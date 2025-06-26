@@ -1,83 +1,142 @@
-Return-Path: <linux-kernel+bounces-704418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BF4AE9D3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:08:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B2EAE9D45
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1366A1897879
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:04:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E09187B3045
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142D17081E;
-	Thu, 26 Jun 2025 12:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGbCeBRE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C35216E1B;
+	Thu, 26 Jun 2025 12:12:09 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA902F1FDA;
-	Thu, 26 Jun 2025 12:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546113C2F;
+	Thu, 26 Jun 2025 12:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750939432; cv=none; b=WEPW0P77x8ErcaandYyk/mioQfQwDoIcY4g7VMJ4UTWk6CGrle2Dockz4VUD9nOc52OaFPOnxs80sGD6vNCRf5lwEZ8I+xrXgkZaREkNQ6Zw3BI7fYV2eoSOilb91ibR1bwoacZZqIOwp9z5OnJHwD81b6fkF8xiIEe3uvdhkYE=
+	t=1750939929; cv=none; b=Nbqe8R4qi4fXnUvPusDkkkmLWSZ/W/wd5z145tO0YmhtoixK1wjrhDPV5CdEYeoCz8gRlf0J1IzYqeqoXKaDndbxcVjmJ0PPAo5LDVcwjxu5pGACHRryq0Ep2LAMmNpVyboja+u3zV7OGkhLPFZHYbmKGg+dC6lJJZSmI9eP/MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750939432; c=relaxed/simple;
-	bh=4hnWVm/WUKrVcAQs3GScuoi2DpfD6MZHWSrLCp87cMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=c5mZjBDzbhUE05bCgbTPWdNRAc+Vv8ok3rRbhcabUc3MYwGyaIdDVagd2OObtSU0PCzUfaoWIvgkRlAaFfuGncSvRBPBuO24Ts8e6CHm/eOGtXeJRtoWwnaOBsLYvTcWnGc9KOvd1Y7lsJ1P4XvQzJogPuHFtGegwtrXsOtBQS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGbCeBRE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F90AC4CEED;
-	Thu, 26 Jun 2025 12:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750939432;
-	bh=4hnWVm/WUKrVcAQs3GScuoi2DpfD6MZHWSrLCp87cMU=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=nGbCeBREC5eH1u5LoXmzBL/KyhNMgjcwCqBdp4VdTIiAPPhxf0igOOfG1q8sKILbB
-	 rjqtIZZfEJtiR4pE0nED5VcTVLpfFwRRcybg7U/wD9It/vIp1T9grEuJGWyYVeEw0c
-	 uiK17aLdxBZ7+Gherpbb0j752P5rVT0xpduFeR1ACZK0LbzIEHsrT3jct9rOvhx+ku
-	 6SGou8vV75LAtsu4aq1wb/UWy9rGafJK6zWeCcPkovfedTu/J5TnQ5KN2/2snXpzIs
-	 LaeW0byiRY8HQUJI5Z0qRQr0Vj0rH8d3WP0jFIdgKKb1HQQy6zsyStwmDAxl7TgOL2
-	 ZnG8sFtnnp9yQ==
-Message-ID: <e038c70c-e7ce-41c5-9b6e-f7d5ca04b600@kernel.org>
-Date: Thu, 26 Jun 2025 07:03:48 -0500
+	s=arc-20240116; t=1750939929; c=relaxed/simple;
+	bh=S0He3klNKgx264BDmuWA7zCXhYd94x/8cNR57vffdQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s4W+258R+7sNlUrwzUq/K06r5VjkL0BoYW9QGBAoL6v3nXwwR1mNGo4cWcLvZrod9zlnUvf7ZuePX9TzanAPQt223fQ5Oz6rT5ZOoh/V17xDLEbGc7/N+rTSH6Y8XM/1d9KdCJHmwM9ajLQPu29HM+DZwfUCuukSd3rjnxvHlzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 7FDF014019D;
+	Thu, 26 Jun 2025 12:12:03 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 644EA60011;
+	Thu, 26 Jun 2025 12:11:59 +0000 (UTC)
+Date: Thu, 26 Jun 2025 08:12:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, "Jose
+ E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v11 14/14] unwind_user/x86: Enable compat mode frame
+ pointer unwinding on x86
+Message-ID: <20250626081220.71ac3ab6@gandalf.local.home>
+In-Reply-To: <aF0FwYq1ECJV5Fdi@gmail.com>
+References: <20250625225600.555017347@goodmis.org>
+	<20250625225717.187191105@goodmis.org>
+	<aF0FwYq1ECJV5Fdi@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: altera: socfpga_stratix10: update internal
- oscillators
-To: Matthew Gerlach <matthew.gerlach@altera.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250625151442.42191-1-matthew.gerlach@altera.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250625151442.42191-1-matthew.gerlach@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: gikz5ymk5gtkqfsbe7umaz6ygmti5hdb
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 644EA60011
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+3QBRxWW5QKTEc4mL8hVqCKcePDm/UYrE=
+X-HE-Tag: 1750939919-377805
+X-HE-Meta: U2FsdGVkX193DTU0jxe+hcnGyWs5G+kMGoQ+BjeKhg3ibdZ049hEqDvRQOdn/n+fmBWDV3neU1YtovsnJY9UIDM79V7xzGvVJtumYGrQEg+adFQorFWXawPyyw3B/mNEHV3KCRcmPcY9vLYMwmCTehxc5/2TkYsltq60/bTRMNGrv4NQmlpYZ4ABC1PXa8tOK3/gnOlmIk8FrG5cTLKrHzOlDuvzEZLJGM925d+wWkY/GVGYRiB7e5o8gYHrLRm9k9f0B6jgLLCbxRjdt5wJxwielPiYeWaLP4L6E6T8yUR13Ghfk3qo9hc/zFIX8Kb2XKNcE1edOxfznjnsGrRTIfaU/9vkn29TvihmPMU5NZPexAoxv/6DKmTgkb8+fOfNp9qsaF2yTsH3g4v/xZnVjQ==
 
-On 6/25/25 10:14, Matthew Gerlach wrote:
-> Add the clock-frequency property to the cb_intosc_ls_clk and
-> cb_intosc_hs_div2_clk device tree nodes.
+On Thu, 26 Jun 2025 10:33:05 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
+
+> * Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> The f2s_free_clk is implemented by custom logic in the FPGA; so it
-> should be disabled in the dtsi by default and enabled by a
-> dts for a specific FPGA design on a specific board.
+> > diff --git a/arch/x86/include/asm/unwind_user_types.h b/arch/x86/include/asm/unwind_user_types.h
+> > new file mode 100644
+> > index 000000000000..d7074dc5f0ce
+> > --- /dev/null
+> > +++ b/arch/x86/include/asm/unwind_user_types.h
+> > @@ -0,0 +1,17 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _ASM_UNWIND_USER_TYPES_H
+> > +#define _ASM_UNWIND_USER_TYPES_H  
 > 
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
->   arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 3 +++
->   1 file changed, 3 insertions(+)
+> This is not the standard x86 header guard pattern ...
+
+Should it be:
+
+#ifndef _ASM_X86_UNWIND_USER_TYPES_H
+
+?
+
 > 
-> diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+> > +
+> > +#ifdef CONFIG_IA32_EMULATION
+> > +
+> > +struct arch_unwind_user_state {
+> > +	unsigned long ss_base;
+> > +	unsigned long cs_base;
+> > +};
+> > +#define arch_unwind_user_state arch_unwind_user_state  
+> 
+> Ran out of newlines? ;-)
 
-Applied!
+I believe Josh purposely kept the #define and the structure together
+without a newline as one defines itself to be used in the generic code.
 
-Dinh
+Do you prefer them to be separated by a newline?
 
+
+> 
+> > +/*
+> > + * If an architecture needs to initialize the state for a specific
+> > + * reason, for example, it may need to do something different
+> > + * in compat mode, it can define arch_unwind_user_init to a
+> > + * function that will perform this initialization.  
+> 
+> Please use 'func()' when referring to functions in comments.
+
+You mean to use "arch_unwind_user_init()"?
+
+> 
+> > +/*
+> > + * If an architecture requires some more updates to the state between
+> > + * stack frames, it can define arch_unwind_user_next to a function
+> > + * that will update the state between reading stack frames during
+> > + * the user space stack walk.  
+> 
+> Ditto.
+
+And this to have arch_unwind_user_next()?
+
+I'll update.
+
+Thanks for the review.
+
+-- Steve
 
