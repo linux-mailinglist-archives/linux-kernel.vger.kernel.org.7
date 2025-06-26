@@ -1,196 +1,129 @@
-Return-Path: <linux-kernel+bounces-704042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31856AE98A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:40:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4B6AE989B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44F55A13E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:39:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE857165865
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4677E2951D7;
-	Thu, 26 Jun 2025 08:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10F42BD03E;
+	Thu, 26 Jun 2025 08:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G+jVVRcz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AeVpE4SM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268E62676CD
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DA629CB32
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927087; cv=none; b=mOYDJGaHrimfxfcAgHg43AOKiQXLyyzBxhwu6gUeDEipehA0VrMK89CG/POeOZQlW6ig05OogX8Yg3sD5CTzPXfNQVQqW4x5NsREYxy4H/ca2WWVGvJDaUJ96lfkjORqzclXZFwpnlmreTBD/7vVduhqAT7WPMFe/wHPgWtIvxQ=
+	t=1750927148; cv=none; b=hAMvjRRoRigKTCxZ35/TWcx02KXIOdIiyfLasYPDJ4uv5fGXIQd33891buOI+TFzEVuNFP1h0A8D91UeIKR30DRBJOYpN7j9m069q6cSvI0WMhzk80wlxWxgQtSr4xjhrN3fmyP7aLXQ4i1qVzNd/F0K8RHQX+OjkJ/fXUMN7KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927087; c=relaxed/simple;
-	bh=jx/K8tygJjGoas2i+iwGNVNUm3+ZqzRYN3QILlGvNsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R0jL0maeLDTHMFFiPSNKrk8K6bDLI5W9ZxHVQClpDyRLCY0lZdCif8EHJt5Z3k6KJ+g+6xqvIvUOJkOSSgc9E4hKl5LpY9UR+APG7NzSNjlz+2s/HFA2sL8mUU4Dd21fkhnfBJGH+tcsix9QT52vdMVweaC9SG9+AXIPe7Lloak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G+jVVRcz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q0DtIU029528
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:38:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DN2gLQs/N6h7C/Maw6kExG3LolsSEMumqxKA8yzbDWk=; b=G+jVVRczn7E5t1VS
-	BvsKRC8qcTsKEUeaXW0U0e/0JvKx3jEtD8QdM/lT1mgS5sKanN1sFYO/B8xAP+L/
-	6zg5gmuwqNWubZ9MTy/Vh4GXo0hO/pZ4KpQL4/cYZ3FrTFTWp6IBSPw9yWoK7Omj
-	Voqq71EXzalVwtTxQQDeTN2YJ+XKqizHO2xO2I3tvwUrHRK8vRtz9Cvq1Su2Hq8r
-	UPd7ZeuOeUVjvW7WXbbI3OEAiYBW6D2gAPahmXTvW79Ww5PLwAXLFYEeCtIabsR3
-	LFQAKph9B4oZFKPYUjgFX3Cb9bPzXXggRyxJ+34bHzGEUYLcatIRTloBj69f+nS4
-	W3wm0w==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47esa4uwqb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:38:05 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d09a3b806aso17033285a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:38:05 -0700 (PDT)
+	s=arc-20240116; t=1750927148; c=relaxed/simple;
+	bh=HSfhsMUTIEeNXER3GX24dEAFcEBa65RyFKGAcFfGniQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-type; b=TPXsDj03M2CqMevkWMZTavsBugPvEokV7sV0X1LVv7tU4Y9cMaPvhvMAUGE64l+IEUuXjKlcm74oIpxdNXpu3ej6XzlCQqPSfcnDKP25xwlmB/c++TmJS+ROAfHjAZQdQHjMOS/ZUDXx42d478GdAUMCFXhUgJx8n7YUO6XgFNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AeVpE4SM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750927145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NOVgOi9q8hphdneYXIZpnIwxycB6I6Mf0iPTX4mv7ok=;
+	b=AeVpE4SM6nUiVHlDwC+9YBB7av8ovLMng2va+qxpO26LDT6gUD6/NOTXsrsekEF4ArY9xy
+	KUTBM+4+Cf7F++jboNMae0n4TsDU9UcefKcjqQlk27w6qig+i2eTrEpsCCrMMbTdobFxk9
+	77ZCeeXlKRxx15jGYYesczNaUegQEC4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-130-MP2qlS6MOwqeI_NlnSWlYQ-1; Thu, 26 Jun 2025 04:39:04 -0400
+X-MC-Unique: MP2qlS6MOwqeI_NlnSWlYQ-1
+X-Mimecast-MFC-AGG-ID: MP2qlS6MOwqeI_NlnSWlYQ_1750927143
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so2946055e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:39:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750927084; x=1751531884;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DN2gLQs/N6h7C/Maw6kExG3LolsSEMumqxKA8yzbDWk=;
-        b=DQ/OdC43TE/mT8Q0ckl3RGSHI4DrWz2bzOdoAkgBFAJnwxFRUfpa7s6Xt6mVQTPGPs
-         5Uagg/okkPAX9pzPOAHV9tlcUz6CLPdQgNbUG2mPsQXayshxosB25Fd1LUzPN4Wp5MH1
-         eRnQRnzig/xC6Po62ePEmVwHlWxucclcf43eo196dbxlq93Vy/3kLtqApDwUM96eLn1Q
-         QvTnOWyhExyOHPvuNxAyCWpCzHxyO68txa8Q8T2QuVBhwgkV8zQoDSCpdH6r4JnBRxaB
-         0Sq7BQVX2yxpEJkKvOlZsQHxPB9jxjBD88WoNkODgrCHeQIeEHkNZ/UzazwUVXC/c13p
-         wMcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpC/aypC3vYjRhClAXPktIV0kYaSFq1hy+/GOWnZwwnJKct6ndZJOUTpByU+wYqHdC/K5fEA6OVUBc7s4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgan4fQd61ue+AMSBqREGVjM4ArztyqQ5Zr6v9eLsm9SWlV6ik
-	qzXraJdTljrxuDrw+gKLGkffuopOn48sEtcMY8MJxa99MXuNT37bqHrQ/FNIj+oa7Vuor34HNKP
-	DpzRX9aSRlM7BBktYgDPesL+/LrCAgnh+0xGGOCtBPUJBx8K3Depf+SCqVpoY8jOhkyI=
-X-Gm-Gg: ASbGncu3KcBtpfHI3nNP5zj+JxGcD8cniKCLHYQBzTvJYaisoCEXMalaYMAwKAVUBiO
-	1XJixGZ6Jd+svoUqqUjKI3magp/KXNvRDuJH1K5aw5xBET9QjG8vo8o7E2+gsoV+MwRqM+Y85Bt
-	lm0woJTdOxxUQuUzLZEpeLsPcU4sniAZ6YPhTC3+8bt0Dr0NZ8Z+ISH9+cNg1+ZwSpWCACqV7Ue
-	6ZoOjGMFcYAiNodXD0I8s9Y9aR46O8T2g23GHgpbV93SmGdvMBhFrFkSe/QmeiRR16YqJXnbEf8
-	NI2x+w4S6/KQfpoRa2rZKYDFGj7NsWllFHLU6Opg7dyQnbEkfiaSln09bue1vC2xqi2o5m4pAll
-	D0cE=
-X-Received: by 2002:a05:620a:394f:b0:7c0:c024:d5 with SMTP id af79cd13be357-7d4296f07camr348015785a.8.1750927083677;
-        Thu, 26 Jun 2025 01:38:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEE8XRSLwrca8EjF9FheFZBFZEGiaUI959MuTBNXXt+9+gWR0YgIVeiXbqyruvrR19c3XdKiw==
-X-Received: by 2002:a05:620a:394f:b0:7c0:c024:d5 with SMTP id af79cd13be357-7d4296f07camr348014285a.8.1750927083307;
-        Thu, 26 Jun 2025 01:38:03 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae054209ac4sm1177132466b.169.2025.06.26.01.38.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 01:38:02 -0700 (PDT)
-Message-ID: <39d6a38d-6728-4998-aca2-23138677123b@oss.qualcomm.com>
-Date: Thu, 26 Jun 2025 10:38:00 +0200
+        d=1e100.net; s=20230601; t=1750927143; x=1751531943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NOVgOi9q8hphdneYXIZpnIwxycB6I6Mf0iPTX4mv7ok=;
+        b=HWClnymSlUDzbmWAA06rrih50krXHEi0I0rrTgJeg6LeRkkhC68O4ACqkBO4pwRaxm
+         Q2z0rivCOgbC106FtRQc710/RHEVLOGxo133tuyZNUW+Y/PzMfwCNO/sXstxZGQq3C3Z
+         a6Zk5mWZigMW5Vg74zIjFPCkFBdEYUinmf52vD2qU9O0q6vWeqU+uU7Dw1yfdLSz7Vva
+         uMpGCAykitInnjkBKmk3MHnRvQibyVRyXnVjaFUb4264jnlq2nqpsCHIdMXU1I4vtY6k
+         VjjXKFdPDzXfSVA2drVCmWfezzuiSawLgwEz3wCblgSPKhTsKGFdjSzX1WUCLIFtvPl3
+         06EA==
+X-Gm-Message-State: AOJu0YyB7GHAPraok/MdNvCUjcYq5uzvP+3pyXKp231u5s6YL8rWANCj
+	atQwoC9FDZN3M5nxJ8UhGh+yhVOR4iXrJV33io0rO0SKPpytKzcky/iKHRKJsx7wT21xk8TgcWK
+	ceU5o9KCa25Ijq//Tw2G2GGm7DzOD6TGCvQSawbcjpt8FGffOm8SKUwOJcvAeHQtE5g==
+X-Gm-Gg: ASbGncsCnNdN1MLfyHhO3vLhVQkeGsrRAqOAcZscS1FRhV/8hyJe+BBrWi3BmRVYlyt
+	JgJ8xOWX5ts0zbVXrSMpMWfDetrr53/KqQI0i7HpI76J0tT966VASvVDBUHtBGJy4OtafG9bDn8
+	lwaCN4EAL3Ot0N99vwVeBzWkYfk7Yo/M7mUvxajf05zg39qgEQU2OIokgQE8kIIJu5ltPT1DDaQ
+	8+rweglctmmbi9M4HujzPLvUy8XhtwZyxLVgMSRA26fDPDnTO0VywBsVShIUW8jFWIMZCwJBC34
+	lAQDiZEsp9V7xtCWixdDh/xJQEI=
+X-Received: by 2002:a05:600c:3b12:b0:453:5c30:a1fd with SMTP id 5b1f17b1804b1-453886ecc6bmr27801435e9.8.1750927142742;
+        Thu, 26 Jun 2025 01:39:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhqjNyC6ulr9vBF1aI7RMGdUMF58z3nn/X9iHP+GUGyh3gq4Bxy5W7zVXa3UwHMyhVwcH4eA==
+X-Received: by 2002:a05:600c:3b12:b0:453:5c30:a1fd with SMTP id 5b1f17b1804b1-453886ecc6bmr27801235e9.8.1750927142388;
+        Thu, 26 Jun 2025 01:39:02 -0700 (PDT)
+Received: from lab.hqhome163.com ([81.57.75.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45388888533sm20000505e9.21.2025.06.26.01.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 01:39:01 -0700 (PDT)
+From: Alessandro Carminati <acarmina@redhat.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Alessandro Carminati <alessandro.carminati@gmail.com>,
+	Alessandro Carminati <acarmina@redhat.com>
+Subject: [PATCH] regulator: core: fix NULL dereference on unbind due to stale coupling data
+Date: Thu, 26 Jun 2025 08:38:09 +0000
+Message-Id: <20250626083809.314842-1-acarmina@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add bindings for IQ8 EVK
- board
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Umang Chheda <umang.chheda@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@oss.qualcomm.com
-References: <20250623130420.3981916-1-umang.chheda@oss.qualcomm.com>
- <20250623130420.3981916-2-umang.chheda@oss.qualcomm.com>
- <aFy7wEmP0EzGUHX+@hu-bjorande-lv.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <aFy7wEmP0EzGUHX+@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=eLYTjGp1 c=1 sm=1 tr=0 ts=685d06ed cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=2leXWRGikYLyCpLsO-IA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: TflLMAwUicPygRnVUXDEG2EPuXQtRahd
-X-Proofpoint-ORIG-GUID: TflLMAwUicPygRnVUXDEG2EPuXQtRahd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA3MCBTYWx0ZWRfX+XOzFz8cvCFP
- kxFY2ox+QZXPZolx0EAbC5NRx/5SEbzRqJjwWT1+kHzUVxHiH3KbwHBUgNnTdP5Zmqpn0e/wu04
- FL1c+b4779ETOapgVxqwPNOgtPOPHhFDodFlnpwVotWIzSTancbfeYkp00E+WzRzK5VF0mgj5aB
- FQ1dfk3UA/VXmCi2gn2Z7+ekOK1boP7+XXKgEDEO55KOZ2q+feEOWFqKkdJhFnFoPb+XH3MkTFg
- OLmMDKczTpEjQMvIv4SafPgqOxealSqM4LAHoMks8eX8rABP+BF4MTYSmeMPLkOmSwLYhfmFYPC
- iCk67P5DzsQ+ut0oriI+ipEeHChEHoFBdYlG+vQ1jTbEbiaDVCdXPbIglQ0oeEX4tuTg/i0grmV
- 6cfmJolo0VNOFYNZ2DFtIFe2xdeCWOxJpSTfvXhxHWNvxohzd55WdICI1hnDPOmRZ9fDR6fq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_04,2025-06-25_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506260070
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 
+Failing to reset coupling_desc.n_coupled after freeing coupled_rdevs can
+lead to NULL pointer dereference when regulators are accessed post-unbind.
 
+This can happen during runtime PM or other regulator operations that rely
+on coupling metadata.
 
-On 6/26/25 5:17 AM, Bjorn Andersson wrote:
-> On Mon, Jun 23, 2025 at 06:34:19PM +0530, Umang Chheda wrote:
->> QCS8275 is another SoC under IQ8 series of SoCs. Unlike QCS8300
->> which has safety features, it doesn't have safety monitoring feature
->> of Safety-Island(SAIL) subsystem, which affects thermal management.
->>
-> 
-> QCS8300 and QCS8275 are both the "Monaco" SoC, with some differences in
-> which nodes are "okay" and "disabled", and as you say here some side
-> effects thereof.
-> 
-> Describing these as "Monaco" and "Monaco with Sail" would lend itself
-> for a better structure.
-> 
->> qcs8275-iq-8275-evk board is based on QCS8275 SOC.
->>
->> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
->> ---
->>  Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
->> index b14206d11f8b..19823bc91a3b 100644
->> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
->> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
->> @@ -54,6 +54,7 @@ description: |
->>          msm8998
->>          qcs404
->>          qcs615
->> +        qcs8275
-> 
-> Please add "monaco" instead.
-> 
->>          qcs8300
->>          qcs8550
->>          qcm2290
->> @@ -935,6 +936,12 @@ properties:
->>            - const: qcom,qcs404-evb
->>            - const: qcom,qcs404
->>  
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8275-iq-8275-evk
-> 
-> Please use the qcom,monaco- prefix. Is qcom,monaco-evk unique enough?
-> We can sync up offline on this.
-> 
->> +          - const: qcom,qcs8275
->> +          - const: qcom,qcs8300
-> 
-> Please replace these two with just qcom,monaco.
+For example, on ridesx4, unbinding the 'reg-dummy' platform device triggers
+a panic in regulator_lock_recursive() due to stale coupling state.
 
-We could in theory keep the SKU id as a penultimate entry in the top
-level compatible, but I'm not sure it makes sense given what we want
-to achieve (just thinking out loud) - exposing soc_id through
-qcom_socinfo & sysfs seems to be enough, and if it's not, we can
-handle the odd cases separately.
+Ensure n_coupled is set to 0 to prevent access to invalid pointers.
 
-All in all, let's go with Monaco.
+Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
+---
+ drivers/regulator/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Konrad
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 7a248dc8d2e2..cbd6d53ebfb5 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5639,6 +5639,7 @@ static void regulator_remove_coupling(struct regulator_dev *rdev)
+ 				 ERR_PTR(err));
+ 	}
+ 
++	rdev->coupling_desc.n_coupled = 0;
+ 	kfree(rdev->coupling_desc.coupled_rdevs);
+ 	rdev->coupling_desc.coupled_rdevs = NULL;
+ }
+-- 
+2.34.1
+
 
