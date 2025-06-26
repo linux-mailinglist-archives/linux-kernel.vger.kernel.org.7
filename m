@@ -1,161 +1,95 @@
-Return-Path: <linux-kernel+bounces-705019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B879CAEA44D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C2FAEA457
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9799A1C43A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:18:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5E97ABE0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D432B25A2CF;
-	Thu, 26 Jun 2025 17:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D998B2ECD3E;
+	Thu, 26 Jun 2025 17:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZJ+tFYuQ"
-Received: from mail-qk1-f202.google.com (mail-qk1-f202.google.com [209.85.222.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ibB5ft1Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC2478F2F
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 17:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99BC20127B
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 17:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750958266; cv=none; b=XhSNI/eanf1ThUQ+KQFRLKqFsQzswMpQ+duNVvX86k+Z7IBzSQEvvpkph2Z943SRtYa49uIuOYJGeu62Cr9lDg9v4tekushd7ZZpLOUmd3H/9AxmDEeJj2THk+nQwzu63E1l1UAkHaOokJqCPnpZXpvGTegTJHUTxNyxzy0h9V4=
+	t=1750958450; cv=none; b=n6Y0HIKCW5yhINY2f048s9bkt5aMTy9nACYNh0iPRq/+GASq98N+4Ra3AedcHvYxxJJTfrW2xu+1ky4oVLZSVca+sIX++f4XZZ8VAve7k/i79ROII08GN9GQjtWfqu4Q3d0EAA5hL6JjUduClbzrvrTyEU3TR+u57QIntJQcWVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750958266; c=relaxed/simple;
-	bh=wraxF92E5UMplfHdosxwPoePMfHDlZiunci84xKy9ow=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qf+aaAkK9EwBxjzeoWv5BLUFNwhhVncT23p4MOxJhduzITXyFEIQ3I+buBELpugOoNYPz+DJyP5CFiQqFQ/7n/p0FXXBkg2cFLdSoBjKHaei5xQeN8o0l7a+Q3yQp98mOY+dgyojGjUXzPuLORM4Ph+mRP2QshdcusPViY5lT/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZJ+tFYuQ; arc=none smtp.client-ip=209.85.222.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com
-Received: by mail-qk1-f202.google.com with SMTP id af79cd13be357-7c5f3b8b1a1so178582785a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750958263; x=1751563063; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9bhxg3fOhJ4ocdPhUszxgKjahNAxF1eH+RBCnIZYJrA=;
-        b=ZJ+tFYuQb4WApiasmLYmXbcWJaM0x2p9zZpZUs+uuySUD5MBhhFXrHMfbd8NWMc6XY
-         n45Khb8YfqScW6Bjv9lT4i7HP7i0se3fltNqqq39npxMWURb8GAO/+iY+mqIgGs9blM/
-         VHHA+c6JL/pBc8d9eubEMGiZ3e0DmvBIhXq9j/uM8EgldVjDiDFBNYOyuEjquM2gGP9L
-         mg7bJDOxP5hBV6dBgOArKzxQgiU9xphpCTvmms3Off+unJRpx6X8DevQjGbmmhott6WJ
-         nw/xUxCW42gn+OME/cv6aUTEYwt53+eK+9aLkNUhVJilTKKzQ/SZo++qLddzsAZ6d3wr
-         VFKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750958263; x=1751563063;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9bhxg3fOhJ4ocdPhUszxgKjahNAxF1eH+RBCnIZYJrA=;
-        b=LJc0L3q15bjwYIDkkqdDOZGR5FquLeFyATM+8kCiRlAGASzytjomWriHGvzHd5o6WS
-         1icJMVwDCCoYtqhFxWH0Pu+DYNG0ku+3ZQWEf8xc/ikWwHlmLUeCdQB3uBgm1aOpszJs
-         ZVwjzSiGtYTqQkMpCKkMZgst260Obmn1cMfJak/WRAu4jCo3jQf/KcIj1ADUjx1RuQYl
-         nD+DiqsD2IqR2HQlAQpvpYEQcEt72+Yuez8vE+KHDfsoXd8k4WcI83NQ0MmROv+uDNYQ
-         V8uH0r+F/Gnw2qtw1yNVe1ZJnw0IcxISG7NXMxo3n+nKt8mEYQr64vV6A2am2Jd4tKQd
-         v0lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJfAh3QRY0GksiMKAXMZSUwlgKb0pgCJRZ280L9iuaCksfiaFXgf8zqkZ5D+lgbOTlDz0A+8GiTAUjor0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkF4JNN/KQi5xLznAnKhROZwbdCjqbSjuaAGqi/GbX9QJvEJP4
-	vgknYNiuB1SC98faP+mz03CsoP2E/Lr502jrZSzHsskaFhgISIBFhJng449XhXssP+YbJYMG5ud
-	Huau3QExiSuIxng==
-X-Google-Smtp-Source: AGHT+IGW3Lb93nR97g0YhaLSp+vwVF5TL23ka7gRWZ1ay34aGEsUXZwqal+m1lyEpUN6FXWehUOPpulZf4i3rA==
-X-Received: from qkis20.prod.google.com ([2002:a05:620a:bd4:b0:7ce:c215:7cab])
- (user=marievic job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:2b87:b0:7d3:8ee7:ca10 with SMTP id af79cd13be357-7d443935786mr51080385a.2.1750958262975;
- Thu, 26 Jun 2025 10:17:42 -0700 (PDT)
-Date: Thu, 26 Jun 2025 17:17:29 +0000
+	s=arc-20240116; t=1750958450; c=relaxed/simple;
+	bh=ZpNp5uX6l3WWkoGDqP3OscDyl3hsSvOk7NW5Lh2rF0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uAOShSwp9RJVC2HBeDSx1HaL2KiJ8TWLLB0Sg00idnsWWbQRBfzKa2jLk9yJtMJfdKihX5+KgEyErvMs+3u+L80GU7Cts4AVOy9bpUcV0ClHSOiTM/o751WEq3Piwqz/VnnbUZyZLKkJKSF7zhbt+ZZHBr+olIU2Q9yTpTfy6Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ibB5ft1Z; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750958449; x=1782494449;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZpNp5uX6l3WWkoGDqP3OscDyl3hsSvOk7NW5Lh2rF0o=;
+  b=ibB5ft1ZQr8yV+/lBO9RnU+6LIxAGnSI+fG5M2Fyfkmwy7QNEyuz9cTk
+   eDEPj+KFdBYVif8GE643/6dNK4cwcT8Z4LixRhFUXNYtVvKmzWrJ2AlIc
+   Hh2jAuJvSWMS2ef4bV8eaQIyE4iB2tQ3bv+L2LbsZhTP8qqrm8IvPQH5S
+   X53mykqpgarOO2AqMTdT3dlSxjxURUC6GqWByM9QtBaPYMtAbbMGwzfBE
+   jaPn6L4d67S1FnCVuDX732f9JaqA8WFjOcwcKEZjVvkpj2nwB8hkw38TS
+   Q2Ry5ImvfN60UbeTcPJBKTTbQxy7WRL2zd+YS1+idn9SEiL7qjnoABSp6
+   Q==;
+X-CSE-ConnectionGUID: K2AcM8srS2SfIPPATMYoyA==
+X-CSE-MsgGUID: AHPY9FtSSXeb3mZGprvhbw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="55890565"
+X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
+   d="scan'208";a="55890565"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 10:20:45 -0700
+X-CSE-ConnectionGUID: zTdBtQl1QSq6zkriSZQ7Ug==
+X-CSE-MsgGUID: IvA14ZQtTJKROHO9fA7caw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
+   d="scan'208";a="158068524"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 26 Jun 2025 10:20:43 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 382632AD; Thu, 26 Jun 2025 20:20:41 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/2] firmware: sysfb: Unorphan and fix header
+Date: Thu, 26 Jun 2025 20:18:59 +0300
+Message-ID: <20250626172039.329052-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250626171730.1765004-1-marievic@google.com>
-Subject: [PATCH] kunit: Make default kunit_test timeout configurable via both
- a module parameter and a Kconfig option
-From: Marie Zhussupova <marievic@google.com>
-To: rmoar@google.com, shuah@kernel.org, davidgow@google.com
-Cc: geert@linux-m68k.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Marie Zhussupova <marievic@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-To accommodate varying hardware performance and use cases,
-the default kunit test case timeout (currently 300 seconds)
-is now configurable. Users can adjust the timeout by
-either setting the 'timeout' module parameter or the
-KUNIT_DEFAULT_TIMEOUT Kconfig option to their desired
-timeout in seconds.
+It appears that sysfb files became orphaned, reverse that to make
+the changes visible for the maintainers. Second patch just to drop
+kernel.h which is not supposed to be included (in the headers).
 
-Signed-off-by: Marie Zhussupova <marievic@google.com>
----
- lib/kunit/Kconfig | 13 +++++++++++++
- lib/kunit/test.c  | 15 ++++++++-------
- 2 files changed, 21 insertions(+), 7 deletions(-)
+Andy Shevchenko (2):
+  firmware: sysfb: Unorphan sysfb files
+  firmware: sysfb: Don't use "proxy" headers
 
-diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-index a97897edd964..c10ede4b1d22 100644
---- a/lib/kunit/Kconfig
-+++ b/lib/kunit/Kconfig
-@@ -93,4 +93,17 @@ config KUNIT_AUTORUN_ENABLED
- 	  In most cases this should be left as Y. Only if additional opt-in
- 	  behavior is needed should this be set to N.
- 
-+config KUNIT_DEFAULT_TIMEOUT
-+	int "Default value of the timeout module parameter"
-+	default 300
-+	help
-+	  Sets the default timeout, in seconds, for Kunit test cases. This value
-+	  is further multiplied by a factor determined by the assigned speed
-+	  setting: 1x for `DEFAULT`, 3x for `KUNIT_SPEED_SLOW`, and 12x for
-+	  `KUNIT_SPEED_VERY_SLOW`. This allows slower tests on slower machines
-+	  sufficient time to complete.
-+
-+	  If unsure, the default timeout of 300 seconds is suitable for most
-+	  cases.
-+
- endif # KUNIT
-diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-index 002121675605..f3c6b11f12b8 100644
---- a/lib/kunit/test.c
-+++ b/lib/kunit/test.c
-@@ -69,6 +69,13 @@ static bool enable_param;
- module_param_named(enable, enable_param, bool, 0);
- MODULE_PARM_DESC(enable, "Enable KUnit tests");
- 
-+/*
-+ * Configure the base timeout.
-+ */
-+static unsigned long kunit_base_timeout = CONFIG_KUNIT_DEFAULT_TIMEOUT;
-+module_param_named(timeout, kunit_base_timeout, ulong, 0644);
-+MODULE_PARM_DESC(timeout, "Set the base timeout for Kunit test cases");
-+
- /*
-  * KUnit statistic mode:
-  * 0 - disabled
-@@ -393,12 +400,6 @@ static int kunit_timeout_mult(enum kunit_speed speed)
- static unsigned long kunit_test_timeout(struct kunit_suite *suite, struct kunit_case *test_case)
- {
- 	int mult = 1;
--	/*
--	 * TODO: Make the default (base) timeout configurable, so that users with
--	 * particularly slow or fast machines can successfully run tests, while
--	 * still taking advantage of the relative speed.
--	 */
--	unsigned long default_timeout = 300;
- 
- 	/*
- 	 * The default test timeout is 300 seconds and will be adjusted by mult
-@@ -409,7 +410,7 @@ static unsigned long kunit_test_timeout(struct kunit_suite *suite, struct kunit_
- 		mult = kunit_timeout_mult(suite->attr.speed);
- 	if (test_case->attr.speed != KUNIT_SPEED_UNSET)
- 		mult = kunit_timeout_mult(test_case->attr.speed);
--	return mult * default_timeout * msecs_to_jiffies(MSEC_PER_SEC);
-+	return mult * kunit_base_timeout * msecs_to_jiffies(MSEC_PER_SEC);
- }
- 
- 
+ MAINTAINERS           | 2 ++
+ include/linux/sysfb.h | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
 -- 
-2.50.0.rc2.761.g2dc52ea45b-goog
+2.47.2
 
 
