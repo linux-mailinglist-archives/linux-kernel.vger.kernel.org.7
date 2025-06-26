@@ -1,120 +1,167 @@
-Return-Path: <linux-kernel+bounces-703830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78AF6AE9548
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 07:49:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7645AE9550
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 07:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0011C2113E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:49:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 529157AABE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A76D230D35;
-	Thu, 26 Jun 2025 05:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F277D221578;
+	Thu, 26 Jun 2025 05:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1TLyXauv"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ckOCMwp6"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2040.outbound.protection.outlook.com [40.107.100.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D482264B7
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 05:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750916919; cv=none; b=IbmsjHn2muDJveCoVIveZFppH1LVRvn4x1sKTOvkcoVPZ78t91Lv12erQqLdK21tXXuurKCBFMO6WFAKVsrRKBxKzYyrDkHHUrmJh8mQekwc+KiYMs+V/IcUpPyhZfxKLMesB846puaaxcFVwhiv8Mt6ddlW/neef5pY+1nhKRw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750916919; c=relaxed/simple;
-	bh=Y9rAwk43R5Qu/XneIvtPPaxorqlg9IJwfPk0mko3rAw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=U9WD0uRdCpaoNiz36aUHSuMCb1h4AYU0GbpKAwOwnoFomcv4F/hP2HWoAY3kNHnFeVHlW9MEIaHtUj+WY+ww7AUac1JTE5fQQh5GdU9z6rfuzMdXgyKTg2QWfnAcCD2gW66T1gv0JdZueI+diJtm8QFqTJZUvvS/ZKm6beVDEls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1TLyXauv; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-747cebffd4eso590922b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 22:48:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750916917; x=1751521717; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=06wlXYRsyscOOukfm0BoHmWOsjunsh8IZmbqRpcqtRo=;
-        b=1TLyXauv0hSwcmp0Hyyig6+luqbkAyysSytClcC/r+u+yUjI/pJZfvyDxVbU1LaoMs
-         7j+851Vb/z/Xw8//K31iveAZ6SqEXuoc6zu2pzLdjKwWicbSC5OwL9QvV3+JFgwf5nE0
-         gXRgP5EY8A8g7Rp22kpVKIBfM56ndTirXLSbYQXhvLydG65PXRxf8W/TLiRMeI+nhaC9
-         inZclZg8Kjo0ZwU0sJfWkRkWCkLIj4onIFaf28uaWD/XUTChrKIg3yh0haRijJ4CYZwl
-         /iNrb+wr+VVLRN8pQeDA97ZxwIK/1Yc4279e2vmN4K5Z7kYot7WlPlCq2lm9oZ59Cxq6
-         6Z8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750916917; x=1751521717;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=06wlXYRsyscOOukfm0BoHmWOsjunsh8IZmbqRpcqtRo=;
-        b=F7QYr5mlDHNbwqGTXQ/yfcAIC/j0aVQAyFksLj/U5MSsPU+qMbfwKlW4GFcNm9rRsu
-         jWNa0nNDr7Ltgb60eWsS9xEYft+eE7sV7Jnt7E0okFV/7TnZHY8N8gdt7xyKGMVy6eU/
-         6+32f0otMIQahuk1LJ+jWfjahYRG2PPjh4igjm3kR/YWQRsG0j7JXmsP3HWZA4u5eKnm
-         jTGKaArvpuBstgFwwnjsc1JTlmmZS5Dq99q6IUwgrBzfPVwslSciEbNLB7ULmqCsqunR
-         Ca91yWIkRzsSxwUrajtebYusEbkV2md9INymAVmmBkjZdjEL0VUSQlVO4PJKBHp98oU/
-         uEaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZNi3a0o2vHm4dptnh09NmD/ijO/Q7rnqnyRn5xvgYFX24ObiaLSE08dSnj/YnioOFxhWN/Ssvdc3IZsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsBP09FCTDCsanB8pp+UFeQlbkFXCgo8Ge7agWxn9qjZd7X7OL
-	HBybgGqnicZoVKMp94KN61LJr3PQmBA6WPTli61wT2ys4wvfCKFpML1R1JtJjcDtVpEu4Pcgucz
-	d6P/7WN9IuQ==
-X-Google-Smtp-Source: AGHT+IH+oNNAMV2NVtWwXyNOB/xwSiYb7Vtrnxbr8iZKkclF7b16D26wDNw57BukJDxDJDBIx0CIDLYPgWdi
-X-Received: from pfbde4.prod.google.com ([2002:a05:6a00:4684:b0:741:8e1a:2d09])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d85:b0:220:193b:913
- with SMTP id adf61e73a8af0-2207f33227bmr11024525637.34.1750916917233; Wed, 25
- Jun 2025 22:48:37 -0700 (PDT)
-Date: Wed, 25 Jun 2025 22:48:26 -0700
-In-Reply-To: <20250626054826.433453-1-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A361A83F8;
+	Thu, 26 Jun 2025 05:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750916959; cv=fail; b=WL4OeLadliNIU1vH1qBhypQPvhSh3P7py+gaQvB4+FXjBZka4ZbXCMCKR0J1e9+ScmWpSEkaoaTJahZpG3L4rVYWURepTXFWI6IRuIqgVc7grE2NRrKbjgO/m9VEuGoPg/65dSdrPh9+xzRcrswVwqxT6uDr2Lh9GOjw8H6tPBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750916959; c=relaxed/simple;
+	bh=vND9Ppp5wOMU+4lTiRRV++6ZXGzYeyPpQk3mhlX6K4M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iFpqdu2AsYrDasisETGiUUYv/QQnkxy7GPGhi680Jeumfgrv+GDKXYPTMBHwtJ+bERgK9PqWBdEeU3qXnS0L/2jkh6zJ7MLa/DlxqmIo8+70QpQfBw+i1QhpLYMkkAAHRuJVOEmo+WalYQbOn150aqF7PYLptLLPnnNLGz09HOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ckOCMwp6; arc=fail smtp.client-ip=40.107.100.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PY2WTO99gIGMyRaqYcXq+Iw3FKKEZGoK9KumqzjG+IdpgqcO5IZA+HJnpOCgpvHvSzyRbbx/g2gHamW4krGg36O/ISfLZqKRhBDEinNaLUIdv7qbxBEeeUWgNu6ztNQ0r7iwU9iEOwkx11xC6+BwEWI4QpVugE6qIFn52G0iVeW8NkaSWvi/hyYov9PcqOmhx27n1BYLyo7NjT0VoxmaeCPCBlpnpxr3ll76zS9TELlqjLm3/5D1RrkGwANYVkGmDlEsJeU+D12mpUYiUUL6f7p8IMEnirth2HuSW1O/NZpis+f2K0RU8Emw2yBb9xyNKdc4G5PSsn4E6SNd7LhHvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hJNQDy0UPMJLW5cnQcu9Tcqlv1T0hbkVMNuR7Hy4Xog=;
+ b=ifxnKpHj0zA0IfhRStwtoOUmGyoiQihvO1bD5USdKC2U9/Rrxkm/n4whV0Lid27OYBTC4HQQQELN0yv4cu4ot0DPeMzzfpBwhMzgsu3jYywXQb1jS13P+M31JSYQrkAa7SNaWbcmzaEggmURDZQNvpS1weDniylN7UfW6Kop1r39/wSSwcqP+/N0Yx+pA7PIFu2V7pNO4EEkUUmqMcDbXF8o5f5bcFhz4wSjWLoh1dqyjaxGTFoiT6+5j3d3QsZ0qLMrbztLbp5gTUt8CTu+nCkvxztU6qW2QK1w9JX3R63CSg3beGAEIGej738AQR7u29nOAmQByI1dpynf6SpuBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hJNQDy0UPMJLW5cnQcu9Tcqlv1T0hbkVMNuR7Hy4Xog=;
+ b=ckOCMwp6Ep+YoiuFQVaCgA2WRtZFqQaF1gsLptB6UjUa0w5Rsg81K+EnSB79Q5bvdGN2a/lp3hjpbEHT2usx97VzlZ9x1zwv5yf47aVioRjSZcZrQ/Td0p4roOrtTDIVJunoWfpTgNUkJQYsdTuLbNBxnRC+LxGZ1D7zoBxjVOs=
+Received: from BN9PR03CA0247.namprd03.prod.outlook.com (2603:10b6:408:ff::12)
+ by SJ2PR12MB8953.namprd12.prod.outlook.com (2603:10b6:a03:544::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.23; Thu, 26 Jun
+ 2025 05:49:12 +0000
+Received: from BN3PEPF0000B36F.namprd21.prod.outlook.com
+ (2603:10b6:408:ff:cafe::3f) by BN9PR03CA0247.outlook.office365.com
+ (2603:10b6:408:ff::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.17 via Frontend Transport; Thu,
+ 26 Jun 2025 05:49:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN3PEPF0000B36F.mail.protection.outlook.com (10.167.243.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.1 via Frontend Transport; Thu, 26 Jun 2025 05:49:12 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
+ 2025 00:49:11 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
+ 2025 00:49:11 -0500
+Received: from xhdlc201964.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 26 Jun 2025 00:49:07 -0500
+From: Sai Krishna Musham <sai.krishna.musham@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<mani@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <cassel@kernel.org>
+CC: <lkp@intel.com>, <linux-pci@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<michal.simek@amd.com>, <bharat.kumar.gogada@amd.com>,
+	<thippeswamy.havalige@amd.com>, <sai.krishna.musham@amd.com>
+Subject: [PATCH v4 0/2] Add support for AMD Versal Gen 2 MDB PCIe RP PERST#
+Date: Thu, 26 Jun 2025 11:19:04 +0530
+Message-ID: <20250626054906.3277029-1-sai.krishna.musham@amd.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250626054826.433453-1-irogers@google.com>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250626054826.433453-4-irogers@google.com>
-Subject: [PATCH v3 3/3] tools headers: Remove unneeded ignoring of warnings in unaligned.h
-From: Ian Rogers <irogers@google.com>
-To: Eric Biggers <ebiggers@google.com>, Yuzhuo Jing <yuzhuo@google.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Cc: Ian Rogers <irogers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: sai.krishna.musham@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36F:EE_|SJ2PR12MB8953:EE_
+X-MS-Office365-Filtering-Correlation-Id: e58fe121-dcb9-4304-b4c6-08ddb4752d8f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9HCE8tUpJNEBqaTs1moNcfbLNAv04Jkzcu5HVmv0GsTdLMSVWlgiViuHuC0L?=
+ =?us-ascii?Q?xmIAP3S/7hvAoBmOVjkE1kx9g0TATvn4HZMG2zMRsFtc/aQBcRJCaVvOLr5q?=
+ =?us-ascii?Q?u8E/xlSmx2bMHhw3Y5XjUo1PBZtnsafNcLevaWguzfeZ2ZeG6JvTbXZOYs9j?=
+ =?us-ascii?Q?V8+504UBi4HjTNPnn2arIqfL1TJQdrjrrqKVESTt191NIuLyVWA+DzTN2y8m?=
+ =?us-ascii?Q?PKjDK6JgjD8WQojPMmIPATxDFqNLbuS8Dh+VnTruZQh3W4/VMfFr7WqBcz88?=
+ =?us-ascii?Q?NRn30w5a8qx2ZtmHDjg0lVtcXXxxWYt9uGWgeYQo+vIeSm86zGvoa8EGVFoj?=
+ =?us-ascii?Q?OQnPa7ZaZ3EKtaYQX0iZPnpd8wMP/daHfJ6sOMtI4uYGpEp5kEYmgab2QLZE?=
+ =?us-ascii?Q?Uk78B6JXESjtud55GeVU/8h0UKp7DR1k//NJJ+FgdLpOrOgax+G73PWbE8fO?=
+ =?us-ascii?Q?MnleXvmpDxMEGfmn8aM858ZDZTXlg8bYcbBFri8jl0eOpl1iz1J/7LMVu4qk?=
+ =?us-ascii?Q?MiA/PFfifA8By32OB7Udf8aIykau2JYeRKEJM94+7QL8kaQZ6pyepSE+fDBz?=
+ =?us-ascii?Q?gIaPRp4mzfZePOAUQ5jtCct1DRZ4XY8I4+pd9+ndmSGNcIiaH1FL9gj+olfg?=
+ =?us-ascii?Q?WlHsuJYYmvEbZ+/FWm4sIgewnMFOfiOQLfMEhZ2v44v1r6ckZnFN2B1tDFXo?=
+ =?us-ascii?Q?N9+n7XgeT4Zt1EwPi/k6O3Df9R2pRF7/YmopcMVa68+EJ4s1yq3kXqp27gjl?=
+ =?us-ascii?Q?NYpCyA9SpalrgbOJ/8BRG0G3CFep/qmdpsp4lIyHOKKACl7qZCOggP5S6Q3p?=
+ =?us-ascii?Q?QhV9cd7kAvDgjqjqfi1flIfJ7NynzXewLBLWONr3PHFFsxwj/I5+njQl0hLl?=
+ =?us-ascii?Q?wLoAMGeCDK1ZicAmyxpdXDhmIwuOcBovW9pL5m7ABCq8AffmdTAc1QONzrEq?=
+ =?us-ascii?Q?uwJ69C/6U8b3UpD9u2DDvPT+qAUgCHUEpaW67K9gVqSRFi846HRFcwexwnRq?=
+ =?us-ascii?Q?6CvktiPiXVb34GwYR+E2eBJq4hhUW1JHXDpMtIingMharpNpJEmEQ+M6F5pk?=
+ =?us-ascii?Q?7YkxSXe3bBvRW1PnayuE1XN8+4FFTdMumRBDjOfcyLZj50302K370THctLKP?=
+ =?us-ascii?Q?t8Ug24AOESz/fxSr9yTKEeTmmXEv5/szxSr/qg01OKjoLxOyfh/IZ9Itqhi5?=
+ =?us-ascii?Q?3N31JHeQobuy8oINVTJ6IDq4/odEoOiBR60NtmnW1O+Yg3+X6kojBdtV6npb?=
+ =?us-ascii?Q?puOQP7NilQLUV0cKqtc3mmxHfSkmSDBMf+xrPTJfwtyMt5FZNAgrh5cTO112?=
+ =?us-ascii?Q?xDoGFOyqaiUPUkDypvDR45aVpu0zC1SI/HmjXhGO2M247VbSjF0t0M8EwVux?=
+ =?us-ascii?Q?PrRzFXv31/8FX37DlO2clIV7EnjaF+MFm+t+9SIPMbRf7+MvkZObOZKSamxF?=
+ =?us-ascii?Q?V0ws8F2YMyfA1Xt9UNouQNto3lKhcZOlIGS03RFe1YrqoPA7Qxg4KMEhAmy9?=
+ =?us-ascii?Q?vPnFXDtXC4DuVjooS7HJnBTwTBEc+seZskUz?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 05:49:12.4616
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e58fe121-dcb9-4304-b4c6-08ddb4752d8f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B36F.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8953
 
-Now the get/put unaligned use memcpy the -Wpacked and -Wattributes
-warnings don't need disabling.
+Add example usage of reset-gpios for PCIe RP PERST#
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/include/linux/unaligned.h | 4 ----
- 1 file changed, 4 deletions(-)
+Add support for PCIe Root Port PERST# signal handling
 
-diff --git a/tools/include/linux/unaligned.h b/tools/include/linux/unaligned.h
-index 395a4464fe73..d51ddafed138 100644
---- a/tools/include/linux/unaligned.h
-+++ b/tools/include/linux/unaligned.h
-@@ -6,9 +6,6 @@
-  * This is the most generic implementation of unaligned accesses
-  * and should work almost anywhere.
-  */
--#pragma GCC diagnostic push
--#pragma GCC diagnostic ignored "-Wpacked"
--#pragma GCC diagnostic ignored "-Wattributes"
- #include <vdso/unaligned.h>
- 
- #define get_unaligned(ptr)	__get_unaligned_t(typeof(*(ptr)), (ptr))
-@@ -143,6 +140,5 @@ static inline u64 get_unaligned_be48(const void *p)
- {
- 	return __get_unaligned_be48(p);
- }
--#pragma GCC diagnostic pop
- 
- #endif /* __LINUX_UNALIGNED_H */
+Sai Krishna Musham (2):
+  dt-bindings: PCI: amd-mdb: Add example usage of reset-gpios for PCIe
+    RP PERST#
+  PCI: amd-mdb: Add support for PCIe RP PERST# signal handling
+
+ .../bindings/pci/amd,versal2-mdb-host.yaml    | 22 +++++++++
+ drivers/pci/controller/dwc/pcie-amd-mdb.c     | 46 ++++++++++++++++++-
+ 2 files changed, 67 insertions(+), 1 deletion(-)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.50.0.727.gbf7dc18ff4-goog
+2.44.1
 
 
