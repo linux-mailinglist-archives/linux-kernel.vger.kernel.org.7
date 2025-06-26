@@ -1,171 +1,178 @@
-Return-Path: <linux-kernel+bounces-705621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E76AEAB82
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:07:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35326AEAB8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787994E47B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB78C1678E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1CB23BD1B;
-	Thu, 26 Jun 2025 23:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C7E22D780;
+	Thu, 26 Jun 2025 23:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lU0R/nLA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zx3/z2Td"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364412F0E32;
-	Thu, 26 Jun 2025 23:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0659235070
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 23:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750982217; cv=none; b=Ubempcyh55tSlt/aAXJoWL3dOnnQ6Vf8NAZ/6ibkHYLYNjNAQz6hJrLPR+wLES8CNkGQCxydnQ1kzmktRpdBq6v2L+/LTP4w0urrN7fhOD3OY/SUWB98miCWLHtPkd76oBL3HZNKzb3pBbEmgdnM9Xb/gr4BhcVcEyZoXlkMGW4=
+	t=1750982292; cv=none; b=p4/JqmFE2lT/1XMK/cYGEXkBe2LKuee0szsRg9a6W+uedstDHc5zZobnkGWEwsODrjBBuTGyN7jDEMs+RE/9Gp6kzwmVaelsQfyy6ztGF51q4XD7L+9fM0s39Ex4/DTuKY0I+hoRH2yT4a2ZWkKqzWKFZhadwFOOxbk3l2LnnGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750982217; c=relaxed/simple;
-	bh=DorFPQ5015ItCzQravZtk2SQC+7LD/D+QbPqRtGH9D4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WAxme4PA5r1n1DxsopvnYnXOoF1lvikFWCcMyNu5aXhvuEfPqM7DcuiVv6WSlb7Tolv0JOxT3pQ/YGS7ziAF4GcbIIeBgSRD1HEK9nTh7Hq5K+5pDoNFxdlpwB7O8Frrkju0wRxbtWiFpy8BQfR1BM4ogkjTFsK43A/e5opra0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lU0R/nLA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8384FC4CEF2;
-	Thu, 26 Jun 2025 23:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750982217;
-	bh=DorFPQ5015ItCzQravZtk2SQC+7LD/D+QbPqRtGH9D4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lU0R/nLAilESod85HD4lH55CW10HvaJCGCeZCSooJHKD12coO87kUow2rclAECadv
-	 Y+KcCPwFcz4tlRf0s9i8DXs4jvCvALXsD+Ns+l4IJktr3z7HSqrYoTg+JTkV/V+nrf
-	 t+HU77C0U9mb3EbHCYlXXdWHmeD6stCuoiyN3d8G4F2TZu0xyqCtRh9CvwGmgX7NhG
-	 u90hppNvTEvjL3UgF8PScyBQ61Sp6bygH1c1EiG1qozLjbaSqtHFfhyeLCO2L8oAvk
-	 hsqH6TXzZECWsl6rB+xYdyKrD/GkzvxxJASahMcVpXcTDeKvpqFEocxdWKZNUbgo7G
-	 OGIzmF6iuYrBw==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>
-Subject: [PATCH v3 64/64] livepatch: Introduce source code helpers for livepatch modules
-Date: Thu, 26 Jun 2025 16:55:51 -0700
-Message-ID: <2e8af547dd0aa9878f52806e1bf9b89e5d263ee2.1750980517.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1750980516.git.jpoimboe@kernel.org>
-References: <cover.1750980516.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1750982292; c=relaxed/simple;
+	bh=XXuuASV4ibc9aK37puza/fBR+hnOsem4MOV/DQNWTb4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VOxyf9C5EMkptb5+yUPMtYOKdG9TE1dPWE9Y0ZDlyc0uzZv/YVmB1+98uVNGHDzyKjMoKYLFSTgTLG/ECyKiG0CENxsWtDADLV/yyxUgs/aSnURmT/7DRp0LukRCiXbx5gtBEQLZ28xxGh27rruZUeNg/Z03Wcm4WK5mLeiAXNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zx3/z2Td; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750982289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zjFYZhLPqlriz67DMVaY4QJPFmjfEkFaipRi29vSOFA=;
+	b=Zx3/z2TdudqhL8vPZt4+yAaBSDuZCmvp7zZ0rKq7398drVgYkwGx9kG+R5gfIxtgTVGNO0
+	X/OazF02YKLEEodvUEmgMLNqZbHn66F1uoq5JK2FQ+Ep8tLpKRKx868zwF0F5fYR3re8gm
+	QDiN8qeRiHN6y5PN0UPKgiV5WCXhGGo=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-trsaR8ylOTWmRv-MdAwBZw-1; Thu, 26 Jun 2025 19:58:08 -0400
+X-MC-Unique: trsaR8ylOTWmRv-MdAwBZw-1
+X-Mimecast-MFC-AGG-ID: trsaR8ylOTWmRv-MdAwBZw_1750982287
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2354ba59eb6so25692405ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 16:58:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750982287; x=1751587087;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjFYZhLPqlriz67DMVaY4QJPFmjfEkFaipRi29vSOFA=;
+        b=HTWqfuW/omGOwPfYGG7TxCsy+eYxbPI9HT6g0fx/kWzrWNQg75Ezyv00VdZBnoyJkt
+         Gj+JnfDTdZ3dx0YAifmIdKX+AlEXhRhTck+qZptLO+fUSr23B2QS7Ue5HR8GH5Aj+R4b
+         UhqNe/IFPIPfwRqkSx+TVWd/mp9IR8jp0xFTUt4iy2mLTk1bjXDibVN/1ditAmjpZgpu
+         1LGMReyUF4UwUc5g5Fehk8aib3CTpBPdUtTAngvmXYEkoLVsipGlrYP51ufGKppjurVO
+         AOo2rWJ+nxNidDQDwelAhi29KsQsDsS59Yb3BWbPNKesSZmaQYiJxjXgJ+goy5D5vcvN
+         zVww==
+X-Gm-Message-State: AOJu0Yxst0RYBCA1Rj3EjceTV4kCECsFI1h1gWAm6qApf7jgv0N4t8Lr
+	8ABOG5qV7tx0xk7Zojf8dBiXalxmUjuPK6MbWdD20DfpqyyhTZyaFEwLoxNdkiZ5tGR2spVtNgR
+	irY8Y8V7dayAMnSg8fcLoq7sgB5svBLX1+YHFhwvmPtGqEcePyFJpOkAvhVwvkKx/2w==
+X-Gm-Gg: ASbGnctCqhrv8LIvOUfyRLp1NXMLwfsfkwB9sQD5mIZUyVz+UjF9+gdMcUMMDebdRd9
+	U99j8Pn4rDB9TonqjfF6cBtFeHVbpmskW+yqIvGgVsjumQFnkzBYUWbIkbiRzu4SZRqpX6bUYTh
+	yU2j3OK05MM41OwVxZnJLou6Dhc9gsO0ALE2BkOKBCP4G41mV/DSxUXMWOezemJVKYLhZIJ6opW
+	0/398j5J7znHqeZcBMfHPj/Qi/Ml8QFbg4tLTdWIpOr4GoJmdlu6X8lhLuVD9VkfZAS1ECLkx80
+	MLcFttfdBKYwmQo/jbutqeIT2pwipSbwzvDJTpv1kgJEDArsUPXdjnB48sWqjYUh9+QU
+X-Received: by 2002:a17:903:22cb:b0:234:d679:72e9 with SMTP id d9443c01a7336-23ac3deb511mr18115785ad.12.1750982287288;
+        Thu, 26 Jun 2025 16:58:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFo/5Els0SzMCMXOuz0L1/2xCWiGHH5XGizb6luqjfXqNGfseG6+qU64+bbNHXwYwR+59IRow==
+X-Received: by 2002:a17:903:22cb:b0:234:d679:72e9 with SMTP id d9443c01a7336-23ac3deb511mr18115485ad.12.1750982286950;
+        Thu, 26 Jun 2025 16:58:06 -0700 (PDT)
+Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e21a7sm2344445ad.4.2025.06.26.16.58.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 16:58:06 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <e9ef9cb1-f202-4591-99f0-4451ca945f0b@redhat.com>
+Date: Thu, 26 Jun 2025 19:58:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/27] sched/isolation: Introduce housekeeping per-cpu
+ rwsem
+To: Frederic Weisbecker <frederic@kernel.org>, Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20250620152308.27492-1-frederic@kernel.org>
+ <20250620152308.27492-3-frederic@kernel.org>
+ <3bf95ee2-1340-41b1-9f5c-1563f953c6eb@redhat.com>
+ <aFwFUk2rWrikLbyA@localhost.localdomain>
+Content-Language: en-US
+In-Reply-To: <aFwFUk2rWrikLbyA@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add some helper macros which can be used by livepatch source .patch
-files to register callbacks, convert static calls to regular calls where
-needed, and patch syscalls.
+On 6/25/25 10:18 AM, Frederic Weisbecker wrote:
+> Le Mon, Jun 23, 2025 at 01:34:58PM -0400, Waiman Long a écrit :
+>> On 6/20/25 11:22 AM, Frederic Weisbecker wrote:
+>>> The HK_TYPE_DOMAIN isolation cpumask, and further the
+>>> HK_TYPE_KERNEL_NOISE cpumask will be made modifiable at runtime in the
+>>> future.
+>>>
+>>> The affected subsystems will need to synchronize against those cpumask
+>>> changes so that:
+>>>
+>>> * The reader get a coherent snapshot
+>>> * The housekeeping subsystem can safely propagate a cpumask update to
+>>>     the susbsytems after it has been published.
+>>>
+>>> Protect against readsides that can sleep with per-cpu rwsem. Updates are
+>>> expected to be very rare given that CPU isolation is a niche usecase and
+>>> related cpuset setup happen only in preparation work. On the other hand
+>>> read sides can occur in more frequent paths.
+>>>
+>>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+>> Thanks for the patch series and it certainly has some good ideas. However I
+>> am a bit concern about the overhead of using percpu-rwsem for
+>> synchronization especially when the readers have to wait for the completion
+>> on the writer side. From my point of view, during the transition period when
+>> new isolated CPUs are being added or old ones being removed, the reader will
+>> either get the old CPU data or the new one depending on the exact timing.
+>> The effect the CPU selection may persist for a while after the end of the
+>> critical section.
+> It depends.
+>
+> 1) If the read side queues a work and wait for it
+>    (case of work_on_cpu()), we can protect the whole under the same
+>    sleeping lock and there is no persistance beyond.
+>
+> 2) But if the read side just queues some work or defines some cpumask
+>     for future queue then there is persistance and some action must be
+>     taken by housekeeping after the update to propagare the new cpumask
+>     (flush pending works, etc...)
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- include/linux/livepatch_helpers.h | 79 +++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
- create mode 100644 include/linux/livepatch_helpers.h
+I don't mind doing actions to make sure that the cpumask is properly 
+propagated after changing housekeeping cpumasks. I just don't want to 
+introduce too much latency on the reader which could be a latency 
+sensitive task running on an isolated CPU.
 
-diff --git a/include/linux/livepatch_helpers.h b/include/linux/livepatch_helpers.h
-new file mode 100644
-index 000000000000..337bee91d7da
---- /dev/null
-+++ b/include/linux/livepatch_helpers.h
-@@ -0,0 +1,79 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_LIVEPATCH_HELPERS_H
-+#define _LINUX_LIVEPATCH_HELPERS_H
-+
-+/*
-+ * Interfaces for use by livepatch patches
-+ */
-+
-+#include <linux/syscalls.h>
-+#include <linux/livepatch.h>
-+
-+#ifdef MODULE
-+#define KLP_OBJNAME __KBUILD_MODNAME
-+#else
-+#define KLP_OBJNAME vmlinux
-+#endif
-+
-+/* Livepatch callback registration */
-+
-+#define KLP_CALLBACK_PTRS ".discard.klp_callback_ptrs"
-+
-+#define KLP_PRE_PATCH_CALLBACK(func)						\
-+	klp_pre_patch_t __used __section(KLP_CALLBACK_PTRS)			\
-+		__PASTE(__KLP_PRE_PATCH_PREFIX, KLP_OBJNAME) = func
-+
-+#define KLP_POST_PATCH_CALLBACK(func)						\
-+	klp_post_patch_t __used __section(KLP_CALLBACK_PTRS)			\
-+		__PASTE(__KLP_POST_PATCH_PREFIX, KLP_OBJNAME) = func
-+
-+#define KLP_PRE_UNPATCH_CALLBACK(func)						\
-+	klp_pre_unpatch_t __used __section(KLP_CALLBACK_PTRS)			\
-+		__PASTE(__KLP_PRE_UNPATCH_PREFIX, KLP_OBJNAME) = func
-+
-+#define KLP_POST_UNPATCH_CALLBACK(func)						\
-+	klp_post_unpatch_t __used __section(KLP_CALLBACK_PTRS)			\
-+		__PASTE(__KLP_POST_UNPATCH_PREFIX, KLP_OBJNAME) = func
-+
-+/*
-+ * KLP_STATIC_CALL
-+ *
-+ * Replace static_call() usage with this macro when create-diff-object
-+ * recommends it due to the original static call key living in a module.
-+ *
-+ * This converts the static call to a regular indirect call.
-+ */
-+#define KLP_STATIC_CALL(name) \
-+	((typeof(STATIC_CALL_TRAMP(name))*)(STATIC_CALL_KEY(name).func))
-+
-+/* Syscall patching */
-+
-+#define KLP_SYSCALL_DEFINE1(name, ...) KLP_SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
-+#define KLP_SYSCALL_DEFINE2(name, ...) KLP_SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
-+#define KLP_SYSCALL_DEFINE3(name, ...) KLP_SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
-+#define KLP_SYSCALL_DEFINE4(name, ...) KLP_SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
-+#define KLP_SYSCALL_DEFINE5(name, ...) KLP_SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
-+#define KLP_SYSCALL_DEFINE6(name, ...) KLP_SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
-+
-+#define KLP_SYSCALL_DEFINEx(x, sname, ...)				\
-+	__KLP_SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-+
-+#ifdef CONFIG_X86_64
-+// TODO move this to arch/x86/include/asm/syscall_wrapper.h and share code
-+#define __KLP_SYSCALL_DEFINEx(x, name, ...)			\
-+	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
-+	static inline long __klp_do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-+	__X64_SYS_STUBx(x, name, __VA_ARGS__)				\
-+	__IA32_SYS_STUBx(x, name, __VA_ARGS__)				\
-+	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
-+	{								\
-+		long ret = __klp_do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));\
-+		__MAP(x,__SC_TEST,__VA_ARGS__);				\
-+		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));	\
-+		return ret;						\
-+	}								\
-+	static inline long __klp_do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-+
-+#endif
-+
-+#endif /* _LINUX_LIVEPATCH_HELPERS_H */
--- 
-2.49.0
+I would say it should be OK to have a grace period (reusing the RCU 
+term) after changing the housekeeping cpumasks that tasks running on 
+those CPUs that are affected by cpumask changes may or may not 
+experience the full effect of the cpumask change. However, we should 
+minimize the overhead of those tasks that run on CPUs unrelated to the 
+cpumask change ASAP.
+
+>> Can we just rely on RCU to make sure that it either get the new one or the
+>> old one but nothing in between without the additional overhead?
+> This is the case as well and it is covered by 2) above.
+> The sleeping parts handled in 1) would require more thoughts.
+>
+>> My current thinking is to make use CPU hotplug to enable better CPU
+>> isolation. IOW, I would shut down the affected CPUs, change the housekeeping
+>> masks and then bring them back online again. That means the writer side will
+>> take a while to complete.
+> You mean that an isolated partition should only be set on offline CPUs ? That's
+> the plan for nohz_full but it may be too late for domain isolation.
+
+Actually I was talking mainly about nohz_full, but we should handle 
+changes in HK_TYPE_DOMAIN cpumask the same way.
+
+Cheers,
+Longman
+
 
 
