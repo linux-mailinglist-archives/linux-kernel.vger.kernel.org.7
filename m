@@ -1,173 +1,167 @@
-Return-Path: <linux-kernel+bounces-704001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82CEAE9806
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E318AE981E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C7B1753C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E744E084D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1BB25F973;
-	Thu, 26 Jun 2025 08:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHAtd2Ro"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F711FF7B4;
-	Thu, 26 Jun 2025 08:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29BD25F78D;
+	Thu, 26 Jun 2025 08:19:57 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D2425C712
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750925952; cv=none; b=Lwt0PvPapl7CX+9uIEgb14b5uy7A8xasDICXbj2VppTGzuR+/YqNt7IyubvR1vV3uayIiJlzWc+bBnLOL6gp/a4V+bJXD+RNi5H8y2Y/ojiQ/f08VyN9IY3ZQA6/VTyxKeMEne96at1y3i0/Kx1C7DRaMxsYpwYHUaI2jFt5te0=
+	t=1750925997; cv=none; b=bx0LhjWmGRtF1EbUd8zS9u8dAMcgV4zAsRfTcqGoHX+6Jytrx8vwqQYf0EeDbSMeVrczXJDEBK+IEp7e+OJN6DQOj5s9aT8fT+LlAeZpYPZEoqSDjO+ySb1iBRzZK4X+c43RcPi7i6LFd2XMifn3zRV70QUm/UsDB+6tjnmXH20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750925952; c=relaxed/simple;
-	bh=agZj/wzaMpG6bvF18cvXlY4v555Y3BqcKQTQxhyrWhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWPEF/xpO2ws4gJrn6nC9YL33DzDWe1GjJ/5tAI6St/2LSLHRSck9z7nROgFX0cNQAgYSqSP2qjBpyt5i3XJ81q9fnH0VrlQk0QkMMg/JAqIB7ClRqiQZL1h/Dc1ZmIY9Wuar3AqYwo86G29/ooCLOHkPC1xdKTLSlqe3ihKkoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHAtd2Ro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32322C4CEEB;
-	Thu, 26 Jun 2025 08:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750925951;
-	bh=agZj/wzaMpG6bvF18cvXlY4v555Y3BqcKQTQxhyrWhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JHAtd2RowB8YUj61KdTZX0EkkfQeqM1sQjQiU4ebRUsQTxFnsAtvwmSnDVNOKt3Lj
-	 dZv41Y0aTFp+blxCjjjciIAfJTKsQP8atdMyF50ceEgJymd9Pt2Vwv3h/ZsWHqdv77
-	 9oHdmNyvr+g3lRPE+tAJ+Uiei6mQ1ZTGltFj5nC18Di9/5zaGQLzlOUqKhW355+jSZ
-	 3cudfWUHngbills5+n/2rOKx4Dfh9tdjvS820U27v+Mye/XZsNh/sKyFkcb0PHbjaX
-	 C7Zx2maWxH0nhD12jbl/oyoiKbJSQQ2zldEOPcyG1A/meONM7Uczvd6NuXowBPzuup
-	 9c/+RORnADZXw==
-Date: Thu, 26 Jun 2025 10:19:06 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: linux-coco@lists.linux.dev, kvm@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)" <linux-efi@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] x86/sev: Let sev_es_efi_map_ghcbs() map the caa
- pages too
-Message-ID: <aF0CemSo0go8-Bru@gmail.com>
-References: <20250626074236.307848-1-kraxel@redhat.com>
- <20250626074236.307848-3-kraxel@redhat.com>
+	s=arc-20240116; t=1750925997; c=relaxed/simple;
+	bh=5c/d1Moc4QCu1wAAq+x5/pEkmsxVBPZo62SiSD4GJ34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TVEcY1YZ149V6R5+8YVJ53coeYi9n2/lWGuyd1Bdy3jvpArTboHqYikwPhur+86TxAi2prDYBctDl5uyIXaYS99SihVyDtslsaB2QVIWjrtzcBaomHE4vrAH0XnV+rn3Hg6BxVmffa0A52ZX1uve4vhPVHTEge0L8wS55YNCWGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: zV76ipvDTJS0epjzXsMvUQ==
+X-CSE-MsgGUID: zxucR1TWTRCOytQkDG+fHQ==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Jun 2025 17:19:48 +0900
+Received: from REE-DUD04480.adwin.renesas.com (unknown [10.226.78.19])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 22AD1401822A;
+	Thu, 26 Jun 2025 17:19:45 +0900 (JST)
+From: Michael Dege <michael.dege@renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Michael Dege <michael.dege@renesas.com>,
+	Uwe Kleine-Koenig <u.kleine-koenig@baylibre.com>,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] phy: renesas: r8a779f0-ether-serdes: add USXGMII mode
+Date: Thu, 26 Jun 2025 10:19:29 +0200
+Message-Id: <20250626081929.1924713-1-michael.dege@renesas.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626074236.307848-3-kraxel@redhat.com>
+Content-Transfer-Encoding: 8bit
 
+The initial driver implementation was limited to SGMII and 1GBit/s. The
+new mode allows speeds up to 2.5GBit/s on R-Car S4-8 SOCs.
 
-* Gerd Hoffmann <kraxel@redhat.com> wrote:
+Signed-off-by: Michael Dege <michael.dege@renesas.com>
+---
+ drivers/phy/renesas/r8a779f0-ether-serdes.c | 69 +++++++++++++++++----
+ 1 file changed, 57 insertions(+), 12 deletions(-)
 
-> OVMF EFI firmware needs access to the CAA page to do SVSM protocol calls. For
-> example, when the SVSM implements an EFI variable store, such calls will be
-> necessary.
-> 
-> So add that to sev_es_efi_map_ghcbs() and also rename the function to reflect
-> the additional job it is doing now.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  arch/x86/include/asm/sev.h     |  4 ++--
->  arch/x86/coco/sev/core.c       | 20 ++++++++++++++++++--
->  arch/x86/platform/efi/efi_64.c |  4 ++--
->  3 files changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> index 58e028d42e41..6e0ef192f23b 100644
-> --- a/arch/x86/include/asm/sev.h
-> +++ b/arch/x86/include/asm/sev.h
-> @@ -445,7 +445,7 @@ static __always_inline void sev_es_nmi_complete(void)
->  	    cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT))
->  		__sev_es_nmi_complete();
->  }
-> -extern int __init sev_es_efi_map_ghcbs(pgd_t *pgd);
-> +extern int __init sev_es_efi_map_ghcbs_caas(pgd_t *pgd);
->  extern void sev_enable(struct boot_params *bp);
->  
->  /*
-> @@ -556,7 +556,7 @@ static inline void sev_es_ist_enter(struct pt_regs *regs) { }
->  static inline void sev_es_ist_exit(void) { }
->  static inline int sev_es_setup_ap_jump_table(struct real_mode_header *rmh) { return 0; }
->  static inline void sev_es_nmi_complete(void) { }
-> -static inline int sev_es_efi_map_ghcbs(pgd_t *pgd) { return 0; }
-> +static inline int sev_es_efi_map_ghcbs_caas(pgd_t *pgd) { return 0; }
->  static inline void sev_enable(struct boot_params *bp) { }
->  static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate) { return 0; }
->  static inline int rmpadjust(unsigned long vaddr, bool rmp_psize, unsigned long attrs) { return 0; }
-> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> index b6db4e0b936b..b52318d806b6 100644
-> --- a/arch/x86/coco/sev/core.c
-> +++ b/arch/x86/coco/sev/core.c
-> @@ -1045,11 +1045,13 @@ int __init sev_es_setup_ap_jump_table(struct real_mode_header *rmh)
->   * This is needed by the OVMF UEFI firmware which will use whatever it finds in
->   * the GHCB MSR as its GHCB to talk to the hypervisor. So make sure the per-cpu
->   * runtime GHCBs used by the kernel are also mapped in the EFI page-table.
-> + *
-> + * When running under SVSM the CCA page is needed too, so map it as well.
->   */
-> -int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
-> +int __init sev_es_efi_map_ghcbs_caas(pgd_t *pgd)
->  {
->  	struct sev_es_runtime_data *data;
-> -	unsigned long address, pflags;
-> +	unsigned long address, pflags, pflags_enc;
->  	int cpu;
->  	u64 pfn;
->  
-> @@ -1057,6 +1059,7 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
->  		return 0;
->  
->  	pflags = _PAGE_NX | _PAGE_RW;
-> +	pflags_enc = cc_mkenc(pflags);
->  
->  	for_each_possible_cpu(cpu) {
->  		data = per_cpu(runtime_data, cpu);
-> @@ -1068,6 +1071,19 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
->  			return 1;
->  	}
->  
-> +	if (!snp_vmpl)
-> +		return 0;
-> +
-> +	for_each_possible_cpu(cpu) {
+diff --git a/drivers/phy/renesas/r8a779f0-ether-serdes.c b/drivers/phy/renesas/r8a779f0-ether-serdes.c
+index 3b2d8cef75e5..ed83c46f6d00 100644
+--- a/drivers/phy/renesas/r8a779f0-ether-serdes.c
++++ b/drivers/phy/renesas/r8a779f0-ether-serdes.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Renesas Ethernet SERDES device driver
+  *
+- * Copyright (C) 2022 Renesas Electronics Corporation
++ * Copyright (C) 2022-2025 Renesas Electronics Corporation
+  */
+ 
+ #include <linux/delay.h>
+@@ -92,17 +92,18 @@ r8a779f0_eth_serdes_common_setting(struct r8a779f0_eth_serdes_channel *channel)
+ {
+ 	struct r8a779f0_eth_serdes_drv_data *dd = channel->dd;
+ 
+-	switch (channel->phy_interface) {
+-	case PHY_INTERFACE_MODE_SGMII:
+-		r8a779f0_eth_serdes_write32(dd->addr, 0x0244, 0x180, 0x0097);
+-		r8a779f0_eth_serdes_write32(dd->addr, 0x01d0, 0x180, 0x0060);
+-		r8a779f0_eth_serdes_write32(dd->addr, 0x01d8, 0x180, 0x2200);
+-		r8a779f0_eth_serdes_write32(dd->addr, 0x01d4, 0x180, 0x0000);
+-		r8a779f0_eth_serdes_write32(dd->addr, 0x01e0, 0x180, 0x003d);
+-		return 0;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++	/* Set combination mode */
++	r8a779f0_eth_serdes_write32(dd->addr, 0x0244, 0x180, 0x00d7);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01cc, 0x180, 0xc200);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01c4, 0x180, 0x0042);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01c8, 0x180, 0x0000);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01dc, 0x180, 0x002f);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01d0, 0x180, 0x0060);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01d8, 0x180, 0x2200);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01d4, 0x180, 0x0000);
++	r8a779f0_eth_serdes_write32(dd->addr, 0x01e0, 0x180, 0x003d);
++
++	return 0;
+ }
+ 
+ static int
+@@ -155,6 +156,42 @@ r8a779f0_eth_serdes_chan_setting(struct r8a779f0_eth_serdes_channel *channel)
+ 		r8a779f0_eth_serdes_write32(channel->addr, 0x0028, 0x1f80, 0x07a1);
+ 		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f80, 0x0208);
+ 		break;
++
++	case PHY_INTERFACE_MODE_USXGMII:
++		r8a779f0_eth_serdes_write32(channel->addr, 0x001c, 0x300, 0x0000);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0014, 0x380, 0x0050);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x380, 0x2200);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x001c, 0x380, 0x0400);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x01c0, 0x180, 0x0001);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0248, 0x180, 0x056a);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0258, 0x180, 0x0015);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0144, 0x180, 0x1100);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x01a0, 0x180, 0x0001);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00d0, 0x180, 0x0001);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0150, 0x180, 0x0001);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00c8, 0x180, 0x0300);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0148, 0x180, 0x0300);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0174, 0x180, 0x0000);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0160, 0x180, 0x0004);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x01ac, 0x180, 0x0000);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00c4, 0x180, 0x0310);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00c8, 0x180, 0x0301);
++		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x00c8, 0x180, BIT(0), 0);
++		if (ret)
++			return ret;
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0148, 0x180, 0x0301);
++		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0148, 0x180, BIT(0), 0);
++		if (ret)
++			return ret;
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00c4, 0x180, 0x1310);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00d8, 0x180, 0x1800);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x00dc, 0x180, 0x0000);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x380, 0x2300);
++		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0000, 0x380, BIT(8), 0);
++		if (ret)
++			return ret;
++		break;
++
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -179,6 +216,14 @@ r8a779f0_eth_serdes_chan_speed(struct r8a779f0_eth_serdes_channel *channel)
+ 			return ret;
+ 		r8a779f0_eth_serdes_write32(channel->addr, 0x0008, 0x1f80, 0x0000);
+ 		break;
++	case PHY_INTERFACE_MODE_USXGMII:
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x1f00, 0x0120);
++		usleep_range(10, 20);
++		r8a779f0_eth_serdes_write32(channel->addr, 0x0000, 0x380, 0x2600);
++		ret = r8a779f0_eth_serdes_reg_wait(channel, 0x0000, 0x380, BIT(10), 0);
++		if (ret)
++			return ret;
++		break;
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+-- 
+2.25.1
 
-
-So while it's only run-once __init code, still there's no good reason 
-to have *two* all-CPUs loops in the same function.
-
-> +		address = per_cpu(svsm_caa_pa, cpu);
-> +		if (!address)
-> +			return 1;
-
-Yeah, so could we please use sensible & standard error return values 
-such as -EINVAL? This is a pre-existing problem in this function, so it 
-should be done in a separate, preparatory patch. (And yeah, the error 
-codes of efi_setup_page_tables() are kinda lame too, but there's no 
-reason to repeat that mistake in the SEV code.)
-
-> +
-> +		pfn = address >> PAGE_SHIFT;
-> +		if (kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags_enc))
-> +			return 1;
-
-
-Ditto - for consistency this should just pass through the error code 
-that kernel_map_pages_in_pgd() gives.
-
-No objections to the added functionality/fix aspect.
-
-Thanks,
-
-	Ingo
 
