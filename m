@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-704518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C7AAE9E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E39BAE9E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B521C43189
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14633A474A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948FC19D06A;
-	Thu, 26 Jun 2025 13:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rvxbgMaB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAB52E5432;
+	Thu, 26 Jun 2025 13:19:40 +0000 (UTC)
+Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF0F2F1FD0
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A106D1AAA1B;
+	Thu, 26 Jun 2025 13:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750943840; cv=none; b=BlMlYAL9F54WKUg5Wqck95AKaODxvhiPoOBl9o5A1LK422/PWDmxB9NJPSqL/oQXPCYeOlk2xYr+7Z0R8n8jsGpT2zf0iVnNFPo44vC1Z+WaYQzTK1txW2VJAYDhNmFlulbkycscyvGekVp6Nvenkk30NF0b4tk/rzHNr4pHReE=
+	t=1750943980; cv=none; b=P38uyRcxbsbG5X+MWK19L3KAeV3IucX7QqpbPBRAisMSZeZCfdsFoh/JE0+p4iZZjpj9pcgWDqhD44911vxJ1Pk0YprhgFpzpJv+S50TcsKaQXtMz8ReeQ7jCm6ElNxdgTtIge/BBpa7uxbKIZ2nOdcsXkbL2KATcYuzdmIc+vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750943840; c=relaxed/simple;
-	bh=DxFH7mE6oVx/rOp8/DYfbqrIm7Gg4eBMdrveQcs3f9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAPowR7f1aqmUs64cJWS5AuVvcI2mn14Z98ql6YTymS3hCfOgy9cOXHXNaq/iJXShvfoZ0NTmrK6NvYk80olCawattxaSEf0b0x9J22dN42Os5zXaqacoNcjkj11USAi4RkRGAnseQk5HCXM2QszFWphWlTWYKwwrsPE+hsX29g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rvxbgMaB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QOVim0uAJgFhCWS+fN9f0DwP4nltYAI58xXEOtMh1UU=; b=rvxbgMaB46WHwgiX84Vsn6RyYn
-	fsYo8oBlWhB2tWiPDHicCNEer2EY9vg5WKqO+iihiMtp2wtAhw6kSQ8GmriCWg8lyUDqS3BdJt57N
-	KdtyMS+6KmdQe7y6lhyP24DBorXgRNRoV7lXJ3jzEAx+HYLXxQPdVhcCTAQDSA6BXbxOm7MlZ6HZ2
-	qWx494pN9nO3LiA2PA3QBNq25QnmSnQv4sYThfVacPyWKX0qnvzjr6FrQ7Epoy+RKthOyoxiSMGdt
-	2KDOR6luhZIq9C3taDzYDA+k3e8Ct2PbkqQTh/3vfdqSsEQ5Mj8OP3CIdY5jzX0hOWZlGeL1iA1rl
-	EYCyj+OA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUmTc-0000000BhZA-0ReZ;
-	Thu, 26 Jun 2025 13:17:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 99DD830BDDA; Thu, 26 Jun 2025 15:17:15 +0200 (CEST)
-Date: Thu, 26 Jun 2025 15:17:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Chris Mason <clm@meta.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: futex performance regression from "futex: Allow automatic
- allocation of process wide futex hash"
-Message-ID: <20250626131715.GI1613200@noisy.programming.kicks-ass.net>
-References: <3ad05298-351e-4d61-9972-ca45a0a50e33@meta.com>
- <20250604092815.UtG-oi0v@linutronix.de>
- <372d8277-7edb-4f78-99bd-6d23b8f94984@meta.com>
- <20250604200808.hqaWJdCo@linutronix.de>
- <aa6154d1-726c-4da1-a27b-69d2e8b449c6@meta.com>
- <20250606070638.2Wk45AMk@linutronix.de>
- <20250624190118.GB1490279@noisy.programming.kicks-ass.net>
- <71ea52f2-f6bf-4a55-84ba-d1442d13bc82@meta.com>
+	s=arc-20240116; t=1750943980; c=relaxed/simple;
+	bh=75mkrs7dNrjFqYbU96pjzxClIJ/jiib6Uq9QOKp4sF8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GsWdQ1UxRfaoDDGuIBfKdqdFp7pyZRZymwzB6+RVMnXkjtvUfS8Tcoub/Gwo4Yoh4gQXjdy8Ao1wnaIt1bvJ8dhepeIiNMfc99y5xVfGF0/mKjdRi9Mu8bmGC8S1KkSfz9ewCaqhnZVaySWA44iuO6hV3See/WVK89gjXJB7Fy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 26 Jun
+ 2025 15:19:34 +0200
+Received: from lnxdevrm02.bk.prodrive.nl (10.1.1.121) by
+ EXCOP01.bk.prodrive.nl (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Thu, 26 Jun 2025 15:19:34 +0200
+Received: from paugeu by lnxdevrm02.bk.prodrive.nl with local (Exim 4.96)
+	(envelope-from <paul.geurts@prodrive-technologies.com>)
+	id 1uUmVq-00Gq2g-29;
+	Thu, 26 Jun 2025 15:19:34 +0200
+From: Paul Geurts <paul.geurts@prodrive-technologies.com>
+To: <andrew@lunn.ch>
+CC: <andrew+netdev@lunn.ch>, <conor+dt@kernel.org>, <davem@davemloft.net>,
+	<devicetree@vger.kernel.org>, <edumazet@google.com>, <krzk@kernel.org>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-wireless@vger.kernel.org>,
+	<martijn.de.gouw@prodrive-technologies.com>, <mgreer@animalcreek.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<paul.geurts@prodrive-technologies.com>, <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: net/nfc: ti,trf7970a: Add ti,rx-gain-reduction option
+Date: Thu, 26 Jun 2025 15:19:34 +0200
+Message-ID: <20250626131934.4013096-1-paul.geurts@prodrive-technologies.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <ddb9a1a9-7070-416c-848e-00d151846999@lunn.ch>
+References: <ddb9a1a9-7070-416c-848e-00d151846999@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71ea52f2-f6bf-4a55-84ba-d1442d13bc82@meta.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Jun 26, 2025 at 07:01:23AM -0400, Chris Mason wrote:
-> On 6/24/25 3:01 PM, Peter Zijlstra wrote:
-> > On Fri, Jun 06, 2025 at 09:06:38AM +0200, Sebastian Andrzej Siewior wrote:
-> >> On 2025-06-05 20:55:27 [-0400], Chris Mason wrote:
-> >>>>> We've got large systems that are basically dedicated to single
-> >>>>> workloads, and those will probably miss the larger global hash table,
-> >>>>> regressing like schbench did.  Then we have large systems spread over
-> >>>>> multiple big workloads that will love the private tables.
-> >>>>>
-> >>>>> In either case, I think growing the hash table as a multiple of thread
-> >>>>> count instead of cpu count will probably better reflect the crazy things
-> >>>>> multi-threaded applications do?  At any rate, I don't think we want
-> >>>>> applications to need prctl to get back to the performance they had on
-> >>>>> older kernels.
-> >>>>
-> >>>> This is only an issue if all you CPUs spend their time in the kernel
-> >>>> using the hash buckets at the same time.
-> >>>> This was the case in every benchmark I've seen so far. Your thing might
-> >>>> be closer to an actual workload.
-> >>>>
-> >>>
-> >>> I didn't spend a ton of time looking at the perf profiles of the slower
-> >>> kernel, was the bottleneck in the hash chain length or in contention for
-> >>> the buckets?
-> >>
-> >> Every futex operation does a rcuref_get() (which is an atomic inc) on
-> >> the private hash. This is before anything else happens. If you have two
-> >> threads, on two CPUs, which simultaneously do a futex() operation then
-> >> both do this rcuref_get(). That atomic inc ensures that the cacheline
-> >> bounces from one CPU to the other. On the exit of the syscall there is a
-> >> matching rcuref_put().
+> > > You should include the units, "ti,rx-gain-reduction-db"
 > > 
-> > How about something like this (very lightly tested)...
+> > Well, Currently it's not really a dB value (see below).
 > > 
-> > the TL;DR is that it turns all those refcounts into per-cpu ops when
-> > there is no hash replacement pending (eg. the normal case), and only
-> > folds the lot into an atomic when we really care about it.
+> > > 
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    description: |
+> > > > +      Specify a RX gain reduction to reduce antenna sensitivity with 5dB per
+> > > > +      increment, with a maximum of 15dB.
+> > > 
+> > > Given that description i think you can provide a list of values, [0, 
+> > > 5, 10, 15] and the tools will validate values in .dts files.
+> > > 
+> > > > +
+> > > >  required:
+> > > >    - compatible
+> > > >    - interrupts
+> > > > @@ -95,5 +101,6 @@ examples:
+> > > >              irq-status-read-quirk;
+> > > >              en2-rf-quirk;
+> > > >              clock-frequency = <27120000>;
+> > > > +            ti,rx-gain-reduction = <3>;
+> > > 
+> > > Err, how does 3 fit into 5dB increments?
 > > 
-> > There's some sharp corners still.. but it boots and survives the
-> > (slightly modified) selftest.
+> > I implemented it in a way that the value of ti,rx-gain-reduction is 
+> > programmed directly into the RX_GAIN reduction register, and there it 
+> > means 5 dB/LSB. My description probably was not clear enough about 
+> > that. So a value of 3 here actually means 15dB.
+> > So I could either improve the description here that this is the case, 
+> > or make the value in here in actual dB, and do some calculations in 
+> > the driver. What has your preference?
 > 
-> I can get some benchmarks going of this, thanks.  For 6.16, is the goal
-> to put something like this in, or default to the global hash table until
-> we've nailed it down?
+> DT should use SI units, Volts, Amps, degrees C, meters, etc. The driver then should do whatever conversion is needed to convert to hardware register values.
 > 
-> I'd vote for defaulting to global for one more release.
+> Less important, but i'm also wondering if this should be negative, ti,rx-gain-db, with a value of -15. You say this receiver is overly sensitive, so you need to reduce the gain. But are there TI devices where you can actually increase the gain? Ideally the property should be generic and be able to cover that use case as well.
 
-Probably best to do that; means we don't have to rush crazy code :-)
+As far as I am aware, I cannot put a negative number in a dts property. I can interpret the property as s32, but that would mean I need to put it in the dts like
+
+ti,rx-gain = <0xfffffff1>;
+
+which looks like a bad idea. I will just convert it to a dB value for v3.
+
+> 
+>     Andrew
+> 
+> ---
+> pw-bot: cr
+> 
+
+Thanks!
+
+Paul
 
