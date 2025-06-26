@@ -1,185 +1,122 @@
-Return-Path: <linux-kernel+bounces-703782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C441AAE94CA
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B15AE94CB
 	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D41E1759BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789221C2712C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD420C46D;
-	Thu, 26 Jun 2025 03:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36169215F48;
+	Thu, 26 Jun 2025 03:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="3NzRWHAm"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UxaGLZSS"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77891CAA79
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B136E20C03E;
+	Thu, 26 Jun 2025 03:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750910285; cv=none; b=MFY5mrGspB0cBxa7gZLmPHbox/n17ijbkze64BOJbT6pR3ak/bJYvZIx/FInayMj9QxALrCre+h9bIiDIikShAZifwdT6OptlkHk5ET/b/aevSOvAxJyjeh+oKaHOhokQSBc5wAvCciIH0EoWAH+d0yFVQD1Xv5P3lNBFVsuyUY=
+	t=1750910301; cv=none; b=S7iQG/12yzwAXU0QkUhs14D4YHFUpzswqnJNWM44/Vrhpbhk9T9jtDHqGqIEfkY/M+C5XfsLWGaZD06aUB3Ul3aIYuQecxZ+vapPosx8aHFP+QHIPenMSpG5VYC8eMzH7WjI1VA/VrdK+c/tLEZwHKEyxyOwSdJNRAVtX3aSVD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750910285; c=relaxed/simple;
-	bh=T2Miax55TEaH5XXrNWxmT95KXQwslFMTuIhlDQPaD6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KlsgTWPjwdEqSUj1CuirfJLL2salAJITAjZFGE+MOdN0BWiQCLpVW0Lm9ExJvcfBYTD8G0j4IW5I3jsipWy3APjq/VLhpWl18Gb8WfXtfblDxtY/an+QU+LF2mfumRu3RePkRFolavae8Y8P0R/+cRcEJLoJIbmv7J/TA0P8N+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=3NzRWHAm; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748f5a4a423so439158b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 20:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1750910283; x=1751515083; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ukewhoDGjvLSFodXCnO2Wi7qwdFCCxAWQjKm3BxoyQw=;
-        b=3NzRWHAm72ObkQsmlY+xEArO65buF439G7C0VhjZEwSSIe2/gnAnYiYiHzpFnXsf43
-         8gZ2H46RzbSiL3nHERBMuO9hTELT4lmYsekqVMHyq9UHhnykJs7/OzYeDdRYRiILApW2
-         WgRmsWcK6thNMXyAH5wtS9T1LKy+qDK3JOQZS2D8uR8mIqIr9QwznFSA/PzVL7l/S1gw
-         AkF0ABxBR+0Mk7vBqoxomKd06u9smeX/eGdVvF+OFADKqarURp2hzLSRP2lUnYuojHC2
-         MhHR3or1gS8hxXAc5HBk+g7SCXksXr8g7KqRkERX+Yg+MgUTis23Cwlyh8eLV4jGdEYC
-         3R2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750910283; x=1751515083;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ukewhoDGjvLSFodXCnO2Wi7qwdFCCxAWQjKm3BxoyQw=;
-        b=XmHhfAuKvj1eRjC4WkZxfO6KnHevW9F3O1er1x+eUrqMP1mxJFeB6+/9qcr7+Lhaxa
-         v90N/qoOQ4krCi4gjbHiCjSTeET+pJ0llyeFUOLAKpx39AIxuradoa5ChovgX03jtGD5
-         I6neDmCbvF9IdlZOM253t82raVsyC9YipJ9G0rTE5Xy4hWZW5j0lBRM7Yypim9WrLUFa
-         /ai6bwP33bmNOhr4TsyJlf/96TJZ01KjPpHKpKl5EPEETGNFbYnVYlsB4YvPCOITLPUf
-         Ec8GAorkG5OCzyFCRuH9lOpkvE3Jj1tgsTQXZAo4okseHnOyGdb9opzTq3F3HezUjtWi
-         aPlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiFIGC6HoP+c6MnkUMocjjY7Ztieg5v2FUwLR6Rd+k1ZepwyoyIeoA8dcOOfsPtvQ29+xes7+xIz0esm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnlDicD3vtoT48cj5b43DvNTfQkr6R2sZrr4gwbQyIEem6iZia
-	i46SlDbIIiMPOHBjJAnHJqjiZKxqEoHrvuBFaKmFPfkm1e29wrzqRHjSRSIaorOx8lw=
-X-Gm-Gg: ASbGncvcFefV7keYGssrL+xycvMKUa+XnpsmRj2brY3SroxE2MBn18VWUgqaitpURg3
-	Dabn4yw7qwmwDZfy4vbfO38b4/2SwiCh5Dgqkx/SXLE+wdWyGU28SR0ligQQPZaAg7HwUZn3oYK
-	h9IlPSwgfZok2hQqrbMgsz2Gn3DBmXSd7MK0xwIof1eDbIQ6xlh61tjk4XffCPZSAKyZ/VHzTs6
-	8EET6vbl2Jl6NnTMS3/7KpSV7ABwlmPEiHs13c3YDWnfMXOHTYIfoNLyy+zg8NJX8F7Vz7fpZuJ
-	/P76l1aO+8A+IY58Wz8EhDTQQEjqN4M/+r7TJD0SSBwNgCXZq12s53e01R75R+XgBW48WMLQX2s
-	MgjQg08XQhdAxGUKDB8Bic6xPc/qgpKW+HQyhHxsEuULCuGuy
-X-Google-Smtp-Source: AGHT+IGfMj1hupvnOX/mD73qau+DpHSUC+w5eDTmeBI+czHsebUdwnvPvrfHC2KQ/TS+fSfAjMVx1g==
-X-Received: by 2002:a05:6a00:c86:b0:740:afda:a742 with SMTP id d2e1a72fcca58-74ad4059d79mr8122379b3a.0.1750910283181;
-        Wed, 25 Jun 2025 20:58:03 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c88548dbsm6145745b3a.133.2025.06.25.20.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 20:58:02 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uUdkN-00000003L0Q-42Kg;
-	Thu, 26 Jun 2025 13:57:59 +1000
-Date: Thu, 26 Jun 2025 13:57:59 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	yc1082463@gmail.com
-Subject: Re: [PATCH] xfs: report a writeback error on a read() call
-Message-ID: <aFzFR6zD7X1_9bWj@dread.disaster.area>
-References: <aFqyyUk9lO5mSguL@infradead.org>
- <51cc5d2e-b7b1-4e48-9a8c-d6563bbc5e2d@gmail.com>
- <aFuezjrRG4L5dumV@infradead.org>
- <88e4b40b61f0860c28409bd50e3ae5f1d9c0410b.camel@kernel.org>
- <aFvbr6H3WUyix2fR@infradead.org>
- <6ac46aa32eee969d9d8bc55be035247e3fdc0ac8.camel@kernel.org>
- <aFvkAIg4pAeCO3PN@infradead.org>
- <11735cf2e1893c14435c91264d58fae48be2973d.camel@kernel.org>
- <CALOAHbDtFh5P_P0aTzaKRcwGfQmkrhgmk09BQ1tu9ZdXvKi8vQ@mail.gmail.com>
+	s=arc-20240116; t=1750910301; c=relaxed/simple;
+	bh=i3cwc5DEp74Q7e/G9rtpoJI0teGt/fy+bPuNljlXaS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d+HFTVX7Etr6Ntfj4i1/834/076cEP5bRS6DvzLNDfkWnyTmqWnRQ3tv5h1370Mivw1Qs4AMEP31YQkrj4Olxu2EHpYEWqjzGPL7ApaU4WmGZQ636ozQRPdvps9W2Jfy+ZEvfGddDLzS78QiZ0Ed/RE0HIiTVROL74fWbEtAGvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UxaGLZSS; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55Q3w9P82042696;
+	Wed, 25 Jun 2025 22:58:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1750910289;
+	bh=3AP4dwXI1t7oeLyfh2CSNUlA5VPDAe2FDrqRdo7EbqI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=UxaGLZSS7yOLjrrDFfN1zU1gvqZVioDDjrslDZnDoeXprRvtjnXfR3dqzwA1O0NJO
+	 NhK3U7vOMbjrgIvbshyH3jcOkkSxcZRR92mst+70ToOV/u6TKc0lru9ypTzpP47XQe
+	 O871KjPwy2jKEQ0mU3CohYAICEG9J8cFaemebT3U=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55Q3w9QR3219249
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 25 Jun 2025 22:58:09 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 25
+ Jun 2025 22:58:09 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 25 Jun 2025 22:58:08 -0500
+Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55Q3w5VF590037;
+	Wed, 25 Jun 2025 22:58:05 -0500
+Message-ID: <5428ecbd-8154-43b1-a77c-9eda550c47e7@ti.com>
+Date: Thu, 26 Jun 2025 09:28:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALOAHbDtFh5P_P0aTzaKRcwGfQmkrhgmk09BQ1tu9ZdXvKi8vQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62-main: Remove eMMC High Speed
+ DDR support
+To: Judith Mendez <jm@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian
+ Hunter <adrian.hunter@intel.com>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+References: <20250624221230.1952291-1-jm@ti.com>
+ <20250624221230.1952291-3-jm@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250624221230.1952291-3-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Jun 26, 2025 at 10:41:47AM +0800, Yafang Shao wrote:
-> On Wed, Jun 25, 2025 at 10:06 PM Jeff Layton <jlayton@kernel.org> wrote:
-> >
-> > On Wed, 2025-06-25 at 04:56 -0700, Christoph Hellwig wrote:
-> > > On Wed, Jun 25, 2025 at 07:49:31AM -0400, Jeff Layton wrote:
-> > > > Another idea: add a new generic ioctl() that checks for writeback
-> > > > errors without syncing anything. That would be fairly simple to do and
-> > > > sounds like it would be useful, but I'd want to hear a better
-> > > > description of the use-case before we did anything like that.
+
+
+On 25/06/25 03:42, Judith Mendez wrote:
+> For eMMC, High Speed DDR mode is not supported [0], so remove
+> mmc-ddr-1_8v flag which adds the capability.
 > 
-> As you mentioned earlier, calling fsync()/fdatasync() after every
-> write() blocks the thread, degrading performance—especially on HDDs.
-> However, this isn’t the main issue in practice.
-> The real problem is that users typically don’t understand "writeback
-> errors". If you warn them, "You should call fsync() because writeback
-> errors might occur," their response will likely be: "What the hell is
-> a writeback error?"
+
+Needs a Fixes tag.
+
+> [0] https://www.ti.com/lit/gpn/am625
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> For example, our users (a big data platform) demanded that we
-> immediately shut down the filesystem upon writeback errors. These
-> users are algorithm analysts who write Python/Java UDFs for custom
-> logic—often involving temporary disk writes followed by reads to pass
-> data downstream. Yet, most have no idea how these underlying processes
-> work.
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+> index 9e0b6eee9ac7..120ba8f9dd0e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
+> @@ -553,7 +553,6 @@ sdhci0: mmc@fa10000 {
+>  		clocks = <&k3_clks 57 5>, <&k3_clks 57 6>;
+>  		clock-names = "clk_ahb", "clk_xin";
+>  		bus-width = <8>;
+> -		mmc-ddr-1_8v;
+>  		mmc-hs200-1_8v;
+>  		ti,clkbuf-sel = <0x7>;
+>  		ti,otap-del-sel-legacy = <0x0>;
 
-And that's exactly why XFS originally never threw away dirty data on
-writeback errors. Because scientists and data analysts that wrote
-programs to chew through large amounts of data didn't care about
-persistence of their data mid-processing. They just wanted what they
-wrote to be there the next time the processing pipeline read it.
-
-> > > That's what I mean with my above proposal, except that I though of an
-> > > fcntl or syscall and not an ioctl.
-> >
-> > Yeah, a fcntl() would be reasonable, I think.
-> >
-> > For a syscall, I guess we could add an fsync2() which just adds a flags
-> > field. Then add a FSYNC_JUSTCHECK flag that makes it just check for
-> > errors and return.
-> >
-> > Personally, I like the fcntl() idea better for this, but maybe we have
-> > other uses for a fsync2().
-> 
-> What do you expect users to do with this new fcntl() or fsync2()? Call
-> fsync2() after every write()? That would still require massive
-> application refactoring.
-
-<sigh>
-
-We already have a user interface that provides exactly the desired
-functionality.
-
-$ man sync_file_range
-....
-   Some details
-       SYNC_FILE_RANGE_WAIT_BEFORE  and  SYNC_FILE_RANGE_WAIT_AFTER
-       will  detect  any I/O errors or ENOSPC conditions and will
-       return these to the caller.
-....
-
-IOWs, checking for a past writeback IO error is as simple as:
-
-	if (sync_file_range(fd, 0, 0, SYNC_FILE_RANGE_WAIT_BEFORE) < 0) {
-		/* An unreported writeback error was pending on the file */
-		wb_err = -errno;
-		......
-	}
-
-This does not cause new IO to be issued, it only blocks on writeback
-that is currently in progress, and it has no data integrity
-requirements at all. If the writeback has already been done, all it
-will do is sweep residual errors out to userspace.....
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Regards
+Vignesh
+https://ti.com/opensource
+
 
