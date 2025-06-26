@@ -1,126 +1,184 @@
-Return-Path: <linux-kernel+bounces-704676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABDAAEA05B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B461AEA044
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D57B8D59
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2217E17F8C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722C92E175E;
-	Thu, 26 Jun 2025 14:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506412E765F;
+	Thu, 26 Jun 2025 14:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Um9jdZEC"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="3C8beXfi"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43091FFC41;
-	Thu, 26 Jun 2025 14:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD4A28507F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750947639; cv=none; b=dW4urIVcmzXwhEoQ8NowZEO1gxdSu1M5lloGp9zUaFzPV9QxOn7XMDvS2KkfeO8L1E/REgzHPgSykUGsLhS18WVZAAGYi8ZwTO6PCs+R+yxsKPGO7ejGD5Pc2JYg4tiEIDBbYkHOZ4gWHtBMP5qQEdP90qL0OUr/n7JOeHd8L7s=
+	t=1750947518; cv=none; b=OgdbngP8Iv4tm47JO7Lhj6Q1cW/tFlUcggQ3Hbs6Q1Og7owBaoo2cR4IgcclZLW/spB39d35O2AMq6ey8LSAznkxP7wsvk/GFN2V72JDKLFQp7vQwh5SfvajuG1uW4+1IieXrUl2feQTQKqx0Gh2ZC11P93hbqxerP7IgU0G7og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750947639; c=relaxed/simple;
-	bh=yxN2RrdCi+oF75J4+SNsoBdRHTZ0fryD0gPR4jugiYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=REvL08YDYgmxTt42aJ+g4/eVd98NcbFCHbkvPD1aLlxb7lYErqWlIuS/o6r0t1LKuWTy4r1uwpilasijoJ+I42/X+m2fIITyFQRT3P3S4WkPeL+wDK4etEfd++gGPqE6aLzcz1/v3Ausk3pTqJJlc5fKOgCDT6jp+Vj1D5VAMqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Um9jdZEC; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55QEILMu2480443;
-	Thu, 26 Jun 2025 09:18:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1750947501;
-	bh=wFsFiLH1AC8uaOEAXzwfhn+J6kmqxAKDCggsNNyWAkM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Um9jdZECWIV0e9EakqymbBQVn/y22bAgmlwIMh7BrwDp1eSY+Jw0Spcn38rvaRLgK
-	 e6pzZhrYMic51XSVuJrW1UJddRUkZmyKs2egFV+STbr+Uuh1h04GhqWKfgKLm/YDC5
-	 L9g0TCz9PAFbcJo6i3tjyRPFmt8JQae2OytW9GOs=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55QEILfC2053280
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 26 Jun 2025 09:18:21 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 26
- Jun 2025 09:18:20 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 26 Jun 2025 09:18:20 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55QEIKGq1132823;
-	Thu, 26 Jun 2025 09:18:20 -0500
-Message-ID: <44649612-ea42-43af-b07a-f2f504a199fa@ti.com>
-Date: Thu, 26 Jun 2025 09:18:20 -0500
+	s=arc-20240116; t=1750947518; c=relaxed/simple;
+	bh=TOD13ffTPElASni26XgeRgQdq0G/4M0LdcwD2Hv4v24=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lLNcbHCEHiLE9Baabu4OVu5YYsXeTGEojGe376bfBOPJlSOU09d3VtRPi3ww8Rt9aEywEF+FLmikOEcKrLN4AW8kNa+7pIIp5XqkXATdx4p22dIeG0dCUCKhf+3SeJNXVaKCD7PbasLIyo0Lt3lAp37CMM1MxmmxhW8GN5xy42Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=3C8beXfi; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4a77ea7ed49so23114691cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1750947515; x=1751552315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZ5hZb53byMy6O+kgnQ/7o78O0jkXDe0+NDrOq4Do84=;
+        b=3C8beXfiYtoH2RD0dunn7LWiq83bel9cr9NMbrfjMD7gi7tVig4eTvhU52eAZ4YVBy
+         OckcO+MzdYJK8tZBfUUEakvJvUIDSIlvrcoVFNd/aNv0OK6EGll81erY6ChDStPlPjsh
+         wE4VGcscqPensB1Sl11Zcxi4S13Yv8UX7rZLPrxF4VVGD54/Eq7eofF7mgssx6CReEQU
+         ZWV/B1zbNmkZ9qDPprahaJqzPY6QoJsMiRIFkzc1Si6z48YxnReuw7VUZEnrJ753I5Pt
+         EdSLoVTGUvyj1n/gbjAn464bITfbYEZUAiLABt4Y+kNzbINUodSt60J/ktSrtJAzMhs4
+         EYig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750947515; x=1751552315;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VZ5hZb53byMy6O+kgnQ/7o78O0jkXDe0+NDrOq4Do84=;
+        b=vpqWOU8BOT1HAOexcr8Y77FiwRgRZqFGxoEsf56h7bkFhi0zHw9//wTRHETeoDWS8Z
+         kG2bZlgaseBg7tRclNoymgAIXq5NNspR3Dl81IdvqUhL1hK5gFSsDRr9h5f3NyKVwFKu
+         LqkbkTp+EWByO3xO/PwgxzrOl+WyLlHNyx56sJTMc9NzFqqqXMkhw2/XZfF0tRxx53Ku
+         GmrsQGr2loxemdQNFXj5pi6fI6+DDj664RTEuNFB5CFKxMvc0haICL8jBxSniuRSFIHO
+         VXXtqKw3bVOcFJMrYhXFMno2Hh8JSKhE1nbmhm219NMU9lepZquj4rRORdjurI3ciyBQ
+         1Diw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnPRZWlEY0afi1Y4ZdJpoj4uQJNDL2joSnjVfIX0Yg/ks0+UhFZaSfe1x+VKUQ5Lj0FTgKnaB//FiIHgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn1RCZMp3RVmTyYb84li68jEw8wal39sg57NP0OCIkaJ1GoQqh
+	H656D4hg6AtRxajr189CzR0oFb231S1yJYKokFCsQgkr47kOdxe4RDbx7Avgb79xX8Y=
+X-Gm-Gg: ASbGnctuM0vGPaiBA8iXK92KjNMVzrFeoYR5IYfsoM/9qpAZj+PI3ZS/Lf+GoWGRWnh
+	XCsrC4FcJfIbD8yh/6QU3i5qcX9m6+PnQ3Ta/gzI4IvtYyhpWUamcsImPPV29XAeZfHezlV0Qu9
+	1dm4Eu9OKTH1do3ekDwdDaRHdFBhYn0ctigR09ZIJAkbKY+ZUnhYVRJbqByM45d59GQNY55j6w1
+	2Q2GNmKUxON5FokdzoJzOTzut4sFZ5JoQVuigeejBBmSvD5msg2JBAiF30BvWJ5MA9RnGfAObwa
+	uLWLQRxan6KCyMHaR/KFU4OxQq4Rv5U6DHP1Kz8j5RLfOnprP0VN9SWNtK1bcLzt37QHnVOC2hj
+	fj5moO5fo9fKqzcl7ZMlD+7zch7nzFJi2PaKF+/kxqaR5rw==
+X-Google-Smtp-Source: AGHT+IEo5qUjncPNNeJ4vUf95+jNv5wrktztcnKidKdsP+7iFgU5PUhhf5ynIvp3aZOcL04L/dj9Dw==
+X-Received: by 2002:a05:622a:400e:b0:4a4:3475:d882 with SMTP id d75a77b69052e-4a7f2de0d53mr56801981cf.6.1750947515077;
+        Thu, 26 Jun 2025 07:18:35 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a779d6df17sm70266101cf.30.2025.06.26.07.18.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 07:18:34 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
+Date: Thu, 26 Jun 2025 09:18:21 -0500
+Message-ID: <20250626141827.1140403-3-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250626141827.1140403-1-elder@riscstar.com>
+References: <20250626141827.1140403-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62-main: Remove eMMC High Speed
- DDR support
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-References: <20250624221230.1952291-1-jm@ti.com>
- <20250624221230.1952291-3-jm@ti.com>
- <5428ecbd-8154-43b1-a77c-9eda550c47e7@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <5428ecbd-8154-43b1-a77c-9eda550c47e7@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-Hi Vignesh,
+Enable support for the RTC and regulators found in the SpacemiT P1
+PMIC.  Support is implemented by the simple I2C MFD driver.
 
-On 6/25/25 10:58 PM, Vignesh Raghavendra wrote:
-> 
-> 
-> On 25/06/25 03:42, Judith Mendez wrote:
->> For eMMC, High Speed DDR mode is not supported [0], so remove
->> mmc-ddr-1_8v flag which adds the capability.
->>
-> 
-> Needs a Fixes tag.
+The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
+PMIC provides 6 buck converters and 12 LDO regulators.  It also
+implements a switch, watchdog timer, real-time clock, and more.
+Initially its RTC and regulators are supported.
 
-Ok, will add fixes tag and send in a separate series.
+Signed-off-by: Alex Elder <elder@riscstar.com>
+---
+ drivers/mfd/Kconfig          | 11 +++++++++++
+ drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-> 
->> [0] https://www.ti.com/lit/gpn/am625
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->>   arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->> index 9e0b6eee9ac7..120ba8f9dd0e 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->> @@ -553,7 +553,6 @@ sdhci0: mmc@fa10000 {
->>   		clocks = <&k3_clks 57 5>, <&k3_clks 57 6>;
->>   		clock-names = "clk_ahb", "clk_xin";
->>   		bus-width = <8>;
->> -		mmc-ddr-1_8v;
->>   		mmc-hs200-1_8v;
->>   		ti,clkbuf-sel = <0x7>;
->>   		ti,otap-del-sel-legacy = <0x0>;
-> 
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 6fb3768e3d71c..01805c3eec57d 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1182,6 +1182,17 @@ config MFD_QCOM_RPM
+ 	  Say M here if you want to include support for the Qualcomm RPM as a
+ 	  module. This will build a module called "qcom_rpm".
+ 
++config MFD_SPACEMIT_P1
++	tristate "SpacemiT P1 PMIC"
++	depends on I2C
++	select MFD_SIMPLE_MFD_I2C
++	help
++	  This option supports the I2C-based SpacemiT P1 PMIC, which
++	  contains regulators, a power switch, GPIOs, an RTC, and more.
++	  This option is selected when any of the supported sub-devices
++	  is configured.  The basic functionality is implemented by the
++	  simple MFD I2C driver.
++
+ config MFD_SPMI_PMIC
+ 	tristate "Qualcomm SPMI PMICs"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+index 22159913bea03..026cd92e20ad3 100644
+--- a/drivers/mfd/simple-mfd-i2c.c
++++ b/drivers/mfd/simple-mfd-i2c.c
+@@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
+ 	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
+ };
+ 
++static const struct regmap_config spacemit_p1_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0xaa,
++};
++
++static const struct mfd_cell spacemit_p1_cells[] = {
++	{ .name = "spacemit-p1-regulator", },
++	{ .name = "spacemit-p1-rtc", },
++};
++
++static const struct simple_mfd_data spacemit_p1 = {
++	.regmap_config = &spacemit_p1_regmap_config,
++	.mfd_cell = spacemit_p1_cells,
++	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
++};
++
+ static const struct of_device_id simple_mfd_i2c_of_match[] = {
+ 	{ .compatible = "kontron,sl28cpld" },
+ 	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
+ 	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
+ 	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
+ 	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
++	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
+-- 
+2.45.2
 
 
