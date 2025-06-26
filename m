@@ -1,180 +1,233 @@
-Return-Path: <linux-kernel+bounces-705325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A18AAEA83D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18760AEA842
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC22A188EA56
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6004F3B11B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C62F0C4E;
-	Thu, 26 Jun 2025 20:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ABD2F0C4E;
+	Thu, 26 Jun 2025 20:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwxpIKdK"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aGH+dwJR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52ABE1AC88B;
-	Thu, 26 Jun 2025 20:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E812EBBB6;
+	Thu, 26 Jun 2025 20:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750969883; cv=none; b=HUzfgusHXqRzZOR5vnLW/JZkpOoOj+wsetEY+IPubdT3OUgJaD3PTFx5SHF7jXce2FUPQEi+ASz/TV2O1gXyE39yXFhMZNvr+6EZNXAUfDpxAdexzXNuZOn/wfw7WO2YXQxmftwBzrnOcy/F0+2+s8pvyZ5Q+3yMjR/DZ/EgUlc=
+	t=1750970055; cv=none; b=H9ZSBZ/lLwDlGiFOOpshKwcO/l9FL06r4kOvLsyXt11JF46OmTLMrrrp16DktfBGKXNNYbFfZoeQArbcfyqT1/muNd/loMMAd3SzqoNv8PieEoybX+bpZaFErn29WiXXbE9m9tahEXII/DqKYKib1HyE9ZJrxTzKSHvsSx4ka2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750969883; c=relaxed/simple;
-	bh=/7uLT/5QzU2c97p0dDWXOrLBhujNl00Oz5cNwO/D3YQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uTgYlEGDnyaKxCWk/hLRc/HQvsF4JpIBxIyEB8Zka5Zdmnm/mPFKxSene+fg/PU/uO59t07Snyuo6rAPYiTE8yanKnRJV+kBGJXS6OLFUwmGzOdTnbpz62VfhpuXbMwzAycaFz12xA26QpGsS4bd4Kc+nFa2qJZoqbjJFw+DGCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwxpIKdK; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b3c292bb4so12544151fa.1;
-        Thu, 26 Jun 2025 13:31:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750969878; x=1751574678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mRgtLChVcwC91XDcRTbMS+jnkMAGg5kUPg69daDLGww=;
-        b=TwxpIKdKnchrAhtwfC7z6bORF+ZH1tgVDhmCAJAsO6W3E+Sx31vf9h3NM4wmmr2qIR
-         36R1coKF3MhG+I+7cYMYxxDEOZhurWp4n/PtD9foHuHOaXezjaaAy4sFhjuIdUUbQPuZ
-         o3qy2AgbT9ORYfid/N/6uKrUIePRdLjrpv0Q+jmE2YybakhSYyj7S0P7K1VeZAInqcTN
-         JK6ezD2T6MkqFtb+E9yaH9OP6gWgVZoaEk88cOotjJcHFv6LMqr6mOdRRoJFksAVrU3Y
-         6OSo1WUFqbSw/0HFhMQJfbmeJeP6tPsUdIKF4cyB1SuvB2Q+I9w9dX3k/35rDsgMF2Vc
-         x1ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750969878; x=1751574678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRgtLChVcwC91XDcRTbMS+jnkMAGg5kUPg69daDLGww=;
-        b=B4dx0WzmPqKMAbNY/F5JrU9NKEAFYPyJe+xag/FOlI27vCGeJOgoRonWgWgaaunaOE
-         QCd9h7YwLgcoQLFp+OERKwT5wmOmVlyeKa8baBd3NmvRF9t2GI8NrVVjkoi9yvhj51MJ
-         UkgOfqxxGAwLqG8IYN5bxu4/TrZnK4y4BO3yuErE06njrcqMyQsom4CEq13iFRg5Agez
-         E9TKjVuqu4yhQ7El2p0hASCKHzag1eMg4FG4Wiy+EAbPewywVr5KRPZVHNT8zYD2wvNg
-         cFR3qxbN/XfwSLI8Pwg5BSTIHFKF4L5u3gPJU8+D1vW3U9MbjZEUmzhPURqbTMq+kCyv
-         WvZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEaXhK3sLIbSbUiHbnIDazzrZrg5Kcibgav+bvKm3JpFVy0TjjKDUqgJPmifzSyTHP185E49n5szbHGOk=@vger.kernel.org, AJvYcCWxPJua/HPbGT3hmVOIe9B5QQDCKFhf0mqc/NmMkbXrvWkvZ0yh2/DOnIJDlxzN7VWJF5PoatjxLEM0sQhFssM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb5RhAf1PqOoFCe4ZZc2oqg7rHnP6bhdQzf4yuvcmCDCPSKK/s
-	1ax845NKnCI+YcD2PIDq6wAJqb3PvS/iTD4hma6CUrJOvxSI9r3Eh742
-X-Gm-Gg: ASbGncuIOTCP82hRwWaw4te12OeZl8f4RW1J7PIZ7o3giikRyylS+smzh2/CNOO9vS4
-	0AqnBCV1oa7QJ5TgTxtCXPK92DipiSe9qPYOE4N8wx+cvTLUpeiWIxdU9yeBH4StkoW0L+SZcTj
-	9M15Eq+qeKdbi8VZeZm12uistd3KVnUcJG1MPOrhiKFDMdlxnqqn/oabtmlm52cGLRDL57XWflP
-	XYKa3fGTStnrW7t9RBUNmGTf5x9rnNIal0xhnDx5dNZw/JXpeGLkjQDMemFcoespCr9TEYMKa+j
-	wXv+zsGbFYwRFuHn8Ad3mGhIgOZjjW9thel/taRlrrLbr4eMuFbErNZkF1HWyN5WU30WWo2cMJb
-	ULHc6a3yunH1TBek8fP+7kjmOdaenv7tKwlAWM78=
-X-Google-Smtp-Source: AGHT+IHYfF74apNZsEVj5yD91rWsqIQcDDehaUjeuYFFZ6knoVUZVAJYhiRM9u8vG5icCh7X99mhpA==
-X-Received: by 2002:a05:6512:31d0:b0:553:abcd:cf51 with SMTP id 2adb3069b0e04-5550ba16ad6mr269700e87.40.1750969878092;
-        Thu, 26 Jun 2025 13:31:18 -0700 (PDT)
-Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32cd2ec5ef3sm3072181fa.60.2025.06.26.13.31.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 13:31:16 -0700 (PDT)
-Message-ID: <e2677c26-1c25-4a34-b666-9dcfa9642fd1@gmail.com>
-Date: Thu, 26 Jun 2025 23:31:15 +0300
+	s=arc-20240116; t=1750970055; c=relaxed/simple;
+	bh=Lx08/Irv4x0+L5De+AWcscTGFMqD00JkSLHqG15EwkQ=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=Gz4zg4UHa7A0eKgLGMo91xT1lQL2rEIvrpN71o25vX0EcM+jdOyLur6Cj5Kol71OU1UYO0whwXJuw5Yxr48Ae/FgqTuGKXo0hrIHgrfzhcED794MT6iBQCQZQ3Ls/SNWZ2VKL0XxvoNCWVwupCLwZq7fJ6c9+IDU5T1PkK3vAF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aGH+dwJR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2601:602:8100:c320::cf66])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B565F6BE;
+	Thu, 26 Jun 2025 22:33:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750970033;
+	bh=Lx08/Irv4x0+L5De+AWcscTGFMqD00JkSLHqG15EwkQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=aGH+dwJR+zCuMOrO7Q6/wo9lDGpZeyYjESlGeeUW1sNsnDZZBmBHMRAPpveuDwvC2
+	 2a//M8liTqvlhSLEGyhdNEI0fuJl/6YVNnikQ+oKSAFejyGti2bSaVWPXfbS+s6vOz
+	 xP17GYoce7TzZ0GESpPG46046hOZ/0ErlpfuN/Gk=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] rust: add initial scatterlist bindings
-To: Alexandre Courbot <acourbot@nvidia.com>, Lyude Paul <lyude@redhat.com>,
- Jason Gunthorpe <jgg@ziepe.ca>
-Cc: dakr@kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com,
- rust-for-linux@vger.kernel.org,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>,
- Petr Tesarik <petr@tesarici.cz>, Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Sui Jingfeng <sui.jingfeng@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
- Michael Kelley <mhklinux@outlook.com>
-References: <20250528221525.1705117-1-abdiel.janulgue@gmail.com>
- <20250528221525.1705117-2-abdiel.janulgue@gmail.com>
- <20250529004550.GB192517@ziepe.ca> <DA9JTYA0EQU8.26M0ZX80FOBWY@nvidia.com>
- <95ff963ddabf7c3cd2cfd07d0231a0073ff6847e.camel@redhat.com>
- <DAED5BUK7TUQ.4JRHFMWZ99W3@nvidia.com>
- <27e17dbf-df6a-48fc-a652-ad48a776f668@gmail.com>
- <DAENGORNRVZH.2KIGKFV5C5G3L@nvidia.com>
- <f787046921fd608c385dc5c559883c5d70839507.camel@redhat.com>
- <DAP96FEJ0XWT.PWYMIE8IJAVQ@nvidia.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <DAP96FEJ0XWT.PWYMIE8IJAVQ@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aFzif59lHvNz-p-0@kekkonen.localdomain>
+References: <20250410-probe_fixes-v2-0-801bc6eebdea@ideasonboard.com> <20250410-probe_fixes-v2-6-801bc6eebdea@ideasonboard.com> <aFzif59lHvNz-p-0@kekkonen.localdomain>
+Subject: Re: [PATCH v2 6/6] media: ti: j721e-csi2rx: Support multiple pixels per clock
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maxime Ripard <mripard@kernel.org>, Devarsh Thakkar <devarsht@ti.com>, Rishikesh Donadkar <r-donadkar@ti.com>, Vaishnav Achath <vaishnav.a@ti.com>, Changhuang Liang <changhuang.liang@starfivetech.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Thu, 26 Jun 2025 13:34:07 -0700
+Message-ID: <175097004739.8144.1542268744363236258@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
+Hi Sakari,
 
+Quoting Sakari Ailus (2025-06-25 23:02:39)
+> Hi Jai,
+>=20
+> On Thu, Apr 10, 2025 at 12:19:04PM +0530, Jai Luthra wrote:
+> > Add support for negotiating the highest possible pixel mode (from
+> > single, dual, quad) with the Cadence CSI2RX bridge. This is required to
+> > drain the Cadence stream FIFOs without overflowing when the source is
+> > operating at a high link-frequency [1].
+> >=20
+> > Also, update the Kconfig as this introduces a hard build-time dependency
+> > on the Cadence CSI2RX driver, even for a COMPILE_TEST.
+> >=20
+> > [1] Section 12.6.1.4.8.14 CSI_RX_IF Programming Restrictions of AM62 TRM
+> >=20
+> > Link: https://www.ti.com/lit/pdf/spruj16
+> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+>=20
+> This creates a dependency between the two drivers.
+>=20
+> Can you confirm that the TI device only exists in conjunction with the
+> cadence HW block?
+>=20
 
-On 18/06/2025 04:03, Alexandre Courbot wrote:
-> Hi Lyude, sorry for taking so long to come back to this!
-> 
-> On Tue Jun 10, 2025 at 2:44 AM JST, Lyude Paul wrote:
->> On Thu, 2025-06-05 at 22:56 +0900, Alexandre Courbot wrote:
->>> On Thu Jun 5, 2025 at 10:30 PM JST, Abdiel Janulgue wrote:
->>>>
->>>>
->>>> On 05/06/2025 08:51, Alexandre Courbot wrote:
->>>>> Maybe I need more context to understand your problem, but the point of
->>>>> this design is precisely that it doesn't make any assumption about the
->>>>> memory layout - all `P` needs to do is provide the pages describing the
->>>>> memory backing.
->>>>>
->>>>> Assuming that `_owner` here is the owner of the memory, couldn't you
->>>>> flip your data layout and pass `_owner` (or rather a newtype wrapping
->>>>> it) to `SGTable`, thus removing the need for a custom type?
->>>>
->>>> I think what Lyude has in mind here (Lyude, correct me if I'm wrong) is
->>>> for cases where we need to have a rust SGTable instances for those
->>>> struct sg_table that we didn't allocate ourselves for instance in the
->>>> gem shmem bindings. So memory layout needs to match for
->>>> #[repr(transparent)] to work
->>>
->>> Thanks, I think I am starting to understand and this is a problem
->>> indeed. I should probably take a look at the DRM code to get my answers,
->>> but IIUC in `OwnedSGTable`, `sg_table` is already provided by the C side
->>> and is backed by `_owner`?
->>
->> Correct. You generally create a gem shmem object, and then you can call a
->> function to ask gem to create an sg_table and hand it back to you. I should
->> note my priorities have shifted a bit from trying to get shmem bindings
->> upstream, but currently it's still the best example I have of this usecase.
->>
->> So, for gem shmem this means we can operate with an SGTable in two ways:
->>
->>   * gem_shmem_object.sg_table() -> Result<&kernel::scatterlist::SGTable>
->>   * gem_shmem_object.owned_sg_table() ->
->>     Result<kernel::drm::gem::shmem::OwnedSGTable<T: DriverObject>
->>
->> I'm going to call the first return type SGTable and the second one
->> OwnedSGTable, just so I can type a bit less.
->>
->> The first, sg_table(), quite literally just calls drm_gem_shmem_get_pages_sgt
->> which attempts to allocate the table and return a pointer to it on success. We
->> then cast that to &SGTable and return it to the user. This can be good for
-> 
-> Mmm but if you cast the returned C pointer into a `&SGTable`, then who
-> owns (and is responsible for freeing) the `SGTable` it refers to? If the
-> pointer is just turned into a reference then this might leak the `struct
-> sg_table`.
-> 
+Yes, the main job of TI device is to unwrap the Cadence-specific pixel
+stream to something the TI K3 DMA engine can understand. So these are (and
+will be) always paired together in all K3 SoCs that support CSI2RX.
 
-Just commenting on this bit. From what I've seen, we don't actually leak 
-anything. The cast only creates a reference to the original C `struct 
-sg_table` object which was allocated and owned by whichever kernel 
-subsystem called sg_alloc_table(). Rust doesn't even allow us to take 
-ownership or to dereference the value, so this one is safe. Destructors 
-are not called on those "casted" objects.
+> > ---
+> >  drivers/media/platform/ti/Kconfig                  |  3 +-
+> >  .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 38 ++++++++++++++=
+++++++--
+> >  2 files changed, 37 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/ti/Kconfig b/drivers/media/platform=
+/ti/Kconfig
+> > index bab998c4179aca3b07372782b9be7de340cb8d45..3bc4aa35887e6edc9fa8749=
+d9956a67714c59001 100644
+> > --- a/drivers/media/platform/ti/Kconfig
+> > +++ b/drivers/media/platform/ti/Kconfig
+> > @@ -67,7 +67,8 @@ config VIDEO_TI_J721E_CSI2RX
+> >       tristate "TI J721E CSI2RX wrapper layer driver"
+> >       depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
+> >       depends on MEDIA_SUPPORT && MEDIA_CONTROLLER
+> > -     depends on (PHY_CADENCE_DPHY_RX && VIDEO_CADENCE_CSI2RX) || COMPI=
+LE_TEST
+> > +     depends on VIDEO_CADENCE_CSI2RX
+> > +     depends on PHY_CADENCE_DPHY_RX || COMPILE_TEST
+> >       depends on ARCH_K3 || COMPILE_TEST
+> >       select VIDEOBUF2_DMA_CONTIG
+> >       select V4L2_FWNODE
+> > diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/dr=
+ivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> > index ad51d033b6725426550578bdac1bae8443458f13..425324c3d6802cfda79d116=
+d3967b61a2e7a015a 100644
+> > --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> > +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> > @@ -21,6 +21,8 @@
+> >  #include <media/v4l2-mc.h>
+> >  #include <media/videobuf2-dma-contig.h>
+> > =20
+> > +#include "../../cadence/cdns-csi2rx.h"
+> > +
+> >  #define TI_CSI2RX_MODULE_NAME                "j721e-csi2rx"
+> > =20
+> >  #define SHIM_CNTL                    0x10
+> > @@ -29,6 +31,7 @@
+> >  #define SHIM_DMACNTX                 0x20
+> >  #define SHIM_DMACNTX_EN                      BIT(31)
+> >  #define SHIM_DMACNTX_YUV422          GENMASK(27, 26)
+> > +#define SHIM_DMACNTX_DUAL_PCK_CFG    BIT(24)
+> >  #define SHIM_DMACNTX_SIZE            GENMASK(21, 20)
+> >  #define SHIM_DMACNTX_FMT             GENMASK(5, 0)
+> >  #define SHIM_DMACNTX_YUV422_MODE_11  3
+> > @@ -40,6 +43,7 @@
+> >  #define SHIM_PSI_CFG0_SRC_TAG                GENMASK(15, 0)
+> >  #define SHIM_PSI_CFG0_DST_TAG                GENMASK(31, 16)
+> > =20
+> > +#define TI_CSI2RX_MAX_PIX_PER_CLK    4
+> >  #define PSIL_WORD_SIZE_BYTES         16
+> >  /*
+> >   * There are no hard limits on the width or height. The DMA engine can=
+ handle
+> > @@ -110,6 +114,7 @@ struct ti_csi2rx_dev {
+> >       struct v4l2_format              v_fmt;
+> >       struct ti_csi2rx_dma            dma;
+> >       u32                             sequence;
+> > +     u8                              pix_per_clk;
+> >  };
+> > =20
+> >  static const struct ti_csi2rx_fmt ti_csi2rx_formats[] =3D {
+> > @@ -485,6 +490,26 @@ static int ti_csi2rx_notifier_register(struct ti_c=
+si2rx_dev *csi)
+> >       return 0;
+> >  }
+> > =20
+> > +/* Request maximum possible pixels per clock from the bridge */
+> > +static void ti_csi2rx_request_max_ppc(struct ti_csi2rx_dev *csi)
+> > +{
+> > +     struct media_pad *pad;
+> > +     int ret;
+> > +     u8 ppc =3D TI_CSI2RX_MAX_PIX_PER_CLK;
+>=20
+> Could you make this look like a reverse Christmas tree?
+>=20
 
-/Abdiel
+Will do.
+
+> > +
+> > +     pad =3D media_entity_remote_source_pad_unique(&csi->vdev.entity);
+> > +     if (!pad)
+> > +             return;
+> > +
+> > +     ret =3D cdns_csi2rx_negotiate_ppc(csi->source, pad->index, &ppc);
+> > +     if (ret) {
+> > +             dev_warn(csi->dev, "NUM_PIXELS negotiation failed: %d\n",=
+ ret);
+> > +             csi->pix_per_clk =3D 1;
+> > +     } else {
+> > +             csi->pix_per_clk =3D ppc;
+> > +     }
+> > +}
+> > +
+> >  static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
+> >  {
+> >       const struct ti_csi2rx_fmt *fmt;
+> > @@ -496,6 +521,9 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_d=
+ev *csi)
+> >       reg =3D SHIM_CNTL_PIX_RST;
+> >       writel(reg, csi->shim + SHIM_CNTL);
+> > =20
+> > +     /* Negotiate pixel count from the source */
+> > +     ti_csi2rx_request_max_ppc(csi);
+> > +
+> >       reg =3D SHIM_DMACNTX_EN;
+> >       reg |=3D FIELD_PREP(SHIM_DMACNTX_FMT, fmt->csi_dt);
+> > =20
+> > @@ -524,14 +552,18 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx=
+_dev *csi)
+> >       case V4L2_PIX_FMT_YVYU:
+> >               reg |=3D FIELD_PREP(SHIM_DMACNTX_YUV422,
+> >                                 SHIM_DMACNTX_YUV422_MODE_11);
+> > +             /* Multiple pixels are handled differently for packed YUV=
+ */
+> > +             if (csi->pix_per_clk =3D=3D 2)
+> > +                     reg |=3D SHIM_DMACNTX_DUAL_PCK_CFG;
+> > +             reg |=3D FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
+> >               break;
+> >       default:
+> > -             /* Ignore if not YUV 4:2:2 */
+> > +             /* By default we change the shift size for multiple pixel=
+s */
+> > +             reg |=3D FIELD_PREP(SHIM_DMACNTX_SIZE,
+> > +                               fmt->size + (csi->pix_per_clk >> 1));
+> >               break;
+> >       }
+> > =20
+> > -     reg |=3D FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
+> > -
+> >       writel(reg, csi->shim + SHIM_DMACNTX);
+> > =20
+> >       reg =3D FIELD_PREP(SHIM_PSI_CFG0_SRC_TAG, 0) |
+> >=20
+>=20
+> --=20
+> Regards,
+>=20
+> Sakari Ailus
+
+Thanks,
+Jai
 
