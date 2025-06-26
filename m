@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-704280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E027CAE9BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D88DAE9BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68763ABAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A722D3B9FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6088823B631;
-	Thu, 26 Jun 2025 10:37:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC7727144B;
+	Thu, 26 Jun 2025 10:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="b2Vw1DZB"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9991B6D08
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 10:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F6B25B2E8;
+	Thu, 26 Jun 2025 10:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750934262; cv=none; b=f39Y+ei3JsthpzoIzIrXwgLKUWbrRFKH0/TRvp4n90PhiGVPVSV1siI/0BLgQILmdHT6Soyzs8dw32yS8szmpqhyTBD4o6rD8U8/jbmEgCKqHKIxQfopbH5WiC9lpkStRpS0OgFp4IFhDi5dcuXCPvkx34WudcysHmjgQV78qP0=
+	t=1750934993; cv=none; b=e0ETD26JmPAmfSyaZmiENiLRU1FsvEs81T4XckDZV0D3qlrChWTypBGQjPyqbrynNRPXCQ10yLppKz1G5t0XtEvtBmCvx17gm6QPOVHJsysYbY2PkV/MA9fdGt/Yg3TlIliqgXAguqzF9rT8zWgqJDaiJ++BzWDW9BcN7CdVPoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750934262; c=relaxed/simple;
-	bh=Ru4cJwVwT+dUhkwZmjint5XdqI947nBRVkM7H0g4IwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oM3nL+uOwmq2jlCNUYXPPiZq8oSQ29WAgPyNlWN530dw0bD/eOxcPJcM267XUlYSKlhVNFZbAQiNbDe883e0IRatztIVQZsNJ6T7mdG1qPwSrPa3KkH8Ni6IqIJam/iogJjWwgacm7uKxrSwXAYk93rmAPJ8/p6qKw0nSbQrcZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uUjz3-0002jU-B0; Thu, 26 Jun 2025 12:37:33 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uUjz2-005Qtx-2B;
-	Thu, 26 Jun 2025 12:37:32 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uUjz2-00Gj5S-1v;
-	Thu, 26 Jun 2025 12:37:32 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH net-next v1 1/1] net: usb: lan78xx: fix possible NULL pointer dereference in lan78xx_phy_init()
-Date: Thu, 26 Jun 2025 12:37:31 +0200
-Message-Id: <20250626103731.3986545-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1750934993; c=relaxed/simple;
+	bh=kYqY3ltFAk7XmlICA8MnZqcWspwPD7e9MENExTqOgIg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JQUBjvorUmOjlGfcHWbDqswdyVsZ6KW/XLWkVdmSI6LhuelX6MS37DqjZJshCsYDspwdmxxRkjseNVDXou/g8bWSQZ3yRnWR2xyKuj8MJuKdhkmjTTv8VhgJjKECCZM5OBTNURHQ8wq2WcF9/LHq1JIFahKS4f6mmU4gCgmTD4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=b2Vw1DZB; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q8h3C3016775;
+	Thu, 26 Jun 2025 06:49:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=+Aq7skARuQhh51B4mkRgzuSzgEb
+	qBtwQONWz935ZXnQ=; b=b2Vw1DZBFN01GknLr3OGeqMmlzit8ZMJaITR2T0Me+W
+	V1u8lmVKPVEk5Oa7CXqB6i+Wz7Sisq0RVEWSGYFCq+jtlyeFFGtouGpp0VUH2U1P
+	1jKudDGO1jOWfUP2vHF12yOr6qPLA2B/12Scir4SAxir0EQCvHJm7e0RdA1dndYr
+	wk7phLCf7yXeTdA1haBHPUCDVlTUikPIQ7FkvGL3uG5npwoMi7V7zIIyZXF8ZboZ
+	0/fK84hlg79FVhKkWTfepz8Y5LatEydag7rtxLgTpelrgKRG0cej/fqxkLvfcrO2
+	4eVcZim/bDKNYFSzZWuvs77BN2h0m3vR9U7pXCgjdug==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 47h2xcgkfa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 06:49:49 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 55QAnmUd047054
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 26 Jun 2025 06:49:48 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 26 Jun
+ 2025 06:49:48 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 26 Jun 2025 06:49:48 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.167])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55QAnclu000419;
+	Thu, 26 Jun 2025 06:49:40 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 1/2] dt-bindings: iio: adc: ad4851: add spi-3wire
+Date: Thu, 26 Jun 2025 13:40:23 +0300
+Message-ID: <20250626104024.8645-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,63 +75,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: OZP6VjL2_jMNtBGTpMHVnvJBNWLmgZYL
+X-Proofpoint-GUID: OZP6VjL2_jMNtBGTpMHVnvJBNWLmgZYL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA5MCBTYWx0ZWRfX49Iz5Ngss7G3
+ omQ+KF7O/JVkEHAhm6IOj8mdev+8rz9D+2KnZIF7e+Q/tsiaUnQ+il3ZUepDVIYph5EVMUWvTnO
+ 8PTcy7v0oaQQRm5XgT50mnBTtCNamqA9tWiTlzJ7FA+yk1BP+icMAJWWnzPzy/HyF9DGCQV4P7o
+ hUaVgL/TBeOqqTID3h2D8S8p7X7P0hmJO0KfSLZ4LyCm0r4+PBIzmrWOAZCzjtkbE78lcXKXvBI
+ 0/KFEGDM7ms6GAuLQ3wcPZicV6SUN4jSL14OeaGA3YhWs7fbeHyiReUnCQsL955GH18MA0sfxMa
+ 5eLaMFc1AkBuAxq4hrALDZAdHEbTLjzyK5eRuX/8IPbE+3I39FpgjFSLRz2aUctre4nD6VEvVIX
+ igqwjDtjqCoLSeXqhR7ElzYwUrsqEKkMCvL8ah4Zry8tShnE6fUrrrIaMXBsoW8GRXn5WDF8
+X-Authority-Analysis: v=2.4 cv=OoRPyz/t c=1 sm=1 tr=0 ts=685d25cd cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=S76Hmel1X9esiIvpTsQA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_05,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
+ mlxlogscore=987 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506260090
 
-If no PHY device is found (e.g., for LAN7801 in fixed-link mode),
-lan78xx_phy_init() may proceed to dereference a NULL phydev pointer,
-leading to a crash.
+Add devicetree support for spi 3-wire configuration.
 
-Update the logic to perform MAC configuration first, then check for the presence
-of a PHY. For the fixed-link case, set up the fixed link and return early,
-bypassing any code that assumes a valid phydev pointer.
-
-It is safe to move lan78xx_mac_prepare_for_phy() earlier because this function
-only uses information from dev->interface, which is configured by
-lan78xx_get_phy() beforehand. The function does not access phydev or any data
-set up by later steps.
-
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 ---
- drivers/net/usb/lan78xx.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/iio/adc/adi,ad4851.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index ae37cd235526..6e9dc30b50f9 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2831,6 +2831,10 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- 	if (ret < 0)
- 		return ret;
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4851.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4851.yaml
+index c6676d91b4e6..b107322e0ea3 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad4851.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4851.yaml
+@@ -69,6 +69,8 @@ properties:
+   spi-max-frequency:
+     maximum: 25000000
  
-+	ret = lan78xx_mac_prepare_for_phy(dev);
-+	if (ret < 0)
-+		goto phylink_uninit;
++  spi-3wire: true
 +
- 	/* If no PHY is found, set up a fixed link. It is very specific to
- 	 * the LAN7801 and is used in special cases like EVB-KSZ9897-1 where
- 	 * LAN7801 acts as a USB-to-Ethernet interface to a switch without
-@@ -2840,11 +2844,12 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- 		ret = lan78xx_set_fixed_link(dev);
- 		if (ret < 0)
- 			goto phylink_uninit;
--	}
+   '#address-cells':
+     const: 1
  
--	ret = lan78xx_mac_prepare_for_phy(dev);
--	if (ret < 0)
--		goto phylink_uninit;
-+		/* No PHY found, so set up a fixed link and return early.
-+		 * No need to configure PHY IRQ or attach to phylink.
-+		 */
-+		return 0;
-+	}
- 
- 	/* if phyirq is not set, use polling mode in phylib */
- 	if (dev->domain_data.phyirq > 0)
 -- 
-2.39.5
+2.49.0
 
 
