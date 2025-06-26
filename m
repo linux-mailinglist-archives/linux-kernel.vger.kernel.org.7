@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-704093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09269AE995B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F116AE9947
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276987AD6C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF813AB747
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D417C29E11B;
-	Thu, 26 Jun 2025 08:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E5E29DB96;
+	Thu, 26 Jun 2025 08:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbeBuza2"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YXtdF63C"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1BB295DB2;
-	Thu, 26 Jun 2025 08:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC1D2957AD;
+	Thu, 26 Jun 2025 08:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750928187; cv=none; b=Mqedxc1SRKhs2MlAwcRMxF3FD4nne9LUhW2CdRAqER7vEKGrJ10L5E0xzm5r3hvg+VESwVzjV37qN9exAuYJMzta4foHJeM7tNC+qLNJcToNx/O6gYYg9+DC1p8hiZaqLFXLQBkkisnAuXeRcxcKP1S9PUKYba2OHmGWorqsh/M=
+	t=1750928250; cv=none; b=MNlrSzcANQlKcslqi9PjtnqwUfSp6HCU5ZTcyhwWj4I5TqcQyji+7aGh5OyR4iEunQPcB1zg/AHozrxgKxi/mMISirZrX0yUZVuWDBgJZ0Q5H24qwS80twMMGPrlp4Npxsqd7Tw8SCtvhwLFsr6bYwjhvtfQ/drvBtcatco2W2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750928187; c=relaxed/simple;
-	bh=kKq2tmEw8Z+I4+DkPTVtyuGbD/NPo/vSE2bc1oGU0v4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LwzIAYdj640ESecPjbTRG/RdNAGXV1qgPgcVSHMotuY4vJXEqhgx5Kn/VYUSjox2PbFtxs02tZvkrHiI/GqIct6S93coG5gQjSuLVjDggyVsrSw3BxSPIeHRyHD5XhEKx5KzuUjG66R/ogV9FGqNt6Qn1fLIiandBtrvK56IkUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FbeBuza2; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-234fcadde3eso11788295ad.0;
-        Thu, 26 Jun 2025 01:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750928185; x=1751532985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kKq2tmEw8Z+I4+DkPTVtyuGbD/NPo/vSE2bc1oGU0v4=;
-        b=FbeBuza2DP9Y3YvcZhACmmJ90gkMacnJXh8dUfl6ae/uMI/ntJWTq/yj4kZKz5h4zE
-         4gg3AsxoivRaTi64gKIv4XsyzPuE31a+o8+jXxmG1abyQ0v4i2jk1BwlMIlBvfFTp1IP
-         q6hXargx+FwbNXfN66Iik38w51z5zI0JV18yTtxWn487cs2p/Ga9TCfGUllTtFSs9Vhd
-         5+xWpXdsbfb3imFiTAboueI2pKkA5FO5pH7Ts3Dl8E2NJae5wTK5mv4TZeQVx8DHTsuW
-         lTh/VzzV9kDJ2wBKw/pVV8KdIYylOhz80GMaR/1R0eYgK5IzjvKo0ndFy3l4Pyv4v3OO
-         txrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750928185; x=1751532985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kKq2tmEw8Z+I4+DkPTVtyuGbD/NPo/vSE2bc1oGU0v4=;
-        b=qRofxzVpvkUjg2GGn7BDhW5u15hJAvFCLzKy4J2yVCq4rliP4ihZ8a2Fy5vAO8L5Lz
-         GZnOTEpkROBAh5YT90ne1jtv2zTBJd6lka/Y9zNCImf1D+eg5w9kTykVnEDT0GS4J80f
-         rSdMKxetGLKvhDkSzyHqJ+TblQ2JBVbT8X0Yk3HGkxY7Sk1e37ZrTdlNRAbQcmLXahzv
-         f74TqBn20tAkZPKGI9XcVe3C2b94u9PVmZpUKiK9fgFIOhpsWr1YCqV66QoOmNcvdVkp
-         0AHzWIxWZ0l5ykjqpru6bRbfi8mniPOksS99N1v3wE9UQa52NMVq3NrHk449I3pnSBIX
-         fAtg==
-X-Forwarded-Encrypted: i=1; AJvYcCU09g1xmCMbQfDVqT7Pi4zt9YiGRLGXqjXIc1sk3DCdb+GXtge7bGfKPxvpWkD9uURKKUHYqvFj2lUJ4zI=@vger.kernel.org, AJvYcCXsZK1fs2C0MEgYbb1mlaEoS/wrZZZshCy3YV3OJ2YTJAYAwD1h7tT92uECcNaMREA28/VAZq8IXLT/zsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD99PzrB0IPXAe9lZsJKOOK9H8Ll60YzUP8dfV98F5tF0OI7Zl
-	2IHANfIO4CwxsT3GVxzH/xUzGs11bI80Hui3WllyaapWigozSby7/ph1dGZOFdxdKzrtzXxS00C
-	f13MJA1zMavUXvP8gevKhLNZ4F3FGymQIBw==
-X-Gm-Gg: ASbGncuoGJnh5vaOQMQjRyXd9NutvFa/Ftvi7hj5gkpNNka2oYV6kmjWMxxZVArJtEg
-	QQSVrpH7CHt4v1Z3mgkLttXisp8AESPtBzN7wadaAXFJs2hiYNg34TmzBEZ3PDZcyRuNrlgUVg0
-	ub6f0OH6hlfLBUEWMVL8HqpkpOkbf2re6xhRg9enH1ESbDZEfAp7xmOY9xThe4/T1traiRbJTsf
-	eY6Ag==
-X-Google-Smtp-Source: AGHT+IE2DrC5grwumkOHXtYkpMUb7BU6kwWjuzYjVuHSy0tZ0sO1LU9jFpnSRoX5x0S/VZtcmZJfjTLwHaopoc46CX8=
-X-Received: by 2002:a17:903:2407:b0:234:f580:a15 with SMTP id
- d9443c01a7336-23823fd0962mr97131565ad.14.1750928185135; Thu, 26 Jun 2025
- 01:56:25 -0700 (PDT)
+	s=arc-20240116; t=1750928250; c=relaxed/simple;
+	bh=iexAl4IZBdK0K86HpFD/b/If8pH2fw4n5Z9QnMksSUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUshYpn+iA05Q6F02dIb2GYsiZye7wBUFzUWzRx32e+9iODhnnIuoccJqoUJMeY3/CyPnUgqehgIihbgoPcWljANeZYZIBOJuhBLJs22uQLR75fg7R3wS79jtHkfkBwS0Liptct0+WvQoAPyi4TrujIbQZ5srl8u56hiVx/EQ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YXtdF63C; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=fVmE/YiM+9C7jTD9oWg38lCkPD2nzPFS2EHGoqNAdeI=; b=YXtdF63CS4XTioz7pSvXGoJsWU
+	vi/CmOrqzYmLVJBFpW39RM9JpzGVI37KoO45IBc/DAxH1Oek+1HzAQtA/ES8t/V4TMFnC/MEIlP5E
+	5lNRnigiEccxo0z0X3ezV3BAkwBinCmgSkzZnUvZzKyIhNtLbWmLOjJ1NxtL+rW9XDAQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uUiQ2-00H1gg-H5; Thu, 26 Jun 2025 10:57:18 +0200
+Date: Thu, 26 Jun 2025 10:57:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Paul Geurts <paul.geurts@prodrive-technologies.com>
+Cc: mgreer@animalcreek.com, krzk@kernel.org, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, conor+dt@kernel.org,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	martijn.de.gouw@prodrive-technologies.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: net/nfc: ti,trf7970a: Add
+ ti,rx-gain-reduction option
+Message-ID: <ddb9a1a9-7070-416c-848e-00d151846999@lunn.ch>
+References: <20250626082953.3963992-1-paul.geurts@prodrive-technologies.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625020504.2728161-1-shengjiu.wang@nxp.com>
-In-Reply-To: <20250625020504.2728161-1-shengjiu.wang@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 26 Jun 2025 11:56:10 +0300
-X-Gm-Features: Ac12FXzvq83DcpP5mt4TK7XmROn_z1FuFMfxOK7fO0D14eB9FvX3yh2CJWin8Vo
-Message-ID: <CAEnQRZDDrt+zP=+Echs_Df_7dcugHrJ4DW7SF_aDGiDSnMtVbg@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: fsl_asrc: use internal measured ratio for non-ideal
- ratio mode
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
-	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
-	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626082953.3963992-1-paul.geurts@prodrive-technologies.com>
 
-On Wed, Jun 25, 2025 at 5:07=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.co=
-m> wrote:
->
-> When USRC=3D0, there is underrun issue for the non-ideal ratio mode;
-> according to the reference mannual, the internal measured ratio can be
-> used with USRC=3D1 and IDRC=3D0.
->
-> Fixes: d0250cf4f2ab ("ASoC: fsl_asrc: Add an option to select internal ra=
-tio mode")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > You should include the units, "ti,rx-gain-reduction-db"
+> 
+> Well, Currently it's not really a dB value (see below).
+> 
+> > 
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    description: |
+> > > +      Specify a RX gain reduction to reduce antenna sensitivity with 5dB per
+> > > +      increment, with a maximum of 15dB.
+> > 
+> > Given that description i think you can provide a list of values, [0,
+> > 5, 10, 15] and the tools will validate values in .dts files.
+> > 
+> > > +
+> > >  required:
+> > >    - compatible
+> > >    - interrupts
+> > > @@ -95,5 +101,6 @@ examples:
+> > >              irq-status-read-quirk;
+> > >              en2-rf-quirk;
+> > >              clock-frequency = <27120000>;
+> > > +            ti,rx-gain-reduction = <3>;
+> > 
+> > Err, how does 3 fit into 5dB increments?
+> 
+> I implemented it in a way that the value of ti,rx-gain-reduction is programmed
+> directly into the RX_GAIN reduction register, and there it means 5 dB/LSB. My
+> description probably was not clear enough about that. So a value of 3 here actually
+> means 15dB.
+> So I could either improve the description here that this is the case, or make the
+> value in here in actual dB, and do some calculations in the driver. What has your
+> preference?
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+DT should use SI units, Volts, Amps, degrees C, meters, etc. The
+driver then should do whatever conversion is needed to convert to
+hardware register values.
+
+Less important, but i'm also wondering if this should be negative,
+ti,rx-gain-db, with a value of -15. You say this receiver is overly
+sensitive, so you need to reduce the gain. But are there TI devices
+where you can actually increase the gain? Ideally the property should
+be generic and be able to cover that use case as well.
+
+    Andrew
+
+---
+pw-bot: cr
 
