@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-704041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35626AE989F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8EDAE98B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FCA3AF2FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC2B3A7297
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 08:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA8E2949E5;
-	Thu, 26 Jun 2025 08:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDA8295DBF;
+	Thu, 26 Jun 2025 08:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MKIuUEzV"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="yAcNns/e"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1668F292B27
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 08:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB93727EFE9;
+	Thu, 26 Jun 2025 08:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750927070; cv=none; b=tFMIdAPS8FF4WGuqVX6Wa5UyMInr1mA3D1hsx+B3KqxkSeAE+SviXL8tDb49oJRwaQvKFzPUhbIs2tueXOz7Jws8dqi5IYgsXFhODcMwxvC+jZr3i73tV819vz1jCnm7snNX8IL/BhhWbMCVbl+8ZGLH0vqfgueyUUEU0G0tuT0=
+	t=1750927261; cv=none; b=ptwkpzzOrWEdR/85pFJWOBEb5pceUZacWi3/OzzIY+EKXFnkrUm27QWgq14XfHgGpcMNuUYUol8oNe6uFgO1tP9WCP6H0NYdjoc0YQqb7uJxfW9fHfiOQbaPZ93MD5dzeAuA+TPJ0BpHJ00lFyDeGzRKXEe1VNt4Jx3qu57F/C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750927070; c=relaxed/simple;
-	bh=61NR3+cv2s+s8non1oheMAZjlDoX1CX3MknyPY6bDPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uBk2fVM2nIbWhaypX0EUJzVRiuxpRTnvqIvDKaecogfNL0wIav5zBNTvDbOgfaweMnltC3NeTfAeEtgKaut7DKBFDswMLEtIkKUOdz421SaFbnDObQbUiwpUGPTezRQpg4JSimK5Dx4JXw+ZDF2E51Uqp4f4lMeoKdppbTcVhHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MKIuUEzV; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-32b7f41d3e6so8061431fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 01:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1750927065; x=1751531865; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOVSm2lxlfvHzHWNA6nGxFDSpaI7yd4pLz8A6iME9uA=;
-        b=MKIuUEzVQIcmMdKU3umjnTlK7MaISvXiPxmI9b8x7G4ODEkVKgQay1l9COTq/9+bNO
-         FB1XgAscObG5wp+hdLIMG2TWL2oiKbF7w59KJwHq5xxvLLKZz0jn/ftrtA+eIpVr0sRg
-         GGX6Lvv5AEQV7FbpMQrMe6pi1CMcfnQicEl8EEvaubcg2hdSnlA1fZmE0tx/zXwv+Rgw
-         4CWZfgq4gTEq/yYsjpF4wxn+047j+px8s0A3E207294ZYQMw8kQILB+qulyEKLHIbqir
-         nCvloDgir3Hkt/VzosMMSbU5qOBtU7Z7kElhKTL5HDRJzTJFCWfR6nhgu7OFwMrh1E/T
-         GZlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750927065; x=1751531865;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LOVSm2lxlfvHzHWNA6nGxFDSpaI7yd4pLz8A6iME9uA=;
-        b=LxjAvMCSZ4M5tIIWGmzoaleSH+VqmTKXDlN684x94drqvm1/5fkXU3I4T/PIp5WEOQ
-         JCYDefbpyDem3qtK8g6F0jHL1lcIQHZbUi7XRphD85idqp9BlMcqdQEbhuA5yzMQ3Oum
-         nvWVrfykcc6+bMvhecBx0vcacXzTr57dHm1xLnhtpVl6fGjx9M4A56FBltSbRmqZi0GI
-         EfSEm7U18ZbXutnT6UxwSzlH4UimCmFkFXELuisfxNr5+mJClJNjgB8CA5gjrVSJsp1C
-         jKbqGtB29k+h7ZmvfSuLYrnHrpZ6uPT9icksfLOpHaEIsCV163Fcv/1nim3iWlmMkr8s
-         BL+w==
-X-Forwarded-Encrypted: i=1; AJvYcCX8fc8fGn/lp7F5YKrvtjkXCaxJnQC/ZjwRqRLRWxZi1K6+EfHHawTa67Su4dEcSnxLzZxi1HYCLLHvLY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtQGskshDFW4kTL4ye4lkOV+SK20owGSeLlXeLq6xSfkUJfUaa
-	BHv2jNjtlUxm+W3buIKZfv4dr1Q7ECToEP01zruLyCTsuC5VfByEj7pkJPlciI/DfiQUplPGJv8
-	83nQhKqgi6EyKNmoYCMNt+st/QzAgW5HJ2gsbsLLFsfKT+xqRskmUgY05
-X-Gm-Gg: ASbGnctW6MeU1pfVcQTYJQbhPWHDtQuD6oK3u3hnNmpYNy8JVJQBdmewtANOxgWScUa
-	2dHFfvQaNMjQKgX6vLXvel495/BNUvy6z8tzAcSnQTWRl6r+SC/mkfpomuW0mIGpSQ0Z9ESRuCA
-	CpLj2T3kd572+hQGQOOl2QETwqPPxVnqx47UWKlSJjXtNGryPTA0AOHjLFPqyzkatrU/Za0L27i
-	noEV13UcWbONWU=
-X-Google-Smtp-Source: AGHT+IFoce4glEmRfpaGq1cEJXdDdpQIuRzef09xN/mVCcmD+KVlQpUFkduHrAryLe+sJhQ5P60PGjtSCXUKZH3ivEQ=
-X-Received: by 2002:a05:651c:4088:b0:32b:871e:9862 with SMTP id
- 38308e7fff4ca-32cd0261797mr6223281fa.20.1750927064914; Thu, 26 Jun 2025
- 01:37:44 -0700 (PDT)
+	s=arc-20240116; t=1750927261; c=relaxed/simple;
+	bh=X7liYNZKtZ/SRtsmqGvcVDdn/3KBB20klOip54vWi7o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ooL2ovO7ROg587eoC2+ixR5PuWm9rOWmg1oFvoJGdl6m5ri1ifo4+7DEkcxF1Gzr5jXXAL83GuKV9sdC90K7Y+IoA96FgGMhvqPyRyvSb853qHZoXwpmbG3ZuXZtg2w+xxOPmTASQofg5XneS+CCvb0B78E/+7bsqYBivuVrHYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=yAcNns/e; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q8PD5s026846;
+	Thu, 26 Jun 2025 10:40:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	5xLXEiPmIkFsOWq2iScRt7BhDQ5CLO6wEMeeYC9tPQw=; b=yAcNns/eKTBEPfvF
+	brtge3KBWhvYe/uSk9spqaox79wdlAKfckfm1jprWhwvaHBI4BvhcuI2HlePQNDJ
+	MeoSMRdIO4uGXT1H04TjELdVKe6z6lpj9irdpw6upp7KzjGEC7pE6O9J8KhUty+R
+	VDPvYz/mRhaSOpyH4RJFCS3qLhPYvWusBwhhp03g92LtBsFkdLahsO25v9bnduVm
+	CDPbcT9Rvmrqj4R4DDu0ic4LkIRYqimc2G+M6gEGCstRZMM3+e0Uc1CQSA32di49
+	oADO1A0KfMQa2MMwO+jL1+SEHSY8ZSgI8ExKTt9rOqwj3CklBCDmGVq/xpNp5Y6x
+	5ERS9g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dhvbwe8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 10:40:40 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 24FE640047;
+	Thu, 26 Jun 2025 10:39:11 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9EADBB22D16;
+	Thu, 26 Jun 2025 10:37:51 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
+ 2025 10:37:50 +0200
+Date: Thu, 26 Jun 2025 10:37:44 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Andi Shyti
+	<andi.shyti@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Sumit Semwal
+	<sumit.semwal@linaro.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?=
+	<christian.koenig@amd.com>,
+        M'boumba Cedric Madianga
+	<cedric.madianga@gmail.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        "Pierre-Yves
+ MORDRET" <pierre-yves.mordret@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>
+Subject: Re: [PATCH 1/3] i2c: stm32: fix the device used for the DMA map
+Message-ID: <20250626083744.GA348766@gnbcxd0016.gnb.st.com>
+References: <20250616-i2c-upstream-v1-0-42d3d5374e65@foss.st.com>
+ <20250616-i2c-upstream-v1-1-42d3d5374e65@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aFNYQkbEctT6N0Hb@lappy> <20250623132803.26760-1-dvyukov@google.com>
- <aFsE0ogdbKupvt7o@lappy> <CACT4Y+Y04JC359J3DnLzLzhMRPNLem11oj+u04GoEazhpmzWTw@mail.gmail.com>
- <aFwb_3EE2VMEV_tf@lappy> <CACT4Y+b9u6_wx9BU0hH0L6ogGKN_+R5T7OsgJVFAWm8yeD0E7Q@mail.gmail.com>
-In-Reply-To: <CACT4Y+b9u6_wx9BU0hH0L6ogGKN_+R5T7OsgJVFAWm8yeD0E7Q@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 26 Jun 2025 10:37:33 +0200
-X-Gm-Features: Ac12FXzg-OSj1zle3ASePCxnUdh4OCWuOBwquUmVr7PDJNx1ZtzdOjfrL6XnuBI
-Message-ID: <CACT4Y+b1Sou9bzhsuJ_LAjwCtynWN1iNRnaUkkTecNWxLUfMUw@mail.gmail.com>
-Subject: Re: [RFC 00/19] Kernel API Specification Framework
-To: Sasha Levin <sashal@kernel.org>
-Cc: kees@kernel.org, elver@google.com, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tools@kernel.org, workflows@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250616-i2c-upstream-v1-1-42d3d5374e65@foss.st.com>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_04,2025-06-25_01,2025-03-28_01
 
-On Thu, 26 Jun 2025 at 10:32, Dmitry Vyukov <dvyukov@google.com> wrote:
+Hi Clément,
+
+On Mon, Jun 16, 2025 at 10:53:54AM +0200, Clément Le Goffic wrote:
+> If the DMA mapping failed, it produced an error log with the wrong
+> device name:
+> "stm32-dma3 40400000.dma-controller: rejecting DMA map of vmalloc memory"
+> Fix this issue by replacing the dev with the I2C dev.
+
+Indeed, nice catch ! Thanks a lot !
+
+> 
+> Fixes: bb8822cbbc53 ("i2c: i2c-stm32: Add generic DMA API")
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  drivers/i2c/busses/i2c-stm32.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
+> index 157c64e27d0b..5e0b31aed774 100644
+> --- a/drivers/i2c/busses/i2c-stm32.c
+> +++ b/drivers/i2c/busses/i2c-stm32.c
+> @@ -118,7 +118,7 @@ int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
+>  	dma->dma_len = len;
+>  	chan_dev = dma->chan_using->device->dev;
+>  
+> -	dma->dma_buf = dma_map_single(chan_dev, buf, dma->dma_len,
+> +	dma->dma_buf = dma_map_single(dev, buf, dma->dma_len,
+>  				      dma->dma_data_dir);
+>  	if (dma_mapping_error(chan_dev, dma->dma_buf)) {
+>  		dev_err(dev, "DMA mapping failed\n");
+> 
+> -- 
+> 2.43.0
 >
-> On Wed, 25 Jun 2025 at 17:55, Sasha Levin <sashal@kernel.org> wrote:
-> >
-> > On Wed, Jun 25, 2025 at 10:52:46AM +0200, Dmitry Vyukov wrote:
-> > >On Tue, 24 Jun 2025 at 22:04, Sasha Levin <sashal@kernel.org> wrote:
-> > >
-> > >> >6. What's the goal of validation of the input arguments?
-> > >> >Kernel code must do this validation anyway, right.
-> > >> >Any non-trivial validation is hard, e.g. even for open the validation function
-> > >> >for file name would need to have access to flags and check file precense for
-> > >> >some flags combinations. That may add significant amount of non-trivial code
-> > >> >that duplicates main syscall logic, and that logic may also have bugs and
-> > >> >memory leaks.
-> > >>
-> > >> Mostly to catch divergence from the spec: think of a scenario where
-> > >> someone added a new param/flag/etc but forgot to update the spec - this
-> > >> will help catch it.
-> > >
-> > >How exactly is this supposed to work?
-> > >Even if we run with a unit test suite, a test suite may include some
-> > >incorrect inputs to check for error conditions. The framework will
-> > >report violations on these incorrect inputs. These are not bugs in the
-> > >API specifications, nor in the test suite (read false positives).
-> >
-> > Right now it would be something along the lines of the test checking for
-> > an expected failure message in dmesg, something along the lines of:
-> >
-> >         https://github.com/linux-test-project/ltp/blob/0c99c7915f029d32de893b15b0a213ff3de210af/testcases/commands/sysctl/sysctl02.sh#L67
-> >
-> > I'm not opposed to coming up with a better story...
 
-If the goal of validation is just indirectly validating correctness of
-the specification itself, then I would look for other ways of
-validating correctness of the spec.
-Either removing duplication between specification and actual code
-(i.e. generating it from SYSCALL_DEFINE, or the other way around) ,
-then spec is correct by construction. Or, cross-validating it with
-info automatically extracted from the source (using
-clang/dwarf/pahole).
-This would be more scalable (O(1) work, rather than thousands more
-manually written tests).
+Acked-by: Alain Volmat <alain.volmat@foss.st.com>
 
-> Oh, you mean special tests for this framework (rather than existing tests).
-> I don't think this is going to work in practice. Besides writing all
-> these specifications, we will also need to write dozens of tests per
-> each specification (e.g. for each fd arg one needs at least 3 tests:
-> -1, valid fd, inclid fd; an enum may need 5 various inputs of
-> something; let alone netlink specifications).
+Regards,
+Alain
 
