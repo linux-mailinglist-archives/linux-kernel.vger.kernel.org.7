@@ -1,132 +1,132 @@
-Return-Path: <linux-kernel+bounces-704826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD99AEA229
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A77AEA246
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703B016DDDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6F91889C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470582EE27E;
-	Thu, 26 Jun 2025 15:00:00 +0000 (UTC)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1102EF654;
+	Thu, 26 Jun 2025 15:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k9FZKwHX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EFC2EACFB
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38FB2EF64D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 15:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949999; cv=none; b=bPLYSbqU/MjK11Wc85sCmLZGcMkKslSF8Fo0R6zal54wAvXqO+XWKSqTVNo/E0WFMQYQrurDOAOJ3J0413MQZBZydnk2H3nRdTQ+0l7xztLb0yo99w/48i5/7YU+sW7fdMLQizpKg6cUdD7wX+BJjaoNZJ0q8UKs78e789Yud6E=
+	t=1750950086; cv=none; b=n2JigmjKX74JrhK7++bplHxw7IQdyImMEmgJLCo5Qv7r/ChD5FLzi/6cMjujOiRyc7sf8Gzs6TEz/dXGvTzWSbcbtb6T4tEvCoup8c43sMzeSVL5E9R0egcCj2gyX/gFiZB9GEVLz/yUvHSKOKgscK79SDI1Q0tjDKtzVZsYOI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949999; c=relaxed/simple;
-	bh=qKJ3TOgBVgAG191jBalz7NNV9sHrI5LIdnTqgeqMt7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OY43p9S0AAnfPeOCWFgDjMSwG3HJ3T2lSc8h4Yqu2yRn/7TLWiLaK98yCHJPcLRU/TnQXm3NicHNL6VUgJ6bBZoxhElTOFupHniFc28zhYeTjpQm4syT4/X1gDKcyWoXGhwO0gusNl95wOsOoo4vY+w51qnNRkBfRqKWSx1JaQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-87ed3b792a2so278381241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:59:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750949995; x=1751554795;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r88EEJAotUoVpruAcVJoQDPPsGCVaFlUVSarfnMZBus=;
-        b=TWGFMEHnSQZewFLoq/2MlUiSNi9ia79DA3DdGamlVZPfu0AxTVblMjtptr3wy9t7u1
-         8wAu3g3Aff9QhnQ/kSrP2LkpVP3K4so0SfyJ4h7GHCbfxypmJOthxJDIVTAXM5BwSCGw
-         b39zFQBQkXm/GcjAPvSpa2hcSa2fk/ergyoKMnDr9+TR/RHDNhtDhJbkfSF2ChO8654S
-         c9L1Lcbcu+jfSi+xhk5kay2dPBo9b/EnLsODowfiwjbO3qdFmMQvL5PeP9zVS5f74zMt
-         z8qLSPT6oELQrXXkzT8lOkXULAJD+fkgcJy7gVCtAwOlD9TPGojxB0sXWMATXTHlUNkI
-         3WTA==
-X-Gm-Message-State: AOJu0YyWzjYRoH9gyiBkIKkQmj2borpyGb0ivZ66DouCQmGl54OBpNok
-	cxwX3Yem72dcXqQoyJV6lXOBVqg287ykXT0xNHf/zPEtjWJAjEgk+Zs9+8YuxAhydCE=
-X-Gm-Gg: ASbGncs+lik2HAanm47fsiciNm0A72iIz8++RfbMKQTjao6LO1KiqVK0ZCD1Vjl9nTB
-	oRiJXezHo0sbnKCTAFKFNYVDW9rxUymdljkCV0YSc+To8VetcVmpK+51Kf6/hbvXr6FJZmeydQD
-	/FoYbTmkTcZebS2t2shY2R0VPRZ3DgUvy+fZxSMGX/iaRA7r2NMSmJjt54KKYFJEaN83SfSL2qS
-	GVhvD3xCo1miqCJaJBhsC7myin8uweYw/xibsieGRbzyR6gySxGbnseel1TnrO83XLQJVgGCkob
-	A0hZN1Iqv/leYcUudAShqpP0iZRy4H3rb28IR9LfYsyIDtBYHpuHFozXqcg+YCBEqMh00Lw/iUB
-	b3rFxrlIMmKz/5/MyOUwazayKQPZd
-X-Google-Smtp-Source: AGHT+IEc7Yjq8X6rek4PfLzTOCzomzRWOySprQHK3VBSNhwVWgt+YslzwYP5TwMi4hAifDK7gOJyfA==
-X-Received: by 2002:a05:6102:6c7:b0:4e7:db33:5725 with SMTP id ada2fe7eead31-4ecc6a6e9bamr6580715137.3.1750949994899;
-        Thu, 26 Jun 2025 07:59:54 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ee4cb724ecsm12928137.16.2025.06.26.07.59.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 07:59:54 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5314b486207so321753e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:59:54 -0700 (PDT)
-X-Received: by 2002:a05:6122:3985:b0:531:2afc:461b with SMTP id
- 71dfb90a1353d-532ef3b9108mr6081914e0c.4.1750949993756; Thu, 26 Jun 2025
- 07:59:53 -0700 (PDT)
+	s=arc-20240116; t=1750950086; c=relaxed/simple;
+	bh=IKFVK62nc1DPi+ZXmbCDfuOx5jFjnSp0BYdBVUWUuCA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l4FzgRoeJ65oYx+OtSA7YpFW+63iFglc4cT9lBz+G9WzEZ1yDx93i5WLsD72uSvp4ip8kk5MFNEywaq9ue10etVv/blM/mcm8WIM9XhmT0TZabX53qZyIgxuUD6hBX8b5oZVuJvqMDYF2QDuRb4lMA7puBUZTmh/0feKAYmPDFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k9FZKwHX; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750950085; x=1782486085;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IKFVK62nc1DPi+ZXmbCDfuOx5jFjnSp0BYdBVUWUuCA=;
+  b=k9FZKwHXsw+6XMYm19yFTghYuoLZRwkdzqv61QV12yrEyx/l40bAZuQ4
+   m9JJRIDPnh9XaMKacGHPK6JmyFSaBqbuSGF8CGPHHTJuV7BqzRVE2QCoC
+   QlzmQp6fhSqkIIOw864t2RGDvmc5r/niuE+OyJOXHf4yh7nIpEVWbe313
+   YCWBIH/QbMKSIqVHPV3F7cn64WoTsWOnbLtHbR2BHhXQp2E4MIFGfgrzt
+   rYXYBPFENKyEA6Aa08+xy4IdcSbrG98RAsTJAQdP9TiTximj9NaFXoXf8
+   o3xaXB/d5eBY+ntWV0ZEdaYDwAGXbNYxNeXYGuAVYvBI3UE6DKtm+7RiK
+   w==;
+X-CSE-ConnectionGUID: XMNQ04NsR3m3iEX5YzRY9g==
+X-CSE-MsgGUID: yUqP8sB2TrqWuJ0AKRmJoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53382419"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="53382419"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 08:01:24 -0700
+X-CSE-ConnectionGUID: 6tubOVvgTYCbmHZNdqkRkQ==
+X-CSE-MsgGUID: F5KubKH4Sv+n3uAVp8w0Tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="157103339"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 26 Jun 2025 08:01:21 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 8144E2E2; Thu, 26 Jun 2025 18:01:20 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] x86/defconfigs: Explicitly unset CONFIG_64BIT in i386_defconfig
+Date: Thu, 26 Jun 2025 18:00:34 +0300
+Message-ID: <20250626150118.318836-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626145119.2048423-1-jani.nikula@intel.com>
-In-Reply-To: <20250626145119.2048423-1-jani.nikula@intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Jun 2025 16:59:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU+tgMqHcU8Fwr_XVE9RfNEGHnbEYHQ1DraE=YRvQxJuw@mail.gmail.com>
-X-Gm-Features: Ac12FXx-6bz0nK_P8UsF2VW3B2ShhCuX5ocsE3wCLtJQXSrU2FWYjeTIxhmMFs0
-Message-ID: <CAMuHMdU+tgMqHcU8Fwr_XVE9RfNEGHnbEYHQ1DraE=YRvQxJuw@mail.gmail.com>
-Subject: Re: [PATCH] iopoll: use fsleep() instead of usleep_range()
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Jani,
+A recent refresh of the defconfigs got rid of the following
+(unset) configuration option:
 
-Thanks for your patch!
+  # CONFIG_64BIT is not set
 
-On Thu, 26 Jun 2025 at 16:51, Jani Nikula <jani.nikula@intel.com> wrote:
-> Sometimes it's necessary to poll with long sleeps, and the accuracy of
-> usleep_range() is overkill. Use the flexible sleep helper fsleep() for
-> sleeping in the read_poll_timeout() family of macros to automatically
-> choose the appropriate method of waiting.
->
-> Functionally there are a few consequences for existing users:
->
-> - 10 us and shorter sleeps will use usleep() instead of
+Innocuous as it seems, when the configuration file is saved again
+the behavior is changed so that CONFIG_64BIT=y.
 
-s/usleep/udelay/.
+Currently,
 
->   usleep_range(). Presumably this will not be an issue.
+  $ make i386_defconfig
+  $ grep CONFIG_64BIT .config
+  CONFIG_64BIT=y
 
-Note that udelay() does not sleep, but loops.
+whereas previously (and with this patch):
 
->
-> - When it leads to a slack of less than 25%, msleep() will be used
->   instead of usleep_range(). Presumably this will not be an issue, given
->   the sleeps will be longer in this case.
->
-> - Otherwise, the usleep_range() slack gets switched from the begin of
->   the range to the end of the range, i.e. [sleep/2+1..sleep] ->
->   [sleep..sleep+sleep/2]. In theory, this could be an issue in some
->   cases, but difficult to determine before this hits the real world.
->
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+  $ make i386_defconfig
+  $ grep CONFIG_64BIT .config
+  # CONFIG_64BIT is not set
 
-> Not really sure who to Cc, given MAINTAINERS doesn't match this. Adding
-> some past committers.
+This was found by cross-compilation of the 32-bit kernel on 64-bit machine
+with the result of non-bootable kernel on Intel Galileo Gen 2 board.
 
-Oh well ;-)
+Restore the missing explicitly unset CONFIG_64BIT in 32-bit defconfig.
 
-Gr{oetje,eeting}s,
+Fixes: 0e11f689ec03 ("x86/kconfig/32: Refresh defconfig")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-                        Geert
+v2: fixed the authorship and amended the commit message (Boris)
 
+ arch/x86/configs/i386_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
+index bd182325ebb4..9fc5c2eb58af 100644
+--- a/arch/x86/configs/i386_defconfig
++++ b/arch/x86/configs/i386_defconfig
+@@ -28,6 +28,7 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_PROFILING=y
+ CONFIG_KEXEC=y
++# CONFIG_64BIT is not set
+ CONFIG_SMP=y
+ CONFIG_HYPERVISOR_GUEST=y
+ CONFIG_PARAVIRT=y
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.47.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
