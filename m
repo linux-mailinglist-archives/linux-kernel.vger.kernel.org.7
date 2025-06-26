@@ -1,178 +1,187 @@
-Return-Path: <linux-kernel+bounces-704389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25025AE9CEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:56:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F96AE9D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5307B0A55
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:55:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D117A48A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A37F1C6BE;
-	Thu, 26 Jun 2025 11:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299A61459EA;
+	Thu, 26 Jun 2025 11:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="EvLKy83+"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011020.outbound.protection.outlook.com [52.101.70.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjUGiUR5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A982F1FEC;
-	Thu, 26 Jun 2025 11:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750938999; cv=fail; b=ITFZPVqwHf4Fy/8QejnVcbu1kKx2/ILx1/9+KjJr7A+rVEQWBmq5mPScKDPFNf70z7157LIQLM3HWl6K+cuYUIp+vrjRht585mSXN2+3EHQG0Adn+ChAS99JTa4mMIZT4v0Mkkl75nyAPcXuAeRr2DTmMU7z4AOHJMQponerWZs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750938999; c=relaxed/simple;
-	bh=ypqYPIQmafbTYlU0K3vdDJJvc/VGCOkjBJ40b72rH3E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lqhmJGXnyFUMkCd4KH7wVMGXtkGa65p6g3LxpVotPb+XUxhvOj/Lr00KfUuppM64ZlvE1PBKiLnOf5Hr9k22Zjd5Ylkdu2fPYnrAev6mncmEdcn6rZx+E/imTDGUI8S9W/eMXn3pu4cCe/wzmvoUs96Jk8Qoa63uXwgiel6ywFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=EvLKy83+; arc=fail smtp.client-ip=52.101.70.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WfWUlkwPngilvOP7+C4j02A+X/OiKZdB/7Nal1hiw9viTF4G7kWN0us9tOa6MGeOpPw1JOO8FdFBPeqZLVRFvNZixqbBy+SoH68npayyixxLJ0M4Nkmwz4X+Kz5Y83feIFb+DJwEw0chh3FvObhbe8ja/QVKex0qk7gwiND5MgiN0foYGc9lwY3Urj5mgda7ZNBjx04V+ToAHy+aocJcgiVvenXJYrN3Peizm5kTSMqgMdD2SN3keibmrHavpNakDJGj5DY1pqRr5/eslreHAulWZ6983sZ8gydZrNNR+LiJemBR4ZSvYwWWSB1ZOHO61Mi4kzlIcaAMykgS/PzpEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nZy5zpYLihWpjMxJV4JADIoOVINRxrpxm+YX6JDqy1s=;
- b=hYsnYJ0mU/dU92Ij4AWvbTRJIgBag2bpkQ5Lero0iaqrOHJtWD6lO9iZ+D22xXxyd3CRc3xcVaN40OOqSn5uO84eptn/nTfOxdQR7iqsLsL4yd1VrNP2KmM7AUJh1ZVwgFOR0u9hbjOS0Z1oKBTt06/g9e6Ee4Uf5FczrfhUI2PExAlVOLI0xBS72kKxHtLGdUuOU8ZQn78XNpM8cESuejuBsVxEVvwIjLRDywabaSLe4sDaV32uNVAFmbPfuY/nmv5fT8ld8D+Ax8/N0ockR+I5qTnqmHOKJ36Rh/REK+QC+GHCKAmWOenVPSQ7J6gkOKeCARee/UgiLOsVoaBURA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nZy5zpYLihWpjMxJV4JADIoOVINRxrpxm+YX6JDqy1s=;
- b=EvLKy83+WjBnkD4yWEwieVsRz0B4KFnZU2Th6OxbEKOgEhWZZOW49jpHF+4jO1uC0YDJHJIIE5sNZiBctftj87059oEfoM0DfVOzowUY+JEJNTI/s66pGKcVKhso0FvKIQK1VV6i3Ljg3wFjLdPFrTgv7zec4rZ6nFmKRECiYwY=
-Received: from AS4PR10CA0009.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5dc::12)
- by AM7PR02MB6002.eurprd02.prod.outlook.com (2603:10a6:20b:1ad::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.16; Thu, 26 Jun
- 2025 11:56:35 +0000
-Received: from AM4PEPF00027A5F.eurprd04.prod.outlook.com
- (2603:10a6:20b:5dc:cafe::23) by AS4PR10CA0009.outlook.office365.com
- (2603:10a6:20b:5dc::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.20 via Frontend Transport; Thu,
- 26 Jun 2025 11:56:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
- action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM4PEPF00027A5F.mail.protection.outlook.com (10.167.16.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8880.14 via Frontend Transport; Thu, 26 Jun 2025 11:56:35 +0000
-Received: from pcczc3457tyd.2n.cz.axis.com (10.4.0.13) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 26 Jun
- 2025 13:56:33 +0200
-From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20-=202N?= <kamilh@axis.com>
-To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <kamilh@axis.com>, <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <f.fainelli@gmail.com>, <robh@kernel.org>,
-	<andrew+netdev@lunn.ch>
-Subject: [PATCH net 0/3] net: phy: bcm54811: Fix the PHY initialization
-Date: Thu, 26 Jun 2025 13:56:16 +0200
-Message-ID: <20250626115619.3659443-1-kamilh@axis.com>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1553A279331;
+	Thu, 26 Jun 2025 11:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750939019; cv=none; b=PnQcQgT41TIn4uNkp0V7qz/ZzXcneiyrZrpQ8vwyZ5H+XyqD3c+4JWBYavBuGKmMDizk56x7CfG9fK9ub4yE9J951fc+L58rxfsd9R3gMq5u7Tkd6q7OhJ6vRWVejVRVPw7E538eF2KOm3jswegFgk3vZB+VIaDdZOoc4Ca1Jlg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750939019; c=relaxed/simple;
+	bh=ur3iJNC/prPNA/VGCtNu1nPwmXw0oOudMWBo6/Ic2h4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Qtdf2ynQRU4F9vywRSvxT370GFN8xCFjeQNXHuA8PuMAD4g0Eps641Z6kq0fZTh5LOSEjj2zSEVp6AwGpyuzmsa8882pcyhKwi0IdTYv71LwKvkleGuO1B3qEwr+vv0b27pwz828Ds4gUu25h5h1v882mOy9LbY8UHI3I+4jzzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjUGiUR5; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750939018; x=1782475018;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ur3iJNC/prPNA/VGCtNu1nPwmXw0oOudMWBo6/Ic2h4=;
+  b=hjUGiUR5PpZuCsjDM9090m6RICouKpgUMtiwJVJqCStWAV7UINkYKAIY
+   +QfA0jYfPCf/IlF9DjQ06xgyS63sQ4TCs2S6bdSVWL0AjyuWVbCzgO7Kc
+   XND5RiMMRM7siYdud11YIwi4cuuwR5rwEFZ3a+qSLT3nx1aoVajGVGKNC
+   nhJDLPDZXsXGJS31EpOjDWQ6nfLkkxHb6SKPVy516d24BU4eaYIjlGDaZ
+   P2tbWWdd2Il0uAER65N9DaLnLS2ea06pmYOwH4d5Dhy3y6Wi3wWujZb0+
+   N/c9A1SRr9J4dOcmG6IKSJ4XeHoFmj4FY66t8xZ33yTjxefj/zWmuuN19
+   w==;
+X-CSE-ConnectionGUID: EEA4aNc1ScahJqWYW4xoIw==
+X-CSE-MsgGUID: cwXRo62RTM2gZr1EpAMRLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="53304559"
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="53304559"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 04:56:58 -0700
+X-CSE-ConnectionGUID: BSd9wuZfQ+OY0bIsUy5XOA==
+X-CSE-MsgGUID: IIxyWJarR3WIMnHBRwk8sQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
+   d="scan'208";a="152800586"
+Received: from yungchua-desk.itwn.intel.com ([10.227.8.136])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 04:56:56 -0700
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: broonie@kernel.org,
+	tiwai@suse.de,
+	linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
+	linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH 07/15] ASoC: rt711-sdca: wait codec init in hw_params
+Date: Thu, 26 Jun 2025 19:56:17 +0800
+Message-ID: <20250626115625.536423-8-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
+References: <20250626115625.536423-1-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A5F:EE_|AM7PR02MB6002:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06efc5e5-ac7c-4be7-898e-08ddb4a88005
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aWJ0UUtqekg1N1hZNGk4MmZ5N0RtK29ubzJENGhtdUxQRzZ2ZTZGVXhyRys5?=
- =?utf-8?B?dUVSa3NWTG1GejZqOXJFenozb1FPQzVuUnBwRHdKMGQ1R2JCYlo2am5BeG1G?=
- =?utf-8?B?OWhaMEl3encwQTVXTXVoWm5NVHFiN0dabjQ2Z05iUmtXY0FHaUhtUHNaejUy?=
- =?utf-8?B?TVZZTXM5aE9wVjk1K2VKcUsxS0k0eU43K0JWQjNKQko1clAwcThxVlZKVnNV?=
- =?utf-8?B?MmZqeFY5ZVhobzJVekt5N3Z6cktlUXlPT3g2bGZDcWFuMzNIRFZWTlNLUVhv?=
- =?utf-8?B?eWcxcTFpL2lSS0V4ZlB5dHlrMEZHMlFoeFBJM1dpM01ISlk5a0M0cnhGcmNT?=
- =?utf-8?B?b3RhcFYveEVpS2l2VXpUdUV1dHhFVFhzYmZlL0hMUk5zRC8yS2tleStEKzVG?=
- =?utf-8?B?KzlGaVBlZGpUNWhYMWZiMnNHQXMxaERBdVd3SGtrOUJxSGR2ZWU0MUhGYmtK?=
- =?utf-8?B?RXFlZmJjRHVnbGg2cVZjcFV3bGgwbmlwWVBYY08yNUZOcS90N3ppK2VzbVY1?=
- =?utf-8?B?Tm8wZnRSZGw4TGtzNHZCWnhqd2c1MEdhNitqOUl2Q0RzWThhZ1VYa0l6OUdN?=
- =?utf-8?B?UWZZVHVUbFZpZjV4WVZEMTFvZ21EYjNQenVZa2dkVUFxV1NrTTdoWnZvWGh6?=
- =?utf-8?B?Z3dMZVVOcE5jUmtGYjlGVDN5N3lTakxIOHFvWUtCNldyT0l5ZzUvSS9OV0Q0?=
- =?utf-8?B?a0R2SXBJaEdpZVdmMHBkV0tSMXRvaU1iMHQwYngxU216ZlYzS1VjeXdRdDAv?=
- =?utf-8?B?RG8yaUYvcDlaNGZjUTF4OVB3Vm9FWWNQTHBoOWYyNEZHQk9JYzVBYWZyUFVl?=
- =?utf-8?B?cGtpYnFNOHZxMitwT2NvTmo1YjE0UkxTOWNhd0hKNEZ0UVl5SFVGMTNsU2pi?=
- =?utf-8?B?VERtb0kwMmliMENCYTlnL3FwZkpvMUx2ZXZtQ05jRlJybHg4L1BYck94NWZ4?=
- =?utf-8?B?eXNSblBlZHFHMm56L2RWTUxVRklXdk44Ukt6M1BzTVFHNWJ1RDIxdGtQRGQ5?=
- =?utf-8?B?MkpvVzdYZFNnNjdaK0JTTjFDQ2xUTUlxYXRWUWRQQmp4alY2YmhhN2lmSC80?=
- =?utf-8?B?bVJBU1BNL3RKMFRBRVFCdS9sdittMEptcXNxaVNYL2p3bEJmNFVXVE1KSlQr?=
- =?utf-8?B?c3F3QlZMOTUzMUIvR3FyTVUvWU1FVDE3NDFsbW85dkw0OXF6dFMxNi9BT0JO?=
- =?utf-8?B?YnJkM3RLbTUyR3VTMVJHMnZiMEp0Szl2Z2VnNUxqRmp6cjN4NXVKM2dqbUtr?=
- =?utf-8?B?SkgyTmJ1b3RBTU1xeUlhRDRnNGNaQ0dNOVBVYzlDTElOQnZaaUJKTG9YYko2?=
- =?utf-8?B?Y3ZUclZIbXc5V2szZ0V3Nk9PNFpmRlhJK2dTQjRkUk9CYU1wa2hVMlRabDZz?=
- =?utf-8?B?VGExVG9VMExGT056cC8vSFVLeTk0THR2N0ppL25PTE1HczdUNnoreFpjVEtv?=
- =?utf-8?B?ZHVHZ0owWWlLdmNyMlpHczVOL3E2NjRVeS9SYm9ta1NCMlh1N3hNeU4zZVNH?=
- =?utf-8?B?Z2FIQktKYVZheWFseEVpekJEV0ZnS1JZT1N6RWlRUU9DenJUSU9TbGpJR3VO?=
- =?utf-8?B?a1FINldwOEdrUVRveG5GRjI5blZ4RC9ZSHE0YTJDcGM2UEczUE9GcXhiT3FQ?=
- =?utf-8?B?Ynl2QmREZ1lCK3NoY3orS0I4Z0N1aDJtVDQyTHVmNng4dktVQjJkYXl1VUIy?=
- =?utf-8?B?YUttMVNIRVYxUVl4aHlkNlZmMzFZclRYK1RTUStEWElyN202REdnd3E5R1Zm?=
- =?utf-8?B?bjd1NXpPS1l2dWN3aUduZ0RqdEFxT2I4N3JlTEIyaEt1cFJTNTFjZWFnM09K?=
- =?utf-8?B?VlJTbys0OXNQc05uMzNxRTFOS3FmVFA0a0xSQm9QT3dEWXcvczh0RWZSdUx5?=
- =?utf-8?B?ZWF1dkRGbUVPNi9HbUxwaTJ4Y1I1endYQW0wTmhmdkdmcXFSbThYdkZ3WmZJ?=
- =?utf-8?B?TzV2cjJKL3V4TGtrek50MmttREY5ekduUFpIVTl6ZFQvWWdHTU9iUG81VW54?=
- =?utf-8?B?OGQva1NJbVV5aE9BWUd2RndHMGZKZ3B6d2dHU3EvMEkwUGtBbGtwdERHTmxz?=
- =?utf-8?B?aldVaEsxUzNJTUVqdGlWUi9BSkJrYXhKTDM4Zz09?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 11:56:35.1449
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06efc5e5-ac7c-4be7-898e-08ddb4a88005
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A5F.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6002
 
-PATCH 1 - Add MII-Lite PHY interface mode as defined by Broadcom for
-   their two-wire PHYs. It can be used with most Ethernet controllers
-   under certain limitations (no half-duplex link modes etc.).
+Move regmap sync to rt711_sdca_update_status() when unattach_request
+is set, and only do regmap sync in resume when no reattach needed.
+And move waiting codec init to hw_params when the codec really need to
+be initialized. The change can shorten the resume time.
 
-PATCH 2 - Add MII-Lite PHY interface type
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Reviewed-by: Shuming Fan <shumingf@realtek.com>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ sound/soc/codecs/rt711-sdca-sdw.c | 28 ++++++++++++++++------------
+ sound/soc/codecs/rt711-sdca.c     |  6 ++++++
+ 2 files changed, 22 insertions(+), 12 deletions(-)
 
-PATCH 3 - Fix the BCM54811 PHY initialization so that it conforms
-   to the datasheet regarding a reserved bit in the LRE Control
-   register, which must be written to zero after every device reset.
-   
-Kamil Horák - 2N (3):
-  net: phy: MII-Lite PHY interface mode
-  dt-bindings: ethernet-phy: add MII-Lite phy interface type
-  net: phy: bcm54811: Fix the PHY initialization
-
- .../bindings/net/ethernet-controller.yaml     |  1 +
- drivers/net/phy/broadcom.c                    | 30 ++++++++++++++++---
- drivers/net/phy/phy-core.c                    |  1 +
- drivers/net/phy/phy_caps.c                    |  4 +++
- drivers/net/phy/phylink.c                     |  1 +
- include/linux/brcmphy.h                       |  7 +++++
- include/linux/phy.h                           |  4 +++
- 7 files changed, 44 insertions(+), 4 deletions(-)
-
+diff --git a/sound/soc/codecs/rt711-sdca-sdw.c b/sound/soc/codecs/rt711-sdca-sdw.c
+index 6eb05871db37..ec11e0033a28 100644
+--- a/sound/soc/codecs/rt711-sdca-sdw.c
++++ b/sound/soc/codecs/rt711-sdca-sdw.c
+@@ -142,6 +142,7 @@ static int rt711_sdca_update_status(struct sdw_slave *slave,
+ 				enum sdw_slave_status status)
+ {
+ 	struct rt711_sdca_priv *rt711 = dev_get_drvdata(&slave->dev);
++	int ret;
+ 
+ 	if (status == SDW_SLAVE_UNATTACHED)
+ 		rt711->hw_init = false;
+@@ -169,7 +170,20 @@ static int rt711_sdca_update_status(struct sdw_slave *slave,
+ 		return 0;
+ 
+ 	/* perform I/O transfers required for Slave initialization */
+-	return rt711_sdca_io_init(&slave->dev, slave);
++	ret = rt711_sdca_io_init(&slave->dev, slave);
++	if (ret < 0) {
++		dev_err(&slave->dev, "IO init failed: %d\n", ret);
++		return ret;
++	}
++
++	if (slave->unattach_request) {
++		regcache_cache_only(rt711->regmap, false);
++		regcache_sync(rt711->regmap);
++		regcache_cache_only(rt711->mbq_regmap, false);
++		regcache_sync(rt711->mbq_regmap);
++	}
++
++	return ret;
+ }
+ 
+ static int rt711_sdca_read_prop(struct sdw_slave *slave)
+@@ -434,13 +448,10 @@ static int rt711_sdca_dev_system_suspend(struct device *dev)
+ 	return rt711_sdca_dev_suspend(dev);
+ }
+ 
+-#define RT711_PROBE_TIMEOUT 5000
+-
+ static int rt711_sdca_dev_resume(struct device *dev)
+ {
+ 	struct sdw_slave *slave = dev_to_sdw_dev(dev);
+ 	struct rt711_sdca_priv *rt711 = dev_get_drvdata(dev);
+-	unsigned long time;
+ 
+ 	if (!rt711->first_hw_init)
+ 		return 0;
+@@ -456,14 +467,7 @@ static int rt711_sdca_dev_resume(struct device *dev)
+ 		goto regmap_sync;
+ 	}
+ 
+-	time = wait_for_completion_timeout(&slave->initialization_complete,
+-				msecs_to_jiffies(RT711_PROBE_TIMEOUT));
+-	if (!time) {
+-		dev_err(&slave->dev, "%s: Initialization not complete, timed out\n", __func__);
+-		sdw_show_ping_status(slave->bus, true);
+-
+-		return -ETIMEDOUT;
+-	}
++	return 0;
+ 
+ regmap_sync:
+ 	slave->unattach_request = 0;
+diff --git a/sound/soc/codecs/rt711-sdca.c b/sound/soc/codecs/rt711-sdca.c
+index dd6ccf17afd4..a4027796dafc 100644
+--- a/sound/soc/codecs/rt711-sdca.c
++++ b/sound/soc/codecs/rt711-sdca.c
+@@ -1327,6 +1327,8 @@ static void rt711_sdca_shutdown(struct snd_pcm_substream *substream,
+ 	snd_soc_dai_set_dma_data(dai, substream, NULL);
+ }
+ 
++#define RT711_PROBE_TIMEOUT 5000
++
+ static int rt711_sdca_pcm_hw_params(struct snd_pcm_substream *substream,
+ 				struct snd_pcm_hw_params *params,
+ 				struct snd_soc_dai *dai)
+@@ -1362,6 +1364,10 @@ static int rt711_sdca_pcm_hw_params(struct snd_pcm_substream *substream,
+ 			return -EINVAL;
+ 	}
+ 
++	retval = sdw_slave_wait_for_initialization(rt711->slave, RT711_PROBE_TIMEOUT);
++	if (retval < 0)
++		return retval;
++
+ 	retval = sdw_stream_add_slave(rt711->slave, &stream_config,
+ 					&port_config, 1, sdw_stream);
+ 	if (retval) {
 -- 
-2.39.5
+2.43.0
 
 
