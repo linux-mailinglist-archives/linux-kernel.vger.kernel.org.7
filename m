@@ -1,101 +1,69 @@
-Return-Path: <linux-kernel+bounces-704141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CE5AE99F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:29:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA22AE99FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6C64A6CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A2E1C4209E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 09:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07412BEC3B;
-	Thu, 26 Jun 2025 09:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB7411713;
+	Thu, 26 Jun 2025 09:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzFPB8Wm"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cp1a70XI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9211129C35F
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 09:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FE22264C3;
+	Thu, 26 Jun 2025 09:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750930157; cv=none; b=hPIeR5EB1aa3pbrSDDdpkUuY9S+EXrrTSiLKaFfv3u4UmBEVysL5TEr8PcwoXs7tU6TW52kOvl1l6oSBfd4VNF2EiZmXAKd5lmbXw5ZI+1OG0lGwppwChBdBjUB2jNdHRDU3emtKwZdGdXBGOc1qn1a5dxHumhhBqFhTNrHrzKI=
+	t=1750930248; cv=none; b=MWHvNRJGRaVSkPUGDyMk1ZTDJOIV0gBxev1vWC77hzndOSsCHTbN0zDEFNs/J7RtaZWGrjSe54NUh+7wlakNPceyNM8ryTBUuTYm+7Y1S0ciy03EYutc/RnFMENps1UYmDOiefyev/ugRerikXmbAE1bDvRtvwa6GgOI8NaUq3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750930157; c=relaxed/simple;
-	bh=kDfLWh1mGf3KaWrnD/PC2Ds9y9iJDXiahDxr7ekg2iY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V67p7cERYr5JApLfohVLn93KCyFwN3E/un0w0SAPK0WXuBpgUVBFcNSdDel6Eqt5OJP3NxyYUkW2/3HVaFTOx95jxg5ltFMEGKtjrupoZeu2IOU27NJbxsdM2oNegSSUTK6sUkgru2iQTvQZ9LbzT3l/aJT10/wjbnj9zaRl8Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzFPB8Wm; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso703590f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 02:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750930154; x=1751534954; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vfPg1bPzYUgjbdKxXUbIHHPyI6o1ylxUcethQzPOy2s=;
-        b=UzFPB8WmwKtbvzglFWT4ncqztO4IkXItBo+kxrDe54H0EMY4+js6HlFRMQGuZOhP98
-         17RI8+5SwOjLzL4fZPj652VBHDUj80lJsqLpuYu9LrnpzGlFCIM2J38GdjXZXZ0Qmzls
-         vvymSiTvPtxFmdOzAz8MBN8s8dUoJWw/VAsCL9RGuz8w3uhH2301MXVT7ntxLhNPXZPp
-         UtyuFVVrbJpxlbqCTWtwNB09tYE0C9OaOE46miPcdeh1nEXle3PsJABF6fgVsbDwTcXD
-         McK4gg6y4ED40sQzEuypiYtpLt9aJfzp7CvT4gWDXSLPVksPVkgJN4MPoZKn9MpgXK0S
-         5oTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750930154; x=1751534954;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vfPg1bPzYUgjbdKxXUbIHHPyI6o1ylxUcethQzPOy2s=;
-        b=o9P634EByenlD+OnT4IwtUxZS2qYjPwLeDbifzmwOWgH3qQUyGSmcLkP3TkZjgsbwD
-         cRufK+6FhSOJxEXK0sUbMuC5YN6DKRfFOSta/dQMwVixB05SKQBr5BdVm5/+4QK/a8nt
-         WrHTZQlC5j10k+c3fso2swwo5kzz89QRvrc1ZThxSbDeQ6rPS9urQOOwX00eIKITGEHA
-         CZiUO4rBDg8ibIsNj0C6EouPGwl/SvU87uOnX9I/aFEctB/vqQ91YeNjUv8vMDTenvI7
-         hzkv7FWN5SccXmY610PQdhk6Od0ciE2T3KCqvd7SxB21XYRd9CQo15vNB9zxWQkfGtfn
-         /OKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOTIvWv2jwmzOfq/Rpq3kqzuljABXROtCczwlH5TMLWHry7toUW8NB0A9gIbcvGoknoqSa830McsD9ToA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0I4HfWZJSd2ekDSpB4voFW47tpYJ2sl1j1O8Zp/L7x02KCieZ
-	56KYCBpywZPLJhvUo6kfl5lnu7n3ltHom5R6H5jjKYonyzES6LsKr3XH
-X-Gm-Gg: ASbGncutHnB/B2BGpaR6i0ESuXHvnm6dUdmrBuvI6lPPinDmMCxO8v44X0UMt0xv/hF
-	NDFU44ICQequAuc6Zc1t8eVBuosn/4LWL6zJ+5YI3q3G18rsf6reIkk8b6bHWBiOxyX/JOlHues
-	aRxj4BmrGghRlYJMk8JXdI82o9qYwQzmCJsY3NrEVQH7H6c6TOomIJ0+MJvxK3evLgtD7PwH3CW
-	/KdKjui67CQjE3Iljst36Cen3rFAdJxzTMdfaLkgvA0S1DJbf8imm+ZYZSvcIEsDtkEoAwbjrA/
-	WA6Q/eN8wHzrkXJi9prk2hsyMjNFSzm8fG3p+dHfmGGjsBA=
-X-Google-Smtp-Source: AGHT+IFKXFVQqQF/e1a/uqOSmFAWHw7Suwi2bBnIU1uj7qmwG8d6IbJ3C4uZB9qONaL/NItzf1KkxQ==
-X-Received: by 2002:a05:6000:4112:b0:3a5:8905:2dda with SMTP id ffacd0b85a97d-3a6ed646c23mr5123244f8f.43.1750930153481;
-        Thu, 26 Jun 2025 02:29:13 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::3086])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a6e8113b00sm7002427f8f.96.2025.06.26.02.29.09
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 26 Jun 2025 02:29:13 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: david@redhat.com
-Cc: 21cnbao@gmail.com,
-	akpm@linux-foundation.org,
-	baolin.wang@linux.alibaba.com,
-	chrisl@kernel.org,
-	ioworker0@gmail.com,
-	kasong@tencent.com,
-	lance.yang@linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	lorenzo.stoakes@oracle.com,
-	ryan.roberts@arm.com,
-	v-songbaohua@oppo.com,
-	x86@kernel.org,
-	ying.huang@intel.com,
-	zhengtangquan@oppo.com
-Subject: Re: [PATCH v4 3/4] mm: Support batched unmap for lazyfree large folios during reclamation
-Date: Thu, 26 Jun 2025 17:29:05 +0800
-Message-ID: <20250626092905.31305-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <a5b5b0aa-21c4-4abf-b323-63af96aabcd5@redhat.com>
-References: <a5b5b0aa-21c4-4abf-b323-63af96aabcd5@redhat.com>
+	s=arc-20240116; t=1750930248; c=relaxed/simple;
+	bh=IlkNMzux1bdmIAPi2kGZMq826sbYkBUtao2A2Cu2dyg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jm3U8BuosNJE4GS2HEono+j4QOikshVPCZgA387QTWNiOQNJXRHcfjJBh8LXx0c4WCoKfx9j1P2CBIFnfzGRjVVr6hzeFJa/VZrVoHpIvBv+lQJEyYW4OEWWev73upM0vNw4TSMCCq8mJXGfsKpEj6HNxhB81rocOO1xcD5XJvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cp1a70XI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q0EDtk014499;
+	Thu, 26 Jun 2025 09:30:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+8ZFQIryNLDWfo2NkMJE/R
+	C9YVC5xe0Yms/pvV0HVSs=; b=cp1a70XIjAjlk71phocySKzDzPRObUThtKBEcR
+	6xXbsXZqidpP/9CVkwFGOKzP97rfaPfcG/XsJRhMHWOAuVDtDHZPu2eJL96xBNP3
+	nc3S3E3Le8O7DNbKDcgd4DddDCz93c26A/Jz8ZjSO5vtHqKk/S7e9mCeLac+Eg9U
+	a+O9gQS5gZdO24SuXN9a20APJQsM1zkhD+C1uLKNP85Z4nFxR52XfZiQm8c9iv90
+	w24va34TDgWWZuXxwp0HeRdfP3yqwGec/joH8+rx9OmEmiUwntMigApvXula6i0J
+	EEELdOf8g5H6VFu1teqKrJDqjOGlxwqdfaDW8ZyeYwIyuqiw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f3bgjt0e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 09:30:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55Q9Ugvs010132
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Jun 2025 09:30:42 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 26 Jun 2025 02:30:11 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <cros-qcom-dts-watchers@chromium.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ling Xu <quic_lxu5@quicinc.com>
+Subject: [PATCH v3 0/2] arm64: dts: qcom: sc7280: Add property for sc7280
+Date: Thu, 26 Jun 2025 14:59:50 +0530
+Message-ID: <20250626092952.847393-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,99 +71,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: C2LI0kuCZwWmT940ErjJ_sA-oZBHyG0r
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA3OCBTYWx0ZWRfX9Qhcq7/DljAF
+ Mk/I02zkV76/mcPZRxfHVDtUL6LUPAfOEzZ56YFVOJxS+FNtHWZ7r1EsemMpNbiiunI9vn1FH5T
+ bSpqhikZNN6bSz/ufHSlfZJZxKVV1DYUOzNhraqcIEq9Mj7akflwO46cNWmnC2YjDP8z2e8qhDe
+ 3jpFRNoG7mJVD7GXhHxgHIC/6DDH/9WgDBIINWjOlaYBwYBHO29nQAl2JLcF+AGH9fgKOVuEjjs
+ 4uO2SznwUa6YPrhD+jBSZFhhFsuZUKd3pCOYFBd74YsVtJfPDbQOPdfr4f+FOalS0TSrM1OQdr5
+ rE+eaktUdfUNyB2bfL1c7lCVnXchotAvs3BHL9aoy4fInTVnGl9Nc/ATot67xFKGf2oAq7NDp5C
+ kSEsMAyflT1LM9zTStq/VgsNQeoonapQ78ty5zxqEns3j+OYjYRtKFk1cORvJCICHOvPbyoK
+X-Authority-Analysis: v=2.4 cv=L4kdQ/T8 c=1 sm=1 tr=0 ts=685d1343 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=nP9DjPefQNtmf87SolwA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: C2LI0kuCZwWmT940ErjJ_sA-oZBHyG0r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_04,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ spamscore=0 phishscore=0 mlxlogscore=364 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506260078
 
-Before I send out the real patch, I'd like to get some quick feedback to
-ensure I've understood the discussion correctly ;)
+This patch series add memory region, nsessions and dma-coherent property
+for sc7280.
+Patch [v2]: https://lore.kernel.org/linux-arm-msm/20250516110029.1637270-1-quic_lxu5@quicinc.com/
 
-Does this look like the right direction?
+Changes in v3:
+  - Dropped dma-coherent change.
+  - Modified indentation.
+Changes in v2:
+  - Added compatible.
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index fb63d9256f09..5ebffe2137e4 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1845,23 +1845,37 @@ void folio_remove_rmap_pud(struct folio *folio, struct page *page,
- #endif
- }
- 
--/* We support batch unmapping of PTEs for lazyfree large folios */
--static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
--			struct folio *folio, pte_t *ptep)
-+static inline unsigned int folio_unmap_pte_batch(struct folio *folio,
-+			struct page_vma_mapped_walk *pvmw,
-+			enum ttu_flags flags, pte_t pte)
- {
- 	const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
--	int max_nr = folio_nr_pages(folio);
--	pte_t pte = ptep_get(ptep);
-+	unsigned long end_addr, addr = pvmw->address;
-+	struct vm_area_struct *vma = pvmw->vma;
-+	unsigned int max_nr;
-+
-+	if (flags & TTU_HWPOISON)
-+		return 1;
-+	if (!folio_test_large(folio))
-+		return 1;
- 
-+	/* We may only batch within a single VMA and a single page table. */
-+	end_addr = pmd_addr_end(addr, vma->vm_end);
-+	max_nr = (end_addr - addr) >> PAGE_SHIFT;
-+
-+	/* We only support lazyfree batching for now ... */
- 	if (!folio_test_anon(folio) || folio_test_swapbacked(folio))
--		return false;
-+		return 1;
- 	if (pte_unused(pte))
--		return false;
--	if (pte_pfn(pte) != folio_pfn(folio))
--		return false;
-+		return 1;
-+
-+	/* ... where we must be able to batch the whole folio. */
-+	if (pte_pfn(pte) != folio_pfn(folio) || max_nr != folio_nr_pages(folio))
-+		return 1;
-+	max_nr = folio_pte_batch(folio, addr, pvmw->pte, pte, max_nr, fpb_flags,
-+				 NULL, NULL, NULL);
- 
--	return folio_pte_batch(folio, addr, ptep, pte, max_nr, fpb_flags, NULL,
--			       NULL, NULL) == max_nr;
-+	return (max_nr != folio_nr_pages(folio)) ? 1 : max_nr;
- }
- 
- /*
-@@ -2024,9 +2038,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 			if (pte_dirty(pteval))
- 				folio_mark_dirty(folio);
- 		} else if (likely(pte_present(pteval))) {
--			if (folio_test_large(folio) && !(flags & TTU_HWPOISON) &&
--			    can_batch_unmap_folio_ptes(address, folio, pvmw.pte))
--				nr_pages = folio_nr_pages(folio);
-+			nr_pages = folio_unmap_pte_batch(folio, &pvmw, flags, pteval);
- 			end_addr = address + nr_pages * PAGE_SIZE;
- 			flush_cache_range(vma, address, end_addr);
- 
-@@ -2206,13 +2218,16 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 			hugetlb_remove_rmap(folio);
- 		} else {
- 			folio_remove_rmap_ptes(folio, subpage, nr_pages, vma);
--			folio_ref_sub(folio, nr_pages - 1);
- 		}
- 		if (vma->vm_flags & VM_LOCKED)
- 			mlock_drain_local();
--		folio_put(folio);
--		/* We have already batched the entire folio */
--		if (nr_pages > 1)
-+		folio_put_refs(folio, nr_pages);
-+
-+		/*
-+		 * If we are sure that we batched the entire folio and cleared
-+		 * all PTEs, we can just optimize and stop right here.
-+		 */
-+		if (nr_pages == folio_nr_pages(folio))
- 			goto walk_done;
- 		continue;
- walk_abort:
---
+Ling Xu (2):
+  arm64: dts: qcom: sc7280: Add memory region for audiopd
+  arm64: dts: qcom: sc7280: Add nsessions property for adsp
 
-Thanks,
-Lance
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+-- 
+2.34.1
+
 
