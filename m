@@ -1,144 +1,189 @@
-Return-Path: <linux-kernel+bounces-705077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368F7AEA4E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98344AEA513
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E8D5604F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5153BFEEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 18:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9078E2EE26F;
-	Thu, 26 Jun 2025 18:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B332EF665;
+	Thu, 26 Jun 2025 18:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjSKrhN9"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Ziydn1LJ"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5B2ED853
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8992ECE80;
+	Thu, 26 Jun 2025 18:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750961115; cv=none; b=S+xIR+GEqQGs1djiNS0dwy2zRmmZz0xBC5J904SVDiB0ilr8LzrIIL33KRzOhtXpecloHUYpMt5oyW89MWU+ailu+oW0hJUgWpx+HLpIsbDoPqjVqaQBAH2DfxemlYw9kjMS9T4qNuogemrdsEYo7kWMyZD0jeYbkcQ333xBa9M=
+	t=1750961750; cv=none; b=BZEedQGNbzfVMxHVETPuEwB6m/HULzHlaRleZ9XYBxKhxRB/gywVrpLs7yWBk49Wk5m/o2JliKOLXM9P5fJZaw344AH14CNB1E4p7AO6zQ9/4xR5TUslGMTHEIEMfNNrMs16DvOfqaqCFS4/QcwknrMFq3Qs86/9ufuUrrRLTTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750961115; c=relaxed/simple;
-	bh=HT1PZrDkhp6DI0bsi07qe2ZDkBoSKcXmqoFHOkEVHss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hh9D5CS9TcJ3y/I3sU9CWZ+r6f/BDzg9uIzOLbbyANhHFqbB7WABWaJNtu/pbRizyAV8ytFXV9+QIHnLBNVqZ+ZEG2a3T0AHborUAG0PwDLUsgluKKTthhOZpcGyJ9D6zlwXryyNNvpafrNXDwiW3bSYT+iQvG9z3UAxCgrFHVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjSKrhN9; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fadb9a0325so12650896d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750961112; x=1751565912; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QiZwuPd0AoWibuQALk3DmH+qz68nVTZ0UFoYX05f/uk=;
-        b=cjSKrhN9i55CUBkiyawY16YeZ32z1ZbKIEHysAUDgdG3OjTTQxNoh7nV/xgWHZToPh
-         q4mljyeq9MvIzCuymj3ZaNmLS+2lE4yxDGEyzQNGzRa6PZ4hReiB/FohTTjLZ7qCT/5C
-         NWxyd62SMS2oLgqfGKw2UczbCIbdbRMKdLpjE9v7sy9Fx97OcUmYZWY4C8yAG9QqonNL
-         5LUqTepr/sjwDt31BtF5Mfb+uTkA8FqPdscZP/NEbmhUlj27XeNBH+aN9rbPa1TRNjSV
-         W0vSf914mBLeP9Qagn3NLxwwNQfjXkdGEg2XpR2NbtahWFCsCWPXgYjjII+JC2ALZ9Mv
-         mRew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750961112; x=1751565912;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QiZwuPd0AoWibuQALk3DmH+qz68nVTZ0UFoYX05f/uk=;
-        b=eNskp7w4j/ZB8edo7IC8WYYl/FVhu7FuFRr4QgNYDDpBwqaCHV0sHB5lRz1D6kMhku
-         EVfBHOJJMnN0ZWIeg7U1LDsvMg1QvDK6OZ6QC4zSQqQ9v55IPQS4JAdDWLqkVpyJT3QM
-         ZuJmmkT6sWpR8As5Qwt8DJA8CH0B50ymnvhlNDlUIE6oVuBx1VslcNAfPSeXvyrx+5nw
-         wQpQQ5b3e7BoeUPfee7wJvaVDZjCM7gLhEYAtNhswuoZKdJj51CBr1CGWD9LVxXIv+z3
-         bYI6nT3b5bNpce+UkRn74a+TvpoA9OSMjJiWffcR0leFhESqr7GdkYnpV0qnG+xTC4K4
-         YgDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuxTy74ueq36NDCrL04Fr6Ij0zWWQyRkqt42cVPwfUYAJ4HTfrJr5AqJNDAkH0befRSXFqF9DN/7xKPEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVGgHiJ1BTwXPu4heDnHGO9vdt8pK/89GII15NrcRQxMDi3Biz
-	mR0EYRQxPpHrGk26nPHglT6zQvMhjpR4yCautY5G67qfqLo6z1F/jlW/GM5Q4w==
-X-Gm-Gg: ASbGncttbrOU1S3EKiu2sbtFQDMWmNtGx9Z9c4X+D+/E/VEzLG3soHpGlZ2DnciPvWr
-	lCUoSpUQn/hyLDZcZ0jX+b4O9cYEZrMOxZe8yE5y9FWwcov3sGM2mM9aj2fPc8YJd1XTVENCDDv
-	MJpLgnJLIoyycT2Wu6Dhh5dJhCTACa9AaP986fEGcXAAhqdmarXAeqBoKYE5qNHIOWHS5RZ9/7q
-	XCfnlD7VKMODAFL95VkNysOnXHqzwcGPSE4kkG8IZPUuTYCY0Yu8vVQNs5W93sOyr3nkZxo+nKG
-	vv75PwJFmFaP6lVKLInWVGTKQVqNhvKrjmcfqbIyQPPpwthx6LxR
-X-Google-Smtp-Source: AGHT+IFgwg9byY7wnJjSTsjkRMLnfpRN05Qu3TUP7ur9Y/iw0TPz2j48zy3H+eunzSHMiSdxwVpIsA==
-X-Received: by 2002:a05:6214:460a:b0:6fb:23:4812 with SMTP id 6a1803df08f44-700037a5989mr7609226d6.26.1750961112038;
-        Thu, 26 Jun 2025 11:05:12 -0700 (PDT)
-Received: from fushigibana ([2601:405:4a00:186f::50e])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd7718d340sm10275906d6.4.2025.06.26.11.05.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 11:05:11 -0700 (PDT)
-Received: from pnariyoshi (uid 1000)
-	(envelope-from pedro.nariyoshi@gmail.com)
-	id c5e35
-	by fushigibana (DragonFly Mail Agent v0.14 on fushigibana);
-	Thu, 26 Jun 2025 14:05:10 -0400
-From: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	linux-media@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	MrChromebox <mrchromebox@gmail.com>
-Cc: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
-Subject: [PATCH] media : cros-ec-cec: Add Fizz board variants, so driver can detect them
-Date: Thu, 26 Jun 2025 14:03:41 -0400
-Message-ID: <20250626180429.463420-1-pedro.nariyoshi@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1750961750; c=relaxed/simple;
+	bh=+EAQlblP0d7jGYyj+x1+5IGIR2s09xZawcBVk29N8fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bWyeeTAFgr6mhHfSLyReRSKN3mFa3vwKnjpjiN8SEYNRDg7A3n4U/3x5bJ8YLRFiBFpjc/9yNDW8KayjzmKgCPHtNPG3+gbFVd0+e+Zc+mtyTuOAZt6txLp9RidZdsNRAUX7AO6TMUw3ufV2m4FxIVykfrqK6zygIRuiGxIP1RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Ziydn1LJ; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0753966E9B7;
+	Thu, 26 Jun 2025 20:15:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1750961746;
+	bh=+EAQlblP0d7jGYyj+x1+5IGIR2s09xZawcBVk29N8fw=;
+	h=From:Subject:Date;
+	b=Ziydn1LJpmk3qTCZnpBDNmFIlnmTzUy5FYADu8zKxvtvXRhv0sRQGYG5prjYku6Zx
+	 PHh1VvJsGjO1MBkEJ2KF8pVuMpx+CYykwcfABMpphH9H02Vzj/4612+ddv3DtOCVvv
+	 VsoWLshvgeS0nZLIdBZt+BY312zmNnHDKnEf1nFxs9OI7l/+3binutPFjvlcrZrgUl
+	 5QWbyooZJZHJgyVHRRcIHWhSYzAibQ2xc7k+peWGzq9/9vhU5LvUvKfLDwWbKYABTV
+	 Jb+f61ztzmyk3woY7lK/cRBzxWGvEwj5DYu0sPum4nSTTQdf2IWyGkLOQuJl+pdRIU
+	 veVkF2jRupmIQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject:
+ [PATCH v2 5/9] PM: Make pm_runtime_force_resume() work with
+ DPM_FLAG_SMART_SUSPEND
+Date: Thu, 26 Jun 2025 20:04:41 +0200
+Message-ID: <22766435.EfDdHjke4D@rjwysocki.net>
+In-Reply-To: <5015172.GXAFRqVoOG@rjwysocki.net>
+References: <5015172.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTELtlwpycCpv0Vcuy8QanEK65EXpXLDYHJklsvPFyrHxl+avjRHDMJ7Pn1w8r8jjwxdARbdK2l6HvrQpU6gOIgHwqnc6mWfuAcVkm0fjKgXKtQhSdxCxnuVXrmGsTXIoZNtqbmO2vNuBJTcPUJZcz8R30PgE7bGEL3PWfdNzVLoVYs7Qoda0OTfmBJ3NatDBgLvJuvPlRG2dcl26WhHZbi4RyoYzmp2r7+bO7YpOn26wkYi1BZUkbAIVk0I3hYwmbSrEOMnYl/hve4oRCJ1F8R5clMEE2pVXAf8o49/YUaNEHtTh2A9QXrvEf9flQXInm5SNV3s2dtsBWqHjVykY5tzpv44XIDGvyWuPM26oHOX0wO0KJH4q3IH+BpbMJ/rG5o0lruCpEgxT21TjstRd/f04r9ftBHsUBCmkKIvNk5y+ebU/D6nF0OBGF7CzMTKDSFICLq926YdZLGUTZ2+ZCCAIKrd7WWF9UxV26WwRFVLjfdKV1Neib6VJCEDgreJGrtqL9gKjy6Qr0c8dIwihivyO6+eGkFthkyLsBs4k1zyP+N+/2FYLJIDCirhBVWS0/U3Riao0MLY57sp6b8lmybEFnDv9tU2vLk+I5bbONaDo2iRrVSglwprGkB/7evTGYQBEHCtOaTHJjh+QjmlcCvleAf2tW/Y+0Hchb1JJXLMxw
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-I recently reflashed a Chromebox (Wukong variant of the Fizz board) with
-coreboot and I noticed that the cec driver refused to load with a bit of
-tinkering, I realized that the dmi_match_table was expecting the product
-name to be Fizz, but `dmidecode` reports `Wukong` as the product name. I
-am not sure if this is the best approach, but adding this patch lets me
-load the driver and it works properly.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Alternatively, we could instead match the DMI_PRODUCT_FAMILY, instead of
-DMI_SYS_VENDOR and DMI_PRODUCT_NAME. In my board at least, that says
-"Google_Fizz".
+Curently, drivers using pm_runtime_force_suspend/resume() cannot set
+DPM_FLAG_SMART_SUSPEND because the devices with that flag set may need
+to be resumed during system-wide resume regardless of whether or not
+they have power.needs_force_resume set.  That can happen due to a
+dependency resolved at the beginning of a system-wide resume transition
+(for instance, a bus type or PM domain has decided to resume a
+subordinate device with DPM_FLAG_SMART_SUSPEND and its parent and
+suppliers also need to be resumed).
 
-I am open to suggestions for alternative solutions and I hope I did't
-break any rules (this is my first kernel patch). (And sorry for the
-previous error in the subject line)
+To overcome this limitation, modify pm_runtime_force_resume() to check
+the device's power.smart_suspend flag (which is set for devices with
+DPM_FLAG_SMART_SUSPEND set that meet some additional requirements) and
+the device's runtime PM status in addition to power.needs_force_resume.
+Also change it to clear power.smart_suspend to ensure that it will not
+handle the same device twice during one transition.
 
-Signed-off-by: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
+The underlying observation is that there are two cases in which the
+device needs to be resumed by pm_runtime_force_resume().  One of them
+is when the device has power.needs_force_resume set, which means that
+pm_runtime_force_suspend() has suspended it and decided that it should
+be resumed during the subsequent system resume.  The other one is when
+power.smart_suspend is set and the device's runtume PM status is
+RPM_ACTIVE.
+
+Update kerneldoc comments in accordance with the code changes.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/media/cec/platform/cros-ec/cros-ec-cec.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
-index 419b9a7abcce..a26473c3cd84 100644
---- a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
-+++ b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
-@@ -302,8 +302,15 @@ static const char *const port_ab_conns[] = { "Port A", "Port B", NULL };
- static const char *const port_d_conns[] = { "Port D", NULL };
+v1 -> v2:
+   * Added R-by from Ulf.
+   * Corresponds to patch [3/9] in v1.
+
+---
+ drivers/base/power/runtime.c |   38 +++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
+
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1962,10 +1962,6 @@
+  * sure the device is put into low power state and it should only be used during
+  * system-wide PM transitions to sleep states.  It assumes that the analogous
+  * pm_runtime_force_resume() will be used to resume the device.
+- *
+- * Do not use with DPM_FLAG_SMART_SUSPEND as this can lead to an inconsistent
+- * state where this function has called the ->runtime_suspend callback but the
+- * PM core marks the driver as runtime active.
+  */
+ int pm_runtime_force_suspend(struct device *dev)
+ {
+@@ -2014,20 +2010,28 @@
+  * pm_runtime_force_resume - Force a device into resume state if needed.
+  * @dev: Device to resume.
+  *
+- * Prior invoking this function we expect the user to have brought the device
+- * into low power state by a call to pm_runtime_force_suspend(). Here we reverse
+- * those actions and bring the device into full power, if it is expected to be
+- * used on system resume.  In the other case, we defer the resume to be managed
+- * via runtime PM.
++ * This function expects that either pm_runtime_force_suspend() has put the
++ * device into a low-power state prior to calling it, or the device had been
++ * runtime-suspended before the preceding system-wide suspend transition and it
++ * was left in suspend during that transition.
++ *
++ * The actions carried out by pm_runtime_force_suspend(), or by a runtime
++ * suspend in general, are reversed and the device is brought back into full
++ * power if it is expected to be used on system resume, which is the case when
++ * its needs_force_resume flag is set or when its smart_suspend flag is set and
++ * its runtime PM status is "active".
++ *
++ * In other cases, the resume is deferred to be managed via runtime PM.
+  *
+- * Typically this function may be invoked from a system resume callback.
++ * Typically, this function may be invoked from a system resume callback.
+  */
+ int pm_runtime_force_resume(struct device *dev)
+ {
+ 	int (*callback)(struct device *);
+ 	int ret = 0;
  
- static const struct cec_dmi_match cec_dmi_match_table[] = {
--	/* Google Fizz */
-+	/* Google Fizz and variants*/
- 	{ "Google", "Fizz", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Bleemo", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Excelsior", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Jax", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Kench", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Sion", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Teemo", "0000:00:02.0", port_b_conns },
-+	{ "Google", "Wukong", "0000:00:02.0", port_b_conns },
- 	/* Google Brask */
- 	{ "Google", "Brask", "0000:00:02.0", port_b_conns },
- 	/* Google Moli */
--- 
-2.49.0
+-	if (!dev->power.needs_force_resume)
++	if (!dev->power.needs_force_resume && (!dev_pm_smart_suspend(dev) ||
++	    pm_runtime_status_suspended(dev)))
+ 		goto out;
+ 
+ 	callback = RPM_GET_CALLBACK(dev, runtime_resume);
+@@ -2041,8 +2045,20 @@
+ 	}
+ 
+ 	pm_runtime_mark_last_busy(dev);
++
+ out:
++	/*
++	 * The smart_suspend flag can be cleared here because it is not going
++	 * to be necessary until the next system-wide suspend transition that
++	 * will update it again.
++	 */
++	dev->power.smart_suspend = false;
++	/*
++	 * Also clear needs_force_resume to make this function skip devices that
++	 * have been seen by it once.
++	 */
+ 	dev->power.needs_force_resume = false;
++
+ 	pm_runtime_enable(dev);
+ 	return ret;
+ }
+
+
 
 
