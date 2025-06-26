@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-703640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FE5AE931F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 01:58:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2D2AE9328
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 02:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0077B7004
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Jun 2025 23:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAA31C251A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 00:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666842D3EC2;
-	Wed, 25 Jun 2025 23:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA638E573;
+	Thu, 26 Jun 2025 00:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k/KCcCyG"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Obv9QQ8V"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4BE287252;
-	Wed, 25 Jun 2025 23:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF2C3C2F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 00:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750895861; cv=none; b=tuv+2crAXWFJm9KklxSH9yjnIfPcjF5tY0wnNHalA4WQsKIwv3lW6Qs26cktgCKz53bvNerSnm7pLYpjwanlAH6SDQ+4EJYKc5QabIBrhmHtqP82M/Y8Xz1z8jQY5PpweHAHEhOVwwPeT/xXkdcl3XAuoPLhFMiWOAGBbLyqTOo=
+	t=1750896176; cv=none; b=c99/FSAJnw0mOaLI8MhfXWXOzxSeMmg+blu/lePb1D5LfrvFRunH4zQyOLNSojgJm9M96nNOXLLuADY7D/7vPm72aVMGyHOHFtJ4p2XMlrlWO03e7FZWxfqY9ANEJ3Q6T0BNDYSBIhTXcWqe7paUsTI/9XQQeXNFWxKJJPVzbxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750895861; c=relaxed/simple;
-	bh=b2p2wLab3AkXhvQjT2HVq8Bz24cBRw35pUZ7w5ivhU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Z3Mja29H3gWux5/grDExxGaeaKiFysVfPYZN33vve046I+n3+2kzNtoNfqvfNlOkaSDdk9MH5ZBMo+Nn1qfo3P53EU7O16PHXgaPLGldNjXgzSE0DWYLzuOsuDN7KqQeGechCvpWHunxKRbxncjFaaC3D1oWSBd+Nx1QuwVKMRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k/KCcCyG; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description;
-	bh=c+rrrcFg6u66Hnzut5Z/WroFwVDDLyZyn8hntHme06U=; b=k/KCcCyGyqyAaxFb2ZKA9rh+VF
-	Tw6VTBokl/pf0DZqNobcHM6gtVorsZFwjF1thuG8hsHpYkkudmmJQG7E68zAW5xoaM4FTkmbKJE2x
-	O9iRP4tpW1WALUETZlhq3OfEb/qnSTosMFfwVxhZmeTX6c+Z7aA1j+BjwzIegrJUroKPvl+XDbjec
-	7uAUmnu7eIXy0AOot45E+8K+/ItaML7t/oFzCCNLc5L2DH6fSZw2wwRtScDNRq2Vdxs3Yw5RQiyBf
-	XBS/At592eesDjQ0OjCaWqPi4H4KI6ntoWqNb46K4fPxwU/iHzZ5XEqTDG6ZtNeDN3uHJPjmae4n+
-	RjiP4REg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uUZzD-000000060Zf-0xuo;
-	Wed, 25 Jun 2025 23:57:03 +0000
-Message-ID: <ac8efa08-3f85-4532-8762-573ebd258ca7@infradead.org>
-Date: Wed, 25 Jun 2025 16:56:48 -0700
+	s=arc-20240116; t=1750896176; c=relaxed/simple;
+	bh=kshfTldGwa+NqLCEMdWnaa69rBSF7LioeLsQJInJyMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jmlDrXNZWxB1w5uhI83AV4pjOGFW2PmcxNcLrZDjZfXweNUZddq76BCBZ52R5zmmwxNEtPNgo0Yadl8CwBaGyRP665ELnXQjmZotPIEv6Q4yjF8vEi1za60eDnT8gFft6aoHnsvKR7wpMw3zrF2eJJysX1sWAiaG4qvqRHd/rYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Obv9QQ8V; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-748e378ba4fso695495b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 17:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750896173; x=1751500973; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lM1GTPPHV5WCR55djJT3W1q00iOrpCxrYOZ6QlrYZ6A=;
+        b=Obv9QQ8VfG7bmIjDjQMWRHUSdfwDgMZYXnFGwbdTPt/ccC5NDjPjmjVRxDmt0RSyXs
+         LOUf0iUAXBnLt+g+yXTMWGENyb6zl1IGwoOZq9C8PP5c/y0KUu5QWeWXX4FW8rEK7NjT
+         sXUQVyy31PedYYAxHnTDnpUsBzC6vDAHgo1CVSKKZmKAVM6D71KhtQsKua/1D5A7/cw0
+         2tolZjinrr8OQHQlJqQaLjBreYilojxRkgZnT0F5mfyUIFmAJPPLfVaB3jqW0YICeKbs
+         7gErTHh3Th5fFjypGx4Sf1KwTA2+K5nKDymy8FiCXcQH2GbVR+mLwYhPh5pqDUG6so3u
+         6mQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750896173; x=1751500973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lM1GTPPHV5WCR55djJT3W1q00iOrpCxrYOZ6QlrYZ6A=;
+        b=UAwMgPjesmd17CoKS4ixaJzovbOGQvnjckgivGqPmeWEleVXDzU0Z+T+D6C0ZK0dTU
+         frh3LkU5OEeM0Cm7Ciqj/vGsi7AT5Yn4EiUul70M5VFlcEcQz1jeYCDaKVi4y9SJ/bdN
+         EquS45FiIvxApYqsGUoK6/gUzztrF1jlE5NzzG0rHEcSPjXfSnMEJ1frBuTBgnEQRcb4
+         ktocTObTDcyTvPjCnxiN/0+2pI+Gc1QgUQPF1UIECuY/VtRMc+Aha258WiATm8yB2kyr
+         dCraZHLS+omyW0oP1TNK5pBbYSHTf5iNnBCl+EK/ejmCKIS3/w6hFYZpjYCdFlXa6C3C
+         v2WA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0bs/XhtjPRtyb7/ODqU96YUBlCXSPeCJVbJXgCA/samzbLvEuIGRumq33cTbAAro2KcPzzTuRHioXt94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdwTBQi6Y5ZpB3erDq4FsvKQRPXlmDw6Xe0Ms00FifKSykf0bL
+	qrmb6w35hR73wXmGel1oRepUAa3OS0sY8+NFUDa4WcrJ5/3KANTTKQAO
+X-Gm-Gg: ASbGncviWZO4KPdCl4BxyVaACsm9ExrxiCIu9CKg7zgRhuQQJl8pUjyvES5PNIVn6gp
+	kGm4d3GBGnvxHYSjGm5lIXULLQ6YHFYy8GrX9qBhLWPfLAciuM+gWuzu/ydBOP2CE8AwXPzvsl+
+	PG7lior/coWtlw1y40F82cbRf/B/uNLX/ebMZpAM8836qe/xsEGXVoTnaFzMXbTvqlpbwo4XBru
+	Ggn1I7UUNewOw3nj8T3wkftjCPAb0scqgXpjJdJm0rCxe1BoF/v30Wxf56RPoiQQ6kKqmQQADwt
+	X3g+jVEBh+nbOImXjOAJt6Ms/bgcdTyEubUQYtrS6ZPzQA3OBvkL4eZMYl4+Ew==
+X-Google-Smtp-Source: AGHT+IHBlphPYG0R+Ezs3voKgmJntm9TCYEj5igU5EvDXw9i4W7TFCoT1JCE5a9iA/KumVZ68cBqOg==
+X-Received: by 2002:a05:6a20:d74d:b0:21f:f0b6:3d6d with SMTP id adf61e73a8af0-2207f19208amr6650183637.10.1750896172980;
+        Wed, 25 Jun 2025 17:02:52 -0700 (PDT)
+Received: from localhost ([216.228.127.131])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c88722e7sm5414333b3a.166.2025.06.25.17.02.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 17:02:52 -0700 (PDT)
+Date: Wed, 25 Jun 2025 20:02:50 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, tglx@linutronix.de, maddy@linux.ibm.com,
+	vschneid@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+	kprateek.nayak@amd.com, huschle@linux.ibm.com, srikar@linux.ibm.com,
+	linux-kernel@vger.kernel.org, christophe.leroy@csgroup.eu,
+	linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
+Subject: Re: [RFC v2 4/9] sched/fair: Don't use CPU marked as avoid for
+ wakeup and load balance
+Message-ID: <aFyOITguo83GdxKv@yury>
+References: <20250625191108.1646208-1-sshegde@linux.ibm.com>
+ <20250625191108.1646208-5-sshegde@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 03/32] kho: warn if KHO is disabled due to an error
-To: Pasha Tatashin <pasha.tatashin@soleen.com>, pratyush@kernel.org,
- jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
- rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
- ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org,
- aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org,
- tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com,
- roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk,
- mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org,
- hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com,
- joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com,
- song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org,
- gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
- cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
- Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
- aleksander.lobakin@intel.com, ira.weiny@intel.com,
- andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
- bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
- stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
- brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250625231838.1897085-1-pasha.tatashin@soleen.com>
- <20250625231838.1897085-4-pasha.tatashin@soleen.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250625231838.1897085-4-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625191108.1646208-5-sshegde@linux.ibm.com>
 
-
-
-On 6/25/25 4:17 PM, Pasha Tatashin wrote:
-> During boot scratch area is allocated based on command line
-> parameters or auto calculated. However, scratch area may fail
-> to allocate, and in that case KHO is disabled. Currently,
-> no warning is printed that KHO is disabled, which makes it
-> confusing for the end user to figure out why KHO is not
-> available. Add the missing warning message.
-
-Are users even going to know what "KHO" means in the warning message?
-
+On Thu, Jun 26, 2025 at 12:41:03AM +0530, Shrikanth Hegde wrote:
+> Load balancer shouldn't spread CFS tasks into a CPU marked as Avoid. 
+> Remove those CPUs from load balancing decisions. 
 > 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> At wakeup, don't select a CPU marked as avoid. 
+> 
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 > ---
->  kernel/kexec_handover.c | 1 +
->  1 file changed, 1 insertion(+)
+> while tesing didn't see cpu being marked as avoid while new_cpu is. 
+> May need some more probing to see if even cpu can be. if so it could
+> lead to crash.  
 > 
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index 1ff6b242f98c..069d5890841c 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -565,6 +565,7 @@ static void __init kho_reserve_scratch(void)
->  err_free_scratch_desc:
->  	memblock_free(kho_scratch, kho_scratch_cnt * sizeof(*kho_scratch));
->  err_disable_kho:
-> +	pr_warn("Failed to reserve scratch area, disabling KHO\n");
->  	kho_enable = false;
->  }
+>  kernel/sched/fair.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7e2963efe800..406288aef535 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8546,7 +8546,12 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+>  	}
+>  	rcu_read_unlock();
 >  
+> -	return new_cpu;
+> +	/* Don't select a CPU marked as avoid for wakeup */
+> +	if (cpu_avoid(new_cpu))
+> +		return cpu;
+> +	else
+> +		return new_cpu;
+> +
+>  }
 
--- 
-~Randy
+There are more 'return's in this function, but you patch only one...
 
+>  
+>  /*
+> @@ -11662,6 +11667,9 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
+>  
+>  	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
+>  
+> +	/* Don't spread load into CPUs marked as avoid */
+> +	cpumask_andnot(cpus, cpus, cpu_avoid_mask);
+> +
+>  	schedstat_inc(sd->lb_count[idle]);
+>  
+>  redo:
+> -- 
+> 2.43.0
 
