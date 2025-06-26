@@ -1,108 +1,77 @@
-Return-Path: <linux-kernel+bounces-705354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1ACAEA885
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:58:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49885AEA87B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 22:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B54C3AEE79
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:57:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 178A47B20DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 20:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A36202996;
-	Thu, 26 Jun 2025 20:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E8B23B62B;
+	Thu, 26 Jun 2025 20:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2xrVoGt"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBjC28nN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7E925A334;
-	Thu, 26 Jun 2025 20:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEA0202996;
+	Thu, 26 Jun 2025 20:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750971465; cv=none; b=tyWguNuaKPbDgN/okFFoCC/JYOXy9ebo1HFqVnKHF2M/Kr8Ht2wDV04GqEAJ1xqQF0A/M9VY5QEjhemMsa10rPoTcAcpLjIYGcrv8h3eZLAVCtonaM0GUI+gTESrPh8NyoY5CC1Z+Pr2Z1EPoc7fwAyO/max+Jy8O8bEW2EM0N4=
+	t=1750971323; cv=none; b=hEXr7WUjnvUcqt4dhRaOiUdT58fMhSuRePQjaJ/ETiLGy29Gq8O9cHwFLPDMQLbCTqLuWOf78X08DnxcAOn/v39JU017KADwcABC8VeeGzifgBOovbRuxmv1aCSxs1Ndmc668tehOptNt6Yyr4/AzxtNuYt6neijmq0ij9sufP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750971465; c=relaxed/simple;
-	bh=fboFooiv5nQCNWPaoV3T7R8k3RIvcK1dRe+5TeMQ214=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p+QHU/oR0LUvEV9mVutzD3OVhMrZeWYn0zN1YqKlQXqYxPo4G3oiHbuvgK3w9vCMUUIf+r6jod8huzAlXM7CSX2vC/9vj6FEVT35WveT8O9Fad0UdRCaJVIvm9VqVbR3B4jO4yKFJbq6pJFUemQz0yc5whoIEmXhTH4LPbhKpRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2xrVoGt; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74af4af04fdso412653b3a.1;
-        Thu, 26 Jun 2025 13:57:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750971463; x=1751576263; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fboFooiv5nQCNWPaoV3T7R8k3RIvcK1dRe+5TeMQ214=;
-        b=H2xrVoGtgqABU379MSLXy5p/OM/FRfEwUmcEsFAe+w58Br0lcAqUfaA5/9CrMYSzA5
-         7VBQ93LUwa56h6eh2fW2g8SOGtfwCJZGyzC4kvz44NNcrftBuixxahibMYTguZXGazVM
-         BJkAtWV12J/Mk0yvm2tI08hzQ5LmldgXVAGMwBozjPpLQNih6KAsBgMbGs4T2RjP3fPX
-         y86lKf+/ugAtFDpBzSmKpGL56ficg82/yq4feT64nj3LUT51SX4qq9mOARzeDP9FbI2M
-         HUg17VYaGc0IiOSEXY8SqWLEo075z+k0wUJ/s4u/y5yQQVH14c+db7wL72c6BHB/xo0r
-         5Pzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750971463; x=1751576263;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fboFooiv5nQCNWPaoV3T7R8k3RIvcK1dRe+5TeMQ214=;
-        b=r67qgQ2URV44PY+3AsqSofHenpTS1MeFTrD1ne3EbMA0m7PbrQKj01Kw2p68ru6a9Z
-         eEETEvuWf4whyoUNGdkA2y2/3iMcyZzAyF3yeSs2PpNTxcOC4CA9/I9zt/P6KGS4xxJd
-         h5J30YUUt8z4DVAQrpQ3UHc0GOZjhSskCBU+lfjOz77+nHAmPLQbx5nYB2DzJcojYC8F
-         qPNVH5UdRHu1NHYj21WGjyZwNlRoOGPT3XC31okRW7ZdY8/nGoJ6x9ag4wiVNu78UfDE
-         UoY98+ow/2sQ69fOikHeCxCvlhMWOnDvBOtA6WvOuuUMYh4U5Ek+sg+JzOi/fH+S8MNh
-         UP1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU36tVT6BOJzj9K/V2cVGMjhuCOqz7RTcOeAiVZxwybGv7KmyHeNBlO2qhyqR6r6KtlMcjzdOMmYz+SWVxg@vger.kernel.org, AJvYcCU5KfiEa4MJXsC73gq3Ppbz1u6ufov7MKhxlhjUEoxl7T/yB6tDeW8r9yWy+1lEuNo0cuplpRy7bT06@vger.kernel.org, AJvYcCUZDQ7/DnNxtxSvJab6tG6v0rPeerqEvDVXYv6NzJDPqZyEVEQVcT6Z4udDWArFl3dpdeuRr3QaA1pk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7c+D6zSiwPWaeJoVTrwnyUcaLto2eHNv1q20a/KTo0OYR0nqR
-	tZNs3QkM7LdIthE9NGQvwx7r25InxLimn/hjbWHcRlU1dIKAGvQvEqJo
-X-Gm-Gg: ASbGncs7hNLSOvNRq/CwSab9PVuOxLoRO4G26xHZjbCq4FwlJm6/zGj/U5PMOhWUI8I
-	x0QF/0jQSRZedET5cpCBkKiW3owTaeVgFl7GSJY7LaGJaRil9zt2pXSoV2K8/8pgnoK2qPnwBTq
-	ICDFz0NdyaGRhvw72R7koYhqO8Of/I4N+8r9mKNmy6W/oiCXZy1j4U3J7EruDn8qsRrxLlTMXtz
-	li080t3SGRDM1oWdxBA/l/vNm4jVBM3xUQC7ErRw6LgkbwcnED55s/8dWu/073jE+em1tWN/WIx
-	Wzh91ogJu8R9uWnLCEXzD7LlNkHYCyCw0bqZ7Dmlv3wZk1ixcyrP0c6xKRynHoYMyhDQ9XlS/z9
-	XZEDl5OtMoxuIBrWwkOY=
-X-Google-Smtp-Source: AGHT+IHOMStf689VxqL03BfuyX0jEndQjIUPRMfj87Aj79T5t0yVc3e26PVqXcYYXZ9eoinzT1hcnw==
-X-Received: by 2002:a05:6a00:8ca:b0:749:1e60:bdd with SMTP id d2e1a72fcca58-74af7893218mr609513b3a.2.1750971463012;
-        Thu, 26 Jun 2025 13:57:43 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:4ff:1626:32b1:712a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af57ef669sm498169b3a.158.2025.06.26.13.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 13:57:42 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: conor@kernel.org
-Cc: andy@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dlechner@baylibre.com,
-	jic23@kernel.org,
-	krzk+dt@kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nuno.sa@analog.com,
-	robh@kernel.org,
-	rodrigo.gobbi.7@gmail.com,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v3] dt-bindings: iio: adc: st,spear600-adc: txt to yaml format conversion.
-Date: Thu, 26 Jun 2025 17:54:01 -0300
-Message-ID: <20250626205733.6354-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250526-overtake-charger-6c5ffcc2bc09@spud>
-References: <20250526-overtake-charger-6c5ffcc2bc09@spud>
+	s=arc-20240116; t=1750971323; c=relaxed/simple;
+	bh=hLlzonJAvNms9VG34BSVk9UF0cfYYAcLzKIDWMr15GY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxbOWJbx4wxwNrQ3MxurccvM0XS+3Kl4avD4l9quLIlWC04QVuBpo5gPH7PkW74wwW5XfFKLR5O9/6fXZo/NDLBmsWr5LjdFJNHPu2/sowv2po3cGcwMdFkt12X64XsYHyzf9C1F0DtOJsbCV/+Y3twzQqb97xo7OzOYRyeq2xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBjC28nN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2BDC4CEEB;
+	Thu, 26 Jun 2025 20:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750971323;
+	bh=hLlzonJAvNms9VG34BSVk9UF0cfYYAcLzKIDWMr15GY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBjC28nNB+FQqzQqdq3y1XK41BqrcL25ES1u4oYjPVI7GTgB9BhF3Lq7KWZLOwt4g
+	 TqCtGs3icQjmKKYk5VxgNmY1X+W34f4Jx4x96dB2ZDdP2dlMkRyLH6jfy0ZSdzTQh2
+	 pjZGkdA5yul1P5FHh2b21af1hqz5fZRb21TaMnq8+g3cmsR9ehUpoJZS4V8k2rl5gO
+	 IJ2JQEvx2gOni2azjZVh+zrdSpxC3yNGiI79jCtlpD4aEhL7QX1ItVkcXOSH1GIpFD
+	 HxjYYOXV67WTcpQtf5+h9s/JPGDUOQwc/56IAhn0KKcr5YY3eca40aIOS01WLkhlsS
+	 rX8eBRwoyqqzw==
+Date: Thu, 26 Jun 2025 22:55:17 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: long.yunjian@zte.com.cn
+Cc: pierre-yves.mordret@foss.st.com, alain.volmat@foss.st.com, 
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, linux-i2c@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, mou.yi@zte.com.cn, xu.lifeng1@zte.com.cn, 
+	ouyang.maochun@zte.com.cn, fang.yumeng@zte.com.cn
+Subject: Re: PATCH] i2c: stm32f7: Use str_on_off() helper
+Message-ID: <tfj32n5ex5ss4lj52oglc6rnj5bvwxhgabcc5xe4w2nreehgsv@j2dh3bcsov5q>
+References: <20250623203144007kQF7E1Bhy5PJl-Ph3u3Ou@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623203144007kQF7E1Bhy5PJl-Ph3u3Ou@zte.com.cn>
 
-Hi, all,
+Hi Yumeng,
 
-Just a gentle ping here since it was already been reviewed.
-If there is any other concerns, let me know.
-Tks and regards.
+On Mon, Jun 23, 2025 at 08:31:44PM +0800, long.yunjian@zte.com.cn wrote:
+> From: Yumeng Fang <fang.yumeng@zte.com.cn>
+> 
+> Remove hard-coded strings by using the str_on_off() helper.
+> 
+> Signed-off-by: Yumeng Fang <fang.yumeng@zte.com.cn>
+
+merged to i2c/i2c-host.
+
+Thanks,
+Andi
 
