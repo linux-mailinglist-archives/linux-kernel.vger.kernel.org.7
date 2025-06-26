@@ -1,104 +1,228 @@
-Return-Path: <linux-kernel+bounces-704607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F05AE9F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:58:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF73AE9FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE43164D32
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:58:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A385657CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3602E92B5;
-	Thu, 26 Jun 2025 13:57:21 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E092E7F2D;
+	Thu, 26 Jun 2025 13:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o5PkjtLx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08491922F6;
-	Thu, 26 Jun 2025 13:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C892E7623
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750946241; cv=none; b=sd2eZAyEaj2lhaf0Pwtn0XQXFoon4mRof2tFtjiYAfZLdNH1jsqGd+Le7RAVgZ9rv8yIgCc+TM6doyDK+rjS4XWzV6j6sMfhFyZQYe1Q21yfKhVBakMO9Cgzp4ZgtislYAIQE2ofOCiwOvLfZj/QN8/nzcB0rAMxh6Fj0lBbIuM=
+	t=1750946381; cv=none; b=P6W/qFa1dmpCI0fGrJXfYRIQyuDC11k1uM84FdwyT4jLCo5zVTFEMXmkoVEzB4VIfO5au5+5ttlgZX22ou4hyAnC18RVdpgyS9G2j+J/TzetH9emX+zO4dTUy8vDM5n7CGL7IQCi5QyDsCsO5KQ/kb8f3e7Ec5FFW43DoBcJ0vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750946241; c=relaxed/simple;
-	bh=0c7ZHZLsdl7RngXjNl2NpX2L2Tdel9+PLaSBG+/n1XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cu1w5KznyGw1a1CS4xnBWTUrzlk176gNs+l6rXVviwoMN0cua/ZFk9eJwci9Q8WEjNIFax1L6D9BExIE3VuCWsC78Mwbyxd78WIoq0MEeS2hrvJDZ8Nb3MfgVf0ImOKi9kXw8NuxEC6VbIiWTpXyIKpr0Zjj6O1R3J3wTB0YQM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bSgH11TkwzYQv0F;
-	Thu, 26 Jun 2025 21:57:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 164801A236D;
-	Thu, 26 Jun 2025 21:57:16 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgD3W2C6UV1ofP7jQg--.28741S3;
-	Thu, 26 Jun 2025 21:57:15 +0800 (CST)
-Message-ID: <e2fe408c-23be-4cb4-9cb2-04178fad947f@huaweicloud.com>
-Date: Thu, 26 Jun 2025 21:57:14 +0800
+	s=arc-20240116; t=1750946381; c=relaxed/simple;
+	bh=kmEGhYciyMMp4G/GxiAobkj/2CDHouIK6RTlTVRsPMA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LkQnVgY6mVyaHtofnpGYEqptJCYEqeRr6xEdXq76hnj12EroSBwkB9Gy4RRIpGQmC+Fd7SQ3hfMnzm2C2aKNN0U+pdfpS/oUvmICNwcltc5xb4+gLgQfW2n6zBTt57FK0SEXHwQu1p5KEHAQlluCtS/Co4nR5zjq6btsMpqi2JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o5PkjtLx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q9x1kC013644
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:59:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=5tgkYFTM5Xrw95Ff69bLBTB8QDp/Y5pR5JN
+	HIoSX3ys=; b=o5PkjtLxjpIJg6ia2CjX17OQPVrTV/c0zNWZH4arCQeXVAMHqxO
+	GHkuXWB4OmgpW/ZurUn0UIeJ8/UMU3dranvAhqLDGTcTBDJEwy6UBc28vpDnNgjt
+	myWjX3AuMWGIvO3KlRuLh6fBBkgJrlwiemKVGf0vScr9zmpFXUprOzSE7dKgKyyd
+	daJaUfcBMBUOI1cISCYltTM1IfMKf2jUdhtxtoeMR5/b2soSB+FMsm5RUHu0CkHl
+	VdR1xYzHWwxaHUIbvXi1r/KlqCH6vyR/3pQtNN/YSuhCBsI0cDqU5KaayK5tXi77
+	grdKvjH8QKTeeXfQo7nGkKAzuvZxWf4esYA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f3bgkgve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:59:37 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d22790afd2so137987485a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 06:59:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750946377; x=1751551177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5tgkYFTM5Xrw95Ff69bLBTB8QDp/Y5pR5JNHIoSX3ys=;
+        b=uSHJvOrfbZ8/ruCvYp2xi+Eq7nb/SLemwvKKHoxeokc8OD4kbX1534eumF13jFYD37
+         lNWv83ITALi1kiNZsFXpSG/TzFrim45IlWHZLm9HXr0F+qWLNBVlxCooscdC0Cixt6bj
+         5+ft0LsdiTxSF0egQjPW6lMh8+K9NWyPqnPy98ejxp27SHIUyyw/EOuXFAAXP/qCo78N
+         fv6zl0cTqFjBPAlIGPWhqhtlzMhwl+1ySLm7uIeTaGSrJpb1sL2IVZQA3/tFtHNsJvd1
+         16Ap6MUR0mrI8o5jmEppvQBJGNso3yh8m3fQQJVQKxFNeTqckPhRcoW1uOs7mHIZfVes
+         EMDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLO4xcWBIMf3j15+hCfxsYzHRt7nQWGnbRaf5W627VA19kYqfO8lvs6hBGdRdtM5AdF82z2z+Ei+zYW48=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+OrLwxp5NV1kSUP+IelXqf6xwFFIWQmadoF1quOdoM3eoKed/
+	I35cM+2dn/DXvsLdHFYghd0WSG7r1WGmqci1HOfydLZCOMMN+l5DqRxCUWPCv8qebyBTIsr56BG
+	wknsZJHBqa6SdgzZgQDOIBuCzBzBfcYaKTU2hprFOptHTOHi9l6iFic5Cg0xWKL8vrlo=
+X-Gm-Gg: ASbGnctez1FHlbYJn9IiXcrOAMiyk1alCTvZ7j3S1oe7koduNFc6wp4uxMIzbiYjqFY
+	7z9vAOKzqofncIGPSveWQby0vRxp9+A/7E9dpOynfRpaytjEmKzHWRpPOLXXF43aDl0ZK5COdl/
+	QYGsTmx2yXhsdjzFrc9dFuAaC9AK4ExJcIINAVqX9w+y1VIpzhklTQeQuISfaTvZEwh0hfOqQZC
+	hHWz4O4VAUwjBgacYznTN0LgMkfCmpH3qJltNsAQC4AXlOqG5j77vLnTMBxG8P6Hgrv4syTzBhY
+	nfgGe87gWoy5V+EOqEoOxk3FG/XNy2xeAbVWTJWmfHSs5ogE71PlpU1gU2ravP6nnsO585k2snn
+	9
+X-Received: by 2002:a05:620a:c4e:b0:7d4:29b8:b573 with SMTP id af79cd13be357-7d429b8f1f2mr955658885a.30.1750946376571;
+        Thu, 26 Jun 2025 06:59:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHa+vixNwigHwEtVGLKHaX1GvWyXjxTDO3Co4S7iTaf40s0SAmzfWX9ACUxorf8rQ9eiSSNsg==
+X-Received: by 2002:a05:620a:c4e:b0:7d4:29b8:b573 with SMTP id af79cd13be357-7d429b8f1f2mr955653785a.30.1750946375894;
+        Thu, 26 Jun 2025 06:59:35 -0700 (PDT)
+Received: from trex.. (132.red-79-144-190.dynamicip.rima-tde.net. [79.144.190.132])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823c57d7sm53723365e9.40.2025.06.26.06.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 06:59:35 -0700 (PDT)
+From: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+To: jorge.ramirez@oss.qualcomm.com, krzk+dt@kernel.org,
+        bryan.odonoghue@linaro.org, quic_vgarodia@quicinc.com,
+        quic_dikshita@quicinc.com, mchehab@kernel.org, robh@kernel.org,
+        conor+dt@kernel.org, konradybcio@kernel.org, andersson@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/5] media: venus: Add QCM2290 support with AR50_LITE core
+Date: Thu, 26 Jun 2025 15:59:26 +0200
+Message-Id: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] fallocate: introduce FALLOC_FL_WRITE_ZEROES flag
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, hch@lst.de
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- djwong@kernel.org, john.g.garry@oracle.com, bmarzins@redhat.com,
- chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com, brauner@kernel.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250619111806.3546162-1-yi.zhang@huaweicloud.com>
- <yq11praqywi.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <yq11praqywi.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgD3W2C6UV1ofP7jQg--.28741S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW5JVWrJwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UdxhLUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: T4i_csfQ6FamgfPGWwgHUdK8J5e1Ydwv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDExOCBTYWx0ZWRfX/MGAM5mv5guJ
+ 0OLxR7NFlZkFbhNP+u/RyGhA8I4A0ae0dRZMRODj56yvTWNKXEX/NflEZiv5BTXdXbqF4VfXnuK
+ 9cBdEFGGrCHCZIG72uJ8OdPcS07fqwUFAuf2tqvHO4OBEMlMhA39CaSTYsYk0+xmpmQsDt1mdD1
+ Z9T1xIFuiRnBEyMw5IzmPQxR/6V5/b4UPdqkvOJCZ9Q+Jl5hqShqUzzLzrOzbW2rjZGS70bHO7L
+ gy88mzw7wvbXBabsYnS8W07/PxQKEtX8niQ3MKAQTlF+2rvxFOM7dejEI5YDSquZcCRR2CAERkb
+ EYMcVP3MXfX+jjTlfdb4+PpcbVvW5Pu5H0395cKsCdn2t1K36OexWR1gZSpn5oa/dOLT6+6ZD76
+ BjtsYgcngFU4mLUvCEqyicvBpXY6sgn/vC7e8sbKF+L0uhRyXoB57Dql7Dh9dSuXdq5U86Bz
+X-Authority-Analysis: v=2.4 cv=L4kdQ/T8 c=1 sm=1 tr=0 ts=685d5249 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=wjE3nLva0YkvARyJ+Gfmxg==:17
+ a=6IFa9wvqVegA:10 a=vaIsIKZIAAAA:8 a=7WrQi52fQBeieaC-wGsA:9
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=rh-XPM1-DYv4t-UOgbwD:22
+X-Proofpoint-GUID: T4i_csfQ6FamgfPGWwgHUdK8J5e1Ydwv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_06,2025-06-26_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506260118
 
-On 2025/6/23 23:08, Martin K. Petersen wrote:
-> 
-> Zhang,
-> 
->> This series implements the BLK_FEAT_WRITE_ZEROES_UNMAP feature and
->> BLK_FLAG_WRITE_ZEROES_UNMAP_DISABLED flag for SCSI, NVMe and
->> device-mapper drivers, and add the FALLOC_FL_WRITE_ZEROES and
->> STATX_ATTR_WRITE_ZEROES_UNMAP support for ext4 and raw bdev devices.
->> Any comments are welcome.
-> 
-> This looks OK to me.
-> 
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> 
+Changes since v4:
+- patch 1/5:
+  - added reviewed by: Krzysztof Kozlowski
+  - updated example section
+- patch 2/5:
+  - added reviewed by: Bryan O'Donoghue
+  - Fixed Co-developed-by order
+- patch 3/5:
+- patch 4/5:
+ - removed encode-node (userspace exposure)
+ - fixed Co-developed-by order
+- patch 5/5:
+ - fixed venus register region
+ - power-domain-names: one per line
+ - clock-names: one per line
+ - fixed interconnect tags
+ - empty line before subnode
+ - enable the venus node
 
-Thank you, Martin and Christoph, for the patient review. I will update
-my test patches next.
+Changes since v3:
+- Fixed schema commit subject.
 
-Best regards,
-Yi.
+Changes since v2:
+- Removed IS_HFI/IS_VPU macros
+- checkpatch.pl --strict fixes:
+  - convert macro to static inline to avoid argument reuse side effect
+
+Changes since v1:
+- Added IS_HFI macro usage
+- Moved schema patch to top
+- Fixed commit messages
+
+This patch series adds support for the Venus video decoder/encoder block
+present on the Qualcomm QCM2290.
+
+Only video decoding is supported in this set - video encoding should
+follow up in the coming weeks.
+
+The QCM2290 integrates an AR50_LITE core, a low-power implementation of
+Venus supporting H.264, HEVC (H.265), and VP9 decoding.
+
+The series includes:
+  - DT binding schema for qcom,qcm2290-venus
+  - SoC integration via qcm2290.dtsi
+  - Resource table definitions and frequency scaling
+  - Platform capability registration for the AR50_LITE core decoding block.
+
+Decoding was verified on the QCOM RB1 platform using GStreamer with V4L2-based
+decode plugins. The following pipelines were used for playback 1280x720 and
+1920x1080 H.264, HEVC and VP9 videos from https://www.elecard.com/videos.
+
+[H.264]
+gst-launch-1.0 filesrc location=videos/xxxxx.mp4 \
+  ! qtdemux name=demux demux.video_0 ! queue ! h264parse ! v4l2h264dec \
+  ! videoconvert ! autovideosink
+
+[H.265]
+gst-launch-1.0 filesrc location=videos/xxxxx.mp4 \
+  ! qtdemux name=demux demux.video_0 ! queue ! h265parse ! v4l2h265dec \
+  ! videoconvert ! autovideosink
+
+[VP9]
+gst-launch-1.0 filesrc location=videos/xxxxx.webm \
+  ! matroskademux ! queue ! v4l2vp9dec \
+  ! videoconvert ! autovideosink
+
+[Fluster]
+The H.264 decoder was also tested using the Fluster test suite
+(version: v0.4.0-12-g33566abd0964).
+ Target: GStreamer-H.264-V4L2-Gst1.0, Test Suite: JVT-AVC_V1
+ Result: 126/135 tests passed
+ Failures:
+ FM1_BT_B, FM1_FT_E, FM2_SVA_C, BA3_SVA_C, SP1_BT_A,
+ SP2_BT_B, MR6_BT_B, MR7_BT_B, MR8_BT_B
+
+---
+
+Jorge Ramirez-Ortiz (5):
+  media: dt-bindings: venus: Add qcm2290 dt schema
+  media: venus: vdec: AR50_LITE video core support
+  media: venus: hfi_plat_v6_lite: Populate decode capabilities
+  media: venus: core: Add qcm2290 DT compatible and resource data
+  arm64: dts: qcom: qcm2290: Add venus video node
+
+ .../bindings/media/qcom,qcm2290-venus.yaml    | 127 +++++++++++++++
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi         |  57 +++++++
+ drivers/media/platform/qcom/venus/Makefile    |   2 +-
+ drivers/media/platform/qcom/venus/core.c      |  50 +++++-
+ drivers/media/platform/qcom/venus/core.h      |  11 +-
+ drivers/media/platform/qcom/venus/firmware.c  |   8 +-
+ drivers/media/platform/qcom/venus/helpers.c   |  80 ++++++++++
+ drivers/media/platform/qcom/venus/helpers.h   |   2 +
+ .../media/platform/qcom/venus/hfi_helper.h    |  10 +-
+ .../media/platform/qcom/venus/hfi_platform.c  |   2 +
+ .../media/platform/qcom/venus/hfi_platform.h  |   1 +
+ .../qcom/venus/hfi_platform_v6_lite.c         | 148 ++++++++++++++++++
+ drivers/media/platform/qcom/venus/hfi_venus.c |  14 +-
+ .../media/platform/qcom/venus/pm_helpers.c    |   1 +
+ drivers/media/platform/qcom/venus/vdec.c      |  15 +-
+ 15 files changed, 503 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
+ create mode 100644 drivers/media/platform/qcom/venus/hfi_platform_v6_lite.c
+
+-- 
+2.34.1
 
 
