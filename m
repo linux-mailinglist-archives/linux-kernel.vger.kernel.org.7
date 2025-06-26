@@ -1,146 +1,135 @@
-Return-Path: <linux-kernel+bounces-704729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD84AEA119
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:46:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35F2AEA118
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF196A4877
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:40:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 556311630AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1453A2EB5B4;
-	Thu, 26 Jun 2025 14:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35662EBDE8;
+	Thu, 26 Jun 2025 14:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a53c3MlZ"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RTh+bAmd"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B62EAD0E
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC9D2EBDEA
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750948800; cv=none; b=JQtHBdJNqJ+QzWGFo6msmhpIDznaSS29M8yxO1znBPZKV9qA2lejPcNA45tDnWh0SoZ4rgrhLpzedoOKmnep3m9OhmTsclslLuWzrtfPmTsrv+zn2LLY7S74pHe7+GXV2w7aljo19N+WwrfAGAAQiStZW53Ivvvtu/uhw4xS5J4=
+	t=1750948836; cv=none; b=GFm/3WrRTEb07wSnIJjN6RQgCqMtSFTQKmJU55jE/h6C6Um5QSco1AzNqvpKra0d/q/PFq8r34Pzyx8icH0ooXgc78/7p14JWA+t8qvmLho5PXiETyXsRMYzVNTpeRDY093VVXPZYNCT0u8HfeJwk2QqJ6hjSRJw/xSbRbiayRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750948800; c=relaxed/simple;
-	bh=UJf4eeSoOBTLWXE3jQ5PrH2R7qMOPCIdaK8JlFrestM=;
+	s=arc-20240116; t=1750948836; c=relaxed/simple;
+	bh=AI8QyK5VbmzODrK/iLx119zZFzi6+nVsa4oz+0yWfvc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HbMw1uHK6jMvrw8oVEdJwOmoeiRpCk3vHW1/cE92mHrSBJeu9rz+Nk/bNeJhg6Xa7q/+Ug7nDOzBTsJFDmf241OJQ/j/oNjrxkPp8DYpDUE09vXyVwxqqV67uU15lAjq9uzk7zfdkhjzCqvavSZSx5rQN1GbzRC+afdngm/sFX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a53c3MlZ; arc=none smtp.client-ip=209.85.210.173
+	 To:Cc:Content-Type; b=Z4jytjjoJ2FRpQUv5dYKtYgSr0tS2KDqjB6l3Ptpv0NkDLHJ2xGFLrp1cS2R7+VHWBF73i73mFCAk4VKhLDBeHu6GHuhLwd3OIeLIMNJtN/KqE8HsspIoO97hpNOP1WS+PicGvUx1TJzD/bn4zdc+qTZ39SqCWYc9eT3Gfu9/7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RTh+bAmd; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-748fe69a7baso1124343b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:39:58 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234d366e5f2so15226265ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1750948797; x=1751553597; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1750948830; x=1751553630; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0NbDqFXySj+gbUU6xSTy3Imp3ynt9ccm9VYTmcwbQNg=;
-        b=a53c3MlZzSAOkHAxC7Dw4xhckqnEClglnqX9cz/1f8DhcGOBDQ3awwnzStqpsQnzW4
-         xOEBLTL925pjrghJBU38y029StmJxTiWj7SbxEoUujdsKrsKLtXSUhGprcdn4YEy3GkO
-         j/SEs4OWBcuAhLXRexRIAtwLEIEcWqewEzNlg=
+        bh=ktVHpVwkar6BpRFpT2c0I23iBcQUDcPsZbqMOUPU8EM=;
+        b=RTh+bAmd9Rs/1F9YaSUEgoE6AZWmfWbo0A8c+Z+//hSXCBfFL0aEPu02QkIcWR8xhV
+         7EF/nv2fkg5Q2LBFsEUDOf1alTswnJxUPoIHC323WrBFoKzvzMWk0K9CzlqGTcsWwIJj
+         n6wIiF8jcquai5QEJid2Y4sFn1XcImLh5stdc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750948797; x=1751553597;
+        d=1e100.net; s=20230601; t=1750948830; x=1751553630;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0NbDqFXySj+gbUU6xSTy3Imp3ynt9ccm9VYTmcwbQNg=;
-        b=wP1cakGNdeX+U3SPBB+y3VM8EcH5RZTRvQpyLSjHMwtyF/gHI1AuPg0TV/fhhaVX2R
-         hn+OhB1NudbnL2TQaGXZ4kggT5R3LnQCTU/whKjtU+2o5MTc+g6mQTXDrGMpNu83kOBL
-         sRBnXuYTUWD7llKibzufE/zrSjglTHrepvA34i9Z0IcqaqeXArx5LZJ3xVDiAubaQ1Yj
-         LydjSZzs7xS3dNZHpVfhE18GynahR0KzhoulUCHnfMK+u/0rrkpO5diB7FSXMw/lm5Gy
-         VvDrfkS3EhFROPXIpAqGQCmwAqP2u3xSGhjFaQ6/Ir+DGqs875KqRm7anPdjGBZjoYQo
-         /ztA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5TcWYwvi3vSDg6G4YSV43PR/uZjDb3USbfy4yV43Zw6RhoGwyxQCAOd1/PZDBnoiVZ5O5Ot9EcXCyLjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjnJYogWoUbA1auii0u0WeZSQp86qq2Vje7/1R3UhdofTLpQB/
-	7Pq81RjbqM0OYZ6uIVT+vWYiV7PxwSR1lGMxhvbZwyylaK12Xn6if7YyTbtbCZQIEtP8D0Ynv4d
-	OezCW/EDu
-X-Gm-Gg: ASbGncufgJi/jGZyA4PUR/ve0ZboYN4mvo30F6lm50tACqt/1Hn2/q+7tQAcIVWnF8S
-	Njqi/KE+N4Q4DxDC8w4Jk+Dk2kyF7DfFuyPRta6aodGJ0BXSXUGHZFLj+Rezigc4trvdk8myFBl
-	R3fFCHkv0yYWsImjWERq8RdidvGModfVog2/+Zb7nasNtAJp1UhvdsX3uGBNtwvHg+K93hAWvcN
-	oinILv5Cl4HEzyb1qhiMQ4Ey2IBLwj5/FJRiTYPG+d5LJ4XDU0XbRCSK0gTZFzF8l04mcEx34Xv
-	ugK6mXbC+6vJ8fFmvRjAPn4PO31TNEYC/8+WvBnVLEYkxTgzRqSbBqNYUzgtlNVc4UysDY7mvcr
-	O3bdD4uMNxqx0kM2cc2L6JrszAR8hmsROw+9p
-X-Google-Smtp-Source: AGHT+IHSvkboQkjK2+15IgtYGspu2lSp0MLcWhYhqtOu9//RmtMpYYXfuvTjpNRmFozGeFo/IWcq/g==
-X-Received: by 2002:a05:6a00:3d08:b0:748:fcfa:8be2 with SMTP id d2e1a72fcca58-74af4888968mr127811b3a.2.1750948797175;
-        Thu, 26 Jun 2025 07:39:57 -0700 (PDT)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com. [209.85.216.46])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749b5e4293dsm7638844b3a.66.2025.06.26.07.39.55
+        bh=ktVHpVwkar6BpRFpT2c0I23iBcQUDcPsZbqMOUPU8EM=;
+        b=C6hh3SjKX6SU5SQiGDij76pb2E9fDG0hX3QoJUhw7tKjOhy9OwSMY5XNgiwFvL2plH
+         qcQdpBtcgY8b9ejff4EvZeqHN6bJqzANwAyZFkO5vrCefcTqqe7DF2PK2rjHoO80M/En
+         nv+hxAnGgow2oV63mElNijE/oUHA30sSisw8yZJ+OM7fVdPAHCIrBhetgEYiQbaLMT7t
+         PbfCnhy6bDH+TJbFBglKfhvcHnUrUYxSta/VzJJVFQXh0eJQTRhtBmawc4BxmK4Ir7Zy
+         ISJq3KBW2M6tvdhJE4/7gvZtxI0jJCAb/wJyKpZQDAvOwCAKyMq/u1GVh+5KoBgPA3vi
+         p/bA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm40NbpChs8Cs7ORVLQbHaLjZ+mJLTUCputurGEtopCA4CVTycVlE/ngBFfAasUcM6i6dJ4BTbqtfYDGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJnhhRCASGbhpqzPExHUqr/F5qnkC9znjGQnMeGRZiztU7BGOz
+	zVshkZiEz0sQiMJUx0i9JDsY+grn4HENmm8Vune05U+q7vjIc2C4Lyxn9ykeuXMHhQpDeBv8pqo
+	N4rmKk+k4
+X-Gm-Gg: ASbGncvn8ez3l2VlRAzhJfLbXNmNDTWOBSr10eEaPZ+fQuetTNIiYZQq26pCaJU90cC
+	BC2Dr2DCABLbUEdYx/oTQYoJsrIq1y9HYuT2U0hucr0Nq6wLwNvg1uHk53S/R4Zp+mYH7dqaDwa
+	vzZ/F6XTei13KsMP2U+MTOlKvrdZ29c9zVubuzVmNEre4nmHlMEulCpmZttHZdSjLCZZy3/EC1Y
+	8K3BaqNz0iXO3PEgigO4TpCNIM5GEcQzi51NUSNm7Vw2pYDsgRMui38iEkqZ/ibK8nOjYtAVFZC
+	9lRarRTuEzy7tNL0Wldu6mikapN6gpFKY33qga5dfgYu1h0ep6zfxosE8Qjdx6+NA+7l5hIzgsZ
+	OK1vD8EPP/F3qcvJ9VYeb/C/HCA==
+X-Google-Smtp-Source: AGHT+IHqR1YhFPNbRzG8oLnT4mjq7svhC4i6FLFMulTftv75vhwEF7H1Js0HL5HY8FP0VxF1S2D4Lw==
+X-Received: by 2002:a17:903:2292:b0:237:ed38:a5b3 with SMTP id d9443c01a7336-23823f98035mr90301855ad.8.1750948830631;
+        Thu, 26 Jun 2025 07:40:30 -0700 (PDT)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23abe312922sm140205ad.23.2025.06.26.07.40.25
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 07:39:56 -0700 (PDT)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3138e64b42aso1282324a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:39:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUODTq48ypJC4jWLTXkIa6F0F8AXGFCCACQ1ozzuqz6Df8CoxDOXBa2+tohNhRkgpZNzyDqZBuYCr2hcAQ=@vger.kernel.org
-X-Received: by 2002:a17:90b:5212:b0:312:db8f:9a09 with SMTP id
- 98e67ed59e1d1-315f25e698bmr11249585a91.14.1750948795378; Thu, 26 Jun 2025
- 07:39:55 -0700 (PDT)
+        Thu, 26 Jun 2025 07:40:25 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-315c1b0623cso1262668a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:40:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQ8heEfjeObvtdXRXe3aqc61wOD39NlUdpxb80yWhgaZV4HvwbEaRamWXuc43ZsgC0DqFaPQ3wlp/m6Ns=@vger.kernel.org
+X-Received: by 2002:a17:90b:2c84:b0:311:e9ac:f5ce with SMTP id
+ 98e67ed59e1d1-315f26965camr9459965a91.21.1750948825200; Thu, 26 Jun 2025
+ 07:40:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626122854.193239-1-yelangyan@huaqin.corp-partner.google.com>
-In-Reply-To: <20250626122854.193239-1-yelangyan@huaqin.corp-partner.google.com>
+References: <20250620074951.32758-1-brgl@bgdev.pl> <CAD=FV=XD1bfz4e=JOscqa3pGL_Z1RBRjQdDh31yfxac9ZPX6YQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=XD1bfz4e=JOscqa3pGL_Z1RBRjQdDh31yfxac9ZPX6YQ@mail.gmail.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 26 Jun 2025 07:39:43 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XHVKvsJwHzuL+7bv70LvcC2Y-y1C3_aZ7rsAki3cJOGg@mail.gmail.com>
-X-Gm-Features: Ac12FXxkqZPpQXyw5nU2lsKO8nED1gWJWX73WnTNQEt8Js0cUhmqSOeE9SC36iU
-Message-ID: <CAD=FV=XHVKvsJwHzuL+7bv70LvcC2Y-y1C3_aZ7rsAki3cJOGg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel-edp: Add CMN N116BCJ-EAK
-To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-Cc: neil.armstrong@linaro.org, jessica.zhang@oss.qualcomm.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+Date: Thu, 26 Jun 2025 07:40:13 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V-XPij=ztJprp3O0eo3Xe80vS59+bAP_nERobEBNPXxw@mail.gmail.com>
+X-Gm-Features: Ac12FXy9GKHhd2g2BMUwILWpLqK8s1l4nJf-UsGjEGsCX_D33Z1nSU4jBJCrYPI
+Message-ID: <CAD=FV=V-XPij=ztJprp3O0eo3Xe80vS59+bAP_nERobEBNPXxw@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi86: remove unnecessary GPIO line
+ direction check
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Thu, Jun 26, 2025 at 5:29=E2=80=AFAM Langyan Ye
-<yelangyan@huaqin.corp-partner.google.com> wrote:
+On Wed, Jun 25, 2025 at 11:25=E2=80=AFAM Doug Anderson <dianders@chromium.o=
+rg> wrote:
 >
-> Add support for the CMN N116BCJ-EAK, pleace the EDID here for
-> subsequent reference.
+> Hi,
 >
-> 00 ff ff ff ff ff ff 00 0d ae 63 11 00 00 00 00
-> 19 22 01 04 95 1a 0e 78 02 67 75 98 59 53 90 27
-> 1c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-> 01 01 01 01 01 01 da 1d 56 e2 50 00 20 30 30 20
-> a6 00 00 90 10 00 00 18 00 00 00 fe 00 4e 31 31
-> 36 42 43 4a 2d 45 41 4b 0a 20 00 00 00 fe 00 43
-> 4d 4e 0a 20 20 20 20 20 20 20 20 20 00 00 00 fe
-> 00 4e 31 31 36 42 43 4a 2d 45 41 4b 0a 20 00 80
+> On Fri, Jun 20, 2025 at 12:50=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > As of commit 92ac7de3175e3 ("gpiolib: don't allow setting values on inp=
+ut
+> > lines"), the GPIO core makes sure values cannot be set on input lines.
+> > Remove the unnecessary check.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 5 -----
+> >  1 file changed, 5 deletions(-)
 >
-> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-> ---
->  drivers/gpu/drm/panel/panel-edp.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/pa=
-nel-edp.c
-> index 6c45c9e879ec..3796c41629cc 100644
-> --- a/drivers/gpu/drm/panel/panel-edp.c
-> +++ b/drivers/gpu/drm/panel/panel-edp.c
-> @@ -1967,6 +1967,7 @@ static const struct edp_panel_entry edp_panels[] =
-=3D {
->         EDP_PANEL_ENTRY('C', 'M', 'N', 0x115e, &delay_200_500_e80_d50, "N=
-116BCA-EA1"),
->         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1160, &delay_200_500_e80_d50, "N=
-116BCJ-EAK"),
->         EDP_PANEL_ENTRY('C', 'M', 'N', 0x1161, &delay_200_500_e80, "N116B=
-CP-EA2"),
-> +       EDP_PANEL_ENTRY('C', 'M', 'N', 0x1163, &delay_200_500_e80_d50, "N=
-116BCJ-EAK"),
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Pushed to drm-misc-next:
 
-...and pushed to drm-misc-next:
-
-[1/1] drm/panel-edp: Add CMN N116BCJ-EAK
-      commit: 34a3554a1c7059b861db2aafb052a256f38813d6
+[1/1] drm/bridge: ti-sn65dsi86: remove unnecessary GPIO line direction chec=
+k
+      commit: bffc0692359f8d06d989657c00b274802a791692
 
