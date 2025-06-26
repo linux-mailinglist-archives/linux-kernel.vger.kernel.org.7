@@ -1,149 +1,173 @@
-Return-Path: <linux-kernel+bounces-704460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04323AE9DB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:40:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCA4AE9DB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15869162691
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:40:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C087B3A0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171CC2E11D4;
-	Thu, 26 Jun 2025 12:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6332E11D8;
+	Thu, 26 Jun 2025 12:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iov/UuMO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Bq4Wvv7+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFEB2E0B50;
-	Thu, 26 Jun 2025 12:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62378201017;
+	Thu, 26 Jun 2025 12:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750941627; cv=none; b=ZQyX2X896XHVFE8A1YURouzo0blgQKdoTNuqRRmV0/PhBpcUcCmYAdFusOg7tZN7HBR2YVwOWt1YLLlbos/98cZ7/pEM5J4dQM/OsljfyWQOb3RNS04VArjxcVHluxf0Y11iq3yjOusmjaOHnD+eH/M71RLbruigoKIRpAuE8Dk=
+	t=1750941772; cv=none; b=qVG49866NjakCfNk1lCrK+V0pMZ0eryEOW+OYzQkNP5W2LYbOKMZtQ0NgrP12zVCrnQoAB8zQZpvwbUseoEU7g4KxXK0J0x0FkoIwNrs1pi5D89xK7rnT3U3KGWlPOBR05v/+2pCir6X46BpPQXF4nba6X6E/n/4THAqyl+jTHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750941627; c=relaxed/simple;
-	bh=tjTOGPjzJnUG43hJmlfmYnj58c2q6lIlyqKtZ0yQ1RQ=;
+	s=arc-20240116; t=1750941772; c=relaxed/simple;
+	bh=/a+MiBN3U4KcgRah2otQEl2ZAfbGFptjDWZeI5tiwVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ciaj3siTnqZUengHbZ4D0DUKQK0nAOFFubcChlBBKhTurAIwH4TTSEmW+wDNCGJlw8zPe8q320+YEPHSs6zlg3HTE5Cj5EiIb8m85RvaMSSwtbS7UrJPahM1SdIq0q4qDUrOXFf2zyWetLjRyNQiKp8nHuyQAqt04l+JUQ7sFCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iov/UuMO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75679C4CEEB;
-	Thu, 26 Jun 2025 12:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750941627;
-	bh=tjTOGPjzJnUG43hJmlfmYnj58c2q6lIlyqKtZ0yQ1RQ=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCNbCtnITuDTFsP9j0GQYoQuWfk7qTu6TQzAJaV44Ht2Vplcy1mpIShlACmUxFt5DqYIaSv0qH/xDxM8uhEP/01hs4IGkXko0M2w09kG9yS3qzQpZpj6yt5bZU84AdlU0YBVUJnjhwo9zOO7EU3xMp9apKHY1EFSMoRiBntHJZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Bq4Wvv7+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (85-76-34-12-nat.elisa-mobile.fi [85.76.34.12])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 132F13D5;
+	Thu, 26 Jun 2025 14:42:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750941750;
+	bh=/a+MiBN3U4KcgRah2otQEl2ZAfbGFptjDWZeI5tiwVM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iov/UuMO5gwHm/ahFOfhswkjoJiwTLF0guIiN2DoAeTvTTAIlPiojVkwzlTXYx4vQ
-	 n7c8xYy3Z5Z+WmYxcQYKD/CcUCgKC4RyMNGrtiHhPg1GVdP0R2qx5q5piZ9+1+qhB/
-	 5Fw8JdyvakCmqTI6tlvzPkXosO6zUtrOV4g5i02mNj0otQZVZsdK7cXoeYIRheVvQL
-	 HVC9ElJWilf+okF+PTPkAYE+OD7hSTg1awFFPF6+oU6+LRcX1xBq2rZ+fmdVt2Sl1j
-	 9BlyLKSsrs0preOaFymh8sfhsdkm6/G0jEkq9jLK62L+9gohRBt1MC9tcMClAIDvMv
-	 TVoI95NoeUElg==
-Date: Thu, 26 Jun 2025 14:40:22 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] rust: support NUMA ids in allocations
-Message-ID: <aF0_tm04Y8MsqVzZ@pollux>
-References: <20250626083516.3596197-1-vitaly.wool@konsulko.se>
- <20250626083653.3596424-1-vitaly.wool@konsulko.se>
+	b=Bq4Wvv7+34jFLzYlwax7THsGzi1+IcvoqEvmMityKXbu1cRceUKUfyPc9xLPq6Yg1
+	 5e7lBeQMd1mjDDUf7CAbCWM6vKjjRSCnysXhkVZNSJHFXG8dQxWTAF/53UWhBurTCL
+	 nwcJ1NV6NnTQjYrHmqVW+4izlymLQFc3gg4w9n5c=
+Date: Thu, 26 Jun 2025 15:42:24 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kumar M <anil.mamidala@xilinx.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, "Guoniu.zhou" <guoniu.zhou@nxp.com>,
+	Stefan Hladnik <stefan.hladnik@gmail.com>,
+	Florian Rebaudo <frebaudo@witekio.com>
+Subject: Re: [PATCH v3 2/2] media: i2c: Add ON Semiconductor AP1302 ISP driver
+Message-ID: <20250626124224.GK8738@pendragon.ideasonboard.com>
+References: <20250623-ap1302-v3-0-c9ca5b791494@nxp.com>
+ <20250623-ap1302-v3-2-c9ca5b791494@nxp.com>
+ <20250623224701.GE15951@pendragon.ideasonboard.com>
+ <aFryrpyDByI6wu5b@lizhi-Precision-Tower-5810>
+ <20250624185643.GE20757@pendragon.ideasonboard.com>
+ <aFr6Ehpl5Kk+nt7m@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250626083653.3596424-1-vitaly.wool@konsulko.se>
+In-Reply-To: <aFr6Ehpl5Kk+nt7m@lizhi-Precision-Tower-5810>
 
-On Thu, Jun 26, 2025 at 10:36:53AM +0200, Vitaly Wool wrote:
-> Add support for specifying NUMA ids in Rust allocators as an Option
-> (i. e. providing `None` as nid corresponds to NUMA_NO_NODE). This
-> will allow to specify node to use for allocation of e. g. {KV}Box.
+On Tue, Jun 24, 2025 at 03:18:42PM -0400, Frank Li wrote:
+> On Tue, Jun 24, 2025 at 09:56:43PM +0300, Laurent Pinchart wrote:
+> > On Tue, Jun 24, 2025 at 02:47:10PM -0400, Frank Li wrote:
+> > > On Tue, Jun 24, 2025 at 01:47:01AM +0300, Laurent Pinchart wrote:
+> > > > On Mon, Jun 23, 2025 at 03:17:38PM -0400, Frank Li wrote:
+> > > > > From: Anil Kumar Mamidala <anil.mamidala@xilinx.com>
+> > > > >
+> > > > > The AP1302 is a standalone ISP for ON Semiconductor sensors.
+> > > > > AP1302 ISP supports single and dual sensor inputs. The driver
+> > > > > code supports AR1335, AR0144 and AR0330 sensors with single and
+> > > > > dual mode by loading the corresponding firmware.
+> > > > >
+> > > > > Signed-off-by: Anil Kumar Mamidala <anil.mamidala@xilinx.com>
+> > > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > > Signed-off-by: Stefan Hladnik <stefan.hladnik@gmail.com>
+> > > > > Signed-off-by: Florian Rebaudo <frebaudo@witekio.com>
+> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > > ---
+> > > > > Change in v3:
+> > > > > - add extra empty line between difference register define
+> > > > > - add bits.h
+> > > > > - use GEN_MASK and align regiser bit define from 31 to 0.
+> > > > > - add ap1302_sensor_supply
+> > > > > - add enable gpio
+> > > > > - update firmware header format
+> > > >
+> > > > One of the main issues with this driver is that we need to standardize
+> > > > the header format. The standardized format will need to be approved by
+> > > > onsemi as we will need to provide not just a driver, but also a
+> > > > toolchain that will produce firmwares in the right format. Furthermore,
+> > > > some time ago the AP1302 firmware was extended with the ability to
+> > > > dynamically compute PLL parameters IIRC. This needs to be taken into
+> > > > account.
+> > >
+> > > It is quite common when work with firmwares. Generally, it need version
+> > > information at header.
+> > >
+> > > The driver need check firmware's API version, if miss match or incompatible,
+> > > just return and report error.
+> > >
+> > > we can't assume firmware always align driver code because many user just
+> > > update kernel without update rootfs or firmware package.
+> >
+> > Sure, but that's not the point. The point is that there are multiple
+> > out-of-tree ap1302 driver versions, developed or adapted by different
+> > SoC vendors. Those variants use firmware files produced by those SoC
+> > vendors, and they not standard.
 > 
-> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
-> ---
->  rust/helpers/slab.c            |  9 +++++----
->  rust/helpers/vmalloc.c         |  4 ++--
->  rust/kernel/alloc.rs           | 28 ++++++++++++++++++++++++++--
->  rust/kernel/alloc/allocator.rs | 26 ++++++++++++++++++--------
->  rust/kernel/alloc/kvec.rs      |  3 ++-
->  5 files changed, 53 insertions(+), 17 deletions(-)
+> I am not sure if firwmare is open source. Most like not.
+
+The firmware is not open-source, but I don't think that's relevant.
+
+> We need create
+> difference compatible string for difference Soc vendor.
+
+No, that we must absolutely not do :-) If it's the same AP1302 and same
+camera sensor, we must not have different compatible strings when the
+AP1302 is connected to an NXP SoC or a MediaTek SoC.
+
+> > We need to standardize on a firmware
+> > format to upstream a driver, and that standardization needs to involve
+> > the device manufacturer.
 > 
-> diff --git a/rust/helpers/slab.c b/rust/helpers/slab.c
-> index 5e9e8dd2bba0..ab1cf72f8353 100644
-> --- a/rust/helpers/slab.c
-> +++ b/rust/helpers/slab.c
-> @@ -3,13 +3,14 @@
->  #include <linux/slab.h>
->  
->  void * __must_check __realloc_size(2)
-> -rust_helper_krealloc(const void *objp, size_t new_size, unsigned long align, gfp_t flags)
-> +rust_helper_krealloc_node(const void *objp, size_t new_size, unsigned long align, gfp_t flags,
-> +			  int nid)
->  {
-> -	return krealloc(objp, new_size, flags);
-> +	return krealloc_node(objp, new_size, flags, nid);
->  }
->  
->  void * __must_check __realloc_size(2)
-> -rust_helper_kvrealloc(const void *p, size_t size, unsigned long align, gfp_t flags)
-> +rust_helper_kvrealloc_node(const void *p, size_t size, unsigned long align, gfp_t flags, int nid)
->  {
-> -	return kvrealloc(p, size, flags);
-> +	return kvrealloc_node(p, size, flags, nid);
->  }
+> we need workable version (easy extend) firstly, when let other vendor follow.
+> 
+> Frank Li
+> >
+> > > > I want to resuscitate this driver and get it merged. There's more work
+> > > > to do, in collaboration with onsemi, and I haven't had time to tackle
+> > > > it. If you want to propose a proper design for firmware handling I would
+> > > > be happy to participate in the discussion.
+> > >
+> > > who is onsemi contact windows.
+> > >
+> > > > > - update raw sensor supply delay time
+> > > > > - use gpiod_set_value_cansleep() insteand gpiod_set_value()
+> > > > > - update use latest v4l2 api
+> > > > > - use ctrl_to_sd() helper function
+> > > > > - add ap1302_g_volatile_ctrl()
+> > > > > - remove ap1302_get_fmt()
+> > > > > - use guard for mutex.
+> > > > > - use dev_err_probe
+> > > > > - use devm_add_action_or_reset to simple error handle at probe.
+> > > > > - use read_poll_timeout() simple dma idle polling.
+> > > > >
+> > > > > previous upstream:
+> > > > > https://lore.kernel.org/linux-media/1631091372-16191-1-git-send-email-anil.mamidala@xilinx.com/
+> > > > > ---
+> > > > >  MAINTAINERS                |    1 +
+> > > > >  drivers/media/i2c/Kconfig  |    9 +
+> > > > >  drivers/media/i2c/Makefile |    1 +
+> > > > >  drivers/media/i2c/ap1302.c | 2838 ++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  4 files changed, 2849 insertions(+)
+> > > >
+> > > > [snip]
 
-Same as in the previous patch, please keep those as "normal" helpers for
-*realloc_node() and create the corresponding *realloc_node_align() helpers
-discarding the argument on the Rust side.
+-- 
+Regards,
 
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index a2c49e5494d3..1e26c2a7f47c 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -156,7 +156,30 @@ pub unsafe trait Allocator {
->      fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
->          // SAFETY: Passing `None` to `realloc` is valid by its safety requirements and asks for a
->          // new memory allocation.
-> -        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags) }
-> +        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags, None) }
-> +    }
-> +
-> +    /// Allocate memory based on `layout`, `flags` and `nid`.
-> +    ///
-> +    /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
-> +    /// constraints (i.e. minimum size and alignment as specified by `layout`).
-> +    ///
-> +    /// This function is equivalent to `realloc` when called with `None`.
-> +    ///
-> +    /// # Guarantees
-> +    ///
-> +    /// When the return value is `Ok(ptr)`, then `ptr` is
-> +    /// - valid for reads and writes for `layout.size()` bytes, until it is passed to
-> +    ///   [`Allocator::free`] or [`Allocator::realloc`],
-> +    /// - aligned to `layout.align()`,
-> +    ///
-> +    /// Additionally, `Flags` are honored as documented in
-> +    /// <https://docs.kernel.org/core-api/mm-api.html#mm-api-gfp-flags>.
-> +    fn alloc_node(layout: Layout, flags: Flags, nid: Option<i32>)
-> +                -> Result<NonNull<[u8]>, AllocError> {
-> +        // SAFETY: Passing `None` to `realloc` is valid by its safety requirements and asks for a
-> +        // new memory allocation.
-> +        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags, nid) }
->      }
->  
->      /// Re-allocate an existing memory allocation to satisfy the requested `layout`.
-> @@ -196,6 +219,7 @@ unsafe fn realloc(
->          layout: Layout,
->          old_layout: Layout,
->          flags: Flags,
-> +        nid: Option<i32>,
->      ) -> Result<NonNull<[u8]>, AllocError>;
-
-I think you did forget to add realloc_node() as requested in the last iteration.
+Laurent Pinchart
 
