@@ -1,365 +1,203 @@
-Return-Path: <linux-kernel+bounces-704880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC0FAEA2BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:35:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969E6AEA29B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596615A260A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436E21700EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB612EE290;
-	Thu, 26 Jun 2025 15:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DE12ED147;
+	Thu, 26 Jun 2025 15:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjY4IwO6"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKFFjvGl"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F632ED867;
-	Thu, 26 Jun 2025 15:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5571F2ECD3E;
+	Thu, 26 Jun 2025 15:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750952003; cv=none; b=I+gLXPqtRtOiwDBwlxB/vgXFswZ8QGW3YFoILDHUJL5LPSv8lnlIwcn97FI4/OJ+Ur7A+6ZgtcJAYwpOKYBdYBUqBjFf2Lt0DjaLiwsmlqpdWVKPjFdKh8qKQIj+T5HG61ULqR8GVVYsGk9Of4z3Nzpp+dqKkq8uYpvKPXg1Wg8=
+	t=1750951931; cv=none; b=DGO/QaX34ZaFnrHr5jobjk/wvVtMJ8fZ6YwXT+XSzFV39faDys5g2h5J/pUYlf3qwIKJJIOgDxIdna9cYuFKVVqmmm5cpbhIj6wnu3fPpGgsPLmyoVKM+aMfW/vt/6vCHIC25YD4oSnrnAjD//iA+qgMz6Lka6b6AHxWR2K5fnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750952003; c=relaxed/simple;
-	bh=wcoCib0y3tKBYGMr83R+bqMPu+MeV/ei1S9/t1XfqVs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hqN6lWdJ6mQonBmorjJSW+u2B9N+6BR7UmUREAJArZKrlr1NWG+5UZy50CjnqpNKZaEXdl1QllBjsZ4terb3ZN+7iZNmSX7a0Db+bLCFf4wTH/im6uAECGq/0Yv+Bg/5QEe35LHqvm6HtxRnjCj6e7TqykWgcvYh6SulK+BzWaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjY4IwO6; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1750951931; c=relaxed/simple;
+	bh=9cBzVZrNtKrfd33efqkWagZMjsWvvlG6F/Mn2eyIc6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IZlXBaUX6PLGjKltCMcKStLml+1eLL2URgj88foA9/QoTAazXRIIBZSklika3DtoKXYU5RJITH+ltIz/oobTHpc4KEdD+WhIJu+Ow/pku6vTGQIoJIa6WjkkVDBZRaLR7pmoXG2YBeCnMaxmhqbz6BkHvVi6DqMXtC2/f2of+vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKFFjvGl; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55502821bd2so1199056e87.2;
-        Thu, 26 Jun 2025 08:33:21 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so1330111b3a.0;
+        Thu, 26 Jun 2025 08:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750952000; x=1751556800; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750951929; x=1751556729; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+pDrLO6USAZl/TGsifgnkWPVKgGBnMCumXxL7y5KwTQ=;
-        b=SjY4IwO6thS3WmlIpfx+kmcwsj3xNrM3Avcrxmapm/tu7xUE0gpQCUsjDg1GNnQZNx
-         LVa1csL1akPmr5ezbXU1Y/1AApVCRdH+mRsnHUGwkpUt5TKq9qw8iSwsmBPrG7liw/c0
-         x91rvxc6BpPx+294Z8ATUcT02tTTuBFSKKU6DpPZa5HWIoBMyA1fc49voyv8Ozm/ox6g
-         KfX5AD40pjVmfc674pidRbKitfGF4R+NScjkB47KMj8YNR8nlDdKg0eCwxtlZgyvdcHP
-         Bx+q1aIuGDIBLeJCH8VFG3p4owaERuGDYZ3QrFv8V5Paa2TarzU23EBUSsEM9ipOWLcV
-         nAtA==
+        bh=dOPju5AumU2Kn0t+yuh195AN33tJhLKQXSfJHeANdZI=;
+        b=bKFFjvGlw5i/Oe5DMEMUGH7Z9oxlwmwRKoRi17TGM4g/bygPxXhrh3H9ldqgnrQ2Ie
+         hqQ5B5lvb1KnWTQvMaSwMzlNpOmqQ4HVZquH6htqpGnmVTr+4jbZWIWumlK3RWu3m5Lz
+         3NctjxSzBGWSmwoj8a5R3qZhX0g3vmclsaPlq7tHQrFTI8GIT6WpvdVOIDPvWrQJT2nB
+         xo0IUJMcBwJ4XU6M1OFGTcK0f3d91S/hwWPEVYDyQV6aAhqYR9ScT7db3ok4Il/TE5Tz
+         vG5alV6xCDFVM1BmemQOg1zhsHRRtEqQHJ0xGcECSLRQRmtxI00KtwYhFSoYAJwXiWva
+         7qmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750952000; x=1751556800;
+        d=1e100.net; s=20230601; t=1750951929; x=1751556729;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+pDrLO6USAZl/TGsifgnkWPVKgGBnMCumXxL7y5KwTQ=;
-        b=SET1Q8Kkqeb361+oy3aSCzdtUGDJkMlIlStGRebBi7HTjkydTdtuZKZ0JSeJkGj1ko
-         ftr7YF3FvNxBaoIdgtoSP4733kaxt7fwktfJtMlI08IQ2NJBiUGHoufUMGYA2QgRDP3R
-         14TcQIYY2U1A2Y6Ey6phxrncnO1Qfu4ujX20tkxCndilSBlURbkomTFJ7tF8sBzwCR7+
-         e97HKR020f2ufOv543jzp0iYAmboiHJI0vZjyfj9fFYgZehMqGCwuM9xxeSgmRv+xPNd
-         oyeaQXOaitJKq78jG290bPOAFbExEEsWAWabb1qfzUo3EW0Sv4gHOy1rfmdjX+fADXqA
-         CmPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Iblpho36cB6VLSVY+gTrWrhkrhEMRoFzPG9qL9KmT9Ft7GlxetJi0kyeZ6OaG/41MuWSemtJxkGxVQ==@vger.kernel.org, AJvYcCXUae9Xyhi9XkKMxqAajocaAl5IsWRF0Lt7y7vHwTrtsgvlx1oLrSqcrsB8pM1tQ/PfDltB2AMJhHRD5Qw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx181w7AOlDKmoH0UprdbTOyp4yBnFtX+T4SpoTcP9OMMjQDiCB
-	k6PfaqNcoBm9czLYgLJWwPG17L3SEjmPanHbJJBw6RHSDPu0rp5oi/Hc
-X-Gm-Gg: ASbGnctolYMufDMNIagN/FMl+Dn10ZKITFMxoBFkmOTkgffHtOsvvr18NJGsh4HvWyL
-	PQXKVKUT6ZPjuI1d9kojpsdayAZmRVLlzjGXCkDjsFQQY0cCwABZqWrx1IRRO9/6YnZ2fgtMSfv
-	aaDRpTowFUS4G0b3df6e7aJs/6ttyJrhA2r/e4ViDJU9vHzO8d51+8VsknSQ8Wb7/SfcHUeEJ1k
-	ueXWzZDGRd7LgsSh+7LsfHxGAtbhsdXnjGbJbU3wCFGGq1A+S5a9H5TfaWnDcf3S32bcAAHVCNf
-	fDV58klCk99Z0PDrrAqU8u69FreLZAlJYvIQwS1nIIesbKp4t1q8jbbYNIXrLPe8Hy4oGySnVVX
-	36V6SCnJBRFdtCljDgDvomDb2cL1tAQ==
-X-Google-Smtp-Source: AGHT+IGY311+Wdu3kb/XvX91pk/iQewvyeMEbYN3t0cf6Gst1F46Nt/0GHv4Ja5q8VZUcn9wuGuFjg==
-X-Received: by 2002:a05:6512:12c2:b0:553:28f1:66ec with SMTP id 2adb3069b0e04-554fdd47009mr2940330e87.31.1750951999683;
-        Thu, 26 Jun 2025 08:33:19 -0700 (PDT)
-Received: from localhost.localdomain (2.135.54.165.dynamic.telecom.kz. [2.135.54.165])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2ce1fasm42792e87.174.2025.06.26.08.33.12
+        bh=dOPju5AumU2Kn0t+yuh195AN33tJhLKQXSfJHeANdZI=;
+        b=J6+8J/R102+RkuEWnRG1E/crmRsC/YQ7C2SVMt1Ja0gf8zsGn91JdC+hsaSRUvpjg4
+         MaSZV0fLxk+MHXCxE3RD2i8QuiDYHtSchVs6OuOdWKEeuMk/cA1E9jn/U9OjyFe7B333
+         Kw2EmrVs2ZPt+Y1w+MkGwzmf7cgrkfgt2thnTCKZ8s6z6e/iVZieUAx724A3ugZZEz8l
+         7nyxG1R19yYHUkvgj0dyL0m/3G0r25lwEEQlLj9p8pQnnkQc3HZ0dUyTrteA89ai7OIf
+         XCrE32vpAY6ROBNaN1TvYjirVTcrgNnrOEsHWywfqL96Jh0CTaCqyw41/td/W41o70LR
+         SEgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+xESvuSgbBlnIS/qkM7J3WBXMK0t7J9A92LOId72mAVXCiS2z9ALphPDFTnSh96cdHDCrRy6jWmjXpP8=@vger.kernel.org, AJvYcCXHzGqXtsJr4Vl4+Wrwjus+C1qEwf4aoSm6N1wGswMsqAkfgSKn306ooT46aFxfttQ5tUHFU6djKJgO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrmrvli9UUEiDi4LsMwUi4G+ILjGnRjWsfit92cTtNnNxbLSvk
+	3ygxX6Kw0UhUcE9nv+jmfKoRMKnDf89cmKwywhJnHgIkHwftYvZqWhud
+X-Gm-Gg: ASbGnct/dtyFhDfECayYYxLMJKypJKSiQA0hfDddr8u3vv++KIQtaGfA94eNTYL8Dqx
+	5EGj1TcUjKY9Un9lyfdk2LUMHR2p4sVZMT2MV7F6H+WifeVDAII+98ED8Rd0XrnJtfzx6e7EstI
+	rj/X2RIHV0pvWE7JgLTrsyKL5tJlRUn4OibnY6p44Sw1+g5TGG8dBGwna4vo9veAyzopPT9D8MF
+	KFqZiBAxY3eX30gbEqw028L+SlBDfZgR1MCgiJlFPlkc0MLJTC0VCC/TtnuhrSJ2iKeMRHLqQLL
+	NXIm72Kf2Qy+n87y81CaU6pNLNpyNEph0oml9NcjYLh2xK/OeBS01+W1z6GxcaDHQhq+uO3cX7f
+	WGxV5g4bIt/gkO3L9VQ1a
+X-Google-Smtp-Source: AGHT+IGKqAPTE+91pLgSVbkrh/0uvi3JsBdef2MyY88JBpFky3mK+FDQw7En9IeOx8upC2PzlOgl2Q==
+X-Received: by 2002:a05:6a20:7d8b:b0:215:efed:acfc with SMTP id adf61e73a8af0-2207f14d5f6mr11290030637.7.1750951929356;
+        Thu, 26 Jun 2025 08:32:09 -0700 (PDT)
+Received: from avinash-INBOOK-Y2-PLUS.. ([2401:4900:88e3:29c5:7a4e:6494:9023:72af])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34c44b4755sm1976776a12.73.2025.06.26.08.32.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 08:33:18 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: ryabinin.a.a@gmail.com,
-	glider@google.com,
-	andreyknvl@gmail.com,
-	dvyukov@google.com,
-	vincenzo.frascino@arm.com,
-	linux@armlinux.org.uk,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	maddy@linux.ibm.com,
-	mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com,
-	svens@linux.ibm.com,
-	richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	x86@kernel.org,
-	hpa@zytor.com,
-	chris@zankel.net,
-	jcmvbkbc@gmail.com,
-	akpm@linux-foundation.org,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: arnd@arndb.de,
-	rppt@kernel.org,
-	geert@linux-m68k.org,
-	mcgrof@kernel.org,
-	guoweikang.kernel@gmail.com,
-	tiwei.btw@antgroup.com,
-	kevin.brodsky@arm.com,
-	benjamin.berg@intel.com,
-	kasan-dev@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org,
+        Thu, 26 Jun 2025 08:32:08 -0700 (PDT)
+From: Abinash Singh <abinashlalotra@gmail.com>
+X-Google-Original-From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: oneukum@suse.com
+Cc: abinashlalotra@gmail.com,
+	abinashsinghlalotra@gmail.com,
+	gregkh@linuxfoundation.org,
+	johan@kernel.org,
 	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-mm@kvack.org,
-	llvm@lists.linux.dev,
-	snovitoll@gmail.com
-Subject: [PATCH v2 11/11] kasan: replace kasan_arch_is_ready with kasan_enabled
-Date: Thu, 26 Jun 2025 20:31:47 +0500
-Message-Id: <20250626153147.145312-12-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250626153147.145312-1-snovitoll@gmail.com>
-References: <20250626153147.145312-1-snovitoll@gmail.com>
+	linux-usb@vger.kernel.org
+Subject: [PATCH] usb: serial: usb_wwan: Fix data races by protecting dtr/rts state with a mutex
+Date: Thu, 26 Jun 2025 21:01:56 +0530
+Message-ID: <20250626153156.50131-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <f2419bb9-2d81-4a6d-838d-b404e3ce7786@suse.com>
+References: <f2419bb9-2d81-4a6d-838d-b404e3ce7786@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Replace the existing kasan_arch_is_ready() calls with kasan_enabled().
-Drop checks where the caller is already under kasan_enabled() condition.
+Fix two previously noted locking-related issues in usb_wwan by introducing
+a mutex to serialize access to the shared `rts_state` and `dtr_state`
+fields in `struct usb_wwan_port_private`.
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218315
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+- In `usb_wwan_dtr_rts()`, the fields are now updated under the new
+  `portdata->lock` to prevent concurrent access.
+- In `usb_wwan_tiocmset()`, the same lock is used to protect both updates
+  to the modem control lines and the subsequent `usb_wwan_send_setup()`
+  call.
+
+The mutex is initialized during `usb_wwan_port_probe()` when the port
+private data is allocated. This ensures consistent state and avoids
+data races when multiple threads attempt to modify control line state.
+
+This change resolves the two old `FIXME` comments and improves thread
+safety for modem control signal handling.
+
+Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
 ---
- include/linux/kasan-enabled.h | 20 ++++++++++++--------
- mm/kasan/common.c             |  8 ++++----
- mm/kasan/generic.c            |  6 +++---
- mm/kasan/kasan.h              |  6 ------
- mm/kasan/shadow.c             | 15 +++------------
- 5 files changed, 22 insertions(+), 33 deletions(-)
+Thank You very much for your feedback .
+You don't have to say sorry , your feedback
+is valueable for me.
 
-diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
-index 2b1351c30c6..2436eb45cfe 100644
---- a/include/linux/kasan-enabled.h
-+++ b/include/linux/kasan-enabled.h
-@@ -5,32 +5,36 @@
- #include <linux/static_key.h>
+
+v2 :
+	initialized the mutex during probing
+	droping lock after returning from usb_wwan_send_setup()
+
+Regards
+Abinash
+---
+ drivers/usb/serial/usb-wwan.h |  1 +
+ drivers/usb/serial/usb_wwan.c | 12 ++++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/serial/usb-wwan.h b/drivers/usb/serial/usb-wwan.h
+index 519101945769..e8d042d9014f 100644
+--- a/drivers/usb/serial/usb-wwan.h
++++ b/drivers/usb/serial/usb-wwan.h
+@@ -59,6 +59,7 @@ struct usb_wwan_port_private {
+ 	int ri_state;
  
- #ifdef CONFIG_KASAN
-+
- /*
-  * Global runtime flag. Starts ‘false’; switched to ‘true’ by
-  * the appropriate kasan_init_*() once KASAN is fully initialized.
-  */
- DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
--#endif
--
--#ifdef CONFIG_KASAN_HW_TAGS
+ 	unsigned long tx_start_time[N_OUT_URB];
++	struct mutex lock;
+ };
  
- static __always_inline bool kasan_enabled(void)
- {
- 	return static_branch_likely(&kasan_flag_enabled);
- }
- 
--static inline bool kasan_hw_tags_enabled(void)
-+#else /* !CONFIG_KASAN */
-+
-+static __always_inline bool kasan_enabled(void)
- {
--	return kasan_enabled();
-+	return false;
- }
- 
--#else /* CONFIG_KASAN_HW_TAGS */
-+#endif /* CONFIG_KASAN */
-+
-+#ifdef CONFIG_KASAN_HW_TAGS
- 
--static inline bool kasan_enabled(void)
-+static inline bool kasan_hw_tags_enabled(void)
- {
--	return IS_ENABLED(CONFIG_KASAN);
-+	return kasan_enabled();
- }
- 
-+#else /* !CONFIG_KASAN_HW_TAGS */
-+
- static inline bool kasan_hw_tags_enabled(void)
- {
- 	return false;
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 525194da25f..0f3648335a6 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -257,7 +257,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
- bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
- 				unsigned long ip)
- {
--	if (!kasan_arch_is_ready() || is_kfence_address(object))
-+	if (!kasan_enabled() || is_kfence_address(object))
- 		return false;
- 	return check_slab_allocation(cache, object, ip);
- }
-@@ -265,7 +265,7 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
- bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
- 		       bool still_accessible)
- {
--	if (!kasan_arch_is_ready() || is_kfence_address(object))
-+	if (!kasan_enabled() || is_kfence_address(object))
- 		return false;
- 
- 	poison_slab_object(cache, object, init, still_accessible);
-@@ -289,7 +289,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
- 
- static inline bool check_page_allocation(void *ptr, unsigned long ip)
- {
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
- 		return false;
- 
- 	if (ptr != page_address(virt_to_head_page(ptr))) {
-@@ -518,7 +518,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
- 		return true;
- 	}
- 
--	if (is_kfence_address(ptr) || !kasan_arch_is_ready())
-+	if (is_kfence_address(ptr) || !kasan_enabled())
- 		return true;
- 
- 	slab = folio_slab(folio);
-diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-index ab9ab30caf4..af2f2077a45 100644
---- a/mm/kasan/generic.c
-+++ b/mm/kasan/generic.c
-@@ -176,7 +176,7 @@ static __always_inline bool check_region_inline(const void *addr,
- 						size_t size, bool write,
- 						unsigned long ret_ip)
- {
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
- 		return true;
- 
- 	if (unlikely(size == 0))
-@@ -204,7 +204,7 @@ bool kasan_byte_accessible(const void *addr)
- {
- 	s8 shadow_byte;
- 
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
- 		return true;
- 
- 	shadow_byte = READ_ONCE(*(s8 *)kasan_mem_to_shadow(addr));
-@@ -506,7 +506,7 @@ static void release_alloc_meta(struct kasan_alloc_meta *meta)
- 
- static void release_free_meta(const void *object, struct kasan_free_meta *meta)
- {
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
+ #endif /* __LINUX_USB_USB_WWAN */
+diff --git a/drivers/usb/serial/usb_wwan.c b/drivers/usb/serial/usb_wwan.c
+index 0017f6e969e1..cd80fbd1dc6f 100644
+--- a/drivers/usb/serial/usb_wwan.c
++++ b/drivers/usb/serial/usb_wwan.c
+@@ -80,11 +80,12 @@ void usb_wwan_dtr_rts(struct usb_serial_port *port, int on)
  		return;
  
- 	/* Check if free meta is valid. */
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index 129178be5e6..e0ffc16495d 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -544,12 +544,6 @@ static inline void kasan_poison_last_granule(const void *address, size_t size) {
+ 	portdata = usb_get_serial_port_data(port);
+-	/* FIXME: locking */
++	mutex_lock(&portdata->lock);
+ 	portdata->rts_state = on;
+ 	portdata->dtr_state = on;
  
- #endif /* CONFIG_KASAN_GENERIC */
+ 	usb_wwan_send_setup(port);
++	mutex_unlock(&portdata->lock);
+ }
+ EXPORT_SYMBOL(usb_wwan_dtr_rts);
  
--#ifndef kasan_arch_is_ready
--static inline bool kasan_arch_is_ready(void)	{ return true; }
--#elif !defined(CONFIG_KASAN_GENERIC) || !defined(CONFIG_KASAN_OUTLINE)
--#error kasan_arch_is_ready only works in KASAN generic outline mode!
--#endif
+@@ -113,6 +114,7 @@ int usb_wwan_tiocmset(struct tty_struct *tty,
+ 	struct usb_serial_port *port = tty->driver_data;
+ 	struct usb_wwan_port_private *portdata;
+ 	struct usb_wwan_intf_private *intfdata;
++	int ret;
+ 
+ 	portdata = usb_get_serial_port_data(port);
+ 	intfdata = usb_get_serial_data(port->serial);
+@@ -120,7 +122,7 @@ int usb_wwan_tiocmset(struct tty_struct *tty,
+ 	if (!intfdata->use_send_setup)
+ 		return -EINVAL;
+ 
+-	/* FIXME: what locks portdata fields ? */
++	mutex_lock(&portdata->lock);
+ 	if (set & TIOCM_RTS)
+ 		portdata->rts_state = 1;
+ 	if (set & TIOCM_DTR)
+@@ -130,7 +132,9 @@ int usb_wwan_tiocmset(struct tty_struct *tty,
+ 		portdata->rts_state = 0;
+ 	if (clear & TIOCM_DTR)
+ 		portdata->dtr_state = 0;
+-	return usb_wwan_send_setup(port);
++	ret = usb_wwan_send_setup(port);
++	mutex_unlock(&portdata->lock);
++	return ret;
+ }
+ EXPORT_SYMBOL(usb_wwan_tiocmset);
+ 
+@@ -452,7 +456,7 @@ int usb_wwan_port_probe(struct usb_serial_port *port)
+ 	portdata = kzalloc(sizeof(*portdata), GFP_KERNEL);
+ 	if (!portdata)
+ 		return -ENOMEM;
 -
- #if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
++	mutex_init(&portdata->lock);
+ 	init_usb_anchor(&portdata->delayed);
  
- void kasan_kunit_test_suite_start(void);
-diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-index d2c70cd2afb..9db8548ccb4 100644
---- a/mm/kasan/shadow.c
-+++ b/mm/kasan/shadow.c
-@@ -125,7 +125,7 @@ void kasan_poison(const void *addr, size_t size, u8 value, bool init)
- {
- 	void *shadow_start, *shadow_end;
- 
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
- 		return;
- 
- 	/*
-@@ -150,9 +150,6 @@ EXPORT_SYMBOL_GPL(kasan_poison);
- #ifdef CONFIG_KASAN_GENERIC
- void kasan_poison_last_granule(const void *addr, size_t size)
- {
--	if (!kasan_arch_is_ready())
--		return;
--
- 	if (size & KASAN_GRANULE_MASK) {
- 		u8 *shadow = (u8 *)kasan_mem_to_shadow(addr + size);
- 		*shadow = size & KASAN_GRANULE_MASK;
-@@ -390,7 +387,7 @@ int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
- 	unsigned long shadow_start, shadow_end;
- 	int ret;
- 
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
- 		return 0;
- 
- 	if (!is_vmalloc_or_module_addr((void *)addr))
-@@ -560,7 +557,7 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
- 	unsigned long region_start, region_end;
- 	unsigned long size;
- 
--	if (!kasan_arch_is_ready())
-+	if (!kasan_enabled())
- 		return;
- 
- 	region_start = ALIGN(start, KASAN_MEMORY_PER_SHADOW_PAGE);
-@@ -611,9 +608,6 @@ void *__kasan_unpoison_vmalloc(const void *start, unsigned long size,
- 	 * with setting memory tags, so the KASAN_VMALLOC_INIT flag is ignored.
- 	 */
- 
--	if (!kasan_arch_is_ready())
--		return (void *)start;
--
- 	if (!is_vmalloc_or_module_addr(start))
- 		return (void *)start;
- 
-@@ -636,9 +630,6 @@ void *__kasan_unpoison_vmalloc(const void *start, unsigned long size,
-  */
- void __kasan_poison_vmalloc(const void *start, unsigned long size)
- {
--	if (!kasan_arch_is_ready())
--		return;
--
- 	if (!is_vmalloc_or_module_addr(start))
- 		return;
- 
+ 	for (i = 0; i < N_IN_URB; i++) {
 -- 
-2.34.1
+2.43.0
 
 
