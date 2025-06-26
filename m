@@ -1,79 +1,53 @@
-Return-Path: <linux-kernel+bounces-704828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A67AEA255
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:21:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38255AEA225
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FFCD18884AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BB35A3BD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11C62EF29D;
-	Thu, 26 Jun 2025 15:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F3A2EBDF4;
+	Thu, 26 Jun 2025 15:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ME0xteVo"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ltGfW6AV"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D9F2EBDEF;
-	Thu, 26 Jun 2025 15:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D882EF673;
+	Thu, 26 Jun 2025 15:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750950046; cv=none; b=allt3I/49GttzuKl218VyqRyD+CVThWTeA8lY9rbRlrd613TggMU/CJ61He7Q6O9kwox+Ck3KjwsYos/dOWMa2aN1N5kRazNUfMg4avGj0slLcujpz9FMMPkXH3mVtBKcN9AQAQ0XHpDXdlsAhKMlsg0rNG3Jf5jXga9f2IebFs=
+	t=1750950158; cv=none; b=lmRpBdDUHVIpxFNrSQQ/LghxbwuEXwV2qrtSkYQYzBzFthDxP9LckgV5Qrfa7yfTWhoNwzdkxlXtgbqeb9pibKOEOnYfVFiRDMihIYf7wZoC/hWaHDWZmZiBibOHfjVmRpr0AJl4trkjL6gPBeiKGiFkQcIGusnkFQUr6k/UvqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750950046; c=relaxed/simple;
-	bh=/gT8heUBQ3Z05xBH4vV12d5Lb//+FEkn0bNpbdFYKx4=;
+	s=arc-20240116; t=1750950158; c=relaxed/simple;
+	bh=Bbgc2DY40jng+4DfV8RXgOGPojDihC9w3OdSooOoJWg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cSokV8he8hAV+nWkgNZQR/dDchMtrlcVm72EmBslnLr+baQQ1aLhqKSTDWoaUbg0Y0WnLG1TNbe7T+C7c52a2ulLq1xz4XoKdIYcOXsuvRJRk+iLnfk3IeibhHzeVVExgsZ9BKcgxwjaDq5AlTqxRmJ6FnQXJPoM+jXl13SEdW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ME0xteVo; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-450cb2ddd46so6216015e9.2;
-        Thu, 26 Jun 2025 08:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750950042; x=1751554842; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LBGyUPVtexsma6QWRBZRifNwyFeoUzD3AR8JqwIxFIE=;
-        b=ME0xteVokNXKXsHvB9qkgdcgo20nFz081fY8OR5I7eZz+gKbmJmuljQf67w65WWQmK
-         fn7/tC75SEFSrUKUmdF8y/yzPCsj2DrdioSVvzP6na1OzM1Iq3JBP27Xkmdupk19LJqT
-         NM0b2iuapnUDWhD3ZI3sWS2gXAsBUux6E/WXVjevmYEMjzxxMYmkBmLdCbH6dbdaN3DG
-         Dz79A7X7PbJNEcNJSHCcW1CjHamsInV0H6+NvnNSYubxsmVSyzXWXX/frRsJ/QcyTf6h
-         18ztZ8BsB5JtBsdNP+z7GsTg4i373CBW5bDbQv9M2eOjtcTvWqbvbAcLhlH6aEjVmj6l
-         CHKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750950042; x=1751554842;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LBGyUPVtexsma6QWRBZRifNwyFeoUzD3AR8JqwIxFIE=;
-        b=S8XaLTZWq4ocAWt6jeFYbwj/BHlj4QC654+QlJoDVx+mOm2VXwYGRVzJjbfUDKk82V
-         767LnJIBm9xgzYZZbC6Gl1huYKZxIfjUTWuu6SEJoxio4QBWiWDZWBwa28RTjACNAVah
-         OBbhrL7NE4sHHRKrZggdaYTRSc2mCKlKwNXFz9B6dfEl7rSJCsM6X2VH7J8HoKPQARnj
-         W7Xl7uLPQsPmi/BecU3OzMmF2A/qyPfN0mrcE/TGLmGEsciAQOH+hDcQLPkFCzzxMsH9
-         H028a4FPYOJ+8qbedZ2SbGpXZjLFrBSKHZZ39h74nQk06gcNzLxF7ZYkyi7S3/fBif5W
-         63zw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+UXr1oM9b75IGXw70MAK71EMoHqTgkArNYP4uSJqIaHoesW6eiF7stlgPk/W5xf1DEzzr7VNJRB9/6tXw@vger.kernel.org, AJvYcCWRxJ8YuwkFdZKFzLPqAj9kzTqkOCLCaOOxDtPNrxwBq1FVflpu0yV+l4tiSc9QdpD+o7gDzpKY0eCKaj2v@vger.kernel.org, AJvYcCX5fu4G3CSLNvtyJ7cYHJCZdw+lXxWz18gkfnh5mqY6oWjREafuojuD5GsKoTijb8sW7/IFpAF2F4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFistn9qyS6wGQIMT9Z/9ElTERkkXABKO1P03ODMH/soSGsSAJ
-	o7epi4MIF0yClG8sH0m5ozXUSJthUSy1ohlhk4sFv9VGXt5SPMl6djWI
-X-Gm-Gg: ASbGncs3qk6uUIAQIxAXOFuoQJyoWmhl7GPoDWkhUxnEV3NpHms1dnU/H65B1/gQAqu
-	0pdLJPpIqJLxvRLmM3ENVKwAKTltdclpkIf6XfXfth93Pbw1UScmf/u0PF3QGG4pv2rn42sZah5
-	2USqxMxdXeXRB3IGXJA3Tb8ddiwsuZYrnsDhAeNyQ+p6ICdvkxFFoZCpG1kWYp3wq1Jzkze9Bhf
-	rqTPgCxc4jJBJN+8cCzq1YIkLEjEyzZF5YcZ8bhbbpLD39mwpipjTT2zykSkzmeZJzj+dnqDdgZ
-	/VcDstX1/7lfTnLZ0zPgzHUbuQvtOls2PpkAARBkUXsx3lGxh9Nj3VEA1woSNHfnSGSEGTbWWt4
-	X9fUs8EiKJr+RnWCveucJqrqvosTEE6goB5CAbA==
-X-Google-Smtp-Source: AGHT+IFzXXD0K2hy8zfMgy/bRNcrMH3XjipsA0in5du/DiH+ioT3nihHoLTw08S4Ydosgwh/XQ17Vg==
-X-Received: by 2002:a05:600c:8b23:b0:453:8042:ba9a with SMTP id 5b1f17b1804b1-4538eaafe29mr99505e9.28.1750950042008;
-        Thu, 26 Jun 2025 08:00:42 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4064b1sm23079715e9.29.2025.06.26.08.00.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Jun 2025 08:00:41 -0700 (PDT)
-Message-ID: <3b90caec-b4c0-47d8-bdd7-1a7abd5e69d9@gmail.com>
-Date: Thu, 26 Jun 2025 17:00:42 +0200
+	 In-Reply-To:Content-Type; b=MileT7PBwobfyl8F8vsIjvOnzLNcXevEArchjkBDDIsbnL7t3qlZeeolDzvXDOVO/v+o4IJZUj9OPPXygyTim37yuHIohFRCoxPHMMCfVyzQf8ii+Ywe5FRv7Q9jJbNWiHYtjn6KuxYShHQyENx2egVWt2F1GXJmp7vXG72+xJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ltGfW6AV; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=f5DlpX2huMTLf4bsOPml/8rj3dKo7+jspuRt9BtAGXg=; b=ltGfW6AV9dczegMNqj5U4DixS/
+	s/6eN/vh/A38dEvSYJ4tcZS+aXcbzTWdsxkz9jL5N9G5akCrOVn7aqIJVF5QgSruAnI32KrnD8wZk
+	580DShYV0S/dbwNIild2rS7Q6HFp8YvthqfKeybOAQR+BMF4M8WeUv4ofL10jVk6c2+gmI1AYV8RC
+	Kn92AiR2qxwEEvti3DJ6ZQUYlZYvJ21W9IReIXIl9e4G+hNT8Hz048xZDtaDQ330CpzzQeGQNMCvD
+	eakZr/mNWtOAfjJjpI/lX9t6R72uIMh0ISRfj4egQEfFpyPiu/STYKRA14aAHIICUDRBXm47rfUfQ
+	tTazxPcQ==;
+Received: from [189.7.87.79] (helo=[192.168.0.7])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uUo7R-0091W2-U4; Thu, 26 Jun 2025 17:02:30 +0200
+Message-ID: <5baab2ed-c48d-41ae-819a-71ca195c4407@igalia.com>
+Date: Thu, 26 Jun 2025 12:02:23 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,105 +55,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] interconnect: avoid memory allocation when
- 'icc_bw_lock' is held
-Content-Language: hu
-To: Johan Hovold <johan@kernel.org>
-Cc: Georgi Djakov <djakov@kernel.org>,
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Johan Hovold <johan+linaro@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625-icc-bw-lockdep-v3-1-2b8f8b8987c4@gmail.com>
- <aFvr1zSkf4KmIcMT@hovoldconsulting.com>
- <aFvuiVX0kMIqXQtZ@hovoldconsulting.com>
- <84b94649-a248-46b0-a401-772aeb8777a2@gmail.com>
- <aFwBYRF0wJwVDdeX@hovoldconsulting.com>
- <ac5ba192-b538-457e-acc4-c2d358b1fd0e@gmail.com>
- <aF0TIWfDI4M1azzc@hovoldconsulting.com>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <aF0TIWfDI4M1azzc@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] drm/vkms: Fix race-condition between the hrtimer and the
+ atomic commit
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+ hamohammed.sa@gmail.com, daniel@ffwll.ch, airlied@linux.ie,
+ arthurgrillo@riseup.net, mairacanal@riseup.net, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, stable@vger.kernel.org,
+ gregkh@linuxfoundation.org, sashal@kernel.org
+References: <20250626142243.19071-1-pranav.tyagi03@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20250626142243.19071-1-pranav.tyagi03@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-2025. 06. 26. 11:30 keltezéssel, Johan Hovold írta:
+Hi Pranav,
 
-...
-
->> Nevertheless, I think that we can have a simpler solution. We can create a
->> wrapper around icc_node_add(), and allocate the name from there. I mean
->> something like this:
->>
->> int icc_node_add_dyn(struct icc_node *node, struct icc_provider *provider)
->> {
->> 	if (node->id >= ICC_DYN_ID_START) {
->> 		node->name = devm_kasprintf(provider->dev, GFP_KERNEL, "%s@%s",
->> 					    node->name, dev_name(provider->dev));
->> 		if (!node->name)
->> 			return -ENOMEM;
->> 	}
->>
->> 	icc_node_add(node, provider);
->> 	return 0;
->> }
->>
->> Then we can change the qcom_icc_rpmh_probe() and qcom_osm_l3_probe() to use the
->> wrapper instead of the plain version. Since the wrapper can return an error
->> code, it can be handled in the callers. And as a bonus, we don't have to touch
->> other users of icc_node_add() at all.
+On 26/06/25 11:22, Pranav Tyagi wrote:
+> From: Maíra Canal <mcanal@igalia.com>
 > 
-> That would be a smaller change indeed, but I don't think we should
-> change the current model of:
+> [ Upstream commit a0e6a017ab56936c0405fe914a793b241ed25ee0 ]
 > 
-> 	node = icc_node_create()
-> 	<manual initialisation of the node>
-> 	icc_node_add(node)
+> Currently, it is possible for the composer to be set as enabled and then
+> as disabled without a proper call for the vkms_vblank_simulate(). This
+> is problematic, because the driver would skip one CRC output, causing CRC
+> tests to fail. Therefore, we need to make sure that, for each time the
+> composer is set as enabled, a composer job is added to the queue.
 > 
-> So given that we need to add some new helper (or export the internal ID
-> define), I think we might as well add that icc_node_set_name() helper I
-> suggested might be the long term solution here directly.
-
-Ok, I see the reason behind that.
-
+> In order to provide this guarantee, add a mutex that will lock before
+> the composer is set as enabled and will unlock only after the composer
+> job is added to the queue. This way, we can have a guarantee that the
+> driver won't skip a CRC entry.
 > 
-> I also don't like hiding device managed allocations (those should be done
-> explicitly with devm_ prefix helpers so that the callers can reason
-> about ordering) so I dropped that as well.
+> This race-condition is affecting the IGT test "writeback-check-output",
+> making the test fail and also, leaking writeback framebuffers, as the
+> writeback job is queued, but it is not signaled. This patch avoids both
+> problems.
 > 
-> So something like the below. 
-
-It seems to be a cleaner solution indeed.
-
-> Note that this could be extended with a
-> name-allocated flag and an appropriate warning somewhere later if anyone
-> is worried about drivers failing to use the helper.
+> [v2]:
+>      * Create a new mutex and keep the spinlock across the atomic commit in
+>        order to avoid interrupts that could result in deadlocks.
 > 
-> Note that we can't use kfree_const() unconditionally as I initially
-> intended as apparently some interconnect providers already allocate
-> names for non-dynamic nodes.
+> [ Backport to 5.15: context cleanly applied with no semantic changes.
+> Build-tested. ]
+> 
+> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+> Reviewed-by: Arthur Grillo <arthurgrillo@riseup.net>
+> Signed-off-by: Maíra Canal <mairacanal@riseup.net>
+> Link: https://patchwork.freedesktop.org/patch/msgid/20230523123207.173976-1-mcanal@igalia.com
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
 
-Not that I want to worry about anything, but for the sake of completeness I have
-to note something. Theoretically, freeing the name in icc_node_destroy() could
-cause the following on IPQ9574 under some circumstances:
+This patch violates locking rules and it was reversed a while ago.
+Please, check commit 7908632f2927 ("Revert "drm/vkms: Fix race-condition
+between the hrtimer and the atomic commit"").
 
-  [    4.003692] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffffff80047e4180 pfn:0x447e4
-  [    4.008439] flags: 0x0(zone=0)
-  [    4.017545] raw: 0000000000000000 fffffffec0000448 ffffff803fdbb518 0000000000000000
-  [    4.020480] raw: ffffff80047e4180 0000000000150000 00000000ffffffff 0000000000000000
-  [    4.028413] page dumped because: Not a kmalloc allocation
-
-It is not a problem of your patch though. The root cause of this is the same
-as why I saw the lockdep warning on the platform originally. The reason is
-that the static node ids used by the 'nsscc-ipq9574' driver are within the
-range of dynamic ids. Nevertheless, I have sent a patch [1] to fix that
-already.
-
-Despite the note above, your proposal looks good to me. Would you like to
-send it as a formal patch, or shall I do it?
-
-[1] https://lore.kernel.org/r/20250625-icc-dyn-id-fix-v1-1-127cb5498449@gmail.com
-
-Regards,
-Gabor
-
+Best Regards,
+- Maíra
 
