@@ -1,219 +1,101 @@
-Return-Path: <linux-kernel+bounces-704791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B66AEA1CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:03:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D657AEA1D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ADDA165873
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AA8417743C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAE62EE26B;
-	Thu, 26 Jun 2025 14:50:29 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739A12EF2A6;
+	Thu, 26 Jun 2025 14:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sru82K9U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2273E2ED85B;
-	Thu, 26 Jun 2025 14:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE33F2EBDC6
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949429; cv=none; b=QhDAGn4aWnbiFtSlAp0M3XC7TUEDw5AV5yqUcyINpDNZvD/8oqnX0SbuqEyTvEzBGfdJa6I+BuhgUIs1NV3HInNrD93y9CCkaPVWBGZEHZ1k/AmSzdEHNfO5dJJHQqhzhw2aUQf2/gaqlE7V4bqnIhM+Z9rR0FnMUXreEC6rskQ=
+	t=1750949477; cv=none; b=J43a7QHWASokxgZKn21J34a7fQTJtjDVA5QOfjSnYZHBrezsK+IOr7L3LOfUy0E9lJhWrkc2Le2lH5K4rdKQ+H7R5dKzKlbuB1QIL17n0jWKP6epDznTnXfY8gT6r1/LxsghtpxsAVmmYX6JgicCoxmibO9993QeuWJOdDEn1OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949429; c=relaxed/simple;
-	bh=eMgpsq696yQ1FYSXmaUGx0p1XVtQWu+QXsXn2uSA4lQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EH7V9AQd7lftBZGg3xziM/+GDDOwL5wp1ejvMEcg5+UYI/YCkR+fahzyR/egmtb2RwW+rOFC5ZRdsEZO0T6vP+++o0XT0tNyT2qONp4inLkxQYDcyhMNcq15s63awwmvhkGOW7rzpQ0waRpjP3tY86cAvlASdUdilr+KFtUG3g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 32F5C102AAC;
-	Thu, 26 Jun 2025 14:50:24 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 2FC6E20026;
-	Thu, 26 Jun 2025 14:50:20 +0000 (UTC)
-Date: Thu, 26 Jun 2025 10:50:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu
- Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH v11 10/11] perf script: Display
- PERF_RECORD_CALLCHAIN_DEFERRED
-Message-ID: <20250626105041.31e2d403@gandalf.local.home>
-In-Reply-To: <20250625231541.584226205@goodmis.org>
-References: <20250625231541.584226205@goodmis.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1750949477; c=relaxed/simple;
+	bh=hb0t7W6wWhCAfD8zp8vw/jxoMB8N6zb8dEsKzlP/xWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QD0xdIP2WQyxyKMzkp6SHtUXcjkR3PObrypUR/AchhvTwBuLvV4xqn2S9QNGgTo29rlczYJ4TuXwNp05Bj8+JwNlvlsYLusBWY0i113bndTpfZ3se4KpYMVpFPOaot4cOZKNIJl0WtTIJ45xs2+hYwUwoPHxeSlYJwgUw93EMBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sru82K9U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1ADC4CEED;
+	Thu, 26 Jun 2025 14:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750949475;
+	bh=hb0t7W6wWhCAfD8zp8vw/jxoMB8N6zb8dEsKzlP/xWA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sru82K9U63wKBqGZUpioOrPwwYh4IcCRYO1ja/9K+tY95okU/ICcnff7j5wdkv8OX
+	 3hy8VmfTdTM36mUOR7WrXquUQhY7QJ3A+jlu34U0Vv+S4iOvzSibeksjE6+Wwg/UIB
+	 CSxLO09RYkQyA9yJOY/gXu2H5w3ChE7aJimj5PBoMkSBOqGyy9WKd4mLsqp+T1zUvj
+	 X5bbSmsfr1v5zajGOGeLDDCDaN+YTcm8oyuvlPoeg2lybJEFAQU05xd4PLpFp6PuOs
+	 xnN3ziMI+y627nwtSRS/jPfVnYb4pSBPHv4+ktxZCRrp/gX+U4bwHwBwwlnfPea5jh
+	 kdubYgArWpnhg==
+Date: Thu, 26 Jun 2025 16:51:12 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH 03/27] PCI: Protect against concurrent change of
+ housekeeping cpumask
+Message-ID: <aF1eYIkUA6k60kTK@localhost.localdomain>
+References: <20250620152308.27492-4-frederic@kernel.org>
+ <20250620161710.GA1296438@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 1opmnsbb4zs3bkn3z7p4nd48qeao1tu6
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 2FC6E20026
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+vYdMWUIj+wdHEpX46jvXaQMbT0XB5+kQ=
-X-HE-Tag: 1750949420-247832
-X-HE-Meta: U2FsdGVkX19YRjH84n2ckejiSz2n+lTSI+klqxjHGaR67xZWgLXyABiFCV0Zmhuv4ChbhqdfuzCo9foEENHhcYG/EdX2e8M5/R4B+7mdyoQjynGCQqF6jozzZYJUWV8ajI3S6vi/0oSX4KAFV7txFE05Q194Bl5WXHuLQWON6HsoNDi36E8gvJNg8VrfaSqFT3vOxCR65UQr1RezqDhVbY2CZkfJ5NO9pghZITw9lC1vy54cAb22RSKA+Taw3SVCA6BIAMfYAUqT1tnLEBuBqFmM+9qnVYRk1gmEdxe2PPZbySKeLbBKILAdSzDT7ksyGFQDd18G/og49rMsiOi5am4XBVwkP88MGQQ487JqCDhMIHKv8fMkJ/NYf+/RocmjGmlo3f1geOEW7HsFzL+n4g==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250620161710.GA1296438@bhelgaas>
 
+Le Fri, Jun 20, 2025 at 11:17:10AM -0500, Bjorn Helgaas a écrit :
+> On Fri, Jun 20, 2025 at 05:22:44PM +0200, Frederic Weisbecker wrote:
+> > HK_TYPE_DOMAIN will soon integrate cpuset isolated partitions and
+> > therefore be made modifyable at runtime. Synchronize against the cpumask
+> > update using appropriate locking.
+> 
+> s/modifyable/modifiable/
+> 
+> > Queue and wait for the PCI call to complete while holding the
+> > housekeeping rwsem. This way the housekeeping update side doesn't need
+> > to propagate its changes to PCI.
+> 
+> What PCI call are we waiting for?  I see housekeeping_lock(), but I
+> assume that's doing some housekeeping-related mutual exclusion, not
+> waiting for PCI work.
 
-From: Namhyung Kim <namhyung@kernel.org>
+It's waiting for the call to work_on_cpu() to complete (along with
+the CPU election through housekeeping_cpumask()).
 
-Handle the deferred callchains in the script output.
+> 
+> I don't know how to use housekeeping_lock() or when it's needed.  Can
+> you add some guidance here and at the housekeeping_lock() definition?
 
-  $ perf script
-  perf     801 [000]    18.031793:          1 cycles:P:
-          ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
-          ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
-          ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
-          ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
-          ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
-          ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
-          ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
-          ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
-          ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
-          ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
-          ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
-          ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
-          ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
+You're right, it's missing documentation, context and guidance. I'll
+try to fill that in the next iteration. Also the lock is likely going
+to be replaced by RCU instead.
 
-  perf     801 [000]    18.031814: DEFERRED CALLCHAIN
-              7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
+Thanks.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/perf/builtin-script.c | 89 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 6c3bf74dd78c..a6f8209256fe 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2483,6 +2483,93 @@ static int process_sample_event(const struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_deferred_sample_event(const struct perf_tool *tool,
-+					 union perf_event *event,
-+					 struct perf_sample *sample,
-+					 struct evsel *evsel,
-+					 struct machine *machine)
-+{
-+	struct perf_script *scr = container_of(tool, struct perf_script, tool);
-+	struct perf_event_attr *attr = &evsel->core.attr;
-+	struct evsel_script *es = evsel->priv;
-+	unsigned int type = output_type(attr->type);
-+	struct addr_location al;
-+	FILE *fp = es->fp;
-+	int ret = 0;
-+
-+	if (output[type].fields == 0)
-+		return 0;
-+
-+	/* Set thread to NULL to indicate addr_al and al are not initialized */
-+	addr_location__init(&al);
-+
-+	if (perf_time__ranges_skip_sample(scr->ptime_range, scr->range_num,
-+					  sample->time)) {
-+		goto out_put;
-+	}
-+
-+	if (debug_mode) {
-+		if (sample->time < last_timestamp) {
-+			pr_err("Samples misordered, previous: %" PRIu64
-+				" this: %" PRIu64 "\n", last_timestamp,
-+				sample->time);
-+			nr_unordered++;
-+		}
-+		last_timestamp = sample->time;
-+		goto out_put;
-+	}
-+
-+	if (filter_cpu(sample))
-+		goto out_put;
-+
-+	if (machine__resolve(machine, &al, sample) < 0) {
-+		pr_err("problem processing %d event, skipping it.\n",
-+		       event->header.type);
-+		ret = -1;
-+		goto out_put;
-+	}
-+
-+	if (al.filtered)
-+		goto out_put;
-+
-+	if (!show_event(sample, evsel, al.thread, &al, NULL))
-+		goto out_put;
-+
-+	if (evswitch__discard(&scr->evswitch, evsel))
-+		goto out_put;
-+
-+	perf_sample__fprintf_start(scr, sample, al.thread, evsel,
-+				   PERF_RECORD_CALLCHAIN_DEFERRED, fp);
-+	fprintf(fp, "DEFERRED CALLCHAIN");
-+
-+	if (PRINT_FIELD(IP)) {
-+		struct callchain_cursor *cursor = NULL;
-+
-+		if (symbol_conf.use_callchain && sample->callchain) {
-+			cursor = get_tls_callchain_cursor();
-+			if (thread__resolve_callchain(al.thread, cursor, evsel,
-+						      sample, NULL, NULL,
-+						      scripting_max_stack)) {
-+				pr_info("cannot resolve deferred callchains\n");
-+				cursor = NULL;
-+			}
-+		}
-+
-+		fputc(cursor ? '\n' : ' ', fp);
-+		sample__fprintf_sym(sample, &al, 0, output[type].print_ip_opts,
-+				    cursor, symbol_conf.bt_stop_list, fp);
-+	}
-+
-+	fprintf(fp, "\n");
-+
-+	if (verbose > 0)
-+		fflush(fp);
-+
-+out_put:
-+	addr_location__exit(&al);
-+	return ret;
-+}
-+
- // Used when scr->per_event_dump is not set
- static struct evsel_script es_stdout;
- 
-@@ -4069,6 +4156,7 @@ int cmd_script(int argc, const char **argv)
- 
- 	perf_tool__init(&script.tool, !unsorted_dump);
- 	script.tool.sample		 = process_sample_event;
-+	script.tool.callchain_deferred	 = process_deferred_sample_event;
- 	script.tool.mmap		 = perf_event__process_mmap;
- 	script.tool.mmap2		 = perf_event__process_mmap2;
- 	script.tool.comm		 = perf_event__process_comm;
-@@ -4095,6 +4183,7 @@ int cmd_script(int argc, const char **argv)
- 	script.tool.throttle		 = process_throttle_event;
- 	script.tool.unthrottle		 = process_throttle_event;
- 	script.tool.ordering_requires_timestamps = true;
-+	script.tool.merge_deferred_callchains = false;
- 	session = perf_session__new(&data, &script.tool);
- 	if (IS_ERR(session))
- 		return PTR_ERR(session);
 -- 
-2.47.2
-
+Frederic Weisbecker
+SUSE Labs
 
