@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-704298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944F7AE9C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:59:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4316AE9BEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 12:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F05D7BDE61
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF904A0104
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 10:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC1626B767;
-	Thu, 26 Jun 2025 10:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83B26B761;
+	Thu, 26 Jun 2025 10:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="NS2N6ibF"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EszjdSlM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8731126B2DC;
-	Thu, 26 Jun 2025 10:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11E926A1AC;
+	Thu, 26 Jun 2025 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750935256; cv=none; b=qPWVgC95UQ1FrBmfAt/GeqQ7MShY8y9yuOKDxNUC5IKLBKNvW3hgquntbZkbKFSPc80X7xYQuuCjdp5YkBP675FYLKKz1yKpmCDRNaP/tGJ7yfrDi1RAySM+1Cyzm2P2yjc1z1+nxbkqqGAvOjhDKr5rXx7v8tGboRIeQZr4bxk=
+	t=1750935276; cv=none; b=u8f1mhDSU2F6GKbh6tsulMLNBnewU3jXuI+nIzYiu0zq3KZkLb5Wy5JlThDipCrOy5w2UTfOyo4Qmp0bM4/H7L8TdSGoBZH4JOX2fXPTGQBfv5iBRd9S2Lyr+5tjucLAavb5Bi/m6l/78k024g1SoSP3/aZsW1aNquubdS10cHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750935256; c=relaxed/simple;
-	bh=u4FAkkOPIZ9Sb0kPH8gkTxSqGIvSB0tKE6FdM9MQkpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqGqJNVe8t4RrxVfQMQEr5Rdniq4KsI0fOcyGX3Ycyoj+ZIvnDwyYV4rI8MVaMrhMxn1fVFjCyQ7itVXG/FTuiKULCtNtWgt6AkLEaapD1NcBSbNMQd71qpdUG8XvBBxQf9ggtrIiqWMXK+zLVGNdOB1ur1TPnJx5+RI4XFr4hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=NS2N6ibF; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1750935252;
-	bh=u4FAkkOPIZ9Sb0kPH8gkTxSqGIvSB0tKE6FdM9MQkpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NS2N6ibFj6oaTIBo24pnT+DGukdYkKlOAu/TnzAIu1YBEqkEpeVCSTO97Pq3w53W5
-	 JqhjmLcHJi93Q2c+73u8qJFk3AB8W4zk+IW4rQu9lHqEl7+CwilozoAO7niKWlqTU1
-	 rmZwNIob/4UwUMMBt6Hs5PZM6ABZmdYixpfoDhaU=
-Date: Thu, 26 Jun 2025 12:54:11 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>, Will Deacon <will@kernel.org>, Han Xu <han.xu@nxp.com>, 
-	Haibo Chen <haibo.chen@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Pavel Machek <pavel@kernel.org>, Andrew Davis <afd@ti.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-leds@vger.kernel.org
-Subject: Re: (subset) [PATCH v7 2/3] leds: lp8860: Check return value of
- devm_mutex_init()
-Message-ID: <e340b32d-8839-43b0-8662-edef1729ad6e@t-8ch.de>
-References: <20250617-must_check-devm_mutex_init-v7-2-d9e449f4d224@weissschuh.net>
- <175033649656.801367.11888454651585197053.b4-ty@kernel.org>
- <f1cc8959-d420-4ba3-922f-ed7c6f054f22@t-8ch.de>
- <20250625090439.GQ795775@google.com>
+	s=arc-20240116; t=1750935276; c=relaxed/simple;
+	bh=vl24n8aM4Ut+tNFLr2AcJcy6+Q0gPPmMquqRtf8KWs8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UuUWGtL3Tgls6RlnEVxUHMVZCzoTsB8t78TIiyiaNWEo923MNauruPRCfZD1twNNIdqsv6xUSqrVT5oTukJK/a/yniG0JDaqaJoh8cjEmI9j1fxZYe7Lex21hHHMKVJYGxkYKTZLhf9RgQICepbbcyBLGf54bhzGXrXpxzl41fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EszjdSlM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E1D7C4CEEB;
+	Thu, 26 Jun 2025 10:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750935276;
+	bh=vl24n8aM4Ut+tNFLr2AcJcy6+Q0gPPmMquqRtf8KWs8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EszjdSlMkl07Gyybl7i66ZVdVnlx5kjBXnhmCwqJwqJCUxMM595+tJXToqRWxM+2d
+	 3XJWQfUKRl34GKW1sSNus1WvM1NEQMfFgdsSgmu4GQUTkU+PJsw6yautu47Ahhvd4z
+	 wyfWny5+hOarz98l8P54pCOWlBcJcppNCVpkfNrgiXhfcObZHBjCrmS2SIu7ipDbZt
+	 aEIlgQd91T4dRjG/8RmJv8EShJmOJEav508TjfAnUMFW/bcQfaLOstNSFMTPgTGFPI
+	 rPcxz5EA1pk1owAXKccysnhY2t6r9HA/Uhrkdb9gbLM3IC5MGa8ZaRHZLh/eszt1AH
+	 /C7i8ns2FgBxg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	stable@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Stuart Yoder <stuart.yoder@arm.com>,
+	linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER)
+Subject: [PATCH] tpm_crb_ffa: Remove unused export
+Date: Thu, 26 Jun 2025 13:54:23 +0300
+Message-Id: <20250626105423.1043485-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250625090439.GQ795775@google.com>
 
-On 2025-06-25 10:04:39+0100, Lee Jones wrote:
-> On Thu, 19 Jun 2025, Thomas Weißschuh wrote:
-> > On 2025-06-19 13:34:56+0100, Lee Jones wrote:
-> > > On Tue, 17 Jun 2025 19:08:13 +0200, Thomas Weißschuh wrote:
-> > > > devm_mutex_init() can fail. With CONFIG_DEBUG_MUTEXES=y the mutex will be
-> > > > marked as unusable and trigger errors on usage.
-> > > > 
-> > > > Add the missed check.
-> > > 
-> > > Applied, thanks!
-> > > 
-> > > [2/3] leds: lp8860: Check return value of devm_mutex_init()
-> > >       commit: 426e0c8e8eed26b67bbbd138483bb5973724adae
-> > 
-> > Thanks, but (as mentioned in the cover letter) these patches should go
-> > together through the mutex/locking tree.
-> > Could you drop it on your side and give an Ack instead?
-> 
-> There has to be good reasons to do this.
->
-> I didn't see any dependents or dependencies in this patch.
+From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-Patch 3 depends on patch 1 and 2.
+Remove the export of tpm_crb_ffa_get_interface_version() as it has no
+callers outside tpm_crb_ffa.
 
-It will break the build for each instance of an ignored return value
-of devm_mutex_init(). Therefore all such instances need to be resolved
-before the patch can be applied.
-So the patches can't go through different trees.
+Cc: stable@vger.kernel.org # v6.15+
+Fixes: eb93f0734ef1 ("tpm_crb: ffa_tpm: Implement driver compliant to CRB over FF-A")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+---
+ drivers/char/tpm/tpm_crb_ffa.c | 3 +--
+ drivers/char/tpm/tpm_crb_ffa.h | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-In theory we could fix the drivers in this cycle and then change
-devm_mutex_init() in the next one. But new regressions are introduced
-over and over. This patch is already in the third cycle...
+diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+index 462fcf610020..9c6a2988a598 100644
+--- a/drivers/char/tpm/tpm_crb_ffa.c
++++ b/drivers/char/tpm/tpm_crb_ffa.c
+@@ -247,7 +247,7 @@ static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+  *
+  * Return: 0 on success, negative error code on failure.
+  */
+-int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor)
++static int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor)
+ {
+ 	int rc;
+ 
+@@ -275,7 +275,6 @@ int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor)
+ 
+ 	return rc;
+ }
+-EXPORT_SYMBOL_GPL(tpm_crb_ffa_get_interface_version);
+ 
+ /**
+  * tpm_crb_ffa_start() - signals the TPM that a field has changed in the CRB
+diff --git a/drivers/char/tpm/tpm_crb_ffa.h b/drivers/char/tpm/tpm_crb_ffa.h
+index 645c41ede10e..d7e1344ea003 100644
+--- a/drivers/char/tpm/tpm_crb_ffa.h
++++ b/drivers/char/tpm/tpm_crb_ffa.h
+@@ -11,11 +11,9 @@
+ 
+ #if IS_REACHABLE(CONFIG_TCG_ARM_CRB_FFA)
+ int tpm_crb_ffa_init(void);
+-int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor);
+ int tpm_crb_ffa_start(int request_type, int locality);
+ #else
+ static inline int tpm_crb_ffa_init(void) { return 0; }
+-static inline int tpm_crb_ffa_get_interface_version(u16 *major, u16 *minor) { return 0; }
+ static inline int tpm_crb_ffa_start(int request_type, int locality) { return 0; }
+ #endif
+ 
+-- 
+2.39.5
 
-
-Thomas
 
