@@ -1,217 +1,139 @@
-Return-Path: <linux-kernel+bounces-704788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04541AEA1BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:01:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638DEAEA1A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6956C4E1CFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC7C6A28C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABE32FCE24;
-	Thu, 26 Jun 2025 14:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCD62ED14C;
+	Thu, 26 Jun 2025 14:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RM5tpvvs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3g8rK+mp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="OoE0pHQk"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D702FBFE3;
-	Thu, 26 Jun 2025 14:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5B22F362D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949383; cv=none; b=kjRHXlLHK75O+xYNTnb47sRAoPkbyS6il96R0pSF6TxaX7RD2mghzJv/gkFYKyH1LeXrlL3JLTEEghfoqhDOuPM+tTQMv7aVWbEpMzdwg3Mlrw9biKsFSfOlX8t/fX9om5oK86wHxOd8o7yhosqX/dXsNZ8OWo9ngFUoVupxtdM=
+	t=1750949361; cv=none; b=M/JCg7231zdn/pIXr5GPbgv7ZUB1F4rRc4J11sSLotgQayRohHpMdiWqI+sWFBa/6r51k/NUyIr6sKifPKg0oa/D0kTFq7JhC/EqhL0Z9+OTDPQq7Jc14iJ5AOuiEngWHUpMYDa+w6dg547npAx8Xx8zQ8gqWDyT01n6RJnq+cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949383; c=relaxed/simple;
-	bh=dp2qjOL8O21ilGvN3hcyhYQWqyZCYJvTUAiWti124QY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S12dwHdWmCsF88eOA1c6qy0few0RmEQupnvEgHP/3qd3nRhvpxzfvjB2i9yP1FVmYA1sSMAOPOmizuUx+1ZxYRBMI7tJEfCUMxC4AHwGEOCjHE6YXXMQ/wueVlvoiy2VBoBtuMNHzgFYWSUNPTNcsIytFXYXkDioWGuwIl0A58Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RM5tpvvs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3g8rK+mp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1750949379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MIhKQ4RQQi3D5IJg+JFkYdGIygyIoXiLyEsOtUGkCjs=;
-	b=RM5tpvvs+MbLl9f7SQ4Y4ZdLiJ6gkF0qGYmpFYd1vgciUYEome+/nKuo3y8YNQqaRl9zlG
-	vK1suWMloNhESxrs+IfhZ0Ir0uq+WbbIHtZTJ2H8ZkutgRI3Yum3zAczYWNoJ3VR71Mex6
-	fsgdiE+j3itHmBfek6RXeFNDcJE66HYbToqjerqVB4SG9GKNoyqLM6ubDDe3bIVCXzYX6C
-	4Ix6zqpNBaIWk0L9nYtIJstz4x+qM9MLqKMPz+0eqHFX2bnBPOr8e8oaetpxb9aab4Myd+
-	l22+2HQLy3/qGyN+ylhIfZaBxzJtN+2HcbXXw2XRaqbVdVinmwc752tr4tm6OQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1750949379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MIhKQ4RQQi3D5IJg+JFkYdGIygyIoXiLyEsOtUGkCjs=;
-	b=3g8rK+mpfrVGe4Vw+aUfM9tHYiyJfZRoezDvLVA2kq5SNuyB89vV0NChva4wdm0ota7ehM
-	z4hy2jp1szfWSsCw==
-To: Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Antoine Tenart <atenart@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-mips@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 12/12] irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()
-Date: Thu, 26 Jun 2025 16:49:09 +0200
-Message-Id: <6d23d93fa1f1e65526698f97c9888fa5d12abc7b.1750860131.git.namcao@linutronix.de>
-In-Reply-To: <cover.1750860131.git.namcao@linutronix.de>
-References: <cover.1750860131.git.namcao@linutronix.de>
+	s=arc-20240116; t=1750949361; c=relaxed/simple;
+	bh=e+p1u3bjk72DZ4xXV4yRymVTRZjUSFmGtt4UT1KJy4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8u+qVqq/8HBjFAuTIHOtl8z5k3a6eKYjvW554bcpi28LwzRcNwYF7KZtLoIoNjAIwNeoe2Q7z8dp7w9UpXjksgNCM6BkMwYwRuTgImi16FfsAKBfMZL31/d86HzYqCT6Mnci/MMteDA4OBkizsNKPixAS9h31r8Qxc2lK89Bi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=OoE0pHQk; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-40b31468da3so38619b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 07:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1750949357; x=1751554157; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDTHGKJ7PRnQtifJssL8JUIIPtKYbrBYEt3PvsupNKg=;
+        b=OoE0pHQkKhw4hvO00e7lyvZUJjgpBMreXb6Jk35+vlUH2IE5UYZqaqLSQHU/nibg6v
+         ruXqxLbVMqM1vytrKhJtNrqEDD6h6rXPgBiryqmNYLC3IQnZIhuOS7TcPwGr5R7ygKs1
+         lWTtvGDk6W0KewJgH+hGGwveddIggSzeYH22jvTTUIxPsmaKjGdaoU/MlO0VHJ95ibm8
+         knVzbKenulkmq7F+9uZ5iBaho2oUTnB1Fx9YeiEBCInT5w6yq1OERaErbJt1TU1W9RXL
+         JVbdr/2nbDQR2i1Zix/oN3aQ7XelMgfOCuorezM/K2rl/XlBSx5xdT0WppNl72JmrNT7
+         FlqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750949357; x=1751554157;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eDTHGKJ7PRnQtifJssL8JUIIPtKYbrBYEt3PvsupNKg=;
+        b=sx1wnVerxz+OcWXaFMzLuFfVxupdEj4/VzaRD+fbjUOrgrRZoDB+rsYpNyAR4weUos
+         Sy19i2d/vzN2vc55G3TfdQhcKnH7nEy1KTzzKMQyi0HheaYVrUgBZmzyrN8ppY9mOIc8
+         OH09X0sZ7FyaUw0q8quu/R9nwcTmRiAbx2qVI8v1JQjq6CNIacbqe6fjTVp1jafBOey4
+         KGrviKuo0KHoCFX4unx3o7YIENgLa77xeDwxNjE1xBxN5oe/ZNQDzUw4vU823a//iCt1
+         89o+FGDUs40B8PsllpYZGjPmOZq767rFWvFMXLquq5qjD/eibt3fWQWAB40DvmiazfWr
+         Z0hQ==
+X-Gm-Message-State: AOJu0Yx/NyLUqPk5VxHgD9JBJP4sK0YJOJoKTk7rsDG4iahoDTUvAc54
+	fmddbwCinsVO71xbjoUxfz79skYKcEqpc/ahACgvWr5BQFl25Eh3kCZtyFZMiCp0xR0=
+X-Gm-Gg: ASbGncutxeTcKCnsezMW+GTexyW3AX8H5NR5YTWxb/i1MObL3hNIw9Xwrn819HItuhQ
+	p0lvvTzg3L184NbprfL8Nru9IM3nlgUJQQq2Xx1Tdk5kHkhhIBDK0HCaRLEFNh/xbhE+0yrs0QI
+	6zVms5cS0FJZYK6FKN95OJ8zZC+O6SVjGtx35HQdqZ+E3jXNxXvjT6aK5ybbnQff+4Nqu7ZjRcL
+	Ke3LFEKz9qqpNW00AAwESYRjf72aCQ18SgM2H1zJjNiOvGAG65BT6PeJSE8WMM4CXGXV7sLD9mF
+	4lOgs8f46xJWQ9UX0L4ZY5nBlczaeuHrCcrTp0q/B0cBSkI=
+X-Google-Smtp-Source: AGHT+IEk1fuPkxL2WLgf9P7Tgn7/Q5tUITHrfb7oE7/rJ7NBa+jsmVtdMJzdRWUlmWV91MQIQpsO/Q==
+X-Received: by 2002:a05:6808:50ac:b0:406:7186:5114 with SMTP id 5614622812f47-40b05c73cf1mr5460261b6e.36.1750949357253;
+        Thu, 26 Jun 2025 07:49:17 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6c136ecsm2593994b6e.6.2025.06.26.07.49.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 07:49:16 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uUnud-00000001WeQ-0wX2;
+	Thu, 26 Jun 2025 11:49:15 -0300
+Date: Thu, 26 Jun 2025 11:49:15 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Create cleanup class for tpm_buf
+Message-ID: <20250626144915.GD213144@ziepe.ca>
+References: <20250625213757.1236570-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625213757.1236570-1-jarkko@kernel.org>
 
-Move away from the legacy MSI domain setup, switch to use
-msi_create_parent_irq_domain().
+On Thu, Jun 26, 2025 at 12:37:56AM +0300, Jarkko Sakkinen wrote:
+> @@ -323,7 +323,7 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>   */
+>  static int tpm1_startup(struct tpm_chip *chip)
+>  {
+> -	struct tpm_buf buf;
+> +	CLASS(tpm_buf, buf)();
+>  	int rc;
+>  
+>  	dev_info(&chip->dev, "starting up the TPM manually\n");
+> @@ -335,7 +335,6 @@ static int tpm1_startup(struct tpm_chip *chip)
+>  	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
+>  
+>  	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
+> -	tpm_buf_destroy(&buf);
+>  	return rc;
+>  }
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
- drivers/irqchip/Kconfig           |  1 +
- drivers/irqchip/irq-ls-scfg-msi.c | 49 ++++++++++++++-----------------
- 2 files changed, 23 insertions(+), 27 deletions(-)
+So, Linus has spoken negatively about just converting existing code to
+use cleanup.h, fearful it would introduce more bugs.
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index afd7bae30a788..f1aaf3a0fcdb0 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -436,6 +436,7 @@ config LS_SCFG_MSI
- 	def_bool y if SOC_LS1021A || ARCH_LAYERSCAPE
- 	select IRQ_MSI_IOMMU
- 	depends on PCI_MSI
-+	select IRQ_MSI_LIB
-=20
- config PARTITION_PERCPU
- 	bool
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scf=
-g-msi.c
-index 84bc5e4b47cf5..7eca751d6548b 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -14,6 +14,7 @@
- #include <linux/iommu.h>
- #include <linux/irq.h>
- #include <linux/irqchip/chained_irq.h>
-+#include <linux/irqchip/irq-msi-lib.h>
- #include <linux/irqdomain.h>
- #include <linux/of_irq.h>
- #include <linux/of_pci.h>
-@@ -47,7 +48,6 @@ struct ls_scfg_msi {
- 	spinlock_t		lock;
- 	struct platform_device	*pdev;
- 	struct irq_domain	*parent;
--	struct irq_domain	*msi_domain;
- 	void __iomem		*regs;
- 	phys_addr_t		msiir_addr;
- 	struct ls_scfg_msi_cfg	*cfg;
-@@ -57,17 +57,18 @@ struct ls_scfg_msi {
- 	unsigned long		*used;
- };
-=20
--static struct irq_chip ls_scfg_msi_irq_chip =3D {
--	.name =3D "MSI",
--	.irq_mask	=3D pci_msi_mask_irq,
--	.irq_unmask	=3D pci_msi_unmask_irq,
--};
--
--static struct msi_domain_info ls_scfg_msi_domain_info =3D {
--	.flags	=3D (MSI_FLAG_USE_DEF_DOM_OPS |
--		   MSI_FLAG_USE_DEF_CHIP_OPS |
--		   MSI_FLAG_PCI_MSIX),
--	.chip	=3D &ls_scfg_msi_irq_chip,
-+#define MPIC_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS | \
-+				 MSI_FLAG_USE_DEF_CHIP_OPS)
-+#define MPIC_MSI_FLAGS_SUPPORTED (MSI_FLAG_PCI_MSIX       | \
-+				  MSI_GENERIC_FLAGS_MASK)
-+
-+static const struct msi_parent_ops ls_scfg_msi_parent_ops =3D {
-+	.required_flags		=3D MPIC_MSI_FLAGS_REQUIRED,
-+	.supported_flags	=3D MPIC_MSI_FLAGS_SUPPORTED,
-+	.bus_select_token	=3D DOMAIN_BUS_NEXUS,
-+	.bus_select_mask	=3D MATCH_PCI_MSI,
-+	.prefix			=3D "MSI-",
-+	.init_dev_msi_info	=3D msi_lib_init_dev_msi_info,
- };
-=20
- static int msi_affinity_flag =3D 1;
-@@ -185,6 +186,7 @@ static void ls_scfg_msi_domain_irq_free(struct irq_doma=
-in *domain,
- }
-=20
- static const struct irq_domain_ops ls_scfg_msi_domain_ops =3D {
-+	.select	=3D msi_lib_irq_domain_select,
- 	.alloc	=3D ls_scfg_msi_domain_irq_alloc,
- 	.free	=3D ls_scfg_msi_domain_irq_free,
- };
-@@ -214,21 +216,15 @@ static void ls_scfg_msi_irq_handler(struct irq_desc *=
-desc)
-=20
- static int ls_scfg_msi_domains_init(struct ls_scfg_msi *msi_data)
- {
--	/* Initialize MSI domain parent */
--	msi_data->parent =3D irq_domain_create_linear(NULL,
--						    msi_data->irqs_num,
--						    &ls_scfg_msi_domain_ops,
--						    msi_data);
-+	struct irq_domain_info info =3D {
-+		.fwnode		=3D of_fwnode_handle(msi_data->pdev->dev.of_node),
-+		.ops		=3D &ls_scfg_msi_domain_ops,
-+		.host_data	=3D msi_data,
-+		.size		=3D msi_data->irqs_num,
-+	};
-+
-+	msi_data->parent =3D msi_create_parent_irq_domain(&info, &ls_scfg_msi_par=
-ent_ops);
- 	if (!msi_data->parent) {
--		dev_err(&msi_data->pdev->dev, "failed to create IRQ domain\n");
--		return -ENOMEM;
--	}
--
--	msi_data->msi_domain =3D pci_msi_create_irq_domain(
--				of_fwnode_handle(msi_data->pdev->dev.of_node),
--				&ls_scfg_msi_domain_info,
--				msi_data->parent);
--	if (!msi_data->msi_domain) {
- 		dev_err(&msi_data->pdev->dev, "failed to create MSI domain\n");
- 		irq_domain_remove(msi_data->parent);
- 		return -ENOMEM;
-@@ -405,7 +401,6 @@ static void ls_scfg_msi_remove(struct platform_device *=
-pdev)
- 	for (i =3D 0; i < msi_data->msir_num; i++)
- 		ls_scfg_msi_teardown_hwirq(&msi_data->msir[i]);
-=20
--	irq_domain_remove(msi_data->msi_domain);
- 	irq_domain_remove(msi_data->parent);
-=20
- 	platform_set_drvdata(pdev, NULL);
---=20
-2.39.5
+I would certainly split this into more patches, and it would be nice
+if something mechanical like coccinelle could do the change.
 
+At least I would add the class and drop the tpm_buf_destroy() as one
+patch, and another would be to cleanup any empty gotos.
+
+Also, I think the style guide for cleanup.h is to not use the
+variable block, so it should be more like:
+
+CLASS(tpm_buf, buf)();
+if (!tpm_buf)
+   return -ENOMEM;
+
+AFAICT, but that seems to be some kind of tribal knowledge.
+
+Jason
 
