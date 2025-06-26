@@ -1,127 +1,183 @@
-Return-Path: <linux-kernel+bounces-704866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F73AAEA2C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:35:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816B1AEA2A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 17:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05F0188CD70
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7BC5A1BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2742EBDDA;
-	Thu, 26 Jun 2025 15:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575652ECD1C;
+	Thu, 26 Jun 2025 15:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b="GPwvi2JE"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzoukCrr"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19F716DEB3
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 15:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750951927; cv=pass; b=qjblPk64YksJw1fotM+dYjSQPq4hJf8mv25ZzOmQ4kTxNbxMeF9YlV+3XtOm0wapYKzpzyapT0oQ0V7KEaYahkdvPkoCKwub4ZIHHqbvQbJaNMpFU5moC+VLs1Xrd+REsSJ22ZOxFHIDE1IkPPApAJhnvsAL32jA+WXGa3a9rRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750951927; c=relaxed/simple;
-	bh=QzJ+mw1mZ61E4BVBc6eVU0mJdCfS5N8n38LYhvIVPcQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QxP5WVYSQSVDf2yusUQNLA3XZRQB3LWGfmpMYlnkcCMTFB81LpOv79vzHEiAvt5YErzuYXX8sBR2l9qFJoPLTxnr/JpsgUvILQ8J8IwfeZoqts4BlUPLoBBK1OxAH1sr1XWITLFVkINSQR8roi77dPmGC7WRMEh4uSFbi1W0ch4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nfraprado@collabora.com header.b=GPwvi2JE; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1750951908; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FrndBkfH5Yb2hczHdjvZqLHKmGh24t0qRtvSHL54QVLoPvLancdd9ugXgSDXr1yfWFaiA+96D7SNInWSRIKjBaLrLdQcAxuHyJq9MS5VMMa5UgH2p09eOnrl17YZJyo16szJHeWrAAtqomNQ+5ViaIM1hU/hkTXtvrj6Q00z1qY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1750951908; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QzJ+mw1mZ61E4BVBc6eVU0mJdCfS5N8n38LYhvIVPcQ=; 
-	b=EnEyuXkYIqKLKBz4gRYejn0GG5+5NQ6QGEYB0o2XKiJKwpHS49P9LskOZViHoDDIIZ5evX2ic6yYL8d5UhZETAE+OTkyM8fpwjcSYHfaFl4MYm9lN+t4cppALW0Rxd/wbR8VMzaf2vRHjzpSjXo3+wb1HDLn98cLTZqDzutbe8M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nfraprado@collabora.com;
-	dmarc=pass header.from=<nfraprado@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1750951908;
-	s=zohomail; d=collabora.com; i=nfraprado@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=QzJ+mw1mZ61E4BVBc6eVU0mJdCfS5N8n38LYhvIVPcQ=;
-	b=GPwvi2JERhAm14b28wt6nqJSJUgC5hmNtxTniKoaSYSUD26Dut6Qy7SZDtqXlPC+
-	u+c4iDnGone5HN01r5dARbuDDXUm9+qTLPZzTuUjRh2hrZAh0W9XL3Q/3opVM/RKrGC
-	fGjtjiwqkyO+q2Wrigk0TmnOpkut8cQUyksJUZmc=
-Received: by mx.zohomail.com with SMTPS id 1750951905438943.3169151421496;
-	Thu, 26 Jun 2025 08:31:45 -0700 (PDT)
-Message-ID: <e6b3c842625d9740da2481f9b5893015ac699db0.camel@collabora.com>
-Subject: Re: [PATCH] arm64: defconfig: enable further Rockchip platform
- drivers
-From: =?ISO-8859-1?Q?N=EDcolas?= "F. R. A. Prado" <nfraprado@collabora.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Heiko Stuebner
-	 <heiko@sntech.de>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
-	 <will@kernel.org>
-Cc: kernel@collabora.com, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 26 Jun 2025 11:31:38 -0400
-In-Reply-To: <20250626-rk3588-defconfig-v1-1-39a19a41c181@collabora.com>
-References: <20250626-rk3588-defconfig-v1-1-39a19a41c181@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAFA2ED165;
+	Thu, 26 Jun 2025 15:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750951940; cv=none; b=ZkEL1fYFmjr2jeI/OIZ3HPlhBFA6nHHDjsVuGlA13Qw2iiQLVSPdSk/fcfCPsoQVJ5juxbnQj2z/jkhzrO27doGZEsmlw1A5mj3nVwKD7lfsjF/bvohAqa6kZt9uuHxoFel1ifdEp6CKlHSLe4wxhXawSxT4vEVov8Z43boJaLg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750951940; c=relaxed/simple;
+	bh=sGXp482ePzEbOSqj6Oo7pSTRt0qdWiaHv14lzRVBHx8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=u9CpAT8S2SyWpZamPZBEKphwjrZb18pu0QE1IyUlZaRXhrx+lEeMSq0r1pBkuVZl4D0aHwMW+IFARcWElW2k6geYr+eFnebRHcBj5RDLHA7w76xYKR4N62fkB0LCDM5K/w/bcf4HltSfIZ4QRSodfsvtX99WGHU7MvrSOcaKELw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzoukCrr; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553d52cb80dso1357477e87.1;
+        Thu, 26 Jun 2025 08:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750951937; x=1751556737; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m8+Li4ZqAZW0QY7sIIldmBLFf6VQ+4AeP6Iv95ugt8g=;
+        b=RzoukCrrVTFKW8tYIs0PLj/Y9sverFKPG+BBJjKifGhvBuiSLogYYMZXLfeIgth4h7
+         Bb+PIEC4NePLvx+P6T81z6PL5nE9NnePgkbhv0Zy3G2MpAw59qtODoIHn/08X8T1gnmK
+         75HuUswvVNOQnUhfdmDokrEdYtgJ13vCRttHVRmi+DeosN15fR4jQ55kvVPaNh7seZON
+         OWrCdmXIf9Ii+TWiKaoS6NxrUF85EL4eCBov5zpI/6r7k/JA+2Q64ZrGSb8SmYLKmNA1
+         6+g0i1mXUGux7srOPoW4nfRCn07sQyZxVSHSzemGvyG+kplW0h1WfzkhIb/wuf0QftXW
+         x9vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750951937; x=1751556737;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m8+Li4ZqAZW0QY7sIIldmBLFf6VQ+4AeP6Iv95ugt8g=;
+        b=GA/2vNtwwVdWsYJNY+J32oN6hUzMTNouJ+mCgJwivcuNx3Jr4+UVsdeOECRQhE/W2E
+         z+8Tfaut1uS7EIvISj/wxyiXRzusCfr9DaHbdz9H/xOcQL9deWRGBOCf32qIdmowPFi4
+         UvBKC/1HKkb5R4pPaVk+92o4gzFMTO8ZlNRUHiKe8db64RM1xJolqbTztMbQ7S8LlqMz
+         lUF4hZOo/eaHDhRT1ASxuE//UB+wRfN+LKoZk6unDD3n/Wugduf7nfnir/Ity+8GLvGw
+         Tf9kwhH6grKXnl4bgJgjHnRpF076QAw3rNZ+ag5RFnb/eyjoYdTbJWnay2KzHKPG3lFy
+         CgqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7gF8s44vkpk8t+Gf7Bfk1GSFAEdMnF62Hx+u3ZsvW/ts3mU6qcYEaPkoBx030kfE6O/ZV4XGkWAVp/f8=@vger.kernel.org, AJvYcCVoGqWo8mbnCVLzh+yYJArNSUuC7/UYA9WMgFd42a2DJ/IlHRm9HfeBNq6lCsTCcy4yDL+d33K3WWd5eA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSVKPqcM+QV9HVMMjfOSBNTLyvOiVPV9E+QlQya7SdENsHESwl
+	QsxZzwCjJpbM3SqLOOyf8VQ0b/yNyBpdxpu3Irj3PxCDIOYcTsiWvkiV
+X-Gm-Gg: ASbGnctuXYOEEX88pMtgfxCOXwmtE6gmfHwWHQyWQOPQUi9Hbac5W1/atQ452evAk4t
+	kTnI2hQ1KP5xpQ8vebZHdRHPpzpEgg79mPsYp14w/AObWHCgzLdRt/ZkJbs+xwcpJ4ICdsIQBu3
+	BBmQZIZxbFYa0Jg+aSmJgivGb+75fPfi64K0vhsEqNB1bjZy3OQ80EBmMhJE9iJQQVHx6z5TqZJ
+	QHXZITQRzBEhVajO2esWu0baajWWIrT+TSB+0YRtug+BxVLDLYR96qADPGx+E/zcgp+Jd4V2aBK
+	tPqp6nYkrvyQ+xMiE/WlWjWtxe7rH9aDM6mhXoAUvCpGsfDCJ5Rf9dYiPrv1X+RJTwqMHYZrHAl
+	L+FHPL9O+6kdJF+wYHHKJIf2B7A8MUw==
+X-Google-Smtp-Source: AGHT+IFV82PjQkEQV8pwkpgH+uEG2XxjLf7tDKt0/XCF6qX83TTzJXquCdeUIk26UtVJ1dwuwllM0A==
+X-Received: by 2002:a05:6512:3e0f:b0:553:cab0:3800 with SMTP id 2adb3069b0e04-55502c95046mr1480652e87.14.1750951936982;
+        Thu, 26 Jun 2025 08:32:16 -0700 (PDT)
+Received: from localhost.localdomain (2.135.54.165.dynamic.telecom.kz. [2.135.54.165])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2ce1fasm42792e87.174.2025.06.26.08.32.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 08:32:16 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: ryabinin.a.a@gmail.com,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	linux@armlinux.org.uk,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	x86@kernel.org,
+	hpa@zytor.com,
+	chris@zankel.net,
+	jcmvbkbc@gmail.com,
+	akpm@linux-foundation.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: arnd@arndb.de,
+	rppt@kernel.org,
+	geert@linux-m68k.org,
+	mcgrof@kernel.org,
+	guoweikang.kernel@gmail.com,
+	tiwei.btw@antgroup.com,
+	kevin.brodsky@arm.com,
+	benjamin.berg@intel.com,
+	kasan-dev@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-mm@kvack.org,
+	llvm@lists.linux.dev,
+	snovitoll@gmail.com
+Subject: [PATCH v2 02/11] kasan/arm64: call kasan_init_generic in kasan_init
+Date: Thu, 26 Jun 2025 20:31:38 +0500
+Message-Id: <20250626153147.145312-3-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250626153147.145312-1-snovitoll@gmail.com>
+References: <20250626153147.145312-1-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-06-26 at 17:16 +0200, Nicolas Frattaroli wrote:
-> The RK3588 SoC, and its sibling, the RK3588S, are supported by
-> mainline
-> Linux. However, some of its SoC drivers are currently not enabled in
-> the
-> arm64 defconfig.
->=20
-> Enable rockchip-dfi, rockchip-rga, and the Rockchip specific
-> extensions
-> to Hantro as modules.
+Call kasan_init_generic() which enables the static flag to mark KASAN
+initialized in CONFIG_KASAN_GENERIC mode, otherwise it's an inline stub,
+and the flag is enabled in kasan_init_sw_tags() or kasan_init_hw_tags().
 
-Personally I don't think the first paragraph adds much, so I'd drop it.
-=C2=A0
-Also I feel like you're missing the most important information here,
-which is what these modules are used for, so I'd focus on that eg
-"Enable configs for rockchip-dfi, rga, hantro, etc. This enables
-monitoring of DDR load, usage of the hardware codecs, etc"
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218315
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+ arch/arm64/mm/kasan_init.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->=20
-> These drivers are also used on other Rockchip SoCs that mainline
-> supports, notably RK3566/RK3568, as well as RK3399.
->=20
-> Suggested-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
-> =C2=A0arch/arm64/configs/defconfig | 3 +++
-> =C2=A01 file changed, 3 insertions(+)
->=20
-> diff --git a/arch/arm64/configs/defconfig
-> b/arch/arm64/configs/defconfig
-> index
-> e071f8f45607dbfd8e00b915b27999949ee0fc88..8b5ecb20ed6450faa0da14a6fdb
-> 4cb227a1f735f 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1789,3 +1789,6 @@ CONFIG_CORESIGHT_STM=3Dm
-> =C2=A0CONFIG_CORESIGHT_CPU_DEBUG=3Dm
-> =C2=A0CONFIG_CORESIGHT_CTI=3Dm
-> =C2=A0CONFIG_MEMTEST=3Dy
-> +CONFIG_DEVFREQ_EVENT_ROCKCHIP_DFI=3Dm
-> +CONFIG_VIDEO_ROCKCHIP_RGA=3Dm
-> +CONFIG_VIDEO_HANTRO_ROCKCHIP=3Dm
+diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+index d541ce45dae..abeb81bf6eb 100644
+--- a/arch/arm64/mm/kasan_init.c
++++ b/arch/arm64/mm/kasan_init.c
+@@ -399,14 +399,12 @@ void __init kasan_init(void)
+ {
+ 	kasan_init_shadow();
+ 	kasan_init_depth();
+-#if defined(CONFIG_KASAN_GENERIC)
++	kasan_init_generic();
+ 	/*
+ 	 * Generic KASAN is now fully initialized.
+ 	 * Software and Hardware Tag-Based modes still require
+ 	 * kasan_init_sw_tags() and kasan_init_hw_tags() correspondingly.
+ 	 */
+-	pr_info("KernelAddressSanitizer initialized (generic)\n");
+-#endif
+ }
+ 
+ #endif /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
+-- 
+2.34.1
 
-You should run make savedefconfig and commit the configs from the
-generated defconfig so they're in the right place in the defconfig,
-rather than just appending them to end like this.
-
---=20
-Thanks,
-
-N=C3=ADcolas
 
