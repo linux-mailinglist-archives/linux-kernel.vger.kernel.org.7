@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-704388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D855AE9CE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4533AE9CD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903771654BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380CC4A7582
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 11:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ECDBE4A;
-	Thu, 26 Jun 2025 11:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DE18F5E;
+	Thu, 26 Jun 2025 11:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="lW0cccsx"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCpuq5cp"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52020DDD2
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 11:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F37710E0;
+	Thu, 26 Jun 2025 11:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750938928; cv=none; b=eQhDWMoNNbvPkH0L9uCDqr0P6EhwMs0TofD1tbZcjxcL99EMLIq+4UYfv881uKk9K4S11pmHsfYeqPCD835+r3sb1ziKCz7hr9OAwCYTFw1nuZ+eRoz7xwMVcnWLibcv5dXQpNBaCBxZRoJ5fIWP24v7f2tkw2v9XtWuGpT8FnI=
+	t=1750938627; cv=none; b=c/KtXwMaLp/utrOt4fdtHhLVGrTZVQT7wVE4FanFnUjLxKnTAEvz1NfUA/SUTL4OVJdQtLIgQVwHazmyZy+Hs1kYFFWshJxVQKybrp/ASF/CLPkGsvvEXj0wV8UKV4e0XTDl81yrJxkbN12ChovxBha1m9TlfGYCr8un65NiRdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750938928; c=relaxed/simple;
-	bh=OepCRvmZSgZ21THaAIKKkjUXXt+rOFHQEY0XAoO+8s8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JWfOvx2Mb5GI/F2f+mUWf7W/EfvbieOdDTOkhiG07Ta+/PLiD2kOGUjyv6MJ69L82wA/1quD/0pyUL7AxdiqsSgfz3TVx3tiFaBysNAcGNeB351zAhxRBXmgoLYz8mj09m6kDQMQrnviWGwkjC3Z2p28q7X12lJXaq50oiODiJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=lW0cccsx; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 7D570240027
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 13:50:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
-	s=1984.ea087b; t=1750938605;
-	bh=++tZDl1VMrYPukj14Hp1L5Dy277OIIyCwylm3lluCpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=lW0cccsxwQ8q50mmQouzfBYYL+5jMnZ3lCTJHiIie8U6j5FYBqAHlirmQ1MNpV7c6
-	 QuxILbycA3tGHTSxnsutXzf5CpdBeTpTSntHdxGEphRHHWckYuVLPNeqGUSBIhGlxI
-	 764AfEw6IcPsL4T1kJuBKH+Ot0QPbWzFnG1uyzeug+OGYSKs2dTPnV2hhcQn2bVYde
-	 Tdoaybh3JQFngYXEISPRxaxn16kETt842JN0Mz/ay8cytXuDKS3UAkWR0WX6M2Tb3a
-	 AyytNmrCZh0dafxmX2psxEHu6Ldth3jd2mQhu+vGOBLJGLVFr9rX3MUFsA0BLBieEo
-	 dly1Of5b6XYLlNKdBZC4dm4PYrpQgFUVawsfVcosaZGst1op5am80W6/kI87xQE8rI
-	 bxQ5qAAZdLN/VytO/NvSZpFYdjlAVTeBY35dTQ77QRPTMinSLKrQxz8/G5epi2dKKk
-	 iK+9+nQ3Vbe7nbHFAefcDWKidWidHGy4IgGAzsInewNdaS7JNMj
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4bScS94sRFz9rxN;
-	Thu, 26 Jun 2025 13:50:01 +0200 (CEST)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: zhangjianrong <zhangjianrong5@huawei.com>,  andreas.noever@gmail.com,
-  michael.jamet@intel.com,  YehezkelShB@gmail.com,
-  linux-usb@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  guhengsheng@hisilicon.com,  caiyadong@huawei.com,  xuetao09@huawei.com,
-  lixinghang1@huawei.com
-Subject: Re: [PATCH] thunderbolt: Confirm the necessity to configure asym
- link first
-In-Reply-To: <20250626093026.GJ2824380@black.fi.intel.com>
-References: <20250626084107.2710306-1-zhangjianrong5@huawei.com>
-	<20250626093026.GJ2824380@black.fi.intel.com>
-Date: Thu, 26 Jun 2025 11:50:00 +0000
-Message-ID: <877c0ylo2f.fsf@posteo.net>
+	s=arc-20240116; t=1750938627; c=relaxed/simple;
+	bh=47DwLxZ5ThOmC2ZCeEvtDYoVmJKiQ13yJRlQWHsuxRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HDvExK4QslpmTXECfK5AEQ/5M1PkyrcApet8k0MD8tftB7JlbDfRycdjBJYnhbZ7b+QCEObb03F/Hlef7YWTP5kpQrvPHV9WLVhoVcG00rM+jof0HB2d66EqhBxpnFCzhPlnNpbkGJgZzwOgtuFop9IP+dKBBoulqBukP9fqiJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCpuq5cp; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-313862d48e7so137115a91.1;
+        Thu, 26 Jun 2025 04:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750938625; x=1751543425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l9XKIcAVinRyEVth7piavPqwL9ln4+s7PL+WLMnmvUU=;
+        b=YCpuq5cpzk5b/44brhIzH+tWmDveDCSdIX7UE7Ata4IKEuOVdL2gAomJjlFnUIVLPQ
+         9kqJPJr/ntZT8RGz3FYarsyOcOL8dLLwBjOOXK/WWBffNzx0l340bQAcVpdBs+Xy1wso
+         UUL7IFr/1Kj/5wLCY5DMSl+5+ETKuILspgaE1d9UuC3ycBZsI49fpGou03tMxdD5npby
+         +DsvMONz+JGEW8Y2WX3R+HZEsun6ipdusBDhCFd91hZpvo2Tn0fPmqX5WNMsSXE4q2eN
+         3Sd3B/XbxT7jwvHdfMCjeCIDTEpNkg5O+ijVtwjeZW5DAzDkLGgCkGjriAUEovjqY3Ed
+         c1RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750938625; x=1751543425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l9XKIcAVinRyEVth7piavPqwL9ln4+s7PL+WLMnmvUU=;
+        b=csXnIv/FFV2va5UMYfxadBSWJvkEV6lYlCQURJsMZZQcjm+FYSSzVDcm8qjdI/UIFy
+         eRj+jdqQCtCyxvVnfadpfj5vJ8M0nYBWOCzP8noPqBLE0JGj6c0CAXHYY/nQ1gqtVBUG
+         yigSqoBTtOY69J0q9ByEF1/tKtR2PKo0Py8LEKGzaIb/XiG2QCxNwCV4ZxQNKWjVy/4H
+         e9Ko+opzPz/6j9qHaHUKowQexlusHPdRVe706s/liXjb5BPOL448y0M8VgRMNiFNe2ds
+         JRcEx2/wbbg8R1zsc+kLYK2tOK+tqwXGtR1WpNrr0DYSu+iprXTWJPjsZjg7/dTl2aFj
+         quFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWG8+h3xFjYTnUwZNCPLEhD5LQ8bg0MCydVtu+NSrPSS6bKRFW5QecNQH8jcAZrVkE3RzIWf8W80UU=@vger.kernel.org, AJvYcCWPqXjUMXoE/iZ6urKdggq4FKCG/ggWdo+GUUW36Lwlc8IfpIWG2jnPc1mlBYlWsuCwSlucYs+JB2RNEk0RqxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLbHk8B9AAf51X1SC0sasYAOZOwrxcUpIVGgQwnrqbqX9hJ7Kf
+	0pkI/GtDif1RRUY9CF5KxXWC/rRPwBfHLDl3b0Nyw4/5wgY9d1AcaspC8w4uw54Jner9xx8oURF
+	2BA5/RBXsx1fSDG3PCjEN5cvIiunb8+Y=
+X-Gm-Gg: ASbGncvvv6rF6p8uQJXcewmmr+DFQxQn6M6Xz/zuDt91khcJQI6hD8H1zV9JMXY7OuG
+	gHnFLtJUwMx8WVlg0Wg2M1lcGVe2BP/S9riUpOYyyJKBn3M05K+NUWkUlNs1OF6+ZYhkzN4OHIz
+	GUZmZ2G8mc3QCnqKEdSppjbrr2IyUTaCtiwEHRMiv0sPs=
+X-Google-Smtp-Source: AGHT+IEDAfqrKdcOT2s3DZHiC9RhHcJN9UbcrQCS6mv6OcB4dOUdlDT1p3KWKRr/Jh/jPOgSwAknZPYNmBynDnS0svE=
+X-Received: by 2002:a17:90b:2e50:b0:313:2bfc:94c with SMTP id
+ 98e67ed59e1d1-315f26ae116mr3685087a91.8.1750938625522; Thu, 26 Jun 2025
+ 04:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250626100448.27921-1-work@onurozkan.dev> <20250626100448.27921-3-work@onurozkan.dev>
+In-Reply-To: <20250626100448.27921-3-work@onurozkan.dev>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 26 Jun 2025 13:50:12 +0200
+X-Gm-Features: Ac12FXxu4fukAl2NZsF-4Rlpnor3wUHjieWYL8rynr6tvoB0DmTBZvvc9TN3CrU
+Message-ID: <CANiq72mSoq=bVxSsg7_-X+EimVZiuN89fFZSYs8rKSaLmEm5gw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: drop unnecessary lints caught by `#[expect(...)]`
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	airlied@gmail.com, simona@ffwll.ch, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, rafael@kernel.org, viresh.kumar@linaro.org, 
+	gregkh@linuxfoundation.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, davidgow@google.com, nm@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Mika Westerberg <mika.westerberg@linux.intel.com> writes:
+On Thu, Jun 26, 2025 at 12:06=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.de=
+v> wrote:
+>
+> -        #[expect(clippy::unnecessary_cast)]
 
-> Hi,
->
-> On Thu, Jun 26, 2025 at 04:41:07PM +0800, zhangjianrong wrote:
->> Current implementation can cause allocation failures in
->> tb_alloc_dp_bandwidth() in some cases. For example:
->> allocated_down(30Gbps), allocated_up(50Gbps),
->> requested_down(10Gbps).
->
-> I'm not sure I understand the above.
->
-> Can you describe in which real life situation this can happen?
+We should avoid converting them into `expect` in the previous patch,
+because then it would break the build between the commits (it is not
+too critical if it is a Clippy one, but we still aim to keep builds
+Clippy clean).
 
-I suppose this can happen when reducing bandwidth while total upstream
-bandwidth usage on the link exceeds TB_ASYM_MIN (36 Gbps). The
-allocation fails at the asymmetric limit check before checking whether
-the downstream request actually needs asymmetric mode.
+In addition, the reasoning for each of these not being needed may not
+be immediately obvious (unlike other lint patches that follow all a
+pattern). So it would be best to split the patches into cases to
+explain each. For instance, this one is because with the new custom
+FFI mappings `c_long` is always `isize` now, which is always different
+from `c_int` (`i32`).
 
->
->> 
->> Signed-off-by: zhangjianrong <zhangjianrong5@huawei.com>
->> ---
->>  drivers/thunderbolt/tb.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
->> index a7c6919fbf97..558455d9716b 100644
->> --- a/drivers/thunderbolt/tb.c
->> +++ b/drivers/thunderbolt/tb.c
->> @@ -1039,6 +1039,9 @@ static int tb_configure_asym(struct tb *tb, struct tb_port *src_port,
->>  			break;
->>  
->>  		if (downstream) {
->> +			/* Does consumed + requested exceed the threshold */
->> +			if (consumed_down + requested_down < asym_threshold)
->> +				continue;
->>  			/*
->>  			 * Downstream so make sure upstream is within the 36G
->>  			 * (40G - guard band 10%), and the requested is above
->> @@ -1048,20 +1051,17 @@ static int tb_configure_asym(struct tb *tb, struct tb_port *src_port,
->>  				ret = -ENOBUFS;
->>  				break;
->>  			}
->> -			/* Does consumed + requested exceed the threshold */
->> -			if (consumed_down + requested_down < asym_threshold)
->> -				continue;
->>  
->>  			width_up = TB_LINK_WIDTH_ASYM_RX;
->>  			width_down = TB_LINK_WIDTH_ASYM_TX;
->>  		} else {
->>  			/* Upstream, the opposite of above */
->> +			if (consumed_up + requested_up < asym_threshold)
->> +				continue;
->>  			if (consumed_down + requested_down >= TB_ASYM_MIN) {
->>  				ret = -ENOBUFS;
->>  				break;
->>  			}
->> -			if (consumed_up + requested_up < asym_threshold)
->> -				continue;
->>  
->>  			width_up = TB_LINK_WIDTH_ASYM_TX;
->>  			width_down = TB_LINK_WIDTH_ASYM_RX;
->> -- 
->> 2.34.1
+By the way, please Cc the rust-for-linux list too.
+
+Thanks!
+
+Cheers,
+Miguel
 
