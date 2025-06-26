@@ -1,214 +1,112 @@
-Return-Path: <linux-kernel+bounces-705404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EE1AEA90D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7157CAEA8EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 23:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4817D1C4089D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA871C2707E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081D7261365;
-	Thu, 26 Jun 2025 21:52:03 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BCD25E47E;
-	Thu, 26 Jun 2025 21:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB892260560;
+	Thu, 26 Jun 2025 21:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a/tR3+7V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F0E21B91F
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750974722; cv=none; b=SZzrg4vDCyzHKwJUIiRfb5P0Yh0q9V1KVEdFg2WModMWc3z9EATBmMgizWdvaB8pnlDYhXJoThIAsC3mSllOEMQWiwTYoSy9+DWm6RqSJ6+4VkRugZahKq60NAN2XZnyKFl0QlIEq3D95BHJeV0mGLawnZyzY5BfLxJgLo0chUc=
+	t=1750973973; cv=none; b=Nu4jpO8BLxJVmM2MqVrsORQRsshYiqfrZTmPLG9nhZNdLmbDammkZvxIYKZoglxEgOODDeoCrw/WzwPqTFj9qJWe23V33wMDHi2CrMcIv5CdDmNKdp0IIWsXoxD1AU2N+5yNnE7kfFG2iwOdm7RPFFrkzGHRdHvO6mzhXX5S00Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750974722; c=relaxed/simple;
-	bh=bnz1Bb7o+gzldkFLngzW6l31QB4WnvlWMZjBoOExqS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=as77i60IFZq8hsURfUsV2mRTGZuMxxlz+Ic8E95f1skGZqMwny4ako6kLBc227CooTkkYiOYRt1Ta+OeQIC4/NGs7avyN4W45x/giSGawC4t9HsJPUInYsn1JI/FM9Ewi1xo+9BxxStgT5BJ3gBxgGAVJQW47XwGu9LhYpskPk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 55QLdUFG018871;
-	Thu, 26 Jun 2025 16:39:31 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 55QLdRb4018869;
-	Thu, 26 Jun 2025 16:39:27 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Thu, 26 Jun 2025 16:39:27 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andre Almeida <andrealmeid@igalia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/5] powerpc: Implement masked user access
-Message-ID: <20250626213927.GQ17294@gate.crashing.org>
-References: <cover.1750585239.git.christophe.leroy@csgroup.eu> <20250622172043.3fb0e54c@pumpkin> <ff2662ca-3b86-425b-97f8-3883f1018e83@csgroup.eu> <20250624131714.GG17294@gate.crashing.org> <20250624175001.148a768f@pumpkin> <20250624182505.GH17294@gate.crashing.org> <20250624220816.078f960d@pumpkin>
+	s=arc-20240116; t=1750973973; c=relaxed/simple;
+	bh=x69QRK5RucHC+6csbFYWaWitPETwel9PsQ4R9TfS79M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hue59Nj8SF6R4yRv3e3tlfJ1KWpaxj0UE1bCBKCkYt6DKvenuOrFWu4E0abs61mTtHj4VkY+Bqt8WfrTH0z35EC7L2btdHRQeHAdnJfhCvBP0/XyBwOJer4jSeIHZic+UoxfXgzIw4Edg8grEk5/PTCHp+cm1W1AMzd38jp/l0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a/tR3+7V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA28C4CEEB;
+	Thu, 26 Jun 2025 21:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1750973970;
+	bh=x69QRK5RucHC+6csbFYWaWitPETwel9PsQ4R9TfS79M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a/tR3+7VlwCB16OuZnu7kef+T2i84B5dk13XMNTjd/UqdZmWmOnKUeFFdu44NqFDF
+	 TiQ225pHCcAUNz2U2kwDGry8PYe/v6YE3Aj/TBlilp92/KzDZ8HRa/NzKjKbrDEAXO
+	 qkS+YRR6O9YFmvfvEzDbQL8au8Bim0G8IG1fqtAs=
+Date: Thu, 26 Jun 2025 14:39:29 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Luiz Capitulino <luizcap@redhat.com>
+Cc: david@redhat.com, willy@infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lcapitulino@gmail.com, shivankg@amd.com
+Subject: Re: [PATCH 1/3] mm: introduce snapshot_page()
+Message-Id: <20250626143929.a7f2bcbb8e90290f23af452e@linux-foundation.org>
+In-Reply-To: <4a9745dd2989f7d5bf5bc69c37fc3e3cfda37e87.1750961812.git.luizcap@redhat.com>
+References: <cover.1750961812.git.luizcap@redhat.com>
+	<4a9745dd2989f7d5bf5bc69c37fc3e3cfda37e87.1750961812.git.luizcap@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624220816.078f960d@pumpkin>
-User-Agent: Mutt/1.4.2.3i
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi!
+On Thu, 26 Jun 2025 14:16:51 -0400 Luiz Capitulino <luizcap@redhat.com> wrote:
 
-On Tue, Jun 24, 2025 at 10:08:16PM +0100, David Laight wrote:
-> On Tue, 24 Jun 2025 13:25:05 -0500
-> Segher Boessenkool <segher@kernel.crashing.org> wrote:
-> > On Tue, Jun 24, 2025 at 05:50:01PM +0100, David Laight wrote:
-> > > On Tue, 24 Jun 2025 08:17:14 -0500
-> > > Segher Boessenkool <segher@kernel.crashing.org> wrote:
-> > >   
-> > > > On Tue, Jun 24, 2025 at 07:27:47AM +0200, Christophe Leroy wrote:  
-> > > > > Ah ok, I overlooked that, I didn't know the cmove instruction, seem 
-> > > > > similar to the isel instruction on powerpc e500.    
-> > > > 
-> > > > cmove does a move (register or memory) when some condition is true.  
-> > > 
-> > > The destination of x86 'cmov' is always a register (only the source can be
-> > > memory - and is probably always read).  
-> > 
-> > Both source operands can be mem, right?  But probably not both at the
-> > same time.
+> This commit refactors __dump_page() into snapshot_page().
 > 
-> It only has one 'real' source, but the implementation could easily
-> read the destination register and then decide which value to write
-> back - rather than doing a conditional write to the register file.
-
-Yeah, in x86 many (most insns?) can read any reg that they write.  Not
-a great design, but heh.
-
-> A conditional write would be a right PITA for the alu result
-> forwarding logic
-
-Depends.  An implementation can always do the register forwarding etc.,
-just annul the actual store where appropriate (and not put it in the
-various store queues either, heh -- annul all the effects of the store).
-
-> > x86 is not a RISC architecture, or more generally, a load/store
-> > architecture.
+> snapshot_page() tries to take a faithful snapshot of a page and its
+> folio representation. The snapshot is returned in the struct
+> page_snapshot parameter along with additional flags that are best
+> retrieved at snapshot creation time to reduce race windows.
 > 
-> It sort of is these days.
-
-Not at all.  Most *implementations* are, the uarchs, but the
-architecture (which determines the required visible semantics) is not.
-That impedance difference is quite painful, yes, for code generation
-more than for the processor implementation even -- as usual the
-compilers have to save the day!
-
-> The memory transfers are separate u-ops, so a 'reg += mem' instruction
-> is split into two be the decoder.
-
-Yup.  Very expensive.  Both for the implementation, and for the
-performance of eventual code running on it.
-
-> Although some u-ops get merged together and executed in one clock,
-> obvious example is some 'compare+branch' pairs.
-
-On many other architectures such things run in 0 cycles anyway :-)
-
-> > A computational instruction is one that doesn't touch memory or does a
-> > branch, or some system function, some supervisor or hypervisor
-> > instruction maybe.
-> > 
-> > x86 does not have many computational insns, most insns can touch
-> > memory :-)
+> This function is intended to be used by callers that need a stable
+> representation of a struct page and struct folio so that pointers
+> or page information doesn't change while working on a page.
 > 
-> Except that the memory 'bit' is executed separately from any alu 'stuff'.
+> The idea and original implemenetation of snapshot_page() comes from
 
-On many uarchs, yes.  But not in the arch.  No uarch can decide to just
-not implement these difficult and expensive insns :-)
+tpyo!
 
-> > > There is a planned new instruction that would do a conditional write
-> > > to memory - but not on any cpu yet.  
-> > 
-> > Interesting!  Instructions like the atomic store insns we got for p9,
-> > maybe?  They can do minimum/maximum and various kinds of more generic
-> > reductions and similar.
-> 
-> I think they are only conditional stores.
-> But they do save a conditional branch.
+> Matthew Wilcox with suggestions for improvements from David Hildenbrand.
+> All bugs and misconceptions are mine.
+>
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -4184,4 +4184,24 @@ static inline bool page_pool_page_is_pp(struct page *page)
+>  }
+>  #endif
+>  
+> +#define PAGE_SNAPSHOT_FAITHFUL     (1 << 0)
+> +#define PAGE_SNAPSHOT_PG_HUGE_ZERO (1 << 1)
+> +#define PAGE_SNAPSHOT_PG_FREE      (1 << 2)
+> +#define PAGE_SNAPSHOT_PG_IDLE      (1 << 3)
+> +
+> +struct page_snapshot {
+> +	struct folio folio_snapshot;
+> +	struct page page_snapshot;
+> +	unsigned long pfn;
+> +	unsigned long idx;
+> +	unsigned long flags;
+> +};
+> +
+> +static inline bool snapshot_page_is_faithful(const struct page_snapshot *ps)
+> +{
+> +	return ps->flags & 0x1;'
 
-Yeah, but those are not ever executed *anyway*, there is branch
-prediction and we require that to be pretty good to get reasonable
-performance anyway.
+	& PAGE_SNAPSHOT_FAITHFUL?
 
-A branch around the store insns is just fine if it can be predicted
-correctly.  If it cannot be predicted correctly, you can do the store
-always, just have the address that is stored to depend on the condition
-(such the data is stored to some dummy memory if it "should not be
-done").  Source code gets such a transform done manually in the
-performance critical paths not infrequently, already.
+> +}
+> +
 
-GCC does not currently do such a transformation AFAIK, but it is a
-pretty basic thing to do.  Conditional stores are not often written in
-source code programs, or there would probably be an implementation for
-this already :-)
+All looks sane to me.  Small-system people (are there any left?) might
+point out that all the new code could be under ifdef CONFIG_PROCFS?
 
-> A late disable of a memory write is far less problematic than a disabled
-> register file write. No one minds (too much) about slight delays between
-> writes and reads of the same location (reduced by a store to load forwarder)
-> but you don't want to lose clocks between adjacent simple alu instructions.
-
-Writes to memory take tens of cycles *anyway*, but all of that is hidden
-by the various memory load and store queues (which let you do forwarding
-in just a few cycles).
-
-> For my sins I re-implemented a soft cpu last year...
-
-Ouch :-)  But it was fun to do I hope?
-
-> Which doesn't have a 'cmov' :-(
-
-The x86 flag register bits are so limited and complicated in the first
-place, cmov is the easier part there ;-) 
-
-> > But ancient things do not.  Both 970 (Apple G5) and Cell BE do not yet
-> > have it (they are ISA 2.01 and 2.02 respectively).  And the older p5's
-> > do not have it yet either, but the newer ones do.
-> > 
-> > And all classic PowerPC is ISA 1.xx of course.  Medieval CPUs :-)
-> 
-> That make more sense than the list in patch 5/5.
-
-Not sure what list that is.  I'll find it :-)
-
-> > > > But sure, seen from very far off both isel and cmove can be used to
-> > > > implement the ternary operator ("?:"), are similar in that way :-)  
-> > > 
-> > > Which is exactly what you want to avoid speculation.  
-> > 
-> > There are cheaper / simpler / more effective / better ways to get that,
-> > but sure, everything is better than a conditional branch, always :-)
-> 
-> Everything except a TLB miss :-)
-
-Heh.  TLBa are just a tiny part of translation on Power.  We mostly care
-about the ERATs.  Look it up, if you want to be introduced to another
-level of pain :-)
-
-> And for access_ok() avoiding the conditional is a good enough reason
-> to use a 'conditional move' instruction.
-> Avoiding speculation is actually free.
-
-*Assuming* that avoiding speculation is actually free, you mean?
-
-
-Segher
+I'll skip v1, see what reviewers have to say, thanks.
 
