@@ -1,216 +1,190 @@
-Return-Path: <linux-kernel+bounces-703748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-703750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F1BAE947B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:08:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41211AE9483
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 05:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DD117694D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E2197A95BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 03:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DF71991CD;
-	Thu, 26 Jun 2025 03:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5411B3935;
+	Thu, 26 Jun 2025 03:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEYA/AVo"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="diKasmMg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C93B11713;
-	Thu, 26 Jun 2025 03:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D34213A86C
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750907293; cv=none; b=WSEwAFluKCpfhPxrzVIzvLpC9QafYh1nIWUJqDskiBfQnvFJM/eFIEN27TNSYcepOVEPPUIDZZhsD2mhu0tFqfDz0L11YbsxhI8/aHGvKozl2dbyfVZxkWByCen35ckt1i+F4Oisat9NOb0oACX7Tn/Y4qh9vrQ6nI061xvOmGQ=
+	t=1750907848; cv=none; b=CF8ENsYNTfQ4paqhqeslen152MYxMeO7f/ubryp2SqItCkjNWjttoDSTJLFS8hTXKvELiAV8hOobxBeJPG9C1NxFr23cK48hD7537frwjFgLg9RDq4l5AuIuONZ9FNU+VzXcKCr3U+3Re7oTtck4y3KLGx3BahLf7Upw1HZHGT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750907293; c=relaxed/simple;
-	bh=lWo5an8OdaUAFaj7d4vEBfb/OZ6LH/dPxCLqHDE32pU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FQTuMRxpMJCIrmpO5gDF8A6O+RfcTt2fvRQfWqpWU7s8TJoqfF/3Rmisfmrnh+4YOgIO6+WumtO7nTotkTkzMjcoq0U7ZmRkKMyNTj8DkVcwfbjjc9ppvMD1CIuOXdlNTuPYO0KonlSMYeJbzCGgejkYxf4mDWXkMryd57UGvyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEYA/AVo; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23508d30142so8645725ad.0;
-        Wed, 25 Jun 2025 20:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750907292; x=1751512092; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xetl4Q1nAdqIE8NowlSON/wr7o9z3LI7Y8QPRF2z6Io=;
-        b=eEYA/AVo5ZCg2vHF1cPPyJGEivgT5KgscEW5fkicamDp55vgP2NC/6aDnUXV235qVz
-         AtSzu7oIm206F7EXyJD7ulUyqBREeoyy6cI6/SHoaotgXTvwEF0yNxJS6g7ThfpzY7XM
-         iWwAiYVD5ECgde1w94JiGcWdNiZcGSByq8DARl8LHHAtJi/pEYh+NzhbXBZM/etPHNrN
-         8dbE8Gv/X57YtNnc9nrkmmmYUzQObSV/07NbyLw5ZIZMYuSWOcxnqS1IQRURErBkPcFU
-         3Ow/LktESJTYyj/noN0oS+UZNblmXXvICpBG+MhsojZrshVUtYQX1ux6T76gJyMlCSCc
-         iYIg==
+	s=arc-20240116; t=1750907848; c=relaxed/simple;
+	bh=x31mGF7s/0RHh07FGyqoXnkN/evj/qdApu57bE/qeio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMJ0x55VkDXQ4Mpcvr6o1A+GAPXEDtjKsLSuFy7BkX+9yaIa49P4eA82OP0QaQziEge7SCl/AYkU6L6pMfm/HJ3GYQuMDJfTMAUOsRxOs0YB/CPTs8iNY617PtqUQQMe50e0Vpyp3YVCtcy761QpYNLMXa9o9sT48+K9UBlotxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=diKasmMg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55Q0DnSH015336
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:17:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ErBUOcE2lsiiqTjUOQb6F1cA
+	j3KxdxJhCA7no6eV1V0=; b=diKasmMgHdFRDruQV16ajkorWL8ivqnLHQJyqUoB
+	SC7mNZrO5GTA+JfDJxhVWv5K6BCRc3K7zP13TMQ/qti/lIQC4OngR9pmLzfM6Uwv
+	wip6va9+sjUplzEkInaIrnljhG/oBoMpWvO23carllT3pNSJ6oKET3d2vhZ85ndZ
+	lXutHiSjCg4w3F0COxDVclaaZyBDrFfbrPtK4XpRjJt7oA7KxhvUjxEe5BzWgZ33
+	MSJ2HhX6b2c5pOh5WGV6N0XkYu71SvksfKZ5z7y8/LOoRzT6aWNLqP997JbBPXyo
+	Xmh1z0j63B3RINDGKyaAtJT1dNEBuTRTfEpOMsNKSY6Q2g==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47g88fbjnq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 03:17:24 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2eb60594e8so329732a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Jun 2025 20:17:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750907292; x=1751512092;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xetl4Q1nAdqIE8NowlSON/wr7o9z3LI7Y8QPRF2z6Io=;
-        b=VRBG5p/BWemmsX2o6fh/ls4OWEJ9Ert8PxlPN2COw+Zw9bBUgqsckJ7E8AvZfw2zI5
-         IsOUBdcGv+GfcSYSYfKM+sBS/ylxwKkswnAXTzoqkva0o8x5nVBgklCDs1EvNygLdkqi
-         bCuu9Ds5LPGITcX+3a9C25Dp8k9ZcdypAs8mI+Z+yQnnW+HErBX6+e87GI9fsXLFrYJX
-         5TbEZNVFSbgk2F65bzTuXawbi4oLKbxAClKo6nng98lmm84ZsnUV/btizfaFmCYwOuHB
-         S7764R/Er1L8Ol1tZsHe/KtaKvK/6DoES75cX1EmSu0Qr34YoauH6gn+KBK6qogp/Ve/
-         2BdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsLnbJdrRbzrufkhEI05bKGdwKT0yIbMf+6ZJZbyvnyg5U0ekiYgX2UWNLz5zRYyL/cG4pfyYmJ2Wtubg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNdhQpJR4OjFaxytf83Twkits3Qp3UY4Q86jznp/NKQcd9Rsd
-	vehaAaD+MpCpr/M9Kjf/Wkeqe4aWkPnqsJNp+FW0+LTI/rQ5zGmCmZci
-X-Gm-Gg: ASbGncu+ofslfc6W1jnf/hfz7f61ZAYQhrJTsCOgJbeKNiMoF+6Pns0fQedbGl3OeEc
-	2LBMjy2r4oIFXNshpM79ePTIeT9jGIxx0X+bGe+FuQMWlYLRkh3Uj67fCz2AvknaG96asC87ZAz
-	1RCWMmvFkjusfQPcr99Qo/7otf6W5IRjNxOJBYm0uBr95CbUucYQol6obi6Uv/vKC0xu7Vp4RdI
-	5ipWExBHzWOeUhZNmWg+mptBBe2tfTOu8HVyvhnlVGs4tj3tzxaFr8nuIYU/LSt1Ewykm4YHuqr
-	5RbPJm3RVMolEEYZf8DaM/zFOEWLxxr+fRKDirRo9CyBxsRhjvqjKAeQxMumfh5q
-X-Google-Smtp-Source: AGHT+IFKo/7YFVk++cMRdtz8fShtah+X7Ozy2mMHd2aoe7W6PwQGPQeLb5mjGCspXZSFcYtbGYj6Uw==
-X-Received: by 2002:a17:903:1a67:b0:234:f200:51a1 with SMTP id d9443c01a7336-23823f94c1fmr77830975ad.9.1750907291677;
-        Wed, 25 Jun 2025 20:08:11 -0700 (PDT)
-Received: from localhost ([1.203.169.130])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d860a8b4sm142984495ad.90.2025.06.25.20.08.10
+        d=1e100.net; s=20230601; t=1750907844; x=1751512644;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ErBUOcE2lsiiqTjUOQb6F1cAj3KxdxJhCA7no6eV1V0=;
+        b=qsOrcBvBVl1u0Ni/+DlZyd4RQtX5hEDeN9rwD3frRvFYqJn83QH/A8edharJPtk99p
+         /0UZ5zsS7TdwSzBp1qkXy6o2z9o/z2UHLjn4m335CuOLywYToH7d017I+OSmEL4D3sWe
+         KmTWEuVJZW77R+2ka2PLprJ10Tl4BebIF4BjZIvFbiff2EDavKr0TYPA3LlxwtzXzwTV
+         C2N6mT16VSRYkypO4Wj7DNWd1bo0vBBUUdbjSnrdI0zMcMOicFb7AMa7OAed/Fok3gYF
+         CZVNTo2mV/URIUENAc2zqYiJ+b5AmkKieYyAUyg8w6+1/ZVqAF2/mY14O0j4FeiQEiGx
+         qh9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUdBtTtRcZ3r0gMq+vhQHKdc13T4XS4XawoB4fOz0fmtxbCpLPACOpj9B/c4hnn3DVGAlXM966IGMk75HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8rmWkG6IVdkfCK7M4zt8qELb5yyF/sF0wv3W7IAUrlxvgI5mc
+	JmUUoz8xKoSu773QfJHvFIoHSce77VI8HAD7eNr0Fpsa818sY+TH/5caAHLL70W+AJ71Y79NdW1
+	hISs4nsK6W5s047Y3KWGiGS8OBZckNHURjcq+KouTH6uJDIViyIDsiBuz6zx6j+uuVhM=
+X-Gm-Gg: ASbGncsKA+HzK+NicZJiIipeV55bAvBULdjz27npQ6yc8HVbFUyWh0K+0WqIRexyWFv
+	vBGM24vmHAmubyIjcmU48DHd4posJ1PWLvKwWjfee/Dys8P1Gugak96CKZFj5d4HK47tz8nI+Lz
+	oXDYjAtdOZJ++CbivNzkBHNG6jiYPe5M3pyLOV2KlKm8gJoKxymdefRIGL6LAjog3koArq1tbzQ
+	CsIe8wUUChuGyVXSQ80iYiwZT1a4JYqrc/6cy1E/lfrxBGuCrAwna9GrXzL9UhkUvX9pGOO7cUL
+	9/IIvWetDHKOaAw1TcGDw/ZAHhPYPd9gjajaVQpPixOW3HT4VQUpjPkaQnHqE1++0I2qNyEGaIA
+	XM9xIqg==
+X-Received: by 2002:a17:903:187:b0:234:d679:72f7 with SMTP id d9443c01a7336-23823fead84mr95627275ad.23.1750907843605;
+        Wed, 25 Jun 2025 20:17:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmDn5qi3w4LtcEg2tNZs4Bk6hVI5/xpEnIq/0nSUsclWzPvoDTvtuUsmOO4aLVTEXCpBXtZw==
+X-Received: by 2002:a17:903:187:b0:234:d679:72f7 with SMTP id d9443c01a7336-23823fead84mr95626695ad.23.1750907842898;
+        Wed, 25 Jun 2025 20:17:22 -0700 (PDT)
+Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-237d86cf609sm149804835ad.203.2025.06.25.20.17.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 20:08:11 -0700 (PDT)
-From: Hao-ran Zheng <zhenghaoran154@gmail.com>
-To: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	zzzccc427@gmail.com,
-	Hao-ran Zheng <zhenghaoran154@gmail.com>
-Subject: [PATCH] btrfs: Two data races in btrfs
-Date: Thu, 26 Jun 2025 11:08:06 +0800
-Message-Id: <20250626030806.665809-1-zhenghaoran154@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 25 Jun 2025 20:17:22 -0700 (PDT)
+Date: Wed, 25 Jun 2025 20:17:20 -0700
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+To: Umang Chheda <umang.chheda@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@oss.qualcomm.com
+Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add bindings for IQ8 EVK
+ board
+Message-ID: <aFy7wEmP0EzGUHX+@hu-bjorande-lv.qualcomm.com>
+References: <20250623130420.3981916-1-umang.chheda@oss.qualcomm.com>
+ <20250623130420.3981916-2-umang.chheda@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623130420.3981916-2-umang.chheda@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDAyMyBTYWx0ZWRfXy3HcybXIZDJk
+ p4TyD+UgPFb3Ed1mVK39dccUP0cCppoa4A0NRKtYYaEuxrqwu+1W4fZorfhPIJlyuCBIjQwX4LR
+ hQzGQ1SraMzrl2aTDjyxF9n66w8KkZNKuGAGatWfzPyVLvt7f8X3VoRVfaoEtpkybfzsDh5JT3w
+ KY3QZM+4+C0vzB8jNyam7T7g0/thG43TS4ML+Gb5Y3TCqDFBTbB0vGrq+/gpT0JQ0SPj+/Cf7EB
+ r6ot5zKauiYUyteESBK1MdR+ecvZ/CwzVwBbG/CkGvTEIZxw8OCm/UtjnYvH2cJQnffH6sNP5lq
+ 3orR/6D6irf9HKhuVbpwh9EEIgytqMmXomiv60hfHAeKOOXfbDr3Xu+uSw+PxttHyTw8Hf8g8KP
+ d/vnOnWtdzU4TxW6FTDJ2Z7jEeOR+vnyqVeB/grcKH7053z84cQ9QeWzUeznRIDBMsYbg/DX
+X-Proofpoint-ORIG-GUID: PS2YJ4hTrag8Na-Et6mcOhYkjT191Dm7
+X-Proofpoint-GUID: PS2YJ4hTrag8Na-Et6mcOhYkjT191Dm7
+X-Authority-Analysis: v=2.4 cv=LNNmQIW9 c=1 sm=1 tr=0 ts=685cbbc4 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=PMlHnbKYs8XDBWqhuCgA:9
+ a=CjuIK1q_8ugA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-26_02,2025-06-25_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 mlxscore=0 clxscore=1015 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506260023
 
-Hello maintainers,
+On Mon, Jun 23, 2025 at 06:34:19PM +0530, Umang Chheda wrote:
+> QCS8275 is another SoC under IQ8 series of SoCs. Unlike QCS8300
+> which has safety features, it doesn't have safety monitoring feature
+> of Safety-Island(SAIL) subsystem, which affects thermal management.
+> 
 
-I would like to report two data race bugs we discovered in BTRFS
-filesystem on Linux kernel v6.16-rc3. These issues were identified
-using our data race detector.
+QCS8300 and QCS8275 are both the "Monaco" SoC, with some differences in
+which nodes are "okay" and "disabled", and as you say here some side
+effects thereof.
 
-These issues were deemed non-critical after evaluation, as they
-do not impact core functionality or security. To minimize
-performance overhead while ensuring clarity for future maintenance,
-I have annotated them with data_race() macros.
+Describing these as "Monaco" and "Monaco with Sail" would lend itself
+for a better structure.
 
-Below is a summary of the findings:
+> qcs8275-iq-8275-evk board is based on QCS8275 SOC.
+> 
+> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index b14206d11f8b..19823bc91a3b 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -54,6 +54,7 @@ description: |
+>          msm8998
+>          qcs404
+>          qcs615
+> +        qcs8275
 
----
+Please add "monaco" instead.
 
-============ DATARACE ============
- extent_write_cache_pages fs/btrfs/extent_io.c:2439 [inline]
- btrfs_writepages+0x34fc/0x3d20 fs/btrfs/extent_io.c:2376
- do_writepages+0x302/0x7c0 mm/page-writeback.c:2687
- filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
-  __filemap_fdatawrite_range mm/filemap.c:422 [inline]
- filemap_fdatawrite_range+0x145/0x1d0 mm/filemap.c:440
- btrfs_fdatawrite_range fs/btrfs/file.c:3701 [inline]
- start_ordered_ops fs/btrfs/file.c:1439 [inline]
- btrfs_sync_file+0x6e7/0x1d70 fs/btrfs/file.c:1550
- generic_write_sync include/linux/fs.h:2970 [inline]
- btrfs_do_write_iter+0xd0c/0x12f0 fs/btrfs/file.c:1391
- btrfs_file_write_iter+0x3d/0x60 fs/btrfs/file.c:1401
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x940/0xd10 fs/read_write.c:679
- ksys_write+0x116/0x200 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1a0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- 0x0
-============OTHER_INFO============
- extent_write_cache_pages fs/btrfs/extent_io.c:2439 [inline]
- btrfs_writepages+0x34fc/0x3d20 fs/btrfs/extent_io.c:2376
- do_writepages+0x302/0x7c0 mm/page-writeback.c:2687
- filemap_fdatawrite_wbc mm/filemap.c:389 [inline]
- __filemap_fdatawrite_range mm/filemap.c:422 [inline]
- filemap_fdatawrite_range+0x145/0x1d0 mm/filemap.c:440
- btrfs_fdatawrite_range fs/btrfs/file.c:3701 [inline]
- start_ordered_ops fs/btrfs/file.c:1439 [inline]
- btrfs_sync_file+0x509/0x1d70 fs/btrfs/file.c:1521
- generic_write_sync include/linux/fs.h:2970 [inline]
- btrfs_do_write_iter+0xd0c/0x12f0 fs/btrfs/file.c:1391
- btrfs_file_write_iter+0x3d/0x60 fs/btrfs/file.c:1401
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x940/0xd10 fs/read_write.c:679
- ksys_write+0x116/0x200 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1a0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================END==============
+>          qcs8300
+>          qcs8550
+>          qcm2290
+> @@ -935,6 +936,12 @@ properties:
+>            - const: qcom,qcs404-evb
+>            - const: qcom,qcs404
+>  
+> +      - items:
+> +          - enum:
+> +              - qcom,qcs8275-iq-8275-evk
 
-===========================DATA_RACE===========================
- btrfs_inode_safe_disk_i_size_write+0x144/0x190 fs/btrfs/file-item.c:65
- btrfs_finish_one_ordered+0x999/0x1330 fs/btrfs/inode.c:3203
- btrfs_finish_ordered_io+0x33/0x50 fs/btrfs/inode.c:3308
- finish_ordered_fn+0x3a/0x50 fs/btrfs/ordered-data.c:331
- btrfs_work_helper+0x199/0x6c0 fs/btrfs/async-thread.c:314
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0x21f/0x520 kernel/workqueue.c:3319
- worker_thread+0x323/0x4a0 kernel/workqueue.c:3400
- kthread+0x2d5/0x300 kernel/kthread.c:464
- ret_from_fork+0x4d/0x60 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-============OTHER_INFO============
- fill_stack_inode_item fs/btrfs/delayed-inode.c:1809 [inline]
- btrfs_delayed_update_inode+0x1ab/0xa40 fs/btrfs/delayed-inode.c:1931
- btrfs_update_inode+0x128/0x270 fs/btrfs/inode.c:4156
- btrfs_setxattr_trans+0x143/0x280 fs/btrfs/xattr.c:266
- btrfs_xattr_handler_set+0xb7/0xf0 fs/btrfs/xattr.c:380
- __vfs_setxattr+0x21e/0x240 fs/xattr.c:200
- __vfs_setxattr_noperm+0xa5/0x2d0 fs/xattr.c:234
- vfs_setxattr+0xd5/0x1d0 fs/xattr.c:321
- do_setxattr fs/xattr.c:636 [inline]
- file_setxattr+0xb0/0x110 fs/xattr.c:646
- path_setxattrat+0x217/0x260 fs/xattr.c:711
- __do_sys_fsetxattr fs/xattr.c:761 [inline]
- __se_sys_fsetxattr fs/xattr.c:758 [inline]
- __x64_sys_fsetxattr+0x2c/0x40 fs/xattr.c:758
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1a0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-=================================
+Please use the qcom,monaco- prefix. Is qcom,monaco-evk unique enough?
+We can sync up offline on this.
 
-Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
----
- fs/btrfs/extent_io.c | 2 +-
- fs/btrfs/file-item.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> +          - const: qcom,qcs8275
+> +          - const: qcom,qcs8300
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 849199768664..0c03fafc3ae0 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2436,7 +2436,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
- 	}
- 
- 	if (wbc->range_cyclic || (wbc->nr_to_write > 0 && range_whole))
--		mapping->writeback_index = done_index;
-+		data_race(mapping->writeback_index = done_index);
- 
- 	btrfs_add_delayed_iput(BTRFS_I(inode));
- 	return ret;
-diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
-index 54d523d4f421..15572e79b6de 100644
---- a/fs/btrfs/file-item.c
-+++ b/fs/btrfs/file-item.c
-@@ -61,7 +61,7 @@ void btrfs_inode_safe_disk_i_size_write(struct btrfs_inode *inode, u64 new_i_siz
- 		i_size = min(i_size, end + 1);
- 	else
- 		i_size = 0;
--	inode->disk_i_size = i_size;
-+	data_race(inode->disk_i_size = i_size);
- out_unlock:
- 	spin_unlock(&inode->lock);
- }
--- 
-2.34.1
+Please replace these two with just qcom,monaco.
 
+Regards,
+Bjorn
+
+> +
+>        - items:
+>            - enum:
+>                - qcom,qcs8300-ride
+> -- 
+> 2.25.1
+> 
 
