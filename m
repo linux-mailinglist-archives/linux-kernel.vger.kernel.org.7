@@ -1,64 +1,66 @@
-Return-Path: <linux-kernel+bounces-705247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CB2AEA757
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:51:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEE4AEA75A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 21:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD81A7A2426
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB9784E1E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 19:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89E62EF9A9;
-	Thu, 26 Jun 2025 19:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239742F0E31;
+	Thu, 26 Jun 2025 19:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vwbBIqqE"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="boAc6D7s"
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAB21552FA;
-	Thu, 26 Jun 2025 19:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B90215F5C;
+	Thu, 26 Jun 2025 19:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750967453; cv=none; b=tjONUMYoH4kCbGSf7u077W33lADONZqWNHcbEJBNNxtTo5lb9/2VkOlk3LSjWDzCb1WgQX2KCBpPRjvK0intyLBrgqp5oMWTm/WMo8YCjmoekeQJjms9Hn4ZFOnL9HxWTUViBBdtI9mHmbG5XfHBohEs4Nx/OwntqbiMx8XSrHM=
+	t=1750967454; cv=none; b=SoNojpYkupKzwxgLFbUFj03ljZcUdSSZCjGfYSgYEiFE3vtBBvGzFffsYlL/CciKekocjE3CZOLvbRVuMlyyihqMaO3xJxovOp3LDhIzPZkKe1QAHbjTHkwmRpHeancAHAWIKx1t1JonD5Wg8cirF0K0WpfUYMYmwE4WMUlFwkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750967453; c=relaxed/simple;
-	bh=YViufr8wDcvR2AP3dS+wOtrVu/Rjl5g24coHgH/kfy4=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Hipf4wXNV2Ttq4y75Q3tFpd2ZRYz5kqKDojmdyWlcokTKj7RaDfdT7tZ/98zBVASLe0tGJ98FHk8TfuaJgeqd9N0whNFvqkk8pRoZ9ZI61fs0FNVmgcKkS+BwbuycUc45uyXhQ4KunV07WpemHaFs23f39JA8FcFvRjIPbMTyAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vwbBIqqE; arc=none smtp.client-ip=185.132.182.106
+	s=arc-20240116; t=1750967454; c=relaxed/simple;
+	bh=gVzWTXNd6NPxpJJE+oFcGZWlup1AntES9uY+KcHycwg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=JTyhmJLCMR350UUqqoteRC6J9L+sHYxN3Qs6dAngDSqg0307pyFBsxR5/gxGYNAcXUVevuzmIvfgdQD05jgT21jMl1s5VAubFOqgxL+zLX+nnIgqfziqDmXn2y6O0sdJURJahsGZMPZ9PbPkZXOUyef6oEJKcb88XFMwg822gc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=boAc6D7s; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QFvBVk009049;
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QGfQPr018806;
 	Thu, 26 Jun 2025 21:50:30 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=0rlrS+BB1a4km1rs1/r4Dw
-	n4U0O9ETz8kgdC8TDIbZQ=; b=vwbBIqqEhkvE27+fHaTNvB/Iz87u32du8q760f
-	PLT5XZro5KM4JHJ0APaB2G7nR76CDXTW5zBdeAOwD4Rh41X8MaQR1ytK6a9iOM+p
-	73eBWGv8UlOWZJEcxtC/QLmtbLBEpFXdCuqaC+GaLZsa0WQP/IFTqnaLQQC5Jecz
-	HqvgUP0gxrqxuGaesLQHfR2cEoPrVyjy4ARKDsuwyKpgNXu6PkQ1edV9zfm2M8ZW
-	qBjYQrhwjGE/6aGd76vLMO199DlmqyO4K1wDg9fnNGtNVc0tNlbHqhMXsKmWm//n
-	6EOC7lsgouKMJaYMjbPoPoUlQk4TOeA3gRl7Yn7hbMocAkZQ==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NMik+GHj52uoVxxBe7t1QLzP2UFZJzC3gMfHq5L927E=; b=boAc6D7sDxuZgQo2
+	kqHvwl2FEnBRRtz8JuPWC0AgNCXs3zC0y/wI2WgkfZcG01K/h6PxX6PuyEu8CwT4
+	7E67jltvksEdz2EANewZAZMfXoCN0rYMRfoM5codEvzd9l70QnyIkJpn3URJGvjq
+	o12ZPUunLE4AkE4L7B3aOCai5KV2qLLPIke9/v03XdDERJ3YvQKXO0WHKunsV/yu
+	PSP2ZGeO/qe6QB+uM+PjTfg3ZoGRIqO4dSWH7jqX1/34PBJN2D0M7MhwsUjrLcMN
+	A17UERgLzQTQTJnfr2J3GZiFSvjVEXrLEzFCztps9/2a1IsjUGgAjHjEg8Zvzz4R
+	/fBSSw==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dm33ruyp-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dj5p16jk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 26 Jun 2025 21:50:30 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F3D7040044;
-	Thu, 26 Jun 2025 21:49:31 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8A66840046;
+	Thu, 26 Jun 2025 21:49:32 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E0CE8BD23A2;
-	Thu, 26 Jun 2025 21:48:41 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A7119BD23A3;
+	Thu, 26 Jun 2025 21:48:44 +0200 (CEST)
 Received: from localhost (10.252.1.90) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 26 Jun
- 2025 21:48:40 +0200
+ 2025 21:48:43 +0200
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Subject: [PATCH RFC 0/2] Introduce ddr[3-4]-channel binding
-Date: Thu, 26 Jun 2025 21:48:33 +0200
-Message-ID: <20250626-ddr-bindings-v1-0-cae30933c54c@foss.st.com>
+Date: Thu, 26 Jun 2025 21:48:34 +0200
+Subject: [PATCH RFC 1/2] dt-bindings: memory: add jedec,ddr[3-4]-channel
+ binding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,10 +69,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIABGkXWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDMyMz3ZSUIt2kzLyUzLz0Yt2UpFQj46TktFQjS0sloJaCotS0zAqwcdF
- KQW7OSrG1tQDB4daQYwAAAA==
-X-Change-ID: 20250626-ddr-bindings-dbe23bcfe299
+Message-ID: <20250626-ddr-bindings-v1-1-cae30933c54c@foss.st.com>
+References: <20250626-ddr-bindings-v1-0-cae30933c54c@foss.st.com>
+In-Reply-To: <20250626-ddr-bindings-v1-0-cae30933c54c@foss.st.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>, Will Deacon <will@kernel.org>,
         Mark
@@ -91,40 +92,75 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-26_06,2025-06-26_05,2025-03-28_01
 
-This series aims to request comments for the ddr-channel binding as I'll
-need them for the stm32-ddr-pmu driver.
-The V1 of the driver and a start of discussion can be found here:
-https://lore.kernel.org/r/20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com
-
-The first patch contains a base of binding, which I find sufficient for
-my needs but perhaps you'll have suggestion for addition or rework as this is
-mainly inspirate from lpddrX-channel binding.
-As we can find the same property in the two channel binding maybe this can be
-shared properties.
-
-The second patch, that contains stm32-ddr-pmu binding, aims to provide an
-example of usage of this ddr-channel bindings.
-Note the "memory-channel" property which I mainly want to discuss about
-and gather some feedbacks.
-
-For your knowledge, the stm32-ddr-pmu driver (DDRPERFM peripheral) needs
-the dram type information for its internal working with ddr events.
+Introduce as per jdec,lpddrX-channel binding, jdec,ddr[3-4]-channel
+binding.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 ---
-Clément Le Goffic (2):
-      dt-bindings: memory: add jedec,ddr[3-4]-channel binding
-      dt-bindings: perf: stm32: introduce DDRPERFM dt-bindings
+ .../memory-controllers/ddr/jedec,ddr-channel.yaml  | 53 ++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
- .../memory-controllers/ddr/jedec,ddr-channel.yaml  | 53 +++++++++++++
- .../devicetree/bindings/perf/st,stm32-ddr-pmu.yaml | 90 ++++++++++++++++++++++
- 2 files changed, 143 insertions(+)
----
-base-commit: e34a79b96ab9d49ed8b605fee11099cf3efbb428
-change-id: 20250626-ddr-bindings-dbe23bcfe299
+diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
+new file mode 100644
+index 000000000000..5271b41279e2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr-channel.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr-channel.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: DDR channel with chip/rank topology description
++
++description:
++  A DDR channel is a logical grouping of memory chips that are connected
++  to a host system. The main purpose of this node is to describe the
++  overall DDR topology of the system, including the amount of individual
++  DDR chips.
++
++maintainers:
++  - Clément Le Goffic <clement.legoffic@foss.st.com>
++
++properties:
++  compatible:
++    enum:
++      - jedec,ddr3-channel
++      - jedec,ddr4-channel
++
++  io-width:
++    description:
++      The number of DQ pins in the channel. If this number is different
++      from (a multiple of) the io-width of the DDR chip, that means that
++      multiple instances of that type of chip are wired in parallel on this
++      channel (with the channel's DQ pins split up between the different
++      chips, and the CA, CS, etc. pins of the different chips all shorted
++      together).  This means that the total physical memory controlled by a
++      channel is equal to the sum of the densities of each rank on the
++      connected DDR chip, times the io-width of the channel divided by
++      the io-width of the DDR chip.
++    enum:
++      - 8
++      - 16
++      - 32
++      - 64
++      - 128
++
++required:
++      - compatible
++      - io-width
++
++additionalProperties: false
++
++examples:
++  - |
++    ddr_channel: ddr3-channel@0 {
++        compatible = "jedec,ddr3-channel";
++        io-width = <16>;
++    };
 
-Best regards,
 -- 
-Clément Le Goffic <clement.legoffic@foss.st.com>
+2.43.0
 
 
