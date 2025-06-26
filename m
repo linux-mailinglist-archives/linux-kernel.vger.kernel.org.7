@@ -1,276 +1,222 @@
-Return-Path: <linux-kernel+bounces-704679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D59AEA066
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:24:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E130AEA068
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6098F7B387F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:20:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D37AC7B87AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA4E2E9720;
-	Thu, 26 Jun 2025 14:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E747928BA9C;
+	Thu, 26 Jun 2025 14:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X5U1hllT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R72cZiMr"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397BF2E7F29;
-	Thu, 26 Jun 2025 14:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BF028A406;
+	Thu, 26 Jun 2025 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750947674; cv=none; b=N3f24HddPrXIGodXZsv0T2R5Yntwd4ZjNatTowLiyjwq6RxvNR0JJG4Eq0vUNlWgPPRavpzGY3QEhTWy+DsCq99AisNRxNdvd8AazTpM6MjTtIUTT6iadLEkDJty33yuCtONfWCXTWEoie2IsafF5loDEtXtFh5GoKA+kpYEQ0Y=
+	t=1750947780; cv=none; b=VFwAOCj9pa7an+zBMA1IdTjQUp/YovWLtybS7sbDRkY7Fvlr8tZ0Co+QIZjM19Uxo8qZg7xvm90D6gqwhimaabUkVO8tVV13cDAgh48mZCz+g1xUbBeOdfIn7d0ANcW4SNqenq/30FHauslIOGVsIEw9LYVtDz4Hn+RUiomdIpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750947674; c=relaxed/simple;
-	bh=xIJe4c6jLTcZl6XLuk6MrvbPTebmU1QDAeRz0h/qZ1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rha5xIbTSvuSqvVcbXmClqos2+VstJgw0yyb3kFwCbmFNabtd0xUAZYJO56jZWxzJcnsJBgI2bf9TR3namOgDKF9jZzf1KOdx0SV7HS7kuWsPRO/nBVo+JUrgX+ImWVs53SY9CXuzpnidbS+b52fk9vlcUD6/mYIgaDUJXq0au0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X5U1hllT; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750947673; x=1782483673;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xIJe4c6jLTcZl6XLuk6MrvbPTebmU1QDAeRz0h/qZ1Q=;
-  b=X5U1hllTAwuCtaXfb3PjjaOMCeNmvm6MRw/VF3xJg2wkoq2WTkDxfr4L
-   I0IG2CLtzJ+7KbrWmus4HGF7txlvJshtdfFVWbIK+J3YcQSzJTG8f+Ora
-   ZS/vEIbks0g7L3LX+47ep/nlCiR03ooVg55RdtWyQ/Oc3W94UApSz2F+G
-   dItP523A7LKbqv+GKovxezMgSZi0HFcoxPrXeB63yuZ7+dNdSzz0MY75R
-   VdbJFitBmf61CIORgAHpZ2h8Yhdg93u213/QdmgSm+3Z7ejhCdB0xdFUO
-   /9rK5IyB8L2HNhYPwFZ2wwLoVA4CgRiziJBKo1y3Biqw92wB7v2f4U9YZ
-   g==;
-X-CSE-ConnectionGUID: oBgGIqp3Sr6O2pmIRtQ88g==
-X-CSE-MsgGUID: y8b2R4ErR+WCopVm69M9YQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="64305780"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="64305780"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 07:21:11 -0700
-X-CSE-ConnectionGUID: KmQEI4G7Qau7oSajweR/Lw==
-X-CSE-MsgGUID: nfCr2ys8R8i137Prd6U1TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="158029284"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 07:21:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uUnTK-0000000ACLQ-1JAQ;
-	Thu, 26 Jun 2025 17:21:02 +0300
-Date: Thu, 26 Jun 2025 17:21:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Raag Jadav <raag.jadav@intel.com>,
-	"Tauro, Riana" <riana.tauro@intel.com>,
-	"Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>,
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-	intel-xe@lists.freedesktop.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] drm/xe: Support for I2C attached MCUs
-Message-ID: <aF1XTr2y1EmkRT_8@smile.fi.intel.com>
-References: <20250626135610.299943-1-heikki.krogerus@linux.intel.com>
- <20250626135610.299943-3-heikki.krogerus@linux.intel.com>
+	s=arc-20240116; t=1750947780; c=relaxed/simple;
+	bh=VnAzg56f+hysQJZPOLXhBXL0My2caz2gxoa80MYeNr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UZvWkwpvBX9/oTrMw3iTfVlgOhg/nPzk9YBPWWM41+0Mogm/pQFGxL6BMxxDaBAAraf5hqzhaf+RZCsoYL6SB2jB1w5xnj+F/cJlL5Bk6wwFADtB4ik/2OcOJ71ucVPhaXTolQ/tpxfnX6hLbz7i6bLK3+xySxW7ujNP+lS8htQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R72cZiMr; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-748ece799bdso803380b3a.1;
+        Thu, 26 Jun 2025 07:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750947777; x=1751552577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FMM3xSjjvtkN9sNymINSQ4aTR9MjXM5qmSlYZv1dEyw=;
+        b=R72cZiMrUn1Yg46TQ01+OOADGD+vTSQNHOLq+DQ7S9X3AFM3yVCYjNK5du6a+zB4Iu
+         V/Qu8l+3Ca02Q1W1B7+IbLyUs9d68nAiUytxv2gsNwttHExbuEwfPURkPPaxx+tKZvzM
+         mJE8qktorpTLGZTE1Ba5+/bQOFILvj0KSkYqxc9+UVkAaUHp+5cbUBniYnO6fCMWuORE
+         6zpR+fS5beq70aC+97bcj3Tg2L6dxulv0xv9BXk4SyGMG1TgK4jABlDDAAtyAFi6knC7
+         p5X5ebbpUX1F+TWKGd0fqHeN2WcdOpSfeuphh/CgigGENyARawx+5MNfW3klFiIQaa3n
+         unNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750947777; x=1751552577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FMM3xSjjvtkN9sNymINSQ4aTR9MjXM5qmSlYZv1dEyw=;
+        b=URpyLtsdBF3eEsvaoAOdmTo0u1Dwr37jdUgq+54WUoW65VZ38IXNunkmKjw+u4nG/w
+         BTpQiHCpZfDGQ45gZKSEwv8eZZ8YY9OEcNTqlOS7kXSTaIVzJ/Y+4ne4uv4uwDehmoyz
+         mx4Lez2NWoVyVMukOuiaxPcWOQ/3gZViyHUclbtwAGCiiRIdII8S/kwUdkllCyWFukBX
+         /h7mzoQg6kSuYYQCzYnFL1K27fsB01SpVHSacKqyEElJUnsEoSL9UIpPJqh89Wbp5giz
+         KkH39Zh115WHY+ZRk78vg/KqQceKXuXDxdjjTiIoObBKjiB6PiahrpoxuJ8Kmk6fFJ+v
+         LOKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPUOoQq+Zv/7rXY3pHCgu3/B9Qq+e6XRpjBkiP6ZFtdmK+FQ/8r5K013iUTMFcm8BMkePY/RY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEJynMYLTp8RTCu1g0I0TTa94VMhmV7duw7pnyM9vkD9GlBx6A
+	JYKWB0zWz0UUVVUB4Kt6G7rxMxRlbOc/de2+31DJdo0gZphWk9jbXqWuwGcfmE+0
+X-Gm-Gg: ASbGncvX1EXTeQt70hDIt+tOMHADwqfhGOR/nWSVb9LJ/+BGe/aWnqCA5bolKuLJCft
+	8XGG+st3n2h/QZqui+Gr/Pj45jhPnlW1MeR3rg9/9nKiEBfFEh3ceGMSG9xn2CePnBbpPUzcumm
+	/SKYmho/ZcdTV2nzdMY9cZlHm4uNTBX0qv+lhgexZU24Ny0ekOw/Monh0sKNmC9cPex7CGkX3lC
+	GjZFVCdnTK2UYAr/VSN9wYBOglepFEzCqnPySr/nIN2WnDxEdUCKssnH4KCm8OkAecwbZBD+tcy
+	cZwsewS1oYwrBlTRsAYq4pkefgANt8aC7XWLyX7CHOL7ha7TRMsJLUMw24cK/sRsIWthpjIzp0n
+	xxMoUn/DNmgoB7e0ecQ==
+X-Google-Smtp-Source: AGHT+IHvPgEXqKwWC3H8FLqec238NOxqpv7452gpGXmtMjCrr6s266Ccdd9P8x3NxP0Pg4hK8zFHVA==
+X-Received: by 2002:a05:6a21:3298:b0:1f5:591b:4f7a with SMTP id adf61e73a8af0-2207f31ac43mr11593474637.38.1750947777297;
+        Thu, 26 Jun 2025 07:22:57 -0700 (PDT)
+Received: from manjaro.domain.name ([2401:4900:1c67:6116:afb5:b6ab:2dc8:4a21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-749c8872629sm7129288b3a.164.2025.06.26.07.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 07:22:56 -0700 (PDT)
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: rodrigosiqueiramelo@gmail.com,
+	melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com,
+	daniel@ffwll.ch,
+	airlied@linux.ie,
+	mcanal@igalia.com,
+	arthurgrillo@riseup.net,
+	mairacanal@riseup.net,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	Pranav Tyagi <pranav.tyagi03@gmail.com>
+Subject: [PATCH] drm/vkms: Fix race-condition between the hrtimer and the atomic commit
+Date: Thu, 26 Jun 2025 19:52:43 +0530
+Message-ID: <20250626142243.19071-1-pranav.tyagi03@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626135610.299943-3-heikki.krogerus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 26, 2025 at 04:56:07PM +0300, Heikki Krogerus wrote:
-> Adding adaption/glue layer where the I2C host adapter
-> (Synopsys DesignWare I2C adapter) and the I2C clients (the
-> microcontroller units) are enumerated.
-> 
-> The microcontroller units (MCU) that are attached to the GPU
-> depend on the OEM. The initially supported MCU will be the
-> Add-In Management Controller (AMC).
+From: Maíra Canal <mcanal@igalia.com>
 
-...
+[ Upstream commit a0e6a017ab56936c0405fe914a793b241ed25ee0 ]
 
-> +static int xe_i2c_register_adapter(struct xe_i2c *i2c)
-> +{
-> +	struct pci_dev *pci = to_pci_dev(i2c->drm_dev);
-> +	struct platform_device *pdev;
-> +	struct fwnode_handle *fwnode;
-> +	int ret;
-> +
-> +	fwnode = fwnode_create_software_node(xe_i2c_adapter_properties, NULL);
-> +	if (!fwnode)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * Not using platform_device_register_full() here because we don't have
-> +	 * a handle to the platform_device before it returns. xe_i2c_notifier()
-> +	 * uses that handle, but it may be called before
-> +	 * platform_device_register_full() is done.
-> +	 */
-> +	pdev = platform_device_alloc(adapter_name, pci_dev_id(pci));
-> +	if (!pdev) {
-> +		ret = -ENOMEM;
-> +		goto err_fwnode_remove;
-> +	}
-> +
-> +	if (i2c->adapter_irq) {
+Currently, it is possible for the composer to be set as enabled and then
+as disabled without a proper call for the vkms_vblank_simulate(). This
+is problematic, because the driver would skip one CRC output, causing CRC
+tests to fail. Therefore, we need to make sure that, for each time the
+composer is set as enabled, a composer job is added to the queue.
 
-> +		struct resource	res = { };
-> +
-> +		res.start = i2c->adapter_irq;
-> +		res.name = "xe_i2c";
-> +		res.flags = IORESOURCE_IRQ;
+In order to provide this guarantee, add a mutex that will lock before
+the composer is set as enabled and will unlock only after the composer
+job is added to the queue. This way, we can have a guarantee that the
+driver won't skip a CRC entry.
 
+This race-condition is affecting the IGT test "writeback-check-output",
+making the test fail and also, leaking writeback framebuffers, as the
+writeback job is queued, but it is not signaled. This patch avoids both
+problems.
 
-		struct resource	res;
+[v2]:
+    * Create a new mutex and keep the spinlock across the atomic commit in
+      order to avoid interrupts that could result in deadlocks.
 
-		res = DEFINE_RES_IRQ_NAMED(i2c->adapter_irq, "xe_i2c");
+[ Backport to 5.15: context cleanly applied with no semantic changes.
+Build-tested. ]
 
-> +		ret = platform_device_add_resources(pdev, &res, 1);
-> +		if (ret)
-> +			goto err_pdev_put;
-> +	}
-> +
-> +	pdev->dev.parent = i2c->drm_dev;
-> +	pdev->dev.fwnode = fwnode;
-> +	i2c->adapter_node = fwnode;
-> +	i2c->pdev = pdev;
-> +
-> +	ret = platform_device_add(pdev);
-> +	if (ret)
-> +		goto err_pdev_put;
-> +
-> +	return 0;
-> +
-> +err_pdev_put:
-> +	platform_device_put(pdev);
-> +err_fwnode_remove:
-> +	fwnode_remove_software_node(fwnode);
-> +
-> +	return ret;
-> +}
+Signed-off-by: Maíra Canal <mcanal@igalia.com>
+Reviewed-by: Arthur Grillo <arthurgrillo@riseup.net>
+Signed-off-by: Maíra Canal <mairacanal@riseup.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20230523123207.173976-1-mcanal@igalia.com
+Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+---
+ drivers/gpu/drm/vkms/vkms_composer.c | 9 +++++++--
+ drivers/gpu/drm/vkms/vkms_crtc.c     | 9 +++++----
+ drivers/gpu/drm/vkms/vkms_drv.h      | 4 +++-
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
-...
-
-> +static int xe_i2c_irq_map(struct irq_domain *h, unsigned int virq,
-> +			  irq_hw_number_t hw_irq_num)
-> +{
-> +	irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
-
-Wondering if you need to setup a custom lockdep class here.
-
-> +	return 0;
-> +}
-
-...
-
-> +static void xe_i2c_remove_irq(struct xe_i2c *i2c)
-> +{
-> +	if (i2c->irqdomain) {
-
-	if (!i2c->irqdomain)
-		return;
-
-> +		irq_dispose_mapping(i2c->adapter_irq);
-> +		irq_domain_remove(i2c->irqdomain);
-> +	}
-> +}
-
-...
-
-> +static void xe_i2c_remove(void *data)
-> +{
-> +	struct xe_i2c *i2c = data;
-> +	int i;
-
-unsigned?
-
-> +	for (i = 0; i < XE_I2C_MAX_CLIENTS; i++)
-> +		i2c_unregister_device(i2c->client[i]);
-> +
-> +	bus_unregister_notifier(&i2c_bus_type, &i2c->bus_notifier);
-> +	xe_i2c_unregister_adapter(i2c);
-> +	xe_i2c_remove_irq(i2c);
-> +}
-
-...
-
-> +int xe_i2c_probe(struct xe_device *xe)
-> +{
-> +	struct xe_i2c_endpoint ep;
-> +	struct regmap *regmap;
-> +	struct xe_i2c *i2c;
-> +	int ret;
-> +
-> +	xe_i2c_read_endpoint(xe_root_tile_mmio(xe), &ep);
-> +	if (ep.cookie != XE_I2C_EP_COOKIE_DEVICE)
-> +		return 0;
-> +
-> +	i2c = devm_kzalloc(xe->drm.dev, sizeof(*i2c), GFP_KERNEL);
-> +	if (!i2c)
-> +		return -ENOMEM;
-> +
-> +	INIT_WORK(&i2c->work, xe_i2c_client_work);
-> +	i2c->mmio = xe_root_tile_mmio(xe);
-> +	i2c->drm_dev = xe->drm.dev;
-> +	i2c->ep = ep;
-
-> +	regmap = devm_regmap_init(i2c->drm_dev, NULL, i2c, &i2c_regmap_config);
-
-Use of i2c->drm_dev makes harder to maintain and understand the code.
-Managed resources should be carefully attached to the correct device,
-otherwise it's inevitable object lifetime related issues.
-
-With
-
-	struct device *dev = xe->drm.dev;
-
-and using local dev, it becomes easier to get and avoid such subtle mistakes.
-
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	i2c->bus_notifier.notifier_call = xe_i2c_notifier;
-> +	ret = bus_register_notifier(&i2c_bus_type, &i2c->bus_notifier);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = xe_i2c_create_irq(i2c);
-> +	if (ret)
-> +		goto err_unregister_notifier;
-> +
-> +	ret = xe_i2c_register_adapter(i2c);
-> +	if (ret)
-> +		goto err_remove_irq;
-> +
-> +	return devm_add_action_or_reset(i2c->drm_dev, xe_i2c_remove, i2c);
-> +
-> +err_remove_irq:
-> +	xe_i2c_remove_irq(i2c);
-> +
-> +err_unregister_notifier:
-> +	bus_unregister_notifier(&i2c_bus_type, &i2c->bus_notifier);
-> +
-> +	return ret;
-> +}
-
+diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+index 9e8204be9a14..77fced36af55 100644
+--- a/drivers/gpu/drm/vkms/vkms_composer.c
++++ b/drivers/gpu/drm/vkms/vkms_composer.c
+@@ -332,10 +332,15 @@ void vkms_set_composer(struct vkms_output *out, bool enabled)
+ 	if (enabled)
+ 		drm_crtc_vblank_get(&out->crtc);
+ 
+-	spin_lock_irq(&out->lock);
++	mutex_lock(&out->enabled_lock);
+ 	old_enabled = out->composer_enabled;
+ 	out->composer_enabled = enabled;
+-	spin_unlock_irq(&out->lock);
++
++	/* the composition wasn't enabled, so unlock the lock to make sure the lock
++	 * will be balanced even if we have a failed commit
++	 */
++	if (!out->composer_enabled)
++		mutex_unlock(&out->enabled_lock);
+ 
+ 	if (old_enabled)
+ 		drm_crtc_vblank_put(&out->crtc);
+diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+index 57bbd32e9beb..1b02dee8587a 100644
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -16,7 +16,7 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+ 	struct drm_crtc *crtc = &output->crtc;
+ 	struct vkms_crtc_state *state;
+ 	u64 ret_overrun;
+-	bool ret, fence_cookie;
++	bool ret, fence_cookie, composer_enabled;
+ 
+ 	fence_cookie = dma_fence_begin_signalling();
+ 
+@@ -25,15 +25,15 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+ 	if (ret_overrun != 1)
+ 		pr_warn("%s: vblank timer overrun\n", __func__);
+ 
+-	spin_lock(&output->lock);
+ 	ret = drm_crtc_handle_vblank(crtc);
+ 	if (!ret)
+ 		DRM_ERROR("vkms failure on handling vblank");
+ 
+ 	state = output->composer_state;
+-	spin_unlock(&output->lock);
++	composer_enabled = output->composer_enabled;
++	mutex_unlock(&output->enabled_lock);
+ 
+-	if (state && output->composer_enabled) {
++	if (state && composer_enabled) {
+ 		u64 frame = drm_crtc_accurate_vblank_count(crtc);
+ 
+ 		/* update frame_start only if a queued vkms_composer_worker()
+@@ -293,6 +293,7 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+ 
+ 	spin_lock_init(&vkms_out->lock);
+ 	spin_lock_init(&vkms_out->composer_lock);
++	mutex_init(&vkms_out->enabled_lock);
+ 
+ 	vkms_out->composer_workq = alloc_ordered_workqueue("vkms_composer", 0);
+ 	if (!vkms_out->composer_workq)
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index d48c23d40ce5..666997e2bcab 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -83,8 +83,10 @@ struct vkms_output {
+ 	struct workqueue_struct *composer_workq;
+ 	/* protects concurrent access to composer */
+ 	spinlock_t lock;
++	/* guarantees that if the composer is enabled, a job will be queued */
++	struct mutex enabled_lock;
+ 
+-	/* protected by @lock */
++	/* protected by @enabled_lock */
+ 	bool composer_enabled;
+ 	struct vkms_crtc_state *composer_state;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
