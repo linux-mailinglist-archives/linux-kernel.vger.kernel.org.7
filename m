@@ -1,87 +1,71 @@
-Return-Path: <linux-kernel+bounces-704678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BADAEA05A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:22:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B86AEA0F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 16:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D5FA7B92B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:20:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE004168240
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 14:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9B1FFC41;
-	Thu, 26 Jun 2025 14:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067D12EAD15;
+	Thu, 26 Jun 2025 14:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PwL1KJBt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="EE91GXIW"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879BA2E975F
-	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A461EE03D
+	for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 14:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750947665; cv=none; b=jyu73+oEK80ZTR11d69UIdYd+yEmFPwJfwbzBQ6qasHRvvlvzr0+Jkk5Ray5+TtT5NYfbaJ9Ss8Bp1aeZtzZLlv4YC7b4pyEmlvmkFpCDZ8FzctHnnYiT71RfAhnmWk8CYxy7FZEG0KwMEfj37sLphUmvVHEf9v+i+DOylpZ3yQ=
+	t=1750948397; cv=none; b=cbW9XA0L3q7EgJYMqC+amk4V4tzTZsKIGMw0jQ8K8Q/NAAWslbK34vVkWF/T8++dPpy9kEvzJTSXCz4S0ai5wwBucx4IHamYXZD12gXtS1R2xz4FdG4yWtrkNgEBmc7KdHUmnSJrG+Wo9WBZMOX2lHqEU1G4pir367Fwz4EH5yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750947665; c=relaxed/simple;
-	bh=pb209bXaugEvQjg2MuIrZK2EF+7xdDuFhOeXfAta4ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d0gC0QtMWcSnPOGSlvK+GLXVgzkdU+0Zy/37FaQWqO+07INxTdeEsQJhkhwoXZXfXh/i2kU6m6eABrQZPrVQyvkZrWAsQMveZzJ1aVTvdA65VEU9HbzEB9asGg/lXOUPVG98N0sF6ZHwgrCrFt7cz/uKojwcNpLEHF9GN86ly9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PwL1KJBt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750947662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Fb7vbgp9yWJFAfr2LZ2H/YK07/bv8dqvyUraYZjnSI=;
-	b=PwL1KJBt1cqkZ69AK5rfPE4nxf/AuTyaorlHhK3ICYcv+9OrTDopRCQJq58TmEih2BsO6d
-	iJpu+wYM2ZJ0sCBEKtnatRsk8rJrjC59gRMQurypzfZUXzSQP5Pujy7/d3iKRnmv6dyNX1
-	3dLm6bi/xWynHsdaM6qS1G+FxT5hdRE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-obUpJtOxNhWrcrcVQ2YF3g-1; Thu,
- 26 Jun 2025 10:21:00 -0400
-X-MC-Unique: obUpJtOxNhWrcrcVQ2YF3g-1
-X-Mimecast-MFC-AGG-ID: obUpJtOxNhWrcrcVQ2YF3g_1750947658
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBA801956096;
-	Thu, 26 Jun 2025 14:20:57 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.64.203])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 51AF1180045C;
-	Thu, 26 Jun 2025 14:20:49 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-trace-kernel@vger.kernel.org (open list:TRACING)
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Clark Williams <williams@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH 2/2] tracing/preemptirq: Optimize preempt_disable/enable() tracepoint overhead
-Date: Thu, 26 Jun 2025 11:20:10 -0300
-Message-ID: <20250626142017.26372-3-wander@redhat.com>
-In-Reply-To: <20250626142017.26372-1-wander@redhat.com>
-References: <20250626142017.26372-1-wander@redhat.com>
+	s=arc-20240116; t=1750948397; c=relaxed/simple;
+	bh=YPAWrQhHj2b2mvwCdsHJtWxdTBpLZOUBtZlYp/c2Bzs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ciobcJFgx2DZEpghTItgHrBinI0QHH3VFkhjCq1Ynzj2ZeOKyM9Z81I8sAwZkLfu0ZHP5+WcJjnuAMrufFlkS1bGUw4qHEGUDnd+cCXMQMDKE6JomHFSC42SK52xlxJO7UDqxOzQv36e9emkuKzpaaFu9gl1/m8qGgl/57Fwre4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=EE91GXIW; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1750948384; bh=h+4UoYC/nICB37bc6TKBCVxl4oKTHZHHUe485m7GPoo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=EE91GXIW12YqZD6CUGRXnthSgmZKDZJJtgNe7pQh05RXCWBTEki4QEEcC2ePQLdvB
+	 qmZv/Ra6jJba/dGIx74Hy0gFUsYG08wSYvB3mNenZ5NcvGgXksUV8PoOSRAG6ln8Cu
+	 06TcsuyH1aGo3m302MDsY/HztLq6R46Lsu1kVRSw=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.228.63])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 522B5EC0; Thu, 26 Jun 2025 22:20:34 +0800
+X-QQ-mid: xmsmtpt1750947634tysug6ggn
+Message-ID: <tencent_BE9E321B554B031B9E25CABA09BB2D338B08@qq.com>
+X-QQ-XMAILINFO: M2SvzgchpLqfmD8Sl9CO6pOVjeJ8IJ5aLIK+6IX/qUz5Wt3wpmvh2QDFUpgK3F
+	 Ll1/a6/JiPX9FvIJ76HjQZSoEbHsk6t+vxK/T1Nn6pGCCrHk4ZYGJYSn4ZZ219tPYck648NrMXi8
+	 j1t76I68Dv8Oza1Uu4syiwFGYs/v3Hb7c9vbTD5jj2cm2F0vz8g1BPIsPUdQ9WSWfi38pQ5QoGum
+	 2ou9/NWzlcnnCwBs8k6Thuli1vRhvsK0Oitin78wmPm8jBnVrZoNluh6HJkGtsBO+2WiniEQsu6W
+	 Gu5bIzmVnz8duGdHRYxAIgBVvvu0Qm6FrOT/n6PhyRuH3/5etyAw/rsB+iv6GpAQo0N8rLRVXvB5
+	 oDBLG+JiPKHKEoSe1wYXw6PRWl4EXTknQBVWCPB9slTQL4h/Ejzyk4WOxaKXqPFioklyoEmtvEno
+	 4Au6Erbn1pJlbQMLCdfTmFEAs2Bf6fXcvIIT9bzoiwyUv5PWNewC8jpNqxzfJXWl0YwMz0AepHWv
+	 v3YPSySmUd5xOn5/mzZqzuDkKyX0maeb5ubO2jgAEefI6ce/CiYKkGefuToy44BRTPf3LXdsKDFp
+	 gu+WWOS8Jgrh81hM9xlKWEgBcbHnEgj2vSlu9YRS1dcSRB6wXGWrHJOBBggQ97H8cOYjS8l2gqK+
+	 hxleUypHfO0gQexSa5bzGckRNvr1bbzwrgHZJIsZW5JF7RapLNY0F4ZQAIACzfzy+doqDy4KZxIn
+	 69ienHmzf9TU20tMPN96up7PIrpSEsAz+txvhNsu23aH+57wzW07sbziPvCAkXaVd2z/FbQVtDlo
+	 0iwXtrkxwU8sN3yz0DfDvX4yVKZ2lEypccxp5+HRw9O5FA6fuhTxXU8Vp/CuiEZuKFaVJaI01xvi
+	 uhbHaOX1JC7skKfmi7JVTtfoMk/QpkemV8WgZqijDuJ9wx6k1tNdiD6kcjaJVLttEslt4Da18Lhf
+	 1XejtWpTeAsysJCbbLgl5BXk09pQFzg7IoPCLwq3YjctbexVqKBJHgt/UYXIhk
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+14afda08dc3484d5db82@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [hams?] possible deadlock in nr_rt_ioctl (2)
+Date: Thu, 26 Jun 2025 22:20:33 +0800
+X-OQ-MSGID: <20250626142032.1364958-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <685d4c2a.a00a0220.2e5631.028c.GAE@google.com>
+References: <685d4c2a.a00a0220.2e5631.028c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,196 +73,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Similar to the IRQ tracepoint, the preempt tracepoints are typically
-disabled in production systems due to the significant overhead they
-introduce even when not in use.
+#syz test
 
-The overhead primarily comes from two sources: First, when tracepoints
-are compiled into the kernel, preempt_count_add() and preempt_count_sub()
-become external function calls rather than inlined operations. Second,
-these functions perform unnecessary preempt_count() checks even when the
-tracepoint itself is disabled.
-
-This optimization introduces an early check of the tracepoint static key,
-which allows us to skip both the function call overhead and the redundant
-preempt_count() checks when tracing is disabled. The change maintains all
-existing functionality when tracing is active while significantly
-reducing overhead for the common case where tracing is inactive.
-
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
----
- include/linux/preempt.h         | 35 ++++++++++++++++++++++++++++++---
- kernel/sched/core.c             | 12 +----------
- kernel/trace/trace_preemptirq.c | 19 ++++++++++++++++++
- 3 files changed, 52 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-index b0af8d4ef6e6..d13c755cd934 100644
---- a/include/linux/preempt.h
-+++ b/include/linux/preempt.h
-@@ -10,6 +10,7 @@
- #include <linux/linkage.h>
- #include <linux/cleanup.h>
- #include <linux/types.h>
-+#include <linux/tracepoint-defs.h>
- 
- /*
-  * We put the hardirq and softirq counter into the preemption
-@@ -191,17 +192,45 @@ static __always_inline unsigned char interrupt_context_level(void)
-  */
- #define in_atomic_preempt_off() (preempt_count() != PREEMPT_DISABLE_OFFSET)
- 
--#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+#if defined(CONFIG_DEBUG_PREEMPT)
- extern void preempt_count_add(int val);
- extern void preempt_count_sub(int val);
--#define preempt_count_dec_and_test() \
--	({ preempt_count_sub(1); should_resched(0); })
-+#elif defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+extern void __trace_preempt_on(void);
-+extern void __trace_preempt_off(void);
-+
-+DECLARE_TRACEPOINT(preempt_enable);
-+DECLARE_TRACEPOINT(preempt_disable);
-+
-+#define __preempt_trace_enabled(type) \
-+	(tracepoint_enabled(preempt_##type) && preempt_count() == val)
-+
-+static inline void preempt_count_add(int val)
-+{
-+	__preempt_count_add(val);
-+
-+	if (__preempt_trace_enabled(disable))
-+		__trace_preempt_off();
-+}
-+
-+static inline void preempt_count_sub(int val)
-+{
-+	if (__preempt_trace_enabled(enable))
-+		__trace_preempt_on();
-+
-+	__preempt_count_sub(val);
-+}
- #else
- #define preempt_count_add(val)	__preempt_count_add(val)
- #define preempt_count_sub(val)	__preempt_count_sub(val)
- #define preempt_count_dec_and_test() __preempt_count_dec_and_test()
- #endif
- 
-+#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_TOGGLE)
-+#define preempt_count_dec_and_test() \
-+	({ preempt_count_sub(1); should_resched(0); })
-+#endif
-+
- #define __preempt_count_inc() __preempt_count_add(1)
- #define __preempt_count_dec() __preempt_count_sub(1)
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8988d38d46a3..4feba4738d79 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5840,8 +5840,7 @@ static inline void sched_tick_start(int cpu) { }
- static inline void sched_tick_stop(int cpu) { }
- #endif
- 
--#if defined(CONFIG_PREEMPTION) && (defined(CONFIG_DEBUG_PREEMPT) || \
--				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
-+#if defined(CONFIG_PREEMPTION) && defined(CONFIG_DEBUG_PREEMPT)
- /*
-  * If the value passed in is equal to the current preempt count
-  * then we just disabled preemption. Start timing the latency.
-@@ -5850,30 +5849,24 @@ static inline void preempt_latency_start(int val)
- {
- 	if (preempt_count() == val) {
- 		unsigned long ip = get_lock_parent_ip();
--#ifdef CONFIG_DEBUG_PREEMPT
- 		current->preempt_disable_ip = ip;
--#endif
- 		trace_preempt_off(CALLER_ADDR0, ip);
+diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
+index b94cb2ffbaf8..a9ae329d598e 100644
+--- a/net/netrom/nr_route.c
++++ b/net/netrom/nr_route.c
+@@ -331,7 +331,6 @@ static int nr_del_node(ax25_address *callsign, ax25_address *neighbour, struct n
+ 		return -EINVAL;
  	}
- }
  
- void preempt_count_add(int val)
- {
--#ifdef CONFIG_DEBUG_PREEMPT
- 	/*
- 	 * Underflow?
- 	 */
- 	if (DEBUG_LOCKS_WARN_ON((preempt_count() < 0)))
- 		return;
--#endif
- 	__preempt_count_add(val);
--#ifdef CONFIG_DEBUG_PREEMPT
- 	/*
- 	 * Spinlock count overflowing soon?
- 	 */
- 	DEBUG_LOCKS_WARN_ON((preempt_count() & PREEMPT_MASK) >=
- 				PREEMPT_MASK - 10);
--#endif
- 	preempt_latency_start(val);
- }
- EXPORT_SYMBOL(preempt_count_add);
-@@ -5891,7 +5884,6 @@ static inline void preempt_latency_stop(int val)
+-	spin_lock_bh(&nr_node_list_lock);
+ 	nr_node_lock(nr_node);
+ 	for (i = 0; i < nr_node->count; i++) {
+ 		if (nr_node->routes[i].neighbour == nr_neigh) {
+@@ -345,7 +344,9 @@ static int nr_del_node(ax25_address *callsign, ax25_address *neighbour, struct n
+ 			nr_node->count--;
  
- void preempt_count_sub(int val)
- {
--#ifdef CONFIG_DEBUG_PREEMPT
- 	/*
- 	 * Underflow?
- 	 */
-@@ -5903,14 +5895,12 @@ void preempt_count_sub(int val)
- 	if (DEBUG_LOCKS_WARN_ON((val < PREEMPT_MASK) &&
- 			!(preempt_count() & PREEMPT_MASK)))
- 		return;
--#endif
+ 			if (nr_node->count == 0) {
++				spin_lock_bh(&nr_node_list_lock);
+ 				nr_remove_node_locked(nr_node);
++				spin_unlock_bh(&nr_node_list_lock);
+ 			} else {
+ 				switch (i) {
+ 				case 0:
+@@ -360,14 +361,12 @@ static int nr_del_node(ax25_address *callsign, ax25_address *neighbour, struct n
+ 				nr_node_put(nr_node);
+ 			}
+ 			nr_node_unlock(nr_node);
+-			spin_unlock_bh(&nr_node_list_lock);
  
- 	preempt_latency_stop(val);
- 	__preempt_count_sub(val);
- }
- EXPORT_SYMBOL(preempt_count_sub);
- NOKPROBE_SYMBOL(preempt_count_sub);
--
- #else
- static inline void preempt_latency_start(int val) { }
- static inline void preempt_latency_stop(int val) { }
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index 90ee65db4516..deb2428b34a2 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -118,6 +118,25 @@ EXPORT_TRACEPOINT_SYMBOL(irq_enable);
+ 			return 0;
+ 		}
+ 	}
+ 	nr_neigh_put(nr_neigh);
+ 	nr_node_unlock(nr_node);
+-	spin_unlock_bh(&nr_node_list_lock);
+ 	nr_node_put(nr_node);
  
- #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
- 
-+#if !defined(CONFIG_DEBUG_PREEMPT)
-+EXPORT_SYMBOL(__tracepoint_preempt_disable);
-+EXPORT_SYMBOL(__tracepoint_preempt_enable);
-+
-+void __trace_preempt_on(void)
-+{
-+	trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
-+}
-+EXPORT_SYMBOL(__trace_preempt_on);
-+NOKPROBE_SYMBOL(__trace_preempt_on);
-+
-+void __trace_preempt_off(void)
-+{
-+	trace_preempt_off(CALLER_ADDR0, get_lock_parent_ip());
-+}
-+EXPORT_SYMBOL(__trace_preempt_off);
-+NOKPROBE_SYMBOL(__trace_preempt_off);
-+#endif /* !CONFIG_DEBUG_PREEMPT */
-+
- void trace_preempt_on(unsigned long a0, unsigned long a1)
- {
- 	trace(preempt_enable, TP_ARGS(a0, a1));
--- 
-2.50.0
+ 	return -EINVAL;
 
 
