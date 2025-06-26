@@ -1,117 +1,149 @@
-Return-Path: <linux-kernel+bounces-704589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-704591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496F6AE9F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A6FAE9F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 15:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9E83BA5B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18C91C42292
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Jun 2025 13:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736072E765F;
-	Thu, 26 Jun 2025 13:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F852E7173;
+	Thu, 26 Jun 2025 13:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tum.de header.i=@tum.de header.b="jEZ9FNYI"
-Received: from postout2.mail.lrz.de (postout2.mail.lrz.de [129.187.255.138])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mwSmQ5JJ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F212E762B;
-	Thu, 26 Jun 2025 13:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.187.255.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAB02E1C7E;
+	Thu, 26 Jun 2025 13:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750945753; cv=none; b=lAAIMbwkR0eoVTgk6Rv8o9dtPNdOshpfsMOA/Ttkg1AmSqWazkMdSwCMqgxMl/QBxetmxw3Lrjh8AG+k5F2wwvGXToAV0EsOPesWXBTCF8vs5/ym9IP5AbVmrqOsAbs7X2p3zJz2TKnvP2o0k6AYWQqoYtOgHRPxrfh8thLqriI=
+	t=1750945791; cv=none; b=LOODkFZk6Xd/4XyFtKZdXaZKHQ3pjINr8txGlTtMiSs0W0Qf920PSfdt9LWAhh8WPXKFxoJ/nbYJkms5G6H4TjnBRFQ5lkeUfpiugSWjFw/958tYdcotmLu5fnzyGV16VPx6cS9AY8HX8DCQmbdWbzudyBG8oBeKYFJXRI5hwvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750945753; c=relaxed/simple;
-	bh=9ETa/aMCfVnorl4nBQFB5QCxuCy0bZmquwrSjwaYyjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y2aTVK8jwUn5ZJfbkeVUaKzvy5oUTsTk3o5GGQhAcg/ReIFg+L0uftaTxCY+Zcbpj27Iv4Pxr5QpGpwZn95mfvL6b2NF26n/USObKwOpe2hbpdFNB2AGiYFvB0EI7c3EXSIJoWNzPKuj0ElG+ICcHJ+Zq4lu9VWStiaMZMkcQdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tum.de; spf=pass smtp.mailfrom=tum.de; dkim=pass (2048-bit key) header.d=tum.de header.i=@tum.de header.b=jEZ9FNYI; arc=none smtp.client-ip=129.187.255.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tum.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tum.de
-Received: from lxmhs52.srv.lrz.de (localhost [127.0.0.1])
-	by postout2.mail.lrz.de (Postfix) with ESMTP id 4bSg5X3Kg3zyTW;
-	Thu, 26 Jun 2025 15:49:04 +0200 (CEST)
-Authentication-Results: postout.lrz.de (amavis); dkim=pass (2048-bit key)
- reason="pass (just generated, assumed good)" header.d=tum.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tum.de; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=tu-postout21; t=1750945743; bh=Vb0qfFuOWjHfY85Vsrj1qe50SGMWpv
-	uFukEEzkrwbjs=; b=jEZ9FNYIQaR4FmC1BeBaDukV2FkAwkzNuwJK2y0e9k6S4c
-	eWKr6WGJdicdljqHFiH+IybG3EBpX2U4WHMeJFBwJwYDC8Be5HUkQQT6u7SGuIZM
-	kP6Hs/PDHTNhROt1rGSUULiAcMr4mQA+fYJdRID55DDVoZl3V8MM4kGqTsqWNH0g
-	m3ivgNmaCOr4Wdm5HmgLUHqT3B8F5ZxbpIXa0cRTtt9t2R5jhcfPhuQdr+DxfnYA
-	fkgRL7KQC1zHvMxpyNAwGWu4MbvOzd5JUFlGKYvi4byD2ByOYaX2bX8Id4R6zUt+
-	7P+MRoe3MstEHtCN34vYpWLpOLL6US0zCPEpy1DQ==
-X-Virus-Scanned: by amavisd-new at lrz.de in lxmhs52.srv.lrz.de
-X-Spam-Flag: NO
-X-Spam-Score: -2.868
-X-Spam-Level:
-Received: from postout2.mail.lrz.de ([127.0.0.1])
- by lxmhs52.srv.lrz.de (lxmhs52.srv.lrz.de [127.0.0.1]) (amavis, port 20024)
- with LMTP id 774kSpfJgTYp; Thu, 26 Jun 2025 15:49:03 +0200 (CEST)
-Received: from [IPV6:2a02:2455:1858:e00::6d26] (unknown [IPv6:2a02:2455:1858:e00::6d26])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by postout2.mail.lrz.de (Postfix) with ESMTPSA id 4bSg5W2QzNzyTJ;
-	Thu, 26 Jun 2025 15:49:03 +0200 (CEST)
-Message-ID: <15fa8a27-958f-42d2-ac1f-0fce248cfc1f@tum.de>
-Date: Thu, 26 Jun 2025 15:49:02 +0200
+	s=arc-20240116; t=1750945791; c=relaxed/simple;
+	bh=kozox/jbM9GWIB06RT5vuS5Ewwi9VvJVmt22hiXXCr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpPG70LHRfGHy0IQi1scgZ4V+zDlE9mJgwA4u7cF3sENR0Wwz2oKrSwPsDUk7ssskyUErFAaFKa+jn6+F9OUwjjhqhoXozExiKWggouIB6Kf0zwPoy9gpxViS3kqa9eop+thTFxZ0XMWeDIixfZlThWfBbVH0F7/wXgr8StO9YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mwSmQ5JJ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DDjOhg3TDA3lAk/n8wJigYThpB4BiPBNqT914UwqWr4=; b=mwSmQ5JJj9GCM6h53p6V6Ly1Ur
+	bR/FprIAMYt9ES7WjIwtXs4Fg2epbCSYV5xdWtLV2wmXsyyQGDS4gFn+lqX+bEw+lrzmuLBmv8hPv
+	Phtec8rRMc2b31BMwiypEcQtCXFaB5SmQbpKIaZ7alD2OxxZXneU6FZOPY3ZVqc91pXRdtRm9NxZ3
+	O2EDB3QNDHO7/8V/JTj2tgMuE7qLsLMd7+kdbu8ZFmRdXOM+WEYSm+0obArX6wiTtkcJr3CgXil9p
+	oyLDhT3tYFfNOghkv3+1UD3dWyLAwUPBK4CNWgO9yggHIIjKofh6og8+FMbA0dd+SscVt8hGtWM1C
+	kufkI7kQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uUmyf-0000000BkWF-368u;
+	Thu, 26 Jun 2025 13:49:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4678430BDA9; Thu, 26 Jun 2025 15:49:21 +0200 (CEST)
+Date: Thu, 26 Jun 2025 15:49:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv7 03/16] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <20250626134921.GK1613200@noisy.programming.kicks-ass.net>
+References: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
+ <20250625125112.3943745-5-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/hyper-v: Filter non-canonical addresses passed via
- HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST(_EX)
-To: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, pbonzini@redhat.com
-References: <c090efb3-ef82-499f-a5e0-360fc8420fb7@tum.de>
- <175088956523.720749.10160134537876951534.b4-ty@google.com>
-Content-Language: en-US
-From: Manuel Andreas <manuel.andreas@tum.de>
-Autocrypt: addr=manuel.andreas@tum.de; keydata=
- xjMEY9Zx/RYJKwYBBAHaRw8BAQdALWzRzW9a74DX4l6i8VzXGvv72Vz0qfvj9s7bjBD905nN
- Jk1hbnVlbCBBbmRyZWFzIDxtYW51ZWwuYW5kcmVhc0B0dW0uZGU+wokEExYIADEWIQQuSfNX
- 11QV6exAUmOqZGwY4LuingUCY9Zx/QIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEKpkbBjgu6Ke
- McQBAPyP530S365I50I5rM2XjH5Hr9YcUQATD5dusZJMDgejAP9T/wUurwQSuRfm1rK8cNcf
- w4wP3+PLvL+J+kuVku93CM44BGPWcf0SCisGAQQBl1UBBQEBB0AmCAf31tLBD5tvtdZ0XX1B
- yGLUAxhgmFskGyPhY8wOKQMBCAfCeAQYFggAIBYhBC5J81fXVBXp7EBSY6pkbBjgu6KeBQJj
- 1nH9AhsMAAoJEKpkbBjgu6Kej6YA/RvJdXMjsD5csifolLw53KX0/ElM22SvaGym1+KiiVND
- AQDy+y+bCXI+J713/AwLBsDxTEXmP7Cp49ZqbAu83NnpBQ==
-In-Reply-To: <175088956523.720749.10160134537876951534.b4-ty@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625125112.3943745-5-kirill.shutemov@linux.intel.com>
 
-On 6/26/25 12:25 AM, Sean Christopherson wrote:
-> On Wed, 25 Jun 2025 15:53:19 +0200, Manuel Andreas wrote:
->> In KVM guests with Hyper-V hypercalls enabled, the hypercalls
->> HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST and HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST_EX
->> allow a guest to request invalidation of portions of a virtual TLB.
->> For this, the hypercall parameter includes a list of GVAs that are supposed
->> to be invalidated.
->>
->> However, when non-canonical GVAs are passed, there is currently no
->> filtering in place and they are eventually passed to checked invocations of
->> INVVPID on Intel / INVLPGA on AMD.
->> While the AMD variant (INVLPGA) will silently ignore the non-canonical
->> address and perform a no-op, the Intel variant (INVVPID) will fail and end
->> up in invvpid_error, where a WARN_ONCE is triggered:
->>
->> [...]
-> 
-> Applied to kvm-x86 fixes, with a massaged changelog, e.g. to call out that
-> "real" Hyper-V behaves this way.  Thanks!
-> 
-> [1/1] x86/hyper-v: Filter non-canonical addresses passed via HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST(_EX)
->        https://github.com/kvm-x86/linux/commit/fa787ac07b3c
+On Wed, Jun 25, 2025 at 03:50:56PM +0300, Kirill A. Shutemov wrote:
 
-Thanks for the quick approval and Vitaly for the Hyper-V testing!
+> +/*
+> + * The CLAC/STAC instructions toggle the enforcement of X86_FEATURE_SMAP and
+> + * X86_FEATURE_LASS.
+> + *
+> + * SMAP enforcement is based on the _PAGE_BIT_USER bit in the page tables: the
+> + * kernel is not allowed to touch pages with the bit set unless the AC bit is
+> + * set.
+> + *
+> + * LASS enforcement is based on bit 63 of the virtual address. The kernel is
+> + * not allowed to touch memory in the lower half of the virtual address space
+> + * unless the AC bit is set.
+> + *
+> + * Note: a barrier is implicit in alternative().
+> + */
+> +
+>  static __always_inline void clac(void)
+>  {
+> -	/* Note: a barrier is implicit in alternative() */
+>  	alternative("", "clac", X86_FEATURE_SMAP);
+>  }
+>  
+>  static __always_inline void stac(void)
+>  {
+> -	/* Note: a barrier is implicit in alternative() */
+>  	alternative("", "stac", X86_FEATURE_SMAP);
+>  }
+>  
+> +static __always_inline void lass_enable_enforcement(void)
+> +{
+> +	alternative("", "clac", X86_FEATURE_LASS);
+> +}
+> +
+> +static __always_inline void lass_disable_enforcement(void)
+> +{
+> +	alternative("", "stac", X86_FEATURE_LASS);
+> +}
+
+Much hate for this naming. WTH was wrong with lass_{clac,stac}()?
+
+We're not calling those other functions smap_{en,dis}able_enforcement()
+either (and please don't take that as a suggestion, its terrible
+naming).
 
