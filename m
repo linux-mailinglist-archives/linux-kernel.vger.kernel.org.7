@@ -1,179 +1,239 @@
-Return-Path: <linux-kernel+bounces-706620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF46BAEB929
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B12AAEB924
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0D916D8E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B57216CC3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A2A2DBF53;
-	Fri, 27 Jun 2025 13:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Zxk6VSsd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YMlvIMbO"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D0A2F1FDF;
-	Fri, 27 Jun 2025 13:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED4B2D9EDE;
+	Fri, 27 Jun 2025 13:44:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400942F1FDF;
+	Fri, 27 Jun 2025 13:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751031856; cv=none; b=IXM+g/fwQc1X7wneJeNHfQPG6+WG0JEkm43Pz71X00ymctD7ot0fdO9DwSkrWRhav2Y/RlTOkSeXSoy0zR0uGiqFbxnzpSRwaAiBWSakmkVfYKBoPca9ghMR1WTMe47qP6qazM1Ausu8KdYxprkKaFWSv+QZNpvYJvDPRmyTExU=
+	t=1751031848; cv=none; b=TBP4TvcSJrzFy8HtDmmlGuTb1baoswa+YsKlw6njr09Md2wN06+AlccBkhLLsTb2XjS74HPxYa3K9scdzH9lOzQN5pbW+9K9tIJeHsUVTaYE1oaM0rowJ3tP/EXVoWkqrFXkJTE9vrLVzx8NZNmUunQspOQHXce30Gmc892Zl84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751031856; c=relaxed/simple;
-	bh=ZOXAew4DUwdo/+jR21OmX71rRnDo1/+IYO9r362NZFM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gcamENosed1mOjKoBSvaUwzgq00NcaMA8vE7bOGIyYJW9/isvnxncOOdjYu547He3l23eHDe8nMAVOyyPnQeq9nrk9z6trgG50BfpT3kxafMpl6Ac+MB7QL6j3E6k+7N7QwYgvu8yO+M4TR71s5lb9KIVIgzgtta5oWg1KCPBfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Zxk6VSsd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YMlvIMbO; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id EC73AEC02AB;
-	Fri, 27 Jun 2025 09:44:12 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 27 Jun 2025 09:44:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751031852;
-	 x=1751118252; bh=MwYMREdsoquOfaH8DwftQzll55uDY1tNpCkxnAXYMU0=; b=
-	Zxk6VSsdo1LsAyRcgfOPdlN6RiCgCoP7JgQDkhQXuvUusPfN3QyZ4l6kCYtkbtMp
-	DjS9G6iNLmvC660VnspQ3dxD+qH/iotPzz8R9AQH10Bs+C+wLwuKKazEWWTVVNlF
-	AvRlbg2FHhq+D3X2fl9KsYcofbNxo+xD3cba4tortPc86Idy9DLgNdaa5UaAvwwd
-	n+QT0FN7wqRPTQFsYb8+d7DTF8E0qhV3Rl9SMLkyLxpu8QuPIltED8QznFyPiY5g
-	dLJCH+7DTM8o9c3HJAqdODDYnqRiwSSEFCFnwj7SGevW8D4BUijNl5HqCNfHk8qf
-	HYy/qW96uLDjhVOO/tMaZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751031852; x=
-	1751118252; bh=MwYMREdsoquOfaH8DwftQzll55uDY1tNpCkxnAXYMU0=; b=Y
-	MlvIMbOlITqfMyLwBykRnbA/BXk1s7ugPjpkaoqqGE6i/JOQELaKG1PbUbm46ycl
-	LvW51Chgb04N6XOX8Gkc0yvEMn1eYuVuIZbV4bWZ2E9Not9loXiD2nOUTeT37EHp
-	39mrnkrpM+xqZiCGdGA9jhBaOo9sWHi12jxfQVeYc8NyPxXN5sqGXwSsVUdq/8DZ
-	JHZs0jRM79xueSuA4hoR2bCDjVWNeFcdt+vMWD+Qp2g3LTZIPjxqZVcNdIdknM7s
-	9fuOUSkcDH9z/ioBsAoEpx3Q+q2iuFv65IVWdABW40LgGuRwxgC4ksOO3bgHMthr
-	R+PoBq8odXtudeooO4RfQ==
-X-ME-Sender: <xms:KqBeaPU8h5RoYcHy4fl35wVMfqSg_k9j8UKaiyWHDPq8kRO_4WOK_w>
-    <xme:KqBeaHkuK66dRi-PToEoZ-i9j4b_XxgmM7e_d2liIJKivyDT_B6i7mzb4IFN4yR9i
-    y42E-V6fptTjA51iEY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhguuceu
-    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
-    epvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
-    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopehgohhrughonhdrghgvsegsshhtrdgrihdprhgtphhtthhopegsshhtqd
-    huphhsthhrvggrmhessghsthgrihdrthhophdprhgtphhtthhopegrnhhgvghlohhgihho
-    rggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpth
-    htohepsggvnhdrtghhuhgrnhhgsehgvghnvghshihslhhoghhitgdrtghomhdrthifpdhr
-    tghpthhtohepvhhitghtohhrrdhshhhihhesghgvnhgvshihshhlohhgihgtrdgtohhmrd
-    htfidprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhr
-    tghpthhtohepphgsrhhosghinhhsohhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsh
-    hhrghntghhuhhnuddvudeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheprggurhhirghn
-    rdhhuhhnthgvrhesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:KqBeaLbXD7Fuyd7wgKIt6ZtxHzzvwSeXxSYnrf5Rv4AEjO4vCXwbKw>
-    <xmx:KqBeaKXIN5Qh3uGeBHX7HTGVVr6YYXhSbsZUpbc5AUUvfpQwq9bh8Q>
-    <xmx:KqBeaJlwZIR_cY_XjkhIljx9f9M8MWUGjfIMwjnO8w95Z6F533yXew>
-    <xmx:KqBeaHcD4JdP6c0Wcair0bofHudvv6yK1Zz0267UNbRtc_cpsv0dqQ>
-    <xmx:LKBeaKZ1JFmVwyzmIn7NwZV1Eyk_ijJFUDDfHY-n-OcH3z8pBpg73cbY>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DA76D700065; Fri, 27 Jun 2025 09:44:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751031848; c=relaxed/simple;
+	bh=sKa5RTfY3fKUDBvn1uk9oSPN1RCutNFkSrQa6GYoh+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tu3982nBF8pjbRjHeiY2WCAeEnIAc0dUfXP8j921plkp6w/oxyuEkpz1i2bcFbIOMiexDcmGPn6Rey3R1uFARQfwGMNztkEmKhgymZp1X58HLqIUO2WtW4jF2+U0WGAR8HU4MCVUftik2zU024nD4a9WpP2CRpPKKxnjDeSEkrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71A3F1A00;
+	Fri, 27 Jun 2025 06:43:48 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62A13F66E;
+	Fri, 27 Jun 2025 06:44:03 -0700 (PDT)
+Date: Fri, 27 Jun 2025 14:44:00 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, arm-scmi@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] firmware: arm_scmi: imx: Support getting syslog of
+ MISC protocol
+Message-ID: <aF6gIOrY5ODBumkf@pluto>
+References: <20250627-sm-misc-api-v1-v1-0-2b99481fe825@nxp.com>
+ <20250627-sm-misc-api-v1-v1-5-2b99481fe825@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tedb66c89affcaf60
-Date: Fri, 27 Jun 2025 15:43:50 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Adrian Hunter" <adrian.hunter@intel.com>,
- "yangzh0906@thundersoft.com" <yangzh0906@thundersoft.com>,
- "Ulf Hansson" <ulf.hansson@linaro.org>, "gordon.ge" <gordon.ge@bst.ai>
-Cc: bst-upstream <bst-upstream@bstai.top>,
- "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Victor Shih" <victor.shih@genesyslogic.com.tw>,
- "Shan-Chun Hung" <shanchun1218@gmail.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Peter Robinson" <pbrobinson@gmail.com>,
- "Ben Chuang" <ben.chuang@genesyslogic.com.tw>
-Message-Id: <5c0909b4-f3f6-401d-9a17-8560c5a1d7c0@app.fastmail.com>
-In-Reply-To: <b6bf0b53-8812-4099-b5d3-39e7fd264777@intel.com>
-References: <20250528085453.481320-1-yangzh0906@thundersoft.com>
- <87619781-629b-4393-8c14-b34483a7c734@intel.com>
- <202506271822530452465@thundersoft.com>
- <b6bf0b53-8812-4099-b5d3-39e7fd264777@intel.com>
-Subject: Re: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST C1200
- controller driver
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250627-sm-misc-api-v1-v1-5-2b99481fe825@nxp.com>
 
-On Fri, Jun 27, 2025, at 15:19, Adrian Hunter wrote:
-> On 27/06/2025 13:22, yangzh0906@thundersoft.com wrote:
->> Dear=C2=A0Mr. Hunter,
->>=20
->> Our platform supports 64-bit physical addressing, but the eMMC contro=
-ller's SRAM-based DMA engine is constrained to a 32-bit address space.=C2=A0
->> When using the standard SDHCI interface, which allocates DDR-based DM=
-A buffers with 64-bit addresses, thedma_map_single() operation fails=C2=A0
->> because the DMA engine cannot handle addresses beyond 32 bits.
+On Fri, Jun 27, 2025 at 02:03:48PM +0800, Peng Fan wrote:
+> MISC protocol supports getting system log regarding system sleep latency
+> ,wakeup interrupt and etc. Add the API for user to retrieve the
+> information from SM.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../firmware/arm_scmi/vendors/imx/imx-sm-misc.c    | 78 ++++++++++++++++++++++
+>  include/linux/scmi_imx_protocol.h                  | 19 ++++++
+>  2 files changed, 97 insertions(+)
+> 
+> diff --git a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+> index d5b24bc4d4ca6c19f4cddfaea6e9d9b32a4c92f7..1a6d75357b76ce6bb7d06461999b368c27f1fa43 100644
+> --- a/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+> +++ b/drivers/firmware/arm_scmi/vendors/imx/imx-sm-misc.c
+> @@ -28,6 +28,7 @@ enum scmi_imx_misc_protocol_cmd {
+>  	SCMI_IMX_MISC_DISCOVER_BUILDINFO = 0x6,
+>  	SCMI_IMX_MISC_SI_INFO = 0xB,
+>  	SCMI_IMX_MISC_CFG_INFO = 0xC,
+> +	SCMI_IMX_MISC_SYSLOG = 0xD,
+>  	SCMI_IMX_MISC_CTRL_NOTIFY = 0x8,
+>  };
+>  
+> @@ -87,6 +88,19 @@ struct scmi_imx_misc_si_info_out {
+>  	u8 siname[MISC_MAX_SINAME];
+>  };
+>  
+> +struct scmi_imx_misc_syslog_in {
+> +	__le32 flags;
+> +	__le32 index;
+> +};
+> +
+> +#define REMAINING(x)	le32_get_bits((x), GENMASK(31, 20))
+> +#define RETURNED(x)	le32_get_bits((x), GENMASK(11, 0))
+> +
+> +struct scmi_imx_misc_syslog_out {
+> +	__le32 numlogflags;
+> +	__le32 syslog[];
+> +};
+> +
+>  static int scmi_imx_misc_attributes_get(const struct scmi_protocol_handle *ph,
+>  					struct scmi_imx_misc_info *mi)
+>  {
+> @@ -368,6 +382,69 @@ static int scmi_imx_misc_silicon_info(const struct scmi_protocol_handle *ph,
+>  	return ret;
+>  }
+>  
+> +struct scmi_imx_misc_syslog_ipriv {
+> +	u32 *array;
+> +};
+> +
+> +static void iter_misc_syslog_prepare_message(void *message, u32 desc_index,
+> +					     const void *priv)
+> +{
+> +	struct scmi_imx_misc_syslog_in *msg = message;
+> +
+> +	msg->flags = cpu_to_le32(0);
+> +	msg->index = cpu_to_le32(desc_index);
+> +}
+> +
+> +static int iter_misc_syslog_update_state(struct scmi_iterator_state *st,
+> +					 const void *response, void *priv)
+> +{
+> +	const struct scmi_imx_misc_syslog_out *r = response;
+> +
+> +	st->num_returned = RETURNED(r->numlogflags);
+> +	st->num_remaining = REMAINING(r->numlogflags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +iter_misc_syslog_process_response(const struct scmi_protocol_handle *ph,
+> +				  const void *response,
+> +				  struct scmi_iterator_state *st, void *priv)
+> +{
+> +	const struct scmi_imx_misc_syslog_out *r = response;
+> +	struct scmi_imx_misc_syslog_ipriv *p = priv;
+> +
+> +	p->array[st->desc_index + st->loop_idx] =
+> +		le32_to_cpu(r->syslog[st->loop_idx]);
+> +
+> +	return 0;
+> +}
+> +
+> +static int scmi_imx_misc_syslog(const struct scmi_protocol_handle *ph, u16 size,
+> +				void *array)
+> +{
 
-dma_map_single() should always succeed on arm64 even if the buffer
-is outside of the dma mask: On most modern SoCs there is an SMMU/IOMMU
-that implements the actual mapping, and in the absence of that
-there is a fallback to SWIOTLB, which is always built-in on arm64.
+...so this size...
 
-> SDHCI controllers can use 32-bit DMA or 64-bit DMA, however even with
-> 64-bit DMA it is possible to restrict the DMA addresses to 32-bits
-> by setting a 32-bit DMA mask.
->
-> If the host controller capabilities indicate support for 64-bit DMA
-> but you want the driver to use 32-bit DMA, set SDHCI_QUIRK2_BROKEN_64_=
-BIT_DMA.
->
-> However, if you want to use 64-bit DMA with only 32-bit DMA addresses=20
-> you can instead implement sdhci host op ->set_dma_mask() and in that
-> function dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32))
+> +	struct scmi_iterator_ops ops = {
+> +		.prepare_message = iter_misc_syslog_prepare_message,
+> +		.update_state = iter_misc_syslog_update_state,
+> +		.process_response = iter_misc_syslog_process_response,
+> +	};
+> +	struct scmi_imx_misc_syslog_ipriv ipriv = {
+> +		.array = array,
+> +	};
+> +	void *iter;
+> +
+> +	if (!array || !size)
+> +		return -EINVAL;
+> +
 
-I would not expect an standard SDHCI to be broken like this any more,
-and if it is, I think the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk is
-more appropriate than overriding the dma_set_mask() operation.
+...which cannot be zero and is passed down to the iterator as max_resources
+is meant to repreent also the length of tthe array passed here as an
+argument and filled-in by the iterators ?
 
-What sometimes happens though is that the SoC integration itself is
-broken, and a 64-bit capable DMA master like SDHCI is connected
-to a 32-bit bus. In this case the DMA limitation should be
-described in the device tree, using the "dma-ranges" property
-of the broken bus node. The SDHCI code then still sets the correct
-64-bit DMA mask according for the device, but the dma_map_single()
-still uses an swiotlb bounce buffer or the IOMMU to work around
-the bus restriction.
+...and so basically array bounds-checking is enforced by the iterators
+core code, because no matter what, it is always enforced that
 
->>  To resolve this hardware limitation, we implement a bounce buffer al=
-located via >> dma_alloc_coherent() to satisfy DMA addressing constraint=
-s.
->
-> The bounce buffer should not be needed to satisfy DMA addressing
-> constraints.  It is used when SDHCI ADMA (scatter/gather) is broken.
+	(returned + remaining <= max_resources (size)
 
-I wonder if the actual problem here is not the addressing limit
-but instead the coherency protocol. If the DMA master is cache
-coherent but listed as non-coherent in DT, or vice versa, there will
-be data corruption for all addresses, and using a dma_alloc_coherent()
-bounce buffer may hide this.
+...I am fine with this, I am just trying to understand and see if I can
+find a mishap :D
 
-       Arnd
+> +	iter = ph->hops->iter_response_init(ph, &ops, size, SCMI_IMX_MISC_SYSLOG,
+> +					    sizeof(struct scmi_imx_misc_syslog_in),
+> +					    &ipriv);
+> +	if (IS_ERR(iter))
+> +		return PTR_ERR(iter);
+> +
+> +	return ph->hops->iter_response_run(iter);
+> +}
+> +
+>  static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
+>  	.misc_cfg_info = scmi_imx_misc_cfg_info,
+>  	.misc_ctrl_set = scmi_imx_misc_ctrl_set,
+> @@ -375,6 +452,7 @@ static const struct scmi_imx_misc_proto_ops scmi_imx_misc_proto_ops = {
+>  	.misc_ctrl_req_notify = scmi_imx_misc_ctrl_notify,
+>  	.misc_discover_build_info = scmi_imx_discover_build_info,
+>  	.misc_silicon_info = scmi_imx_misc_silicon_info,
+> +	.misc_syslog = scmi_imx_misc_syslog,
+>  };
+>  
+>  static int scmi_imx_misc_protocol_init(const struct scmi_protocol_handle *ph)
+> diff --git a/include/linux/scmi_imx_protocol.h b/include/linux/scmi_imx_protocol.h
+> index 0e639dfb5d16e281e2ccf006a63694b316c431f4..ff34d974046aa982fa9f5d46fc673412e01a532d 100644
+> --- a/include/linux/scmi_imx_protocol.h
+> +++ b/include/linux/scmi_imx_protocol.h
+> @@ -71,6 +71,23 @@ struct scmi_imx_misc_system_info {
+>  	u8 siname[MISC_MAX_SINAME];
+>  };
+>  
+> +struct scmi_imx_misc_sys_sleep_rec {
+> +	u32 sleepentryusec;
+> +	u32 sleepexitusec;
+> +	u32 sleepcnt;
+> +	u32 wakesource;
+> +	u32 mixpwrstat;
+> +	u32 mempwrstat;
+> +	u32 pllpwrstat;
+> +	u32 syssleepmode;
+> +	u32 syssleepflags;
+> +};
+
+So where is this used ? later in the series ?
+> +
+> +struct scmi_imx_misc_syslog {
+> +	struct scmi_imx_misc_sys_sleep_rec syssleeprecord;
+> +	uint32_t deverrlog;
+> +};
+> +
+>  struct scmi_imx_misc_proto_ops {
+>  	int (*misc_cfg_info)(const struct scmi_protocol_handle *ph,
+>  			     struct scmi_imx_misc_system_info *info);
+> @@ -84,6 +101,8 @@ struct scmi_imx_misc_proto_ops {
+>  					struct scmi_imx_misc_system_info *info);
+>  	int (*misc_silicon_info)(const struct scmi_protocol_handle *ph,
+>  				 struct scmi_imx_misc_system_info *info);
+> +	int (*misc_syslog)(const struct scmi_protocol_handle *ph, u16 size,
+> +			  void *array);
+>  };
+> 
+
+Thanks,
+Cristian
 
