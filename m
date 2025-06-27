@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-705671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F8BAEAC14
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:00:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30524AEAC18
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1D83AB000
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:00:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062C44A7BEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989C31714B7;
-	Fri, 27 Jun 2025 01:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CE95475E;
+	Fri, 27 Jun 2025 01:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlLzGzWi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGshnAdb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F314D15689A;
-	Fri, 27 Jun 2025 00:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62892F1FC7;
+	Fri, 27 Jun 2025 01:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750986000; cv=none; b=JtoZIOV9Y4nm/orTwTrWFF2xX1J3B5lBgrptRPT0+SsOtfXHo9a4UKHId4gyHN5QiCHHOGOoP+E9cbNemR/lddBfpD4Lw7uV9biiNO/OnBgwlsuaLxeh9xyosO7TNwGsIVpzUV1fUABRSQ/giPdqQZvrTJOA4m5s7owmEQpxPXw=
+	t=1750986065; cv=none; b=dFRuVECNmhEE+92BnhyAwo94L+7/ZMO8Su5l8e6BpEArqKZZRxAvxgpgVNE4N/f7WSrs4DGpoNqK2epwfa4oHR4mgGNEgkTucTOhG7IE5H+d4kD2cFZ6aDKz5HI/rX9UFDL8lkn2K36/fttnFSwXP1tHuvBy4M3WXkEWyD8GuZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750986000; c=relaxed/simple;
-	bh=VkWF1gdQoTZWOGfhakMa99lt5mYOIofcHp91h9azi3s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=YkYMvC/XOILR3J2jW+RzJoR74+GHwZGAiLb30E8vRbTJK2ivGablRwdPYCH6J4rge5LmPV4scnoebN2adUNLo1iG8xDGRRKvJYVbUCRAOJ5dHLyLVBIyfE0a7rB2J1tv3ISJvpJQZQXRjzN2bzchVVILjxX6XF5m/OsMxPTEzUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlLzGzWi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ADC9C4CEEB;
-	Fri, 27 Jun 2025 00:59:58 +0000 (UTC)
+	s=arc-20240116; t=1750986065; c=relaxed/simple;
+	bh=EzNtq1CBfE6D5XU7fFWpxazdWNZ6B3o/QCCjb21UIF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=prVb+e5cyprr8Hj/KFhrToqd6ywhWcK1ZZhKVRgceu1rYts55RPRDWPij4FBMq+S+rZkIcb/o395rl3/wCm1sxa0mBgrtYQwXYh2HngNZEVhuNgR1Kw/YRR2tgYelCIi2gPGOP1QMFVDGayXqzmBLLWIOjX5XIjRlWNyPk0JXHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGshnAdb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A67C4CEEB;
+	Fri, 27 Jun 2025 01:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750985998;
-	bh=VkWF1gdQoTZWOGfhakMa99lt5mYOIofcHp91h9azi3s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rlLzGzWiKp2Qe5vnXYID5PL3G0ZwHe96L4b5VwQbuVopWdLxZMFJEyWgcJ0tbMp+d
-	 ydwNgeKh3B6azaWAK3bXexI1fmTyJCOjq0s+ZVKwVznU8ilxOO16ovZF3sODCDwadr
-	 iP0fpW0wXjz1Fn3BOtUuOn+qfYMCErSr+7yri+Crynum/gG27Mk+OSc2TjFunHWxW5
-	 dsR8RqPSTIQhc0Gq/AVr/KsxFtTXlErnTKFcuDP+w2B3meMyI+w34xHBhrk+2H7q7B
-	 /43mFJgJi4FUWhi2l3BF1dr1ujbVTL+TMIsiEt9YoUBGYNZH5xt5fuDcNfanabN0tn
-	 DN9jNHQB//ZeQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE0C3A40FCB;
-	Fri, 27 Jun 2025 01:00:25 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1750986064;
+	bh=EzNtq1CBfE6D5XU7fFWpxazdWNZ6B3o/QCCjb21UIF0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VGshnAdbpQtUmshrVAsTLVnHviXXGbAWSKHEzbkgWJqG5biezICvDrDoDp6ivq7nR
+	 Kt7oKW6t5CDMUCN0P5RwRyO6ldbabAwELZs/8EuBQIHKxcTiv3+1wR9N2JtpH/XK+P
+	 b5m1cMJmrXk3L4Rj+lpW7FN51RkEid/PnmNyvIwOeup20TQdCsh6gfKeqc10xgR31z
+	 Sjzjx+Od8Vt14TIcly1w50TSqOa7LlhMcOvhMH50RjHIR/h98VjWvj0mCX8CkwVnDS
+	 jkoGRYT7UxP77oRu4fxEo1zB1qcTqgiJgmc83qdmbqDU8/0GlaDn7tFiuwAd+TeNfn
+	 VRFMmfg3WQHaA==
+Date: Thu, 26 Jun 2025 18:01:02 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mark Bloch <mbloch@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Paolo Abeni
+ <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew Lunn"
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
+ <saeedm@nvidia.com>, <gal@nvidia.com>, <leonro@nvidia.com>,
+ <tariqt@nvidia.com>, Donald Hunter <donald.hunter@gmail.com>, Jiri Pirko
+ <jiri@resnulli.us>, Jonathan Corbet <corbet@lwn.net>, Leon Romanovsky
+ <leon@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton
+ <jlayton@kernel.org>, NeilBrown <neil@brown.name>, Olga Kornievskaia
+ <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+ <tom@talpey.com>, Shuah Khan <shuah@kernel.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-rdma@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, Carolina Jubran <cjubran@nvidia.com>,
+ Cosmin Ratiu <cratiu@nvidia.com>, Jiri Pirko <jiri@nvidia.com>
+Subject: Re: [PATCH net-next v11 2/8] devlink: Extend devlink rate API with
+ traffic classes bandwidth management
+Message-ID: <20250626180102.497e35a2@kernel.org>
+In-Reply-To: <20250625183018.87065-3-mbloch@nvidia.com>
+References: <20250625183018.87065-1-mbloch@nvidia.com>
+	<20250625183018.87065-3-mbloch@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: Remove unused function
- first_net_device_rcu()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175098602474.1388943.17116977813012792000.git-patchwork-notify@kernel.org>
-Date: Fri, 27 Jun 2025 01:00:24 +0000
-References: <20250625102155.483570-1-yuehaibing@huawei.com>
-In-Reply-To: <20250625102155.483570-1-yuehaibing@huawei.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed, 25 Jun 2025 21:30:12 +0300 Mark Bloch wrote:
+> Introduce support for specifying relative bandwidth shares between
+> traffic classes (TC) in the devlink-rate API. This new option allows
+> users to allocate bandwidth across multiple traffic classes in a
+> single command.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+net/devlink/rate.c:390:33: warning: variable 'total' set but not used [-Wunused-but-set-variable]
+  390 |         int rem, err = -EOPNOTSUPP, i, total = 0;
+      |                                        ^
 
-On Wed, 25 Jun 2025 18:21:55 +0800 you wrote:
-> This is unused since commit f04565ddf52e ("dev: use name hash for
-> dev_seq_ops")
-> 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> ---
->  include/linux/netdevice.h | 7 -------
->  1 file changed, 7 deletions(-)
 
-Here is the summary with links:
-  - [net-next] net: Remove unused function first_net_device_rcu()
-    https://git.kernel.org/netdev/net-next/c/040ae95a984f
-
-You are awesome, thank you!
+Documentation/netlink/specs/devlink.yaml
+  1277:8    error    wrong indentation: expected 8 but found 7  (indentation)
+  1279:8    error    wrong indentation: expected 8 but found 7  (indentation)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+pw-bot: cr
 
