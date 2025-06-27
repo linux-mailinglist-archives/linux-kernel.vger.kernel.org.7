@@ -1,167 +1,129 @@
-Return-Path: <linux-kernel+bounces-706100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FB0AEB1F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25DA9AEB1FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9DB1C249D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1CA1891E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCCD293C46;
-	Fri, 27 Jun 2025 09:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F500293C44;
+	Fri, 27 Jun 2025 09:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TO+bQ5Sf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cluPxEQ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B60293B7D
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C62F293B44;
+	Fri, 27 Jun 2025 09:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015064; cv=none; b=iNBQrl7l0R+LZQr9sx8SARJF4V6fKGx2MSioWu1Ie86ZdSFmaH3l2VUPD92PUw+AvHky51tOK0GFVpzfADZXIwb/8ggPARXSHPeK/3fQdashCj+gZ1nfHNRAR8tDQ8KmFAONDKvtKkFPTzO8jSjvmLkJvqHMsiySIjCa2dL6v7I=
+	t=1751015097; cv=none; b=hgW9IZfEPQy+jzZ5Jd1F+jF1BrNfg8gyvizwuQvm7LEEjFgt091IujVo9cU20N86LJQAXE9Ts1koipaAcdyJ7ufrMino7CD/mO/yJLdCe1AghdWh3LyDsTLTJx6p6fWLv4AHJ9d0q2V8+HGzeBuhpEiBGNYhD/dokWq2UrPGPGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015064; c=relaxed/simple;
-	bh=6mBWTKa6P/+vCpBZT8W6CcoZks7wq0ID1jI5oyoVOgE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c33LR6YlXC35dM79XGJ8nFqgHcmUXjrFfR2yQK29nWIatmOMD4FLynbOu/14aDMq7oy4QJ/oXvnbmxUr5H5Y37/Ysx2LSSv7XECLMbcRVWgFQbOD6SRQ5kPcGwuN2jJb4fU+we1GisN41o1C7YNxNN9UIyjtm6sdQJXmcl4uvKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TO+bQ5Sf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751015061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3KmsmsR1zkdWGHUqUCVWxvNYYetoO/L55l7eas6vaQU=;
-	b=TO+bQ5Sf4QwOq1GGEtK343EvC7EtuHf3htGAbybTbPUhSEMHxfsBhzLhvvUfE9bDKnVYQk
-	tm9MtlOx+XLq1ZY791T531AEhoEzbnMT0fEo7DVeiEY8fyYZhb6sdNm9l0Z6Plcm/4NHrS
-	kw0YwtCzSJATxxu87Q2SrVBycKaZ3ko=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-R2gfavTaPKiQcpKrN1f0TQ-1; Fri, 27 Jun 2025 05:04:20 -0400
-X-MC-Unique: R2gfavTaPKiQcpKrN1f0TQ-1
-X-Mimecast-MFC-AGG-ID: R2gfavTaPKiQcpKrN1f0TQ_1751015059
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4e713e05bso1046974f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:04:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751015059; x=1751619859;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3KmsmsR1zkdWGHUqUCVWxvNYYetoO/L55l7eas6vaQU=;
-        b=O7YO12hoPI4hR0G/Q0oth9u9W4/PV6eULabwmKIyLuKt5G0yjd8C2gFjFig/YSmEyA
-         T8j9DzeRLP4Z3C2l2vg0jkBWIhmYZAGpt2zF8NJNBQWDw5hBcPRSA7UALHTVX1Q2EwEC
-         LNao/pWGiYFIdWVHpzUbUeLmc3gFLeY5ufXjJfRqYkW/dDyccJIfBvS7f70E3um+Jsff
-         zMeAA3uVwEfMcNDmuY3oetOfEv560gLxMvXAFcqJnr0OJ7SkD2OK0RtYqVd0VNBHL31Z
-         w8/CUcoY4K1D0Ic3UA0unBZq2ViC1p4RTQeqScXxzDB0QR/xgMl0sasxAAJGpZS1ZwzY
-         j1xA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5t6/iOvvDER2Z9yV4E4rLdk3A5kNWuN+X297wyhLk3+MWegSTygZxCDMjD4ATgA5r2gGUU2kjgSHrnWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcfk0tz9xAakOrMhK9EjErIylXtdWLVuhA8zhz6e+Kjnxj0Fm0
-	jIkbRPuJkKAU1xKb496R9OMzDtUZWfcdHGdiD264dxm0/q5d4dXLtCkVIJdN6ZVrLuPIvblFk9o
-	mcRPDDr3iznfZ18N8L7b2l6okHDYqHxWBg5igk2lYzzbkHCOY0jgRmmehz/4PjEm2VA==
-X-Gm-Gg: ASbGnctlm2n2X8YqPvOSmqHNvMQwMdIkztKG5KadCLIA7jfE/D3OfA0Cl8eF0icaiVM
-	0Zn3hnemBhMaIGmz4M6xY7907Jo1kSQiQa0C/pah/GAbuL0Ks5oGR7WczNjHAgyMaNcVFKSUhv6
-	uYvjRlWr1xA3Hu6/KZOlf3Sc5wFZmfjSgug1aJHadym2a9F6HlsHokmnIXC5qu2VKlLqCXNfC0M
-	n8gQ8vzOmSYyn33MQd7t0469jDu+gNt1yXZ/JfCdSXOMRvhYzDRbhkrr9WIx6Xk6+7rMEzQyZQs
-	Ohch8A5gYR+kqlN8k2PINu1EMzAZ3fjmCiQ5pAuFbo7Ei2A5rYivhoPsmljco8524jTYDtp1bIu
-	VWvzB
-X-Received: by 2002:a05:6000:23c3:b0:3a4:c8c1:aed8 with SMTP id ffacd0b85a97d-3a8ff9ea18bmr1806169f8f.39.1751015058653;
-        Fri, 27 Jun 2025 02:04:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvtbVNhtoT88g8GCP3xDLM03Xs+KFxLUDU0up7wRpfFhdOnPdXOQT+WY57/deJVibdF9AU1g==
-X-Received: by 2002:a05:6000:23c3:b0:3a4:c8c1:aed8 with SMTP id ffacd0b85a97d-3a8ff9ea18bmr1806130f8f.39.1751015058205;
-        Fri, 27 Jun 2025 02:04:18 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fb20esm2169081f8f.36.2025.06.27.02.04.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 02:04:17 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Maxime Ripard <mripard@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Anusha
- Srivatsa <asrivats@redhat.com>, Francesco Dolcini <francesco@dolcini.it>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Maxime
- Ripard <mripard@kernel.org>
-Subject: Re: [PATCH v2 1/5] drm/mipi-dsi: Add dev_is_mipi_dsi function
-In-Reply-To: <20250626-drm-panel-simple-fixes-v2-1-5afcaa608bdc@kernel.org>
-References: <20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org>
- <20250626-drm-panel-simple-fixes-v2-1-5afcaa608bdc@kernel.org>
-Date: Fri, 27 Jun 2025 11:04:16 +0200
-Message-ID: <87cyapd08f.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1751015097; c=relaxed/simple;
+	bh=yURdhbEwnnJumfHvPTjAkd6H7BvKAAun9yVi+i2aN8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JFB3xJERPSjJZbiRkKbn0O3PVNjXcX7mErsJuHq6nzoBSN42ieYWF/joh7PD7jUPu+HCJGAtJiD3YZ6LtEbf3FIhiaMBi7Sx3Ip6iGTdmGHW3ZhQnFaFQywtV8whLisGc/+XU4DheHmeaG8B9Bqcr6BrsoMny/eBDb9Fzryx1YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cluPxEQ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DC81C4CEEB;
+	Fri, 27 Jun 2025 09:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751015097;
+	bh=yURdhbEwnnJumfHvPTjAkd6H7BvKAAun9yVi+i2aN8U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cluPxEQ2/Yw+lsaExWQSqim8gpaPow1MuzmH6AJPjA6FYxLuqysrYot+32JDncobl
+	 oRO+xLlxLqHtZfrpee0p2DEjeZOAEtTLveW4sMHVn9km8Veeu8h1JBo7WTsJizO8O5
+	 XtaR8ANNpH18kayVwYm4qKjXo0l++K34oakdNEZJNRVffeCuditeRs2YUFlut+QRUg
+	 feNsquTpuXRv82ePwbI6/KPObvz7O09jtagsltOnaY2G47TgUPjATvnx10rfXMMLP0
+	 nqWQJxiYTDr2WzLm74YsyXLf59wtGxrK4K6fYkkSKcQ6QRibNY37kgjtOgcC6iAuve
+	 6AEmdfBqvv7Ww==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5535652f42cso2203101e87.2;
+        Fri, 27 Jun 2025 02:04:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0H/e4FyrdoYc+MIRxtTrBwKWWzKUdP2x3mfpRe7Z+w39boLXkzddgpvTAowEs81evSroi43Z1iNp3k61K@vger.kernel.org, AJvYcCVg1PlV7bdUVCcKLmLqcdW5w5PBqrxiuzQwFkmy8VKXLLw8VWOXnxMoLmrXXM8C4Poaop/O0/LQxGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIcVuow9H8v1GFQyuSRk7zhNIBEyztQziE4348ok0BTO/EN7TI
+	UJfz13CfUXXBmIp5DZXi+jQ0WMLXKM2/3UdbCSMFtCev/YJ2QLaMKURTsDQninI/yzxoIwd/WyV
+	1JWwWlN8Pt0t64VQ0i+jthEwOuTehyX8=
+X-Google-Smtp-Source: AGHT+IGWLtzS7qhakWBsIJmXdocEsS4KtnbetBMcTYRSWbAXF/NDfP4A6g/gxgSSz3n8B6djS8GoEVU9YUJHB1nVLJw=
+X-Received: by 2002:a05:6512:ea5:b0:553:a469:3fed with SMTP id
+ 2adb3069b0e04-5550b7e7b6fmr802342e87.11.1751015095791; Fri, 27 Jun 2025
+ 02:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250627030612.3887582-1-rdunlap@infradead.org>
+In-Reply-To: <20250627030612.3887582-1-rdunlap@infradead.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 27 Jun 2025 18:04:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARmi687t4YhCTaVXKr6EKCrNo_zNxzzfVEvDPUs0EGMew@mail.gmail.com>
+X-Gm-Features: Ac12FXxO8KMj-DIflB5rQ2UimD06Fs03oI0CCUSQcPokBTFrC6-Lh3hwhtt6SKQ
+Message-ID: <CAK7LNARmi687t4YhCTaVXKr6EKCrNo_zNxzzfVEvDPUs0EGMew@mail.gmail.com>
+Subject: Re: [PATCH] docs: kbuild/kconfig: add alldefconfig to the all*configs
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Maxime Ripard <mripard@kernel.org> writes:
-
-Hello Maxime,
-
-> This will be especially useful for generic panels (like panel-simple)
-> which can take different code path depending on if they are MIPI-DSI
-> devices or platform devices.
+On Fri, Jun 27, 2025 at 12:06=E2=80=AFPM Randy Dunlap <rdunlap@infradead.or=
+g> wrote:
 >
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> Add "alldefconfig" to the explanation of the KCONFIG_ALLCONFIG
+> environment variable usage so that all targets that use KCONFIG_ALLCONFIG
+> are listed.
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nicolas Schier <nicolas.schier@linux.dev>
+> Cc: linux-kbuild@vger.kernel.org
 > ---
->  drivers/gpu/drm/drm_mipi_dsi.c | 3 ++-
->  include/drm/drm_mipi_dsi.h     | 3 +++
->  2 files changed, 5 insertions(+), 1 deletion(-)
+
+Applied to linux-kbuild.
+Thanks.
+
+
+>  Documentation/kbuild/kconfig.rst |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-> index e5184a0c24651756ee0b1eb27d94083d63eb35a7..21fd647f8ce1a6a862e2f8fb5320e701f26f614f 100644
-> --- a/drivers/gpu/drm/drm_mipi_dsi.c
-> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
-> @@ -89,16 +89,17 @@ static const struct dev_pm_ops mipi_dsi_device_pm_ops = {
->  	.thaw = pm_generic_thaw,
->  	.poweroff = pm_generic_poweroff,
->  	.restore = pm_generic_restore,
->  };
->  
-> -static const struct bus_type mipi_dsi_bus_type = {
-> +const struct bus_type mipi_dsi_bus_type = {
->  	.name = "mipi-dsi",
->  	.match = mipi_dsi_device_match,
->  	.uevent = mipi_dsi_uevent,
->  	.pm = &mipi_dsi_device_pm_ops,
->  };
-> +EXPORT_SYMBOL_GPL(mipi_dsi_bus_type);
->  
->  /**
->   * of_find_mipi_dsi_device_by_node() - find the MIPI DSI device matching a
->   *    device tree node
->   * @np: device tree node
-> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-> index b37860f4a895c25ef8ba1c5b3f44827ef53aa100..6d2c08e8110151a97620389197f1ef79c058329d 100644
-> --- a/include/drm/drm_mipi_dsi.h
-> +++ b/include/drm/drm_mipi_dsi.h
-> @@ -221,10 +221,13 @@ struct mipi_dsi_multi_context {
->  
->  #define MIPI_DSI_MODULE_PREFIX "mipi-dsi:"
->  
->  #define to_mipi_dsi_device(__dev)	container_of_const(__dev, struct mipi_dsi_device, dev)
->  
-> +extern const struct bus_type mipi_dsi_bus_type;
-> +#define dev_is_mipi_dsi(dev)	((dev)->bus == &mipi_dsi_bus_type)
-> +
+> --- lnx-616-rc3.orig/Documentation/kbuild/kconfig.rst
+> +++ lnx-616-rc3/Documentation/kbuild/kconfig.rst
+> @@ -67,12 +67,12 @@ Environment variables for ``*config``:
+>      with its value when saving the configuration, instead of using the
+>      default, ``CONFIG_``.
+>
+> -Environment variables for ``{allyes/allmod/allno/rand}config``:
+> +Environment variables for ``{allyes/allmod/allno/alldef/rand}config``:
+>
+>  ``KCONFIG_ALLCONFIG``
+> -    The allyesconfig/allmodconfig/allnoconfig/randconfig variants can al=
+so
+> -    use the environment variable KCONFIG_ALLCONFIG as a flag or a filena=
+me
+> -    that contains config symbols that the user requires to be set to a
+> +    The allyesconfig/allmodconfig/alldefconfig/allnoconfig/randconfig va=
+riants
+> +    can also use the environment variable KCONFIG_ALLCONFIG as a flag or=
+ a
+> +    filename that contains config symbols that the user requires to be s=
+et to a
+>      specific value.  If KCONFIG_ALLCONFIG is used without a filename whe=
+re
+>      KCONFIG_ALLCONFIG =3D=3D "" or KCONFIG_ALLCONFIG =3D=3D "1", ``make =
+*config``
+>      checks for a file named "all{yes/mod/no/def/random}.config"
 
-Usually I prefer to have static inline functions instead of macros to have
-type checking. I see that this header has a mix of both, so I don't have a
-strong opinion on what to use in this case.
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+--=20
+Best Regards
+Masahiro Yamada
 
