@@ -1,94 +1,124 @@
-Return-Path: <linux-kernel+bounces-706419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58449AEB664
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:30:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F9BAEB52B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CD941C280DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13FFF1887AAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B5129DB6C;
-	Fri, 27 Jun 2025 11:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C7129898B;
+	Fri, 27 Jun 2025 10:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kenip.in header.i=@kenip.in header.b="cNiVjLij"
-Received: from techbitestudio.com (techbitestudio.com [75.119.147.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fw0WUk4x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E7A29CB3C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=75.119.147.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C07029615D;
+	Fri, 27 Jun 2025 10:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751023808; cv=none; b=GhXE4WhF/Vyk3QZ5Rp/nEtrA3Q8gAhlsRYDclV4HypDSOOPHYDete7K4EHw0Aow8IO/vpKPo0Qcxlgfeyu4AXiHdZBNJ3bsu1tBOhYCC6ToDgcB4GW+/Vtdu8rVzJ+zYI1RSqSkFW7XVgK2SP+wjIH8zCEy8jfkEbzljVDyyCLg=
+	t=1751020845; cv=none; b=Ar05dz6X9I5Kydk2beZ93PDxAkoAM7i5K/iURH2GzfB+XT3ke9rLIPhpr/7TxTKRs76wkdSsNiNA/F5yTipBkvjMa7M6hC8zRM+Woin/LujWCIW0L1BxY0D+AVQAdSsHHr921RdnfHPseA6QNO0YfqT1HFzlpIUDnorOUrBd+gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751023808; c=relaxed/simple;
-	bh=zKCqTgjmsvUS/CZo4YC2wBwYHN+PAOj3t6dtU61EBIo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:Message-ID:Content-Type; b=O0MPd1SKWGzKruqXsduPDwDHVf+D5JAmyJwcck4DsPcHfLojcu0Cpb7ZJNK3Jtng3FoREQ5vgND9Chg7MS3+LCWWidQZgC8ruDN0b//SN3yWe/JJ3inOyXRFX2YSdy7yaRYfiXNi/lsz+EobUNmMxLdh7U146DBoH2a5flx1rq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kenip.in; spf=pass smtp.mailfrom=kenip.in; dkim=pass (1024-bit key) header.d=kenip.in header.i=@kenip.in header.b=cNiVjLij; arc=none smtp.client-ip=75.119.147.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kenip.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kenip.in
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kenip.in;
-	 s=mail; h=Content-Transfer-Encoding:Content-Type:Message-ID:Subject:Cc:To:
-	From:Date:MIME-Version:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=0akcOW2gYFSf51i2ugkmfmThX8pSKjWE5TDslO2xpjk=; b=cNiVjLijduAidhx/XhScghm16b
-	hUP6QpTC64zS4Uf6AW8dMRHBDD+e0c5S+VPUrISes0cV9Xs5Or6308ihE7MloUoUWfu0cYEK2oyvu
-	KbdrWUFO4m6smJ6N9LKZkOwQjB7OyZ0MpJnG4UM0DZRqrTSC+M/xFF8PClKNVweKb80Y=;
-Received: from localhost ([127.0.0.1] helo=kenip.in)
-	by techbitestudio.com with esmtpa (Exim 4.93)
-	(envelope-from <siddhartha@kenip.in>)
-	id 1uV6UG-0003e6-Hr; Fri, 27 Jun 2025 16:09:16 +0530
+	s=arc-20240116; t=1751020845; c=relaxed/simple;
+	bh=7qfv9HgVzOEOTjaIxZhU7hK9cuJpa4FQXmITJTTJBGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GG9jn1c/tpT+OF23YKy6495I7U5QvlTIV0TEBRkyUo4qUP5Lyf4TEZ8tPLbeVU0+nxuNSuSYwYRYS5en7BFXLv1ygJFZz5CYYy/67sqnIe8UVm0Iz9KnA3HfYxtkDHPZCGXm3yFiMzIAnDZyQ94MVCz6tqWhmg99NLS8SiuWpFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fw0WUk4x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AB2C4AF09;
+	Fri, 27 Jun 2025 10:40:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751020844;
+	bh=7qfv9HgVzOEOTjaIxZhU7hK9cuJpa4FQXmITJTTJBGs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Fw0WUk4xPmRlmgDezc1YKV/cRfHJ4iHucPaAP1v4VFN77pttsoXUwObdNm2IcKlJ0
+	 qHjogcDFJA5WfxRKHNXYgd6r1wpWi/N8CAgl7ezq5lO3NDl45DYxIowXN0fZCQnkAe
+	 RYTGy1+ZhpL0JSIiqt3Q+dArWVxWacu4Crd935iYSh2LIiKVP72DlHDMc9Wt3SxX9I
+	 Oe/FuwzMS6rqIols9lyQgRjgZTCcveSsdo1vFLpM13YrLaoyg2wojsIGDKDxh4lL/k
+	 rFaDNzBomRZwAtv8uqeell5u43H6UM+lVCtTFbTXbSkTs2xIQxe1mucpwgbqKwyGXE
+	 lpZXCjs2rPR7A==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2ea34731c5dso1235331fac.0;
+        Fri, 27 Jun 2025 03:40:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0yYLkXxsk5GFm15YcvCWw6gMeoq/RskPHw7OVCTI1SSwurFAgF2jU6mvfPQ4cgMAbWVZFAnR5l6XdpzE=@vger.kernel.org, AJvYcCWXXNFgw1j6IgGXjss2ofQd4rkE6ADNnKG4okdQGwmjOsjnPhphDiFxz3o1RslKo27rXyHhk8ZPAAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUOmpoTRTQy+z1be4GhRRp/CIZk61HVS7WXoYgy+BRpcl4Kwxx
+	XTslGYuPaVXF+N5P4RIwr53z88POduEIDOumdGC//ft7FaBJSRCYbW7xQ6y4p9qnQiXcV7mFVf8
+	FbZr/yj9V1V8OO97ngLTbFKRSth3WGLA=
+X-Google-Smtp-Source: AGHT+IFhOwiSehvLBkinA4qw2PH2OU6rDaCbd9wuzKMX5ahOUCbBmhxWtwnQNsVCx4C5FPU9zqajspliPpZOhjhh11o=
+X-Received: by 2002:a05:6871:e7c6:b0:29e:65ed:5c70 with SMTP id
+ 586e51a60fabf-2efed86efafmr1672430fac.30.1751020844035; Fri, 27 Jun 2025
+ 03:40:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 27 Jun 2025 16:09:16 +0530
-From: siddhartha@kenip.in
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, mgorman@suse.de
-Subject: =?UTF-8?Q?=5BPATCH=5D_mm=3A_limit_THP_alignment_=E2=80=93_perfor?=
- =?UTF-8?Q?mance_gain_observed_in_AI_inference_workloads?=
-Message-ID: <28338f055b3c9afa8b69ff6f05ea20ed@kenip.in>
-X-Sender: siddhartha@kenip.in
-Disposition-Notification-To: siddhartha@kenip.in
-X-Priority: 1 (Highest)
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+References: <5011988.GXAFRqVoOG@rjwysocki.net> <CAPDyKFpBTz0M8DmWHLLm7x4c8G5PpQNv0Zj7mrZ9BewTBi1skg@mail.gmail.com>
+ <5a6d0684-3340-43ed-b520-933654515943@amd.com>
+In-Reply-To: <5a6d0684-3340-43ed-b520-933654515943@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 27 Jun 2025 12:40:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iJ65xxuHtJrWp1sC76FUzPHNpXB+xtHB=e4qTRSgAC4w@mail.gmail.com>
+X-Gm-Features: Ac12FXwM-RS_IpmNqOjPxf8-LkqCjGjccQnSq8VTBhiyXJPJXFSHQgRjmlID9gY
+Message-ID: <CAJZ5v0iJ65xxuHtJrWp1sC76FUzPHNpXB+xtHB=e4qTRSgAC4w@mail.gmail.com>
+Subject: Re: [RFT][PATCH v4 0/2] PM: sleep: Handle async suppliers like
+ parents and async consumers like children
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Chris Bainbridge <chris.bainbridge@gmail.com>, Saravana Kannan <saravanak@google.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jun 27, 2025 at 12:28=E2=80=AFAM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+> On 6/26/2025 4:46 AM, Ulf Hansson wrote:
+> > On Mon, 23 Jun 2025 at 14:55, Rafael J. Wysocki <rjw@rjwysocki.net> wro=
+te:
+> >>
+> >> Hi Everyone,
+> >>
+> >> These two patches complement the recently made PM core changes related=
+ to
+> >> the async suspend and resume of devices.  They should apply on top of
+> >> 6.16-rc3.
+> >>
+> >> They were sent along with the other changes mentioned above:
+> >>
+> >> https://lore.kernel.org/linux-pm/2229735.Mh6RI2rZIc@rjwysocki.net/
+> >> https://lore.kernel.org/linux-pm/2651185.Lt9SDvczpP@rjwysocki.net/
+> >>
+> >> (and this is v4 because they have been rebased in the meantime), but t=
+hey don't
+> >> make any difference on my test-bed x86 systems, so I'd appreciate a co=
+nfirmation
+> >> that they are actually needed on ARM (or another architecture using DT=
+).
+> >>
+> >> Thanks!
+> >
+> > Hi Rafael,
+> >
+> > I haven't yet got the time to test these, but the code looks good to
+> > me, so feel free to add for the series:
+> >
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >
+> > Kind regards
+> > Uffe
+>
+> I passed this series to some internal guys to test on a wide variety of
+> AMD x86 hardware.  The initial testing looks good.
+> Will keep you apprised if anything pops up.
 
-I wanted to share validation data from a Hugging Face-based AI 
-inferencing workload,
-which was significantly impacted by the THP alignment logic introduced 
-in commit efa7df3e3bb5.
+Thanks!
 
-Using transformer models with dynamic input lengths on Intel Xeon 
-(Cooper Lake),
-we observed up to a 3200% throughput improvement after applying the 
-patch from Oct 2024:
-
-   mm: limit THP alignment of anonymous mappings to PMD-aligned sizes
-
-Metrics:
-- Model: BERT-base
-- Inference engine: Transformers + ONNX Runtime
-- Kernel: 6.6 vs patched 6.6.8
-- Batch size: 8-32, input length: 64-512 tokens
-- Metric: inference throughput (samples/sec)
-
-Thanks for the fix -- this change had real impact on a 
-production-relevant workload.
-
-Best Regards,
-Siddhartha Sharma
-ISV @ Kenip
-Solution Link: 
-https://www.intel.com/content/www/us/en/partner/showcase/offering/a5bHo00000045YUIAY/deadlock-clearance.html
+It would also help if you could check whether or not there is any
+measurable performance (that is, system suspend and resume time)
+difference between "before" and "after".
 
