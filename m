@@ -1,159 +1,274 @@
-Return-Path: <linux-kernel+bounces-706033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8306BAEB0EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B587AEB0F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC10116DEDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 08:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D035671BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 08:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DD3233D7C;
-	Fri, 27 Jun 2025 08:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D197235063;
+	Fri, 27 Jun 2025 08:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kmjoS7Ei"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883212264D9
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 08:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ClxbQwWK"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37C32264D9;
+	Fri, 27 Jun 2025 08:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751011595; cv=none; b=HXNZTJTsdN/UtVD3F67/9mQhTWVnVN4upZGWT9w5ai7IdUbQu9nHuDl/7EGdOxm1LfGbYdCU94imBcLn30DkllCWyBByBGTzPi/zm+EDySvI9B+Of19GUdfFWyKbhBuydqDEpN/VWS4nY9u1NOM3XKGRPpMFrBXWkrKNu6J/KxA=
+	t=1751011697; cv=none; b=HOitsRoJGQpKWj1Adkdlc7TchZDmYJgbSuZXO1aJQkBWyAz6u1z6x26qiWcmKxJvOUNmEqP9KgexPSVjvu4NV6X0I1tHFiuVXdynH963mbZMCy7ZKGbDCZ8j4IXMxEGJEmChsW9qDoNqkTg7+GoAguvbXKQzhz5rLb2NW8mtXrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751011595; c=relaxed/simple;
-	bh=Fd/B71Ay1n6YVW8By1kBNB5aLOrWe2WdwbwtZmI38kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZY922S7Ldlarc4D8fXTQEexIg4D5IHIS10FAfR9zgFD3sC6876tb44/ivS7W8TORhsRMy639ZbnUXsIW5sQEKEn0n9+0hzZMXZezF23g4izV0IdWhBORH1quPWLahWG+Qeeauuxppx5oR1aJ75cMwptKlziEwhSnVCmyQxahxb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kmjoS7Ei; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751011593; x=1782547593;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Fd/B71Ay1n6YVW8By1kBNB5aLOrWe2WdwbwtZmI38kA=;
-  b=kmjoS7EixVJxgErWRMcpvfU89Lpizw1by5OTLoHc3TM3u9hMDRQaOL1q
-   y2tX6i/CbQyndZcVlYWik1kt/fkAw4qsTCuxXuBdpkjd7FWDVHJIoke7V
-   VRLOnQRBCHhyY+NcTtySmbuEeVpvelp8BveV+4twTDcpyMc9CXLuxAxuQ
-   zskoro4lEmYmTK0+o2bGTlWnjJe+cbTpB9RriPB2lU8kW6nSRh+VhY2fF
-   OEzSkNhvGsCjzWThk9NnY6XfZan6OfA+fWNnDs03nuvbkmgUH4zDwaaOQ
-   C4nVrZSSrO0saTRqp3yQNzPq6GJt4ML9ys/ZsFfzIzozsE/8Q6isf1hDX
-   Q==;
-X-CSE-ConnectionGUID: clO4mxJ7RUa0UMG1+vVcCQ==
-X-CSE-MsgGUID: MAekqobRSrSQLrqXSEoutA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53467786"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="53467786"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 01:06:33 -0700
-X-CSE-ConnectionGUID: F3t9TbshTvixij/xrIJ3mQ==
-X-CSE-MsgGUID: uF8MnP8ZQCi2tufOsfTPmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="176421304"
-Received: from igk-lkp-server01.igk.intel.com (HELO e588e990b675) ([10.91.175.65])
-  by fmviesa002.fm.intel.com with ESMTP; 27 Jun 2025 01:06:31 -0700
-Received: from kbuild by e588e990b675 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uV46P-0000dX-1F;
-	Fri, 27 Jun 2025 08:06:29 +0000
-Date: Fri, 27 Jun 2025 10:05:30 +0200
-From: kernel test robot <lkp@intel.com>
-To: Huang Ying <ying.huang@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: kernel/resource.c:1838:43: warning: implicit conversion from
- 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value
- from 68719476735 to 4294967295
-Message-ID: <202506271014.vuMnyMSa-lkp@intel.com>
+	s=arc-20240116; t=1751011697; c=relaxed/simple;
+	bh=fpia9a6iKw8L0D4wNnYihrwFfdgdJwMKsA+2bNyr2Ag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RZgPySOWgy6PRprTo5IVe2HXejEZ/a7icICmpQxpkw844o6/b2+u9cfDAIHKLRkvCZJu7o9WpcHEYLHZb789iczzjQMSI/ez0jBaK5afj9+VIP6ozSvBgLCIPOMUmA2goxkDXrlAU/wTjEBYdfvtu30eks/MI0ooRC/SWdAoSj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ClxbQwWK; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=rh9oVjrrQM8DPbLLaBegPR7NE0t6yE6U1DfP0BdJbRI=;
+	b=ClxbQwWKsZjVjRh6bo2jM0tkvPv2Oe6+8DdhVtzjEAfYetwC3jintuBn59AdEF
+	MXw5CCk5FgF2XqKHEkmDo+pStUT0F59LBMXxJa0F7JutcfHGHWzYvjCQMbmlSM5Z
+	osAg6zICS53xfxwozAPCdM8QKHNd02YsC33MPG3i16QT8=
+Received: from [10.42.20.80] (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD337RWUV5olYa1Aw--.44459S2;
+	Fri, 27 Jun 2025 16:07:51 +0800 (CST)
+Message-ID: <24f53098-710a-43f9-8d1c-d809fb5354eb@163.com>
+Date: Fri, 27 Jun 2025 16:07:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6f2a71a99ebd5dfaa7948a2e9c59eae94b741bd8
-commit: 99185c10d5d9214d0d0c8b7866660203e344ee3b resource, kunit: add test case for region_intersects()
-date:   9 months ago
-config: arm-randconfig-2006-20250627 (https://download.01.org/0day-ci/archive/20250627/202506271014.vuMnyMSa-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250627/202506271014.vuMnyMSa-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506271014.vuMnyMSa-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from kernel/resource.c:21:
-   In file included from include/linux/pseudo_fs.h:4:
-   In file included from include/linux/fs_context.h:14:
-   In file included from include/linux/security.h:33:
-   In file included from include/linux/mm.h:2198:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> kernel/resource.c:1838:43: warning: implicit conversion from 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value from 68719476735 to 4294967295 [-Wconstant-conversion]
-    1838 |                 end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-         |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   kernel/resource.c:1827:52: note: expanded from macro 'MAX_PHYS_ADDR'
-    1827 | #define MAX_PHYS_ADDR           ((1ULL << MAX_PHYSMEM_BITS) - 1)
-         |                                                             ^
-   include/linux/minmax.h:213:52: note: expanded from macro 'min_t'
-     213 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
-         |                           ~~~~~~~~~~~~~~~~~~~~~~~~~^~
-   include/linux/minmax.h:96:33: note: expanded from macro '__cmp_once'
-      96 |         __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:93:31: note: expanded from macro '__cmp_once_unique'
-      93 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-         |                                ~~    ^
-   kernel/resource.c:1855:45: warning: implicit conversion from 'unsigned long long' to 'resource_size_t' (aka 'unsigned int') changes value from 68719476735 to 4294967295 [-Wconstant-conversion]
-    1855 |                 addr <= min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-   kernel/resource.c:1827:52: note: expanded from macro 'MAX_PHYS_ADDR'
-    1827 | #define MAX_PHYS_ADDR           ((1ULL << MAX_PHYSMEM_BITS) - 1)
-         |                                                             ^
-   include/linux/minmax.h:213:52: note: expanded from macro 'min_t'
-     213 | #define min_t(type, x, y) __cmp_once(min, type, x, y)
-         |                           ~~~~~~~~~~~~~~~~~~~~~~~~~^~
-   include/linux/minmax.h:96:33: note: expanded from macro '__cmp_once'
-      96 |         __cmp_once_unique(op, type, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/minmax.h:93:31: note: expanded from macro '__cmp_once_unique'
-      93 |         ({ type ux = (x); type uy = (y); __cmp(op, ux, uy); })
-         |                                ~~    ^
-   3 warnings generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: efifb: do not load efifb if PCI BAR has changed
+ but not fixuped
+To: Thomas Zimmermann <tzimmermann@suse.de>, Helge Deller <deller@gmx.de>
+Cc: Peter Jones <pjones@redhat.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250626094937.515552-1-oushixiong1025@163.com>
+ <ecf7f260-4c5f-45fc-be8d-0361b00af6a3@suse.de>
+From: Shixiong Ou <oushixiong1025@163.com>
+In-Reply-To: <ecf7f260-4c5f-45fc-be8d-0361b00af6a3@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD337RWUV5olYa1Aw--.44459S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtr4UuF43ZryfuFy3ur47twb_yoW3JF1fpF
+	4fKw43uF48XF1xGws8Ca1DCr1Svr4v9FyqkFsxK34UA34UGF10vr97C3yq9ryUZr48Jr1x
+	tw4Dtw12kF15uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UatCcUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXQd5D2heTgpVUQAAsa
 
 
-vim +1838 kernel/resource.c
+在 2025/6/26 18:31, Thomas Zimmermann 写道:
+> Hi
+>
+> Am 26.06.25 um 11:49 schrieb oushixiong1025@163.com:
+>> From: Shixiong Ou <oushixiong@kylinos.cn>
+>>
+>> [WHY]
+>> On an ARM machine, the following log is present:
+>> [    0.900884] efifb: framebuffer at 0x1020000000, using 3072k, total 
+>> 3072k
+>> [    2.297884] amdgpu 0000:04:00.0: 
+>> remove_conflicting_pci_framebuffers: bar 0: 0x1000000000 -> 0x100fffffff
+>> [    2.297886] amdgpu 0000:04:00.0: 
+>> remove_conflicting_pci_framebuffers: bar 2: 0x1010000000 -> 0x10101fffff
+>> [    2.297888] amdgpu 0000:04:00.0: 
+>> remove_conflicting_pci_framebuffers: bar 5: 0x58200000 -> 0x5823ffff
+>>
+>> It show that the efifb framebuffer base is out of PCI BAR, and this
+>
+> The patch at
+>
+>   https://patchwork.freedesktop.org/series/148057/
+>
+> is supposed to fix the problem. It has been merged with v6.16-rc1 as 
+> commit 2f29b5c23101 ("video: screen_info: Relocate framebuffers behind 
+> PCI bridges"). It is in your tree?
+>
+> Best regards
+> Thomas
+>
+yeah, this patch is in my tree. but do not fix the problem.
 
-  1831	
-  1832	static resource_size_t gfr_start(struct resource *base, resource_size_t size,
-  1833					 resource_size_t align, unsigned long flags)
-  1834	{
-  1835		if (flags & GFR_DESCENDING) {
-  1836			resource_size_t end;
-  1837	
-> 1838			end = min_t(resource_size_t, base->end, MAX_PHYS_ADDR);
-  1839			return end - size + 1;
-  1840		}
-  1841	
-  1842		return ALIGN(max(base->start, align), align);
-  1843	}
-  1844	
+this is some message:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+kylin@kylin-pc:~$ dmesg | grep BAR
+[    0.688192] pci 0000:00:03.0: BAR 15: assigned [mem 
+0x1000000000-0x101fffffff 64bit pref]
+[    0.688200] pci 0000:00:00.0: BAR 0: assigned [mem 
+0x1020000000-0x10200fffff 64bit pref]
+[    0.688205] pci 0000:00:00.0: BAR 14: assigned [mem 
+0x58000000-0x580fffff]
+[    0.688210] pci 0000:00:01.0: BAR 0: assigned [mem 
+0x1020100000-0x10201fffff 64bit pref]
+[    0.688215] pci 0000:00:02.0: BAR 0: assigned [mem 
+0x1020200000-0x10202fffff 64bit pref]
+[    0.688221] pci 0000:00:02.0: BAR 14: assigned [mem 
+0x58100000-0x581fffff]
+[    0.688225] pci 0000:00:03.0: BAR 0: assigned [mem 
+0x1020300000-0x10203fffff 64bit pref]
+[    0.688231] pci 0000:00:03.0: BAR 14: assigned [mem 
+0x58200000-0x585fffff]
+[    0.688237] pci 0000:00:04.0: BAR 0: assigned [mem 
+0x1020400000-0x10204fffff 64bit pref]
+[    0.688243] pci 0000:00:05.0: BAR 0: assigned [mem 
+0x1020500000-0x10205fffff 64bit pref]
+[    0.688249] pci 0000:00:05.0: BAR 14: assigned [mem 
+0x58600000-0x586fffff]
+[    0.688253] pci 0000:01:00.0: BAR 0: assigned [mem 
+0x58000000-0x58003fff 64bit]
+[    0.688290] pci 0000:03:00.0: BAR 6: assigned [mem 
+0x58100000-0x5817ffff pref]
+[    0.688296] pci 0000:03:00.0: BAR 0: assigned [mem 0x58180000-0x58181fff]
+[    0.688303] pci 0000:03:00.0: BAR 5: assigned [mem 0x58182000-0x58183fff]
+[    0.688317] pci 0000:04:00.0: BAR 1: assigned [mem 
+0x1000000000-0x101fffffff 64bit pref]
+[    0.688326] pci 0000:04:00.0: BAR 0: assigned [mem 0x58200000-0x583fffff]
+[    0.688332] pci 0000:04:00.0: BAR 6: assigned [mem 
+0x58400000-0x584fffff pref]
+[    0.688336] pci 0000:04:00.1: BAR 0: assigned [mem 0x58500000-0x58503fff]
+[    0.688360] pci 0000:06:00.0: BAR 0: assigned [mem 
+0x58600000-0x58601fff 64bit]
+kylin@kylin-pc:~$ dmesg | grep framebuffer
+[    1.137536] efifb: framebuffer at 0x1020000000, using 3072k, total 3072k
+
+the efifb base address is still at 0x1020000000 after calling 
+pcibios_bus_to_resource().
+
+
+>> results in both efi-framebuffer and amdgpudrmfb co-existing.
+>>
+>> The fbcon will be bound to efi-framebuffer by default and cannot be 
+>> used.
+>>
+>> [HOW]
+>> Do not load efifb driver if PCI BAR has changed but not fixuped.
+>> In the following cases:
+>>     1. screen_info_lfb_pdev is NULL.
+>>     2. __screen_info_relocation_is_valid return false.
+>>
+>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+>> ---
+>>   drivers/video/fbdev/efifb.c     |  4 ++++
+>>   drivers/video/screen_info_pci.c | 24 ++++++++++++++++++++++++
+>>   include/linux/screen_info.h     |  5 +++++
+>>   3 files changed, 33 insertions(+)
+>>
+>> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+>> index 0e1bd3dba255..de8d016c9a66 100644
+>> --- a/drivers/video/fbdev/efifb.c
+>> +++ b/drivers/video/fbdev/efifb.c
+>> @@ -303,6 +303,10 @@ static void efifb_setup(struct screen_info *si, 
+>> char *options)
+>>     static inline bool fb_base_is_valid(struct screen_info *si)
+>>   {
+>> +    /* check whether fb_base has changed but not fixuped */
+>> +    if (!screen_info_is_useful())
+>> +        return false;
+>> +
+>>       if (si->lfb_base)
+>>           return true;
+>>   diff --git a/drivers/video/screen_info_pci.c 
+>> b/drivers/video/screen_info_pci.c
+>> index 66bfc1d0a6dc..ac57dcaf0cac 100644
+>> --- a/drivers/video/screen_info_pci.c
+>> +++ b/drivers/video/screen_info_pci.c
+>> @@ -9,6 +9,8 @@ static struct pci_dev *screen_info_lfb_pdev;
+>>   static size_t screen_info_lfb_bar;
+>>   static resource_size_t screen_info_lfb_res_start; // original start 
+>> of resource
+>>   static resource_size_t screen_info_lfb_offset; // framebuffer 
+>> offset within resource
+>> +static bool screen_info_changed;
+>> +static bool screen_info_fixuped;
+>>     static bool __screen_info_relocation_is_valid(const struct 
+>> screen_info *si, struct resource *pr)
+>>   {
+>> @@ -24,6 +26,24 @@ static bool 
+>> __screen_info_relocation_is_valid(const struct screen_info *si, stru
+>>       return true;
+>>   }
+>>   +bool screen_info_is_useful(void)
+>> +{
+>> +    unsigned int type;
+>> +    const struct screen_info *si = &screen_info;
+>> +
+>> +    type = screen_info_video_type(si);
+>> +    if (type != VIDEO_TYPE_EFI)
+>> +        return true;
+>> +
+>> +    if (screen_info_changed && !screen_info_fixuped) {
+>> +        pr_warn("The screen_info has changed but not fixuped");
+>> +        return false;
+>> +    }
+>> +
+>> +    pr_info("The screen_info is useful");
+>> +    return true;
+>> +}
+>> +
+>>   void screen_info_apply_fixups(void)
+>>   {
+>>       struct screen_info *si = &screen_info;
+>> @@ -32,18 +52,22 @@ void screen_info_apply_fixups(void)
+>>           struct resource *pr = 
+>> &screen_info_lfb_pdev->resource[screen_info_lfb_bar];
+>>             if (pr->start != screen_info_lfb_res_start) {
+>> +            screen_info_changed = true;
+>>               if (__screen_info_relocation_is_valid(si, pr)) {
+>>                   /*
+>>                    * Only update base if we have an actual
+>>                    * relocation to a valid I/O range.
+>>                    */
+>>                   __screen_info_set_lfb_base(si, pr->start + 
+>> screen_info_lfb_offset);
+>> +                screen_info_fixuped = true;
+>>                   pr_info("Relocating firmware framebuffer to offset 
+>> %pa[d] within %pr\n",
+>>                       &screen_info_lfb_offset, pr);
+>>               } else {
+>>                   pr_warn("Invalid relocating, disabling firmware 
+>> framebuffer\n");
+
+And should something be done after __screen_info_relocation_is_valid() 
+return false?
+
+Best regards
+Shixiong.
+
+>>               }
+>>           }
+>> +    } else {
+>> +        screen_info_changed = true;
+>>       }
+>>   }
+>>   diff --git a/include/linux/screen_info.h b/include/linux/screen_info.h
+>> index 923d68e07679..632cdbb1adbe 100644
+>> --- a/include/linux/screen_info.h
+>> +++ b/include/linux/screen_info.h
+>> @@ -138,9 +138,14 @@ ssize_t screen_info_resources(const struct 
+>> screen_info *si, struct resource *r,
+>>   u32 __screen_info_lfb_bits_per_pixel(const struct screen_info *si);
+>>     #if defined(CONFIG_PCI)
+>> +bool screen_info_is_useful(void);
+>>   void screen_info_apply_fixups(void);
+>>   struct pci_dev *screen_info_pci_dev(const struct screen_info *si);
+>>   #else
+>> +bool screen_info_is_useful(void)
+>> +{
+>> +    return true;
+>> +}
+>>   static inline void screen_info_apply_fixups(void)
+>>   { }
+>>   static inline struct pci_dev *screen_info_pci_dev(const struct 
+>> screen_info *si)
+>
+
 
