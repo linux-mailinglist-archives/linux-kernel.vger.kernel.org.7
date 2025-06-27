@@ -1,303 +1,145 @@
-Return-Path: <linux-kernel+bounces-706837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC55AEBC9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:56:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E440AAEBCA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ABEE3B6F5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4FE168B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F282E8E05;
-	Fri, 27 Jun 2025 15:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901252E9EBD;
+	Fri, 27 Jun 2025 15:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pipWipL0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bWUy2+KH"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1CB2E337C;
-	Fri, 27 Jun 2025 15:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593A92E973C;
+	Fri, 27 Jun 2025 15:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039770; cv=none; b=tbChnTZ93We17ZbJaAwgYJhQVLwaLAcp4Lmbod6RIijBIP0Z7qsj1ltsMBLxhil/ZjI8eWrUQu69gJ9qhGJ/WMqyYRRilM39f65g0o+lSJSAaUPV9ucjKqtjdUoTPwYSE4BdAzoWaKiuJwmCGqPrdvQRcv3kWqju6XQgiylwqHQ=
+	t=1751039817; cv=none; b=aFctq4WXOLKldez+xaEi9VKqkZphaRmUt+sZFJFmVVZUgU2yHpg4QK5lrl9lfMybaik3DUD6H9kD1cBEsE8H+e01pUqxomVaFdrbulOBHyvGV7plnMFXK1tROpxJmxWX7BlL1jP8le6BhY8XbImsLuUEFvH9ZaB00srNgjih1nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039770; c=relaxed/simple;
-	bh=Kt6hxMbhF45+pYPS+uUmuLJPgeX6AoKkm7uSpf8DRqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s1vfoKmNxAzMUTAO5cICQgq0hcKDcBBE6OEdczqqB/KbHabz2jJO2a3qnf1H6zpVjvoVcrYcQp4Num208o4GAuJpYa4oVA+9B+YwQIHkVHEC4ZM+vn3cukgaOeiNzyCwe+LCfFbsOAppUUoC8KUkDc/X641Qonbo5ovdiUMwHtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pipWipL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73412C4CEE3;
-	Fri, 27 Jun 2025 15:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751039769;
-	bh=Kt6hxMbhF45+pYPS+uUmuLJPgeX6AoKkm7uSpf8DRqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pipWipL04tZelAzR+jqqfYj7pzCuL8Q0uvezlFXJstjwFlh34ihzYB0guOF/hU6IE
-	 HHP8+Gooh8HlkXycYTz8y/SeqDdoMdOqT42D3TwKtYLE5krR56LpB39uN1TqsIYkvk
-	 grFTvXy/7Qw4vCy3YHkiRw/2P2qkMRQyZLZlcJj2vwvJaZd7cb+dV5NnsVbqUITjf4
-	 kWkdG9f9PYc8z8gmh5+wIX6w8x6041oEyb0P1wFcrF/iP6ygiAEYULmHqAmQc6qNTy
-	 co4aRYJ+3RevvIkAzqmepJs/F4JqCBw55HcvKb402/DbzmwjqbdSEcDRtMi7Lj+8Kf
-	 AaZJhCXzyj2NA==
-Message-ID: <fdd635ce-5e8e-4123-8e8e-241a57b4d7fe@kernel.org>
-Date: Fri, 27 Jun 2025 17:56:05 +0200
+	s=arc-20240116; t=1751039817; c=relaxed/simple;
+	bh=IOusWH85S4yiTdywO3XqYqSK8cw+vKq9Jp+ntdI2tpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q9J6h84MhSrVDk4YCF1rOw8eG48y+lwTJ1dcSu5aUy1cwzS5wqJq1nDPx5lq/XOqPX8CCTlnfLHdZvi1H2IRmuN/9ToHSp+PObyKL8xNi+DFcvm/4wLqUI7PZiB1acenGIMpfoQeBacQbkE7hu/HureBoAVCqpCJI8P791a01MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bWUy2+KH; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R8HC56010490;
+	Fri, 27 Jun 2025 15:56:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=IOusWH85S4yiTdywO3XqYqSK8cw+vK
+	q9Jp+ntdI2tpE=; b=bWUy2+KHyNK2AImHPoT/K7nzfyjM9NmbuPvmXplHr+g7Y1
+	XypofmRRr63tOsATvlz60+Wh/jAkHbBDW1m06Xp4w2EWccwM0RJ8z8f/KoYWJeOg
+	7/fYOrpDpOX/qcMMSetF5V0Yi78zQj8arGJTbiEmJrArgZI7GA1orxcm1ivZa2CO
+	9fjaBYSiqaW49sfvXKOO5C6Vu7EeMAP6cSsfUCix4Ifi792kapFAfhH9xCBZ7UNx
+	cni79E0bRZxeweolBPXZyKdVQdzJZeeSVMuK1+fX7xGK4fq9qDKhajNSSl7x8Do+
+	1dO+VnToeXsnT3eToBYuSmsdNn/I5R3qzZDDED2A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47gsphva72-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 15:56:27 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55RFtCtW014897;
+	Fri, 27 Jun 2025 15:56:26 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47gsphva6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 15:56:26 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55RC14MI014987;
+	Fri, 27 Jun 2025 15:56:25 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47e72u52rw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 15:56:25 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55RFuLZq17498492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 27 Jun 2025 15:56:21 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 869D720043;
+	Fri, 27 Jun 2025 15:56:21 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E42A20040;
+	Fri, 27 Jun 2025 15:56:20 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.0.221])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 27 Jun 2025 15:56:20 +0000 (GMT)
+Date: Fri, 27 Jun 2025 17:56:18 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: GONG Ruiqi <gongruiqi1@huawei.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, "Lee, Chun-Yi" <jlee@suse.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, Lu Jialin <lujialin4@huawei.com>
+Subject: Re: [PATCH RESEND] integrity: Extract secure boot enquiry function
+ out of IMA
+Message-ID: <aF6/ItTfd7oVN+Sn@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20250626023617.3885806-1-gongruiqi1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] Input: Don't send fake button presses to wake
- system
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mario Limonciello <superm1@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Mika Westerberg
- <westeri@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
- "open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
- <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
-References: <vkau25ybcx3bcoa2jmxlukumunzii5h6em43anh6mmzk2kyiv7@kyych4kxc4zo>
- <0d71a686-da67-4686-8976-a17d0d1ca923@kernel.org>
- <CAJZ5v0gKUN1OdqAHnXNcFUAOfhpdRfa_o=L6TA2GZTpe1bMaNQ@mail.gmail.com>
- <exmgckzoakt2ncsdphqvymcadon7k6tl36a3zvrj2pv23dffps@znq23v3qbcm2>
- <CAJZ5v0j3ZyuEqSKQ+3K8M3BwPCxn5Z6KOwjyjt4cJW6HfxjPDw@mail.gmail.com>
- <hyvpl4gvxc6h2r3itfofjduwb3vpobyo7a7z6g3zapzscqtafh@ixsd4amyljva>
- <de548b27-4c43-4f30-af9d-b060101e6fd8@kernel.org>
- <75fixx6rgwsgsw6e765oxdcivcg2nkzx2fp2qywgx4vi3ihywh@ot7gdecsnttw>
- <1b0d2349-dbf7-47aa-95c9-1974e63d111a@kernel.org>
- <13025910-7639-400b-878a-cd0780c6534c@kernel.org>
- <4ajmcrl3bqeikki2etek5bafzszelgevr322tvuubx4pxxyju2@qqxz6lzcb6e5>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <4ajmcrl3bqeikki2etek5bafzszelgevr322tvuubx4pxxyju2@qqxz6lzcb6e5>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626023617.3885806-1-gongruiqi1@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZVGn4lXE8Yi5L_H_NMtRZszsX8O1zlVQ
+X-Proofpoint-ORIG-GUID: cRmhbyTPAwHuG266gZfp9uPvG-4fDGhs
+X-Authority-Analysis: v=2.4 cv=Hul2G1TS c=1 sm=1 tr=0 ts=685ebf2b cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=i0EeH86SAAAA:8 a=MfmPClk6on00Wl0lz3oA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEyOCBTYWx0ZWRfX6FVFnTWLiZx0 z+RdbizKGA2mloifLyiTyqfs1kKkb6HuDB7ShsfyeOqkPjTZQ2RFoKFT6dgyhrDmqMjux7VWIhh 1sclUvGeNFDf8T/69PdD+yAWPwgTzIPkpYSQDQOOlTU+Q3kohFm9WF7bQSgMvdjoASGwEtnXvcY
+ 6y+ex2clQaDlEgQmJ06Fff03IWLZROr7C1eXc6Df7d/Z+tqVlulcx8L546Q1zKdlECtopleiyQ2 QhKyVwbYOwhggvmbHlMyekUCKU7JpeaDVC4OBgVMcngHb2SiwhL/a1PfRc+8dEBCYVnzzvPidyN iJlbRUHMzNB2FsUG296X4cX4R6GG8CqcCKCaJA3nmlNYVy7ram2mcjJ09GJWSOVzIvDWMmgtY2B
+ mAjNLCSr8qBAq/aNrZEhsp1J54ZLASLtkHcj3YTHS5pQmacwx9wmLyhvEpCo0XcQkn+m54j9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_05,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=952 bulkscore=0 mlxscore=0 adultscore=0 spamscore=0
+ impostorscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270128
 
-Hi Dmitry,
+On Thu, Jun 26, 2025 at 10:36:17AM +0800, GONG Ruiqi wrote:
 
-On 27-Jun-25 4:44 PM, Dmitry Torokhov wrote:
-> On Fri, Jun 27, 2025 at 04:14:38PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 27-Jun-25 4:06 PM, Mario Limonciello wrote:
->>> On 6/26/2025 11:56 PM, Dmitry Torokhov wrote:
->>>> On Thu, Jun 26, 2025 at 05:21:35PM -0500, Mario Limonciello wrote:
->>>>> On 6/26/2025 2:40 PM, Dmitry Torokhov wrote:
->>>>>> On Thu, Jun 26, 2025 at 09:31:12PM +0200, Rafael J. Wysocki wrote:
->>>>>>> On Thu, Jun 26, 2025 at 9:28 PM Dmitry Torokhov
->>>>>>> <dmitry.torokhov@gmail.com> wrote:
->>>>>>>>
->>>>>>>> On Thu, Jun 26, 2025 at 09:18:56PM +0200, Rafael J. Wysocki wrote:
->>>>>>>>> On Thu, Jun 26, 2025 at 9:16 PM Hans de Goede <hansg@kernel.org> wrote:
->>>>>>>>>>
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> On 26-Jun-25 21:14, Dmitry Torokhov wrote:
->>>>>>>>>>> On Thu, Jun 26, 2025 at 08:57:30PM +0200, Hans de Goede wrote:
->>>>>>>>>>>> Hi,
->>>>>>>>>>>>
->>>>>>>>>>>> On 26-Jun-25 20:48, Dmitry Torokhov wrote:
->>>>>>>>>>>>> On Thu, Jun 26, 2025 at 01:20:54PM -0500, Mario Limonciello wrote:
->>>>>>>> [...]
->>>>>>>>>>>>>> I want to note this driver works quite differently than how ACPI power
->>>>>>>>>>>>>> button does.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> You can see in acpi_button_notify() that the "keypress" is only forwarded
->>>>>>>>>>>>>> when not suspended [1].  Otherwise it's just wakeup event (which is what my
->>>>>>>>>>>>>> patch was modeling).
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> https://github.com/torvalds/linux/blob/v6.16-rc3/drivers/acpi/button.c#L461
->>>>>>>>>>>>>> [1]
->>>>>>>>>>>>>
->>>>>>>>>>>>> If you check acpi_button_resume() you will see that the events are sent
->>>>>>>>>>>>> from there. Except that for some reason they chose to use KEY_WAKEUP and
->>>>>>>>>>>>> not KEY_POWER, oh well. Unlike acpi button driver gpio_keys is used on
->>>>>>>>>>>>> multiple other platforms.
->>>>>>>>>>>>
->>>>>>>>>>>> Interesting, but the ACPI button code presumably only does this on resume
->>>>>>>>>>>> for a normal press while the system is awake it does use KEY_POWER, right ?
->>>>>>>>>>>
->>>>>>>>>>> Yes. It is unclear to me why they chose to mangle the event on wakeup,
->>>>>>>>>>> it does not seem to be captured in the email discussions or in the patch
->>>>>>>>>>> description.
->>>>>>>>>>
->>>>>>>>>> I assume they did this to avoid the immediate re-suspend on wakeup by
->>>>>>>>>> power-button issue. GNOME has a workaround for this, but I assume that
->>>>>>>>>> some userspace desktop environments are still going to have a problem
->>>>>>>>>> with this.
->>>>>>>>>
->>>>>>>>> It was done for this reason IIRC, but it should have been documented
->>>>>>>>> more thoroughly.
->>>>>>>>
->>>>>>>> I assert that it should not have been done and instead dealt with in
->>>>>>>> userspace. There are numerous drivers in the kernel emitting
->>>>>>>> KEY_POWER. Let userspace decide how to handle this, what keys to ignore,
->>>>>>>> what keys to process and when.
->>>>>>>
->>>>>>> Please see my last message in this thread (just sent) and see the
->>>>>>> changelog of commit 16f70feaabe9 ("ACPI: button: trigger wakeup key
->>>>>>> events").
->>>>>>>
->>>>>>> This appears to be about cases when no event would be signaled to user
->>>>>>> space at all (power button wakeup from ACPI S3).
->>>>>>
->>>>>> Ahh, in S3 we do not know if we've been woken up with Sleep or Power
->>>>>> button, right? So we can not send the "right" event code and use
->>>>>> "neutral" KEY_WAKEUP for both. Is this right?
->>>>>>
->>>>>> Thanks.
->>>>>>
->>>>>
->>>>> I did some more experiments with this affected system that started this
->>>>> thread (which uses s2idle).
->>>>>
->>>>> I only applied patch 3 in this series to help the debounce behavior and
->>>>> figure out impacts from patch 4 with existing Linux userspace.
->>>>>
->>>>> If suspended using systemd in GNOME (click the GUI button) on Ubuntu 24.04
->>>>> the GNOME workaround mitigates this problem and no visible impact.
->>>>>
->>>>> If I suspend by hand using the kernel interface and then press power button
->>>>> to wake:
->>>>>
->>>>> # echo mem | sudo tee /sys/power/state:
->>>>>
->>>>> * When GNOME is running:
->>>>> I get the shutdown popup and it eventually shuts down.
->>>>>
->>>>> * When GNOME isn't running (just on a VT):
->>>>> System shuts down.
->>>>
->>>> For the latter you may want to raise an issue with systemd, and for the
->>>> former I guess it is being too clever and does not activate the
->>>> workaround if suspend was not initiated by it? I think Gnome is being
->>>> too careful.
->>>>
->>>> Thanks.
->>>>
->>>
->>> Sure I could file bugs with both the projects.
->>>
->>> But before I do if all userspace needs to account for this with a series of workarounds at resume time, you still think that is that really the best way forward?
->>>
->>> Hans, you have a lot of experience in the GNOME community.  Your thoughts?
->>
->> I guess it would be good to fix this in the kernel, sending
->> KEY_WAKEUP from gpio_key when the event is KEY_POWER and
->> we are going through the special wakeup path in gpio_keys.
->>
->> When this was discussed quite a while ago the ACPI button
->> driver simply did not send any event at all on wkaeup
->> by ACPI power-button. Know that it does send an event
->> it would be good to mimic this, at least when the gpio_key
->> devices where instantiated by soc_button_array.
->>
->> So maybe add a new field to struct gpio_keys_button
->> called wakeup_code and when that is not 0 use that
->> instead of the plain "code" member on wakeups ?
->>
->> That would keep the gpio_keys code generic while
->> allowing to mimic the ACPI button behavior.
->>
->> And then set wakeup_code to KEY_WAKEUP for
->> the power-button in soc_button_array.
->>
->> To me this sounds better then trying to fix all userspace
->> code which does something on KEY_POWER of which there
->> is quite a lot.
->>
->> The special GNOME power-button handling was always
->> a workaround because last time a kernel fix was
->> nacked. But now with the KEY_WAKEUP done by the ACPI
->> button code it looks like we do have a good way
->> to fix this in the kernel, so that would be better
->> IMHO.
->>
->> Dmitry, what do you think of adding a wakeup_code
->> field to struct gpio_keys_button and let the code
->> creating the gpio_keys_button decide if a different
->> code should be used on wakeup or not ?
-> 
-> And what is the plan on dealing with all other drivers that emit
-> KEY_POWER?
+Hi GONG,
 
-There actually aren't that many that I'm aware of.
+...
+> Compile-tested for powerpc, s390 and x86, all with allmodconfig.
 
-Note that this gpio_keys KEY_POWER evdev event generation
-on resume issue goes way back until the last time we had
-this conversation and it still has not really been fixed.
+This breaks defconfig and debug_defconfig builds on s390
+since IMA_ARCH_POLICY=n in these configurations and thus
+CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n as well:
 
-And I've not seen any bug-reports about the same problem
-with any other drivers.
+s390x-15.1.0-ld: security/integrity/ima/ima_main.o: in function `ima_load_data':
+/home/agordeev/linux.c3/security/integrity/ima/ima_main.c:902:(.text+0x54e): undefined reference to `arch_integrity_get_secureboot'
+s390x-15.1.0-ld: security/integrity/ima/ima_appraise.o: in function `ima_appraise_parse_cmdline':
+/home/agordeev/linux.c3/security/integrity/ima/ima_appraise.c:30:(.init.text+0x44): undefined reference to `arch_integrity_get_secureboot'
+make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux.unstripped] Error 1
+make[1]: *** [/home/agordeev/linux.c3/Makefile:1236: vmlinux] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-> What about acpi button behavior when using S0ix?
+> Signed-off-by: GONG Ruiqi <gongruiqi1@huawei.com>
 
-AFAIK it is the same as with S3, at least it is not
-causing any issues. I've never seen the ACPI button code
-cause re-suspend immediately on wakeup by what for all
-intends and purposes is a spurious KEY_POWER event.
-
-Last time we discussed this I wasn't really happy with
-the outcome of the discussion but I just went for it
-because of Android's reliance on the event and we
-lacked a better plan.
-
-Now that we've a fix for this in the form of KEY_WAKEUP
-it is time to properly fix this instead of doing userspace
-kludges.
-
-> What about
-> holding power button for too long so that normal reporting "catches" the
-> pressed state?
-
-The key-down event is send as KEY_WAKEUP instead,
-so userspace sees KEY_WAKEUP pressed not KEY_POWER.
-
-> Kernel reports hardware events, interpreting them and applying certain
-> policies is task for userspace.
-
-And atm it is actually doing a shitty job of reporting
-hwevents because there is no way for userspace to be able
-to differentiate between:
-
-1. User pressed power-button to wakeup system
-2. User pressed power-button after resume to do
-   power-button-action (e.g. suspend system)
-
-Even though *the kernel* does *know* the difference.
-
-So the suggested change actually makes the kernel
-do its job of reporting hw-events better by making
-the reporting more accurate.
-
-ATM if I resume say a tablet with GNOME and then
-change my mind and press the power button within
-3 seconds of resume to suspend it again the second
-power-button press will outright be ignored
-
-The current userspace workaround is racy like this,
-again the whole workaround in GNOME is just an ugly
-kludge which I did back then because we couldn't
-agree on a better way to deal with this in the kernel /
-because just suppressing sending KEY_POWER would break
-Android.
-
-The suggested use of KEY_WAKEUP is lightyears better
-then doing ignore KEY_POWER events for xx seconds
-after resume which is simply always going to be racy
-and always was just an ugly hack / never was
-a great solution.
-
-Regards,
-
-Hans
-
-
-
-
+Thanks!
 
