@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-706136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFFBAAEB27C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:17:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569DBAEB1E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E35DC4A2A2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0B61C22704
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFC1298270;
-	Fri, 27 Jun 2025 09:12:03 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E741E293C51;
+	Fri, 27 Jun 2025 09:02:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5282957C0;
-	Fri, 27 Jun 2025 09:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB7293B55;
+	Fri, 27 Jun 2025 09:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015523; cv=none; b=QwDM5SrD+/AL3TZsZYBfIlTlUX+olGUUcYrQFQ5nJZ1Zyu7XRElnYwbFWauLHNrOwj8yedJGhsPOT/MWrZ1HKOqXZxNwg50lQlaGr3Fbi2ylGJSO6jZKBIDdsQ4sacgqmRdhhYMqDrTzaZlVxRr4pdsWMFoOjQp2xqHjgixCfCU=
+	t=1751014972; cv=none; b=EubNZ2r3AKVEew7o4Cip1zJxfrpDLZxumhTTnScH7H/Pk+dvl3HbD/uZkAWnBiyU9rUXM6udjf2y9RTletzuOH5rWTHPSReqVl1WoeAs5z0+TbEkxMtFdyPRQVbMQJdrtWauyeeIx4vTKS4SXUUqnTOAzSjwoDVWvRzijTgQGmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015523; c=relaxed/simple;
-	bh=GVRCKGSKR6GX4ns1XYW2cgh8ldp9Mp84DNxhiD2jLXA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzJmTO8z1iO7weK0h+ZaDZP+vTmVTIC/gFqn12ls0F+f1oScimEjTznYXX+MZibqXABhSUKscYWHCzwYYogNAtieoIDeJeuRv8iz4X8NBokhoBZu8vXS0PxyjBx7rFJJwH1aMhQ+sI12/7wMg/m7pxydKB0gXKDlspp+UiTUyx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bT8ny1Slsz10XVg;
-	Fri, 27 Jun 2025 17:07:18 +0800 (CST)
-Received: from kwepemk200016.china.huawei.com (unknown [7.202.194.82])
-	by mail.maildlp.com (Postfix) with ESMTPS id 67EE81400D1;
-	Fri, 27 Jun 2025 17:11:56 +0800 (CST)
-Received: from huawei.com (10.67.174.78) by kwepemk200016.china.huawei.com
- (7.202.194.82) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 27 Jun
- 2025 17:11:55 +0800
-From: Yi Yang <yiyang13@huawei.com>
-To: <yiyang13@huawei.com>
-CC: <corey@minyard.net>, <linux-kernel@vger.kernel.org>,
-	<lujialin4@huawei.com>, <openipmi-developer@lists.sourceforge.net>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH] ipmi: fix underflow in ipmi_create_user()
-Date: Fri, 27 Jun 2025 09:02:20 +0000
-Message-ID: <20250627090220.592415-1-yiyang13@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250610121523.252149-1-yiyang13@huawei.com>
-References: <20250610121523.252149-1-yiyang13@huawei.com>
+	s=arc-20240116; t=1751014972; c=relaxed/simple;
+	bh=qaBguxJ/59Y70qyBDlyzD5aimjI4J8ODIPajo/Wefvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XZsdRdF2VAkSNepNq0ahuwu/hslZx+10q/INpl/6B4T0yCqDzfcGg6NAfICWAZVb2cgzxtmxvxDY08zvs6ZKOJ5xKUUAu8tSHSLl2IvAfd9aBgCPsZcAN+bHjfqiwUxabwNj0tRc+ce4XfXZy5zflt7F6Qgf8eoBj8g17NR7UXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bT8hc4FsFzYQvD3;
+	Fri, 27 Jun 2025 17:02:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 78AA41A10F6;
+	Fri, 27 Jun 2025 17:02:39 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgCH2MItXl5oDsw0Qg--.9912S2;
+	Fri, 27 Jun 2025 17:02:39 +0800 (CST)
+Message-ID: <5f622eec-a039-4e82-9f37-3cad1692f268@huaweicloud.com>
+Date: Fri, 27 Jun 2025 17:02:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 00/28] Eliminate Dying Memory Cgroup
+To: Kairui Song <ryncsn@gmail.com>, Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Muchun Song <muchun.song@linux.dev>,
+ Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
+ mhocko@kernel.org, shakeel.butt@linux.dev, akpm@linux-foundation.org,
+ david@fromorbit.com, zhengqi.arch@bytedance.com, yosry.ahmed@linux.dev,
+ nphamcs@gmail.com, chengming.zhou@linux.dev, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org,
+ hamzamahfooz@linux.microsoft.com, apais@linux.microsoft.com,
+ yuzhao@google.com
+References: <20250415024532.26632-1-songmuchun@bytedance.com>
+ <CAMgjq7BAfh-op06++LEgXf4UM47Pp1=ER+1WvdOn3-6YYQHYmw@mail.gmail.com>
+ <F9BDE357-C7DA-4860-A167-201B01A274FC@linux.dev>
+ <CAMgjq7D+GXce=nTzxPyR+t6YZSLWf-8eByo+0NpprQf61gXjPA@mail.gmail.com>
+ <aAF2eUG26_xDYIDU@google.com>
+ <CAMgjq7BNUMFzsFCOt--mvTqSmgdA65PWcn57G_6-gEj0ps-jCg@mail.gmail.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <CAMgjq7BNUMFzsFCOt--mvTqSmgdA65PWcn57G_6-gEj0ps-jCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemk200016.china.huawei.com (7.202.194.82)
+X-CM-TRANSID:_Ch0CgCH2MItXl5oDsw0Qg--.9912S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4xtw47CFWUWryUuFyxAFb_yoW8Ar4fpF
+	WFqF42kFs5ur95A3y0y34kWFyUta97Wr15Ar1rJrn8tw1DZF1FyF47CrWF9as29r1xZ3yI
+	vrWDur4UK3WDZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	bAw3UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On 2025/6/27 17:10, yiyang wrote:
-> Syzkaller reported this bug:
-> ==================================================================
-> BUG: KASAN: global-out-of-bounds in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
-> BUG: KASAN: global-out-of-bounds in atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
-> BUG: KASAN: global-out-of-bounds in ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
-> Write of size 4 at addr ffffffff8fc6a438 by task syz.5.1074/5888
->
-> CPU: 0 PID: 5888 Comm: syz.5.1074 Not tainted 6.6.0+ #60
-> ......
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x72/0xa0 lib/dump_stack.c:106
->  print_address_description.constprop.0+0x6b/0x3d0 mm/kasan/report.c:364
->  print_report+0xba/0x280 mm/kasan/report.c:475
->  kasan_report+0xa9/0xe0 mm/kasan/report.c:588
->  check_region_inline mm/kasan/generic.c:181 [inline]
->  kasan_check_range+0x100/0x1c0 mm/kasan/generic.c:187
->  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->  atomic_dec include/linux/atomic/atomic-instrumented.h:592 [inline]
->  ipmi_create_user.part.0+0x5e5/0x790 drivers/char/ipmi/ipmi_msghandler.c:1291
->  ipmi_create_user+0x56/0x80 drivers/char/ipmi/ipmi_msghandler.c:1236
->  ipmi_open+0xac/0x2b0 drivers/char/ipmi/ipmi_devintf.c:97
->  chrdev_open+0x276/0x700 fs/char_dev.c:414
->  do_dentry_open+0x6a7/0x1410 fs/open.c:929
->  vfs_open+0xd1/0x440 fs/open.c:1060
->  do_open+0x957/0x10d0 fs/namei.c:3671
->  path_openat+0x258/0x770 fs/namei.c:3830
->  do_filp_open+0x1c7/0x410 fs/namei.c:3857
->  do_sys_openat2+0x5bd/0x6a0 fs/open.c:1428
->  do_sys_open fs/open.c:1443 [inline]
->  __do_sys_openat fs/open.c:1459 [inline]
->  __se_sys_openat fs/open.c:1454 [inline]
->  __x64_sys_openat+0x17a/0x210 fs/open.c:1454
->  do_syscall_x64 arch/x86/entry/common.c:51 [inline]
->  do_syscall_64+0x59/0x110 arch/x86/entry/common.c:81
->  entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> RIP: 0033:0x54d2cd
-> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f4751920048 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> RAX: ffffffffffffffda RBX: 0000000000796080 RCX: 000000000054d2cd
-> RDX: 0000000000000000 RSI: 0000000020004280 RDI: ffffffffffffff9c
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 000000000000001e R11: 0000000000000246 R12: 000000000079608c
-> R13: 0000000000000000 R14: 0000000000796080 R15: 00007f4751900000
->  </TASK>
->
-> The buggy address belongs to the variable:
->  ipmi_interfaces+0x38/0x40
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x45a6a
-> flags: 0x3fffff00004000(reserved|node=0|zone=1|lastcpupid=0x1fffff)
-> raw: 003fffff00004000 ffffea0001169a88 ffffea0001169a88 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffffffff8fc6a300: 00 00 00 00 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
->  ffffffff8fc6a380: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
->> ffffffff8fc6a400: 00 00 f9 f9 f9 f9 f9 f9 00 00 00 00 f9 f9 f9 f9
->                                         ^
->  ffffffff8fc6a480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffff8fc6a500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f9 f9
-> ==================================================================
->
-> In the ipmi_create_user() function, the intf->nr_users variable has an
-> underflow issue. Specifically, on the exception path (goto out_kfree;)
-> before atomic_add_return(), calling atomic_dec() when intf->nr_users has
-> not been incremented will result in an underflow.
->
-> The relevant code has been completely rewritten in the next tree and has
-> been fixed with commit 9e91f8a6c868 ("ipmi:msghandler: Remove srcu for the
-> ipmi_interfaces list"). However, the issue still exists in the 5.19+
-> stable branches and needs to be fixed on those branches.
->
-> Cc: stable@vger.kernel.org # 5.19+
-> Fixes: 8e76741c3d8b ("ipmi: Add a limit on the number of users that may use IPMI")
-> Signed-off-by: Yi Yang <yiyang13@huawei.com>
-> ---
->  drivers/char/ipmi/ipmi_msghandler.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> index 186f1fee7534..0293fad2f4f2 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -1246,18 +1246,18 @@ int ipmi_create_user(unsigned int          if_num,
->   found:
->      if (atomic_add_return(1, &intf->nr_users) > max_users) {
->          rv = -EBUSY;
-> -        goto out_kfree;
-> +        goto out_dec;
->      }
->  
->      INIT_WORK(&new_user->remove_work, free_user_work);
->  
->      rv = init_srcu_struct(&new_user->release_barrier);
->      if (rv)
-> -        goto out_kfree;
-> +        goto out_dec;
->  
->      if (!try_module_get(intf->owner)) {
->          rv = -ENODEV;
-> -        goto out_kfree;
-> +        goto out_dec;
->      }
->  
->      /* Note that each existing user holds a refcount to the interface. */
-> @@ -1281,8 +1281,9 @@ int ipmi_create_user(unsigned int          if_num,
->      *user = new_user;
->      return 0;
->  
-> -out_kfree:
-> +out_dec:
->      atomic_dec(&intf->nr_users);
-> +out_kfree:
->      srcu_read_unlock(&ipmi_interfaces_srcu, index);
->      vfree(new_user);
->      return rv;
-> -- 
-> 2.25.1
 
-ping 
+
+On 2025/4/28 11:43, Kairui Song wrote:
+> On Fri, Apr 18, 2025 at 5:45 AM Roman Gushchin <roman.gushchin@linux.dev> wrote:
+>>
+>> On Fri, Apr 18, 2025 at 02:22:12AM +0800, Kairui Song wrote:
+>>>
+>>> We currently have some workloads running with `nokmem` due to objcg
+>>> performance issues. I know there are efforts to improve them, but so
+>>> far it's still not painless to have. So I'm a bit worried about
+>>> this...
+>>
+>> Do you mind sharing more details here?
+>>
+>> Thanks!
+> 
+> Hi,
+> 
+> Sorry for the late response, I was busy with another series and other works.
+> 
+> It's not hard to observe such slow down, for example a simple redis
+> test can expose it:
+> 
+> Without nokmem:
+> redis-benchmark -h 127.0.0.1 -q -t set,get -n 80000 -c 1
+> SET: 16393.44 requests per second, p50=0.055 msec
+> GET: 16956.34 requests per second, p50=0.055 msec
+> 
+> With nokmem:
+> redis-benchmark -h 127.0.0.1 -q -t set,get -n 80000 -c 1
+> SET: 17263.70 requests per second, p50=0.055 msec
+> GET: 17410.23 requests per second, p50=0.055 msec
+> 
+> And I'm testing with latest kernel:
+> uname -a
+> Linux localhost 6.15.0-rc2+ #1594 SMP PREEMPT_DYNAMIC Sun Apr 27
+> 15:13:27 CST 2025 x86_64 GNU/Linux
+> 
+> This is just an example. For redis, it can be a workaround by using
+> things like redis pipeline, but not all workloads can be adjusted
+> that flexibly.
+> 
+> And the slowdown could be amplified in some cases.
+
+Hi Kairui,
+
+We've also encountered this issue in our Redis scenario. May I confirm
+whether your testing is based on cgroup v1 or v2?
+
+In our environment using cgroup v1, we've identified memcg_account_kmem
+as the critical performance bottleneck function - which, as you know, is
+specific to the v1 implementation.
+
+Best regards,
+Ridong
+
 
