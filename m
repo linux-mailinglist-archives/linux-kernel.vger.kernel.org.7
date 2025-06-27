@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-707110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E1AEBFE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:31:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F16AAEBF67
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E971C477A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A4881C463E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64332EE299;
-	Fri, 27 Jun 2025 19:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3B81FA178;
+	Fri, 27 Jun 2025 19:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="lUEw4HA5"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ARXunImr"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A272EA755;
-	Fri, 27 Jun 2025 19:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52172BAF9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 19:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751052588; cv=none; b=rOISrm1APMPJ/Qx54SNoOlT9CW6ELxvzIlBIDLVIC0lxERYUEgZF24hn1HC4UM0Hv0i9mQoY4e5m8X3JvYVNVfIAw6hcYvdJLOMhBAKVrv643ndl5cKvk/7h1Pjj9TOsZ+2KptmHm0SCWfhyBUax49DhQn1eQd7re3bodibqpEk=
+	t=1751051233; cv=none; b=kBdmtixz/XB5eZCiBS5hjcBYXOrRNeYD+qFtPvQrDgCUiKeooKpefgUR40kQGQxsiGQ3twqHRv3asAk8w2BXKbICCugQoxpSFmGByx3BsMEBVLa6Va89jSNlcPq9xVidhqVndJibc1FZO43o4DfZJ6Iopl24JZSKLbGcZ/N+/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751052588; c=relaxed/simple;
-	bh=YybUBfc+8sGiw13jasECKaaQ7wukGf1o6DQrxm6RhKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NUHztMuImpqlVKitfJsamwynLg3LkrVhj451e9FpHOljEhWgXeWrs/cfGqFdyGLIdGA9rsvdTzPDAKEVwp/9ci6/vtXkKFsPu6dpVWsRqeEepYL080xEc+1+iMAUnyG+8Pa9YxfIReAYBmyCxGEVW6Nwt27Mh4AYXs263kARqJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=lUEw4HA5; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id E953E66DF53;
-	Fri, 27 Jun 2025 21:29:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1751052583;
-	bh=YybUBfc+8sGiw13jasECKaaQ7wukGf1o6DQrxm6RhKo=;
-	h=From:Subject:Date;
-	b=lUEw4HA5ctBvx+h0g5AVwYzv2QxoHiRdZq3xDW6UHHiJCTWZtK7/UvrrWg5yHgRlF
-	 F4fGLWE34TDOaVKRp+rzqXazpQ/U2uRo+4nQBFHY1vz4PTX7p/xDRWkxBE5LM2xiD8
-	 svKjunh4XnGAV0cwd5p//3sUy74nhv2oTjVPcMl/V3i8UcYLrdAiedBseOPWCfpFVe
-	 oCJ+MYQyBMo5UcBBQQLi2Ww1yH6WOZjlaJwB7cKevRxwGTIOa1cNFL1UoyxAqjfgbj
-	 OQGr5cWn5qUIDqVquwp4lLRXKzI68AWyVxBIf/omZW193qPeQ95KDXIocFqnOZO36q
-	 Rr+hxINK0hCDA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH v3 1/9] PM: Use true/false as power.needs_force_resume values
-Date: Fri, 27 Jun 2025 21:06:34 +0200
-Message-ID: <2254988.irdbgypaU6@rjwysocki.net>
-In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
-References: <5018768.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1751051233; c=relaxed/simple;
+	bh=gRH6bQJVT0kWutn4D4yI8XEfW7RwsqVgI38t7XVn1BU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+DEP+lFr/ZQI3i8TplAoaQ5ZAsx9pWYwM+RqraCWqJJQWtMZ1aTcIad0678YHg1xeGzG9x9eiVaL0y/LVwhfm0i9RqxOCeIHs/ZC+urOFeGmWugJd/931rcIQVN096JFOelXG+C3dN6SSi/qr9gf313WLJ2YPE9C71QeqEHmWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ARXunImr; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2edec6c5511so737799fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751051231; x=1751656031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CxznrGwJamZIk/DsTZnWe894P2DXZ821s6aOSzXYpyI=;
+        b=ARXunImrDBslJLJLpsXx8ZlMAA1mbLPIdrdi9JJ5DgmhyPw4PghQSBL/swDFOZaUiJ
+         TIu4XN4rGaGNU08uesxaPE9l33OlZrmCJlXa2fqWt22Ff7HlamgWXYBuncPMR5IWGquO
+         Wo9xfD+E9m0WRfXN1bIwaIiLiz0OUXCo0WhgZ7zoIuT4WlwfnAunQIMdmzSnWY60BcYO
+         tuJjZevfI5lyCYMGnx3QC2JJY8PKc7RHGow4Vcw7A/LioGLYBGVfAMethm4Ync/pAsNb
+         16W4irAUkTleQ+zer8RsYcc7QIZeBafhXlNImfG/btiByo5vFWaKMq6pkozUWmQpIjMc
+         JzDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751051231; x=1751656031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CxznrGwJamZIk/DsTZnWe894P2DXZ821s6aOSzXYpyI=;
+        b=qOXZiLFYmOIJfLbpP/hQtdCkWbn6vKGRG4s9SXjj5ER9R2SHwBIimNikmFscTnV3X9
+         4qfAetxCKg+FJacVMxGFZ5PbCAxDYY1yIqnt6BOJliuv+P0yjtGFFryjz9ffSPAVjufd
+         euziihfbcZarzJGETKVell6WmuFBJmL/98yzY+Cj9sSOn+FetzrGGng4tf679e9VjoDC
+         JicYHHm8/uFCiE3C2Y9gX5ORRcE5eqwJJ9sAawEzmWH2zKTKQ8r8CA7AZ1CrjEjlx5yo
+         DLrEvBNs5C/C3wiZgYcTWOgnOLUkhgCZ/VX6QGflcE7Gid9EvdHAjwKeM46lJSUeyazg
+         XX2w==
+X-Gm-Message-State: AOJu0YwyPC+iZWg5B/SjFNuuc45ym7+CVjpCSNUucbNZhlBRTZj5Fb5X
+	+HKOyGpOnBHJaAqpR0ya/uO2A3MjuCPWzDBIYCGoVRNUhMkLyCZ4EC9OT6D/taOO8VCHpO7+rk0
+	rNcEmvaI=
+X-Gm-Gg: ASbGncsXIkcJPORpaIrrXV5GtPVLg+oa5t/doT5gvYXiaadz5SFlcilv+/dTaxUHCG4
+	pDX04eolYTJ1z/mytbW20akMVYwKafIgok27wnSmmjk+U2yimyQwqwsxPIW7V1AstQMZqqy2uBQ
+	9auBxWOqqHiCpN9CtC9CUcP3yXT8ZDmXdN9Y0ziEOZAZEOIt2Vv4lgFnLWHyjkP+rFninM6irUg
+	A7jhvmu/EOht7D90ik4GN/cqmSsOuKjvkbXmNwIIqFXm5Znc0vboHVn3HLz+CPtrnoT87/ttCX6
+	aEs9y2dDnhOm5X2557il1UyhjOfRthOkKLVcIKpwFlI1EMMraFxY/I037qnEKCyISkYmHA==
+X-Google-Smtp-Source: AGHT+IGVfNhZXgro3rkdSUBFgHThBES7U4lixDdALrjoSVzcMwU+UcYWarThB3QxJ68AA67x/PKgcg==
+X-Received: by 2002:a05:6870:a546:b0:2ea:7963:534e with SMTP id 586e51a60fabf-2efed4a421cmr3358354fac.14.1751051230783;
+        Fri, 27 Jun 2025 12:07:10 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:e9c1:9891:4bfd:dadf])
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2efd50b20eesm1000616fac.27.2025.06.27.12.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 12:07:10 -0700 (PDT)
+Date: Fri, 27 Jun 2025 14:07:07 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/9] Doing it for the consistency in the tree,eliminating
+ the full path to the script
+Message-ID: <be91d221-0182-44bf-8d70-131ed347b738@sabinyo.mountain>
+References: <cover.1750459100.git.unixbhaskar@gmail.com>
+ <4ac24fc6d88cc4cc11ac6a4590562d23882deba6.1750459100.git.unixbhaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTGMUf5ozIUuZ+G+BIWXYkha/UUSG8iYef/kxm9xm6hkRjUOHyA7ODhlX0LkM82tu3/gioP+8IFCKojgM359bQwDK8+Et/4ARqFdHmhplrJHKZ0VtgjrlwYyXmvvdpYVUdf1JyOURJCuMzkqRuTZm2czVaP8HE9H1PaJhRlPZ9EfUAL6faVPh1pEPEDNrasKKnajaDt80jgAqena6b+Ga/fMHBqMgpc5wijOOSzvEIz1Kj+OPpXlzwu28DiYKvDviRLz+AP/+/l1tdwY7Pi+LY85uwwDV2GMwgdvA0e6car0+27HK80G+F56t9nhg4+NCbRhYfIzb72Zr1sNRfIlILnzTh8y9Aowew0zACS1YMkc4FS5X05cXiP1oI4uFWVokdy/hstHyZLyPhQg4MOHg1dzkdLPSQWTJQiEJ9mef+gIKm+fpaqH/3A4wWDCitN8IGuym6nDOVHCNbca6nQK8WCmzRfJFs9+zYJJIHZqZoE3SbxRidEJGUbKHU8DcsIVDHJRTAHPoSBvyaP/nWArnO6cMVtJ2wpSwXLzcvrsv4XNBf0FYoILpYFboLC0SoOomNfMkQ4PqKylB83/YbnIlh6NT9U4p8dvcZ3u8slAeH+HCAnT90FGEZxB6XlRUryCq6Ro0Lu2L6kij6YbqFLDzbWMwQzHg7Vvg+eFpCwMf1rHOA
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ac24fc6d88cc4cc11ac6a4590562d23882deba6.1750459100.git.unixbhaskar@gmail.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Sat, Jun 21, 2025 at 04:08:53AM +0530, Bhaskar Chowdhury wrote:
+> Just try to making things consistent across the tree by eliminating full path
+> to the script.
+> 
+> Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+> ---
+>  smatch_scripts/find_null_params.sh | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/smatch_scripts/find_null_params.sh b/smatch_scripts/find_null_params.sh
+> index 9e39146d2d40..a78eb7623fb4 100755
+> --- a/smatch_scripts/find_null_params.sh
+> +++ b/smatch_scripts/find_null_params.sh
+> @@ -3,7 +3,7 @@
+>  file=$1
+> 
+>  if [[ "$file" = "" ]] ; then
+> -    echo "Usage:  $0 <file with smatch messages>"
+> +	echo "Usage:  $(basename $0) <file with smatch messages>"
 
-Since power.needs_force_resume is a bool field, use true/false
-as its values instead of 1/0, respectively.
+I don't love tab indents for bash scripts.  I know that the kernel does
+this for scripts but I don't love it there either.  So I've been hand
+editing these patches.  It's easy for me to hand edit these in my email
+client so no worries.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+>      exit 1
+>  fi
+> 
+> @@ -13,7 +13,7 @@ cat null_calls.txt unchecked | sort | uniq -d > null_params.txt
+>  IFS="
+>  "
+>  for i in $(cat null_params.txt) ; do
+> -	grep "$i" $file | grep -w undefined
+> +	grep "$i" $file | grep -w undefined
 
-v2 -> v3: No changes.
+In this case I think you were removing a space from the end of the line
+but somehow your email client seems to have deleted it so the patch
+didn't apply.  I did this manually as well, but you may want to fix that.
 
-v1 -> v2: Added R-by from Ulf.
+Anyway, all of these are applied now.
 
----
- drivers/base/power/runtime.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1827,7 +1827,7 @@
- 	dev->power.request_pending = false;
- 	dev->power.request = RPM_REQ_NONE;
- 	dev->power.deferred_resume = false;
--	dev->power.needs_force_resume = 0;
-+	dev->power.needs_force_resume = false;
- 	INIT_WORK(&dev->power.work, pm_runtime_work);
- 
- 	dev->power.timer_expires = 0;
-@@ -1997,7 +1997,7 @@
- 		pm_runtime_set_suspended(dev);
- 	} else {
- 		__update_runtime_status(dev, RPM_SUSPENDED);
--		dev->power.needs_force_resume = 1;
-+		dev->power.needs_force_resume = true;
- 	}
- 
- 	return 0;
-@@ -2047,7 +2047,7 @@
- 
- 	pm_runtime_mark_last_busy(dev);
- out:
--	dev->power.needs_force_resume = 0;
-+	dev->power.needs_force_resume = false;
- 	pm_runtime_enable(dev);
- 	return ret;
- }
-
-
+regards,
+dan carpenter
 
 
