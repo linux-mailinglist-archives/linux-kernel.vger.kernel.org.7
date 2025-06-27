@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-705658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E84CAEABE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:48:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307D8AEABEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A38567F4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25031C4569B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF03194AD5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEAB1946BC;
 	Fri, 27 Jun 2025 00:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoCzdsbk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+HcB2Y3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE52188006;
-	Fri, 27 Jun 2025 00:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0804A16DEB1;
+	Fri, 27 Jun 2025 00:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750985229; cv=none; b=m/sNdHSGVq1rXuCMDrKaXjgzOianr7ZdW2N2SPXMnJAgsSubRLgNljGjzC4mGPkf+sUPy0tUBxcKmuJR3vpH5+zjuCZRyKKRYKmtigH3VguRlEONooWa1SRO9b3B9mChUCdPdx6Acc0yG77Sf33ZAZGqybA2jSpeviPdDhnGxpE=
+	t=1750985229; cv=none; b=sOLW8Jd+23NQas0oaAidKA3r3h0vDfn65kcgND2e8bV0PmUBmv/UHEA5uQL8ZNuEU1abnMknrc5OBaIrY/2Cq0cX9ULF8M9Rqq6T5dlQYijYpMaz8QbPaAqxtrkzN/VC7GZ0HEefO3f6q/TL0sVZmMF+sm/mBzv8kDXCWoa9bQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1750985229; c=relaxed/simple;
-	bh=Sy0MNRkr7OgPAHkYaJle+oDt6of3ltgYZS+pBtmnxsg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iV545AR7AaW/MokXQKyUas3+yYmeEBS+z6EBdCpOczLtPls2nL23rzvWlQC9T3oqebsME8a5XOUGSs5zrDwB5FYq3RoqeTJI+JlIP/croIUu2JoKBPnn+ECFwbOCv3Grv9NjsqvfAT0sbKch/fIsnMK21sYbxOHnPumtkcbs/GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoCzdsbk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5888C4CEF3;
+	bh=N6BtiYtAE91IjBviDHOKuD3lvCAmE+hW+1yotu7D/9g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cv3Yw0dJINb0PFf9BoLNDVoGtGKCIUCrwo1yw8pe/dxIIYvSTnOtnpHTo4TQzhRagbGilosVitNTi91fuzD8TNQprD1QRDN8XIZLWa+oO1zfa3P9BTxDMJc24d7LTBqlSSWc+gGDJCdP1UF5vGHExDRThIWsxpZST1a1bWQER9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+HcB2Y3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66B1EC4CEF0;
 	Fri, 27 Jun 2025 00:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750985229;
-	bh=Sy0MNRkr7OgPAHkYaJle+oDt6of3ltgYZS+pBtmnxsg=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=VoCzdsbkoo5sJQ5ESRkQH6mdo6fdZbKn223ORwnlRljqQfJxlMZXm4fARn4KKSWG7
-	 SQDiY0v8hoj/YxqCxbiDHrW4e0aXYOwPamWrDx5wePdwKeToVxyvHLe7TknxzveLSO
-	 pMy46atriyTYv9jc9RMvWIfJhX0WWaZGNu3eugoLxwa83Y0T93+qNYTwyvn2NtNa1x
-	 C7NvyS0X/HSvqQaV6cj2eCdthkpDw7Bv7tFhHcqHUoJBt3EvRUabqzlq6Bm2Q2JbIr
-	 Va9ewMSgzlu0z8c5uk2Hr9YRwqwUVb0arnAMLRYCAiLO868GrjHM0rlNsoDEKqdE4D
-	 sosbrhir9Dv9w==
+	s=k20201202; t=1750985228;
+	bh=N6BtiYtAE91IjBviDHOKuD3lvCAmE+hW+1yotu7D/9g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=h+HcB2Y3aEPv5xWqHZTcTioJJpF+LEjGSG2p45BLGMVfee5HYtBrACShOt8LDtDAW
+	 eG/scDecAw78231X0JNk3lktihknlZBwq1I8lOVueVb7gNjm+1pvPq+zzYq3nBugTK
+	 awtCgU5rmsE6CHdBv4la7Tyxe/GQxrlI6jPurORwl9fkZYCvLQZYC5jLMd3tH9Kk2v
+	 TfsysL8odTD389uqTpfmi2PXxmEYhj+PDw9mRzg6X6lOgU1aJEyrr3MM7r7Me3si5X
+	 Q+gPWA5JyBuSsdKUgNp2z9EfgdqZwkuQ5gVrGpxA0/AXvyg4bCC+UdJR8SUDtx+tq2
+	 E5hQmMmxVyYkw==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, 
  Melody Olvera <melody.olvera@oss.qualcomm.com>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250616062541.7167-2-krzysztof.kozlowski@linaro.org>
-References: <20250616062541.7167-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] phy: qcom: qmp-combo: Add missing PLL (VCO)
- configuration on SM8750
-Message-Id: <175098522871.106297.918831691026558846.b4-ty@kernel.org>
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250617080401.11147-1-johan+linaro@kernel.org>
+References: <20250617080401.11147-1-johan+linaro@kernel.org>
+Subject: Re: [PATCH] phy: qcom: m31-eusb2: drop registration printk
+Message-Id: <175098522832.106297.6161787629116315639.b4-ty@kernel.org>
 Date: Thu, 26 Jun 2025 17:47:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,21 +63,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 16 Jun 2025 08:25:42 +0200, Krzysztof Kozlowski wrote:
-> Add missing DP PHY status and VCO clock configuration registers to fix
-> configuring the VCO rate on SM8750.  Without proper VCO rate setting, it
-> works on after-reset half of rate which is not enough for DP over USB to
-> work as seen on logs:
+On Tue, 17 Jun 2025 10:04:01 +0200, Johan Hovold wrote:
+> Drivers should generally be quiet on successful probe so drop the
+> registration printk from the recently added M31 EUSB2 driver.
 > 
->   [drm:msm_dp_ctrl_link_train_1_2] *ERROR* max v_level reached
->   [drm:msm_dp_ctrl_link_train_1_2] *ERROR* link training #1 on phy 0 failed. ret=-11
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] phy: qcom: qmp-combo: Add missing PLL (VCO) configuration on SM8750
-      commit: 304c102cff7382353a28039907a7017bde795db9
+[1/1] phy: qcom: m31-eusb2: drop registration printk
+      commit: 2bff9083c1744dc8751ddc0844a65e3bee89f519
 
 Best regards,
 -- 
