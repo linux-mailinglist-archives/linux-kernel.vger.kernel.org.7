@@ -1,95 +1,154 @@
-Return-Path: <linux-kernel+bounces-707318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D0FAEC295
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:19:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C71AEC29B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 324336E69D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5B91C463CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D8F28EA63;
-	Fri, 27 Jun 2025 22:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B356F28F939;
+	Fri, 27 Jun 2025 22:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeVBI21d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFrLFPDF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03EF14F9D6;
-	Fri, 27 Jun 2025 22:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4E28F523
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 22:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751062787; cv=none; b=J4sZ/GMM5O2O4SsqR99cdiwfHCjdD/aQ730UDD1pBwdGNyEDbyo8v/IP37IQrx/KMZ71J3guIqHiJi9u9LPfrhbbVxNRbYJzU5FqJz06Wnds+nnmI61pRajH4YWHLY3Hlwi0/rjPOlWHSAHu8XlSegknnr3BGYZ+opstgVoYUTE=
+	t=1751063293; cv=none; b=fQrHrqV6mUoqMe4UpMkqwvwDGnDsPP40ZaK0iMg5qtolia/ambv11zKTTb4wiBBvaeNZHyegKA66UjPMGIy3KO9s6BQHq/VtqHv3I134ZSquYPwGue4hvJC+3wFGzd9KZnD7zQUFHg7/y1uL9koTpNMVckzMzmIskCimJi2NiTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751062787; c=relaxed/simple;
-	bh=N0V4BZdMH/VMOZWlTiUnUi2RLPy+t6c7H7VRP1hkvI4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Pvvg1sA15DdHU1oTEzJOwMD6sVruAtxMD6ctob0Ue/kILa203NJK414/AXfSwq/+EhO79nf5I5Hhv1vdHHqI3gNioRXrp6zZP35AIHanR8BjemgZdFzBGK6o7lwYsFciPN0Ez1LUrZ0azNIDlcLNXatgd5HxbQLFoqQmvTEzReU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeVBI21d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49578C4CEE3;
-	Fri, 27 Jun 2025 22:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751062787;
-	bh=N0V4BZdMH/VMOZWlTiUnUi2RLPy+t6c7H7VRP1hkvI4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TeVBI21dhl1/DYXVMMVKW2B705RhlpboV6f4DisDbPbjiTsap8ypete8NTP5D4fec
-	 pzvE+wXwp/Xm302YK9sP3ZJ+WAn20UiKglAwi/eAfO5BrBX1YBGe6xbt1NhzUO50fP
-	 p9oIAFBcIk1ONe4Smm4GRmG/id1OvEoRFXKKVw/AZ0YhugVKHL/ub6/5vCzdafl10V
-	 x22tJi6dzPbpsrmbVS5zoGNYtVOq428UeFc705zAGJoG4RCRe7rpUn1pHE/d/jr5oS
-	 /C9aBmRP3RcfHvVR/RB9wYfPBRPdXZgwABvdkXdoZnivnunjpcSOH8rVUjzluDqFtP
-	 cFr1fiazE3ZXA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DA238111CE;
-	Fri, 27 Jun 2025 22:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751063293; c=relaxed/simple;
+	bh=mvyzCImA9C9zhndmyufLSspMX/CTzojFGEHMAVwofdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mA1FdR6ROITS13lDdgHxRMowUEIQPh6whzPhHpKY8B/yR68xNdo3W3qmXPAVnjX9jZRXgXtvhtqJYGjTRUs0BQDBsIlMPIgRmfhxDaoQVYvU8eEbPXvmjSrZ3GDayklUlT0kkCp0BHYNAbxqRUPdFl8+9FLdVcVODnBndOoolzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFrLFPDF; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751063291; x=1782599291;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mvyzCImA9C9zhndmyufLSspMX/CTzojFGEHMAVwofdc=;
+  b=oFrLFPDFC9xXUeW+J/AUwmpQoSIqQUD2vO/FRIwN2z6/pRg7px3DfAcB
+   7haHyVN5mNK4V3pBvkrNJ0Nb1f9nkOtZUevmwpFKkq6WnNyKyzl9MyisG
+   UwGeYX5JS79KEJztbtZKHCatIh1WQqFns01nsHcOfzdOeMZ3mFo6mMcf0
+   nDX0sy+aNAyL++mXcPBkFnVgulV5rTuxlDVb9JqwlF2+AimmGmbig09z1
+   Pzm+Li/DlkRKQ4yCdYeeDW55rLZpMEqcQWGYjBfq2+Gbt19mJht6E0XN3
+   FUSWQzTfwrYuxUVu4bMcrbrFBVAYbGHj7cDiDJXCuen19OB3dgUjsVW1y
+   A==;
+X-CSE-ConnectionGUID: 7BWWIwIlS9SdXZzEiyyzqw==
+X-CSE-MsgGUID: F+0mj1WIQFOU1577nx/wng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="64074396"
+X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
+   d="scan'208";a="64074396"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 15:28:10 -0700
+X-CSE-ConnectionGUID: eUDheSWeQDugdt2kld5bYQ==
+X-CSE-MsgGUID: VYGaKQjMRM+ErcoFLQB7xw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
+   d="scan'208";a="156959491"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 15:28:10 -0700
+Date: Fri, 27 Jun 2025 15:28:09 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Fenghua Yu <fenghuay@nvidia.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v6 14/30] x86,fs/resctrl: Support binary fixed point
+ event counters
+Message-ID: <aF8a-bbfn2xhnKXz@agluck-desk3>
+References: <20250626164941.106341-1-tony.luck@intel.com>
+ <20250626164941.106341-15-tony.luck@intel.com>
+ <a14b2ed0-c319-43df-85f1-f97ecd6b688b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 0/2] NFC: trf7970a: Add option to reduce antenna gain
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175106281324.2076129.2162106005861598496.git-patchwork-notify@kernel.org>
-Date: Fri, 27 Jun 2025 22:20:13 +0000
-References: <20250626141242.3749958-1-paul.geurts@prodrive-technologies.com>
-In-Reply-To: <20250626141242.3749958-1-paul.geurts@prodrive-technologies.com>
-To: Paul Geurts <paul.geurts@prodrive-technologies.com>
-Cc: mgreer@animalcreek.com, krzk@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- robh@kernel.org, conor+dt@kernel.org, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, martijn.de.gouw@prodrive-technologies.com
+In-Reply-To: <a14b2ed0-c319-43df-85f1-f97ecd6b688b@nvidia.com>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 26 Jun 2025 16:12:40 +0200 you wrote:
-> The TRF7970a device is sensitive to RF disturbances, which can make it
-> hard to pass some EMC immunity tests. By reducing the RX antenna gain,
-> the device becomes less sensitive to EMC disturbances, as a trade-off
-> against antenna performance.
+On Fri, Jun 27, 2025 at 02:22:18PM -0700, Fenghua Yu wrote:
+> Hi, Tony,
 > 
-> Signed-off-by: Paul Geurts <paul.geurts@prodrive-technologies.com>
+> On 6/26/25 09:49, Tony Luck wrote:
+> > Resctrl was written with the assumption that all monitor events can be
+> > displayed as unsigned decimal integers.
+> > 
+> > Hardware architecture counters may provide some telemetry events with
+> > greater precision where the event is not a simple count, but is a
+> > measurement of some sort (e.g. Joules for energy consumed).
+> > 
+> > Add a new argument to resctrl_enable_mon_event() for architecture code
+> > to inform the file system that the value for a counter is a fixed-point
+> > value with a specific number of binary places.  The file system will
+> > only allow architecture to use floating point format on events that it
+> > marked with mon_evt::is_floating_point.
 > 
-> [...]
+> User app needs to know if a number is a floating pointer value or an integer
+> value. I see you document the energy and activity events as floating point
+> values and all others are integer values.
+> 
+> Is it better to show the value types in info directory?
+> 
+> e.g. create an info file "events_floating" which shows all events with
+> floating point values. Events not in this info are integer by default.
+> 
+> This may have two benefits:
+> 
+> 1. An app can query the type info to parse the values accordingly without
+> hard coding event types.
+> 
+> 2. Any future floating point events can be added here without changing the
+> document.
 
-Here is the summary with links:
-  - [v3,1/2] dt-bindings: net/nfc: ti,trf7970a: Add ti,rx-gain-reduction-db option
-    https://git.kernel.org/netdev/net-next/c/2bee162a28fb
-  - [v3,2/2] NFC: trf7970a: Create device-tree parameter for RX gain reduction
-    https://git.kernel.org/netdev/net-next/c/5d69351820ea
+Maybe. It's obvious which are floating point because the values
+have a "." in them.  Some apps may not care about the difference
+and just read everything as if they are floating point. Maybe
+likely since the next step is to compute the rate with:
+	(current_value - previous_value) / delta_t
+which will be done as a floating point calculation with
+microsecond timestamps.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+But it wouldn't be hard to add an info file that lists which are
+in floating point (maybe also to provide the precision as
+suggested by Dave Martin).
 
+[snip]
 
+> > +static void print_event_value(struct seq_file *m, int binary_bits, u64 val)
+> > +{
+> > +	struct fixed_params *fp = &fixed_params[binary_bits];
+> 
+> Is it worth to have a boundary check here like? I'm afraid without the
+> hardening check, a future caller may give a wrong value and cause hard
+> debugged failure.
+> 
+> if (WARN_ON_ONCE(binary_bits >=MAX_BINARY_BITS))
+> 
+>     return;
+
+Seems like belt and braces overkill. resctrl_enable_mon_event()
+already has a check for MAX_BINARY_BITS and will not enable
+an event if architecture provides a too-large value.
+
+-Tony
 
