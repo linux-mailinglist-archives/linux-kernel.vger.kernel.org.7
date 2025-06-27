@@ -1,292 +1,98 @@
-Return-Path: <linux-kernel+bounces-707180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E860AEC0C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD98AEC0D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF50E563FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D7EF64696A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26FA21ABDC;
-	Fri, 27 Jun 2025 20:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20AB21D3D4;
+	Fri, 27 Jun 2025 20:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w3ZyDFzw"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="PgigF6B0"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62051FF1C7
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 20:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103C8C2FB;
+	Fri, 27 Jun 2025 20:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751055509; cv=none; b=tqkFngWyj9z+sXNjfFuvXMdnMGOT0A8vtN6dp3TPZam8DVZ8QMDtsomBYSo47rEiO1KULF2KRsejbNh1yDHqq7UHTx7ISUS+17jYraUTT5ZDY0wHWZR7DP8J2vvgkZtSKFlRSs+b31A3zlFjox/WZddf+b9baaudsCKc2jVQ+HQ=
+	t=1751055817; cv=none; b=HZjInVjr0UHBK0/zB7Qo2DzCHPKATZ8zCuTOIHuA90r5qoLfNk+eFgDUHIuWBfZ2dRcZt7hdL7unoGatbTWjFSHJV9847UGVxxSyFlSOUSRJofR8eXyWSch6qwLDSVMWfLtUijGoGy8C6cGdxj3iXafi46M08OT/TT74ba6v7Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751055509; c=relaxed/simple;
-	bh=G7F0DcmwVh/tviwW6A2dHXA6/b277Jcy2hQjOKJ+Rzc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eGllE1uIktSR/TI3Spexh6CZsS72yC9sPKm6i6Is7k4X0qjoY9RS/X690AeonAg8evAQanA3ggBkZV5SGCLPCjUHO+L9oxctJA810UV+O9le6e2n2HSUp8TXy7chlTYff0e0ywIy/K8tQ5rEPUMnLBpWl9uPRca/zhxXAKVb1x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w3ZyDFzw; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-740270e168aso2379139b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:18:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751055507; x=1751660307; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NahqSEdHMNEK/vjgQjUji3mOM+Y9TAZbBy8PoHtafsY=;
-        b=w3ZyDFzwaUnoJIY94UHVDzc+v755N0XiMqRMVcfmfPn5E38WkTQ4SgA4KyVeuhEfKV
-         T4rHLzxSkb/JqJrRlNs7TpPo0QgC5HEwdiFjnkBgRzp5OCMR6obRrUBzkWfXLqYz2Pvb
-         PfGNi8yuYcAuec54RaODsEese+I/4foECq6DwUGwYhnarcUYckDdzUn445MMo7w7vzpB
-         1dFp3aR8EaM4B+9f3UhHIj0l4xSuOQ1XGDhJ+9uHwlDiEYyzCQG8KdXE7HSf7EP5oPvX
-         rh6V88/3VkkwmPpDGV5wA+14cZsSLx0uMaVMMNImVtXtykolZS8jJ9j09JU2mJxt6MZb
-         tjUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751055507; x=1751660307;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NahqSEdHMNEK/vjgQjUji3mOM+Y9TAZbBy8PoHtafsY=;
-        b=D3wJZyDc0i23tkej8ccqIEsnek/SnZeuIN3A5WnW1oG7R9ycHzlu9uJzgnKMCf59QI
-         r3FG4RqaKmQAmhnNrPeevi2MEkrx78REt2iJ5KreNj3m8Hep9DmI5g7BC6RbUOiAvncb
-         Rka4y/G9pFMpY+I8rgycszKE9sgVYuQvbGv7/2mM/bD05IVW4tPPfZBLZxc2Ro32nlHP
-         Quc3N715K7u0kF05QG+5sFeEiuVnS6k66ubS1Xpuf44PPCjRXeigcNod79Exu0S8Tdk8
-         1hcCYCf3ZcCjQkoBKuBVQZ2W6TZVFZvxndQsmwcohq/dHqlGyBKlIUEkR0muAC+RmyPQ
-         Tclg==
-X-Gm-Message-State: AOJu0YyLswovBG/8uy117p2V8YguGpGY3Rm3HWS1W2WWB0DfiagkMPzp
-	eDk3qH0/DuOPyV0j3lyC/fEF3FQwZRdrSj4KbGYd7ImUzPPbsUrdC6AfsHd6iwazsMcbtK4BWaW
-	1e/knmB/LRyDKxZ6bikTGNaShv/eRwGNouDM053MoW0o2cl9txjQF+oYTl/A/+k1AVtDi6+rKe6
-	NVVcJlkv/pWXC22f3zvofkLKMvPeYw6d8MwT7ZSa/DIPut
-X-Google-Smtp-Source: AGHT+IERa3xyQGzXWP8szN7hcZv+eUzRuURmnj9SiLw0CJhbkivmmmcbEQpuNU9TWU7ulwjAeXoBO2hKsaU=
-X-Received: from pgcj26.prod.google.com ([2002:a05:6a02:501a:b0:b2c:4548:13d0])
- (user=ctshao job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:2d4c:b0:220:5c12:efa3
- with SMTP id adf61e73a8af0-220a17fa94fmr6287859637.38.1751055506931; Fri, 27
- Jun 2025 13:18:26 -0700 (PDT)
-Date: Fri, 27 Jun 2025 13:16:41 -0700
+	s=arc-20240116; t=1751055817; c=relaxed/simple;
+	bh=8LRAvUFeTwmz4rDd900x+Z+XteT5wGFcJVnT+hGaLP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h3ReBkcaFyx0OS0n5PUmlfN73VlbtJEdBYwYPObiIYOtaVXVFEzNJyYyhJCV2JasNXRz5eW3TrWcCcgX+40c6mMe1a40YL+cOZNowhmeUb1ZYAmCfFvjmOTn32M5DaVI1gFx6GrjZryyoPU1rSbW15hNJI3v1ZAwPAWXH1fCFgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=PgigF6B0; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LNuHdZp1p8Oowbp9pqTlemJ4dhvpEIex6NkU/PUOyGM=; b=PgigF6B0mR7Bk3asa15fereY3a
+	LPqE/FIBEXopIv4s9QCLrpfaYUBgKU1u89vGKeK1muVH7XyHMxbqcQsGG2tS2YrSlQ1uHKiFWBQEz
+	Lr/2r9vFkbEvN0Xv/FYTMn4jCq9aCt2/oLa6gNJjtS2ZChMJNe8/S8m2QWzBrou4fAH4Ckyq127dp
+	tj0V8qFApRZZcxf5YQn2Q9uV1KnKj47ndCt9zpnmIylfOSfIRxx/LNeoDzL/a+dLMHTexTdZsIBNd
+	+4NjBh6x0TVn5T3yxmTcpMY8SqOr555P/xg7x87szaSOqTug4SXO2VZua01RaYpX5c5RbgEUHUhO6
+	4JV762+g==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uVFbI-009XtB-C6; Fri, 27 Jun 2025 22:23:08 +0200
+Message-ID: <96b3d0fa-7fd2-4d2b-a6d6-cc91ed1dca4e@igalia.com>
+Date: Fri, 27 Jun 2025 17:23:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250627201818.479421-1-ctshao@google.com>
-Subject: [PATCH v4] perf stat: Fix uncore aggregation number
-From: Chun-Tse Shao <ctshao@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Chun-Tse Shao <ctshao@google.com>, Ian Rogers <irogers@google.com>, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, weilin.wang@intel.com, james.clark@linaro.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/7] selftests/futex: Add ASSERT_ macros
+To: Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, Peter Zijlstra
+ <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-api@vger.kernel.org, kernel-dev@igalia.com,
+ Darren Hart <dvhart@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Waiman Long <longman@redhat.com>
+References: <20250626-tonyk-robust_futex-v5-0-179194dbde8f@igalia.com>
+ <20250626-tonyk-robust_futex-v5-1-179194dbde8f@igalia.com>
+ <87ecv6p364.ffs@tglx>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <87ecv6p364.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Follow up:
-lore.kernel.org/CAP-5=fVDF4-qYL1Lm7efgiHk7X=_nw_nEFMBZFMcsnOOJgX4Kg@mail.gmail.com/
+Em 26/06/2025 19:07, Thomas Gleixner escreveu:
+> On Thu, Jun 26 2025 at 14:11, André Almeida wrote:
+> 
+>> Create ASSERT_{EQ, NE, TRUE, FALSE} macros to make test creation easier.
+> 
+> What's so futex special about this that it can't use the same muck in
+> 
+> tools/testing/selftests/kselftest_harness.h
+> 
 
-The patch adds unit aggregation during evsel merge the aggregated uncore
-counters. Change the name of the column to `ctrs` and `counters` for
-json mode.
+My previous version of this test used kselftest_harness.h, but Shuah 
+request to keep consistency and don't use this header, giving that the 
+rest of futex test doesn't use it:
 
-Tested on a 2-socket machine with SNC3, uncore_imc_[0-11] and
-cpumask="0,120"
-Before:
-  perf stat -e clockticks -I 1000 --per-socket
-  #           time socket cpus             counts unit events
-       1.001085024 S0        1         9615386315      clockticks
-       1.001085024 S1        1         9614287448      clockticks
-  perf stat -e clockticks -I 1000 --per-node
-  #           time node   cpus             counts unit events
-       1.001029867 N0        1         3205726984      clockticks
-       1.001029867 N1        1         3205444421      clockticks
-       1.001029867 N2        1         3205234018      clockticks
-       1.001029867 N3        1         3205224660      clockticks
-       1.001029867 N4        1         3205207213      clockticks
-       1.001029867 N5        1         3205528246      clockticks
-After:
-  perf stat -e clockticks -I 1000 --per-socket
-  #           time socket ctrs             counts unit events
-       1.001026071 S0       12         9619677996      clockticks
-       1.001026071 S1       12         9618612614      clockticks
-  perf stat -e clockticks -I 1000 --per-node
-  #           time node   ctrs             counts unit events
-       1.001027449 N0        4         3207251859      clockticks
-       1.001027449 N1        4         3207315930      clockticks
-       1.001027449 N2        4         3206981828      clockticks
-       1.001027449 N3        4         3206566126      clockticks
-       1.001027449 N4        4         3206032609      clockticks
-       1.001027449 N5        4         3205651355      clockticks
+https://lore.kernel.org/lkml/fe02f42b-7ba8-4a3b-a86c-2a4a7942fd3b@linuxfoundation.org/
 
-Tested with JSON output linter:
-  perf test "perf stat JSON output linter"
-   94: perf stat JSON output linter                                    : Ok
-
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Chun-Tse Shao <ctshao@google.com>
----
-v4:
-  Modify perf-stat.txt and json output lint test
-
-v3: https://lore.kernel.org/20250624221545.1711008-1-ctshao@google.com/
-  Rename the column to `ctrs` and `counters` in json mode.
-
-v2: https://lore.kernel.org/20250612225324.3315450-1-ctshao@google.com/
-  Rename the column to `aggr_nr`.
-  Remove unnecessary comment.
-
-v1: https://lore.kernel.org/20250611233239.3098064-1-ctshao@google.com/
-
-
- tools/perf/Documentation/perf-stat.txt        |  6 ++--
- .../tests/shell/lib/perf_json_output_lint.py  |  4 +--
- tools/perf/util/stat-display.c                | 34 +++++++++----------
- tools/perf/util/stat.c                        |  2 +-
- 4 files changed, 24 insertions(+), 22 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index 61d091670dee..1a766d4a2233 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -640,18 +640,20 @@ JSON FORMAT
- With -j, perf stat is able to print out a JSON format output
- that can be used for parsing.
-
--- timestamp : optional usec time stamp in fractions of second (with -I)
-+- interval : optional timestamp in fractions of second (with -I)
- - optional aggregate options:
- 		- core : core identifier (with --per-core)
- 		- die : die identifier (with --per-die)
- 		- socket : socket identifier (with --per-socket)
- 		- node : node identifier (with --per-node)
- 		- thread : thread identifier (with --per-thread)
-+- counters : number of aggregated PMU counters
- - counter-value : counter value
- - unit : unit of the counter value or empty
- - event : event name
- - variance : optional variance if multiple values are collected (with -r)
--- runtime : run time of counter
-+- event-runtime : run time of the event
-+- pcnt-running : percentage of time the event was running
- - metric-value : optional metric value
- - metric-unit : optional unit of metric
-
-diff --git a/tools/perf/tests/shell/lib/perf_json_output_lint.py b/tools/perf/tests/shell/lib/perf_json_output_lint.py
-index 9e772a89ce38..c6750ef06c0f 100644
---- a/tools/perf/tests/shell/lib/perf_json_output_lint.py
-+++ b/tools/perf/tests/shell/lib/perf_json_output_lint.py
-@@ -45,7 +45,7 @@ def is_counter_value(num):
-
- def check_json_output(expected_items):
-   checks = {
--      'aggregate-number': lambda x: isfloat(x),
-+      'counters': lambda x: isfloat(x),
-       'core': lambda x: True,
-       'counter-value': lambda x: is_counter_value(x),
-       'cgroup': lambda x: True,
-@@ -75,7 +75,7 @@ def check_json_output(expected_items):
-       if count not in expected_items and count >= 1 and count <= 7 and 'metric-value' in item:
-         # Events that generate >1 metric may have isolated metric
-         # values and possibly other prefixes like interval, core,
--        # aggregate-number, or event-runtime/pcnt-running from multiplexing.
-+        # counters, or event-runtime/pcnt-running from multiplexing.
-         pass
-       elif count not in expected_items and count >= 1 and count <= 5 and 'metricgroup' in item:
-         pass
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 729ad5cd52cb..9cb5245a92aa 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -50,15 +50,15 @@ static int aggr_header_lens[] = {
- };
-
- static const char *aggr_header_csv[] = {
--	[AGGR_CORE] 	= 	"core,cpus,",
--	[AGGR_CACHE]	= 	"cache,cpus,",
--	[AGGR_CLUSTER]	= 	"cluster,cpus,",
--	[AGGR_DIE] 	= 	"die,cpus,",
--	[AGGR_SOCKET] 	= 	"socket,cpus,",
--	[AGGR_NONE] 	= 	"cpu,",
--	[AGGR_THREAD] 	= 	"comm-pid,",
--	[AGGR_NODE] 	= 	"node,",
--	[AGGR_GLOBAL] 	=	""
-+	[AGGR_CORE]	=	"core,ctrs,",
-+	[AGGR_CACHE]	=	"cache,ctrs,",
-+	[AGGR_CLUSTER]	=	"cluster,ctrs,",
-+	[AGGR_DIE]	=	"die,ctrs,",
-+	[AGGR_SOCKET]	=	"socket,ctrs,",
-+	[AGGR_NONE]	=	"cpu,",
-+	[AGGR_THREAD]	=	"comm-pid,",
-+	[AGGR_NODE]	=	"node,",
-+	[AGGR_GLOBAL]	=	""
- };
-
- static const char *aggr_header_std[] = {
-@@ -304,7 +304,7 @@ static void print_aggr_id_std(struct perf_stat_config *config,
- 		return;
- 	}
-
--	fprintf(output, "%-*s %*d ", aggr_header_lens[idx], buf, 4, aggr_nr);
-+	fprintf(output, "%-*s %*d ", aggr_header_lens[idx], buf, /*strlen("ctrs")*/ 4, aggr_nr);
- }
-
- static void print_aggr_id_csv(struct perf_stat_config *config,
-@@ -366,27 +366,27 @@ static void print_aggr_id_json(struct perf_stat_config *config, struct outstate
- {
- 	switch (config->aggr_mode) {
- 	case AGGR_CORE:
--		json_out(os, "\"core\" : \"S%d-D%d-C%d\", \"aggregate-number\" : %d",
-+		json_out(os, "\"core\" : \"S%d-D%d-C%d\", \"counters\" : %d",
- 			id.socket, id.die, id.core, aggr_nr);
- 		break;
- 	case AGGR_CACHE:
--		json_out(os, "\"cache\" : \"S%d-D%d-L%d-ID%d\", \"aggregate-number\" : %d",
-+		json_out(os, "\"cache\" : \"S%d-D%d-L%d-ID%d\", \"counters\" : %d",
- 			id.socket, id.die, id.cache_lvl, id.cache, aggr_nr);
- 		break;
- 	case AGGR_CLUSTER:
--		json_out(os, "\"cluster\" : \"S%d-D%d-CLS%d\", \"aggregate-number\" : %d",
-+		json_out(os, "\"cluster\" : \"S%d-D%d-CLS%d\", \"counters\" : %d",
- 			id.socket, id.die, id.cluster, aggr_nr);
- 		break;
- 	case AGGR_DIE:
--		json_out(os, "\"die\" : \"S%d-D%d\", \"aggregate-number\" : %d",
-+		json_out(os, "\"die\" : \"S%d-D%d\", \"counters\" : %d",
- 			id.socket, id.die, aggr_nr);
- 		break;
- 	case AGGR_SOCKET:
--		json_out(os, "\"socket\" : \"S%d\", \"aggregate-number\" : %d",
-+		json_out(os, "\"socket\" : \"S%d\", \"counters\" : %d",
- 			id.socket, aggr_nr);
- 		break;
- 	case AGGR_NODE:
--		json_out(os, "\"node\" : \"N%d\", \"aggregate-number\" : %d",
-+		json_out(os, "\"node\" : \"N%d\", \"counters\" : %d",
- 			id.node, aggr_nr);
- 		break;
- 	case AGGR_NONE:
-@@ -1317,7 +1317,7 @@ static void print_header_interval_std(struct perf_stat_config *config,
- 	case AGGR_CLUSTER:
- 	case AGGR_CACHE:
- 	case AGGR_CORE:
--		fprintf(output, "#%*s %-*s cpus",
-+		fprintf(output, "#%*s %-*s ctrs",
- 			INTERVAL_LEN - 1, "time",
- 			aggr_header_lens[config->aggr_mode],
- 			aggr_header_std[config->aggr_mode]);
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 355a7d5c8ab8..b0205e99a4c9 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -526,7 +526,7 @@ static int evsel__merge_aggr_counters(struct evsel *evsel, struct evsel *alias)
- 		struct perf_counts_values *aggr_counts_a = &ps_a->aggr[i].counts;
- 		struct perf_counts_values *aggr_counts_b = &ps_b->aggr[i].counts;
-
--		/* NB: don't increase aggr.nr for aliases */
-+		ps_a->aggr[i].nr += ps_b->aggr[i].nr;
-
- 		aggr_counts_a->val += aggr_counts_b->val;
- 		aggr_counts_a->ena += aggr_counts_b->ena;
---
-2.50.0.727.gbf7dc18ff4-goog
+> or at least share the implementation in some way?
+> 
+> Thanks,
+> 
+>          tglx
 
 
