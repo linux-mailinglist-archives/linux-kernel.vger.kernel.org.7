@@ -1,75 +1,103 @@
-Return-Path: <linux-kernel+bounces-706595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44A3AEB8D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:27:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A8FAEB8E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2920456024A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:27:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FE3165A0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5C22D9ED9;
-	Fri, 27 Jun 2025 13:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EA12D9EF7;
+	Fri, 27 Jun 2025 13:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B3zP03eW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="F2sGGhti";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NI6wyCok"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F4B2D3EFC
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9B32D9EDE
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751030828; cv=none; b=nKAnebU1Tt596txUY4ZpI9JLv3Ibz4kGa+jdr+OP6Ql1va/7KRYmi87saT8ftUk5aXS1Q97XB7YYmixzEVMGE2VN69P7/fWj3P9rv97DdE1uUKmuzNgqo495FTsgix+OvJeeZzqvO+JcBgrPTNhONnpr5QMWMKMB1pb17oZrgNw=
+	t=1751030866; cv=none; b=toZR6EU+op7hPUxl/OWxSf10Rpwzt54y/Ymzdylb6xoxR/PoluS62eGXYyuxw9VG+d+rUBSExwx2MeqxTZW5VpZFEfRDa3NhA8PKbsWCZa34hvyM/OWG4rSuvx0/9XE5JS6wqslW+/hBSj3bgfJM6Q7/TGIPGU2Qmma8p7nyJiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751030828; c=relaxed/simple;
-	bh=+kIQ5VHvJN30K60J0VWbUzogD9+6Rd5JFkoTsIYhD3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P5ka7cD51rE4Hq1UwciQUfV/YFHrTyELl21O6g1RK3PO31gfJBDFzwiPg9rLXMShdBDZWphebmuBI2yy6RAXj+axTZvbNJ7M7TENL1V5NjbrGIXhwOIGkvhxf22L7riachzo3N2PAPMyf9zqoYX8r6YvrXWbfd5EffmO+Ev5MZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B3zP03eW; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751030827; x=1782566827;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=+kIQ5VHvJN30K60J0VWbUzogD9+6Rd5JFkoTsIYhD3k=;
-  b=B3zP03eWNduVqbzpOoBuBzVurd6hzxV0rNehGnb9t8OrLxhp++KQ/OPZ
-   c6ECjl+f910cOJClQV5b2/SOupJAYNpBZBKsRN+BpgHf/HK/rXrOR4Qa4
-   B85B7TUT+MDjVEPoOit6Ao02/T0J0nEGQdM4L7ivP1GhSVDkHzW5DYh+A
-   I4laL2+54p4rYREDAArc7SQtn5+oBIPmvFJ+fsfVZLsi5/cdB7TIinJx4
-   QTkiYZoA+37e6KOYacZHAM+fdBU4nZ4Y89eKUYy5behxiSybpJvOpyppM
-   mFRYM+Nr5hJQlmdaDYKUtQlwqbj0OyweGZhQ9B85yuk76xJL0n6c7GOFD
-   A==;
-X-CSE-ConnectionGUID: gfnOR12uQcCeaFb2roKi/Q==
-X-CSE-MsgGUID: X8bfJcfvRZ64yFgvfVjprw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="70913322"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="70913322"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 06:27:06 -0700
-X-CSE-ConnectionGUID: fGQwhC+nQkuusG5LaKpopQ==
-X-CSE-MsgGUID: IIfp3XjgQJqgOYa7qXHVWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="152329228"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 27 Jun 2025 06:27:04 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uV96c-000WCU-0v;
-	Fri, 27 Jun 2025 13:27:02 +0000
-Date: Fri, 27 Jun 2025 21:26:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb James DeLisle <cjd@cjdns.fr>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: kismet: WARNING: unmet direct dependencies detected for
- SERIAL_OF_PLATFORM when selected by ECONET
-Message-ID: <202506272102.tz4YMFgc-lkp@intel.com>
+	s=arc-20240116; t=1751030866; c=relaxed/simple;
+	bh=VMy2QYvZtXZt3bSoOwLnQuWz3ohhDDM7Vc57rhdFeog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkUX2lF/XGVFoPZSzsMc6B85Y2P0tRiuRusvtnHZGaKIgwhJrCL5Hw19hnYzK22TNcSI/iTbePIVAO7PmyhauDlCZOVXWzGmJsNtorHLAC9eUa+GudKTB1VZKJdRGGrPThl9RVx2DFen0XYdWUsvcTIWjGMZkTDyGicb9nweu8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=F2sGGhti; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NI6wyCok; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A8FF31400052;
+	Fri, 27 Jun 2025 09:27:42 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Fri, 27 Jun 2025 09:27:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1751030862; x=
+	1751117262; bh=/b4iuZGO2uIWibX0BVFmtq5puu53/x9osr3KMvrinfw=; b=F
+	2sGGhti0sJo/1dRe8v1sjfMEvaHollSaRCoy89v6Y4YobZMrXYAyBnbVLfPKSDCA
+	r3SMtQMu+qPj3ObPSq1ioQTGvAMbSEGER/iOdvS4iQsTBXjU92pBC3BE3YWuxJK2
+	Fkcy/FPZjEGUTj7idf47N8Z4ETdKwXX82BWoV19ewVbTs7tZ9KtSodKv+s3qBrd6
+	PmNAaGPK2PPwGPHOwNyS2QtmFqkZnO784uDTJ5eiq4S6K7RYagyiBSWGBylEAeAi
+	ZTZMZEtDsTafcpbjWAqgiTnCygw2cDYc7L6cTwhRjUrBIuYpRI8uBhmWaDlXFYqk
+	+ozl0Vn93WRcGHOSHTNHw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1751030862; x=1751117262; bh=/b4iuZGO2uIWibX0BVFmtq5puu53/x9osr3
+	KMvrinfw=; b=NI6wyCok7BUwWgvJ36RuQG4tS017o4v6W21XC63019fDOkzStNU
+	F7FZaFzeqQQP4z7xVJY7vFXpHM3n0wWzcBzUIcz90x7IjFCOissNL19fZEVELfnS
+	LpsJK3JL30qkLExbeZMEZCgNBu7wNpqsBnaKU7ucsrjceAQroNP8B+3B4Hf713kZ
+	xGdfTSzrd5l/WovXQzxH8udN8Ab+sVv2qvUX0/xAR85wwGy0UTCV6LCrrS+9EsTv
+	CGGLq3tAEvHk+odR6pmbQVOSHHj5SQSJmjeH2SThRyOkDy4iyEwzksS0JA8Rk8T5
+	sgOj9qnCzbz5yTIl8xVSWN7UmXeSmOq4zUA==
+X-ME-Sender: <xms:TZxeaDwYAgHyy4ZR7dluWKBO3Vjo3zEgeOgJix8dfCjf2moLeu00GA>
+    <xme:TZxeaLRV8PYObThkDin5KyU-AonibZnqXiUziykNUrXUzOtYdmz5V2O3HzlEK-aSQ
+    -gnj-g8BRdWejKvbfE>
+X-ME-Received: <xmr:TZxeaNWNpCKHDMrNvlcwsaTiCjG810YGN2fHnB4gdQ8k7f_furE4W1Q2s3s93Pf1DmsL4g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepfdfmihhrihhllhcu
+    tedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqe
+    enucggtffrrghtthgvrhhnpeffvdevueetudfhhfffveelhfetfeevveekleevjeduudev
+    vdduvdelteduvefhkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthht
+    ohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrihgvlhesshhurhhrih
+    gvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
+    dprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+    pdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvg
+    hriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsphesrghlihgvnhekrdgu
+    vgdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrggurg
+    hvrdgrmhhithesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:TZxeaNgtvVIm2zgCajRBHuh9fYB3wLrcr41ym4mTpWYM1Oii1mIvdA>
+    <xmx:TZxeaFBZIAERDDpnc4vel2juOSoul2uJfN-coYRHeCft2y59aCwT2g>
+    <xmx:TZxeaGKDqsEhpi9ejJVoNQd-qGkut-g3gARcT--RUqfvKTSMFHC-Wg>
+    <xmx:TZxeaECOmTRaQaLcimjitifDyzyerk9im8xOwxBFzYuPwl5kdK1VWA>
+    <xmx:TpxeaNc1maR6rhlEKHLD6Gn_daT06FkBBLObToJmSlmVL9h58p6-CZ1C>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 27 Jun 2025 09:27:37 -0400 (EDT)
+Date: Fri, 27 Jun 2025 16:27:33 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Rik van Riel <riel@surriel.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org, bp@alien8.de, 
+	x86@kernel.org, nadav.amit@gmail.com, seanjc@google.com, tglx@linutronix.de, 
+	mingo@kernel.org, Rik van Riel <riel@fb.com>
+Subject: Re: [RFC PATCH v4 6/8] x86/mm: use RAR for kernel TLB flushes
+Message-ID: <um6emftj5lmto2ivddovvxl7lz4uvwduuwq725a3n7qykepmtc@cq6y4yez2hcv>
+References: <20250619200442.1694583-1-riel@surriel.com>
+ <20250619200442.1694583-7-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,27 +106,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250619200442.1694583-7-riel@surriel.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   67a993863163cb88b1b68974c31b0d84ece4293e
-commit: 35fb26f94dfa1b291086b84b2421f957214824d1 mips: Add EcoNet MIPS platform support
-date:   5 weeks ago
-config: mips-kismet-CONFIG_SERIAL_OF_PLATFORM-CONFIG_ECONET-0-0 (https://download.01.org/0day-ci/archive/20250627/202506272102.tz4YMFgc-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20250627/202506272102.tz4YMFgc-lkp@intel.com/reproduce)
+On Thu, Jun 19, 2025 at 04:03:58PM -0400, Rik van Riel wrote:
+> From: Rik van Riel <riel@fb.com>
+> 
+> Use Intel RAR for kernel TLB flushes, when enabled.
+> 
+> Pass in PCID 0 to smp_call_rar_many() to flush the specified addresses,
+> regardless of which PCID they might be cached under in any destination CPU.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> ---
+>  arch/x86/mm/tlb.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 39f80111e6f1..8931f7029d6c 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -21,6 +21,7 @@
+>  #include <asm/apic.h>
+>  #include <asm/msr.h>
+>  #include <asm/perf_event.h>
+> +#include <asm/rar.h>
+>  #include <asm/tlb.h>
+>  
+>  #include "mm_internal.h"
+> @@ -1468,6 +1469,18 @@ static void do_flush_tlb_all(void *info)
+>  	__flush_tlb_all();
+>  }
+>  
+> +static void rar_full_flush(const cpumask_t *cpumask)
+> +{
+> +	guard(preempt)();
+> +	smp_call_rar_many(cpumask, 0, 0, TLB_FLUSH_ALL);
+> +	invpcid_flush_all();
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506272102.tz4YMFgc-lkp@intel.com/
-
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM when selected by ECONET
-   WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM
-     Depends on [n]: TTY [=n] && HAS_IOMEM [=y] && SERIAL_8250 [=n] && OF [=y]
-     Selected by [y]:
-     - ECONET [=y]
+I don't follow why do we need to call invpcid_flush_all() here in addition
+to smp_call_rar_many(). Hm?
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  Kiryl Shutsemau / Kirill A. Shutemov
 
