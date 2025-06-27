@@ -1,199 +1,337 @@
-Return-Path: <linux-kernel+bounces-705765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945F4AEAD82
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:45:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CA8AEAD89
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:48:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8733BF9DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8FEA4A5722
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056BC19E990;
-	Fri, 27 Jun 2025 03:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A979199935;
+	Fri, 27 Jun 2025 03:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LVRleTtu"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2051.outbound.protection.outlook.com [40.107.92.51])
+	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="a862vnOS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m7MZDuO3"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CC115746E;
-	Fri, 27 Jun 2025 03:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750995891; cv=fail; b=mgsOaRAI7SdHfpW5wp/TyJ8oPJjqx0jiyaCasXA9ZFBTfrHvZuzFQd7t/7KGQW2/xjWES7jcd6SaKXO2taUKolRwbJl2ZYOVs+vgUfih3EoXbGyeVDRI96mqAzoy9S9RmZTZEp3HmIEWNpR0ev9jJjlcaYTRCJAqyGDf6j+qepw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750995891; c=relaxed/simple;
-	bh=VJkKv8ZsRyzFio8SOugo1OrIJ4s5O7Qy26/7lJIOBV8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WTD4NsX/OK3pkw+GTojHdh+c4eLDxuPlm5E7A2Xs6oBaprvan8K5EwOtsk6wOhzion+WW39USJJf6ivsscRyiwQM82Gop46l7AK62cm2lTb7kyqqPwMKIiw5leCbfkjzKLgCyh3iXkjSxwOvbGiLDRJJ8k/grv5deNfogj1Ress=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LVRleTtu; arc=fail smtp.client-ip=40.107.92.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BZ2fCBnALUWiiE46t+gpcVA+lkbple3xPMSuUAhDaixqOMOZ4ECXP1GT7mLL5M0vLfwxnMbYZSB7AgDYsWzWNpqBIfCivNGxoYPHwyF2tCRsLtMXTIEmfbPXqWdYR12o5ENlBCV3pQ+Dq6tik69/kgZv/zPCSNhWE3vMonYZOg/GxvDA3WUqBVRp8rQh67hpXcsVlWwD3TU9x6ABOcD2E0Xhp1ymGwCynNk/sf2NdnEKD22nG59HUMaxLscOXV1V62AsSQp68Vdn9uOm/R1tmowtWBXrmRRPUvl8/yhAn2HXbKn38sNR3Abm1yFtDowkhjEBdQ0qzB7V21U9qMDVuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1LA2jxf4Xkekbo9EjIvEp5EOUeltDYFJgEb8htNcLz4=;
- b=PyEtatMyulJA/pTGoRM44xrzJVoxIY5772lhIl7hna5gwA/S0O0+Dl6bpwVPUmC5FI3/k1sIwDfDcBJvxKYgj0Nx8EfXumFesDwhBGTeavwkkDZ+uaQsCtz2DCfF9aS3EGhWvDFolZnZ3KKU9y/k6nGuKNQb01XZh5TXYabTV3kkPnmi2yrrIrvrBplVmSyE2xM6WWyDT8Lr/6U1XFbtvaBHpvj0kR+HWBlqxlFDdY0AHMS8839Lnm6lcAiOHTubm6GUTFv5piAwHLMXP+dlF+lwwsl7HCSQ9iQQbYSoQjaKujDTI7FAM982ZmoSf76CYJTGNog/YrKzN7XmaLTwhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1LA2jxf4Xkekbo9EjIvEp5EOUeltDYFJgEb8htNcLz4=;
- b=LVRleTtuV3z5ffdkeLoHvDZKVj8q5DEqjBFTWja77M4/WoxtABAwCwz8MjkwrUQAVACZJh5fDIYWsPjKHXvTqgGl8BQ8TB544/LWjkxo13Q8GQ0nVkWXJPQPXfRwCjNGWo8a9uRpulYqL4+6X9mjrfJPSNMMqanR9xpCjnoQs2I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4SPRMB0045.namprd12.prod.outlook.com (2603:10b6:8:6e::21) by
- SA3PR12MB7784.namprd12.prod.outlook.com (2603:10b6:806:317::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Fri, 27 Jun
- 2025 03:44:41 +0000
-Received: from DM4SPRMB0045.namprd12.prod.outlook.com
- ([fe80::3a05:d1fd:969c:4a78]) by DM4SPRMB0045.namprd12.prod.outlook.com
- ([fe80::3a05:d1fd:969c:4a78%4]) with mapi id 15.20.8857.019; Fri, 27 Jun 2025
- 03:44:41 +0000
-Message-ID: <482239bb-2b71-4175-ad33-772856eb8332@amd.com>
-Date: Fri, 27 Jun 2025 09:14:33 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] x86/sev: Use TSC_FACTOR for Secure TSC frequency
- calculation
-To: Tom Lendacky <thomas.lendacky@amd.com>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, bp@alien8.de, x86@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- aik@amd.com, dionnaglaze@google.com, stable@vger.kernel.org
-References: <20250626060142.2443408-1-nikunj@amd.com>
- <aF0ESlmxi1uOHkrc@gmail.com> <f2292bcb-ccc5-4121-98ce-bf65c0590131@amd.com>
- <069049ff-178a-6d94-d161-5a7b90b6245c@amd.com>
-Content-Language: en-US
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <069049ff-178a-6d94-d161-5a7b90b6245c@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4P287CA0080.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:26b::8) To DM4SPRMB0045.namprd12.prod.outlook.com
- (2603:10b6:8:6e::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709822AD2D
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750996109; cv=none; b=N8AdlPGJeR0Y1E708526DlPWfsBX6EaOWN1CZyY43OnuFJuttOFTLA1ZGlRIToAeeaE/Oqqgpfas8w2YRdRQNCSXDPLQSod+ThTzQ3qEle54PKIdZHTKFQSavknYcFb7QMOKXW5AWU0Uko6UQAwc0gIJVwjpo67vvmakWhORphA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750996109; c=relaxed/simple;
+	bh=GGAkcolMP49ige7LYkeVqkN6AD+Hlq/QDhXW8dBZ72c=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=oj2YxjNmq2AJQo37eoKc9YJcbKBxi7+dTApqD4NmiTQIRh+XwQh3qAqX1ygkWWHemyB+4HpIFs7IzqPYBaYAVyOLVVAcqUZ8oGbia7b0GJd73DvTEo5bAIbyXcO3rqJZJgKaUgZgKHIGnuiI7+WgQhwFiTTYs1FWf+SUCrgmke4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=a862vnOS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m7MZDuO3; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9C7B8EC019D;
+	Thu, 26 Jun 2025 23:48:25 -0400 (EDT)
+Received: from phl-frontend-02 ([10.202.2.161])
+  by phl-compute-05.internal (MEProxy); Thu, 26 Jun 2025 23:48:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1750996105; x=1751082505; bh=SLQ3hSoxHT
+	PvT1cQmLSd7RVZNZNhqvEZVvuKzN+KNL8=; b=a862vnOSOLvl8A7oE1aVCJlYfs
+	lA/0292Z8rmxVp+xkWyFPHz6lFluDxTM8p8awaTU7aJxUOdV0EZbuwi/AzVHOblz
+	OXkrYncSVNHwX64qIWtZuRbkXBsivy8PJ/34luQUohUsL8ITKuyX6zgFspOf9w7D
+	iMvq7wyP9B8tVRzfa0CZLchSffVtM84eWUSDq+oTI84YzUscYeCjW4v1bw3uv1p8
+	qSJTRImfx1xbG0HY9hY5UWIOpTca1EE/Cd12E5XHjU9s606EZCBfyCzF/FtdEy7r
+	/jRP6MUlhCQCquTPq3lBvjQoc8VLKmqaCff5nZOCLb/Rfxpju0foWQ+GlVyg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1750996105; x=1751082505; bh=SLQ3hSoxHTPvT1cQmLSd7RVZNZNhqvEZVvu
+	KzN+KNL8=; b=m7MZDuO3QGBI1GCaHIYm276qrP7AZAZfatorO87TxWTZ8mDP4Rd
+	ru5DHa2g2gJo8Z2k90jJia8zu/qmBQFOuBe6/9AFP3VfVCeZAWW+qjvteguS+DiE
+	R+XlaYnz22a8uBpj1Z6wiYuRH1b2baZBE3HNdV5UsVodD/NIkhsYQXZC6U84mGHm
+	tWTs55Ul132aWH1eo01w3m3DlkA0CXVpwkcHPINcUaGT5Si7k2z6fnMxhfo93gGJ
+	njtF2mxDHCD5B1d6i7ck80rEngPnW+UJuG/f/5A5gKO4kfD5EGi8LCloNRCbsOKi
+	iXyC79g2i+a7CUqzucSI6V3tBMNc6rQ8H3g==
+X-ME-Sender: <xms:iBReaDAsTWpPS-uhYj0UY-0qheiENrDKmipYcOfINydPdh_A0KSBeg>
+    <xme:iBReaJgMxTyZNlfAwmpbsc9nhUDJYoR2NWehvmexsjA9pvzqIWPZuAX2xAgP3Up5W
+    IdJdAI3Svf7vLHlaEo>
+X-ME-Received: <xmr:iBReaOlEt0ycNZ2tMf61Z1j6TAmNuonOxCK5Doj0L9AzdHoYpSOnhU0DPYkkPtjOzR__EzUIgCMV1h8llEB3CyOrYYcjiFcDJv5CHlpnhNYtR23qzQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvtdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefpihgtohhlrghsucfr
+    ihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    fgvedvhfefueejgefggfefhfelffeiieduvdehffduheduffekkefhgeffhfefveenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtohesfh
+    hluhignhhitgdrnhgvthdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepuhdrkhhlvghinhgvqdhkohgvnhhighessggrhihlihgsrhgvrdgtoh
+    hmpdhrtghpthhtohepsghijhhurdgurghsrdhjiiessghprdhrvghnvghsrghsrdgtohhm
+    pdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthht
+    oheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhope
+    holhgvghesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:iBReaFwZoSsIctd9ZNhrA6LJeJ2cDI_1ucT_VBg6zmN5HF_e801Osw>
+    <xmx:iBReaIQ4dLXOPVE_BPgzRgzXj0EYdh2E0MmrOpadxpOSCz3ZYAWdlw>
+    <xmx:iBReaIZE2b8Pz4RAfABH3MF_JHqDxgfzfKIP3jjRBSsuZ58jtfpCow>
+    <xmx:iBReaJQiOLXZLNm0sSU9tz7RxqP78J7hqskq2Vis6W0HGGK-qGJYdA>
+    <xmx:iRReaAhgTgYnJd9RpbftNCdv-zUqyD22BNFlPHoMesf_8X1fxBpP7Lm1>
+Feedback-ID: i58514971:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 26 Jun 2025 23:48:24 -0400 (EDT)
+Received: from xanadu (xanadu.lan [192.168.1.120])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 5789C120F41C;
+	Thu, 26 Jun 2025 23:48:23 -0400 (EDT)
+Date: Thu, 26 Jun 2025 23:48:23 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v3 next 09/10] lib: mul_u64_u64_div_u64() Optimise the
+ divide code
+In-Reply-To: <20250626224618.757dff9a@pumpkin>
+Message-ID: <os833s47-15so-979n-1o8s-22n20q096182@syhkavp.arg>
+References: <20250614095346.69130-1-david.laight.linux@gmail.com> <20250614095346.69130-10-david.laight.linux@gmail.com> <os452n92-2p25-2q4r-453r-0ps224s90r98@syhkavp.arg> <7r88r006-o704-7q1q-21o2-6n62o864oo79@syhkavp.arg> <20250626224618.757dff9a@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4SPRMB0045:EE_|SA3PR12MB7784:EE_
-X-MS-Office365-Filtering-Correlation-Id: b4606dcf-7182-40a4-f5c7-08ddb52cf2af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NFJlZjROZGphQjFRUHpkeFhFWnBGNmtEeHltS2ppRVl5QURmNnlkNUdnRmts?=
- =?utf-8?B?ZXF4L2llTnpuZ3VObWRvNGFnajI0R3lzMG90UGQ4RkVNUXl6cVJ4RTFOekxI?=
- =?utf-8?B?elZzZ3hQV3NoNVhwYzBQYmh3Tks5OHpaRmYxZ3RtOVgxNTlRVEtGZFc4T3Vx?=
- =?utf-8?B?TGR2d3lXTnJBUTFPRjZ0RUZneElQQ21Yb2g0bEJ2cldQNGt5bWNveFdKWnFE?=
- =?utf-8?B?Y3BsSEtMYVhuV2Z2d0FROWlxZ2F0Q2R2M0JxV2RBWGVwZnI0RS9RbzFvMVJv?=
- =?utf-8?B?eWd0cXF0akdyZ1lZMVVvc2hzUHlEZWFWNUs3R1FBWEZNa0t0VnBOVzVaOGlF?=
- =?utf-8?B?UG85aXZPa2NNcG9JbnNsNWpzcFpHay9XaFlnSk82ZThVMlJCM1VnV2VIOFVT?=
- =?utf-8?B?bWhtcEswYStRbFljenAwaUhIQ1M5czkzSmR3VSs1VEFNOFpvNlp4OGVzZkJI?=
- =?utf-8?B?dmZIcGpYTHQyaHQ1KzcrWkdoZXM5RWFHWkpKb25Ea24ycTJNSDRISUdXZW54?=
- =?utf-8?B?Y21JbzNqbTlrZmZuZ1dOQkpTN3BlZ2llNVJYU1g3RElYYmMyb2Z5TnRUZG5J?=
- =?utf-8?B?NlRNZ3g0Y3A4K3FKS2lOZXhzN2pkM1FMMGRkQzJuMUR0U25Jc0pTMzJRZi9W?=
- =?utf-8?B?WUZraVpDaCtKUElEbGxwUXhOM0NVTktzRlpxWEhqQ0FWcm4zbUJyNDd0cFR4?=
- =?utf-8?B?cmRxa3J1bTYxekt1c2lkZFBUVnBUZXBEWlFlRGZxa2d4VmJPK0dodDdMMnFZ?=
- =?utf-8?B?c0hNNVNCQ2dRT212ZnRoNk9LVlpucE5xUi9GUU9WNmZxM3dzK29vSWhSc3la?=
- =?utf-8?B?YlFKNXFLbEFHTWJYV0N5YXROZS91VDA0NXhJVm1kcFoyWjY2NFR5UXVkOTlK?=
- =?utf-8?B?WVplUWc4NXRvbXRoN0JiN1FGRW0rT0xmb1dobWtlY1BDRldQRWFyZERueFcy?=
- =?utf-8?B?VkR4YjgzNDJtS0NmRVlXaVR1ajc2RFBCNlhIM2JhR3R1Ync4R2YyYU9rN0JK?=
- =?utf-8?B?akNqQ2JybXhheVU5aEd2NjY0Um5EV0FkUGw0eTBCS3pQUDFIRjhsTXV1RDJr?=
- =?utf-8?B?Z2hURWlXSjdVdGtJMzR6TUtGUHdjZGxxM1crTVNKSkhiRVBLRlFuWVpLYXBh?=
- =?utf-8?B?STlHbmpkdXdZNlhHUzJRbUhQL3BtTDZiTUZxMmtiMTRwb2MzZFNsUTNtenQy?=
- =?utf-8?B?T3k1cDJWTkRJcUF5eDBNVUxiWGJwUWt2R0tjWEthb1VEV0k3cko1emxYZVp3?=
- =?utf-8?B?cGlkSUxTcFpZdy9pYysyOE1VTFJ3ZFg3MEpjYVFLZ1RUUDhna0R6KzhnQ08w?=
- =?utf-8?B?WW1xd2lhQ3M4eWR4ZmhaeWVBdC9TN2JRSHhGVVRGK3Z0Z2U2SDNyT0dITWNz?=
- =?utf-8?B?eStDdTZTWXgyUDE1cmxQcldJL0FIVkdKMGhDd3BEWVNuQWtxRm1UMGJBSHZP?=
- =?utf-8?B?TjlYTXRZcnNEdVZhSWxvL1pSV1lxRGFhQjY2WE51OGdLbVl0NEQ4NnJlelY3?=
- =?utf-8?B?R2IybldhMzkrWGFkV1JwUUpqRElDS1RhQ3RoT2J2blZSTk04cGJGQkJTcjZ3?=
- =?utf-8?B?RGpIamRMOXlVTVNQMnlmZFFKdk9PcHZiUXdkdUdsdzU0NW9KYnJzMnFuT0J6?=
- =?utf-8?B?MzBuYWVqNW1DNzJmRTdIS09Td24xVWlXQWdUWGEzQTZkQTIxZS85U3Qxd2xJ?=
- =?utf-8?B?aWQ4YndJMEgvWVVxNk11Rkl6Yk5hd1lkYlVXNm1wQXJGcU1IWlpaSHpkbGpx?=
- =?utf-8?B?V0ZTZDdzMzdkeml5cmVPMUxFVWpVbDByaG1EZ2xoRHVOZnhJV3lQTTNXZWpo?=
- =?utf-8?B?Y2Y0V0hZNXlTdDk4L1RkNVltenpobSs3U3U1Z0dXSm50em1hTE1xaGgybUEx?=
- =?utf-8?B?akFqSkUrTjNZMGdUTmg3aThnU2tLZ2lsSERIcDM3MkJ0cHhMcHdLK0NmS0NO?=
- =?utf-8?Q?BhsrHJIRNS4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4SPRMB0045.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VjNNaXZ1Y2ptM3dJL1RsVk1VdkloR2xna29VQ2dPeE55ZFpHSGRZWlgvMTFx?=
- =?utf-8?B?UFd0WWljTG9RcXJJSENPOURoL0txaVlOTHkyVjMvejIzNHdBTlQ2d3haRWw1?=
- =?utf-8?B?WTJtSTBlVC9wVy9IUzJRNjdYOFpMS1RHV2xIMkNheFh5REZ0MUt3N2ZrTHY0?=
- =?utf-8?B?WWpMSHh1OUhIRG9YQjZpcDQvRnJPNkZ2RHN3RGxUelRySXM1eExNUG5mK1hp?=
- =?utf-8?B?L1BFNDhQRHpQbjZUUk9MZW92czByWHJjemhVNlU3V3NIZ25hZ1FWVXBjMzRy?=
- =?utf-8?B?V0xqa0ozQWxVSUF6Ym1yQmFGYWVpd3o1SGd0YllMYTRQQkpPS3JCUUN3K2ZF?=
- =?utf-8?B?TlN1WHlaQ2luakxUYUN4aWMxRHhXdjdPMDRna2lKZlBxT29oZXNBcGZmR2tw?=
- =?utf-8?B?VnhNT0czUXYyaWMwM0xVYXBDVkxjYThEU2plYzNodWs2bFpqOU5Nb0ZSZFJD?=
- =?utf-8?B?WGN5MGU0TDFqc0lyWVhJS1BYSEJPRVlxWlgxdzRGU2hHeHU5Q0tNMzlIVkFL?=
- =?utf-8?B?am1ObmMvOGJqbkh1R2pCWGozd1JEWW5zZUFOUVpjQ1N5VlE1RTRDTEluYUxh?=
- =?utf-8?B?NnQ2eUZFNFdkQ3Jxd2xUSktWdWpzZUhadURaR3IwclpIRnZBMDg3ampHalRw?=
- =?utf-8?B?a05CaWFDMEIrZExhdWpwakRxQzJ3Qml5bVU0eXl1MGxCaWF6UWthK0gyaFZH?=
- =?utf-8?B?ZmJadmgwZ0VuZjBVSUdyL0hzdjVic2g2Z3ZIZzgrWExMMWtVZ3V6Q0RqRzlB?=
- =?utf-8?B?OTVaTCtwcWhFRXYvbWZjVHRiekUzVndwcmlqaktJTzZlMkJwSnVnVG9qWDVU?=
- =?utf-8?B?R21GQS9ELzlaS0NMQk5tV1ZmQm5MTnVKYzZLWlA2cXJ3MXJnby9DTjZwZGQz?=
- =?utf-8?B?alQ2SmthenVKUUNObVZQamdROVArTnRmR2w4clp6VStIVUZ3Qjd4YU5MYlNG?=
- =?utf-8?B?aEJDc0w5RTNaYm9odkk5bW1pWThvL1lndzU2em10Z2RzSlI3U20vK29mZ0s1?=
- =?utf-8?B?eEpHdWtyMnArbjdDQUJ6MzJ6ejMyTWR4YkJQaGtvaTFHa3BjYkZvTGYxeWx6?=
- =?utf-8?B?M3BoRWFEL3JzTy9kNUk5Q056Z1h2aG1hMEgwSGNsZWJSUytGT0EzakhhZFJ3?=
- =?utf-8?B?UlNDbVE1YWJya0hxZE56ZFg4ekI4NVlxaFRaV1VHMTNzaGpab0ZaUjRldHZy?=
- =?utf-8?B?ZmdmVWxLeDVuR05YckNIRzM4YmFvZzQ4elRObTVEWVE4SjMwSG1NRGxWSzJr?=
- =?utf-8?B?YytWUGFBbGRKaExISC9heXllRU56UHJWYTI2bkNML2V1MnZYekczQkNabDl6?=
- =?utf-8?B?NFYzcXJLNVBSaHBPTkd6cVhaZXFPNk1vMHBVblVzRzFFZE12cnhKYmV1SVhz?=
- =?utf-8?B?VnBiek9hcWliZEdack5tL0VMVlFoN2ZjYkdMUDljS2cwWE5iNTBReXpJelhC?=
- =?utf-8?B?NGNEdFFQbWZodmlhNExQMk1XcGpzSGJRUnR0UTgrM1JyT0MxN2huSDdrWDhY?=
- =?utf-8?B?elczS2xaY3AxcjVNaVFETE1RYTNFNWY1Nm1jZmhscy8yMzh4NzZJN1NFQXpn?=
- =?utf-8?B?MEtyMkNzZkJ5Y3VyWnpPMUxZZ0s4dFlVMSt3cTZSb1pQcTk0QmM5NFJqYlJL?=
- =?utf-8?B?azk5SjM2UENTN292TmdwT2pFSFVaV0wrNlBxUHBhWFp1dHBwVFpaOUMyMmNv?=
- =?utf-8?B?T2xVYlZ6S2JNMTFPU3RXLzFxQytTUGtvRTQ0dFBCUDFvNXhlUXNMV3RObnkz?=
- =?utf-8?B?N0ZDV1RRanhvNGZMdDI1aURoeFo5NGdvQ1hRT2tkMXlOZG1DR2hZOCtyejR2?=
- =?utf-8?B?Nm8xQ0t5dGYrYnluRTJyQ3phSVIyTkNwS0dmK1hzdC80MmxlaVpGQU9VNlZy?=
- =?utf-8?B?Qmk5NEJXOVNtMUJHQ3RwZnAzRUVPRzFiU0lRenRIWE5XTitFZG9HbVM5eXJL?=
- =?utf-8?B?MkNFaENKRUh1RkhSaExCUkxEdVJ5V05YR0h3M05UMHc3cUJrVVgrTTJTcXNW?=
- =?utf-8?B?eEtzN0Z1cmc2MUxXY0VVZjlUakJTcU41bUpQVnprbHpmVkZXeHRXK29pNExy?=
- =?utf-8?B?eW5xdExDVU9jejU2YUZUWFkrK1NwVE1WaWtvbklka2lFU2JHZXgvbURWNFd1?=
- =?utf-8?Q?Y++wP+0jCvflqolbkQuI0xxk/?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4606dcf-7182-40a4-f5c7-08ddb52cf2af
-X-MS-Exchange-CrossTenant-AuthSource: DM4SPRMB0045.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 03:44:41.3027
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TVOif3JlnkERVYvCWeflyV8o/NclPeWyMOTYhb7C6cFZg50VCh39m55MTUYggeqBsbpiAqk7A5hsfvat7VqAgQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7784
+Content-Type: text/plain; charset=US-ASCII
 
+On Thu, 26 Jun 2025, David Laight wrote:
 
-
-On 6/26/2025 7:11 PM, Tom Lendacky wrote:
-> On 6/26/25 05:01, Nikunj A. Dadhania wrote:
->> On 6/26/2025 1:56 PM, Ingo Molnar wrote:
->>> * Nikunj A Dadhania <nikunj@amd.com> wrote:
-
->>>> +#define SNP_SCALE_TSC_FREQ(freq, factor) ((freq) - ((freq) * (factor)) / 100000)
->>>
->>> Nit: there's really no need to use parentheses in this expression,
->>> 'x * y / z' is equivalent and fine.
->>
->> It will give wrong scale if I call with freq as "tsc + 1000000" 
->> without the parentheses?
+> On Tue, 17 Jun 2025 21:33:23 -0400 (EDT)
+> Nicolas Pitre <nico@fluxnic.net> wrote:
 > 
-> I think Ingo is saying this can be ((freq) - (freq) * (factor) / 100000)
+> > On Tue, 17 Jun 2025, Nicolas Pitre wrote:
+> > 
+> > > On Sat, 14 Jun 2025, David Laight wrote:
+> > >   
+> > > > Replace the bit by bit algorithm with one that generates 16 bits
+> > > > per iteration on 32bit architectures and 32 bits on 64bit ones.
+> > > > 
+> > > > On my zen 5 this reduces the time for the tests (using the generic
+> > > > code) from ~3350ns to ~1000ns.
+> > > > 
+> > > > Running the 32bit algorithm on 64bit x86 takes ~1500ns.
+> > > > It'll be slightly slower on a real 32bit system, mostly due
+> > > > to register pressure.
+> > > > 
+> > > > The savings for 32bit x86 are much higher (tested in userspace).
+> > > > The worst case (lots of bits in the quotient) drops from ~900 clocks
+> > > > to ~130 (pretty much independant of the arguments).
+> > > > Other 32bit architectures may see better savings.
+> > > > 
+> > > > It is possibly to optimise for divisors that span less than
+> > > > __LONG_WIDTH__/2 bits. However I suspect they don't happen that often
+> > > > and it doesn't remove any slow cpu divide instructions which dominate
+> > > > the result.
+> > > > 
+> > > > Signed-off-by: David Laight <david.laight.linux@gmail.com>  
+> > > 
+> > > Nice work. I had to be fully awake to review this one.
+> > > Some suggestions below.  
+> > 
+> > Here's a patch with my suggestions applied to make it easier to figure 
+> > them out. The added "inline" is necessary to fix compilation on ARM32. 
+> > The "likely()" makes for better assembly and this part is pretty much 
+> > likely anyway. I've explained the rest previously, although this is a 
+> > better implementation.
 > 
-> in other words, getting rid of the parentheses around the multiplication.
+> I've been trying to find time to do some more performance measurements.
+> I did a few last night and managed to realise at least some of what
+> is happening.
+> 
+> I've dropped the responses in here since there is a copy of the code.
+> 
+> The 'TLDR' is that the full divide takes my zen5 about 80 clocks
+> (including some test red tape) provided the branch-predictor is
+> predicting correctly.
+> I get that consistently for repeats of the same division, and moving
+> onto the next one - provided they take the same path.
+> (eg for the last few 'random' value tests.)
+> However if I include something that takes a different path (eg divisor
+> doesn't have the top bit set, or the product has enough high zero bits
+> to take the 'optimised' path then the first two or three repeats of the
+> next division are at least 20 clocks slower.
+> In the kernel these calls aren't going to be common enough (and with
+> similar inputs) to train the branch predictor.
+> So the mispredicted branches really start to dominate.
+> This is similar to the issue that Linus keeps mentioning about kernel
+> code being mainly 'cold cache'.
+> 
+> > 
+> > commit 99ea338401f03efe5dbebe57e62bd7c588409c5c
+> > Author: Nicolas Pitre <nico@fluxnic.net>
+> > Date:   Tue Jun 17 14:42:34 2025 -0400
+> > 
+> >     fixup! lib: mul_u64_u64_div_u64() Optimise the divide code
+> > 
+> > diff --git a/lib/math/div64.c b/lib/math/div64.c
+> > index 3c9fe878ce68..740e59a58530 100644
+> > --- a/lib/math/div64.c
+> > +++ b/lib/math/div64.c
+> > @@ -188,7 +188,7 @@ EXPORT_SYMBOL(iter_div_u64_rem);
+> >  
+> >  #if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
+> >  
+> > -static u64 mul_add(u32 a, u32 b, u32 c)
+> > +static inline u64 mul_add(u32 a, u32 b, u32 c)
+> 
+> If inline is needed, it need to be always_inline.
 
-Ak ok, that should be fine.
+Here "inline" was needed only because I got a "defined but unused" 
+complaint from the compiler in some cases. The "always_inline" is not 
+absolutely necessary.
 
-Regards
-Nikunj
+> >  {
+> >  	return add_u64_u32(mul_u32_u32(a, b), c);
+> >  }
+> > @@ -246,7 +246,7 @@ static inline u32 mul_u64_long_add_u64(u64 *p_lo, u64 a, u32 b, u64 c)
+> >  
+> >  u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  {
+> > -	unsigned long d_msig, q_digit;
+> > +	unsigned long n_long, d_msig, q_digit;
+> >  	unsigned int reps, d_z_hi;
+> >  	u64 quotient, n_lo, n_hi;
+> >  	u32 overflow;
+> > @@ -271,36 +271,21 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  
+> >  	/* Left align the divisor, shifting the dividend to match */
+> >  	d_z_hi = __builtin_clzll(d);
+> > -	if (d_z_hi) {
+> > +	if (likely(d_z_hi)) {
+> 
+> I don't think likely() helps much.
+> But for 64bit this can be unconditional...
+
+It helps if you look at how gcc orders the code. Without the likely, the 
+normalization code is moved out of line and a conditional forward branch 
+(predicted untaken by default) is used to reach it even though this code 
+is quite likely. With likely() gcc inserts the normalization 
+code in line and a conditional forward branch (predicted untaken by 
+default) is used to skip over that code. Clearly we want the later.
+
+> >  		d <<= d_z_hi;
+> >  		n_hi = n_hi << d_z_hi | n_lo >> (64 - d_z_hi);
+> 
+> ... replace 'n_lo >> (64 - d_z_hi)' with 'n_lo >> (63 - d_z_hi) >> 1'.
+
+Why? I don't see the point.
+
+> The extra shift probably costs too much on 32bit though.
+> 
+> 
+> >  		n_lo <<= d_z_hi;
+> >  	}
+> >  
+> > -	reps = 64 / BITS_PER_ITER;
+> > -	/* Optimise loop count for small dividends */
+> > -	if (!(u32)(n_hi >> 32)) {
+> > -		reps -= 32 / BITS_PER_ITER;
+> > -		n_hi = n_hi << 32 | n_lo >> 32;
+> > -		n_lo <<= 32;
+> > -	}
+> > -#if BITS_PER_ITER == 16
+> > -	if (!(u32)(n_hi >> 48)) {
+> > -		reps--;
+> > -		n_hi = add_u64_u32(n_hi << 16, n_lo >> 48);
+> > -		n_lo <<= 16;
+> > -	}
+> > -#endif
+> 
+> You don't want the branch in the loop.
+> Once predicted correctly is makes little difference where you put
+> the test - but that won't be 'normal'
+> Unless it gets trained odd-even it'll get mispredicted at least once.
+> For 64bit (zen5) the test outside the loop was less bad
+> (IIRC dropped to 65 clocks - so probably worth it).
+> I need to check an older cpu (got a few Intel ones).
+> 
+> 
+> > -
+> >  	/* Invert the dividend so we can use add instead of subtract. */
+> >  	n_lo = ~n_lo;
+> >  	n_hi = ~n_hi;
+> >  
+> >  	/*
+> > -	 * Get the most significant BITS_PER_ITER bits of the divisor.
+> > +	 * Get the rounded-up most significant BITS_PER_ITER bits of the divisor.
+> >  	 * This is used to get a low 'guestimate' of the quotient digit.
+> >  	 */
+> > -	d_msig = (d >> (64 - BITS_PER_ITER)) + 1;
+> > +	d_msig = (d >> (64 - BITS_PER_ITER)) + !!(d << BITS_PER_ITER);
+> 
+> For 64bit x64 that is pretty much zero cost
+> (gcc manages to use the 'Z' flag from the '<< 32' in a 'setne' to get a 1
+> I didn't look hard enough to find where the zero register came from
+> since 'setne' of changes the low 8 bits).
+> But it is horrid for 32bit - added quite a few clocks.
+> I'm not at all sure it is worth it though.
+
+If you do an hardcoded +1 when it is not necessary, in most of those 
+cases you end up with one or two extra overflow adjustment loops. Those 
+loops are unnecessary when d_msig is not increased by 1.
+
+> >  
+> >  	/*
+> >  	 * Now do a 'long division' with BITS_PER_ITER bit 'digits'.
+> > @@ -308,12 +293,17 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  	 * The worst case is dividing ~0 by 0x8000 which requires two subtracts.
+> >  	 */
+> >  	quotient = 0;
+> > -	while (reps--) {
+> > -		q_digit = (unsigned long)(~n_hi >> (64 - 2 * BITS_PER_ITER)) / d_msig;
+> > +	for (reps = 64 / BITS_PER_ITER; reps; reps--) {
+> > +		quotient <<= BITS_PER_ITER;
+> > +		n_long = ~n_hi >> (64 - 2 * BITS_PER_ITER);
+> >  		/* Shift 'n' left to align with the product q_digit * d */
+> >  		overflow = n_hi >> (64 - BITS_PER_ITER);
+> >  		n_hi = add_u64_u32(n_hi << BITS_PER_ITER, n_lo >> (64 - BITS_PER_ITER));
+> >  		n_lo <<= BITS_PER_ITER;
+> > +		/* cut it short if q_digit would be 0 */
+> > +		if (n_long < d_msig)
+> > +			continue;
+> 
+> As I said above that gets misprediced too often
+> 
+> > +		q_digit = n_long / d_msig;
+> 
+> I fiddled with the order of the lines of code - changes the way the object
+> code is laid out and change the clock count 'randomly' by one or two.
+> Noise compared to mispredicted branches.
+> 
+> I've not tested on an older system with a slower divide.
+> I suspect older (Haswell and Broadwell) may benefit from the divide
+> being scheduled earlier.
+> 
+> If anyone wants of copy of the test program I can send you a copy.
+> 
+> 	David
+> 
+> >  		/* Add product to negated divisor */
+> >  		overflow += mul_u64_long_add_u64(&n_hi, d, q_digit, n_hi);
+> >  		/* Adjust for the q_digit 'guestimate' being low */
+> > @@ -322,7 +312,7 @@ u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+> >  			n_hi += d;
+> >  			overflow += n_hi < d;
+> >  		}
+> > -		quotient = add_u64_long(quotient << BITS_PER_ITER, q_digit);
+> > +		quotient = add_u64_long(quotient, q_digit);
+> >  	}
+> >  
+> >  	/*
+> 
+> 
 
