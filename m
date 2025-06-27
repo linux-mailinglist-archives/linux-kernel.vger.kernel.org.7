@@ -1,167 +1,172 @@
-Return-Path: <linux-kernel+bounces-706317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FF9AEB512
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8FBAEB504
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88A3188C969
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5F51C41E33
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A66298CA0;
-	Fri, 27 Jun 2025 10:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C47322156A;
+	Fri, 27 Jun 2025 10:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aZYnrqB9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBKmPHtc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19DE26B756;
-	Fri, 27 Jun 2025 10:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E49E4EB38
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020451; cv=none; b=Cvjh3LRpa0QXXMxdiYklOcozZnTrfegQGTyWOJn6cbMw16/xtdubNBmYb2ojW5fReTKxTE/OZJkK4cvpJahMIG6aN+zqFXBRMgKAnYG2ebA9EUjPNGHWlp4ScIH69KNlJ2NwJtd021XbyMkonPXtqBJATF7wF07T6HG/rdRo/VQ=
+	t=1751020419; cv=none; b=mmqjI/2/tgf2hJNQIjwrzxQBgCIgHZj6GBQ49MTnA7i9Nvvl5IgYG+nO+pPsmYjxyNZMUt6n3fpyzpU/YsBjlOHLfssTC334aFVO0kF8iNYpNvJsBS7r4ZJZy+9xfa9GP+vak4v8CotW2P6WVbehePS6+PfOofU0Q60d3jcWVGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020451; c=relaxed/simple;
-	bh=NJEr28iU7ySNWsWvysGjhjF4BlXU02+p7PrxqHp0KDM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pfyglehnv2SGTJ+aicqn2OqX+mCc/oN7cFzOXz6zN4LUIADWeezQOm3tKOYbCSP9bgPRwMiRRKEFTyS3Aq7cxH6t2k7byYAzeBdMvnJN5OrRypbRcIVUHMdzUKCK0YC+nwiBqztqYVwgWDgrTPlbf7z3tvF35wf2Kx3/y4lY9KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aZYnrqB9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R4DgCD008739;
-	Fri, 27 Jun 2025 10:34:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3qG4vDhN+pXvVkjr4GfQm6rnWkov+SX8y6P46nqvpMw=; b=aZYnrqB9nXrZRxCp
-	EL7bATJ8bMFRY2w7fWle3V/BqZVqXILGN9CFC7Ab2fFJHo8KjYnXSmP5eFMTzMjz
-	DffdJfX5SURIYXomVp6sjaxOTbi/C4VRyvmlNkb0bC2fLvA8uG9snm9liCJdToGe
-	N7vhign3lOMmQwO8l+RRhJ1UiYjwfD7jgs0R7o80VLlix39wBkYeYjMy/PKLr7uX
-	RsEhx3ZVvr0VOHs/U3DIu//WKt0pM3hPpEBRV0jnMle262xfvcb++i48iEQjpz+j
-	UcJP+kgXcqBLDZ5ku74ykWG7mIgVmrTrjDC6sasAAfl7U7wPL4zbULxdHuU2kbTn
-	vi7G6Q==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqvw74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 10:34:04 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55RAY38r000354
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 10:34:03 GMT
-Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Fri, 27 Jun 2025 03:34:00 -0700
-From: Ling Xu <quic_lxu5@quicinc.com>
-To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>
-CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Ling Xu
-	<quic_lxu5@quicinc.com>
-Subject: [PATCH v4 4/4] misc: fastrpc: add support for gdsp remoteproc
-Date: Fri, 27 Jun 2025 16:03:19 +0530
-Message-ID: <20250627103319.2883613-5-quic_lxu5@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250627103319.2883613-1-quic_lxu5@quicinc.com>
-References: <20250627103319.2883613-1-quic_lxu5@quicinc.com>
+	s=arc-20240116; t=1751020419; c=relaxed/simple;
+	bh=aIbu24VZKsQ0mNNKyKVSxFOTzJ56cEmLBlpiEyUahzA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y3hxWjaXHxqJk5UocFapHjm6m2endxEpbGUnNtji6I/ALtueY8T9w84LnNwwXy4QML8MPbPVMDu0NPQWiPcZBFe44qs0ceovZ5wNOc0XTmoKD+HK/DRpEUCFe8OYBK6QTrVBqHhYHfSLsvO0GwMMv8d1Z74j55eemUNn2Zi11Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBKmPHtc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751020416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dulzs6tJ70GQvmeyAReKMXNerxvTVJjW28pt4S38/Hw=;
+	b=CBKmPHtcC6Wp2NRfTsfsbYbI6fHOeC0/z0KgDSUWOTK81rosXTooEdo/2yPMzakfTedFsL
+	5BnQtbNHrSoVO9ofECqyM+S9am3lMMwYGcVh0l9a0CVbGnaLs64LIWrMwmRUJn7U3ScXyq
+	xBOkGAEfw5BwrOf6y/ctvoq5A74uLQQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-X7inpYuvMXOVb8u0c_It4g-1; Fri, 27 Jun 2025 06:33:35 -0400
+X-MC-Unique: X7inpYuvMXOVb8u0c_It4g-1
+X-Mimecast-MFC-AGG-ID: X7inpYuvMXOVb8u0c_It4g_1751020414
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4e9252ba0so1266156f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:33:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751020414; x=1751625214;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dulzs6tJ70GQvmeyAReKMXNerxvTVJjW28pt4S38/Hw=;
+        b=XmWO7ns7CMQy5AxBOZDiR6buawcWHe+L69DeIgVzPNoqd7awBGguQ8dSXVnGES7qt1
+         gWf6egcuiLJRBEKo7BCSemHjEAU9AjmX5f3hfJNit8ZhSCK/BXisKpzDsYkw4ybGpGtk
+         KgRqXuinS/xSaotz747QpaK3fZ9KjyRVXmiHWYaocx4mPsPfFBajKSfqElr/R6NlxiQs
+         AcdQxkfiXvRY4j9kptehnlkslEhip9UWOpTjjMcSqs2zarpY8hMV9nso7NOxZDsa0qku
+         9pmzSMaNx+UbPwsxMI3uFTRPmdR8nNGrUza0X6+I5mi5fucwXs/5UKaG0Hb4HnnW2l1y
+         +Ycg==
+X-Gm-Message-State: AOJu0YyNq+702x5uabtrv/bmMILayUbpRSwfL+Wa8CT+oDHYHgB8fk8S
+	ioJW8MQBHMRxlmWeoa1d0vvbKI7u95GMF0KVuvKotUU2LZnw334sX7lQjsemjUjfJYkU+W5knbW
+	J20sAdzOhEXauScGmF4p+09bAWb3j/psf631Gwn3wdLNoH9fSEfHGhXkfPuPR6lEBng==
+X-Gm-Gg: ASbGncswyq6dNHrxCzt+4EvxyIk0Gfg0jCqFpfQ0A6Lz9eAPQSJMYWSgSSHU0/u304/
+	cRM3vuHUQgrbU1SGxiC045y02PYxrKzYyJoJxQ9cyuxtsoDfpgnvPi2LyST9SWu1RSwXyH2Fja4
+	uVKmqivyfAvFoqFOxL/RnQSS0XGx3fhWPCop1F+7ixXl3LZDLRS1zjgkAphNMdyKatXybnAz+Ui
+	0VKlR3rL6rZaFKbjvv5/QR/rtNRkXLX3nrPi4z9iwWjK9QLBy553Fa3cAJlcpTVxZcYqXyiIhAK
+	TcuHfIB6aKhDCDfd23KjjyU7Ex/OdP2RqGODt7p7oDaYuMm1BSPgpXzCHi5Wlmrag9V7WusUu+N
+	Lkxym
+X-Received: by 2002:a05:6000:649:b0:3a4:d4cd:b06 with SMTP id ffacd0b85a97d-3a8fee65059mr2554129f8f.34.1751020414134;
+        Fri, 27 Jun 2025 03:33:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGr8/RKNk/JTVd5LqMGQVf2Ns+S9uVp6luEws4kRt9cVcCSr6ObG/jWvZ4ZnNoCEPUruiIDIw==
+X-Received: by 2002:a05:6000:649:b0:3a4:d4cd:b06 with SMTP id ffacd0b85a97d-3a8fee65059mr2554114f8f.34.1751020413648;
+        Fri, 27 Jun 2025 03:33:33 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7facf9sm2309041f8f.22.2025.06.27.03.33.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 03:33:32 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH v1 1/2] firmware: sysfb: Unorphan sysfb files
+In-Reply-To: <aF5w4QTbSkebYbk2@smile.fi.intel.com>
+References: <20250626172039.329052-1-andriy.shevchenko@linux.intel.com>
+ <20250626172039.329052-2-andriy.shevchenko@linux.intel.com>
+ <87ikkhd0uv.fsf@minerva.mail-host-address-is-not-set>
+ <aF5eL1o3WNo3Q7_p@smile.fi.intel.com>
+ <87wm8xbkyh.fsf@minerva.mail-host-address-is-not-set>
+ <aF5w4QTbSkebYbk2@smile.fi.intel.com>
+Date: Fri, 27 Jun 2025 12:33:31 +0200
+Message-ID: <87ldpdbhj8.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4qZbUDNaC49OtDFPDmTmBSXN2qgt2e27
-X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685e739c cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=d01il73eTdEK0Eih25sA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 4qZbUDNaC49OtDFPDmTmBSXN2qgt2e27
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDA4NSBTYWx0ZWRfX5NMSaEyfuXhg
- CpXOdmIeaBZ+oJkK9Ly5Z7Ik6CKEGQtabDl084/RlTehUA1p10MzycX9MaruCBplDTpsJl2wHCc
- //Cj/z1FNR9IJT76wIdd2keP1y1OZi/BOxLfTVSeuqdCXFKvOFPnY8n/uPXBqt/bEcHc8vtbwVm
- SsofQgfQg4C45TIfpf/8FDhzuc9p/X1WFAh/iLChFgpQAyfp7aGKdTvqyomtKfjTVZlagRU/uHs
- ZB0ruD70m6q1Rk9TUWBuLNTNuAoJ1g++6PuwSQLV+ZZQY9MNwCnE9ceVNwFwvzNV4EGllhLEd1k
- TrvuPmapTd7gDB+uUhnZRsbwoZTnptSBbEUVcfx0mjWQMZnMYDgEEpUJkntv93SlXFjjPUzcHpu
- 3DB/i4Oc0TmlnO2BakT847bSZFl/mpdPpIDCKtlM6c+pgrPMTjGmtqvVtTtlCaBwgmJE6H+1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506270085
 
-The fastrpc driver has support for 5 types of remoteprocs. There are
-some products which support GDSP remoteprocs. GDSP is General Purpose
-DSP where tasks can be offloaded. This patch extends the driver to
-support GDSP remoteprocs.
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
----
- drivers/misc/fastrpc.c      | 5 ++++-
- include/uapi/misc/fastrpc.h | 3 ++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+[...]
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index cb9f4be286af..d3d9b9fdbf4c 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -2245,6 +2245,8 @@ static int fastrpc_get_domain_id(const char *domain)
- 		return MDSP_DOMAIN_ID;
- 	else if (!strncmp(domain, "sdsp", 4))
- 		return SDSP_DOMAIN_ID;
-+	else if (!strncmp(domain, "gdsp", 4))
-+		return GDSP_DOMAIN_ID;
- 
- 	return -EINVAL;
- }
-@@ -2319,13 +2321,14 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
- 	case ADSP_DOMAIN_ID:
- 	case MDSP_DOMAIN_ID:
- 	case SDSP_DOMAIN_ID:
--		/* Unsigned PD offloading is only supported on CDSP*/
-+		/* Unsigned PD offloading is only supported on CDSP and GDSP*/
- 		data->unsigned_support = false;
- 		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
- 		if (err)
- 			goto err_free_data;
- 		break;
- 	case CDSP_DOMAIN_ID:
-+	case GDSP_DOMAIN_ID:
- 		data->unsigned_support = true;
- 		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
- 		err = fastrpc_device_register(rdev, data, true, domain);
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index b890f8042e86..5ea891615c49 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -22,8 +22,9 @@
- #define MDSP_DOMAIN_ID (1)
- #define SDSP_DOMAIN_ID (2)
- #define CDSP_DOMAIN_ID (3)
-+#define GDSP_DOMAIN_ID (4)
- 
--#define FASTRPC_DOMAIN_MAX    3
-+#define FASTRPC_DOMAIN_MAX    4
- 
- /**
-  * enum fastrpc_map_flags - control flags for mapping memory on DSP user process
+>> 
+>> That's just because there is an entry for arch/x86/. The problem then is
+>> that there isn't an entry for drivers/firmware. It was orphaned then just
+>> because it was moved to a directory that has no entry in MAINTAINERS.
+>> 
+>> > See the difference?
+>> 
+>> There is no need to have such a rude tone.
+>
+> It wasn't meant to be rude, sorry. The point is that any change in
+
+No worries.
+
+> drivers/firmware/sysfb* and respective include are not visible to (any)
+> maintainers, they just might be sent for a luck of somebody to pick
+> them up by browsing the LKML for such things.
+>
+
+Right. But get_maintainer.pl still reports I think the correct people to Cc:
+
+./scripts/get_maintainer.pl -f -- drivers/firmware/sysfb*
+Thomas Zimmermann <tzimmermann@suse.de> (commit_signer:4/4=100%,authored:2/4=50%,added_lines:11/43=26%,removed_lines:5/11=45%,commit_signer:1/1=100%,authored:1/1=100%,added_lines:1/1=100%,removed_lines:30/30=100%)
+Javier Martinez Canillas <javierm@redhat.com> (commit_signer:4/4=100%,authored:1/4=25%,added_lines:19/43=44%,commit_signer:1/1=100%)
+Alex Deucher <alexander.deucher@amd.com> (commit_signer:3/4=75%,authored:1/4=25%,added_lines:13/43=30%,removed_lines:6/11=55%)
+Tzung-Bi Shih <tzungbi@kernel.org> (commit_signer:1/4=25%)
+linux-kernel@vger.kernel.org (open list)
+
+In my opinion both Thomas and me have much more context and knowledge of
+the sysfb codebase than the x86 maintainers. It was just for historical
+reasons that the sysfb code ended in the arch/x86/ sub-directory.
+
+But you are correct that dri-devel at least should also be in the Cc list.
+
+> ...
+>
+>> >> > +F:	drivers/firmware/sysfb*.c
+>> >
+>> >> I would prefer these to be in the "DRM DRIVER FOR FIRMWARE FRAMEBUFFERS"
+>> >> entry instead of "DRM DRIVERS" since the former is what has most of the
+>> >> code for the sysfb infrastructure.
+>> >
+>> > Then do it, please, fix the above.
+>> 
+>> Part of the review process is to give feedback to patch authors. I don't
+>> understand why you expect me to fix an issue you brought up just because
+>> I ask you to rework your patch a little.
+>
+> In my humble opinion, the author of the patch that makes the problem appear
+> can help to fix that as well. Are my expectations too high?
+>
+> In any case, this was an ad-hoc patch due to the second one, so this one
+> may be considered as a administrative bug report.
+>
+
+That's OK, but it wasn't framed as a bug report but as a patch and that's why
+I gave my feedback. But I'll post a patch and add a Reported-by tag from you.
+
+Thomas, I think we can then only merge patch #2 and I will take care of #1.
+
 -- 
-2.34.1
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
