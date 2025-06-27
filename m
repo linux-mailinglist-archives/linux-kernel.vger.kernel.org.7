@@ -1,87 +1,222 @@
-Return-Path: <linux-kernel+bounces-705852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB784AEAE88
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:44:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E03AEAE90
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F634E14BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEEF64190C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937D21DE887;
-	Fri, 27 Jun 2025 05:44:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD061E0DFE;
+	Fri, 27 Jun 2025 05:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="NUg3Q+FS"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A112F852
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F994A21;
+	Fri, 27 Jun 2025 05:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751003044; cv=none; b=DrNeHDS9Sc7quUhZfwPgiIAjx5c/hLLb74mU6Li23zSTPlEbImlHGwlvWEZkryDqYHAZofUvaaw1nlMLydU4FvxsmHdiW7kmBTi8VlufJpa3yLrLovTqSWv0gs7Z0ksoawd9NY2sOWyaqSHMKK05c+xeXcvPTvdAYSi5bon+bh4=
+	t=1751003552; cv=none; b=Yo3q0SDSR+sgyO7aReIrI/PmJF8swkdr1V4NW66IqeXlxSebefmOokJqNZuoD/dNuWAtYaMWJkH/lbkiU3BZ8qplGDC0tqlJF7QTKXuq4N2Pq1koTCCv1go37IoHsYuulxmJWJaGwxkXkvTQq0Co5/V1dYTnAtZA1NBZvMtzVhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751003044; c=relaxed/simple;
-	bh=soSTAGmaFQ30rdWSI32v3PHsN9vFxhd0C7khwWjTrWk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fFtKTKv/AhWee/UEzt5HS8TGWLlkJNeKFr8atR8vGEH62GWO+1D9dvx2fkPEWsqyXknIbAWQK1YNyjJsfckmV8J59QYwWE/rPRuhVh4v2BemHqpYrBuLE8FcWrRoGgkQgoofSlMZGYq7wHuL5999mUUHEA/2wxPfvDUrKoWkt9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so44412385ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 22:44:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751003042; x=1751607842;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Pd432zo7LFGK6KOyiXTXMOvwX3eozzXxwAFL1DPThI=;
-        b=w6gUfwX4pvdTHEr9XE1STjjO81IPs+aG4DJUX8nYJOMRO0fkRc9gHD7E8iLPTTwOHk
-         MtYGVbDEq4NGZSfAwFNYVoI0TrlqcS4GO4mjt1y5t2wZxs6eTPz9+HxPRAC1O0jZqRqv
-         OSUvhTZB/jJbynJ09Z3Tl2rW5yp8BV42YoWG3qK8CzMTM3LswMDkJoYsZhNFMhQE6q7T
-         YMqyvFBBedFmTAulyrGK14D0lSZQDrHpW2uZYW06+2bOOsadGndcmSkDq2YvmcmR8o/R
-         iDgucK9b9jQMROOkcjimT0l7Q93hDekb1lT48pR0ARIEqGpHMDYjhs3EyEGkgKLyyYl7
-         lf/Q==
-X-Gm-Message-State: AOJu0YxPDeu70GgW0pf0Wwvf98J1Po5Zjgv8D61dvaI1b9Qc5hkfhqbD
-	Enl1HDtGQBtVu9pwNkq5DW+jlve5Nxu1PA3lDLVU0whIKh3z+UnfBDLOjghjXnHvRpwYjozQLDY
-	ODajcYS+PDt7+ZHTgA57be/E1JRgiuWWlw9lGSzm0mLl8CL0rzRFHL4Vjj9E=
-X-Google-Smtp-Source: AGHT+IHVpClRtlO3j1SYzj+w0FS7Z69fNeAIKojFmVrL8DN54Qr0A+mFUE6fB0bTOnj/NargK9mVhJOPLJXKzrLRHsIad62GHlLS
+	s=arc-20240116; t=1751003552; c=relaxed/simple;
+	bh=I+cyzXXEFsVaAY+O6/we7LXtcWZMrSXWgPA81FRNw4c=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ZxNrFPMicuowjVKuEBF34vY8ukOizREkCskBjT1rYXDwbe+crFvn8BK8tkb0Jk3ju2li+CK8j379kDrQzr0AlPgTwCtFFtahv8vAi8uv0kM0eYap44cUIGfLAiiJs6t7Pp1fQ84eZ2AsTo4sy0ceXH7kgnWVPB4+e11XDXNEAzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=NUg3Q+FS; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1751003086;
+	bh=UyV35LOM07P/PALS6LcEMleCj1no3wxnvAIeYWaEtMU=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=NUg3Q+FSo4ZvGRStNFZRcyBK2LQb6PdQnA/gJ9PlV5t7nFWQSPNUt3RjFyklTZ+HC
+	 iXPD48xk53aOi7RlCQXLB0Orsic0/wjL9ImhlnrVhMz0XcN68kVY4/fHrIjaliksWB
+	 ojxzRZjZeTqF6MG9YpIg6T86PnpEhMf8g2ubuyd8=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:194d:b0:3dd:c40d:787e with SMTP id
- e9e14a558f8ab-3df4ab56738mr27583995ab.2.1751003041875; Thu, 26 Jun 2025
- 22:44:01 -0700 (PDT)
-Date: Thu, 26 Jun 2025 22:44:01 -0700
-In-Reply-To: <20250627051303.2837086-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685e2fa1.a00a0220.34b642.0154.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl
- (3)
-From: syzbot <syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
+Date: Fri, 27 Jun 2025 07:44:31 +0200
+Cc: Antony Antony <antony.antony@secunet.com>,
+ David Howells <dhowells@redhat.com>,
+ Antony Antony <antony@phenome.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Sedat Dilek <sedat.dilek@gmail.com>,
+ Maximilian Bosch <maximilian@mbosch.me>,
+ regressions@lists.linux.dev,
+ v9fs@lists.linux.dev,
+ netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C7DAFD20-65D2-4B61-A612-A25FCC0C9573@flyingcircus.io>
+References: <ZxFQw4OI9rrc7UYc@Antony2201.local>
+ <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
+ <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
+ <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
+ <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
+ <3327438.1729678025@warthog.procyon.org.uk>
+ <ZxlQv5OXjJUbkLah@moon.secunet.de>
+ <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
+To: Ryan Lahfa <ryan@lahfa.xyz>
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+we=E2=80=99re experiencing the same issue with a number of NixOS tests =
+that are heavy in operations copying from the v9fs mounted nix store.
 
-Reported-by: syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com
-Tested-by: syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com
+> On 13. Jun 2025, at 00:24, Ryan Lahfa <ryan@lahfa.xyz> wrote:
+>=20
+> Hi everyone,
+>=20
+> Le Wed, Oct 23, 2024 at 09:38:39PM +0200, Antony Antony a =C3=A9crit :
+>> On Wed, Oct 23, 2024 at 11:07:05 +0100, David Howells wrote:
+>>> Hi Antony,
+>>>=20
+>>> I think the attached should fix it properly rather than working =
+around it as
+>>> the previous patch did.  If you could give it a whirl?
+>>=20
+>> Yes this also fix the crash.
+>>=20
+>> Tested-by: Antony Antony <antony.antony@secunet.com>
+>=20
+> I cannot confirm this fixes the crash for me. My reproducer is =
+slightly
+> more complicated than Max's original one, albeit, still on NixOS and
+> probably uses 9p more intensively than the automated NixOS testings
+> workload.
+>=20
+> Here is how to reproduce it:
+>=20
+> $ git clone https://gerrit.lix.systems/lix
+> $ cd lix
+> $ git fetch https://gerrit.lix.systems/lix refs/changes/29/3329/8 && =
+git checkout FETCH_HEAD
+> $ nix-build -A hydraJobs.tests.local-releng
+>=20
+> I suspect the reason for why Antony considers the crash to be fixed is
+> that the workload used to test it requires a significant amount of
+> chance and retries to trigger the bug.
+>=20
+> On my end, you can see our CI showing the symptoms:
+> =
+https://buildkite.com/organizations/lix-project/pipelines/lix/builds/2357/=
+jobs/019761e7-784e-4790-8c1b-f609270d9d19/log.
+>=20
+> We retried probably hundreds of times and saw different corruption
+> patterns, Python getting confused, ld.so getting confused, systemd
+> sometimes too. Python had a much higher chance of crashing in many of
+> our tests. We reproduced it over aarch64-linux (Ampere Altra Q80-30) =
+but
+> also Intel and AMD CPUs (~5 different systems).
 
-Tested on:
+Yeah. We=E2=80=99re on AMD CPUs and it wasn=E2=80=99t hardware-bound.=20
 
-commit:         67a99386 Merge tag 'v6.16-p6' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=134d3b70580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=595d344ff0b23ac5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9b9124ae9b12d5af5d95
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=134a808c580000
+The errors we saw where:=20
 
-Note: testing is done by a robot and is best-effort only.
+- malloc(): unaligned tcache chunk detected
+- segfaulting java processes
+- misbehaving filesystems (errors about internal structures in ext4, =
+incorrect file content in xfs)
+- crashing kernels when dealing with the outfall of those errors
+
+> As soon as we reverted to Linux 6.6 series, the bug went away.
+
+Same here, the otherway around: we came from 6.6.94 and updated to =
+6.12.34 and immediately saw a number of tests failing, all of which were =
+heavy in copying data from v9fs to the root filesystem in the VM.
+
+> We bisected but we started to have weirder problems, this is because =
+we
+> encountered the original regression mentioned in October 2024 and for =
+a
+> certain range of commits, we were unable to bisect anything further.
+
+I had already found the issue from last October when started bisecting, =
+I later got in touch with Ryan who recognized that we were chasing the =
+same issue. I stopped bisecting at that point - the bisect was already =
+homing in around the time of the changes in last October.
+
+> So I switched my bisection strategy to understand when the bug was
+> fixed, this lead me on the commit
+> e65a0dc1cabe71b91ef5603e5814359451b74ca7 which is the proper fix
+> mentioned here and on this discussion.
+>=20
+> Reverting this on the top of 6.12 cause indeed a massive amount of
+> traces, see this gist [1] for examples.
+
+Yeah. During bisect I noticed it flapping around with the original =
+October issues crashing immediately during boot.
+
+> Applying the "workaround patch" aka "[PATCH] 9p: Don't revert the I/O
+> iterator after reading" after reverting e65a0dc1cabe makes the problem
+> go away after 5 tries (5 tries were sufficient to trigger with the
+> proper fix).
+
+Yup, I applied the revert and workaround patch on top of 6.12.34 and the =
+reliably broken test became reliably green again.
+
+Our test can be reproduced, too:
+
+$ git clone https://github.com/flyingcircusio/fc-nixos.git
+$ cd fc-nixos
+$ eval $(./dev-setup)
+$ nix-build tests/matomo.nix
+
+The test will fail with ext4 complaining something like this:
+
+machine # [ 42.596728] =
+vn2haz1283lxz6iy0rai850a7jlgxbja-matomo-setup-update-pre[1233]: Copied =
+files, updating package link in /var/lib/matomo/current-package.
+machine # [ 42.788956] EXT4-fs error (device vda): =
+htree_dirblock_to_tree:1109: inode #13138: block 5883: comm setfacl: bad =
+entry in directory: rec_len % 4 !=3D 0 - offset=3D0, inode=3D606087968, =
+rec_len=3D31074, size=3D4096 fake=3D0
+machine # [ 42.958590] EXT4-fs error (device vda): =
+htree_dirblock_to_tree:1109: inode #13138: block 5883: comm chown: bad =
+entry in directory: rec_len % 4 !=3D 0 - offset=3D0, inode=3D606087968, =
+rec_len=3D31074, size=3D4096 fake=3D0
+machine # [ 43.068003] EXT4-fs error (device vda): =
+htree_dirblock_to_tree:1109: inode #13138: block 5883: comm chmod: bad =
+entry in directory: rec_len % 4 !=3D 0 - offset=3D0, inode=3D606087968, =
+rec_len=3D31074, size=3D4096 fake=3D0
+machine # [ 43.004098] =
+vn2haz1283lxz6iy0rai850a7jlgxbja-matomo-setup-update-pre[1233]: Giving =
+matomo read+write access to /var/lib/matomo/share/matomo.js, =
+/var/lib/matomo/share/piwik.js, /var/lib/matomo/share/config, =
+/var/lib/matomo/share/misc/user, /var/lib/matomo/share/js, =
+/var/lib/matomo/share/tmp, /var/lib/matomo/share/misc
+machine # [ 43.201319] EXT4-fs error (device vda): =
+htree_dirblock_to_tree:1109: inode #13138: block 5883: comm setfacl: bad =
+entry in directory: rec_len % 4 !=3D 0 - offset=3D0, inode=3D606087968, =
+rec_len=3D31074, size=3D4096 fake=3D0
+
+I=E2=80=99m also available for testing and further diagnosis.
+
+Christian
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
