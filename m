@@ -1,172 +1,118 @@
-Return-Path: <linux-kernel+bounces-706312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8FBAEB504
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:35:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98EDAEB518
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5F51C41E33
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA87188EFAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C47322156A;
-	Fri, 27 Jun 2025 10:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D00265CB0;
+	Fri, 27 Jun 2025 10:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBKmPHtc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PGnvwdxi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E49E4EB38
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CC7265CB2
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020419; cv=none; b=mmqjI/2/tgf2hJNQIjwrzxQBgCIgHZj6GBQ49MTnA7i9Nvvl5IgYG+nO+pPsmYjxyNZMUt6n3fpyzpU/YsBjlOHLfssTC334aFVO0kF8iNYpNvJsBS7r4ZJZy+9xfa9GP+vak4v8CotW2P6WVbehePS6+PfOofU0Q60d3jcWVGU=
+	t=1751020501; cv=none; b=Y8yPfX9RJBduffG4zMDiYXrhDNqj4MK+iGUauweFs7vc93PrXAKHUu3iPiQcKK4VyXt6s2ug0zLQxH6qBna2e8zTa+eiLbY9ElQW5V1Rf+cKnhY2wa+v/pxM3hPP+vccybKzZeHAzZuuA5SWxKgXCz1vCeX3EZoz/w4hXUNbVYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020419; c=relaxed/simple;
-	bh=aIbu24VZKsQ0mNNKyKVSxFOTzJ56cEmLBlpiEyUahzA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y3hxWjaXHxqJk5UocFapHjm6m2endxEpbGUnNtji6I/ALtueY8T9w84LnNwwXy4QML8MPbPVMDu0NPQWiPcZBFe44qs0ceovZ5wNOc0XTmoKD+HK/DRpEUCFe8OYBK6QTrVBqHhYHfSLsvO0GwMMv8d1Z74j55eemUNn2Zi11Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBKmPHtc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751020416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dulzs6tJ70GQvmeyAReKMXNerxvTVJjW28pt4S38/Hw=;
-	b=CBKmPHtcC6Wp2NRfTsfsbYbI6fHOeC0/z0KgDSUWOTK81rosXTooEdo/2yPMzakfTedFsL
-	5BnQtbNHrSoVO9ofECqyM+S9am3lMMwYGcVh0l9a0CVbGnaLs64LIWrMwmRUJn7U3ScXyq
-	xBOkGAEfw5BwrOf6y/ctvoq5A74uLQQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-X7inpYuvMXOVb8u0c_It4g-1; Fri, 27 Jun 2025 06:33:35 -0400
-X-MC-Unique: X7inpYuvMXOVb8u0c_It4g-1
-X-Mimecast-MFC-AGG-ID: X7inpYuvMXOVb8u0c_It4g_1751020414
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4e9252ba0so1266156f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:33:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751020414; x=1751625214;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dulzs6tJ70GQvmeyAReKMXNerxvTVJjW28pt4S38/Hw=;
-        b=XmWO7ns7CMQy5AxBOZDiR6buawcWHe+L69DeIgVzPNoqd7awBGguQ8dSXVnGES7qt1
-         gWf6egcuiLJRBEKo7BCSemHjEAU9AjmX5f3hfJNit8ZhSCK/BXisKpzDsYkw4ybGpGtk
-         KgRqXuinS/xSaotz747QpaK3fZ9KjyRVXmiHWYaocx4mPsPfFBajKSfqElr/R6NlxiQs
-         AcdQxkfiXvRY4j9kptehnlkslEhip9UWOpTjjMcSqs2zarpY8hMV9nso7NOxZDsa0qku
-         9pmzSMaNx+UbPwsxMI3uFTRPmdR8nNGrUza0X6+I5mi5fucwXs/5UKaG0Hb4HnnW2l1y
-         +Ycg==
-X-Gm-Message-State: AOJu0YyNq+702x5uabtrv/bmMILayUbpRSwfL+Wa8CT+oDHYHgB8fk8S
-	ioJW8MQBHMRxlmWeoa1d0vvbKI7u95GMF0KVuvKotUU2LZnw334sX7lQjsemjUjfJYkU+W5knbW
-	J20sAdzOhEXauScGmF4p+09bAWb3j/psf631Gwn3wdLNoH9fSEfHGhXkfPuPR6lEBng==
-X-Gm-Gg: ASbGncswyq6dNHrxCzt+4EvxyIk0Gfg0jCqFpfQ0A6Lz9eAPQSJMYWSgSSHU0/u304/
-	cRM3vuHUQgrbU1SGxiC045y02PYxrKzYyJoJxQ9cyuxtsoDfpgnvPi2LyST9SWu1RSwXyH2Fja4
-	uVKmqivyfAvFoqFOxL/RnQSS0XGx3fhWPCop1F+7ixXl3LZDLRS1zjgkAphNMdyKatXybnAz+Ui
-	0VKlR3rL6rZaFKbjvv5/QR/rtNRkXLX3nrPi4z9iwWjK9QLBy553Fa3cAJlcpTVxZcYqXyiIhAK
-	TcuHfIB6aKhDCDfd23KjjyU7Ex/OdP2RqGODt7p7oDaYuMm1BSPgpXzCHi5Wlmrag9V7WusUu+N
-	Lkxym
-X-Received: by 2002:a05:6000:649:b0:3a4:d4cd:b06 with SMTP id ffacd0b85a97d-3a8fee65059mr2554129f8f.34.1751020414134;
-        Fri, 27 Jun 2025 03:33:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGr8/RKNk/JTVd5LqMGQVf2Ns+S9uVp6luEws4kRt9cVcCSr6ObG/jWvZ4ZnNoCEPUruiIDIw==
-X-Received: by 2002:a05:6000:649:b0:3a4:d4cd:b06 with SMTP id ffacd0b85a97d-3a8fee65059mr2554114f8f.34.1751020413648;
-        Fri, 27 Jun 2025 03:33:33 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7facf9sm2309041f8f.22.2025.06.27.03.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 03:33:32 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v1 1/2] firmware: sysfb: Unorphan sysfb files
-In-Reply-To: <aF5w4QTbSkebYbk2@smile.fi.intel.com>
-References: <20250626172039.329052-1-andriy.shevchenko@linux.intel.com>
- <20250626172039.329052-2-andriy.shevchenko@linux.intel.com>
- <87ikkhd0uv.fsf@minerva.mail-host-address-is-not-set>
- <aF5eL1o3WNo3Q7_p@smile.fi.intel.com>
- <87wm8xbkyh.fsf@minerva.mail-host-address-is-not-set>
- <aF5w4QTbSkebYbk2@smile.fi.intel.com>
-Date: Fri, 27 Jun 2025 12:33:31 +0200
-Message-ID: <87ldpdbhj8.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1751020501; c=relaxed/simple;
+	bh=BTuVbInTviSCPgqccAWc6LF/t2hU2VnFDBewn6YGhvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tfJ5vK9D7jHRMCTAvMcpmy/Vwk7e5ZSt14loLz4mwnrU9IYJ7Bg0IlQMFAzAUr1CoNqwMHiofe/l7UPW0LcbA5G6bLUCkypfAVYYesSyKdEhQyCdxABoeDaqhwyK5sG2lMVwvFTdKcr7ULA4wNDprk97NMztSpc8LRpUfD3eYus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PGnvwdxi; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751020500; x=1782556500;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BTuVbInTviSCPgqccAWc6LF/t2hU2VnFDBewn6YGhvI=;
+  b=PGnvwdxiQeXIIkYu5jJn12EIWVsKP2si/WfveoYN3dtVrNtZhACFZgrp
+   GGJu1gbPxa3guPMb15WAezZTI8DtU6RZunCV5miyiH3BawbwRAMJuAGeN
+   F7UTFNv2Qn34L18ivxz2cuzgxNy13+2D8iYdyEKEcsL+sanQJWp1V4gqo
+   bvA0y6S5sfHzRTePVHdgzlF62msuQJZ6rMxyQMZzizfS7IYDzqKk679y0
+   o6zQxPdPSA/U+63QBPXYRx2wsaawND9UOi/EuVQauGeO8rmGqCPC2lETa
+   kBWLKQmZOwms1jQ1I0LOtyi8kbqmkJB50Lgd7PlJbOVJw/VVfdd9sBmf7
+   A==;
+X-CSE-ConnectionGUID: h470ADSLTvyKt0OptG+51g==
+X-CSE-MsgGUID: 29z6sMDXQ+aTHGtoCPrOXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="64770083"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="64770083"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 03:34:59 -0700
+X-CSE-ConnectionGUID: VO5wL10LRSu2CfjInRDw8Q==
+X-CSE-MsgGUID: eSEkxIfzQxmb+3TOQVgoVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="153073411"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 27 Jun 2025 03:34:58 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9358A6A; Fri, 27 Jun 2025 13:34:56 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] firmware: sysfb: Don't use "proxy" headers
+Date: Fri, 27 Jun 2025 13:34:15 +0300
+Message-ID: <20250627103454.702606-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
-[...]
+Note that kernel.h is discouraged to be included as it's written
+at the top of that file.
 
->> 
->> That's just because there is an entry for arch/x86/. The problem then is
->> that there isn't an entry for drivers/firmware. It was orphaned then just
->> because it was moved to a directory that has no entry in MAINTAINERS.
->> 
->> > See the difference?
->> 
->> There is no need to have such a rude tone.
->
-> It wasn't meant to be rude, sorry. The point is that any change in
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-No worries.
+v2: dropped first patch, added tags (Javier, Thomas)
 
-> drivers/firmware/sysfb* and respective include are not visible to (any)
-> maintainers, they just might be sent for a luck of somebody to pick
-> them up by browsing the LKML for such things.
->
+ include/linux/sysfb.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Right. But get_maintainer.pl still reports I think the correct people to Cc:
-
-./scripts/get_maintainer.pl -f -- drivers/firmware/sysfb*
-Thomas Zimmermann <tzimmermann@suse.de> (commit_signer:4/4=100%,authored:2/4=50%,added_lines:11/43=26%,removed_lines:5/11=45%,commit_signer:1/1=100%,authored:1/1=100%,added_lines:1/1=100%,removed_lines:30/30=100%)
-Javier Martinez Canillas <javierm@redhat.com> (commit_signer:4/4=100%,authored:1/4=25%,added_lines:19/43=44%,commit_signer:1/1=100%)
-Alex Deucher <alexander.deucher@amd.com> (commit_signer:3/4=75%,authored:1/4=25%,added_lines:13/43=30%,removed_lines:6/11=55%)
-Tzung-Bi Shih <tzungbi@kernel.org> (commit_signer:1/4=25%)
-linux-kernel@vger.kernel.org (open list)
-
-In my opinion both Thomas and me have much more context and knowledge of
-the sysfb codebase than the x86 maintainers. It was just for historical
-reasons that the sysfb code ended in the arch/x86/ sub-directory.
-
-But you are correct that dri-devel at least should also be in the Cc list.
-
-> ...
->
->> >> > +F:	drivers/firmware/sysfb*.c
->> >
->> >> I would prefer these to be in the "DRM DRIVER FOR FIRMWARE FRAMEBUFFERS"
->> >> entry instead of "DRM DRIVERS" since the former is what has most of the
->> >> code for the sysfb infrastructure.
->> >
->> > Then do it, please, fix the above.
->> 
->> Part of the review process is to give feedback to patch authors. I don't
->> understand why you expect me to fix an issue you brought up just because
->> I ask you to rework your patch a little.
->
-> In my humble opinion, the author of the patch that makes the problem appear
-> can help to fix that as well. Are my expectations too high?
->
-> In any case, this was an ad-hoc patch due to the second one, so this one
-> may be considered as a administrative bug report.
->
-
-That's OK, but it wasn't framed as a bug report but as a patch and that's why
-I gave my feedback. But I'll post a patch and add a Reported-by tag from you.
-
-Thomas, I think we can then only merge patch #2 and I will take care of #1.
-
+diff --git a/include/linux/sysfb.h b/include/linux/sysfb.h
+index 07cbab516942..b449665c686a 100644
+--- a/include/linux/sysfb.h
++++ b/include/linux/sysfb.h
+@@ -7,9 +7,13 @@
+  * Copyright (c) 2012-2013 David Herrmann <dh.herrmann@gmail.com>
+  */
+ 
+-#include <linux/kernel.h>
++#include <linux/err.h>
++#include <linux/types.h>
++
+ #include <linux/platform_data/simplefb.h>
+ 
++struct device;
++struct platform_device;
+ struct screen_info;
+ 
+ enum {
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.47.2
 
 
