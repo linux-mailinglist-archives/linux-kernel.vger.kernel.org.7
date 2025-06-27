@@ -1,107 +1,78 @@
-Return-Path: <linux-kernel+bounces-706397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99E7AEB609
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:11:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCB7AEB588
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E311C43F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778EF16E543
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B85B1917FB;
-	Fri, 27 Jun 2025 11:10:35 +0000 (UTC)
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1B929A32A;
+	Fri, 27 Jun 2025 10:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="H25St+d9"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359E029AB11
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCADB2980BF
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751022635; cv=none; b=NiB/5DnZaYverh3zXWlZqCQzL2sR34MEMk+9Dulzc8MRJEgYi2GViGVWNQgTw/8OjTl1S5GDoOONs2EhdSRjMtjc/nEEMnfJHBHDvxPwmh8BaSDgFfVdcUIb5adw95MmtLK70x1G+BL3Fo2TcrhLagpFP6XludmOtlMq6KoQJOo=
+	t=1751021687; cv=none; b=A1YMgViR39AOiUc3xE6qKiR4nV8dS1jH46W0oS4R3ZKn2KuyLkwW7S3NVmBmuHTAwEH51vTCTH7j2xT5dlkYjshUvJ4gDOHwDhn3yNYjVd8MLKkVJ9B7csJi0AMktobk3SeLcBboOMWNSQHgd0Mc2hwDbIc5kODYeECiOQWerjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751022635; c=relaxed/simple;
-	bh=QVNN6PEuKtjv/LwBBEU6+ak92MwPeasvGzcyPAw29aY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eKyKA5lb7Av+zC1G/CIrFTZQmK++eN87qr/1X9rsUS92UBfMa9nnY8hB7DWrIuIjD2Gz4Kp3iBF9RAJgfHOkPDwIQuHRvvw4t9Kvw+McryL/Xw1NFppZt20KLeIA93V3r2ONHTKTU1IU0Ih+m9526OZRCsiAS/rjAqlyrKOUwOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bTC9Q2slpzVtZ;
-	Fri, 27 Jun 2025 12:54:18 +0200 (CEST)
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bTC9P25PgzxLs;
-	Fri, 27 Jun 2025 12:54:17 +0200 (CEST)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Fri, 27 Jun 2025 12:53:57 +0200
-Subject: [PATCH v4 5/5] arm64: dts: rockchip: force PMIC reset behavior to
- restart PMU on RK3588 Tiger
+	s=arc-20240116; t=1751021687; c=relaxed/simple;
+	bh=Ek+lA1SX5gipBxgIfPVabXXslyult+iMQ0m7IDgHvtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HMnB8sqUN8xS1ofA41Ng0mgilclg047xjTTeJnIpXyfN7yQIYR/TiranRX5Gx0Qx8HqNSu6yFXTlT7DmX+YvDH/eHJJ3j5gwqk6e+hXy5cy0u4KlFhaZSLaYgLzqDC0POGJBqD2TMvcNQuxcK+aVMNzr9oeU1LpQrIV8V3tlotA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=H25St+d9; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/VkP
+	h9CtKvJ+8x44vX4RgQiDyyc1lUXyDR2rjHDL+Zo=; b=H25St+d9xO6yD4YGBtxY
+	cB3vQ/If8IPj4Vpp7+JlEHWYGJ9/dVCAP1TyX5mB4bI2FblUvSJv6I7cSoGaK3XN
+	OBPChSVjJ6P4xqCRlDIjVAEJMyhtGKdhedPLbcGJhmw7BeH2C8hDCwFYz4V/dyry
+	XUPOb1XmfAYDbcI0gd1/LmHNQ/3W9utyfvesZyJwCi1V8tvi6mQS2GSep10g8N2Y
+	qH5TrQtrF+lDhqBlKSId2CMToz6731wF5duFfsTYi6KNBzey6s93Fcq9WMGJnvi/
+	SlE0ttxT+i4GV2jHRwKayiN1mtZl0RBD2AoINW5K2Z8OKQTb3IFY2QydElj0QzK2
+	cw==
+Received: (qmail 1435052 invoked from network); 27 Jun 2025 12:54:42 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jun 2025 12:54:42 +0200
+X-UD-Smtp-Session: l3s3148p1@kS1hgYs4os4gAwDPXzuUAOCQSK0rM+sw
+Date: Fri, 27 Jun 2025 12:54:42 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+	Peter Rosin <peda@axentia.se>, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: Use dev_fwnode()
+Message-ID: <aF54cmMncmbtU3Qb@shikoro>
+References: <20250611104348.192092-1-jirislaby@kernel.org>
+ <20250611104348.192092-8-jirislaby@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-rk8xx-rst-fun-v4-5-ce05d041b45f@cherry.de>
-References: <20250627-rk8xx-rst-fun-v4-0-ce05d041b45f@cherry.de>
-In-Reply-To: <20250627-rk8xx-rst-fun-v4-0-ce05d041b45f@cherry.de>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Lukasz Czechowski <lukasz.czechowski@thaumatec.com>, 
- Daniel Semkowicz <dse@thaumatec.com>, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250611104348.192092-8-jirislaby@kernel.org>
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+On Wed, Jun 11, 2025 at 12:43:36PM +0200, Jiri Slaby (SUSE) wrote:
+> irq_domain_create_simple() takes fwnode as the first argument. It can be
+> extracted from the struct device using dev_fwnode() helper instead of
+> using of_node with of_fwnode_handle().
+> 
+> So use the dev_fwnode() helper.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Peter Rosin <peda@axentia.se>
+> Cc: linux-i2c@vger.kernel.org
 
-The bootloader for RK3588 Tiger currently forces the PMIC reset behavior
-(stored in RST_FUN bitfield in register SYS_CFG3 of the PMIC) to 0b1X
-which is incorrect for our devices.
-
-It is required to restart the PMU as otherwise the companion
-microcontroller cannot detect the PMIC (and by extension the full
-product and main SoC) being rebooted which is an issue as that is used
-to reset a few things like the PWM beeper and watchdogs.
-
-Let's add the new rockchip,reset-mode property to make sure the PMIC
-reset behavior is the expected one.
-
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
- arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-index c4933a08dd1e3c92f3e0747135faf97c5eeca906..b44e89e1bb1599ee70b921598c2eb6fd54614f55 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/rockchip.h>
-+#include "rk8xx.h"
- #include "rk3588.dtsi"
- 
- / {
-@@ -440,6 +441,7 @@ pmic@0 {
- 		vcc13-supply = <&vcc_1v1_nldo_s3>;
- 		vcc14-supply = <&vcc_1v1_nldo_s3>;
- 		vcca-supply = <&vcc5v0_sys>;
-+		rockchip,reset-mode = <RK806_RESTART>;
- 
- 		rk806_dvs1_null: dvs1-null-pins {
- 			pins = "gpio_pwrctrl1";
-
--- 
-2.50.0
+Added "mux: pca954x:" to the header and applied to for-next, thanks!
 
 
