@@ -1,102 +1,128 @@
-Return-Path: <linux-kernel+bounces-706829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66879AEBC89
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 458D1AEBC90
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935923B3EB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3B23AAF36
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905802EA498;
-	Fri, 27 Jun 2025 15:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934E12EAD1D;
+	Fri, 27 Jun 2025 15:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z0ceVbAZ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HptNLOij"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8427623B61F;
-	Fri, 27 Jun 2025 15:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4E82EA755;
+	Fri, 27 Jun 2025 15:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039546; cv=none; b=folD3kd1+eNGMSsZz+jhDRf+p5V8Xv73tNONYwk5+u5Bc5amWrdtimE1+hls0ImydF9BZYxAKzChjVCVJN/XO1IRNANNuSDj149LW6FfHQBBZqA0w/nvyB2okjBFCC6dHIVO3ONfmHnpqbkSwLReWOhx3sdISwVUExu9CGrKxVs=
+	t=1751039564; cv=none; b=qMJIiD+AOPv8Ek9lj/ZjG0t76LUFDiB2+1SsHg0aC9Mn+FM5WRQJA3ZCplDvnrnsW3LEHHPydfc5ObLYxQ8Q7UKHlwZKgJOO614u7ZEBZUGB9ffceIpqrDFeAJPDrJje6UYorITKXl7TYkkiF/0nqxaH3Ma4XStUt7Mh6w/ZBbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039546; c=relaxed/simple;
-	bh=d40eK7td5Xa1FR52S3Q2YnEJMCDbNmnB5/xe1+8KVxw=;
+	s=arc-20240116; t=1751039564; c=relaxed/simple;
+	bh=gy9CL9y+gfjM4QOF0F7e8FXJmc5anJ3Go0BAtsFvsKc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/dCTWmNR0A1z+ekx7OLIwpGWjlE4mAzVryI7xqXNKN5jmElNUnJM8VOBoh0F21KmtW1c0azrAUw5WEyHYxwZKgzr8BKcYnm6e9HmC2WA/Nigiil3VwL/+FnpeXJfpKRCLhq6KOPosrraEoMkSKxyepdIVUuwDUqZypU7obqtKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z0ceVbAZ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Z+c/vMVBxvVliRM5Ba7u5qi1BNZCmTnatXuCT2DSf3s=; b=Z0ceVbAZOy3oDx3Jzp0zWCkcEC
-	5+/Ux5Woml8GdpSfkIhVTxnoD/1Ma1995s/H+9SLhMV2WFdH9AnA9VE6AMi5lmgAUc/GeLJBH8dv8
-	E+M91T3jrx+/xDUjfEcpMkKP2yciCidFInvaEizsorLfYjYs4vSQqrO5c8ROi7216sQU8i31mcYAN
-	tujVt5eFpXiIQNYSJqIuB4VKAotXXyXWuUkTHDWgreQsgQoRPqOcBBnTBM8tXQMMJZ9gn6FY62Phu
-	Xf2fu73K0hPBw9c5br2aSuebLqlrVwLN+UclnVhjVRg3/Iu1SkfzhW56ODmF5CZeO5B9qaQwK9fRF
-	+21HmNKA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uVBN9-0000000EQf9-17Tf;
-	Fri, 27 Jun 2025 15:52:15 +0000
-Date: Fri, 27 Jun 2025 16:52:15 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
-Cc: "tytso@mit.edu" <tytso@mit.edu>,
-	"hch@infradead.org" <hch@infradead.org>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-	"tursulin@ursulin.net" <tursulin@ursulin.net>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"chentao325@qq.com" <chentao325@qq.com>,
-	"frank.li@vivo.com" <frank.li@vivo.com>
-Subject: Re: [PATCH v3 3/4] fs: change write_begin/write_end interface to
- take struct kiocb *
-Message-ID: <aF6-L5Eu7XieS8aM@casper.infradead.org>
-References: <20250627110257.1870826-1-chentaotao@didiglobal.com>
- <20250627110257.1870826-4-chentaotao@didiglobal.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZ/UsQ7KSHDX1W4g4pO5spN99GWZrfhS3nvy1/R4TCX/+26yjoOYHVJBnZjYGG3a3CF3jcrRau4LLrNDfSQEzgPoO/Hnvxvi5zFk0JUvRX7ipC6la7qzFwXHXKvk7eZy7nPP1dG2++JzLy4d1+xh4/CKLrlvUYCb+Ei32pYjOPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HptNLOij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAC9C4CEF3;
+	Fri, 27 Jun 2025 15:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751039563;
+	bh=gy9CL9y+gfjM4QOF0F7e8FXJmc5anJ3Go0BAtsFvsKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HptNLOijAQuThXyOxRbHv92Tpzf90xR4vy7kfuhDOhzs21PwCMTLa/n8A7+FkixcA
+	 Do1jFS+DS4LuXGoeDkq3q78CvN5ZHGP5nGaNDnhCmDYKWuecBEqAeQaN4WVnCoesfs
+	 rszraaQAVmK/qcWUSPrhTrkAc/r+ADkSNvvx8KJ8FEGTi9jsPlUNNm9UbCKjkACL0R
+	 2UyJ1ENh7PDdR7V9aWsKw7YD/F70DKGmeGtbhFe7pdpOxxT3CKrYMZRdV8Q6AgxUq9
+	 Jf5NNu6Y+EP++/i+iy8LCMwYxi4DVMgCwb7jAY1MbRO/p0PvxmO6rpN1PiOMUyjAv1
+	 x4osoJ4oZjibQ==
+Date: Fri, 27 Jun 2025 08:52:42 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v4][for-next/hardening] acpi: nfit: intel: avoid multiple
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <202506270850.8631FABC17@keescook>
+References: <aFxtOLs6Yv_uzgt4@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250627110257.1870826-4-chentaotao@didiglobal.com>
+In-Reply-To: <aFxtOLs6Yv_uzgt4@kspp>
 
-On Fri, Jun 27, 2025 at 11:03:11AM +0000, 陈涛涛 Taotao Chen wrote:
-> @@ -1399,13 +1400,10 @@ static int write_end_fn(handle_t *handle, struct inode *inode,
->  }
->  
->  /*
-> - * We need to pick up the new inode size which generic_commit_write gave us
-> - * `file' can be NULL - eg, when called from page_symlink().
-> - *
+On Wed, Jun 25, 2025 at 03:42:16PM -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Use the new TRAILING_OVERLAP() helper to fix a dozen instances of
+> the following type of warning:
+> 
+> drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Tested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> This patch should go through:
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/ (for-next/hardening)
+> 
+> Changes in v4:
+>  - Use the new TRAILING_OVERLAP() helper.
+> 
+> Changes in v3:
+>  - Use union instead of DEFINE_RAW_FLEX().
+>  - Link: https://lore.kernel.org/linux-hardening/aEneid7gdAZr1_kR@kspp/
+> 
+> Changes in v2:
+>  - Use DEFINE_RAW_FLEX() instead of __struct_group().
+>  - Link: https://lore.kernel.org/linux-hardening/Z-QpUcxFCRByYcTA@kspp/ 
+> 
+> v1:
+>  - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
+> 
+>  drivers/acpi/nfit/intel.c | 84 +++++++++++++++++----------------------
+>  1 file changed, 36 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
+> index 3902759abcba..d0b72e906428 100644
+> --- a/drivers/acpi/nfit/intel.c
+> +++ b/drivers/acpi/nfit/intel.c
+> @@ -55,10 +55,9 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
+>  {
+>  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>  	unsigned long security_flags = 0;
+> -	struct {
+> -		struct nd_cmd_pkg pkg;
+> -		struct nd_intel_get_security_state cmd;
+> -	} nd_cmd = {
+> +	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
+> +			 struct nd_intel_get_security_state cmd;
+> +	) nd_cmd = {
 
-Why delete this?  It seems still true to me, other than s/file/iocb/
+If you wanted, these could be even further minimized to this, leaving
+the trailing object indentation unchanged:
 
->   * ext4 never places buffers on inode->i_mapping->i_private_list.  metadata
->   * buffers are managed internally.
->   */
-> -static int ext4_write_end(struct file *file,
-> +static int ext4_write_end(const struct kiocb *iocb,
->  			  struct address_space *mapping,
->  			  loff_t pos, unsigned len, unsigned copied,
->  			  struct folio *folio, void *fsdata)
+-	struct {
+-		struct nd_cmd_pkg pkg;
++	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
+ 		struct nd_intel_get_security_state cmd;
+-	} nd_cmd = {
++	) nd_cmd = {
+
+-- 
+Kees Cook
 
