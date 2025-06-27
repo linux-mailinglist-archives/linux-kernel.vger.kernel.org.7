@@ -1,184 +1,113 @@
-Return-Path: <linux-kernel+bounces-706348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D57AEB56E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A8EAEB574
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7744A4DEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:52:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390A04A52EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84EA29993D;
-	Fri, 27 Jun 2025 10:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1442A298CAC;
+	Fri, 27 Jun 2025 10:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bt9nFbfp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lPDIfD7t"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8699A224893
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A999339A8
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751021518; cv=none; b=UgYLFy8FlAZ8nrvLltkKeL4txKf0VlgGToevSufmcVr5c0iqSzMZ83US3Mrbbi0lecW+UdKOWh+/kGxuWS/UBVjhYXFg+c3f+2+fap43cvybHIQWwxvxk9YtSF8rUieI1quSzFDaKlfVV/1Q68mzDqntLXUGlngBi62Bz+LItzc=
+	t=1751021547; cv=none; b=VxwvSe6zaDdPikj27toBu5GuD0dzk9nEPTRuOT0axZihVLbBU4knbci4MgR3oOx7laSzGGY2tfvVm71WjjgTJb4VPemLtBsaGwp0k4k7w20u/8XCwF6vO/d5//2PXyP2c1pK33cc0zErX6fqFGMDQ7dToLgI+pQL8UO/3IXWfWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751021518; c=relaxed/simple;
-	bh=8NiJEsAY6H5hPb9ifVbvDlDwq1XB2n1aC1SVumzVDf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LZ8ubotSncSZwDekfXgqJWdV1LZQODxkx9zIyhwZlC2y/MrlceW5OBSLKpGzmFj2UgUQFlh8AbG1S3nKxECieJqZ1KWGxxkBHRLWrPz5P5j2FydNsEnxF99rlNo+lt33pBKP1+BeWQ3eKU44bRzqo/KMMhY+sjUlbAqtz4eNDQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bt9nFbfp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751021515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L9N28nJ//bAtYtJKvSA/25sV4gpscCPOFq7vHxaYwng=;
-	b=Bt9nFbfpYtZskS5sVeVxxzeJj9b/wOKJadU3h4Vubdg3AOpnOS2r6eHiaDnVr3gE85DR+/
-	z/4dpMSh0ZBuhJNuwA07FNwQcOMS2KUA0miccOrLlQE9gAnHE7rvS/nPmkf21JHzPXX7aI
-	xlWu26QpcstjiXC8XlIJtPOY7mGjxFY=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-NygEStmHPd2i4pTxn5eKyw-1; Fri, 27 Jun 2025 06:51:54 -0400
-X-MC-Unique: NygEStmHPd2i4pTxn5eKyw-1
-X-Mimecast-MFC-AGG-ID: NygEStmHPd2i4pTxn5eKyw_1751021514
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a58cd9b142so41639911cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:51:54 -0700 (PDT)
+	s=arc-20240116; t=1751021547; c=relaxed/simple;
+	bh=viQz2FoWAMoMRBrUB0vOI7MJY+U2udKXiQsPy3/43Lo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IH0bAmqKeYFhnoHDKOXdAb7vyhxevXmK5zPY+zqsr/SPXUmSQyWtfC18pJxazJ23BA7biuKu1f25iS0l4t2VyD8QOtUJlKkiiXdK3hKiJ23S8ks+sLkIhUPrsDuAwRBRQPZzqvlOgbf16Ht78ruE/6HgqdWi4KgTIuvLgOIP+fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lPDIfD7t; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fabb948e5aso22628166d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751021545; x=1751626345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=viQz2FoWAMoMRBrUB0vOI7MJY+U2udKXiQsPy3/43Lo=;
+        b=lPDIfD7t408ZxrVpNKvE+WAFBUXePajuD4rBJe3/hTCzUSSJXAOjrrN/0lvsBq+H77
+         G2J5R6Q8ltzNPXtsgysIi/YqUVI9KaXIfYGdcITV0DalCmNfCSO/LYGvRmdCNkJYULQP
+         XvHvHoOzrbY/98Z7yroLwILBnuk2NBl5j7yk57b+NaLEqcUSI08oX1tkeaqhq4sWIa9b
+         4Uq95M8X39wKzOBjBG3TG47SHoq2m6nXriHRA5lyVKUEkz6dSJs8VKSVwz0WsKDyPZSY
+         Pf89UE04FwPDDV45kV9YOLLEWSSatytKkkoW3Ep1AAFT6524qeuvFrDZZKyCfiNhiHkF
+         +EJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751021514; x=1751626314;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9N28nJ//bAtYtJKvSA/25sV4gpscCPOFq7vHxaYwng=;
-        b=ekLidX4sti9hY6Xngz79mbH/W/pWrvkZr/s7TLlGCMLx908S/Qn0IC1jig8TTtnRj+
-         YC6oVEZw1Q3LKnh1biOYrMi5KZNrVrfZqn/RVwGdmNHvt4ubdO4FvtlX7/bw2zK8yZ7v
-         +BJwC1vdBPhSAdvIcilAOryuBh+Vl+CD+SEFeOaRuEXYWify2qIHmFg8aISAWJrIPcU8
-         wCNvIEagp5Vr4Y/8KvFkBM9/WVl7KZlJy8PEmPqtmP4vLLDZq4Df2WjXTrY10E2uxXch
-         QEvkEl1wERuQKZdgxrnU8v0IHs1g/YcuaTcw3kJbeCKYSxlzPF0PsYwUVraJcPReEwOP
-         c1xQ==
-X-Gm-Message-State: AOJu0YzPPbNCp/8+s8tGLnSbNruAd0VHrER+w2kavyAg1JuGC2aOgipK
-	1Jv4DI32wPykZIxWd39VZIDM5AvBTyIRhw+D65zNQiJRzFnjRReQ48iwts4w5OL2CrNSHGplKiV
-	Di+KrrO4ZfCoFmpGrotQXJF0e6N+wcXq7RZZEhBpcxfSmT7J/rZwM9n0Fd0SDjRIycZzaFBiU7A
-	==
-X-Gm-Gg: ASbGnctMkN0chu2ScpKM1WzBFmyuiLY2mxQJs7i7z5OBTSlytCP5hNZEiXsd8ly0Za8
-	PHZC8Tp7Xo863aKSkH5w3RqY+SVxl7RQrye36dS+5uO0Igz5jLoaXKreL312aXKswVIXRjuhNYd
-	50/x12UUPzBSE0uzJNWXmsm2uIsBm3/68Pth6m1eta4Z9fpgoEzC2gk3T/4bqIEwk1hySnayWAh
-	iqlpKy10NRj62mc7J01UxT+Yc1jnwwRiFFywfQ/EJoRpppBu+BEvejiT/hHRBF7sIA6loJxJe+8
-	xBHJn0/zmwTlcf7HIVgXHOpc8h+x
-X-Received: by 2002:ac8:7f4e:0:b0:4a7:30e2:b31e with SMTP id d75a77b69052e-4a7fcac456fmr48138381cf.34.1751021513893;
-        Fri, 27 Jun 2025 03:51:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUZBEeQ02fjTo/PBcoZEjlOKuEN1OVgF9WmLAZpvc5pbASKuBu4dcl/skhi8pvedUhQk6Z7w==
-X-Received: by 2002:ac8:7f4e:0:b0:4a7:30e2:b31e with SMTP id d75a77b69052e-4a7fcac456fmr48137981cf.34.1751021513420;
-        Fri, 27 Jun 2025 03:51:53 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.181.237])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc5ad3c6sm9858681cf.78.2025.06.27.03.51.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 03:51:53 -0700 (PDT)
-Date: Fri, 27 Jun 2025 12:51:45 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>, 
-	Steven Moreland <smoreland@google.com>, Frederick Mayle <fmayle@google.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	netdev@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH 0/5] vsock/virtio: SKB allocation improvements
-Message-ID: <izmrcafyog7cxvef2nipk5f2vzxxptyc4fopnvl3heqslsp7q6@32ssw2piag6h>
-References: <20250625131543.5155-1-will@kernel.org>
+        d=1e100.net; s=20230601; t=1751021545; x=1751626345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=viQz2FoWAMoMRBrUB0vOI7MJY+U2udKXiQsPy3/43Lo=;
+        b=hifCGyawW+9aPP4mjjG+d8Im4Frz7gXzjxo8zbMRTmLXxRBqFSzgl7LpFp6R6DzFmO
+         dLY+JvRrB5Vw7C+AWi9jI70lQdRfoLX+zrBcDGSx9+Kx6MdhHYuKIJJ+WmUbgzjG8jOq
+         ztKTHbMtCSaj+D/Cu0ybT2KW1UGghsg1x+cc9RtRt04wMddBaZ+MrLoibhr4HIrN4vnL
+         x+wLLCFKmqyqrdF9Frx7hhJpxiyw9OedRE5ahjYk/fzpiHfA0z5lRCf8dC+aTRLnCU3U
+         7t1l/Z7lL9XPDt8FO55sZlyOnJNnaTrNqmJQOj5HILmkcmp3A8Wj9a9gKtz8+QofSw6s
+         nUIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+p7hKQdzjIDkn+SL/UxYUKhNzYRwUre8RL12E9Z5c4oE5mpDKhuLTgbi8KR/lL/nl3P1XB7jvz3vZpfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvyqjzEzvJ6AqjOC3FShOnmFxDS1o5nj8eeZ41Trk7yNJR5UIA
+	BFFLf/WW720dK62V+OgFGcXPVaKW0P1nFO3iRRaJANGaINzRWDxNAFuCMJbF1xOxppZvUEIYIWB
+	2nlfq+D/gq3L0TsOvK3g8J+RKodq+hxq6+PkasN/z
+X-Gm-Gg: ASbGncvU9DK0Iv/5NynqdKwjK3wRE43k+L3yuKhLbww7cInW4XowPpwflAn46+QOls2
+	wryT6GoitjvpZPu2JDz0uo6olsX5nz5VfXwSRpY55m+KQOBcKdPH4y770L0dP3U8kDAFPgWAI2g
+	nSoqVyaxmT4egRjjjJyijANqS70A+AFs/yqEzdmxRhGroOLFPzTf8MC4G7ZpoMWTJwyatN3IsXF
+	MW5GQuiD/I3
+X-Google-Smtp-Source: AGHT+IHiPYfanXyE076HAbBUTiSPySq5WIulTf1tneg+6DFz5W/NAseIh3zHh2ggPpwhiKNV49pZNoFv1V1Xqv1HXQM=
+X-Received: by 2002:a05:6214:2aae:b0:6fa:c41e:cc6c with SMTP id
+ 6a1803df08f44-70002dec8ccmr47072906d6.15.1751021544651; Fri, 27 Jun 2025
+ 03:52:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250625131543.5155-1-will@kernel.org>
+References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-2-glider@google.com>
+ <20250627075905.GP1613200@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250627075905.GP1613200@noisy.programming.kicks-ass.net>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 27 Jun 2025 12:51:47 +0200
+X-Gm-Features: Ac12FXz9ZmEhwn6682BBmZphT053hwX6JSzJtoiQLmtu_EeKs6Hkmz1YSAuN-mU
+Message-ID: <CAG_fn=XvYNkRp00A_BwL4xRn5hTFcGmvJw=M0XU1rWPMWEZNjA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] x86: kcov: disable instrumentation of arch/x86/kernel/tsc.c
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2025 at 02:15:38PM +0100, Will Deacon wrote:
->Hi folks,
+On Fri, Jun 27, 2025 at 9:59=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
->We're using vsock extensively in Android as a channel over which we can
->route binder transactions to/from virtual machines managed by the
->Android Virtualisation Framework. However, we have been observing some
->issues in production builds when using vsock in a low-memory environment
->(on the host and the guest) such as:
+> On Thu, Jun 26, 2025 at 03:41:48PM +0200, Alexander Potapenko wrote:
+> > sched_clock() appears to be called from interrupts, producing spurious
+> > coverage, as reported by CONFIG_KCOV_SELFTEST:
 >
->  * The host receive path hanging forever, despite the guest performing
->    a successful write to the socket.
->
->  * Page allocation failures in the vhost receive path (this is a likely
->    contributor to the above)
->
->  * -ENOMEM coming back from sendmsg()
->
->This series aims to improve the vsock SKB allocation for both the host
->(vhost) and the guest when using the virtio transport to help mitigate
->these issues. Specifically:
->
->  - Avoid single allocations of order > PAGE_ALLOC_COSTLY_ORDER
->
->  - Use non-linear SKBs for the transmit and vhost receive paths
->
->  - Reduce the guest RX buffers to a single page
->
->There are more details in the individual commit messages but overall
->this results in less wasted memory and puts less pressure on the
->allocator.
->
->This is my first time looking at this stuff, so all feedback is welcome.
+> NMI context even. But I'm not sure how this leads to problems. What does
+> spurious coverage even mean?
 
-Thank you very much for this series!
+This leads to KCOV collecting slightly different coverage when
+executing the same syscall multiple times.
+For syzkaller that means higher chance to pick a less interesting
+input incorrectly assuming it produced some new coverage.
 
-I left some minor comments, but overall LGTM!
-
-Thanks,
-Stefano
-
->
->Patches based on v6.16-rc3.
->
->Cheers,
->
->Will
->
->Cc: Keir Fraser <keirf@google.com>
->Cc: Steven Moreland <smoreland@google.com>
->Cc: Frederick Mayle <fmayle@google.com>
->Cc: Stefan Hajnoczi <stefanha@redhat.com>
->Cc: Stefano Garzarella <sgarzare@redhat.com>
->Cc: "Michael S. Tsirkin" <mst@redhat.com>
->Cc: Jason Wang <jasowang@redhat.com>
->Cc: "Eugenio Pérez" <eperezma@redhat.com>
->Cc: netdev@vger.kernel.org
->Cc: virtualization@lists.linux.dev
->
->--->8
->
->Will Deacon (5):
->  vhost/vsock: Avoid allocating arbitrarily-sized SKBs
->  vsock/virtio: Resize receive buffers so that each SKB fits in a page
->  vhost/vsock: Allocate nonlinear SKBs for handling large receive
->    buffers
->  vsock/virtio: Rename virtio_vsock_skb_rx_put() to
->    virtio_vsock_skb_put()
->  vhost/vsock: Allocate nonlinear SKBs for handling large transmit
->    buffers
->
-> drivers/vhost/vsock.c                   | 21 +++++++++------
-> include/linux/virtio_vsock.h            | 36 +++++++++++++++++++------
-> net/vmw_vsock/virtio_transport.c        |  2 +-
-> net/vmw_vsock/virtio_transport_common.c |  9 +++++--
-> 4 files changed, 49 insertions(+), 19 deletions(-)
->
->-- 
->2.50.0.714.g196bf9f422-goog
->
->
-
+There's a similar discussion at
+https://lore.kernel.org/all/20240619111936.GK31592@noisy.programming.kicks-=
+ass.net/T/#u
 
