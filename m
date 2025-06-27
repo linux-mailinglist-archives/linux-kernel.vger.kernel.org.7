@@ -1,249 +1,383 @@
-Return-Path: <linux-kernel+bounces-706759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5D1AEBBAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:27:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08781AEBBBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA5EA56316C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5AB1696BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB332E9EBB;
-	Fri, 27 Jun 2025 15:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA86E2E92DE;
+	Fri, 27 Jun 2025 15:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iBKd143x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CD7IBdgt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC82F2E9745
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF4B1CAA6C;
+	Fri, 27 Jun 2025 15:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751038033; cv=none; b=ef7aOC7/eLBdNiw1ssx7rLi2D4Zf2TnpBfQmiZsYkuVWdANlTyN/HgFGXB0O8/kQEZBgAbA02oENvIovWE5rB1vP6Wd3ZRlzNcFM1Csi5Gpsi1NJlKRBuPyHiF7/WgLVVwtg0se4EOLXoQFLYTmHg4ZlFjtCoDt/a3EVSwoFwso=
+	t=1751038129; cv=none; b=RgL0AfwGNeJfmI5TStqXcRZ4jsA7mrtehliargX/SGjHhNMceTfdnuudqeZgmUd2oEjuJn74wAOv9KJYwdQKXjeBAadSVYZUUrIRmtap6XYE8bAQC9wj7KyYbBJMY1VJO54OK8tN5xIhUtZ6AlGENFpNAU9FjPqm0sY7QcOsPcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751038033; c=relaxed/simple;
-	bh=hcN6A1q0WGNYWRvbQ4ctcnRMau6cAMlQLdGma13AKqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmOPIdYgn22MJPsE1MLsO4gsqt5jl2Q+aWs0BK7N7IlUFAs6U/P0cHxAaObDNrnDvGS8xda79Xx7u5L3OetjqZGIsPIzCYNcxskHur07Tuq/D3LdbDt7ARfWzKA37mdJqBCYWFmSVrt5Rj9bPY+Rg7TRHcYUjF+Bh3ea+6B9XkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iBKd143x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RCXt9h011216
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:27:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JZZ4tJ6lcu3L9BEzwOZsQXUridSAuhGxATa6ADiHX78=; b=iBKd143x7nGsvr/U
-	az510V+NoAVosDvhr333MuNCoJFZ8A5MttWnq0EtcFeh28Ghplkm5Lq7TlpQUw4v
-	fQNvLGkukd5rvfVoL5zgPcfm23z1KyxJtlaHf1ZTaTmASSy3fzeAneCaO2uJTgtq
-	ey/HqXhoQY3f8xLEoyuV3A0eFSkhSs1LmcTUWie6hgDn3x5C/D5vwZm2M3ahJl2M
-	2A3jYunp4+G7S6ouhPEih6l5IazRpURwL4IZgOU62IQ7uw47Ilw6osXTYrqjVIF6
-	Y8Qq547i7HE8EME0YMJvnLt6u/2Wkj5Qxu1ItuQuHi9MUVtYxeP/F5quyL3VX452
-	u4sEEw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f3bgq82h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:27:10 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7cfb7ee97c5so3049785a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 08:27:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751038030; x=1751642830;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZZ4tJ6lcu3L9BEzwOZsQXUridSAuhGxATa6ADiHX78=;
-        b=CJ5Ho9ZnJbFJU6JUWN4t8AjPMnWGmAi00ALLg2mJk0hA3VBaYnFucMaRPfvA6Z+4Na
-         9q4gPjwxur8qEkyob3lV6zLxNWSI+n4jTx8arM+LoEW7N/W48TjEfRwewOfA4n+24pXf
-         otKCy97/AMLBTX2TNKLuFPdVwxanwItDVwY0PzU80KbOmJlWKadJ6XsPUh1kUyIQYSHg
-         61UAlpSzSghywyXoTul513RbZ02w63M0v4IOu6L3cGDaB4RMu0C4AahBaL8jfKa80ngu
-         rneLSvgpPVPutAJn0PRUnA8nrv2dqWS7KxhQHWAEucuAWY+vA7vTsuEbwtfaZDEry7CV
-         XNVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXW3F50W8i3PUsL5G1L4g3/W5329Fmsq/3HsnzS2E4S9Sj9+6UWwRJPinY3/HW7lNrUGEgUBWiRp/JQAlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGfRJHxihRIrqIA+sbLw8zdlJPeuM7CQt+FEcrLlh3EQOZBDHg
-	kMHmSG98Bk6xbpNlHWvfRcqCiLLIBAsjjLTaUeSP1GqoE7UGf5BjJCo1Kksk/PlIQwKow6TQkMe
-	CIrKfsZNIv5iaRrb8nLlLi6K6qCR7b/rfRMbJlKnaFjIBX5NpZCJHRBKz9gcXJmtmOgo=
-X-Gm-Gg: ASbGncsh4qNrAPr7IxHFzTWU4Ee4/ynhxrtrx103TAezHopwSfvFRLew0c+HfEriwes
-	0QLoT9/Ynd44ADsqjwHMD4q8z2N4RCotOoNPBJc96JyAelVrsapBPHtOXVSyLTm05UxApn9YhdU
-	ByJtQrpJ5bxVB1OFhdPLEosrnWPvv5N3H+FIHci1sxomHjJVLko4drGIVzcq0F1iQludeCx7boH
-	TqjSHLnXV25ZGTwSgBvZ9mx7Dwo/YO4udFwcRLQfNgD4S0u3k6INo4v2t8nUlHNPZhmLa676s2B
-	M9cVnhIpbVV272Vh+6JGU/lmbFYFNKjHE/dLcDlopvsSMSEQUMNO+jvhuacx92ociwzPNjCUvWc
-	V+V0=
-X-Received: by 2002:a05:620a:2a0f:b0:7d3:cf9b:511f with SMTP id af79cd13be357-7d4438fc152mr232576385a.5.1751038029868;
-        Fri, 27 Jun 2025 08:27:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzu9KxtnhJiSF0c+63jY7dHIfp2V6YLdELQCZgcMxDmXNkGrahzyOY+/NuiaXWENcUW8wxqg==
-X-Received: by 2002:a05:620a:2a0f:b0:7d3:cf9b:511f with SMTP id af79cd13be357-7d4438fc152mr232573785a.5.1751038029320;
-        Fri, 27 Jun 2025 08:27:09 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c6bda4sm140761466b.141.2025.06.27.08.27.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 08:27:08 -0700 (PDT)
-Message-ID: <7df8a438-364e-431e-8424-209ad7482efc@oss.qualcomm.com>
-Date: Fri, 27 Jun 2025 17:27:04 +0200
+	s=arc-20240116; t=1751038129; c=relaxed/simple;
+	bh=QtHjZBImyP82L6fjboplG+GB2+4sny3P40EkhqEuBIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ei4mQmdVv9ZOfYJ8CtMqM57T4hGGSSoAvcrfojm5VWuFl+Hk8oXqRnHOPLDzL3KcABx91tOHuVgZ56go3QR4TCn67gqRSkLdLMhjjVEMWuyj6hzymMhArnOI4N1tmg96vSHq4I8gMCUxjcy1HB8A1TDgogHyofwmvsVezStwcnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CD7IBdgt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE4AC4CEE3;
+	Fri, 27 Jun 2025 15:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751038128;
+	bh=QtHjZBImyP82L6fjboplG+GB2+4sny3P40EkhqEuBIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CD7IBdgtXz0atRZoKAF+Gp1ID957/kMCWjRMmhbrgTy+VbO5mm+kPDm1LMFfKKqxV
+	 eGGxMINWb8jyyk0iF2bCa0mK3wKF8tO9loiMeN7pV/zSEuuNGAZn+1rqrKO6FDRANK
+	 ydEaFm58+6Sqln65n8+cjJc23g7ma30DO0xbqu+ofNuF6lxnoy+b3tutnpA27LAo3I
+	 uSANDZ8/JbU0J7EKIPmOR55LgkL8hiRrZjz7zzvOtDSiK+kaNV9dVzQR7cR8+UnAGR
+	 waxPdAtPgit8wH2IDvtP0TufCut+eIt3a2jsRScVBrajpgu37bEtXkJOAWDdFg9NV7
+	 4RbH8GzY3htiA==
+Date: Fri, 27 Jun 2025 17:28:45 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 4/9] pwm: Add Rust driver for T-HEAD TH1520 SoC
+Message-ID: <aot4ow37qsrehgce6vpc5m7ha5w6h4jvj7k7bokn4eo63sjk5x@iyp5ir234kx5>
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+ <CGME20250623180902eucas1p2960477c0a44f05e991747312b0ae0ff0@eucas1p2.samsung.com>
+ <20250623-rust-next-pwm-working-fan-for-sending-v5-4-0ca23747c23e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] arm64: dts: qcom: qcm2290: Add venus video node
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: krzk+dt@kernel.org, bryan.odonoghue@linaro.org, quic_dikshita@quicinc.com,
-        mchehab@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-        konradybcio@kernel.org, andersson@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
- <20250626135931.700937-6-jorge.ramirez@oss.qualcomm.com>
- <6e330e8f-5856-ef8e-5fe3-52bd61b59e02@quicinc.com> <aF6PqCY/E6H0Mc2/@trex>
- <2722e70a-1080-c9f3-eb56-4a6e79084bdc@quicinc.com> <aF6z7iaicHyNXg6w@trex>
- <e704535c-0004-6dbd-bc81-b4ebc7747881@quicinc.com>
- <bac1e5e4-ed18-4e26-a883-2a41bf8468a8@oss.qualcomm.com>
- <a934bb78-587b-6aca-2fb1-38605d3b385a@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <a934bb78-587b-6aca-2fb1-38605d3b385a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: IUcJ4t2reW5TzCF9TAy--PjGJUUIWHvD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEyNSBTYWx0ZWRfX8wPq2Nth0BRr
- RJzvUA/pgR/HOwksj0kYMUSTeMmQTZsOfbaWSq1NG4XJ8XBq8X5CX6EliWC5n4hr6K8zbWadNs/
- A415eJlo69qv0TMKeEwCsD9dYUURzYFEHzSxsWvBBuiqkbtjwUXd6x/qBZNpwjtPmn5hYJVcCeC
- 4eHFAyStb8bGAcL77/wQNBzKGxsHRXW1RhhMcWJNaeKD2x6SmYlgatIye+npeTaa4uTKdrgLo5O
- NmD7+A2ZflBv0SHPZQEv/a9oFnW2jya+D5gTIszDoJtFYxgfarl4ywIsFB3EOHD9xkwITnsncvU
- yDPHEwhgSiyw7FiCWPWi5r9wtb+r0lXeJkYJ30PyAJ5MlvYiP/b8/pC+Dpx0EgJT8O3SuIwtR+p
- 3QYBJ46fHuiJlew4XxPRgpRW+pt/OVJ87L7KPPoX0FnyIhyIKxCh2QnRXFOlylUVG/w7vVKb
-X-Authority-Analysis: v=2.4 cv=L4kdQ/T8 c=1 sm=1 tr=0 ts=685eb84e cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=_MKmYBsjHzb_8gZMir8A:9
- a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: IUcJ4t2reW5TzCF9TAy--PjGJUUIWHvD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
- adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- spamscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506270125
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vkfxvii7cyang4hh"
+Content-Disposition: inline
+In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-4-0ca23747c23e@samsung.com>
 
-On 6/27/25 5:23 PM, Vikash Garodia wrote:
-> 
-> On 6/27/2025 8:50 PM, Konrad Dybcio wrote:
->> On 6/27/25 5:12 PM, Vikash Garodia wrote:
->>>
->>> On 6/27/2025 8:38 PM, Jorge Ramirez wrote:
->>>> On 27/06/25 20:28:29, Vikash Garodia wrote:
->>>>>
->>>>> On 6/27/2025 6:03 PM, Jorge Ramirez wrote:
->>>>>> On 27/06/25 17:40:19, Vikash Garodia wrote:
->>>>>>>
->>>>>>> On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
->>>>>>>> Add DT entries for the qcm2290 venus encoder/decoder.
->>>>>>>>
->>>>>>>> Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
->>>>>>>> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
->>>>>>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
->>>>>>>> ---
->>>>>>>>  arch/arm64/boot/dts/qcom/qcm2290.dtsi | 57 +++++++++++++++++++++++++++
->>>>>>>>  1 file changed, 57 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
->>>>>>>> index f49ac1c1f8a3..5326c91a0ff0 100644
->>>>>>>> --- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
->>>>>>>> +++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
->>>>>>>> @@ -1628,6 +1628,63 @@ adreno_smmu: iommu@59a0000 {
->>>>>>>>  			#iommu-cells = <2>;
->>>>>>>>  		};
->>>>>>>>  
->>>>>>>> +		venus: video-codec@5a00000 {
->>>>>>>> +			compatible = "qcom,qcm2290-venus";
->>>>>>>> +			reg = <0 0x5a00000 0 0xf0000>;
->>>>>>>> +			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
->>>>>>>> +
->>>>>>>> +			power-domains = <&gcc GCC_VENUS_GDSC>,
->>>>>>>> +					<&gcc GCC_VCODEC0_GDSC>,
->>>>>>>> +					<&rpmpd QCM2290_VDDCX>;
->>>>>>>> +			power-domain-names = "venus",
->>>>>>>> +					     "vcodec0",
->>>>>>>> +					     "cx";
->>>>>>>> +			operating-points-v2 = <&venus_opp_table>;
->>>>>>>> +
->>>>>>>> +			clocks = <&gcc GCC_VIDEO_VENUS_CTL_CLK>,
->>>>>>>> +				 <&gcc GCC_VIDEO_AHB_CLK>,
->>>>>>>> +				 <&gcc GCC_VENUS_CTL_AXI_CLK>,
->>>>>>>> +				 <&gcc GCC_VIDEO_THROTTLE_CORE_CLK>,
->>>>>>>> +				 <&gcc GCC_VIDEO_VCODEC0_SYS_CLK>,
->>>>>>>> +				 <&gcc GCC_VCODEC0_AXI_CLK>;
->>>>>>>> +			clock-names = "core",
->>>>>>>> +				      "iface",
->>>>>>>> +				      "bus",
->>>>>>>> +				      "throttle",
->>>>>>>> +				      "vcodec0_core",
->>>>>>>> +				      "vcodec0_bus";
->>>>>>>> +
->>>>>>>> +			memory-region = <&pil_video_mem>;
->>>>>>>> +			iommus = <&apps_smmu 0x860 0x0>,
->>>>>>>> +				 <&apps_smmu 0x880 0x0>,
->>>>>>>> +				 <&apps_smmu 0x861 0x04>,
->>>>>>>> +				 <&apps_smmu 0x863 0x0>,
->>>>>>>> +				 <&apps_smmu 0x804 0xe0>;
->>>>>>> keep only the non secure ones.
->>>>>>
->>>>>> ok
->>>>>>
->>>>>>>> +
->>>>>>>> +			interconnects = <&mmnrt_virt MASTER_VIDEO_P0 RPM_ALWAYS_TAG
->>>>>>>> +					 &bimc SLAVE_EBI1 RPM_ALWAYS_TAG>,
->>>>>>>> +					<&bimc MASTER_APPSS_PROC RPM_ACTIVE_TAG
->>>>>>>> +					 &config_noc SLAVE_VENUS_CFG RPM_ACTIVE_TAG>;
->>>>>>>> +			interconnect-names = "video-mem",
->>>>>>>> +					     "cpu-cfg";
->>>>>>>> +
->>>>>>>> +			status = "okay";
->>>>>>>> +
->>>>>>>> +			venus_opp_table: opp-table {
->>>>>>>> +				compatible = "operating-points-v2";
->>>>>>>> +
->>>>>>>> +				opp-133000000 {
->>>>>>>> +					opp-hz = /bits/ 64 <133000000>;
->>>>>>>> +					required-opps = <&rpmpd_opp_low_svs>;
->>>>>>>> +				};
->>>>>>> Fix the corner freq value
->>>>>>
->>>>>> can you add some reference please?
->>>>>>
->>>>>> I took this data from an internal document - not sure why the downstream
->>>>>> driver supports different values or where those were taken from (AFAIK
->>>>>> they are not supported)
->>>>> Most likely you have referred incorrect downstream file. Refer scuba-vidc.dtsi.
->>>>
->>>> I took them from actual documents (which might or might not be obsolete,
->>>> hard to say but they were the latest version and as such, they
->>>> contradict the downstream dtsi).
->>>>
->>>> So I'd rather not use downstream - could you point me to the reference
->>>> you used please - I wonder if the fix is required downstream instead of here?
->>>
->>> You can look for this file gcc-scuba.c and refer gcc_video_venus_clk_src which
->>> is the src for different venus clocks.
->>
->> This is not a good source in general, GCC often has more rates defined
->> than the consumer is supposed to finally run at (because they were deemed
->> power-inefficient or similar, you can pretty much set any rate you want
->> on the clocks fwiw)
-> Count wise, i agree. Value-wise, afaik, corners should match OR are you saying
-> client scaling request for 133.0 MHz is ok when src is generating 133.33 MHz ?
 
-I *think* we're running a closest-match in there.. but I'd love to
-have the clock and consumer drivers agree on the rate exactly
-(which in this case would be 133333333 - and the clock plan in
-our docs agrees)
+--vkfxvii7cyang4hh
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 4/9] pwm: Add Rust driver for T-HEAD TH1520 SoC
+MIME-Version: 1.0
 
-Konrad
+On Mon, Jun 23, 2025 at 08:08:52PM +0200, Michal Wilczynski wrote:
+> Introduce a PWM driver for the T-HEAD TH1520 SoC, written in Rust and
+> utilizing the safe PWM abstractions from the preceding commit.
+>=20
+> The driver implements the pwm::PwmOps trait using the modern waveform
+> API (round_waveform_tohw, write_waveform, etc.) to support configuration
+> of period, duty cycle, and polarity for the TH1520's PWM channels.
+>=20
+> Resource management is handled using idiomatic Rust patterns. The PWM
+> chip object is allocated via pwm::Chip::new and its registration with
+> the PWM core is managed by the pwm::Registration RAII guard. This
+> ensures pwmchip_remove is always called when the driver unbinds,
+> preventing resource leaks. Device managed resources are used for the
+> MMIO region, and the clock lifecycle is correctly managed in the
+> driver's private data Drop implementation.
+>=20
+> The driver's core logic is written entirely in safe Rust, with no unsafe
+> blocks.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  MAINTAINERS               |   1 +
+>  drivers/pwm/Kconfig       |  10 ++
+>  drivers/pwm/Makefile      |   1 +
+>  drivers/pwm/pwm_th1520.rs | 318 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 330 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a575622454a2ef57ce055c8a8c4765fa4fddc490..879870471e86dcec4a0e8f5c4=
+5d2cc3409411fdd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21402,6 +21402,7 @@ F:	drivers/mailbox/mailbox-th1520.c
+>  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+>  F:	drivers/pinctrl/pinctrl-th1520.c
+>  F:	drivers/pmdomain/thead/
+> +F:	drivers/pwm/pwm_th1520.rs
+>  F:	drivers/reset/reset-th1520.c
+>  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>  F:	include/dt-bindings/power/thead,th1520-power.h
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index cfddeae0eab3523f04f361fb41ccd1345c0c937b..a675b3bd68392d1b05a47a2a1=
+390c5606647ca15 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -719,6 +719,16 @@ config PWM_TEGRA
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-tegra.
+> =20
+> +config PWM_TH1520
+> +	tristate "TH1520 PWM support"
+> +	depends on RUST_PWM_ABSTRACTIONS
+
+RUST_PWM_ABSTRACTIONS is user selectable. Is that sensible. From a
+user's POV it shouldn't matter if the driver is written in Rust or not.
+
+> +	help
+> +	  This option enables the driver for the PWM controller found on the
+> +	  T-HEAD TH1520 SoC.
+> +
+> +	  To compile this driver as a module, choose M here; the module
+> +	  will be called pwm-th1520. If you are unsure, say N.
+> +
+>  config PWM_TIECAP
+>  	tristate "ECAP PWM support"
+>  	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARC=
+H_K3 || COMPILE_TEST
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 96160f4257fcb0e0951581af0090615c0edf5260..a410747095327a315a6bcd24a=
+e343ce7857fe323 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -66,6 +66,7 @@ obj-$(CONFIG_PWM_STMPE)		+=3D pwm-stmpe.o
+>  obj-$(CONFIG_PWM_SUN4I)		+=3D pwm-sun4i.o
+>  obj-$(CONFIG_PWM_SUNPLUS)	+=3D pwm-sunplus.o
+>  obj-$(CONFIG_PWM_TEGRA)		+=3D pwm-tegra.o
+> +obj-$(CONFIG_PWM_TH1520)	+=3D pwm_th1520.o
+>  obj-$(CONFIG_PWM_TIECAP)	+=3D pwm-tiecap.o
+>  obj-$(CONFIG_PWM_TIEHRPWM)	+=3D pwm-tiehrpwm.o
+>  obj-$(CONFIG_PWM_TWL)		+=3D pwm-twl.o
+> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a77c45cef9cf8f02a25db9d42=
+c45cd0df565b0ec
+> --- /dev/null
+> +++ b/drivers/pwm/pwm_th1520.rs
+> @@ -0,0 +1,318 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
+> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
+> +
+> +//! Rust T-HEAD TH1520 PWM driver
+> +//!
+> +//! Limitations:
+> +//! - The period and duty cycle are controlled by 32-bit hardware regist=
+ers,
+> +//!   limiting the maximum resolution.
+> +//! - The driver supports continuous output mode only; one-shot mode is =
+not
+> +//!   implemented.
+> +//! - The controller hardware provides up to 6 PWM channels.
+
+Important questions to answer here are:
+
+ - How does the hardware behave on disable? (Does it stop immediately
+   (or at all)? Does it emit a constant output? Which?)=20
+ - How does the hardware behave on reconfiguration? (Does it switch
+   immidiately or does it complete the current period? Can there be
+   glitches?
+
+> +//!
+> +
+> +use core::ops::Deref;
+> +use kernel::{
+> +    c_str,
+> +    clk::Clk,
+> +    device::{Bound, Core, Device},
+> +    devres,
+> +    io::mem::IoMem,
+> +    of, platform,
+> +    prelude::*,
+> +    pwm, time,
+> +};
+> +
+> +const MAX_PWM_NUM: u32 =3D 6;
+> +
+> +// Register offsets
+> +const fn th1520_pwm_chn_base(n: u32) -> usize {
+> +    (n * 0x20) as usize
+> +}
+> +
+> +const fn th1520_pwm_ctrl(n: u32) -> usize {
+> +    th1520_pwm_chn_base(n)
+> +}
+> +
+> +const fn th1520_pwm_per(n: u32) -> usize {
+> +    th1520_pwm_chn_base(n) + 0x08
+> +}
+> +
+> +const fn th1520_pwm_fp(n: u32) -> usize {
+> +    th1520_pwm_chn_base(n) + 0x0c
+> +}
+> +
+> +// Control register bits
+> +const PWM_START: u32 =3D 1 << 0;
+> +const PWM_CFG_UPDATE: u32 =3D 1 << 2;
+> +const PWM_CONTINUOUS_MODE: u32 =3D 1 << 5;
+> +const PWM_FPOUT: u32 =3D 1 << 8;
+
+Can you please add a driver specific prefix to these?
+
+> +const TH1520_PWM_REG_SIZE: usize =3D 0xB0;
+> +
+> +fn ns_to_cycles(ns: u64, rate_hz: u64) -> u64 {
+> +    const NSEC_PER_SEC_U64: u64 =3D time::NSEC_PER_SEC as u64;
+> +
+> +    match ns.checked_mul(rate_hz) {
+> +        Some(product) =3D> product / NSEC_PER_SEC_U64,
+> +        None =3D> u64::MAX,
+> +    }
+
+The semantic here is: If ns * rate_hz overflows, return U64_MAX, else ns
+* rate_hz / NSEC_PER_SEC, right?
+
+If you cannot easily reproduce what mul_u64_u64_div_u64() does, I think
+it would be more prudent do make this:
+
+	match ns.checked_mul(rate_hz) {
+	    Some(product) =3D> product,
+	    None =3D> u64::MAX,
+	} / NSEC_PER_SEC_U64
+
+> +}
+> +
+> [...]
+> +impl pwm::PwmOps for Th1520PwmDriverData {
+> +    type WfHw =3D Th1520WfHw;
+> +
+> +    fn round_waveform_tohw(
+> +        chip: &pwm::Chip,
+> +        _pwm: &pwm::Device,
+> +        wf: &pwm::Waveform,
+> +    ) -> Result<(c_int, Self::WfHw)> {
+> +        let data: &Self =3D chip.drvdata();
+> +
+> +        if wf.period_length_ns =3D=3D 0 {
+> +            return Ok((
+> +                0,
+> +                Th1520WfHw {
+> +                    enabled: false,
+> +                    ..Default::default()
+> +                },
+> +            ));
+> +        }
+> +
+> +        let rate_hz =3D data.clk.rate().as_hz() as u64;
+> +
+> +        let period_cycles =3D ns_to_cycles(wf.period_length_ns, rate_hz)=
+=2Emin(u32::MAX as u64);
+> +        let mut duty_cycles =3D ns_to_cycles(wf.duty_length_ns, rate_hz)=
+=2Emin(u32::MAX as u64);
+> +
+> +        let mut ctrl_val =3D PWM_CONTINUOUS_MODE;
+> +
+> +        if wf.duty_offset_ns =3D=3D 0 {
+> +            ctrl_val |=3D PWM_FPOUT;
+> +        } else {
+> +            duty_cycles =3D period_cycles - duty_cycles;
+
+Huh, this looks wrong. Your hardware only supports the two polarities,
+right? Then configure inversed polarity if
+
+	wf->duty_length_ns && wf->duty_offset_ns && wf->duty_length_ns + wf->duty_=
+offset_ns >=3D wf->period_length_ns
+
+(i.e. how the pwm-stm32 driver does it).
+
+> +        }
+> +
+> +        let wfhw =3D Th1520WfHw {
+> +            period_cycles: period_cycles as u32,
+> +            duty_cycles: duty_cycles as u32,
+> +            ctrl_val,
+> +            enabled: true,
+> +        };
+> +
+> +        dev_dbg!(
+> +            chip.device(),
+> +            "Requested: period {}ns, duty {}ns, offset {}ns -> HW: perio=
+d {} cyc, duty {} cyc, ctrl 0x{:x}\n",
+
+Would it be helpful to also emit the clkrate here?
+
+> +            wf.period_length_ns,
+> +            wf.duty_length_ns,
+> +            wf.duty_offset_ns,
+> +            wfhw.period_cycles,
+> +            wfhw.duty_cycles,
+> +            wfhw.ctrl_val
+> +        );
+> +
+> +        Ok((0, wfhw))
+> +    }
+> +
+> +    fn round_waveform_fromhw(
+> +        chip: &pwm::Chip,
+> +        _pwm: &pwm::Device,
+> +        wfhw: &Self::WfHw,
+> +        wf: &mut pwm::Waveform,
+> +    ) -> Result<c_int> {
+> +        let data: &Self =3D chip.drvdata();
+> +        let rate_hz =3D data.clk.rate().as_hz() as u64;
+> +
+> +        wf.period_length_ns =3D cycles_to_ns(wfhw.period_cycles as u64, =
+rate_hz);
+> +
+> +        let duty_cycles =3D wfhw.duty_cycles as u64;
+> +
+> +        if (wfhw.ctrl_val & PWM_FPOUT) !=3D 0 {
+> +            wf.duty_length_ns =3D cycles_to_ns(duty_cycles, rate_hz);
+> +            wf.duty_offset_ns =3D 0;
+> +        } else {
+> +            let period_cycles =3D wfhw.period_cycles as u64;
+> +            let original_duty_cycles =3D period_cycles.saturating_sub(du=
+ty_cycles);
+> +
+> +            wf.duty_length_ns =3D cycles_to_ns(original_duty_cycles, rat=
+e_hz);
+> +            // We can't recover the original non-zero offset, so we just=
+ set it
+> +            // to a representative non-zero value.
+> +            wf.duty_offset_ns =3D 1;
+
+For an inversed polarity signal the duty_offset is polarity - duty_cycle.
+
+> +        }
+> +
+> +        Ok(0)
+> +    }
+
+Best regards
+Uwe
+
+--vkfxvii7cyang4hh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmheuKsACgkQj4D7WH0S
+/k63Mgf/b+iJPKal4W5i41FIDsXdTx4wlBWLFoajKZKGZs/HOtmYjrp37yH6sm03
++NTlYMPvgbxnD3+jCG4CEF09T4/VZ/pL0mIZvY/xb2uJ8LvH1PDza/zJIFWJmqy8
+5JbJtXXCBZGGMK0P0RD6ojA6M6yQnzdp9gftfPVrCIf+4jxf4UBQEuqhu74+f8gd
+agLM/ei3d8Y8KTuRsd7JfYcsWh7jTO5AyMZ08UE4hW26fjGP+HxtmJD3Ir+JsMU4
+QYK4hn2F4I8XHdiqIT5ExjFe6d/8U7XWZ2a2sPTVoBSKepKKsi4guyraTevqhnYO
+uegIgvtvqtGYqcvydO1dhtKn2r0iAA==
+=Duul
+-----END PGP SIGNATURE-----
+
+--vkfxvii7cyang4hh--
 
