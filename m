@@ -1,128 +1,338 @@
-Return-Path: <linux-kernel+bounces-706569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0369AEB867
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162AEAEB86F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3098A17CAD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 942A31C488DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3122D978D;
-	Fri, 27 Jun 2025 13:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3491C2D97AB;
+	Fri, 27 Jun 2025 13:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qj4zAGp1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OYCxvv9e"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4D6264FBB;
-	Fri, 27 Jun 2025 13:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB877264FBB
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751029461; cv=none; b=L3sbU+23nb+dEXwmQs6Om/B3455vzmGmOsJRNtn3VCFHhuCIbXCIRDsDzVC+u4HibaWDvqmoJthDq/Uy854VkS7Ew2a+rfEzzF/Aoyc2adtbzQ428RRrpAjdqkMZiMDCDgEKX7YtY4zxuDtiDWmmyxI6ypDKz7dv0ulv2LUy9Kg=
+	t=1751029520; cv=none; b=IZ8oNz07dLgukzlB0ojgHMxJMii2nBHT82/e3v2ghinUEaulbiuwyC/u99u4t2wqVtG8ynfhT9UgSB1yCBjztsGk2ptcd/sScS8ko1xOZ0IWx63pPcUrWJh8mSKLzb+9Qc4PAlZmGBnSpkBB/470LHCypM0E8dfGYYlbaBFdcYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751029461; c=relaxed/simple;
-	bh=XzX4psFBvnYR6QHI3Kw1ucRawOE+xlOc/dM9jXgI1bU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUbcQU6KzXp8TqxyAcx/Lo7ApwUFaSBb+T1S5556dqsBCg3ewwT6VBk6CxCavWcBEd6zLDlhRUQWEffFozQE51kCGtzvkqqTsblBDEvtkrtalgHVwNfNR9GrnozcOVkchV6KuhtyqcEr1tZ3UyOYvudG5PkY9z1LaOLj6Ar931c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qj4zAGp1; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751029459; x=1782565459;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XzX4psFBvnYR6QHI3Kw1ucRawOE+xlOc/dM9jXgI1bU=;
-  b=Qj4zAGp1nkz4s5S6kAIIP4UqFpVrUt6AJXZetUhU1KQY03w86Tdk+Bpx
-   hljB+ArUX5eRHBj5/BP+iXcm5Q95t4K6F7FCyqRLXZN0IR+gj9DXRfQo8
-   /2MqY/C0plAkOiRfXTYFyEPupx6Xxgt47LyY7SZPPGsQN/k2ASAfyYDC2
-   Fl0nKghJnlbhSSSRc0k5ZpXVXrfdhkSNC25VkyZKOxaYDc747LQVX85hL
-   JOOtA6U3xCJEA5hbFbUOeqTbqfiazAILvHiok+2hm1mXpoPA/5Jju3J0n
-   UJyPb6rCA/Orqu93SLYoZSAOkUcwojl3K2XZjMf6Jen2+yDDWDMfV+9YJ
-   g==;
-X-CSE-ConnectionGUID: 6zWTJDa9SluUqD+NdnUTig==
-X-CSE-MsgGUID: s5wI5y4OQFar0KX95jYu9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="70773961"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="70773961"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 06:04:02 -0700
-X-CSE-ConnectionGUID: ldfBJ5F6RAmcS7Go8ORzNA==
-X-CSE-MsgGUID: L9DsV3rAT+Wj/YlqbN+IEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="183836732"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 27 Jun 2025 06:03:58 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 01F626A; Fri, 27 Jun 2025 16:03:56 +0300 (EEST)
-Date: Fri, 27 Jun 2025 16:03:56 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, dave.hansen@linux.intel.com, 
-	rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, kai.huang@intel.com, 
-	yan.y.zhao@intel.com, chao.gao@intel.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, kvm@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 04/12] x86/virt/tdx: Add tdx_alloc/free_page() helpers
-Message-ID: <g5akv7uwsdrvs3j4wsj2xmc3fpdlyudj5sjuhw62m3f4yjsxse@nrne5miazbx4>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <20250609191340.2051741-5-kirill.shutemov@linux.intel.com>
- <dba2841f-0725-4b58-b633-650201c053b4@intel.com>
+	s=arc-20240116; t=1751029520; c=relaxed/simple;
+	bh=kt5v3d4MZckkBwSb7InSwYyTA/uy9sEym+09OHCY24c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SUsF29lJQEFzdQ3ka99VVI8VAvpZ9yMTpRC5CgSs2ojin25v1iSW2Es88R4Qq3gFsgd7OaCt+pH8YpJsDifwqKQ3428hDVVVo13LPtEsqtBmVPzoAQP4HsvzYoTBkE4qUUzAtnJebd3vFd2JsyT/HgoubOiGfQfXaG35oZpCfTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OYCxvv9e; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RCXZj8008479
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:05:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=Mj2LcX/wfNnzEoznRxiF/Vekbx0t7G9NztY2MpuYpkg=; b=OY
+	Cxvv9eu2hCpM9YnTikkajsDO+FaI9akcFuAfXIvxWEFJDNzCR4Ul/mSfhTWiYwxV
+	LqXRR+cbclMuxspdmsjN5rCT4kQgnE/Nl67X8xrBLC5fGAeeYprUvXbtV9/fnsg6
+	fMmteFZmwrOxJVFP8AOMbdx/kZ7l3M9uwKcFeYEthR1aebbXIh9RNqHvpvtHWtrR
+	qJ8GIsS0FdcCdYXXDqFcgT/Zfu1DUKW/5Z5kCILsudHk6lmRmx9/IuMKGlJ3uF33
+	n/ckbR2o5Or/CgNz86mOyqsVmXrvP1sd5eVctTpRV69tLxaPDHAXxX9IddsVIC/T
+	sYfeib+RNsYh2M3S4x6Q==
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqw9gk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:05:11 +0000 (GMT)
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-2e9b472cfd1so2069314fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 06:05:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751029511; x=1751634311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mj2LcX/wfNnzEoznRxiF/Vekbx0t7G9NztY2MpuYpkg=;
+        b=uxXUvqvfbsVXy68D58hUhBVMDKjSLbYY6IhTjp7XvIPUORZEmZYRoK9YUEnzW/iyG3
+         GX2TeFZsDTJInrym9zpqDvZMkk5PHyUL03f9OnLNp481bVG8uEhXCa/uY6jFZwZVWqt5
+         NmNruRBWwD7pgg9AkMJoiE3Le+idvbQrocPOvJOcZk4Y9Uspc/+Odsr0TzXiQ4JYRCKy
+         REg1eRs8Kyf30q8xhaPYGI0PvD6hdFVpXNE0/DiwEVnS130+2wsBftj7t/gDU6aTwim/
+         BzWCyGNF/Kv5iScdebuF+lbe8t/IzA3RfHOsf0/544xqOTmlXR0+wlOEDBgD8tJUXlOQ
+         fgRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjrAtSFa0XS3w1SjKTpNSCCBTz4+cZeLSIHB9JGjLPjLdT2qA5s7nOD/DoMczesbVeltUIk8NsYfi9r1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4zneEN+ncjqzlc1DGoky/toyJR9TV/l1eZfCHJmfc5Nav+eNU
+	oBxss/VWZEDvgrs1DRfKTt4CH8zP5NWTFMUQ6KuBopy6fCWkS7ld49rdfEssKD9e2VHmijuTCZc
+	F+v3arde6ksCMndv6tf3UpkMxsR0iV9W6Cr9uDbnT9wbZ4dNuEBqZD6Ttc/T0DjHmd2HAOG3xza
+	TxLgs0avyYtOqJZ2nzJbhO9Xxf20LA4eZxci6vGD/wUQ==
+X-Gm-Gg: ASbGnct+B1hsJAolJ4WkUW/vbE/sN2rNqWdQcArpdYP0dXai/toMsqIBbtahQsX2iRA
+	VUEwU0NWvTGNBoCIfwF/pnqUG+ytvyvSp9jq9aox6miJeoviQY7cg40j605idqeWVhAwwcse5hc
+	5Mhjqm5CMJOUmatyupr9A+Vene3Beod2/9Yws=
+X-Received: by 2002:a05:6870:178e:b0:2c2:3e24:9b54 with SMTP id 586e51a60fabf-2efed4b16bbmr1775193fac.11.1751029510789;
+        Fri, 27 Jun 2025 06:05:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESX69QJe1uekZFWjeHdkSgJnjoP36VXXoHS+Nz/76pjCAnZNKmYaHKOmH3q6HBqH9fqrkTn18b791wGsOGMf8=
+X-Received: by 2002:a05:6870:178e:b0:2c2:3e24:9b54 with SMTP id
+ 586e51a60fabf-2efed4b16bbmr1775160fac.11.1751029510306; Fri, 27 Jun 2025
+ 06:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dba2841f-0725-4b58-b633-650201c053b4@intel.com>
+References: <20250620154537.89514-1-robin.clark@oss.qualcomm.com> <20250620154537.89514-3-robin.clark@oss.qualcomm.com>
+In-Reply-To: <20250620154537.89514-3-robin.clark@oss.qualcomm.com>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 06:04:58 -0700
+X-Gm-Features: Ac12FXz4HuRCQCqIgAwuSyAn2p3FTUW3xCVysI5avKQdPvQayJzO9voPeQsIo4E
+Message-ID: <CACSVV03d-3J2SxSnm3oS2OG9LHEJzLKpmgWF=Cx8_Qgw3PZPVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] drm/gpuvm: Add locking helpers
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: -a_zALdcYLEhZGoAJ7J8QUztzDB-Engj
+X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685e9707 cx=c_pps
+ a=CWtnpBpaoqyeOyNyJ5EW7Q==:117 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10
+ a=EUspDBNiAAAA:8 a=MIFqPDLa7Y6Tg69WKSUA:9 a=QEXdDO2ut3YA:10
+ a=vh23qwtRXIYOdz9xvnmn:22
+X-Proofpoint-GUID: -a_zALdcYLEhZGoAJ7J8QUztzDB-Engj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEwOCBTYWx0ZWRfX13YptPbiQeAu
+ kTWVVE1TgtfEnGszsEg98dwLZ3r5u83JhFWHs+abYPHDLoxIvn3j4rB/tVqgCzzip5I/uWlP8K1
+ NAYuqmj249JayCHhjF9iilH01DDXBCQkcv3ErZkvMHNdjv179pfmIuMg56XbiVSJvaNTRrEkZNN
+ IUE3MAUARmzSHb6vnwy3fu3uf2Hbbo9EhEDuppozOsO2FLiJksoPDdZMSgQuFdbVOlkPnDT+5oz
+ pAW+QJdEPw49DS2vYFTvOFgPGO9IFAHdbYEp9bcEPI5R8x496GWuZFPAdaHM6evfxl6z6VLvNXJ
+ 4AED9Ejj9LIyIQ5VbvaTn/pujfGnLAHelmkk5Ap8seyM/yHcngmcp1LyTQJ49vhRQSlVQ7ENC1c
+ sy4tJBEU/jkmTMKsLT6K0jvH1Vui5SZI7+lMjtZ3fkLRHyAnKUS1gw/LB6cQOL0YakjxIn6X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270108
 
-On Fri, Jun 27, 2025 at 10:49:34AM +0300, Adrian Hunter wrote:
-> On 09/06/2025 22:13, Kirill A. Shutemov wrote:
-> > +static void tdx_pamt_put(struct page *page, enum pg_level level)
-> > +{
-> > +	unsigned long hpa = page_to_phys(page);
-> > +	atomic_t *pamt_refcount;
-> > +	LIST_HEAD(pamt_pages);
-> > +	u64 err;
-> > +
-> > +	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
-> > +		return;
-> > +
-> > +	if (level != PG_LEVEL_4K)
-> > +		return;
-> > +
-> > +	hpa = ALIGN_DOWN(hpa, PMD_SIZE);
-> > +
-> > +	pamt_refcount = tdx_get_pamt_refcount(hpa);
-> > +	if (!atomic_dec_and_test(pamt_refcount))
-> > +		return;
-> > +
-> > +	scoped_guard(spinlock, &pamt_lock) {
-> > +		/* Lost race against tdx_pamt_add()? */
-> > +		if (atomic_read(pamt_refcount) != 0)
-> > +			return;
-> > +
-> > +		err = tdh_phymem_pamt_remove(hpa | TDX_PS_2M, &pamt_pages);
-> > +
-> > +		if (err) {
-> > +			atomic_inc(pamt_refcount);
-> > +			pr_err("TDH_PHYMEM_PAMT_REMOVE failed: %#llx\n", err);
-> > +			return;
-> > +		}
-> > +	}
-> > +
-> 
-> Won't any pages that have been used need to be cleared
-> before being freed.
+On Fri, Jun 20, 2025 at 8:45=E2=80=AFAM Rob Clark <robin.clark@oss.qualcomm=
+.com> wrote:
+>
+> For UNMAP/REMAP steps we could be needing to lock objects that are not
+> explicitly listed in the VM_BIND ioctl in order to tear-down unmapped
+> VAs.  These helpers handle locking/preparing the needed objects.
+>
+> Note that these functions do not strictly require the VM changes to be
+> applied before the next drm_gpuvm_sm_map_lock()/_unmap_lock() call.  In
+> the case that VM changes from an earlier drm_gpuvm_sm_map()/_unmap()
+> call result in a differing sequence of steps when the VM changes are
+> actually applied, it will be the same set of GEM objects involved, so
+> the locking is still correct.
+>
+> v2: Rename to drm_gpuvm_sm_*_exec_locked() [Danilo]
+> v3: Expand comments to show expected usage, and explain how the usage
+>     is safe in the case of overlapping driver VM_BIND ops.
 
-Good point. I missed that.
+Danilo, did you have any remaining comments on this?
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+BR,
+-R
+
+> Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/drm_gpuvm.c | 126 ++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_gpuvm.h     |   8 +++
+>  2 files changed, 134 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+> index 0ca717130541..a811471b888e 100644
+> --- a/drivers/gpu/drm/drm_gpuvm.c
+> +++ b/drivers/gpu/drm/drm_gpuvm.c
+> @@ -2390,6 +2390,132 @@ drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm, void =
+*priv,
+>  }
+>  EXPORT_SYMBOL_GPL(drm_gpuvm_sm_unmap);
+>
+> +static int
+> +drm_gpuva_sm_step_lock(struct drm_gpuva_op *op, void *priv)
+> +{
+> +       struct drm_exec *exec =3D priv;
+> +
+> +       switch (op->op) {
+> +       case DRM_GPUVA_OP_REMAP:
+> +               if (op->remap.unmap->va->gem.obj)
+> +                       return drm_exec_lock_obj(exec, op->remap.unmap->v=
+a->gem.obj);
+> +               return 0;
+> +       case DRM_GPUVA_OP_UNMAP:
+> +               if (op->unmap.va->gem.obj)
+> +                       return drm_exec_lock_obj(exec, op->unmap.va->gem.=
+obj);
+> +               return 0;
+> +       default:
+> +               return 0;
+> +       }
+> +}
+> +
+> +static const struct drm_gpuvm_ops lock_ops =3D {
+> +       .sm_step_map =3D drm_gpuva_sm_step_lock,
+> +       .sm_step_remap =3D drm_gpuva_sm_step_lock,
+> +       .sm_step_unmap =3D drm_gpuva_sm_step_lock,
+> +};
+> +
+> +/**
+> + * drm_gpuvm_sm_map_exec_lock() - locks the objects touched by a drm_gpu=
+vm_sm_map()
+> + * @gpuvm: the &drm_gpuvm representing the GPU VA space
+> + * @exec: the &drm_exec locking context
+> + * @num_fences: for newly mapped objects, the # of fences to reserve
+> + * @req_addr: the start address of the range to unmap
+> + * @req_range: the range of the mappings to unmap
+> + * @req_obj: the &drm_gem_object to map
+> + * @req_offset: the offset within the &drm_gem_object
+> + *
+> + * This function locks (drm_exec_lock_obj()) objects that will be unmapp=
+ed/
+> + * remapped, and locks+prepares (drm_exec_prepare_object()) objects that
+> + * will be newly mapped.
+> + *
+> + * The expected usage is:
+> + *
+> + *    vm_bind {
+> + *        struct drm_exec exec;
+> + *
+> + *        // IGNORE_DUPLICATES is required, INTERRUPTIBLE_WAIT is recomm=
+ended:
+> + *        drm_exec_init(&exec, IGNORE_DUPLICATES | INTERRUPTIBLE_WAIT, 0=
+);
+> + *
+> + *        drm_exec_until_all_locked (&exec) {
+> + *            for_each_vm_bind_operation {
+> + *                switch (op->op) {
+> + *                case DRIVER_OP_UNMAP:
+> + *                    ret =3D drm_gpuvm_sm_unmap_exec_lock(gpuvm, &exec,=
+ op->addr, op->range);
+> + *                    break;
+> + *                case DRIVER_OP_MAP:
+> + *                    ret =3D drm_gpuvm_sm_map_exec_lock(gpuvm, &exec, n=
+um_fences,
+> + *                                                     op->addr, op->ran=
+ge,
+> + *                                                     obj, op->obj_offs=
+et);
+> + *                    break;
+> + *                }
+> + *
+> + *                drm_exec_retry_on_contention(&exec);
+> + *                if (ret)
+> + *                    return ret;
+> + *            }
+> + *        }
+> + *    }
+> + *
+> + * This enables all locking to be performed before the driver begins mod=
+ifying
+> + * the VM.  This is safe to do in the case of overlapping DRIVER_VM_BIND=
+_OPs,
+> + * where an earlier op can alter the sequence of steps generated for a l=
+ater
+> + * op, because the later altered step will involve the same GEM object(s=
+)
+> + * already seen in the earlier locking step.  For example:
+> + *
+> + * 1) An earlier driver DRIVER_OP_UNMAP op removes the need for a
+> + *    DRM_GPUVA_OP_REMAP/UNMAP step.  This is safe because we've already
+> + *    locked the GEM object in the earlier DRIVER_OP_UNMAP op.
+> + *
+> + * 2) An earlier DRIVER_OP_MAP op overlaps with a later DRIVER_OP_MAP/UN=
+MAP
+> + *    op, introducing a DRM_GPUVA_OP_REMAP/UNMAP that wouldn't have been
+> + *    required without the earlier DRIVER_OP_MAP.  This is safe because =
+we've
+> + *    already locked the GEM object in the earlier DRIVER_OP_MAP step.
+> + *
+> + * Returns: 0 on success or a negative error codec
+> + */
+> +int
+> +drm_gpuvm_sm_map_exec_lock(struct drm_gpuvm *gpuvm,
+> +                          struct drm_exec *exec, unsigned int num_fences=
+,
+> +                          u64 req_addr, u64 req_range,
+> +                          struct drm_gem_object *req_obj, u64 req_offset=
+)
+> +{
+> +       if (req_obj) {
+> +               int ret =3D drm_exec_prepare_obj(exec, req_obj, num_fence=
+s);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       return __drm_gpuvm_sm_map(gpuvm, &lock_ops, exec,
+> +                                 req_addr, req_range,
+> +                                 req_obj, req_offset);
+> +
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map_exec_lock);
+> +
+> +/**
+> + * drm_gpuvm_sm_unmap_exec_lock() - locks the objects touched by drm_gpu=
+vm_sm_unmap()
+> + * @gpuvm: the &drm_gpuvm representing the GPU VA space
+> + * @exec: the &drm_exec locking context
+> + * @req_addr: the start address of the range to unmap
+> + * @req_range: the range of the mappings to unmap
+> + *
+> + * This function locks (drm_exec_lock_obj()) objects that will be unmapp=
+ed/
+> + * remapped by drm_gpuvm_sm_unmap().
+> + *
+> + * See drm_gpuvm_sm_map_exec_lock() for expected usage.
+> + *
+> + * Returns: 0 on success or a negative error code
+> + */
+> +int
+> +drm_gpuvm_sm_unmap_exec_lock(struct drm_gpuvm *gpuvm, struct drm_exec *e=
+xec,
+> +                            u64 req_addr, u64 req_range)
+> +{
+> +       return __drm_gpuvm_sm_unmap(gpuvm, &lock_ops, exec,
+> +                                   req_addr, req_range);
+> +}
+> +EXPORT_SYMBOL_GPL(drm_gpuvm_sm_unmap_exec_lock);
+> +
+>  static struct drm_gpuva_op *
+>  gpuva_op_alloc(struct drm_gpuvm *gpuvm)
+>  {
+> diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+> index 2a9629377633..274532facfd6 100644
+> --- a/include/drm/drm_gpuvm.h
+> +++ b/include/drm/drm_gpuvm.h
+> @@ -1211,6 +1211,14 @@ int drm_gpuvm_sm_map(struct drm_gpuvm *gpuvm, void=
+ *priv,
+>  int drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm, void *priv,
+>                        u64 addr, u64 range);
+>
+> +int drm_gpuvm_sm_map_exec_lock(struct drm_gpuvm *gpuvm,
+> +                         struct drm_exec *exec, unsigned int num_fences,
+> +                         u64 req_addr, u64 req_range,
+> +                         struct drm_gem_object *obj, u64 offset);
+> +
+> +int drm_gpuvm_sm_unmap_exec_lock(struct drm_gpuvm *gpuvm, struct drm_exe=
+c *exec,
+> +                                u64 req_addr, u64 req_range);
+> +
+>  void drm_gpuva_map(struct drm_gpuvm *gpuvm,
+>                    struct drm_gpuva *va,
+>                    struct drm_gpuva_op_map *op);
+> --
+> 2.49.0
+>
 
