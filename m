@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-706444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A5BAEB6D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:46:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99F5AEB6CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACB3C1C60518
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:46:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663FF1C603F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CAF2C3274;
-	Fri, 27 Jun 2025 11:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926B32BEFE5;
+	Fri, 27 Jun 2025 11:46:11 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F4E1DA21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AC6233728
 	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751024772; cv=none; b=d0AQy5LKZdPpzCyaEaBD8LDVuvrcMfPNyYm1RqrahxASEIEZxPZpjv7HD5Fajko4V2Naa/imDQEPii6zUXODPl8Se+cPDWVxHrtIfZd57JkqCoJmQ5Q88JUcBoEijY45n1rUcdbMp7LMGw7S+Ybcx2dXk00rGUgOuRoYKvZGmXI=
+	t=1751024771; cv=none; b=NQEdIdywZ2gNKbh1YjQWpoy6O7c6cxebAUOeJ5vkhol9A9MOXQIDrmXAEG7+uAZmhonlHC4bvFOlzzA06eFxODCA3EAPySPOwt/nNt5N9l6XHjE3fAZNIuhKPkC9xUXZWIPLqW6vAe61U2pxAcQtdi2jQKNm2ciKuw96Y3SvZNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751024772; c=relaxed/simple;
-	bh=s6zS0pHWcMOOiTba1t96zuUE7lsjYKkRW4PgdkGPxKs=;
+	s=arc-20240116; t=1751024771; c=relaxed/simple;
+	bh=pwWlNz2DV8BdCvj4IeXBBjwqypfcikWFOyP/rC9OMgM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ff/wdr4dQDD1xMDuPUt4EYMac1qLMiZCVVX/MjWL6Axsa6Rg3CT/EyZCCLbK56ci3fx5JP6Qlrkh/iEKSrBbLfFpX0OeOM2TlOk4E1wX7nvehcyHoker4XOvRdb+4k6m30/9AZycPb96fMYy9+5YWxJHK+T3D9+XKYGSentTDb4=
+	 In-Reply-To:To:Cc; b=ch1VZ94KhG6UkZ29rmcGx5x8uFqs3CLmicLQiiL+ZVI0U4Zdu0A1ojgswPPIRXkx5DzkPieCeXxjgiwsG+ujZAkzfECES7VciH/K5SKi4/zo/wzh36KEza4G11j9107X5asY9kt0EW6o2qNdEV8q4zvcu5UV2NE+wV+wAxC/o/E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uV7Wi-0004N2-Ip; Fri, 27 Jun 2025 13:45:52 +0200
+	id 1uV7Wi-0004N2-Ld; Fri, 27 Jun 2025 13:45:52 +0200
 From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Fri, 27 Jun 2025 13:45:38 +0200
-Subject: [PATCH v2 1/4] drm/bridge: samsung-dsim: Always flush display FIFO
- on vsync pulse
+Date: Fri, 27 Jun 2025 13:45:39 +0200
+Subject: [PATCH v2 2/4] drm/panel: samsung-s6d7aa0: Drop
+ MIPI_DSI_MODE_VSYNC_FLUSH flag
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-dsi-vsync-flush-v2-1-4066899a5608@pengutronix.de>
+Message-Id: <20250627-dsi-vsync-flush-v2-2-4066899a5608@pengutronix.de>
 References: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
 In-Reply-To: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
 To: Inki Dae <inki.dae@samsung.com>, 
@@ -68,49 +68,28 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Always flush the display FIFO on vsync pulse, even if not explicitly
-requested by the panel via MIPI_DSI_MODE_VSYNC_FLUSH mode_flag.
-
-The display FIFO should be empty at vsync. Flushing it at vsync pulses
-helps to remove garbage that may have entered the FIFO during startup
-(if synchronisation between upstream display controller and Samsung DSIM
-is lacking) and that may persist in form of last frame's leftovers on
-subsequent frames. Flushing the display FIFO if it is already empty
-should have no effect.
-
-This will allow to remove the MIPI_DSI_MODE_VSYNC_FLUSH flag, which is
-only used by the Samsung DSIM bridge driver. Arguably this flag doesn't
-belong in the panel configuration at all: flushing the display FIFO on
-vsync is a workaround for issues with the integration between display
-controller and DSI bridge, not a property of the DSI link between bridge
-and panel. No panel actually has a requirement to receive garbage or old
-frame content after vsync.
-
-I wonder if host controller FIFO resets are mentioned by the MIPI DSI
-specification at all. This patch is based on the assumption that the
-MIPI_DSI_MODE_VSYNC_FLUSH flag only exists because the DSIM_MFLUSH_VS
-bit happens to be located in the same register as the bits controlling
-the DSI mode.
+Drop the MIPI_DSI_MODE_VSYNC_FLUSH flag from DSI mode_flags.
+It has no effect anymore.
 
 Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/gpu/drm/bridge/samsung-dsim.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 8ec6f4e7952f1f0cc1fc977732d8e457d6eb5012..c4997795db18280903570646b0a5b2c03b666307 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -897,8 +897,6 @@ static int samsung_dsim_init_link(struct samsung_dsim *dsi)
- 		 * The user manual describes that following bits are ignored in
- 		 * command mode.
- 		 */
--		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
--			reg |= DSIM_MFLUSH_VS;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
- 			reg |= DSIM_SYNC_INFORM;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c b/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
+index b5b9e80690f66cc62acbd341865d8d47419e498b..692020081524ad9d1bc815464fa447b5a2d9241d 100644
+--- a/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
++++ b/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
+@@ -244,7 +244,7 @@ static const struct s6d7aa0_panel_desc s6d7aa0_lsl080al02_desc = {
+ 	.init_func = s6d7aa0_lsl080al02_init,
+ 	.off_func = s6d7aa0_lsl080al02_off,
+ 	.drm_mode = &s6d7aa0_lsl080al02_mode,
+-	.mode_flags = MIPI_DSI_MODE_VSYNC_FLUSH | MIPI_DSI_MODE_VIDEO_NO_HFP,
++	.mode_flags = MIPI_DSI_MODE_VIDEO_NO_HFP,
+ 	.bus_flags = 0,
+ 
+ 	.has_backlight = false,
 
 -- 
 2.39.5
