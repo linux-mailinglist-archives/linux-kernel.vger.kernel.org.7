@@ -1,102 +1,134 @@
-Return-Path: <linux-kernel+bounces-706349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9153AEB572
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:52:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18940AEB575
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20EF1BC65AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD976641338
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8087B298CB0;
-	Fri, 27 Jun 2025 10:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5662980B2;
+	Fri, 27 Jun 2025 10:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WoHOtl4o"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ceE+V8FP"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CB72980B2;
-	Fri, 27 Jun 2025 10:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C0F2980BF
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751021535; cv=none; b=QPXg9Nn2J1Bb/nRO3eE83F4yROYGUg9CdkX8muwwBMo+y9/H6f2qLwcgsCyu8iW7RsiSv8OjcqqXHNHItybpbTUzIA215YoWpQkjsZd20mrUwOgqnPhF05HicqlhEFkvjVnmj14wqOWRQxjpreBFIUJ8kQgsI+Ns+xvnDYA1Oeg=
+	t=1751021557; cv=none; b=kdUBBCCClNtvfxlnAhQbqcx4eeF5konKh1iTvESBH0K9e3n0iNkA76SrcJAgPE8CB+Gq2apaQyXo6p4es/uHDpfIw2khEQQ4XhBZeFXHqo0yfQpdlFOzs3tI8f/WmnuQ8AeWI5K+/yPC86RvWjULlbz1zK4xLD459OHoEGHdnxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751021535; c=relaxed/simple;
-	bh=HbR6SPn3F0JueHJ4F/q6o4HfMOlQLCupl1O9Rireycc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qn/L+BrJGT9fnHLGzAP2dy0jaEyOZmRuIAHh8CciCJFP3yqdKL/cUf2POVpvko6ToHg4qo60vbnQM/JsNDSNEjAEa4CeXLhqM7kerK29DxIJ0zM2GB/xJLfQA6dBg2UCB1N3uvU2EMEuEftFfBImaRFbnq/hAcyeP6mEK51MO1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WoHOtl4o; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=v2XjhXXjoVlHC+MJiTSQDgatPB8bllHZZSaqdgyRjXI=; b=WoHOtl4oJO/nf79w7IeiTc6TGM
-	hKBTTlL/4/iJ6QpFOeoc1YgEv0UwX6m04qOF570CB3IHsrF/ijkLqx8QRWBpIM6BMlV5kK7mg5RiV
-	Xw9QPr95AJKnzwsRj8Y+K31dfWfeqspeQWeq8yl5fhT6DDVSToJzSqDFhlI4CdWhmcOUw/QyZtw0P
-	DDvM0tM42NLnVRL9p0Ah8/F3USUyCINfkS22XYt7AziL236EnZ1wudaTcqHzXXcY0CRLvpOdPA+Qq
-	c9At+Gh6x8nDRarHcf2Bfy6EB9vQ1cARCvQ6Aq49+OT71yz6133IHf91pyvas/uThAB+BNLMa/l/6
-	x02iFxsQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uV6gg-0000000Ds10-0vfU;
-	Fri, 27 Jun 2025 10:52:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B5B1F30017D; Fri, 27 Jun 2025 12:52:05 +0200 (CEST)
-Date: Fri, 27 Jun 2025 12:52:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>
-Subject: Re: [PATCH v3 46/64] x86/extable: Define ELF section entry size for
- exception table
-Message-ID: <20250627105205.GY1613200@noisy.programming.kicks-ass.net>
-References: <cover.1750980516.git.jpoimboe@kernel.org>
- <1a53b6dcf236ce1fe0f0cd0d4441fc2bd9022cb3.1750980517.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1751021557; c=relaxed/simple;
+	bh=mPOghuxsj47lwq8oIa4sXfWI/aVeJZPiSsLaEJNGW4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R1BnU9vtlK7EhbP2tROpgN0fzO/LsBgfgHmDIJeVeuWV3jsBtXE92B1z/wnS1dZpMmThKu5AFjcz7qKH03ehty3F4MKi14HJvM+7j8CG3eDia8iiKSch8m8dJttlret4coLxDNw5Rcx/lFIFUIqdHSc+/3QROe+NYWb+6UOX2XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ceE+V8FP; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RAbIaI000435;
+	Fri, 27 Jun 2025 10:52:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=dV61dEVtvyb8fbrV
+	Vm6gOlkX1KSxV9hG1v71rMs4zx8=; b=ceE+V8FPHNHcb+g3IT4H84byNtByVWpH
+	NQ8d3VylIQ38drH/th9VB33SWZNqm0cz0x+U6pjIothjyVyCYRpYn+r8rPlGn+l1
+	CFil93zvw4FAeoYPFtiX9dN29imXBvw2bC1va3hNw4mVO9oA45oiErHLzjdeBZz2
+	O/+wjoZ/dS8eDteucRoJds9K0Iaiz7I9ybcwkBEzrEl2s1ULiPC8fgqr/LenWaje
+	VgPKwWEoAUSOLykNc8cgLxCUMazs8/vAJr66GOadnTuekpUdCHe8v9ZM89utrWgI
+	0kaD+ChwOCtQKtpyRpO3l2PhxqLXkm7s2PWzoxTzHzbpZtVPvP4Jpg==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47ds8ybq0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 27 Jun 2025 10:52:11 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55R9eRo7017913;
+	Fri, 27 Jun 2025 10:52:10 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ehw16x4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 27 Jun 2025 10:52:10 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55RAq9dU014292;
+	Fri, 27 Jun 2025 10:52:09 GMT
+Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47ehw16x33-1;
+	Fri, 27 Jun 2025 10:52:09 +0000
+From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Cc: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] wait: Relate wait_event_cmd() to its userspace equivalence
+Date: Fri, 27 Jun 2025 12:52:06 +0200
+Message-ID: <20250627105207.1613044-1-haakon.bugge@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a53b6dcf236ce1fe0f0cd0d4441fc2bd9022cb3.1750980517.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
+ phishscore=0 adultscore=0 malwarescore=0 suspectscore=0 mlxlogscore=961
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506270088
+X-Proofpoint-ORIG-GUID: OPucuTbyZnZNYufnqbL2msAf_dXKlFEA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDA4OSBTYWx0ZWRfX3ApYphz0iL2G CYBljnYl06Gb/iiiRxpchOx8i4odDWiAF4nUj4JBzcUXu25Jor7eeEWGDNjj6/9tU6P9QXdAKGk 7PJmlPOOzZ1omOoBuC/92txt+9tO4choAlXuKNZv0679XqaVc117eJaKO+dM0y7bMLQLWrKCASQ
+ N/O9Vav06dWFMo6MBHQPi0RGOHfIiCAD35N8vvUzj+wwNI7bjxo2Kphbo6gM0o2Rrd1zSp4BkEa TwjpVMmBsgP4jBSuhqzXDN3nzCdXgFBEDknr5DYFX5d/T8Py8B9qwXlAQnrMsdt2ZwDtUAt05u8 Q1HC2YieETJkUH7K6Otm8LnoFdIXgkVdukIiS4PeUi/WfyUGnvA29HiDN8qUL31Px71y7ch1NKj
+ EUHEWjOAs3vYQzDevuJwgOH33QTN3YXHGganRQloi+OaOv2OSJiLzMsP/RWmYrhQxO2lmBX9
+X-Proofpoint-GUID: OPucuTbyZnZNYufnqbL2msAf_dXKlFEA
+X-Authority-Analysis: v=2.4 cv=PqSTbxM3 c=1 sm=1 tr=0 ts=685e77db b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=M51BFTxLslgA:10 a=yPCof4ZbAAAA:8 a=wEmhiZHmUTMBQUX5UU0A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 cc=ntf awl=host:14723
 
-On Thu, Jun 26, 2025 at 04:55:33PM -0700, Josh Poimboeuf wrote:
+Relate wait_event_cmd() to userspace's pthread_cond_wait(). This
+because when searching for functionality comparable to
+pthread_cond_wait(), it is very hard to find wait_event_cmd().
 
-> @@ -193,7 +193,8 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
->  	".purgem extable_type_reg\n"
->  
->  # define _ASM_EXTABLE_TYPE(from, to, type)			\
-> -	" .pushsection \"__ex_table\",\"a\"\n"			\
-> +	" .pushsection __ex_table, \"aM\", @progbits, "		\
-> +		       __stringify(EXTABLE_SIZE) "\n"		\
->  	" .balign 4\n"						\
->  	" .long (" #from ") - .\n"				\
->  	" .long (" #to ") - .\n"				\
-> @@ -201,7 +202,8 @@ static __always_inline __pure void *rip_rel_ptr(void *p)
->  	" .popsection\n"
->  
->  # define _ASM_EXTABLE_TYPE_REG(from, to, type, reg)				\
-> -	" .pushsection \"__ex_table\",\"a\"\n"					\
-> +	" .pushsection __ex_table, \"aM\", @progbits, "				\
-> +		       __stringify(EXTABLE_SIZE) "\n"				\
->  	" .balign 4\n"								\
->  	" .long (" #from ") - .\n"						\
->  	" .long (" #to ") - .\n"						\
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
 
-This style is much better.
+--
+
+v1 -> v2:
+      * Split original patch into two
+      * Wordsmithing as suggested by Matthew
+---
+ include/linux/wait.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 965a19809c7e5..62df98193a3a7 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -469,6 +469,14 @@ do {										\
+  *
+  * wake_up() has to be called after changing any variable that could
+  * change the result of the wait condition.
++ *
++ * This is the kernel's polymorphic implementation of userspace's
++ * pthread_cond_wait().
++ *
++ * When calling this function, cmd1 is typically a lock-release call
++ * and cmd2 a lock-acquire call. The locking primitive can be chosen,
++ * contrary to pthread_cond_wait(), where the locking type is cast in
++ * stone and is a pthread_mutex_t.
+  */
+ #define wait_event_cmd(wq_head, condition, cmd1, cmd2)				\
+ do {										\
+-- 
+2.43.5
+
 
