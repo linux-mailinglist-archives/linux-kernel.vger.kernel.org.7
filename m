@@ -1,178 +1,182 @@
-Return-Path: <linux-kernel+bounces-706875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF555AEBD16
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:23:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA09AEBD0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D347B5B96
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE10D1C4839E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA3E2EAD19;
-	Fri, 27 Jun 2025 16:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E812D3EE8;
+	Fri, 27 Jun 2025 16:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="YwGaNcv2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TBC50qEi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9B92EAB80;
-	Fri, 27 Jun 2025 16:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751041337; cv=pass; b=iRpruJo/8Yy9fZm02VBO2Xry3Hy/bvK3B4mmQkMGPGGrSoxS4NgW8oVQ5UF5BOyStkaw1A6Um3Mmg0tEnXvhdkGvI2EfW0qfqUZnqw8x3pELwC73i1Ovt4q+Rm4uQQpVjBJ8ZRr1Bna8PeURKpOqr+v280LzrLL8ajTLqeZTDcA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751041337; c=relaxed/simple;
-	bh=9QVLNmpFlJxco9Io8+xRWl3/tkfvBnkJ5v4p1lVDt5M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VcL4qnHCI+8iNlECYrwKpMZ7Eizn49YtaKRQ6wiJL//t7GUSU2pa/gILw2a5ZNUzofaRcxuAzq2KsuTwa1sCT7TVur9bs7V8CFB8amkDP7A/XU7vG2WUVhndKg7olALq1+/UPjQtG2b2mxweOQNCva31yUtcOlPBm1zz4TEFFhY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=YwGaNcv2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751041317; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=A5+fBBw1v95twjhxnyHpCGxc12/Aas6YeGTGuPC6frODMdjnjnbHLAHvkPhlSzRIcefhoHKW5PTkSvioMV5ZyvGmywZ6IF7d0TZd6p0wZdMAkQoYPjhJX9jYZ5ywgIcr9IqB1Lqc6wUCzsFr2FL+bT3Tck455Q17bXEWKOih5P0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751041317; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8KUHteAG14bnq4zqajKJEsvYdoQ2vrt6l/2WIKsu2Dc=; 
-	b=AP/WW/g/PvwTBliseLvB5kTJw+EzDWvkcmSyULAXDH1jG4pz8CALaLYF/cDb5MMo/5BfJhTIn0jAKhhFeT3X8TyYx97267gDXzONHTZdnhJqRTZB7uJp8j8vhgAqUiqtGEw4UQxB/lfahGLSx/qRAeOtir9KaUBrHq7BnOV01DI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751041317;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=8KUHteAG14bnq4zqajKJEsvYdoQ2vrt6l/2WIKsu2Dc=;
-	b=YwGaNcv2htqWgrIfh4UYa4O0olbuAvBjf4Awqpyg8JRZqBzWR9QSrqP42K1K2x6I
-	XV8xF+UBKcKzCNwjK3rP1AS2fPmSe8QFnKDQbXfZl3s7u8SqZ70HrCr9j+RfuQnnbWu
-	V1c2ozJODWN4SZavR158W8X3mTeImmADT7By9Gdc=
-Received: by mx.zohomail.com with SMTPS id 1751041315119984.016417825778;
-	Fri, 27 Jun 2025 09:21:55 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Fri, 27 Jun 2025 13:21:08 -0300
-Subject: [PATCH v5 6/6] rust: pci: add irq accessors
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD342D9783
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751041315; cv=none; b=k2a3KekBTUgUaSp81fJeR6R+5E+WS+nobNI7tQbHeu5fiQlRxH6SBMvBFwhnqstKs4Q5kgivwt0fAj1W/epUWs+nv5+AOrvVriPjmvFuZMWSCf+AOgyCTlimFjArOmwKOFLL10+4N6KRvNUK+KXOQ+URvIOHIdqBjZpDZA8Y9gw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751041315; c=relaxed/simple;
+	bh=30vgKdy5n94b1DNeLRG5PLw2PPMa/I/W7Pqq9Wsa51w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7XXAe84X1f1nNhqN8aHUmrovT08+w+iTma1HBQb7lLNo4H0qlHlLMEmbPYUtx78D7aKJBUGxH81Z8pyXb50aM+GE3ybi7cgC06Svoeatbr6dAKigw43vKFLepj0di2VcY1iPb+rdCpPV0vOY5OU2QE8jA3ssLOZPyIyIpjCMog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TBC50qEi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBmNZ2027380
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:21:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	g8S/q69+hMXzlKm1t8hoFvS7fzscnXnzVXeG/Aysk4A=; b=TBC50qEikpNwSDDm
+	cBrC48K85w4D7KXqQRgKZsP8yS5P+ij4btN1s5LjIA7iIGixJK+TmreJKYmAeXaG
+	IGi7CrpzqKey8wweQalmj7GB7Ht6M4qMPx0CGiWFfhz7LHJmV1NqfDlk6zgIz5p+
+	y+ZxXn68Pr02GC/PyLKaEcw7c7b7jYByvSzfB+b1rZvOb509kss3Kmv0KExAzFUV
+	mhLa8JgaZ/e/zP957DD9sHeIeehrDk+Xz1a9Z1McSVT6e3FYCFPRroe4QpBu15Xr
+	mOWCIbSF7mKXCUWjcIu6iUxA6l9MwPyx00idDae+RTMuTHjODgkZFwTUINcg4Y2M
+	9mN1tQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47ec26huja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:21:52 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d3ba561898so25747485a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:21:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751041311; x=1751646111;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g8S/q69+hMXzlKm1t8hoFvS7fzscnXnzVXeG/Aysk4A=;
+        b=Vj48wnwHXxiJ766rArrNpKQYpaiuBeBrU5IuwxQwP7icFWBOXhZtdOTdPCWk3ZkK7j
+         zuhRnoMP0rRSNnzPlFnvhM6ViGKG9XHsyMFucCHc+TfGFiLbEs05onv4QrACovw6Y/94
+         SikOsdKNCfMnYc8shysGDrwGMCeTm4zauTDJkQ6J69WR6yz0ylzW7o3rhemgCM79Rtko
+         jKLziIUhLkySt8u+ZXqRK8CAfTbo7Vjq7do/QnXjGUpfUd3moftsAXJ/lkn7NZssjE13
+         WnyhZs6DVoERi2UlyWTOKbqLlexJyYe9G/LXv88Wrq0AFWzkTlfXJpVOXOf+JQJAxYNP
+         AfJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZJYIhJmo1Ff4egHBzesGtVkWmdmqOmmWQR0tIjPtTxQH/PNbQdTikHYx9qgxS3kf5c2gdqXXkKBPJG6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTWFtWDa9HbPxm90Kk75VmYPO/5fGXXt1PngPKxqdnP1O2LpXi
+	Dr4Afw/Kle7GmfxQ5QtWsxnre/7W4zrdidwyHESO1Vb6XAklIs+0oGdaeUDRFOaki0ztxOBUXex
+	Zmnd0lqjsOnmCWbUs9+JgwTmVhEDtWsCxYGI8GB0Tv+dVc/3w9NM/e1hq8PrJS4LTkjk=
+X-Gm-Gg: ASbGnctoeDVMqHxeYCWrnw/cFbQVrp8r1sOgqhybBmZ0H/r982DTxKwoI91VBkQfq3v
+	PqzyyISxlM6cIYxQljWp0V5dDxXjnr2SLhK1vZPZGxePwfRD08Pezn8lrZk60gYUjS9LwNgjKO4
+	V1f54IjKqCyVBJa3WSJCYbFuQFBdzuQjvzoP+5mJu+PGli3uQzN5pE4ytvYIalV8XDWehRQHpZA
+	eTX8AIIV0jmXVOwfB1UEDienC/ZAurVkVvaefyrzL8jlZvJ8AGmP3EeFjmVHXQ7KsjzP9mVxqBN
+	dloqwk+WctjKmQXWWDJLaUygdhyqZ580hymB3MC4trZy+ZKyuB6glfyPwHvyAgxNg08GnDlblBb
+	lo/0=
+X-Received: by 2002:a05:620a:1925:b0:7d4:2901:2b3c with SMTP id af79cd13be357-7d4439b51a3mr212887585a.9.1751041310920;
+        Fri, 27 Jun 2025 09:21:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1SPxuQsD4kZcYVOTyATUEwOXLUOsQYA3SYR1WoncAoVYNaaL5puLHJyjBBdfcBGSK7mKW7w==
+X-Received: by 2002:a05:620a:1925:b0:7d4:2901:2b3c with SMTP id af79cd13be357-7d4439b51a3mr212884385a.9.1751041310357;
+        Fri, 27 Jun 2025 09:21:50 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a016sm153479966b.57.2025.06.27.09.21.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 09:21:49 -0700 (PDT)
+Message-ID: <4556893f-982b-435d-aed1-d661ee31f862@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 18:21:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 03/14] net: ethernet: qualcomm: Add PPE driver
+ for IPQ9574 SoC
+To: Luo Jie <quic_luoj@quicinc.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lei Wei <quic_leiwei@quicinc.com>,
+        Suruchi Agarwal <quic_suruchia@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com
+References: <20250626-qcom_ipq_ppe-v5-0-95bdc6b8f6ff@quicinc.com>
+ <20250626-qcom_ipq_ppe-v5-3-95bdc6b8f6ff@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250626-qcom_ipq_ppe-v5-3-95bdc6b8f6ff@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-topics-tyr-request_irq-v5-6-0545ee4dadf6@collabora.com>
-References: <20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com>
-In-Reply-To: <20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Benno Lossin <lossin@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-pci@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEzMyBTYWx0ZWRfXzrKbs+oWrduE
+ SQnNP3mcNIz21b4cIc1HCkuoSDD5NWNMRN89PA0Wx7OGKAqQX76xpoSZJJuHRBD5DWPChbH9Jal
+ MNMj2jfCxVMLsns6a6+8/3tyQX7vqsyfKUSLVj16BbFKkWvw86b9FbuMkConQAlFGek4XnX/2Od
+ VCPi/IFjARTulPT40ZDjD5petwrNOBYBCU/GnwfQYxGwJk8WPh2JlcbLbdKweqJt9LrT9IN3MwE
+ lqXkicAFFndsBp8CUY9WBZ8MZ+MIQ7o+hvaEfC2Jjwff5o/QuOin1mPUNTlRtPe4U2cqqrydRkz
+ y6V4xyM8L1qKO9z/hsOvotSqcXUbEC+8oh/jEqC8xuLcZrv6XDWbtIcUjFK8WZjpQedY6YT9VXB
+ axDl3b+FzL43FnvitGZWUpm6IfEtI4+iD8DKNFrZtxIFm6y2oa0c9d0i/mpswzbLOECcRwqX
+X-Authority-Analysis: v=2.4 cv=XPQwSRhE c=1 sm=1 tr=0 ts=685ec520 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=JRFc35xCpNCPHeNcAxQA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: t3wbClGvYjKqsAuv1Zcu9h42Rcpbs4tF
+X-Proofpoint-ORIG-GUID: t3wbClGvYjKqsAuv1Zcu9h42Rcpbs4tF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_05,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ spamscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
+ priorityscore=1501 adultscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506270133
 
-These accessors can be used to retrieve a irq::Registration or a
-irq::ThreadedRegistration from a pci device. Alternatively, drivers can
-retrieve an IrqRequest from a bound PCI device for later use.
+On 6/26/25 4:31 PM, Luo Jie wrote:
+> The PPE (Packet Process Engine) hardware block is available on Qualcomm
+> IPQ SoC that support PPE architecture, such as IPQ9574.
+> 
+> The PPE in IPQ9574 includes six integrated ethernet MAC for 6 PPE ports,
+> buffer management, queue management and scheduler functions. The MACs
+> can connect with the external PHY or switch devices using the UNIPHY PCS
+> block available in the SoC.
+> 
+> The PPE also includes various packet processing offload capabilities
+> such as L3 routing and L2 bridging, VLAN and tunnel processing offload.
+> It also includes Ethernet DMA function for transferring packets between
+> ARM cores and PPE ethernet ports.
+> 
+> This patch adds the base source files and Makefiles for the PPE driver
+> such as platform driver registration, clock initialization, and PPE
+> reset routines.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
 
-These accessors ensure that only valid IRQ lines can ever be registered.
+[...]
 
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/helpers/pci.c |  8 ++++++++
- rust/kernel/pci.rs | 45 +++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 51 insertions(+), 2 deletions(-)
+> +static int ppe_clock_init_and_reset(struct ppe_device *ppe_dev)
+> +{
+> +	unsigned long ppe_rate = ppe_dev->clk_rate;
+> +	struct device *dev = ppe_dev->dev;
+> +	struct reset_control *rstc;
+> +	struct clk_bulk_data *clks;
+> +	struct clk *clk;
+> +	int ret, i;
+> +
+> +	for (i = 0; i < ppe_dev->num_icc_paths; i++) {
+> +		ppe_dev->icc_paths[i].name = ppe_icc_data[i].name;
+> +		ppe_dev->icc_paths[i].avg_bw = ppe_icc_data[i].avg_bw ? :
+> +					       Bps_to_icc(ppe_rate);
+> +		ppe_dev->icc_paths[i].peak_bw = ppe_icc_data[i].peak_bw ? :
+> +						Bps_to_icc(ppe_rate);
+> +	}
 
-diff --git a/rust/helpers/pci.c b/rust/helpers/pci.c
-index cd0e6bf2cc4d9b37db3a717e7a8422b054f348ec..f372a32e8fd19730563ab51500e8c8764854ae47 100644
---- a/rust/helpers/pci.c
-+++ b/rust/helpers/pci.c
-@@ -21,3 +21,11 @@ bool rust_helper_dev_is_pci(const struct device *dev)
- {
- 	return dev_is_pci(dev);
- }
-+
-+#ifndef CONFIG_PCI_MSI
-+int rust_helper_pci_irq_vector(struct pci_dev *pdev, unsigned int nvec)
-+{
-+	return pci_irq_vector(pdev, nvec);
-+}
-+
-+#endif
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index db0eb7eaf9b10c5316366ef16fe722a03044a517..60d37d6459518c79136535ce03c73a5a3097eda8 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -10,8 +10,8 @@
-     devres::Devres,
-     driver,
-     error::{to_result, Result},
--    io::Io,
--    io::IoRaw,
-+    io::{Io, IoRaw},
-+    irq::{self, request::IrqRequest},
-     str::CStr,
-     types::{ARef, ForeignOwnable, Opaque},
-     ThisModule,
-@@ -413,6 +413,47 @@ pub fn iomap_region<'a>(
-     ) -> impl PinInit<Devres<Bar>, Error> + 'a {
-         self.iomap_region_sized::<0>(bar, name)
-     }
-+
-+    /// Returns an [`IrqRequest`] for the IRQ vector at the given index, if any.
-+    pub fn request_irq_by_index(&self, index: u32) -> Result<IrqRequest<'_>> {
-+        // SAFETY: `self.as_raw` returns a valid pointer to a `struct pci_dev`.
-+        let irq = unsafe { crate::bindings::pci_irq_vector(self.as_raw(), index) };
-+        if irq < 0 {
-+            return Err(crate::error::Error::from_errno(irq));
-+        }
-+        // SAFETY: `irq` is guaranteed to be a valid IRQ number for `&self`.
-+        Ok(unsafe { IrqRequest::new(self.as_ref(), irq as u32) })
-+    }
-+
-+    /// Returns a [`kernel::irq::Registration`] for the IRQ vector at the given
-+    /// index.
-+    pub fn irq_by_index<T: crate::irq::Handler + 'static>(
-+        &self,
-+        index: u32,
-+        flags: irq::flags::Flags,
-+        name: &'static CStr,
-+        handler: T,
-+    ) -> Result<impl PinInit<irq::Registration<T>, Error> + '_> {
-+        let request = self.request_irq_by_index(index)?;
-+
-+        Ok(irq::Registration::<T>::new(request, flags, name, handler))
-+    }
-+
-+    /// Returns a [`kernel::irq::ThreadedRegistration`] for the IRQ vector at
-+    /// the given index.
-+    pub fn threaded_irq_by_index<T: crate::irq::ThreadedHandler + 'static>(
-+        &self,
-+        index: u32,
-+        flags: irq::flags::Flags,
-+        name: &'static CStr,
-+        handler: T,
-+    ) -> Result<impl PinInit<irq::ThreadedRegistration<T>, Error> + '_> {
-+        let request = self.request_irq_by_index(index)?;
-+
-+        Ok(irq::ThreadedRegistration::<T>::new(
-+            request, flags, name, handler,
-+        ))
-+    }
- }
- 
- impl Device<device::Core> {
+Can you not just set ppe_dev->icc_paths to ppe_icc_data?
 
--- 
-2.50.0
-
+Konrad
 
