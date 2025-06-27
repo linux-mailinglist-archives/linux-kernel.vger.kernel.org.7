@@ -1,78 +1,151 @@
-Return-Path: <linux-kernel+bounces-705735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9CEAEACEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A03AEACF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706004A5F04
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:43:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55B34A6CD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C146F192B75;
-	Fri, 27 Jun 2025 02:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2AF1922FA;
+	Fri, 27 Jun 2025 02:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aj/dP3OP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUmEdZKy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDFE1362
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6292F2F1FCB;
+	Fri, 27 Jun 2025 02:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750992216; cv=none; b=vFqb+YRG4S6Pns17j2aX024ZLzv8qkzi5KNLT0wTmRHtN/3C6TUyHinv5x9nIEwCe3ryUJD0hMBzQap5rbyZwv53id9wzyZAjOr2rmGs1gHYHYO66sMElqcVL/foVuYWL3wHeE5DUjfhJAcAf8sp17bJkBIR1q7dvQy5x/oqtCY=
+	t=1750992394; cv=none; b=ruOBtuju1hAaqXrCf+rCOr11ljj6nV5tzg2jlC4BYVmzt+b/unTmEGp5s+a+tWvacvod5PQtWaOstCFwO/GO6YqNpjwZVT/fYfIhXEghppkRXx+Jw957kpOYtS2PNse9A7NxULfbAPwBSQjsL7a915ccy0x1a+2gfdCRlMmKlMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750992216; c=relaxed/simple;
-	bh=n/nstBsO1bgKBTSEh4ZMaH5ZH0MJ/EIw9FCOKOtoaSw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=rGfiiAqli8NxSIpNfzNeO4DVLpUFXt23YnylumRejom3cGivK1rMLZggUTpOvFzxNheGFP2bzBNnP3slhwx6zGv0+OHF29hec5nn0C52taOlMzk2GCLu81E2yHn0rRl2V6ekwIL1XIfYHvTi8ZrePPooBc+3pydIFzbrDXYNuiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aj/dP3OP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11806C4CEEE;
-	Fri, 27 Jun 2025 02:43:36 +0000 (UTC)
+	s=arc-20240116; t=1750992394; c=relaxed/simple;
+	bh=LQms1tNsqpQ+nXQaH2KYlSJYLllazDGuxMMHkBk5CDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqVL5kHcAWinNgK/daDirLarsxyhIOMLwyAhTIQSkheHjH4BjDW3dwljZIY4P62K7u9fq5IuN9ZOVQSIfBv3m5IArEezi+6LHwRdH9z+4wKcKPlEGx0+XmaOG6bSnpALJ5qXKLmC0cZnuzSbQPeOBtlAlgPpM18UUpfRAMlkLV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUmEdZKy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF0CC4CEEE;
+	Fri, 27 Jun 2025 02:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750992216;
-	bh=n/nstBsO1bgKBTSEh4ZMaH5ZH0MJ/EIw9FCOKOtoaSw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=aj/dP3OPYwe6gTp8ajqI66LiQ2tyFvLh25zBIxaWJAq2fNWmxbq1ItE4pDMLr/pZ9
-	 wQB8ud2e9alS1027Hax1SrHdxHh7cUFlQVS2ZLr0Kqfl6HqkTbgzETl+1f0gjMQJIS
-	 r+IwvT7aGoJ3q69vxeM9h4xQuW9ma5pt9IX+dfr/T2MEUTN38OdC4+sF1UnfAn+J57
-	 ojWSPEqzQ0FB6dJYiskKA8hbZ7/cRkFyZ1L9Shm8J6zWZwczJBjAME6R+GFBBMQ4+W
-	 Td725AtlXbjFomutR1UicfTtc+xnH7qdKm0jFhWwgqH1AwPE2UFv5w4WW4dShNQe9V
-	 QGnjvoKq8E9OQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710553A40FCB;
-	Fri, 27 Jun 2025 02:44:03 +0000 (UTC)
-Subject: Re: [GIT PULL] HID fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <87p88249-s198-rq33-77p1-17qnr911436o@xreary.bet>
-References: <87p88249-s198-rq33-77p1-17qnr911436o@xreary.bet>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87p88249-s198-rq33-77p1-17qnr911436o@xreary.bet>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025062701
-X-PR-Tracked-Commit-Id: a8905238c3bbe13db90065ed74682418f23830c3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8a20830f2dd180064f25254d9c55beb243fe9223
-Message-Id: <175099224214.1407206.13630347143954633918.pr-tracker-bot@kernel.org>
-Date: Fri, 27 Jun 2025 02:44:02 +0000
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
+	s=k20201202; t=1750992394;
+	bh=LQms1tNsqpQ+nXQaH2KYlSJYLllazDGuxMMHkBk5CDs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FUmEdZKy5Pt85iIZINjlu6Rlw+WTOVjloMjWfOUMo1LHk6H53Te0c1wsyd8N4vhTL
+	 53kUWt5yc9a3iKDuavEg64TN6Q43K99IAq3pPC9PcKgpI2GIS6qBzQuYO1on5nVrYR
+	 s/RG/HdAzJaAfI7nPRGHfihNXYmCSy6JFzq/V+1VKJVbAVezkkf5RpbZ9e37qV1vuL
+	 2x0VbbiTZXMQQOMyud6dJRU217TdKsz5QbnJHwoljbfbZAha6cxt4d2MdAbgZaAfB2
+	 vYXACkfMBqv7cZhM2n833mbduEvSFugpShoskJ6/RhxH1RGxrtHdftTa4CBFseiqjV
+	 XaffibLNkkX2A==
+Date: Thu, 26 Jun 2025 21:46:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:FREESCALE SOC DRIVERS" <linuxppc-dev@lists.ozlabs.org>,
+	"moderated list:FREESCALE SOC DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: soc: add vf610 reboot syscon
+ controller
+Message-ID: <20250627024633.GA1656962-robh@kernel.org>
+References: <20250617155231.2023977-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617155231.2023977-1-Frank.Li@nxp.com>
 
-The pull request you sent on Fri, 27 Jun 2025 00:15:30 +0200 (CEST):
+On Tue, Jun 17, 2025 at 11:52:30AM -0400, Frank Li wrote:
+> Add vf610 reboot controller, which used to reboot whole system. Fix below
+> CHECK_DTB warnings:
+> 
+> arch/arm/boot/dts/nxp/vf/vf610-bk4.dtb: /soc/bus@40000000/src@4006e000:
+>     failed to match any schema with compatible: ['fsl,vf610-src', 'syscon']
+> 
+> IC reference manual call it as system reset controller(SRC), but it is not
+> module as linux reset controller, which used to reset individual device.
+> SRC work as reboot controller, which reboot whole system. It provides a
+> syscon interface to syscon-reboot.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change in v2
+> - change description to avoid confuse about reset controller.
+> - it is legacy device, more than 10 year. So try keep existed dts as it.
+> ---
+>  .../bindings/soc/fsl/fsl,vf610-src.yaml       | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,vf610-src.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,vf610-src.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,vf610-src.yaml
+> new file mode 100644
+> index 0000000000000..cb8aa510a21f7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/fsl/fsl,vf610-src.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas//soc/fsl/fsl,vf610-src.yaml#
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025062701
+Double '/'
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8a20830f2dd180064f25254d9c55beb243fe9223
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale vf610 System Reset Controller (SRC)
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description: |
 
-Thank you!
+Don't need '|'
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> +  IC reference manual call it as SRC, but it is not module as linux reset
+> +  controller, which used to reset individual device. SRC work as reboot
+> +  controller, which reboot whole system. It provide a syscon interface to
+> +  syscon-reboot.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - fsl,vf610-src
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    syscon@4006e000 {
+> +        compatible = "fsl,vf610-src", "syscon";
+> +        reg = <0x4006e000 0x1000>;
+> +        interrupts = <96 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
+> +
+> -- 
+> 2.34.1
+> 
 
