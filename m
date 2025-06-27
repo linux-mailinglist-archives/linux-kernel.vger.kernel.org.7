@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-706443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E9DAEB6CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C780AAEB6CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44EB9175305
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372A7171B9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0400F29E0F3;
-	Fri, 27 Jun 2025 11:46:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C2E2BEC4A;
+	Fri, 27 Jun 2025 11:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEBAsqeL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A6522F75C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D491DA21;
+	Fri, 27 Jun 2025 11:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751024771; cv=none; b=NDED6JWUAAo6j9Idvda7FAPQAsoBkSenooL20ywlh5Z1/eBeA4HHrZXlzMxY5yZcrH5nn8upoPXN4YgXKHjycr1DXItwA/7dtyoV5Ez6vDI5VmE2kIN7ZMVEq+E7BFPVz1WMNLm5fVe6m3YVODkUVk6dV36/Z7haufJbc8dj8uI=
+	t=1751024755; cv=none; b=tDAKJtH0H/wxUnMjMIB7qCHtj543R/E0DVRLV6KeGIeD/IgMx6n3siJbxX69KwIHaK3AiBWRiHJRar70Rs2HwfkkpkXaiTI83IHy8F8rq4BOokdBSg4u4BtWPICNz3bMaI/1wDAVxijK4n01IQxhA6Y9Ur4Dp8HqcyyNniX/7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751024771; c=relaxed/simple;
-	bh=AmircmMluli+uVnLARe2NzwbiMu4iW7gLj3ed1iWcBo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rM+LyqXJgi6s49rHJQYscFtewvgTA8mVOSsRM60WDAEZcizY+KfKK1VQ0m12HNjaY8ESTms/L2FbWlylbJooeepUkwzMdpQietHkpjZI15VRt5W0G1oucS9U7yCUze/AnPObYKXKPt/spxKsCl3HeMLHhURkXicAgjWGTcJfr4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uV7Wi-0004N2-QJ; Fri, 27 Jun 2025 13:45:52 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Fri, 27 Jun 2025 13:45:41 +0200
-Subject: [PATCH v2 4/4] drm/mipi-dsi: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+	s=arc-20240116; t=1751024755; c=relaxed/simple;
+	bh=jTASXHFJaWtWuGba5uGJqmKPNvhb7UutBVfpBhwr2Co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcV2VXhus2fdGSQhR7ByaDYXRcmQpG7FhcRmB1l2v76vkVry5ZPGyNgsuNCkAu7Uu4c2YY43/Ntd9ywDeYSrBRNjiJaiEYk8iOW3e2/4naUbWaT4tbtEVJEPjckW1lf0rnDf2fT1dh3no6JVdEj9IxCO+/dEQxN0eViBqHhBS5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEBAsqeL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6784C4CEE3;
+	Fri, 27 Jun 2025 11:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751024754;
+	bh=jTASXHFJaWtWuGba5uGJqmKPNvhb7UutBVfpBhwr2Co=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PEBAsqeLBf/ZOGonjkm8MylG5wWhZCV5e1/MLmkDxYCtEBPfwmc4vophl+26dnZqz
+	 fhH7g/Rkr3CL5iJL9FssXp1VRA5jXHQE1LAWWeIV1il1+aTTT3TxGE/XIwoeAwur9k
+	 Rmrrv3pzIGKs3rkwHKkwx42cMf12/UrdeJCYC8d4w2ptmwcGL/nWZU+OesVFsHoWSv
+	 0DJmEnY7ltxkJqdDHGdUiCzKvciEbxy7OCrKVSpLvpGu05cycZpFiC0DJ/GFGwxVqI
+	 wv/IfNVJj0hh0/6Komwrb1Ja8g/DvCwgEY+GntpTn59hHMCCnKh7bKdvt6TWt/TBOY
+	 90RtKH69UybbA==
+Date: Fri, 27 Jun 2025 12:45:48 +0100
+From: Simon Horman <horms@kernel.org>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	Boris Pismenny <borisp@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Ayush Sawal <ayush.sawal@chelsio.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH net-next v2 7/9] net/smc: Drop nr_pages_max initialization
+Message-ID: <20250627114548.GA1943@horms.kernel.org>
+References: <20250626-splice-drop-unused-v2-0-3268fac1af89@rbox.co>
+ <20250626-splice-drop-unused-v2-7-3268fac1af89@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-dsi-vsync-flush-v2-4-4066899a5608@pengutronix.de>
-References: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
-In-Reply-To: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
-To: Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Artur Weber <aweber.kernel@gmail.com>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626-splice-drop-unused-v2-7-3268fac1af89@rbox.co>
 
-Drop the unused MIPI_DSI_MODE_VSYNC_FLUSH flag. Whether or not a display
-FIFO flush on vsync is required to avoid sending garbage to the panel is
-not a property of the DSI link, but of the integration between display
-controller and DSI host bridge.
+On Thu, Jun 26, 2025 at 10:33:40AM +0200, Michal Luczaj wrote:
+> splice_pipe_desc::nr_pages_max was initialized unnecessarily in
+> commit b8d199451c99 ("net/smc: Allow virtually contiguous sndbufs or RMBs
+> for SMC-R"). Struct's field is unused in this context.
+> 
+> Remove the assignment. No functional change intended.
+> 
+> Suggested-by: Simon Horman <horms@kernel.org>
+> Signed-off-by: Michal Luczaj <mhal@rbox.co>
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- include/drm/drm_mipi_dsi.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index b37860f4a895c25ef8ba1c5b3f44827ef53aa100..369b0d8830c3d14a4fc1e8e38d5fa55f04ca143e 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -130,8 +130,6 @@ struct mipi_dsi_host *of_find_mipi_dsi_host_by_node(struct device_node *node);
- #define MIPI_DSI_MODE_VIDEO_NO_HBP	BIT(6)
- /* disable hsync-active area */
- #define MIPI_DSI_MODE_VIDEO_NO_HSA	BIT(7)
--/* flush display FIFO on vsync pulse */
--#define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
- /* disable EoT packets in HS mode */
- #define MIPI_DSI_MODE_NO_EOT_PACKET	BIT(9)
- /* device supports non-continuous clock behavior (DSI spec 5.6.1) */
-
--- 
-2.39.5
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
