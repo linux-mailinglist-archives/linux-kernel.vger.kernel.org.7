@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-706465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AAC8AEB6F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D28AEB6EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C66C37B3B02
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:53:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF4D16787C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D992DD5E1;
-	Fri, 27 Jun 2025 11:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5792DD5FE;
+	Fri, 27 Jun 2025 11:52:37 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1B12BF011
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4DE2DCC1A
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025155; cv=none; b=E4a6UhebjBcjHRJJ5R2mmAf+UsjsVZzsAiNythZqKLI8b+4FxtDu7BhAhnGRxK1gzs/6MjsTiQzLduUJ6e3uFdFQrZS/Qk7mz5ItFmIbv+hKOiiMBmJ+SRZOK0Pc+JOyUa6nB/cTzM3d5WKqLa4WGZiZfDdbPA5pL3RKhlidvog=
+	t=1751025157; cv=none; b=pfEW9UVYkJC/qMlS2FsWWpJHnoZC6FfkXJMjOG1jMKrh+H5zOdupvAKpMhVcnV2aGSBcZu92fuZN4vXBHSYLA91oYmDdUDod3grM8i2dipF5EXX0Jup7DRU4PcoKjPKJUw6CbGrtml+kBqjtas7PJYqeWScyWZOtAlY87iDARtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025155; c=relaxed/simple;
-	bh=qCJIDHlKgLxVVrOHq7iV9Oickr7qzW4eb+saKaVMpCA=;
+	s=arc-20240116; t=1751025157; c=relaxed/simple;
+	bh=n87S/2oSxpnOkHLiSzhmE46RIApYY231MlBT/6pX/wo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UuvWhThbm6r5+icEYb9XO2nTrsHtn3TFN8r22haE08mn6JArmYgMvkYJ2SXTBZ+ivtm692iOTnKas8dtJlQk4mQRH76geCXDILFaVm/k/eXa4Rg4FJFNubXkxFAJ9cWJV1fvGAnJ0KNlvAjzuyO5SXVf/DIogpF7BRbO7jYYrDM=
+	 In-Reply-To:To:Cc; b=NkgRRDUB94JZv9bw3wZNSdjMlCpRdBstXqrtFezc9GlAKGN5DH3wo6GiNUDApmiJ89qAz7fRpxaq8Y5pSvBEp9DUwJPcGdpgkWQqQ+M15EHcd80OwFr0y718WhDX87oc7JnOf0uMTEEtVziq2dAs7iYpcaon/pH/uJfNefukGrY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 393E91A00;
-	Fri, 27 Jun 2025 04:52:16 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25E1922C7;
+	Fri, 27 Jun 2025 04:52:18 -0700 (PDT)
 Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB0703F58B;
-	Fri, 27 Jun 2025 04:52:31 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6A813F58B;
+	Fri, 27 Jun 2025 04:52:33 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
-Date: Fri, 27 Jun 2025 12:51:54 +0100
-Subject: [PATCH v4 08/10] coresight: Refactor driver data allocation
+Date: Fri, 27 Jun 2025 12:51:55 +0100
+Subject: [PATCH v4 09/10] coresight: Make clock sequence consistent
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-arm_cs_fix_clock_v4-v4-8-0ce0009c38f8@arm.com>
+Message-Id: <20250627-arm_cs_fix_clock_v4-v4-9-0ce0009c38f8@arm.com>
 References: <20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com>
 In-Reply-To: <20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
@@ -54,185 +54,102 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751025136; l=6103;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751025136; l=3530;
  i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=qCJIDHlKgLxVVrOHq7iV9Oickr7qzW4eb+saKaVMpCA=;
- b=/yOmOXE0EpVTbZZ/v2wdZ6bRrIyUBlfR30WcISMGimxVGxYIVOBfz/st7QGgBJxiDwSWSTwg5
- 4M8s80vQPZ2DRo2nFkGry95BFuzO9S+Y9ueGOJEYW799aytXVsn/0Lm
+ bh=n87S/2oSxpnOkHLiSzhmE46RIApYY231MlBT/6pX/wo=;
+ b=r0plWUwY17xPYYj2d4wdSo08zRwttIV3zgPGRNmG8MTDPy5juWIxE4bdDU3yApkKCFR1gTaZs
+ 4RlTB8Bdk4JAMJ4n8eytPWW/JFMe6z4Vvy66QgjSfiIkbXVKE8wLo7S
 X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
  pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-The driver data no longer needs to be allocated separately in the static
-and dynamic probes. Moved the allocation into the low-level functions to
-avoid code duplication.
+Since atclk is enabled after pclk during the probe phase, this commit
+maintains the same sequence for the runtime resume flow.
 
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-catu.c      | 20 +++++++-------------
- drivers/hwtracing/coresight/coresight-cpu-debug.c | 21 +++++++--------------
- drivers/hwtracing/coresight/coresight-tmc-core.c  | 20 +++++++-------------
- 3 files changed, 21 insertions(+), 40 deletions(-)
+ drivers/hwtracing/coresight/coresight-funnel.c     | 6 +++---
+ drivers/hwtracing/coresight/coresight-replicator.c | 6 +++---
+ drivers/hwtracing/coresight/coresight-stm.c        | 6 +++---
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 6 +++---
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index 0f476a0cbd740c233d039c5c411ca192681e2023..a3ccb7034ae14d7339bc2549bccadf11e28c45e2 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -515,11 +515,17 @@ static int __catu_probe(struct device *dev, struct resource *res)
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index 02e0dc678a32c3b1f32fc955bf8871142e3412e1..9dcfc5ce8845d9e01bb956dddab0d64de51ec397 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -297,11 +297,11 @@ static int funnel_runtime_resume(struct device *dev)
  {
- 	int ret = 0;
- 	u32 dma_mask;
--	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
-+	struct catu_drvdata *drvdata;
- 	struct coresight_desc catu_desc;
- 	struct coresight_platform_data *pdata = NULL;
- 	void __iomem *base;
+ 	struct funnel_drvdata *drvdata = dev_get_drvdata(dev);
  
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, drvdata);
-+
- 	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
- 	if (ret)
- 		return ret;
-@@ -580,14 +586,8 @@ static int __catu_probe(struct device *dev, struct resource *res)
- 
- static int catu_probe(struct amba_device *adev, const struct amba_id *id)
- {
--	struct catu_drvdata *drvdata;
- 	int ret;
- 
--	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
+-	if (drvdata && !IS_ERR(drvdata->atclk))
+-		clk_prepare_enable(drvdata->atclk);
 -
--	amba_set_drvdata(adev, drvdata);
- 	ret = __catu_probe(&adev->dev, &adev->res);
- 	if (!ret)
- 		pm_runtime_put(&adev->dev);
-@@ -627,18 +627,12 @@ static struct amba_driver catu_driver = {
- static int catu_platform_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct catu_drvdata *drvdata;
- 	int ret = 0;
- 
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
--	dev_set_drvdata(&pdev->dev, drvdata);
- 	ret = __catu_probe(&pdev->dev, res);
- 	pm_runtime_put(&pdev->dev);
- 	if (ret)
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index 5f6db2fb95d4623a0bab08828ae00442870abd7d..3edfb5d3d02056afcaab4da575d1101c68aeac80 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -562,10 +562,16 @@ static void debug_func_exit(void)
- 
- static int __debug_probe(struct device *dev, struct resource *res)
- {
--	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
-+	struct debug_drvdata *drvdata;
- 	void __iomem *base;
- 	int ret;
- 
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
+ 	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+ 		clk_prepare_enable(drvdata->pclk);
 +
-+	dev_set_drvdata(dev, drvdata);
-+
- 	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, NULL);
- 	if (ret)
- 		return ret;
-@@ -629,13 +635,6 @@ static int __debug_probe(struct device *dev, struct resource *res)
- 
- static int debug_probe(struct amba_device *adev, const struct amba_id *id)
- {
--	struct debug_drvdata *drvdata;
--
--	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	amba_set_drvdata(adev, drvdata);
- 	return __debug_probe(&adev->dev, &adev->res);
++	if (drvdata && !IS_ERR(drvdata->atclk))
++		clk_prepare_enable(drvdata->atclk);
+ 	return 0;
  }
- 
-@@ -694,14 +693,8 @@ static struct amba_driver debug_driver = {
- static int debug_platform_probe(struct platform_device *pdev)
+ #endif
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index f1bbd12e63e0c130f945d8df34fb2334bd21336f..e53095603b0c0419bc96a66b23d15bb54e75e634 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -335,11 +335,11 @@ static int replicator_runtime_resume(struct device *dev)
  {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct debug_drvdata *drvdata;
- 	int ret = 0;
+ 	struct replicator_drvdata *drvdata = dev_get_drvdata(dev);
  
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
+-	if (drvdata && !IS_ERR(drvdata->atclk))
+-		clk_prepare_enable(drvdata->atclk);
 -
--	dev_set_drvdata(&pdev->dev, drvdata);
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-index ead3f5358d411b1d9e45f87986bd85cbe5be720a..e5ab4a0323354d826c831f68c71d81808cbcd8ff 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-@@ -785,10 +785,16 @@ static int __tmc_probe(struct device *dev, struct resource *res)
- 	u32 devid;
- 	void __iomem *base;
- 	struct coresight_platform_data *pdata = NULL;
--	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
-+	struct tmc_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
- 	struct coresight_dev_list *dev_list = NULL;
- 
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
+ 	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+ 		clk_prepare_enable(drvdata->pclk);
 +
-+	dev_set_drvdata(dev, drvdata);
++	if (drvdata && !IS_ERR(drvdata->atclk))
++		clk_prepare_enable(drvdata->atclk);
+ 	return 0;
+ }
+ #endif
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index a931282ec0eaf1b2a5db8ccc8f21789441cd634d..ed68d8280b1945f38d1294a5b5f557a614c90c94 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -969,11 +969,11 @@ static int stm_runtime_resume(struct device *dev)
+ {
+ 	struct stm_drvdata *drvdata = dev_get_drvdata(dev);
+ 
+-	if (drvdata && !IS_ERR(drvdata->atclk))
+-		clk_prepare_enable(drvdata->atclk);
+-
+ 	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+ 		clk_prepare_enable(drvdata->pclk);
 +
- 	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
- 	if (ret)
- 		return ret;
-@@ -898,14 +904,8 @@ static int __tmc_probe(struct device *dev, struct resource *res)
- 
- static int tmc_probe(struct amba_device *adev, const struct amba_id *id)
++	if (drvdata && !IS_ERR(drvdata->atclk))
++		clk_prepare_enable(drvdata->atclk);
+ 	return 0;
+ }
+ #endif
+diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
+index 5e47d761e1c4e99072eeb492c1eac7dd4285a591..1c5c2a82971490888c45508c68b516ab7dbf3eeb 100644
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -218,11 +218,11 @@ static int tpiu_runtime_resume(struct device *dev)
  {
--	struct tmc_drvdata *drvdata;
- 	int ret;
+ 	struct tpiu_drvdata *drvdata = dev_get_drvdata(dev);
  
--	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
+-	if (drvdata && !IS_ERR(drvdata->atclk))
+-		clk_prepare_enable(drvdata->atclk);
 -
--	amba_set_drvdata(adev, drvdata);
- 	ret = __tmc_probe(&adev->dev, &adev->res);
- 	if (!ret)
- 		pm_runtime_put(&adev->dev);
-@@ -982,14 +982,8 @@ static struct amba_driver tmc_driver = {
- static int tmc_platform_probe(struct platform_device *pdev)
- {
- 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	struct tmc_drvdata *drvdata;
- 	int ret = 0;
- 
--	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
--	if (!drvdata)
--		return -ENOMEM;
--
--	dev_set_drvdata(&pdev->dev, drvdata);
- 	pm_runtime_get_noresume(&pdev->dev);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
+ 	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+ 		clk_prepare_enable(drvdata->pclk);
++
++	if (drvdata && !IS_ERR(drvdata->atclk))
++		clk_prepare_enable(drvdata->atclk);
+ 	return 0;
+ }
+ #endif
 
 -- 
 2.34.1
