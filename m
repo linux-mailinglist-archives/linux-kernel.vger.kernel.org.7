@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-705629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C24AEAB9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:10:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B29AEAB9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517677B8224
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC67F3ABEBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A429E14A82;
-	Fri, 27 Jun 2025 00:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822E823DE;
+	Fri, 27 Jun 2025 00:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXOOh3NA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cwi.nl header.i=@cwi.nl header.b="qAiggwjh"
+Received: from fester.cwi.nl (fester.cwi.nl [192.16.191.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0109B28371;
-	Fri, 27 Jun 2025 00:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4889F1362;
+	Fri, 27 Jun 2025 00:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.16.191.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750982746; cv=none; b=ZCyIf2xNq/jTHARleWM0Lg7weuppuLgGNy1Rqa7aL7l6K9yMvS1/v7NDmMQ5KAGNEksvwEcI0RpP2gzkeb735olSQNFUP9khecMgQP7TxAJuK57Hxh6e70wUb34P8GAesCkOeWKXqYqAFofxB3bzlS+GQY0AvlFIHQz5tURRDYw=
+	t=1750983118; cv=none; b=uhJpjs55B6ct3JIdJrBWyB6SulGWXgGdOzGES2yqLzk7JRZYjVSuo0cAfw3RNkQ78de2lIn4LeTgEubHwnXwNEy/OcyhZDuQIyKX2dP70AvznoLij4hQHLbq5HIXxpMiTCuVke1TADgcEKbBqN70hYtWM7XXxnfOyU8BhLnHL94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750982746; c=relaxed/simple;
-	bh=Ck+DzOXAxdqOO+jxI+vUNr8Y2kNlJLXxkINzJ1YAIWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H9/2cBVubaBH1YTiIkbF2oJH2pRdvQj6rcO/rqo5hA8z1DcEz6G8E1B7mRHSHWU0yfp7+qebnsyKjc5SrjjtYgjWqKsOkmGWRC+xcbKgPfMlA+EWbG5OI2RlB8GlZEAFoKrWxGGMKksLvlpFcO3QXMR4AbP4x1fEbqG1PipRa0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXOOh3NA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCEC7C4CEEB;
-	Fri, 27 Jun 2025 00:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750982745;
-	bh=Ck+DzOXAxdqOO+jxI+vUNr8Y2kNlJLXxkINzJ1YAIWw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GXOOh3NA9gmywj39wIs+aigKeNMeViNksWSk/5y28zohFx5WMCY1eLtcSzpdzXU87
-	 VX3w9Xk1/v3Oyt/q4VsNpOGuxQYZYFkaBuDSV+pQcMu0oOwVZZAAl0H/Jx2/hp78+Q
-	 4G7cybaPKiRznAIICJW+8KA38s8MPCywWbABM/BgXMHHikQ0I8mg+H0p0RiRLuo2ch
-	 vm7SeUCxCVzi61OIuPKt7oBnydhcGEx7lDXQ7GsmwPy04yjNnlv2NWJZtgeUNFjqCo
-	 cPSSlOVHksN5Kiqwb/wa/AXUQPbIzka2jCmLDz48p7Nl4hz3cr5m2s4BWC7P3rbHV1
-	 4alWUEk09msug==
-Date: Thu, 26 Jun 2025 17:05:43 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, Matthew Gerlach
- <matthew.gerlach@altera.com>, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, maxime.chevallier@bootlin.com,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- richardcochran@gmail.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, Mun Yew Tham
- <mun.yew.tham@altera.com>
-Subject: Re: [PATCH v6] dt-bindings: net: Convert socfpga-dwmac bindings to
- yaml
-Message-ID: <20250626170543.6696868d@kernel.org>
-In-Reply-To: <20250626234119.GA1398428-robh@kernel.org>
-References: <20250613225844.43148-1-matthew.gerlach@altera.com>
-	<20250623111913.1b387b90@kernel.org>
-	<20250626234119.GA1398428-robh@kernel.org>
+	s=arc-20240116; t=1750983118; c=relaxed/simple;
+	bh=kIm8aXdacfqFY41xmjMNEfsCStCcPXinUrGP10cCRN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bK9j4uZskDrh1PORZHqdXXfiAqx7gcgFWKBClC/dgw6EN4KxFXrTuY6H/xzeaxlQmDKL6IhBS/+I7WYhlI0FvWEyikDoE/898IOOp1zPy2rFTmByeDAhkrpRH70SJSuePlXbD8ZFDzH1Twrprg762rgyzK3WNHNsHih4j8j046Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cwi.nl; spf=pass smtp.mailfrom=cwi.nl; dkim=fail (1024-bit key) header.d=cwi.nl header.i=@cwi.nl header.b=qAiggwjh reason="signature verification failed"; arc=none smtp.client-ip=192.16.191.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cwi.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cwi.nl
+Received: from localhost (37-251-114-171.fixed.kpn.net [37.251.114.171])
+	(authenticated bits=0)
+	by fester.cwi.nl (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTPSA id 55R08BcK024285
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 02:08:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=cwi.nl; s=default;
+	t=1750982891; bh=kIm8aXdacfqFY41xmjMNEfsCStCcPXinUrGP10cCRN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qAiggwjhNOADTkarcWjUJqW4BOpmBnYPtzMIMXsBipH388u+p84rWwscV0WlEJ/nk
+	 MhtVh6ilHrIkPB66zDXbWdMdXWys2N2DTt8CTPgilEbFPLcoasKjK6fqLyoue981jN
+	 S9pMcUagOzlFa5T1TSFIIIoZu7ZCXbgD+547wNsc=
+Date: Fri, 27 Jun 2025 02:08:11 +0200
+From: "Andries E. Brouwer" <aeb@cwi.nl>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Carlos O'Donell" <carlos@redhat.com>, "Andries E. Brouwer" <aeb@cwi.nl>,
+        linux-man@vger.kernel.org, linux-kernel@vger.kernel.org,
+        libc-alpha@sourceware.org
+Subject: Re: man-pages-6.14 released
+Message-ID: <20250627000811.GB1598947@if>
+References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
+ <20250509112627.GA924923@if>
+ <bn2rs76dkhejmthy2wvul4ho26zzlwtkfg474ztiwggkxz7f3d@g25omktsd3ug>
+ <20250509121454.GA952723@if>
+ <3e82680d-149c-4a67-b838-bc73c0be3e4e@redhat.com>
+ <e363mzanav4inu3wtk5pmyzfwlquxr5kwh7ytk5emtayizi7qi@dqxritlnl22g>
+ <42dad79f-e0f2-4731-ac14-0189f5d278a0@redhat.com>
+ <u2ogua4573d2xm2p2oiuna67kydkr3e26pt6lixeidezdw34dg@nvn64na3cptt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <u2ogua4573d2xm2p2oiuna67kydkr3e26pt6lixeidezdw34dg@nvn64na3cptt>
 
-On Thu, 26 Jun 2025 18:41:19 -0500 Rob Herring wrote:
-> No need to ping us. Like netdev, you can check the PW queue:
->=20
-> https://patchwork.ozlabs.org/project/devicetree-bindings/list/
+On Fri, Jun 27, 2025 at 01:14:46AM +0200, Alejandro Colomar wrote:
 
-Thanks, noted!
+> On Thu, Jun 26, 2025 at 07:01:24PM -0400, Carlos O'Donell wrote:
 
-> In any case, we're a bit behind ATM.
->=20
->=20
-> It looks like we have 2 competing conversions of this binding. This one=20
-> and this one which I reviewed:
->=20
-> https://lore.kernel.org/all/20250624191549.474686-1-dinguyen@kernel.org/
->=20
-> Looks like there are some differences which need resolving, so I revoke=20
-> my review. Will follow-up separately on both.
+> > you need permission from the authors.
+> > 
+> > I disagree that man-pages should go forward with the current changes.
+> > 
+> > May you please restore the copyright notices and cut a new release?
+> 
+> Hmmm, it'll take some time.  I need to stop and compare the both lists,
+> which are rather long.  I don't promise it will happen soon, but I'll
+> keep it in a TODO list.  I'll also try to do it at least after
+> September, when I'll be meeting Michael in person, where I'll ask him
+> about his copyright notices (which represent a huge percentage of the
+> copyright notice lines).  That will reduce the work significantly.
+> So, it might happen around the end of this year.
+> 
+> Once I start doing that, I'll do another round of asking the remaining
+> people about their copyright notices.  Hopefully, there'l l be few of
+> them.
 
-=F0=9F=91=8D=EF=B8=8F
+
+I think you are too sloppy.
+
+Do you not recall the SCO saga?
+There a big legal conflict arose over copyright ownership.
+Something is still visible on https://en.wikipedia.org/wiki/SCO–Linux_disputes
+Maybe this ancient matter has still not been completely settled.
+
+Copyright is a legal matter, not something where convenience plays a role.
+In principle you need permission of everyone involved, and not only that,
+but you must be able to prove in court that everyone did give this permission.
+So one needs written permission.
+(And in what jurisdiction? Copyright details differ between countries.)
+Some original copyright holders are no longer alive, and the rights
+have been inherited.
+Life is much easier if you regard those copyright sentences as fossils
+carried over from earlier to later versions. And leave them verbatim.
+
+Andries
 
