@@ -1,120 +1,207 @@
-Return-Path: <linux-kernel+bounces-706384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AAEAEB5E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:07:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BEDAEB4F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D4956199A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B701892FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFE82BFC62;
-	Fri, 27 Jun 2025 11:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CF9298994;
+	Fri, 27 Jun 2025 10:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQw6iH+u"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XBn6+XQ0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B72BF017;
-	Fri, 27 Jun 2025 11:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA7229898C;
+	Fri, 27 Jun 2025 10:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751022301; cv=none; b=YUkmdb0iYnGBXJePYrnk63ScM4s4WD6fyDHSJGQznk0xjar2I54et01G0sRM6HTIF9KmwYHMXa5lkZl7XvIYoxoPR95WTudakXpQEPjVrs76aztCTo2zS0iNQdOyt0RQhUE1E5EIhGnIkT8NvbDwqTZZJ+d0KBsgOgA7kbDt8Kg=
+	t=1751020319; cv=none; b=DYngL48tXCRkYxZemVyrkNgkSfVop4UyspkWamz5qE5ZBDa9VV8qHzrsLA8OlCAQjiZf9JFL4WBg4GGyfD1JIDaVOFKWBvkphbFs8Uga+61kC6w9dqafm/dfEI97n8C2zMSY4RnLIppb37UfJAemXRbcdb0+01Bz4Te+vutuyVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751022301; c=relaxed/simple;
-	bh=Gab9HlTdevtNeTDMwimxTwHY16y/zKL0OdzGVNj+iY0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=b5AqN3VfqB+ikWSJNIODMLgBT1vT1YPlSwmvYuKrquvdX/F0zWhJIDnQO15phTwe7n0czKcQjM8Y9y90y7Mw309YhuoAEgW+bAwu4FBJWxmVQHsOBCp8F7Hd1kp8m7S9S24pr09SKGtdvp4VWPN5qou1rw4Ax8DnRWhZftYYu6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQw6iH+u; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a582e09144so1306514f8f.1;
-        Fri, 27 Jun 2025 04:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751022298; x=1751627098; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fe9OQkLMXpO2IZiw3ZWA9BPKAW+1uGPTqT4qLkMzqak=;
-        b=XQw6iH+uPUnpy+0w+VVQ6WrzgO5BJyO3Q3k0VOPpUo/vUfnfIE36djEqd94/rHK/Fm
-         7bBJPkBvDYdN/rL9dUMSJPd8ciNWmoFSRKaSMseLqGmTCGYFCdolDEt0z5kKTklucLsd
-         hYVf6G7lfI0CJnXKLjAaGuENL9u05Z6GKw4orfVpllb3PaIEqAXtqOX6iW19J/iNOPcO
-         FdWwCskX3hpVK67cJ1mCYIaotQmvJiJURMYQ5AioJnb8z8S2U55Eds/EOwmOcYizR2fQ
-         X35rQxS9E+oNqCagkE5fWtCgCPdCAT4VAFlodGvyMrPh+2aGNaqCcfwdJhLysolg8QCc
-         4BPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751022298; x=1751627098;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fe9OQkLMXpO2IZiw3ZWA9BPKAW+1uGPTqT4qLkMzqak=;
-        b=qD2/gApJ2e5Xfxa0YiT8JBy0RppyXWMaCm4A5x/7wEU5NOQHHbokBvkGMxfd/xpmYC
-         povVmy2TmsByIbf4mP2TYRKGBIXTRmjEtmLhFACvWu0iAZRvBmIzqKd+tHI1NJPKxWY3
-         eoTh4y63ru1UF4DPI9NzZMNZNZkXnNOzCGbTBpYiG+i07wrK6zmqVv5vvZ1tbAH5pSV9
-         ide3TT/5wcsEOUoS6AOK9j4xIzgOAUwNEvz3738v6Jg1cEHH6sveVKXmJWcYywWRHJZe
-         YdYiM/UpEuPpqOvYin5FVWhR1deiitoR9l6eQfgwVYdOf3rT6bh2jvYtWKeN6dn+e7Zu
-         Jcmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi1iu4iPlyAPq1Ywk0q2SkQh3plByJNgfZYyArZ8cefruDpKxknzPGzwjvZ/nh2Woz+mvjfhUt@vger.kernel.org, AJvYcCWLDjyOi5VEPU9NGT2u41jUWS55nrJoOk/qnAee/IvKFMdMoea0hg+EFIGdL3oymHGyptlZbYxAWQiK4W8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjQp2fCLgXXsuc78k4yv7rWfQ+GMt0gFJqbFfKRUk80qaJd3cm
-	s3IFR2yh9hcEnkmRBI9n9OSdnFluk+iAvvDhWhuV35tCIckfq2P5u2wL
-X-Gm-Gg: ASbGncuALWL2XV9nnEMmpFIlNHAJKOF1Tw21QKf6XRwRQvml6ItHl6DMmBhCr6K0Luv
-	/9TGHRcLF4lBpSVvNuv5zfpfnwsMzKjG5hYqRYhTUdNYUrh7e6QNRZvg3yyIohkprecpOcO9G29
-	S8m3L4HfTNAggVXZaoc2KQYczRCNVfs8erGpZIp/r34epgFMGr7PiDETBIgUwULcIqaefKTF4W7
-	UXzAyPFv0fUarPxl28Po5heDsssDEOFIr024JMPHP1V3CXH2nF5Fpjw3ZDDd0RXAL7ki4L3qN1g
-	CrurKx67qPDxrF45ENofXtxdwOpA7VfpigvY86zs2JHv1PZC9k4dSw0qarvEgGox/qFaytXxjg=
-	=
-X-Google-Smtp-Source: AGHT+IFVcMpR0rLM6VYkpxbugODonjletnVYfb7gUIKV7lAQ+3Nt5KGTvKv9ehhSsIEGXJogIF2sYg==
-X-Received: by 2002:adf:9d91:0:b0:3a4:f744:e00c with SMTP id ffacd0b85a97d-3a8ff51fcc6mr2124588f8f.29.1751022297497;
-        Fri, 27 Jun 2025 04:04:57 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:40b8:18e0:8ac6:da0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5f8absm2432679f8f.95.2025.06.27.04.04.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 04:04:57 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
- Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
-  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
-  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
-  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
-  stern@rowland.harvard.edu
-Subject: Re: [PATCH v8 02/13] tools: ynl_gen_rst.py: Split library from
- command line tool
-In-Reply-To: <bf7908e3b23ff85e245e4ea151d8b5be69de0814.1750925410.git.mchehab+huawei@kernel.org>
-Date: Fri, 27 Jun 2025 11:29:39 +0100
-Message-ID: <m2sejl8oks.fsf@gmail.com>
-References: <cover.1750925410.git.mchehab+huawei@kernel.org>
-	<bf7908e3b23ff85e245e4ea151d8b5be69de0814.1750925410.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1751020319; c=relaxed/simple;
+	bh=W2Bg30qV1ZfFbZr7Wq/g5PCtFv368PERSSRJrjS6UTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJOVQyNPMyA3tCzTlmOelOkrqEIGEiPX//6o8o+cjr60U5P3syfaZXv9sAnV7LrlDuKY59JMvHA97VD0kI4POy4uNVatE5n2yeWTmrKcLkEfg13Ok3BbVfjh2DEVqvXgDxHgZxITs0pIb5Pycda7i6DuHuoY8zG/OlGeg7ZFbvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XBn6+XQ0; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751020318; x=1782556318;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W2Bg30qV1ZfFbZr7Wq/g5PCtFv368PERSSRJrjS6UTk=;
+  b=XBn6+XQ0we69PWQLYggoBPGIO1Ag0H3WPj0ge3oMoSb0lzJxI1iHgrvj
+   4K4Xt7dkENbAanSJNIwIFJolGqk3u6J7SDchxy51+G62l0S6YYveigFO5
+   itOXZGlpJz5jYAg1QaQBdEKWNeZ5tj+Pgsp3Z/RTKwpa0/CNThAHLnJEG
+   OuboCkRArHZkeX1NlCxP2weoVmV2dCZPnMKDSUfnxZ685U+EgB3IrQ7x4
+   5GDn6ZlLf25LynS40IjRX+J2eVHwDR1i8PVNza6vsj/w0EM47gAJWu4lo
+   fFIZjpLSvqHjxBk73wr/tKTd0cMYxMFYJOIVkCXHEO+zUi5muvGAo32eN
+   A==;
+X-CSE-ConnectionGUID: 7pX/i8XGRnqSTNQKMf5a3Q==
+X-CSE-MsgGUID: 0/hFG1OnT7yo2QCEgERjxQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53273433"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="53273433"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 03:31:57 -0700
+X-CSE-ConnectionGUID: mSOf9phKQ8mXRoDpmTh3ng==
+X-CSE-MsgGUID: j0xk4bnTShW880YXbbD4CA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="156817812"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 27 Jun 2025 03:31:46 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id A0FEA6A; Fri, 27 Jun 2025 13:31:44 +0300 (EEST)
+Date: Fri, 27 Jun 2025 13:31:44 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Xin Li <xin@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv7 13/16] x86/traps: Handle LASS thrown #SS
+Message-ID: <lvutnc4et6r4a5eayoweb5butpspvop2m2pjioiudjwa3mkpo7@drcsdchj66w5>
+References: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
+ <20250625125112.3943745-15-kirill.shutemov@linux.intel.com>
+ <c704ea9a-8c73-46c2-80d1-f7b93a221908@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c704ea9a-8c73-46c2-80d1-f7b93a221908@zytor.com>
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Thu, Jun 26, 2025 at 10:57:47AM -0700, Xin Li wrote:
+> On 6/25/2025 5:51 AM, Kirill A. Shutemov wrote:
+> > LASS throws a #GP for any violations except for stack register accesses,
+> > in which case it throws a #SS instead. Handle this similarly to how other
+> > LASS violations are handled.
+> > 
+> > In case of FRED, before handling #SS as LASS violation, kernel has to
+> > check if there's a fixup for the exception. It can address #SS due to
+> > invalid user context on ERETU[1]. See 5105e7687ad3 ("x86/fred: Fixup
+> 
+> Forgot to put the link to [1]?  Maybe just remove "[1]"?
 
-> As we'll be using the Netlink specs parser inside a Sphinx
-> extension, move the library part from the command line parser.
->
-> While here, change the code which generates an index file
-> to parse inputs from both .rst and .yaml extensions. With
-> that, the tool can easily be tested with:
->
-> 	tools/net/ynl/pyynl/ynl_gen_rst.py -x -o Documentation/netlink/specs/foo.rst
->
-> Without needing to first generate a temp directory with the
-> rst files.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+I will add the link. It is important context.
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+> > fault on ERETU by jumping to fred_entrypoint_user") for more details.
+> > 
+> > Co-developed-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > ---
+> >   arch/x86/kernel/traps.c | 39 +++++++++++++++++++++++++++++++++------
+> >   1 file changed, 33 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> > index e2ad760b17ea..f1f92e1ba524 100644
+> > --- a/arch/x86/kernel/traps.c
+> > +++ b/arch/x86/kernel/traps.c
+> > @@ -418,12 +418,6 @@ DEFINE_IDTENTRY_ERRORCODE(exc_segment_not_present)
+> >   		      SIGBUS, 0, NULL);
+> >   }
+> > -DEFINE_IDTENTRY_ERRORCODE(exc_stack_segment)
+> > -{
+> > -	do_error_trap(regs, error_code, "stack segment", X86_TRAP_SS, SIGBUS,
+> > -		      0, NULL);
+> > -}
+> > -
+> >   DEFINE_IDTENTRY_ERRORCODE(exc_alignment_check)
+> >   {
+> >   	char *str = "alignment check";
+> > @@ -866,6 +860,39 @@ DEFINE_IDTENTRY_ERRORCODE(exc_general_protection)
+> >   	cond_local_irq_disable(regs);
+> >   }
+> > +#define SSFSTR "stack segment fault"
+> > +
+> > +DEFINE_IDTENTRY_ERRORCODE(exc_stack_segment)
+> > +{
+> > +	if (user_mode(regs))
+> > +		goto error_trap;
+> > +
+> > +	if (cpu_feature_enabled(X86_FEATURE_FRED) &&
+> > +	    fixup_exception(regs, X86_TRAP_SS, error_code, 0))
+> > +		return;
+> > +
+> 
+> Thanks for making the change for FRED.
+> 
+> > +	if (cpu_feature_enabled(X86_FEATURE_LASS)) {
+> > +		enum kernel_gp_hint hint;
+> > +		unsigned long gp_addr;
+> > +
+> > +		hint = get_kernel_gp_address(regs, &gp_addr);
+> > +		if (hint != GP_NO_HINT) {
+> > +			printk(SSFSTR ", %s 0x%lx", kernel_gp_hint_help[hint],
+> > +			       gp_addr);
+> > +		}
+> > +
+> > +		if (hint != GP_NON_CANONICAL)
+> > +			gp_addr = 0;
+> 
+> Nit: GP/gp don't seem fit here, maybe we need a more generic name?
+> 
+> Sorry I don't have a recommendation.
+
+Naming is hard.
+
+Maybe get_kernel_exc_address()/kernel_exc_hint_help/EXC_NO_HINT/... ?
+
+> > +
+> > +		die_addr(SSFSTR, regs, error_code, gp_addr);
+> > +		return;
+> > +	}
+> > +
+> > +error_trap:
+> > +	do_error_trap(regs, error_code, "stack segment", X86_TRAP_SS, SIGBUS,
+> > +		0, NULL);
+> 
+> The indentation has changed; I believe the original formatting is
+> preferable.
+> 
+> > +}
+> > +
+> >   static bool do_int3(struct pt_regs *regs)
+> >   {
+> >   	int res;
+> 
+> Just minor comments, so
+> 
+> Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+
+Thanks.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
