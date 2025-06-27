@@ -1,150 +1,191 @@
-Return-Path: <linux-kernel+bounces-707080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AA7AEBF97
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7B1AEBFDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780C756576F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:16:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6291C47751
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F361FAC23;
-	Fri, 27 Jun 2025 19:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230DA2ED16E;
+	Fri, 27 Jun 2025 19:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HeSdvolZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cy7oBoSv"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA891E1E0B;
-	Fri, 27 Jun 2025 19:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8486B2E92DE;
+	Fri, 27 Jun 2025 19:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751051765; cv=none; b=D6oeB8ewJHHXhbj7c6b76ALVR3IyhuoqCfcHaVZIeYFh2J5N5cAHQZYKeLeq7xRgOQSEa3BxFg3O3UJdJOE7d5yLzm3OWFVMw3oWvx9QlfULwwssIFRlMU+VPJjYL+jeYI2R4pqC+Qv4WW4rKcFNyTz9ZTG+ry4uD2fiCJ55Xyc=
+	t=1751052587; cv=none; b=StG0JnpZ+Vxr4E1mOTfNBxxRNTkxUs4ogOfsNXjQUn0hwYqR1HPCI7dxHOLJZd4cCnQoN5PntZBqQOh8+eHRl2ONzgrc8pCGh5yuxngQVMG+Ah7EJawYB8BsyORwfqjFmZsr3Gs1m1zfMxCjNc+SqrCaFmhOYK3sDLP8LYfU3Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751051765; c=relaxed/simple;
-	bh=e3ItbkmjlCF+WHhbj2/fNpi4b7yR0M+6lB+y/2rBgh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyYe7JTxWRN7bvmsEQtL4igwUL89jr9J8w4PfhAOmbYt4nLyAAHpN5+mJE9MKpnGYoweTwBSGLlcZGOG9pBRYX+KJnF11RfhtPOL0BrAkykB5J1XsB9BR3BxiE/fN9/8cVT8F5ZoZkmOy8s42ye+abeNAXlrkPXu/TaHxsEcOt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HeSdvolZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DD2C4CEE3;
-	Fri, 27 Jun 2025 19:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751051764;
-	bh=e3ItbkmjlCF+WHhbj2/fNpi4b7yR0M+6lB+y/2rBgh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HeSdvolZ1UWrXJ9VSVn0ZS0DXIqe2eIXrXITt8duLo+CfF5vTXac+ssoZApecraH1
-	 P6B34G+ZT4coa3ZcU6wxNroRRNJoZdFztXJD03a4AdF1WGj/t9kpNYDL/NfBJE4Wof
-	 KmdnpV4SLP6BzmvZek6j0+ATHYvGhFeAd1DG8mXmgIsOfucxt3OywgB99zLXehfevR
-	 mqU7rlqzqJtoNk10nnojKRiZNt0EB9GqJ5bK68DoJUsEIZlO21up/E/uvVTp+qY8Wt
-	 bHmHC42juwXKYjbB+5rAmVCmyt4SIW3YdBju8ygb3Yey69lLMJjOUfvZszDV8BjyJY
-	 3XsaCQMDAlyHw==
-Date: Fri, 27 Jun 2025 20:15:55 +0100
-From: Simon Horman <horms@kernel.org>
-To: =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-	Harini Katakam <harini.katakam@xilinx.com>,
-	Rafal Ozieblo <rafalo@cadence.com>,
-	Haavard Skinnemoen <hskinnemoen@atmel.com>,
-	Jeff Garzik <jeff@garzik.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH net-next v2 16/18] MIPS: mobileye: add EyeQ5 DMA IOCU
- support
-Message-ID: <20250627191555.GD1776@horms.kernel.org>
-References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
- <20250627-macb-v2-16-ff8207d0bb77@bootlin.com>
+	s=arc-20240116; t=1751052587; c=relaxed/simple;
+	bh=Z0N60xq3kCpnv/XjKGtSTa3NRdhZk8CdO9VGmCPoETg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xjak/BfFSTKZkHXOetwASKYHJVSI9/V3J1INouF7N48Lgc4Z/ytUExA4t43bP6L6TlBTTr2kepiK6GUoZO91aIcTKIfCUjIfHFtEPS3MiLV0VtaPHRsgk3tKLhjIqUjJVx2LdoBWJB/f8L19PyXyi6AKPBlvbgqJdBKxXvN4MWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cy7oBoSv; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C4D9166DE8A;
+	Fri, 27 Jun 2025 21:29:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1751052581;
+	bh=Z0N60xq3kCpnv/XjKGtSTa3NRdhZk8CdO9VGmCPoETg=;
+	h=From:Subject:Date;
+	b=cy7oBoSvAYBHfztWRkfDYCfFz+3E+JuVviX8zuoQwQu/grApsmry0LzplDd2SlOCy
+	 QjrirgVHH1xy3rIHeqQGJwlpKy9xGqq/WV18O4k1W3+FosW7ExM3v+lmSAqAjCIHTs
+	 FIla5vb5K7XNvYIHWYdlJWm1dPSIAREQosfD4bAjM299S9yImQH8u1dOGDIZQMpZtg
+	 YEe22rc4ochQSTq9gES8Kb63yYjlrtmfSQW2TDa5ZO3JxoF+/A24kVCUcut8hjGALn
+	 yZLLbPizsjzTeNCFZxyqwyvOOt0QQrpfSB4sf7H8zczhfpQPSwAUUGOq1wFGQvhstR
+	 PMrZVWrDApkGA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject:
+ [PATCH v3 3/9] PM: Make pm_runtime_force_resume() work with
+ DPM_FLAG_SMART_SUSPEND
+Date: Fri, 27 Jun 2025 21:15:59 +0200
+Message-ID: <3662906.iIbC2pHGDl@rjwysocki.net>
+In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
+References: <5018768.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250627-macb-v2-16-ff8207d0bb77@bootlin.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTGrSjjgwBeoPV1BTemn5ImVCZpPTZb07vPRCPpCLNITJNQNwAJrBW+NvQ9gHfopUGw7eKCZUx2JvTkH7ndztXO95C/5NZYx0U0uzSGwSElzY3a0yFW5y/ST6sLyUL+pkZNb6zBf5QQDeWSHMTwFL5SzhnW4lYOV2aXUoJnPKm0KcXRLQpgIKgvtcuh9kc8szEcWaDKkWT6ZvZMLezK4NKUrQ0LRPHVUG/J8XldG2aWmsAAgiz8DIA4tSCjGi3syq1aAO8pJ5+EOuYaRvLcxgtvWWEpF/MWy84RxjOnkuHVdyEMV6Ug0G9LNrdrQ+TwE0ATvvO2S6WiA1+7Yw5g2H305gslEDzC4qYjPR98sLFkKLIORGzJ+a6iRC4PqBx2XJfBL5VbUkMarbPpAGSLxV5nrbhVZu+BgLG+QIwAWjIxtHQZKqyul0nsdoMPlQuI+34BbIf5IUEXGf/s5wbmIhCg+ettfeT7txWyW53DunSJZt+n2BpRqCSB5HBjgxADJ0aNgcDc4idWZCKEd14ogNps+gnFW/3iXHrnBtRh8CTHXWb8LQ09ge48jhxy+x9yudiztNFDmm7aysKArf1RkA+ocudNePxbW1cHqYMiW2TM0vY9VkvjAGC3ZTTDfkgca1jOeTZEbHIsRuF6nAOympCCOiW1JKjF3iKHi03ojkHCzpQ
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On Fri, Jun 27, 2025 at 11:09:02AM +0200, Théo Lebrun wrote:
-> Both Cadence GEM Ethernet controllers on EyeQ5 are hardwired through CM3
-> IO Coherency Units (IOCU). For DMA coherent accesses, BIT(36) must be
-> set in DMA addresses.
-> 
-> Implement that in platform-specific dma_map_ops which get attached to
-> both instances of `cdns,eyeq5-gem` through a notifier block.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-...
+Curently, drivers using pm_runtime_force_suspend/resume() cannot set
+DPM_FLAG_SMART_SUSPEND because the devices with that flag set may need
+to be resumed during system-wide resume regardless of whether or not
+they have power.needs_force_resume set.  That can happen due to a
+dependency resolved at the beginning of a system-wide resume transition
+(for instance, a bus type or PM domain has decided to resume a
+subordinate device with DPM_FLAG_SMART_SUSPEND and its parent and
+suppliers also need to be resumed).
 
-> diff --git a/arch/mips/mobileye/eyeq5-iocu-dma.c b/arch/mips/mobileye/eyeq5-iocu-dma.c
+To overcome this limitation, modify pm_runtime_force_resume() to check
+the device's power.smart_suspend flag (which is set for devices with
+DPM_FLAG_SMART_SUSPEND set that meet some additional requirements) and
+the device's runtime PM status in addition to power.needs_force_resume.
+Also change it to clear power.smart_suspend to ensure that it will not
+handle the same device twice during one transition.
 
-...
+The underlying observation is that there are two cases in which the
+device needs to be resumed by pm_runtime_force_resume().  One of them
+is when the device has power.needs_force_resume set, which means that
+pm_runtime_force_suspend() has suspended it and decided that it should
+be resumed during the subsequent system resume.  The other one is when
+power.smart_suspend is set and the device's runtume PM status is
+RPM_ACTIVE.
 
-> +const struct dma_map_ops eyeq5_iocu_ops = {
-> +	.alloc			= eyeq5_iocu_alloc,
-> +	.free			= eyeq5_iocu_free,
-> +	.alloc_pages_op		= dma_direct_alloc_pages,
-> +	.free_pages		= dma_direct_free_pages,
-> +	.mmap			= eyeq5_iocu_mmap,
-> +	.get_sgtable		= eyeq5_iocu_get_sgtable,
-> +	.map_page		= eyeq5_iocu_map_page,
-> +	.unmap_page		= eyeq5_iocu_unmap_page,
-> +	.map_sg			= eyeq5_iocu_map_sg,
-> +	.unmap_sg		= eyeq5_iocu_unmap_sg,
-> +	.get_required_mask	= dma_direct_get_required_mask,
-> +};
-> +EXPORT_SYMBOL(eyeq5_iocu_ops);
+Update kerneldoc comments in accordance with the code changes.
 
-Hi Théo,
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-Does eyeq5_iocu_ops need to be exported?
-If so it should probably be declared in a header file somewhere.
-But I if not probably the EXPORT_SYMBOL line should be
-dropped, and the structure made static.
+v2 -> v3: Reorder (it was patch [5/9] in v2).
 
-Flagged by Sparse.
+v1 -> v2:
+   * Added R-by from Ulf.
+   * Corresponds to patch [3/9] in v1.
 
-> +
-> +static int eyeq5_iocu_notifier(struct notifier_block *nb,
-> +			       unsigned long event,
-> +			       void *data)
-> +{
-> +	struct device *dev = data;
-> +
-> +	/*
-> +	 * IOCU routing is hardwired; we must use our above custom
-> +	 * routines for cache-coherent DMA on ethernet interfaces.
-> +	 */
-> +	if (event == BUS_NOTIFY_ADD_DEVICE &&
-> +	    device_is_compatible(dev, "mobileye,eyeq5-gem")) {
-> +		set_dma_ops(dev, &eyeq5_iocu_ops);
-> +		return NOTIFY_OK;
-> +	}
-> +
-> +	return NOTIFY_DONE;
-> +}
+---
+ drivers/base/power/runtime.c |   38 +++++++++++++++++++++++++++-----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
-...
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1957,10 +1957,6 @@
+  * sure the device is put into low power state and it should only be used during
+  * system-wide PM transitions to sleep states.  It assumes that the analogous
+  * pm_runtime_force_resume() will be used to resume the device.
+- *
+- * Do not use with DPM_FLAG_SMART_SUSPEND as this can lead to an inconsistent
+- * state where this function has called the ->runtime_suspend callback but the
+- * PM core marks the driver as runtime active.
+  */
+ int pm_runtime_force_suspend(struct device *dev)
+ {
+@@ -2008,20 +2004,28 @@
+  * pm_runtime_force_resume - Force a device into resume state if needed.
+  * @dev: Device to resume.
+  *
+- * Prior invoking this function we expect the user to have brought the device
+- * into low power state by a call to pm_runtime_force_suspend(). Here we reverse
+- * those actions and bring the device into full power, if it is expected to be
+- * used on system resume.  In the other case, we defer the resume to be managed
+- * via runtime PM.
++ * This function expects that either pm_runtime_force_suspend() has put the
++ * device into a low-power state prior to calling it, or the device had been
++ * runtime-suspended before the preceding system-wide suspend transition and it
++ * was left in suspend during that transition.
++ *
++ * The actions carried out by pm_runtime_force_suspend(), or by a runtime
++ * suspend in general, are reversed and the device is brought back into full
++ * power if it is expected to be used on system resume, which is the case when
++ * its needs_force_resume flag is set or when its smart_suspend flag is set and
++ * its runtime PM status is "active".
++ *
++ * In other cases, the resume is deferred to be managed via runtime PM.
+  *
+- * Typically this function may be invoked from a system resume callback.
++ * Typically, this function may be invoked from a system resume callback.
+  */
+ int pm_runtime_force_resume(struct device *dev)
+ {
+ 	int (*callback)(struct device *);
+ 	int ret = 0;
+ 
+-	if (!dev->power.needs_force_resume)
++	if (!dev->power.needs_force_resume && (!dev_pm_smart_suspend(dev) ||
++	    pm_runtime_status_suspended(dev)))
+ 		goto out;
+ 
+ 	/*
+@@ -2041,8 +2045,20 @@
+ 	}
+ 
+ 	pm_runtime_mark_last_busy(dev);
++
+ out:
++	/*
++	 * The smart_suspend flag can be cleared here because it is not going
++	 * to be necessary until the next system-wide suspend transition that
++	 * will update it again.
++	 */
++	dev->power.smart_suspend = false;
++	/*
++	 * Also clear needs_force_resume to make this function skip devices that
++	 * have been seen by it once.
++	 */
+ 	dev->power.needs_force_resume = false;
++
+ 	pm_runtime_enable(dev);
+ 	return ret;
+ }
+
+
+
 
