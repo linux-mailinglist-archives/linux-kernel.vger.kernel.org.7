@@ -1,89 +1,114 @@
-Return-Path: <linux-kernel+bounces-706661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEE8AEB994
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:18:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F361EAEB996
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A357160B3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9691C4864D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41BC2E266E;
-	Fri, 27 Jun 2025 14:17:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A652E2E264B
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3372E2665;
+	Fri, 27 Jun 2025 14:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JTPcY4Ho";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q3EcjBDw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE922E2659;
+	Fri, 27 Jun 2025 14:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751033871; cv=none; b=RDd4Z+vOT8iRIaB/Da/qW3ZdPjdy8gfRspu1uwW0j93G2xi69eVXsEpEKaXyOgnsOk9S4Iw0gwouYFBKnm55jQKU+3Y6kWxS7l2UxXTYVF0EKRXyG6LSm9lti5PGhUyFF5Yu5iv3RZdV2hgxZdfQ48aBLOsL08EZz9tTSn0uAEk=
+	t=1751033890; cv=none; b=tCSTBrCrsLARG3b+4NpTNGdJbCJlbqWoaIAoz6iJ/Blm92a6RZqoGQgJYXVMdcoplx5YI19o2LWb0eNOdrJCgBJuoHVoY+zdwDBIbdUI1hbKXYBmqjNpbi/LL+4nMgOyugg/JOAUFtEFZNKq5HCTqq6w1glce5cGhGSVJqUeCwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751033871; c=relaxed/simple;
-	bh=SIDSxPACo3swYolhYSJkG/ZrpWuC2ELMGnQmef6BVPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nAig2irvM5q0v1bjn1BJjVHUICPIhtC6YU9y0Jm9AIuNNscObWpK9QqMmAt3ShLmVeg7b0GKAKUdF/goh6Y3kqMt0C6qGwLC78/dlivqVtd6yFYDZOVA5fXXDdZc68JLu/KSQxVC/tAr2j03ySmB3Aub6iMudB0edKdgsWzP6gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5571C1A00;
-	Fri, 27 Jun 2025 07:17:31 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 252213F58B;
-	Fri, 27 Jun 2025 07:17:48 -0700 (PDT)
-Date: Fri, 27 Jun 2025 15:17:45 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, kernel@oss.qualcomm.com,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: Re: [PATCH] coresight-tmc: Add configurable timeout for flush and
- tmcready
-Message-ID: <20250627141745.GS794930@e132581.arm.com>
-References: <20250627-flush_timeout-v1-1-2f46a8e9f842@quicinc.com>
- <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
+	s=arc-20240116; t=1751033890; c=relaxed/simple;
+	bh=+pi/wIlcbLNnuX1RBlHCp/Nab1wavZUXPEn3t0yFunw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PWEH241TdVpYusXB5BjcDp4aTdU9bnMfS90R3KjewrAU2J6X863+udK3d+IDXoFQZ6Vnw7pfQXsHwQWkANX3S4D6MEZTPQg0AAD+isH/Nt3nsP3nsAmXjTTB2enDi7wi7VWtlHu73SDhwA5+vsSA2sNwMU2m84giFCglbGJDMmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JTPcY4Ho; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q3EcjBDw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751033886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pi/wIlcbLNnuX1RBlHCp/Nab1wavZUXPEn3t0yFunw=;
+	b=JTPcY4HoWZjBfcsbsJvA20ZnzRcsLjqZpqs0Jlsl3cDrD5fEbEdlxzCcLfv+V5H3VIF5Ia
+	WJSYgj7fV3v8zsIDuYccFnqV8Lsvj+7zYNTC8ocHNb0y2El6cDfDgSoIDhhb+18yIiMlrV
+	MQIFYflQnev9ornTwTrbf02qojHXO5rrdhaBHZkALH+cJIerWy8VPU1lZB0Q7Qtu9XmJCg
+	UvyqUwsuc6MRISQxYKe6kQRo2/cBXjdFfdp/co+esDkEoYxgFEQpgxXBeEobAcAp6pduZa
+	khGakssZhUgJR4unZsJgwBNpw7SIbi7CHfxCTmstt6pjHZ3TAi4CKseThnKfvQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751033886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+pi/wIlcbLNnuX1RBlHCp/Nab1wavZUXPEn3t0yFunw=;
+	b=q3EcjBDwDSlN5SU0XlMs2o0HMzKupClunf6b0FpPvH0MA5Ck52MaMeWKpP4eEXeeMW4l9B
+	3OwavwLkwWlcU/DA==
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, Richard
+ Cochran <richardcochran@gmail.com>, Christopher Hall
+ <christopher.s.hall@intel.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Miroslav Lichvar
+ <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, David
+ Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, Thomas
+ =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Kurt
+ Kanzenbach
+ <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [patch V3 04/11] timekeeping: Provide time setter for auxiliary
+ clocks
+In-Reply-To: <CANDhNCpu5+ZVxFg0XVU4KYEWnNCbSruPob9dOeF3btxqJ1N70g@mail.gmail.com>
+References: <20250625182951.587377878@linutronix.de>
+ <20250625183757.995688714@linutronix.de>
+ <CANDhNCpu5+ZVxFg0XVU4KYEWnNCbSruPob9dOeF3btxqJ1N70g@mail.gmail.com>
+Date: Fri, 27 Jun 2025 16:18:05 +0200
+Message-ID: <87ldpdnu8y.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 27, 2025 at 12:23:29PM +0100, James Clark wrote:
-> 
-> 
-> On 27/06/2025 12:10 pm, Yuanfang Zhang wrote:
-> > The current implementation uses a fixed timeout via
-> > coresight_timeout(), which may be insufficient when multiple
-> > sources are enabled or under heavy load, leading to TMC
-> > readiness or flush completion timeout.
-> > 
-> > This patch introduces a configurable timeout mechanism for
-> > flush and tmcready.
-> > 
-> 
-> What kind of values are you using? Is there a reason to not increase the
-> global one?
+On Thu, Jun 26 2025 at 21:23, John Stultz wrote:
+> On Wed, Jun 25, 2025 at 11:38=E2=80=AFAM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+>>
+>> Add clock_settime(2) support for auxiliary clocks. The function affects =
+the
+>> AUX offset which is added to the "monotonic" clock readout of these cloc=
+ks.
+>>
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>
+> Minor fretting: I worry a little that the difference here between the
+> default timekeeper where set adjusts the REALTIME offset from
+> MONOTONIC, and here where it directly adjusts "mono" might confuse
+> later readers?
 
-IIUC, this patch is related to patch [1].
+Actually it's not really that different.
 
-It seems to me that both patches aim to address the long latency when
-flushing the TMC, but take different approaches. In the earlier patch,
-both Mike and I questioned how the timeout occurred in hardware, but
-no information provided about the cause.
+In both cases the new offset to the monotonic clock is calculated and
+stored in the relevant tk::offs_* member.
 
-I would suggest that we first make clear if this is a hardware quirk or
-a common issue in Arm CoreSight.
+The difference is that the core timekeeper operates on xtime, but for
+simplicity I chose to calculate the resulting tk::offs_aux directly from
+the monotonic base. That's valid with the aux clocks as they don't
+need any of the xtime parts.
 
-Thanks,
-Leo
+I added some blurb to it.
 
-[1] https://lore.kernel.org/linux-arm-kernel/CAJ9a7Vgre_3mkXB_xeVx5N9BqPTa2Ai4_8E+daDZ-yAUv44A9g@mail.gmail.com/
+
 
