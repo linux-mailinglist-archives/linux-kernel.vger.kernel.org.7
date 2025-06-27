@@ -1,177 +1,120 @@
-Return-Path: <linux-kernel+bounces-706308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66509AEB50F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:37:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AAEAEB5E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720A93BF06D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:32:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D4956199A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8699F2C08CD;
-	Fri, 27 Jun 2025 10:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFE82BFC62;
+	Fri, 27 Jun 2025 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OcdG1Gho"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQw6iH+u"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031D0298996;
-	Fri, 27 Jun 2025 10:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B72BF017;
+	Fri, 27 Jun 2025 11:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020186; cv=none; b=IBDgOc2dZoO3Z5nkO28vS3OuBBJPm0uEPbu0QV+L013ZMQffX6FsdiwIsCDMCsq+nIvL4aqSk7pTZ8rsKvR34HS4UzsuMkjtatplOQ+0ypCDXwys+1SGnexXA6UGYap2yPH6yJkV9kqd55q39NxFAw2ANQDyxrfL+Fa6JeFzAHg=
+	t=1751022301; cv=none; b=YUkmdb0iYnGBXJePYrnk63ScM4s4WD6fyDHSJGQznk0xjar2I54et01G0sRM6HTIF9KmwYHMXa5lkZl7XvIYoxoPR95WTudakXpQEPjVrs76aztCTo2zS0iNQdOyt0RQhUE1E5EIhGnIkT8NvbDwqTZZJ+d0KBsgOgA7kbDt8Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020186; c=relaxed/simple;
-	bh=fxxnsqYVj44bqdTtrWf0Pa18mSdf5qVyV6pvT9Lt990=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecSRIrWRBG4QwOCCcJpAYOjhmBL5lJqKyqzlv9Hq4NYcQ/ruKkorcOLfUk8NmnhVQh8vTMz5ET+nRRcWANQOH3rnFch2qJuXC+CUqp7AHcXA1PBafRA7j/m3huvwr/jnLmpMPcThHWzoXxQmhhXxNElZ1/KIyLAKq/L7xOPLFsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OcdG1Gho; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NTo9B/0JaMaJmJH7vjJ70ZwqNHFhkhkJqmR2lsO5Mc8=; b=OcdG1GhoheuSXY8Y8B7osPhahy
-	fX0QPohM57jQrYhywOaMTFT7l6XLyxy7tHXUoey5gSGe5XhBNJEffb8Izg+cEv/O8rJBtqOxMWoPX
-	rYZMIoFbVGlFfRFtI4Js0tW2pMUOjzTMM0eiPGMN8B4RM/Xv+Av4CKGFKpsm8DjhbFJz9WXos21M3
-	ofHnlwYtwtlJtmMzcmL7XaGHO9kvPOjvgq9uIIg/o7Yh67khTQ1yc19cskBONkJPj4tCVyB2DVBs5
-	WoJsNgD+ZZfYQHS/bJXTTXtZVeNlJ/nBwGJpAMtPFDWMktaRlt08dzdfoozgDxP9+4Kww4hZl3zjF
-	xPSNyrZg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uV6Kp-0000000Dpdd-3u62;
-	Fri, 27 Jun 2025 10:29:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B43A6300222; Fri, 27 Jun 2025 12:29:30 +0200 (CEST)
-Date: Fri, 27 Jun 2025 12:29:30 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>
-Subject: Re: [PATCH v3 26/64] objtool: Add section/symbol type helpers
-Message-ID: <20250627102930.GU1613200@noisy.programming.kicks-ass.net>
-References: <cover.1750980516.git.jpoimboe@kernel.org>
- <c897dc0a55a84f9992b8c766214ff38b0f597583.1750980517.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1751022301; c=relaxed/simple;
+	bh=Gab9HlTdevtNeTDMwimxTwHY16y/zKL0OdzGVNj+iY0=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=b5AqN3VfqB+ikWSJNIODMLgBT1vT1YPlSwmvYuKrquvdX/F0zWhJIDnQO15phTwe7n0czKcQjM8Y9y90y7Mw309YhuoAEgW+bAwu4FBJWxmVQHsOBCp8F7Hd1kp8m7S9S24pr09SKGtdvp4VWPN5qou1rw4Ax8DnRWhZftYYu6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQw6iH+u; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a582e09144so1306514f8f.1;
+        Fri, 27 Jun 2025 04:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751022298; x=1751627098; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fe9OQkLMXpO2IZiw3ZWA9BPKAW+1uGPTqT4qLkMzqak=;
+        b=XQw6iH+uPUnpy+0w+VVQ6WrzgO5BJyO3Q3k0VOPpUo/vUfnfIE36djEqd94/rHK/Fm
+         7bBJPkBvDYdN/rL9dUMSJPd8ciNWmoFSRKaSMseLqGmTCGYFCdolDEt0z5kKTklucLsd
+         hYVf6G7lfI0CJnXKLjAaGuENL9u05Z6GKw4orfVpllb3PaIEqAXtqOX6iW19J/iNOPcO
+         FdWwCskX3hpVK67cJ1mCYIaotQmvJiJURMYQ5AioJnb8z8S2U55Eds/EOwmOcYizR2fQ
+         X35rQxS9E+oNqCagkE5fWtCgCPdCAT4VAFlodGvyMrPh+2aGNaqCcfwdJhLysolg8QCc
+         4BPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751022298; x=1751627098;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fe9OQkLMXpO2IZiw3ZWA9BPKAW+1uGPTqT4qLkMzqak=;
+        b=qD2/gApJ2e5Xfxa0YiT8JBy0RppyXWMaCm4A5x/7wEU5NOQHHbokBvkGMxfd/xpmYC
+         povVmy2TmsByIbf4mP2TYRKGBIXTRmjEtmLhFACvWu0iAZRvBmIzqKd+tHI1NJPKxWY3
+         eoTh4y63ru1UF4DPI9NzZMNZNZkXnNOzCGbTBpYiG+i07wrK6zmqVv5vvZ1tbAH5pSV9
+         ide3TT/5wcsEOUoS6AOK9j4xIzgOAUwNEvz3738v6Jg1cEHH6sveVKXmJWcYywWRHJZe
+         YdYiM/UpEuPpqOvYin5FVWhR1deiitoR9l6eQfgwVYdOf3rT6bh2jvYtWKeN6dn+e7Zu
+         Jcmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi1iu4iPlyAPq1Ywk0q2SkQh3plByJNgfZYyArZ8cefruDpKxknzPGzwjvZ/nh2Woz+mvjfhUt@vger.kernel.org, AJvYcCWLDjyOi5VEPU9NGT2u41jUWS55nrJoOk/qnAee/IvKFMdMoea0hg+EFIGdL3oymHGyptlZbYxAWQiK4W8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjQp2fCLgXXsuc78k4yv7rWfQ+GMt0gFJqbFfKRUk80qaJd3cm
+	s3IFR2yh9hcEnkmRBI9n9OSdnFluk+iAvvDhWhuV35tCIckfq2P5u2wL
+X-Gm-Gg: ASbGncuALWL2XV9nnEMmpFIlNHAJKOF1Tw21QKf6XRwRQvml6ItHl6DMmBhCr6K0Luv
+	/9TGHRcLF4lBpSVvNuv5zfpfnwsMzKjG5hYqRYhTUdNYUrh7e6QNRZvg3yyIohkprecpOcO9G29
+	S8m3L4HfTNAggVXZaoc2KQYczRCNVfs8erGpZIp/r34epgFMGr7PiDETBIgUwULcIqaefKTF4W7
+	UXzAyPFv0fUarPxl28Po5heDsssDEOFIr024JMPHP1V3CXH2nF5Fpjw3ZDDd0RXAL7ki4L3qN1g
+	CrurKx67qPDxrF45ENofXtxdwOpA7VfpigvY86zs2JHv1PZC9k4dSw0qarvEgGox/qFaytXxjg=
+	=
+X-Google-Smtp-Source: AGHT+IFVcMpR0rLM6VYkpxbugODonjletnVYfb7gUIKV7lAQ+3Nt5KGTvKv9ehhSsIEGXJogIF2sYg==
+X-Received: by 2002:adf:9d91:0:b0:3a4:f744:e00c with SMTP id ffacd0b85a97d-3a8ff51fcc6mr2124588f8f.29.1751022297497;
+        Fri, 27 Jun 2025 04:04:57 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:40b8:18e0:8ac6:da0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5f8absm2432679f8f.95.2025.06.27.04.04.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 04:04:57 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
+ Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
+  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
+  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
+  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
+  stern@rowland.harvard.edu
+Subject: Re: [PATCH v8 02/13] tools: ynl_gen_rst.py: Split library from
+ command line tool
+In-Reply-To: <bf7908e3b23ff85e245e4ea151d8b5be69de0814.1750925410.git.mchehab+huawei@kernel.org>
+Date: Fri, 27 Jun 2025 11:29:39 +0100
+Message-ID: <m2sejl8oks.fsf@gmail.com>
+References: <cover.1750925410.git.mchehab+huawei@kernel.org>
+	<bf7908e3b23ff85e245e4ea151d8b5be69de0814.1750925410.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c897dc0a55a84f9992b8c766214ff38b0f597583.1750980517.git.jpoimboe@kernel.org>
+Content-Type: text/plain
 
-On Thu, Jun 26, 2025 at 04:55:13PM -0700, Josh Poimboeuf wrote:
-> @@ -177,11 +178,71 @@ static inline unsigned int elf_text_rela_type(struct elf *elf)
->  	return elf_addr_size(elf) == 4 ? R_TEXT32 : R_TEXT64;
->  }
->  
-> +static inline bool sym_has_sec(struct symbol *sym)
-> +{
-> +	return sym->sec->idx;
-> +}
-> +
-> +static inline bool is_null_sym(struct symbol *sym)
-> +{
-> +	return !sym->idx;
-> +}
-> +
-> +static inline bool is_sec_sym(struct symbol *sym)
-> +{
-> +	return sym->type == STT_SECTION;
-> +}
-> +
-> +static inline bool is_object_sym(struct symbol *sym)
-> +{
-> +	return sym->type == STT_OBJECT;
-> +}
-> +
-> +static inline bool is_func_sym(struct symbol *sym)
-> +{
-> +	return sym->type == STT_FUNC;
-> +}
-> +
-> +static inline bool is_file_sym(struct symbol *sym)
-> +{
-> +	return sym->type == STT_FILE;
-> +}
-> +
-> +static inline bool is_notype_sym(struct symbol *sym)
-> +{
-> +	return sym->type == STT_NOTYPE;
-> +}
-> +
-> +static inline bool is_global_sym(struct symbol *sym)
-> +{
-> +	return sym->bind == STB_GLOBAL;
-> +}
-> +
-> +static inline bool is_weak_sym(struct symbol *sym)
-> +{
-> +	return sym->bind == STB_WEAK;
-> +}
-> +
-> +static inline bool is_local_sym(struct symbol *sym)
-> +{
-> +	return sym->bind == STB_LOCAL;
-> +}
-> +
->  static inline bool is_reloc_sec(struct section *sec)
->  {
->  	return sec->sh.sh_type == SHT_RELA || sec->sh.sh_type == SHT_REL;
->  }
->  
-> +static inline bool is_string_sec(struct section *sec)
-> +{
-> +	return sec->sh.sh_flags & SHF_STRINGS;
-> +}
-> +
-> +static inline bool is_text_sec(struct section *sec)
-> +{
-> +	return sec->sh.sh_flags & SHF_EXECINSTR;
-> +}
-> +
->  static inline bool sec_changed(struct section *sec)
->  {
->  	return sec->_changed;
-> @@ -222,6 +283,11 @@ static inline bool is_32bit_reloc(struct reloc *reloc)
->  	return reloc->sec->sh.sh_entsize < 16;
->  }
->  
-> +static inline unsigned long sec_size(struct section *sec)
-> +{
-> +	return sec->sh.sh_size;
-> +}
-> +
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
+> As we'll be using the Netlink specs parser inside a Sphinx
+> extension, move the library part from the command line parser.
+>
+> While here, change the code which generates an index file
+> to parse inputs from both .rst and .yaml extensions. With
+> that, the tool can easily be tested with:
+>
+> 	tools/net/ynl/pyynl/ynl_gen_rst.py -x -o Documentation/netlink/specs/foo.rst
+>
+> Without needing to first generate a temp directory with the
+> rst files.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Naming seems inconsistent, there are:
-
-  sym_has_sec(), sec_changed() and sec_size()
-
-which have the object first, but then most new ones are:
-
-  is_foo_sym() and is_foo_sec()
-
-which have the object last.
-
-
-Can we make this consistent and do something like:
-
-  s/is_\([^_]*\)_\(sym\|sec\)/\2_is_\1/
-
-?
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
