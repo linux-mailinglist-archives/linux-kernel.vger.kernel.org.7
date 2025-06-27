@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-707298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA48AAEC244
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC49EAEC249
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B48566193
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:46:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 736A37A473A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB1128A700;
-	Fri, 27 Jun 2025 21:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE0028A3ED;
+	Fri, 27 Jun 2025 21:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRrBwM0Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cgnf6ziA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7133D28A1E4;
-	Fri, 27 Jun 2025 21:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610F61E521D;
+	Fri, 27 Jun 2025 21:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751060768; cv=none; b=Scc5CckLYvftw3azpLdbNKS4XrzjDN7+8KtQ5/EAAMFhQ2X70LAIRIQnDQaNtOsAo40aw5fRHap45OxKOFzALjKm4uKP52eoF3iGebi2ZbxiscfhjEbq0tmvyfct4Copu5V++pAXnFI+1yeu2hQaE2QF7LQEnx+/dsgi+mFiwrY=
+	t=1751060888; cv=none; b=Tem7/AAlHoWNh0R1D1gmhv/uMRsnnP+AN9tVsSjHlRVzed+R+z+oSvC2RcRezw5fDW9ybnOikEjb60MVwTEAfjkyIVgcjLyzY1E/tV0vIqqKOiqm/zRzgKRHiyEAnpX/g52z8hxMjDyaDUF7pbcaCwWrYvf5VeYZpRaqFrOFEuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751060768; c=relaxed/simple;
-	bh=Wa4ecWizOT5Iqtise/QjGf4n6skn5SZMXAZ5hYrTYRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NCtlKDi+4mTmnv8RmrYjTBjoRgQOdj0cOgohrsvRq6VDiEWnEx14rZ9kBq8NlEnwr9or80LBpaFKavkvWY1LOBQDfSpTCqH+1mVW78gKmKTDEEZUs7DSGbnothOx8ntkeT9ugjPGjzoUZgBUw/HmilskW2gFDjJZ7yWK2nKO1Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRrBwM0Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25672C4CEE3;
-	Fri, 27 Jun 2025 21:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751060768;
-	bh=Wa4ecWizOT5Iqtise/QjGf4n6skn5SZMXAZ5hYrTYRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DRrBwM0QoCU5lHi0MAk1WbFBSz7918jSwXcUAsuuaA90vjTItz66KSqlfnTGIvm3s
-	 63f3KpVEH8MM0fZ1M7lrpffXGgXIi3T3nje13ZvJQ/8lLHnxt+5YfxOySB2pfE96RS
-	 0Y8rRTKoblzxauvdBHy6Ri/hiOEk15gRlI/hRt3KFeRJvGBNfGmfaT0zrHvOx3puD2
-	 vZdeYh0ZVEMQNhtSiY8gbL66yJh6j4ooCO+CsYxent72DRn2wNZ9CpYXeOdz4yW4qG
-	 Jt7tLQN3EyBIYrIaUY6MePBhDVSOfoxAiT7u/0mCb9Ln1eWkV9hkDZum7bONuz0Vd3
-	 MjnwtJlybu7gw==
-Date: Fri, 27 Jun 2025 16:46:07 -0500
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Simon Horman <horms@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v15 03/12] dt-bindings: net: dsa: Document
- support for Airoha AN8855 DSA Switch
-Message-ID: <20250627214607.GA193659-robh@kernel.org>
-References: <20250626212321.28114-1-ansuelsmth@gmail.com>
- <20250626212321.28114-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1751060888; c=relaxed/simple;
+	bh=KrT9visr8JuUFyc9dCKnyKiJKRMau3o6/bKp1lg+dTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YlzGo7dZdrU7lnvDtzrmNCfELeBOJyxOd2+jBxH4oFf/h1OsC6URz1VFH7tbId80WmnHfjhR5PFCgyFTU4S7xzgiD1aNEwwZN0e1+8QgaYvAQ/+qX8Vv7HJo9tJ8xAOFk9aaJqUsvjDLqFqoa3b4higowSvPUdYC7cFPcfzEW0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cgnf6ziA; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751060887; x=1782596887;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=KrT9visr8JuUFyc9dCKnyKiJKRMau3o6/bKp1lg+dTE=;
+  b=Cgnf6ziAWC3M5VO06/FeJ+DRkJhYPIpB75QgceWwYfyQ9uExIGN7qG67
+   peVmEDKkFGQi5+abl98I/0Ofy2dzg9xe1t2eLCVHWtvcbWuleruei9t6J
+   bOFiROuUlKT1VPbF0XLmpjrDF0gSqP6JLQcZzI31qH7wi4TBOD47nkzbC
+   HrKQS5CVIEFTVmnEqUWSvzWdNa+EldSjMWYX89firdvi63NFM0IPzWUGg
+   glSjH7MH9BuWjU+CX/qjt/j/qInKLWH87MZYVoJxGRs33/dXlJ0c9x3Bj
+   CYTsZI2EfRMZ2Z+n7nPkLaaG709k7TZ98PSTLjrl0p/a4ewQyElTwp9iy
+   Q==;
+X-CSE-ConnectionGUID: qcLNqlINQMaK3NI1zXO3dA==
+X-CSE-MsgGUID: iPNpC49BRAG6hroHHIO9Og==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="53254365"
+X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
+   d="scan'208";a="53254365"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 14:48:05 -0700
+X-CSE-ConnectionGUID: dvCZF54UQ+WvtuBXGynaRw==
+X-CSE-MsgGUID: aMbgSoumSz+wLZCV6vgFHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
+   d="scan'208";a="153625860"
+Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 14:48:04 -0700
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: early: xhci-dbc: Fix early_ioremap leak
+Date: Fri, 27 Jun 2025 14:47:47 -0700
+Message-ID: <20250627-xdbc-v1-1-43cc8c317b1b@intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626212321.28114-4-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250627-xdbc-0fe0b64c9560
+X-Mailer: b4 0.15-dev-a7f9c
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 26, 2025 at 11:23:02PM +0200, Christian Marangi wrote:
-> Document support for Airoha AN8855 5-port Gigabit Switch.
-> 
-> It does expose the 5 Internal PHYs on the MDIO bus and each port
-> can access the Switch register space by configurting the PHY page.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../net/dsa/airoha,an8855-switch.yaml         | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml b/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> new file mode 100644
-> index 000000000000..fbb9219fadae
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> @@ -0,0 +1,86 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/dsa/airoha,an8855-switch.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Airoha AN8855 Gigabit Switch
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: >
-> +  Airoha AN8855 is a 5-port Gigabit Switch.
-> +
-> +  It does expose the 5 Internal PHYs on the MDIO bus and each port
-> +  can access the Switch register space by configurting the PHY page.
-> +
-> +$ref: dsa.yaml#/$defs/ethernet-ports
-> +
-> +properties:
-> +  compatible:
-> +    const: airoha,an8855-switch
-> +
-> +required:
-> +  - compatible
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    ethernet-switch {
-> +        compatible = "airoha,an8855-switch";
-> +
-> +        ports {
+Using the kernel param earlyprintk=xdbc,keep without proper hardware
+setup leads to this:
 
-ethernet-ports is preferred.
+	[ ] xhci_dbc:early_xdbc_parse_parameter: dbgp_num: 0
+	...
+	[ ] xhci_dbc:early_xdbc_setup_hardware: failed to setup the connection to host
+	...
+	[ ] calling  kmemleak_late_init+0x0/0xa0 @ 1
+	[ ] kmemleak: Kernel memory leak detector initialized (mem pool available: 14919)
+	[ ] kmemleak: Automatic memory scanning thread started
+	[ ] initcall kmemleak_late_init+0x0/0xa0 returned 0 after 417 usecs
+	[ ] calling  check_early_ioremap_leak+0x0/0x70 @ 1
+	[ ] ------------[ cut here ]------------
+	[ ] Debug warning: early ioremap leak of 1 areas detected.
+	    please boot with early_ioremap_debug and report the dmesg.
+	[ ] WARNING: CPU: 11 PID: 1 at mm/early_ioremap.c:90 check_early_ioremap_leak+0x4e/0x70
 
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
+When early_xdbc_setup_hardware() fails, make sure to call
+early_iounmap() since xdbc_init() won't handle it.
 
-And ethernet-port@0
+Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+---
+ drivers/usb/early/xhci-dbc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/usb/early/xhci-dbc.c b/drivers/usb/early/xhci-dbc.c
+index 341408410ed93..41118bba91978 100644
+--- a/drivers/usb/early/xhci-dbc.c
++++ b/drivers/usb/early/xhci-dbc.c
+@@ -681,6 +681,10 @@ int __init early_xdbc_setup_hardware(void)
+ 
+ 		xdbc.table_base = NULL;
+ 		xdbc.out_buf = NULL;
++
++		early_iounmap(xdbc.xhci_base, xdbc.xhci_length);
++		xdbc.xhci_base = NULL;
++		xdbc.xhci_length = 0;
+ 	}
+ 
+ 	return ret;
 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
