@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-706664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA49AEB99B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:19:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8D4AEB9A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21E7642DD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A20E64479E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75CA2E267B;
-	Fri, 27 Jun 2025 14:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125932E266A;
+	Fri, 27 Jun 2025 14:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMFvBsxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/pdxHje"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059372E2652;
-	Fri, 27 Jun 2025 14:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5AB2E2640
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751033928; cv=none; b=GefjOijEj2Ek8NvH9Vpn2M+N+li3JpaCu0uDaGiQ/XXEOI71ZtithJDEUxkorb5mkUmCxPoRUhS2nTNxUgfE14QdFQfj+EO01QP+5/fKFSb/L/xUNHu9lteiPaOShq+11QTMTA0q6cnCql+zPeTE/pGO5a48jqMF5EpyDBuTHEY=
+	t=1751034008; cv=none; b=UAt/DIunWPeqmaRf2eXwexlWfS4asH8awKhN0yAHriL6v9htDNh9ezg3B6AVt3m2lLOlT7rfa6hpnl2eW4L+UaU3ZUgneHyjwOJZm6f7fxfPlxRoY/d0T3I57Rx7G0JnsqK4yW8giSeqNAb+w/NBcx1Xx8bNw5baDDEzsVrgbHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751033928; c=relaxed/simple;
-	bh=TaiQW3c+noRyzXQvsLousUbpwR3hV32c+YniAy5VZUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFNbUlpVuEtVIuomElPS/dw9NID2yPJPxjq14B6Nr8hJRMbxl/RBDabziUP2hc8oZrCdB+BSaP2l5e0owXMHlQhwDkj4GrR2xF3/Ty9Upf/aS2d8pgtLA3PhF0PP5bEdItn2T5YsxaU7MEqz5+rAsL+92jBgLIt49yYMlDxOj24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMFvBsxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA384C4CEE3;
-	Fri, 27 Jun 2025 14:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751033927;
-	bh=TaiQW3c+noRyzXQvsLousUbpwR3hV32c+YniAy5VZUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JMFvBsxh25QJ2POJpnOoSHcIiORn+haen7v9wCSZAqbRWEWR8rp168/xP5JajxRet
-	 ABSMKTjuxgMOqYpqxHoeQAIY1ZO/1qnNPS1mZwEAmC6ZGJ+7oPy6aIr9chIwI3mMzx
-	 1LwQNtcBxXDKjAqya0P7p7/blBNf1PY42VO6WrZJIuY+dkKjUMVR2n25EtXJNAYBR9
-	 AXfHsrTv4FYdFOr/WwX1bKOOoWsBgt46qpWbERDFD3NLDjmQReTG1ZBzJlC2KUu2aT
-	 lgwUVSvQu451wB1EMcCCl1itmRUz/iFxcC0/eMTNQtR8zSTF1A1AGP4bgUwFaT/d6Y
-	 QSo2Oo2lIP7sA==
-Date: Fri, 27 Jun 2025 09:18:46 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
+	s=arc-20240116; t=1751034008; c=relaxed/simple;
+	bh=X1LW1oZ0Yi5W6s1QSGFN/vY4p6QmWFxGUP/LCeeyHA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldCIyLAS8ZTbI5TWLrKkmqpcFZ7e+6o3CMI5k3a9jjQZYxEI60fbOXa12CztpP1TBmVUKxbUtQqIUGwM8BFeCAQ9qIUWDg9oQNbmg3vV90ioWC5kNtpCtCSxmvJfWFanaaqDLuW215XHKCHEW50y1EX/dCutMI8MnlBdNsfT6b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/pdxHje; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751034007; x=1782570007;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=X1LW1oZ0Yi5W6s1QSGFN/vY4p6QmWFxGUP/LCeeyHA8=;
+  b=N/pdxHje3fd/cte5RS/3HZINzcPdG8ie7dNqeV9rI54ub1EP645GWxer
+   I5lcUDhyOFAcgCCsnda+yucHf8zFb2BC6k4+UmpTY/Kb4aPxVxM6ONu7x
+   C34XeQtLJzIOZG/n7epBRYxkOFtK+2Ni1t3QzPhCjbe1xBOYFfRc6hmlE
+   oEeLchTVDytXbSNPVZ5JSTCoo+AMjPUZjwQ5VbjJo8BDao8C/5JANYeOG
+   ZcIOXuBQp8mrthRxHQia9IrytWnstCZm4IjfC9hviVZBUdDnmeQYRp1FL
+   PlCJbJz2/M0XgoQVkeGTNCcBlXYLfMzu5ffdPqeviYJLyvppMiTmeNLaj
+   Q==;
+X-CSE-ConnectionGUID: sbbcKu3bShuhMExqL3c20Q==
+X-CSE-MsgGUID: gPqCB9z6R1iO/iKMqa8O5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="52467226"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="52467226"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 07:20:06 -0700
+X-CSE-ConnectionGUID: 1rtKbcErQu2qicUgRu890Q==
+X-CSE-MsgGUID: IH+tU32BTqu3xrHkLL7q+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="158548200"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 27 Jun 2025 07:20:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id D176B2BA; Fri, 27 Jun 2025 17:20:02 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Dan Williams <dan.j.williams@intel.com>,
 	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 02/28] driver core: Rename get_dev_from_fwnode()
- wrapper to get_device_from_fwnode()
-Message-ID: <20250627141846.GA3234475-robh@kernel.org>
-References: <20250613134817.681832-1-herve.codina@bootlin.com>
- <20250613134817.681832-3-herve.codina@bootlin.com>
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v2 1/1] libnvdimm: Don't use "proxy" headers
+Date: Fri, 27 Jun 2025 17:19:23 +0300
+Message-ID: <20250627142001.994860-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250613134817.681832-3-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 13, 2025 at 03:47:42PM +0200, Herve Codina wrote:
-> get_dev_from_fwnode() calls get_device() and so it acquires a reference
-> on the device returned.
-> 
-> In order to be more obvious that this wrapper is a get_device() variant,
-> rename it to get_device_from_fwnode().
-> 
-> Suggested-by: Mark Brown <broonie@kernel.org>
-> Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=iEkKPNbNOccYmA@mail.gmail.com/
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Saravana Kannan <saravanak@google.com>
-> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  drivers/base/core.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index cbc0099d8ef2..36ccee91ba9a 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1881,7 +1881,7 @@ static void fw_devlink_unblock_consumers(struct device *dev)
->  	device_links_write_unlock();
->  }
->  
-> -#define get_dev_from_fwnode(fwnode)	get_device((fwnode)->dev)
-> +#define get_device_from_fwnode(fwnode)	get_device((fwnode)->dev)
+Update header inclusions to follow IWYU (Include What You Use)
+principle.
 
-In patch 3, you add the same define. Is there some reason to not move it 
-to a header?
+Note that kernel.h is discouraged to be included as it's written
+at the top of that file.
 
-Rob
+While doing that, sort headers alphabetically.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+v2: reshuffled includes and forward declarations (Ira)
+
+ include/linux/libnvdimm.h | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+index e772aae71843..28f086c4a187 100644
+--- a/include/linux/libnvdimm.h
++++ b/include/linux/libnvdimm.h
+@@ -6,12 +6,12 @@
+  */
+ #ifndef __LIBNVDIMM_H__
+ #define __LIBNVDIMM_H__
+-#include <linux/kernel.h>
++
++#include <linux/io.h>
+ #include <linux/sizes.h>
++#include <linux/spinlock.h>
+ #include <linux/types.h>
+ #include <linux/uuid.h>
+-#include <linux/spinlock.h>
+-#include <linux/bio.h>
+ 
+ struct badrange_entry {
+ 	u64 start;
+@@ -80,7 +80,9 @@ typedef int (*ndctl_fn)(struct nvdimm_bus_descriptor *nd_desc,
+ 		struct nvdimm *nvdimm, unsigned int cmd, void *buf,
+ 		unsigned int buf_len, int *cmd_rc);
+ 
++struct attribute_group;
+ struct device_node;
++struct module;
+ struct nvdimm_bus_descriptor {
+ 	const struct attribute_group **attr_groups;
+ 	unsigned long cmd_mask;
+@@ -121,6 +123,8 @@ struct nd_mapping_desc {
+ 	int position;
+ };
+ 
++struct bio;
++struct resource;
+ struct nd_region;
+ struct nd_region_desc {
+ 	struct resource *res;
+@@ -147,8 +151,6 @@ static inline void __iomem *devm_nvdimm_ioremap(struct device *dev,
+ 	return (void __iomem *) devm_nvdimm_memremap(dev, offset, size, 0);
+ }
+ 
+-struct nvdimm_bus;
+-
+ /*
+  * Note that separate bits for locked + unlocked are defined so that
+  * 'flags == 0' corresponds to an error / not-supported state.
+@@ -238,6 +240,9 @@ struct nvdimm_fw_ops {
+ 	int (*arm)(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arg);
+ };
+ 
++struct kobject;
++struct nvdimm_bus;
++
+ void badrange_init(struct badrange *badrange);
+ int badrange_add(struct badrange *badrange, u64 addr, u64 length);
+ void badrange_forget(struct badrange *badrange, phys_addr_t start,
+-- 
+2.47.2
+
 
