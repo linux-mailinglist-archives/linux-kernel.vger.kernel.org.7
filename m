@@ -1,290 +1,325 @@
-Return-Path: <linux-kernel+bounces-706628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4C2AEB93A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:50:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF161AEB941
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389FD1C438AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A684C561BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0CA2D9782;
-	Fri, 27 Jun 2025 13:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30B12D97B6;
+	Fri, 27 Jun 2025 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxUkuXII"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AVfjnmy/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DCD1DFE1
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E18723B61F
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751032251; cv=none; b=gMgV8zFuowGzyvHnzbx3FLumTzxRcQd9fYVQ77hOU3NM5WHfUd9QZ6LWsYNtpHGXe+0WjtSwD2atXB66pnsai5vN2Y9Fm03t3Mey68qWbLTQtz14YjcFGTezCFou/2fpFzLargbW4/vREEQAGqTAJfKeuYl1Wdiuc0VTCdHwKKQ=
+	t=1751032319; cv=none; b=Dr0yxchXtLmeV+u7OLU+0t8UT+nBLSywk/4l/6Uuc0+uTBNyib0/xOvbNHThyB6cKVJTaSfGPvEdxTMCBB91nSZL/S0gdOOvW06VWQN6TmX1WIj6vh9j0JgB7yomMlEFoJAYa6QtFoz668vTF8PYIOj7V+5G0bvLGjVZ/MtoGsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751032251; c=relaxed/simple;
-	bh=bSX+/UXmvh3czyFYzpAGgii4+gkqBkrTG0gsPeQ3R+c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W7I2mK2aSU9o+2taRA4iQIfJj9+f17JQPyRpC5gz2vYMovbydx/hC+3i1N1zxzc3Pdy5gk/SNxNOUCfFHWFjHEbKKL0UrC2hFAJun+LB2u0hI1RsmxubxJNmcKJ3rbT5dXUhBDeTtYj1yVqW9BKViM5r7lIFnBemoM8W2+hbh40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxUkuXII; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-747ef5996edso1807117b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 06:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751032249; x=1751637049; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Er5yzRbxAzEONxojnd+XiqNzcC4mWTkPWEuVaxn0Exk=;
-        b=dxUkuXIIAsPe2rHSTv+lSw469PDrjjWSiHLE17tvMHOKwle7Qagow3WmeAOk3PBwlR
-         aGWuxtpuT64mab/B1PnWU5pysr2EiPeYsHqPtsY0gKgJCYFfT+i4xsWdhUu4ycV72YKv
-         AO24Tc4tQQYXnwddAfakocLgbpMUhgJ2Zy2akGuCitCt5hUQHaVx1RuqpFLClbdH1ifh
-         fEwCQwCJ/7pYdcr8WN7x5tGeM4S7yaOWPgVyN/j2e8bcvqlP4aGV9Om59qhjSv74Mg0y
-         Xgpi1YahUt1c65jjnrH1y+ZhH83pMswaFanJShhdbZv/GdCyJY1Y+lWfB/6tKcKStrJm
-         lRiQ==
+	s=arc-20240116; t=1751032319; c=relaxed/simple;
+	bh=jUMEv2c4z71duFOh6YjhSN+NhM/CZEpn4PdmDPk5+s0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHQ1wu9LxLYh9IXO8TKR2CbtATEoNeAHRuGeXK+dZ4wo9A8/qxtOxrjlbxL6LRHCThLKX28qeP2g5a9enYsNtcJkWIfIZWG3uCrcfQYf5cYxQDh745wi36zy6Yb++hS3cH1WAJNaEYoC6oYmQ2At0vvNy7eHGKKBzCNCGH4DXO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AVfjnmy/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751032316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jdi8H7Y+WEaY2+EapncWAogUSUPPOlCTUAbjZIpMpK8=;
+	b=AVfjnmy/l+V0cfOwub0GL6WAtM1aBbdwbYA1iSwj+PF/49yLLRtc3LjVDiAR1h+biU5TB6
+	SXC+P1w/UwEnVo2px3qhz5za0a2uJdJatzX6uUYdb6soL/TyuHcQGWh88JRkXdp5Rt14+p
+	FBK7VbEvWpwVxBDeNQSdSybQH/6Tnpo=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-551-rRIa9sJAMMuEZv9UXZVqbA-1; Fri, 27 Jun 2025 09:51:54 -0400
+X-MC-Unique: rRIa9sJAMMuEZv9UXZVqbA-1
+X-Mimecast-MFC-AGG-ID: rRIa9sJAMMuEZv9UXZVqbA_1751032313
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fafb2f0a33so33616316d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 06:51:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751032249; x=1751637049;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Er5yzRbxAzEONxojnd+XiqNzcC4mWTkPWEuVaxn0Exk=;
-        b=FjwpEXf4nHWfjtztpwhaUr9dRg4Xozj+AxEvQrppCxfj7JrfeLaUhmaVlb0PxCww4S
-         rqRXqtiu7HzlHETe39L8aRX5tXwvLZZkMK61NC56C3BBIVfdoLAwNHr690SNpKNnmRCW
-         e4EeYDRD3bHI7o6hBmgWhvWhI74r1TiJckPjgB6DHqt/58pmilB+ZpPpEWV0hPlwlrdH
-         /53bxFD7S3Tlarf/8oF715M8DzClCv7FmijejODt+GUp31Bvqy9nkk8eAZO4Er8AAFZb
-         nZ+VfaysJjnEZ9fM0FVeoE85vb3RDaCLulhfPs9g6McpDwNrCWfFauZ1+Cm49XpZ9Q5A
-         7sSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX16u6cqesZtocxTjsXcT0ucSa6HEGhSqK0ixshM2pRAXSNMdCn0+5GHOB4f/4Ebrqx+3EdrIKqNZB+lg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQuuhS9DyT1e9XHIh6Mjh09IgnqeEBtQwKvV+ECOQzgGhYzkRY
-	i7EyeU3doGAvmJ+aQl+bgelQbNjNf7LI9aqMf6NavpL8WmvB3YQ8xmD8
-X-Gm-Gg: ASbGncuYNbvGhDyLU0rkCHscGNyMHIQBodTeb/il5sLF0z0wyhJU0mtYvIFU3z5I7wk
-	M8Adgn2Ioa0KJonqMmWCqx1kmjrXFcnmAGDIVgTKU+P8myAlFXxHZaGhp3BsuIbUYzpnj+gM5DE
-	RLtrQDfjH272E/noOmhKipnIIWkOl315VtiBfq6cJiBrfbA/mqRaVxAdWcChKyv3SihCZJwJ3t0
-	8QOpkseNbBCP4OMPDOm3AKNk+WTyUYNQXya1T+OOhR96cA19sgFCkA0Rcee0nXqL4/peS224PVL
-	ROvM4k81UjeB9hHbYe1FeyeNhvb8q+xM0X2UNWBkCOc6OdaX75MAPs6vYmSRq47LQgc/fd4bi6b
-	hiTilCMcoZ2YRgJ3XvrKJTaxu1Zexce5x0xgsN6wtMxvhcjbh
-X-Google-Smtp-Source: AGHT+IHm0tIQwqMArAkM6EsZ4e/IJxZXd3aeraDsPj/38phu/wRCS2B3aMR4ToaySdgBCXkERG+hHw==
-X-Received: by 2002:a05:6a00:2302:b0:748:1bac:ad5f with SMTP id d2e1a72fcca58-74af6f22722mr4532045b3a.12.1751032246276;
-        Fri, 27 Jun 2025 06:50:46 -0700 (PDT)
-Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3008194sm1698813a12.9.2025.06.27.06.50.43
+        d=1e100.net; s=20230601; t=1751032313; x=1751637113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jdi8H7Y+WEaY2+EapncWAogUSUPPOlCTUAbjZIpMpK8=;
+        b=Vr3ldOPodqwJaUD6JLYhMhanFNMJOrI0R8bNyvCrwk09KaHS3CeiV9/mCXA9F7TNBv
+         M9W3ivzpTE+PVtn5qUhT3CMlm117tdkUeWwIz2Qk+81VfOUdQhvw+/9oAobXOanF3ZJq
+         ZhL7KYXs0hzF/JdEr29wsOmnHZWagKrCD7KzBIfQaZ3ZuEv8DNN0UtvZPwvkuP/CYfLv
+         wiNrHU2OOfUv9ObPN5J+znrRYZeuj+K6qxqb2jkrtqF0Nw/g/WOrg82UiPlUWqxuL1Z7
+         knlwVfEjXLQsIU7SPCrlVKrCV+0dq482lN52g0YZ4h9cPi2f6NfFSvsdGuljjdtGd2Yd
+         YA2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXUoSDuoAtgnS3UVAQV+51m2V+quLxVmErXsyORnhzmJ265OpLMN1GDIHGaMJQymmz4TXaDzAYfRvVmjQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoDlnyiqCkf0YbsWbQa/95GOmmMo37WprtmKQf4VZKCXI9Yl49
+	8wjoQrSrpnyf8D8wP6AOrySOKGDF3Gz1r1KJ5Gju8u4+xHoe0cNbga2JZEX9zAsNomBTR5w8TfU
+	4cHAj4DdCT6uIurIzJFSlrEpLq54eq5a3kdel4r1zi2dTKiZkRepVP73JnDuVw6n8xw==
+X-Gm-Gg: ASbGncuXAxrxjpooOOyEwAOo5yi4ZQ651DTwSMxJJZiNHKLVdzWCV+qtAyS4Bhwcrgu
+	I6PBhjFNTgQfwkN8fGA7qd8Au7JPieq2ky9Iy4ohLYLWiF9T4V8KlUh/9z0krxw/MK2AUjTrvXI
+	JooCJo8mQCbt1BU8ZLBvjGguMkXMTo7bTrwVDsNN/vNcrTVoOWP2onVSgz6L3f7Kh8+PSwBCk72
+	rea+kn/ZGilX+qtWuH1sYPKbyjiFBAftmGT5FqvOi8YCJN5RFkiii9AByghT2gpp2Q7MJj/eiD6
+	NcWZ6qrpGJm6BA==
+X-Received: by 2002:a05:6214:c67:b0:6fd:6fc6:3961 with SMTP id 6a1803df08f44-70003c8eae7mr58596466d6.37.1751032311273;
+        Fri, 27 Jun 2025 06:51:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEiC41jUhRVuBAY/tvm/vWlRrKGu+kuTwOtZUZIehF8tIJVZBE67diI3DWMUfhyMY0RMShs4w==
+X-Received: by 2002:a05:6214:c67:b0:6fd:6fc6:3961 with SMTP id 6a1803df08f44-70003c8eae7mr58592736d6.37.1751032306777;
+        Fri, 27 Jun 2025 06:51:46 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d44317195fsm131113185a.38.2025.06.27.06.51.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 06:50:45 -0700 (PDT)
-Date: Fri, 27 Jun 2025 22:50:41 +0900
-Message-ID: <m2sejl47ke.wl-thehajime@gmail.com>
-From: Hajime Tazaki <thehajime@gmail.com>
-To: benjamin@sipsolutions.net
-Cc: linux-um@lists.infradead.org,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 09/13] x86/um: nommu: signal handling
-In-Reply-To: <3b407ed711c5d7e1819da7513c3e320699473b2d.camel@sipsolutions.net>
-References: <cover.1750594487.git.thehajime@gmail.com>
-	<548dcef198b79a4f8eb166481e39abe6e13ed2e3.1750594487.git.thehajime@gmail.com>
-	<3b407ed711c5d7e1819da7513c3e320699473b2d.camel@sipsolutions.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/26.3 Mule/6.0
+        Fri, 27 Jun 2025 06:51:46 -0700 (PDT)
+Date: Fri, 27 Jun 2025 09:51:42 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+	Michal Hocko <mhocko@suse.com>,
+	David Hildenbrand <david@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	James Houghton <jthoughton@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH 0/4] mm/userfaultfd: modulize memory types
+Message-ID: <aF6h7rYVnVTMtJ0S@x1.local>
+References: <20250620190342.1780170-1-peterx@redhat.com>
+ <114133f5-0282-463d-9d65-3143aa658806@amazon.com>
+ <aFxZUHcQh3hSraqe@x1.local>
+ <7666ee96-6f09-4dc1-8cb2-002a2d2a29cf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7666ee96-6f09-4dc1-8cb2-002a2d2a29cf@amazon.com>
 
+On Thu, Jun 26, 2025 at 05:09:47PM +0100, Nikita Kalyazin wrote:
+> 
+> 
+> On 25/06/2025 21:17, Peter Xu wrote:
+> > On Wed, Jun 25, 2025 at 05:56:23PM +0100, Nikita Kalyazin wrote:
+> > > 
+> > > 
+> > > On 20/06/2025 20:03, Peter Xu wrote:
+> > > > [based on akpm/mm-new]
+> > > > 
+> > > > This series is an alternative proposal of what Nikita proposed here on the
+> > > > initial three patches:
+> > > > 
+> > > >     https://lore.kernel.org/r/20250404154352.23078-1-kalyazin@amazon.com
+> > > > 
+> > > > This is not yet relevant to any guest-memfd support, but paving way for it.
+> > > 
+> > > Hi Peter,
+> > 
+> > Hi, Nikita,
+> > 
+> > > 
+> > > Thanks for posting this.  I confirmed that minor fault handling was working
+> > > for guest_memfd based on this series and looked simple (a draft based on
+> > > mmap support in guest_memfd v7 [1]):
+> > 
+> > Thanks for the quick spin, glad to know it works. Some trivial things to
+> > mention below..
+> 
+> Following up, I drafted UFFDIO_COPY support for guest_memfd to confirm it
+> works as well:
 
-Hello,
+Appreciated.
 
-thanks for the comment on the complicated part of the kernel (signal).
+Since at it, I'll comment quickly below.
 
-On Wed, 25 Jun 2025 08:20:03 +0900,
-Benjamin Berg wrote:
->=20
-> Hi,
->=20
-> On Mon, 2025-06-23 at 06:33 +0900, Hajime Tazaki wrote:
-> > This commit updates the behavior of signal handling under !MMU
-> > environment. It adds the alignment code for signal frame as the frame
-> > is used in userspace as-is.
-> >=20
-> > floating point register is carefully handling upon entry/leave of
-> > syscall routine so that signal handlers can read/write the contents of
-> > the register.
-> >=20
-> > It also adds the follow up routine for SIGSEGV as a signal delivery runs
-> > in the same stack frame while we have to avoid endless SIGSEGV.
-> >=20
-> > Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-> > ---
-> > =A0arch/um/include/shared/kern_util.h=A0=A0=A0 |=A0=A0 4 +
-> > =A0arch/um/nommu/Makefile=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 =
-|=A0=A0 2 +-
-> > =A0arch/um/nommu/os-Linux/signal.c=A0=A0=A0=A0=A0=A0 |=A0 13 ++
-> > =A0arch/um/nommu/trap.c=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0 | 194 ++++++++++++++++++++++++++
-> > =A0arch/x86/um/nommu/do_syscall_64.c=A0=A0=A0=A0 |=A0=A0 6 +
-> > =A0arch/x86/um/nommu/os-Linux/mcontext.c |=A0 11 ++
-> > =A0arch/x86/um/shared/sysdep/mcontext.h=A0 |=A0=A0 1 +
-> > =A0arch/x86/um/shared/sysdep/ptrace.h=A0=A0=A0 |=A0=A0 2 +-
-> > =A08 files changed, 231 insertions(+), 2 deletions(-)
-> > =A0create mode 100644 arch/um/nommu/trap.c
-> >=20
-> > [SNIP]
-> > diff --git a/arch/x86/um/nommu/os-Linux/mcontext.c b/arch/x86/um/nommu/=
-os-Linux/mcontext.c
-> > index c4ef877d5ea0..955e7d9f4765 100644
-> > --- a/arch/x86/um/nommu/os-Linux/mcontext.c
-> > +++ b/arch/x86/um/nommu/os-Linux/mcontext.c
-> > @@ -6,6 +6,17 @@
-> > =A0#include <sysdep/mcontext.h>
-> > =A0#include <sysdep/syscalls.h>
-> > =A0
-> > +static void __userspace_relay_signal(void)
-> > +{
-> > + /* XXX: dummy syscall */
-> > + __asm__ volatile("call *%0" : : "r"(__kernel_vsyscall), "a"(39) :);
-> > +}
->=20
-> 39 is NR__getpid, I assume?
->=20
-> The "call *%0" looks like it is code for retpolin, I think this would
-> currently just segfault.
+> 
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 8c44e4b9f5f8..b5458a22fff4 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -349,12 +349,19 @@ static bool kvm_gmem_offset_is_shared(struct file
+> *file, pgoff_t index)
+> 
+>  static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+>  {
+> +	struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
+>  	struct inode *inode = file_inode(vmf->vma->vm_file);
+>  	struct folio *folio;
+>  	vm_fault_t ret = VM_FAULT_LOCKED;
+> 
+>  	filemap_invalidate_lock_shared(inode->i_mapping);
+> 
+> +	folio = filemap_get_entry(inode->i_mapping, vmf->pgoff);
+> +	if (!folio && vma && userfaultfd_missing(vma)) {
+> +		filemap_invalidate_unlock_shared(inode->i_mapping);
+> +		return handle_userfault(vmf, VM_UFFD_MISSING);
+> +	}
 
-# if you mean retpolin as zpoline,
+Likely a possible refcount leak when folio != NULL here.
 
-zploine uses `call *%rax` so, this is not about zpoline.
+> +
+>  	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
+>  	if (IS_ERR(folio)) {
+>  		int err = PTR_ERR(folio);
+> @@ -438,10 +445,57 @@ static int kvm_gmem_uffd_get_folio(struct inode
+> *inode, pgoff_t pgoff,
+>  	return 0;
+>  }
+> 
+> +static int kvm_gmem_mfill_atomic_pte(pmd_t *dst_pmd,
+> +			   struct vm_area_struct *dst_vma,
+> +			   unsigned long dst_addr,
+> +			   unsigned long src_addr,
+> +			   uffd_flags_t flags,
+> +			   struct folio **foliop)
+> +{
+> +	struct inode *inode = file_inode(dst_vma->vm_file);
+> +	pgoff_t pgoff = linear_page_index(dst_vma, dst_addr);
+> +	struct folio *folio;
+> +	int ret;
+> +
+> +	folio = kvm_gmem_get_folio(inode, pgoff);
+> +	if (IS_ERR(folio)) {
+> +		ret = PTR_ERR(folio);
+> +		goto out;
+> +	}
+> +
+> +	folio_unlock(folio);
+> +
+> +	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_COPY)) {
+> +		void *vaddr = kmap_local_folio(folio, 0);
+> +		ret = copy_from_user(vaddr, (const void __user *)src_addr, PAGE_SIZE);
+> +		kunmap_local(vaddr);
+> +		if (unlikely(ret)) {
+> +			*foliop = folio;
+> +			ret = -ENOENT;
+> +			goto out;
+> +		}
+> +	} else {		/* ZEROPAGE */
+> +		clear_user_highpage(&folio->page, dst_addr);
+> +	}
+> +
+> +	kvm_gmem_mark_prepared(folio);
 
-> > +void set_mc_userspace_relay_signal(mcontext_t *mc)
-> > +{
-> > + mc->gregs[REG_RIP] =3D (unsigned long) __userspace_relay_signal;
-> > +}
-> > +
+Since Faud's series hasn't yet landed, so I'm almost looking at the current
+code base with an imagination of what might happen.
 
-This is a bit scary code which I tried to handle when SIGSEGV is
-raised by host for a userspace program running on UML (nommu).
+In general, missing trapping for guest-memfd could start to be slightly
+trickier.  So far IIUC guest-memfd cache pool needs to be populated only by
+a prior fallocate() syscall, not during fault.  So I suppose we will need
+to use uptodate bit to mark folio ready, like what's done here.
 
-# and I should remember my XXX tag is important to fix....
+If so, we may want to make sure in fault path any !uptodate fault will get
+trapped for missing too, even if it sounds not strictly a "cache miss"
+... so slightly confusing but sounds necessary.
 
-let me try to explain what happens and what I tried to solve.
+Meanwhile, I'm not 100% sure how it goes especially if taking CoCo into
+account, because CoCo needs to prepare the pages, so mark uptodate may not
+be enough?  I don't know well on the CoCo side to tell.  Otherwise we'll at
+least need to restrict MISSING traps to only happen on fully shared
+guest-memfds.
 
-The SEGV signal from userspace program is delivered to userspace but
-if we don't fix the code raising the signal, after (um) rt_sigreturn,
-it will restart from $rip and raise SIGSEGV again.
+OTOH, MINOR should be much easier to be done for guest-memfd, not only
+because the code to support that would be very minimum which is definitely
+lovely, but also because it's still pretty common idea to monitor pgtable
+entries, and it should logically even apply to CoCo: in a fault(), we need
+to check whether the guest-memfd folio is "shared" and/or "faultable"
+first; it should already fail the fault() if it's a private folio.  Then if
+it's visible (aka, "faultable") to HVA namespace, then it's legal to trap a
+MINOR too.  For !CoCo it'll always trap as it's always faultable.
 
-# so, yes, we've already relied on host and um's rt_sigreturn to
-  restore various things.
+MINOR also makes more sense to be used in the future with 1G postcopy
+support on top of gmem, because that's almost the only way to go.  Looks
+like we've made up our mind to reuse Hugetlb pages for gmem which sounds
+good, then Hugetlb pages are in 1G granule in allocations, and we can't
+easily do 4K miss trapping on one 1G huge page.  MINOR is simpler but
+actually more powerful from that POV.
 
-when a uml userspace crashes with SIGSEGV,
+To summarize, I think after this we can do MINOR before MISSING for
+guest-memfd if MINOR already works for you.  We can leave MISSING until we
+know how we would use it.
 
-- host kernel raises SIGSEGV (at original $rip)
-- caught by uml process (hard_handler)
-- raise a signal to uml userspace process (segv_handler)
-- handler ends (hard_handler)
-- (host) run restorer (rt_sigreturn, registered by (libc)sigaction,
-  not (host) rt_sigaction)
-- return back to the original $rip
-- (back to top)
+Thanks,
 
-this is the case where endless loop is happened.
-um's sa_handler isn't called as rt_sigreturn (um) isn't called.
-and the my original attempt (__userspace_relay_signal) is what I tried.
+> +
+> +	ret = mfill_atomic_install_pte(dst_pmd, dst_vma, dst_addr,
+> +				       &folio->page, true, flags);
+> +
+> +	if (ret)
+> +		folio_put(folio);
+> +out:
+> +	return ret;
+> +}
+> +
+>  static const vm_uffd_ops kvm_gmem_uffd_ops = {
+> -	.uffd_features	= 	VM_UFFD_MINOR,
+> -	.uffd_ioctls	= 	BIT(_UFFDIO_CONTINUE),
+> +	.uffd_features	= 	VM_UFFD_MISSING | VM_UFFD_MINOR,
+> +	.uffd_ioctls	= 	BIT(_UFFDIO_COPY) |
+> +				BIT(_UFFDIO_ZEROPAGE) |
+> +				BIT(_UFFDIO_CONTINUE),
+>  	.uffd_get_folio	=	kvm_gmem_uffd_get_folio,
+> +	.uffd_copy	=	kvm_gmem_mfill_atomic_pte,
+>  };
+>  #endif
+> 
+> > 
+> > > 
+> > > diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> > > index 5abb6d52a375..6ddc73419724 100644
+> > > --- a/virt/kvm/guest_memfd.c
+> > > +++ b/virt/kvm/guest_memfd.c
+> > > @@ -5,6 +5,9 @@
+> > >   #include <linux/pagemap.h>
+> > >   #include <linux/anon_inodes.h>
+> > >   #include <linux/set_memory.h>
+> > > +#ifdef CONFIG_USERFAULTFD
+> > 
+> > This ifdef not needed, userfaultfd_k.h has taken care of all cases.
+> 
+> Good to know, thanks.
+> 
+> > > +#include <linux/userfaultfd_k.h>
+> > > +#endif
+> > > 
+> > >   #include "kvm_mm.h"
+> > > 
+> > > @@ -396,6 +399,14 @@ static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
+> > >                kvm_gmem_mark_prepared(folio);
+> > >        }
+> > > 
+> > > +#ifdef CONFIG_USERFAULTFD
+> > 
+> > Same here.  userfaultfd_minor() is always defined.
+> 
+> Thank you.
+> 
+> > I'll wait for a few more days for reviewers, and likely send v2 before next
+> > week.
+> > 
+> > Thanks,
+> > 
+> > --
+> > Peter Xu
+> > 
+> 
 
-I agree that it is lazy to call a dummy syscall (indeed, getpid).
-I'm trying to introduce another routine to jump into userspace and
-call (um) rt_sigreturn after (host) rt_sigreturn.
+-- 
+Peter Xu
 
-> And this is really confusing me. The way I am reading it, the code
-> tries to do:
->    1. Rewrite RIP to jump to __userspace_relay_signal
->    2. Trigger a getpid syscall (to do "nothing"?)
->    3. Let do_syscall_64 fire the signal from interrupt_end
-
-correct.
-
-> However, then that really confuses me, because:
->  * If I am reading it correctly, then this approach will destroy the
->    contents of various registers (RIP, RAX and likely more)
->  * This would result in an incorrect mcontext in the userspace signal
->    handler (which could be relevant if userspace is inspecting it)
->  * However, worst, rt_sigreturn will eventually jump back
->    into__userspace_relay_signal, which has nothing to return to.
->  * Also, relay_signal doesn't use this? What happens for a SIGFPE, how
->    is userspace interrupted immediately in that case?
-
-relay_signal shares the same goal of this, indeed.
-but the issue with `mc->gregs[REG_RIP]` (endless signals) still exists
-I guess.
-
-> Honestly, I really think we should take a step back and swap the
-> current syscall entry/exit code. That would likely also simplify
-> floating point register handling, which I think is currently
-> insufficient do deal with the odd special cases caused by different
-> x86_64 hardware extensions.
->=20
-> Basically, I think nommu mode should use the same general approach as
-> the current SECCOMP mode. Which is to use rt_sigreturn to jump into
-> userspace and let the host kernel deal with the ugly details of how to
-> do that.
-
-I looked at how MMU mode (ptrace/seccomp) does handle this case.
-
-In nommu mode, we don't have external process to catch signals so, the
-nommu mode uses hard_handler() to catch SEGV/FPE of userspace
-programs.  While mmu mode calls segv_handler not in a context of
-signal handler.
-
-# correct me if I'm wrong.
-
-thus, mmu mode doesn't have this situation.
-
-
-I'm attempting various ways; calling um's rt_sigreturn instead of
-host's one, which doesn't work as host restore procedures (unblocking
-masked signals, restoring register states, etc) aren't called.
-
-I'll update here if I found a good direction, but would be great if
-you see how it should be handled.
-
--- Hajime
-
-> I believe that this requires a second "userspace" sigaltstack in
-> addition to the current "IRQ" sigaltstack. Then switching in between
-> the two (note that the "userspace" one is also used for IRQs if those
-> happen while userspace is executing).
->=20
-> So, in principle I would think something like:
->  * to jump into userspace, you would:
->     - block all signals
->     - set "userspace" sigaltstack
->     - setup mcontext for rt_sigreturn
->     - setup RSP for rt_sigreturn
->     - call rt_sigreturn syscall
->  * all signal handlers can (except pure IRQs):
->     - check on which stack they are
->       -> easy to detect whether we are in kernel mode
->     - for IRQs one can probably handle them directly (and return)
->     - in user mode:
->        + store mcontext location and information needed for rt_sigreturn
->        + jump back into kernel task stack
->  * kernel task handler to continue would:
->     - set sigaltstack to IRQ stack
->     - fetch register from mcontext
->     - unblock all signals
->     - handle syscall/signal in whatever way needed
->=20
-> Now that I wrote about it, I am thinking that it might be possible to
-> just use the kernel task stack for the signal stack. One would probably
-> need to increase the kernel stack size a bit, but it would also mean
-> that no special code is needed for "rt_sigreturn" handling. The rest
-> would remain the same.
->=20
-> Thoughts?
->=20
-> Benjamin
->=20
-> > [SNIP]
->=20
 
