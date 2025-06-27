@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-706453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17902AEB6E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B67AEB6F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC6E67AF70C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D483B3B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C12B2D1F6B;
-	Fri, 27 Jun 2025 11:52:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931222BF3FC;
+	Fri, 27 Jun 2025 11:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HfwYnDCM"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFD72C15BD;
-	Fri, 27 Jun 2025 11:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF2A2BF012;
+	Fri, 27 Jun 2025 11:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025131; cv=none; b=OO7rMF15EgItllWQ13boOxyGngn0zdDfZla1ninVFiDyYhA68J6YFZkem7qAysovwargyafBz1R/DvMaFDjxR/7Df11MDOT9JadDerYs2EHtg84JKKs6mufATdthd483WCKGV+QNG+LY0qUMgHdSaomi8F4LVu0/PdUKDD3BG+Q=
+	t=1751025195; cv=none; b=cJZp1UIssBm1jtamJBG8TF2k9MJI+40EqBHa8g41xdRrlhICd8ZFJ+S8Q+Z+EQ/kOFS8xLDZlAZZ9th4RkbbL11/bybSIgcFR0mKcoHNQzt2aV9czoAzGwZD/q1ptxgCUxeDh+XbDeD3XoUtq3sKJPZyAAu7Oib7bfjqvsSoxhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025131; c=relaxed/simple;
-	bh=XsFBoM55j4bAYZ7L9ORFlVbOLZCzG1Kh4FVMZp84x5c=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hDyZZ7k4vM6KqhiKJYRpFSXImgLXtgTY6SkyKARBGJ7SZvZcg+eX66XsfwdWVEgzO4hMn/kI/1ETjUs1VtYUZlNS9aLWGLbOINNHtSZ+R7w+4Aauu2mGh95u9rrs0F3nk1jU957CDpzU9WWICp8TKb1yTMuVyP3yRlq/e+2TkHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bTDRw3mZ5z6L5K9;
-	Fri, 27 Jun 2025 19:51:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 04ADC14011D;
-	Fri, 27 Jun 2025 19:52:06 +0800 (CST)
-Received: from localhost (10.48.153.213) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 27 Jun
- 2025 13:52:04 +0200
-Date: Fri, 27 Jun 2025 12:52:03 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v10 14/17] cxl/pci: Introduce CXL Endpoint protocol
- error handlers
-Message-ID: <20250627125203.00002564@huawei.com>
-In-Reply-To: <20250626224252.1415009-15-terry.bowman@amd.com>
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
-	<20250626224252.1415009-15-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751025195; c=relaxed/simple;
+	bh=WDJRIiBgDgF7nDs2mDyrrymo6t/hxdkYyNXPPcQgJdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScPrwqDDDz9rtKXGs4dgK6gK5Z0uRQIZctmDaevWn/ouImoteNe1OuF4KYZszZpg9fwMOGh9MkUDnZphPYft/Qyp2OMTZwiPiN1bNdvfL5GkzWvgr+kJB91OStV1kfV1dzIVaA7nfIBp4ZLv/WjKIautzI8F5IesnUvmUd0efh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HfwYnDCM; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 64AE920E95;
+	Fri, 27 Jun 2025 13:53:05 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id UBsMN3Dr0E-0; Fri, 27 Jun 2025 13:53:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751025184; bh=WDJRIiBgDgF7nDs2mDyrrymo6t/hxdkYyNXPPcQgJdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HfwYnDCM1zsRY9Rm5LKXfpBahJetXii9aCQ3SpmgsNOt52jkgYBgpW9KMr2a3Pl91
+	 Ft5M0wynRpI3oKb0kFohouxh6gsAf5MRN8Wh9aLaSGRcMSwtygLK5OkmWZbTCHiGyr
+	 Ndhxb0DK3mzSaAquh3+JPYbNeA0Ofhrst6C4Y8dpjf+Ns0NIR9OjHUUwYdtTAKaae2
+	 5BCe2y0DayXrjs7eeA/GdfzxNlyrk9Vsg4yjN6RxHcRHkSuWj4TaFAMP1yNO0NOgey
+	 JMHrPAkVZjLhdqbCZnBhELF6YNAJU1MUVAyk7/qd5R9OTrQpT75gt57FF0hInGF4UE
+	 LAGD4/R4lDHNA==
+Date: Fri, 27 Jun 2025 11:52:41 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: loongson2: Add Loongson
+ 2K0300 compatible
+Message-ID: <aF6FtaNB6XgkvUX7@pie>
+References: <20250617162426.12629-1-ziyao@disroot.org>
+ <20250617162426.12629-2-ziyao@disroot.org>
+ <20250627-gay-sepia-reindeer-2fde2a@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250627-gay-sepia-reindeer-2fde2a@krzk-bin>
 
-On Thu, 26 Jun 2025 17:42:49 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> CXL Endpoint protocol errors are currently handled using PCI error
-> handlers. The CXL Endpoint requires CXL specific handling in the case of
-> uncorrectable error (UCE) handling not provided by the PCI handlers.
+On Fri, Jun 27, 2025 at 10:03:53AM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Jun 17, 2025 at 04:24:19PM +0000, Yao Zi wrote:
+> > Document the clock controller shipped in Loongson 2K0300 SoC, which
+> > generates various clock signals for SoC peripherals.
+> > 
+> > Differing from previous generations of SoCs, 2K0300 requires a 120MHz
+> > external clock input, and a separate dt-binding header is used for
+> > cleanness.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  .../bindings/clock/loongson,ls2k-clk.yaml     | 26 ++++++---
+> >  MAINTAINERS                                   |  1 +
+> >  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
+> >  3 files changed, 75 insertions(+), 6 deletions(-)
+> >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+> > index 4f79cdb417ab..3e0a894cfb2f 100644
+> > --- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
+> > @@ -16,6 +16,7 @@ description: |
+> >  properties:
+> >    compatible:
+> >      enum:
+> > +      - loongson,ls2k0300-clk
+> >        - loongson,ls2k0500-clk
+> >        - loongson,ls2k-clk  # This is for Loongson-2K1000
+> >        - loongson,ls2k2000-clk
+> > @@ -24,19 +25,32 @@ properties:
+> >      maxItems: 1
+> >  
+> >    clocks:
+> > -    items:
+> > -      - description: 100m ref
+> > +    maxItems: 1
+> >  
+> > -  clock-names:
+> > -    items:
+> > -      - const: ref_100m
+> > +  clock-names: true
 > 
-> Add CXL specific handlers for CXL Endpoints. Rename the existing
-> cxl_error_handlers to be pci_error_handlers to more correctly indicate
-> the error type and follow naming consistency.
+> No. How does this implement my comment?
+
+I'm sorry that I forgot about the suggestion of dropping clock-names for
+the new compatible.
+
+Is it acceptable to remove the description of clocks property, keep
+clock-names property as-is, and use an allOf block to disallow
+clocks-names for the new 2K0300 compatible? Thanks for your explanation.
+
+> It makes no sense, why 100m even appeared here. I already objected last
+> time!
 > 
-> The PCI handlers will be called if the CXL device is not trained for
-> alternate protocol (CXL). Update the CXL Endpoint PCI handlers to call the
-> CXL UCE handlers.
 > 
-> The existing EP UCE handler includes checks for various results. These are
-> no longer needed because CXL UCE recovery will not be attempted. Implement
-> cxl_handle_ras() to return PCI_ERS_RESULT_NONE or PCI_ERS_RESULT_PANIC. The
-> CXL UCE handler is called by cxl_do_recovery() that acts on the return
-> value. In the case of the PCI handler path, call panic() if the result is
-> PCI_ERS_RESULT_PANIC.
+> >  
+> >    '#clock-cells':
+> >      const: 1
+> >      description:
+> >        The clock consumer should specify the desired clock by having the clock
+> >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
+> > -      for the full list of Loongson-2 SoC clock IDs.
+> > +      and include/dt-bindings/clock/loongson,ls2k0300-clk.h for the full list of
+> > +      Loongson-2 SoC clock IDs.
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: loongson,ls2k0300-clk
+> > +    then:
+> > +      properties:
+> > +        clock-names:
+> > +          const: ref_120m
 > 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> NAK, stop doing this pattern. You already got comment on this.
 
-A few minor comments inline.
+Oops, I missed the comment about dropping the frequency (or the full
+clock-names property) from clock-names when writing v2, and I've decided
+to drop the clock-names property completely for the 2K0300 compatible.
 
-J
-> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> index 887b54cf3395..7209ffb5c2fe 100644
-> --- a/drivers/cxl/core/pci.c
-> +++ b/drivers/cxl/core/pci.c
+Sorry again for my mistake.
 
+> Best regards,
+> Krzysztof
+> 
+> 
 
->  
-> -	scoped_guard(device, dev) {
-> -		if (!dev->driver) {
-> +pci_ers_result_t cxl_error_detected(struct device *dev)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(dev);
-> +	struct cxl_dev_state *cxlds = pci_get_drvdata(pdev);
-> +	struct device *cxlmd_dev = &cxlds->cxlmd->dev;
-> +	pci_ers_result_t ue;
-> +
-> +	scoped_guard(device, cxlmd_dev) {
-I think there is nothing much happening after this (maybe introduced in later
-patches in which case ignore this comment).
-
-So can you just use a guard and reduce the indent of the rest?
-
-> +
-> +		if (!cxlmd_dev->driver) {
->  			dev_warn(&pdev->dev,
->  				 "%s: memdev disabled, abort error handling\n",
->  				 dev_name(dev));
-> -			return PCI_ERS_RESULT_DISCONNECT;
-> +			return PCI_ERS_RESULT_PANIC;
->  		}
->  
->  		if (cxlds->rcd)
-> @@ -881,29 +888,23 @@ pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
->  		ue = cxl_handle_ras(&cxlds->cxlmd->dev, cxlds->serial, cxlds->regs.ras);
-
-little hard to tell from this code blob but can you return here?
-
->  	}
->  
-> -
-> -	switch (state) {
-> -	case pci_channel_io_normal:
-> -		if (ue) {
-> -			device_release_driver(dev);
-> -			return PCI_ERS_RESULT_NEED_RESET;
-> -		}
-> -		return PCI_ERS_RESULT_CAN_RECOVER;
-> -	case pci_channel_io_frozen:
-> -		dev_warn(&pdev->dev,
-> -			 "%s: frozen state error detected, disable CXL.mem\n",
-> -			 dev_name(dev));
-> -		device_release_driver(dev);
-> -		return PCI_ERS_RESULT_NEED_RESET;
-> -	case pci_channel_io_perm_failure:
-> -		dev_warn(&pdev->dev,
-> -			 "failure state error detected, request disconnect\n");
-> -		return PCI_ERS_RESULT_DISCONNECT;
-> -	}
-> -	return PCI_ERS_RESULT_NEED_RESET;
-> +	return ue;
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_error_detected, "CXL");
+Best regards,
+Yao Zi
 
