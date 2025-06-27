@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-705972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B877DAEB011
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:30:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEB4AEB013
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96FB51C210FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:30:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BDEE566E20
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CD121CFEF;
-	Fri, 27 Jun 2025 07:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ED12264AC;
+	Fri, 27 Jun 2025 07:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVCfB55M"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqpkvF8L"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6C621C9EA
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD87F21D3C9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751009395; cv=none; b=GwYcn0IzdJik6TJrwgibwai7EBVvIRx2GxkmVhCGM6ydd56kizssNAmxCy0UkPbPdsp2W455Vh8Oj9Kgc9ZGD14BeOYUsJ9WcOD86SypLaP3oopcKf8egpi1gC5T+lTyeEC1ffPdLLgznW1+d3oqZLRAOQAurTK/5/Cqqf6n/ak=
+	t=1751009402; cv=none; b=M9LA4J3aLcl8po9Qa1VLl9vywDTSNGWydKAGJQrtLI/5dswl0UggkdAT8VYtWJySsAfH+onJ9GFX8N+5D0U6OItI3xB7T6OvDlxUtoIpmeffvPhnQN+X5h3oBGthLwNDn7xB+g+NyWJXBPHVFInNc9i+ys+stVCDSbTZLSMQiOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751009395; c=relaxed/simple;
-	bh=D07LL7FI3Rq7CLxTrZdx2gLhFRY9YWPapNFxE1JUjXU=;
+	s=arc-20240116; t=1751009402; c=relaxed/simple;
+	bh=upp2XMMSzydYHE6K9Q/3J5VDUWJ4aO4qTCokV6k89qw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L2JVwVRCEDA9puWg/RlC2wGOTwoUirwoqzGybdPwcfSQTML7eeLFh0BZGl7FmzlVhBrR9sV2XAfWaLcxxA440GAoLSIN2NVDCIO0ChEblXJhXrY7T06qXH50tLXUS4WnPFP8+cOwuwuhHhmMlhbTuwQfvq0FPQoQXswVXeAoXZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVCfB55M; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=SSwEd5Lff65qxwokd/+eJiR4ML4K/+CZTQkbOCIcaDXOLj4t09PCIRjDHqWvVhrlXzZjZIQ2AdstfZcJCNI/Jd8nvfvWbcHjFFzOvRM56odIfvYFccuCXsvsYM21yeTHG3HPZdhQnf+KkgfiZrdlD+tp+eaFHL4XEuMcYHI6SJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqpkvF8L; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a54690d369so1646890f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 00:29:52 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a536ecbf6fso1035495f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 00:29:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751009390; x=1751614190; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751009398; x=1751614198; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XGwVQ5Flc+D7Cd++9w3V1W8ZV4LDw0kGbLT/w49WWjo=;
-        b=gVCfB55MzISyGR/QERvnTLkuWLTfoKv/dTwQBAyC+ZhZu8QJ47MI3G493UxS9zIKLp
-         A13dn1ywTzzR7QOAC44hdzXT2/SZqMSHR0ZvGfZrIrUELJ7MlsUHPC5oYYZh0TEYq4GD
-         a7awFM1NqAZbVaOjxBMS0bq/UbRVpY5uuCmh9aQ2cGbffHkQ+/fFEQkJJGt+XUeC1EXW
-         GgENs2JXXZBHjsfP60ilrKmgOFF3H2mnNj80W5RferHNO/fM9jTW1ES0wgfP52r6IKVZ
-         U4R+Ogtsjnq7bWZq5MjJVwYUtO4r8eH+Q7oqSe0+O7cOdkY6BsFrT5dq8A75JMc1FC31
-         fDyw==
+        bh=frViLy0H+mcv5Vd2p65vOchSjpU8NXW7W8lMsYCNBFw=;
+        b=UqpkvF8LxAHDX04piBtsNvM0EZ2fbpELjtnZxVzi6PQxOIdHbirFFGAgVttZxSHdXF
+         xrJWgU6Zjl4Qf/fPmM+1ZsVgsR9hOIXSBsHPzJoy6yGMOwR9GNanHZTj9yeHna0cackU
+         6sx5kFMGXuFDspWQ6utzOGwU2CwzIMH2/HI/Wbz4WFWczaxeGRV6IL8emvehywRIX29G
+         X4KymKxLIY0diqh57hG4QUNiqZhFP5GJnHACErLMskDiUOlODyUeQI6RTnDaXHCPRbdj
+         EqHrIRtUOkRt19q1BD5L9Rv7SlzuMDcHlC6fvcrpYycx69qD+c35wcqnxLB7WBP78ObF
+         8jaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751009390; x=1751614190;
+        d=1e100.net; s=20230601; t=1751009398; x=1751614198;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XGwVQ5Flc+D7Cd++9w3V1W8ZV4LDw0kGbLT/w49WWjo=;
-        b=bIGafk7BwyRZd8pfPSmGGhYvzCIa1u89yEy8XB6yRjUeJ7bjHU74IfUMapJypAttn+
-         lug7UULZL6sCea7ul04I96U4BFjHOhg+E/f3cbAb5kegwL7YqOkD0eWrEwrX71bd2xaQ
-         2iEFD+iYS6lIEDJadAvizMF4k8XpFPiV6VrC7rh9sIf9G/wes1KWN8M+iZF5ZB/Z7niA
-         L0OwMglvmh5bZ3fr4ge2iV7P6JFWOKiPrDsVBTZLGrMacaj8t7v/U7vHjAzZmCtvRBF5
-         mQr2c0/ZBMWdGrLMrEoipiZ0qTiN3MVdSNPXowvv0AndPOWn8WdPOwCgd55FhWMDxPDe
-         Kg0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXgP1J8LLI5oRurssM62wAwGfGPrMz51qlJN2JwIDzXxBjU8sHg6r5wFZEEIsQUL4/0rUJQHkmMZvlnZ0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfKWzjnIf3ViFPCg2GSFIVBwcbok0QfMCaWqSO8FoD2MA8Z/0H
-	6tibBpJNKBf65xum89lJiy8iQuX9A+OYOARj4+Nd9DWwZOCIchyjpAp6
-X-Gm-Gg: ASbGncu+1vg3YMNKez9CeXllDaHo1NsHtNh6rUZofND482jAiIrJlT5bVtPu8AISp/e
-	IIixexwi3pvh6TdoXf3lJA6vgvk09R9//AzWFHgz96nWslya/4tuNDyr5vy2jmLivpnOn0Z4M7X
-	MpCPHRTJZewXci1PBDIin6G/GHsNDVHMIurCFKAEQwd0GQ/6uW4T73WtHEkuS0pOJ2M3HVb6gPt
-	T/VMxa6nx1/TClK15TBE4ZGSidWdnqZMHP1TlGXoVNQivQmSIubcyYruLFajbMU1w79XmdFd6PD
-	crzb7ZB9Ro3ZuwogIPCwr38th75VUVF+U1Ov8L8ZwpzIKkGD
-X-Google-Smtp-Source: AGHT+IHI3IoRcF9+IQUF8gWE3fQXWuiQLLXT2Oez5CFa8WdZTlx+Nhe9/6i4seFp0sL2p2UFPLhcLw==
-X-Received: by 2002:adf:9c93:0:b0:3a4:ed2f:e80c with SMTP id ffacd0b85a97d-3a8fdeff3a2mr1719522f8f.31.1751009390109;
-        Fri, 27 Jun 2025 00:29:50 -0700 (PDT)
+        bh=frViLy0H+mcv5Vd2p65vOchSjpU8NXW7W8lMsYCNBFw=;
+        b=cEmgRRHPy+ZOBBn1kGB5NFI8pxSNTMnLBDu9lEc7t/pPH/mGOsS05OVX7mvjloyDpy
+         LB78jSEcdv6ZP+KW1VEhJUMrfyTwNF2XHfOluZY7k/gDn9/V/yPaJxYt8V8pcHR3mngi
+         hnfBxE0Km4UccdjzdorNdQ93hrbLfye127UIgXFuC//WVzg98LC6jIdmN+UZFl5xK22Q
+         SnwJKyXLv9/AiRhb6bSgh4NjSU4qhlvwzWaLSgoZyXFfmnkBCwzzd3ATBSosx3CS4j9h
+         UvH+ft02ILegofpKNkWrZw/0uOvYf+93zFrlkQSNhLjOMwQtZMwHAM6g/vmCLz/CiUwh
+         zo+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVMSol6vcpzP5j89vuiqgEpADt4Xu2FBfmi03uHVADVMGgN6to/sMzL/kXjHzzYlaG0fNVT8EizaAwe+C8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgzw29rveLRfCMoxo/cguxjXI8O6ELohlkGP84m4ZdmkxSt50R
+	eo2zq0yZy8VKEb0Z8W5kmBlz5bMydFvjnYP6wp9dETW8Xr1b06YCdBAE
+X-Gm-Gg: ASbGnctS1ZCcJtfQ8AP5M7ypMxt6qVIlJVsrCztzJmsUfnlWpVCytmVsm+aiaz95pOG
+	IXG4g5s7WHS138Gw0a88jokB1B+F23ogCNbsLQauHYmgezdeTQjK6cU68hCsnMA1EA7nGqenYeK
+	2WAVTyBUSBa25aQ7wIAemJuUQqem7xTwzaaYqLCvKa7W/Bf0/qHU7a1RWz5SUHL8790okzrgr6R
+	kO1vgigfBGA7KWrgwXuDK5GaHyaKcOcEbcD/Q8ALLzRLNhW4jzS410+b3FM1ir+zLo1UZeVas3U
+	xoqafQWDhwchwqSupwcVrADRYDKDniULJuSXJnyymNP3aSpf
+X-Google-Smtp-Source: AGHT+IE9uEGFp1zc0imGlKPcumD/KOulw91C2XL3gMaggE949OJic2VxzPk9dCh3aR+aapVEjrDUUw==
+X-Received: by 2002:a05:6000:2307:b0:3a6:d145:e2cc with SMTP id ffacd0b85a97d-3a8fdff46e4mr1961474f8f.15.1751009397879;
+        Fri, 27 Jun 2025 00:29:57 -0700 (PDT)
 Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::302c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e72b6sm1955665f8f.15.2025.06.27.00.29.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e72b6sm1955665f8f.15.2025.06.27.00.29.50
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 27 Jun 2025 00:29:49 -0700 (PDT)
+        Fri, 27 Jun 2025 00:29:57 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
 To: akpm@linux-foundation.org
@@ -92,9 +92,9 @@ Cc: zi.li@linux.dev,
 	tfiga@chromium.org,
 	will@kernel.org,
 	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH 1/3] locking/rwsem: make owner helpers globally available
-Date: Fri, 27 Jun 2025 15:29:22 +0800
-Message-ID: <20250627072924.36567-2-lance.yang@linux.dev>
+Subject: [PATCH 2/3] hung_task: extend hung task blocker tracking to rwsems
+Date: Fri, 27 Jun 2025 15:29:23 +0800
+Message-ID: <20250627072924.36567-3-lance.yang@linux.dev>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250627072924.36567-1-lance.yang@linux.dev>
 References: <20250627072924.36567-1-lance.yang@linux.dev>
@@ -108,88 +108,271 @@ Content-Transfer-Encoding: 8bit
 
 From: Lance Yang <lance.yang@linux.dev>
 
-In preparation for extending blocker tracking to support rwsems, make the
-rwsem_owner() and is_rwsem_reader_owned() helpers globally available for
-determining if the blocker is a writer or one of the readers.
+Inspired by mutex blocker tracking[1], and having already extended it to
+semaphores, let's now add support for reader-writer semaphores (rwsems).
 
-Additionally, a stale owner pointer in a reader-owned rwsem can lead to
-false positives in blocker tracking when CONFIG_DETECT_HUNG_TASK_BLOCKER
-is enabled. To mitigate this, clear the owner field on the reader unlock
-path, similar to what CONFIG_DEBUG_RWSEMS does. A NULL owner is better
-than a stale one for diagnostics.
+The approach is simple: when a task enters TASK_UNINTERRUPTIBLE while
+waiting for an rwsem, we just call hung_task_set_blocker(). The hung task
+detector can then query the rwsem's owner to identify the lock holder.
+
+Tracking works reliably for writers, as there can only be a single writer
+holding the lock, and its task struct is stored in the owner field.
+
+The main challenge lies with readers. The owner field points to only one
+of many concurrent readers, so we might lose track of the blocker if that
+specific reader unlocks, even while others remain. This is not a
+significant issue, however. In practice, long-lasting lock contention is
+almost always caused by a writer. Therefore, reliably tracking the writer
+is the primary goal of this patch series ;)
+
+With this change, the hung task detector can now show blocker task's info
+like below:
+
+[Fri Jun 27 15:21:34 2025] INFO: task cat:28631 blocked for more than 122 seconds.
+[Fri Jun 27 15:21:34 2025]       Tainted: G S                  6.16.0-rc3 #8
+[Fri Jun 27 15:21:34 2025] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[Fri Jun 27 15:21:34 2025] task:cat             state:D stack:0     pid:28631 tgid:28631 ppid:28501  task_flags:0x400000 flags:0x00004000
+[Fri Jun 27 15:21:34 2025] Call Trace:
+[Fri Jun 27 15:21:34 2025]  <TASK>
+[Fri Jun 27 15:21:34 2025]  __schedule+0x7c7/0x1930
+[Fri Jun 27 15:21:34 2025]  ? __pfx___schedule+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? policy_nodemask+0x215/0x340
+[Fri Jun 27 15:21:34 2025]  ? _raw_spin_lock_irq+0x8a/0xe0
+[Fri Jun 27 15:21:34 2025]  ? __pfx__raw_spin_lock_irq+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  schedule+0x6a/0x180
+[Fri Jun 27 15:21:34 2025]  schedule_preempt_disabled+0x15/0x30
+[Fri Jun 27 15:21:34 2025]  rwsem_down_read_slowpath+0x55e/0xe10
+[Fri Jun 27 15:21:34 2025]  ? __pfx_rwsem_down_read_slowpath+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? __pfx___might_resched+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  down_read+0xc9/0x230
+[Fri Jun 27 15:21:34 2025]  ? __pfx_down_read+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? __debugfs_file_get+0x14d/0x700
+[Fri Jun 27 15:21:34 2025]  ? __pfx___debugfs_file_get+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? handle_pte_fault+0x52a/0x710
+[Fri Jun 27 15:21:34 2025]  ? selinux_file_permission+0x3a9/0x590
+[Fri Jun 27 15:21:34 2025]  read_dummy_rwsem_read+0x4a/0x90
+[Fri Jun 27 15:21:34 2025]  full_proxy_read+0xff/0x1c0
+[Fri Jun 27 15:21:34 2025]  ? rw_verify_area+0x6d/0x410
+[Fri Jun 27 15:21:34 2025]  vfs_read+0x177/0xa50
+[Fri Jun 27 15:21:34 2025]  ? __pfx_vfs_read+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? fdget_pos+0x1cf/0x4c0
+[Fri Jun 27 15:21:34 2025]  ksys_read+0xfc/0x1d0
+[Fri Jun 27 15:21:34 2025]  ? __pfx_ksys_read+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  do_syscall_64+0x66/0x2d0
+[Fri Jun 27 15:21:34 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[Fri Jun 27 15:21:34 2025] RIP: 0033:0x7f3f8faefb40
+[Fri Jun 27 15:21:34 2025] RSP: 002b:00007ffdeda5ab98 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[Fri Jun 27 15:21:34 2025] RAX: ffffffffffffffda RBX: 0000000000010000 RCX: 00007f3f8faefb40
+[Fri Jun 27 15:21:34 2025] RDX: 0000000000010000 RSI: 00000000010fa000 RDI: 0000000000000003
+[Fri Jun 27 15:21:34 2025] RBP: 00000000010fa000 R08: 0000000000000000 R09: 0000000000010fff
+[Fri Jun 27 15:21:34 2025] R10: 00007ffdeda59fe0 R11: 0000000000000246 R12: 00000000010fa000
+[Fri Jun 27 15:21:34 2025] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000fff
+[Fri Jun 27 15:21:34 2025]  </TASK>
+[Fri Jun 27 15:21:34 2025] INFO: task cat:28631 <reader> blocked on an rw-semaphore likely owned by task cat:28630 <writer>
+[Fri Jun 27 15:21:34 2025] task:cat             state:S stack:0     pid:28630 tgid:28630 ppid:28501  task_flags:0x400000 flags:0x00004000
+[Fri Jun 27 15:21:34 2025] Call Trace:
+[Fri Jun 27 15:21:34 2025]  <TASK>
+[Fri Jun 27 15:21:34 2025]  __schedule+0x7c7/0x1930
+[Fri Jun 27 15:21:34 2025]  ? __pfx___schedule+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? __mod_timer+0x304/0xa80
+[Fri Jun 27 15:21:34 2025]  schedule+0x6a/0x180
+[Fri Jun 27 15:21:34 2025]  schedule_timeout+0xfb/0x230
+[Fri Jun 27 15:21:34 2025]  ? __pfx_schedule_timeout+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? __pfx_process_timeout+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? down_write+0xc4/0x140
+[Fri Jun 27 15:21:34 2025]  msleep_interruptible+0xbe/0x150
+[Fri Jun 27 15:21:34 2025]  read_dummy_rwsem_write+0x54/0x90
+[Fri Jun 27 15:21:34 2025]  full_proxy_read+0xff/0x1c0
+[Fri Jun 27 15:21:34 2025]  ? rw_verify_area+0x6d/0x410
+[Fri Jun 27 15:21:34 2025]  vfs_read+0x177/0xa50
+[Fri Jun 27 15:21:34 2025]  ? __pfx_vfs_read+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  ? fdget_pos+0x1cf/0x4c0
+[Fri Jun 27 15:21:34 2025]  ksys_read+0xfc/0x1d0
+[Fri Jun 27 15:21:34 2025]  ? __pfx_ksys_read+0x10/0x10
+[Fri Jun 27 15:21:34 2025]  do_syscall_64+0x66/0x2d0
+[Fri Jun 27 15:21:34 2025]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[Fri Jun 27 15:21:34 2025] RIP: 0033:0x7f8f288efb40
+[Fri Jun 27 15:21:34 2025] RSP: 002b:00007ffffb631038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[Fri Jun 27 15:21:34 2025] RAX: ffffffffffffffda RBX: 0000000000010000 RCX: 00007f8f288efb40
+[Fri Jun 27 15:21:34 2025] RDX: 0000000000010000 RSI: 000000002a4b5000 RDI: 0000000000000003
+[Fri Jun 27 15:21:34 2025] RBP: 000000002a4b5000 R08: 0000000000000000 R09: 0000000000010fff
+[Fri Jun 27 15:21:34 2025] R10: 00007ffffb630460 R11: 0000000000000246 R12: 000000002a4b5000
+[Fri Jun 27 15:21:34 2025] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000fff
+[Fri Jun 27 15:21:34 2025]  </TASK>
+
+[1] https://lore.kernel.org/all/174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com/
 
 Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Lance Yang <lance.yang@linux.dev>
 ---
- include/linux/rwsem.h  | 12 ++++++++++++
- kernel/locking/rwsem.c | 14 +++++++-------
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ include/linux/hung_task.h | 18 +++++++++---------
+ kernel/hung_task.c        | 29 +++++++++++++++++++++++++----
+ kernel/locking/rwsem.c    | 17 ++++++++++++++++-
+ 3 files changed, 50 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index c8b543d428b0..544853bed5b9 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -132,6 +132,18 @@ static inline int rwsem_is_contended(struct rw_semaphore *sem)
- 	return !list_empty(&sem->wait_list);
- }
+diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+index 1bc2b3244613..34e615c76ca5 100644
+--- a/include/linux/hung_task.h
++++ b/include/linux/hung_task.h
+@@ -21,17 +21,17 @@
+  * type.
+  *
+  * Type encoding:
+- * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
+- * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
+- * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
+- * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
++ * 00 - Blocked on mutex			(BLOCKER_TYPE_MUTEX)
++ * 01 - Blocked on semaphore			(BLOCKER_TYPE_SEM)
++ * 10 - Blocked on rw-semaphore as READER	(BLOCKER_TYPE_RWSEM_READER)
++ * 11 - Blocked on rw-semaphore as WRITER	(BLOCKER_TYPE_RWSEM_WRITER)
+  */
+-#define BLOCKER_TYPE_MUTEX      0x00UL
+-#define BLOCKER_TYPE_SEM        0x01UL
+-#define BLOCKER_TYPE_RTMUTEX    0x02UL
+-#define BLOCKER_TYPE_RWSEM      0x03UL
++#define BLOCKER_TYPE_MUTEX		0x00UL
++#define BLOCKER_TYPE_SEM		0x01UL
++#define BLOCKER_TYPE_RWSEM_READER	0x02UL
++#define BLOCKER_TYPE_RWSEM_WRITER	0x03UL
  
-+#if defined(CONFIG_DEBUG_RWSEMS) || defined(CONFIG_DETECT_HUNG_TASK_BLOCKER)
-+/*
-+ * Return just the real task structure pointer of the owner
-+ */
-+extern struct task_struct *rwsem_owner(struct rw_semaphore *sem);
-+
-+/*
-+ * Return true if the rwsem is owned by a reader.
-+ */
-+extern bool is_rwsem_reader_owned(struct rw_semaphore *sem);
-+#endif
-+
- #else /* !CONFIG_PREEMPT_RT */
+-#define BLOCKER_TYPE_MASK       0x03UL
++#define BLOCKER_TYPE_MASK		0x03UL
  
- #include <linux/rwbase_rt.h>
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index d2432df2b905..8708a1205f82 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -23,6 +23,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/sysctl.h>
+ #include <linux/hung_task.h>
++#include <linux/rwsem.h>
+ 
+ #include <trace/events/sched.h>
+ 
+@@ -100,6 +101,7 @@ static void debug_show_blocker(struct task_struct *task)
+ {
+ 	struct task_struct *g, *t;
+ 	unsigned long owner, blocker, blocker_type;
++	const char *rwsem_blocked_by, *rwsem_blocked_as;
+ 
+ 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+ 
+@@ -111,12 +113,20 @@ static void debug_show_blocker(struct task_struct *task)
+ 
+ 	switch (blocker_type) {
+ 	case BLOCKER_TYPE_MUTEX:
+-		owner = mutex_get_owner(
+-			(struct mutex *)hung_task_blocker_to_lock(blocker));
++		owner = mutex_get_owner(hung_task_blocker_to_lock(blocker));
+ 		break;
+ 	case BLOCKER_TYPE_SEM:
+-		owner = sem_last_holder(
+-			(struct semaphore *)hung_task_blocker_to_lock(blocker));
++		owner = sem_last_holder(hung_task_blocker_to_lock(blocker));
++		break;
++	case BLOCKER_TYPE_RWSEM_READER:
++	case BLOCKER_TYPE_RWSEM_WRITER:
++		owner = (unsigned long)rwsem_owner(
++					hung_task_blocker_to_lock(blocker));
++		rwsem_blocked_as = (blocker_type == BLOCKER_TYPE_RWSEM_READER) ?
++					"reader" : "writer";
++		rwsem_blocked_by = is_rwsem_reader_owned(
++					hung_task_blocker_to_lock(blocker)) ?
++					"reader" : "writer";
+ 		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+@@ -134,6 +144,11 @@ static void debug_show_blocker(struct task_struct *task)
+ 			pr_err("INFO: task %s:%d is blocked on a semaphore, but the last holder is not found.\n",
+ 			       task->comm, task->pid);
+ 			break;
++		case BLOCKER_TYPE_RWSEM_READER:
++		case BLOCKER_TYPE_RWSEM_WRITER:
++			pr_err("INFO: task %s:%d is blocked on an rw-semaphore, but the owner is not found.\n",
++			       task->comm, task->pid);
++			break;
+ 		}
+ 		return;
+ 	}
+@@ -152,6 +167,12 @@ static void debug_show_blocker(struct task_struct *task)
+ 			pr_err("INFO: task %s:%d blocked on a semaphore likely last held by task %s:%d\n",
+ 			       task->comm, task->pid, t->comm, t->pid);
+ 			break;
++		case BLOCKER_TYPE_RWSEM_READER:
++		case BLOCKER_TYPE_RWSEM_WRITER:
++			pr_err("INFO: task %s:%d <%s> blocked on an rw-semaphore likely owned by task %s:%d <%s>\n",
++			       task->comm, task->pid, rwsem_blocked_as, t->comm,
++			       t->pid, rwsem_blocked_by);
++			break;
+ 		}
+ 		sched_show_task(t);
+ 		return;
 diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 2ddb827e3bea..a310eb9896de 100644
+index a310eb9896de..92c6332da401 100644
 --- a/kernel/locking/rwsem.c
 +++ b/kernel/locking/rwsem.c
-@@ -181,11 +181,11 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 	__rwsem_set_reader_owned(sem, current);
- }
+@@ -27,6 +27,7 @@
+ #include <linux/export.h>
+ #include <linux/rwsem.h>
+ #include <linux/atomic.h>
++#include <linux/hung_task.h>
+ #include <trace/events/lock.h>
  
--#ifdef CONFIG_DEBUG_RWSEMS
-+#if defined(CONFIG_DEBUG_RWSEMS) || defined(CONFIG_DETECT_HUNG_TASK_BLOCKER)
- /*
-  * Return just the real task structure pointer of the owner
-  */
--static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
-+struct task_struct *rwsem_owner(struct rw_semaphore *sem)
- {
- 	return (struct task_struct *)
- 		(atomic_long_read(&sem->owner) & ~RWSEM_OWNER_FLAGS_MASK);
-@@ -194,7 +194,7 @@ static inline struct task_struct *rwsem_owner(struct rw_semaphore *sem)
- /*
-  * Return true if the rwsem is owned by a reader.
-  */
--static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
-+bool is_rwsem_reader_owned(struct rw_semaphore *sem)
- {
- 	/*
- 	 * Check the count to see if it is write-locked.
-@@ -207,10 +207,10 @@ static inline bool is_rwsem_reader_owned(struct rw_semaphore *sem)
- }
+ #ifndef CONFIG_PREEMPT_RT
+@@ -1065,10 +1066,13 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, long count, unsigned int stat
+ 		wake_up_q(&wake_q);
  
- /*
-- * With CONFIG_DEBUG_RWSEMS configured, it will make sure that if there
-- * is a task pointer in owner of a reader-owned rwsem, it will be the
-- * real owner or one of the real owners. The only exception is when the
-- * unlock is done by up_read_non_owner().
-+ * With CONFIG_DEBUG_RWSEMS or CONFIG_DETECT_HUNG_TASK_BLOCKER configured,
-+ * it will make sure that the owner field of a reader-owned rwsem either
-+ * points to a real reader-owner(s) or gets cleared. The only exception is
-+ * when the unlock is done by up_read_non_owner().
-  */
- static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
- {
+ 	trace_contention_begin(sem, LCB_F_READ);
++	set_current_state(state);
++
++	if (state == TASK_UNINTERRUPTIBLE)
++		hung_task_set_blocker(sem, BLOCKER_TYPE_RWSEM_READER);
+ 
+ 	/* wait to be given the lock */
+ 	for (;;) {
+-		set_current_state(state);
+ 		if (!smp_load_acquire(&waiter.task)) {
+ 			/* Matches rwsem_mark_wake()'s smp_store_release(). */
+ 			break;
+@@ -1083,8 +1087,12 @@ rwsem_down_read_slowpath(struct rw_semaphore *sem, long count, unsigned int stat
+ 		}
+ 		schedule_preempt_disabled();
+ 		lockevent_inc(rwsem_sleep_reader);
++		set_current_state(state);
+ 	}
+ 
++	if (state == TASK_UNINTERRUPTIBLE)
++		hung_task_clear_blocker();
++
+ 	__set_current_state(TASK_RUNNING);
+ 	lockevent_inc(rwsem_rlock);
+ 	trace_contention_end(sem, 0);
+@@ -1146,6 +1154,9 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+ 	set_current_state(state);
+ 	trace_contention_begin(sem, LCB_F_WRITE);
+ 
++	if (state == TASK_UNINTERRUPTIBLE)
++		hung_task_set_blocker(sem, BLOCKER_TYPE_RWSEM_WRITER);
++
+ 	for (;;) {
+ 		if (rwsem_try_write_lock(sem, &waiter)) {
+ 			/* rwsem_try_write_lock() implies ACQUIRE on success */
+@@ -1179,6 +1190,10 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
+ trylock_again:
+ 		raw_spin_lock_irq(&sem->wait_lock);
+ 	}
++
++	if (state == TASK_UNINTERRUPTIBLE)
++		hung_task_clear_blocker();
++
+ 	__set_current_state(TASK_RUNNING);
+ 	raw_spin_unlock_irq(&sem->wait_lock);
+ 	lockevent_inc(rwsem_wlock);
 -- 
 2.49.0
 
