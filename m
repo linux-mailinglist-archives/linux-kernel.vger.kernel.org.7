@@ -1,216 +1,484 @@
-Return-Path: <linux-kernel+bounces-707107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE51AEBFDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:31:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4938FAEBFB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AADA1C47746
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5F61896DBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F1E2ED157;
-	Fri, 27 Jun 2025 19:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B122920C01B;
+	Fri, 27 Jun 2025 19:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="QIlaSYzt"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="klPutfXh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530D12E8E0D;
-	Fri, 27 Jun 2025 19:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46BB1F0E25;
+	Fri, 27 Jun 2025 19:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751052587; cv=none; b=MAf3f8P8jtLlC8BqnlbiIK8YZqIx528pF3MVb3BFe8tMk44/W12CGTQIrrBq48+Iy8z1m8P/ZFtBKlyscP3n6M44WBgjgE2CZlDVWmkxleyE+qzcJk2qjopJBbPn1iFX9EMwWWmY6O6rh6wVe8A7e0QLRp4EitWgq6Ul1lLwAOU=
+	t=1751052228; cv=none; b=GcFkJE9CWbL8HgizXJfRhkI7n6M06p9jFjgSy+oYgGAr+QmXQjPNJzHLv04Y8RoME/JifJqUc2+FJqbXeGL5uLZdQ8n358hd2crtlYW8kIWT0D4cDvHe/Tx/HD5ZengU69VHE5wfdR4WwVip0+Ql0qUhBTx6wouXyqOnWyYeoV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751052587; c=relaxed/simple;
-	bh=a2L73IVnYApL3PZy8r0onUfV0iQqjgiEAGOn3ixCw9g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E2iN4sdFXRy5lJIiB4+OrAiUlFbw9hop16CMkvAWSd5IRRAyMU47wVVNpHdkADKeyq62hF7tLctZW25DlfLMfpjd21TUyX7qb8s5ZcYn05JjKlJWeD1DEsm8urC1dxH6M84CG0pSZ6CFYhzjUmXaw9/p+ahJ9YC9hsSwKE9MmXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=QIlaSYzt; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id E904566DE54;
-	Fri, 27 Jun 2025 21:29:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1751052576;
-	bh=a2L73IVnYApL3PZy8r0onUfV0iQqjgiEAGOn3ixCw9g=;
-	h=From:Subject:Date;
-	b=QIlaSYztmcXGzRz1G9aBnRT8nV/D2Rd1vW7pHl4djBkga7K5AehYXCXG3BMCsgD0i
-	 ymQkshdz1JqMlUF193rkBDsmfuV279fWHVqgwwDY7gPMa65T+MVINNvN51Mv7iJEyv
-	 hnV5OLa/+q1UcoMDvZdi+H6126ahsczlKpdjwkuM0by/5t8IdFoM6lBV+oO5CscNaC
-	 8QCvoD/FKcmy66B+wqH3bmsrmZJd1g4APqsyr2zBJ9KGhvoGYRUmncVQMfzx80ezPg
-	 JnX2yeCBrgTtxFLg1x/+sFJrFNNKI1KUrGcvRbi5hfHvm8Po6LJZk55XFYD8hxTag6
-	 EzJtUco2KWBrQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject:
- [PATCH v3 7/9] PM: sleep: Add strict_midlayer flag to struct dev_pm_info
-Date: Fri, 27 Jun 2025 21:23:42 +0200
-Message-ID: <24017035.6Emhk5qWAg@rjwysocki.net>
-In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
-References: <5018768.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1751052228; c=relaxed/simple;
+	bh=FYOk1Aqz5XAdGGGaHlY1S5+z7gvxMQs/+r/4Jye3pkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pc1TWbIR6sXNuPH1qL058hDaALAUcnWU+fGBhasKNeKUQzoGCBGpQCKy6R2ZyHL34fuYgnvEtR5YNrgFbpEBXODRoXwUGLyyIXchbggq9T2svug+aXs7SO7632sPzSXSygqdBfkm3IIAtuysKipQ4CvOwkAH+yTrRWEs6MvG7Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=klPutfXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E56C4CEE3;
+	Fri, 27 Jun 2025 19:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751052228;
+	bh=FYOk1Aqz5XAdGGGaHlY1S5+z7gvxMQs/+r/4Jye3pkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=klPutfXhtrhb4bzY7e0Fo6xvshyY2C7pnBOJgfRDKdXZexONVYSfLaEdbXGzs7KZC
+	 d7UeCf9e4C6/BW31zjWhK94DgYXShk/P49dXgdwERXkwJ+p5WUf60kGNEyfxEjZ5X7
+	 rvXQbVgMzEeP4tiOrXYzkW298Js9uxbkti8IUCCNF3GBy6q0yylbq02HcUh4U6vj/c
+	 BJsik+AHNnEpcf3IqABWRzkh0cuwwD+kohnIcykeKGhx7Ylx0TbCzXGIs+YAH8JGKe
+	 tVTt5rLIsEI07D4h8tbPbakXKu9fm8Refev/zi/hBsnY6CQPQhlhjMawooplBWIS7f
+	 SHSZ8gEPE8DOA==
+Date: Fri, 27 Jun 2025 14:23:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Jared Kangas <jkangas@redhat.com>,
+	Mattijs Korpershoek <mkorpershoek@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 2/2] dma-buf: heaps: Introduce a new heap for reserved
+ memory
+Message-ID: <20250627192347.GA4032621-robh@kernel.org>
+References: <20250617-dma-buf-ecc-heap-v5-0-0abdc5863a4f@kernel.org>
+ <20250617-dma-buf-ecc-heap-v5-2-0abdc5863a4f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTGrSjjgwBeoPV1BTemn5ImVCZpPTZb07vPRCPpCLNITJNQNwAJrBW+NvQ9gHfopUGw7eKCZUx2JvTkH7ndztXO95C/5NZYx0U0uzSGwSElzY3a0yFW5y/ST6sLyUL+pkZNb6zBf5QQDeWSHMTwFL5SzhnW4lYOV2aXUoJnPKm0KcXRLQpgIKgvtcuh9kc8szEcWaDKkWT6ZvZMLezK4NKUrQ0LRPHVUG/J8XldG2aWmsAAgiz8DIA4tSCjGi3syq1aAO8pJ5+EOuYaRvLcxgtvWWEpF/MWy84RxjOnkuHVdyEMV6Ug0G9LNrdrQ+TwE0ATvvO2S6WiA1+7Yw5g2H305hobAL8FSJDxMfEWWRBWjiEx+AxTY/1jy9QvpQSCjCN7bFW6ite67jRSc+0gg4zn+E0CTtw/+d+72HDvJbBOcCq5R6JkaZaFtE36LVj4SdfbMjERgAMspgSO5WGZcv8/E63fgot3pidAjTLt0UDaeYOqmeSU+/Zcy9Qxj2tO8Hqag7m1i4jvh7w6zT4HZDwLLxrvBkFMwTVRUawLfu3magXCXqsCuDtQPWxSi1BW62l2pUviEkSG3Sry9HXt32X6BJWl9CXIAttcLiyP7ll6GeidKhjgher1fw3Cm7nn1YKLOssCEEpv5DCUTolaZBj92uXBq5iswkugW3vYe1UawMg
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617-dma-buf-ecc-heap-v5-2-0abdc5863a4f@kernel.org>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Jun 17, 2025 at 02:25:41PM +0200, Maxime Ripard wrote:
+> Some reserved memory regions might have particular memory setup or
+> attributes that make them good candidates for heaps.
+> 
+> Let's provide a heap type that will create a new heap for each reserved
+> memory region flagged as such.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/dma-buf/heaps/Kconfig         |   8 +
+>  drivers/dma-buf/heaps/Makefile        |   1 +
+>  drivers/dma-buf/heaps/carveout_heap.c | 362 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 371 insertions(+)
+> 
+> diff --git a/drivers/dma-buf/heaps/Kconfig b/drivers/dma-buf/heaps/Kconfig
+> index a5eef06c422644e8aadaf5aff2bd9a33c49c1ba3..1ce4f6828d8c06bfdd7bc2e5127707f1778586e6 100644
+> --- a/drivers/dma-buf/heaps/Kconfig
+> +++ b/drivers/dma-buf/heaps/Kconfig
+> @@ -1,5 +1,13 @@
+> +config DMABUF_HEAPS_CARVEOUT
+> +	bool "DMA-BUF Carveout Heaps"
+> +	depends on DMABUF_HEAPS
+> +	help
+> +	  Choose this option to enable the carveout dmabuf heap. The carveout
+> +	  heap is backed by pages from reserved memory regions flagged as
+> +	  exportable. If in doubt, say Y.
+> +
+>  config DMABUF_HEAPS_SYSTEM
+>  	bool "DMA-BUF System Heap"
+>  	depends on DMABUF_HEAPS
+>  	help
+>  	  Choose this option to enable the system dmabuf heap. The system heap
+> diff --git a/drivers/dma-buf/heaps/Makefile b/drivers/dma-buf/heaps/Makefile
+> index 974467791032ffb8a7aba17b1407d9a19b3f3b44..b734647ad5c84f449106748160258e372f153df2 100644
+> --- a/drivers/dma-buf/heaps/Makefile
+> +++ b/drivers/dma-buf/heaps/Makefile
+> @@ -1,3 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_DMABUF_HEAPS_CARVEOUT)	+= carveout_heap.o
+>  obj-$(CONFIG_DMABUF_HEAPS_SYSTEM)	+= system_heap.o
+>  obj-$(CONFIG_DMABUF_HEAPS_CMA)		+= cma_heap.o
+> diff --git a/drivers/dma-buf/heaps/carveout_heap.c b/drivers/dma-buf/heaps/carveout_heap.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c01abc72c09d4f2a373462fded2856d975a36c8f
+> --- /dev/null
+> +++ b/drivers/dma-buf/heaps/carveout_heap.c
+> @@ -0,0 +1,362 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/dma-buf.h>
+> +#include <linux/dma-heap.h>
+> +#include <linux/genalloc.h>
+> +#include <linux/highmem.h>
+> +#include <linux/of_reserved_mem.h>
+> +
+> +struct carveout_heap_priv {
+> +	struct dma_heap *heap;
+> +	struct gen_pool *pool;
+> +};
+> +
+> +struct carveout_heap_buffer_priv {
+> +	struct mutex lock;
+> +	struct list_head attachments;
+> +
+> +	unsigned long num_pages;
+> +	struct carveout_heap_priv *heap;
+> +	phys_addr_t paddr;
+> +	void *vaddr;
+> +	unsigned int vmap_cnt;
+> +};
+> +
+> +struct carveout_heap_attachment {
+> +	struct list_head head;
+> +	struct sg_table table;
+> +
+> +	struct device *dev;
+> +	bool mapped;
+> +};
+> +
+> +static int carveout_heap_attach(struct dma_buf *buf,
+> +				struct dma_buf_attachment *attachment)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = buf->priv;
+> +	struct carveout_heap_attachment *a;
+> +	struct sg_table *sgt;
+> +	unsigned long len = priv->num_pages * PAGE_SIZE;
+> +	int ret;
+> +
+> +	a = kzalloc(sizeof(*a), GFP_KERNEL);
+> +	if (!a)
+> +		return -ENOMEM;
+> +	INIT_LIST_HEAD(&a->head);
+> +	a->dev = attachment->dev;
+> +	attachment->priv = a;
+> +
+> +	sgt = &a->table;
+> +	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
+> +	if (ret)
+> +		goto err_cleanup_attach;
+> +
+> +	sg_set_buf(sgt->sgl, priv->vaddr, len);
+> +
+> +	mutex_lock(&priv->lock);
+> +	list_add(&a->head, &priv->attachments);
+> +	mutex_unlock(&priv->lock);
+> +
+> +	return 0;
+> +
+> +err_cleanup_attach:
+> +	kfree(a);
+> +	return ret;
+> +}
+> +
+> +static void carveout_heap_detach(struct dma_buf *dmabuf,
+> +				 struct dma_buf_attachment *attachment)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = dmabuf->priv;
+> +	struct carveout_heap_attachment *a = attachment->priv;
+> +
+> +	mutex_lock(&priv->lock);
+> +	list_del(&a->head);
+> +	mutex_unlock(&priv->lock);
+> +
+> +	sg_free_table(&a->table);
+> +	kfree(a);
+> +}
+> +
+> +static struct sg_table *
+> +carveout_heap_map_dma_buf(struct dma_buf_attachment *attachment,
+> +			  enum dma_data_direction direction)
+> +{
+> +	struct carveout_heap_attachment *a = attachment->priv;
+> +	struct sg_table *table = &a->table;
+> +	int ret;
+> +
+> +	ret = dma_map_sgtable(a->dev, table, direction, 0);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	a->mapped = true;
+> +
+> +	return table;
+> +}
+> +
+> +static void carveout_heap_unmap_dma_buf(struct dma_buf_attachment *attachment,
+> +					struct sg_table *table,
+> +					enum dma_data_direction direction)
+> +{
+> +	struct carveout_heap_attachment *a = attachment->priv;
+> +
+> +	a->mapped = false;
+> +	dma_unmap_sgtable(a->dev, table, direction, 0);
+> +}
+> +
+> +static int
+> +carveout_heap_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+> +				       enum dma_data_direction direction)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = dmabuf->priv;
+> +	struct carveout_heap_attachment *a;
+> +	unsigned long len = priv->num_pages * PAGE_SIZE;
+> +
+> +	mutex_lock(&priv->lock);
+> +
+> +	if (priv->vmap_cnt)
+> +		invalidate_kernel_vmap_range(priv->vaddr, len);
+> +
+> +	list_for_each_entry(a, &priv->attachments, head) {
+> +		if (!a->mapped)
+> +			continue;
+> +
+> +		dma_sync_sgtable_for_cpu(a->dev, &a->table, direction);
+> +	}
+> +
+> +	mutex_unlock(&priv->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +carveout_heap_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
+> +				     enum dma_data_direction direction)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = dmabuf->priv;
+> +	struct carveout_heap_attachment *a;
+> +	unsigned long len = priv->num_pages * PAGE_SIZE;
+> +
+> +	mutex_lock(&priv->lock);
+> +
+> +	if (priv->vmap_cnt)
+> +		flush_kernel_vmap_range(priv->vaddr, len);
+> +
+> +	list_for_each_entry(a, &priv->attachments, head) {
+> +		if (!a->mapped)
+> +			continue;
+> +
+> +		dma_sync_sgtable_for_device(a->dev, &a->table, direction);
+> +	}
+> +
+> +	mutex_unlock(&priv->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int carveout_heap_mmap(struct dma_buf *dmabuf,
+> +			      struct vm_area_struct *vma)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = dmabuf->priv;
+> +	unsigned long len = priv->num_pages * PAGE_SIZE;
+> +
+> +	return vm_iomap_memory(vma, priv->paddr, len);
+> +}
+> +
+> +static int carveout_heap_vmap(struct dma_buf *dmabuf, struct iosys_map *map)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = dmabuf->priv;
+> +	unsigned long len = priv->num_pages * PAGE_SIZE;
+> +
+> +	mutex_lock(&priv->lock);
+> +
+> +	if (!priv->vmap_cnt) {
+> +		void *vaddr = memremap(priv->paddr, len, MEMREMAP_WB);
+> +
+> +		if (!vaddr) {
+> +			mutex_unlock(&priv->lock);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		priv->vaddr = vaddr;
+> +	}
+> +
+> +	WARN_ON(!priv->vaddr);
+> +	iosys_map_set_vaddr(map, priv->vaddr);
+> +	priv->vmap_cnt++;
+> +
+> +	mutex_unlock(&priv->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static void carveout_heap_vunmap(struct dma_buf *dmabuf, struct iosys_map *map)
+> +{
+> +	struct carveout_heap_buffer_priv *priv = dmabuf->priv;
+> +
+> +	mutex_lock(&priv->lock);
+> +
+> +	priv->vmap_cnt--;
+> +	if (!priv->vmap_cnt) {
+> +		memunmap(priv->vaddr);
+> +		priv->vaddr = NULL;
+> +	}
+> +
+> +	mutex_unlock(&priv->lock);
+> +
+> +	iosys_map_clear(map);
+> +}
+> +
+> +static void carveout_heap_dma_buf_release(struct dma_buf *buf)
+> +{
+> +	struct carveout_heap_buffer_priv *buffer_priv = buf->priv;
+> +	struct carveout_heap_priv *heap_priv = buffer_priv->heap;
+> +	unsigned long len = buffer_priv->num_pages * PAGE_SIZE;
+> +
+> +	gen_pool_free(heap_priv->pool, buffer_priv->paddr, len);
+> +	kfree(buffer_priv);
+> +}
+> +
+> +static const struct dma_buf_ops carveout_heap_buf_ops = {
+> +	.attach		= carveout_heap_attach,
+> +	.detach		= carveout_heap_detach,
+> +	.map_dma_buf	= carveout_heap_map_dma_buf,
+> +	.unmap_dma_buf	= carveout_heap_unmap_dma_buf,
+> +	.begin_cpu_access	= carveout_heap_dma_buf_begin_cpu_access,
+> +	.end_cpu_access	= carveout_heap_dma_buf_end_cpu_access,
+> +	.mmap		= carveout_heap_mmap,
+> +	.vmap		= carveout_heap_vmap,
+> +	.vunmap		= carveout_heap_vunmap,
+> +	.release	= carveout_heap_dma_buf_release,
+> +};
+> +
+> +static struct dma_buf *carveout_heap_allocate(struct dma_heap *heap,
+> +					      unsigned long len,
+> +					      u32 fd_flags,
+> +					      u64 heap_flags)
+> +{
+> +	struct carveout_heap_priv *heap_priv = dma_heap_get_drvdata(heap);
+> +	struct carveout_heap_buffer_priv *buffer_priv;
+> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+> +	struct dma_buf *buf;
+> +	phys_addr_t paddr;
+> +	/* len is guaranteed to be page-aligned by the framework, so we can use it as is. */
+> +	size_t size = len;
+> +	int ret;
+> +
+> +	buffer_priv = kzalloc(sizeof(*buffer_priv), GFP_KERNEL);
+> +	if (!buffer_priv)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	INIT_LIST_HEAD(&buffer_priv->attachments);
+> +	mutex_init(&buffer_priv->lock);
+> +
+> +	paddr = gen_pool_alloc(heap_priv->pool, size);
+> +	if (!paddr) {
+> +		ret = -ENOMEM;
+> +		goto err_free_buffer_priv;
+> +	}
+> +
+> +	buffer_priv->paddr = paddr;
+> +	buffer_priv->heap = heap_priv;
+> +	buffer_priv->num_pages = size >> PAGE_SHIFT;
+> +
+> +	/* create the dmabuf */
+> +	exp_info.exp_name = dma_heap_get_name(heap);
+> +	exp_info.ops = &carveout_heap_buf_ops;
+> +	exp_info.size = size;
+> +	exp_info.flags = fd_flags;
+> +	exp_info.priv = buffer_priv;
+> +
+> +	buf = dma_buf_export(&exp_info);
+> +	if (IS_ERR(buf)) {
+> +		ret = PTR_ERR(buf);
+> +		goto err_free_buffer;
+> +	}
+> +
+> +	return buf;
+> +
+> +err_free_buffer:
+> +	gen_pool_free(heap_priv->pool, paddr, len);
+> +err_free_buffer_priv:
+> +	kfree(buffer_priv);
+> +
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static const struct dma_heap_ops carveout_heap_ops = {
+> +	.allocate = carveout_heap_allocate,
+> +};
+> +
+> +static int __init carveout_heap_setup(struct device_node *node)
+> +{
+> +	struct dma_heap_export_info exp_info = {};
+> +	const struct reserved_mem *rmem;
+> +	struct carveout_heap_priv *priv;
+> +	struct dma_heap *heap;
+> +	struct gen_pool *pool;
+> +	int ret;
+> +
+> +	rmem = of_reserved_mem_lookup(node);
+> +	if (!rmem)
+> +		return -EINVAL;
+> +
+> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	pool = gen_pool_create(PAGE_SHIFT, NUMA_NO_NODE);
+> +	if (!pool) {
+> +		ret = -ENOMEM;
+> +		goto err_cleanup_heap;
+> +	}
+> +	priv->pool = pool;
+> +
+> +	ret = gen_pool_add(pool, rmem->base, rmem->size, NUMA_NO_NODE);
+> +	if (ret)
+> +		goto err_release_mem_region;
+> +
+> +	exp_info.name = node->full_name;
+> +	exp_info.ops = &carveout_heap_ops;
+> +	exp_info.priv = priv;
+> +
+> +	heap = dma_heap_add(&exp_info);
+> +	if (IS_ERR(heap)) {
+> +		ret = PTR_ERR(heap);
+> +		goto err_release_mem_region;
+> +	}
+> +	priv->heap = heap;
+> +
+> +	return 0;
+> +
+> +err_release_mem_region:
+> +	gen_pool_destroy(pool);
+> +err_cleanup_heap:
+> +	kfree(priv);
+> +	return ret;
+> +}
+> +
+> +static int __init carveout_heap_init(void)
+> +{
+> +	struct device_node *rmem_node;
+> +	struct device_node *node;
+> +	int ret;
+> +
+> +	rmem_node = of_find_node_by_path("/reserved-memory");
+> +	if (!rmem_node)
+> +		return 0;
+> +
+> +	for_each_child_of_node(rmem_node, node) {
+> +		if (!of_device_is_compatible(node, "carved-out"))
+> +			continue;
+> +
+> +		ret = carveout_heap_setup(node);
+> +		if (ret)
+> +			return ret;
+> +	}
 
-Add a new flag, called strict_midlayer, to struct dev_pm_info, along
-with helper functions for updating and reading its value, to allow
-middle layer code that provides proper callbacks for device suspend-
-resume during system-wide PM transitions to let pm_runtime_force_suspend()
-and and pm_runtime_force_resume() know that they should only invoke
-runtime PM callbacks coming from the device's driver.
+/reserved-memory nodes get a platform_device, so why not make this a 
+driver?
 
-Namely, if this flag is set, pm_runtime_force_suspend() and
-and pm_runtime_force_resume() will invoke runtime PM callbacks
-provided by the device's driver directly with the assumption that
-they have been called via a middle layer callback for device suspend
-or resume, respectively.
-
-For instance, acpi_general_pm_domain provides specific
-callback functions for system suspend, acpi_subsys_suspend(),
-acpi_subsys_suspend_late() and acpi_subsys_suspend_noirq(), and
-it does not expect its runtime suspend callback function,
-acpi_subsys_runtime_suspend(), to be invoked at any point during
-system suspend. In particular, it does not expect that function
-to be called from within any of the system suspend callback functions
-mentioned above which would happen if a device driver collaborating
-with acpi_general_pm_domain used pm_runtime_force_suspend() as its
-callback function for any system suspend phase later than "prepare".
-
-The new flag allows this expectation of acpi_general_pm_domain to
-be formally expressed, which is going to be done subsequently.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v2 -> v3:
-   * Add a kerneldoc comment for dev_pm_set_strict_midlayer() (Bjorn).
-   * Update changelog (minor tweaks).
-
-v1 -> v2:
-   * Rename dev_pm_strict_midlayer() to dev_pm_set_strict_midlayer().
-   * Add dev_pm_strict_midlayer_is_set() and use it in get_callback()
-     because pm_runtime_force_suspend() can be used in driver remove
-     callbacks and so it needs to work with CONFIG_PM_SLEEP unset.
-
----
- drivers/base/power/runtime.c |   21 +++++++++++++++++++--
- include/linux/device.h       |   27 +++++++++++++++++++++++++++
- include/linux/pm.h           |    1 +
- 3 files changed, 47 insertions(+), 2 deletions(-)
-
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1958,6 +1958,23 @@
- 	pm_request_idle(link->supplier);
- }
- 
-+static pm_callback_t get_callback(struct device *dev, size_t cb_offset)
-+{
-+	/*
-+	 * Setting power.strict_midlayer means that the middle layer
-+	 * code does not want its runtime PM callbacks to be invoked via
-+	 * pm_runtime_force_suspend() and pm_runtime_force_resume(), so
-+	 * return a direct pointer to the driver callback in that case.
-+	 */
-+	if (dev_pm_strict_midlayer_is_set(dev))
-+		return __rpm_get_driver_callback(dev, cb_offset);
-+
-+	return __rpm_get_callback(dev, cb_offset);
-+}
-+
-+#define GET_CALLBACK(dev, callback) \
-+		get_callback(dev, offsetof(struct dev_pm_ops, callback))
-+
- /**
-  * pm_runtime_force_suspend - Force a device into suspend state if needed.
-  * @dev: Device to suspend.
-@@ -1984,7 +2001,7 @@
- 	if (pm_runtime_status_suspended(dev) || dev->power.needs_force_resume)
- 		return 0;
- 
--	callback = RPM_GET_CALLBACK(dev, runtime_suspend);
-+	callback = GET_CALLBACK(dev, runtime_suspend);
- 
- 	dev_pm_enable_wake_irq_check(dev, true);
- 	ret = callback ? callback(dev) : 0;
-@@ -2046,7 +2063,7 @@
- 	    pm_runtime_status_suspended(dev)))
- 		goto out;
- 
--	callback = RPM_GET_CALLBACK(dev, runtime_resume);
-+	callback = GET_CALLBACK(dev, runtime_resume);
- 
- 	dev_pm_disable_wake_irq_check(dev, false);
- 	ret = callback ? callback(dev) : 0;
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -879,6 +879,33 @@
- #endif
- }
- 
-+/*
-+ * dev_pm_set_strict_midlayer - Update the device's power.strict_midlayer flag
-+ * @dev: Target device.
-+ * @val: New flag value.
-+ *
-+ * When set, power.strict_midlayer means that the middle layer power management
-+ * code (typically, a bus type or a PM domain) does not expect its runtime PM
-+ * suspend callback to be invoked at all during system-wide PM transitions and
-+ * it does not expect its runtime PM resume callback to be invoked at any point
-+ * when runtime PM is disabled for the device during system-wide PM transitions.
-+ */
-+static inline void dev_pm_set_strict_midlayer(struct device *dev, bool val)
-+{
-+#ifdef CONFIG_PM_SLEEP
-+	dev->power.strict_midlayer = val;
-+#endif
-+}
-+
-+static inline bool dev_pm_strict_midlayer_is_set(struct device *dev)
-+{
-+#ifdef CONFIG_PM_SLEEP
-+	return dev->power.strict_midlayer;
-+#else
-+	return false;
-+#endif
-+}
-+
- static inline void device_lock(struct device *dev)
- {
- 	mutex_lock(&dev->mutex);
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -683,6 +683,7 @@
- 	bool			smart_suspend:1;	/* Owned by the PM core */
- 	bool			must_resume:1;		/* Owned by the PM core */
- 	bool			may_skip_resume:1;	/* Set by subsystems */
-+	bool			strict_midlayer:1;
- #else
- 	bool			should_wakeup:1;
- #endif
-
-
-
+Rob
 
