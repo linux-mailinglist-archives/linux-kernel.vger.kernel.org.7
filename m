@@ -1,278 +1,137 @@
-Return-Path: <linux-kernel+bounces-707312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA8FAEC284
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A497AEC29A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338CF3B7BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A127C17D66C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB48F28C5D7;
-	Fri, 27 Jun 2025 22:02:31 +0000 (UTC)
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A56D28E5F3;
+	Fri, 27 Jun 2025 22:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="cb/2IN+r"
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C3E1E3DF2;
-	Fri, 27 Jun 2025 22:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2DC28A40C;
+	Fri, 27 Jun 2025 22:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751061751; cv=none; b=jx4pqI/j5bSmEd9n+WuNT/jOP4Tv9LJJqYNnAZ6y86vGpSbS5ob/+ImqzQKAvjeYM+AKSLxY3n1ajdG0NMP/9BaP8myOGQzAkUGstDExX2ojcx7DnnsjsueAALfxpzOm5xpp6ov4BdosTCzfhP19Xbu5rJ38nLCM026oA7C6X9k=
+	t=1751062995; cv=none; b=oLt0D9OO7nTeSIWJZBqICa8/2egQXuiQpiyAHEt24uH0mO2CK//RlbsD9yCxV4GVSYaepi6qOizTlqBYELkM/VYHJBwks8tdbLfShsV7c20WzWvKo35GSlCHlyfbrn9rsA2Ff/kfwQewQggJgYhnAF3iARy9TGJ28nngm+T34I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751061751; c=relaxed/simple;
-	bh=ANXcm1ZKFC5lfszbAx7bg4T35inKNoAp/JoF3ncpZE0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pHU7fEvak+k60TUNe8QGQkCvNp5mu+oIdmFordbKuYNuLrxNV8Jat6QVKqKivSAs1SIAN2e0SF8XA1PADOeu4NQEAjODHMeScLesyjxdfS1eKXdjBBK0GZoQH1wvgldeJo3KCQ8hTtBfo0LMc7cCwTg2LXeUnk7xTmS851IpzZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-60c60f7eeaaso4428797a12.0;
-        Fri, 27 Jun 2025 15:02:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751061748; x=1751666548;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3XibZ9LJtcHZM0hK1qmCxsRpn4uo0EMJHQhuADSXxSw=;
-        b=CNXPqq9vx8s/9GIUfG8p9s8uhW1btSFe5zegJ8c6cMIFR6eMTj6MJn//nLNU0geG1d
-         KQ08CYBzGecV3uHDJAOkPpnRC5/tpjKUMBZdDjE1Cz/jM56REDtTHlH6dw0qLhjZeH7J
-         Sar6zjKcpk15esOcSFzboTxCSiXKxBxiJLLdcQzr4POkw2UjbSBKflT3bFgoBT8WFJmp
-         J7j1IZi8LrtyLIpJbWNu0zIWpy4pZXg0LcogvhaZ+c0MdHxUKB/T1XzLqNpOGy+WSjsE
-         aBtboBH/FY8XlZeKH+wN2wnSBZp3kMITC/tNpLMx87p3kfpd03Rdfyii/1ca8brzj9Pl
-         Obrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXczs6z0dvt0xwmLwucNmJsgVeZYvl98u/lHZdDeav4cuIMNlfMPZgaZbchYC5G4gq2SG6AYpfdADOOpbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWZHlLXlx/fBNtiuueJUeYUpp49RK+T1CWUA7XCzpUI1VmSIYW
-	p9PpSs3oiBaLfgv1adlL+j0kV2GZcUkL3bXbn0iV5agQXTEQ3mWUleCN0py7sx92
-X-Gm-Gg: ASbGncvW+A2Tck2VSf5Zq8EPqC8DzWoevwgXBH8a7vJlrMslEk+PFAwblZnogNfMUZa
-	pLfQ9AKG7zmy3L0l0ahv49NOVsxfokzMLfZ9EpTBMRpYN4V9K6fdTYuezfvuewwzzVZI6RxMS6X
-	lSoiNE54Ua7jVwInnUNjWtjezQv1jyps8xoEWEBhCzJLo1umpQ8FrjuZh9PUcWQ1I7Pxqu1CJr5
-	QKhgSY11HShAtwa6wF08RotiWWf7HJkFeONaHxUkOiQmyzF0K823m6TbZabDv2/MUV/u2Xahqk+
-	3OCePY2kRszoTdyZlr7iBsiyXdgyctsjWmQYv5gW/Zbb+uxttAmRq2A03sS6CzomUA0HUqLv3dC
-	prCg3TeAQ1AEaeoPX/+4hVhdLeDU=
-X-Google-Smtp-Source: AGHT+IFpCXoS3TCNuLMFfCp/oy99vw4aWgSDou0IAxf+yf3JVzm4EqHN5/tApbYHAlFsUVLPo9Zfgg==
-X-Received: by 2002:a17:907:9721:b0:ae0:de30:8569 with SMTP id a640c23a62f3a-ae34fd1227emr482698866b.1.1751061747149;
-        Fri, 27 Jun 2025 15:02:27 -0700 (PDT)
-Received: from im-t490s.redhat.com (78-80-106-150.customers.tmcz.cz. [78.80.106.150])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35363a172sm196622866b.8.2025.06.27.15.02.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 15:02:26 -0700 (PDT)
-From: Ilya Maximets <i.maximets@ovn.org>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	dev@openvswitch.org,
-	linux-kernel@vger.kernel.org,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Aaron Conole <aconole@redhat.com>,
-	Ilya Maximets <i.maximets@ovn.org>
-Subject: [PATCH net-next] net: openvswitch: allow providing upcall pid for the 'execute' command
-Date: Sat, 28 Jun 2025 00:01:33 +0200
-Message-ID: <20250627220219.1504221-1-i.maximets@ovn.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751062995; c=relaxed/simple;
+	bh=rjlE+KDgRHWCSWKyhXNO7pfpClaA55NFoIubE6nZjHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mty+/rDF0jqot+A7WqG8g7MsxuCurz4TC7FVNGm5qdzBRkuoInz2ZTuJyUl6gadpTAfKhCmdBg7ZVHiHwXr2ojvtce1IJ5Cux5pUQ4TJKqC8RjqSTZA6KiZVNmh1aU85GhEyklozUqEeATJskfnq+rMkYnZ4UwgE+9CSvZhsCH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=cb/2IN+r; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9pR6IDw/Y31ZqeE9wCgkVL95jAGsPYQ6vrtzrGRASCk=; b=cb/2IN+rB1DTVIKbpfTX4IwXG3
+	5oIvu7CJUjr/snqySBBlckbA/m+iHkrJizfw5UThuyVX1JPq5OrD87Ap0g72RqBZ6apZPGOBtA7+m
+	0tGpvdRvZB15WYt8UqmV0CbBbbNXP6b77thdPNmUY5aQwbvUKRH0oubjuS/gMvgHTUXzQEX73EhB+
+	SZguQQqQs0pDAVpm6FQ2At28QzmIR4lcKbSocS7zS5aurdZAn2lmi6vZD/gqWyH2zL6iOdQ9ZJ/Nb
+	qCtDNI57A70t4JzdegrNRPP5TxCvB9p6rREidvZEhfRiwnSj4ehthoP6/JzUNY2U7TVBhKtJc26Un
+	j45j2aSA==;
+Received: from [2600:8803:e7e4:1d00:1715:453e:e133:7d6] (port=59610)
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <david@lechnology.com>)
+	id 1uVHG5-000000007EW-3gBM;
+	Fri, 27 Jun 2025 18:06:34 -0400
+Message-ID: <fab212d2-5ab6-4353-901d-113eee0c567b@lechnology.com>
+Date: Fri, 27 Jun 2025 17:06:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: phy: Convert ti,da830-usb-phy to DT
+ schema
+To: "Rob Herring (Arm)" <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250627220107.214162-1-robh@kernel.org>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20250627220107.214162-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-When a packet enters OVS datapath and there is no flow to handle it,
-packet goes to userspace through a MISS upcall.  With per-CPU upcall
-dispatch mechanism, we're using the current CPU id to select the
-Netlink PID on which to send this packet.  This allows us to send
-packets from the same traffic flow through the same handler.
-
-The handler will process the packet, install required flow into the
-kernel and re-inject the original packet via OVS_PACKET_CMD_EXECUTE.
-
-While handling OVS_PACKET_CMD_EXECUTE, however, we may hit a
-recirculation action that will pass the (likely modified) packet
-through the flow lookup again.  And if the flow is not found, the
-packet will be sent to userspace again through another MISS upcall.
-
-However, the handler thread in userspace is likely running on a
-different CPU core, and the OVS_PACKET_CMD_EXECUTE request is handled
-in the syscall context of that thread.  So, when the time comes to
-send the packet through another upcall, the per-CPU dispatch will
-choose a different Netlink PID, and this packet will end up processed
-by a different handler thread on a different CPU.
-
-The process continues as long as there are new recirculations, each
-time the packet goes to a different handler thread before it is sent
-out of the OVS datapath to the destination port.  In real setups the
-number of recirculations can go up to 4 or 5, sometimes more.
-
-There is always a chance to re-order packets while processing upcalls,
-because userspace will first install the flow and then re-inject the
-original packet.  So, there is a race window when the flow is already
-installed and the second packet can match it and be forwarded to the
-destination before the first packet is re-injected.  But the fact that
-packets are going through multiple upcalls handled by different
-userspace threads makes the reordering noticeably more likely, because
-we not only have a race between the kernel and a userspace handler
-(which is hard to avoid), but also between multiple userspace handlers.
-
-For example, let's assume that 10 packets got enqueued through a MISS
-upcall for handler-1, it will start processing them, will install the
-flow into the kernel and start re-injecting packets back, from where
-they will go through another MISS to handler-2.  Handler-2 will install
-the flow into the kernel and start re-injecting the packets, while
-handler-1 continues to re-inject the last of the 10 packets, they will
-hit the flow installed by handler-2 and be forwarded without going to
-the handler-2, while handler-2 still re-injects the first of these 10
-packets.  Given multiple recirculations and misses, these 10 packets
-may end up completely mixed up on the output from the datapath.
-
-Let's allow userspace to specify on which Netlink PID the packets
-should be upcalled while processing OVS_PACKET_CMD_EXECUTE.
-This makes it possible to ensure that all the packets are processed
-by the same handler thread in the userspace even with them being
-upcalled multiple times in the process.  Packets will remain in order
-since they will be enqueued to the same socket and re-injected in the
-same order.  This doesn't eliminate re-ordering as stated above, since
-we still have a race between kernel and the userspace thread, but it
-allows to eliminate races between multiple userspace threads.
-
-Userspace knows the PID of the socket on which the original upcall is
-received, so there is no need to send it up from the kernel.
-
-Solution requires storing the value somewhere for the duration of the
-packet processing.  There are two potential places for this: our skb
-extension or the per-CPU storage.  It's not clear which is better,
-so just following currently used scheme of storing this kind of things
-along the skb.
-
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
----
- include/uapi/linux/openvswitch.h |  6 ++++++
- net/openvswitch/actions.c        |  6 ++++--
- net/openvswitch/datapath.c       | 10 +++++++++-
- net/openvswitch/datapath.h       |  3 +++
- net/openvswitch/vport.c          |  1 +
- 5 files changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-index 3a701bd1f31b..3092c2c6f1d2 100644
---- a/include/uapi/linux/openvswitch.h
-+++ b/include/uapi/linux/openvswitch.h
-@@ -186,6 +186,11 @@ enum ovs_packet_cmd {
-  * %OVS_PACKET_ATTR_USERSPACE action specify the Maximum received fragment
-  * size.
-  * @OVS_PACKET_ATTR_HASH: Packet hash info (e.g. hash, sw_hash and l4_hash in skb).
-+ * @OVS_PACKET_ATTR_UPCALL_PID: Netlink PID to use for upcalls while
-+ * processing %OVS_PACKET_CMD_EXECUTE.  Takes precedence over all other ways
-+ * to determine the Netlink PID including %OVS_USERSPACE_ATTR_PID,
-+ * %OVS_DP_ATTR_UPCALL_PID, %OVS_DP_ATTR_PER_CPU_PIDS and the
-+ * %OVS_VPORT_ATTR_UPCALL_PID.
-  *
-  * These attributes follow the &struct ovs_header within the Generic Netlink
-  * payload for %OVS_PACKET_* commands.
-@@ -205,6 +210,7 @@ enum ovs_packet_attr {
- 	OVS_PACKET_ATTR_MRU,	    /* Maximum received IP fragment size. */
- 	OVS_PACKET_ATTR_LEN,	    /* Packet size before truncation. */
- 	OVS_PACKET_ATTR_HASH,	    /* Packet hash. */
-+	OVS_PACKET_ATTR_UPCALL_PID, /* u32 Netlink PID. */
- 	__OVS_PACKET_ATTR_MAX
- };
- 
-diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-index 3add108340bf..2832e0794197 100644
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -941,8 +941,10 @@ static int output_userspace(struct datapath *dp, struct sk_buff *skb,
- 			break;
- 
- 		case OVS_USERSPACE_ATTR_PID:
--			if (dp->user_features &
--			    OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
-+			if (OVS_CB(skb)->upcall_pid)
-+				upcall.portid = OVS_CB(skb)->upcall_pid;
-+			else if (dp->user_features &
-+				 OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
- 				upcall.portid =
- 				  ovs_dp_get_upcall_portid(dp,
- 							   smp_processor_id());
-diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
-index b990dc83504f..ec08ce72f439 100644
---- a/net/openvswitch/datapath.c
-+++ b/net/openvswitch/datapath.c
-@@ -267,7 +267,9 @@ void ovs_dp_process_packet(struct sk_buff *skb, struct sw_flow_key *key)
- 		memset(&upcall, 0, sizeof(upcall));
- 		upcall.cmd = OVS_PACKET_CMD_MISS;
- 
--		if (dp->user_features & OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
-+		if (OVS_CB(skb)->upcall_pid)
-+			upcall.portid = OVS_CB(skb)->upcall_pid;
-+		else if (dp->user_features & OVS_DP_F_DISPATCH_UPCALL_PER_CPU)
- 			upcall.portid =
- 			    ovs_dp_get_upcall_portid(dp, smp_processor_id());
- 		else
-@@ -616,6 +618,7 @@ static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)
- 	struct sw_flow_actions *sf_acts;
- 	struct datapath *dp;
- 	struct vport *input_vport;
-+	u32 upcall_pid = 0;
- 	u16 mru = 0;
- 	u64 hash;
- 	int len;
-@@ -651,6 +654,10 @@ static int ovs_packet_cmd_execute(struct sk_buff *skb, struct genl_info *info)
- 			       !!(hash & OVS_PACKET_HASH_L4_BIT));
- 	}
- 
-+	if (a[OVS_PACKET_ATTR_UPCALL_PID])
-+		upcall_pid = nla_get_u32(a[OVS_PACKET_ATTR_UPCALL_PID]);
-+	OVS_CB(packet)->upcall_pid = upcall_pid;
-+
- 	/* Build an sw_flow for sending this packet. */
- 	flow = ovs_flow_alloc();
- 	err = PTR_ERR(flow);
-@@ -719,6 +726,7 @@ static const struct nla_policy packet_policy[OVS_PACKET_ATTR_MAX + 1] = {
- 	[OVS_PACKET_ATTR_PROBE] = { .type = NLA_FLAG },
- 	[OVS_PACKET_ATTR_MRU] = { .type = NLA_U16 },
- 	[OVS_PACKET_ATTR_HASH] = { .type = NLA_U64 },
-+	[OVS_PACKET_ATTR_UPCALL_PID] = { .type = NLA_U32 },
- };
- 
- static const struct genl_small_ops dp_packet_genl_ops[] = {
-diff --git a/net/openvswitch/datapath.h b/net/openvswitch/datapath.h
-index cfeb817a1889..db0c3e69d66c 100644
---- a/net/openvswitch/datapath.h
-+++ b/net/openvswitch/datapath.h
-@@ -121,6 +121,8 @@ struct datapath {
-  * @cutlen: The number of bytes from the packet end to be removed.
-  * @probability: The sampling probability that was applied to this skb; 0 means
-  * no sampling has occurred; U32_MAX means 100% probability.
-+ * @upcall_pid: Netlink socket PID to use for sending this packet to userspace;
-+ * 0 means "not set" and default per-CPU or per-vport dispatch should be used.
-  */
- struct ovs_skb_cb {
- 	struct vport		*input_vport;
-@@ -128,6 +130,7 @@ struct ovs_skb_cb {
- 	u16			acts_origlen;
- 	u32			cutlen;
- 	u32			probability;
-+	u32			upcall_pid;
- };
- #define OVS_CB(skb) ((struct ovs_skb_cb *)(skb)->cb)
- 
-diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
-index 8732f6e51ae5..6bbbc16ab778 100644
---- a/net/openvswitch/vport.c
-+++ b/net/openvswitch/vport.c
-@@ -501,6 +501,7 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
- 	OVS_CB(skb)->mru = 0;
- 	OVS_CB(skb)->cutlen = 0;
- 	OVS_CB(skb)->probability = 0;
-+	OVS_CB(skb)->upcall_pid = 0;
- 	if (unlikely(dev_net(skb->dev) != ovs_dp_get_net(vport->dp))) {
- 		u32 mark;
- 
--- 
-2.49.0
+On 6/27/25 5:01 PM, Rob Herring (Arm) wrote:
+> Convert the TI DA830 USB PHY binding to DT schema format. Add "clocks"
+> and "clock-names" which are already in use. As they are always present,
+> make them required as well.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+Reviewed-by: David Lechner <david@lechnology.com>
 
 
