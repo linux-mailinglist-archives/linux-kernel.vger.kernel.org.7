@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-705688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7253AAEAC47
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:14:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABEA7AEAC4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4F3189628F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:14:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A14189F034
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12926137C2A;
-	Fri, 27 Jun 2025 01:14:03 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612C6145348;
+	Fri, 27 Jun 2025 01:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZeNCeW35"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1DA3FF1;
-	Fri, 27 Jun 2025 01:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375A210F1
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 01:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750986842; cv=none; b=N/qQJclAS7QYWPfybNp4RxefWeAFDyISQevd7/TzDYw+qvCMA8HsryGKd0vKcEjCTMFprfYw47vz3Yp3AUA+eKz1RrEMG0LHimZWWIlouY/ag+gSETPJBKCR1Oa2EnceUyUj7wsgC1AdjWc0rZawIEqPQA7+c9H+b4PyyImV/Qo=
+	t=1750987295; cv=none; b=FckBbMsUS9Aui/x0nH7O3LjZv/4cGLXtlAqeqRO/vOE9gaP1b/OTcbSNnwFtQneqWwbRa//sRtm8UyYqFvujwoqEJjWOSCh24J+nWYsJfcxlgYB3MyqwyOZ9VGEfnPUbdBE+9qYYDTCPzpfLxVMPOYUFvROmcFZLSIFQN8wEEr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750986842; c=relaxed/simple;
-	bh=E9qOIjaeUyDj/QW736gI7kwyOLH47uPnBzOmDJkTJzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lVXZorDWva4gvo7AEY5Th/MfpTTI1rjFwyMG2mFl2NDrlOFPVsEMc+9E2fU9PW+dJ6X9U031leNqfaTYyvkyWD18S5R0NsrPel7JwheRvia/JIeobNeXPaOzIE6nUM4J1HUQCJTEBwsb8N9CH0gpAq3C1Nv6JypxTRyrDY0nURo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bSyBQ4Gmyz10XJq;
-	Fri, 27 Jun 2025 09:09:18 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id A9F57180080;
-	Fri, 27 Jun 2025 09:13:56 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 27 Jun 2025 09:13:55 +0800
-Message-ID: <eedc1f82-1f99-421c-9b92-2155e5991a7f@huawei.com>
-Date: Fri, 27 Jun 2025 09:13:55 +0800
+	s=arc-20240116; t=1750987295; c=relaxed/simple;
+	bh=tRBEWWDSpswFz6OdbmJC8DxaO0ElnlwwezA1904IvzQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sRhMZfGsM+8OWYgScvUfTBGOKNFTxiMAWc9hn4fumhV8d9LXLMd4LPHI3YqcSbvOX/7ZqWWdStYpqPRjCPVY190TkhFTmLdVEUd/rv1E4BJmyrg1HIqP4rF+yj87xf9CVy8aUlgfWVGp4ViOPjMynDfXfFv6R9fdZW9FpyWZiEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZeNCeW35; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750987282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=eFLrizrm7Gptxh7hNHxwVX2g3KSt3HdrF2K1MScmkcE=;
+	b=ZeNCeW35ktdPs2AsRcHL7bb/1nLCBzBKOal5x9clTHY1FP6aqQw7XGZ/WRyZT7xIhlipJZ
+	pFaETAlsiHgSdUw7+gAZT5i/QxoCvhFmAIn2+1VbD95NHdoAmkDqGNbL7ew4yZNlDnppac
+	quqcxgd6ZZxInJiuhd7vANxC2RKYlG8=
+From: Youling Tang <youling.tang@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	youling.tang@linux.dev,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH 1/3] bcachefs: Removes NULL pointer checks for filemap_lock_folio() return values
+Date: Fri, 27 Jun 2025 09:21:02 +0800
+Message-Id: <20250627012104.222703-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: add sysctl ndisc_debug
-To: Ido Schimmel <idosch@idosch.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <dsahern@kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250624125115.3926152-1-wangliang74@huawei.com>
- <aFq2s3SnM1lzuGHb@shredder>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aFq2s3SnM1lzuGHb@shredder>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-Migadu-Flow: FLOW_OUT
 
+From: Youling Tang <tangyouling@kylinos.cn>
 
-在 2025/6/24 22:31, Ido Schimmel 写道:
-> On Tue, Jun 24, 2025 at 08:51:15PM +0800, Wang Liang wrote:
->> Ipv6 ndisc uses ND_PRINTK to print logs. However it only works when
->> ND_DEBUG was set in the compilation phase. This patch adds sysctl
->> ndisc_debug, so we can change the print switch when system is running and
->> get ipv6 ndisc log to debug.
-> Is there a good reason to do this instead of using dynamic debug? Note
-> that we will never be able to remove this sysctl.
->
-> Users of vanilla kernels can only see the messages printed with 'val'
-> being 0 or 1. Maybe convert them to call net_{err,warn}_ratelimited()
-> instead of ND_PRINTK() and convert the rest to net_dbg_ratelimited() so
-> that users will be able to enable / disable them during runtime via the
-> dynamic debug interface?
-Hi! Thanks for your review!
+__filemap_get_folio the return value cannot be NULL, so unnecessary checks
+are removed.
 
-Yes, you are right. Dynamic debug is indeed a better choice.
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ fs/bcachefs/fs-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I will use it to replace sysctl in v2.
+diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
+index dc5f713e209c..74841b1dc8ca 100644
+--- a/fs/bcachefs/fs-io.c
++++ b/fs/bcachefs/fs-io.c
+@@ -289,7 +289,7 @@ static int __bch2_truncate_folio(struct bch_inode_info *inode,
+ 	u64 end_pos;
+ 
+ 	folio = filemap_lock_folio(mapping, index);
+-	if (IS_ERR_OR_NULL(folio)) {
++	if (IS_ERR(folio)) {
+ 		/*
+ 		 * XXX: we're doing two index lookups when we end up reading the
+ 		 * folio
+-- 
+2.34.1
 
-------
-Best regards
-Wang Liang
 
