@@ -1,213 +1,394 @@
-Return-Path: <linux-kernel+bounces-707020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED88AEBF03
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17434AEBF05
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAEB31C43BDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496731C44905
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F8C2EBDC1;
-	Fri, 27 Jun 2025 18:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FDC2ECD06;
+	Fri, 27 Jun 2025 18:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaHUwoa8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epAeo1O0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD1935957;
-	Fri, 27 Jun 2025 18:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751048795; cv=fail; b=pHAL6SQskrbWFGgnHSgUKYmg+sO6nWtsku0akVGsT5zWiOVn3Yt78DjYdGhUhwLYL/GkbF4EOYN2Kn+s0zGMiRntjO+nyoMREMMuCagXw6nHr/z4wVXbBFbJ479gpZPR2e5vdHWkzK/oxrzjXXuRZnzqjJ5uxfF4bRyBPtM6A3c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751048795; c=relaxed/simple;
-	bh=9x9HFdapjehl+9itqZ+BfFx9E/+rM7dXX/yGEZec7/E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sg6uSvpJ93XPbFppcjYDiLCODRK9pjNC6BbAWEOYZ+Ck97i69QIWLZ5AfuwFEMSGQTpNVPgzE99qy7g32hZjbL07mNjjBvc3/DDeM8FoZHSeLZMGG2trzA/PoMX2ypBhOJRllAdJueC7rxyXRlSdnJdQMteSH2TKYTXxB99K7b0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaHUwoa8; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2D2EBDE5;
+	Fri, 27 Jun 2025 18:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751048874; cv=none; b=ghmIUQktHO1rLd7lt7nma//f13R9y8e9OvsoHW0AI9hNkhunRVPcDsQZS1vBeLh4xacxsnMejBvxRKMK0Ig0D7BZ1cY7P4Rgc7l+ip+VMWDRfofo+qFS+D22buyOvmq8WeHRzU2kReRByv8jdoThKqpp5p5NhwCpGKqvWZnCpB8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751048874; c=relaxed/simple;
+	bh=dNruR8i3nvuH0Ur6TUj/RfC6hHdJRSjk7s5QAvFDO3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UXRh3jA4i1Gj9NsZ4UwafWUDOCdNxtlzCSsUfAJYUeAgO/xb9owxKRLJvsdREq+eCx2qM6FiNyKRuV6Jqpu7NSXS7d6mNzeW+Po4UbWHd/DQnibvGKOru6DmxIcPMwFEzJSuENoMGHQKrrDq8qQVDquyNRu8mkS/8h0hR1PqjfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epAeo1O0; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751048793; x=1782584793;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=9x9HFdapjehl+9itqZ+BfFx9E/+rM7dXX/yGEZec7/E=;
-  b=UaHUwoa8BQVJPyhaVTH5V9+vXNP5rVe19CJt70ipPUEKXngMbX9gaL2Q
-   9KzyEMUVA4Yil53N7di94QOmmn1H6LDy+/AqOMMdu5cS5+Lw17e7ko3EF
-   2xrsuffjoAyJoXoL97Zs47Tsjus5T4sWX5BvB32dn0INqks5B23Rpe4fY
-   dIjFhWPkPkGsWpK2uOX2HYfwd6lxCb7mXg/dHENrXHABsN4ywXrh9t6ri
-   foPKHBTe6xV2CgEn3I5mcdMxhGFkPyxmIK4MmSfJxnc/5PtlWnQqZ1i7E
-   NudmE2iaKC3C5o8/kGisRJUsEAIJNmcCsWuJzoFx8AgLVDxm60rdfN9Ci
+  t=1751048873; x=1782584873;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dNruR8i3nvuH0Ur6TUj/RfC6hHdJRSjk7s5QAvFDO3c=;
+  b=epAeo1O043SLggLgawzNeM7ga73oQzLPeth19c+zde/E7acVJ2vZdNfL
+   RtO5EE7T4WwgA48x7ON3jYKL1BgbwJWVnT1HzqFe3jvaV4uV0ayR3E+2R
+   74Wqi5CsY3+AjEAOqSlwe2dWTxDGlIsRaRBRQj8wuJcrYz17uwRZR1Whw
+   23UpqafcCrvqB/mN6Rmec6X9y6xTWof43xXV8n1qtgwvgjrwfRJ97uWIG
+   yM/qLqqu9HgoD1bKDIgXXLYfrisNjaO+TKpGq0sxA/0qbjv12E272Tv1H
+   mmyI4OEYDhjI3hfIQ8euZA2FmMAjwPLMC8I1PgiRHh1uVDY3SCpMAQvPz
    w==;
-X-CSE-ConnectionGUID: Ej+MYmH2Se+eTEW6L6vzyw==
-X-CSE-MsgGUID: uPjvSvLiQTiZ8/ZdzBFJhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="64814454"
+X-CSE-ConnectionGUID: aGXbxI+AReucD7PHornyEA==
+X-CSE-MsgGUID: R0Rz0M8yQLam3/xGGyAf4g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="52598782"
 X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="64814454"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 11:20:03 -0700
-X-CSE-ConnectionGUID: e2oCco9MSG+ANyOGBlsA6A==
-X-CSE-MsgGUID: XHm1Ml9lTPutIpGrmRrXtA==
+   d="scan'208";a="52598782"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 11:27:52 -0700
+X-CSE-ConnectionGUID: am8OoBiHQJ6jv78kbrdmew==
+X-CSE-MsgGUID: 9W9dLvIRSyKowKwjpbkIYA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="153359296"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 11:20:04 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 27 Jun 2025 11:20:02 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Fri, 27 Jun 2025 11:20:02 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.71)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 27 Jun 2025 11:20:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zVILgP+1VTuY3Wv0CSATutzOtMP5XTTEg2Q1vGHT2y+E47uqx+mwj7pixEHY5AmZAyzusAB7W6LrvLGBx4B+CD0eKrqUZUwPWczK0Ldx8aqh3WR0N+9K4z4Zbl2qWyYXbBciAE58jKDxzHMKdjLl+1JTxnWbatcSkGJkblHhytdNJ28jyqCD6zMZ4vedh0uVOJzWOhVgUPPjZuQW3KUOksMU6wPzVcjIWyCKTfOGh1qWE5OxP7rTBOnv/LHtlaRXcIAj8AUylI8GzFujnGgbVKTNC60YjuuY1f8zkHTgR1Qv9yQPbrQP0Be6lpzBpyXykNLxq64KpWOx86rObW8aWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fhuUwmBcGlLXyOj8y6eGvBeEcEfnmWId8VdE31NysKc=;
- b=g0mZMXkgN/HGeCX1f49si6H4fHBznkb6bIhY/hB38EjqIZ9v1cgEg+iNF1dzePRJCpMmyEj/XxnnksEzQv51HAv0ZjB9Pbs6fSDgZXon+kPtnhFpdnBc4QgRws1ng02Ez1tEf9PliHUw/ov9oORuntKnZMXW/CmObAii43vnFxUE53ODSzLqUaLtRerXVezT54jHaHLokHB1hE6uCfFtuUS06F6EV2xiBSv2B+6372gwTectBV17TkQZ+iZaG8kuCnCR99ao/S2k8Wb+7srsDuEYHaDZWkAAGVL6wevkI1IHWQbvXC30oTZW1vFKn0iklGRRvBkqqG97w5UGIXsIjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by MW3PR11MB4715.namprd11.prod.outlook.com
- (2603:10b6:303:57::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.21; Fri, 27 Jun
- 2025 18:19:59 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::19ef:ed1c:d30:468f]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::19ef:ed1c:d30:468f%4]) with mapi id 15.20.8835.018; Fri, 27 Jun 2025
- 18:19:59 +0000
-Date: Fri, 27 Jun 2025 13:21:17 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Shivank Garg <shivankg@amd.com>, <david@redhat.com>,
-	<akpm@linux-foundation.org>, <brauner@kernel.org>, <paul@paul-moore.com>,
-	<rppt@kernel.org>, <viro@zeniv.linux.org.uk>
-CC: <seanjc@google.com>, <vbabka@suse.cz>, <willy@infradead.org>,
-	<pbonzini@redhat.com>, <tabba@google.com>, <afranji@google.com>,
-	<ackerleytng@google.com>, <shivankg@amd.com>, <jack@suse.cz>,
-	<hch@infradead.org>, <cgzones@googlemail.com>, <ira.weiny@intel.com>,
-	<roypat@amazon.co.uk>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH V3] fs: generalize anon_inode_make_secure_inode() and fix
- secretmem LSM bypass
-Message-ID: <685ee11da5119_2ec7172946a@iweiny-mobl.notmuch>
-References: <20250626191425.9645-5-shivankg@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250626191425.9645-5-shivankg@amd.com>
-X-ClientProxiedBy: MW3PR06CA0019.namprd06.prod.outlook.com
- (2603:10b6:303:2a::24) To PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c)
+   d="scan'208";a="152489474"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 27 Jun 2025 11:27:49 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 21C0C27C; Fri, 27 Jun 2025 21:27:47 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH v1 1/1] serial: 8250: Move CE4100 quirks to a module under 8250 driver
+Date: Fri, 27 Jun 2025 21:25:00 +0300
+Message-ID: <20250627182743.1273326-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|MW3PR11MB4715:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e31ac9e-b0b9-4429-6585-08ddb5a739ea
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JMRX2UGK50RkIhgy+X2ABq6Qlwm39OVnVNxKf6xh9YcAv1ApAiOyQ2SYgthO?=
- =?us-ascii?Q?Qx9HVzJUnZderqv/skmtDzF3gzN0wutun/VCA66DgzkuwP7FGLuBAp0pca+y?=
- =?us-ascii?Q?CTMLXv7tsiCUHnFvSsZ4BZizn5VANv1VPA3/rjvAnzC7vSNLGn7RGZztw9Nt?=
- =?us-ascii?Q?Vly8C9XNxwa1QVaRSTZu6zyGDWrJntuLo5/al8icWROpyMy6nmn1AOGeTbjt?=
- =?us-ascii?Q?3GhZcGUjc+7mKmtnEAbFkiCjCshfrpv+evurBaGQCjGBTtnNUEGxR2p/tGAV?=
- =?us-ascii?Q?hi+rry1PFhohLQtnJNHp1WZbOJtVFAFPb2VR+0ylbPpvAMeCZ92/RxH9TxX9?=
- =?us-ascii?Q?jn0M2gz8nydSEwycnkEb+DaEorKpQxhTKPPJsYA/6L4r4qr3VNmWgXFqDbMr?=
- =?us-ascii?Q?qkuhHe2N0pOrBiAfuxmvh//dx81026O7nL7ZNI+BWBX+qwmmedSZ2tTQxau1?=
- =?us-ascii?Q?KIqz41nRHgMypuurveyhhZOdNVKOd7P8jsW/nu2+8+c9/PXbUyr3v1BoWOP/?=
- =?us-ascii?Q?6dzkdCmM35mCBZ6Sr3qOKN9SQpFRXJ6TLMxbkhnw3w7+WprAA20KGja+RBP6?=
- =?us-ascii?Q?4HVItJAht8TfMGkZhrSqbFl/Hu+fV8BNCxl2RIu1TchSsA1J2WvkhpaL8TMV?=
- =?us-ascii?Q?/p7THoJYeQ7oFpZnTvr+n2Kckv36iOn86JbHCZxU00H15wYZx9ocpcoJAPfA?=
- =?us-ascii?Q?Cdcb1PCaunmgkxoauyjqmBl8QnQtFp5dSe4dHLcBFXNhXl9QCwgFDpsnH8Nd?=
- =?us-ascii?Q?HAwSWMwd6mHH8BKAYbU4Sv7rz5z/QnqcUTqsZyu1mr7LGGglW8pejRKwB6pI?=
- =?us-ascii?Q?7m3Gidy8IlADta7lGdx0v4XLZ2gVvDp2HTq5zcCnCwYUYU+d9AZfhpe3/Gl4?=
- =?us-ascii?Q?18kr/hJtO0Q6VvumLRo87P97d4i3L9MFrNixlvlGm0I3N37AG1oMDhBD7OqS?=
- =?us-ascii?Q?uykhIr+yVz6oZTO7IVULUcDH2PQljAfxS8gqZ7SbrTJb19u54IGx5VCtHsZJ?=
- =?us-ascii?Q?9BvMfsVyqbTOyxaO3Ss0uJtaYOxAQZAJyyICgEewuO9RIgP8mqR1r5Ui0ZMs?=
- =?us-ascii?Q?iFi1B4gic0+0n9LQrr53UnxPehCI9LrTajsmxmh03y74kKd8vDSPWT/rwm+n?=
- =?us-ascii?Q?r5lxZoIZPT3kp0MvyLyIaGjVoUv02JFF+2vxnb+/FrUpbbuhO/7dgsziEmoP?=
- =?us-ascii?Q?cesQ8I5C2XwBfo6kzChr+J0rSQGfHIMyi8b8VSYtpzdW3vUqaLVL+jz/NiB4?=
- =?us-ascii?Q?SbDVzC7Acm9TknDwwUqhnrUj4qU9dohydIsjYnTvoMaWRYB3zP++4qtIypB8?=
- =?us-ascii?Q?cYNmmSBMz7ogJhPqcbO8mUs7UAqAwCRFvQs5/XcaHe45Bkw8jWsESQ9Xe2hi?=
- =?us-ascii?Q?bsDXngrg2FMy3sntxNaRkNs1gDaRjXP+7/uh3n/c2RW1iI7S3h8sCorLUvva?=
- =?us-ascii?Q?G3jMm1iafXY=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VSe55YbxOFHn8hMAzhfwRcjfA8IXSCpcJikAZZL6TUItM/qiTUZTCUABNWug?=
- =?us-ascii?Q?oLEciFraAgx4p011y22DzXWDYB46XVWnCs4T60bb9a9ZeL9WGIcZMJCUfgLa?=
- =?us-ascii?Q?o9KH9GPJOnUV9wdApDDdwmlH+RVnznAWaCoHt7Rm+tT7mw5v8xdQZ/LvyOVS?=
- =?us-ascii?Q?JWVs3mtJ27XGsPEWSc6e/xK4YnXyBtSKnFzhgdZhySLb6n4WnwZmkfIjXF7Y?=
- =?us-ascii?Q?mXIjF9teuvPS42aIwxnK/wgiC5/842CZXhJfHM/elAL4e+J8EYAH16c/DIgF?=
- =?us-ascii?Q?+sjhTTOnb+D/aRekt6Wx+R9StyDpm79WTaeFIcBJG+Ful8R0jqM3t46LT6TJ?=
- =?us-ascii?Q?wgz8Q2uAcN4ybt9Z2MCkzm0LqHxHtJOOlEchne+sIJOKhMO1x1uP35NkCmQK?=
- =?us-ascii?Q?vlmJN2oiSv0PINMQXsuRPNDYKn/+WZspDV+ZkaxCQCFAAoyomEzJ/Do07g7D?=
- =?us-ascii?Q?l9gS41keP10nkRDRf/nK7YvH18Olf0ca2ivl7VFkLc6gHiumb1W2jQbJdRg+?=
- =?us-ascii?Q?BRRGcDJ861F12TWMYrOoq8s25fe1AzmkuBOQvuC7q+AFoOIgclcPmSL1cRpR?=
- =?us-ascii?Q?0rHxCHJHE7zGX0renV6w96R0dOpmvGYtm485a5Err1KZ7eZdfpQxPKcI2BlV?=
- =?us-ascii?Q?vCpdse0MwfVkCv9Hfj30eQu+QgoSQJ09K7FzMBvGVUdPc2WarvuX14ZtzXGW?=
- =?us-ascii?Q?QmFznZOXtpXw30BcZ4U9eEbo8aRyysyDdtAuCGqooLDn6Jf9jjJ9fpbYJgf4?=
- =?us-ascii?Q?wIwMghyYQZy6qPeuMJFCesIkRp8L9Hw9YhchG/yxmA1vMfGK8Q9bBYBmYiBl?=
- =?us-ascii?Q?kjpmCchGD3WFlYQq5/kMVRL0s2NptPu2dysKybTUXdMKwvjD27/GsL0z+2en?=
- =?us-ascii?Q?Mom2xVUxv4Ky9KOl3SevajDmuILAaNkYHRXfyIi8/0uTS5FistY1BJYf5Neq?=
- =?us-ascii?Q?DE9P4XqHqt6YJGT3KHWurk0AOcGMZSt+YpvYCph8Io1BWAT+kbcs1f+YILCG?=
- =?us-ascii?Q?tOHqwA0Yfz265zyGc+w69vxYpDPWT9V40gIfiHpgmO5gDF8Z58CifbQcc6BT?=
- =?us-ascii?Q?iZjEvb0OQ4ZgIYbS8nFWJZb3SALXD5VnZv4jdufSHBBidPNNdGWTf/nQwS74?=
- =?us-ascii?Q?+yUM3CVdepWcRzTyDuPbd1vu7SepJpVKeY/cBJ4grw0N1wwZRctCHc86cHej?=
- =?us-ascii?Q?stEFStUkj5/wM3GijaC4GPxrCm9SomjF4I50E7E/DFx0bjWO4Fe6/+Hl4rsS?=
- =?us-ascii?Q?Ls+uHbtfqxz0nuLQ4eRqrQsSD/kcIXeipa1ev0I0veYv61+it7hDHuegNM9F?=
- =?us-ascii?Q?8kzlgB7PBKkwGSO50Ye68PjiyRhoafhHUTTK2Zh0W+di5CSV1N6wfvkuF8r9?=
- =?us-ascii?Q?dc15ulz4fF4TF6ei1laoKMSb/8gUvbvslcIx8YawDQhW4iT0eWHfrkUGtjEp?=
- =?us-ascii?Q?HxrCPU5emdblFJndfeQevpJmzPgyg5HbCsbw77UhwLUKTO0GD4hDeeLjyx5l?=
- =?us-ascii?Q?xALst0Ssrsl8yhKPTP4gZotxA/+FHG2+teAqZYAaY/96mwMGdTBgaHJgVKHy?=
- =?us-ascii?Q?8zEf9DBndozBRxBayEx6YZk3HWa10me+wZI8CYY7?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e31ac9e-b0b9-4429-6585-08ddb5a739ea
-X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 18:19:59.3388
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2GAVCdQuXzZuqRtTDavpeV4Z4wymrA4bHPeN6yRecE8nEM0A1yQz/VL22ds7BoBWM+kqCdtU078Qz292uL6q5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4715
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Shivank Garg wrote:
-> Extend anon_inode_make_secure_inode() to take superblock parameter and
-> make it available via fs.h. This allows other subsystems to create
-> anonymous inodes with proper security context.
-> 
-> Use this function in secretmem to fix a security regression, where
-> S_PRIVATE flag wasn't cleared after alloc_anon_inode(), causing
-> LSM/SELinux checks to be skipped.
-> 
-> Using anon_inode_make_secure_inode() ensures proper security context
-> initialization through security_inode_init_security_anon().
-> 
-> Fixes: 2bfe15c52612 ("mm: create security context for memfd_secret inodes")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+There is inconvenient for maintainers and maintainership to have
+some quirks under architectural code. Move it to the specific quirk
+file like other 8250-compatible drivers do.
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-[snip]
+The next step can be considered on how to get rid of
+serial8250_set_isa_configurator() ugly hook.
+
+ arch/x86/include/asm/ce4100.h                 |  6 ++
+ arch/x86/platform/ce4100/ce4100.c             | 98 -------------------
+ .../tty/serial/8250/8250_ce4100.c             | 92 +++--------------
+ drivers/tty/serial/8250/Makefile              |  1 +
+ 4 files changed, 23 insertions(+), 174 deletions(-)
+ copy arch/x86/platform/ce4100/ce4100.c => drivers/tty/serial/8250/8250_ce4100.c (51%)
+
+diff --git a/arch/x86/include/asm/ce4100.h b/arch/x86/include/asm/ce4100.h
+index 2930f560d7f3..e1f965bb1e31 100644
+--- a/arch/x86/include/asm/ce4100.h
++++ b/arch/x86/include/asm/ce4100.h
+@@ -4,4 +4,10 @@
+ 
+ int ce4100_pci_init(void);
+ 
++#ifdef CONFIG_SERIAL_8250
++void __init sdv_serial_fixup(void);
++#else
++static inline void sdv_serial_fixup(void) {};
++#endif
++
+ #endif
+diff --git a/arch/x86/platform/ce4100/ce4100.c b/arch/x86/platform/ce4100/ce4100.c
+index 08492bea9713..aaa7017416f7 100644
+--- a/arch/x86/platform/ce4100/ce4100.c
++++ b/arch/x86/platform/ce4100/ce4100.c
+@@ -5,19 +5,12 @@
+  * (C) Copyright 2010 Intel Corporation
+  */
+ #include <linux/init.h>
+-#include <linux/kernel.h>
+-#include <linux/irq.h>
+ #include <linux/reboot.h>
+-#include <linux/serial_reg.h>
+-#include <linux/serial_8250.h>
+ 
+ #include <asm/ce4100.h>
+ #include <asm/prom.h>
+ #include <asm/setup.h>
+-#include <asm/i8259.h>
+ #include <asm/io.h>
+-#include <asm/io_apic.h>
+-#include <asm/emergency-restart.h>
+ 
+ /*
+  * The CE4100 platform has an internal 8051 Microcontroller which is
+@@ -31,97 +24,6 @@ static void ce4100_power_off(void)
+ 	outb(0x4, 0xcf9);
+ }
+ 
+-#ifdef CONFIG_SERIAL_8250
+-
+-static unsigned int mem_serial_in(struct uart_port *p, int offset)
+-{
+-	offset = offset << p->regshift;
+-	return readl(p->membase + offset);
+-}
+-
+-/*
+- * The UART Tx interrupts are not set under some conditions and therefore serial
+- * transmission hangs. This is a silicon issue and has not been root caused. The
+- * workaround for this silicon issue checks UART_LSR_THRE bit and UART_LSR_TEMT
+- * bit of LSR register in interrupt handler to see whether at least one of these
+- * two bits is set, if so then process the transmit request. If this workaround
+- * is not applied, then the serial transmission may hang. This workaround is for
+- * errata number 9 in Errata - B step.
+-*/
+-
+-static u32 ce4100_mem_serial_in(struct uart_port *p, unsigned int offset)
+-{
+-	u32 ret, ier, lsr;
+-
+-	if (offset != UART_IIR)
+-		return mem_serial_in(p, offset);
+-
+-	offset <<= p->regshift;
+-
+-	ret = readl(p->membase + offset);
+-	if (!(ret & UART_IIR_NO_INT))
+-		return ret;
+-
+-	/* see if the TX interrupt should have really set */
+-	ier = mem_serial_in(p, UART_IER);
+-	/* see if the UART's XMIT interrupt is enabled */
+-	if (!(ier & UART_IER_THRI))
+-		return ret;
+-
+-	lsr = mem_serial_in(p, UART_LSR);
+-	/* now check to see if the UART should be generating an interrupt (but isn't) */
+-	if (lsr & (UART_LSR_THRE | UART_LSR_TEMT))
+-		ret &= ~UART_IIR_NO_INT;
+-
+-	return ret;
+-}
+-
+-static void ce4100_mem_serial_out(struct uart_port *p, unsigned int offset, u32 value)
+-{
+-	offset <<= p->regshift;
+-	writel(value, p->membase + offset);
+-}
+-
+-static void ce4100_serial_fixup(int port, struct uart_port *up,
+-	u32 *capabilities)
+-{
+-#ifdef CONFIG_EARLY_PRINTK
+-	/*
+-	 * Over ride the legacy port configuration that comes from
+-	 * asm/serial.h. Using the ioport driver then switching to the
+-	 * PCI memmaped driver hangs the IOAPIC
+-	 */
+-	if (up->iotype !=  UPIO_MEM32) {
+-		up->uartclk  = 14745600;
+-		up->mapbase = 0xdffe0200;
+-		set_fixmap_nocache(FIX_EARLYCON_MEM_BASE,
+-				up->mapbase & PAGE_MASK);
+-		up->membase =
+-			(void __iomem *)__fix_to_virt(FIX_EARLYCON_MEM_BASE);
+-		up->membase += up->mapbase & ~PAGE_MASK;
+-		up->mapbase += port * 0x100;
+-		up->membase += port * 0x100;
+-		up->iotype   = UPIO_MEM32;
+-		up->regshift = 2;
+-		up->irq = 4;
+-	}
+-#endif
+-	up->iobase = 0;
+-	up->serial_in = ce4100_mem_serial_in;
+-	up->serial_out = ce4100_mem_serial_out;
+-
+-	*capabilities |= (1 << 12);
+-}
+-
+-static __init void sdv_serial_fixup(void)
+-{
+-	serial8250_set_isa_configurator(ce4100_serial_fixup);
+-}
+-
+-#else
+-static inline void sdv_serial_fixup(void) {};
+-#endif
+-
+ static void __init sdv_arch_setup(void)
+ {
+ 	sdv_serial_fixup();
+diff --git a/arch/x86/platform/ce4100/ce4100.c b/drivers/tty/serial/8250/8250_ce4100.c
+similarity index 51%
+copy from arch/x86/platform/ce4100/ce4100.c
+copy to drivers/tty/serial/8250/8250_ce4100.c
+index 08492bea9713..3dd88f372a51 100644
+--- a/arch/x86/platform/ce4100/ce4100.c
++++ b/drivers/tty/serial/8250/8250_ce4100.c
+@@ -4,34 +4,17 @@
+  *
+  * (C) Copyright 2010 Intel Corporation
+  */
++
+ #include <linux/init.h>
+-#include <linux/kernel.h>
+-#include <linux/irq.h>
+-#include <linux/reboot.h>
+-#include <linux/serial_reg.h>
+-#include <linux/serial_8250.h>
++#include <linux/io.h>
++#include <linux/types.h>
+ 
+ #include <asm/ce4100.h>
+-#include <asm/prom.h>
+-#include <asm/setup.h>
+-#include <asm/i8259.h>
+-#include <asm/io.h>
+-#include <asm/io_apic.h>
+-#include <asm/emergency-restart.h>
++#include <asm/fixmap.h>
++#include <asm/page.h>
+ 
+-/*
+- * The CE4100 platform has an internal 8051 Microcontroller which is
+- * responsible for signaling to the external Power Management Unit the
+- * intention to reset, reboot or power off the system. This 8051 device has
+- * its command register mapped at I/O port 0xcf9 and the value 0x4 is used
+- * to power off the system.
+- */
+-static void ce4100_power_off(void)
+-{
+-	outb(0x4, 0xcf9);
+-}
+-
+-#ifdef CONFIG_SERIAL_8250
++#include <linux/serial_reg.h>
++#include <linux/serial_8250.h>
+ 
+ static unsigned int mem_serial_in(struct uart_port *p, int offset)
+ {
+@@ -48,7 +31,6 @@ static unsigned int mem_serial_in(struct uart_port *p, int offset)
+  * is not applied, then the serial transmission may hang. This workaround is for
+  * errata number 9 in Errata - B step.
+ */
+-
+ static u32 ce4100_mem_serial_in(struct uart_port *p, unsigned int offset)
+ {
+ 	u32 ret, ier, lsr;
+@@ -82,26 +64,23 @@ static void ce4100_mem_serial_out(struct uart_port *p, unsigned int offset, u32
+ 	writel(value, p->membase + offset);
+ }
+ 
+-static void ce4100_serial_fixup(int port, struct uart_port *up,
+-	u32 *capabilities)
++static void ce4100_serial_fixup(int port, struct uart_port *up, u32 *capabilities)
+ {
+ #ifdef CONFIG_EARLY_PRINTK
+ 	/*
+-	 * Over ride the legacy port configuration that comes from
++	 * Override the legacy port configuration that comes from
+ 	 * asm/serial.h. Using the ioport driver then switching to the
+-	 * PCI memmaped driver hangs the IOAPIC
++	 * PCI memmaped driver hangs the IOAPIC.
+ 	 */
+-	if (up->iotype !=  UPIO_MEM32) {
+-		up->uartclk  = 14745600;
++	if (up->iotype != UPIO_MEM32) {
++		up->uartclk = 14745600;
+ 		up->mapbase = 0xdffe0200;
+-		set_fixmap_nocache(FIX_EARLYCON_MEM_BASE,
+-				up->mapbase & PAGE_MASK);
+-		up->membase =
+-			(void __iomem *)__fix_to_virt(FIX_EARLYCON_MEM_BASE);
++		set_fixmap_nocache(FIX_EARLYCON_MEM_BASE, up->mapbase & PAGE_MASK);
++		up->membase = (void __iomem *)__fix_to_virt(FIX_EARLYCON_MEM_BASE);
+ 		up->membase += up->mapbase & ~PAGE_MASK;
+ 		up->mapbase += port * 0x100;
+ 		up->membase += port * 0x100;
+-		up->iotype   = UPIO_MEM32;
++		up->iotype = UPIO_MEM32;
+ 		up->regshift = 2;
+ 		up->irq = 4;
+ 	}
+@@ -113,46 +92,7 @@ static void ce4100_serial_fixup(int port, struct uart_port *up,
+ 	*capabilities |= (1 << 12);
+ }
+ 
+-static __init void sdv_serial_fixup(void)
++void __init sdv_serial_fixup(void)
+ {
+ 	serial8250_set_isa_configurator(ce4100_serial_fixup);
+ }
+-
+-#else
+-static inline void sdv_serial_fixup(void) {};
+-#endif
+-
+-static void __init sdv_arch_setup(void)
+-{
+-	sdv_serial_fixup();
+-}
+-
+-static void sdv_pci_init(void)
+-{
+-	x86_of_pci_init();
+-}
+-
+-/*
+- * CE4100 specific x86_init function overrides and early setup
+- * calls.
+- */
+-void __init x86_ce4100_early_setup(void)
+-{
+-	x86_init.oem.arch_setup			= sdv_arch_setup;
+-	x86_init.resources.probe_roms		= x86_init_noop;
+-	x86_init.mpparse.find_mptable		= x86_init_noop;
+-	x86_init.mpparse.early_parse_smp_cfg	= x86_init_noop;
+-	x86_init.pci.init			= ce4100_pci_init;
+-	x86_init.pci.init_irq			= sdv_pci_init;
+-
+-	/*
+-	 * By default, the reboot method is ACPI which is supported by the
+-	 * CE4100 bootloader CEFDK using FADT.ResetReg Address and ResetValue
+-	 * the bootloader will however issue a system power off instead of
+-	 * reboot. By using BOOT_KBD we ensure proper system reboot as
+-	 * expected.
+-	 */
+-	reboot_type = BOOT_KBD;
+-
+-	pm_power_off = ce4100_power_off;
+-}
+diff --git a/drivers/tty/serial/8250/Makefile b/drivers/tty/serial/8250/Makefile
+index b04eeda03b23..e61dc3f4ca50 100644
+--- a/drivers/tty/serial/8250/Makefile
++++ b/drivers/tty/serial/8250/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_SERIAL_8250_ASPEED_VUART)	+= 8250_aspeed_vuart.o
+ obj-$(CONFIG_SERIAL_8250_BCM2835AUX)	+= 8250_bcm2835aux.o
+ obj-$(CONFIG_SERIAL_8250_BCM7271)	+= 8250_bcm7271.o
+ obj-$(CONFIG_SERIAL_8250_BOCA)		+= 8250_boca.o
++obj-$(CONFIG_X86_INTEL_CE)		+= 8250_ce4100.o
+ obj-$(CONFIG_SERIAL_8250_DFL)		+= 8250_dfl.o
+ obj-$(CONFIG_SERIAL_8250_DW)		+= 8250_dw.o
+ obj-$(CONFIG_SERIAL_8250_EM)		+= 8250_em.o
+-- 
+2.47.2
+
 
