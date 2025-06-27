@@ -1,204 +1,132 @@
-Return-Path: <linux-kernel+bounces-707317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D08CAEC28D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:16:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB464AEC297
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 602C15626B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E835F6E695B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2258128D8CF;
-	Fri, 27 Jun 2025 22:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144F128DF1B;
+	Fri, 27 Jun 2025 22:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kjSAnMUd"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djw67N73"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED47219E8
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 22:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751062558; cv=fail; b=YyrwA5ANgMHcNsBC6ems9WCY1+KGRzZkP3Mvn3fchQ4DtzVm5ppJWulTbd+iuQ7y3Hr3HJh88pluePreyOGnhKr0O4s65yycJd90VSftQjnXuso6ILYrdAeXUce9wwB9Mh7E4dO/j/IIt+YHeHVMHL6p1zhg9YFBEfu7hw7T1DM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751062558; c=relaxed/simple;
-	bh=5fcSgv/PdC+RE/mihJ23Og5j9/4FSK8gpdt0EanIwns=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pGRWU3fKDaJy6NutLDKdhCyjcDK+aJSFb8+342mzaVeqOq0ufH0PGhQ5dcPe5nA1yTfnGsunWr8D/H9UMAB3N5mi0OXE0LPk8yJPFDLNShZnlxsMqaolJ/JOKA6hFuDDrV7Yif9whl9VnPJ/95TjeTGPMhw39ZhDURy7LDiwrdg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kjSAnMUd; arc=fail smtp.client-ip=40.107.236.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YKCvhi7OORH6hpwre3YSUlKCG5pLSmb0515BCBiS3iNunqxgUYC9ciKAVCCRVdvNMz2QLArPOTQaNQYIpVGkEwVY4jZUzGG24BLPv2F3cFS82RAmeDrYUvM8LcUsddP+ERYCaiUoQPKryg8sYSBuZ7et9Jl4zRrtlQnZvjBu9MVj0rbE5zmnsLK+3VdBtglHTJzU+NAVbSR+M323Mqbpi6ni2CqoaYYLBCdX7lXO7J40Wr7WrUHFyKD98lzmZs35Nq8Pcetux2kruPqq4a5+K9dljSm67DN4dERwJl96z8ucCx+KlHqLZx0/U0cIFHcHFFxWaa2S+JTMlToPsJW1BQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5fcSgv/PdC+RE/mihJ23Og5j9/4FSK8gpdt0EanIwns=;
- b=yBAxcIciNLpuz9o4f99QaOOT/LM3MX7Dnql6637ctdcb2aKt17GJ317bRcRal6af1pmzz56r8k3tKOM9ixGKhKXTY0uKuuppACDyTc037qmWPiy3Xx+tCwBJwYh/75pdyM02f/rl7hVNHGXXxvsSafzCTywRYYRPbGUQVh3OyVLRfAfbhZzrssE00kh9hAC46SoWqtI5D2Wdhnw6UfVWM/gfOUfUUss9dzySotmoHw7TG+K3QGbCZkOUlMq4sRV0uSJIpeJ4ZzWZUrVAz5+jwRar2lpSTI+OVYER3Glpcj6+aFMinbG+w/eFJ5SQep7jZ2AF7hKMcET2Kr5YWerdDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5fcSgv/PdC+RE/mihJ23Og5j9/4FSK8gpdt0EanIwns=;
- b=kjSAnMUd1TyVNeO5kgEnjhDZuTehnD1BKpOlDTLrzeFwTiykWxDQVDnOSzUQ0MVZTKw/dGeGRv1F1XyD5aa2pw1azahIzjO4W6BeXpAQ/KJMuma6YBwAsFAU2nLMMMhC+eNeAYlGrgkcBPU/Buz733VOdJYe0soQrDR/idHVAEgzBszSBVc9eeuDjnkkIVFDSqh5hUE0NXy9YWfdVrUR3ajzJoF3Eas++CGfWhoqYrMpY3CzLwtqZTOYvzmJQ8lvNvpijpWmrIiFdSzKCCdxjtwDEhcXetYyeni0IWe7yJOyiBmlx2P1hyebTpAswQeso6UDAYB3/ymFwpaIXD45eA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
- CH1PR12MB9574.namprd12.prod.outlook.com (2603:10b6:610:2ae::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.24; Fri, 27 Jun
- 2025 22:15:54 +0000
-Received: from DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
- ([fe80::bd88:b883:813d:54a2%6]) with mapi id 15.20.8835.027; Fri, 27 Jun 2025
- 22:15:54 +0000
-Message-ID: <f93b813a-0bb0-4dec-9526-b4f13b967248@nvidia.com>
-Date: Fri, 27 Jun 2025 15:15:51 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 02/30] x86,fs/resctrl: Replace architecture event
- enabled checks
-To: Tony Luck <tony.luck@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
- Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>,
- Babu Moger <babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>,
- Dave Martin <Dave.Martin@arm.com>,
- Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
- Chen Yu <yu.c.chen@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
-References: <20250626164941.106341-1-tony.luck@intel.com>
- <20250626164941.106341-3-tony.luck@intel.com>
-Content-Language: en-US
-From: Fenghua Yu <fenghuay@nvidia.com>
-In-Reply-To: <20250626164941.106341-3-tony.luck@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH7PR02CA0019.namprd02.prod.outlook.com
- (2603:10b6:510:33d::25) To DM6PR12MB2667.namprd12.prod.outlook.com
- (2603:10b6:5:42::28)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B9228A3EC;
+	Fri, 27 Jun 2025 22:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751062855; cv=none; b=Em/RsU3fzqMT9EC6w1D8GbpCr1ExL6ixoRNURxdTiFou+Ey7hkXoiIOFk9Ll+F9zJCV02R1tj9sjnEhLV+QSlnwssCupWezVmESIxsW1cjG/xxRsuoDJ6y1TC65Ckn48YuheuC9NzgSn65y0uELQrZmRmnLeEyq/8bj4K8lY17k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751062855; c=relaxed/simple;
+	bh=9L0ixXMRbVqYGzBnfUXhugHIfiWqtm/lpXgHMiILOps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMkL6u1qTbOV8+PAhUWOJwTuKqXvakt/EVPpvV6ii8Rt9ekpdJEPluSaOL/CvvT3Fco+L0u3d8qQRHJ/tMcMym1GiSU7M4MhT1LbLcgF2wTCYQTCH9RL25UL6/rhZLVq6IBLAo0MdzlIa5+Q15p14lcdHAgse6YCc9NwK6vR8Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djw67N73; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751062854; x=1782598854;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9L0ixXMRbVqYGzBnfUXhugHIfiWqtm/lpXgHMiILOps=;
+  b=djw67N73ktSDG/aAzbauhF/+Ec5uAv4OIscBeEJ1/hAA6DiPMyK+vF/p
+   QLl7s8S3I+qWN57IUzsvEkxpE0PT2d8z+qa+kabulI04vyJzmhcFRzJh1
+   hddxLBrxIilooWKYK5EzGolDULI4Q9WZsCzG8tfzU5T3v/f2VulbeJDQh
+   aZJnXx+016TyDBEWaYhW0aXStQrE4m+4r1dfWolAiy483BuCFOqVG7T+e
+   /zR3VEIaN+yqmrJtOFQ37igCpjEBGNMWf8tz8EgQqeIYg0Kw9Gxb2qVa7
+   xjX5MuF43+o1Xo+Huw/6xZzgcN5Zv+HRVMz2A8GWlzIJhOeUomwRX2wyd
+   Q==;
+X-CSE-ConnectionGUID: Od122P7QTZOORZK4JP0Axw==
+X-CSE-MsgGUID: Nk0JDsI8TZeEf+rk3XOXnQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="53509083"
+X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
+   d="scan'208";a="53509083"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 15:20:54 -0700
+X-CSE-ConnectionGUID: rpVEiyRYQB+NIypkshJRVw==
+X-CSE-MsgGUID: 6rfxsHhQR1ysfl3rVu0jWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
+   d="scan'208";a="153095261"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 27 Jun 2025 15:20:52 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uVHRA-000WaM-2O;
+	Fri, 27 Jun 2025 22:20:48 +0000
+Date: Sat, 28 Jun 2025 06:20:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
+	bhelgaas@google.com, mani@kernel.org, kwilczynski@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org, jingoohan1@gmail.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: Re: [PATCH v3] PCI: dwc: Refactor code by using
+ dw_pcie_clear_and_set_dword()
+Message-ID: <202506280542.6ttkdrur-lkp@intel.com>
+References: <20250626145040.14180-3-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|CH1PR12MB9574:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0f8e02f-052a-412f-88af-08ddb5c82ebe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z0EwdTFMVU9DQlFMb1NVOUVyR2ttSkt0VHFlZjM2L1NiNmlnMUVSUWFpQ1Nq?=
- =?utf-8?B?V3V1cVN0cUIxSWowYUh1SG1zY01LSmhKR2lQUzNFV0JlcG4xUXM4MXR5bWNS?=
- =?utf-8?B?M0FoTTlyeHVvR0h4VUhaR1E0NG9GNVhHOWFOR0EwMnNXWVRGdkNHcDNFTStt?=
- =?utf-8?B?cUJZQVJjbi91cmpQTFJSN0RtdzBhckR0WmhWQXVRUFVwOUV1ZWFOUDIzWTFj?=
- =?utf-8?B?SHJvNEQ4MGhYTEVKeGZBYTZKNG8wRkFBQlpHNVpxODBERVVabzdiVEFJTVF3?=
- =?utf-8?B?V2dnTnFqQzdoU0Q2Q2gvQk9tWEppL3hkaGoza0lkY0ZWOS93cXJMNFVRRENw?=
- =?utf-8?B?N253SzRoV2RtV21LNXdjYmtOWDQ1YXFGOUFxZVl4bmtQSW1MdTMvcCsyT1Vy?=
- =?utf-8?B?d1JIU0d6R29TbWhnVzc4ajRqN1BxOG95MFBDMmoyU2FRR2dIZVFiQjVGays5?=
- =?utf-8?B?TU1PQTlpMGdSbGxycE14NUNTdFFPM2RaSXFiSjl2WnFtL1E0U2dCc0pRc1F2?=
- =?utf-8?B?Vk9QWDVmYmhRdGpnQTJjMFFLTWVDbVhBTW84SEJRNnVNNmFRMEp4Z0Zud0Nk?=
- =?utf-8?B?Zi9RMVF6T2gvTGVpamRlcm1VaEtZczRVZWN5bUlMakkrZmZpUklNMWtKYnpB?=
- =?utf-8?B?cEhwTnVQZTFjN1dYLzZ0MkVlV2QxT1NreURlSStaL2dqVU12WE9PWVVLOVhm?=
- =?utf-8?B?SkcyK1YzNHBCV05meHRhVHJQYTdrZUh4YXRxdnNBZkx3cW83bVVtcFNlZDNV?=
- =?utf-8?B?M0tOT0VLQVAwcjZVdTEzOCtDTWJaNkU2Uk5OYnhGbWdxUlhwbS92U2J6RUs0?=
- =?utf-8?B?S3MzRE9tKzN1MExCWkRMOFJSRGpSNUk0bFp5ZVhEVTFSYVRDZHRpQ2p0bHlJ?=
- =?utf-8?B?Sm51eXdMZmlObXl6U2pVcTZNZ3RHZDU4VU03QUVZWWNVaVhITHBEcWVaV0xh?=
- =?utf-8?B?R1RqN08reWpwbjhUUklXYWZ4cjNoMjlWS0d5RUNtWDZBWVJ5R2RyYm8vTTlZ?=
- =?utf-8?B?ZXJEanpINTVsRlhobEV6MllMajdNcmtUZ0dNZWtaRVl4Tzg0TE9qVk50Qlow?=
- =?utf-8?B?dzBxUTJzd2ozalNUZ2VpYm42d3VRZjZmeWNsOWNJNjkyYzFvTVdqZnhZYzlI?=
- =?utf-8?B?Z042a3J5UEhBMXNnaGlaSDVBS3prQis0SGQ2UTh0WE1nWjRlQVFsOWpzSU1p?=
- =?utf-8?B?NlZyYTJ2Z1Q3S0U3SGhRaVZUNXoyNktJZE5Ea2NxeXN6UURqaGJsUHNQdnpj?=
- =?utf-8?B?VjNMc1FRSE1VUFNGdzZOWjRQTi81U2ZKbFM5Ti9KNmdWUlJHNUJtaVhGTEJr?=
- =?utf-8?B?QmJUSzc5Q3ZJdlRRVjVoNzlRKzlzU015Q3hIc004QWZJaUd1K3BqeG9LY3R3?=
- =?utf-8?B?RWJvR21FemRjM2RqSjk2TU1PaitVVUFrZlZEbDl5THhGNHJRdXE1UW84bFlR?=
- =?utf-8?B?ODd5bHRCYVJRcjNlamc1MlpSZ0UyNE1tT2ZGeUtMUmdmNU9haDd0MTNBT000?=
- =?utf-8?B?cnZyUjQzTHRGRkpmT0ZXbndkU1BMR295dDE3NUh6Qk1jNENyN0pFVkx3ZTlz?=
- =?utf-8?B?bi9kbkhGNytucjJQbnRWVEtRVTRNV1pRUHRoYUxPeXg2bW01aWpaOFVsSE5R?=
- =?utf-8?B?Z1NGand4K01zby84T2xsMjZaaGlZWGpaK3BKeG1iZ2MvaDM2Z3AwTnJ4QkE2?=
- =?utf-8?B?alBNUUFzeHptWFhLeTFsQWFRcnFLV2REaVJjY0E2NG1FU2sxWU43enRiRG9i?=
- =?utf-8?B?U2ZuemFZNWJBbWtqZFJZay8xLzVnTkFWVjdGYTZPblEvZnJFcjRnYXM1R1hy?=
- =?utf-8?B?RHhWWDJJNmdsbGVRWnlRc2tVSnMzRi9DTHErYWpER0l3SVR1MncwYitKWFEy?=
- =?utf-8?B?anVwdVY1NHZNYmVuUHVBU3hiNFYrRWZVZGg3cXk3WFNzUGZEYmtZYXBRc21s?=
- =?utf-8?B?UC9sY0tzOTZxN3pFZ3Q1cTBOc2MrclBLVGJQcmNHalZXNGJ6MC81cnNlbjUw?=
- =?utf-8?B?cTZjMW5nZmJnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SVZJUDYzaEhleWhFSkVMY0VUTlRmQlR1WUR2Wm0vMC83ek1janNkOE1CMHkx?=
- =?utf-8?B?N1VCUGtmcWpCRnVMM2JrcnY2cDhXWVhwVFNVNlZrMkorRHZiWm1mZlByUys5?=
- =?utf-8?B?L3JtVm80eDdvelArRTIwVlNKY2lpN0E0TTNCTG1laHZady81a1lOYU8ySFha?=
- =?utf-8?B?bjFzU2hMUSsyWjFZbmlsNFBrSmgzMm90WGEwYXB5MzdsMEZNaW45OHNZbktz?=
- =?utf-8?B?cGdIYkVoWmhrYlN2RjR5eUlwd01obFJkZmJOTWJZL3BaRFRDTTVGWVdiSFJo?=
- =?utf-8?B?SHF0RzNYRUNiT0ZtWkpPNll6eVNiVzloN2RoN1lIWmNiL0x2MzVwOGEzV1A1?=
- =?utf-8?B?ZUNLVHY2andQdE8yak5Bc3BtdGxzSTdJK1o4TWN4dVdxUHhsYWtjdXBFUFVm?=
- =?utf-8?B?TGJycUlyMHZoY1l6VEx0cGdkako2OVA2czROclRSVmd3bFhOMUJkS2tZd0c2?=
- =?utf-8?B?UUNhSTk2dlJKbEZDaGxON3ZiTGNXWDdreHdNT3RnK09kWHJkYWNHaGU2ZFNs?=
- =?utf-8?B?eWxVMWIwTmVsbGNRaVNyOXc1M3FsT0JIV250a2JDakhXaGFqcEw2d05YUm1I?=
- =?utf-8?B?ekNtYWw5RWVmU0taTEpIMThTbEJvUzBIUnQvKzRVRzI1SjFFTjlNeCt5OWdF?=
- =?utf-8?B?d1pzREZaUUJjZEE4NDZOQ0hUU29NVjVrY3h4cHJGOTBielkwT3FxeWplZUFS?=
- =?utf-8?B?VjRsa25ITHBTWnZSNzNHNm9uSjF0N2xtMjFlUXMxZHZTcm9RWm9WMEt1U05z?=
- =?utf-8?B?OXJqT05iOUxMSkxSUTVxc05RMkdqVzlYWCtmQVRhdmNqTW4vMktTZWlyWStD?=
- =?utf-8?B?WXRqQ3pncStZc2d2NlJLdjhZcytLcEpjV3VPZDBmbzZISUZ5QWh0OFVPbFN2?=
- =?utf-8?B?dUJ3SHMzSFJURDBBQis3eVlNRlVYTDJpZWp0VG52MTQrNklGUzB1eUxLMVk0?=
- =?utf-8?B?aytqRXlvWnhtUzNSRUNETWprVjFIOWZleWJxOFJHcWtiMHB2TEFhS29TU29H?=
- =?utf-8?B?a0VrVU15VTQ5N0l0ZVdPZ2FEV0tXZGhadmFGSnU4cWwxdkwzOG5KYVhURHZr?=
- =?utf-8?B?UldMQVlOa3BDTVVSNU41YjJoRFZTbnBOUVdQdEM0TWc3ZkxaNlZQM3ZPZVE4?=
- =?utf-8?B?RXpndzQxdHBwVTRzbStWei9yd05nUldNRFNoNDZoZXQxWFE0RG5Bb1lrbHdl?=
- =?utf-8?B?SmttVVNsNHNDVXdQVmZNbUNiVDhXZXhNbUxWVTBqVTBXd3d1ZzRCekIvSHpT?=
- =?utf-8?B?c002aU5jM1lzWnpEL2ZvSTZGeUp1bHlSSHViT1k4K3JwNEtlaG5WWlRlajVX?=
- =?utf-8?B?N0I5YWlGYjYzT0Y4bEppRS9sWjVmTHF4SXRNRlAwWTZxUnRHdkRXUElMMFZz?=
- =?utf-8?B?QXc3djhKcG5uSHpUL2tKSk1TeHZQamN1QkQzNEpPaGtXRFRSR2xVdDVtcUFo?=
- =?utf-8?B?MVJaQTdPL0Y2ajR4U2tDRjg2SkpzNmFKT0c1U2ZYSklPbFdtQUJCODlpTm4v?=
- =?utf-8?B?b29DT2tOVzBORGFhOEhjWDBsQlZPOUdHNzV2SWxpWDdUOXhwclB4d0R3Nm5J?=
- =?utf-8?B?dm9CZ0NPSDBqdkdFSjN1UmloWEdpeDJVaXAyQnFxTGtrNU1Vd21LcXl2VkFv?=
- =?utf-8?B?ODRNbjBZeTV6c3BZN1FiQjM3QkduaXB1TEdqOVVNSFFzbXVBaCtoYnRrcnJE?=
- =?utf-8?B?cVpvV3JzOVlaRUIzaVlzdU9tbXhIcHFIaWRSSmpNVVNYWE1IME1EQUtDeENZ?=
- =?utf-8?B?MW9WNGJmOHl3c2xZM3FQcEwrRzlwRW5QOFlmY0YyVDF3dzQ2dno4MFNGdUZs?=
- =?utf-8?B?VktoTVQyRStKVDhZV2J6azkxRzZPZ25GWkdJcmhxYjNsM0Izdm5zc3Ruemt0?=
- =?utf-8?B?SXRBUEhwMklnTEdpT0N5SGt2MDVuQllqVzVzanErZGVFeGQrYXVpSFdXWW5E?=
- =?utf-8?B?cEYveHNnamhWTTBOSGZYeW9xd0VIQVlPblJucWpHNGp2ZytJT3Z1bWxvd05C?=
- =?utf-8?B?MjN3a1FDczV2Wm1vZXJtK3hBT2VSSHk2cFdoSXVmV2pmd1dEQi9pYWs4NWlw?=
- =?utf-8?B?cXMyQnpHdFNSaFZza3J0MzdpZjY1aktDallQUDZzWnRHQ0pQNjVndXJrekFn?=
- =?utf-8?Q?8mP/2PpK/G4UDIu/nTPq9nGP4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0f8e02f-052a-412f-88af-08ddb5c82ebe
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 22:15:54.0815
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZBmhUwWAIhdu204lwJOvfrtSoV0ekx9+3gXhJFB+LHE7MuABmyy0oTa4AZ6u5d7PUUhmjaMVrZbqkNpKZGknkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9574
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626145040.14180-3-18255117159@163.com>
+
+Hi Hans,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus linus/master v6.16-rc3 next-20250627]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-dwc-Refactor-code-by-using-dw_pcie_clear_and_set_dword/20250627-031223
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250626145040.14180-3-18255117159%40163.com
+patch subject: [PATCH v3] PCI: dwc: Refactor code by using dw_pcie_clear_and_set_dword()
+config: arc-randconfig-001-20250628 (https://download.01.org/0day-ci/archive/20250628/202506280542.6ttkdrur-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250628/202506280542.6ttkdrur-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506280542.6ttkdrur-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/pci/controller/dwc/pcie-amd-mdb.c:21:
+   drivers/pci/controller/dwc/pcie-designware.h: In function 'dw_pcie_dbi_ro_wr_en':
+>> drivers/pci/controller/dwc/pcie-designware.h:712:2: error: implicit declaration of function 'dw_pcie_clear_and_set_dword'; did you mean 'pcie_capability_set_dword'? [-Werror=implicit-function-declaration]
+     dw_pcie_clear_and_set_dword(pci, PCIE_MISC_CONTROL_1_OFF,
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+     pcie_capability_set_dword
+   cc1: some warnings being treated as errors
 
 
-On 6/26/25 09:49, Tony Luck wrote:
-> The resctrl file system now has complete knowledge of the status
-> of every event. So there is no need for per-event function calls
-> to check.
->
-> Replace each of the resctrl_arch_is_{event}enabled() calls with
-> resctrl_is_mon_event_enabled(QOS_{EVENT}).
->
-> No functional change.
->
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+vim +712 drivers/pci/controller/dwc/pcie-designware.h
 
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+   709	
+   710	static inline void dw_pcie_dbi_ro_wr_en(struct dw_pcie *pci)
+   711	{
+ > 712		dw_pcie_clear_and_set_dword(pci, PCIE_MISC_CONTROL_1_OFF,
+   713					    0, PCIE_DBI_RO_WR_EN);
+   714	}
+   715	
 
-Thanks.
-
--Fenghua
-
-[SNIP]
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
