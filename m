@@ -1,174 +1,192 @@
-Return-Path: <linux-kernel+bounces-707230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45C7AEC184
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:52:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C04BAEC1B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 345465647C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AA7E7AFAF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1138A2ED879;
-	Fri, 27 Jun 2025 20:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECC52ED15B;
+	Fri, 27 Jun 2025 21:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="YynT5htg"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="oG7GbBEH"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9F92ECEAE;
-	Fri, 27 Jun 2025 20:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FED2F1FCB
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 21:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751057507; cv=none; b=GjW7G8mvaW9ZlOc6Ey93rr5D5qj6GxwgcNu5kcBNItLNM+lvo0DGr5D761GnhSGvym2WPcyhMlm4R1kb29HqXKDB0JWjdhqw99UZy7IXa9XnK99Cbe34xtukali1tJOJ/etXWhBWBhMORg/W2Z0KXOc9Sn8PhZ5kUGUYR7X9fT0=
+	t=1751058435; cv=none; b=VmqPi1ajfFrlTQqTe4yluHGBYYfgZsCNK4VZElr78GDbcjRtDxNhO4tV7iK8qopi10vM95HJsj8T2wVfQWoUV3yFTWlCTsIsOCY0fI4ICy4lVRtJCsu1ecDVsR515DAFqz7u3bTFmTWJLbF6g8JJnN54/L2Y0cJzYfKN7pLkLzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751057507; c=relaxed/simple;
-	bh=KjMUJVcwN4e2wA+enjyaCPLTrfrzx9wCh24MNovogHo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SxDTG4w/1tF4wOOqnTVa5dVAwanYqRLZXE9zULiIB3ZwlOa07nc0ITIK9caJABRAkfbDgLvDVRo+yeO7j65hemBSAw9tyvrOphBsn3S1H3Fe9czdykQ4k4nN+HTcCWu1NjrHZ+Mky7THoZJvALYt3usmcLe1snToDseErLDtIFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=YynT5htg; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1751057495; x=1751662295; i=w_armin@gmx.de;
-	bh=GkpwTbp/au2bsPcIPtH+WBjZffEsEK9oTVTyL1IPBHU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YynT5htgPE8317tuZqKFJNC1uaxZKWER/cdAeUgZ3y1npGClsJ8KesPFgDmx2a9R
-	 bIsA8eZADQ/UC99038GgF5OHUISl2ghtOYtM+lI4Ud+ZwcFkE3JN0UcU1nBr1v8O6
-	 A/yDgNNhSxxq1q6RkgCwlUXGlxFegVk2oW4X+gHdYYxJc29ikjQWYwbpQyRrEi1rl
-	 IgTqg4UJY8w/UpZq/80FZQROj8iOQNFOtGhbc6eLDgbk60cJSowJhTv6mGYIdSqfA
-	 O1z1CwVsbu8KcR5VOnwSGBzgykuUrB6KoL1aWgo/ZkSvitcqfg12Pg0Em+pMel0oS
-	 OHomx5rWpPmi+rm2IA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1McYCl-1v11Yp1RoD-00b5Xd; Fri, 27 Jun 2025 22:51:34 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: sre@kernel.org,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: linux-pm@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] platform/x86: dell-ddv: Fix taking the psy->extensions_sem lock twice
-Date: Fri, 27 Jun 2025 22:51:24 +0200
-Message-Id: <20250627205124.250433-3-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250627205124.250433-1-W_Armin@gmx.de>
-References: <20250627205124.250433-1-W_Armin@gmx.de>
+	s=arc-20240116; t=1751058435; c=relaxed/simple;
+	bh=az9UDJ/gRYrH+H+VpLKHbbgzpUpzTZdg3XC6oevglL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ltrdV0SYoPXYu8FqVHq5Nqg3NP9anDIEN0sNO24T+9Zfi55URJ3rgMggjzj5ra3Q6FTxv6jy1yqXPqfUWlLkz9ovhXoQDNa0PtamO9xoYHV4+0eHb/R6w4XcoNap/fquhl5wf3rYW9srrpAmKq/g3+lHJCIvbqtunuPH70trpS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=oG7GbBEH; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+X-ASG-Debug-ID: 1751057502-1cf43938a63f6730002-xx1T2L
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id VjFT7On7ZH7HhrXb; Fri, 27 Jun 2025 16:52:04 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=uG6C9McWhgD8jz/jDL4hhtu4xyNYWs1GeWI7Pl4Qt4c=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=oG7GbBEHdx1h2HpMBb2N
+	H8URICpKkEoGa2EEmk7VELHZPp/EDwEWeojhZFYKThVik0TNC3aOxpqiJliFTeOaxdB5IWcHMxO88
+	6ztkDyvTy7DxqiLma2yIszQsRGDa/NFgyca+/xzJP4AD5KXVsjfndn5mhQQ2sCHCSJMXIUwves=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14072462; Fri, 27 Jun 2025 16:52:00 -0400
+Message-ID: <7a5eeed1-fb97-48d8-9297-d6f7370c5b15@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Fri, 27 Jun 2025 16:52:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YYtU0Gp+p1hgigDy++sgnL5bdPxmPbN//p722amhc01dQ8hd5ga
- uWqaFi6LPNR776+onfaQO9a0XrmZnvrlSVf0HYlUlRhlmjxmRv1cIpYefSCtRJJxIJhJrCv
- ZULJSO2Em2SlRsw4j9HnrkVFDb8NIQs7H22ciIH3syKX809AM88ZmIMeCh5tzQ4P9iSGxd9
- 2G6KTpibnYt6kUzcxWA8Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RKO+pJ/AOfA=;YcLW8S4YG7rts4WQSj+gFOJp8Zp
- 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
- /g==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kernel: make TIF_NOTIFY_SIGNAL and core dumps co-exist
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH] kernel: make TIF_NOTIFY_SIGNAL and core dumps co-exist
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Olivier Langlois <olivier@trillion01.com>
+References: <76d3418c-e9ba-4392-858a-5da8028e3526@kernel.dk>
+ <CAHk-=wgBMNC1ePTgqM6f0iBH94KE5_oHQYD2sqCbjev0KaZ6Kw@mail.gmail.com>
+ <7fb2d8a6-951c-092c-ccaa-15522ae2ed01@kernel.dk>
+ <6d8b3c24-12d1-043f-aec8-cfdc5b2e2786@cybernetics.com>
+ <874k3qxc3i.fsf@email.froward.int.ebiederm.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <874k3qxc3i.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1751057524
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 5072
+X-Barracuda-BRTS-Status: 1
 
-Calling power_supply_get_property() inside
-dell_wmi_ddv_battery_translate() can cause a deadlock since this
-function is also being called from the power supply extension code,
-in which case psy->extensions_sem is already being held.
+On 3/22/22 11:04, Eric W. Biederman wrote:
+> Tony Battersby <tonyb@cybernetics.com> writes:
+>
+>> On 8/19/21 10:59, Jens Axboe wrote:
+>>> On 8/18/21 8:57 PM, Linus Torvalds wrote:
+>>>> On Tue, Aug 17, 2021 at 8:06 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>> task_work being added with notify == TWA_SIGNAL will utilize
+>>>>> TIF_NOTIFY_SIGNAL for signaling the targeted task that work is available.
+>>>>> If this happens while a task is going through a core dump, it'll
+>>>>> potentially disturb and truncate the dump as a signal interruption.
+>>>> This patch seems (a) buggy and (b) hacky.
+>>>>
+>>>>> --- a/kernel/task_work.c
+>>>>> +++ b/kernel/task_work.c
+>>>>> @@ -41,6 +41,12 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+>>>>>                 head = READ_ONCE(task->task_works);
+>>>>>                 if (unlikely(head == &work_exited))
+>>>>>                         return -ESRCH;
+>>>>> +               /*
+>>>>> +                * TIF_NOTIFY_SIGNAL notifications will interfere with
+>>>>> +                * a core dump in progress, reject them.
+>>>>> +                */
+>>>>> +               if (notify == TWA_SIGNAL && (task->flags & PF_SIGNALED))
+>>>>> +                       return -ESRCH;
+>>>> This basically seems to check task->flags with no serialization.
+>>>>
+>>>> I'm sure it works 99.9% of the time in practice, since you'd be really
+>>>> unlucky to hit any races, but I really don't see what the
+>>>> serialization logic is.
+>>>>
+>>>> Also, the main user that actually triggered the problem already has
+>>>>
+>>>>         if (unlikely(tsk->flags & PF_EXITING))
+>>>>                 goto fail;
+>>>>
+>>>> just above the call to task_work_add(), so this all seems very hacky indeed.
+>>>>
+>>>> Of course, I don't see what the serialization for _that_ one is either.
+>>>>
+>>>> Pls explain. You can't just randomly add tests for random flags that
+>>>> get modified by other random code.
+>>> You're absolutely right. On the io_uring side, in the current tree,
+>>> there's only one check where current != task being checked - and that's
+>>> in the poll rewait arming. That one should likely just go away. It may
+>>> be fine as it is, as it just pertains to ring exit cancelations. We want
+>>> to ensure that we don't rearm poll requests if the process is canceling
+>>> and going away. I'll take a closer look at that one.
+>>>
+>>> For this particular patch, I agree it's racy. I'll see if I can come up
+>>> with something better...
+>>>
+>> Continuing this thread from August 2021:
+>>
+>> I previously tested a version of Jens' patch backported to 5.10 and it
+>> fixed my problem.  Now I am trying to upgrade kernels, and 5.17 still
+>> has the same problem - coredumps from an io_uring program to a pipe are
+>> truncated.  Jens' patch applied to 5.17 again fixes the problem.  Has
+>> there been any progress with fixing the problem upstream?
+>>
+>> Reference:
+>>
+>> https://lore.kernel.org/all/8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com/
+>> https://lore.kernel.org/all/76d3418c-e9ba-4392-858a-5da8028e3526@kernel.dk/
+> I am still slowly working on this.  (I was unfortunately preempted by
+> some painful to track down and fix regressions elsewhere).
+>
+> When I was doubly checking to be certain I understood the problem the
+> case you describe is one of the easy cases that needs to be handled.
+>
+> There is at least one more difficult interaction that is not solved by
+> squelching task_work_add after PF_SIGNALED is set, and I am not 100%
+> convinced that it is even correct to squelch task_work_add at that point
+> in the code.
+>
+> The progress I have made to date that I am sending to Linus for v5.18 is
+> the removal of tracehook.h which makes the code much more
+> understandable.
+>
+> I think I have a general solution that I am planning to post after
+> v5.18-rc1 that I have not tested yet on the cases that I know about,
+> but I expect it will work.
+>
+> So I think that puts a good general fix 2-3 weeks out.
+>
+> This is quite possibly a case where perfection is getting in the way of
+> the good, but I honestly can't judge anything except a fix that cleans
+> up everything and is complete.  There are too many weird and subtle
+> interactions that I don't understand.
+>
+> So I am going to continue concentrating on a good general solution so
+> that the code is readable and makes sense.
+>
+> Eric
+>
+Again continuing this thread from March 2022:
 
-Fix this by using the new power_supply_get_property_direct() function
-to ignore any power supply extensions when retrieving the battery
-serial number.
+This problem has never been fixed; it is still present in 6.16-rc3.  To
+recap: core dumps from a program using io_uring get truncated,
+especially if the core is piped to a program.  I have a forward-port of
+Jen's patch that fixes it, but apparently that patch did not pass muster
+with Linus back in 2021.  Any chance of getting this fixed properly
+upstream?
 
-Tested on a Dell Inspiron 3505.
+Reference:
 
-Reported-by: Hans de Goede <hansg@kernel.org>
-Fixes: 058de163a376 ("platform/x86: dell-ddv: Implement the battery matchi=
-ng algorithm")
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/dell/dell-wmi-ddv.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+https://lore.kernel.org/all/8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com/
+https://lore.kernel.org/all/76d3418c-e9ba-4392-858a-5da8028e3526@kernel.dk/
 
-diff --git a/drivers/platform/x86/dell/dell-wmi-ddv.c b/drivers/platform/x=
-86/dell/dell-wmi-ddv.c
-index 67f3d7158403..62e3d060f038 100644
-=2D-- a/drivers/platform/x86/dell/dell-wmi-ddv.c
-+++ b/drivers/platform/x86/dell/dell-wmi-ddv.c
-@@ -689,9 +689,13 @@ static int dell_wmi_ddv_battery_translate(struct dell=
-_wmi_ddv_data *data,
-=20
- 	dev_dbg(&data->wdev->dev, "Translation cache miss\n");
-=20
--	/* Perform a translation between a ACPI battery and a battery index */
--
--	ret =3D power_supply_get_property(battery, POWER_SUPPLY_PROP_SERIAL_NUMB=
-ER, &val);
-+	/*
-+	 * Perform a translation between a ACPI battery and a battery index.
-+	 * We have to use power_supply_get_property_direct() here because this
-+	 * function will also get called from the callbacks of the power supply
-+	 * extension.
-+	 */
-+	ret =3D power_supply_get_property_direct(battery, POWER_SUPPLY_PROP_SERI=
-AL_NUMBER, &val);
- 	if (ret < 0)
- 		return ret;
-=20
-=2D-=20
-2.39.5
+Tony Battersby
+Cybernetics
 
 
