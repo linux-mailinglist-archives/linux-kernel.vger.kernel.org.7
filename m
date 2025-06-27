@@ -1,67 +1,51 @@
-Return-Path: <linux-kernel+bounces-706662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E74AEB995
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:18:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEE8AEB994
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A8C1C48681
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A357160B3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906EC2E2F16;
-	Fri, 27 Jun 2025 14:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rz4iNDCZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YUpJtwtp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6142E266C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41BC2E266E;
 	Fri, 27 Jun 2025 14:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A652E2E264B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751033873; cv=none; b=ht26HD1AgIz7RVXRvSW2b+ywYuacXEBxILMQY6BgNkzow4i13zPHzQmcajV42K1UQYwtq8+8N9pUr3jx+bf/qtGZB6yAYpLz5xcs5BRWrnueuofSV/JswxlH/52aX8eqmwMyJGhBStXZirtJvUMqxMz0MyCtqSqXfQmY71Zqy3k=
+	t=1751033871; cv=none; b=RDd4Z+vOT8iRIaB/Da/qW3ZdPjdy8gfRspu1uwW0j93G2xi69eVXsEpEKaXyOgnsOk9S4Iw0gwouYFBKnm55jQKU+3Y6kWxS7l2UxXTYVF0EKRXyG6LSm9lti5PGhUyFF5Yu5iv3RZdV2hgxZdfQ48aBLOsL08EZz9tTSn0uAEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751033873; c=relaxed/simple;
-	bh=9N4BsFtxYHDtZ6fcQvtVbeKzC3miVFJq8VROpg0ox40=;
+	s=arc-20240116; t=1751033871; c=relaxed/simple;
+	bh=SIDSxPACo3swYolhYSJkG/ZrpWuC2ELMGnQmef6BVPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VpWc2MICl/npf7tRi4Spc56F5KzqDuVUiIVOJcNvSpVgS73M4svsxGU5m/HB6kbpmcq1U6rqlbn1A9sbBwXJNr63JYIA4ohj1EGSZacDooq9pu3VFEXVdPNoChU+nbuUBAKzoR2S6Afndjnfln8OsjrgmtdoC+aMPU9TiYw4vCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rz4iNDCZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YUpJtwtp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 27 Jun 2025 16:17:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751033869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r8Ide64yaresq/HYNRHld+wPyxzNMOOriEtiS6XtR3U=;
-	b=rz4iNDCZFpMYiyWYIU5H4AxyIrulVw7rHFnmaTsHW7GLdDAi35egu9Cy/Go/z5xNpdSDuT
-	qIEeHmSnROIHZiMZhs0c5EFYaeUXB915AXIbk+LNFBSDkRGCKhUL8DG0vLbpbpTSZ+0r85
-	7+rwVae2ckT2kcTJ8HpZwUnD8b58OcqQaG0nIvsZthuBmhPP7kitkt0gbVODvZCc9TX254
-	19r1RRJcNnLT18EuFAgR5o1afFuemizjwSe/xGE46OFA1Lt38EOxZxBB0ThhN6kaV6R/sR
-	8I2fKRoLvtl2FMR0vn2fqQf1ENXYhacMf0t5vta2RGzqbEnLJzR1x6178G4WqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751033869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r8Ide64yaresq/HYNRHld+wPyxzNMOOriEtiS6XtR3U=;
-	b=YUpJtwtp9N6uCkfrsLnmHK8k9MoVqbi3i3exwveAUL8kDDRw+18ZwOXo79Jl6ESCOg6Abf
-	xgGAAyMIQazhM0Aw==
-From: Nam Cao <namcao@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	john.ogness@linutronix.de
-Subject: Re: [PATCH v10 00/19] RV: Linear temporal logic monitors for RT
- application
-Message-ID: <20250627141744.yTIdgd2m@linutronix.de>
-References: <cover.1749547399.git.namcao@linutronix.de>
- <20250627124248.fpuBrdWJ@linutronix.de>
- <20250627101631.59bd7ab0@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nAig2irvM5q0v1bjn1BJjVHUICPIhtC6YU9y0Jm9AIuNNscObWpK9QqMmAt3ShLmVeg7b0GKAKUdF/goh6Y3kqMt0C6qGwLC78/dlivqVtd6yFYDZOVA5fXXDdZc68JLu/KSQxVC/tAr2j03ySmB3Aub6iMudB0edKdgsWzP6gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5571C1A00;
+	Fri, 27 Jun 2025 07:17:31 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 252213F58B;
+	Fri, 27 Jun 2025 07:17:48 -0700 (PDT)
+Date: Fri, 27 Jun 2025 15:17:45 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, kernel@oss.qualcomm.com,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: Re: [PATCH] coresight-tmc: Add configurable timeout for flush and
+ tmcready
+Message-ID: <20250627141745.GS794930@e132581.arm.com>
+References: <20250627-flush_timeout-v1-1-2f46a8e9f842@quicinc.com>
+ <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,19 +54,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250627101631.59bd7ab0@gandalf.local.home>
+In-Reply-To: <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
 
-On Fri, Jun 27, 2025 at 10:16:31AM -0400, Steven Rostedt wrote:
-> On Fri, 27 Jun 2025 14:42:48 +0200
-> Nam Cao <namcao@linutronix.de> wrote:
+On Fri, Jun 27, 2025 at 12:23:29PM +0100, James Clark wrote:
 > 
-> > Is there any chance this series could be applied soon? I have some more
-> > patches which depend on this series, so it is holding up the show. I think
-> > Gabriele needs this applied for his patches as well.
 > 
-> I'll try to take a look at these today.
+> On 27/06/2025 12:10 pm, Yuanfang Zhang wrote:
+> > The current implementation uses a fixed timeout via
+> > coresight_timeout(), which may be insufficient when multiple
+> > sources are enabled or under heavy load, leading to TMC
+> > readiness or flush completion timeout.
+> > 
+> > This patch introduces a configurable timeout mechanism for
+> > flush and tmcready.
+> > 
+> 
+> What kind of values are you using? Is there a reason to not increase the
+> global one?
 
-Thanks!
+IIUC, this patch is related to patch [1].
 
-Nam
+It seems to me that both patches aim to address the long latency when
+flushing the TMC, but take different approaches. In the earlier patch,
+both Mike and I questioned how the timeout occurred in hardware, but
+no information provided about the cause.
+
+I would suggest that we first make clear if this is a hardware quirk or
+a common issue in Arm CoreSight.
+
+Thanks,
+Leo
+
+[1] https://lore.kernel.org/linux-arm-kernel/CAJ9a7Vgre_3mkXB_xeVx5N9BqPTa2Ai4_8E+daDZ-yAUv44A9g@mail.gmail.com/
 
