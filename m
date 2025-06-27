@@ -1,176 +1,319 @@
-Return-Path: <linux-kernel+bounces-707227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A448AEC175
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:49:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FBBBAEC181
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ECB4564444
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D738C1C2275F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E322ED856;
-	Fri, 27 Jun 2025 20:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA857223DEE;
+	Fri, 27 Jun 2025 20:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iwLKQmF/"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Ldtv7Iig"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC19C255F39;
-	Fri, 27 Jun 2025 20:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F9F2ECD11;
+	Fri, 27 Jun 2025 20:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751057346; cv=none; b=JiJI5SbikS1UoNMQOS+7vUZEjmTUjuoYPsWze+DMddwgVys+Kc+yeutVLuxIjj1Eq8icUtYxy4qOIC1tqB7KdYRgh0KteHksUORKHbhGA/MNmUNeWC7xlVSswOuwnf6LmgBI3pQlVfTBMZ+HO+F4k8jC8AMC06+0S6SF3eCBglw=
+	t=1751057505; cv=none; b=Eg4laSehJ8LOXExcKZT1u6p+hhTbsgQSvk0ZjmDqjxEtf/JMR/bgFwPfW0bTO+vhRp0ZaPBdYuhr/wkD3t5kOSF6zc79ZPo3kprX+o6sjEowrnLqtmwq7c84Al/89q3nVTBFxK36ndOsGQ1Jsp/uUiwVvTBqKlwiURuWGY79OeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751057346; c=relaxed/simple;
-	bh=sNnneumzgh8HpZ6dHQ/dWMjwjSBmUwK755TSQoE1p/A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cN0sU6htkN4KjuiXDjbplMjYAMCYaMhNwsWLNSMPM34/2R+ese5pqRLSgxAxyET8pCz/cV4aaxww9Ak+Hd7kBz2wTFjLAYaI1dgSESbZR2xpXZnUvdUUhWkwHQfelcG8k6mWeikCW/1bdrjd0Xft+FT4dpkBufwvzpu/Zy3sN/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iwLKQmF/; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RKmwlK2112130;
-	Fri, 27 Jun 2025 15:48:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751057338;
-	bh=l7Gdp8Nk60ZfRYhbL7kV9nXUPDhA4CVDa+kStehV06k=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=iwLKQmF/0Z4iRQaqC2FBfdg22yRU7fTYaVG+Vcqh4jYXONpgyQo5X6mHl15R/C+ao
-	 1np+r4hIv6he8nd5DXD0k8yy4GltBg/tcPhJceG70jPKq2Vwplmy5C0wrnTaKCJIIf
-	 X2Vkm0QxO9y6ii/0d54uM+0SBAAj5F0L+MX/wdY4=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RKmw0T783155
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 27 Jun 2025 15:48:58 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
- Jun 2025 15:48:57 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 27 Jun 2025 15:48:57 -0500
-Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RKmpWX3421525;
-	Fri, 27 Jun 2025 15:48:57 -0500
-From: Kendall Willis <k-willis@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>,
-        <ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
-        <msp@baylibre.com>, <khilman@baylibre.com>,
-        Kendall Willis <k-willis@ti.com>
-Subject: [PATCH 2/2] pmdomain: ti_sci: Add LPM abort sequence to suspend path
-Date: Fri, 27 Jun 2025 15:48:21 -0500
-Message-ID: <20250627204821.1150459-3-k-willis@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250627204821.1150459-1-k-willis@ti.com>
-References: <20250627204821.1150459-1-k-willis@ti.com>
+	s=arc-20240116; t=1751057505; c=relaxed/simple;
+	bh=Q5MfKjbjYSrHdzI3fRMl17kM6NaOgiBesjgXDepXjh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nbr4MDje9J5X01sACoAeCbvTmySyMgdUtVFRIwTqRBn/79L5g3FKaaadR8cVfNoSxepUVk6ja1TiAIspLvsfBbDAPGbe/Gs5Dmi3LOSglsmcNqoR3neOim47k0JGvWDSuZ/isvEGeRu/FOdZx/gUqSGHCxMQ3x+4XPzeHxKA3Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Ldtv7Iig; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1751057490; x=1751662290; i=w_armin@gmx.de;
+	bh=hUUsqnZQFIKQOpOknR8UAJqoZYk2LlPuCBFJSqKkl6Q=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Ldtv7Iig848QpAP5wVXd4YoO6HY4SawZhByD2INWouNKbCBWVBygP9vnCvFjzwIP
+	 GfOnmJDiSckC+grtvYwYQq0QgzGlNmb2f2wW3BS2yEE/JgBxbAoVHOupxEj8Ytsyv
+	 Gkw+p/IQnnF7zl3VCzisc4/S6AByWGjL3/mqe5GGHAs1aiGv5ELnPYlaALVdsWe9R
+	 3h8JeE0F/rFA/Y2u9UuQwXTBOg6qw1p7DSALrOFhq4UZZDbD/+mpVIhFmMqHQNwQO
+	 bA2BLE+OONDnoVRXzMc8WOBjbYKgJPT/vZAogA9FCk2vgs2daxUvEUOb/TzT1LDNP
+	 /coRDUSdqk72bVvG4w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MCKBc-1udXma11oA-00BMIX; Fri, 27 Jun 2025 22:51:30 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: sre@kernel.org,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: linux-pm@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] power: supply: core: Add power_supply_get/set_property_direct()
+Date: Fri, 27 Jun 2025 22:51:22 +0200
+Message-Id: <20250627205124.250433-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Czqf/QmY1VhuYFd4Y/U3MK9Zmg2XtuxSgMU8x5YH5gl7DQ4xiE5
+ KIgtMCMYPn9w5vdxz+1n3kWmovB0GREyPPmuh4tU6fP59uv4smeHLeMHA4oZ8tj0q/Biw0x
+ KFIinFVJxAe47SIstV73jHQoJrFjeVTPLzQvlH1Tywtg9LjBWzRclU+09H4uVGeVeJEaafI
+ bwM9F7yQzD7kQiHS8klIw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:trIV/CNFxzk=;xsZvodsyVZGd1mgcihGYZiwdHlL
+ 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
+ F5U6vA8GY/Oo1Vn/dDwF9PUf2J6U/3Vw=
 
-Create ->suspend_late() and ->suspend_noirq() hooks to add abort sequence
-to any driver within the PM domain with either of those hooks. If a driver
-fails to suspend with those hooks, add a call to the DM to abort entering
-the LPM. The suspend hooks of the PM domains driver inserts itself into
-the suspend path of all devices connected to the TI SCI PM domain. So if
-any device in the PM domain with either a ->suspend_late() or
-->suspend_noirq hook fails to suspend, the PM domain drivers suspend hook
-will send the abort call to the DM.
+Power supply extensions might want to interact with the underlying
+power supply to retrieve data like serial numbers, charging status
+and more. However doing so causes psy->extensions_sem to be locked
+twice, possibly causing a deadlock.
 
-Adding an abort call in the ->suspend() hook is not necessary. TI SCI
-suspend sends the message to the DM to prepare to enter a low power mode.
-TI SCI suspend ALWAYS occurs after the ->suspend() hook for all TI SCI
-devices has been called.
+Provide special variants of power_supply_get/set_property() that
+ignore any power supply extensions and thus do not touch the
+associated psy->extensions_sem lock.
 
-Signed-off-by: Kendall Willis <k-willis@ti.com>
----
- drivers/pmdomain/ti/ti_sci_pm_domains.c | 46 ++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+Suggested-by: Hans de Goede <hansg@kernel.org>
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/power/supply/power_supply_core.c | 82 ++++++++++++++++++++----
+ include/linux/power_supply.h             |  8 +++
+ 2 files changed, 78 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-index 82df7e44250bb..975defc16271d 100644
---- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
-+++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
-@@ -2,7 +2,7 @@
- /*
-  * TI SCI Generic Power Domain Driver
-  *
-- * Copyright (C) 2015-2017 Texas Instruments Incorporated - http://www.ti.com/
-+ * Copyright (C) 2015-2025 Texas Instruments Incorporated - http://www.ti.com/
-  *	J Keerthy <j-keerthy@ti.com>
-  *	Dave Gerlach <d-gerlach@ti.com>
-  */
-@@ -149,8 +149,47 @@ static int ti_sci_pd_suspend(struct device *dev)
- 
- 	return 0;
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supp=
+ly/power_supply_core.c
+index aedb20c1d276..e70ffedf1a80 100644
+=2D-- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -1241,9 +1241,8 @@ bool power_supply_has_property(struct power_supply *=
+psy,
+ 	return false;
+ }
+=20
+-int power_supply_get_property(struct power_supply *psy,
+-			    enum power_supply_property psp,
+-			    union power_supply_propval *val)
++static int __power_supply_get_property(struct power_supply *psy, enum pow=
+er_supply_property psp,
++				       union power_supply_propval *val, bool use_extensions)
+ {
+ 	struct power_supply_ext_registration *reg;
+=20
+@@ -1253,10 +1252,14 @@ int power_supply_get_property(struct power_supply =
+*psy,
+ 		return -ENODEV;
+ 	}
+=20
+-	scoped_guard(rwsem_read, &psy->extensions_sem) {
+-		power_supply_for_each_extension(reg, psy) {
+-			if (power_supply_ext_has_property(reg->ext, psp))
++	if (use_extensions) {
++		scoped_guard(rwsem_read, &psy->extensions_sem) {
++			power_supply_for_each_extension(reg, psy) {
++				if (!power_supply_ext_has_property(reg->ext, psp))
++					continue;
++
+ 				return reg->ext->get_property(psy, reg->ext, reg->data, psp, val);
++			}
+ 		}
+ 	}
+=20
+@@ -1267,20 +1270,49 @@ int power_supply_get_property(struct power_supply =
+*psy,
+ 	else
+ 		return -EINVAL;
  }
 +
-+static int ti_sci_pd_suspend_late(struct device *dev)
++int power_supply_get_property(struct power_supply *psy, enum power_supply=
+_property psp,
++			      union power_supply_propval *val)
 +{
-+	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-+	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-+	int ret;
-+
-+	ret = pm_generic_suspend_late(dev);
-+	if (ret) {
-+		dev_err(dev, "%s: Failed to suspend. Abort entering low power mode.\n", __func__);
-+		if (ti_sci->ops.pm_ops.lpm_abort(ti_sci))
-+			dev_err(dev, "%s: Failed to abort.\n", __func__);
-+		return ret;
-+	}
-+
-+	return 0;
++	return __power_supply_get_property(psy, psp, val, true);
 +}
-+
-+static int ti_sci_pd_suspend_noirq(struct device *dev)
+ EXPORT_SYMBOL_GPL(power_supply_get_property);
+=20
+-int power_supply_set_property(struct power_supply *psy,
+-			    enum power_supply_property psp,
+-			    const union power_supply_propval *val)
++/**
++ * power_supply_get_property_direct - Read a power supply property withou=
+t checking for extensions
++ * @psy: The power supply
++ * @psp: The power supply property to read
++ * @val: The resulting value of the power supply property
++ *
++ * Read a power supply property without taking into account any power sup=
+ply extensions registered
++ * on the given power supply. This is mostly useful for power supply exte=
+nsions that want to access
++ * their own power supply as using power_supply_get_property() directly w=
+ill result in a potential
++ * deadlock.
++ *
++ * Return: 0 on success or negative error code on failure.
++ */
++int power_supply_get_property_direct(struct power_supply *psy, enum power=
+_supply_property psp,
++				     union power_supply_propval *val)
 +{
-+	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
-+	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
-+	int ret;
-+
-+	ret = pm_generic_suspend_noirq(dev);
-+	if (ret) {
-+		dev_err(dev, "%s: Failed to suspend. Abort entering low power mode.\n", __func__);
-+		if (ti_sci->ops.pm_ops.lpm_abort(ti_sci))
-+			dev_err(dev, "%s: Failed to abort.\n", __func__);
-+		return ret;
-+	}
-+
-+	return 0;
++        return __power_supply_get_property(psy, psp, val, false);
 +}
++EXPORT_SYMBOL_GPL(power_supply_get_property_direct);
 +
++
++static int __power_supply_set_property(struct power_supply *psy, enum pow=
+er_supply_property psp,
++				       const union power_supply_propval *val, bool use_extensions)
+ {
+ 	struct power_supply_ext_registration *reg;
+=20
+ 	if (atomic_read(&psy->use_cnt) <=3D 0)
+ 		return -ENODEV;
+=20
+-	scoped_guard(rwsem_read, &psy->extensions_sem) {
+-		power_supply_for_each_extension(reg, psy) {
+-			if (power_supply_ext_has_property(reg->ext, psp)) {
++	if (use_extensions) {
++		scoped_guard(rwsem_read, &psy->extensions_sem) {
++			power_supply_for_each_extension(reg, psy) {
++				if (!power_supply_ext_has_property(reg->ext, psp))
++					continue;
++
+ 				if (reg->ext->set_property)
+ 					return reg->ext->set_property(psy, reg->ext, reg->data,
+ 								      psp, val);
+@@ -1295,8 +1327,34 @@ int power_supply_set_property(struct power_supply *=
+psy,
+=20
+ 	return psy->desc->set_property(psy, psp, val);
+ }
++
++int power_supply_set_property(struct power_supply *psy, enum power_supply=
+_property psp,
++			      const union power_supply_propval *val)
++{
++	return __power_supply_set_property(psy, psp, val, true);
++}
+ EXPORT_SYMBOL_GPL(power_supply_set_property);
+=20
++/**
++ * power_supply_set_property_direct - Write a power supply property witho=
+ut checking for extensions
++ * @psy: The power supply
++ * @psp: The power supply property to write
++ * @val: The value to write to the power supply property
++ *
++ * Write a power supply property without taking into account any power su=
+pply extensions registered
++ * on the given power supply. This is mostly useful for power supply exte=
+nsions that want to access
++ * their own power supply as using power_supply_set_property() directly w=
+ill result in a potential
++ * deadlock.
++ *
++ * Return: 0 on success or negative error code on failure.
++ */
++int power_supply_set_property_direct(struct power_supply *psy, enum power=
+_supply_property psp,
++				     const union power_supply_propval *val)
++{
++	return __power_supply_set_property(psy, psp, val, false);
++}
++EXPORT_SYMBOL_GPL(power_supply_set_property_direct);
++
+ int power_supply_property_is_writeable(struct power_supply *psy,
+ 					enum power_supply_property psp)
+ {
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 45468959dd98..f21f806bfb38 100644
+=2D-- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -878,15 +878,23 @@ static inline int power_supply_is_system_supplied(vo=
+id) { return -ENOSYS; }
+ extern int power_supply_get_property(struct power_supply *psy,
+ 			    enum power_supply_property psp,
+ 			    union power_supply_propval *val);
++int power_supply_get_property_direct(struct power_supply *psy, enum power=
+_supply_property psp,
++				     union power_supply_propval *val);
+ #if IS_ENABLED(CONFIG_POWER_SUPPLY)
+ extern int power_supply_set_property(struct power_supply *psy,
+ 			    enum power_supply_property psp,
+ 			    const union power_supply_propval *val);
++int power_supply_set_property_direct(struct power_supply *psy, enum power=
+_supply_property psp,
++				     const union power_supply_propval *val);
  #else
- #define ti_sci_pd_suspend		NULL
-+#define ti_sci_pd_suspend_late		NULL
-+#define ti_sci_pd_suspend_noirq		NULL
+ static inline int power_supply_set_property(struct power_supply *psy,
+ 			    enum power_supply_property psp,
+ 			    const union power_supply_propval *val)
+ { return 0; }
++static inline int power_supply_set_property_direct(struct power_supply *p=
+sy,
++						   enum power_supply_property psp,
++						   const union power_supply_propval *val)
++{ return 0; }
  #endif
- 
- /*
-@@ -264,6 +303,11 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
- 				    pd_provider->ti_sci->ops.pm_ops.set_latency_constraint)
- 					pd->pd.domain.ops.suspend = ti_sci_pd_suspend;
- 
-+				if (pd_provider->ti_sci->ops.pm_ops.lpm_abort) {
-+					pd->pd.domain.ops.suspend_late = ti_sci_pd_suspend_late;
-+					pd->pd.domain.ops.suspend_noirq = ti_sci_pd_suspend_noirq;
-+				}
-+
- 				pm_genpd_init(&pd->pd, NULL, true);
- 
- 				list_add(&pd->node, &pd_provider->pd_list);
--- 
-2.34.1
+ extern void power_supply_external_power_changed(struct power_supply *psy)=
+;
+=20
+=2D-=20
+2.39.5
 
 
