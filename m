@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-706342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90421AEB559
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E015DAEB5EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DADF21BC1584
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55BD176DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB5429B218;
-	Fri, 27 Jun 2025 10:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB8F2DCC14;
+	Fri, 27 Jun 2025 11:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjT5UI7V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4qRKEYA"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AB1298CB1;
-	Fri, 27 Jun 2025 10:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15842BEC4A;
+	Fri, 27 Jun 2025 11:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751021376; cv=none; b=R6NWo0LtJW4Esp5aegnmQXlG6pBEzOif+2xDDHPLIs+U39RnNGe6z2EhgLObp2HrJhBTpaxz/2D5fkUpKvW75NFxjn7WYqFTXSrgbjPNbFwH0HB7KYo0PX0Dm6jcQFyFhJiYxE0OXp4nUitj/dQBKH/R7BLPCj/iXRrFQ0P2FSE=
+	t=1751022304; cv=none; b=G1WFl3uu6/4PfBbj2MT0EUPbE9QHGIzymbCygrXmCvTPWSgfojzOSOoO552GSBkNUi7TJ1i91HvpssnL7SmiH9UW1DcPHVkOyb/hKncUUC82ZzFOW3n7hKazo/JTIZ+chZ6RD4UoxMZkxXmx7DwevLTi2T4ANPwLR+6zYIQwyhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751021376; c=relaxed/simple;
-	bh=OrBU5eBwBcoKQHllVdPOQ7ABzGCI1+juFwHu/MwINgI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BlJqKqHb6QdLMTvpsluWF0H4u3L95Qld6Js6MMdfEfg/dtw0M8DyrTaVfeH3p3xcF6DLJQNjEsSIv2OtHsIKOuKE5RERKIM+K5X27jp0Yve6k/JDcf4fHmoqDOa8OO8nl7IsfAgr7t1m5fO3x5q+wjfmURUsx5rciYn6IWcDNTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjT5UI7V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E951C4CEE3;
-	Fri, 27 Jun 2025 10:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751021375;
-	bh=OrBU5eBwBcoKQHllVdPOQ7ABzGCI1+juFwHu/MwINgI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jjT5UI7V0MN8cv7Kxou/19uR4bMLbukpmBDE6+Hvnj7C6DXS6KP8eb87VWD61mA/Y
-	 uF5D5Ct5K/Z/Mrf7cosGn/ZaRH55vKh9pgV0l27CFC1BjAimugSNJsYHaP6HKn38mj
-	 HcNcKd0L98nVNcQZyc43Vbx/6LTEUKSGNFfmkWyI3vay2c7yWc3aLakfmJD35TcU2H
-	 g5ZxBVSZ6JvEKZyRuGYVVLMhPvjBDALsYaTGrxu0d478gSF10PT/3nwtqyQQTzEOYl
-	 ieUPrTo4t1AujfFjdwRMS/egGfRxIozKJ30XKuvFCpr4zie36/nJDbhthJ8GcD5eN7
-	 3RnEyk3A+6UBA==
-From: Srinivas Kandagatla <srini@kernel.org>
-To: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Neal Gompa <neal@gompa.dev>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
- =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Arnd Bergmann <arnd@arndb.de>, Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
- linux-input@vger.kernel.org, dmaengine@vger.kernel.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
-References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
-Subject: Re: (subset) [PATCH 00/11] Drop default ARCH_APPLE from Kconfig
- and use defconfig instead
-Message-Id: <175102136780.6245.11489454367138517610.b4-ty@kernel.org>
-Date: Fri, 27 Jun 2025 11:49:27 +0100
+	s=arc-20240116; t=1751022304; c=relaxed/simple;
+	bh=4hfOjU+Xu/htgbnrO/6j06ZqG2i0jYGSE9EvifTKQ48=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=n/Dg1zWkkVA5Xd6j5LDOlCTZ3kypYGoYV+93xESzpXfRzvzPw5A75cswQzzPFBESKM0QACIYSC1jtrCUMj1htQ8uVqDBDFSuvlnuy/+G+0opCxfS1hEu7tKLkz1v1RBigyvSDiPV1TWLFFeoaKaOmdPHS5KaCPRKfXud24VrWkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4qRKEYA; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-453643020bdso17887795e9.1;
+        Fri, 27 Jun 2025 04:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751022301; x=1751627101; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hfOjU+Xu/htgbnrO/6j06ZqG2i0jYGSE9EvifTKQ48=;
+        b=V4qRKEYAJxsRWPq77zyZiGtMMORDXxOqgzneCOHEoBrTgwqh8nquoH2GMlSamoX+Nb
+         jQIIi0iyYLBkHzU9M3dQEk6lKs00CVq5JSikmApKzWrsqPOBTyalXAzcTyfodEdkreoi
+         6tdQWXNUpvRnj6B/3RXCYXe4SLQyapBN5BtKDsRls66XHPdrW5KKmdUv4vjYpExVQtf/
+         z0lTarhtpzT5ifMpk9dp9YxIxMlwYxWMLnczpLtp/xmf4oUtefulA0AMdW2A1QlRoqeD
+         I5aiidpYweXqgGapA18j14zE1hHki8dvdfzu55wVmPFajXXSa7giI1jiAr/ZcS0Z7mxb
+         13hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751022301; x=1751627101;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4hfOjU+Xu/htgbnrO/6j06ZqG2i0jYGSE9EvifTKQ48=;
+        b=wk+T4I7KGSJcGlAKZwJECnv54dyCZzESfCDEkzbNf2YmhtO9EPA+Ya61l0pPUtZCsM
+         GpM6nXp4MFOBjTKhfitP1WEbIbIwLLUTtY5VogZBp4u4HMK/D4P0i7EmsARf6dQOpbG9
+         DFuVqpVotrX3LuPc3WuOv5fEEZ0DaR7eNEJsU4eU/HA8Z4yratmfHPj5WhLRmNXqQMzl
+         eLE8U02I/8yTjFvqDQs9KY6lcueIt6Bm6vLsZ2TaoKMYOsH7k1v9FeRnwzU1HI/1rtTT
+         y8yN6nV2UxBJcFMdK0WkfrETz4JuMRwO9Z9OqLDMsJyymkY1ScvdactTWN/izcptxPYv
+         mDMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVncc904w2Eqv4vMDfKMnD3dv+rLXQuGZ0G9Gn5WRuK9CX17pKatnhub1UV0csZSz9F2MIaoWZIWMRJHYo=@vger.kernel.org, AJvYcCWcM9tRxuLhew3ST5iLf8G4KsL8wwu2UYFVFjierWXvCeeg6cicMOT9gMD4L69EJHnGRPNAqgaB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyOwZ5TrNE50vY6qlNVNQ3bDC/JxI6p8rVAjnReXiFo3o6ntLH
+	yQwm6c41HIkl7tz/XZyl0GGuDx0ixS4T9+8h70Gar9CONo6PvSdVU7dZ
+X-Gm-Gg: ASbGncvY5HZbo+f/sZzHJ95w26KXHz2L58CBkS6q+m1XF8rEjbMMiQ+cjSBHNRSwoVe
+	C1gm2ATY5qb4kmGyemKsNuhGtnSUveFe48M3mpDvZvUkXvRvULk8jxOvGqSzsQS670v+LytFtuZ
+	Q+x+joAc0ONk4v1ONMAz6aQG6O7YptS+/DmYrJIPWVupLwGOYs7dgda36r4pbSVepywRVHQzQ3v
+	aMMP75df+jzM+movCpBq8sTkE7gdksDWBT/hUVZ7VouEbTW9mXpxbFt42reDB+h4xQa3+wzc7JD
+	iFyC/QZKlJY89HpDi5Z4kY7S0cMnQLrfgMaNP59shI7wOgmrC7IZP7Mq3ubSGmz/vuCbBeokEg=
+	=
+X-Google-Smtp-Source: AGHT+IE73758IwYSE3gwQCVr5ocOcoostGM/uXpiZKDoUYwwlxSUMV3h6l1nDvdN1/+koG3pVg3tqA==
+X-Received: by 2002:a05:600c:8712:b0:451:e394:8920 with SMTP id 5b1f17b1804b1-4539341e446mr4257555e9.27.1751022300978;
+        Fri, 27 Jun 2025 04:05:00 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:40b8:18e0:8ac6:da0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c4acsm75833275e9.1.2025.06.27.04.04.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 04:05:00 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
+ Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
+  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
+  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
+  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
+  stern@rowland.harvard.edu
+Subject: Re: [PATCH v8 08/13] tools: ynl_gen_rst.py: drop support for
+ generating index files
+In-Reply-To: <95d1ed00026acbe425f036f860f7bcd1a18ce98b.1750925410.git.mchehab+huawei@kernel.org>
+Date: Fri, 27 Jun 2025 11:49:28 +0100
+Message-ID: <m2jz4x8nnr.fsf@gmail.com>
+References: <cover.1750925410.git.mchehab+huawei@kernel.org>
+	<95d1ed00026acbe425f036f860f7bcd1a18ce98b.1750925410.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-On Thu, 12 Jun 2025 21:11:24 +0000, Sven Peter wrote:
-> When support for Apple Silicon was originally upstreamed we somehow
-> started using `default ARCH_APPLE` for most drivers. arm64 defconfig
-> also contains ARCH_APPLE=y such that this will turn into `default y`
-> there by default which is neither what we want nor how this is usually
-> done.
-> Let's fix all that by dropping the default everywhere and adding the
-> drivers to defconfig as modules instead of built-ins.
-> None of these patches depend on each other so we can just take them all
-> independently through the respective subsystem trees.
-> 
-> [...]
+> As we're now using an index file with a glob, there's no need
+> to generate index files anymore.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Applied, thanks!
-
-[04/11] nvmem: apple: drop default ARCH_APPLE in Kconfig
-        commit: e426953c193a2b51c8adcd3922fb8eef15790219
-
-Best regards,
--- 
-Srinivas Kandagatla <srini@kernel.org>
-
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
