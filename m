@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-706113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF4AAEB21E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:09:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2212BAEB2A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82ACB1725B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7D0170DE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26CD293C42;
-	Fri, 27 Jun 2025 09:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FvLZoAXi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF3429617D;
+	Fri, 27 Jun 2025 09:18:17 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98483293C41
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EC5293C6E
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015261; cv=none; b=tAxSgGj+iwHcJPH8nU5Yjhq4LyVQHR21sITbS+4RVPmlAtqrbyC1NBZDsTlX2GeQ3ZLXV9y/gaK5DVKM5VNE9xUFvzCWmsamQ+GX7WCwG/DgDDGEHS4Lw/PGakNTlzxtDkF5TWmg2QMhBqV2+o2EUI+ZCd8y+RPjZXymHs2c4BM=
+	t=1751015897; cv=none; b=FX684SVy6roUQZtnz4/Nod24OqX/QbYj1dkTWQeddohTaX/bPDOPEG+YfGmhSbNwlFba/QMVTJl2xriW93BBc1gNsta1ByJtCCakfC0YCuKsQqEuVENBh9mc5uqKRgXNjfOH1giWfBngPtTuAJ7Fd84axjXraOdTIKK2at02Xi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015261; c=relaxed/simple;
-	bh=IZBBYw3vsOEnBByulARI9OMAft/HX8YpcrnjRmgF1eE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=t50Ncmzxokp1mcV5fVwthH+Az6RittoE1/kfwBZgUNryG3+Ajuzq1ferns1njOUdBKXLVxbCTlM3k8spChp9unimX4CR1Uun2+DGXfr1p2Dxzik6W3KNJshBjLJUugllO+65o0y8qi23wMtcAfdqsMfz3cI1otJ3vWpPZ24d2YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FvLZoAXi; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751015260; x=1782551260;
-  h=date:from:to:cc:subject:message-id;
-  bh=IZBBYw3vsOEnBByulARI9OMAft/HX8YpcrnjRmgF1eE=;
-  b=FvLZoAXivODKp1nWR6f2gDo5KrIG1EculKNF8lQ73ilfIzeHCzvS4hS8
-   pnMaNuqc109GTI8OzAx0BbcRuW6by2j2o0P5nCXiH+ks1vwANrkp6EaK4
-   53JaBd7HhBmHW+k6CWLCHCjjC95LyHX0SRl3VW7PLCpPSo59YdxMjjYfo
-   43ffCaMIYJr5pATYheM6GtXEE0/p2YQQMHOGWYQtspiBxjMSjuYuLxm56
-   NJjRzicUEu4QZNVnnbPJ3VVd9FjdED6Jao3rVRa2H6WtWWr/0vKmAilpG
-   1MB3GEw5aWAtUlQSbVJycYKU46khu41Ah5g5cxJcPOFtMIEsbXa/QcePW
-   A==;
-X-CSE-ConnectionGUID: STyfcLxEQ6+m+W3iMjPRZQ==
-X-CSE-MsgGUID: Y61MMWvJQ3aiaT+qVJd3Cg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="63582106"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="63582106"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 02:07:39 -0700
-X-CSE-ConnectionGUID: 9Ef9Q40YQG6nMu6DnexPQg==
-X-CSE-MsgGUID: LScHhWR6T0iFNxYZsSN49w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="152276493"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 27 Jun 2025 02:07:38 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uV53X-000W0o-0L;
-	Fri, 27 Jun 2025 09:07:35 +0000
-Date: Fri, 27 Jun 2025 17:06:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- e51a38e71974982abb3f2f16141763a1511f7a3f
-Message-ID: <202506271737.gzifUHgm-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1751015897; c=relaxed/simple;
+	bh=Izm8MqI7uCMyrD97oNc/Jc+iWnkGXHI/bYDqMxEzfW4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b3OUDZGjb/vrnNXZMf1U60YBlQl+svaK7thUEdA3Xcl0N1983341K+/stFgHYgqGznghE1zYNg6JFsaOL4WqjutLbZKjp2irmtr22AVeQ19bFIyVNyuo77PbvOFEFaflkpdKFOEt7nlZB7NMC9W+XDH2oVI4RRH3uE+nxv5khSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 55R99UtV013509
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 17:09:30 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 55R98EZA012876
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 27 Jun 2025 17:08:14 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Fri, 27 Jun 2025
+ 17:08:14 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To:
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <peterz@infradead.org>,
+        <dvhart@infradead.org>, <dave@stgolabs.net>, <andrealmeid@igalia.com>,
+        <shuah@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <tim609@andestech.com>,
+        Ben Zong-You Xie
+	<ben717@andestech.com>,
+        Cynthia Huang <cynthia@andestech.com>
+Subject: [PATCH v2] selftests: futex: define SYS_futex on 32-bit architectures with 64-bit time_t
+Date: Fri, 27 Jun 2025 17:08:12 +0800
+Message-ID: <20250627090812.937939-1-ben717@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 55R99UtV013509
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: e51a38e71974982abb3f2f16141763a1511f7a3f  Merge x86/bugs into tip/master
+glibc does not define SYS_futex for 32-bit architectures using 64-bit
+time_t e.g. riscv32, therefore this test fails to compile since it does not
+find SYS_futex in C library headers. Define SYS_futex as SYS_futex_time64
+in this situation to ensure successful compilation and compatibility.
 
-elapsed time: 1152m
+Signed-off-by: Cynthia Huang <cynthia@andestech.com>
+Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+---
+Changes since v1:
+  - Fix the SOB chain
 
-configs tested: 20
-configs skipped: 156
+v1 : https://lore.kernel.org/all/20250527093536.3646143-1-ben717@andestech.com/
+---
+ tools/testing/selftests/futex/include/futextest.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+diff --git a/tools/testing/selftests/futex/include/futextest.h b/tools/testing/selftests/futex/include/futextest.h
+index ddbcfc9b7bac..7a5fd1d5355e 100644
+--- a/tools/testing/selftests/futex/include/futextest.h
++++ b/tools/testing/selftests/futex/include/futextest.h
+@@ -47,6 +47,17 @@ typedef volatile u_int32_t futex_t;
+ 					 FUTEX_PRIVATE_FLAG)
+ #endif
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250626    clang-20
-i386    buildonly-randconfig-002-20250626    clang-20
-i386    buildonly-randconfig-003-20250626    clang-20
-i386    buildonly-randconfig-004-20250626    clang-20
-i386    buildonly-randconfig-005-20250626    clang-20
-i386    buildonly-randconfig-006-20250626    clang-20
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250627    clang-20
-x86_64  buildonly-randconfig-002-20250627    clang-20
-x86_64  buildonly-randconfig-003-20250627    clang-20
-x86_64  buildonly-randconfig-004-20250627    clang-20
-x86_64  buildonly-randconfig-005-20250627    gcc-12
-x86_64  buildonly-randconfig-006-20250627    gcc-12
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-18
-
++/*
++ * SYS_futex is expected from system C library, in glibc some 32-bit
++ * architectures (e.g. RV32) are using 64-bit time_t, therefore it doesn't have
++ * SYS_futex defined but just SYS_futex_time64. Define SYS_futex as
++ * SYS_futex_time64 in this situation to ensure the compilation and the
++ * compatibility.
++ */
++#if !defined(SYS_futex) && defined(SYS_futex_time64)
++#define SYS_futex SYS_futex_time64
++#endif
++
+ /**
+  * futex() - SYS_futex syscall wrapper
+  * @uaddr:	address of first futex
 --
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
 
