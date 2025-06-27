@@ -1,645 +1,145 @@
-Return-Path: <linux-kernel+bounces-705820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B54AEAE2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 044C8AEAE30
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82F04E0E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:54:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5432B4E1104
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C31A1DB548;
-	Fri, 27 Jun 2025 04:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4911DC9B5;
+	Fri, 27 Jun 2025 04:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mymVmmFu"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n4Cv2HTp"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE931D5CF2
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38031DB548
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751000041; cv=none; b=hHrE1JT/wQ/wejCJEIexs9rKwYPCY3mp1FIik+2nr6W849AJfZ3JfnQLkeNOYxgbItGXBN8rJ/VujUelWO/PghHswMnRBMG8aqR/Gccup5Vk4l6IG1b3UEhH29H887NtR7QFG5KWYy8LsDdpgXZvyS3MyUmPnI92BHfNSWemvIY=
+	t=1751000061; cv=none; b=pKt9/cMwKQIjoE/9SoLqwC/ItilCM4zjozvylHXGTOaV/9+lMbCN7DQzFCp5mQ/T2ICveoRdwBdgtQxh7GSgNhoFYwU7tw1TIlrR4aPmaWC0U1Bjm6sz8Z6IbApvl1wkQSRj1whqljpLyicucDlxypwLyLLJKT/JVz1AMKP4dpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751000041; c=relaxed/simple;
-	bh=483uB6UzX2TgzfCyZzzGHymgeL//x7AkYDxxGnp6K6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZvOZ8EYiqtV/Zw8jM1iCB/5HCJYleSQDDHsHf1i9RN2qRrfAUQkkn2WJv80jCUgf3yUaMQXZhe8prbv0ciIbqo5geNTaCk44ZHnvHh7UD3k0i4ZakLOo8xvH2ViEFoMee4ZE/8amoKUk971WlampBzbZNukmf8x0jUhrLiqHNE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mymVmmFu; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-237f270513bso74695ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751000038; x=1751604838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DtGyqXmElvAld4zBVXkgxOmHALsnPQCTadiFmCBdWaw=;
-        b=mymVmmFuNagM1bLnkwA+QbAnjJj+KRJhvyTIKF9bews5RIiU1XZwrk1H3SrXo3Gx6Z
-         ZskB5VCFyx5RZcVZTVlyQeDI4Wi4KoJ6EQ5A9Q9K7SbP2Gdfi+l/IgYbK7xUh3KvIoYE
-         GWuLe7PhTHskq5QVvt5aTE2ymgEnR7FoTHMiDCeiV09lmnur78TQJrZHyPEmU2Mure+s
-         42kaaW4Dmk3cZeTCifLpFK+V9z4+BdaO1qi0KM/sN2m3fm25+xFKDGMZUTctW5eMsp8L
-         6mADiyU+sK02PXFgpecvGc/1OdvUaiHKZ3VrK3BGYdZSS6b8L/wlaqQfuNVFdBw1oPsS
-         +RkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751000038; x=1751604838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DtGyqXmElvAld4zBVXkgxOmHALsnPQCTadiFmCBdWaw=;
-        b=GHcGrhheA2Z7XDGnj0DOb0GttQyEiTWHkgKljVN1Zhg+VCeDjVJB7uTFWWC8bfUNon
-         FsxtBU6I6tT8O5KdH34wCr13NYCBeSFzgxeQrFNGgVEKFzzdKTg2deFqEa7yahW5FJqa
-         P0japjduwcjPBlxN27pLGVACOaKb/tilDsVNLuEHS3eG24fruDzPMu34vYGVTykO4ows
-         w3NDjKWozrj9+ZMt9T/rofxycMCwDE7igIedwmpxYvdE3qwD7ACd55w2/a5gavwWEPdP
-         uGeOoawmiB/8Jap51OBX8yzk2NnymNJNZU8zoNLQtfAae0BD1OAGZ8PdRsPqVoja695a
-         SKNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUI2SzIAudQbZBoHBO8RuvupOuaYMCDgqLYxnTlTFUlC9Cp9Oa9aQ/+4KNSph6gxLgUDRqX71ZCQN+/ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1FCI5mVt5qIWxwndIz0Ow7WFLE7cWbkIQsRKLkHybcj5iqtpS
-	ccNfY1FerOz1t+2jDBWxc9xwoFU2Z5qqHLjxIPaOGw/S5YyqPlkNblger6ZSViXYbV3PjdMkOwh
-	if6ONSbVJdCEFatIKUhomHubpP+gVNy/SwYqbbefp
-X-Gm-Gg: ASbGnctsyH3J1SMW/0UcKfMHHGwBAx13qm1pef5TWt+zpW7C4e/5oRQWXZWUApNAvIs
-	das4O1SSYWFVlV2uOOOfZKnw95p/2r2ypKPhmbiBD0gnUkrs3nds7acV1ejHHi8vZNxipyMud+n
-	+mfBCrePSmdHG3DlCR1wgUaIaCNYBYoPUWyArH8ZXDZK/o
-X-Google-Smtp-Source: AGHT+IFzJBBQmFYQ7cI3zeLxgkj3kZjv08y1P1BPNH+vs22PKstYf/pcm/7eHWqo/C7HnJCN2nOoS4/62QqjCLEYKY0=
-X-Received: by 2002:a17:903:1b04:b0:22c:3cda:df11 with SMTP id
- d9443c01a7336-23ac4be08camr1874065ad.10.1751000038176; Thu, 26 Jun 2025
- 21:53:58 -0700 (PDT)
+	s=arc-20240116; t=1751000061; c=relaxed/simple;
+	bh=Mn91nD8N81a4I8LV9JExL3dkijp9Nz+10fd1guOSSOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lwAsYSs8LaLJ1E7H3Kk7Zjb9l9i6QL4KPyMGMsUc4YBnBnoZn2otF9I5od4Ajzf/dGAZp5b39IaS+2kBngckwNuNlEFJno7wR2frlqZ/EpjGRqNwdkyvgb4mLTMA3ullOcqSzflcPwwHqfwyfTSR+m9mjSD1qOWO9OaIh88NGTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=n4Cv2HTp; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dbcc14cc-abfa-4486-a642-2fe97b4a0ef3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751000044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9a2vQ9ByAahXjvmC4vFJM4DGyfQ2okDu7nWB7feKJaE=;
+	b=n4Cv2HTpgZ1pNqF5WzeMnnw8nyricFS+9qorvbjBMQH3ClH24QQ0iCthatcYUB5USRYdJN
+	x4MYqa37vwXC4fJ0d6a96l9KnH30YgSV6UVSJvuWQxY15MHFCL4xTcaXOD43iqcSyrkTHa
+	g/JA9erJRhMfxhgrMhQiiQr6AuCRVrU=
+Date: Thu, 26 Jun 2025 21:53:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250417230740.86048-1-irogers@google.com> <20250417230740.86048-7-irogers@google.com>
- <aF3Vd0C-7jqZwz91@google.com>
-In-Reply-To: <aF3Vd0C-7jqZwz91@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 26 Jun 2025 21:53:45 -0700
-X-Gm-Features: Ac12FXx6BrCLeEYICFnuYkeyjAzfSWOJvLC5yE48R4tIzxAMokm7LIFabW4mKME
-Message-ID: <CAP-5=fV4x0q7YdeYJd6GAHXd48Qochpa-+jq5jsRJWK36v7rSA@mail.gmail.com>
-Subject: Re: [PATCH v4 06/19] perf capstone: Support for dlopen-ing libcapstone.so
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Aditya Gupta <adityag@linux.ibm.com>, "Steinar H. Gunderson" <sesse@google.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Changbin Du <changbin.du@huawei.com>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, James Clark <james.clark@linaro.org>, 
-	Kajol Jain <kjain@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Li Huafei <lihuafei1@huawei.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Andi Kleen <ak@linux.intel.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	llvm@lists.linux.dev, Song Liu <song@kernel.org>, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [syzbot] [rdma?] WARNING in rxe_skb_tx_dtor
+To: syzbot <syzbot+8425ccfb599521edb153@syzkaller.appspotmail.com>,
+ jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ zyjzyj2000@gmail.com
+References: <685e168e.a00a0220.2e5631.03f4.GAE@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <685e168e.a00a0220.2e5631.03f4.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jun 26, 2025 at 4:19=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+#syz test: https://github.com/zhuyj/linux.git v6.16_fix_rxe_skb_tx_dtor
+
+在 2025/6/26 20:57, syzbot 写道:
+> Hello,
 >
-> On Thu, Apr 17, 2025 at 04:07:27PM -0700, Ian Rogers wrote:
-> > If perf wasn't built against libcapstone, no HAVE_LIBCAPSTONE_SUPPORT,
-> > support dlopen-ing libcapstone.so and then calling the necessary
-> > functions by looking them up using dlsym. Reverse engineer the types
-> > in the API using pahole, adding only what's used in the perf code or
-> > necessary for the sake of struct size and alignment.
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in rxe_skb_tx_dtor
 >
-> I still think it's simpler to require capstone headers at build time and
-> add LIBCAPSTONE_DYNAMIC=3D1 or something to support dlopen.
-
-I agree, having a header file avoids the need to declare the header
-file values. This is simpler. Can we make the build require
-libcapstone and libLLVM in the same way that libtraceevent is
-required? That is you have to explicitly build with NO_LIBTRACEEVENT=3D1
-to get a no libtraceevent build to succeed. If we don't do this then
-having LIBCAPSTONE_DYNAMIC will most likely be an unused option and
-not worth carrying in the code base, I think that's sad. If we require
-the libraries I don't like the idea of people arguing, "why do I need
-to install libcapstone and libLLVM just to get the kernel/perf to
-build now?" The non-simple, but still not very complex, approach taken
-here was taken as a compromise to get the best result (a perf that
-gets faster, BPF support, .. when libraries are available without
-explicitly depending on them) while trying not to offend kernel
-developers who are often trying to build on minimal systems.
-
-Thanks,
-Ian
-
-> Thanks,
-> Namhyung
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 3034 at drivers/infiniband/sw/rxe/rxe_net.c:357 rxe_skb_tx_dtor+0x8b/0x2a0 drivers/infiniband/sw/rxe/rxe_net.c:357
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 3034 Comm: kworker/u4:10 Not tainted 6.16.0-rc3-syzkaller-ge9ef70b277ad #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Workqueue: rxe_wq do_work
+> RIP: 0010:rxe_skb_tx_dtor+0x8b/0x2a0 drivers/infiniband/sw/rxe/rxe_net.c:357
+> Code: 80 3c 20 00 74 08 4c 89 ff e8 c1 64 81 f9 4d 8b 37 44 89 f6 83 e6 01 31 ff e8 d1 e5 1d f9 41 f6 c6 01 75 0e e8 e6 e0 1d f9 90 <0f> 0b 90 e9 b4 01 00 00 4c 89 ff e8 45 97 fd 01 48 89 c7 be 0e 00
+> RSP: 0018:ffffc900000079e8 EFLAGS: 00010246
+> RAX: ffffffff88a26d8a RBX: ffff8880560d4500 RCX: ffff88801f722440
+> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff887bc1c4
+> R10: dffffc0000000000 R11: ffffffff88a26d00 R12: dffffc0000000000
+> R13: 1ffff1100ac1a8ab R14: 0000000000025820 R15: ffff888033440000
+> FS:  0000000000000000(0000) GS:ffff88808d250000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f5e595acfc8 CR3: 0000000056029000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <IRQ>
+>   skb_release_head_state+0x101/0x250 net/core/skbuff.c:1139
+>   napi_consume_skb+0xd2/0x1e0 net/core/skbuff.c:-1
+>   e1000_unmap_and_free_tx_resource drivers/net/ethernet/intel/e1000/e1000_main.c:1972 [inline]
+>   e1000_clean_tx_irq drivers/net/ethernet/intel/e1000/e1000_main.c:3864 [inline]
+>   e1000_clean+0x49d/0x2b00 drivers/net/ethernet/intel/e1000/e1000_main.c:3805
+>   __napi_poll+0xc7/0x480 net/core/dev.c:7414
+>   napi_poll net/core/dev.c:7478 [inline]
+>   net_rx_action+0x707/0xe30 net/core/dev.c:7605
+>   handle_softirqs+0x286/0x870 kernel/softirq.c:579
+>   do_softirq+0xec/0x180 kernel/softirq.c:480
+>   </IRQ>
+>   <TASK>
+>   __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+>   local_bh_enable include/linux/bottom_half.h:33 [inline]
+>   __neigh_event_send+0x9b/0x1560 net/core/neighbour.c:1194
+>   neigh_event_send_probe include/net/neighbour.h:463 [inline]
+>   neigh_event_send include/net/neighbour.h:469 [inline]
+>   neigh_resolve_output+0x198/0x750 net/core/neighbour.c:1496
+>   neigh_output include/net/neighbour.h:539 [inline]
+>   ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
+>   __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
+>   ip6_finish_output+0x234/0x7d0 net/ipv6/ip6_output.c:226
+>   rxe_send drivers/infiniband/sw/rxe/rxe_net.c:391 [inline]
+>   rxe_xmit_packet+0x79e/0xa30 drivers/infiniband/sw/rxe/rxe_net.c:450
+>   rxe_requester+0x1fea/0x3d20 drivers/infiniband/sw/rxe/rxe_req.c:805
+>   rxe_sender+0x16/0x50 drivers/infiniband/sw/rxe/rxe_req.c:839
+>   do_task drivers/infiniband/sw/rxe/rxe_task.c:127 [inline]
+>   do_work+0x1b4/0x6c0 drivers/infiniband/sw/rxe/rxe_task.c:187
+>   process_one_work kernel/workqueue.c:3238 [inline]
+>   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+>   kthread+0x70e/0x8a0 kernel/kthread.c:464
+>   ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>   </TASK>
 >
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/capstone.c | 287 ++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 248 insertions(+), 39 deletions(-)
-> >
-> > diff --git a/tools/perf/util/capstone.c b/tools/perf/util/capstone.c
-> > index c9845e4d8781..8d65c7a55a8b 100644
-> > --- a/tools/perf/util/capstone.c
-> > +++ b/tools/perf/util/capstone.c
-> > @@ -11,19 +11,249 @@
-> >  #include "print_insn.h"
-> >  #include "symbol.h"
-> >  #include "thread.h"
-> > +#include <dlfcn.h>
-> >  #include <fcntl.h>
-> > +#include <inttypes.h>
-> >  #include <string.h>
-> >
-> >  #ifdef HAVE_LIBCAPSTONE_SUPPORT
-> >  #include <capstone/capstone.h>
-> > +#else
-> > +typedef size_t csh;
-> > +enum cs_arch {
-> > +     CS_ARCH_ARM =3D 0,
-> > +     CS_ARCH_ARM64 =3D 1,
-> > +     CS_ARCH_X86 =3D 3,
-> > +     CS_ARCH_SYSZ =3D 6,
-> > +};
-> > +enum cs_mode {
-> > +     CS_MODE_ARM =3D 0,
-> > +     CS_MODE_32 =3D 1 << 2,
-> > +     CS_MODE_64 =3D 1 << 3,
-> > +     CS_MODE_V8 =3D 1 << 6,
-> > +     CS_MODE_BIG_ENDIAN =3D 1 << 31,
-> > +};
-> > +enum cs_opt_type {
-> > +     CS_OPT_SYNTAX =3D 1,
-> > +     CS_OPT_DETAIL =3D 2,
-> > +};
-> > +enum cs_opt_value {
-> > +     CS_OPT_SYNTAX_ATT =3D 2,
-> > +     CS_OPT_ON =3D 3,
-> > +};
-> > +enum cs_err {
-> > +     CS_ERR_OK =3D 0,
-> > +     CS_ERR_HANDLE =3D 3,
-> > +};
-> > +enum x86_op_type {
-> > +     X86_OP_IMM =3D 2,
-> > +     X86_OP_MEM =3D 3,
-> > +};
-> > +enum x86_reg {
-> > +     X86_REG_RIP =3D 41,
-> > +};
-> > +typedef int32_t x86_avx_bcast;
-> > +struct x86_op_mem {
-> > +     enum x86_reg segment;
-> > +     enum x86_reg base;
-> > +     enum x86_reg index;
-> > +     int scale;
-> > +     int64_t disp;
-> > +};
-> > +
-> > +struct cs_x86_op {
-> > +     enum x86_op_type type;
-> > +     union {
-> > +             enum x86_reg  reg;
-> > +             int64_t imm;
-> > +             struct x86_op_mem mem;
-> > +     };
-> > +     uint8_t size;
-> > +     uint8_t access;
-> > +     x86_avx_bcast avx_bcast;
-> > +     bool avx_zero_opmask;
-> > +};
-> > +struct cs_x86_encoding {
-> > +     uint8_t modrm_offset;
-> > +     uint8_t disp_offset;
-> > +     uint8_t disp_size;
-> > +     uint8_t imm_offset;
-> > +     uint8_t imm_size;
-> > +};
-> > +typedef int32_t  x86_xop_cc;
-> > +typedef int32_t  x86_sse_cc;
-> > +typedef int32_t  x86_avx_cc;
-> > +typedef int32_t  x86_avx_rm;
-> > +struct cs_x86 {
-> > +     uint8_t prefix[4];
-> > +     uint8_t opcode[4];
-> > +     uint8_t rex;
-> > +     uint8_t addr_size;
-> > +     uint8_t modrm;
-> > +     uint8_t sib;
-> > +     int64_t disp;
-> > +     enum x86_reg sib_index;
-> > +     int8_t sib_scale;
-> > +     enum x86_reg sib_base;
-> > +     x86_xop_cc xop_cc;
-> > +     x86_sse_cc sse_cc;
-> > +     x86_avx_cc avx_cc;
-> > +     bool avx_sae;
-> > +     x86_avx_rm avx_rm;
-> > +     union {
-> > +             uint64_t eflags;
-> > +             uint64_t fpu_flags;
-> > +     };
-> > +     uint8_t op_count;
-> > +     struct cs_x86_op operands[8];
-> > +     struct cs_x86_encoding encoding;
-> > +};
-> > +struct cs_detail {
-> > +     uint16_t regs_read[12];
-> > +     uint8_t regs_read_count;
-> > +     uint16_t regs_write[20];
-> > +     uint8_t regs_write_count;
-> > +     uint8_t groups[8];
-> > +     uint8_t groups_count;
-> > +
-> > +     union {
-> > +             struct cs_x86 x86;
-> > +     };
-> > +};
-> > +struct cs_insn {
-> > +     unsigned int id;
-> > +     uint64_t address;
-> > +     uint16_t size;
-> > +     uint8_t bytes[16];
-> > +     char mnemonic[32];
-> > +     char op_str[160];
-> > +     struct cs_detail *detail;
-> > +};
-> > +#endif
-> > +
-> > +#ifndef HAVE_LIBCAPSTONE_SUPPORT
-> > +static void *perf_cs_dll_handle(void)
-> > +{
-> > +     static bool dll_handle_init;
-> > +     static void *dll_handle;
-> > +
-> > +     if (!dll_handle_init) {
-> > +             dll_handle_init =3D true;
-> > +             dll_handle =3D dlopen("libcapstone.so", RTLD_LAZY);
-> > +             if (!dll_handle)
-> > +                     pr_debug("dlopen failed for libcapstone.so\n");
-> > +     }
-> > +     return dll_handle;
-> > +}
-> > +#endif
-> > +
-> > +static enum cs_err perf_cs_open(enum cs_arch arch, enum cs_mode mode, =
-csh *handle)
-> > +{
-> > +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > +     return cs_open(arch, mode, handle);
-> > +#else
-> > +     static bool fn_init;
-> > +     static enum cs_err (*fn)(enum cs_arch arch, enum cs_mode mode, cs=
-h *handle);
-> > +
-> > +     if (!fn_init) {
-> > +             fn =3D dlsym(perf_cs_dll_handle(), "cs_open");
-> > +             if (!fn)
-> > +                     pr_debug("dlsym failed for cs_open\n");
-> > +             fn_init =3D true;
-> > +     }
-> > +     if (!fn)
-> > +             return CS_ERR_HANDLE;
-> > +     return fn(arch, mode, handle);
-> > +#endif
-> > +}
-> > +
-> > +static enum cs_err perf_cs_option(csh handle, enum cs_opt_type type, s=
-ize_t value)
-> > +{
-> > +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > +     return cs_option(handle, type, value);
-> > +#else
-> > +     static bool fn_init;
-> > +     static enum cs_err (*fn)(csh handle, enum cs_opt_type type, size_=
-t value);
-> > +
-> > +     if (!fn_init) {
-> > +             fn =3D dlsym(perf_cs_dll_handle(), "cs_option");
-> > +             if (!fn)
-> > +                     pr_debug("dlsym failed for cs_option\n");
-> > +             fn_init =3D true;
-> > +     }
-> > +     if (!fn)
-> > +             return CS_ERR_HANDLE;
-> > +     return fn(handle, type, value);
-> > +#endif
-> > +}
-> > +
-> > +static size_t perf_cs_disasm(csh handle, const uint8_t *code, size_t c=
-ode_size,
-> > +                     uint64_t address, size_t count, struct cs_insn **=
-insn)
-> > +{
-> > +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > +     return cs_disasm(handle, code, code_size, address, count, insn);
-> > +#else
-> > +     static bool fn_init;
-> > +     static enum cs_err (*fn)(csh handle, const uint8_t *code, size_t =
-code_size,
-> > +                              uint64_t address, size_t count, struct c=
-s_insn **insn);
-> > +
-> > +     if (!fn_init) {
-> > +             fn =3D dlsym(perf_cs_dll_handle(), "cs_disasm");
-> > +             if (!fn)
-> > +                     pr_debug("dlsym failed for cs_disasm\n");
-> > +             fn_init =3D true;
-> > +     }
-> > +     if (!fn)
-> > +             return CS_ERR_HANDLE;
-> > +     return fn(handle, code, code_size, address, count, insn);
-> >  #endif
-> > +}
-> >
-> > +static void perf_cs_free(struct cs_insn *insn, size_t count)
-> > +{
-> >  #ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > +     cs_free(insn, count);
-> > +#else
-> > +     static bool fn_init;
-> > +     static void (*fn)(struct cs_insn *insn, size_t count);
-> > +
-> > +     if (!fn_init) {
-> > +             fn =3D dlsym(perf_cs_dll_handle(), "cs_free");
-> > +             if (!fn)
-> > +                     pr_debug("dlsym failed for cs_free\n");
-> > +             fn_init =3D true;
-> > +     }
-> > +     if (!fn)
-> > +             return;
-> > +     fn(insn, count);
-> > +#endif
-> > +}
-> > +
-> > +static enum cs_err perf_cs_close(csh *handle)
-> > +{
-> > +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > +     return cs_close(handle);
-> > +#else
-> > +     static bool fn_init;
-> > +     static enum cs_err (*fn)(csh *handle);
-> > +
-> > +     if (!fn_init) {
-> > +             fn =3D dlsym(perf_cs_dll_handle(), "cs_close");
-> > +             if (!fn)
-> > +                     pr_debug("dlsym failed for cs_close\n");
-> > +             fn_init =3D true;
-> > +     }
-> > +     if (!fn)
-> > +             return CS_ERR_HANDLE;
-> > +     return fn(handle);
-> > +#endif
-> > +}
-> > +
-> >  static int capstone_init(struct machine *machine, csh *cs_handle, bool=
- is64,
-> >                        bool disassembler_style)
-> >  {
-> > -     cs_arch arch;
-> > -     cs_mode mode;
-> > +     enum cs_arch arch;
-> > +     enum cs_mode mode;
-> >
-> >       if (machine__is(machine, "x86_64") && is64) {
-> >               arch =3D CS_ARCH_X86;
-> > @@ -44,7 +274,7 @@ static int capstone_init(struct machine *machine, cs=
-h *cs_handle, bool is64,
-> >               return -1;
-> >       }
-> >
-> > -     if (cs_open(arch, mode, cs_handle) !=3D CS_ERR_OK) {
-> > +     if (perf_cs_open(arch, mode, cs_handle) !=3D CS_ERR_OK) {
-> >               pr_warning_once("cs_open failed\n");
-> >               return -1;
-> >       }
-> > @@ -56,27 +286,25 @@ static int capstone_init(struct machine *machine, =
-csh *cs_handle, bool is64,
-> >                * is set via annotation args
-> >                */
-> >               if (disassembler_style)
-> > -                     cs_option(*cs_handle, CS_OPT_SYNTAX, CS_OPT_SYNTA=
-X_ATT);
-> > +                     perf_cs_option(*cs_handle, CS_OPT_SYNTAX, CS_OPT_=
-SYNTAX_ATT);
-> >               /*
-> >                * Resolving address operands to symbols is implemented
-> >                * on x86 by investigating instruction details.
-> >                */
-> > -             cs_option(*cs_handle, CS_OPT_DETAIL, CS_OPT_ON);
-> > +             perf_cs_option(*cs_handle, CS_OPT_DETAIL, CS_OPT_ON);
-> >       }
-> >
-> >       return 0;
-> >  }
-> > -#endif
-> >
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > -static size_t print_insn_x86(struct thread *thread, u8 cpumode, cs_ins=
-n *insn,
-> > +static size_t print_insn_x86(struct thread *thread, u8 cpumode, struct=
- cs_insn *insn,
-> >                            int print_opts, FILE *fp)
-> >  {
-> >       struct addr_location al;
-> >       size_t printed =3D 0;
-> >
-> >       if (insn->detail && insn->detail->x86.op_count =3D=3D 1) {
-> > -             cs_x86_op *op =3D &insn->detail->x86.operands[0];
-> > +             struct cs_x86_op *op =3D &insn->detail->x86.operands[0];
-> >
-> >               addr_location__init(&al);
-> >               if (op->type =3D=3D X86_OP_IMM &&
-> > @@ -94,7 +322,6 @@ static size_t print_insn_x86(struct thread *thread, =
-u8 cpumode, cs_insn *insn,
-> >       printed +=3D fprintf(fp, "%s %s", insn[0].mnemonic, insn[0].op_st=
-r);
-> >       return printed;
-> >  }
-> > -#endif
-> >
-> >
-> >  ssize_t capstone__fprintf_insn_asm(struct machine *machine __maybe_unu=
-sed,
-> > @@ -105,9 +332,8 @@ ssize_t capstone__fprintf_insn_asm(struct machine *=
-machine __maybe_unused,
-> >                                  uint64_t ip __maybe_unused, int *lenp =
-__maybe_unused,
-> >                                  int print_opts __maybe_unused, FILE *f=
-p __maybe_unused)
-> >  {
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> >       size_t printed;
-> > -     cs_insn *insn;
-> > +     struct cs_insn *insn;
-> >       csh cs_handle;
-> >       size_t count;
-> >       int ret;
-> > @@ -117,7 +343,7 @@ ssize_t capstone__fprintf_insn_asm(struct machine *=
-machine __maybe_unused,
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > -     count =3D cs_disasm(cs_handle, code, code_size, ip, 1, &insn);
-> > +     count =3D perf_cs_disasm(cs_handle, code, code_size, ip, 1, &insn=
-);
-> >       if (count > 0) {
-> >               if (machine__normalized_is(machine, "x86"))
-> >                       printed =3D print_insn_x86(thread, cpumode, &insn=
-[0], print_opts, fp);
-> > @@ -125,20 +351,16 @@ ssize_t capstone__fprintf_insn_asm(struct machine=
- *machine __maybe_unused,
-> >                       printed =3D fprintf(fp, "%s %s", insn[0].mnemonic=
-, insn[0].op_str);
-> >               if (lenp)
-> >                       *lenp =3D insn->size;
-> > -             cs_free(insn, count);
-> > +             perf_cs_free(insn, count);
-> >       } else {
-> >               printed =3D -1;
-> >       }
-> >
-> > -     cs_close(&cs_handle);
-> > +     perf_cs_close(&cs_handle);
-> >       return printed;
-> > -#else
-> > -     return -1;
-> > -#endif
-> >  }
-> >
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > -static void print_capstone_detail(cs_insn *insn, char *buf, size_t len=
-,
-> > +static void print_capstone_detail(struct cs_insn *insn, char *buf, siz=
-e_t len,
-> >                                 struct annotate_args *args, u64 addr)
-> >  {
-> >       int i;
-> > @@ -153,7 +375,7 @@ static void print_capstone_detail(cs_insn *insn, ch=
-ar *buf, size_t len,
-> >               return;
-> >
-> >       for (i =3D 0; i < insn->detail->x86.op_count; i++) {
-> > -             cs_x86_op *op =3D &insn->detail->x86.operands[i];
-> > +             struct cs_x86_op *op =3D &insn->detail->x86.operands[i];
-> >               u64 orig_addr;
-> >
-> >               if (op->type !=3D X86_OP_MEM)
-> > @@ -194,9 +416,7 @@ static void print_capstone_detail(cs_insn *insn, ch=
-ar *buf, size_t len,
-> >               break;
-> >       }
-> >  }
-> > -#endif
-> >
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> >  struct find_file_offset_data {
-> >       u64 ip;
-> >       u64 offset;
-> > @@ -213,9 +433,7 @@ static int find_file_offset(u64 start, u64 len, u64=
- pgoff, void *arg)
-> >       }
-> >       return 0;
-> >  }
-> > -#endif
-> >
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> >  static u8 *
-> >  read_symbol(const char *filename, struct map *map, struct symbol *sym,
-> >           u64 *len, bool *is_64bit)
-> > @@ -262,13 +480,11 @@ read_symbol(const char *filename, struct map *map=
-, struct symbol *sym,
-> >       free(buf);
-> >       return NULL;
-> >  }
-> > -#endif
-> >
-> >  int symbol__disassemble_capstone(const char *filename __maybe_unused,
-> >                                struct symbol *sym __maybe_unused,
-> >                                struct annotate_args *args __maybe_unuse=
-d)
-> >  {
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> >       struct annotation *notes =3D symbol__annotation(sym);
-> >       struct map *map =3D args->ms.map;
-> >       u64 start =3D map__rip_2objdump(map, sym->start);
-> > @@ -279,7 +495,7 @@ int symbol__disassemble_capstone(const char *filena=
-me __maybe_unused,
-> >       bool needs_cs_close =3D false;
-> >       u8 *buf =3D NULL;
-> >       csh handle;
-> > -     cs_insn *insn =3D NULL;
-> > +     struct cs_insn *insn =3D NULL;
-> >       char disasm_buf[512];
-> >       struct disasm_line *dl;
-> >       bool disassembler_style =3D false;
-> > @@ -316,7 +532,7 @@ int symbol__disassemble_capstone(const char *filena=
-me __maybe_unused,
-> >
-> >       needs_cs_close =3D true;
-> >
-> > -     free_count =3D count =3D cs_disasm(handle, buf, len, start, len, =
-&insn);
-> > +     free_count =3D count =3D perf_cs_disasm(handle, buf, len, start, =
-len, &insn);
-> >       for (i =3D 0, offset =3D 0; i < count; i++) {
-> >               int printed;
-> >
-> > @@ -355,9 +571,9 @@ int symbol__disassemble_capstone(const char *filena=
-me __maybe_unused,
-> >
-> >  out:
-> >       if (needs_cs_close) {
-> > -             cs_close(&handle);
-> > +             perf_cs_close(&handle);
-> >               if (free_count > 0)
-> > -                     cs_free(insn, free_count);
-> > +                     perf_cs_free(insn, free_count);
-> >       }
-> >       free(buf);
-> >       return count < 0 ? count : 0;
-> > @@ -377,16 +593,12 @@ int symbol__disassemble_capstone(const char *file=
-name __maybe_unused,
-> >       }
-> >       count =3D -1;
-> >       goto out;
-> > -#else
-> > -     return -1;
-> > -#endif
-> >  }
-> >
-> >  int symbol__disassemble_capstone_powerpc(const char *filename __maybe_=
-unused,
-> >                                        struct symbol *sym __maybe_unuse=
-d,
-> >                                        struct annotate_args *args __may=
-be_unused)
-> >  {
-> > -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> >       struct annotation *notes =3D symbol__annotation(sym);
-> >       struct map *map =3D args->ms.map;
-> >       struct dso *dso =3D map__dso(map);
-> > @@ -499,7 +711,7 @@ int symbol__disassemble_capstone_powerpc(const char=
- *filename __maybe_unused,
-> >
-> >  out:
-> >       if (needs_cs_close)
-> > -             cs_close(&handle);
-> > +             perf_cs_close(&handle);
-> >       free(buf);
-> >       return count < 0 ? count : 0;
-> >
-> > @@ -508,7 +720,4 @@ int symbol__disassemble_capstone_powerpc(const char=
- *filename __maybe_unused,
-> >               close(fd);
-> >       count =3D -1;
-> >       goto out;
-> > -#else
-> > -     return -1;
-> > -#endif
-> >  }
-> > --
-> > 2.49.0.805.g082f7c87e0-goog
-> >
+>
+> Tested on:
+>
+> commit:         e9ef70b2 RDNA/rxe: Fix rxe_skb_tx_dtor problem
+> git tree:       https://github.com/zhuyj/linux.git v6.16_fix_rxe_skb_tx_dtor
+> console output: https://syzkaller.appspot.com/x/log.txt?x=122183d4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=79da270cec5ffd65
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8425ccfb599521edb153
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+>
+> Note: no patches were applied.
+
+-- 
+Best Regards,
+Yanjun.Zhu
+
 
