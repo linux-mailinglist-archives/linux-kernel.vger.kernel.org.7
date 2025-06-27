@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-706361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041D1AEB596
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3721AEB59E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E58BC4A52BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88CB4A5E10
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5599029B218;
-	Fri, 27 Jun 2025 11:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AA229ACFC;
+	Fri, 27 Jun 2025 11:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c6urAryN"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjI4W1Z7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94CD266B67
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FD529A9E4;
+	Fri, 27 Jun 2025 11:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751022005; cv=none; b=d5Sk6Ccv33wMfpXERg6AXv7THhKZHoJYXXh4+dw8b70xDGOGd8xhJf3r+eEWoYRX0lgwYnJXBWxAgBHRfkueWHD+rWoS95v6AywbF2Pp51Yp9Hw44xCzznxzlbuIneBSdw+OQwtGAVVLkNhHeLbkpaoFa9pv/kTi/IGhV8xIDNE=
+	t=1751022049; cv=none; b=B0SipqKp9Ixj7ejzVxp9nUQBMgnabIFZXLOhbWSMoDyJ0rvtEjrDfoDOgbF/ORqGvlle0kZ5IG7LDofHCq43R1jegm+Yt/0eyVtDY6biGy24jCrVxctaabUupwr6HnDkTheWd9HfeSD9EMjJSm+F3oCi1b5j/tEp+oPqQEugNdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751022005; c=relaxed/simple;
-	bh=vLo5INOPS/WDpIxNx5EixrWME6bTViVtqYq5HO8ajvQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=mlCW93gMkGk5EcKhPH4yAUlSSF4Tq2aRB4zuak77o0TWkbzWIQE30knL+kT6jXNjxS1D3LsIhzNpj+0U3V3JbZjkgmfpc4jMVjZGVdeiEsmrczob09hELTySnXPuEILY9/I7J6ER1zW18/XZnjKmdnEY6n0K83jzYN9CyPIm8l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=c6urAryN; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250627110001epoutp01f8e8dfb3b3dd84cf5ebf676fb599d5aa~M4Tu0-EBl3204232042epoutp01V
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:00:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250627110001epoutp01f8e8dfb3b3dd84cf5ebf676fb599d5aa~M4Tu0-EBl3204232042epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751022001;
-	bh=+ENfZgyXG6LRtkLsvTjegXsc5nM6Q4iQE+wp1eC5dN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=c6urAryNFOrLbEjPvy+dNYuBLBOACYyYsVD7KypMRs90ko1mcGgdm+K7/UUqIJM22
-	 9CdPopiDEALv2u/dDI3JOFQc15+eZ/lj6bv7ouR37IUsnq7Z6umaKMMUh8ctXlrd90
-	 20qN/G/YIKVKXrsBGpwesXbOD+oPVrgZje+xjX20=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250627110001epcas1p21f2a1180b51fc82517facb6b9f247e14~M4TuV63LA0253702537epcas1p2E;
-	Fri, 27 Jun 2025 11:00:01 +0000 (GMT)
-Received: from epcas1p2.samsung.com (unknown [182.195.36.223]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bTCJ057Wzz6B9m5; Fri, 27 Jun
-	2025 11:00:00 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250627105959epcas1p168bbbe460ee1f081e67723505e1f57c9~M4TsoWor_2955029550epcas1p1Z;
-	Fri, 27 Jun 2025 10:59:59 +0000 (GMT)
-Received: from U20PB1-1082.tn.corp.samsungelectronics.net (unknown
-	[10.91.135.33]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250627105959epsmtip21aa89321785c91e7dfb1e50c794acb7e~M4TsjuKwn3127031270epsmtip2N;
-	Fri, 27 Jun 2025 10:59:59 +0000 (GMT)
-From: "Peter GJ. Park" <gyujoon.park@samsung.com>
-To: pabeni@redhat.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	gyujoon.park@samsung.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, oneukum@suse.com
-Subject: [PATCH net v2] net: usb: usbnet: fix use-after-free in race on
- workqueue
-Date: Fri, 27 Jun 2025 19:59:53 +0900
-Message-Id: <20250627105953.2711808-1-gyujoon.park@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <87a7f8a6-71b1-4b90-abc7-0a680f2a99cf@redhat.com>
+	s=arc-20240116; t=1751022049; c=relaxed/simple;
+	bh=lqMMTP1yhhlfjf6iJhvfIFcNWwN4TjqIAC4xUq/hPm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNZ39buHCvCCI/PZAgC0I+1fO8Jqi+xh1IQYhM86yiTrGPZ896Cd7vorrF8rmnJesXR4TJQ63h2ZSknf1/jAFrKL9uPGweCKSCithgKRnqAqvi0ombzDB+KYKe2hQ3yZ2BoNcEUd7PybJTEdQlMuXP1LYJR2I7E2aHnbnGTzhJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjI4W1Z7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3EDC4CEEB;
+	Fri, 27 Jun 2025 11:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751022048;
+	bh=lqMMTP1yhhlfjf6iJhvfIFcNWwN4TjqIAC4xUq/hPm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IjI4W1Z73WmLTsreROLH+fYoV6wXIJEMOb3MNKX/yuRJmS7griT1taFprJ5PGNkNc
+	 m4gYkn7Nhnb5Tc56ERd9/1X4hQK374cglRCaWiyqZxi/Fk0gywqShd8G5bzk/HAVZ+
+	 uhJNuoqDhUf0Qp7A2KdbKTSj+oMxAoL7cvdDg4XwviAc3mmrmckadBlt9H7uDT6tL1
+	 Gfkr9kz7XBadf7H9ZVcDnz+eX4FOzkmyjzpQ7fmbXQdbVuXSyJHppShIXRR4L20wk5
+	 STdzfO503JuVgiF3SrFLsZ4dmDNUjlzyjWtqGKnj1GLPzX/ig29bWxlCTtP7EMyecy
+	 bT/Kk4oT47SGg==
+Date: Fri, 27 Jun 2025 12:00:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Hohn, Torben" <Torben.Hohn@bruker.com>
+Cc: "amit.kumar-mahapatra@amd.com" <amit.kumar-mahapatra@amd.com>,
+	"frogger@hardanger.blackshift.org" <frogger@hardanger.blackshift.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux@roeck-us.net" <linux@roeck-us.net>
+Subject: Re: [PATCH v2] spi: Raise limit on number of chip selects
+Message-ID: <aF553GU_btT81_b_@finisterre.sirena.org.uk>
+References: <FR4P281MB343441EB901D3DD286B923D6837AA@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250627105959epcas1p168bbbe460ee1f081e67723505e1f57c9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250627105959epcas1p168bbbe460ee1f081e67723505e1f57c9
-References: <87a7f8a6-71b1-4b90-abc7-0a680f2a99cf@redhat.com>
-	<CGME20250627105959epcas1p168bbbe460ee1f081e67723505e1f57c9@epcas1p1.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u0SfgTdM+pvwNqIA"
+Content-Disposition: inline
+In-Reply-To: <FR4P281MB343441EB901D3DD286B923D6837AA@FR4P281MB3434.DEUP281.PROD.OUTLOOK.COM>
+X-Cookie: Do not cut switchbacks.
 
-When usbnet_disconnect() queued while usbnet_probe() processing,
-it results to free_netdev before kevent gets to run on workqueue,
-thus workqueue does assign_work() with referencing freeed memory address.
 
-For graceful disconnect and to prevent use-after-free of netdev pointer,
-the fix adds canceling work and timer those are placed by usbnet_probe()
+--u0SfgTdM+pvwNqIA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Peter GJ. Park <gyujoon.park@samsung.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
----
- drivers/net/usb/usbnet.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Thu, Jun 26, 2025 at 04:58:20PM +0000, Hohn, Torben wrote:
+> Hello Marc,
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index c04e715a4c2a..3c5d9ba7fa66 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -1660,6 +1660,9 @@ void usbnet_disconnect (struct usb_interface *intf)
- 	usb_free_urb(dev->interrupt);
- 	kfree(dev->padding_pkt);
+That isn't my name...
 
-+	timer_delete_sync(&dev->delay);
-+	tasklet_kill(&dev->bh);
-+	cancel_work_sync(&dev->kevent);
- 	free_netdev(net);
- }
- EXPORT_SYMBOL_GPL(usbnet_disconnect);
---
-2.25.1
+> +#define SPI_CS_CNT_MAX 16
 
+> If this is increased to 24 now, we need to carry another patch on top of mainline again once we add another Chipselect
+> into our FPGA, or into the next iteration of our hardware. We would really prefer that a Kconfig value is used.
+> We have handed a patch to pengutronix, because they can send proper emails.
+
+> In the IIO framework there is a Konfig Value for something similar:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/iio/trigger.h#n74
+
+This doesn't really work, we're supposed to support single kernel image
+so putting per platform configuration in Kconfig ends up being at best a
+usability problem.  At some point it's better to just bite the bullet
+and make things dynamic.
+
+--u0SfgTdM+pvwNqIA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmheedsACgkQJNaLcl1U
+h9AplQf+MNNvZr6JlQ5WWyzKnDpp9b0sjYa821cSH1QHeD+oHTrihMnplm+jnQ3Y
+B1V8xWmszYWsy6m8ZtpZPr1be703DDoS2dfyOe6EnY8dLI2hrWQvJmtUcLvBxZQi
+VZakbibVhTbWVaUWk5z6jLtmpGMuQKG005S0jtuMJtOgLICgYTYeHX4dzlxuR4Wm
+I5vzSZHDwEBDoVH62o4FbWllRnV6Vm281oP/dXWcP6L2xxQngG4/LmxZZy70/Zro
+5uL/rLzlOPGj+/48E8Abxn3lyKv7Azt4O9grikgyNfFjN2719QjyZ/TkC6c5e1pv
+2NV66TvwnpBvh162R5YLFzPToo6dJw==
+=Pcx2
+-----END PGP SIGNATURE-----
+
+--u0SfgTdM+pvwNqIA--
 
