@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-707360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD3EAEC2FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A0DAEC302
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E086E5EB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395ED6E5C77
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EE2290DB1;
-	Fri, 27 Jun 2025 23:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890B2292908;
+	Fri, 27 Jun 2025 23:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bK0v4Sp9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0SWFBoI"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9483C28DB71;
-	Fri, 27 Jun 2025 23:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD2A291C1E;
+	Fri, 27 Jun 2025 23:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751066853; cv=none; b=Vdh54T0qM4OKrOVKwfbX+YGd21EDL9NLCn4E0ADipVGcyjwdtrQIVRJx62rIoFQBYLA3JYrDmFop53WIt2P12RKJDoQlENEdt7mPudCyKlng8nAVGi93vJzLx9EharHeA/C6P5on2rBna07A8yRn+JDzHXR3csuPgnY8jMiDsTY=
+	t=1751067128; cv=none; b=S0qWJQ6yawqzzlGTSkQBOzRqyVo1o5HejsNVg7CVdW4JioVuiF+66BKs5IWsa5nqylGcvYrZOXn0eL1AebkAG2PNzi4m/zhZOFnz3TDFDGFeqpwXr48ngrHtkMFC9Xob+BcfK5dlw4wComJFwso2c6ifAGNDie5wmyQv4AZIP/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751066853; c=relaxed/simple;
-	bh=DzeC/ItIJ1IKYPWFENclfRURS3c24iRf6j/N4B8dPAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4S1Sb2DTrPgj97LxWh5+JG0RgYU1Zy824zikh3Y5oF9biEBVUCinNlNm0abkagmRMuJcV018ohx7ti7fMlPc+ueWJr/RwUSRgQm+dXYAReu0IMc1ABrpdu9w1nTSKes+rj0qHKnc5HMqMtd6GWnklaMEcQbV7j5F2eQABqNUB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bK0v4Sp9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76827C4CEE3;
-	Fri, 27 Jun 2025 23:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751066853;
-	bh=DzeC/ItIJ1IKYPWFENclfRURS3c24iRf6j/N4B8dPAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bK0v4Sp94EyI0JB5esjyP/GChQ/RNh6VTd1xLu9yUMzfDxVw/JrNjOZyNb0G/IY+P
-	 hDd/jAZe/VQ4DIDgAM+yglQnrvubDPyVtlsm8gIJRBLjRm+SXPXXlPWxNQjlJuBkTg
-	 XjypdGgSO9OBmyJ+d5TTDrJQg1xxTW3SyohShXwP0U7BJXpNhUM9rIUvgEQ5xRWh+U
-	 DxB3GQztByKRGAEp+XSJl+/AFNG7dXcLPk0GdnCoG95ZmZ6GzN0QMBz97AxVoC8Gwe
-	 M5mX1MDcEQnmV0dXqTID2Tcrl3CdjABAvzMqB5q32wq+kVahRmjvlL0mhCn8ynuHHq
-	 PcVPmzyMp87GQ==
-Date: Sat, 28 Jun 2025 04:57:26 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, brgl@bgdev.pl, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lukas@wunner.de, Jim Quinlan <james.quinlan@broadcom.com>
-Subject: Re: [PATCH v3] PCI/pwrctrl: Move pci_pwrctrl_create_device()
- definition to drivers/pci/pwrctrl/
-Message-ID: <qy2nfwiu2g7pbzbk37wseapvsen7mx4fgqdkdwjbclsj5dltu5@7o2xtj3qhedm>
-References: <20250616053209.13045-1-mani@kernel.org>
- <20250627224502.GA1687792@bhelgaas>
+	s=arc-20240116; t=1751067128; c=relaxed/simple;
+	bh=YPnTiOfKeorNB8r7cpyKWvCUxr6j45iw769OI9lLoV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ss7XG3PK8ywZfxq0kgUL1vXJSjLq6nFpYwiEH7qqLXruaQAbgGpfeRxYB6erUmsUzwZRfbWhSJhq0DeotU4bqqOe/Qsc7JdFyLU19EBF/AG6TgFPpIr58Gh4Td4mcjxUZH8rZ0NkGZ00rh5j2TS2tn2IwqSZWJTDls3UR8Orbro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0SWFBoI; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-23633a6ac50so32785685ad.2;
+        Fri, 27 Jun 2025 16:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751067126; x=1751671926; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+DGQNS5yV0iBqaU1x/InlhD/xcyDEGMcKU4WcCfmD4=;
+        b=H0SWFBoI41JJwiYC8lY/fYwyXuxR5/EJvimjS+X1ea1A8ZGMQ1oGQ9U+Vo1ONrPyPt
+         HilISygfHR+TPp4jzW0UR4gp/WQKDF3giUe8FPWtCUixt8nQfR5nYuhHZiWUXimbQKRC
+         jtcm5q7JB2CI/FAry/AhwiIxo+t2IicqbHBnPrzKEGdbPwqX34dNHx8zpkx6A5dXFFJP
+         7qW0YRYQ/PLewQsL6sxD/E2RGuKsRip2gllvYy5PYBcsf9KKnkUd9ilP2iL3RoKv56pt
+         KPKa0jUe0EoDEH2s58+wYdypv4zCWVcLtcl9eeOhz8storIR1Y91kJOXL0LUV4Md8azC
+         Uasw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751067126; x=1751671926;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I+DGQNS5yV0iBqaU1x/InlhD/xcyDEGMcKU4WcCfmD4=;
+        b=HWt/E8BVIO/LS3kB+B4cpvVp9i0qwl3+8gQQhqs+RvKJq+PLGe6J80h7xvnHH5rJY0
+         FKGOECQnWeeRMtopIAEtxEnvY2G5adcCk0QuDhhe8RcMabUbc4SK7yp5mt4zs0Ko7vWU
+         Hpjxw7b0l4JFsu4IhCRVOQlCbK2UKwXeoSLu4UhfsYC8AkPLMLF9Nl1dz2zb96MaoWO/
+         wL8vDrHAQ5ra+5BrkoLyN0t7HCm8j8Q2U06gctXbTqQuKMI27dFdknt/+Oy0SIZ5nkfl
+         t/28uyr/Ij9/T/7xcUTbxuMrtMUPZeEuJZiORgVqb1FFZBPfqqhmXxp42tk58JROKFHX
+         qKLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVakO4Oosf37FdYsvwXaFJsxL9yotYZNldO7o8hkBeyKVJzPZJaTRdhLkXSfYdyBXFkoUoqqBr0JMenkDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAM/nWt807g57a7+lVfVbESzuVmJOMTfJAD1PeBxjTnTxY+157
+	YBuND4UYRdbt50V9zRW520YtrxCWuZP/oYLktKuDAEnF4stFbmXeO5mb
+X-Gm-Gg: ASbGncs26ORScH+F88+xKs4wYdTo5c1E1op4zstnHUiGXIHFlHiwBYglgf9SPSiEcbi
+	wE2tQOdgm2LtBNanuaiYHegp4vL36nS6aBFIk8v0wtNqlYmHxO82RUpoi5qAF8ZJ1IZDNe3KNOX
+	CsowiHHZ2ocmOgejLGNdbbhDaCQimUXKNBME/ivSSMEWUI8r1AbTjcLVu509M9pHeaguTNfIAZT
+	ZFaoJFoPqOTwAWKPa+aIClqXuEhPcz5hXfE+5y+AkAuBV29KxOofw5JnjHGp7WXnTCpuYPNQ58B
+	6ECZ3FXRMWkx2p8v57teSX6RSlsj+SD9zYT+YVFx1Q/v7CR+yf80dWADhoq2lQ==
+X-Google-Smtp-Source: AGHT+IHg7vP7/d9S3v6EOl8gQObtoAsfGkXEWElQTHDuv46nJXJg9sI7JyZdzQjwWXqvHw/s8C35xg==
+X-Received: by 2002:a17:903:b8f:b0:235:88b:2d06 with SMTP id d9443c01a7336-23ac3bffd96mr67891485ad.6.1751067125934;
+        Fri, 27 Jun 2025 16:32:05 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-315f539e6ccsm7564660a91.17.2025.06.27.16.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 16:32:05 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Ze Huang <huangze@whut.edu.cn>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: (subset) [PATCH v4 0/4] riscv: sophgo: cv18xx: Add reset generator support
+Date: Sat, 28 Jun 2025 07:31:50 +0800
+Message-ID: <175106708298.79260.10445943203117657356.b4-ty@gmail.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250617070144.1149926-1-inochiama@gmail.com>
+References: <20250617070144.1149926-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250627224502.GA1687792@bhelgaas>
 
-On Fri, Jun 27, 2025 at 05:45:02PM -0500, Bjorn Helgaas wrote:
-> On Mon, Jun 16, 2025 at 11:02:09AM +0530, Manivannan Sadhasivam wrote:
-> > pci_pwrctrl_create_device() is a PWRCTRL framework API. So it should be
-> > built only when CONFIG_PWRCTRL is enabled. Currently, it is built
-> > independently of CONFIG_PWRCTRL. This creates enumeration failure on
-> > platforms like brcmstb using out-of-tree devicetree that describes the
-> > power supplies for endpoints in the PCIe child node, but doesn't use
-> > PWRCTRL framework to manage the supplies. The controller driver itself
-> > manages the supplies.
-> > 
-> > But in any case, the API should be built only when CONFIG_PWRCTRL is
-> > enabled. So move its definition to drivers/pci/pwrctrl/core.c and provide
-> > a stub in drivers/pci/pci.h when CONFIG_PWRCTRL is not enabled. This also
-> > fixes the enumeration issues on the affected platforms.
+On Tue, 17 Jun 2025 15:01:38 +0800, Inochi Amaoto wrote:
+> Like SG2042, CV1800 Series SoCs also have simple bit reset generator.
+> Add necessary code and bindings for it.
 > 
-> Finally circling back to this since I think brcmstb is broken since
-> v6.15 and we should fix it for v6.16 final.
+> Changes from v4:
+> 1. patch 1: convert the compatible as entry of enum.
+> 1. patch 2, 3: apply Alexander's tag.
+> 1. patch 3: apply Junhui's tag.
 > 
+> [...]
 
-Yes! Sorry for the delay. The fact that I switched the job and had to attend OSS
-NA prevented me from reworking this patch.
+Applied to for-next, thanks!
 
-> IIUC, v3 is the current patch and needs at least a fix for the build
-> issue [1], and I guess the options are:
-> 
->   1) Make CONFIG_PCI_PWRCTRL bool.  On my x86-64 system
->      pci-pwrctrl-core.o is 8880 bytes, which seems like kind of a lot
->      when only a few systems need it.
-> 
->   2) Leave pci_pwrctrl_create_device() in probe.c.  It gets optimized
->      away if CONFIG_OF=n because of_pci_find_child_device() returns
->      NULL, but still a little ugly for readers.
-> 
->   3) Put pci_pwrctrl_create_device() in a separate
->      drivers/pci/pwrctrl/ file that is always compiled even if PWRCTRL
->      itself is a module.  Ugly because then we sort of have two "core"
->      files (core.c and whatever new file is always compiled).
-> 
+[3/4] riscv: dts: sophgo: add reset generator for Sophgo CV1800 series SoC
+      https://github.com/sophgo/linux/commit/fcb3f47c81afe43b336bf8033234417445789807
+[4/4] riscv: dts: sophgo: add reset configuration for Sophgo CV1800 series SoC
+      https://github.com/sophgo/linux/commit/880f18ee6772d4add69519cb7de2fcf9f4769cd6
 
-I guess, we could go with option 3 if you prefer. We could rename the existing
-pwrctrl/core.c to pwrctrl/pwrctrl.c and move the definition of
-pci_pwrctrl_create_device() to new pwrctrl/core.c. The new file will depend on
-HAVE_PWRCTRL, which is bool.
+Thanks,
+Inochi
 
-> And I guess all of these options still depend on CONFIG_PCI_PWRCTRL
-> not being enabled in a kernel that has brcmstb enabled?  If so, that
-> seems ugly to me.  We should be able to enable both PWRCTRL and
-> brcmstb at the same time, e.g., for a single kernel image that works
-> both on a brcmstb system and a system that needs pwrctrl.
-> 
-
-Right, that would be the end goal. As I explained in the reply to the bug report
-[1], this patch will serve as an interim workaround. Once my pwrctrl rework
-(which I didn't submit yet) is merged, I will move this driver to use the
-pwrctrl framework.
-
-The fact that I missed this driver in the first place during the previous rework
-of the pwrctrl framework is due to devicetree being kept out-of-tree for this
-platform.
-
-- Mani
-
-[1] https://lore.kernel.org/all/vazxuov2hdk5sezrk7a5qfuclv2s3wo5sxhfwuo3o4uedsdlqv@po55ny24ctne/
-
--- 
-மணிவண்ணன் சதாசிவம்
 
