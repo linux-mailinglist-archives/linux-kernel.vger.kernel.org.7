@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-707043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB72AEBF39
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:42:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96802AEBF32
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9631BC52AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:41:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD3E564EA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521852EE976;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4985F2EE975;
 	Fri, 27 Jun 2025 18:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rL7pGfkM"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="dR79u8eP"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F2C2ED15B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67822ED177;
 	Fri, 27 Jun 2025 18:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751049618; cv=none; b=h8CZnLSx9zZaxDFZVfue6gRQ1NmIvWGs3SrL8jFjxuVGQ54tQeQOvEYw+v4FeN7ppCZsfJY9eYSxzNP26hClHQujoDZEFSP7fjr3v1nhK87/WLpRbbzZ9iAHKNIxAaHD1hOXH5gDgFMwFZ4ruIlamNxCNuhBCLIfrvaDWLywXWQ=
+	t=1751049619; cv=none; b=RqwMMwQ+8zQrcocgDLHTXeUnP4FyrIOzwbvg+PbL+YJ/HfTfVHF1ghuL4Vz2rLNyDQj/LjNDK8g3d5g9a3h9bR4td8yZ/qaMvH/lbGzNpo5OYIKH2zT6QUMkznIBANZIohxDlL6ysdrWvmpXJF927pkuoIPNn/G2W9l/Wmw/Zro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751049618; c=relaxed/simple;
-	bh=xZ1AjPAb5peoQ2/5X0OBEamGLpA0DWBnUXtAprtIgNA=;
+	s=arc-20240116; t=1751049619; c=relaxed/simple;
+	bh=lTMAGNy9jLGShROhYkdk0ytJI8mqL0/g8PTQr+cZOYA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aYZPbxXS0TMBLKtoNuIacynuvsqVgcZh2BB6reYEwy5kpPZ0nwOfziOIlWmEi3JqLDIChRYTwlLN00j0T5tKSH97AkmTPTN12MVLtttznhcMfCZ1gm4k1Lprm557qIim9eNb5YFTLi0tqdDzj1wBA0OHYpO05jG3KXEfzD68YdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rL7pGfkM; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=N1Pt3xmiPJfxcZ03Z7CDkm+Vsml0a/ZGhP0xgwIphOWBCpAmYs/subgMKqySnh6dWWN+PppHp5sOu7WuxUfU96Y16Gtoq75WJ+8gkYwwWRmGO3wfci92+BU8z9Ojk0wWfZUbw7kXj26XpwhJh05/fa2lk9FqBwk6fBFZOAoG7Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=dR79u8eP; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5CEBF40AD6
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E2CFB40AD0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751049616; bh=cU1j40zTmEy13wFVQwU6r+Xhna53bFvCfqjstVBxj9g=;
+	t=1751049617; bh=Mls0+pzTN3LHiGp7GlWLLCkLVeQdt0qpNAqNfdM34Xo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rL7pGfkML2l9C57A9KH/jD3e78kvdmBwezH7Dxd3cMIwkivrLOyvO9jEQQZ2lgSYG
-	 3IBWpdZV8VOzIR7ztrp3adC9q8Kt0YjiJBNtQgSmpW7JfvIjR7kAuxh98Ofe+Vj6Ne
-	 c1ODpYxDqU3WriH01f1kaeuI3x2aq78kFbaFMcZQdDaWd6wrFd92FYNSPJnv92r+hM
-	 vE223z43DilqJEfYBHRNiO1zRMjkEMlI3VhdXcLQpibLQEH+ufQKQlaFIrugT+s1ZS
-	 zVZP5KNO7zvHWfZpkvgqDX3/DPJV1zDx8v9WECyWw7WmkqxQN0erNCUNb3sbW2s+3O
-	 W19FMSJTgdU+w==
+	b=dR79u8ePD6bYJ9iL/gNrdlmU81YmeX21pTaft+tED37sZdkuP9IUj91B64N1qfwM+
+	 ldtEMwN00fWHm0XWRMZPOJL8CwdNl+XzQtPFRzbbanBPMgmyT4OxKb21EnO9DwYavu
+	 ZBwNLg1fGCO5q/UBScaAoS8ttOQ8fSGLaJ5OSxikr35BPZp5XSGN3XUca2b8jpAVpS
+	 mIHekLpvAVqYltoiEyS+Pj1fTkd9WGywrpD98V4HOnefRzUi0kZ5LZQDI9r3PC9PCo
+	 Gs66GntedtTZjIE/KYf/tiLF98Dxo2Fis9kPmr/Y4sNSY9d6ajJBCd8PQGoRFs2mnc
+	 msVpvTawxJetg==
 Received: from trenco.lwn.net (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	by ms.lwn.net (Postfix) with ESMTPA id 5CEBF40AD6;
+	by ms.lwn.net (Postfix) with ESMTPA id E2CFB40AD0;
 	Fri, 27 Jun 2025 18:40:16 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 5/8] docs: kdoc: rework process_export() slightly
-Date: Fri, 27 Jun 2025 12:39:57 -0600
-Message-ID: <20250627184000.132291-6-corbet@lwn.net>
+Subject: [PATCH 6/8] docs: kdoc: remove the INLINE_END state
+Date: Fri, 27 Jun 2025 12:39:58 -0600
+Message-ID: <20250627184000.132291-7-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250627184000.132291-1-corbet@lwn.net>
 References: <20250627184000.132291-1-corbet@lwn.net>
@@ -63,64 +63,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reorganize process_export() to eliminate duplicated code, don't look for
-exports in states where we don't expect them, and don't bother with normal
-state-machine processing if an export declaration has been found.
+It is never used, so just get rid of it.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 224dea5f7c2e..734b908579c3 100644
+index 734b908579c3..03a0e44707a7 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -1211,16 +1211,17 @@ class KernelDoc:
+@@ -108,8 +108,7 @@ class state:
+     INLINE_NA     = 0 # not applicable ($state != INLINE)
+     INLINE_NAME   = 1 # looking for member name (@foo:)
+     INLINE_TEXT   = 2 # looking for member documentation
+-    INLINE_END    = 3 # done
+-    INLINE_ERROR  = 4 # error - Comment without header was found.
++    INLINE_ERROR  = 3 # error - Comment without header was found.
+                       # Spit a warning as it's not
+                       # proper kernel-doc and ignore the rest.
  
-         if export_symbol.search(line):
-             symbol = export_symbol.group(2)
--            for suffix in suffixes:
--                symbol = symbol.removesuffix(suffix)
--            function_set.add(symbol)
--            return
--
--        if export_symbol_ns.search(line):
-+        elif export_symbol_ns.search(line):
-             symbol = export_symbol_ns.group(2)
--            for suffix in suffixes:
--                symbol = symbol.removesuffix(suffix)
--            function_set.add(symbol)
-+        else:
-+            return False
-+        #
-+        # Found an export, trim out any special suffixes
-+        #
-+        for suffix in suffixes:
-+            symbol = symbol.removesuffix(suffix)
-+        function_set.add(symbol)
-+        return True
+@@ -117,7 +116,6 @@ class state:
+         "",
+         "_NAME",
+         "_TEXT",
+-        "_END",
+         "_ERROR",
+     ]
  
-     def process_normal(self, ln, line):
-         """
-@@ -1767,13 +1768,10 @@ class KernelDoc:
-                     # it was read twice. Here, we use the already-existing
-                     # loop to parse exported symbols as well.
-                     #
--                    # TODO: It should be noticed that not all states are
--                    # needed here. On a future cleanup, process export only
--                    # at the states that aren't handling comment markups.
--                    self.process_export(export_table, line)
--
--                    # Hand this line to the appropriate state handler
--                    self.state_actions[self.state](self, ln, line)
-+                    if (self.state != state.NORMAL) or \
-+                       not self.process_export(export_table, line):
-+                        # Hand this line to the appropriate state handler
-+                        self.state_actions[self.state](self, ln, line)
- 
-         except OSError:
-             self.config.log.error(f"Error: Cannot open file {self.fname}")
 -- 
 2.49.0
 
