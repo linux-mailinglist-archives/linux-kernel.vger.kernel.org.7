@@ -1,249 +1,322 @@
-Return-Path: <linux-kernel+bounces-706725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B412AAEBAEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:01:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 167B9AEBAF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5DFC7B5CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:00:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7729B188DD37
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A76F4ED;
-	Fri, 27 Jun 2025 15:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9E82E8E05;
+	Fri, 27 Jun 2025 15:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GC8BTwZ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="fqrcEMzH"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866E1B78F3;
-	Fri, 27 Jun 2025 15:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05711C6FE8
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751036499; cv=none; b=BjW5QoASlRnFhUkAr5BR1/y2dcek1K+j2+A02FeH1PETdggnqZxlfH4QJZwZs6f7CfvIE0BrlO0OX+1qBJkXL1WmwjWpn8H9dbMH1RZ89T9pbYIyooS/+B9qN1P6jWv5W5nR+Iy4mHE7jDJevk/a5gWRnfVDg8IOPQgCmVt69As=
+	t=1751036539; cv=none; b=sA85ff6yQ33chQdNFe5HD+DOVAgwFKUcV4YWbhrUa762o+vfylaARhIri/1RYCY2+JdoAkU60Q8H43/rPwa3ME28GcqEDpH/AUB4mnr6pkxiSQ47/g5KNmcAKDnhRccwbDBg6KvpfGm/uIgUwrMi+hD65gCpYIeVcy9teNVoPI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751036499; c=relaxed/simple;
-	bh=G83basSwJmom/UjEsv3A4K0YpUbhyHGDHOVGor+sYC8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rc9xHsOraq7u5c9eFYhQDfulGzgP3dcYYKa+KIWESZjwymlELHkrFeBFjjTMZt9AHL08P9IDXpnvNcqGVL4UqBN0nU36JOXEFKEqpynPdfaAyFyg3CnWtap1u9Jo+9FIAB7qMzu0/TxUFmZ9ojDvBkXUieDoxZd121px0wmoU6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GC8BTwZ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225C5C4CEE3;
-	Fri, 27 Jun 2025 15:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751036499;
-	bh=G83basSwJmom/UjEsv3A4K0YpUbhyHGDHOVGor+sYC8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GC8BTwZ5Zhns9//KZQl3at71K9DS6LTMDhoYTzHFzghg48sXazqO+X3knNNUE/Wkd
-	 DW0jneRafgrniYuJvtTSzpDyk/bUWDGVIoCikzZ9Tu664NlEwFbvFz6euiYSBRgTSG
-	 Wh5oJA3UEjrvGkaWL7cWhOianNhSnzRwMeYBknMl6D6ptHkOVH6VJHebxSbEMkKaG2
-	 8qPtskrpQbe4f8P0x5IV1Rt2MkEc0p0hfWa4k3KM7AJxj5sg8KQzl05iarRY+VVxJx
-	 d9ol4offvylbZFfhsdQFJzcZJQfPi/vB2ZXAhdCfnIch4/3oYUSO1h1A9/Eg/8uvSm
-	 cOo30SqgmoG9A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uVAa8-00Ab1s-Ur;
-	Fri, 27 Jun 2025 16:01:37 +0100
-Date: Fri, 27 Jun 2025 16:01:36 +0100
-Message-ID: <86plepb54f.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mingwei Zhang <mizhang@google.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 10/22] KVM: arm64: Set up FGT for Partitioned PMU
-In-Reply-To: <20250626200459.1153955-11-coltonlewis@google.com>
-References: <20250626200459.1153955-1-coltonlewis@google.com>
-	<20250626200459.1153955-11-coltonlewis@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1751036539; c=relaxed/simple;
+	bh=cJONLCQOpF6Xvzl9B4WOfWoBD70JG1idjgUJls73ICM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UWddn8QeoqjJmxC0WeaFSSi1OQBfiUZ+gQJd7COUsQ91rPNSQVL+5lKsdk+h2Mn10fvnUj/8J8TtpKf3itbcE/UcDapkZeNDLW6CNmJ4ihROR0ZDp9/WDlAZf2dKunL4jx96jw5FVwQ/3Sps8INR8OO+eT1M3KzgCToPK3/eC1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=fqrcEMzH; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=cJONLCQOpF6Xvzl9B4WOfWoBD70JG1idjgUJls73ICM=;
+	t=1751036537; x=1752246137; b=fqrcEMzH67jcXO3t44Gn2or1IjychTyd49mOgT190lyVxPp
+	jQaWNQmsrbCThndknUKF047gGY2+6fLUYPo2Y8PSSwSS6pZl3kxrPYl72SfH6TZ59g0npLQF419I3
+	xkbwrqZRZlCaC89VbNGfp5zS+OUQvqAxXgnIWCPfZ2sQi6BxnOa32AB7eQFoQhQ9WNtaaXcqTINNv
+	e5KNPxS3vstnhdqHKZCu6cfBf7iiITKJG2p58wqodeA6A7javfVotmGdce/SyOLDariI88XCRdWUX
+	KGl4t/zSU5GUOC6KesrlQlCaWC033ZsmmtVJDvVlo/VnNVD33Sh9Nud3b4zpeT4A==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1uVAac-0000000Du7J-0uX8;
+	Fri, 27 Jun 2025 17:02:06 +0200
+Message-ID: <734965ac85b2c4cf481cc98ac53052fd5064d30e.camel@sipsolutions.net>
+Subject: Re: [PATCH v10 09/13] x86/um: nommu: signal handling
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Hajime Tazaki <thehajime@gmail.com>
+Cc: linux-um@lists.infradead.org, ricarkol@google.com,
+ Liam.Howlett@oracle.com, 	linux-kernel@vger.kernel.org
+Date: Fri, 27 Jun 2025 17:02:05 +0200
+In-Reply-To: <m2sejl47ke.wl-thehajime@gmail.com> (sfid-20250627_155052_193903_B610E51D)
+References: <cover.1750594487.git.thehajime@gmail.com>
+		<548dcef198b79a4f8eb166481e39abe6e13ed2e3.1750594487.git.thehajime@gmail.com>
+		<3b407ed711c5d7e1819da7513c3e320699473b2d.camel@sipsolutions.net>
+	 <m2sejl47ke.wl-thehajime@gmail.com> (sfid-20250627_155052_193903_B610E51D)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: coltonlewis@google.com, kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, mizhang@google.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com, shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-malware-bazaar: not-scanned
 
-On Thu, 26 Jun 2025 21:04:46 +0100,
-Colton Lewis <coltonlewis@google.com> wrote:
-> 
-> In order to gain the best performance benefit from partitioning the
-> PMU, utilize fine grain traps (FEAT_FGT and FEAT_FGT2) to avoid
-> trapping common PMU register accesses by the guest to remove that
-> overhead.
-> 
-> There should be no information leaks between guests as all these
-> registers are context swapped by a later patch in this series.
-> 
-> Untrapped:
-> * PMCR_EL0
-> * PMUSERENR_EL0
-> * PMSELR_EL0
-> * PMCCNTR_EL0
-> * PMINTEN_EL0
-> * PMEVCNTRn_EL0
-> 
-> Trapped:
-> * PMOVS_EL0
-> * PMEVTYPERn_EL0
-> * PMCCFILTR_EL0
-> * PMICNTR_EL0
-> * PMICFILTR_EL0
-> 
-> PMOVS remains trapped so KVM can track overflow IRQs that will need to
-> be injected into the guest.
-> 
-> PMICNTR remains trapped because KVM is not handling that yet.
-> 
-> PMEVTYPERn remains trapped so KVM can limit which events guests can
-> count, such as disallowing counting at EL2. PMCCFILTR and PMCIFILTR
-> are the same.
+Hi,
 
-I'd rather you explain why it is safe not to trap the rest.
+On Fri, 2025-06-27 at 22:50 +0900, Hajime Tazaki wrote:
+> thanks for the comment on the complicated part of the kernel (signal).
 
-> 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-> ---
->  arch/arm64/include/asm/kvm_pmu.h        | 23 ++++++++++
->  arch/arm64/kvm/hyp/include/hyp/switch.h | 58 +++++++++++++++++++++++++
->  arch/arm64/kvm/pmu-part.c               | 32 ++++++++++++++
->  3 files changed, 113 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_pmu.h b/arch/arm64/include/asm/kvm_pmu.h
-> index 6328e90952ba..73b7161e3f4e 100644
-> --- a/arch/arm64/include/asm/kvm_pmu.h
-> +++ b/arch/arm64/include/asm/kvm_pmu.h
-> @@ -94,6 +94,21 @@ u64 kvm_pmu_guest_counter_mask(struct arm_pmu *pmu);
->  void kvm_pmu_host_counters_enable(void);
->  void kvm_pmu_host_counters_disable(void);
->  
-> +#if !defined(__KVM_NVHE_HYPERVISOR__)
-> +bool kvm_vcpu_pmu_is_partitioned(struct kvm_vcpu *vcpu);
-> +bool kvm_vcpu_pmu_use_fgt(struct kvm_vcpu *vcpu);
-> +#else
-> +static inline bool kvm_vcpu_pmu_is_partitioned(struct kvm_vcpu *vcpu)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline bool kvm_vcpu_pmu_use_fgt(struct kvm_vcpu *vcpu)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  /*
->   * Updates the vcpu's view of the pmu events for this cpu.
->   * Must be called before every vcpu run after disabling interrupts, to ensure
-> @@ -133,6 +148,14 @@ static inline u64 kvm_pmu_get_counter_value(struct kvm_vcpu *vcpu,
->  {
->  	return 0;
->  }
-> +static inline bool kvm_vcpu_pmu_is_partitioned(struct kvm_vcpu *vcpu)
-> +{
-> +	return false;
-> +}
-> +static inline bool kvm_vcpu_pmu_use_fgt(struct kvm_vcpu *vcpu)
-> +{
-> +	return false;
-> +}
->  static inline void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu,
->  					     u64 select_idx, u64 val) {}
->  static inline void kvm_pmu_set_counter_value_user(struct kvm_vcpu *vcpu,
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> index 825b81749972..47d2db8446df 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> @@ -191,6 +191,61 @@ static inline bool cpu_has_amu(void)
->                 ID_AA64PFR0_EL1_AMU_SHIFT);
->  }
->  
-> +/**
-> + * __activate_pmu_fgt() - Activate fine grain traps for partitioned PMU
-> + * @vcpu: Pointer to struct kvm_vcpu
-> + *
-> + * Clear the most commonly accessed registers for a partitioned
-> + * PMU. Trap the rest.
-> + */
-> +static inline void __activate_pmu_fgt(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_cpu_context *hctxt = host_data_ptr(host_ctxt);
-> +	struct kvm *kvm = kern_hyp_va(vcpu->kvm);
-> +	u64 set;
-> +	u64 clr;
-> +
-> +	set = HDFGRTR_EL2_PMOVS
-> +		| HDFGRTR_EL2_PMCCFILTR_EL0
-> +		| HDFGRTR_EL2_PMEVTYPERn_EL0;
-> +	clr = HDFGRTR_EL2_PMUSERENR_EL0
-> +		| HDFGRTR_EL2_PMSELR_EL0
-> +		| HDFGRTR_EL2_PMINTEN
-> +		| HDFGRTR_EL2_PMCNTEN
-> +		| HDFGRTR_EL2_PMCCNTR_EL0
-> +		| HDFGRTR_EL2_PMEVCNTRn_EL0;
-> +
-> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGRTR_EL2, clr, set);
-> +
-> +	set = HDFGWTR_EL2_PMOVS
-> +		| HDFGWTR_EL2_PMCCFILTR_EL0
-> +		| HDFGWTR_EL2_PMEVTYPERn_EL0;
-> +	clr = HDFGWTR_EL2_PMUSERENR_EL0
-> +		| HDFGWTR_EL2_PMCR_EL0
-> +		| HDFGWTR_EL2_PMSELR_EL0
-> +		| HDFGWTR_EL2_PMINTEN
-> +		| HDFGWTR_EL2_PMCNTEN
-> +		| HDFGWTR_EL2_PMCCNTR_EL0
-> +		| HDFGWTR_EL2_PMEVCNTRn_EL0;
-> +
-> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGWTR_EL2, clr, set);
-> +
-> +	if (!cpus_have_final_cap(ARM64_HAS_FGT2))
-> +		return;
-> +
-> +	set = HDFGRTR2_EL2_nPMICFILTR_EL0
-> +		| HDFGRTR2_EL2_nPMICNTR_EL0;
-> +	clr = 0;
-> +
-> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGRTR2_EL2, clr, set);
-> +
-> +	set = HDFGWTR2_EL2_nPMICFILTR_EL0
-> +		| HDFGWTR2_EL2_nPMICNTR_EL0;
-> +	clr = 0;
-> +
-> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGWTR2_EL2, clr, set);
+This stuff isn't simple.
 
-This feels wrong. There should be one place to populate the FGTs that
-apply to a guest as set from the host, not two or more.
+Actually, I am starting to think that the current MMU UML kernel also
+needs a redesign with regard to signal handling and stack use in that
+case. My current impression is that the design right now only permits
+voluntarily scheduling. More specifically, scheduling in response to an
+interrupt is impossible.
 
-There is such a construct in the SME series, and maybe you could have
-a look at it, specially if the trap configuration is this static.
+I suppose that works fine, but it also does not seem quite right.
 
-	M.
+> On Wed, 25 Jun 2025 08:20:03 +0900,
+> Benjamin Berg wrote:
+> >=20
+> > Hi,
+> >=20
+> > On Mon, 2025-06-23 at 06:33 +0900, Hajime Tazaki wrote:
+> > > This commit updates the behavior of signal handling under !MMU
+> > > environment. It adds the alignment code for signal frame as the frame
+> > > is used in userspace as-is.
+> > >=20
+> > > floating point register is carefully handling upon entry/leave of
+> > > syscall routine so that signal handlers can read/write the contents o=
+f
+> > > the register.
+> > >=20
+> > > It also adds the follow up routine for SIGSEGV as a signal delivery r=
+uns
+> > > in the same stack frame while we have to avoid endless SIGSEGV.
+> > >=20
+> > > Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
+> > > ---
+> > > =C2=A0arch/um/include/shared/kern_util.h=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 4 +
+> > > =C2=A0arch/um/nommu/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+> > > =C2=A0arch/um/nommu/os-Linux/signal.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 13 ++
+> > > =C2=A0arch/um/nommu/trap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 194 ++++++++=
+++++++++++++++++++
+> > > =C2=A0arch/x86/um/nommu/do_syscall_64.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0 6 +
+> > > =C2=A0arch/x86/um/nommu/os-Linux/mcontext.c |=C2=A0 11 ++
+> > > =C2=A0arch/x86/um/shared/sysdep/mcontext.h=C2=A0 |=C2=A0=C2=A0 1 +
+> > > =C2=A0arch/x86/um/shared/sysdep/ptrace.h=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 2 +-
+> > > =C2=A08 files changed, 231 insertions(+), 2 deletions(-)
+> > > =C2=A0create mode 100644 arch/um/nommu/trap.c
+> > >=20
+> > > [SNIP]
+> > > diff --git a/arch/x86/um/nommu/os-Linux/mcontext.c b/arch/x86/um/nomm=
+u/os-Linux/mcontext.c
+> > > index c4ef877d5ea0..955e7d9f4765 100644
+> > > --- a/arch/x86/um/nommu/os-Linux/mcontext.c
+> > > +++ b/arch/x86/um/nommu/os-Linux/mcontext.c
+> > > @@ -6,6 +6,17 @@
+> > > =C2=A0#include <sysdep/mcontext.h>
+> > > =C2=A0#include <sysdep/syscalls.h>
+> > > =C2=A0
+> > > +static void __userspace_relay_signal(void)
+> > > +{
+> > > + /* XXX: dummy syscall */
+> > > + __asm__ volatile("call *%0" : : "r"(__kernel_vsyscall), "a"(39) :);
+> > > +}
+> >=20
+> > 39 is NR__getpid, I assume?
+> >=20
+> > The "call *%0" looks like it is code for retpolin, I think this would
+> > currently just segfault.
+>=20
+> # if you mean retpolin as zpoline,
+>=20
+> zploine uses `call *%rax` so, this is not about zpoline.
 
--- 
-Without deviation from the norm, progress is not possible.
+Ah, yes, of course.
+
+> > > +void set_mc_userspace_relay_signal(mcontext_t *mc)
+> > > +{
+> > > + mc->gregs[REG_RIP] =3D (unsigned long) __userspace_relay_signal;
+> > > +}
+> > > +
+>=20
+> This is a bit scary code which I tried to handle when SIGSEGV is
+> raised by host for a userspace program running on UML (nommu).
+>=20
+> # and I should remember my XXX tag is important to fix....
+>=20
+> let me try to explain what happens and what I tried to solve.
+>=20
+> The SEGV signal from userspace program is delivered to userspace but
+> if we don't fix the code raising the signal, after (um) rt_sigreturn,
+> it will restart from $rip and raise SIGSEGV again.
+>=20
+> # so, yes, we've already relied on host and um's rt_sigreturn to
+> =C2=A0 restore various things.
+>=20
+> when a uml userspace crashes with SIGSEGV,
+>=20
+> - host kernel raises SIGSEGV (at original $rip)
+> - caught by uml process (hard_handler)
+> - raise a signal to uml userspace process (segv_handler)
+> - handler ends (hard_handler)
+> - (host) run restorer (rt_sigreturn, registered by (libc)sigaction,
+> =C2=A0 not (host) rt_sigaction)
+> - return back to the original $rip
+> - (back to top)
+>=20
+> this is the case where endless loop is happened.
+> um's sa_handler isn't called as rt_sigreturn (um) isn't called.
+> and the my original attempt (__userspace_relay_signal) is what I tried.
+>=20
+> I agree that it is lazy to call a dummy syscall (indeed, getpid).
+> I'm trying to introduce another routine to jump into userspace and
+> call (um) rt_sigreturn after (host) rt_sigreturn.
+>=20
+> > And this is really confusing me. The way I am reading it, the code
+> > tries to do:
+> > =C2=A0=C2=A0 1. Rewrite RIP to jump to __userspace_relay_signal
+> > =C2=A0=C2=A0 2. Trigger a getpid syscall (to do "nothing"?)
+> > =C2=A0=C2=A0 3. Let do_syscall_64 fire the signal from interrupt_end
+>=20
+> correct.
+>=20
+> > However, then that really confuses me, because:
+> > =C2=A0* If I am reading it correctly, then this approach will destroy t=
+he
+> > =C2=A0=C2=A0 contents of various registers (RIP, RAX and likely more)
+> > =C2=A0* This would result in an incorrect mcontext in the userspace sig=
+nal
+> > =C2=A0=C2=A0 handler (which could be relevant if userspace is inspectin=
+g it)
+> > =C2=A0* However, worst, rt_sigreturn will eventually jump back
+> > =C2=A0=C2=A0 into__userspace_relay_signal, which has nothing to return =
+to.
+> > =C2=A0* Also, relay_signal doesn't use this? What happens for a SIGFPE,=
+ how
+> > =C2=A0=C2=A0 is userspace interrupted immediately in that case?
+>=20
+> relay_signal shares the same goal of this, indeed.
+> but the issue with `mc->gregs[REG_RIP]` (endless signals) still exists
+> I guess.
+
+Well, endless signals only exist as long as you exit to the same
+location. My suggestion was to read the user state from the mcontext
+(as SECCOMP mode does it) and executing the signal right away, i.e.:
+ * Fetch the current registers from the mcontext
+ * Push the signal context onto the userspace stack
+ * Modify the host mcontext to set registers for the signal handler
+ * Jump back to userspace by doing a "return"
+
+Said differently, I really prefer deferring as much logic as possible
+to the host. This is both safer and easier to understand. Plus, it also
+has the advantage of making it simpler to port UML to other
+architectures.
+
+> > Honestly, I really think we should take a step back and swap the
+> > current syscall entry/exit code. That would likely also simplify
+> > floating point register handling, which I think is currently
+> > insufficient do deal with the odd special cases caused by different
+> > x86_64 hardware extensions.
+> >=20
+> > Basically, I think nommu mode should use the same general approach as
+> > the current SECCOMP mode. Which is to use rt_sigreturn to jump into
+> > userspace and let the host kernel deal with the ugly details of how to
+> > do that.
+>=20
+> I looked at how MMU mode (ptrace/seccomp) does handle this case.
+>=20
+> In nommu mode, we don't have external process to catch signals so, the
+> nommu mode uses hard_handler() to catch SEGV/FPE of userspace
+> programs.=C2=A0 While mmu mode calls segv_handler not in a context of
+> signal handler.
+>=20
+> # correct me if I'm wrong.
+>=20
+> thus, mmu mode doesn't have this situation.
+
+Yes, it does not have this specific issue. But see the top of the mail
+for other issues that are somewhat related.
+
+> I'm attempting various ways; calling um's rt_sigreturn instead of
+> host's one, which doesn't work as host restore procedures (unblocking
+> masked signals, restoring register states, etc) aren't called.
+>=20
+> I'll update here if I found a good direction, but would be great if
+> you see how it should be handled.
+
+Can we please discuss possible solutions? We can figure out the details
+once it is clear how the interaction with the host should work.
+
+I still think that the idea of using the kernel task stack as the
+signal stack is really elegant. Actually, doing that in normal UML may
+be how we can fix the issues mentioned at the top of my mail. And for
+nommu, we can also use the host mcontext to jump back into userspace
+using a simple "return".
+
+Conceptually it seems so simple.
+
+Benjamin
+
+
+>=20
+> -- Hajime
+>=20
+> > I believe that this requires a second "userspace" sigaltstack in
+> > addition to the current "IRQ" sigaltstack. Then switching in between
+> > the two (note that the "userspace" one is also used for IRQs if those
+> > happen while userspace is executing).
+> >=20
+> > So, in principle I would think something like:
+> > =C2=A0* to jump into userspace, you would:
+> > =C2=A0=C2=A0=C2=A0 - block all signals
+> > =C2=A0=C2=A0=C2=A0 - set "userspace" sigaltstack
+> > =C2=A0=C2=A0=C2=A0 - setup mcontext for rt_sigreturn
+> > =C2=A0=C2=A0=C2=A0 - setup RSP for rt_sigreturn
+> > =C2=A0=C2=A0=C2=A0 - call rt_sigreturn syscall
+> > =C2=A0* all signal handlers can (except pure IRQs):
+> > =C2=A0=C2=A0=C2=A0 - check on which stack they are
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -> easy to detect whether we are in kern=
+el mode
+> > =C2=A0=C2=A0=C2=A0 - for IRQs one can probably handle them directly (an=
+d return)
+> > =C2=A0=C2=A0=C2=A0 - in user mode:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + store mcontext location and info=
+rmation needed for rt_sigreturn
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + jump back into kernel task stack
+> > =C2=A0* kernel task handler to continue would:
+> > =C2=A0=C2=A0=C2=A0 - set sigaltstack to IRQ stack
+> > =C2=A0=C2=A0=C2=A0 - fetch register from mcontext
+> > =C2=A0=C2=A0=C2=A0 - unblock all signals
+> > =C2=A0=C2=A0=C2=A0 - handle syscall/signal in whatever way needed
+> >=20
+> > Now that I wrote about it, I am thinking that it might be possible to
+> > just use the kernel task stack for the signal stack. One would probably
+> > need to increase the kernel stack size a bit, but it would also mean
+> > that no special code is needed for "rt_sigreturn" handling. The rest
+> > would remain the same.
+> >=20
+> > Thoughts?
+> >=20
+> > Benjamin
+> >=20
+> > > [SNIP]
+> >=20
+>=20
+
 
