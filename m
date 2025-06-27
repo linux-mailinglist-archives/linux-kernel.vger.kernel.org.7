@@ -1,229 +1,182 @@
-Return-Path: <linux-kernel+bounces-707053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CC6AEBF47
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:49:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA4DAEBF4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A06116E2E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614F93B92DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4881EE03D;
-	Fri, 27 Jun 2025 18:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49361EF39F;
+	Fri, 27 Jun 2025 18:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="agY5s/XZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f89gT4qm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693FC78F4B;
-	Fri, 27 Jun 2025 18:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107624502A;
+	Fri, 27 Jun 2025 18:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751050180; cv=none; b=QCQtF0zZye4JnBEU4UTVlIGbSO3RLrhs0p5fb+fXIqBQD4vOPAJ03o0eH6bV76Wf49t53YByIcwel/yLCdsf6moA5N/rFUDozV+nDkOcsd+WFK1c7sTzY7/ycKUrhWgVwQuVWsq3s/tsBRSkOopZFheB/Q34n9ZFX52HvLUDHVk=
+	t=1751050321; cv=none; b=D/TPdYlSuKT+tXc0cQ1EST/QjC+nBSPC6gkadrmfoJjGatlFKedd5p3UZtPNLVcT0C39nZIzPTAqgqsAx478ATSfbckmflIy/RXV7/jABKBHdtodFQr8tV/S+XIhuRrdxDWUUCicki34kG04IKDQlN7V+m/2pDn6aW6EljwVeMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751050180; c=relaxed/simple;
-	bh=narcaFjXVhe4/7r7kPhjOLSPFF8lb9hRlbz3gP5dDG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sgKhLVJ9wBIAvXvGTb4QKsC7eXJhXSQ6ekaf9ZDj8A26U+tXIEL4yVcXErjElxS6csCai1ZgDrcupNeKdgTBRuRtbh+1+aWMAKd1zonIF0OtN3CdQF4TnOyXxicLm/ElZyotgsIfGfga1VbBQ8V7YT4FMPTb/GVCDCJdToZR7TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=agY5s/XZ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751050178; x=1782586178;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=narcaFjXVhe4/7r7kPhjOLSPFF8lb9hRlbz3gP5dDG0=;
-  b=agY5s/XZQocy8Ex2IuFJHX0TUM4XyP1AiT6BUj1VSXRZiT2g57lYyjwU
-   B/JhsHCObpsXQ+S4vGvrliVsff+pkz3kvsRrw+k0HIQ1SEo5uQbla3F2v
-   Qc82jdageexcO/KZRnfvdlTwv4NUQTMXzwreUKtouCYxyj4x7rIjvzkP7
-   iDONiWB5wl2U3pop+iz6alsGcuBa5qKyZzvV/o+MP2JBOzmW7TyVtNAzS
-   0EyPb6l5cb2iDc1pj/8BEta6JLOXqZbSyl6XR17VaKvJhnnlPnXC4Fssy
-   iYCp3E0ICtFwex1ark2x12OyAQsTIEnLsfe51CxzaTKPudKMdJhE3rH5r
-   Q==;
-X-CSE-ConnectionGUID: ZZAflAdaQz2obFK9MUwVSA==
-X-CSE-MsgGUID: BD1XCQmaSCGw9sAx+eTDkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="78810498"
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="78810498"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 11:49:37 -0700
-X-CSE-ConnectionGUID: A7Edkv01Q/aVxm2Gt3qXJQ==
-X-CSE-MsgGUID: Egm5CKSjSTaC/g/ScZ2zJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="152394717"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 27 Jun 2025 11:49:34 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uVE8h-000WTG-3D;
-	Fri, 27 Jun 2025 18:49:32 +0000
-Date: Sat, 28 Jun 2025 02:49:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peng Fan <peng.fan@nxp.com>, Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	arm-scmi@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 7/7] firmware: imx: sm-misc: Dump syslog and system info
-Message-ID: <202506280217.aZih1pGT-lkp@intel.com>
-References: <20250627-sm-misc-api-v1-v1-7-2b99481fe825@nxp.com>
+	s=arc-20240116; t=1751050321; c=relaxed/simple;
+	bh=euvnyW4y4L7Ax2AaJfgnY285+oZy74N4SwvcUrcj4aA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ngurEg5zteG7LpgdzfO7XpTVDkaw/3jn8iPFgbqI6KlF5QgQ7hJ/ToCtxzfOW+z1ApKrwPgIDHFmRtO4W9AwKco03WNrQDPmT1YWq/s2XdCWebFwRhpj+pkn76UzYgJ3H8t+rPlqJ7uosJIbQP8Ki+HSy6BxtuxCIm7Q+8EE4mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f89gT4qm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CA3C4CEE3;
+	Fri, 27 Jun 2025 18:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751050319;
+	bh=euvnyW4y4L7Ax2AaJfgnY285+oZy74N4SwvcUrcj4aA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f89gT4qmMIdFe6oB5I+WVQS4FNELutxouQp7A4Pbl8uaWBia15pG1PeQbOWhWSzS4
+	 ldrmQcjnd70byKhVmXgxNS9u5Tr1MzI16xM9vacE3gxT7SftOQayTZoyj2qFAIBfR1
+	 DnmbUjv4BKN17rpd5w1SClMSBQmFF0UG2XdT2CRRDHW20mwpkTx9AYQcu6ncIg3EKs
+	 iZbul4cc4L8Yi86LWWRERnejaccCX6uPfL2QqP1idwMg4kRD5LXkpp6g2zVwzWHpxw
+	 f+Gl5pogZhQsteJfOly0+pK7ZLoVTudL+XMzXUtV6dBMy6xhDM0Q3UMn9jSeZzPuqX
+	 LZS5q2LzrxKOA==
+Message-ID: <8c4284f6-58eb-4d9a-b2e7-e1c66d3fcad6@kernel.org>
+Date: Fri, 27 Jun 2025 20:51:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627-sm-misc-api-v1-v1-7-2b99481fe825@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/9] rust: pwm: Add driver operations trait and
+ registration support
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Drew Fustini <drew@pdp7.com>,
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin
+ <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+ <CGME20250623180900eucas1p2ffbd79e79f690189ae89aefcc3793e50@eucas1p2.samsung.com>
+ <20250623-rust-next-pwm-working-fan-for-sending-v5-3-0ca23747c23e@samsung.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-3-0ca23747c23e@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Peng,
+On 6/23/25 8:08 PM, Michal Wilczynski wrote:
+> diff --git a/rust/kernel/pwm.rs b/rust/kernel/pwm.rs
+> index 3865b43ec47df6cb0c09bc74a228535512b6b1a8..25bc07a3df1d43467a3a6ec8f2362ae8f770360a 100644
+> --- a/rust/kernel/pwm.rs
+> +++ b/rust/kernel/pwm.rs
+> @@ -8,12 +8,13 @@
+>   
+>   use crate::{
+>       bindings,
+> -    device,
+> -    error,
+> +    device::{self, Bound},
+> +    devres::Devres,
+> +    error::{self, to_result},
+>       prelude::*,
+>       types::{ARef, AlwaysRefCounted, ForeignOwnable, Opaque},
+>   };
+> -use core::{convert::TryFrom, ptr::NonNull};
+> +use core::{convert::TryFrom, marker::PhantomData, ptr::NonNull};
+>   
+>   /// Maximum size for the hardware-specific waveform representation buffer.
+>   ///
+> @@ -408,3 +409,482 @@ unsafe impl Send for Chip {}
+>   // kernel locks, which the C core is responsible for. Any interior mutability is
+>   // handled and synchronized by the C kernel code.
+>   unsafe impl Sync for Chip {}
+> +
+> +/// A resource guard that ensures `pwmchip_remove` is called on drop.
+> +///
+> +/// This struct is intended to be managed by the `devres` framework by transferring its ownership
+> +/// via [`Devres::new_foreign_owned`]. This ties the lifetime of the PWM chip registration
+> +/// to the lifetime of the underlying device.
+> +pub struct Registration {
+> +    chip: ARef<Chip>,
+> +}
+> +
+> +impl Registration {
+> +    /// Registers a PWM chip with the PWM subsystem.
+> +    ///
+> +    /// Transfers its ownership to the `devres` framework, which ties its lifetime
+> +    /// to the parent device.
+> +    /// On unbind of the parent device, the `devres` entry will be dropped, automatically
+> +    /// calling `pwmchip_remove`. This function should be called from the driver's `probe`.
+> +    pub fn new_foreign_owned(
+> +        dev: &device::Device<Bound>,
+> +        chip: ARef<Chip>,
+> +        ops_vtable: &'static PwmOpsVTable,
+> +    ) -> Result {
+> +        let c_chip_ptr = chip.as_raw();
+> +
+> +        // SAFETY: `c_chip_ptr` is valid because the `ARef<Chip>` that owns it exists.
+> +        // The vtable pointer is also valid. This sets the `.ops` field on the C struct.
+> +        unsafe {
+> +            (*c_chip_ptr).ops = ops_vtable.as_raw();
+> +        }
+> +
+> +        // SAFETY: `c_chip_ptr` points to a valid chip with its ops initialized.
+> +        // `__pwmchip_add` is the C function to register the chip with the PWM core.
+> +        unsafe {
+> +            to_result(bindings::__pwmchip_add(c_chip_ptr, core::ptr::null_mut()))?;
+> +        }
+> +
+> +        let registration = Registration { chip };
+> +
+> +        Devres::new_foreign_owned(dev, registration, GFP_KERNEL)?;
+> +
+> +        Ok(())
 
-kernel test robot noticed the following build errors:
+This can just be:
 
-[auto build test ERROR on ecb259c4f70dd5c83907809f45bf4dc6869961d7]
+	Devres::new_foreign_owned(dev, registration, GFP_KERNEL)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/firmware-arm_scmi-imx-Add-documentation-for-MISC_BOARD_INFO/20250627-140736
-base:   ecb259c4f70dd5c83907809f45bf4dc6869961d7
-patch link:    https://lore.kernel.org/r/20250627-sm-misc-api-v1-v1-7-2b99481fe825%40nxp.com
-patch subject: [PATCH 7/7] firmware: imx: sm-misc: Dump syslog and system info
-config: i386-buildonly-randconfig-001-20250628 (https://download.01.org/0day-ci/archive/20250628/202506280217.aZih1pGT-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250628/202506280217.aZih1pGT-lkp@intel.com/reproduce)
+I.e. no need for the `Ok(())` below.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506280217.aZih1pGT-lkp@intel.com/
+With that,
 
-All errors (new ones prefixed by >>):
+	Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
->> drivers/firmware/imx/sm-misc.c:58:11: error: call to undeclared function 'kmalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      58 |         syslog = kmalloc(sizeof(*syslog), GFP_KERNEL);
-         |                  ^
-   drivers/firmware/imx/sm-misc.c:58:11: note: did you mean 'mm_alloc'?
-   include/linux/sched/mm.h:16:26: note: 'mm_alloc' declared here
-      16 | extern struct mm_struct *mm_alloc(void);
-         |                          ^
->> drivers/firmware/imx/sm-misc.c:58:9: error: incompatible integer to pointer conversion assigning to 'struct scmi_imx_misc_syslog *' from 'int' [-Wint-conversion]
-      58 |         syslog = kmalloc(sizeof(*syslog), GFP_KERNEL);
-         |                ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/firmware/imx/sm-misc.c:64:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      64 |                 kfree(syslog);
-         |                 ^
-   drivers/firmware/imx/sm-misc.c:80:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      80 |         kfree(syslog);
-         |         ^
-   drivers/firmware/imx/sm-misc.c:97:9: error: call to undeclared function 'kmalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      97 |         info = kmalloc(sizeof(*info), GFP_KERNEL);
-         |                ^
->> drivers/firmware/imx/sm-misc.c:97:7: error: incompatible integer to pointer conversion assigning to 'struct scmi_imx_misc_system_info *' from 'int' [-Wint-conversion]
-      97 |         info = kmalloc(sizeof(*info), GFP_KERNEL);
-         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/firmware/imx/sm-misc.c:127:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     127 |         kfree(info);
-         |         ^
-   7 errors generated.
+for the Registration bits.
 
+@Uwe: Just a head-up if you plan to pick this up for the upcoming merge window,
+Devres::new_foreign_owned() will be replaced with devres::register() --
+semantics and arguments do not change.
 
-vim +/kmalloc +58 drivers/firmware/imx/sm-misc.c
+> +    }
+> +}
+> +
+> +impl Drop for Registration {
+> +    fn drop(&mut self) {
+> +        let chip_raw = self.chip.as_raw();
+> +
+> +        // SAFETY: `chip_raw` points to a chip that was successfully registered.
+> +        // `bindings::pwmchip_remove` is the correct C function to unregister it.
+> +        // This `drop` implementation is called automatically by `devres` on driver unbind.
+> +        unsafe {
+> +            bindings::pwmchip_remove(chip_raw);
+> +        }
 
-    46	
-    47	static ssize_t syslog_show(struct device *device, struct device_attribute *attr,
-    48				   char *buf)
-    49	{
-    50		struct scmi_imx_misc_sys_sleep_rec *rec;
-    51		struct scmi_imx_misc_syslog *syslog;
-    52		int ret;
-    53		size_t len = 0;
-    54	
-    55		if (!ph)
-    56			return 0;
-    57	
-  > 58		syslog = kmalloc(sizeof(*syslog), GFP_KERNEL);
-    59		if (!syslog)
-    60			return -ENOMEM;
-    61	
-    62		ret = imx_misc_ctrl_ops->misc_syslog(ph, sizeof(*syslog), syslog);
-    63		if (ret) {
-  > 64			kfree(syslog);
-    65			return ret;
-    66		}
-    67	
-    68		rec = &syslog->syssleeprecord;
-    69	
-    70		len += sysfs_emit_at(buf, len, "Wake Vector = %u\n", rec->wakesource);
-    71		len += sysfs_emit_at(buf, len, "Sys sleep mode = %u\n", rec->syssleepmode);
-    72		len += sysfs_emit_at(buf, len, "Sys sleep flags = 0x%08x\n", rec->syssleepflags);
-    73		len += sysfs_emit_at(buf, len, "MIX power status = 0x%08x\n", rec->mixpwrstat);
-    74		len += sysfs_emit_at(buf, len, "MEM power status = 0x%08x\n", rec->mempwrstat);
-    75		len += sysfs_emit_at(buf, len, "PLL power status = 0x%08x\n", rec->pllpwrstat);
-    76		len += sysfs_emit_at(buf, len, "Sleep latency = %u\n", rec->sleepentryusec);
-    77		len += sysfs_emit_at(buf, len, "Wake latency = %u\n", rec->sleepexitusec);
-    78		len += sysfs_emit_at(buf, len, "Sleep count = %u\n", rec->sleepcnt);
-    79	
-    80		kfree(syslog);
-    81	
-    82		return len;
-    83	}
-    84	
-    85	static DEVICE_ATTR_RO(syslog);
-    86	
-    87	static ssize_t system_info_show(struct device *device, struct device_attribute *attr,
-    88					char *buf)
-    89	{
-    90		struct scmi_imx_misc_system_info *info;
-    91		int len = 0;
-    92		int ret;
-    93	
-    94		if (!ph)
-    95			return 0;
-    96	
-  > 97		info = kmalloc(sizeof(*info), GFP_KERNEL);
-    98		if (!info)
-    99			return -ENOMEM;
-   100	
-   101		ret = imx_misc_ctrl_ops->misc_discover_build_info(ph, info);
-   102		if (ret)
-   103			goto err;
-   104	
-   105		ret = imx_misc_ctrl_ops->misc_cfg_info(ph, info);
-   106		if (ret)
-   107			goto err;
-   108	
-   109		ret = imx_misc_ctrl_ops->misc_silicon_info(ph, info);
-   110		if (ret)
-   111			goto err;
-   112	
-   113		ret = imx_misc_ctrl_ops->misc_board_info(ph, info);
-   114		if (ret)
-   115			goto err;
-   116	
-   117		len += sysfs_emit_at(buf, len, "SM Version    = Build %u, Commit 08%x\n",
-   118				     info->buildnum, info->buildcommit);
-   119		len += sysfs_emit_at(buf, len, "SM Config     = %s, mSel=%u\n",
-   120				     info->cfgname, info->msel);
-   121		len += sysfs_emit_at(buf, len, "Silicon       = %s\n", info->siname);
-   122		len += sysfs_emit_at(buf, len, "Board         = %s, attr=0x%08x\n",
-   123				     info->brdname, info->brd_attributes);
-   124	
-   125		ret = len;
-   126	err:
-   127		kfree(info);
-   128		return ret;
-   129	}
-   130	
+NIT: You can write this in one line as:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	unsafe { bindings::pwmchip_remove(chip_raw) };
 
