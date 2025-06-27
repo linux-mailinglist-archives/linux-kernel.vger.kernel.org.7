@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-705656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800F9AEABE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E84CAEABE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEFE856152E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:47:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A38567F4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DBC14EC73;
-	Fri, 27 Jun 2025 00:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF03194AD5;
+	Fri, 27 Jun 2025 00:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSCckswS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoCzdsbk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021E87261D;
-	Fri, 27 Jun 2025 00:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE52188006;
+	Fri, 27 Jun 2025 00:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750985228; cv=none; b=J8JJetyoWhngWo8Jb+veoxbh/kf2WFj0MSYztx89b8VnB9vc8rwTsg3uf8iv1HNboxwnLr6g99uD6b1ufP9umjmKIxi8QbZFAEqBcZk0WXoWPAOwt3JJCC9SBmzfOP5AsTiEJ4b5Nqsvj4raXGxmaPnpoc54OAbvoqeaK2h+5tg=
+	t=1750985229; cv=none; b=m/sNdHSGVq1rXuCMDrKaXjgzOianr7ZdW2N2SPXMnJAgsSubRLgNljGjzC4mGPkf+sUPy0tUBxcKmuJR3vpH5+zjuCZRyKKRYKmtigH3VguRlEONooWa1SRO9b3B9mChUCdPdx6Acc0yG77Sf33ZAZGqybA2jSpeviPdDhnGxpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750985228; c=relaxed/simple;
-	bh=KLVo0i7bzQjuCkB6EyoBn05Oq4kJmck/VNNy4YqEOZY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NKLnqd8YQOjz67oyPvQKyMGl1ggHSvGpJLjGf7yg+00Fp2n1LDXRcdddjSUmw7GBfYk/fkRkrgekSNUhjlobvk5D4RUsBtWc2GtGUGMAkjBP0Wa/dY96LvXkHHKc5EO+7RLq+4X4jD4q40NjE96Y8at0dImm3dikmnlHkTngObo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSCckswS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441ADC4CEF1;
-	Fri, 27 Jun 2025 00:47:07 +0000 (UTC)
+	s=arc-20240116; t=1750985229; c=relaxed/simple;
+	bh=Sy0MNRkr7OgPAHkYaJle+oDt6of3ltgYZS+pBtmnxsg=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iV545AR7AaW/MokXQKyUas3+yYmeEBS+z6EBdCpOczLtPls2nL23rzvWlQC9T3oqebsME8a5XOUGSs5zrDwB5FYq3RoqeTJI+JlIP/croIUu2JoKBPnn+ECFwbOCv3Grv9NjsqvfAT0sbKch/fIsnMK21sYbxOHnPumtkcbs/GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoCzdsbk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5888C4CEF3;
+	Fri, 27 Jun 2025 00:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750985227;
-	bh=KLVo0i7bzQjuCkB6EyoBn05Oq4kJmck/VNNy4YqEOZY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=sSCckswSACPcKvyWCKnrG2h1+jZ67FaMJTasx6hSt5ts/L+BJx5oHj93hwJZ8ioc1
-	 q3h9KH658ecGogfhe3XXRVBtKn2Y3cPDOwyEUDdJXjYu6YcuqfmadmBFYEwVqo4FTk
-	 bBj0+xI3F2R6yR7xFSq5grvz2V7U5IJtHKkdQlr1A2V0z1b3mBmzvqa5OkKMS2kyCa
-	 ICcrUiZ1QzYcb1RksKQ79BJqjO97w+XMY2dZHL5ogoPcZGaqTMfVa3qMVma7UvKszx
-	 sRGFdQ/z4MFpYMn8PUAdMt3w6hUeZHy3hQEha5BCeJFRITaUCtDN/S+82sB6Aafnwy
-	 sPpsHpoJIIKvQ==
+	s=k20201202; t=1750985229;
+	bh=Sy0MNRkr7OgPAHkYaJle+oDt6of3ltgYZS+pBtmnxsg=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=VoCzdsbkoo5sJQ5ESRkQH6mdo6fdZbKn223ORwnlRljqQfJxlMZXm4fARn4KKSWG7
+	 SQDiY0v8hoj/YxqCxbiDHrW4e0aXYOwPamWrDx5wePdwKeToVxyvHLe7TknxzveLSO
+	 pMy46atriyTYv9jc9RMvWIfJhX0WWaZGNu3eugoLxwa83Y0T93+qNYTwyvn2NtNa1x
+	 C7NvyS0X/HSvqQaV6cj2eCdthkpDw7Bv7tFhHcqHUoJBt3EvRUabqzlq6Bm2Q2JbIr
+	 Va9ewMSgzlu0z8c5uk2Hr9YRwqwUVb0arnAMLRYCAiLO868GrjHM0rlNsoDEKqdE4D
+	 sosbrhir9Dv9w==
 From: Vinod Koul <vkoul@kernel.org>
 To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Mrinmay Sarkar <mrinmay.sarkar@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- krishna.chundru@oss.qualcomm.com, quic_vbadigan@quicinc.com, 
- quic_nayiluri@quicinc.com, quic_ramkri@quicinc.com, 
- quic_nitegupt@quicinc.com, Mrinmay Sarkar <quic_msarkar@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <20250617-update_phy-v5-0-2df83ed6a373@quicinc.com>
-References: <20250617-update_phy-v5-0-2df83ed6a373@quicinc.com>
-Subject: Re: (subset) [PATCH v5 0/2] Update PCIe PHY settings for QCS8300
- and SA8775P
-Message-Id: <175098522717.106297.12993468962065635081.b4-ty@kernel.org>
-Date: Thu, 26 Jun 2025 17:47:07 -0700
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Melody Olvera <melody.olvera@oss.qualcomm.com>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250616062541.7167-2-krzysztof.kozlowski@linaro.org>
+References: <20250616062541.7167-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] phy: qcom: qmp-combo: Add missing PLL (VCO)
+ configuration on SM8750
+Message-Id: <175098522871.106297.918831691026558846.b4-ty@kernel.org>
+Date: Thu, 26 Jun 2025 17:47:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,17 +64,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Tue, 17 Jun 2025 17:08:18 +0530, Mrinmay Sarkar wrote:
-> This Series is to update PCIe PHY settings as per latest
-> hardware programming guide and remove max link speed dt
-> property for SA8775P PCIe EP.
+On Mon, 16 Jun 2025 08:25:42 +0200, Krzysztof Kozlowski wrote:
+> Add missing DP PHY status and VCO clock configuration registers to fix
+> configuring the VCO rate on SM8750.  Without proper VCO rate setting, it
+> works on after-reset half of rate which is not enough for DP over USB to
+> work as seen on logs:
 > 
+>   [drm:msm_dp_ctrl_link_train_1_2] *ERROR* max v_level reached
+>   [drm:msm_dp_ctrl_link_train_1_2] *ERROR* link training #1 on phy 0 failed. ret=-11
 > 
+> [...]
 
 Applied, thanks!
 
-[1/2] phy: qcom: qmp-pcie: Update PHY settings for QCS8300 & SA8775P
-      commit: 03aa45d6c62d6861dcbcff627d88814c0ddecc88
+[1/1] phy: qcom: qmp-combo: Add missing PLL (VCO) configuration on SM8750
+      commit: 304c102cff7382353a28039907a7017bde795db9
 
 Best regards,
 -- 
