@@ -1,134 +1,193 @@
-Return-Path: <linux-kernel+bounces-706383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E27DAEB5DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7F0AEB4DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 693665606E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2351C414AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0017B2C08CB;
-	Fri, 27 Jun 2025 11:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C5D2989BA;
+	Fri, 27 Jun 2025 10:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4CTDk8G"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0HuLtnqg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ezmsx4Ov";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0HuLtnqg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Ezmsx4Ov"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0F82BEC4A;
-	Fri, 27 Jun 2025 11:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8349619066B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 10:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751022299; cv=none; b=bpiQ/I/7A91t9fzv44shmNjhYnSSikrpdtH1MASZYgBw7pgfDwz9J9eX0QtxOxRjj0mka52DTYY8oLnWr57EnIa/B+t2CXWO9skmfbS1KgZO/v2ztSzYvG5i8WKgtGhkg4KLjFvPVpIDYKfdl7bkf0L1I9Q0P/wmTi8lUVvHbXk=
+	t=1751020160; cv=none; b=rdMxxTArK3hOsr2zbOGBZcPjKK2WWcb/Z0pfjL0K5jHVqeXfRTStGWaqfr6Pth5VsDN2aiadVJtkpaBYaF/5UW5fp3h8rDnNTIoMRb4MGdRL/WYg5wn7nlKPU6Ow7qlMB5RnUfwPHbtbtMrJjRvsE13FEAWYr5+zhFAVD5xBLDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751022299; c=relaxed/simple;
-	bh=7OX2gmVdzbsDMuU5mDzT/dNOdFBH3pSx7pn8SHF3BpA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=BIYsXLL4SeSg6wp/a98jhlZ34X+XQP5lGVjQfulY7OmzarPjl/rsouM8NngKLDXjmZtXb8+i+uQ2bpnQJQWO4c9+ZK1hrypqJIdw1Bdzscep+CCwjWaGN1vyXfEwoOEhKC8QZW3wKcpnLK9kroZKs5Jmgwlw1hhew+p2g+3T36Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4CTDk8G; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a575a988f9so1210973f8f.0;
-        Fri, 27 Jun 2025 04:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751022296; x=1751627096; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+sVT4qtdvzplq7Tz7qyhzRU8mVdcqltow7utE3n3/o=;
-        b=l4CTDk8GmRToQ799QQqTo96mNTCZUMRPIV8tzItUOkfsO1kzVStfO9S4MlQ22oWRIx
-         TRjna+CyCjJxLFCQ3C8zKVEOY12+g7iMPhntIv27+3yPiqNWVjVugRe5YYiDbLG1KMzL
-         N6lWZGUk8VmqmMAE/2COdl7cLREcixUutd9MokHGTNepUlXvwqIwnYkw+mxoUMl+Dk1w
-         neRrPyUui4EZhccRnJ8sxdWlhBAN7gPZw90elkFTQ8sp1qdWjXYcNeWZJ6Y0eBs52+fl
-         EJyVUrrfQVc060o+a7revA8Gw/2c1dUG6cpIIsrm8kALM3ZWX4MCYADkpMy0sHegGiRe
-         OyGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751022296; x=1751627096;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w+sVT4qtdvzplq7Tz7qyhzRU8mVdcqltow7utE3n3/o=;
-        b=RDct0P6Z3D2lnm6euM1DVae1hWjY1DzUedhpT8+tiQ/edPMmGAxw4Gb4ohcQTW0lF/
-         JtpxtWKbUoerXkLPUK0i+odbkVyiP7jUqS6kcsdPFmFdcrzYof/llhFF00PoGbMKO0mt
-         RtcR/aSLErISIvlBrdfoocodVzki6C/o/ZtDa7FxuCl54zsnboDxTlNmUwFfuPhoFdxP
-         CBOb8bbeuWQi0SqwUcSwMTPUL+GppLgaW0T2FSviK2a+MjnBa8pwZsN4RONorzpa1vuw
-         42h43BzqonessZcq0oiFgLtqn1/NDEo8PDQ3yHs/FXOFYymPNhIBPxxi7PNDN8aYYJMV
-         TSaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKhYb7cis64B6EYSbXONcFBBn9CLlZIP8e+3pYvvzAcqtmhuFZYVanf7Lkbc/xGvGr8Hkqa7TKjMZf+lo=@vger.kernel.org, AJvYcCWbcDFpDQ68II9RY1C8VOOMGnvLCSSN9XNvgWHLlJFseB5e8tSF31d9YhvAykFk1T//k1pynXRZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw8K6k1hAmxEaW702bxBZRSwI2ro8gJRvooizyrzbhyYr5L+Oj
-	FMRhNFIMFXABLladvSR4zHZBFZrrHF+tfuwQwA4DzaHPE4b4eXKb/lSW
-X-Gm-Gg: ASbGncuLDURyBdLO8cDTARSqkSmQkYX5+LPHARcew3iuEElT2CDpsVnCk8wkDSJvrEB
-	BQdeDQ9W4q9FvihMnCtoZErbc4zwGQd8yJUoimW7C1joqCWJ2CQEydHN4JdM4PfDKqlcZxT486p
-	4Ri4HwOdw6Soelv8M9YGyzcTdi6fHYHI3yQqpauUvYwrXYXE+PQy65eW62rkCgIq6NXeYUJ9fPJ
-	jwCe4/K6syuKd1gIAm0dhBqtrLcvu0XSnuePByHyuNQskAQtVMLqkZWgIkCHBAt8cOO/d9e8TOq
-	0Rcxoz8fdoPztTG81B5w2x912wXv9m42rtZYTPP4UXmwEI0bodln7E9L2EdWwmcqfkcm+PHkRw=
-	=
-X-Google-Smtp-Source: AGHT+IG5sOZtrZ/xkGKBtpPDwO9ulvETh61gbQZuRWutZTAPMm2RPvXbvSU+mZffShbCxp1x7KeuNg==
-X-Received: by 2002:adf:ea49:0:b0:3a5:2cb5:6429 with SMTP id ffacd0b85a97d-3a9001a2429mr1995199f8f.43.1751022295630;
-        Fri, 27 Jun 2025 04:04:55 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:40b8:18e0:8ac6:da0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fa5easm2364868f8f.26.2025.06.27.04.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 04:04:55 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
- <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
- <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
- Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
- <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
- Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
- Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
-  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
-  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
-  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
-  stern@rowland.harvard.edu
-Subject: Re: [PATCH v8 06/13] docs: use parser_yaml extension to handle
- Netlink specs
-In-Reply-To: <34e491393347ca1ba6fd65e73a468752b1436a80.1750925410.git.mchehab+huawei@kernel.org>
-Date: Fri, 27 Jun 2025 11:28:40 +0100
-Message-ID: <m2wm8x8omf.fsf@gmail.com>
-References: <cover.1750925410.git.mchehab+huawei@kernel.org>
-	<34e491393347ca1ba6fd65e73a468752b1436a80.1750925410.git.mchehab+huawei@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1751020160; c=relaxed/simple;
+	bh=lzTDc05wRZkn4HQKdEu7ZLT84f2VoFsN2PT4tF+PlEc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XWf+3g3rfJzAQmVcArWCDYJxJG1t80jf9Fxte59BcokknHYA9yIiGw7HTeDZBK8rkdUWg+o4sIaVu/49RR2m3DxXoK0jzhACDUMNdGoU8U5TVRsX6ZbtSMg4yblzjyjQ4IJad7j+DJjWdTGO1xHqU5vkVvyV+TVMa2QTTYwCsu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0HuLtnqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ezmsx4Ov; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0HuLtnqg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Ezmsx4Ov; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 82DCD21175;
+	Fri, 27 Jun 2025 10:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751020155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=/Nz3rHqrUjYxoZ53w69TmDEbWGJFOtlq8zBUlOUNVng=;
+	b=0HuLtnqgKgmZWI3glmjKdrtfPTIVZjsuYbYquWvxBGYqFSQc1Vo5V/pgN5Pme2VKXH2HLc
+	apo8856e15DCQNBnT7dN1LZRWdP+SH6kdbiKHOkaisKviPaAfMTw27XSqv8TdvUC0vweMj
+	BptZg/u1RLiqwrGZEOuIunGI0b4tAzI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751020155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=/Nz3rHqrUjYxoZ53w69TmDEbWGJFOtlq8zBUlOUNVng=;
+	b=Ezmsx4Ovj24Sqxs7XFDLhVDrfkSvFAf383fN1K2tkSz9PXk66rrJ378vKkPWjefyvze0nx
+	+zRBRk6sd7qlzoBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0HuLtnqg;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Ezmsx4Ov
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751020155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=/Nz3rHqrUjYxoZ53w69TmDEbWGJFOtlq8zBUlOUNVng=;
+	b=0HuLtnqgKgmZWI3glmjKdrtfPTIVZjsuYbYquWvxBGYqFSQc1Vo5V/pgN5Pme2VKXH2HLc
+	apo8856e15DCQNBnT7dN1LZRWdP+SH6kdbiKHOkaisKviPaAfMTw27XSqv8TdvUC0vweMj
+	BptZg/u1RLiqwrGZEOuIunGI0b4tAzI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751020155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=/Nz3rHqrUjYxoZ53w69TmDEbWGJFOtlq8zBUlOUNVng=;
+	b=Ezmsx4Ovj24Sqxs7XFDLhVDrfkSvFAf383fN1K2tkSz9PXk66rrJ378vKkPWjefyvze0nx
+	+zRBRk6sd7qlzoBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0D03113786;
+	Fri, 27 Jun 2025 10:29:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mCwjAHtyXmgIAgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Fri, 27 Jun 2025 10:29:15 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Peter Xu <peterx@redhat.com>,
+	Gavin Guo <gavinguo@igalia.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v3 0/5] Misc rework on hugetlb faulting path
+Date: Fri, 27 Jun 2025 12:28:59 +0200
+Message-ID: <20250627102904.107202-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 82DCD21175
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+ v1 -> v2:
+   - Addressed issue folio_lock when holding spinlock (per David)
+   - Simplify new_anon_folio (per David)
+   - Slightly rework patch#2 to make it simpler
 
-> Instead of manually calling ynl_gen_rst.py, use a Sphinx extension.
-> This way, no .rst files would be written to the Kernel source
-> directories.
->
-> We are using here a toctree with :glob: property. This way, there
-> is no need to touch the netlink/specs/index.rst file every time
-> a new Netlink spec is added/renamed/removed.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+ v1 -> v2:
+   - Addressed feedback from David
+   - Settle ideas wrt. locking in faulting path after
+     discussion with David
+   - Add Acks-by
 
-This patch doesn't currently merge in the net-next tree because it
-depends on a series in docs-next.
+ RFC -> v1:
+   - Stop looking up folio in the pagecache for detecting a COW
+     on a private mapping.
+   - Document the locks
 
-> diff --git a/Documentation/sphinx/parser_yaml.py b/Documentation/sphinx/parser_yaml.py
-> index 585a7ec81ba0..fa2e6da17617 100755
-> --- a/Documentation/sphinx/parser_yaml.py
-> +++ b/Documentation/sphinx/parser_yaml.py
-> @@ -18,9 +18,9 @@ from sphinx.util import logging
->  from sphinx.parsers import Parser
->  
->  srctree = os.path.abspath(os.environ["srctree"])
-> -sys.path.insert(0, os.path.join(srctree, "tools/net/ynl/pyynl"))
-> +sys.path.insert(0, os.path.join(srctree, "tools/net/ynl/pyynl/lib"))
->  
-> -from netlink_yml_parser import YnlDocGenerator        # pylint: disable=C0413
-> +from doc_generator import YnlDocGenerator        # pylint: disable=C0413
+This patchset aims to give some love to the hugetlb faulting path, doing so
+by removing obsolete comments that are no longer true, sorting out the folio
+lock, and changing the mechanism we use to determine whether we are COWing a
+private mapping already.
 
-Please fix up patch 5 so that this diff can be dropped.
+The most important patch of the series is #1, as it fixes a deadlock that
+was described in [1], where two processes were holding the same lock
+for the folio in the pagecache, and then deadlocked in the mutex.
+Looking up and locking the folio in the pagecache was done to check whether
+that folio was the same folio we had mapped in our pagetables, meaning that if it
+was different we knew that we already mapped that folio privately, so any
+further CoW would be made on a private mapping, which lead us to the  question:
+ __Was the reservation for that address consumed?__
+That is all we care about, because if it was indeed consumed and we are the
+owner and we cannot allocate more folios, we need to unmap the folio from the
+processes pagetables and make it exclusive for us.
+
+We figured we do not need to look up the folio at all, and it is just enough to
+check whether the folio we have mapped is anonymous, which means we mapped it
+privately, so the reservation was indeed consumed.
+
+Patch#2 sorts out folio locking in the faulting path, reducing the scope of it
+,only taking it when we are dealing with an anonymous folio and document it.
+More details in the patch.
+
+Patch#3-5 are cleanups.
+
+[1] https://lore.kernel.org/lkml/20250513093448.592150-1-gavinguo@igalia.com/
+
+
+Oscar Salvador (5):
+  mm,hugetlb: Change mechanism to detect a COW on private mapping
+  mm,hugetlb: Sort out folio locking in the faulting path
+  mm,hugetlb: Rename anon_rmap to new_anon_folio and make it boolean
+  mm,hugetlb: Drop obsolete comment about non-present pte and second
+    faults
+  mm,hugetlb: Drop unlikelys from hugetlb_fault
+
+ mm/hugetlb.c | 132 ++++++++++++++++++++++-----------------------------
+ 1 file changed, 56 insertions(+), 76 deletions(-)
+
+-- 
+2.50.0
+
 
