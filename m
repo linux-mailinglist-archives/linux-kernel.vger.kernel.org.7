@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-705777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4226AEAD9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:57:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03550AEADAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67CAB7B65C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4F056341C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF3A1ACEAC;
-	Fri, 27 Jun 2025 03:57:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DD51C7017;
+	Fri, 27 Jun 2025 04:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrlrvfPO"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FFE1A705C
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09C0249E5;
+	Fri, 27 Jun 2025 04:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750996625; cv=none; b=SMA6J7ikwEkR79d3BZAKWdCDCEMQ+jFu3nLYfpwrgZ2rhnVPDhpeahxFj98NLlg+6MWqvzpqLMpYQAkbNRu3teTK7UYBOpFadN5cm66dSI13oSGTCe4nJuuCv9wp4q2GMw860YeyNOjAbAnTZrW7+45ZfCuroljbfKiZsVgD1bA=
+	t=1750996811; cv=none; b=Cn4zxHo1NRq+PHxFSkYaqRp+aWuxO3DAaiVSo6ifMFAvet2FFnyVMS6M9RM/dszPfWRO8shoJImjARljA1KtMKoFvenH4mAJvBRfeVfwIKnrObHLZl27QbRF46Nbd1Njz0nLq2DDOBMj/56sqA+NwetvaO/xRY9pR0lvZhwTYbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750996625; c=relaxed/simple;
-	bh=iGtsc2zIpestiI1LiwAjLp7hMhvKPPtvOJ/nYZ4+MNM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=g3v6NvlS81/iRRMmJkdMP12jA0BHaWzwSYuQXisuHM3U+RyySqG2ZIa8SYXzEhB4Cz8bCsM5//91hqX+mVdquE4YSYpK//XRW/GS6VrnNjO+GVJzN8w8ABlGgvUPL/NaVRDT4MiEFVDsdOfjeW+pp97fyK0xAQciOP0E7p8XR8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3de3b5b7703so10845195ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 20:57:03 -0700 (PDT)
+	s=arc-20240116; t=1750996811; c=relaxed/simple;
+	bh=uzh6Ejeo0zjoQzvbnZGYIBfTNLOOJRawGCX6NyVzMaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZF5ga7swSmoY2NikenFzK+9NWm0W8CvJwMaToCS2W+UNtrQJRtAzWI6ovFgMtzw880UyQIcyJFQ+m5Lu0mQY5UU3uqMk+x+YRutqPqlETHhYvguJEfqAm9sw+vZqWBWheGxLuPWqfezBPSQJmcqk0bqL4H4QKQVtVViQq8vfbOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lrlrvfPO; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-711a3dda147so19579157b3.2;
+        Thu, 26 Jun 2025 21:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750996808; x=1751601608; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uzh6Ejeo0zjoQzvbnZGYIBfTNLOOJRawGCX6NyVzMaQ=;
+        b=lrlrvfPOAzaPRRBZVHWNSGC5PZ+izJuIC8G9AwKboi3FNNVSHFOfcnyExpybSf9a+M
+         Z3XamDvkEtXNazzVwhZejaThdkW2Wv+9g6Qq8ZG1VOODZrk6dzSgaKd2HKA3AoMGGCEr
+         Ha0iKsNWdQy3Q1DbteNdpimKefMuPSTa16IcGu4cvciqb0VwgcUXg2LRLw2+9I+77kXq
+         abrJEvhYLbkQPWuwsQ5dDzOxYHvF1vVrAIlBnAdpUBzLyW9m+j9QfzpTJAzRwksj2myk
+         EgR2x9sgVBJKeyIxGecpgrZ7J9BacWAqKX18M8Q1JoT4D33i0zUHnCKVuLfP8wCZv6z4
+         ijKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750996623; x=1751601423;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Edqk8b6TRexhsTMFdiRMX8dpvvT0ITdG0FS3RQnqiFI=;
-        b=UB/IVdymPQRy+MWJXBulMYtmJsWru3qozAI3CpfLaiBTI0uDzF22TJT8P5wMOCci0/
-         vLt8IK5RzoIDhfDrU7nnrHSih3RmErfJW0GyUVfInGlq5n/tpTdqZInagGpmeTzGquWq
-         zIesbq5nBw3ASs/LJpNce4GcPCHjO6QLYwLPRgNb2dvxDfNqmP9tajPo9uDDbT/3ZcDX
-         YOQ5aipp0A3hwUJuQyt5YC4ZW4S1W7Gho8MzbEd2h631zdjHIKdqkFJbfE2CYKW+c702
-         HW28o9/yU72WXF3CJ1rvwsHVgGyvvGi/FSBQJGA6+fiI1fEwleJDIA9g+5OZqvzlBsDS
-         sZ5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfq1VJL3CLZHqPCkAyioIde+5zY/quYr+TGHQRMUtdpwGNhBc7O9Rlrz7jamsIwDU4Wj+X80RtYIo3098=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlsmqEvSGlqe6uhihbye/0vnLb1MiDlU0MhO98L5rnVg/bAuoY
-	lGgoEFD5AOf+7/Vsy9P2FWK785MhQmVeBL/LjqcPdds+Cq4lFzkQUl5PCs4hG2UNIR9zARLTsxZ
-	nwi4fYqUGiM3dcFEy7YkfOb3qe6EdhZiVGF/OaLGlF6jsJ0au6H/ppn6ig2k=
-X-Google-Smtp-Source: AGHT+IESmmH/HGBBLnn5qK3lcAscrw/OP1YEPEl9mM72nxERUyiHuxuBc3rKf/ewxGsGgPCjey5/xnQS+m0G9gbqergdnAxYbm5I
+        d=1e100.net; s=20230601; t=1750996808; x=1751601608;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uzh6Ejeo0zjoQzvbnZGYIBfTNLOOJRawGCX6NyVzMaQ=;
+        b=wQ/DAr2J+Pw+tH0uAKp0xKUKqyZOUdboKjjy+i4J/208mtiFta/o46wS7LXlodoyu7
+         mWefBEfsoTTtb/YqPOE0eInxn6ydtossDA4o5ezbR2NsOAuhycieTNXoWfJI+7Savibj
+         DIWr9Pf7LlcnqLDik9Gsk2begePnU48/ZnSBw6XUO4i9k3gmfK00oLUVhXDqWTPkqewg
+         qnMGtmVGIrKT4LzIYxhjp5Veut7IQ7t1ThIARVCSJE5wouSwn68KBR7+VsuSIT8tX83o
+         oidXiSweRBC89bNxuiqGw9LabkiY5iToa+yzFB9QrUbXJ0HNY/qb85zESkr82GwUDm6h
+         LSyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFHAHvbEHlMHhhFxYXC7J6Zvl+5hwKxhuSt3M7OsTj3POf0LVSjgSTv20Nq+W5PNC9qjFOicWF@vger.kernel.org, AJvYcCWA1PvXXqMJVk6Ezf1OP8qmo0kTGzPefxNHj8muLhiTBY/EQloGJnEGElXDCmvF+p+ephDUwrSwZlK7I3Y=@vger.kernel.org, AJvYcCWRWy9/Q3EdosPgvaMPVTJ1kgDGKu8c2DFfnfjlNTrIOO7qEFybO2ixwmnGYAE8scwR3+NGbCqHsHKu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw0xUDFNmpyv6ZLwQyys8OeixA6D9CJRG/2SKh1ABVe+u+Wq7z
+	xJyMupDgTRF3wbDmSbRe+WOQr8hSojQH9W0THPb0hqTJhX+W9YPDDorw4nQyQFVaiRVcE2nj4aq
+	dfsY2Ff1qv8VOz3mntB77+PW5JVnJyUg=
+X-Gm-Gg: ASbGncts/b17RAjaHvpE40gwvq1NOL9cXS1whNPKESgcCuq7mCp//9Ak0ety0HOgmCO
+	D/1sEhrFa/yN8B0VV0Lea3Txn4QyGn3DoAz/yeRIpiE25bE2i1Y7qSzohYmIbFY+wuinnExxgmt
+	+5pbMPdh6zsUTj+d3bIolKG09uXWtuLd6XFFN+dGCPNi0s61Uu0N2S542dN9c=
+X-Google-Smtp-Source: AGHT+IFGFbNxfM2Y3pKB8FLy0/CNkvBvLBQxCbwsOZh36DwBvQpux8n0sFeXGu96NI0KeKMemd9NFiA0SpOeoRaXABE=
+X-Received: by 2002:a05:690c:6e8e:b0:6fb:a696:b23b with SMTP id
+ 00721157ae682-715171d2002mr27679707b3.33.1750996808407; Thu, 26 Jun 2025
+ 21:00:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ce:b0:3dd:cc26:61c7 with SMTP id
- e9e14a558f8ab-3df4acf1885mr22597545ab.20.1750996622691; Thu, 26 Jun 2025
- 20:57:02 -0700 (PDT)
-Date: Thu, 26 Jun 2025 20:57:02 -0700
-In-Reply-To: <95a8efa9-eca2-4b07-a762-e08de6ae61b3@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685e168e.a00a0220.2e5631.03f4.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in rxe_skb_tx_dtor
-From: syzbot <syzbot+8425ccfb599521edb153@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yanjun.zhu@linux.dev, zyjzyj2000@gmail.com
+References: <20250625034021.3650359-1-dqfext@gmail.com> <20250625034021.3650359-2-dqfext@gmail.com>
+ <aF1z52+rpNyIKk0O@debian>
+In-Reply-To: <aF1z52+rpNyIKk0O@debian>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Fri, 27 Jun 2025 11:58:58 +0800
+X-Gm-Features: Ac12FXxEbCjk6xKhlXBSv8er9UxDmmmlmhm8ygwfkngkLtj7QrRRPuHIJzB3Cqg
+Message-ID: <CALW65jasGOz_EKHPhKPNQf3i0Sxr1DQyBWBeXm=bbKRdDusAKg@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] ppp: convert rlock to rwlock to improve RX concurrency
+To: Guillaume Nault <gnault@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	linux-ppp@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Jun 27, 2025 at 12:23=E2=80=AFAM Guillaume Nault <gnault@redhat.com=
+> wrote:
+> That doesn't look right. Several PPP Rx features are stateful
+> (multilink, compression, etc.) and the current implementations
+> currently don't take any precaution when updating the shared states.
+>
+> For example, see how bsd_decompress() (in bsd_comp.c) updates db->*
+> fields all over the place. This db variable comes from ppp->rc_state,
+> which is passed as parameter of the ppp->rcomp->decompress() call in
+> ppp_decompress_frame().
+>
+> I think a lot of work would be needed before we could allow
+> ppp_do_recv() to run concurrently on the same struct ppp.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in rxe_skb_tx_dtor
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 3034 at drivers/infiniband/sw/rxe/rxe_net.c:357 rxe_skb_tx_dtor+0x8b/0x2a0 drivers/infiniband/sw/rxe/rxe_net.c:357
-Modules linked in:
-CPU: 0 UID: 0 PID: 3034 Comm: kworker/u4:10 Not tainted 6.16.0-rc3-syzkaller-ge9ef70b277ad #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: rxe_wq do_work
-RIP: 0010:rxe_skb_tx_dtor+0x8b/0x2a0 drivers/infiniband/sw/rxe/rxe_net.c:357
-Code: 80 3c 20 00 74 08 4c 89 ff e8 c1 64 81 f9 4d 8b 37 44 89 f6 83 e6 01 31 ff e8 d1 e5 1d f9 41 f6 c6 01 75 0e e8 e6 e0 1d f9 90 <0f> 0b 90 e9 b4 01 00 00 4c 89 ff e8 45 97 fd 01 48 89 c7 be 0e 00
-RSP: 0018:ffffc900000079e8 EFLAGS: 00010246
-RAX: ffffffff88a26d8a RBX: ffff8880560d4500 RCX: ffff88801f722440
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff887bc1c4
-R10: dffffc0000000000 R11: ffffffff88a26d00 R12: dffffc0000000000
-R13: 1ffff1100ac1a8ab R14: 0000000000025820 R15: ffff888033440000
-FS:  0000000000000000(0000) GS:ffff88808d250000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5e595acfc8 CR3: 0000000056029000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- skb_release_head_state+0x101/0x250 net/core/skbuff.c:1139
- napi_consume_skb+0xd2/0x1e0 net/core/skbuff.c:-1
- e1000_unmap_and_free_tx_resource drivers/net/ethernet/intel/e1000/e1000_main.c:1972 [inline]
- e1000_clean_tx_irq drivers/net/ethernet/intel/e1000/e1000_main.c:3864 [inline]
- e1000_clean+0x49d/0x2b00 drivers/net/ethernet/intel/e1000/e1000_main.c:3805
- __napi_poll+0xc7/0x480 net/core/dev.c:7414
- napi_poll net/core/dev.c:7478 [inline]
- net_rx_action+0x707/0xe30 net/core/dev.c:7605
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- do_softirq+0xec/0x180 kernel/softirq.c:480
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- __neigh_event_send+0x9b/0x1560 net/core/neighbour.c:1194
- neigh_event_send_probe include/net/neighbour.h:463 [inline]
- neigh_event_send include/net/neighbour.h:469 [inline]
- neigh_resolve_output+0x198/0x750 net/core/neighbour.c:1496
- neigh_output include/net/neighbour.h:539 [inline]
- ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
- __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
- ip6_finish_output+0x234/0x7d0 net/ipv6/ip6_output.c:226
- rxe_send drivers/infiniband/sw/rxe/rxe_net.c:391 [inline]
- rxe_xmit_packet+0x79e/0xa30 drivers/infiniband/sw/rxe/rxe_net.c:450
- rxe_requester+0x1fea/0x3d20 drivers/infiniband/sw/rxe/rxe_req.c:805
- rxe_sender+0x16/0x50 drivers/infiniband/sw/rxe/rxe_req.c:839
- do_task drivers/infiniband/sw/rxe/rxe_task.c:127 [inline]
- do_work+0x1b4/0x6c0 drivers/infiniband/sw/rxe/rxe_task.c:187
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
-Tested on:
-
-commit:         e9ef70b2 RDNA/rxe: Fix rxe_skb_tx_dtor problem
-git tree:       https://github.com/zhuyj/linux.git v6.16_fix_rxe_skb_tx_dtor
-console output: https://syzkaller.appspot.com/x/log.txt?x=122183d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=79da270cec5ffd65
-dashboard link: https://syzkaller.appspot.com/bug?extid=8425ccfb599521edb153
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-
-Note: no patches were applied.
+Right. I think we can grab a write lock where it updates struct ppp.
 
