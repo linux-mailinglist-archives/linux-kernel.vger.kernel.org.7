@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-706727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3507EAEBAEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:02:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84AEAEBAF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CE3560A4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:02:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78821647092
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CEF2E88A9;
-	Fri, 27 Jun 2025 15:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6BE2E88A9;
+	Fri, 27 Jun 2025 15:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uimzMe/l";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZtmcqdM7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UoRytafx"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062201C6FE8;
-	Fri, 27 Jun 2025 15:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B009CF4ED;
+	Fri, 27 Jun 2025 15:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751036533; cv=none; b=ncFLeWzl8ZQic1IpLvtt//ZJDNsHL07g2rdFBXAv5jD1drSpMEx5fextISIGHlMNZqdqKCJgV65eZckU3mTe0vqWmNjtPF5H+qy57yKMNk7yUzxFbVnLwherih4C3B+oVIZWO2lXX2RpyuDxohyGBsxPgMVar6GR8JFbdO8bPjI=
+	t=1751036600; cv=none; b=ZCpW+qNUD8eON5U10mDfG6FRZgb0zOfNYfFA5z7uwuJeWVWAspI9EMzzKY5c2e3p2z/mcYLpVN21yXDOo47sJBLYAxzTjPpF24V0FZS/jcoGWLZfqHRLoFwk/DxynxA/CSgzlTUg3+8RCc/gg0Zzs/e7kFo+gFz7iACqMk/HS1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751036533; c=relaxed/simple;
-	bh=tfA2QwKxRkMhYuRZ4z56nNCSRBWnKU7G/mMuN72yeQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYHdIcwFk/poZhev65TyKkH8nhuITty5jUDlla88t8ZS03TP+MBofozB3+wOh5ayZ4Nvu7XmFZPjxnE6c9ZKsc1HW5htTfw5Bh4vs/xyDsxf+qDLKaUQpae72I6VDK7GA8/RryAtGxRO4kHmnvUioU8qkWE953ecg0zY6jB9ees=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uimzMe/l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZtmcqdM7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 27 Jun 2025 17:02:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751036530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvgCwM0cdIwDopQL4iWKyespTMSawwFYARJ4z6iapCs=;
-	b=uimzMe/lNCg5DwWLgcstXiuhS9ZGjYA29YnnyZVA0C0NdTl5X4YQjW2/yGE14g8AfpGg2R
-	8R1itLoVHpsM1lpMn/UB2IqikBGegRkbEcx3kzFO/KgI/6oROZb+RoGQ1JLakXBKvOaUGJ
-	DXMWMj/K+OlGd8mZN3tZ8BbidcvF/QiqAXoGqwKyC1XBKUSX6CkxmdvVMxuV1wsknySZpW
-	cduhYJjtQNo975BdapCOehvH9MO61ne2ijBt2gNxt3b/6N5h+BkZ777mstshOGIYk29rFL
-	8+yah6JCukYpCD9T+gVftr6PJur3j8fM+Lz/Cp+AZH/SIZjjueAil96ehTp/QQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751036530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RvgCwM0cdIwDopQL4iWKyespTMSawwFYARJ4z6iapCs=;
-	b=ZtmcqdM7kqIh7pogk432eZI1DM41Uo0AyWFrVZGpTocwuSlDNYlTZavN+dRvCnnVYtpNWB
-	e5KbLBfm3XvsnSCQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	john.ogness@linutronix.de
-Subject: Re: [RFC PATCH v2 09/12] rv: Replace tss monitor with more complete
- sts
-Message-ID: <20250627150208.xrOGCPrw@linutronix.de>
-References: <20250514084314.57976-1-gmonaco@redhat.com>
- <20250514084314.57976-10-gmonaco@redhat.com>
- <20250624073609.OA9Q1V4g@linutronix.de>
- <e2b2e78a9c66973d90a9dbeea83b88b97182c36e.camel@redhat.com>
- <20250624155053.wOoDw8ff@linutronix.de>
- <20250624153125.56eab22a@batman.local.home>
+	s=arc-20240116; t=1751036600; c=relaxed/simple;
+	bh=vHgbqqxav7PLXVzwShebkckuGfsjD85hkjxnlgD60cs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=khapfZB1ziqTmt7GXX+4uRvsdJdlmnn0WxbQTR+2X8o7ke/Jh6lIp7MwyWA152XTqlldqYeeEbpv/GcWOLVTsdljSQioSYuoZ9AB8GBBu17QsWABiS5ip2GrwlM40dYgI/C6Xb++tY20GQSGoUtm6J8Lo7uBDoOshXFN4XLUi90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UoRytafx; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8D5D425B9B;
+	Fri, 27 Jun 2025 17:03:15 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id SKBRcaReXqhH; Fri, 27 Jun 2025 17:03:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1751036594; bh=vHgbqqxav7PLXVzwShebkckuGfsjD85hkjxnlgD60cs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=UoRytafxH9QzkSuEhGQ2HepLO3UAu131e4BI//9c+8132UHkDbOtLQKy22yrR3Eu+
+	 wm6rc9/QwYtwaGKRMf+5wUb0VpG8Bd73pNEuw6KB53JRdiTiNT3nrdu/ocqSBQ/tdG
+	 z3XTI9zd5bfUhbHVlIA5qZi/k8I5pYTVMNTcEvyipk1EaMxDglwSEhw+Z8RMdXSsd9
+	 qnCfb7/xxNzFYjH6QYZZEqli6Ue6/NLlWgMPN6NPbM63P/9eE0rgh9ucZMJZYLBqnR
+	 UrmYwITZxYabuYlJfhV9Twg+Ya3D8l5T8Rk1xedsz4xyRS7Rw2j61VvjNruw+On4XG
+	 fuUX2QVvFmKzA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250624153125.56eab22a@batman.local.home>
+Date: Fri, 27 Jun 2025 15:03:14 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring
+ <robh@kernel.org>, Conor Dooley <conor@kernel.org>, Ajay Kumar
+ <ajaykumar.rs@samsung.com>, Akshu Agrawal <akshua@gmail.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: display: samsung,exynos7-decon: add
+ properties for iommus and ports
+In-Reply-To: <efa167d1-a5f3-47cd-855d-250f41a5e883@kernel.org>
+References: <20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org>
+ <20250627-exynosdrm-decon-v3-1-5b456f88cfea@disroot.org>
+ <20250627-literate-talented-panda-cbac89@krzk-bin>
+ <85c3658fdfa90636caac3b3fce295915@disroot.org>
+ <efa167d1-a5f3-47cd-855d-250f41a5e883@kernel.org>
+Message-ID: <ab1a39df178b68e2f1d61a537e0d567c@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 24, 2025 at 03:31:25PM -0400, Steven Rostedt wrote:
-> So WRT tracepoints, it's the same as a tree falling in the woods[1].
+On 2025-06-27 14:44, Krzysztof Kozlowski wrote:
+> On 27/06/2025 15:44, Kaustabh Chakraborty wrote:
+>>>> a/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+>>>> +++
+>>>> b/Documentation/devicetree/bindings/display/samsung/samsung,exynos7-decon.yaml
+>>>> @@ -80,6 +80,14 @@ properties:
+>>>>        - const: vsync
+>>>>        - const: lcd_sys
+>>>> 
+>>>> +  iommus:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  ports:
+>>>> +    $ref: /schemas/graph.yaml#/properties/ports
+>>>> +    description:
+>>>> +      Contains a port which is connected to mic or dsim node.
+>>> 
+>>> You need to list and describe the ports.
+>> 
+>> -    description:
+>> -      Contains a port which is connected to mic or dsim node.
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description:
+>> +          Input port which is connected to either a Mobile Image
+>> +          Compressor (MIC) or a DSI Master device.
 > 
-> If a user space ABI "breaks" but no user space tooling notices, did it
-> really break?
 > 
-> The answer is "No".
-> 
-> As for tracepoints, its fine to change them until it's not ;-)
-> 
-> We had only one case that a tracepoint change broke user space where
-> Linus reverted that change [2]. That was because powertop hard coded
-> the addresses to the tracepoint field offsets and didn't use the format
-> files (what libtraceevent gives you). And I removed an unused common
-> field, which shifted everything and broke powertop.
-> 
-> But I converted powertop to use libtraceevent, waited a few year until
-> all the major distros provided the new powertop, and then I removed the
-> field. Guess what? Nobody noticed. (And old powertop would still break).
-> 
-> BPF taps into most tracepoints that change all the time. I'm cleaning
-> up unused tracepoints which included a couple that were left around to
-> "not break old BPF programs". I replied, if an old BPF program relies on
-> that tracepoint, keeping it around (but not used) is *worse* than
-> having that BPF program break. That's because that BPF program is
-> still broken (it's expecting that unused tracepoint to fire) but now
-> it's getting garbage for output (that being no output!). It's worse
-> because it's "silently failing" and the user may be relying on
-> something they don't know is broken.
-> 
-> So yeah, change the tracepoint when the code its tracing changes. That
-> way any tooling depending on it, knows that it can no longer depend on
-> it.
-> 
-> Anything using tracepoints are pretty much tied to the kernel anyway,
-> and when the kernel updates, the tooling that is relying on it also
-> needs to be updated otherwise it's not getting the information it is
-> expecting. That most definitely includes monitors.
+> If this is only one port, then just 'port' property, but I have doubts
+> it should be one, because even you mentioned two - MIC could be the
+> input and MIPI DSIM would be the output.
 
-Alright, thanks for sharing. That was an interesting discussion you had
-back then.
+DECON is the first device in the pipeline. So it should only have
+output.
 
-Let me keep an eye out for any user tools based on RV, making sure they use
-our API properly.
+It's either:
+DECON -> DSIM -> panel
+or
+DECON -> MIC -> DSIM -> panel
 
-Best regards,
-Nam
+Exynos7870 doesn't have MIC, but other SoCs may have one.
+
+> 
+> Maybe if the MIC is integral part, it would not have been an input, but
+> then only 'port'.
+> 
+>> 
+>> I assume you want something like this?
+>> Is the formatting correct? Should there be a space between
+>> ports:$ref and ports:properties?
+> 
+> Look at toshiba,tc358768.yaml or the simple-bridge (except you should
+> name the input and output ports).
+
+Okay, thanks!
+
+Therefore this:
+
+-    description:
+-      Contains a port which is connected to mic or dsim node.
++
++    properties:
++      port:
++        $ref: /schemas/graph.yaml#/properties/port
++        description:
++          Output port which is connected to either a Mobile Image
++          Compressor (MIC) or a DSI Master device.
+
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
