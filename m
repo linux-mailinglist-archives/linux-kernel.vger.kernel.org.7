@@ -1,180 +1,263 @@
-Return-Path: <linux-kernel+bounces-706504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C90AEB76D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:16:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A39CAEB768
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8223A81E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9DF47B7226
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF692C3257;
-	Fri, 27 Jun 2025 12:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA112C032C;
+	Fri, 27 Jun 2025 12:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTgs6Q5e"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FUqS2Dcw"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00FB824A3;
-	Fri, 27 Jun 2025 12:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABD62D3A77
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751026547; cv=none; b=lxuenAttMGVDcfXP66Cdu2EWSQov7sje/TqoaKNmyY7Mu4MFC2I9vu8+zwTXaEsr39blrDZOIbBXYPAbK3KSXZup19ydzYQWh6gJj1jm7r+7H/7htwLQfIaZ+atxKN6SrgalGxQlUuwVMhUA4k3QBO5JfzklNMNet/n6eLA0Bbg=
+	t=1751026401; cv=none; b=bGJS5/tXIJodr6MCjX9+aSbkyhOqrrvYqagdnv87GNDadZbRcsgwpN+a6kMxMqtOt9whOT3TnFEhUYnALLUIBmyhE5FEtfOSZJTlEh0tP29cq4U0p3h3EeHVL5aWECUDEGBvXkLIfnVXKDi3ymh3lVmETS7266bo1mgr6YNBalo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751026547; c=relaxed/simple;
-	bh=vWaPSK7tFprZvlKk6cNOOT8GxuKU+3MFNSmpz8uN3kk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iYcEA5A6Uwb9UJg80nQlNM+YcGjsaMAI/ZnNZf5p73dZOTA5c4KCC8p0zOpFP8nnTm4Y/2N295dYN5RpulNtOA8g65nvLh1Z7zlI6ZnErwGHNAx0rlThvZFwYR6LADOnYfZf4MIsGWA5yyEltCye1lR2w5kDVmiT8NK5C/R+nT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTgs6Q5e; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a577ab8c34so292768f8f.3;
-        Fri, 27 Jun 2025 05:15:45 -0700 (PDT)
+	s=arc-20240116; t=1751026401; c=relaxed/simple;
+	bh=wJc4Yq/2qIbN+YrM8hSbDxvEt1nc0UwcLw7/Vd6Yz4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GnPKSkd8beS+FGD11zUf4k5ftXvtLB2oAEm3pAFq64mYx09BDl4Z0zsZkQXijVR4oa4zZT3d+BcyU0480Bj8VICOGTC2KIQx6T4yL/JOIWEWEefNEXuWn8nuidTmkl3+RBiNJGOELQAvvfR66Ak91e6tRzPn5I5L5jFUuSnlwdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FUqS2Dcw; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87f4c8e9cdcso505641241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:13:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751026544; x=1751631344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSNzCAhQULxNCOGe2nHXtwBZiRA02UYH1olLfxSNu64=;
-        b=YTgs6Q5etdzGhRpo+uvSOuAn1wryk/tXTNxqeAgwAubtxurllJPDZiaBJ/VyAwOwf2
-         UP09uJj5wKr61TAhzYapoGfqNNGWla5Xq0G24G3WhDTxbJCoLPXUmxLZb3czl6CPiQVj
-         Gu3VvUCqMBlqaBOkgABk0Q6YxNYBopYGHPgt1+sJuyG1SGrREZds/NLrIJ8eoHUSwsmB
-         hawkOcZ1YUREeBkEoQRBJx7tfL0TwGWKIf3EqkM7oEfKpV87XYYnzIxizpmk7gdRJXj5
-         6hS/OmRfMe3eENASgK0MODsjuL4sJGPAAOxBZXDqAKhtN6K+vlfw7WHRcG6hxUlhKUNC
-         ITbQ==
+        d=chromium.org; s=google; t=1751026398; x=1751631198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L/kboISUHVl7C5fi/y0/ImSh6YAy6f5eQsfdMQeLy6w=;
+        b=FUqS2DcwK+V/GuMNs/bvIDtRNcKAxkThnpSfto9Ojx+NHIYg6IJtcuI6UsmQOuRxgR
+         0mkKzQj2NByv374S9sriHTv61WRYfHanTWhOep19GDfaZAnQXxla62MYffB2C38AfXd4
+         hm7JkIHcDe6NPRL8HIJaDhgm6xYLOxpm+++FU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751026544; x=1751631344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fSNzCAhQULxNCOGe2nHXtwBZiRA02UYH1olLfxSNu64=;
-        b=CO6fLzqc8OxWMlXUYBj2RugcH2qafkLmBVzAlLJ0IY7d6h4tLxJcYqp40+fh0KeFvY
-         dKp6jJuUpVN8DTgJ4gOjGvl+MZy9p4wl36Oh4Was+3C6GK9C0BTam5L6x9lr44HyEAxk
-         lZpkjtyZo+0hEMJo9IWxIbZI3Sc5+zyhksgbHymTHzje+Mdsw/d++7hDxCk/0+QkaM6u
-         7pXwu18QRhjc1JPcinpsouBFky5yV5iPdScRDknh6vT//lCuw2W34ygi5NeXrWibZMmE
-         MtHBhWH3EFs8xP0N0+5PWc3PPTgrjv2SSd+3+ixtvPoW5Yru5FoneVlj3DgfLPp/oKFg
-         mafw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiV1qHissiW/AfD5IKOLwqaQ7r1QaDXgBsygPQLE7KR9lYOpSNJsNOJTqcfGy4TCAGG4AP9rgTqtn/lA==@vger.kernel.org, AJvYcCWLawctQf2CxIgmzhuEK8KeljZlOHNiaJkaLr652EgYsdHYzftKrn6Hk/DPOWaueh6egYqJNFlZPwKk4TGk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybwl5Oqe4+0JNjgPowyIaseRJGZ+7IVqq4pjHOYx86J9ca4A3x
-	JZn+OZFXBhhQk1fM8lUPryRpAq0bohsJ0G1lJOEiTHDeE6MyzXMfiaWy
-X-Gm-Gg: ASbGncusJp57xaLjo5K9Uk6met31jZN3rZ5llkX1fHTAeJbmxgXiFiFMl383DeTvsE7
-	B1dNou/qDyxpwl7h+KIDG0jXqWuT2fd0JrmcJ9OgMQBUWYK3JCpg/pdjig0Ju47GWquX196vpud
-	T6YDUdYSXe/qTGi49kobzZpQjxpDmYSdH6p53sG3MiL+HBVwrAyEjuaE23f4XHaSoBjZTGOVRNq
-	J70Af983Yqu4dlmIM/Ibj4SljQMVlLo1BdXt8ajHwDbAcqWjqSG6FGAzGBZ660hN0mM8wk+ZvA9
-	wRYY+driVIiyem3ETVpY3luONrm4FBi0A+kYmzeeqxnBdpVZ0sfNP1CWrQulJZCHZB+XnD+ClMb
-	0qgq1iI6rioqVHw4=
-X-Google-Smtp-Source: AGHT+IFxEau6MybuzhUxkkPYte1ZoUsWvtByYAO8s26pxQdvWzlR86gK9+Q+u9x1KVPd0RJnXeBUig==
-X-Received: by 2002:a5d:6384:0:b0:3a6:d191:a834 with SMTP id ffacd0b85a97d-3a90dd535bamr793215f8f.9.1751026543770;
-        Fri, 27 Jun 2025 05:15:43 -0700 (PDT)
-Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:c222:941f:da95:c9f3])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a892e59628sm2522355f8f.81.2025.06.27.05.15.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 05:15:43 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Philipp Stanner <phasta@kernel.org>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Zetao <lizetao1@huawei.com>,
-	Asai Thambi S P <asamymuthupa@micron.com>,
-	Sam Bradshaw <sbradshaw@micron.com>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] block: mtip32xx: Fix usage of dma_map_sg()
-Date: Fri, 27 Jun 2025 14:11:19 +0200
-Message-ID: <20250627121123.203731-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1751026398; x=1751631198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L/kboISUHVl7C5fi/y0/ImSh6YAy6f5eQsfdMQeLy6w=;
+        b=Kdj1YKMmH90QEQLfdqDK+0r3NIVqJqiB00RCHeEyr6PDxN0RG9DxxJLb8XejZbxb2z
+         g0SJ63I5W2LbiMINrERvb2KHMMZkkY9n/Uki5XXQAwcq8s1BrqCF/7/eZ9PnocAB2qKP
+         +VgfrESMv5LKuzL88i7eX9WtKfmJjWwlatdoBmak0j+jbUuF7ck70f7xSRSIVy2g9H7T
+         IdsVrQZOEISOVSRaHuVoxAUfvjaIMRyflyMIMO54RajTFBm3dcJ1gu4lYgQdRIz30yHy
+         tferiluJCrrVGF2PesNociJDzTC0IclIF5p6wAQkVKGdmCQ6pjLfgNZGyLHPAelI+OMr
+         L9Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeL+kHWJUkCVCNAiOfjNk1tCn+8jK4u7b6ZYuX4JmHCnUocrzyobPuiNhlPQGkDu/6TSbYOrO79SnNIU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyacDRcEJ4Y7iY0QdkfzJLR9K8hQHw1e/aA9jExFO/S4WrJpheN
+	+NC2zXWym7O5xMDbCb6HLXmrjEazXuL6VnshxBEgagITC4lZsvS2kIN/4HJaIyc6iD4ZinETzj8
+	L0YU=
+X-Gm-Gg: ASbGncuM5pl6Ok4fH2jssHKtI+Jx1qgtonJRiKP6di1p3Nhqk4tM3rPy1Ck0tWVNJ8b
+	Cde4J5WT2u2Q7Xs5LwPhfd5b3eN/zCP/HwFOks7UocazT6iONGqrLx0+0c7CNWbHJ+k5W4vQueD
+	RNJK5pdwv9/WvsGiwVEBJK+W3ENgUJDw60FwwjgswTaaDS4GXFv6V8qORJPV/bT+WymstZ3ZFPg
+	sViB+0VEJPgfzMcm7OY4w3Opsz/VhMF5mxeB+VDQJLAX/9dYg3xNZ7RG51/DjdfIFr0OrKkbo3t
+	+d1zM1rUa2v7D0VPyjpCU/8VkWQBgY//bJ0TSrPq5Cy8ZBj5CwFdUQv8Uvm/l3TWuQm03R1cyC0
+	SseLCqnN8ytoO38oEc+i7dw==
+X-Google-Smtp-Source: AGHT+IFZ+Hm5WaBR5iSSeCUlLv4PD6W9+y42s2zV7rRE9/IlTUtvFks9CIj3M1Iv5OVr5BF0oJ6l3A==
+X-Received: by 2002:a05:6102:a4d:b0:4ec:c548:e10e with SMTP id ada2fe7eead31-4ee4f4e672cmr2376390137.3.1751026397820;
+        Fri, 27 Jun 2025 05:13:17 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-884d1c3781esm589443241.10.2025.06.27.05.13.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 05:13:17 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4c9cea30173so481319137.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:13:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXlI/XIGFwPEmMBX/t7ixumGMx1419XeWlT5hC9KgpakfhBt5v229NdHttpg5hfj2NkCrwRIPfJqCLP2wQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:b10:b0:4e5:59ce:471b with SMTP id
+ ada2fe7eead31-4ee4f8fa5cbmr2358879137.23.1751026395186; Fri, 27 Jun 2025
+ 05:13:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com> <20250623120154.109429-3-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250623120154.109429-3-angelogioacchino.delregno@collabora.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Fri, 27 Jun 2025 20:12:39 +0800
+X-Gmail-Original-Message-ID: <CAC=S1njT6ygGuZDPU5KDW94Nu-TbM21DM-6HdR7Pio=WTD_eQA@mail.gmail.com>
+X-Gm-Features: Ac12FXwNi69jmRwGOUm8UJ7WfMt6niSy4CkLT9-9z1YDS1Mi3aHTobxjbgMPxFw
+Message-ID: <CAC=S1njT6ygGuZDPU5KDW94Nu-TbM21DM-6HdR7Pio=WTD_eQA@mail.gmail.com>
+Subject: Re: [PATCH v1 02/13] pmdomain: mediatek: Refactor bus protection
+ regmaps retrieval
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org, 
+	y.oudjana@protonmail.com, wenst@chromium.org, lihongbo22@huawei.com, 
+	mandyjh.liu@mediatek.com, mbrugger@suse.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The dma_map_sg() can fail and, in case of failure, returns 0.  If it
-fails, mtip_hw_submit_io() returns an error.
+On Mon, Jun 23, 2025 at 8:02=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> In preparation to add support for new generation SoCs like MT8196,
+> MT6991 and other variants, which require to set bus protection on
+> different busses than the ones found on legacy chips, and to also
+> simplify and reduce memory footprint of this driver, refactor the
+> mechanism to retrieve and use the bus protection regmaps.
+>
+> This is done by removing the three pointers to struct regmap from
+> struct scpsys_domain (allocated for each power domain) and moving
+> them to the main struct scpsys (allocated per driver instance) as
+> an array of pointers to regmap named **bus_prot.
+>
+> That deprecates the old devicetree properties to grab phandles to
+> the three predefined busses (infracfg, infracfg-nao and smi) and
+> replaces it with a new property "mediatek,bus-protection" that is
+> meant to be an array of phandles holding the same busses where
+> required (for now - for legacy SoCs).
+>
+> The new bus protection phandles are indexed by the bus_prot_index
+> member of struct scpsys, used to map "bus type" (ex.: infra, smi,
+> etc) to the specific *bus_prot[x] element.
+>
+> While the old per-power-domain regmap pointers were removed, the
+> support for old devicetree was retained by still checking if the
+> new property (in DT) and new-style declaration (in SoC specific
+> platform data) are both present at probe time.
+>
+> If those are not present, a lookup for the old properties will be
+> done in all of the children of the power controller, and pointers
+> to regmaps will be retrieved with the old properties, but then
+> will be internally remapped to follow the new style regmap anyway
+> as to let this driver benefit of the memory footprint reduction.
+>
+> Finally, it was necessary to change macros in mtk-pm-domains.h and
+> in mt8365-pm-domains.h to make use of the new style bus protection
+> declaration, as the actual HW block is now recognized not by flags
+> but by its own scpsys_bus_prot_block enumeration.
+>
+> The BUS_PROT_(STA)_COMPONENT_{INFRA,INFRA_NAO,SMI} flags were also
+> removed since they are now unused, and because that enumeration was
+> initially meant to vary the logic of bus protection and not the bus
+> where work is performed, anyway!
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
 
-The dma_unmap_sg() requires the nents parameter to be the same as the
-one passed to dma_map_sg(). This patch saves the nents in
-command->scatter_ents.
+<snip>
 
-Fixes: 88523a61558a ("block: Add driver for Micron RealSSD pcie flash cards")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/block/mtip32xx/mtip32xx.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+>
+> +static int scpsys_get_bus_protection_legacy(struct device *dev, struct s=
+cpsys *scpsys)
+> +{
+> +       const u8 bp_blocks[3] =3D {
+> +               BUS_PROT_BLOCK_INFRA, BUS_PROT_BLOCK_SMI, BUS_PROT_BLOCK_=
+INFRA_NAO
+> +       };
+> +       struct device_node *np =3D dev->of_node;
+> +       struct device_node *node, *smi_np;
+> +       int num_regmaps =3D 0, i, j;
+> +       struct regmap *regmap[3];
+> +
+> +       /*
+> +        * Legacy code retrieves a maximum of three bus protection handle=
+s:
+> +        * some may be optional, or may not be, so the array of bp blocks
+> +        * that is normally passed in as platform data must be dynamicall=
+y
+> +        * built in this case.
+> +        *
+> +        * Here, try to retrieve all of the regmaps that the legacy code
+> +        * supported and then count the number of the ones that are prese=
+nt,
+> +        * this makes it then possible to allocate the array of bus_prot
+> +        * regmaps and convert all to the new style handling.
+> +        */
+> +       node =3D of_find_node_with_property(np, "mediatek,infracfg");
+> +       if (node) {
+> +               regmap[0] =3D syscon_regmap_lookup_by_phandle(node, "medi=
+atek,infracfg");
+> +               of_node_put(node);
+> +               num_regmaps++;
+> +               if (IS_ERR(regmap[0]))
+> +                       return dev_err_probe(dev, PTR_ERR(regmap[0]),
+> +                                            "%pOF: failed to get infracf=
+g regmap\n",
+> +                                            node);
+> +       } else {
+> +               regmap[0] =3D NULL;
+> +       }
+> +
+> +       node =3D of_find_node_with_property(np, "mediatek,smi");
+> +       if (node) {
+> +               smi_np =3D of_parse_phandle(node, "mediatek,smi", 0);
+> +               of_node_put(node);
+> +               if (!smi_np)
+> +                       return -ENODEV;
+> +
+> +               regmap[1] =3D device_node_to_regmap(smi_np);
+> +               num_regmaps++;
+> +               of_node_put(smi_np);
+> +               if (IS_ERR(regmap[1]))
+> +                       return dev_err_probe(dev, PTR_ERR(regmap[1]),
+> +                                            "%pOF: failed to get SMI reg=
+map\n",
+> +                                            node);
+> +       } else {
+> +               regmap[1] =3D NULL;
+> +       }
+> +
+> +       node =3D of_find_node_with_property(np, "mediatek,infracfg-nao");
+> +       if (node) {
+> +               regmap[2] =3D syscon_regmap_lookup_by_phandle(node, "medi=
+atek,infracfg-nao");
+> +               num_regmaps++;
+> +               of_node_put(node);
+> +               if (IS_ERR(regmap[2]))
+> +                       return dev_err_probe(dev, PTR_ERR(regmap[2]),
+> +                                            "%pOF: failed to get infracf=
+g regmap\n",
+> +                                            node);
+> +       } else {
+> +               regmap[2] =3D NULL;
+> +       }
+> +
+> +       scpsys->bus_prot =3D devm_kmalloc_array(dev, num_regmaps,
+> +                                             sizeof(*scpsys->bus_prot), =
+GFP_KERNEL);
+> +       if (!scpsys->bus_prot)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0, j =3D 0; i < num_regmaps; i++) {
 
-diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
-index 66ce6b81c7d9..8fc7761397bd 100644
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -2040,11 +2040,12 @@ static int mtip_hw_ioctl(struct driver_data *dd, unsigned int cmd,
-  * @dir      Direction (read or write)
-  *
-  * return value
-- *	None
-+ *	0	The IO completed successfully.
-+ *	-ENOMEM	The DMA mapping failed.
-  */
--static void mtip_hw_submit_io(struct driver_data *dd, struct request *rq,
--			      struct mtip_cmd *command,
--			      struct blk_mq_hw_ctx *hctx)
-+static int mtip_hw_submit_io(struct driver_data *dd, struct request *rq,
-+			     struct mtip_cmd *command,
-+			     struct blk_mq_hw_ctx *hctx)
- {
- 	struct mtip_cmd_hdr *hdr =
- 		dd->port->command_list + sizeof(struct mtip_cmd_hdr) * rq->tag;
-@@ -2056,12 +2057,14 @@ static void mtip_hw_submit_io(struct driver_data *dd, struct request *rq,
- 	unsigned int nents;
- 
- 	/* Map the scatter list for DMA access */
--	nents = blk_rq_map_sg(rq, command->sg);
--	nents = dma_map_sg(&dd->pdev->dev, command->sg, nents, dma_dir);
-+	command->scatter_ents = blk_rq_map_sg(rq, command->sg);
-+	nents = dma_map_sg(&dd->pdev->dev, command->sg,
-+			   command->scatter_ents, dma_dir);
-+	if (!nents)
-+		return -ENOMEM;
- 
--	prefetch(&port->flags);
- 
--	command->scatter_ents = nents;
-+	prefetch(&port->flags);
- 
- 	/*
- 	 * The number of retries for this command before it is
-@@ -2112,11 +2115,13 @@ static void mtip_hw_submit_io(struct driver_data *dd, struct request *rq,
- 	if (unlikely(port->flags & MTIP_PF_PAUSE_IO)) {
- 		set_bit(rq->tag, port->cmds_to_issue);
- 		set_bit(MTIP_PF_ISSUE_CMDS_BIT, &port->flags);
--		return;
-+		return 0;
- 	}
- 
- 	/* Issue the command to the hardware */
- 	mtip_issue_ncq_command(port, rq->tag);
-+
-+	return 0;
- }
- 
- /*
-@@ -3315,7 +3320,9 @@ static blk_status_t mtip_queue_rq(struct blk_mq_hw_ctx *hctx,
- 
- 	blk_mq_start_request(rq);
- 
--	mtip_hw_submit_io(dd, rq, cmd, hctx);
-+	if (mtip_hw_submit_io(dd, rq, cmd, hctx))
-+		return BLK_STS_IOERR;
-+
- 	return BLK_STS_OK;
- }
- 
--- 
-2.43.0
+Did you mean BUS_PROT_BLOCK_COUNT?
+Consider a case where only regmap[2] is configured.
 
+Regards,
+Fei
+
+> +               enum scpsys_bus_prot_block bp_type;
+> +
+> +               if (!regmap[i])
+> +                       continue;
+> +
+> +               bp_type =3D bp_blocks[i];
+> +               scpsys->bus_prot_index[bp_type] =3D j;
+> +               scpsys->bus_prot[j] =3D regmap[i];
+> +
+> +               j++;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+
+<snip>
 
