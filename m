@@ -1,110 +1,78 @@
-Return-Path: <linux-kernel+bounces-705925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89AFAEAF57
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 08:56:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7C0AEAF3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 08:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB781BC12FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867641685E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27F5219A97;
-	Fri, 27 Jun 2025 06:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F083821767C;
+	Fri, 27 Jun 2025 06:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="HkBIIXaG"
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [178.154.239.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BFE21B9C6;
-	Fri, 27 Jun 2025 06:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.150
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="GIeiHA7U"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CB8139D1B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 06:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751007301; cv=none; b=uqlaJvCpIXbtsY5XABlqcAxz/005u8UcnpvUPF7BumF4dUgRZbthLQFvDZaXpLhNP5yJNrWe/IPCmyTpLVrG1wbRknWxOvQ2YvKE2C6apImeiVwcLPTLpN+5oun0xx1RlLqizzsnAQM5g9el4V2esL/Pb7mn0fSdGaEymCoC4lA=
+	t=1751007228; cv=none; b=DnzrBp3EtWbLID7pEhNgXPRris8QcLCiE9gd/HKC+B4/JhrrZXx+gJo4zc8fsNljDhRwhRuG9GNNUZLsvui8FfXF4Cceh5mJiF9EtrcQR7sGbcKq2yhJn31z+cZ26Bx1veAxpttsVmDyxaA4AYTYsPseLIv4OvGZyn3SvJ7WSjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751007301; c=relaxed/simple;
-	bh=MHf2LFg84werqxYDZJfhmApfMPTrh5lfupXyN5hzHB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ERgiiCpgvEJSqxsRg5JrcOoy9Cp/1JGw0j2yLfTj6KqZzMnLrgVroj/xW1bR1B2ZgB4mSBvXD0Ek8Vcsr3+uXK6Yd2mpPaQ6kgPhSZIBt9zmvqre2VwhPeTExJ61J+5M16QgAHWuoU5tjZuqCi7R3+njC88zwE7BtKz9XFuMkn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=HkBIIXaG; arc=none smtp.client-ip=178.154.239.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2ea3:0:640:da3e:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id 5407960A84;
-	Fri, 27 Jun 2025 09:54:57 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id PsPIlP9LwSw0-m2hF7xsP;
-	Fri, 27 Jun 2025 09:54:56 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1751007296;
-	bh=MHf2LFg84werqxYDZJfhmApfMPTrh5lfupXyN5hzHB8=;
-	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=HkBIIXaGjNYuG7DZi/gmanqaauwujy8+HK4cyDosW8AZlSvmGpzV4cPP0DeaQqZKn
-	 1FNUliEVdz5NMNiXx2orYtZK8YpKObhvLOCRZQPlN6lT60CU0RukmpRwy/GIW7fbCQ
-	 slK5rt7Nfef8WWFKcDIB9p/xfa6uaSwI3/B6Xuak=
-Authentication-Results: mail-nwsmtp-smtp-production-main-87.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	gregkh@linuxfoundation.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	davidgow@google.com,
-	nm@ti.com,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v2 3/3] rust: remove `#[allow(clippy::non_send_fields_in_send_ty)]`
-Date: Fri, 27 Jun 2025 09:53:20 +0300
-Message-ID: <20250627065320.9315-4-work@onurozkan.dev>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250627065320.9315-1-work@onurozkan.dev>
-References: <20250627065320.9315-1-work@onurozkan.dev>
+	s=arc-20240116; t=1751007228; c=relaxed/simple;
+	bh=Yo3z90k4twSlPMQYzOIKH9VTAjl/qG2Op4HCeH55WXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9ksOnoDeGudVB3LYi6jDfLkdD0nDIEkHjk0XvBA5cLvZDLKA6o6nJ9tho9MWEcTwlx6srzvoKqsZgj/tmUXBeCuQ0nJQv9Lj0LZ6im18ev4JH6yXxPGUJJNwmJSXh4kByF/Yc+M8B0jSxlv/mZ9nUI+rySCGKVKi9IR7sHoZ2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=GIeiHA7U; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 0651C4D686;
+	Fri, 27 Jun 2025 08:53:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1751007226;
+	bh=Yo3z90k4twSlPMQYzOIKH9VTAjl/qG2Op4HCeH55WXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GIeiHA7U0rvouipHa47iAzncUxTCQ+sl6rHavIs/5wTRL/9XtEcDm0e4w6pxYJg1/
+	 UeIxlB/kbUkgCj3T42D0ZDsfIHTHmMHkZz9kPBG3vmt7QgB9f8Pua4LXvJmPwmsXVV
+	 +jgsJVxe/yslNZpeI31FDAadS2E0eup7b77vUkMAKcwKUdvtsoE7CITl952Vfta98n
+	 pQmK033gtIOZgohl50TNLLO87RORo5Yg4kwKp0pCUdplhGlrXxpaBbq1QGC+rnt64Q
+	 qmYMKQ37X5SJACBLMNEH7Z4wvYELZ6LieKGqDey3MBb2jHlKDEH+i3hZME/TFat5+c
+	 cAnyrgs25gZKw==
+Date: Fri, 27 Jun 2025 08:53:44 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+Cc: suravee.suthikulpanit@amd.com, will@kernel.org, robin.murphy@arm.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	Vasant.Hegde@amd.com
+Subject: Re: [PATCH v6 0/8] Introduce debugfs support in IOMMU
+Message-ID: <aF4_-F4utWGgcwWY@8bytes.org>
+References: <20250604163647.1439-1-dheerajkumar.srivastava@amd.com>
+ <dbec455c-74a0-4f91-8b8c-7b995c6e3e9c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbec455c-74a0-4f91-8b8c-7b995c6e3e9c@amd.com>
 
-Clippy no longer complains about this lint.
+Hi Dheeraj,
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- rust/kernel/cpufreq.rs | 1 -
- 1 file changed, 1 deletion(-)
+On Thu, Jun 26, 2025 at 11:27:54AM +0530, Dheeraj Kumar Srivastava wrote:
+> Just a friendly reminder to review the patch series. Your valuable feedback
+> would be greatly appreciated to help us move forward.
 
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 11b03e9d7e89..97de9b0573da 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -907,7 +907,6 @@ fn register_em(_policy: &mut Policy) {
- /// or CPUs, so it is safe to share it.
- unsafe impl<T: Driver> Sync for Registration<T> {}
+Will merge once acked/reviewed by Suravee or Vasant.
 
--#[allow(clippy::non_send_fields_in_send_ty)]
- /// SAFETY: Registration with and unregistration from the cpufreq subsystem can happen from any
- /// thread.
- unsafe impl<T: Driver> Send for Registration<T> {}
---
-2.50.0
+Regards,
 
+	Joerg
 
