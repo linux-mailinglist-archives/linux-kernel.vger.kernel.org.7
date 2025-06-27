@@ -1,215 +1,104 @@
-Return-Path: <linux-kernel+bounces-706177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A7AAEB2F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:31:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B61AEB2C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 130853A10B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:31:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A5487A3C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6328A2980A5;
-	Fri, 27 Jun 2025 09:30:48 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65009293B44;
+	Fri, 27 Jun 2025 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="r6Tgp/P6"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14F12206AF;
-	Fri, 27 Jun 2025 09:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F702737F9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751016647; cv=none; b=V3tkeDzUv4B1wuoG1xWAHWhsEMJMhB7WugODvPQa/SH1XobPT+cFzvP1j/iAISn7fsHU8fEBei9gOoHSl3hB54C2IyHzutO2TESIRzmutx3fCJq4Z+fGzx4DFpMmLpvxLzygh8sJzRRtl1e2s9UXhhM0zSSidbuy6o7uBOoizu8=
+	t=1751016246; cv=none; b=gJ/prLnzOQT45XT3xg8HZJbiKms5uBI/nnFEsvuGfjcjmG65+PXpLR2/Li5nhAR9cLdHLIR3wyQbiugY8vKfFOps3fzccOPiyIPw8fakSXUycmJRusvazmQIHuU2gapSip9C/4guW7pVHuLFpdEQHF2lXoDxdyntQhnNe/D3k/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751016647; c=relaxed/simple;
-	bh=WIygAyUMcpu1oJueNMDm/m1mGRWcVpNv57BXr1XjFsg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Inf67F1bNtUMEjwTmfGohf8tq0Uqidj/5AO3hnowCtdu6Eu9pY6xNlAwKGrZH4mB73Np6dWEqYUW0B8YNZ7Hz8kXJBr7E/NhajNDmYVKsGnWjDw6g24F0wcI7OYIWps2KtbMHjJ1JaEghlCIGvFiCXoqW1ZylF986rvafHwVAqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bT9Jz42wszYQvMb;
-	Fri, 27 Jun 2025 17:30:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 736751A124B;
-	Fri, 27 Jun 2025 17:30:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe1+_ZF5oHZM5Qw--.46522S4;
-	Fri, 27 Jun 2025 17:30:41 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: josef@toxicpanda.com,
-	axboe@kernel.dk,
-	ming.lei@redhat.com,
-	hch@infradead.org,
-	nilay@linux.ibm.com,
-	hare@suse.de
-Cc: linux-block@vger.kernel.org,
-	nbd@other.debian.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] nbd: fix false lockdep deadlock warning
-Date: Fri, 27 Jun 2025 17:23:48 +0800
-Message-Id: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1751016246; c=relaxed/simple;
+	bh=VKQBj2stu7iXeJd9KQUHIkIoUgY637IlmEQqau/g0Jk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lcwP7i7E3z4ZSNcVEMlOm99rgulbzWA6RNsXwATNYFZtkvoC/TKTNB0tuLvSWqo00lbdoOp40H+J9tm6qtWLrlew5vooKgRw7sdY5JVABsTdcn40YGEVdvOHMwctldjlqEY14RM9nKGvF8jmPRbsvY3RDXMGPmd5o+8BoL3n43M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=r6Tgp/P6; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=J4ZjnT6oCMq1CKTCNR3HCJ0iSz8drwLRwfHKoiq9yKA=;
+	t=1751016245; x=1752225845; b=r6Tgp/P6/GUZOIbQebXQIaXw2CEvcGL7OY/jmZ5zZvjVD1k
+	3NAHvd01qqLsW9qFufVCRlSs+ws5ykLZXxPWU+G+0Q/ySsDzcRXDLpF8wrfYDbyXgwCVec14wAffx
+	J4yQpI1ki4dVOIMNsYmkalYvIcpAfec0bynflemxLp9UkcEA3pSt/C4Mtqyfo8/vGzzhMi7ZCECVp
+	GpDsr9JWidX+9yuayDuUJnbgNh5aMz0Jn5eztaCZzlqFSKYXK9nhevPLQSRA+EAqhoZm7qNiyMGDa
+	eC7ieUUByA/uUqIDmFcVpXOvsf4McGUKFK7AmqpCe94K1FV0434P4dB9eZp16crQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uV5JP-0000000DS2I-3RBo;
+	Fri, 27 Jun 2025 11:24:00 +0200
+Message-ID: <94de787f4c3ad6fc3a44c50c2a5d5311861ddd6c.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/1] um: virt-pci: Switch to
+ msi_create_parent_irq_domain()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Richard Weinberger
+	 <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Fri, 27 Jun 2025 11:23:58 +0200
+In-Reply-To: <20250627084943.nCYOI4Vp@linutronix.de>
+References: <cover.1750947651.git.namcao@linutronix.de>
+	 <b911c2f15c031354850eee277a773832890c3c17.1750947651.git.namcao@linutronix.de>
+	 <45f44f0298259abf1862b965805307b7c01a279d.camel@sipsolutions.net>
+	 <20250627084943.nCYOI4Vp@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXe1+_ZF5oHZM5Qw--.46522S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxCw4kZr1fZry8GFyrGFWkCrg_yoWrWFWfpF
-	4UCFWDGrWUAa1xuF4UA3srWF1Yk3s7Ka4xGry7Ja4Ykr97Ar9avrykK3WSvr4UtrZ7JFs8
-	JayYgF4Ska18JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-malware-bazaar: not-scanned
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Fri, 2025-06-27 at 10:49 +0200, Nam Cao wrote:
+>=20
+> Thanks for testing! The later kernel crash should be fixed with:
+>=20
+> diff --git a/arch/um/drivers/virt-pci.c b/arch/um/drivers/virt-pci.c
+> index e51a9357934da..557d93aea00a1 100644
+> --- a/arch/um/drivers/virt-pci.c
+> +++ b/arch/um/drivers/virt-pci.c
+> @@ -407,7 +407,6 @@ static const struct irq_domain_ops um_pci_inner_domai=
+n_ops =3D {
+> =20
+>  #define UM_PCI_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS		| \
+>  				   MSI_FLAG_USE_DEF_CHIP_OPS		| \
+> -				   MSI_FLAG_PCI_MSI_MASK_PARENT		| \
+>  				   MSI_FLAG_NO_AFFINITY)
 
-The deadlock is reported because there are circular dependency:
+Can confirm that.
 
-t1: disk->open_mutex -> nbd->config_lock
+> I have no immediate idea about the lockdep warn, I don't see how the
+> MSI_FLAG_PCI_MSI_MASK_PARENT flag can be related to that. Probably there'=
+s
+> another problem, let me stare at it..
 
- blkdev_release
-  bdev_release
-   //lock disk->open_mutex)
-   blkdev_put_whole
-    nbd_release
-     nbd_config_put
-        refcount_dec_and_mutex_lock
-        //lock nbd->config_lock
+Seems to go away as well, perhaps it's due to taking some wrong path
+with the flag just prior to the crash?
 
-t2: nbd->config_lock -> set->update_nr_hwq_lock
+IOW, works for me with the above change with no crash and no lockdep
+warning either.
 
- nbd_genl_connect
-  //lock nbd->config_lock
-  nbd_start_device
-   blk_mq_update_nr_hw_queues
-   //lock set->update_nr_hwq_lock
-
-t3: set->update_nr_hwq_lock -> disk->open_mutex
-
- nbd_dev_remove_work
-  nbd_dev_remove
-   del_gendisk
-    down_read(&set->update_nr_hwq_lock);
-    __del_gendisk
-    mutex_lock(&disk->open_mutex);
-
-This is false warning because t1 and t2 should be synchronized by
-nbd->refs, and t1 is still holding the reference while t2 is triggered
-when the reference is decreased to 0. However the lock order is broken.
-
-Fix the problem by breaking the dependency from t2, by calling
-blk_mq_update_nr_hw_queues() outside of nbd internal config_lock, since
-now other context can concurrent with nbd_start_device(), also make sure
-they will still return -EBUSY, the difference is that they will not wait
-for nbd_start_device() to be done.
-
-Fixes: 98e68f67020c ("block: prevent adding/deleting disk during updating nr_hw_queues")
-Reported-by: syzbot+2bcecf3c38cb3e8fdc8d@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/6855034f.a00a0220.137b3.0031.GAE@google.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/block/nbd.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 7bdc7eb808ea..d43e8e73aeb3 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1457,10 +1457,13 @@ static void nbd_config_put(struct nbd_device *nbd)
- 	}
- }
- 
--static int nbd_start_device(struct nbd_device *nbd)
-+static int nbd_start_device(struct nbd_device *nbd, bool netlink)
-+	__releases(&nbd->config_lock)
-+	__acquires(&nbd->config_lock)
- {
- 	struct nbd_config *config = nbd->config;
- 	int num_connections = config->num_connections;
-+	struct task_struct *old;
- 	int error = 0, i;
- 
- 	if (nbd->pid)
-@@ -1473,8 +1476,21 @@ static int nbd_start_device(struct nbd_device *nbd)
- 		return -EINVAL;
- 	}
- 
--	blk_mq_update_nr_hw_queues(&nbd->tag_set, config->num_connections);
-+	/*
-+	 * synchronize with concurrent nbd_start_device() and
-+	 * nbd_add_socket()
-+	 */
- 	nbd->pid = task_pid_nr(current);
-+	if (!netlink) {
-+		old = nbd->task_setup;
-+		nbd->task_setup = current;
-+	}
-+
-+	mutex_unlock(&nbd->config_lock);
-+	blk_mq_update_nr_hw_queues(&nbd->tag_set, config->num_connections);
-+	mutex_lock(&nbd->config_lock);
-+	if (!netlink)
-+		nbd->task_setup = old;
- 
- 	nbd_parse_flags(nbd);
- 
-@@ -1524,7 +1540,7 @@ static int nbd_start_device_ioctl(struct nbd_device *nbd)
- 	struct nbd_config *config = nbd->config;
- 	int ret;
- 
--	ret = nbd_start_device(nbd);
-+	ret = nbd_start_device(nbd, false);
- 	if (ret)
- 		return ret;
- 
-@@ -1995,7 +2011,7 @@ static struct nbd_device *nbd_find_get_unused(void)
- 	lockdep_assert_held(&nbd_index_mutex);
- 
- 	idr_for_each_entry(&nbd_index_idr, nbd, id) {
--		if (refcount_read(&nbd->config_refs) ||
-+		if (refcount_read(&nbd->config_refs) || nbd->pid ||
- 		    test_bit(NBD_DESTROY_ON_DISCONNECT, &nbd->flags))
- 			continue;
- 		if (refcount_inc_not_zero(&nbd->refs))
-@@ -2109,7 +2125,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 	}
- 
- 	mutex_lock(&nbd->config_lock);
--	if (refcount_read(&nbd->config_refs)) {
-+	if (refcount_read(&nbd->config_refs) || nbd->pid) {
- 		mutex_unlock(&nbd->config_lock);
- 		nbd_put(nbd);
- 		if (index == -1)
-@@ -2198,7 +2214,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 				goto out;
- 		}
- 	}
--	ret = nbd_start_device(nbd);
-+	ret = nbd_start_device(nbd, true);
- 	if (ret)
- 		goto out;
- 	if (info->attrs[NBD_ATTR_BACKEND_IDENTIFIER]) {
--- 
-2.39.2
-
+johannes
 
