@@ -1,108 +1,159 @@
-Return-Path: <linux-kernel+bounces-707132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E5BAEC034
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC89AEC014
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1256F1C47C39
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33219188E8B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CF42ECE9E;
-	Fri, 27 Jun 2025 19:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD47F20FA94;
+	Fri, 27 Jun 2025 19:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPGZ7yVd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jORnNvZ4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE66CA6F;
-	Fri, 27 Jun 2025 19:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C661C5496;
+	Fri, 27 Jun 2025 19:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751053137; cv=none; b=udP/JaPdO4b0PlcJa+CTHrYaLhUtBbzhDJJQr+MiJoyKR4mZpoyezb+ImIZsJd+GQR+LsnK61O1RwZ+bz+uT4kPwiIh7Gygn2PtnVSco6WloHeyHsnlPhE+qmipXf2gwOt47OB99kk0bLOgmLRSN48bvsUBAReAnL2wsM3V1UF8=
+	t=1751053091; cv=none; b=UKBKQyZ8iixV0J+pg8MUkwZ5qvsb6tEubCvisXb5Kv7C99RBhSYv0sbOZC0XUX7LTfUCR/sYGifPhHfDEkxBDEd8wr/pKeUyxs69bYGAqlAyJ1NMTKXlzJmoiv5BBAodwNj4IwUplMtzxrI79SSjF2y4+bCle1r7EUSBBoZ74Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751053137; c=relaxed/simple;
-	bh=OE8U2vT7ew5Dt6ec8C7hkjuElIoXUc1rAPhJAuZXxG8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jYZ9MYlYWJHDndU7W+ApKdo1uybbfOVWazX6AmqtZ9XF8eEfbdnKEAyqqQzRE4xFtxf4E6BSC+d58jUC1k+6926mhXp3LNQlqqWXMiFIiuuJywH2Z4YauWoCAWTIHstIGQztO8u5eNcZjnywV8BfqTT9jj6kQcNvYa+seZgAPWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPGZ7yVd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283C1C4CEF6;
-	Fri, 27 Jun 2025 19:38:49 +0000 (UTC)
+	s=arc-20240116; t=1751053091; c=relaxed/simple;
+	bh=IaHiq80K/XJ1mca1aiRXLxnrML7BIY8xQk2zNdDd4Tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=THoyXRTWuM5T1+EQtyyaUzOntGAu9NSoVcN9pY9XxTTWVPt6t9iQqmE17t1ifUInq4AuV8HDj/ni1reXzacqz6xTwWvEz7X4a0PML+XwxLKsQsbg2l4yALUZnU29iTaVx/viuVt5e4O3ufjmVznYWuT+hjJGt9NWl0EevD4yImw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jORnNvZ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE77C4CEE3;
+	Fri, 27 Jun 2025 19:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751053136;
-	bh=OE8U2vT7ew5Dt6ec8C7hkjuElIoXUc1rAPhJAuZXxG8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YPGZ7yVdxGLbHgm7y1rhDBnfH40vpyGmywbcIuoWgPzSGVZQylVK8pc8sG0H0Ajut
-	 UP99Rzrh9GlJKv7QfNyk+MyyellutDgnFh2R7Xiu3VFkXPC665FsBfbqW+XMSo1uD5
-	 bzXAQxt/ahMTNZ8xI/lRCOJQWDdo2wU2PTESbUseSewXDCcJ8kCrvpqdLWFztEPJtz
-	 20s1yYt99RwhltUaKArwd/16gAMti29MT+Dl593FYEEixbTOWluSnBjT0+14f0GSwn
-	 6ptEsco2UXPqaJvwHSpi0sPzGeIwxY7VCrNi6xKloyRfIMPozR3owMJ4IDbyq0YcJA
-	 cP5xHbmkEl6RA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 27 Jun 2025 21:37:58 +0200
-Subject: [PATCH 4/4] clk: qcom: rpmh: Define RPMH_IPA_CLK on QCS615
+	s=k20201202; t=1751053090;
+	bh=IaHiq80K/XJ1mca1aiRXLxnrML7BIY8xQk2zNdDd4Tc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jORnNvZ4wQ/o3RzobzHRXuK+7K/AsTmPQk9RRlzQ47O4SyiyHTo5i8uMeXcBEAUD2
+	 ehvVVfzCPAVPzLmM7NiUvHxkTy6h0rxBZeRGy+vcRvBtaGZ8PSogIIcUct0itwZUcW
+	 TVFaX7BCaf7jJ9Ms3ZqOc29Dk5p+PEFyP9YMOp9sDws315zmNLDQ1ZPboubB9ENGT2
+	 Xp2O0hqfnpuq+AaXKUReBa/cgBljGYCX1QbWskTu1TAxhabUxdZwImU8AXusu6uFkX
+	 +AkM3BRd9+zjoiUMbkKYgxHnfFF5QTnB0iB+ana/xoyCGt4PTwWrMZzbFE1nATtgPJ
+	 3lGL3aRg4Wo/A==
+Message-ID: <584af55f-1b73-4c17-bf85-c2d3ecf6692e@kernel.org>
+Date: Fri, 27 Jun 2025 21:38:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] Input: Don't send fake button presses to wake
+ system
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Mario Limonciello <superm1@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Mika Westerberg <westeri@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
+ "open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
+References: <CAJZ5v0j3ZyuEqSKQ+3K8M3BwPCxn5Z6KOwjyjt4cJW6HfxjPDw@mail.gmail.com>
+ <hyvpl4gvxc6h2r3itfofjduwb3vpobyo7a7z6g3zapzscqtafh@ixsd4amyljva>
+ <de548b27-4c43-4f30-af9d-b060101e6fd8@kernel.org>
+ <75fixx6rgwsgsw6e765oxdcivcg2nkzx2fp2qywgx4vi3ihywh@ot7gdecsnttw>
+ <1b0d2349-dbf7-47aa-95c9-1974e63d111a@kernel.org>
+ <13025910-7639-400b-878a-cd0780c6534c@kernel.org>
+ <4ajmcrl3bqeikki2etek5bafzszelgevr322tvuubx4pxxyju2@qqxz6lzcb6e5>
+ <fdd635ce-5e8e-4123-8e8e-241a57b4d7fe@kernel.org>
+ <eaf7bva2skjz6oo2s2f4agooplthvuztyr6tssa7rux764qw35@kscd3rtejfvn>
+ <9f5e0c21-bc25-44d0-a4d4-6fd6e58a9f2e@kernel.org>
+ <ly3mww7nq7uuqvdx7p2uzcrphhboeuep3yuwbaxwfimesitjaa@hf72i4vu5quo>
+Content-Language: en-US, nl
+From: Hans de Goede <hansg@kernel.org>
+In-Reply-To: <ly3mww7nq7uuqvdx7p2uzcrphhboeuep3yuwbaxwfimesitjaa@hf72i4vu5quo>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-topic-qcs615_icc_ipa-v1-4-dc47596cde69@oss.qualcomm.com>
-References: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
-In-Reply-To: <20250627-topic-qcs615_icc_ipa-v1-0-dc47596cde69@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Georgi Djakov <djakov@kernel.org>, 
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
- Taniya Das <quic_tdas@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-clk@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751053092; l=1036;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=I5Frh8xqHPLbzLba+aZWZ34NiNQSkZoK0uf/p2Aol9Q=;
- b=Z32XgiO7x666mSxR3HDZ8XOdjJnY4rK71nyJqsrpxcHn+wYCGzZNbU5f/KPR/xtsw+CBzt09K
- J0n4xR3/hx/CuaFqaJDWkWSZdn2OqtSxDeCo+dnR0Rmr0Wa3ZKFU/NA
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hi,
 
-This was previously (mis)represented in the interconnect driver, move
-the resource under the clk-rpmh driver control, just like we did for
-all platforms in the past, see e.g. Commit aa055bf158cd ("clk: qcom:
-rpmh: define IPA clocks where required")
+On 27-Jun-25 9:18 PM, Dmitry Torokhov wrote:
+> On Fri, Jun 27, 2025 at 01:56:53PM -0500, Mario Limonciello wrote:
+>> On 6/27/2025 1:36 PM, Dmitry Torokhov wrote:
+>>> On Fri, Jun 27, 2025 at 05:56:05PM +0200, Hans de Goede wrote:
+> 
+> [ ... trim ... ]
+> 
+>>>
+>>> 2. There is a patch from Mario (a8605b0ed187) suppressing sending
+>>> KEY_POWER as part of "normal" wakeup handling, pretty much the same as
+>>> what he and you are proposing to do in gpio-keys (and eventually in
+>>> every driver keyboard or button driver in the kernel). This means we no
+>>> longer can tell if wakeup is done by power button or sleep button (on
+>>> systems with dual-button models, see ACPI 4.8.3.1).
+>>
+>> Actually a8605b0ed187 was about a runtime regression not a suspend
+>> regression.  I didn't change anything with sending KEY_POWER during wakeup
+>> handling.
+> 
+> Ah, right, ignorng events for "suspended" buttons was done in
+> e71eeb2a6bcc ("ACPI / button: Do not propagate wakeup-from-suspend
+> events"). Again trying to add heuristic to the kernel instead of
+> enlightening userspace.
+> 
+> I am curious why the system is sending "Notify Wake" events when not
+> sleeping though?
+> 
+> [ .. skip .. ]
+> 
+>>
+>> FTR I did test Hans suggestion and it does work effectively (code below).
+>>
+>> diff --git a/drivers/input/keyboard/gpio_keys.c
+>> b/drivers/input/keyboard/gpio_keys.c
+>> index f9db86da0818b..3bc8c95e9943b 100644
+>> --- a/drivers/input/keyboard/gpio_keys.c
+>> +++ b/drivers/input/keyboard/gpio_keys.c
+>> @@ -425,7 +425,8 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void
+>> *dev_id)
+>>                          * already released by the time we got interrupt
+>>                          * handler to run.
+>>                          */
+>> -                       input_report_key(bdata->input, button->code, 1);
+>> +                       input_report_key(bdata->input, *bdata->code, 1);
+>> +                       input_sync(bdata->input);
+> 
+> I start wondering if we should keep the fake press given that we do not
+> know for sure if wakeup truly happened because of this button press...
 
-Fixes: 42a1905a10d6 ("clk: qcom: rpmhcc: Add support for QCS615 Clocks")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/clk/qcom/clk-rpmh.c | 1 +
- 1 file changed, 1 insertion(+)
+AFAIK we cannot drop the fake press because then Android userspace
+will immediately go back to sleep again assuming the wakeup was
+e.g. just some data coming in from the modem which did not result
+in a notification to show, so no need to turn on the display,
+but instead immediately go back to sleep.
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 00fb3e53a388ed24ed76622983eb5bd81a6b7002..e02346bccdc6f26b1a832ed62dbfdc35f271c858 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -825,6 +825,7 @@ static struct clk_hw *qcs615_rpmh_clocks[] = {
- 	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
- 	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
- 	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
-+	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
- };
- 
- static const struct clk_rpmh_desc clk_rpmh_qcs615 = {
+IIRC last time we had this discussion (man years ago) the reason
+to send KEY_POWER was to let Android know that it should actualy
+turn on the display and show the unlock screen because the user
+wants that to happen.
 
--- 
-2.50.0
+I believe this is also what the KEY_WAKEUP thing in the ACPI button
+code is for.
+
+> Can we track back to the wakeup source and determine this? It will not
+> help your problem, but I still believe userspace is where policy should
+> live.
+
+There is /sys/power/pm_wakeup_irq we could correlate that to the IRQ
+number of the ISR and then AFAICT we will definitively know if
+the power-button was the wakeup source ?
+
+Regards,
+
+Hans
 
 
