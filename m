@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-706241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93862AEB417
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:16:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05BEAEB40E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A09B7B7A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE9C3AC8AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9576E298997;
-	Fri, 27 Jun 2025 10:12:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129D0298CBE;
+	Fri, 27 Jun 2025 10:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="TUnaDvBd"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3321298242;
-	Fri, 27 Jun 2025 10:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6291DF980;
+	Fri, 27 Jun 2025 10:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751019179; cv=none; b=qYq+baT7GpG41Boac5J6CHYLX+OSW6cttCWJ5/RyjMMtxncx61X9MH+xA/3fXXB8tgjxo7ySaYce0ySx9j+AzfUWoWiQkrLmnqxZmP3W18VMETcrvpTQD6/JqyxiyfHy/gxHxdkPkdyI1IlO7zwxK4iWPKZKiiYnZ/LwjaMJ3Bw=
+	t=1751019337; cv=none; b=s9gOhZfgXqg1p/50KUqc4EODFG67eEBozDeTCt/Fj/5M24CZLXaBKV7gtUMuLwt93YCvfnA+6ZxesyKF/fPcC31IvU0eUhfmsG+C43lfTdqISEyV38FPiI4Pb8aO7cYVniJ0TGe7hiHMmQC8TCx10o3aLzUbDd9eI08o8ruhttI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751019179; c=relaxed/simple;
-	bh=ACT/+OHmISkipT0R7m3k8YttxXMJkOC/TqU0F57vO0o=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZlZhfdi9AtByXN5D5CaWxd98qI/R3gGx7q2uIC0HTpYhSjA4Df05ihHc8EWmgNTdDTfNnUVe6eODGscA45a2hFcEX1ZURQDLhnBRAYCRPH3lroZNAY5b7BP57InEGKeK3+xuddms0YeiyvcjffS7PKOFaBU5uEBqCuKLJF/183A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bTBBV0GCKz6L5Dt;
-	Fri, 27 Jun 2025 18:10:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 278C31402ED;
-	Fri, 27 Jun 2025 18:12:48 +0800 (CST)
-Received: from localhost (10.48.153.213) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 27 Jun
- 2025 12:12:47 +0200
-Date: Fri, 27 Jun 2025 11:12:44 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-CC: Terry Bowman <terry.bowman@amd.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v10 04/17] CXL/AER: Introduce CXL specific AER driver
- file
-Message-ID: <20250627111244.00003dee@huawei.com>
-In-Reply-To: <214c9b73-6e62-40c0-a805-56127269941a@linux.intel.com>
-References: <20250626224252.1415009-1-terry.bowman@amd.com>
-	<20250626224252.1415009-5-terry.bowman@amd.com>
-	<214c9b73-6e62-40c0-a805-56127269941a@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751019337; c=relaxed/simple;
+	bh=kWqlKO5PmJMlK30Hu/nszvcABWtwmUQaTNNfj6O7HXU=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=BFiSl1UIxp9+pOcvEEcJhPUJQv9gFQhVwRX7JU2+PSPzs+DzME8fqQDV3bZDixPy4TijAa2M9JGeHvslFWU6+A2zF9AjkP01Qg01ADrIlnSmYvHwxy+ke+oFMuiu0Y0TPAV1yYjKgsIeapFu8Kc7A5dW05jbRbC6Gre/KyCoUik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=TUnaDvBd; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R8PVHO022240;
+	Fri, 27 Jun 2025 12:15:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=mVBgEXGskFGd1kZHXy9461
+	TXv3u/WKz4hFmABhGynE8=; b=TUnaDvBduVytL1jo7TCMT9l4v5t7cPtAhaslCI
+	eeZG5KnvL8984S665vwrxF/h4FgS4nXZxGIK9p6whXltR+1tDJ7Jmcl1Ti59j4NK
+	vGqwCJK64JivfCHSFmbBgzPdxilY07HaDRQrJjzs89Q4xJRp/LkSzeDZJrQYWRFJ
+	IxP5ewno/C/wLfzG0JkMXJalE2neRoa6xAvnfm2rsa/aC3dGU+pMbEn7VhFsA3lj
+	Uq+VN7TNk7brpGOrICzNwHFseHDg5eZmV8A+R7fFP1CWYExducr04tVQpbuLGIUx
+	Fm6p7wNA9o0qdtgKICgU64mQYM6/fjktlUGIn0lB8Wcs8jHg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dj5p3xqf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 12:15:12 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 00FB840045;
+	Fri, 27 Jun 2025 12:13:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 75734B65697;
+	Fri, 27 Jun 2025 12:12:57 +0200 (CEST)
+Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 27 Jun
+ 2025 12:12:57 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Subject: [PATCH v2 0/3] Fix STM32 I2C dma operations
+Date: Fri, 27 Jun 2025 12:12:55 +0200
+Message-ID: <20250627-i2c-upstream-v2-0-8c14523481dc@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKduXmgC/1XMQQ6CMBCF4auQWVvSFqYEV9zDsEAYZBZQ0qlEQ
+ 7i7FVcu/5e8bwehwCRwzXYItLGwX1LYSwb91C0PUjykBqstarSVYtur5yoxUDcrwrurUZsC6w7
+ SZQ008uvkbm3qiSX68D71zXzXH+SM+4c2o7Qq7VAMWFQlOWxGL5JLzHs/Q3scxwcajC4EqgAAA
+ A==
+X-Change-ID: 20250527-i2c-upstream-e5b69501359a
+To: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Alain Volmat
+	<alain.volmat@foss.st.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "M'boumba Cedric
+ Madianga" <cedric.madianga@gmail.com>,
+        Wolfram Sang <wsa@kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-07fe9
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_03,2025-06-26_05,2025-03-28_01
 
-On Thu, 26 Jun 2025 16:42:09 -0700
-Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com> wrote:
+This patch series aims to fix some issues inside the driver's DMA
+handling.
+It also uses newer I2C DMA API.
 
-> On 6/26/25 3:42 PM, Terry Bowman wrote:
-> > The CXL AER error handling logic currently resides in the AER driver file,
-> > drivers/pci/pcie/aer.c. CXL specific changes are conditionally compiled
-> > using #ifdefs.
-> >
-> > Improve the AER driver maintainability by separating the CXL specific logic
-> > from the AER driver's core functionality and removing the #ifdefs.
-> > Introduce drivers/pci/pcie/cxl_aer.c and move the CXL AER logic into the
-> > new file.
-> >
-> > Update the makefile to conditionally compile the CXL file using the
-> > existing CONFIG_PCIEAER_CXL Kconfig.
-> >
-> > Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> > ---  
-> 
-> After moving the code , you seem to have updated it with your own
-> changes. May be you split it into two patches.
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+Changes in v2:
+- Fix the dev used in dma_unmap also in the error path of
+  `stm32_i2c_prep_dma_xfer`
+- Add a dma_unmap_single also in the ITs error handler
+- Add Alain Volmat's "Acked-by" on patch 3
+- Link to v1: https://lore.kernel.org/r/20250616-i2c-upstream-v1-0-42d3d5374e65@foss.st.com
 
-Agreed. I think the changes are small but a direct code move followed
-by cleanup (I think it's the mask and the comment update only?)
-would be better.
+---
+Clément Le Goffic (3):
+      i2c: stm32: fix the device used for the DMA map
+      i2c: stm32f7: unmap DMA mapped buffer
+      i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
 
-Assuming you do that, for both resulting patches:
+ drivers/i2c/busses/i2c-stm32.c   |  4 ++--
+ drivers/i2c/busses/i2c-stm32f7.c | 42 +++++++++++++++++++++++++++++-----------
+ 2 files changed, 33 insertions(+), 13 deletions(-)
+---
+base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+change-id: 20250527-i2c-upstream-e5b69501359a
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Best regards,
+--  
+Clément Le Goffic <clement.legoffic@foss.st.com>
+
 
