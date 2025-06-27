@@ -1,57 +1,87 @@
-Return-Path: <linux-kernel+bounces-705730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AE5AEACDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B143AEACE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691CE1BC713B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75EB2189F457
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A1C199223;
-	Fri, 27 Jun 2025 02:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD7518DB1E;
+	Fri, 27 Jun 2025 02:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD1b19HP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGvuTDS/"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4105A3C01
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EF23C01
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750991924; cv=none; b=e7fd3cY8BQnyMWzewhbFtuh4CRunWquDG43y2xNsAHhw3NZYJ2r5pY1qy51piWtSjRYxMefnsy/AAreUD6x//AMvA6HPElno7I+J4YfhiRnoYdSWpT4a+X2kjx67nFqKpMDdW9GAGUkfq0vL0SW4D2vBB1j2BPm6cr3X+OJSAvg=
+	t=1750991975; cv=none; b=H0YYF1NE6S2Q7ynVU/7B/kaFodNmxqDkQ8UCNLqZZ3hNwueJ+W6ruBiVB0rCAtMuXSRBlgYNqkysXoKjRMUbapaGbd2CHPyrGhzsy0TbuzS/GsYaFHsAz1BdXD2xsSCy1ozZKwlCaSap8Ihegngse2Yi2C6gn+WPvjy95VRoFz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750991924; c=relaxed/simple;
-	bh=DzX/NhNydrE1FbXKlYOIdNNqYXACSw7i/Wy3/su2Q70=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lcLj/5l5yqtwnFTwKm/FRFcQihEDTqe7Er9KDGITzPYbnsEBeVzR7IJsb+OTubiAv3c5hLXSKc/XwnUIAwQ9E7mf5aEUI72E9KUcZ5/wArMzmOh3Q5KoHHn1sggEqoIACExfrUt0mI2vPluT5leT0sVrf1A3WmOFyUDm8gmxAK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD1b19HP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE470C4CEEE;
-	Fri, 27 Jun 2025 02:38:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750991922;
-	bh=DzX/NhNydrE1FbXKlYOIdNNqYXACSw7i/Wy3/su2Q70=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bD1b19HP8i8N55wdi6AEbrP3k9D/ENSAj4fhJSfGgTNBq1amL7xXZKFfS3A8o/05X
-	 +F+3uEBzng1VHCFyIaiUPcYLpEHofiBrfssusXE0zwc1ktLtNNLVkihg35hx+larQV
-	 ogW8n5VPbxlhZFXl8uq5F5sQWAHzljb6OtLB7+xUX/xhzCZghPRWwoNkLNtbS3HYz2
-	 b+4nIqy8y2cBx/Td4+xO70lTo1MUJG2rFdLms/YAkbNYDBKc8FjRo4trw/kzme8/Cu
-	 f1cQi01oXp7ezdcYhz+LkfD3XQGJ8d5Oi4isLziM9qYgmHEBK/xS+qOQTam04Mg8SC
-	 kM8WTeKCX+nsQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH 2/2] f2fs: fix to check upper boundary for gc_no_zoned_gc_percent
-Date: Fri, 27 Jun 2025 10:38:18 +0800
-Message-ID: <20250627023818.146534-2-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-In-Reply-To: <20250627023818.146534-1-chao@kernel.org>
-References: <20250627023818.146534-1-chao@kernel.org>
+	s=arc-20240116; t=1750991975; c=relaxed/simple;
+	bh=vvXfD1IfkO52OboqRZXTZrSZOnFkJz+wyFRQ1bQn7AY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dAfoidvX5WFO+o9c7TW/TQSM6bbZnICy+vlKSt9oztpuv64vKfBycpHaSBt0vILOx8DrKHj4L9rZXB7e0p1W7M9rzA98pxxztj58x0TVz3ofRjvMLsXFsP0EeLoIeQLFJgOUK6lIWUGxe3XgX1wd/8xEpFxuUZHg4BdyHiyD6/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGvuTDS/; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-235f9e87f78so21505935ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 19:39:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750991973; x=1751596773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q+Xmpn0m1NNRLGqOUCu2eX/6jrBk9qwF49IxfMBhpEU=;
+        b=TGvuTDS/0uxFbVg7HA5nPq9CLc/BGFF4X+mIOWkUwneNqsw3kDoeVmVNTj04ez7iuI
+         zaC3VZHX3LQ8r23v0bF2A5ZJHeQPs/4gTol9lB08MwyulufMAhKsU69y6FATZR4Oz1XG
+         u9o3y3g+IDXuDWghLmpL8Ej5fHchofBVAzan9f1uNK9NUW4ExCKSNvSDjT/9WlmfsMlm
+         NU8v4XtV5iBPnZYwyZ8615u2QqhbwufHULkWjFoTwOj5DRRAP/3FcJBr2sC9fNAMAxG8
+         KR9M0YS1Fn2j4Uk5AlfnK6Ib0wHi0f6MPIR3glMWdRRPOp8B/3f5015qECtR5eI2svZf
+         FcrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750991973; x=1751596773;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q+Xmpn0m1NNRLGqOUCu2eX/6jrBk9qwF49IxfMBhpEU=;
+        b=jAoja0IWV/FmgzExQxjz/Aoz2S1rFxatlhbi871Vh0get5wSxzmqNjCDy2pJQpRMzg
+         7cw1+y0SOlnoO3I0pX1UVt7NSMi61cZ6nr8XvJ4poMc8U0ZCTDUFqDKlOBLGsQDCo8sY
+         9++HUMqtEdRCvYoaG7zBpmI3/hPlck9YdRxhP8bAdiMbW3LhlfNd+3tq/Uj/SK4vQoAS
+         VectO8RiFgQH2v+vvR8cdWcOdxAwfP+d054I7oku8ls7T+Nxb9jsdhacLXo2e5VLGzpp
+         KsAoLMqJ7GTaQ3SxXEtInhUPQpBrkXaFRGvzuijuH+45mDivckQaeevMUTQUS/MZSOj3
+         PF4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfGCZvhXQtePvtutccWUDsGkZozW/2SmOuZLGfYSclq1occ8q0Xr3Mcl04sRZeFDWbp0R6y+j4x4uHCXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKEUhiuikvcRfbqgKT811Gq/+rwy0K1p9BhXLn7HNmwycxcRkL
+	nS8GoEygii7TwGjUnuMBu/Aoa595s8DgohdP8XcWlZdq/j4VNvNRHd+d
+X-Gm-Gg: ASbGnctW30ziCOgobdJTRwVP/8tC80NIv2qB1sE397iB8BvymaEz3l2SSBDvX0PljPK
+	P5mo4AE6Wx3Yin1pjmoXW9YeTltauwMvGPjCExy9AvRxwxDYzirkAR14tjpXFWAjuxo/TGCzB8f
+	mUKMWgZBqE3QV8l9v/jE9UzIk+tjXjqqv/Jv3KNghjPPw/3N+xqvZzAfakiX2Sh7xTeBNlwypth
+	Kuw6fiHltTmGUcMNgQaQ8bFIPj4DZkOgr2PllSpWAtVdrTHF+Ydwh5TaFuRDG4k1wSfpT5mJ+vS
+	vqZUpds+3i9BO/28zSTi/K89i9GAYZxSE1GyV/UEFKqU5xYlI4dHr06l6t+4uTiZTZYUWRy4Rwd
+	GrymJ//kF4tTG2GuWjrkZs6HkaG7/Wz9wFAnEBQ==
+X-Google-Smtp-Source: AGHT+IGT6mSXkMoZBI9eS+i+6n5dkAlAiLro6eu3jOH5Rab/6j/ltru+m7KO0gmlC0KataXVrNbGHA==
+X-Received: by 2002:a17:903:2f4c:b0:234:eb6:a35d with SMTP id d9443c01a7336-23ac4606503mr22426855ad.27.1750991972966;
+        Thu, 26 Jun 2025 19:39:32 -0700 (PDT)
+Received: from ipravd-Nitro-AN515-55.hsd1.ca.comcast.net ([2601:646:a000:5fc0:ac9:41cf:eabf:a84b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c5bc7sm4037755ad.221.2025.06.26.19.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 19:39:32 -0700 (PDT)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>,
+	syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
+Subject: [PATCH] ocfs2: Avoid NULL pointer dereference in dx_dir_lookup_rec()
+Date: Thu, 26 Jun 2025 22:38:30 -0400
+Message-ID: <20250627023830.150291-1-ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,35 +90,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch adds missing upper boundary check while setting
-gc_no_zoned_gc_percent via sysfs.
+When a directory entry is not found, ocfs2_dx_dir_lookup_rec() prints an
+error message that unconditionally dereferences the 'rec' pointer.
+However, if 'rec' is NULL, this leads to a NULL pointer dereference and
+a kernel panic.
 
-Fixes: 9a481a1c16f4 ("f2fs: create gc_no_zoned_gc_percent and gc_boost_zoned_gc_percent")
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
+Add an explicit check for a NULL 'rec' and use an alternate error
+message in that case to avoid unsafe access.
+
+Reported-by: syzbot+20282c1b2184a857ac4c@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67483b75.050a0220.253251.007c.GAE@google.com/T/
+Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
 ---
- fs/f2fs/sysfs.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/ocfs2/dir.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index d74472d96026..bdef926b3377 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -628,6 +628,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
- 		return count;
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 7799f4d16ce9..dccf0349e523 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -809,11 +809,17 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
  	}
  
-+	if (!strcmp(a->attr.name, "gc_no_zoned_gc_percent")) {
-+		if (t > 100)
-+			return -EINVAL;
-+		*ui = (unsigned int)t;
-+		return count;
-+	}
-+
- 	if (!strcmp(a->attr.name, "gc_boost_zoned_gc_percent")) {
- 		if (t > 100)
- 			return -EINVAL;
+ 	if (!found) {
+-		ret = ocfs2_error(inode->i_sb,
+-				  "Inode %lu has bad extent record (%u, %u, 0) in btree\n",
+-				  inode->i_ino,
+-				  le32_to_cpu(rec->e_cpos),
+-				  ocfs2_rec_clusters(el, rec));
++		if (rec) {
++			ret = ocfs2_error(inode->i_sb,
++					"Inode %lu has bad extent record (%u, %u, 0) in btree\n",
++					inode->i_ino,
++					le32_to_cpu(rec->e_cpos),
++					ocfs2_rec_clusters(el, rec));
++		} else {
++			ret = ocfs2_error(inode->i_sb,
++					"Inode %lu has no extent records in btree\n",
++					inode->i_ino);
++		}
+ 		goto out;
+ 	}
+ 
 -- 
-2.49.0
+2.45.2
 
 
