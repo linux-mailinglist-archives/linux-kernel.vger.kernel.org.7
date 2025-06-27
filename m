@@ -1,96 +1,158 @@
-Return-Path: <linux-kernel+bounces-706832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC158AEBC92
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E56BAEBC9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807C33AB6EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B421C6076C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4EC2E9ECB;
-	Fri, 27 Jun 2025 15:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695772E9754;
+	Fri, 27 Jun 2025 15:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2PIXGHE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nmao1MSX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3923208;
-	Fri, 27 Jun 2025 15:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A662E88A6
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039609; cv=none; b=sqsOTvSCkRx3rygkZfLjAVnrgoxoh5Dw7UzpGyIU3wNTu7yiZRIyg57qEOiDM9dvQTge5tbONCf17wPRaZHv3ZqVwaK+6h1a5uqz/xkmooQakH3Udups5/sMkPqetzqmC79vqvGlGp/z8NQTDJgwlbbkb7Wx6YdH4BM01WbZcAg=
+	t=1751039677; cv=none; b=qeTN6s5HTEXsPKSrnj5Z8sLpCjRLCgZSZq7gQsaYtNPrPCSaUjS9lq3DNCtynFB3u39fUedI4xSshNr/2Y9GfdB+gipBxdgi5wghHPBLIEkY6CPIz/aSykJr8dEsNtbw+lofjw21ewSN1wdZ94n4zR+/VHPybhe61MP+/IzKFhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039609; c=relaxed/simple;
-	bh=9jvEQ9I22Mhlsd+LxJZ4oHjg0gKuzAh0ToNhXaQgrpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bs8SMHqW1JfQedE9v25vzcupc9uqn5kDzOpTWx5+qpRXa1gzuudgDNqenR6yHC8lxMsAgK5ug+1x6ZM75vyhXqPB6F6qM4+P7UWQW7zvwZfiD7xmMmxu3mr4l2DTbWYU4Q6suYzHDxHSavQOh/0XXC/fgr0APjHjyhVr5hBO2pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2PIXGHE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CE1C4CEE3;
-	Fri, 27 Jun 2025 15:53:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751039608;
-	bh=9jvEQ9I22Mhlsd+LxJZ4oHjg0gKuzAh0ToNhXaQgrpY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b2PIXGHE/PIjk2eDAc/MPl8v1olroLzQzQ5N7Art4TKnw7Y/JDV72yh7d0qcKcw68
-	 UgsFSysnsboCT9wr1010yB4dmIynxsWaFSikE8rw/5BA3TrdS65ZE7l0jl04EHuxJO
-	 2GOT0nxqJhDmMIfHSo1N85/YEBBp/65e0trzeq5sDbiHY9XdRsxb8luQ1FAheRPJ2a
-	 hoiN65nrtqvpEbPAKYVmeSQ+yTebSXYVUW7LUMnTvTb2/sHiVg211ij6N8SE36fNXI
-	 QeORosy2Y636/Sh0a/w8EKPuG1e4RJ7jDT/+Ba/yidThRoXlHNSDexIuKlZAuYJLEy
-	 RneUfat3/2WBQ==
-Date: Fri, 27 Jun 2025 16:53:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: andy@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	dlechner@baylibre.com, jic23@kernel.org, krzk+dt@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nuno.sa@analog.com, robh@kernel.org, ~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v3] dt-bindings: iio: adc: st,spear600-adc: txt to yaml
- format conversion.
-Message-ID: <20250627-rage-oat-14141026cf28@spud>
-References: <20250526-overtake-charger-6c5ffcc2bc09@spud>
- <20250626205733.6354-1-rodrigo.gobbi.7@gmail.com>
+	s=arc-20240116; t=1751039677; c=relaxed/simple;
+	bh=S8bnZFwqOefSjfjbTJZ426XN8OOe081rliiCwRtOwVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MYe7JM5ZepdeQbNi637oit7gu3NLvP47eFZWEeq4Z6g03JLGqjMeFKCfAGsQZYZwcADLKcpSyySKbw1W+2rpb0g1wXc/RanT0V7PccovzbNVIcZbOcBSIEcpHuqawl9vCCW8zuQiZ2nKFsblbjlwNKnCSSpawyVPsYnE2ivZCwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nmao1MSX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RC0JwD009547
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:54:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pZr7iAj8/Dq9pOneeMlm+pgyY2ynqbotMAGjlAeCcLw=; b=nmao1MSXUtZjQUoq
+	SDTHRsY0Hg3VjpLw/0Ii6jsLVDVb+o6Yohs8y3iHUebXf0FRWOQk/sjhIqZJBEBY
+	BSo32OJ3lGaKxUevBvFPf56KEC7/lfJ8pBNAv2D1F7XYnaQcpdiQDhvfhyTtTLUa
+	ACryQoaz9l4DhHiiNizuY9qmTnWFmSIdOOZm+Bhwi7pEu78jtRObXxWSPQkzbkr7
+	6hLAhByJHsqGgfYv6o4x9hV1eGwsL1pu1qSch+fMTKpYF2mpUw7cbCeVr9XfhuLV
+	SdoaqoIPwjllHbjr22wrAx2Oe6drE/2Vv2f0sFHDlO2CaXmEVdGj0lSD6dHuDHmj
+	Z8Dviw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f4b4796c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:54:35 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d0979e6263so3349785a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 08:54:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751039674; x=1751644474;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pZr7iAj8/Dq9pOneeMlm+pgyY2ynqbotMAGjlAeCcLw=;
+        b=IH/PXd5lKTCxAOYwtOFEwa1BkXahWrtEb1+QFwiem/HWeN79Ty0UHWJ18zN2wbEWNJ
+         kV9z7Ti3H0hOg9I9lLvAhRdOsrnGlU3crypKMxdxQ5pECJ3uBKZdL4G5ZesgAdGIr+yM
+         onnnYhL8Efc9KfRWjU2O/4lO9o9Z4f9JSYl8waDaNFD9aWGjyn+Ack/8t7AHd2CGbpCG
+         SJxxGRqG814a1shgM/FvXSKBFq9/Xl9gnVmyDvG/AM+DZ7+lm6JOCab1oLnwgYeydGAu
+         iRuxarZ/KEBc1+8QORXNU7734Zxm3+jGSUkvNZ7PQXKgNhkBq6mF2qJPSm+krkVn22yI
+         b5VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnEvGP4Eq6ldWf7bXFBS3NmCB4iTDKeIjHdydC04KHkfBvTpFQGa8Sr0hbHYu5lPSY1yy5RvfkazHjuiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXKBq7PqSsRkzK8JCk63icDzLYvuqDDlILYMOMkERtk95hfVrZ
+	7bX1oyiEc4lMI7SshmzpgZPox5xDNIDNMatMK9vXjwLtaX6JdxS9u5/BqEDZJYkYDnr4WjS2SSx
+	mxMglpfE91wUnDlBAbDyQeVy+fxivpuqF81J0LvZG9VuXxMxtdrKANRSlOEeeiI3HUWU=
+X-Gm-Gg: ASbGncvXyRv8dNypIS6Xad84u7VePRNvmEuNJTFmie3zXgV4+l7VS5f+SBbr59Jlj/y
+	Di8hJfFyF6CYOpgM2SETz7F8+d37eXwVAdmSs4chDC7xyPJONFSk8yxQTfcx4BZPrxSEOsfmrQn
+	DJaFHxZYJv71VYAMXUyTzdmsp8Zs+i3+oZid1s789F83Cbnj+fAmsK+qaq8EQ+HjLJsmHlRikzg
+	8nAqMImE5wd9A22AE7DXnfSlQrYSKkle5dQ42DqPVXSAK2crXiK4Yn7pnaXO+6tnyhWPpYyG/HT
+	l0sqDq2fiq1EciG0AC9LidkTZALmLd2CV7TzOy+3dgQHKFkuHqG/SbptYVbEmvRwIe0Z2e4B4sg
+	h4IA=
+X-Received: by 2002:a05:620a:404c:b0:7d3:b0a3:6aa7 with SMTP id af79cd13be357-7d4438e31e4mr210379785a.3.1751039673895;
+        Fri, 27 Jun 2025 08:54:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnVBSJATURZomyb5icuOPlYo1v/x1ajNUslEnC5Ai/XTvP7ZKMpfHMiKxOU0P7qaWYMS3lXg==
+X-Received: by 2002:a05:620a:404c:b0:7d3:b0a3:6aa7 with SMTP id af79cd13be357-7d4438e31e4mr210378085a.3.1751039673452;
+        Fri, 27 Jun 2025 08:54:33 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353639bfcsm147793566b.11.2025.06.27.08.54.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 08:54:32 -0700 (PDT)
+Message-ID: <68c06500-a776-4f56-8514-c180b23f7715@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 17:54:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0y+6vaV681sTCfCv"
-Content-Disposition: inline
-In-Reply-To: <20250626205733.6354-1-rodrigo.gobbi.7@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] soundwire: bus: add sdw_slave_get_current_bank helper
+To: srinivas.kandagatla@oss.qualcomm.com, vkoul@kernel.org, broonie@kernel.org
+Cc: yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250627155103.441547-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20250627155103.441547-3-srinivas.kandagatla@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250627155103.441547-3-srinivas.kandagatla@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEyOSBTYWx0ZWRfX9OPIvukg0K0T
+ I6iXvAFRg+XuOmlTHL9G+dJjJeTQe/SAEZ5f143n1Vww0fbd6dZApli6ffdS8raqMbbs4O2YLhn
+ A5SGmS9kTuby96Ht9ZqkDx9O8bu9R49EFDK5D9H6C+IFR26f8jeTrx2i3h/OFCvyKrza/aOSZ4E
+ Ff+ph1t/9rUMv45+3VzkO1FlkTKdp5Od7FVWc6Yjub0wPDYQu3UgWPs27lQRRMRF8WPXHIhdbzI
+ CTV0n1BcKPMTJ95aN4ayt+6rpPiKZcW1eTvJApr5WROLQte1ujrl/ejeH6VLUkBQs5pX8r2vi+h
+ 7jwYTUyn4fV0/k5kZ/1QH13ZInVhxwYD7C+fMIWqb/+ylhLpBOvEQCKD1ohNwLanlO1ncL0bgzL
+ f1eP1HM1FCnMkq6W2psh0lb1zQDPp/EiLcQnHXfya45PK58Ncu59GSpe53ok/9uYzAH3K68G
+X-Proofpoint-ORIG-GUID: pK39CbzsQ3WOWrk8gRI82uC1bKk6V4Tp
+X-Proofpoint-GUID: pK39CbzsQ3WOWrk8gRI82uC1bKk6V4Tp
+X-Authority-Analysis: v=2.4 cv=A8BsP7WG c=1 sm=1 tr=0 ts=685ebebb cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=7h2XZbHhf3WDBbgsTHsA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_05,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 bulkscore=0
+ phishscore=0 adultscore=0 impostorscore=0 suspectscore=0 mlxscore=0
+ clxscore=1015 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506270129
 
+On 6/27/25 5:51 PM, srinivas.kandagatla@oss.qualcomm.com wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> 
+> There has been 2 instances of this helper in codec drivers,
+> it does not make sense to keep duplicating this part of code.
+> 
+> Lets add a helper sdw_get_current_bank() for codec drivers to use it.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> ---
+>  drivers/soundwire/bus.c       | 7 +++++++
+>  include/linux/soundwire/sdw.h | 8 ++++++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+> index 39aecd34c641..58306c515ccc 100644
+> --- a/drivers/soundwire/bus.c
+> +++ b/drivers/soundwire/bus.c
+> @@ -1363,6 +1363,13 @@ int sdw_slave_get_scale_index(struct sdw_slave *slave, u8 *base)
+>  }
+>  EXPORT_SYMBOL(sdw_slave_get_scale_index);
+>  
+> +int sdw_slave_get_current_bank(struct sdw_slave *sdev)
+> +{
+> +	return FIELD_GET(SDW_SCP_STAT_CURR_BANK,
+> +			 sdw_read(sdev, SDW_SCP_CTRL));
 
---0y+6vaV681sTCfCv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+sdw_read can fail (miserably)
 
-On Thu, Jun 26, 2025 at 05:54:01PM -0300, Rodrigo Gobbi wrote:
-> Hi, all,
->=20
-> Just a gentle ping here since it was already been reviewed.
-> If there is any other concerns, let me know.
-> Tks and regards.
-
-This is all I see here, a ping with no context is not very
-helpful. I have to go look it up on lore to see who reviewed it
-etc. In this case the reviewer in question is me, so you're looking for
-Jonathan to apply it.
-
---0y+6vaV681sTCfCv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaF6+cwAKCRB4tDGHoIJi
-0sEuAP0XXkr/zdyXCCujaPGWlfN2pKqB7teOqvhq2sk+UHO9tQD+MpTvyNNFmJ8p
-o2nW19m3IMiJ8OyL3Yss+7hndGZA+AQ=
-=qBDa
------END PGP SIGNATURE-----
-
---0y+6vaV681sTCfCv--
+Konrad
 
