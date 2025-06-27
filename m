@@ -1,181 +1,114 @@
-Return-Path: <linux-kernel+bounces-706945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF199AEBE15
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:04:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C98AEBE0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2916E5653C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:04:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872DF7A254A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07522EBBA3;
-	Fri, 27 Jun 2025 17:03:34 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555A02EACEE;
+	Fri, 27 Jun 2025 17:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lLKFhWE7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC1E2D3EFC;
-	Fri, 27 Jun 2025 17:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7292EA162;
+	Fri, 27 Jun 2025 17:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751043814; cv=none; b=Dc8w0VpD58u8YxVw1nKffwDg5edIJNMIV1I2Z2kOQ+F5kS/ubtL3NXpeIPH3nygggRhBgSpdNxvZpdoNMdMnokukZZQoI2EinNt7V+OeJ3rAp1II1WSQBNposz3H9QCvZh0b/FKMPimdyB5q+s2l4T5h+lwkxWDWQ388pkJRgDU=
+	t=1751043801; cv=none; b=NeqikWzcwaAqID9vqqUSCMRl7hPYdJID+S+8F+fTJHY5/vXJ/AxdxBMhle2uMcTtWIUbNNIxnlKTUVEpeP3rQwSmPsIbg+tDp6UjIq+LRCZYQem1wzZOac9IKSBretYgLdt97LvVAgcgyi/9YQefIrCTqxTFVrokp2ixzVSkHJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751043814; c=relaxed/simple;
-	bh=/aNBC0XBfGvwuRnaC4+TsJVqjIgdi1gtra/gd2Kk8+s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jkjEDdkAARtDZoZSV5280KZX1sEO9FvxiFRL676yD69vUw9P12ZOFlF0T37HyAhXC31xIBP+0EOMJwB4j4zEoJktHNtgO9AUsofzJKy1CUdz/mw6o//dzzP7CDRhIJz5QxzwPYCFr/QBkQxKuDLvpZ6RDw1+vF6RqlsgNYq8G4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ade76b8356cso4073466b.2;
-        Fri, 27 Jun 2025 10:03:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751043811; x=1751648611;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I3HuCBWhl7sYzAryoc8j2NnrheIMmb5LJG1G+EC5ub8=;
-        b=q6nu0oQE8ma2mXFUk5+GSVYP+meFbDT46TKNYPdD/NhZ/4FEMCqPl6mJ2fy8kcqyMk
-         8JCH/24wz3wl8v21wrkcipr7gVvfF0xjwePBA1LjMYEzjnqxlTYwSNCkZKCtGwUW/Tgx
-         8OUreqiaf0Tgw38Argbrn/3yFxdydAeMNH5YmJSV3KpWbzjLYnw5M0pBzZMkuEuIxfRU
-         DRrwFKeIhlTWcXiys/0c5+5s8zPW/JReRKAaKPK1XGBO4sdAzgOdC3qWl7ubkzb7O8rO
-         3+2joWrP7fz5fXdPaWF0M5CumgVOZSfNwnXDngZ0CEIExQmv6p1G9O1zdymUAQwjTP2f
-         qI4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZtqejyB9RfTfnFXUFyVzTu979Nh3/S5PagVyME4nYXHsD1/8wwKlUQVaeW53x5eJScmU=@vger.kernel.org, AJvYcCX3E6HjeaGOIfBEW8tcbhDS4MQQfXW2BCUuoF6KrDjNjCsi5fC/4qMW5gavGSFAHGUjeq1Oul8p@vger.kernel.org, AJvYcCXeHCanNGssaYAWxV2mLj7THye6BTixV+aq18BykCfRqlMB1vTn1+oC5LTR7T6xsZg2V3y+t9f8FQejhSsjXC4H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCTgCVj3ULc1paQwUO/u7BG611rjEQSug2T2Kipn4iDgL7qwJZ
-	JxAdK7nZ6QRIq+bM8RRNRzBEDDAeGUKjHV99o6sc2CXE8HjTsyijz6oxOhskjg==
-X-Gm-Gg: ASbGncsdZKgZMisWUTATqqmdWfdk8yteOwo4KLKpvhFa003US/Q3uza1elJKcMoaljv
-	C2HzDNBL8DMXxHRsoi6Zdd/+8gUSIoGx6/we/k4ut/B/0M+lV5tJA6Ex0dSvplnCVlGBW3gEgVs
-	8x0XsnsvaG3ygrcQ42fcFB+TWp0cQ0yG6V/R0arttWRXE4N75fXx80CgXRAqH+VvwIDXNtuThvd
-	EV/10BnIQu83bKEvhBNjS0j8sQzvqGu5yse2vLWemKTt7TZK/IDPu9crI3Zj1y7dSs6+Qhm7mPt
-	3kwyGMmJac4awlDD/fcnnXqrkaUdSpgX9FdD34fRWvXYboBRVnNB
-X-Google-Smtp-Source: AGHT+IENsGlGcMgnMWYwPxvWkQX4RMe6V4a7dkEgE/WtU7Ma5WEOnkwSn70xiLohRqrgGr0MAS3UhQ==
-X-Received: by 2002:a17:907:ea6:b0:ae0:a463:f4da with SMTP id a640c23a62f3a-ae35015c01amr403406266b.42.1751043810567;
-        Fri, 27 Jun 2025 10:03:30 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:9::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae36327ce4asm82044066b.163.2025.06.27.10.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 10:03:30 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 27 Jun 2025 10:03:09 -0700
-Subject: [PATCH net-next v3 1/3] selftests: drv-net: add helper/wrapper for
- bpftrace
+	s=arc-20240116; t=1751043801; c=relaxed/simple;
+	bh=6iU4sKtqulwtJbHdtTjfBW2WtHCU3a8mQLkMyO716dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uAj1DxKr/1aSg59b6nOevskiOwY1cu23NU98E51YUyvIaKZgR619ChKkPRPzefBUi/4rNWo05ZhUO9kuvJDPwiB7QDxFXMsStTBCjl6giP/E4Bui+Cw3GdHXXmTbQQfeA1rLFFMHi6cQaym583rk7tF1DO8VrKSbZlG8Ldg/Gxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lLKFhWE7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=BX8yP699mQd1hqQWYrl2/cTWYSKTaQhOnRx2XR4O0nI=; b=lLKFhWE7lu96o6X4WT3tH4Sf1O
+	oFn+aopDUWdGLcdZZzN4QfYf4S6XDwKRYHArQn5ap3m58Et87mT4Ayt6ydcfEgKSJk9PEFzYHQGW/
+	JMPMcvwErhnhXiakaH6uPHmYcq+T3F3YwECBJHYqoUiNPo9ymCBd1Ib/d9+WGAmCO0GI/fl3FtOmv
+	+toLcyd8ZL6SW5pWju0H9RRNwMPb2ngciRiSRQuHslvf32Vy10QFJC1mkVGwPE+K86H2nT+LgoeKL
+	1nQzjkHMiGrUvnzfn32qPmJoVD+pIIBdxrgVJB1unlnK8fQDHJ9XR/SU0LsqA909wugZbwr1k3AbM
+	5BCG5tNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uVCTl-0000000EZN4-26cY;
+	Fri, 27 Jun 2025 17:03:09 +0000
+Date: Fri, 27 Jun 2025 18:03:09 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
+Cc: "tytso@mit.edu" <tytso@mit.edu>,
+	"hch@infradead.org" <hch@infradead.org>,
+	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+	"tursulin@ursulin.net" <tursulin@ursulin.net>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"chentao325@qq.com" <chentao325@qq.com>,
+	"frank.li@vivo.com" <frank.li@vivo.com>
+Subject: Re: [PATCH v3 4/4] ext4: support uncached buffered I/O
+Message-ID: <aF7OzbVwXqbJaLQA@casper.infradead.org>
+References: <20250627110257.1870826-1-chentaotao@didiglobal.com>
+ <20250627110257.1870826-5-chentaotao@didiglobal.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-netpoll_test-v3-1-575bd200c8a9@debian.org>
-References: <20250627-netpoll_test-v3-0-575bd200c8a9@debian.org>
-In-Reply-To: <20250627-netpoll_test-v3-0-575bd200c8a9@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, bpf@vger.kernel.org, 
- ast@kernel.org, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3109; i=leitao@debian.org;
- h=from:subject:message-id; bh=2B3HspaUtkLq/87GHVo3MgVog4C2o2TFROWRoUVy5GY=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoXs7f/8E6BG65o3jhrLh4koQgcCH/Whdkftybo
- aoE86vMT7KJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaF7O3wAKCRA1o5Of/Hh3
- bbC2D/oCPCBueLOi1qmmxeWym8rqsVryET+A2t5F3oX11d9j0Uusbp/FVrrHL2PDfWPDuM5VMk6
- +quzanGXbRkKTldTqAZTTsd92rhhwnSsZ3zxFn67MAZ5XZKaN5D189V40hYCN4AAogqAIabgQB3
- /rjykwZdMYZO43yMRX8FVOzTR8PRQfgdT7euHwUaw189Bvoj6c0HdCg2+GLD5SjG5QVe36NvRnu
- CON7yBLfjIXnpk5tGB6xEF0Mpm9HMG+VJRh1GnSd8XJhCAJomUUJ0tDfaDXbOpH2AiOlGsoIOOF
- LPtiszx4Qw75KfoaVYA/BJ1Y7SW+Q4IGIsvMUNLmXSSC4wNatV3iwNkPxvklJgQXklZmut2Tz2K
- qC/40tBfIyZX35+9cbf5ywHGWCTCO5DVt4Lc2oOkizNL0VFhJRGgu/oAmwGOqMt6qBopXnKgG7i
- IWG7SpQIih/2Yf1WcC0qDUalyDR0eU4RUxKurxEMqUD0ZSn0NxE2CWknuhA58+6157+QDG+vA9N
- SPImwTTxtFFhxnVYbwbUJm5YhabA6g0ahTTLOubrSWGSRcJCbUkfZ7LnGvnrnHXyMAFyVs0RGSe
- ad7nKggbQVcDzdiL4W8+ewIl4P+M/+YLMxig8VGHtDvRdGJIqo/BAZ11yskcg9/RusylpMrGnCf
- IEFCbY24flbcflw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250627110257.1870826-5-chentaotao@didiglobal.com>
 
-From: Jakub Kicinski <kuba@kernel.org>
+On Fri, Jun 27, 2025 at 11:03:13AM +0000, 陈涛涛 Taotao Chen wrote:
+> +++ b/fs/ext4/inode.c
+> @@ -1270,6 +1270,9 @@ static int ext4_write_begin(const struct kiocb *iocb,
+>  	if (unlikely(ret))
+>  		return ret;
+>  
+> +	if (iocb->ki_flags & IOCB_DONTCACHE)
+> +		fgp |= FGP_DONTCACHE;
 
-bpftrace is very useful for low level driver testing. perf or trace-cmd
-would also do for collecting data from tracepoints, but they require
-much more post-processing.
+I think this needs to be:
 
-Add a wrapper for running bpftrace and sanitizing its output.
-bpftrace has JSON output, which is great, but it prints loose objects
-and in a slightly inconvenient format. We have to read the objects
-line by line, and while at it return them indexed by the map name.
+	if (iocb && iocb->ki_flags & IOCB_DONTCACHE)
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- .../selftests/drivers/net/lib/py/__init__.py       |  3 +-
- tools/testing/selftests/net/lib/py/utils.py        | 33 ++++++++++++++++++++++
- 2 files changed, 35 insertions(+), 1 deletion(-)
+because it's legit to call write_begin with a NULL argument.  The
+'file' was always an optional argument, and we should preserve that
+optionality with this transformation.
 
-diff --git a/tools/testing/selftests/drivers/net/lib/py/__init__.py b/tools/testing/selftests/drivers/net/lib/py/__init__.py
-index 9ed1d8f70524a..98829a0f7a02c 100644
---- a/tools/testing/selftests/drivers/net/lib/py/__init__.py
-+++ b/tools/testing/selftests/drivers/net/lib/py/__init__.py
-@@ -14,7 +14,8 @@ try:
-     from net.lib.py import EthtoolFamily, NetdevFamily, NetshaperFamily, \
-         NlError, RtnlFamily
-     from net.lib.py import CmdExitFailure
--    from net.lib.py import bkg, cmd, defer, ethtool, fd_read_timeout, ip, \
-+    from net.lib.py import bkg, cmd, bpftrace, defer, ethtool, \
-+        fd_read_timeout, ip, \
-         rand_port, tool, wait_port_listen
-     from net.lib.py import fd_read_timeout
-     from net.lib.py import KsftSkipEx, KsftFailEx, KsftXfailEx
-diff --git a/tools/testing/selftests/net/lib/py/utils.py b/tools/testing/selftests/net/lib/py/utils.py
-index 34470d65d871a..760ccf6fccccc 100644
---- a/tools/testing/selftests/net/lib/py/utils.py
-+++ b/tools/testing/selftests/net/lib/py/utils.py
-@@ -185,6 +185,39 @@ def ethtool(args, json=None, ns=None, host=None):
-     return tool('ethtool', args, json=json, ns=ns, host=host)
- 
- 
-+def bpftrace(expr, json=None, ns=None, host=None, timeout=None):
-+    """
-+    Run bpftrace and return map data (if json=True).
-+    The output of bpftrace is inconvenient, so the helper converts
-+    to a dict indexed by map name, e.g.:
-+     {
-+       "@":     { ... },
-+       "@map2": { ... },
-+     }
-+    """
-+    cmd_arr = ['bpftrace']
-+    # Throw in --quiet if json, otherwise the output has two objects
-+    if json:
-+        cmd_arr += ['-f', 'json', '-q']
-+    if timeout:
-+        expr += ' interval:s:' + str(timeout) + ' { exit(); }'
-+    cmd_arr += ['-e', expr]
-+    cmd_obj = cmd(cmd_arr, ns=ns, host=host, shell=False)
-+    if json:
-+        # bpftrace prints objects as lines
-+        ret = {}
-+        for l in cmd_obj.stdout.split('\n'):
-+            if not l.strip():
-+                continue
-+            one = _json.loads(l)
-+            if one.get('type') != 'map':
-+                continue
-+            for k, v in one["data"].items():
-+                ret[k] = v
-+        return ret
-+    return cmd_obj
-+
-+
- def rand_port(type=socket.SOCK_STREAM):
-     """
-     Get a random unprivileged port.
+I wonder if it's worth abstracting some of this boilerplate.  Something
+like:
 
--- 
-2.47.1
+struct folio *write_begin_get_folio(iocb, mapping, index, len)
+{
+	fgf_t fgflags = FGP_WRITEBEGIN;
+
+	if (iocb && iocb->ki_flags & IOCB_DONTCACHE)
+		fgflags |= FGP_DONTCACHE;
+	fgflags |= fgf_set_order(len);
+
+	return __filemap_get_folio(mapping, index, fgflags,
+			mapping_gfp_mask(mapping));
+}
 
 
