@@ -1,176 +1,131 @@
-Return-Path: <linux-kernel+bounces-705762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6EBAEAD5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:38:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01694AEAD83
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7266D7B387B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:36:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81B5D4A4A62
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A034C19E83C;
-	Fri, 27 Jun 2025 03:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14462199FD0;
+	Fri, 27 Jun 2025 03:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ovGvLsNg"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gx9hnx3U"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2E318FDA5;
-	Fri, 27 Jun 2025 03:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF732AD2D
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750995488; cv=none; b=S/YYglB4i5JbAm8ZNmOh+rKYchO2L6mfFDwjP6cJ8+D2MOxeAYUhOJo0QQ8V6uNsldTpm1aB5Q8UJsjjvZlxNQVq10b6pqhAtsP6k5DEBqO05bhKtQQED+EBN8ehsnVWw4UfvA17tg5n7HIq5vgQDU3u8mqXEa/6KEfRBE1H0F4=
+	t=1750995955; cv=none; b=ZgZmAcZoob1YZZGn1boKLV3uh/ZigzMIjzhVwxhV103tjoW9b/s1x6LJvmIsPLXStp9xWoatVtUzJfRO3TjFPFy12KvMc5u8ZhuYvLCsE8Lm0GohTuWZpqXvyA3/6jeCGLQksKRLu9m9OQuUihPCzektXWEhBf9dO6H0dP2symU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750995488; c=relaxed/simple;
-	bh=vIwQvESFQL3sMXcIqPq2w/7GLahXqsMOC7GJdypTPcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjmbSJCxvjZT149SDRp8a7diIlT8J7tsmm3B/U/SKrvSUNKtDnjukAsYKhP/e5U4f4vyRMUf6b9L0Pni42RVsj3wb30gnmx8H/oqg9zwZqau0hpfIS/xffJ0WwdiVqH899iDFa9uPcd8hJx5bs21dLmHOqzZr4+oTdhMxLuxz1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ovGvLsNg; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3z7DVek5PQALlWeukz2QC/IvVFBYSVxtsPML/WlhtTc=; b=ovGvLsNgeLeELIVOWqnyuqLgem
-	5ACWK/SyHp8pGnrZ7UdrOQJ1R8Sx9STUfSsMfFCke5Qydpyt+c6psDYp5hLxecnqyVOfS/Plo6H5d
-	4pFYDZfHNQm/6BmUsLfDkIo6EzuN+iw9BLH5idYK+rBIoaqjBe+vPInN77q1565BBqbJQtbBwOohf
-	FJ7eum8bX2oZ6J/C5php6h5rQ1cWhrN1+lZPp08215+z/8a7v0nx/cg+c9DZHiODl+Mldw7hAk2Xp
-	riHkSnhUPHQJuHKUxEOSFfdzD/nuwwNVY66dnqGq+VDbdTTBzP2Sl5e+G2bg0ZbvuuXH7uTSeLCxD
-	Qf323JUA==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uUzuS-009EpM-BY; Fri, 27 Jun 2025 05:37:52 +0200
-Message-ID: <b74f6484-dd16-430a-bad9-4dca6384d1dc@igalia.com>
-Date: Fri, 27 Jun 2025 12:37:45 +0900
+	s=arc-20240116; t=1750995955; c=relaxed/simple;
+	bh=eeVeMBSN/ZNuVnGC2vNd5G2PEDWqGuN9/+4isAPmluw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JdScmYRhKWOCBtaW9DB5BtvjvBlvEgEm3u0IYkLNM8XT6AOu79FmeCYMAS7hPoGTrSalFNVVDlqfLuZQlOuPGD+6oK6Qbtd5bV80sT49NuPHQ0odD+ofellRQAh+L8RDhH3Y649/rYhSwrXh6xSwsNa6EcRkXWKHMlem0PlbEjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gx9hnx3U; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750995954; x=1782531954;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=eeVeMBSN/ZNuVnGC2vNd5G2PEDWqGuN9/+4isAPmluw=;
+  b=Gx9hnx3UZuRYTCKiTgGWnsULXJagCV846opJiikL3ySGylUk1yGYAGSj
+   HJo794ynyA6OJjC0B67UPuFmnMFUDmHSZZ0B272E3FnoLxbM7g84AN9YG
+   cakiU55jUUI3joMWL4bnUa5M1736A14S8N0gd3rOwPGR6ntfRtF1aUPRW
+   WPMcvhMogWlB2bnT8jzcxmK6HYJSatHd0sQV7soumwnZYdgGK5+NxNZBF
+   z/O85G/xqIJLhi/tGGCITNppl9ss1IXxNdGF51w7dg1q3RChtkNzDqKlH
+   bdRWRuSmLTU7phip9qphFZHg+/4A8wu/mqa4F1X7Ks1NcK24ERXv4cDJl
+   Q==;
+X-CSE-ConnectionGUID: NzEx75VsSpagPabANm40Xg==
+X-CSE-MsgGUID: TNurnUbnQ6ymL81Yz3ZM4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53454182"
+X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
+   d="scan'208";a="53454182"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 20:45:53 -0700
+X-CSE-ConnectionGUID: 40NeaaZLRWazC4p/0ImNbA==
+X-CSE-MsgGUID: BljgX8CIQyOSYqt0x4txAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
+   d="scan'208";a="176374825"
+Received: from yilunxu-optiplex-7050.sh.intel.com ([10.239.159.165])
+  by fmviesa002.fm.intel.com with ESMTP; 26 Jun 2025 20:45:50 -0700
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: jgg@nvidia.com,
+	jgg@ziepe.ca,
+	kevin.tian@intel.com,
+	will@kernel.org,
+	aneesh.kumar@kernel.org
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	joro@8bytes.org,
+	robin.murphy@arm.com,
+	shuah@kernel.org,
+	nicolinc@nvidia.com,
+	aik@amd.com,
+	dan.j.williams@intel.com,
+	baolu.lu@linux.intel.com,
+	yilun.xu@intel.com
+Subject: [PATCH v3 0/5] iommufd: Destroy vdevice on device unbind
+Date: Fri, 27 Jun 2025 11:38:04 +0800
+Message-Id: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/10] PM: EM: Add netlink support for the energy
- model.
-To: lukasz.luba@arm.com, rafael@kernel.org, len.brown@intel.com,
- pavel@kernel.org
-Cc: christian.loehle@arm.com, tj@kernel.org, kernel-dev@igalia.com,
- linux-pm@vger.kernel.org, sched-ext@lists.linux.dev,
- linux-kernel@vger.kernel.org, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>
-References: <20250613094428.267791-1-changwoo@igalia.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20250613094428.267791-1-changwoo@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Gentle ping as it reaches 2-weeks.
+It is to solve the lifecycle issue that vdevice may outlive idevice. It
+is a prerequisite for TIO, to ensure extra secure configurations (e.g.
+TSM Bind/Unbind) against vdevice could be rolled back on idevice unbind,
+so that VFIO could still work on the physical device without surprise.
 
-@Lukasz, @Rafael -- I have a question related to the energy model
-in general. As far as I understand, the energy model describes
-the performance-energy consumption tradeoff when a single CPU in
-a performance domain is running. However, in reality, SoCs may
-have thermal constraints, which would result in additional
-constraints. For example, running all CPUs with the highest
-frequency may not be possible. My question is this: does kernel
-maintain and use such (thermal?) constraints?
+Changelog:
+v3:
+ - No bother clean each tombstone in iommufd_fops_release().
+ - Drop vdev->ictx initialization fix patch.
+ - Optimize control flow in iommufd_device_remove_vdev().
+ - Make iommufd_vdevice_abort() reentrant.
+ - Call iommufd_vdevice_abort() directly instead of waiting for it.
+ - Rephrase/fix some comments.
+ - A new patch to remove vdev->dev.
+ - A new patch to explicitly skip existing viommu tests for no_iommu.
+ - Also skip vdevice tombstone test for no_iommu.
+ - Allow me to add SoB from Aneesh.
 
-Regards,
-Changwoo Min
+v2: https://lore.kernel.org/linux-iommu/20250623094946.1714996-1-yilun.xu@linux.intel.com/
 
-On 6/13/25 18:44, Changwoo Min wrote:
-> There is a need to access the energy model from the userspace. One such
-> example is the sched_ext schedulers [1]. The userspace part of the
-> sched_ext schedules could feed the (post-processed) energy-model
-> information to the BPF part of the scheduler.
-> 
-> Currently, debugfs is the only way to read the energy model from userspace;
-> however, it lacks proper notification mechanisms when a performance domain
-> and its associated energy model change.
-> 
-> This patch set introduces a generic netlink for the energy model, as
-> discussed in [2]. It allows a userspace program to read the performance
-> domain and its energy model. It notifies the userspace program when a
-> performance domain is created or deleted or its energy model is updated
-> through a multicast interface.
-> 
-> Specifically, it supports two commands:
->    - EM_CMD_GET_PDS: Get the list of information for all performance
->      domains.
->    - EM_CMD_GET_PD_TABLE: Get the energy model table of a performance
->      domain.
-> 
-> Also, it supports three notification events:
->    - EM_CMD_PD_CREATED: When a performance domain is created.
->    - EM_CMD_PD_DELETED: When a performance domain is deleted.
->    - EM_CMD_PD_UPDATED: When the energy model table of a performance domain
->      is updated.
-> 
-> This can be tested using the tool, tools/net/ynl/pyynl/cli.py, for example,
-> with the following commands:
-> 
->    $> tools/net/ynl/pyynl/cli.py \
->       --spec Documentation/netlink/specs/em.yaml \
->       --do get-pds
->    $> tools/net/ynl/pyynl/cli.py \
->       --spec Documentation/netlink/specs/em.yaml \
->       --do get-pd-table --json '{"pd-id": 0}'
->    $> tools/net/ynl/pyynl/cli.py \
->       --spec Documentation/netlink/specs/em.yaml \
->       --subscribe event  --sleep 10
-> 
-> [1] https://lwn.net/Articles/922405/
-> [2] https://lore.kernel.org/lkml/a82423bc-8c38-4d57-93da-c4f20011cc92@arm.com/
-> 
-> ChangeLog v1 -> v2:
->    - Use YNL to generate boilerplate code. Overhaul the naming conventions
->      (command, event, notification, attribute) to follow the typical
->      conventions of other YNL-based netlink implementations.
->    - Calculate the exact message size instead of using NLMSG_GOODSIZE
->      when allocating a message (genlmsg_new). This avoids the reallocation
->      of a message.
->    - Remove an unnecessary function, em_netlink_exit(), and initialize the
->      netlink (em_netlink_init) at em_netlink.c without touching energy_model.c.
-> 
-> CC: Lukasz Luba <lukasz.luba@arm.com>
-> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> CC: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Changwoo Min <changwoo@igalia.com>
-> 
-> Changwoo Min (10):
->    PM: EM: Add em.yaml and autogen files.
->    PM: EM: Add a skeleton code for netlink notification.
->    PM: EM: Assign a unique ID when creating a performance domain.
->    PM: EM: Expose the ID of a performance domain via debugfs.
->    PM: EM: Add an iterator and accessor for the performance domain.
->    PM: EM: Implement em_nl_get_pds_doit().
->    PM: EM: Implement em_nl_get_pd_table_doit().
->    PM: EM: Implement em_notify_pd_deleted().
->    PM: EM: Implement em_notify_pd_created/updated().
->    PM: EM: Notify an event when the performance domain changes.
-> 
->   Documentation/netlink/specs/em.yaml | 113 ++++++++++
->   MAINTAINERS                         |   3 +
->   include/linux/energy_model.h        |  19 ++
->   include/uapi/linux/energy_model.h   |  62 ++++++
->   kernel/power/Makefile               |   5 +-
->   kernel/power/em_netlink.c           | 311 ++++++++++++++++++++++++++++
->   kernel/power/em_netlink.h           |  34 +++
->   kernel/power/em_netlink_autogen.c   |  48 +++++
->   kernel/power/em_netlink_autogen.h   |  23 ++
->   kernel/power/energy_model.c         |  83 +++++++-
->   10 files changed, 699 insertions(+), 2 deletions(-)
->   create mode 100644 Documentation/netlink/specs/em.yaml
->   create mode 100644 include/uapi/linux/energy_model.h
->   create mode 100644 kernel/power/em_netlink.c
->   create mode 100644 kernel/power/em_netlink.h
->   create mode 100644 kernel/power/em_netlink_autogen.c
->   create mode 100644 kernel/power/em_netlink_autogen.h
-> 
+v1/rfc: https://lore.kernel.org/linux-iommu/20250610065146.1321816-1-aneesh.kumar@kernel.org/
+
+The series is based on v6.16-rc1
+
+Xu Yilun (5):
+  iommufd: Add iommufd_object_tombstone_user() helper
+  iommufd: Destroy vdevice on idevice destroy
+  iommufd/vdevice: Remove struct device reference from struct vdevice
+  iommufd/selftest: Explicitly skip tests for inapplicable variant
+  iommufd/selftest: Add coverage for vdevice tombstone
+
+ drivers/iommu/iommufd/device.c          |  42 +++
+ drivers/iommu/iommufd/driver.c          |   4 +-
+ drivers/iommu/iommufd/iommufd_private.h |  35 ++-
+ drivers/iommu/iommufd/main.c            |  20 +-
+ drivers/iommu/iommufd/viommu.c          |  47 ++-
+ tools/testing/selftests/iommu/iommufd.c | 388 ++++++++++++------------
+ 6 files changed, 337 insertions(+), 199 deletions(-)
+
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+-- 
+2.25.1
+
 
