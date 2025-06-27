@@ -1,109 +1,97 @@
-Return-Path: <linux-kernel+bounces-706169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A91DAEB2DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272DCAEB2F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B9D1886236
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63537189BBA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A524293C76;
-	Fri, 27 Jun 2025 09:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169A29ACF7;
+	Fri, 27 Jun 2025 09:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVM8rqp/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="CAQMo3G4";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="OTCogenG"
+Received: from mailrelay1-3.pub.mailoutpod3-cph3.one.com (mailrelay1-3.pub.mailoutpod3-cph3.one.com [46.30.212.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D71F19F10A;
-	Fri, 27 Jun 2025 09:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C88D295DB4
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.0
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751016529; cv=none; b=hOPB/eS5B4YODo04WfTyafRTg5MuenhZ8AW8DRrVePCRjghQ9BxL3aJ4H6lUZk6j4E/LY+XEdJtcX8WD0bCPiOoeAMaYDAMIaA/ka9OOpGPVq5+e6B8xRs+XxhPP9TIYtwpV5Zv7Q3P3YsUFXroEPh7O+2/k0U6LvSJlM89Z0us=
+	t=1751016617; cv=none; b=UOUkBYPrgOrN9OZaG5pavKo4awhHyzSvpeBz3rUiZhgNsGYsp8uqUUuF8byEFS3IpOwsxqNXZfmzsQMxneCtPfdJsfCNARxdmfErCwctoQEK5t+a3eTxhpVKoRss8gjetjp71wpXpB3OWbx32JJF5okTfzGGCotKKhP4HlQOlN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751016529; c=relaxed/simple;
-	bh=NMdUf/+EgOboapTSK2P0BWd2KGOh4vtzeZ1cIy0waMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rs8BXmSYPINYZX8l6jWl3sS/jGRJBReUoz+E6Hr3SXVPUvDbblhoT2O2sevm9Z1NRjbp6n3kDWuRggr2yx3I3ZCj6/0+9wW8FykareMknV6VNGa3q/i3Al0Nm6699F3nnBzMElnumKOBue7vESCBzw/czRyPNGL5c3ZmFzSWMXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVM8rqp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F06C4CEE3;
-	Fri, 27 Jun 2025 09:28:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751016528;
-	bh=NMdUf/+EgOboapTSK2P0BWd2KGOh4vtzeZ1cIy0waMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EVM8rqp/Jt8lnO6gp/6oOYfJeZkJKCBM65127Pdwzk+90BDjC1vKMC1FrmJWGVrPG
-	 Gclq5nLOFnFPmBdIDG6sUiKDVq3maqQzwL5stg7wfdvwuUCyXi9RVeEHvJw/tu0L4T
-	 xsxT7uvLHf3J3T+rmGxCmw7ryGYu/mFfZ9pMs2Tpyjc0an87/YFT1sYoYEWU0KteNP
-	 +qKzT3oe6M5kAa3FdrHaYy6TqDIp9Hdcp6ZzqiHISl3ahpkJ+eag5e0u/OTwrkWv6T
-	 p1v07vNfR5vUWSpk+G+nHWJToQxCBo62O3DXdapdaWNq4fH8TN4x+pwH+9nY24NGtB
-	 Kzku7Wpgtspvg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uV5O4-000000000Co-3wci;
-	Fri, 27 Jun 2025 11:28:49 +0200
-Date: Fri, 27 Jun 2025 11:28:48 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-	kw@linux.com, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
-	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
-	quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
- link_down reset
-Message-ID: <aF5kUDghdXUbaDo3@hovoldconsulting.com>
-References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
- <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1751016617; c=relaxed/simple;
+	bh=hEOJrVMGDzKkOP2R+1Ohzn8Ie+hvnAxSW+0XgxMjiWc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fvm1I1wD5ci/es86hTI2mEC5beyAy2kPE2OzIzQFuS7NL9Qo6zmGIOlgdJ/+1Vu1PzLv/D4UJV1E4VFiC8BXTtWoX7rCp24K4HDxG/1wmWaasKC1hs9fuK5ZQuc5PWGXgHbED3sKxtfkLEVsSfSmSyRzaFeL0jitJlF6kfpVPZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=CAQMo3G4; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=OTCogenG; arc=none smtp.client-ip=46.30.212.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751016545; x=1751621345;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=4ldWEIgjhHcv8pLoOguZ60cI9NblcazUnA8m9dt7vcc=;
+	b=CAQMo3G4jnsz/FHF5g3IqkiO13sJrszTQFG5ErmCNU3JutOVaaYGdeqNuWhdRx83qEUCRy/VCOh3D
+	 ZwMAQluEuFCTE9x53wj/r+Djprab49ulSA3+Zmm5cdk+TFva1NQ5v6tnYI8R0oJyz+SE2trq/Aq46R
+	 Ylt0oB2hLeYuWhzGf5GCqpFYqStETNF3Oxc1NtRyNMGvYLU35k3h4+vzVFVp7otvDo0wEQDYKFBTOi
+	 fDW35BeEvCPezwLb7Jn3U+sDYv9BRMgS0D0hN1FLKN2qc6rVNOa0IqbytsZmcwRSjohkwNQ/dofq4q
+	 p8abRfYeLW0EJ33+3UrIPJ4vHJGaA9Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751016545; x=1751621345;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=4ldWEIgjhHcv8pLoOguZ60cI9NblcazUnA8m9dt7vcc=;
+	b=OTCogenGbBDBq+1HCOantkqK9ARCR4C1l6ZTay7EufFwABKuvSDO9EDL0EUtTlNghM5MH5tnyfJ66
+	 QC7BIt6BA==
+X-HalOne-ID: 2a14a1c1-5339-11f0-b4b2-152d8afab6bc
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay1.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 2a14a1c1-5339-11f0-b4b2-152d8afab6bc;
+	Fri, 27 Jun 2025 09:29:04 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v5 0/4] support large align and nid in Rust allocators
+Date: Fri, 27 Jun 2025 11:29:01 +0200
+Message-Id: <20250627092901.356909-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 05:00:46PM +0800, Ziyue Zhang wrote:
-> Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
-> document it.
+The coming patches provide the ability for Rust allocators to set
+NUMA node and large alignment.
 
-Please describe what this reset does here as I asked you to earlier.
+Changelog:
+v2 -> v3:
+* fixed the build breakage for non-MMU configs
+v3 -> v4:
+* added NUMA node support for k[v]realloc (patch #2)
+* removed extra logic in Rust helpers
+* patch for Rust allocators split into 2 (align: patch #3 and
+  NUMA ids: patch #4)
+v4 -> v5:
+* reworked NUMA node support for k[v]realloc for all 3 <alloc>_node
+  functions to have the same signature
+* all 3 <alloc>_node slab/vmalloc functions now support alignment
+  specification
+* Rust helpers are extended with new functions, the old ones are left
+  intact
+* Rust support for NUMA nodes comes first now (as patch #3)
 
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml  | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
-> index 4b91b5608013..510c9e1c28e1 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
-> @@ -66,11 +66,14 @@ properties:
->        - const: global
->  
->    resets:
-> -    maxItems: 1
-> +    items:
-> +      - description: PCIe controller reset
-> +      - description: PCIe link down reset
->  
->    reset-names:
->      items:
-> -      - const: pci
-> +      - const: pci # PCIe core reset
-> +      - const: link_down # PCIe link down reset
-
-I think you can drop the comments since you already describe the resets
-above.
-
-Johan
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
