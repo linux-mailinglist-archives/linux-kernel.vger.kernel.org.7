@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-705954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26263AEAFE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:13:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21C2AEAFEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 750607B25EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:11:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 194CA188491F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD52D21D00D;
-	Fri, 27 Jun 2025 07:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE2E229B18;
+	Fri, 27 Jun 2025 07:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nb704Dww"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfAJPJ8S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A9E21ABB7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702F221C9E5;
 	Fri, 27 Jun 2025 07:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751008381; cv=none; b=LyCoftCGDnDa0YpMKHaQ+AuPmRc22G8RFKI0yAkK90VqFcQWkAsvc9d+YsFQ4aHrBCox1TaF3xjg6NQ0I7baFZooALVQiwHiehrQ0kg3jHANKQvyEyOGoLWBU3iC0Wzcm/7xxF4T4L6pkx1ya2cR5vlg5X/OE01/xJEtXIiR8JM=
+	t=1751008381; cv=none; b=VcFkuWY6DSVJxx37haabm25WCkC1RJVYGM0rpdt8S5Oq/c1hC9Ma2fG00DcI/qvDav0K9j+bY4QajMvXdMOAOHlVFgeb/2ZI5ISaJR6n2jDR5+atzguvhAxISdv8nZShOWQKdOzKFqwjBSMl9ZUiqJetBTSxJfWHh3wAqlVaRGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751008381; c=relaxed/simple;
-	bh=5aPHBqgghaNXr+qmy8IWnHIq6Bg8C3t/68W+2vw4Hqc=;
+	bh=klh+xDRcULbooF8MFi5xLowZY/xbmuqnM1SLK8gC+H0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KjnNf/4gS22eSIzpgbVkQmRHlebczUwbK2LOdPECvMko0ATKiafwxO2Xa/JAtWV0YcIq3iFd5HBSaF1DHuoVIZtWZlgLeIXj9j0si+qdojo6aOHZN1PCdFLHSjB0koJ04TremEfw1lS+5j8jtZ8YKrB8jifkSm4Np2SybwtD6Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nb704Dww; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D61CCC4CEF5;
+	 In-Reply-To:To:Cc; b=V9MURxLzNjgxBDO9jclaD/v5IAWBDM4GoEEUcDGuUcHtoclSdS86F+cnS+LiEIokb+cejh3MzFDZLnU5kOI/9BIAFIPWOcea2FFNIkUyMX91sgX+ZWIxpNs2vuHe+1mzpOX0WYRWpqiX1Adx21G4x91VLwaqNoC7JiYT6aFkwAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfAJPJ8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E310FC4CEF4;
 	Fri, 27 Jun 2025 07:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751008380;
-	bh=5aPHBqgghaNXr+qmy8IWnHIq6Bg8C3t/68W+2vw4Hqc=;
+	bh=klh+xDRcULbooF8MFi5xLowZY/xbmuqnM1SLK8gC+H0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Nb704Dwwwr1W+SXUmHskF5rcaXk7HWza396g3R3+cyEsZnDlWVxduxXPwVOBWGH7W
-	 lg7yDGFxwPlcPMUy5m0xeb23IX2H41ZkxbdE4DixuRKyrfHUqV2dmsnDoRsrDj6p8/
-	 qj1vJEIZvstHFGvGKxb1cJqqpqLhcrPP6NBGNuDaC0UYPYv0Ivkjp3FC375Rep0zL9
-	 FUkuiCYZpmh5vkcfU1dXyrbyfxa/3Q44YsMLS9hAHfpaHCbHX02WF3A3pGpBDc4UiI
-	 MWgQ0i3uK0H7P+g+pq6zUN4YBBvBgOEtnG4PV2FAM3I8HO4VNSKxQaTv1fVVOA75Wo
-	 AzWaWB1qXBS4w==
+	b=IfAJPJ8SMCtd/QKuPwxsR3R5mn/1SvpH24+BqWVziK5kvI/Pj7RGNmR9dxxc7qWFS
+	 6PFbbuI5I9xyJWEZbz7hh1MFR1Wm7NOr+nswUf8r3VobmXEdh8eIGYerwl53u3PEVg
+	 +AcVQasenUj4lJn048F3+adGJHeaI6fz2+J+DwtEwkdtKi+sCpmaaDBoQ2brQ54xQO
+	 F4k7ijn+8/uL1+SW/cgH3RNqLIsJPQAEOouIym/cusccU+5VbGMOZFV41UrOTt50gR
+	 pIRO4vN5gwzqsri57CETDLfhYlMS3bZpJNz30gJpuXXPOZMpwb3usVAHdUASO8jK5C
+	 67TQXt8c8Tagg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9823C7EE39;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CBCC77B7F;
 	Fri, 27 Jun 2025 07:13:00 +0000 (UTC)
 From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Fri, 27 Jun 2025 07:12:28 +0000
-Subject: [PATCH v6 4/5] KVM: arm64: Bump the supported version of FF-A to
- 1.2
+Date: Fri, 27 Jun 2025 07:12:29 +0000
+Subject: [PATCH v6 5/5] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
+ host handler
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-virtio-msg-ffa-v6-4-8c02fd94edac@google.com>
+Message-Id: <20250627-virtio-msg-ffa-v6-5-8c02fd94edac@google.com>
 References: <20250627-virtio-msg-ffa-v6-0-8c02fd94edac@google.com>
 In-Reply-To: <20250627-virtio-msg-ffa-v6-0-8c02fd94edac@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
@@ -69,11 +69,11 @@ Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
  sebastianene@google.com, qwandor@google.com, 
  Per Larsen <perlarsen@google.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751008380; l=2907;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751008380; l=2999;
  i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=7rEMvl8SoHWGrwsNRCeFHM4pJ2DEx095GGBAAYP+euA=;
- b=QnK7PyFg+Sp9K6Dvzow+2ecO2qkpCoOzOMEHl/0e83G3yL4lNUY+S4v5SH+Ij7bEHDL4HwwGk
- x3mbjSjVhOkC41qM06xylFeNwkfA+dNHlMPJqkD9QyOCWcBsxd9IFIY
+ bh=Hltr6esYXys/fifuX4LJaE69K+4zBEQKpm9B+c1zcxQ=;
+ b=3eyayw173eIS/U1YOT+pKH7Ed66MiRS9vDdxdwYsb5K9W5IEqrqub9hlfkRlkmLBHCm4nZ49W
+ oCXO/uYF60hCMYXVCEeNHIw3tJZYAAeamsu38z42BsD5auTmlovJ35E
 X-Developer-Key: i=perlarsen@google.com; a=ed25519;
  pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
 X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
@@ -83,85 +83,85 @@ Reply-To: perlarsen@google.com
 
 From: Per Larsen <perlarsen@google.com>
 
-FF-A version 1.2 introduces the DIRECT_REQ2 ABI. Bump the FF-A version
-preferred by the hypervisor as a precursor to implementing the 1.2-only
-FFA_MSG_SEND_DIRECT_REQ2 and FFA_MSG_SEND_RESP2 messaging interfaces.
+FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
+the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
+uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
+argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
+in the host ffa handler.
 
-We must also use SMCCC 1.2 for 64-bit SMCs if hypervisor negotiated FF-A
-1.2, so ffa_set_retval is updated and a new function to call 64-bit smcs
-using SMCCC 1.2 with fallback to SMCCC 1.1 is introduced.
-
-Update ffa_call_supported to mark FF-A 1.2 interfaces as unsupported
-lest they get forwarded.
-
-Co-developed-by: Ayrton Munoz <ayrton@google.com>
-Signed-off-by: Ayrton Munoz <ayrton@google.com>
 Signed-off-by: Per Larsen <perlarsen@google.com>
 ---
- arch/arm64/kvm/hyp/nvhe/ffa.c | 14 ++++++++++----
- include/linux/arm_ffa.h       |  1 +
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ arch/arm64/kvm/hyp/nvhe/ffa.c | 24 +++++++++++++++++++++++-
+ include/linux/arm_ffa.h       |  2 ++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 5fd6474d96ae4b90d99796ee81bb36373219afc4..d543d1f5ddd62fb15f8d39f4ff7d5bb0006da4a1 100644
+index d543d1f5ddd62fb15f8d39f4ff7d5bb0006da4a1..348c5aa93ab8ade2b26fc86ed2169d801784a892 100644
 --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
 +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -678,6 +678,12 @@ static bool ffa_call_supported(u64 func_id)
- 	case FFA_NOTIFICATION_SET:
+@@ -679,7 +679,6 @@ static bool ffa_call_supported(u64 func_id)
  	case FFA_NOTIFICATION_GET:
  	case FFA_NOTIFICATION_INFO_GET:
-+	/* Unimplemented interfaces added in FF-A 1.2 */
+ 	/* Unimplemented interfaces added in FF-A 1.2 */
+-	case FFA_MSG_SEND_DIRECT_REQ2:
+ 	case FFA_MSG_SEND_DIRECT_RESP2:
+ 	case FFA_CONSOLE_LOG:
+ 	case FFA_PARTITION_INFO_GET_REGS:
+@@ -858,6 +857,22 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *res,
+ 	hyp_spin_unlock(&host_buffers.lock);
+ }
+ 
++static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
++			       struct kvm_cpu_context *ctxt,
++			       u64 vm_handle)
++{
++	DECLARE_REG(u32, endp, ctxt, 1);
++
++	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
++
++	if (FIELD_GET(FFA_SRC_ENDPOINT_MASK, endp) != vm_handle) {
++		ffa_to_smccc_error(regs, FFA_RET_INVALID_PARAMETERS);
++		return;
++	}
++
++	arm_smccc_1_2_smc(args, regs);
++}
++
+ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
+ {
+ 	struct arm_smccc_1_2_regs res;
+@@ -916,11 +931,18 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
+ 	case FFA_PARTITION_INFO_GET:
+ 		do_ffa_part_get(&res, host_ctxt);
+ 		goto out_handled;
 +	case FFA_MSG_SEND_DIRECT_REQ2:
-+	case FFA_MSG_SEND_DIRECT_RESP2:
-+	case FFA_CONSOLE_LOG:
-+	case FFA_PARTITION_INFO_GET_REGS:
-+	case FFA_EL3_INTR_HANDLE:
- 		return false;
++		if (hyp_ffa_version >= FFA_VERSION_1_2) {
++			do_ffa_direct_msg2(&res, host_ctxt, HOST_FFA_ID);
++			goto out_handled;
++		}
++		goto out_not_supported;
  	}
  
-@@ -734,7 +740,7 @@ static int hyp_ffa_post_init(void)
- 	if (res.a0 != FFA_SUCCESS)
- 		return -EOPNOTSUPP;
+ 	if (ffa_call_supported(func_id))
+ 		return false; /* Pass through */
  
--	switch (res.a2) {
-+	switch (res.a2 & FFA_FEAT_RXTX_MIN_SZ_MASK) {
- 	case FFA_FEAT_RXTX_MIN_SZ_4K:
- 		min_rxtx_sz = SZ_4K;
- 		break;
-@@ -931,7 +937,7 @@ int hyp_ffa_init(void *pages)
- 
- 	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
- 		.a0 = FFA_VERSION,
--		.a1 = FFA_VERSION_1_1,
-+		.a1 = FFA_VERSION_1_2,
- 	}, &res);
- 	if (res.a0 == FFA_RET_NOT_SUPPORTED)
- 		return 0;
-@@ -952,10 +958,10 @@ int hyp_ffa_init(void *pages)
- 	if (FFA_MAJOR_VERSION(res.a0) != 1)
- 		return -EOPNOTSUPP;
- 
--	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_1))
-+	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_2))
- 		hyp_ffa_version = res.a0;
- 	else
--		hyp_ffa_version = FFA_VERSION_1_1;
-+		hyp_ffa_version = FFA_VERSION_1_2;
- 
- 	tx = pages;
- 	pages += KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE;
++out_not_supported:
+ 	ffa_to_smccc_error(&res, FFA_RET_NOT_SUPPORTED);
+ out_handled:
+ 	ffa_set_retval(host_ctxt, &res);
 diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
-index 5bded24dc24fea8cdcbe42bf79c7c025c3fa5f4b..c0dd6183d956043192114a522b7eef465e7078ac 100644
+index c0dd6183d956043192114a522b7eef465e7078ac..82a35a3b22de426f7e9a8894e76fdf1e933b3d6b 100644
 --- a/include/linux/arm_ffa.h
 +++ b/include/linux/arm_ffa.h
-@@ -128,6 +128,7 @@
- #define FFA_FEAT_RXTX_MIN_SZ_4K		0
- #define FFA_FEAT_RXTX_MIN_SZ_64K	1
- #define FFA_FEAT_RXTX_MIN_SZ_16K	2
-+#define FFA_FEAT_RXTX_MIN_SZ_MASK	3
+@@ -269,6 +269,8 @@ bool ffa_partition_check_property(struct ffa_device *dev, u32 property)
+ 	(ffa_partition_check_property(dev, FFA_PARTITION_DIRECT_REQ2_RECV) && \
+ 	 !dev->mode_32bit)
  
- /* FFA Bus/Device/Driver related */
- struct ffa_device {
++#define FFA_SRC_ENDPOINT_MASK	GENMASK(31, 16)
++
+ /* For use with FFA_MSG_SEND_DIRECT_{REQ,RESP} which pass data via registers */
+ struct ffa_send_direct_data {
+ 	unsigned long data0; /* w3/x3 */
 
 -- 
 2.50.0.727.gbf7dc18ff4-goog
