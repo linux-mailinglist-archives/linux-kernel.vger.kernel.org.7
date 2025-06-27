@@ -1,439 +1,538 @@
-Return-Path: <linux-kernel+bounces-706228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01E9AEB3DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:10:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA3DAEB3E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB161C206FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:10:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2A7D7B315E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C28729A9C9;
-	Fri, 27 Jun 2025 10:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E212BE7D4;
+	Fri, 27 Jun 2025 10:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="omISiRsG";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="omISiRsG"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012014.outbound.protection.outlook.com [52.101.66.14])
+	dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b="N7S3nKDN"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010012.outbound.protection.outlook.com [52.101.69.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DA52980BF;
-	Fri, 27 Jun 2025 10:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.14
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751018983; cv=fail; b=JkSlrZF3boNoZ5/i2hY9Ywhus+ciV/u1jiJqlVrDPh3hyG3CxFEP5ymnZsDTAXT/T7/b7OarXqBNGWaN+FUVlVRs3PfWbUwRK0KCsdBGRZQF9oQn4yZ/C9lvEez2FLdCuTfl99LkcqZsimxVqloqlXRtjfGm55qhVz6aOzV21rg=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751018983; c=relaxed/simple;
-	bh=/T+MKL3wOcoOKwE9gXOh/IZGnwov4rrRN7ITr87R+y4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=umrmknITCnQgDn6GGC8x+Rd13vMxSuBjL1HTboyg6n1zYrksC11JIMbylZVPIG3fNnRpiUfBxinizCqy/bgklUi8rSkcCJ+v5kYcWSJAE2ohqTiqY7pf50T/UOjpLWe40qrJlhyIYoyzC6tNfdVEzBHktTuQ/WxjTCmTP2MO9qc=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=omISiRsG; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=omISiRsG; arc=fail smtp.client-ip=52.101.66.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=g61nzWohS3PnVh60Iwf4zmzNkTLbUDacThqlLPFBxWtYwt7oh1HBMHPPspD7EnYi2NsuY2zFNg7lIIctdApa8+W+bzCNDrhSTRAMxuaB1oIDPGCshNAD/avSFP1SqodrDG1ItWe9bDBHDMxJ7B+/mG7sRhE2piVzixH90cPnOxodT2rHlH8E7jiTZaO/D9XCaH8n4VbKSPTEKEJYcKU6V7L+qouGGGokh1MYNiYx28g/+sHWrSHM5WUn+ij6xt18uxYH/AplWY0Hcy9xAq2XjAHLPDFoKglT85zqebqiX8sWBrSGvRC36vNum5SfwxI3hD1VFacX+rFch6oig58Z8A==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1JZWyBHQ4DdI0xlEbAxmeEvzN1yQPqX6oatqt7IA7hM=;
- b=QhGVt8Nb+MNOl93qV6lUsRQtlupY5p/1MoYpBxhRPltWUHFaLjDnNo3B1Jcuq73XZny/+3M3+R8Hqt/iVFsTFVGkfDC248mT4aSjprM1MAH8J4qCqaoTT8VJZR+1y/KtV346Vz5gHakQ42+pIBTivzOHvh7sPGNDstB5yag0M50wE6s+smXPWlyg9MFOUEhP8Zg1OGwbCOKXvdGW/YjRjSQFq42Et6/ABN6BeogTC0Wml7uXEF2MV5+AzNo+nHcu2Ur5tCx9AhtYMcJ450M4N06/Oz3XF+ZU5KxCFG/YcyJBa/3w9m5hANn/QPfgwr3y+e4dOzOUk/abkHE2YWaTbQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1JZWyBHQ4DdI0xlEbAxmeEvzN1yQPqX6oatqt7IA7hM=;
- b=omISiRsGsl1Zvpd13uj18OW4cWQY+4CQIZzElKE0RkbBD7nYyIMudiXRym9Pl3NJPB+rPg9wwT1irTS/ZCHx++S97/kD3e+0dy0NzlCfM17B3VrWtdY3xXiTCcwPOPX8qtRaVcpHq9wMjx4pRho2lfhZ3St13oRkwwD7pP85CQY=
-Received: from PAZP264CA0171.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:236::33)
- by PR3PR08MB5724.eurprd08.prod.outlook.com (2603:10a6:102:85::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.21; Fri, 27 Jun
- 2025 10:09:36 +0000
-Received: from AM1PEPF000252E0.eurprd07.prod.outlook.com
- (2603:10a6:102:236:cafe::ad) by PAZP264CA0171.outlook.office365.com
- (2603:10a6:102:236::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.23 via Frontend Transport; Fri,
- 27 Jun 2025 10:09:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM1PEPF000252E0.mail.protection.outlook.com (10.167.16.58) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.14
- via Frontend Transport; Fri, 27 Jun 2025 10:09:36 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D681029ACDD;
+	Fri, 27 Jun 2025 10:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751018990; cv=fail; b=K5eR1/2fqjuo3R4OhW1GSJ2JyqFm1J1aaSh2ItvmFO6G+7BPsG7imJkQsd+zYTB9wFaNfb/8yS2n9lf20GEZk2d1erHQkph/RyEFFkgG/JhvaNrj7/zYoUOhcCDr88E5O6VUGnLvL3FgUVz2nexZw49+eDbtPhAE0PYlg28T4Dc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751018990; c=relaxed/simple;
+	bh=zg39zxPjzAR45tHt8SLnSLlQoWhDz3LJ8ddKL1dDdxw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CKSlDm/t7BzmIM8KU12DiUAm99O0EeG70cPUGRhYJPPpn4eF4CyurTRZhkmGRkT/Tbhe0ruXJl1KrDk3yWwyUFi69RwiQsu9V32/a/VtBlWIhygQwkq0CCuk00vXJhfou/YWDXQ23zVwl1X0MHOWsBPlq7p8ydcm0PGUGhSuwHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de; spf=pass smtp.mailfrom=arri.de; dkim=pass (1024-bit key) header.d=arri.de header.i=@arri.de header.b=N7S3nKDN; arc=fail smtp.client-ip=52.101.69.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arri.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arri.de
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k0DgNkbVGx49+urOun6eFC28y+7MZwzysPHzJauCWnP8U+t5LwRCqaVJXeMcCqfDU4rCrzCIQPFG6C3w+ZXBtF38X36MqSgnkQ0ZFYLnRh5NctnTR4ewMhRcn+WUcMwSzr+AlrlntNvuUw4QWB3jgD0YTRqGBr8FnVPPe7TxprCQwtOy2RB07UveQF0gn3IgBlYKdO/7kdTJewZPETgM5wbEOMuBci7XHTTdRgLmP7u+ENfGF3LmojDaqHxKi08I28C0oNUX8qnu4+9YA+Q9DoQGgVKg7g2DTGuWhLPtqxJmV2KinUazSlGmauO5Ie4B6z/8E+TMfTBSJYfgOI3ewg==
+ b=J6oJXaabcbIhwpRhA1ORIUBijONkxspPlEYHIjOULlvYM2hAP01n1fuHiQfYMZsI5YqMCpzS9Yk8Qc21Sob/fCa/N02giP4qVM+Hj8pp07fKtZT58R1uxU8c2ofYRH+lkl9FKuX6BUR0Xa+K0cxDNhhLregHmkW1KpJFPnH5gT8z+qu+yG7zV00eA6koQ3oeaD1kVCkL/ELaQliPn1eGBpvcHgfZS+dwzygZ0AIpy6eCrGIEobVnDeoecEDBxVmvKcScyFZsTA86WPd3M3hUJDwORrl6t+HFe9WUKS1rfKlKjx+m9ogcINBKVFGBbDwxT6cEDnkfl7nMLHoSxVj6YA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1JZWyBHQ4DdI0xlEbAxmeEvzN1yQPqX6oatqt7IA7hM=;
- b=XI72jcp5qb6CSdLvk6Gm78xPYJhFQ6sSelkP3R7Hlc4eB19SbVJDl4cCI9njGoMug+CqLN+pKDuICUCAikyNPZWIeFE+bkj2FhEaRutzyFXX5EHwWRK846EnA38qq33CGIZKoRELNU3FiHZaci38o1TsFh02WiJUcXCQZ1hlmtb9zhKhmIWRWM8VMI9O09kR2ewfe5/GmrLsLblmahVHdMX6fwizZ6zVHsFQd93lrp7thFoW16Gz7bJrfdmRmR5q59Kz4fY17kfdDypfsOaE0WxVQylicsIlMM4qo0UxjvcvwASHjvdyVRsrRxA/U8rIUpQmEr4V325yhgyf6TCX+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ bh=wcAyE+WqoS5o5S7mE1bo9sx7a8Zq+SJoRn4TC1HoaxE=;
+ b=W9+rkmyWtyfJ0amH9x/Fa7Xsr7OMHuPbVc/m49hx0uIG7acO4PwIvkgJtdz1Gs0tf2KEAxv+8kCh46n8uZmOgpPvj2UTJbX0gC3DplAfbWrCq2lLXX1wxX0VbfHwsEAd0xj6jKEFGr3vo8YceuyTPeBWRoqhcZWb2yd+ZJi6aglaqZOh9kuoj/adVo39BIX6oaP/oCU+mjf2wvb9gD7CJMcOVCi9GfF0tOjUpDVzX/jxK6dpMOP8RtrxQHvseu8ZW/usFkrwPrbjflXZryBUw8gyPV9GZTxRn14x0SD9OzEFj9+chxgfU5l8pzawUGGLcJYv1xO3foHyXnPX/opXhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 217.111.95.7) smtp.rcpttodomain=holtmann.org smtp.mailfrom=arri.de;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=arri.de;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arri.de; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1JZWyBHQ4DdI0xlEbAxmeEvzN1yQPqX6oatqt7IA7hM=;
- b=omISiRsGsl1Zvpd13uj18OW4cWQY+4CQIZzElKE0RkbBD7nYyIMudiXRym9Pl3NJPB+rPg9wwT1irTS/ZCHx++S97/kD3e+0dy0NzlCfM17B3VrWtdY3xXiTCcwPOPX8qtRaVcpHq9wMjx4pRho2lfhZ3St13oRkwwD7pP85CQY=
-Received: from DU2PR08MB10202.eurprd08.prod.outlook.com (2603:10a6:10:46e::5)
- by PAXPR08MB7466.eurprd08.prod.outlook.com (2603:10a6:102:2b8::10) with
+ bh=wcAyE+WqoS5o5S7mE1bo9sx7a8Zq+SJoRn4TC1HoaxE=;
+ b=N7S3nKDNRyFqUe3FIu1AkBmPTy938jvseSIXd7KlKCTc3b4j9ebXN00lKj2Et05yC6xbIngzETEdxcVJnYSeunsTfzHjlDk7G4aNrKaZ67vpVQKI7ao/YyEb4ulJtUIkpTeIwki0uZQaIXUVeb7U80ftDW00Drr1zaV31erRvRc=
+Received: from AM0PR03CA0010.eurprd03.prod.outlook.com (2603:10a6:208:14::23)
+ by DU0PR03MB8266.eurprd03.prod.outlook.com (2603:10a6:10:317::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Fri, 27 Jun
- 2025 10:09:02 +0000
-Received: from DU2PR08MB10202.eurprd08.prod.outlook.com
- ([fe80::871d:8cc1:8a32:2d31]) by DU2PR08MB10202.eurprd08.prod.outlook.com
- ([fe80::871d:8cc1:8a32:2d31%3]) with mapi id 15.20.8857.026; Fri, 27 Jun 2025
- 10:09:02 +0000
-From: Sascha Bischoff <Sascha.Bischoff@arm.com>
-To: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC: nd <nd@arm.com>, "maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Joey Gouly
-	<Joey.Gouly@arm.com>, Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "will@kernel.org"
-	<will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, Timothy Hayes
-	<Timothy.Hayes@arm.com>
-Subject: [PATCH v2 4/5] KVM: arm64: gic-v5: Support GICv3 compat
-Thread-Topic: [PATCH v2 4/5] KVM: arm64: gic-v5: Support GICv3 compat
-Thread-Index: AQHb50uBjf2gMU8QZUm8oyds38bs7g==
-Date: Fri, 27 Jun 2025 10:09:02 +0000
-Message-ID: <20250627100847.1022515-5-sascha.bischoff@arm.com>
-References: <20250627100847.1022515-1-sascha.bischoff@arm.com>
-In-Reply-To: <20250627100847.1022515-1-sascha.bischoff@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: git-send-email 2.34.1
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic:
-	DU2PR08MB10202:EE_|PAXPR08MB7466:EE_|AM1PEPF000252E0:EE_|PR3PR08MB5724:EE_
-X-MS-Office365-Filtering-Correlation-Id: 795b0223-c009-49b3-86c5-08ddb562b863
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-X-Microsoft-Antispam-Message-Info-Original:
- =?iso-8859-1?Q?jGf1/Gm/hNPlkMu3ksB2Zmc5Pe6Pq9dO0iUhPNZdRJVho7l7lnor2b3gRF?=
- =?iso-8859-1?Q?qYtOVx9aQ4fo3nODnz3i5N6IDg86VYtHRox4LTJdLVOu4Tmu2dCtRag4ae?=
- =?iso-8859-1?Q?x3odO1DbXy6sP0IxzsMDZ1Nqm1tf496lS+LOpsOVIW3Cgpm5Xshd8ejH5q?=
- =?iso-8859-1?Q?heDfvWyyKIDN9t5NQN68AI2BlVaRf0SGbBKT+0VIxNKTv3CDns6GsENzmv?=
- =?iso-8859-1?Q?S2txaeZqaNwSD5T9UwiNFRQWFnERFQHOqfNTzAEwryMgtp4YHwgBjihshU?=
- =?iso-8859-1?Q?6JWKqmcZuTm7fkFucX2WcskSb27pjNrTOdDE0Gv6ORaASGqSvOls9j7Dhn?=
- =?iso-8859-1?Q?e9CeujtQkUGfCl2LS9mluv71HUhqLFvkutOSPsKBQICzc0vcbfWGo6Hbd+?=
- =?iso-8859-1?Q?QVyuT86KC9GEKcgUr+dSvin+oel9wPYwh421a/4oT3JOT6sCOVRB7eFH0x?=
- =?iso-8859-1?Q?6ud7A5AzrNNz6N+MRyJXVldch08G33YgfTv+VukGgUmT0QEShWUuFhgA1Y?=
- =?iso-8859-1?Q?xzuQzMtxoUw+a6m1YUzO1Y+x78upeTp50QXexd6AWAiXC9WluGdD1+HtGs?=
- =?iso-8859-1?Q?o5WdoOUoUl3lebcNHM343tK6or8NiNJGvUM4KAC8oaQEr6rJ/VUE9hbs7J?=
- =?iso-8859-1?Q?U6lTkutNx+nk53mwacNEgdBd4uf+MFxJUj2+TSeVEu4CdnRff9h6wVF4X3?=
- =?iso-8859-1?Q?2elOfkl0/rpWE92V041dhX/mULYqMmzRtPntYlDya99ZTlG63gTMdP2ppR?=
- =?iso-8859-1?Q?QPKQR8PTl/DR5vwh6S6YY3tBHpawysI+BwgBQ7+suQDlGGzj4pwzne/XKT?=
- =?iso-8859-1?Q?tP3tAvGST3NaM2UI5kBBJF6F/VUPX2X7p4g91Bt4UbUzLFeO9lRhKiKUtX?=
- =?iso-8859-1?Q?8V3UIJECzXq+4a4xiNGP42cgcJAlv2Tl12I6UUGyh5dm6JDWhor138S4k1?=
- =?iso-8859-1?Q?CjOt3npch8zDiNtVpnpbcYEd8lPOubpNc8M6EfvkN5H089jc91WNUV+T1h?=
- =?iso-8859-1?Q?p07iRZRzuUwN7vf6LKQMGT/iJtBBp5IhVhb6+HMzwopxoe/DyWPztJJnYk?=
- =?iso-8859-1?Q?8qgmbPCijhSV0K0Gv0jAriWU5GcnMfR8SI6aZx15+Kwi4Llsi1NDZGAabX?=
- =?iso-8859-1?Q?U7S53GRkQqQTSW0pFtl5LM928ZYz8+iPLLJ7TSzVu52WJACpVPOK6lUOjj?=
- =?iso-8859-1?Q?8kNHEYPFbi4ILzczwSPDom1EOzXDHBWsc+PHi/wWwl7pP7qdvYV6fSvvwL?=
- =?iso-8859-1?Q?/GFUsMwspHIZmggVFn5DnAPBNiEkdg7buIdetbASwJjQTixpH0gbM2k+Db?=
- =?iso-8859-1?Q?6mRlEunFYZs1kS9XFkewZlvhlUtIEXxI1QmgAFFuY5xH61a9l9jY0N97Je?=
- =?iso-8859-1?Q?nKN71Dj7hIfMFhgDJ4pHqZdCSf259++nZxIE6NXvbpdW7NErvVpMY/KcBC?=
- =?iso-8859-1?Q?StfdYVgWwFR7vbtA5bd4GLeyefBaYho7H7i+I4dUESqqO6vHzXfl4dt9qH?=
- =?iso-8859-1?Q?V1U0VJrBNNBmGn4JkrtUELFtrP37TQoCnH49hEO9dlmw=3D=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR08MB10202.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Fri, 27 Jun
+ 2025 10:09:39 +0000
+Received: from AMS0EPF000001B4.eurprd05.prod.outlook.com
+ (2603:10a6:208:14:cafe::5d) by AM0PR03CA0010.outlook.office365.com
+ (2603:10a6:208:14::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.20 via Frontend Transport; Fri,
+ 27 Jun 2025 10:09:39 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 217.111.95.7)
+ smtp.mailfrom=arri.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=arri.de;
+Received-SPF: Fail (protection.outlook.com: domain of arri.de does not
+ designate 217.111.95.7 as permitted sender) receiver=protection.outlook.com;
+ client-ip=217.111.95.7; helo=mta.arri.de;
+Received: from mta.arri.de (217.111.95.7) by
+ AMS0EPF000001B4.mail.protection.outlook.com (10.167.16.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.14 via Frontend Transport; Fri, 27 Jun 2025 10:09:38 +0000
+Received: from n9w6sw14.localnet (10.30.5.30) by mta.arri.de (10.10.18.5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.38; Fri, 27 Jun
+ 2025 12:09:38 +0200
+From: Christian Eggers <ceggers@arri.de>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Jaganath Kanakkassery <jaganath.k.os@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] Bluetooth: HCI: Set extended advertising data synchronously
+Date: Fri, 27 Jun 2025 12:09:38 +0200
+Message-ID: <4990184.OV4Wx5bFTl@n9w6sw14>
+Organization: Arnold & Richter Cine Technik GmbH & Co. Betriebs KG
+In-Reply-To: <20250627070508.13780-1-ceggers@arri.de>
+References: <20250627070508.13780-1-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB7466
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM1PEPF000252E0.eurprd07.prod.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	b776e6ea-a240-4263-6bee-08ddb562a47c
+X-MS-TrafficTypeDiagnostic: AMS0EPF000001B4:EE_|DU0PR03MB8266:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5af88d30-9851-447e-f1a3-08ddb562ba0e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|14060799003|376014|7416014|35042699022;
+	BCL:0;ARA:13230040|82310400026|30052699003|36860700013|1800799024|376014|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?z4iqUoYGWmWEAyvC/4reVc95rTChNyuVtWj+C/z7/1CABryaWlw4SV8I1z?=
- =?iso-8859-1?Q?/QgouupiSTba2YCPaiS4FgZnZhaanHzwpg+yY5Yjxzd/vrPKws8LyBCsNA?=
- =?iso-8859-1?Q?GDNv2XOn/7NZQASOC7tBALTKrdGqeSqX2S7UeUXJlWv3xDujcJFURzYQgG?=
- =?iso-8859-1?Q?rUNpPJZeILNRTm6v7RpYDfp7oa0JQ4cJcX4wU7+eX7WsiYx4BZuft4qQjZ?=
- =?iso-8859-1?Q?fGYYg4MEsz0QSbWby8CZGJNG5AafBI/FExpOU4t5bVu3DkjGHKZ1jwQ0lS?=
- =?iso-8859-1?Q?PSRwt1jTeBBYWgutRFeJpt/apbFfoSiku0Mo3KWnWNQpKUx6MTLg81Da01?=
- =?iso-8859-1?Q?eaPX455mzkUOZlazPol1qc1D0l+kANKLEPhqtHkwd0oxQnw2tXBERXW1rj?=
- =?iso-8859-1?Q?2x3B++PsI8CMfMDAQYbRFRL2QjYq6YtXejiCD8KlRv7KqUw9TRb+UV2UNo?=
- =?iso-8859-1?Q?aBnfIpsqX3H2J6wQmKbpBG6bZbcC6tUrtuq8eXfoiTGQpvHKmIuBg3zzO3?=
- =?iso-8859-1?Q?ic8wAxtJh6+xnVSjoHgeKF7TAF67A5VQnRlPb6ie2DEp9NcpRAu9kClFNW?=
- =?iso-8859-1?Q?x9Mf9jWLiQrCPbUJRo46mEA6VrzIUYdD+eGlNncAmsmVV4ZqDRC2UbiNdK?=
- =?iso-8859-1?Q?XXgAjqx1r9bKj5cJ6TwSiQ5y7+cS3iJoVQB9eRlOfCc6WIyxfDufCIvxmZ?=
- =?iso-8859-1?Q?WmXqP2jQ+JeRREOZc4xymOq1XKeg0JfJJyZu6NiSUFiV6X0b/aSJuYzlNr?=
- =?iso-8859-1?Q?SAk4N8hnMrAUezEFqcjt0bVwineKy3RDZ6gnzdWQZjOJkmoeuCNVeMkxRV?=
- =?iso-8859-1?Q?nUhOvjU9hgi31xzchPm7YrKFc2I5RZXJv0sF0c4qcZ4kk+idZAl55v6ud2?=
- =?iso-8859-1?Q?iwu4Q22UPiNVEb/9Ha2pDPl17ZZO7Ui9/g949fYC4Cp6QBK3BJAcPAvIhR?=
- =?iso-8859-1?Q?62ficTQOCx3ioHuNT/t9/IZaVo56tgSojaFuj4vcbjEq2C98GxOVU521Ia?=
- =?iso-8859-1?Q?HcNLdIbku3ruTkt8O9JNrP90zsza9WIR9vBMmCYNfmvuVFNVSTg8zEU82e?=
- =?iso-8859-1?Q?MNsEhPsl2Zk/MrhRNIs2VVXoUuwLoWdRxQ/JNjnsgaK/UJZkyaJVSqui9F?=
- =?iso-8859-1?Q?lLCFDlS/+iYwXJwCUDp7YQA9ckQTzGBggzE87lA5cy6yCvm1PYHD8e/HaR?=
- =?iso-8859-1?Q?PQBd9Yaop02J7XuexNKdhY8rA5ser5/lkDDKEgeR436K0ZZ0F01/7M16bb?=
- =?iso-8859-1?Q?DUfz25Ylhlt326oNw42p6UwzSaUeAigS7gSNerphPcP3V2VE/+GwE1n2GI?=
- =?iso-8859-1?Q?bAB517zmpDnH+Irosv/VSygHVgADfccKxvNYH8RoYRsmIRz91jE7LjmV79?=
- =?iso-8859-1?Q?4O4vweSgBO/6CNBQFk6SUOrVAufbpSSkwVwZc+yj474bmsNSvikDN48zhU?=
- =?iso-8859-1?Q?smSjZILbLFful5Fdtl0qhpZ7cdiIfMGxXYDu5ALhcqEjk7iAgCoWj2Livb?=
- =?iso-8859-1?Q?Z1gY014rFU1xZqR+sStJO4uzlljSxwek8NzFE6fcn8MD/KPsZigia0Q00w?=
- =?iso-8859-1?Q?FjVLj6jch51ONDGTgEEEEq9TiyKd?=
+	=?us-ascii?Q?e+V2qQb6KyB9p+TonHNfzZ76Wx8LbOCGLpzz/hB9M16WT34i4g2y4GYEAWBE?=
+ =?us-ascii?Q?tyg9D6huISmkPr0gd6om5A2TXcRMmjL1UNWah/Li5A73XFfDqiS0opZbW/AY?=
+ =?us-ascii?Q?naRZXItN+KxUfalXR7jXkRkQlXiwCyRi5JDvPCaRsHyEWdiT77Z+5qNvYVhN?=
+ =?us-ascii?Q?8IYzC4wB6wznlNuwYV++RtspYbntskBRksLvZBX67Vh4gyf7MuBku0a6WmKn?=
+ =?us-ascii?Q?qoivFGaXIeeynwLu0nKVHje6yZySanVMvbhq1O7BLy8jqIdiffUkUHclnog0?=
+ =?us-ascii?Q?yL80PxM9I8/ptxe9bhkTe5S9VhWmkt1esgTAgstleT1p7I82m7T86JK+f56v?=
+ =?us-ascii?Q?7o3cPImO0PJSniCIRWZTzgIK11ZzwHubVuLIWpsyXc4dv+sAW06ceXnsoYIF?=
+ =?us-ascii?Q?+EL7+1bhOfHGMrpSIKORqIOt+wIoeYWnPSfofsMUFs/QWKRJWKdDIpcgCJTc?=
+ =?us-ascii?Q?zJ9eG2sgWJCc2OlKKXKR4bIcMDznRiaFXCezRbAVriZE9XRABNpNLYlZYmy/?=
+ =?us-ascii?Q?jjphfe7nH0ui+4M4W0nDkh4JnGL/aV1NxyaCFuDrxfD/9y0Sp5b83a+lx0Mm?=
+ =?us-ascii?Q?KFD9EKo/eknoGe9pMB+wcHRwrKKsSzU4cOGdsHT4QamoELv6+RuFXgmfOvxa?=
+ =?us-ascii?Q?4ufgduuLfs/PNVJcJY7GGXSxBGj7P77o0VB9QiFOxz8g0gwkTUjm00Xl5mYF?=
+ =?us-ascii?Q?cFTCtc9exYAD9bmRoRE2tMXbk72yFqphm5Ti2EUN0OSF/PBIHpwZeY7sCgAt?=
+ =?us-ascii?Q?kuxzVL9YWcNUADcspPxrI5T9pbKVCrfHqlx/xju8ewlXe5X+aIYkwLUELaGy?=
+ =?us-ascii?Q?H6qINXVFJpeHZ0x7amVEqx/v3pdOF8bLhvXbPIL1WEDGXqXh3cQX9Nbh+uJ8?=
+ =?us-ascii?Q?dWTDeLNxm+ftQy6iX6mX/rbBWazkCBRmTPFtUh+3DdK3O62sdaov30w+mBc+?=
+ =?us-ascii?Q?etTdhg15K7SFD/3FxMFOFbdORmRP3pKYJRE8lOzPkMicE9s4oKe/32T7bO2I?=
+ =?us-ascii?Q?rWQZzakI167qlWmqAqAfdCjfZ8OYCT/JUp4rX4nAYRFu55ztY4/BmG1xGYkY?=
+ =?us-ascii?Q?ocWMZq4jWpaTNFNm0NJ0+TOZHZ6frzN1gvhA8RyIgBk2D0lt0pd/Gezg3yNP?=
+ =?us-ascii?Q?1Fo8auSSGJCv9KJVFb2XWR0kbHA53sabcKnHL6vm49mAlRQFEdyR3XOfDdNv?=
+ =?us-ascii?Q?YV1I9Ljzxw0PHQLJE7Jrate8d8JgKCKSkPuwXNFfUnDL+gVYU5cHyQCwrcie?=
+ =?us-ascii?Q?1xm+Qs+aIbcA/6eIG0DdvPYgI1kkAPBt/Ylql1RicGf6N6b2l9updK07Wd6F?=
+ =?us-ascii?Q?BtNDIyng0NmjrQ2vnCzPH2+JMiTYTr1EfSPUlUrmLGfUHw3U3T5IumfpMYKh?=
+ =?us-ascii?Q?TP4r11jWdiGkAY98rz1dda5IEcSXCENoWZW2Zrxrv2n1hlK85pKv9HmoMWhM?=
+ =?us-ascii?Q?4Q0AdERNUrF7T3Uq1xd3HqTDsPeBaRkBXhBcKcYHap5pN4W3NfwMfNlqfEF+?=
+ =?us-ascii?Q?m3V4jFoZbhmbgNsaHGgNoWpOkQDAgnTQGoYXCFW6BgJRgulXe5eimAZq1g?=
+ =?us-ascii?Q?=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(14060799003)(376014)(7416014)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 10:09:36.0413
+	CIP:217.111.95.7;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mta.arri.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(30052699003)(36860700013)(1800799024)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arri.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2025 10:09:38.9016
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 795b0223-c009-49b3-86c5-08ddb562b863
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5af88d30-9851-447e-f1a3-08ddb562ba0e
+X-MS-Exchange-CrossTenant-Id: e6a73a5a-614d-4c51-b3e3-53b660a9433a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e6a73a5a-614d-4c51-b3e3-53b660a9433a;Ip=[217.111.95.7];Helo=[mta.arri.de]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AM1PEPF000252E0.eurprd07.prod.outlook.com
+	AMS0EPF000001B4.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR08MB5724
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB8266
 
-Add support for GICv3 compat mode (FEAT_GCIE_LEGACY) which allows a
-GICv5 host to run GICv3-based VMs. This change enables the
-VHE/nVHE/hVHE/protected modes, but does not support nested
-virtualization.
+Hi Luiz,
 
-A lazy-disable approach is taken for compat mode; it is enabled on the
-vgic_v3_load path but not disabled on the vgic_v3_put path. A
-non-GICv3 VM, i.e., one based on GICv5, is responsible for disabling
-compat mode on the corresponding vgic_v5_load path. Currently, GICv5
-is not supported, and hence compat mode is not disabled again once it
-is enabled, and this function is intentionally omitted from the code.
+after changing my test setup (I now only use Mesh, no "normal" advertising
+anymore), I get many of these errors:
 
-Co-authored-by: Timothy Hayes <timothy.hayes@arm.com>
-Signed-off-by: Timothy Hayes <timothy.hayes@arm.com>
-Signed-off-by: Sascha Bischoff <sascha.bischoff@arm.com>
----
- arch/arm64/kvm/hyp/vgic-v3-sr.c | 51 +++++++++++++++++++++++++++------
- arch/arm64/kvm/sys_regs.c       | 10 ++++++-
- arch/arm64/kvm/vgic/vgic-init.c |  6 ++--
- arch/arm64/kvm/vgic/vgic.h      | 11 +++++++
- include/kvm/arm_vgic.h          |  6 +++-
- 5 files changed, 72 insertions(+), 12 deletions(-)
+bluetooth-meshd[276]: @ MGMT Command: Mesh Send (0x0059) plen 40                                                                   {0x0001} [hci0] 43.846388
+        Address: 00:00:00:00:00:00 (OUI 00-00-00)
+        Addr Type: 2
+        Instant: 0x0000000000000000
+        Delay: 0
+        Count: 1
+        Data Length: 21
+        Data[21]: 142b003a8b6fe779bd4385a94fed0a9cf611880000
+< HCI Command: LE Set Extended Advertising Parameters (0x08|0x0036) plen 25                                                            #479 [hci0] 43.846505
+        Handle: 0x05
+        Properties: 0x0010
+          Use legacy advertising PDUs: ADV_NONCONN_IND
+        Min advertising interval: 1280.000 msec (0x0800)
+        Max advertising interval: 1280.000 msec (0x0800)
+        Channel map: 37, 38, 39 (0x07)
+        Own address type: Random (0x01)
+        Peer address type: Public (0x00)
+        Peer address: 00:00:00:00:00:00 (OUI 00-00-00)
+        Filter policy: Allow Scan Request from Any, Allow Connect Request from Any (0x00)
+        TX power: Host has no preference (0x7f)
+        Primary PHY: LE 1M (0x01)
+        Secondary max skip: 0x00
+        Secondary PHY: LE 1M (0x01)
+        SID: 0x00
+        Scan request notifications: Disabled (0x00)
+> HCI Event: Command Complete (0x0e) plen 5                                                                                            #480 [hci0] 43.847480
+      LE Set Extended Advertising Parameters (0x08|0x0036) ncmd 2
+--->    Status: Command Disallowed (0x0c)
+        TX power (selected): 0 dbm (0x00)
 
-diff --git a/arch/arm64/kvm/hyp/vgic-v3-sr.c b/arch/arm64/kvm/hyp/vgic-v3-s=
-r.c
-index f162b0df5cae..6ce88e56ccb8 100644
---- a/arch/arm64/kvm/hyp/vgic-v3-sr.c
-+++ b/arch/arm64/kvm/hyp/vgic-v3-sr.c
-@@ -296,12 +296,19 @@ void __vgic_v3_activate_traps(struct vgic_v3_cpu_if *=
-cpu_if)
- 	}
-=20
- 	/*
--	 * Prevent the guest from touching the ICC_SRE_EL1 system
--	 * register. Note that this may not have any effect, as
--	 * ICC_SRE_EL2.Enable being RAO/WI is a valid implementation.
-+	 * GICv5 BET0 FEAT_GCIE_LEGACY doesn't include ICC_SRE_EL2. This is due
-+	 * to be relaxed in a future spec release, at which point this in
-+	 * condition can be dropped.
- 	 */
--	write_gicreg(read_gicreg(ICC_SRE_EL2) & ~ICC_SRE_EL2_ENABLE,
--		     ICC_SRE_EL2);
-+	if (!cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF)) {
-+		/*
-+		 * Prevent the guest from touching the ICC_SRE_EL1 system
-+		 * register. Note that this may not have any effect, as
-+		 * ICC_SRE_EL2.Enable being RAO/WI is a valid implementation.
-+		 */
-+		write_gicreg(read_gicreg(ICC_SRE_EL2) & ~ICC_SRE_EL2_ENABLE,
-+			     ICC_SRE_EL2);
-+	}
-=20
- 	/*
- 	 * If we need to trap system registers, we must write
-@@ -322,8 +329,14 @@ void __vgic_v3_deactivate_traps(struct vgic_v3_cpu_if =
-*cpu_if)
- 		cpu_if->vgic_vmcr =3D read_gicreg(ICH_VMCR_EL2);
- 	}
-=20
--	val =3D read_gicreg(ICC_SRE_EL2);
--	write_gicreg(val | ICC_SRE_EL2_ENABLE, ICC_SRE_EL2);
-+	/*
-+	 * Can be dropped in the future when GICv5 spec is relaxed. See comment
-+	 * above.
-+	 */
-+	if (!cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF)) {
-+		val =3D read_gicreg(ICC_SRE_EL2);
-+		write_gicreg(val | ICC_SRE_EL2_ENABLE, ICC_SRE_EL2);
-+	}
-=20
- 	if (!cpu_if->vgic_sre) {
- 		/* Make sure ENABLE is set at EL2 before setting SRE at EL1 */
-@@ -423,9 +436,19 @@ void __vgic_v3_init_lrs(void)
-  */
- u64 __vgic_v3_get_gic_config(void)
- {
--	u64 val, sre =3D read_gicreg(ICC_SRE_EL1);
-+	u64 val, sre;
- 	unsigned long flags =3D 0;
-=20
-+	/*
-+	 * In compat mode, we cannot access ICC_SRE_EL1 at any EL
-+	 * other than EL1 itself; just return the
-+	 * ICH_VTR_EL2. ICC_IDR0_EL1 is only implemented on a GICv5
-+	 * system, so we first check if we have GICv5 support.
-+	 */
-+	if (cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF))
-+		return read_gicreg(ICH_VTR_EL2);
-+
-+	sre =3D read_gicreg(ICC_SRE_EL1);
- 	/*
- 	 * To check whether we have a MMIO-based (GICv2 compatible)
- 	 * CPU interface, we need to disable the system register
-@@ -471,6 +494,16 @@ u64 __vgic_v3_get_gic_config(void)
- 	return val;
- }
-=20
-+static void __vgic_v3_compat_mode_enable(void)
-+{
-+	if (!cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF))
-+		return;
-+
-+	sysreg_clear_set_s(SYS_ICH_VCTLR_EL2, 0, ICH_VCTLR_EL2_V3);
-+	/* Wait for V3 to become enabled */
-+	isb();
-+}
-+
- static u64 __vgic_v3_read_vmcr(void)
- {
- 	return read_gicreg(ICH_VMCR_EL2);
-@@ -490,6 +523,8 @@ void __vgic_v3_save_vmcr_aprs(struct vgic_v3_cpu_if *cp=
-u_if)
-=20
- void __vgic_v3_restore_vmcr_aprs(struct vgic_v3_cpu_if *cpu_if)
- {
-+	__vgic_v3_compat_mode_enable();
-+
- 	/*
- 	 * If dealing with a GICv2 emulation on GICv3, VMCR_EL2.VFIQen
- 	 * is dependent on ICC_SRE_EL1.SRE, and we have to perform the
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 76c2f0da821f..f01953c7c2a9 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1811,7 +1811,7 @@ static u64 sanitise_id_aa64pfr0_el1(const struct kvm_=
-vcpu *vcpu, u64 val)
- 		val |=3D SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, CSV3, IMP);
- 	}
-=20
--	if (kvm_vgic_global_state.type =3D=3D VGIC_V3) {
-+	if (vgic_is_v3(vcpu->kvm)) {
- 		val &=3D ~ID_AA64PFR0_EL1_GIC_MASK;
- 		val |=3D SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, GIC, IMP);
- 	}
-@@ -1953,6 +1953,14 @@ static int set_id_aa64pfr0_el1(struct kvm_vcpu *vcpu=
-,
- 	    (vcpu_has_nv(vcpu) && !FIELD_GET(ID_AA64PFR0_EL1_EL2, user_val)))
- 		return -EINVAL;
-=20
-+	/*
-+	 * If we are running on a GICv5 host and support FEAT_GCIE_LEGACY, then
-+	 * we support GICv3. Fail attempts to do anything but set that to IMP.
-+	 */
-+	if (vgic_is_v3_compat(vcpu->kvm) &&
-+	    FIELD_GET(ID_AA64PFR0_EL1_GIC_MASK, user_val) !=3D ID_AA64PFR0_EL1_GI=
-C_IMP)
-+		return -EINVAL;
-+
- 	return set_id_reg(vcpu, rd, user_val);
- }
-=20
-diff --git a/arch/arm64/kvm/vgic/vgic-init.c b/arch/arm64/kvm/vgic/vgic-ini=
-t.c
-index eb1205654ac8..1f1f0c9ce64f 100644
---- a/arch/arm64/kvm/vgic/vgic-init.c
-+++ b/arch/arm64/kvm/vgic/vgic-init.c
-@@ -674,10 +674,12 @@ void kvm_vgic_init_cpu_hardware(void)
- 	 * We want to make sure the list registers start out clear so that we
- 	 * only have the program the used registers.
- 	 */
--	if (kvm_vgic_global_state.type =3D=3D VGIC_V2)
-+	if (kvm_vgic_global_state.type =3D=3D VGIC_V2) {
- 		vgic_v2_init_lrs();
--	else
-+	} else if (kvm_vgic_global_state.type =3D=3D VGIC_V3 ||
-+		   kvm_vgic_global_state.has_gcie_v3_compat) {
- 		kvm_call_hyp(__vgic_v3_init_lrs);
-+	}
- }
-=20
- /**
-diff --git a/arch/arm64/kvm/vgic/vgic.h b/arch/arm64/kvm/vgic/vgic.h
-index 4349084cb9a6..23d393998085 100644
---- a/arch/arm64/kvm/vgic/vgic.h
-+++ b/arch/arm64/kvm/vgic/vgic.h
-@@ -389,6 +389,17 @@ void vgic_v3_put_nested(struct kvm_vcpu *vcpu);
- void vgic_v3_handle_nested_maint_irq(struct kvm_vcpu *vcpu);
- void vgic_v3_nested_update_mi(struct kvm_vcpu *vcpu);
-=20
-+static inline bool vgic_is_v3_compat(struct kvm *kvm)
-+{
-+	return cpus_have_final_cap(ARM64_HAS_GICV5_CPUIF) &&
-+		kvm_vgic_global_state.has_gcie_v3_compat;
-+}
-+
-+static inline bool vgic_is_v3(struct kvm *kvm)
-+{
-+	return kvm_vgic_global_state.type =3D=3D VGIC_V3 || vgic_is_v3_compat(kvm=
-);
-+}
-+
- int vgic_its_debug_init(struct kvm_device *dev);
- void vgic_its_debug_destroy(struct kvm_device *dev);
-=20
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index 4a34f7f0a864..5c293e0ff5c1 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -38,6 +38,7 @@
- enum vgic_type {
- 	VGIC_V2,		/* Good ol' GICv2 */
- 	VGIC_V3,		/* New fancy GICv3 */
-+	VGIC_V5,		/* Newer, fancier GICv5 */
- };
-=20
- /* same for all guests, as depending only on the _host's_ GIC model */
-@@ -77,9 +78,12 @@ struct vgic_global {
- 	/* Pseudo GICv3 from outer space */
- 	bool			no_hw_deactivation;
-=20
--	/* GIC system register CPU interface */
-+	/* GICv3 system register CPU interface */
- 	struct static_key_false gicv3_cpuif;
-=20
-+	/* GICv3 compat mode on a GICv5 host */
-+	bool			has_gcie_v3_compat;
-+
- 	u32			ich_vtr_el2;
- };
-=20
---=20
-2.34.1
+
+From the btmon output it is obvious that advertising is not disabled before updating the parameters.
+
+I added the following debug line in hci_setup_ext_adv_instance_sync():
+
+	printk(KERN_ERR "instance = %u, adv = %p, adv->pending = %d, adv->enabled = %d\n",
+	       instance, adv, adv ? adv->pending : -1, adv ? adv->enabled : -1);
+
+From the debug output I see that adv->pending is still true (so advertising is not disabled
+before setting the advertising params). After changing the check from 
+
+	if (adv && !adv->pending) {
+
+to
+
+	if (adv && adv->enabled) {
+
+it seems to do the job correctly. What do you think?
+
+
+regards,
+Christian
+
+
+On Friday, 27 June 2025, 09:05:08 CEST, Christian Eggers wrote:
+> Currently, for controllers with extended advertising, the advertising
+> data is set in the asynchronous response handler for extended
+> adverstising params. As most advertising settings are performed in a
+> synchronous context, the (asynchronous) setting of the advertising data
+> is done too late (after enabling the advertising).
+> 
+> Move setting of adverstising data from asynchronous response handler
+> into synchronous context to fix ordering of HCI commands.
+> 
+> Signed-off-by: Christian Eggers <ceggers@arri.de>
+> Fixes: a0fb3726ba55 ("Bluetooth: Use Set ext adv/scan rsp data if controller supports")
+> Cc: stable@vger.kernel.org
+> v2: https://lore.kernel.org/linux-bluetooth/20250626115209.17839-1-ceggers@arri.de/
+> ---
+> v3: refactor: store adv_addr_type/tx_power within hci_set_ext_adv_params_sync()
+> 
+> v2: convert setting of adv data into synchronous context (rather than moving
+> more methods into asynchronous response handlers).
+> - hci_set_ext_adv_params_sync: new method
+> - hci_set_ext_adv_data_sync: move within source file (no changes)
+> - hci_set_adv_data_sync: dito
+> - hci_update_adv_data_sync: dito
+> - hci_cc_set_ext_adv_param: remove (performed synchronously now)
+> 
+>  net/bluetooth/hci_event.c |  36 -------
+>  net/bluetooth/hci_sync.c  | 207 ++++++++++++++++++++++++--------------
+>  2 files changed, 130 insertions(+), 113 deletions(-)
+> 
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 66052d6aaa1d..4d5ace9d245d 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -2150,40 +2150,6 @@ static u8 hci_cc_set_adv_param(struct hci_dev *hdev, void *data,
+>  	return rp->status;
+>  }
+>  
+> -static u8 hci_cc_set_ext_adv_param(struct hci_dev *hdev, void *data,
+> -				   struct sk_buff *skb)
+> -{
+> -	struct hci_rp_le_set_ext_adv_params *rp = data;
+> -	struct hci_cp_le_set_ext_adv_params *cp;
+> -	struct adv_info *adv_instance;
+> -
+> -	bt_dev_dbg(hdev, "status 0x%2.2x", rp->status);
+> -
+> -	if (rp->status)
+> -		return rp->status;
+> -
+> -	cp = hci_sent_cmd_data(hdev, HCI_OP_LE_SET_EXT_ADV_PARAMS);
+> -	if (!cp)
+> -		return rp->status;
+> -
+> -	hci_dev_lock(hdev);
+> -	hdev->adv_addr_type = cp->own_addr_type;
+> -	if (!cp->handle) {
+> -		/* Store in hdev for instance 0 */
+> -		hdev->adv_tx_power = rp->tx_power;
+> -	} else {
+> -		adv_instance = hci_find_adv_instance(hdev, cp->handle);
+> -		if (adv_instance)
+> -			adv_instance->tx_power = rp->tx_power;
+> -	}
+> -	/* Update adv data as tx power is known now */
+> -	hci_update_adv_data(hdev, cp->handle);
+> -
+> -	hci_dev_unlock(hdev);
+> -
+> -	return rp->status;
+> -}
+> -
+>  static u8 hci_cc_read_rssi(struct hci_dev *hdev, void *data,
+>  			   struct sk_buff *skb)
+>  {
+> @@ -4164,8 +4130,6 @@ static const struct hci_cc {
+>  	HCI_CC(HCI_OP_LE_READ_NUM_SUPPORTED_ADV_SETS,
+>  	       hci_cc_le_read_num_adv_sets,
+>  	       sizeof(struct hci_rp_le_read_num_supported_adv_sets)),
+> -	HCI_CC(HCI_OP_LE_SET_EXT_ADV_PARAMS, hci_cc_set_ext_adv_param,
+> -	       sizeof(struct hci_rp_le_set_ext_adv_params)),
+>  	HCI_CC_STATUS(HCI_OP_LE_SET_EXT_ADV_ENABLE,
+>  		      hci_cc_le_set_ext_adv_enable),
+>  	HCI_CC_STATUS(HCI_OP_LE_SET_ADV_SET_RAND_ADDR,
+> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> index 1f8806dfa556..563614b53485 100644
+> --- a/net/bluetooth/hci_sync.c
+> +++ b/net/bluetooth/hci_sync.c
+> @@ -1205,9 +1205,126 @@ static int hci_set_adv_set_random_addr_sync(struct hci_dev *hdev, u8 instance,
+>  				     sizeof(cp), &cp, HCI_CMD_TIMEOUT);
+>  }
+>  
+> +static int
+> +hci_set_ext_adv_params_sync(struct hci_dev *hdev, struct adv_info *adv,
+> +			    const struct hci_cp_le_set_ext_adv_params *cp,
+> +			    struct hci_rp_le_set_ext_adv_params *rp)
+> +{
+> +	struct sk_buff *skb;
+> +
+> +	skb = __hci_cmd_sync(hdev, HCI_OP_LE_SET_EXT_ADV_PARAMS, sizeof(*cp),
+> +			     cp, HCI_CMD_TIMEOUT);
+> +
+> +	/* If command return a status event, skb will be set to -ENODATA */
+> +	if (skb == ERR_PTR(-ENODATA))
+> +		return 0;
+> +
+> +	if (IS_ERR(skb)) {
+> +		bt_dev_err(hdev, "Opcode 0x%4.4x failed: %ld",
+> +			   HCI_OP_LE_SET_EXT_ADV_PARAMS, PTR_ERR(skb));
+> +		return PTR_ERR(skb);
+> +	}
+> +
+> +	if (skb->len != sizeof(*rp)) {
+> +		bt_dev_err(hdev, "Invalid response length for "
+> +			   "HCI_OP_LE_SET_EXT_ADV_PARAMS: %u", skb->len);
+> +		kfree_skb(skb);
+> +		return -EIO;
+> +	}
+> +
+> +	memcpy(rp, skb->data, sizeof(*rp));
+> +	kfree_skb(skb);
+> +
+> +	if (!rp->status) {
+> +		hdev->adv_addr_type = cp->own_addr_type;
+> +		if (!cp->handle) {
+> +			/* Store in hdev for instance 0 */
+> +			hdev->adv_tx_power = rp->tx_power;
+> +		} else if (adv) {
+> +			adv->tx_power = rp->tx_power;
+> +		}
+> +	}
+> +
+> +	return rp->status;
+> +}
+> +
+> +static int hci_set_ext_adv_data_sync(struct hci_dev *hdev, u8 instance)
+> +{
+> +	DEFINE_FLEX(struct hci_cp_le_set_ext_adv_data, pdu, data, length,
+> +		    HCI_MAX_EXT_AD_LENGTH);
+> +	u8 len;
+> +	struct adv_info *adv = NULL;
+> +	int err;
+> +
+> +	if (instance) {
+> +		adv = hci_find_adv_instance(hdev, instance);
+> +		if (!adv || !adv->adv_data_changed)
+> +			return 0;
+> +	}
+> +
+> +	len = eir_create_adv_data(hdev, instance, pdu->data,
+> +				  HCI_MAX_EXT_AD_LENGTH);
+> +
+> +	pdu->length = len;
+> +	pdu->handle = adv ? adv->handle : instance;
+> +	pdu->operation = LE_SET_ADV_DATA_OP_COMPLETE;
+> +	pdu->frag_pref = LE_SET_ADV_DATA_NO_FRAG;
+> +
+> +	err = __hci_cmd_sync_status(hdev, HCI_OP_LE_SET_EXT_ADV_DATA,
+> +				    struct_size(pdu, data, len), pdu,
+> +				    HCI_CMD_TIMEOUT);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Update data if the command succeed */
+> +	if (adv) {
+> +		adv->adv_data_changed = false;
+> +	} else {
+> +		memcpy(hdev->adv_data, pdu->data, len);
+> +		hdev->adv_data_len = len;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hci_set_adv_data_sync(struct hci_dev *hdev, u8 instance)
+> +{
+> +	struct hci_cp_le_set_adv_data cp;
+> +	u8 len;
+> +
+> +	memset(&cp, 0, sizeof(cp));
+> +
+> +	len = eir_create_adv_data(hdev, instance, cp.data, sizeof(cp.data));
+> +
+> +	/* There's nothing to do if the data hasn't changed */
+> +	if (hdev->adv_data_len == len &&
+> +	    memcmp(cp.data, hdev->adv_data, len) == 0)
+> +		return 0;
+> +
+> +	memcpy(hdev->adv_data, cp.data, sizeof(cp.data));
+> +	hdev->adv_data_len = len;
+> +
+> +	cp.length = len;
+> +
+> +	return __hci_cmd_sync_status(hdev, HCI_OP_LE_SET_ADV_DATA,
+> +				     sizeof(cp), &cp, HCI_CMD_TIMEOUT);
+> +}
+> +
+> +int hci_update_adv_data_sync(struct hci_dev *hdev, u8 instance)
+> +{
+> +	if (!hci_dev_test_flag(hdev, HCI_LE_ENABLED))
+> +		return 0;
+> +
+> +	if (ext_adv_capable(hdev))
+> +		return hci_set_ext_adv_data_sync(hdev, instance);
+> +
+> +	return hci_set_adv_data_sync(hdev, instance);
+> +}
+> +
+>  int hci_setup_ext_adv_instance_sync(struct hci_dev *hdev, u8 instance)
+>  {
+>  	struct hci_cp_le_set_ext_adv_params cp;
+> +	struct hci_rp_le_set_ext_adv_params rp;
+>  	bool connectable;
+>  	u32 flags;
+>  	bdaddr_t random_addr;
+> @@ -1316,8 +1433,12 @@ int hci_setup_ext_adv_instance_sync(struct hci_dev *hdev, u8 instance)
+>  		cp.secondary_phy = HCI_ADV_PHY_1M;
+>  	}
+>  
+> -	err = __hci_cmd_sync_status(hdev, HCI_OP_LE_SET_EXT_ADV_PARAMS,
+> -				    sizeof(cp), &cp, HCI_CMD_TIMEOUT);
+> +	err = hci_set_ext_adv_params_sync(hdev, adv, &cp, &rp);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Update adv data as tx power is known now */
+> +	err = hci_set_ext_adv_data_sync(hdev, cp.handle);
+>  	if (err)
+>  		return err;
+>  
+> @@ -1822,79 +1943,6 @@ int hci_le_terminate_big_sync(struct hci_dev *hdev, u8 handle, u8 reason)
+>  				     sizeof(cp), &cp, HCI_CMD_TIMEOUT);
+>  }
+>  
+> -static int hci_set_ext_adv_data_sync(struct hci_dev *hdev, u8 instance)
+> -{
+> -	DEFINE_FLEX(struct hci_cp_le_set_ext_adv_data, pdu, data, length,
+> -		    HCI_MAX_EXT_AD_LENGTH);
+> -	u8 len;
+> -	struct adv_info *adv = NULL;
+> -	int err;
+> -
+> -	if (instance) {
+> -		adv = hci_find_adv_instance(hdev, instance);
+> -		if (!adv || !adv->adv_data_changed)
+> -			return 0;
+> -	}
+> -
+> -	len = eir_create_adv_data(hdev, instance, pdu->data,
+> -				  HCI_MAX_EXT_AD_LENGTH);
+> -
+> -	pdu->length = len;
+> -	pdu->handle = adv ? adv->handle : instance;
+> -	pdu->operation = LE_SET_ADV_DATA_OP_COMPLETE;
+> -	pdu->frag_pref = LE_SET_ADV_DATA_NO_FRAG;
+> -
+> -	err = __hci_cmd_sync_status(hdev, HCI_OP_LE_SET_EXT_ADV_DATA,
+> -				    struct_size(pdu, data, len), pdu,
+> -				    HCI_CMD_TIMEOUT);
+> -	if (err)
+> -		return err;
+> -
+> -	/* Update data if the command succeed */
+> -	if (adv) {
+> -		adv->adv_data_changed = false;
+> -	} else {
+> -		memcpy(hdev->adv_data, pdu->data, len);
+> -		hdev->adv_data_len = len;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int hci_set_adv_data_sync(struct hci_dev *hdev, u8 instance)
+> -{
+> -	struct hci_cp_le_set_adv_data cp;
+> -	u8 len;
+> -
+> -	memset(&cp, 0, sizeof(cp));
+> -
+> -	len = eir_create_adv_data(hdev, instance, cp.data, sizeof(cp.data));
+> -
+> -	/* There's nothing to do if the data hasn't changed */
+> -	if (hdev->adv_data_len == len &&
+> -	    memcmp(cp.data, hdev->adv_data, len) == 0)
+> -		return 0;
+> -
+> -	memcpy(hdev->adv_data, cp.data, sizeof(cp.data));
+> -	hdev->adv_data_len = len;
+> -
+> -	cp.length = len;
+> -
+> -	return __hci_cmd_sync_status(hdev, HCI_OP_LE_SET_ADV_DATA,
+> -				     sizeof(cp), &cp, HCI_CMD_TIMEOUT);
+> -}
+> -
+> -int hci_update_adv_data_sync(struct hci_dev *hdev, u8 instance)
+> -{
+> -	if (!hci_dev_test_flag(hdev, HCI_LE_ENABLED))
+> -		return 0;
+> -
+> -	if (ext_adv_capable(hdev))
+> -		return hci_set_ext_adv_data_sync(hdev, instance);
+> -
+> -	return hci_set_adv_data_sync(hdev, instance);
+> -}
+> -
+>  int hci_schedule_adv_instance_sync(struct hci_dev *hdev, u8 instance,
+>  				   bool force)
+>  {
+> @@ -6269,6 +6317,7 @@ static int hci_le_ext_directed_advertising_sync(struct hci_dev *hdev,
+>  						struct hci_conn *conn)
+>  {
+>  	struct hci_cp_le_set_ext_adv_params cp;
+> +	struct hci_rp_le_set_ext_adv_params rp;
+>  	int err;
+>  	bdaddr_t random_addr;
+>  	u8 own_addr_type;
+> @@ -6310,8 +6359,12 @@ static int hci_le_ext_directed_advertising_sync(struct hci_dev *hdev,
+>  	if (err)
+>  		return err;
+>  
+> -	err = __hci_cmd_sync_status(hdev, HCI_OP_LE_SET_EXT_ADV_PARAMS,
+> -				    sizeof(cp), &cp, HCI_CMD_TIMEOUT);
+> +	err = hci_set_ext_adv_params_sync(hdev, NULL, &cp, &rp);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Update adv data as tx power is known now */
+> +	err = hci_set_ext_adv_data_sync(hdev, cp.handle);
+>  	if (err)
+>  		return err;
+>  
+> 
+
+
+
+
 
