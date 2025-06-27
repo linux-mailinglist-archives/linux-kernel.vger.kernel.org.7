@@ -1,146 +1,302 @@
-Return-Path: <linux-kernel+bounces-706138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310C2AEB280
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:17:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9304FAEB28C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989883AB0FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10DC67B708E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289ED2989A7;
-	Fri, 27 Jun 2025 09:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6612C031B;
+	Fri, 27 Jun 2025 09:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QyzHvsT6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0r2AvZzQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cw7qgBzE";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0r2AvZzQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cw7qgBzE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F63293C63
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E695293B44
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015571; cv=none; b=isO2RiUz1Q1BiQj2IzxGZboH0Y8uok+QTx3mewDwn0sP9UOR3VG493Efe38j78tEGCE9lWqyehqSDHft0SO/gNTszUgMGgvcoXb7Kt7uXAZPcwQXrrkWjMfQrDGcD3QeeputRboUg4f51QjR90ZKJzw5qNjx7ybGK/leMn1LvaA=
+	t=1751015595; cv=none; b=T5wJCqfUkf4SbWX8pzPwcZxJJAdZIWxDe5alE8P3+GR537o7+4hfIf3k7SNFwe/suM7X6CV7sx+FNWZ/Y45N0TdokEAyzq1Ne095ytwTrpF1bAQXg12l6C/JvDkzrKc4n8IWZDtdeuED7CtwiRr1NCcQvXfxH3U2x8svQKvNgb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015571; c=relaxed/simple;
-	bh=bkW3GZbWbQDdNFr1naRi59/VXIHN3lE27NvLHntnQvw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O/iEip5ZfHdayxjygeGr4/ghtt62rMz/LkS0R2SWGRW4cmJQr4NXvT1iz1dft+hve8RA3qZz+luVUOBVgN45UuyUWatXs6peKPXoq65/abDVcErneNMKVSAocOw10nOhXUoPyZaoyrhpn3UA69BK7Lcu7sn46yvbuhy5SmmQNOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QyzHvsT6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751015568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wYCV/mmnu9quiFORIT64HDfZgAbi4d31P/K4WpqK4Ew=;
-	b=QyzHvsT6ZONHJVWxVrRFSfJQ8aHFaQw/UZhxboZ9nOkA23osrcDHs/XKQEIlzp3Sautrqm
-	iNbNby+6o9S0wmycLDqmzZ3laq0RKEv3lheYT4wm/q+RCfjTVkQHD35PrikyHmgRAbQDF8
-	7hZ/tyXCuJYbHVgYXZCFdZXhnI9RF5U=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-llVQ55deMrqV4vR3a79IhQ-1; Fri, 27 Jun 2025 05:12:46 -0400
-X-MC-Unique: llVQ55deMrqV4vR3a79IhQ-1
-X-Mimecast-MFC-AGG-ID: llVQ55deMrqV4vR3a79IhQ_1751015565
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451d2037f1eso11117505e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:12:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751015565; x=1751620365;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wYCV/mmnu9quiFORIT64HDfZgAbi4d31P/K4WpqK4Ew=;
-        b=ZppaAdu5uoqm7M+vRC5yf0Iv6XvrMkjY87iV+2oiCjAQT2u6gFMYKwK/7i1tivp86L
-         DCWzuYhyFAWvr/VzIW8Q4yMFB7ae14GsW8sUegUJeVjqCb2BCQ40ces4Lft9J/2DdVhJ
-         eOEvi5zXny8Zdx/t5oHo3tpF4TMp5+xvXT54ZIcT70Rz3/5P+q4HxqNM3bVHyy9H4Kc4
-         958qm177kFXJqZfsnG0/0KhoDvXAssuO+q4CZVn92UI6IRJy4fbtFaN65f19tKsJo44c
-         MXXNEzYx4n4s5LUvWwlMLunEu8XL7+FEKlteM7PRiAloFaeQimj2Yjk6aqxIPw7p4Jq8
-         ynhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXymhvLC6rV6iRgs91vJc7YqCNTEC7yz6qKf2PeYw0kCI2pMEV90DSuNWUB+y1ePOya2ffajm4HGOsf138=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8LS0rFvEikCZv6KhcprFaTe6uw8jrFk1qlue7BA0ycMV/PYjm
-	q8jT9GNOMt+qg8Qj+kA85du5PiLteSHNmtRo1jMqzPUpSZeDu/eECuX84HEjg+aHLKgNTzbaiGN
-	cDD61t+zeRh7dEosgwejQ6cwnuWamX8lE5YJFCyBXbT3N9RIXq88PN7+sfR3R3hxSkw==
-X-Gm-Gg: ASbGnctn+xD3CZb4sZTqSuz8Y57tyjGrMryCPB0RrjnQtTIHjsH/Mdwj+QO+wmNh88d
-	WyirwrhBFzeVjYAVOgTMPspXwdvepWL/ihvGcmoG/u2y8xsuEXltAAo+vvsUEJltMWoPKB8Pwsf
-	XovMnTf0JrR3pTnZOYDkjU8Jkf8pFWEMuoihWrNAoM/Jk3tBE0UTdmbcAa1lgEBLuky39wr9wn4
-	0P5ongvv1nMuUdy9XvtEr8A0diU0P0bO9XcPa30u+YHS3lth6ug2hKhxxPNfOFPCoHZBp4p+P3f
-	MIFkoNebi/fyqIe0HDYpwnesPVkIxpXenDoCbHdGvux3JweDW2x55e/i4mqFTdFSPTHcpTeg8l4
-	XMlG+
-X-Received: by 2002:a05:600c:8b8b:b0:453:b1c:442a with SMTP id 5b1f17b1804b1-4538ee70f31mr24187975e9.27.1751015565254;
-        Fri, 27 Jun 2025 02:12:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGrPuxSZs8zruo6edxrSyEN0yDly0bJfK6/O6yP8vrNS1ZzI1Ta9cGuoIvNVmYoF464I92XwQ==
-X-Received: by 2002:a05:600c:8b8b:b0:453:b1c:442a with SMTP id 5b1f17b1804b1-4538ee70f31mr24187655e9.27.1751015564743;
-        Fri, 27 Jun 2025 02:12:44 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e78e8sm2203570f8f.19.2025.06.27.02.12.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 02:12:44 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Maxime Ripard <mripard@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Anusha
- Srivatsa <asrivats@redhat.com>, Francesco Dolcini <francesco@dolcini.it>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Maxime
- Ripard <mripard@kernel.org>
-Subject: Re: [PATCH v2 4/5] drm/panel: panel-simple: Add function to look
- panel data up
-In-Reply-To: <20250626-drm-panel-simple-fixes-v2-4-5afcaa608bdc@kernel.org>
-References: <20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org>
- <20250626-drm-panel-simple-fixes-v2-4-5afcaa608bdc@kernel.org>
-Date: Fri, 27 Jun 2025 11:12:43 +0200
-Message-ID: <8734blczuc.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1751015595; c=relaxed/simple;
+	bh=CW9dRrxzJsbZj7d/cQox7XcDlQ0KFU2RLYYIYS+YKec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ipgSRisiqtXJxGblvbP5zx5xmPH9G/Ptmt0sp+DkcteegAszZxn2GH2tclHNgTNEaLJdhtPrcyL+8KXL7DwuKzFZ6E313/HqXBlOJjkMcYkV56+RLgqPz/lnCA1pXJ0RHZGPC0O657Yn1VTjvGCeZ6mGmYCl2TLxYMhRfvi2lkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0r2AvZzQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cw7qgBzE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0r2AvZzQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cw7qgBzE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 543A521168;
+	Fri, 27 Jun 2025 09:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751015591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mHSKn2TBs2JAIZha6EG+kAH1cFbN9zY+1x5JS8zFklo=;
+	b=0r2AvZzQO+EesVNyZmAbZL48pPDcKRDe0qETAcjRENL8jdAYwWuZeDIxGhEmUOkEDEUUSI
+	n87b1AlkzTNBlYgGoQdwPa3VAqzry0sQbSIwUF/xQW+54MqBEx1cVMLQX1X7TvaAlN+uNM
+	Iuv9avTlB9Qjn8h3k6X1mGccHPOnsXM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751015591;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mHSKn2TBs2JAIZha6EG+kAH1cFbN9zY+1x5JS8zFklo=;
+	b=Cw7qgBzEz688YWnXaN/BY/xv2HAmrBXkvDSObChPx3ej0+rIZYrajq6cNYsqFnzz4Bbs24
+	toQboJhVYpN+J/Bg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751015591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mHSKn2TBs2JAIZha6EG+kAH1cFbN9zY+1x5JS8zFklo=;
+	b=0r2AvZzQO+EesVNyZmAbZL48pPDcKRDe0qETAcjRENL8jdAYwWuZeDIxGhEmUOkEDEUUSI
+	n87b1AlkzTNBlYgGoQdwPa3VAqzry0sQbSIwUF/xQW+54MqBEx1cVMLQX1X7TvaAlN+uNM
+	Iuv9avTlB9Qjn8h3k6X1mGccHPOnsXM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751015591;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mHSKn2TBs2JAIZha6EG+kAH1cFbN9zY+1x5JS8zFklo=;
+	b=Cw7qgBzEz688YWnXaN/BY/xv2HAmrBXkvDSObChPx3ej0+rIZYrajq6cNYsqFnzz4Bbs24
+	toQboJhVYpN+J/Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22031138A7;
+	Fri, 27 Jun 2025 09:13:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qW/TBqdgXmh6aAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 27 Jun 2025 09:13:11 +0000
+Message-ID: <3b3feb03-c417-4569-b7b0-44565d7cce4f@suse.de>
+Date: Fri, 27 Jun 2025 11:13:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: efifb: do not load efifb if PCI BAR has changed
+ but not fixuped
+To: oushixiong1025@163.com, Helge Deller <deller@gmx.de>
+Cc: Peter Jones <pjones@redhat.com>, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Shixiong Ou <oushixiong@kylinos.cn>
+References: <20250626094937.515552-1-oushixiong1025@163.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250626094937.515552-1-oushixiong1025@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[163.com,gmx.de];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmx.de];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-Maxime Ripard <mripard@kernel.org> writes:
+Hi
 
-> Commit de04bb0089a9 ("drm/panel/panel-simple: Use the new allocation in
-> place of devm_kzalloc()") moved the call to drm_panel_init into the
-> devm_drm_panel_alloc(), which needs a connector type to initialize
-> properly.
+Am 26.06.25 um 11:49 schrieb oushixiong1025@163.com:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
 >
-> In the panel-dpi compatible case, the passed panel_desc structure is an
-> empty one used as a discriminant, and the connector type it contains
-> isn't actually initialized.
+> [WHY]
+> On an ARM machine, the following log is present:
+> [    0.900884] efifb: framebuffer at 0x1020000000, using 3072k, total 3072k
+> [    2.297884] amdgpu 0000:04:00.0: remove_conflicting_pci_framebuffers: bar 0: 0x1000000000 -> 0x100fffffff
+> [    2.297886] amdgpu 0000:04:00.0: remove_conflicting_pci_framebuffers: bar 2: 0x1010000000 -> 0x10101fffff
+> [    2.297888] amdgpu 0000:04:00.0: remove_conflicting_pci_framebuffers: bar 5: 0x58200000 -> 0x5823ffff
 >
-> It is initialized through a call to panel_dpi_probe() later in the
-> function, which used to be before the call to drm_panel_init() that got
-> merged into devm_drm_panel_alloc().
+> It show that the efifb framebuffer base is out of PCI BAR, and this
+> results in both efi-framebuffer and amdgpudrmfb co-existing.
 >
-> So, we do need a proper panel_desc pointer before the call to
-> devm_drm_panel_alloc() now. All cases associate their panel_desc with
-> the panel compatible and use of_device_get_match_data, except for the
-> panel-dpi compatible.
+> The fbcon will be bound to efi-framebuffer by default and cannot be used.
 >
-> In that case, we're expected to call panel_dpi_probe, which will
-> allocate and initialize the panel_desc for us.
+> [HOW]
+> Do not load efifb driver if PCI BAR has changed but not fixuped.
+> In the following cases:
+> 	1. screen_info_lfb_pdev is NULL.
+> 	2. __screen_info_relocation_is_valid return false.
+
+Apart from ruling out invalid screen_info, did you figure out why the 
+relocation tracking didn't work? It would be good to fix this if possible.
+
+Best regards
+Thomas
+
 >
-> Let's create such a helper function that would be called first in the
-> driver and will lookup the desc by compatible, or allocate one if
-> relevant.
->
-> Reported-by: Francesco Dolcini <francesco@dolcini.it>
-> Closes: https://lore.kernel.org/all/20250612081834.GA248237@francesco-nb/
-> Fixes: de04bb0089a9 ("drm/panel/panel-simple: Use the new allocation in place of devm_kzalloc()")
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 > ---
-
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+>   drivers/video/fbdev/efifb.c     |  4 ++++
+>   drivers/video/screen_info_pci.c | 24 ++++++++++++++++++++++++
+>   include/linux/screen_info.h     |  5 +++++
+>   3 files changed, 33 insertions(+)
+>
+> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+> index 0e1bd3dba255..de8d016c9a66 100644
+> --- a/drivers/video/fbdev/efifb.c
+> +++ b/drivers/video/fbdev/efifb.c
+> @@ -303,6 +303,10 @@ static void efifb_setup(struct screen_info *si, char *options)
+>   
+>   static inline bool fb_base_is_valid(struct screen_info *si)
+>   {
+> +	/* check whether fb_base has changed but not fixuped */
+> +	if (!screen_info_is_useful())
+> +		return false;
+> +
+>   	if (si->lfb_base)
+>   		return true;
+>   
+> diff --git a/drivers/video/screen_info_pci.c b/drivers/video/screen_info_pci.c
+> index 66bfc1d0a6dc..ac57dcaf0cac 100644
+> --- a/drivers/video/screen_info_pci.c
+> +++ b/drivers/video/screen_info_pci.c
+> @@ -9,6 +9,8 @@ static struct pci_dev *screen_info_lfb_pdev;
+>   static size_t screen_info_lfb_bar;
+>   static resource_size_t screen_info_lfb_res_start; // original start of resource
+>   static resource_size_t screen_info_lfb_offset; // framebuffer offset within resource
+> +static bool screen_info_changed;
+> +static bool screen_info_fixuped;
+>   
+>   static bool __screen_info_relocation_is_valid(const struct screen_info *si, struct resource *pr)
+>   {
+> @@ -24,6 +26,24 @@ static bool __screen_info_relocation_is_valid(const struct screen_info *si, stru
+>   	return true;
+>   }
+>   
+> +bool screen_info_is_useful(void)
+> +{
+> +	unsigned int type;
+> +	const struct screen_info *si = &screen_info;
+> +
+> +	type = screen_info_video_type(si);
+> +	if (type != VIDEO_TYPE_EFI)
+> +		return true;
+> +
+> +	if (screen_info_changed && !screen_info_fixuped) {
+> +		pr_warn("The screen_info has changed but not fixuped");
+> +		return false;
+> +	}
+> +
+> +	pr_info("The screen_info is useful");
+> +	return true;
+> +}
+> +
+>   void screen_info_apply_fixups(void)
+>   {
+>   	struct screen_info *si = &screen_info;
+> @@ -32,18 +52,22 @@ void screen_info_apply_fixups(void)
+>   		struct resource *pr = &screen_info_lfb_pdev->resource[screen_info_lfb_bar];
+>   
+>   		if (pr->start != screen_info_lfb_res_start) {
+> +			screen_info_changed = true;
+>   			if (__screen_info_relocation_is_valid(si, pr)) {
+>   				/*
+>   				 * Only update base if we have an actual
+>   				 * relocation to a valid I/O range.
+>   				 */
+>   				__screen_info_set_lfb_base(si, pr->start + screen_info_lfb_offset);
+> +				screen_info_fixuped = true;
+>   				pr_info("Relocating firmware framebuffer to offset %pa[d] within %pr\n",
+>   					&screen_info_lfb_offset, pr);
+>   			} else {
+>   				pr_warn("Invalid relocating, disabling firmware framebuffer\n");
+>   			}
+>   		}
+> +	} else {
+> +		screen_info_changed = true;
+>   	}
+>   }
+>   
+> diff --git a/include/linux/screen_info.h b/include/linux/screen_info.h
+> index 923d68e07679..632cdbb1adbe 100644
+> --- a/include/linux/screen_info.h
+> +++ b/include/linux/screen_info.h
+> @@ -138,9 +138,14 @@ ssize_t screen_info_resources(const struct screen_info *si, struct resource *r,
+>   u32 __screen_info_lfb_bits_per_pixel(const struct screen_info *si);
+>   
+>   #if defined(CONFIG_PCI)
+> +bool screen_info_is_useful(void);
+>   void screen_info_apply_fixups(void);
+>   struct pci_dev *screen_info_pci_dev(const struct screen_info *si);
+>   #else
+> +bool screen_info_is_useful(void)
+> +{
+> +	return true;
+> +}
+>   static inline void screen_info_apply_fixups(void)
+>   { }
+>   static inline struct pci_dev *screen_info_pci_dev(const struct screen_info *si)
 
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
