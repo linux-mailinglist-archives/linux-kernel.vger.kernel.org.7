@@ -1,150 +1,176 @@
-Return-Path: <linux-kernel+bounces-705630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FB8AEAB9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:11:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F410CAEAB9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABC787B6445
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:09:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4AB1C25352
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2494431;
-	Fri, 27 Jun 2025 00:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9545C9461;
+	Fri, 27 Jun 2025 00:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MaIsX67E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZcBJiqI0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069563234
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 00:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3292F3234
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 00:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750983027; cv=none; b=qAytxzB3xe8Jc1UihiHrlqiOiKc/JUJr9sokplQTYSaTSiXR4byGwUpX11x8RhDOck3TOCVoFLPGF6EAbMe7qxz1xmcJ2fKvTrYj2ACdmT0f0ielz0inqYoUDfxdAZtB9hHNAMP7Evyu4PU5HEZBvIs2DxSBGdNeR9gbfhPKvMs=
+	t=1750983121; cv=none; b=eje5KSYvqN3RxCUiuo1ZdmXA2cfI4uVwiE1gUTwgiT2onHW5yToq7mgcoGsHeN4pTZJcPBLfqTi59oQYB/eku4lKOvKRbZ1jdSmnH+1LxrZkyOdE4lP9LpcqgqoJYW5aTN1aY2k7/viCvAbSufQ0xeOdBwzfn0NjspSNEVUAKwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750983027; c=relaxed/simple;
-	bh=vLuXr3OHsn81mt/r85TJd3sMjzzVqGImybC0kaAHcTQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m5Pw6btSZeot8nvGFn389ya/dLFd7vIZhc0K2AhhB+oW0Pba7jodJAtWuuDTuBCcqyMRAlMLuWo9gpUnkzk4MPgvw6RCrbwIoloIL8gHxiiytYgiVXeW0rxDIxrnsWMLXrVOsczn++z1vxfLmNyHcGE8zhQR2ZXgTr1OVj6zXLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MaIsX67E; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750983026; x=1782519026;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=vLuXr3OHsn81mt/r85TJd3sMjzzVqGImybC0kaAHcTQ=;
-  b=MaIsX67ELkRemxWflIsM8qKt6OYasMwCZt6vU2Lyezl8zl2M93hYP/Lh
-   DCr4HNPMmg7/ejesyfOxnNLxswX2iXNZr5CKZbOFlLhHtYPzRFJHuUr10
-   ly3THwzcrbgj0A1FDgALwFQqM/c1xKPsrJ2r0jzyubGTju1TVi9RZMbks
-   oGK7r9G7/LqRaAfgfGzIxHwRx5RCb+FewhU+Z7l1j8tDsMaHKAh36PYMZ
-   cmFfAi2WdIf1aCzU6MjXpL0sSGop7NtmzT7DysB5L5UVntyb0kMS3VLbb
-   Eq9ZJYZYaBaeINqr6hRgtELFo2JdVpyTDPAl3L9kV6kpyWrcywaAyz8gV
-   w==;
-X-CSE-ConnectionGUID: BNKQPR2BQKS1kPLYHryE1A==
-X-CSE-MsgGUID: h9NztAUkS5O3tHd8WYNTsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53020826"
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="53020826"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 17:10:25 -0700
-X-CSE-ConnectionGUID: o0icYyA9RA6PIeV3Wo9Ynw==
-X-CSE-MsgGUID: cqrcIp+/TZaTaxhQKEAleA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,268,1744095600"; 
-   d="scan'208";a="152277509"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.150]) ([10.124.220.150])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 17:10:24 -0700
-Message-ID: <75e763df63fdddc77fcb2a02bfc3b94eb22aadb2.camel@linux.intel.com>
-Subject: Re: [RFC patch v3 01/20] sched: Cache aware load-balancing
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>, Jianyong Wu <jianyong.wu@outlook.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, Tim Chen <tim.c.chen@intel.com>, Vincent
- Guittot <vincent.guittot@linaro.org>, Libo Chen <libo.chen@oracle.com>,
- Abel Wu <wuyun.abel@bytedance.com>, Madadi Vineeth Reddy
- <vineethr@linux.ibm.com>,  Hillf Danton <hdanton@sina.com>, Len Brown
- <len.brown@intel.com>, linux-kernel@vger.kernel.org, "Gautham R . Shenoy"
- <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>
-Date: Thu, 26 Jun 2025 17:10:24 -0700
-In-Reply-To: <b3062fe0-da79-4f5f-8361-e2002dae9a35@intel.com>
-References: <cover.1750268218.git.tim.c.chen@linux.intel.com>
-	 <cbe56cb89cca4c3ddcbc9956a82bda23f5b81c57.1750268218.git.tim.c.chen@linux.intel.com>
-	 <SI2PR04MB4931D866229A4F148F26CD72E37AA@SI2PR04MB4931.apcprd04.prod.outlook.com>
-	 <b3062fe0-da79-4f5f-8361-e2002dae9a35@intel.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1750983121; c=relaxed/simple;
+	bh=AfuA1Q4dGW/R/LmUZ6GkNdE8h//0/AIDkbN+a8Ve9nE=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JHV9BYv3T2WTo3IiHmrVAAxG5vP9Ju+roo0wJNbq9rKMIw7mstl+CKvAPExgOd3LEDnsfE7qsL1OWN/eLtBcLYTir0xd9JRVwgwBmS8aFbpEb1Ys+7XFRxpzKTsAT+d2Cw8kmkh7enkYV3zpZRZ7Wa2HwqIk0X7K1GETwZkB3WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZcBJiqI0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750983119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PDHugx8Wa0UzYJ/GA4AZ0RcTmsVFGQY+Se/1LaUcEqs=;
+	b=ZcBJiqI0nwra7BZ9GEYme9wCUrYxfdY8sXZtDZ5OA+uu1y0iTRRaYH7TCHq+LW4CVSzO/P
+	VnUC2PGWqZ9S9OCBTxA/4HagfDlzbaUpvEqidMKx1fVrJZKroe2cFYHrY9nLUSaBnbQ9ZG
+	dAjLY1kpmTJQlJgpD9uiLeSusf+GOv0=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-519-YuyVYs2qPem3Qds_P_ASLg-1; Thu, 26 Jun 2025 20:11:57 -0400
+X-MC-Unique: YuyVYs2qPem3Qds_P_ASLg-1
+X-Mimecast-MFC-AGG-ID: YuyVYs2qPem3Qds_P_ASLg_1750983117
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23536f7c2d7so24789195ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 17:11:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750983117; x=1751587917;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDHugx8Wa0UzYJ/GA4AZ0RcTmsVFGQY+Se/1LaUcEqs=;
+        b=vKsfKi2paIVaiBA+wBvVARaEjJlkIsFlaC8eUW7Is0C2N/cTN3ZGlc5a31ePnI6cYG
+         oUrC9f9jSJZ8RvGqmHtoTj4/lJ/XG/UgIoA430uOa//IzidZcECUWHOMQVT+9mMZDaCY
+         d8KwD6RjX8q7d6z3W6113VTIP5+bekIcunWkNdeOxrUp0Vu8C4zvczRvpdN8g1v18302
+         dCarpWbmT4BzWTh+ZRXxNkma1iny/2/FaxyW/2fZBw3xg+K6dFGl9BWdnLna8N9MgR3S
+         xATJYCvpMGl7OKIgWI9hJZsVmwrcwbP7nkz1GypT0VyTbUQ4aJOpgGlg7+TmlQGbm1zG
+         Tjmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA4ZmpzC6kpFMcIixjml0mP/IO0qMCuRm/vjVAj/kzvt5NLc3RQ1UgHxoL+yNyhPDtZ4tSm30TveHt010=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTDYDEGBARvjV0cl3ksf0nNY7g/1J6uFnhRLteS/bIo7aCteJq
+	yTHEhTi8QVlnih/BiL3LoxF7U3Wt+Vy2+jY2jX1q+Y81FMk3IDHgESl2Npsnpb3OXTKe/RwLY13
+	s6k//eIfjVaywvxE4F76kECv3RwAb08xqNnrmE4mwKuGfvbXvYmNT1Q2IstULFcc/pA==
+X-Gm-Gg: ASbGncsNHumVsRhGUancVvMgT0iL86Tho9wW3mS/8S8nd5tcK+DDy+xCO2CKtm7Ccow
+	pGaV+TcH4K4TzxZIyNrXlBKQeFF7awT/ei6M7boJqKB0Ohm3+sJUoZf7tSV3tjUJz7KIwBIWBMZ
+	jgGhVqC3BhpkyFKbAjNpwPjJa8SU8Sx22n+EsIEl5ziHrtLiYQXlEN1z5EnWwVZiGjH0WdG66PT
+	VZHZOfC1FAsJPGnZVpkwbb0/8hLZ82TYNLvZ2U3qPTJWG9/vUOuzaXN/7hBqxiVrkkdIyd+gugV
+	MP12wbLFXOaXKpT8EFH8r0KcJfkM+7KPuU7b0FtSH39jTCdpP1Ol7y+CZhYtpPv33FRj
+X-Received: by 2002:a17:903:f8c:b0:234:b123:b4ff with SMTP id d9443c01a7336-23ac45c1c84mr15752435ad.21.1750983116787;
+        Thu, 26 Jun 2025 17:11:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQqDn7AQvFlJHqTfJzSWTr9Jz9pgORHBaAe871Av2pUzBCUnRY6E9Tr0X4OTANhkUrVWw6Iw==
+X-Received: by 2002:a17:903:f8c:b0:234:b123:b4ff with SMTP id d9443c01a7336-23ac45c1c84mr15752195ad.21.1750983116422;
+        Thu, 26 Jun 2025 17:11:56 -0700 (PDT)
+Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3b0052sm2188785ad.158.2025.06.26.17.11.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jun 2025 17:11:55 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <c205b6a8-89ee-424e-ac83-94584d59a449@redhat.com>
+Date: Thu, 26 Jun 2025 20:11:54 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/27] sched/isolation: Introduce housekeeping per-cpu
+ rwsem
+To: Phil Auld <pauld@redhat.com>, Frederic Weisbecker <frederic@kernel.org>
+Cc: Waiman Long <llong@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Marco Crivellari
+ <marco.crivellari@suse.com>, Michal Hocko <mhocko@suse.com>,
+ Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
+References: <20250620152308.27492-1-frederic@kernel.org>
+ <20250620152308.27492-3-frederic@kernel.org>
+ <3bf95ee2-1340-41b1-9f5c-1563f953c6eb@redhat.com>
+ <20250625121850.GA57862@pauld.westford.csb>
+ <aFwI6sCtObAGoMBt@localhost.localdomain>
+ <20250625155017.GC57862@pauld.westford.csb>
+Content-Language: en-US
+In-Reply-To: <20250625155017.GC57862@pauld.westford.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-06-26 at 21:32 +0800, Chen, Yu C wrote:
->=20
-> >=20
-> > This task work may take a long time for the system with large number=
-=20
-> > cpus which increacing the delay for process back to userspace. It may b=
-e=20
-> > the reason that schbench benchmark regressed so much.
-> >=20
->=20
-> Thanks for the insight Jianyong, yes, the scan on all online CPUs would
-> be costly.
->=20
-> > To avoid searching the whole system, what about just searching the=20
-> > preferred numa node provided by numa balancing if there is one. If not,=
-=20
-> > then fallback to search the whole system or just search the numa node=
-=20
-> > where the main process locates as there is a high probability it=20
-> > contains the preferred LLC. In other words, we can opt for a suboptimal=
-=20
-> > LLC location to prioritize speed.
-> >=20
-> > WDYT?
-> >=20
-> This is a good idea. Previously, Tim had a version that dealt with a
-> similar scenario, which only scanned the CPUs within p's preferred node.
+On 6/25/25 11:50 AM, Phil Auld wrote:
+> On Wed, Jun 25, 2025 at 04:34:18PM +0200 Frederic Weisbecker wrote:
+>> Le Wed, Jun 25, 2025 at 08:18:50AM -0400, Phil Auld a écrit :
+>>> Hi Waiman,
+>>>
+>>> On Mon, Jun 23, 2025 at 01:34:58PM -0400 Waiman Long wrote:
+>>>> On 6/20/25 11:22 AM, Frederic Weisbecker wrote:
+>>>>> The HK_TYPE_DOMAIN isolation cpumask, and further the
+>>>>> HK_TYPE_KERNEL_NOISE cpumask will be made modifiable at runtime in the
+>>>>> future.
+>>>>>
+>>>>> The affected subsystems will need to synchronize against those cpumask
+>>>>> changes so that:
+>>>>>
+>>>>> * The reader get a coherent snapshot
+>>>>> * The housekeeping subsystem can safely propagate a cpumask update to
+>>>>>     the susbsytems after it has been published.
+>>>>>
+>>>>> Protect against readsides that can sleep with per-cpu rwsem. Updates are
+>>>>> expected to be very rare given that CPU isolation is a niche usecase and
+>>>>> related cpuset setup happen only in preparation work. On the other hand
+>>>>> read sides can occur in more frequent paths.
+>>>>>
+>>>>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+>>>> Thanks for the patch series and it certainly has some good ideas. However I
+>>>> am a bit concern about the overhead of using percpu-rwsem for
+>>>> synchronization especially when the readers have to wait for the completion
+>>>> on the writer side. From my point of view, during the transition period when
+>>>> new isolated CPUs are being added or old ones being removed, the reader will
+>>>> either get the old CPU data or the new one depending on the exact timing.
+>>>> The effect the CPU selection may persist for a while after the end of the
+>>>> critical section.
+>>>>
+>>>> Can we just rely on RCU to make sure that it either get the new one or the
+>>>> old one but nothing in between without the additional overhead?
+>>>>
+>>>> My current thinking is to make use CPU hotplug to enable better CPU
+>>>> isolation. IOW, I would shut down the affected CPUs, change the housekeeping
+>>>> masks and then bring them back online again. That means the writer side will
+>>>> take a while to complete.
+>>> The problem with this approach is that offlining a cpu effects all the other
+>>> cpus and causes latency spikes on other low latency tasks which may already be
+>>> running on other parts of the system.
+>>>
+>>> I just don't want us to finally get to dynamic isolation and have it not
+>>> usable for the usecases asking for it.
+>> We'll have to discuss that eventually because that's the plan for nohz_full.
+>> We can work around the stop machine rendez-vous on nohz_full if that's the
+>> problem. If the issue is not to interrupt common RT-tasks, then that's a
+>> different problem for which I don't have a solution.
+>>
+> My understanding is that it's the stop machine issue. If you have a way
+> around that then great!
 
-Yes, we were also thinking along the line of looking only at the preferred
-node.
+My current thinking is to just run a selected set of CPUHP teardown and 
+startup methods relevant to housekeeping cpumasks usage without calling 
+the full set from CPUHP_ONLINE to CPUHP_OFFLINE. I don't know if it is 
+possible or not or how much additional changes will be needed to make 
+that possible. That will skip the CPUHP_TEARDOWN_CPU teardown method 
+that is likely the cause of most the latency spike experienced by other 
+CPUs.
 
->   However, it seems to cause bouncing of the mm->mm_sched_cpu because we
-> set a 2X threshold for switching the mm->mm_sched_cpu in patch 5. If the
-> old mm_sched_cpu is not in p's current preferred node, last_m_a_occ is
-> always 0, which makes the switching of mm->mm_sched_cpu always succeed
-> due to the condition if (m_a_occ > (2 * last_m_a_occ)).=C2=A0
->=20
-There were some regressions on schbench during out tests and preferred
-LLC bounces switches a lot with preferred node as mentioned by
-Chen Yu.  For schbench, there's really not much NUMA data and preferred
-node bounces around. We'll have to figure out the right thing
-to do if preferred node changes and preferred LLC falls outside the
-preferred node.
-
-Tim
-
-> Anyway, since it
-> is a software issue, we can find a way to address it.
->=20
-> Maybe we also following Abel's suggestion that only one thread of
-> the process is allowed to perform the statistic calculation, this
-> could minimal the negative impact to the whole process.
->=20
+Cheers,
+Longman
 
 
