@@ -1,86 +1,126 @@
-Return-Path: <linux-kernel+bounces-706861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F262AEBCF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8942AEBCF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7411E7B230A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0371C2517A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219971A262D;
-	Fri, 27 Jun 2025 16:17:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B26A1A9B3D;
+	Fri, 27 Jun 2025 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvgZlx4u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5B11A08A4
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5689E1A08A4;
+	Fri, 27 Jun 2025 16:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751041044; cv=none; b=dMK9/hGjWa6VJJ6mRiy/FD+SG1J6lKlnp7bpd7q4H6kxCIWRUh+8XeGaBQhf0axhccXRSaCzz3omn9zxkW/qKr/EV4+qxn6VkpnJoKycvlyY4JGDhekOUMkW734FulAX2LyeOwAa3E630uPZIx+ArZUuWWY6wEb1VViPNoWeBDg=
+	t=1751041095; cv=none; b=ccjumgaVcAX1ThnUZXpl6whGEk6vsggZqKS87IRW/PdM/wDEDPtjiuwABDRNgK1ve4JYG7halVmjhklpcXvqh612Cd0o+G4cArB5scy4a2xAI9vQC13gn3U88NB2EjiCfGULQ0K5wiGRm4QIHsEG3tT7F3bbvGlKW6m8fURZV2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751041044; c=relaxed/simple;
-	bh=2EDYynSAKdcNkoTKt2Z1SNAswFEK8/5Ov1+wsGM+KF4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lX7XrcBxyV4ycsyoOzRbJi9Qko3D73pN3Ijed3hCQSrnuFHmvkOR0wcbNpPYMsgTJCK/sG7Pv4Yv2lp/kFw9O4anjKqcYXSjme7idA0CYemw4XVTnO9VE2eG3lIlXt1USGVAvmIbeTUNPzzvkpIwnNV4UKVL7okgS6IMNarVpB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uVBlM-0000VN-W7; Fri, 27 Jun 2025 18:17:17 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uVBlM-005e4c-2D;
-	Fri, 27 Jun 2025 18:17:16 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uVBlM-000QIt-1v;
-	Fri, 27 Jun 2025 18:17:16 +0200
-Message-ID: <6b9d0c3d9c5a0338b16f32e37a759df836f2c004.camel@pengutronix.de>
-Subject: Re: [PATCH 1/1] dt-bindings: reset: convert nxp,lpc1850-rgu.txt to
- yaml format
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "open
- list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-Date: Fri, 27 Jun 2025 18:17:16 +0200
-In-Reply-To: <20250602144046.943982-1-Frank.Li@nxp.com>
-References: <20250602144046.943982-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1751041095; c=relaxed/simple;
+	bh=vNyKPuHzCNUHX4x3bntCWHqAQ4zTRDjMdL7Oc2xzQyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+2QyuGIPDcNQ7Niw2eVxFK34rwhqlH0vUhxFO9VGEDud6bQbrb11mDakX1PfndkAAuLSW/Et46GyEG8tzkowWYXZnF0SZDE336KLKZlbAxiUJWkOlrBQEpRW1wPDhzCYYwvHWsVbz9+WKu/91d2MwlvMx0wXnIR3m2mW1ScODs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvgZlx4u; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751041094; x=1782577094;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vNyKPuHzCNUHX4x3bntCWHqAQ4zTRDjMdL7Oc2xzQyI=;
+  b=kvgZlx4u3zsCh4/ThTmTOpv/tnPY+XxsuDvqz3ngp7afkzQKcuhZpZNY
+   IjdC22XHUxeHburD50xEVTfx05vOxPETtm6F/gy87e6XdjjMeSpRdl5Yt
+   Ck+XBBUIivM/tiZaXDYRnfrrAjyGzm1kE9tt8JDlGGKUJ4Q8G+dYmjR6P
+   NFiiJF4KEc63VGsSkUfx/SSFRckfph0Yg6vhFiRSEsvCkbu6OKOucq+4s
+   dXaImImHE/jbxvgUqbsdAuHIiducSNYqUWYRctlhXMOnH2H32RYEAoSj6
+   EengU73QJ7Qg5dwAbrIzLMUDwGcemmACIoucSRmacJN35e0kPfC1WjZRC
+   w==;
+X-CSE-ConnectionGUID: 3e3NQTRpTg244UziF44Org==
+X-CSE-MsgGUID: 2sXXAbucTyG/+aWCo0pAdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="40983254"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="40983254"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:17:27 -0700
+X-CSE-ConnectionGUID: x6MOS/2zRwqYo99kITkz4g==
+X-CSE-MsgGUID: ZwvY1V5LQ5qWmx5VIdRoJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="157129155"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:17:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uVBlQ-0000000AX4s-2NUJ;
+	Fri, 27 Jun 2025 19:17:20 +0300
+Date: Fri, 27 Jun 2025 19:17:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: LiangCheng Wang <zaq14760@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v6] staging: media: atomisp: apply clang-format and fix
+ checkpatch.pl errors
+Message-ID: <aF7EEAxXsurLvIt9@smile.fi.intel.com>
+References: <20250627-bar-v6-1-b22b5ea3ced0@gmail.com>
+ <e201c4b0-4fcc-4d98-9d76-0e9c41dc4d9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e201c4b0-4fcc-4d98-9d76-0e9c41dc4d9f@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mo, 2025-06-02 at 10:40 -0400, Frank Li wrote:
-> Convert nxp,lpc1850-rgu.txt to yaml format.
->=20
-> Additional changes:
-> - remove label in example.
-> - remove reset consumer in example.
+On Fri, Jun 27, 2025 at 06:05:08PM +0200, Hans de Goede wrote:
+> On 27-Jun-25 4:56 PM, LiangCheng Wang wrote:
 
-Applied to reset/next, thanks!
+...
 
-[1/1] dt-bindings: reset: convert nxp,lpc1850-rgu.txt to yaml format
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D25ef956349a5
+>  	for (i = 0; i < count; i++) {
+> -		err = i2c_smbus_write_byte_data(client, reglist[i].reg, reglist[i].val);
+> +		err = i2c_smbus_write_byte_data(client, reglist[i].reg,
+> +						reglist[i].val);
+>  		if (err) {
+> -			dev_err(&client->dev, "write error: wrote 0x%x to offset 0x%x error %d",
+> 
+> The original line here had a length below 100 chars, so it was fine
+> and log messages are allowed to go over the length limit
 
-regards
-Philipp
+Actually I tend to agree with clang-format on this case and that's why:
+until V4L2 becomes less pedantic and fanatic about 80 characters
+limit, the 100 is not applicable for this driver to be moved under
+their umbrella.
+
+> +			dev_err(&client->dev,
+> +				"write error: wrote 0x%x to offset 0x%x error %d",
+>  				reglist[i].val, reglist[i].reg, err);
+>  			return err;
+>  		}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
