@@ -1,159 +1,128 @@
-Return-Path: <linux-kernel+bounces-707101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF25AEBFC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C62AEBFCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4534A7D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23695565BA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B525211460;
-	Fri, 27 Jun 2025 19:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2C7217648;
+	Fri, 27 Jun 2025 19:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcStCyds"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="chxIXNcN"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A702C20AF9C;
-	Fri, 27 Jun 2025 19:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4F220C03E;
+	Fri, 27 Jun 2025 19:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751052413; cv=none; b=OJYThcfCMF58fkI/t196/xnGXaOFIZbRKPuupVFR4bfIoYSMVz/aJmPONHVuPZuvqgG8BxECXHC8+dvAS2izKUoJyQDrlxMzECjVRMAzENfSRMg2REa8zo0sQRuljVG4ehUQ1A3Jt3gDeGlZ+qDHJkAQKC4F1ZwKtdA/fZ0Osqo=
+	t=1751052583; cv=none; b=bh5FCqSww+sihfc+gUQgAUpGpwLHjSL/9YQ3thPBQK0ogylUcVBgkWWPumDZs/v64vV+11M2NM8nMQg3WExIyPGmI5qp571LsWMncXk/wQteqa/Dm5ZqbMBWCP1RTBHeX04oAg2KRpURCowA85LvmHpkfbp6jGlXHuW3f5TQy8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751052413; c=relaxed/simple;
-	bh=kCoAehJoP4d3veWTy0DxemolidReITNQ2YabMYVknDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5Oyzhfaz7ewmzkd2UOZKzlV5upoQ+H4miYnK1K9ixtIcTqCFqetmSnbtDaVbrrfAMWtqwxGD28+yn+CPRQaWPwfEBhl1EwtqgTBcsvUuIZ63KPC5cv5E+zvxqhaxSKocuvHeosps3FFYLq9tqBK85tkr7bJHY2MlOq0T8L8i2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcStCyds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0140AC4CEE3;
-	Fri, 27 Jun 2025 19:26:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751052413;
-	bh=kCoAehJoP4d3veWTy0DxemolidReITNQ2YabMYVknDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fcStCydsxKyIDjbz3Tz51AeLrwy5mof6hG1an2zqnuWTNSnQLJUO0VkblIlnYNyzP
-	 4ioTcAoJeHgAWz8nJrR/AoPshag+KCtlDO/ZzklDEDbLyKhP+iZcc2ocHDOhjDK3Av
-	 erBF0XU329gNyQW7lDqBBRv8GrGHvsnR8GzkdxWe1Bvd+6V8PKvsJQkTs6QkZIC+35
-	 WDWaaU0yKbjz8YqGFZFfvUT7Soth1y0BLOfdiAq6TTVPCFwpxt/uFRnzoILet9oizy
-	 O8aWp2JmnMCfOBv4XY2LiWTQGVxE0aM5lo49Tuxe8VH2Dulut2dn15YAEhhxFfXAdE
-	 lW+/7cDWPe8Wg==
-Date: Fri, 27 Jun 2025 12:26:50 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Li Huafei <lihuafei1@huawei.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	llvm@lists.linux.dev, Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v4 06/19] perf capstone: Support for dlopen-ing
- libcapstone.so
-Message-ID: <aF7wesWHTv_Wp-8y@google.com>
-References: <20250417230740.86048-1-irogers@google.com>
- <20250417230740.86048-7-irogers@google.com>
- <aF3Vd0C-7jqZwz91@google.com>
- <CAP-5=fV4x0q7YdeYJd6GAHXd48Qochpa-+jq5jsRJWK36v7rSA@mail.gmail.com>
- <CAP-5=fXLUO3yvSmM4nSnNV_qQGGLP_XTcfPgOhgOkuaNnr3Hvw@mail.gmail.com>
+	s=arc-20240116; t=1751052583; c=relaxed/simple;
+	bh=kY9pRbBGXyFt52NNCZFJytbQXz3mokYgEYHz3UNvujM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mAcq8KCUHi/Yft9qqpdu41sy/F/KI/DgVGvcARwjI1rCLmhJDdk0xtndOr69Vp2OAZq1oFBKPX4f7JJmvSa6wilq3A8j8iPNiLWdhAjrlfRgx+IfeEIZoYC51SlMCnz5NWvOLTkt77LahrrNbHE2HTzZlxVcNq/q0JL1QrSEi/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=chxIXNcN; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 2E32866DE29;
+	Fri, 27 Jun 2025 21:29:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1751052573;
+	bh=kY9pRbBGXyFt52NNCZFJytbQXz3mokYgEYHz3UNvujM=;
+	h=From:Subject:Date;
+	b=chxIXNcNZweVjZDYMbATeSQQTOp1C6QSshPZptPOHzlZGHjAzY1XSkiQEBFM4jBos
+	 WMIB42fmWiYWKEdiUnqjTlFp6vWCN6/PGWkER0kxElUSF6IvDXxVdCTh0dqTyksPel
+	 9f7JGBZgy8xSCLFnKyGZRqIk6U8A28K7y0+I0rDih0q7ZYZxYPR9MJJObxJUh+sD7U
+	 oEUWk7YgzjkfHQCwkUVcwdsdSzOQUos5dzPDtXbZBpP6VGSMUqwHiVVF85yDpXT775
+	 59U2Es4hoaVyAupPRyHLOAe6bz3fEa1L4rvhTTueBYOI8QDl8NA8FCu/ooi/08scp9
+	 Jf1LLtdYYJyFw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Bjorn Helgaas <helgaas@kernel.org>
+Subject: [PATCH v3 9/9] PCI/PM: Set power.strict_midlayer in pci_pm_init()
+Date: Fri, 27 Jun 2025 21:29:16 +0200
+Message-ID: <1925097.atdPhlSkOF@rjwysocki.net>
+In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
+References: <5018768.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXLUO3yvSmM4nSnNV_qQGGLP_XTcfPgOhgOkuaNnr3Hvw@mail.gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTGRmHXmKxezHgHnenmfNBRxuxS5icg2UpqKuDHPuOJctsue4XUZZKRq+I3k43I7hGGWSVpCO2RMCqeSIExCba3+jEV4RHupFvblFZsJZEOU7KXO+apCLF7BrBbkfQgmVa3qfzu3l1CWWL3sTxIklFfy+SfQ3LU6S7g6b40rVIMKuT9PeVQ7vN73+o7FRm9i7DCswR8ZH2qLd5FKGiCRHAdTIZCJcdKbCzlNjgCJP7j9sC140zaF4s84pWcODIanBShuw8pSTZor6gJPE1mce69YOKvKUPMQL94xAmz+P6IQ2jB2WOr72U/SFpTenbJ1S72cePd03wWASkAhj+PgKNE/kKaG855T+EyLZWoLbf4OYEM2kSOJ7GiNom/yotNU5itFRBu9ztylBE6t5JhKLjiXKijes9NEspnrfifqNeEp1Iti6cizTPhSednvuVLBvTgy22/fO5Hdwix0ZC67F4Is0PRCrSBuuF7KbGU4LIhBJv8/XKtYrzsYSiRbLVUBf0HTlsKeaxYAbcVoxU997JTOkabLjeefj/4PDUXPX7gfPxWiQoKCdoQ2q3YeD5r9SIpwTX4Q1yW1rAk3Ubk30v+V+PvNb2Z1gR5NzsHGaG4RHE0g6QLLpAkF++EbO6hrRRakssNrfSdFb0IgXU7vRUp7COxhzJFOT/Q8mdjKYmP8ow
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-On Fri, Jun 27, 2025 at 09:44:02AM -0700, Ian Rogers wrote:
-> On Thu, Jun 26, 2025 at 9:53 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > On Thu, Jun 26, 2025 at 4:19 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > >
-> > > On Thu, Apr 17, 2025 at 04:07:27PM -0700, Ian Rogers wrote:
-> > > > If perf wasn't built against libcapstone, no HAVE_LIBCAPSTONE_SUPPORT,
-> > > > support dlopen-ing libcapstone.so and then calling the necessary
-> > > > functions by looking them up using dlsym. Reverse engineer the types
-> > > > in the API using pahole, adding only what's used in the perf code or
-> > > > necessary for the sake of struct size and alignment.
-> > >
-> > > I still think it's simpler to require capstone headers at build time and
-> > > add LIBCAPSTONE_DYNAMIC=1 or something to support dlopen.
-> >
-> > I agree, having a header file avoids the need to declare the header
-> > file values. This is simpler. Can we make the build require
-> > libcapstone and libLLVM in the same way that libtraceevent is
-> > required? That is you have to explicitly build with NO_LIBTRACEEVENT=1
-> > to get a no libtraceevent build to succeed. If we don't do this then
-> > having LIBCAPSTONE_DYNAMIC will most likely be an unused option and
-> > not worth carrying in the code base, I think that's sad. If we require
-> > the libraries I don't like the idea of people arguing, "why do I need
-> > to install libcapstone and libLLVM just to get the kernel/perf to
-> > build now?" The non-simple, but still not very complex, approach taken
-> > here was taken as a compromise to get the best result (a perf that
-> > gets faster, BPF support, .. when libraries are available without
-> > explicitly depending on them) while trying not to offend kernel
-> > developers who are often trying to build on minimal systems.
-> 
-> Fwiw, a situation that I think is analogous (and was playing on my
-> mind while writing the code) is that we don't require python to build
-> perf and carry around empty-pmu-events.c:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/empty-pmu-events.c?h=perf-tools-next
-> It would be simpler (in the code base and in general) to require
-> everyone building perf to have python.
-> Having python on a system seems less of a stretch than requiring
-> libcapstone and libLLVM.
-> 
-> If we keep the existing build approach, optional capstone and libLLVM
-> by detecting it as a feature, then just linking against the libraries
-> is natural. Someone would need to know they care about optionality and
-> enable LIBCAPSTONE_DYNAMIC=1. An average build where the libraries
-> weren't present would lose the libcapstone and libLLVM support. We
-> could warn about this situation but some people are upset about build
-> warnings, and if we do warn we could be pushing people into just
-> linking against libcapstone and libLLVM which seems like we'll fall
-> foul of the, "perf has too many library dependencies," complaint. We
-> could warn about linking against libraries when there is a _DYNAMIC
-> alternative like this available, but again people don't like build
-> warnings and they could legitimately want to link against libcapstone
-> or libLLVM.
-> 
-> Anyway, that's why I ended up with the code in this state, to best try
-> to play off all the different compromises and complaints that have
-> been dealt with in the past.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I can see your point.  Adding new build flags is likely to be unused and
-forgotten.
+The PCI bus type does not expect its runtime PM suspend callback
+function, pci_pm_runtime_suspend(), to be invoked at all during system-
+wide suspend and resume, and it does not expect its runtime resume
+callback function, pci_pm_runtime_resume(), to be invoked at any point
+when runtime PM is disabled for the given device during system-wide
+suspend and resume, so make it express that expectation by setting
+power.strict_midlayer for all PCI devices in pci_pm_prepare() and
+clear it in pci_pm_complete().
 
-But I also think is that this dlopen support is mostly useful to distro
-package managers who want to support more flexible environment and
-regular dynamic linking is preferred to local builds over dlopen.  Then
-adding a note to a pull request and contacting them directly (if needed)
-might work?
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+---
 
-Thanks,
-Namhyung
+v2 -> v3:
+   * Update subject prefix (Bjorn).
+   * Update the changelog to be more precise.
+   * Add Acked-by from Bjorn.
+
+v1 -> v2:
+   * Set and clear the new flag in "prepare" and "complete" to allow
+     pm_runtime_force_suspend() invoked from driver remove callbacks to
+     work.
+   * Update subject and changelog.
+
+---
+ drivers/pci/pci-driver.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -708,6 +708,8 @@
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+ 
++	dev_pm_set_strict_midlayer(dev, true);
++
+ 	if (pm && pm->prepare) {
+ 		int error = pm->prepare(dev);
+ 		if (error < 0)
+@@ -749,6 +751,8 @@
+ 		if (pci_dev->current_state < pre_sleep_state)
+ 			pm_request_resume(dev);
+ 	}
++
++	dev_pm_set_strict_midlayer(dev, false);
+ }
+ 
+ #else /* !CONFIG_PM_SLEEP */
+
+
 
 
