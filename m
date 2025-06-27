@@ -1,154 +1,163 @@
-Return-Path: <linux-kernel+bounces-706481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2963AEB70B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:01:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C587AEB8DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F291189DA16
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0CE37AA182
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B34280CF6;
-	Fri, 27 Jun 2025 12:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974AC2D9EFC;
+	Fri, 27 Jun 2025 13:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="QWHlN5S1";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="plJo6EVo"
-Received: from mailrelay-egress12.pub.mailoutpod2-cph3.one.com (mailrelay-egress12.pub.mailoutpod2-cph3.one.com [46.30.211.187])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E16CT/WL"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D706919F461
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA79D2D9EC1;
+	Fri, 27 Jun 2025 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025698; cv=none; b=ZfKbyDcIr+kUwPqiTdegQop7NbitMvqK+P0BK6RoC5VuBV19v0TnWtTSyWRx+kp+GU00Xa/Zale7330Caqj3viVZne8xNTpbA3odbA7PUcd0MmYExlX1PUCBy3rgJ4DgWa4ZvqfhFG0lgqvEvDO60SG0LTRqUTsg4xGmhltVBNE=
+	t=1751030852; cv=none; b=DKY6KM/NDrHqB986hwjucAqZ+wqt/TxaxQCpmc61deEtmHkWg7q7nNxuW3WYl+E/gEwyj/YTM5VSt/1DXh6tmJRhw382Mib2z2CwHRjHqwYuL3VBtTUzJtOXFmnz9lCUHeHm+sRkh7c9R41UVQabxIx/4oeXVeg5RS9kO9pzHGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025698; c=relaxed/simple;
-	bh=dveS3dz0/tVYs2oYeHsTlR9eW66aOO/Bg7sniYE5tSI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=aaY7BCFLMrktFcdDW7J00QcjEHa5FBSsBbWRo7iywGfciq7TC3rMtttYhupuYwVUxovlK0o7uayxmNcsjvaF+oXyUlH7KWAL2quTxt8pJS4xWNnXmSfPFG/RJ+rss6Rc6IHNP/23xB/64hzsWSSViMVxCT7zIU65kk9mbfihZko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=QWHlN5S1; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=plJo6EVo; arc=none smtp.client-ip=46.30.211.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751025694; x=1751630494;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=uKS3HDNF930knCZOok1v2ViZte0XlPRX5ok0p1B2NIA=;
-	b=QWHlN5S1uJmIPI6qxF/CONzE/AY4TSvK8ygi5az3JJjoyLnpkvmq1Yenyb0VfvHP9VjaPUdl4gj/Z
-	 cuB41kRZ/vKy0GQuJmWUVbZxBYms1la/ymoHS3dWdE/rQt3IhTVIfaixYc8PdE/j9+xyR/oNyIMwZA
-	 fyh9H3+vid4KYIMOMHZCtvaQm8t/JVYisGmUUetIC7LcLHKUkRl3bcfpNiS09+QqyDVAUgP3yhgqzV
-	 u1eSESmFSjR1cM3iDGQdzkeAOKsj7BtOnQSKuPwrY8S1bxZGinJ01D3SpvWZ1s7ubRYpZiCw7MFFjC
-	 bplfF0f/u94x3nD9/zvTJw8p8ZGISXg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751025694; x=1751630494;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=uKS3HDNF930knCZOok1v2ViZte0XlPRX5ok0p1B2NIA=;
-	b=plJo6EVoYEQpR09rHvEkZH4M66P0Elt8wjAzuB0fq2Kjl/Dqn/VoRbn5bITykMt/76HQt+xL3Y33n
-	 fi2q8+ZAQ==
-X-HalOne-ID: 785ab324-534e-11f0-8646-e90f2b8e16ca
-Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
-	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 785ab324-534e-11f0-8646-e90f2b8e16ca;
-	Fri, 27 Jun 2025 12:01:34 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1751030852; c=relaxed/simple;
+	bh=KZYJhm9UPtGzECz1HxwIYc8GEylWjMZHFM2Zz2tspqI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=smaEkEg54CESc0XRBG8UYkmjfUu8lt86yEaVCjWDx/fyCBezkhh2ASnm7Pk1hvlfvoqBFvEdi+GF83U2bV9Lzg0zUk8rcE4Lg9TXQk24CfxpAoaMFTZDHUQ9U3z2Tsy7sxgrMyauDensto0y1FBp8vcL9rv0N+LkVe2kvTyUmrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E16CT/WL; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RBw0gc2747731;
+	Fri, 27 Jun 2025 06:58:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751025480;
+	bh=Y6ab/7/rCmnpESR4rDGCTeqcMqaugD9Zg+9DrZJj9Yo=;
+	h=From:To:CC:Subject:Date;
+	b=E16CT/WLYaoZSIQ4HS8VVYCYEz68f2RkbMPif049nDXdeFTHFt0am352/ujRR5Y4U
+	 fHcwGVUh3excQ5wFg0+4ZMdXzkoQB8hic1yd2/b66z1CaCIm04LCKbaGhFy/9HD+BL
+	 vmc9GkJPh2kCnt38syFf+ZL+GbW+suSBxtOPGj+A=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RBw0KX3207803
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 27 Jun 2025 06:58:00 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
+ Jun 2025 06:58:00 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 27 Jun 2025 06:57:59 -0500
+Received: from localhost (ula0502350.dhcp.ti.com [172.24.227.38])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RBvxVO2754930;
+	Fri, 27 Jun 2025 06:57:59 -0500
+From: Paresh Bhagat <p-bhagat@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
+        <devarsht@ti.com>, <s-vadapalli@ti.com>, <andrew@lunn.ch>
+Subject: [PATCH v5 0/4] Add support for AM62D2 SoC and EVM
+Date: Fri, 27 Jun 2025 17:27:49 +0530
+Message-ID: <20250627115753.2246881-1-p-bhagat@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH 2/4] mm/slub: allow to set node and align in k[v]realloc
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <aF6DmPmeSpWU3hH_@pc636>
-Date: Fri, 27 Jun 2025 14:01:23 +0200
-Cc: Danilo Krummrich <dakr@kernel.org>,
- linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C6331389-1008-4D8B-99AA-C2640671E9A2@konsulko.se>
-References: <20250627092901.356909-1-vitaly.wool@konsulko.se>
- <20250627093714.402989-1-vitaly.wool@konsulko.se> <aF51PTZh0gRVFuYu@pollux>
- <aF6DmPmeSpWU3hH_@pc636>
-To: Uladzislau Rezki <urezki@gmail.com>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+This patch series adds support for the AM62D SoC and its evaluation
+module (EVM) board, enable eMMC and firmware-name update for
+AM62D2-EVM board.
 
+The AM62D SoC is a high-performance Digital Signal Processing (DSP)
+device with a quad-core Cortex-A53 cluster, dual Cortex-R5F cores,
+and a Cx7 DSP core with Matrix Multiplication Accelerator (MMA).
+It features a range of peripherals, including multichannel audio
+serial ports, Ethernet, UARTs, SPI, I2C, USB, and more.
 
-> On Jun 27, 2025, at 1:42=E2=80=AFPM, Uladzislau Rezki =
-<urezki@gmail.com> wrote:
->=20
-> Hello, Vitaly, Danilo.
->=20
->> On Fri, Jun 27, 2025 at 11:37:14AM +0200, Vitaly Wool wrote:
->>> Reimplement k[v]realloc_node() to be able to set node and
->>> alignment should a user need to do so. In order to do that while
->>> retaining the maximal backward compatibility, the following rules
->>> are honored:
->>> * kmalloc/kzalloc/krealloc remain unchanged
->>> * kvmalloc/kvrealloc/kvcalloc remain unchanged
->>> * kvrealloc remains unchanged
->>> * kvrealloc_node is implemented as a new function taking align and
->>>  NUMA id as extra parameters compared to kvrealloc.
->>> * krealloc_node is implemented as a new function taking NUMA id
->>>  as an extra parameter compared to krealloc
->>> * kvmalloc_node/kvzalloc_node/kvcalloc_node get an extra parameter
->>>  (alignment)
->>=20
->> I see what you're doing here:
->>=20
->> You created vrealloc_node_noprof() in the previous patch, taking the =
-following
->> arguments:
->>=20
->> vrealloc_node_noprof(const void *p, size_t size,
->>      unsigned long align,
->>      gfp_t flags, int nid)
->>=20
->> And now you're aligning the newly introduced krealloc_node() and
->> kvrealloc_node() with that.
->>=20
->> The idea for having an align argument on krealloc_node() simply is =
-that it
->> fails if the alignment requirement can't be fulfilled by the =
-corresponding
->> kmalloc bucket, such that we can fall back to vrealloc_node() in
->> kvrealloc_node().
->>=20
->> Generally, this makes sense to me.
->>=20
->> However, now you consequently have to add the align argument to =
-kvmalloc_node(),
->> kvzalloc_node(), kvcalloc_node() as well.
->>=20
->> This is what creates this huge diffstat changing all the users.
->>=20
->> IMHO, the problem here was introduced already with =
-vrealloc_node_noprof() taking
->> an align argument in your previous patch, since now you have to =
-adjust
->> everything else to logically follow the same naming scheme.
->>=20
->> Instead, I think you should introduce vrealloc_node_align(),
->>=20
-> I am probably missing something. Could you please clarify why do you
-> need the vrealloc_node_align() and other friends? Do you have users
-> which require vrealloc() or kvrealloc() to support nid and align from
-> Rust API point of view?=20
->=20
->=20
+The EVM board is a low-cost, expandable platform designed for the AM62D2
+SoC, having 4GB LPDDR4 RAM, Gigabit Ethernet expansion connectors, audio
+jacks, USB ports, and more.
 
-Alignment for Rust allocators should generally be supported, it=E2=80=99s =
-been listed as TODO for a while.
-Node awareness is very desirable for e.g. KVBox and for the coming zpool =
-mapping.
+This SoC is part K3 AM62x family, which includes the AM62A and AM62P
+variants. While the AM62A and AM62D are largely similar, the AM62D is
+specifically targeted for general-purpose DSP applications, whereas the
+AM62A focuses on edge AI workloads. A key distinction is that the AM62D
+does not include multimedia components such as the video encoder/decoder,
+MJPEG encoder, Vision Processing Accelerator (VPAC) for image signal
+processing, or the display subsystem. Additionally, the AM62D has a
+different pin configuration compared to the AM62A, which impacts embedded
+software development.
 
-~Vitaly
+This patch series includes updates to the dts and dtsi files, device tree
+bindings, and pin control header files to support the AM62D SoC and EVM
+board.
+
+Bootlog-
+
+SD Card
+https://gist.github.com/paresh-bhagat12/1757cc54a39f1baf883341af2a383db6
+
+eMMC
+https://gist.github.com/paresh-bhagat12/36c756422ff71fa9568c45e9b44332f0
+
+Tech Ref Manual-https://www.ti.com/lit/pdf/sprujd4
+Schematics Link-https://www.ti.com/lit/zip/sprcal5
+
+Change Log:
+V4 -> V5:
+	- Added bootph-all property only in leaf node.
+	- Added a new dtsi file for am62d2 SOC.
+	- Updated commit msg and description for dt bindings patch.
+	- Updated cpsw_port node for rx internal delays. This change also
+	  depends on this series for functionality (networking)
+	  https://lore.kernel.org/r/cover.1750756583.git.matthias.schiffer@ew.tq-group.com/
+	- Updated device tree to follow ordering of properties and
+	  schematic.
+	  https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-style.html#order-of-properties-in-device-node
+
+V3 -> V4:
+	- Added bootph-all property at source nodes.
+	- Reuse dtsi files of am62a (instead of common files).
+	- Added eMMC support.
+	- Updated firmware name for am62d.
+
+V2 -> V3:
+	- Added bootph-all property to essential device nodes.
+	- Updated reserved memory for ATF.
+	- Introduce common dtsi files for AM62A and AM62D.
+
+V1 -> V2: Fixed indentation and build errors.
+
+Paresh Bhagat (4):
+  arm64: dts: ti: Add bootph property to nodes at source for am62a
+  dt-bindings: arm: ti: Add AM62D2 SoC and Boards
+  arm64: dts: ti: Add pinctrl entries for AM62D2 family of SoCs
+  arm64: dts: ti: Add support for AM62D2-EVM
+
+ .../devicetree/bindings/arm/ti/k3.yaml        |   6 +
+ arch/arm64/boot/dts/ti/Makefile               |   3 +
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     |  14 +
+ arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi      |   1 +
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi   |   2 +
+ arch/arm64/boot/dts/ti/k3-am62d2-evm.dts      | 599 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62d2.dtsi         |  25 +
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           |   3 +
+ 8 files changed, 653 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
+
+-- 
+2.34.1
 
 
