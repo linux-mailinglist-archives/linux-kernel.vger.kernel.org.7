@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-706647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5625AEB970
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:04:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A95AEBA91
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28665638E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A865E7A6C33
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EB32DD5EB;
-	Fri, 27 Jun 2025 14:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69A52E3399;
+	Fri, 27 Jun 2025 14:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="voHDQSQN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p9frIgck"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="NknhPClr"
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CC92DCBEF;
-	Fri, 27 Jun 2025 14:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D359122577E
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751033089; cv=none; b=ZauIHUtFngx//K+Q64wSKmt/fesEfivuyfcdttnThIjFNnjpG9AyLgn2kRSHz9g7PWmEy/hzhTp218fUAz/MVhwFGVku9WoqXOGm8grGNVFyeqhXLW4ohPQpPSG/TVn3IfZ7fdOlO2UnfcgS78TMrOPNAFpr95PCFJgiWDkrwLw=
+	t=1751036099; cv=none; b=JNbCPZYkfFNh3ykYLt3PVN8wRw/4SopTXyB3GEDYz76yYv4PSGCjEkSI59gHWDizRiVtsmMNbGj3j4S8vtT4F39Xf5fajX8NT4FW4WZgap4H0rGdyaP8lovQgBezUamy7RBCN0xetxUd5vNjEf8OYmJcAw/5QwGfKho/zt0ID90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751033089; c=relaxed/simple;
-	bh=s2S42hWkHNbnZv7OCqrUp4lqLfra6M/wkKx5NSNANSs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VVFpVCujdmjHXdUDDPPQwcw//zXp5jVraR1/eSTPgx8eAgCTLA82QYERUq8KT2is5P+k5i0HdTwvY1PCu5XuRUL0wEwoe5s1f/qpH8jdCefx4YV7mU5Vco6sCG/1Y0/tbN8wTkaBqws2R8cSfr06DxdG1hvaCv3iLsa4rRAnIdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=voHDQSQN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p9frIgck; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751033086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pRnlofzL0omWkVGViWnN13/n3c33AdU47NpbKuHNqWc=;
-	b=voHDQSQN+D80toFeQZXaPAOd+RgFTjw2YEOIUO/ggx2lbkuoqjJHHCclqFscNJKvxsSvWV
-	X5GY0Z5EWemWLGJmn6TQA3Zxe65Q0FUZI5kQFylyk4jYvFO4kobXguHjcCQwq4sMzVuck1
-	Upk4FLLHDZyGOpJn81kswhC0hdBc+gRglf2kaZQxh3IvKaFDPWEIshqJenpsv9VYrfcpl1
-	TMNNNO5EU/3jqkgVG95SnsQ/fgsonIDssnyuMj6B7byZxGq8mM6TZJ8wbBm0QeSmuwL6/D
-	JeBMH/FrrpyGedyGK52i0HeE/TFLNIFF66ByfwiEYbBj9ur8jGBYADZ7RXYElg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751033086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pRnlofzL0omWkVGViWnN13/n3c33AdU47NpbKuHNqWc=;
-	b=p9frIgckAMrrCPtdWfMM6SCzMCcKbIPDSmS3R6pT7rKhcRWAn9ol/ZlGYlxyRGMBdOXe2K
-	6nxAdYG9hVEoQnBw==
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, Christopher Hall
- <christopher.s.hall@intel.com>, Frederic Weisbecker <frederic@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Miroslav Lichvar
- <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, David
- Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, Thomas
- =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Kurt
- Kanzenbach
- <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine Tenart
- <atenart@kernel.org>
-Subject: Re: [patch V3 01/11] timekeeping: Update auxiliary timekeepers on
- clocksource change
-In-Reply-To: <CANDhNCqLST-im8WJXTWPsXmqhq2JM9+nVB6phixxH2PT-tQ3Tg@mail.gmail.com>
-References: <20250625182951.587377878@linutronix.de>
- <20250625183757.803890875@linutronix.de>
- <CANDhNCqLST-im8WJXTWPsXmqhq2JM9+nVB6phixxH2PT-tQ3Tg@mail.gmail.com>
-Date: Fri, 27 Jun 2025 16:04:44 +0200
-Message-ID: <87o6u9nuv7.ffs@tglx>
+	s=arc-20240116; t=1751036099; c=relaxed/simple;
+	bh=15J+IQAkOb/B6R9Pfbs3G/etVMfCqLb+Vjq0lgfKV5g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2gwkng6GB3IIwvZJubYQHnVW8skpCO+lDOrquCG2zpmkAbBblo95zNWkggasFydxbDabyrot046N8zX+t6/bsDorO6PyUnI1rCA7sx1f8nEXOJtqk+TxDEzNfQdqJfowhYWWVvcxADbJS/2FswwR1HlvMSjuusBD9N3ZkzRll4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=NknhPClr; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250627131426a3bf49ad6ed7034d72
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 27 Jun 2025 15:14:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=M4o1mmAGEsf5Agze6Yc8E7yYvvCWB7C1WHPlHiIkd64=;
+ b=NknhPClr7PprOtuFLqVoQoigCsC/fp8L63nr9ZT+VhQURM3aPPKa+CvAKrjU+CNT0j47oR
+ cm7e26Z2e73zs9J93WZi4lyoAafUooAJA7vj4pZGSBa/NioXPq44qsO2MGZW3tYb+AXe2foB
+ 2HXutKzK/P1+B9fYXP/M9oYSQDHxyDAd96brh76vYblYWIWOtCLS/DQ92HQgSIcpNR9zIoMv
+ nL6cRWqrzkk7fL03/zD9kVf8yvzLrpob1pUROFsvDWIKlOodJGipfrh642fs/wwNxV4+zBt+
+ xwHk2uQnntmavXFmfpI/Knj9SoFE1Kl7ZqvueMrnHxvWChTmufnW0JxA==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: devicetree@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: ti: k3-pinctrl: Introduce Schmitt Trigger macros
+Date: Fri, 27 Jun 2025 15:13:23 +0200
+Message-ID: <20250627131332.2806026-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-On Thu, Jun 26 2025 at 21:43, John Stultz wrote:
->> +/* Bitmap for the activated auxiliary timekeepers */
->> +static unsigned long aux_timekeepers;
->> +
->
-> Nit: Would it be useful to clarify this is accessed without locks, and
-> the related tks->clock_valid *must* be checked while holding the lock
-> before using a timekeeper that is considered activated in the
-> aux_timekeepers bitmap?
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-I'll amend all your nits when applying the pile.
+Introduce ST_DISABLE and ST_ENABLE macros so that they can be used in
+conjunction with PIN_INPUT* macros, e.g. (PIN_INPUT | ST_ENABLE).
 
-Thanks,
+Note that K3 might have quite strict input slew rate requirements and
+all inputs actually have ST enabled on reset, but AM62PX_IOPAD macro
+will not preserve this power-on default config. Therefore ST_ENABLE
+is encouraged in many situations, especially if the input is to be
+used as IRQ trigger.
 
-        tglx
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ arch/arm64/boot/dts/ti/k3-pinctrl.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+index cac7cccc11121..3e371be7b8062 100644
+--- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
++++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+@@ -8,6 +8,7 @@
+ #ifndef DTS_ARM64_TI_K3_PINCTRL_H
+ #define DTS_ARM64_TI_K3_PINCTRL_H
+ 
++#define ST_EN_SHIFT		(14)
+ #define PULLUDEN_SHIFT		(16)
+ #define PULLTYPESEL_SHIFT	(17)
+ #define RXACTIVE_SHIFT		(18)
+@@ -44,6 +45,10 @@
+ #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
+ #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
+ 
++/* Schmitt trigger configuration */
++#define ST_DISABLE		(0 << ST_EN_SHIFT)
++#define ST_ENABLE		(1 << ST_EN_SHIFT)
++
+ #define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
+ #define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
+ #define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
+-- 
+2.50.0
+
 
