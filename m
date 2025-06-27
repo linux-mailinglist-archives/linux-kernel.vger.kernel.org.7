@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-706608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653ABAEB906
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C139BAEB90D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB0B3BA277
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685B51C421F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641C725F961;
-	Fri, 27 Jun 2025 13:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4381C2D9EF1;
+	Fri, 27 Jun 2025 13:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5UGbdVX"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGV9S0Du"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C899921B9FD
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2B2294A11;
+	Fri, 27 Jun 2025 13:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751031170; cv=none; b=CGON3J7nBJos12NR5T8IgjFL2YPPQtPdsiXdomCxPlm77KYmeCNAO+e9Yty530zLacpusQNTuSTlesAHvz2UHof8cETDG1l89pxRNhMvdv4olM+PLOETmjQc4twioyofbX+HL2R3iR1dfD6Hf8fIsE5+4r4dY6RBXW+MfxDW+Ao=
+	t=1751031272; cv=none; b=gNxoOmHHXVRcHT0qWAx1YH4UfCbYOniTLg8c8VXJzkDVaK4p+dvAYILbyggNqMmxWIGiX+zWw1RlYbK+dYgk/F+A2BlLsqDtgVnsOuVFQnqiyf7YI6zhiG68dOy6kGFuGCaG9zhL8Qv2YY36k7XNtZRIX2PUMAm0Z8wJJF4mqHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751031170; c=relaxed/simple;
-	bh=3CFQCN69m7XzAoNrptngTrM9nxy7EanLF6eu8+toEXw=;
+	s=arc-20240116; t=1751031272; c=relaxed/simple;
+	bh=IdTDvFP8y9HaGTCvvR1/VaHuRyW7QodsgF7bM8TCSI0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rayREtyoPQlvqZuRjs+kB6LLX2UiDeEwF9xMPpxS+mOjTDemBjL13sPGlr8TIvcQpbbvh1bRl36+GlE1lsvXLcRI/AEhzYVbZ2UwENM6rQTr0zVkBiKPRW0f21OdR/F1+N2otQ45WM5VkNujJMIbeKDhlSbO1qgsIEtK+fNCgDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A5UGbdVX; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ae0de0c03e9so267818366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 06:32:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751031167; x=1751635967; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yx7UcFPCa+Dpueol6GXn1V8vjpR+B3PuxUNEOBghfAY=;
-        b=A5UGbdVXBzPIJ3LcJ82lY7TvdGHhV4kO/K+nggiFsCqWCUtfB7DR0/QYdfB9x+W/td
-         OGQMTfmm0JrFAdp/v/ZW09dFkFrbtloiRAkDv4T1PK2nrSf0Gmg7Yx6kCtDDFVvQCgJ5
-         RdovP8WeN+kkRQKaWMmMj+SK7BTjoQogpEYw4ZxtxLhjAg1quUSeCNKvCWEvMVOZGU4B
-         En+sAC6updYL8YlY5CqA3M2vyWgMjvm5thDRUGmvjEVnJV9lKEHHT8s0DoaRK9FcldJv
-         iiGJTGnyTYPcrwXew8UsLeoNh5SeO3hp2n6ppLhz0n/EQRPpCUbqJN/rvFUY+bya7ERX
-         ntrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751031167; x=1751635967;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yx7UcFPCa+Dpueol6GXn1V8vjpR+B3PuxUNEOBghfAY=;
-        b=J7+4gnwJMARQD3Nc67BR8YRSFG2xIK4lxSUOX6/8a/TcNH5WtFdmxNlgzqx4ZtOvte
-         jssoFMkdYJlQ/XECQTL2f9GPOtA3b1gbgoGPh5pft65E3n1+aVB1L3/a6hXPLb9tkp6G
-         fUETJt1PN+CH19is+CNPsrb5IzZZlTw40a5zNTG0ZhC7BPsmz2JDB642VrnskayZ89vH
-         xzOeujMF2Si8FfUeE2GeTx0cluDqlZkuRrsP6+BC/XaoRG2Kpm9/AIikPe8PS+q+PvlL
-         9xkGxEuh/Kr6rcCu4wZFwIjxV3aiD0mFGkxjlhXDWwkWmQsiQc3QGkIFLfjX7ONdOjpO
-         nnHg==
-X-Forwarded-Encrypted: i=1; AJvYcCX858I7iCfa3gy8+3nsr1lQyTdOLB06GAUWOqsTjrcyLG9QBbHXYwpwLKVo3auZCMJQsxJNEFOWj33A2K8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws3TrpKv+4nfSPHbMlp4wa+G/rUcwvABeu0I9/dn7JeuON6hBw
-	CKtpljg/G+WX2PwpFt0aceSlSIyTDz7nTN+vtquYUW6tqy+oQfAQMypS20cwls3Vm5C+lb3xNhI
-	NbdHFdtpx3hETBgJ53ugleJ4fuChb+69EqBzUNGJeWA==
-X-Gm-Gg: ASbGncsjswkao8Ph5fgPxjKHvzY+X9LjuLPV4duNXiKXGnH+FL6hV7FlRxsWo0jZfTV
-	hqeMKUPxFyXXf0+rUEGRe82I4D53ZXKEluKf8LT2zqRhIPW+QkxvUZlfvdKO4yP9/daOei0n31C
-	nPnEDazKpWYjCMQMq+pFw1W97DJ6U0ZmyOPqLui/rVmZhn7jyWMhEt3YZL+9jfOVWoPonWsOo9
-X-Google-Smtp-Source: AGHT+IEe/IPSRtND6XVHLzYuqdQeL+pU07j+spsJjTrlNeGkkokEF6l4pMj+scLEAZBVl2XEBvNBcgqfWiPaUhX953c=
-X-Received: by 2002:a17:907:1c22:b0:ad2:313f:f550 with SMTP id
- a640c23a62f3a-ae3500f84femr317527666b.29.1751031164107; Fri, 27 Jun 2025
- 06:32:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=HaS+wc5JkZOe2me+Z7LcxIIMGnf4Jv+0umGTRNzsyrNRgCFZPrWXkJJPcVz50Qck1Zi/SFrdmdE+VDfxCFk1D8qBB94MjLKLgm3/gaZJrGYUoIxDJWbC1sYnCBp6iCMQ2jyX0JzT1P/Ze5sdeGDJESG3XUAqpD8UfUeIKoRGNW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGV9S0Du; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20E84C4AF09;
+	Fri, 27 Jun 2025 13:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751031272;
+	bh=IdTDvFP8y9HaGTCvvR1/VaHuRyW7QodsgF7bM8TCSI0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dGV9S0DuN0PMGbTcSCHn0V2FGwVDGdhEXR3I4FUJ9/YySKuhAQSzKWPC5ArWakjbs
+	 XMCzbvUTLK5/R4eWuNHhnTwGYwtNaTvcvZbW+yOcOodJ7GCu0IPv3sjktwFI61jyAF
+	 lTQ1sTzZOWVnU/Z1TE+0I0WhZAqmS/cmZhnI+E1OFdwbY3JnZ6CdPRijk0ixaTUovH
+	 d2cDv6ytpRwCYMhPVUxh4+5zaK2odYUEDjwzn6Bh8ltMFRnKzp9MEgNZioFt8bh2tY
+	 KYP7clxaiDJN2XrmKDUc/aMiPoebM6CREcwsnP0YOgS3Ous7gPnpoqOUXsZni2JYii
+	 AFtzOAC3SJMJQ==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60768f080d8so3820707a12.1;
+        Fri, 27 Jun 2025 06:34:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUsM2TJeCdXlaU1Fnb+0wmEG9C8FPSwvJGpc7CY5F0SiKUEIptFpF4e/Sf9HI807m/9qKSA4eNSc1F9@vger.kernel.org, AJvYcCVxPllmP9ne0g6s/6Lsc97a2zjxQsW1WkZgfqVECjxinFBuargabvaQoRPqMKjN7irD/TgE7CWtm6pBWywi@vger.kernel.org, AJvYcCXMOZYFfQjZ6suYXUsaoW8mMkUXqWXOksJ4GvYbTawE2IBSRRYIAwbZ3Otyn6qFCeSm0JTWwPRHqtSYLA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZapbGPiLWC0AQ46P38+p6fD00hRsS/sspYkPJ/BZxRKUT1KED
+	HQA9IXwhiHFQnngKmBwxLKFyB14KWfbr5EAuQ+DT81HP4qI1StdolYALycc0+YGf6GOM+D4WmIt
+	VOhP705aXn+aFFEbqcyyHpC5Fquwu1w==
+X-Google-Smtp-Source: AGHT+IEVRFNBFlTP6R9fUrxtJFc+ywLiUb4Q+PsDVjgttF7BLiyvAKx8hYh9X9Oqt+d5yA8ADVKHtkuR4NjvhsGbj6E=
+X-Received: by 2002:a17:907:7f14:b0:ae0:c561:b806 with SMTP id
+ a640c23a62f3a-ae3500f276fmr296866566b.37.1751031270546; Fri, 27 Jun 2025
+ 06:34:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250624204942.715206-1-clm@fb.com> <20250626070057.GE1613200@noisy.programming.kicks-ass.net>
- <872c057e-5e2f-4cbf-943a-072b6015fee9@meta.com> <CAKfTPtBE0_77+J-A7vWRKsHCCmuX1jWTbPYWGVPg1MYq_rv8Og@mail.gmail.com>
- <dbbff170-db0a-4955-a024-978bb8dc3016@meta.com>
-In-Reply-To: <dbbff170-db0a-4955-a024-978bb8dc3016@meta.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 27 Jun 2025 15:32:32 +0200
-X-Gm-Features: Ac12FXxBFesj2iOszhfB3qLpiayh1UF1J5oYaYs3wxecadgqZOnVFPGm4Bds-Zg
-Message-ID: <CAKfTPtBinqRvLk4bvP4bbEZU1OcGV=DBnyxQ2SO9SumdwfV-aA@mail.gmail.com>
-Subject: Re: [PATCH RFC] sched/fair: bump sd->max_newidle_lb_cost when newidle
- balance fails
-To: Chris Mason <clm@meta.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Chris Mason <clm@fb.com>, linux-kernel@vger.kernel.org
+References: <20250625085715.889837-1-daniel.lezcano@linaro.org>
+In-Reply-To: <20250625085715.889837-1-daniel.lezcano@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 27 Jun 2025 08:34:18 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLNQ729cwSEUnk5bNMjhJR7WTqcPPh1uL4suN1GhNhRMw@mail.gmail.com>
+X-Gm-Features: Ac12FXxw2NuGvxwtqORXKtaK75DRC2OKF-_MV83Pl275d2zGx8F2rQx8EOkHjI8
+Message-ID: <CAL_JsqLNQ729cwSEUnk5bNMjhJR7WTqcPPh1uL4suN1GhNhRMw@mail.gmail.com>
+Subject: Re: [PATCH RFC] timer: of: Create a platform_device before the
+ framework is initialized
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	lorenzo.pieralisi@linaro.org, Hans de Goede <hansg@kernel.org>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Arnd Bergmann <arnd@arndb.de>, John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, 
+	"open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Jun 2025 at 16:55, Chris Mason <clm@meta.com> wrote:
+On Wed, Jun 25, 2025 at 3:57=E2=80=AFAM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 >
-> On 6/26/25 10:26 AM, Vincent Guittot wrote:
-> > On Thu, 26 Jun 2025 at 12:58, Chris Mason <clm@meta.com> wrote:
+> In the context of the time keeping and the timers, some platforms have
+> timers which need to be initialized very early. It is the case of the
+> ARM platform which do not have the architected timers.
 >
-> >> Got it, I'll play with that.  Vincent, was there a benchmark I can use
-> >> to see if I've regressed the case you were focused on?
-> >
-> > It's not a public benchmark but I had some unitary tests with tasks
-> > waiting on a busy CPU while other CPUs become idle for a "long" time
-> > (but still less than 500us in average). This is even more true with
-> > frequency scaling which will minimize the idle duration by decreasing
-> > the frequency
+> The macro TIMER_OF_DECLARE adds an entry in the timer init functions
+> array at compile time and the function timer_probe is called from the
+> timer_init() function in kernel/time.c
 >
-> Ok, I don't think I'll be able to reliably recreate that on my own, can
-> I ask you to rerun against the v2 I sent out?
+> This array contains a t-uple with the init function and the compatible
+> string.
+>
+> The init function has a device node pointer parameter.
+>
+> The timer_probe() function browses the of nodes and find the ones
+> matching the compatible string given when using the TIMER_OF_DECLARE
+> macro. It then calls the init function with the device node as a
+> pointer.
+>
+> But there are some platforms where there are multiple timers like the
+> ARM64 with the architected timers. Those are always initialized very
+> early and the other timers can be initialized later.
+>
+> For this reason we find timer drivers with the platform_driver
+> incarnation. Consequently their init functions are different, they
+> have a platform_device pointer parameter and rely on the devm_
+> function for rollbacking.
+>
+> To summarize, we have:
+>  - TIMER_OF_DECLARE with init function prototype:
+>    int (*init)(struct device_node *np);
+>
+>  - module_platform_driver (and variant) with the probe function
+>    prototype:
+>    int (*init)(struct platform_device *pdev);
+>
+> The current situation with the timers is the following:
+>
+>  - Two platforms can have the same timer hardware, hence the same
+>    driver but one without alternate timers and the other with multiple
+>    timers. For example, the Exynos platform has only the Exynos MCT on
+>    ARM but has the architeched timers in addition on the ARM64.
+>
+>  - The timer drivers can be modules now which was not the case until
+>    recently. TIMER_OF_DECLARE do not allow the build as a module.
+>
+> It results in duplicate init functions (one with rollback and one with
+> devm_) and different way to declare the driver (TIMER_OF_DECLARE and
+> module_platform_driver).
+>
+> This proposed change is to unify the prototyping of the init functions
+> to receive a platform_device pointer as parameter. Consequently, it
+> will allow a smoother and nicer module conversion and a huge cleanup
+> of the init functions by removing all the rollback code from all the
+> timer drivers. It introduces a TIMER_OF_DECLARE_PDEV macro.
+>
+> If the macro is used a platform_device is manually allocated and
+> initialized with the needed information for the probe
+> function. Otherwise module_platform_driver can be use instead with the
+> same probe function without the timer_probe() initialization.
+>
+> I don't have an expert knowledge of the platform_device internal
+> subtilitie so I'm not sure if this approach is valid. However, it has
+> been tested on a Rockchip board with the "rockchip,rk3288-timer" and
+> verified the macro and the devm_ rollback work correctly.
 
-Yes, I will run some tests
+Have you looked at the SH "early_platform_driver"? How does this
+compare? IIRC, that used to be generally available, but has been
+pushed into SH since that was the only arch using it and no one likes
+it.
 
-Vincent
-
->
-> -chris
+Rob
 
