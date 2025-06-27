@@ -1,266 +1,176 @@
-Return-Path: <linux-kernel+bounces-707222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6196EAEC16A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:46:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A50FAEC16E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F036D3A7F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF153B4449
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2502EE261;
-	Fri, 27 Jun 2025 20:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="chb2zHM+"
-Received: from mail-ot1-f73.google.com (mail-ot1-f73.google.com [209.85.210.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256BD2EE617;
+	Fri, 27 Jun 2025 20:46:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972301D79BE
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 20:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED01F223DEE
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 20:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751057161; cv=none; b=GMjg5ynPnl6HtofwZMgFd0VkRjaQOpPciq3q+Onx6+8Uk4QY7aGcFXfHvzRJGNw3hGP+5zZ7MguvBrt1HITdzkppYWFq1+s5y0SFEjsEIi/wNHeFsk2e1yIQfg6BrB27LTV3S7K1sREHIhjdwngdVlariaHZpNLgnBf4hGj0h/0=
+	t=1751057165; cv=none; b=o+prtYqPj+8SCK79mDFqrYP5spcHDvY4w917yCnTf5/oXz6qGzGaFRtYXsRHaphyI+2wQaU0qCbdbY5uHFVzBlVjOb6QbwR7ahPvWxqxpW6X4YxvAMOb1wjWRv0xKo/H6gqKZo45jBIiDZ6OdJFEJMczzOU2gYQnk9N1RgkoW+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751057161; c=relaxed/simple;
-	bh=Dbw6vfXTIcPD2nnOiddnC76ZVYtHdIwQERNCs5CZ+AM=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=e+fwUw1yQIKK93C/ZLQ3inrVLybbvsyQJO7KBOxP7GDZ9+EwHptU7An5j2ZxC/2lsH/HHFMKBOrgMt5/3KCRIU56dXN/LsAM/mO9bZ1S8SeuyZqiSTYWE2Jm3HpogkXoBJDOShdx7/5oZ2o9bDex+I4fuM/IUHOoulfdMZU9mSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=chb2zHM+; arc=none smtp.client-ip=209.85.210.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-73abbfc3d0aso34460a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751057159; x=1751661959; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vCwkQeNvJFmRc91Gk8T3YA4HoLg8Wg847EVfC3MKwm0=;
-        b=chb2zHM+qpJUEpMnCwyd8NgEPi3M4Ase/rKhFoV8lM32AdG14FlUUe6DfvAZOvc/Yt
-         jZ1DbLscucMS+714pHT7VFfu1Svu+TdttzFkenolTXjezC8oVDkyn8D4bHNhHMlCfb3y
-         0hlTPQ5vMzdMQdE9bKa5rNPsZXXQ88fhFnS3ViEttyCZvouSPxhhX31ZOMHfhBkki2KD
-         0LRlkOj1dDoEa61My54K+pJvyNuba7HOpVs5nXvveIihUTPzArWZa31RfKHKFAy/+voL
-         Z0ixic/1sOJxNl5BjUEE0fd34UbYS29rzWfw5Iacj8De2j4JCLKIB/xfpeLXfszw3YWM
-         o1Ug==
+	s=arc-20240116; t=1751057165; c=relaxed/simple;
+	bh=TmaijBzvcXFkUGMpnMPN+z+LEjRYnQbYBF7QdKkwaJU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eruiTJRWaqQ9HLe+bJkqhHltRYJqtf56gc33Tf5LGGlN0BexrW9AoPcP9tUWje1EkfAOYKtSe4Ba7fzNGC8sz5dN/FGYToW9b0MiubN3NQgGhU4kT0PpVPUOhIKKcA3+3C51IIF5a4NGtqjGv3Uq9vtq7RBaxW4AZV0Pwkim89E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3df309d9842so6563985ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:46:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751057159; x=1751661959;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1751057163; x=1751661963;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCwkQeNvJFmRc91Gk8T3YA4HoLg8Wg847EVfC3MKwm0=;
-        b=ByTLC8Fc0lc068vECHKZNQWC1SoDLOjMY6SAKlTCgn9/5lKzPhdGhY8k2x+7tY/w8j
-         VxbBQVxVZu14Tcgr4hIJciRdcD6yw1zHL5r9nlnLJcySCrNSg+JzGjRQ3WDVUQHjhNuY
-         5zV5E4j9HYCi25kwa8roBhrHdeDMg56MBVtQF91CzO23KBlFcf5+hyla7+mcs7xHDvUf
-         1mlUPW/6eiWDNnhtx2+M7O+fI0P09tdL7KCazXpWSNH3I3c1OxCWlXSsUmEsCDqKoXqF
-         Ay2RTB/u9weDaa8azlI1hhLkopC3JVb+WQlCNTr9Renb16iZpIP/HRD/x3jdsT7WS4lV
-         MFDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqIdVWkCV7zCjNG1tm/njl1HKvsWBfJFrL35QTR+NckXnx1NLG5vSDudOJwFX3TewfXMNxo4dnAqTNBY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPkKA9VmhdkAjBGTB5DIDqcojnz2x68SZfYAoCvinmDc4ifEdW
-	k1eTRRGW+TDFGcEwRcjAP8B2aX22y5oRRwXmv9b8FggTBVATuRsXAcb9CIeFsk9hAEFJq1JRV0C
-	tdDRMQSOeKG+GgCj/rsQFfMW2Pg==
-X-Google-Smtp-Source: AGHT+IH2HpfAlrvSBQPMk62/RIc0nWzkxCoCzJycTm56dna3SUVLdeLNxUVR8JHlvZrOyIvBaFCfMBXjvOwVdkFbjg==
-X-Received: from otbby6.prod.google.com ([2002:a05:6830:6086:b0:72c:10e4:a953])
- (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6830:2710:b0:727:4356:9f07 with SMTP id 46e09a7af769-73afc67b661mr3036914a34.14.1751057158815;
- Fri, 27 Jun 2025 13:45:58 -0700 (PDT)
-Date: Fri, 27 Jun 2025 20:45:57 +0000
-In-Reply-To: <86plepb54f.wl-maz@kernel.org> (message from Marc Zyngier on Fri,
- 27 Jun 2025 16:01:36 +0100)
+        bh=oRm0qcBk4afDT7slNTJNM2b9Ewsq2dOHeRONJZ5bpV4=;
+        b=NDWjMM895xW+MFCSuSJT3vZADHRNLv5U20gTVt3gbeEi9muUo8HByVuECKtcDCkz7R
+         irm6ZkigdSDHYbrVdpDMtOiO0EcSFQRNvBlA5wKcp/XzgLfvfr2k/E9BB+hl79mEsaly
+         jTr5HswPwDwltYM9coHjcCxemfy3DS7lg5vGT6dL3NNFKktUOPdeXJJfR9NOmERahn96
+         z5RpW0eZV7WgMfbQ2HsLBu7E7Wnrc4RAhRYDT4GwkJpBc2TmW3dVFnOZ4OdcS9HhHTHT
+         W2gt4yNPzkiDmDmDVp7ayPvUwcV7cD3q4dpGRHWj0BJrROWc1OVyC8SAUgKOUs3YuuoF
+         Xtgw==
+X-Gm-Message-State: AOJu0Yz2BKM3uIjW6/7tiypuz0i6ctbZhoZDyg5iwAW5vaXnpLekHvj8
+	LporgrhTv3t9pzMc9xifpGxVq+myrP020anE7D2TwrQ1I5+jBdbvWUDJYqw358vZEhRREXRbq7Z
+	Pla9BZpNEEHNIgGjFBbVl0ZkIBhgZC9qXLLqMnC6HvliuKrBNVZ8SZVgID6o=
+X-Google-Smtp-Source: AGHT+IGnABw5MzFRNYgQXsQPwPwvKjExeZ350LKBLpRnacnRhW1+gvf1Y6eiGrhaCUkor8FF2OntoxzMWik7nInD2+Z4oyR7+wom
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsntbjq89am2.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [PATCH v3 10/22] KVM: arm64: Set up FGT for Partitioned PMU
-From: Colton Lewis <coltonlewis@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, 
-	oliver.upton@linux.dev, mizhang@google.com, joey.gouly@arm.com, 
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com, 
-	shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:b2c:b0:3dd:fad4:7c61 with SMTP id
+ e9e14a558f8ab-3df4ab6cb1emr62468745ab.8.1751057163230; Fri, 27 Jun 2025
+ 13:46:03 -0700 (PDT)
+Date: Fri, 27 Jun 2025 13:46:03 -0700
+In-Reply-To: <ea44d9c8-23c3-4bb0-b867-0adf26b330e8@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685f030b.a00a0220.3efde.0002.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in rxe_skb_tx_dtor
+From: syzbot <syzbot+8425ccfb599521edb153@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Marc Zyngier <maz@kernel.org> writes:
+Hello,
 
-> On Thu, 26 Jun 2025 21:04:46 +0100,
-> Colton Lewis <coltonlewis@google.com> wrote:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+general protection fault in rxe_skb_tx_dtor
 
->> In order to gain the best performance benefit from partitioning the
->> PMU, utilize fine grain traps (FEAT_FGT and FEAT_FGT2) to avoid
->> trapping common PMU register accesses by the guest to remove that
->> overhead.
+Oops: general protection fault, probably for non-canonical address 0xe000bc000000006c: 0000 [#1] SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0x0006000000000360-0x0006000000000367]
+CPU: 0 UID: 0 PID: 1039 Comm: kworker/u4:7 Not tainted 6.16.0-rc3-syzkaller-gc0e71fcff378 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: rxe_wq do_work
+RIP: 0010:rxe_skb_tx_dtor+0x78/0x240 drivers/infiniband/sw/rxe/rxe_net.c:364
+Code: 03 42 80 3c 28 00 74 08 4c 89 f7 e8 72 65 81 f9 4d 8b 36 4d 85 f6 0f 84 c3 00 00 00 4d 8d be 60 03 00 00 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 77 01 00 00 41 8b 2f 31 ff 89 ee e8 bf
+RSP: 0018:ffffc900000079e8 EFLAGS: 00010206
+RAX: 0000c0000000006c RBX: ffff8880122848c0 RCX: ffff8880330a8000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: ffff8880122848c0
+RBP: 0000000000000000 R08: ffffffff8fa10ef7 R09: 1ffffffff1f421de
+R10: dffffc0000000000 R11: ffffffff88a26c60 R12: dffffc0000000000
+R13: dffffc0000000000 R14: 0006000000000000 R15: 0006000000000360
+FS:  0000000000000000(0000) GS:ffff88808d250000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb0aec28fc8 CR3: 000000004f814000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ skb_release_head_state+0x101/0x250 net/core/skbuff.c:1139
+ napi_consume_skb+0xd2/0x1e0 net/core/skbuff.c:-1
+ e1000_unmap_and_free_tx_resource drivers/net/ethernet/intel/e1000/e1000_main.c:1972 [inline]
+ e1000_clean_tx_irq drivers/net/ethernet/intel/e1000/e1000_main.c:3864 [inline]
+ e1000_clean+0x49d/0x2b00 drivers/net/ethernet/intel/e1000/e1000_main.c:3805
+ __napi_poll+0xc7/0x480 net/core/dev.c:7414
+ napi_poll net/core/dev.c:7478 [inline]
+ net_rx_action+0x707/0xe30 net/core/dev.c:7605
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ do_softirq+0xec/0x180 kernel/softirq.c:480
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ __neigh_event_send+0x9b/0x1560 net/core/neighbour.c:1194
+ neigh_event_send_probe include/net/neighbour.h:463 [inline]
+ neigh_event_send include/net/neighbour.h:469 [inline]
+ neigh_resolve_output+0x198/0x750 net/core/neighbour.c:1496
+ neigh_output include/net/neighbour.h:539 [inline]
+ ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
+ __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
+ ip6_finish_output+0x234/0x7d0 net/ipv6/ip6_output.c:226
+ rxe_send drivers/infiniband/sw/rxe/rxe_net.c:390 [inline]
+ rxe_xmit_packet+0x79e/0xa30 drivers/infiniband/sw/rxe/rxe_net.c:449
+ rxe_requester+0x1fea/0x3d20 drivers/infiniband/sw/rxe/rxe_req.c:805
+ rxe_sender+0x16/0x50 drivers/infiniband/sw/rxe/rxe_req.c:839
+ do_task drivers/infiniband/sw/rxe/rxe_task.c:127 [inline]
+ do_work+0x1b1/0x6c0 drivers/infiniband/sw/rxe/rxe_task.c:187
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:rxe_skb_tx_dtor+0x78/0x240 drivers/infiniband/sw/rxe/rxe_net.c:364
+Code: 03 42 80 3c 28 00 74 08 4c 89 f7 e8 72 65 81 f9 4d 8b 36 4d 85 f6 0f 84 c3 00 00 00 4d 8d be 60 03 00 00 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 77 01 00 00 41 8b 2f 31 ff 89 ee e8 bf
+RSP: 0018:ffffc900000079e8 EFLAGS: 00010206
+RAX: 0000c0000000006c RBX: ffff8880122848c0 RCX: ffff8880330a8000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: ffff8880122848c0
+RBP: 0000000000000000 R08: ffffffff8fa10ef7 R09: 1ffffffff1f421de
+R10: dffffc0000000000 R11: ffffffff88a26c60 R12: dffffc0000000000
+R13: dffffc0000000000 R14: 0006000000000000 R15: 0006000000000360
+FS:  0000000000000000(0000) GS:ffff88808d250000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb0aec28fc8 CR3: 000000004f814000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	03 42 80             	add    -0x80(%rdx),%eax
+   3:	3c 28                	cmp    $0x28,%al
+   5:	00 74 08 4c          	add    %dh,0x4c(%rax,%rcx,1)
+   9:	89 f7                	mov    %esi,%edi
+   b:	e8 72 65 81 f9       	call   0xf9816582
+  10:	4d 8b 36             	mov    (%r14),%r14
+  13:	4d 85 f6             	test   %r14,%r14
+  16:	0f 84 c3 00 00 00    	je     0xdf
+  1c:	4d 8d be 60 03 00 00 	lea    0x360(%r14),%r15
+  23:	4c 89 f8             	mov    %r15,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 77 01 00 00    	jne    0x1ae
+  37:	41 8b 2f             	mov    (%r15),%ebp
+  3a:	31 ff                	xor    %edi,%edi
+  3c:	89 ee                	mov    %ebp,%esi
+  3e:	e8                   	.byte 0xe8
+  3f:	bf                   	.byte 0xbf
 
->> There should be no information leaks between guests as all these
->> registers are context swapped by a later patch in this series.
 
->> Untrapped:
->> * PMCR_EL0
->> * PMUSERENR_EL0
->> * PMSELR_EL0
->> * PMCCNTR_EL0
->> * PMINTEN_EL0
->> * PMEVCNTRn_EL0
+Tested on:
 
->> Trapped:
->> * PMOVS_EL0
->> * PMEVTYPERn_EL0
->> * PMCCFILTR_EL0
->> * PMICNTR_EL0
->> * PMICFILTR_EL0
+commit:         c0e71fcf RDNA/rxe: Fix rxe_skb_tx_dtor problem
+git tree:       https://github.com/zhuyj/linux.git v6.16_fix_rxe_skb_tx_dtor
+console output: https://syzkaller.appspot.com/x/log.txt?x=13d9708c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=79da270cec5ffd65
+dashboard link: https://syzkaller.appspot.com/bug?extid=8425ccfb599521edb153
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
 
->> PMOVS remains trapped so KVM can track overflow IRQs that will need to
->> be injected into the guest.
-
->> PMICNTR remains trapped because KVM is not handling that yet.
-
->> PMEVTYPERn remains trapped so KVM can limit which events guests can
->> count, such as disallowing counting at EL2. PMCCFILTR and PMCIFILTR
->> are the same.
-
-> I'd rather you explain why it is safe not to trap the rest.
-
-Okay, I will reverse my explanation.
-
-
->> Signed-off-by: Colton Lewis <coltonlewis@google.com>
->> ---
->>   arch/arm64/include/asm/kvm_pmu.h        | 23 ++++++++++
->>   arch/arm64/kvm/hyp/include/hyp/switch.h | 58 +++++++++++++++++++++++++
->>   arch/arm64/kvm/pmu-part.c               | 32 ++++++++++++++
->>   3 files changed, 113 insertions(+)
-
->> diff --git a/arch/arm64/include/asm/kvm_pmu.h  
->> b/arch/arm64/include/asm/kvm_pmu.h
->> index 6328e90952ba..73b7161e3f4e 100644
->> --- a/arch/arm64/include/asm/kvm_pmu.h
->> +++ b/arch/arm64/include/asm/kvm_pmu.h
->> @@ -94,6 +94,21 @@ u64 kvm_pmu_guest_counter_mask(struct arm_pmu *pmu);
->>   void kvm_pmu_host_counters_enable(void);
->>   void kvm_pmu_host_counters_disable(void);
-
->> +#if !defined(__KVM_NVHE_HYPERVISOR__)
->> +bool kvm_vcpu_pmu_is_partitioned(struct kvm_vcpu *vcpu);
->> +bool kvm_vcpu_pmu_use_fgt(struct kvm_vcpu *vcpu);
->> +#else
->> +static inline bool kvm_vcpu_pmu_is_partitioned(struct kvm_vcpu *vcpu)
->> +{
->> +	return false;
->> +}
->> +
->> +static inline bool kvm_vcpu_pmu_use_fgt(struct kvm_vcpu *vcpu)
->> +{
->> +	return false;
->> +}
->> +#endif
->> +
->>   /*
->>    * Updates the vcpu's view of the pmu events for this cpu.
->>    * Must be called before every vcpu run after disabling interrupts, to  
->> ensure
->> @@ -133,6 +148,14 @@ static inline u64 kvm_pmu_get_counter_value(struct  
->> kvm_vcpu *vcpu,
->>   {
->>   	return 0;
->>   }
->> +static inline bool kvm_vcpu_pmu_is_partitioned(struct kvm_vcpu *vcpu)
->> +{
->> +	return false;
->> +}
->> +static inline bool kvm_vcpu_pmu_use_fgt(struct kvm_vcpu *vcpu)
->> +{
->> +	return false;
->> +}
->>   static inline void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu,
->>   					     u64 select_idx, u64 val) {}
->>   static inline void kvm_pmu_set_counter_value_user(struct kvm_vcpu *vcpu,
->> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h  
->> b/arch/arm64/kvm/hyp/include/hyp/switch.h
->> index 825b81749972..47d2db8446df 100644
->> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
->> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
->> @@ -191,6 +191,61 @@ static inline bool cpu_has_amu(void)
->>                  ID_AA64PFR0_EL1_AMU_SHIFT);
->>   }
-
->> +/**
->> + * __activate_pmu_fgt() - Activate fine grain traps for partitioned PMU
->> + * @vcpu: Pointer to struct kvm_vcpu
->> + *
->> + * Clear the most commonly accessed registers for a partitioned
->> + * PMU. Trap the rest.
->> + */
->> +static inline void __activate_pmu_fgt(struct kvm_vcpu *vcpu)
->> +{
->> +	struct kvm_cpu_context *hctxt = host_data_ptr(host_ctxt);
->> +	struct kvm *kvm = kern_hyp_va(vcpu->kvm);
->> +	u64 set;
->> +	u64 clr;
->> +
->> +	set = HDFGRTR_EL2_PMOVS
->> +		| HDFGRTR_EL2_PMCCFILTR_EL0
->> +		| HDFGRTR_EL2_PMEVTYPERn_EL0;
->> +	clr = HDFGRTR_EL2_PMUSERENR_EL0
->> +		| HDFGRTR_EL2_PMSELR_EL0
->> +		| HDFGRTR_EL2_PMINTEN
->> +		| HDFGRTR_EL2_PMCNTEN
->> +		| HDFGRTR_EL2_PMCCNTR_EL0
->> +		| HDFGRTR_EL2_PMEVCNTRn_EL0;
->> +
->> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGRTR_EL2, clr, set);
->> +
->> +	set = HDFGWTR_EL2_PMOVS
->> +		| HDFGWTR_EL2_PMCCFILTR_EL0
->> +		| HDFGWTR_EL2_PMEVTYPERn_EL0;
->> +	clr = HDFGWTR_EL2_PMUSERENR_EL0
->> +		| HDFGWTR_EL2_PMCR_EL0
->> +		| HDFGWTR_EL2_PMSELR_EL0
->> +		| HDFGWTR_EL2_PMINTEN
->> +		| HDFGWTR_EL2_PMCNTEN
->> +		| HDFGWTR_EL2_PMCCNTR_EL0
->> +		| HDFGWTR_EL2_PMEVCNTRn_EL0;
->> +
->> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGWTR_EL2, clr, set);
->> +
->> +	if (!cpus_have_final_cap(ARM64_HAS_FGT2))
->> +		return;
->> +
->> +	set = HDFGRTR2_EL2_nPMICFILTR_EL0
->> +		| HDFGRTR2_EL2_nPMICNTR_EL0;
->> +	clr = 0;
->> +
->> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGRTR2_EL2, clr, set);
->> +
->> +	set = HDFGWTR2_EL2_nPMICFILTR_EL0
->> +		| HDFGWTR2_EL2_nPMICNTR_EL0;
->> +	clr = 0;
->> +
->> +	update_fgt_traps_cs(hctxt, vcpu, kvm, HDFGWTR2_EL2, clr, set);
-
-> This feels wrong. There should be one place to populate the FGTs that
-> apply to a guest as set from the host, not two or more.
-
-> There is such a construct in the SME series, and maybe you could have
-> a look at it, specially if the trap configuration is this static.
-
-> 	M.
-
-> --
-> Without deviation from the norm, progress is not possible.
-
-I'm assuming you are referring to Mark Brown's series [1], specifically
-patches 5 and 18 and I see what you mean.
-
-You are probably thinking configuration should happen from
-sys_regs.c:kvm_calculate_traps or thereabout and should be setting bits
-in the existing kvm->arch.fgt array.
-
-Correct me if I'm mistaken.
-
-[1]  
-https://lore.kernel.org/kvm/20250625-kvm-arm64-sme-v6-0-114cff4ffe04@kernel.org/
+Note: no patches were applied.
 
