@@ -1,199 +1,248 @@
-Return-Path: <linux-kernel+bounces-705751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9145CAEAD1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:00:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7124FAEAD25
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 05:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7DD1C223FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5800D1C22388
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9C01A262D;
-	Fri, 27 Jun 2025 02:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803FF194C96;
+	Fri, 27 Jun 2025 03:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+MCvt/2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="o9dNvPwp"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA061A2398
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E4017C21B
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 03:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750993194; cv=none; b=E3PojXGmFG6gbHvjK922KRTeoyT5k6QWLpHlGyQpQ215r1HyTZIqUtgNmDtcQi/Ch1k+O4rGGmIxzMEYZlDnokfZSGgRYvGmuMyCGPwmaxXGMZtJn3/qamEjqT4SXxGqWGotkBjPXi501VgMQvWhHouO1oROSGW/1nf+NRsSIr0=
+	t=1750993364; cv=none; b=IVrZ68CasOEmRbuwc5yvx1BSlqfUFZON1h0mbDRpp74+QFJRRutDzZ9DtX3QQCvW3fP972Zo7X4ayildInojC9+vk4c1DjwkolWKQVy+duCbp9jGPf7pTgnsbzXuHrOB9OdS4UQB0Ec2fFTIUfB9HKW+ggmlWCDvCD5pn/+hME4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750993194; c=relaxed/simple;
-	bh=4NqwKliYxy8MhrsnNyN+PcNi2iyEW5+AWz1gEYnmZ54=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JF1nRjBCV/dlLR8S6bwhmYYyh8gy50hTflUT1bSFRR6BFIkxifHbeyeWl8w/kyohHjerF60Ah+MYWeY3ZDr7aKeW422wkMFGgnE0BmTtvfyLvElXLC2aRUDt190gqpMH15NcPiWLyLfafQlrxqGLTFc1VwjWluvZYm9IvZDUYQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+MCvt/2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F48C4CEEB;
-	Fri, 27 Jun 2025 02:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750993192;
-	bh=4NqwKliYxy8MhrsnNyN+PcNi2iyEW5+AWz1gEYnmZ54=;
-	h=From:To:Cc:Subject:Date:From;
-	b=j+MCvt/2FcPez/rFPZyI6bhqypUTJfQAwX2v8YBWMRudhwu/XzFe/YL9wGejK+2yc
-	 XIUTIeDbhxxVN4RSKl469DRbQzM3lXhYuxCaJOg8R+xhNZmypn997e2nLXGNPY92fx
-	 wScR4n4/f825GRadPfvf3fdIxVjwcgzxys9Kpu5NbkVL125dvue2Ca5PufIOEf6UXW
-	 ybuwKYBCvOPOq8Cgi0FFNM3uFi2S35d3SOMwwFAFSC1F8ngTbyg2kZTIgUyppA6K4A
-	 xHFu//XGI+N+gPE5/YRxXJGOBjSYfzbIyQg0+vFiFyZGIflPBAIyFSYwlMJkEcDs9F
-	 60AMMdVP9eoeg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: account and print more stats during recovery
-Date: Fri, 27 Jun 2025 10:59:43 +0800
-Message-ID: <20250627025944.152334-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+	s=arc-20240116; t=1750993364; c=relaxed/simple;
+	bh=OV4Vv1j62T0J9EDR2MBzhy7KvS/mL5uJgVrkoezDvk4=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jepcS3zAoQKZ1wbiqyPmUeiHpAw8LP3gjI8gQOWi2/+ZGvJ5Z6yGWKBkDTnXHulgnGfyDFJAraARkmwTbR/fzH8QIsWMmrj3AbFGLj5JeKAXlgnVU2kt78DYvtCMSarVwCQr8RE6mCI+AbchB3y9bWM+LKA7sd0rxs0lMFALmnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=o9dNvPwp; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2f365c0a530311f0b33aeb1e7f16c2b6-20250627
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=OV4Vv1j62T0J9EDR2MBzhy7KvS/mL5uJgVrkoezDvk4=;
+	b=o9dNvPwpSbmiE8l6zluijkcE2FcSLAqpk2KZ986d7dbSVWRceIGYj/DDeZWkDWaXV7npTioza0WO4GzIaebM+/plz3KBrBF56MUoUZe1UB4fdJJsN0IJm9h6eInhzXyAbYMi3U0fzmV8xVKiYBB2amTbsV7xHvi4R0C7MLSbiOE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.2,REQID:3702e25b-eb87-4cab-9138-86a37c05b3b8,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:9eb4ff7,CLOUDID:28e84082-cc21-4267-87cf-e75829fa6365,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,
+	EDM:-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0
+	,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 2f365c0a530311f0b33aeb1e7f16c2b6-20250627
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <kuyo.chang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 266055417; Fri, 27 Jun 2025 11:02:39 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Fri, 27 Jun 2025 11:02:36 +0800
+Received: from [10.233.130.16] (10.233.130.16) by mtkmbs13n2.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1258.39 via Frontend
+ Transport; Fri, 27 Jun 2025 11:02:36 +0800
+Message-ID: <c057bbc383ab5525172b22a4f3480acbcac12045.camel@mediatek.com>
+Subject: Re: [PATCH v3 1/1] sched/deadline: Fix dl_server runtime
+ calculation formula
+From: Kuyo Chang <kuyo.chang@mediatek.com>
+To: John Stultz <jstultz@google.com>
+CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
+ Gorman" <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Date: Fri, 27 Jun 2025 11:02:37 +0800
+In-Reply-To: <CANDhNCpNZd+s9+ZXU=+4t3CyV=7weFsbWQEx2=M9yphx6szt8Q@mail.gmail.com>
+References: <20250626030746.2245365-1-kuyo.chang@mediatek.com>
+	 <CANDhNCpNZd+s9+ZXU=+4t3CyV=7weFsbWQEx2=M9yphx6szt8Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-F2FS-fs (vdc): f2fs_recover_fsync_data: recovery fsync data, check_only: 0
-F2FS-fs (vdc): do_recover_data: start to recover dnode
-F2FS-fs (vdc): recover_inode: ino = 5, name = testfile.t2, inline = 21
-F2FS-fs (vdc): recover_data: ino = 5, nid = 5 (i_size: recover), range (0, 864), recovered = 1, err = 0
-F2FS-fs (vdc): do_recover_data: dnode: (recoverable: 256, fsynced: 256, total: 256), recovered: (inode: 256, dentry: 1, dnode: 256), err: 0
+On Wed, 2025-06-25 at 22:25 -0700, John Stultz wrote:
+>=20
+>=20
+>=20
+> On Wed, Jun 25, 2025 at 8:08=E2=80=AFPM Kuyo Chang <kuyo.chang@mediatek.c=
+om>
+> wrote:
+> > [Symptom]
+> > The calculation formula for dl_server runtime is based on
+> > Frequency/capacity scale-invariance.
+> > This will cause excessive RT latency (expect absolute time).
+>=20
+> I appreciate your symptom/analysis/solution markers, but they are a
+> little unconventional for commit messages, so you might consider
+> dropping them.
+>=20
+> Further, you're explaining the cause of the problem before you
+> describe what you were seeing.
+>=20
+> I might suggest rewording as:
+> "In our testing with 6.12 based kernel on a big.LITTLE system, we
+> were
+> seeing instances of RT tasks being blocked from running on the LITTLE
+> cpus for multiple seconds of time, apparently by the dl_server. This
+> far exceeds the default configured 50ms per second runtime."
+>=20
+> Then you can get into the analysis where you can state as you had
+> above:
+> "This is due to the fair dl_server runtime calculation being scaled
+> for frequency & capacity of the cpu"
+>=20
+> > [Analysis]
+> > Consider the following case under a Big.LITTLE architecture:
+> >=20
+> > Assume the runtime is: 50,000,000 ns, and Frequency/capacity
+> > scale-invariance defined as below:
+> >=20
+> > Frequency scale-invariance: 100
+> > Capacity scale-invariance: 50
+> > First by Frequency scale-invariance,
+> > the runtime is scaled to 50,000,000 * 100 >> 10 =3D 4,882,812
+> > Then by capacity scale-invariance,
+> > it is further scaled to 4,882,812 * 50 >> 10 =3D 238,418.
+> >=20
+> > So it will scaled to 238,418 ns.
+>=20
+> This part is all good, but you might want to make it more clear why
+> the smaller scaled "runtime" value here results in longer delays for
+> RT tasks.
+> ie:
+>=20
+> This smaller "accounted runtime" value is what ends up being
+> subtracted against the fair-server's runtime for the current period.
+> Thus after 50ms of real time, we've only accounted ~238us against the
+> fair servers runtime. This 209:1 ratio in this example means that on
+> the smaller cpu the fair server is allowed to continue running,
+> blocking RT tasks, for over 10 seconds before it exhausts its
+> supposed
+> 50ms of runtime.=C2=A0 And on other hardware configurations it can be eve=
+n
+> worse.
+>=20
+> > [Solution]
+> > The runtime for dl_server should be fixed time
+> > asis RT bandwidth control.
+> > Fix the runtime calculation formula for the dl_server.
+>=20
+> I think this can be stated more simply as:
+> "For the fair deadline_server, to prevent realtime tasks from being
+> unexpectedly delayed, we really do want to use fixed time, and not
+> scaled time for smaller capacity/frequency cpus. So remove the
+> scaling
+> from the fair server's accounting to fix this."
+>=20
+> > Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
+> > Acked-by: Juri Lelli <juri.lelli@redhat.com>
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Suggested-by: John Stultz <jstultz@google.com>
+> > Tested-by: John Stultz <jstultz@google.com>
+> >=20
+> > v1:
+> > https://lore.kernel.org/all/20250614020524.631521-1-kuyo.chang@mediatek=
+.com/
+> > v2:
+> > https://lore.kernel.org/all/20250617155355.1479777-1-kuyo.chang@mediate=
+k.com/
+>=20
+> Please add a "---" line above the version data so it doesn't get
+> added
+> to the commit history.
+>=20
+> > Change-Id: Iaaa1ec78f405586c22ba56230ef1143206daa2d0
+>=20
+> Also no Change-Ids in upstream targeted commits.
+> ./scripts/checkpatch.pl should warn you about this, and its a good
+> idea in general to run that before submitting.
+>=20
+> > ---
+> > =C2=A0kernel/sched/deadline.c | 8 ++++++--
+> > =C2=A01 file changed, 6 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > index ad45a8fea245..96a21f38fcc3 100644
+> > --- a/kernel/sched/deadline.c
+> > +++ b/kernel/sched/deadline.c
+> > @@ -1504,7 +1504,9 @@ static void update_curr_dl_se(struct rq *rq,
+> > struct sched_dl_entity *dl_se, s64
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (dl_entity_is_special(dl_=
+se))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return;
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_d=
+elta_exec(rq, dl_se,
+> > delta_exec);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D delta_exec;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!dl_server(dl_se))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_delta_exec(rq, dl_se,
+> > delta_exec);
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dl_se->runtime -=3D scaled_d=
+elta_exec;
+> >=20
+> > @@ -1624,7 +1626,9 @@ void dl_server_update_idle_time(struct rq
+> > *rq, struct task_struct *p)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (delta_exec < 0)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return;
+> >=20
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_d=
+elta_exec(rq, &rq-
+> > >fair_server, delta_exec);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scaled_delta_exec =3D delta_exec;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!rq->fair_server.dl_server)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 scaled_delta_exec =3D dl_scaled_delta_exec(rq, &rq-
+> > >fair_server, delta_exec);
+>=20
+> I still feel like these lines don't make much sense, and it seems
+> like
+> they could be dropped.=C2=A0 When is (!rq->fair_server.dl_server) true?
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rq->fair_server.runtime -=3D=
+ scaled_delta_exec;
+> >=20
+> > --
+>=20
+> Thanks so much again for finding this issue and resubmitting this
+> patch! I really do want to see this land quickly as it addresses a
+> pretty big issue.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/recovery.c | 38 +++++++++++++++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 7 deletions(-)
+Thanks for your reminder and suggestion.
+Update to v4 as below link :)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 51ebed4e1521..f7d2fc86aeb1 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -624,7 +624,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- {
- 	struct dnode_of_data dn;
- 	struct node_info ni;
--	unsigned int start, end;
-+	unsigned int start = 0, end = 0, index;
- 	int err = 0, recovered = 0;
- 
- 	/* step 1: recover xattr */
-@@ -679,7 +679,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto err;
- 	}
- 
--	for (; start < end; start++, dn.ofs_in_node++) {
-+	for (index = start; index < end; index++, dn.ofs_in_node++) {
- 		block_t src, dest;
- 
- 		src = f2fs_data_blkaddr(&dn);
-@@ -708,9 +708,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		}
- 
- 		if (!file_keep_isize(inode) &&
--			(i_size_read(inode) <= ((loff_t)start << PAGE_SHIFT)))
-+			(i_size_read(inode) <= ((loff_t)index << PAGE_SHIFT)))
- 			f2fs_i_size_write(inode,
--				(loff_t)(start + 1) << PAGE_SHIFT);
-+				(loff_t)(index + 1) << PAGE_SHIFT);
- 
- 		/*
- 		 * dest is reserved block, invalidate src block
-@@ -765,9 +765,11 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- err:
- 	f2fs_put_dnode(&dn);
- out:
--	f2fs_notice(sbi, "recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
--		    inode->i_ino, file_keep_isize(inode) ? "keep" : "recover",
--		    recovered, err);
-+	f2fs_notice(sbi, "recover_data: ino = %lx, nid = %x (i_size: %s), "
-+		    "range (%u, %u), recovered = %d, err = %d",
-+		    inode->i_ino, nid_of_node(&folio->page),
-+		    file_keep_isize(inode) ? "keep" : "recover",
-+		    start, end, recovered, err);
- 	return err;
- }
- 
-@@ -778,6 +780,14 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 	int err = 0;
- 	block_t blkaddr;
- 	unsigned int ra_blocks = RECOVERY_MAX_RA_BLOCKS;
-+	unsigned int recoverable_dnode = 0;
-+	unsigned int fsynced_dnode = 0;
-+	unsigned int total_dnode = 0;
-+	unsigned int recovered_inode = 0;
-+	unsigned int recovered_dentry = 0;
-+	unsigned int recovered_dnode = 0;
-+
-+	f2fs_notice(sbi, "do_recover_data: start to recover dnode");
- 
- 	/* get node pages in the current segment */
- 	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
-@@ -800,10 +810,12 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 			f2fs_folio_put(folio, true);
- 			break;
- 		}
-+		recoverable_dnode++;
- 
- 		entry = get_fsync_inode(inode_list, ino_of_node(&folio->page));
- 		if (!entry)
- 			goto next;
-+		fsynced_dnode++;
- 		/*
- 		 * inode(x) | CP | inode(x) | dnode(F)
- 		 * In this case, we can lose the latest inode(x).
-@@ -815,6 +827,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 				f2fs_folio_put(folio, true);
- 				break;
- 			}
-+			recovered_inode++;
- 		}
- 		if (entry->last_dentry == blkaddr) {
- 			err = recover_dentry(entry->inode, &folio->page, dir_list);
-@@ -822,12 +835,14 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 				f2fs_folio_put(folio, true);
- 				break;
- 			}
-+			recovered_dentry++;
- 		}
- 		err = do_recover_data(sbi, entry->inode, folio);
- 		if (err) {
- 			f2fs_folio_put(folio, true);
- 			break;
- 		}
-+		recovered_dnode++;
- 
- 		if (entry->blkaddr == blkaddr)
- 			list_move_tail(&entry->list, tmp_inode_list);
-@@ -840,9 +855,15 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		f2fs_folio_put(folio, true);
- 
- 		f2fs_ra_meta_pages_cond(sbi, blkaddr, ra_blocks);
-+		total_dnode++;
- 	}
- 	if (!err)
- 		err = f2fs_allocate_new_segments(sbi);
-+
-+	f2fs_notice(sbi, "do_recover_data: dnode: (recoverable: %u, fsynced: %u, "
-+		"total: %u), recovered: (inode: %u, dentry: %u, dnode: %u), err: %d",
-+		recoverable_dnode, fsynced_dnode, total_dnode, recovered_inode,
-+		recovered_dentry, recovered_dnode, err);
- 	return err;
- }
- 
-@@ -855,6 +876,9 @@ int f2fs_recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	unsigned long s_flags = sbi->sb->s_flags;
- 	bool need_writecp = false;
- 
-+	f2fs_notice(sbi, "f2fs_recover_fsync_data: recovery fsync data, "
-+					"check_only: %d", check_only);
-+
- 	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
- 		f2fs_info(sbi, "recover fsync data on readonly fs");
- 
--- 
-2.49.0
+https://lore.kernel.org/all/20250627022837.3331827-1-kuyo.chang@mediatek.co=
+m/
+
+> -john
 
 
