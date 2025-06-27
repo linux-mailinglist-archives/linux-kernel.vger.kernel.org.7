@@ -1,263 +1,146 @@
-Return-Path: <linux-kernel+bounces-706502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A39CAEB768
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C0CAEB766
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9DF47B7226
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:14:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 944E67B1B59
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA112C032C;
-	Fri, 27 Jun 2025 12:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7932D2397;
+	Fri, 27 Jun 2025 12:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FUqS2Dcw"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sftZOycl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABD62D3A77
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35EA2BEFE5;
+	Fri, 27 Jun 2025 12:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751026401; cv=none; b=bGJS5/tXIJodr6MCjX9+aSbkyhOqrrvYqagdnv87GNDadZbRcsgwpN+a6kMxMqtOt9whOT3TnFEhUYnALLUIBmyhE5FEtfOSZJTlEh0tP29cq4U0p3h3EeHVL5aWECUDEGBvXkLIfnVXKDi3ymh3lVmETS7266bo1mgr6YNBalo=
+	t=1751026375; cv=none; b=LOj454kiVEOpNa1HN4GQcosU8vpqeOEOhhyitMYUt6jas0VXL4RX12ywoA0IkoZZWw1ZzDIlPoTYqvggs8WHD4Hn2XtJr7kX3MNTZJdnn7DjEr2QFUP77ZPBxVW7rwNnLmGnrRV09hosAV37TuBxsSBhCQwiUSuhD1rBo3ULvls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751026401; c=relaxed/simple;
-	bh=wJc4Yq/2qIbN+YrM8hSbDxvEt1nc0UwcLw7/Vd6Yz4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GnPKSkd8beS+FGD11zUf4k5ftXvtLB2oAEm3pAFq64mYx09BDl4Z0zsZkQXijVR4oa4zZT3d+BcyU0480Bj8VICOGTC2KIQx6T4yL/JOIWEWEefNEXuWn8nuidTmkl3+RBiNJGOELQAvvfR66Ak91e6tRzPn5I5L5jFUuSnlwdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FUqS2Dcw; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87f4c8e9cdcso505641241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1751026398; x=1751631198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L/kboISUHVl7C5fi/y0/ImSh6YAy6f5eQsfdMQeLy6w=;
-        b=FUqS2DcwK+V/GuMNs/bvIDtRNcKAxkThnpSfto9Ojx+NHIYg6IJtcuI6UsmQOuRxgR
-         0mkKzQj2NByv374S9sriHTv61WRYfHanTWhOep19GDfaZAnQXxla62MYffB2C38AfXd4
-         hm7JkIHcDe6NPRL8HIJaDhgm6xYLOxpm+++FU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751026398; x=1751631198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L/kboISUHVl7C5fi/y0/ImSh6YAy6f5eQsfdMQeLy6w=;
-        b=Kdj1YKMmH90QEQLfdqDK+0r3NIVqJqiB00RCHeEyr6PDxN0RG9DxxJLb8XejZbxb2z
-         g0SJ63I5W2LbiMINrERvb2KHMMZkkY9n/Uki5XXQAwcq8s1BrqCF/7/eZ9PnocAB2qKP
-         +VgfrESMv5LKuzL88i7eX9WtKfmJjWwlatdoBmak0j+jbUuF7ck70f7xSRSIVy2g9H7T
-         IdsVrQZOEISOVSRaHuVoxAUfvjaIMRyflyMIMO54RajTFBm3dcJ1gu4lYgQdRIz30yHy
-         tferiluJCrrVGF2PesNociJDzTC0IclIF5p6wAQkVKGdmCQ6pjLfgNZGyLHPAelI+OMr
-         L9Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeL+kHWJUkCVCNAiOfjNk1tCn+8jK4u7b6ZYuX4JmHCnUocrzyobPuiNhlPQGkDu/6TSbYOrO79SnNIU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyacDRcEJ4Y7iY0QdkfzJLR9K8hQHw1e/aA9jExFO/S4WrJpheN
-	+NC2zXWym7O5xMDbCb6HLXmrjEazXuL6VnshxBEgagITC4lZsvS2kIN/4HJaIyc6iD4ZinETzj8
-	L0YU=
-X-Gm-Gg: ASbGncuM5pl6Ok4fH2jssHKtI+Jx1qgtonJRiKP6di1p3Nhqk4tM3rPy1Ck0tWVNJ8b
-	Cde4J5WT2u2Q7Xs5LwPhfd5b3eN/zCP/HwFOks7UocazT6iONGqrLx0+0c7CNWbHJ+k5W4vQueD
-	RNJK5pdwv9/WvsGiwVEBJK+W3ENgUJDw60FwwjgswTaaDS4GXFv6V8qORJPV/bT+WymstZ3ZFPg
-	sViB+0VEJPgfzMcm7OY4w3Opsz/VhMF5mxeB+VDQJLAX/9dYg3xNZ7RG51/DjdfIFr0OrKkbo3t
-	+d1zM1rUa2v7D0VPyjpCU/8VkWQBgY//bJ0TSrPq5Cy8ZBj5CwFdUQv8Uvm/l3TWuQm03R1cyC0
-	SseLCqnN8ytoO38oEc+i7dw==
-X-Google-Smtp-Source: AGHT+IFZ+Hm5WaBR5iSSeCUlLv4PD6W9+y42s2zV7rRE9/IlTUtvFks9CIj3M1Iv5OVr5BF0oJ6l3A==
-X-Received: by 2002:a05:6102:a4d:b0:4ec:c548:e10e with SMTP id ada2fe7eead31-4ee4f4e672cmr2376390137.3.1751026397820;
-        Fri, 27 Jun 2025 05:13:17 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-884d1c3781esm589443241.10.2025.06.27.05.13.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 05:13:17 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4c9cea30173so481319137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:13:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlI/XIGFwPEmMBX/t7ixumGMx1419XeWlT5hC9KgpakfhBt5v229NdHttpg5hfj2NkCrwRIPfJqCLP2wQ=@vger.kernel.org
-X-Received: by 2002:a05:6102:b10:b0:4e5:59ce:471b with SMTP id
- ada2fe7eead31-4ee4f8fa5cbmr2358879137.23.1751026395186; Fri, 27 Jun 2025
- 05:13:15 -0700 (PDT)
+	s=arc-20240116; t=1751026375; c=relaxed/simple;
+	bh=C6oegAaJ6Q9XOuL86FjJu5fzYxEuJUZ71dKO2pzkkNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccng3ONfYUGqizahC/sQ5w3j5bzM+S4GkwoM4IYI1JdFkACaZFR1IqAz5ZOiZEOcxx+a2QtbjCbuyRy6Zy+UYj276UvUOSYPeF/tgIlZG29DuKu/jpouaOhDTCaMflfLpVPvYTMDDChqI7TdlWASRHbQEQs1GXiRzrPWC9y5T7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sftZOycl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6153C4CEE3;
+	Fri, 27 Jun 2025 12:12:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751026374;
+	bh=C6oegAaJ6Q9XOuL86FjJu5fzYxEuJUZ71dKO2pzkkNI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sftZOyclg0UnjLvH59IBt3TWlpu4GVOW4KuMn8IEDuNrH2vgoHXZSa2IWzQCGGp+F
+	 0iUvAhRQ8QbFdRyHnK3kbDHevMUO6/pDQ7eHfiAtXrWH9DIYuA/NwwCHmddErxrQvd
+	 EhxQxR03CgCIJuprGt35iCoWpUVCp+i+9GYzHYmqCMamk57ZxzoAcZV10yeMpZGRgH
+	 WbHRJ/tm6DnZBbQf0qPzqtq98A+E+4qpYoFnp9m+E+HUrLW2WRyDh3QCP2VZJ/mOph
+	 ss/bWH7nlFaFJ5IAA3BwX3vWRvHMEvx3OjT+YMWHWPmbhgU0blePaRiruCixQxauZ7
+	 sDQ1YZKaxcHNA==
+Date: Fri, 27 Jun 2025 14:12:46 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/9] rust: pwm: Add core 'Device' and 'Chip' object
+ wrappers
+Message-ID: <aF6Kvrk3UTC1Jj5Q@pollux>
+References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
+ <CGME20250623180859eucas1p10ebb40f33046d52618ba738ebbbaa664@eucas1p1.samsung.com>
+ <20250623-rust-next-pwm-working-fan-for-sending-v5-2-0ca23747c23e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com> <20250623120154.109429-3-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20250623120154.109429-3-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Fri, 27 Jun 2025 20:12:39 +0800
-X-Gmail-Original-Message-ID: <CAC=S1njT6ygGuZDPU5KDW94Nu-TbM21DM-6HdR7Pio=WTD_eQA@mail.gmail.com>
-X-Gm-Features: Ac12FXwNi69jmRwGOUm8UJ7WfMt6niSy4CkLT9-9z1YDS1Mi3aHTobxjbgMPxFw
-Message-ID: <CAC=S1njT6ygGuZDPU5KDW94Nu-TbM21DM-6HdR7Pio=WTD_eQA@mail.gmail.com>
-Subject: Re: [PATCH v1 02/13] pmdomain: mediatek: Refactor bus protection
- regmaps retrieval
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org, 
-	y.oudjana@protonmail.com, wenst@chromium.org, lihongbo22@huawei.com, 
-	mandyjh.liu@mediatek.com, mbrugger@suse.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-2-0ca23747c23e@samsung.com>
 
-On Mon, Jun 23, 2025 at 8:02=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> In preparation to add support for new generation SoCs like MT8196,
-> MT6991 and other variants, which require to set bus protection on
-> different busses than the ones found on legacy chips, and to also
-> simplify and reduce memory footprint of this driver, refactor the
-> mechanism to retrieve and use the bus protection regmaps.
->
-> This is done by removing the three pointers to struct regmap from
-> struct scpsys_domain (allocated for each power domain) and moving
-> them to the main struct scpsys (allocated per driver instance) as
-> an array of pointers to regmap named **bus_prot.
->
-> That deprecates the old devicetree properties to grab phandles to
-> the three predefined busses (infracfg, infracfg-nao and smi) and
-> replaces it with a new property "mediatek,bus-protection" that is
-> meant to be an array of phandles holding the same busses where
-> required (for now - for legacy SoCs).
->
-> The new bus protection phandles are indexed by the bus_prot_index
-> member of struct scpsys, used to map "bus type" (ex.: infra, smi,
-> etc) to the specific *bus_prot[x] element.
->
-> While the old per-power-domain regmap pointers were removed, the
-> support for old devicetree was retained by still checking if the
-> new property (in DT) and new-style declaration (in SoC specific
-> platform data) are both present at probe time.
->
-> If those are not present, a lookup for the old properties will be
-> done in all of the children of the power controller, and pointers
-> to regmaps will be retrieved with the old properties, but then
-> will be internally remapped to follow the new style regmap anyway
-> as to let this driver benefit of the memory footprint reduction.
->
-> Finally, it was necessary to change macros in mtk-pm-domains.h and
-> in mt8365-pm-domains.h to make use of the new style bus protection
-> declaration, as the actual HW block is now recognized not by flags
-> but by its own scpsys_bus_prot_block enumeration.
->
-> The BUS_PROT_(STA)_COMPONENT_{INFRA,INFRA_NAO,SMI} flags were also
-> removed since they are now unused, and because that enumeration was
-> initially meant to vary the logic of bus protection and not the bus
-> where work is performed, anyway!
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
+On Mon, Jun 23, 2025 at 08:08:50PM +0200, Michal Wilczynski wrote:
+> +    /// Gets the *typed* driver-specific data associated with this chip's embedded device.
+> +    pub fn drvdata<T: 'static>(&self) -> &T {
+> +        // SAFETY: `self.as_raw()` gives a valid pwm_chip pointer.
+> +        // `bindings::pwmchip_get_drvdata` is the C function to retrieve driver data.
+> +        let ptr = unsafe { bindings::pwmchip_get_drvdata(self.as_raw()) };
+> +
+> +        // SAFETY: The only way to create a chip is through Chip::new, which initializes
+> +        // this pointer.
+> +        unsafe { &*ptr.cast::<T>() }
+> +    }
+> +
+> +    /// Sets the *typed* driver-specific data associated with this chip's embedded device.
+> +    pub fn set_drvdata<T: 'static + ForeignOwnable>(&self, data: T) {
+> +        // SAFETY: `self.as_raw()` gives a valid pwm_chip pointer.
+> +        // `bindings::pwmchip_set_drvdata` is the C function to set driver data.
+> +        // `data.into_foreign()` provides a valid `*mut c_void`.
+> +        unsafe { bindings::pwmchip_set_drvdata(self.as_raw(), data.into_foreign().cast()) }
+> +    }
 
-<snip>
+I think this is unsound, e.g. what happens if someone calls set_drvdata() twice?
+Then you leak the ForeignOwnable from the first call.
 
->
-> +static int scpsys_get_bus_protection_legacy(struct device *dev, struct s=
-cpsys *scpsys)
-> +{
-> +       const u8 bp_blocks[3] =3D {
-> +               BUS_PROT_BLOCK_INFRA, BUS_PROT_BLOCK_SMI, BUS_PROT_BLOCK_=
-INFRA_NAO
-> +       };
-> +       struct device_node *np =3D dev->of_node;
-> +       struct device_node *node, *smi_np;
-> +       int num_regmaps =3D 0, i, j;
-> +       struct regmap *regmap[3];
-> +
-> +       /*
-> +        * Legacy code retrieves a maximum of three bus protection handle=
-s:
-> +        * some may be optional, or may not be, so the array of bp blocks
-> +        * that is normally passed in as platform data must be dynamicall=
-y
-> +        * built in this case.
-> +        *
-> +        * Here, try to retrieve all of the regmaps that the legacy code
-> +        * supported and then count the number of the ones that are prese=
-nt,
-> +        * this makes it then possible to allocate the array of bus_prot
-> +        * regmaps and convert all to the new style handling.
-> +        */
-> +       node =3D of_find_node_with_property(np, "mediatek,infracfg");
-> +       if (node) {
-> +               regmap[0] =3D syscon_regmap_lookup_by_phandle(node, "medi=
-atek,infracfg");
-> +               of_node_put(node);
-> +               num_regmaps++;
-> +               if (IS_ERR(regmap[0]))
-> +                       return dev_err_probe(dev, PTR_ERR(regmap[0]),
-> +                                            "%pOF: failed to get infracf=
-g regmap\n",
-> +                                            node);
-> +       } else {
-> +               regmap[0] =3D NULL;
-> +       }
-> +
-> +       node =3D of_find_node_with_property(np, "mediatek,smi");
-> +       if (node) {
-> +               smi_np =3D of_parse_phandle(node, "mediatek,smi", 0);
-> +               of_node_put(node);
-> +               if (!smi_np)
-> +                       return -ENODEV;
-> +
-> +               regmap[1] =3D device_node_to_regmap(smi_np);
-> +               num_regmaps++;
-> +               of_node_put(smi_np);
-> +               if (IS_ERR(regmap[1]))
-> +                       return dev_err_probe(dev, PTR_ERR(regmap[1]),
-> +                                            "%pOF: failed to get SMI reg=
-map\n",
-> +                                            node);
-> +       } else {
-> +               regmap[1] =3D NULL;
-> +       }
-> +
-> +       node =3D of_find_node_with_property(np, "mediatek,infracfg-nao");
-> +       if (node) {
-> +               regmap[2] =3D syscon_regmap_lookup_by_phandle(node, "medi=
-atek,infracfg-nao");
-> +               num_regmaps++;
-> +               of_node_put(node);
-> +               if (IS_ERR(regmap[2]))
-> +                       return dev_err_probe(dev, PTR_ERR(regmap[2]),
-> +                                            "%pOF: failed to get infracf=
-g regmap\n",
-> +                                            node);
-> +       } else {
-> +               regmap[2] =3D NULL;
-> +       }
-> +
-> +       scpsys->bus_prot =3D devm_kmalloc_array(dev, num_regmaps,
-> +                                             sizeof(*scpsys->bus_prot), =
-GFP_KERNEL);
-> +       if (!scpsys->bus_prot)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0, j =3D 0; i < num_regmaps; i++) {
+Anyways, this does not need to be public, you should just call
+bindings::pwmchip_set_drvdata() once in Self::new().
 
-Did you mean BUS_PROT_BLOCK_COUNT?
-Consider a case where only regmap[2] is configured.
+Please also see [1], where I introduce generic accessors for drvdata for Device.
 
-Regards,
-Fei
+[1] https://lore.kernel.org/lkml/20250621195118.124245-3-dakr@kernel.org/
 
-> +               enum scpsys_bus_prot_block bp_type;
+> +    /// Allocates and wraps a PWM chip using `bindings::pwmchip_alloc`.
+> +    ///
+> +    /// Returns an [`ARef<Chip>`] managing the chip's lifetime via refcounting
+> +    /// on its embedded `struct device`.
+> +    pub fn new<T: 'static + ForeignOwnable>(
+> +        parent_dev: &device::Device,
+> +        npwm: u32,
+> +        sizeof_priv: usize,
+> +	drvdata: T,
+> +    ) -> Result<ARef<Self>> {
+> +        // SAFETY: `parent_device_for_dev_field.as_raw()` is valid.
+> +        // `bindings::pwmchip_alloc` returns a valid `*mut bindings::pwm_chip` (refcount 1)
+> +        // or an ERR_PTR.
+> +        let c_chip_ptr_raw =
+> +            unsafe { bindings::pwmchip_alloc(parent_dev.as_raw(), npwm, sizeof_priv) };
 > +
-> +               if (!regmap[i])
-> +                       continue;
+> +        let c_chip_ptr: *mut bindings::pwm_chip = error::from_err_ptr(c_chip_ptr_raw)?;
 > +
-> +               bp_type =3D bp_blocks[i];
-> +               scpsys->bus_prot_index[bp_type] =3D j;
-> +               scpsys->bus_prot[j] =3D regmap[i];
+> +        // Cast the `*mut bindings::pwm_chip` to `*mut Chip`. This is valid because
+> +        // `Chip` is `repr(transparent)` over `Opaque<bindings::pwm_chip>`, and
+> +        // `Opaque<T>` is `repr(transparent)` over `T`.
+> +        let chip_ptr_as_self = c_chip_ptr.cast::<Self>();
 > +
-> +               j++;
-> +       }
+> +	// SAFETY: The pointer is valid, so we can create a temporary ref to set data.
+> +        let chip_ref = unsafe { &*chip_ptr_as_self };
+> +        chip_ref.set_drvdata(drvdata);
 > +
-> +       return 0;
+> +        // SAFETY: `chip_ptr_as_self` points to a valid `Chip` (layout-compatible with
+> +        // `bindings::pwm_chip`) whose embedded device has refcount 1.
+> +        // `ARef::from_raw` takes this pointer and manages it via `AlwaysRefCounted`.
+> +        Ok(unsafe { ARef::from_raw(NonNull::new_unchecked(chip_ptr_as_self)) })
+> +    }
 > +}
-> +
-
-<snip>
 
