@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-706452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3562FAEB6DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:52:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21B2AEB6E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B56183B4F52
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CE21C418E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E392BEFED;
-	Fri, 27 Jun 2025 11:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FA62C0323;
+	Fri, 27 Jun 2025 11:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a1N4YoGN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cbi11tNe"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273952BD59B
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255A72BF3FC
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025126; cv=none; b=P5aUwoA5bMD1ecL3QilSwcv5w5grYlPFNScB1Ddgi+94FVhNqkTTLFBKLiZtqBQv+lF6LBFnylClKJ2ZnDwvXRqTLKDDlUlW0QUeKwzwosFz13rtagdu0R6fRDQFDuIyKfBYIHrUVg742l0qaGhYo5oV0tyXGsQQAclItTZJDQs=
+	t=1751025133; cv=none; b=HOfRtZeQI4AofDA+2h7Pm7iN8D2nLA4kqNV0ZPIb9VVNw+9wDWkuG8juBqbdTRLcTliapBdASIrMoyMHA9PeJlbf7JfuBhH/1YWzglFhz1LgXr196RX/yAP8+xLm3We3FuF1L5MOCZFlLSBcytpP/GofuySSvJj9XncWUx9UXPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025126; c=relaxed/simple;
-	bh=eLabGndv5WbLVWZBWuCa784Nl9PyS/LDkKRTF1WtRSc=;
+	s=arc-20240116; t=1751025133; c=relaxed/simple;
+	bh=B1fDgTPvcW5CNOENUIG20E3kZIfrYCCjaLOj12iKS54=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pv7CgNJ6lYUyMUfa5CGfl0Gzw8ZMVBsL/pXedKVaF4lNm7WlQwvxIVsuTSTfpHUsaBn7FXgMsJn7zs5/u+S63LLRrfSTBz03zz0Nw3oP5lYYhHx/mcpNz7vZ1nhyiQNrIiTqdVAXdtspKBc2Dvs6s6nPfSV8K6gz5m0YNBBQfbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a1N4YoGN; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=JekGIRmPCEwfuRUgL2NyPKcX7NIbkMGKokAWetPimHxrx12ZKpkLxxlNYTzk2Ffm33t3v8WH9ug8sj0obqlaVc1wt2VBDFzMiyibd6RTenA1DetXPpMMIYwgTXqarGi42lEqEs+HLP2wnAF3Kbu0vhzeKNHWjv1EVxAa5GfvlaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cbi11tNe; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751025124;
+	s=mimecast20190719; t=1751025131;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OYPEz3mUS07c5nVCrOLOsn4ePZ2xxtEuXLNx/SjYWkQ=;
-	b=a1N4YoGNxPtn6AevYODb0O106jXBzVaEk42lBYWLo7NuF25DJQOWmtCT8GY7D57W2gXk+C
-	UCVxtAUD0O6yxgdB4AGGLL72NwEer0G3tH8VHa5YUIpOMOrcLnYALauFaFhDGgGEMG1LH0
-	bz9MIwqEF8qFriXz4NcyssQwrrQxu6I=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=I5vSNy0YZG1hcCr6zeagT5BwkVdXA07NqtiRR9wtVcQ=;
+	b=cbi11tNe1dd1XRQxM2MfkM37lL5URIhj9LbdCUyRych2epZmbIy/sq0hYP/gJpfaDfcK2a
+	0MBCec1uQ+w/E7gRBRaeECAfYGQhClqelzmzfzR2kd73Rij/qQDDxwIy3WT/Md+OiCl5T9
+	xJGYXmvA84ag5CURYR8uM7EHgquQf3E=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-UTx3Z_1INq-JNb5Xn6jw_A-1; Fri,
- 27 Jun 2025 07:52:02 -0400
-X-MC-Unique: UTx3Z_1INq-JNb5Xn6jw_A-1
-X-Mimecast-MFC-AGG-ID: UTx3Z_1INq-JNb5Xn6jw_A_1751025121
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-684-hv7pZnlCN1mjkOBSAXu05Q-1; Fri,
+ 27 Jun 2025 07:52:07 -0400
+X-MC-Unique: hv7pZnlCN1mjkOBSAXu05Q-1
+X-Mimecast-MFC-AGG-ID: hv7pZnlCN1mjkOBSAXu05Q_1751025126
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 764A418011DF;
-	Fri, 27 Jun 2025 11:52:00 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 147421801BD8;
+	Fri, 27 Jun 2025 11:52:06 +0000 (UTC)
 Received: from jlelli-thinkpadt14gen4.remote.csb (unknown [10.44.32.84])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C98DA19560A7;
-	Fri, 27 Jun 2025 11:51:54 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E10E19560AB;
+	Fri, 27 Jun 2025 11:52:00 +0000 (UTC)
 From: Juri Lelli <juri.lelli@redhat.com>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
@@ -70,9 +70,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>,
 	Luca Abeni <luca.abeni@santannapisa.it>,
 	Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 2/5] sched/deadline: Reset extra_bw to max_bw when clearing root domains
-Date: Fri, 27 Jun 2025 13:51:15 +0200
-Message-ID: <20250627115118.438797-3-juri.lelli@redhat.com>
+Subject: [PATCH 3/5] sched/deadline: Fix accounting after global limits change
+Date: Fri, 27 Jun 2025 13:51:16 +0200
+Message-ID: <20250627115118.438797-4-juri.lelli@redhat.com>
 In-Reply-To: <20250627115118.438797-1-juri.lelli@redhat.com>
 References: <20250627115118.438797-1-juri.lelli@redhat.com>
 Precedence: bulk
@@ -84,39 +84,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-dl_clear_root_domain() doesn't take into account the fact that per-rq
-extra_bw variables retain values computed before root domain changes,
-resulting in broken accounting.
+A global limits change (sched_rt_handler() logic) currently leaves stale
+and/or incorrect values in variables related to accounting (e.g.
+extra_bw).
 
-Fix it by resetting extra_bw to max_bw before restoring back dl-servers
-contributions.
+Properly clean up per runqueue variables before implementing the change
+and rebuild scheduling domains (so that accounting is also properly
+restored) after such a change is complete.
 
-Fixes: 2ff899e351643 ("sched/deadline: Rebuild root domain accounting after every update")
 Reported-by: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 ---
- kernel/sched/deadline.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/sched/deadline.c | 4 +++-
+ kernel/sched/rt.c       | 6 ++++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index c1f223f372968..7a3b556d45a99 100644
+index 7a3b556d45a99..187f324565f92 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -2907,7 +2907,14 @@ void dl_clear_root_domain(struct root_domain *rd)
- 	int i;
+@@ -3166,6 +3166,9 @@ void sched_dl_do_global(void)
+ 	if (global_rt_runtime() != RUNTIME_INF)
+ 		new_bw = to_ratio(global_rt_period(), global_rt_runtime());
  
- 	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
++	for_each_possible_cpu(cpu)
++		init_dl_rq_bw_ratio(&cpu_rq(cpu)->dl);
 +
-+	/*
-+	 * Reset total_bw to zero and extra_bw to max_bw so that next
-+	 * loop will add dl-servers contributions back properly,
-+	 */
- 	rd->dl_bw.total_bw = 0;
-+	for_each_cpu(i, rd->span)
-+		cpu_rq(i)->dl.extra_bw = cpu_rq(i)->dl.max_bw;
+ 	for_each_possible_cpu(cpu) {
+ 		rcu_read_lock_sched();
  
- 	/*
- 	 * dl_servers are not tasks. Since dl_add_task_root_domain ignores
+@@ -3181,7 +3184,6 @@ void sched_dl_do_global(void)
+ 		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
+ 
+ 		rcu_read_unlock_sched();
+-		init_dl_rq_bw_ratio(&cpu_rq(cpu)->dl);
+ 	}
+ }
+ 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 15d5855c542cb..be6e9bcbe82b6 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2886,6 +2886,12 @@ static int sched_rt_handler(const struct ctl_table *table, int write, void *buff
+ 	sched_domains_mutex_unlock();
+ 	mutex_unlock(&mutex);
+ 
++	/*
++	 * After changing maximum available bandwidth for DEADLINE, we need to
++	 * recompute per root domain and per cpus variables accordingly.
++	 */
++	rebuild_sched_domains();
++
+ 	return ret;
+ }
+ 
 -- 
 2.49.0
 
