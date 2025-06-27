@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-705980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E8BAEB026
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C8CAEB017
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C72567063
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:33:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8D756217C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3C521C16A;
-	Fri, 27 Jun 2025 07:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A7F3C2F;
+	Fri, 27 Jun 2025 07:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="JciHfeKa"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSlQgiBh"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A463C2F;
-	Fri, 27 Jun 2025 07:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CDC339A8;
+	Fri, 27 Jun 2025 07:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751009622; cv=none; b=M2L96mG9IxbtDvYfv2tOKtki0gKab1wwb9UaYu2LkbBqXV5vlUHpJ5mP/Pg2SxdC82w2Z5asL0QvOC706hQWQHbF61KZTS6Wyut3/9zqlnkDxOstPHUxwGU2fY12gxnOOlE6Zp1j+cgz+03EErIW4LFZFCKSsB/qpNl2RaZ/f3A=
+	t=1751009497; cv=none; b=HumRjWSL6eCYXZlzxRWtY0nFxhU+N3UjU2BHv34xcahVkeMfYdUBRBGmzLQIw9mh0mmFzCGx0SQXipOSSEiuPNcYu7IiK4haExsK9Qvx28ie71KhduAQFzarNHciFzNshkBjZ8Mc+P0yraU/A0QRe0XIMW8s1HNI1JPI2WnHOU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751009622; c=relaxed/simple;
-	bh=qar+YM6XTszYLM/wb/kz1CEveLAhfKbgBVNFhbZ4MkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kog0f4WAvI/JABhU4mhukS0iUwfq43I+VRJN7gH1YB2bSOHCaRFW9SSbJGwrrAspB5kLoNU4TJWl326OQZKOZDbsiE6NBCXur6LkcRE0OR5qaVryfizazxWdN36y88kI+Da/GhfF9r7h76Oi3uko5Xt4LbrSXkEdWLQIwaNQX7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=JciHfeKa; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R2c6Rv030383;
-	Fri, 27 Jun 2025 09:33:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	1Q285Yr3y+87stzQw+zewu692BZK8q52Hv1ctiichRc=; b=JciHfeKa47Iu6sv9
-	VamsVMjg7X+3xY77tw1LBPC1uO0q239nBfbj9K2yYucT7DBEvknjB4ki34TlgIQM
-	kT9l3BL9rSYIVPSOYQuuwFHPM8NLr0Sul81CP9YJTAxGEogTs5EQpBj/SeNjaoxn
-	0uikTuHhBtYBklAU2vdyVdbr+IO3IxqUdINDgEtk1pxPdad87hoI9LFPtfSjBfwE
-	uF4Yt94SE6OrzVJCx4Cn7OhQ/rcndL1sD1V79C0aCep5vlzfCb6dLLYyAsxutFaP
-	W6aiOrLrzFTkaXNSUxw0RaatwVKHUpU21YKkwrxYPXwC/bd5b73z7Eag1onrHItW
-	+GOw8A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dm33tthg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 09:33:14 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 282D540044;
-	Fri, 27 Jun 2025 09:31:50 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9DDC1BCF079;
-	Fri, 27 Jun 2025 09:30:47 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 27 Jun
- 2025 09:30:46 +0200
-Message-ID: <9bb4ab7d-afe2-4508-a18e-12cb1485a5a0@foss.st.com>
-Date: Fri, 27 Jun 2025 09:30:46 +0200
+	s=arc-20240116; t=1751009497; c=relaxed/simple;
+	bh=9fRWkgV+8VP7UmRHkuiRfuz5hfvvERiwtk8L614dD50=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=br+ohkAuCi14X88cnKvWYLND5boTVui0hY653b53LXsAiVP4VeBR7AiDSRSzGyDATHdcjrP4rVPeAmwZjlynOpZpO88dVITGNLCQJgXl6DCwpdSKrmfFmewxA+V5Aj8u5d5mjoBpay0WtuIhuQ8iM//KV/YXrpEkuLkOxV5NciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KSlQgiBh; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-74931666cbcso1742807b3a.0;
+        Fri, 27 Jun 2025 00:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751009495; x=1751614295; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Ulo2IqCqK6lmTR1n2ctrbmpkiinWsFuA6QDYyT+/w0=;
+        b=KSlQgiBh5Wrs1PB4IvFaDIwzP0uL0ce+b1WSCkaoEE6WOALgks5FvfRuObD6J9HUkv
+         WIF7YlWrDDt9Uw2SEjp48MJ827SM9pZ8hwn+MzSxrXdaoEuh2mi8FSg94N48iM2Xkha5
+         Xlgwhv//sfqESxAx7/s8F8iMUveNKbNE7YFcWa8zM5Z+/EHEambV6Qp9NhDY9Z7EerOF
+         K1IGmpz5r+NOcXJcwojIqqUhWgR0AkJSXA/sTOMwh5ndbbBdg2tevHof/CKTI8WFcx3E
+         ZQD6Yud14Jgheqdv/1iNz+4EnRf//CAsPGUvaD/+b/wGlY4gahdf6n7IzfvqzS+a9jlf
+         nTnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751009495; x=1751614295;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9Ulo2IqCqK6lmTR1n2ctrbmpkiinWsFuA6QDYyT+/w0=;
+        b=rTdfc42Jf4zwXcRUwORk88M0DFty+XGf/BmJV8MuVr6zpjyRMMpzeie0w5k1yjZj3n
+         eOj9MXxyFZ2bvG0ChioB8d1YdpyY1iSMO9SnWY9vnuO8A+7W9UYNun2V4UL02QETL9ax
+         nN+U1ksY5KMKHmrwl0U97gICKeOhAvklyhuMMRsoGWb/NMGtOqXwLPPkfXkFCyocKdff
+         erPYePeseaU10IuJ3gp0lmWAa0bFldsxLP5H32qIQGJ+MmREZXQVqKMNUMmPeeMMA71z
+         Ve4oNzupntJ/hTTd96/APWXzyn2/k5qLz5+zi5fHo/gvvgtvAk6YVUMy1Bp53/WZrGEe
+         oafA==
+X-Forwarded-Encrypted: i=1; AJvYcCUitTm+DXIntx8jtOLIp56/V3MwC+13ZlkvbOkWDXtqVjnjtPHLL+GBYGujOOSoJveCdcE0+YDZ8O8K46fj62NK/H8=@vger.kernel.org, AJvYcCWR15cRrIr8oXiy/UQDmpmulxhVkznDvY25wK1kA9bODxhp+1cWZbMlbTMbcyR0uRWPcDgeBqr5gQkaRPzd@vger.kernel.org, AJvYcCWpOKagm436bKHIsk0dFFTOC1NxOMCF0IyevVWd8YlVs9d91BLwf793Q1Y7BiejuxdwiwgGa/IquD2P1w0Hxb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeLRpH/15ODMkJoG85LvBL8oFDKsiwCR23Ux5pGi9J4Mp8KhhH
+	XzaIFPJOt2XFpDEb5dKVeoOsSSmhKrgs25tcEBj/xv9ys05xhL2xqse0
+X-Gm-Gg: ASbGnctbb5XDxRPM963WiOKTwDW1ywkHF2rFZ6NX3vq6ibroCrYOzLehfdTHGwA7hnA
+	yq0nwJ/QYpFvCOxOOTgamhLwIEyte8uHI5NIB2s/1Q1cGVQZuB7Ceo/LTw9682WF9m+Xi21qEcT
+	aikCCgVERJ+p9JYnOH9YCY+QhtnvTWSS43f99cp9ry06E4eliVPKoEkp9fN5yiUxDsqCxF0pWKX
+	/MB7IS7CMLtcOZTFuDI9ed8mWR9x/I7CZZc68Uf8I0gCkIgl9DoT6CDirL6vqXKjnd874qN1Pg2
+	Tz2qQo+5vzZQ9H4eZwtOo5KaIbFAsSw9Y6U3jv+EsNBx9FWjNWK/SWUrIDDcNVZ12TlsrrAuV90
+	M+g5ao3y4y8I9z8DHk5I0EMnGUQgpn5A=
+X-Google-Smtp-Source: AGHT+IHWPxrtW7uCSMjhE308lVU3QsfpWpHidLpZ/iou98J5zU0NWKBg4cfBpKfITecjKJM3Ydlp0Q==
+X-Received: by 2002:a05:6a00:18a7:b0:736:4644:86ee with SMTP id d2e1a72fcca58-74af6f4078bmr2943654b3a.14.1751009494749;
+        Fri, 27 Jun 2025 00:31:34 -0700 (PDT)
+Received: from [172.17.0.2] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af540a8f6sm1628646b3a.12.2025.06.27.00.31.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 00:31:34 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+X-Google-Original-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Subject: [PATCH v5 0/2] ARM: dts: Add support for Meta Clemente BMC
+Date: Fri, 27 Jun 2025 15:31:20 +0800
+Message-Id: <20250627-add-support-for-meta-clemente-bmc-v5-0-038ed6f1cb9f@fii-foxconn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] i2c: stm32: fix the device used for the DMA map
-To: Alain Volmat <alain.volmat@foss.st.com>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Andi Shyti
-	<andi.shyti@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>,
-        M'boumba Cedric Madianga
-	<cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        "Pierre-Yves
- MORDRET" <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>
-References: <20250616-i2c-upstream-v1-0-42d3d5374e65@foss.st.com>
- <20250616-i2c-upstream-v1-1-42d3d5374e65@foss.st.com>
- <20250626083744.GA348766@gnbcxd0016.gnb.st.com>
- <20250626084356.GB348766@gnbcxd0016.gnb.st.com>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20250626084356.GB348766@gnbcxd0016.gnb.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_02,2025-06-26_05,2025-03-28_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMhIXmgC/5XNTWrDMBCG4asErauif1dd9R4lC3k80whqyUiuS
+ Qi+e+WsDM3CXX7D8Lx3VrFErOz9dGcFl1hjTm3YlxODS0hfyOPQNlNCWeHkGw/DwOvPNOUyc8q
+ FjzgHDt84YpqR9yNwb2QwzvdglWbNmQpSvD4an+e2L7HOudweyUVu1//oi+SCo4XgnEc0Xf9BM
+ bbfK+SUXiGPbGssaucqecRVzXVgkYT10nh47uq9q4+4urmglCYCMg7ouWv2bnfENZuLHZHSxgk
+ wf911XX8B8kX8AOABAAA=
+X-Change-ID: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ bruce.jy.hung@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
+ Leo Wang <leo.jt.wang@fii-foxconn.com>, Leo Wang <leo.jt.wang@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751009491; l=1868;
+ i=leo.jt.wang@fii-foxconn.com; s=20250618; h=from:subject:message-id;
+ bh=9fRWkgV+8VP7UmRHkuiRfuz5hfvvERiwtk8L614dD50=;
+ b=0XsbKwFEd4w+7PzCss2Nmt2rO/8TFCmbSJs+qdTQwzawMciw4D7RjYyp2vdqVWZKISYobWBP4
+ UD6tzE6U0MHCxtObyeLMadTp/GYPRXTWeuWWAPR/jwtI7cNH8Isi1zI
+X-Developer-Key: i=leo.jt.wang@fii-foxconn.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-On 6/26/25 10:43, Alain Volmat wrote:
-> Hi Clément,
-> 
-> Oups, I was too fast.
-> 
-> there might be another place to correct in the driver, dma_unmap_single
-> within the error handling of the function stm32_i2c_prep_dma_xfer.
-> 
->     err:
->              dma_unmap_single(chan_dev, dma->dma_buf, dma->dma_len,
->                               dma->dma_data_dir);
-> 
-> Could you also correct this one as well ?
-> 
-> Alain
+This series adds initial support for the Meta Clemente BMC based on the ASPEED AST2600 SoC.
 
-Hi Alain,
+Patch 1 documents the compatible string.
+Patch 2 adds the device tree for the board.
 
-Oh yes you're right, I'll send a v2
+Signed-off-by: Leo Wang <leo.jt.wang@fii-foxconn.com>
+---
+Changes in v5:
+- Remove accidently pasted texts.
+- Link to v4: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v4-0-ce7ff23460c4@fii-foxconn.com
 
-Best regard,
-Clément
-> 
-> 
-> On Thu, Jun 26, 2025 at 10:37:51AM +0200, Alain Volmat wrote:
->> Hi Clément,
->>
->> On Mon, Jun 16, 2025 at 10:53:54AM +0200, Clément Le Goffic wrote:
->>> If the DMA mapping failed, it produced an error log with the wrong
->>> device name:
->>> "stm32-dma3 40400000.dma-controller: rejecting DMA map of vmalloc memory"
->>> Fix this issue by replacing the dev with the I2C dev.
->>
->> Indeed, nice catch ! Thanks a lot !
->>
->>>
->>> Fixes: bb8822cbbc53 ("i2c: i2c-stm32: Add generic DMA API")
->>> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->>> ---
->>>   drivers/i2c/busses/i2c-stm32.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
->>> index 157c64e27d0b..5e0b31aed774 100644
->>> --- a/drivers/i2c/busses/i2c-stm32.c
->>> +++ b/drivers/i2c/busses/i2c-stm32.c
->>> @@ -118,7 +118,7 @@ int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
->>>   	dma->dma_len = len;
->>>   	chan_dev = dma->chan_using->device->dev;
->>>   
->>> -	dma->dma_buf = dma_map_single(chan_dev, buf, dma->dma_len,
->>> +	dma->dma_buf = dma_map_single(dev, buf, dma->dma_len,
->>>   				      dma->dma_data_dir);
->>>   	if (dma_mapping_error(chan_dev, dma->dma_buf)) {
->>>   		dev_err(dev, "DMA mapping failed\n");
->>>
->>> -- 
->>> 2.43.0
->>>
->>
->> Acked-by: Alain Volmat <alain.volmat@foss.st.com>
->>
->> Regards,
->> Alain
+Changes in v4:
+- Move properties of nodes defined in the same file from label ref back to where they belong.
+- Move pinctrl default configs for ncsi3 and ncsi4 to aspeed-g6-pinctrl.dtsi.
+- Add properties to i2c10 and i2c15 to enable MCTP.
+- Link to v3: https://lore.kernel.org/r/20250623-add-support-for-meta-clemente-bmc-v3-0-c223ffcf46cf@fii-foxconn.com
+
+Changes in v3:
+- Modify leakage sensor to reflect current design.
+- Link to v2: https://lore.kernel.org/r/20250621-add-support-for-meta-clemente-bmc-v2-0-6c5ef059149c@fii-foxconn.com
+
+Changes in v2:
+- Fix patch 1/2 subject line to match dt-bindings convention.
+- Reorder device tree nodes in patch 2/2 to follow upstream DTS style.
+- Link to v1: https://lore.kernel.org/r/20250618-add-support-for-meta-clemente-bmc-v1-0-e5ca669ee47b@fii-foxconn.com
+
+---
+Leo Wang (2):
+      dt-bindings: arm: aspeed: add Meta Clemente board
+      ARM: dts: aspeed: clemente: add Meta Clemente BMC
+
+ .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+ .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 1291 ++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |   11 +
+ 4 files changed, 1304 insertions(+)
+---
+base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
+change-id: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+
+Best regards,
+-- 
+Leo Wang <leo.jt.wang@fii-foxconn.com>
 
 
