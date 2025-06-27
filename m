@@ -1,92 +1,184 @@
-Return-Path: <linux-kernel+bounces-705950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5CFAEAFDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D98FFAEAFE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E50189D6C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:12:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97EC189DCF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973D221C195;
-	Fri, 27 Jun 2025 07:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6A921CFEF;
+	Fri, 27 Jun 2025 07:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="os8eh9Om"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4341E9919;
-	Fri, 27 Jun 2025 07:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751008337; cv=none; b=W8WMu/hElSYJpFp9704AcHC4xXy2G54eErk5cZdiYADLj+KLcip4fdVddT2rSSusij7qX0XVHfZ8njFEWVq88UIq/kBZBJyP3C6ueN8KFX9G1HgEBsBbXw0MJA5QyEfnxUnTNdM/MKpUlvfIL7S691svKRXnHsYcFFftWtOznVI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751008337; c=relaxed/simple;
-	bh=hViMdqb6dxMsSc22iEs4gFV/W3OyUowtbhavaS4N2C4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XsMUxTSlEfxD8lR1gfmRKmJx/pUDwPKiMgzH5yKGGBav9nAEfkcvUekz3ExdyjaP0QJPetSt+UES9L+fOCgLIdrxuNrq9OStV0Km5QtmzfP8PJNJW8zoadyvwtnMGJdSNbO0fPMWzegzRvSmyiwgnSaLcR+ZC7QcqtHRHu2ZBN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=os8eh9Om; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwoiTNxX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 382E94D686;
-	Fri, 27 Jun 2025 09:12:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1751008333;
-	bh=hViMdqb6dxMsSc22iEs4gFV/W3OyUowtbhavaS4N2C4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=os8eh9OmTEn/Dx1LHcwVX5y/zK9/DPU+4gdnpJKgvmO8zgLCFp6UyZQzhdVu/eTB5
-	 ymyVzF6dt2XSAV1mvIVjI4FKvk41lONyZrMBQn4PxkBdn1BcFwrjk/vusMYrkdD0+t
-	 b4IEj9E5srjbXb25KOIHy0R+93xNZ1Hp+3MskKXm6EyeWCW/Myweg9idpwczBK5DIU
-	 5UIc1k7ayRmlhP+3k0Yp1KlD3ld/piGG2aRMG6PjylYIXcPeC6+G8+jwYAjKQOlAD/
-	 U7ACVw6okT+2NBBXG0Nx+ZNTUt18dp9sVNkVpInqzvcmgrKjHyI8oS+0vwQhkOXQub
-	 +76+NJjhyQ8GQ==
-Date: Fri, 27 Jun 2025 09:12:12 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Simon Xue <xxm@rock-chips.com>
-Cc: will@kernel.org, heiko@sntech.de, robin.murphy@arm.com,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] iommu/rockchip: prevent iommus dead loop when two
- masters share one IOMMU
-Message-ID: <aF5ETB6HEGywYKS9@8bytes.org>
-References: <20250623010532.584409-1-xxm@rock-chips.com>
- <20250623020018.584802-1-xxm@rock-chips.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB4D1E9919;
+	Fri, 27 Jun 2025 07:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751008381; cv=none; b=AreZvu0zqRNR4Rl9+Bn7SAThpGUsJElzCpV76aeyUMs1pTmsDn35Bol+grhu+Uc1Cd1aTUDRu0y/zUJYupHc7bJ0i8ZdMSFXm0kIhrMkq5ZDcDoA1P3DinfQuLqgmwTxZtoI+LbgZjjMeD4waUhw+R8zIjlaMeusBgb/4lCjJws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751008381; c=relaxed/simple;
+	bh=vacyOvH9yiqinENGzTmGsKooNswCrtZiKq9q4IMB0VM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r78zasEiRip/sTIQ9oriXNi1oeoMph3JzkyCmSe6o+9BmkHs8U3HNA3De5xfAkZYLwqdX7s/4a55xGynYAc1j6McLrc6QhQZO7YKAhG5c8HJi8kOQt8rcFO48Z1o41wJ9RPiJSvfPUikidNnpBZqoiYxH1zJU7/QGfPFI1wOqQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwoiTNxX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1E84C4CEE3;
+	Fri, 27 Jun 2025 07:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751008380;
+	bh=vacyOvH9yiqinENGzTmGsKooNswCrtZiKq9q4IMB0VM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=hwoiTNxXnZxp+3WDWqDnX1S9La0EcUnSMotlqKJGKmw3hGdYMANeLwFciZbQKvm3a
+	 oSnF1VxKpXBmS4RJezt1f/QFZ2jM2TKXeUL87PDWMSDhOI/7mGYxhBoaMM1oEuFNZk
+	 JGaFeIWYH4AK9oI7h4yGD1ub2TR4Tky1iwh1PVwB7CpgarwkAlAytWjA6vcpvfU3kD
+	 hkp0LFnxwJMs0BLK37pXa9hFUrxq8jBdhr+vGLryf0JGa68IZix4vWLgDnI+er4GYu
+	 ZEG2fY2Vsrf27PqPM8ZXf51i5HJCI9i3cnsCT0GKpwsBToQ+Hl0PwB9oedVZLXUq1C
+	 ikUdHb/MDIbLA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9069AC77B7F;
+	Fri, 27 Jun 2025 07:13:00 +0000 (UTC)
+From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
+Subject: [PATCH v6 0/5] KVM: arm64: Support FF-A 1.2 and SEND_DIRECT2 ABI
+Date: Fri, 27 Jun 2025 07:12:24 +0000
+Message-Id: <20250627-virtio-msg-ffa-v6-0-8c02fd94edac@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623020018.584802-1-xxm@rock-chips.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFhEXmgC/2XQTW6DMBCG4atEXtfRePyDySr3qLKgMAZLAUc2t
+ VJF3L0GqSoty1k8rz7NiyWKnhK7nF4sUvbJh6kc5u3E2qGZeuK+KzdDQA0aDM8+zj7wMfXcuYY
+ jNq7CtkahgRX0iOT8cwu+38rtYhj5PERq9hmEAsCeJaKSSnDBHxTvVz+On1Mzzec2jGts8GkO8
+ Wsbl3FN/gTs/x0ZOXDqrHIWtKyNvvYh9HfaUuuQLHdeyIOXxXfGtJVxTnxge/Bq7w9/yKp4bYG
+ oAir7xMHrX29EffC6eCXKJ63W1kL1xy/L8g2E76xxqgEAAA==
+X-Change-ID: 20250506-virtio-msg-ffa-22af72c92150
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, ahomescu@google.com, armellel@google.com, 
+ arve@android.com, ayrton@google.com, qperret@google.com, 
+ sebastianene@google.com, qwandor@google.com, 
+ Per Larsen <perlarsen@google.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751008380; l=4411;
+ i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
+ bh=vacyOvH9yiqinENGzTmGsKooNswCrtZiKq9q4IMB0VM=;
+ b=w839cQqnyWmglZ8jeIakq6lQsI/V5KMO1oi2OfuHqE9mO6UhcjWBbFmuCcycaP6cYfyRQG9q8
+ GHwRQfWcpAvD0cvudfVz7u2XI1hFHFqwbk0aou+S5Jfof7UREVGVbC9
+X-Developer-Key: i=perlarsen@google.com; a=ed25519;
+ pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
+X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
+ auth_id=402
+X-Original-From: Per Larsen <perlarsen@google.com>
+Reply-To: perlarsen@google.com
 
-On Mon, Jun 23, 2025 at 10:00:18AM +0800, Simon Xue wrote:
-> When two masters share an IOMMU, calling ops->of_xlate during
-> the second master's driver init may overwrite iommu->domain set
-> by the first. This causes the check if (iommu->domain == domain)
-> in rk_iommu_attach_device() to fail, resulting in the same
-> iommu->node being added twice to &rk_domain->iommus, which can
-> lead to an infinite loop in subsequent &rk_domain->iommus operations.
-> 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 25c2325575cc ("iommu/rockchip: Add missing set_platform_dma_ops callback")
-> Signed-off-by: Simon Xue <xxm@rock-chips.com>
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> 
-> v3:
->    Add missing `Cc: stable@vger.kernel.org` in commit message.
->    No functional changes.
-> v2:
->    No functional changes.
-> ---
->  drivers/iommu/rockchip-iommu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Hi,
 
-Applied for -rc, thanks.
+The FF-A 1.2 specification introduces a new SEND_DIRECT2 ABI which
+allows registers x4-x17 to be used for the message payload. This patch
+set prevents the host from using a lower FF-A version than what has
+already been negotiated with the hypervisor. This is necessary because
+the hypervisor does not have the necessary compatibility paths to
+translate from the hypervisor FF-A version to a previous version.
+
+Support for FF-A 1.2 in the hypervisor is added as a precursor to the
+addition of the FFA_MSG_SEND_DIRECT_REQ2 messaging interface. The bulk
+of this change has to do with the upgrade to SMCCC 1.2 required by
+FF-A 1.2. Additionally, unimplemented FF-A 1.2 interfaces are added to
+the list of unsupported functions.
+
+Tested by booting Android under QEMU and loading Trusty as the guest
+VM and observing the SEND_DIRECT2 ABI being used successfully during
+guest boot.
+
+Changes since v5:
+- 3/6 -> 2/5: Merged with parent patch as they were closely related
+              Don't rename variables from "res" to "regs" to avoid churn
+              Update and clarify reasoning for condition added to ffa_set_retval
+              Adopt style suggested by Marc when passing regs to arm_smccc_1_2_smc
+              Fix inadvertent duplicate statements in ffa_{map,unmap}_hyp_buffers
+- Link to v5: https://lore.kernel.org/r/20250619-virtio-msg-ffa-v5-0-412c98558807@google.com
+
+Changes since v4:
+- 1/5 -> 1/6: Added Acked-by: Will Deacon <will@kernel.org>
+              Reworded patch subject and description
+- 2/5:        Dropped patch: zero x4-x7 in ffa_set_retval
+-        2/6: New: use SMCCC 1.2 during hyp init
+-        3/6: New: use SMCCC 1.2 in host FF-A handler
+- 3/5 -> 4/6: No change; can revisit denylist design in later patchset
+              Added Acked-by: Will Deacon <will@kernel.org>
+- 4/5 -> 5/6: No change
+- 5/5 -> 6/6: No change
+- Link to v4: https://lore.kernel.org/r/20250516-virtio-msg-ffa-v4-0-580ee70e5081@google.com
+
+Changes since v3:
+- all:        Remove Signed-off-by: Per Larsen <perl@immunant.com>
+- 2/5:        Split out from 2/3, zero x4-x7 in set_ffa_retval
+- 3/5:        Split out from 2/3, Mark FFA_NOTIFICATION_* calls as
+              unsupported
+- 2/3 -> 4/5: Drop ffa_get_hypervisor_version, access hyp_ffa_version
+              directly when version negotiation is complete.
+- 3/3 -> 5/5: Call ffa_to_smccc_1_2_error directly in
+              do_do_ffa_direct_msg2
+              Push call to ffa_call_needs_smccc_1_2 lower down by adding
+              ffa_get_func_id and ffa_set_retval_smccc_1_x.
+              Drop ffa_to_smccc_1_2_regs and ffa_to_smccc_1_2_regs_prop
+              as they are no longer used.
+- Link to v3: https://lore.kernel.org/r/20250513-virtio-msg-ffa-v3-0-d66c76ff1b2c@google.com 
+
+Changes since v2:
+- 2/3: Removed files added by mistake.
+       Add and use ffa_get_hypervisor_version to access hyp_ffa_version
+- 3/3: Use ffa_get_hypervisor_version to access hyp_ffa_version safely
+- Link to v2: https://lore.kernel.org/r/20250508-virtio-msg-ffa-v2-0-ed84f8053965@google.com
+
+Changes since v1:
+- 1/3: Simplify commit message; drop long comment in do_ffa_version
+- 2/3: Correct use of Co-developed-by: footer
+       s/arm_smccc_1_2_smc_fallback/arm_smccc_1_x_smc/
+       Always access hyp_ffa_version w/lock held
+       Remove superfluous comments in ffa_call_supported
+       Add and use FFA_FEAT_RXTX_MIN_SZ_MASK instead of constant
+       Add FFA_PARTITION_INFO_GET_REGS to calls that require SMCCC 1.2
+- 3/3: Always access hyp_ffa_version w/lock held
+       Correct formatting
+
+Thanks,
+Per Larsen
+
+--
+2.49.0
+
+---
+Per Larsen (5):
+      KVM: arm64: Correct return value on host version downgrade attempt
+      KVM: arm64: Use SMCCC 1.2 for FF-A initialization and in host handler
+      KVM: arm64: Mark FFA_NOTIFICATION_* calls as unsupported
+      KVM: arm64: Bump the supported version of FF-A to 1.2
+      KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in host handler
+
+ arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
+ arch/arm64/kvm/hyp/nvhe/ffa.c    | 240 +++++++++++++++++++++++++++------------
+ include/linux/arm_ffa.h          |   3 +
+ 3 files changed, 171 insertions(+), 73 deletions(-)
+---
+base-commit: 67a993863163cb88b1b68974c31b0d84ece4293e
+change-id: 20250506-virtio-msg-ffa-22af72c92150
+
+Best regards,
+-- 
+Per Larsen <perlarsen@google.com>
+
+
 
