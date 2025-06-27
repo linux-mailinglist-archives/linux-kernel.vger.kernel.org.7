@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-706436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1043AEB6BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:43:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4467AEB6B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304221C46CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17837564027
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D2D2BDC11;
-	Fri, 27 Jun 2025 11:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2DA2BDC11;
+	Fri, 27 Jun 2025 11:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxsWZU26"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hpdcb2VW"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD2C29E115;
-	Fri, 27 Jun 2025 11:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2847429DB8F;
+	Fri, 27 Jun 2025 11:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751024590; cv=none; b=E8ujlvVl1hv+zb/wUEv3R8rTebs0TxxbpBo8/xYJ0l8mRi86YnTyO1K9AgIt4vTiInKpMwXRHlUkJKGrHlvanb9rq8/I3iCNi0FkodHP3L5WGDV1aauIDF/IXCNKr2Ez7wyTpm0iQ6E/mFSnzO1ULc4SCsB3dWQpeP2Kb9gUEVo=
+	t=1751024543; cv=none; b=aovNOBuLihqdWxzHlF39+zrA2BLiMzoE+7zeIrKDsrv3Zcg9z2a3z1nGPO8ssTF8IBxXsPF/NL6PDSmT49mRNb53k90R2aRE/jn1al6oHN4D/NUwHh8MwftU8+axISPpLk7nD+isjPNbCT0azlgotePQCslHuhLm1zVaUjKLDK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751024590; c=relaxed/simple;
-	bh=01x4DIG/MLfv54ivDmaNIOW309XnOy44DSBxspFOKKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aeUJCFBEnfZEDYXA81Hapfb6GJj796pUNdfwMeBw0jjf6VdaW3WHY27Bf4HJ6ZpJNPZToCNnQv4ncnZlvmYIfnyCfvbh/yD8wrXk/PztVPdV/0CUkHu/BSKb4Pd3qJyEYRfODcVMNx0h4uGgdvkAR6Ol0aoA5Yytf4GedrEdEKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxsWZU26; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1751024543; c=relaxed/simple;
+	bh=DLQjs7jc3NN2Z6ubvR29XdtYB2MPYQoKAWQDBl77eLg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uVzEJqy8vRxzAWYk+FWDOCEGtUaw6f/tvQVhCcwiJByZuDQ8geeNMSRFk8npiw0dyyZJWix16ZeOWuF/i4Of1kDZjSV8lKgC1daHWnAYlrHYnvJB/aS62h6lEtOwj/GCAbzb1plxjVXHHkpaeyiZDj7Fn70pnW5vv91VI/Hs8GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hpdcb2VW; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so311381f8f.0;
-        Fri, 27 Jun 2025 04:43:08 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5533303070cso2056406e87.2;
+        Fri, 27 Jun 2025 04:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751024587; x=1751629387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6QGBPcCUdbQ9cCGWaoo95uH+3lhdSPiV9mhyp8TNwZo=;
-        b=CxsWZU26z6AG7REZD9gITkGc6lucKG0IoI3m9BzCj5setzl8SHy3hWCdVx7Yeulb7g
-         eplo2bX24mFWhBd+foDiMX1+x1E/5j81TTIRTw5GnAeShl2sU9ICRgaM3rmNTDIpGhcG
-         LRTBXqGBxnsuLKLxiDsayrrEzD+VcwcaKLS3EkvhNzo+bH6QaMK/L6VlCTN03A96NQki
-         L5I70joEU40kjlB8iUlEcvXeeihp8BW0INO9ghbwEMo4AQG8+m7ZPL2GrLKJy8/Zdm+A
-         fy5rGJIxVBbUDButgmxiMfKmzv++MozDplAqOQy5m88wPTXG7AyikNO0aRysNmgoHNi7
-         WQIQ==
+        d=gmail.com; s=20230601; t=1751024540; x=1751629340; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tmPrqaqhW+EK4H5tg98y4zFWAy9fgrveP3Z8NDC1wKI=;
+        b=Hpdcb2VWYE0pEXs93+ZcW6ew9b9uM6liea715mIQfk5bjd0YdrGZJosnINaL/aaPih
+         SL0UJgXmhZtYc2Q4GmuDnfFvr/xQJZFqSD5t5mL4j+NnBD2QPZJT3UmqiDZNS672BkG5
+         hUP2F1TIUmMRkgiTgv5CGOeMp0AQ+Rmo4HbQfTBUnDsiMHdyIUUGTkmASySqssqgZDK3
+         7eHQQMJQM2wDj3RhIKwfPRI64X2rMkuQp8CZyqGTwTsAL9/oXeZxNWksTqTfrExsiPT4
+         HpCPt0qi5yxlsHXtJHOcjSOL7U/7TxyK0F7QAnZ6OPvUc5dDg84aZ5pRRolLw9fjBtss
+         9N0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751024587; x=1751629387;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6QGBPcCUdbQ9cCGWaoo95uH+3lhdSPiV9mhyp8TNwZo=;
-        b=L9ozCbDp8HtoLe6c8vKcw/EFNn8yQai2DPjjCk2pWsuN2DpssSfX9rNB69ECKXaSfK
-         7P+sXL/+Xw1cBDeoW0BRTG8ava4N+Or6cgjt2N8AbSeiWwasE5zE32y1b+xnVZ6UGVm+
-         RUDtBmz1tgwf/92jURUabGySERvK9HDGJ2ThJODaXv3dJXjzCsoCLuIeuOr5PhoY+PvP
-         4/3J3AWC0RfaQpw5iSnrSG4DhqbvnRFBCbZloJxfhLYiiWvjKzshQ4NrBWamU44AHVMH
-         ucXPa7te7OX109+EBoc6biMht7UEw4OzlHrM2rGN7E6xwbWZAHv61iyysE+GmEb2t5Ef
-         AVZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF6T1K5e3bjWLXleUIlbW9dnxNpN1hYyC4F2ABc8dh0OUUqyiwZahvuDOvkfCklQVtONxtOiLPQHotI8ej@vger.kernel.org, AJvYcCVDzCOvpfCI6K3wrDdZVhOdgPq8cMWXNn3mzS0y36qtzl/iheXhRftvfEPDYT8Fy9zfTZfPksV4C8kcmw==@vger.kernel.org, AJvYcCWSeAaKvYKL64ZDES99RxqYafGDIMaomqnLXUGZRuHXjalhli1eY+kMWFe1j6S0L8k4k2vURamQyG2QRGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1eNI4psUlA07J0ctZxx8QLyNVMXRHvtX4Y/OmgS7kAU8vGJLV
-	EQIuq1YmdRh9F1olsIVsrF8dqhYfpYjXLBqxJWt/ebxPx0heTamePACg
-X-Gm-Gg: ASbGncvFImGKkf7bxPEo06nEU1wvrf1C8fTAtH40wC5BsL9xrz7j3i7y+sph0C8f7FE
-	Zv5dBLnJ/5VqqhElcV7BZ5k+7GG7TY/FSfgoPe0g/NvsRen4xrKQLk/JZ0JmSf9ZlWrvdkgvShq
-	dtaAkUubBUEI+nrXnh5N9EJX/yPqhzfKeWjTWxtc+UgBvt1bvaGgnosYPa+oEd8q3P7WlSGF9Fp
-	DXwRmrweYvFdVl196IGCPIMABC/d5zE16GynmBp+WHGzFIV/sSMaYccA3A0k3UKkuUUdUDUO4Ec
-	yhaqri1Kr0dfm4pTURpsKt3BEfGgtuVxgkzsWkiY/cA3Uj5Yf2iY3yJFdr+1K3iZ2r4GRDVw1Ec
-	4lMpkyX5T0uIdBvA=
-X-Google-Smtp-Source: AGHT+IEzB8OKtz6EI4EG6Z2bI83b9XilioEr7YH0Ayx9iVh8UP+7DpwRKhNGodaDU5udaC4/Pdg57w==
-X-Received: by 2002:a05:600c:3ba4:b0:453:590b:d392 with SMTP id 5b1f17b1804b1-4538eeb77ecmr12554225e9.2.1751024586994;
-        Fri, 27 Jun 2025 04:43:06 -0700 (PDT)
-Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:c222:941f:da95:c9f3])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4538234be76sm78169655e9.15.2025.06.27.04.43.06
+        d=1e100.net; s=20230601; t=1751024540; x=1751629340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tmPrqaqhW+EK4H5tg98y4zFWAy9fgrveP3Z8NDC1wKI=;
+        b=I4Pz5sGELulEqHatB5ZmZUPgMOQeL/08zcX5jiDuAwcPYQPnn8309xMn8I0BMNbRh1
+         Ab1uYmUOiaBPlTNfm0AYMTs7t1SnEsiG7qw4I8QnG0oKDSP7MdzTKTE7Ku+bqn4NPXVw
+         tH+vAuXEf5AU9AcpTew94+hVX+E4wBCyxv88U+KDarzHRmug5uEl+AEWUlxyi/YNgvDd
+         4To5/cBh+hfPiDy/kltpPbflLczs8S+cRtIhPc6/aQ73CKIn4Ypa8VXaZFH0Qw67hbtk
+         xYd7F1PV7A6/Mjg1JUtc9WFQy9dmZdmZhjFoLh+2mL06DeprQ8QUROAaePdi0r2Uq0RV
+         wkLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ozkE54M422WDkCc1hJioVHMcFrvgCKLQabZiupg8GK5HWondQtcYDTRfYTi/k37TaSME8GihWnrvJpQ=@vger.kernel.org, AJvYcCUsfue+KMP0b4RftC07PkWoXNeXYgQ5iGE8Ge1IENNqrB4RWxD2NFEkFbytQGuO+kMImOwmoxRUPy9Y1TeiI9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQw0hzvjivpC3lFHDqOknLQCu/Fpa0AVIA6b3HFBmNBecHnVFm
+	45gV/eWdphn4/THSYMWiNrqKsxuQj0WZGgxAfuYm/vn8oqHuCwWrc71/Rw3HPg==
+X-Gm-Gg: ASbGncthlybJmfzSnNKFMKRy2dEGAFvw72HbzMzxximNnDI9rV/tbsW0rR6anidumTF
+	XW/GjYwJMNVtPQbBHQt0Xc1x2N8s5MvsCdgIgrYZYeTdFVIdTXhMmecEelR0cn2DDUK/JmqywPH
+	G3MD04c3G/05rzY7D08fBsNxSzBSWbK0o+ipEcsWDKUcS6jeACW955OMPbwzDuVPMyiKsRmZl4O
+	911u94HPS3EnoavoybuVx/YNvBa+XLvI7EU+6Odm6LBCr3P9Q8ZVClTtREssrUxwEF0HjcBmwRi
+	tpAlWuDfCY1xY0Cf3l0lSYiAAhu+ShSj9/JumD0EKUYjQAxxskxTP4UxZFRC4gw9sxLhTA8J3ot
+	w3MWTx1ytWBM=
+X-Google-Smtp-Source: AGHT+IEy7VhPgAWEXO/LXQ0C8S+wuoF2yCySoHfhr2ctNDV4hnMQQJxvZ9qI5HLKufPyjdWQvFs8lQ==
+X-Received: by 2002:a05:6512:224c:b0:553:ad81:4de1 with SMTP id 2adb3069b0e04-5550b8253c0mr973628e87.24.1751024539809;
+        Fri, 27 Jun 2025 04:42:19 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2ec0a7sm414748e87.237.2025.06.27.04.42.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 04:43:06 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	James Smart <james.smart@broadcom.com>,
-	Ram Vegesna <ram.vegesna@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Peter Wang <peter.wang@mediatek.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Daniel Wagner <dwagner@suse.de>,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: elx: efct: Fix dma_unmap_sg() nents value
-Date: Fri, 27 Jun 2025 13:41:13 +0200
-Message-ID: <20250627114117.188480-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 27 Jun 2025 04:42:18 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 27 Jun 2025 13:42:16 +0200
+To: Danilo Krummrich <dakr@kernel.org>,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: Vitaly Wool <vitaly.wool@konsulko.se>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/4] mm/slub: allow to set node and align in k[v]realloc
+Message-ID: <aF6DmPmeSpWU3hH_@pc636>
+References: <20250627092901.356909-1-vitaly.wool@konsulko.se>
+ <20250627093714.402989-1-vitaly.wool@konsulko.se>
+ <aF51PTZh0gRVFuYu@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aF51PTZh0gRVFuYu@pollux>
 
-The dma_unmap_sg() functions should be called with the same nents as the
-dma_map_sg(), not the value the map function returned.
+Hello, Vitaly, Danilo.
 
-Fixes: 692e5d73a811 ("scsi: elx: efct: LIO backend interface routines")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/scsi/elx/efct/efct_lio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Fri, Jun 27, 2025 at 11:37:14AM +0200, Vitaly Wool wrote:
+> > Reimplement k[v]realloc_node() to be able to set node and
+> > alignment should a user need to do so. In order to do that while
+> > retaining the maximal backward compatibility, the following rules
+> > are honored:
+> > * kmalloc/kzalloc/krealloc remain unchanged
+> > * kvmalloc/kvrealloc/kvcalloc remain unchanged
+> > * kvrealloc remains unchanged
+> > * kvrealloc_node is implemented as a new function taking align and
+> >   NUMA id as extra parameters compared to kvrealloc.
+> > * krealloc_node is implemented as a new function taking NUMA id
+> >   as an extra parameter compared to krealloc
+> > * kvmalloc_node/kvzalloc_node/kvcalloc_node get an extra parameter
+> >   (alignment)
+> 
+> I see what you're doing here:
+> 
+> You created vrealloc_node_noprof() in the previous patch, taking the following
+> arguments:
+> 
+> 	vrealloc_node_noprof(const void *p, size_t size,
+> 			     unsigned long align,
+> 			     gfp_t flags, int nid)
+> 
+> And now you're aligning the newly introduced krealloc_node() and
+> kvrealloc_node() with that.
+> 
+> The idea for having an align argument on krealloc_node() simply is that it
+> fails if the alignment requirement can't be fulfilled by the corresponding
+> kmalloc bucket, such that we can fall back to vrealloc_node() in
+> kvrealloc_node().
+> 
+> Generally, this makes sense to me.
+> 
+> However, now you consequently have to add the align argument to kvmalloc_node(),
+> kvzalloc_node(), kvcalloc_node() as well.
+> 
+> This is what creates this huge diffstat changing all the users.
+> 
+> IMHO, the problem here was introduced already with vrealloc_node_noprof() taking
+> an align argument in your previous patch, since now you have to adjust
+> everything else to logically follow the same naming scheme.
+> 
+> Instead, I think you should introduce vrealloc_node_align(),
+>
+I am probably missing something. Could you please clarify why do you
+need the vrealloc_node_align() and other friends? Do you have users
+which require vrealloc() or kvrealloc() to support nid and align from
+Rust API point of view? 
 
-diff --git a/drivers/scsi/elx/efct/efct_lio.c b/drivers/scsi/elx/efct/efct_lio.c
-index 9ac69356b13e..bd3d489e56ae 100644
---- a/drivers/scsi/elx/efct/efct_lio.c
-+++ b/drivers/scsi/elx/efct/efct_lio.c
-@@ -382,7 +382,7 @@ efct_lio_sg_unmap(struct efct_io *io)
- 		return;
- 
- 	dma_unmap_sg(&io->efct->pci->dev, cmd->t_data_sg,
--		     ocp->seg_map_cnt, cmd->data_direction);
-+		     cmd->t_data_nents, cmd->data_direction);
- 	ocp->seg_map_cnt = 0;
- }
- 
--- 
-2.43.0
+Thank you in advance!
 
+--
+Uladzislau Rezki
 
