@@ -1,130 +1,152 @@
-Return-Path: <linux-kernel+bounces-706191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676A8AEB31A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C3AAEB326
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 805CE5604F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10BB3A544B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC062951A7;
-	Fri, 27 Jun 2025 09:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266AC2951D3;
+	Fri, 27 Jun 2025 09:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="5M0z4Bkc";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Mriq9ZxF"
-Received: from mailrelay-egress12.pub.mailoutpod2-cph3.one.com (mailrelay-egress12.pub.mailoutpod2-cph3.one.com [46.30.211.187])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ANo4mvAp"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1533B293C6E
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C9E1DE2C9;
+	Fri, 27 Jun 2025 09:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751017165; cv=none; b=eF7aRPIwAZ7h8Joi3J4xGvXIJMd+EohsDuahJ5cELlvsT4cuFdH4yk3+MWwmZLByDcKy5IOMyXC9KBKy2OMckST1vc0CioIWpesvtBUuckBFkdxtngBCcyl7Wz6e3ACWp1Ciqv2WfZijj9QkkMSic/8ZstcyW6215XeJ0BfFzsk=
+	t=1751017331; cv=none; b=E1bD9qSwfVmg4DinhCQtpQXkGlRHk5o2KI4bRaP+KHZ9ihfqmDLgxMWGKxpGR+f1C96UGjCo01QcZMKrcTcxiuued3lSbFdGnj8ScYkB06tiXnHYmcPS37Es/yoUeHhjWIa+Ec35Prf3cYNmvo1MSqj0cSLtjmDS77+XEYBW/sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751017165; c=relaxed/simple;
-	bh=cMBPS7UL7Z9M3GsM6vxgAs14SnbamdvW0l1fLWM1wYo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NyxYTA+w/q8JpIa4RW9xKCekbiaSuSX9p1WH2/P4WlXE+uVL5/LQHzrPK0jOfYc/3c/shQz03X3M4aUeJ+ZwQlYCbMu083Tc6KgXCtiu7Trpgcul4s1gjzgoeYtcUGNXxHZKU8iKuH90O4yxTzvmCey5qmbLG5RYDfPN9Nw/TiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=5M0z4Bkc; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Mriq9ZxF; arc=none smtp.client-ip=46.30.211.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751017162; x=1751621962;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=iZmlSFy4KF+5xgzlYCUJvQ/v8BY1pzWF9k3tLUMOd/w=;
-	b=5M0z4BkcQJPtMNSk1YM1oSuYfov1jWqF/cQNd3w52dHdjZN3zMOcG0YoYxwbfioEKKKkMNEDH61Bz
-	 fAxfevYEfbeAqjnpwSDp9AW7seGmpjAcjVQZfuz2MMHxNcq7TGqmAQHOyjY7OtaQOtZ/9ulLtcFZ0I
-	 vZEE9Wojt1jL8BWhyPUPi0+WvcIvVszByrgXgzNrLb4raBgADaxMiBKoavMdJdCr9gmBlNHcgjoGco
-	 RF8ySaydBmQyXNhhY3WgTaS4J5AAxO/Pjn1HcrI3nvzn0Kp+IyHxtcNk8Y2+VeOl3Sl5+BEslLI4i5
-	 YbefVxx8caSXYJc4sPCC5/A4DbkvaWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751017162; x=1751621962;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
-	 subject:cc:to:from:from;
-	bh=iZmlSFy4KF+5xgzlYCUJvQ/v8BY1pzWF9k3tLUMOd/w=;
-	b=Mriq9ZxFe+umxklzgZa0m3XrQgsem7CIrFuK4VBWmaIwDf/1rqvhYlj9gO3ioVs2z8KAwqx77XOIz
-	 M6hhnyqDw==
-X-HalOne-ID: 9a50b852-533a-11f0-83cc-e90f2b8e16ca
-Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
-	by mailrelay2.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 9a50b852-533a-11f0-83cc-e90f2b8e16ca;
-	Fri, 27 Jun 2025 09:39:22 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	rust-for-linux@vger.kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH v5 4/4] rust: support large alignments in allocations
-Date: Fri, 27 Jun 2025 11:39:18 +0200
-Message-Id: <20250627093918.415888-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250627092901.356909-1-vitaly.wool@konsulko.se>
-References: <20250627092901.356909-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1751017331; c=relaxed/simple;
+	bh=ALB8scmnqBjrj7Lx7mrURXy49O4IYjmrSTfkDIal3lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rTE+dD7fzvved3bS2x+XF7ebqHPmSzsN2x7WwT6krkVQmt6BTneXSyyotPs+rPqhEhDZ8p6FxltGFdKm/1/bQqT0mFy9bIDcTPo/PnVW6udMb0GX6VA3BDMoCT4t9N4b6SOdDM5wDOfq0Svwz2+PTmXDCmYj4o4kJA/AQgs0Kb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ANo4mvAp; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 081091FD35;
+	Fri, 27 Jun 2025 09:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751017321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ebkQpOy7jU/hd2ovSMuvbdUVcZ8KbjpAp3Ecuke29NM=;
+	b=ANo4mvApogHPe4fMWd2QFeBCg+mWgojUEV8XaXM/25ncURaUsz9M/kEC6Nn6IVH4maVX6j
+	gSeSCAUP/wlUINz90v32u/TeUsei8qUxIXQS6gDZRhsaB8zBNJmzkdZiaYtkNAavTknDsP
+	dRdh+FNdH2dlKN6La4DumIswSehs0FgFn89O4Iokd0AoNO4qnLq0SpsC6O1yrdqCLW9b2k
+	h9Upd+221NuY96MmaBC7ix86cApTM5GZSfo0ZV56K/KAoyKWrsuFyHBZ31W4LK69SU2LzV
+	acuBc9jpT4Ril5gE8uY2KWJvi1SV/M7Wfe4OOWc+QLioRAkbvmT+bkVgu9R1Iw==
+Date: Fri, 27 Jun 2025 11:41:51 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu
+ Beznea <claudiu.beznea@tuxon.dev>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland
+ <samuel.holland@sifive.com>, Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
+ <gregory.clement@bootlin.com>, Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+ Harini Katakam <harini.katakam@xilinx.com>, Rafal Ozieblo
+ <rafalo@cadence.com>, Haavard Skinnemoen <hskinnemoen@atmel.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mips@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+ Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH net-next v2 00/18] Support the Cadence MACB/GEM
+ instances on Mobileye EyeQ5 SoCs
+Message-ID: <20250627112234.1cb54133@2a02-8440-d103-6715-ef68-2a2e-b947-8885.rev.sfr.net>
+In-Reply-To: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepkeehgeeijeekteffhfelheetffeghfffhfeufeeifeffjeeftefhveduteduueeunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeekgeegtdemugdutdefmeeijeduheemvghfieekmedvrgdvvgemsgelgeejmeekkeekheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemkeeggedtmeguuddtfeemieejudehmegvfheikeemvdgrvdgvmegsleegjeemkeekkeehpdhhvghlohepvdgrtddvqdekgeegtddqugdutdefqdeijeduhedqvghfieekqddvrgdvvgdqsgelgeejqdekkeekhedrrhgvvhdrshhfrhdrnhgvthdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeffedprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhli
+ hhnrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Add support for large (> PAGE_SIZE) alignments in Rust allocators.
-With _NODE primitives introduced in the previous patch, we actually
-have all the infractructure in place so let's just start using it.
+Hi Th=C3=A9o,
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
- rust/kernel/alloc/allocator.rs | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+On Fri, 27 Jun 2025 11:08:46 +0200
+Th=C3=A9o Lebrun <theo.lebrun@bootlin.com> wrote:
 
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index 4f0fe2b67593..75c9e4220ac3 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -118,7 +118,7 @@ unsafe fn call(
-         // - Those functions provide the guarantees of this function.
-         let raw_ptr = unsafe {
-             // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
--            self.0(ptr.cast(), size, 1, flags.0, c_nid).cast()
-+            self.0(ptr.cast(), size, layout.align(), flags.0, c_nid).cast()
-         };
- 
-         let ptr = if size == 0 {
-@@ -162,12 +162,6 @@ unsafe fn realloc(
-         flags: Flags,
-         nid: Option<i32>,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::VREALLOC_NODE.call(ptr, layout, old_layout, flags, nid) }
-@@ -187,12 +181,6 @@ unsafe fn realloc(
-         flags: Flags,
-         nid: Option<i32>,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        // TODO: Support alignments larger than PAGE_SIZE.
--        if layout.align() > bindings::PAGE_SIZE {
--            pr_warn!("KVmalloc does not support alignments larger than PAGE_SIZE yet.\n");
--            return Err(AllocError);
--        }
--
-         // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-         // allocated with this `Allocator`.
-         unsafe { ReallocFunc::KVREALLOC_NODE.call(ptr, layout, old_layout, flags, nid) }
--- 
-2.39.2
+> Mobileye EyeQ5 SoCs provides two GEM IP blocks. The end result of this
+> series is working 1G networking on the EyeQ5 eval board. It isn't just
+> a new macb_config & compatible, we also provide some cleanup & fixes
+> along the way.
+>=20
+> dt-bindings:
+>   [PATCH net-next v2 01/18] dt-bindings: net: cdns,macb: sort compatibles
+>   [PATCH net-next v2 02/18] dt-bindings: net: cdns,macb: add Mobileye Eye=
+Q5 ethernet interface
+>   [PATCH net-next v2 03/18] dt-bindings: net: cdns,macb: allow tsu_clk wi=
+thout tx_clk
+>   [PATCH net-next v2 04/18] dt-bindings: net: cdns,macb: allow dma-cohere=
+nt
+>=20
+> Cleanup:
+>   [PATCH net-next v2 05/18] net: macb: use BIT() macro for capability def=
+initions
+>   [PATCH net-next v2 06/18] net: macb: Remove local variables clk_init an=
+d init in macb_probe()
+>   [PATCH net-next v2 07/18] net: macb: drop macb_config NULL checking
+>   [PATCH net-next v2 08/18] net: macb: introduce DMA descriptor helpers (=
+is 64bit? is PTP?)
+>   [PATCH net-next v2 09/18] net: macb: sort #includes
+>=20
+> Fixes:
+>   [PATCH net-next v2 10/18] net: macb: remove illusion about TBQPH/RBQPH =
+being per-queue
+>   [PATCH net-next v2 11/18] net: macb: single dma_alloc_coherent() for DM=
+A descriptors
+>   [PATCH net-next v2 12/18] net: macb: match skb_reserve(skb, NET_IP_ALIG=
+N) with HW alignment
+>   [PATCH net-next v2 13/18] net: macb: avoid double endianness swap in ma=
+cb_set_hwaddr()
 
+Fixes go through the net tree, and new features through net-next :
+
+https://docs.kernel.org/process/maintainer-netdev.html#netdev-faq
+
+As this series is quite big, it could be nice to send the cleanups and
+fixes in dedicated series, and then the eyeQ5 support in itself as a
+standalone series. This would make the review work easier.
+
+
+> EyeQ5 support:
+>   [PATCH net-next v2 14/18] net: macb: add no LSO capability (MACB_CAPS_N=
+O_LSO)
+>   [PATCH net-next v2 15/18] net: macb: Add "mobileye,eyeq5-gem" compatible
+>=20
+> DTS:
+>   [PATCH net-next v2 16/18] MIPS: mobileye: add EyeQ5 DMA IOCU support
+>   [PATCH net-next v2 17/18] MIPS: mobileye: eyeq5: add two Cadence GEM Et=
+hernet controllers
+>   [PATCH net-next v2 18/18] MIPS: mobileye: eyeq5-epm: add two Cadence GE=
+M Ethernet PHYs
+
+Maxime
 
