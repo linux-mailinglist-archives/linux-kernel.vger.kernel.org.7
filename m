@@ -1,106 +1,204 @@
-Return-Path: <linux-kernel+bounces-705779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11E6AEADA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:00:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25DD7AEADAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE791BC7B04
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:00:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5CBE7A5D15
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5B91B6CE4;
-	Fri, 27 Jun 2025 03:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26FA19F461;
+	Fri, 27 Jun 2025 04:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8/iTcP5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mrHXGqU7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09B419F420;
-	Fri, 27 Jun 2025 03:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7CC249E5
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750996794; cv=none; b=UVLZ67mlBGMxs1QOjxoXqCDT904bUqY8NQfw7HkYjWkmDM/fyDZHlt1HD59rZFwDupulIZWHxxywMntQjQhzus234QHm+kZmr7KZKnIi+Qlu58wS2D/4bsTIcNtFUHHjq5houXYXmwq5cr5YXwXng5wSHYIAaxTliH6ObLNFWgI=
+	t=1750996905; cv=none; b=tb1Zyv2JMKLRJwHhFiT9GP8S+t+BgATlLc/NbHowZGDPs3yXWni9lbR5L9fCNYx6TTFNAcSw6rY7c2x7eS0HIPpdrpc3lAr5Ok3aKW9IfuVnRJMrythfJrUqAVUjEo5re+8s2f3K9aOgeYdoNwgq41lg5PcDOg5YmXsmeWFRKGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750996794; c=relaxed/simple;
-	bh=30ofrfTmzxnxVEFkrGqHc6kxPyp7kpbqtMKKF0e3Fr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=anlF9GqsNNpjtoDFEFs3ISbRcKXj0oz5b1uDGf4V+s+50Ht8x6isFG+SZl0nVTR2prLemF/NuyyiG8o7DPOcL0FgqTj/MggwPVhy5U20HjD1N+S9L16C1wo/RREj+vuU1onDHawtXvPgztoyIlIU6Gw1DT2HseYDrIP+r6lYLm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8/iTcP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47BD6C4CEEB;
-	Fri, 27 Jun 2025 03:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750996794;
-	bh=30ofrfTmzxnxVEFkrGqHc6kxPyp7kpbqtMKKF0e3Fr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C8/iTcP5umsFzug4zLePft5CeRdVZh9wtKEltjW4vJdNGv9X6o/qJ0WgNt6hK5EEG
-	 gflZmchPMw8DcsK8JzZ2/yArBSRtFxRKre7nz6nY+6isfxxLzXlgMKgmNpqFqZL0Gp
-	 TqIurcvfipphqx+zvUEhJIirczLt4tdg7Me9LNFvJFqVUDJ7LuvyeG/LanWpIVzUWK
-	 1BkfrBwHw7jRy//Dwt5geNwnys2mc8lO6Lyt+wFYfYAwjqGwMqZejeWQRN9+K1zqMy
-	 fVAUZVEX65w2VZXiLBK0i3IOa284NU+pN3p83Gqv//DO2JZ6guAp3u88rGFzwllWI+
-	 TtgqvIaaYccMw==
-Date: Thu, 26 Jun 2025 20:59:18 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: John Johansen <john.johansen@canonical.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] apparmor: use SHA-256 library API instead of
- crypto_shash API
-Message-ID: <20250627035918.GA15797@sol>
-References: <20250428190430.850240-1-ebiggers@kernel.org>
- <20250514042147.GA2073@sol>
- <4f37c07c-3a39-4c98-b9c4-13356f5a10dc@canonical.com>
- <20250612191105.GE1283@sol>
- <c80d4e69-ef03-462c-9084-e6bb56f428e6@canonical.com>
+	s=arc-20240116; t=1750996905; c=relaxed/simple;
+	bh=4OSKNRAw8wj5R+QIDkd86TtJQKZ9t7E+NO90UsGFKqw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=m5BzihsauZRRzt0MfUFGFvB3MVf613ENZaSecnO98W51I5ZxmrcKOKrbXKs478gHh1D2lkig/f0ndrEsGmF6qHYaAoTHMmcpzopWzItgrxLRIIgMLUk70V8pkDnoMDiN8t0qrhsBR6G7j1NWEiXinmzfBa/GVl/TzGZym9uRds4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mrHXGqU7; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1750996903; x=1782532903;
+  h=date:from:to:cc:subject:message-id;
+  bh=4OSKNRAw8wj5R+QIDkd86TtJQKZ9t7E+NO90UsGFKqw=;
+  b=mrHXGqU7hBfv2ClDIE2XFSEDIIYPcjFL5ux8a3zNbL8RMqxTMuZEyx2d
+   OUC+JXsovmA3w87ku7WSnZFmvsxHyxkIl4Mc6r4i6da6SSzFkOqbh5nww
+   t4cmmBdS6hCD+zVEo39e+0Ye2v/NecFWdRFyE4LLLjd3BRX4Geiqb7JYt
+   0Nrf9EGwQRk+JGigHdxcF1bK7jQBwcwnqWRqWe4LsfnwC6l4jhW2ftkah
+   XEFw1b5Stx9btz8fntNyvq2q8AyWfxmNI4LGg/cxfdiX4BSfW/eWScCw7
+   FnrbHyxqGhmiBcmBVDFxoB+TWXMbHEd3f0TWIvXI9JbSXsZznGKzNKs5j
+   A==;
+X-CSE-ConnectionGUID: riHNkVcKRf2X6VO8xWrwHQ==
+X-CSE-MsgGUID: +HCw1AK/SG+NRHAkxmomGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="75852224"
+X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
+   d="scan'208";a="75852224"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 21:01:43 -0700
+X-CSE-ConnectionGUID: bxTQH+YcQRGSgG3Wxs6cQw==
+X-CSE-MsgGUID: 6tLRQca8T8WrmyeY4uFp1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
+   d="scan'208";a="152217983"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 26 Jun 2025 21:01:35 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uV0HK-000VmA-1w;
+	Fri, 27 Jun 2025 04:01:30 +0000
+Date: Fri, 27 Jun 2025 12:01:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ 1476b218327b89bbb64c14619a2d34f0c320f2c3
+Message-ID: <202506271202.ysjHhrTU-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c80d4e69-ef03-462c-9084-e6bb56f428e6@canonical.com>
 
-On Sun, Jun 22, 2025 at 02:16:07PM -0700, John Johansen wrote:
-> On 6/12/25 12:11, Eric Biggers wrote:
-> > On Sat, May 17, 2025 at 12:43:30AM -0700, John Johansen wrote:
-> > > On 5/13/25 21:21, Eric Biggers wrote:
-> > > > On Mon, Apr 28, 2025 at 12:04:30PM -0700, Eric Biggers wrote:
-> > > > > From: Eric Biggers <ebiggers@google.com>
-> > > > > 
-> > > > > This user of SHA-256 does not support any other algorithm, so the
-> > > > > crypto_shash abstraction provides no value.  Just use the SHA-256
-> > > > > library API instead, which is much simpler and easier to use.
-> > > > > 
-> > > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > > > ---
-> > > > > 
-> > > > > This patch is targeting the apparmor tree for 6.16.
-> > > > > 
-> > > > >    security/apparmor/Kconfig  |  3 +-
-> > > > >    security/apparmor/crypto.c | 85 ++++++--------------------------------
-> > > > >    2 files changed, 13 insertions(+), 75 deletions(-)
-> > > > 
-> > > > Any interest in taking this patch through the apparmor or security trees?
-> > > > 
-> > > I can take it through my tree
-> > 
-> > Thanks!  I notice this isn't in v6.16-rc1.  Do you have a pull request planned?
-> > 
-> 
-> Hey Eric,
-> 
-> sorry I have been sick and didn't get a 6.16 pull request out. I am slowly trying
-> to dig my way out of the backlog, which is several weeks deeo. I might get together
-> a small PR of bug fixes before the 6.17 merge window but the bulk of what is in
-> apparmor-next will be waiting to merge in 6.17 now.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
+branch HEAD: 1476b218327b89bbb64c14619a2d34f0c320f2c3  perf/aux: Fix pending disable flow when the AUX ring buffer overruns
 
-Hope you're feeling better!  Actually, would you mind if instead I took this
-patch (with your ack) through the libcrypto-next tree for 6.17?
-Otherwise there will be a silent merge conflict after I apply
-https://lore.kernel.org/r/20250625070819.1496119-11-ebiggers@kernel.org/
+elapsed time: 1077m
 
-- Eric
+configs tested: 112
+configs skipped: 1
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+arc                              allmodconfig    clang-19
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    clang-19
+arc                   randconfig-001-20250626    gcc-12.4.0
+arc                   randconfig-001-20250627    gcc-10.5.0
+arc                   randconfig-002-20250626    gcc-13.3.0
+arc                   randconfig-002-20250627    gcc-10.5.0
+arm                              allmodconfig    clang-19
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    clang-19
+arm                   randconfig-001-20250626    clang-21
+arm                   randconfig-001-20250627    gcc-10.5.0
+arm                   randconfig-002-20250626    clang-20
+arm                   randconfig-002-20250627    gcc-10.5.0
+arm                   randconfig-003-20250626    gcc-10.5.0
+arm                   randconfig-003-20250627    gcc-10.5.0
+arm                   randconfig-004-20250626    clang-21
+arm                   randconfig-004-20250627    gcc-10.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250626    clang-21
+arm64                 randconfig-001-20250627    gcc-10.5.0
+arm64                 randconfig-002-20250626    clang-17
+arm64                 randconfig-002-20250627    gcc-10.5.0
+arm64                 randconfig-003-20250626    gcc-8.5.0
+arm64                 randconfig-003-20250627    gcc-10.5.0
+arm64                 randconfig-004-20250626    clang-21
+arm64                 randconfig-004-20250627    gcc-10.5.0
+csky                              allnoconfig    gcc-15.1.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    clang-20
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250626    clang-20
+i386        buildonly-randconfig-001-20250627    gcc-12
+i386        buildonly-randconfig-002-20250626    clang-20
+i386        buildonly-randconfig-002-20250627    gcc-12
+i386        buildonly-randconfig-003-20250626    clang-20
+i386        buildonly-randconfig-003-20250627    gcc-12
+i386        buildonly-randconfig-004-20250626    clang-20
+i386        buildonly-randconfig-004-20250627    gcc-12
+i386        buildonly-randconfig-005-20250626    clang-20
+i386        buildonly-randconfig-005-20250627    gcc-12
+i386        buildonly-randconfig-006-20250626    clang-20
+i386        buildonly-randconfig-006-20250627    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-15.1.0
+loongarch                         allnoconfig    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-15.1.0
+openrisc                          allnoconfig    clang-21
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    clang-21
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    clang-21
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    gcc-15.1.0
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    clang-21
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    gcc-15.1.0
+s390                             allmodconfig    clang-18
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-21
+s390                             allyesconfig    gcc-15.1.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250626    clang-20
+x86_64      buildonly-randconfig-001-20250627    clang-20
+x86_64      buildonly-randconfig-002-20250626    clang-20
+x86_64      buildonly-randconfig-002-20250627    clang-20
+x86_64      buildonly-randconfig-003-20250626    clang-20
+x86_64      buildonly-randconfig-003-20250627    clang-20
+x86_64      buildonly-randconfig-004-20250626    clang-20
+x86_64      buildonly-randconfig-004-20250627    clang-20
+x86_64      buildonly-randconfig-005-20250626    clang-20
+x86_64      buildonly-randconfig-005-20250627    clang-20
+x86_64      buildonly-randconfig-006-20250626    clang-20
+x86_64      buildonly-randconfig-006-20250627    clang-20
+x86_64                              defconfig    clang-20
+x86_64                                  kexec    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-12
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-12
+x86_64                           rhel-9.4-ltp    gcc-12
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
