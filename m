@@ -1,383 +1,215 @@
-Return-Path: <linux-kernel+bounces-706766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08781AEBBBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C98EAEBBD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5AB1696BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5EB5564CC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA86E2E92DE;
-	Fri, 27 Jun 2025 15:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1CD2E92C9;
+	Fri, 27 Jun 2025 15:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CD7IBdgt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jojdp3aJ"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF4B1CAA6C;
-	Fri, 27 Jun 2025 15:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC7C2E92AD
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751038129; cv=none; b=RgL0AfwGNeJfmI5TStqXcRZ4jsA7mrtehliargX/SGjHhNMceTfdnuudqeZgmUd2oEjuJn74wAOv9KJYwdQKXjeBAadSVYZUUrIRmtap6XYE8bAQC9wj7KyYbBJMY1VJO54OK8tN5xIhUtZ6AlGENFpNAU9FjPqm0sY7QcOsPcM=
+	t=1751038193; cv=none; b=aCXyNYjk76AfNVZIjqi3FFe25htUoaLvY11+IpFWa5naPA+1UQ6bLz+gkdG+ZU+q32+biD3VnjKZoc8elgnuj0PHBqh6UzB5/3svPrOS8TGF1iNYgFGTC7e7RWXv+AebM5p91RhlyR/GXmNs64h7QqjDfIn8bQKsiA3u803nCgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751038129; c=relaxed/simple;
-	bh=QtHjZBImyP82L6fjboplG+GB2+4sny3P40EkhqEuBIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ei4mQmdVv9ZOfYJ8CtMqM57T4hGGSSoAvcrfojm5VWuFl+Hk8oXqRnHOPLDzL3KcABx91tOHuVgZ56go3QR4TCn67gqRSkLdLMhjjVEMWuyj6hzymMhArnOI4N1tmg96vSHq4I8gMCUxjcy1HB8A1TDgogHyofwmvsVezStwcnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CD7IBdgt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE4AC4CEE3;
-	Fri, 27 Jun 2025 15:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751038128;
-	bh=QtHjZBImyP82L6fjboplG+GB2+4sny3P40EkhqEuBIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CD7IBdgtXz0atRZoKAF+Gp1ID957/kMCWjRMmhbrgTy+VbO5mm+kPDm1LMFfKKqxV
-	 eGGxMINWb8jyyk0iF2bCa0mK3wKF8tO9loiMeN7pV/zSEuuNGAZn+1rqrKO6FDRANK
-	 ydEaFm58+6Sqln65n8+cjJc23g7ma30DO0xbqu+ofNuF6lxnoy+b3tutnpA27LAo3I
-	 uSANDZ8/JbU0J7EKIPmOR55LgkL8hiRrZjz7zzvOtDSiK+kaNV9dVzQR7cR8+UnAGR
-	 waxPdAtPgit8wH2IDvtP0TufCut+eIt3a2jsRScVBrajpgu37bEtXkJOAWDdFg9NV7
-	 4RbH8GzY3htiA==
-Date: Fri, 27 Jun 2025 17:28:45 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 4/9] pwm: Add Rust driver for T-HEAD TH1520 SoC
-Message-ID: <aot4ow37qsrehgce6vpc5m7ha5w6h4jvj7k7bokn4eo63sjk5x@iyp5ir234kx5>
-References: <20250623-rust-next-pwm-working-fan-for-sending-v5-0-0ca23747c23e@samsung.com>
- <CGME20250623180902eucas1p2960477c0a44f05e991747312b0ae0ff0@eucas1p2.samsung.com>
- <20250623-rust-next-pwm-working-fan-for-sending-v5-4-0ca23747c23e@samsung.com>
+	s=arc-20240116; t=1751038193; c=relaxed/simple;
+	bh=9aycGSq3aS/GqzzreilPYPPBxPAckX6Dfr9ZfVljmg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H2lItznWKod9dDa4zV2Yz7xXpBaSztgezIEYu0W0sV+5cj7NeyjkJIVS2Sc8CyCHZ2EsNu82HZqYXiQKxTVAiSMpWSAyhal8NNzP1R0csV7mpVJOeV4eyBMnydeQqviwThFxZ4UVv07FEl0Zqrm/i8EhIyFYOYG26cFlXoIXmpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jojdp3aJ; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <530101b3-34d2-49bb-9a12-c7036b0c0a69@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751038189;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sLiuMRtcmExZlAb2vPZafFZMyEqiWSdyJ2XHpTWjryU=;
+	b=jojdp3aJ6B+Xgwpz/k6+OhYLJXmPgXf95Us1PNv0bB6R1+gv6FBAjoT2fm5yhc9bnqacrM
+	dJgOVT4u5v1BYJtWnvmK5l8QzMJqxt7gFKd8YtXf0nkUr4H7+W/qnhtPH/Z0E7K4fZlxiG
+	YH3Sa6PrtnlBPZ17rz56nOlQAruaDLA=
+Date: Fri, 27 Jun 2025 23:29:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vkfxvii7cyang4hh"
-Content-Disposition: inline
-In-Reply-To: <20250623-rust-next-pwm-working-fan-for-sending-v5-4-0ca23747c23e@samsung.com>
+Subject: Re: [PATCH v2 1/1] mm/rmap: fix potential out-of-bounds page table
+ access during batched unmap
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com,
+ chrisl@kernel.org, kasong@tencent.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
+ ryan.roberts@arm.com, v-songbaohua@oppo.com, x86@kernel.org,
+ huang.ying.caritas@gmail.com, zhengtangquan@oppo.com, riel@surriel.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, harry.yoo@oracle.com,
+ mingzhe.yang@ly.com, stable@vger.kernel.org, Lance Yang <ioworker0@gmail.com>
+References: <20250627062319.84936-1-lance.yang@linux.dev>
+ <CAGsJ_4xQW3O=-VoC7aTCiwU4NZnK0tNsG1faAUgLvf4aZSm8Eg@mail.gmail.com>
+ <CAGsJ_4z+DU-FhNk9vkS-epdxgUMjrCvh31ZBwoAs98uWnbTK-A@mail.gmail.com>
+ <1d39b66e-4009-4143-a8fa-5d876bc1f7e7@linux.dev>
+ <CAGsJ_4xX+kW1msaXpEPqX7aQ-GYG9QVMo+JYBc18BfLCs8eFyA@mail.gmail.com>
+ <609409c7-91a8-4898-ab29-fa00eb36df02@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <609409c7-91a8-4898-ab29-fa00eb36df02@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
---vkfxvii7cyang4hh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 4/9] pwm: Add Rust driver for T-HEAD TH1520 SoC
-MIME-Version: 1.0
 
-On Mon, Jun 23, 2025 at 08:08:52PM +0200, Michal Wilczynski wrote:
-> Introduce a PWM driver for the T-HEAD TH1520 SoC, written in Rust and
-> utilizing the safe PWM abstractions from the preceding commit.
->=20
-> The driver implements the pwm::PwmOps trait using the modern waveform
-> API (round_waveform_tohw, write_waveform, etc.) to support configuration
-> of period, duty cycle, and polarity for the TH1520's PWM channels.
->=20
-> Resource management is handled using idiomatic Rust patterns. The PWM
-> chip object is allocated via pwm::Chip::new and its registration with
-> the PWM core is managed by the pwm::Registration RAII guard. This
-> ensures pwmchip_remove is always called when the driver unbinds,
-> preventing resource leaks. Device managed resources are used for the
-> MMIO region, and the clock lifecycle is correctly managed in the
-> driver's private data Drop implementation.
->=20
-> The driver's core logic is written entirely in safe Rust, with no unsafe
-> blocks.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  MAINTAINERS               |   1 +
->  drivers/pwm/Kconfig       |  10 ++
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm_th1520.rs | 318 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 330 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a575622454a2ef57ce055c8a8c4765fa4fddc490..879870471e86dcec4a0e8f5c4=
-5d2cc3409411fdd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21402,6 +21402,7 @@ F:	drivers/mailbox/mailbox-th1520.c
->  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
->  F:	drivers/pinctrl/pinctrl-th1520.c
->  F:	drivers/pmdomain/thead/
-> +F:	drivers/pwm/pwm_th1520.rs
->  F:	drivers/reset/reset-th1520.c
->  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
->  F:	include/dt-bindings/power/thead,th1520-power.h
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index cfddeae0eab3523f04f361fb41ccd1345c0c937b..a675b3bd68392d1b05a47a2a1=
-390c5606647ca15 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -719,6 +719,16 @@ config PWM_TEGRA
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-tegra.
-> =20
-> +config PWM_TH1520
-> +	tristate "TH1520 PWM support"
-> +	depends on RUST_PWM_ABSTRACTIONS
+On 2025/6/27 18:13, David Hildenbrand wrote:
+> On 27.06.25 09:36, Barry Song wrote:
+>> On Fri, Jun 27, 2025 at 7:15 PM Lance Yang <lance.yang@linux.dev> wrote:
+>>>
+>>>
+>>>
+>>> On 2025/6/27 14:55, Barry Song wrote:
+>>>> On Fri, Jun 27, 2025 at 6:52 PM Barry Song <21cnbao@gmail.com> wrote:
+>>>>>
+>>>>> On Fri, Jun 27, 2025 at 6:23 PM Lance Yang <ioworker0@gmail.com> 
+>>>>> wrote:
+>>>>>>
+>>>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>>>
+>>>>>> As pointed out by David[1], the batched unmap logic in 
+>>>>>> try_to_unmap_one()
+>>>>>> can read past the end of a PTE table if a large folio is mapped 
+>>>>>> starting at
+>>>>>> the last entry of that table. It would be quite rare in practice, as
+>>>>>> MADV_FREE typically splits the large folio ;)
+>>>>>>
+>>>>>> So let's fix the potential out-of-bounds read by refactoring the 
+>>>>>> logic into
+>>>>>> a new helper, folio_unmap_pte_batch().
+>>>>>>
+>>>>>> The new helper now correctly calculates the safe number of pages 
+>>>>>> to scan by
+>>>>>> limiting the operation to the boundaries of the current VMA and 
+>>>>>> the PTE
+>>>>>> table.
+>>>>>>
+>>>>>> In addition, the "all-or-nothing" batching restriction is removed to
+>>>>>> support partial batches. The reference counting is also cleaned up 
+>>>>>> to use
+>>>>>> folio_put_refs().
+>>>>>>
+>>>>>> [1] https://lore.kernel.org/linux-mm/ 
+>>>>>> a694398c-9f03-4737-81b9-7e49c857fcbe@redhat.com
+>>>>>>
+>>>>>
+>>>>> What about ?
+>>>>>
+>>>>> As pointed out by David[1], the batched unmap logic in 
+>>>>> try_to_unmap_one()
+>>>>> may read past the end of a PTE table when a large folio spans 
+>>>>> across two PMDs,
+>>>>> particularly after being remapped with mremap(). This patch fixes the
+>>>>> potential out-of-bounds access by capping the batch at vm_end and 
+>>>>> the PMD
+>>>>> boundary.
+>>>>>
+>>>>> It also refactors the logic into a new helper, 
+>>>>> folio_unmap_pte_batch(),
+>>>>> which supports batching between 1 and folio_nr_pages. This improves 
+>>>>> code
+>>>>> clarity. Note that such cases are rare in practice, as MADV_FREE 
+>>>>> typically
+>>>>> splits large folios.
+>>>>
+>>>> Sorry, I meant that MADV_FREE typically splits large folios if the 
+>>>> specified
+>>>> range doesn't cover the entire folio.
+>>>
+>>> Hmm... I got it wrong as well :( It's the partial coverage that triggers
+>>> the split.
+>>>
+>>> how about this revised version:
+>>>
+>>> As pointed out by David[1], the batched unmap logic in 
+>>> try_to_unmap_one()
+>>> may read past the end of a PTE table when a large folio spans across two
+>>> PMDs, particularly after being remapped with mremap(). This patch fixes
+>>> the potential out-of-bounds access by capping the batch at vm_end and 
+>>> the
+>>> PMD boundary.
+>>>
+>>> It also refactors the logic into a new helper, folio_unmap_pte_batch(),
+>>> which supports batching between 1 and folio_nr_pages. This improves code
+>>> clarity. Note that such boundary-straddling cases are rare in 
+>>> practice, as
+>>> MADV_FREE will typically split a large folio if the advice range does 
+>>> not
+>>> cover the entire folio.
+>>
+>> I assume the out-of-bounds access must be fixed, even though it is very
+>> unlikely. It might occur after a large folio is marked with MADV_FREE and
+>> then remapped to an unaligned address, potentially crossing two PTE 
+>> tables.
+> 
+> Right. If it can be triggered from userspace, it doesn't matter how 
+> likely/common/whatever it is. It must be fixed.
 
-RUST_PWM_ABSTRACTIONS is user selectable. Is that sensible. From a
-user's POV it shouldn't matter if the driver is written in Rust or not.
+Agreed. It must be fixed regardless of how rare the scenario is ;)
 
-> +	help
-> +	  This option enables the driver for the PWM controller found on the
-> +	  T-HEAD TH1520 SoC.
-> +
-> +	  To compile this driver as a module, choose M here; the module
-> +	  will be called pwm-th1520. If you are unsure, say N.
-> +
->  config PWM_TIECAP
->  	tristate "ECAP PWM support"
->  	depends on ARCH_OMAP2PLUS || ARCH_DAVINCI_DA8XX || ARCH_KEYSTONE || ARC=
-H_K3 || COMPILE_TEST
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 96160f4257fcb0e0951581af0090615c0edf5260..a410747095327a315a6bcd24a=
-e343ce7857fe323 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -66,6 +66,7 @@ obj-$(CONFIG_PWM_STMPE)		+=3D pwm-stmpe.o
->  obj-$(CONFIG_PWM_SUN4I)		+=3D pwm-sun4i.o
->  obj-$(CONFIG_PWM_SUNPLUS)	+=3D pwm-sunplus.o
->  obj-$(CONFIG_PWM_TEGRA)		+=3D pwm-tegra.o
-> +obj-$(CONFIG_PWM_TH1520)	+=3D pwm_th1520.o
->  obj-$(CONFIG_PWM_TIECAP)	+=3D pwm-tiecap.o
->  obj-$(CONFIG_PWM_TIEHRPWM)	+=3D pwm-tiehrpwm.o
->  obj-$(CONFIG_PWM_TWL)		+=3D pwm-twl.o
-> diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a77c45cef9cf8f02a25db9d42=
-c45cd0df565b0ec
-> --- /dev/null
-> +++ b/drivers/pwm/pwm_th1520.rs
-> @@ -0,0 +1,318 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2025 Samsung Electronics Co., Ltd.
-> +// Author: Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +//! Rust T-HEAD TH1520 PWM driver
-> +//!
-> +//! Limitations:
-> +//! - The period and duty cycle are controlled by 32-bit hardware regist=
-ers,
-> +//!   limiting the maximum resolution.
-> +//! - The driver supports continuous output mode only; one-shot mode is =
-not
-> +//!   implemented.
-> +//! - The controller hardware provides up to 6 PWM channels.
+> 
+>>
+>> A batch size between 2 and nr_pages - 1 is practically rare, as we 
+>> typically
+>> split large folios when MADV_FREE does not cover the entire folio range.
+>> Cases where a batch of size 2 or nr_pages - 1 occurs may only happen if a
+>> large folio is partially unmapped after being marked MADV_FREE, which is
+>> quite an unusual pattern in userspace.
+> 
+> I think the point is rather "Simplify the code by not special-casing for 
+> completely mapped folios, there is no real reason why we cannot batch 
+> ranges that don't cover the complete folio.".
 
-Important questions to answer here are:
+Yeah. That makes the code cleaner and more generic, as there is no
+strong reason to special-case for fully mapped folios ;)
 
- - How does the hardware behave on disable? (Does it stop immediately
-   (or at all)? Does it emit a constant output? Which?)=20
- - How does the hardware behave on reconfiguration? (Does it switch
-   immidiately or does it complete the current period? Can there be
-   glitches?
+Based on that, I think we're on the same page now. I'd like to post
+the following commit message for the next version:
 
-> +//!
-> +
-> +use core::ops::Deref;
-> +use kernel::{
-> +    c_str,
-> +    clk::Clk,
-> +    device::{Bound, Core, Device},
-> +    devres,
-> +    io::mem::IoMem,
-> +    of, platform,
-> +    prelude::*,
-> +    pwm, time,
-> +};
-> +
-> +const MAX_PWM_NUM: u32 =3D 6;
-> +
-> +// Register offsets
-> +const fn th1520_pwm_chn_base(n: u32) -> usize {
-> +    (n * 0x20) as usize
-> +}
-> +
-> +const fn th1520_pwm_ctrl(n: u32) -> usize {
-> +    th1520_pwm_chn_base(n)
-> +}
-> +
-> +const fn th1520_pwm_per(n: u32) -> usize {
-> +    th1520_pwm_chn_base(n) + 0x08
-> +}
-> +
-> +const fn th1520_pwm_fp(n: u32) -> usize {
-> +    th1520_pwm_chn_base(n) + 0x0c
-> +}
-> +
-> +// Control register bits
-> +const PWM_START: u32 =3D 1 << 0;
-> +const PWM_CFG_UPDATE: u32 =3D 1 << 2;
-> +const PWM_CONTINUOUS_MODE: u32 =3D 1 << 5;
-> +const PWM_FPOUT: u32 =3D 1 << 8;
+```
+As pointed out by David[1], the batched unmap logic in try_to_unmap_one()
+may read past the end of a PTE table when a large folio's PTE mappings
+are not fully contained within a single page table.
 
-Can you please add a driver specific prefix to these?
+While this scenario might be rare, an issue triggerable from userspace must
+be fixed regardless of its likelihood. This patch fixes the out-of-bounds
+access by refactoring the logic into a new helper, folio_unmap_pte_batch().
 
-> +const TH1520_PWM_REG_SIZE: usize =3D 0xB0;
-> +
-> +fn ns_to_cycles(ns: u64, rate_hz: u64) -> u64 {
-> +    const NSEC_PER_SEC_U64: u64 =3D time::NSEC_PER_SEC as u64;
-> +
-> +    match ns.checked_mul(rate_hz) {
-> +        Some(product) =3D> product / NSEC_PER_SEC_U64,
-> +        None =3D> u64::MAX,
-> +    }
+The new helper correctly calculates the safe batch size by capping the
+scan at both the VMA and PMD boundaries. To simplify the code, it also
+supports partial batching (i.e., any number of pages from 1 up to the
+calculated safe maximum), as there is no strong reason to special-case
+for fully mapped folios.
+```
 
-The semantic here is: If ns * rate_hz overflows, return U64_MAX, else ns
-* rate_hz / NSEC_PER_SEC, right?
+So, wdyt?
 
-If you cannot easily reproduce what mul_u64_u64_div_u64() does, I think
-it would be more prudent do make this:
+Thanks,
+Lance
 
-	match ns.checked_mul(rate_hz) {
-	    Some(product) =3D> product,
-	    None =3D> u64::MAX,
-	} / NSEC_PER_SEC_U64
 
-> +}
-> +
-> [...]
-> +impl pwm::PwmOps for Th1520PwmDriverData {
-> +    type WfHw =3D Th1520WfHw;
-> +
-> +    fn round_waveform_tohw(
-> +        chip: &pwm::Chip,
-> +        _pwm: &pwm::Device,
-> +        wf: &pwm::Waveform,
-> +    ) -> Result<(c_int, Self::WfHw)> {
-> +        let data: &Self =3D chip.drvdata();
-> +
-> +        if wf.period_length_ns =3D=3D 0 {
-> +            return Ok((
-> +                0,
-> +                Th1520WfHw {
-> +                    enabled: false,
-> +                    ..Default::default()
-> +                },
-> +            ));
-> +        }
-> +
-> +        let rate_hz =3D data.clk.rate().as_hz() as u64;
-> +
-> +        let period_cycles =3D ns_to_cycles(wf.period_length_ns, rate_hz)=
-=2Emin(u32::MAX as u64);
-> +        let mut duty_cycles =3D ns_to_cycles(wf.duty_length_ns, rate_hz)=
-=2Emin(u32::MAX as u64);
-> +
-> +        let mut ctrl_val =3D PWM_CONTINUOUS_MODE;
-> +
-> +        if wf.duty_offset_ns =3D=3D 0 {
-> +            ctrl_val |=3D PWM_FPOUT;
-> +        } else {
-> +            duty_cycles =3D period_cycles - duty_cycles;
 
-Huh, this looks wrong. Your hardware only supports the two polarities,
-right? Then configure inversed polarity if
 
-	wf->duty_length_ns && wf->duty_offset_ns && wf->duty_length_ns + wf->duty_=
-offset_ns >=3D wf->period_length_ns
-
-(i.e. how the pwm-stm32 driver does it).
-
-> +        }
-> +
-> +        let wfhw =3D Th1520WfHw {
-> +            period_cycles: period_cycles as u32,
-> +            duty_cycles: duty_cycles as u32,
-> +            ctrl_val,
-> +            enabled: true,
-> +        };
-> +
-> +        dev_dbg!(
-> +            chip.device(),
-> +            "Requested: period {}ns, duty {}ns, offset {}ns -> HW: perio=
-d {} cyc, duty {} cyc, ctrl 0x{:x}\n",
-
-Would it be helpful to also emit the clkrate here?
-
-> +            wf.period_length_ns,
-> +            wf.duty_length_ns,
-> +            wf.duty_offset_ns,
-> +            wfhw.period_cycles,
-> +            wfhw.duty_cycles,
-> +            wfhw.ctrl_val
-> +        );
-> +
-> +        Ok((0, wfhw))
-> +    }
-> +
-> +    fn round_waveform_fromhw(
-> +        chip: &pwm::Chip,
-> +        _pwm: &pwm::Device,
-> +        wfhw: &Self::WfHw,
-> +        wf: &mut pwm::Waveform,
-> +    ) -> Result<c_int> {
-> +        let data: &Self =3D chip.drvdata();
-> +        let rate_hz =3D data.clk.rate().as_hz() as u64;
-> +
-> +        wf.period_length_ns =3D cycles_to_ns(wfhw.period_cycles as u64, =
-rate_hz);
-> +
-> +        let duty_cycles =3D wfhw.duty_cycles as u64;
-> +
-> +        if (wfhw.ctrl_val & PWM_FPOUT) !=3D 0 {
-> +            wf.duty_length_ns =3D cycles_to_ns(duty_cycles, rate_hz);
-> +            wf.duty_offset_ns =3D 0;
-> +        } else {
-> +            let period_cycles =3D wfhw.period_cycles as u64;
-> +            let original_duty_cycles =3D period_cycles.saturating_sub(du=
-ty_cycles);
-> +
-> +            wf.duty_length_ns =3D cycles_to_ns(original_duty_cycles, rat=
-e_hz);
-> +            // We can't recover the original non-zero offset, so we just=
- set it
-> +            // to a representative non-zero value.
-> +            wf.duty_offset_ns =3D 1;
-
-For an inversed polarity signal the duty_offset is polarity - duty_cycle.
-
-> +        }
-> +
-> +        Ok(0)
-> +    }
-
-Best regards
-Uwe
-
---vkfxvii7cyang4hh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmheuKsACgkQj4D7WH0S
-/k63Mgf/b+iJPKal4W5i41FIDsXdTx4wlBWLFoajKZKGZs/HOtmYjrp37yH6sm03
-+NTlYMPvgbxnD3+jCG4CEF09T4/VZ/pL0mIZvY/xb2uJ8LvH1PDza/zJIFWJmqy8
-5JbJtXXCBZGGMK0P0RD6ojA6M6yQnzdp9gftfPVrCIf+4jxf4UBQEuqhu74+f8gd
-agLM/ei3d8Y8KTuRsd7JfYcsWh7jTO5AyMZ08UE4hW26fjGP+HxtmJD3Ir+JsMU4
-QYK4hn2F4I8XHdiqIT5ExjFe6d/8U7XWZ2a2sPTVoBSKepKKsi4guyraTevqhnYO
-uegIgvtvqtGYqcvydO1dhtKn2r0iAA==
-=Duul
------END PGP SIGNATURE-----
-
---vkfxvii7cyang4hh--
 
