@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-706523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D803AEB7B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:29:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2F4AEB7B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4EEA4A728B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FE0C3B1EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B612D12F5;
-	Fri, 27 Jun 2025 12:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B0E2D3207;
+	Fri, 27 Jun 2025 12:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Iz5OfdKj"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kNfq05Kw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bj8Wugek"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA617C21C;
-	Fri, 27 Jun 2025 12:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AB7524F;
+	Fri, 27 Jun 2025 12:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751027347; cv=none; b=J2snNB0jdmcg6UPPaawR3C3IZG++ey8TXedW1f0tLatHmtO+yaTAe2gSbz8DBQM1L/vcfQS5abTqRQ0xnKaKoyAKt0JU7MFaypkwlMcgNW+M78N74UbRcyATL940nd6GoC/iyaE8FWbX11fVl2XLOE0mZiJu1ltga4Iwy3ob5xo=
+	t=1751027446; cv=none; b=R9wkurvfMt0oi4xYowryhUY55mz0QrDLIRIK5Jf8/gqGbZnvVA4+bDfrQlTB+C/FuN9kByymo6yOtjeVHW740CjrSpNbnFYZNo7SSBI4IE+fR5WoOBhUWxQfvamPmJ+UdD6rlWlTVqRF2mqRQOWqs0kbYCmx0P2+FCgSJckCVQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751027347; c=relaxed/simple;
-	bh=EtshUSUcNz/EcdgguxC9OOdXGB2IBgMhJVAOJyuE9yY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=gwIlCuGcKi6HSHUTo+xg1d9m3Jv+NTl50yJGOO6xBWnjoIRWUAwVYZB5RPqGN8KffbCUZ5s99ZQ5BkA4xHFbW3ote7mXlWNNPKRetzrUCd36ou3GSqN9PKQviOPoGrEf03iBbTsOHzAOQTFq4mUgR1HLiwoSaMRAOiD8A7RfC4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Iz5OfdKj; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id BE00824CE2;
-	Fri, 27 Jun 2025 14:29:03 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id a-Vi0xHrL_L8; Fri, 27 Jun 2025 14:29:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751027342; bh=EtshUSUcNz/EcdgguxC9OOdXGB2IBgMhJVAOJyuE9yY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=Iz5OfdKj6tJy1F91PBHFqCdCfHs+sxsFQcWGG3bBiYzpqR1aPcf7Lzxm6Ff+GuGXk
-	 1OXZThqT8gFO7exnrQIQVG84R/sQd5c+Hj/B+ceIWiFssn79jGI7jweBHA0FTFLs+7
-	 /pewIt+aa0AmzeDs6lnlC6PRlMp8auU3FBSOmbB3bpIQrEkMrJHRqPhHi1n49wNBTL
-	 J9RUeRH+h2LEbUd7ZMiRaa0AQyx9D6t/VT7w4GxW/8yBaC+eyGOyQ1SRlA7NF0a2N+
-	 G1rhJBnMJxswRIYj9mNn47hmhyNPC6+x2sk+3jRfy2EB+MRYfIAXU0QEO9ra53ZmPy
-	 8mPJdvLa2xdPA==
+	s=arc-20240116; t=1751027446; c=relaxed/simple;
+	bh=tPqD7lpNKtBZq2fnjCtdln3EGyIBusmFyGEYGF4soFY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ryNtz1W8G3xnNVHXaGKhj9CmnmZoZ8N5XNH+D3Q2mzvrpyR3gJRqT6cNdqKO8gpPcgCADp5ygwkDe+iZ2mBzoFmkjtuWJ5upqchvUHmVAFXlQWDa/dYLuwjJ/4FTdV1HkkgQUrtkKX42dyCyj3KB4B6C8Ni0Hc0RPqGc58+BnJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kNfq05Kw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bj8Wugek; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 27 Jun 2025 12:30:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751027442;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zogBGtOsfthpizvbogRciEFuJA+7qVueBtxw/sQquSY=;
+	b=kNfq05KwvZC5C3mvXu2dzYJZVprkvg+I3plREGXJdD6rEonbSeZOm5/aj3YfTELeIVpVuF
+	gUb0FqCbygvBxO8rLjljZ38MO/rpS3dM+PjMjkaQ5SF0NhfbEqzVEQuoqPn4XZvdzhBKQB
+	0YaDargaJLgpISrw0rOlxQZwnXlzsO2sUpBbxFHadBPaBniazYlNlCB3en3zuhD+T9yRWl
+	ckcOZfYovKg6L1rPd5JTmoWRib80tF5OcNO3lFfw05zzLnkK6xk4f3IY3JaOOyjIosAalz
+	iuvpzDk1SXkookbERTplFmMY9FpC9LP7KsvKirG/iiajTjwQa3BfMab5M6A6nA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751027442;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zogBGtOsfthpizvbogRciEFuJA+7qVueBtxw/sQquSY=;
+	b=bj8WugekMk1g3zoi6hZ82Z0hnOemW3C6p+apxDvAN+y4OFLVGKWQyeEMGBdb8hOhsR8RGA
+	l+XCsEW/hemrPoDg==
+From: "tip-bot2 for Gerd Hoffmann" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/sev] x86/sev: Let sev_es_efi_map_ghcbs() map the CA pages too
+Cc: Gerd Hoffmann <kraxel@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250626114014.373748-4-kraxel@redhat.com>
+References: <20250626114014.373748-4-kraxel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 27 Jun 2025 12:29:01 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Inki Dae <daeinki@gmail.com>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
- <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 01/13] drm/bridge: samsung-dsim: separate LINK and DPHY
- status registers
-In-Reply-To: <CAAQKjZOHUGg8WEZxfhVxrUPS3O68BQJ6=cDnUSk6BomYjuY62Q@mail.gmail.com>
-References: <20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org>
- <20250627-exynos7870-dsim-v2-1-1433b67378d3@disroot.org>
- <CAAQKjZOHUGg8WEZxfhVxrUPS3O68BQJ6=cDnUSk6BomYjuY62Q@mail.gmail.com>
-Message-ID: <922117777d718b77c86be3a43e86dd7f@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <175102744074.406.15128722963377307885.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 2025-06-27 10:07, Inki Dae wrote:
-> 2025년 6월 27일 (금) 오전 4:42, Kaustabh Chakraborty 
-> <kauschluss@disroot.org>님이 작성:
->> 
->> Exynos7870's DSIM has separate registers for LINK and DPHY status. 
->> This
->> is in contrast to other devices in the driver which use a single
->> register for both.
->> 
->> Add their respective entries in the register list. Devices having a
->> single status register have been assigned the same offset for both
->> entries.
->> 
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>  drivers/gpu/drm/bridge/samsung-dsim.c | 15 +++++++++------
->>  1 file changed, 9 insertions(+), 6 deletions(-)
->> 
->> diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c 
->> b/drivers/gpu/drm/bridge/samsung-dsim.c
->> index 
->> f2f666b27d2d5ec016d7a7f47c87fcdf1377d41a..7fd4c34cdc3170d363942f98feec048097da3c06 
->> 100644
->> --- a/drivers/gpu/drm/bridge/samsung-dsim.c
->> +++ b/drivers/gpu/drm/bridge/samsung-dsim.c
->> @@ -30,7 +30,7 @@
->>  /* returns true iff both arguments logically differs */
->>  #define NEQV(a, b) (!(a) ^ !(b))
->> 
->> -/* DSIM_STATUS */
->> +/* DSIM_DPHY_STATUS */
->>  #define DSIM_STOP_STATE_DAT(x)         (((x) & 0xf) << 0)
->>  #define DSIM_STOP_STATE_CLK            BIT(8)
->>  #define DSIM_TX_READY_HS_CLK           BIT(10)
->> @@ -239,7 +239,8 @@ enum samsung_dsim_transfer_type {
->>  };
->> 
->>  enum reg_idx {
->> -       DSIM_STATUS_REG,        /* Status register */
-> 
-> According to the datasheets I have, both Exynos5422 and Exynos7420 use
-> DSIM_STATUS, while Exynos8890 splits this into DSIM_LINK_STATUS and
-> DSIM_PHY_STATUS. It appears that Exynos7870 follows the same approach
-> as Exynos8890.
-> 
-> The current modification removes the legacy DSIM_STATUS_REG and adds
-> new DSIM_LINK_STATUS_REG and DSIM_DPHY_STATUS_REG. However, this
-> change causes the register names used for older SoC versions to differ
-> from those in the datasheets, so I think it is better to keep the
-> legacy name for backward compatibility.
-> 
-> How about modifying it as follows?
-> enum reg_idx {
->     DSIM_STATUS_REG,          /* Status register (legacy) */
->     DSIM_LINK_STATUS_REG,     /* Link status register (Exynos7870, ...) 
-> */
->     DSIM_PHY_STATUS_REG,      /* PHY status register (Exynos7870, ...) 
-> */
->     ...
-> };
-> 
-> static const unsigned int exynos7870_reg_ofs[] = {
->     [DSIM_STATUS_REG] = 0x00,        /* Legacy compatibility - use
-> LINK_STATUS */
->     [DSIM_LINK_STATUS_REG] = 0x04,   /* Link status register */
->     [DSIM_PHY_STATUS_REG] = 0x08,    /* PHY status register */
->     ...
-> };
-> 
-> Additionally, by configuring the hw_type field in the
-> samsung_dsim_plat_data structure like you did with the patch[1], you
-> can use the appropriate register name for each SoC as shown below:
-> if (dsi->plat_data->hw_type == DSIM_TYPE_EXYNOS7870)
+The following commit has been merged into the x86/sev branch of tip:
 
-I've instead added a flag to the driver data indicating the
-availability of legacy status register. In my opinion, this
-approach quickly turns cumbersome as the number of variants
-increase.
+Commit-ID:     a7549636f67f973474ebe1ad262acc2aa4d1327d
+Gitweb:        https://git.kernel.org/tip/a7549636f67f973474ebe1ad262acc2aa4d1327d
+Author:        Gerd Hoffmann <kraxel@redhat.com>
+AuthorDate:    Thu, 26 Jun 2025 13:40:13 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 27 Jun 2025 14:07:10 +02:00
 
-Thanks for the suggestion.
+x86/sev: Let sev_es_efi_map_ghcbs() map the CA pages too
 
->     reg = samsung_dsim_read(dsi, DSIM_LINK_STATUS_REG);
-> else
->     reg = samsung_dsim_read(dsi, DSIM_STATUS_REG);
-> 
-> 
-> [1] [PATCH v2 12/13] drm/bridge: samsung-dsim: add driver support for
-> exynos7870 DSIM bridge
-> 
-> Thanks,
-> Inki Dae
+OVMF EFI firmware needs access to the CA page to do SVSM protocol calls. For
+example, when the SVSM implements an EFI variable store, such calls will be
+necessary.
+
+So add that to sev_es_efi_map_ghcbs() and also rename the function to reflect
+the additional job it is doing now.
+
+  [ bp: Massage. ]
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250626114014.373748-4-kraxel@redhat.com
+---
+ arch/x86/coco/sev/core.c       | 17 +++++++++++++++--
+ arch/x86/include/asm/sev.h     |  4 ++--
+ arch/x86/platform/efi/efi_64.c |  4 ++--
+ 3 files changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 8375ca7..46bd895 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -1045,11 +1045,13 @@ int __init sev_es_setup_ap_jump_table(struct real_mode_header *rmh)
+  * This is needed by the OVMF UEFI firmware which will use whatever it finds in
+  * the GHCB MSR as its GHCB to talk to the hypervisor. So make sure the per-cpu
+  * runtime GHCBs used by the kernel are also mapped in the EFI page-table.
++ *
++ * When running under SVSM the CA page is needed too, so map it as well.
+  */
+-int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
++int __init sev_es_efi_map_ghcbs_cas(pgd_t *pgd)
+ {
++	unsigned long address, pflags, pflags_enc;
+ 	struct sev_es_runtime_data *data;
+-	unsigned long address, pflags;
+ 	int cpu;
+ 	u64 pfn;
+ 
+@@ -1057,6 +1059,7 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
+ 		return 0;
+ 
+ 	pflags = _PAGE_NX | _PAGE_RW;
++	pflags_enc = cc_mkenc(pflags);
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		data = per_cpu(runtime_data, cpu);
+@@ -1066,6 +1069,16 @@ int __init sev_es_efi_map_ghcbs(pgd_t *pgd)
+ 
+ 		if (kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags))
+ 			return 1;
++
++		if (snp_vmpl) {
++			address = per_cpu(svsm_caa_pa, cpu);
++			if (!address)
++				return 1;
++
++			pfn = address >> PAGE_SHIFT;
++			if (kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags_enc))
++				return 1;
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index fbb616f..a81769a 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -446,7 +446,7 @@ static __always_inline void sev_es_nmi_complete(void)
+ 	    cc_platform_has(CC_ATTR_GUEST_STATE_ENCRYPT))
+ 		__sev_es_nmi_complete();
+ }
+-extern int __init sev_es_efi_map_ghcbs(pgd_t *pgd);
++extern int __init sev_es_efi_map_ghcbs_cas(pgd_t *pgd);
+ extern void sev_enable(struct boot_params *bp);
+ 
+ /*
+@@ -554,7 +554,7 @@ static inline void sev_es_ist_enter(struct pt_regs *regs) { }
+ static inline void sev_es_ist_exit(void) { }
+ static inline int sev_es_setup_ap_jump_table(struct real_mode_header *rmh) { return 0; }
+ static inline void sev_es_nmi_complete(void) { }
+-static inline int sev_es_efi_map_ghcbs(pgd_t *pgd) { return 0; }
++static inline int sev_es_efi_map_ghcbs_cas(pgd_t *pgd) { return 0; }
+ static inline void sev_enable(struct boot_params *bp) { }
+ static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate) { return 0; }
+ static inline int rmpadjust(unsigned long vaddr, bool rmp_psize, unsigned long attrs) { return 0; }
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index e7e8f77..b4409df 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -216,8 +216,8 @@ int __init efi_setup_page_tables(unsigned long pa_memmap, unsigned num_pages)
+ 	 * When SEV-ES is active, the GHCB as set by the kernel will be used
+ 	 * by firmware. Create a 1:1 unencrypted mapping for each GHCB.
+ 	 */
+-	if (sev_es_efi_map_ghcbs(pgd)) {
+-		pr_err("Failed to create 1:1 mapping for the GHCBs!\n");
++	if (sev_es_efi_map_ghcbs_cas(pgd)) {
++		pr_err("Failed to create 1:1 mapping for the GHCBs and CAs!\n");
+ 		return 1;
+ 	}
+ 
 
