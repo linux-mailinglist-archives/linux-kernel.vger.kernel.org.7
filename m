@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-707297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475EAAEC241
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:46:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0069FAEC247
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CA91C46442
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731DE6E1F41
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A557028B7C9;
-	Fri, 27 Jun 2025 21:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8567258CCC;
+	Fri, 27 Jun 2025 21:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yd+1CupH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fh2/IP5s"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BDC28A1FB
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 21:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C191FBCB5;
+	Fri, 27 Jun 2025 21:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751060751; cv=none; b=mk5//+lkTVD6F2533HZSWjB4s0yOFRw9QdDAtoTGeH0oV8kQfBGwPURS7tudZ1kNY9c28SRJxDfIMia4jzK1y+sCfpOxndh+lXoZGPTL2Z19l2XpZ2ORfmhC3HBw5Wze0xGsgAcMAe3kgW5f0w+W9LqLJwfK7qTTMkRzs9n+Ei0=
+	t=1751060805; cv=none; b=WmJtuJibPafhJUFMvQJRaYmb/GlByD+znMfQp56T4+u/rbrb8RgooXZV9L0I/GU9edTcMDTHMAPUfh42WXxeJvQQtOri3DwxOOsYwl7+h48805IBxQLEiq5pFuB5LxT4esOjM0kGpR9V9m2BNIDPTH6cDixpWHuqu+AKxs1opAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751060751; c=relaxed/simple;
-	bh=SXgoQ1idQ/QAggHeUOTb6B7xD04V/Ud51LpI1El6PZc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mhbNqfpqjC4ajX31RGtzVKzNemxR+sHWA7fsm7vtCkIDzprVExvLsbpxTchgnfbBUP6VU6Zhev7kZWaYenv7WowKUPPzHHJtPn460ItOMIUjKoiauzC83vjXPiIIAJHQUNUwWTPA3mIIWBwqvnMSk2QAX6318Fhf4nIYPUfsucM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yd+1CupH; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751060749; x=1782596749;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=SXgoQ1idQ/QAggHeUOTb6B7xD04V/Ud51LpI1El6PZc=;
-  b=Yd+1CupHB6EFZyOLkPrmPy/CJNxOVoyWojLzircAe6qk/FpAM+vko0V/
-   Zy9QfCQgeu1iZmJa9IxXNOojZckTU7SFZ7Q4uosQmuHZEYwppHXHnh48O
-   4kS70kVHQkyBP2fN3brLiDHCOQFNLrHRR8M71tEhQNljMpO5hjxPZGyie
-   +AnZrT1DCm7Jc/iADzJ6G97UaGyttgQHPP37JOwB95VEPp/FGdp9VvqFp
-   udwooULa/grtvadxl/jXb51R39P34pUO1568FwGZPTTz1+GfnixpjRPku
-   G+8BLcVS/e5MkkJ+D48tfWZ8FqaZNR/A1TEUrh24X8nwppva0Dr5a9o+K
-   w==;
-X-CSE-ConnectionGUID: ZYpSJf67T7y9sVDuIKVPVg==
-X-CSE-MsgGUID: MeZUQOcRRhCT6KZzqepUpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="57063809"
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="57063809"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 14:45:47 -0700
-X-CSE-ConnectionGUID: PVgiLh26QASebbFsDd+gMA==
-X-CSE-MsgGUID: 8MmuCRbaTN2yssdus7W7dQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="190092872"
-Received: from unknown (HELO [172.25.112.21]) ([172.25.112.21])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 14:45:47 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Date: Fri, 27 Jun 2025 14:45:30 -0700
-Subject: [PATCH 4/4] sched/topology: Keep SD_PREFER_SIBLING for domains
- with clusters
+	s=arc-20240116; t=1751060805; c=relaxed/simple;
+	bh=MjnAslqJJMl32jVN4ZvTbGfDWSSZ3EjKaYsG3TsFGR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lgHAdthV1L7IUyGY5ViBzXWM5tLEegJ5sk0DTjcJpG/gezARoC4igwbaoczKJf+0g7hYlHVRelbNkCo0K84LNEbpTFatACk9T+MOwmHHIjQgVOAQrd8E9O7lJhZRHSjS50RYrzztBvMcsbOQQHpe8fdb55r6QPRyPIrDvoUd2ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fh2/IP5s; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RLjxNJ2516423;
+	Fri, 27 Jun 2025 16:45:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751060759;
+	bh=I87Av/MwXWoM8xzWi/f8xlGiaslW/Qp2/zw+nq+E/Yc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=fh2/IP5sT0iO0Fdz0SLIWRGWUqjsQ5p6QI03ou4g3cjTPnc9ZQRUidtxGED9Y4yOF
+	 pWhx1EoTftKw2bxS7O+hRSColqRh+vELSsaYs3wOWp4TQGjBMJG5V6vU9NMS+QJh6/
+	 DrwQiBJfpd5DMgyg2ZOASUgiQ9uiek6MaWPhL0UI=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RLjw3G750176
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 27 Jun 2025 16:45:59 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
+ Jun 2025 16:45:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 27 Jun 2025 16:45:58 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RLjwh93486775;
+	Fri, 27 Jun 2025 16:45:58 -0500
+Message-ID: <a754b9e8-dc89-4188-bd2f-18c29c299fb7@ti.com>
+Date: Fri, 27 Jun 2025 16:45:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-rneri-fix-cas-clusters-v1-4-121ffb50bbc7@linux.intel.com>
-References: <20250627-rneri-fix-cas-clusters-v1-0-121ffb50bbc7@linux.intel.com>
-In-Reply-To: <20250627-rneri-fix-cas-clusters-v1-0-121ffb50bbc7@linux.intel.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Tim C Chen <tim.c.chen@linux.intel.com>, Barry Song <baohua@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- ricardo.neri@intel.com, linux-kernel@vger.kernel.org, 
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751060764; l=1754;
- i=ricardo.neri-calderon@linux.intel.com; s=20250602;
- h=from:subject:message-id; bh=SXgoQ1idQ/QAggHeUOTb6B7xD04V/Ud51LpI1El6PZc=;
- b=Zu4su9EKrTEx4BlG79NOL/rURGcBoHIzn3WokFj1mO43ZaORCJ3I7yTHMPDm0g5JpEa/UyqJ3
- D8DQUFnVh8HAzaMKuzf1ZpMbCj3+bcUR4765BIVeCoOYJDCzEc947Oa
-X-Developer-Key: i=ricardo.neri-calderon@linux.intel.com; a=ed25519;
- pk=NfZw5SyQ2lxVfmNMaMR6KUj3+0OhcwDPyRzFDH9gY2w=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Add support for BeagleBone Green Eco board
+To: Robert Nelson <robertcnelson@gmail.com>
+CC: Kory Maincent <kory.maincent@bootlin.com>,
+        Tony Lindgren
+	<tony@atomide.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Aaro Koskinen
+	<aaro.koskinen@iki.fi>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Kevin Hilman
+	<khilman@baylibre.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Paul Barker <paul.barker@sancloud.com>,
+        Marc Murphy
+	<marc.murphy@sancloud.com>,
+        Jason Kridner <jkridner@gmail.com>, Andrew Davis
+	<afd@ti.com>,
+        Bajjuri Praneeth <praneeth@ti.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Thomas Bonnefille
+	<thomas.bonnefille@bootlin.com>,
+        Romain Gantois <romain.gantois@bootlin.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+References: <20250620-bbg-v5-0-84f9b9a2e3a8@bootlin.com>
+ <e49a3fff-8a50-44aa-aa0c-1ba1bf478eb6@ti.com>
+ <CAOCHtYgNfnAK43GBTdN675dFSHrbTJfy_2GbRE88E-0keoChrg@mail.gmail.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <CAOCHtYgNfnAK43GBTdN675dFSHrbTJfy_2GbRE88E-0keoChrg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-There are topologies with scheduling domains that contain CPUs of
-asymmetric capacity and grouped into two or more clusters of CPUs of
-equal capacity sharing L2 cache. CONFIG_SCHED_CLUSTER requires to
-balance load among clusters sharing a resource.
+Hi Robert
 
-Keep the SD_PREFER_SIBLING in the child domains to indicate to the load
-balancer that it should spread load among cluster siblings.
+On 6/26/25 7:03 PM, Robert Nelson wrote:
+> On Thu, Jun 26, 2025 at 6:23 PM Judith Mendez <jm@ti.com> wrote:
+>>
+>> Hi Kory,
+>>
+>> On 6/20/25 3:15 AM, Kory Maincent wrote:
+>>> SeeedStudio BeagleBone Green Eco (BBGE) is a clone of the BeagleBone Green
+>>> (BBG). It has minor differences from the BBG, such as a different PMIC,
+>>> a different Ethernet PHY, and a larger eMMC.
+>>
+>> Thanks for the patches.
+>> I was testing against next and noticed a kernel paging request error:
+>> https://gist.github.com/jmenti/d861528f98035b07259c29e76e5fae8b
+>>
+>> Did you see this by chance?
+>>
+>> I will double check that I tested correctly and come back, but was just
+>> curious to see if this is expected.
+> 
+> The tps65219-regulator.c has a bug, make sure with this board you also
+> have: https://patchew.org/linux/20250620154541.2713036-1-s-ramamoorthy@ti.com/
 
-Checks for capacity in the load balancer will prevent migrations from
-high- to low-capacity CPUs. Likewise, misfit load will still be used to
-move high-load tasks to bigger CPUs.
 
-Remove unnecessary parentheses while here.
+Thanks! I don't see the issue anymore! (:
 
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
- kernel/sched/topology.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 8e06b1d22e91..61786cfdc78f 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1689,8 +1689,15 @@ sd_init(struct sched_domain_topology_level *tl,
- 	/*
- 	 * Convert topological properties into behaviour.
- 	 */
--	/* Don't attempt to spread across CPUs of different capacities. */
--	if ((sd->flags & SD_ASYM_CPUCAPACITY) && sd->child)
-+	/*
-+	 * Don't attempt to spread across CPUs of different capacities. An
-+	 * exception to this rule are domains in which there are clusters of
-+	 * CPUs sharing a resource. Keep the flag in such case to balance load
-+	 * among them. The load balancer will prevent task migrations from
-+	 * high- to low-capacity CPUs.
-+	 */
-+	if (sd->flags & SD_ASYM_CPUCAPACITY && sd->child &&
-+	    !(sd->child->flags & SD_CLUSTER))
- 		sd->child->flags &= ~SD_PREFER_SIBLING;
- 
- 	if (sd->flags & SD_SHARE_CPUCAPACITY) {
-
--- 
-2.43.0
+~ Judith
 
 
