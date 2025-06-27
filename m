@@ -1,157 +1,165 @@
-Return-Path: <linux-kernel+bounces-706137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A65AEB27E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:17:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493F4AEB28D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229DE17C834
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57A58188C26F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAED42957C0;
-	Fri, 27 Jun 2025 09:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F14029A311;
+	Fri, 27 Jun 2025 09:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jI2mMSNl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UEJbey2a"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E012741A0;
-	Fri, 27 Jun 2025 09:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F0A299929
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015552; cv=none; b=cBUfkLEl4KdSBvWbbcY6Wo/lFRT0oO8H7NVYshylrlbAvJJ05w7oG5THqndN86+rBegoosyfR3WxSKA6XnJle4mvkUY6vNkxtjNVZ5/I55EmnRjQnuSiY8C8shTCf1PmDZVaPVrm+CrYRbDgQFvbFnK3A5htdWZ/jkhk3+qrs2Y=
+	t=1751015578; cv=none; b=uEJPvq/bztVy7E7Q1979j/WiUtwfUwXDgWNdJniVRjzFCdVNkEE2cde3rK+S8zibwQ5ETDIBv2PcbMKS6ci59w7A3tX1XtdnFpVhu00LPHNMUM100gznNhLh4XFI1YaGcRP8eFrRDd9N6lmdYGq53ZbpH2HX9oGuwc/T69bbTjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015552; c=relaxed/simple;
-	bh=pA/2XLoSO8QMzw/6J3xr5U+FO1FrMVD9L5FGTWj0y8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=olRg+E9gbrRdNDZzoW+f5jMinh9FNi8rrG55vFIXa4JHNjc8Hm+gmTjZANi541uzgW3R7YEu/ucSzcgKWAMccRjBaMNa/cSzCVZks4indu+eRP2ze2IvncerdFi8iL1Nxiq1lgMVF8HnbcXwbLBMSg+OlKYVkyJkWL1YJozUhC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jI2mMSNl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE4AC4CEE3;
-	Fri, 27 Jun 2025 09:12:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751015551;
-	bh=pA/2XLoSO8QMzw/6J3xr5U+FO1FrMVD9L5FGTWj0y8I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jI2mMSNl88IYMGZga3wZMRWakIsMngxDMC9h+SLZ7LkImtXBAfsPUlqOaxNZQ+NaU
-	 uvAyupZzK+b0aVF4zCvqNqyxi7qSJfz9lq7MyucZouLrYBhXaoZ8GCl5D/OJa+7FoD
-	 H5IYHckUvyqoLgu5TYQ/ZA4uJPWmVJsyEsfRjQbKINsI7mjyZCzce1Myob53lWCmrS
-	 x4TE95ktDC2YE82AzYQ++bzgTw9i1E1LxirX2keL7AIggq0NdXoZ0wM/ynXjPVORvD
-	 Owh/GwmJ7o2xIEDRknrQ5BpaDT4aUjlYu1Sr9xOMZmu3IUh/pKdElwKq/2kN/k9ixP
-	 fJQJ8gu8W7bBg==
-Message-ID: <4cbc691e-c725-48eb-9932-4549381fa55b@kernel.org>
-Date: Fri, 27 Jun 2025 11:12:23 +0200
+	s=arc-20240116; t=1751015578; c=relaxed/simple;
+	bh=j205EYLjzOUu5rmW2oUGimRr250dsQmrzW5+uyLHUG4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nW0byc5gSo3R455ZzLeRO43ISBK4wCVzJ8V0lwGPNQcxgRAcf6+s9X9fEX7KFqEVOK67Y/4yvkaR1pWazGKLzvkpDpDp+HvoiY+O0i69iJlDgDjH3KTsM9KHPLjVdECDEiDA+sIvOeKJQZKMHd1lV5IjZwDXGXgsGRvA0uJcJWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UEJbey2a; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B7EC14388C;
+	Fri, 27 Jun 2025 09:12:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751015569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jMMS4ea1lRKR0o6OKvXdrGiucNnIGPkdr5Jn9qFP87U=;
+	b=UEJbey2aMdghOOt1fBRUZu5HuQXA3IxGl2hx8t31+2ZHNrPjAODP7uuOHtkScBv8tLSVdC
+	aNHvhfCIJx5K9a70NGmOJ1fzsQafUB6iFix9J7cJRFHBVB+ffazQkbD5qcOrFX5Q0lQR6L
+	Dh0oM88ScCktL9gaYJRflw9QRT79LaLpvpv+epORKRntvUoYkbWMGcGT9gZNwAu3mxOyz5
+	n4GK89PCozZkC5AD51tVsiNoVMkOOcnw93b2cni/wD3XV+txT9K8yYcM32Cbp+7rI5J9+w
+	THfcJIr9k5swqp53S89UGnKtPaVf7SIb96a7JVoIYjE5Rqb6nDra3xYSlYHwCQ==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v5 0/8] drm/vkms: Add support for multiple plane formats
+Date: Fri, 27 Jun 2025 11:12:31 +0200
+Message-Id: <20250627-b4-new-color-formats-v5-0-94452f119c72@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: exynos: gs101-pixel-common: add Maxim
- MAX77759 PMIC
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250524-b4-max77759-mfd-dts-v2-0-b479542eb97d@linaro.org>
- <20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org>
- <2c491166-d8ae-4fb6-a4f7-74e823e1205d@kernel.org>
- <b2c3b78d60f3dc3e4576e8b79298e22ea46567c6.camel@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b2c3b78d60f3dc3e4576e8b79298e22ea46567c6.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH9gXmgC/33RzU4DIRAH8FfZcC7K57L05HsYDwsMlqQsCrjWN
+ H13aTfVNHW9MSTzm+HPERXIAQradkeUYQ4lpKkVctMhuxunV8DBtRoxwgThlGEj8ASf2KZ9yti
+ nHMdaMDWgXT8MhtERtda3DD4cLuzzS6t3odSUvy5TZnq+XUBJ+7/BmWKClbBeeyCKU/VkUqr7M
+ D3YFNGZnNkvM1CxwrDGDIYLra0HTeCG2SzPooSof9qdUG6UxIleifst+M8WlLKVdGbeGMa9Uqq
+ nWll9z4grI4nkZIURjQEvWyZi4Kq3t8xpyT3D+0f7xbqEj8xYoDkxhrrtXI44hmIfr4c25VBb6
+ +kboQy/eQgCAAA=
+X-Change-ID: 20240312-b4-new-color-formats-1be9d688b21a
+To: Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2619;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=j205EYLjzOUu5rmW2oUGimRr250dsQmrzW5+uyLHUG4=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBoXmCH80JevWz0vzrlM/lG8lV0MRm01bgrCPx8T
+ HhQNL6Bw8uJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaF5ghwAKCRAgrS7GWxAs
+ 4pomD/93nbTLzVjNebVf4lLWqb7YPbgHlGEi21o944mf1He7BJ6rTmwihelVRpSOFCA6ctA6wzA
+ 6V8juC4fOnQA+hD4j2iy7RZ7B+lGa0XgVCSAYufmqoNzCi1JAZf2eydMshf2l82ZQH+bov6WJDv
+ 7k8vwUhBDInWz+TV6I2MGxI/ykembRSDQgjjcTgjiCz8Eg+WHPaSxIIpXhj9SCBBK8W2XOBoodJ
+ pVfHywD520emUcK62bZXaIGggPpuAg/cqu0DTZeME12iwyLtK468aoV8/Gs/2lnNKAkhuOleq8v
+ uAEptegAMi1sHmsAcee1qEj6PynYkZjTuUqrBj3m7vRDCfnO9KVEQNAsQ8FazNdTY6T4gr9gteK
+ DEa0DA3t4G6DIyUdaBbtxUOpFNetux8pZktkVKUcPUOaLhlkRbUZ6VIwuh6nUnEJX+jbhbGxmux
+ vEutO7Mx9Qi7tXmDjNsIHXU1oRA//lwx3obXNlKf2Z+d2Cxv3SGnXtM9JahjjJcxc1YpGgndxaW
+ mI1EpoxiE6pu6PwhL435GQWINojiolnl1IlFJU6hidIppAe1o5+bl2tRE5Sxdd8a8cxvj8FO1nx
+ bMZCAHVvXv5HXncYHVNEcidXUT/MpZakIJBfY67RJDaTVEpMYZUcf85ZuYGGR6H0RpQOkyqrGsf
+ rDisECYwC5b5xXg==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddvieeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejleduffeikeefkeejvdejffffueevfeeigefhiefhudegkefhjeejvefhvdefjeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdeijegnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepmhgrihhrrggtrghnrghlsehrihhsvghuphdrnhgvthdprhgtphhtthhopehsihhquhgvihhrrgesihhgrghlihgrrdgtohhmpdhrtghpthhtoheprghrthhhuhhrghhrihhllhhosehrihhsvghuphdrnhgvthdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrm
+ hgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepjhgvrhgvmhhivgdruggruhhthhgvrhhisggvshessghoohhtlhhinhdrtghomh
 
-On 27/06/2025 10:54, André Draszik wrote:
-> Hi Krzysztof,
-> 
-> On Thu, 2025-06-26 at 21:49 +0200, Krzysztof Kozlowski wrote:
->> On 24/05/2025 07:21, André Draszik wrote:
->>> +
->>> +		gpio {
->>> +			compatible = "maxim,max77759-gpio";
->>> +
->>> +			gpio-controller;
->>> +			#gpio-cells = <2>;
->>> +			/*
->>> +			 * "Human-readable name [SIGNAL_LABEL]" where the
->>> +			 * latter comes from the schematic
->>> +			 */
->>> +			gpio-line-names = "OTG boost [OTG_BOOST_EN]",
->>> +					  "max20339 IRQ [MW_OVP_INT_L]";
->>> +
->>> +			interrupt-controller;
->>> +			#interrupt-cells = <2>;
->>> +		};
->>> +
->>> +		nvmem-0 {
->>
->> Why is this called nvmem-0, not nvmem? Is there nvmem-1? I see binding
->> does it, but why?
-> 
-> 'nvmem' is used/declared by nvmem-consumer.yaml as a phandle array
-> already so using just 'nvmem' fails validation:
-> 
-> Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: pmic@66: nvmem: {'compatible': ['maxim,max77759-nvmem'], 'nvmem-
-> layout': {'compatible': ['fixed-layout'], '#address-cells': 1, '#size-cells': 1, 'reboot-mode@0': {'reg': [[0, 4]]}, 'boot-reason@4':
-> {'reg': [[4, 4]]}, 'shutdown-user-flag@8': {'reg': [[8, 1]]}, 'rsoc@10': {'reg': [[10, 2]]}}} is not of type 'array'
-> 	from schema $id: http://devicetree.org/schemas/nvmem/nvmem-consumer.yaml#
-> 
-> https://lore.kernel.org/all/20250226-max77759-mfd-v2-3-a65ebe2bc0a9@linaro.org/
-Heh, this should have been just folded into the parent as Rob suggested
-during v2. Well, let's just merge it.
+This series introduce a macro to generate a function to read simple
+formats. It avoid duplication of the same logic for similar formats.
+
+In addition, it also introduce multiple "easy" formats (rgb888 variants)
+and also 16 bits yuv support (P01* formats).
+
+PATCH 1 is the introduction of the macro and adaptation of the existing
+code to avoid duplication
+PATCH 2-5 introduce new formats with the help of this macro.
+PATCH 6 adds support for 16-bit yuv formats
+PATCH 7 introduces a macro to reduce code duplication between yuv formats
+PATCH 8 adds support for P01* formats
+
+I tested the implementation using kms_plane.
+
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v5:
+- Avoid code duplication in RGB565 and BRG565 readline functions
+- Properly rename yuv_u8 to yuv_u16
+- Fix useless indentatin
+- Remove untested formats
+- Link to v4: https://lore.kernel.org/r/20250530-b4-new-color-formats-v4-0-ef5f9f48376c@bootlin.com
+
+Changes in v4:
+- Update tests to test yuv 16 bits conversions, not only 8 bits
+- Link to v3: https://lore.kernel.org/r/20241122-b4-new-color-formats-v3-0-23f7776197c9@bootlin.com
+
+Changes in v3:
+- Rebased on new YUV iterations
+- Link to v2: https://lore.kernel.org/r/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com
+
+Changes in v2:
+- Add proper casting/type to __le16 when needed to avoid warnings with
+  sparse
+- Change the function argb_u16_from_yuv8888 to argb_u16_from_yuv161616 to
+  support 16 bits values.
+- Add support for P010/P012/P016 format
+- Link to v1: https://lore.kernel.org/r/20240516-b4-new-color-formats-v1-0-74cf9fe07317@bootlin.com
+
+---
+Louis Chauvet (8):
+      drm/vkms: Create helpers macro to avoid code duplication in format callbacks
+      drm/vkms: Add support for ARGB8888 formats
+      drm/vkms: Add support for ARGB16161616 formats
+      drm/vkms: Add support for RGB565 formats
+      drm/vkms: Add support for RGB888 formats
+      drm/vkms: Change YUV helpers to support u16 inputs for conversion
+      drm/vkms: Create helper macro for YUV formats
+      drm/vkms: Add P01* formats
+
+ drivers/gpu/drm/vkms/tests/vkms_format_test.c | 139 +++++------
+ drivers/gpu/drm/vkms/vkms_formats.c           | 325 +++++++++++++-------------
+ drivers/gpu/drm/vkms/vkms_formats.h           |   4 +-
+ drivers/gpu/drm/vkms/vkms_plane.c             |  13 +-
+ 4 files changed, 244 insertions(+), 237 deletions(-)
+---
+base-commit: bb8aa27eff6f3376242da37c2d02b9dcc66934b1
+change-id: 20240312-b4-new-color-formats-1be9d688b21a
 
 Best regards,
-Krzysztof
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
+
 
