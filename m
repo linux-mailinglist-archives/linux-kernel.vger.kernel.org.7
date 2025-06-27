@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-707356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625E9AEC2F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:20:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21D0AEC2F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B1771BC3429
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB477189A40D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F007293C44;
-	Fri, 27 Jun 2025 23:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD7E295DA6;
+	Fri, 27 Jun 2025 23:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="po83a66J"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwTE/p1f"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DF6292B43
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 23:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1609292B5E
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 23:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751066343; cv=none; b=fyNbCw7DnW6zo/LCk6134vzWzXvuqmO3/EtdCtrcgcriCT/2DaLXhPYrvUQ0UjkVh3Bjht1aBsWFKQpkRl/GB7UaghJteGmbZ4fZ00qkODpqz/33QZY97Jg18aA6nM+X9PTRLeeC5Lcfv1WAOH/iNOLG1cJC0qZoJOaQR6WJJSw=
+	t=1751066345; cv=none; b=hJEK7T1okez/2l7SCqoPaEi8ETFG/zSlgpQq+CYHUAqS7We68/Z/t4wBHWGd7RjYLdmJu5KosplgUz+83oMsqwACUEZrgJf0WyxFfeUjMIbAkT543A29gMNVZ9QMLP+6+e0GRUOA6EKymvTj3ZMaWQ7NW2EDqpEpSlXLFFIYEtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751066343; c=relaxed/simple;
-	bh=Gc2so4smdIf1i7j4gTeIU1kaRlnXyNxsJaXUAE7o+/U=;
+	s=arc-20240116; t=1751066345; c=relaxed/simple;
+	bh=zLOPr23btb/P2Q+bNErI5riOTp9hfWGYj59cKhKyl3M=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=q8O+okQFIMQH2HLnmas8Hn/7vwRI+uJRDlzZqaYgmAjujBgB3TjFAAbR5sGGZAo9cyYtNABtoPrwRX+UgfUJL2yBnF+jamMgzj/ynGrFYKOIW8Ws5fcl0xpW22fmVGCjIAAec3Wp12pl6NMLQhxmjUDDMbG7971eYcscA124NOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=po83a66J; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=lE3DTCYa8iZDH7uF1S3XxIKvaMUfgWnAbHx/+muujp0HCQKvvC3BSJfhzcJb5rsd67Bo+XnU1IMDKhb7xwbDYNbLWxk3kte+XgBAA4f56ogBuO/iwEpXSYXfo7yhHojJAmd2G6Eo5DC0di3CfHUOoEXj7eRLtWZ85tT+2dOaOHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwTE/p1f; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-747ddba7c90so366797b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:19:01 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-313fb0ec33bso2355677a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:19:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751066341; x=1751671141; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1751066343; x=1751671143; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqFaGm4GB0KNYo2CZziN4flSoFd+I3+UISgZDI1zvM4=;
-        b=po83a66JxPvOH1ZmfVVfgaC8M0NwQucnYMw6eUXZM/rWHoorfU+Hs7WBx5NHPiwNNu
-         7ftsX9HFLfX/b2b2khGSeEPcfpUKQJ/+I4E90ZlsgpY53FWyZGlcA2Por537yfYxMoBg
-         zW/UlHGOPc9jyLvgFdEtoREK0asBOB2T9VZ6mDZUg2Xo/KphXt3OO7gVhpNUwSaZo8Ny
-         m/jY/Hfau9yP/e3SfjoorjuqkNpbfHTZlnBsRLzA4CT7v91po+L5FohqsF09Vb8V31sI
-         Qkafam0FXQvRAh2R83W3ig4cdmZhXNukimagxaWy3QDLjSbAhRa2gwUhIZyZnAIr0H4R
-         AeXQ==
+        bh=FYSKWILaHkU1OfYdFyMg39AM+0yljyAGiysqEp8n70A=;
+        b=MwTE/p1fE75+Zz3OTjavzk7dUKmYmGiXFNVKVKs/6SFre2H2BADlGlLUrsX+zFzp2/
+         N+YDFO5ZHJ/M/n9BzQR+6vBmCXQOFpyN3jI+7xDajJiMTXODzyTTnE/D3AyGB3T//JWM
+         XLet1tOLlnuuhQ/C0b3SzOxEUWvZguZHe1GqaPZxLSNlJ7NRgst9/4BXlfswQMQz5yAC
+         FrGIs+G4IqBkEP48pkPMzFFCZyCh8Yio9Z9g7Y+yBnu9hwljz4V1yAF2tvT4I9tqu+4+
+         gki0liqlrvjt9cOYIOlRIIAgWTYovqXEO45h31ozSeWyCVJWdqWk53CFgG3PhVhSTc5S
+         Uw8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751066341; x=1751671141;
+        d=1e100.net; s=20230601; t=1751066343; x=1751671143;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqFaGm4GB0KNYo2CZziN4flSoFd+I3+UISgZDI1zvM4=;
-        b=rJMxgDDe9LNRxm/nQsb97tOW8rkCBqgc/IvEKp9GbLGI9EyjFBPoLRCYB2NxcChYU2
-         Dm/cT2IClTM/AdTu6dWfnZKHIhHuluM6/g5BxM4XFIMjUk7B8dabtshHaMKUt9JbyJBx
-         jgNSBEdz3B+Wx6DxZS91aaTHvojLzICfUtzHxXqC/IxQbX0AusYo5ELSjZ9sXKKSunMJ
-         iPl4oPvXNrhFXtu/JJc8C65N0znf8bRlpNnE93h5fXQGe56VRLbnGq8AL7Dcscf+KwL6
-         pF16wUEEpySJcM1O7ZIy0s0b9QM7uI4VmiLngBLUJgc/heVvn6/i2mEPsscean39B5fX
-         ryQQ==
-X-Gm-Message-State: AOJu0YxX/BUbuL8Wl11yXKxuJfYv0sE3s+GPYtswq9bb58pKfuKKZf69
-	oA8sCamyYW2eY+aWC8KlLuG+3giUfPVc3DZ66njHGnT8Ug28DYOEztq1uNAykxEquk23vsNVhI9
-	VS0oJskMfig==
-X-Google-Smtp-Source: AGHT+IFDyZVe59e1MBXO1oPmvtzkDr7PIQbOg90cm+dhUGt0VZUUBO/sieOBpJwoyIDRyGYZaerypthGmizH
-X-Received: from pfbf3.prod.google.com ([2002:a05:6a00:ad83:b0:748:4f7c:c605])
- (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2409:b0:730:9946:5973
- with SMTP id d2e1a72fcca58-74af6e39feemr6156140b3a.5.1751066341323; Fri, 27
- Jun 2025 16:19:01 -0700 (PDT)
-Date: Fri, 27 Jun 2025 23:18:28 +0000
+        bh=FYSKWILaHkU1OfYdFyMg39AM+0yljyAGiysqEp8n70A=;
+        b=sluc7MEnJ1Gb2sNCc39O4/lE0jMGbgEt3kQfeLf8tVBJaBbmqdUe8yJyViVyFVDi7B
+         edJ7l9iSzeoV8vYosLLcUKwgXsDRlAvJwCQ4hSQLHmOWnBC4d3nNjr7yJV9nbD1Yd+DB
+         QRsXfycrXeJCOgpsjN7po2P48O/U73Idlzw90Ij3i7Pf315N60rYTjz0P0YiZyR0NC2k
+         gC0SvNBKAm2jVvPz2xT6RIUumVvt+ajJQGcvL9+cmlwVk1i5+zkC9NJFikPdX8jlRpyp
+         TlgK2ji1vlDpZGvzP73nUOYJVaWKlLPoqzbxawXYWnxSVo7I2kFYID5oBjgF3jO5jrUB
+         MGAA==
+X-Gm-Message-State: AOJu0Ywqgddeov6VWUKw6QrH9CuOnvIYy8vsOlLNXWXi/vLSYVlV0omd
+	MEQcivXyVT98DjFX1hP9BUc7Vtgi2ew0xlyLwOMjJWo8S+rH64VFrtGfLu2GmUGUuw5ZEwOzO1g
+	3pVn/RWMp7w==
+X-Google-Smtp-Source: AGHT+IE+Y7GHm/K1Vq+yCasbBH4sgxeF6wx8bTZ4uGjwS1XAJoUvWQvS6NqJ5QvX+Ml437xKVT5J2EZTcIUG
+X-Received: from pjj5.prod.google.com ([2002:a17:90b:5545:b0:314:3438:8e79])
+ (user=mmaurer job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b0d:b0:311:df4b:4b93
+ with SMTP id 98e67ed59e1d1-318c9106951mr7504640a91.7.1751066343031; Fri, 27
+ Jun 2025 16:19:03 -0700 (PDT)
+Date: Fri, 27 Jun 2025 23:18:29 +0000
 In-Reply-To: <20250627-debugfs-rust-v8-0-c6526e413d40@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,13 +72,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250627-debugfs-rust-v8-0-c6526e413d40@google.com>
 X-Developer-Key: i=mmaurer@google.com; a=ed25519; pk=2Ezhl7+fEjTOMVFpplDeak2AdQ8cjJieLRVJdNzrW+E=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751066331; l=6477;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751066331; l=5627;
  i=mmaurer@google.com; s=20250429; h=from:subject:message-id;
- bh=Gc2so4smdIf1i7j4gTeIU1kaRlnXyNxsJaXUAE7o+/U=; b=NnjWslr8ptGBmFKeniz9+u0oXUjE79BjuxcBOaP34x0Gbvc1Tc1q7nO3wQbBUflUsoXSKqAfu
- RLqE54dGrgIDYfsz8A5jmu2j2i8oECONjNTKMg68zF8MDcC9hmj7q7V
+ bh=zLOPr23btb/P2Q+bNErI5riOTp9hfWGYj59cKhKyl3M=; b=0pqWdWwjSCuBN0BzLJf896SS+iXUk/wx513y49aaWkud6WntkFbHaaTEzJ1okWZl0yAKgDKY2
+ cpJ61WNa5RoBZzpH4tAt/d5kBHlIlf1bHGfak58BZiRVYx4zJ/U4V2L
 X-Mailer: b4 0.14.2
-Message-ID: <20250627-debugfs-rust-v8-5-c6526e413d40@google.com>
-Subject: [PATCH v8 5/6] rust: debugfs: Support format hooks
+Message-ID: <20250627-debugfs-rust-v8-6-c6526e413d40@google.com>
+Subject: [PATCH v8 6/6] rust: samples: Add debugfs sample
 From: Matthew Maurer <mmaurer@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -91,181 +91,144 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Matthew Maurer <mmaurer@google.com>, Dirk Behme <dirk.behme@de.bosch.com>
 Content-Type: text/plain; charset="utf-8"
 
-Rather than always using Display, allow hooking arbitrary functions to
-arbitrary files. Display technically has the expressiveness to do this,
-but requires a new type be declared for every different way to render
-things, which can be very clumsy.
+Provides an example of using the Rust DebugFS bindings.
 
 Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
 Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
- rust/kernel/debugfs.rs              | 45 ++++++++++++++++++++
- rust/kernel/debugfs/display_file.rs | 85 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 129 insertions(+), 1 deletion(-)
+ MAINTAINERS                  |  1 +
+ samples/rust/Kconfig         | 11 +++++++
+ samples/rust/Makefile        |  1 +
+ samples/rust/rust_debugfs.rs | 76 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 89 insertions(+)
 
-diff --git a/rust/kernel/debugfs.rs b/rust/kernel/debugfs.rs
-index 929e55ee5629f6888edf29997b9ed77d274e11c8..d74b599e8534536b10502e6db8c6f3197f7ab4a5 100644
---- a/rust/kernel/debugfs.rs
-+++ b/rust/kernel/debugfs.rs
-@@ -10,7 +10,9 @@
- #[cfg(CONFIG_DEBUG_FS)]
- use crate::sync::Arc;
- use crate::types::ForeignOwnable;
-+use core::fmt;
- use core::fmt::Display;
-+use core::ops::Deref;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 551e3a6a16d9051a2d58a77614c458287da2bdcc..f55c99cb2907655d109cb1fa248cdec803b5ce9a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7374,6 +7374,7 @@ F:	rust/kernel/devres.rs
+ F:	rust/kernel/driver.rs
+ F:	rust/kernel/faux.rs
+ F:	rust/kernel/platform.rs
++F:	samples/rust/rust_debugfs.rs
+ F:	samples/rust/rust_driver_platform.rs
+ F:	samples/rust/rust_driver_faux.rs
  
- #[cfg(CONFIG_DEBUG_FS)]
- mod display_file;
-@@ -157,6 +159,49 @@ pub fn display_file<D: ForeignOwnable + Send + Sync>(&self, name: &CStr, data: D
-         self.create_file(name, data)
-     }
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 7f7371a004ee0a8f67dca99c836596709a70c4fa..01101db41ae31b08a86d048cdd27da8ef9bb23a2 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -62,6 +62,17 @@ config SAMPLE_RUST_DMA
  
-+    /// Create a file in a DebugFS directory with the provided name, and contents from invoking `f`
-+    /// on the provided reference.
-+    ///
-+    /// `f` must be a function item or a non-capturing closure, or this will fail to compile.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// # use core::sync::atomic::{AtomicU32, Ordering};
-+    /// # use kernel::c_str;
-+    /// # use kernel::debugfs::Dir;
-+    /// let dir = Dir::new(c_str!("foo"));
-+    /// static MY_ATOMIC: AtomicU32 = AtomicU32::new(3);
-+    /// let file = dir.fmt_file(c_str!("bar"), &MY_ATOMIC, &|val, f| {
-+    ///   let out = val.load(Ordering::Relaxed);
-+    ///   writeln!(f, "{out:#010x}")
-+    /// });
-+    /// MY_ATOMIC.store(10, Ordering::Relaxed);
-+    /// ```
-+    pub fn fmt_file<
-+        D: ForeignOwnable + Send + Sync,
-+        T,
-+        F: Fn(&T, &mut fmt::Formatter<'_>) -> fmt::Result + Send + Sync,
-+    >(
-+        &self,
-+        name: &CStr,
-+        data: D,
-+        f: &'static F,
-+    ) -> File
-+    where
-+        for<'a> D::Borrowed<'a>: Deref<Target = T>,
-+    {
-+        #[cfg(CONFIG_DEBUG_FS)]
-+        let data_adapted = display_file::FormatAdapter::new(data, f);
-+        #[cfg(not(CONFIG_DEBUG_FS))]
-+        let data_adapted = {
-+            // Mark used
-+            let (_, _) = (data, f);
-+            &0
-+        };
-+        self.display_file(name, data_adapted)
-+    }
-+
-     /// Create a new directory in DebugFS at the root.
-     ///
-     /// # Examples
-diff --git a/rust/kernel/debugfs/display_file.rs b/rust/kernel/debugfs/display_file.rs
-index 0c2dd756fa866425d1b7771beceaa2fb43bf11e5..b38675a90e1b2e359fb54afd91062b26d1c32ba2 100644
---- a/rust/kernel/debugfs/display_file.rs
-+++ b/rust/kernel/debugfs/display_file.rs
-@@ -5,7 +5,9 @@
- use crate::seq_file::SeqFile;
- use crate::seq_print;
- use crate::types::ForeignOwnable;
--use core::fmt::Display;
-+use core::fmt::{Display, Formatter, Result};
-+use core::marker::PhantomData;
-+use core::ops::Deref;
+ 	  If unsure, say N.
  
- /// Implements `open` for `file_operations` via `single_open` to fill out a `seq_file`.
- ///
-@@ -70,3 +72,84 @@ impl<D: ForeignOwnable + Sync> DisplayFile for D
-         ..unsafe { core::mem::zeroed() }
-     };
- }
++config SAMPLE_RUST_DEBUGFS
++	tristate "DebugFS Test Module"
++	depends on DEBUG_FS
++	help
++	  This option builds the Rust DebugFS Test module sample.
 +
-+/// Adapter to implement `Display` via a callback with the same representation as `T`.
-+///
-+/// # Invariants
-+///
-+/// If an instance for `FormatAdapter<_, F>` is constructed, `F` is inhabited.
-+#[repr(transparent)]
-+pub(crate) struct FormatAdapter<D, F> {
-+    inner: D,
-+    _formatter: PhantomData<F>,
++	  To compile this as a module, choose M here:
++	  the module will be called rust_debugfs.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_DRIVER_PCI
+ 	tristate "PCI Driver"
+ 	depends on PCI
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index bd2faad63b4f3befe7d1ed5139fe25c7a8b6d7f6..61276222a99f8cc6d7f84c26d0533b30815ebadd 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -4,6 +4,7 @@ ccflags-y += -I$(src)				# needed for trace events
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
++obj-$(CONFIG_SAMPLE_RUST_DEBUGFS)		+= rust_debugfs.o
+ obj-$(CONFIG_SAMPLE_RUST_DMA)			+= rust_dma.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+diff --git a/samples/rust/rust_debugfs.rs b/samples/rust/rust_debugfs.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..6af9177c711a07764f0323e03a72d115287f1205
+--- /dev/null
++++ b/samples/rust/rust_debugfs.rs
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2025 Google LLC.
++
++//! Sample DebugFS exporting module
++
++use core::sync::atomic::{AtomicU32, Ordering};
++use kernel::c_str;
++use kernel::debugfs::{Dir, File};
++use kernel::prelude::*;
++use kernel::sync::{new_mutex, Arc};
++
++module! {
++    type: RustDebugFs,
++    name: "rust_debugfs",
++    authors: ["Matthew Maurer"],
++    description: "Rust DebugFS usage sample",
++    license: "GPL",
 +}
 +
-+impl<D, F> FormatAdapter<D, F> {
-+    pub(crate) fn new(inner: D, _f: &'static F) -> Self {
-+        // INVARIANT: We were passed a reference to F, so it is inhabited.
-+        FormatAdapter {
-+            inner,
-+            _formatter: PhantomData,
-+        }
-+    }
++struct RustDebugFs {
++    // As we only hold these for drop effect (to remove the directory/files) we have a leading
++    // underscore to indicate to the compiler that we don't expect to use this field directly.
++    _debugfs: Dir,
++    _subdir: Dir,
++    _file: File,
++    _file_2: File,
 +}
 +
-+pub(crate) struct BorrowedAdapter<'a, D: ForeignOwnable, F> {
-+    borrowed: D::Borrowed<'a>,
-+    _formatter: PhantomData<F>,
-+}
++static EXAMPLE: AtomicU32 = AtomicU32::new(8);
 +
-+// SAFETY: We delegate to D's implementation of `ForeignOwnable`, so `into_foreign` produced aligned
-+// pointers.
-+unsafe impl<D: ForeignOwnable, F> ForeignOwnable for FormatAdapter<D, F> {
-+    type PointedTo = D::PointedTo;
-+    type Borrowed<'a> = BorrowedAdapter<'a, D, F>;
-+    type BorrowedMut<'a> = Self::Borrowed<'a>;
-+    fn into_foreign(self) -> *mut Self::PointedTo {
-+        self.inner.into_foreign()
-+    }
-+    unsafe fn from_foreign(foreign: *mut Self::PointedTo) -> Self {
-+        Self {
-+            // SAFETY: `into_foreign` is delegated, so a delegated `from_foreign` is safe.
-+            inner: unsafe { D::from_foreign(foreign) },
-+            _formatter: PhantomData,
-+        }
-+    }
-+    unsafe fn borrow<'a>(foreign: *mut Self::PointedTo) -> Self::Borrowed<'a> {
-+        BorrowedAdapter {
-+            // SAFETY: `into_foreign` is delegated, so a delegated `borrow` is safe.
-+            borrowed: unsafe { D::borrow(foreign) },
-+            _formatter: PhantomData,
-+        }
-+    }
-+    unsafe fn borrow_mut<'a>(foreign: *mut Self::PointedTo) -> Self::BorrowedMut<'a> {
-+        // SAFETY: `borrow_mut` has stricter requirements than `borrow`
-+        unsafe { Self::borrow(foreign) }
-+    }
-+}
++impl kernel::Module for RustDebugFs {
++    fn init(_this: &'static ThisModule) -> Result<Self> {
++        // Create a debugfs directory in the root of the filesystem called "sample_debugfs".
++        let debugfs = Dir::new(c_str!("sample_debugfs"));
 +
-+impl<'a, D: ForeignOwnable<Borrowed<'a>: Deref<Target = T>>, T, F> Display
-+    for BorrowedAdapter<'a, D, F>
-+where
-+    F: Fn(&T, &mut Formatter<'_>) -> Result + 'static,
-+{
-+    fn fmt(&self, fmt: &mut Formatter<'_>) -> Result {
-+        // SAFETY: FormatAdapter<_, F> can only be constructed if F is inhabited
-+        let f: &F = unsafe { materialize_zst_fmt() };
-+        f(&self.borrowed, fmt)
-+    }
-+}
++        // Create a subdirectory, so "sample_debugfs/subdir" now exists.
++        let sub = debugfs.subdir(c_str!("subdir"));
 +
-+/// For types with a unique value, produce a static reference to it.
-+///
-+/// # Safety
-+///
-+/// The caller asserts that F is inhabited
-+unsafe fn materialize_zst_fmt<F>() -> &'static F {
-+    const { assert!(core::mem::size_of::<F>() == 0) };
-+    let zst_dangle: core::ptr::NonNull<F> = core::ptr::NonNull::dangling();
-+    // SAFETY: While the pointer is dangling, it is a dangling pointer to a ZST, based on the
-+    // assertion above. The type is also inhabited, by the caller's assertion. This means
-+    // we can materialize it.
-+    unsafe { zst_dangle.as_ref() }
++        // Create a single file in the subdirectory called "example" that will read from the
++        // `EXAMPLE` atomic variable.
++        // We `forget` the result to avoid deleting the file at the end of the scope.
++        let file = sub.fmt_file(c_str!("example"), &EXAMPLE, &|example, f| {
++            writeln!(f, "Reading atomic: {}", example.load(Ordering::Relaxed))
++        });
++        // Now, "sample_debugfs/subdir/example" will print "Reading atomic: 8\n" when read.
++
++        // Change the value in the variable displayed by the file. This is intended to demonstrate
++        // that the module can continue to change the value used by the file.
++        EXAMPLE.store(10, Ordering::Relaxed);
++        // Now, "sample_debugfs/subdir/example" will print "Reading atomic: 10\n" when read.
++
++        // In addition to globals, we can also attach any kind of owned data. Most commonly, this
++        // will look like an `Arc<MyObject>` as those can be shared with the rest of the module.
++        let my_arc = Arc::pin_init(new_mutex!(10), GFP_KERNEL)?;
++        // An `Arc<Mutex<usize>>` doesn't implement display, so let's give explicit instructions on
++        // how to print it
++        let file_2 = sub.fmt_file(c_str!("arc_backed"), my_arc.clone(), &|val, f| {
++            writeln!(f, "locked value: {:#010x}", *val.lock())
++        });
++
++        // Since it's an `Arc` and we cloned it, we continue to have access to `my_arc`. If this
++        // were real, we'd probably stash it in our module struct and do something with it when
++        // handling real calls.
++        *my_arc.lock() = 99;
++
++        // Save the handles we want to preserve to our module object. They will be automatically
++        // cleaned up when our module is unloaded.
++        Ok(Self {
++            _debugfs: debugfs,
++            _subdir: sub,
++            _file: file,
++            _file_2: file_2,
++        })
++    }
 +}
 
 -- 
