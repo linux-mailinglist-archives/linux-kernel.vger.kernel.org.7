@@ -1,394 +1,144 @@
-Return-Path: <linux-kernel+bounces-707022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17434AEBF05
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:28:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224D7AEBF00
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496731C44905
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:28:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A075605AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FDC2ECD06;
-	Fri, 27 Jun 2025 18:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C882EBBA8;
+	Fri, 27 Jun 2025 18:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epAeo1O0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="HcpRcSSz"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C2D2EBDE5;
-	Fri, 27 Jun 2025 18:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC3335957;
+	Fri, 27 Jun 2025 18:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751048874; cv=none; b=ghmIUQktHO1rLd7lt7nma//f13R9y8e9OvsoHW0AI9hNkhunRVPcDsQZS1vBeLh4xacxsnMejBvxRKMK0Ig0D7BZ1cY7P4Rgc7l+ip+VMWDRfofo+qFS+D22buyOvmq8WeHRzU2kReRByv8jdoThKqpp5p5NhwCpGKqvWZnCpB8=
+	t=1751048735; cv=none; b=uWsDUfxERaHe4A1gpV6Pj93tUOZLd7WjjpR5wr+eTYAO6s48DV+A27tdIqlWUOy8t5hlSQbEpmzpwAW7cC3z6i/oVO4rY5UEraDOrEYKR5rUEjFKBSL7sTYzriIUK72/YrtDmhSXEm6uS6MzqCsjMV7fxmffKHYlxcRtlRlSnBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751048874; c=relaxed/simple;
-	bh=dNruR8i3nvuH0Ur6TUj/RfC6hHdJRSjk7s5QAvFDO3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UXRh3jA4i1Gj9NsZ4UwafWUDOCdNxtlzCSsUfAJYUeAgO/xb9owxKRLJvsdREq+eCx2qM6FiNyKRuV6Jqpu7NSXS7d6mNzeW+Po4UbWHd/DQnibvGKOru6DmxIcPMwFEzJSuENoMGHQKrrDq8qQVDquyNRu8mkS/8h0hR1PqjfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epAeo1O0; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751048873; x=1782584873;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=dNruR8i3nvuH0Ur6TUj/RfC6hHdJRSjk7s5QAvFDO3c=;
-  b=epAeo1O043SLggLgawzNeM7ga73oQzLPeth19c+zde/E7acVJ2vZdNfL
-   RtO5EE7T4WwgA48x7ON3jYKL1BgbwJWVnT1HzqFe3jvaV4uV0ayR3E+2R
-   74Wqi5CsY3+AjEAOqSlwe2dWTxDGlIsRaRBRQj8wuJcrYz17uwRZR1Whw
-   23UpqafcCrvqB/mN6Rmec6X9y6xTWof43xXV8n1qtgwvgjrwfRJ97uWIG
-   yM/qLqqu9HgoD1bKDIgXXLYfrisNjaO+TKpGq0sxA/0qbjv12E272Tv1H
-   mmyI4OEYDhjI3hfIQ8euZA2FmMAjwPLMC8I1PgiRHh1uVDY3SCpMAQvPz
-   w==;
-X-CSE-ConnectionGUID: aGXbxI+AReucD7PHornyEA==
-X-CSE-MsgGUID: R0Rz0M8yQLam3/xGGyAf4g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="52598782"
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="52598782"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 11:27:52 -0700
-X-CSE-ConnectionGUID: am8OoBiHQJ6jv78kbrdmew==
-X-CSE-MsgGUID: 9W9dLvIRSyKowKwjpbkIYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="152489474"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 27 Jun 2025 11:27:49 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 21C0C27C; Fri, 27 Jun 2025 21:27:47 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v1 1/1] serial: 8250: Move CE4100 quirks to a module under 8250 driver
-Date: Fri, 27 Jun 2025 21:25:00 +0300
-Message-ID: <20250627182743.1273326-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751048735; c=relaxed/simple;
+	bh=PjJQt6R+2Pb0XGHkIwzKosDZ/u+lUxtx+ilk3A++byg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lcSuCBbFQLtdggWV/hm7Ph/NVXUr+xPcRxcApD5Y1QQm7pFB/Cpp1UU3euo0pMI3/ihw+hCV4Ok2P9BRfVQtICvCer8ff5rzHgz6EH6vkvAGAUIm4l3/julQ3t3dm5XLhNiYyHy5iHcTgFuEEjXrRdEEfLSsuRJI3PzhphDsl3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=HcpRcSSz; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=AcyZ33LazzChsEAUzIIB359Y93Og/rELjwXfNDaBkEM=; b=HcpRcSSz1aCLDictpkpp3PuP8n
+	016GmdmvMyFTr8Fp3goWlzDWt6g+Qg1UQnq19KLPDu5XfrsfGy54AeysX+I7b5EKWhJNwc3G3aIJH
+	6MxIeD5TZRDXYXkEWWwhUorD+HAPmBCXbYiEQpcYsK/60fbQ0QiNT3BCc6XsT51j7ylorjGHgyvk4
+	LAjIG7D8xgOgYJRBYlD+t4WGvJJeL6GUaYKKgk3KDs7mBXsxLku1ItYfQivQjw4M44RFKl8xpAIZY
+	xWjreGFjjXbkK3L6Nl9gPdT6tXt2AXij+qt7dHgCcjrz+03Ba6odHEvAXf8WmjOJYwo7Z+2oqYMv+
+	LNt1qWzQ==;
+Received: from i53875b81.versanet.de ([83.135.91.129] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uVDl7-0006Qj-Ee; Fri, 27 Jun 2025 20:25:09 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Quentin Schulz <quentin.schulz@cherry.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Diederik de Haas <didi.debian@cknow.org>
+Cc: Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 2/8] arm64: dts: rockchip: Refactor DSI nodes on rk3399 boards
+Date: Fri, 27 Jun 2025 20:25:07 +0200
+Message-ID: <5121698.88bMQJbFj6@diego>
+In-Reply-To: <DAXGZG0DEKS2.7RLXKSDO0C9T@cknow.org>
+References:
+ <20250627152645.740981-1-didi.debian@cknow.org>
+ <b1c789bf-1369-42ec-8bb3-d7a45c92abf0@cherry.de>
+ <DAXGZG0DEKS2.7RLXKSDO0C9T@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-There is inconvenient for maintainers and maintainership to have
-some quirks under architectural code. Move it to the specific quirk
-file like other 8250-compatible drivers do.
+Am Freitag, 27. Juni 2025, 18:52:08 Mitteleurop=C3=A4ische Sommerzeit schri=
+eb Diederik de Haas:
+> Hi Quentin,
+>=20
+> Thanks for taking a look.
+>=20
+> On Fri Jun 27, 2025 at 6:10 PM CEST, Quentin Schulz wrote:
+> > On 6/27/25 5:16 PM, Diederik de Haas wrote:
+> >> The #address-cells and #size-cells properties are not useful on the DSI
+> >> controller nodes; they are only useful/required on ports and panel(s).
+> >> So remove them from the controller node and add them where actually
+> >> needed on the various rk3399 based boards.
+> >>=20
+> >> Next to that, there were several (exact) redefinitions of nodes which
+> >> are already present in rk3399-base.dtsi to add a mipi_out endpoint.
+> >> Simplify that by referencing the mipi_out phandle and add the endpoint
+> >> to that, which allows the removeal of the ports redefinition.
+> >>=20
+> >> And fix 1 instance where the mipi_out referenced node was not sorted
+> >> correctly.
+> >>=20
+> >> This fixes the following DTB validation warnings:
+> >>=20
+> >>    unnecessary #address-cells/#size-cells without "ranges",
+> >>    "dma-ranges" or child "reg" property
+> >>=20
+> >
+> > Too many unrelated changes in this commit, please split into multiple=20
+> > commits.
+> >
+> > I could identify:
+> >
+> > - moving address-cells/size-cells from SoC.dtsi to board dts(i)s,
+> > - reordering properties to better match DT coding style=20
+> > https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-s=
+tyle.html#order-of-properties-in-device-node
+> > - use phandle to directly access ports,
+> > - reorder DT node to better match DT coding style=20
+> > https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-s=
+tyle.html#order-of-nodes
+>=20
+> I initially had it as several commits, but that resulted in (f.e.) 1
+> issue being fixed, but 1 (or more) others would pop up.
+> Those were then fixed in follow-up commits, but I assumed I'd get Rob's
+> bot screaming at me for introducing new warnings (first).
+>=20
+> And as they all relate(d) to fixing the dsi node, I then choose to
+> combine them (but still separated by SoC).
+> IMO there are several ways to organize the commits and each would have
+> their pros and cons, so I 'settled' for this arrangement.
+>=20
+> So I prefer to wait for other people's opinion first before reorganizing
+> the commits again (if there's a different consensus).
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+personally, I can live with the current setup here, because as you said
+it's all DSI related, and also not a functional change ;-) .
 
-The next step can be considered on how to get rid of
-serial8250_set_isa_configurator() ugly hook.
+I guess you _could_ move the clock-master + status moves into a separate
+patch, as that should not trigger any warnings.
 
- arch/x86/include/asm/ce4100.h                 |  6 ++
- arch/x86/platform/ce4100/ce4100.c             | 98 -------------------
- .../tty/serial/8250/8250_ce4100.c             | 92 +++--------------
- drivers/tty/serial/8250/Makefile              |  1 +
- 4 files changed, 23 insertions(+), 174 deletions(-)
- copy arch/x86/platform/ce4100/ce4100.c => drivers/tty/serial/8250/8250_ce4100.c (51%)
 
-diff --git a/arch/x86/include/asm/ce4100.h b/arch/x86/include/asm/ce4100.h
-index 2930f560d7f3..e1f965bb1e31 100644
---- a/arch/x86/include/asm/ce4100.h
-+++ b/arch/x86/include/asm/ce4100.h
-@@ -4,4 +4,10 @@
- 
- int ce4100_pci_init(void);
- 
-+#ifdef CONFIG_SERIAL_8250
-+void __init sdv_serial_fixup(void);
-+#else
-+static inline void sdv_serial_fixup(void) {};
-+#endif
-+
- #endif
-diff --git a/arch/x86/platform/ce4100/ce4100.c b/arch/x86/platform/ce4100/ce4100.c
-index 08492bea9713..aaa7017416f7 100644
---- a/arch/x86/platform/ce4100/ce4100.c
-+++ b/arch/x86/platform/ce4100/ce4100.c
-@@ -5,19 +5,12 @@
-  * (C) Copyright 2010 Intel Corporation
-  */
- #include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/irq.h>
- #include <linux/reboot.h>
--#include <linux/serial_reg.h>
--#include <linux/serial_8250.h>
- 
- #include <asm/ce4100.h>
- #include <asm/prom.h>
- #include <asm/setup.h>
--#include <asm/i8259.h>
- #include <asm/io.h>
--#include <asm/io_apic.h>
--#include <asm/emergency-restart.h>
- 
- /*
-  * The CE4100 platform has an internal 8051 Microcontroller which is
-@@ -31,97 +24,6 @@ static void ce4100_power_off(void)
- 	outb(0x4, 0xcf9);
- }
- 
--#ifdef CONFIG_SERIAL_8250
--
--static unsigned int mem_serial_in(struct uart_port *p, int offset)
--{
--	offset = offset << p->regshift;
--	return readl(p->membase + offset);
--}
--
--/*
-- * The UART Tx interrupts are not set under some conditions and therefore serial
-- * transmission hangs. This is a silicon issue and has not been root caused. The
-- * workaround for this silicon issue checks UART_LSR_THRE bit and UART_LSR_TEMT
-- * bit of LSR register in interrupt handler to see whether at least one of these
-- * two bits is set, if so then process the transmit request. If this workaround
-- * is not applied, then the serial transmission may hang. This workaround is for
-- * errata number 9 in Errata - B step.
--*/
--
--static u32 ce4100_mem_serial_in(struct uart_port *p, unsigned int offset)
--{
--	u32 ret, ier, lsr;
--
--	if (offset != UART_IIR)
--		return mem_serial_in(p, offset);
--
--	offset <<= p->regshift;
--
--	ret = readl(p->membase + offset);
--	if (!(ret & UART_IIR_NO_INT))
--		return ret;
--
--	/* see if the TX interrupt should have really set */
--	ier = mem_serial_in(p, UART_IER);
--	/* see if the UART's XMIT interrupt is enabled */
--	if (!(ier & UART_IER_THRI))
--		return ret;
--
--	lsr = mem_serial_in(p, UART_LSR);
--	/* now check to see if the UART should be generating an interrupt (but isn't) */
--	if (lsr & (UART_LSR_THRE | UART_LSR_TEMT))
--		ret &= ~UART_IIR_NO_INT;
--
--	return ret;
--}
--
--static void ce4100_mem_serial_out(struct uart_port *p, unsigned int offset, u32 value)
--{
--	offset <<= p->regshift;
--	writel(value, p->membase + offset);
--}
--
--static void ce4100_serial_fixup(int port, struct uart_port *up,
--	u32 *capabilities)
--{
--#ifdef CONFIG_EARLY_PRINTK
--	/*
--	 * Over ride the legacy port configuration that comes from
--	 * asm/serial.h. Using the ioport driver then switching to the
--	 * PCI memmaped driver hangs the IOAPIC
--	 */
--	if (up->iotype !=  UPIO_MEM32) {
--		up->uartclk  = 14745600;
--		up->mapbase = 0xdffe0200;
--		set_fixmap_nocache(FIX_EARLYCON_MEM_BASE,
--				up->mapbase & PAGE_MASK);
--		up->membase =
--			(void __iomem *)__fix_to_virt(FIX_EARLYCON_MEM_BASE);
--		up->membase += up->mapbase & ~PAGE_MASK;
--		up->mapbase += port * 0x100;
--		up->membase += port * 0x100;
--		up->iotype   = UPIO_MEM32;
--		up->regshift = 2;
--		up->irq = 4;
--	}
--#endif
--	up->iobase = 0;
--	up->serial_in = ce4100_mem_serial_in;
--	up->serial_out = ce4100_mem_serial_out;
--
--	*capabilities |= (1 << 12);
--}
--
--static __init void sdv_serial_fixup(void)
--{
--	serial8250_set_isa_configurator(ce4100_serial_fixup);
--}
--
--#else
--static inline void sdv_serial_fixup(void) {};
--#endif
--
- static void __init sdv_arch_setup(void)
- {
- 	sdv_serial_fixup();
-diff --git a/arch/x86/platform/ce4100/ce4100.c b/drivers/tty/serial/8250/8250_ce4100.c
-similarity index 51%
-copy from arch/x86/platform/ce4100/ce4100.c
-copy to drivers/tty/serial/8250/8250_ce4100.c
-index 08492bea9713..3dd88f372a51 100644
---- a/arch/x86/platform/ce4100/ce4100.c
-+++ b/drivers/tty/serial/8250/8250_ce4100.c
-@@ -4,34 +4,17 @@
-  *
-  * (C) Copyright 2010 Intel Corporation
-  */
-+
- #include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/irq.h>
--#include <linux/reboot.h>
--#include <linux/serial_reg.h>
--#include <linux/serial_8250.h>
-+#include <linux/io.h>
-+#include <linux/types.h>
- 
- #include <asm/ce4100.h>
--#include <asm/prom.h>
--#include <asm/setup.h>
--#include <asm/i8259.h>
--#include <asm/io.h>
--#include <asm/io_apic.h>
--#include <asm/emergency-restart.h>
-+#include <asm/fixmap.h>
-+#include <asm/page.h>
- 
--/*
-- * The CE4100 platform has an internal 8051 Microcontroller which is
-- * responsible for signaling to the external Power Management Unit the
-- * intention to reset, reboot or power off the system. This 8051 device has
-- * its command register mapped at I/O port 0xcf9 and the value 0x4 is used
-- * to power off the system.
-- */
--static void ce4100_power_off(void)
--{
--	outb(0x4, 0xcf9);
--}
--
--#ifdef CONFIG_SERIAL_8250
-+#include <linux/serial_reg.h>
-+#include <linux/serial_8250.h>
- 
- static unsigned int mem_serial_in(struct uart_port *p, int offset)
- {
-@@ -48,7 +31,6 @@ static unsigned int mem_serial_in(struct uart_port *p, int offset)
-  * is not applied, then the serial transmission may hang. This workaround is for
-  * errata number 9 in Errata - B step.
- */
--
- static u32 ce4100_mem_serial_in(struct uart_port *p, unsigned int offset)
- {
- 	u32 ret, ier, lsr;
-@@ -82,26 +64,23 @@ static void ce4100_mem_serial_out(struct uart_port *p, unsigned int offset, u32
- 	writel(value, p->membase + offset);
- }
- 
--static void ce4100_serial_fixup(int port, struct uart_port *up,
--	u32 *capabilities)
-+static void ce4100_serial_fixup(int port, struct uart_port *up, u32 *capabilities)
- {
- #ifdef CONFIG_EARLY_PRINTK
- 	/*
--	 * Over ride the legacy port configuration that comes from
-+	 * Override the legacy port configuration that comes from
- 	 * asm/serial.h. Using the ioport driver then switching to the
--	 * PCI memmaped driver hangs the IOAPIC
-+	 * PCI memmaped driver hangs the IOAPIC.
- 	 */
--	if (up->iotype !=  UPIO_MEM32) {
--		up->uartclk  = 14745600;
-+	if (up->iotype != UPIO_MEM32) {
-+		up->uartclk = 14745600;
- 		up->mapbase = 0xdffe0200;
--		set_fixmap_nocache(FIX_EARLYCON_MEM_BASE,
--				up->mapbase & PAGE_MASK);
--		up->membase =
--			(void __iomem *)__fix_to_virt(FIX_EARLYCON_MEM_BASE);
-+		set_fixmap_nocache(FIX_EARLYCON_MEM_BASE, up->mapbase & PAGE_MASK);
-+		up->membase = (void __iomem *)__fix_to_virt(FIX_EARLYCON_MEM_BASE);
- 		up->membase += up->mapbase & ~PAGE_MASK;
- 		up->mapbase += port * 0x100;
- 		up->membase += port * 0x100;
--		up->iotype   = UPIO_MEM32;
-+		up->iotype = UPIO_MEM32;
- 		up->regshift = 2;
- 		up->irq = 4;
- 	}
-@@ -113,46 +92,7 @@ static void ce4100_serial_fixup(int port, struct uart_port *up,
- 	*capabilities |= (1 << 12);
- }
- 
--static __init void sdv_serial_fixup(void)
-+void __init sdv_serial_fixup(void)
- {
- 	serial8250_set_isa_configurator(ce4100_serial_fixup);
- }
--
--#else
--static inline void sdv_serial_fixup(void) {};
--#endif
--
--static void __init sdv_arch_setup(void)
--{
--	sdv_serial_fixup();
--}
--
--static void sdv_pci_init(void)
--{
--	x86_of_pci_init();
--}
--
--/*
-- * CE4100 specific x86_init function overrides and early setup
-- * calls.
-- */
--void __init x86_ce4100_early_setup(void)
--{
--	x86_init.oem.arch_setup			= sdv_arch_setup;
--	x86_init.resources.probe_roms		= x86_init_noop;
--	x86_init.mpparse.find_mptable		= x86_init_noop;
--	x86_init.mpparse.early_parse_smp_cfg	= x86_init_noop;
--	x86_init.pci.init			= ce4100_pci_init;
--	x86_init.pci.init_irq			= sdv_pci_init;
--
--	/*
--	 * By default, the reboot method is ACPI which is supported by the
--	 * CE4100 bootloader CEFDK using FADT.ResetReg Address and ResetValue
--	 * the bootloader will however issue a system power off instead of
--	 * reboot. By using BOOT_KBD we ensure proper system reboot as
--	 * expected.
--	 */
--	reboot_type = BOOT_KBD;
--
--	pm_power_off = ce4100_power_off;
--}
-diff --git a/drivers/tty/serial/8250/Makefile b/drivers/tty/serial/8250/Makefile
-index b04eeda03b23..e61dc3f4ca50 100644
---- a/drivers/tty/serial/8250/Makefile
-+++ b/drivers/tty/serial/8250/Makefile
-@@ -24,6 +24,7 @@ obj-$(CONFIG_SERIAL_8250_ASPEED_VUART)	+= 8250_aspeed_vuart.o
- obj-$(CONFIG_SERIAL_8250_BCM2835AUX)	+= 8250_bcm2835aux.o
- obj-$(CONFIG_SERIAL_8250_BCM7271)	+= 8250_bcm7271.o
- obj-$(CONFIG_SERIAL_8250_BOCA)		+= 8250_boca.o
-+obj-$(CONFIG_X86_INTEL_CE)		+= 8250_ce4100.o
- obj-$(CONFIG_SERIAL_8250_DFL)		+= 8250_dfl.o
- obj-$(CONFIG_SERIAL_8250_DW)		+= 8250_dw.o
- obj-$(CONFIG_SERIAL_8250_EM)		+= 8250_em.o
--- 
-2.47.2
+> > The change for RK3399 Puma Haikou Video Demo DTSO is fine for me.
+>=20
+> Thanks :)
+>=20
+> Cheers,
+>   Diederik
+>=20
+
+
+
 
 
