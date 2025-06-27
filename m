@@ -1,75 +1,70 @@
-Return-Path: <linux-kernel+bounces-707237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16369AEC199
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:56:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8C8AEC171
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D951C21B8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABE65564361
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564732ECEAE;
-	Fri, 27 Jun 2025 20:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4380241685;
+	Fri, 27 Jun 2025 20:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="it7cKOFv";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="F5qUsqRX"
-Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tXY5VlWs"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EB62ECD33
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 20:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608A1E48A;
+	Fri, 27 Jun 2025 20:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751057796; cv=none; b=uhR6R7f16/42yWqpcrhJh48XY9Zy1Y3g7ULg2dSQBfeA3Td14fnVslrrZyIjIzzDc57+D9ZGYcZhM+oPdqa5CPHJ1qR9vQg9kVBM30O/Yqw+YrXQTzC7oe4YB6Qgv/Cs2myM/nuMf15M3TAxIC9lpvV5g3jqvV0urFH1Q5QDrn8=
+	t=1751057344; cv=none; b=dSUHPc1+TadzhxUxOkwUhIFbHEodxpRUhjWzCwnTpVLYsL2xrI6OQfzgTpzLKrjDMbdqr5RkW1IiSQMmXcu8TvT7zuBNsrNE5wmwjLcCEKuON0eeeyGe7X1ZCr0G7iejPypsmmAgoZ7iKKBD2BcLHhyRFRT6S0sUYqO10Z6HtTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751057796; c=relaxed/simple;
-	bh=EqsjFcnoV7wkCfCblGpMw/2Zo+KMh0FeYoLwiaCPx8I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JGH+T+bd4Szu3oqSn2ZFAQPPjgZhHssQjLZIW1C19igfPfoFWcBqJQdNYHT7WSRr4LaVWAxz2yAQ/j66bS9CRmYw3UhgXOht3H+YokhCXqfxLOHsOmy4kH3nJTMJkail3Lq7tyQwBOuAKAjLjTOJg+SCmFht4YYixWBDAVFguuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=it7cKOFv reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=F5qUsqRX; arc=none smtp.client-ip=103.2.141.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1751058694; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-Id:Date:Subject:To:From:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=EPjNXSD+QUTAQdHPBF1PZFOR+NJM45qYXx5B36QYUrI=; b=it7cKOFvqyVyYcFSrfbRdoewyh
-	UFcfT3Yw7VjN9tfj9AF3PR4wYPpBDElU6g8bputf2LJ391K4UIbDfoROuBY0lIpOIIuMa4P0nyj+4
-	nHD0QkK/zpWeuoQhxyLfZn1Ci67JPK8iNNludzglGSKR6YKTw6lzZvC2J18QwDLBH4gDWBA2nC5nE
-	iV0IgkocQP2fw9wFWv1lRULcRlIChY0f8lZExulJrqUxhp6Rmas3YCINJm3opyNem93mjrtTUba5Z
-	52puz7JgjdiwOwoDUC2ZfloXysLZqYs8nUIBMnyxB9bw76vULZRksJ0JlSUAhv83irmg1CIuPw+0D
-	8E7SWCcA==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1751057794; h=from : subject
- : to : message-id : date;
- bh=EPjNXSD+QUTAQdHPBF1PZFOR+NJM45qYXx5B36QYUrI=;
- b=F5qUsqRXDyTcx6V+IZZljLVtUA+PwAlWQA4izgEfdnu8oJGGT66xy7l6umrmFa/U491gu
- 4LE6GI+YY+3kBrUxf7StBOZbJ2Idtqy/AOrDOR5umZ/9KfxqabpqE51zFMcsHQipQ6BsiYZ
- N4NKkcuProtDFsg6l67JTiIzmzDIUAai7g2WNsFHL6tX3AVpqPGFct/AejmCjbKKO/5wREq
- cEgdOa666PbIpUwEPSW4FRuUUls6kHpU2CySIv2G4R5n0j5mXKuF7IM+0eKCMo17mfHyzZI
- pGbVnh2c8Pp7b9NXCupBC/O0KFdbXWXYP2/ETZQwOxUO9jFynFhPYB3vteAg==
-Received: from [10.176.58.103] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1uVG7V-TRk3aB-BP; Fri, 27 Jun 2025 20:56:25 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.98.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1uVG7V-4o5NDgrjV9w-omjN; Fri, 27 Jun 2025 20:56:25 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH wireless-next 3/3] wifi: mac80211: Correctly init MLO link in
- ieee80211_8023_xmit()
-Date: Fri, 27 Jun 2025 22:46:49 +0200
-Message-Id: <8ddf1dd6362e0ad57a98505b0d195554ebc91b7c.1751057146.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1751057146.git.repk@triplefau.lt>
-References: <cover.1751057146.git.repk@triplefau.lt>
+	s=arc-20240116; t=1751057344; c=relaxed/simple;
+	bh=7lh1D7X4PEQNtzbuYBYYZr7+QXtnCRLLN3kysbsGGTQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qg1u4PDmv3PaSRwbq5j5gw6NuFm5pN4zTzgXHrJAgz+T4+dBSpUZutxzBYw1QWOrXYRC9BDqu2ymr1ep+OgBPPtkO5xdlN8dH9DGopFpkOK686hRvr8b4XF346p1JhVm+9RVLdUoG7OvulCfmD1aHPC8TmOypMwgGob/+9Iyb8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tXY5VlWs; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RKmqvX2508627;
+	Fri, 27 Jun 2025 15:48:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751057332;
+	bh=93MTeUvjAac0mVu0/ygJFfMB9ChTxtocV2BdLcqjMgs=;
+	h=From:To:CC:Subject:Date;
+	b=tXY5VlWsttAx/kckmqxTnws32hkyIMizdP+Fof8ypF05IY/Njpy/3ojw6bH39zdGV
+	 CMcd5iWqIZggeGZkUggZw23GGmlMMLOy3gAkMwVVazOWV7/0il4pRK6IYJx6Ke5Lob
+	 TFUBwGyJG3IeZc2ztQhFi9HTsQt+t3RXPg8L+1tk=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RKmqcw3578130
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 27 Jun 2025 15:48:52 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
+ Jun 2025 15:48:51 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 27 Jun 2025 15:48:51 -0500
+Received: from uda0506412.dhcp.ti.com (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RKmpWV3421525;
+	Fri, 27 Jun 2025 15:48:51 -0500
+From: Kendall Willis <k-willis@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <ssantosh@kernel.org>,
+        <ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+CC: <d-gole@ti.com>, <vishalm@ti.com>, <sebin.francis@ti.com>,
+        <msp@baylibre.com>, <khilman@baylibre.com>,
+        Kendall Willis <k-willis@ti.com>
+Subject: [PATCH 0/2] Enable abort sequence from LPM entry
+Date: Fri, 27 Jun 2025 15:48:19 -0500
+Message-ID: <20250627204821.1150459-1-k-willis@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,36 +72,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Smtpcorp-Track: Nz5J7QcA5snT.TjIl-KkFGOci.EDlO-gMB_5u
-Feedback-ID: 510616m:510616apGKSTK:510616s0p5iKs-_9
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The IEEE80211_TX_CTRL_MLO_LINK info is the only part of
-ieee80211_tx_control where a 0 value has a specific meaning. Thus this
-should always be initialized with IEEE80211_LINK_UNSPECIFIED if there is
-no MLO link information associated with the skb, even using when 802.11
-hw encap offloading.
+The PM co-processor (device manager or DM) adds the ability to abort
+entry to a low power mode by clearing the mode selection in the
+latest version of its firmware (11.x) [1].
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- net/mac80211/tx.c | 2 ++
- 1 file changed, 2 insertions(+)
+This series adds support for aborting entry to a low power mode if an
+error occurs during suspend. If any driver with either ->suspend_late()
+or ->suspend_noirq() hook in the TI SCI PM domain fails to suspend, an
+abort message will be sent to the DM and the DM will abort by clearing
+the current mode selection.
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index d58b80813bdd..f65fb96a498e 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -4637,6 +4637,8 @@ static void ieee80211_8023_xmit(struct ieee80211_sub_if_data *sdata,
- 
- 	info->flags |= IEEE80211_TX_CTL_HW_80211_ENCAP;
- 	info->control.vif = &sdata->vif;
-+	info->control.flags |= u32_encode_bits(IEEE80211_LINK_UNSPECIFIED,
-+					       IEEE80211_TX_CTRL_MLO_LINK);
- 
- 	if (key)
- 		info->control.hw_key = &key->conf;
+The flow for the abort sequence is the following:
+   1. User sends a command to enter sleep
+   2. Linux starts to suspend drivers
+   3. TI SCI suspends and sends prepare_sleep message to DM
+   4. A driver fails to suspend
+   5. Linux sends DM abort message via the TI SCI PM domain driver
+   6. DM aborts LPM entry by clearing the current mode selection
+   7. Linux resumes the drivers that have already suspended
+   8. Linux works as normal
+
+Only devices in the TI SCI PM domain are able to trigger the abort
+message because the TI SCI PM domain driver has ->suspend_late() and
+->suspend_noirq() hooks that are apart of each drivers respective
+suspend path. In the TI SCI PM domain driver suspend hook, the suspend
+hook of the current device will be called and the TI SCI PM domain driver
+will check to see if the suspend returned with an error. If it does, an
+abort message is sent to the DM.
+
+The prepare_sleep message has to be sent to the DM first before the
+abort message is sent since abort works by clearing the low power mode
+selected. The prepare_sleep message is sent as apart of TI SCI
+->suspend(). Since TI SCI suspend happens after all TI SCI devices with
+the ->suspend() hook have suspended, adding an abort call in the
+->suspend() hook isn't needed.
+
+Additionally, if TI SCI fails to suspend or fails to prepare sleep, an
+abort message will be sent to the DM. This had to be done separately
+because TI SCI is not a device in the TI SCI PM domain.
+
+Testing:
+To test this series, a driver in the TI SCI PM domain has to fail to
+suspend. When this happens the following is printed during Linux's
+suspend/resume logs:
+   Failed to suspend. Abort entering low power mode.
+
+Series has been tested on an SK-AM62B-P1 board. Normal suspend/resume
+has been verified. Abort was tested by adding an error into the TI SCI
+suspend hook.
+
+[1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html
+
+Kendall Willis (2):
+  firmware: ti_sci: Enable abort handling of entry to LPM
+  pmdomain: ti_sci: Add LPM abort sequence to suspend path
+
+ drivers/firmware/ti_sci.c               | 67 +++++++++++++++++++++++--
+ drivers/firmware/ti_sci.h               |  3 +-
+ drivers/pmdomain/ti/ti_sci_pm_domains.c | 46 ++++++++++++++++-
+ include/linux/soc/ti/ti_sci_protocol.h  |  2 +
+ 4 files changed, 113 insertions(+), 5 deletions(-)
+
+
+base-commit: 2aeda9592360c200085898a258c4754bfe879921
 -- 
-2.40.0
+2.34.1
 
 
