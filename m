@@ -1,123 +1,180 @@
-Return-Path: <linux-kernel+bounces-706380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35269AEB5D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:06:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033D2AEB5EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951D13A669F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:05:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1359C7B4677
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E14260576;
-	Fri, 27 Jun 2025 11:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA75F1EF0BE;
+	Fri, 27 Jun 2025 11:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aClLUdME"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QaLdDQQX"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F7A2D876B
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3224F299AAB
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751022228; cv=none; b=ewhLDCSxvlxmM7x9b8HSGLHsoPlZcKIOhcLMM8re83wOns3utJOkw/CuIHwyZOml7fuz7nPPInukVLoE9e4pB25dkmUCF2sI6JkZ0HiyqQOWfdPaV6g8GWFIyGBaMWE+1QOeHdUy0cDklZz8SGIEMCm6CdWHvh9CehWkwRrBTzs=
+	t=1751022271; cv=none; b=YTtoQfY+O3css7tlznsO8ZpbNS/Q0s61RJalrazJ4Z4Zj/y67GQBrRDL9R9Ef52FBaD+WTELNCZB2xZfEJ2ciS6GvwqEgulHYNHqJzEO6zt2MFbVntQMtbqPhM5kVXWftjm6EPa6oYaViNbRTC60YhIG6YOElAXzbEBHotQwLdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751022228; c=relaxed/simple;
-	bh=NnfDTk1pQjGQ6xz9Gx7UhuPMPvkRSW1fzPZMDObvOG0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NGK+ryBDthX7RdAe9bkGHUmEPkaP1Rbw7+FgrUEjfoqunynsYp34m10Twk3jO/2YRgoOMw8gkPr+uRlIwgAj4byTlO4Km06nK3eM511qQzAfkK2WNzBjhD1x6mSj4kT+DnCdZIOr71WCJCVCoOSLmTe1JyHLrVFo2j3I1ON9TDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aClLUdME; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1751022271; c=relaxed/simple;
+	bh=fjH0JhH6D7x/OD2TdOZ50ouYuHiuH5jEFF3eIdj3weA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMZN+TN0vY3Z8Hjk1UHZ9UQ6u4Qys63YExRaoKzyzF0lxgdEV4zznyntTZBAxyPs6mA+Lnj4N7i6M1YI1/6fplJRzlb7D3ZvKIw6YbBsHjUVJcCTldmpJb4gefuFL6wDjiZq2AM3psC2xCCh45VIp6tyPgpJ+myVXO1SFs0O/a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QaLdDQQX; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751022225;
+	s=mimecast20190719; t=1751022268;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mtX7I0GPvovEGFWmWQECoN3Ul3jWpNQVGiKa93vT//s=;
-	b=aClLUdMEqah7ZqVxRSPtTgIuCAF8YCBtfkL6DCAu4Cw8sw3R7LYFGAwUO0mK2zwCyVGsfV
-	G4/8e76nUphxMZWiQBjErU3sRqr7bImf0bBFey61GdGepP2BSLpoUUL+jm+5MNChDNZMKv
-	TSkr0qgKbbuRSyyr3+HHHFvCqVmOu4w=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-RozzyyWGNOGiXbQB_2VfqQ-1; Fri, 27 Jun 2025 07:03:44 -0400
-X-MC-Unique: RozzyyWGNOGiXbQB_2VfqQ-1
-X-Mimecast-MFC-AGG-ID: RozzyyWGNOGiXbQB_2VfqQ_1751022223
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-452ff9e054eso7933735e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:03:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751022223; x=1751627023;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mtX7I0GPvovEGFWmWQECoN3Ul3jWpNQVGiKa93vT//s=;
-        b=QoxMLNabyCeab7cc5wJEO5fPzll9uVZz2feUlwZzECi6MAwoQ/unHBvo8YGrDqpVUV
-         Zlnte1wnU5nNTCyJRS3EcYp/YRu9yyuPOzevI1TjOWdF9LoAjNu0y8o/FrHBYEOwcJiJ
-         WKF/hNG/Q+nU+JGPTrgj3+Nx69ZZe288B7kJ6E7egwaiC3b2aivYhpgNvb3Z1W75lFFD
-         kJRkcRwE3B4Q8MfrvhQG8I/KQKIte1yjJGscs8mBb6rPmncT+KZceJS0DBaKSjvR8n3R
-         rT5mmZg85XC2ztGcOUiELTaNl8VI5NALWULkWfm1c8Dim0sEqgstOFBFVb7HcCN9LvAN
-         jpYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2GnGKU7zcF5qf2UZV3qCxMGoiavE58wPETn/dF4v4EyfhUv5ukJ36MPylzLDVINowyIbEsPINf51LBRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSMvXjt99z1zU9K8M8miFWKI9QtxtB7hgHEWbbAL4SmeqbaKrp
-	XWjwJfk5Tv1Leo6UKaGphY+n1wYNQSNZS6FxCeL3VdH8+YTMONuq47dpAY8hubimLshK6m7ZeNc
-	MXTWB2gUL6iSazq1xm4xNaTETx8+oNEeQAl8MUUVfknmZQA6gxj8x+scYMJChRDAPEg==
-X-Gm-Gg: ASbGncvZEt0h/Qd2R0AaF1F6xmvCjaYcDh99+vqn2HCvydOuCimokfrBvdcSTSBhC/K
-	wSWjBO3aQZCv1q6YfxN4ax5cEj9UxFOVtqrlvX77KmOFYCQcUkuhkv5crzex4WSJ78y/esFQ2CV
-	SmJVcO1WPOHS5jvNDV1+KaJ1cYENYAIErVuuFfchUXU1x7+h9/GsubRJIVHGHQqrMWCkFjnhCKr
-	758ne+lyLBRl2DmJsJJW9I7eigMcWlqpXV+kYlJdW3QPOquzf+88b/7dj7AnkvOM18ilaV+xR2M
-	KUk0R17tp5mDVl3YFpsr2RPYsefTKnmm9CWA30l52v7paZxyis0u0euFLWBpO+AkAdxZsc1HTmz
-	iL0nn
-X-Received: by 2002:a05:600c:64c8:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-45392bc7863mr8865535e9.27.1751022223080;
-        Fri, 27 Jun 2025 04:03:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE9SDcCf+mmOjwZCGWKGJgmV5NZ0wW6bs1ldO0KYcIHLiZMF5li0QSbqyGtLk6UFRI7bW16aw==
-X-Received: by 2002:a05:600c:64c8:b0:450:d3b9:a5fc with SMTP id 5b1f17b1804b1-45392bc7863mr8865235e9.27.1751022222610;
-        Fri, 27 Jun 2025 04:03:42 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a40766csm47736185e9.32.2025.06.27.04.03.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 04:03:42 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] firmware: sysfb: Don't use "proxy" headers
-In-Reply-To: <20250627103454.702606-1-andriy.shevchenko@linux.intel.com>
-References: <20250627103454.702606-1-andriy.shevchenko@linux.intel.com>
-Date: Fri, 27 Jun 2025 13:03:40 +0200
-Message-ID: <87ikkhbg4z.fsf@minerva.mail-host-address-is-not-set>
+	bh=gpNlNCAbYqrGZEBTx3NoAjbHoc60DnHuxuxn14zXNOc=;
+	b=QaLdDQQXC+vfjbJeWlcqsUl8dTRMdHpYVdKLfvCttysV13dQ4r26LVJYZVi45i94vi51bg
+	AfMOY+BcDaC/ubLnbdU+spQPpXs6VXW+40O0FrXTRSAcucRE4xjUgZBwdJpjYeFRjiFcZp
+	zfnPSGBMNZP67ps+7wBSXqWR1zmqN7U=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-64-NRJ_f5qoOhOeG1mpRRY4XA-1; Fri,
+ 27 Jun 2025 07:04:24 -0400
+X-MC-Unique: NRJ_f5qoOhOeG1mpRRY4XA-1
+X-Mimecast-MFC-AGG-ID: NRJ_f5qoOhOeG1mpRRY4XA_1751022263
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F0DD618DA5C0;
+	Fri, 27 Jun 2025 11:04:21 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.105])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 683E830001BC;
+	Fri, 27 Jun 2025 11:04:10 +0000 (UTC)
+Date: Fri, 27 Jun 2025 19:04:01 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: josef@toxicpanda.com, axboe@kernel.dk, hch@infradead.org,
+	nilay@linux.ibm.com, hare@suse.de, linux-block@vger.kernel.org,
+	nbd@other.debian.org, linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
+Message-ID: <aF56oVEzTygIOUTN@fedora>
+References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
->
-> Note that kernel.h is discouraged to be included as it's written
-> at the top of that file.
->
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Fri, Jun 27, 2025 at 05:23:48PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The deadlock is reported because there are circular dependency:
+> 
+> t1: disk->open_mutex -> nbd->config_lock
+> 
+>  blkdev_release
+>   bdev_release
+>    //lock disk->open_mutex)
+>    blkdev_put_whole
+>     nbd_release
+>      nbd_config_put
+>         refcount_dec_and_mutex_lock
+>         //lock nbd->config_lock
+> 
+> t2: nbd->config_lock -> set->update_nr_hwq_lock
+> 
+>  nbd_genl_connect
+>   //lock nbd->config_lock
+>   nbd_start_device
+>    blk_mq_update_nr_hw_queues
+>    //lock set->update_nr_hwq_lock
+> 
+> t3: set->update_nr_hwq_lock -> disk->open_mutex
+> 
+>  nbd_dev_remove_work
+>   nbd_dev_remove
+>    del_gendisk
+>     down_read(&set->update_nr_hwq_lock);
+>     __del_gendisk
+>     mutex_lock(&disk->open_mutex);
+> 
+> This is false warning because t1 and t2 should be synchronized by
+> nbd->refs, and t1 is still holding the reference while t2 is triggered
+> when the reference is decreased to 0. However the lock order is broken.
+> 
+> Fix the problem by breaking the dependency from t2, by calling
+> blk_mq_update_nr_hw_queues() outside of nbd internal config_lock, since
+> now other context can concurrent with nbd_start_device(), also make sure
+> they will still return -EBUSY, the difference is that they will not wait
+> for nbd_start_device() to be done.
+> 
+> Fixes: 98e68f67020c ("block: prevent adding/deleting disk during updating nr_hw_queues")
+> Reported-by: syzbot+2bcecf3c38cb3e8fdc8d@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/6855034f.a00a0220.137b3.0031.GAE@google.com/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->
-> v2: dropped first patch, added tags (Javier, Thomas)
->
+>  drivers/block/nbd.c | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index 7bdc7eb808ea..d43e8e73aeb3 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -1457,10 +1457,13 @@ static void nbd_config_put(struct nbd_device *nbd)
+>  	}
+>  }
+>  
+> -static int nbd_start_device(struct nbd_device *nbd)
+> +static int nbd_start_device(struct nbd_device *nbd, bool netlink)
+> +	__releases(&nbd->config_lock)
+> +	__acquires(&nbd->config_lock)
+>  {
+>  	struct nbd_config *config = nbd->config;
+>  	int num_connections = config->num_connections;
+> +	struct task_struct *old;
+>  	int error = 0, i;
+>  
+>  	if (nbd->pid)
+> @@ -1473,8 +1476,21 @@ static int nbd_start_device(struct nbd_device *nbd)
+>  		return -EINVAL;
+>  	}
+>  
+> -	blk_mq_update_nr_hw_queues(&nbd->tag_set, config->num_connections);
+> +	/*
+> +	 * synchronize with concurrent nbd_start_device() and
+> +	 * nbd_add_socket()
+> +	 */
+>  	nbd->pid = task_pid_nr(current);
+> +	if (!netlink) {
+> +		old = nbd->task_setup;
+> +		nbd->task_setup = current;
+> +	}
+> +
+> +	mutex_unlock(&nbd->config_lock);
+> +	blk_mq_update_nr_hw_queues(&nbd->tag_set, config->num_connections);
+> +	mutex_lock(&nbd->config_lock);
+> +	if (!netlink)
+> +		nbd->task_setup = old;
 
-Pushed to drm-misc (drm-misc-next). Thanks!
+I guess the patch in the following link may be simper, both two take
+similar approach:
 
--- 
-Best regards,
+https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+
+thanks,
+Ming
 
 
