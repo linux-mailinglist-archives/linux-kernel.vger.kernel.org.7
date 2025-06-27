@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-707045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0898EAEBF34
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E18BAEBF36
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F393565199
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:41:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58CA6561ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AEE92EF293;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7469C2EF640;
 	Fri, 27 Jun 2025 18:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="sJBPPUrj"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="epbttpUh"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE622EE269;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059EE2EE5E6;
 	Fri, 27 Jun 2025 18:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751049620; cv=none; b=LKgBIr49Gv9fUPaJ8HaJziJwpq6uVs20gA191jHI35Me7GZCsCcZi5dbB8nWn7uuEz/lmRqJdREDOWi4zt2ACIwFEFuPJH/f3Myk87ekarjclz1v4YJeY0ffZZxTIGPneNeyfo/7hRcAZ8NQGKpgMnrRQKl8ic0od7ribSYzfbc=
+	t=1751049620; cv=none; b=d4MNXmSeKBMXBBq0oot9aBFmOutRuD11aaCv2Box4h+klsJsoXgTiIXV9QSNsr+hyBamzvvjZVhLczFHB4KOz4BRE3hDO1LEDny1a3A4t6WQn09pMRKlLGmW6T50kZkL3EXTyarcI0ApVjmWL99KOkh7xKxa5MKCsB9CDWme6pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751049620; c=relaxed/simple;
-	bh=gRvhyy7wVTzRIRa1gE90PymXg70C2aJ5PrOuzYoaVzI=;
+	bh=OG3Vi3/fNl/c04UvhGfqGhF0Tv6V5jD1gvt/Ro3R3vk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dNJ+WTHZE0yBpsd5A6EPsN7y8e+6R2ByBvio0qjXyi6Ip4ZvpOPnrR11RESZJWFMEZ6gTGtmBz3inPAMvQ51ByH9Q8aCoa384HhltTdO3/cdhL8/bJ7ZUKKsimYahoYq1fk2uuqDydRGSoitpiv1imUsc9U2vA7vUL5lttGD7Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=sJBPPUrj; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=XToX0qZSC9mfzgP94fGFMcpwoInjvEfvEUEn+k8U0DKdS7F4/8/PJwzibiB8w+16/VZMm2bFDXl+pfB4UyxME5UUcSbpxfFj/KzNTKwrascVUPmG4EFRcAMH24cpfOyu2FGH6gc5MkiboTliyAJEKGlibBbx0MI85Z85fMKx5/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=epbttpUh; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7D30440AC7
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0ED7E40AD2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751049617; bh=J/FzKvzFoyxVTHx0W5BXoFXXd1bavPdlVAbQNxM84Po=;
+	t=1751049618; bh=+iEYvlkxgBTH8QTIpp2nezk4u73s3MZGF2/w6ybXQoQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sJBPPUrjVQ+MCrSUI4+HWc0JxiVaGQ2wt6giy3Q/ZaLMwKXh8KOVAZ3Dr7E4Y3q/E
-	 YwouZuQb7OwcrEXxoOJXwcc0fbKfRoXv7GMHWPjTxPcK3s7OPsNCgze45jRiGn7lMS
-	 ttFO7nrT0/Mpq8kYAje/3U0eKkyZxTBukG4EArQeGj6VbOXUTDxJ+pjlPOSVnSUhfi
-	 hBwQC8oiKsNAl7DQXKfZQ3mSReeQG1eSUfUWueNV6uBDGw+88LM//XVzf6aIdtz299
-	 0HymE6JJIHnj6i6G0uTr/7QquQ5+mGUfKOTj1EyAQOkVNgS7h3U/9aPdJo4iYyncWd
-	 fmwsqdq2sK3xw==
+	b=epbttpUhMhLNmuPyKN6n7RmlJhrpM8hw/XXdJ1NFCj6s1S0zOxPEVxi/m80+ErKpf
+	 jjeD1Hx4TmacvVb4jSy86nFKe/SAgfemjPVwRKRpM8Z97fLQEsxQu4h5a/NBNQUvei
+	 pW2MidsrTMiu+f1Tke0tTdVTWTtw71BQb7Edlk06ov99GEbokEJZunDyPJ+N2rg8ZA
+	 avFgyIEqzDAqFwSCK9T2NzRCSEJLO0fw7Vy4+CSjaGkp8TGH0jkz9eg1BJcu2aX+Eg
+	 0+1vsBHqXSOnZBs52U+ZnZISL8t6KN/h4aIQeB4MUyy/GJdwR/HzxfJ1UmsZOzYumz
+	 jq7139oGWxdzQ==
 Received: from trenco.lwn.net (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	by ms.lwn.net (Postfix) with ESMTPA id 7D30440AC7;
-	Fri, 27 Jun 2025 18:40:17 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 0ED7E40AD2;
+	Fri, 27 Jun 2025 18:40:18 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 7/8] docs: kdoc: remove the inline states-within-a-state
-Date: Fri, 27 Jun 2025 12:39:59 -0600
-Message-ID: <20250627184000.132291-8-corbet@lwn.net>
+Subject: [PATCH 8/8] docs: kdoc: split the processing of the two remaining inline states
+Date: Fri, 27 Jun 2025 12:40:00 -0600
+Message-ID: <20250627184000.132291-9-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250627184000.132291-1-corbet@lwn.net>
 References: <20250627184000.132291-1-corbet@lwn.net>
@@ -63,142 +63,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The processing of inline kerneldoc comments is a state like the rest, but
-it was implemented as a set of separate substates.  Just remove the
-substate logic and make the inline states normal ones like the rest.
+Now that "inline_*" are just ordinary parser states, split them into two
+separate functions, getting rid of some nested conditional logic.
 
-INLINE_ERROR was never actually used for anything, so just take it out.
-
-No changes to the generated output.
+The original process_inline() would simply ignore lines that didn't match
+any of the regexes (those lacking the initial " * " marker).  I have
+preserved that behavior, but we should perhaps emit a warning instead.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 43 ++++++++++-----------------------
- 1 file changed, 13 insertions(+), 30 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 37 ++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 03a0e44707a7..a931c1471fa8 100644
+index a931c1471fa8..93938155fce2 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -91,7 +91,8 @@ class state:
-     SPECIAL_SECTION = 4      # doc section ending with a blank line
-     PROTO         = 5        # scanning prototype
-     DOCBLOCK      = 6        # documentation block
--    INLINE        = 7        # gathering doc outside main block
-+    INLINE_NAME   = 7        # gathering doc outside main block
-+    INLINE_TEXT   = 8	     # reading the body of inline docs
+@@ -1448,31 +1448,30 @@ class KernelDoc:
+             # Unknown line, ignore
+             self.emit_msg(ln, f"bad line: {line}")
  
-     name = [
-         "NORMAL",
-@@ -101,23 +102,10 @@ class state:
-         "SPECIAL_SECTION",
-         "PROTO",
-         "DOCBLOCK",
--        "INLINE",
-+        "INLINE_NAME",
-+        "INLINE_TEXT",
-     ]
+-    def process_inline(self, ln, line):
+-        """STATE_INLINE: docbook comments within a prototype."""
++    def process_inline_name(self, ln, line):
++        """STATE_INLINE_NAME: beginning of docbook comments within a prototype."""
  
--    # Inline documentation state
--    INLINE_NA     = 0 # not applicable ($state != INLINE)
--    INLINE_NAME   = 1 # looking for member name (@foo:)
--    INLINE_TEXT   = 2 # looking for member documentation
--    INLINE_ERROR  = 3 # error - Comment without header was found.
--                      # Spit a warning as it's not
--                      # proper kernel-doc and ignore the rest.
--
--    inline_name = [
--        "",
--        "_NAME",
--        "_TEXT",
--        "_ERROR",
--    ]
- 
- SECTION_DEFAULT = "Description"  # default section
- 
-@@ -246,7 +234,6 @@ class KernelDoc:
- 
-         # Initial state for the state machines
-         self.state = state.NORMAL
--        self.inline_doc_state = state.INLINE_NA
- 
-         # Store entry currently being processed
-         self.entry = None
-@@ -323,7 +310,6 @@ class KernelDoc:
- 
-         # State flags
-         self.state = state.NORMAL
--        self.inline_doc_state = state.INLINE_NA
- 
-     def push_parameter(self, ln, decl_type, param, dtype,
-                        org_arg, declaration_name):
-@@ -1465,30 +1451,28 @@ class KernelDoc:
-     def process_inline(self, ln, line):
-         """STATE_INLINE: docbook comments within a prototype."""
- 
--        if self.inline_doc_state == state.INLINE_NAME and \
-+        if self.state == state.INLINE_NAME and \
-            doc_inline_sect.search(line):
+-        if self.state == state.INLINE_NAME and \
+-           doc_inline_sect.search(line):
++        if doc_inline_sect.search(line):
              self.entry.begin_section(ln, doc_inline_sect.group(1))
- 
+-
              self.entry.add_text(doc_inline_sect.group(2).lstrip())
--            self.inline_doc_state = state.INLINE_TEXT
-+            self.state = state.INLINE_TEXT
-             # Documentation block end */
-             return
- 
-         if doc_inline_end.search(line):
+             self.state = state.INLINE_TEXT
+-            # Documentation block end */
+-            return
+-
+-        if doc_inline_end.search(line):
++        elif doc_inline_end.search(line):
              self.dump_section()
              self.state = state.PROTO
--            self.inline_doc_state = state.INLINE_NA
-             return
+-            return
++        elif doc_content.search(line):
++            self.emit_msg(ln, f"Incorrect use of kernel-doc format: {line}")
++            self.state = state.PROTO
++        # else ... ??
  
-         if doc_content.search(line):
--            if self.inline_doc_state == state.INLINE_TEXT:
-+            if self.state == state.INLINE_TEXT:
-                 self.entry.add_text(doc_content.group(1))
+-        if doc_content.search(line):
+-            if self.state == state.INLINE_TEXT:
+-                self.entry.add_text(doc_content.group(1))
++    def process_inline_text(self, ln, line):
++        """STATE_INLINE_TEXT: docbook comments within a prototype."""
  
--            elif self.inline_doc_state == state.INLINE_NAME:
-+            elif self.state == state.INLINE_NAME:
-                 self.emit_msg(ln,
-                               f"Incorrect use of kernel-doc format: {line}")
--
--                self.inline_doc_state = state.INLINE_ERROR
-+                self.state = state.PROTO
+-            elif self.state == state.INLINE_NAME:
+-                self.emit_msg(ln,
+-                              f"Incorrect use of kernel-doc format: {line}")
+-                self.state = state.PROTO
++        if doc_inline_end.search(line):
++            self.dump_section()
++            self.state = state.PROTO
++        elif doc_content.search(line):
++            self.entry.add_text(doc_content.group(1))
++        # else ... ??
  
      def syscall_munge(self, ln, proto):         # pylint: disable=W0613
          """
-@@ -1664,8 +1648,7 @@ class KernelDoc:
-             self.dump_section()
- 
-         elif doc_inline_start.search(line):
--            self.state = state.INLINE
--            self.inline_doc_state = state.INLINE_NAME
-+            self.state = state.INLINE_NAME
- 
-         elif self.entry.decl_type == 'function':
-             self.process_proto_function(ln, line)
-@@ -1716,7 +1699,8 @@ class KernelDoc:
+@@ -1699,8 +1698,8 @@ class KernelDoc:
          state.BODY:			process_body,
          state.DECLARATION:		process_decl,
          state.SPECIAL_SECTION:		process_special,
--        state.INLINE:			process_inline,
-+        state.INLINE_NAME:		process_inline,
-+        state.INLINE_TEXT:		process_inline,
+-        state.INLINE_NAME:		process_inline,
+-        state.INLINE_TEXT:		process_inline,
++        state.INLINE_NAME:		process_inline_name,
++        state.INLINE_TEXT:		process_inline_text,
          state.PROTO:			process_proto,
          state.DOCBLOCK:			process_docblock,
          }
-@@ -1756,9 +1740,8 @@ class KernelDoc:
-                             prev = ""
-                             prev_ln = None
- 
--                    self.config.log.debug("%d %s%s: %s",
-+                    self.config.log.debug("%d %s: %s",
-                                           ln, state.name[self.state],
--                                          state.inline_name[self.inline_doc_state],
-                                           line)
- 
-                     # This is an optimization over the original script.
 -- 
 2.49.0
 
