@@ -1,111 +1,126 @@
-Return-Path: <linux-kernel+bounces-706327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F538AEB52D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:41:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF96AEB5FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0C1169726
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77FE47B6251
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14C0298994;
-	Fri, 27 Jun 2025 10:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8720C2DAFD0;
+	Fri, 27 Jun 2025 11:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M306hN6G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9igoHln"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1847C296169;
-	Fri, 27 Jun 2025 10:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AC92D9799;
+	Fri, 27 Jun 2025 11:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020866; cv=none; b=n7fMTjErXDhGS78Yqwhfmlc0uqLGfXQ83AG8MVc+pv+uiVpfESmONLrT7w1ANKVQM7xgf+CKdpDr3d1KPf5sNU1SZEU/6ByFgcft0cPyFl2I6PLJZAuh8h3j+PRvJa6ZW5yK4mfHQ4PT27qLpl1WfNDZyCJOV7fCq2qmXq8RPco=
+	t=1751022302; cv=none; b=Ho9pIOLpo59d+UPErxy7MWTXu8beSchpVcmThPkErnS7VYb3PmGBQG4dQQbMvwKp+BwCW6lF9IHQlsUDD0tfSMusX/9oiG3iUHJi44e6yT0JBTAhs2aUqoIjbaGAP1kBaP9FACogWoH1jrKu7ZFkMFhiIv98TSK5swmv9k0cYeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020866; c=relaxed/simple;
-	bh=rzLraCNuwTpuf/DUAb7YKc3FNpCiMSkIclVF2DPCAuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9A3S2asQzcHXgG2sSisq+v5ZMvQHFWQFP6wFbL5A1gdyufxvvVe6bgSYxSvjxxIVZLeqRZgZMT/VMvZBFed7Lxb6ttBhccwVf9R0yHhU9u/gWHFZV6/slcmYXEHdEqtfZ351pPPbj6SP+RESa02KeC7jjiwhCLoUZMoetJzcK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M306hN6G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB27C4CEE3;
-	Fri, 27 Jun 2025 10:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751020865;
-	bh=rzLraCNuwTpuf/DUAb7YKc3FNpCiMSkIclVF2DPCAuY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M306hN6Gbd1Gc0eJnFzf0djXisEUIKObApc/k5J1CV4qprjUwcg+Mz59+LP32KFL3
-	 GYVIZADFbzS4qNopkBV8ktDgDogH1TqLRM1y/MZk9sPQhCUyZQsr4KvyaZHIvKqWFN
-	 mhl7oc484C7kjweoDcz2qstW5s7qei8lNxdyaOZ3rdRft4GLVL086ncZw5xoGqJTjo
-	 x35XKN5ZczLLlGin5ck3EhmjsUO/iqt3BbCXNyL4Y1dmvs+tXU2w2oSzlYFfTJ00bO
-	 TFAUnUQc1kVBoYoxsusUX2G7iCw6Ssi1np9NmON3IZ6ATy9v3fhbAcFvfzf08x/yqD
-	 3QMnYXhiNHz4w==
-Date: Fri, 27 Jun 2025 12:41:01 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/4] mm/slub: allow to set node and align in k[v]realloc
-Message-ID: <aF51PTZh0gRVFuYu@pollux>
-References: <20250627092901.356909-1-vitaly.wool@konsulko.se>
- <20250627093714.402989-1-vitaly.wool@konsulko.se>
+	s=arc-20240116; t=1751022302; c=relaxed/simple;
+	bh=IzhzSlg+a6MNT6mp9a166nnlPRXDawCSwrvw2zas3ys=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=T9bzJ3NrUYwhXNEuqu1Dt+xlbJQnnDHTjvRpueiRjtu7FNTDyf1ozlzOje4vc1HpTF/LtysmoDi4FEcVHdU3H2mgjHqSYd/B3ZiALCKdZCFschrYjl5sPDt/bnXopoqyderEhkd2GAvwlH14o+n4RWonL9eb4V/DMWT484GKk4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9igoHln; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450cfb79177so11140925e9.0;
+        Fri, 27 Jun 2025 04:05:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751022299; x=1751627099; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ArfsTLmwxi9yd3k6+gxg662TPkYeEIsTSNfN2sfzizY=;
+        b=m9igoHlnC3DeQm0fJcgStJMw6WFV/TdDzfaBKetGLUqefEFDJUfGm9juQjIu8a0hFY
+         01QO/HlwqamQT5OGJq3ualPFxzkj1rg/QNhnHCZRofwD8h9z2T7xbJNTqveI6p3AISoi
+         MQQWK0Ed175+x6BNWPmreuz9Ljadn8PXHN+hu7baIOZg31QFqalvZVf8OsO2FKFKUxky
+         z3T1tYIOe3sHo70gsF0w9EnTcMNqC5Jio1gUF1x+0DrjOSGFsYZVHmsBgwDyzf4mb+vV
+         yrj4zXVTI3DpI3zeJxys7hLK4AcrhRHihXpN9gjSD0GNk3/wLnxiQdiZwWfW7Qj2kFB8
+         iQ3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751022299; x=1751627099;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ArfsTLmwxi9yd3k6+gxg662TPkYeEIsTSNfN2sfzizY=;
+        b=Y30vZxKYOwbrOubIxFiVb72JxItcwefENBM3ZHBuSlxwb4C/4EI0rr3+EhV84XCYpx
+         zgbXCTg5ssRNZq+x2EZ4DG6+K1VOZlPFvXIiJmST7IrnGK3ktnIsqa7CaLDV7gljCp45
+         PfVtR7QBR73Wt8699RDtY8XckZORyodEPhKbwN8vLiMfmzoP6ySU8s7FdqimeHj1rCbw
+         Fb34VhKqxU6SslBC3oyKTyMs82N9ICLzl10rIrxEBRX4ORM6YdAfpW2S69nybYrE+8PK
+         0Qm7FKqLQJlK0Y0DZfO/9Yed4/N8BSx4hHd+Bh6jzpuNPenqdNQ7mRNXlFUroddataLl
+         AQzw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7slV42fkt2hjEws0kdN0uLSg1c04FTLTJzpkAbHNaPq7d7INwof5iT96GRw5Cm5JJgr6eZwfpqc3B7sw=@vger.kernel.org, AJvYcCWGqqpJZ32wXuiIayxYvkzS5DB1/xx/dXH2AKljbaNRvCd442K/GyXMPxSgSQrxaL8F4YXVAAM5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM49QAD3533nVYrhBn9fweiZOMvegj7pYWw9V5zhYQshfrLPUo
+	1NJYQwujQxA22TJ1i62iSzjmQTWntha/TUqffmNahOSUe2LknXMvZlIQ
+X-Gm-Gg: ASbGncs/FfB6y+sBPHGwZAQlF8p3Rh644dv3MKu6phipjeJIFg8kDlFUBPMVoFK7fRl
+	nVEUFopdTUTiUU9PlSNukx1sp6OlZos8KQB3m1iLppoTsraVUSFOb/Y/ak++T5fjPX9UW2TskA7
+	7+7m3Au50LT6edLrm21b7n+o5LZT5cjgG3rpUGIaCL3bPZ8Jxc/y9dV9z6aFzVrjik+fcpyY4s1
+	h5b4/bfaK4fx2TxHoGjQMz5O8tsO3xdoU8GMqWtBTHepyKSq0GVCy/wd3I2nsv4gbsb2IMIdv0b
+	lsgWlDEspFjliIKjQo9GDDyUig/g2KeqoHG2VqI8ayPh1W9QAobvqhRPv3ktTtGAosseEuoRwg=
+	=
+X-Google-Smtp-Source: AGHT+IEpM1ETIrENyCAnUIBLSlkPLHo3rmCFmpZ0/Rq7Eqh8Z5kuTci5QCowTov1lw+939ExHok2Bw==
+X-Received: by 2002:a05:600c:8118:b0:450:cd50:3c66 with SMTP id 5b1f17b1804b1-4538ee62b0dmr27939015e9.29.1751022299269;
+        Fri, 27 Jun 2025 04:04:59 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:40b8:18e0:8ac6:da0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823c57d7sm81053325e9.40.2025.06.27.04.04.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 04:04:58 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,  Jonathan Corbet
+ <corbet@lwn.net>,  "Akira Yokosawa" <akiyks@gmail.com>,  "Breno Leitao"
+ <leitao@debian.org>,  "David S. Miller" <davem@davemloft.net>,  "Eric
+ Dumazet" <edumazet@google.com>,  "Ignacio Encinas Rubio"
+ <ignacio@iencinas.com>,  "Jan Stancek" <jstancek@redhat.com>,  "Marco
+ Elver" <elver@google.com>,  "Paolo Abeni" <pabeni@redhat.com>,  "Randy
+ Dunlap" <rdunlap@infradead.org>,  "Ruben Wauters" <rubenru09@aol.com>,
+  "Shuah Khan" <skhan@linuxfoundation.org>,  joel@joelfernandes.org,
+  linux-kernel-mentees@lists.linux.dev,  linux-kernel@vger.kernel.org,
+  lkmm@lists.linux.dev,  netdev@vger.kernel.org,  peterz@infradead.org,
+  stern@rowland.harvard.edu
+Subject: Re: [PATCH v8 04/13] tools: ynl_gen_rst.py: cleanup coding style
+In-Reply-To: <398c4d179f07bc0558c8f6ce196e3620bf2efdaf.1750925410.git.mchehab+huawei@kernel.org>
+Date: Fri, 27 Jun 2025 11:41:38 +0100
+Message-ID: <m2o6u98o0t.fsf@gmail.com>
+References: <cover.1750925410.git.mchehab+huawei@kernel.org>
+	<398c4d179f07bc0558c8f6ce196e3620bf2efdaf.1750925410.git.mchehab+huawei@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627093714.402989-1-vitaly.wool@konsulko.se>
+Content-Type: text/plain
 
-On Fri, Jun 27, 2025 at 11:37:14AM +0200, Vitaly Wool wrote:
-> Reimplement k[v]realloc_node() to be able to set node and
-> alignment should a user need to do so. In order to do that while
-> retaining the maximal backward compatibility, the following rules
-> are honored:
-> * kmalloc/kzalloc/krealloc remain unchanged
-> * kvmalloc/kvrealloc/kvcalloc remain unchanged
-> * kvrealloc remains unchanged
-> * kvrealloc_node is implemented as a new function taking align and
->   NUMA id as extra parameters compared to kvrealloc.
-> * krealloc_node is implemented as a new function taking NUMA id
->   as an extra parameter compared to krealloc
-> * kvmalloc_node/kvzalloc_node/kvcalloc_node get an extra parameter
->   (alignment)
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-I see what you're doing here:
+>      @staticmethod
+>      def rst_ref(namespace: str, prefix: str, name: str) -> str:
+>          """Add a hyperlink to the document"""
+> @@ -119,10 +100,9 @@ class RstFormatters:
+>                      'nested-attributes': 'attribute-set',
+>                      'struct': 'definition'}
+>          if prefix in mappings:
+> -            prefix = mappings[prefix]
+> +            prefix = mappings.get(prefix, "")
 
-You created vrealloc_node_noprof() in the previous patch, taking the following
-arguments:
+This gives me a sad face because fixing the erroneous pylint warning
+makes the code look worse. I'd prefer to either suppress the warning
+or to change this:
 
-	vrealloc_node_noprof(const void *p, size_t size,
-			     unsigned long align,
-			     gfp_t flags, int nid)
+        if prefix in mappings:
+            prefix = mappings[prefix]
 
-And now you're aligning the newly introduced krealloc_node() and
-kvrealloc_node() with that.
+to this:
 
-The idea for having an align argument on krealloc_node() simply is that it
-fails if the alignment requirement can't be fulfilled by the corresponding
-kmalloc bucket, such that we can fall back to vrealloc_node() in
-kvrealloc_node().
+        prefix = mappings.get(prefix, prefix)
 
-Generally, this makes sense to me.
-
-However, now you consequently have to add the align argument to kvmalloc_node(),
-kvzalloc_node(), kvcalloc_node() as well.
-
-This is what creates this huge diffstat changing all the users.
-
-IMHO, the problem here was introduced already with vrealloc_node_noprof() taking
-an align argument in your previous patch, since now you have to adjust
-everything else to logically follow the same naming scheme.
-
-Instead, I think you should introduce vrealloc_node_align(),
-kvrealloc_node_align(), etc. This way no existing function signatures, such as
-kvmalloc_node() have to be changed and no users have to be adjusted.
-
-- Danilo
+But IMHO the intent of the original is clearer.
 
