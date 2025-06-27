@@ -1,231 +1,270 @@
-Return-Path: <linux-kernel+bounces-706411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FC8AEB63B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498B7AEB654
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 388B3189715A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:24:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBA3C56377C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE4E2C032C;
-	Fri, 27 Jun 2025 11:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rigtTqqp"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B76929B205;
+	Fri, 27 Jun 2025 11:26:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F1629A9E4
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AA629E0F3
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751023414; cv=none; b=tq2vLgx+RlGNjL3/jT2Z+tZBuLp9hxUo2lUBwtKVIQN0sLlpg+ovk9wA8rqv7sT41hRoLPfYgcmAYL/zFQ6gFxx054zsBncMZfzJ+CUI6zOS26HD454+oN/3Ij5hu0oU8lZhpOI1ANjaUDrR0lY+tdZqp0EzMhHenRPdI7tbmOI=
+	t=1751023567; cv=none; b=YuestNzakVox14dN6Wh1pG75nD+DXXuHsew68c4qQiuASd2X22krTGP430uknDlpMUHLTe8BXZ630FY0nuZKLQpsr9rICKDI2u+O7M99mnNukb8cOUeEY3VDx5q6XCcslgzbjKKCdVpFWrjL57M3chrvD5J9LXEwMRNlAAXaovY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751023414; c=relaxed/simple;
-	bh=avxtm9tRxoS2zNKPMFem+AIRUXJax9YQN0ZSTamMQDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mgGhowFoPKrVMw0D4lal1T4aJtsdBi1FqPT1VCgaLsuakzWaVSMKLfzprYoidJFdL7d8y7i61aJVD7wZt7CvzUvjn+2m+/N2HXK6MDtSzQsl8pGtKf0qiOm4XN5Tgj+uspTdF7kzXD+rnqhJzVBE9jND7Quw6IZ/e02fYZtgJMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rigtTqqp; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a6e2d85705so1200867f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:23:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751023410; x=1751628210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/GADAYPYH6XtwZCwZvDUpQ7sXCaWC25QDTPuEwyrGf8=;
-        b=rigtTqqpMFWHlagmaqgyirNORK3mQg5+2XquvfVSZTw+3Xq4Ejxtk4XJRHarbJsRxF
-         xuHr/qxPsEIpuEXfXWykKAUjTItzM4zNfGpoZwKhiLs6wk/Nbykmm2Z2ZmVnoFHOiGyc
-         EPxn86zmjSELR9lW3iaYrgw78QKd/g5nxwOEca8f9E/j31NQddp2PNaLQ3pdSNkU5f9B
-         aRgX+DWy1wss8FdH7wr1f4eL71iNeRq3TuDPDO3newQBKM/HfGhAoO26amuR53Wo1bX1
-         uqO5ixIUuPOo8/pXsA1w1LUEVLtx1YBRpjy3jZNsKNaDaKaUIrgJzziujc3fQCef9nKW
-         /LYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751023410; x=1751628210;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/GADAYPYH6XtwZCwZvDUpQ7sXCaWC25QDTPuEwyrGf8=;
-        b=XtxUQTl06PUTeuEt0LgPaa9fJ9LyILGc1aRtW/F97ZXFznf5MDN6xYxr053M1qMhI+
-         XBCMflzlEdRNR1dSuwDGb5JEAjumhCkuttIi1F56vH+uND0vr5tL/AI+lO8pp2rOi/vC
-         ubgxzuBKit1WyOQGTVPdIV7zJMm8mH9Ki7JzxTDHPVONgRLj+9d0yYoLjKL5CZPK+FTH
-         cXImBZlzTuj9F7OOmlUKToVf33HDJH5wqlOvKf+y2Mw+zA/bWAymKMh9cSBqhsWm9IFY
-         LvDfpJx2vbdzvobb1Y6gLE8sDfX8Ai4DVH2lPYd4IkXUH07uCHYXCE6vpYS0euKdQZw3
-         nvYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvP4UVXP5lJsEzi+m5aa7CyBEnlC7vB/7g6IUyIk6XeBhi7sZUXM7bA2vstHP+vlScbhg7ozzapoN5MJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTyr7JjN5GCLQ/F2GVymLehtnhBmzEW8tnCHBwAzqH50HsgoTv
-	SPab1UmIlSUIp7HRiS4UliJ4RJh0TiGG3NsfQZhqxnPjktwtsn39Fqxu/ggiF8mlytk=
-X-Gm-Gg: ASbGnctTTE5vRgSVoqWPm+8Rfl591gOP7H1pA0w8TSlpJ/cK6SZS70Qgvgh5pPN0qQF
-	JQ6lTcfSUmOxUEn7lFUjC9znGFrCrEHvpPPMVXriT/JMRzJqhyMafwIhjcKi8t227O7tChT8lgx
-	B6BUnQn9acXQaIe9HoLT32EHR9GhySmdiZt3ijtgyG0FeT3cjuvguIBVpUehaiXtyiZflUxuRlY
-	LrCT5DaCTbmvqyhWcx6BVz90f7dWPxFSF6/K3QOqFWflT69FrZfCOOsylGjZ3bgrRHsnAXGXSuF
-	M0J5wcWAxkpQWHNy+iy8I18RclqZ9NqRzaz2/Un6igCC9l5uETyeekgnjPWcP41e2FM=
-X-Google-Smtp-Source: AGHT+IHpjRR+lhjSBz+H5Y+FWjh/7wV/egv/qDnpzKkXfpV6p0HxBrpcsCDQ+17zG3AKUjPpxcqhvw==
-X-Received: by 2002:adf:b608:0:b0:3a4:cbc6:9db0 with SMTP id ffacd0b85a97d-3a902d88058mr2114575f8f.51.1751023410387;
-        Fri, 27 Jun 2025 04:23:30 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fa750sm2416679f8f.25.2025.06.27.04.23.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 04:23:29 -0700 (PDT)
-Message-ID: <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
-Date: Fri, 27 Jun 2025 12:23:29 +0100
+	s=arc-20240116; t=1751023567; c=relaxed/simple;
+	bh=/5sKzhy0U7mWcXv6ol6//8b1xu6weKJCNg0GsKTp2ac=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=b+YmLc+YXjwSB3HPzUT5urMlmKtGKjVHBs/JGMZy51MwI4czKT7O3o4DOdicvh88wDfYrIK/zU3aA2FnbzaRIdLjDGD0lSXVq44PG7GPYtZw/OPPwwoDDGiMKeMtvtqDWADrjHAqEXVXkgmVc2c7QZOagaVjrTIo6mH6HUpzZuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uV7DC-0007OW-HD; Fri, 27 Jun 2025 13:25:42 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uV7DA-005bYo-34;
+	Fri, 27 Jun 2025 13:25:40 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uV7DA-003kun-2p;
+	Fri, 27 Jun 2025 13:25:40 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v3 1/1] phy: micrel: add Signal Quality Indicator (SQI) support for KSZ9477 switch PHYs
+Date: Fri, 27 Jun 2025 13:25:39 +0200
+Message-Id: <20250627112539.895255-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight-tmc: Add configurable timeout for flush and
- tmcready
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, Leo Yan <leo.yan@arm.com>
-Cc: kernel@oss.qualcomm.com, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <20250627-flush_timeout-v1-1-2f46a8e9f842@quicinc.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250627-flush_timeout-v1-1-2f46a8e9f842@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Add support for the Signal Quality Indicator (SQI) feature on KSZ9477
+family switches, providing a relative measure of receive signal quality.
 
+The hardware exposes separate SQI readings per channel. For 1000BASE-T,
+all four channels are read. For 100BASE-TX, only one channel is reported,
+but which receive pair is active depends on Auto MDI-X negotiation, which
+is not exposed by the hardware. Therefore, it is not possible to reliably
+map the measured channel to a specific wire pair.
 
-On 27/06/2025 12:10 pm, Yuanfang Zhang wrote:
-> The current implementation uses a fixed timeout via
-> coresight_timeout(), which may be insufficient when multiple
-> sources are enabled or under heavy load, leading to TMC
-> readiness or flush completion timeout.
-> 
-> This patch introduces a configurable timeout mechanism for
-> flush and tmcready.
-> 
+This resolves an earlier discussion about how to handle multi-channel
+SQI. Originally, the plan was to expose all channels individually.
+However, since pair mapping is sometimes unavailable, this
+implementation treats SQI as a per-link metric instead. This fallback
+avoids ambiguity and ensures consistent behavior. The existing get_sqi()
+UAPI was designed for single-pair Ethernet (SPE), where per-pair and
+per-link are effectively equivalent. Restricting its use to per-link
+metrics does not introduce regressions for existing users.
 
-What kind of values are you using? Is there a reason to not increase the 
-global one?
+The raw 7-bit SQI value (0–127, lower is better) is converted to the
+standard 0–7 (high is better) scale. Empirical testing showed that the
+link becomes unstable around a raw value of 8.
 
-I don't think it's important what value we choose because it's only to 
-stop hangs and make it terminate eventually. As far as I can see it 
-wouldn't matter if we set it to a huge value like 1 second. That would 
-only cause a big delay when something has actually gone wrong. Under 
-normal circumstances the timeout won't be hit so it doesn't really need 
-to be configurable.
+The SQI raw value remains zero if no data is received, even if noise is
+present. This confirms that the measurement reflects the "quality" during
+active data reception rather than the passive line state. User space
+must ensure that traffic is present on the link to obtain valid SQI
+readings.
 
-> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> ---
->   drivers/hwtracing/coresight/coresight-tmc-core.c | 43 ++++++++++++++++++++++--
->   1 file changed, 41 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index 88afb16bb6bec395ba535155228d176250f38625..286d56ce88fe80fbfa022946dc798f0f4e72f961 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -8,6 +8,7 @@
->   #include <linux/kernel.h>
->   #include <linux/init.h>
->   #include <linux/types.h>
-> +#include <linux/delay.h>
->   #include <linux/device.h>
->   #include <linux/idr.h>
->   #include <linux/io.h>
-> @@ -35,13 +36,31 @@ DEFINE_CORESIGHT_DEVLIST(etb_devs, "tmc_etb");
->   DEFINE_CORESIGHT_DEVLIST(etf_devs, "tmc_etf");
->   DEFINE_CORESIGHT_DEVLIST(etr_devs, "tmc_etr");
->   
-> +static u32 tmc_timeout;
-> +
-> +static void tmc_extend_timeout(struct csdev_access *csa, u32 offset, int pos, int val)
-> +{
-> +	int i;
-> +
-> +	for (i = tmc_timeout; i > 0; i--) {
-> +		if (i - 1)
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+changes v3:
+- Update commit message
+- drop usleep
+- bring back multi channel support
+changes v2:
+- Reword commit message
+- Fix SQI value inversion
+- Implement an empirically-derived, non-linear mapping to the standard
+  0-7 SQI scale
+---
+ drivers/net/phy/micrel.c | 132 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
 
-I didn't get what the if is for here? Removing it does basically the 
-same thing, but if you do want to keep it maybe if (i > 1) is more 
-explanatory.
-
-> +			udelay(1);
-
-Can you not do udelay(tmc_timeout)?
-
-> +	}
-> +}
-> +
-> +static int tmc_wait_status(struct csdev_access *csa, u32 offset, int pos, int val)
-> +{
-> +	return coresight_timeout_action(csa, offset, pos, val,
-> +			tmc_extend_timeout);
-> +}
-> +
->   int tmc_wait_for_tmcready(struct tmc_drvdata *drvdata)
->   {
->   	struct coresight_device *csdev = drvdata->csdev;
->   	struct csdev_access *csa = &csdev->access;
->   
->   	/* Ensure formatter, unformatter and hardware fifo are empty */
-> -	if (coresight_timeout(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1)) {
-> +	if (tmc_wait_status(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1)) {
->   		dev_err(&csdev->dev,
->   			"timeout while waiting for TMC to be Ready\n");
->   		return -EBUSY;
-> @@ -61,7 +80,7 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata)
->   	ffcr |= BIT(TMC_FFCR_FLUSHMAN_BIT);
->   	writel_relaxed(ffcr, drvdata->base + TMC_FFCR);
->   	/* Ensure flush completes */
-> -	if (coresight_timeout(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0)) {
-> +	if (tmc_wait_status(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0)) {
->   		dev_err(&csdev->dev,
->   		"timeout while waiting for completion of Manual Flush\n");
->   	}
-> @@ -561,11 +580,31 @@ static ssize_t stop_on_flush_store(struct device *dev,
->   
->   static DEVICE_ATTR_RW(stop_on_flush);
->   
-> +static ssize_t timeout_cfg_show(struct device *dev,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	return scnprintf(buf, PAGE_SIZE, "%d\n", tmc_timeout);
-> +}
-> +
-> +static ssize_t timeout_cfg_store(struct device *dev,
-> +				 struct device_attribute *attr,
-> +				 const char *buf, size_t size)
-> +{
-> +	unsigned long val;
-> +
-> +	if (kstrtoul(buf, 0, &val))
-> +		return -EINVAL;
-> +	tmc_timeout = val;
-> +
-> +	return size;
-> +}
-> +static DEVICE_ATTR_RW(timeout_cfg);
->   
-
-Seeing as the existing timeout is global for all devices, if we do want 
-a configurable one shouldn't we make the global one configurable rather 
-than per-device? That seems too fine grained to me.
-
->   static struct attribute *coresight_tmc_attrs[] = {
->   	&dev_attr_trigger_cntr.attr,
->   	&dev_attr_buffer_size.attr,
->   	&dev_attr_stop_on_flush.attr,
-> +	&dev_attr_timeout_cfg.attr,
->   	NULL,
->   };
->   
-> 
-> ---
-> base-commit: 408c97c4a5e0b634dcd15bf8b8808b382e888164
-> change-id: 20250627-flush_timeout-a598b4c0ce7b
-> 
-> Best regards,
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index d0429dc8f561..74fd6ff32c6c 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -2173,6 +2173,136 @@ static void kszphy_get_phy_stats(struct phy_device *phydev,
+ 	stats->rx_errors = priv->phy_stats.rx_err_pkt_cnt;
+ }
+ 
++/* Base register for Signal Quality Indicator (SQI) - Channel A
++ *
++ * MMD Address: MDIO_MMD_PMAPMD (0x01)
++ * Register:    0xAC (Channel A)
++ * Each channel (pair) has its own register:
++ *   Channel A: 0xAC
++ *   Channel B: 0xAD
++ *   Channel C: 0xAE
++ *   Channel D: 0xAF
++ */
++#define KSZ9477_MMD_SIGNAL_QUALITY_CHAN_A	0xac
++
++/* SQI field mask for bits [14:8]
++ *
++ * SQI indicates relative quality of the signal.
++ * A lower value indicates better signal quality.
++ */
++#define KSZ9477_MMD_SQI_MASK			GENMASK(14, 8)
++
++#define KSZ9477_MAX_CHANNELS			4
++#define KSZ9477_SQI_MAX				7
++
++/* Number of SQI samples to average for a stable result.
++ *
++ * Reference: KSZ9477S Datasheet DS00002392C, Section 4.1.11 (page 26)
++ * For noisy environments, a minimum of 30–50 readings is recommended.
++ */
++#define KSZ9477_SQI_SAMPLE_COUNT		40
++
++/* The hardware SQI register provides a raw value from 0-127, where a lower
++ * value indicates better signal quality. However, empirical testing has
++ * shown that only the 0-7 range is relevant for a functional link. A raw
++ * value of 8 or higher was measured directly before link drop. This aligns
++ * with the OPEN Alliance recommendation that SQI=0 should represent the
++ * pre-failure state.
++ *
++ * This table provides a non-linear mapping from the useful raw hardware
++ * values (0-7) to the standard 0-7 SQI scale, where higher is better.
++ */
++static const u8 ksz_sqi_mapping[] = {
++	7, /* raw 0 -> SQI 7 */
++	7, /* raw 1 -> SQI 7 */
++	6, /* raw 2 -> SQI 6 */
++	5, /* raw 3 -> SQI 5 */
++	4, /* raw 4 -> SQI 4 */
++	3, /* raw 5 -> SQI 3 */
++	2, /* raw 6 -> SQI 2 */
++	1, /* raw 7 -> SQI 1 */
++};
++
++/**
++ * kszphy_get_sqi - Read, average, and map Signal Quality Index (SQI)
++ * @phydev: the PHY device
++ *
++ * This function reads and processes the raw Signal Quality Index from the
++ * PHY. Based on empirical testing, a raw value of 8 or higher indicates a
++ * pre-failure state and is mapped to SQI 0. Raw values from 0-7 are
++ * mapped to the standard 0-7 SQI scale via a lookup table.
++ *
++ * Return: SQI value (0–7), or a negative errno on failure.
++ */
++static int kszphy_get_sqi(struct phy_device *phydev)
++{
++	int sum[KSZ9477_MAX_CHANNELS] = { 0 };
++	int worst_sqi = KSZ9477_SQI_MAX;
++	int i, val, raw_sqi, ch;
++	u8 channels;
++
++	/* Determine applicable channels based on link speed */
++	if (phydev->speed == SPEED_1000)
++		channels = 4;
++	else if (phydev->speed == SPEED_100)
++		channels = 1;
++	else
++		return -EOPNOTSUPP;
++
++	/* Sample and accumulate SQI readings for each pair (currently only one).
++	 *
++	 * Reference: KSZ9477S Datasheet DS00002392C, Section 4.1.11 (page 26)
++	 * - The SQI register is updated every 2 µs.
++	 * - Values may fluctuate significantly, even in low-noise environments.
++	 * - For reliable estimation, average a minimum of 30–50 samples
++	 *   (recommended for noisy environments)
++	 * - In noisy environments, individual readings are highly unreliable.
++	 *
++	 * We use 40 samples per pair with a delay of 3 µs between each
++	 * read to ensure new values are captured (2 µs update interval).
++	 */
++	for (i = 0; i < KSZ9477_SQI_SAMPLE_COUNT; i++) {
++		for (ch = 0; ch < channels; ch++) {
++			val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
++					   KSZ9477_MMD_SIGNAL_QUALITY_CHAN_A + ch);
++			if (val < 0)
++				return val;
++
++			raw_sqi = FIELD_GET(KSZ9477_MMD_SQI_MASK, val);
++			sum[ch] += raw_sqi;
++
++			/* We communicate with the PHY via MDIO via SPI or
++			 * I2C, which is relatively slow. At least slower than
++			 * the update interval of the SQI register.
++			 * So, we can skip the delay between reads.
++			 */
++		}
++	}
++
++	/* Calculate average for each channel and find the worst SQI */
++	for (ch = 0; ch < channels; ch++) {
++		int avg_raw_sqi = sum[ch] / KSZ9477_SQI_SAMPLE_COUNT;
++		int mapped_sqi;
++
++		/* Handle the pre-fail/failed state first. */
++		if (avg_raw_sqi >= ARRAY_SIZE(ksz_sqi_mapping))
++			mapped_sqi = 0;
++		else
++			/* Use the lookup table for the good signal range. */
++			mapped_sqi = ksz_sqi_mapping[avg_raw_sqi];
++
++		if (mapped_sqi < worst_sqi)
++			worst_sqi = mapped_sqi;
++	}
++
++	return worst_sqi;
++}
++
++static int kszphy_get_sqi_max(struct phy_device *phydev)
++{
++	return KSZ9477_SQI_MAX;
++}
++
+ static void kszphy_enable_clk(struct phy_device *phydev)
+ {
+ 	struct kszphy_priv *priv = phydev->priv;
+@@ -5801,6 +5931,8 @@ static struct phy_driver ksphy_driver[] = {
+ 	.update_stats	= kszphy_update_stats,
+ 	.cable_test_start	= ksz9x31_cable_test_start,
+ 	.cable_test_get_status	= ksz9x31_cable_test_get_status,
++	.get_sqi	= kszphy_get_sqi,
++	.get_sqi_max	= kszphy_get_sqi_max,
+ } };
+ 
+ module_phy_driver(ksphy_driver);
+-- 
+2.39.5
 
 
