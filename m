@@ -1,236 +1,151 @@
-Return-Path: <linux-kernel+bounces-705690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E21AEAC4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFD4AEAC51
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 03:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96A7C189F202
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC924A6F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 01:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A96815B54A;
-	Fri, 27 Jun 2025 01:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5B610F1;
+	Fri, 27 Jun 2025 01:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RSk8vOQP"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DGiJoNa1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D30288A2
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 01:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0AC2F1FEA
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 01:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750987290; cv=none; b=uXorVw0r61i9OIDIHTB85EfpYvCefYG3XlhZq4qgognbICr9gaZ4NVpC0FxNMYSzZixEvC+wK5jKSMj08lP24rRWohIK/q5qXzLufFES7kelfX3WX1VfsT0b+V7ltnljI3IXJhJ2h8hBwFIucbidGDhjSk9INOAdVW/FOp5c5V4=
+	t=1750987734; cv=none; b=rzJ3hKG8d+Wura3/s7atzRspfIaZvqyHFmsXMGA54ZNBamBUprGNi/ANs5OxWiRQoZCEsPRuKPg3/YaG9KdiszOxGxiZRle+/nDP/kMpTX6gWAtj6G1A+y39HKawytPs+xHaD+1TxvdIbEidpfyEboawDuon3Nsz+DDFkVzVvNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750987290; c=relaxed/simple;
-	bh=zmp2BR+LTEf7nbM86yaKod0xJjE/UEAE9LnZE2XqcGg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VtPBCsJ9WFxMa+J54Ec7aqOQjVysuJllF6Yzm8rpxez72Wr8gI/fz2MTDIgi4QtVqIIvdx6/iHaeCno5mgMBX23Qb3m1RzqTd5eBI/eYy1fnh509ePdy90T2dl6i0ela8lUpstLpzxhYfPS7noCPEWyrqrX4IlhwxOeuwQN6HsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RSk8vOQP; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1750987286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0jHEVG0rfttzRt1zyd21KTlJWuRDVM5oEXRmSZeoKDs=;
-	b=RSk8vOQPFq4ETnChYLalTFfcHWw9GLAtRMv8dOJszpR0mafoZfH+KvuhcMXWX3eNq48LHI
-	0Ve31zltOxka+N54YfBTl5rWlFIok0U7vIaCF6SW/+7INL/AEkhN5GHSKUJEbbNwa3XhqT
-	kHVtEloisuubpG13sa60Kx43IW6KVi4=
-From: Youling Tang <youling.tang@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH 3/3] bcachefs: Spilt bchfs_fallocate() into two functions
-Date: Fri, 27 Jun 2025 09:21:04 +0800
-Message-Id: <20250627012104.222703-3-youling.tang@linux.dev>
-In-Reply-To: <20250627012104.222703-1-youling.tang@linux.dev>
-References: <20250627012104.222703-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1750987734; c=relaxed/simple;
+	bh=mLhzT0gbEINjxMyIEBcYQYBQbYT3gPLBbXmxqgDjbXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AwNoLi+MVq1FWu0cNNeyp7Yt5BlnKbQfbIh2kMA0unImXovMQMQlIevw9DSzmFzsNjqe+rU7yPH6PmfLZZEjBy9RUPLV04mlFPz5RObJrRmS1BAAMxSRsmAVKiTJoJoL2/l0hCV5EC3fQz8tnA+JgTZhGlpp8YgfsKkRI8A3+o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DGiJoNa1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55QHpVHL006382
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 01:28:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7BHttPaz4TxUNQzBLNE+418p
+	FfXOu6+pWP6NmmNpoHo=; b=DGiJoNa1uPazrx+2KERUtSEAXuqt4lVnru3pvqJJ
+	J2DFGQVD+8mf+Fl2GVyLhAKu35qYZb8sSEmA1WTSMo0Jt+paxrecMa9BzYPO2Wnm
+	KYffpuY2cfCquGg9F5QyTYfsJwHHOucH5FURTX31/PKx8gYxn0BRN6Gp7mT7A/lr
+	BLtWaRVfMJNeeERQNRTo3utljaZdI1nnWrGe/cs9btcI01h9BslyF+08y0hFXGKe
+	THEzYiPVEtomHF/js31JRvJ927aFAn4gc/NwzgfNid+YfsElOPJc2pjMSfsq0avP
+	G1UtWR4nTF2oGSSpQ2sGFu9qddblmKuJfXZMEBVXsbUFtQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47emcmxu06-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 01:28:51 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d38c5c3130so236991685a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 18:28:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750987730; x=1751592530;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7BHttPaz4TxUNQzBLNE+418pFfXOu6+pWP6NmmNpoHo=;
+        b=vzkyj+pxw/ZCcnksS6M+MPuCIQ8LBc0dgGBfbMCwr3Ft5UYi8R5Lx0N/1Ue6eXs3b+
+         HenmmKR0GTkfsxluo2DeqP8v2bp7KLIwXrezUfgQ4a9KuSnnkplFxRQKlmvvKdudkPW5
+         WuZyUw4LaYqy1Rs87oFITdXVdNnIYEuqJkTa8j0iWq54aHj7ja71RP3pjOpIFTxmwAqb
+         z6X6C5tqnkobYx2WxxlhfcgY02fauCzfatjc40irG3Es76DGoQlL54wdSgw7GZnSEUNQ
+         SviJAuNLKncIV7Ou+KWY4sculRk8OCz+DoMqU8cNb5MNBQd2+JZ/cZQojPJzTmArc5Y3
+         A3mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTjAdwf3OCxn5zxP1WYlqL/QS8m/SHE20H2fs5sYqRg3xuqjM90SJROm5WpSzYWmfHH8sJIkLImYKPftA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8YdrI5RjLznfwlF5/ALeBvl3X7qKQbHQGtfKI3MksUVGhctpX
+	+oiwnMKpe3pH5I+/cen795Oi96zlvpjxIFlbKQpAlQaydWSUGsSNiSWhlXImZZ0naFa1RWexfzU
+	gXpl7v0kh2+Rml+VVf9qCxoYTQKtohp+x1n5GhwL31r91peZCawWbLdg6JUy9lZMaEd0=
+X-Gm-Gg: ASbGncvll6xhZvLx/tTdMbLKSDul8jC7pMZLcSO9jdt2Ufk/lDpgK2MI0BhQn7I66sW
+	KmzNhsOLa+QCD2zVFAzTvq0+Y5QTq0YdqKrV4ELti/gFVYR/k7oyZzjUb1irGvfUt4cjKgtqhPj
+	Mk0G0mKWci4o01htzDystCWOzaXsmHgjk+ZU3iSE0ftCj0c+RHzot8hQM/7qnzBD7fr/BiwnuS2
+	rYE4Wf7yM/lK7BXJN7s5PvdTZMpzipiHTy50l4SE2zpJaQ9Tpau8F4WqVrdXEsfjghk6SD+G5YF
+	lXc9if4LdUT7nIHdZXYx8tIBmzMq3ed7+u3jelunt7LIQJfoSXekXUIPlM39y9/4V0uQMo1Qi3R
+	iOk0XtlPwlelpSombUJDd2dUSj8JZd1ScNQo=
+X-Received: by 2002:a05:620a:198a:b0:7d3:ed4d:f1ba with SMTP id af79cd13be357-7d4439b298dmr282410585a.49.1750987730515;
+        Thu, 26 Jun 2025 18:28:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4mM93pJrmTOiGI3AS8mbJSAOrrA8+GDhMNzP/TNmnR49p+KAgomnY2oA+PJOFrHgpx9euiA==
+X-Received: by 2002:a05:620a:198a:b0:7d3:ed4d:f1ba with SMTP id af79cd13be357-7d4439b298dmr282408685a.49.1750987730124;
+        Thu, 26 Jun 2025 18:28:50 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32cd2ee85e9sm3688701fa.82.2025.06.26.18.28.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Jun 2025 18:28:49 -0700 (PDT)
+Date: Fri, 27 Jun 2025 04:28:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] interconnect: qcom: Add SM7635 interconnect provider
+ driver
+Message-ID: <2we5y3aimhhizbsr6rvhpvtfkzl35lvpqr5vlhpxzsdcjudlqb@iotpzxpksveq>
+References: <20250625-sm7635-icc-v1-0-8b49200416b0@fairphone.com>
+ <20250625-sm7635-icc-v1-2-8b49200416b0@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625-sm7635-icc-v1-2-8b49200416b0@fairphone.com>
+X-Proofpoint-GUID: m4ieOyVU8psW1YFXnHj9R1dhC_zTgdbF
+X-Proofpoint-ORIG-GUID: m4ieOyVU8psW1YFXnHj9R1dhC_zTgdbF
+X-Authority-Analysis: v=2.4 cv=J+eq7BnS c=1 sm=1 tr=0 ts=685df3d3 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=6H0WHjuAAAAA:8 a=lAZXaacekHF5OtbiRAEA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDAxMCBTYWx0ZWRfX1uFUhAr7A3yw
+ 3IbfJrYuZ7gqfHlXUovIz49DhYZy3GCb5SU0P1YhGs2kFxPUFo6SJ30xVO22JjjsUekjyMpyMPg
+ ymSTcANV/ilBY3FP+54q1fIuLSjft7BoQswzS+Un454/dEeD61N1YbqHAsdHvx8pOFQTiy03iuP
+ WT6Czxc/GXMAuwNCgBXuZogrV5xQNS4+rsX9hFARcUu7w522hyD05LRYWBL4+6QCUcq0Jz/Gpot
+ LcOSkzVFlSDfY0a2pVZNGE7Codb/aI6ct29RyTTn8K2v1HOqpCO++t7ENumj/CH5WmCx0usnyvZ
+ IYBTc+s4XTN6EEqe87RtvLuPEfJIDhnUqMmDz2xMKUyr7Vdqz7gw6xp+2KIdbCzgR/YkPgwWVLB
+ Xd0eIYQDjanuEsqx2By4EmFPR+WdOXeh8zU4NQBI9+BtvU+t8skUjeFkK7na36SqcfVh0ltP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_01,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270010
 
-From: Youling Tang <tangyouling@kylinos.cn>
+On Wed, Jun 25, 2025 at 11:13:48AM +0200, Luca Weiss wrote:
+> Add driver for the Qualcomm interconnect buses found in SM7635 based
+> platforms. The topology consists of several NoCs that are controlled by
+> a remote processor that collects the aggregated bandwidth for each
+> master-slave pairs.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  drivers/interconnect/qcom/Kconfig  |    9 +
+>  drivers/interconnect/qcom/Makefile |    2 +
+>  drivers/interconnect/qcom/sm7635.c | 1554 ++++++++++++++++++++++++++++++++++++
+>  drivers/interconnect/qcom/sm7635.h |  130 +++
+>  4 files changed, 1695 insertions(+)
 
-Separating bchfs_fallocate() into two functions to handle
-FALLOC_FL_ALLOCATE_RANGE and FALLOC_FL_ZERO_RANGE respectively makes the
-code more readable.
+Could you please use dynamic IDs? SA8775p driver has been converted
+already and I've sent series converting the rest of the RPMh drivers to
+dynamic ID allocation.
 
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
----
- fs/bcachefs/fs-io.c | 111 ++++++++++++++++++++++++++++++--------------
- 1 file changed, 77 insertions(+), 34 deletions(-)
+> 
 
-diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
-index 69d3ddd4c6a1..430b59c7b7a3 100644
---- a/fs/bcachefs/fs-io.c
-+++ b/fs/bcachefs/fs-io.c
-@@ -627,7 +627,7 @@ static noinline long bchfs_fcollapse_finsert(struct bch_inode_info *inode,
- 	return ret;
- }
- 
--static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
-+static noinline int bchfs_fallocate(struct bch_inode_info *inode, int mode,
- 			     u64 start_sector, u64 end_sector)
- {
- 	struct bch_fs *c = inode->v.i_sb->s_fs_info;
-@@ -757,59 +757,100 @@ static noinline int __bchfs_fallocate(struct bch_inode_info *inode, int mode,
- 	return ret;
- }
- 
--static noinline long bchfs_fallocate(struct bch_inode_info *inode, int mode,
-+static int bchfs_falloc_newsize(struct file *file, int mode, loff_t offset,
-+				loff_t len, loff_t *new_size)
-+{
-+	struct inode *inode = file_inode(file);
-+
-+	if ((mode & FALLOC_FL_KEEP_SIZE) || offset + len <= i_size_read(inode))
-+		return 0;
-+	*new_size = offset + len;
-+	return inode_newsize_ok(inode, *new_size);
-+}
-+
-+static int bchfs_falloc_setsize(struct bch_fs *c, struct bch_inode_info *inode,
-+				loff_t new_size)
-+{
-+	int ret;
-+
-+	spin_lock(&inode->v.i_lock);
-+	i_size_write(&inode->v, new_size);
-+	spin_unlock(&inode->v.i_lock);
-+
-+	mutex_lock(&inode->ei_update_lock);
-+	ret = bch2_write_inode_size(c, inode, new_size, 0);
-+	mutex_unlock(&inode->ei_update_lock);
-+
-+	return ret;
-+}
-+
-+static noinline long bchfs_falloc_allocate_range(struct file *file, int mode,
- 			    loff_t offset, loff_t len)
- {
-+	struct bch_inode_info *inode = file_bch_inode(file);
- 	struct bch_fs *c = inode->v.i_sb->s_fs_info;
- 	u64 end		= offset + len;
-+	loff_t new_size = 0;
- 	u64 block_start	= round_down(offset,	block_bytes(c));
- 	u64 block_end	= round_up(end,		block_bytes(c));
-+	int ret;
-+
-+	ret = bchfs_falloc_newsize(file, mode, offset, len, &new_size);
-+	if (ret)
-+		return ret;
-+
-+	ret = bchfs_fallocate(inode, mode, block_start >> 9, block_end >> 9);
-+	if (ret)
-+		return ret;
-+
-+	if (mode & FALLOC_FL_KEEP_SIZE && end > inode->v.i_size)
-+		new_size = inode->v.i_size;
-+
-+	if (new_size)
-+		ret = bchfs_falloc_setsize(c, inode, new_size);
-+
-+	return ret;
-+}
-+
-+static noinline long bchfs_falloc_zero_range(struct file *file, int mode,
-+			    loff_t offset, loff_t len)
-+{
-+	struct bch_inode_info *inode = file_bch_inode(file);
-+	struct bch_fs *c = inode->v.i_sb->s_fs_info;
-+	u64 end		= offset + len;
-+	loff_t new_size = 0;
-+	u64 block_start	= round_up(offset,	block_bytes(c));
-+	u64 block_end	= round_down(end,	block_bytes(c));
- 	bool truncated_last_page = false;
- 	int ret, ret2 = 0;
- 
--	if (!(mode & FALLOC_FL_KEEP_SIZE) && end > inode->v.i_size) {
--		ret = inode_newsize_ok(&inode->v, end);
--		if (ret)
--			return ret;
--	}
--
--	if (mode & FALLOC_FL_ZERO_RANGE) {
--		ret = bch2_truncate_folios(inode, offset, end);
--		if (unlikely(ret < 0))
--			return ret;
-+	ret = bchfs_falloc_newsize(file, mode, offset, len, &new_size);
-+	if (ret)
-+		return ret;
- 
--		truncated_last_page = ret;
-+	ret = bch2_truncate_folios(inode, offset, end);
-+	if (unlikely(ret < 0))
-+		return ret;
- 
--		truncate_pagecache_range(&inode->v, offset, end - 1);
-+	truncated_last_page = ret;
- 
--		block_start	= round_up(offset,	block_bytes(c));
--		block_end	= round_down(end,	block_bytes(c));
--	}
-+	truncate_pagecache_range(&inode->v, offset, end - 1);
- 
--	ret = __bchfs_fallocate(inode, mode, block_start >> 9, block_end >> 9);
-+	ret = bchfs_fallocate(inode, mode, block_start >> 9, block_end >> 9);
- 
- 	/*
- 	 * On -ENOSPC in ZERO_RANGE mode, we still want to do the inode update,
- 	 * so that the VFS cache i_size is consistent with the btree i_size:
- 	 */
--	if (ret &&
--	    !(bch2_err_matches(ret, ENOSPC) && (mode & FALLOC_FL_ZERO_RANGE)))
-+	if (ret && !(bch2_err_matches(ret, ENOSPC)))
- 		return ret;
- 
- 	if (mode & FALLOC_FL_KEEP_SIZE && end > inode->v.i_size)
--		end = inode->v.i_size;
--
--	if (end >= inode->v.i_size &&
--	    (((mode & FALLOC_FL_ZERO_RANGE) && !truncated_last_page) ||
--	     !(mode & FALLOC_FL_KEEP_SIZE))) {
--		spin_lock(&inode->v.i_lock);
--		i_size_write(&inode->v, end);
--		spin_unlock(&inode->v.i_lock);
--
--		mutex_lock(&inode->ei_update_lock);
--		ret2 = bch2_write_inode_size(c, inode, end, 0);
--		mutex_unlock(&inode->ei_update_lock);
--	}
-+		new_size = inode->v.i_size;
-+
-+	if (new_size &&
-+	    ((!truncated_last_page) || !(mode & FALLOC_FL_KEEP_SIZE)))
-+		ret2 = bchfs_falloc_setsize(c, inode, new_size);
- 
- 	return ret ?: ret2;
- }
-@@ -843,8 +884,10 @@ long bch2_fallocate_dispatch(struct file *file, int mode,
- 
- 	switch (mode & FALLOC_FL_MODE_MASK) {
- 	case FALLOC_FL_ALLOCATE_RANGE:
-+		ret = bchfs_falloc_allocate_range(file, mode, offset, len);
-+		break;
- 	case FALLOC_FL_ZERO_RANGE:
--		ret = bchfs_fallocate(inode, mode, offset, len);
-+		ret = bchfs_falloc_zero_range(file, mode, offset, len);
- 		break;
- 	case FALLOC_FL_PUNCH_HOLE:
- 		ret = bchfs_fpunch(inode, offset, len);
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
