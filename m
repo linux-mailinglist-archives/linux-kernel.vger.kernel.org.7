@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-706808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10989AEBC44
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6A7AEBC49
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736C21C607D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F4F6A248F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB39D2E9EDF;
-	Fri, 27 Jun 2025 15:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1562EA48D;
+	Fri, 27 Jun 2025 15:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fqF5i0IE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vk5KrW9I"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08D2E9EA7
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184D02EA163
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 15:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751039229; cv=none; b=QbCj4SzmeGicKXRk/Pt/SFq6U5xl51A0pGgcQYg+dZCOAURuZHtQhRxN+ix/Qb2vEv37PmAFaGwAE+zMaZmq4HjnhP9DgIk1voJyuGWgzJkLxsUP36hEO8TnjdcDy1JSAvzV4/Zqi5EWEwEN9DUn7xYPglHAz2E6iaaQjAH72UM=
+	t=1751039232; cv=none; b=p5D2N1UmmpfalULFrwU4zk/9kkvVmX0gVNXDkpUx77ePJOZsmnUxy+23/J7pNSdvQ1h04JPnB1G0zWCJHe2Kq+lB6tjHRMVIINnWzX8ypIIbtlPzIg8v/SdnFOYef7/Qoap6ckECZo6w731pt2+kV7VeFNs/ckuJHC79H71YMVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751039229; c=relaxed/simple;
-	bh=znDgLA4PCa0dI46kISScS4QqE/4p3uzAS+5TqbQUTHI=;
+	s=arc-20240116; t=1751039232; c=relaxed/simple;
+	bh=9ZtPgZuS9uFslrXUQ1rcSbFCNR4aA6sb8TcVi4Z+HRw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=obUa5Z7N+CKGF6w0bxvxuoMT/uIyNP4Mov0cylv3r0paOC5YZecr3jafBqs5CHfjX4Cc5b4fvQfKgDJxJsUOpjlxHbevcwoQFM8DiI2vcevz+x2EQ3tbc6oqGyVWGtZbKF8M8eITMmUEyW+MYNvm5XsQvueApeY9xunWC7iSslA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fqF5i0IE; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=igreh4fW2RCqMyUeAbLIk48TeqUfvXdQpCteynDoFbZy0skSe+G4kVpqpnlRTfrRxqanY83maDD0yenXOWyAdIG/xswSwgvVet3HuakqSZD591gZ0YzQCE6qH2QX7NizAIQ/o3gh+bwhGKMfq1dHEytUFcZ4b5zMWs4qzxa4G/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vk5KrW9I; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751039226;
+	s=mimecast20190719; t=1751039230;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4s5p6yQ8BzE2xSNqwYo7qQuoEVz15qoQNKU3WjAr+jY=;
-	b=fqF5i0IExfh7FFoyv79AztQf/2f6C+QhxSEOcKAlsCJuxmEsmyoGyLtSBkIXMpYOB8vYhJ
-	yDwdR/urp4zpMETZHUcEZg4VMucg3TiYu++rB3tq5aNAZA+ggnCkCETEMRj5Y+9vNQAn8r
-	wQoFaITs8SdMrlrIHHMNGrL+UcjiyKg=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=2pTwEtrgahpBZLxew2/VEiH1EfjnhNlR4+CF1BwOTeU=;
+	b=Vk5KrW9IEszFLTiZxAXai7oAwbnElfCrTXFJ33Jhz7MZosMQuobDurVZYQOP98AEjHRw8o
+	XCbxM/+LDozMrawh73+IwpJvB7Ea/diXmt4pnMuKlm0DUjvCWwSZGZT/k49HmHLbVy2wtC
+	Z81dq7H5fjuycmxw68GjDZAqkPZR6qg=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-NXpfctAZNe257W2ABn_X1w-1; Fri, 27 Jun 2025 11:47:04 -0400
-X-MC-Unique: NXpfctAZNe257W2ABn_X1w-1
-X-Mimecast-MFC-AGG-ID: NXpfctAZNe257W2ABn_X1w_1751039224
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fad2a25b65so38077496d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 08:47:04 -0700 (PDT)
+ us-mta-651-cSy7lidfP0uF3E5TnZgndw-1; Fri, 27 Jun 2025 11:47:07 -0400
+X-MC-Unique: cSy7lidfP0uF3E5TnZgndw-1
+X-Mimecast-MFC-AGG-ID: cSy7lidfP0uF3E5TnZgndw_1751039227
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6fb1be925fbso35502866d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 08:47:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751039224; x=1751644024;
+        d=1e100.net; s=20230601; t=1751039227; x=1751644027;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4s5p6yQ8BzE2xSNqwYo7qQuoEVz15qoQNKU3WjAr+jY=;
-        b=xD/zTtMwQSEGc06I1gd5bvUVrrdCG3A6eSuhVL1QwO5r9ZcZA0TxTiBlyb0Eh0+uoi
-         0VA5ywpcAjcoPhQpBbLAmmwFm+2DxYTaO+qwxkLQjLzIi/6lYggQOc3HFMdPBir1qE/t
-         +dCiHrMdDYlFfUwQjxxgFJJbfeEKe/TCaAx+0VRqJDD4L/aOW4HtUDcRKY0MaQNWGRA6
-         ss2a9X8zVzIoZgSgiWY4w1bYSFcVd4VrlQh634n7DdYUNRu59kiZfjORkrhOLCPuMdDf
-         CzucqwCWMC+uyynKitRsxxPEgRDYAc/VQQyn+gfzCPCHlTG2C/dPstW+NGfl2Gt4NJ9Z
-         vNAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLZ3vbkRIhDludeIxV2Hi+m1Q/nT3+zvrJu85AezxycVdEIcljxXBPDJni6JAJp3qIreNOFm43bcVCSaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxcbovo2MNmMBm+9OPXK9VC1focg45+XLL5QpjGtDbDCujmSpm
-	9e+0niCp1uhvXjRpGsz6YwfWKILoV84Knsap3T3phFn7irA2RgOBg3mPU85jB+8NgeUWI7s4Zo2
-	+cQkaoiUeBRNw7xGOElk08e/6GdZtqPcdrI5sr2biX0TzMmwLYklXYHSfozhG0YqC0Q==
-X-Gm-Gg: ASbGncusrK+NQRm6fE9nRh+GRdLi2T4xT7HICc7UG5I5gcef7GWs/4y7cnAgzbo0Tpo
-	gc8q7E+1GS3Fa3SUxJ7ovgTwKxrUxBS+BumCxoUm9irlNsEKOCqvNCbkT2J00QIUQRp8evtmFgX
-	ojbTtMXdnmrW7NVV1Zfw6yK6xlphYKh6lRwTMtcIjmpmzTsiTn2zhIunwM/EDy7T9KKKAnno6Nx
-	+8A5hfYjesUmfwiq4iiH13GOveHq6hWK61Vqdk+YiWuImPxvnI+ioRZfSliPt/ELZnB9hh1x/gX
-	Fo20FQ+iunc=
-X-Received: by 2002:a05:6214:248d:b0:6cb:ee08:c1e8 with SMTP id 6a1803df08f44-7001378bc2emr77815216d6.23.1751039224358;
-        Fri, 27 Jun 2025 08:47:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHrpemk2muCVBZAJdk1MH+sryhPpY7XYDf5g/Kyt5Bk9fidyZgNPYd2fX9DgN0JanIjEVqfIA==
-X-Received: by 2002:a05:6214:248d:b0:6cb:ee08:c1e8 with SMTP id 6a1803df08f44-7001378bc2emr77814886d6.23.1751039223990;
-        Fri, 27 Jun 2025 08:47:03 -0700 (PDT)
+        bh=2pTwEtrgahpBZLxew2/VEiH1EfjnhNlR4+CF1BwOTeU=;
+        b=d0B+uaWExSAyaSioB8iMfkjSsk550GIbeJbF5UVDLNr2kWoC6uKv4QFXHh1UOZPGtH
+         vzIPEtjrbQ8p8EsAC8QScEgn+j1tz8+J2cM4nVNruI55qzmPpmkpUdtSb9UM5eJpPFEK
+         rbQBBgPDGLvWhsQK6mK7xtz3mdsBMUq5YS3+rdaT+q8PVsoeZRzN8BfG67d8nlXxxmOV
+         xTnUd3DFPlGukEckrZinqDoqBULKhbQ8jCYOi6Dr8OizVAycGqsBOq7Z6pnIPNUA7UIQ
+         DZlErQUtacvOhuBHojmYf46dJeLR0mpWF+6iZBKQlVJSo6IGdnXf/jjNCquebVTLGood
+         BOdg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ZMv4mWHThbFZajlfUApp1EZofg7+fkxEklgzG0JbV39FY7PFUrOrQjJUFm8amxvJIPkbyvas04YFbQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd25UVDlTCaVlEZiUDw9P2WVWrvjumiScB4Q7Nyj4/0pRzwDjT
+	cVuPIouxEgOUPKV7bB1p14ZQmiRQQ9QvFwBIaKXqfqyBPvP0zP9lPrWmDyXyDCW7DZORKrIUCac
+	yzkD85GtCG8SMQguNB3vMbNdQJkiuLXEUkRvA+dibWrhuSJ3piCbvE3Qs+nsgz2QJjg==
+X-Gm-Gg: ASbGnctQ/TO7G6gQxPNbzdde4BEShUwp8bFJGN50U3/8tHv4Pgvl3PciMRpk2Sz7mgS
+	M/Py3RMjrJDg/yW3xApZ26Up5Jf4avgs/vLq8Xmb3Homd7hCAFrgI0uOk2u1o3LwWeB1ZKbgzC8
+	VJMa1yV3jWrX0qdcX+uxiWPbo27TPd+FJUukC/GNddFR6IqT0V9BRGYvRUyk9H2mXmi6WB0fEbZ
+	gU2yoCgm+U5WdORVqDgDJ/NtbjJzALOdz8IiW+uIyPYD2VlVo+9S5A4b2DGkh69ZYDvIOGIyYCT
+	axYr0cL1UHE=
+X-Received: by 2002:ad4:5ae3:0:b0:6f8:b73e:8ea5 with SMTP id 6a1803df08f44-7000233c759mr59425796d6.26.1751039226956;
+        Fri, 27 Jun 2025 08:47:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1K53WVc8+zg900RTkXeBD9NJqIkartaxwzghCXbibLJ+g6fNpxQUnaJNDNiONSfRZ42vUYQ==
+X-Received: by 2002:ad4:5ae3:0:b0:6f8:b73e:8ea5 with SMTP id 6a1803df08f44-7000233c759mr59425426d6.26.1751039226435;
+        Fri, 27 Jun 2025 08:47:06 -0700 (PDT)
 Received: from x1.com ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd772e4fddsm22296066d6.65.2025.06.27.08.47.01
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd772e4fddsm22296066d6.65.2025.06.27.08.47.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 08:47:02 -0700 (PDT)
+        Fri, 27 Jun 2025 08:47:05 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
@@ -98,9 +98,9 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	Oscar Salvador <osalvador@suse.de>,
 	Axel Rasmussen <axelrasmussen@google.com>,
 	Ujwal Kundur <ujwal.kundur@gmail.com>
-Subject: [PATCH v2 2/4] mm/shmem: Support vm_uffd_ops API
-Date: Fri, 27 Jun 2025 11:46:53 -0400
-Message-ID: <20250627154655.2085903-3-peterx@redhat.com>
+Subject: [PATCH v2 3/4] mm/hugetlb: Support vm_uffd_ops API
+Date: Fri, 27 Jun 2025 11:46:54 -0400
+Message-ID: <20250627154655.2085903-4-peterx@redhat.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250627154655.2085903-1-peterx@redhat.com>
 References: <20250627154655.2085903-1-peterx@redhat.com>
@@ -112,78 +112,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for the new vm_uffd_ops API for shmem.  Note that this only
+Add support for the new vm_uffd_ops API for hugetlb.  Note that this only
 introduces the support, the API is not yet used by core mm.
 
-Due to the tailored uffd_copy() API, shmem is extremely easy to support it
-by reusing the existing mfill function.
+Due to legacy reasons, it's still not trivial to move hugetlb completely to
+the API (like shmem).  But it will still use uffd_features and uffd_ioctls
+properly on the API because that's pretty general.
 
-It only needs a separate uffd_get_folio() definition but that's oneliner.
-
-Cc: Hugh Dickins <hughd@google.com>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Oscar Salvador <osalvador@suse.de>
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/shmem.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ mm/hugetlb.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2b19965d27df..9a8b8dd4709b 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3151,6 +3151,13 @@ static inline struct inode *shmem_get_inode(struct mnt_idmap *idmap,
- #endif /* CONFIG_TMPFS_QUOTA */
- 
- #ifdef CONFIG_USERFAULTFD
-+
-+static int shmem_uffd_get_folio(struct inode *inode, pgoff_t pgoff,
-+				struct folio **folio)
-+{
-+	return shmem_get_folio(inode, pgoff, 0, folio, SGP_NOALLOC);
-+}
-+
- int shmem_mfill_atomic_pte(pmd_t *dst_pmd,
- 			   struct vm_area_struct *dst_vma,
- 			   unsigned long dst_addr,
-@@ -5194,6 +5201,19 @@ static int shmem_error_remove_folio(struct address_space *mapping,
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 11d5668ff6e7..ccd2be152d36 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5457,6 +5457,22 @@ static vm_fault_t hugetlb_vm_op_fault(struct vm_fault *vmf)
  	return 0;
  }
  
 +#ifdef CONFIG_USERFAULTFD
-+static const vm_uffd_ops shmem_uffd_ops = {
++static const vm_uffd_ops hugetlb_uffd_ops = {
 +	.uffd_features	= 	__VM_UFFD_FLAGS,
++	/* _UFFDIO_ZEROPAGE not supported */
 +	.uffd_ioctls	= 	BIT(_UFFDIO_COPY) |
-+				BIT(_UFFDIO_ZEROPAGE) |
 +				BIT(_UFFDIO_WRITEPROTECT) |
 +				BIT(_UFFDIO_CONTINUE) |
 +				BIT(_UFFDIO_POISON),
-+	.uffd_get_folio	=	shmem_uffd_get_folio,
-+	.uffd_copy	=	shmem_mfill_atomic_pte,
++	/*
++	 * Hugetlbfs still has its own hard-coded handler in userfaultfd,
++	 * due to limitations similar to vm_operations_struct.fault().
++	 * TODO: generalize it to use the API functions.
++	 */
 +};
 +#endif
 +
- static const struct address_space_operations shmem_aops = {
- 	.dirty_folio	= noop_dirty_folio,
- #ifdef CONFIG_TMPFS
-@@ -5296,6 +5316,9 @@ static const struct vm_operations_struct shmem_vm_ops = {
- 	.set_policy     = shmem_set_policy,
- 	.get_policy     = shmem_get_policy,
- #endif
+ /*
+  * When a new function is introduced to vm_operations_struct and added
+  * to hugetlb_vm_ops, please consider adding the function to shm_vm_ops.
+@@ -5470,6 +5486,9 @@ const struct vm_operations_struct hugetlb_vm_ops = {
+ 	.close = hugetlb_vm_op_close,
+ 	.may_split = hugetlb_vm_op_split,
+ 	.pagesize = hugetlb_vm_op_pagesize,
 +#ifdef CONFIG_USERFAULTFD
-+	.userfaultfd_ops = &shmem_uffd_ops,
++	.userfaultfd_ops = &hugetlb_uffd_ops,
 +#endif
  };
  
- static const struct vm_operations_struct shmem_anon_vm_ops = {
-@@ -5305,6 +5328,9 @@ static const struct vm_operations_struct shmem_anon_vm_ops = {
- 	.set_policy     = shmem_set_policy,
- 	.get_policy     = shmem_get_policy,
- #endif
-+#ifdef CONFIG_USERFAULTFD
-+	.userfaultfd_ops = &shmem_uffd_ops,
-+#endif
- };
- 
- int shmem_init_fs_context(struct fs_context *fc)
+ static pte_t make_huge_pte(struct vm_area_struct *vma, struct folio *folio,
 -- 
 2.49.0
 
