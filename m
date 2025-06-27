@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-706686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3737AEB9E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21038AEB9EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6A24A0616
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 397C34A42AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CF32E2644;
-	Fri, 27 Jun 2025 14:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC49717A309;
+	Fri, 27 Jun 2025 14:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X15TK5B2"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gPwYuyKH"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2523F3234
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF7EFBF6
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751034696; cv=none; b=HN+nvhI2XwrC6c7q9IpJYRbJtpYxVOcK9Bc8Hw7Gl+w7bzl+800smQJ646A83xru9v2WLLsNTff6Jfw7+g3Xg1MTc37Ckd3M9ziLpbzg8r0oiNlHePKhYj8ISrpoV2yy8HxrgMZZ//oZ4oGhB6Ym+0qI8gLlzHiTn2lTIgOVGy8=
+	t=1751034770; cv=none; b=EaB9U6fnVic8Tu+RvRGZlF0uoyjRgAIepk9+fVBa9TsKtII/xmhwVqPsoTIAFDx5/P8PqxIAAW9UH9xWUsMgiVPD9zY/ZGP188SCyMuYWiUY400CC6CnsgroL4OMwOYBqAu/nUykqOGBvsOYxHogFfHcB1ibhVIs6JkeKsFIARI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751034696; c=relaxed/simple;
-	bh=B1BdE0J+jY6ME5BrRSZux1zOeKpTZZ4DlpXlyhs8zxE=;
+	s=arc-20240116; t=1751034770; c=relaxed/simple;
+	bh=Po4u001r36w6b0m/+peKhn+9f+wXsw6fw50zBQ2mS6k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l3mf7f0Dd9UQCodauLSp+Yj8pBBcypk637A1DvCe4kt4fx12YuAt0Y6ceEGliEwtCKk+hTb4bYmfVDvqVeIzUsXELP0UuI33wQJAfaNrG6MSx56eSauf/N3BIb3RQiGwN4bADHKZdhXukKtLqHO9rkzmFVKXWClrd5BeInvLKvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X15TK5B2; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so3210995a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:31:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=hwiznzUXpUZ5jBe/EihS4EyW7NuLlGXCqVRx4vGWA6ISSjRDME/7z/YHnXgjCgVC6ULUmST541M4yCuOFuZ/z9WLIZiYyyQVpVkuB7ZqeWmd1fBr+OMJjPi1TMJb2Sd2wQSx01YHgTEJD56S4X+NU4/SaMiQPWrX9FQZTGJ5oT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gPwYuyKH; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6ecf99dd567so25942106d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751034691; x=1751639491; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8o5xo7GeehPDbRd+X/7D8FpirwN/TZkXVzx9zL2sssc=;
-        b=X15TK5B2V1rLeKkJ9wU5Xr0orKYbmRRqGr9S0RVf2ulX2MghILw3tjttiglnpKsyIN
-         CRXcaUxMqgmZwfdT5inUh5hTtd8LF8YFhWlnE9wYyP2T4iDAVSVs8ytbigF9VK/llu9P
-         iD4hW8Jb0DiLH6OXbJxkMEVL5C5qNUxoKevMQZ4IEsHENA4/RThtxOJakLgX7+Nm32HZ
-         e3eXwXlKIoczXAhAGo3cAsKZvWZBGmemfQO6alAIaKrLREmmd1/rs+1+xug+waFxotd3
-         WTUMATMEZB5etKoIISu5G6GiTiIYzaGWAx/glxIY858o9BTWoKCkZO4cI30p8SOJzBDs
-         UKDg==
+        d=google.com; s=20230601; t=1751034768; x=1751639568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JRHcsCTsHBJJ/xPjm9td2b9ZVcHsn4qi0sxiMajgt+I=;
+        b=gPwYuyKHxhwoEbanprOIh/57CEyP03cbIzJKwi5KKraefC2IZzXSIenDkyPHo0IH0j
+         ublPcITE9ig7QW9L5VioufYTKb1n2Q0HpX62nIFz/OzOOnRfrFH78isD7HAC3ODTJYY3
+         zX/7QpPNoaCoyZTl7w8Vi8yty92g9XCWuhydE9ErDL0AnLcBcSn9mvZXAgmykZmSYSBX
+         Mdnym3NmzmJzD5U6LwZEP+0gFz0J+fbq9P8IM021Ezg7c5I2yAuVdrSx3fJ95oqcCdBp
+         ZNcY1rr7CACetUxTQ7DkXYaR5Oa8IJSNjP0BqnUvrZVF3bv8Wl9VOOM0zwWPQo9MNK5f
+         ny/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751034691; x=1751639491;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8o5xo7GeehPDbRd+X/7D8FpirwN/TZkXVzx9zL2sssc=;
-        b=p94ljND/KiHnYv1+GsU7KwSEk0JthHrlOrYutMyN0b1n1zR2kBz74InNM39OEarpRp
-         LKcfF0bpLSUrZFAO0hX0u4f40TOdJiKw/pHAUUN9YWzf8yJTN4KEv6rd4Z4Jyr6cYvwz
-         yKUC23K/3VO2d9ZbtqfazsuPVMpojqYNk3iQoogVbxH7MDyva3XkUM7+R/YbXUa3vc9F
-         QrZlkebaLlyfwl6FTWH+Y5zYWLZMaA3i6nAJlfn2AjF/dyHQSHuj8Y1VEmLAQatm3HlV
-         QC48PYELbk2wyEsdiJEVGEVbqMFGAQhqMEzw96FZyyb7ABR1k4Uo73oJTyZuafodtWTE
-         a+Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyCX+jSM0AuKxqbkDYT0VbSz9cxWEbDuftj8LJWOIV5fznrIRP96bch0x20xkHPWwGHTF28b72pyQC4ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFv10pMSxGM5/nftvP5Piz2W2b3i2Uo8yAS8l5PN0MKza4I6U3
-	OdWFu5qYmgkA0M9RbioxDI5CoV7EfCZQIbSpSYUTiugC9yCKNi99Ix1c+vHKB+G8D01gDvyH5b6
-	33BeqyHEmDclP0pGavyLls4q9UqmNU/C5rWboKKkjKQ==
-X-Gm-Gg: ASbGnctULdAV6BJcoKFY4DIZAtfkxnEq7ux9AOdi9ed0QCNDcOYPmyCnWoudi7opEbK
-	uMeLokafJrE0XGUQE9ogCYCRCv6QqyW2VTPrm+Y+ECor9y/wKH8/SibetcSB/eCmKOHMA1zJLC3
-	UfhuCUa19CpZdCQ0omEhYddItUFwi9y0MKRkZQJrUldzE8AGq5f7Id/pj6qPZUq2b7FbK7cfMtK
-	Brovg==
-X-Google-Smtp-Source: AGHT+IEL785XIeur6WCbc2OIj5nk/sVLVVNkV3GZ+ObEePJ/qNpPBLIGoWwmBJBgA18YqNdBbv+6Y6RgOuBSpzWsw/4=
-X-Received: by 2002:a05:6402:5bc4:b0:607:eeb1:b18b with SMTP id
- 4fb4d7f45d1cf-60c88d9c37dmr2283943a12.8.1751034691378; Fri, 27 Jun 2025
- 07:31:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751034768; x=1751639568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JRHcsCTsHBJJ/xPjm9td2b9ZVcHsn4qi0sxiMajgt+I=;
+        b=cVpS//e0UdvmVBdaB0mbYRw9Jbq92UXD0PhLXokvcIv9DRjmuWfyVULPRqPNcQPDEi
+         YGqg+hS1/rZ2R9ya52mXUJb1lBaIWT6wkI/MrFag4nyq7z0FUDb+Zb8mO949QNjKXKCa
+         R+NUxQWYjZIDrEUG6tW/aq8eqVaNlASZVsFmUbWgMohLw0cRMWkOLzYBl8g/z7j6UvG5
+         eJyTOTez/cPkWKpR8gj0/4i01IHBunuyW1uw6zaIpWxL/6XS1KIPhQ+SDLf8QqBmRmzt
+         O3HfnRBJkALiaqAIdxRCW3VdT3LanjBFY98G0dOyGy21xRG/8NjUmg6U9v46yrCb+O60
+         1T6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVkrhPTR+w2jbcOE4qUmd0zEajncOOe7usIRBdkjHdsfQ+v3gKjjWllHYY3en35ch4JeRlWqwE0EcTlPdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgsd4Z8po6d2IYX7ojEqXU5gEryB1uGvYEJbqQoC0ckL2Q+Rcx
+	ivq6j4zRjtNKUBaYpUY5FeyhM/rA+ooJF8ngqDEbi13FLHLMDZnUMAaazVQ99fkDd968k7BFqwk
+	xeI+wDwPARKJad5phnznFcnBeU1zsbZNFVLY/2F9r
+X-Gm-Gg: ASbGncu6wYwKtp78oy0Q5u0RVpAUYWdvz9Hw5lBNvnoxcCiJVRfZRC5A4VUK29iPPGk
+	e8R3xmbTdg4Ow7D0e6r+YSdMBiGaMRXMe47PCbxyKpFy8HzUbxgVC/WRb21kiGv55Rk2pqKrYNE
+	a9s/VLT5pEHwGeo/PRqcSGfC41ATVsdZ9L1F0pbJPaFXXxI4UY1OEnR8lRjFGAZ485daWXr4dOR
+	w==
+X-Google-Smtp-Source: AGHT+IGXvg5qcm/3TlvU9TnzKZw93CYVeSD6YM9ZKocDg+cEOxV9hu8gdB/cBYZ0v7+49zyWV0HzRZrOxmjxS3ILpO0=
+X-Received: by 2002:a05:6214:3c9e:b0:6fb:59de:f8ab with SMTP id
+ 6a1803df08f44-70002b09787mr64657346d6.10.1751034767488; Fri, 27 Jun 2025
+ 07:32:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250626215911.5992-1-hiagofranco@gmail.com>
-In-Reply-To: <20250626215911.5992-1-hiagofranco@gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Fri, 27 Jun 2025 08:31:20 -0600
-X-Gm-Features: Ac12FXyLrcISUGMKifq1LXY0djWn87ywvC4vhLqatRfOsnXR-16wTizuirmCxWY
-Message-ID: <CANLsYkzo32BHkxRzSLY1U_PcidMPOaz7xZjDs8HKtTCQ0ZpF=g@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] remoteproc: imx_rproc: allow attaching to running
- core kicked by the bootloader
-To: Hiago De Franco <hiagofranco@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Hiago De Franco <hiago.franco@toradex.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@oss.nxp.com>, daniel.baluta@nxp.com, iuliana.prodan@oss.nxp.com, 
-	"Rafael J . Wysocki" <rafael@kernel.org>
+References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-7-glider@google.com>
+ <20250627081146.GR1613200@noisy.programming.kicks-ass.net> <CAG_fn=UrOBF=hQ5y6VN9VuA67GeVOyaaWtrnaSLz4TnC7u1fiw@mail.gmail.com>
+In-Reply-To: <CAG_fn=UrOBF=hQ5y6VN9VuA67GeVOyaaWtrnaSLz4TnC7u1fiw@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 27 Jun 2025 16:32:11 +0200
+X-Gm-Features: Ac12FXyNdmWFSSJKEPyXOJOFO_SgvNyJtoRQ-REuaA1XlHVfOaH0P5mnZZsSDRc
+Message-ID: <CAG_fn=W6hXNnYLZpHN5Ein_iZ-tqJDFZWXaQm29eUf7xQoU=Lg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] kcov: x86: introduce CONFIG_KCOV_UNIQUE
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, x86@kernel.org, 
+	Aleksandr Nogikh <nogikh@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Jun 2025 at 15:59, Hiago De Franco <hiagofranco@gmail.com> wrote:
+On Fri, Jun 27, 2025 at 4:24=E2=80=AFPM Alexander Potapenko <glider@google.=
+com> wrote:
 >
-> From: Hiago De Franco <hiago.franco@toradex.com>
+> On Fri, Jun 27, 2025 at 10:11=E2=80=AFAM Peter Zijlstra <peterz@infradead=
+.org> wrote:
+> >
+> > On Thu, Jun 26, 2025 at 03:41:53PM +0200, Alexander Potapenko wrote:
+> > > The new config switches coverage instrumentation to using
+> > >   __sanitizer_cov_trace_pc_guard(u32 *guard)
+> > > instead of
+> > >   __sanitizer_cov_trace_pc(void)
+> > >
+> > > This relies on Clang's -fsanitize-coverage=3Dtrace-pc-guard flag [1].
+> > >
+> > > Each callback receives a unique 32-bit guard variable residing in the
+> > > __sancov_guards section. Those guards can be used by kcov to deduplic=
+ate
+> > > the coverage on the fly.
+> >
+> > This sounds like a *LOT* of data; how big is this for a typical kernel
+> > build?
 >
-> This patch series depends on Ulf's patches that are currently under
-> review, "pmdomain: Add generic ->sync_state() support to genpd" [1].
-> Without them, this series is not going to work.
->
+> I have a 1.6Gb sized vmlinux, which has a .text section of 176Mb.
+> There are 1809419 calls to __sanitizer_cov_trace_pc_guard, and the
+> __sancov_guards section has a size of 6Mb, which are only allocated at
+> runtime.
 
-I thought we agreed to repost when the feature referred to above and
-the work in drivers/pmdomain/core.c will be merge.  I'm not sure what
-to do with this patchset.
+Also note that most of this array will be containing zeroes.
+The high coverage watermark across all syzbot instances is below 900K
+coverage points: https://syzkaller.appspot.com/upstream
+But that is coverage aggregated from multiple runs of the same kernel binar=
+y.
+CONFIG_KCOV_UNIQUE will be only initializing the guards for the code
+that was executed during a single run (<=3D 1 hour), and only when
+coverage collection was enabled for the current process, so background
+tasks won't be polluting them.
 
-> For the i.MX8X and i.MX8 family SoCs, currently when the remotecore is
-> started by the bootloader and the M core and A core are in the same
-> partition, the driver is not capable to detect the remote core and
-> report the correct state of it.
 >
-> This patch series implement a new function, dev_pm_genpd_is_on(), which
-> returns the power status of a given power domain (M core power domains
-> IMX_SC_R_M4_0_PID0 and IMX_SC_R_M4_0_MU_1A in this case). If it is
-> already powered on, the driver will attach to it.
->
-> Finally, the imx_rproc_clk_enable() function was also changed to make it
-> return before dev_clk_get() is called, as it currently generates an SCU
-> fault reset if the remote core is already running and the kernel tries
-> to enable the clock again. These changes are a follow up from a v1 sent
-> to imx_rproc [2] and from a reported regression [3].
->
-> [1] https://lore.kernel.org/all/20250523134025.75130-1-ulf.hansson@linaro.org/
-> [2] https://lore.kernel.org/lkml/20250423155131.101473-1-hiagofranco@gmail.com/
-> [3] https://lore.kernel.org/lkml/20250404141713.ac2ntcsjsf7epdfa@hiago-nb/
->
-> v6:
-> - Added "reviewed by" from Ulf and Bjorn.
-> - Fixed and improved commit descriptions of patches 2 and 3.
-> - Improved the comment inside imx_rproc.c file.
-> v5:
-> - https://lore.kernel.org/all/20250617193450.183889-1-hiagofranco@gmail.com/
-> v4:
-> - https://lore.kernel.org/lkml/20250602131906.25751-1-hiagofranco@gmail.com/
-> v3:
-> - https://lore.kernel.org/all/20250519171514.61974-1-hiagofranco@gmail.com/
-> v2:
-> - https://lore.kernel.org/lkml/20250507160056.11876-1-hiagofranco@gmail.com/
-> v1:
-> - https://lore.kernel.org/lkml/20250505154849.64889-1-hiagofranco@gmail.com/
->
-> Hiago De Franco (3):
->   pmdomain: core: introduce dev_pm_genpd_is_on()
->   remoteproc: imx_rproc: skip clock enable when M-core is managed by the
->     SCU
->   remoteproc: imx_rproc: detect and attach to pre-booted remote cores
->
->  drivers/pmdomain/core.c        | 33 +++++++++++++++++++++++++++
->  drivers/remoteproc/imx_rproc.c | 41 ++++++++++++++++++++++++++++------
->  include/linux/pm_domain.h      |  6 +++++
->  3 files changed, 73 insertions(+), 7 deletions(-)
->
-> --
-> 2.39.5
->
+> If we take a vmlinux image from syzbot (e.g.
+> https://storage.googleapis.com/syzbot-assets/dadedf20b2e3/vmlinux-67a9938=
+6.xz),
+> its .text section is 166Mb, and there are 1893023 calls to
+> __sanitizer_cov_trace_pc, which will translate to exactly the same
+> number of __sanitizer_cov_trace_pc_guard, if we apply the unique
+> coverage instrumentation.
 
