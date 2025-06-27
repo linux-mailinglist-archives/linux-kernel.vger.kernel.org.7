@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-705975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CCCAEB014
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:30:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F04AEB021
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6751BC74F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:31:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59BBF7B5142
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D02921FF30;
-	Fri, 27 Jun 2025 07:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF6221CC61;
+	Fri, 27 Jun 2025 07:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jx1B+4/Z"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEiz9yF2"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CAF221FA4
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E50721C9EA;
+	Fri, 27 Jun 2025 07:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751009407; cv=none; b=M1eqReyWcljP9wqFynN7193VGoO3smj15Y/BtxcgkBErwiQluj/LLxZrW65x2K/2yYnseRYoP/IQ7yXQbv4FgCqXowGbyMerWAiDnGGxnjGDQHl/7FFN9MnX1POqFrYGDQaqjPZfkDM4MF91pzZC54ayvCa7JF1oHtQkQAEbR6Y=
+	t=1751009521; cv=none; b=o6Xho52Yf5IVetSb/TnCOjH/dmF+wgxaUTGbLgKoySCPDXfNWSSGvJYTdmpjxBQkCsDv166BPymzjp5jNXahooX5KhTspxVu6yuxvKyTwNCantmsaEFTUOt2EwTLOC3shLqGohdIAL+NnRMcCRyFw/dym7zfklVpV2LrDNBqxNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751009407; c=relaxed/simple;
-	bh=gLq5QR5UkZcDNZ4qEDEV0UgI3bwdOXiGKr7EDDC5UEg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aH3P7+BA5cPBwSiR3DCpWVVTjZiB3VJTeztCOehHP0E/5PaPut+RwLrkyOKy3c0EN+pDPAXm0zh6oBBoTrPhmZ9YgkIIO0BXpTKyeWfzrL65iGh5o/vXFg/bUWwYNNnCh7hfwfcrpytIVNwP+JHa10tWeD9M6hiAWv/hkt9S/Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jx1B+4/Z; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1751009521; c=relaxed/simple;
+	bh=CsGo1GsbYINnY/8tnwOpQqo8uzAdi38TQdAiBPI/wtc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SSlZaRVxElUThdVhSbqusaJc6SWf/iUFLLWx9hg30N+viPDAwKytxau/Zs4LuEmi7HjyV/mnRNPAsrbC6whx58wOYtXywyhnd2b9udMlkyZtaoLzmBCnYs4RhJjYP1CFS/lXDxTCyOuzU1uPpD/DKxbY/ivRQYBemkIDp6e8c1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEiz9yF2; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so1075914f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 00:30:05 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-453079c1e2eso2115365e9.3;
+        Fri, 27 Jun 2025 00:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751009404; x=1751614204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sZx7HLeDxFUsTV7MB27dJE7edqAxtdtwVAh6e83NzOY=;
-        b=jx1B+4/ZaITLW7T3f5modf4Q44sMWwaaTUcHE/eUzcPTe1AcrYKehHiEzTfiCfmO4r
-         nK6Xz0hTJdvv9gWuRoQtRuN4/qHDriOFjSZNLBDiP7bNXxSoiPN93jp0vw1P0NfjxLTd
-         1T8CBIkCnIv7mHqBJgKelRtDy1gqAMxbSooQQCNhJaI5qWqcgt64EV7R3oVeSAYIdSNb
-         QKM86Z9whqbE6cR++ManLg398hUZLJYIdmXSXE9yNY0gJC8+2ATTH3kqz+Fl5rsd92n4
-         LYSyZtFcs4MgI4INpX3OvkSVHjwpucTi8R0nWd6dvtDV/XaC7fQA4mczp+xOx+/k6kP/
-         Xq4A==
+        d=gmail.com; s=20230601; t=1751009518; x=1751614318; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TScBpjlTpSBrukUzd8MltsW16ug3e51n2CNSK0/YESI=;
+        b=kEiz9yF29EI/5oZICmy3GIxqFZ+gBXjxBqkPYYIyFm7iDqhvnnM5+irBPSEqsEqcL1
+         NyJXJxNsxew1nedR1F4wVTeTdN+NuffM9vZH8CGZdPS7sacvG3roG2V3DknrYrRTtfqZ
+         ziNIonenKT9wE442exNqh445ewTOXkFZuCAXfOR1iqkD++hdVdzusIiBmhft4B0opkNr
+         rWYZTbHy/BbkQrTd5nJIhj14kXUmB5mvNpvC5aac4KJTVkBuT2iNGPtSS4J0M9l1oFQR
+         k6JXTt5kYkJ+YFKSrxfNLDno4P9VaPkUW7tEDrLi22yowpdi2PTO/+X9nHCUmzvwNJrv
+         yEjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751009404; x=1751614204;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sZx7HLeDxFUsTV7MB27dJE7edqAxtdtwVAh6e83NzOY=;
-        b=OQ7mGI0G5kf7ZknKOQ4cohTdF6Pi3le6C1nq7EWnawNHQpLXIfDpj3ohYTpEr2oo3b
-         3wPrbMJpQhRe0rEyZSqBcWPayXea+KQ6xn7N06Z5QoVqDHGQM+btjSWYNFwsHyKhOOFZ
-         3VCVycaFlr57OAUDXoySaTnK1+9Q6SaMYwr1eVsOoKimkDeC1GOQyXK7jI8U96LepLsG
-         4AAzfgnvxEGieW/uoBn/5Vdzh+X3K1qhHH3McaWmkdqeAYLapgzyFcFX9lQQBw6Ft6H2
-         +oXK39KEbEA/dKG9n5lieVhWxFsmtlo2FGMRYwI68KNRvcYQxBW2Q4b/Y+i5SiUaXJrl
-         L4zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkBw+RulktkBOMv80oaQ2Ur3oVzmcX4kjoT7EHcStmtK/O6amcs/KTDhY83tqbL9a5IN/wXy7KSIB3L1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaxtCA9cr2FMkk876B4Tk74X+k1flSCY/j2Bx1OlHSmfUORDo+
-	SPemOdctCmTyL1uokU0ARwOF+UQxBy3HgEq/mkWQ6iQNECF6BO/dEIZy
-X-Gm-Gg: ASbGncsWSjPklUvawTZPB+VkH0aV7YYXib9V9IuKTCgckhVkhosw9/hSBrGXKBoxxis
-	YlRG6gE7GQlMSMVY9Q3jgYE57VlOqTkzOtT4u/JOGdbDuTVDnrFr7n9W9+rE8BsF8eE9ILh2ZIn
-	jmTNZooMkjKAPjo7B1RbT+j3NnKbbrSo/or9Cc7ppSkRh0z7D0FTkR7pG0JVCEWv5/7IjWDjakm
-	UpcOY+lRnV22gQ0hUf2lWEhsKOJsgiY1f7mhKQKeGk53XirsowakIq1bcioagPx4QAXR/EsgQAW
-	HCC3E2lq268YVB8G7Wk1g7VcqqMSB1lZU2pxq30SdI2kImSI
-X-Google-Smtp-Source: AGHT+IHLxuzOhCr2ZOuAnoMckWZohG8XUTUNZtVdZrbctK4w8YIIgD/ecNFvLienpmYMqTMQ43Nwvg==
-X-Received: by 2002:a5d:59c9:0:b0:3a3:6b07:20a1 with SMTP id ffacd0b85a97d-3a8feb851f2mr1958251f8f.40.1751009403503;
-        Fri, 27 Jun 2025 00:30:03 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::302c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e72b6sm1955665f8f.15.2025.06.27.00.29.58
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 27 Jun 2025 00:30:03 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org
-Cc: zi.li@linux.dev,
-	anna.schumaker@oracle.com,
-	boqun.feng@gmail.com,
-	joel.granados@kernel.org,
-	jstultz@google.com,
-	kent.overstreet@linux.dev,
-	leonylgao@tencent.com,
+        d=1e100.net; s=20230601; t=1751009518; x=1751614318;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TScBpjlTpSBrukUzd8MltsW16ug3e51n2CNSK0/YESI=;
+        b=O9iODsIjnlUYRJF80g+J5wxj4WhcA8EmcpNWm3uvIbxikfNh1Ngyi7REm0XKRBmnMO
+         NDBTUNcZW1RBkw0rCJDhsbGs3Ubh0gMqqein++5GKgBokdbQGnl6RGJPF6Rm7K/2VOPq
+         E952egkrCQYx07tLz5JbuJAfP7MWLSqD55SBLyp3hLv5Ov116Tk/qsfnQu4C1mY3D0Oh
+         E6Dv/20EDQXcrTnLJVUEUjGUwnNKSWm61D5YgEQfkp5w/aYEmGAcse0SUPwOwXMN0NU3
+         V1BCBIgpR99S+s7HeD3b0UkrVU3GJffH8hUEZIOQkUPS912NHjpwX6XFuAPGc6mpvChG
+         ourQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJi06sNcFfAH7tMF1fOhMeGBwYcIK+nvKxm3MIAbXvs3Ba79sKjGj2PWg/MoRf5wKYP6M4riJdsxncLRs=@vger.kernel.org, AJvYcCXl0KbHvZ8x6se/CqMU5ZGozpLnaxqbqgubUV3PyOr8xXrOfNWKzir44RnEYH5ZNle0JVesYWIQZix9XX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzegiu2L0J1zMQi7sh1giuHIweKrwC/07AI3T28blWKwDNm8UR
+	uf1FAIXdoiZ/cUOml+xMMiJAqBUO9cWQUIQgZO7MYvFXBTNx7OVqSgY5
+X-Gm-Gg: ASbGncu+GBA6HJ9Bhe3eplgp7eQkoHuS/xCLwInCaNuoaP5J6pux+ItpvfX+Q9bz1v+
+	eKIlpb3YCExNUMoxB52JeqIs2SmUCwn9feulbSZiF5URbm2raOAKOCUqwviqfaZDs5PPRVX1lSP
+	zyorhVqzCi7mV+lTeFCMfGgxVsm2JwQRirj9zmTA9QUTRaNU2smV7XmNxECJxHnoE2EcwDZ5w6m
+	F+fkHjQPtimvzHkVwPIJ+Tiz4L+6Kld6V+4psJzTUZuL9wecEW3FiU+ARQ4/+7ACQ1Z+ZHxWz/9
+	dTSxCgXS2o/Y3fr7NTwhmJTg2/nvuy2rFKFjZZvro3GmCgupgOiaDqG0uFaHGf9xncunWj2embc
+	KrVS1IJefiQ8EAaAE9wE0UKAK
+X-Google-Smtp-Source: AGHT+IE76NO/bOabugCB8DyLAXSDRN+k6axz7/mxNvs22Q813ctMby/ju5/cUVSYpa3ZP5RqlSPsrg==
+X-Received: by 2002:a05:6000:2a06:b0:3a5:3399:51b1 with SMTP id ffacd0b85a97d-3a8fdeff8b9mr580958f8f.6.1751009517507;
+        Fri, 27 Jun 2025 00:31:57 -0700 (PDT)
+Received: from localhost.localdomain ([156.208.147.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e74fbsm1963481f8f.10.2025.06.27.00.31.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 00:31:57 -0700 (PDT)
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+To: andy@kernel.org,
+	hdegoede@redhat.com,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel-mentees@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	longman@redhat.com,
-	mhiramat@kernel.org,
-	mingo@redhat.com,
-	mingzhe.yang@ly.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	tfiga@chromium.org,
-	will@kernel.org
-Subject: [PATCH 3/3] samples: enhance hung_task detector test with read-write semaphore support
-Date: Fri, 27 Jun 2025 15:29:24 +0800
-Message-ID: <20250627072924.36567-4-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250627072924.36567-1-lance.yang@linux.dev>
-References: <20250627072924.36567-1-lance.yang@linux.dev>
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	skhan@linuxfoundation.com,
+	dan.carpenter@linaro.org,
+	Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>,
+	Hans de Goede <hansg@kernel.org>
+Subject: [PATCH v4] staging: media: atomisp: remove debug sysfs attributes active_bo and free_bo
+Date: Fri, 27 Jun 2025 10:29:39 +0300
+Message-Id: <20250627072939.21447-1-abdelrahmanfekry375@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,200 +96,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Zi Li <zi.li@linux.dev>
+The sysfs attributes active_bo and free_bo expose internal buffer
+state used only for debugging purposes. These are not part of
+any standard kernel ABI, and need to be removed before this
+driver may be moved out of drivers/staging.
 
-Extend the hung_task detector test module to include read-write semaphore
-support alongside existing mutex and semaphore tests. This module now
-creates additional debugfs files under <debugfs>/hung_task, namely
-'rw_semaphore_read' and 'rw_semaphore_write', in addition to 'mutex' and
-'semaphore'. Reading these files with multiple processes triggers a
-prolonged sleep (256 seconds) while holding the respective lock, enabling
-hung_task detector testing for various locking mechanisms.
+- Remove active_bo and free_bo attributes
+- Remove group registration calls form hmm_init() and hmm_cleanup()
 
-This change builds on the extensible hung_task_tests module, adding
-read-write semaphore functionality to improve test coverage for kernel
-locking primitives. The implementation ensures proper lock handling and
-includes checks to prevent redundant data reads.
-
-Usage is:
-
-        > cd /sys/kernel/debug/hung_task
-        > cat mutex & cat mutex           # Test mutex blocking
-        > cat semaphore & cat semaphore   # Test semaphore blocking
-        > cat rw_semaphore_write \
-            & cat rw_semaphore_read       # Test rwsem blocking
-        > cat rw_semaphore_write \
-            & cat rw_semaphore_write      # Test rwsem blocking
-
-Update the Kconfig description to reflect the addition of read-write
-semaphore debugfs files.
-
-Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Zi Li <zi.li@linux.dev>
+Suggested-by: Hans de Goede <hansg@kernel.org>
+Signed-off-by: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
 ---
- samples/Kconfig                     |  7 ++-
- samples/hung_task/hung_task_tests.c | 81 ++++++++++++++++++++++++++---
- 2 files changed, 77 insertions(+), 11 deletions(-)
+v4:
+- Fix typos
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index ffef99950206..a8880c62d4c8 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -316,10 +316,9 @@ config SAMPLE_HUNG_TASK
- 	depends on DETECT_HUNG_TASK && DEBUG_FS
- 	help
- 	  Build a module that provides debugfs files (e.g., mutex, semaphore,
--	  etc.) under <debugfs>/hung_task. If user reads one of these files,
--	  it will sleep long time (256 seconds) with holding a lock. Thus,
--	  if 2 or more processes read the same file concurrently, it will
--	  be detected by the hung_task watchdog.
-+	  rw_semaphore_read, rw_semaphore_write) under <debugfs>/hung_task.
-+	  Reading these files with multiple processes triggers hung task
-+	  detection by holding locks for a long time (256 seconds).
- 
- source "samples/rust/Kconfig"
- 
-diff --git a/samples/hung_task/hung_task_tests.c b/samples/hung_task/hung_task_tests.c
-index a5c09bd3a47d..0360ec916890 100644
---- a/samples/hung_task/hung_task_tests.c
-+++ b/samples/hung_task/hung_task_tests.c
-@@ -4,11 +4,12 @@
-  * semaphore, etc.
-  *
-  * Usage: Load this module and read `<debugfs>/hung_task/mutex`,
-- *        `<debugfs>/hung_task/semaphore`, etc., with 2 or more processes.
-+ *        `<debugfs>/hung_task/semaphore`, `<debugfs>/hung_task/rw_semaphore_read`,
-+ *        `<debugfs>/hung_task/rw_semaphore_write`, etc., with 2 or more processes.
-  *
-  * This is for testing kernel hung_task error messages with various locking
-- * mechanisms (e.g., mutex, semaphore, etc.). Note that this may freeze
-- * your system or cause a panic. Use only for testing purposes.
-+ * mechanisms (e.g., mutex, semaphore, rw_semaphore_read, rw_semaphore_write, etc.).
-+ * Note that this may freeze your system or cause a panic. Use only for testing purposes.
-  */
- 
- #include <linux/debugfs.h>
-@@ -17,21 +18,29 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/semaphore.h>
-+#include <linux/rwsem.h>
- 
--#define HUNG_TASK_DIR		"hung_task"
--#define HUNG_TASK_MUTEX_FILE	"mutex"
--#define HUNG_TASK_SEM_FILE	"semaphore"
--#define SLEEP_SECOND		256
-+#define HUNG_TASK_DIR			"hung_task"
-+#define HUNG_TASK_MUTEX_FILE		"mutex"
-+#define HUNG_TASK_SEM_FILE		"semaphore"
-+#define HUNG_TASK_RWSEM_READ_FILE	"rw_semaphore_read"
-+#define HUNG_TASK_RWSEM_WRITE_FILE	"rw_semaphore_write"
-+#define SLEEP_SECOND			256
- 
- static const char dummy_string[] = "This is a dummy string.";
- static DEFINE_MUTEX(dummy_mutex);
- static DEFINE_SEMAPHORE(dummy_sem, 1);
-+static DECLARE_RWSEM(dummy_rwsem);
- static struct dentry *hung_task_dir;
- 
- /* Mutex-based read function */
- static ssize_t read_dummy_mutex(struct file *file, char __user *user_buf,
- 				size_t count, loff_t *ppos)
+v3: https://lore.kernel.org/all/20250624170746.47188-1-abdelrahmanfekry375@gmail.com/
+- remove blank line
+
+v2: https://lore.kernel.org/all/20250624144943.39297-1-abdelrahmanfekry375@gmail.com/
+- Add Suggested-by line
+- Remove unnecessary comments
+
+v1: https://lore.kernel.org/all/20250624130841.34693-1-abdelrahmanfekry375@gmail.com/
+
+ drivers/staging/media/atomisp/pci/hmm/hmm.c | 92 ---------------------
+ 1 file changed, 92 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/hmm/hmm.c b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+index 84102c3aaf97..469de184b9b8 100644
+--- a/drivers/staging/media/atomisp/pci/hmm/hmm.c
++++ b/drivers/staging/media/atomisp/pci/hmm/hmm.c
+@@ -28,88 +28,6 @@ struct hmm_bo_device bo_device;
+ static ia_css_ptr dummy_ptr = mmgr_EXCEPTION;
+ static bool hmm_initialized;
+
+-/*
+- * p: private
+- * v: vmalloc
+- */
+-static const char hmm_bo_type_string[] = "pv";
+-
+-static ssize_t bo_show(struct device *dev, struct device_attribute *attr,
+-		       char *buf, struct list_head *bo_list, bool active)
+-{
+-	ssize_t ret = 0;
+-	struct hmm_buffer_object *bo;
+-	unsigned long flags;
+-	int i;
+-	long total[HMM_BO_LAST] = { 0 };
+-	long count[HMM_BO_LAST] = { 0 };
+-	int index1 = 0;
+-	int index2 = 0;
+-
+-	ret = scnprintf(buf, PAGE_SIZE, "type pgnr\n");
+-	if (ret <= 0)
+-		return 0;
+-
+-	index1 += ret;
+-
+-	spin_lock_irqsave(&bo_device.list_lock, flags);
+-	list_for_each_entry(bo, bo_list, list) {
+-		if ((active && (bo->status & HMM_BO_ALLOCED)) ||
+-		    (!active && !(bo->status & HMM_BO_ALLOCED))) {
+-			ret = scnprintf(buf + index1, PAGE_SIZE - index1,
+-					"%c %d\n",
+-					hmm_bo_type_string[bo->type], bo->pgnr);
+-
+-			total[bo->type] += bo->pgnr;
+-			count[bo->type]++;
+-			if (ret > 0)
+-				index1 += ret;
+-		}
+-	}
+-	spin_unlock_irqrestore(&bo_device.list_lock, flags);
+-
+-	for (i = 0; i < HMM_BO_LAST; i++) {
+-		if (count[i]) {
+-			ret = scnprintf(buf + index1 + index2,
+-					PAGE_SIZE - index1 - index2,
+-					"%ld %c buffer objects: %ld KB\n",
+-					count[i], hmm_bo_type_string[i],
+-					total[i] * 4);
+-			if (ret > 0)
+-				index2 += ret;
+-		}
+-	}
+-
+-	/* Add trailing zero, not included by scnprintf */
+-	return index1 + index2 + 1;
+-}
+-
+-static ssize_t active_bo_show(struct device *dev, struct device_attribute *attr,
+-			      char *buf)
+-{
+-	return bo_show(dev, attr, buf, &bo_device.entire_bo_list, true);
+-}
+-
+-static ssize_t free_bo_show(struct device *dev, struct device_attribute *attr,
+-			    char *buf)
+-{
+-	return bo_show(dev, attr, buf, &bo_device.entire_bo_list, false);
+-}
+-
+-
+-static DEVICE_ATTR_RO(active_bo);
+-static DEVICE_ATTR_RO(free_bo);
+-
+-static struct attribute *sysfs_attrs_ctrl[] = {
+-	&dev_attr_active_bo.attr,
+-	&dev_attr_free_bo.attr,
+-	NULL
+-};
+-
+-static struct attribute_group atomisp_attribute_group[] = {
+-	{.attrs = sysfs_attrs_ctrl },
+-};
+-
+ int hmm_init(void)
  {
-+	/* Check if data is already read */
-+	if (*ppos >= sizeof(dummy_string))
-+		return 0;
-+
- 	/* Second task waits on mutex, entering uninterruptible sleep */
- 	guard(mutex)(&dummy_mutex);
- 
-@@ -46,6 +55,10 @@ static ssize_t read_dummy_mutex(struct file *file, char __user *user_buf,
- static ssize_t read_dummy_semaphore(struct file *file, char __user *user_buf,
- 				    size_t count, loff_t *ppos)
- {
-+	/* Check if data is already read */
-+	if (*ppos >= sizeof(dummy_string))
-+		return 0;
-+
- 	/* Second task waits on semaphore, entering uninterruptible sleep */
- 	down(&dummy_sem);
- 
-@@ -58,6 +71,46 @@ static ssize_t read_dummy_semaphore(struct file *file, char __user *user_buf,
- 				       sizeof(dummy_string));
+ 	int ret;
+@@ -130,14 +48,6 @@ int hmm_init(void)
+ 	 */
+ 	dummy_ptr = hmm_alloc(1);
+
+-	if (!ret) {
+-		ret = sysfs_create_group(&atomisp_dev->kobj,
+-					 atomisp_attribute_group);
+-		if (ret)
+-			dev_err(atomisp_dev,
+-				"%s Failed to create sysfs\n", __func__);
+-	}
+-
+ 	return ret;
  }
- 
-+/* Read-write semaphore read function */
-+static ssize_t read_dummy_rwsem_read(struct file *file, char __user *user_buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	/* Check if data is already read */
-+	if (*ppos >= sizeof(dummy_string))
-+		return 0;
-+
-+	/* Acquires read lock, allowing concurrent readers but blocks if write lock is held */
-+	down_read(&dummy_rwsem);
-+
-+	/* Sleeps here, potentially triggering hung task detection if lock is held too long */
-+	msleep_interruptible(SLEEP_SECOND * 1000);
-+
-+	up_read(&dummy_rwsem);
-+
-+	return simple_read_from_buffer(user_buf, count, ppos, dummy_string,
-+				       sizeof(dummy_string));
-+}
-+
-+/* Read-write semaphore write function */
-+static ssize_t read_dummy_rwsem_write(struct file *file, char __user *user_buf,
-+				      size_t count, loff_t *ppos)
-+{
-+	/* Check if data is already read */
-+	if (*ppos >= sizeof(dummy_string))
-+		return 0;
-+
-+	/* Acquires exclusive write lock, blocking all other readers and writers */
-+	down_write(&dummy_rwsem);
-+
-+	/* Sleeps here, potentially triggering hung task detection if lock is held too long */
-+	msleep_interruptible(SLEEP_SECOND * 1000);
-+
-+	up_write(&dummy_rwsem);
-+
-+	return simple_read_from_buffer(user_buf, count, ppos, dummy_string,
-+				       sizeof(dummy_string));
-+}
-+
- /* File operations for mutex */
- static const struct file_operations hung_task_mutex_fops = {
- 	.read = read_dummy_mutex,
-@@ -68,6 +121,16 @@ static const struct file_operations hung_task_sem_fops = {
- 	.read = read_dummy_semaphore,
- };
- 
-+/* File operations for rw_semaphore read */
-+static const struct file_operations hung_task_rwsem_read_fops = {
-+	.read = read_dummy_rwsem_read,
-+};
-+
-+/* File operations for rw_semaphore write */
-+static const struct file_operations hung_task_rwsem_write_fops = {
-+	.read = read_dummy_rwsem_write,
-+};
-+
- static int __init hung_task_tests_init(void)
+
+@@ -145,12 +55,10 @@ void hmm_cleanup(void)
  {
- 	hung_task_dir = debugfs_create_dir(HUNG_TASK_DIR, NULL);
-@@ -79,6 +142,10 @@ static int __init hung_task_tests_init(void)
- 			    &hung_task_mutex_fops);
- 	debugfs_create_file(HUNG_TASK_SEM_FILE, 0400, hung_task_dir, NULL,
- 			    &hung_task_sem_fops);
-+	debugfs_create_file(HUNG_TASK_RWSEM_READ_FILE, 0400, hung_task_dir, NULL,
-+			    &hung_task_rwsem_read_fops);
-+	debugfs_create_file(HUNG_TASK_RWSEM_WRITE_FILE, 0400, hung_task_dir, NULL,
-+			    &hung_task_rwsem_write_fops);
- 
- 	return 0;
+ 	if (dummy_ptr == mmgr_EXCEPTION)
+ 		return;
+-	sysfs_remove_group(&atomisp_dev->kobj, atomisp_attribute_group);
+
+ 	/* free dummy memory first */
+ 	hmm_free(dummy_ptr);
+ 	dummy_ptr = 0;
+-
+ 	hmm_bo_device_exit(&bo_device);
+ 	hmm_initialized = false;
  }
--- 
-2.49.0
+--
+2.25.1
 
 
