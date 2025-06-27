@@ -1,111 +1,153 @@
-Return-Path: <linux-kernel+bounces-706549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC436AEB822
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:50:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C111EAEB827
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2B073B49ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1438C189E37D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896D02D879C;
-	Fri, 27 Jun 2025 12:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C96D2D879C;
+	Fri, 27 Jun 2025 12:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWJm1SqE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EY1X793v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEF3BE4A;
-	Fri, 27 Jun 2025 12:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A5D2BEC35;
+	Fri, 27 Jun 2025 12:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751028626; cv=none; b=r1lH0tXTIoln1Cw02yqWRfyKF0FohNwYP12Ldh2B9S0GUXIUsZQHobFV8YTRxir3ZHYqL2vAJbwcXMBaZ9qmf9NF9pNVk30y4hjv4by+74/J/HNbgeiv6N60uCa9kC32SKJ3f9bXCWWjotmC8er6MH71FokWkJeg22QKBCBLzMs=
+	t=1751028686; cv=none; b=kvB2y2nOGrsrLBVSBo8GvrkTB8uCD1Z6bx8U2PwB6M6JP4GbvBvO0LwhfBe+xe7NmMs2y9MRuI/oQsW7RfKMuezv9/GhccFYuNR5siPqKX4lSO8Vh4yeuKe3f1JlFLljoN42dXUuKxpWCSkuVculcRl/oQWxSzVKZf6miB9/b48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751028626; c=relaxed/simple;
-	bh=apcScWYertfmVCc5s0nVnezatVqNPQZKD26Xobpb+uA=;
+	s=arc-20240116; t=1751028686; c=relaxed/simple;
+	bh=vkTWHdyY2LgTLEhdW6ywJcKCt9UErdA7gq50ddD4J7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9EUCWHcRcCedOesDKV+eXky55cob+cZGdi4W6Kq/sHCw5NXdMawR05UGJKqRChEkJt9K/WdfnjiTgb33jz1NckFL+bLmzhwq50J8vbka/z7JVkKfYKcj6+7TCi19s2QJl7Grd/hzryYxo9Qt0wDEq+e5KlAtROpW1gwkxLkGDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWJm1SqE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C78CC4CEE3;
-	Fri, 27 Jun 2025 12:50:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4W8zAfcKoT2n21niLyWR28MRLWfNgy/v7dztc5DowTtiVr76bo0AoLAPwANioNShWiu6lmJmw9hlGj+5mL1jpH9xziwWSsq/fiyyma6PnZ8VVsKRvC0Wo96prtp3jI0DPtKGZzRZXycuiA5Sw5Xh1mL5yJmIqVr4XqUkfDOsQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EY1X793v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD1F4C4CEE3;
+	Fri, 27 Jun 2025 12:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751028625;
-	bh=apcScWYertfmVCc5s0nVnezatVqNPQZKD26Xobpb+uA=;
+	s=k20201202; t=1751028686;
+	bh=vkTWHdyY2LgTLEhdW6ywJcKCt9UErdA7gq50ddD4J7U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aWJm1SqETG/HN3wItNy/D0gKz9Nr9hMyfHi0n7kpgWMpOk8ikhBNBt50s2ubCA+AA
-	 jxqqZ8P8k0K1td9tmsAB9A/7fX+ZycBSYTgIXjwTAW/Lrpl5oQxvToL8vjuOpWSc+U
-	 2pVifHdTiWqUiTB2lXSlktwdRkg4VkxCn7BrlUQQZOGXPFYJAPMXOD0ar5C/eOI/YG
-	 K9iMAvBSF6ZA3zZMAfJSdCjbcEo7HVJMC0aZuNp7//JC++xlzasP6FmPI7e8hJ6ucQ
-	 uDtHSkbnvFy77bj5bAgBSW3UvQKJzgt5ph5DCBpCjnGxUunkT29XmwRRpodZoqfwN0
-	 BYiP1CcN+V5hg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uV8XC-000000004yD-1W3O;
-	Fri, 27 Jun 2025 14:50:26 +0200
-Date: Fri, 27 Jun 2025 14:50:26 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Steev Klimaszewski <steev@kali.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v4 5/8] firmware; qcom: scm: enable QSEECOM on SC8280XP
- CRD
-Message-ID: <aF6Tkh75LRym8MQY@hovoldconsulting.com>
-References: <20250625-more-qseecom-v4-0-aacca9306cee@oss.qualcomm.com>
- <20250625-more-qseecom-v4-5-aacca9306cee@oss.qualcomm.com>
- <e5e3e8f1-4328-4929-825a-3d8e836cf072@oss.qualcomm.com>
- <95c46d39-5b4a-46dd-aa73-1b3b9bf81019@oss.qualcomm.com>
- <aF6NUeNLPrR5vqEf@hovoldconsulting.com>
- <f55a057d-2cdd-411e-97b9-5ede1300a4e9@oss.qualcomm.com>
+	b=EY1X793vtCOEYQVu60/1GWtMu/J/QR4ff5coXtHaO1S5KX6WWx1sz8cpC9H43vD92
+	 PbDEyMg3DoFr6qAsB6Hc10WJTPqHvzt8umwtLBIX1gl2a5R3vaINtixLt9jZtacy38
+	 WRbCMgIlkSnT8OWPnKsGZDgn/EziNXBzClIPsvxM+SEKHO8hwyCgtEOUvLC+qR7kYI
+	 qBcNdQ127+NSLu3G/FW8GtY/PN5fOF5qObxDiUgfh4Tts28h32mOi4HzAABvUhHOJ1
+	 Pw3p19wn+i9kRDjuDONH7oqhuXX5uPrkr7dQ135iWCKjcAab4aUXloJ+tnm9jz6Bya
+	 gtHC0gMJMd1fQ==
+Date: Fri, 27 Jun 2025 13:51:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	troymitchell988@gmail.com, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
+Message-ID: <20250627125119.GF10134@google.com>
+References: <20250625164119.1068842-1-elder@riscstar.com>
+ <20250625164119.1068842-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f55a057d-2cdd-411e-97b9-5ede1300a4e9@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250625164119.1068842-3-elder@riscstar.com>
 
-On Fri, Jun 27, 2025 at 02:26:41PM +0200, Konrad Dybcio wrote:
-> On 6/27/25 2:23 PM, Johan Hovold wrote:
-> > On Fri, Jun 27, 2025 at 01:54:37AM +0200, Konrad Dybcio wrote:
-> >> On 6/27/25 1:34 AM, Konrad Dybcio wrote:
-> >>> On 6/25/25 12:53 AM, Dmitry Baryshkov wrote:
+On Wed, 25 Jun 2025, Alex Elder wrote:
 
-> >>>> As reported by Johan, this platform also doesn't currently support
-> >>>> updating of the UEFI variables. In preparation to reworking match list
-> >>>> for QSEECOM mark this platform as supporting QSEECOM with R/O UEFI
-> >>>> variables.
-
-> >>>> +	{ .compatible = "qcom,sc8280xp-crd", .data = &qcom_qseecom_ro_uefi, },
-> >>>
-> >>> R/W works for me (tm).. the META version may be (inconclusive) 2605
-> >>
-> >> Looked at the wrong SoC META table.. the build date is 05/25/2023
-> > 
-> > Could be that my machine was not provisioned properly. Do you boot from
-> > UFS or NVMe?
-> > 
-> > My fw is also older: 01/10/2022.
+> Enable support for the RTC and regulators found in the SpacemiT P1
+> PMIC.  Support is implemented by the simple I2C MFD driver.
 > 
-> The machine has UFS, NVME and SPINOR, however the boot log definitely says:
+> The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
+> PMIC provides 6 buck converters and 12 LDO regulators.  It also
+> implements a switch, watchdog timer, real-time clock, and more.
+> Initially its RTC and regulators are supported.
 > 
-> S - Boot Interface: SPI
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+> v4: - Add a dependency on I2C, to avoid a CROSS_COMPILE build error
+> 
+>  drivers/mfd/Kconfig          | 11 +++++++++++
+>  drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
+>  2 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6fb3768e3d71c..01805c3eec57d 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1182,6 +1182,17 @@ config MFD_QCOM_RPM
+>  	  Say M here if you want to include support for the Qualcomm RPM as a
+>  	  module. This will build a module called "qcom_rpm".
+>  
+> +config MFD_SPACEMIT_P1
+> +	tristate "SpacemiT P1 PMIC"
+> +	depends on I2C
+> +	select MFD_SIMPLE_MFD_I2C
+> +	help
+> +	  This option supports the I2C-based SpacemiT P1 PMIC, which
+> +	  contains regulators, a power switch, GPIOs, an RTC, and more.
+> +	  This option is selected when any of the supported sub-devices
+> +	  is configured.  The basic functionality is implemented by the
+> +	  simple MFD I2C driver.
+> +
+>  config MFD_SPMI_PMIC
+>  	tristate "Qualcomm SPMI PMICs"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+> diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+> index 22159913bea03..026cd92e20ad3 100644
+> --- a/drivers/mfd/simple-mfd-i2c.c
+> +++ b/drivers/mfd/simple-mfd-i2c.c
+> @@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
+>  	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
+>  };
+>  
+> +static const struct regmap_config spacemit_p1_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = 0xaa,
+> +};
 
-Mine says:
+Suggest making this more widely useful by adding the 'max_register'
+attribute to 'struct simple_mfd' and conditionally overriding
+regmap_config_8r_8v's value during probe.
 
-S - Boot Interface: UFS
+> +static const struct mfd_cell spacemit_p1_cells[] = {
+> +	{ .name = "spacemit-p1-regulator", },
+> +	{ .name = "spacemit-p1-rtc", },
+> +};
+> +
+> +static const struct simple_mfd_data spacemit_p1 = {
+> +	.regmap_config = &spacemit_p1_regmap_config,
+> +	.mfd_cell = spacemit_p1_cells,
+> +	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
+> +};
+> +
+>  static const struct of_device_id simple_mfd_i2c_of_match[] = {
+>  	{ .compatible = "kontron,sl28cpld" },
+>  	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
+>  	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
+>  	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
+>  	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
+> +	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
+> -- 
+> 2.45.2
+> 
 
-Johan
+-- 
+Lee Jones [李琼斯]
 
