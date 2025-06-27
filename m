@@ -1,169 +1,109 @@
-Return-Path: <linux-kernel+bounces-706174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E527CAEB2EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A91DAEB2DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAA167A9840
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B9D1886236
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15502980B2;
-	Fri, 27 Jun 2025 09:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A524293C76;
+	Fri, 27 Jun 2025 09:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e//iFiMP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVM8rqp/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2201293C71;
-	Fri, 27 Jun 2025 09:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D71F19F10A;
+	Fri, 27 Jun 2025 09:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751016590; cv=none; b=mSxBnAYQFydPYplhdhYH7sC3SrzwJVMW/SE0C5XJXO2L5diYZ6/e3PwT6iNSQiu/Zf1p+Ax5Up+0tDRq4zYtZ3EwuWBImH8rEoegXCFrWxQz7c7j2MwPk2oem6kjDz+tMJZi6v68KN8ua13113HREX1UjI3H2Nwabz5LKQxyq1c=
+	t=1751016529; cv=none; b=hOPB/eS5B4YODo04WfTyafRTg5MuenhZ8AW8DRrVePCRjghQ9BxL3aJ4H6lUZk6j4E/LY+XEdJtcX8WD0bCPiOoeAMaYDAMIaA/ka9OOpGPVq5+e6B8xRs+XxhPP9TIYtwpV5Zv7Q3P3YsUFXroEPh7O+2/k0U6LvSJlM89Z0us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751016590; c=relaxed/simple;
-	bh=hgTq3HJakHDLAQL9R275nXbuleoJE/PtptKFtlOZlIs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=etaz7QroIdq0KMnV1GVVX8odozbLf1wpS5DQltenh7mqPBvnczvWmAgrNzjLyVD0id1IobH3zs6dovwP9pt2hS7ehHGG/IgGrGfDufXKSbNSsGbv/cM0imgbLTywuho4eysba8yYXq3AjcrX9Tyj+0g4eB3GKdd1bp0m4wMud0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e//iFiMP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8DBBEC4CEF5;
-	Fri, 27 Jun 2025 09:29:49 +0000 (UTC)
+	s=arc-20240116; t=1751016529; c=relaxed/simple;
+	bh=NMdUf/+EgOboapTSK2P0BWd2KGOh4vtzeZ1cIy0waMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rs8BXmSYPINYZX8l6jWl3sS/jGRJBReUoz+E6Hr3SXVPUvDbblhoT2O2sevm9Z1NRjbp6n3kDWuRggr2yx3I3ZCj6/0+9wW8FykareMknV6VNGa3q/i3Al0Nm6699F3nnBzMElnumKOBue7vESCBzw/czRyPNGL5c3ZmFzSWMXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVM8rqp/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F06C4CEE3;
+	Fri, 27 Jun 2025 09:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751016589;
-	bh=hgTq3HJakHDLAQL9R275nXbuleoJE/PtptKFtlOZlIs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=e//iFiMPG+kIkeO00iAQNxm07FQ6j2M1qk0oKOOKOLL3oSeAAPYsGvpgzDVoYsZwi
-	 0+DKO0BGz+UO3uRTIZJTD894Xo5vUWEO2MleVFIaoklqTbNrp78OdpbZDY8c0YL4Ce
-	 eXcLvcNi5CKzu31hSFcdleggATqu/i/OK2TeEU8O1hTO9yquSoxDNvfwpzckWiEtF5
-	 /6ApimCDO9x/WIZ6qFbhVxuuFB/WnqxUzDLSMQrtwnoz20ANfBl4iRlhB216WVXtCS
-	 X52ZltH9rkhF253xXEhfIkA1xLDncoZVIT4c1oFH4dOoTpRUf7Enan/7R/1vUBAs9B
-	 ZaujDl2Q1qkug==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856E6C83000;
-	Fri, 27 Jun 2025 09:29:49 +0000 (UTC)
-From: Joel Granados <joel.granados@kernel.org>
-Date: Fri, 27 Jun 2025 11:27:29 +0200
-Subject: [PATCH 5/5] sysctl: rename kern_table -> sysctl_subsys_table
+	s=k20201202; t=1751016528;
+	bh=NMdUf/+EgOboapTSK2P0BWd2KGOh4vtzeZ1cIy0waMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVM8rqp/Jt8lnO6gp/6oOYfJeZkJKCBM65127Pdwzk+90BDjC1vKMC1FrmJWGVrPG
+	 Gclq5nLOFnFPmBdIDG6sUiKDVq3maqQzwL5stg7wfdvwuUCyXi9RVeEHvJw/tu0L4T
+	 xsxT7uvLHf3J3T+rmGxCmw7ryGYu/mFfZ9pMs2Tpyjc0an87/YFT1sYoYEWU0KteNP
+	 +qKzT3oe6M5kAa3FdrHaYy6TqDIp9Hdcp6ZzqiHISl3ahpkJ+eag5e0u/OTwrkWv6T
+	 p1v07vNfR5vUWSpk+G+nHWJToQxCBo62O3DXdapdaWNq4fH8TN4x+pwH+9nY24NGtB
+	 Kzku7Wpgtspvg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1uV5O4-000000000Co-3wci;
+	Fri, 27 Jun 2025 11:28:49 +0200
+Date: Fri, 27 Jun 2025 11:28:48 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v3 2/4] dt-bindings: PCI: qcom,pcie-sa8775p: document
+ link_down reset
+Message-ID: <aF5kUDghdXUbaDo3@hovoldconsulting.com>
+References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
+ <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250627-jag-sysctl-v1-5-20dd9801420b@kernel.org>
-References: <20250627-jag-sysctl-v1-0-20dd9801420b@kernel.org>
-In-Reply-To: <20250627-jag-sysctl-v1-0-20dd9801420b@kernel.org>
-To: Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2432;
- i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=hgTq3HJakHDLAQL9R275nXbuleoJE/PtptKFtlOZlIs=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGheZItRvg7iUt/llY0jbi3S8p4tXdqPpP3ES
- PH4SAld/qySPIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoXmSLAAoJELqXzVK3
- lkFPkkcL/0kQbR1sj7lbluFeCpSjtNkpKm+jLiXZcrRmAe9K4iSgODeEZRXR7j+6fu9IqphE3Gm
- Z5lm4OhRmxF/P21L5oBXMHdsBsmEyFU5qQVQTGTCq+qZIHJSm7p+XsvQ04r/vBDcVjWHiSVDnOH
- 4fF+pPRuoPm2EQP/q2zT4tYvaajLN/8mBOVDxiokci+6K8PDk/O6dn97UYlQIS4gX8qj6CFHE1H
- N5dz1iSBTb5coUDKVmuBbaqEL8r1MXo4fiVeVtX3qvha4mEB4QdwZhL0U/DtNXzu0KGhEhtu0vB
- ZdautBKdIG/ui5nC7p5HUam91iIVu0bnfrHmZ1VNuFkk5nSSGEV/APDcz5AbIpzAWhzYTfore0h
- 6erbmuF00MVdrGY9W/T+rFU6pYYy6q/ftmH8yZzRds0H30FAjmj/CEIxlxv74C53FXR+TQvcwEK
- OrCAqwpvdhNlacaC3dvBEwF8mPBZ7cR+czVEYERECXdd+RYsqgyPDgsjPCc3Cq+9eZFI4Ujo3f6
- fE=
-X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
- auth_id=239
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625090048.624399-3-quic_ziyuzhan@quicinc.com>
 
-Renamed sysctl table from kern_table to sysctl_subsys_table and grouped
-the two arch specific ctls to the end of the array.
+On Wed, Jun 25, 2025 at 05:00:46PM +0800, Ziyue Zhang wrote:
+> Each PCIe controller on sa8775p includes 'link_down'reset on hardware,
+> document it.
 
-This is part of a greater effort to move ctl tables into their
-respective subsystems which will reduce the merge conflicts in
-kernel/sysctl.c.
+Please describe what this reset does here as I asked you to earlier.
 
-Signed-off-by: Joel Granados <joel.granados@kernel.org>
----
- kernel/sys.c    |  1 -
- kernel/sysctl.c | 22 +++++++++++-----------
- 2 files changed, 11 insertions(+), 12 deletions(-)
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml  | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+> index 4b91b5608013..510c9e1c28e1 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+> @@ -66,11 +66,14 @@ properties:
+>        - const: global
+>  
+>    resets:
+> -    maxItems: 1
+> +    items:
+> +      - description: PCIe controller reset
+> +      - description: PCIe link down reset
+>  
+>    reset-names:
+>      items:
+> -      - const: pci
+> +      - const: pci # PCIe core reset
+> +      - const: link_down # PCIe link down reset
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index bbeee62f9abcdf18cdf5cdb06271476b048357ae..18a037cc6f61a339f1f21af9c26b25ecca1ae43c 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -210,7 +210,6 @@ static int __init init_overflow_sysctl(void)
- 
- postcore_initcall(init_overflow_sysctl);
- 
--
- /*
-  * Returns true if current's euid is same as p's uid or euid,
-  * or has CAP_SYS_NICE to p's user_ns.
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 21b70443aea75ae3212f70e5ce7efbfdf8a4f75b..cb6196e3fa993daa21704d190baf366084e014f7 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1454,7 +1454,7 @@ int proc_do_static_key(const struct ctl_table *table, int write,
- 	return ret;
- }
- 
--static const struct ctl_table kern_table[] = {
-+static const struct ctl_table sysctl_subsys_table[] = {
- #ifdef CONFIG_PROC_SYSCTL
- 	{
- 		.procname	= "sysctl_writes_strict",
-@@ -1465,15 +1465,6 @@ static const struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_NEG_ONE,
- 		.extra2		= SYSCTL_ONE,
- 	},
--#endif
--#ifdef CONFIG_SYSCTL_ARCH_UNALIGN_ALLOW
--	{
--		.procname	= "unaligned-trap",
--		.data		= &unaligned_enabled,
--		.maxlen		= sizeof (int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
- #endif
- 	{
- 		.procname	= "ngroups_max",
-@@ -1489,6 +1480,15 @@ static const struct ctl_table kern_table[] = {
- 		.mode		= 0444,
- 		.proc_handler	= proc_dointvec,
- 	},
-+#ifdef CONFIG_SYSCTL_ARCH_UNALIGN_ALLOW
-+	{
-+		.procname	= "unaligned-trap",
-+		.data		= &unaligned_enabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#endif
- #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN
- 	{
- 		.procname	= "ignore-unaligned-usertrap",
-@@ -1502,7 +1502,7 @@ static const struct ctl_table kern_table[] = {
- 
- int __init sysctl_init_bases(void)
- {
--	register_sysctl_init("kernel", kern_table);
-+	register_sysctl_init("kernel", sysctl_subsys_table);
- 
- 	return 0;
- }
+I think you can drop the comments since you already describe the resets
+above.
 
--- 
-2.47.2
-
-
+Johan
 
