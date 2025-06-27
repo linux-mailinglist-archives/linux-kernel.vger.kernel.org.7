@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-705996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F25AEB066
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:45:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040FCAEB06A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD6D1894D3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787283A2BF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 07:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4B621D3CC;
-	Fri, 27 Jun 2025 07:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JI8LsXwJ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E006121ADB7;
+	Fri, 27 Jun 2025 07:46:17 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE1121D00D;
-	Fri, 27 Jun 2025 07:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F7C2CCA9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751010314; cv=none; b=T/H6YdNT2/JAIdYloT6fg7e/iEBi4XMHMpGe1bokAvp5DtzYFehGsx5aoDwIz+LNglyoLJeIFQG4ufyKK23tG4GYIJDCMKMt+fGBjGr929WVMUw9DVCBmRvleHwr0jXBQGRM+6L8Jj+TbN8r9RDH9g8ersQsPYHPAYrR3A61SkM=
+	t=1751010377; cv=none; b=ZaxIoNMeOjlRAhOJAHewwKbyoJfFcDgFI99Q13AaDWyqcy9brYDfbHDSIeyEP12HPlwNS46rHXxAZ8aQuAnnLdoenp0alblcm9Zm92S9d7XkD82uBmXBGjaXLf+Q17Zd7AsghXAlwoDpcureiMMOOctRZln+Pd1DmUI2pXkYXrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751010314; c=relaxed/simple;
-	bh=vqujOY/R4b/ay6EtDaM0zoqhCTHH7KClxFgKqjr1jAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8WW4yCgA9NrMfDDS8HINZVlFxCrlMyKzM/5JHNTF6edOYrlCQCDlfwfWb4uA8aHyFTg+tkyzr9dI/rUT0Ckhd7M63F8Yr9+VqzXigJBftoBMwVrPl8pvZxZu3phm/EBJNrbAfGgVrwK8Hhi2CglPLPGCqErygr8E8MSojbftxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JI8LsXwJ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23636167b30so18764285ad.1;
-        Fri, 27 Jun 2025 00:45:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751010312; x=1751615112; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6kwXMa0RVLz7EpJ4koQvotLZKLm6G+hz8I9ALzuYytU=;
-        b=JI8LsXwJxX53o20GpIOOy/nUOaexh7Fbx1sSyPcq1+td9HR4u4/Xppy/lcOEIC5zOI
-         Ax/EYOm2GerXow223olh1doGimdl+3aSQFy/mMQTkn0peFZhNQswsPffocPrxWq2jQO+
-         bpu7pHBrNtnyhvgspBNiC03q6GqZ77y0xhWdZStQOBH2gpw2+ME4yyVyQDj8aFUsRzTu
-         emaqh+fX9j0GT7p14QOtDh8Lo9XgHJzCym74seNH72HwwRfXLDCZriNU/UNwG2ASyuNG
-         YIZPLl9jHJ29GhZZqoK+uX1VZ/zWQyRE4hBqnhOktrombY6c+dxi2hnzNSVYis2ZU7/d
-         Kf1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751010312; x=1751615112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6kwXMa0RVLz7EpJ4koQvotLZKLm6G+hz8I9ALzuYytU=;
-        b=cBsVLT9om1BuqsC50jV7dDyTqWng41paF0pTEWE/k6Qq+8ZSooozgRDK3ubIhnRsle
-         jAvIhfFUg+WLI3K9WN2rI6BATho7RcCFP9OUkzbkSDCJ6e+wTlERgKCukEdDO65F5aEM
-         yuaWbQ+qQHUMNDnV5ZxvLTLhSE/QTqZ/gbkGEmhAbppVXKgaQBzeksB8NIgz+YuLBYXn
-         BLNVUwSBgO4TnslQ7B/4pV/qNUKyWiDVP+3POfBqL3HQaMkckHv6j7D4hTd38eRiFlJY
-         b1rD3/Ea4wg/NbCIcmcAHzCWks+s8Myo3NkZ9Qd82MHGK7zGc4A7idpcx8ikbT1LSDP1
-         hyHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAWTlJYCSVgBuqYc3SrCRy78+L8SUprJry/vfKcEtDqi5ZLQmq8UE+Wc9QRJodHVBD8lce7VThcf0D0yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw72SesRsXAV0DoIhDjemIU7WDbhozaApZA5B2jzf072H04FEd
-	z5A8IglMr1dsuEWDfh5kSLkpmCtdS1zJsvaY1rsZ0qonEUc5uCfpIt28
-X-Gm-Gg: ASbGncvjXeu9+CZ0pwStJa5GJhTOnsc6OSfwi9CO8e+RD4fBHw2OUHWebJx7nJ+g/YI
-	k3go70B8QBCjepsYA0oWUBNamDHi5OVj1+nn6mmkh9fIXDZu0s2zRqKmZa6zT8CzDuD45RLj4Ei
-	1EXIEYFuD4wK2YEyPLmwS44CI4MUAEQ7Jpxgrn74oW0QgmLJo3isH7m9ndgjhp0+WLjz4jTArB1
-	0MZuPIl0EZKdQoJI0xWGorRsPMkeyYQds7WO1eHhx2per9MYAlYXHk9zYFj1YDpMK1h09w+hmPS
-	H4R39ldOqr2XJNWlQeJcev3P+PJiEUPM+URwo4+CwoUjVTosZtYjHnTuy6T2iGKslo6B/wXJ
-X-Google-Smtp-Source: AGHT+IEosVdRq8jswGr8fyP/uRwtM7xveOdc4+/YhWRKXXFAv1fBojRPrGKTceYMplzzNMFyzx4jZA==
-X-Received: by 2002:a17:902:f601:b0:235:c9a7:d5fb with SMTP id d9443c01a7336-23ac3deaf2cmr35094145ad.16.1751010312004;
-        Fri, 27 Jun 2025 00:45:12 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-23acb39b99esm10595105ad.102.2025.06.27.00.45.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 00:45:11 -0700 (PDT)
-Date: Fri, 27 Jun 2025 15:44:58 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Yixun Lan <dlan@gentoo.org>, Ze Huang <huangze@whut.edu.cn>, 
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH v4 0/4] riscv: sophgo: cv18xx: Add reset generator support
-Message-ID: <ep7gbthprqyzfdcqvs3wadqflyusdsut3uxt5wv5j7mvazyl5s@muk77uizwcrg>
-References: <20250617070144.1149926-1-inochiama@gmail.com>
+	s=arc-20240116; t=1751010377; c=relaxed/simple;
+	bh=dfGDnPRiwN7EuOkD03nB8CSrfVnT+NSKNmSD92S8fXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dwEOs0NYeplr2G71lGlPwJwwqpq8J4v+XR4hbbbVAooRFgRHKTsdCXiOJFoMjTJjVJRVTrVXJcQk01xXCafcBLSSayFYhHgmz7CMdqttuEo1TnfE/YTRW7O3K3PV5Qqq1O5YIy1X9g9iSnPOlBRaKaXBdbo7HZNjZe3V1pMw8PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c42ddc80532a11f0b29709d653e92f7d-20250627
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:475b7cd6-ffa6-4ce2-b4ce-fac83fe3678c,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-50
+X-CID-META: VersionHash:6493067,CLOUDID:270913f7217740048e4aa9b8e5e63ecf,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: c42ddc80532a11f0b29709d653e92f7d-20250627
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 369483624; Fri, 27 Jun 2025 15:45:59 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 23F43E008FA1;
+	Fri, 27 Jun 2025 15:45:59 +0800 (CST)
+X-ns-mid: postfix-685E4C37-40371140
+Received: from localhost.localdomain (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 55A64E008FA5;
+	Fri, 27 Jun 2025 15:45:55 +0800 (CST)
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	patrick.bellasi@arm.com,
+	qyousef@layalina.io,
+	xuewen.yan@unisoc.com
+Cc: linux-kernel@vger.kernel.org,
+	Zihuan Zhang <zhangzihuan@kylinos.cn>
+Subject: [PATCH v1] sched/uclamp: Initialize uclamp_rq alongside rq setup in sched_init()
+Date: Fri, 27 Jun 2025 15:45:35 +0800
+Message-Id: <20250627074535.14064-1-zhangzihuan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250617070144.1149926-1-inochiama@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 17, 2025 at 03:01:38PM +0800, Inochi Amaoto wrote:
-> Like SG2042, CV1800 Series SoCs also have simple bit reset generator.
-> Add necessary code and bindings for it.
-> 
-> Changes from v4:
-> 1. patch 1: convert the compatible as entry of enum.
-> 1. patch 2, 3: apply Alexander's tag.
-> 1. patch 3: apply Junhui's tag.
-> 
-> Changes from v2:
-> 1. patch 3: fix wrong reset ID.
-> 
-> Changes from v1:
-> 1. rebase to v6.16-rc1
-> 2. patch 1: apply Rob's tag
-> 3. patch 3: fix wrong reset ID
-> 
-> Inochi Amaoto (4):
->   dt-bindings: reset: sophgo: Add CV1800B support
->   reset: simple: add support for Sophgo CV1800B
->   riscv: dts: sophgo: add reset generator for Sophgo CV1800 series SoC
->   riscv: dts: sophgo: add reset configuration for Sophgo CV1800 series
->     SoC
-> 
->  .../bindings/reset/sophgo,sg2042-reset.yaml   |  4 +-
->  arch/riscv/boot/dts/sophgo/cv180x.dtsi        | 25 +++++
->  arch/riscv/boot/dts/sophgo/cv18xx-reset.h     | 98 +++++++++++++++++++
->  drivers/reset/reset-simple.c                  |  2 +
->  4 files changed, 128 insertions(+), 1 deletion(-)
->  create mode 100644 arch/riscv/boot/dts/sophgo/cv18xx-reset.h
-> 
-> --
-> 2.49.0
-> 
+uclamp_rq is currently initialized for all possible CPUs in a separate
+loop within init_uclamp(). This creates a dependency on the ordering of
+sched_init() and init_uclamp(), and duplicates the per-CPU iteration.
 
-I wonder if the binding and driver can be merged, as many devices
-require reset to functional normally. If these two are taken, I
-can take the dts change.
+This patch simplifies the logic by moving uclamp_rq initialization into
+sched_init(), immediately after each cpu_rq is initialized. This ensures
+uclamprq setup is tightly coupled with rq setup and removes the need for
+a redundant loop.
 
-Regards,
-Inochi
+Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+---
+ kernel/sched/core.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 8988d38d46a3..a160ec8645b2 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1998,7 +1998,7 @@ static void uclamp_post_fork(struct task_struct *p)
+ 	uclamp_update_util_min_rt_default(p);
+ }
+=20
+-static void __init init_uclamp_rq(struct rq *rq)
++static void init_uclamp_rq(struct rq *rq)
+ {
+ 	enum uclamp_id clamp_id;
+ 	struct uclamp_rq *uc_rq =3D rq->uclamp;
+@@ -2016,10 +2016,6 @@ static void __init init_uclamp(void)
+ {
+ 	struct uclamp_se uc_max =3D {};
+ 	enum uclamp_id clamp_id;
+-	int cpu;
+-
+-	for_each_possible_cpu(cpu)
+-		init_uclamp_rq(cpu_rq(cpu));
+=20
+ 	for_each_clamp_id(clamp_id) {
+ 		uclamp_se_set(&init_task.uclamp_req[clamp_id],
+@@ -2043,6 +2039,7 @@ static inline void uclamp_rq_dec(struct rq *rq, str=
+uct task_struct *p) { }
+ static inline void uclamp_fork(struct task_struct *p) { }
+ static inline void uclamp_post_fork(struct task_struct *p) { }
+ static inline void init_uclamp(void) { }
++static inline void init_uclamp_rq(struct rq *rq) {}
+ #endif /* CONFIG_UCLAMP_TASK */
+=20
+ bool sched_task_on_rq(struct task_struct *p)
+@@ -8586,6 +8583,7 @@ void __init sched_init(void)
+ 		init_cfs_rq(&rq->cfs);
+ 		init_rt_rq(&rq->rt);
+ 		init_dl_rq(&rq->dl);
++		init_uclamp_rq(rq);
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
+ 		rq->tmp_alone_branch =3D &rq->leaf_cfs_rq_list;
+--=20
+2.25.1
 
 
