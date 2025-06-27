@@ -1,331 +1,155 @@
-Return-Path: <linux-kernel+bounces-707060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47242AEBF54
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:55:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96706AEBF5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D081C45E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C5B17FC9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BD81F12FB;
-	Fri, 27 Jun 2025 18:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7CF1F1311;
+	Fri, 27 Jun 2025 18:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITe48UYA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8B8+Fbv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B498D4502A;
-	Fri, 27 Jun 2025 18:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F764502A;
+	Fri, 27 Jun 2025 18:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751050524; cv=none; b=cigf9NTuAy0ETZW92zCP4FDhepTw9k7M7zYqgk6ogAMYOQOBv0gQRwu5Cf4SMjI8JNwLbVRvxcRJY3y70sDgwSurP+EIcXmNtOTDcMhQ9Xz2zFbRdbVWbrEaTcHQGR+beckjOXzBBnyQDG+EC5tqz3X8kkNZ+IF3FD4lqvfcM2c=
+	t=1751050710; cv=none; b=SUBXmbPQY1ywa8Ik/zPnW8kytWHu0Pchh/waN/NUNzJE5BtWB11j6x0QWo/t4qUvmzv9YBOwKDIfcO19gF+9dYl3XJChXCuT+nWw4f0rmKS0zVe8x6BU47/QXJ2pItWh/L3Fj+Kh24aE8+8Mb+CqHkynwgoJ1eQ2aNzvAdDU5iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751050524; c=relaxed/simple;
-	bh=oLWn1hEhrRA2WOirLALuOWE0n+F+Fa0VRES5IX5m308=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HwJtk4cFcr5jeGyLCBHXsTsPZTPAO06NXWcCRIL+dLO/PK7DoR8fIzPkXsDwW9fRzUaVLjtHKYH7Amp1Gz7Rvxd8IqczYDC7cRqeuohzyETK0l5wv2wvRdzqnDkVoMLc/d+yz0ggN7VWgpT9bdw16ZO23G6o/qpY5Cs8mafZQGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITe48UYA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06724C4CEE3;
-	Fri, 27 Jun 2025 18:55:21 +0000 (UTC)
+	s=arc-20240116; t=1751050710; c=relaxed/simple;
+	bh=9RDwtHBhtKqPblXPI9Fl8+SOfUWmVmsCQUmrhnB+dXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dnw2CoFHg0aNJ3SlpZ80xXWpXwMQZ+kUynaIUS34eQO3LpCoNiv5Oo7Wh5nmlvxZT4+Q5EZrrWrMN/FNWo6h7pnPTALW6jnAYxN/7LmomFQZNDhFWe6I7AG6idHW5br8BRn1H4E4gwDBUxFnRuvXHUDIv1m2cNI4UMWzWlUHmIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8B8+Fbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCD9C4CEE3;
+	Fri, 27 Jun 2025 18:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751050524;
-	bh=oLWn1hEhrRA2WOirLALuOWE0n+F+Fa0VRES5IX5m308=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ITe48UYA92zBNkBJfGQsrXBEKkIEHsqlCinbEoCqQJqUmEY7MUUVDFYkcdPZNNFLo
-	 8rR4VNd1S66Tubi7HW+m3iVcjP05T28okzL2Fn+COdNDAfsEUrxHblgdlb35wYuBDT
-	 6uAexZfNcerv2jEeQMldheuWuut9fq/bgII+rFydoEKLivOpKKCyrCmJDGFPnOuZrw
-	 NXspkoZoNUjCSKCD8IdMPZOdIHFiRp32heUTvmgmQr7hZnZZGtKXvdAJY8NvuybAXy
-	 MEDEo4AfW/iVClq9tpGS2oT2MehdkDj/sk59GUrRPvIJyRi2YKDURdsUAtInP/EauQ
-	 2pwUnkWw3Yk6Q==
-Date: Fri, 27 Jun 2025 12:55:19 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>, Kees Cook <kees@kernel.org>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Cc: nvdimm@lists.linux.dev, linux-acpi@vger.kernel.org,
+	s=k20201202; t=1751050710;
+	bh=9RDwtHBhtKqPblXPI9Fl8+SOfUWmVmsCQUmrhnB+dXQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K8B8+Fbv7KXzak+U3czwcfQhzenUICqY1D1SNkNyEBEVO8dWtodGLnYZc/2yTKvdL
+	 3XLV+AE++myPPGNeWKzP583+2086g1bo25VwRU964W6u47ykRh/0S12m662cX1XDFJ
+	 bvG6rslCukIPs3KEzU5dcZsnstElmkvBDVhslAbvTH40bcF1A5SJEA3AggAdMuIbJq
+	 a24jq0Ch4UnNaPoS+sDFbp8SL/uGM5MU3Z6yQOdxhG0lFRzpfLe1Z4J6YrErMNnHcX
+	 zMasnhAnR615OWywI09i0qUKSIhqdv5bvkWgkGv2RGQT3/X3i06Vw+omFnBI3Bx+bw
+	 KVTkhIUq38keg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-s390@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v5][for-next/hardening] acpi: nfit: intel: avoid multiple
- -Wflex-array-member-not-at-end warnings
-Message-ID: <aF7pF4kej8VQapyR@kspp>
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Joerg Schmidbauer <jschmidb@de.ibm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	stable@vger.kernel.org,
+	Ingo Franzki <ifranzki@linux.ibm.com>
+Subject: [PATCH] crypto: s390/sha - Fix uninitialized variable in SHA-1 and SHA-2
+Date: Fri, 27 Jun 2025 11:56:49 -0700
+Message-ID: <20250627185649.35321-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+Commit 88c02b3f79a6 ("s390/sha3: Support sha3 performance enhancements")
+added the field s390_sha_ctx::first_message_part and made it be used by
+s390_sha_update_blocks().  At the time, s390_sha_update_blocks() was
+used by all the s390 SHA-1, SHA-2, and SHA-3 algorithms.  However, only
+the initialization functions for SHA-3 were updated, leaving SHA-1 and
+SHA-2 using first_message_part uninitialized.
 
-Use the new TRAILING_OVERLAP() helper to fix a dozen instances of
-the following type of warning:
+This could cause e.g. CPACF_KIMD_SHA_512 | CPACF_KIMD_NIP to be used
+instead of just CPACF_KIMD_NIP.  It's unclear why this didn't cause a
+problem earlier; this bug was found only when UBSAN detected the
+uninitialized boolean.  Perhaps the CPU ignores CPACF_KIMD_NIP for SHA-1
+and SHA-2.  Regardless, let's fix this.  For now just initialize to
+false, i.e. don't try to "optimize" the SHA state initialization.
 
-drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+Note: in 6.16, we need to patch SHA-1, SHA-384, and SHA-512.  In 6.15
+and earlier, we'll also need to patch SHA-224 and SHA-256, as they
+hadn't yet been librarified (which incidentally fixed this bug).
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Fixes: 88c02b3f79a6 ("s390/sha3: Support sha3 performance enhancements")
+Cc: stable@vger.kernel.org
+Reported-by: Ingo Franzki <ifranzki@linux.ibm.com>
+Closes: https://lore.kernel.org/r/12740696-595c-4604-873e-aefe8b405fbf@linux.ibm.com
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
-Changes in v5:
- - Fix union initialization. (Dan)
- - Leave trailing object indentation unchanged. (Kees)
 
-Changes in v4:
- - Use the new TRAILING_OVERLAP() helper.
- - Link: https://lore.kernel.org/linux-hardening/aFxtOLs6Yv_uzgt4@kspp/
+This is targeting 6.16.  I'd prefer to take this through
+libcrypto-fixes, since the librarification work is also touching this
+area.  But let me know if there's a preference for the crypto tree or
+the s390 tree instead.
 
-Changes in v3:
- - Use union instead of DEFINE_RAW_FLEX().
- - Link: https://lore.kernel.org/linux-hardening/aEneid7gdAZr1_kR@kspp/
+ arch/s390/crypto/sha1_s390.c   | 1 +
+ arch/s390/crypto/sha512_s390.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-Changes in v2:
- - Use DEFINE_RAW_FLEX() instead of __struct_group().
- - Link: https://lore.kernel.org/linux-hardening/Z-QpUcxFCRByYcTA@kspp/
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z618ILbAR8YAvTkd@kspp/
-
- drivers/acpi/nfit/intel.c | 119 +++++++++++++++++---------------------
- 1 file changed, 52 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
-index 3902759abcba..bce6f6a18426 100644
---- a/drivers/acpi/nfit/intel.c
-+++ b/drivers/acpi/nfit/intel.c
-@@ -55,10 +55,9 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
- 	unsigned long security_flags = 0;
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_get_security_state cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_GET_SECURITY_STATE,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -120,10 +119,9 @@ static unsigned long intel_security_flags(struct nvdimm *nvdimm,
- static int intel_security_freeze(struct nvdimm *nvdimm)
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_freeze_lock cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_FREEZE_LOCK,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -153,10 +151,9 @@ static int intel_security_change_key(struct nvdimm *nvdimm,
- 	unsigned int cmd = ptype == NVDIMM_MASTER ?
- 		NVDIMM_INTEL_SET_MASTER_PASSPHRASE :
- 		NVDIMM_INTEL_SET_PASSPHRASE;
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_set_passphrase cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_family = NVDIMM_FAMILY_INTEL,
- 			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE * 2,
-@@ -195,10 +192,9 @@ static int __maybe_unused intel_security_unlock(struct nvdimm *nvdimm,
- 		const struct nvdimm_key_data *key_data)
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_unlock_unit cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_UNLOCK_UNIT,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -234,10 +230,9 @@ static int intel_security_disable(struct nvdimm *nvdimm,
- {
- 	int rc;
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_disable_passphrase cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_DISABLE_PASSPHRASE,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -277,10 +272,9 @@ static int __maybe_unused intel_security_erase(struct nvdimm *nvdimm,
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
- 	unsigned int cmd = ptype == NVDIMM_MASTER ?
- 		NVDIMM_INTEL_MASTER_SECURE_ERASE : NVDIMM_INTEL_SECURE_ERASE;
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_secure_erase cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_family = NVDIMM_FAMILY_INTEL,
- 			.nd_size_in = ND_INTEL_PASSPHRASE_SIZE,
-@@ -318,10 +312,9 @@ static int __maybe_unused intel_security_query_overwrite(struct nvdimm *nvdimm)
- {
- 	int rc;
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_query_overwrite cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_QUERY_OVERWRITE,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -354,10 +347,9 @@ static int __maybe_unused intel_security_overwrite(struct nvdimm *nvdimm,
- {
- 	int rc;
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_overwrite cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_OVERWRITE,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -407,10 +399,9 @@ const struct nvdimm_security_ops *intel_security_ops = &__intel_security_ops;
- static int intel_bus_fwa_businfo(struct nvdimm_bus_descriptor *nd_desc,
- 		struct nd_intel_bus_fw_activate_businfo *info)
- {
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_bus_fw_activate_businfo cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE_BUSINFO,
- 			.nd_family = NVDIMM_BUS_FAMILY_INTEL,
-@@ -518,33 +509,31 @@ static enum nvdimm_fwa_capability intel_bus_fwa_capability(
- static int intel_bus_fwa_activate(struct nvdimm_bus_descriptor *nd_desc)
- {
- 	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_bus_fw_activate cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE,
--			.nd_family = NVDIMM_BUS_FAMILY_INTEL,
--			.nd_size_in = sizeof(nd_cmd.cmd.iodev_state),
--			.nd_size_out =
--				sizeof(struct nd_intel_bus_fw_activate),
--			.nd_fw_size =
--				sizeof(struct nd_intel_bus_fw_activate),
--		},
-+	) nd_cmd;
-+	int rc;
-+
-+	nd_cmd.pkg = (struct nd_cmd_pkg) {
-+		.nd_command = NVDIMM_BUS_INTEL_FW_ACTIVATE,
-+		.nd_family = NVDIMM_BUS_FAMILY_INTEL,
-+		.nd_size_in = sizeof(nd_cmd.cmd.iodev_state),
-+		.nd_size_out =
-+			sizeof(struct nd_intel_bus_fw_activate),
-+		.nd_fw_size =
-+			sizeof(struct nd_intel_bus_fw_activate),
-+	};
-+	nd_cmd.cmd = (struct nd_intel_bus_fw_activate) {
- 		/*
- 		 * Even though activate is run from a suspended context,
- 		 * for safety, still ask platform firmware to force
- 		 * quiesce devices by default. Let a module
- 		 * parameter override that policy.
- 		 */
--		.cmd = {
--			.iodev_state = acpi_desc->fwa_noidle
--				? ND_INTEL_BUS_FWA_IODEV_OS_IDLE
--				: ND_INTEL_BUS_FWA_IODEV_FORCE_IDLE,
--		},
-+		.iodev_state = acpi_desc->fwa_noidle
-+			? ND_INTEL_BUS_FWA_IODEV_OS_IDLE
-+			: ND_INTEL_BUS_FWA_IODEV_FORCE_IDLE,
- 	};
--	int rc;
--
- 	switch (intel_bus_fwa_state(nd_desc)) {
- 	case NVDIMM_FWA_ARMED:
- 	case NVDIMM_FWA_ARM_OVERFLOW:
-@@ -582,10 +571,9 @@ const struct nvdimm_bus_fw_ops *intel_bus_fw_ops = &__intel_bus_fw_ops;
- static int intel_fwa_dimminfo(struct nvdimm *nvdimm,
- 		struct nd_intel_fw_activate_dimminfo *info)
- {
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_fw_activate_dimminfo cmd;
--	} nd_cmd = {
-+	) nd_cmd = {
- 		.pkg = {
- 			.nd_command = NVDIMM_INTEL_FW_ACTIVATE_DIMMINFO,
- 			.nd_family = NVDIMM_FAMILY_INTEL,
-@@ -688,27 +676,24 @@ static int intel_fwa_arm(struct nvdimm *nvdimm, enum nvdimm_fwa_trigger arm)
- {
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
- 	struct acpi_nfit_desc *acpi_desc = nfit_mem->acpi_desc;
--	struct {
--		struct nd_cmd_pkg pkg;
-+	TRAILING_OVERLAP(struct nd_cmd_pkg, pkg, nd_payload,
- 		struct nd_intel_fw_activate_arm cmd;
--	} nd_cmd = {
--		.pkg = {
--			.nd_command = NVDIMM_INTEL_FW_ACTIVATE_ARM,
--			.nd_family = NVDIMM_FAMILY_INTEL,
--			.nd_size_in = sizeof(nd_cmd.cmd.activate_arm),
--			.nd_size_out =
--				sizeof(struct nd_intel_fw_activate_arm),
--			.nd_fw_size =
--				sizeof(struct nd_intel_fw_activate_arm),
--		},
--		.cmd = {
--			.activate_arm = arm == NVDIMM_FWA_ARM
--				? ND_INTEL_DIMM_FWA_ARM
--				: ND_INTEL_DIMM_FWA_DISARM,
--		},
--	};
-+	) nd_cmd;
- 	int rc;
+diff --git a/arch/s390/crypto/sha1_s390.c b/arch/s390/crypto/sha1_s390.c
+index d229cbd2ba229..73672e76a88f9 100644
+--- a/arch/s390/crypto/sha1_s390.c
++++ b/arch/s390/crypto/sha1_s390.c
+@@ -36,10 +36,11 @@ static int s390_sha1_init(struct shash_desc *desc)
+ 	sctx->state[2] = SHA1_H2;
+ 	sctx->state[3] = SHA1_H3;
+ 	sctx->state[4] = SHA1_H4;
+ 	sctx->count = 0;
+ 	sctx->func = CPACF_KIMD_SHA_1;
++	sctx->first_message_part = false;
  
-+	nd_cmd.pkg = (struct nd_cmd_pkg) {
-+		.nd_command = NVDIMM_INTEL_FW_ACTIVATE_ARM,
-+		.nd_family = NVDIMM_FAMILY_INTEL,
-+		.nd_size_in = sizeof(nd_cmd.cmd.activate_arm),
-+		.nd_size_out = sizeof(struct nd_intel_fw_activate_arm),
-+		.nd_fw_size = sizeof(struct nd_intel_fw_activate_arm),
-+	};
-+	nd_cmd.cmd = (struct nd_intel_fw_activate_arm) {
-+		.activate_arm = arm == NVDIMM_FWA_ARM ?
-+					ND_INTEL_DIMM_FWA_ARM :
-+					ND_INTEL_DIMM_FWA_DISARM,
-+	};
-+
- 	switch (intel_fwa_state(nvdimm)) {
- 	case NVDIMM_FWA_INVALID:
- 		return -ENXIO;
+ 	return 0;
+ }
+ 
+ static int s390_sha1_export(struct shash_desc *desc, void *out)
+diff --git a/arch/s390/crypto/sha512_s390.c b/arch/s390/crypto/sha512_s390.c
+index 33711a29618c3..e9e112025ff22 100644
+--- a/arch/s390/crypto/sha512_s390.c
++++ b/arch/s390/crypto/sha512_s390.c
+@@ -30,10 +30,11 @@ static int sha512_init(struct shash_desc *desc)
+ 	ctx->sha512.state[6] = SHA512_H6;
+ 	ctx->sha512.state[7] = SHA512_H7;
+ 	ctx->count = 0;
+ 	ctx->sha512.count_hi = 0;
+ 	ctx->func = CPACF_KIMD_SHA_512;
++	ctx->first_message_part = false;
+ 
+ 	return 0;
+ }
+ 
+ static int sha512_export(struct shash_desc *desc, void *out)
+@@ -95,10 +96,11 @@ static int sha384_init(struct shash_desc *desc)
+ 	ctx->sha512.state[6] = SHA384_H6;
+ 	ctx->sha512.state[7] = SHA384_H7;
+ 	ctx->count = 0;
+ 	ctx->sha512.count_hi = 0;
+ 	ctx->func = CPACF_KIMD_SHA_512;
++	ctx->first_message_part = false;
+ 
+ 	return 0;
+ }
+ 
+ static struct shash_alg sha384_alg = {
+
+base-commit: e540341508ce2f6e27810106253d5de194b66750
 -- 
-2.43.0
+2.50.0
 
 
