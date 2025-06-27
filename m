@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-707189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D79AEC0ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:28:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04698AEC0F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D06E6E17E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45071560905
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4A621D590;
-	Fri, 27 Jun 2025 20:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7719A2264D1;
+	Fri, 27 Jun 2025 20:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXerUr1Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjwcY67p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7C621D3C6;
-	Fri, 27 Jun 2025 20:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43FA221DB9;
+	Fri, 27 Jun 2025 20:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751056052; cv=none; b=ITKvA76y7csT3BE+QmRhGvoDrEMZCm/4S/eqZUNnS6K3873g8bayg/4UPhRfgnPB1zQQr+6YEivQtV429mQ0914XUxeZEoqizSoQ9OmZXU0gGyqfUGd3jo15x38AYuWF54+6O3moykBOYw9eYXkUXh03sQQeJGGUAqOw+tYxP5U=
+	t=1751056132; cv=none; b=Axh+KJ/3kjrP0J71AKUdbVYAi/o6kcmUvNjYsZjNTc4G4OITHSmQcfwVQVRHGmydvK6GCy64CKwPh0pKfvwagpz7AssuSuM7gDUb4rBKikAj1qDvx8GnM/TQKDbg0dehxCTj+ttI8gac0OmzqStuCWrwe+Sf4o7FtxhDbo7pvdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751056052; c=relaxed/simple;
-	bh=QDKVwtK2TEwDIXhfVWLXDxgF4PMvRsSYsSJwf6t+eWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dDRD+SaOBY2JGKUNL5pWsj9+CfJxu8e/PvPLniXfQWbCoYeO7FopRkJ+DXbdsMhdCIsd9K6A4TCYJ4Js7qyNl0KFtHfj4amHrIzK/+K4zqWxsGSuoKLClG/w5tzZovbyN8aZToiGFjKv9B55f1K20BhkSknmZ8akMouxqPXWhDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXerUr1Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 975AFC4CEE3;
-	Fri, 27 Jun 2025 20:27:31 +0000 (UTC)
+	s=arc-20240116; t=1751056132; c=relaxed/simple;
+	bh=f33g7AQTIoumIR81yP3oqisT+p6xQ/smz6jb75JSd7E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=edN1CB8A1jMu6BpmH2GzVKMbowLh3y02fQ1F4qtenM+zGssSbMCC/CnPPrlmufN/Pto7QoOi68CeLv/sU4/h8Tqt36hBGB6nJkDmEGXKfUJfDSYddGdC18QfAej5cJpNQKxDKIoDJLLmtPWlI6BUd5C0dtMtaQjPww4rERra8V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjwcY67p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD97C4CEE3;
+	Fri, 27 Jun 2025 20:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751056051;
-	bh=QDKVwtK2TEwDIXhfVWLXDxgF4PMvRsSYsSJwf6t+eWA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pXerUr1ZpL/lyDDuhY/20jjRuDzMsyOFBtnNOAMyFpscGHNnKV6o45N97kY3KI01y
-	 e+CgI0IGH8h+k7mS1gJW/FgKKjNim+vQ1Ydqnihq1FCbtpbXWS0LxziElz66+y2JiR
-	 eJc3OgL3hbmTaMjBME2hTcOubf1+5YRnWJGQgZSPGzzHi1eQS5KHKz4QDUn3C6AU63
-	 ARfsp9UCYTCAJjQ5Sa4zbCn2KSSEfMpkRZdPFWwKJ1Vzfkww/E7Me5YxiEZYk+eBWK
-	 wULPZF/nV9hj3L1E0OUvPKefyeXBcPNgWgzi9h+LsiTkGFL3akU92y1s6vsaHV3c/3
-	 6ekqNtJysygNw==
-Date: Fri, 27 Jun 2025 15:27:30 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [GIT PULL] PCI fixes for v6.16
-Message-ID: <20250627202730.GA1683609@bhelgaas>
+	s=k20201202; t=1751056132;
+	bh=f33g7AQTIoumIR81yP3oqisT+p6xQ/smz6jb75JSd7E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kjwcY67phiXKdjFIgm+NBjQUL5EzYzn69zzAq8DaOFO6xB1xWGqOguqzzLJXWbxOF
+	 6oGMVHGZjLNqjTRwl8Q1hM0FcEJzM4ehPSR0JHFUbRPDl+6UduRZIcr5vHb3VQTCGO
+	 khZj6jaWnrTc5avIeF/HL2oRniIVoFIaf3EZnlwxWIChJx9ZWSFlNmqwuxQKvj1B1n
+	 xxDemS/rVxjpC1BoaY9y9v3rYyfaAYwTM9jc6RnZyu2qero0qSKiJl3wDi1M/pIjgP
+	 g14p76cvEU9CtAQkoQ89R5nApyPAIkXgkRvyNqqwVmliAwYqY9pWwAhXotV2uAee7Q
+	 b1nmHLg5JBGOQ==
+From: Kees Cook <kees@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	nvdimm@lists.linux.dev,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v5][for-next/hardening] acpi: nfit: intel: avoid multiple -Wflex-array-member-not-at-end warnings
+Date: Fri, 27 Jun 2025 13:28:15 -0700
+Message-Id: <175105609270.2134124.11937541280593665883.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <aF7pF4kej8VQapyR@kspp>
+References: <aF7pF4kej8VQapyR@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+On Fri, 27 Jun 2025 12:55:19 -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Use the new TRAILING_OVERLAP() helper to fix a dozen instances of
+> the following type of warning:
+> 
+> drivers/acpi/nfit/intel.c:692:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> [...]
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+Thanks for the revs and reviews! :) Since this depends on
+TRAILING_OVERLAP, I've snagged it for the hardening tree.
 
-are available in the Git repository at:
+Applied to for-next/hardening, thanks!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.16-fixes-2
+[1/1] acpi: nfit: intel: avoid multiple -Wflex-array-member-not-at-end warnings
+      https://git.kernel.org/kees/c/5e54510a9389
 
-for you to fetch changes up to 5aa326a6a2ff0a7e7c6e11777045e66704c2d5e4:
+Take care,
 
-  PCI/PTM: Build debugfs code only if CONFIG_DEBUG_FS is enabled (2025-06-23 12:55:49 -0500)
+-- 
+Kees Cook
 
-----------------------------------------------------------------
-
-- Fix a PTM debugfs build error with CONFIG_DEBUG_FS=n && CONFIG_PCIE_PTM=y
-  (Manivannan Sadhasivam)
-
-----------------------------------------------------------------
-Manivannan Sadhasivam (1):
-      PCI/PTM: Build debugfs code only if CONFIG_DEBUG_FS is enabled
-
- drivers/pci/pcie/ptm.c | 2 ++
- 1 file changed, 2 insertions(+)
 
