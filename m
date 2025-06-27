@@ -1,165 +1,148 @@
-Return-Path: <linux-kernel+bounces-706459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E65BAEB6E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC46AEB6E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA9B056068E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:53:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B57F3BA96F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6135D2BEFED;
-	Fri, 27 Jun 2025 11:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cj0e/SEr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244F82D9798
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C316D2D3EFA;
+	Fri, 27 Jun 2025 11:52:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F36D2C08C9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025145; cv=none; b=qu9z/3cbWsJ/OmJmNrGkjAOUpO6K2MP1bAwI0bpNxiY1loHs+SbvKXn2nsxgs28GH2h1WcvxR+48NUofxUop3gJXQy4VjgrtCDaX6AsSKwkHqYbjMniVZFDx5GvpuzyyPcdUOiFofaJcySQ530DIRHK/zrc0qbETBzx5nj9oQzo=
+	t=1751025141; cv=none; b=hSgMAPC+3bdSeXGD/+e220XR3tF0+WcXAZgd5wzdmLygansxQMNTPfRQNduUDa53tYNirGUZLGSkqvkMmnp42//yG3nNx+j10Z2YwClHNVa4HVciTegjD1ytRjdLS4oRaWUhdTm9b5skGirUq1M9QBZcnSj7+Ef9o+0MKoclF9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025145; c=relaxed/simple;
-	bh=+wUi4GXukNo2pvBcAQ46Qj1TJ38IJNJg5MzaCi/0apg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PzC3rIFNWEM7JTVLRxIP0gZYQhqMbYVNTMKjvgjXrqky3B6wcS48ggV+c62Af4Q/NFw6YFXtvC53lGgQCytO8Ce6iwqV/aMoWyudCv33TBKDiMUk5SCbgfP+W3D3urxFSCO1v5p7xPqObl7Wd3RuZ8lDhNMBO0ATnloDo4PAIHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cj0e/SEr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751025143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NK5HahFlaS1XZ4t7oWyohvLCLN5zar3OEBM1RLwvCbE=;
-	b=cj0e/SErSkZH4Z6JId9ow2YmRIePhFsbOYq8x7I0Ks7177ozapDr222DRyrPScJ5xN/LcD
-	6cbbd6In2KaK8PEH+5pyUjxTOVXd+2t55KNMexugJqQSpdwmMCfkC4Y8cDmLKDnpPpfcz/
-	+9hNYe15appDWyTT2GKxThVT8MLdXH4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-468-bJHnK-l7PnaOJpZJ83RoXg-1; Fri,
- 27 Jun 2025 07:52:19 -0400
-X-MC-Unique: bJHnK-l7PnaOJpZJ83RoXg-1
-X-Mimecast-MFC-AGG-ID: bJHnK-l7PnaOJpZJ83RoXg_1751025138
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 418DA1801212;
-	Fri, 27 Jun 2025 11:52:18 +0000 (UTC)
-Received: from jlelli-thinkpadt14gen4.remote.csb (unknown [10.44.32.84])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F82819560A7;
-	Fri, 27 Jun 2025 11:52:13 +0000 (UTC)
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <llong@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH 5/5] tools/sched: Add dl_bw_dump.py for printing bandwidth accounting info
-Date: Fri, 27 Jun 2025 13:51:18 +0200
-Message-ID: <20250627115118.438797-6-juri.lelli@redhat.com>
-In-Reply-To: <20250627115118.438797-1-juri.lelli@redhat.com>
-References: <20250627115118.438797-1-juri.lelli@redhat.com>
+	s=arc-20240116; t=1751025141; c=relaxed/simple;
+	bh=qoXC/l3xNPFNA8wYwenCP2bGPYx0KGdr+dPkmBLbGJw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HN511yeju9eRjmnUQfsfVfqCrkDX9B5CcDknr2uvqen6wJWIQsqpB/k0w2Y0WouAFwO046G3rYTWD/nCQ011Xpi4WjZJM/4FuzVePCvxggBQlRLco7/EfnaRffVvRs+tKpDPNU1B9KhjkdjOvfIT4YbE6n2reBcnifQWBYY9hS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5F811A00;
+	Fri, 27 Jun 2025 04:52:00 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71EF13F58B;
+	Fri, 27 Jun 2025 04:52:16 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v4 00/10] coresight: Fix and improve clock usage
+Date: Fri, 27 Jun 2025 12:51:46 +0100
+Message-Id: <20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANOFXmgC/x2MWwqAIBAArxL7nWCLPa8SIWZrLT1RkCC6e9LnM
+ Mw8EMgzBeiyBzxFDnweCVSegV3MMZPgKTGgxFJWWAvjd22Ddnxru5121VEJQjUWVLimRQmpvDw
+ l/1/74X0/MuX2WGUAAAA=
+X-Change-ID: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751025136; l=3817;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=qoXC/l3xNPFNA8wYwenCP2bGPYx0KGdr+dPkmBLbGJw=;
+ b=3Vrpyuj0g3wgLf3vy2h2lTU/Ztbwf4fbhJTfkVn+5AlcSNz6IOHJ2k70ibxk2VAzhUvqrJ5Wj
+ JvuL9JyFmWwDmZPufSX+wf8eidoI4rOOWsHgzYiix58F8Gp+jbswhU8
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-dl_rq bandwidth accounting information is crucial for the correct
-functioning of SCHED_DEADLINE.
+This series fixes and improves clock usage in the Arm CoreSight drivers.
 
-Add a drgn script for accessing that information at runtime, so that
-it's easier to check and debug issues related to it.
+Based on the DT binding documents, the trace clock (atclk) is defined in
+some CoreSight modules, but support is absent. In most cases, the issue
+is hidden because the atclk clock is shared by multiple CoreSight
+modules and the clock is enabled anyway by other drivers. The first
+three patches address this issue.
 
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+The programming clock (pclk) management in CoreSight drivers does not
+use the devm_XXX() variant APIs, the drivers needs to manually disable
+and release clocks for errors and for normal module exit.  However, the
+drivers miss to disable clocks during module exit. The atclk may also
+not be disabled in CoreSight drivers during module exit. By using devm
+APIs, patches 04 and 05 fix clock disabling issues.
+
+Another issue is pclk might be enabled twice in init phase - once by
+AMBA bus driver, and again by CoreSight drivers. This is fixed in
+patch 06.
+
+Patches 07 to 10 refactor the clock related code. Patch 07 consolidates
+the clock initialization into a central place. Patch 08 polishes driver
+data allocation. Patch 09 makes the clock enabling sequence consistent.
+Patch 09 removes redundant condition checks and adds error handling in
+runtime PM.
+
+This series has been verified on Arm64 Hikey960 and Juno platforms.
+
+Changes from v3:
+- Separated patch 07 into two patches, one is for clock consolidation
+  and another is for polishing driver data allocation (Anshuman).
+
+Changes from v2:
+- Updated subjects for patches 04 and 05 (Anshuman).
+- Refined condition checking "if (dev_is_amba(dev))" in patch 07
+  (Anshuman).
+
+Changes from v1:
+- Moved the coresight_get_enable_clocks() function into CoreSight core
+  layer (James).
+- Added comments for clock naming "apb_pclk" and "apb" (James).
+- Re-ordered patches for easier understanding (Anshuman).
+- Minor improvement for commit log in patch 01 (Anshuman).
+
+Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/sched/dl_bw_dump.py | 57 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100755 tools/sched/dl_bw_dump.py
+Leo Yan (10):
+      coresight: tmc: Support atclk
+      coresight: catu: Support atclk
+      coresight: etm4x: Support atclk
+      coresight: Appropriately disable programming clocks
+      coresight: Appropriately disable trace bus clocks
+      coresight: Avoid enable programming clock duplicately
+      coresight: Consolidate clock enabling
+      coresight: Refactor driver data allocation
+      coresight: Make clock sequence consistent
+      coresight: Refactor runtime PM
 
-diff --git a/tools/sched/dl_bw_dump.py b/tools/sched/dl_bw_dump.py
-new file mode 100755
-index 0000000000000..aae4e42b17690
---- /dev/null
-+++ b/tools/sched/dl_bw_dump.py
-@@ -0,0 +1,57 @@
-+#!/usr/bin/env drgn
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2025 Juri Lelli <juri.lelli@redhat.com>
-+# Copyright (C) 2025 Red Hat, Inc.
-+
-+desc = """
-+This is a drgn script to show dl_rq bandwidth accounting information. For more
-+info on drgn, visit https://github.com/osandov/drgn.
-+
-+Only online CPUs are reported.
-+"""
-+
-+import os
-+import argparse
-+
-+import drgn
-+from drgn import FaultError
-+from drgn.helpers.common import *
-+from drgn.helpers.linux import *
-+
-+def print_dl_bws_info():
-+
-+    print("Retrieving dl_rq bandwidth accounting information:")
-+
-+    runqueues = prog['runqueues']
-+
-+    for cpu_id in for_each_possible_cpu(prog):
-+        try:
-+            rq = per_cpu(runqueues, cpu_id)
-+
-+            if rq.online == 0:
-+                continue
-+
-+            dl_rq = rq.dl
-+
-+            print(f"  From CPU: {cpu_id}")
-+
-+            # Access and print relevant fields from struct dl_rq
-+            print(f"  running_bw : {dl_rq.running_bw}")
-+            print(f"  this_bw    : {dl_rq.this_bw}")
-+            print(f"  extra_bw   : {dl_rq.extra_bw}")
-+            print(f"  max_bw     : {dl_rq.max_bw}")
-+            print(f"  bw_ratio   : {dl_rq.bw_ratio}")
-+
-+        except drgn.FaultError as fe:
-+            print(f"  (CPU {cpu_id}: Fault accessing kernel memory: {fe})")
-+        except AttributeError as ae:
-+            print(f"  (CPU {cpu_id}: Missing attribute for root_domain (kernel struct change?): {ae})")
-+        except Exception as e:
-+            print(f"  (CPU {cpu_id}: An unexpected error occurred: {e})")
-+
-+if __name__ == "__main__":
-+    parser = argparse.ArgumentParser(description=desc,
-+                                     formatter_class=argparse.RawTextHelpFormatter)
-+    args = parser.parse_args()
-+
-+    print_dl_bws_info()
+ drivers/hwtracing/coresight/coresight-catu.c       | 53 ++++++++---------
+ drivers/hwtracing/coresight/coresight-catu.h       |  1 +
+ drivers/hwtracing/coresight/coresight-core.c       | 46 +++++++++++++++
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 41 +++++---------
+ drivers/hwtracing/coresight/coresight-ctcu-core.c  | 24 +++-----
+ drivers/hwtracing/coresight/coresight-etb10.c      | 18 ++----
+ drivers/hwtracing/coresight/coresight-etm3x-core.c | 17 ++----
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 32 ++++++-----
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  4 +-
+ drivers/hwtracing/coresight/coresight-funnel.c     | 66 ++++++++--------------
+ drivers/hwtracing/coresight/coresight-replicator.c | 63 ++++++++-------------
+ drivers/hwtracing/coresight/coresight-stm.c        | 34 +++++------
+ drivers/hwtracing/coresight/coresight-tmc-core.c   | 48 ++++++++--------
+ drivers/hwtracing/coresight/coresight-tmc.h        |  2 +
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 36 +++++-------
+ include/linux/coresight.h                          | 30 +---------
+ 16 files changed, 226 insertions(+), 289 deletions(-)
+---
+base-commit: 67a993863163cb88b1b68974c31b0d84ece4293e
+change-id: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
+
+Best regards,
 -- 
-2.49.0
+Leo Yan <leo.yan@arm.com>
 
 
