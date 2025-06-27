@@ -1,144 +1,152 @@
-Return-Path: <linux-kernel+bounces-707019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224D7AEBF00
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:26:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330A1AEBF04
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A075605AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:25:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 462E57B324C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C882EBBA8;
-	Fri, 27 Jun 2025 18:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="HcpRcSSz"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2D62EBB91;
+	Fri, 27 Jun 2025 18:27:51 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC3335957;
-	Fri, 27 Jun 2025 18:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F8119F422
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 18:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751048735; cv=none; b=uWsDUfxERaHe4A1gpV6Pj93tUOZLd7WjjpR5wr+eTYAO6s48DV+A27tdIqlWUOy8t5hlSQbEpmzpwAW7cC3z6i/oVO4rY5UEraDOrEYKR5rUEjFKBSL7sTYzriIUK72/YrtDmhSXEm6uS6MzqCsjMV7fxmffKHYlxcRtlRlSnBo=
+	t=1751048871; cv=none; b=sLh/SZY36zfWgJ7sgaqCZnFIag+YZ7nZUYjH6ieN/3ipVySP9V0P28gUq0r/iI1XSnJlVhCLTQafU8X8qULV+Ui07JofF4Z1fzrQ1pHpjGdmTunAQaZUf73Ku8SVeRg1oOKxT3Q62GcH9O79dVPoPSPLao3CQtdQP+wJ9EF9JLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751048735; c=relaxed/simple;
-	bh=PjJQt6R+2Pb0XGHkIwzKosDZ/u+lUxtx+ilk3A++byg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lcSuCBbFQLtdggWV/hm7Ph/NVXUr+xPcRxcApD5Y1QQm7pFB/Cpp1UU3euo0pMI3/ihw+hCV4Ok2P9BRfVQtICvCer8ff5rzHgz6EH6vkvAGAUIm4l3/julQ3t3dm5XLhNiYyHy5iHcTgFuEEjXrRdEEfLSsuRJI3PzhphDsl3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=HcpRcSSz; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=AcyZ33LazzChsEAUzIIB359Y93Og/rELjwXfNDaBkEM=; b=HcpRcSSz1aCLDictpkpp3PuP8n
-	016GmdmvMyFTr8Fp3goWlzDWt6g+Qg1UQnq19KLPDu5XfrsfGy54AeysX+I7b5EKWhJNwc3G3aIJH
-	6MxIeD5TZRDXYXkEWWwhUorD+HAPmBCXbYiEQpcYsK/60fbQ0QiNT3BCc6XsT51j7ylorjGHgyvk4
-	LAjIG7D8xgOgYJRBYlD+t4WGvJJeL6GUaYKKgk3KDs7mBXsxLku1ItYfQivQjw4M44RFKl8xpAIZY
-	xWjreGFjjXbkK3L6Nl9gPdT6tXt2AXij+qt7dHgCcjrz+03Ba6odHEvAXf8WmjOJYwo7Z+2oqYMv+
-	LNt1qWzQ==;
-Received: from i53875b81.versanet.de ([83.135.91.129] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uVDl7-0006Qj-Ee; Fri, 27 Jun 2025 20:25:09 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Quentin Schulz <quentin.schulz@cherry.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Diederik de Haas <didi.debian@cknow.org>
-Cc: Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/8] arm64: dts: rockchip: Refactor DSI nodes on rk3399 boards
-Date: Fri, 27 Jun 2025 20:25:07 +0200
-Message-ID: <5121698.88bMQJbFj6@diego>
-In-Reply-To: <DAXGZG0DEKS2.7RLXKSDO0C9T@cknow.org>
-References:
- <20250627152645.740981-1-didi.debian@cknow.org>
- <b1c789bf-1369-42ec-8bb3-d7a45c92abf0@cherry.de>
- <DAXGZG0DEKS2.7RLXKSDO0C9T@cknow.org>
+	s=arc-20240116; t=1751048871; c=relaxed/simple;
+	bh=01ugrlY/0RqnzIazl+TSmCe8m5sjkORAizFqv5UF6UA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=q7jysjcsstz47sgDABmFZ5ZZNPo553RKEd/d3hF+SL8WnufigWFRikSpsv/fjIpxPyzVFGIcnRzeVZ/sLEAp78kNAq0djywyRzLZxN65PaWRohEjJlQWXumPY8yCPqcNuTimyjfCeUmuX775BYld6+uok48p+/RIGA02QYCc69E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3df33827a8cso5018355ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:27:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751048868; x=1751653668;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VjfxlhwayDOPXiGvimC4arJo9ropDjEihbwloDG0I1w=;
+        b=ZA1eFfZ9ektM4FBFtJYEt4tdGxMk9qJ0mB95W1G6gH5RvqI18wJ8nMCj6B4AN2ezdh
+         k50qYIxpAuftwGIjR5HyRujAbcMmOCB2iADzPXyAuosEu43HTt4ROXPT6hBgTQ5kUmUH
+         wmmWYimpTczVWXxLob53yR0RsNvojTPl4tAjfW+s2L50CD7qYUs3GXAudQfYjr9ed5r0
+         43Er9aI6IEKjsQs44DEwyQjcCqWGLh/4FSCpvNu2MhOyVFCF9qnR5ZLWt9tHo5b+Rxul
+         Tj5/DT9lWbpBKwDBr/vm2j9IDoV3MQoiOlOpnwskOWUyWlSDhrbfpURYWHPs4e7rc0JZ
+         j17Q==
+X-Gm-Message-State: AOJu0Yzt4li1Kz7XGlIinC2Y/zeEEdfEBYYf1v3HPOQRRFVINTwj22kk
+	aZ6JQJ+/MZs0dqdxVYrIMrwk4q07Z2WvuQ0klP2Uxu/6yjc6cUBPeHBmNrf4zUrYaANAg17Irk4
+	PK3Qsq1Gllci2FRK8GZRnYOVk1F1WPEY9nszZD92yuHNShe5dQPrB/yshYt8=
+X-Google-Smtp-Source: AGHT+IGUxDNrCqM/Q28B311AJFUkc9+/SiL7hEo3husKRyfOBdX2SQHNCMa7CO49x7zrV9zY3lfNbeRH2DvoT9CqtqEt8CO/508T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Received: by 2002:a92:ca4e:0:b0:3df:3110:cc01 with SMTP id
+ e9e14a558f8ab-3df4abb73e6mr61174935ab.19.1751048868454; Fri, 27 Jun 2025
+ 11:27:48 -0700 (PDT)
+Date: Fri, 27 Jun 2025 11:27:48 -0700
+In-Reply-To: <6813a531.050a0220.14dd7d.0018.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <685ee2a4.a70a0220.2f4de1.0000.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [rdma?] WARNING in rxe_skb_tx_dtor
+From: syzbot <syzbot+8425ccfb599521edb153@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Freitag, 27. Juni 2025, 18:52:08 Mitteleurop=C3=A4ische Sommerzeit schri=
-eb Diederik de Haas:
-> Hi Quentin,
->=20
-> Thanks for taking a look.
->=20
-> On Fri Jun 27, 2025 at 6:10 PM CEST, Quentin Schulz wrote:
-> > On 6/27/25 5:16 PM, Diederik de Haas wrote:
-> >> The #address-cells and #size-cells properties are not useful on the DSI
-> >> controller nodes; they are only useful/required on ports and panel(s).
-> >> So remove them from the controller node and add them where actually
-> >> needed on the various rk3399 based boards.
-> >>=20
-> >> Next to that, there were several (exact) redefinitions of nodes which
-> >> are already present in rk3399-base.dtsi to add a mipi_out endpoint.
-> >> Simplify that by referencing the mipi_out phandle and add the endpoint
-> >> to that, which allows the removeal of the ports redefinition.
-> >>=20
-> >> And fix 1 instance where the mipi_out referenced node was not sorted
-> >> correctly.
-> >>=20
-> >> This fixes the following DTB validation warnings:
-> >>=20
-> >>    unnecessary #address-cells/#size-cells without "ranges",
-> >>    "dma-ranges" or child "reg" property
-> >>=20
-> >
-> > Too many unrelated changes in this commit, please split into multiple=20
-> > commits.
-> >
-> > I could identify:
-> >
-> > - moving address-cells/size-cells from SoC.dtsi to board dts(i)s,
-> > - reordering properties to better match DT coding style=20
-> > https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-s=
-tyle.html#order-of-properties-in-device-node
-> > - use phandle to directly access ports,
-> > - reorder DT node to better match DT coding style=20
-> > https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-s=
-tyle.html#order-of-nodes
->=20
-> I initially had it as several commits, but that resulted in (f.e.) 1
-> issue being fixed, but 1 (or more) others would pop up.
-> Those were then fixed in follow-up commits, but I assumed I'd get Rob's
-> bot screaming at me for introducing new warnings (first).
->=20
-> And as they all relate(d) to fixing the dsi node, I then choose to
-> combine them (but still separated by SoC).
-> IMO there are several ways to organize the commits and each would have
-> their pros and cons, so I 'settled' for this arrangement.
->=20
-> So I prefer to wait for other people's opinion first before reorganizing
-> the commits again (if there's a different consensus).
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-personally, I can live with the current setup here, because as you said
-it's all DSI related, and also not a functional change ;-) .
+***
 
-I guess you _could_ move the clock-master + status moves into a separate
-patch, as that should not trigger any warnings.
+Subject: Re: [syzbot] [rdma?] WARNING in rxe_skb_tx_dtor
+Author: yanjun.zhu@linux.dev
 
+#syz test: https://github.com/zhuyj/linux.git v6.16_fix_rxe_skb_tx_dtor
 
-> > The change for RK3399 Puma Haikou Video Demo DTSO is fine for me.
->=20
-> Thanks :)
->=20
-> Cheers,
->   Diederik
->=20
-
-
-
+On 6/26/25 10:09 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in rxe_skb_tx_dtor
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 1039 at drivers/infiniband/sw/rxe/rxe_net.c:360 rxe_skb_tx_dtor+0x94/0x2b0 drivers/infiniband/sw/rxe/rxe_net.c:360
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 1039 Comm: kworker/u4:7 Not tainted 6.16.0-rc3-syzkaller-gc2b99574e921 #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Workqueue: rxe_wq do_work
+> RIP: 0010:rxe_skb_tx_dtor+0x94/0x2b0 drivers/infiniband/sw/rxe/rxe_net.c:360
+> Code: 80 3c 20 00 74 08 4c 89 ff e8 b8 64 81 f9 4d 8b 37 44 89 f6 83 e6 01 31 ff e8 c8 e5 1d f9 41 f6 c6 01 75 0e e8 dd e0 1d f9 90 <0f> 0b 90 e9 b4 01 00 00 4c 89 ff e8 4c 97 fd 01 48 89 c7 be 0e 00
+> RSP: 0018:ffffc900000079e8 EFLAGS: 00010246
+> RAX: ffffffff88a26d93 RBX: ffff88804844d000 RCX: ffff88800037a440
+> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff887bc1c4
+> R10: dffffc0000000000 R11: ffffffff88a26d00 R12: dffffc0000000000
+> R13: 1ffff11009089a0b R14: 0000000000025820 R15: ffff8880333d0000
+> FS:  0000000000000000(0000) GS:ffff88808d250000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f12ddf0ffc8 CR3: 00000000550c0000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <IRQ>
+>   skb_release_head_state+0xfe/0x250 net/core/skbuff.c:1139
+>   napi_consume_skb+0xd2/0x1e0 net/core/skbuff.c:-1
+>   e1000_unmap_and_free_tx_resource drivers/net/ethernet/intel/e1000/e1000_main.c:1972 [inline]
+>   e1000_clean_tx_irq drivers/net/ethernet/intel/e1000/e1000_main.c:3864 [inline]
+>   e1000_clean+0x49d/0x2b00 drivers/net/ethernet/intel/e1000/e1000_main.c:3805
+>   __napi_poll+0xc4/0x480 net/core/dev.c:7414
+>   napi_poll net/core/dev.c:7478 [inline]
+>   net_rx_action+0x707/0xe30 net/core/dev.c:7605
+>   handle_softirqs+0x286/0x870 kernel/softirq.c:579
+>   do_softirq+0xec/0x180 kernel/softirq.c:480
+>   </IRQ>
+>   <TASK>
+>   __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+>   local_bh_enable include/linux/bottom_half.h:33 [inline]
+>   __neigh_event_send+0x9b/0x1560 net/core/neighbour.c:1194
+>   neigh_event_send_probe include/net/neighbour.h:463 [inline]
+>   neigh_event_send include/net/neighbour.h:469 [inline]
+>   neigh_resolve_output+0x198/0x750 net/core/neighbour.c:1496
+>   neigh_output include/net/neighbour.h:539 [inline]
+>   ip6_finish_output2+0x11fb/0x16a0 net/ipv6/ip6_output.c:141
+>   __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
+>   ip6_finish_output+0x234/0x7d0 net/ipv6/ip6_output.c:226
+>   rxe_send drivers/infiniband/sw/rxe/rxe_net.c:394 [inline]
+>   rxe_xmit_packet+0x79e/0xa30 drivers/infiniband/sw/rxe/rxe_net.c:453
+>   rxe_requester+0x1fea/0x3d20 drivers/infiniband/sw/rxe/rxe_req.c:805
+>   rxe_sender+0x16/0x50 drivers/infiniband/sw/rxe/rxe_req.c:839
+>   do_task drivers/infiniband/sw/rxe/rxe_task.c:127 [inline]
+>   do_work+0x1b4/0x6c0 drivers/infiniband/sw/rxe/rxe_task.c:187
+>   process_one_work kernel/workqueue.c:3238 [inline]
+>   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+>   kthread+0x70e/0x8a0 kernel/kthread.c:464
+>   ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>   </TASK>
+> 
+> 
+> Tested on:
+> 
+> commit:         c2b99574 RDNA/rxe: Fix rxe_skb_tx_dtor problem
+> git tree:       https://github.com/zhuyj/linux.git v6.16_fix_rxe_skb_tx_dtor
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12e983d4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=79da270cec5ffd65
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8425ccfb599521edb153
+> compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> 
+> Note: no patches were applied.
 
 
