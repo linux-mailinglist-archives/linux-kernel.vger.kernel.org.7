@@ -1,142 +1,213 @@
-Return-Path: <linux-kernel+bounces-706939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1D3AEBE03
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:02:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2C5AEBDF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9FEE6A175E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 161E93A6B3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 17:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307392EB5A7;
-	Fri, 27 Jun 2025 17:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730AC2D3EFC;
+	Fri, 27 Jun 2025 17:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dUlKVrBB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NCm1xx2h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4572EACEE;
-	Fri, 27 Jun 2025 17:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C3217A306
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 17:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751043689; cv=none; b=LgR5J9vXI40dIRTF6iK9skQR5XWmal32I9rB/KqXhgCcjDC6CyM2r6pawBgJUkHeEiVEXZ7eNT0Azc3JxG4qYiwxCtEotmstoc46OShmMJyZdrvIgD4ZEyAZp/LOQYtSfFduEzA9HJFD3QP8rj/MhhgMcoPgDU7IIExDHPhPEV4=
+	t=1751043681; cv=none; b=gLEPiQ2Mj+w2J9Q1ehuW2X/IBW1wkRScYh1dqegeoyrfFXDEjwP1PCMV2GX7Xe6SmABMdQUt017LK9CcO37/aLhBPzGc53GQIgRfH6VxSRs1xCZwNzhNYR/CNoTmQWqpnk1KyWC9cmgA86YtRe50uSh5bBxQyXAfVjwICOf5TwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751043689; c=relaxed/simple;
-	bh=6f3tVgP2MLR8AUZbYTqhucyur2AusJBPWY2FYtWij3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J6HXipONHC/8QUs4Wn7J4bXfziR+w/18i1Enz2l2Ym0Y03jvyC5kVw5YUr4tbDGTc5bDAu4wyHjiaYMuOe9vGQK1aO0e1R8qPonH1cmPfavb3RpUvBbUAgx2BVJ+8oQI2CSIfkrNZ5oQPMXMyeH94yFa2j/gROMkjX7PnyV2018=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dUlKVrBB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBq2Zc028862;
-	Fri, 27 Jun 2025 17:01:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	66HzoUAyUCupfEkLPSykmXZ3bg7T/djHe6L0jVhT+Yg=; b=dUlKVrBBR5EUEAQR
-	RLwKNFcYygq6vHsYG65AfQIzlqduQNz4DwCiDIH//6gKZ5ze7l4oZn72UC50uhvk
-	bk23sZ3a2lF5n5ohYJjdJrtOouqXOk1SELhHaQlJlEcqw51EgMtVD92d3HHGzTMQ
-	mywAzyNkFiAhHarmYXtXuh6kKtsIypn7zsr0z2H8PAq/mK9hJ0iD9t6ubm92Ol4+
-	X/zcK6CSZuunvKef0RPM9PJAnx8Ewyh5m9dbv6CcSMQYFKuOmhirohZtMWmD1JCz
-	HtJzFJXDAfSMDCpkGDh/qcGmO6j8C2MbFxgC+Lx6wwQPQzBqWfJkPByS5t2I2Asw
-	CC8axQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47hkpbj7aj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 17:01:13 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55RH1CmQ031486
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Jun 2025 17:01:12 GMT
-Received: from [10.50.11.187] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Jun
- 2025 10:00:35 -0700
-Message-ID: <4db91e5b-9bbf-ce59-3880-30dd6efa9c92@quicinc.com>
-Date: Fri, 27 Jun 2025 22:30:32 +0530
+	s=arc-20240116; t=1751043681; c=relaxed/simple;
+	bh=6Po6Tys/cawtmKgVnCBdOs2Jv9ue2yUoscY2Y82XtxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=foakT+Edz+YDvfWRmMmr6iTY+xXuCZT7jVVcz9Te2QVrXNirs25Nma3DBuXNDJjURLLHCG9XsNz3LebYRQFS54kckOObytWR3sOX0eWzXo6fOWn8xTfYUmAc83t4agGbDh8keNcMMrZgWpgLuwBN1gMvihpSZVPnrZUXqTu1IYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NCm1xx2h; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751043679; x=1782579679;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=6Po6Tys/cawtmKgVnCBdOs2Jv9ue2yUoscY2Y82XtxE=;
+  b=NCm1xx2hhPIjq3eXPWpA5IfsKHOX5W99FQsj+oTx5GAMi9/qFxFUUSkh
+   QlokDsyUTCEx0KpLw/mh8977setrC+YV9GdFquQxTqHvELgVFZ9guNd9x
+   ImxXCr8ko8OEqTHHLmGtqNYgpES36WSGy8zxLN6kTSw7CQHQY0AyRpz7F
+   T6aOhk8ZJ8/ZNJFTbshYi+aFmNNXgOdcOELv7gmUvGgxY66TkKcnJgGRN
+   sSIK5Vk7cu++K5kr0sjgdZkIxa6FHna4xw677QlI/stzWVzQHCQQx2cYh
+   ePfmJM//kyKSuIdwi+HbZo/ufJhZbabewivLcHbQ0vu5TVeZrFhDDSv41
+   w==;
+X-CSE-ConnectionGUID: o8YkIexKS/2b+zsDqJLn9g==
+X-CSE-MsgGUID: GbyRg3B1TWeY2XAgQ9cCLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="53224163"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="53224163"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 10:01:19 -0700
+X-CSE-ConnectionGUID: MSgg9RLpTeifEd1dm4llrw==
+X-CSE-MsgGUID: VEGh0DTfSMyyvNK3bicy1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="153566144"
+Received: from igk-lkp-server01.igk.intel.com (HELO e588e990b675) ([10.91.175.65])
+  by fmviesa010.fm.intel.com with ESMTP; 27 Jun 2025 10:01:17 -0700
+Received: from kbuild by e588e990b675 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uVCRv-0000h9-0E;
+	Fri, 27 Jun 2025 17:01:15 +0000
+Date: Fri, 27 Jun 2025 19:00:41 +0200
+From: kernel test robot <lkp@intel.com>
+To: Nicolas Pitre <npitre@baylibre.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: security/keys/proc.c:211:19: warning: '%llu' directive writing
+ between 1 and 18 bytes into a region of size 16
+Message-ID: <202506271922.h8h9N24f-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Mauro
- Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
- <306223e7-b760-4d37-b5d2-ac04e3c98842@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <306223e7-b760-4d37-b5d2-ac04e3c98842@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEzOCBTYWx0ZWRfX95XFtW7RCgQU
- hfC8WnsLnBd3CPvv0P4KpzuIne1SHTiep14u+JooKFs9eebuBvfuB/FQLNpu9XUCMU8FO1E75cZ
- mhRj2YoolUl4Dx6GSUe/AqOtG/Pw4hmAbODfhjd83M4oSZnastcvK73QOczvVO6siIU5CZWk4aw
- nhKjsGpsde6DwhlEVnEj5ap0TCwUIYwlQljEgz/0tiw1iA1Bv13E6wToZXILLY+RuO/HuSMsMtS
- 4K143blqldbfVWhXXljVxcEDOYjLScxth7/DZFqYqTOt3JePwpmN9oLgVIv4iS4NGlIYUSGR6/I
- Rvs4ZqA/TzkI0q23JDhI25CXOXuFkxCVTYRT2Cs86AaxL0Sm9/yL5XM00YfT7CHMZJCaE8Ppi2O
- z7E1Zu9qCS3VjghSMgB6yaF2HS9fPe/L9HZ9OZLAIJ5T2fI2CpfKCvVPLeqbWcTmc6ICZhbI
-X-Proofpoint-GUID: I7oicxnUsrOxhlPRcG---j2_OLvBoKVQ
-X-Authority-Analysis: v=2.4 cv=AY2xH2XG c=1 sm=1 tr=0 ts=685ece59 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=S8hidplFpqv_CiXkyBkA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: I7oicxnUsrOxhlPRcG---j2_OLvBoKVQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_05,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 lowpriorityscore=0 spamscore=0 adultscore=0 impostorscore=0
- clxscore=1015 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506270138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e540341508ce2f6e27810106253d5de194b66750
+commit: 00a31dd3acea0f88f947fc71e268ebb34b59f218 asm-generic/div64: optimize/simplify __div64_const32()
+date:   8 months ago
+config: powerpc-randconfig-2006-20250626 (https://download.01.org/0day-ci/archive/20250627/202506271922.h8h9N24f-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250627/202506271922.h8h9N24f-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506271922.h8h9N24f-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   security/keys/proc.c: In function 'proc_keys_show':
+   security/keys/proc.c:217:24: warning: 'sprintf' may write a terminating nul past the end of the destination [-Wformat-overflow=]
+       sprintf(xbuf, "%lluw", div_u64(timo, 60 * 60 * 24 * 7));
+                           ^
+   security/keys/proc.c:217:4: note: 'sprintf' output between 3 and 17 bytes into a destination of size 16
+       sprintf(xbuf, "%lluw", div_u64(timo, 60 * 60 * 24 * 7));
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   security/keys/proc.c:215:24: warning: 'sprintf' may write a terminating nul past the end of the destination [-Wformat-overflow=]
+       sprintf(xbuf, "%llud", div_u64(timo, 60 * 60 * 24));
+                           ^
+   security/keys/proc.c:215:4: note: 'sprintf' output between 3 and 17 bytes into a destination of size 16
+       sprintf(xbuf, "%llud", div_u64(timo, 60 * 60 * 24));
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   security/keys/proc.c:213:23: warning: 'h' directive writing 1 byte into a region of size between 0 and 15 [-Wformat-overflow=]
+       sprintf(xbuf, "%lluh", div_u64(timo, 60 * 60));
+                          ^
+   security/keys/proc.c:213:4: note: 'sprintf' output between 3 and 18 bytes into a destination of size 16
+       sprintf(xbuf, "%lluh", div_u64(timo, 60 * 60));
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> security/keys/proc.c:211:19: warning: '%llu' directive writing between 1 and 18 bytes into a region of size 16 [-Wformat-overflow=]
+       sprintf(xbuf, "%llum", div_u64(timo, 60));
+                      ^~~~
+   security/keys/proc.c:211:18: note: directive argument in the range [0, 576460752303423487]
+       sprintf(xbuf, "%llum", div_u64(timo, 60));
+                     ^~~~~~~
+   security/keys/proc.c:211:4: note: 'sprintf' output between 3 and 20 bytes into a destination of size 16
+       sprintf(xbuf, "%llum", div_u64(timo, 60));
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
 
 
-On 6/27/2025 10:00 PM, Bryan O'Donoghue wrote:
-> On 27/06/2025 16:48, Vikash Garodia wrote:
->> Changes in v3:
->> - Add info about change in iommus binding (Thanks Krzysztof)
->> - Link to
->> v2:https://lore.kernel.org/r/20250627-video_cb-v2-0-3931c3f49361@quicinc.com
-> 
-> Hmm.
-> 
-> I would be nice to see what also _wasn't_ done i.e. why you didn't do what
-> Dmitry was suggesting, IMO that's as important as stating what you did change.
-> 
-> Not a huge deal you explained in a response email your logic already but just as
-> suggestion for future, I think its good practice to go through each point and
-> say what you did do, what you didn't do, perhaps what you tried and then decided
-> to do in a different way.
-I see your point here, and it would be certainly good to document (as a summary
-in cover letter) the design approaches which was not considered stating the
-limitations as well to drop them out.
+vim +211 security/keys/proc.c
 
-Regards,
-Vikash
-> 
-> ---
-> bod
+^1da177e4c3f41 Linus Torvalds 2005-04-16  152  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  153  static int proc_keys_show(struct seq_file *m, void *v)
+^1da177e4c3f41 Linus Torvalds 2005-04-16  154  {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  155  	struct rb_node *_p = v;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  156  	struct key *key = rb_entry(_p, struct key, serial_node);
+ab5c69f01313c8 Eric Biggers   2017-09-27  157  	unsigned long flags;
+927942aabbbe50 David Howells  2010-06-11  158  	key_ref_t key_ref, skey_ref;
+074d58989569b3 Baolin Wang    2017-11-15  159  	time64_t now, expiry;
+03dab869b7b239 David Howells  2016-10-26  160  	char xbuf[16];
+363b02dab09b32 David Howells  2017-10-04  161  	short state;
+074d58989569b3 Baolin Wang    2017-11-15  162  	u64 timo;
+06ec7be557a125 Michael LeMay  2006-06-26  163  	int rc;
+06ec7be557a125 Michael LeMay  2006-06-26  164  
+4bdf0bc3003141 David Howells  2013-09-24  165  	struct keyring_search_context ctx = {
+ede0fa98a900e6 Eric Biggers   2019-02-22  166  		.index_key		= key->index_key,
+4aa68e07d84556 Eric Biggers   2017-09-18  167  		.cred			= m->file->f_cred,
+462919591a1791 David Howells  2014-09-16  168  		.match_data.cmp		= lookup_user_key_possessed,
+462919591a1791 David Howells  2014-09-16  169  		.match_data.raw_data	= key,
+462919591a1791 David Howells  2014-09-16  170  		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
+dcf49dbc8077e2 David Howells  2019-06-26  171  		.flags			= (KEYRING_SEARCH_NO_STATE_CHECK |
+dcf49dbc8077e2 David Howells  2019-06-26  172  					   KEYRING_SEARCH_RECURSE),
+4bdf0bc3003141 David Howells  2013-09-24  173  	};
+4bdf0bc3003141 David Howells  2013-09-24  174  
+028db3e290f15a Linus Torvalds 2019-07-10  175  	key_ref = make_key_ref(key, 0);
+927942aabbbe50 David Howells  2010-06-11  176  
+927942aabbbe50 David Howells  2010-06-11  177  	/* determine if the key is possessed by this process (a test we can
+927942aabbbe50 David Howells  2010-06-11  178  	 * skip if the key does not indicate the possessor can view it
+927942aabbbe50 David Howells  2010-06-11  179  	 */
+028db3e290f15a Linus Torvalds 2019-07-10  180  	if (key->perm & KEY_POS_VIEW) {
+028db3e290f15a Linus Torvalds 2019-07-10  181  		rcu_read_lock();
+e59428f721ee09 David Howells  2019-06-19  182  		skey_ref = search_cred_keyrings_rcu(&ctx);
+028db3e290f15a Linus Torvalds 2019-07-10  183  		rcu_read_unlock();
+927942aabbbe50 David Howells  2010-06-11  184  		if (!IS_ERR(skey_ref)) {
+927942aabbbe50 David Howells  2010-06-11  185  			key_ref_put(skey_ref);
+927942aabbbe50 David Howells  2010-06-11  186  			key_ref = make_key_ref(key, 1);
+927942aabbbe50 David Howells  2010-06-11  187  		}
+927942aabbbe50 David Howells  2010-06-11  188  	}
+927942aabbbe50 David Howells  2010-06-11  189  
+4aa68e07d84556 Eric Biggers   2017-09-18  190  	/* check whether the current task is allowed to view the key */
+f5895943d91b41 David Howells  2014-03-14  191  	rc = key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW);
+06ec7be557a125 Michael LeMay  2006-06-26  192  	if (rc < 0)
+028db3e290f15a Linus Torvalds 2019-07-10  193  		return 0;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  194  
+074d58989569b3 Baolin Wang    2017-11-15  195  	now = ktime_get_real_seconds();
+^1da177e4c3f41 Linus Torvalds 2005-04-16  196  
+028db3e290f15a Linus Torvalds 2019-07-10  197  	rcu_read_lock();
+028db3e290f15a Linus Torvalds 2019-07-10  198  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  199  	/* come up with a suitable timeout value */
+ab5c69f01313c8 Eric Biggers   2017-09-27  200  	expiry = READ_ONCE(key->expiry);
+39299bdd254668 David Howells  2023-12-09  201  	if (expiry == TIME64_MAX) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  202  		memcpy(xbuf, "perm", 5);
+074d58989569b3 Baolin Wang    2017-11-15  203  	} else if (now >= expiry) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  204  		memcpy(xbuf, "expd", 5);
+7b1b9164598286 David Howells  2009-09-02  205  	} else {
+074d58989569b3 Baolin Wang    2017-11-15  206  		timo = expiry - now;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  207  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  208  		if (timo < 60)
+074d58989569b3 Baolin Wang    2017-11-15  209  			sprintf(xbuf, "%llus", timo);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  210  		else if (timo < 60*60)
+074d58989569b3 Baolin Wang    2017-11-15 @211  			sprintf(xbuf, "%llum", div_u64(timo, 60));
+^1da177e4c3f41 Linus Torvalds 2005-04-16  212  		else if (timo < 60*60*24)
+074d58989569b3 Baolin Wang    2017-11-15  213  			sprintf(xbuf, "%lluh", div_u64(timo, 60 * 60));
+^1da177e4c3f41 Linus Torvalds 2005-04-16  214  		else if (timo < 60*60*24*7)
+074d58989569b3 Baolin Wang    2017-11-15 @215  			sprintf(xbuf, "%llud", div_u64(timo, 60 * 60 * 24));
+^1da177e4c3f41 Linus Torvalds 2005-04-16  216  		else
+074d58989569b3 Baolin Wang    2017-11-15  217  			sprintf(xbuf, "%lluw", div_u64(timo, 60 * 60 * 24 * 7));
+^1da177e4c3f41 Linus Torvalds 2005-04-16  218  	}
+^1da177e4c3f41 Linus Torvalds 2005-04-16  219  
+363b02dab09b32 David Howells  2017-10-04  220  	state = key_read_state(key);
+363b02dab09b32 David Howells  2017-10-04  221  
+
+:::::: The code at line 211 was first introduced by commit
+:::::: 074d58989569b39f04294c90ef36dd82b8c2cc1a security: keys: Replace time_t/timespec with time64_t
+
+:::::: TO: Baolin Wang <baolin.wang@linaro.org>
+:::::: CC: David Howells <dhowells@redhat.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
