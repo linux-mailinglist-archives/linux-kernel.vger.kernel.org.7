@@ -1,256 +1,220 @@
-Return-Path: <linux-kernel+bounces-705742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C8AAEAD02
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:51:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69ECDAEAD05
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2A607A8A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D8717ABB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B431946BC;
-	Fri, 27 Jun 2025 02:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E38219D07A;
+	Fri, 27 Jun 2025 02:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhs+l2IP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKd++Msq"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17D3219E8;
-	Fri, 27 Jun 2025 02:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4B6186294
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 02:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750992661; cv=none; b=oFeVCKkmhM9U6r3kAQMUaLfyQumZ67BJKsXOJ/aLxdy425mAcABO+ODPLANdAff80IE2aMgL8Wk7rcqUwqLMCDtVO5N3RTnzUKrcEpyDW+JTSAzW9FHRyPecL8i2k8G/RfRo7tjiH8g5OLDARiatGEbEaU0oElNwfNYlzCYNZwE=
+	t=1750992783; cv=none; b=lkFRutKFVn/0FQ8gZyFhY+46gRRCm4hHg9emBLZk4L2fxm2kQ8d9GROZ6erfhxeKW4ZxIjezL2Xwl15sV7QMKic4uHAVmvRV2xQCeV9ZmmUcNgG0QdK5kSo5q6wM3XagpV3K83zaiS2FtDMLK27h+h7hWcD+3dVecknlvyglqZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750992661; c=relaxed/simple;
-	bh=QvL56MYYAxGslKpHG6OIwVOATz5SpWV3LVwYEEaG8xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WtpZ8tFPC2m1/0Mt3n775Gy7ftiutxYrN7Qog4Jpqkq0HIncefZcOPt94GLgAxidFRMZ+4KuzLIz1HVZOW1UdBh0ex/moOCi/eXVXyWRezm2GWv8weJdOspCh89fOTGUrsTf/lTL1XBc0I0BJHU9j+GtngNQMftFbd1k+9wQxGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhs+l2IP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520CCC4CEEB;
-	Fri, 27 Jun 2025 02:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750992661;
-	bh=QvL56MYYAxGslKpHG6OIwVOATz5SpWV3LVwYEEaG8xk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rhs+l2IPzVEfSqz+ZyLpUKmHpLk+PhU9q2xsNAknS98isbvCVCfFmxIADKanLz5Qf
-	 xMKqCWdx4/9ROhJLSPkuwWK3MRa69cPRfsdjLQjJTaythSoHdIGCkk0mhcwtX6iAog
-	 fOt9Y/chU0SgC16HOEkwGdGT56tIWuflmpiEI3WxYeHQd6bZ66JyucvoMkH0cPQwYc
-	 Ov6emP8jKEsKpt5OHQG3GExWi3qtf2j0OKWgxCe2ItI4t5RzlJiOECKpq9Qh3301nD
-	 4qGz4ZZAMS0kFE/FDIh+bOBCZcc9d9r/wm0TF7ZGNzigVUQNt+d+/jBcvacxTaRT1J
-	 d2rNGMru/jS3g==
-Date: Thu, 26 Jun 2025 21:51:00 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	"open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/LPC32XX SOC SUPPORT" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: mtd: convert lpc32xx-slc.txt to yaml
- format
-Message-ID: <20250627025100.GA1661037-robh@kernel.org>
-References: <20250623202325.2468483-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1750992783; c=relaxed/simple;
+	bh=i4Ehn82wQMBANVZn2Qv6kpXeHEI63GE7vJ4zmZW/Xpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K1SBKkQKK707YNbaXFVxT34W1cOXHqoEtvHoc/CIKgv1AMKAcppwT7bdjmDbgHppsM/1/DmBgCIDr5GnOBvUqUyY++X4DQOjiB/vT2nsvu7AcCmjKYS35KhRloB8wnAadlJP20HuzKhAQlpBkMK7hkASLh2vIkzKoq0F3DJpO68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKd++Msq; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d6ade159so12404455e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 19:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750992779; x=1751597579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6PzA7mB8f6GScrtLf4fvCqozUiHt2kWSKvUWfhehRw=;
+        b=XKd++Msq1tzGVYVPH9iXIa8rLjXA0VACUQ9iw7w3RagweLI4wBL/3h5jZ5fBFtNKuU
+         U2XDFQxZsB1kmikdqXAnRsoNBseJtP/1KqHUwBl/RFIE1uKMS7OODe2m629mouYvU4UM
+         I2SYwrNRev1Rqc72i9MfYksx9DeNtmbySoZp3j6uxvhUtxPH1BNq72v75zJXp5IJQP/A
+         DLnF3y+JgP494WHJO2ShB88XUdvMMuddEdmbr4vbXV/zPgdPKA6PthpFO3WhZa4U/8EL
+         +gususJWUEzXTqDDw7Stu+NESr2XQsbV7Ju+7Hw9w4xFVtWFT2cVNjr2ACnzCDfGa1bB
+         QDcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750992779; x=1751597579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N6PzA7mB8f6GScrtLf4fvCqozUiHt2kWSKvUWfhehRw=;
+        b=fiN4QBikV5A30vzv1txjlfCRN6bdd/B2UBuHSkytXasCGqsc5FnF88gF+CvZO6QkFx
+         qsuJqc+Sl84QMe6jt9tcGY9xudWZMb7LUTJk2fQWPe0w6m9eSimYIyQ/gHliOdTioROY
+         TtaqwetxAA83Ze9It2CLBSHpda3osbrHv2HnqAv3rlf+UKEHxgPNhLV2j6oIs+7XjjQK
+         /Syjxup7lk4fsi7Ct6WF2+ELKhA4HBnH9GkVKKykP1wWZnB3bUxNVz656x15zKk7LIwT
+         3CP2/GUG4RRupUdQneSQfDmdUFNTozECL13XFXl7N7pmal2LZ/MGtVfjE8DhvNwnI3Ou
+         85zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnbcIYIyP6NNS+PvFnB6lcaqc1d7QzmNmaUmSQv+SZVwTdLpclIMqPvxSWXpKF7sRbzfI+ZFYcgSLy6V0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykJ2oxPyKidTgECDTYOd/0fHj3YNuln4+c8PKQcIl3kpo33i8e
+	a6GQmAAcDH89CYYB+bOOsThc/JOQwaLn0Th1y5Aur4MmXcwEav4bpSeN
+X-Gm-Gg: ASbGncsqi7ePW5bHO6va16smaZkv2BQx7C2Hnmpb9SFKVzr9YlBJF8y6zYtYtNU1yv3
+	MI0mVy8DA7azz3dtRNZTKxvzDl8lzsrNaL0jiT77+60G8Br5rK2Z0K+7+4gS8VXXg9yOgwrQgaq
+	Y5r+Zg/aQiBI64I6S5svVWBJQnk5yibwThhoC2HZIRXVHwkpj1PV1du9/6ZgGIneMcbmsoWduF+
+	C43QJ+q51E2hwL3VPZYSPAnbL9oeW6TVUNGHgqYwAKpRPZWmaHOG5q1NKFAWWt9xPxKquteHyVI
+	Kae5UcmMId8lGYGcKkXm8hlEkCkQSukJ4+XCxDW1wrdMHBMR
+X-Google-Smtp-Source: AGHT+IFBUodrO2XKQIiwzTtHA/m8Q0lEsRRL9iE7J3KYXgrGSCiuYQrK9rEZ8la7pXGRsNR2J1eheQ==
+X-Received: by 2002:a05:600c:3582:b0:442:f482:c429 with SMTP id 5b1f17b1804b1-4538ee3b4dcmr12330455e9.8.1750992779126;
+        Thu, 26 Jun 2025 19:52:59 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::302c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4213f0sm36194695e9.36.2025.06.26.19.52.51
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 26 Jun 2025 19:52:58 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+X-Google-Original-From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	21cnbao@gmail.com
+Cc: baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	ioworker0@gmail.com,
+	kasong@tencent.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org,
+	lorenzo.stoakes@oracle.com,
+	ryan.roberts@arm.com,
+	v-songbaohua@oppo.com,
+	x86@kernel.org,
+	huang.ying.caritas@gmail.com,
+	zhengtangquan@oppo.com,
+	riel@surriel.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	harry.yoo@oracle.com,
+	mingzhe.yang@ly.com,
+	Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>
+Subject: [PATCH 1/1] mm/rmap: make folio unmap batching safe and support partial batches
+Date: Fri, 27 Jun 2025 10:52:14 +0800
+Message-ID: <20250627025214.30887-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623202325.2468483-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 23, 2025 at 04:23:24PM -0400, Frank Li wrote:
-> Convert lpc32xx-slc.txt to yaml format.
-> 
-> Additional changes:
-> - add ref to nand-controller.yaml
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/mtd/lpc32xx-slc.txt   |  52 ---------
->  .../bindings/mtd/nxp,lpc3220-slc.yaml         | 101 ++++++++++++++++++
->  2 files changed, 101 insertions(+), 52 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mtd/lpc32xx-slc.txt
->  create mode 100644 Documentation/devicetree/bindings/mtd/nxp,lpc3220-slc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/lpc32xx-slc.txt b/Documentation/devicetree/bindings/mtd/lpc32xx-slc.txt
-> deleted file mode 100644
-> index 39f17630a3011..0000000000000
-> --- a/Documentation/devicetree/bindings/mtd/lpc32xx-slc.txt
-> +++ /dev/null
-> @@ -1,52 +0,0 @@
-> -NXP LPC32xx SoC NAND SLC controller
-> -
-> -Required properties:
-> -- compatible: "nxp,lpc3220-slc"
-> -- reg: Address and size of the controller
-> -- nand-on-flash-bbt: Use bad block table on flash
-> -- gpios: GPIO specification for NAND write protect
-> -
-> -The following required properties are very controller specific. See the LPC32xx
-> -User Manual:
-> -- nxp,wdr-clks: Delay before Ready signal is tested on write (W_RDY)
-> -- nxp,rdr-clks: Delay before Ready signal is tested on read (R_RDY)
-> -(The following values are specified in Hz, to make them independent of actual
-> -clock speed:)
-> -- nxp,wwidth: Write pulse width (W_WIDTH)
-> -- nxp,whold: Write hold time (W_HOLD)
-> -- nxp,wsetup: Write setup time (W_SETUP)
-> -- nxp,rwidth: Read pulse width (R_WIDTH)
-> -- nxp,rhold: Read hold time (R_HOLD)
-> -- nxp,rsetup: Read setup time (R_SETUP)
-> -
-> -Optional subnodes:
-> -- Partitions, see Documentation/devicetree/bindings/mtd/mtd.yaml
-> -
-> -Example:
-> -
-> -	slc: flash@20020000 {
-> -		compatible = "nxp,lpc3220-slc";
-> -		reg = <0x20020000 0x1000>;
-> -		#address-cells = <1>;
-> -		#size-cells = <1>;
-> -
-> -		nxp,wdr-clks = <14>;
-> -		nxp,wwidth = <40000000>;
-> -		nxp,whold = <100000000>;
-> -		nxp,wsetup = <100000000>;
-> -		nxp,rdr-clks = <14>;
-> -		nxp,rwidth = <40000000>;
-> -		nxp,rhold = <66666666>;
-> -		nxp,rsetup = <100000000>;
-> -		nand-on-flash-bbt;
-> -		gpios = <&gpio 5 19 1>; /* GPO_P3 19, active low */
-> -
-> -		mtd0@00000000 {
-> -			label = "phy3250-boot";
-> -			reg = <0x00000000 0x00064000>;
-> -			read-only;
-> -		};
-> -
-> -		...
-> -
-> -	};
-> diff --git a/Documentation/devicetree/bindings/mtd/nxp,lpc3220-slc.yaml b/Documentation/devicetree/bindings/mtd/nxp,lpc3220-slc.yaml
-> new file mode 100644
-> index 0000000000000..db9cf4efb2212
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/nxp,lpc3220-slc.yaml
-> @@ -0,0 +1,101 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mtd/nxp,lpc3220-slc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP LPC32xx SoC NAND SLC controller
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,lpc3220-slc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  gpios:
-> +    maxItems: 1
-> +    description:
-> +      GPIO specification for NAND write protect
-> +
-> +  nand-on-flash-bbt: true
-> +
-> +  partitions:
-> +    type: object
-> +    $ref: partitions/partition.yaml
+From: Lance Yang <lance.yang@linux.dev>
 
-That's not right... You want partitions.yaml?
+As pointed out by David[1], the batched unmap logic in try_to_unmap_one()
+can read past the end of a PTE table if a large folio is mapped starting at
+the last entry of that table.
 
-> +    unevaluatedProperties: false
-> +
-> +  nxp,wdr-clks:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Delay before Ready signal is tested on write (W_RDY)
-> +
-> +  nxp,rdr-clks:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Delay before Ready signal is tested on read (R_RDY)
-> +
-> +  nxp,wwidth:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Write pulse width (W_WIDTH) in Hz
-> +
-> +  nxp,whold:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Write hold time (W_HOLD) in Hz
-> +
-> +  nxp,wsetup:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Write setup time (W_SETUP) in Hz
-> +
-> +  nxp,rwidth:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Read pulse width (R_WIDTH) in Hz
-> +
-> +  nxp,rhold:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Read hold time (R_HOLD) in Hz
-> +
-> +  nxp,rsetup:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Read setup time (R_SETUP) in Hz
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - gpios
-> +
-> +allOf:
-> +  - $ref: nand-controller.yaml
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    nand-controller@20020000 {
-> +        compatible = "nxp,lpc3220-slc";
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        reg = <0x20020000 0x1000>;
-> +        nxp,wdr-clks = <14>;
-> +        nxp,wwidth = <40000000>;
-> +        nxp,whold = <100000000>;
-> +        nxp,wsetup = <100000000>;
-> +        nxp,rdr-clks = <14>;
-> +        nxp,rwidth = <40000000>;
-> +        nxp,rhold = <66666666>;
-> +        nxp,rsetup = <100000000>;
-> +        nand-on-flash-bbt;
-> +        gpios = <&gpio 5 19 1>; /* GPO_P3 19, active low */
-> +    };
-> -- 
-> 2.34.1
-> 
+So let's fix the out-of-bounds read by refactoring the logic into a new
+helper, folio_unmap_pte_batch().
+
+The new helper now correctly calculates the safe number of pages to scan by
+limiting the operation to the boundaries of the current VMA and the PTE
+table.
+
+In addition, the "all-or-nothing" batching restriction is removed to
+support partial batches. The reference counting is also cleaned up to use
+folio_put_refs().
+
+[1] https://lore.kernel.org/linux-mm/a694398c-9f03-4737-81b9-7e49c857fcbe@redhat.com
+
+Fixes: 354dffd29575 ("mm: support batched unmap for lazyfree large folios during reclamation")
+Suggested-by: David Hildenbrand <david@redhat.com>
+Suggested-by: Barry Song <baohua@kernel.org>
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+---
+ mm/rmap.c | 46 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 18 deletions(-)
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index fb63d9256f09..1320b88fab74 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1845,23 +1845,32 @@ void folio_remove_rmap_pud(struct folio *folio, struct page *page,
+ #endif
+ }
+ 
+-/* We support batch unmapping of PTEs for lazyfree large folios */
+-static inline bool can_batch_unmap_folio_ptes(unsigned long addr,
+-			struct folio *folio, pte_t *ptep)
++static inline unsigned int folio_unmap_pte_batch(struct folio *folio,
++			struct page_vma_mapped_walk *pvmw,
++			enum ttu_flags flags, pte_t pte)
+ {
+ 	const fpb_t fpb_flags = FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY;
+-	int max_nr = folio_nr_pages(folio);
+-	pte_t pte = ptep_get(ptep);
++	unsigned long end_addr, addr = pvmw->address;
++	struct vm_area_struct *vma = pvmw->vma;
++	unsigned int max_nr;
++
++	if (flags & TTU_HWPOISON)
++		return 1;
++	if (!folio_test_large(folio))
++		return 1;
+ 
++	/* We may only batch within a single VMA and a single page table. */
++	end_addr = pmd_addr_end(addr, vma->vm_end);
++	max_nr = (end_addr - addr) >> PAGE_SHIFT;
++
++	/* We only support lazyfree batching for now ... */
+ 	if (!folio_test_anon(folio) || folio_test_swapbacked(folio))
+-		return false;
++		return 1;
+ 	if (pte_unused(pte))
+-		return false;
+-	if (pte_pfn(pte) != folio_pfn(folio))
+-		return false;
++		return 1;
+ 
+-	return folio_pte_batch(folio, addr, ptep, pte, max_nr, fpb_flags, NULL,
+-			       NULL, NULL) == max_nr;
++	return folio_pte_batch(folio, addr, pvmw->pte, pte, max_nr, fpb_flags,
++			       NULL, NULL, NULL);
+ }
+ 
+ /*
+@@ -2024,9 +2033,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			if (pte_dirty(pteval))
+ 				folio_mark_dirty(folio);
+ 		} else if (likely(pte_present(pteval))) {
+-			if (folio_test_large(folio) && !(flags & TTU_HWPOISON) &&
+-			    can_batch_unmap_folio_ptes(address, folio, pvmw.pte))
+-				nr_pages = folio_nr_pages(folio);
++			nr_pages = folio_unmap_pte_batch(folio, &pvmw, flags, pteval);
+ 			end_addr = address + nr_pages * PAGE_SIZE;
+ 			flush_cache_range(vma, address, end_addr);
+ 
+@@ -2206,13 +2213,16 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			hugetlb_remove_rmap(folio);
+ 		} else {
+ 			folio_remove_rmap_ptes(folio, subpage, nr_pages, vma);
+-			folio_ref_sub(folio, nr_pages - 1);
+ 		}
+ 		if (vma->vm_flags & VM_LOCKED)
+ 			mlock_drain_local();
+-		folio_put(folio);
+-		/* We have already batched the entire folio */
+-		if (nr_pages > 1)
++		folio_put_refs(folio, nr_pages);
++
++		/*
++		 * If we are sure that we batched the entire folio and cleared
++		 * all PTEs, we can just optimize and stop right here.
++		 */
++		if (nr_pages == folio_nr_pages(folio))
+ 			goto walk_done;
+ 		continue;
+ walk_abort:
+-- 
+2.49.0
+
 
