@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-706716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B31AEBA63
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:51:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA8BAEBA8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA61F7AB4B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154D03BD2B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BCA2E54D5;
-	Fri, 27 Jun 2025 14:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503B22E8DFA;
+	Fri, 27 Jun 2025 14:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="epyDyZSz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OTPRR4yK"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B53D2E7644
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992EA219300;
+	Fri, 27 Jun 2025 14:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751035869; cv=none; b=ecGasyGF9otBZBeBeGQjt1fjDYTDllHtEUAdbvOV/YHvv21tPIFFVuNuF2u34eFnhKpQncflN4YkN6wnGVfjWLSQHTn+58t6sMz58tp/J0Q4ZVoYHSWSyknTqMFZIRuZ5QamG433vOTrML9e7qVqPLp/LqSiOiplSzXEULRCvGA=
+	t=1751035969; cv=none; b=b+M/aWOYwQdZkyEI04h/nhsDF95zhI6j4JrFQ86cUcS3cHrFHhO0pGwGmlKsUPyqdmkXHGtY6aVtfG0sDu6yM+QZLvo1mePsoSlw+579hLs5XqGMVUbZwYWIvw2GfcTth/Rb20S1A41z3m9cfCaYwgnHVaw1ChWAmg/N1eyML2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751035869; c=relaxed/simple;
-	bh=7rtraUnuZEglIw9bM3jvt7JTU0MMScfXHqqtKcchIKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqKY1y5pbKWNOkdzVS5M3hR3BXW73qcPdpMYTax1fZm6C16qGH7htKyM0c8qKySsCFgW5c7lvZEPq7m7jIfBS7N9PUL1LC4p5sZFk8biJKbLRbHpE51FTCu0110aqWBQe38SdAwoZdhC3Yu1tBCXI0Wqti2ombR6/ej3CuNSUH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=epyDyZSz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBRr8M009570
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:51:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7rtraUnuZEglIw9bM3jvt7JTU0MMScfXHqqtKcchIKk=; b=epyDyZSzyFl+MJZf
-	VvTrWRZwWi+CJrg4dBLVr8AGET00Udrlwr5ChES4CENzsHTPyZdBKPD4JsXXglmR
-	/AfeHOHbg3nAmIBV60ucOmyWysINbAAXOUgbzaqM6duhGmOnqvL+wdCyG4Y2Q8ca
-	pSHmEJk8SB6igGgoCBHNAx/E2cUHluoxLCpq3i+XjGSdhv6AkpLSmFfkl/cV4zwz
-	eA7jJgsde/V/c0JrgcIqqtXogfhc4gmStUQl0mIxDgeGYa1S4OtPIvuMkmneYunO
-	GnIDkBuG3WaVPtHMK/oYmOGt17T5FQRzBeTK34DC5nIvdiC4L9W2y+bfMWDgXFTx
-	Eu7mQA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f4b4744f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:51:06 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d3eeb07a05so19322285a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 07:51:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751035865; x=1751640665;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rtraUnuZEglIw9bM3jvt7JTU0MMScfXHqqtKcchIKk=;
-        b=R7MPT6zxkhuYPYtA+ir9kSoYP3HtkTkRZN6092/lrkHJ6AfdWnNpiFe98HdJ8bTsUc
-         KH0n4WLT+YSKyMxNwCu2OPupL9Xbignk4dNHuJAR4jlbzOLAnIqdRcDqgQX8ApruxgdY
-         OdtDTaaJ8JgBXWwOL2OhVOVg2AeoIvnCIDyIryaxeQPmg0lb9TJ+ZiPU/mabIjHsJrQV
-         YMjZSaMPc0Msq48nTjRkI8skN88vWBUZII2m6CKqzUsZO3WnJ0SoyRFGGhmDWOOpcVZi
-         0mrNsW8A1HLr15PRr3kAo9svhLueinvURO299RhUAMFtgocDTHxUGfzdQrmp9uqyggVh
-         Phpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWT+nKKpZhXABmVKaqyefyeV4QJPR21WVjiKExjjbKNnh4/cKfwvO1sQV8QxoSEr0nMAoIC0sfQN8WuxS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxExKFl0oEU+l7A22hqzFMxmb2CKcHe62nfE/Ce/BiEpYqeqzqS
-	mA8NlduOHsE+I+rDfu9UfZV+fZQiFmI7pxix6oT2ud7wS9TDW7PUXw35ODmxTqfXGpbcTlhhd48
-	yLWxJKXewGJ14nBzF+mdfXVU+QuqiW90u6kd1Mmv4XQp54XY3+LPhL61DbXkBszu3DZQ=
-X-Gm-Gg: ASbGncvHKd+53QcAWqBpacUcZpO5ztCuhvlMDvtxur0R98uEpQcFOlVtKxJwHdem7Ag
-	IXVXPASktlpoQNEfJSd79iWj+fFv47hx8VOtZEkzVgTH34zYcIbFxAAfErGR0Y5qfgBBrXKl4t2
-	ivfpmQKyiCXXLvG4cYg8A+aisKMxnxA3HYAGhlOY60uZ2RyjJwpNKgF8Umqgi07DSV53fr+2lxW
-	pV1GU7ycP9VJ5Avo/UmNlF7Q3imW7hgmFuXsHy/LIZg2+c4swxeRQj9KMiFGYVkmRfk/tiTXGdS
-	nBKVU0KMd8fGE4zIJQqqwZxuXeBKdoX5rZY/CFUZu7aJRCoupWMczChf8+at/Hq9FLneBDMqSj7
-	4NEA=
-X-Received: by 2002:a05:620a:4390:b0:7cd:4a08:ea12 with SMTP id af79cd13be357-7d4438a5772mr187163385a.0.1751035865327;
-        Fri, 27 Jun 2025 07:51:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNBrqmMSfnZF56yQ8HHV8zsPd591TqWYeI7+RBqNhUzZBbf8gF6QKBgxQqjSPo5Eech9fVsg==
-X-Received: by 2002:a05:620a:4390:b0:7cd:4a08:ea12 with SMTP id af79cd13be357-7d4438a5772mr187150585a.0.1751035861886;
-        Fri, 27 Jun 2025 07:51:01 -0700 (PDT)
-Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c011desm137341766b.101.2025.06.27.07.50.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 07:51:01 -0700 (PDT)
-Message-ID: <25ddb70a-7442-4d63-9eff-d4c3ac509bbb@oss.qualcomm.com>
-Date: Fri, 27 Jun 2025 16:50:57 +0200
+	s=arc-20240116; t=1751035969; c=relaxed/simple;
+	bh=Y9PSyNNXun1vslLOG1Em1fG3vkezxqyO8VcmI8EIDLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=llMag44pWA0tuJbjcLcgaph3FIbCudujUpxnSGe6AX4p2t1tn/oHDPon99IeMNK6nxL2Ojnz8oovOkLl/Ls4XcHoZLCZyuZ/cnk3+h1IxQ8vIylcYPijSYsuU099I9nxZo/0JQupeM1UeFJGsacv+JtQlezelkvdWoLGdQIcd3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OTPRR4yK; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8126544365;
+	Fri, 27 Jun 2025 14:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751035958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ga4DYhJ2FO3ImSWe5QoRj6QIF5B7qFE+8eHa0kIn7Ms=;
+	b=OTPRR4yKaNYHU2ov192tpqD6SRrTnToZ1hO2EKs+LgXa/u/n5Ff5+AFuSXuKxf48WQTFy9
+	tvP0bwTeZzQG3M2K/eR7hrlZMT6G/tr8dkcAMFgq0yZpFgxhn1qJYxP+/xp3VX8ODxcLB8
+	ToGFVrpah/FsapRai7V9/GgGbWagJ0lOA/O2Ak6rrtlB9gTfkrlbsfteBQLNa8Gr5HSv/Q
+	PIzpSkoHSZBa3wA1kJ2c4ku32k11PGXFGs00q8vloMEdslC0RUceJAXHB90+PIZ7ZJNG2F
+	uQ5mtoEX9RSsaMLDQqL3bNZ6pMWN0+C9YhJgIXQ/pnLFiGEeqvO4o7iTbCQu4Q==
+Date: Fri, 27 Jun 2025 16:52:32 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len
+ Brown <lenb@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Davidlohr Bueso
+ <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 02/28] driver core: Rename get_dev_from_fwnode()
+ wrapper to get_device_from_fwnode()
+Message-ID: <20250627165232.0b3dc935@bootlin.com>
+In-Reply-To: <20250627141846.GA3234475-robh@kernel.org>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+	<20250613134817.681832-3-herve.codina@bootlin.com>
+	<20250627141846.GA3234475-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: sa8775p: remove aux clock from
- pcie phy
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, jingoohan1@gmail.com, mani@kernel.org,
-        lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-        johan+linaro@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-        neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
-References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
- <20250625090048.624399-4-quic_ziyuzhan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250625090048.624399-4-quic_ziyuzhan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEyMSBTYWx0ZWRfX7wxn6PqJFrKz
- ZJQvoK4Pe8KstY6a/KQPe2CMwSevPqs5ORp3fKhONrM3GR1VRxrmnZeb8k88W6FTUkHeTLk8jal
- hHAIEFpq5Jw3zX9O2az2IXr3vnEZEbEjUi61QDursJY1JhrWPr57UHmISp48Inoq6j86EQm86ZU
- 75dUTS5yBI4/5k5A/JMAyytjlaOfo56xRGArE9qLrtHYm0Eihigg7M94yBAG0mWUHMIfokJKGgJ
- ED35KAYB0MFBEzZd2R/Mcdbyv096ValDXe4kasuOxW3mA/vf8BX7znrKMgWiYbbQhxaVH5tjgO+
- Mvo/lGr8VuQYWAL9tAyZwqbZEk17zKm47OsOgX1s9saM46wmPei16a64c1df2MoJ2YAWdeZIvKp
- kPdoqmXlfEWJeW0iamFdY7fH8TXBnrLCtixU6hRbz5brMcgmxYgrTK+I1XkZQZ2X8EYXqQ0h
-X-Proofpoint-ORIG-GUID: YHEqVcHqy3IHDf79bJ5ZLQ3fWy10k4md
-X-Proofpoint-GUID: YHEqVcHqy3IHDf79bJ5ZLQ3fWy10k4md
-X-Authority-Analysis: v=2.4 cv=A8BsP7WG c=1 sm=1 tr=0 ts=685eafda cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=flLoF9dUt9D-64fZ2z0A:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 bulkscore=0
- phishscore=0 adultscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- clxscore=1015 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506270121
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeffeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdfhleejtdeftdejveffgedtuddtgefhtedtudfhuefhtddtffeiueeigfdvhfdvnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeekpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ ehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 6/25/25 11:00 AM, Ziyue Zhang wrote:
-> gcc_aux_clk is used in PCIe RC and it is not required in pcie phy, in
-> pcie phy it should be gcc_phy_aux_clk, so remove gcc_aux_clk and
-> replace it with gcc_phy_aux_clk.
+Hi Rob,
 
-GCC_PCIE_n_PHY_AUX_CLK is a downstream of the PHY's output..
-are you sure the PHY should be **consuming** it too?
+On Fri, 27 Jun 2025 09:18:46 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-Konrad
+> On Fri, Jun 13, 2025 at 03:47:42PM +0200, Herve Codina wrote:
+> > get_dev_from_fwnode() calls get_device() and so it acquires a reference
+> > on the device returned.
+> > 
+> > In order to be more obvious that this wrapper is a get_device() variant,
+> > rename it to get_device_from_fwnode().
+> > 
+> > Suggested-by: Mark Brown <broonie@kernel.org>
+> > Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=iEkKPNbNOccYmA@mail.gmail.com/
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Reviewed-by: Saravana Kannan <saravanak@google.com>
+> > Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > ---
+> >  drivers/base/core.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index cbc0099d8ef2..36ccee91ba9a 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -1881,7 +1881,7 @@ static void fw_devlink_unblock_consumers(struct device *dev)
+> >  	device_links_write_unlock();
+> >  }
+> >  
+> > -#define get_dev_from_fwnode(fwnode)	get_device((fwnode)->dev)
+> > +#define get_device_from_fwnode(fwnode)	get_device((fwnode)->dev)  
+> 
+> In patch 3, you add the same define. Is there some reason to not move it 
+> to a header?
+> 
+
+In this patch (patch 2), I rename the define. In patch 3, I move the define in
+an other place in the same file (core.c) in order to have it available for the
+function added (also in patch 3).
+
+I don't think we need to move it to a header.
+
+Best regards,
+Hervé
 
