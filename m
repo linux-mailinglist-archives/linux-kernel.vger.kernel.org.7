@@ -1,128 +1,163 @@
-Return-Path: <linux-kernel+bounces-707289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622A7AEC233
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0053EAEC258
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F8AC7AE4C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:40:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F433AD752
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2041728A700;
-	Fri, 27 Jun 2025 21:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0728A707;
+	Fri, 27 Jun 2025 21:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZJOBiR8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E384+2Q6"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60693289E37;
-	Fri, 27 Jun 2025 21:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F7725CC69;
+	Fri, 27 Jun 2025 21:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751060495; cv=none; b=j6rWMgEU99JsmIqxVZ0dmVbkcbCliNdp7j4LojruImfacvJjFVQwnGiRTz+Z7j4nz26vJu6ao0tWHB85vSVDinkEvPCaB5TjpB51DCREZ28SPAH/gZMeN7ngFim1lQLySrnvu7KVg5AmvTp9R6UZHgtxr9WKVIfWR8djsJF/kFw=
+	t=1751061099; cv=none; b=avFnxH/8ZXOgFUfaFfRX+1LtKwJl0c0Ujvz4/s6OcxnG6HnJQDf//xJXTjMsswxhRlUsybMxXCJ2c7rVF6oRc//H2sYrIHl5WM2rc0jcFSdx/H3RFBTNjC9sGlAkcL13Rauem5fVspJzhjO4MQow/ikpR9uCZItOaPqp8aNoWu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751060495; c=relaxed/simple;
-	bh=5Ljo3CcoOPKf5/DedTG4W2a6UHG8S1ZDpc+SXGnp4DE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDPOmQKE3PpmeWt/9FAi1QcT+hkEyl86o5MUu+TelpejTJ73PvOkkE9QjkNSg088yQSwOzwEPwMeePmjCc+3VLk5M4Ym8+ceF/GJWlhwimLxLrnj25UiKxvH6juN4YoXrJFUeBSp/jbUfmqY/gLSqaWOndBz6aXSqNc+Uqo6atQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZJOBiR8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1488C4CEE3;
-	Fri, 27 Jun 2025 21:41:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751060494;
-	bh=5Ljo3CcoOPKf5/DedTG4W2a6UHG8S1ZDpc+SXGnp4DE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uZJOBiR8DKoBr7HUN+DYQdov6AZSy1ItCrxaJkFHt7+5EiNrNPXDY2Lfp0hqGaq8y
-	 2H9Wgk29NSEEd3JQe6ZjTauNTe2PCD6cPjyMSJgNz/zvyzMhkyso7PTEMlsgcTP4Ro
-	 IzKdEiFLyHP5jkGRzE7vZoIbvN2dbR4BjdGRV6r8NJS5we6hqbu0C5bH3BMtSiUpxs
-	 isH/yjg2l8vx9hLgNiaujAOVEG+J4/DxmgZJbmI0GMYLsA7H/TAkoeISTL1sSVjGrb
-	 zvzstNFwRpgWyVivAhWHeMRLfFdb7/21Mjm5NpCes+X3z2DUqNZuw9/qjBht1SvhsH
-	 vZZlYokiABIHQ==
-Date: Fri, 27 Jun 2025 22:41:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Christoph Hellwig <hch@lst.de>, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] spi: spi-fsl-dspi: Report FIFO overflows as errors
-Message-ID: <22d69113-fec0-4405-872d-af76bd038c09@sirena.org.uk>
-References: <20250627-james-nxp-spi-dma-v4-0-178dba20c120@linaro.org>
- <20250627-james-nxp-spi-dma-v4-6-178dba20c120@linaro.org>
- <aF73e/ggeycsYiaD@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1751061099; c=relaxed/simple;
+	bh=p84SUZOBh2KwgfNP4tsjy/n+Aua2QB4VpTm9s4Z9284=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ra6D0ovk7NjSDi/QLkWbIBp0LAq5bESTAciik6V37TNffi5KJGmlqmuFEEcgVjSix5FzUeCl1FcHdlJxH0iRQFq7YdaogrFdpFxYj3NxZVWkzq/Tdb78ZO+Xy+qOvyMGRGyp5APpt6FV8/di4wrxr4mZcFKp+Qnvu/oIEY9Khwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E384+2Q6; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id VGqQuIpApqtV6VGqQuQjHe; Fri, 27 Jun 2025 23:42:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1751060571;
+	bh=3azxurnCZ0xuClFPmibEzr67iBGJnUksM41hokFlhrI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=E384+2Q6HHMTaPcuK4pWvjusqmBr8WAx1n37ONcbDKH6u1oNuwvSiyaPu+37BsBjK
+	 wjaJBJ7ow9AMOdzrwgTZIryCpwgeU44qy6UH+QNARAy/Tyr2/xMaNlyWG6WbWC/21f
+	 JIn6GfLuulRvo7SDJDegj0wqGjiQecSeaJOCdHMGjEzoX5fMEjeXZQ9lercUeiw5DB
+	 9zYb57NCey5cHygHy3qRF/vgR0obPX14pnd1T1XArfCwGXl+so+HbB3Qr2rar4tJoX
+	 gJ0Uea8Gl/DzkiMo4L7O+TGMeKgUeSnGexgZWaTWpoBts7M1qe6JD9yY1mMQjD8yQF
+	 zqB4T6B8+G9Ww==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 27 Jun 2025 23:42:51 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v4] remoteproc: k3-dsp: Fix an error handling path in k3_dsp_rproc_probe()
+Date: Fri, 27 Jun 2025 23:42:33 +0200
+Message-ID: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1nt4mhY+dwym5Hr9"
-Content-Disposition: inline
-In-Reply-To: <aF73e/ggeycsYiaD@lizhi-Precision-Tower-5810>
-X-Cookie: Avoid contact with eyes.
+Content-Transfer-Encoding: 8bit
 
+IF an error occurs after a successful k3_rproc_request_mbox() call,
+mbox_free_channel() should be called to avoid a leak.
 
---1nt4mhY+dwym5Hr9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Such a call is missing in the error handing path of k3_dsp_rproc_probe().
+It is also missing both in the error handling path of k3_m4_rproc_probe()
+and in (in-existent) corresponding remove function.
 
-On Fri, Jun 27, 2025 at 03:56:43PM -0400, Frank Li wrote:
-> On Fri, Jun 27, 2025 at 11:21:42AM +0100, James Clark wrote:
+Switch to managed resources to avoid these leaks and simplify the code.
 
-> > In target mode, the host sending more data than can be consumed would be
-> > a common problem for any message exceeding the FIFO or DMA buffer size.
-> > Cancel the whole message as soon as this condition is hit as the message
-> > will be corrupted.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-> > Only do this for target mode in a DMA transfer, it's not likely these
-> > flags will be set in host mode
+This is an update of [1].
+The code has been heavily refactored recently with things moved to
+ti_k3_common.c
 
-> "not likely", I think SPI controller should stop CLK if FIFO empty and fu=
-ll.
-> It should be "never" happen.
+This new version also fixes a leak in k3_m4_rproc_probe(). In this file,
+mbox_free_channel() was missing.
 
-> Only check FIFO error flags at target mode because it never happen at hos=
-t mode.
+Being very different from the v3, I've removed the previous review tags.
 
-> You can remove below whole paragram.
+[1]: https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/remoteproc/ti_k3_common.c         | 12 +++++++++++-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
+ 3 files changed, 11 insertions(+), 5 deletions(-)
 
-I agree it *should* never happen in host mode but it can be good
-practice to look in case something gets messed up.  That said extra
-device accesses in the hot path are probably going to be noticable so
-likely not worth it, but in the dspi_poll() case:
+diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+index d4f20900f33b..7a9c3fb80fec 100644
+--- a/drivers/remoteproc/ti_k3_common.c
++++ b/drivers/remoteproc/ti_k3_common.c
+@@ -155,6 +155,13 @@ int k3_rproc_release(struct k3_rproc *kproc)
+ }
+ EXPORT_SYMBOL_GPL(k3_rproc_release);
+ 
++static void k3_rproc_free_channel(void *data)
++{
++	struct k3_rproc *kproc = data;
++
++	mbox_free_channel(kproc->mbox);
++}
++
+ int k3_rproc_request_mbox(struct rproc *rproc)
+ {
+ 	struct k3_rproc *kproc = rproc->priv;
+@@ -173,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+ 		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+ 				     "mbox_request_channel failed\n");
+ 
++	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
++	if (ret)
++		return ret;
++
+ 	/*
+ 	 * Ping the remote processor, this is only for sanity-sake for now;
+ 	 * there is no functional effect whatsoever.
+@@ -183,7 +194,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+ 	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+ 	if (ret < 0) {
+ 		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+-		mbox_free_channel(kproc->mbox);
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 7a72933bd403..d6ceea6dc920 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+ 		if (ret)
+ 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+ 	}
+-
+-	mbox_free_channel(kproc->mbox);
+ }
+ 
+ static const struct k3_rproc_mem_data c66_mems[] = {
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index ca5ff280d2dc..04f23295ffc1 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+ 				return;
+ 			}
+ 		}
+-
+-		mbox_free_channel(kproc->mbox);
+ 	}
+ }
+ 
+-- 
+2.50.0
 
-> @@ -1067,6 +1080,9 @@ static void dspi_poll(struct fsl_dspi *dspi)
->                         regmap_read(dspi->regmap, SPI_SR, &spi_sr);
->                         regmap_write(dspi->regmap, SPI_SR, spi_sr);
->=20
-> +                       dspi->cur_msg->status =3D dspi_fifo_error(dspi, s=
-pi_sr);
-> +                       if (dspi->cur_msg->status)
-> +                               return;
-
-we're reading the register anyway so the overhead is much lower.
-
---1nt4mhY+dwym5Hr9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhfEAkACgkQJNaLcl1U
-h9Bfiwf9Fa3LD6n+/brGDGbQJc6S5NZo/Iv8vZRtcpTQ4iXdTte85tTkmykGA+I0
-kNkP6wImm2WAZx1qKa/QKK0zYBP8e8Be/N2/6mF+dB+qlzrD0g/W0GWIUSnyhAzt
-xLs+VKHajdZgy16CyxV+KZAz9K4W7VZCd5b3/jIBJoVkyBEMAUkKgoZpZTff7WLd
-3ObZOvGQxLU70o/MPz5v65neCmVIuu20V9A/7BZReFY1ZpgIycndnyzM+E80iVKF
-uIJvbjuV6lmMjBO6GpyjMm1U6D+ebGte8JlE6mY2s1o1lJ5n35naBOaIURTrzOWS
-yBcsW/v17RQ1UMqYRUPd6q++ciWczg==
-=1ixx
------END PGP SIGNATURE-----
-
---1nt4mhY+dwym5Hr9--
 
