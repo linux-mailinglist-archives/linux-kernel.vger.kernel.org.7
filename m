@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-706328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5287AEB52E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:41:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FF9AEB512
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40741169C28
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88A3188C969
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2128298994;
-	Fri, 27 Jun 2025 10:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A66298CA0;
+	Fri, 27 Jun 2025 10:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lahfa.xyz header.i=@lahfa.xyz header.b="KIX31bsi"
-Received: from kurisu.lahfa.xyz (kurisu.lahfa.xyz [163.172.69.160])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aZYnrqB9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EDE22156A;
-	Fri, 27 Jun 2025 10:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.69.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19DE26B756;
+	Fri, 27 Jun 2025 10:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020909; cv=none; b=CIrk4oeoZ1ZehykYUGLK1aL9xePuEYAg/exvn112TBoB/xrOaGuAZdLQ8ZaYKi2CRLoh8UjIM3K/l2YqIDlIgvOSIKI8dXkHTxpgzs54jxiDpnC8Ewz6aD3tR6F7wqQdo/fozmXbPekjde3xxTVVRQh2xhRveVhFBghIMvwW6Mc=
+	t=1751020451; cv=none; b=Cvjh3LRpa0QXXMxdiYklOcozZnTrfegQGTyWOJn6cbMw16/xtdubNBmYb2ojW5fReTKxTE/OZJkK4cvpJahMIG6aN+zqFXBRMgKAnYG2ebA9EUjPNGHWlp4ScIH69KNlJ2NwJtd021XbyMkonPXtqBJATF7wF07T6HG/rdRo/VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020909; c=relaxed/simple;
-	bh=yhF0gvpQ2LingrBx1HYPfc8w3xJ+F33erqmQmXW9kPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cxp6Sa86smWRidCSbD/YxrKZbVj3MBMTAwjSRr0o2FtU8ccEfMbBHhxmpufbalLfla+kHI8hm41A0tw/WfbkCMD07qufkyo3rBv7fx7P2NbtQg1HMX9GZnVUHPzB5ZKZT1fLOlBtQ0p7f2Tgo9UFcpu8yfpGFwNiATzRUmxMprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lahfa.xyz; spf=pass smtp.mailfrom=lahfa.xyz; dkim=pass (1024-bit key) header.d=lahfa.xyz header.i=@lahfa.xyz header.b=KIX31bsi; arc=none smtp.client-ip=163.172.69.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lahfa.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lahfa.xyz
-Date: Fri, 27 Jun 2025 12:33:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lahfa.xyz; s=kurisu;
-	t=1751020405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKbXq1dbdhV8xumU0aZAN+tBsL+injlXBseZI72UWGQ=;
-	b=KIX31bsiJiF4FTf1m/nQ2lEmj9X0nb+B1EjYYq+QrDCcZ8lrVU5vVNzzvuJnhN1083vDrI
-	NrnzfKSvauvRKKJSrXC7hlw/ZqkztctbMnQDGxytK3R7L/TPLtZ5KOt58YJy+MEoSadumY
-	TtjeSwIdF4YwE8q9BJsTmXDGDK+5fto=
-From: Ryan Lahfa <ryan@lahfa.xyz>
-To: David Howells <dhowells@redhat.com>
-Cc: Antony Antony <antony.antony@secunet.com>, 
-	Antony Antony <antony@phenome.org>, Christian Brauner <brauner@kernel.org>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	Sedat Dilek <sedat.dilek@gmail.com>, Maximilian Bosch <maximilian@mbosch.me>, 
-	regressions@lists.linux.dev, v9fs@lists.linux.dev, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Message-ID: <gnji275b4iqotq3x3sa3igwa3vczk6tqtfcxpbv6k47hinrj2j@3wrm3id43qgj>
-References: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
- <ZxFQw4OI9rrc7UYc@Antony2201.local>
- <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
- <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
- <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
- <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
- <3327438.1729678025@warthog.procyon.org.uk>
- <ZxlQv5OXjJUbkLah@moon.secunet.de>
- <1641293.1751018406@warthog.procyon.org.uk>
+	s=arc-20240116; t=1751020451; c=relaxed/simple;
+	bh=NJEr28iU7ySNWsWvysGjhjF4BlXU02+p7PrxqHp0KDM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pfyglehnv2SGTJ+aicqn2OqX+mCc/oN7cFzOXz6zN4LUIADWeezQOm3tKOYbCSP9bgPRwMiRRKEFTyS3Aq7cxH6t2k7byYAzeBdMvnJN5OrRypbRcIVUHMdzUKCK0YC+nwiBqztqYVwgWDgrTPlbf7z3tvF35wf2Kx3/y4lY9KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aZYnrqB9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R4DgCD008739;
+	Fri, 27 Jun 2025 10:34:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3qG4vDhN+pXvVkjr4GfQm6rnWkov+SX8y6P46nqvpMw=; b=aZYnrqB9nXrZRxCp
+	EL7bATJ8bMFRY2w7fWle3V/BqZVqXILGN9CFC7Ab2fFJHo8KjYnXSmP5eFMTzMjz
+	DffdJfX5SURIYXomVp6sjaxOTbi/C4VRyvmlNkb0bC2fLvA8uG9snm9liCJdToGe
+	N7vhign3lOMmQwO8l+RRhJ1UiYjwfD7jgs0R7o80VLlix39wBkYeYjMy/PKLr7uX
+	RsEhx3ZVvr0VOHs/U3DIu//WKt0pM3hPpEBRV0jnMle262xfvcb++i48iEQjpz+j
+	UcJP+kgXcqBLDZ5ku74ykWG7mIgVmrTrjDC6sasAAfl7U7wPL4zbULxdHuU2kbTn
+	vi7G6Q==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbhqvw74-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 10:34:04 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55RAY38r000354
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 10:34:03 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 27 Jun 2025 03:34:00 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Ling Xu
+	<quic_lxu5@quicinc.com>
+Subject: [PATCH v4 4/4] misc: fastrpc: add support for gdsp remoteproc
+Date: Fri, 27 Jun 2025 16:03:19 +0530
+Message-ID: <20250627103319.2883613-5-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250627103319.2883613-1-quic_lxu5@quicinc.com>
+References: <20250627103319.2883613-1-quic_lxu5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1641293.1751018406@warthog.procyon.org.uk>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4qZbUDNaC49OtDFPDmTmBSXN2qgt2e27
+X-Authority-Analysis: v=2.4 cv=Id+HWXqa c=1 sm=1 tr=0 ts=685e739c cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8 a=d01il73eTdEK0Eih25sA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 4qZbUDNaC49OtDFPDmTmBSXN2qgt2e27
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDA4NSBTYWx0ZWRfX5NMSaEyfuXhg
+ CpXOdmIeaBZ+oJkK9Ly5Z7Ik6CKEGQtabDl084/RlTehUA1p10MzycX9MaruCBplDTpsJl2wHCc
+ //Cj/z1FNR9IJT76wIdd2keP1y1OZi/BOxLfTVSeuqdCXFKvOFPnY8n/uPXBqt/bEcHc8vtbwVm
+ SsofQgfQg4C45TIfpf/8FDhzuc9p/X1WFAh/iLChFgpQAyfp7aGKdTvqyomtKfjTVZlagRU/uHs
+ ZB0ruD70m6q1Rk9TUWBuLNTNuAoJ1g++6PuwSQLV+ZZQY9MNwCnE9ceVNwFwvzNV4EGllhLEd1k
+ TrvuPmapTd7gDB+uUhnZRsbwoZTnptSBbEUVcfx0mjWQMZnMYDgEEpUJkntv93SlXFjjPUzcHpu
+ 3DB/i4Oc0TmlnO2BakT847bSZFl/mpdPpIDCKtlM6c+pgrPMTjGmtqvVtTtlCaBwgmJE6H+1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270085
 
-Hi David,
+The fastrpc driver has support for 5 types of remoteprocs. There are
+some products which support GDSP remoteprocs. GDSP is General Purpose
+DSP where tasks can be offloaded. This patch extends the driver to
+support GDSP remoteprocs.
 
-Le Fri, Jun 27, 2025 at 11:00:06AM +0100, David Howells a écrit :
-> Ryan Lahfa <ryan@lahfa.xyz> wrote:
-> 
-> > Here is how to reproduce it:
-> > 
-> > $ git clone https://gerrit.lix.systems/lix
-> > $ cd lix
-> > $ git fetch https://gerrit.lix.systems/lix refs/changes/29/3329/8 && git checkout FETCH_HEAD
-> > $ nix-build -A hydraJobs.tests.local-releng
-> 
-> How do I build and run this on Fedora is the problem :-/
+Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+---
+ drivers/misc/fastrpc.c      | 5 ++++-
+ include/uapi/misc/fastrpc.h | 3 ++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-This may introduce another layer but you could use a Docker container
-(Lix has http://ghcr.io/lix-project/lix) and run these instructions
-inside that context.
-
-Alternatives are the following:
-
-- static binary for Nix, I can build one for you and make it available.
-- the Lix installer, https://lix.systems/install/ (curl | sh but it does
-  prompt you for any step and tell you what it does, it should also be
-  very easy to uninstall!).
-- Debian has Nix packaged: https://packages.debian.org/sid/nix-bin (not
-  Lix, but doesn't matter for this reproducer).
-- Can install a remote VM for you with Fedora with one of the previous
-  option and give you root@ over there.
-
-Let me know how I can help.
-
-> > [1]: https://gist.dgnum.eu/raito/3d1fa61ebaf642218342ffe644fb6efd
-> 
-> Looking at this, it looks very much like a page may have been double-freed.
-> 
-> Just to check, what are you using 9p for?  Containers?  And which transport is
-> being used, the virtio one?
-
-9p is used in QEMU in this context.
-NixOS has a framework of end to end testing à la OpenQA from OpenSUSE
-that makes use of 9pfs to mount the host Nix store inside the guest VM
-to avoid copying back'n'forth things that are not under test.
-
-Yep, transport is virtio.
-
-Kind regards,
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index cb9f4be286af..d3d9b9fdbf4c 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -2245,6 +2245,8 @@ static int fastrpc_get_domain_id(const char *domain)
+ 		return MDSP_DOMAIN_ID;
+ 	else if (!strncmp(domain, "sdsp", 4))
+ 		return SDSP_DOMAIN_ID;
++	else if (!strncmp(domain, "gdsp", 4))
++		return GDSP_DOMAIN_ID;
+ 
+ 	return -EINVAL;
+ }
+@@ -2319,13 +2321,14 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+ 	case ADSP_DOMAIN_ID:
+ 	case MDSP_DOMAIN_ID:
+ 	case SDSP_DOMAIN_ID:
+-		/* Unsigned PD offloading is only supported on CDSP*/
++		/* Unsigned PD offloading is only supported on CDSP and GDSP*/
+ 		data->unsigned_support = false;
+ 		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
+ 		if (err)
+ 			goto err_free_data;
+ 		break;
+ 	case CDSP_DOMAIN_ID:
++	case GDSP_DOMAIN_ID:
+ 		data->unsigned_support = true;
+ 		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
+ 		err = fastrpc_device_register(rdev, data, true, domain);
+diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
+index b890f8042e86..5ea891615c49 100644
+--- a/include/uapi/misc/fastrpc.h
++++ b/include/uapi/misc/fastrpc.h
+@@ -22,8 +22,9 @@
+ #define MDSP_DOMAIN_ID (1)
+ #define SDSP_DOMAIN_ID (2)
+ #define CDSP_DOMAIN_ID (3)
++#define GDSP_DOMAIN_ID (4)
+ 
+-#define FASTRPC_DOMAIN_MAX    3
++#define FASTRPC_DOMAIN_MAX    4
+ 
+ /**
+  * enum fastrpc_map_flags - control flags for mapping memory on DSP user process
 -- 
-Ryan Lahfa
+2.34.1
+
 
