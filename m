@@ -1,179 +1,85 @@
-Return-Path: <linux-kernel+bounces-707111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8D3AEBFE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0265AEBFA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73143565DD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37746560CAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05262EE5F7;
-	Fri, 27 Jun 2025 19:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A207A20A5EA;
+	Fri, 27 Jun 2025 19:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="ScfXtIgc"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgSXez3g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507612EA73B;
-	Fri, 27 Jun 2025 19:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06244200110;
+	Fri, 27 Jun 2025 19:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751052588; cv=none; b=mXMODHhXfYCBz9JtOQYMKeaMdJcOqEjWQBo6/y4NCi2nG1NEMemDRuk5mmueFXg36NImp/TatKWTaoysAYNA7rzEBhNbbwzJrC4bWHJp+dFGtKmwNcHtvT0uFXziMmsopEuAwiPns1pzmahnhlSPd4IJ+yGZQTOYXYIXxKI9uNY=
+	t=1751052010; cv=none; b=VUZJ8Tqal/nKDjtcAZtRu0IAGBWjMTIQahWWm8o/Jjc7OjCe7zpXet2ylHh7WXe82Fk5PuaDDc5FNUDDIdS6DXcSpbvGjJyh+xMfz81KEaL1Zgn+I+BBxjaPxXyPzPQCoeET5+/XU9WAr9eQaeOpau3NdjKFFR4ZPONVtkT9P9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751052588; c=relaxed/simple;
-	bh=MgvBlsJ/DMHt8Kgss7r5bAK9n/TKokfeGfDfe9EF2Cs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3Vr7BjjMcqxGdAJF9Sl+bfysHI9r9FmzNo//Ec5RNIQ6GNWjPqrE5l9hi5MS+dtYoxnzD+tdegWkINjWbdsYbC8/pEpU/n3+vtP3k3AVC7RMUVmrtn4oQrMAjLdYXV33H1KbMITBUvQRf8qvdky6zdAg5zDobJ42nWWhDb4IJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=ScfXtIgc; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from kreacher.localnet (unknown [5.63.189.50])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3C64D66DE73;
-	Fri, 27 Jun 2025 21:29:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1751052579;
-	bh=MgvBlsJ/DMHt8Kgss7r5bAK9n/TKokfeGfDfe9EF2Cs=;
-	h=From:Subject:Date;
-	b=ScfXtIgcniBKJCRD6/jR6NPHvN3ymKFg3nXCoH9oeiqRFFu2mysOlTbzNv3TC2e5H
-	 ECNr/4t1w7k7Hb/kqyleHGHV8nvkZRCYzrgZieldudZyoyE1xNwKRPMFDitC82vpYu
-	 4sd1Y2ug6wwlDWMWmmoIMvL7ynE0yywu6+vaoGHsne9kx8Qic5k+i6RUT/E5TfNW4M
-	 xCqL1b3HeLrmGapamReavUgrLYDE2NdwmBNKeewJA1jhAvggNQiPNa/7jLimKdgD6t
-	 KSKwn7KJIzINCTtVhKezJkyb4O0NvmEWdzoeVmx1gAwgY8vCNfyC2OV1dlDvkutanF
-	 KUDAq2o/WJTIQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject:
- [PATCH v3 5/9] PM: Check power.needs_force_resume in
- pm_runtime_force_suspend()
-Date: Fri, 27 Jun 2025 21:19:31 +0200
-Message-ID: <1855933.VLH7GnMWUR@rjwysocki.net>
-In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
-References: <5018768.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1751052010; c=relaxed/simple;
+	bh=rlOHZjZIEspl0q/GBx3OYaU1/H0UqF4UUVO6+aOekBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlqCQNZb6eeFG6AUgsYzxyZfHoBKLJIlFPf4ZZAsoyMoewJIwQd4j07BiI5olnWqAMaJ4rRq1jvHOoB9Ei9leLu0pSVwqVZRljMHnt2ktIEDJNSlNjhoFO8ZXNHmoMUUbYGzQH4VtybqfRS3qfi7+zRv8+lrOJreYSwSObvSoEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgSXez3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A246C4CEE3;
+	Fri, 27 Jun 2025 19:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751052009;
+	bh=rlOHZjZIEspl0q/GBx3OYaU1/H0UqF4UUVO6+aOekBA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XgSXez3gkFbYLioFF1Fbh7TfdWdk1g+mL4gRgdBv3mngkruDkm3DWglLsA+T/otE3
+	 vZmAGxTOGI5eIRRUD7YOqdvWvcyRmVH8JeEnJR2IaxgZZhzjyg8lD7PNujHYaae5Z+
+	 d4wua3Nb2eJ6dUPa2w1m5wdnaj16cHcGm0BE7MWK2girIwq/FX2WptGY7cc5wzHYTA
+	 oGfU0oDaXpv0NltxRqLVlCh0uj+wkBQuqH6tO8IiNJbBihCuP0Sy06kNX2ESc4vlWB
+	 QPCfPg+D9AfJkypXNTK7rWe4nj/gC/cp+wJ20Cqlxu/T8fSD939GEvmDfP/saBCgID
+	 RpQCvFx4V8dTg==
+Date: Fri, 27 Jun 2025 14:20:08 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Pengyu Luo <mitltlatltl@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Eric Biggers <ebiggers@google.com>, devicetree@vger.kernel.org,
+	Benno Lossin <lossin@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Ingo Molnar <mingo@kernel.org>,
+	Joel Granados <joel.granados@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-arm-msm@vger.kernel.org,
+	Alice Ryhl <aliceryhl@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH 1/4] dt-bindings: vendor-prefixes: Add Ntmer
+Message-ID: <175105200813.4031932.897263178678419405.robh@kernel.org>
+References: <20250617092929.1492750-1-mitltlatltl@gmail.com>
+ <20250617092929.1492750-2-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 5.63.189.50
-X-CLIENT-HOSTNAME: 5.63.189.50
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: dmFkZTGrSjjgwBeoPV1BTemn5ImVCZpPTZb07vPRCPpCLNITJNQNwAJrBW+NvQ9gHfopUGw7eKCZUx2JvTkH7ndztXO95C/5NZYx0U0uzSGwSElzY3a0yFW5y/ST6sLyUL+pkZNb6zBf5QQDeWSHMTwFL5SzhnW4lYOV2aXUoJnPKm0KcXRLQpgIKgvtcuh9kc8szEcWaDKkWT6ZvZMLezK4NKUrQ0LRPHVUG/J8XldG2aWmsAAgiz8DIA4tSCjGi3syq1aAO8pJ5+EOuYaRvLcxgtvWWEpF/MWy84RxjOnkuHVdyEMV6Ug0G9LNrdrQ+TwE0ATvvO2S6WiA1+7Yw5g2H305qA3a5DTQAvMd3eX+r2ot7uQ3ewr5YpzXFKNcEw6iJmgF/z80Tl0DJuIvKrx/skYubFlkRkxVgInSftqTC9/smZ8b/Zc87Etbyx6N4IpG54GWJiQHYtbFBn5XlMlJyzSMmMHzVrVNGybamftIk6F6UReKpk5MQ5tpnv1/cBDfJjs/mGWUvwOKYxKTl1d/VBP8j1AhrJDSY0fhxhH9k70EyNQkgYXdqtH1XlEEx3xHz0iHo2upVSoUaQrw8eMN5K6fUBQAwrZjytd7U0lXqnv8gT3taluTb9ituKSzpUrqMK1uEBIvHKLK9J/eUb6skljGXkpIxi3eN2utClqwFhVk7Q
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Add a power.needs_force_resume check to pm_runtime_force_suspend() so
-it need not rely on the runtime PM status of the device when deciding
-whether or not to return early.
-
-With the new check in place, pm_runtime_force_suspend() will also skip
-devices with the runtime PM status equal to RPM_ACTIVE if they have
-power.needs_force_resume set, so it won't need to change the RPM
-status of the device to RPM_SUSPENDED in addition to setting
-power.needs_force_resume in the case when pm_runtime_need_not_resume()
-return false.
-
-That allows the runtime PM status update to be removed from
-pm_runtime_force_resume(), so the runtime PM status remains unchanged
-between the pm_runtime_force_suspend() and pm_runtime_force_resume()
-calls.
-
-This change potentially unbreaks drivers that call pm_runtime_force_suspend()
-from their ->remove() callbacks because currently, if the device being
-unbound from its driver has a parent with enabled runtime PM and/or
-(possibly) device links respecting runtime PM to suppliers, and it is
-RPM_ACTIVE when the remove takes place, pm_runtime_force_suspend() will
-not drop the parent's child count and the suppliers' runtime PM usage
-counters after force-suspending the device unless pm_runtime_need_not_resume()
-returns 'true' for it.  Moreover, because pm_runtime_force_suspend()
-changes the device's runtime PM status to RPM_SUSPENDED, in the above
-case pm_runtime_reinit() will not cause those counters to drop, so they
-will remain nonzero forever effectively preventing the devices in
-question from runtime-suspending going forward.
-
-This change is also needed for pm_runtime_force_suspend() to work
-with PCI PM and ACPI PM after subsequent changes.  Namely, say
-DPM_FLAG_SMART_SUSPEND is set for a PCI device and its driver uses
-pm_runtime_force_suspend() as its ->suspend() callback.  If
-pm_runtime_force_suspend() changed the runtime PM status of the
-device to RPM_SUSPENDED, pci_pm_suspend_noirq() would skip the
-device due to the dev_pm_skip_suspend() check.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v2 -> v3:
-   * Update changelog (explanation why it potentially unbreaks some drivers and
-     why the subsequent changes depend on it).
-   * Reorder (it was [4/9] previously).
-
-v1 -> v2: Corresponds to patch [2/9] (that was posted as [0/9] by mistake) in v1.
-
----
- drivers/base/power/runtime.c |   21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
-
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -1969,7 +1969,7 @@
- 	int ret;
- 
- 	pm_runtime_disable(dev);
--	if (pm_runtime_status_suspended(dev))
-+	if (pm_runtime_status_suspended(dev) || dev->power.needs_force_resume)
- 		return 0;
- 
- 	callback = RPM_GET_CALLBACK(dev, runtime_suspend);
-@@ -1984,15 +1984,16 @@
- 	/*
- 	 * If the device can stay in suspend after the system-wide transition
- 	 * to the working state that will follow, drop the children counter of
--	 * its parent, but set its status to RPM_SUSPENDED anyway in case this
--	 * function will be called again for it in the meantime.
-+	 * its parent and the usage counters of its suppliers.  Otherwise, set
-+	 * power.needs_force_resume to let pm_runtime_force_resume() know that
-+	 * the device needs to be taken care of and to prevent this function
-+	 * from handling the device again in case the device is passed to it
-+	 * once more subsequently.
- 	 */
--	if (pm_runtime_need_not_resume(dev)) {
-+	if (pm_runtime_need_not_resume(dev))
- 		pm_runtime_set_suspended(dev);
--	} else {
--		__update_runtime_status(dev, RPM_SUSPENDED);
-+	else
- 		dev->power.needs_force_resume = true;
--	}
- 
- 	return 0;
- 
-@@ -2033,12 +2034,6 @@
- 	    pm_runtime_status_suspended(dev)))
- 		goto out;
- 
--	/*
--	 * The value of the parent's children counter is correct already, so
--	 * just update the status of the device.
--	 */
--	__update_runtime_status(dev, RPM_ACTIVE);
--
- 	callback = RPM_GET_CALLBACK(dev, runtime_resume);
- 
- 	dev_pm_disable_wake_irq_check(dev, false);
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617092929.1492750-2-mitltlatltl@gmail.com>
 
 
+On Tue, 17 Jun 2025 17:29:26 +0800, Pengyu Luo wrote:
+> Ntmer is a Chinese company, their website is https://www.ntmer.com
+> 
+> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
