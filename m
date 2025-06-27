@@ -1,153 +1,219 @@
-Return-Path: <linux-kernel+bounces-706551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C111EAEB827
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:51:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EC7AEB82D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1438C189E37D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2FAC189CC14
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C96D2D879C;
-	Fri, 27 Jun 2025 12:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22FF2BEC35;
+	Fri, 27 Jun 2025 12:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EY1X793v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IbMBNwYC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A5D2BEC35;
-	Fri, 27 Jun 2025 12:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743142D9788
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751028686; cv=none; b=kvB2y2nOGrsrLBVSBo8GvrkTB8uCD1Z6bx8U2PwB6M6JP4GbvBvO0LwhfBe+xe7NmMs2y9MRuI/oQsW7RfKMuezv9/GhccFYuNR5siPqKX4lSO8Vh4yeuKe3f1JlFLljoN42dXUuKxpWCSkuVculcRl/oQWxSzVKZf6miB9/b48=
+	t=1751028701; cv=none; b=PQ3XFv/7JcPkplD8/33ePgFG6tf88S8eKWTjJLwneFboCT5wnD6OqyLWPnLbZjW++E53EWC+eWW/5o+PiMFyT1RftZQrNnvO462mDMRCmQ+/AMnN25fU6Y79BUaRQDkVPAOwGWv9YfOr/52qhkdv9LL2gAjQAilF89J/Ut3uw5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751028686; c=relaxed/simple;
-	bh=vkTWHdyY2LgTLEhdW6ywJcKCt9UErdA7gq50ddD4J7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4W8zAfcKoT2n21niLyWR28MRLWfNgy/v7dztc5DowTtiVr76bo0AoLAPwANioNShWiu6lmJmw9hlGj+5mL1jpH9xziwWSsq/fiyyma6PnZ8VVsKRvC0Wo96prtp3jI0DPtKGZzRZXycuiA5Sw5Xh1mL5yJmIqVr4XqUkfDOsQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EY1X793v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD1F4C4CEE3;
-	Fri, 27 Jun 2025 12:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751028686;
-	bh=vkTWHdyY2LgTLEhdW6ywJcKCt9UErdA7gq50ddD4J7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EY1X793vtCOEYQVu60/1GWtMu/J/QR4ff5coXtHaO1S5KX6WWx1sz8cpC9H43vD92
-	 PbDEyMg3DoFr6qAsB6Hc10WJTPqHvzt8umwtLBIX1gl2a5R3vaINtixLt9jZtacy38
-	 WRbCMgIlkSnT8OWPnKsGZDgn/EziNXBzClIPsvxM+SEKHO8hwyCgtEOUvLC+qR7kYI
-	 qBcNdQ127+NSLu3G/FW8GtY/PN5fOF5qObxDiUgfh4Tts28h32mOi4HzAABvUhHOJ1
-	 Pw3p19wn+i9kRDjuDONH7oqhuXX5uPrkr7dQ135iWCKjcAab4aUXloJ+tnm9jz6Bya
-	 gtHC0gMJMd1fQ==
-Date: Fri, 27 Jun 2025 13:51:19 +0100
-From: Lee Jones <lee@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	troymitchell988@gmail.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
-Message-ID: <20250627125119.GF10134@google.com>
-References: <20250625164119.1068842-1-elder@riscstar.com>
- <20250625164119.1068842-3-elder@riscstar.com>
+	s=arc-20240116; t=1751028701; c=relaxed/simple;
+	bh=si5pkg3D7M7AemArS/xiRGGpBgK97TaRSQ8mXnLW03I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ncmy1BDt4SzPFMz5MeqPvOGUEdTYLUyK8qgKlVBDq9qz8ZudzzUSwPlhHx6lUp+Omk0D2bNvJ1sD2Y+8IsWyU13KwCEXdZ6Stz1uSZeBt4/TbUgEBP8OC/wCXZ3gplasa89adyJYxkodeksPbmrOHhm99vjYLlY4FlsVs1SSgFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IbMBNwYC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBg0K5028796
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:51:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=ZrQ8AHkAD30tuUld9m43KAGRDqt8gThRB6o
+	xUrxVwDo=; b=IbMBNwYCkXD5hjWt97lAhSiAVOC6h7oxNUV2kyldYK+XeLJ11DI
+	hwqWLN13j41143FRF0SO817fOdVUt9pSIe7UkdkN9ldbhFw5JWJMXDJiItHDqgZx
+	0kBBkcv4PNCVGBin7uvk5lk1NlXw+TxkqTuC2jUEDbXxuasvtH/wY6bUfTZEXTXp
+	WxfmqAw6qIcQ+rY2+XG0cXbA925UEr4ROCJiJRFvsRrhZVCO86mfLz1MwvMwdPHJ
+	CX+gwA3lY1yLPphga2ENcgDKTJsJ+B7KE6DhXO0nKR08nrrZp2/XrHehbtAKMVDE
+	L/ToiV/xiULMEFu4QhcmYogoP2QYh76eHiA==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47hkpbhhke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:51:37 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-74890390d17so1846978b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:51:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751028696; x=1751633496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZrQ8AHkAD30tuUld9m43KAGRDqt8gThRB6oxUrxVwDo=;
+        b=M9kJNyUQWpC7Hdk8IqbhWF2r09l1pYQ9ajpoIL4ZXpqH60Aamx65+S53TRIx1nKKuD
+         5JXKER9A2Ho4bNiMIA3yuanuSviww5hhyyYCxxcfgXV3QXdQ1hWIHmjBjJN6829EP2Bj
+         5BFlHw/vCMQQrRYs/EV2ZOWJ/RX/Zv8GCtGD7K+O2/UiT1AArWUx+BtV9StGdWq4Olg5
+         +IzCZt9F7Pvx1qL4/ENeDxUqc7jH1u0HlS9MbTYFC7J3zRUehr1bgPHjQO+1XKnyemtX
+         WGzhJqIqrLYUhe6kLNNpWCNWT4zYqrGpFGqJsPA95gLrXubnsaV740uoWe71TDRoPyuU
+         cRmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNQzjvde1Abcum2B0QKyvKzP3r0+sYTmZ2jeeTGYeRNrcBT0AoW2c4hjI0ebsvejmZUTo1c2ZSNqjXsgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLqZZiUUDog6WsEJAODBRzx4x/cxYYn/oxQHLRR6cNkPpir6O1
+	tUCBVpQamQHGVHR2+lJ21fraltxRoDxlt3HSqmfMVjP2+FFIsCPynuNzYbED6q3xa1o8Q6yP+cc
+	7tlk4RzVc5Myt1JaJO9H15zhUXcD4X3RzxlNBFcOwP9BkYlgBUrvo7TuFuKOy4zG3akA=
+X-Gm-Gg: ASbGncvQzQK6IQZ9DmICCDK4xfw/0emBq6i/nlT+XV6NeeW+7oAm4EZbdr5o5Zntedw
+	krBYlQo5OxclFBOWk/zvls7a5shjHgrYvQG0P0AkeFKYwWWIHnkDpx0Zji77oPp+LkLky9tOJHe
+	dsQ19fsfDoXrO0g0uLpyBktdXz8IUK14z4moHETwQxqEx3kum+SUzDYk2XzY4aX1G4Q8jS1b4vD
+	Pc89XaMw9zmIwoIVi7oeJc2663Q6fxH+1WFXvxH9GRXOel/HIuQDWH+yi8ErjV8U2g/56roqYXL
+	q923w5fltpZcBvYhfCvBOiVbHH9HbhT/LCf0pVxS4yrik9fbAYo=
+X-Received: by 2002:a05:6a20:4327:b0:220:7b2e:5b3f with SMTP id adf61e73a8af0-220a16b18d4mr4802824637.19.1751028695836;
+        Fri, 27 Jun 2025 05:51:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF26C8dtDNtXckzHuaNi47xMdSgfo4gkIZBa3WflpXjgfUX5aXrSLsxvdSTRWWbJGV3ZuUfmQ==
+X-Received: by 2002:a05:6a20:4327:b0:220:7b2e:5b3f with SMTP id adf61e73a8af0-220a16b18d4mr4802762637.19.1751028695329;
+        Fri, 27 Jun 2025 05:51:35 -0700 (PDT)
+Received: from hu-kbajaj-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3200874sm1570337a12.69.2025.06.27.05.51.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 05:51:35 -0700 (PDT)
+From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [PATCH v2] usb: misc: qcom_eud: Access EUD_MODE_MANAGER2 through secure calls
+Date: Fri, 27 Jun 2025 18:21:31 +0530
+Message-ID: <20250627125131.27606-1-komal.bajaj@oss.qualcomm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250625164119.1068842-3-elder@riscstar.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEwNiBTYWx0ZWRfXwSEBjfzKuqU9
+ FV6f0JdAWVr6/6wUp1RlMpoosbuoPKpC/ncMYJt1Bj3wM2/URY2n/MwGS8mPK0onssOSshVoeE4
+ 2x/SEoF6/KOGyELM9S7qf2h52oJ7m3TmwDfpwYLDytDfZ8LRAEYlOpKJE28nBOT7zr77Vkhlrp+
+ efiM0mw/LAU+Xg8xHhVs6WwMzPSyQ/RsgboK7uoi8LZWeXGO31mry6IUdVLmzGthNAcebuF7oJb
+ K67rirRc7b0NhXxI+Gg0A4+0ugmxFMpmf1sjvRVNEWjR8SkuJ+xME0Ho7RCysRmg7Yam4D/k3hm
+ a7Rl7BFJkH9ED6wocG4PwDs1bRRmiWvoCzSPLeq00wCBydYFChaO0ms3R+YbKJEqDcwF0ki8M/8
+ v+JbYI2tbOPDzhhKz+NFzwHv/mvvX5cX2BNErdBWyvRPbReg9xYb8nszhdm0T7msYIBMQrZI
+X-Proofpoint-GUID: 7XFxlnS4vuSalCoaRX3wF9kwikbj65rP
+X-Authority-Analysis: v=2.4 cv=AY2xH2XG c=1 sm=1 tr=0 ts=685e93d9 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=RCjrDKQIKzBwdYVaOqUA:9 a=IoOABgeZipijB_acs4fv:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 7XFxlnS4vuSalCoaRX3wF9kwikbj65rP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 lowpriorityscore=0 spamscore=0 adultscore=0 impostorscore=0
+ clxscore=1011 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270106
 
-On Wed, 25 Jun 2025, Alex Elder wrote:
+EUD_MODE_MANAGER2 register is mapped to a memory region that is marked
+as read-only for HLOS, enforcing access restrictions that prohibit
+direct memory-mapped writes via writel().
 
-> Enable support for the RTC and regulators found in the SpacemiT P1
-> PMIC.  Support is implemented by the simple I2C MFD driver.
-> 
-> The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
-> PMIC provides 6 buck converters and 12 LDO regulators.  It also
-> implements a switch, watchdog timer, real-time clock, and more.
-> Initially its RTC and regulators are supported.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
-> v4: - Add a dependency on I2C, to avoid a CROSS_COMPILE build error
-> 
->  drivers/mfd/Kconfig          | 11 +++++++++++
->  drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
->  2 files changed, 29 insertions(+)
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6fb3768e3d71c..01805c3eec57d 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1182,6 +1182,17 @@ config MFD_QCOM_RPM
->  	  Say M here if you want to include support for the Qualcomm RPM as a
->  	  module. This will build a module called "qcom_rpm".
->  
-> +config MFD_SPACEMIT_P1
-> +	tristate "SpacemiT P1 PMIC"
-> +	depends on I2C
-> +	select MFD_SIMPLE_MFD_I2C
-> +	help
-> +	  This option supports the I2C-based SpacemiT P1 PMIC, which
-> +	  contains regulators, a power switch, GPIOs, an RTC, and more.
-> +	  This option is selected when any of the supported sub-devices
-> +	  is configured.  The basic functionality is implemented by the
-> +	  simple MFD I2C driver.
-> +
->  config MFD_SPMI_PMIC
->  	tristate "Qualcomm SPMI PMICs"
->  	depends on ARCH_QCOM || COMPILE_TEST
-> diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-> index 22159913bea03..026cd92e20ad3 100644
-> --- a/drivers/mfd/simple-mfd-i2c.c
-> +++ b/drivers/mfd/simple-mfd-i2c.c
-> @@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
->  	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
->  };
->  
-> +static const struct regmap_config spacemit_p1_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = 0xaa,
-> +};
+Attempts to write to this region from HLOS can result in silent failures
+or memory access violations, particularly when toggling EUD (Embedded
+USB Debugger) state. To ensure secure register access, modify the driver
+to use qcom_scm_io_writel(), which routes the write operation to Qualcomm
+Secure Channel Monitor (SCM). SCM has the necessary permissions to access
+protected memory regions, enabling reliable control over EUD state.
 
-Suggest making this more widely useful by adding the 'max_register'
-attribute to 'struct simple_mfd' and conditionally overriding
-regmap_config_8r_8v's value during probe.
+SC7280, the only user of EUD is also affected, indicating that this could
+never have worked on a properly fused device.
 
-> +static const struct mfd_cell spacemit_p1_cells[] = {
-> +	{ .name = "spacemit-p1-regulator", },
-> +	{ .name = "spacemit-p1-rtc", },
-> +};
-> +
-> +static const struct simple_mfd_data spacemit_p1 = {
-> +	.regmap_config = &spacemit_p1_regmap_config,
-> +	.mfd_cell = spacemit_p1_cells,
-> +	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
-> +};
-> +
->  static const struct of_device_id simple_mfd_i2c_of_match[] = {
->  	{ .compatible = "kontron,sl28cpld" },
->  	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
->  	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
->  	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
->  	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
-> +	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
-> -- 
-> 2.45.2
-> 
+Fixes: 9a1bf58ccd44 ("usb: misc: eud: Add driver support for Embedded USB Debugger(EUD)")
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Changes in v2:
+* Drop separate compatible to be added for secure eud
+* Use secure call to access EUD mode manager register
+* Link to v1: https://lore.kernel.org/all/20240807183205.803847-1-quic_molvera@quicinc.com/
 
+ drivers/usb/misc/qcom_eud.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
+index 83079c414b4f..30c999c49eb0 100644
+--- a/drivers/usb/misc/qcom_eud.c
++++ b/drivers/usb/misc/qcom_eud.c
+@@ -16,6 +16,8 @@
+ #include <linux/sysfs.h>
+ #include <linux/usb/role.h>
+ 
++#include <linux/firmware/qcom/qcom_scm.h>
++
+ #define EUD_REG_INT1_EN_MASK	0x0024
+ #define EUD_REG_INT_STATUS_1	0x0044
+ #define EUD_REG_CTL_OUT_1	0x0074
+@@ -34,7 +36,7 @@ struct eud_chip {
+ 	struct device			*dev;
+ 	struct usb_role_switch		*role_sw;
+ 	void __iomem			*base;
+-	void __iomem			*mode_mgr;
++	phys_addr_t			mode_mgr;
+ 	unsigned int			int_status;
+ 	int				irq;
+ 	bool				enabled;
+@@ -43,10 +45,14 @@ struct eud_chip {
+ 
+ static int enable_eud(struct eud_chip *priv)
+ {
++	int ret;
++
+ 	writel(EUD_ENABLE, priv->base + EUD_REG_CSR_EUD_EN);
+ 	writel(EUD_INT_VBUS | EUD_INT_SAFE_MODE,
+ 			priv->base + EUD_REG_INT1_EN_MASK);
+-	writel(1, priv->mode_mgr + EUD_REG_EUD_EN2);
++	ret = qcom_scm_io_writel(priv->mode_mgr + EUD_REG_EUD_EN2, 1);
++	if (ret)
++		return ret;
+ 
+ 	return usb_role_switch_set_role(priv->role_sw, USB_ROLE_DEVICE);
+ }
+@@ -54,7 +60,7 @@ static int enable_eud(struct eud_chip *priv)
+ static void disable_eud(struct eud_chip *priv)
+ {
+ 	writel(0, priv->base + EUD_REG_CSR_EUD_EN);
+-	writel(0, priv->mode_mgr + EUD_REG_EUD_EN2);
++	qcom_scm_io_writel(priv->mode_mgr + EUD_REG_EUD_EN2, 0);
+ }
+ 
+ static ssize_t enable_show(struct device *dev,
+@@ -178,6 +184,7 @@ static void eud_role_switch_release(void *data)
+ static int eud_probe(struct platform_device *pdev)
+ {
+ 	struct eud_chip *chip;
++	struct resource *res;
+ 	int ret;
+ 
+ 	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
+@@ -200,9 +207,10 @@ static int eud_probe(struct platform_device *pdev)
+ 	if (IS_ERR(chip->base))
+ 		return PTR_ERR(chip->base);
+ 
+-	chip->mode_mgr = devm_platform_ioremap_resource(pdev, 1);
+-	if (IS_ERR(chip->mode_mgr))
+-		return PTR_ERR(chip->mode_mgr);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	if (!res)
++		return -ENODEV;
++	chip->mode_mgr = res->start;
+ 
+ 	chip->irq = platform_get_irq(pdev, 0);
+ 	if (chip->irq < 0)
 -- 
-Lee Jones [李琼斯]
+2.48.1
+
 
