@@ -1,108 +1,107 @@
-Return-Path: <linux-kernel+bounces-706479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF59AEB707
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F3CAEB70C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A02416D228
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CAEC189D055
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA87F296145;
-	Fri, 27 Jun 2025 12:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C358E29E0F3;
+	Fri, 27 Jun 2025 12:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SUNp4+Bh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MnyuJS3i"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C33219F461
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389DA1DB551;
+	Fri, 27 Jun 2025 12:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025619; cv=none; b=niZkl+WibXk3xCdp9Wq9cjy0KilYaPUxueIucfEpJb5GGtf766g8C5KhUewZhS1YfGqWkopMPCiseN6ALV4YDI78Q3znh47acm78o+IkqlIFo14q1yxP2LXIDbMiVsXQkWQmSXwvd2WVDUw76+qmBAxTDu+bhSvB/OQFcDBV7Vw=
+	t=1751025712; cv=none; b=QLEsUJ12EhIsvU0ay1NCZNIc3oOFpj51N26emgkNazsZ0Gx9mCR+RLF+ykip7HgjN53KOJDqvqRjSPMKUC9azFg0JFZFuLrNCS3ZK5ArAtxgT0X/FuGHvBYZ6SBnt1jax+SLazIV56MilO3dcOGj8L7yVn7hlkTd6rGFMcqskbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025619; c=relaxed/simple;
-	bh=909P6nH0p1HOpbVXQE7Al8zLxx5mdQNGBOcx64yDYLE=;
+	s=arc-20240116; t=1751025712; c=relaxed/simple;
+	bh=UHMGY9lxYmtZHXs+Es7Nhp2fGyKHJf0mmDaSA3nAdQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzYPz8YhpA6N1QhxPhh0byMcOppSaD56rNkTqnyiCGtmZYGXgBwQ+b/Cn+HT8d8lYW6hw1ERDqoCCxgQ+HMqiEFEOIk4qbkGjqRZWDhRs2H1QQ6x1eifLvuFYz1CoP0+qIvMHL233oHbI+wPKZ9KhdP41H/u5kbSDBv3snX50LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SUNp4+Bh; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751025617; x=1782561617;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=909P6nH0p1HOpbVXQE7Al8zLxx5mdQNGBOcx64yDYLE=;
-  b=SUNp4+Bh+AjhuCIwlAnzUEHedz5/KV2os9UsZ77J/A6ecQApR8aSy2gC
-   4bvNsh7drI3hlg5ifrFcpJjSKzZeYStwxA50pQfGxrJx2ydRR0iR6zfOg
-   F5PiRTYnlbKqRyB1yYEQOeZoOnN8yk7apksGQE5GXK9S8cTtUYrDGfKQD
-   8vxqQvOPHfjmjOB3txOOiwxKBfLr+NC1pyLI5rRmQNHiTaTA9UL8MlWWZ
-   g4SWPxUksP+iHKDTIhMwXTSrWSQ+MCnwzJcN/Hu8kDR0vXQIPVHq3YGaQ
-   5scfRX49L5VwdqIH+pwwFVBzHN72OS3wNHjT+5woQkxgy2FFyARDv49p8
-   w==;
-X-CSE-ConnectionGUID: YCQUcRC8S3Ow7C1OqOMnMg==
-X-CSE-MsgGUID: 1+tLp1YVQju4wo26ZMKtVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53418108"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="53418108"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 05:00:17 -0700
-X-CSE-ConnectionGUID: spZfFjjVSRSQdtFc9S4VFg==
-X-CSE-MsgGUID: w/VF5bZjR1+RUTnwQHhLFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="152879032"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 05:00:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uV7kZ-0000000ATLs-1tZ5;
-	Fri, 27 Jun 2025 15:00:11 +0300
-Date: Fri, 27 Jun 2025 15:00:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
-	dri-devel@lists.freedesktop.org, Borislav Petkov <bp@suse.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH] MAINTAINERS: Add missing sysfb files to firmware
- framebuffers entry
-Message-ID: <aF6Hy5Yv8PrxKENX@smile.fi.intel.com>
-References: <20250627113328.2703491-1-javierm@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhQuuD9nPzuZ7MDx7ObxwxsTF0k9gUeL9fzy6Z91CX6PupHeqoIhFQJTN1lzxkOf1ZDWXuRjsKx5XOw9mrZh1QeRnP0FvKhd+xokvD0hV9dMWseJoiQ65BmphkgJWOoe1VR7MTj/4veugCqVLNb1H3OUkjpJGBZfKQe/9Gs9MCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MnyuJS3i; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2D04640E0169;
+	Fri, 27 Jun 2025 12:01:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id WrsdBXC2E2Xe; Fri, 27 Jun 2025 12:01:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751025697; bh=FkZ5lpYwYTYuA2kPbG6UdUCZVUGwHwYkxO5MZLARu2s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MnyuJS3ifx2X1UipUt7O520VGuBc4r7fgG9DBqh+LRNksXo83qdUuuQgii3UTVsJd
+	 PvuDyZTIVxGW9vMRUf7EqWKPbyk17n5w0b/ZQ34Cu8t5+TNPSUp02AQJfUtLuMUq8b
+	 mBrtXi7GqszMZQP0quIeWNBgMx77wMB2j+ca064eWd/o6ntyjGuU6YgLuI9x1j8R8a
+	 nPJ6ZP0fg8kzcyTy/ypocO6o3hFQjGZW+3zsTjdaFyTjg0nhCbTGRWbdX3tgMzG8Rm
+	 wTsgewTl2Js0KwRwke+MLRsMg70YJ+7c303gHup9QJvDe20bWv5exEJ/p9gY1P+pSY
+	 eacxAjruA0aOSvggI4MsSvk6HDLYB/Jvm4fVkaUh3pmr8qJm1p1EkbaAqvr5tEx3wP
+	 A6Q3MdC9pZWb+gmSs8pCEcZoggA/pJkNexRIE+0lG4cm3CVbpSD+9qD1CmLGIMJn9f
+	 szRUauC6pef6M1G42phJfePVNO5PuQ5QvRY1l52obpyuicXBgtEeTJRtZzCN+hZIiU
+	 ZNxRAL2kyTKEgxeKB+Uzq+RwsR2qv3hbet60Ro7aSuNQjkcEka7a28gnqwzeLK5FBb
+	 shYT4hwXP2JNheeLCuAhkDHfGswZUT6CWnJWC4/Q5hGMqelhRUvxub1wbjJFieeUo1
+	 kPhtlHwH2duvJYtFde097Tos=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7CDCF40E019C;
+	Fri, 27 Jun 2025 12:01:28 +0000 (UTC)
+Date: Fri, 27 Jun 2025 14:01:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: linux-coco@lists.linux.dev, kvm@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] x86/sev: fix error handling in
+ sev_es_efi_map_ghcbs_caas()
+Message-ID: <20250627120122.GBaF6IEgLEmfntS7qA@fat_crate.local>
+References: <20250626114014.373748-1-kraxel@redhat.com>
+ <20250626114014.373748-3-kraxel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250627113328.2703491-1-javierm@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250626114014.373748-3-kraxel@redhat.com>
 
-On Fri, Jun 27, 2025 at 01:33:04PM +0200, Javier Martinez Canillas wrote:
-> The commit d391c5827107 ("drivers/firmware: move x86 Generic System
-> Framebuffers support") moved the sysfb*.c source files from arch/x86
-> to drivers/firmware, because the logic wasn't x86 specific and could
-> be used by other architectures.
-> 
-> But the drivers/firmware path is not listed in MAINTAINERS, which led
-> to the files being orphaned and scripts/get_maintainer.pl not listing
-> a mailing list to Cc anymore.
-> 
-> Now that we have an entry for all the firmware-provided framebuffer code,
-> add the missing sysfb files to make sure correct folks and list is Cc'ed.
+On Thu, Jun 26, 2025 at 01:40:12PM +0200, Gerd Hoffmann wrote:
+> -		if (kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags))
+> -			return 1;
+> +		retval = kernel_map_pages_in_pgd(pgd, pfn, address, 1, pflags);
+> +		if (retval != 0)
+> +			return retval;
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Yeah, I'd understand if it made any sense to propagate the error upwards but
+this function is called exactly once by efi_setup_page_tables() and all it
+needs to return is success/failure which the caller uses on the spot.
+
+So no point in doing any of that nonsense. I'll zap it from the set.
+
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
