@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-706902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902B1AEBD99
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:36:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4835AEBD80
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1102B1883B93
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55CBC7A85DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8154D81720;
-	Fri, 27 Jun 2025 16:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B3F2EA74F;
+	Fri, 27 Jun 2025 16:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvELLEMt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fs2Ad+ug"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4AB2E9EC9;
-	Fri, 27 Jun 2025 16:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3D12E54D5;
+	Fri, 27 Jun 2025 16:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751042012; cv=none; b=gSR2xTOqHylmhMmsvRzyM3pNat1vDwCVAzWom/Yxt3+/PxqOCO8ypTaLqVQCb7otdKgynG4+tovl17qrZ6JDBe4aaMG5rHBnFo55ZsJfr/XRt/lDSIJ4LAMjveOHDwjLHj+T8xND83ndzom5Cqg3lpggR4Pai/bwAXiB1PPglV4=
+	t=1751042038; cv=none; b=X6sSAq91vp5va2C6qBSrFMnhmZ4h/IXLXcfclbs3QFhFNZxYo2ftun0cXA8xv5xrEVzrH46o0O+l6Dga5ZnaJn8nykmrBEjVzBXrdeSeLqy9GvdGcYMW7srxLJq9D4rywev+ZYrQ01jEVcKoXbYXLCLvI2gSA+YX4XmTXdj8VbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751042012; c=relaxed/simple;
-	bh=WFhAKwhDV0tYJDjNHwHxrmRVh8mM0OQx2XhK1ipVWb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UC96sLdbeYuGqvn3TCliSka75AKuMJKlcg2VA8M4HkqmKkbLlMV5bjoCZKBCiOgmA8basLAbhkMuCYF1px6/GQQZxYEBJSlIOuWYc7Jzo6iNqbCqjIjx90A4x2kw2kLmyx+LkxnrV2BCfxT7R1ufAJ5LtaYrsVJhqGsq4OmGGxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvELLEMt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13231C4CEE3;
-	Fri, 27 Jun 2025 16:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751042012;
-	bh=WFhAKwhDV0tYJDjNHwHxrmRVh8mM0OQx2XhK1ipVWb0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AvELLEMtW9jgJU3jVQbc/o9w3TRJ2g8otBKa1jWoKxnYTgdKg+ohECLGFouptLwGt
-	 gjqW/SpKF89QWgmy0w7fKEqGSkD59rwIHvYVE/zZyFj12hb463CHlLe0Vbh0VdPTGp
-	 j8azFk3T0pBvrnjWG/aOWhfiDsJKW+2PesglAxnTfhz/0dM7j5kD4asbJVeZ+vQ8ZS
-	 Bek2nrdPf8TtIaCKTznnhlAqDA7K7w8kCtrQgzzcdb59EN7Mcu+2IKy9hSON4Uyd1S
-	 jNCkBiqak3GsnM/JwPXTIgtxk91ct4EMfs3/xNr8Ci8wYZooy6aZV5NSEDMn42I0Vi
-	 6Odf68oC/IeHw==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yunjeong Mun <yunjeong.mun@sk.com>,
-	SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: [PATCH RESEND] samples/damon/mtier: add parameters for node0 memory usage
-Date: Fri, 27 Jun 2025 09:33:29 -0700
-Message-Id: <20250627163329.50997-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751042038; c=relaxed/simple;
+	bh=Y2MaEeceKNbv4yiFNLVL6EuLylExKPZ4w7oafZAoUjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIZC0YPj4qLUWOWmpjAGtffE3Cu588GxX+irDgvlQxOgRF7RcdYc3vQ9UYz1mhcnop/tQ1RRwAiprHlqDETcbFXzcXxJYS5BDbf9UmyG2yYJu3xf78wKgx67TZAypToBeAjiOsuzeJ3xwgyJHnCka6CQiigahlH2dg5kJKpITtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fs2Ad+ug; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751042037; x=1782578037;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y2MaEeceKNbv4yiFNLVL6EuLylExKPZ4w7oafZAoUjc=;
+  b=Fs2Ad+ugEnW8qSsWArq7KVp/lsBNdKr6NrF7KParsLYBR7T+yEk/tJaU
+   dyJPDQmYz4KYZ6Su5/F793XJ0LVHZv5x4RKaroLfBoCkROG6Ygnjr7ygv
+   Rowen59uXo/Ceoz/Bx0T675mCWUlY85IT+yQh3gWEVpQ0S1Z+d9xWyIqR
+   DiG59v7XJ/QOfNdmCCIvyzGsZ1ai7wd1kJ3ECMn+h/Nh8c1CmbFdy2Hwh
+   YdW8uiMPCnRuGzYhQYU7ZMShL/imkbJm+EoSxZp9qWL1yzewGX/yKik6J
+   +dnhKUOCC6BxPOaMZjTaDXUe3BSz+TNDA7Spespo1jEHMrac/0b+ufLVT
+   Q==;
+X-CSE-ConnectionGUID: aDwHT5DZTHaKji7HqORHCQ==
+X-CSE-MsgGUID: 5gb/9b34S5CPJ/EWiYVXyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="53079635"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="53079635"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:33:56 -0700
+X-CSE-ConnectionGUID: 1C2IXb2STTuL8X3DDhbOyQ==
+X-CSE-MsgGUID: danC++UFS6ObVuVtA6jiVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="157388500"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:33:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uVC1D-0000000AXHz-2uXB;
+	Fri, 27 Jun 2025 19:33:39 +0300
+Date: Fri, 27 Jun 2025 19:33:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 18/28] of: property: Allow fw_devlink device-tree on
+ x86 when PCI device-tree node creation is enabled
+Message-ID: <aF7H4-toeb7Ouz3d@smile.fi.intel.com>
+References: <20250613134817.681832-1-herve.codina@bootlin.com>
+ <20250613134817.681832-19-herve.codina@bootlin.com>
+ <20250627162245.GA3513535-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250627162245.GA3513535-robh@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Yunjeong Mun <yunjeong.mun@sk.com>
+On Fri, Jun 27, 2025 at 11:22:45AM -0500, Rob Herring wrote:
+> On Fri, Jun 13, 2025 at 03:47:58PM +0200, Herve Codina wrote:
 
-This patch changes the hard-coded quota goal metric values into sysfs
-knobs: `node0_mem_used_bp` and `node0_mem_free_bp`. These knobs
-represent the used and free memory ratio of node0 in basis points
-(bp, where 1 bp = 0.01%). As mentioned in [1], this patch is developed
-under the assumption that node0 is always the fast-tier in a two-tiers
-memory setup.
+...
 
-[1] https://lore.kernel.org/linux-mm/20250420194030.75838-8-sj@kernel.org/
+> > -	if (IS_ENABLED(CONFIG_X86))
+> > +	if (IS_ENABLED(CONFIG_X86) && !IS_ENABLED(CONFIG_PCI_DYNAMIC_OF_NODES))
+> 
+> I really want CONFIG_PCI_DYNAMIC_OF_NODES to go away at some point, not 
+> add more users. 
+> 
+> I think this should instead check for specific platforms not with 
+> kconfig symbols but DT properties. For ce4100, you can just check the 
+> root compatible string. For OLPC, there isn't a root compatible (in the 
+> DT I have). You could check for /architecture == OLPC instead. There's 
+> some virtualization guests using DT now too. I would think their DT's 
+> are simple enough to avoid any fw_devlink issues. 
 
-Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
-Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
-Link: https://patch.msgid.link/20250619050313.1535-1-yunjeong.mun@sk.com
-Reviewed-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- samples/damon/mtier.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+I don't think this is good approach. The above check is more reliable in my
+opinion.
 
-diff --git a/samples/damon/mtier.c b/samples/damon/mtier.c
-index 36d2cd933f5a..f3220d6e6739 100644
---- a/samples/damon/mtier.c
-+++ b/samples/damon/mtier.c
-@@ -24,6 +24,12 @@ module_param(node1_start_addr, ulong, 0600);
- static unsigned long node1_end_addr __read_mostly;
- module_param(node1_end_addr, ulong, 0600);
- 
-+static unsigned long node0_mem_used_bp __read_mostly = 9970;
-+module_param(node0_mem_used_bp, ulong, 0600);
-+
-+static unsigned long node0_mem_free_bp __read_mostly = 50;
-+module_param(node0_mem_free_bp, ulong, 0600);
-+
- static int damon_sample_mtier_enable_store(
- 		const char *val, const struct kernel_param *kp);
- 
-@@ -112,7 +118,7 @@ static struct damon_ctx *damon_sample_mtier_build_ctx(bool promote)
- 	quota_goal = damos_new_quota_goal(
- 			promote ? DAMOS_QUOTA_NODE_MEM_USED_BP :
- 			DAMOS_QUOTA_NODE_MEM_FREE_BP,
--			promote ? 9970 : 50);
-+			promote ? node0_mem_used_bp : node0_mem_free_bp);
- 	if (!quota_goal)
- 		goto free_out;
- 	quota_goal->nid = 0;
+> Alternatively, we could perhaps make x86 fw_devlink default off
 
-base-commit: 12c066f7860c9b980fdc8ccad1f98425b3344bf0
+For my (little) knowledge I believe this is not feasible anymore.
+Some x86 code (drivers) relies on fw_devlink nowadays. But take
+this with grain of salt, I may be way mistaken.
+
+> and then enable it only when you create nodes. Maybe it has to be restricted
+> a sub tree of the DT to avoid any later interactions if devices are unbound
+> and rebound. Not a fully fleshed out idea...
+
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
+
 
