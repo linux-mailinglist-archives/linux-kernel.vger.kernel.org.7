@@ -1,189 +1,123 @@
-Return-Path: <linux-kernel+bounces-706182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B2DAEB302
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CCBAEB1EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50262188B799
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE2E1889419
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFF2293C64;
-	Fri, 27 Jun 2025 09:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548EB293B63;
+	Fri, 27 Jun 2025 09:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uCxYqSBQ"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8ME8cDw"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95937293468
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C42222590;
+	Fri, 27 Jun 2025 09:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751016788; cv=none; b=P07sxezSQtmPfewC2eEU43lPR8WyNNwWPRvYwayc7Del7mEqOResHc4IB9lV/OBAtkGQvw30dS220nDKTs8cHv7+s4Jyqv4CEPMSKNaFWCsm81QVsfvu62IB8D53X/VSyMkr040QtL3GCQRC4X5dWxUTqK9KH9xOVtTzIceG+jw=
+	t=1751015032; cv=none; b=hMAJIphW5xnZosq1wOlenjppdiOwqOl0NxagWmr1H4PUXK0VvHC2mhRVmtNl/V9haiOTiAJHMnlypvR+WI1Add8MUYEWvUAcb/PbB0ZIaX36iwy5LD3P9CRvEv4vkEg4YdQ1R3x6JyMgrytQcA6m8/Hc465WPJV20vmsIdb91pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751016788; c=relaxed/simple;
-	bh=VXByMGvrYIFk6J7l6d66GOgoXAABV8VqYthKY3nfMFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=hPie4/SGa+wF1puemJFbjR3cXK8yoSS1OJNz8Gh2gu0NfAF2VYVIuco8ev4y1yFiCyR5dMfjZzeVhO5Nb0aZTr3LuEsdx73hPZDhgd08P4Y2cR0NFSaf9pMPFhKuL7BxIZKQNVcCvoplV5Q92EFBGopO+zP6nle5RvsOZQDZJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uCxYqSBQ; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250627093303epoutp03a16dbc95f79354a85de049f700c6adcb~M3HzBENDO2932429324epoutp035
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:33:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250627093303epoutp03a16dbc95f79354a85de049f700c6adcb~M3HzBENDO2932429324epoutp035
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751016783;
-	bh=803Ryi9f+g9PHC85frY88NRvvDMi88cIW/isNgputhc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uCxYqSBQfBbQ/WsDJJvQGDLQWfB+oc0xyEx0JyHGXoigzZWjwjWW30vl9gpZzObtl
-	 92pYaJB2/ulIL5hd/cIjhnK6JreXJA5Gsqik7Ceg3B/xYJmuSrd2JDR+z1mMfmO+vz
-	 UC1VT/NYLRHjrfOJertXs8iQEtvx9j1nYfVRp4bA=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250627093302epcas5p1a6ad3f06f523f5bccd4d50d2dac71130~M3HyHJ4Ct3060930609epcas5p1X;
-	Fri, 27 Jun 2025 09:33:02 +0000 (GMT)
-Received: from epcpadp2new (unknown [182.195.40.142]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bT9Mf3Y5Qz2SSKj; Fri, 27 Jun
-	2025 09:33:02 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250627090337epcas5p1c77ffd7260b375241786afa81a1712ce~M2uGkTsPF2989429894epcas5p15;
-	Fri, 27 Jun 2025 09:03:37 +0000 (GMT)
-Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250627090335epsmtip10a1c0b878e5135109f36f5fe1b81d39d~M2uEJ_prp1804518045epsmtip1L;
-	Fri, 27 Jun 2025 09:03:35 +0000 (GMT)
-Date: Fri, 27 Jun 2025 14:33:29 +0530
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, a.manzanares@samsung.com, nifan.cxl@gmail.com,
-	anisa.su@samsung.com, vishak.g@samsung.com, krish.reddy@samsung.com,
-	arun.george@samsung.com, alok.rathore@samsung.com, neeraj.kernel@gmail.com,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, gost.dev@samsung.com, cpgs@samsung.com
-Subject: Re: [RFC PATCH 15/20] cxl: Add a routine to find cxl root decoder
- on cxl bus
-Message-ID: <1983025922.01751016782483.JavaMail.epsvc@epcpadp2new>
+	s=arc-20240116; t=1751015032; c=relaxed/simple;
+	bh=SkT01FuiroIHQcsTRFpB/e7tKPVnTyJoT7yGqpKBv3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G7nxjodLTutSdVBZs8yzZudBHnE8yKaEuHGxWZjgAze/mKqC3FlhrlJji3TVdEY2aAzwifX1Iog5zE44gjHde9k0xlQnkb8U2qK065+5l+ZCovqjQ6EPvC0VLhNP40I33vqnCivmDZMoeFXgXPsL0buoJ5eVdIz2XW1W72GNWQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8ME8cDw; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70e3caa3f7cso1403367b3.3;
+        Fri, 27 Jun 2025 02:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751015030; x=1751619830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LxPXFm/2Af/O0czSgJFjpR6ljpGP3r1+LOljZ09h6rw=;
+        b=N8ME8cDw1BIMkfuXB0WG0ElQlHkW3U17C67Wgz+4E9SAal8vP8PjvUskV1wyEgJoHg
+         jbYyIrG/BoNxj8LOyZd+jqkFbblv1gwQfnMU7dfE70tR2AM31YE7qs/2zaHH0vCTJ7Hh
+         HhONzU0UpQRkLxlo6SYORtQjZXYDQTjR7VhTgYUow+uJrxt8y6tfXGVaQBm5IV/xOjv3
+         Kq3nwN/u+VZHNeo7o5kf0yEu5cKRHY+p0uBldWziPb+UjTc2g08SaUE+a1Ri3Bye6isu
+         5U8ZPKIfw8JcEDuKPOL+DAZoKo9vZbqm7Lmtcv85DmxI34XAyqzZLiao+fY+wcJIPe3X
+         ekuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751015030; x=1751619830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LxPXFm/2Af/O0czSgJFjpR6ljpGP3r1+LOljZ09h6rw=;
+        b=wJaZve6x9KvNh5pqPaEYmoDJ7e7bbF4B23Ywm+3476F/ginz78B2S+7D+JYp2x9SWb
+         zgUlURLTatSGOoL4XW3+hNigvgVAnxBZXcRx879FU0RXGzzG0QBU9BvAZD0cTNRRUcqd
+         yB4vKhWx3bKRZmrcvCPu5HD5J6RPWqppey+6vo6o1IAS/kXO0tnYQp0E/xS1nD7hW/qw
+         uZl3LqJEe2K3XQqhjNI3lVmAPjzLqIYgTrwOuaz83HFU/DEetuqUNTMNi3jyDXmBB1OP
+         ZjqoB1vyAMvxLiD0fEHcWxb2hkyJyyRhMfjEnInPa1+ZnQ+Ktsarq4sEcMKayCxMVCLR
+         Guug==
+X-Forwarded-Encrypted: i=1; AJvYcCUYXqXDMwzFINZVKu/SusxfyV2/pFxaz8b1TIeiolNwxDUXJlv8BEv6xIWHOrg+BgKIXq5T55ilvi1tJ6Q=@vger.kernel.org, AJvYcCXp5b7C81NywhBmLbv9NJHY1nBZ4cOsVov+UT0B9Rc4M1LeD2kdANde+bHuSpbQg3gdLTGkMshpN+gcrWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypJIjrM43flE5eZo0Rnvr69ZCdf1Hzgn9J9HFufcKHzkV24cqo
+	6UOt6pQY2GbDd3FFd3UzMQ7OpVlgULPUJGRZHqeymzjeO00wqd1Mqrfmo86H79ZPxRZmTfYdgXo
+	e6rZmyHcg6O8721mjlGcBlJ2A4x5iN0I=
+X-Gm-Gg: ASbGncvp9WAuwxjRaNovrlXGiyjSF5T9q1F4Nv9sm3/+Ej4jp2CY5zmvSUa7wiyiQ0p
+	mXt7N1Dg008LVmM1d37Kaa6i27zGf0JHLGryE+Sf0zgKyvIzZgGOV29XMxq2SsFuFmIZmRj54Ze
+	uuSs1hhwoIdPUKxbnj2ZyitBBrqcoa/QQZr+jepNJ0/Y5JBg==
+X-Google-Smtp-Source: AGHT+IHxWtIJzA7AjqYBeRaD1K1kJoZF1TThU2Qzy0U70LW+zaf9l8TXpjHPTMMpS0pxvero1s7YpQzkzOAIKEGREi8=
+X-Received: by 2002:a05:690c:4a01:b0:713:fff3:62ad with SMTP id
+ 00721157ae682-7151719d791mr15585547b3.8.1751015030205; Fri, 27 Jun 2025
+ 02:03:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aF2dUqGKcu8-rwaV@aschofie-mobl2.lan>
-X-CMS-MailID: 20250627090337epcas5p1c77ffd7260b375241786afa81a1712ce
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----K5ZVV-zrPS8y8iJelFUsagW7KEVVNg7wn3oh2ZJRPRpX678s=_d1ff6_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CPGSPASS: Y
-X-Hop-Count: 3
-X-CMS-RootMailID: 20250617124049epcas5p1de7eeee3b5ddd12ea221ca3ebf22f6e8
-References: <20250617123944.78345-1-s.neeraj@samsung.com>
-	<CGME20250617124049epcas5p1de7eeee3b5ddd12ea221ca3ebf22f6e8@epcas5p1.samsung.com>
-	<1295226194.21750165382072.JavaMail.epsvc@epcpadp2new>
-	<aF2dUqGKcu8-rwaV@aschofie-mobl2.lan>
+References: <20250627072939.21447-1-abdelrahmanfekry375@gmail.com> <aF5Y5MurVIn1mUk1@smile.fi.intel.com>
+In-Reply-To: <aF5Y5MurVIn1mUk1@smile.fi.intel.com>
+From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
+Date: Fri, 27 Jun 2025 12:03:39 +0300
+X-Gm-Features: Ac12FXwOUEosg--SmicR1srEOI1Ci9W95VvN9pfI47FDKsi8dSoopfUooLVYraM
+Message-ID: <CAGn2d8O-X8mgmf9kED=XbFYAoySs6+is=dorkz4yPbrSLiP6Nw@mail.gmail.com>
+Subject: Re: [PATCH v4] staging: media: atomisp: remove debug sysfs attributes
+ active_bo and free_bo
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: andy@kernel.org, hdegoede@redhat.com, mchehab@kernel.org, 
+	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+	skhan@linuxfoundation.com, dan.carpenter@linaro.org, 
+	Hans de Goede <hansg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------K5ZVV-zrPS8y8iJelFUsagW7KEVVNg7wn3oh2ZJRPRpX678s=_d1ff6_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-
-On 26/06/25 12:19PM, Alison Schofield wrote:
->On Tue, Jun 17, 2025 at 06:09:39PM +0530, Neeraj Kumar wrote:
->> Add cxl_find_root_decoder to find root decoder on cxl bus. It is used to
->> find root decoder during region creation
+On Fri, Jun 27, 2025 at 11:40=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
->Does the existing to_cxl_root_decoder() provide what you need here?
+> On Fri, Jun 27, 2025 at 10:29:39AM +0300, Abdelrahman Fekry wrote:
+> > The sysfs attributes active_bo and free_bo expose internal buffer
+> > state used only for debugging purposes. These are not part of
+> > any standard kernel ABI, and need to be removed before this
+> > driver may be moved out of drivers/staging.
+> >
+> > - Remove active_bo and free_bo attributes
+> > - Remove group registration calls form hmm_init() and hmm_cleanup()
 >
-
-Hi Alison,
-
-Actually, my need is to find decoder0.0 from port1, with which endpoint device is connected.
-Here i am already using to_cxl_root_decoder() inside cxl_find_root_decoder().
-In cxl_find_root_decoder(), First i am finding dev which is required by to_cxl_root_decoder()
-
-	struct cxl_root_decoder *cxl_find_root_decoder(struct cxl_port *port)
-	{
-		struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
-		struct device *dev = device_find_child(&cxl_root->port.dev, NULL, match_root_decoder);
-		return to_cxl_root_decoder(dev);
-	}
-
-
-Thanks,
-Neeraj
-
->>
->> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
->> ---
->>  drivers/cxl/core/port.c | 26 ++++++++++++++++++++++++++
->>  drivers/cxl/cxl.h       |  1 +
->>  2 files changed, 27 insertions(+)
->>
->> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
->> index 2452f7c15b2d..94d9322b8e38 100644
->> --- a/drivers/cxl/core/port.c
->> +++ b/drivers/cxl/core/port.c
->> @@ -513,6 +513,32 @@ struct cxl_switch_decoder *to_cxl_switch_decoder(struct device *dev)
->>  }
->>  EXPORT_SYMBOL_NS_GPL(to_cxl_switch_decoder, "CXL");
->>
->> +static int match_root_decoder(struct device *dev, void *data)
->> +{
->> +	return is_root_decoder(dev);
->> +}
->> +
->> +/**
->> + * cxl_find_root_decoder() - find a cxl root decoder on cxl bus
->> + * @port: any descendant port in root-cxl-port topology
->> + */
->> +struct cxl_root_decoder *cxl_find_root_decoder(struct cxl_port *port)
->> +{
->> +	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
->> +	struct device *dev;
->> +
->> +	if (!cxl_root)
->> +		return NULL;
->> +
->> +	dev = device_find_child(&cxl_root->port.dev, NULL, match_root_decoder);
->> +
->> +	if (!dev)
->> +		return NULL;
->> +
->> +	return to_cxl_root_decoder(dev);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(cxl_find_root_decoder, "CXL");
->> +
->>  static void cxl_ep_release(struct cxl_ep *ep)
->>  {
->>  	put_device(ep->ep);
->> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
->> index 30c80e04cb27..2c6a782d0941 100644
->> --- a/drivers/cxl/cxl.h
->> +++ b/drivers/cxl/cxl.h
->> @@ -871,6 +871,7 @@ bool is_cxl_nvdimm_bridge(struct device *dev);
->>  int devm_cxl_add_nvdimm(struct cxl_port *parent_port, struct cxl_memdev *cxlmd);
->>  struct cxl_nvdimm_bridge *cxl_find_nvdimm_bridge(struct cxl_port *port);
->>  void cxl_region_discovery(struct cxl_port *port);
->> +struct cxl_root_decoder *cxl_find_root_decoder(struct cxl_port *port);
->>
->>  #ifdef CONFIG_CXL_REGION
->>  bool is_cxl_pmem_region(struct device *dev);
->> --
->> 2.34.1
->>
->>
-
-------K5ZVV-zrPS8y8iJelFUsagW7KEVVNg7wn3oh2ZJRPRpX678s=_d1ff6_
-Content-Type: text/plain; charset="utf-8"
-
-
-------K5ZVV-zrPS8y8iJelFUsagW7KEVVNg7wn3oh2ZJRPRpX678s=_d1ff6_--
-
+> ...
+>
+> >       /* free dummy memory first */
+> >       hmm_free(dummy_ptr);
+> >       dummy_ptr =3D 0;
+> > -
+> >       hmm_bo_device_exit(&bo_device);
+> >       hmm_initialized =3D false;
+>
+> Stray change.
+>
+sorry for that , will fix and resend it right away
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
