@@ -1,104 +1,138 @@
-Return-Path: <linux-kernel+bounces-706107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903F1AEB20E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:07:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 903ACAEB21A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F09189FDA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CC71C25788
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B773329552A;
-	Fri, 27 Jun 2025 09:05:18 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88BF2951BA;
-	Fri, 27 Jun 2025 09:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F158B293C70;
+	Fri, 27 Jun 2025 09:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTLpJw6r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526AD293B7E;
+	Fri, 27 Jun 2025 09:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751015118; cv=none; b=snC9yqaBTLm8LhkAHYWqP7cVDGDdVq/HF/5zPJjI6KG8NRtnT8vSCsdA97domepNu1LHbntbE2G9b0HLceVeTitVBW677DLgAVIwc4poDXB2044lGH0cijCmMvJExL2EA9a24VHlu1WPDgPAYi4TAaRNERRv1jzRMrCRHx5x1ws=
+	t=1751015150; cv=none; b=jXrRLW7LAjQ6/U1vZ2XeuR2rWOA0IITyXJtJQV7DoDoK44nqBhrijSgwg6UOrlXD0coWE9lk8nOoRDn7MjU8viTxJR+YC9HFskd8OPqTZy+FzXgKMpGu1tjak1TtRbEc2jb2JNiDvlCW4GnO1durVNqyqc5rzDTIOSNqk/a5MPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751015118; c=relaxed/simple;
-	bh=9DFt5yBIByc8A5fTofoeJFiaxrEmzDqhpsfJB8V5+8g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tDOGNhUbHQcqTlwnZUWK4e4uVGScmQpTOmkj8O58FetyEes08W4ahH+weKTgyiLEx4TqimzlDzit97aJ6x+/qCji0UcZ8bwecPOcoUIqD3Tp4b2pH12Jte9iUTlWuvLCp2UtAKp5Lb8oERJkd3grjs5UoukCQq+ZvwO+y8cjRbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxnOLKXl5oVjIeAQ--.31464S3;
-	Fri, 27 Jun 2025 17:05:14 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJCxM+TEXl5ovCsAAA--.1247S8;
-	Fri, 27 Jun 2025 17:05:14 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Xianglai Li <lixianglai@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v4 6/6] LoongArch: KVM: Add address alignment check
-Date: Fri, 27 Jun 2025 17:05:07 +0800
-Message-Id: <20250627090507.808319-7-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250627090507.808319-1-maobibo@loongson.cn>
-References: <20250627090507.808319-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1751015150; c=relaxed/simple;
+	bh=XvxycTB3onM69EDKebMKpJFwtx2tibWRvWCOQn8a4IU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=AaWiE87tNbxHJ00ZWqGPpgDZRBNEtPkd1L6/lJ1fETSb/F79hHukJqKnVXAV10HlaJz2vSvodITI/+hIFnRoegFXvPcKarn+MAzQxSPy6KmBlG6WGiPwuxrEEMa8gMA4ay0nrA/IgHX5k6kaYcv762co2M/wKSYfvWqNGXTR7z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTLpJw6r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52484C4CEE3;
+	Fri, 27 Jun 2025 09:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751015149;
+	bh=XvxycTB3onM69EDKebMKpJFwtx2tibWRvWCOQn8a4IU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=nTLpJw6rxqPJ1mmiibAIPVRYLcl1FLPvAt0F4lpglJcAKuMZ1e8sbjxCbwfgE3nUX
+	 tRy1STZYPYA7s8yBvgzBAscd1KJO3CuBEVO9OxR4VCGF6O4U71aOlUYky0StnZu+NW
+	 7mTuVIoJRIBJXL2YQf6oveN3gjvZBIGbjFAtw7V1pL64ZaB0J/nCrCw4KdWOyqpzhE
+	 DASbjievzFGMoGBfZalKwzlZNRPER4xTMba413UiUpFO75HjadRw0B1RnCTfCrQ8o2
+	 GwM+w58EqX3NHanHyZqqcGV6ZMB1Q5d2MiUEv/FdfHYutTfa2y21qmQ5Zwax1ze1rk
+	 G6xBE9uOeJTiQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxM+TEXl5ovCsAAA--.1247S8
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 27 Jun 2025 11:05:44 +0200
+Message-Id: <DAX72CI4S0JF.1GCUWSOEO3H7W@kernel.org>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>, <alex.gaynor@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
+ <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor
+ Gross" <tmgross@umich.edu>, <david.m.ertman@intel.com>,
+ <ira.weiny@intel.com>, <leon@kernel.org>, <kwilczynski@kernel.org>,
+ <bhelgaas@google.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v4 4/5] rust: types: ForeignOwnable: Add type Target
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250626200054.243480-1-dakr@kernel.org>
+ <20250626200054.243480-5-dakr@kernel.org> <aF2rpzSccqgoVvn0@tardis.local>
+ <DAWUKB7PAZG1.2K2W9VCATZ3O0@kernel.org>
+ <45a2bd65-ec77-4ce7-bd8e-553880d85bdf@app.fastmail.com>
+ <DAWUY4YH6XP9.TWAP6N95L5BR@kernel.org>
+ <8922f6f0-241a-4659-b382-fb8c62b77e8f@app.fastmail.com>
+ <44579f29-a8a4-41cb-97ea-5ab7711e4d2a@app.fastmail.com>
+In-Reply-To: <44579f29-a8a4-41cb-97ea-5ab7711e4d2a@app.fastmail.com>
 
-IOCSR instruction supports 1/2/4/8 bytes access, the address should
-be naturally aligned with its access size. Here address alignment
-checking is added in eiointc kernel emulation.
+On Fri Jun 27, 2025 at 1:55 AM CEST, Boqun Feng wrote:
+> On Thu, Jun 26, 2025, at 4:45 PM, Boqun Feng wrote:
+>> On Thu, Jun 26, 2025, at 4:36 PM, Benno Lossin wrote:
+>>> On Fri Jun 27, 2025 at 1:21 AM CEST, Boqun Feng wrote:
+>>>> On Thu, Jun 26, 2025, at 4:17 PM, Benno Lossin wrote:
+>>>>> On Thu Jun 26, 2025 at 10:20 PM CEST, Boqun Feng wrote:
+>>>>>> On Thu, Jun 26, 2025 at 10:00:42PM +0200, Danilo Krummrich wrote:
+>>>>>>> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+>>>>>>> index 3958a5f44d56..74c787b352a9 100644
+>>>>>>> --- a/rust/kernel/types.rs
+>>>>>>> +++ b/rust/kernel/types.rs
+>>>>>>> @@ -27,6 +27,9 @@
+>>>>>>>  /// [`into_foreign`]: Self::into_foreign
+>>>>>>>  /// [`PointedTo`]: Self::PointedTo
+>>>>>>>  pub unsafe trait ForeignOwnable: Sized {
+>>>>>>> +    /// The payload type of the foreign-owned value.
+>>>>>>> +    type Target;
+>>>>>>
+>>>>>> I think `ForeignOwnable` also implies a `T` maybe get dropped via a
+>>>>>> pointer from `into_foreign()`. Not sure it's worth mentioning though=
+.
+>>>>>
+>>>>> What? How would that happen?
+>>>>
+>>>> The owner of the pointer can do from_foreign() and eventually drop
+>>>> the ForeignOwnable, hence dropping T.
+>>>
+>>> I'm confused, you said `into_foreign` above. I don't think any sensible
+>>> ForeignOwnable implementation will drop a T in any of its functions.
+>>>
+>>
+>> A KBox<T> would drop T when it gets dropped, no?
+>> A Arc<T> would drop T when it gets dropped if it=E2=80=99s the last refc=
+ount.
+>>
+>> I was trying to say =E2=80=9CForeignOwnable::drop() may implies Target::=
+drop()=E2=80=9D,
+>> that=E2=80=99s what a =E2=80=9Cpayload=E2=80=9D means. Maybe that I used=
+ =E2=80=9CT=E2=80=9D instead of =E2=80=9CTarget=E2=80=9D
+>> in the original message caused confusion?
 
-Cc: stable@vger.kernel.org
-Fixes: 3956a52bc05b ("LoongArch: KVM: Add EIOINTC read and write functions")
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Ah now I understand what you are saying. Your mentioning of
+`into_foreign` and `from_foreign` confused me. Yes a `ForeignOwnable`
+may drop a `T`/`Target` in its own drop function. But I don't think we
+need to document that.
+
+> The point is whichever receives the pointer from a into_foreign()
+> would owns the Target, because it can from_foreign() and
+> drop the ForeignOwnable. So for example, if the pointer can
+> be passed across threads, that means Target needs to be Send.
+
+We should solve this in a different manner. Document the `Send` & `Sync`
+requirements on `into_foreign`. So when you turn a `P: ForeignOwnable`
+that is `!Send` into a raw pointer, you are not allowed to call
+`from_foreign` on a different thread.
+
+If `P: !Sync` then you're not allowed to call `borrow[_mut]` on the
+pointer from two different threads (ie only the one that is currently
+owning the value is allowed to call that).
+
 ---
- arch/loongarch/kvm/intc/eiointc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/eiointc.c
-index d54fe805bf6e..fab5cf52779c 100644
---- a/arch/loongarch/kvm/intc/eiointc.c
-+++ b/arch/loongarch/kvm/intc/eiointc.c
-@@ -316,6 +316,11 @@ static int kvm_eiointc_read(struct kvm_vcpu *vcpu,
- 		return -EINVAL;
- 	}
- 
-+	if (addr & (len - 1)) {
-+		kvm_err("%s: eiointc not aligned addr %llx len %d\n", __func__, addr, len);
-+		return -EINVAL;
-+	}
-+
- 	vcpu->kvm->stat.eiointc_read_exits++;
- 	spin_lock_irqsave(&eiointc->lock, flags);
- 	switch (len) {
-@@ -687,6 +692,11 @@ static int kvm_eiointc_write(struct kvm_vcpu *vcpu,
- 		return -EINVAL;
- 	}
- 
-+	if (addr & (len - 1)) {
-+		kvm_err("%s: eiointc not aligned addr %llx len %d\n", __func__, addr, len);
-+		return -EINVAL;
-+	}
-+
- 	vcpu->kvm->stat.eiointc_write_exits++;
- 	spin_lock_irqsave(&eiointc->lock, flags);
- 	switch (len) {
--- 
-2.39.3
-
+Cheers,
+Benno
 
