@@ -1,120 +1,205 @@
-Return-Path: <linux-kernel+bounces-706418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A388AEB65E
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:28:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A973AEB66A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33D656149D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E0F1C42B5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEC72980AF;
-	Fri, 27 Jun 2025 11:28:18 +0000 (UTC)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6AF29CB3C;
+	Fri, 27 Jun 2025 11:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nM3GcEBf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B692F1FE6;
-	Fri, 27 Jun 2025 11:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05049214801
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751023698; cv=none; b=Vf99uiI6CkinUlhcJTlAgHgQBlm1FxH5RPqwL5yaMS90DgkDvmNLRqED8uyg6jO9J3fH7mKiGXofi6cAhUAUoN56loLQm33Pc0uEHKIKTt6laaolzYF64OCnz6UJx1CnS6m6/8Zq3wXCclKTX0VICaYEidGUMsDoGSgaoZ0ZbwY=
+	t=1751023862; cv=none; b=Wv4TAAkfIU0zAtBlsh4AUN9hV/G4ZRkvZORCqhoXUleU1vxGTSoF97FRk+oAsnIX8CSklATIR/kCVrjkHsyICzpnjUBvSoU+wcTtdIxdOtwG363Rg0H+mmk0oQa4FibnBGib5np4JJf7vPQ9BuqI43/sMFw3HW5QGh4CJCbtR5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751023698; c=relaxed/simple;
-	bh=t9uwRhW/sg97I2ajxeqeS9Ii8eZvkOWFtRuEzgYxQqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CSpG1ncMNJjHq9+CDXHuv7WTlNo7cbuM9nei0/tjg82P0Us2RBdF6SQyDbKs3ZOTsfer71F+hAg16X1qOTSMAK/m84j2uSaM7umj7EBt76dy/CiwaIFXrZyGqHd0NUy7jH7yRUIt/T//17XjkTrMreTuQkyOmx4CPzMbeXeimDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4e79dde8511so426183137.0;
-        Fri, 27 Jun 2025 04:28:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751023694; x=1751628494;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pEK3TrmN6mfMIzQQCnzQAWWZ+QxJLbnrCj8nmqswDeg=;
-        b=kYQfpn3tXZBkh8TRIlRU/kKX2D1ttdYZpPpNwxlgCJyCuFiGf9OdDjpAZP6hwPyYFC
-         tHFnJF3huhS1rNTpFEkK4B+DSC2fIKcMFqHvwr3NrSJ5fS3eaSMXQ7J5/UC1TiCrOJT6
-         rVU/8cHRh1DmD8FVY/2EjxLEGqn8pDaaBHYBbUWbW0kZhghVBNy7rMHVuaFwW/7HEXL8
-         e2mfwchTkzNqPnPqVA5o8ph9oY7+RQV+eqzKtahfthfFsYDHUAIj3gZxfvbjM7TaBbIA
-         XcKPbXvEb2RbV/boze1aZgXFAtJyOewR2S+q1e3KzsYT43mqvsf32BucOdOhHzIWxJ/2
-         EImA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkEr1xshcJiCXmkfOvA+TGSnGeI851+sijxk94AIZ1C402CE//huWn5ZCZLG8CDpuTCfeSAwtNa0fz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjRkxnNLbgENV27LQ0+jNyn9Srg29cu5kAPIW0aeswLtFTc4bC
-	8LPYMHs7avtsd0JWvaMiK+51Pw25WTDlib2acsKkkIouSoa0ipA+lkOPQtmpJwwVXgU=
-X-Gm-Gg: ASbGncsLxDS8EvpvQR358N775PqHhUCJnMDVulMpyEny4I76kb7w3l6YENQlmH4FgPe
-	fpfk/KcZKw6pvyUXII2+3lQKjJir8RAo8u4KrSfaiAv4lll2ZhXLiLWwKTfVRaw2YuqModqOBOr
-	hOMqSX/Wf3FYGxZCPKcejod9wvXkXZxGtumskDdgGniB7b6ZeHiRLxCXCr9GbokXgIEveUCUb1w
-	xocGyhTIF8RuCNOKNIqQbSC8IH99QldoTLrz47L5RDdFrWK5vgGMKJRh10AIm6Aev/JhdxLsuaW
-	po8Lw7dksIaUY3hSzUjSmnUJ2hpZJUME7mUjOaIAJfH8vCM7soHoJ7nlCZQxwc9Ob/nqcbdr2VY
-	/truI7E4NMc42h+xPL6qgk6hy
-X-Google-Smtp-Source: AGHT+IFwecJ+URPNO2sDLxbd3OweXmXsHsvye3MzQLPmWy3Vcb09mgYX5XEdrky8do9vEu5BH5JHgQ==
-X-Received: by 2002:a05:6102:8015:b0:4e6:f7e9:c4a5 with SMTP id ada2fe7eead31-4ee4f8365d1mr2053064137.22.1751023694497;
-        Fri, 27 Jun 2025 04:28:14 -0700 (PDT)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ee4c79e5c3sm276291137.3.2025.06.27.04.28.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jun 2025 04:28:14 -0700 (PDT)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-87ecac3e17cso497061241.3;
-        Fri, 27 Jun 2025 04:28:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/RZKJsqZ+3caoQCuhRucJc2GzvHt0kYO9rnPu6DDKzOQvSrLjV8PjIKHKYzXS4K5tQGS0Xo3EFSJo@vger.kernel.org
-X-Received: by 2002:a05:6102:41a4:b0:4ec:285:72e1 with SMTP id
- ada2fe7eead31-4ee4f4e2bf1mr1843344137.6.1751023693796; Fri, 27 Jun 2025
- 04:28:13 -0700 (PDT)
+	s=arc-20240116; t=1751023862; c=relaxed/simple;
+	bh=i1WbDhB1+wY70SwMZLSulc6VyTG6n01VXfNaeicTBPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNBwzfOXnXMKcisfhQNQIxVPk9RtqYiMWfnI9rqf3JkIw33PRWQbD3uXsbUPo5Evf3kmClnud9eNBGfgKw4TqwiY5KDYt+ddjnx619GEH3emFFx1G2aX14dBJthWrXr16a9CUlLEAkn2TRXBo9TAY0+9cncBFgIAVO8pAJf7J1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nM3GcEBf; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751023862; x=1782559862;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i1WbDhB1+wY70SwMZLSulc6VyTG6n01VXfNaeicTBPY=;
+  b=nM3GcEBfct0axn5Hdzoy3UNRA3k7suIkY31S2IvEtFYh8hwY0+av8sF/
+   0qjEGhiIBBqTdwR8ko4StIKZ+Otzhw8cn3sl7064tKjFoEBI8nABUnMNJ
+   Kub3Nb8F8c1SaSDjOFFUZ7RZEFwceppUePUNUbg+pr1wNc506vFXfaoHG
+   afggWi+2VYvPBgk+//jgIvG581wzeZhPmwBntw/1yBUjJztGCpeUVAa5J
+   t+y2DgFPcCPdQJDug/+0doRTvEIxXMb12KSx4OOocBDvkHUp3U2DqR5TP
+   Dz4+srJrYuvxONN41GueVotTBErx//A9APyF/iMGUVNHD2wdEFLFLMxXt
+   Q==;
+X-CSE-ConnectionGUID: omVCvF2URKSqpPkCVjAISQ==
+X-CSE-MsgGUID: ZLXE8cCgQsK1Ym3N03PSAg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="64393196"
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="64393196"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 04:31:00 -0700
+X-CSE-ConnectionGUID: KEnKKXs5TQOO1SoZnre3aQ==
+X-CSE-MsgGUID: no3RA6baSOy1fFNI2uioOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
+   d="scan'208";a="153309827"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 27 Jun 2025 04:30:53 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uV7IA-000W7m-0O;
+	Fri, 27 Jun 2025 11:30:50 +0000
+Date: Fri, 27 Jun 2025 19:30:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Lee Jones <lee@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v1 1/1] mfd: syscon: atmel-smc: Don't use "proxy" headers
+Message-ID: <202506271909.O9FuRVos-lkp@intel.com>
+References: <20250626155435.325336-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250609212356.2264244-1-florian.fainelli@broadcom.com> <20250609212356.2264244-2-florian.fainelli@broadcom.com>
-In-Reply-To: <20250609212356.2264244-2-florian.fainelli@broadcom.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 27 Jun 2025 13:28:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXjYJeS48jToVe9O8DsadyeT0q1CsBxQtx3k+X5h8LLTg@mail.gmail.com>
-X-Gm-Features: Ac12FXxx6AlZB9goS3Kuy-9PuglmpGj0_M6FTCRkX8gafLJyv4mGupPxoMZrHiA
-Message-ID: <CAMuHMdXjYJeS48jToVe9O8DsadyeT0q1CsBxQtx3k+X5h8LLTg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: memory-controller: Define fallback compatible
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626155435.325336-1-andriy.shevchenko@linux.intel.com>
 
-Hi Florian,
+Hi Andy,
 
-On Tue, 10 Jun 2025 at 16:32, Florian Fainelli
-<florian.fainelli@broadcom.com> wrote:
-> All of the DDR controllers beyond revision b.2.1 have had a consistent
-> layout, therefore define a "brcm,brcmstb-memc-ddr-rev-b.2.1" fallback
-> compatible string to match them all rather than having to continuously
-> add to the list.
->
-> Link: https://lore.kernel.org/all/20241217194439.929040-2-florian.fainelli@broadcom.com/
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+kernel test robot noticed the following build warnings:
 
-Thanks for your patch, which is now commit 501be7cecec9aaf9
-("dt-bindings: memory-controller: Define fallback compatible")
-in mem-ctrl/for-next
+[auto build test WARNING on lee-mfd/for-mfd-next]
+[also build test WARNING on lee-mfd/for-mfd-fixes soc/for-next lee-leds/for-leds-next linus/master v6.16-rc3 next-20250626]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->  .../brcm,brcmstb-memc-ddr.yaml                | 54 ++++++++++++-------
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/mfd-syscon-atmel-smc-Don-t-use-proxy-headers/20250626-235519
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+patch link:    https://lore.kernel.org/r/20250626155435.325336-1-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 1/1] mfd: syscon: atmel-smc: Don't use "proxy" headers
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250627/202506271909.O9FuRVos-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250627/202506271909.O9FuRVos-lkp@intel.com/reproduce)
 
-The oneline-summary really needs a "brcm" part, as this does
-not apply to all memory controllers.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506271909.O9FuRVos-lkp@intel.com/
 
-Gr{oetje,eeting}s,
+All warnings (new ones prefixed by >>):
 
-                        Geert
+>> drivers/mfd/atmel-smc.c:24:1: warning: data definition has no type or storage class
+      24 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_init);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:24:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:24:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:118:1: warning: data definition has no type or storage class
+     118 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_set_timing);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:118:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:118:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:157:1: warning: data definition has no type or storage class
+     157 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_set_setup);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:157:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:157:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:196:1: warning: data definition has no type or storage class
+     196 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_set_pulse);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:196:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:196:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:234:1: warning: data definition has no type or storage class
+     234 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_set_cycle);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:234:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:234:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c: In function 'atmel_smc_cs_conf_apply':
+   drivers/mfd/atmel-smc.c:248:9: error: implicit declaration of function 'regmap_write' [-Wimplicit-function-declaration]
+     248 |         regmap_write(regmap, ATMEL_SMC_SETUP(cs), conf->setup);
+         |         ^~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c: At top level:
+   drivers/mfd/atmel-smc.c:253:1: warning: data definition has no type or storage class
+     253 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_apply);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:253:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:253:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:275:1: warning: data definition has no type or storage class
+     275 | EXPORT_SYMBOL_GPL(atmel_hsmc_cs_conf_apply);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:275:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:275:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c: In function 'atmel_smc_cs_conf_get':
+   drivers/mfd/atmel-smc.c:289:9: error: implicit declaration of function 'regmap_read' [-Wimplicit-function-declaration]
+     289 |         regmap_read(regmap, ATMEL_SMC_SETUP(cs), &conf->setup);
+         |         ^~~~~~~~~~~
+   drivers/mfd/atmel-smc.c: At top level:
+   drivers/mfd/atmel-smc.c:294:1: warning: data definition has no type or storage class
+     294 | EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_get);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:294:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:294:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:316:1: warning: data definition has no type or storage class
+     316 | EXPORT_SYMBOL_GPL(atmel_hsmc_cs_conf_get);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:316:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:316:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:326:34: error: array type has incomplete element type 'struct of_device_id'
+     326 | static const struct of_device_id atmel_smc_ids[] __maybe_unused = {
+         |                                  ^~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c: In function 'atmel_hsmc_get_reg_layout':
+   drivers/mfd/atmel-smc.c:347:17: error: implicit declaration of function 'of_match_node' [-Wimplicit-function-declaration]
+     347 |         match = of_match_node(atmel_smc_ids, np);
+         |                 ^~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:349:29: error: invalid use of undefined type 'const struct of_device_id'
+     349 |         return match ? match->data : ERR_PTR(-EINVAL);
+         |                             ^~
+   drivers/mfd/atmel-smc.c: At top level:
+   drivers/mfd/atmel-smc.c:351:1: warning: data definition has no type or storage class
+     351 | EXPORT_SYMBOL_GPL(atmel_hsmc_get_reg_layout);
+         | ^~~~~~~~~~~~~~~~~
+   drivers/mfd/atmel-smc.c:351:1: error: type defaults to 'int' in declaration of 'EXPORT_SYMBOL_GPL' [-Wimplicit-int]
+   drivers/mfd/atmel-smc.c:351:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
+   drivers/mfd/atmel-smc.c:326:34: warning: 'atmel_smc_ids' defined but not used [-Wunused-variable]
+     326 | static const struct of_device_id atmel_smc_ids[] __maybe_unused = {
+         |                                  ^~~~~~~~~~~~~
+
+
+vim +24 drivers/mfd/atmel-smc.c
+
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  13  
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  14  /**
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  15   * atmel_smc_cs_conf_init - initialize a SMC CS conf
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  16   * @conf: the SMC CS conf to initialize
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  17   *
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  18   * Set all fields to 0 so that one can start defining a new config.
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  19   */
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  20  void atmel_smc_cs_conf_init(struct atmel_smc_cs_conf *conf)
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  21  {
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  22  	memset(conf, 0, sizeof(*conf));
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  23  }
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16 @24  EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_init);
+fe9d7cb22ef3a2 Boris Brezillon 2017-03-16  25  
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
