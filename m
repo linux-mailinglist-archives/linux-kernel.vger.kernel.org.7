@@ -1,105 +1,186 @@
-Return-Path: <linux-kernel+bounces-707069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393F3AEBF70
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:08:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8530AEBFEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 301974A41DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1D91C47779
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72C820296A;
-	Fri, 27 Jun 2025 19:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C722EE967;
+	Fri, 27 Jun 2025 19:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pe/0J1kh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="vQScK1/W"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47532BAF9;
-	Fri, 27 Jun 2025 19:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506EC2EA72F;
+	Fri, 27 Jun 2025 19:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751051290; cv=none; b=HUzAarMm3q5LA204PVD+L8i8w1vEcjtq/MJpzImLbrMarKfdbtn62Q4XEIqP+nK4bckDwIYF/hV2wr3hEu4cFqJbovWImFnv1NhPMT7zolqezyNpgSgfvKr678Nmt84YCsMMQh7fxM2mdrODm6lilTlwhDNBXMUy4dNV6B1dg3A=
+	t=1751052588; cv=none; b=DUJInpWSAJzCn5C9R9wNSqD+LrZBwJx+PoSf1xaCUZaLDcBdfbb3M97GxG+joMOLx1OmNmZTnksDNPOrLWhEqP3WQTVH3EH7Q1NrxuDY1PHpmTwzdfO0XWmWmHBMJmhwura0B/Zwj0OpdwKfCu+3EyOtIEaTebM0jYtt+6tSqdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751051290; c=relaxed/simple;
-	bh=h2V7n5lcId3Q5D9J9FBwMhLB7N9wwQBDYBQCNpHNKUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGLLBWmfmBz7hV5/h7Frf+ZK9HNGLuUuBn8fma73oa6Wt+B4/7AKV6Md0zIDlVzCrCDvPrR4o9F2VhcUaBdmlzN0F3UeE6JUaAQp0jdwPaXIkjV22jdtQYkkUpBDuQTQWlSQJ+Oppe6iD0R5x88OWNy+ZagFrkChIPF69mZkNFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pe/0J1kh; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751051288; x=1782587288;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=h2V7n5lcId3Q5D9J9FBwMhLB7N9wwQBDYBQCNpHNKUY=;
-  b=Pe/0J1khOdln0qBRTGB87NHMnyMHpJbz3MhK2CHrWhaHomfepB95QRqh
-   MmzWeawdJVXGCR4S+mKbJym9uVeGj50DsuLAKlBUTIneoXA3Vsbvaibvp
-   e+5esCENLlD+fYhfEQfNMuIwGNd8J0N3//dQ/tm3mI0YzeXrDu6rw/f+U
-   czS57C+2GSjRFMjiFcQ8l2zjMf38PpMSqN/ANZR6OkOwMSNGaGKg5AxdM
-   7nOLXkW/oUlS24ln8w8zzK9oyeHgwX+XMF7tH0gxW1JBodwP/onFlzrNx
-   IUiuDrGLmirk4avjNqQB1DAIQbQW5XTm2hPKbezncHbGU6DOLK/1hXWzI
-   g==;
-X-CSE-ConnectionGUID: /9jdx+iFRGSxA9iKhMnWHQ==
-X-CSE-MsgGUID: nAP/FOt7TxiRQJTaHA/j7g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="70806780"
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="70806780"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 12:08:08 -0700
-X-CSE-ConnectionGUID: xiHlSFjZSpCMu6OQRMYUZg==
-X-CSE-MsgGUID: xnkBiDgXTrKpHNSSnyugrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="183794875"
-Received: from tjmaciei-mobl5.ger.corp.intel.com (HELO localhost) ([10.124.221.68])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 12:08:07 -0700
-Date: Fri, 27 Jun 2025 12:08:06 -0700
-From: David Box <david.e.box@linux.intel.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	srinivas.pandruvada@linux.intel.com, andriy.shevchenko@linux.intel.com, ilpo.jarvinen@linux.intel.com, 
-	xi.pardee@linux.intel.com, hdegoede@redhat.com
-Subject: Re: [PATCH V2 00/15] Intel VSEC/PMT: Introduce Discovery Driver
-Message-ID: <blofpgaq2o3jcy2h4mbpbm2zpnpniroz5agvvqvfs4qf5o2pwm@7spetkpvs7u7>
-References: <20250617014041.2861032-1-david.e.box@linux.intel.com>
- <aFxahfwnntrMFumI@agluck-desk3>
+	s=arc-20240116; t=1751052588; c=relaxed/simple;
+	bh=qomG2jEgH2N5lQ6ECtla5SnH6Y+Dt64taWawObq9AZw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iH+bqWiIFM35RGJ53q3rYXoBgNxW8VpXkgNK33AMQrWqFvAwaZgE9/H36Wgr55PX7RRaZoXdi5BLytiXTBXGJCGO3W/WaECKR39q7sAuAmHbLKMjXWObYX3yNF40JbxhBjiuAfeddsrh4lnoXGT5fgqJ0iO5dl4kvXZUcFh8Coc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=vQScK1/W; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from kreacher.localnet (unknown [5.63.189.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0D62266DF42;
+	Fri, 27 Jun 2025 21:29:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1751052582;
+	bh=qomG2jEgH2N5lQ6ECtla5SnH6Y+Dt64taWawObq9AZw=;
+	h=From:Subject:Date;
+	b=vQScK1/WZIGw6eW5u3ZmmFvgUUro02zcDYT3XuwAv7YkqYQRCaYUcnqjLGjJwjFot
+	 Pikk4oFa3den575z9ooTOjzFA4cOjiw0klK5LH7wFS3TT8Lb35jOYzReOj4RUSgfa7
+	 i45NmmKrLvL6URYJXv7y0OB4CRs4S0fWJhND3nqgMn/fB3busLtjAdDeLpUAAs1gKr
+	 JkoN6FRmrBP4/fiJLIVAJepV6LHkmslL0wey+eoWG4D49KQI7mnXDqji3V0uc8d42V
+	 FllYRiEK9mNjTIo7WRcWMr+9S04l1nXSeLdma6gVJKzWHUg4cYo5XfBsuhIOiTdRV3
+	 ElS4rTSAvaK7Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Linux PCI <linux-pci@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject:
+ [PATCH v3 2/9] PM: Move two sleep-related functions under CONFIG_PM_SLEEP
+Date: Fri, 27 Jun 2025 21:08:48 +0200
+Message-ID: <3384523.aeNJFYEL58@rjwysocki.net>
+In-Reply-To: <5018768.GXAFRqVoOG@rjwysocki.net>
+References: <5018768.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aFxahfwnntrMFumI@agluck-desk3>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 5.63.189.50
+X-CLIENT-HOSTNAME: 5.63.189.50
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: dmFkZTGrSjjgwBeoPV1BTemn5ImVCZpPTZb07vPRCPpCLNITJNQNwAJrBW+NvQ9gHfopUGw7eKCZUx2JvTkH7ndztXO95C/5NZYx0U0uzSGwSElzY3a0yFW5y/ST6sLyUL+pkZNb6zBf5QQDeWSHMTwFL5SzhnW4lYOV2aXUoJnPKm0KcXRLQpgIKgvtcuh9kc8szEcWaDKkWT6ZvZMLezK4NKUrQ0LRPHVUG/J8XldG2aWmsAAgiz8DIA4tSCjGi3syq1aAO8pJ5+EOuYaRvLcxgtvWWEpF/MWy84RxjOnkuHVdyEMV6Ug0G9LNrdrQ+TwE0ATvvO2S6WiA1+7Yw5g2H305Ka/9/AB20Ji8aYocbnvXnSgVE3yuoI/x8dRBi9lwenVlKYIMrlt/oq4QrEwNVvyUKN1kfois/E/YdcEuMI1szrw2gRCq67RS+aNItPgKlX9D+K+blGIPc1BT5T7VZaDtt8o/iEv9+0CIKWFBDIPmpHXh6SlJ4oq1SUu2GgVARUSjO4jCvR44E41RGFQdvahxbMkK8S/MnAJzZlzuq8z1GfLsus4biOc+6aEm/tpC3fevcfY8d/eaPO9KShfPhteoNsJyq0nyVlKE2AuxIKYSuLg3o0/XZlSh+TZ/TATCbsMI/j9wpC1A2J+KBSEP6dj7qiO4EnlhEGF+LSd3m3ollA
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On Wed, Jun 25, 2025 at 01:22:29PM -0700, Luck, Tony wrote:
-> On Mon, Jun 16, 2025 at 06:40:24PM -0700, David E. Box wrote:
-> > This patch series introduces a new discovery driver for Intel Platform
-> > Monitoring Technology (PMT) and a set of supporting changes to improve
-> > telemetry integration across Intel VSEC features.
-> 
-> Caution. Part 14 has this "Subject:"
-> 
->    [PATCH V2] platform/x86/intel/pmt/telemetry: Add API to retrieve telemetry regions by feature
-> 
-> which is missing the "14/15" "b4 am" does warn:
-> 
-> 	ERROR: missing [14/15]!
-> 
-> But my eyes skipped over that, and then I got surprised that the
-> DISCOVERY driver was missing from my kernel.
-> 
-> With part 14 manually applied things seem good.
-> 
-> -Tony
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Ah, I forgot to reset the numbering to 14/15 when I respun this patch. I didn't
-even notice. Thanks for spotting it and testing Tony.
+Since pm_runtime_force_resume() and pm_runtime_need_not_resume() are only
+needed for handling system-wide PM transitions, there is no reason to
+compile them in if CONFIG_PM_SLEEP is unset.
 
-David
+Accordingly, move them under CONFIG_PM_SLEEP and make the static
+inline stub for pm_runtime_force_resume() return an error to indicate
+that it should not be used outside CONFIG_PM_SLEEP.
+
+Putting pm_runtime_force_resume() also allows subsequent changes to
+be more straightforward because this function is going to access a
+device PM flag that is only defined when CONFIG_PM_SLEEP is set.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v2 -> v3: Reorder (previosly it was patch [3/9].
+
+v1 -> v2:
+   * Keep pm_runtime_force_suspend() under CONFIG_PM (Ulf).
+   * Update changelog.
+   * Corresponds to patch [4/9] in v1.
+
+---
+ drivers/base/power/runtime.c |   18 +++++++++++-------
+ include/linux/pm_runtime.h   |   16 ++++++++++++----
+ 2 files changed, 23 insertions(+), 11 deletions(-)
+
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -1946,13 +1946,6 @@
+ 	pm_request_idle(link->supplier);
+ }
+ 
+-bool pm_runtime_need_not_resume(struct device *dev)
+-{
+-	return atomic_read(&dev->power.usage_count) <= 1 &&
+-		(atomic_read(&dev->power.child_count) == 0 ||
+-		 dev->power.ignore_children);
+-}
+-
+ /**
+  * pm_runtime_force_suspend - Force a device into suspend state if needed.
+  * @dev: Device to suspend.
+@@ -2014,6 +2007,8 @@
+ }
+ EXPORT_SYMBOL_GPL(pm_runtime_force_suspend);
+ 
++#ifdef CONFIG_PM_SLEEP
++
+ /**
+  * pm_runtime_force_resume - Force a device into resume state if needed.
+  * @dev: Device to resume.
+@@ -2057,3 +2052,12 @@
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pm_runtime_force_resume);
++
++bool pm_runtime_need_not_resume(struct device *dev)
++{
++	return atomic_read(&dev->power.usage_count) <= 1 &&
++		(atomic_read(&dev->power.child_count) == 0 ||
++		 dev->power.ignore_children);
++}
++
++#endif /* CONFIG_PM_SLEEP */
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -66,9 +66,7 @@
+ 
+ extern int pm_generic_runtime_suspend(struct device *dev);
+ extern int pm_generic_runtime_resume(struct device *dev);
+-extern bool pm_runtime_need_not_resume(struct device *dev);
+ extern int pm_runtime_force_suspend(struct device *dev);
+-extern int pm_runtime_force_resume(struct device *dev);
+ 
+ extern int __pm_runtime_idle(struct device *dev, int rpmflags);
+ extern int __pm_runtime_suspend(struct device *dev, int rpmflags);
+@@ -257,9 +255,7 @@
+ 
+ static inline int pm_generic_runtime_suspend(struct device *dev) { return 0; }
+ static inline int pm_generic_runtime_resume(struct device *dev) { return 0; }
+-static inline bool pm_runtime_need_not_resume(struct device *dev) {return true; }
+ static inline int pm_runtime_force_suspend(struct device *dev) { return 0; }
+-static inline int pm_runtime_force_resume(struct device *dev) { return 0; }
+ 
+ static inline int __pm_runtime_idle(struct device *dev, int rpmflags)
+ {
+@@ -330,6 +326,18 @@
+ 
+ #endif /* !CONFIG_PM */
+ 
++#ifdef CONFIG_PM_SLEEP
++
++bool pm_runtime_need_not_resume(struct device *dev);
++int pm_runtime_force_resume(struct device *dev);
++
++#else /* !CONFIG_PM_SLEEP */
++
++static inline bool pm_runtime_need_not_resume(struct device *dev) {return true; }
++static inline int pm_runtime_force_resume(struct device *dev) { return -ENXIO; }
++
++#endif /* CONFIG_PM_SLEEP */
++
+ /**
+  * pm_runtime_idle - Conditionally set up autosuspend of a device or suspend it.
+  * @dev: Target device.
+
+
+
 
