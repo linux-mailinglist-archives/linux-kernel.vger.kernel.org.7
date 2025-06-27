@@ -1,203 +1,106 @@
-Return-Path: <linux-kernel+bounces-705824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925BCAEAE37
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0216BAEAE3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752B61BC6312
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963F13BDA61
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00C01DD9AD;
-	Fri, 27 Jun 2025 04:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED71E25F8;
+	Fri, 27 Jun 2025 04:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klArCB9U"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qKs9Izyi"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFFE18DB35;
-	Fri, 27 Jun 2025 04:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C861DE2C9
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751000173; cv=none; b=JXBdxSoW87TEiZAYRbUIKsrH1Rjf2hrRxyNpKA72+aARPa4kvAKZD7SbHyziK24mohH5fCoYk/Zh+u8Oz2QEREhyP73BQzlEjzgLcWnlWI+oSLxcB6rLr3cw/JcAVFolJZF9rAYE/J8KSf2RyqslNFGqJoBm0ZE3EZwKWfBRcq0=
+	t=1751000210; cv=none; b=ny58zaieQzYpAcmpzipEkl014AX9sm1k+XTFH1xH703UabYnDHxNeJfb8DsJ1oKgkzGLGD25oq4ACWTCY00024tJmVy8NG6b7Cs2yVRrfIYohXuwgBbfY3rWW40XZUGjTPQJNbygt5pzg9KeXK3Jm80TKdI6f36W1Pu8rphv/dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751000173; c=relaxed/simple;
-	bh=IhiRrVHyVPn0A/ZdPezR9EoQUvZL5nukWhH425d93Dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i72FXxSjIJAgNIOePBLEaIf2EsdBI2qAWpAuB1ZayGAnd0KJCV/iEJzttC8ceuZau8izs2VNWznHYE90zXnyJRZMSsYFmuQOFvWNKnfjC7kPiqBNVjOrW0BMb19QE61ydsF19fa2dGk0fJYPEdai/uwAr3ACKGPMXKy6496Pr00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klArCB9U; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748f5a4a423so1248675b3a.1;
-        Thu, 26 Jun 2025 21:56:11 -0700 (PDT)
+	s=arc-20240116; t=1751000210; c=relaxed/simple;
+	bh=Zv6mkUr/Euphf/sOKT6hhTVY3yWD7uxMOkBVG4NiSjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R80mUZp1biZyosORBLYG9xpPsNlq8+Vdp3uQd2fOlNfrnUGZSSc+FBJ2EzwICO/aljCTsqWZVsD/1/z5baBFKxT1vcOToW6QUySKvGFD79p6WRA4PFY9Mmx0Z7wbCnTycUvXvhRbO+hGurVoqNKRLirX9t/hEBu4MYXmNMngPJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qKs9Izyi; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553b9eb2299so2534515e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:56:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751000171; x=1751604971; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+MrdyFOXIC4Y5u1TiDSz8/gmnYUkl1eoQe+EDX6yl88=;
-        b=klArCB9U+yXd6vX5OtoFIsLRZNWznbTtni8CTt3RVEr7TBYdsa2EoUN3P+0prPAXfv
-         x6sJaXKImLE3Iai75kDOKk/WhviZAQulpA7vn7Mfbm3S/eF+yPJV3KtveL7q0ibUjrnq
-         TEbNSJQuJhLykFIU1MwgDB+JGZFhEkuilwRN7tptmDaqaTW7GjrCJmV0GGx/sn1B6lDu
-         t5DRi4lXr4WVv3lM/DK5TODoPtylWLvezqzDXYxzv3OqMV1kWCuJYUzzOx6CuyZqYdn5
-         o6HU3fsMWDjJXZJI6Es6yJbypqVrMsQEtS8qOrLo8XFRTEpVUA1fI7ESQfl1G2Q8veN6
-         +waw==
+        d=google.com; s=20230601; t=1751000207; x=1751605007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zv6mkUr/Euphf/sOKT6hhTVY3yWD7uxMOkBVG4NiSjU=;
+        b=qKs9IzyiNAOboJEot+SNUHhEzuhHsvA1jIrxFy+w9JpE4J8quvwyKmj0wVXO6vok3p
+         A40oWC1L+GLfOn2SEfMN7ogMIC2PZaMu8wIlDMSsZ/HYiPsjAc/LjQvLuT4qNltGGBEq
+         1yEF8hF4bt0M18zYjpuZn4RyeaHPROIVQE7K3vk1O0aEUh/MdKAMPy98980Uww5duXUr
+         K3+koPksfmFpYccegTg7+GK0+mOtUvIFDhC2YeFlPqoJCafJbFCA8n8urCJ5s9Xu/svM
+         EQizxr1YsSovG2+jTQiZ1D6jgyNHu60n7pPkit1lbgJX2EAm5mSfEuK4TSV6uB8lmnzM
+         aNRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751000171; x=1751604971;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+MrdyFOXIC4Y5u1TiDSz8/gmnYUkl1eoQe+EDX6yl88=;
-        b=NvxoRQvmkUKGI7CaoA6YVJi4wTiGDga+WBXKmK2fCDL1QtTOFflwLmRh1DILn/7xJL
-         PiqCQ5kYzwIYkM5thqHXtyaeQhddbLG90KNYsGnbu0rIUgPvVNDzWlpadjRuDoHLrqXM
-         QzNMqjb2H1UnhxvkUytumORYPkzGvoT9IyczZxPK/Fv/ekO/ddT1tUQ9Z4GD2brPpmBK
-         6X6db6V18wRebDUyHAiKun+CSFhehND45lTL7gnMY1qMeUtxl7NneI+mt1ZSc5jci7UW
-         lixWgNC3hBrFSKG7+zs2bvfWJ64LJuRsVIzf+jQGe4fvv9A9En5u+aUbCc1xs0+agLxj
-         hvDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzqAmUrTfke1YmN7PE7mF9/HbLI2mwdYbNkXN7TZNSXu++F6I5fZ9xKFeCQ+NhaiKteMeRB/cjsMFY1zrH@vger.kernel.org, AJvYcCV7RSA7KpZSGySMs8TiQ1FIuRI4K503tlPNIf8mvTigLcqnl3Mt7yd/rFiLy3lXAK5M1hlEdEKeqvXa5g==@vger.kernel.org, AJvYcCWOQbuCwvyQ/+sYwP7o8nY2iQnpRh6qqUMOPw+nPNkLFjzyJQEgaBrYtAGwS/mEMEZI5DV2iFAG8vc+WD0=@vger.kernel.org, AJvYcCX+CXBSS/GVJ2slCn7iJ9ovnhYMzFoTxB224FNCZrwl2HKm7sPk4pUlOd7CIFKItW7oBapfHotR8klP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvwUY9msAE2YctmEY6i3XzQfuQ03iz+CqfIjs/euPi5Dcus6iV
-	bgn1mUz4TR0Fca5AaW5KmSIkMSDPw2oV5mARMgRab61LxOZyG05/DtED
-X-Gm-Gg: ASbGncsG2nJALl8uvpccAwr2O3XgNryoroR1MADT6NZiCcoTTeDVFxMP8bmEnrIWmCA
-	t7rtJesKZttEmfnRs43GQhELttV4qPPQiO8hW5XdkSZbDc0U/VDE66yecJlPwHWm62ZRVZyJnSP
-	CBqQX6VrWEBPhPYMWFTFTOI4PIKDSXbcL60RwR3nwgBwtBHd3BTFKE+lbL7kQzcBLNnrRUROocB
-	RWI7HNVrrah20WCdn4QBZsn+wBFoHmvWaTaqXVTYMswXkjcBwc206IjsW6ABdx3PdpbTZa9VkQY
-	xaDWt+hrRk0FDFRCSBwcODmotJPyZt7pnA3bcD3/bCbO4pyjGmhkpoU+SlrfOw==
-X-Google-Smtp-Source: AGHT+IHznONadMYPcgLTqG7+syOd2eJWTrjST0N+svkcTt1ke5FV1m9p3Ui18oLYEM06Tm5z8MkI+Q==
-X-Received: by 2002:a05:6a00:1820:b0:749:4cd:108e with SMTP id d2e1a72fcca58-74af6ef37e8mr2475301b3a.10.1751000170868;
-        Thu, 26 Jun 2025 21:56:10 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:d0c7:d92:6a17:eb62])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5574390sm1329989b3a.90.2025.06.26.21.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 21:56:10 -0700 (PDT)
-Date: Thu, 26 Jun 2025 21:56:07 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>, 
-	"open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v3 4/4] Input: Don't send fake button presses to wake
- system
-Message-ID: <75fixx6rgwsgsw6e765oxdcivcg2nkzx2fp2qywgx4vi3ihywh@ot7gdecsnttw>
-References: <cbbf0caf-82ce-4427-9844-b11e0f5cacdb@kernel.org>
- <obpakvzyludc4jskqzyxf65dhqds7ie3jkbfsqdve32ouuaili@xvogkmwvbmbf>
- <284ea5c0-dca5-4e9e-a3e7-705eca794010@kernel.org>
- <vkau25ybcx3bcoa2jmxlukumunzii5h6em43anh6mmzk2kyiv7@kyych4kxc4zo>
- <0d71a686-da67-4686-8976-a17d0d1ca923@kernel.org>
- <CAJZ5v0gKUN1OdqAHnXNcFUAOfhpdRfa_o=L6TA2GZTpe1bMaNQ@mail.gmail.com>
- <exmgckzoakt2ncsdphqvymcadon7k6tl36a3zvrj2pv23dffps@znq23v3qbcm2>
- <CAJZ5v0j3ZyuEqSKQ+3K8M3BwPCxn5Z6KOwjyjt4cJW6HfxjPDw@mail.gmail.com>
- <hyvpl4gvxc6h2r3itfofjduwb3vpobyo7a7z6g3zapzscqtafh@ixsd4amyljva>
- <de548b27-4c43-4f30-af9d-b060101e6fd8@kernel.org>
+        d=1e100.net; s=20230601; t=1751000207; x=1751605007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zv6mkUr/Euphf/sOKT6hhTVY3yWD7uxMOkBVG4NiSjU=;
+        b=M9opZYCOvIL50GZDIOXkTnXdHtALbyySNRUFOAFFcjms2c8KWwQnFPQhrHCdF+gTtn
+         qQAEU1MUyCoCn459cvf7GCDQeTLzT241dYvk65LMXx2AufNBaM0wd25rAOjF85BaR+V9
+         HTf3qsOYmocSxkM8dFlhW8xwO7soytn4vItNIQw6Y8ILICmZ6ozqPfhaEgNQ+FlSZtxA
+         SJXQYjUdAFuXAErBWGHfGdDW1cIIWVlmcJGn5IKfbSytKFS9YimNFnYWNfGVStge/gSr
+         eeHv9uwhBNb+aF8MOKHngLv6Zw2QJ6EJoUmQGvowqjh107WbgK4sGxMP7+CzhkCYF+Bo
+         r7cg==
+X-Gm-Message-State: AOJu0Yw7wyxjXYI3Gx8a9HorrFD7mvlTS9kxYXYl+qV+4BWPWiM+V2nq
+	A13H4Hkr27jjVL9alkg92w0GszAYfMoYMjojjyNwkg+i5jTTBFdRjWA24M/zxcstxWbqq0SYHCk
+	2grarsiGgKl5+lSikTx89EK+PTMAfpprMII2eFGo=
+X-Gm-Gg: ASbGncs6IEQ2o6+i6p2GuUXPEvq9ZBf9BY4yfqtP+MOeSaHi+dgKkgg09DOijpOP5rn
+	oLDmsnuoos4rvz5kajKT2noHHROVaeWUJflpzPGWu+/iebUXcQ12IeHUT8qF8iMWH2zN3Tgw4Uc
+	1eQhy2yAzu6kwLAH8S3708muiTdNxcuTnECnRBr912hkPpilzipobVZze7IGTI1hPEfbsHfDwr
+X-Google-Smtp-Source: AGHT+IG1WjlZkyIbsccktZjNQrYIsbUfTY10eKJpeHSrD2SHzIU3QkMBbhEO25oUaZ630Tmra/pi6PFRBg57ie5hXyM=
+X-Received: by 2002:a05:6512:2353:b0:553:2159:8716 with SMTP id
+ 2adb3069b0e04-5550c35c0famr449258e87.26.1751000207239; Thu, 26 Jun 2025
+ 21:56:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <de548b27-4c43-4f30-af9d-b060101e6fd8@kernel.org>
+References: <20250625182951.587377878@linutronix.de> <20250625183758.187322876@linutronix.de>
+In-Reply-To: <20250625183758.187322876@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 26 Jun 2025 21:56:35 -0700
+X-Gm-Features: Ac12FXxThCCAUfCE9_7KpBD3nksP3SCcmnqrN5H6dj6J3m5deRuxRVa_3JHc-uY
+Message-ID: <CANDhNCqXP-S_ebrHeGMGgE+vqMaAjOzC7p2hzRxff8JrRrpkzg@mail.gmail.com>
+Subject: Re: [patch V3 07/11] timekeeping: Make do_adjtimex() reusable
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
+	Antoine Tenart <atenart@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 26, 2025 at 05:21:35PM -0500, Mario Limonciello wrote:
-> On 6/26/2025 2:40 PM, Dmitry Torokhov wrote:
-> > On Thu, Jun 26, 2025 at 09:31:12PM +0200, Rafael J. Wysocki wrote:
-> > > On Thu, Jun 26, 2025 at 9:28 PM Dmitry Torokhov
-> > > <dmitry.torokhov@gmail.com> wrote:
-> > > > 
-> > > > On Thu, Jun 26, 2025 at 09:18:56PM +0200, Rafael J. Wysocki wrote:
-> > > > > On Thu, Jun 26, 2025 at 9:16 PM Hans de Goede <hansg@kernel.org> wrote:
-> > > > > > 
-> > > > > > Hi,
-> > > > > > 
-> > > > > > On 26-Jun-25 21:14, Dmitry Torokhov wrote:
-> > > > > > > On Thu, Jun 26, 2025 at 08:57:30PM +0200, Hans de Goede wrote:
-> > > > > > > > Hi,
-> > > > > > > > 
-> > > > > > > > On 26-Jun-25 20:48, Dmitry Torokhov wrote:
-> > > > > > > > > On Thu, Jun 26, 2025 at 01:20:54PM -0500, Mario Limonciello wrote:
-> > > > [...]
-> > > > > > > > > > I want to note this driver works quite differently than how ACPI power
-> > > > > > > > > > button does.
-> > > > > > > > > > 
-> > > > > > > > > > You can see in acpi_button_notify() that the "keypress" is only forwarded
-> > > > > > > > > > when not suspended [1].  Otherwise it's just wakeup event (which is what my
-> > > > > > > > > > patch was modeling).
-> > > > > > > > > > 
-> > > > > > > > > > https://github.com/torvalds/linux/blob/v6.16-rc3/drivers/acpi/button.c#L461
-> > > > > > > > > > [1]
-> > > > > > > > > 
-> > > > > > > > > If you check acpi_button_resume() you will see that the events are sent
-> > > > > > > > > from there. Except that for some reason they chose to use KEY_WAKEUP and
-> > > > > > > > > not KEY_POWER, oh well. Unlike acpi button driver gpio_keys is used on
-> > > > > > > > > multiple other platforms.
-> > > > > > > > 
-> > > > > > > > Interesting, but the ACPI button code presumably only does this on resume
-> > > > > > > > for a normal press while the system is awake it does use KEY_POWER, right ?
-> > > > > > > 
-> > > > > > > Yes. It is unclear to me why they chose to mangle the event on wakeup,
-> > > > > > > it does not seem to be captured in the email discussions or in the patch
-> > > > > > > description.
-> > > > > > 
-> > > > > > I assume they did this to avoid the immediate re-suspend on wakeup by
-> > > > > > power-button issue. GNOME has a workaround for this, but I assume that
-> > > > > > some userspace desktop environments are still going to have a problem
-> > > > > > with this.
-> > > > > 
-> > > > > It was done for this reason IIRC, but it should have been documented
-> > > > > more thoroughly.
-> > > > 
-> > > > I assert that it should not have been done and instead dealt with in
-> > > > userspace. There are numerous drivers in the kernel emitting
-> > > > KEY_POWER. Let userspace decide how to handle this, what keys to ignore,
-> > > > what keys to process and when.
-> > > 
-> > > Please see my last message in this thread (just sent) and see the
-> > > changelog of commit 16f70feaabe9 ("ACPI: button: trigger wakeup key
-> > > events").
-> > > 
-> > > This appears to be about cases when no event would be signaled to user
-> > > space at all (power button wakeup from ACPI S3).
-> > 
-> > Ahh, in S3 we do not know if we've been woken up with Sleep or Power
-> > button, right? So we can not send the "right" event code and use
-> > "neutral" KEY_WAKEUP for both. Is this right?
-> > 
-> > Thanks.
-> > 
-> 
-> I did some more experiments with this affected system that started this
-> thread (which uses s2idle).
-> 
-> I only applied patch 3 in this series to help the debounce behavior and
-> figure out impacts from patch 4 with existing Linux userspace.
-> 
-> If suspended using systemd in GNOME (click the GUI button) on Ubuntu 24.04
-> the GNOME workaround mitigates this problem and no visible impact.
-> 
-> If I suspend by hand using the kernel interface and then press power button
-> to wake:
-> 
-> # echo mem | sudo tee /sys/power/state:
-> 
-> * When GNOME is running:
-> I get the shutdown popup and it eventually shuts down.
-> 
-> * When GNOME isn't running (just on a VT):
-> System shuts down.
+On Wed, Jun 25, 2025 at 11:38=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> Split out the actual functionality of adjtimex() and make do_adjtimex() a
+> wrapper which feeds the core timekeeper into it and handles the result
+> including audit at the call site.
+>
+> This allows to reuse the actual functionality for auxiliary clocks.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-For the latter you may want to raise an issue with systemd, and for the
-former I guess it is being too clever and does not activate the
-workaround if suspend was not initiated by it? I think Gnome is being
-too careful.
-
-Thanks.
-
--- 
-Dmitry
+Acked-by: John Stultz <jstultz@google.com>
 
