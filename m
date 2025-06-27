@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-707300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC49EAEC249
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC381AEC24E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 736A37A473A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DFBE3B2229
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE0028A3ED;
-	Fri, 27 Jun 2025 21:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8253328A701;
+	Fri, 27 Jun 2025 21:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cgnf6ziA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AQfIPDnO"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610F61E521D;
-	Fri, 27 Jun 2025 21:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495DA1FBCB5;
+	Fri, 27 Jun 2025 21:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751060888; cv=none; b=Tem7/AAlHoWNh0R1D1gmhv/uMRsnnP+AN9tVsSjHlRVzed+R+z+oSvC2RcRezw5fDW9ybnOikEjb60MVwTEAfjkyIVgcjLyzY1E/tV0vIqqKOiqm/zRzgKRHiyEAnpX/g52z8hxMjDyaDUF7pbcaCwWrYvf5VeYZpRaqFrOFEuM=
+	t=1751060930; cv=none; b=N0VFn1NgllnuIOkL1I3iDw6PxEH7d7Sa33VYrddeQBQ/Vdsgak9Z+AKG4dJqXh5K7OfWcRLg2PlMyR82iDT5uFFyrlAUpN8kRpJM1gqxMeFvSkpkDOZLZKciezrAVI0oCD202mIUlCCbYDzgpSaVpBrPporH6N4Nn9OkktzifX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751060888; c=relaxed/simple;
-	bh=KrT9visr8JuUFyc9dCKnyKiJKRMau3o6/bKp1lg+dTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YlzGo7dZdrU7lnvDtzrmNCfELeBOJyxOd2+jBxH4oFf/h1OsC6URz1VFH7tbId80WmnHfjhR5PFCgyFTU4S7xzgiD1aNEwwZN0e1+8QgaYvAQ/+qX8Vv7HJo9tJ8xAOFk9aaJqUsvjDLqFqoa3b4higowSvPUdYC7cFPcfzEW0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cgnf6ziA; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751060887; x=1782596887;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=KrT9visr8JuUFyc9dCKnyKiJKRMau3o6/bKp1lg+dTE=;
-  b=Cgnf6ziAWC3M5VO06/FeJ+DRkJhYPIpB75QgceWwYfyQ9uExIGN7qG67
-   peVmEDKkFGQi5+abl98I/0Ofy2dzg9xe1t2eLCVHWtvcbWuleruei9t6J
-   bOFiROuUlKT1VPbF0XLmpjrDF0gSqP6JLQcZzI31qH7wi4TBOD47nkzbC
-   HrKQS5CVIEFTVmnEqUWSvzWdNa+EldSjMWYX89firdvi63NFM0IPzWUGg
-   glSjH7MH9BuWjU+CX/qjt/j/qInKLWH87MZYVoJxGRs33/dXlJ0c9x3Bj
-   CYTsZI2EfRMZ2Z+n7nPkLaaG709k7TZ98PSTLjrl0p/a4ewQyElTwp9iy
-   Q==;
-X-CSE-ConnectionGUID: qcLNqlINQMaK3NI1zXO3dA==
-X-CSE-MsgGUID: iPNpC49BRAG6hroHHIO9Og==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="53254365"
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="53254365"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 14:48:05 -0700
-X-CSE-ConnectionGUID: dvCZF54UQ+WvtuBXGynaRw==
-X-CSE-MsgGUID: aMbgSoumSz+wLZCV6vgFHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,271,1744095600"; 
-   d="scan'208";a="153625860"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 14:48:04 -0700
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: early: xhci-dbc: Fix early_ioremap leak
-Date: Fri, 27 Jun 2025 14:47:47 -0700
-Message-ID: <20250627-xdbc-v1-1-43cc8c317b1b@intel.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751060930; c=relaxed/simple;
+	bh=RB25scHzcHUecT2LoPbXGgFC+nSWwtL47Zd0BDvbfR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=frMaPVOHWrmddObZvyNzpHRCgI+IMuvYXeK7gIVOFT6dYFpVhMdg11Ohqo1VNEZRUS1EVb6RItHHcT9UlwA6G0VIgU+r8zcFQrmaSnUnv+Kw9HTws1m3eI2Pxqbxi2udSQiRDBbvy4AZ8eGxypLgdf8Y2Gt+to6R9/OgN1MxLu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AQfIPDnO; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RLmK8d2841413;
+	Fri, 27 Jun 2025 16:48:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751060900;
+	bh=c48FdaYUBETORNVRHnKeGAi+dO5DvZl4pZvPld9S9xs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=AQfIPDnOuERmi0XwmMIvUYTCmUpBOeKEQY7wxkcO8M7+Yxbp0ibrKJco1fhXiU8pt
+	 HsPuS4sKbGLvDQ+XCNx3tS7nfSEuCL86z1TgYM/xpWrdhqAbB4oj+ISf+sPyNksGyn
+	 tdgFeG+JRjjY+knEm9QNv+/eBqIryYtZmUkdckCI=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RLmKSP751364
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 27 Jun 2025 16:48:20 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
+ Jun 2025 16:48:19 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 27 Jun 2025 16:48:19 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RLmJ7J3755700;
+	Fri, 27 Jun 2025 16:48:19 -0500
+Message-ID: <89457440-8b3f-4e21-8352-6ee05b269398@ti.com>
+Date: Fri, 27 Jun 2025 16:48:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Change-ID: 20250627-xdbc-0fe0b64c9560
-X-Mailer: b4 0.15-dev-a7f9c
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Add support for BeagleBone Green Eco board
+To: Kory Maincent <kory.maincent@bootlin.com>,
+        Tony Lindgren
+	<tony@atomide.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Aaro Koskinen
+	<aaro.koskinen@iki.fi>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Kevin Hilman
+	<khilman@baylibre.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Paul Barker <paul.barker@sancloud.com>,
+        Marc Murphy
+	<marc.murphy@sancloud.com>
+CC: Jason Kridner <jkridner@gmail.com>, Andrew Davis <afd@ti.com>,
+        Bajjuri
+ Praneeth <praneeth@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+        Romain Gantois
+	<romain.gantois@bootlin.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+References: <20250620-bbg-v5-0-84f9b9a2e3a8@bootlin.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250620-bbg-v5-0-84f9b9a2e3a8@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Using the kernel param earlyprintk=xdbc,keep without proper hardware
-setup leads to this:
+Hi Kory,
 
-	[ ] xhci_dbc:early_xdbc_parse_parameter: dbgp_num: 0
-	...
-	[ ] xhci_dbc:early_xdbc_setup_hardware: failed to setup the connection to host
-	...
-	[ ] calling  kmemleak_late_init+0x0/0xa0 @ 1
-	[ ] kmemleak: Kernel memory leak detector initialized (mem pool available: 14919)
-	[ ] kmemleak: Automatic memory scanning thread started
-	[ ] initcall kmemleak_late_init+0x0/0xa0 returned 0 after 417 usecs
-	[ ] calling  check_early_ioremap_leak+0x0/0x70 @ 1
-	[ ] ------------[ cut here ]------------
-	[ ] Debug warning: early ioremap leak of 1 areas detected.
-	    please boot with early_ioremap_debug and report the dmesg.
-	[ ] WARNING: CPU: 11 PID: 1 at mm/early_ioremap.c:90 check_early_ioremap_leak+0x4e/0x70
+On 6/20/25 3:15 AM, Kory Maincent wrote:
+> SeeedStudio BeagleBone Green Eco (BBGE) is a clone of the BeagleBone Green
+> (BBG). It has minor differences from the BBG, such as a different PMIC,
+> a different Ethernet PHY, and a larger eMMC.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-When early_xdbc_setup_hardware() fails, make sure to call
-early_iounmap() since xdbc_init() won't handle it.
-
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
- drivers/usb/early/xhci-dbc.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/usb/early/xhci-dbc.c b/drivers/usb/early/xhci-dbc.c
-index 341408410ed93..41118bba91978 100644
---- a/drivers/usb/early/xhci-dbc.c
-+++ b/drivers/usb/early/xhci-dbc.c
-@@ -681,6 +681,10 @@ int __init early_xdbc_setup_hardware(void)
- 
- 		xdbc.table_base = NULL;
- 		xdbc.out_buf = NULL;
-+
-+		early_iounmap(xdbc.xhci_base, xdbc.xhci_length);
-+		xdbc.xhci_base = NULL;
-+		xdbc.xhci_length = 0;
- 	}
- 
- 	return ret;
-
-
+For the series,
+Tested-by: Judith Mendez <jm@ti.com>
 
 
