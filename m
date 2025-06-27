@@ -1,227 +1,145 @@
-Return-Path: <linux-kernel+bounces-706609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31309AEB90C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:34:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00A8AEB911
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EABA3A5677
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:34:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14274A40D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E6E2D9EC1;
-	Fri, 27 Jun 2025 13:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018D22D9EF7;
+	Fri, 27 Jun 2025 13:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QIpIBwPI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJDDw55M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44F82F1FDF
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF9F2F1FDF;
+	Fri, 27 Jun 2025 13:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751031272; cv=none; b=YtRkeswvV5SdHS8fezxShuUE1aj0rJMVXzcKs4be08OGcl9FA20Q/zHmp3hJH1fB1CBVePtWh1H4GkI3YLV4vzcBi/W908g1QLMNZcWo8TZWrK2pjZTl9w8F08vn+qx/r+VmC6eW214Ur4xligYQ41PlsJ8AcbYGKYyV8djfVjU=
+	t=1751031373; cv=none; b=Ux+pjzNsvCCG6qobpvgUcpfd8/AKksmUCw8p9z8N9bz3q0zZ4a0xHnZ39h+/I6q1LdVhYOq5Y1rlqHKhqX3dhpHuc+cRyXDsNL5RD3Kh9a1JJ/P7i+M/sWqvB2pKE7/N7hJ4Hf8bW6mUCJ8p/j8xbXjp6bztH0g2iRn7mjkpH3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751031272; c=relaxed/simple;
-	bh=QRg/Zei1BexxRcPkF9RqYWSAq0V6f/MrUnmF+rZpc/M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QFBxB4OTjGeDS7c4IQ8iXqF20gS1mxDZ79tWuyliYuLHDjg4puBC5W4X3HKfFhqBN3Kk6NEe3+cmJLfmTICMLotItg4Hu7xPhlCDjFJQPflSMPvV5bXQPOXv2ncd2XlkJCQxUYNCYCwSi/dNU1TMx2mdKK0uTt8zlXiuAQl2fBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QIpIBwPI; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751031271; x=1782567271;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=QRg/Zei1BexxRcPkF9RqYWSAq0V6f/MrUnmF+rZpc/M=;
-  b=QIpIBwPI4HCQeYaa1gOoUJVpp+T1nqM04qTuFshGrdwY6qfy7notnyJU
-   gaUPd23iniZD9j2cbljmI7QsF/NNDJAU6fgogXyIvKiVHyZrUg+txX+08
-   d5F4+dM/MAIYVnkGeVdRlPHrI2PPCwv0xfiEHZHbqJP0IBeDtZsZ9RGkW
-   FvUaip/b2od7YsO5iG271m44A1YN1f/pBkeke3jXTSbTjNrYrpO5131RD
-   zIyUsJ96YGlnsioScPEnDgSynxviht4Dc/ydtQKX/QzJK78JKxVLb+Klv
-   hG2jY2lwZICniLakprmcfOXNOaZgw5ovScW+95GHUrad2TKhbgWb0FXEN
-   g==;
-X-CSE-ConnectionGUID: rNGMBxYzQ2SZA6ZCY3tpQA==
-X-CSE-MsgGUID: wZmRxwDhQIqElRu7Qa99WA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="64699125"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="64699125"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 06:34:30 -0700
-X-CSE-ConnectionGUID: QqtRsua5Tiy/zII1uD/BDA==
-X-CSE-MsgGUID: GFy12A7zRD2T6QbRq2kmOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="190000355"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.146])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 06:34:26 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, Imre
- Deak <imre.deak@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Matt Wagantall <mattw@codeaurora.org>, Dejin Zheng
- <zhengdejin5@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/18] drm/i915/ddi: prefer read_poll_timeout() over
- readx_poll_timeout()
-In-Reply-To: <aF6UOCLdO0fGHGA9@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1751023767.git.jani.nikula@intel.com>
- <59bcc15dd4debf00ee0c7b430a3b701462ac9de7.1751023767.git.jani.nikula@intel.com>
- <aF6UOCLdO0fGHGA9@intel.com>
-Date: Fri, 27 Jun 2025 16:34:23 +0300
-Message-ID: <f922ec0a42855e17228d3f22d7291b389abe2df0@intel.com>
+	s=arc-20240116; t=1751031373; c=relaxed/simple;
+	bh=b+AqKL/t2Y57F7SFIeF2uOilMxYgh+4DSlllHo4mbfo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mV83OEHy2NTsaAwbWwOtNlk3bwZkl6iyEL1aMCa5ugbbyOKAKDH8hUUv2ZjS/TBaRH9Bi2Hxt0kvVNs477lnNcW7GYXYP38ZhiyCVMfKKi9E8F6hCD4PWhG6PlfIub7ce0C0QKTNjLCcipahkA0YzUa2GCWI0TTvMIXuRHHrTHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJDDw55M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2F3C4CEE3;
+	Fri, 27 Jun 2025 13:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751031373;
+	bh=b+AqKL/t2Y57F7SFIeF2uOilMxYgh+4DSlllHo4mbfo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AJDDw55MJlOCVvTFjNTI1frKXCVh8blcEuVXrNyCokvJAG1kOtlsiSCic2uxm/G58
+	 BrO+Bxxc3pu2lbtt/kDFxhoI3I/Jayc9I8UXOt/zVMasJmI7ZSMEvccLpRS3W2ftKz
+	 vMjX5+nOFC+dlKksOVew1jaDQGTANoYxW54i4uqYAtJAOpT/QPU8bkfmFRKyvO5Z82
+	 OBVExL/AQvGJPwrZmOfv/uLSLHjfEP9SnTogY6JSz7a6Mof3pQ1ypdnBiFhJl5xYqZ
+	 K5yUAUals6BoMVo6oBjiZj6o8Fd79QHkP4M1Nsw6w8w00SrbjZM77B1tghvy3iPl3S
+	 QddlGxg2/VoWg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uV9FS-00AZpT-Nm;
+	Fri, 27 Jun 2025 14:36:11 +0100
+Date: Fri, 27 Jun 2025 14:36:10 +0100
+Message-ID: <86qzz5b92t.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mingwei Zhang <mizhang@google.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-perf-users@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 09/22] KVM: arm64: Correct kvm_arm_pmu_get_max_counters()
+In-Reply-To: <20250626200459.1153955-10-coltonlewis@google.com>
+References: <20250626200459.1153955-1-coltonlewis@google.com>
+	<20250626200459.1153955-10-coltonlewis@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: coltonlewis@google.com, kvm@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, mizhang@google.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com, shuah@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 27 Jun 2025, Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com=
-> wrote:
-> On Fri, Jun 27, 2025 at 02:36:32PM +0300, Jani Nikula wrote:
->> Unify on using read_poll_timeout() throughout instead of mixing with
->> readx_poll_timeout(). While the latter can be ever so slightly simpler,
->> they are both complicated enough that it's better to unify on one
->> approach only.
->>=20
->> While at it, better separate the handling of error returns from
->> drm_dp_dpcd_readb() and the actual status byte. This is best achieved by
->> inlining the read_fec_detected_status() function.
->>=20
->> Cc: Imre Deak <imre.deak@intel.com>
->> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
->> ---
->>  drivers/gpu/drm/i915/display/intel_ddi.c | 33 +++++++++---------------
->>  1 file changed, 12 insertions(+), 21 deletions(-)
->>=20
->> diff --git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/=
-i915/display/intel_ddi.c
->> index 0405396c7750..fc4587311607 100644
->> --- a/drivers/gpu/drm/i915/display/intel_ddi.c
->> +++ b/drivers/gpu/drm/i915/display/intel_ddi.c
->> @@ -2339,34 +2339,25 @@ static void intel_dp_sink_set_fec_ready(struct i=
-ntel_dp *intel_dp,
->>  		drm_dbg_kms(display->drm, "Failed to clear FEC detected flags\n");
->>  }
->>=20=20
->> -static int read_fec_detected_status(struct drm_dp_aux *aux)
->> -{
->> -	int ret;
->> -	u8 status;
->> -
->> -	ret =3D drm_dp_dpcd_readb(aux, DP_FEC_STATUS, &status);
->> -	if (ret < 0)
->> -		return ret;
->> -
->> -	return status;
->> -}
->> -
->>  static int wait_for_fec_detected(struct drm_dp_aux *aux, bool enabled)
->>  {
->>  	struct intel_display *display =3D to_intel_display(aux->drm_dev);
->>  	int mask =3D enabled ? DP_FEC_DECODE_EN_DETECTED : DP_FEC_DECODE_DIS_D=
-ETECTED;
->> -	int status;
->> -	int err;
->> +	u8 status =3D 0;
->> +	int ret, err;
->>=20=20
->> -	err =3D readx_poll_timeout(read_fec_detected_status, aux, status,
->> -				 status & mask || status < 0,
->> -				 10000, 200000);
->> +	ret =3D read_poll_timeout(drm_dp_dpcd_readb, err,
->> +				err || (status & mask),
->> +				10 * 1000, 200 * 1000, false,
->> +				aux, DP_FEC_STATUS, &status);
->
-> I think I hate these macros. It's very hard to tell from this
-> soup what is actually being done here.
+On Thu, 26 Jun 2025 21:04:45 +0100,
+Colton Lewis <coltonlewis@google.com> wrote:
+> 
+> Since cntr_mask is modified when the PMU is partitioned to remove some
+> bits, make sure the missing counters are added back to get the right
+> total.
 
-The thing is, I hate __wait_for(), wait_for(), wait_for_us(),
-wait_for_atomic_us(), and wait_for_atomic() even more.
+Please fix the subject of the patch to be more descriptive. It is
+worded like a bug fix, while it really is only a step in the patch
+series.
 
-It's also very hard to figure out what is actually going on with
-them. The timeouts are arbitrarily either ms or us. wait_for_us() is
-atomic depending on the timeout. __wait_for() Wmax parameter actually
-isn't the max sleep, it's 2*Wmax-2. Some of them have exponentially
-growing sleeps, while some arbitrarily don't.
+Something like "Take partitioning into account for max number of
+counters" would go a long way.
 
-It's a fscking mess, and people randomly choose whichever version with
-no idea what's actually going on behind the scenes.
+> 
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+>  arch/arm64/kvm/pmu.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/pmu.c b/arch/arm64/kvm/pmu.c
+> index 79b7ea037153..67216451b8ce 100644
+> --- a/arch/arm64/kvm/pmu.c
+> +++ b/arch/arm64/kvm/pmu.c
+> @@ -533,6 +533,8 @@ static bool pmu_irq_is_valid(struct kvm *kvm, int irq)
+>  u8 kvm_arm_pmu_get_max_counters(struct kvm *kvm)
+>  {
+>  	struct arm_pmu *arm_pmu = kvm->arch.arm_pmu;
+> +	u8 counters;
+> +
 
-> The 'val', 'op', and 'args' look very disconnected here even though
-> they are always part of the same thing. Is there a reason they can't
-> just be a single 'op' parameter like we have in wait_for() so you can
-> actually see the code?
->
-> Ie.
-> read_poll_timeout(err =3D drm_dp_dpcd_readb(aux, DP_FEC_STATUS, &status),
-> 		  err || (status & mask),
->                   10 * 1000, 200 * 1000, false);
-> ?
+nit: superfluous blank line.
+>  
+>  	/*
+>  	 * PMUv3 requires that all event counters are capable of counting any
+> @@ -545,7 +547,12 @@ u8 kvm_arm_pmu_get_max_counters(struct kvm *kvm)
+>  	 * The arm_pmu->cntr_mask considers the fixed counter(s) as well.
+>  	 * Ignore those and return only the general-purpose counters.
+>  	 */
+> -	return bitmap_weight(arm_pmu->cntr_mask, ARMV8_PMU_MAX_GENERAL_COUNTERS);
+> +	counters = bitmap_weight(arm_pmu->cntr_mask, ARMV8_PMU_MAX_GENERAL_COUNTERS);
+> +
+> +	if (kvm_pmu_is_partitioned(arm_pmu))
+> +		counters += arm_pmu->hpmn_max;
 
-Internally the macro has:
+Why the check? Why can't we rely on hpmn_max to always give us the
+correct value?
 
-#define read_poll_timeout(op, val, cond, sleep_us, timeout_us, \
-				sleep_before_read, args...) \
+Thanks,
 
-...
+	M.
 
-		(val) =3D op(args); \
-
-So you do need to provide an lvalue val, and you need to be able to add
-() after op. I think GCC allows not passing varargs. IOW you'd need to
-implement another macro (which could be used to implement the existing
-one, but not the other way round).
-
-I'm really not enthusiastic about blocking this series waiting on that
-kind of refactoring in iopoll.h which might happen, or might not,
-considering there's no active maintainer for iopoll.h.
-
-So yeah, the interface isn't great, and I'm not claiming it is, but it
-is *one* *single* *documented* *interface* that's used across the
-kernel. On the whole, warts and all, I think it's still much better than
-what we currently have. And it breaks the dependency on i915_utils.h.
-
-I've carefully tried to do the line breaks so that it's always:
-
-        read_poll_timeout(op, val,
-                          cond,
-                          sleep_us, timeout_us, sleep_before_read,
-                          args...);
-
-I think that helps a bit.
-
-
-BR,
-Jani.
-
-
->
->>=20=20
->> -	if (err || status < 0) {
->> +	/* Either can be non-zero, but not both */
->> +	ret =3D ret ?: err;
->> +	if (ret) {
->>  		drm_dbg_kms(display->drm,
->> -			    "Failed waiting for FEC %s to get detected: %d (status %d)\n",
->> -			    str_enabled_disabled(enabled), err, status);
->> -		return err ? err : status;
->> +			    "Failed waiting for FEC %s to get detected: %d (status 0x%02x)\n=
-",
->> +			    str_enabled_disabled(enabled), ret, status);
->> +		return ret;
->>  	}
->>=20=20
->>  	return 0;
->> --=20
->> 2.39.5
-
---=20
-Jani Nikula, Intel
+-- 
+Without deviation from the norm, progress is not possible.
 
