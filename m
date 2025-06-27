@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-706517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF068AEB79D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637F6AEB7A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C279D1886734
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46FE13AE131
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1172C08D3;
-	Fri, 27 Jun 2025 12:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BE917C21C;
+	Fri, 27 Jun 2025 12:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3aNliHoU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5wgppqQL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O+4QH8Yj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDFF2BEC3D
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340C294A16
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751027078; cv=none; b=VgibHJXT2WW0RYnBNYSJJ/YUSfqXkjmLZe02la8UgzxFXWguvx572cZi7GGDMqjwhTXtbgPpPAcZpxGNR9EO07rrV78kizvCvT6yGM8LERnGcoCNI6Zuy6BX2/cbHmz+FuO2m/Fve3HDbihC/qeXAN1jWSxwXbT6bepgh0zlWVI=
+	t=1751027209; cv=none; b=t58J4nvHe4gwouJGYbG47pj9Mr3Kg2hgbb8dw1SKtXWHdNp/+/NGPeqnhTXxnH1z0HRX4RMk+U1zlqC57B1TihiinLMNhHsgwS3iRI9/AaAjv0FRWHcClGFzNB2onZSlTFmTtgm8LC0j0y5c7P45GRHPHpL7PKvkoCyDipCE304=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751027078; c=relaxed/simple;
-	bh=9CZX/gN6H0dvDI9xwZAIRvjrV1biAXY3injNtbTMfgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dorkkjbj9nBmaW91NaBcSx0AVV9b51/y7vzf7rV4k38Y8+DPtkxs9r9PoCrvbJm5svDAjMtkG98itEfoSD6BwWH2AFK8IuQna8/l769oHCRzwYjpYLOFxMU9oaCd/tvjo0YeB+Xq7fc2wC/DiiRMc4TFSqLBfkyJDEXIweckQeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3aNliHoU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5wgppqQL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 27 Jun 2025 14:24:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751027075;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mpbYOTc9s2yyrANH4b1uxDXixl3Ah8BpykO6BbfmOW0=;
-	b=3aNliHoUMJXLWhSc3FDwnwhMc6CxR5QsVoUvhFxrwQiAP0FbPCTHT3iTemwbF1WCohDXvL
-	mCHWJuHQaXAIRW0aWqZMwIjJuGB8TL0vSYlSI3/Kfmw4jFyUfQAS7h68X50We0Z+Unhvcp
-	EyMUr4q7TnTRcClQbh3vjCL4WGEU9N3S2FaersyhZv32i62qYEA+7x9DmjKdwWVKvogR2c
-	tOoD/AnzxFGMwG4OQjkBk2xJUzyt/0svgWNLnTGbJN1Pst/M76H0tNJbGLo918AMhgMeQK
-	jhAj9JIxvXn3z99kAmtZu4FuaQe186UztDjTH5xrZKYHt7ODaOlAmLe1odfL3A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751027075;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mpbYOTc9s2yyrANH4b1uxDXixl3Ah8BpykO6BbfmOW0=;
-	b=5wgppqQLzDVcc/JUGzV81iv6ZYf9MWEiosFJXXbtKNLNU82Kjjlpd4lOYNlBiKmJu2SJ4f
-	lvfLLdDdsaOR2VDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Chris Mason <clm@meta.com>, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: futex performance regression from "futex: Allow automatic
- allocation of process wide futex hash"
-Message-ID: <20250627122434.LtaTjk_B@linutronix.de>
-References: <3ad05298-351e-4d61-9972-ca45a0a50e33@meta.com>
- <20250604092815.UtG-oi0v@linutronix.de>
- <372d8277-7edb-4f78-99bd-6d23b8f94984@meta.com>
- <20250604200808.hqaWJdCo@linutronix.de>
- <aa6154d1-726c-4da1-a27b-69d2e8b449c6@meta.com>
- <20250606070638.2Wk45AMk@linutronix.de>
- <20250624190118.GB1490279@noisy.programming.kicks-ass.net>
- <20250626134820.ybEtTXSN@linutronix.de>
- <20250626143638.GM1613200@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1751027209; c=relaxed/simple;
+	bh=uvLf0GSmDfBqWnfb8F3nJPftkgEoswcxXdrp9fik/Dc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NAIMht9yH2oYAn9PaKEt8yT6U+6ElliOx+w2wCqvKORTHf/JJxN4SeZWD/tg08p1Wu7uNO/iwIbAjZR6MuOR9RZ5nyoVNIA0LbFuNB5SOC9mZJLYoAowjZ9hb16QhHM+kLg36HxQoeRf4Pk1yrYcS2XearhusLaE+45HwsnAXRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O+4QH8Yj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RCMXBj011364
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:26:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YW3xJyw4MXHu9B0GBzc5gHoDvKGTsk+fsKdR1a1sIbA=; b=O+4QH8YjgyPItHjb
+	u8d63KLj9Wxt0oJLsOq+kn5tLQxNBXLp1EZRjfpWs3BlP+TqGIwvSU8XygJ5yyFX
+	ChFVIz6cafe0XdrC6HHiWqALXr4Zt7bdhx37EMErB0JXSXBc6EpKRcaajgw3Xyhx
+	hO7VnbClwmiEz/eX0TELvbDeGwSXb8Oo6iEat2o3v1lS1sKGONLqWtoFz1bF/pQS
+	mQ/tj6+OkwiokbEFbir3jUeVakc1+HmqNdJl0DkdMRRsm8T3ZZU7NLSEL5vs7GoI
+	MMYSmW+OrbvVvBkAOB1iiZn0LUi4LIB7FqxSfjVNcwfSsM658NIbRQcpBcOU3cCJ
+	0KystA==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47f3bgprjp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:26:46 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6fb53b1e007so5154796d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:26:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751027206; x=1751632006;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YW3xJyw4MXHu9B0GBzc5gHoDvKGTsk+fsKdR1a1sIbA=;
+        b=WM4SOy2+37tLXAwRhkSWrSvqhFaJpfiWqG+hCKFtxKixPIYgsF252rwa0zzx/delgg
+         3ACZ+BHZ2F7OSyOLAgbzNRUmz02ftLnJt0ogevEkQEckROIppaX4PFpKXe0eg5DmXPg/
+         INox8dEZep9w8h7PPPoTUX1mUwyY3/6lb56Yl2ykzdNieNck65wsrKSPDb9VanAHsTnT
+         nxj4xjA1pwIe78j9z9BPTKWyNN4koL55ZBlpL3rl79ATzeDsjLe1O5i5CvX70FGWwkDo
+         SF46oMQmFFtxBTAfGT3BiNEFlRZ881DNbG5wmyVfviMU32SEcBcY8mXfGhg1+YQWUTHp
+         QXlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAJnQ04T6lybC+NAZa+nhpr+G3yAWKwQ+2AtUrzEb9QGtNHdA3jca9791/95MueHWAqehPTAbJqxIvGm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Anx+hYWtTXqwoLCcqxCAswc36MocRDYjIHoXUoxLpuf7MgQb
+	Ua/HDdLN4CU9hw/+//xn4xLD/SrVVuZRAHgxTLftnxyEU/1Ebp8CHV2e3RlessxmQeK8dI3WX4v
+	RET5vanKCTsELlUVrpV+U5zYz6V6c1GoD/cu1OV6fBaoRDpM3Wk5SXfu0sU4mpmLJknA=
+X-Gm-Gg: ASbGncuOtqHxIv72MDMsiilYCfBp6zSAdLKcZhegD2kBReNlijeMgqNfRfaDzZRKEwI
+	9U8NwxbXUptlLmOcPKMtQwDD3QYslvoKzVRU3ssk/K1kxsLXStAgQXRDHrF63sAOllJs+ynoBUN
+	ezEQCN/g36j0DohVc478s7BDonTrlCc+xuEjxoM9DGbPbkj4NERkYUDUCZm4edLr6Wccxmd93Yx
+	1kWqil/eB5txjTiQ+AORDuCwGYPQ5KIqAEK/KjVOiFNkQTTheDRwR3X8g4s2fXehV2rgn7XKhjw
+	3i8RAIfZzn5drm+pPzAjKG5m6xpmW5b7DfUHyAYsB6JPH6PaORd2PiwYQvpvWCGwChmPD0PPg7C
+	f6P4=
+X-Received: by 2002:a05:620a:25cc:b0:7d3:ab3b:e477 with SMTP id af79cd13be357-7d4439e23f5mr154618685a.15.1751027205909;
+        Fri, 27 Jun 2025 05:26:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/bh4wpr7MzQxlOHz+0jxOOse9nBDfqf6PABTa8SnfEnGAbDpv0Z1SKZKQLrLB1c23nS+QmQ==
+X-Received: by 2002:a05:620a:25cc:b0:7d3:ab3b:e477 with SMTP id af79cd13be357-7d4439e23f5mr154616685a.15.1751027205192;
+        Fri, 27 Jun 2025 05:26:45 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c8319e706sm1467294a12.47.2025.06.27.05.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 05:26:43 -0700 (PDT)
+Message-ID: <f55a057d-2cdd-411e-97b9-5ede1300a4e9@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 14:26:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250626143638.GM1613200@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] firmware; qcom: scm: enable QSEECOM on SC8280XP
+ CRD
+To: Johan Hovold <johan@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Steev Klimaszewski <steev@kali.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-efi@vger.kernel.org
+References: <20250625-more-qseecom-v4-0-aacca9306cee@oss.qualcomm.com>
+ <20250625-more-qseecom-v4-5-aacca9306cee@oss.qualcomm.com>
+ <e5e3e8f1-4328-4929-825a-3d8e836cf072@oss.qualcomm.com>
+ <95c46d39-5b4a-46dd-aa73-1b3b9bf81019@oss.qualcomm.com>
+ <aF6NUeNLPrR5vqEf@hovoldconsulting.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <aF6NUeNLPrR5vqEf@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: kt2sCTBA4qXQzKeSAsJ15DsOgbR9pqMw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEwMyBTYWx0ZWRfX+g+V7+aEAde0
+ T16lKuZcr7JYt6wFqELuryJNjv1DnqHEU7SncXNhStO3S1UHgMYSOOw+l5ONMGl7CuhP3KoRz07
+ /y2LFLKzGJu3pAyqRNsyA41KtOlTMBY9BL/oDluscsP6G2G5DUoREuswmijRs6ZaUuCLggQj50T
+ rgXkclHZuL5CRJ7WT1f16hRgipWrNhkaFyc1rFfhOY/LmuZptE6HZDZ1Pk8bHFLA3HxNMjeuP7Y
+ 8VtBvEWBvAvG7YZTSHvuLiyzUYzrlHjr8hsHiE4l2q+BzXT100CMO71BMTGdEm8GxAX8iGjL3G7
+ 8urjH9sGPQRP+nfGLQUgcswZONYp9h3yE5TH0TEptR18NzygFTuJ8oHqaN/QhT0NY1AyqYZPbs2
+ eoJl2zf5SBEIo+yrxAQAXJwAt4XcfwoOcmQy7fAVPbnLCnYhH13PeSg12ATbgfIYJbvUOrjR
+X-Authority-Analysis: v=2.4 cv=L4kdQ/T8 c=1 sm=1 tr=0 ts=685e8e06 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=TYFmBxuQ-sYf0sw0Za0A:9
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: kt2sCTBA4qXQzKeSAsJ15DsOgbR9pqMw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ spamscore=0 phishscore=0 mlxlogscore=999 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506270103
 
-On 2025-06-26 16:36:38 [+0200], Peter Zijlstra wrote:
-> > I guess that is why you said earlier with to use srcu. For
-> > things like "hackbench -T" you end up creating a new hash on every
-> > thread creation which is not applied because RCU takes a while.
-> > This could be optimized later by checking if the hash in futex_phash_new
-> > matches the requested size.
+On 6/27/25 2:23 PM, Johan Hovold wrote:
+> On Fri, Jun 27, 2025 at 01:54:37AM +0200, Konrad Dybcio wrote:
+>> On 6/27/25 1:34 AM, Konrad Dybcio wrote:
+>>> On 6/25/25 12:53 AM, Dmitry Baryshkov wrote:
+>>>> As reported by Johan, this platform also doesn't currently support
+>>>> updating of the UEFI variables. In preparation to reworking match list
+>>>> for QSEECOM mark this platform as supporting QSEECOM with R/O UEFI
+>>>> variables.
+>>>>
+>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>>> ---
+>>>>  drivers/firmware/qcom/qcom_scm.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+>>>> index dbb77c3f69ddaa931e7faa73911207a83634bda1..27ef2497089e11b5a902d949de2e16b7443a2ca4 100644
+>>>> --- a/drivers/firmware/qcom/qcom_scm.c
+>>>> +++ b/drivers/firmware/qcom/qcom_scm.c
+>>>> @@ -2005,6 +2005,7 @@ static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
+>>>>  	{ .compatible = "microsoft,romulus13", },
+>>>>  	{ .compatible = "microsoft,romulus15", },
+>>>>  	{ .compatible = "qcom,sc8180x-primus" },
+>>>> +	{ .compatible = "qcom,sc8280xp-crd", .data = &qcom_qseecom_ro_uefi, },
+>>>
+>>> R/W works for me (tm).. the META version may be (inconclusive) 2605
+>>
+>> Looked at the wrong SoC META table.. the build date is 05/25/2023
 > 
-> So the main benefit of using SRCU (I have half a patch and a head-ache
-> to show for it) is that you don't need the per-mm-per-cpu memory
-> storage. The down-side is that you share the 'refcount' between all mm's
-> so it gets to be even slower.
-
-I see. So it is not just s/rcu/srcu/ for the hopefully quicker grace
-period since it does not affect whole system. It a different algorithm.
-
-> The 'problem' is that reasoning about stuff comes even harder. But the
-> main idea is to replace mm->futex_phash with a 'tombstone' value to
-> force __futex_hash() into taking the slow-path and hitting
-> mm->futex_hash_lock.
+> Could be that my machine was not provisioned properly. Do you boot from
+> UFS or NVMe?
 > 
-> Then you do call_srcu() to wait one SRCU period, this has everybody
-> stalled, and guarantees the fph you had is now unused so we can rehash.
-> Then replace the tombstone with the new hash and start over.
-> 
-> It's just that stuff like futex_hash_get() gets somewhat tricky, you
-> have to ensure the SRCU periods overlap.
-> 
-> Anyway, that approach should be feasible as well, just not sure of the
-> trade-offs.
+> My fw is also older: 01/10/2022.
 
-The current looks reasonable enough and it survived yesterday's testing.
+The machine has UFS, NVME and SPINOR, however the boot log definitely says:
 
-> > Why preempt_disable()? Is it just an optimized version of
-> > rcu_read_lock()? I don't understand why. You don't even go for
-> > __this_cpu_inc() so I a bit puzzled.
-> 
-> The code morphed a lot over the two days it took to write this. But
-> yeah, preempt or rcu doesn't really matter here.
-> 
-> I didn't yet think about __this_cpu, its not really relevant on x86. If
-> you want to make that relaxation you have to consider IRQ and SoftIRQ
-> handling though. Given we have this_cpu_inc() in the RCU callback, which
-> is ran from SoftIRQ context, this might not be safe.
+S - Boot Interface: SPI
 
-Nah, I am all for a simple cguard(rcu) here.
-
-Sebastian
+Konrad
 
