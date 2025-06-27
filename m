@@ -1,160 +1,166 @@
-Return-Path: <linux-kernel+bounces-705821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A388AEAE2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BEEAEAE33
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 06:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8964E107A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1A93640292
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 04:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F3B1DEFE8;
-	Fri, 27 Jun 2025 04:54:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5C01DB548;
+	Fri, 27 Jun 2025 04:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K1iDnaF+"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A4F1DE4E5
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668521D5CF2
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751000046; cv=none; b=hyfUUYMeuKkHUt1ieq+PKOjN7jVVSMVrCzjlqT4ybMUyGlqxpEnjEFzOzaLTcTTcwGx0kHDNc7tpnvWaxmYlqzMUbiVRfmlZMqCZDLW6xwvlkpDCqyQgOvXywgLxtJsXx2Opou4w4eOinn2JG2SfJSKoAOLu+ievOcA6biBg4k8=
+	t=1751000090; cv=none; b=u/Mjef/i/lQCZoZ7WxH+Q+7sG8t+nyucI8o2VfhDKcS6sAKY1kmii10zss/FFOfb7vYdxwQbzI6+nHYnJDVLhKh9svyS21jdrk8DvIMuu55mqmvPDd+C1AkYU+guOG8RPOVB10FBAFvpaoYYoghrRhZcwjp+5jWgL3ax9ZmXyBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751000046; c=relaxed/simple;
-	bh=vnd2EJcfPh0FKmD/4EacItn7nOzl2cHJ4a1gckne2oc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=upBJRyQDx97y5TfdBnV2y4XDMiiNjUzrYe7AiTl/9+xgE7/8F0PXIl7+a3rt1yC/UU33qslaJ3KcxpEI0NqEPcF+hnaqlo/swjeSjGP8QOOMdgT5SLHARYJt4D11MZlrgokMS+44YPhZAh1Xfh1YqRn6hLC4Fko3WvRzo+/WpF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ddafe52d04so43402925ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:54:04 -0700 (PDT)
+	s=arc-20240116; t=1751000090; c=relaxed/simple;
+	bh=v35BJ34lgvcP6bUBnuX4G37d0j4fI/MWcYfFOIx0kO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=glhTKEtPxGG/rDi31zmo0fRkCoeAQlWjziHQ35vzwdNIMw4PcC8kl0bkP2Vf7Wy1vAIG4xD+NCOb86ON5jQ8yTE8hNHimdb8ehbkB1SZgZZ3B8nllKAkHjlJx+4hxyYHjzEsdOXKiG5AgPaJdHC3PY8SVspKWDtESZ1mKKDnJ08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K1iDnaF+; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553dceb342fso1544026e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Jun 2025 21:54:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751000086; x=1751604886; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MwcYSCU7O2wVwCmP9UL7U8eP3yLNVSRm6pslGgCVSM=;
+        b=K1iDnaF+qKBWsSBNqp6JAVI/oDurIrZTpw7ZACPvuljb7herIil72xeW1Lrn42jwf3
+         rMFaUBWG6LzQhPKrTJz6WtjZ2s9mL/KrHPgdw0rb9VRrhzd7Ml6h1tg13+bhLiOGGBbI
+         /WRLr1Nu8Pxv9bfijcyG1LJmZy/6LgDxRCLScj363rJKhKwQx7Sy5kYhd4d9JNaQmvOS
+         SmDCmgGb5QPXAJWhuSRpw/lE4Zz0BlFSed7Ua3dkZ1xm9IciV6jRvvlkvmC/uyiyQWGs
+         jIj+bDH5Kv1D+LuPDU/l7ETBMKl+3kcJebjUjKBalIVCbEe8iv8i6zXSh/nG2l2+wFcv
+         jx8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751000044; x=1751604844;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BoSG+kEhTdB9dyfvsXn9C4p+CYrh+2w75i9A8qe1xhg=;
-        b=Ty09uWuhpRJ3NTspxxYJ/pg+PMuBZ6ZQXGrq4znbqrDqUIKGSEXtBRMAjIBmWIb6lu
-         ZwCeNCui/2q/R5tfrVggn0Wmtsg0LynDQ5vf3MAbQKsL7m93wyNUvK84sUnh/pCDLDR9
-         AUpX/I3ZKh+Fisz0HoOTBTET33+om/zVzMOzKUNldCwDWHfh84mK8SHzM10l/bNlNqff
-         qt2Y2iwt7hjnGgWKKM3E5EIvcSn+oT4H3V8wsob2YHXVPF8uLV9xH10o5/D3r3hSuAFN
-         G9cLR8Oq4Q3Y2wZhiiGE2tEpjNGZFGVMu0VnIbveYDM4BBFDEYyVSfQfk5fGcqQ7YqjN
-         0RSw==
-X-Gm-Message-State: AOJu0Yzg4zy7G81CJlcIF1TXxR6tqY22J20Jf/RH5tUQ24CqaJ7IeTFB
-	h+cmkopmXEKI77e+GPShD9dJOMvXFj4SJIpNyOrTzcHdhEwzR/O1Egh7fTZFlCHwMmosdA/ykVw
-	UtH2CWYrHlAQE3H82N+I/JHGf0KVghpbs8FvqGNAp6UKIr4Kds5ON+Y1ixzI=
-X-Google-Smtp-Source: AGHT+IEGL+le4krX34hUd1Egm373T9cWzt0Jjb3W59sC5WqVTqVuYBMutH3KJtWhLgu3w2MfG22a05RsxvCaxtqFYdb0gChfsk+E
+        d=1e100.net; s=20230601; t=1751000086; x=1751604886;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4MwcYSCU7O2wVwCmP9UL7U8eP3yLNVSRm6pslGgCVSM=;
+        b=LzXEHKzpI+yQlV68UrdM8dY9mkpy9VDLsZzxZNvspae9WVFDb+EyvRbFzQ1+991e0a
+         vnLaKHwNQAW/FHq0WprG6BxAeXs3NWZ2+euOhv0YM7ttZ73GGIJQ/+iEuof7IGdfA4Dg
+         k1QwS6TXpgDtS6Asb+LUAhd83S3R8oEz5TZJ8+JBl0cAKvJmu3F3AWvw6cVTXiaErdmI
+         iwyKeAbJoXE17ckp3hKxssEIbgqcg33j4fhGn+gZuRZB+allQ3pMJszto/R5q7fANPQD
+         2BJSu3KCF/YboWTtIpR6HLgCwQTiMSoxw0WyKp+mQxa0pgKlwXOvXoh405LN424DHHRV
+         XoeA==
+X-Gm-Message-State: AOJu0YzVut0badIpjLDOgwmrFfj1EliWfcnOmXDvT95rGmItNd94n8qv
+	0J4X8Ky6rpRggFYswqsm9uQ1g8Ttast/P4H2RGpc34uZ4tLVyj5ig6Wdjj2jGJ3jIvF6748nm55
+	YfGQh+xaz9+eMGQD6F/YnLDhpzet7GTUWcFPJ9ZM5TH9AcQN34anOl1TeEQ==
+X-Gm-Gg: ASbGnctZz2Pmpz94bSYBtrWLjnasJH8tvk35+20198NHOgEeQhbgPGsoW0PuUFZBnVf
+	sjBg/2OBcwbTzV2wD3T5ZugH1J9m0VgVC2IltgXtXxu7MnFnAye0fm1zOe2LGW1zDIAx8aLzOH4
+	HBc3v1cdZmRlAT3Lt3c+Y+5Waype693pcPzSbRC8TX3csSNuuNIAgqqM5Msb+JYMKOVPo2TeqDT
+	FEEjacm1T0=
+X-Google-Smtp-Source: AGHT+IFpLSv3KdtEC81mfx9MJueqJy1tKEIWQAG2KaGeBxgKAmIeLcw+2jgK0HvCMltj6Jh83tRtGXnZN4SOR/0Vcrc=
+X-Received: by 2002:a05:6512:220d:b0:554:f76a:baaf with SMTP id
+ 2adb3069b0e04-5550b9ee1c0mr598894e87.56.1751000086251; Thu, 26 Jun 2025
+ 21:54:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3309:b0:3d6:cbad:235c with SMTP id
- e9e14a558f8ab-3df4ab6244amr27928485ab.6.1751000044268; Thu, 26 Jun 2025
- 21:54:04 -0700 (PDT)
-Date: Thu, 26 Jun 2025 21:54:04 -0700
-In-Reply-To: <20250627032632.2470249-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685e23ec.a00a0220.34b642.014d.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KMSAN: kernel-infoleak in vmci_host_unlocked_ioctl
- (3)
-From: syzbot <syzbot+9b9124ae9b12d5af5d95@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20250625182951.587377878@linutronix.de> <20250625183758.124057787@linutronix.de>
+In-Reply-To: <20250625183758.124057787@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 26 Jun 2025 21:54:34 -0700
+X-Gm-Features: Ac12FXw_Je7fjw68q5uLeLBiIbu4q7GMysmzcodNlFFbo38SspffgCM3lhGSYcA
+Message-ID: <CANDhNCqhaezCu=+JiJ0GOMaOAJZN6Cu8FbchW3Fy_8tzXi3K1g@mail.gmail.com>
+Subject: Re: [patch V3 06/11] timekeeping: Add auxiliary clock support to __timekeeping_inject_offset()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, 
+	Richard Cochran <richardcochran@gmail.com>, Christopher Hall <christopher.s.hall@intel.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, 
+	David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
+	Antoine Tenart <atenart@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jun 25, 2025 at 11:38=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> Redirect the relative offset adjustment to the auxiliary clock offset
+> instead of modifying CLOCK_REALTIME, which has no meaning in context of
+> these clocks.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  kernel/time/timekeeping.c |   34 ++++++++++++++++++++++++++--------
+>  1 file changed, 26 insertions(+), 8 deletions(-)
+> ---
+>
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -1448,16 +1448,34 @@ static int __timekeeping_inject_offset(s
+>
+>         timekeeping_forward_now(tks);
+>
+> -       /* Make sure the proposed value is valid */
+> -       tmp =3D timespec64_add(tk_xtime(tks), *ts);
+> -       if (timespec64_compare(&tks->wall_to_monotonic, ts) > 0 ||
+> -           !timespec64_valid_settod(&tmp)) {
+> -               timekeeping_restore_shadow(tkd);
+> -               return -EINVAL;
+> +       if (!IS_ENABLED(CONFIG_POSIX_AUX_CLOCKS) || tks->id =3D=3D TIMEKE=
+EPER_CORE) {
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: unable to handle kernel NULL pointer dereference in ioctl
-
-BUG: kernel NULL pointer dereference, address: 0000000000000320
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 8000000047e19067 P4D 8000000047e19067 PUD 0 
-Oops: Oops: 0000 [#1] SMP PTI
-CPU: 1 UID: 0 PID: 6745 Comm: syz.0.16 Not tainted 6.16.0-rc3-syzkaller-g6f2a71a99ebd-dirty #0 PREEMPT(undef) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:vfs_ioctl fs/ioctl.c:51 [inline]
-RIP: 0010:__do_sys_ioctl fs/ioctl.c:907 [inline]
-RIP: 0010:__se_sys_ioctl+0x23f/0x400 fs/ioctl.c:893
-Code: 83 20 03 00 00 00 00 00 00 49 83 fd 04 0f 83 b9 01 00 00 48 8b 7d c8 44 89 e6 48 8b 55 b0 4d 89 f3 2e e8 e0 4a 44 1d 49 89 c6 <44> 8b a3 20 03 00 00 8b 83 a8 0f 00 00 89 45 d4 c7 03 00 00 00 00
-RSP: 0018:ffff88804a3dbe30 EFLAGS: 00010282
-RAX: fffffffffffffff2 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 00000000219e67d0 RSI: 0000000000000001 RDI: ffff8880219e67d0
-RBP: ffff88804a3dbe80 R08: ffffea000000000f R09: 0000000000000000
-R10: ffff8880211e67d0 R11: ffffffff82831f32 R12: 00000000000007a0
-R13: 0000000000000000 R14: fffffffffffffff2 R15: ffff888038101c01
-FS:  00007f0f9a3e76c0(0000) GS:ffff8881aa97d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000320 CR3: 0000000047176000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:893
- x64_sys_call+0x1ebe/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0f9958e929
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0f9a3e7038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f0f997b5fa0 RCX: 00007f0f9958e929
-RDX: 0000200000000140 RSI: 00000000000007a0 RDI: 0000000000000004
-RBP: 00007f0f99610b39 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0f997b5fa0 R15: 00007ffe024bc598
- </TASK>
-Modules linked in:
-CR2: 0000000000000320
----[ end trace 0000000000000000 ]---
-RIP: 0010:vfs_ioctl fs/ioctl.c:51 [inline]
-RIP: 0010:__do_sys_ioctl fs/ioctl.c:907 [inline]
-RIP: 0010:__se_sys_ioctl+0x23f/0x400 fs/ioctl.c:893
-Code: 83 20 03 00 00 00 00 00 00 49 83 fd 04 0f 83 b9 01 00 00 48 8b 7d c8 44 89 e6 48 8b 55 b0 4d 89 f3 2e e8 e0 4a 44 1d 49 89 c6 <44> 8b a3 20 03 00 00 8b 83 a8 0f 00 00 89 45 d4 c7 03 00 00 00 00
-RSP: 0018:ffff88804a3dbe30 EFLAGS: 00010282
-RAX: fffffffffffffff2 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 00000000219e67d0 RSI: 0000000000000001 RDI: ffff8880219e67d0
-RBP: ffff88804a3dbe80 R08: ffffea000000000f R09: 0000000000000000
-R10: ffff8880211e67d0 R11: ffffffff82831f32 R12: 00000000000007a0
-R13: 0000000000000000 R14: fffffffffffffff2 R15: ffff888038101c01
-FS:  00007f0f9a3e76c0(0000) GS:ffff8881aa97d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000320 CR3: 0000000047176000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	83 20 03             	andl   $0x3,(%rax)
-   3:	00 00                	add    %al,(%rax)
-   5:	00 00                	add    %al,(%rax)
-   7:	00 00                	add    %al,(%rax)
-   9:	49 83 fd 04          	cmp    $0x4,%r13
-   d:	0f 83 b9 01 00 00    	jae    0x1cc
-  13:	48 8b 7d c8          	mov    -0x38(%rbp),%rdi
-  17:	44 89 e6             	mov    %r12d,%esi
-  1a:	48 8b 55 b0          	mov    -0x50(%rbp),%rdx
-  1e:	4d 89 f3             	mov    %r14,%r11
-  21:	2e e8 e0 4a 44 1d    	cs call 0x1d444b07
-  27:	49 89 c6             	mov    %rax,%r14
-* 2a:	44 8b a3 20 03 00 00 	mov    0x320(%rbx),%r12d <-- trapping instruction
-  31:	8b 83 a8 0f 00 00    	mov    0xfa8(%rbx),%eax
-  37:	89 45 d4             	mov    %eax,-0x2c(%rbp)
-  3a:	c7 03 00 00 00 00    	movl   $0x0,(%rbx)
+I feel like this should be in something like:
+  static inline bool is_core_timekeeper(tsk)
 
 
-Tested on:
+> +               /* Make sure the proposed value is valid */
+> +               tmp =3D timespec64_add(tk_xtime(tks), *ts);
+> +               if (timespec64_compare(&tks->wall_to_monotonic, ts) > 0 |=
+|
+> +                   !timespec64_valid_settod(&tmp)) {
+> +                       timekeeping_restore_shadow(tkd);
+> +                       return -EINVAL;
+> +               }
+> +
+> +               tk_xtime_add(tks, ts);
+> +               tk_set_wall_to_mono(tks, timespec64_sub(tks->wall_to_mono=
+tonic, *ts));
+> +       } else {
+> +               struct tk_read_base *tkr_mono =3D &tks->tkr_mono;
+> +               ktime_t now, offs;
+> +
+> +               /* Get the current time */
+> +               now =3D ktime_add_ns(tkr_mono->base, timekeeping_get_ns(t=
+kr_mono));
+> +               /* Add the relative offset change */
+> +               offs =3D ktime_add(tks->offs_aux, timespec64_to_ktime(*ts=
+));
+> +
+> +               /* Prevent that the resulting time becomes negative */
+> +               if (ktime_add(now, offs) < 0) {
+> +                       timekeeping_restore_shadow(tkd);
+> +                       return -EINVAL;
+> +               }
+> +               tks->offs_aux =3D offs;
 
-commit:         6f2a71a9 Merge tag 'bcachefs-2025-06-26' of git://evil..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1720608c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=595d344ff0b23ac5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9b9124ae9b12d5af5d95
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=103ba08c580000
+I'd also consider moving this else into a aux helper function as well,
+but I'm not 100% on that.
 
+Other than the is_core_timekeeper (or timekeeper_is_core() maybe?)
+suggestion above:
+ Acked-by: John Stultz <jstultz@google.com>
+
+thanks
+-john
 
