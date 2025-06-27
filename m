@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-706311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5B3AEB4FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D89E7AEB50B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3881C425B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5863188419E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C083D299928;
-	Fri, 27 Jun 2025 10:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED5A22156A;
+	Fri, 27 Jun 2025 10:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UoviRh7l"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fq+LxtBA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F5A29824B;
-	Fri, 27 Jun 2025 10:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5B3253F00;
+	Fri, 27 Jun 2025 10:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751020327; cv=none; b=iE/SrSTj4qsbOVWjILI2OuN76TSVtUhT8LPsi5AyFsnQZ+GhG47ROxbISIms0Fstae09Z+qSzW1lNBWjfZbfH1bId6fcmIWPFqJe4pX9w6lLo5W6mDIIGHQMBz6QgCG0v3EC3ILOBSIM1HvJ3MF96QjZrNCRDqPkjSQwJRbHoak=
+	t=1751020433; cv=none; b=GBCrrUbH0j7rA0Km4/PhdPEtmpQ8+cD0d0yViRAorNk5VOubY56rzI030iXGAtgoc0b22CUpvA0ed76rBFWtsFjw03HvnlCYQCVj3SxgN4jEZqFb6Bv+B0dy8+Yf74nvlgblkyZQj8eUXywDII+B0Ex46gQOpqTNHjidY17YMdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751020327; c=relaxed/simple;
-	bh=dqWLPFhz8rc1ZTXlMaJumoRCie1NT15EY7+LO9HcNC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IaYCW9+YeGfFuf6ts201KsR8FY4N2mmYhb9X/rsus5xaT89c8YZeVuiWniRaym5tHLQlDY8B48ceCpZ4rZOQxktLywS+ZB2LT1e80RN2aZJrYF1if4Bh8r7meaA4sbrwxaG3VMz5zA/VqWsvuQe6oP+wg2H7WtwArXr2RudWHvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UoviRh7l; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=a5DbHwM2RC/F41mKJ6XtRMRcJqm5DzALFSyCg+z/++Y=; b=UoviRh7l6mtdS4pvSN45NIy1GS
-	Q1xm1CVZa0z5bPkHbwkuDfLXc0hMptb5m/xORqfEiqT7sBQP0QUe0sX2uRp5yoYVei+Y+qB+bIwxS
-	g4HTETlpY8Tb0RvGNptLJo52+FkJxz55DgWNclVcnXeAz+a1CPwG4ojcOkGivHp4yS3QOq9lq+yOJ
-	hnD4b8USppfLMAV5pcJ2McDMP3TtbthuEeRGT6eGb5EqzGjCG2vToYO840NZSX+m+rS6USYox+gRT
-	t5VtAg5Yq4uyhNV3iFAtxvl8ZkRkShBxsFEtCP0pThZOfyknCw31i3rSsY/8h+u876MCgicV9733n
-	2Z2pFScg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uV6NC-0000000Dptg-3zkC;
-	Fri, 27 Jun 2025 10:31:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 88146300192; Fri, 27 Jun 2025 12:31:58 +0200 (CEST)
-Date: Fri, 27 Jun 2025 12:31:58 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>
-Subject: Re: [PATCH v3 29/64] objtool: Mark prefix functions
-Message-ID: <20250627103158.GV1613200@noisy.programming.kicks-ass.net>
-References: <cover.1750980516.git.jpoimboe@kernel.org>
- <f277ca3e78d662268d6303637b1bba71c2a22b1f.1750980517.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1751020433; c=relaxed/simple;
+	bh=VP/dnezPn4QiNsfJL0cEcXD71vgexIS6ujKQqzJYGLc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gsEhg0nK8kIAqaMSrBMt7kyvXfT+OeAx6qsxDjh4hgZGdnLZy6dM9Lcj6r16agGvBYI9oGVYUPYL0bS5Uq59s4hnM6BbFrNDROGp2ARNhW5vu6ag25BAUaZ4vyKIn9OmP3GRrJmtQOHovh8DF1vG8JhqUPw3xZVmq0Aw0k9NWsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fq+LxtBA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55R4DtBB015139;
+	Fri, 27 Jun 2025 10:33:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=olCj1v8P/I3CvFhsgigwhz
+	rq5RbTz3yGHfA546iFpUw=; b=fq+LxtBANxcTrB8JACHibzXElVGoC7WC2KU6Ck
+	UoD7Afvo5UWu0FZeQHuP+5I//Wk3CO/00CqdG1rYfukUr0h+nMAGYdXAnAP2AWY7
+	fvcEe+tcbBSy9mK3/oD12GM8OLYKi0awmRx9NMCcT5iRdcY/y1wm1Q8V4vmT7CGq
+	/29Qxe+0g7/5XhXQS585VhV93PYeEZcBmClvMWF8gy1RQQ3OMNnch2+UPus/0kB7
+	1XQh2dguLugn/Oi0X1PxoJbvwge3k+nqkB/wb67sdNNrZn1w0xzB95SN7gq2tKHl
+	nN7oSmjMq88KGh1sDb5DXL1gZfO7GrW+BXoI2n/pT0wJkJZQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47fbm253pc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 10:33:45 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55RAXi9k012595
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 10:33:44 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Fri, 27 Jun 2025 03:33:41 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Ling Xu
+	<quic_lxu5@quicinc.com>
+Subject: [PATCH v4 0/4] Add support for gdsp remoteproc on sa8775p
+Date: Fri, 27 Jun 2025 16:03:15 +0530
+Message-ID: <20250627103319.2883613-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f277ca3e78d662268d6303637b1bba71c2a22b1f.1750980517.git.jpoimboe@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=YYu95xRf c=1 sm=1 tr=0 ts=685e7389 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=qgJfyGv91k1fQCYRv54A:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: --txrtWjGz-DVbVLqDDqyvF1EEcAq7s9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDA4NiBTYWx0ZWRfX5CvdDJrGB8V5
+ YPrCP71K7TsRgsZkipN5HwUb0pNbYUmd/xqIXsba5l7l4Isvm5UnHI/g9st4sxtapsU7iefRsxE
+ WUKuu2wLQzSSc0ZhAqN1th4xO92+sUwS8TZe4GwS+7D7BBhTZ9N+8rT9KMKzeCPug91SKYXzhRC
+ qG5n6cjF/viL8jCbS2UQnubdvFhoBMEe8nhmt+qOWEqgX4hrqWuCJ/pwaNGYtJ9YNXpQVirufcQ
+ fCpuSlwbbgA++J5A6xoEnUjrBXQpkVbcAt+0M+Zhec+mhaIV1j0zkZ09UpvqGyIftvPR+E7rd7p
+ Qk4hDFsfb0YnVp4c+rLW0Q7zuNncvCG1aL3mDiBFgYfxFop0pIkR46gH3Cpfh2QQL+jGz7lItSB
+ FXRcUqlBsrx06TpSnzrS9cWD2KZ0fQ16ixwv9GIrIHW9vRCwwWB5bSF6q3V0IrISk2CTqRs+
+X-Proofpoint-ORIG-GUID: --txrtWjGz-DVbVLqDDqyvF1EEcAq7s9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxlogscore=697
+ clxscore=1015 mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506270086
 
-On Thu, Jun 26, 2025 at 04:55:16PM -0700, Josh Poimboeuf wrote:
-> In preparation for the objtool klp diff subcommand, introduce a flag to
-> identify __pfx_*() and __cfi_*() functions in advance so they don't need
-> to be manually identified every time a check is needed.
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> ---
->  tools/objtool/check.c               | 3 +--
->  tools/objtool/elf.c                 | 4 ++++
->  tools/objtool/include/objtool/elf.h | 6 ++++++
->  3 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 80bafcdb42af..55cc3a2a21c9 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -3564,8 +3564,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
->  
->  		if (func && insn_func(insn) && func != insn_func(insn)->pfunc) {
->  			/* Ignore KCFI type preambles, which always fall through */
-> -			if (!strncmp(func->name, "__cfi_", 6) ||
-> -			    !strncmp(func->name, "__pfx_", 6))
-> +			if (is_prefix_func(func))
->  				return 0;
->  
->  			if (file->ignore_unreachables)
-> diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-> index 59568381486c..1bb86151243a 100644
-> --- a/tools/objtool/elf.c
-> +++ b/tools/objtool/elf.c
-> @@ -442,6 +442,10 @@ static void elf_add_symbol(struct elf *elf, struct symbol *sym)
->  	elf_hash_add(symbol, &sym->hash, sym->idx);
->  	elf_hash_add(symbol_name, &sym->name_hash, str_hash(sym->name));
->  
-> +	if (is_func_sym(sym) &&
-> +	    (strstarts(sym->name, "__pfx_") || strstarts(sym->name, "__cfi_")))
-> +		sym->prefix = 1;
-> +
->  	if (is_func_sym(sym) && strstr(sym->name, ".cold"))
->  		sym->cold = 1;
->  	sym->pfunc = sym->cfunc = sym;
-> diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objtool/elf.h
-> index f41496b0ad8f..842faec1b9a9 100644
-> --- a/tools/objtool/include/objtool/elf.h
-> +++ b/tools/objtool/include/objtool/elf.h
-> @@ -72,6 +72,7 @@ struct symbol {
->  	u8 frame_pointer     : 1;
->  	u8 ignore	     : 1;
->  	u8 cold		     : 1;
-> +	u8 prefix	     : 1;
->  	struct list_head pv_target;
->  	struct reloc *relocs;
->  	struct section *group_sec;
-> @@ -229,6 +230,11 @@ static inline bool is_local_sym(struct symbol *sym)
->  	return sym->bind == STB_LOCAL;
->  }
->  
-> +static inline bool is_prefix_func(struct symbol *sym)
-> +{
-> +	return is_func_sym(sym) && sym->prefix;
-> +}
+The fastrpc driver has support for 5 types of remoteprocs. There are
+some products which support GDSP remoteprocs. GDSP is General Purpose
+DSP where tasks can be offloaded. Add fastrpc nodes and task offload
+support for GDSP. Also strict domain IDs for domain.
+Patch [v3]: https://lore.kernel.org/linux-arm-msm/20250622133820.18369-1-quic_lxu5@quicinc.com/
 
-func_is_prefix() ?
+Changes in v4:
+  - Split patch and change to common syntax.
+Changes in v3:
+  - Restrict domain IDs to represent a domain.
+Changes in v2:
+  - Add GPDSP labels in dt-bindings.
 
-Also, since we only ever set sym->prefix when is_func_sym(), this helper
-could avoid checking that again.
+Ling Xu (4):
+  dt-bindings: misc: qcom,fastrpc: Add GDSP label
+  arm64: dts: qcom: sa8775p: add GDSP fastrpc-compute-cb nodes
+  misc: fastrpc: Refactor domain ID to enforce strict mapping
+  misc: fastrpc: add support for gdsp remoteproc
+
+ .../bindings/misc/qcom,fastrpc.yaml           |  2 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 57 +++++++++++++++++++
+ drivers/misc/fastrpc.c                        | 57 ++++++++-----------
+ include/uapi/misc/fastrpc.h                   |  8 +++
+ 4 files changed, 91 insertions(+), 33 deletions(-)
+
+-- 
+2.34.1
+
 
