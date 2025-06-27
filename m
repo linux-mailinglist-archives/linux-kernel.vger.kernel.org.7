@@ -1,97 +1,94 @@
-Return-Path: <linux-kernel+bounces-705640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-705637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C793AEABBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188A3AEABB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 02:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765994E0177
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BB61563D04
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 00:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F98CA5A;
-	Fri, 27 Jun 2025 00:23:07 +0000 (UTC)
-Received: from joooj.vinc17.net (joooj.vinc17.net [155.133.131.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C3343172;
+	Fri, 27 Jun 2025 00:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUgrR31X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B55212E5B;
-	Fri, 27 Jun 2025 00:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.133.131.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06109460;
+	Fri, 27 Jun 2025 00:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750983787; cv=none; b=R9nYon1UpAdhzVg8PoAmv6Ba1hOg7/IYgEtJVjbsB9trqtMcnHztF/Jm5rrXJW6u3Ys3bK0HVuY+sbjbRdRWIvor7a9A1vockf4pmYUCgrSjIZUVNCxpzmoB8ymZJH0e6dVt2VCtKs0MKGPWZEiE1Lm2267OcWD/gJODRbrkRPU=
+	t=1750983592; cv=none; b=NZEo0Y6Jt7Vjqg/LfrAYZvHrh+5UNifNn9myIIkrQ0kGvyY+UagxdkVTJaq1ke8DNxl1B2qpp0AT/QEWASEeI6UYHpP5ZlEqAzVxfxHauIY5o/hkJpnvWjOX7JXGNekfv6+ObZCyV8gX2rlhgjFj/uHd4dAVWAryCeUR4gbTEh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750983787; c=relaxed/simple;
-	bh=ARQyf+w3iW4Di+uKWvsWr3VefT5lXktN5+Vu3+WI1r0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsOv/esJAgYEqdRi6yaas+Q1HxtjhkDyufTuDJ8ImZdNDkD8BFt6dMoWSvCx5jqcFNasr5RP3Z6v82aVaTaGzEr/1J5xvXn9uW7JnZAjLA1PQwNrk5H9/tkbTnwf7pdDKLopwHP1eFY2x2yeu+Hm4HLsCHT1QEpcenjLp3nhheQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinc17.net; spf=pass smtp.mailfrom=vinc17.net; arc=none smtp.client-ip=155.133.131.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vinc17.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinc17.net
-Received: from smtp-qaa.vinc17.net (2a02-8428-1b1d-4d01-96a9-491d-7b48-ba31.rev.sfr.net [IPv6:2a02:8428:1b1d:4d01:96a9:491d:7b48:ba31])
-	by joooj.vinc17.net (Postfix) with ESMTPSA id 0E6285CF;
-	Fri, 27 Jun 2025 02:20:13 +0200 (CEST)
-Received: by qaa.vinc17.org (Postfix, from userid 1000)
-	id 4A6E5CA045B; Fri, 27 Jun 2025 02:20:11 +0200 (CEST)
-Date: Fri, 27 Jun 2025 02:20:11 +0200
-From: Vincent Lefevre <vincent@vinc17.net>
-To: Carlos O'Donell <carlos@redhat.com>
-Cc: Alejandro Colomar <alx@kernel.org>, "Andries E. Brouwer" <aeb@cwi.nl>,
-	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Subject: Re: man-pages-6.14 released
-Message-ID: <20250627002011.GA431181@qaa.vinc17.org>
-Mail-Followup-To: Vincent Lefevre <vincent@vinc17.net>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Alejandro Colomar <alx@kernel.org>,
-	"Andries E. Brouwer" <aeb@cwi.nl>, linux-man@vger.kernel.org,
-	linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
-References: <uidtufql6ftz72im7w6zggeihwhuwgnpxwb7j46fbp6ryvzv4i@cwyp6ewepeob>
- <20250509112627.GA924923@if>
- <bn2rs76dkhejmthy2wvul4ho26zzlwtkfg474ztiwggkxz7f3d@g25omktsd3ug>
- <20250509121454.GA952723@if>
- <3e82680d-149c-4a67-b838-bc73c0be3e4e@redhat.com>
- <e363mzanav4inu3wtk5pmyzfwlquxr5kwh7ytk5emtayizi7qi@dqxritlnl22g>
- <42dad79f-e0f2-4731-ac14-0189f5d278a0@redhat.com>
+	s=arc-20240116; t=1750983592; c=relaxed/simple;
+	bh=RrmsbVmyogoXW9Ko+aax+pPbyYQ0NRNNiGyXTQbNfws=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cxJlUQazjLcjFNwWP//soOFmhp/QB3DaKeMb3YwA9DPt/OPYYRlBpNP45jcvAqWcG8xUW3LZLUiRfhBh5llcrDZFOsV6fkONTt4pzUkKIqR7S/JHLSUnBesl2Vwm9XwVThH33l1MVQ8NdYekRpoVR4uuf68iVFO0MXjXKNjvoFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUgrR31X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BFAEC4CEEB;
+	Fri, 27 Jun 2025 00:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750983592;
+	bh=RrmsbVmyogoXW9Ko+aax+pPbyYQ0NRNNiGyXTQbNfws=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=gUgrR31XVX2D9PNxb2xoqJcgtfunntbCmCWaCWUo90b2DiSHb6+7Zz1RoY43IH/Ga
+	 6MlqTnRN8a4gYNVJOuDGUkt4tPFgjSe3nB1ReWEu3nyNagbRTAZa9AIKrxFMIaLzuZ
+	 IvXYj8Aebh6sX0py5t0sb1pzgRVTy/RK5nGZ2K3ye6DTjqH1WPjYdUO/w2xxwPeH9H
+	 SGHI7TCaAJmKl5g84b1mjfzB/PM7A94x6k4a9GoluF8ETPjFwXL+V/EwNKnctyVDEO
+	 BX5LNBShG1naOeSlLGUzIiKTg3VlNtr3P7Cv8j6sMvs8YIjWVOuhztfQNOL6dldaqb
+	 REuTIxh9XOnXw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1AF3A40FCB;
+	Fri, 27 Jun 2025 00:20:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <42dad79f-e0f2-4731-ac14-0189f5d278a0@redhat.com>
-X-Mailer-Info: https://www.vinc17.net/mutt/
-User-Agent: Mutt/2.2.13+86 (bb2064ae) vl-169878 (2025-02-08)
+Subject: Re: [PATCH net-next v2] net: mana: Fix build errors when
+ CONFIG_NET_SHAPER is disabled
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175098361824.1380299.7391305111038301717.git-patchwork-notify@kernel.org>
+Date: Fri, 27 Jun 2025 00:20:18 +0000
+References: <1750851355-8067-1-git-send-email-ernis@linux.microsoft.com>
+In-Reply-To: <1750851355-8067-1-git-send-email-ernis@linux.microsoft.com>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 2025-06-26 19:01:24 -0400, Carlos O'Donell wrote:
-> On 6/26/25 5:04 PM, Alejandro Colomar wrote:
-> > The thing is, as someone else mentioned, removals happen also implicitly
+Hello:
 
-This was me, there:
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-https://lore.kernel.org/linux-man/u2ogua4573d2xm2p2oiuna67kydkr3e26pt6lixeidezdw34dg@nvn64na3cptt/T/#me71349fc15520d5c183311dfaf85667903c07d9d
-
-> > by moving text from one page to another and not copying copyright
-> > notices, so how much does it matter an intentional rewrite of the
-> > copyright notices into a different form (but which keeps their
-> > copyright, as part of the AUTHORS file), compared to an unintentional
-> > removal of copyright by moving the text (these do actually remove
-> > copyright, so these are the problematic ones).
+On Wed, 25 Jun 2025 04:35:55 -0700 you wrote:
+> Fix build errors when CONFIG_NET_SHAPER is disabled, including:
 > 
-> Both are legally mistakes.
+> drivers/net/ethernet/microsoft/mana/mana_en.c:804:10: error:
+> 'const struct net_device_ops' has no member named 'net_shaper_ops'
+> 
+>      804 |         .net_shaper_ops         = &mana_shaper_ops,
+> 
+> [...]
 
-Mistakes, yes (as long as copyright notices are per-file).
-But legally? Why?
+Here is the summary with links:
+  - [net-next,v2] net: mana: Fix build errors when CONFIG_NET_SHAPER is disabled
+    https://git.kernel.org/netdev/net-next/c/11cd02069872
 
-I've always heard that a copyright notice was optional and only
-informative (so, in particular, there are no requirements to have
-per-file copyright notices instead of a single one for the work).
-
+You are awesome, thank you!
 -- 
-Vincent Lefèvre <vincent@vinc17.net> - Web: <https://www.vinc17.net/>
-100% accessible validated (X)HTML - Blog: <https://www.vinc17.net/blog/>
-Work: CR INRIA - computer arithmetic / Pascaline project (LIP, ENS-Lyon)
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
