@@ -1,167 +1,187 @@
-Return-Path: <linux-kernel+bounces-707162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27151AEC087
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 22:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBC9AEBFFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677711C4595A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C99016E20A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 19:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C212E92DE;
-	Fri, 27 Jun 2025 20:01:46 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2EE2ECD16;
+	Fri, 27 Jun 2025 19:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pDQSiQ1+"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6900F15E8B;
-	Fri, 27 Jun 2025 20:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048572EBBA3;
+	Fri, 27 Jun 2025 19:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751054506; cv=none; b=svY2gZM/4Uncqo24EbUxgY6dUSR1d1T/HXwR9tPTbSKxdjsytqEo8jYf/IgoLWx04Mg2EVvj1a3vCEKLY+gLRDhxp1RuUP64BmJZ7wZu8CAJV1PhyNXRFk/YcixlzFvy/6XoRDZe9Q/9VBpUxbWkjMMjWriDvPVFVcJgdcHmfes=
+	t=1751052726; cv=none; b=i4tQ7nZSXvRS1Pb0f0XDwpzK626rTUIGUfTRt0CDMcfHNnhjdy91R0aOB8PSkYr+Uc8m+xhjJkx4KuzH4TqIDA8OPkLc/vS4SGXPoYbGYm0nlDJgNo6g3/pfTbXTJtkkTWPHEl9C4o9AhJnrbF3/OjBB1G86UvYL5F0FgytyW/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751054506; c=relaxed/simple;
-	bh=alEzDmtk2I2rFB/roV/8cjxA5f7pcGNJr887FkIlt8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxsAUsCHoHg3OHn6bJP2t15aNMStWa8DdPA5qdsyEv/wK0ru/pgXWqqgsYTjBjA9JIb4DWXyafDci37vXJfN2pPKQ3euEghAS6dWQcCbfmLx9Z9QTujikrc9QWh4hARzaYotGeQ6v+zGUr6hCaxzw1rNoCjqkzCQPJhsJ+jh1jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1uVEnR-000000003Fi-3XIT;
-	Fri, 27 Jun 2025 19:31:37 +0000
-Date: Fri, 27 Jun 2025 20:31:34 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: "Chester A. Unal" <chester.a.unal@arinc9.com>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Wunderlich <frank-w@public-files.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [net-next PATCH 0/6] net: dsa: mt7530: modernize MIB handling +
- fix
-Message-ID: <aF7xlqRLXlZu0DZr@makrotopia.org>
-References: <20250410163022.3695-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1751052726; c=relaxed/simple;
+	bh=OmkwvJTCg9uftU+D1x+MegluB/qmhXQnYLMchcdtboI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VU0BKuQFnq0/7SkhM01MVT8TAQOzX7qlp0g3JKGPHg6bJ8VB6wpcq89k7iBDcKuNgTExwXWFshkUQS3oaTTZ6vTznoNCvzCB/n/q17RHUndPTm2DAUi8V0LEKecd8wF9j/5E6NJbWSyQtDFJ+LlK+MZKmMwA1SekYVt+QSnnXb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pDQSiQ1+; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RJVppO2496974;
+	Fri, 27 Jun 2025 14:31:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751052711;
+	bh=IsmC7YBYLmO/IpP84oFzjb88vBYm7nSf6TjgsuwpSqY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=pDQSiQ1+cQqO547LwgYMRGy+oMhly/INy1eCQ2edPoQus286hjCKMwI10wdtSzA+7
+	 6YbgIMShghzvNO+fsMnfbyJZ3SKFQigpgnEnZFKgY50j92rAfsEkDjcRZTce1PMulu
+	 QAnM12CWoI83aCJ6KhpGBSuayRO47Rc90f4kpVjA=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RJVp4Q3531647
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 27 Jun 2025 14:31:51 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
+ Jun 2025 14:31:50 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 27 Jun 2025 14:31:50 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RJVo3k3598018;
+	Fri, 27 Jun 2025 14:31:50 -0500
+Date: Fri, 27 Jun 2025 14:31:50 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+CC: <aaro.koskinen@iki.fi>, <andreas@kemnade.info>, <khilman@baylibre.com>,
+        <rogerq@kernel.org>, <tony@atomide.com>, <lee@kernel.org>,
+        <d-gole@ti.com>, <robertcnelson@gmail.com>, <jkridner@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <m-leonard@ti.com>, <praneeth@ti.com>, <afd@ti.com>
+Subject: Re: [PATCH v2] regulator: tps65219: Fix devm_kmalloc size allocation
+Message-ID: <20250627193150.nxer4zuowaejzp4v@unarmored>
+References: <20250620154541.2713036-1-s-ramamoorthy@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250410163022.3695-1-ansuelsmth@gmail.com>
+In-Reply-To: <20250620154541.2713036-1-s-ramamoorthy@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Christian,
-
-On Thu, Apr 10, 2025 at 06:30:08PM +0200, Christian Marangi wrote:
-> This small series modernize MIB handling for MT7530 and also
-> implement .get_stats64.
+On 10:45-20250620, Shree Ramamoorthy wrote:
+> In probe(), two arrays of structs are allocated with the devm_kmalloc()
+> function, but the memory size of the allocations were given as the arrays'
+> length (pmic->common_irq_size for the first call and pmic->dev_irq_size for
+> the second devm_kmalloc call). The memory size should have been the total
+> memory needed.
 > 
-> It was reported that kernel and Switch MIB desync in scenario where
-> a packet is forwarded from a port to another. In such case, the
-> forwarding is offloaded and the kernel is not aware of the
-> transmitted packet. To handle this, read the counter directly
-> from Switch registers.
+> This led to a heap overflow when the struct array was used. The issue was
+> first discovered with the PocketBeagle2 and BeaglePlay. The common and
+> device-specific structs are now allocated one at a time within the loop.
 > 
-> Christian Marangi (6):
->   net: dsa: mt7530: generalize read port stats logic
->   net: dsa: mt7530: move pkt size and rx err MIB counter to rmon stats
->     API
->   net: dsa: mt7530: move pause MIB counter to eth_ctrl stats API
->   net: dsa: mt7530: move pkt stats and err MIB counter to eth_mac stats
->     API
->   net: dsa: mt7530: move remaining MIB counter to define
->   net: dsa: mt7530: implement .get_stats64
+> Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+> Reported-by: Dhruva Gole <d-gole@ti.com>
+> Closes: https://lore.kernel.org/all/20250619153526.297398-1-d-gole@ti.com/
+> Tested-by: Robert Nelson <robertcnelson@gmail.com>
+> Acked-by: Andrew Davis <afd@ti.com>
+> Signed-off-by: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+> ---
+> v2: Update commit message explanation & tags.
+> ---
 
-After this series being applied I see lockdep warnings every time
-the interface counters are being read on MT7531 connected via MDIO:
+Kasan also reports the same on latest next :(
+https://gist.github.com/nmenon/a0a020e8417c198d2f366fa00b900e12
 
-[  234.374708] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:579
-[  234.383200] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 3667, name: ifconfig
-[  234.391202] preempt_count: 1, expected: 0
-[  234.395226] INFO: lockdep is turned off.
-[  234.399150] CPU: 3 UID: 0 PID: 3667 Comm: ifconfig Tainted: G        W  O        6.16.0-rc1+ #0 NONE 
-[  234.399158] Tainted: [W]=WARN, [O]=OOT_MODULE
-[  234.399160] Hardware name: Bananapi BPI-R3 (DT)
-[  234.399162] Call trace:
-[  234.399165]  show_stack+0x28/0x78 (C)
-[  234.399179]  dump_stack_lvl+0x68/0x8c
-[  234.399184]  dump_stack+0x14/0x1c
-[  234.399188]  __might_resched+0x138/0x250
-[  234.399197]  __might_sleep+0x44/0x80
-[  234.399201]  __mutex_lock+0x4c/0x934
-[  234.399209]  mutex_lock_nested+0x20/0x28
-[  234.399215]  mt7530_get_stats64+0x40/0x2ac
-[  234.399222]  dsa_user_get_stats64+0x2c/0x40
-[  234.399229]  dev_get_stats+0x44/0x1e0
-[  234.399237]  dev_seq_printf_stats+0x24/0xe0
-[  234.399244]  dev_seq_show+0x14/0x40
-[  234.399248]  seq_read_iter+0x368/0x464
-[  234.399257]  seq_read+0xd0/0xfc
-[  234.399263]  proc_reg_read+0xa8/0xf0
-[  234.399268]  vfs_read+0x98/0x2b0
-[  234.399275]  ksys_read+0x54/0xdc
-[  234.399280]  __arm64_sys_read+0x18/0x20
-[  234.399286]  invoke_syscall.constprop.0+0x4c/0xd0
-[  234.399293]  do_el0_svc+0x3c/0xd0
-[  234.399298]  el0_svc+0x34/0xa0
-[  234.399303]  el0t_64_sync_handler+0x104/0x138
-[  234.399308]  el0t_64_sync+0x158/0x15c
+Could this be routed to master please?
 
-Note that this only shows with some lock debugging options being set
-and may not actually be a problem, but I believe it anyway should be
-fixed somehow.
+Reviewed-by: Nishanth Menon <nm@ti.com>
 
-#
-# Lock Debugging (spinlocks, mutexes, etc...)
-#
-CONFIG_LOCK_DEBUGGING_SUPPORT=y
-CONFIG_PROVE_LOCKING=y
-CONFIG_PROVE_RAW_LOCK_NESTING=y
-# CONFIG_LOCK_STAT is not set
-CONFIG_DEBUG_RT_MUTEXES=y
-CONFIG_DEBUG_SPINLOCK=y
-CONFIG_DEBUG_MUTEXES=y
-CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
-CONFIG_DEBUG_RWSEMS=y
-CONFIG_DEBUG_LOCK_ALLOC=y
-CONFIG_LOCKDEP=y
-CONFIG_LOCKDEP_BITS=15
-CONFIG_LOCKDEP_CHAINS_BITS=16
-CONFIG_LOCKDEP_STACK_TRACE_BITS=19
-CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
-CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
-# CONFIG_DEBUG_LOCKDEP is not set
-CONFIG_DEBUG_ATOMIC_SLEEP=y
-# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
-# CONFIG_LOCK_TORTURE_TEST is not set
-# CONFIG_WW_MUTEX_SELFTEST is not set
-# CONFIG_SCF_TORTURE_TEST is not set
-# CONFIG_CSD_LOCK_WAIT_DEBUG is not set
-# end of Lock Debugging (spinlocks, mutexes, etc...)
+>  drivers/regulator/tps65219-regulator.c | 28 +++++++++++++-------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/regulator/tps65219-regulator.c b/drivers/regulator/tps65219-regulator.c
+> index b16b300d7f45..5e67fdc88f49 100644
+> --- a/drivers/regulator/tps65219-regulator.c
+> +++ b/drivers/regulator/tps65219-regulator.c
+> @@ -436,46 +436,46 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
+>  					     pmic->rdesc[i].name);
+>  	}
+>  
+> -	irq_data = devm_kmalloc(tps->dev, pmic->common_irq_size, GFP_KERNEL);
+> -	if (!irq_data)
+> -		return -ENOMEM;
+> -
+>  	for (i = 0; i < pmic->common_irq_size; ++i) {
+>  		irq_type = &pmic->common_irq_types[i];
+>  		irq = platform_get_irq_byname(pdev, irq_type->irq_name);
+>  		if (irq < 0)
+>  			return -EINVAL;
+>  
+> -		irq_data[i].dev = tps->dev;
+> -		irq_data[i].type = irq_type;
+> +		irq_data = devm_kmalloc(tps->dev, sizeof(*irq_data), GFP_KERNEL);
+> +		if (!irq_data)
+> +			return -ENOMEM;
+> +
+> +		irq_data->dev = tps->dev;
+> +		irq_data->type = irq_type;
+>  		error = devm_request_threaded_irq(tps->dev, irq, NULL,
+>  						  tps65219_regulator_irq_handler,
+>  						  IRQF_ONESHOT,
+>  						  irq_type->irq_name,
+> -						  &irq_data[i]);
+> +						  irq_data);
+>  		if (error)
+>  			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+>  					     "Failed to request %s IRQ %d: %d\n",
+>  					     irq_type->irq_name, irq, error);
+>  	}
+>  
+> -	irq_data = devm_kmalloc(tps->dev, pmic->dev_irq_size, GFP_KERNEL);
+> -	if (!irq_data)
+> -		return -ENOMEM;
+> -
+>  	for (i = 0; i < pmic->dev_irq_size; ++i) {
+>  		irq_type = &pmic->irq_types[i];
+>  		irq = platform_get_irq_byname(pdev, irq_type->irq_name);
+>  		if (irq < 0)
+>  			return -EINVAL;
+>  
+> -		irq_data[i].dev = tps->dev;
+> -		irq_data[i].type = irq_type;
+> +		irq_data = devm_kmalloc(tps->dev, sizeof(*irq_data), GFP_KERNEL);
+> +		if (!irq_data)
+> +			return -ENOMEM;
+> +
+> +		irq_data->dev = tps->dev;
+> +		irq_data->type = irq_type;
+>  		error = devm_request_threaded_irq(tps->dev, irq, NULL,
+>  						  tps65219_regulator_irq_handler,
+>  						  IRQF_ONESHOT,
+>  						  irq_type->irq_name,
+> -						  &irq_data[i]);
+> +						  irq_data);
+>  		if (error)
+>  			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+>  					     "Failed to request %s IRQ %d: %d\n",
+> 
+> base-commit: 75f5f23f8787c5e184fcb2fbcd02d8e9317dc5e7
+> -- 
+> 2.43.0
+> 
+> 
 
-CONFIG_TRACE_IRQFLAGS=y
-CONFIG_TRACE_IRQFLAGS_NMI=y
-# CONFIG_DEBUG_IRQFLAGS is not set
-CONFIG_STACKTRACE=y
-# CONFIG_WARN_ALL_UNSEEDED_RANDOM is not set
-# CONFIG_DEBUG_KOBJECT is not set
-
-
-Cheers
-
-
-Daniel
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
