@@ -1,169 +1,174 @@
-Return-Path: <linux-kernel+bounces-706468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B67AEB6F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D30AEB6FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D483B3B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D513BD9BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931222BF3FC;
-	Fri, 27 Jun 2025 11:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8E72D3EF0;
+	Fri, 27 Jun 2025 11:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HfwYnDCM"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b0TqHXgg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF2A2BF012;
-	Fri, 27 Jun 2025 11:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D7C2C032C
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025195; cv=none; b=cJZp1UIssBm1jtamJBG8TF2k9MJI+40EqBHa8g41xdRrlhICd8ZFJ+S8Q+Z+EQ/kOFS8xLDZlAZZ9th4RkbbL11/bybSIgcFR0mKcoHNQzt2aV9czoAzGwZD/q1ptxgCUxeDh+XbDeD3XoUtq3sKJPZyAAu7Oib7bfjqvsSoxhg=
+	t=1751025327; cv=none; b=iwZHG255LIH/67aFeOuroHjWXptmxx32LBP14pn6CvrYoCKbhhvcmXVc9xP7LYUT5WvAH4m8WazBqKbU06yJCvoTZqiG6BUUDeGTWoocDMU8cT9drtlgj9XDvmrPbWOuQ4J008NF2rV4BFoDqeq+QlnT/bFnokRx8Q1mdq5bJg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025195; c=relaxed/simple;
-	bh=WDJRIiBgDgF7nDs2mDyrrymo6t/hxdkYyNXPPcQgJdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScPrwqDDDz9rtKXGs4dgK6gK5Z0uRQIZctmDaevWn/ouImoteNe1OuF4KYZszZpg9fwMOGh9MkUDnZphPYft/Qyp2OMTZwiPiN1bNdvfL5GkzWvgr+kJB91OStV1kfV1dzIVaA7nfIBp4ZLv/WjKIautzI8F5IesnUvmUd0efh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HfwYnDCM; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 64AE920E95;
-	Fri, 27 Jun 2025 13:53:05 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id UBsMN3Dr0E-0; Fri, 27 Jun 2025 13:53:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751025184; bh=WDJRIiBgDgF7nDs2mDyrrymo6t/hxdkYyNXPPcQgJdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HfwYnDCM1zsRY9Rm5LKXfpBahJetXii9aCQ3SpmgsNOt52jkgYBgpW9KMr2a3Pl91
-	 Ft5M0wynRpI3oKb0kFohouxh6gsAf5MRN8Wh9aLaSGRcMSwtygLK5OkmWZbTCHiGyr
-	 Ndhxb0DK3mzSaAquh3+JPYbNeA0Ofhrst6C4Y8dpjf+Ns0NIR9OjHUUwYdtTAKaae2
-	 5BCe2y0DayXrjs7eeA/GdfzxNlyrk9Vsg4yjN6RxHcRHkSuWj4TaFAMP1yNO0NOgey
-	 JMHrPAkVZjLhdqbCZnBhELF6YNAJU1MUVAyk7/qd5R9OTrQpT75gt57FF0hInGF4UE
-	 LAGD4/R4lDHNA==
-Date: Fri, 27 Jun 2025 11:52:41 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [PATCH v2 1/8] dt-bindings: clock: loongson2: Add Loongson
- 2K0300 compatible
-Message-ID: <aF6FtaNB6XgkvUX7@pie>
-References: <20250617162426.12629-1-ziyao@disroot.org>
- <20250617162426.12629-2-ziyao@disroot.org>
- <20250627-gay-sepia-reindeer-2fde2a@krzk-bin>
+	s=arc-20240116; t=1751025327; c=relaxed/simple;
+	bh=C9b8bzYVuBNX3jlO+T7eGAcebhKxaIwMsmpVwf5CeyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZS/wbm6FQ3ErA/zOCAotzIcAm3F+UwlwQOhopuxPCAcIJTLCYLmannQeOwlsC9PNXo4jzjZzMgD1NGWVJ7jFRIfjAsIIXOG4nJIcCQ9I+5ITwCpbHV0ieB4zD/UN5ReidNfR2lpo8DFkC/UnZ7lhIe4jLalvVmNfMFTwJefFi/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b0TqHXgg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751025317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mbSXmwI7TrslY1nGgIlZWbSATN0wGdT0UucOx2x/n00=;
+	b=b0TqHXggl4MjjMx5rY1V5sKEukmMXMq6MVdm5EjJ6FshHmWfAKd4eaO6hb2+/iSCemor0j
+	SEe2QEF/iOVGHHAIWDErbay+GDBu+xlsRGPGxxuEqZM641rqQFgUPu+nbxcWu1SmJtLKZS
+	xBg0wOrTlyEjMJtelIOLtlY11TmBVZM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-jUtCc614M7KIhy6XKG0kPw-1; Fri, 27 Jun 2025 07:55:16 -0400
+X-MC-Unique: jUtCc614M7KIhy6XKG0kPw-1
+X-Mimecast-MFC-AGG-ID: jUtCc614M7KIhy6XKG0kPw_1751025313
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3a52bfda108so1018497f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:55:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751025313; x=1751630113;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mbSXmwI7TrslY1nGgIlZWbSATN0wGdT0UucOx2x/n00=;
+        b=NmUrDB8ooRhhhxYTcaGnvO/7im1URgxu5qBYy+KOQJ/cJ+O/mudqX5MysYBHq3QRet
+         wIz6vDPEXs2k3n36vfsovpX10plOHqKuk12z1D4jPgqxzBOPsrTAKlAB+PvpVQADIqYx
+         qqLoGLNw9YvqqvEyAUw01ri71vvrQhwSW1QIXdQ/lkbBTpis1p3I4KJ3KV38UURpa5Ry
+         uSqCIeIaF/ed074lXoo294cYrkprtrswQGunLKxheTkxPQIkfXNerfg2OHU8uiR/FiFQ
+         HdcPall/KlwZ0QEtqmLKCBGRfo/qv9Q4++KVs1AZvRSbqtinZhVz+HTZyrmOTvvjcppU
+         Ta3g==
+X-Gm-Message-State: AOJu0YySie3XlK+SdF1EMTjOwt7hm/0Lij2xJfDffoS6fVaGAC4dTrpG
+	7Mr3QSSKvN9Zn/sV3drahM2rRYwnvb8qKNgRsHxfo1DZqBGRDM+nMOW2YNGDfrUDLE4BktJ/7nL
+	ENqH2thFMi5bVNW1ajbRh4UkkXL5NdWqDrMQh9HbZnReFr3qchOM6aTOzFO4zVEoj9XETSwjanE
+	SHvL3glQ91g9jm8nDus7KPV1gTozdQeYdpHToOjF09rOP+Xyeq
+X-Gm-Gg: ASbGncuub12kciL6gmBstAYoGGeUnHSAkAdp0aM/Iwmou2Rw0oPLle3XO5Rub0QA0Jm
+	QDMDJ2WodcJGHVjFWUXQwVg54/Rw2D2/XWThw6qkt5GSTtB3AvzPC+hNjq0Udbk3ihPcPGfFpS4
+	BPW9E9LQQCZgIaH5yqMBT4gS9KaroanRYOiFh7PRAai+CvhuUmbRSLR6pbGPUQzVXIGjUIBft63
+	kVPAfB36zxP+325XF85J0AUbjfel0MIevRozsRDRMs5q/DhPb8HxDLLsvCHz3tz99i0A8PsjRM+
+	es+id5xIZrSu5IDwyXAO0W2MFiTuJaDnpy1B4Zy7aBcRTVWg4+OkP0XeQ/6YgBwa20xPhZgWX//
+	mERKrp94=
+X-Received: by 2002:adf:9d92:0:b0:3a5:2575:6b45 with SMTP id ffacd0b85a97d-3a90075fd06mr2360965f8f.48.1751025312896;
+        Fri, 27 Jun 2025 04:55:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFugdJI4CDwGzTOAtHeyUKGxYs4vUwxiYsnRMKAUbK5+L5Bwr4Th3CZuVl0FW8vFIePdmYM4A==
+X-Received: by 2002:adf:9d92:0:b0:3a5:2575:6b45 with SMTP id ffacd0b85a97d-3a90075fd06mr2360911f8f.48.1751025312212;
+        Fri, 27 Jun 2025 04:55:12 -0700 (PDT)
+Received: from localhost (p200300d82f2d5d00f1a32f3065759425.dip0.t-ipconnect.de. [2003:d8:2f2d:5d00:f1a3:2f30:6575:9425])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a892e6280bsm2537152f8f.94.2025.06.27.04.55.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 04:55:11 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>
+Subject: [PATCH v1 0/4] mm: folio_pte_batch() improvements
+Date: Fri, 27 Jun 2025 13:55:06 +0200
+Message-ID: <20250627115510.3273675-1-david@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627-gay-sepia-reindeer-2fde2a@krzk-bin>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 27, 2025 at 10:03:53AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Jun 17, 2025 at 04:24:19PM +0000, Yao Zi wrote:
-> > Document the clock controller shipped in Loongson 2K0300 SoC, which
-> > generates various clock signals for SoC peripherals.
-> > 
-> > Differing from previous generations of SoCs, 2K0300 requires a 120MHz
-> > external clock input, and a separate dt-binding header is used for
-> > cleanness.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  .../bindings/clock/loongson,ls2k-clk.yaml     | 26 ++++++---
-> >  MAINTAINERS                                   |  1 +
-> >  .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
-> >  3 files changed, 75 insertions(+), 6 deletions(-)
-> >  create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> > index 4f79cdb417ab..3e0a894cfb2f 100644
-> > --- a/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
-> > @@ -16,6 +16,7 @@ description: |
-> >  properties:
-> >    compatible:
-> >      enum:
-> > +      - loongson,ls2k0300-clk
-> >        - loongson,ls2k0500-clk
-> >        - loongson,ls2k-clk  # This is for Loongson-2K1000
-> >        - loongson,ls2k2000-clk
-> > @@ -24,19 +25,32 @@ properties:
-> >      maxItems: 1
-> >  
-> >    clocks:
-> > -    items:
-> > -      - description: 100m ref
-> > +    maxItems: 1
-> >  
-> > -  clock-names:
-> > -    items:
-> > -      - const: ref_100m
-> > +  clock-names: true
-> 
-> No. How does this implement my comment?
+Ever since we added folio_pte_batch() for fork() + munmap() purposes,
+a lot more users appeared (and more are being proposed), and more
+functionality was added.
 
-I'm sorry that I forgot about the suggestion of dropping clock-names for
-the new compatible.
+Most of the users only need basic functionality, and could benefit from
+a non-inlined version.
 
-Is it acceptable to remove the description of clocks property, keep
-clock-names property as-is, and use an allOf block to disallow
-clocks-names for the new 2K0300 compatible? Thanks for your explanation.
+So let's clean up folio_pte_batch() and split it into a basic
+folio_pte_batch() (no flags) and a more advanced folio_pte_batch_ext().
+Using either variant will now look much cleaner.
 
-> It makes no sense, why 100m even appeared here. I already objected last
-> time!
-> 
-> 
-> >  
-> >    '#clock-cells':
-> >      const: 1
-> >      description:
-> >        The clock consumer should specify the desired clock by having the clock
-> >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/loongson,ls2k-clk.h
-> > -      for the full list of Loongson-2 SoC clock IDs.
-> > +      and include/dt-bindings/clock/loongson,ls2k0300-clk.h for the full list of
-> > +      Loongson-2 SoC clock IDs.
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: loongson,ls2k0300-clk
-> > +    then:
-> > +      properties:
-> > +        clock-names:
-> > +          const: ref_120m
-> 
-> NAK, stop doing this pattern. You already got comment on this.
+This series will likely conflict with some changes in some
+(old+new) folio_pte_batch() users, but conflicts should be trivial to
+resolve.
 
-Oops, I missed the comment about dropping the frequency (or the full
-clock-names property) from clock-names when writing v2, and I've decided
-to drop the clock-names property completely for the 2K0300 compatible.
+Tested on x86-64. Cross-compile tested.
 
-Sorry again for my mistake.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Zi Yan <ziy@nvidia.com>
+Cc: Matthew Brost <matthew.brost@intel.com>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Rakie Kim <rakie.kim@sk.com>
+Cc: Byungchul Park <byungchul@sk.com>
+Cc: Gregory Price <gourry@gourry.net>
+Cc: Ying Huang <ying.huang@linux.alibaba.com>
+Cc: Alistair Popple <apopple@nvidia.com>
+Cc: Pedro Falcato <pfalcato@suse.de>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>
 
-> Best regards,
-> Krzysztof
-> 
-> 
+David Hildenbrand (4):
+  mm: convert FPB_IGNORE_* into FPB_HONOR_*
+  mm: smaller folio_pte_batch() improvements
+  mm: split folio_pte_batch() into folio_pte_batch() and
+    folio_pte_batch_ext()
+  mm: remove boolean output parameters from folio_pte_batch_ext()
 
-Best regards,
-Yao Zi
+ mm/internal.h  | 110 +++++++++++++++++++++++++++----------------------
+ mm/madvise.c   |  27 +++---------
+ mm/memory.c    |  21 ++++------
+ mm/mempolicy.c |   5 +--
+ mm/mlock.c     |   4 +-
+ mm/mremap.c    |   4 +-
+ mm/rmap.c      |   4 +-
+ mm/util.c      |  29 +++++++++++++
+ 8 files changed, 105 insertions(+), 99 deletions(-)
+
+
+base-commit: 0051fec1d393b659ffee707f869f8ffe4d1632e2
+-- 
+2.49.0
+
 
