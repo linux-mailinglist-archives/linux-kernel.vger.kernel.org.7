@@ -1,86 +1,179 @@
-Return-Path: <linux-kernel+bounces-706617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22DDAEB923
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF46BAEB929
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32ED1C438D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0D916D8E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19A02D97BF;
-	Fri, 27 Jun 2025 13:43:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A2A2DBF53;
+	Fri, 27 Jun 2025 13:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Zxk6VSsd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YMlvIMbO"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0349E2F1FDF
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 13:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D0A2F1FDF;
+	Fri, 27 Jun 2025 13:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751031784; cv=none; b=D7kzpHPDCpn4EyVosPGs8gXNHs923LkHnpeTKUD4sFvtAegORCJM9YKtqpx8qJBlxrAIprJUrjB5sFDOotR4A9z4VfXF6TS/1A/E1pEx2sasK3mCwB7/qEcCGeRIafNVc0LLfBm7YscMFdPqcT+RbIQgouNS+1CqrH0E6G3mcpM=
+	t=1751031856; cv=none; b=IXM+g/fwQc1X7wneJeNHfQPG6+WG0JEkm43Pz71X00ymctD7ot0fdO9DwSkrWRhav2Y/RlTOkSeXSoy0zR0uGiqFbxnzpSRwaAiBWSakmkVfYKBoPca9ghMR1WTMe47qP6qazM1Ausu8KdYxprkKaFWSv+QZNpvYJvDPRmyTExU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751031784; c=relaxed/simple;
-	bh=Fs5lzt5cJsSsWvQOaAiHoIZQVL4DvXM39NlB5+MOb/U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UBW3ysqkMd0Q+rGSfbBBhHgDVIUv6uZVxfTXrLRhB/iN+eyAYpVrgtjEw8W4YoMCNQ7bm9Q3l0MQ0qwxT2vIBaWhWJU4Y5SZhyweglUKaKDhgKjZh2lsEczlCLGktfHeRg0RpMTCP4THxqDgysiwsIBtiTufX4jHYhLHUs9wqHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddd5cd020dso37760325ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 06:43:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751031782; x=1751636582;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5zJ7bO0fv9qH/RU76MZInwOjd16BKe4Iqr3ENxxsoFQ=;
-        b=TFzT/QYK/YlKxm3/0bKUMxskzlB/TsGwpu0x/YPBDin8IvcLAGx07bE01bZVyEPg9U
-         tn/30iD+kzUpTqqX4+dXPgL+lDDHdeZ7jZqKGh3MPSzC5TZRlEWVbTTGzEdKluaYEIEC
-         I/ygRIU/7sbVE0edyV0TVOiZi4XW2u9VPupzOk/SLaYkiCR52rftNnE3iOsIw3VwS9W+
-         8SrfDzb5PdDOtmJGyw+FHZ+RQvyJuwd6OyU30ZuK4pJ96X0Xn08r/jGT8gcXUm5Bg/8o
-         /m9g6yhQHqn6yOWWmil2279/Xd2JSI/URsbAyGDufLmTelzQRRaTkhpqSEGYm8BHegpC
-         LXIg==
-X-Gm-Message-State: AOJu0YxGL+H4kJ009ugFQsYBMYMvdgm7yUsPwn9gc4+RX5D4RL0o6Bis
-	XAbP7rmoiXX+pPWmot6KwfnAWW0RSkYJTS33OU/TumDTyPJ9Qu1yHzLfrNmVl5IlArqEyKtgiK5
-	fslq9QoScl1ONm4Wcr8VFKELMJdTfCsJrdOVswzDaqmurkzU86QMpg6VPTJQ=
-X-Google-Smtp-Source: AGHT+IHWqSKFDx+l5sP+iCM0PHsTTOorKPyMNVk86siLXNiTJ7fPcYzWvEFgcgIF0AmGIoOKRYYdWDzDIVJN8rHtFZbNn0UkvOor
+	s=arc-20240116; t=1751031856; c=relaxed/simple;
+	bh=ZOXAew4DUwdo/+jR21OmX71rRnDo1/+IYO9r362NZFM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gcamENosed1mOjKoBSvaUwzgq00NcaMA8vE7bOGIyYJW9/isvnxncOOdjYu547He3l23eHDe8nMAVOyyPnQeq9nrk9z6trgG50BfpT3kxafMpl6Ac+MB7QL6j3E6k+7N7QwYgvu8yO+M4TR71s5lb9KIVIgzgtta5oWg1KCPBfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Zxk6VSsd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YMlvIMbO; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id EC73AEC02AB;
+	Fri, 27 Jun 2025 09:44:12 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 27 Jun 2025 09:44:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1751031852;
+	 x=1751118252; bh=MwYMREdsoquOfaH8DwftQzll55uDY1tNpCkxnAXYMU0=; b=
+	Zxk6VSsdo1LsAyRcgfOPdlN6RiCgCoP7JgQDkhQXuvUusPfN3QyZ4l6kCYtkbtMp
+	DjS9G6iNLmvC660VnspQ3dxD+qH/iotPzz8R9AQH10Bs+C+wLwuKKazEWWTVVNlF
+	AvRlbg2FHhq+D3X2fl9KsYcofbNxo+xD3cba4tortPc86Idy9DLgNdaa5UaAvwwd
+	n+QT0FN7wqRPTQFsYb8+d7DTF8E0qhV3Rl9SMLkyLxpu8QuPIltED8QznFyPiY5g
+	dLJCH+7DTM8o9c3HJAqdODDYnqRiwSSEFCFnwj7SGevW8D4BUijNl5HqCNfHk8qf
+	HYy/qW96uLDjhVOO/tMaZw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751031852; x=
+	1751118252; bh=MwYMREdsoquOfaH8DwftQzll55uDY1tNpCkxnAXYMU0=; b=Y
+	MlvIMbOlITqfMyLwBykRnbA/BXk1s7ugPjpkaoqqGE6i/JOQELaKG1PbUbm46ycl
+	LvW51Chgb04N6XOX8Gkc0yvEMn1eYuVuIZbV4bWZ2E9Not9loXiD2nOUTeT37EHp
+	39mrnkrpM+xqZiCGdGA9jhBaOo9sWHi12jxfQVeYc8NyPxXN5sqGXwSsVUdq/8DZ
+	JHZs0jRM79xueSuA4hoR2bCDjVWNeFcdt+vMWD+Qp2g3LTZIPjxqZVcNdIdknM7s
+	9fuOUSkcDH9z/ioBsAoEpx3Q+q2iuFv65IVWdABW40LgGuRwxgC4ksOO3bgHMthr
+	R+PoBq8odXtudeooO4RfQ==
+X-ME-Sender: <xms:KqBeaPU8h5RoYcHy4fl35wVMfqSg_k9j8UKaiyWHDPq8kRO_4WOK_w>
+    <xme:KqBeaHkuK66dRi-PToEoZ-i9j4b_XxgmM7e_d2liIJKivyDT_B6i7mzb4IFN4yR9i
+    y42E-V6fptTjA51iEY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdefvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    epvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguse
+    grrhhnuggsrdguvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehgohhrughonhdrghgvsegsshhtrdgrihdprhgtphhtthhopegsshhtqd
+    huphhsthhrvggrmhessghsthgrihdrthhophdprhgtphhtthhopegrnhhgvghlohhgihho
+    rggttghhihhnohdruggvlhhrvghgnhhosegtohhllhgrsghorhgrrdgtohhmpdhrtghpth
+    htohepsggvnhdrtghhuhgrnhhgsehgvghnvghshihslhhoghhitgdrtghomhdrthifpdhr
+    tghpthhtohepvhhitghtohhrrdhshhhihhesghgvnhgvshihshhlohhgihgtrdgtohhmrd
+    htfidprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhr
+    tghpthhtohepphgsrhhosghinhhsohhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsh
+    hhrghntghhuhhnuddvudeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheprggurhhirghn
+    rdhhuhhnthgvrhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:KqBeaLbXD7Fuyd7wgKIt6ZtxHzzvwSeXxSYnrf5Rv4AEjO4vCXwbKw>
+    <xmx:KqBeaKXIN5Qh3uGeBHX7HTGVVr6YYXhSbsZUpbc5AUUvfpQwq9bh8Q>
+    <xmx:KqBeaJlwZIR_cY_XjkhIljx9f9M8MWUGjfIMwjnO8w95Z6F533yXew>
+    <xmx:KqBeaHcD4JdP6c0Wcair0bofHudvv6yK1Zz0267UNbRtc_cpsv0dqQ>
+    <xmx:LKBeaKZ1JFmVwyzmIn7NwZV1Eyk_ijJFUDDfHY-n-OcH3z8pBpg73cbY>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DA76D700065; Fri, 27 Jun 2025 09:44:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:380e:b0:3dd:edef:894c with SMTP id
- e9e14a558f8ab-3df4abb6432mr34181665ab.14.1751031782100; Fri, 27 Jun 2025
- 06:43:02 -0700 (PDT)
-Date: Fri, 27 Jun 2025 06:43:02 -0700
-In-Reply-To: <d1312fe5-a38b-4522-8330-998410da7980@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685e9fe6.a00a0220.129264.0006.GAE@google.com>
-Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
-From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: Tedb66c89affcaf60
+Date: Fri, 27 Jun 2025 15:43:50 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Adrian Hunter" <adrian.hunter@intel.com>,
+ "yangzh0906@thundersoft.com" <yangzh0906@thundersoft.com>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>, "gordon.ge" <gordon.ge@bst.ai>
+Cc: bst-upstream <bst-upstream@bstai.top>,
+ "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Victor Shih" <victor.shih@genesyslogic.com.tw>,
+ "Shan-Chun Hung" <shanchun1218@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Peter Robinson" <pbrobinson@gmail.com>,
+ "Ben Chuang" <ben.chuang@genesyslogic.com.tw>
+Message-Id: <5c0909b4-f3f6-401d-9a17-8560c5a1d7c0@app.fastmail.com>
+In-Reply-To: <b6bf0b53-8812-4099-b5d3-39e7fd264777@intel.com>
+References: <20250528085453.481320-1-yangzh0906@thundersoft.com>
+ <87619781-629b-4393-8c14-b34483a7c734@intel.com>
+ <202506271822530452465@thundersoft.com>
+ <b6bf0b53-8812-4099-b5d3-39e7fd264777@intel.com>
+Subject: Re: [PATCH v1 5/9] mmc: sdhci: add Black Sesame Technologies BST C1200
+ controller driver
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Jun 27, 2025, at 15:19, Adrian Hunter wrote:
+> On 27/06/2025 13:22, yangzh0906@thundersoft.com wrote:
+>> Dear=C2=A0Mr. Hunter,
+>>=20
+>> Our platform supports 64-bit physical addressing, but the eMMC contro=
+ller's SRAM-based DMA engine is constrained to a 32-bit address space.=C2=A0
+>> When using the standard SDHCI interface, which allocates DDR-based DM=
+A buffers with 64-bit addresses, thedma_map_single() operation fails=C2=A0
+>> because the DMA engine cannot handle addresses beyond 32 bits.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+dma_map_single() should always succeed on arm64 even if the buffer
+is outside of the dma mask: On most modern SoCs there is an SMMU/IOMMU
+that implements the actual mapping, and in the absence of that
+there is a fallback to SWIOTLB, which is always built-in on arm64.
 
-Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Tested-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+> SDHCI controllers can use 32-bit DMA or 64-bit DMA, however even with
+> 64-bit DMA it is possible to restrict the DMA addresses to 32-bits
+> by setting a 32-bit DMA mask.
+>
+> If the host controller capabilities indicate support for 64-bit DMA
+> but you want the driver to use 32-bit DMA, set SDHCI_QUIRK2_BROKEN_64_=
+BIT_DMA.
+>
+> However, if you want to use 64-bit DMA with only 32-bit DMA addresses=20
+> you can instead implement sdhci host op ->set_dma_mask() and in that
+> function dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32))
 
-Tested on:
+I would not expect an standard SDHCI to be broken like this any more,
+and if it is, I think the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk is
+more appropriate than overriding the dma_set_mask() operation.
 
-commit:         2aeda959 Add linux-next specific files for 20250627
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=114daf0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4db16d7e2cf94450
-dashboard link: https://syzkaller.appspot.com/bug?extid=b668da2bc4cb9670bf58
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+What sometimes happens though is that the SoC integration itself is
+broken, and a 64-bit capable DMA master like SDHCI is connected
+to a 32-bit bus. In this case the DMA limitation should be
+described in the device tree, using the "dma-ranges" property
+of the broken bus node. The SDHCI code then still sets the correct
+64-bit DMA mask according for the device, but the dma_map_single()
+still uses an swiotlb bounce buffer or the IOMMU to work around
+the bus restriction.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+>>  To resolve this hardware limitation, we implement a bounce buffer al=
+located via >> dma_alloc_coherent() to satisfy DMA addressing constraint=
+s.
+>
+> The bounce buffer should not be needed to satisfy DMA addressing
+> constraints.  It is used when SDHCI ADMA (scatter/gather) is broken.
+
+I wonder if the actual problem here is not the addressing limit
+but instead the coherency protocol. If the DMA master is cache
+coherent but listed as non-coherent in DT, or vice versa, there will
+be data corruption for all addresses, and using a dma_alloc_coherent()
+bounce buffer may hide this.
+
+       Arnd
 
