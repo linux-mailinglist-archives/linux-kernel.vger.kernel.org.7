@@ -1,101 +1,277 @@
-Return-Path: <linux-kernel+bounces-706194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC08AEB32C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:43:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E714AEB337
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885A7566634
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:43:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209DD56008E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0B0295534;
-	Fri, 27 Jun 2025 09:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBA92989B7;
+	Fri, 27 Jun 2025 09:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n23E/N/G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499D625F78A;
-	Fri, 27 Jun 2025 09:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="B4vJJFHh"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA9329824B;
+	Fri, 27 Jun 2025 09:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751017408; cv=none; b=ITtE5WYMin4iDIOYZ2t8i/fLJDBHi8bMdbDE3l56NWU0ntf94Hp+9EVxxOOzWgwXB28HVjLvj6lVj1gAMNEs14ZpvC0vnvuOQRAIjE4Ejlbp/L0OYVEpjWgtXo5DneANwIs/ioOFefp6FEabOfHcwudnVWjrGDyNk5iix/CMeIU=
+	t=1751017492; cv=none; b=Tqn8kftfBIHtrAz2vYYRhPCD7vxWeRNdTrGwtjquHbDwbWEBVkYLXomQkHG5T7nMnZYLIY02T61qBYSal2D2jrOb8Ao5uu0uoq7EARFfFza6ktysYFjg4RcMdXt3CfgdAuQSl+OUC98RaU+E2JdJgzu/If+eFLjNc+uhKXx1gBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751017408; c=relaxed/simple;
-	bh=ngQ6R8Q7RFtEfkc0s81vKQLJQh7gq65r5WAROHbGqPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6AHpuiB9x2r3m05qdXGeXmDAtN2K5nzBde5vrbKbkajGuIwJwXNNDSX/ElHpXmG10vdJBCUbHtuY/TlUQftKM3NFrwYemAl1McdWXeM1X85dqO5h53n6nzRVLSRTKya25lJ8irSZjTXBFOUmqZnx7AjcthOoKICUuvqsAAJts4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n23E/N/G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66DCC4CEE3;
-	Fri, 27 Jun 2025 09:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751017407;
-	bh=ngQ6R8Q7RFtEfkc0s81vKQLJQh7gq65r5WAROHbGqPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n23E/N/GoDphO9m5at0H5Ohu/mB4/Lyn7IXvno7I3e12cZfUUf1y9yA4BOmlB8QGT
-	 mpnMMoTgdPyfUY4fZJLS5D3rDzPkMBBXhxg/UKe2DYNVDf9BWFuOTyTQE2QxtIBtoG
-	 fgRg3oxCVUeiUirEij94ch9QE0DcCHceByoQUhX+Etw7w+RlY30sFyekBLX8GmHlns
-	 b0ZwcW/CvPYk6/HUpYmiU5la90TuWpLNGKwFCOLj+Bp0dTtirdwlC1l3djuMEKAlar
-	 dcX5m6dZDtUeM6ebC3AptqAwYSvDmLcoQaLwgLT00lEWexaVtrde+0gZpmPMwvjYIL
-	 GUIISfTng1p9w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uV5cF-000000000Ug-2baj;
-	Fri, 27 Jun 2025 11:43:28 +0200
-Date: Fri, 27 Jun 2025 11:43:27 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Georgi Djakov <djakov@kernel.org>,
-	Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1751017492; c=relaxed/simple;
+	bh=uFNN6WF+H4Pq7J6XkgwEd0a4t0kU5I+jQ1ADTybJaFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B31FFbRC31Uq8aVPvtTDGusxiJs1HoZ8ZUlKs85fvWcisfAhvAfLdrfUa5kcFLDkcr5zf8CG7hWDV4+lo+gwbGQSBhVvYBpEHFW5b3GNlbJVS/6ijPt9IhcyCDZQZ6HT1odFhC8/WioWTErU+k04J1pNK3BVdnSajbIabPRzNXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=B4vJJFHh; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=a4
+	vzSTntLhgG4uuZm3+r1/iBQ1fisyq3I7ghN5hcb6M=; b=B4vJJFHhdygvHP8MCz
+	sJxyb4SvkDTF7PVn+HSAfx03b8M5LqOItVkKbu05Hijr10rwWfodrmbuHCwAn8Hq
+	kWEFKK91F+91I2fAhK33G+GUHcIng1BmIifVC8U7l3+s14wDTJwiEbhW6BWi/CN8
+	LKsMzd3YWzA4QCGu9kt+Al8W8=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDnbwXmZ15oG_bRAw--.14450S2;
+	Fri, 27 Jun 2025 17:44:07 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	willemb@google.com,
+	almasrymina@google.com,
+	kerneljasonxing@gmail.com,
+	ebiggers@google.com,
+	asml.silence@gmail.com,
+	aleksander.lobakin@intel.com,
+	stfomichev@gmail.com
+Cc: yangfeng@kylinos.cn,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] interconnect: avoid memory allocation when
- 'icc_bw_lock' is held
-Message-ID: <aF5nv6TQoyfh7wKS@hovoldconsulting.com>
-References: <20250625-icc-bw-lockdep-v3-1-2b8f8b8987c4@gmail.com>
- <aFvr1zSkf4KmIcMT@hovoldconsulting.com>
- <aFvuiVX0kMIqXQtZ@hovoldconsulting.com>
- <84b94649-a248-46b0-a401-772aeb8777a2@gmail.com>
- <aFwBYRF0wJwVDdeX@hovoldconsulting.com>
- <ac5ba192-b538-457e-acc4-c2d358b1fd0e@gmail.com>
- <aF0TIWfDI4M1azzc@hovoldconsulting.com>
- <3b90caec-b4c0-47d8-bdd7-1a7abd5e69d9@gmail.com>
- <aF5EPhd5smrmB38Q@hovoldconsulting.com>
- <b960680d-6c5a-4130-b2dd-4ddf1f800430@gmail.com>
+Subject: [PATCH v2] skbuff: Improve the sending efficiency of __skb_send_sock
+Date: Fri, 27 Jun 2025 17:44:06 +0800
+Message-Id: <20250627094406.100919-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b960680d-6c5a-4130-b2dd-4ddf1f800430@gmail.com>
+X-CM-TRANSID:_____wDnbwXmZ15oG_bRAw--.14450S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKF4xAF1fWry5JFWxZw1DKFg_yoW7ZFW7pa
+	13W398Zr4UJr1qqr4kJrZxCr4fta9akayrtF13A395tr90yrWFgF18tr1jkFW5trWkuFy7
+	GrsIvr1rCrs0va7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUVysUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiZQp5eGheYdG5CAAAsZ
 
-On Fri, Jun 27, 2025 at 11:36:26AM +0200, Gabor Juhos wrote:
-> 2025. 06. 27. 9:11 keltezéssel, Johan Hovold írta:
-> > On Thu, Jun 26, 2025 at 05:00:42PM +0200, Gabor Juhos wrote:
+From: Feng Yang <yangfeng@kylinos.cn>
 
-> >> Despite the note above, your proposal looks good to me. Would you like to
-> >> send it as a formal patch, or shall I do it?
-> > 
-> > I can post it in a bit.
-> 
-> Great, just saw the final patch. Thank you!
+By aggregating skb data into a bvec array for transmission, when using sockmap to forward large packets,
+what previously required multiple transmissions now only needs a single transmission, which significantly enhances performance.
+For small packets, the performance remains comparable to the original level.
 
-Here it is for reference:
+When using sockmap for forwarding, the average latency for different packet sizes
+after sending 10,000 packets is as follows:
+size	old(us)		new(us)
+512	56		55
+1472	58		58
+1600	106		79
+3000	145		108
+5000	182		123
 
-	https://lore.kernel.org/lkml/20250627075854.26943-1-johan+linaro@kernel.org/
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+---
+Changes in v2:
+- Delete dynamic memory allocation, thanks: Paolo Abeni,Stanislav Fomichev.
+- Link to v1: https://lore.kernel.org/all/20250623084212.122284-1-yangfeng59949@163.com/
+---
+ net/core/skbuff.c | 145 ++++++++++++++++++++++------------------------
+ 1 file changed, 68 insertions(+), 77 deletions(-)
 
-It looks like Georgi picked up the patch from this thread yesterday,
-which should be fine as well as I only changed the commit message
-(replacing the ipc splat with one from sc8280xp) before posting it as
-v4.
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 85fc82f72d26..aae5139cfb28 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3231,104 +3231,95 @@ static int sendmsg_unlocked(struct sock *sk, struct msghdr *msg)
+ 	return sock_sendmsg(sock, msg);
+ }
+ 
++#define MAX_SKB_SEND_BIOVEC_SIZE	16
+ typedef int (*sendmsg_func)(struct sock *sk, struct msghdr *msg);
+ static int __skb_send_sock(struct sock *sk, struct sk_buff *skb, int offset,
+ 			   int len, sendmsg_func sendmsg, int flags)
+ {
+-	unsigned int orig_len = len;
+ 	struct sk_buff *head = skb;
+ 	unsigned short fragidx;
+-	int slen, ret;
+-
+-do_frag_list:
+-
+-	/* Deal with head data */
+-	while (offset < skb_headlen(skb) && len) {
+-		struct kvec kv;
+-		struct msghdr msg;
+-
+-		slen = min_t(int, len, skb_headlen(skb) - offset);
+-		kv.iov_base = skb->data + offset;
+-		kv.iov_len = slen;
+-		memset(&msg, 0, sizeof(msg));
+-		msg.msg_flags = MSG_DONTWAIT | flags;
+-
+-		iov_iter_kvec(&msg.msg_iter, ITER_SOURCE, &kv, 1, slen);
+-		ret = INDIRECT_CALL_2(sendmsg, sendmsg_locked,
+-				      sendmsg_unlocked, sk, &msg);
+-		if (ret <= 0)
+-			goto error;
+-
+-		offset += ret;
+-		len -= ret;
+-	}
+-
+-	/* All the data was skb head? */
+-	if (!len)
+-		goto out;
++	struct msghdr msg;
++	struct bio_vec bvec[MAX_SKB_SEND_BIOVEC_SIZE];
++	int ret, slen, total_len = 0;
++	int bvec_count = 0;
++	unsigned int copied = 0;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.msg_flags = MSG_SPLICE_PAGES | MSG_DONTWAIT | flags;
++
++	while (copied < len) {
++		/* Deal with head data */
++		if (offset < skb_headlen(skb) && bvec_count < MAX_SKB_SEND_BIOVEC_SIZE) {
++			struct page *page = virt_to_page(skb->data + offset);
++			unsigned int page_offset = offset_in_page(skb->data + offset);
++
++			if (!sendpage_ok(page))
++				msg.msg_flags &= ~MSG_SPLICE_PAGES;
++
++			slen = min_t(int, skb_headlen(skb) - offset, len - copied);
++			bvec_set_page(&bvec[bvec_count++], page, slen, page_offset);
++			copied += slen;
++			offset += slen;
++		}
+ 
+-	/* Make offset relative to start of frags */
+-	offset -= skb_headlen(skb);
++		/* Make offset relative to start of frags */
++		offset -= skb_headlen(skb);
+ 
+-	/* Find where we are in frag list */
+-	for (fragidx = 0; fragidx < skb_shinfo(skb)->nr_frags; fragidx++) {
+-		skb_frag_t *frag  = &skb_shinfo(skb)->frags[fragidx];
++		if (copied < len && bvec_count < MAX_SKB_SEND_BIOVEC_SIZE) {
++			for (fragidx = 0; fragidx < skb_shinfo(skb)->nr_frags; fragidx++) {
++				skb_frag_t *frag  = &skb_shinfo(skb)->frags[fragidx];
++				unsigned int frag_size = skb_frag_size(frag);
+ 
+-		if (offset < skb_frag_size(frag))
+-			break;
++				/* Find where we are in frag list */
++				if (offset >= frag_size) {
++					offset -= frag_size;
++					continue;
++				}
+ 
+-		offset -= skb_frag_size(frag);
+-	}
++				slen = min_t(size_t, frag_size - offset, len - copied);
++				bvec_set_page(&bvec[bvec_count++], skb_frag_page(frag), slen,
++					      skb_frag_off(frag) + offset);
+ 
+-	for (; len && fragidx < skb_shinfo(skb)->nr_frags; fragidx++) {
+-		skb_frag_t *frag  = &skb_shinfo(skb)->frags[fragidx];
++				copied += slen;
++				offset = 0;
+ 
+-		slen = min_t(size_t, len, skb_frag_size(frag) - offset);
++				if (copied >= len || bvec_count >= MAX_SKB_SEND_BIOVEC_SIZE)
++					break;
++			}
++		}
+ 
+-		while (slen) {
+-			struct bio_vec bvec;
+-			struct msghdr msg = {
+-				.msg_flags = MSG_SPLICE_PAGES | MSG_DONTWAIT |
+-					     flags,
+-			};
++		if (copied < len && bvec_count < MAX_SKB_SEND_BIOVEC_SIZE) {
++			/* Process any frag lists */
++			if (skb == head) {
++				if (skb_has_frag_list(skb))
++					skb = skb_shinfo(skb)->frag_list;
++			} else if (skb->next) {
++				skb = skb->next;
++			}
++		}
+ 
+-			bvec_set_page(&bvec, skb_frag_page(frag), slen,
+-				      skb_frag_off(frag) + offset);
+-			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1,
+-				      slen);
++		if (bvec_count == MAX_SKB_SEND_BIOVEC_SIZE || copied == len) {
++			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, bvec, bvec_count, len);
++			ret = INDIRECT_CALL_2(sendmsg, sendmsg_locked, sendmsg_unlocked, sk, &msg);
+ 
+-			ret = INDIRECT_CALL_2(sendmsg, sendmsg_locked,
+-					      sendmsg_unlocked, sk, &msg);
+-			if (ret <= 0)
+-				goto error;
++			if (ret < 0)
++				return ret;
+ 
++			/* Statistical data */
+ 			len -= ret;
+ 			offset += ret;
+-			slen -= ret;
++			total_len += ret;
++
++			/* Restore initial value */
++			memset(&msg, 0, sizeof(msg));
++			msg.msg_flags = MSG_SPLICE_PAGES | MSG_DONTWAIT | flags;
++			copied = 0;
++			bvec_count = 0;
++			skb = head;
+ 		}
+-
+-		offset = 0;
+ 	}
+ 
+-	if (len) {
+-		/* Process any frag lists */
+-
+-		if (skb == head) {
+-			if (skb_has_frag_list(skb)) {
+-				skb = skb_shinfo(skb)->frag_list;
+-				goto do_frag_list;
+-			}
+-		} else if (skb->next) {
+-			skb = skb->next;
+-			goto do_frag_list;
+-		}
+-	}
+-
+-out:
+-	return orig_len - len;
+-
+-error:
+-	return orig_len == len ? ret : orig_len - len;
++	return total_len;
+ }
+ 
+ /* Send skb data on a socket. Socket must be locked. */
+-- 
+2.43.0
 
-Johan
 
