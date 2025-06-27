@@ -1,396 +1,217 @@
-Return-Path: <linux-kernel+bounces-706547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF89EAEB817
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:49:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BE5AEB824
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72679560B2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:48:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8726556245B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985892D9793;
-	Fri, 27 Jun 2025 12:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5D72C031B;
+	Fri, 27 Jun 2025 12:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lqmuzra6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NeYoApK1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nGUio8BS"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C762980BF;
-	Fri, 27 Jun 2025 12:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1331BBE4A
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 12:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751028538; cv=none; b=VFdPq0amJSCOcEkw/ns9LjkL89OIaAH5LCgp8Gp9yqYiqh9vPnFQOXqcrxy1/aRCKEh0oK/knz/ESz62Yf++YJ54qBpnuT6AbaqxQoYeiLbOShJFgjEgXSSnYysNlTvplP/p8dZHxv3CSd4Gc+IesvIg5YsOcWiTyhEp3Kcq0I0=
+	t=1751028658; cv=none; b=LNQnmS5PvsZv7CR/teIbKwhEAaxPsrxdpKQJUWbE8dFQ6q57C/Bf2i3IYvju8YQvwxYqM/qtwe4sPXtQvZuYys+K885Z4k1WEJb3KA74/UHKzmy7ihReaZxd0iuoblA8UCs7BFKzEav+v9z5QVDSzEKJICuUvoI2PYrzyMv2jUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751028538; c=relaxed/simple;
-	bh=91g/Z0XKaGrm4enQreIzabrBw3Lf4UpDZ4SRKzVP1xo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=t8ccilJz6NrPEt8+PcA4shkbgEgU+8nJfSGdUB45A3oetuUh0c+jTsruGC8xLF1AeQtTamxBO0VS72GFOoEf1GCMxPSSxF+cN1l2Wt43WdqeNEC3mj6z6WIj1I15zluU2BHLx8aKDLoBR2QNOYOEwi+ydRfw/TnifRwAJl6z2Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lqmuzra6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NeYoApK1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751028535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dahXu2LEDMAp26RbUOIDlGEe7yKn2tw8fEfvF1ZcJHA=;
-	b=lqmuzra6pRShzul0BKepI1sehWdXlq7GRY6s+aWJmehnFXVc2um1nmpnw+W5PC8U/NJeed
-	TEp78/NSPC28NRo1WAnF7CP31PZSGfJCFwRRRmVxySvvoNr7eOeWopOGLQ+THKJif4FlV+
-	bTctGp317l7qkQ2finUivmro66xG6b/ZBMLIGTS5xw8I191KKuTsfVoIuaj84tqSx4zCiQ
-	ADsG/VUW8/pakI+zv8Kj19k5AACZitEYI5Odea9pMasohs1ubkb8yNKkEAtaOJGhBL/cvE
-	7gbDuepex8RX2NJDmvuRJ19u7jAaMVdzOqWe6k75Q5Ha7rz8NUQ4EBnJY6owZA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751028535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dahXu2LEDMAp26RbUOIDlGEe7yKn2tw8fEfvF1ZcJHA=;
-	b=NeYoApK17LDa2m/ATlT2S+xXuEP1obxvXvQ2rZS4JhKRPbPkEy91xRAqFifQEHFCgw3wnx
-	irF2m56Q1/vYN5Ag==
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Ingo Molnar
- <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, Shuah Khan <shuah@kernel.org>, Arnd
- Bergmann <arnd@arndb.de>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Waiman Long <longman@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-api@vger.kernel.org, kernel-dev@igalia.com, =?utf-8?Q?Andr=C3=A9?=
- Almeida
- <andrealmeid@igalia.com>
-Subject: Re: [PATCH v5 7/7] selftests: futex: Expand robust list test for
- the new interface
-In-Reply-To: <20250626-tonyk-robust_futex-v5-7-179194dbde8f@igalia.com>
-References: <20250626-tonyk-robust_futex-v5-0-179194dbde8f@igalia.com>
- <20250626-tonyk-robust_futex-v5-7-179194dbde8f@igalia.com>
-Date: Fri, 27 Jun 2025 14:48:54 +0200
-Message-ID: <87tt41nydl.ffs@tglx>
+	s=arc-20240116; t=1751028658; c=relaxed/simple;
+	bh=QCJARtglO2LaY2IHKh5t2U/Tlklxb0ibISPLcSbmuzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m2SwxhQa5salepn08KP9t7X8vb3qYFwA/Oc8T9DCvjnAmm8u0qe9YlyNjdVSTmhZF6H8RZHSPVovaWpY2cfNAEP36z+Eyi8hiuf7bW1KDuJ9O1XfN1Ym6TpuYbUunXzYplCVkJRbRFq2rodfnMEMYb6+VLiWNaHvEiRqWdg70m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nGUio8BS; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6ecf99dd567so24407796d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 05:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751028656; x=1751633456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=idturYgqav2RqhmzofSv+DJRMZDL8II+nd4+G+NHC8w=;
+        b=nGUio8BS6ZlpExukdx8F5eRR6u8EPnB6A4rMQ0cs9cYdcQQKNn7KIpobF07TbqpCdS
+         kAr85FID+gXteQZ62QDRuQdm8Cvp+kzD+s5Wwc/FKmPCk9QXPGHp50EhwXeXLne4H5Q7
+         Y7rz4pbrGRALARcJkKhORsSCV6tIS5AAI/zvU3VG7BdQZkdlmM4iA/4UpXkI/L5xzLyS
+         9ohdDPGoeJ09gygD44xZlj484s7plGa/KLosYmI4s7iz4wagD9QxynMW6l/oFZFPNQND
+         84zGA7J5mDEdM3J1fc+/mIbFbbFaOkqaUdhPehtaTkSgUwQR6gzvpTtFNY21FUD4OD+T
+         KfAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751028656; x=1751633456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=idturYgqav2RqhmzofSv+DJRMZDL8II+nd4+G+NHC8w=;
+        b=ncrsBQFf8tZD1ckIAbMy8EqdyDQehoEkU8GEITCa7Mbwzek5B5hdKKuld0KixDloxV
+         CZmj/aaYtT/RZJ87Q/V977DAHaKZtscX86eqlR7rE+SwrmnagWdCJ5Nw3TOFRsopjc0h
+         QFdMjOYl7sL+RqkIsYMTIo7Z3usfJT/l0M2oTSHWTNjwAV4lEF9adKCcPhFcfrMUiuv3
+         JZQY1wnE1sCllqT669mXcu79islg7x5DPm5eG1qvC725NY2h6BXwvQdNaNDOdrGqMFS1
+         jRcvot2wH1GxR34G23bz5vEsVQIjIDmif21PdMrzWHleT38CF8+K/Xgx7Vsl2MgbVzK/
+         16zA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBcdgVLNuUn/fHhhquCw+sFwudN47nwCbLWtrqhhTm6ga1I+rxF++qyGArLq4ZCBusZesM1DOt+LTv2l4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuinMj3x+N9wyYbuVvGdhUEw0wZIo8EiuoEvHYr8gPU0NXZleD
+	kvugvimSJ+DLX3ZJPbrPrG0A+m8pUE3M3hbBFnR7yXtMqN9qxCIyLOKgPSeefuNicem0tDiRQHQ
+	XZX5YBB7z8cnPQM+KYe8C/xy5tuHOJCSHz1CTc6oB
+X-Gm-Gg: ASbGncvVy0pf7K0hW9DmyGHdDoV1DkA35JpljQkZ9U+Q77kMQk/BzKyVrP5BpleSDcz
+	C9YIaP4KTL/+EbKbZQGVuRhud11iYpV0nvM7/1q50qA+1LRrsBUg1nrn0CbA5YOeZdR6cGFVTvs
+	S8q/znaw/zONeGs/bPWg4ZnEdMJLuiqK6IV1sCOvZEcNW6XwhZ+Yv0tDDciMM8GTuDYQMCcauAe
+	zDuh/rZvT42
+X-Google-Smtp-Source: AGHT+IHIU4LDEs67YWr+lK5C2TD7HbosAimrfZGq5Uf+Lz6Ud+fdIxcudZiyYZLVcgNSr+MlK/m5GD+tabyL7OnlGNM=
+X-Received: by 2002:a05:6214:459a:b0:6fd:a382:f86f with SMTP id
+ 6a1803df08f44-7001413116cmr59746306d6.34.1751028655727; Fri, 27 Jun 2025
+ 05:50:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250626134158.3385080-1-glider@google.com> <20250626134158.3385080-3-glider@google.com>
+ <20250627080248.GQ1613200@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250627080248.GQ1613200@noisy.programming.kicks-ass.net>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 27 Jun 2025 14:50:18 +0200
+X-Gm-Features: Ac12FXwxKj33euY6ZH-yL0eZIHyMTugesDF-zJKSuw4473Kt_nozRUjRKba6tvg
+Message-ID: <CAG_fn=XCEHppY3Fn+x_JagxTjHYyi6C=qt-xgGmHq7xENVy4Jw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/11] kcov: apply clang-format to kcov code
+To: Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Ingo Molnar <mingo@redhat.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 26 2025 at 14:11, Andr=C3=A9 Almeida wrote:
-
-> Expand the current robust list test for the new set_robust_list2
-> syscall. Create an option to make it possible to run the same tests
-> using the new syscall, and also add two new relevant test: test long
-> lists (bigger than ROBUST_LIST_LIMIT) and for unaligned addresses.
+On Fri, Jun 27, 2025 at 10:02=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
 >
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
->  .../selftests/futex/functional/robust_list.c       | 160 +++++++++++++++=
-+++++-
->  1 file changed, 156 insertions(+), 4 deletions(-)
+> On Thu, Jun 26, 2025 at 03:41:49PM +0200, Alexander Potapenko wrote:
+> > kcov used to obey clang-format style, but somehow diverged over time.
+> > This patch applies clang-format to kernel/kcov.c and
+> > include/linux/kcov.h, no functional change.
 >
-> diff --git a/tools/testing/selftests/futex/functional/robust_list.c b/too=
-ls/testing/selftests/futex/functional/robust_list.c
-> index 42690b2440fd29a9b12c46f67f9645ccc93d1147..004ad79ff6171c411fd47e699=
-e3c38889544218e 100644
-> --- a/tools/testing/selftests/futex/functional/robust_list.c
-> +++ b/tools/testing/selftests/futex/functional/robust_list.c
-> @@ -35,16 +35,45 @@
->  #include <stddef.h>
->  #include <sys/mman.h>
->  #include <sys/wait.h>
-> +#include <stdint.h>
->=20=20
->  #define STACK_SIZE (1024 * 1024)
->=20=20
->  #define FUTEX_TIMEOUT 3
->=20=20
-> +#define SYS_set_robust_list2 468
-> +
-> +enum robust_list2_type {
-> +        ROBUST_LIST_32BIT,
-> +        ROBUST_LIST_64BIT,
-> +};
+> I'm not sure I agree this is in fact a good thing. Very questionable
+> style choices made.
 
-Why can't this use an updated header?
+Adding Miguel, who maintains clang-format.
 
-> +
->  static pthread_barrier_t barrier, barrier2;
->=20=20
-> +bool robust2 =3D false;
+> I had to kill clang-format hard in my nvim-lsp-clangd setup, because
+> clang-format is such a piece of shit.
 
-global because ....
+Random fact that I didn't know before: 1788 out of 35503 kernel .c
+files are already formatted according to the clang-format style.
+(I expected the number to be much lower)
 
->  int set_robust_list(struct robust_list_head *head, size_t len)
->  {
-> -	return syscall(SYS_set_robust_list, head, len);
-> +	int ret, flags;
-> +
-> +	if (!robust2) {
-> +		return syscall(SYS_set_robust_list, head, len);
-> +	}
-
-Pointless brackets.
-
-> +	if (sizeof(head) =3D=3D 8)
-> +		flags =3D ROBUST_LIST_64BIT;
-> +	else
-> +		flags =3D ROBUST_LIST_32BIT;
-> +
-> +	/*
-> +	 * We act as we have just one list here. We try to use the first slot,
-> +	 * but if it hasn't been alocated yet we allocate it.
-> +	 */
-> +	ret =3D syscall(SYS_set_robust_list2, head, 0, flags);
-> +	if (ret =3D=3D -1 && errno =3D=3D ENOENT)
-> +		ret =3D syscall(SYS_set_robust_list2, head, -1, flags);
-
-What the heck is this?
-
-> +	return ret;
->  }
->=20=20
->  int get_robust_list(int pid, struct robust_list_head **head, size_t *len=
-_ptr)
-> @@ -246,6 +275,11 @@ static void test_set_robust_list_invalid_size(void)
->  	size_t head_size =3D sizeof(struct robust_list_head);
->  	int ret;
->=20=20
-> +	if (robust2) {
-> +		ksft_test_result_skip("This test is only for old robust interface\n");
-
-Why is it invoked in the first place?
-
-> +		return;
-> +	}
-> +
->  	ret =3D set_robust_list(&head, head_size);
->  	ASSERT_EQ(ret, 0);
->=20=20
-> @@ -321,6 +355,11 @@ static void test_get_robust_list_child(void)
->  	struct robust_list_head head, *get_head;
->  	size_t len_ptr;
->=20=20
-> +	if (robust2) {
-> +		ksft_test_result_skip("Not implemented in the new robust interface\n");
-
-For the very wrong reasons.
-
-> +		return;
-> +	}
-> +
->  	ret =3D pthread_barrier_init(&barrier, NULL, 2);
->  	ret =3D pthread_barrier_init(&barrier2, NULL, 2);
->  	ASSERT_EQ(ret, 0);
-> @@ -332,7 +371,7 @@ static void test_get_robust_list_child(void)
->=20=20
->  	ret =3D get_robust_list(tid, &get_head, &len_ptr);
->  	ASSERT_EQ(ret, 0);
-> -	ASSERT_EQ(&head, get_head);
-> +	ASSERT_EQ(get_head, &head);
-
-ROTFL
-
->=20=20
->  	pthread_barrier_wait(&barrier2);
->=20=20
-> @@ -507,11 +546,119 @@ static void test_circular_list(void)
->  	ksft_test_result_pass("%s\n", __func__);
->  }
->=20=20
-> +#define ROBUST_LIST_LIMIT	2048
-> +#define CHILD_LIST_LIMIT (ROBUST_LIST_LIMIT + 10)
-> +
-> +static int child_robust_list_limit(void *arg)
-> +{
-> +	struct lock_struct *locks;
-> +	struct robust_list *list;
-> +	struct robust_list_head head;
-> +	int ret, i;
-> +
-> +	locks =3D (struct lock_struct *) arg;
-> +
-> +	ret =3D set_list(&head);
-> +	if (ret)
-> +		ksft_test_result_fail("set_list error\n");
-
-Yet again the same broken crap.
-
-> +	/*
-> +	 * Create a very long list of locks
-> +	 */
-> +	head.list.next =3D &locks[0].list;
-> +
-> +	list =3D head.list.next;
-> +	for (i =3D 0; i < CHILD_LIST_LIMIT - 1; i++) {
-> +		list->next =3D &locks[i+1].list;
-> +		list =3D list->next;
-> +	}
-> +	list->next =3D &head.list;
-> +
-> +	/*
-> +	 * Grab the lock in the last one, and die without releasing it
-> +	 */
-> +	mutex_lock(&locks[CHILD_LIST_LIMIT], &head, false);
-> +	pthread_barrier_wait(&barrier);
-> +
-> +	sleep(1);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * The old robust list used to have a limit of 2048 items from the kerne=
-l side.
-> + * After this limit the kernel stops walking the list and ignore the oth=
-er
-
-ignores
-
-> + * futexes, causing deadlocks.
-> + *
-> + * For the new interface, test if we can wait for a list of more than 20=
-48
-> + * elements.
-> + */
-> +static void test_robust_list_limit(void)
-> +{
-> +	struct lock_struct locks[CHILD_LIST_LIMIT + 1];
-> +	_Atomic(unsigned int) *futex =3D &locks[CHILD_LIST_LIMIT].futex;
-> +	struct robust_list_head head;
-> +	int ret;
-> +
-> +	if (!robust2) {
-> +		ksft_test_result_skip("This test is only for new robust interface\n");
-> +		return;
-> +	}
-> +
-> +	*futex =3D 0;
-> +
-> +	ret =3D set_list(&head);
-> +	ASSERT_EQ(ret, 0);
-> +
-> +	ret =3D pthread_barrier_init(&barrier, NULL, 2);
-> +	ASSERT_EQ(ret, 0);
-> +
-> +	create_child(child_robust_list_limit, locks);
-> +
-> +	/*
-> +	 * After the child thread creates the very long list of locks, wait on
-> +	 * the last one.
-> +	 */
-> +	pthread_barrier_wait(&barrier);
-> +	ret =3D mutex_lock(&locks[CHILD_LIST_LIMIT], &head, false);
-> +
-> +	if (ret !=3D 0)
-> +		printf("futex wait returned %d\n", errno);
-> +	ASSERT_EQ(ret, 0);
-
-lalala.
-
-> +
-> +	ASSERT_TRUE(*futex | FUTEX_OWNER_DIED);
-
-Copy and pasta does not make it more correct.
-
-> +	wait(NULL);
-> +	pthread_barrier_destroy(&barrier);
-> +
-> +	ksft_test_result_pass("%s\n", __func__);
-> +}
-> +
-> +/*
-> + * The kernel should refuse an unaligned head pointer
-> + */
-> +static void test_unaligned_address(void)
-> +{
-> +	struct robust_list_head head, *h;
-> +	int ret;
-> +
-> +	if (!robust2) {
-> +		ksft_test_result_skip("This test is only for new robust interface\n");
-> +		return;
-> +	}
-> +
-> +	h =3D (struct robust_list_head *) ((uintptr_t) &head + 1);
-> +	ret =3D set_list(h);
-> +	ASSERT_EQ(ret, -1);
-> +	ASSERT_EQ(errno, EINVAL);
-> +}
-> +
->  void usage(char *prog)
->  {
->  	printf("Usage: %s\n", prog);
->  	printf("  -c	Use color\n");
->  	printf("  -h	Display this help message\n");
-> +	printf("  -n	Use robust2 syscall\n");
-
-Right. We need a command line option to guarantee that the test is not
-executed by bots...
-
->  	printf("  -v L	Verbosity level: %d=3DQUIET %d=3DCRITICAL %d=3DINFO\n",
->  	       VQUIET, VCRITICAL, VINFO);
->  }
-> @@ -520,7 +667,7 @@ int main(int argc, char *argv[])
->  {
->  	int c;
->=20=20
-> -	while ((c =3D getopt(argc, argv, "cht:v:")) !=3D -1) {
-> +	while ((c =3D getopt(argc, argv, "chnt:v:")) !=3D -1) {
->  		switch (c) {
->  		case 'c':
->  			log_color(1);
-> @@ -531,6 +678,9 @@ int main(int argc, char *argv[])
->  		case 'v':
->  			log_verbosity(atoi(optarg));
->  			break;
-> +		case 'n':
-> +			robust2 =3D true;
-> +			break;
->  		default:
->  			usage(basename(argv[0]));
->  			exit(1);
-> @@ -538,7 +688,7 @@ int main(int argc, char *argv[])
->  	}
->=20=20
->  	ksft_print_header();
-> -	ksft_set_plan(7);
-> +	ksft_set_plan(8);
 >
+> > -static inline void kcov_task_init(struct task_struct *t) {}
+> > -static inline void kcov_task_exit(struct task_struct *t) {}
+> > -static inline void kcov_prepare_switch(struct task_struct *t) {}
+> > -static inline void kcov_finish_switch(struct task_struct *t) {}
+> > -static inline void kcov_remote_start(u64 handle) {}
+> > -static inline void kcov_remote_stop(void) {}
+> > +static inline void kcov_task_init(struct task_struct *t)
+> > +{
+> > +}
+> > +static inline void kcov_task_exit(struct task_struct *t)
+> > +{
+> > +}
+> > +static inline void kcov_prepare_switch(struct task_struct *t)
+> > +{
+> > +}
+> > +static inline void kcov_finish_switch(struct task_struct *t)
+> > +{
+> > +}
+> > +static inline void kcov_remote_start(u64 handle)
+> > +{
+> > +}
+> > +static inline void kcov_remote_stop(void)
+> > +{
+> > +}
+>
+> This is not an improvement.
 
-Just check whether the new syscall is implemented and then set the
-number of tests accordingly.
+Fair enough.
+I think we can fix this by setting AllowShortFunctionsOnASingleLine:
+Empty, SplitEmptyFunction: false in .clang-format
 
->  	test_robustness();
->=20=20
-> @@ -548,6 +698,8 @@ int main(int argc, char *argv[])
->  	test_set_list_op_pending();
->  	test_robust_list_multiple_elements();
->  	test_circular_list();
-> +	test_robust_list_limit();
-> +	test_unaligned_address();
+Miguel, do you think this is a reasonable change?
 
-and then do:
 
-	test_robustness();
-        ....
-	test_circular_list();
+> >
+> >  struct kcov_percpu_data {
+> > -     void                    *irq_area;
+> > -     local_lock_t            lock;
+> > -
+> > -     unsigned int            saved_mode;
+> > -     unsigned int            saved_size;
+> > -     void                    *saved_area;
+> > -     struct kcov             *saved_kcov;
+> > -     int                     saved_sequence;
+> > +     void *irq_area;
+> > +     local_lock_t lock;
+> > +
+> > +     unsigned int saved_mode;
+> > +     unsigned int saved_size;
+> > +     void *saved_area;
+> > +     struct kcov *saved_kcov;
+> > +     int saved_sequence;
+> >  };
+> >
+> >  static DEFINE_PER_CPU(struct kcov_percpu_data, kcov_percpu_data) =3D {
+>
+> This is just plain wrong. Making something that was readable into a
+> trainwreck.
 
-        if (has_robust) {
-        	robust2 =3D true;
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-                test_robustness();
-                ...
-                test_circular_list();
-		test_robust_list_limit();
-		test_unaligned_address();
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-        }=20=20=20=20=20=20=20=20
+Setting AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments will
+replace the above with the following diff:
 
-or something like that.
+ struct kcov_percpu_data {
+-       void                    *irq_area;
+-       local_lock_t            lock;
+-
+-       unsigned int            saved_mode;
+-       unsigned int            saved_size;
+-       void                    *saved_area;
+-       struct kcov             *saved_kcov;
+-       int                     saved_sequence;
++       void        *irq_area;
++       local_lock_t lock;
++
++       unsigned int saved_mode;
++       unsigned int saved_size;
++       void        *saved_area;
++       struct kcov *saved_kcov;
++       int          saved_sequence;
+ };
 
-Time for a stiff drink....
+(a bit denser, plus it aligns the variable names, not the pointer signs)
+Does this look better?
+
+>
+> Please either teach clang-format sensible style choices, or refrain from
+> using it.
+
+
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
 
