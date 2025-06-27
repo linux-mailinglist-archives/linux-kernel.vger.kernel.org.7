@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-706864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8942AEBCF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:18:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB71BAEBCFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0371C2517A
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F6E37B2869
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B26A1A9B3D;
-	Fri, 27 Jun 2025 16:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvgZlx4u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E681A76DA;
+	Fri, 27 Jun 2025 16:17:51 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5689E1A08A4;
-	Fri, 27 Jun 2025 16:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D3E1A08A4
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 16:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751041095; cv=none; b=ccjumgaVcAX1ThnUZXpl6whGEk6vsggZqKS87IRW/PdM/wDEDPtjiuwABDRNgK1ve4JYG7halVmjhklpcXvqh612Cd0o+G4cArB5scy4a2xAI9vQC13gn3U88NB2EjiCfGULQ0K5wiGRm4QIHsEG3tT7F3bbvGlKW6m8fURZV2M=
+	t=1751041071; cv=none; b=TjlDvN6OgsiHA7jWgH9K31bRucva3y2I0Hi59UE1eW2tL61JCMsLSCRmh69zQbFhaRV5Dxq+sFZVY6W1aiSD86AkaTSrM3vc5aCyaae0+A0fpBO6EFd9Gw6hgPQIhcPG9uUhSE/kkYfcBsJA13cp/SD5ETCbuJjOyA0/pPfXwXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751041095; c=relaxed/simple;
-	bh=vNyKPuHzCNUHX4x3bntCWHqAQ4zTRDjMdL7Oc2xzQyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+2QyuGIPDcNQ7Niw2eVxFK34rwhqlH0vUhxFO9VGEDud6bQbrb11mDakX1PfndkAAuLSW/Et46GyEG8tzkowWYXZnF0SZDE336KLKZlbAxiUJWkOlrBQEpRW1wPDhzCYYwvHWsVbz9+WKu/91d2MwlvMx0wXnIR3m2mW1ScODs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvgZlx4u; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751041094; x=1782577094;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vNyKPuHzCNUHX4x3bntCWHqAQ4zTRDjMdL7Oc2xzQyI=;
-  b=kvgZlx4u3zsCh4/ThTmTOpv/tnPY+XxsuDvqz3ngp7afkzQKcuhZpZNY
-   IjdC22XHUxeHburD50xEVTfx05vOxPETtm6F/gy87e6XdjjMeSpRdl5Yt
-   Ck+XBBUIivM/tiZaXDYRnfrrAjyGzm1kE9tt8JDlGGKUJ4Q8G+dYmjR6P
-   NFiiJF4KEc63VGsSkUfx/SSFRckfph0Yg6vhFiRSEsvCkbu6OKOucq+4s
-   dXaImImHE/jbxvgUqbsdAuHIiducSNYqUWYRctlhXMOnH2H32RYEAoSj6
-   EengU73QJ7Qg5dwAbrIzLMUDwGcemmACIoucSRmacJN35e0kPfC1WjZRC
-   w==;
-X-CSE-ConnectionGUID: 3e3NQTRpTg244UziF44Org==
-X-CSE-MsgGUID: 2sXXAbucTyG/+aWCo0pAdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="40983254"
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="40983254"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:17:27 -0700
-X-CSE-ConnectionGUID: x6MOS/2zRwqYo99kITkz4g==
-X-CSE-MsgGUID: ZwvY1V5LQ5qWmx5VIdRoJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,270,1744095600"; 
-   d="scan'208";a="157129155"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2025 09:17:24 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uVBlQ-0000000AX4s-2NUJ;
-	Fri, 27 Jun 2025 19:17:20 +0300
-Date: Fri, 27 Jun 2025 19:17:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Hans de Goede <hansg@kernel.org>
-Cc: LiangCheng Wang <zaq14760@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v6] staging: media: atomisp: apply clang-format and fix
- checkpatch.pl errors
-Message-ID: <aF7EEAxXsurLvIt9@smile.fi.intel.com>
-References: <20250627-bar-v6-1-b22b5ea3ced0@gmail.com>
- <e201c4b0-4fcc-4d98-9d76-0e9c41dc4d9f@kernel.org>
+	s=arc-20240116; t=1751041071; c=relaxed/simple;
+	bh=EpS50sVTieLd5hWIVkfDWKZoZmCkWzzgRnyPvqG2f74=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f/aG6M0k+rn9kc8q1nDh2/E4oFkX4I9z5oGY8Ym2sMJH7AlDTM+hFm6NBVXUgA0WB32YzhA+5yqanwppSrfE/E6gfEwxLM+e3pa74ahuBpqO8v64jWuiLBmt4mtatj1Vi6nUpgBEmehgQmM1gesQJFn4gg3Ex9A5Bqwm2/TsfNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uVBlj-00013q-0m; Fri, 27 Jun 2025 18:17:39 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uVBlh-005e4h-0c;
+	Fri, 27 Jun 2025 18:17:37 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uVBlh-000QK1-0G;
+	Fri, 27 Jun 2025 18:17:37 +0200
+Message-ID: <0802d06dafc270799f05d3ccd9fb8a46eb0836e0.camel@pengutronix.de>
+Subject: Re: [PATCH] dt-bindings: reset: renesas,rzv2h-usb2phy: Document
+ RZ/V2N SoC support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Prabhakar <prabhakar.csengg@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, Lad
+	Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Fri, 27 Jun 2025 18:17:36 +0200
+In-Reply-To: <20250528133031.167647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: 
+	<20250528133031.167647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e201c4b0-4fcc-4d98-9d76-0e9c41dc4d9f@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Jun 27, 2025 at 06:05:08PM +0200, Hans de Goede wrote:
-> On 27-Jun-25 4:56 PM, LiangCheng Wang wrote:
+On Mi, 2025-05-28 at 14:30 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Document support for the USB2PHY reset controller found on the Renesas
+> RZ/V2N (R9A09G056) SoC. The reset controller IP is functionally identical
+> to that on the RZ/V2H(P) SoC, so no driver changes are needed. The existi=
+ng
+> `renesas,r9a09g057-usb2phy-reset` compatible will be used as a fallback
+> for the RZ/V2N SoC.
 
-...
+Applied to reset/next, thanks!
 
->  	for (i = 0; i < count; i++) {
-> -		err = i2c_smbus_write_byte_data(client, reglist[i].reg, reglist[i].val);
-> +		err = i2c_smbus_write_byte_data(client, reglist[i].reg,
-> +						reglist[i].val);
->  		if (err) {
-> -			dev_err(&client->dev, "write error: wrote 0x%x to offset 0x%x error %d",
-> 
-> The original line here had a length below 100 chars, so it was fine
-> and log messages are allowed to go over the length limit
+[1/1] dt-bindings: reset: renesas,rzv2h-usb2phy: Document RZ/V2N SoC
+support
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Dfd4a06a2e166
 
-Actually I tend to agree with clang-format on this case and that's why:
-until V4L2 becomes less pedantic and fanatic about 80 characters
-limit, the 100 is not applicable for this driver to be moved under
-their umbrella.
-
-> +			dev_err(&client->dev,
-> +				"write error: wrote 0x%x to offset 0x%x error %d",
->  				reglist[i].val, reglist[i].reg, err);
->  			return err;
->  		}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+regards
+Philipp
 
 
