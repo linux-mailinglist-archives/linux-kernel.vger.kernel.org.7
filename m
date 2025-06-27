@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-706168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D091AEB2D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C2AEB2EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF92A3AF7F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D563C1887ECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C31293C76;
-	Fri, 27 Jun 2025 09:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F873296150;
+	Fri, 27 Jun 2025 09:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEQnAo8m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jA3YFp32"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21822271464;
-	Fri, 27 Jun 2025 09:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9CD293C59;
+	Fri, 27 Jun 2025 09:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751016431; cv=none; b=cpkVUg9W/SKmhPu7bT1SAPb81yBhR8njfVyBDoRflX/bFB6R5FaV0w2iBBGOGl31NZOUmwfbvrm0eqYKEeaESWqp19ccnqYvpIMwmSCyepr59nulZ6lxTeiCpSRre3QCl0R8Bu+lXsXxNLRiZOL3G7mAGG2rxQLQpXoCcybeX+0=
+	t=1751016589; cv=none; b=bXZVYJ8hPOupHDa6AO5dn2W6ZfZgNgVd9O4c93lySl9MMBKQLHI05ymrT5OL66Tjs+VORiw57DZDuIyhs710l+uY3ADwlqINe1mZIoWqlLURx/0oIqKuol8i53uownI0Pdz3h8a3vtr0VSL99uxdwzn3K+VebVyRZeNmrCaTWCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751016431; c=relaxed/simple;
-	bh=9Ao2DPZ5WH1AH59KqUG8CMXG1VAzP6Js/sjGtfxOmd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQzn6VE2j2pNpDLYQjd/xM4EMhKqqSI/1GlE9kupdrb7jlBF3lUe8h3wvNSJuxNlVR/xDbeXwRjVKUzwuyvLPfCk/Zg6LzX7Mw+tzm7pgkZQ8sNdIwCXSkPxqH9jY6pMQXoibhA71FkvSRWqN2irwe/QO9KFiTx8EBsJJk8uMQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEQnAo8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77D9CC4CEE3;
-	Fri, 27 Jun 2025 09:27:09 +0000 (UTC)
+	s=arc-20240116; t=1751016589; c=relaxed/simple;
+	bh=VlBSbuV26ATgj5QJpDedzhjO9BPdGw9zgUZj/bdJy/U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W2HylxbqaN5cxOS97mrdmaOgE/qAtPfJjeYyy/GJqJhSKzoxFXVK7ISgyqmA7rQAmKNKGUlZx4ZqHv4pWQW7bAl8QljdzHaADNMiuEr8BKiNLj58kMMlt+KwB0xHqoay2xM1cbt61qqWc78myXds7aBGUFqf9xfqToKeXasNzh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jA3YFp32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5CA4DC4CEE3;
+	Fri, 27 Jun 2025 09:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751016429;
-	bh=9Ao2DPZ5WH1AH59KqUG8CMXG1VAzP6Js/sjGtfxOmd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bEQnAo8m0otz0/uF05lagMkPplo1RIXinU9bo4tRu9ozLnBLODPx7vvqdk5/1kGaH
-	 9+ucSrGzQq7iGQnzk3TN+bz11fA9bf7BZAOu7xXhKOV5kbid4aJ/F44DOXe5BrwYMw
-	 7EKt7oeVPFwbfWZ33WL7mNurS3D2Y/5liaoKkdGL8PqMAbctzDZgS3jzUX9gufikgj
-	 IM8jZsMe9fJQyUpHjpzmDQmld/iOFkUaTvIu5zEaZZZ83M373//1xo0AkDNu5iLcSX
-	 p4lVM3IbKVH91aedgRJUdeCquqNaBioSIqjprjpWUSmslbv/qxWAcVgcppG/fjxQEC
-	 C3Gq1HBQPaHXw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1uV5MT-000000000BF-2wGi;
-	Fri, 27 Jun 2025 11:27:09 +0200
-Date: Fri, 27 Jun 2025 11:27:09 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
-	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
-	kw@linux.com, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
-	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
-	quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v3 1/4] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Update pcie phy bindings
-Message-ID: <aF5j7VqX5oU11cWe@hovoldconsulting.com>
-References: <20250625090048.624399-1-quic_ziyuzhan@quicinc.com>
- <20250625090048.624399-2-quic_ziyuzhan@quicinc.com>
+	s=k20201202; t=1751016589;
+	bh=VlBSbuV26ATgj5QJpDedzhjO9BPdGw9zgUZj/bdJy/U=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jA3YFp32S8voInFY0AkXyPdLJe794lc9uFxDS6Zd1OYUKiW8HhNkR4EouulK0p5G3
+	 DzoPA6RcUY+nkTPfXMbXILcLRUm/AYw3kklJrYyq+dCF6SEewQe8FrrrveZCdO5Hyz
+	 ylDDTBS2qi+hdz+WXsKzrAoSJDR+RBCOiKsV1z/TGGL6tnPYenMVTdrfL+hGZ44fW0
+	 j1OV1B6PYAJ1IzFxf6PvBtxjSNw+lPudzDKTPPPo2bMzaypoN/H4dg34t4Lep6PJ61
+	 VCr3dAhQ94gXoolHQkWyCOW90drzlOwhsgEx4Mb4LqZVz1IKWjnekcIlOSL1481uRb
+	 aGf6evz42rk8A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42040C7EE2A;
+	Fri, 27 Jun 2025 09:29:49 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH 0/5] sysctl: Remove last two ctl_tables from the kern_table
+ array
+Date: Fri, 27 Jun 2025 11:27:24 +0200
+Message-Id: <20250627-jag-sysctl-v1-0-20dd9801420b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625090048.624399-2-quic_ziyuzhan@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPxjXmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMyNz3azEdN3iyuLkkhxdCyPjxJQ0U3Njo6RUJaCGgqLUtMwKsGHRsbW
+ 1ABCM55RcAAAA
+X-Change-ID: 20250627-jag-sysctl-823adf5732be
+To: Kees Cook <kees@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2264;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=VlBSbuV26ATgj5QJpDedzhjO9BPdGw9zgUZj/bdJy/U=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGheZG85WIoisMVONIVO95YWzjTczwH2jER2l
+ i8nRrb3TqJUaIkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoXmRvAAoJELqXzVK3
+ lkFPAiAL/3vF4gCqCRj8+Iw00lNSe6lSk5rEbDjpvuYQtRTvudFemFMWd/pSUgG7RGr6Ouyq48D
+ dZVeueDgS/pqxA5bAb4+nmEpDLHxQUf6Xmkt6BH3T9Sw0l4PqXSpFDwMBXoOd8/KY5y8Lpk2gpE
+ MM+w2343xdxTsoEaEzt5l4ZlWIL7QEh9DcKQ8xjOpyo6t2yt85XMf+OjIZntTOZ/BMotfkZxi/9
+ wLHB1MYC/lY+o5yoHA31ZRhHPA/XGJKA5C1fWpl10orbvQpXTX8MlnOY9yfMejUtGhFLSavqR6r
+ RmQzMQii6xhmb0M+1gGd7mICt7Bk9DFoNMRACH2hknP5bzVsEQPd104ZgdW8PuCjOqEM4cgMGyX
+ IJWgYPYHK5HZV0DMSyViXtfFujyUad0Xle4n/O6Txlm3YOR9EupiLVKXjLlKxBH5RHxe0lWGH8s
+ tGajcvqo3SvWL9O/emhv8kIU/tKFi0yLVQe7yjtUPyCaAYqnYS8Zok/1VFNsVxUH65G4Hr6oCW5
+ SA=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-On Wed, Jun 25, 2025 at 05:00:45PM +0800, Ziyue Zhang wrote:
-> The gcc_aux_clk is required by the PCIe controller but not by the PCIe
-> PHY. In PCIe PHY, the source of aux_clk used in low-power mode should
-> be gcc_phy_aux_clk. Hence, remove gcc_aux_clk and replace it with
-> gcc_phy_aux_clk.
-> 
-> Removed the phy_aux clock from the PCIe PHY binding as it is no longer
-> used by any instance.
+This is the last series to relocate sysctl tables from kernel/sysctl.c
+into their respective subsystems. After the move of two ctl_tables
+(uevent_helper & overflow{uid,gid}), five remain. They either handle
+variables defined within sysctl.c or serve as a common place for
+variables that are defined in different architectures. These five will
+not be moved. Note that this series includes two auxiliary changes:
+Removal of an unused variable and Nix-based rework of sysctl.sh test
+script
 
-Please add the Fixes tags I mentioned earlier which identifies the
-commits that added the bogus clock.
+By decentralizing sysctl registrations, subsystem maintainers regain
+control over their sysctl interfaces, improving maintainability and
+reducing the likelihood of merge conflicts. All this is made possible by
+the work done to reduce the ctl_table memory footprint in commit
+d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
+arrays").
 
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml           | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> index 2c6c9296e4c0..57b16444eb0e 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> @@ -54,7 +54,7 @@ properties:
->  
->    clocks:
->      minItems: 5
-> -    maxItems: 7
-> +    maxItems: 6
+A few comments on the process:
+1. If you prefer to merge this through a non-sysctl tree, please let me
+   know so I can avoid conflicts in linux-next.
+2. Apologies if you were copied by mistake—let me know if you'd like to
+   be removed.
+3. This series builds on [1], so please rebase accordingly for clean
+   application.
+4. Testing done by running sysctl selftests on x86_64 and 0-day.
 
-You remove the last user of the bogus clock (qcs8300) in a separate
-series so you should keep it until then.
+Comments/Suggestions greatly appreciated
 
->    clock-names:
->      minItems: 5
-> @@ -65,7 +65,6 @@ properties:
->        - enum: [rchng, refgen]
->        - const: pipe
->        - const: pipediv2
-> -      - const: phy_aux
->  
->    power-domains:
->      maxItems: 1
-> @@ -176,6 +175,8 @@ allOf:
->            contains:
->              enum:
->                - qcom,qcs615-qmp-gen3x1-pcie-phy
-> +              - qcom,sa8775p-qmp-gen4x2-pcie-phy
-> +              - qcom,sa8775p-qmp-gen4x4-pcie-phy
->                - qcom,sc8280xp-qmp-gen3x1-pcie-phy
->                - qcom,sc8280xp-qmp-gen3x2-pcie-phy
->                - qcom,sc8280xp-qmp-gen3x4-pcie-phy
-> @@ -197,8 +198,6 @@ allOf:
->            contains:
->              enum:
->                - qcom,qcs8300-qmp-gen4x2-pcie-phy
+[1] https://lore.kernel.org/20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org
 
-                   ^
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
+---
+Joel Granados (5):
+      sysctl: Nixify sysctl.sh
+      sysctl: Removed unused variable
+      uevent: mv uevent_helper into kobject_uevent.c
+      kernel/sys.c: Move overflow{uid,gid} sysctl into kernel/sys.c
+      sysctl: rename kern_table -> sysctl_subsys_table
 
-> -              - qcom,sa8775p-qmp-gen4x2-pcie-phy
-> -              - qcom,sa8775p-qmp-gen4x4-pcie-phy
+ include/linux/sysctl.h                   |  1 -
+ kernel/sys.c                             | 29 +++++++++++++++++++
+ kernel/sysctl.c                          | 49 +++++++-------------------------
+ lib/kobject_uevent.c                     | 20 +++++++++++++
+ tools/testing/selftests/sysctl/sysctl.sh |  2 +-
+ 5 files changed, 61 insertions(+), 40 deletions(-)
+---
+base-commit: 501dd0fbc76bcae57902ea000d9c6ccd9d5f226e
+change-id: 20250627-jag-sysctl-823adf5732be
 
-Johan
+Best regards,
+-- 
+Joel Granados <joel.granados@kernel.org>
+
+
 
