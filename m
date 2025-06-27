@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-707256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25ECDAEC1D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:19:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60CC6AEC1D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 23:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23ED189FCEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:19:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11B927AF40A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 21:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A78B25F78E;
-	Fri, 27 Jun 2025 21:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7874825F78F;
+	Fri, 27 Jun 2025 21:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQD4SIMF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKMM4ZPH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC6425E452;
-	Fri, 27 Jun 2025 21:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA95E25CC57;
+	Fri, 27 Jun 2025 21:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751059151; cv=none; b=o4/Qym9AVJOrdCI6KkfoGfsvtRCjuJFDZuATeQ9ZEYseWmdeDplma4bgbd+r1yCvhk7KeaI2GMBrbbsXFAGUhsRvVPQh8rN1Ak+d+BSrxgsYWcHaQj9mZ04FA8hoXF1GgCa4zRMn1xHpo0/Vuhv/hV8dRPdD9Q0HizjYzT5Khfw=
+	t=1751059165; cv=none; b=XtDtBt15iyfR4JQzagl3qMoVcodmnr+krH2XTmW4H2EQ+ksSc8CdGRDZ499jUEAUSQgxhJNptcAogVf/YqDdylJZFfK5Ni9vEVanBmSa1zbhOp4mdFrj+odPCtQf/XDkvPHXKJSav1/Mizld1B4C3WoKd8VdWS9/cB+EEftOrOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751059151; c=relaxed/simple;
-	bh=DJo/Xw/Bqco4vBD6Mqkh+C8Ix5OPOEQ1fzty/x4dnyk=;
+	s=arc-20240116; t=1751059165; c=relaxed/simple;
+	bh=9JNcIWRH2v6P/Sbb+bgcwepnMw48U5U73p8nACiIeO0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNM/ob9thseS/aOl+kOfQd7x132CdAq8ZMoKcq5WA3aMFM19f/UFDd7SLKlQJD4ImDArSoYMvk4wuQKiTZ2q+6Keeoyx7NaD6numWcDMV+Dla7FBg1tYt+PQnY+YCE15/YFOAcz7XVuM0h7dooOohhchRIFJxJbVvPliTbt13/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQD4SIMF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D82C4CEE3;
-	Fri, 27 Jun 2025 21:19:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSt2+do6+6NIMb5YokgY4KvWwl9FRU/a7xAKGzcxICdBhVSlb9eIPNlmI7J63G7bcKQX1hGgsbZXAe/Zz2wv66QhsfgJPX5hfgHMtjdaoZd+XUOScs8kVJON1wxAycZTxmqd8Y8Zf8haAfA4EsYZ40rSZnNYI5G6c9dHS5HVuq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKMM4ZPH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55C34C4CEE3;
+	Fri, 27 Jun 2025 21:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751059150;
-	bh=DJo/Xw/Bqco4vBD6Mqkh+C8Ix5OPOEQ1fzty/x4dnyk=;
+	s=k20201202; t=1751059163;
+	bh=9JNcIWRH2v6P/Sbb+bgcwepnMw48U5U73p8nACiIeO0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gQD4SIMFHjE7kHEjfbyq8Bv9jRE3HgswR1vZshITIExP2INHjVXbvpQjvn/cMhU2k
-	 yTVaVahdRv/vWLPArfKV1XPJiIWWwt+HMY/k05nw4CuTX3XKYL5kepGomHutsXuOSF
-	 elS3CPQ9zaP+SnJZrxHBFwvojxvhvz1y4eZw9bthfI5YTUl0ib81mTB6fGG+1yfR2h
-	 6LSlcDATwYmPn5eJZItgVH3aUPfUqOSr9XCjhT2Z2QKNoE6gwEpcGSDm1cbKVpq5Aj
-	 +KWf5WXxSOW/Q5iPVmQU+dzLty/ZZGeXxaLryvfb9alyGhPZLGbeU69ho8KIbpozyc
-	 xsRljQdH2oBWg==
-Date: Fri, 27 Jun 2025 16:19:09 -0500
+	b=mKMM4ZPHsHKC7elUTQYw7FZhvGBpllKGWQDcQPuGO/rqeC/yEOKMKb1+gvK6npK+h
+	 WIzIfAcj+8hZ+x5RRFgMcG38j5JdtTelilcmdypZHQCguX4jHf3DzfHq12l1s9AGtk
+	 /nu9/Js0OVCKHMXSAwkag0FcQ2l4w/woNqyWC5APLrTv4CVkzSsOytxLtVw/uOLp90
+	 5zZPpl5KM6MCTxp1lvWXbUYR4za80VTjit5G0nFkESZQVd3bIxC4of4P+Hl0HP/tgA
+	 e8cQa2Rt76XCtH8j2VovJ3Vmo4BIcRPMObacByuMxxvGahmycrxePQuk7MELDeu3/0
+	 5HngcU9+grV5w==
+Date: Fri, 27 Jun 2025 16:19:22 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH v2 1/1] dt-bindings: usb: convert lpc32xx-udc.txt to yaml
- format
-Message-ID: <175105914924.160757.6319015774337763114.robh@kernel.org>
-References: <20250625214357.2620682-1-Frank.Li@nxp.com>
+To: Cristian Cozzolino <cristian_ci@protonmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, phone-devel@vger.kernel.org,
+	devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add Flipkart
+Message-ID: <175105916214.161122.10408553923321798480.robh@kernel.org>
+References: <20250626-rimob-initial-devicetree-v3-0-4017ac9fd93d@protonmail.com>
+ <20250626-rimob-initial-devicetree-v3-1-4017ac9fd93d@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,29 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250625214357.2620682-1-Frank.Li@nxp.com>
+In-Reply-To: <20250626-rimob-initial-devicetree-v3-1-4017ac9fd93d@protonmail.com>
 
 
-On Wed, 25 Jun 2025 17:43:53 -0400, Frank Li wrote:
-> Convert lpc32xx-udc.txt to yaml format.
+On Thu, 26 Jun 2025 00:04:26 +0200, Cristian Cozzolino wrote:
+> Add Flipkart to the vendor prefixes.
 > 
-> Additional changes:
-> - add clocks and put it into required list to match existed lp32xx.dtsi.
-> - remove usb-transceiver@2c at examples.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Cristian Cozzolino <cristian_ci@protonmail.com>
 > ---
-> changes in v2
-> - update commit message by add "additional changes"
-> - add clocks to required list
-> ---
->  .../devicetree/bindings/usb/lpc32xx-udc.txt   | 28 ----------
->  .../bindings/usb/nxp,lpc3220-udc.yaml         | 54 +++++++++++++++++++
->  2 files changed, 54 insertions(+), 28 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/usb/lpc32xx-udc.txt
->  create mode 100644 Documentation/devicetree/bindings/usb/nxp,lpc3220-udc.yaml
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
