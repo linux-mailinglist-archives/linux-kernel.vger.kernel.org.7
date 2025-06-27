@@ -1,238 +1,263 @@
-Return-Path: <linux-kernel+bounces-706597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CD8AEB8DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 15:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4975EAEB71B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075B01C20DFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB973AEB3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DDA2DBF47;
-	Fri, 27 Jun 2025 13:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6633420B1F4;
+	Fri, 27 Jun 2025 12:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="julKciE+"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JuCoJl0b"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F942D9EE9;
-	Fri, 27 Jun 2025 13:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98E82C08D5;
+	Fri, 27 Jun 2025 12:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751030854; cv=none; b=l+sWJSbapCDHH23WCBcVOQFiRPia1C+HR4B8qOc+8i+rvKfY72PIc+77//2G2AN4XaoH6sawbjQK6pozcQbcUa8frRwDGOA7NFnVBAYDn3ATNWQ0AlRW8IG9kg0VLKRx74XqGgnSH9kho4kOOmtcnKohqaZ1WHgDm9J9AkUm1cg=
+	t=1751026016; cv=none; b=ouFW1HWxDtjH8qU5u4rmPWU4Lz9nrnItrelTWiqlIxlSGnzT+kn7cUxJbuFiQsAvzU9Y6isNpZjQD3cCD9fBicN0O73U2X0+uqapFlNt6IgKDIcyjnXP3Wu4BJWToUK4F5QF0JJzfAw7iV8nLcKPuXFYbUgc9SMS+bVHFPY7hpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751030854; c=relaxed/simple;
-	bh=9W1JgSKeDkaeUxmYu0M1nTGZ2j3jE/5h9HLHIlPEjrY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UB4YK+h7f6HDeNUWENe3quaxsybn9LokWFNjUD2m5E252Iv5nNusZfAGv19BpPYV1xN11WrKkD6Zt1hd1rSKujJQWZ3PwC7rPKUG1lZTE6A0/r3sSxz58guBUNK3nO35jhanmGQhsgxZ6DSA1FCJQZ5/ni8i0qtsO8k4ZzUhTtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=julKciE+; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 55RBw2Bk2747738;
-	Fri, 27 Jun 2025 06:58:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751025482;
-	bh=S6WQg2nTz8+rn65F3UHXN0fs/bGijiuQFzqFHHyFcog=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=julKciE+Ouw6W/r+SwkDqt4wHBkBv6h/IcZ/O14zTSNmghUFlvvz/o0Z87Mh0lY+4
-	 HZ3aRX3ZJcoC0GjFpOWQz/1e+afuDzBDKIn/SioIjeG/pANn4pE4E/h7Db3qyazv3F
-	 YwSU33yGOgnv8HGelFBpKbaBjjDgY1DvtTSQpm9k=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 55RBw2m23207858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 27 Jun 2025 06:58:02 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 27
- Jun 2025 06:58:02 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 27 Jun 2025 06:58:02 -0500
-Received: from localhost (ula0502350.dhcp.ti.com [172.24.227.38])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 55RBw1oN2754960;
-	Fri, 27 Jun 2025 06:58:01 -0500
-From: Paresh Bhagat <p-bhagat@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
-        <devarsht@ti.com>, <s-vadapalli@ti.com>, <andrew@lunn.ch>
-Subject: [PATCH v5 1/4] arm64: dts: ti: Add bootph property to nodes at source for am62a
-Date: Fri, 27 Jun 2025 17:27:50 +0530
-Message-ID: <20250627115753.2246881-2-p-bhagat@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250627115753.2246881-1-p-bhagat@ti.com>
-References: <20250627115753.2246881-1-p-bhagat@ti.com>
+	s=arc-20240116; t=1751026016; c=relaxed/simple;
+	bh=t7XzKew5+0lYzbTmoALkz10JRdnJiuTWlYdSxpv78k8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ioc4aNAMV6tIELmnoKS3rUzMmrDbnX+rNrF8eED91p7H/VbM2j/ny994NCqk4kXoayYHSjjhQ36q70N2VgJAl8rfHsc3cRhP42NaF8j1BaH9LnbhFWgAsTsOJjDKUPnTyUdMCJZS6NGSNo+Ujux4jIpuMYFZPUF9GVvfKl0VIL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JuCoJl0b; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RC4DVm014224;
+	Fri, 27 Jun 2025 12:06:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hvt4amqmouPmPQltleqmNYS6BYq7CIwa2LE9KyVDFvU=; b=JuCoJl0bn97rsuBV
+	ZtKqj9fAL2IVcZW2X5WCKCco3dm1zvHhM6K5+apWrmrDdjpEXkiox4emm4x0n6Rx
+	wWA3koQ87bd9fWRSio3pZplN8qkbLbZt2mO6Qm25jHSdmUgu0DEEVftb9uk5G65n
+	oXH7OG2gLxp3hBlJjUXh9tcmEDQL/JdMDqj3XtJkMLC8o1J90Q8SlzeOm6MJgmLN
+	zSsd7lQvymCLiN/LpB4V0MiFa3+2PLAnXPj9oEmEey6BZOI5o5T3Ycl4lmrdIHlZ
+	kWBPDb/Eh42d+Ct5NakRjcnBFJuCARqgKCHYuGPJEQyLfmB04Mt80z5BEGTEAjdM
+	mRFAzw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47emcn0hp4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 12:06:50 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55RC6oJw019415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 27 Jun 2025 12:06:50 GMT
+Received: from [10.50.23.194] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 27 Jun
+ 2025 05:06:46 -0700
+Message-ID: <76492de3-c200-535a-aa1b-c617ba6146f1@quicinc.com>
+Date: Fri, 27 Jun 2025 17:36:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v5 1/5] media: dt-bindings: venus: Add qcm2290 dt schema
+Content-Language: en-US
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>, <krzk+dt@kernel.org>,
+        <bryan.odonoghue@linaro.org>, <quic_dikshita@quicinc.com>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250626135931.700937-1-jorge.ramirez@oss.qualcomm.com>
+ <20250626135931.700937-2-jorge.ramirez@oss.qualcomm.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250626135931.700937-2-jorge.ramirez@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EiN1Rx7BzmEC0I9Xw9iCP2r7YY8rNIgZ
+X-Proofpoint-ORIG-GUID: EiN1Rx7BzmEC0I9Xw9iCP2r7YY8rNIgZ
+X-Authority-Analysis: v=2.4 cv=J+eq7BnS c=1 sm=1 tr=0 ts=685e895a cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=gEfo2CItAAAA:8
+ a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=EFdyQdsXkkGHEbZHU5cA:9
+ a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDEwMCBTYWx0ZWRfX91Ha1w5XgZiL
+ LIhSE0YIWrd8nmKCyUV3BQA9mHr/mqyNIGMmrB0awxx8Bj+ujsGJjGYx/tw4B8Q6s0zHIN8oANx
+ kQkMmE0sDQfvy4tGkdjDMmZ2e3SKqvT2di9WKe1WQY4/goGVMzJhNBVRPwHCvugcdLQHPR15AOr
+ 7vLzT6+u1sw8xf4i0yUZgp4YB+EYQPGA+arKlb6w1t5zcP79dNOsL8QP332qb5PmLFiHj+HjQhn
+ fa2kRks5Sk60mlKJYr0w2Ccxx514ELwC4n/SgdY9LI/qqqUXZKrKw8GCRZT+L8UxqSSQ0kBPaeq
+ d5rS+IPnDQqv0UO58olQoW0eFq3qAVHFASMZ4tIENegFDI2MfaZJu4V8SPeKHaZVsqLbfoikCj9
+ lo5hgCkJatGBOf8YgJBpuKSsaKy4U+NDd7DxsmbxXvY8FHyuAzO/MWV/MFp46JqM/2fPm5A4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_04,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ mlxscore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506270100
 
-Add bootph property directly into the original definitions of relevant
-nodes (e.g., power domains, USB controllers, and other peripherals)
-within their respective DTSI files (ex. main, mcu, and wakeup) for
-am62a.
 
-By defining bootph in the nodes source definitions instead of appending
-it later in final DTS files, this change ensures that the property is
-inherently present wherever the nodes are reused across derived device
-trees.
+On 6/26/2025 7:29 PM, Jorge Ramirez-Ortiz wrote:
+> Add a schema for the venus video encoder/decoder on the qcm2290.
+> 
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/media/qcom,qcm2290-venus.yaml    | 127 ++++++++++++++++++
+>  1 file changed, 127 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml b/Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
+> new file mode 100644
+> index 000000000000..a9f89b545334
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
+> @@ -0,0 +1,127 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,qcm2290-venus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm QCM2290 Venus video encode and decode accelerators
+> +
+> +maintainers:
+> +  - Vikash Garodia <quic_vgarodia@quicinc.com>
+> +
+> +description:
+> +  The Venus AR50_LITE IP is a video encode and decode accelerator present
+> +  on Qualcomm platforms
+> +
+> +allOf:
+> +  - $ref: qcom,venus-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,qcm2290-venus
+> +
+> +  power-domains:
+> +    maxItems: 3
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: venus
+> +      - const: vcodec0
+> +      - const: cx
+> +
+> +  clocks:
+> +    maxItems: 6
+> +
+> +  clock-names:
+> +    items:
+> +      - const: core
+> +      - const: iface
+> +      - const: bus
+> +      - const: throttle
+> +      - const: vcodec0_core
+> +      - const: vcodec0_bus
+> +
+> +  iommus:
+> +    minItems: 1
+> +    maxItems: 5
+2 should be good to support non secure usecases. 5 not needed.
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: video-mem
+> +      - const: cpu-cfg
+> +
+> +  operating-points-v2: true
+> +  opp-table:
+> +    type: object
+> +
+> +required:
+> +  - compatible
+> +  - power-domain-names
+> +  - iommus
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,gcc-qcm2290.h>
+> +    #include <dt-bindings/interconnect/qcom,qcm2290.h>
+> +    #include <dt-bindings/interconnect/qcom,rpm-icc.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    venus: video-codec@5a00000 {
+> +        compatible = "qcom,qcm2290-venus";
+> +        reg = <0x5a00000 0xf0000>;
+> +        interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +        power-domains = <&gcc GCC_VENUS_GDSC>,
+> +                        <&gcc GCC_VCODEC0_GDSC>,
+> +                        <&rpmpd QCM2290_VDDCX>;
+> +        power-domain-names = "venus",
+> +                             "vcodec0",
+> +                             "cx";
+> +        operating-points-v2 = <&venus_opp_table>;
+> +
+> +        clocks = <&gcc GCC_VIDEO_VENUS_CTL_CLK>,
+> +                 <&gcc GCC_VIDEO_AHB_CLK>,
+> +                 <&gcc GCC_VENUS_CTL_AXI_CLK>,
+> +                 <&gcc GCC_VIDEO_THROTTLE_CORE_CLK>,
+> +                 <&gcc GCC_VIDEO_VCODEC0_SYS_CLK>,
+> +                 <&gcc GCC_VCODEC0_AXI_CLK>;
+> +        clock-names = "core",
+> +                       "iface",
+> +                       "bus",
+> +                       "throttle",
+> +                       "vcodec0_core",
+> +                       "vcodec0_bus";
+> +
+> +        memory-region = <&pil_video_mem>;
+> +        iommus = <&apps_smmu 0x860 0x0>,
+> +                 <&apps_smmu 0x880 0x0>,
+> +                 <&apps_smmu 0x861 0x04>,
+> +                 <&apps_smmu 0x863 0x0>,
+> +                 <&apps_smmu 0x804 0xE0>;
+update this accordingly.
+> +
+> +        interconnects = <&mmnrt_virt MASTER_VIDEO_P0 RPM_ALWAYS_TAG
+> +                         &bimc SLAVE_EBI1 RPM_ALWAYS_TAG>,
+> +                        <&bimc MASTER_APPSS_PROC RPM_ACTIVE_TAG
+> +                         &config_noc SLAVE_VENUS_CFG RPM_ACTIVE_TAG>;
+> +        interconnect-names = "video-mem",
+> +                             "cpu-cfg";
+> +
+> +        venus_opp_table: opp-table {
+> +            compatible = "operating-points-v2";
+> +
+> +            opp-133000000 {
+> +                opp-hz = /bits/ 64 <133000000>;
+> +                required-opps = <&rpmpd_opp_low_svs>;
+> +            };
+This value is incorrect, fix it to 133330000.
+> +            opp-240000000 {
+> +                opp-hz = /bits/ 64 <240000000>;
+> +                required-opps = <&rpmpd_opp_svs>;
+Do you see other corners in the reference catalog as well, not just the
+downstream code ? OR did you limit this as the usecase do not demand higher corner ?
 
-Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62a-main.dtsi   | 14 ++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi    |  1 +
- arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi |  2 ++
- 3 files changed, 17 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-index 63e097ddf988..770f1258b0aa 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-@@ -51,6 +51,7 @@ phy_gmii_sel: phy@4044 {
- 			compatible = "ti,am654-phy-gmii-sel";
- 			reg = <0x4044 0x8>;
- 			#phy-cells = <1>;
-+			bootph-all;
- 		};
- 
- 		epwm_tbclk: clock-controller@4130 {
-@@ -96,6 +97,7 @@ secure_proxy_main: mailbox@4d000000 {
- 			#mbox-cells = <1>;
- 			interrupt-names = "rx_012";
- 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			bootph-all;
- 		};
- 
- 		inta_main_dmss: interrupt-controller@48000000 {
-@@ -131,6 +133,7 @@ main_bcdma: dma-controller@485c0100 {
- 			ti,sci-rm-range-bchan = <0x20>; /* BLOCK_COPY_CHAN */
- 			ti,sci-rm-range-rchan = <0x21>; /* SPLIT_TR_RX_CHAN */
- 			ti,sci-rm-range-tchan = <0x22>; /* SPLIT_TR_TX_CHAN */
-+			bootph-all;
- 		};
- 
- 		main_pktdma: dma-controller@485c0000 {
-@@ -147,6 +150,8 @@ main_pktdma: dma-controller@485c0000 {
- 				    "ring", "tchan", "rchan", "rflow";
- 			msi-parent = <&inta_main_dmss>;
- 			#dma-cells = <2>;
-+			bootph-all;
-+
- 			ti,sci = <&dmsc>;
- 			ti,sci-dev-id = <30>;
- 			ti,sci-rm-range-tchan = <0x23>, /* UNMAPPED_TX_CHAN */
-@@ -220,16 +225,19 @@ dmsc: system-controller@44043000 {
- 		k3_pds: power-controller {
- 			compatible = "ti,sci-pm-domain";
- 			#power-domain-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_clks: clock-controller {
- 			compatible = "ti,k2g-sci-clk";
- 			#clock-cells = <2>;
-+			bootph-all;
- 		};
- 
- 		k3_reset: reset-controller {
- 			compatible = "ti,sci-reset";
- 			#reset-cells = <2>;
-+			bootph-all;
- 		};
- 	};
- 
-@@ -254,6 +262,7 @@ secure_proxy_sa3: mailbox@43600000 {
- 		 * firmware on non-MPU processors
- 		 */
- 		status = "disabled";
-+		bootph-all;
- 	};
- 
- 	main_pmx0: pinctrl@f4000 {
-@@ -262,6 +271,7 @@ main_pmx0: pinctrl@f4000 {
- 		#pinctrl-cells = <1>;
- 		pinctrl-single,register-width = <32>;
- 		pinctrl-single,function-mask = <0xffffffff>;
-+		bootph-all;
- 	};
- 
- 	main_esm: esm@420000 {
-@@ -282,6 +292,7 @@ main_timer0: timer@2400000 {
- 		assigned-clock-parents = <&k3_clks 36 3>;
- 		power-domains = <&k3_pds 36 TI_SCI_PD_EXCLUSIVE>;
- 		ti,timer-pwm;
-+		bootph-all;
- 	};
- 
- 	main_timer1: timer@2410000 {
-@@ -651,6 +662,7 @@ usb0: usb@31000000 {
- 			interrupt-names = "host", "peripheral";
- 			maximum-speed = "high-speed";
- 			dr_mode = "otg";
-+			bootph-all;
- 			snps,usb2-gadget-lpm-disable;
- 			snps,usb2-lpm-disable;
- 		};
-@@ -745,6 +757,7 @@ cpsw_port1: port@1 {
- 				phys = <&phy_gmii_sel 1>;
- 				mac-address = [00 00 00 00 00 00];
- 				ti,syscon-efuse = <&cpsw_mac_syscon 0x0>;
-+				bootph-all;
- 			};
- 
- 			cpsw_port2: port@2 {
-@@ -764,6 +777,7 @@ cpsw3g_mdio: mdio@f00 {
- 			clocks = <&k3_clks 13 0>;
- 			clock-names = "fck";
- 			bus_freq = <1000000>;
-+			bootph-all;
- 		};
- 
- 		cpts@3d000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-index ee961ced7208..df4aa131097f 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
-@@ -12,6 +12,7 @@ mcu_pmx0: pinctrl@4084000 {
- 		#pinctrl-cells = <1>;
- 		pinctrl-single,register-width = <32>;
- 		pinctrl-single,function-mask = <0xffffffff>;
-+		bootph-all;
- 	};
- 
- 	mcu_esm: esm@4100000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-index 259ae6ebbfb5..9ef1c829a9df 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-@@ -17,6 +17,7 @@ wkup_conf: bus@43000000 {
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-+			bootph-all;
- 		};
- 
- 		opp_efuse_table: syscon@18 {
-@@ -67,6 +68,7 @@ wkup_uart0: serial@0 {
- 			reg = <0 0x100>;
- 			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-+			bootph-pre-ram;
- 	       };
- 	};
- 
--- 
-2.34.1
-
+Regards,
+Vikash
+> +            };
+> +        };
+> +    };
 
