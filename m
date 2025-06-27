@@ -1,212 +1,145 @@
-Return-Path: <linux-kernel+bounces-706439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0A1AEB6C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:44:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B434AEB6D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A913BFB9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5A9417FAE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377DC2BEC3D;
-	Fri, 27 Jun 2025 11:44:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EE22D3EE3;
+	Fri, 27 Jun 2025 11:46:15 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBFB1922FA
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E704C2D3EE0
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751024668; cv=none; b=sPs5HkRoMw90KsSH1JTE65zwoW/dfmYsP5yqk08IZ6uUIQb+BnLTgZn4AZBoPZGYT0Df5zQI35SDZUXCZ251HqEMyr4Vhyl0A+2+xhlhYsqLw9TdXke+RlHMmXzYbFNz/2SJyIM3wcaZrHT6jDESTuiKzik4OKOF7/mHmOEDLw0=
+	t=1751024775; cv=none; b=adv3uFSKbq65F8+oo2ekLpdqgX7Up9vpdDkzeBuzC3CP14XUnjCrQLCKzTmOM8reMGJEL/ByjsBLv529ezE7JOc6IkcxVNN+p0Rj82GfgwVZZFf2UL+W5/wpJmA140ikPdqlDAcz0Lc1jYest1YzwP4zXXUHUGvwJ8GpAMUvYmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751024668; c=relaxed/simple;
-	bh=LypsnHfjUJ/MQWcPoyl8T1d6zmfjblGzB4a3dMrK1JA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nhoyar6bZGG7be6MWQZz7thAjrRhG3zG/SkDdJZM38O/u19YhSLAoLLOtsOKDZDxys4BADKco68Ik2aMYcmd2AQ+2H5B7g7oIyTaxUYNT/UDEljM2MiH9ah2fLn2HdhxzkVd2Q0RgkXbf1eF/nWmEqaDkim94BBp4psHPhP01+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddd5311fd3so18139205ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:44:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751024666; x=1751629466;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LcNzehwuovaQpYuSLQaGBibTim5vKH876zH5zSg7PqM=;
-        b=cyr9ZnxaKNzAE6ZRV9+L59F166rTp29k8Sv7l0XLUsyD2VNz5kXBf3q8yWPz/7rVIn
-         zYM+k3y4BWv4JXnXX3a2v9Q9+Njy35tJnhtMU0OovJtiaGgeqxxVRvk6lhwdM9+1g+Cr
-         2z1V2nFysOHyQhIBicPgUOsj8YEe0S++FAnMtLhgy4k1Er9JZl/eZ+Z3f8PCpVAFlw2E
-         DkTHnnQ8uzrQnyQdp6cnWlvE2X3DOtn2Ag9V9xi94IcZRdgILUQMJYcfh6TQECVs+exB
-         xkctkqWrmYp0YuL3+hAmnz0DTQrzfu5OIHXS6qyJ7Zd8zEWt8q7eFgHhdli0XGjS/bul
-         FSGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMzesA/gOE3XCT8ze6XNb6MqOWgNuI3ruKIyKZ2C+NgpTW5EDC+QcxheB1DGaKDLYJDOmzUvpUL82p6j0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye4EiOlV5Ynnp0D2kdDmlM3VlrVs6lFBE+6yydMhEqtrzBfSI8
-	X7IpFoEfM0sdU3wr/5vU5Y3NdjDYpv/tSJ312sou7X5AYKjDWjUlh/lkTMfdWDSA14EvfUo1Ds/
-	h7wiWhA4ruepOXMMaV+eDQLCU7NNqLybs4hyq6GNcN1rLlB1kIbxenZsUHdE=
-X-Google-Smtp-Source: AGHT+IEAfg2yIhYyQDwlT8K8xZcVXGXvfML2KOrIA1eVXjUIR6IBI5ghrW0aa5ddHuN3wR+c6aXNXEMKHStBdEPUjOxWRTkrscKa
+	s=arc-20240116; t=1751024775; c=relaxed/simple;
+	bh=JdVJnpaEZtLd9FeCCX+vyHrDD6OuJkB7SDth8D47IME=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ud0taWCCNTMnY6LQeGD1qhswNlomwFanLCo4tIdPTp1emwe3TzrYpgFovwkc88PqTcsVYozA/cHf4TbcZFdWKn0yzS4Ce4UraPAqypCm3xKXuZgQWqhXySrY5++qbGGMLJz3sKqmi0VQAQdYSUXMTyO/EFgFIiypy7M55tOXUb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uV7Wi-0004N2-Gc; Fri, 27 Jun 2025 13:45:52 +0200
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v2 0/4] drm/bridge: samsung-dsim: Stop controlling vsync
+ display FIFO flush in panels
+Date: Fri, 27 Jun 2025 13:45:37 +0200
+Message-Id: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3111:b0:3df:2f47:dc21 with SMTP id
- e9e14a558f8ab-3df4acc64a1mr34190715ab.22.1751024666209; Fri, 27 Jun 2025
- 04:44:26 -0700 (PDT)
-Date: Fri, 27 Jun 2025 04:44:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685e841a.a00a0220.129264.0002.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in ip_mr_output
-From: syzbot <syzbot+f02fb9e43bd85c6c66ae@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGGEXmgC/3WNQQqDMBBFryKz7pQYYtWuvEdxYeNEB0qUjAZFv
+ HtT912+B//9A4QCk8AzOyBQZOHJJ9C3DOzY+YGQ+8SglS5UoUvshTHK7i26zyojVq6yts67h1M
+ G0moO5Hi7iq828ciyTGG/DmL+s/9bMUeF9dtQZ4qyKnXdzOSHdQmT5+3eE7TneX4BgS3PbbMAA
+ AA=
+X-Change-ID: 20250527-dsi-vsync-flush-8f8cc91a6f04
+To: Inki Dae <inki.dae@samsung.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello,
+This series enables the vsync flush feature in the samsung-dsim driver
+unconditionally and removes the MIPI_DSI_MODE_VSYNC_FLUSH flag.
 
-syzbot found the following issue on:
+Background: I've recently seen shifted display issues on two different
+i.MX8MM boards (mxsfb + samsung-dsim) with different DSI panels.
+The symptoms were horizonally shifted display contents, with a stable
+offset, in about 0.1 to 0.6 percent of modesets.
+Enabling the MIPI_DSI_MODE_VSYNC_FLUSH flag in the panels' mode_flags
+fixed the issue in both cases.
 
-HEAD commit:    fc4842cd0f11 Merge branch 'netconsole-msgid' into main
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10d0be82580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8a808a5ba3697f99
-dashboard link: https://syzkaller.appspot.com/bug?extid=f02fb9e43bd85c6c66ae
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=152d0d0c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132d0d0c580000
+The samsung-dsim driver is the only DSI bridge driver that uses this
+flag: If the flag is absent, the driver sets the DSIM_MFLUSH_VS bit in
+the DSIM_CONFIG_REG register, which disables the vsync flush feature.
+The reset value of this bit is cleared (vsync flush is default-enabled).
+According to the i.MX8MM reference manual,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8929e479b95b/disk-fc4842cd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3b2cb79509fb/vmlinux-fc4842cd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/60acef195b6f/bzImage-fc4842cd.xz
+    "It needs that Main display FIFO should be flushed for deleting
+     garbage data."
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f02fb9e43bd85c6c66ae@syzkaller.appspotmail.com
+This appears to match the comment in mxsfb_reset_block() in mxsfb_kms.c:
 
-WARNING: CPU: 0 PID: 5859 at net/ipv4/ipmr.c:2302 ip_mr_output+0xbb1/0xe70 net/ipv4/ipmr.c:2302
-Modules linked in:
-CPU: 0 UID: 0 PID: 5859 Comm: syz-executor357 Not tainted 6.16.0-rc1-syzkaller-00413-gfc4842cd0f11 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:ip_mr_output+0xbb1/0xe70 net/ipv4/ipmr.c:2302
-Code: df e9 63 f6 ff ff e8 8e 72 c6 f7 48 8b 74 24 18 45 31 f6 31 ff ba 02 00 00 00 e8 ea 14 4c ff e9 45 f6 ff ff e8 70 72 c6 f7 90 <0f> 0b 90 e9 94 f5 ff ff e8 62 72 c6 f7 90 0f 0b 90 42 80 3c 2b 00
-RSP: 0018:ffffc90000007900 EFLAGS: 00010246
-RAX: ffffffff89f9ec80 RBX: ffff888033053780 RCX: ffff8880277c9e00
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90000007a10 R08: 0000000000000000 R09: ffffffff89d71b5d
-R10: dffffc0000000000 R11: ffffffff89f9e0d0 R12: 0000000000000010
-R13: dffffc0000000000 R14: ffff888075dfb100 R15: 0000000000000000
-FS:  000055557e793380(0000) GS:ffff888125c52000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe8999b9270 CR3: 00000000291c0000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- igmp_send_report+0x89e/0xdb0 net/ipv4/igmp.c:799
- igmp_timer_expire+0x204/0x510 net/ipv4/igmp.c:-1
- call_timer_fn+0x17e/0x5f0 kernel/time/timer.c:1747
- expire_timers kernel/time/timer.c:1798 [inline]
- __run_timers kernel/time/timer.c:2372 [inline]
- __run_timer_base+0x61a/0x860 kernel/time/timer.c:2384
- run_timer_base kernel/time/timer.c:2393 [inline]
- run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- __do_softirq kernel/softirq.c:613 [inline]
- invoke_softirq kernel/softirq.c:453 [inline]
- __irq_exit_rcu+0xca/0x1f0 kernel/softirq.c:680
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1050 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1050
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa8/0x110 kernel/locking/spinlock.c:194
-Code: 74 05 e8 cb 4e 5f f6 48 c7 44 24 20 00 00 00 00 9c 8f 44 24 20 f6 44 24 21 02 75 4f f7 c3 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> d3 3a 28 f6 65 8b 05 bc 43 34 07 85 c0 74 40 48 c7 04 24 0e 36
-RSP: 0018:ffffc9000445f640 EFLAGS: 00000206
-RAX: 718848643f7ff500 RBX: 0000000000000a02 RCX: 718848643f7ff500
-RDX: 0000000000000006 RSI: ffffffff8d982ba6 RDI: 0000000000000001
-RBP: ffffc9000445f6c0 R08: ffffffff8fa10ff7 R09: 1ffffffff1f421fe
-R10: dffffc0000000000 R11: fffffbfff1f421ff R12: dffffc0000000000
-R13: ffffffff8f574a40 R14: ffffffff8f574a00 R15: 1ffff9200088bec8
- spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
- __wake_up_common_lock+0x190/0x1f0 kernel/sched/wait.c:108
- netlink_unlock_table net/netlink/af_netlink.c:462 [inline]
- netlink_broadcast_filtered+0x108a/0x1140 net/netlink/af_netlink.c:1526
- nlmsg_multicast_filtered include/net/netlink.h:1151 [inline]
- nlmsg_multicast include/net/netlink.h:1170 [inline]
- nlmsg_notify+0xf0/0x1a0 net/netlink/af_netlink.c:2577
- vif_add+0x93f/0x1420 net/ipv4/ipmr.c:894
- ip_mroute_setsockopt+0xe12/0xf60 net/ipv4/ipmr.c:1455
- do_ip_setsockopt+0xf11/0x2d00 net/ipv4/ip_sockglue.c:948
- ip_setsockopt+0x66/0x110 net/ipv4/ip_sockglue.c:1417
- do_sock_setsockopt+0x25a/0x3e0 net/socket.c:2342
- __sys_setsockopt net/socket.c:2367 [inline]
- __do_sys_setsockopt net/socket.c:2373 [inline]
- __se_sys_setsockopt net/socket.c:2370 [inline]
- __x64_sys_setsockopt+0x18b/0x220 net/socket.c:2370
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe8999384c9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcd7ef3cc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000016417 RCX: 00007fe8999384c9
-RDX: 00000000000000ca RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000010 R09: 0000000000000000
-R10: 0000200000003d80 R11: 0000000000000246 R12: 00007ffcd7ef3cec
-R13: 00007ffcd7ef3d20 R14: 00007ffcd7ef3d00 R15: 0000000000000001
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	74 05                	je     0x7
-   2:	e8 cb 4e 5f f6       	call   0xf65f4ed2
-   7:	48 c7 44 24 20 00 00 	movq   $0x0,0x20(%rsp)
-   e:	00 00
-  10:	9c                   	pushf
-  11:	8f 44 24 20          	pop    0x20(%rsp)
-  15:	f6 44 24 21 02       	testb  $0x2,0x21(%rsp)
-  1a:	75 4f                	jne    0x6b
-  1c:	f7 c3 00 02 00 00    	test   $0x200,%ebx
-  22:	74 01                	je     0x25
-  24:	fb                   	sti
-  25:	bf 01 00 00 00       	mov    $0x1,%edi
-* 2a:	e8 d3 3a 28 f6       	call   0xf6283b02 <-- trapping instruction
-  2f:	65 8b 05 bc 43 34 07 	mov    %gs:0x73443bc(%rip),%eax        # 0x73443f2
-  36:	85 c0                	test   %eax,%eax
-  38:	74 40                	je     0x7a
-  3a:	48                   	rex.W
-  3b:	c7                   	.byte 0xc7
-  3c:	04 24                	add    $0x24,%al
-  3e:	0e                   	(bad)
-  3f:	36                   	ss
+    /*
+     * It seems, you can't re-program the controller if it is still
+     * running. This may lead to shifted pictures (FIFO issue?), so
+     * first stop the controller and drain its FIFOs.
+     */
 
+Now I wonder why the bit is controlled by a flag in the panel drivers.
+Whether the display controller pushes up to a FIFO worth of garbage data
+into the DSI bridge during initialization seems to be a property of the
+display controller / DSI bridge integration (whether this is due to
+hardware or driver bugs), not a specific requirement of the panel.
+Surely no panel needs to receive a partial line of garbage data in front
+of the first frame?
+
+Instead of adding the flag to every panel connected to affected SoCs,
+the vsync flush feature could just be enabled unconditionally.
+Clearing an already-empty display FIFO should have no effect, unless
+I'm missing something? With that, the MIPI_DSI_MODE_VSYNC_FLUSH flag
+would not be used anymore and could be removed.
+
+regards
+Philipp
+
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+Changes in v2:
+- Collect Marek's Acked-by.
+- Drop RFC tag.
+- No further changes.
+- Link to v1: https://lore.kernel.org/r/20250527-dsi-vsync-flush-v1-0-9b4ea4578729@pengutronix.de
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Philipp Zabel (4):
+      drm/bridge: samsung-dsim: Always flush display FIFO on vsync pulse
+      drm/panel: samsung-s6d7aa0: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      drm/panel: samsung-s6e8aa0: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      drm/mipi-dsi: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ drivers/gpu/drm/bridge/samsung-dsim.c         | 2 --
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 2 +-
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c | 2 +-
+ include/drm/drm_mipi_dsi.h                    | 2 --
+ 4 files changed, 2 insertions(+), 6 deletions(-)
+---
+base-commit: b462b0ef4d788d56f0e575406e58450358dcbd96
+change-id: 20250527-dsi-vsync-flush-8f8cc91a6f04
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Philipp Zabel <p.zabel@pengutronix.de>
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
