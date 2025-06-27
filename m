@@ -1,78 +1,138 @@
-Return-Path: <linux-kernel+bounces-706891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DAAAEBD75
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8989AEBD73
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F70188B399
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78D4D168EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B392EAD1A;
-	Fri, 27 Jun 2025 16:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458FB2E9EBB;
+	Fri, 27 Jun 2025 16:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocha7P8y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="K18JUEzi"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1FC2EACEE;
-	Fri, 27 Jun 2025 16:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751041730; cv=none; b=pystnMPzFs3vtDdFpi3lVbJMaP+/T/iz1xBG3IZZ3uG3Tc0B/DeugUnfXsp0tHa827bFaWwRs8yrLZnTL+9sev3keYUqu8JeG4gHXOrfqIFhtJB8kSoTCkWy/9XpiXswvYsoD9MjjRgKjB4ndbxBqve8Fp29d15S1pgjylxWP8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751041730; c=relaxed/simple;
-	bh=zccJajHHp4c7bwHuPvHIAEfCRoeMWJn4yaFj2VHAqqg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=H7B8hmD4oK8bjTGE5gkTtsRivmavO2cyyDs6DbAAs4Dk3q6uy/qga7/qYZliTKqfAjHed5eMrFQtujjU/Ej23b3snCbTCTLujo1qh76Go92tAu6eESiwhnfVJi1OrkVkXLpDiL86vfSQLDD+KDUqF2vs/1nMgdTJv+XpUbbwkYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocha7P8y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1367C4CEF1;
-	Fri, 27 Jun 2025 16:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751041730;
-	bh=zccJajHHp4c7bwHuPvHIAEfCRoeMWJn4yaFj2VHAqqg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ocha7P8y4mTUNp9WJMLs/2KDNMmdl9pdBbo3Rjkbweuwp7c2lgE6JNWUyhxmOWUj+
-	 iNVmz/GdgcyhXpPb3o40e/xFyCgKpAOAkAZjTnhIkJETwc2/gdPZpgMseV+368GUit
-	 7Ts0Od6OVHI29wlYoRRJ+TDOyRnZEWqrd9Gt3PmBQhvYfuemyb9fIOFvf9UlgTKEDK
-	 sjr7vUgCCqqYodjbo2zhm9cwAAlkHuI5slItyceC7l/mz4zcFP+0h69aQ+6i1VHl2+
-	 b4hGL2Ub/fY8Lb5NhQgqmb6PSfCvwaSVrM47pzY016R5jCr2hLJObINmvAGCEKXF/0
-	 iPhxR67FHwLIQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD8B380DBEE;
-	Fri, 27 Jun 2025 16:29:17 +0000 (UTC)
-Subject: Re: [GIT PULL] s390 fixes for 6.16-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <5038bf76-cdda-4ecf-a9d5-b5ded666356f@agordeev.local>
-References: <5038bf76-cdda-4ecf-a9d5-b5ded666356f@agordeev.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <5038bf76-cdda-4ecf-a9d5-b5ded666356f@agordeev.local>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.16-3
-X-PR-Tracked-Commit-Id: 7f8073cfb04a97842fe891ca50dad60afd1e3121
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 51df97f90002cb055e966189bd46d831af69e155
-Message-Id: <175104175662.1986529.323673224830433894.pr-tracker-bot@kernel.org>
-Date: Fri, 27 Jun 2025 16:29:16 +0000
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163E01C1741;
+	Fri, 27 Jun 2025 16:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751041812; cv=pass; b=RPdLTP83DXtKmKysIRy5kbhrmNghqIsR+6nXu4DqTb7+XrfqNUdVjmB0MdcxPhVDo7C1jjaD8CfAy4Vyj4lBTMCKQydZS+7JxIrCidJlJirJrD7EBgiZUNLlKW6b9e+YUh1eAfbQSm2pXwVUlL9IEj4rAkbwxIyh3ebuGOPbm68=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751041812; c=relaxed/simple;
+	bh=uZOpiqDnsPeN80lkYsgZGsg3XngV1n4ZEp+gMiBSaLo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=i/GhkyYEba4XXVGz6CqA+3fE/hDxlsT0xouHS3453uMLfA4BYNkbye8b4wxPge3apV9ky7vYrePkGJMgPuplwXJX3IvYrnatJp4iOss4xxlbYHniF4sEqgQBl4LbfN15LGzyEQ0XZraw+h2DVKe5hDsKvwVRPzBXFmWD0uROoRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=K18JUEzi; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751041789; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kybPJYkwMmG8BMGNFyE8OOoidf5kSHfCd7oOzb00Z5/iXMZGfd3WAHFvoMaD2oWKkcT/5ionolbmCph4fETBIAKkCtPEwpHLj5OW9QMwE6YJildn1NKHXktHXdIcAZNSoL/8Pf0hdibHVEWtcsxz9XREjvFuuMLVv3T4ozN3ZBI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751041789; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1UYgOu06ruRDAYOcp4JfazG4HIO4Q2KaS4cnFmSM66M=; 
+	b=aCruIxIdxItIKw2gwoarURCrKaR/IQQsnwRvLgMagk0Kl2dT/0pos3tfL6UkuqcKTXXE3ZRx678tRATyyQVhDrAtufRzQB2NXa6DK6bLqw6p9tFkMuLLV6BXczLBLlmSC1qgjpYPTy1OGvVVtTH0XXwuUu9DT81nvP0f74M6yJ0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751041789;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=1UYgOu06ruRDAYOcp4JfazG4HIO4Q2KaS4cnFmSM66M=;
+	b=K18JUEziMCfx3B/fRsaqyjFHGgBMBxOzzmRMWCtx65njiyUlkxEtfa0kRFBXmIOk
+	L9LQ71GMnfOin7/wmUXxKJyyCmmmRe8lzC9VcqSlAJs4GBSSrdsKtXl9nMBqhhY55Kn
+	ejY41ZOUux89RkVtxTXrD0b3/NcvvvN8uzYcvynk=
+Received: by mx.zohomail.com with SMTPS id 1751041787930194.57928858422827;
+	Fri, 27 Jun 2025 09:29:47 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v5 0/6] rust: add support for request_irq
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com>
+Date: Fri, 27 Jun 2025 13:29:31 -0300
+Cc: linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6FF34F9D-4FA6-4463-8922-3894E088CDD2@collabora.com>
+References: <20250627-topics-tyr-request_irq-v5-0-0545ee4dadf6@collabora.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Benno Lossin <lossin@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-The pull request you sent on Fri, 27 Jun 2025 10:21:45 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.16-3
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/51df97f90002cb055e966189bd46d831af69e155
+> On 27 Jun 2025, at 13:21, Daniel Almeida =
+<daniel.almeida@collabora.com> wrote:
+>=20
+>=20
+> ---
+> Changes in v5:
+>=20
+> Thanks, Danilo {
+>  - Removed extra scope in the examples.
+>  - Renamed Registration::register() to Registration::new(),
+>  - Switched to try_pin_init! in Registration::new() (thanks for the
+>    code and the help, Boqun and Benno)
+>  - Renamed the trait functions to handle() and handle_on_thread().
+>  - Introduced IrqRequest with an unsafe pub(crate) constructor
+>  - Made both register() and the accessors that return IrqRequest =
+public
+>    the idea is to allow both of these to work:
+> // `irq` is an `irq::Registration`
+> let irq =3D pdev.threaded_irq_by_name()?
+>  and
+> // `req` is an `IrqRequest`.
+> let req =3D pdev.irq_by_name()?;
+> // `irq` is an `irq::Registration`
+> let irq =3D irq::ThreadedRegistration::new(req)?;
+>=20
+>  - Added another name in the byname variants. There's now one for the
+>    request part and the other one to register()
+>  - Reworked the examples in request.rs
+>  - Implemented the irq accessors in place for pci.rs
+>  - Split the platform accessor macros into two
+> }
+>=20
+> - Added a rust helper for pci_irq_vectors if !CONFIG_PCI_MSI (thanks,
+> Intel 0day bot)
+> - Link to v4: =
+https://lore.kernel.org/r/20250608-topics-tyr-request_irq-v4-0-81cb81fb807=
+3@collabora.com
+>=20
 
-Thank you!
+Sorry, I forgot to mention that this now depends on the new Devres =
+series at [0].
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+[0]  =
+https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=3Dru=
+st/devres
+
+
 
