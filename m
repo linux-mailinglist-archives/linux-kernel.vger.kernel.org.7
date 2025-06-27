@@ -1,98 +1,218 @@
-Return-Path: <linux-kernel+bounces-706036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E824AEB0F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CCB0AEB0FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 10:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22FC1778D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 08:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90B8567471
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 08:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646242356B9;
-	Fri, 27 Jun 2025 08:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0682523B61B;
+	Fri, 27 Jun 2025 08:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8DivVTB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZLYDaLQL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97A4233D7C;
-	Fri, 27 Jun 2025 08:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A23C2367D5
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 08:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751011709; cv=none; b=Gi1o78oVPCjPhxnt0xiKw2WqfAKHd8Uz/dPymA0tcQNE4u+Ii2Kf41dun8u6WAMSAZihIy9/cyUELnh0CDMm3zM4Ph2/DC0OpVpGPZSGKTEiglRniOSPxvVIoc/9Pc7lwr0hwOnHXcB6+n69S0Ubq+Ii7z03OziukGivFjPrZRU=
+	t=1751011740; cv=none; b=dSdLkoKhvetqfMbfdsKgc/ve7BYNR57QKtMMJa3SNpb4t7dX8noJaZSQszQJS/ah1BbUq/LVmXx5vaXVCJwXr5X8Cte4Wuz9o71QIq2aI6lUcZo0dG7ixEfz9mZFif4Qc7JFN4++cOTg/Y6IRiY3q2aSUfPfHwTtZJld9e0IuoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751011709; c=relaxed/simple;
-	bh=PYP9Imqu5GjDkVBHcvLr+ztBK6R3xQ+B5FYXugyhx3c=;
+	s=arc-20240116; t=1751011740; c=relaxed/simple;
+	bh=4atm7a3aa7XLLdZNBlU0QoQBXv7fksZDQmZpN4oS3ko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WxPLn+hrzQi83KmLa5yR6NbJDDEIp21DxL0lAHgUOjEYldubBgWNZsaJlutEIu2QPyH4Lne7WfJcujXTnrr3u7I2B687UZbZ09ZNinZ8MCuWgAXfQ5Ok33PiAO6HAhu3YOkWFyiXoJU4zvFBFsBPiNs9OEtkQF8NwuPIeMD693g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8DivVTB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB9FC4CEED;
-	Fri, 27 Jun 2025 08:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751011709;
-	bh=PYP9Imqu5GjDkVBHcvLr+ztBK6R3xQ+B5FYXugyhx3c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M8DivVTBC8AdBk4Fn/V/IyMSs5cc29CEAiWP0gy3wE+6Rbj6bjo7KK5GhYoiMBsaV
-	 /qrPrjmRHAtZjZHrpNC2OQOX1l7kpCRcva5Tuo3gCWhxUndg2auts/kO8ZjSEyyVqw
-	 RaffDG9g62XJVhm3nHAfd4p7He45PfaBv3a8IL7CqYdiu7m1oOYjOiTLzukEq08w9P
-	 8ncQO0Wy+GENY3BcPxhucS104Hgfmfd0NbpLtXcdY+35jcT8BGL7U1LF9LtZqpe2qI
-	 iiywZ0Zl07ZTDFxOAd5rrH7i/FPgfWl0V+oyoqD99s38d4cgPeb05K8qAL98lvHfjg
-	 mZ8JJDpyN7W3g==
-Date: Fri, 27 Jun 2025 10:08:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
- interconnects property
-Message-ID: <20250627-mysterious-optimistic-bird-acaafb@krzk-bin>
-References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
- <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdmiHDCoODB7ZsFdL2cZx80xUEBkaIcL3ds9HILRLoy+QOOKaJhTj3fqfUhR1XdscdThBNiLzBVSN9i9GUV4cAh5Gsjf0kLRFWA7hL1BljK8zYXOdJHfp3JQxtRi9XAwPSV+dCDuJdCaKNZZv6UI1iFl19+pDPycqLJW7RbUlVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZLYDaLQL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751011737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/1zTV14SPJKhyzAQ+CnMR/zcHPupL9X+uwgLCPBgwIs=;
+	b=ZLYDaLQLvljrIUIZxVPaVq8JzNnpcdErqImpcRKAdAWOMf8gK668FOo8Z/w3NgKKsVmNbO
+	Uicmo0abJ2d1lAfUip+enLPE66W46yTJazDmeQwLAhf1XuoZ/ToC/wgutG8WUm84QAcH6v
+	detpEWTIEW9S55YxHzkBHKrCc8X2dgA=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-567-ECljezsLOF2uoHmYdQh-pg-1; Fri, 27 Jun 2025 04:08:55 -0400
+X-MC-Unique: ECljezsLOF2uoHmYdQh-pg-1
+X-Mimecast-MFC-AGG-ID: ECljezsLOF2uoHmYdQh-pg_1751011734
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b2c36d3f884so1367724a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 01:08:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751011734; x=1751616534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/1zTV14SPJKhyzAQ+CnMR/zcHPupL9X+uwgLCPBgwIs=;
+        b=EKQPRt3PHXcFzMcX/MctLn8YGAdt2Sq/9dhhV3tWXaQQONy4JGTIJFGP6Yyn8PGZIX
+         HRcDG9veozwDKpmdwHYY4l3PfWYPc4U1P3fSbp9AQq5/PnxJsTIxnjhB/ptjCrVSeO1X
+         Z15ztK7iwGTelNeLXiUAg1jY4/yCk7JdO4RNBfHJQgva1UmvNRHX3OvHP0bs/Uqb/J28
+         Xrh4soTP7vP8vA3yI0HkSk1dMHTBH/QeuIYF4DR3S+JZ1OSmqi5n5Z3SvCES31lxprWH
+         0jxvxhxWk7iFK2o52BVep5KY36NU4hWdtJZXicGRcWIIGkyYPFJId7fN6SxFJm5UTw0N
+         85rA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiqpvIqDqKUvOA6hEy8MDKXapjhfuZ8n+qbgXWkvpJMkem7cJJfzF7jKEhh65SIzhW+srDakHGI3KVSWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeV4haUdR24rigFItpoSkoGeOnx2L6Xn5sLjlltdZuZ/O6UJRV
+	D4neKF2Tj5KlisNLO8as4WdX6bMkv45J+fuuOoQNAeC5nyXThDAIX2mjNjmzNPG899e3csYi/te
+	ip8x1xeuVz3KUd13gZSTrQzTT1xJDIOzvwzikTkR2dCZX7+Qg1TPNg2Di4F2Y9wKTAw==
+X-Gm-Gg: ASbGncuM8Fbmxge+vSctKlnd4n0JmXblEPeaMxwvgDxR7eHEHuH/2kj0i5tPAUorJsQ
+	l63OplvzIpHTuVQVB6jwDb2JO0D7OhhDNPl0GeZypBGK3KFk4HFmggnbd/4fflPWU4w0KVwD4hT
+	TZrKHLCsy9gyn6sBuz0or3xms2t5IvRUdu8SldsPoyhQ3unBVDUdlovnzy8uVxvzEoxwmLigvIc
+	HrfkbyTaclvJtd1mtsWUxAVUaXNGVR3A0si7L0rgcTKkfPzQMv+ZtcRXnIHse8YgMF0nGhlT0rT
+	9WCkh/jN9iLWmPiL7N3yykC9Qmc=
+X-Received: by 2002:a05:6a21:4606:b0:1f5:7280:1cf2 with SMTP id adf61e73a8af0-220a12dcb62mr3298238637.12.1751011734524;
+        Fri, 27 Jun 2025 01:08:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFr/5FfyhGN+rz6LQcfj5dGER/OaxguGxdnRTL3rMKPiYqAnq1lmuYeWjQctcVkptzzUcr5EQ==
+X-Received: by 2002:a05:6a21:4606:b0:1f5:7280:1cf2 with SMTP id adf61e73a8af0-220a12dcb62mr3298206637.12.1751011734091;
+        Fri, 27 Jun 2025 01:08:54 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.150.33])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541bd1fsm1597968b3a.47.2025.06.27.01.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 01:08:53 -0700 (PDT)
+Date: Fri, 27 Jun 2025 10:08:38 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net v2 2/3] vsock: Fix transport_* TOCTOU
+Message-ID: <l6yqfwqjzygrs74shfsiptexwqydw3ts2eiuet2te3b7sseelo@ygussce5st4h>
+References: <20250620-vsock-transports-toctou-v2-0-02ebd20b1d03@rbox.co>
+ <20250620-vsock-transports-toctou-v2-2-02ebd20b1d03@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
+In-Reply-To: <20250620-vsock-transports-toctou-v2-2-02ebd20b1d03@rbox.co>
 
-On Mon, Jun 23, 2025 at 08:44:45AM +0200, Luca Weiss wrote:
-> Document the interconnects property which is a list of interconnect
-> paths that is used by the framebuffer and therefore needs to be kept
-> alive when the framebuffer is being used.
-> 
-> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  Documentation/devicetree/bindings/display/simple-framebuffer.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
-> index 296500f9da05e296dbbeec50ba5186b6b30aaffc..f0fa0ef23d91043dfb2b220c654b80e2e80850cd 100644
-> --- a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
-> +++ b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
-> @@ -79,6 +79,9 @@ properties:
->    power-domains:
->      description: List of power domains used by the framebuffer.
->  
-> +  interconnects:
-> +    description: List of interconnect paths used by the framebuffer.
-> +
+On Fri, Jun 20, 2025 at 09:52:44PM +0200, Michal Luczaj wrote:
+>Transport assignment may race with module unload. Protect new_transport
+>from becoming a stale pointer.
+>
+>This also takes care of an insecure call in vsock_use_local_transport();
+>add a lockdep assert.
+>
+>BUG: unable to handle page fault for address: fffffbfff8056000
+>Oops: Oops: 0000 [#1] SMP KASAN
+>RIP: 0010:vsock_assign_transport+0x366/0x600
+>Call Trace:
+> vsock_connect+0x59c/0xc40
+> __sys_connect+0xe8/0x100
+> __x64_sys_connect+0x6e/0xc0
+> do_syscall_64+0x92/0x1c0
+> entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>
+>Fixes: c0cfa2d8a788 ("vsock: add multi-transports support")
+>Signed-off-by: Michal Luczaj <mhal@rbox.co>
+>---
+> net/vmw_vsock/af_vsock.c | 28 +++++++++++++++++++++++-----
+> 1 file changed, 23 insertions(+), 5 deletions(-)
+>
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index 63a920af5bfe6960306a3e5eeae0cbf30648985e..a1b1073a2c89f865fcdb58b38d8e7feffcf1544f 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -407,6 +407,8 @@ EXPORT_SYMBOL_GPL(vsock_enqueue_accept);
+>
+> static bool vsock_use_local_transport(unsigned int remote_cid)
+> {
+>+	lockdep_assert_held(&vsock_register_mutex);
+>+
+> 	if (!transport_local)
+> 		return false;
+>
+>@@ -464,6 +466,8 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+>
+> 	remote_flags = vsk->remote_addr.svm_flags;
+>
+>+	mutex_lock(&vsock_register_mutex);
+>+
+> 	switch (sk->sk_type) {
+> 	case SOCK_DGRAM:
+> 		new_transport = transport_dgram;
+>@@ -479,12 +483,15 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+> 			new_transport = transport_h2g;
+> 		break;
+> 	default:
+>-		return -ESOCKTNOSUPPORT;
+>+		ret = -ESOCKTNOSUPPORT;
+>+		goto err;
+> 	}
+>
+> 	if (vsk->transport) {
+>-		if (vsk->transport == new_transport)
+>-			return 0;
+>+		if (vsk->transport == new_transport) {
+>+			ret = 0;
+>+			goto err;
+>+		}
 
-maxItems: 1, or this is not a simple FB anymore. Anything which needs
-some sort of resources in unknown way is not simple anymore. You need
-device specific bindings.
+		/* transport->release() must be called with sock lock acquired.
+		 * This path can only be taken during vsock_connect(), where we
+		 * have already held the sock lock. In the other cases, this
+		 * function is called on a new socket which is not assigned to
+		 * any transport.
+		 */
+		vsk->transport->release(vsk);
+		vsock_deassign_transport(vsk);
 
-Best regards,
-Krzysztof
+Thinking back to this patch, could there be a deadlock between call
+vsock_deassign_transport(), which call module_put(), now with the
+`vsock_register_mutex` held, and the call to vsock_core_unregister()
+usually made by modules in the exit function?
+
+Thanks,
+Stefano
+
+>
+> 		/* transport->release() must be called with sock lock acquired.
+> 		 * This path can only be taken during vsock_connect(), where we
+>@@ -508,8 +515,16 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+> 	/* We increase the module refcnt to prevent the transport unloading
+> 	 * while there are open sockets assigned to it.
+> 	 */
+>-	if (!new_transport || !try_module_get(new_transport->module))
+>-		return -ENODEV;
+>+	if (!new_transport || !try_module_get(new_transport->module)) {
+>+		ret = -ENODEV;
+>+		goto err;
+>+	}
+>+
+>+	/* It's safe to release the mutex after a successful try_module_get().
+>+	 * Whichever transport `new_transport` points at, it won't go await
+>+	 * until the last module_put() below or in vsock_deassign_transport().
+>+	 */
+>+	mutex_unlock(&vsock_register_mutex);
+>
+> 	if (sk->sk_type == SOCK_SEQPACKET) {
+> 		if (!new_transport->seqpacket_allow ||
+>@@ -528,6 +543,9 @@ int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk)
+> 	vsk->transport = new_transport;
+>
+> 	return 0;
+>+err:
+>+	mutex_unlock(&vsock_register_mutex);
+>+	return ret;
+> }
+> EXPORT_SYMBOL_GPL(vsock_assign_transport);
+>
+>
+>-- 
+>2.49.0
+>
 
 
