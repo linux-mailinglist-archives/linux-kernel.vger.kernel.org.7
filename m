@@ -1,110 +1,185 @@
-Return-Path: <linux-kernel+bounces-706719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A95AEBA91
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A59BAEB975
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 16:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A865E7A6C33
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:53:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41BBC5649B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69A52E3399;
-	Fri, 27 Jun 2025 14:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D055A2DE1EF;
+	Fri, 27 Jun 2025 14:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="NknhPClr"
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeW7pb3H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D359122577E
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 14:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FE22DD5E7;
+	Fri, 27 Jun 2025 14:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751036099; cv=none; b=JNbCPZYkfFNh3ykYLt3PVN8wRw/4SopTXyB3GEDYz76yYv4PSGCjEkSI59gHWDizRiVtsmMNbGj3j4S8vtT4F39Xf5fajX8NT4FW4WZgap4H0rGdyaP8lovQgBezUamy7RBCN0xetxUd5vNjEf8OYmJcAw/5QwGfKho/zt0ID90=
+	t=1751033173; cv=none; b=L715xn9WlqQSrMTrYJ7ngTFDtXFm+PLwoVSFh1AOjFbNa+DE8hLCt5Cii9iX5Jrs1du4Sts2/CGINekzhNzc8KKqG76q8FSqwWBaqb+Rsf66yzZzAUSomPNeUFyXYE71t6dtHJLJSlaAyPalhwS+kUy/RUiXvRIEbqhoYoaiMaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751036099; c=relaxed/simple;
-	bh=15J+IQAkOb/B6R9Pfbs3G/etVMfCqLb+Vjq0lgfKV5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2gwkng6GB3IIwvZJubYQHnVW8skpCO+lDOrquCG2zpmkAbBblo95zNWkggasFydxbDabyrot046N8zX+t6/bsDorO6PyUnI1rCA7sx1f8nEXOJtqk+TxDEzNfQdqJfowhYWWVvcxADbJS/2FswwR1HlvMSjuusBD9N3ZkzRll4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=NknhPClr; arc=none smtp.client-ip=185.136.64.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250627131426a3bf49ad6ed7034d72
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 27 Jun 2025 15:14:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=M4o1mmAGEsf5Agze6Yc8E7yYvvCWB7C1WHPlHiIkd64=;
- b=NknhPClr7PprOtuFLqVoQoigCsC/fp8L63nr9ZT+VhQURM3aPPKa+CvAKrjU+CNT0j47oR
- cm7e26Z2e73zs9J93WZi4lyoAafUooAJA7vj4pZGSBa/NioXPq44qsO2MGZW3tYb+AXe2foB
- 2HXutKzK/P1+B9fYXP/M9oYSQDHxyDAd96brh76vYblYWIWOtCLS/DQ92HQgSIcpNR9zIoMv
- nL6cRWqrzkk7fL03/zD9kVf8yvzLrpob1pUROFsvDWIKlOodJGipfrh642fs/wwNxV4+zBt+
- xwHk2uQnntmavXFmfpI/Knj9SoFE1Kl7ZqvueMrnHxvWChTmufnW0JxA==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: devicetree@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: ti: k3-pinctrl: Introduce Schmitt Trigger macros
-Date: Fri, 27 Jun 2025 15:13:23 +0200
-Message-ID: <20250627131332.2806026-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1751033173; c=relaxed/simple;
+	bh=5W+oZzTTB+4rVXd1JXNGCD611xXo1F4FQJhxF29NZcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZB8XepB7n7MsEQLu93zf1Sp2iBN1dlm+dEvccont5HSlodjyCMIVz79++moDsSuDUUOK7crrKYWIEPybVCDXZ3nKQhqGtfn6dbAMQa0FjwwPxS1dyNobW21D1nlkJ0LV3Pskzlp5EZdXhZX0m3FfK1/ty3CJimGNHRNEsi2kuYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeW7pb3H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A83FC4CEE3;
+	Fri, 27 Jun 2025 14:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751033172;
+	bh=5W+oZzTTB+4rVXd1JXNGCD611xXo1F4FQJhxF29NZcM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OeW7pb3HT5rxyoWJmyLCVyxgjnJsYpB8GgwGSY5N1+i6Q6eXieRfR4nO6Iem87BhE
+	 7q0pCTKMeKpZoqqGoXKDaQcmm4ip+n9D+8a3UeMtLSMbfm7FufdPBk2RckrkcQeXG2
+	 Nrj+WG/KJ4Sk7Zd2SO+lxvEz5KEzhto6WSL6tXRYb9Xg3o1rkZodSQWsGPAOH/Josn
+	 b+iiupoL502dq8D7+rbZZjaClcgCoFQTn8Yx72zRFcFdSzwulzf+1rQ5f4Mjci9WMi
+	 /G14PeRxfIJ0Qy90mQHjWtr2CQ6lqknpCvMBrYFhdvvWIPG4JrqVywk2clmHZEXxlI
+	 u3KobtwsdKNVQ==
+Message-ID: <1b0d2349-dbf7-47aa-95c9-1974e63d111a@kernel.org>
+Date: Fri, 27 Jun 2025 09:06:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] Input: Don't send fake button presses to wake
+ system
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Hans de Goede <hansg@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Mika Westerberg <westeri@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, "open list:GPIO ACPI SUPPORT" <linux-gpio@vger.kernel.org>,
+ "open list:GPIO ACPI SUPPORT" <linux-acpi@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>, Mario Limonciello <mario.limonciello@amd.com>
+References: <cbbf0caf-82ce-4427-9844-b11e0f5cacdb@kernel.org>
+ <obpakvzyludc4jskqzyxf65dhqds7ie3jkbfsqdve32ouuaili@xvogkmwvbmbf>
+ <284ea5c0-dca5-4e9e-a3e7-705eca794010@kernel.org>
+ <vkau25ybcx3bcoa2jmxlukumunzii5h6em43anh6mmzk2kyiv7@kyych4kxc4zo>
+ <0d71a686-da67-4686-8976-a17d0d1ca923@kernel.org>
+ <CAJZ5v0gKUN1OdqAHnXNcFUAOfhpdRfa_o=L6TA2GZTpe1bMaNQ@mail.gmail.com>
+ <exmgckzoakt2ncsdphqvymcadon7k6tl36a3zvrj2pv23dffps@znq23v3qbcm2>
+ <CAJZ5v0j3ZyuEqSKQ+3K8M3BwPCxn5Z6KOwjyjt4cJW6HfxjPDw@mail.gmail.com>
+ <hyvpl4gvxc6h2r3itfofjduwb3vpobyo7a7z6g3zapzscqtafh@ixsd4amyljva>
+ <de548b27-4c43-4f30-af9d-b060101e6fd8@kernel.org>
+ <75fixx6rgwsgsw6e765oxdcivcg2nkzx2fp2qywgx4vi3ihywh@ot7gdecsnttw>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <75fixx6rgwsgsw6e765oxdcivcg2nkzx2fp2qywgx4vi3ihywh@ot7gdecsnttw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+On 6/26/2025 11:56 PM, Dmitry Torokhov wrote:
+> On Thu, Jun 26, 2025 at 05:21:35PM -0500, Mario Limonciello wrote:
+>> On 6/26/2025 2:40 PM, Dmitry Torokhov wrote:
+>>> On Thu, Jun 26, 2025 at 09:31:12PM +0200, Rafael J. Wysocki wrote:
+>>>> On Thu, Jun 26, 2025 at 9:28 PM Dmitry Torokhov
+>>>> <dmitry.torokhov@gmail.com> wrote:
+>>>>>
+>>>>> On Thu, Jun 26, 2025 at 09:18:56PM +0200, Rafael J. Wysocki wrote:
+>>>>>> On Thu, Jun 26, 2025 at 9:16 PM Hans de Goede <hansg@kernel.org> wrote:
+>>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On 26-Jun-25 21:14, Dmitry Torokhov wrote:
+>>>>>>>> On Thu, Jun 26, 2025 at 08:57:30PM +0200, Hans de Goede wrote:
+>>>>>>>>> Hi,
+>>>>>>>>>
+>>>>>>>>> On 26-Jun-25 20:48, Dmitry Torokhov wrote:
+>>>>>>>>>> On Thu, Jun 26, 2025 at 01:20:54PM -0500, Mario Limonciello wrote:
+>>>>> [...]
+>>>>>>>>>>> I want to note this driver works quite differently than how ACPI power
+>>>>>>>>>>> button does.
+>>>>>>>>>>>
+>>>>>>>>>>> You can see in acpi_button_notify() that the "keypress" is only forwarded
+>>>>>>>>>>> when not suspended [1].  Otherwise it's just wakeup event (which is what my
+>>>>>>>>>>> patch was modeling).
+>>>>>>>>>>>
+>>>>>>>>>>> https://github.com/torvalds/linux/blob/v6.16-rc3/drivers/acpi/button.c#L461
+>>>>>>>>>>> [1]
+>>>>>>>>>>
+>>>>>>>>>> If you check acpi_button_resume() you will see that the events are sent
+>>>>>>>>>> from there. Except that for some reason they chose to use KEY_WAKEUP and
+>>>>>>>>>> not KEY_POWER, oh well. Unlike acpi button driver gpio_keys is used on
+>>>>>>>>>> multiple other platforms.
+>>>>>>>>>
+>>>>>>>>> Interesting, but the ACPI button code presumably only does this on resume
+>>>>>>>>> for a normal press while the system is awake it does use KEY_POWER, right ?
+>>>>>>>>
+>>>>>>>> Yes. It is unclear to me why they chose to mangle the event on wakeup,
+>>>>>>>> it does not seem to be captured in the email discussions or in the patch
+>>>>>>>> description.
+>>>>>>>
+>>>>>>> I assume they did this to avoid the immediate re-suspend on wakeup by
+>>>>>>> power-button issue. GNOME has a workaround for this, but I assume that
+>>>>>>> some userspace desktop environments are still going to have a problem
+>>>>>>> with this.
+>>>>>>
+>>>>>> It was done for this reason IIRC, but it should have been documented
+>>>>>> more thoroughly.
+>>>>>
+>>>>> I assert that it should not have been done and instead dealt with in
+>>>>> userspace. There are numerous drivers in the kernel emitting
+>>>>> KEY_POWER. Let userspace decide how to handle this, what keys to ignore,
+>>>>> what keys to process and when.
+>>>>
+>>>> Please see my last message in this thread (just sent) and see the
+>>>> changelog of commit 16f70feaabe9 ("ACPI: button: trigger wakeup key
+>>>> events").
+>>>>
+>>>> This appears to be about cases when no event would be signaled to user
+>>>> space at all (power button wakeup from ACPI S3).
+>>>
+>>> Ahh, in S3 we do not know if we've been woken up with Sleep or Power
+>>> button, right? So we can not send the "right" event code and use
+>>> "neutral" KEY_WAKEUP for both. Is this right?
+>>>
+>>> Thanks.
+>>>
+>>
+>> I did some more experiments with this affected system that started this
+>> thread (which uses s2idle).
+>>
+>> I only applied patch 3 in this series to help the debounce behavior and
+>> figure out impacts from patch 4 with existing Linux userspace.
+>>
+>> If suspended using systemd in GNOME (click the GUI button) on Ubuntu 24.04
+>> the GNOME workaround mitigates this problem and no visible impact.
+>>
+>> If I suspend by hand using the kernel interface and then press power button
+>> to wake:
+>>
+>> # echo mem | sudo tee /sys/power/state:
+>>
+>> * When GNOME is running:
+>> I get the shutdown popup and it eventually shuts down.
+>>
+>> * When GNOME isn't running (just on a VT):
+>> System shuts down.
+> 
+> For the latter you may want to raise an issue with systemd, and for the
+> former I guess it is being too clever and does not activate the
+> workaround if suspend was not initiated by it? I think Gnome is being
+> too careful.
+> 
+> Thanks.
+> 
 
-Introduce ST_DISABLE and ST_ENABLE macros so that they can be used in
-conjunction with PIN_INPUT* macros, e.g. (PIN_INPUT | ST_ENABLE).
+Sure I could file bugs with both the projects.
 
-Note that K3 might have quite strict input slew rate requirements and
-all inputs actually have ST enabled on reset, but AM62PX_IOPAD macro
-will not preserve this power-on default config. Therefore ST_ENABLE
-is encouraged in many situations, especially if the input is to be
-used as IRQ trigger.
+But before I do if all userspace needs to account for this with a series 
+of workarounds at resume time, you still think that is that really the 
+best way forward?
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
- arch/arm64/boot/dts/ti/k3-pinctrl.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-index cac7cccc11121..3e371be7b8062 100644
---- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
-+++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-@@ -8,6 +8,7 @@
- #ifndef DTS_ARM64_TI_K3_PINCTRL_H
- #define DTS_ARM64_TI_K3_PINCTRL_H
- 
-+#define ST_EN_SHIFT		(14)
- #define PULLUDEN_SHIFT		(16)
- #define PULLTYPESEL_SHIFT	(17)
- #define RXACTIVE_SHIFT		(18)
-@@ -44,6 +45,10 @@
- #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
- #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
- 
-+/* Schmitt trigger configuration */
-+#define ST_DISABLE		(0 << ST_EN_SHIFT)
-+#define ST_ENABLE		(1 << ST_EN_SHIFT)
-+
- #define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
- #define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
- #define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
--- 
-2.50.0
-
+Hans, you have a lot of experience in the GNOME community.  Your thoughts?
 
