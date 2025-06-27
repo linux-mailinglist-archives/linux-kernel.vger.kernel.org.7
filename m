@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-706165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353BFAEB2C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:24:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA163AEB2D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 750E31762F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:24:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8ED3A9715
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 09:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5549C293C4E;
-	Fri, 27 Jun 2025 09:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD189293C4E;
+	Fri, 27 Jun 2025 09:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1WuRnH+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9PBbt61"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C7521C16D
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA0D25FA06
+	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 09:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751016277; cv=none; b=KMo4J4dqZw9rr1mdc+31QyqrcM6V3fWE/Zv4Y18zT/heOwYZQbtETfaGlOuEeCV7jGz5LgUOc+BcZvv1SltVEbO1AAdNcCIXW0uXnzz0cja5KaFj68lulHUXsHnfcVPAQF4vUjf5/ylGJD8Iinn5IOuu+SLlXmm6ZZcHltnnIjk=
+	t=1751016338; cv=none; b=kGFgPF1ytMdF2lEXHbrk8qDWWCICp+//RbUH12vE9rMj4rcQSLAC11RMToJrnNHNubC9wMDFu6lYf//VdoxjVBkM/qrCwUS6NhJZBMCUgygtV/i8slb6uMl92nMf2mgDXzTy8RXaJGHt5O/EfdSCbe90jieJ8C9kQoRWdaTeEc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751016277; c=relaxed/simple;
-	bh=RTKwzPM6lesauXZU7R3+oVNk0/n5J2iK/snjSi0tsQ0=;
+	s=arc-20240116; t=1751016338; c=relaxed/simple;
+	bh=RjOuz95NmQNjCtEfnlq89SW3Z5ZuO4FlViZ8lGUPb4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTj5i+TIi5YngR/PEwkRqJ8qAqnpNWt72Sj1IZz0+xFG3tSFqDEghpCTH9SA07EK5c8LqICK6EXIZL5/IzxngFkNGyZB0ZUK1VzOpH8TaENWm9Bbz+IgB2nB1mvk98vzQps/EVikmEailQYkFhJAMtxlILSxRhg3YwydJNZKpb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1WuRnH+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 380F9C4CEE3;
-	Fri, 27 Jun 2025 09:24:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlOqv5xsnEeYAumcefO+HQjoSuFkZJ5xf7Jj52+EmnVg+F1rwRvu6ihRyEskvgeyMWwQ156npQI5ctWT2MrvGGVEK/8EeGVGrOfkmH5vQBXYIA9ZcWo6hCBak5MrIXkP0CeS2uzaqE9va2qIYsNAhJEBpptgEU0Sji/mgQEzpoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9PBbt61; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F69FC4CEE3;
+	Fri, 27 Jun 2025 09:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751016277;
-	bh=RTKwzPM6lesauXZU7R3+oVNk0/n5J2iK/snjSi0tsQ0=;
+	s=k20201202; t=1751016337;
+	bh=RjOuz95NmQNjCtEfnlq89SW3Z5ZuO4FlViZ8lGUPb4I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1WuRnH+XcNAo7Ngg2G+U/r9+Cr8AWK9aF2jmYf9wV9rhTMmiTTH3ybWnE5j8tVUf
-	 jcqk1Ikm03ED65y4kgWu3FN4M1KEC9+BiC9J1BYUzFYcnmd0S6TD9dYOMZmxjmZe4o
-	 MPzqpWjO2K/NQf4s64CtQxrGusKEpTthUwdYtpYEpB3TgBCf/DbgWZfwTuMp/YDMAT
-	 ZbDWzolNyaNEqa8DGZoBUF8MQ/QcQOx1yxzHef1FcEpiyRitsnAKzqsvdV1NHKbyXB
-	 IJV4KoobJJB59+fj+4rggyoxJWDdu7RgjxDbYk4UOqLwB2DKtsrkpsrneEh1uycetS
-	 pjXwDaaM8prvA==
-Date: Fri, 27 Jun 2025 11:24:35 +0200
+	b=D9PBbt61e3T0ATcRzVHgzye4UzRWdrPxVGqXAyZM+B/cN1ws4mtPl2WIoqLfWa5yn
+	 MjCgvfeWNwmNvyBGQ6r7IUzw8AZQr8xq62B0f2V86470yRdjVRMhWLK7oz7EQhOqDv
+	 /gIIWL0FEtXV+q/beHTkY2v3b6PgfiKwt20Q4EtoGNrr89L/zMQ1B4XZ2bUaI7OBcd
+	 eN53e1aGatuCqHR4hXavKDBM0BJCJMv18I4WP/nvmXOT+ZSB3igdmiBE5WsTV+h/Jt
+	 IkkloytT23cOpeQUAZouMsaOItDjvryGAkZzCt4W8btBzDV5LAsZ7lkgBOXN7FzXG+
+	 TDqkmYGhcEcYA==
+Date: Fri, 27 Jun 2025 11:25:35 +0200
 From: Maxime Ripard <mripard@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
+To: Javier Martinez Canillas <javierm@redhat.com>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
 	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
 	Simona Vetter <simona@ffwll.ch>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Anusha Srivatsa <asrivats@redhat.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] drm/panel: panel-simple: Fix panel-dpi probe error
-Message-ID: <20250627-crafty-taupe-hoatzin-ffd456@houat>
+	Anusha Srivatsa <asrivats@redhat.com>, Francesco Dolcini <francesco@dolcini.it>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] drm/mipi-dsi: Add dev_is_mipi_dsi function
+Message-ID: <20250627-manipulative-condor-of-faith-389bce@houat>
 References: <20250626-drm-panel-simple-fixes-v2-0-5afcaa608bdc@kernel.org>
- <aF0fKHQywtoG63wT@gaggiata.pivistrello.it>
+ <20250626-drm-panel-simple-fixes-v2-1-5afcaa608bdc@kernel.org>
+ <87cyapd08f.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,58 +61,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="bf3dbobd655mefge"
+	protocol="application/pgp-signature"; boundary="oo5w6c3i24xyxwvo"
 Content-Disposition: inline
-In-Reply-To: <aF0fKHQywtoG63wT@gaggiata.pivistrello.it>
+In-Reply-To: <87cyapd08f.fsf@minerva.mail-host-address-is-not-set>
 
 
---bf3dbobd655mefge
+--oo5w6c3i24xyxwvo
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/5] drm/panel: panel-simple: Fix panel-dpi probe error
+Subject: Re: [PATCH v2 1/5] drm/mipi-dsi: Add dev_is_mipi_dsi function
 MIME-Version: 1.0
 
-Hi,
-
-On Thu, Jun 26, 2025 at 12:21:28PM +0200, Francesco Dolcini wrote:
+On Fri, Jun 27, 2025 at 11:04:16AM +0200, Javier Martinez Canillas wrote:
+> Maxime Ripard <mripard@kernel.org> writes:
+>=20
 > Hello Maxime,
-> it works for me, thanks!
 >=20
-> On Thu, Jun 26, 2025 at 12:04:58PM +0200, Maxime Ripard wrote:
-> > Here's a series fixing (hopefully) the panel-simple regression for
-> > panels with a panel-dpi compatible.
-> >=20
-> > It's only build tested, so if you could give that series a try
-> > Francesco, I'd really appreciate it.
-> >=20
-> > Thanks!
-> > Maxime=20
-> >=20
-> > Link: https://lore.kernel.org/dri-devel/20250612081834.GA248237@frances=
-co-nb/
+> > This will be especially useful for generic panels (like panel-simple)
+> > which can take different code path depending on if they are MIPI-DSI
+> > devices or platform devices.
+> >
 > > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+> >  drivers/gpu/drm/drm_mipi_dsi.c | 3 ++-
+> >  include/drm/drm_mipi_dsi.h     | 3 +++
+> >  2 files changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_=
+dsi.c
+> > index e5184a0c24651756ee0b1eb27d94083d63eb35a7..21fd647f8ce1a6a862e2f8f=
+b5320e701f26f614f 100644
+> > --- a/drivers/gpu/drm/drm_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/drm_mipi_dsi.c
+> > @@ -89,16 +89,17 @@ static const struct dev_pm_ops mipi_dsi_device_pm_o=
+ps =3D {
+> >  	.thaw =3D pm_generic_thaw,
+> >  	.poweroff =3D pm_generic_poweroff,
+> >  	.restore =3D pm_generic_restore,
+> >  };
+> > =20
+> > -static const struct bus_type mipi_dsi_bus_type =3D {
+> > +const struct bus_type mipi_dsi_bus_type =3D {
+> >  	.name =3D "mipi-dsi",
+> >  	.match =3D mipi_dsi_device_match,
+> >  	.uevent =3D mipi_dsi_uevent,
+> >  	.pm =3D &mipi_dsi_device_pm_ops,
+> >  };
+> > +EXPORT_SYMBOL_GPL(mipi_dsi_bus_type);
+> > =20
+> >  /**
+> >   * of_find_mipi_dsi_device_by_node() - find the MIPI DSI device matchi=
+ng a
+> >   *    device tree node
+> >   * @np: device tree node
+> > diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+> > index b37860f4a895c25ef8ba1c5b3f44827ef53aa100..6d2c08e8110151a97620389=
+197f1ef79c058329d 100644
+> > --- a/include/drm/drm_mipi_dsi.h
+> > +++ b/include/drm/drm_mipi_dsi.h
+> > @@ -221,10 +221,13 @@ struct mipi_dsi_multi_context {
+> > =20
+> >  #define MIPI_DSI_MODULE_PREFIX "mipi-dsi:"
+> > =20
+> >  #define to_mipi_dsi_device(__dev)	container_of_const(__dev, struct mip=
+i_dsi_device, dev)
+> > =20
+> > +extern const struct bus_type mipi_dsi_bus_type;
+> > +#define dev_is_mipi_dsi(dev)	((dev)->bus =3D=3D &mipi_dsi_bus_type)
+> > +
 >=20
-> For the whole series,
+> Usually I prefer to have static inline functions instead of macros to have
+> type checking. I see that this header has a mix of both, so I don't have a
+> strong opinion on what to use in this case.
 >=20
-> Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com> # Toradex Co=
-libri iMX6
+> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-Thanks again for testing, and sorry for the regression
+Thanks for your review!
+
+For the record, it's also how the platform bus defines its equivalent
+macro, so that's why I went with it.
 
 Maxime
 
---bf3dbobd655mefge
+--oo5w6c3i24xyxwvo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaF5jUgAKCRAnX84Zoj2+
-dj4cAXkBZ9mAxRPFYp48ud3HArgZVTHAid8L6IlGVu3HKUVTCEh1Sf9luhFwO77g
-LEXZZ/sBgLlEmCDyeSROl49mzc+CL1c1KA8sDj5ARnnDWdq2RCiBioTCT8xRDjEN
-pTYgmSW9HQ==
-=FKFr
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaF5jjgAKCRAnX84Zoj2+
+dnxHAYDvKAslH9a+3jo1syyXRBG1bO78Ql/LPw2GemDSTM6Yj5g41ZixnLMfufLX
+B1WLsgABf1eCkEdSJrW7+ThutdAWpwTSD9zqTpA1s0putcQ4NflHIa/46/4KEIUK
+VJUqMYrcgg==
+=gkVH
 -----END PGP SIGNATURE-----
 
---bf3dbobd655mefge--
+--oo5w6c3i24xyxwvo--
 
