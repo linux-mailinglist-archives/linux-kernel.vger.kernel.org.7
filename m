@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-707042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C94AEBF2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:41:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB72AEBF39
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 20:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911F7561F34
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:40:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9631BC52AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 18:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B862EE299;
-	Fri, 27 Jun 2025 18:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521852EE976;
+	Fri, 27 Jun 2025 18:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="W5axXksc"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rL7pGfkM"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE9C2ECEA8;
-	Fri, 27 Jun 2025 18:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F2C2ED15B;
+	Fri, 27 Jun 2025 18:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751049618; cv=none; b=qNVGauktCnHtipBqlir1s2EPug92xwdQ80jb7OlAmiLXju+fNuvHZG6M9aIlaul3DN3+9AdbElBUTQDreCaoP9aaCtNso4CxVYdNaXlFJT1vbxaRapXyLv6Vv8TVO920SusvgLtIvZbHzFnMy2dZtoPojl1RN7WeTN0/6xO+DvM=
+	t=1751049618; cv=none; b=h8CZnLSx9zZaxDFZVfue6gRQ1NmIvWGs3SrL8jFjxuVGQ54tQeQOvEYw+v4FeN7ppCZsfJY9eYSxzNP26hClHQujoDZEFSP7fjr3v1nhK87/WLpRbbzZ9iAHKNIxAaHD1hOXH5gDgFMwFZ4ruIlamNxCNuhBCLIfrvaDWLywXWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751049618; c=relaxed/simple;
-	bh=eKnkV3cRdYAzuNoW6e/CWaaa9iGwq94K82H2T+gMCX4=;
+	bh=xZ1AjPAb5peoQ2/5X0OBEamGLpA0DWBnUXtAprtIgNA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u+YNxGZZ1qkFVICrjKeTekz9OZdBBX/VKg4nA06BWZyTRnUFLxcH0ayGdNc4JiZRmKrGoh2BvJe13CPLrLm+zmPLZZW/KkpTa0zV9Lcaz8JdvwnJfajdZYLsev5uAJkiYTSeHlmSquj+83eNaza86BFHwUVO1gf9JAw5Jgc4qBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=W5axXksc; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=aYZPbxXS0TMBLKtoNuIacynuvsqVgcZh2BB6reYEwy5kpPZ0nwOfziOIlWmEi3JqLDIChRYTwlLN00j0T5tKSH97AkmTPTN12MVLtttznhcMfCZ1gm4k1Lprm557qIim9eNb5YFTLi0tqdDzj1wBA0OHYpO05jG3KXEfzD68YdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rL7pGfkM; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C372340AD5
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5CEBF40AD6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751049616; bh=oy2tQOVISxZN/7bzsjOD/t4NelfiJkEaBQFC9sJRccE=;
+	t=1751049616; bh=cU1j40zTmEy13wFVQwU6r+Xhna53bFvCfqjstVBxj9g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W5axXkschMzOVROgnPDBZa2LW1STyyHO+0RHgTpkwvAskjAUz5aziVgyzKcTNms2R
-	 6fg2nvgt6hu6OwhMqUiM28llMmzHrahBrMVJH3riNKTsD+MuxonxUcGPfGBHkB0uCF
-	 prQO0pOv4rQwiAR6ugRAfZle/zcmAv8zEVEzpDt9ynexj+PvG2kWp+R1qtOHQBaoRI
-	 3ffDmQI+fK4L6NDnUmK3k4M8QV7cGroDWNL+rH7ykoIrHu7FFXMtx7Dt8UOZsUEcDv
-	 FhTTmGWTyUjymDmphUzRUJ9UJKdnmLGV0cI6SSzxgmen+nKoz5bf3FzCVNJo7zQ2Nv
-	 vsRMreOP9Lc9g==
+	b=rL7pGfkML2l9C57A9KH/jD3e78kvdmBwezH7Dxd3cMIwkivrLOyvO9jEQQZ2lgSYG
+	 3IBWpdZV8VOzIR7ztrp3adC9q8Kt0YjiJBNtQgSmpW7JfvIjR7kAuxh98Ofe+Vj6Ne
+	 c1ODpYxDqU3WriH01f1kaeuI3x2aq78kFbaFMcZQdDaWd6wrFd92FYNSPJnv92r+hM
+	 vE223z43DilqJEfYBHRNiO1zRMjkEMlI3VhdXcLQpibLQEH+ufQKQlaFIrugT+s1ZS
+	 zVZP5KNO7zvHWfZpkvgqDX3/DPJV1zDx8v9WECyWw7WmkqxQN0erNCUNb3sbW2s+3O
+	 W19FMSJTgdU+w==
 Received: from trenco.lwn.net (c-73-14-55-248.hsd1.co.comcast.net [73.14.55.248])
-	by ms.lwn.net (Postfix) with ESMTPA id C372340AD5;
-	Fri, 27 Jun 2025 18:40:15 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 5CEBF40AD6;
+	Fri, 27 Jun 2025 18:40:16 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 4/8] docs: kdoc: remove KernelEntry::function
-Date: Fri, 27 Jun 2025 12:39:56 -0600
-Message-ID: <20250627184000.132291-5-corbet@lwn.net>
+Subject: [PATCH 5/8] docs: kdoc: rework process_export() slightly
+Date: Fri, 27 Jun 2025 12:39:57 -0600
+Message-ID: <20250627184000.132291-6-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250627184000.132291-1-corbet@lwn.net>
 References: <20250627184000.132291-1-corbet@lwn.net>
@@ -63,25 +63,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This member is unused, to take it out.
+Reorganize process_export() to eliminate duplicated code, don't look for
+exports in states where we don't expect them, and don't bother with normal
+state-machine processing if an export declaration has been found.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_parser.py | 1 -
- 1 file changed, 1 deletion(-)
+ scripts/lib/kdoc/kdoc_parser.py | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 9e46cfa20978..224dea5f7c2e 100644
+index 224dea5f7c2e..734b908579c3 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -129,7 +129,6 @@ class KernelEntry:
-         self.config = config
+@@ -1211,16 +1211,17 @@ class KernelDoc:
  
-         self._contents = []
--        self.function = ""
-         self.sectcheck = ""
-         self.struct_actual = ""
-         self.prototype = ""
+         if export_symbol.search(line):
+             symbol = export_symbol.group(2)
+-            for suffix in suffixes:
+-                symbol = symbol.removesuffix(suffix)
+-            function_set.add(symbol)
+-            return
+-
+-        if export_symbol_ns.search(line):
++        elif export_symbol_ns.search(line):
+             symbol = export_symbol_ns.group(2)
+-            for suffix in suffixes:
+-                symbol = symbol.removesuffix(suffix)
+-            function_set.add(symbol)
++        else:
++            return False
++        #
++        # Found an export, trim out any special suffixes
++        #
++        for suffix in suffixes:
++            symbol = symbol.removesuffix(suffix)
++        function_set.add(symbol)
++        return True
+ 
+     def process_normal(self, ln, line):
+         """
+@@ -1767,13 +1768,10 @@ class KernelDoc:
+                     # it was read twice. Here, we use the already-existing
+                     # loop to parse exported symbols as well.
+                     #
+-                    # TODO: It should be noticed that not all states are
+-                    # needed here. On a future cleanup, process export only
+-                    # at the states that aren't handling comment markups.
+-                    self.process_export(export_table, line)
+-
+-                    # Hand this line to the appropriate state handler
+-                    self.state_actions[self.state](self, ln, line)
++                    if (self.state != state.NORMAL) or \
++                       not self.process_export(export_table, line):
++                        # Hand this line to the appropriate state handler
++                        self.state_actions[self.state](self, ln, line)
+ 
+         except OSError:
+             self.config.log.error(f"Error: Cannot open file {self.fname}")
 -- 
 2.49.0
 
