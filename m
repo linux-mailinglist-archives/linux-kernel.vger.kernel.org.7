@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-706474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-706480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E13AEB6FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 13:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3575AEB70A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 14:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E350B1C611BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 11:56:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1A5189CC87
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Jun 2025 12:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3115D2BF011;
-	Fri, 27 Jun 2025 11:55:34 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E633129B8D8;
+	Fri, 27 Jun 2025 12:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATyZ2PgV"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108F22BD022
-	for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 11:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025CD19F461;
+	Fri, 27 Jun 2025 12:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751025333; cv=none; b=UiMhB5SxjMsH9/27cdIwhvBdJTvuIn1dfD3ND9TNcFINRvWUZuGt3+Cj5BVNY951uvIwVfrYjOUIv0Pfj8FXee+rsZ+QeS1euH85AzcPrnkxqIDh8LEqO+WseB5LZy0Pt59xMGR1N+rRKVigXTH8yB2ahVVEQX7s4Zq+xLp9u9o=
+	t=1751025675; cv=none; b=XyWXpEqpacd/lbv+4NAy1t9HsZVl8ZLWuyBaUjgUU8RtrN3l1L/c4pPP4AARhYyLfMqz3EOxpljVvALrb3lc0ISsjvL4ksyJVUnLSFDQfQMLmz7Jp9Od9f6DCGTSb9CWHZQHl1PBL3NFgRj6MgU2rrBhcIHpx4Yji94lyQnf1oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751025333; c=relaxed/simple;
-	bh=EEP/GLG4BekWXC//EVgssb3St6+ihrIOm2vd/sgeleg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qXfJQNK3aB7/VvDoKhi7UiQ6sboLSZ8hYQt2v5pBq8MOrIoc50OSJHLdW9Wuy1Ywya6/w9SXReNhWW5xKFaDq6Qm5W9MucTQaPEYw6xzRbOEV35ig5fHUqeKhF9OGPESEQjW6pEHyR4ot4LIEx4tmbVGkFb9+02K1NU0/Suw7i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3ddd03db21cso29602365ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 04:55:31 -0700 (PDT)
+	s=arc-20240116; t=1751025675; c=relaxed/simple;
+	bh=w2b/Ud8DUqeVqSTJxt5a48uo0jrDNRZVF+OFUm+fX4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SbU77CndcWSNkwRcPdWyiExLyX8JKyEph7IbHkcamJzvQCpQPRGQ0Faf5LP3KN593ZfzXDyW9OJl9wXdX1CtpIz5WixpcWVXBZW9viDKslLRJyCAX3JLf8auZRtXGusSlww6ZsNjn8P8vr+jW6E8qp1RdUBfAL3JZwNzlMjRw6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATyZ2PgV; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23649faf69fso21092175ad.0;
+        Fri, 27 Jun 2025 05:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751025673; x=1751630473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMm0f1YmbF8p/DacuZnlM8/zlr0CWYSCJDnnq1mmyww=;
+        b=ATyZ2PgVOJ0qIR1HDNQedNzR4pO8fwz/4re6TxF6jTCX+z0WDQeEzpaiTUpjboKfSv
+         RggZBCrXQQckxVlE5/O1pinYR4FLG6uiPP0Py669LtjulZEUAb0D+2wW586hXfUmy9u5
+         MP4/B5Cc1IVEDJC4JjrDMKnf1aP9kB07Dyd6MXSAYJS5ntHkwlL6I/5NXpYRNjG9rwNU
+         a3HEmNQlkff23/tbDH1yXX1thL+xKn6QQd7tbMPkdFB7p8ww3YfguVH/D86J4o33L4XL
+         KZcgAsnY7kC5aqcKmL+oMbjQukMPoNWD8OH4a3esJVMmeZX0u/f1JRZeTveRiZj0PlmS
+         vvGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751025331; x=1751630131;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X1zZgVQszv1UgP+eip3OXc7qhoJRPENcs8WElP/2BNU=;
-        b=k3d5joAQyLeYW6JwXyEAoqkrW1V2E8Go5xkK+j55cQX9AZzfypJubtQtMyLLyrel3w
-         efK7q2BsBh+feaxch0BWWnsbaIiFh7p6wzapt0Dz7AWvIGZcQP7YyC/bIgW7rbFbIND5
-         +Cc792XgbFflyUcIcGiOfu8v8WHi83kCR54mpXxF2BzRnOcHZaANj1S71zYnvWFsSAOb
-         Kshkbjluh+Jes/6pV+Ewmfqwn9v+vWHMbX2xtRK7gYQBxWLedCr3StH5ql0fua4z00Yh
-         B00bVUtY/InCWsTW25lnvAsor6N6AmcZ1o9brqcujMA50TtFh0feXR7MYANJtN4MA2SE
-         uiqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZhJuOqEKIeYBE4Z6yphCWzpkbR+VYCd+3vcNQ2EQhoUm6yOwT+6CcUQNFdalxkk7yDASwY/cKsA1J+0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj1NXWDuevP6ljy922er/R1Y2PRa9QwFp/oke8zVUOZt1HwOQE
-	upyo8CKp+559Nk8goDDC+z+nEDQM5mAiWbjKuY1563LBP7tw/JjmJIBPyt9jWB+kGUa1QsHlRVP
-	/mszLdkfDKUxnSlyeDFYVgOZj1xFgUGg3UW7YiVG47JUnPHBYsr+L71czYH8=
-X-Google-Smtp-Source: AGHT+IHPqVyp07Zu+EID12AGK/E9m4Yi1sBRIGrQLXZCZgqOqmLUWBGP/jvsHyHxPqgHNsHfo9SNMj49X7NQEwIF9aq4RXtbxtvI
+        d=1e100.net; s=20230601; t=1751025673; x=1751630473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lMm0f1YmbF8p/DacuZnlM8/zlr0CWYSCJDnnq1mmyww=;
+        b=GzQbIMLibd3zhqVrjZkaTF0XPmJ2geuk9lUmj+Kumo65v6NIKKk83JDxC7H3CWoDtx
+         aqilcNqK3tutAIailDpIkeQPu3obYRYgMvM9SPVioKSYdpo46z8VAum4x3kNJ0Sfdpqe
+         FeuXJqpD81mw3d/H6f8D8QqUKbBwI+2woTuKgZYsL9RmVhm+JCAq/nAu2q3kOcs8+Nba
+         8gNev/J2ZZiE8AB/rfSUe9aZepb14QWuba4HZaDqo85MEuci5Gf+kkC6oQgUvSIJirX9
+         l72klxTj0uaTr2ROnr41NxBAniDPk3LFfM6WamWPP4zArsUQnSA6bBMnjN7WHLQQQSOV
+         1/lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGm4mV0q0ss8XX1OGrieYBz9r0OhX+CaeenxnlNSc5tEuMqbLZHKcIJdGYGcJPE33WlB4YMcEyVPQnjwDY@vger.kernel.org, AJvYcCUh8cpvF196rSZfkeIe00H9lSiesbEkM1wCVgH+4LvVjJDeLy8Ctgz7JV/dGBFyrX7RdkZkQ+vQq9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOWGqhX5ouX8oC20Ooq69iB0IMGow/89xr4WauoCMOVDNnXZt7
+	YVz9wKPrX++G0Py7YH3vt1/W/pI+1YscRdbmaUAdWy1qwZEAHZZEgdXo
+X-Gm-Gg: ASbGncuZghuZXi/xWStP7ij+A9vmJErJyMJEW6lJmnaRjQG2Xw69MzLszUsLvvsepAE
+	yuMsXsR2PXLQsCZE6HUAdeQtibObarIzjZPDUuP0Wc4lx/b6LFhZcLWT+3DilxnqSif6fOTWBvu
+	A/1QVEXql05r+22Lwin5fM9ErBCi9Eb7LIUrYPWRhYd8pANka0iC5vWeSozcKlt0CmxMahNgO0j
+	hpj3XfEizkeOn+ZUotFCFQSnDV7uruR3674WJFo8uLXiSaJ785vu7JImUgkxcYvgo0xsc+Mdha/
+	aHoP8upyI692sz5SpR0ze34CjMGrkpmA0GJ8cWDI9QUmqvF8HI9mkl+Aqre3qnIIBff9etzTkiW
+	M039vsPg=
+X-Google-Smtp-Source: AGHT+IEFON4jPah/zgdrDesiC9nxTOgYF3/CFQOwYad3x3aR0NDjxOCJA2cEtxdL58xlsqxaUtKPFw==
+X-Received: by 2002:a17:902:d603:b0:234:8c64:7885 with SMTP id d9443c01a7336-23ac48b6862mr44612935ad.53.1751025673095;
+        Fri, 27 Jun 2025 05:01:13 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c408:a02c:2fc6:2cad:e985:b61d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb39b8easm14451815ad.96.2025.06.27.05.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 05:01:12 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: airlied@gmail.com,
+	simona@ffwll.ch
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	corbet@lwn.net,
+	dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kevinpaul468@gmail.com
+Subject: [PATCH v2] workaround for Sphinx false positive preventing indexing
+Date: Fri, 27 Jun 2025 17:27:18 +0530
+Message-Id: <20250627115718.17673-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2287:b0:3df:154d:aa5b with SMTP id
- e9e14a558f8ab-3df4ab4eac3mr31780455ab.5.1751025331299; Fri, 27 Jun 2025
- 04:55:31 -0700 (PDT)
-Date: Fri, 27 Jun 2025 04:55:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <685e86b3.a00a0220.129264.0003.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in ip6_mr_output
-From: syzbot <syzbot+0141c834e47059395621@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Functions drm_format_info, drm_modeset_lock, drm_ioctl_flags are not being
+indexed in the documentation because there are structs with the same name 
+and sphinx is only indexing one of them, Added them to namespaces as a
+workaround for suppressing the warnings and indexing the functions
 
-syzbot found the following issue on:
+This is a bug of Sphinx >=3.1, first reported by Mauro in September 2020
+Link: https://github.com/sphinx-doc/sphinx/issues/8241
 
-HEAD commit:    5d4809e25903 Add linux-next specific files for 20250620
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=131c5b0c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=58afc4b78b52b7e3
-dashboard link: https://syzkaller.appspot.com/bug?extid=0141c834e47059395621
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138a2dd4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171c5b0c580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/16492bf6b788/disk-5d4809e2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7be284ded1de/vmlinux-5d4809e2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/467d717f0d9c/bzImage-5d4809e2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0141c834e47059395621@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: net/ipv6/ip6mr.c:2376 at ip6_mr_output+0xe0b/0x1040 net/ipv6/ip6mr.c:2376, CPU#1: kworker/1:2/121
-Modules linked in:
-CPU: 1 UID: 0 PID: 121 Comm: kworker/1:2 Not tainted 6.16.0-rc2-next-20250620-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: wg-crypt-wg2 wg_packet_tx_worker
-RIP: 0010:ip6_mr_output+0xe0b/0x1040 net/ipv6/ip6mr.c:2376
-Code: f7 49 bd 00 00 00 00 00 fc ff df 48 8b 74 24 38 45 31 f6 31 ff ba 02 00 00 00 e8 c0 23 1b ff e9 a7 fd ff ff e8 b6 62 8e f7 90 <0f> 0b 90 e9 c7 f3 ff ff e8 a8 62 8e f7 90 0f 0b 90 43 80 3c 2e 00
-RSP: 0018:ffffc90002dd74e0 EFLAGS: 00010293
-RAX: ffffffff8a31f62a RBX: 0000000000000000 RCX: ffff88801db93c00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002dd7758 R08: ffffc90002dd76c7 R09: 0000000000000000
-R10: ffffc90002dd7670 R11: fffff520005baed9 R12: 1ffff920005baeac
-R13: dffffc0000000000 R14: ffffc90002dd7670 R15: ffff888027bea8c0
-FS:  0000000000000000(0000) GS:ffff888125d26000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f04da8d0100 CR3: 000000007786c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ip6tunnel_xmit include/net/ip6_tunnel.h:162 [inline]
- udp_tunnel6_xmit_skb+0x640/0xad0 net/ipv6/ip6_udp_tunnel.c:112
- send6+0x5ac/0x8d0 drivers/net/wireguard/socket.c:152
- wg_socket_send_skb_to_peer+0x111/0x1d0 drivers/net/wireguard/socket.c:178
- wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
- wg_packet_tx_worker+0x1c8/0x7c0 drivers/net/wireguard/send.c:276
- process_one_work kernel/workqueue.c:3239 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3322
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3403
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/gpu/drm-kms.rst  | 4 ++++
+ Documentation/gpu/drm-uapi.rst | 2 ++
+ 2 files changed, 6 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
+index abfe220764e1..b18a99869b6d 100644
+--- a/Documentation/gpu/drm-kms.rst
++++ b/Documentation/gpu/drm-kms.rst
+@@ -357,8 +357,10 @@ Format Functions Reference
+ .. kernel-doc:: include/drm/drm_fourcc.h
+    :internal:
+ 
++.. c:namespace-push:: gpu_drm
+ .. kernel-doc:: drivers/gpu/drm/drm_fourcc.c
+    :export:
++.. c:namespace-pop::
+ 
+ .. _kms_dumb_buffer_objects:
+ 
+@@ -473,8 +475,10 @@ KMS Locking
+ .. kernel-doc:: include/drm/drm_modeset_lock.h
+    :internal:
+ 
++.. c:namespace:: gpu_drm
+ .. kernel-doc:: drivers/gpu/drm/drm_modeset_lock.c
+    :export:
++.. c:namespace-pop::
+ 
+ KMS Properties
+ ==============
+diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
+index 69f72e71a96e..e9d7b7282a19 100644
+--- a/Documentation/gpu/drm-uapi.rst
++++ b/Documentation/gpu/drm-uapi.rst
+@@ -554,8 +554,10 @@ DRM specific patterns. Note that ENOTTY has the slightly unintuitive meaning of
+ .. kernel-doc:: include/drm/drm_ioctl.h
+    :internal:
+ 
++.. c:namespace-push:: gpu_drm
+ .. kernel-doc:: drivers/gpu/drm/drm_ioctl.c
+    :export:
++.. c:namespace-pop::
+ 
+ .. kernel-doc:: drivers/gpu/drm/drm_ioc32.c
+    :export:
+-- 
+2.39.5
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
