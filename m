@@ -1,192 +1,93 @@
-Return-Path: <linux-kernel+bounces-707627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16580AEC631
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:13:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6644EAEC636
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5190D1BC6C1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 09:13:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1543B6A5B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 09:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFBB23B623;
-	Sat, 28 Jun 2025 09:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58A0242D96;
+	Sat, 28 Jun 2025 09:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="r/s3poRq"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="mdVgcxp/"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A452253A0;
-	Sat, 28 Jun 2025 09:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751E3244665
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 09:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751101864; cv=none; b=XhIaWT7qycSSebmwQUKMtChnW8wbB4+3NKsJOP+uaOChBXKBsPP9ls5ZLXr0xNV8+1s3B+EpALIKEER7OX+MAhneTko7FQQ8yITf/FL8EjxONhKBdjeEaQFSgVihJaIa/HYJGLuTGpk72dBXv6V+lWoeYfDhuMVndFzQo9pzSj8=
+	t=1751102030; cv=none; b=QrfOi7KJniJH4o/bK2Mw5blZZ4F73kW8dUdQC3DPxxVSVB3sEciSqH5ki0xxgN99KFgS2TE/5AYxAz+uvsMLDk0860a4psptaO0ItazH5fYWunyVNU/ayXlKjjHJhOz8Q5Z56eZ8ILXH1p11h3IDskd2KswUGStBxwcpHRiWuL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751101864; c=relaxed/simple;
-	bh=owery2Y9xho1bAvAYoxF0F6uDfB7KsKdTzyV/Nr07xM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=odQqimo6clDhICdUEiuUvXNrzI9pYuF5sVu9dS3KUij4qS59He4BIdPLMaS/K6a3yTWOmeeeYZr4Pp6GYZxsuoHgrOwoKpRP0Uq+aYNb1FBQhE4tJbqVZoqCFr7XRRJF8DWtJTZxxgeQaiupIRlGN7oA9xw8bhsOIUYVEFF+gT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=r/s3poRq; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout1.routing.net (Postfix) with ESMTP id 6597441B9A;
-	Sat, 28 Jun 2025 09:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1751101856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mw75z6h4HeFha6AF7YI1R1VXg23z1dS7Y1C1o8vw7rQ=;
-	b=r/s3poRqq/VChsGtyFgPlDXqq72CLYUbSfojrYIpQDxm+axAk4IYVdvqL65kjsb/WoIQRt
-	ZFIo6bZfqpyao7+yjmEacYygPp80IJuKzIWRvKSHKjcta8uI3rUCW0bRZUwo9OkjOy9Q8V
-	1NcshjhY4uxuASOq5MabTXLHPmLZN/s=
-Received: from frank-u24.. (fttx-pool-217.61.150.139.bambit.de [217.61.150.139])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 0AAB512272D;
-	Sat, 28 Jun 2025 09:10:56 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Johnson Wang <johnson.wang@mediatek.com>,
-	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
-	Landen Chao <Landen.Chao@mediatek.com>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Felix Fietkau <nbd@nbd.name>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v6 15/15] arm64: dts: mediatek: mt7988a-bpi-r4: configure switch phys and leds
-Date: Sat, 28 Jun 2025 11:10:39 +0200
-Message-ID: <20250628091043.57645-16-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250628091043.57645-1-linux@fw-web.de>
-References: <20250628091043.57645-1-linux@fw-web.de>
+	s=arc-20240116; t=1751102030; c=relaxed/simple;
+	bh=juTA01te9FKV5B8PHkCYX955l/JRRH6fuRt+KBGvoyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZYELG6ZOvRxjXKlEkAWZfsz82iLPPSS/1mG7OK6Bjq+6UZUAGhQ+378P0I/1h5H14uRorUjV9B3gaVV6tYwwOIZz4VPJZZpd4qA+YkoRVfWa6sLIoVcOO7CIkqE66qS5lBJ8xObWmmvXZDRadhfQ/OizDXBwglgwvAncn8M21R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=mdVgcxp/; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1751102025;
+	bh=juTA01te9FKV5B8PHkCYX955l/JRRH6fuRt+KBGvoyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mdVgcxp/LfDJ4VZjuRc0z4HXhiBgbGmfOae7xrLX0u7ZxGKbpoiDS9hX1QK6vlrsh
+	 CxrPCVrGd4NXSmeSv8bV8CNjukWJBr5OMINZ+r/qNaFKlhQ7RKjUm5ubLCqHjbNxpb
+	 6Ger+y3Zh9CfMH+veGJj/uivlK9Wq6HOy941GJDA=
+Date: Sat, 28 Jun 2025 11:13:45 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] Docs/ABI: Fix sysfs-kernel-address_bits path
+Message-ID: <02779f20-f910-4045-8e36-0a60bd9fe7b5@t-8ch.de>
+References: <20250408115823.1358597-1-richard@nod.at>
+ <1837899202.21230.1751099700585.JavaMail.zimbra@nod.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1837899202.21230.1751099700585.JavaMail.zimbra@nod.at>
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On 2025-06-28 10:35:00+0200, Richard Weinberger wrote:
+> ----- Ursprüngliche Mail -----
+> > Von: "richard" <richard@nod.at>
+> > An: "linux-kernel" <linux-kernel@vger.kernel.org>
+> > CC: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, linux@weissschuh.net, "richard" <richard@nod.at>
+> > Gesendet: Dienstag, 8. April 2025 13:58:21
+> > Betreff: [PATCH] Docs/ABI: Fix sysfs-kernel-address_bits path
+> 
+> > It's address_bits, not address_bit.
+> > 
+> > Fixes: 00142bfd5a91 ("kernels/ksysfs.c: export kernel address bits")
+> > Signed-off-by: Richard Weinberger <richard@nod.at>
+> > ---
+> > Documentation/ABI/testing/sysfs-kernel-address_bits | 2 +-
+> > 1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-kernel-address_bits
+> > b/Documentation/ABI/testing/sysfs-kernel-address_bits
+> > index 5d09ff84d4d6..3b72e48086aa 100644
+> > --- a/Documentation/ABI/testing/sysfs-kernel-address_bits
+> > +++ b/Documentation/ABI/testing/sysfs-kernel-address_bits
+> > @@ -1,4 +1,4 @@
+> > -What:		/sys/kernel/address_bit
+> > +What:		/sys/kernel/address_bits
+> > Date:		May 2023
+> > KernelVersion:	6.3
+> > Contact:	Thomas Weißschuh <linux@weissschuh.net>
+> > --
+> > 2.48.1
+> 
+> *kind ping*
 
-Assign pinctrl to switch phys and leds.
-
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
-v4:
-- reorder switch phy(-led) properties
-v2:
-- add labels and led-function and include after dropping from soc dtsi
----
- .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
-index 4d709ee527df..7c9df606f60d 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi
-@@ -4,6 +4,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/regulator/richtek,rt5190a-regulator.h>
-+#include <dt-bindings/leds/common.h>
- 
- #include "mt7988a.dtsi"
- 
-@@ -152,6 +153,66 @@ &gmac2 {
- 	sfp = <&sfp1>;
- };
- 
-+&gsw_phy0 {
-+	pinctrl-0 = <&gbe0_led0_pins>;
-+	pinctrl-names = "gbe-led";
-+};
-+
-+&gsw_phy0_led0 {
-+	function = LED_FUNCTION_WAN;
-+	color = <LED_COLOR_ID_GREEN>;
-+	status = "okay";
-+};
-+
-+&gsw_port0 {
-+	label = "wan";
-+};
-+
-+&gsw_phy1 {
-+	pinctrl-0 = <&gbe1_led0_pins>;
-+	pinctrl-names = "gbe-led";
-+};
-+
-+&gsw_phy1_led0 {
-+	function = LED_FUNCTION_LAN;
-+	color = <LED_COLOR_ID_GREEN>;
-+	status = "okay";
-+};
-+
-+&gsw_port1 {
-+	label = "lan1";
-+};
-+
-+&gsw_phy2 {
-+	pinctrl-0 = <&gbe2_led0_pins>;
-+	pinctrl-names = "gbe-led";
-+};
-+
-+&gsw_phy2_led0 {
-+	function = LED_FUNCTION_LAN;
-+	color = <LED_COLOR_ID_GREEN>;
-+	status = "okay";
-+};
-+
-+&gsw_port2 {
-+	label = "lan2";
-+};
-+
-+&gsw_phy3 {
-+	pinctrl-0 = <&gbe3_led0_pins>;
-+	pinctrl-names = "gbe-led";
-+};
-+
-+&gsw_phy3_led0 {
-+	function = LED_FUNCTION_LAN;
-+	color = <LED_COLOR_ID_GREEN>;
-+	status = "okay";
-+};
-+
-+&gsw_port3 {
-+	label = "lan3";
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_pins>;
--- 
-2.43.0
-
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 
