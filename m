@@ -1,102 +1,121 @@
-Return-Path: <linux-kernel+bounces-707422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5394AEC3BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:06:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B40AEC3C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E584A619C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E611C41053
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076E01A5B96;
-	Sat, 28 Jun 2025 01:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Gexp/rjx";
-	dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b="Gexp/rjx"
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AF11B4121;
+	Sat, 28 Jun 2025 01:21:59 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAC52F1FF1;
-	Sat, 28 Jun 2025 01:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.79.152.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0DBF9CB;
+	Sat, 28 Jun 2025 01:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751072810; cv=none; b=ad296eA+eZAbpZ98u0iHvdOPTPMsVlVL/GF9bpizUzwSWaZtWfezX0J1tXpmuxzsCtFMSvwIB3H5QYi+JFyzAi9SKbgbmyuG3UT2LAid9lXrDo1B/1mYaVZQ5kKQ5R4MIWfIMKX7lYwvTXsTHRWksXc9eZa0WCBCvkmCJp5ZwaQ=
+	t=1751073719; cv=none; b=ngjBr7erVO8hY0nJF6ODVbCfuYDy6VKvc8Iwzz12otm7SQ47e+vHpkgpLNHiIh/Gg79bxzuJVIMS/WWHp9fwH65y/EY8mv9ZpkQnNAHyhDq9FEyO599T3MOg5HPOu2ZwLkGv8ugW0CmVBbDNDvxmgKvzp624IzSTsGLJfp9UllY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751072810; c=relaxed/simple;
-	bh=lvtlGUKgYO9Y0TkSNn7kHB2Oi9ly8/3TM3G1bnzKTDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQEEKajFWJ57qB/9yolX4vR8OtvetNlKTjLP84UQ3f/ktZaVLVR7JL7xyTp/tz+q9eKXRIX2Pcywdw3vvtj6f16hHUIzpJL7n9oZeM0unPmUhoGUuzMe8cy2qWPcRfbO7lB08ji+egCu6WKwDodPGjr5pEmOP3ab0OYAZ55nCG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com; spf=none smtp.mailfrom=mleia.com; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Gexp/rjx; dkim=pass (2048-bit key) header.d=mleia.com header.i=@mleia.com header.b=Gexp/rjx; arc=none smtp.client-ip=178.79.152.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mleia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1751072807; bh=lvtlGUKgYO9Y0TkSNn7kHB2Oi9ly8/3TM3G1bnzKTDg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gexp/rjxeePfASYz5Y/nva3HsYFzNl4QtMlUqPgeoPkp5WoD/uXFGQr84KlvGY/NS
-	 X1swoWZrG9UzpBiWx6CfGfuzID1QzOLo3Bon3+oXy1awluqUUjZgtf8bB32fr473zs
-	 L4YvExYQ15ifjtPFRPZq4GLBIya5BhD7PWg0ZBCfutjEw/pYWHFPcS7VKek2zCFhum
-	 xdn8snRHz6dfX/AMOeedRxwbvGdj03eLcuPP4/pLXinQNrvFu+t/4AQHYyhd7cAN0n
-	 YRIs9nOrmhPZRtNEaQLK03CBoh0f8ZjP2oZ0XLwiE+wFrhqGUXsTomx8s0c3HGtJzq
-	 KGdyCk8BJg8Ug==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-	by mail.mleia.com (Postfix) with ESMTP id 9648B3C4FE4;
-	Sat, 28 Jun 2025 01:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-	t=1751072807; bh=lvtlGUKgYO9Y0TkSNn7kHB2Oi9ly8/3TM3G1bnzKTDg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gexp/rjxeePfASYz5Y/nva3HsYFzNl4QtMlUqPgeoPkp5WoD/uXFGQr84KlvGY/NS
-	 X1swoWZrG9UzpBiWx6CfGfuzID1QzOLo3Bon3+oXy1awluqUUjZgtf8bB32fr473zs
-	 L4YvExYQ15ifjtPFRPZq4GLBIya5BhD7PWg0ZBCfutjEw/pYWHFPcS7VKek2zCFhum
-	 xdn8snRHz6dfX/AMOeedRxwbvGdj03eLcuPP4/pLXinQNrvFu+t/4AQHYyhd7cAN0n
-	 YRIs9nOrmhPZRtNEaQLK03CBoh0f8ZjP2oZ0XLwiE+wFrhqGUXsTomx8s0c3HGtJzq
-	 KGdyCk8BJg8Ug==
-Message-ID: <e541cbf6-7db5-4716-9658-1cac4184ee78@mleia.com>
-Date: Sat, 28 Jun 2025 04:06:46 +0300
+	s=arc-20240116; t=1751073719; c=relaxed/simple;
+	bh=9iEULhb/XPU3L5BGh2VZhi02qzir0c9hgvK+zpaAsL8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u2qyppcH9wk0MKztG2dagMCUNiFrNfmq3u201ppSiayDXkNXCcR+2L2UfIAEHw0jPzMspx3Ou1DJB7qU1ciDfe73p8g+1EjSUI3bHSjzO0yeWXLQQLq43uCOLAOiy45gUv8hmcfrHOFyGZB0IVAzyo256BND0AUp5SD+WrYDPpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bTZQW1j8lzYQv7p;
+	Sat, 28 Jun 2025 09:21:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 21DAC1A08FC;
+	Sat, 28 Jun 2025 09:21:54 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBXu1+wQ19oAwx+Qw--.4287S4;
+	Sat, 28 Jun 2025 09:21:53 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	hch@lst.de
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH] brd: fix leeping function called from invalid context in brd_insert_page()
+Date: Sat, 28 Jun 2025 09:14:58 +0800
+Message-Id: <20250628011459.832760-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] dt-bindings: pwm: convert lpc32xx-pwm.txt to yaml
- format
-To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/LPC32XX SOC SUPPORT"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20250625161909.2541315-1-Frank.Li@nxp.com>
-From: Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20250625161909.2541315-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20250628_010647_632564_704ED86B 
-X-CRM114-Status: UNSURE (   5.57  )
-X-CRM114-Notice: Please train this message. 
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXu1+wQ19oAwx+Qw--.4287S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFW5XFW7JFyUGr17WryfZwb_yoW8Gr4DpF
+	ZF9Fy5Cry5CF42v3W7Z3WDCF1rGa95WayIka45Zw4F9rW3Ar9I934Ik34aq3W5GrW7AFs8
+	ZFs8tw1kAFWUAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFg4SDU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 6/25/25 19:19, Frank Li wrote:
-> Convert pc32xx-pwm.txt to yaml format.
-> 
-> Additional changes:
-> - add ref to pwm.yaml
-> - add clocks
-> - restrict #pwm-cells to 3
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+From: Yu Kuai <yukuai3@huawei.com>
 
-Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+__xa_cmpxchg() is called with rcu_read_lock(), and it will allocated
+memory if necessary.
 
+Fix the problem by moving rcu_read_lock() after __xa_cmpxchg, meanwhile,
+it still should be held before xa_unlock(), prevent returned page to be
+freed by concurrent discard.
+
+Fixes: bbcacab2e8ee ("brd: avoid extra xarray lookups on first write")
+Reported-by: syzbot+ea4c8fd177a47338881a@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/685ec4c9.a00a0220.129264.000c.GAE@google.com/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/block/brd.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index b1be6c510372..0c2eabe14af3 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -64,13 +64,15 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
+ 
+ 	rcu_read_unlock();
+ 	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
+-	rcu_read_lock();
+-	if (!page)
++	if (!page) {
++		rcu_read_lock();
+ 		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	xa_lock(&brd->brd_pages);
+ 	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
+ 			page, gfp);
++	rcu_read_lock();
+ 	if (ret) {
+ 		xa_unlock(&brd->brd_pages);
+ 		__free_page(page);
 -- 
-Best wishes,
-Vladimir
+2.39.2
+
 
