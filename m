@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-707524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086B0AEC505
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 06:55:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90927AEC504
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 06:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7C8E562DA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 04:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2A61BC246D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 04:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A114822DF80;
-	Sat, 28 Jun 2025 04:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027F422F75B;
+	Sat, 28 Jun 2025 04:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xa1G2V36"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1/3EcPu8"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D2722B5AC
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 04:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0956227B95
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 04:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751086281; cv=none; b=sEfwPzFZqrPSGRq1y3I1yUMUgqIbAQYNX8lgI9mlIcsq8GRwI5MseoFHZ6D8p/MYwrF09OQ40fcfaLaiTzX3IIgBAscgP5uXkvDnSrUFMWVyix4XkQlkVLSgp07TtzPaEtOwJI0cuPlBP1ixDktHjMzcC5pCG+jLFf6O8nkn2JM=
+	t=1751086283; cv=none; b=bXSgasn+o6roI3qrM4+eb9896t0Brd6dYbUvSCcxncPZ5+sX1G3SmLKAFYASB6IoreOHUvU3sj8A6SC5Cg3yqYpgXQ2aub9rN8Levbnha4+1KEIPXVofi6q6QqwA3Egk5L0twtUjnG5ripGJsW7HFdN2hba3LIbcILe45hXFnjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751086281; c=relaxed/simple;
-	bh=XZ2G4kiVjld4rU4LFsnLYgXf2Edy2O94yr2BpTWHjrM=;
+	s=arc-20240116; t=1751086283; c=relaxed/simple;
+	bh=rzX8B0iDELZ/bYw3/jiUDZsS7oa2ckXn4WeaJ/6cDmI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=obO0R/mqhA24y5o/u3ahNRgs5UeEIm/8QM6aIz1H3RBnnIkleHbSeGarhHQ3w2MJ97CfS9d8K8vVflQr8Tcu6ftgRCKg+Z7tKJ2jpprpHCLxBcamPG68kua2ySvyNqIX7FrQsXEQE5kSrMkUmvSnwA8lqdgLQxu7Sm2WYkaWoa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xa1G2V36; arc=none smtp.client-ip=209.85.210.201
+	 To:Content-Type; b=gi+LxT0sjeXMtlkMKMwaKF47mDBQ48ecYj+gOtPwDzlFFPDHq4nV3wgypcmNHss3013df9tbL3X/1MVnRMM1ZNSzkb6ktHonxhqKAw5MtOUEkLOvZvo6/3Cz8LuSlEAI3nP4nRYxYPaYPZZy9S7og4MDpg3Plzf+gs6oXwjd7ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1/3EcPu8; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-748cf01de06so1350452b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 21:51:19 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74913385dd8so1106610b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 21:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751086279; x=1751691079; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1751086281; x=1751691081; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=igXQM6BRQW3014Wvuqhh3drIYdWuvzh4LJQBcoyEMvA=;
-        b=Xa1G2V36UbE6ecX6ZmvwWONOex3/rxpxmva18laYL2ot7ASqMS/qt3SZAFkkpKJ28A
-         AcHhdv+jFCNqHGTTbN88MWCwNwGSXQg/ojivOLQaI2xEBYLnOAWiMhXPR8gflSAeJaTT
-         kQsMRVx5ivu58LrcbtJ+Ttq8b0gMk1u72pzH1Li9i0Km1ZtBDvGtTrgts5B1nIG9I0qa
-         wDmFsTE4y1VJQ/0qrtwuh4ZsNpP5kG9VBvS06ny5fdxgViXNLsQJ/bgGKJlLRxeQv819
-         XmWJUU2tRFAcdOw4Fp9yPMnt9UiUy59QCXnxLZufTRwlPPZHJ+k3qozDD55z+9WcGAGK
-         VOkg==
+        bh=zuXuLHVC8mUAXN1Rk38gtyje6VxPsjMfZ/jwecza8r0=;
+        b=1/3EcPu8SQdH4JsabudDskflkSiQ5Zfk95PGfY7PMHu7zNnePZA1FVi0m8foTnKiXc
+         ZY0kraeKLO2DT0UFOMBAQwzoPaKnRZjfXs6fbPnXASF0V1bsgQww5IX30GJ6onEaxt41
+         7WquScZRj2k0DJDrknSBMbubMXaTCPjd8+VyrDREBK4VdhSi8eHRq6Lijxo2bGgy5eAy
+         3EpjVoc+imwIUh7HMv0yrE2s0Dw2HY6LnX46lJNhQVI6ltyXkbQXyqMe8F7HSOiuo8GN
+         UnLfS/M5V4YV5z0WibBccQGrXWDaBHgaD7sxQ/OFpHTLWzVbQrJKZBU1njOjqNiN6Lx/
+         Ly7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751086279; x=1751691079;
+        d=1e100.net; s=20230601; t=1751086281; x=1751691081;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=igXQM6BRQW3014Wvuqhh3drIYdWuvzh4LJQBcoyEMvA=;
-        b=h9ACf9L84bwLoAMZ82f1hL4iQbRu25T3nBKyqHZyO3xzopewjeKbqAJFal+Ytr2kn8
-         MmwD4xXbXpdZfzrWEIOuL9EzUwd5PU74+ludVp68Eo5903a/4ShttZxM+865Pu87g5st
-         fiS6AyDUs4XgllT+yqcGC4VTbFDBb9nCq7piHkY71RBSfGLNQEU9IzylYiA4FXqgiQrD
-         93rpEPwyN1sMzk3fDT6DIYuRSc8pZceogpK1He3bsLnOMemufsz+daVEUvMUUWGpHGAZ
-         WDAvX+xFro6SVWaUj1onM23OAfPllP2nf09yr2s4p+wQueZf/5V1cpvgP6ifXd6yjfwl
-         Y3GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWelzELD/obWg6Ra9ZYUTf4QpxckB3hGXCRVePi9V5AFtO7jBQhcLQPDB6Y+zD9P1TpWKkrgbdyqy7aSlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCI/aM9duB3mhsuhVzOH0e4uN2FmmIn7/xGlhctlGq3b3nbjpA
-	qm87KXYPBmZf7ogP7rPB2UzB9JNHVc3cflX23qfETrtdM4EWioHjVDjhk/ZeynVFdJwudzn29jb
-	amM3I3RUtSA==
-X-Google-Smtp-Source: AGHT+IGlr6aNseajtUasZEJx8sFDfiqYdn+3ReaGiasBgRfrtEPijj3lkiCuoFZfZnQw3dWyqb7RcC1LSJ5S
-X-Received: from pgb12.prod.google.com ([2002:a05:6a02:340c:b0:b2f:64be:6881])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:900f:b0:1f5:709d:e0c6
- with SMTP id adf61e73a8af0-220a17ef512mr7681833637.42.1751086279488; Fri, 27
- Jun 2025 21:51:19 -0700 (PDT)
-Date: Fri, 27 Jun 2025 21:50:12 -0700
+        bh=zuXuLHVC8mUAXN1Rk38gtyje6VxPsjMfZ/jwecza8r0=;
+        b=kE8hcywRe4zoTf4Yojbxi0gDDcdFe8T4Ym16r7ba94wfwcvyLw1sGkPluIXiv6hbhL
+         zX8wocnj0tHTSJRj2FSwCLs5Px0boCoXCsfPoWrlHjj2AHw+aEtjZ1M/joen0f2lN59P
+         NQhwCVZxVZLeW96ABQFbEniyGDcEZQzfp5yop8AmUHhPgygOObgDfEiZgopYZi3QMXY8
+         AdVG1lqb8qfgBcVX/RBqvaQ7QCTqOTJNoNdSK4PfmC+mS7QMiYc5SNFt370wIqfJfhiY
+         +l3BgpqrcawVdShiDKoklcrCSQ5HaxuY3IoK9vKYHnqFnnJn5x5CwSLLyIbSWL5bW1hO
+         bzmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoCPOMPK52cNqGHNRgoRMD9erSK8K48YpcIpZYQZx+ZERPy9aZQ3p2vTxROX2mDsqt/Vz+gCEfYh2T8DU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylcLk3UtBicFtSa/fq53zBNSvg+kELB6Na/jkIKV+0y+gpQNHz
+	n0neIS2tlXe4RKprAzm5H54bKok8QwCkDEFsw0YLblr5bwDV3mDcplxM69X85ejA156dUZyN/qK
+	DzfYLH8Q+4Q==
+X-Google-Smtp-Source: AGHT+IE0qxcnnxTTWe9CHDCNPjcV2j5Ls+Y8fN+NmEKyKnoatl4vzJ3R6yfnqSJhftKCP5XZWld0LGT3E1t9
+X-Received: from pgnb21.prod.google.com ([2002:a63:7155:0:b0:b31:d4af:e567])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9186:b0:21f:5324:340
+ with SMTP id adf61e73a8af0-220a17e9b09mr9968310637.41.1751086281226; Fri, 27
+ Jun 2025 21:51:21 -0700 (PDT)
+Date: Fri, 27 Jun 2025 21:50:13 -0700
 In-Reply-To: <20250628045017.1361563-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250628045017.1361563-1-irogers@google.com>
 X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
-Message-ID: <20250628045017.1361563-19-irogers@google.com>
-Subject: [PATCH v5 18/23] perf auxtrace: Pass perf_env from session through to
- mmap read
+Message-ID: <20250628045017.1361563-20-irogers@google.com>
+Subject: [PATCH v5 19/23] perf trace: Avoid global perf_env with evsel__env
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -104,115 +103,48 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
- auxtrace_mmap__read and auxtrace_mmap__read_snapshot end up calling
- `evsel__env(NULL)` which returns the global perf_env variable for the
- host. Their only call is in perf record. Rather than use the global
- variable pass through the perf_env for `perf record`.
+There is no session in perf trace unless in replay mode, so in host
+mode no session can be associated with the evlist. If the evsel__env
+call fails resort to the host_env that's part of the trace. Remove
+errno_to_name as it becomes a called once 1-line function once the
+argument is turned into a perf_env, just call perf_env__arch_strerrno
+directly.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-record.c |  8 ++++++--
- tools/perf/util/auxtrace.c  | 13 +++++++------
- tools/perf/util/auxtrace.h  |  6 ++++--
- 3 files changed, 17 insertions(+), 10 deletions(-)
+ tools/perf/builtin-trace.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 546c54b34155..362312c764cb 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -775,7 +775,9 @@ static int record__auxtrace_mmap_read(struct record *rec,
- {
- 	int ret;
- 
--	ret = auxtrace_mmap__read(map, rec->itr, &rec->tool,
-+	ret = auxtrace_mmap__read(map, rec->itr,
-+				  perf_session__env(rec->session),
-+				  &rec->tool,
- 				  record__process_auxtrace);
- 	if (ret < 0)
- 		return ret;
-@@ -791,7 +793,9 @@ static int record__auxtrace_mmap_read_snapshot(struct record *rec,
- {
- 	int ret;
- 
--	ret = auxtrace_mmap__read_snapshot(map, rec->itr, &rec->tool,
-+	ret = auxtrace_mmap__read_snapshot(map, rec->itr,
-+					   perf_session__env(rec->session),
-+					   &rec->tool,
- 					   record__process_auxtrace,
- 					   rec->opts.auxtrace_snapshot_size);
- 	if (ret < 0)
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 03211c2623de..ebd32f1b8f12 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1890,7 +1890,7 @@ int __weak compat_auxtrace_mmap__write_tail(struct auxtrace_mmap *mm, u64 tail)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index d52f21afdeb1..da94cd28c8dc 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2904,13 +2904,6 @@ static int trace__fprintf_callchain(struct trace *trace, struct perf_sample *sam
+ 	return sample__fprintf_callchain(sample, 38, print_opts, get_tls_callchain_cursor(), symbol_conf.bt_stop_list, trace->output);
  }
  
- static int __auxtrace_mmap__read(struct mmap *map,
--				 struct auxtrace_record *itr,
-+				 struct auxtrace_record *itr, struct perf_env *env,
- 				 const struct perf_tool *tool, process_auxtrace_t fn,
- 				 bool snapshot, size_t snapshot_size)
- {
-@@ -1900,7 +1900,7 @@ static int __auxtrace_mmap__read(struct mmap *map,
- 	size_t size, head_off, old_off, len1, len2, padding;
- 	union perf_event ev;
- 	void *data1, *data2;
--	int kernel_is_64_bit = perf_env__kernel_is_64_bit(evsel__env(NULL));
-+	int kernel_is_64_bit = perf_env__kernel_is_64_bit(env);
+-static const char *errno_to_name(struct evsel *evsel, int err)
+-{
+-	struct perf_env *env = evsel__env(evsel);
+-
+-	return perf_env__arch_strerrno(env, err);
+-}
+-
+ static int trace__sys_exit(struct trace *trace, struct evsel *evsel,
+ 			   union perf_event *event __maybe_unused,
+ 			   struct perf_sample *sample)
+@@ -2996,8 +2989,9 @@ static int trace__sys_exit(struct trace *trace, struct evsel *evsel,
+ 	} else if (ret < 0) {
+ errno_print: {
+ 		char bf[STRERR_BUFSIZE];
+-		const char *emsg = str_error_r(-ret, bf, sizeof(bf)),
+-			   *e = errno_to_name(evsel, -ret);
++		struct perf_env *env = evsel__env(evsel) ?: &trace->host_env;
++		const char *emsg = str_error_r(-ret, bf, sizeof(bf));
++		const char *e = perf_env__arch_strerrno(env, err);
  
- 	head = auxtrace_mmap__read_head(mm, kernel_is_64_bit);
- 
-@@ -2002,17 +2002,18 @@ static int __auxtrace_mmap__read(struct mmap *map,
- }
- 
- int auxtrace_mmap__read(struct mmap *map, struct auxtrace_record *itr,
--			const struct perf_tool *tool, process_auxtrace_t fn)
-+			struct perf_env *env, const struct perf_tool *tool,
-+			process_auxtrace_t fn)
- {
--	return __auxtrace_mmap__read(map, itr, tool, fn, false, 0);
-+	return __auxtrace_mmap__read(map, itr, env, tool, fn, false, 0);
- }
- 
- int auxtrace_mmap__read_snapshot(struct mmap *map,
--				 struct auxtrace_record *itr,
-+				 struct auxtrace_record *itr, struct perf_env *env,
- 				 const struct perf_tool *tool, process_auxtrace_t fn,
- 				 size_t snapshot_size)
- {
--	return __auxtrace_mmap__read(map, itr, tool, fn, true, snapshot_size);
-+	return __auxtrace_mmap__read(map, itr, env, tool, fn, true, snapshot_size);
- }
- 
- /**
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index b0db84d27b25..f001cbb68f8e 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -23,6 +23,7 @@ union perf_event;
- struct perf_session;
- struct evlist;
- struct evsel;
-+struct perf_env;
- struct perf_tool;
- struct mmap;
- struct perf_sample;
-@@ -512,10 +513,11 @@ typedef int (*process_auxtrace_t)(const struct perf_tool *tool,
- 				  size_t len1, void *data2, size_t len2);
- 
- int auxtrace_mmap__read(struct mmap *map, struct auxtrace_record *itr,
--			const struct perf_tool *tool, process_auxtrace_t fn);
-+			struct perf_env *env, const struct perf_tool *tool,
-+			process_auxtrace_t fn);
- 
- int auxtrace_mmap__read_snapshot(struct mmap *map,
--				 struct auxtrace_record *itr,
-+				 struct auxtrace_record *itr, struct perf_env *env,
- 				 const struct perf_tool *tool, process_auxtrace_t fn,
- 				 size_t snapshot_size);
- 
+ 		fprintf(trace->output, "-1 %s (%s)", e, emsg);
+ 	}
 -- 
 2.50.0.727.gbf7dc18ff4-goog
 
