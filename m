@@ -1,139 +1,192 @@
-Return-Path: <linux-kernel+bounces-707678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494B3AEC6B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 13:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB71AEC6BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 13:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702FE4A0816
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A1794A11A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF7624DCE9;
-	Sat, 28 Jun 2025 11:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="npwluFr0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uQkarKkd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89970248866;
-	Sat, 28 Jun 2025 11:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375E220F41;
+	Sat, 28 Jun 2025 11:35:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC1319597F
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 11:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751110419; cv=none; b=oriZdMvsB0uM7fdUtGK9w35NR49SG/y/JN/z7hucr0DPEczdnlNsC4AjN88BXWebNXkBEh0JncF2Vx7U87SyeD52JuDTAgVxZFkNqGy6FRq0FUiQNJ+AWkyhBRCtHSrFaIsZciufe5LHtnlFFdlBFJsA3XyjgQ6kWTPQW3+3n50=
+	t=1751110507; cv=none; b=cGQ4z5Yt/xcrQSNNx2cXwVCNSXoCTjaGhKFEE4deoqIFSOXRi0BxdvIZcr6V5n7QDCi1KYF5GFVDNaBg06q5iEniDXf9qFt4/DA2ayyE3LQfsVHgnFNR7bjQgBdMTD/WV9LGbRVyZdlxSOtveGN7Dj1l17ejgLogu53BuhYBg94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751110419; c=relaxed/simple;
-	bh=Z8sK1M/bb1wRBNMh2M/ISgCal11mKoUBS/jNphTLSt4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=O0bc96PjS3XMe3FBShrsiyPOVAQAfuMZYeX1OzE9oVT4FN90m3yzObIug0Jbld87X6z2L3YxdjEdSvmNLwc+Uuegl6E5vR14SUKt4XYcHSzursvtqg0JnX4sUlhfO5GdiIYrb+9S0XJQy4aim46WUK8kxSrF/2jOCm/+6LMbUcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=npwluFr0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uQkarKkd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 28 Jun 2025 11:33:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751110408;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5wb202bpvw2Il4BHrHdWyvUPnpTWWca7OThyZ0nEquo=;
-	b=npwluFr0fB1l760Rhc7h3s2tlk3wh7y7Mh04SsMIRWZugBSBHIUfRRa/plbQCMrd1O2nu0
-	VGgbuv+87KY+plIskOcYUY7m5ITUcElhy55XVhg6MwySg9RJNX/LUZ58wPKvryFeeRTJqa
-	7ktk7dLi+SwxhrjEq6tS5s5lubXr73W1+lC+8+yE+Gi4/olQZeio9YXsO7N5nrZ3gmQD36
-	gixC+GpLQF7ILeAby7CZtfFLRRs9W6QQ3+76C3wU7/F3u8bwSA20m7mbq5OQCO8kMlCkwY
-	yTErn3sPULf/Zdg3hmoSfGnq70f3VsluGtYYmKwsoBIvs5JJSrDjaPHOGEE9Yw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751110408;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5wb202bpvw2Il4BHrHdWyvUPnpTWWca7OThyZ0nEquo=;
-	b=uQkarKkdPEimRCNz8bGCI5si5uLrtA2tR0G259/hk0C2+GKpZYCG6VqwjBXUE+gOilpHWJ
-	xATO8CZxdMzmbHDw==
-From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/urgent] x86/mce: Don't remove sysfs if thresholding sysfs
- init fails
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- Tony Luck <tony.luck@intel.com>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250624-wip-mca-updates-v4-1-236dd74f645f@amd.com>
-References: <20250624-wip-mca-updates-v4-1-236dd74f645f@amd.com>
+	s=arc-20240116; t=1751110507; c=relaxed/simple;
+	bh=gbEjsja0XeAEuUE5t3N5d+TJcHcHoarn4TkhbyGv7Ac=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WTDyPubSqPQK1xNjUxUfitNWuQ77agu2NrCDOowKb49rS2fW3aoURhNb8j/eaX1XDL5Q3qKuOJU6yMbdiLtdbABLW+Yc4O7mJV1yFvpAyRo6xMtgd61AAUVUr1X1AYiMZWlHfobmQRLK6uetjJ0aIpV6qZ3GADfWNN4wMOm9mqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B49D01BD0;
+	Sat, 28 Jun 2025 04:34:46 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC5763F762;
+	Sat, 28 Jun 2025 04:34:55 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org
+Cc: ryan.roberts@arm.com,
+	david@redhat.com,
+	willy@infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	anshuman.khandual@arm.com,
+	peterx@redhat.com,
+	joey.gouly@arm.com,
+	ioworker0@gmail.com,
+	baohua@kernel.org,
+	kevin.brodsky@arm.com,
+	quic_zhenhuah@quicinc.com,
+	christophe.leroy@csgroup.eu,
+	yangyicong@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org,
+	hughd@google.com,
+	yang@os.amperecomputing.com,
+	ziy@nvidia.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v4 0/4] Optimize mprotect() for large folios
+Date: Sat, 28 Jun 2025 17:04:31 +0530
+Message-Id: <20250628113435.46678-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175111040774.406.1915924164324676187.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the ras/urgent branch of tip:
+This patchset optimizes the mprotect() system call for large folios
+by PTE-batching. No issues were observed with mm-selftests, build
+tested on x86_64.
 
-Commit-ID:     4c113a5b28bfd589e2010b5fc8867578b0135ed7
-Gitweb:        https://git.kernel.org/tip/4c113a5b28bfd589e2010b5fc8867578b0135ed7
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Tue, 24 Jun 2025 14:15:56 
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 26 Jun 2025 17:28:13 +02:00
+We use the following test cases to measure performance, mprotect()'ing
+the mapped memory to read-only then read-write 40 times:
 
-x86/mce: Don't remove sysfs if thresholding sysfs init fails
+Test case 1: Mapping 1G of memory, touching it to get PMD-THPs, then
+pte-mapping those THPs
+Test case 2: Mapping 1G of memory with 64K mTHPs
+Test case 3: Mapping 1G of memory with 4K pages
 
-Currently, the MCE subsystem sysfs interface will be removed if the
-thresholding sysfs interface fails to be created. A common failure is due to
-new MCA bank types that are not recognized and don't have a short name set.
+Average execution time on arm64, Apple M3:
+Before the patchset:
+T1: 7.9 seconds   T2: 7.9 seconds   T3: 4.2 seconds
 
-The MCA thresholding feature is optional and should not break the common MCE
-sysfs interface. Also, new MCA bank types are occasionally introduced, and
-updates will be needed to recognize them. But likewise, this should not break
-the common sysfs interface.
+After the patchset:
+T1: 2.1 seconds   T2: 2.2 seconds   T3: 4.3 seconds
 
-Keep the MCE sysfs interface regardless of the status of the thresholding
-sysfs interface.
+Observing T1/T2 and T3 before the patchset, we also remove the regression
+introduced by ptep_get() on a contpte block. And, for large folios we get
+an almost 74% performance improvement, albeit the trade-off being a slight
+degradation in the small folio case.
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Tested-by: Tony Luck <tony.luck@intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/20250624-wip-mca-updates-v4-1-236dd74f645f@amd.com
+Here is the test program:
+
+ #define _GNU_SOURCE
+ #include <sys/mman.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <unistd.h>
+
+ #define SIZE (1024*1024*1024)
+
+unsigned long pmdsize = (1UL << 21);
+unsigned long pagesize = (1UL << 12);
+
+static void pte_map_thps(char *mem, size_t size)
+{
+	size_t offs;
+	int ret = 0;
+
+
+	/* PTE-map each THP by temporarily splitting the VMAs. */
+	for (offs = 0; offs < size; offs += pmdsize) {
+		ret |= madvise(mem + offs, pagesize, MADV_DONTFORK);
+		ret |= madvise(mem + offs, pagesize, MADV_DOFORK);
+	}
+
+	if (ret) {
+		fprintf(stderr, "ERROR: mprotect() failed\n");
+		exit(1);
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	char *p;
+        int ret = 0;
+	p = mmap((1UL << 30), SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (p != (1UL << 30)) {
+		perror("mmap");
+		return 1;
+	}
+
+
+
+	memset(p, 0, SIZE);
+	if (madvise(p, SIZE, MADV_NOHUGEPAGE))
+		perror("madvise");
+	explicit_bzero(p, SIZE);
+	pte_map_thps(p, SIZE);
+
+	for (int loops = 0; loops < 40; loops++) {
+		if (mprotect(p, SIZE, PROT_READ))
+			perror("mprotect"), exit(1);
+		if (mprotect(p, SIZE, PROT_READ|PROT_WRITE))
+			perror("mprotect"), exit(1);
+		explicit_bzero(p, SIZE);
+	}
+}
+
 ---
- arch/x86/kernel/cpu/mce/core.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+The patchset is rebased onto Saturday's mm-new.
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index e9b3c5d..07d6193 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -2801,15 +2801,9 @@ static int mce_cpu_dead(unsigned int cpu)
- static int mce_cpu_online(unsigned int cpu)
- {
- 	struct timer_list *t = this_cpu_ptr(&mce_timer);
--	int ret;
- 
- 	mce_device_create(cpu);
--
--	ret = mce_threshold_create_device(cpu);
--	if (ret) {
--		mce_device_remove(cpu);
--		return ret;
--	}
-+	mce_threshold_create_device(cpu);
- 	mce_reenable_cpu();
- 	mce_start_timer(t);
- 	return 0;
+v3->v4:
+ - Refactor skipping logic into a new function, edit patch 1 subject
+   to highlight it is only for MM_CP_PROT_NUMA case (David H)
+ - Refactor the optimization logic, add more documentation to the generic
+   batched functions, do not add clear_flush_ptes, squash patch 4
+   and 5 (Ryan)
+
+v2->v3:
+ - Add comments for the new APIs (Ryan, Lorenzo)
+ - Instead of refactoring, use a "skip_batch" label
+ - Move arm64 patches at the end (Ryan)
+ - In can_change_pte_writable(), check AnonExclusive page-by-page (David H)
+ - Resolve implicit declaration; tested build on x86 (Lance Yang)
+
+v1->v2:
+ - Rebase onto mm-unstable (6ebffe676fcf: util_macros.h: make the header more resilient)
+ - Abridge the anon-exclusive condition (Lance Yang)
+
+Dev Jain (4):
+  mm: Optimize mprotect() for MM_CP_PROT_NUMA by batch-skipping PTEs
+  mm: Add batched versions of ptep_modify_prot_start/commit
+  mm: Optimize mprotect() by PTE-batching
+  arm64: Add batched versions of ptep_modify_prot_start/commit
+
+ arch/arm64/include/asm/pgtable.h |  10 ++
+ arch/arm64/mm/mmu.c              |  28 +++-
+ include/linux/pgtable.h          |  83 +++++++++-
+ mm/mprotect.c                    | 269 +++++++++++++++++++++++--------
+ 4 files changed, 315 insertions(+), 75 deletions(-)
+
+-- 
+2.30.2
+
 
