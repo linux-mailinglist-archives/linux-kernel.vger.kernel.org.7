@@ -1,230 +1,163 @@
-Return-Path: <linux-kernel+bounces-707763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879BDAEC7A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:29:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67536AEC7A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E02518934A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A263B2FE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BEC238C10;
-	Sat, 28 Jun 2025 14:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1B0248F4F;
+	Sat, 28 Jun 2025 14:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9tuIMTD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKJbYdvM"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9BD21E0AF;
-	Sat, 28 Jun 2025 14:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB58721C186;
+	Sat, 28 Jun 2025 14:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751120970; cv=none; b=guj+I5rf/SN3r+Ga6asbWYJmBkFq0AySKIMWm14q0UOGDhDDfx9x0ZhhqEoScWk6hgH12CwSwGBtuUVx7PEaBz/PTJ6nedhauva8MycfjxLvoOycPHyglJz918Z/ogDQgbZn/PaNjd/vFjBUxZB1WrgE6fvgOeFAVLYSFm8PiV0=
+	t=1751120986; cv=none; b=Hl96ZMMJSBscWb5DcN6q7f7PtS8IRF8qvwWIhkmZMXlVM0mIB7OIrbBs/ODp2lj2gkBB9nDYKjBduuDwsZHiBLKxMAtLZCWpLScpxBZ6KcEyDnDtdjfCZ5ehPBTd7ubgJezbhP/RAwP5hrSNuKfRF38sGI/vryjjpWzQgGUsmek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751120970; c=relaxed/simple;
-	bh=Fu4HeiN9Z/6hpzjj5g1RcA20CJsi7vFlMJq+ppBrBic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzgz5e1cWKdqWuZyi5uYH/JaO3gzQ6cjO7tuC2KIb/sCeWcq2W3ubQ/KgBD0Cz6GrxhntcOdMNkf1F4tnQ+yem0M+TcVq8t3H5RwKh9KqFhczonM8WH6vgldRq7ztKQ4fVCmBMLBH1aVeZEkzKsL5QOSCuQFpv+2GR0Y4GjbSLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9tuIMTD; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751120969; x=1782656969;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fu4HeiN9Z/6hpzjj5g1RcA20CJsi7vFlMJq+ppBrBic=;
-  b=L9tuIMTDf/0DXeDjti5T2bdcQS7l+U8n6efoIGD/QZLzi07Rl0Rt2GmC
-   u3MlEiO9Mg2VP85HQAtqOavSfubDlvd292cypWa8ZyBKP/y2zkgcpY8UJ
-   RoSKmgjCp361clzF5bRpL//H26uKsMu3gR5btjuJegWcDDxBl4BqEjOYe
-   cLMjpoKL2kEUD954zVUGmA3XhQA5qUNdkFykVkJb3QpC/kM9u1pSxWV5F
-   vOaW9ih5XujVXhg0lHngLIS1IoS/omdNFscEsr9b7R3bjGb3QvGALxf7q
-   yb3HkfRBNlaIFjURmXmVdX8Q5HMfATC/aSClNZG1R63KXZMrAn/PrU8QA
-   Q==;
-X-CSE-ConnectionGUID: MhYjaPfoR0y3OW3OSHyZgw==
-X-CSE-MsgGUID: 6EdsqvOSQ0ePpB9VRq3FSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11478"; a="64466445"
-X-IronPort-AV: E=Sophos;i="6.16,273,1744095600"; 
-   d="scan'208";a="64466445"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2025 07:29:28 -0700
-X-CSE-ConnectionGUID: SscpZRYsR1enevzvXNn7Aw==
-X-CSE-MsgGUID: gWofCdI1RxCNt16FhVRTJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,273,1744095600"; 
-   d="scan'208";a="152433815"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 28 Jun 2025 07:29:25 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uVWYV-000X6v-0g;
-	Sat, 28 Jun 2025 14:29:23 +0000
-Date: Sat, 28 Jun 2025 22:28:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Conor Dooley <conor@kernel.org>, linux-i2c@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: microchip-core: re-fix fake detections w/
- i2cdetect
-Message-ID: <202506282209.FXWbPIPz-lkp@intel.com>
-References: <20250626-unusable-excess-da94ebc218e8@spud>
+	s=arc-20240116; t=1751120986; c=relaxed/simple;
+	bh=J6PmAR2x3Gaj2uMT0husjz5AQ81kQiQjYOGaLvseu78=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YdP8+qtMTBxKoUiHrItOdtiBvhZNoRD2XENVaib9/h8/bU6A1UXg19EKFjiOLVw4RL2vIGZddiey2z5JbjflJZYo+lZnXT8qEVxRmU8ZqOARsYM2RFiV3azVHEg0IUoPOJO8uO8/Btob4yEqqepq3GRLXklNjRr/YKg51m8154U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKJbYdvM; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b2fcd6fe970so523727a12.3;
+        Sat, 28 Jun 2025 07:29:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751120983; x=1751725783; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M8rK0LNTNZFI5uOITPOK3NWDXLKxWYEPkVY5RC1g95E=;
+        b=lKJbYdvMYJuk17gczWFSHZMH8lcsWWnxtfFBDh+jzbd99FpNreATtHf8VglbEdt9eH
+         2bIWeVibrZqdyybsEYEKTl4E2KYyqNRNSOYGViRpvSJQn8SUNA3v661UyIelxPhM0MwM
+         rmz2GA123solgNw2YhQXEgvw4UqPuqdyx0x+ZZVceJoIyDD2Pdml/ILLbl0ulkJmDpCT
+         H3TOlaEpWmzUBMN4kPslx1u76zA+seTuVr/YLZNWVK0aVmtzMIXn9BntM3A/CiovgdQE
+         3wWMdHayYhc1N6cKslMSM5DZpv7LrdrABFRB9/0K6hnHgCgGaAGn27TznFaDLQOs+zFa
+         1WlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751120983; x=1751725783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M8rK0LNTNZFI5uOITPOK3NWDXLKxWYEPkVY5RC1g95E=;
+        b=HNHwaa5YDRgOIy+y2E7KpsV5rj0rhWk4BC1xU4IyzbmmLGXL86JHWA8OD1wbeqB8D+
+         KMJnMvtAgsCf8DndQjSHIrYq5vWjUcO5WRa6XsSkfOot0QZiKd1Rb0K5oyafxKscZLzq
+         G+BiyeqzZo8C2/dEhFxdsgVFiIV32MuVMAATgvI/dZxPuQuD4sGNcHaSvlydYTVt40dO
+         k3tcsgo6Gdo8vTjKJQAcKyPtFaJhcEae3iP3Lk9epwikG29MKQvWBFr4fOrsYc/t36vo
+         TTxCE+1/RhYmb75sC1RBRBeof+fBvgUuj7nLPAL2EmrMABBty9Qf07kw2GcKpT9tuAce
+         H1kg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3cXvcCqI9CL4aGphauMnUMfo2JwPgHBiYhIDFGVSObJkroBcNC17Q5sqUxKDtSoN5MLLdttpv030Z7Ik=@vger.kernel.org, AJvYcCWG3iYU+KCOwPPe6SgOGLdJt0er2FXZw/y5qz6ucTI/456mMaPPoPVahsg17HbVtp80MQhO42le12MAgrHbXaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqZcfFfEiHcJbY9nddyy4UwvweW61233ScRgbrONjktwVGIe32
+	vagjt8i+J4x87u4AhcOneVYYSQQ5Aj4OdQstrmKbqM7+GrDgj+tFwhHQQXUgTTK83gVhHMXFCBg
+	DNcrpKbAP0eIeSvZny8ZtUoislwVaTws=
+X-Gm-Gg: ASbGnctye/F9PQNEDvB3Cx7kBUu/offYHIqzC9WfBInnRoF3MBFc8mJJUfyfkNX2Rui
+	8PRELStwIjMc5bQPHq+OWAKF2M5xLuEJ2p2pPRFJKc6Hmc3+JfEe9haX5FfRP1VJX16K3Lu8WQv
+	SJ7pF1KGqznmskkjqvbsvdwKJGwTnyLCH8csVcBv+P5Tc=
+X-Google-Smtp-Source: AGHT+IEBB8Xqc39C0N994YZDielieKfflkaDCiTAdwXbea0djsWBlJZ8r6j9Gki1hd80aLoznxs3pd6yTbRPtIErX04=
+X-Received: by 2002:a17:90b:1dc2:b0:312:e76f:520f with SMTP id
+ 98e67ed59e1d1-318edfc8f90mr1619475a91.8.1751120983155; Sat, 28 Jun 2025
+ 07:29:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626-unusable-excess-da94ebc218e8@spud>
+References: <20250627-tyr-v1-1-cb5f4c6ced46@collabora.com> <CANiq72nJcEM09HbQB3_NpKGxr9x8Ah0VE+=XS=xvA26P2qg=_g@mail.gmail.com>
+ <48605183-78B6-461E-9476-C96C8E55A55D@collabora.com>
+In-Reply-To: <48605183-78B6-461E-9476-C96C8E55A55D@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 28 Jun 2025 16:29:31 +0200
+X-Gm-Features: Ac12FXwykK9WpEDj8sy1SYn6UJGGfGhd3PbUMsp81V7dzsqhylvpeGilPLCu43U
+Message-ID: <CANiq72kWGUbpDW+WjKki4JUYX63j_GFBcyQse-rgddwyoFw7cg@mail.gmail.com>
+Subject: Re: [PATCH] Introduce Tyr
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Daniel Stone <daniels@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Alice Ryhl <alice.ryhl@google.com>, Beata Michalska <beata.michalska@arm.com>, 
+	Carsten Haitzler <carsten.haitzler@foss.arm.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Ashley Smith <ashley.smith@collabora.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Conor,
+On Sat, Jun 28, 2025 at 3:06=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> The branch I shared is drm-misc-next plus a few dependencies, i.e.: 10 co=
+mmits
+> total if I counted it correctly - all of which have been sent to the list
+> already and most of which have seen a quite a few iterations. I should ha=
+ve
+> explicitly said this, though.
 
-kernel test robot noticed the following build warnings:
+Ah, that helps, thanks. It is completely fine -- I am just pointing it
+out in case it helps you make this easier to land and for others to
+follow.
 
-[auto build test WARNING on andi-shyti/i2c/i2c-host]
-[also build test WARNING on linus/master v6.16-rc3 next-20250627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Anyway, I thought that having a branch would be more tidy than listing th=
+em, as
+> the branch shows in what order they're applied and etc. For example, the =
+patch
+> for read_poll_timeout was cherry-picked from Fujita's v12 series, and tha=
+t was
+> subsequently dropped in v13 until the rest of the series was merged on v1=
+5. I
+> thought that referring to v12 of that series would be slightly confusing.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Conor-Dooley/i2c-microchip-core-re-fix-fake-detections-w-i2cdetect/20250627-001626
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20250626-unusable-excess-da94ebc218e8%40spud
-patch subject: [PATCH v2] i2c: microchip-core: re-fix fake detections w/ i2cdetect
-config: riscv-randconfig-002-20250628 (https://download.01.org/0day-ci/archive/20250628/202506282209.FXWbPIPz-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250628/202506282209.FXWbPIPz-lkp@intel.com/reproduce)
+Yeah, the branch is definitely nice to have to see the end state you
+want, but having the Lore links helps a lot clarifying what the
+dependencies (and their version etc.) are. You can use that chance to
+mention anything out of the ordinary for each dependency (e.g. like
+you mentioned here).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506282209.FXWbPIPz-lkp@intel.com/
+> Yeah, it's a constant battle between having spelling check enabled (which=
+ on my
+> case flags the code itself, thereby producing a mountain of false positiv=
+es) vs
+> not. In this case, the bad spelling won :)
 
-All warnings (new ones prefixed by >>):
+I would suggest using `checkpatch.pl` with `--codespell` (I don't know
+if it catches this one -- I just saw it in my client -- but their
+dictionary definitely did catch some for us in the past).
 
->> drivers/i2c/busses/i2c-microchip-corei2c.c:510:6: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-           if (ret < 0)
-               ^~~
-   drivers/i2c/busses/i2c-microchip-corei2c.c:438:9: note: initialize the variable 'ret' to silence this warning
-           int ret;
-                  ^
-                   = 0
-   1 warning generated.
+> Hmm, I must say I did not know that this was a thing.
+>
+> Why is it better than [#allow] during the development phase?
 
+I have some notes at:
 
-vim +/ret +510 drivers/i2c/busses/i2c-microchip-corei2c.c
+    https://docs.kernel.org/rust/coding-guidelines.html#lints
 
-   428	
-   429	static int mchp_corei2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned short flags,
-   430					   char read_write, u8 command,
-   431					   int size, union i2c_smbus_data *data)
-   432	{
-   433		struct i2c_msg msgs[2];
-   434		struct mchp_corei2c_dev *idev = i2c_get_adapdata(adap);
-   435		u8 tx_buf[I2C_SMBUS_BLOCK_MAX + 2];
-   436		u8 rx_buf[I2C_SMBUS_BLOCK_MAX + 1];
-   437		int num_msgs = 1;
-   438		int ret;
-   439	
-   440		msgs[CORE_I2C_SMBUS_MSG_WR].addr = addr;
-   441		msgs[CORE_I2C_SMBUS_MSG_WR].flags = 0;
-   442	
-   443		if (read_write == I2C_SMBUS_READ && size <= I2C_SMBUS_BYTE)
-   444			msgs[CORE_I2C_SMBUS_MSG_WR].flags = I2C_M_RD;
-   445	
-   446		if (read_write == I2C_SMBUS_WRITE && size <= I2C_SMBUS_WORD_DATA)
-   447			msgs[CORE_I2C_SMBUS_MSG_WR].len = size;
-   448	
-   449		if (read_write == I2C_SMBUS_WRITE && size > I2C_SMBUS_BYTE) {
-   450			msgs[CORE_I2C_SMBUS_MSG_WR].buf = tx_buf;
-   451			msgs[CORE_I2C_SMBUS_MSG_WR].buf[0] = command;
-   452		}
-   453	
-   454		if (read_write == I2C_SMBUS_READ && size >= I2C_SMBUS_BYTE_DATA) {
-   455			msgs[CORE_I2C_SMBUS_MSG_WR].buf = tx_buf;
-   456			msgs[CORE_I2C_SMBUS_MSG_WR].buf[0] = command;
-   457			msgs[CORE_I2C_SMBUS_MSG_RD].addr = addr;
-   458			msgs[CORE_I2C_SMBUS_MSG_RD].flags = I2C_M_RD;
-   459			num_msgs = 2;
-   460		}
-   461	
-   462		if (read_write == I2C_SMBUS_READ && size > I2C_SMBUS_QUICK)
-   463			msgs[CORE_I2C_SMBUS_MSG_WR].len = 1;
-   464	
-   465		switch (size) {
-   466		case I2C_SMBUS_QUICK:
-   467			msgs[CORE_I2C_SMBUS_MSG_WR].buf = NULL;
-   468			return 0;
-   469		case I2C_SMBUS_BYTE:
-   470			if (read_write == I2C_SMBUS_WRITE)
-   471				msgs[CORE_I2C_SMBUS_MSG_WR].buf = &command;
-   472			else
-   473				msgs[CORE_I2C_SMBUS_MSG_WR].buf = &data->byte;
-   474			break;
-   475		case I2C_SMBUS_BYTE_DATA:
-   476			if (read_write == I2C_SMBUS_WRITE) {
-   477				msgs[CORE_I2C_SMBUS_MSG_WR].buf[1] = data->byte;
-   478			} else {
-   479				msgs[CORE_I2C_SMBUS_MSG_RD].len = size - 1;
-   480				msgs[CORE_I2C_SMBUS_MSG_RD].buf = &data->byte;
-   481			}
-   482			break;
-   483		case I2C_SMBUS_WORD_DATA:
-   484			if (read_write == I2C_SMBUS_WRITE) {
-   485				msgs[CORE_I2C_SMBUS_MSG_WR].buf[1] = data->word & 0xFF;
-   486				msgs[CORE_I2C_SMBUS_MSG_WR].buf[2] = (data->word >> 8) & 0xFF;
-   487			} else {
-   488				msgs[CORE_I2C_SMBUS_MSG_RD].len = size - 1;
-   489				msgs[CORE_I2C_SMBUS_MSG_RD].buf = rx_buf;
-   490			}
-   491			break;
-   492		case I2C_SMBUS_BLOCK_DATA:
-   493			if (read_write == I2C_SMBUS_WRITE) {
-   494				int data_len;
-   495	
-   496				data_len = data->block[0];
-   497				msgs[CORE_I2C_SMBUS_MSG_WR].len = data_len + 2;
-   498				for (int i = 0; i <= data_len; i++)
-   499					msgs[CORE_I2C_SMBUS_MSG_WR].buf[i + 1] = data->block[i];
-   500			} else {
-   501				msgs[CORE_I2C_SMBUS_MSG_RD].len = I2C_SMBUS_BLOCK_MAX + 1;
-   502				msgs[CORE_I2C_SMBUS_MSG_RD].buf = rx_buf;
-   503			}
-   504			break;
-   505		default:
-   506			return -EOPNOTSUPP;
-   507		}
-   508	
-   509		mchp_corei2c_xfer(&idev->adapter, msgs, num_msgs);
- > 510		if (ret < 0)
-   511			return ret;
-   512	
-   513		if (read_write == I2C_SMBUS_WRITE || size <= I2C_SMBUS_BYTE_DATA)
-   514			return 0;
-   515	
-   516		switch (size) {
-   517		case I2C_SMBUS_WORD_DATA:
-   518			data->word = (rx_buf[0] | (rx_buf[1] << 8));
-   519			break;
-   520		case I2C_SMBUS_BLOCK_DATA:
-   521			if (rx_buf[0] > I2C_SMBUS_BLOCK_MAX)
-   522				rx_buf[0] = I2C_SMBUS_BLOCK_MAX;
-   523			/* As per protocol first member of block is size of the block. */
-   524			for (int i = 0; i <= rx_buf[0]; i++)
-   525				data->block[i] = rx_buf[i];
-   526			break;
-   527		}
-   528	
-   529		return 0;
-   530	}
-   531	
+Generally speaking, we default to `expect` unless there is a reason
+not to (I list some possible reasons in the link), because `expect`
+forces us to clean it when unneeded.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Not sure what you mean by "development phase" -- even if Tyr is under
+development, it should still try to conform to the usual guidelines.
+Of course, if a particular `expect` would be a pain, then please feel
+free to use `allow`. But is that case here? i.e. you will want to
+remove the `allow` anyway when you add the new code, no?
+
+Thanks!
+
+Cheers,
+Miguel
 
