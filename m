@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-707728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78157AEC738
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:47:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09270AEC744
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516BE1BC3983
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040134A1478
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F2B1E32D6;
-	Sat, 28 Jun 2025 12:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11E224A051;
+	Sat, 28 Jun 2025 12:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rg3N5PXB"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Rv9Y53q4"
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E10245006
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 12:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3970C1E32D6;
+	Sat, 28 Jun 2025 12:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751114828; cv=none; b=KO+K7w3GhYtLMTVCsB5DVB1c907mRyHFZYRwqk/e9BQfrifnKBt5N5yLfgDsgY7Swn4VyF3fLlTOXLEGz0xbuA5E4RlunY832wAPM9oDcq1jqFZ9pLiqYsxqUm4fv7cinH3C+CiAnMywBvt8iOkxZCz1DDgyqR9/sTwux3GevD8=
+	t=1751115352; cv=none; b=RPF15Z87HsviIqOkjPXhDDTH6VKM9m9f/ZMz2fjk0rYuOLYHIrwbdraJd1+xml3m+3YlUpv0GJeBePJ1MlIKLUrFjHbaSu3lwgnDnRxpChke4dsPQ+qnjg5UPX3CVHxn42OhKoUsGg6iicFY3sqCiOoCOaGGOlWAK9Dexn4Z7zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751114828; c=relaxed/simple;
-	bh=fz1f9/yF76vWySpCE0DY+zKwQjXSblai1L3X0i9FFWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvoQkgZK9gYtEeyB8uhykVM14EvmKgSxh7Rn3Ztlw/0/AP8Y6y/yETJNZXN2IpVdjLBOg7khoZUxehmD3Cj3mFLdqFbHKvuUhYvxQABtVnT28gq6NB/P/XIbjkc1OOGHf9laxYCyiE9BYvDQDqbIQDneoNe5U1cxZlBlYPAFLgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rg3N5PXB; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ef88247b-e726-4f8b-9aec-b3601e44390f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751114812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EFJplUYXs7SZhJPSIA1PM6yryHsqvW879yJ8rEcqRoA=;
-	b=rg3N5PXBg2GjpObyU1Pu+uNxocA2XRqLZrEmlEz+/JO2sqp7IuIlXBNwRTxXKTe3cAuDYQ
-	4Vn4E3mXK9lBpna+7FKjLlJoOx1GarggQI8Y3H1hTBUtwpK08yItYZtU8Fwlk1WqWKQalL
-	VruAOj/kZdFYBRh3WmkTIZ/vhaDPrS0=
-Date: Sat, 28 Jun 2025 13:46:47 +0100
+	s=arc-20240116; t=1751115352; c=relaxed/simple;
+	bh=S7++PTAr4xAkYMbCgcR89+yGuk3BpPCWsV/+d4CP3oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nc4IZIHFYmemK581LmI265LGQzOjU05eIdigeVZXtkYyNulAkHoQK4g07CzsJ83YguTC66tFnQgLCNwOmS44VH15+tiB1Y98IsR1uFj+Xr1sy58/zKf8/rMm4rvPk5Qz0cN4zExwuOWtFS7m39Tjgsi29j3bMmTA9lqpzMLMAHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Rv9Y53q4; arc=none smtp.client-ip=178.154.239.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:bca0:0:640:380a:0])
+	by forward500d.mail.yandex.net (Yandex) with ESMTPS id 58A7B6186F;
+	Sat, 28 Jun 2025 15:48:43 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id bmWfNHHLlSw0-XeRbLXHj;
+	Sat, 28 Jun 2025 15:48:42 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1751114922;
+	bh=ET/LhC8QU7n+a3hSVOWcQEFar31KwcGnUYMpx7mD4JY=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=Rv9Y53q41/X4ucraT7PqIEN6T52TlIy8XH/+OGQzaNmNRU786Bf+1FVa/020sI15D
+	 14EbGI63y5peJj2y0CaM/gokUSC1Ouhz1H0fejxfK/09EL75jgHCH5xGbVgXNi1dWw
+	 4blxx8kcKKplcizUveC+JUbOMrpvNWRPI36Qb4YA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Sat, 28 Jun 2025 15:48:35 +0300
+From: Onur <work@onurozkan.dev>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: viresh.kumar@linaro.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ airlied@gmail.com, simona@ffwll.ch, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu, rafael@kernel.org,
+ gregkh@linuxfoundation.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, davidgow@google.com, nm@ti.com
+Subject: Re: [PATCH v3 3/3] rust: remove
+ `#[allow(clippy::non_send_fields_in_send_ty)]`
+Message-ID: <20250628154835.4e2e4a92@nimda.home>
+In-Reply-To: <CANiq72kY9DA_JD_XkF01ZSmXbD8iaFthVZ66X+9N5aa_WObt+A@mail.gmail.com>
+References: <20250628040956.2181-1-work@onurozkan.dev>
+	<20250628040956.2181-4-work@onurozkan.dev>
+	<CANiq72kjdj4KbDhfnTbm8jZpLC1+WPB3E6M8D8M2NLnphMs5vg@mail.gmail.com>
+	<20250628133013.703461c8@nimda.home>
+	<CANiq72kY9DA_JD_XkF01ZSmXbD8iaFthVZ66X+9N5aa_WObt+A@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v06 5/8] hinic3: TX & RX Queue coalesce
- interfaces
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Joe Damato <jdamato@fastly.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1750937080.git.zhuyikai1@h-partners.com>
- <1367e07afb9038177bff2e5fb3062edf775a3ba7.1750937080.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <1367e07afb9038177bff2e5fb3062edf775a3ba7.1750937080.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 27/06/2025 07:12, Fan Gong wrote:
-> Add TX RX queue coalesce interfaces initialization.
-> It configures the parameters of tx & tx msix coalesce.
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> ---
->   .../net/ethernet/huawei/hinic3/hinic3_main.c  | 61 +++++++++++++++++--
->   .../ethernet/huawei/hinic3/hinic3_nic_dev.h   | 10 +++
->   2 files changed, 66 insertions(+), 5 deletions(-)
-> 
+On Sat, 28 Jun 2025 14:18:53 +0200
+Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+
+> > IMO, we should require people to add a comment explaining the reason
+> > for adding these lint rules to the codebase. It would make both
+> > reading and modifying the code much simpler and clearer.
+> 
+> Do you mean using the lint reasons feature? IIRC we discussed at some
+> point doing that when the feature was added (we enabled it for the
+> `expect` side of things).
+
+Yeah, I meant that it't taking more effort than it should, like digging
+through historical changes in the relevant parts of the source code,
+trying to figuring out whether it was just a false positive or if there
+was a specific reason behind it, etc.
 
