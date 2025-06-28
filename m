@@ -1,72 +1,94 @@
-Return-Path: <linux-kernel+bounces-707951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEE1AEC9A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 20:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 399A3AEC9B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 20:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1B116A2EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 18:13:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72B1216AF73
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 18:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164192580E1;
-	Sat, 28 Jun 2025 18:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21A1287500;
+	Sat, 28 Jun 2025 18:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nMlefoxd"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUQgR3HR"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE47C1A239F
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 18:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C321D3E3
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 18:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751134381; cv=none; b=BznXSEVBFPdZn1EaNf44089iL3u0AFOn1Z+kyYdT9WteC/JaiK388AKTOQZJ6F+Khjh7fXfnzwKKcrsfYSGufj28hm75FTxMycBlO5eWMrhC6iVXd08mi4UaPczX+ynRiEpm/M+lOMKH8yc62GQ5PeN8ALrqenM/0ib8ZJ2I5MA=
+	t=1751134540; cv=none; b=BAMF2pDJARCgHU6CQb14cLRtWiIDstjDnTETz3eX+qgTRxqE6vEPGjpUfzJGaN4JqJb9DVjNQnS1ctPWuspvzERfvkG8HOW655AIzHAx58UPicb8+svTiCqHfqaZRKM1u15ABdIJg8X6DDeP2GTRpgotrdSMneUafuVeohNEsro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751134381; c=relaxed/simple;
-	bh=wS2ta0jPf5nj5DXS3a2vuGruPycuqzuirMGWYz+QfSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xjn7ROfYelmlYUwsSjNJWVTgcvk8ZK3RyBXArQ1Sz40qxTCVxBUfmwrb2DNuWf6SwEmhzvM2J2MH+7wXoo3DwuDxEAdClqPkM+maGa23L9UsFqNUomLrEEgDjqxk9j6YrYcIsUazO+UK630VZ5Zk9cwG/SVJIk/7GXEO+vLLqw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nMlefoxd; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55SHJURv017534;
-	Sat, 28 Jun 2025 18:12:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=L+3Ml7MGMvKIhp7iPbG5EBDt2Nn9V
-	yKSNRG0no/ATvI=; b=nMlefoxdOJjxvoSgVov+mpb9MO3drxho/Buj6OKQ/+9u0
-	+UlTyndICv2ckFuWi3Y2EFRTjKtbzMXdP8UeRGa5aRmueulni2kIdkJxGpTX2Lc2
-	3RFbSV22y2lZQhSoh/rYZgdAXtaKXwQs/1vXTqaxwp27toQRmBsGNKrq+NOixNq1
-	YJoTXOe24drIyLg8SOvwEtou1muuX+KcgMVK2ONsEzKRecprvNEKNW8e7iPQ72gL
-	Nm+Kn6tleCA2HaiD2ETlYNrwMliiiUapI+/JKmNG34K/+xUXzKyc6MhtT498p6fT
-	0u0rI69gWhTyppxDhMZJzsHSLpqbEP7vmQxUfJN3w==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j6tf8f4k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 28 Jun 2025 18:12:38 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55SI9KAp028997;
-	Sat, 28 Jun 2025 18:12:37 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u6ysqn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 28 Jun 2025 18:12:37 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55SI6MIm010792;
-	Sat, 28 Jun 2025 18:12:36 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47j6u6ysqh-1;
-	Sat, 28 Jun 2025 18:12:36 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-        martin.petersen@oracle.com, linux-nvme@lists.infradead.org
-Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org,
-        darren.kenny@oracle.com
-Subject: [PATCH RESEND] nvme: Fix incorrect cdw15 value in passthru error logging
-Date: Sat, 28 Jun 2025 11:12:32 -0700
-Message-ID: <20250628181234.3978844-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1751134540; c=relaxed/simple;
+	bh=E4plUyCSI3k6l2mc6OVyIDEg2o/aLZqtXrmCeA+EOe8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kF10fFhfNGbMhCMysLBrmj3pJ9nuk35T1rvo3F6kRLlixNc947e8BmBvU0RJiY+H7Z4QbeRlx5VsmcdzBYQ6/inDLg6KqDFluAnmij73Br2APvpFFrLhYfR5jeP5qUO3JR6rINBm/1M8MBfcrBWgXTZlYQ5/WcO0Yf5/2zif7zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUQgR3HR; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6f8a87f0c0fso34827516d6.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 11:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751134536; x=1751739336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3iwNAdFnvuqB0Dm2t3yhmssxKeJwx9Ii5rUOi2V7+AQ=;
+        b=UUQgR3HR27PoE7aiUNXftt24gLYlrPZSSVSROjSH+3ago6OdMmL2UHO0Pk/2g+ffXb
+         5LYFl67CnM+c7VTOswJT8ssO+35f1jkkzb2D/Skem4YWYhA1xhVQsJkQ88RKWySThdZW
+         1nz9UtKgAqBKTrVJCjkPsLwHPUy+w79InGIdZObh1e0fWgLBU6W9VSe2TRhGMjf44wAP
+         zuL9XjjgUhTF7Im8rlgzsaBxD3emYkK6MGbnvsLal091qRrSxmxjy/cg0hYU3PdwR92H
+         qRAC1V2akEKHX4fR9S+nlv8By0KoFA+JygDtnWoks+nRsWTkDaaDf006pZJ06gzDFXP7
+         bWpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751134536; x=1751739336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3iwNAdFnvuqB0Dm2t3yhmssxKeJwx9Ii5rUOi2V7+AQ=;
+        b=hcYsVhY43r1O8VGR3yiJYXcQQHSDCIUvcQVk9jD6O2YeiOSvLOlfbiv6UwDAxsZddn
+         +DRRcmWCj2sr8lwNnLQRKGSmkInkJBNVzG2FKZ9pRL2vUcb2q5ly4g6UYj6qnP6QnF+J
+         Ld7UpLOdc9gyo0YBs60X/kNiQOktH0jPZetYNZo7gbQbAGdzb2wIzXPyBPs7o8Q7x1iJ
+         DXVBqLyuwNPnQ2Pkgk8OHpSod47rq6ANHBVM+VIq6DFVIMFm6ECcPi7Uv+YzNBsYnm6a
+         +auky5OGJO2Pn91WKWw9w/JiW6LDHyO+I5A34aNZ8hj2AMv50JcCD+cYJSWleAci3z0G
+         1K0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNDNjDu/ckOcVsXXrGX5P+ZaJEcr8Fq0WVEKQ0kGF8ULgVLP0lKZFbttRfUCQBjRoepD/pXAtkrKN6sqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgEXivjRKjfDY78qkS71a38oA/6LS3wCHoRET/ip5BRt65grK0
+	ShaCKijadJ0w7EAM3Lj6sVqp+Ie7ydmGVa+GjH0w5IpNxW81Z5z3/11QiFIaaQ==
+X-Gm-Gg: ASbGncvVlZ3tcszVE1n+4Ts8a0IjSHNqo3+CfLoF13CNxmUkjFvzAMxUU8PDUATvbc9
+	SyLb7XL+YurlcbLfFsEVWTLIZZ8bv8ULGk0DRSWmJB/vRpzCwZiBUIHJGuUjgIlLnYp4Jp/ewrv
+	sj0HKEOgRgMeVeT/rNZMbnbtOfGqFeSlpK977NwUYkuklGA9SSBLergVUtWshQK5OUnjJomG5Ml
+	M77ENYbCicTaoB+MXHpzskIpemYYEgm5eTtX2JChyw+LZNHQb94/qoTb5NCUph4/tPQho4b3e2L
+	cquFWoNUJQivBU8Eqm0ZcH8XQIh936Iu7iqMB+kuAuchbD9j4+H3
+X-Google-Smtp-Source: AGHT+IGzp8cWKAuO6qoPBeDI2nAZVjC8/1VnvDFjlGhntI+g10PNt7YtSHw0ASmzwfhGEyjaxqjtiw==
+X-Received: by 2002:a05:6214:4309:b0:6fa:c492:2db7 with SMTP id 6a1803df08f44-700016580dbmr116819356d6.13.1751134536131;
+        Sat, 28 Jun 2025 11:15:36 -0700 (PDT)
+Received: from fushigibana ([2601:405:4a00:186f::cc2])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd7718d31asm39935046d6.18.2025.06.28.11.15.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Jun 2025 11:15:35 -0700 (PDT)
+Received: from pnariyoshi (uid 1000)
+	(envelope-from pedro.nariyoshi@gmail.com)
+	id c5f94
+	by fushigibana (DragonFly Mail Agent v0.14 on fushigibana);
+	Sat, 28 Jun 2025 14:15:34 -0400
+From: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	linux-media@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Mr Chromebox <mrchromebox@gmail.com>
+Cc: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
+Subject: [PATCH] media: cros-ec-cec: Add Fizz board variants, so driver can detect them
+Date: Sat, 28 Jun 2025 14:14:35 -0400
+Message-ID: <20250628181530.873795-1-pedro.nariyoshi@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,48 +96,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-27_05,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 adultscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506280152
-X-Authority-Analysis: v=2.4 cv=CMMqXQrD c=1 sm=1 tr=0 ts=68603096 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6IFa9wvqVegA:10 a=yPCof4ZbAAAA:8 a=AeMM1KqErxL4ncdj0kYA:9
-X-Proofpoint-GUID: W_q7wwMP59uDsSMHsfdD9MRpvRaGL7Mr
-X-Proofpoint-ORIG-GUID: W_q7wwMP59uDsSMHsfdD9MRpvRaGL7Mr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI4MDE1MiBTYWx0ZWRfX2kjbMkP1/PcF 4irX/vCShlxU+dNmdA6szhO06UC8fbN2O1LIVD6aAdkvFPqGdct1xkzuyg6uhQzaNQDgiPQ7Ln3 DUTkvLn10ps4boUscF91/DS+WRXv7wOmQhT9+EN1B9qgZMkvf1PDIcu5vexpXT3MiU+3y1aTuq8
- 9gdlVlG0cQqgoCFdP0gXtMurthw081ETcQxpzURshgLGOIF2YFYXG4oTJnakoT65tc6cnSWkPCA 6ZZazigxQbMzjfBvcwBIWtI72pslCKk60R+GDxvqqh2x7pi74z0dkI+ede/1m/je9/84Sm4NlrW NuM7ZWTMkQQs/8DCAcdXte/K0txd5VQcBrg3Yodfylx+PqufulsxL4TIhDOMyhA0B8i2sM7ENbm
- VKO74Adc5iPHEQcFt4i1Ne/tZV2BgZdyc/2at3g67XwjSjtDfTyiLGEsaqMfnrdIvO//9GkJ
 
-Fix an error in nvme_log_err_passthru() where cdw14 was incorrectly
-printed twice instead of cdw15. This fix ensures accurate logging of
-the full passthrough command payload.
+I recently reflashed a Chromebox (Wukong variant of the Fizz board) with
+coreboot and I noticed that the cec driver refused to load with a bit of
+tinkering, I realized that the dmi_match_table was expecting the product
+name to be Fizz, but `dmidecode` reports `Wukong` as the product name. I
+am not sure if this is the best approach, but adding this patch lets me
+load the driver and it works properly.
 
-Fixes: 9f079dda1433 ("nvme: allow passthru cmd error logging")
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Alternatively, we could instead match the DMI_PRODUCT_FAMILY, instead of
+DMI_SYS_VENDOR and DMI_PRODUCT_NAME. In my board at least, that says
+"Google_Fizz".
+
+I am open to suggestions for alternative solutions and I hope I did't
+break any rules (this is my first kernel patch). (And sorry for the
+previous submissions with errors in the subject line)
+
+Signed-off-by: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
 ---
-Corrected Christoph Hellwig's email ID
-added Reviewed-by  Martin K. Petersen
----
- drivers/nvme/host/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/cec/platform/cros-ec/cros-ec-cec.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index e533d791955d..2ae36bce615e 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -386,7 +386,7 @@ static void nvme_log_err_passthru(struct request *req)
- 		nr->cmd->common.cdw12,
- 		nr->cmd->common.cdw13,
- 		nr->cmd->common.cdw14,
--		nr->cmd->common.cdw14);
-+		nr->cmd->common.cdw15);
- }
+diff --git a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+index 419b9a7abcce..a26473c3cd84 100644
+--- a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
++++ b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
+@@ -302,8 +302,15 @@ static const char *const port_ab_conns[] = { "Port A", "Port B", NULL };
+ static const char *const port_d_conns[] = { "Port D", NULL };
  
- enum nvme_disposition {
+ static const struct cec_dmi_match cec_dmi_match_table[] = {
+-	/* Google Fizz */
++	/* Google Fizz and variants*/
+ 	{ "Google", "Fizz", "0000:00:02.0", port_b_conns },
++	{ "Google", "Bleemo", "0000:00:02.0", port_b_conns },
++	{ "Google", "Excelsior", "0000:00:02.0", port_b_conns },
++	{ "Google", "Jax", "0000:00:02.0", port_b_conns },
++	{ "Google", "Kench", "0000:00:02.0", port_b_conns },
++	{ "Google", "Sion", "0000:00:02.0", port_b_conns },
++	{ "Google", "Teemo", "0000:00:02.0", port_b_conns },
++	{ "Google", "Wukong", "0000:00:02.0", port_b_conns },
+ 	/* Google Brask */
+ 	{ "Google", "Brask", "0000:00:02.0", port_b_conns },
+ 	/* Google Moli */
 -- 
-2.47.1
+2.49.0
 
 
