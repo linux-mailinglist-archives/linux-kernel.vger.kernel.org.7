@@ -1,316 +1,105 @@
-Return-Path: <linux-kernel+bounces-707837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C92BEAEC872
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 18:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3277AEC875
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 18:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1308D3AC74E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06469189E646
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E98221F3E;
-	Sat, 28 Jun 2025 16:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D322221F3E;
+	Sat, 28 Jun 2025 16:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LphNWFEr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XThsJ7hA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FD22110;
-	Sat, 28 Jun 2025 16:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8542220A5EC;
+	Sat, 28 Jun 2025 16:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751126489; cv=none; b=W5cnhD042s6S828xlP92ku8NmJuCdGJqLphuR4Sq9QXeT+nFNENM5M7P5TrfFNd+TP71vkbIG4dHDmgknyK+W6I04rMkE07ykDj1WOX2BVCWg1FoXta+h9QkM+gdFXB7T19J0JiUgizo6LDxylgTR3IvNm8va2IgB7FQxAHyKEM=
+	t=1751126672; cv=none; b=MgG4AYfqDMzxhZWCMl/IzpuNh916JfdLMHUBGDbg+qX9/owbazMM8lcBhMsRRyknyP4oAm/CI+CO/C2mihC2z3IqFMDvNuHnF/VWS1yyxp1aJb2l66f+Zs13d7QBqjWAQIcKP6UeOck6zzJh8baWRibpH6pClJhws+J8zAA1Xpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751126489; c=relaxed/simple;
-	bh=QNuH3SHReMcWcui0DlPwcrn2+UCUB+hx5I5pQ/AKsOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BDem2yVHFlO9hg9Jy0pe2pHqFJq1TaGQR+CPXr0mE92LDLAZAiUvdPGHemmE9BjDgNqk41Ai24Eq5xuuE0dLZxrEGG7dD++Wnj2s/ciNY1o/KQ6qP76vVWBvB/Okn5AvBT+yPznh9tx72ryIi9evlHiOafaLwSAUdH8zOzqfKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LphNWFEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F75EC4CEEA;
-	Sat, 28 Jun 2025 16:01:22 +0000 (UTC)
+	s=arc-20240116; t=1751126672; c=relaxed/simple;
+	bh=ZcBXrTQE/EcC9dDxaVoPJkijonw43CRMpiHHbkq1lhE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b4jfsGYiPlfcDyCwGjZzM81/aElY+bx9CEOLFagZzI4pm0Eei7I0ba5qYn4PvSaBuaaHrW3e6lJ005vbMvk0j8cubGGWSHshkQkRD5ao4o4GolcmIEhpdC/9sGz7559PP/6Zhwyxwsv2vEgxhgVCVTaFYFsAt3abCC/SW95suEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XThsJ7hA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE853C4CEEA;
+	Sat, 28 Jun 2025 16:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751126489;
-	bh=QNuH3SHReMcWcui0DlPwcrn2+UCUB+hx5I5pQ/AKsOo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LphNWFErKGcTmeLC0pcxmr7LPO7iJdYMZVALgSVAKUC4jIMwCRTlNOhVZPEcEOTWh
-	 hHxe/mXdL1CbI9HfaPQLLW7TNYdfslTWrHG6xKRAelIJZPvZZOjckwx8TMk5LReg18
-	 mCvFae0T5KVUpAjX8r34Z5A6uL+jifRDxJTGr/+is2fx0jpljup9GJs1HSk5GUWZYy
-	 ioqUW2iTtlhRTp/P67+q1q3AsxNAM1cnZjvagDf7hGGhTM0lEIQprp+8pXoyd/kssC
-	 ci3VqVs6kcEMracx6v43N2LOyx3KJzwbRWs2sBl9F1/LvekY6VLFQIxkGvS54zErms
-	 3SjitU9iXgaFw==
-Date: Sat, 28 Jun 2025 17:01:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-Subject: Re: [PATCH v1 4/5] iio: adc: mt6359: Add support for MediaTek
- MT6363 PMIC AUXADC
-Message-ID: <20250628170118.2bd3e68b@jic23-huawei>
-In-Reply-To: <20250623120028.108809-5-angelogioacchino.delregno@collabora.com>
-References: <20250623120028.108809-1-angelogioacchino.delregno@collabora.com>
-	<20250623120028.108809-5-angelogioacchino.delregno@collabora.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1751126672;
+	bh=ZcBXrTQE/EcC9dDxaVoPJkijonw43CRMpiHHbkq1lhE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XThsJ7hAgV6a8xSt6c55FYLJn0tcO+6YwzPCau0ZeM05nHNa/XXRbQEnVE7//i18N
+	 gXp8xh1FMfVPjYIzjcRc3eOeLoKB1mMHTT6XVbQnRdeKKsLyHVtgJY/OVWA6RupmEh
+	 1dmRFYY71+URBRbg5Ocw3EQxypv+MUBPLQpO5/p4YEQzJMWyJGnP1216CrC0N/hfJo
+	 UCk+Avr2zCOzZUNDBjz+DIfaNMUGHTkTiuW8jtOrZTZrWkTmfF1i01azhdaU+xujIT
+	 oUp0lH0nW8/4nnpfd2BYi6rH6BDSseGIN7nPwnVuhS4WwPxeKTsjckNNbBhwiHAlES
+	 2R7AU9ISqp++A==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/6] selftests/damon: add python and drgn based DAMON sysfs functionality tests
+Date: Sat, 28 Jun 2025 09:04:22 -0700
+Message-Id: <20250628160428.53115-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Jun 2025 14:00:27 +0200
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+DAMON sysfs interface is the bridge between the user space and the
+kernel space for DAMON parameters.  There is no good and simple test to
+see if the parameters are set as expected.  Existing DAMON selftests
+therefore test end-to-end features.  For example, damos_quota_goal.py
+runs a DAMOS scheme with quota goal set against a test program running
+an artificial access pattern, and see if the result is as expected.
+Such tests cover only a few part of DAMON.  Adding more tests is also
+complicated.  Finally, the reliability of the test itself on different
+systems is bad.
 
-> MediaTek MT6363 is a PMIC found on MT8196/MT6991 board designs
-> and communicates with the SoC over SPMI.
-> 
-> This PMIC integrates an Auxiliary ADC (AUXADC) which has a grand
-> total of 54 ADC channels: 49 PMIC-internal channels, 2 external
-> NTC thermistor channels and 2 generic ADC channels (mapped to 7
-> PMIC ADC external inputs).
-> 
-> To use a generic ADC channel it is necessary to enable one of
-> the PMIC ADC inputs at a time and only then start the reading,
-> so in this case it is possible to read only one external input
-> for each generic ADC channel.
-> 
-> Due to the lack of documentation, this implementation supports
-> using only one generic ADC channel, hence supports reading only
-> one external input at a time.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Hi,
+'drgn' is a tool that can extract kernel internal data structures like
+DAMON parameters.  Add a test that passes specific DAMON parameters via
+DAMON sysfs reusing _damon_sysfs.py, extract resulting DAMON parameters
+via 'drgn', and compare those.  Note that this test is not adding
+exhaustive tests of all DAMON parameters and input combinations but very
+basic things.  Advancing the test infrastructure and adding more tests
+are future works.
 
-A few comments that may or may not overlap with Andy's review.
+Changes from RFC
+(https://lore.kernel.org/20250622210330.40490-1-sj@kernel.org)
+- Rebase on latest mm-new
 
-thanks,
+SeongJae Park (6):
+  selftests/damon: add drgn script for extracting damon status
+  selftests/damon/_damon_sysfs: set Kdamond.pid in start()
+  selftests/damon: add python and drgn-based DAMON sysfs test
+  selftests/damon/sysfs.py: test monitoring attribute parameters
+  selftests/damon/sysfs.py: test adaptive targets parameter
+  selftests/damon/sysfs.py: test DAMOS schemes parameters setup
 
-Jonathan
+ tools/testing/selftests/damon/Makefile        |   1 +
+ tools/testing/selftests/damon/_damon_sysfs.py |   3 +
+ .../selftests/damon/drgn_dump_damon_status.py | 161 ++++++++++++++++++
+ tools/testing/selftests/damon/sysfs.py        | 115 +++++++++++++
+ 4 files changed, 280 insertions(+)
+ create mode 100755 tools/testing/selftests/damon/drgn_dump_damon_status.py
+ create mode 100755 tools/testing/selftests/damon/sysfs.py
 
-> ---
->  drivers/iio/adc/mt6359-auxadc.c | 238 +++++++++++++++++++++++++++++---
->  1 file changed, 217 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/mt6359-auxadc.c b/drivers/iio/adc/mt6359-auxadc.c
-> index ae7b65f5f551..f49b0b6e78da 100644
-> --- a/drivers/iio/adc/mt6359-auxadc.c
-> +++ b/drivers/iio/adc/mt6359-auxadc.c
 
-> +enum mtk_pmic_auxadc_flags {
-> +	MTK_PMIC_AUXADC_IS_SPMI = BIT(0),
-> +	MTK_PMIC_AUXADC_NO_RESET = BIT(1),
-> +};
-
-With just two bits I think flags obscures what is going on over
-a pair of separate booleans.
-
->  };
-> @@ -123,7 +155,9 @@ struct mtk_pmic_auxadc_chan {
->   * @desc:           PMIC AUXADC channel data
->   * @regs:           List of PMIC specific registers
->   * @sec_unlock_key: Security unlock key for HK_TOP writes
-> + * @vref_mv:        AUXADC Reference Voltage (VREF) in millivolts
->   * @imp_adc_num:    ADC channel for battery impedance readings
-> + * @flags:          Feature flags
->   * @read_imp:       Callback to read impedance channels
->   */
->  struct mtk_pmic_auxadc_info {
-> @@ -133,22 +167,33 @@ struct mtk_pmic_auxadc_info {
->  	const struct mtk_pmic_auxadc_chan *desc;
->  	const u16 *regs;
->  	u16 sec_unlock_key;
-> +	u16 vref_mv;
-I'd not worry about the space saving here and instead make this a u32 so that
-can avoid the casting when using this.
-
->  	u8 imp_adc_num;
-> +	u8 flags;
-
-As above. Pair of bool preferred.
-
->  	int (*read_imp)(struct mt6359_auxadc *adc_dev,
->  			const struct iio_chan_spec *chan, int *vbat, int *ibat);
->  };
-
->  static void mt6358_stop_imp_conv(struct mt6359_auxadc *adc_dev)
->  {
->  	const struct mtk_pmic_auxadc_info *cinfo = adc_dev->chip_info;
-> @@ -379,13 +488,13 @@ static int mt6359_read_imp(struct mt6359_auxadc *adc_dev,
->  	int ret;
->  
->  	/* Start conversion */
-> -	regmap_write(regmap, cinfo->regs[PMIC_AUXADC_IMP0], MT6359_IMP0_CONV_EN);
-> +	regmap_write(regmap, cinfo->regs[desc->req_idx], desc->req_mask);
-
-Given desc->req_idx is not introduced in this patch, why is this needed now
-but not previously?  Maybe this change belongs in a separate patch with
-a description to explain that.
-
->  	ret = regmap_read_poll_timeout(regmap, cinfo->regs[desc->rdy_idx],
->  				       val, val & desc->rdy_mask,
->  				       IMP_POLL_DELAY_US, AUXADC_TIMEOUT_US);
->  
->  	/* Stop conversion regardless of the result */
-> -	regmap_write(regmap, cinfo->regs[PMIC_AUXADC_IMP0], 0);
-> +	regmap_write(regmap, cinfo->regs[desc->req_idx], 0);
->  	if (ret)
->  		return ret;
->  
-> @@ -416,6 +525,7 @@ static const struct mtk_pmic_auxadc_info mt6357_chip_info = {
->  	.regs = mt6357_auxadc_regs,
->  	.imp_adc_num = MT6357_IMP_ADC_NUM,
->  	.read_imp = mt6358_read_imp,
-> +	.vref_mv = 1800,
->  };
->  
->  static const struct mtk_pmic_auxadc_info mt6358_chip_info = {
-> @@ -426,6 +536,7 @@ static const struct mtk_pmic_auxadc_info mt6358_chip_info = {
->  	.regs = mt6358_auxadc_regs,
->  	.imp_adc_num = MT6358_IMP_ADC_NUM,
->  	.read_imp = mt6358_read_imp,
-> +	.vref_mv = 1800,
->  };
->  
->  static const struct mtk_pmic_auxadc_info mt6359_chip_info = {
-> @@ -436,6 +547,17 @@ static const struct mtk_pmic_auxadc_info mt6359_chip_info = {
->  	.regs = mt6359_auxadc_regs,
->  	.sec_unlock_key = 0x6359,
->  	.read_imp = mt6359_read_imp,
-> +	.vref_mv = 1800,
-
-Add vref_mv and code using it in a precursor patch.  Not a problem that all
-vref_mv will be 1800 at that point.  That way we can quickly see that it
-has no affect on existing parts, and simplify what is present in this patch.
-
-> +};
-> +
-> +static const struct mtk_pmic_auxadc_info mt6363_chip_info = {
-> +	.model_name = "MT6363",
-> +	.channels = mt6363_auxadc_channels,
-> +	.num_channels = ARRAY_SIZE(mt6363_auxadc_channels),
-> +	.desc = mt6363_auxadc_ch_desc,
-> +	.regs = mt6363_auxadc_regs,
-> +	.flags = MTK_PMIC_AUXADC_IS_SPMI | MTK_PMIC_AUXADC_NO_RESET,
-> +	.vref_mv = 1840,
->  };
->  
->  static void mt6359_auxadc_reset(struct mt6359_auxadc *adc_dev)
-> @@ -464,27 +586,74 @@ static int mt6359_auxadc_read_adc(struct mt6359_auxadc *adc_dev,
->  	const struct mtk_pmic_auxadc_info *cinfo = adc_dev->chip_info;
->  	const struct mtk_pmic_auxadc_chan *desc = &cinfo->desc[chan->scan_index];
->  	struct regmap *regmap = adc_dev->regmap;
-> -	u32 val;
-> +	u32 reg, rdy_mask, val, lval;
-> +	u8 ext_sel;
->  	int ret;
->  
-> +	if (desc->ext_sel_idx >= 0) {
-> +		ext_sel = FIELD_PREP(MT6363_EXT_PURES_MASK, desc->ext_sel_pu);
-> +		ext_sel |= FIELD_PREP(MT6363_EXT_CHAN_MASK, desc->ext_sel_ch);
-> +
-> +		ret = regmap_update_bits(regmap, cinfo->regs[desc->ext_sel_idx],
-> +					 MT6363_EXT_PURES_MASK | MT6363_EXT_CHAN_MASK,
-> +					 ext_sel);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	/* Request to start sampling for ADC channel */
->  	ret = regmap_write(regmap, cinfo->regs[desc->req_idx], desc->req_mask);
->  	if (ret)
-> -		return ret;
-> +		goto end;
->  
->  	/* Wait until all samples are averaged */
->  	fsleep(desc->num_samples * AUXADC_AVG_TIME_US);
->  
-> -	ret = regmap_read_poll_timeout(regmap,
-> -				       cinfo->regs[PMIC_AUXADC_ADC0] + (chan->address << 1),
-> -				       val, val & PMIC_AUXADC_RDY_BIT,
-> +	reg = cinfo->regs[PMIC_AUXADC_ADC0] + (chan->address << 1);
-> +	rdy_mask = PMIC_AUXADC_RDY_BIT;
-> +
-> +	/*
-> +	 * Even though for both PWRAP and SPMI cases the ADC HW signals that
-> +	 * the data is ready by setting AUXADC_RDY_BIT, for SPMI the register
-> +	 * read is only 8 bits long: for this case, the check has to be done
-> +	 * on the ADC(x)_H register (high bits) and the rdy_mask needs to be
-> +	 * shifted to the right by the same 8 bits.
-> +	 */
-> +	if (MTK_AUXADC_HAS_FLAG(cinfo, IS_SPMI)) {
-
-This is getting close to the point where the complexity for the IS_SPMI case
-is compled enough you'd be better off just splitting the code.  I'd try that
-and see if it ends up neater than this.
-
-> +		rdy_mask >>= 8;
-> +		reg += 1;
-> +	}
-> +
-> +	ret = regmap_read_poll_timeout(regmap, reg, val, val & rdy_mask,
->  				       AUXADC_POLL_DELAY_US, AUXADC_TIMEOUT_US);
-> -	if (ret)
-> -		return ret;
-> +	if (ret) {
-> +		dev_dbg(adc_dev->dev, "ADC read timeout for chan %lu\n", chan->address);
-> +		goto end;
-> +	}
-> +
-> +	if (MTK_AUXADC_HAS_FLAG(cinfo, IS_SPMI)) {
-> +		/* If the previous read succeeded, this can't fail */
-
-As per discussion with Andy, I don't think we can ever assume that.
-
-> +		regmap_read(regmap, reg - 1, &lval);
-> +		val = (val << 8) | lval;
-> +	}
->  
-> -	/* Stop sampling */
-
-If you have code that ends up with an internal goto for a specific
-block, that often suggests you should be factoring some code out to simplify
-the flow.
-
-I would take everything between the activiate ADC GPIO and deactivate out
-as another function.  That will still need a goto to get to the stop
-sampling but then we won't have the dance below where we do some
-stuff from the main code flow on error and then exit (with more after
-that not run).
-
-> +end:
-> +	/* Stop sampling unconditionally... */
->  	regmap_write(regmap, cinfo->regs[desc->req_idx], 0);
->  
-> +	/* ...and deactivate the ADC GPIO if previously done */
-> +	if (desc->ext_sel_idx >= 0) {
-> +		ext_sel = FIELD_PREP(MT6363_EXT_PURES_MASK, MT6363_PULLUP_RES_OPEN);
-> +
-> +		regmap_update_bits(regmap, cinfo->regs[desc->ext_sel_idx],
-> +				   MT6363_EXT_PURES_MASK, ext_sel);
-> +	}
-> +
-> +	/* Check if we reached this point because of an error or regular flow */
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Everything went fine, give back the ADC reading */
->  	*out = val & GENMASK(chan->scan_type.realbits - 1, 0);
->  	return 0;
->  }
-> @@ -505,7 +674,7 @@ static int mt6359_auxadc_read_raw(struct iio_dev *indio_dev,
->  	int ret;
->  
->  	if (mask == IIO_CHAN_INFO_SCALE) {
-> -		*val = desc->r_ratio.numerator * AUXADC_VOLT_FULL;
-> +		*val = desc->r_ratio.numerator * (u32)cinfo->vref_mv;
-
-As above.  If vref_mv was already a (u32) no need to cast here.
-
+base-commit: 5ab6feac2d83ebbf0d0d2eedf0505878ba677dcb
+-- 
+2.39.5
 
