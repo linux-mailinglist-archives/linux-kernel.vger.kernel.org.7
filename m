@@ -1,110 +1,80 @@
-Return-Path: <linux-kernel+bounces-707494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D7EAEC4C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 06:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609D4AEC4D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 06:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD55D4A0DBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 04:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E371C43F6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 04:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDBF21C167;
-	Sat, 28 Jun 2025 04:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="GHbUrAZG"
-Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C9721C184;
+	Sat, 28 Jun 2025 04:19:34 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8182D198A09;
-	Sat, 28 Jun 2025 04:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BE51DA5F;
+	Sat, 28 Jun 2025 04:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751083834; cv=none; b=oPJznQIh9HvLhxcVzKn58dQQSkS0Y/dT+x20VUrsERZWKoPIbg1wMKxSCNVczvQk7Lrfh+INtsUMYnEFuayqDPdX4e7SlDOGlzAHMBrpXdb09GJx1Y4Cdahx3qSODoFOG5C3NxksNr4/x2RDuUYtTxwrjHlqIoQb40MQSpRMa5g=
+	t=1751084374; cv=none; b=akjAZsT4TtaIaTT/O6Euw+73Xpw3iWUCj6Vpx2+RhWs4oXPZQitOvhp3EsvGopfGU4DkMPFwKmwZB52gh5cKMgZ+qI2/9WIgjggm5BRgiLw8iTSakCkqsBDtWf9T0zGS4jzJyymVNTHXKcH7UgUXB6k6gpOrrJ/YsOeFQ7uF1/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751083834; c=relaxed/simple;
-	bh=MHf2LFg84werqxYDZJfhmApfMPTrh5lfupXyN5hzHB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OlLQssDJ9HrJzHp5X0oUriEO7OIwoRrGr7GPd+Z2FafI45kImzxI0otDGnBv/gTr8o5Rd8cTHk2IpZycBVVj4EYIcmEX/GLTB2qxCVpmD7nEtbC237+/KOX5vH9jqXk8ac89hG5KjqmgtUvYVZIYvDY+xF9ItajN4xEUCmKGqdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=GHbUrAZG; arc=none smtp.client-ip=178.154.239.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:623d:0:640:ecee:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id B848360A75;
-	Sat, 28 Jun 2025 07:10:29 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id w9OeTYGL2iE0-wEEruX1y;
-	Sat, 28 Jun 2025 07:10:29 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1751083829;
-	bh=MHf2LFg84werqxYDZJfhmApfMPTrh5lfupXyN5hzHB8=;
-	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=GHbUrAZGDm9qgkioODj+bY6jK80Gh5LgMq0CoOURuNdnzkzoty9FJhBluy56alMFo
-	 re2yi/QbQYkk1XhDNoZJ6SoY9EZIPjoJCPSM6fArN7R0FdxEkqyNkHyNnlLLe4mA7z
-	 XCHvLJriBg2BFre9gzd79EFZ4IZfNu1VE+LIqSYY=
-Authentication-Results: mail-nwsmtp-smtp-production-main-84.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Cc: airlied@gmail.com,
-	simona@ffwll.ch,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	gregkh@linuxfoundation.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	davidgow@google.com,
-	nm@ti.com,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v3 3/3] rust: remove `#[allow(clippy::non_send_fields_in_send_ty)]`
-Date: Sat, 28 Jun 2025 07:09:56 +0300
-Message-ID: <20250628040956.2181-4-work@onurozkan.dev>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250628040956.2181-1-work@onurozkan.dev>
-References: <20250628040956.2181-1-work@onurozkan.dev>
+	s=arc-20240116; t=1751084374; c=relaxed/simple;
+	bh=3BIxLq5dxWnt6gQBjzbn0MlG0+6WOdN/H7GQfM8g6mw=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=g5kBMY9E38cxyq85Il9d9wnA1nTi0K1/7jSdvA/cqSK8ruioCQSEkXtShQQd1L8stNvcgafj0shAo7KKwPxZ/ajXtsbeEU5mvTgF/4otOEqzBe2QriafEpSQn/8TaBj7WK3aNFXEz8ebhqEzpG2mpmPQE3DeUjQ8IST6lLOqEi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bTfMJ4Q4xz4xPSZ;
+	Sat, 28 Jun 2025 12:19:24 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 55S4JHwC009320;
+	Sat, 28 Jun 2025 12:19:17 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 28 Jun 2025 12:19:17 +0800 (CST)
+Date: Sat, 28 Jun 2025 12:19:17 +0800 (CST)
+X-Zmail-TransId: 2af9685f6d45ffffffffeb0-7fabc
+X-Mailer: Zmail v1.0
+Message-ID: <20250628121917249q9r3rXmnBmRqbgFtJuDHW@zte.com.cn>
+In-Reply-To: <20250627143212435mZ2WRnqC77Y-XxvFKrGsy@zte.com.cn>
+References: 20250627143212435mZ2WRnqC77Y-XxvFKrGsy@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <jiang.kun2@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <fan.yu9@zte.com.cn>, <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gRG9jcy96aF9DTjogVHJhbnNsYXRlIGFsaWFzLnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 55S4JHwC009320
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 685F6D4C.000/4bTfMJ4Q4xz4xPSZ
 
-Clippy no longer complains about this lint.
+> From: Qiu Yutan <qiu.yutan@zte.com.cn>
+> 
+> translate the "alias.rst" into Simplified Chinese
+> 
+> Update to commit 735dadf894f0("docs: networking:
+> Convert alias.txt to rst")
+> 
+> Signed-off-by: Qiu Yutan <qiu.yutan@zte.com.cn>
+> Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+> ---
 
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- rust/kernel/cpufreq.rs | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 11b03e9d7e89..97de9b0573da 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -907,7 +907,6 @@ fn register_em(_policy: &mut Policy) {
- /// or CPUs, so it is safe to share it.
- unsafe impl<T: Driver> Sync for Registration<T> {}
-
--#[allow(clippy::non_send_fields_in_send_ty)]
- /// SAFETY: Registration with and unregistration from the cpufreq subsystem can happen from any
- /// thread.
- unsafe impl<T: Driver> Send for Registration<T> {}
---
-2.50.0
-
+Reviewed-by: xu xin <xu.xin16@zte.com.cn>
 
