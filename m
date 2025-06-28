@@ -1,169 +1,208 @@
-Return-Path: <linux-kernel+bounces-707614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7B1AEC5F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:58:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C68DAEC608
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001AC7B1C15
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 08:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0AB6E5A85
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 09:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F66223710;
-	Sat, 28 Jun 2025 08:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D7122FE02;
+	Sat, 28 Jun 2025 09:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="ROENJZTI"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VvYviVDe"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3261372
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 08:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD2A22ACC6
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 09:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751101076; cv=none; b=NpmsWMmExtIzO4E0kxMANIEdhi6AevwrPoB9nl0aai2d3uWQOW669koMNKGp03dOCbNi6qy7pHn+r3mq7716Q8mwWWZpNuEfMr1GLiRSqXbp8ofYB0TX0i70Vj9aVmBREbuKskLvu1IHdiZtdb6jhzRuhiLr+LteQtI7UDJhJjQ=
+	t=1751101430; cv=none; b=O+GVpPUL0GLiL8aF3NZwNvigExd5TZQc9v+KtomgdfP8E0mv/fZx30k7al6IymbnKsG0uFKe0q7k9RN3lGgGTSyaSqtofZCJhFcBDgF7Vxh/2YTr7KfvNOnbeYk/FGA3F82ASoL1ZiaqriJpI5ugYIHCInD2bj+Ofq0UVLLjxa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751101076; c=relaxed/simple;
-	bh=pLzUu12WEaIgtCdO2e0vn7AW2eyYnzZNKQi/VqabhiM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=K9jqPQKyzzGeWf/7zmaWB4SNajff6DkCO7OAiX1WVBlzrnYsJaicY3Ov/CagupwVTuy1kN3iCRYlk6IDyUBE7sGYSEuH889H8ot6PnnG+l3H+UjD6ZmysPD0iSNuJRNQM+97zQeEBaHsYNh2Nz0puQ+KdNjtVmOwL9Vn1ZHI7Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=ROENJZTI; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1751101430; c=relaxed/simple;
+	bh=MalP5h8rY+8ddDd4DqsyBCGkvFe9zBKO7a3DZScqIDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEd6L7I0Ys7CIwIWCKtDDtGXz971uZi+ARSWnO1DPhWaOCwI62ygfe29fe9kMWW+EH5CERJyPq6f/KUB3eERcl8Zwv/Fj5Mwa481bGdZgpXuW5S2WF0Nej0lPBD3ffjxqWqMkXU/L6sbnoP9Dg8GrJXqWMCfmEbSQ3WwNCYi9Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VvYviVDe; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751101416;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cg6t0GmzXyLQwVr+cFNcsHeCoMT3E75vS7FIvnaXPx0=;
+	b=VvYviVDe590rbGNhEBRSisMwRdgi+FBV1JFAvLsSSi4xvgRuzZwsuLQMVwNaUuIC9d6ygw
+	RVhbZjoqS4dRbBqtXCLZw1ROh8H7kVGNt92/Q8BGzqv+tVxdwX0LkvdjAdVXfq/T1W4C4N
+	604tYVcNXe6PyxT0pfNSm2kWikDsYIM=
+From: Frank Wunderlich <frank.wunderlich@linux.dev>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Johnson Wang <johnson.wang@mediatek.com>,
+	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Felix Fietkau <nbd@nbd.name>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v6 00/15] further mt7988 devicetree work
+Date: Sat, 28 Jun 2025 11:03:11 +0200
+Message-ID: <20250628090330.57264-1-frank.wunderlich@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1751101070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ybqsyqEQtaTyGQvk+BFdCF7y271RgdQMonWszxYB88c=;
-	b=ROENJZTIjZyoCI9g2NPJUEtCzQMHCjP4pthou6YG3P6yiZ2a1ek19Xv1QSzBHZzkaWgQAm
-	3xmFVpxPyobZosVJygZtNI5iEPcIz/nFt5Mi1Gc0t8WkooJHZ4VZCjxfnlm2XBe0aAKk6J
-	4umnJnAB61UfIauxFGLuU7SsDfGL6YYM6ROHv/9Ge7Gvz1h2GptoLGsLO7TiXmULdPMdsC
-	d9ksbrHAIcJaOT53g1FN6EWXLzMCU+ziHi9IXhoOw7M1fBsJ33315yDrQI5J8nUc+uOQI0
-	2HVtYevIo0/JXHjMDXN9et/v3aON1lm6QZ90GzwsA4oYmvanj77wP183v7Bpkw==
-Content-Type: multipart/signed;
- boundary=45ff3aaff99b43270ac8aa38352e1e585a3b95bead335ff4d3af9d1accaf;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sat, 28 Jun 2025 10:57:29 +0200
-Message-Id: <DAY1IKPD6TB6.1JICGYYQTWEDR@cknow.org>
-Cc: "Dragan Simic" <dsimic@manjaro.org>, "Johan Jonker" <jbx6244@gmail.com>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/8] arm64: dts: rockchip: Refactor DSI nodes on rk3399
- boards
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Quentin Schulz"
- <quentin.schulz@cherry.de>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-References: <20250627152645.740981-1-didi.debian@cknow.org>
- <b1c789bf-1369-42ec-8bb3-d7a45c92abf0@cherry.de>
- <DAXGZG0DEKS2.7RLXKSDO0C9T@cknow.org> <5121698.88bMQJbFj6@diego>
-In-Reply-To: <5121698.88bMQJbFj6@diego>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
---45ff3aaff99b43270ac8aa38352e1e585a3b95bead335ff4d3af9d1accaf
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Hi Heiko & Quentin,
+This series continues mt7988 devicetree work
 
-On Fri Jun 27, 2025 at 8:25 PM CEST, Heiko St=C3=BCbner wrote:
-> Am Freitag, 27. Juni 2025, 18:52:08 Mitteleurop=C3=A4ische Sommerzeit sch=
-rieb Diederik de Haas:
->> On Fri Jun 27, 2025 at 6:10 PM CEST, Quentin Schulz wrote:
->> > On 6/27/25 5:16 PM, Diederik de Haas wrote:
->> >> The #address-cells and #size-cells properties are not useful on the D=
-SI
->> >> controller nodes; they are only useful/required on ports and panel(s)=
-.
->> >> So remove them from the controller node and add them where actually
->> >> needed on the various rk3399 based boards.
->> >>=20
->> >> Next to that, there were several (exact) redefinitions of nodes which
->> >> are already present in rk3399-base.dtsi to add a mipi_out endpoint.
->> >> Simplify that by referencing the mipi_out phandle and add the endpoin=
-t
->> >> to that, which allows the removeal of the ports redefinition.
->> >>=20
->> >> And fix 1 instance where the mipi_out referenced node was not sorted
->> >> correctly.
->> >>=20
->> >> This fixes the following DTB validation warnings:
->> >>=20
->> >>    unnecessary #address-cells/#size-cells without "ranges",
->> >>    "dma-ranges" or child "reg" property
->> >>=20
->> >
->> > Too many unrelated changes in this commit, please split into multiple=
-=20
->> > commits.
->> >
->> > I could identify:
->> >
->> > - moving address-cells/size-cells from SoC.dtsi to board dts(i)s,
->> > - reordering properties to better match DT coding style=20
->> > https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-=
-style.html#order-of-properties-in-device-node
->> > - use phandle to directly access ports,
->> > - reorder DT node to better match DT coding style=20
->> > https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-=
-style.html#order-of-nodes
->>=20
->> I initially had it as several commits, but that resulted in (f.e.) 1
->> issue being fixed, but 1 (or more) others would pop up.
->> Those were then fixed in follow-up commits, but I assumed I'd get Rob's
->> bot screaming at me for introducing new warnings (first).
->>=20
->> And as they all relate(d) to fixing the dsi node, I then choose to
->> combine them (but still separated by SoC).
->> IMO there are several ways to organize the commits and each would have
->> their pros and cons, so I 'settled' for this arrangement.
->>=20
->> So I prefer to wait for other people's opinion first before reorganizing
->> the commits again (if there's a different consensus).
->
-> personally, I can live with the current setup here, because as you said
-> it's all DSI related, and also not a functional change ;-) .
->
-> I guess you _could_ move the clock-master + status moves into a separate
-> patch, as that should not trigger any warnings.
+- Extend cpu frequency scaling with CCI
+- GPIO leds
+- Basic network-support (ethernet controller + builtin switch + SFP Cages)
 
-After having thought a bit more about it, I actually agree that the
-moving of address/size-cells from SoC to board dts[i] should be separate
-from extracting the ports/endpoints into a node with a phandle
-reference. This patch set is actually from 2 branches:
-- dtb-fixes-dsi
-- dtb-fixes-ports-endpoints (although I now use 'dtb-fixes-fruit')
+depencies (i hope this list is complete and latest patches/series linked):
 
-ports-endpoints is on top of dsi and came forth as it made sense to do
-the ports/endpoints extraction in more places.
-I'll then also put the DT node movement in a separate patch.
+support interrupt-names is optional again as i re-added the reserved IRQs
+(they are not unusable as i thought and can allow features in future)
+https://patchwork.kernel.org/project/netdevbpf/patch/20250619132125.78368-2-linux@fw-web.de/
 
-I'm not a fan of putting clock-master + status property move into a
-separate patch as then the address/size patch would look weird (to me)
-as you'd see how those properties were inconsistently sorted ... just so
-that can be fixed in a separate patch.
+needs change in mtk ethernet driver for the sram to be read from separate node:
+https://patchwork.kernel.org/project/netdevbpf/patch/566ca90fc59ad0d3aff8bc8dc22ebaf0544bce47.1751072868.git.daniel@makrotopia.org/
 
-Cheers,
-  Diederik
+for SFP-Function (macs currently disabled):
 
---45ff3aaff99b43270ac8aa38352e1e585a3b95bead335ff4d3af9d1accaf
-Content-Type: application/pgp-signature; name="signature.asc"
+PCS clearance which is a 1.5 year discussion currently ongoing
 
------BEGIN PGP SIGNATURE-----
+Daniel asked netdev for a way 2 go:
+https://lore.kernel.org/netdev/aEwfME3dYisQtdCj@pidgin.makrotopia.org/
 
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaF+ufwAKCRDXblvOeH7b
-biZgAQCME6QUUiJaphH6VGnwcT9ww6WdV692xu7Owyds/SRnrQD/dSITCnYbGopt
-SHRh40ahmolnhZl8p4Azfb0upjxs9gs=
-=rbBp
------END PGP SIGNATURE-----
+e.g. something like this (one of):
+* https://patchwork.kernel.org/project/netdevbpf/patch/20250610233134.3588011-4-sean.anderson@linux.dev/ (v6)
+* https://patchwork.kernel.org/project/netdevbpf/patch/20250511201250.3789083-4-ansuelsmth@gmail.com/ (v4)
+* https://patchwork.kernel.org/project/netdevbpf/patch/ba4e359584a6b3bc4b3470822c42186d5b0856f9.1721910728.git.daniel@makrotopia.org/
 
---45ff3aaff99b43270ac8aa38352e1e585a3b95bead335ff4d3af9d1accaf--
+full usxgmii driver:
+https://patchwork.kernel.org/project/netdevbpf/patch/07845ec900ba41ff992875dce12c622277592c32.1702352117.git.daniel@makrotopia.org/
+
+first PCS-discussion is here:
+https://patchwork.kernel.org/project/netdevbpf/patch/8aa905080bdb6760875d62cb3b2b41258837f80e.1702352117.git.daniel@makrotopia.org/
+some more here:
+https://lore.kernel.org/netdev/20250511201250.3789083-4-ansuelsmth@gmail.com/
+
+and then dts nodes for sgmiisys+usxgmii+2g5 firmware
+
+when above depencies are solved the mac1/2 can be enabled and 2.5G phy/SFP slots will work.
+
+changes:
+v6:
+binding:
+- split out the interrupt-names into separate patch
+- update irq(name) min count to 4
+- move interrupt-names up
+- add sram-property
+- drop second reg entry and minitems as there is only 1 item left
+
+dts:
+- fix whitespace-errors for pdma irqs (spaces vs. tabs)
+- move sram from eth reg to own sram node (needs CONFIG_SRAM)
+
+v5:
+- add reserved irqs and change names
+- update binding for 8 irqs with different names (rx,tx => fe1+fe2, rx-ringX => pdmaX)
+(dropped Robs RB due to this change again, sorry)
+
+v4:
+net-binding:
+- allow interrupt names and increase max interrupts to 6 because of RSS/LRO interrupts
+  (dropped Robs RB due to this change)
+
+dts-patches:
+- add interrupts for RSS/LRO and interrupt-names for ethernet node
+- eth-reg and clock whitespace-fix
+- comment for fixed-link on gmac0
+- drop phy-mode properties as suggested by andrew
+- drop phy-connection-type on 2g5 board
+- reorder some properties
+- update 2g5 phy node
+- unit-name dec instead of hex to match reg property
+- move compatible before reg
+- drop phy-mode
+
+v3:
+- dropped patches already applied (SPI+thermal)
+- added soc specific cci compatible (new binding patch + changed dts)
+- enable 2g5 phy because driver is now merged
+- add patch for cleaning up unnecessary pins
+- add patch for gpio-leds
+- add patch for adding ethernet aliases
+
+v2:
+- change reg to list of items in eth binding
+- changed mt7530 binding:
+- unevaluatedProperties=false
+- mediatek,pio subproperty
+- from patternProperty to property
+- board specific properties like led function and labels moved to bpi-r4 dtsi
+
+
+Frank Wunderlich (15):
+  dt-bindings: net: mediatek,net: update for mt7988
+  dt-bindings: net: mediatek,net: allow irq names
+  dt-bindings: net: mediatek,net: update for mt7988
+  dt-bindings: net: dsa: mediatek,mt7530: add dsa-port definition for
+    mt7988
+  dt-bindings: net: dsa: mediatek,mt7530: add internal mdio bus
+  dt-bindings: interconnect: add mt7988-cci compatible
+  arm64: dts: mediatek: mt7988: add cci node
+  arm64: dts: mediatek: mt7988: add basic ethernet-nodes
+  arm64: dts: mediatek: mt7988: add switch node
+  arm64: dts: mediatek: mt7988a-bpi-r4: add proc-supply for cci
+  arm64: dts: mediatek: mt7988a-bpi-r4: drop unused pins
+  arm64: dts: mediatek: mt7988a-bpi-r4: add gpio leds
+  arm64: dts: mediatek: mt7988a-bpi-r4: add aliases for ethernet
+  arm64: dts: mediatek: mt7988a-bpi-r4: add sfp cages and link to gmac
+  arm64: dts: mediatek: mt7988a-bpi-r4: configure switch phys and leds
+
+ .../bindings/interconnect/mediatek,cci.yaml   |  11 +-
+ .../bindings/net/dsa/mediatek,mt7530.yaml     |  24 +-
+ .../devicetree/bindings/net/mediatek,net.yaml |  47 ++-
+ .../mediatek/mt7988a-bananapi-bpi-r4-2g5.dts  |  11 +
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  |  19 ++
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dtsi | 198 ++++++-----
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi     | 318 +++++++++++++++++-
+ 7 files changed, 529 insertions(+), 99 deletions(-)
+
+-- 
+2.43.0
+
 
