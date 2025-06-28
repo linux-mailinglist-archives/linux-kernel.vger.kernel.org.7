@@ -1,329 +1,274 @@
-Return-Path: <linux-kernel+bounces-707972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8C1AEC9DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 21:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E46AECA02
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 21:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4892B1BC0B31
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 19:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A845C1BC00C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 19:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CACE24A063;
-	Sat, 28 Jun 2025 19:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15F124EA8D;
+	Sat, 28 Jun 2025 19:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YuErqHxM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GpAUvloB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864E421D584
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 19:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AA11A704B
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 19:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751137572; cv=none; b=qsfz2nd8kQPODtXoHBlB1bN0CQO60SVEC/h2u7wQHlJZ4CSRHAEvZzutgyHLJHt6NtekYhqcapTwUNHUum9wSs1vDn0HoDmJw3zfizqRmYjf7v91sMgNk1Qmon9pnuPq9N6nxOimuQ1f3TJs8F92wnRPb/tjIk9cmmC/gmg6EiM=
+	t=1751138596; cv=none; b=BDWHD8PeGxS3EJwiPoOLsaZrKohuhi64Re9PdrhvgcKWHOWXAA2ys4PLSW3MU+LMmwaLukn3Q8E5k0lIFM2DLuGW0pHWHub/K42gDXehHG5xiYSh15+pLvRicPbcjRnvXwkPHvRBfmCTY7touPEJJaufdand0E7ojoOo7saYAbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751137572; c=relaxed/simple;
-	bh=8OfSFi2gveGtLJ5i712Fpbg8nVpbBqORffS4vCgLvNI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bGs9VzSxMbKQu3XvZTZPBPfeq+HfbDjP4TVGgNGpbi77YfOrUT6IdeS1ZrhrE9wGGAoOq7kfrCntDBe3pLVZw60NruexELTRF4PRgpvzn8OcBodlyViS1/6pPlVZF/uBO5GAawq5jjTjhCpZ27HOCzLBRZZi5GuaB9MLFxGfpsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YuErqHxM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751137569;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=loOy29L9wjaHhM0YPQ+48N72XLeOxYKWvMsmgZtkh1s=;
-	b=YuErqHxMxMrHWLjnUo6DPUHjeQ5bZyCgKrun8oNsll++b0Cyaz167/akgiTJeovABLlveN
-	wvPDnzBduTA8mHbRHSV1T2qZV0NI/XWbALKRpYmXAWSa1YaT/tTIeQ+JjRSuMk9CMEBe90
-	DbQ8z+bUFcL87+LdK+pYfv1sfvZr8nw=
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
- [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-302-Fe13SrhhObqnbJsDP8CksQ-1; Sat, 28 Jun 2025 15:06:07 -0400
-X-MC-Unique: Fe13SrhhObqnbJsDP8CksQ-1
-X-Mimecast-MFC-AGG-ID: Fe13SrhhObqnbJsDP8CksQ_1751137567
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-72c7d6a53easo2547812a34.1
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 12:06:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751137567; x=1751742367;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=loOy29L9wjaHhM0YPQ+48N72XLeOxYKWvMsmgZtkh1s=;
-        b=V4JgBx5Fd1AyL6TonFhJy7vPSPAhLIJoqtvfCBOilmphQwqYzD33/K8ndKZt/P/2/l
-         sN8Lviqqp8Aq68nokn3qLNTLcSQ7plk655Hzi7Ulun3gYcxE2isG+QfkPgETICYA+q2f
-         29rc0ZM0lwVh+WhT7IU4cidH+L4navtjY6nNMpUjag049NaFh9E7IHqCT899IB2Q1vqv
-         8t6QIWbrIyNOQh6Dygjd0VQ9nbf2gYn3KE3kjSWT8JwnE6i9jPtX4awSSTX+gmoS4bSf
-         GzraDAO/qunGVfuD2V3zZM31ZFa8nqQ//tVdTwa7nivWDtB/6fw5XsPL7EED8YY2zm7/
-         BBBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/3hYda/+TU1BCHkGN7uCbOI6JRcfpKYBziwY2xIaDE3hPaCOPeQio0K0UuvU0HOA7ObNqV83PHoPsX/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziZ9V3V8HdxJIOcbAo4y+zBOiYwXAIvkVn+wXiOjhGOecJFT4p
-	41t0NpaMdSdFdMMmirwjsyjKT8yDbKoPGJd+m9zAXZ8ZtNmbbyjNlW5QNB9mJ6gAcUo9j0rHynv
-	E1pUpn1q2PRl+Vd1pXtBqazAjp5aMJM/bqb3LDR3jP2uuWg3e992x8cOOSPqlNAWhuw==
-X-Gm-Gg: ASbGncsDMEddrFTxBVGqH24j3+Hqw4JCAD1IuMl5MMJUVcuRoKBV5O81ZdflArGIzHT
-	XFlfzGXbh0SaGuMyOzEv7PqKJPwW09pIDslJwHTff3dj/95JgcOetcvEr0+cq1ABeOc881LXu2R
-	NeOYkg30lol/ux5/T06MZr75pTQo0N1TXO+g3Z/JlvCr5U2f8k4+rR2nA9lGHHWma/tsy+vfFql
-	SpgETiIcMUkCd0zqt/SfBiE+Lroxrf0b2vLWdi1Xd5faSb1py1o3djPnsJdHOiiBbmZ3qUmaOWu
-	1scIFYYGuW3+ms1bg//wCoaNZPU7PGGw1IwnEobhWsIm9Xza3bf/C40Nr20bqDZa1yqm
-X-Received: by 2002:a05:6830:2c05:b0:72b:9316:d596 with SMTP id 46e09a7af769-73afc53ba33mr4172699a34.3.1751137566698;
-        Sat, 28 Jun 2025 12:06:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmyDnp2EnTjJD009vL2C/UcuyHNh0RiwQQWhELjuIcYwQb0wYZ41BaMSWdPX4bF4Qor7uSOQ==
-X-Received: by 2002:a05:6830:2c05:b0:72b:9316:d596 with SMTP id 46e09a7af769-73afc53ba33mr4172687a34.3.1751137566252;
-        Sat, 28 Jun 2025 12:06:06 -0700 (PDT)
-Received: from ?IPV6:2601:600:947f:f020:85dc:d2b2:c5ee:e3c4? ([2601:600:947f:f020:85dc:d2b2:c5ee:e3c4])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afb0089cesm918076a34.25.2025.06.28.12.06.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Jun 2025 12:06:05 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <9933aa75-9c7f-4ae3-b580-5c68a63615ba@redhat.com>
-Date: Sat, 28 Jun 2025 15:06:03 -0400
+	s=arc-20240116; t=1751138596; c=relaxed/simple;
+	bh=ltcX8rdpZoFIf5dU5W8qqLMn+qvjzIJbsz8ES40p5fA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f4kmtFH73P+InNwzr8FLHTzj0L0KCI9LBEU5kg/u45N+WNmLjJU6afDiRkbqBGE+gmRgnFAWb0lp6tL8IXi/LRd0sB99HWrkUQk4g2vEq88BF9HLkBy/nItwyM5tjs3dTJmBWWBdCpVtCRbyEMXsfgeHgSWBHrKa5pir0OH6T0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GpAUvloB; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751138593; x=1782674593;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ltcX8rdpZoFIf5dU5W8qqLMn+qvjzIJbsz8ES40p5fA=;
+  b=GpAUvloBa9pgN9P4LfNde0FucKWdL2zQoESAi6qr01LxxuUgJ30UWZDN
+   WFJGR3+Gija6xiJ7iy9MbQv9z07/NjJqR1gBYkg0BWCB7WjCV9bQl7M1d
+   nnqPQ/7sASh4bl4zp7vs4vAHfGueB7h31CwqzNPuTjg4uqGWPPXUYj9PF
+   qQGh5f7C5MwnBH4987He7j+mRVqRCX+qyEoJZTTEtkBWU2ftraG6BzFeI
+   mbLnovGN5e3UvM9xaOhzfZo8tF/XbWsalolYBeodMhJ7tiSgIFfTJPRIo
+   5GCc965CtZwD8N+0L6n2/oRZYIb9W202SC8rY0ZRkpRAI4NLVa4f++qj3
+   g==;
+X-CSE-ConnectionGUID: D52tUlNQSeCouS6Zq89BNQ==
+X-CSE-MsgGUID: aNQS6vNcSw+H4dQ+jCAShA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11478"; a="53357841"
+X-IronPort-AV: E=Sophos;i="6.16,273,1744095600"; 
+   d="scan'208";a="53357841"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2025 12:23:12 -0700
+X-CSE-ConnectionGUID: 4kpU99xgTzOfmuqVEn9rNA==
+X-CSE-MsgGUID: utM2t3JtS2KrPbneJFf/oQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,273,1744095600"; 
+   d="scan'208";a="152706213"
+Received: from igk-lkp-server01.igk.intel.com (HELO e588e990b675) ([10.91.175.65])
+  by fmviesa007.fm.intel.com with ESMTP; 28 Jun 2025 12:23:11 -0700
+Received: from kbuild by e588e990b675 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uVb8n-0000oJ-0T;
+	Sat, 28 Jun 2025 19:23:09 +0000
+Date: Sat, 28 Jun 2025 21:22:14 +0200
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Lee Jones <lee@kernel.org>
+Subject: drivers/leds/leds-pca955x.c:696:53: warning: '%u' directive output
+ may be truncated writing between 1 and 10 bytes into a region of size 8
+Message-ID: <202506282159.TXfvorYl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] local_lock: Move this_cpu_ptr() notation from
- internal to main header.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-References: <20250610110205.1111719-1-bigeasy@linutronix.de>
- <20250610110205.1111719-2-bigeasy@linutronix.de>
-Content-Language: en-US
-In-Reply-To: <20250610110205.1111719-2-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/10/25 7:02 AM, Sebastian Andrzej Siewior wrote:
-> The local_lock.h is the main entry for the local_lock_t type and
-> provides wrappers around internal functions prefixed with __ in
-> local_lock_internal.h.
->
-> Move the this_cpu_ptr() dereference of the variable from the internal to
-> the main header. Since it is all macro implemented, this_cpu_ptr() will
-> still happen within the preempt/ IRQ disabled section.
-> This will free the internal implementation (__) to be used on
-> local_lock_t types which are local variables and must not be accessed
-> via this_cpu_ptr().
->
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->   include/linux/local_lock.h          | 20 +++++++++----------
->   include/linux/local_lock_internal.h | 30 ++++++++++++++---------------
->   2 files changed, 25 insertions(+), 25 deletions(-)
->
-> diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
-> index 16a2ee4f8310b..2ba8464195244 100644
-> --- a/include/linux/local_lock.h
-> +++ b/include/linux/local_lock.h
-> @@ -13,13 +13,13 @@
->    * local_lock - Acquire a per CPU local lock
->    * @lock:	The lock variable
->    */
-> -#define local_lock(lock)		__local_lock(lock)
-> +#define local_lock(lock)		__local_lock(this_cpu_ptr(lock))
->   
->   /**
->    * local_lock_irq - Acquire a per CPU local lock and disable interrupts
->    * @lock:	The lock variable
->    */
-> -#define local_lock_irq(lock)		__local_lock_irq(lock)
-> +#define local_lock_irq(lock)		__local_lock_irq(this_cpu_ptr(lock))
->   
->   /**
->    * local_lock_irqsave - Acquire a per CPU local lock, save and disable
-> @@ -28,19 +28,19 @@
->    * @flags:	Storage for interrupt flags
->    */
->   #define local_lock_irqsave(lock, flags)				\
-> -	__local_lock_irqsave(lock, flags)
-> +	__local_lock_irqsave(this_cpu_ptr(lock), flags)
->   
->   /**
->    * local_unlock - Release a per CPU local lock
->    * @lock:	The lock variable
->    */
-> -#define local_unlock(lock)		__local_unlock(lock)
-> +#define local_unlock(lock)		__local_unlock(this_cpu_ptr(lock))
->   
->   /**
->    * local_unlock_irq - Release a per CPU local lock and enable interrupts
->    * @lock:	The lock variable
->    */
-> -#define local_unlock_irq(lock)		__local_unlock_irq(lock)
-> +#define local_unlock_irq(lock)		__local_unlock_irq(this_cpu_ptr(lock))
->   
->   /**
->    * local_unlock_irqrestore - Release a per CPU local lock and restore
-> @@ -49,7 +49,7 @@
->    * @flags:      Interrupt flags to restore
->    */
->   #define local_unlock_irqrestore(lock, flags)			\
-> -	__local_unlock_irqrestore(lock, flags)
-> +	__local_unlock_irqrestore(this_cpu_ptr(lock), flags)
->   
->   /**
->    * local_lock_init - Runtime initialize a lock instance
-> @@ -64,7 +64,7 @@
->    * locking constrains it will _always_ fail to acquire the lock in NMI or
->    * HARDIRQ context on PREEMPT_RT.
->    */
-> -#define local_trylock(lock)		__local_trylock(lock)
-> +#define local_trylock(lock)		__local_trylock(this_cpu_ptr(lock))
->   
->   /**
->    * local_trylock_irqsave - Try to acquire a per CPU local lock, save and disable
-> @@ -77,7 +77,7 @@
->    * HARDIRQ context on PREEMPT_RT.
->    */
->   #define local_trylock_irqsave(lock, flags)			\
-> -	__local_trylock_irqsave(lock, flags)
-> +	__local_trylock_irqsave(this_cpu_ptr(lock), flags)
->   
->   DEFINE_GUARD(local_lock, local_lock_t __percpu*,
->   	     local_lock(_T),
-> @@ -91,10 +91,10 @@ DEFINE_LOCK_GUARD_1(local_lock_irqsave, local_lock_t __percpu,
->   		    unsigned long flags)
->   
->   #define local_lock_nested_bh(_lock)				\
-> -	__local_lock_nested_bh(_lock)
-> +	__local_lock_nested_bh(this_cpu_ptr(_lock))
->   
->   #define local_unlock_nested_bh(_lock)				\
-> -	__local_unlock_nested_bh(_lock)
-> +	__local_unlock_nested_bh(this_cpu_ptr(_lock))
->   
->   DEFINE_GUARD(local_lock_nested_bh, local_lock_t __percpu*,
->   	     local_lock_nested_bh(_T),
-> diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock_internal.h
-> index 8d5ac16a9b179..b4d7b24882835 100644
-> --- a/include/linux/local_lock_internal.h
-> +++ b/include/linux/local_lock_internal.h
-> @@ -99,14 +99,14 @@ do {								\
->   		local_trylock_t *tl;					\
->   		local_lock_t *l;					\
->   									\
-> -		l = (local_lock_t *)this_cpu_ptr(lock);			\
-> +		l = (local_lock_t *)(lock);			\
->   		tl = (local_trylock_t *)l;				\
->   		_Generic((lock),					\
-> -			__percpu local_trylock_t *: ({			\
-> +			local_trylock_t *: ({			\
->   				lockdep_assert(tl->acquired == 0);	\
->   				WRITE_ONCE(tl->acquired, 1);		\
->   			}),						\
-> -			__percpu local_lock_t *: (void)0);		\
-> +			local_lock_t *: (void)0);		\
->   		local_lock_acquire(l);					\
->   	} while (0)
->   
-> @@ -133,7 +133,7 @@ do {								\
->   		local_trylock_t *tl;				\
->   								\
->   		preempt_disable();				\
-> -		tl = this_cpu_ptr(lock);			\
-> +		tl = (lock);					\
->   		if (READ_ONCE(tl->acquired)) {			\
->   			preempt_enable();			\
->   			tl = NULL;				\
-> @@ -150,7 +150,7 @@ do {								\
->   		local_trylock_t *tl;				\
->   								\
->   		local_irq_save(flags);				\
-> -		tl = this_cpu_ptr(lock);			\
-> +		tl = (lock);					\
->   		if (READ_ONCE(tl->acquired)) {			\
->   			local_irq_restore(flags);		\
->   			tl = NULL;				\
-> @@ -167,15 +167,15 @@ do {								\
->   		local_trylock_t *tl;					\
->   		local_lock_t *l;					\
->   									\
-> -		l = (local_lock_t *)this_cpu_ptr(lock);			\
-> +		l = (local_lock_t *)(lock);				\
->   		tl = (local_trylock_t *)l;				\
->   		local_lock_release(l);					\
->   		_Generic((lock),					\
-> -			__percpu local_trylock_t *: ({			\
-> +			local_trylock_t *: ({			\
->   				lockdep_assert(tl->acquired == 1);	\
->   				WRITE_ONCE(tl->acquired, 0);		\
->   			}),						\
-> -			__percpu local_lock_t *: (void)0);		\
-> +			local_lock_t *: (void)0);		\
->   	} while (0)
->   
->   #define __local_unlock(lock)					\
-> @@ -199,11 +199,11 @@ do {								\
->   #define __local_lock_nested_bh(lock)				\
->   	do {							\
->   		lockdep_assert_in_softirq();			\
-> -		local_lock_acquire(this_cpu_ptr(lock));	\
-> +		local_lock_acquire((lock));			\
->   	} while (0)
->   
->   #define __local_unlock_nested_bh(lock)				\
-> -	local_lock_release(this_cpu_ptr(lock))
-> +	local_lock_release((lock))
->   
->   #else /* !CONFIG_PREEMPT_RT */
->   
-> @@ -227,7 +227,7 @@ typedef spinlock_t local_trylock_t;
->   #define __local_lock(__lock)					\
->   	do {							\
->   		migrate_disable();				\
-> -		spin_lock(this_cpu_ptr((__lock)));		\
-> +		spin_lock((__lock));				\
->   	} while (0)
->   
->   #define __local_lock_irq(lock)			__local_lock(lock)
-> @@ -241,7 +241,7 @@ typedef spinlock_t local_trylock_t;
->   
->   #define __local_unlock(__lock)					\
->   	do {							\
-> -		spin_unlock(this_cpu_ptr((__lock)));		\
-> +		spin_unlock((__lock));				\
->   		migrate_enable();				\
->   	} while (0)
->   
-> @@ -252,12 +252,12 @@ typedef spinlock_t local_trylock_t;
->   #define __local_lock_nested_bh(lock)				\
->   do {								\
->   	lockdep_assert_in_softirq_func();			\
-> -	spin_lock(this_cpu_ptr(lock));				\
-> +	spin_lock((lock));					\
->   } while (0)
->   
->   #define __local_unlock_nested_bh(lock)				\
->   do {								\
-> -	spin_unlock(this_cpu_ptr((lock)));			\
-> +	spin_unlock((lock));					\
->   } while (0)
->   
->   #define __local_trylock(lock)					\
-> @@ -268,7 +268,7 @@ do {								\
->   			__locked = 0;				\
->   		} else {					\
->   			migrate_disable();			\
-> -			__locked = spin_trylock(this_cpu_ptr((lock)));	\
-> +			__locked = spin_trylock((lock));	\
->   			if (!__locked)				\
->   				migrate_enable();		\
->   		}						\
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   aaf724ed69264719550ec4f194d3ab17b886af9a
+commit: bd3d14932923a717ebe475122ca7e17200f87a0c leds: pca955x: Avoid potential overflow when filling default_label
+date:   6 weeks ago
+config: microblaze-randconfig-2003-20250626 (https://download.01.org/0day-ci/archive/20250628/202506282159.TXfvorYl-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250628/202506282159.TXfvorYl-lkp@intel.com/reproduce)
 
-It looks better if the trailing '\' of multi-line macros can be made 
-aligned on the right side. Other than that, it looks good to me.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202506282159.TXfvorYl-lkp@intel.com/
 
-Acked-by: Waiman Long <longman@redhat.com>
+All warnings (new ones prefixed by >>):
 
+   drivers/leds/leds-pca955x.c: In function 'pca955x_probe':
+>> drivers/leds/leds-pca955x.c:696:53: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 8 [-Wformat-truncation=]
+        snprintf(default_label, sizeof(default_label), "%u", i);
+                                                        ^~
+   drivers/leds/leds-pca955x.c:696:52: note: directive argument in the range [0, 2147483647]
+        snprintf(default_label, sizeof(default_label), "%u", i);
+                                                       ^~~~
+   drivers/leds/leds-pca955x.c:696:5: note: 'snprintf' output between 2 and 11 bytes into a destination of size 8
+        snprintf(default_label, sizeof(default_label), "%u", i);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +696 drivers/leds/leds-pca955x.c
+
+   575	
+   576	static int pca955x_probe(struct i2c_client *client)
+   577	{
+   578		struct pca955x *pca955x;
+   579		struct pca955x_led *pca955x_led;
+   580		const struct pca955x_chipdef *chip;
+   581		struct led_classdev *led;
+   582		struct led_init_data init_data;
+   583		struct i2c_adapter *adapter;
+   584		u8 i, nls, psc0;
+   585		u8 ls1[4];
+   586		u8 ls2[4];
+   587		struct pca955x_platform_data *pdata;
+   588		bool keep_psc0 = false;
+   589		bool set_default_label = false;
+   590		char default_label[8];
+   591		int bit, err, reg;
+   592	
+   593		chip = i2c_get_match_data(client);
+   594		if (!chip)
+   595			return dev_err_probe(&client->dev, -ENODEV, "unknown chip\n");
+   596	
+   597		adapter = client->adapter;
+   598		pdata = dev_get_platdata(&client->dev);
+   599		if (!pdata) {
+   600			pdata =	pca955x_get_pdata(client, chip);
+   601			if (IS_ERR(pdata))
+   602				return PTR_ERR(pdata);
+   603		}
+   604	
+   605		/* Make sure the slave address / chip type combo given is possible */
+   606		if ((client->addr & ~((1 << chip->slv_addr_shift) - 1)) !=
+   607		    chip->slv_addr) {
+   608			dev_err(&client->dev, "invalid slave address %02x\n",
+   609				client->addr);
+   610			return -ENODEV;
+   611		}
+   612	
+   613		dev_info(&client->dev, "Using %s %u-bit LED driver at slave address 0x%02x\n",
+   614			 client->name, chip->bits, client->addr);
+   615	
+   616		if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+   617			return -EIO;
+   618	
+   619		if (pdata->num_leds != chip->bits) {
+   620			dev_err(&client->dev,
+   621				"board info claims %d LEDs on a %u-bit chip\n",
+   622				pdata->num_leds, chip->bits);
+   623			return -ENODEV;
+   624		}
+   625	
+   626		pca955x = devm_kzalloc(&client->dev, sizeof(*pca955x), GFP_KERNEL);
+   627		if (!pca955x)
+   628			return -ENOMEM;
+   629	
+   630		pca955x->leds = devm_kcalloc(&client->dev, chip->bits,
+   631					     sizeof(*pca955x_led), GFP_KERNEL);
+   632		if (!pca955x->leds)
+   633			return -ENOMEM;
+   634	
+   635		i2c_set_clientdata(client, pca955x);
+   636	
+   637		mutex_init(&pca955x->lock);
+   638		pca955x->client = client;
+   639		pca955x->chipdef = chip;
+   640		pca955x->blink_period = PCA955X_BLINK_DEFAULT_MS;
+   641	
+   642		init_data.devname_mandatory = false;
+   643		init_data.devicename = "pca955x";
+   644	
+   645		nls = pca955x_num_led_regs(chip->bits);
+   646		/* Use auto-increment feature to read all the LED selectors at once. */
+   647		err = i2c_smbus_read_i2c_block_data(client,
+   648						    0x10 | (pca955x_num_input_regs(chip->bits) + 4), nls,
+   649						    ls1);
+   650		if (err < 0)
+   651			return err;
+   652	
+   653		for (i = 0; i < nls; i++)
+   654			ls2[i] = ls1[i];
+   655	
+   656		for (i = 0; i < chip->bits; i++) {
+   657			pca955x_led = &pca955x->leds[i];
+   658			pca955x_led->led_num = i;
+   659			pca955x_led->pca955x = pca955x;
+   660			pca955x_led->type = pdata->leds[i].type;
+   661	
+   662			switch (pca955x_led->type) {
+   663			case PCA955X_TYPE_NONE:
+   664			case PCA955X_TYPE_GPIO:
+   665				break;
+   666			case PCA955X_TYPE_LED:
+   667				bit = i % 4;
+   668				reg = i / 4;
+   669				led = &pca955x_led->led_cdev;
+   670				led->brightness_set_blocking = pca955x_led_set;
+   671				led->brightness_get = pca955x_led_get;
+   672				led->blink_set = pca955x_led_blink;
+   673	
+   674				if (pdata->leds[i].default_state == LEDS_DEFSTATE_OFF)
+   675					ls2[reg] = pca955x_ledsel(ls2[reg], bit, PCA955X_LS_LED_OFF);
+   676				else if (pdata->leds[i].default_state == LEDS_DEFSTATE_ON)
+   677					ls2[reg] = pca955x_ledsel(ls2[reg], bit, PCA955X_LS_LED_ON);
+   678				else if (pca955x_ledstate(ls2[reg], bit) == PCA955X_LS_BLINK0) {
+   679					keep_psc0 = true;
+   680					set_bit(i, &pca955x->active_blink);
+   681				}
+   682	
+   683				init_data.fwnode = pdata->leds[i].fwnode;
+   684	
+   685				if (is_of_node(init_data.fwnode)) {
+   686					if (to_of_node(init_data.fwnode)->name[0] ==
+   687					    '\0')
+   688						set_default_label = true;
+   689					else
+   690						set_default_label = false;
+   691				} else {
+   692					set_default_label = true;
+   693				}
+   694	
+   695				if (set_default_label) {
+ > 696					snprintf(default_label, sizeof(default_label), "%u", i);
+   697					init_data.default_label = default_label;
+   698				} else {
+   699					init_data.default_label = NULL;
+   700				}
+   701	
+   702				err = devm_led_classdev_register_ext(&client->dev, led,
+   703								     &init_data);
+   704				if (err)
+   705					return err;
+   706	
+   707				set_bit(i, &pca955x->active_pins);
+   708			}
+   709		}
+   710	
+   711		for (i = 0; i < nls; i++) {
+   712			if (ls1[i] != ls2[i]) {
+   713				err = pca955x_write_ls(pca955x, i, ls2[i]);
+   714				if (err)
+   715					return err;
+   716			}
+   717		}
+   718	
+   719		if (keep_psc0) {
+   720			err = pca955x_read_psc(pca955x, 0, &psc0);
+   721		} else {
+   722			psc0 = pca955x_period_to_psc(pca955x, pca955x->blink_period);
+   723			err = pca955x_write_psc(pca955x, 0, psc0);
+   724		}
+   725	
+   726		if (err)
+   727			return err;
+   728	
+   729		pca955x->blink_period = pca955x_psc_to_period(pca955x, psc0);
+   730	
+   731		/* Set PWM1 to fast frequency so we do not see flashing */
+   732		err = pca955x_write_psc(pca955x, 1, 0);
+   733		if (err)
+   734			return err;
+   735	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
