@@ -1,94 +1,400 @@
-Return-Path: <linux-kernel+bounces-707393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14FFAEC36B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 02:11:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6163BAEC379
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 02:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81188442D3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586881C41795
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 00:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E7519D065;
-	Sat, 28 Jun 2025 00:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1832EEA8;
+	Sat, 28 Jun 2025 00:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMr51dMz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="dTvkq1SD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB8B12B94;
-	Sat, 28 Jun 2025 00:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751069391; cv=none; b=lbIIUVGK5iTHEC1BvGe8EmclO484918ME6+oHL723JLcOjev9/9njpdTDjQsuA+YkccJsHdj4cGRj7gx9hvO3BAlnlchQfKCb1UXkPtL3To1ckX3a4BZufvW76KGNCiujG0rfgHqEpAyHQkvapO2cREtvl7hT03c1WbE3sNrASM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751069391; c=relaxed/simple;
-	bh=Raq8WG+fKhjAsuiPjCUHGJ2TewWyNK5S4XFvncAZ0Nc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=n4XZCmIYQFYbvPqiUX6IKOPmI+rCDGowmSKugOWEGQf7whjeJLBoiaw4se/5P+Amd63n2gFV5wsJz+3wOb93PMI6Qkj/Zc+2MkyAbTNPZrpW11b4KppVMUQYVwig2AUl7ig41L7wwZJVMCdhUIhpeHZs6wR0Y5Yh0xZNj10B2wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMr51dMz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF02C4CEE3;
-	Sat, 28 Jun 2025 00:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751069390;
-	bh=Raq8WG+fKhjAsuiPjCUHGJ2TewWyNK5S4XFvncAZ0Nc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=PMr51dMzYB3bZTFbKQHxfx7Nt19WRvTeovOhe8YKQQf37uGwviHIq1C0EtHouk1ZQ
-	 CQe5UOd9y6FLnvY38fonaBNhMvUhcMyxXORlRbp9GdqVET9a32KiSFFJigK7OiSYav
-	 qDbU7fS2H8SUAd0BMQhDcLtExr7KINr1bXfm5DIj36XRsSzRjUC5ReLFoFfnK5ZR/F
-	 5f+Fo4YpJuCwtz9l6cO/gxAwhBUqMzEXOv9SU5FelfQOqtPtA9Ufhkke4SYyn461ma
-	 WU9QwDdBdD59fTb+QmuCCVebvTNjV/UhDNgioJYPVe5/IcoeABgUxYJrAtmo4xvvZ3
-	 ij/WFWt9lwKzQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD8538111CE;
-	Sat, 28 Jun 2025 00:10:17 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F824A08;
+	Sat, 28 Jun 2025 00:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751069618; cv=pass; b=NS9ajSr8k01zasylSmYfzOgW7eMnT1wExwNSZyiSksGEeuWbJqmI7B2GKXLy7tdGg/PO7NyW4h8umJcybVTgwW9O440CVoauNpa2ady49fiRofgwnJI5j4b2Qqs7RVyeVvJoDzJAzMXEldHTqf7uC0ltuoB+nknSNi3h/5xCLK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751069618; c=relaxed/simple;
+	bh=MR3mgJVR9hWjT8RT1DnLxhQrmjwNcavTbOK6stqADRc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=V/+rEvucamcK8Y++Nh0bpNfOLfMhGd3rqiTIsJPf7AUKv1oISnYPU3iOBoaCVt90RhQfJAJnvTLR50JzCVjAvvYR9KcifFNU+RZdJTiisKd6JhX+1yfnF5HkevArIWOYYv46jtG0UB7/LNgWq69oGdGVyGCc2CvGuXqRQOaDP4U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=dTvkq1SD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751069570; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=F2doFgpRNe+kctg93ooMSm+aHwQZtQseEHZOkialN4dewhKyPezKXvpu1vJeuSAl6qNmyLWsWh+a93DNumhKPwIEkHGgsC5P3FQctsIK6q36AhpKPTgIjaUh86ue4xwy6SXILugzu7rSAgPYaKywkUIiCgKWGTbRMqYFXwp08n8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751069570; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0H5Q14gT58j9sWQ7Mkf1VLBkEerIw45k/88Qa7/Ee54=; 
+	b=C7t9Oni+dH1ywmeQ8PwSkOjWo3URfX1t3zHGdgYSJGC/b32VGSLRKwxYMLqFfJus4CS0n/zlm8KOB+cdbmMUHaqNohr690vtmgvxy7H8MS/xw7R6SsduDvTHoP9uoTqgFXzHlKGkHLwkYmkZhlQ6TUmBn1Y+sGzLGgWrmge+MGQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751069570;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=0H5Q14gT58j9sWQ7Mkf1VLBkEerIw45k/88Qa7/Ee54=;
+	b=dTvkq1SDplJdHuRfEA3aufvDDPQQr57yXv2ZZ00yiWZoeO7fG93KDCx0J0qY0VHk
+	sODw7Ipu5Zq0fa/6G28QInGEA+pFZvYr9SImHLYlUW1gjGPyra6GqABr2tUHZFff33d
+	ln5y9o6EGdeOynvH/L/kVN3Aw/T5FNaKI+c8OWi8=
+Received: by mx.zohomail.com with SMTPS id 1751069566742886.3233886676038;
+	Fri, 27 Jun 2025 17:12:46 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v5] ethernet: atl1: Add missing DMA mapping error
- checks
- and count errors
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175106941651.2094888.2849777716496718594.git-patchwork-notify@kernel.org>
-Date: Sat, 28 Jun 2025 00:10:16 +0000
-References: <20250625141629.114984-2-fourier.thomas@gmail.com>
-In-Reply-To: <20250625141629.114984-2-fourier.thomas@gmail.com>
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: chris.snook@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, tglx@linutronix.de,
- mingo@kernel.org, jeff@garzik.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] Introduce Tyr
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <aF8lYpK_l2I-ts1k@pollux>
+Date: Fri, 27 Jun 2025 21:12:29 -0300
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Daniel Stone <daniels@collabora.com>,
+ Rob Herring <robh@kernel.org>,
+ Alice Ryhl <alice.ryhl@google.com>,
+ Beata Michalska <beata.michalska@arm.com>,
+ Carsten Haitzler <carsten.haitzler@foss.arm.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Ashley Smith <ashley.smith@collabora.com>,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ kernel@collabora.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9D9AFE08-2CBB-4A89-866D-512D9080754C@collabora.com>
+References: <20250627-tyr-v1-1-cb5f4c6ced46@collabora.com>
+ <aF8lYpK_l2I-ts1k@pollux>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hello:
+Hi Danilo, thank you an Boqun for having a look at this,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 25 Jun 2025 16:16:24 +0200 you wrote:
-> The `dma_map_XXX()` functions can fail and must be checked using
-> `dma_mapping_error()`.  This patch adds proper error handling for all
-> DMA mapping calls.
-> 
-> In `atl1_alloc_rx_buffers()`, if DMA mapping fails, the buffer is
-> deallocated and marked accordingly.
-> 
-> [...]
+> On 27 Jun 2025, at 20:12, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Fri, Jun 27, 2025 at 07:34:04PM -0300, Daniel Almeida wrote:
+>> +#[pin_data]
+>> +pub(crate) struct TyrData {
+>> +    pub(crate) pdev: ARef<platform::Device>,
+>> +
+>> +    #[pin]
+>> +    clks: Mutex<Clocks>,
+>> +
+>> +    #[pin]
+>> +    regulators: Mutex<Regulators>,
+>> +
+>> +    // Some inforation on the GPU. This is mainly queried by =
+userspace (mesa).
+>> +    pub(crate) gpu_info: GpuInfo,
+>> +}
+>> +
+>> +unsafe impl Send for TyrData {}
+>> +unsafe impl Sync for TyrData {}
+>=20
+> What's the safety justification for those? Why do you need them? The =
+fact that
+> you seem to need to implement those traits within a driver indicates =
+an issue.
 
-Here is the summary with links:
-  - [net,v5] ethernet: atl1: Add missing DMA mapping error checks and count errors
-    https://git.kernel.org/netdev/net/c/d72411d20905
+This was forgotten when scooped from the downstream code.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Although I think the problematic members are only Clk and Regulator
+as Boqun pointed out.
 
+In any case, my bad.
+
+Also, for some reason the Clippy lint did not save me this time.
+
+>=20
+>> +fn issue_soft_reset(iomem: &Devres<IoMem<0>>) -> Result<()> {
+>> +    let irq_enable_cmd =3D 1 | bit_u32(8);
+>> +    regs::GPU_CMD.write(iomem, irq_enable_cmd)?;
+>> +
+>> +    let op =3D || regs::GPU_INT_RAWSTAT.read(iomem);
+>> +    let cond =3D |raw_stat: &u32| -> bool { (*raw_stat >> 8) & 1 =3D=3D=
+ 1 };
+>> +    let res =3D io::poll::read_poll_timeout(
+>> +        op,
+>> +        cond,
+>> +        time::Delta::from_millis(100),
+>> +        Some(time::Delta::from_micros(20000)),
+>> +    );
+>> +
+>> +    if let Err(e) =3D res {
+>> +        pr_err!("GPU reset failed with errno {}\n", e.to_errno());
+>> +        pr_err!(
+>> +            "GPU_INT_RAWSTAT is {}\n",
+>> +            regs::GPU_INT_RAWSTAT.read(iomem)?
+>> +        );
+>=20
+> This is a driver, please use dev_err!().
+>=20
+>> +    }
+>> +
+>> +    Ok(())
+>> +}
+>> +
+>> +kernel::of_device_table!(
+>> +    OF_TABLE,
+>> +    MODULE_OF_TABLE,
+>> +    <TyrDriver as platform::Driver>::IdInfo,
+>> +    [
+>> +        (of::DeviceId::new(c_str!("rockchip,rk3588-mali")), ()),
+>> +        (of::DeviceId::new(c_str!("arm,mali-valhall-csf")), ())
+>> +    ]
+>> +);
+>> +
+>> +impl platform::Driver for TyrDriver {
+>> +    type IdInfo =3D ();
+>> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D =
+Some(&OF_TABLE);
+>> +
+>> +    fn probe(
+>> +        pdev: &platform::Device<Core>,
+>> +        _info: Option<&Self::IdInfo>,
+>> +    ) -> Result<Pin<KBox<Self>>> {
+>> +        dev_dbg!(pdev.as_ref(), "Probed Tyr\n");
+>> +
+>> +        let core_clk =3D Clk::get(pdev.as_ref(), =
+Some(c_str!("core")))?;
+>> +        let stacks_clk =3D Clk::get(pdev.as_ref(), =
+Some(c_str!("stacks")))?;
+>> +        let coregroup_clk =3D Clk::get(pdev.as_ref(), =
+Some(c_str!("coregroup")))?;
+>> +
+>> +        core_clk.prepare_enable()?;
+>> +        stacks_clk.prepare_enable()?;
+>> +        coregroup_clk.prepare_enable()?;
+>> +
+>> +        let mali_regulator =3D =
+Regulator::<regulator::Enabled>::get(pdev.as_ref(), c_str!("mali"))?;
+>> +        let sram_regulator =3D =
+Regulator::<regulator::Enabled>::get(pdev.as_ref(), c_str!("sram"))?;
+>> +
+>> +        let resource =3D pdev.resource_by_index(0).ok_or(EINVAL)?;
+>> +
+>> +        let iomem =3D Arc::new(pdev.iomap_resource(resource)?, =
+GFP_KERNEL)?;
+>=20
+> You can do
+>=20
+> let io =3D iomem.access(pdev.as_ref())?;
+>=20
+> which gives you an &IoMem for the whole scope of probe() without any
+> limitations.
+>=20
+> Also, why not use iomap_resource_sized()? Lots of offsets are known at =
+compile
+> time. This allows you to use infallible accesses, e.g. write() instead =
+of
+> try_write().
+
+Right, I did not even consider this. Should be possible indeed.
+
+>=20
+>> +
+>> +        issue_soft_reset(&iomem)?;
+>> +        gpu::l2_power_on(&iomem)?;
+>> +
+>> +        let gpu_info =3D GpuInfo::new(&iomem)?;
+>> +        gpu_info.log(pdev);
+>> +
+>> +        let platform: ARef<platform::Device> =3D pdev.into();
+>> +
+>> +        let data =3D try_pin_init!(TyrData {
+>> +                pdev: platform.clone(),
+>> +                clks <- new_mutex!(Clocks {
+>> +                    core: core_clk,
+>> +                    stacks: stacks_clk,
+>> +                    coregroup: coregroup_clk,
+>> +                }),
+>> +                regulators <- new_mutex!(Regulators {
+>> +                    mali: mali_regulator,
+>> +                    sram: sram_regulator,
+>> +                }),
+>> +                gpu_info,
+>> +        });
+>> +
+>> +        let data =3D Arc::pin_init(data, GFP_KERNEL)?;
+>> +
+>> +        let tdev: ARef<TyrDevice> =3D =
+drm::device::Device::new(pdev.as_ref(), data.clone())?;
+>> +        drm::driver::Registration::new_foreign_owned(&tdev, =
+pdev.as_ref(), 0)?;
+>> +
+>> +        let driver =3D KBox::pin_init(try_pin_init!(TyrDriver { =
+device: tdev }), GFP_KERNEL)?;
+>> +
+>> +        regs::MCU_CONTROL.write(&iomem, regs::MCU_CONTROL_AUTO)?;
+>> +
+>> +        dev_info!(pdev.as_ref(), "Tyr initialized correctly.\n");
+>=20
+> Consider dev_dbg!() instead.
+
+The problem with dev_dbg() is that it doesn't work, as Alex has also =
+found out
+recently. There was a thread on fixing it and I guess Tamir(?) or =
+Andrew(?)
+came up with a patch, but it hasn't seen any traction. I simply don't =
+think
+there is a way to get these to print for now (at least in upstream code)
+
+>=20
+>> +    pub(crate) fn log(&self, pdev: &platform::Device) {
+>> +        let major =3D (self.gpu_id >> 16) & 0xff;
+>> +        let minor =3D (self.gpu_id >> 8) & 0xff;
+>> +        let status =3D self.gpu_id & 0xff;
+>> +
+>> +        let model_name =3D if let Some(model) =3D GPU_MODELS
+>> +            .iter()
+>> +            .find(|&f| f.major =3D=3D major && f.minor =3D=3D minor)
+>> +        {
+>> +            model.name
+>> +        } else {
+>> +            "unknown"
+>> +        };
+>> +
+>> +        dev_info!(
+>> +            pdev.as_ref(),
+>> +            "mali-{} id 0x{:x} major 0x{:x} minor 0x{:x} status =
+0x{:x}",
+>> +            model_name,
+>> +            self.gpu_id >> 16,
+>> +            major,
+>> +            minor,
+>> +            status
+>> +        );
+>> +
+>> +        dev_info!(
+>> +            pdev.as_ref(),
+>> +            "Features: L2:{:#x} Tiler:{:#x} Mem:{:#x} MMU:{:#x} =
+AS:{:#x}",
+>> +            self.l2_features,
+>> +            self.tiler_features,
+>> +            self.mem_features,
+>> +            self.mmu_features,
+>> +            self.as_present
+>> +        );
+>> +
+>> +        dev_info!(
+>> +            pdev.as_ref(),
+>> +            "shader_present=3D0x{:016x} l2_present=3D0x{:016x} =
+tiler_present=3D0x{:016x}",
+>> +            self.shader_present,
+>> +            self.l2_present,
+>> +            self.tiler_present
+>> +        );
+>> +
+>> +        dev_info!(
+>> +            pdev.as_ref(),
+>> +            "PA bits: {}, VA bits: {}",
+>> +            self.pa_bits(),
+>> +            self.va_bits()
+>> +        );
+>> +    }
+>=20
+> This is called from probe() and seems way too verbose for dev_info!(), =
+please
+> use dev_dbg!() instead.
+
+Same comment as above. Although I don=E2=80=99t care about these =
+printing.
+
+I think that at this point we just need one dev_info!() at the end of =
+probe,
+just to make sure it worked. The rest can be converted to dev_dbg!().
+
+OTOH, IIRC these are indeed printed for Panthor, so maybe Boris can
+explain why this would be relevant.
+
+>=20
+>> +/// Represents a register in the Register Set
+>> +pub(crate) struct Register<const OFFSET: usize>;
+>> +
+>> +impl<const OFFSET: usize> Register<OFFSET> {
+>> +    #[inline]
+>> +    pub(crate) fn read(&self, iomem: &Devres<IoMem>) -> Result<u32> =
+{
+>> +        (*iomem).try_access().ok_or(ENODEV)?.try_read32(OFFSET)
+>> +    }
+>> +
+>> +    #[inline]
+>> +    pub(crate) fn write(&self, iomem: &Devres<IoMem>, value: u32) -> =
+Result<()> {
+>> +        (*iomem)
+>> +            .try_access()
+>> +            .ok_or(ENODEV)?
+>> +            .try_write32(value, OFFSET)
+>> +    }
+>> +}
+>=20
+> This seems like a bad idea. You really want to use Devres::access() =
+from each
+> entry point where you have a &Device<Bound> (such as probe()) and use =
+the
+> returned &IoMem instead. Otherwise every read() and write() does an =
+atomic read
+> and RCU read-side critical section, due to try_access().
+>=20
+> If you really run in a case where you don't have a &Device<Bound>, you =
+can use
+> Devres::try_access_with(), which takes a closure that will have an =
+&IoMem as
+> argument, such that you can do things like:
+>=20
+> io.try_access_with(|io| my_register.write(io, ...))
+
+Right, thanks for pointing that out.
+
+>=20
+> Also, you want accessors for read32() and write32() rather than always =
+use
+> try_read32() and try_write32(). The latter you only want to use when =
+the offset
+> isn't known at compile time.
+>=20
+> I also recommend looking at what nova-core does for register accesses. =
+Regarding
+> the register!() macro in nova-core, we're working on providing this as =
+generic
+> infrastructure.
+
+Oh we=E2=80=99ll definitely switch to the nova macro. We just didn=E2=80=99=
+t get to
+work on it yet, and IIUC it's not available atm?
+
+In any case, if you guys post a patch to make the macro available to =
+other
+drivers I'll switch to that instead.
+
+=E2=80=94 Daniel
 
 
