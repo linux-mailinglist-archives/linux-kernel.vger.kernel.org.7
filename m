@@ -1,124 +1,100 @@
-Return-Path: <linux-kernel+bounces-707605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49917AEC5D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:30:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E239AEC5DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6CD57B0B9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 08:29:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 308166E42EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 08:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6329F20E334;
-	Sat, 28 Jun 2025 08:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZZKNWIK3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ED72222D5;
+	Sat, 28 Jun 2025 08:37:35 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5D01D5154
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 08:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011E54D8CE;
+	Sat, 28 Jun 2025 08:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751099420; cv=none; b=pnkpArn6m/uB06wI14PUMsYfthEGStf6KnVpXaLixehpRqSFFMaxAJHIKiydhl8vouxeh7nXz7Hau30xN06Wwe717oQL1MNn67UAwemnWE+qO2Iq7hoIzUIaJW6qfZtcDMKAFtxO+Ebg9yA7qhQDzt90B4MAzxV40fWQHkXL0i0=
+	t=1751099855; cv=none; b=FfSVynL/eijaoWPisJyFJm8nJUGItLCGjy5vmhHAbPLn3AH4bHI5oM+vlnX9CHlE3JH/nu+oAHUzu+/gL6nQrK/++7ZFIX4nCbP9s3zy+AvhOy4u1fixDNq6AL3dyMrugQQIrH7ZmdPDiZvZDoUYpcdjcuHnb0ylSvl/WWCZ8Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751099420; c=relaxed/simple;
-	bh=4cRj8WS59bxfK6qbay5EitRSd60rIvwt6mbPPYZQ7aQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxXa+ju1w0vnMaSK3/2ua5N0tmn3PVBc5FtwQgwj4FyOrWZp7BQpcvgNocwLNuVEy6cR76V/ee4b6RmIs0XbPzyZnHaUdGMm3GObdU/nc7vVMTss9uHNE3yypkLk4tpHODPMhldAPN98Az4w1gBJryLUlS6Bk8dCAshIWHszXH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZZKNWIK3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E638EC4CEEA;
-	Sat, 28 Jun 2025 08:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751099419;
-	bh=4cRj8WS59bxfK6qbay5EitRSd60rIvwt6mbPPYZQ7aQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZZKNWIK3l6hFWETu0ye5iCeI5zQv+L39reKD7k/UtoxP3BKsFIqwVT5TwEWjeAzAe
-	 nPyu0Qp05y9BOpcd6AEdhpYz7PCogsl7iR1fZDT5vVlfr9fOdItDuwTslw3ncXPtiL
-	 +zoJKUW26x+0XFz4r/xUaEG6/no2RAu56nfgjJfQ=
-Date: Sat, 28 Jun 2025 10:30:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH 1/6] sysfs: attribute_group: allow registration of const
- attribute
-Message-ID: <2025062845-finishing-yeast-313b@gregkh>
-References: <20250116-sysfs-const-attr-prep-v1-0-15e72dba4205@weissschuh.net>
- <20250116-sysfs-const-attr-prep-v1-1-15e72dba4205@weissschuh.net>
- <2025011714-skeleton-bring-3e77@gregkh>
- <3d4c063e-e56d-466c-a3a7-58566bf1da3c@t-8ch.de>
+	s=arc-20240116; t=1751099855; c=relaxed/simple;
+	bh=ameMdu84bmUnjMcu+SDmeqNZjQWo0+HATdqIfZkFDDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGE64o9EylPB73fjW6zNPNLbi9e0Vkl5WNNM8YEy7mO0NjBikgCGDQo1FwBm+vNU5AxiMHHLbRKgRkHf4/7Sxdi58V+qxWM2Tb/CWmmEKRdYGV2Rx4mXkkdLjv917D3dhh2cpGOzZVzx3ESyJtnVtgr63bnAJeDbhWjhUOOhhCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id C74E02A7F4A;
+	Sat, 28 Jun 2025 10:32:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id ruW5vJ1vT0kL; Sat, 28 Jun 2025 10:32:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 7A23F266875;
+	Sat, 28 Jun 2025 10:32:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oJ0rubv0ZrxV; Sat, 28 Jun 2025 10:32:13 +0200 (CEST)
+Received: from nailgun.corp.sigma-star.at (85-127-104-84.dsl.dynamic.surfer.at [85.127.104.84])
+	by lithops.sigma-star.at (Postfix) with ESMTPSA id 0FEFD28F9EF;
+	Sat, 28 Jun 2025 10:32:13 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: linux-kernel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	corbet@lwn.net,
+	amir73il@gmail.com,
+	miklos@szeredi.hu,
+	Richard Weinberger <richard@nod.at>
+Subject: [PATCH] overlayfs.rst: Fix inode table
+Date: Sat, 28 Jun 2025 10:32:05 +0200
+Message-ID: <20250628083205.1066472-1-richard@nod.at>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3d4c063e-e56d-466c-a3a7-58566bf1da3c@t-8ch.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 28, 2025 at 10:19:07AM +0200, Thomas Weiﬂschuh wrote:
-> Hi Greg,
-> 
-> On 2025-01-17 08:01:00+0100, Greg Kroah-Hartman wrote:
-> > On Thu, Jan 16, 2025 at 06:32:27PM +0100, Thomas Weiﬂschuh wrote:
-> > > To be able to constify instances of struct attribute it has to be
-> > > possible to add them to struct attribute_group.
-> > > The current type of the attrs member however is not compatible with that.
-> > > Introduce a union that allows registration of both const and non-const
-> > > attributes to enable a piecewise transition.
-> > > As both union member types are compatible no logic needs to be adapted.
-> > > 
-> > > Technically it is now possible register a const struct
-> > > attribute and receive it as mutable pointer in the callbacks.
-> > > This is a soundness issue.
-> > > But this same soundness issue already exists today in
-> > > sysfs_create_file().
-> > > Also the struct definition and callback implementation are always
-> > > closely linked and are meant to be moved to const in lockstep.
-> > > 
-> > > Similar to commit 906c508afdca ("sysfs: attribute_group: allow registration of const bin_attribute")
-> > > 
-> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> > > ---
-> > >  include/linux/sysfs.h | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-> > > index 0f2fcd244523f050c5286f19d4fe1846506f9214..f5e25bed777a6a6e717f10973f1abcd12111f5c5 100644
-> > > --- a/include/linux/sysfs.h
-> > > +++ b/include/linux/sysfs.h
-> > > @@ -105,7 +105,10 @@ struct attribute_group {
-> > >  	size_t			(*bin_size)(struct kobject *,
-> > >  					    const struct bin_attribute *,
-> > >  					    int);
-> > > -	struct attribute	**attrs;
-> > > +	union {
-> > > +		struct attribute	**attrs;
-> > > +		const struct attribute	*const *attrs_new;
-> > > +	};
-> > 
-> > I'm all for the idea, BUT, let's finish up doing this one:
-> > 
-> > >  	union {
-> > >  		struct bin_attribute		**bin_attrs;
-> > >  		const struct bin_attribute	*const *bin_attrs_new;
-> > 
-> > first please.
-> > 
-> > That way we can see just how "easy" the switch from _new to not-new goes :)
-> 
-> I'd like to resend these preparatory patches so they go into v6.17-rc1
-> and I can work on the follow-up changes.
-> In my opinion the switch from _new will work nicely. There have been no
-> new users of _new in -next at all.
-> 
-> Any objections?
+The HTML output seems to be correct, but when reading the raw rst file
+it's annoying.
+So use "|" for table the border.
 
-Sure, please do.
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ Documentation/filesystems/overlayfs.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/file=
+systems/overlayfs.rst
+index 4133a336486d5..40c127a52eedd 100644
+--- a/Documentation/filesystems/overlayfs.rst
++++ b/Documentation/filesystems/overlayfs.rst
+@@ -61,7 +61,7 @@ Inode properties
+ |Configuration | Persistent | Uniform    | st_ino =3D=3D d_ino | d_ino =3D=
+=3D i_ino |
+ |              | st_ino     | st_dev     |                 | [*]        =
+    |
+ +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D+=3D=3D=3D=3D=
+=3D=3D+=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=
+=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D+
+-|              | dir | !dir | dir | !dir |  dir   +  !dir  |  dir   | !d=
+ir  |
++|              | dir | !dir | dir | !dir |  dir   |  !dir  |  dir   | !d=
+ir  |
+ +--------------+-----+------+-----+------+--------+--------+--------+---=
+----+
+ | All layers   |  Y  |  Y   |  Y  |  Y   |  Y     |   Y    |  Y     |  Y=
+    |
+ | on same fs   |     |      |     |      |        |        |        |   =
+    |
+--=20
+2.49.0
+
 
