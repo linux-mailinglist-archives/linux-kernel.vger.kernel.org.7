@@ -1,101 +1,177 @@
-Return-Path: <linux-kernel+bounces-707794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AE5AEC7F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:53:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EEAAEC7F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F00189A0AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB025189F664
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643B02571DC;
-	Sat, 28 Jun 2025 14:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81461FECB1;
+	Sat, 28 Jun 2025 14:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvSYFQoW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R+TtNdQv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A856F253B40;
-	Sat, 28 Jun 2025 14:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A7C247291;
+	Sat, 28 Jun 2025 14:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751122280; cv=none; b=moc2vIVIMR8BDVLdQs73pGuT2+lUM8jA/3Kg5zuyrer60evXsfv7EbsXORbFzVPTwdrwDdNZh3tQ+YjZn1lMSTjHxPA4G41stvCT7R7TAjBJIySU9bzNlmi9D9Kng6+ChKxwB8JRTLNdeiwXlcGbRS1n/qTJKrF4mcCIiuqxcr8=
+	t=1751122479; cv=none; b=UOAER+LCR27Vo51NgpdiYbQWswDMrxYMnD9zCV8MzgbKYFhOy/Eeg0m0WiyeU3i4yAAthsrKpggAF7mF7NQLRqyVNZR1UzkblNdcCqWKZJg23RlKKn0zeCRaUC0fO50FvW/yK6Kkx4w1c73CL66QRy2CpfQfn9owyFPnqY4ccnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751122280; c=relaxed/simple;
-	bh=1QxAFsBgthe7+8/aWbErprguVQxwCeMWu1FhGtsOzWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kCQ158Fjx+VDi3iP65ZsXOALRhRr0f5LCxMX7xlNhD3CcSSQBbYwNoM/Nuja5tRhmgR2LTE8v8a59wK7CAYm9fA9BGXDUSKmLUIMzgf2+nxNlL7NGNpphzt7nWPl4UnruwM4i164/tY/QKMYB9BIfbABmC0TbBxa54Q7i2MuVxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvSYFQoW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C4DC4CEEA;
-	Sat, 28 Jun 2025 14:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751122280;
-	bh=1QxAFsBgthe7+8/aWbErprguVQxwCeMWu1FhGtsOzWs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hvSYFQoWLpoLmZcGhTRchDq/RofWPfwVh0EmDMSpxqd6/hYh0/UD0MP6rjEUlNG+M
-	 KY4/tTlsqG0YgjRB2aIGMI1NxZv1Ub3tPhaNKnOvZA2HWhp9uD3jgLjFXZ0e50Uk6u
-	 2MCyCirSu2UNfq3Uwcj9mvO69PZG5UGbIbxMpKwywhQ/M52v2iYmQsH3UTP7lmhGPR
-	 vBiFT8eEdW4Bp8MRDBUkhFcEndIpDhF4+FUDHfkYTsjFhhGrKEGpoLgoOWShkvqLFY
-	 YS0eMqBXr1H5iI9vHbz44Uer4oeTi+gRffo2IJTZFX1ITlg2+9wOWujE5nSndZHgpK
-	 QcrpOSkt3CIwQ==
-Date: Sat, 28 Jun 2025 15:51:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, linux-iio@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: axp20x_adc: Add missing sentinel to AXP717
- ADC channel maps
-Message-ID: <20250628155112.2d45ffe1@jic23-huawei>
-In-Reply-To: <20250628044326.2844027-1-wens@kernel.org>
-References: <20250628044326.2844027-1-wens@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751122479; c=relaxed/simple;
+	bh=Aj+/ns36tbt/Z76fsAuEiVmykGmRcZ9L8AfHcCxkWOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEpDoqS13SZOJE+SLc1XU9Kp+VY+b16l29YBIOpi6/MoCtSrkT9QTcym8vkA+JKiHisiYwF32Ch4uTs27B9ajya3pYTc4XQEw67uQOuPIJCN2va90MDveM1magkTbvLr9XugKqtc/ORjVj4Jy1L47tMF2+e+QNlh4M1UG4HqHH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R+TtNdQv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1241BC4CEEA;
+	Sat, 28 Jun 2025 14:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751122478;
+	bh=Aj+/ns36tbt/Z76fsAuEiVmykGmRcZ9L8AfHcCxkWOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R+TtNdQvfARRqoPrm8weDJG787f2s4asB6HneccuByWzTW9mclav7rPMsG2bDiCWh
+	 33jw2fHHl34tri6W1pOAD4P04zWT45DX3akwFX05GnAEtQBgSuKW77Y+4JWahmsckL
+	 MAV0spAVaD/IkgIO1+ngG2kXPJXPdbB1+5igMmM0=
+Date: Sat, 28 Jun 2025 16:54:36 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abinash Singh <abinashlalotra@gmail.com>
+Cc: oneukum@suse.com, abinashsinghlalotra@gmail.com, johan@kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] usb: serial: usb_wwan: Fix data races by protecting
+ dtr/rts state with a mutex
+Message-ID: <2025062815-uninsured-twentieth-c41c@gregkh>
+References: <f2419bb9-2d81-4a6d-838d-b404e3ce7786@suse.com>
+ <20250626153156.50131-1-abinashsinghlalotra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626153156.50131-1-abinashsinghlalotra@gmail.com>
 
-On Sat, 28 Jun 2025 12:43:26 +0800
-Chen-Yu Tsai <wens@kernel.org> wrote:
-
-> From: Chen-Yu Tsai <wens@csie.org>
+On Thu, Jun 26, 2025 at 09:01:56PM +0530, Abinash Singh wrote:
+> Fix two previously noted locking-related issues in usb_wwan by introducing
+> a mutex to serialize access to the shared `rts_state` and `dtr_state`
+> fields in `struct usb_wwan_port_private`.
 > 
-> The AXP717 ADC channel maps is missing a sentinel entry at the end. This
-> causes a KASAN warning.
+> - In `usb_wwan_dtr_rts()`, the fields are now updated under the new
+>   `portdata->lock` to prevent concurrent access.
+> - In `usb_wwan_tiocmset()`, the same lock is used to protect both updates
+>   to the modem control lines and the subsequent `usb_wwan_send_setup()`
+>   call.
 > 
-> Add the missing sentinel entry.
+> The mutex is initialized during `usb_wwan_port_probe()` when the port
+> private data is allocated. This ensures consistent state and avoids
+> data races when multiple threads attempt to modify control line state.
 > 
-> Fixes: 5ba0cb92584b ("iio: adc: axp20x_adc: add support for AXP717 ADC")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-I picked up the version you posted on 7th June.
-I've been a bit slow to send a fixed pull request - sorry about that; busy
-few weeks.
+> This change resolves the two old `FIXME` comments and improves thread
+> safety for modem control signal handling.
 
-Jonathan
+How was this tested?
 
-
+> 
+> Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
 > ---
->  drivers/iio/adc/axp20x_adc.c | 1 +
->  1 file changed, 1 insertion(+)
+> Thank You very much for your feedback .
+> You don't have to say sorry , your feedback
+> is valueable for me.
 > 
-> diff --git a/drivers/iio/adc/axp20x_adc.c b/drivers/iio/adc/axp20x_adc.c
-> index 71584ffd3632..1b49325ec1ce 100644
-> --- a/drivers/iio/adc/axp20x_adc.c
-> +++ b/drivers/iio/adc/axp20x_adc.c
-> @@ -187,6 +187,7 @@ static struct iio_map axp717_maps[] = {
->  		.consumer_channel = "batt_chrg_i",
->  		.adc_channel_label = "batt_chrg_i",
->  	},
-> +	{ }
+> 
+> v2 :
+> 	initialized the mutex during probing
+> 	droping lock after returning from usb_wwan_send_setup()
+
+You didn't list "v2" in the subject line, which makes this hard for our
+tools to track (and for you to track as well!)
+
+
+
+> 
+> Regards
+> Abinash
+> ---
+>  drivers/usb/serial/usb-wwan.h |  1 +
+>  drivers/usb/serial/usb_wwan.c | 12 ++++++++----
+>  2 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/serial/usb-wwan.h b/drivers/usb/serial/usb-wwan.h
+> index 519101945769..e8d042d9014f 100644
+> --- a/drivers/usb/serial/usb-wwan.h
+> +++ b/drivers/usb/serial/usb-wwan.h
+> @@ -59,6 +59,7 @@ struct usb_wwan_port_private {
+>  	int ri_state;
+>  
+>  	unsigned long tx_start_time[N_OUT_URB];
+> +	struct mutex lock;
+
+You might want to document what this lock is for somewhere, right?
+
 >  };
 >  
->  /*
+>  #endif /* __LINUX_USB_USB_WWAN */
+> diff --git a/drivers/usb/serial/usb_wwan.c b/drivers/usb/serial/usb_wwan.c
+> index 0017f6e969e1..cd80fbd1dc6f 100644
+> --- a/drivers/usb/serial/usb_wwan.c
+> +++ b/drivers/usb/serial/usb_wwan.c
+> @@ -80,11 +80,12 @@ void usb_wwan_dtr_rts(struct usb_serial_port *port, int on)
+>  		return;
+>  
+>  	portdata = usb_get_serial_port_data(port);
+> -	/* FIXME: locking */
+> +	mutex_lock(&portdata->lock);
+>  	portdata->rts_state = on;
+>  	portdata->dtr_state = on;
+>  
+>  	usb_wwan_send_setup(port);
 
+You are sure it's ok to call a function while the lock is held?  Is it
+now required?  If so, please add the proper static and runtime checking
+for that.  If not, then it's going to get messy very quickly :(
+
+> +	mutex_unlock(&portdata->lock);
+>  }
+>  EXPORT_SYMBOL(usb_wwan_dtr_rts);
+>  
+> @@ -113,6 +114,7 @@ int usb_wwan_tiocmset(struct tty_struct *tty,
+>  	struct usb_serial_port *port = tty->driver_data;
+>  	struct usb_wwan_port_private *portdata;
+>  	struct usb_wwan_intf_private *intfdata;
+> +	int ret;
+>  
+>  	portdata = usb_get_serial_port_data(port);
+>  	intfdata = usb_get_serial_data(port->serial);
+> @@ -120,7 +122,7 @@ int usb_wwan_tiocmset(struct tty_struct *tty,
+>  	if (!intfdata->use_send_setup)
+>  		return -EINVAL;
+>  
+> -	/* FIXME: what locks portdata fields ? */
+> +	mutex_lock(&portdata->lock);
+>  	if (set & TIOCM_RTS)
+>  		portdata->rts_state = 1;
+>  	if (set & TIOCM_DTR)
+> @@ -130,7 +132,9 @@ int usb_wwan_tiocmset(struct tty_struct *tty,
+>  		portdata->rts_state = 0;
+>  	if (clear & TIOCM_DTR)
+>  		portdata->dtr_state = 0;
+> -	return usb_wwan_send_setup(port);
+> +	ret = usb_wwan_send_setup(port);
+
+Again, is this ok to hold a lock across?
+
+> +	mutex_unlock(&portdata->lock);
+
+Why not use the guard() style for all of this to make it simpler
+overall?
+
+thanks,
+
+greg k-h
 
