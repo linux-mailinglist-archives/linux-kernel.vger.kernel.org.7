@@ -1,140 +1,231 @@
-Return-Path: <linux-kernel+bounces-707562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD97AEC564
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 08:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3978BAEC568
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 09:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E3E4A3109
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 06:53:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4100D560134
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 07:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B94221277;
-	Sat, 28 Jun 2025 06:53:38 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99C2221286;
+	Sat, 28 Jun 2025 07:11:02 +0000 (UTC)
+Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5129BBE4A
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 06:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0E522068A
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 07:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751093618; cv=none; b=SCxwAl98KOCMPXPk85MIgEvD0U5SQ8lpL+ubsF1Jp+e7d8bVVRqrEKCC/kG8G2oz4RPeyXeHvdQKXJLEIBPfk942r6dgER/2pM2o6lffK5OQOib3vPftfj2dNJ2ogoh9zWHhFcR7yGu+/MlAQ0x+HmNDTkHM5+3z0Qe2UAVkVFw=
+	t=1751094662; cv=none; b=lhC8YjascL5LgJdgNlaYIexaa9JiEyqRm8KhQUlqQKik6ULevFRchH72uQx9AwaQC3OGnC21qnmyptTlwCP0G0mVXy9bsNYh4zF2sH7JjW7UocJ5oGqgVT4u8koeMLPbGbt7sN8rt4BvKnRyUolwxSweWg67fo+R6VmjYCZ9GDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751093618; c=relaxed/simple;
-	bh=nP4OWLf9rR3b9ta+ZmTmaXqRA0ZAAWILmIPdje1mPo4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eCOjMymHT46V3RUjpOIcPy2+ogbZG1+pn4nlYOLESjry5FeuCa3imT6bcaa7jktEeI8+peKckWOE+o0gACY4fw5w8wpnq34ad1vQJzXzZSO4l8gTt68cGitTTZMXhupvqd2hOWoF9UnY+KFG1wfZ8PAq//TYQc3hjGNMx2p7lrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bTjnB2x2xzKHN4T
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 14:53:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C53691A16AA
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 14:53:32 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBXvGBokV9ofviVQw--.53873S4;
-	Sat, 28 Jun 2025 14:53:30 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: yi.zhang@redhat.com,
-	linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] nvme: clear nvme request for nonready request
-Date: Sat, 28 Jun 2025 14:46:34 +0800
-Message-Id: <20250628064634.3823093-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1751094662; c=relaxed/simple;
+	bh=bNhLn/dsJQRSsFabEZC5C4WabwpzLWb7QLFpccDdDso=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ol2DXnfy/UB2p9RcMdHTZJX0nMaY747X/I8AyStqAIHrS4ai5zAkPnmmE2o+9lvy7/KqQFDMw5kSLzyQ9KjgThTCKgGJbTRGnj/gqu3cQ+XzcAesWWLT3s1U90ztfrX8Egpu3oHXiRbZt1xx4RZeCPYLNGG8RjnU0iOY6MMC2FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4bTjfk3RRMzYm8sx;
+	Sat, 28 Jun 2025 14:47:58 +0800 (CST)
+Received: from a002.hihonor.com (10.68.31.193) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 28 Jun
+ 2025 14:50:32 +0800
+Received: from a007.hihonor.com (10.68.22.31) by a002.hihonor.com
+ (10.68.31.193) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 28 Jun
+ 2025 14:50:32 +0800
+Received: from a007.hihonor.com ([fe80::e866:83ac:f23b:c25c]) by
+ a007.hihonor.com ([fe80::e866:83ac:f23b:c25c%10]) with mapi id
+ 15.02.1544.011; Sat, 28 Jun 2025 14:50:32 +0800
+From: liuwenfang <liuwenfang@honor.com>
+To: 'Tejun Heo' <tj@kernel.org>
+CC: 'David Vernet' <void@manifault.com>, 'Andrea Righi' <arighi@nvidia.com>,
+	'Changwoo Min' <changwoo@igalia.com>, 'Ingo Molnar' <mingo@redhat.com>,
+	'Peter Zijlstra' <peterz@infradead.org>, 'Juri Lelli'
+	<juri.lelli@redhat.com>, 'Vincent Guittot' <vincent.guittot@linaro.org>,
+	'Dietmar Eggemann' <dietmar.eggemann@arm.com>, 'Steven Rostedt'
+	<rostedt@goodmis.org>, 'Ben Segall' <bsegall@google.com>, 'Mel Gorman'
+	<mgorman@suse.de>, 'Valentin Schneider' <vschneid@redhat.com>,
+	"'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/2] sched_ext: Fix cpu_released while RT task and SCX task
+ are scheduled concurrently
+Thread-Topic: [PATCH v2 1/2] sched_ext: Fix cpu_released while RT task and SCX
+ task are scheduled concurrently
+Thread-Index: AQHb5/jx8N0T8swIHEO5GPUnf7Kp9A==
+Date: Sat, 28 Jun 2025 06:50:32 +0000
+Message-ID: <ced96acd54644325b77c2d8f9fcda658@honor.com>
+References: <fca528bb34394de3a7e87a873fadd9df@honor.com>
+ <aFmwHzO2AKFXO_YS@slm.duckdns.org>
+In-Reply-To: <aFmwHzO2AKFXO_YS@slm.duckdns.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXvGBokV9ofviVQw--.53873S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww4kZFyfur4rArW5Wry5CFg_yoW8uFWfpF
-	4FvrW3C3429w4vy3y7Jw47ur95twsFvasrJr4fGw13XF4DKr9Y9r98Ka43XF9akrs5W3y5
-	GFs5Ar9rXr13XrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+Supposed RT task(RT1) is running on CPU0 and RT task(RT2) is awakened on CP=
+U1,
+RT1 becomes sleep and SCX task(SCX1) will be dispatched to CPU0, RT2 will b=
+e
+placed on CPU0:
 
-It's found nvme mpath IO inflight counter can be decreased to negtive by
-following stack:
+CPU0(schedule)                                     CPU1(try_to_wake_up)
+set_current_state(TASK_INTERRUPTIBLE)              try_to_wake_up # RT2
+__schedule                                           select_task_rq # CPU0 =
+is selected
+LOCK rq(0)->lock # lock CPU0 rq                        ttwu_queue
+  deactivate_task # RT1                                  LOCK rq(0)->lock #=
+ busy waiting
+    pick_next_task # no more RT tasks on rq                 |
+      prev_balance                                          |
+        balance_scx                                         |
+          balance_one                                       |
+            rq->scx.cpu_released =3D false;                   |
+              consume_global_dsq                            |
+                consume_dispatch_q                          |
+                  consume_remote_task                       |
+                    UNLOCK rq(0)->lock                      V
+                                                         LOCK rq(0)->lock #=
+ succ
+                    deactivate_task # SCX1               ttwu_do_activate
+                    LOCK rq(0)->lock # busy waiting      activate_task # RT=
+2 equeued
+                       |                                 UNLOCK rq(0)->lock
+                       V
+                    LOCK rq(0)->lock # succ
+                    activate_task # SCX1
+      pick_task # RT2 is picked
+      put_prev_set_next_task # prev is RT1, next is RT2, rq->scx.cpu_releas=
+ed =3D false;
+UNLOCK rq(0)->lock
 
-CPU: 12 UID: 0 PID: 466 Comm: kworker/12:1H Tainted: G
-   6.16.0-rc3.yu+ #2 PREEMPT(voluntary)
-Workqueue: kblockd blk_mq_run_work_fn
-RIP: 0010:bdev_end_io_acct+0x494/0x5c0
-Call Trace:
- <TASK>
- nvme_end_req+0x4d/0x70 [nvme_core]
- nvme_failover_req+0x3bd/0x530 [nvme_core]
- nvme_fail_nonready_command+0x12c/0x170 [nvme_core]
- nvme_fc_queue_rq+0x463/0x720 [nvme_fc]
- blk_mq_dispatch_rq_list+0x358/0x1260
- __blk_mq_sched_dispatch_requests+0x2dd/0x480
- blk_mq_sched_dispatch_requests+0xa6/0x140
- blk_mq_run_work_fn+0x1bb/0x2a0
- process_one_work+0x8ca/0x1950
- worker_thread+0x58d/0xcf0
- kthread+0x3d5/0x7a0
- ret_from_fork+0x403/0x510
- ret_from_fork_asm+0x1a/0x30
- </TASK>
+At last, RT2 will be running on CPU0 with rq->scx.cpu_released being false!
 
-The IO inflight counter is not increased from nvme_fail_nonready_command()
-yet, hence decrease it will cause it to be negative.
+So, Add the scx_next_task_picked () and check sched class again to fix the =
+value
+of rq->scx.cpu_released.
 
-This is not a problem for blk-mq request because it's already
-initialized before issuing, however, nvme request is only initialized from
-following nvme_setup_cmd(). Fix the problem by clearing it in
-nvme_fail_nonready_command().
-
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/all/CAHj4cs_+dauobyYyP805t33WMJVzOWj=7+51p4_j9rA63D9sog@mail.gmail.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: l00013971 <l00013971@hihonor.com>
 ---
- drivers/nvme/host/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/sched/ext.c   | 24 +++++++++++++++++-------
+ kernel/sched/sched.h |  5 +++++
+ 2 files changed, 22 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 92697f98c601..8caafa25c010 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -764,6 +764,9 @@ blk_status_t nvme_fail_nonready_command(struct nvme_ctrl *ctrl,
- 	    !test_bit(NVME_CTRL_FAILFAST_EXPIRED, &ctrl->flags) &&
- 	    !blk_noretry_request(rq) && !(rq->cmd_flags & REQ_NVME_MPATH))
- 		return BLK_STS_RESOURCE;
-+
-+	if (!(rq->rq_flags & RQF_DONTPREP))
-+		nvme_clear_nvme_request(rq);
- 	return nvme_host_path_error(rq);
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index f5133249f..f161156be 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -3187,7 +3187,7 @@ preempt_reason_from_class(const struct sched_class *c=
+lass)
+ 	return SCX_CPU_PREEMPT_UNKNOWN;
  }
- EXPORT_SYMBOL_GPL(nvme_fail_nonready_command);
--- 
-2.39.2
+=20
+-static void switch_class(struct rq *rq, struct task_struct *next)
++static void switch_class(struct rq *rq, struct task_struct *next, bool pre=
+v_on_scx)
+ {
+ 	const struct sched_class *next_class =3D next->sched_class;
+=20
+@@ -3197,7 +3197,8 @@ static void switch_class(struct rq *rq, struct task_s=
+truct *next)
+ 	 * kick_cpus_irq_workfn() who is waiting for this CPU to perform a
+ 	 * resched.
+ 	 */
+-	smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
++	if (prev_on_scx)
++		smp_store_release(&rq->scx.pnt_seq, rq->scx.pnt_seq + 1);
+ #endif
+ 	if (!static_branch_unlikely(&scx_ops_cpu_preempt))
+ 		return;
+@@ -3233,6 +3234,19 @@ static void switch_class(struct rq *rq, struct task_=
+struct *next)
+ 	}
+ }
+=20
++void scx_next_task_picked(struct rq *rq, struct task_struct *prev,
++			  struct task_struct *next)
++{
++	bool prev_on_scx =3D prev && (prev->sched_class =3D=3D &ext_sched_class);
++
++	if (!scx_enabled() ||
++	    !next ||
++	    next->sched_class =3D=3D &ext_sched_class)
++		return;
++
++	switch_class(rq, next, prev_on_scx);
++}
++
+ static void put_prev_task_scx(struct rq *rq, struct task_struct *p,
+ 			      struct task_struct *next)
+ {
+@@ -3253,7 +3267,7 @@ static void put_prev_task_scx(struct rq *rq, struct t=
+ask_struct *p,
+ 		 */
+ 		if (p->scx.slice && !scx_rq_bypassing(rq)) {
+ 			dispatch_enqueue(&rq->scx.local_dsq, p, SCX_ENQ_HEAD);
+-			goto switch_class;
++			return;
+ 		}
+=20
+ 		/*
+@@ -3269,10 +3283,6 @@ static void put_prev_task_scx(struct rq *rq, struct =
+task_struct *p,
+ 			do_enqueue_task(rq, p, 0, -1);
+ 		}
+ 	}
+-
+-switch_class:
+-	if (next && next->sched_class !=3D &ext_sched_class)
+-		switch_class(rq, next);
+ }
+=20
+ static struct task_struct *first_local_task(struct rq *rq)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 47972f34e..f8e1b2173 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1738,12 +1738,15 @@ static inline void scx_rq_clock_invalidate(struct r=
+q *rq)
+ 	WRITE_ONCE(rq->scx.flags, rq->scx.flags & ~SCX_RQ_CLK_VALID);
+ }
+=20
++void scx_next_task_picked(struct rq *rq, struct task_struct *prev, struct =
+task_struct *next);
+ #else /* !CONFIG_SCHED_CLASS_EXT */
+ #define scx_enabled()		false
+ #define scx_switched_all()	false
+=20
+ static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
+ static inline void scx_rq_clock_invalidate(struct rq *rq) {}
++static inline void scx_next_task_picked(struct rq *rq, struct task_struct =
+*prev,
++					struct task_struct *next) {}
+ #endif /* !CONFIG_SCHED_CLASS_EXT */
+=20
+ /*
+@@ -2465,6 +2468,8 @@ static inline void put_prev_set_next_task(struct rq *=
+rq,
+=20
+ 	__put_prev_set_next_dl_server(rq, prev, next);
+=20
++	scx_next_task_picked(rq, prev, next);
++
+ 	if (next =3D=3D prev)
+ 		return;
+=20
+--=20
+2.17.1
 
 
