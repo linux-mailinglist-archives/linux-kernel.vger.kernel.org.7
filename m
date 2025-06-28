@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-707788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F21BAEC7DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:50:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FA8AEC7EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 16:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F289317D028
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8614189D133
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EAC25A620;
-	Sat, 28 Jun 2025 14:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE5425C713;
+	Sat, 28 Jun 2025 14:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="Tkp51LLF"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="nQ8LqJ4y"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5006C246BA7
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 14:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B18E24DCF3
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 14:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751122175; cv=none; b=hG8DFZIWirmij3WJ2v6PQtuRG3oUqFxmUwKhITellOjLEbV5repY/I0/7gtuDyEl6WAsHBbYvTLxKs7sQS6rDN1O0B/g2FQbPTuIEcvioLpaPWqmyZT+p/D1gQidpvSwKX/IguxcBkQoZyIcWgDSc8zHnJmVvRn0+QbZaDbRP9o=
+	t=1751122178; cv=none; b=cmNRMW48XV1df+LdCUheTIgFz5+UGe+P5kACjYPd+lsmPfIo5kD52bbfeTuyxpyCkuZCmzpcactjh3SNbZG0La+NguevZBt+1eQDDYcwfXxKtvGAyUAjfTR/j02s5VzcEqOapSNi9ALYTGEk3dpZ0oAqGLq5UDIZ40G5RIkD6Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751122175; c=relaxed/simple;
-	bh=KdZ7lvWMzZq+6+Va2Bf1aIrACOXIG7kNfSwqrfkyUMs=;
+	s=arc-20240116; t=1751122178; c=relaxed/simple;
+	bh=QDduJvC/5cNs1aCofqNCkLX2UcDB8NxT18fZG9lmPDM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pais0kY81xUTZeJaBg+TPEZc+kl8L9F0IjlJUsmM/z1MHP2Te6ep2f6DmSOO5oX1KBbynnwPaQ6IZ9ZFJU76MB7kBrOOS6EcetID6FhysG5U78ArJUc+hAKun6r942ZDJxdwzeEU4brgPbWVsqkKoWUjub/Pp7MeGT4FYdCAeSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=Tkp51LLF; arc=none smtp.client-ip=91.218.175.186
+	 MIME-Version; b=PaH22D6xsGI7nk0xi1UFOAqtqMb+hLuqCgusms58zV9U2rUPGIc8Dn2IQalO6gMW4qXpN0LBxHfOGOpWYCYbqaZ4u7SUs0LM3frVDi14XMXlvHqEUJmvVakehloQf9vsHkuaGn9eLP/IiPxPTsgCJ1kJGrYRkICV60NIEakCFSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=nQ8LqJ4y; arc=none smtp.client-ip=91.218.175.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1751122172;
+	t=1751122173;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=855oi/aHiPaIX6D7ew4EHyshWsVi9Qr95Z7nFCB1Mlw=;
-	b=Tkp51LLFHe740iWEvjJdZFOjkfm1kWmsasXj+gApyDniDrHxHcglEBEoZnn9/KgL3G+JgT
-	I/Xq1OUZgjDLbTdEJyqZvGgkGHFBZBU/rDPjdZhoEvnhm6YnQCqPOn0dAobJBLchkPfWKc
-	NKKS3qByIkgV53nzu7ugRFuc/2UPoZYKGTRsVZ3n5riKoZilNb5hf1G+mEUuqGo+4tQnrR
-	7ZMfb/HTpneU+ChcF8PbUm53ELHF39QUzPWf9NTAC5TUBbuMYTgWqynjOh1Kz9nHmg0Zcm
-	yTVFe9PTfYX4jLS+wqgGjhAQDjlHS5vSQHUGBnBRqum8TFdBU1FRjvIx9iM0sA==
+	bh=uYtxvQntJrQzDe3coaU4yovvxAekHNN2pEKLjqZB3iA=;
+	b=nQ8LqJ4yGC3JQ6nQNUj8q8M18//XNZ/Y+Jwgv9rA5QpoHncRR/wGdcgmG9JZjx0mhVodSV
+	bUrlHZBdcUQDcfcAAl6qmi1Nuj/AR5x84oQvVMIPGnkrIqu5qozTFeogxKYNJBQqOmFOVL
+	LN/5+PtWf6J8MmjQ1ynJ5W2uAOdEwelm6Yxs82Jrq28cQSCsfVQup947+GftwDPvKVVafP
+	z3OujWTz2TlyFgnI55zyMmkxJO/E0RJWrLIo6dLhpbYUb7uFMiNig4LUyZmEMnUox79ubK
+	7Fows5vjSseN+2/A3qF61KFmCDsMcJC97wCUvv6cbh8YfkRQRhLZpcCO/5lweQ==
 From: Diederik de Haas <didi.debian@cknow.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -56,9 +56,9 @@ Cc: Dragan Simic <dsimic@manjaro.org>,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v2 07/10] arm64: dts: rockchip: Move mipi_out node on rk3399 haikou demo dtso
-Date: Sat, 28 Jun 2025 16:32:41 +0200
-Message-ID: <20250628144915.839338-8-didi.debian@cknow.org>
+Subject: [PATCH v2 08/10] arm64: dts: rockchip: Fix LCD panel port on rk3566-pinetab2
+Date: Sat, 28 Jun 2025 16:32:42 +0200
+Message-ID: <20250628144915.839338-9-didi.debian@cknow.org>
 In-Reply-To: <20250628144915.839338-1-didi.debian@cknow.org>
 References: <20250628144915.839338-1-didi.debian@cknow.org>
 Precedence: bulk
@@ -70,46 +70,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-According to the DTS coding style [1] referenced nodes should be sorted
-alpha-numerically so move mipi_out to be after mipi_in_panel.
+The MIPI DSI connector on the PineTab2 only has 1 port with 1 endpoint,
+so drop the unit-address properties.
 
-[1] https://www.kernel.org/doc/html/latest/devicetree/bindings/dts-coding-style.html#order-of-nodes
+While at it, move 'rotation' property to its proper sorting position.
+
+This fixes the following DTB validation warnings:
+
+  node has a unit name, but no reg or ranges property
 
 Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
 ---
- .../dts/rockchip/rk3399-puma-haikou-video-demo.dtso  | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
-index 0377ec860d35..d28880b8dd44 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-puma-haikou-video-demo.dtso
-@@ -124,12 +124,6 @@ pca9670: gpio@27 {
- 	};
- };
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
+index 3473b1eef5cd..d0e38412d56a 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi
+@@ -282,11 +282,11 @@ lcd: panel@0 {
+ 		reg = <0>;
+ 		backlight = <&backlight>;
+ 		enable-gpios = <&gpio0 RK_PC7 GPIO_ACTIVE_HIGH>;
+-		rotation = <90>;
+ 		power-supply = <&vcc_3v3>;
++		rotation = <90>;
  
--&mipi_out {
--	mipi_out_panel: endpoint {
--		remote-endpoint = <&mipi_in_panel>;
--	};
--};
--
- &mipi_dsi {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-@@ -151,6 +145,12 @@ mipi_in_panel: endpoint {
- 	};
- };
- 
-+&mipi_out {
-+	mipi_out_panel: endpoint {
-+		remote-endpoint = <&mipi_in_panel>;
-+	};
-+};
-+
- &pinctrl {
- 	pca9670 {
- 		pca9670_resetn: pca9670-resetn {
+-		port@0 {
+-			panel_in_dsi: endpoint@0 {
++		port {
++			panel_in_dsi: endpoint {
+ 				remote-endpoint = <&dsi0_out_con>;
+ 			};
+ 		};
 -- 
 2.50.0
 
