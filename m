@@ -1,186 +1,113 @@
-Return-Path: <linux-kernel+bounces-707431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D77AEC3CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:30:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF642AEC3D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03B54A43EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:30:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F05AB7AFA0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7113B15C140;
-	Sat, 28 Jun 2025 01:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RaAcVVAq"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EA91E9B2D;
+	Sat, 28 Jun 2025 01:30:34 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC26EEA8;
-	Sat, 28 Jun 2025 01:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6381D7989;
+	Sat, 28 Jun 2025 01:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751074227; cv=none; b=QpFRFPnJXs/18kLFJzy0IqG9KPw7lUEZsuV+YRFSlNCtKXA3gEuZ+SxgKB+hEaRdYiXwILIfwNa5OZ61YxpiLQJPlq/PgN274W+EZk4NLllRaqZ/SIIXo8h4eSMRn5QBvMGuZyCTKcJgYX7GWjmqTtyBOG4EoAyCct66aZZmkKs=
+	t=1751074234; cv=none; b=oUKYQTLDjvL9UWF4uT60PPZtPGtwDB+/025koxBJZB7uyLW1oLNHU47QKJUHwxvYPzTE27M0uCs1+WgTFUkEQ6UApRyT/1p1HVl6CFkPant8K6b6PI4wK2BhU8CtfkmnFSGiXca8Dz0WxDaXRNbNUuy/1CY3kgwZkOs519PKNtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751074227; c=relaxed/simple;
-	bh=4Qqib250C3wp/3ZPlTZ2Y0hOef25YveIWChH8p0ROng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NXlJr42D4iswOaX2Q9Hz0C5QiAaOp16JU8fqhmVqDim+A7Vm2eSvgWSXMbs0FMso32ZYgOe/M7rRELSNF6C5U0ko39MlO8HmhJzhJ6Rfh2JAWBQhebUvwbwW80sQLzIefVCCIHXSp1mDAWB0WtICdOJyXPOH6+h2vwVyXffoAtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RaAcVVAq; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235f9ea8d08so23379825ad.1;
-        Fri, 27 Jun 2025 18:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751074226; x=1751679026; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y8AXPmpG2VMuBb/O9YnQP2cAp0A39EaY7EJfwm1hV+c=;
-        b=RaAcVVAqnux7vagv3HarICFaaclQ8DeyOM+42A/t/YZrKlO/bjY3Zt22h1QrjaHnAK
-         hVDqbx0BgsimJmncYWO4x0pHbzoHg/j2HiCAtQBAYSbcVIeR6QiedB2WAL6XkfUZOKb5
-         /ylU2KR77E/94xCww2+ROfW0VR4RD3nxsXSaU3fM6Bp3uG6bwEPwXI4fV4XjyV3TqlBy
-         ERuDcZRXsNKwp91n1xjoBRvJltqfm+MG5RWQiARLzMkPU2S2+RyWGVhj7Z0CUMzs3eyG
-         uDGpgrGyTEEpkuEByZ8lr9wkHcWloPtQQDCHwTQxygGzek1wwiL5R3SAk5AgKm2vHAxO
-         ckxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751074226; x=1751679026;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y8AXPmpG2VMuBb/O9YnQP2cAp0A39EaY7EJfwm1hV+c=;
-        b=R5xXmA9Qy/vKZYmEHew7yxdA4HmiYmoD/ncMuHA9VlhNOR5s0bjem4Wr3aGPZWuexj
-         aowk0XgJy5WwZfXG7s8mwlQ8RFZLAMbEMNYR83Rs9Gk1N+7FBprNAlu8YgD+GvEoJKyl
-         b9uVjr+cQPNiPUqpRsGEiDVy2XeZVXkK0CJShcJJBl0VioZyWx7kRJgBDE9ZRSKChZ8D
-         8yKM6XkvIax+riJGmSG0/gbtPKnPYzTgytm8nGLEtPxwdHjmo1N3hd791QsE5beLfZtX
-         3FxxekVZ3LKX40RFYTpfvaGDHPMZNLSzIikQvP3qLHZGNQo+DqAwjOITIkjuVtR0Nw+E
-         sZiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpKD4qKDH+QqznXKYJvMYecCMsdt/HDUr1ImQKJvLx0+M2bW20dKRWtL8JDU/aBBkQAnf887rqa8pL4aOM@vger.kernel.org, AJvYcCW6/8to1WAzP8KzCdndgZFhBOZYBN+Ap1tALFiAQVhf2uCgn7X1nuyf4rLxSLB3uZLYdrQY3Gm+Zuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLjrswcnxmd5OEdILnZZdKwD6ex3g2/VsNWMsmiEL6/39P5Ywc
-	6/WxonbSngSLBZaVGHSjMX+gB+cmQEft4Q64WrltwCmdbFR79+Tetsuj
-X-Gm-Gg: ASbGncsNTpq+AQLi+owZSEwJXiLJsZqI1x5aqA9yRm7fOgfSGgU8mF1WuIjvQRcl8GV
-	YNH9oNZG4VJyqdXI5OX4yysvOCqrktLjSJqVHt/+PCIG/XllkM4yuliW3JwCylOZdgl3DYyxmXs
-	0jfxp8aKGdDY3ujTQEPSAfhZzTFrZgOV4RjP8pJyJHDzpXyYYC0+15v+rTLkNbQC2uVkM5hkhah
-	HrZj6Sh1TATAdtAOKNzjnPD0oOvj5CmLc3xKyyLzQd+Esbw8sTxWiNMcxtzAu7/qAhXUhvErG/V
-	Kxe5RuOcfb0zKaNCRZ9Xfl29ieGSepec3/lJbR2eE+vRl/9aBRJslVv8uno80A==
-X-Google-Smtp-Source: AGHT+IEhpBuJ3GjJ2GV96K93NPQPaz+CSELR+iF2uzhaORXUXQQfB5dul2kwwnAmFKMrTiXr3jo19Q==
-X-Received: by 2002:a17:902:c401:b0:235:f4f7:a62b with SMTP id d9443c01a7336-23ac4665179mr88553105ad.41.1751074225506;
-        Fri, 27 Jun 2025 18:30:25 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c90d5sm26854075ad.247.2025.06.27.18.30.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Jun 2025 18:30:24 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7A3DF423BF27; Sat, 28 Jun 2025 08:30:21 +0700 (WIB)
-Date: Sat, 28 Jun 2025 08:30:21 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>, airlied@gmail.com,
-	simona@ffwll.ch
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, corbet@lwn.net,
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v2] workaround for Sphinx false positive preventing
- indexing
-Message-ID: <aF9FrVzkZHrIRKEa@archie.me>
-References: <20250627115718.17673-1-kevinpaul468@gmail.com>
+	s=arc-20240116; t=1751074234; c=relaxed/simple;
+	bh=I05Qwm7DodhHvecfrD66FcXio3LEoK+S9wTcNvaSrVs=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2WZ0LUeiQXnCpnKYQhl2X15Dpd9oVe9Nq4kODRNqFvZ/JU8kz60np1VNHRK4rQJq6iZ7DGldsb3qPD5KuxD0pl5wi/KTY9ktHIw5Q7Y5OapWJsEJxr8LFA1SJOoTQcHuRgCH8p6wVHP5sr+GAYplGd0fTBv2yPBEl0oYJOrsoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uVKOg-000000004QF-1ynj;
+	Sat, 28 Jun 2025 01:30:26 +0000
+Date: Sat, 28 Jun 2025 02:30:23 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+	Sky Huang <skylake.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net/next 1/3] net: ethernet: mtk_eth_soc: improve support for
+ named interrupts
+Message-ID: <d1b744685a464c5cd353107555faca6cd965d158.1751072868.git.daniel@makrotopia.org>
+References: <cover.1751072868.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jygN2+v8Ef8hw9M2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250627115718.17673-1-kevinpaul468@gmail.com>
+In-Reply-To: <cover.1751072868.git.daniel@makrotopia.org>
 
+Use platform_get_irq_byname_optional() to avoid outputting error
+messages when using legacy device trees which rely identifying
+interrupts only by index. Instead, output a warning notifying the user
+to update their device tree.
 
---jygN2+v8Ef8hw9M2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-[also Cc'ing Mauro]
-
-On Fri, Jun 27, 2025 at 05:27:18PM +0530, Kevin Paul Reddy Janagari wrote:
-> Functions drm_format_info, drm_modeset_lock, drm_ioctl_flags are not being
-> indexed in the documentation because there are structs with the same name=
-=20
-> and sphinx is only indexing one of them, Added them to namespaces as a
-> workaround for suppressing the warnings and indexing the functions
->=20
-> This is a bug of Sphinx >=3D3.1, first reported by Mauro in September 2020
-> Link: https://github.com/sphinx-doc/sphinx/issues/8241
->=20
-> Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-> ---
->  Documentation/gpu/drm-kms.rst  | 4 ++++
->  Documentation/gpu/drm-uapi.rst | 2 ++
->  2 files changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/gpu/drm-kms.rst b/Documentation/gpu/drm-kms.rst
-> index abfe220764e1..b18a99869b6d 100644
-> --- a/Documentation/gpu/drm-kms.rst
-> +++ b/Documentation/gpu/drm-kms.rst
-> @@ -357,8 +357,10 @@ Format Functions Reference
->  .. kernel-doc:: include/drm/drm_fourcc.h
->     :internal:
-> =20
-> +.. c:namespace-push:: gpu_drm
->  .. kernel-doc:: drivers/gpu/drm/drm_fourcc.c
->     :export:
-> +.. c:namespace-pop::
-> =20
->  .. _kms_dumb_buffer_objects:
-> =20
-> @@ -473,8 +475,10 @@ KMS Locking
->  .. kernel-doc:: include/drm/drm_modeset_lock.h
->     :internal:
-> =20
-> +.. c:namespace:: gpu_drm
->  .. kernel-doc:: drivers/gpu/drm/drm_modeset_lock.c
->     :export:
-> +.. c:namespace-pop::
-> =20
->  KMS Properties
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.=
-rst
-> index 69f72e71a96e..e9d7b7282a19 100644
-> --- a/Documentation/gpu/drm-uapi.rst
-> +++ b/Documentation/gpu/drm-uapi.rst
-> @@ -554,8 +554,10 @@ DRM specific patterns. Note that ENOTTY has the slig=
-htly unintuitive meaning of
->  .. kernel-doc:: include/drm/drm_ioctl.h
->     :internal:
-> =20
-> +.. c:namespace-push:: gpu_drm
->  .. kernel-doc:: drivers/gpu/drm/drm_ioctl.c
->     :export:
-> +.. c:namespace-pop::
-> =20
->  .. kernel-doc:: drivers/gpu/drm/drm_ioc32.c
->     :export:
-
-Works as expected, thanks!
-
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---jygN2+v8Ef8hw9M2
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaF9FpQAKCRD2uYlJVVFO
-o30+AQD0JcVjSsCcFjAd4jMRB1T4R+PpgE/ka0f8n3tq9MD4NwEA+FwOlvSfVA/C
-MuG6SuSMSTogXWQx14VDQqzEGzhx6wQ=
-=PST+
------END PGP SIGNATURE-----
-
---jygN2+v8Ef8hw9M2--
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index f8a907747db4..8f55069441f4 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -3341,17 +3341,22 @@ static int mtk_get_irqs(struct platform_device *pdev, struct mtk_eth *eth)
+ 	int i;
+ 
+ 	/* future SoCs beginning with MT7988 should use named IRQs in dts */
+-	eth->irq[MTK_FE_IRQ_TX] = platform_get_irq_byname(pdev, "fe1");
+-	eth->irq[MTK_FE_IRQ_RX] = platform_get_irq_byname(pdev, "fe2");
++	eth->irq[MTK_FE_IRQ_TX] = platform_get_irq_byname_optional(pdev, "fe1");
++	eth->irq[MTK_FE_IRQ_RX] = platform_get_irq_byname_optional(pdev, "fe2");
+ 	if (eth->irq[MTK_FE_IRQ_TX] >= 0 && eth->irq[MTK_FE_IRQ_RX] >= 0)
+ 		return 0;
+ 
+-	/* only use legacy mode if platform_get_irq_byname returned -ENXIO */
++	/* only use legacy mode if platform_get_irq_byname_optional returned -ENXIO */
+ 	if (eth->irq[MTK_FE_IRQ_TX] != -ENXIO)
+-		return eth->irq[MTK_FE_IRQ_TX];
++		return dev_err_probe(&pdev->dev, eth->irq[MTK_FE_IRQ_TX],
++				     "Error requesting FE TX IRQ\n");
+ 
+ 	if (eth->irq[MTK_FE_IRQ_RX] != -ENXIO)
+-		return eth->irq[MTK_FE_IRQ_RX];
++		return dev_err_probe(&pdev->dev, eth->irq[MTK_FE_IRQ_RX],
++				     "Error requesting FE RX IRQ\n");
++
++	if (!MTK_HAS_CAPS(eth->soc->caps, MTK_SHARED_INT))
++		dev_warn(&pdev->dev, "legacy DT: missing interrupt-names.");
+ 
+ 	/* legacy way:
+ 	 * On MTK_SHARED_INT SoCs (MT7621 + MT7628) the first IRQ is taken
+-- 
+2.50.0
 
