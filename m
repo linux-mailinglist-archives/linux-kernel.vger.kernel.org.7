@@ -1,105 +1,99 @@
-Return-Path: <linux-kernel+bounces-707430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0346AEC3CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBA4AEC3D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 888B37A7688
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE423BCD17
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474791AF0B5;
-	Sat, 28 Jun 2025 01:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w6hWUAVj"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E301DC9B1;
+	Sat, 28 Jun 2025 01:30:33 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507994503B
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 01:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324B2EEA8;
+	Sat, 28 Jun 2025 01:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751073926; cv=none; b=myjYRjO+pLofxmR2mgaQzZzMx6Vfw8JofmVzEUdGDpyi0vsmZv0R+FrUKUWKi+Zl/n+oY94Jdg2hhLQP5MU0fBv2zVYadwXlrGEKgOO1xibxgc9DEpN0I6FYbIRDOXnkotBXoTBcDYWuIbHnjhEEGMReh5SqxbU1jtr7Rf5PWG0=
+	t=1751074233; cv=none; b=XMLzrxLnwm/HjdA4QIfNZ0azEqMptNHMUyd+TqE+HS2oWTRObqLjR8iUMFiBrsKLFTaaO0TS722hpnCLrxvtr4v8cYMQaKA1IpTDI8cqRW+3rff8TKEngjJuF+lp50I1FTFfYlGD7FpjtmuRddLE46OWCJjFMsGnIIvVeh2DAxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751073926; c=relaxed/simple;
-	bh=jBsRv1t+MbjjXt+t5j4i2adx0dnBzatWyL4WvWleFvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gg+99NaC2Sqfiq0mAUt4/WnyEA4LU5ErvqaFYk5TOjl+k0WVYThk6QHHKq9Pis9chuL0VSlYLtP08vMkoTkD4LHMHQs5uGFDGvsR1rPsQfXsyh21+fzeKDWeqR8o8KVn7SiJ32CAq2pEZfc8M9GFaiTwyESwYodth2TMJDluHYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w6hWUAVj; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3de210e6076so45185ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Jun 2025 18:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751073924; x=1751678724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jBsRv1t+MbjjXt+t5j4i2adx0dnBzatWyL4WvWleFvc=;
-        b=w6hWUAVjIjFBcJGlqhXkNDVAd6QR3x0pjKzZQYahhycetjcL/r3p+bl45Oa1Z9Qrm6
-         PZoHbZe0irlKK/DEmeWEoXF7eTZKgVwZKpaSECv34TkfxViuJPTHBkpkIV9ta1bL3UcJ
-         Ncw2rCejyFqx9VuEzPtADdAf02Q08DsQk05b8WxLSNhkKvSeCCMGCy2mPKvnPg6WHJkQ
-         kt3HXPUmrOl5Bcr/p5HWHVuQyyUEXwptILL5lfjUV55e42ym0lM8rCdtwFaSo/+CI39P
-         M2aeYc3EemF9iLldHcr70QR0WOh0O9IVS9nvRje2oEAvUA9AAQ2VyhVQGuRnNID8NLO5
-         etqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751073924; x=1751678724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jBsRv1t+MbjjXt+t5j4i2adx0dnBzatWyL4WvWleFvc=;
-        b=g9EpdKWbRaudpWLhxLjb+G1CVckLTcMlinzh09wneAitzUKltMEBgCV86nKb8mdd3a
-         KWhURC2hDeNKiNeXq7kBRTHCU6b420+B+2eePAlsgyLXoniabnUBLA+hcNSeVoKA7k93
-         YZEham183mnTce1jafsxSmy7DSU7fciOj7IAD1MnMeTGerJM+pL8eMzPNb8htyDFpC+1
-         NF1Bh+tSPXPG0/1gg2T3tVZ6Xt2SBvtcVizUJnIViRNae601mmxsXOJsCtg8zesGWIv2
-         MhYIFlT3tHX1crUwwMg53EkCdrma4OBkS+c7ly4bUcidhJsb70VJf0gvCzkxArxdnJvh
-         LGdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9mRERkQ8lpUAAEzY8MqTb/9ZfN8LQQb+RzKdehyYb1L/2bOm8fFfXkt7K8/uzhrHXhJN+M4lZtZKpfiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0wbNEDzpfB23Uc0ulhodIRYGitPYuYQHivv5iOXEXCvNowRIv
-	158wSDTjznys+CvXcpoMtuvzxx6Lk1X4kTlU8/duOtr68hp4WQgDgISIO7gVVU2/D8atwpFejM2
-	GBsUMHaCoYlMo9wzKIfu3ot7/QQThZOeeLOBpyMj1
-X-Gm-Gg: ASbGncvtw4aqH5TtEisUHvYooIJtkLgtQZZwe77Bq9v76YudsW7UhfeFSmj+SrKh5Nd
-	t/D4esWP4JyYyioJqbL+P7WN1WBBX1Xv4Dxkxn5Hl8XVfHT+BqUOMKO5EhJ4FZOe8oM2LRQM1/Z
-	X60mSWj8ubp+qwGfOzxR/pCZ0FDal/khWV/8j5IjVP0uNB
-X-Google-Smtp-Source: AGHT+IGSRQuU3jkfhVSsR7FQ8+3yWy141hegDQ6tZdzLnOk8SKukC27fW4TWxHyP/8wMaDTCmusA+LYzQdfWzyTg8YU=
-X-Received: by 2002:a05:6e02:1685:b0:3dd:c526:434f with SMTP id
- e9e14a558f8ab-3df56ce74b3mr774675ab.9.1751073924053; Fri, 27 Jun 2025
- 18:25:24 -0700 (PDT)
+	s=arc-20240116; t=1751074233; c=relaxed/simple;
+	bh=lgJwZIq209fXsXqy2AxJFhYz3tmsplLir33JPAd4o5c=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BB/2YhjaqD+GUbBOQpnyp2mRl2zSJyEjwLMdYuDl5enP99dFLA8AGOCfQkqPdReF2zjRipJc1WYb3lW2My/qNl8Zw8IHW6a+5SbVFe6Zyj3ELN1WEmawTRxCurgg5XZMF0p01MFw/vkMLfe9sbI5AIeuT4NnZMtv7UGIWsnncsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uVKOY-000000004QA-0bQ9;
+	Sat, 28 Jun 2025 01:30:18 +0000
+Date: Sat, 28 Jun 2025 02:30:14 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+	Sky Huang <skylake.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net/next 0/3] net: ethernet: mtk_eth_soc: improve device tree
+ handling
+Message-ID: <cover.1751072868.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619002034.97007-1-irogers@google.com> <20250619002034.97007-2-irogers@google.com>
- <aFW5aknT69UR3CTV@google.com>
-In-Reply-To: <aFW5aknT69UR3CTV@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 27 Jun 2025 18:25:12 -0700
-X-Gm-Features: Ac12FXzub2qOEvfir724mQtAGRDikXM7527nrJ2YpeWhE0_sq64ArX2SxUeR28k
-Message-ID: <CAP-5=fV2x1EuOuArhLx4QdzYJ3B5S0NTWM3xvVfRNdVni3fTJw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] perf test: Add sched latency and script shell tests
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Jun 20, 2025 at 12:41=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> You can use 'thloop' workload which runs 2 threads at the same time.
-> Then you don't need to handle the background processes and run it
-> directly with perf test.
+The series further improves the mtk_eth_soc driver in preparation to
+complete upstream support for the MT7988 SoC family.
 
-v3 sent. I held off changing noploop to thloop as I think 2 separate
-processes is a little clearer:
-https://lore.kernel.org/lkml/20250628012302.1242532-1-irogers@google.com/
+Frank Wunderlich's previous attempt to have the ethernet node included
+in mt7988a.dtsi and cover support for MT7988 in the device tree bindings
+was criticized for the way mtk_eth_soc references SRAM in device tree[1].
 
-Thanks,
-Ian
+Having a 2nd 'reg' property, like introduced by commit ebb1e4f9cf38
+("net: ethernet: mtk_eth_soc: add support for in-SoC SRAM") isn't acceptable
+and a dedicated "mmio-sram" node should be used instead.
+
+Support for the hard-coded offset and including the SRAM region as part of
+the Ethernet's "reg" MMIO space will still be required in order to support
+existing legacy device trees of the MT7981 and MT7986 SoC families.
+
+While at it also replace confusing error messages when using legacy device
+trees without "interrupt-names" with a warning informing users that they
+are using a legacy device tree.
+
+[1]: https://patchwork.ozlabs.org/comment/3533543/
+
+Daniel Golle (3):
+  net: ethernet: mtk_eth_soc: improve support for named interrupts
+  net: ethernet: mtk_eth_soc: fix kernel-doc comment
+  net: ethernet: mtk_eth_soc: use genpool allocator for SRAM
+
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 134 +++++++++++++-------
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h |   5 +-
+ 2 files changed, 94 insertions(+), 45 deletions(-)
+
+-- 
+2.50.0
 
