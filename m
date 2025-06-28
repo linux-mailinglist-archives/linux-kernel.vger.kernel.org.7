@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-707663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66195AEC692
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:30:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6A9AEC684
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7037D4A5D9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4DCE179B52
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8AB24467E;
-	Sat, 28 Jun 2025 10:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="NhjXIQ2b"
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D658D2459ED;
+	Sat, 28 Jun 2025 10:14:03 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98E14A3C;
-	Sat, 28 Jun 2025 10:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F9821CA16;
+	Sat, 28 Jun 2025 10:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751106633; cv=none; b=RKl2tAc7KTHxv4VxYBVNWAifr7IytNmoX/7mhd1XyKfU4t/jnyXwhKein0kbsxeR3IBHDZsxp+75wM+HYXP8qz4281hpobnIU/I7rNd9SGM1RbTn0WjLRw7L12nE/Kf1uC9Ai8Li2EEGrlUFRUzxBPd5rJKTqSM+QdQV2KLv3rg=
+	t=1751105643; cv=none; b=Sl50r95N+9wiulNbVUKhQ1UmCjVHFX7P/31htmxnYHHMqaFYkU7J69Y0SVIYT/WFj7TV+wTBj1N3adwnyCVj0XXjDkR6iTrJgfPx3i+YTZDcbAQReahhqvW+YYlPdsvvtYjvzP5srz27QoWMK+G3/QIXeRV7Hy5pfZIAceHN45w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751106633; c=relaxed/simple;
-	bh=uQhRKDxK2mabMgCqoieFovOw4kdCdDL7hqMmNvBVq1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hESvwOd4OC7h5GNXqJpXC82a+G+NE9IGAI7wrACh7XKAsPNwvsIpKEIPOcWPfGEICJF84rmONNhCFJjHSBYXMVg2jkp9yD0GfMjhTgZdbsKnAS8pYoAyTD4vahR0QIsRZK+1qqhLEojF/OKnsX9/ICJwb9QrLYtVwMnMvo8il2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=NhjXIQ2b; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:82a4:0:640:9cc1:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id 847CA6140A;
-	Sat, 28 Jun 2025 13:30:21 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id FUUIxAMLliE0-iaB20H8x;
-	Sat, 28 Jun 2025 13:30:20 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1751106620;
-	bh=uQhRKDxK2mabMgCqoieFovOw4kdCdDL7hqMmNvBVq1w=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=NhjXIQ2bggrzxKaYhfubQknCHqyk6QZICObr3m6HDPo2sRSdLba6UHytf1es05UqC
-	 CxHrGU8uV2M9ExsJ+PPeniwqeZ9iHt0rKjI+3C58JHDfFrRDXFkRDW3zhEaLLqE2sU
-	 443MrhPJZzvVknbVSGMghG2CUeD4qzdzSWgpkJQE=
-Authentication-Results: mail-nwsmtp-smtp-production-main-59.klg.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Sat, 28 Jun 2025 13:30:13 +0300
-From: Onur <work@onurozkan.dev>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, airlied@gmail.com, simona@ffwll.ch,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
- a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- rafael@kernel.org, viresh.kumar@linaro.org, gregkh@linuxfoundation.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- davidgow@google.com, nm@ti.com
-Subject: Re: [PATCH v3 3/3] rust: remove
- `#[allow(clippy::non_send_fields_in_send_ty)]`
-Message-ID: <20250628133013.703461c8@nimda.home>
-In-Reply-To: <CANiq72kjdj4KbDhfnTbm8jZpLC1+WPB3E6M8D8M2NLnphMs5vg@mail.gmail.com>
-References: <20250628040956.2181-1-work@onurozkan.dev>
-	<20250628040956.2181-4-work@onurozkan.dev>
-	<CANiq72kjdj4KbDhfnTbm8jZpLC1+WPB3E6M8D8M2NLnphMs5vg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1751105643; c=relaxed/simple;
+	bh=evHe/Q4Z7c3/bPp/IGnTWoWNO5VUuiNQ3xAGZ+TcF3k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fFuxYb2EKMsZMz0PNBqgQYvxO6xZAi9G2rkgoDnx0ikUP/akF8lFmoUjhTK9PWAcVWQnjnuaFRiudlJdAeW0xcrCzcBfJEKh/ddOV7sMOoC+V2FVCVXIFfCzbr/YnEEaNy3Bf5ZeWx+R7O5kreLC8q/KfVh4r7dNTMwKzgPDI9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bTp711fTfz10XJN;
+	Sat, 28 Jun 2025 18:09:17 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id E60D618007F;
+	Sat, 28 Jun 2025 18:13:55 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 28 Jun
+ 2025 18:13:55 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <marcel@holtmann.org>, <luiz.dentz@gmail.com>,
+	<kai.heng.feng@canonical.com>
+CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH net-next] Bluetooth: btrtl: Fix passing zero to 'ERR_PTR'
+Date: Sat, 28 Jun 2025 18:31:05 +0800
+Message-ID: <20250628103105.211049-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Sat, 28 Jun 2025 09:13:50 +0200
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+If bt_skb_alloc() fails, ret should be -ENOMEM then pass to ERR_PTR().
 
-> On Sat, Jun 28, 2025 at 6:10=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.d=
-ev> wrote:
-> >
-> > Clippy no longer complains about this lint.
->=20
-> Do you have more context? For instance, do you know since when it no
-> longer complains, or why was the reason for the change? i.e. why we
-> had the `allow` in the first place, so that we know we don't need it
-> anymore?
->=20
-> For instance, please how I reasoned about it in commit 5e7c9b84ad08
-> ("rust: sync: remove unneeded
-> `#[allow(clippy::non_send_fields_in_send_ty)]`").
->=20
-> (It may happen to be the same reason, or not.)
->=20
-> Thanks!
->=20
-> Cheers,
-> Miguel
+Fixes: 1996d9cad6ad ("Bluetooth: btrtl: Ask 8821C to drop old firmware")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ drivers/bluetooth/btrtl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-It doesn't seem to be the same reason. I rebased over
-c6af9a1191d042839e56abff69e8b0302d117988 (the exact commit where that
-lint was added) but still Clippy did not complain about it on the
-MSRV. So it was either a leftover, or there is a version between
-1.78 and the current stable where Clippy did complain. I can dig into it
-more during the week if you would like.
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 7838c89e529e..6d5b37990be6 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -1137,8 +1137,10 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+ 
+ 	if (btrtl_dev->drop_fw) {
+ 		skb = bt_skb_alloc(sizeof(*cmd), GFP_KERNEL);
+-		if (!skb)
++		if (!skb) {
++			ret = -ENOMEM;
+ 			goto err_free;
++		}
+ 
+ 		cmd = skb_put(skb, HCI_COMMAND_HDR_SIZE);
+ 		cmd->opcode = cpu_to_le16(0xfc66);
+-- 
+2.34.1
 
-IMO, we should require people to add a comment explaining the reason
-for adding these lint rules to the codebase. It would make both reading
-and modifying the code much simpler and clearer.
-
-Regards,
-Onur
 
