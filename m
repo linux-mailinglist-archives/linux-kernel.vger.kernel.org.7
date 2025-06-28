@@ -1,270 +1,137 @@
-Return-Path: <linux-kernel+bounces-707938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A17BAEC975
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 19:32:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DADAEC97F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 19:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB4417DA80
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ACA3189C6F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D678C288C8B;
-	Sat, 28 Jun 2025 17:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D3826C3BE;
+	Sat, 28 Jun 2025 17:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnKHCbCw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QWqlaoeT"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A333D2882D3;
-	Sat, 28 Jun 2025 17:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3EE25B2FC
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 17:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751131830; cv=none; b=nkAaolRmq65/QrQL6Xqdb1U1EAgRua73ux49zdcCEA0tKyWWtiIC9lzDpalW6/8aZ5nAimfPr51ZsQf/mVEEe1TdgGcIdaZs7Kj7fQKvcYobzKlaalMKMkZyj5a1dfCqeX1x7g67tBzoLR9cG03eMBcDQmyG3uJ3kphnf6knf1g=
+	t=1751131917; cv=none; b=d2tNHFKFACp7ozl7XZUBpg/4z7yogLPpT5s3GREiBVyZcmK+4yvwR22QnZscBhsA2Ld+A0R8Ok5EDV+iuAQ9gw/rLBV82G4wi7ZCQGmu1qjb8hW2gPZ0H9QsJ4iaMRXR6vxAHJZPpRZnzcdvl9x94juZze3tuk2hFVrcCig0KSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751131830; c=relaxed/simple;
-	bh=jcOz3x1eGlNJpjfPJye0zmL0BeEqCXJWFfQN+XE02XU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JxqJUbQ4Gky4seKkqwVEYa08YnSh5q34itKYGaiDplmdSrT+4Yqhy8pRmDpt0wyhScOB74owvFG+pGON34gXhDd2H8bFibbECFQ2mhUtFSOzl0UxZGk0TEsONt9g4+aB0lFwTX6IQxaOJ+P1Con8C+Fbn3Pe1RN6Z1+TK1dNX9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnKHCbCw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84042C4CEEF;
-	Sat, 28 Jun 2025 17:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751131830;
-	bh=jcOz3x1eGlNJpjfPJye0zmL0BeEqCXJWFfQN+XE02XU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mnKHCbCwtx3uTyrPjXJq80QwKbtrL4UBVIwHDOlOzCEalNs2fcMN/zjKeGHyukzkH
-	 6GK/UycXynXKtjBy9cGYk/woCl3twg+6q0kGXyY+2eQ9K2tDKmBdG5ZE3oNZhDmdJ4
-	 cYWKYL5QJwryutN3CoKVFWBMxGWFBD2tW3oFr0P8MCcoNIJbeZ8k2FTXnQgUtvmEKK
-	 OTd6QOKcNQ0X5vyH4lDEHTNN4iCexOemRzuFjEe34x/Uy9/Jx1Wpgk+Pi74FG9uT9d
-	 7H6HImnXD7Ub+c7XjwRQIlr/NHXl5LCPaLs0BpeZWdvAqyz3gwyJJRr8zJJVJmcedU
-	 O9asPCiBVxPiA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uVZNk-00AqZC-Lh;
-	Sat, 28 Jun 2025 18:30:28 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Toan Le <toan@os.amperecomputing.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 12/12] PCI: xgene-msi: Restructure handler setup/teardown
-Date: Sat, 28 Jun 2025 18:30:05 +0100
-Message-Id: <20250628173005.445013-13-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250628173005.445013-1-maz@kernel.org>
-References: <20250628173005.445013-1-maz@kernel.org>
+	s=arc-20240116; t=1751131917; c=relaxed/simple;
+	bh=mNlNcIDpJOuFxOzfuo0nWQ2Cmf1deme4AEktqDh7bL0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EILkfaH6n9j/VdQsOfup5qltECJ+p2+kvY1JrymZf9zuFoQ7yDgSLcZoISJo8jsm++eBIUjBfDcPcDm0bnhh/5jbF/WQLnopnxrDzfEPQVjoQyIvHfHD1QO9JuUGlCQhuUrV0iEHiLmGUp1RfMEc9FuEWLgAtrzsdXNcephT6HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QWqlaoeT; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-4079f80ff0fso2487939b6e.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 10:31:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751131913; x=1751736713; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a/rZ/BZZ6dj3yKfppO+1iRMMiSpP3Dh4QhplfHbi68c=;
+        b=QWqlaoeTQJHcnj4eDY76pzJRKM2QwFBfAXw3iUHslMnRmiT1577+AR/DWAv0IGQnV1
+         S9TnB60KWA6rJEYSQb5W5cVLjZkrhJuhsoQXZQfmsLdqtSUZ7HQnpp/p4G2NXCn+NSU6
+         v+AcfOBe38SaqbyYNlZ0Syum6BcWqqImebglksDNIcHJ71FWjxZupawvCRp7FCvWdy4h
+         E2RX1TFuMnzltj8riSQunfpGhaFN7TGuHE6AjK5KHNAoRYjS0KYRIL0aklOMQl7ckRLH
+         4RD3UNg3hZ+Jmeev3G8gSCm+/I5HtaSYsp1GV8tSEZcET4gwV3+ugp8iL+FxCZ+s24zx
+         xW+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751131913; x=1751736713;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a/rZ/BZZ6dj3yKfppO+1iRMMiSpP3Dh4QhplfHbi68c=;
+        b=xEpKSp767O9wBhvoN49I6pB3BCDQnkN37+0pdKkiI2MyyUEvHjwxr5hO7fUXZi0IVQ
+         w5vEFwS9vjqiJtHu5A9vLqrybcGDeWhXT3kcYZWMjjneyOr0dNp9y5/ujlDKNEg/diqs
+         c1aE9s9a7by7SCbHz43LzBppImJZ5R72KWUmDESVCsZN5KGrF6mvlEoS4uVIdtFTbazj
+         ePs9l1Eph3xlZFRDVXJy6E74NO+CDUIdetCN3od35qV4oc49ZCQ9sDO7tBgTGIZWPgGU
+         NBnxBcBfFPr+R63h1ybDDF9zkye47LrNhNSwtOZaSq/k9NaTvx80GEvHElN28pSfA4R8
+         bTtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdTdlCKDTAQ/qK0Vtea3VyQDvEID+UBMK9CTbIqTU+pp6pg9QFZ1GwVWqg6ksff1jbeXiv7MUtxcqyQHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqKu56bplP4NZCHWFm4fwLtHO2P0ba/UFMR2NAgaTWiEBVCUMX
+	KmlOVVWGls1uStyHcC8T/rQgT1aPtabOpAublv30rFKJak0yHIh2vZYY1Fvv/RkjFR8g5puSRgB
+	Rv428zKU=
+X-Gm-Gg: ASbGncuFeb+AodtwBUpYER7XruQOB5GI5QSI2QvzSynXVETtayVfv/1lKFMysArXoBS
+	O3wpA1NckEBU8N1+r71d5TWYDEdw9mhRcm47/RiwPtke3zi/LOAbW7yhWIPQcMnwWi0Lk/PR+d+
+	0VR7kPyQ7CPJ7GTDG8GR3ScJEJgM23gdRxwX1KvMgiTflwkTmgY32rtGwFx24H1e7xlWsPSyXrs
+	UUf0Ce8T7uVCFJCvHzf3Yvc0wl4deETXPE78j5nvL5tKZN6Y/knoikb9Y5wnV9M4eVDWNgYfSvW
+	2MXEW/wkm9oEe7SV/TOuOTnkCVWDniIRgL1HWMiojVTnSjJaNRnDdqXLYTHbkOvjSg61
+X-Google-Smtp-Source: AGHT+IHN6ojHQDxt1Bx0mZTR0H0cL5vmfW7pJKbLefP/CkbpptVvu96oSnp+TX4rwF0z98uc0D6FGw==
+X-Received: by 2002:a05:6808:48cc:b0:40b:52ff:7a62 with SMTP id 5614622812f47-40b52ff7af1mr997475b6e.8.1751131913560;
+        Sat, 28 Jun 2025 10:31:53 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:3092:a48c:b0c6:cbf4])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40b322ae4e9sm895241b6e.17.2025.06.28.10.31.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Jun 2025 10:31:53 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Sat, 28 Jun 2025 12:31:43 -0500
+Subject: [PATCH] iio: imu: bmi160: make bmi160_regs const
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250628-iio-const-data-18-v1-1-dad85ac392ae@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAP4mYGgC/x3MTQqAIBBA4avIrBswrZCuEi38mWo2GioRRHdPW
+ n6L9x4olJkKzOKBTBcXTrGh7wT4w8adkEMzKKlGOSmDzAl9iqVisNVib9AZ7YLTNAQ5QuvOTBv
+ f/3NZ3/cDfG7BrGMAAAA=
+X-Change-ID: 20250628-iio-const-data-18-b83bdb3e4d05
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=988; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=mNlNcIDpJOuFxOzfuo0nWQ2Cmf1deme4AEktqDh7bL0=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoYCcB/CkRqcoJ0X+ucTtszV8cbkFH/qYauTxfa
+ PkNJhg+/KyJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaGAnAQAKCRDCzCAB/wGP
+ wFtyCACfsx4BEqaYVAkiPaTJ/aV9allSyiIY1u09Zfcyt1QNyg1WaTEVlYCyoGvB4WM+09mtHNa
+ jsN9iRfbZKKHQNedart11F1+LpEIOgVbNNUPlUvPKHHVEdx3VKiOwtrNTatcW2hYbC5Tj8Mcsm0
+ DRAWH6atLgJrP5ZSaK927EM5aTgb6gdKdgtqDtAXne7AFMS2PGazauN6KqS/KhlOYlP3fHzSBm6
+ fvmELEftOg9FgEtwMIiOT+HNsRECXN3HWZPkJbkNVM55rFKbzB7Jvxc4E2fWlaxi2qSDmdqb888
+ P9yuxCGXaFglspAWFFxznyh07YGFxOaHPuWvF/9Ew2Iu7LI2
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Another utterly pointless aspect of the xgene-msi driver is that
-it is built around CPU hotplug. Which is quite amusing since this
-is one of the few arm64 platforms that, by construction, cannot
-do CPU hotplug in a supported way (no EL3, no PSCI, no luck).
+Add const qualifier to struct bmi160_regs bmi160_regs[]. This is
+read-only data so it can be made const.
 
-Drop the CPU hotplug nonsense and just setup the IRQs and handlers
-in a less overdesigned way, grouping things more logically in the
-process.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/pci/controller/pci-xgene-msi.c | 109 +++++++++----------------
- 1 file changed, 37 insertions(+), 72 deletions(-)
+ drivers/iio/imu/bmi160/bmi160_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-index a22a6df7808c7..9f05c2a12da94 100644
---- a/drivers/pci/controller/pci-xgene-msi.c
-+++ b/drivers/pci/controller/pci-xgene-msi.c
-@@ -216,12 +216,6 @@ static int xgene_allocate_domains(struct device_node *node,
- 	return msi->inner_domain ? 0 : -ENOMEM;
- }
+diff --git a/drivers/iio/imu/bmi160/bmi160_core.c b/drivers/iio/imu/bmi160/bmi160_core.c
+index 9aa54b95b89f96299e65b9cc00149bffe5f2e56a..5f47708b4c5dc5b2eb139b1c36542aae22a4cf43 100644
+--- a/drivers/iio/imu/bmi160/bmi160_core.c
++++ b/drivers/iio/imu/bmi160/bmi160_core.c
+@@ -161,7 +161,7 @@ struct bmi160_regs {
+ 	u8 pmu_cmd_suspend;
+ };
  
--static void xgene_free_domains(struct xgene_msi *msi)
--{
--	if (msi->inner_domain)
--		irq_domain_remove(msi->inner_domain);
--}
--
- static int xgene_msi_init_allocator(struct device *dev)
- {
- 	xgene_msi_ctrl->bitmap = devm_bitmap_zalloc(dev, NR_MSI_VEC, GFP_KERNEL);
-@@ -271,26 +265,48 @@ static void xgene_msi_isr(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--static enum cpuhp_state pci_xgene_online;
--
- static void xgene_msi_remove(struct platform_device *pdev)
- {
--	struct xgene_msi *msi = platform_get_drvdata(pdev);
--
--	if (pci_xgene_online)
--		cpuhp_remove_state(pci_xgene_online);
--	cpuhp_remove_state(CPUHP_PCI_XGENE_DEAD);
-+	for (int i = 0; i < NR_HW_IRQS; i++) {
-+		unsigned int irq = xgene_msi_ctrl->gic_irq[i];
-+		if (!irq)
-+			continue;
-+		irq_set_chained_handler_and_data(irq, NULL, NULL);
-+	}
- 
--	xgene_free_domains(msi);
-+	if (xgene_msi_ctrl->inner_domain)
-+		irq_domain_remove(xgene_msi_ctrl->inner_domain);
- }
- 
--static int xgene_msi_hwirq_alloc(unsigned int cpu)
-+static int xgene_msi_handler_setup(struct platform_device *pdev)
- {
-+	struct xgene_msi *xgene_msi = xgene_msi_ctrl;
- 	int i;
--	int err;
- 
--	for (i = cpu; i < NR_HW_IRQS; i += num_possible_cpus()) {
--		unsigned int irq = xgene_msi_ctrl->gic_irq[i];
-+	for (i = 0; i < NR_HW_IRQS; i++) {
-+		u32 msi_val;
-+		int irq, err;
-+
-+		/*
-+		 * MSInIRx registers are read-to-clear; before registering
-+		 * interrupt handlers, read all of them to clear spurious
-+		 * interrupts that may occur before the driver is probed.
-+		 */
-+		for (int msi_idx = 0; msi_idx < IDX_PER_GROUP; msi_idx++)
-+			xgene_msi_ir_read(xgene_msi, i, msi_idx);
-+
-+		/* Read MSIINTn to confirm */
-+		msi_val = xgene_msi_int_read(xgene_msi, i);
-+		if (msi_val) {
-+			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
-+			return EINVAL;
-+		}
-+
-+		irq = platform_get_irq(pdev, i);
-+		if (irq < 0)
-+			return irq;
-+
-+		xgene_msi->gic_irq[i] = irq;
- 
- 		/*
- 		 * Statically allocate MSI GIC IRQs to each CPU core.
-@@ -298,7 +314,7 @@ static int xgene_msi_hwirq_alloc(unsigned int cpu)
- 		 * to each core.
- 		 */
- 		irq_set_status_flags(irq, IRQ_NO_BALANCING);
--		err = irq_set_affinity(irq, cpumask_of(cpu));
-+		err = irq_set_affinity(irq, cpumask_of(i % num_possible_cpus()));
- 		if (err) {
- 			pr_err("failed to set affinity for GIC IRQ");
- 			return err;
-@@ -311,19 +327,6 @@ static int xgene_msi_hwirq_alloc(unsigned int cpu)
- 	return 0;
- }
- 
--static int xgene_msi_hwirq_free(unsigned int cpu)
--{
--	struct xgene_msi *msi = xgene_msi_ctrl;
--	int i;
--
--	for (i = cpu; i < NR_HW_IRQS; i += num_possible_cpus()) {
--		if (!msi->gic_irq[i])
--			continue;
--		irq_set_chained_handler_and_data(msi->gic_irq[i], NULL, NULL);
--	}
--	return 0;
--}
--
- static const struct of_device_id xgene_msi_match_table[] = {
- 	{.compatible = "apm,xgene1-msi"},
- 	{},
-@@ -333,7 +336,6 @@ static int xgene_msi_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
- 	struct xgene_msi *xgene_msi;
--	u32 msi_val, msi_idx;
- 	int rc;
- 
- 	xgene_msi_ctrl = devm_kzalloc(&pdev->dev, sizeof(*xgene_msi_ctrl),
-@@ -343,8 +345,6 @@ static int xgene_msi_probe(struct platform_device *pdev)
- 
- 	xgene_msi = xgene_msi_ctrl;
- 
--	platform_set_drvdata(pdev, xgene_msi);
--
- 	xgene_msi->msi_regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(xgene_msi->msi_regs)) {
- 		rc = PTR_ERR(xgene_msi->msi_regs);
-@@ -364,48 +364,13 @@ static int xgene_msi_probe(struct platform_device *pdev)
- 		goto error;
- 	}
- 
--	for (int irq_index = 0; irq_index < NR_HW_IRQS; irq_index++) {
--		rc = platform_get_irq(pdev, irq_index);
--		if (rc < 0)
--			goto error;
--
--		xgene_msi->gic_irq[irq_index] = rc;
--	}
--
--	/*
--	 * MSInIRx registers are read-to-clear; before registering
--	 * interrupt handlers, read all of them to clear spurious
--	 * interrupts that may occur before the driver is probed.
--	 */
--	for (int irq_index = 0; irq_index < NR_HW_IRQS; irq_index++) {
--		for (msi_idx = 0; msi_idx < IDX_PER_GROUP; msi_idx++)
--			xgene_msi_ir_read(xgene_msi, irq_index, msi_idx);
--
--		/* Read MSIINTn to confirm */
--		msi_val = xgene_msi_int_read(xgene_msi, irq_index);
--		if (msi_val) {
--			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
--			rc = -EINVAL;
--			goto error;
--		}
--	}
--
--	rc = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "pci/xgene:online",
--			       xgene_msi_hwirq_alloc, NULL);
--	if (rc < 0)
--		goto err_cpuhp;
--	pci_xgene_online = rc;
--	rc = cpuhp_setup_state(CPUHP_PCI_XGENE_DEAD, "pci/xgene:dead", NULL,
--			       xgene_msi_hwirq_free);
-+	rc = xgene_msi_handler_setup(pdev);
- 	if (rc)
--		goto err_cpuhp;
-+		goto error;
- 
- 	dev_info(&pdev->dev, "APM X-Gene PCIe MSI driver loaded\n");
- 
- 	return 0;
--
--err_cpuhp:
--	dev_err(&pdev->dev, "failed to add CPU MSI notifier\n");
- error:
- 	xgene_msi_remove(pdev);
- 	return rc;
+-static struct bmi160_regs bmi160_regs[] = {
++static const struct bmi160_regs bmi160_regs[] = {
+ 	[BMI160_ACCEL] = {
+ 		.data	= BMI160_REG_DATA_ACCEL_XOUT_L,
+ 		.config	= BMI160_REG_ACCEL_CONFIG,
+
+---
+base-commit: 14071b9cf2d751ff9bc8b5e43fa94fbf08aceea1
+change-id: 20250628-iio-const-data-18-b83bdb3e4d05
+
+Best regards,
 -- 
-2.39.2
+David Lechner <dlechner@baylibre.com>
 
 
