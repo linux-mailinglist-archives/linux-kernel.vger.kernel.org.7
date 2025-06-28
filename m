@@ -1,122 +1,111 @@
-Return-Path: <linux-kernel+bounces-707667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C97AEC69C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 13:00:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974DAAEC6A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 13:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5832717C37D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08493BF8C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 11:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7023C24676B;
-	Sat, 28 Jun 2025 10:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZaWk2fyB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA2D241669;
+	Sat, 28 Jun 2025 11:08:32 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858301C6FE1;
-	Sat, 28 Jun 2025 10:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A501A18A6DB
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 11:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751108397; cv=none; b=dIrOs9ZB0hm8Gp95zujZrWiFlOzuVvFcv+MIdC1iq07QPWdvUIhsTOGAliyqH010nk0Iq/N2AFQajlqwKElsbI+BV0RRkTfmYz197IyohYn4Cw8R0BT+w8NbBbVKeqIi5NjM76qgcyi5rlYO7PKli2Rj0FV50TIaOUIbW8FPjx4=
+	t=1751108912; cv=none; b=l7j8DusGC4+1A00ohMpmNKUVOgSY1U8E8BJbk11Xe/7Eke6Yv5fnjzeb3gZBR0P6TXIT04hbuKNoRUvfzfRLLV+rwTadJvAKzuXuykuV0BoZjqbfxXTPnKbxgAp/wHvHSUq1KNTiNG4B9uuTIPP61dBytF3OAC0EVPTYjUUnntc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751108397; c=relaxed/simple;
-	bh=PyS8+QY/Xp3+/7gWrQEE7t6DJx4VoFwvrUEY7A9l/GI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJhVWQxXHYo99cmXF8t0M7OKgtXp0sg3kdSRXvFk5vTdLntzn3qlH/rPCwAs8OJrDol/bucY0s1xQk9+9J1pumePUtA3w/10Yi9DAPTC87GNUKhRXVGiUXeArKiS2jYddlkUuC+B6aURslj7i6sxDkwsTdE0cwHDeeCkmoOrUFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZaWk2fyB; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751108395; x=1782644395;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PyS8+QY/Xp3+/7gWrQEE7t6DJx4VoFwvrUEY7A9l/GI=;
-  b=ZaWk2fyBkeOAE1nNiiSUVUUqSiHgTg86oK+fsRhxKnHwPDlQwASk9Rms
-   JnXfTpJK6n1Oz5VD4csBoXX7crawzKlJjBedv4W4hWu5cmEtNCp2UzlTt
-   BlsWNw/gXyRnAj8CtPbYE78rT0yNpKDb1c5hfRxgpvaNlqZl7e7v89Qj/
-   58QvL7eg7tZ+c7Zlvw7cEdcvJ4RKn4/veBzWvbIm3aoVw+4peW4n1OD7h
-   oaZNFu8xxAwSitc2ppbp7VqVwV8w1EJg9p9rN55FMpSztNeLW9YHMcnZk
-   0PQ0Cna9z8B/ANIhuQ5W4Bykn4BP/AGZIsPYtfsDd7nt31ivik9zbDHzu
-   A==;
-X-CSE-ConnectionGUID: 43P9aotRSZCQ11IvybAtbw==
-X-CSE-MsgGUID: h+ZrgN41S12QaUp5voNOQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11477"; a="57084628"
-X-IronPort-AV: E=Sophos;i="6.16,272,1744095600"; 
-   d="scan'208";a="57084628"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2025 03:59:54 -0700
-X-CSE-ConnectionGUID: Xskm3iphRuGr/JSLtxvKCg==
-X-CSE-MsgGUID: FzYXCsYPR720uxl4LGMD/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,272,1744095600"; 
-   d="scan'208";a="152750678"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 28 Jun 2025 03:59:50 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uVTHf-000Wzi-1z;
-	Sat, 28 Jun 2025 10:59:47 +0000
-Date: Sat, 28 Jun 2025 18:59:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tiffany Yang <ynaffit@google.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	keescook@google.com, kernel-team@android.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH 4/5] binder: Convert binder_alloc selftests to KUnit
-Message-ID: <202506281837.hReNHJjO-lkp@intel.com>
-References: <20250627203748.881022-5-ynaffit@google.com>
+	s=arc-20240116; t=1751108912; c=relaxed/simple;
+	bh=Xk2DNVTvstpTZUvZ143MiQn1hd5pYDSGlzYor6sLCeg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=Wf2+PGVybZHlCk4TMcWJjCZEgWqKblszv0bpbIarP4uRD2fNPH4p6GFVn5kgrVv8vOavPoYKfSFvTGtfrFzuD0pION2ZW0P9P31aVD40evBzsZ6ysGh00d0P9mcPJoTs0wvOLrpXc+Frkjjg2ZrWxkl7fQ9qXMcGKsoGk6mnth0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 55SB3Anu071048;
+	Sat, 28 Jun 2025 20:03:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 55SB3AYK071043
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 28 Jun 2025 20:03:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <3ce1940c-f79e-4cb9-8f5f-d457ee0daa03@I-love.SAKURA.ne.jp>
+Date: Sat, 28 Jun 2025 20:03:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627203748.881022-5-ynaffit@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] brd: fix sleeping memory allocation in brd_insert_page()
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Jens Axboe <axboe@kernel.dk>, Yu Kuai <yukuai3@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, LKML <linux-kernel@vger.kernel.org>
+References: <685ec4c9.a00a0220.129264.000c.GAE@google.com>
+ <11cb9a09-f66c-4c46-bd38-fc6080413c29@I-love.SAKURA.ne.jp>
+ <24a7fc31-c54f-4ef3-a76f-7d844a398720@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <24a7fc31-c54f-4ef3-a76f-7d844a398720@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
 
-Hi Tiffany,
+On 2025/06/28 18:39, Tetsuo Handa wrote:
+> On 2025/06/28 17:36, Tetsuo Handa wrote:
+>> syzbot is reporting that brd_insert_page() is calling
+>> __xa_cmpxchg(__GFP_DIRECT_RECLAIM) with spinlock and RCU lock held.
+> 
+> Hmm. Holding spinlock itself is OK because xa_lock() is a requirement.
+> 
+>> Change __xa_cmpxchg() to use GFP_NOWAIT | __GFP_NOWARN, for it is likely
+>> that __xa_cmpxchg() succeeds because of preceding alloc_page().
+> 
+> Since this gfp flag is for allocating index array, it should use
+> __GFP_DIRECT_RECLAIM if possible. Then, deferring RCU lock if possible
+> makes sense. Then, I wonder what this RCU lock is protecting...
+> 
 
-kernel test robot noticed the following build warnings:
+OK. I assume that the "concurrent discard" in
+https://lkml.kernel.org/20250628011459.832760-1-yukuai1@huaweicloud.com means
+brd_do_discard().
 
-[auto build test WARNING on staging/staging-testing]
-[also build test WARNING on staging/staging-next staging/staging-linus shuah-kselftest/kunit shuah-kselftest/kunit-fixes linus/master v6.16-rc3 next-20250627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Calling rcu_read_lock() from brd_insert_page() before xa_unlock() is called prevents
+__free_page() from brd_free_one_page() from call_rcu() from brd_do_discard(), even if
+the page allocated by alloc_page() and stored into brd->brd_pages by __xa_cmpxchg() is
+removed by __xa_erase() before brd_rw_bvec() calls memcpy_{to,from}_page()/memset();
+allowing brd_rw_bvec() to continue using the page returned by brd_insert_page().
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tiffany-Yang/binder-Fix-selftest-page-indexing/20250628-044044
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20250627203748.881022-5-ynaffit%40google.com
-patch subject: [PATCH 4/5] binder: Convert binder_alloc selftests to KUnit
-config: x86_64-buildonly-randconfig-002-20250628 (https://download.01.org/0day-ci/archive/20250628/202506281837.hReNHJjO-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250628/202506281837.hReNHJjO-lkp@intel.com/reproduce)
+I came to worry one possibility about the above expectation, for I don't know
+details of xarray.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506281837.hReNHJjO-lkp@intel.com/
+__xa_cmpxchg() calls __xa_cmpxchg_raw() with xa_lock already held.
+__xa_cmpxchg_raw() always calls __xas_nomem() with xa_lock already held.
+__xas_nomem() might temporarily release xa_lock for allocating memory if
+__GFP_DIRECT_RECLAIM is specified.
+__xa_cmpxchg_raw() might store "entry" at xas_store() before calling __xas_nomem().
 
-All warnings (new ones prefixed by >>):
+Then, is there a possibility that __xas_nomem() temporarily releases xa_lock for
+allocating memory after__xa_cmpxchg_raw() already called xas_store() ?
+Unless there is a guarantee that __xas_nomem() never releases xa_lock if
+__xa_cmpxchg_raw() called xa_store(), there will be a race window that
+the page allocated by alloc_page() and stored into brd->brd_pages by __xa_cmpxchg() is
+removed by __xa_erase() from brd_do_discard() and __free_page() from brd_free_one_page()
+ from call_rcu() from brd_do_discard() is fired before brd_insert_page() calls rcu_lock()
+immediately after returning from __xa_cmpxchg().
 
->> Warning: drivers/android/tests/binder_alloc_kunit.c:326 function parameter 'test' not described in 'binder_alloc_exhaustive_test'
+Also, what serializes concurrent brd_insert_page(), for when __xas_nomem() temporarily
+released xa_lock for allocating memory, two threads might concurrently call
+kmem_cache_alloc_lru() from __xas_nomem() ?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
