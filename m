@@ -1,53 +1,49 @@
-Return-Path: <linux-kernel+bounces-707657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F212FAEC687
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:15:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723D8AEC694
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B9D1BC4658
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C950A160AF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C9421323C;
-	Sat, 28 Jun 2025 10:15:42 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ECB3FF1;
-	Sat, 28 Jun 2025 10:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FD923F28B;
+	Sat, 28 Jun 2025 10:37:56 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8598523313E
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 10:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751105742; cv=none; b=ZGtEe8dQ2wYNKCWP0N+e3liexwaZln7Ypob6uViyGIKLZFdv5H+cW5iYwq7sUQGdXb1SYU4wnzNPnfe/Yh4jJLJCyrpMwp8UMQ6okAfmO0N47mFzYvu+8Pj4V/OVJes7aUoFcfuJ96Jw3qUMRd7WxqwT/nmOIFxj4ExSKEwExW0=
+	t=1751107076; cv=none; b=OyWI68j8XI1M7gDi1+P/lM481jlPFTS0OJi0XxWhdEYOdebObgRW1oMUR6SYX1Wnl4f4moB3/E2WzUEvIqZXrWQJjSmSnlEBSupZBAE6v7BPjVDg4ACbeol9zeH7so3o8OSg/+SHmoSIQIpdj20aahNLa7C2tMt+q6c3qD4xEnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751105742; c=relaxed/simple;
-	bh=J8w/juXGG9OioioHoAEYgFk5ki+vMhrSRZM2leBodM0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WDzN1qX3PUPkKv5J9FAu3GhBR4aNjK1Tsw3IDc2ZkjCml02zDWoTcwmAq52NaYlMNJAiO9mmIqP94J0dBR9kOx5/CMbcOicc/Hi1oU58aSeqlFXBUCok28uOoQy7PwbKU4JSDBcoth2H/+5qMXzczUw+F5PJ2vIwAFRsILSi2eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bTpDL4JWqz2TRxF;
-	Sat, 28 Jun 2025 18:13:54 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id C76001401F0;
-	Sat, 28 Jun 2025 18:15:35 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 28 Jun
- 2025 18:15:34 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <pablo@netfilter.org>, <kadlec@netfilter.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>, <fw@strlen.de>
-CC: <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net-next] netfilter: conntrack: Remove unused net in nf_conntrack_double_lock()
-Date: Sat, 28 Jun 2025 18:32:40 +0800
-Message-ID: <20250628103240.211386-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751107076; c=relaxed/simple;
+	bh=lcdY5/4igis1D06o50sZUMdu2ySz2CbfqGSKDk9HFPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h7X39TyO+pOYq94NLz4lYruPcFRVJDQ0+ajeMNXZ4XEjtO4jmD2EgVM8l+HQXOflKaTsT97KkQs0K6k/cANfHPIfXXxLdHmG8usHPExNhgLp02JvLw8587qmAW5HXQ6g1GryJHvc0yoNrPTpm0Kyy98wzd7rdllCmdOsJhZCof8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.149])
+	by gateway (Coremail) with SMTP id _____8AxGHH2xV9oJt0eAQ--.5478S3;
+	Sat, 28 Jun 2025 18:37:42 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.149])
+	by front1 (Coremail) with SMTP id qMiowJCxrsPsxV9oHkQBAA--.706S2;
+	Sat, 28 Jun 2025 18:37:41 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch fixes for v6.16-rc4
+Date: Sat, 28 Jun 2025 18:37:19 +0800
+Message-ID: <20250628103719.3741195-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,61 +51,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-CM-TRANSID:qMiowJCxrsPsxV9oHkQBAA--.706S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxCF48KF4xWr43uFy3Kr4rJFc_yoWrJFWUpF
+	9xCrn7GF4rGr93Arnrt3s8ur1DJr1xCw1aq3Wa9ry8CF4avw1UZr1ktrykXFyUtayrJry0
+	gF1rGws0qF48JwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
+	1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_
+	JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
+	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
+	I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
+	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jepB-UUUUU=
 
-Since commit a3efd81205b1 ("netfilter: conntrack: move generation
-seqcnt out of netns_ct") this param is unused.
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- net/netfilter/nf_conntrack_core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
 
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 201d3c4ec623..d80f68e06177 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -136,8 +136,8 @@ static void nf_conntrack_double_unlock(unsigned int h1, unsigned int h2)
- }
- 
- /* return true if we need to recompute hashes (in case hash table was resized) */
--static bool nf_conntrack_double_lock(struct net *net, unsigned int h1,
--				     unsigned int h2, unsigned int sequence)
-+static bool nf_conntrack_double_lock(unsigned int h1, unsigned int h2,
-+				     unsigned int sequence)
- {
- 	h1 %= CONNTRACK_LOCKS;
- 	h2 %= CONNTRACK_LOCKS;
-@@ -616,7 +616,7 @@ static void __nf_ct_delete_from_lists(struct nf_conn *ct)
- 		reply_hash = hash_conntrack(net,
- 					   &ct->tuplehash[IP_CT_DIR_REPLY].tuple,
- 					   nf_ct_zone_id(nf_ct_zone(ct), IP_CT_DIR_REPLY));
--	} while (nf_conntrack_double_lock(net, hash, reply_hash, sequence));
-+	} while (nf_conntrack_double_lock(hash, reply_hash, sequence));
- 
- 	clean_from_lists(ct);
- 	nf_conntrack_double_unlock(hash, reply_hash);
-@@ -893,7 +893,7 @@ nf_conntrack_hash_check_insert(struct nf_conn *ct)
- 		reply_hash = hash_conntrack(net,
- 					   &ct->tuplehash[IP_CT_DIR_REPLY].tuple,
- 					   nf_ct_zone_id(nf_ct_zone(ct), IP_CT_DIR_REPLY));
--	} while (nf_conntrack_double_lock(net, hash, reply_hash, sequence));
-+	} while (nf_conntrack_double_lock(hash, reply_hash, sequence));
- 
- 	max_chainlen = MIN_CHAINLEN + get_random_u32_below(MAX_CHAINLEN);
- 
-@@ -1231,7 +1231,7 @@ __nf_conntrack_confirm(struct sk_buff *skb)
- 		reply_hash = hash_conntrack(net,
- 					   &ct->tuplehash[IP_CT_DIR_REPLY].tuple,
- 					   nf_ct_zone_id(nf_ct_zone(ct), IP_CT_DIR_REPLY));
--	} while (nf_conntrack_double_lock(net, hash, reply_hash, sequence));
-+	} while (nf_conntrack_double_lock(hash, reply_hash, sequence));
- 
- 	/* We're not in hash table, and we refuse to set up related
- 	 * connections for unconfirmed conns.  But packet copies and
--- 
-2.34.1
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.16-1
+
+for you to fetch changes up to 955853cf83657faa58572ef3f08b44f0f88885c1:
+
+  LoongArch: KVM: Disable updating of "num_cpu" and "feature" (2025-06-27 18:27:44 +0800)
+
+----------------------------------------------------------------
+LoongArch fixes for v6.16-rc4
+
+Replace __ASSEMBLY__ with __ASSEMBLER__ in headers like others, fix
+build warnings about export.h, reserve the EFI memory map region for
+kdump, handle __init vs inline mismatches, and fix some bugs about KVM.
+----------------------------------------------------------------
+Bibo Mao (6):
+      LoongArch: KVM: Avoid overflow with array index
+      LoongArch: KVM: Add address alignment check for IOCSR emulation
+      LoongArch: KVM: Fix interrupt route update with EIOINTC
+      LoongArch: KVM: Check interrupt route from physical CPU
+      LoongArch: KVM: Check validity of "num_cpu" from user space
+      LoongArch: KVM: Disable updating of "num_cpu" and "feature"
+
+Huacai Chen (1):
+      LoongArch: Fix build warnings about export.h
+
+Kees Cook (1):
+      LoongArch: Handle KCOV __init vs inline mismatches
+
+Ming Wang (1):
+      LoongArch: Reserve the EFI memory map region
+
+Thomas Huth (1):
+      LoongArch: Replace __ASSEMBLY__ with __ASSEMBLER__ in headers
+
+ arch/loongarch/include/asm/addrspace.h         |  8 +--
+ arch/loongarch/include/asm/alternative-asm.h   |  4 +-
+ arch/loongarch/include/asm/alternative.h       |  4 +-
+ arch/loongarch/include/asm/asm-extable.h       |  6 +-
+ arch/loongarch/include/asm/asm.h               |  8 +--
+ arch/loongarch/include/asm/cpu.h               |  4 +-
+ arch/loongarch/include/asm/ftrace.h            |  4 +-
+ arch/loongarch/include/asm/gpr-num.h           |  6 +-
+ arch/loongarch/include/asm/irqflags.h          |  4 +-
+ arch/loongarch/include/asm/jump_label.h        |  4 +-
+ arch/loongarch/include/asm/kasan.h             |  2 +-
+ arch/loongarch/include/asm/loongarch.h         | 16 ++---
+ arch/loongarch/include/asm/orc_types.h         |  4 +-
+ arch/loongarch/include/asm/page.h              |  4 +-
+ arch/loongarch/include/asm/pgtable-bits.h      |  4 +-
+ arch/loongarch/include/asm/pgtable.h           |  4 +-
+ arch/loongarch/include/asm/prefetch.h          |  2 +-
+ arch/loongarch/include/asm/smp.h               |  2 +-
+ arch/loongarch/include/asm/thread_info.h       |  4 +-
+ arch/loongarch/include/asm/types.h             |  2 +-
+ arch/loongarch/include/asm/unwind_hints.h      |  6 +-
+ arch/loongarch/include/asm/vdso/arch_data.h    |  4 +-
+ arch/loongarch/include/asm/vdso/getrandom.h    |  4 +-
+ arch/loongarch/include/asm/vdso/gettimeofday.h |  4 +-
+ arch/loongarch/include/asm/vdso/processor.h    |  4 +-
+ arch/loongarch/include/asm/vdso/vdso.h         |  4 +-
+ arch/loongarch/include/asm/vdso/vsyscall.h     |  4 +-
+ arch/loongarch/kernel/acpi.c                   |  1 +
+ arch/loongarch/kernel/alternative.c            |  1 +
+ arch/loongarch/kernel/efi.c                    | 12 ++++
+ arch/loongarch/kernel/elf.c                    |  1 -
+ arch/loongarch/kernel/kfpu.c                   |  1 +
+ arch/loongarch/kernel/paravirt.c               |  1 -
+ arch/loongarch/kernel/time.c                   |  2 +-
+ arch/loongarch/kernel/traps.c                  |  1 +
+ arch/loongarch/kernel/unwind_guess.c           |  1 +
+ arch/loongarch/kernel/unwind_orc.c             |  3 +-
+ arch/loongarch/kernel/unwind_prologue.c        |  1 +
+ arch/loongarch/kvm/intc/eiointc.c              | 89 ++++++++++++++++++--------
+ arch/loongarch/lib/crc32-loongarch.c           |  1 +
+ arch/loongarch/lib/csum.c                      |  1 +
+ arch/loongarch/mm/ioremap.c                    |  4 +-
+ arch/loongarch/pci/pci.c                       |  1 -
+ tools/arch/loongarch/include/asm/orc_types.h   |  4 +-
+ 44 files changed, 151 insertions(+), 100 deletions(-)
 
 
