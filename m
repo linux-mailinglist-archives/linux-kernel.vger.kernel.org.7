@@ -1,85 +1,165 @@
-Return-Path: <linux-kernel+bounces-707814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E990AEC837
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:19:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B90AEC83B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8614F1BC1914
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 15:19:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4DED7A99E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 15:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C923F21578D;
-	Sat, 28 Jun 2025 15:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F97821578D;
+	Sat, 28 Jun 2025 15:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IobvHAqC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnEUKwJ1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF811EB5FD;
-	Sat, 28 Jun 2025 15:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BC81EB5FD;
+	Sat, 28 Jun 2025 15:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751123972; cv=none; b=RsZMWtqSA5UDYkw22Tw2wudv0uvyXWOJWkKSebQoIDcfrthOYPkW0tRrWgiN18/uVzNBImTqNstr7//WvtWXV/uTROT5UrqNxAg3NMW1wBWSbm893T/aRC+t1klYo/qoH27di3ftv74/pmMSMrxcnV2oeDquJdwTIwfjVAky1qY=
+	t=1751124031; cv=none; b=mXlJrGq/lQkhu1LlSQam4Wb5BlPqe5yqCk8CLOH/19LqeaFictMBiVSLyWB6uppROXqPDxBl0BkDz9bw3yHtG2gcm6+kdOoAuLVSas4EHWQBa/Q/5VOJp3ie0Am3DPnXmE/ck74deRsn8SBbVvjHYdWaV4HKWVlvkCAu6CzGL74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751123972; c=relaxed/simple;
-	bh=28A4LzZ1ADitqkdYC96JZDl7N7FuMJi/0wQBrq1MmUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDMyHo9GVLiP5aVxFLbHeXRYGTVtKcZVnp5rJCQEH9FZvMH+kgaSbWiCZOpePpDrCgT6AGVfdfUt2HYpBmkMJAK98+dKuP01AKOPEw0qZdM8a+IjcuZJovFUFU0JXTSe/IxIWNHsl2NqiJ82JYAtvs3HLObIKZ+/DNTM7LiwIt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IobvHAqC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F81C4CEEA;
-	Sat, 28 Jun 2025 15:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751123971;
-	bh=28A4LzZ1ADitqkdYC96JZDl7N7FuMJi/0wQBrq1MmUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IobvHAqCz5TUEJvdrKM4DH+Qs+fEQ3eLA+LgykHAb8yRVOVx3Ig3GQZl1qhKHBAkk
-	 ZkkCQpRYGy7G89EWNrNSmmVBvsmZilmYKnPdwQWey9VMfVCiq0uTV6OuFhcbg1FJ/4
-	 DU155WcbYhMPPtOl4bL/GBFmfR0yNqAbd8V2Fe3s=
-Date: Sat, 28 Jun 2025 17:19:29 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: SCHNEIDER Johannes <johannes.schneider@leica-geosystems.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] usb: dwc3: gadget: Fix TRB reclaim logic for short
- transfers and ZLPs
-Message-ID: <2025062818-existing-skies-6337@gregkh>
-References: <20250621-dwc3-fix-gadget-mtp-v1-0-a45e6def71bb@leica-geosystems.com>
- <20250621-dwc3-fix-gadget-mtp-v1-1-a45e6def71bb@leica-geosystems.com>
- <AM8PR06MB7521A29A8863C838B54987B6BC7BA@AM8PR06MB7521.eurprd06.prod.outlook.com>
+	s=arc-20240116; t=1751124031; c=relaxed/simple;
+	bh=/mrdRj2so+n3NyWX7vqnHYBbVjK7lHkTasMH9XQNnkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UKYGM61DXmsQadt69f1hRB+E4EtdyZUcvYAFKRJpwrbZ1k7CiPE30GpaLv5Kwoeo0HsoyNflCI0qHz/Euf6Dy6ob2NFEIsqJ/uj9AQgIjZl09/qqU20aXaXQWbBca1QuoUP3T2zd7dTmNa7Zf2b/lJV8mbuV71DV59+V7Mq3mjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnEUKwJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41E4C4CEEA;
+	Sat, 28 Jun 2025 15:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751124031;
+	bh=/mrdRj2so+n3NyWX7vqnHYBbVjK7lHkTasMH9XQNnkc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MnEUKwJ13QIqlt2CA+BhCxuZUnMoo/DxIXwckeRgTd+aVbIJPdThsikMCJimk6OJN
+	 sEL+tAv4ZfJEsSvh/ZgmtnvKbjDLGX7AufWy8v1LQ2Vp0SgxP30UUtbMCACBz/Bbww
+	 zddteANFV7U0islVgXkPuYbDtdLsW8AMpfxq3htMhbHZn/1tdWNN3U5NRnN3Jpau7d
+	 Kbbh83bh/4IRVWlcu2GLAzKalG4AC6f2/L65UMfdWoS4DrndjYd/qzpsZIlkD2SwrN
+	 bqCoCOyxgDi6V2kem5v4GAkXASl+zOVMSRHLE2hLzeoNtUZW1fPfkITKro7K3MGfb0
+	 GKOeSKrtj2xnA==
+Date: Sat, 28 Jun 2025 16:20:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ jmaneyrol@invensense.com, ~lkcamp/patches@lists.sr.ht,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Baptiste
+ Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+Subject: Re: [PATCH] dt-bindings: iio: pressure: invensense,icp101xx: add
+ binding
+Message-ID: <20250628162024.5316e66e@jic23-huawei>
+In-Reply-To: <20250626212742.7986-1-rodrigo.gobbi.7@gmail.com>
+References: <20250626212742.7986-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM8PR06MB7521A29A8863C838B54987B6BC7BA@AM8PR06MB7521.eurprd06.prod.outlook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 25, 2025 at 07:49:16AM +0000, SCHNEIDER Johannes wrote:
-> Commit 96c7bf8f6b3e ("usb: dwc3: gadget: Cleanup SG handling") updated
-> the TRB reclaim path to use the TRB CHN (Chain) bit to determine whether
-> a TRB was part of a chain. However, this inadvertently changed the
-> behavior of reclaiming the final TRB in some scatter-gather or short
-> transfer cases.
-> 
-> In particular, if the final TRB did not have the CHN bit set, the
-> cleanup path could incorrectly skip clearing the HWO (Hardware Own)
-> bit, leaving stale TRBs in the ring. This resulted in broken data
-> transfer completions in userspace, notably for MTP over FunctionFS.
-> 
-> Fix this by unconditionally clearing the HWO bit during TRB reclaim,
-> regardless of the CHN bit state. This restores correct behavior
-> especially for transfers that require ZLPs or end on non-CHN TRBs.
-> 
-> Fixes 61440628a4ff ("usb: dwc3: gadget: Cleanup SG handling")
+On Thu, 26 Jun 2025 18:12:25 -0300
+Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com> wrote:
 
-Forgot the ":" here :(
+> There is no txt file for it, add yaml for invensense,icp101xx family
+> which is already used in the driver.
 
-I've fixed it up...
+Don't mention binding in patch title. The dt-bindings prefix makes that obvious.
+
+> 
+> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+> ---
+> Very simple yaml for a i2c device with psu. The pin out for the rest of
+> the family (the other PNs) doesn`t change anything here, since the diff
+> were RESV pins (unused).
+> 
+> This yaml file falls in the same `category` as others that I`ve submitted, the
+> driver author, which might be still interested at this hardware, is no long contributing
+> (at least for what I`ve looked). Also, it`s email is still "at invensense", not "at tdk", either
+> way I`ll ping him here due the mention at the "maintainers" field:
+
+Try a search for their name in recent mails to the list.  +CC Jean-Baptiste at new TDK address.
+People don't always remember to send a mailmap update when their company email
+changes, particularly if it is due to an acquisition.
+
+Jean-Baptiste has been active in the last week so not hard to find!
+
+> 
+> Dear @Jean-Baptiste Maneyrol, I`ve noticed that since the driver was added,
+> there was no binding doc for it and this is what this patch is addressing.
+> In this case, a maintainer ref is required inside the .yaml file and I would
+> like to ask if I can add you in this case.
+> I would appreciate your comment or suggestion over this topic.
+> 
+> Tks all and regards.
+> ---
+>  .../iio/pressure/invensense,icp101xx.yaml     | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml b/Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml
+> new file mode 100644
+> index 000000000000..439f8aaafbd2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/pressure/invensense,icp101xx.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/pressure/invensense,icp101xx.yaml#
+
+No wild cards in file names please.  Just pick a device to name the binding
+after.  Wild cards have an annoying habit of getting messed up by companies
+releasing completely non compatible parts in the middle of what we thought
+was a reserved number range.
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: InvenSense ICP-101xx Barometric Pressure Sensors
+> +
+> +maintainers:
+> +  - Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>
+
+I'd assume switch to the TDK address +CC but I'll need an Ack or RB from Jean-Baptiste.
+
+> +
+> +description: |
+> +  Support for ICP-101xx family: ICP-10100, ICP-10101, ICP-10110, ICP-10111.
+> +  Those devices uses a simple I2C communication bus, measuring the pressure
+> +  in a ultra-low noise at the lowest power.
+> +  Datasheet: https://product.tdk.com/system/files/dam/doc/product/sensor/pressure/capacitive-pressure/data_sheet/ds-000186-icp-101xx.pdf
+> +
+> +properties:
+> +  compatible:
+> +    const: invensense,icp10100
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        pressure@63 {
+> +            compatible = "invensense,icp10100";
+> +            reg = <0x63>;
+> +            vdd-supply = <&vdd_1v8>;
+> +        };
+> +    };
+> +...
+
 
