@@ -1,160 +1,93 @@
-Return-Path: <linux-kernel+bounces-707801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4C4AEC80C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D88FAEC817
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452291BC02F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 15:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93AD817A603
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 15:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CCE2522B6;
-	Sat, 28 Jun 2025 15:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671512356B9;
+	Sat, 28 Jun 2025 15:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UgNQjIlY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcP8qKBl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505411FBE80;
-	Sat, 28 Jun 2025 15:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AA414883F;
+	Sat, 28 Jun 2025 15:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751122802; cv=none; b=cgMhwbF5zuCviao5MBLGHYSHwaDv/HRdT8dX+1Xdxbsz6UUKzG7sOnajF0ettec9pMDg1bjL7x2Imq2MFVOVP/ITcZ5SlxTwKlm76kQBcjnzKZHzQurjrRERpOjLLnMk8vCMBtIkNII2OIHItYsGGVSRpBtqoCw1ID8sErlgs1M=
+	t=1751122989; cv=none; b=eRIfeDmoD3pAiJ3FJuN9NVgGCCKXXN3W3oY3EKajYlqAl5Fgx+kyUbk6MKTrlgH1vGsIvjI5JLDkojYm58zdH+PPCcRRYLCik3dh8F/qzHNoL0SmaytK7hdxoVQ/cHyNpcTMrRHPMv9Ll7hoaioPU5bJLfTRa1HNyR+r73hDzjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751122802; c=relaxed/simple;
-	bh=/nORueu+E/VVO56WfdHAYQMg0q9l9q7SiKKNWkhQly4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ai9BOPRUpvDn+Gmn8CtMWXbjBLs4DH4jur1YrDXsagIbjEMRS9UhUy0GDriNLSTJJCFosRJEmlrfvtCgEqAmcuDnjJupnNRqaxmLweCHZwdV495ab4qLbKMgdjZW2bdsv/fwq/xzdz8y02T7kTZT9Qxfp0zxgTl/debz6CmsqlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UgNQjIlY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174D8C4CEEA;
-	Sat, 28 Jun 2025 15:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751122801;
-	bh=/nORueu+E/VVO56WfdHAYQMg0q9l9q7SiKKNWkhQly4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UgNQjIlYmHLD6XG6SaVW4pdP+XeAJpiD/c3JxhB5Y/ACLEfwgeFk2IJLPQRVBFs3j
-	 oEhxcWRex8TYuDDhZNoYRJNq5/G5A6ZW1vdghMS1GhxegSOuyIzgOACMFaMprcqj7J
-	 krdSA9YXrE7CAbA4lSwNZZYn1p6FTP+MeVrmr87o=
-Date: Sat, 28 Jun 2025 16:59:58 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Akash Kumar <quic_akakum@quicinc.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Felipe Balbi <balbi@kernel.org>, Jack Pham <quic_jackp@quicinc.com>,
-	kernel@quicinc.com, Wesley Cheng <quic_wcheng@quicinc.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: uvc: Initialize color matching descriptors
- for frame-based
-Message-ID: <2025062812-surging-defiant-934c@gregkh>
-References: <20250625101639.19788-1-quic_akakum@quicinc.com>
+	s=arc-20240116; t=1751122989; c=relaxed/simple;
+	bh=49Z90gaj+g5BDJ6o8+zUrcbyGbY6NcvXSKTAvmPRkiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P09vnBSCukhoFgvkVs//mbRYiySqzCrmvLECQAIljFyuQwl3ZJ+r3AWLNR0A7vPb8+P+suULivwa68W00h2oK52fvl5PhcrzC+whGChbk0arSN/kImwZh1k8hSF+rqj/hbtZIhfwwgoYos0DrcU9LgyToULMv5M89H7ouAg628I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcP8qKBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E72C2C4CEEA;
+	Sat, 28 Jun 2025 15:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751122989;
+	bh=49Z90gaj+g5BDJ6o8+zUrcbyGbY6NcvXSKTAvmPRkiU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TcP8qKBl0QN9xukw1rAnIRDLNNKa08EYv3r9OeAvlreUGTNcj8L5gZ5GztLklB3/y
+	 4xkZY7kuMgmc4iWkWCOH+wOtrJCWqx5LjObu00tUa74SIO1UU7ae9p0SQ8a3cY1GDX
+	 +XRFS9O6C2+/JwoEpTvcdmmRsjqECYJ04n3gjNiVCj6qN3AgxEYE2E03AkGGFYd8r7
+	 RjF1LFrQPMrO9xAuKxKb/PhM1PkFYaO3HQvxpQkPf73b2+RAk1isItPhd6vjz0V0Yr
+	 xHZaR4iwdpkS7SysWGdcF6QYtUdNMEhMIcBnv51s03SFBFxQFceEfarrd799cGNbkh
+	 pRliBM9dLbAkA==
+Date: Sat, 28 Jun 2025 16:02:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] spi: offload trigger: add ADI Util Sigma-Delta
+ SPI driver
+Message-ID: <20250628160259.6f220dfd@jic23-huawei>
+In-Reply-To: <20250627-iio-adc-ad7173-add-spi-offload-support-v2-9-f49c55599113@baylibre.com>
+References: <20250627-iio-adc-ad7173-add-spi-offload-support-v2-0-f49c55599113@baylibre.com>
+	<20250627-iio-adc-ad7173-add-spi-offload-support-v2-9-f49c55599113@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625101639.19788-1-quic_akakum@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 25, 2025 at 03:46:39PM +0530, Akash Kumar wrote:
-> Fix NULL pointer crash in uvcg_framebased_make due to uninitialize
-> color matching descriptor for frame-based format.
+On Fri, 27 Jun 2025 18:40:05 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> Add a new driver for the ADI Util Sigma-Delta SPI FPGA IP core.
 > 
-> [    2.771141][  T486] pc : __uvcg_fill_strm+0x198/0x2cc
-> [    2.771145][  T486] lr : __uvcg_iter_strm_cls+0xc8/0x17c
-> [    2.771146][  T486] sp : ffffffc08140bbb0
-> [    2.771146][  T486] x29: ffffffc08140bbb0 x28: ffffff803bc81380 x27: ffffff8023bbd250
-> [    2.771147][  T486] x26: ffffff8023bbd250 x25: ffffff803c361348 x24: ffffff803d8e6768
-> [    2.771148][  T486] x23: 0000000000000004 x22: 0000000000000003 x21: ffffffc08140bc48
-> [    2.771149][  T486] x20: 0000000000000000 x19: ffffffc08140bc48 x18: ffffffe9f8cf4a00
-> [    2.771150][  T486] x17: 000000001bf64ec3 x16: 000000001bf64ec3 x15: ffffff8023bbd250
-> [    2.771151][  T486] x14: 000000000000000f x13: 004c4b40000f4240 x12: 000a2c2a00051615
-> [    2.771152][  T486] x11: 000000000000004f x10: ffffffe9f76b40ec x9 : ffffffe9f7e389d0
-> [    2.771153][  T486] x8 : ffffff803d0d31ce x7 : 000f4240000a2c2a x6 : 0005161500028b0a
-> [    2.771154][  T486] x5 : ffffff803d0d31ce x4 : 0000000000000003 x3 : 0000000000000000
-> [    2.771155][  T486] x2 : ffffffc08140bc50 x1 : ffffffc08140bc48 x0 : 0000000000000000
-> [    2.771156][  T486] Call trace:
-> [    2.771157][  T486]  __uvcg_fill_strm+0x198/0x2cc
-> [    2.771157][  T486]  __uvcg_iter_strm_cls+0xc8/0x17c
-> [    2.771158][  T486]  uvcg_streaming_class_allow_link+0x240/0x290
-> [    2.771159][  T486]  configfs_symlink+0x1f8/0x630
-> [    2.771161][  T486]  vfs_symlink+0x114/0x1a0
-> [    2.771163][  T486]  do_symlinkat+0x94/0x28c
-> [    2.771164][  T486]  __arm64_sys_symlinkat+0x54/0x70
-> [    2.771164][  T486]  invoke_syscall+0x58/0x114
-> [    2.771166][  T486]  el0_svc_common+0x80/0xe0
-> [    2.771168][  T486]  do_el0_svc+0x1c/0x28
-> [    2.771169][  T486]  el0_svc+0x3c/0x70
-> [    2.771172][  T486]  el0t_64_sync_handler+0x68/0xbc
-> [    2.771173][  T486]  el0t_64_sync+0x1a8/0x1ac
-
-What is "[  T486]"?
-
-And where did the beginning of the crash report go?
-
-> Initialize color matching descriptor for frame-based format to prevent
-> NULL pointer crash.
-> This fix prevents a NULL pointer crash in uvcg_framebased_make due to
-> an uninitialized color matching descriptor.
-
-What causes an unitialized color matching descriptor to happen?  Do we
-have that in the kernel today?  Or is this userspace controlled?
-Hardware controlled?
-
+> This is used to trigger a SPI offload based on a RDY signal from an ADC
+> while masking out other signals on the same line.
 > 
-> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Hi David, Mark,
 
-What git id does this fix?
+This looks fine to me and I'm not immediately spotting any
+build requirements to mean this (and binding in previous patch)
+need to go through IIO with the rest of the series? Shall I leave
+this for Mark to pick up through the SPI tree if he is happy with it?
 
-> ---
->  drivers/usb/gadget/function/uvc_configfs.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/function/uvc_configfs.c b/drivers/usb/gadget/function/uvc_configfs.c
-> index f131943254a4..a4a2d3dcb0d6 100644
-> --- a/drivers/usb/gadget/function/uvc_configfs.c
-> +++ b/drivers/usb/gadget/function/uvc_configfs.c
-> @@ -2916,8 +2916,15 @@ static struct config_group *uvcg_framebased_make(struct config_group *group,
->  		'H',  '2',  '6',  '4', 0x00, 0x00, 0x10, 0x00,
->  		0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71
->  	};
-> +	struct uvcg_color_matching *color_match;
-> +	struct config_item *streaming;
->  	struct uvcg_framebased *h;
->  
-> +	streaming = group->cg_item.ci_parent;
-> +	color_match = uvcg_format_get_default_color_match(streaming);
-> +	if (!color_match)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	h = kzalloc(sizeof(*h), GFP_KERNEL);
->  	if (!h)
->  		return ERR_PTR(-ENOMEM);
-> @@ -2936,6 +2943,9 @@ static struct config_group *uvcg_framebased_make(struct config_group *group,
->  
->  	INIT_LIST_HEAD(&h->fmt.frames);
->  	h->fmt.type = UVCG_FRAMEBASED;
-> +
-> +	h->fmt.color_matching = color_match;
-> +	color_match->refcnt++;
+I'm happy with the rest of the series, but won't pick it up for
+a little while to give Andy (+ anyone else who wishes to) time to
+take a look at v2.
 
-reference counts are almost never done "by hand" like this, are you sure
-this is right?  I don't see the lock being held that is used when
-reading/writing this value elsewhere in the driver, why is this safe
-here?
+Thanks,
 
-And shouldn't the changelog text be something like "mirror what we do in
-the uncompressed mode?"  Or the other modes?  Why is this one the only
-one that does not have this check in it today, was it just forgotten or
-was it intentional?
+Jonathan
 
-thanks,
 
-greg k-h
 
