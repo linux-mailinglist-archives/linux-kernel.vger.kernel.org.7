@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-707426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8E9AEC3C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:22:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48000AEC3C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 03:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47CF17F0F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597331C44391
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 01:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1582F1D5CC7;
-	Sat, 28 Jun 2025 01:22:00 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF8E1514F6;
+	Sat, 28 Jun 2025 01:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCBSmpB0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0740C125D6;
-	Sat, 28 Jun 2025 01:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FF4F9CB;
+	Sat, 28 Jun 2025 01:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751073719; cv=none; b=nWDGDsvEEY25nJ71oZy7vlVPwAEdTeM/J96kW0QrSa1gFrZBezK750RXb/0YnG5eeaODyq7LbBN/Pl17KcCAnM/lXUgCSyjwLHgi+piDzMvnatIp3sJGJ2bA32/ShVK2lLiczcN8qztQGGBipEhTW00QjH0mFwusw2tzXc1K948=
+	t=1751073516; cv=none; b=cxKgXSZ3zSpAfvKrARxPmHbTuDiYObulScPOhcm7I2kN13pphz5FWF5AjteXBvUnr5jGlKsAtNl2EbvssQUPaNicwe52GcMdIvHJTa39HngP5Y0p7K3CXhS3cALlmBFGrR7KJxN/tCxkRzL0uPYdeirrcG5VKNTougd/0ae3x78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751073719; c=relaxed/simple;
-	bh=9iEULhb/XPU3L5BGh2VZhi02qzir0c9hgvK+zpaAsL8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=K+tx+xjWog+wk7MeRSeVVmKTz9yo0XnSaNI2r8P0H17gSBA6bikN1Qsbzi5v2u/C9hFCbPhzM+DcZzkai5B7gTaVqUfLt+XwIZ8T+wbB6g+46lXpy8TPtOOmqRmgH2/LAusFWNQB/yHQtuBzC5E+pBHBCCWJYqcryWdRyfuY2vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bTZQX16VpzKHLwM;
-	Sat, 28 Jun 2025 09:21:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8654C1A0B1A;
-	Sat, 28 Jun 2025 09:21:54 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBXu1+wQ19oAwx+Qw--.4287S5;
-	Sat, 28 Jun 2025 09:21:54 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	hch@lst.de
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] brd: fix leeping function called from invalid context in brd_insert_page()
-Date: Sat, 28 Jun 2025 09:14:59 +0800
-Message-Id: <20250628011459.832760-2-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250628011459.832760-1-yukuai1@huaweicloud.com>
-References: <20250628011459.832760-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1751073516; c=relaxed/simple;
+	bh=XBp2nVw7oLlR80SnXP5dJ44WwJwGF1aZnFfOGqWqA7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOZVUpg16Nnt1wE2sZg73sloyzDZrdXUST9+hkDkcNhOKw6Lrv5hnb3IbZX0uXN+hdcUb4AsmoriWv0VT2UwtIKoJ1TOPV4dPkOgsnaAHMs7d1BaczFmJA4cv3aFULB0N7M/zbqcDIstH0PG6x5b+7rYm/iTpF6bvIgi7GkgZZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCBSmpB0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E20C4CEE3;
+	Sat, 28 Jun 2025 01:18:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751073516;
+	bh=XBp2nVw7oLlR80SnXP5dJ44WwJwGF1aZnFfOGqWqA7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FCBSmpB0dhuUEeX13/kVmI3Tg7oMoVEDoafu2xaEJ5WQ08XRfXz9lGmHR2P2t+wVj
+	 1jPUA+3wxNUE8grrY7oDbrGihyXerpEIS7ciW1TTPxudzlMO7Mq9M4anug1PK9bFRu
+	 00lPvXjOLsSfkSiDNl86T2h9yfm5qW5hke3Nu49YTuPr495rpy2dmXwISoMKN/g20j
+	 lWhouimJiy9WZ0P2GBqA6dI06yxMyK3xncT3XK7wDW0ak78wX66IdaSgOpQYnxZzqQ
+	 TFtHQebnurs934Vv+L8PMhWtgRd9gWTQZ78mxG5uRmqanPTaWoASlW2rFg3MvY2egm
+	 MTxd35uCpgQAQ==
+Date: Sat, 28 Jun 2025 01:18:34 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Crypto library fix for v6.16-rc4
+Message-ID: <20250628011834.GA1246405@google.com>
+References: <20250627181428.GA1234@sol>
+ <CAHk-=wiT=UUcgCVVo5ui_2Xb9fdg4JrPK=ZqpPxDhCgq9vynDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXu1+wQ19oAwx+Qw--.4287S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW5XFW7JFyUGr17WryfZwb_yoW8Gr4DpF
-	ZF9Fy5Cry5CF42v3W7Z3WDCF1rGa95WayIka45Zw4F9rW3Ar9I934Ik34aq3W5GrW7AFs8
-	ZFs8tw1kAFWUAa7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBG14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
-	x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVW8ZVWrXw
-	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
-	6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64
-	vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0x
-	vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRdManUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiT=UUcgCVVo5ui_2Xb9fdg4JrPK=ZqpPxDhCgq9vynDg@mail.gmail.com>
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Fri, Jun 27, 2025 at 05:54:05PM -0700, Linus Torvalds wrote:
+> On Fri, 27 Jun 2025 at 11:15, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > Fix a regression where the purgatory code sometimes fails to build.
+> 
+> Hmm. This is obviously a fine and simple fix, but at the same time it
+> smells to me that the underlying problem here is  that the purgatory
+> code is just too damn fragile, and is being very incestuous with the
+> sha2 code.
+> 
+> The purgatory code tends to be really special in so many other ways
+> too (if you care, just look at how it plays games with compiler flags
+> because it also doesn't want tracing code etc).
+> 
+> And when it comes to the crypto code, it plays games with just
+> re-building the sha256.c file inside the purgatory directory, and is
+> just generallyt being pretty hacky.
+> 
+> Anyway, I've pulled this because as long as it fixes the issue and you
+> are ok with dealing with this crazy code I think it's all good.
+> 
+> But I also get the feeling that this should be very much seen as a
+> purgatory code problem, not a crypto library problem.
+> 
+> We seem to have the same hacks for risc-v, s390 and x86, and I wonder
+> if the safe thing to do long-term from a maintenance sanity standpoint
+> would be to just make the purgatory code hackery use the generic
+> sha256 implementation.
+> 
+> I say that purely as a "maybe it's not a good idea to mix the crazy
+> purgatory code with the special arch-specific optimized code that may
+> need special infrastructure".
+> 
+> The fact that the x86 sha256 routines do that whole irq_fpu_usable()
+> thing etc is a symptom of that kind of "the architecture code is
+> special".
+> 
+> But as long as you are fine with maintaining that arch-optimized code
+> knowing that it gets (mis-)used by the strange purgatory code, I
+> certainly don't mind the status quo with that one-liner fix.
+> 
+> So I guess this email is just me saying "if this keeps triggering
+> problems, just make the purgatory code use the slow generic routines".
+> 
+> Because it's not necessarily worth the pain to support arch-optimized
+> versions for that case.
+> 
+> If there is pain, that is.
 
-__xa_cmpxchg() is called with rcu_read_lock(), and it will allocated
-memory if necessary.
+Purgatory actually gets the generic SHA-256 code already.  The way it works is
+that for purgatory lib/crypto/sha256.c is built with __DISABLE_EXPORTS defined,
+and that file detects that and disables the arch-optimized code.  The
+arch-optimized assembly code is not built into purgatory.
 
-Fix the problem by moving rcu_read_lock() after __xa_cmpxchg, meanwhile,
-it still should be held before xa_unlock(), prevent returned page to be
-freed by concurrent discard.
+This isn't particularly hard to continue supporting, versus the alternative of
+duplicating the generic SHA-256 code into a special file that's just for
+purgatory.  5b90a779bc547 just made it unnecessarily fragile by relying on
+compiler inlining to avoid a call to the arch-optimized code (which isn't built
+into purgatory) from being generated.
 
-Fixes: bbcacab2e8ee ("brd: avoid extra xarray lookups on first write")
-Reported-by: syzbot+ea4c8fd177a47338881a@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/685ec4c9.a00a0220.129264.000c.GAE@google.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/block/brd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+My series
+https://lore.kernel.org/linux-crypto/20250625070819.1496119-1-ebiggers@kernel.org/
+makes it simpler and less fragile.  The #include of sha256-generic.c from
+sha256.c goes away, and the selection of sha256_blocks() becomes just:
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index b1be6c510372..0c2eabe14af3 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -64,13 +64,15 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
- 
- 	rcu_read_unlock();
- 	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
--	rcu_read_lock();
--	if (!page)
-+	if (!page) {
-+		rcu_read_lock();
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	xa_lock(&brd->brd_pages);
- 	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
- 			page, gfp);
-+	rcu_read_lock();
- 	if (ret) {
- 		xa_unlock(&brd->brd_pages);
- 		__free_page(page);
--- 
-2.39.2
+    #if defined(CONFIG_CRYPTO_LIB_SHA256_ARCH) && !defined(__DISABLE_EXPORTS)
+    #include "sha256.h" /* $(SRCARCH)/sha256.h */
+    #else
+    #define sha256_blocks sha256_blocks_generic
+    #endif
 
+That patchset is targeting 6.17, though.  So we had to do this separate fix for
+6.16 which has the odd sha256_choose_blocks() thing.
+
+- Eric
 
