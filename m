@@ -1,206 +1,116 @@
-Return-Path: <linux-kernel+bounces-707702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B5AAEC6F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E45C8AEC6F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 14:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8145717338F
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF8E173266
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CE1246BB0;
-	Sat, 28 Jun 2025 12:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A22246771;
+	Sat, 28 Jun 2025 12:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBMoTRFA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="d32ZTkp6"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F1924467E;
-	Sat, 28 Jun 2025 12:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE502222584
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 12:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751112237; cv=none; b=YTnm6PHBekKXcRUiOYqc7wI0D48KVs31RnPrajELJ50+TS/vHZw+YQIiXhyV5hLy7u/VTHyZOclD+EBUW1tjpwSnwOpPmhDVkmdn9r9pSf12Whn9I4KKWJ20EmrY55cZyDi7uAcGEk0rkGa7nDQb6TV5+KVeEs38tFTU1Zmh55w=
+	t=1751112269; cv=none; b=FwiLt41UJe1A1jgtMtYIlucNGxLvWq97Oc1MsQSpRxnlNp0qLhkl7RhRpW65ms64SXjI4A+tPnCziqxiB8mfVCRFfzaWhYylFB9rL/t6zSHVSkZnvvJRo5tB9URZbgB2PGuPWyy8qvrKsExXS4cveOpwRuYyC11HfaBQYwdpG68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751112237; c=relaxed/simple;
-	bh=fnTY0f4SyP2i7YILQaJH30PaDnbGJFQ6OxX01r/0/MU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2qneCgNVrM4uuZE963ZLuF7N8fW9Erqy5pjQvtcJORXtMllbj7b5xRMPxO4C8sLiLICpCBQWUMoyYYkIxGuwYmDNpQkD5yGLgsRkF1wulPsgiHJRNOro9BlyqyLfFUed4ds0fy9xTpkCepHf9zynpMBiSXNrr6rAAz4gBMf2oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBMoTRFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B26C4CEEA;
-	Sat, 28 Jun 2025 12:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751112236;
-	bh=fnTY0f4SyP2i7YILQaJH30PaDnbGJFQ6OxX01r/0/MU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cBMoTRFA6pPl0c6hPCTLjoXP2bT4O/iPyM656V2DrsOTIBoHcAYggBn2E/sMUgQB9
-	 xyEaZNWd1Lp2Oj/FmFUHPXSezukDjrKXZglA6jHvs8Ty9V35USUje0VIAlDRFkz4r8
-	 EoRMokoHYx+S/vEv12Ke58DQiNRFKqYLYKpT+f5tvWFfVXTKPQaw90z/Gb/cB8eGhE
-	 SReqzme1145OXv9x4MU4IxqjyvcKvSq/A2A51HkOid09SlOKvsPUW/G0a9GeGVtHX5
-	 4gJJIYScN0Ku9y7E7Oc1x+5DxhahGwJT7m3VosOOgLVf9+hX6VvY6CmlcwpSraAe1c
-	 2aJBbZU1OyoOg==
-Date: Sat, 28 Jun 2025 14:03:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sean Wang <sean.wang@mediatek.com>, 
-	Jiande Lu <jiande.lu@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>, 
-	Chris Lu <chris.lu@mediatek.com>, Hao Qin <Hao.qin@mediatek.com>, 
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-mediatek <linux-mediatek@lists.infradead.org>, 
-	devicetree <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] dt-bindings: net: mediatek,mt7925-bluetooth.yaml
-Message-ID: <25t3jzrqcdko5z5udbbcctaqldcrbycryazumw6mfj2c4qihmr@jcubfbuhikvp>
-References: <20250627055924.7716-1-ot_zhangchao.zhang@mediatek.com>
- <20250627055924.7716-3-ot_zhangchao.zhang@mediatek.com>
+	s=arc-20240116; t=1751112269; c=relaxed/simple;
+	bh=LpYKM3S54QzOB//tOQ3iek23SXqzUaYJFEZulK44b5k=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C/9zohG1Bnp1pVbS7lmL/BmavXYfb2EoKGdVYAZbt9auuZgHveCjFiliCMYh0vTFeHHeVuuAYcnVUum+RNaRWKqonA4B2dQ74Cn15JlIe6ZwLHyoy9dNiD+5hFjRAb2yPE69fT0exinuruv9jxlRLUOEsMwKsVZIdzhZDvkpWgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=d32ZTkp6; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1751112268; x=1782648268;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3j84Al7zkWlRrSjbPlmgniXKHtcMOq0gwLry3vQv+QA=;
+  b=d32ZTkp6UibMIZlrqcEpug6DhxXc181wpDjxHf2gumjL/pr2batJPaXs
+   Fx4GewX3NTai57TsVGr1s4fzccBKaSR1l1ID4b+d/JxJy9oHyzjM01ugG
+   dRvaZqrvCefubPi67z4twWDoZmTwzbRTRIcI1GPMmrXbzmSFWLRlFiGI+
+   NLWm7Vn0YqRzFDUHD/Q2ITYM7EtVMeRqpeXuECZ0IOqmYv91GFkE60qOR
+   pUdAAT+4jHLZhDyJXR4APRvLO/RsGx+adciCzSKmD6cLRFt6GK+vqFB4/
+   xOI4WLyxN/k+B0D7bH0De1KP2YaZ/mWt/KfSi/XXFvZajA+P02A6RqgBI
+   g==;
+X-IronPort-AV: E=Sophos;i="6.16,273,1744070400"; 
+   d="scan'208";a="838974618"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2025 12:04:23 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:32107]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.39.63:2525] with esmtp (Farcaster)
+ id 2f6b15b3-4020-4b41-8b03-7f3eb3f60313; Sat, 28 Jun 2025 12:04:22 +0000 (UTC)
+X-Farcaster-Flow-ID: 2f6b15b3-4020-4b41-8b03-7f3eb3f60313
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 28 Jun 2025 12:04:22 +0000
+Received: from b0be8375a521.amazon.com (10.37.244.14) by
+ EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 28 Jun 2025 12:04:20 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <syzbot+e04e2c007ba2c80476cb@syzkaller.appspotmail.com>
+CC: <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
+	<kohei.enju@gmail.com>
+Subject: Re: [syzbot] [hams?] KASAN: slab-use-after-free Read in rose_get_neigh
+Date: Sat, 28 Jun 2025 21:04:03 +0900
+Message-ID: <20250628120413.3247-1-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <6807019a.050a0220.380c13.0001.GAE@google.com>
+References: <6807019a.050a0220.380c13.0001.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250627055924.7716-3-ot_zhangchao.zhang@mediatek.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWC004.ant.amazon.com (10.13.139.206) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
+#syz test
 
-How did you manage to make mistake in my email is beyond my understand.
-Tools should generate address list, not humans.
-
-Where is the changelog?
-
-On Fri, Jun 27, 2025 at 01:59:24PM +0800, Zhangchao Zhang wrote:
-> Add hardware pins and compatible strings.
-
-I don't see any pins here.
-
+diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
+index 2dd6bd3a3011..b72bf8a08d48 100644
+--- a/net/rose/rose_route.c
++++ b/net/rose/rose_route.c
+@@ -497,22 +497,15 @@ void rose_rt_device_down(struct net_device *dev)
+ 			t         = rose_node;
+ 			rose_node = rose_node->next;
  
-> As a binding file for the MTK Bluetooth driver code,
-> it provides a set of compatible fields and hardware
-> pins for the driver to use.
-
-All this is not relevant. Describe the hardware here.
-
-> 
-> Signed-off-by: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>
-> ---
-
-
->  .../bluetooth/mediatek,mt7925-bluetooth.yaml  | 57 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7925-bluetooth.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7925-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7925-bluetooth.yaml
-> new file mode 100644
-> index 000000000000..230c24ada3b4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7925-bluetooth.yaml
-> @@ -0,0 +1,57 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/bluetooth/mediatek,mt7925-bluetooth.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Bluetooth mediatek add gpio pin to reset bt
-
-Not relevant. This is the title describing this specific hardware.
-
-> +
-> +maintainers:
-> +  - Sean Wang <sean.wang@mediatek.com>
-> +
-> +description:
-> +  7925 uses the USB bus to communicate with the host.
-
-Waht is 7925?
-
-> +  Two methods are used to reset Bluetooth.
-> +  Provide hardware pin, when an exception occurs,
-> +  resetting Bluetooth by hardware pin is more stable
-> +  than resetting Bluetooth by software.
-> +  If the corresponding pin is not found in dts,
-> +  bluetooth can also be reset successfully.
-
-Wrap this properly. The same commit msg.
-
-> +
-> +allOf:
-> +  - $ref: bluetooth-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,usb-bluetooth
-
-NAK, you cannot have such compatible. I already said at v1 or v2 that it
-will be rejected!
-
-Why are you pushing this all the time, without reading the feedback?
-
-You need SoC and device specific compatibles. There is no such hardware
-as "usb-bluetooth". If there is, point me to datasheet for it.
-
-
-> +
-> +  gpio-controller:
-> +    description:
-> +      Marks the device node as s GPIO controller.
-
-Irrelevant. Drop. See other schemas.
-
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-
-Drop blank line. Look how other files are doing this.
-
-
-> +    description:
-> +      An active-high reset pin for the Bluetooth core; on typical M.2
-
-active-high? Really? I have doubts.
-
-> +      key E modules this is the W_DISABLE2# pin.
-> +
-> +required:
-> +  - compatible
-> +  - "#gpio-cells"
-> +  - reset-gpios
-> +
-> +unevaluatedProperties: false
-
-This is random style. Why doing something completely different than
-every other file? Missing blank line.
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +      bluetooth {
-
-Messed indentation.
-
-To summarize:
-Except writing something entirely different than every other binding
-(why?), this does not represent hardware. Your commit msg explains ZERO
-about the hardware. Binding description says nothing and is actually not
-correct.
-
-So again, if you send the same it will be rejected.
-
-I expect answers UNDER EACH OF MY COMMENTS, because you keep ignoring
-entire feedback given to you.
-
-Best regards,
-Krzysztof
-
+-			for (i = 0; i < t->count; i++) {
++			for (i = t->count - 1; i >= 0; i--) {
+ 				if (t->neighbour[i] != s)
+ 					continue;
+ 
+ 				t->count--;
+ 
+-				switch (i) {
+-				case 0:
+-					t->neighbour[0] = t->neighbour[1];
+-					fallthrough;
+-				case 1:
+-					t->neighbour[1] = t->neighbour[2];
+-					break;
+-				case 2:
+-					break;
+-				}
++				memmove(&t->neighbour[i], &t->neighbour[i + 1],
++					sizeof(t->neighbour[0]) *
++						(t->count - i));
+ 			}
+ 
+ 			if (t->count <= 0)
 
