@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-707655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B67AEC682
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9BFAEC68A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 12:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89C71797E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4174A2F56
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 10:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB12624468C;
-	Sat, 28 Jun 2025 10:13:48 +0000 (UTC)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB15523313E;
+	Sat, 28 Jun 2025 10:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="uUlABG8z";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="5ogo2rpF"
+Received: from mailrelay3-3.pub.mailoutpod3-cph3.one.com (mailrelay3-3.pub.mailoutpod3-cph3.one.com [46.30.212.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFAF21CA16
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 10:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CA8222593
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 10:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751105628; cv=none; b=bA88a1iWqSHRg8aGizYzGXRySRPdQir+emUNUUvtAmN3Btm+WIajGr/DMni6DA9iWuVa78UHaEnrK7F25uL5iwx9GTr7vrkFp58/twE7V9sty3ph6wx1FlcVlQlqLffqQ0ZylUvULgr/9nVtbyUVX/svxVFCJsArwHPn6DJ1qao=
+	t=1751106207; cv=none; b=mCH77CsFBhMQyPe/gWJ3JiGVLzO9xBmuVCkUtykrjOVWQvt0ymJWN4HVo3zYY2n//OrZ6mU7C9mr9s2s6emZBM4gYRe3CBv0ZYT5uDnAlv6zaU5SU+5EzA+ihvFTVxvWm/6vq6/uUXsUf9Vm4nP0llST5ZtDX88ZhHd1PL4cjhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751105628; c=relaxed/simple;
-	bh=d/0zLntRfBGNvApAVLZ1/oyiFDUhc6y0h/AEBDqdmxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4QV2KXTwOt8NbkBT+mXFO/GincFgmLRMn/WjV2RqNOuzI8mBrZK+n7tEb/5SJzWra8hjn17p95auw5tAZeK1RnjD+CPB861UwRpdqd2LDCSrM8NhJaYMoIqVjCRCUEItrASqwRoJSaJW4HAvRNp/7KsDwTh4IiH3zk3S9goDRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4536b8c183cso17314925e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Jun 2025 03:13:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751105625; x=1751710425;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iAeip+ZgoQPXyxkDsAJDwje6lfQ4g6jf4qqXOmEFdYg=;
-        b=DulD0jhFh57Y/NBHW7NNa9uXmNFNWMRZPgMsb3kz9d9bA3reKlHfiKQt+a9UyOsKkN
-         wkrVwZ96kGgfy3gatHpdnQRQaV4Ug3Hb+b+oA10ee/8YnH4t2SnqkeByKpHyOFD2u2Mg
-         /ASKloXwLHkfWiy//hD8aa/4Vq1eUwlDkICOYZ8YbV3Im0o/1Bvf99wmkNbPSJtME3tS
-         32xbUE1ZQxBANiAgLshZp+HtQUqb/iFOQ/hqqENYnt1a5UDz1O/33TuxMZ4buj+iw0Cb
-         5fxovDBqohJfMTThLMQtoYbzZ4UiPrkJ3urpDjSug5UYYUq4uUrWZ6OqYqcWzR/Dw1nz
-         rNLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyobUWqd8cWRDFRG8UWZT0c9EPIAG2JIa3Y44VezLRXT40PFQqwLRdBEM8Mybo8ir5CLjaZRi/HVP97S0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuMAW2a0KBjYzcGvCLDllRj5xLnOYysrQTgB0t1uv+UK9rRUSV
-	BHngfW+EX3ag6zLbrPd46KuL2GVHxcC9ruLLBZtCqJrff8e88gt9rbWR
-X-Gm-Gg: ASbGncsdvUPwk0oPDqjFoRYFKw/AOt5ya+JdAvEiuBTCnjVUMTYAhAm6lNlPZnqqE35
-	Jm6/Brnzl7wQyS+8mPNYw2fdcKZmvm5ingGv6O6hAMLj8CJ63nS42kpmWFMaD65h6fvPSTt0wnn
-	Jo33nWTAlK/31uFTs8hisjtnnjQ6wmVGjAD98m4DaNTqz47NHO9aMS9w0K3tFHsjrQ2qNPxGb8Q
-	gfZlnFI0uI1M/F985JNusm4kK6C3o3Jyds9lPhNNiL3F3a08ALXukGye2Swk15xvuFp4Ts0ieYk
-	nVcXTN8Of4hUecZg0MynHnkrXPkAu5lWKen2NriPao3TH2669FLtQ6xJ4s9ONPhnwY6zFplCXl2
-	UvCv1fG5kpzpHxIJ3I+Augg==
-X-Google-Smtp-Source: AGHT+IGv3C9+CbOxvwovO1McDRPkuH/sVtjblzbZ/xKR7LXlp4Iz5f6FbX/7Cnv0QsRt2HxPje/tCw==
-X-Received: by 2002:a05:600c:3b2a:b0:453:7713:476c with SMTP id 5b1f17b1804b1-4538f2bfb46mr62616475e9.2.1751105624590;
-        Sat, 28 Jun 2025 03:13:44 -0700 (PDT)
-Received: from [10.100.102.74] (89-138-75-164.bb.netvision.net.il. [89.138.75.164])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad1adsm106139235e9.24.2025.06.28.03.13.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Jun 2025 03:13:44 -0700 (PDT)
-Message-ID: <af65c545-a108-4045-874e-c67f894a3235@grimberg.me>
-Date: Sat, 28 Jun 2025 13:13:42 +0300
+	s=arc-20240116; t=1751106207; c=relaxed/simple;
+	bh=ZC3YvRWK8eKwI0mSEg2vmY1bglHZT4c18XfkWdCm/VQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bI0TB+jS5lfM2OVH43YtOKiBa1fw1S6prCSV96fgn4RKhiFShF0kpJEkapWy4oGXPqKx2BzMjiAvcOrQsqR5U1V1dpUekKBbKpR28YycUnoug3SI3GXOtm1dZ6W5za7h6pJiRnpqZggHPvKN6wOFYfMXFgJhv4m9NXOfu18wol4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=uUlABG8z; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=5ogo2rpF; arc=none smtp.client-ip=46.30.212.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751106201; x=1751711001;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=zZ3lWvoCYkoDfv5FGP/87e3wTYP9JjUflTXQlLe9Lcc=;
+	b=uUlABG8zGhy7NuA9rlWV/OZ9zrXwYG8dzNTo5dNOJFxVWU5TxFLWf1YEUA7UPw3NiKPES4VY2+6sJ
+	 D+R7SC3j7+r91bfs3Q9ELLHrurTMsJZYH04jMnWTmgXw6atdWsSsnRFpZiaCUyxPBno06JM6fieQht
+	 tbgXiQ8w2jwg1j9eWmJm+cyMCMDolvZ0wGEGTB44ZvWWRUzEqdF3tDZucj+I0qssJ9o7tzmjnqG3CV
+	 0k1nqAzvtmUBAdALJ4Sb7CD1s8QNGoJe5yabpUTf/i08UurW9481xIwfMoUM2D5LxXRxq9qNQyFafT
+	 wSLSadW9WAhuHb2NLvztkTxsDdn7s7w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751106201; x=1751711001;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
+	 from;
+	bh=zZ3lWvoCYkoDfv5FGP/87e3wTYP9JjUflTXQlLe9Lcc=;
+	b=5ogo2rpFeUriKg7dTaX8rtIZ2u8aT5J65qZa5dNfUtcIRLhm2Z/dhZK7Q9CWgitYJV7JkHIXfTYzT
+	 MCcX5+pCA==
+X-HalOne-ID: e8aba921-5409-11f0-af50-2b8368a4d5c5
+Received: from slottsdator.home (host-90-238-19-233.mobileonline.telia.com [90.238.19.233])
+	by mailrelay3.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id e8aba921-5409-11f0-af50-2b8368a4d5c5;
+	Sat, 28 Jun 2025 10:23:20 +0000 (UTC)
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Subject: [PATCH v8 0/4] support large align and nid in Rust allocators
+Date: Sat, 28 Jun 2025 12:23:15 +0200
+Message-Id: <20250628102315.2542656-1-vitaly.wool@konsulko.se>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme: clear nvme request for nonready request
-To: Yu Kuai <yukuai1@huaweicloud.com>, kbusch@kernel.org, axboe@kernel.dk,
- hch@lst.de
-Cc: yi.zhang@redhat.com, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250628064634.3823093-1-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20250628064634.3823093-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-First, we need change the patch title to clarify that it fixes a bug.
+The coming patches provide the ability for Rust allocators to set
+NUMA node and large alignment.
 
-i.e. something like:
-nvme: fix nvme-mpath misaccounting of inflight active IO
+Changelog:
+v2 -> v3:
+* fixed the build breakage for non-MMU configs
+v3 -> v4:
+* added NUMA node support for k[v]realloc (patch #2)
+* removed extra logic in Rust helpers
+* patch for Rust allocators split into 2 (align: patch #3 and
+  NUMA ids: patch #4)
+v4 -> v5:
+* reworked NUMA node support for k[v]realloc for all 3 <alloc>_node
+  functions to have the same signature
+* all 3 <alloc>_node slab/vmalloc functions now support alignment
+  specification
+* Rust helpers are extended with new functions, the old ones are left
+  intact
+* Rust support for NUMA nodes comes first now (as patch #3)
+v5 -> v6:
+* added <alloc>_node_align functions to keep the existing interfaces
+  intact
+* clearer separation for Rust support of MUNA ids and large alignments
+v6 -> v7:
+* NUMA identifier as a new Rust type (NumaNode)
+* better documentation for changed and new functions and constants
+v7 -> v8:
+* removed NumaError
+* small cleanups per reviewers' comments
 
-Second, we need to add a fixes tag (i.e. addition of nvme-mpath 
-nr_active accounting)
-
-Third, we need a code-comment that explains this subtlety because it is 
-not trivial.
-
-On 28/06/2025 9:46, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> It's found nvme mpath IO inflight counter can be decreased to negtive by
-> following stack:
->
-> CPU: 12 UID: 0 PID: 466 Comm: kworker/12:1H Tainted: G
->     6.16.0-rc3.yu+ #2 PREEMPT(voluntary)
-> Workqueue: kblockd blk_mq_run_work_fn
-> RIP: 0010:bdev_end_io_acct+0x494/0x5c0
-> Call Trace:
->   <TASK>
->   nvme_end_req+0x4d/0x70 [nvme_core]
->   nvme_failover_req+0x3bd/0x530 [nvme_core]
->   nvme_fail_nonready_command+0x12c/0x170 [nvme_core]
->   nvme_fc_queue_rq+0x463/0x720 [nvme_fc]
->   blk_mq_dispatch_rq_list+0x358/0x1260
->   __blk_mq_sched_dispatch_requests+0x2dd/0x480
->   blk_mq_sched_dispatch_requests+0xa6/0x140
->   blk_mq_run_work_fn+0x1bb/0x2a0
->   process_one_work+0x8ca/0x1950
->   worker_thread+0x58d/0xcf0
->   kthread+0x3d5/0x7a0
->   ret_from_fork+0x403/0x510
->   ret_from_fork_asm+0x1a/0x30
->   </TASK>
->
-> The IO inflight counter is not increased from nvme_fail_nonready_command()
-> yet, hence decrease it will cause it to be negative.
->
-> This is not a problem for blk-mq request because it's already
-> initialized before issuing, however, nvme request is only initialized from
-> following nvme_setup_cmd(). Fix the problem by clearing it in
-> nvme_fail_nonready_command().
->
-> Reported-by: Yi Zhang <yi.zhang@redhat.com>
-> Closes: https://lore.kernel.org/all/CAHj4cs_+dauobyYyP805t33WMJVzOWj=7+51p4_j9rA63D9sog@mail.gmail.com/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/nvme/host/core.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 92697f98c601..8caafa25c010 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -764,6 +764,9 @@ blk_status_t nvme_fail_nonready_command(struct nvme_ctrl *ctrl,
->   	    !test_bit(NVME_CTRL_FAILFAST_EXPIRED, &ctrl->flags) &&
->   	    !blk_noretry_request(rq) && !(rq->cmd_flags & REQ_NVME_MPATH))
->   		return BLK_STS_RESOURCE;
-> +
-> +	if (!(rq->rq_flags & RQF_DONTPREP))
-> +		nvme_clear_nvme_request(rq);
->   	return nvme_host_path_error(rq);
->   }
->   EXPORT_SYMBOL_GPL(nvme_fail_nonready_command);
-
+Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
 
