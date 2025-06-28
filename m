@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-707928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-707925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC097AEC96B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 19:30:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B9FAEC962
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 19:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A9D3BE215
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F17F189C265
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Jun 2025 17:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6011928750D;
-	Sat, 28 Jun 2025 17:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A65728724C;
+	Sat, 28 Jun 2025 17:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/5rNor2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYL+WD7w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6CF2BCFB;
-	Sat, 28 Jun 2025 17:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A6D22B594;
+	Sat, 28 Jun 2025 17:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751131828; cv=none; b=SAkhAyRYSBPcvbGKysXKP/acQIsD3g1cfGLRTscnCLsU9xqVJS+kvqahsacYL+yoj1z2lR7y1FvMybB90RoihW2c3tf2R17abwOiFM9B3dqAMMHdm0TPVYFYD5goqUIuYZkzmUHT9ZUQSiV1c0MFwrmx5Qs6GWCc04tY1gtBmks=
+	t=1751131806; cv=none; b=YzLixBTfaZuGhwA3JZ4vBG/lfG1l0aoLEIJuWfUjB2eLVmJDP5Z63lThZak6WHFviGQL/C3gHFI0K79JyRsDxEt5u8iMNR0+OO4FPKm89DytNn/PfviDedm2345EjUtQrVpABIAMD8Nls7sGhz1cXXSkss0VuqELqNbTbA4DGzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751131828; c=relaxed/simple;
-	bh=zWAmwKnV6f1cwbtaUPgrJ1lIE+Rc2XJQ33KR+f1+GBg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GaGXza3prxWZk7EdYm9ynyo5M9BvXE6YoZ4bQ4JViGB0MnVDVxXpziJPWRX5DVRLas2QEBtX68KYZPvi+0VfdzBHKW2staG7MU6B+6UoUv/Zlvn2cKAH6AnHx/YMltMiCRP9XfkUT7q6K3nrMiJ36/C1ibPUfpcH1z1yMTGCaeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/5rNor2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA90C4CEEA;
-	Sat, 28 Jun 2025 17:30:28 +0000 (UTC)
+	s=arc-20240116; t=1751131806; c=relaxed/simple;
+	bh=lJSsq3cKeP0H9TEkQ5kU1v6+iu6VQAqH/CtrVASdrM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a9JSyzoZ1+G0buNdpj1o8c3hAdiLKPoDFpcf8bOFS5di4MmiT5x11OBPcTVg8LvgXERDObbK810vX0VjKYbar7Q0PGgcaONIozUPu/uZS5dnqdBCV8G0uoWFHiGM/8BEh40794YMWgIqSEDNG6v9IQjlDkJqalJjWIBuK1o8qbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYL+WD7w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46868C4CEEA;
+	Sat, 28 Jun 2025 17:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751131828;
-	bh=zWAmwKnV6f1cwbtaUPgrJ1lIE+Rc2XJQ33KR+f1+GBg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l/5rNor2Px+Cl03/jN1HOWynCV9eo9DeSLJ6bO8UiztHyxYNqMuyqqhnzMpSnt9TH
-	 3kRNDIs83QmyR1QPNeG7WCWI59VZYaYbtT3Z4uHHSfsVP357KbSIMqAzl2Q/nRTYEx
-	 oL63w2UYzn9/d/mr3Ns+0EL9e7sCXCVWM6oQj0pJKOGAuPh/9Gu2jB2bVawB7D5qxe
-	 2pwPMr0neIm6Fv06BYVWNU26Frt54kD1MzdyyUugfZvBPxEkIGqf5NkJL9DUg0P1rS
-	 ZZIFOxvccdpe4/0TJL6k94CwGN+DGQFO6jwdMb1sn6kDdRXlaVjJusfA+20YePCd3L
-	 BJM2bK8IJ+3/w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uVZNi-00AqZC-Fv;
-	Sat, 28 Jun 2025 18:30:26 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Toan Le <toan@os.amperecomputing.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 04/12] PCI: xgene: Drop XGENE_PCIE_IP_VER_UNKN
-Date: Sat, 28 Jun 2025 18:29:57 +0100
-Message-Id: <20250628173005.445013-5-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250628173005.445013-1-maz@kernel.org>
-References: <20250628173005.445013-1-maz@kernel.org>
+	s=k20201202; t=1751131805;
+	bh=lJSsq3cKeP0H9TEkQ5kU1v6+iu6VQAqH/CtrVASdrM4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PYL+WD7w3GZy4QK6crHNAwtMKMJ+yWs/QmpzlcyGq3bSvr89/v41UIDYXpYJzcpmT
+	 7rnxwe64SHFztw8y/i9JnMewRNO0UjUjBPDOqahef1VzhZmzPHDRo0OoKCIRzpRjjx
+	 RDMhWFMkNcSPcNXOevemIJ/rJrDRUm4bV+8UPv6b85LI7x7dGIAY4LED4dm14uWL4J
+	 yHI8lngTFCDVF2q5m1JqUMRC2wSeYYGevVBwW0bhU7eGM0vWaY+Dewy/fWF7x3wAC/
+	 BW94CFtQ6iKiWUDaY/Jl/TkLCO/uPm7XoJdn+vHBUk+QeYzjgow7s2gEGw9i4rPtX4
+	 mdbbsS9WH3gNg==
+Date: Sat, 28 Jun 2025 18:29:58 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ corbet@lwn.net, lucas.p.stankus@gmail.com, lars@metafoo.de,
+ Michael.Hennerich@analog.com, bagasdotme@gmail.com,
+ linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/8] iio: accel: adxl313: add power-save on
+ activity/inactivity
+Message-ID: <20250628182958.6a813bc8@jic23-huawei>
+In-Reply-To: <20250622153423.0d8ddcdb@jic23-huawei>
+References: <20250622122937.156930-1-l.rubusch@gmail.com>
+	<20250622153423.0d8ddcdb@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-XGENE_PCIE_IP_VER_UNKN is only refered to when probing for the
-original XGene PCIe implementation, and get immediately overridden
-if the device has the "apm,xgene-pcie" compatible string.
+On Sun, 22 Jun 2025 15:34:23 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Given that the only way to get there is by finding this very string in
-the DT, it is obvious that we will always ovwrite the version with
-XGENE_PCIE_IP_VER_1.
+> On Sun, 22 Jun 2025 12:29:29 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> 
+> > The patch set covers the following topics:
+> > - add debug register and regmap cache
+> > - prepare iio channel scan_type and scan_index
+> > - prepare interrupt handling
+> > - implement fifo with watermark
+> > - add activity/inactivity together with auto-sleep with link bit
+> > - add ac coupled activity/inactivity, integrate with auto-sleep and link bit
+> > - documentation
+> > 
+> > Sorry for the fuzz: when I was about to rebase for submitting I
+> > noticed Jonathan actually already applied parts of this. I'd recommend
+> > to consider v6 rather over v5.
+> > 
+> > Since activity and inactivity here are implemented covering all axis, I
+> > assumed x&y&z and x|y|z, respectively. Thus the driver uses a fake
+> > channel for activity/inactiviy. AC-coupling is similar to other Analog Device
+> > accelerometers, so MAG_ADAPTIVE events are chosen. Combinations are
+> > documented and functionality tested and verified working.
+> >   
+> Given reply to wrong email thread probably meant first few patches of v5 that
+> I picked up, I've dropped them for now.
+> 
+The series looks mostly good to me, just those couple of function naming things
+need tidying up + I guess there might be something else from the adxl345 series
+review that applies here that I've not noticed. So maybe have a last read through
+with those changes in mind.
 
-Drop the whole thing.
+Thanks,
 
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/pci/controller/pci-xgene.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/pci/controller/pci-xgene.c b/drivers/pci/controller/pci-xgene.c
-index a848f98203ae4..b95afa35201d0 100644
---- a/drivers/pci/controller/pci-xgene.c
-+++ b/drivers/pci/controller/pci-xgene.c
-@@ -54,7 +54,6 @@
- #define XGENE_V1_PCI_EXP_CAP		0x40
- 
- /* PCIe IP version */
--#define XGENE_PCIE_IP_VER_UNKN		0
- #define XGENE_PCIE_IP_VER_1		1
- #define XGENE_PCIE_IP_VER_2		2
- 
-@@ -630,10 +629,7 @@ static int xgene_pcie_probe(struct platform_device *pdev)
- 
- 	port->node = of_node_get(dn);
- 	port->dev = dev;
--
--	port->version = XGENE_PCIE_IP_VER_UNKN;
--	if (of_device_is_compatible(port->node, "apm,xgene-pcie"))
--		port->version = XGENE_PCIE_IP_VER_1;
-+	port->version = XGENE_PCIE_IP_VER_1;
- 
- 	ret = xgene_pcie_map_reg(port, pdev);
- 	if (ret)
--- 
-2.39.2
-
+Jonathan
 
