@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-708176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DFBAECCE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E912AECCEB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB253174339
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 13:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACEE1896C66
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 13:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3806A21D3F1;
-	Sun, 29 Jun 2025 13:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+oULH5T"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C8C22488B;
+	Sun, 29 Jun 2025 13:35:12 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE7735950;
-	Sun, 29 Jun 2025 13:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1527E1F92A;
+	Sun, 29 Jun 2025 13:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751203164; cv=none; b=aPsc2JRcCzBxI00y6n/sowGSdAWvL/OFGh9PZcgGGr6meBTrxpo4BVHI0sNVf4y9KuAOSDyJUD5gjfFxj6MQjrjeec0Ky7Ryw99gP9LIn7DWLXyrXydv+hw+pkW5FjVx7e/xn4NEd513ZV9TsLN0BHD5nTTBAnMpOGCgzg+bwqo=
+	t=1751204111; cv=none; b=qAEeIxOmHksQ1mOWEm3porL95xTeru+dozEFwkm5SM2EDLwdlZGDbj1ChSwYFJx9RnBAzqtMrAYw17OoQJqpHWwxC0LCU+28pmRX/L1dGw1YVw9SU5yQUFDhsqKdkxavDXGUcr+3pu3tDn5aTnB/gGcXG9LPCFBE4zfvNtVa5Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751203164; c=relaxed/simple;
-	bh=hh028ZJpDG0V+KiWTD6rfqoYckc2AWugA9hr8Ise5mo=;
+	s=arc-20240116; t=1751204111; c=relaxed/simple;
+	bh=tcug8XrJIcCuYfiSBxqFOEwin4mfCE6UNDWtr7RJpYQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mhcsh7FZioAVERKUOTaLWxR884FnaLXrH8Q65ATQv+27rAX3JrHYkxdNCPvRb9A/N0/W9l7ZIbRxujKSY+Z9wd48jNstyHDbOfTCbR/YQNOhtxU7fBJH+uSQUwGknxtuctk5E4ts62AOwXeuGeo3qr6D4GN3c/eZSkqgsb/UsT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+oULH5T; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7d43d220c07so319807685a.2;
-        Sun, 29 Jun 2025 06:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751203162; x=1751807962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F6QhJOPYC4Oel4k7RUi/DYQufPPKB57jic+eqoSasGA=;
-        b=P+oULH5T2wvykAmZiRca32wOmzlSmNOLNC2hfgAb36WJqF4WR/4mKDQuNs+7rtsfbQ
-         TOmvhSV+WLSXp5/FfbVeGX3onGUVY9LTKeN46H7htubaZjdi+g5P7b52C/J8yolxnKaG
-         d/8v0IH4FLL1ls0vC4m76js09UVlaI7zni5l/TAQF1OmYOgG0BHpXxVPh418+HnhzUXL
-         FYZlmQn7M7pHMgfQ5d1strtl/qNNqjg+0D4eFs6iWX8H+NDpfYZCAZXXYoemrRw/P1Nd
-         gN8j4XJ09IHVTQbHrZIpArn3j3aR46sWJaJJAMkPpScOHmG+oX0R7zQUA3L1FIZxfRHn
-         ihhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751203162; x=1751807962;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F6QhJOPYC4Oel4k7RUi/DYQufPPKB57jic+eqoSasGA=;
-        b=KcoM1ngpNVsHZensFue/xf0PW5815fNX7KKjvLkVnnScmjg43IxPYYIJsH7q6jolqI
-         sESqcKft1Kms2CDnUtgY9uW9T2zL5+0Z5Uzh31GkDIHR3NPKvxlv6pouTzRxapJC6Hy8
-         qCneqEcOo7QQDpsfsYpFXih7v26C7/mvOd+8OEjAYx5jJe75C6pird6eBD3gm0dU0N7r
-         y+whTthmf7NlWJVaF0XpQFABDtLCu+ATSZ//Qq8gM0maX1qu0PpUPQTqvIZqOHuTr5ZS
-         KDZIYOS6i8v/BFxi2aUU3sTH+lzUyN8Ukf254G4U9gUkbDFlqskW6fWkK0q1inM9IsV+
-         ppGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUktZDqKpocMoqL6LfqunZk/2FAvPjnsgKRhWz6EFQmzd1DvbGKUAjmji26E0w5GynymPETDK7E0sTh2w==@vger.kernel.org, AJvYcCV0IJORCwUeT3asnz8N8akhD1ZeigoV1YQO9qlCL0ZhWUCOS3aei3Z5qBoWT9uVunNPaUb/NXrt4xOu@vger.kernel.org, AJvYcCV7OqM4KSeyd3Pqjww6a9aGV5fNZlA94qBVBVBlK3te4Q1UzOoMs3kzjZn1IF41Ns/PeHo/wzFDblavaxBp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4vGgb8FdM3/icQrzY0sgd1gp6MgYEAlg5YwBHLMa21ncsCPcc
-	a+8HBl6REYaNAzrC4ZckSbbt0RWiRHlNmUKwTx8qeNKjleOH+26pgE/aNTk95qdclkw=
-X-Gm-Gg: ASbGncsAxRCSIQQw3YxMIUb2hzh4x5c610VYO567S7vt6cW9Nhir8rA2c4Du8L+Pv+3
-	9RCQ92AFSs/SG7FiXL86p0L6UTm6EXpT0VpVyslCB6PzciXV7nMJHqPQMVoQqSpHh/vkPNMjjEd
-	pnCRWKdTo1Zy/u9aPh2FYDKS7ptR/A2AWiEFgGGmoMpS5RKPh666qUtW6FmJ1tAMlqoSm+yEQQv
-	frkQl9Txz24UGP9oSEbfjVtmHPR0n/wLLpfgDbKWUSdBsabAWqUZGGO4mXiwSVL3aE8GjX/51Wp
-	x+8LJX0Z21xVjC2rJ/feFLVKEz5KkcubPCH0aLNx1pSX9YdmXQ+ElvxcuegFc+FZT/Lty8ZcCeg
-	Q42BhXGSZ97O3+N9TDWrBmZXahbNSAS4m
-X-Google-Smtp-Source: AGHT+IHlqhpPi4qCpPb3OezCRiBkt77pz4rWNJBBnoBQo6SxTT9koFz4hFUCTn2WQZjlOqbPGYmsxA==
-X-Received: by 2002:a05:620a:170a:b0:7cd:1f0f:f61d with SMTP id af79cd13be357-7d443994edfmr1823812485a.54.1751203162103;
-        Sun, 29 Jun 2025 06:19:22 -0700 (PDT)
-Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d44e27ed25sm241166385a.97.2025.06.29.06.19.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 06:19:21 -0700 (PDT)
-From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org,
+	 MIME-Version; b=FsvrUuRMbbFYl5LJIRG+uXJMZPd5jE02DS6pMLnDF5JhAE2mvt9Su2SLqKhhWQSjdqeJJP/jzvhU3lNV3d+UNuE3OvtHMzAFlHIj0raKKu3jHmmT2vypvOEVqYl7TAul2JgylJ/3puexfpUShbnK9QxbShySzEq9SKChtTGJk6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:d1f3:4f54:4c66:bf44])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 0692241B49;
+	Sun, 29 Jun 2025 13:29:39 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:d1f3:4f54:4c66:bf44) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: syzbot+827ae2bfb3a3529333e9@syzkaller.appspotmail.com
+Cc: agordeev@linux.ibm.com,
+	alibuda@linux.alibaba.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	guwen@linux.alibaba.com,
+	horms@kernel.org,
+	jaka@linux.ibm.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Boris Gjenero <boris.gjenero@gmail.com>,
-	Christian Hewitt <christianshewitt@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Sabatino <paolo.sabatino@gmail.com>
-Subject: [PATCH v2 8/8] MAINTAINERS: Add entry for TM16xx driver
-Date: Sun, 29 Jun 2025 09:19:20 -0400
-Message-ID: <20250629131920.50060-1-jefflessard3@gmail.com>
+	linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com,
+	tonylu@linux.alibaba.com,
+	wenjia@linux.ibm.com
+Subject: syztest
+Date: Sun, 29 Jun 2025 14:29:32 +0100
+Message-ID: <20250629132933.33599-1-contact@arnaud-lcm.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250629130002.49842-1-jefflessard3@gmail.com>
-References: <20250629130002.49842-1-jefflessard3@gmail.com>
+In-Reply-To: <67eaf9b8.050a0220.3c3d88.004a.GAE@google.com>
+References: <67eaf9b8.050a0220.3c3d88.004a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175120378100.6050.10331989249896580154@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+#syz test
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index efb51ee926..bb88b007c1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25047,6 +25047,12 @@ F:	mm/memfd.c
- F:	mm/shmem.c
- F:	mm/shmem_quota.c
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -123,11 +123,14 @@ static struct sock *smc_tcp_syn_recv_sock(const struct sock *sk,
+ 					  struct request_sock *req_unhash,
+ 					  bool *own_req)
+ {
++        read_lock_bh(&((struct sock *)sk)->sk_callback_lock);
+ 	struct smc_sock *smc;
+ 	struct sock *child;
+-
+ 	smc = smc_clcsock_user_data(sk);
  
-+TM16XX-COMPATIBLE LED CONTROLLERS DISPLAY DRIVER
-+M:	Jean-François Lessard <jefflessard3@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
-+F:	drivers/auxdisplay/tm16xx.c
++	if (!smc)
++		goto drop;
 +
- TOMOYO SECURITY MODULE
- M:	Kentaro Takeda <takedakn@nttdata.co.jp>
- M:	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+ 	if (READ_ONCE(sk->sk_ack_backlog) + atomic_read(&smc->queued_smc_hs) >
+ 				sk->sk_max_ack_backlog)
+ 		goto drop;
+@@ -148,9 +151,11 @@ static struct sock *smc_tcp_syn_recv_sock(const struct sock *sk,
+ 		if (inet_csk(child)->icsk_af_ops == inet_csk(sk)->icsk_af_ops)
+ 			inet_csk(child)->icsk_af_ops = smc->ori_af_ops;
+ 	}
++	read_unlock_bh(&((struct sock *)sk)->sk_callback_lock);
+ 	return child;
+ 
+ drop:
++	read_unlock_bh(&((struct sock *)sk)->sk_callback_lock);
+ 	dst_release(dst);
+ 	tcp_listendrop(sk);
+ 	return NULL;
+@@ -2613,7 +2618,7 @@ int smc_listen(struct socket *sock, int backlog)
+ 	int rc;
+ 
+ 	smc = smc_sk(sk);
+-	lock_sock(sk);
++	lock_sock(sock->sk);
+ 
+ 	rc = -EINVAL;
+ 	if ((sk->sk_state != SMC_INIT && sk->sk_state != SMC_LISTEN) ||
 -- 
 2.43.0
 
