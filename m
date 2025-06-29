@@ -1,88 +1,106 @@
-Return-Path: <linux-kernel+bounces-708261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A870AECE49
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5C4AECE4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C484A7A25F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB7C37A21B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E585231A37;
-	Sun, 29 Jun 2025 15:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03248231A24;
+	Sun, 29 Jun 2025 15:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPIR6SnG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7DHikXS"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5401EDA1E;
-	Sun, 29 Jun 2025 15:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294FD3B1AB;
+	Sun, 29 Jun 2025 15:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751209924; cv=none; b=Kpm91lRu7Vcq6jUOjAx9uuZo8014I4s4/OvNRaj51CbLJOYJFm7e7KwvUBHuiksXzZKgP85hM2bijC1DT1Pa7Rxve5BLtV4CWVMw83TTKU6E23rUey2HfFbpE2wj+F2hGi5Br20FuuI395soJRhVdec79XJ0oZprP/TNc5qV7Tk=
+	t=1751210020; cv=none; b=r6drBvGwxMo/QK6BGEC67jiRHECMVVJeHwiIe3PYZLkisiNpM4cexBhIu1z2sNG2nD0OO657/zS4rY5M1irwE89IvZW4YZnHFBZ+2kKbnFvxtkMIUtTY/ABwXAZYgJkCtf5ashFfn27Ky2Y0KWLqzKpC1Jy5efeNBrgnaGF+eMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751209924; c=relaxed/simple;
-	bh=DQE4DrUtiQr80ln5kifnA9R4saKL6OMi+bAy//E728U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VC1MHLBC+Yd2h/FVAO/3VRDuS3fnLrRxFsXgduShvf3eDWSR3ZvN0Ur54QrytLohlMZRLByM1jdRwzYV73PlxeKsBd2G0636h1zAsJedi/Mzfn6o3hlAR9Hpaufk+UIXt/UON2QV0VcjwyWDcK9V+nwkY5FjmgGGM8Nt/b2a7dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPIR6SnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBFF3C4CEEB;
-	Sun, 29 Jun 2025 15:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751209924;
-	bh=DQE4DrUtiQr80ln5kifnA9R4saKL6OMi+bAy//E728U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gPIR6SnGRhG5BL+LMS41+enMzO8n6mJP2pvVRbOlM9oi5VLItx4P31BzACLjXMMDs
-	 dC8S95KqGjUJMY/eWOnGXJOZoEjLqi5C1hlTW9L9Wd+rGsNwZEgRcWsVeTPSXmQkIq
-	 laH/RMs3DAdIQs5s5Ub+Vy58motCBXbMoMYB1w88x5pIjjeEPDfroD+M99r30/4yCF
-	 JxWcFx4Zv2/V6i39j/XvfjB5N+iA2cwB6FYUGWG0xcs9X1+Q7veWUGReljwN34ZjyR
-	 RgKTWHbV/Jr4HqbYd9GDpuYvym5M1GT1aOJYRqeG2H3IUBV128WzuooYZ6MCjnbEWM
-	 llm4H9Ieo/JZw==
-Date: Sun, 29 Jun 2025 17:11:58 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Christian Schrefl <chrisi.schrefl@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lee Jones <lee@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Gerald =?iso-8859-1?Q?Wisb=F6ck?= <gerald.wisboeck@feather.ink>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] rust: implement `Wrapper<T>` for `Opaque<T>`
-Message-ID: <aGFXvt2GistXZMmE@pollux>
-References: <20250610-b4-rust_miscdevice_registrationdata-v6-0-b03f5dfce998@gmail.com>
- <20250610-b4-rust_miscdevice_registrationdata-v6-1-b03f5dfce998@gmail.com>
+	s=arc-20240116; t=1751210020; c=relaxed/simple;
+	bh=puuaFMMUUQZayupB208GrC8wHDP70K8r1qLFo0hCy44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kc3jmozPCjhSJLpy4QyqDo5s1etHSmCMhmc1wYcOSwfRbp2Q9uWG4cInGnsPgsrsWzxIwSmd9opIdsTgT6/XgMhAYGp0LRWhoPo9vcQbt6xwK+bZDmaMaH/vgBgjlPANkp/sya9c3eHOHco9Iyqh4jaEJ8po5nxl1IG63wfdcuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7DHikXS; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31308f52248so478479a91.2;
+        Sun, 29 Jun 2025 08:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751210018; x=1751814818; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RgmyvxKM5K1SUPLpkkPFsKb6VHLC7vsaSec08opdFHc=;
+        b=O7DHikXSl1uPzShJZhMZAAHmCezmCTXzc+JOIDdTgNL80WLZ/2lS1l+4XyHrXCQ+y7
+         WgZRLtz26FloMO60qX3y8UxZGJo7AOvw/xoGEqBA58JD0G+odSabhFg+kXfBngqCJxQl
+         +FEY4O4gJRHDQpbovWdWxuan49H0cuDmw8UcZd/jpQBc7SdB4VtZCWFBjL85HMsSwo4u
+         AP6+hIrYdLFPmqPI46kDVQCblPzHUf0wxmWBVBeEKsJErWp8Wlzn0V3vk+iXeByfVAIN
+         vdtewx3HzSJl3pQL6iqp0ufaivU7n5R9c85+4AQzfh1vveFza6JSAoRcAGAV5pOHDafs
+         6uNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751210018; x=1751814818;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RgmyvxKM5K1SUPLpkkPFsKb6VHLC7vsaSec08opdFHc=;
+        b=gTZBWsrysK3J+l9hjyhQgp4QkbolPQW0aN7T94KExfnLgPzkey8T/y+SUkqNlQSDk5
+         PXlbX2lXqD60t1sf7a4+9U/xochXgJMqEUZYI5teEDn4VR5aJNvSqCzV0GCoQi4DyWkT
+         5Ouo8bzeAC2g3UckKboZZ1Firm+AHMRKpHEiB7RDkJnUq4BcZfz7P96stw0djJM8JaSd
+         ESUgeQCBCNr9yCm55tY1BHxtMAq23RSITLWPuF1K2wWksLC3R17EAs8W278ffa5TfNBY
+         L0S04y9wGnq7OteaibJ4QdpanML4JNrtu+Gtxgj/4f+RaX4gH8a+qQrO6HAWrESyp+9C
+         /wCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU83aLezWUPGu6ku+Pkc+A9r9xw/SD+n6OEWj0hT4FQmbC0V501eHv3165ew9j5gF2bOkkaBYxyvMDrXrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgxZguF65fkldXRv2yEUMzz/+8cIS/pqxwE1hnp4iBCjKQ1gC5
+	vmAQFvNePYINucfeETlKhjTfuUlDl63P2GQzqLA2M5NfqbEjuiPia7alVb+i2eGrgVxDs63K2JS
+	6L8mGhZR2wvcfN9JO0EwwlfYkV9KhdAw=
+X-Gm-Gg: ASbGncvri5k6ABePDAJXweVtB91Eo1dQ8D/SzoibNZBcc6X8qXMLfxS+wu2PHWQz5z9
+	i+HlFDVHHPbTRd6ps1Jo4kbI7j1OH0VeQ438sSLf1b4yxn9x8wuRK1EGihb/KVauapsKvR7qjaV
+	f6+affxnYIYG8yMZ8zYhMWb5Y/UpEt0kI7vq6QGdwmERs=
+X-Google-Smtp-Source: AGHT+IHl0Y8PLE0jKrn6aDF786kOcVr720VChpxwDzRKCoyBbhlUlrsDDt/qgR2D6e5xW/FpLcbEbsoeD/NSJMk+5hQ=
+X-Received: by 2002:a17:90b:5105:b0:312:25dd:1c8a with SMTP id
+ 98e67ed59e1d1-318ec31b3dfmr3419352a91.2.1751210018354; Sun, 29 Jun 2025
+ 08:13:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250610-b4-rust_miscdevice_registrationdata-v6-1-b03f5dfce998@gmail.com>
+References: <CAJLqYhqwyX36mV3kpkcMkGB7_giE-kugfVVt=duWOVJyGbNDkA@mail.gmail.com>
+In-Reply-To: <CAJLqYhqwyX36mV3kpkcMkGB7_giE-kugfVVt=duWOVJyGbNDkA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 29 Jun 2025 17:13:26 +0200
+X-Gm-Features: Ac12FXy7Zt2gJwhhkEhlJqVHAnqtnLJZf5PMbNbCxCUJXMSOLOy9sMn_YEZfhgE
+Message-ID: <CANiq72my84mx2Zwsteae14X+7L+WEZowsU9dh57t8b+cduJ4yg@mail.gmail.com>
+Subject: Re: [PATCH] rust: helpers: sort includes alphabetically
+To: Krikera <prafulrai522@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
+	dakr@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025 at 10:27:55PM +0200, Christian Schrefl wrote:
-> Moves the implementation for `pin-init` from an associated function
-> to the trait function of the `Wrapper` trait and extends the
-> implementation to support pin-initializers with error types.
-> 
-> Adds a use for the `Wrapper` trait in `revocable.rs`, to use the new
-> `pin-init` function. This is currently the only usage in the kernel.
-> 
-> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> Reviewed-by: Gerald Wisböck <gerald.wisboeck@feather.ink>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Signed-off-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+On Sun, Jun 29, 2025 at 4:28=E2=80=AFPM Krikera <prafulrai522@gmail.com> wr=
+ote:
+>
+> Signed-off-by: krikera <prafulrai522@gmail.com>
 
-Applied to driver-core-testing, thanks!
+Thanks for the patch!
+
+Is krikera a "known identity" according to the DCO?
+
+    https://docs.kernel.org/process/submitting-patches.html#developer-s-cer=
+tificate-of-origin-1-1
+
+Cheers,
+Miguel
 
