@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-708108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509FCAECC0E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:03:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494C9AECC06
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 11:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1418717229A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:03:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750CC3A775C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 09:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0877621883F;
-	Sun, 29 Jun 2025 10:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9AC20D51C;
+	Sun, 29 Jun 2025 09:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOC3vpun"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v7IR09Z+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F13290F;
-	Sun, 29 Jun 2025 10:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ABA1A7AE3;
+	Sun, 29 Jun 2025 09:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751191428; cv=none; b=t7sEbUmoTmXQHxXm9TaiXYxRkEYH6ZhuqZLi87xb6ZPNcA6lEU5gi20gNa0TR39y5zQQ37qaPgWFWRCieoVyhLIxDvc8uSmgT6USJS0VhhEUVoVG6r6XCgkBGJ4dHkzIqZfgOvQNBk6Q70Qeqjthqhkx/9tze2nyIF2xp9EBTtk=
+	t=1751190460; cv=none; b=OtP4L5ShD6zcyMZiIvQl4Qmr63wEAoH1BhoptihDuSkIj9Rf/oPt0jYOPjD4u6JPjFi8mYfGkhd3fsBlTYoyk02Al8cnc+KgPhpQKiQ49Qeqrf58MPCegMr/Jp35X7Pbk0Yn6b92milqPOQuUmpKNgwXTQL5WyRjI5I5/+Y3Nig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751191428; c=relaxed/simple;
-	bh=Kufurcy3kv6d6lbIKqCuZZPoftTwGTTowyf/MgdKHbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TnZ7mIsn1WzSTF9w6oZ16aL4Zhe4H33QYMZBd+Ce2jLVBSSSCEKbgyZ5AWCja0sHnWqgTwJ0oSOOL7pjQX5xsqjzehM2hZmirNrgZQ4DPXhuhJsrzBrSKyraC4MHjMk1wrEMXPCMyAeT+xeOvt00QLGGY1cgkI0LQB3BF3Wo8yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOC3vpun; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1CFC4CEEF;
-	Sun, 29 Jun 2025 10:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751191427;
-	bh=Kufurcy3kv6d6lbIKqCuZZPoftTwGTTowyf/MgdKHbI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OOC3vpunncVsCJldtj9dVlq4A/8iGzkZuVtu/S/Fy1hoo8VGwq9Jaa4nYGmt+oXbS
-	 r5lfD5tJdMpNb+cwTiXbdz88lquH1ExYl4q2d1iO5AkCeJpY8rPIywRm4/+PwYort7
-	 tQFAfUWYAnMiN5dIlpe3F6EF6F5lq8ZPzARXTtjl8V/WpjOWmHZx9LxLdmBAa/JpZ8
-	 XzPFloCf2ulul6jwzDsOtmd+w6lLl6+yJOyowG55qI5JsGZNTds5crHc2C7MYKmmjq
-	 2ozEjoT7062AX68scgfXXWsvbrRInNJipbIbLxkjDDm8SPdf6M8K7XSAF+iD1gyly+
-	 OVvQ6hx76b8Zw==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Minas Harutyunyan <hminas@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: dwc2: disable platform lowlevel hw resources during shutdown
-Date: Sun, 29 Jun 2025 17:46:55 +0800
-Message-ID: <20250629094655.747-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751190460; c=relaxed/simple;
+	bh=3PsiXreKOO08zP3QkoiRqU3jk58Y08869vFWrOIe+v4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZMKOcSEtmELrWDDRJz+pvsUyLet4+aHT2XUAgRdgj7tT7WR7Jq6T7hClMF6NE4tYg0kwBtgKrlvuIM9Xn0EpzdQRew4emu2J/gadphF4WqYksWv4WTfT9HGYnZwqkSVM4Mo/1n71kzvhOdb9VdnoSi3ViwKlG1NwCQmmOaJV1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v7IR09Z+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78A2C4CEEB;
+	Sun, 29 Jun 2025 09:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751190455;
+	bh=3PsiXreKOO08zP3QkoiRqU3jk58Y08869vFWrOIe+v4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=v7IR09Z+zK/FXdLr8CtBrByTZs73/BlZF6YxCy3rxHuvw8wXvUYcA3H45zgMbb8x9
+	 h/hpFeIWMUD7WDZd+1B03mSVID1mqZBa+0BMLgrgoqi6+FauY98T4Y/dfKM70aDB8R
+	 Q+xh9qeHV8x1DQd0BkqxHuDObaSI7a2hDQO0YxW8=
+Date: Sun, 29 Jun 2025 11:47:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, pure.logic@nexus-software.ie,
+	johan@kernel.org, elder@kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] greybus: loopback: remove gb_loopback_async_wait_all()
+Message-ID: <2025062945-prologue-plutonium-870f@gregkh>
+References: <20250628063121.362685-1-pranav.tyagi03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250628063121.362685-1-pranav.tyagi03@gmail.com>
 
-On some SoC platforms, in shutdown stage, most components' power is cut
-off, but there's still power supply to the so called always-on
-domain, so if the dwc2's regulator is from the always-on domain, we
-need to explicitly disable it to save power.
+On Sat, Jun 28, 2025 at 12:01:21PM +0530, Pranav Tyagi wrote:
+> Remove redundant gb_loopback_async_wait_all() as connection is disabled
+> at the beginning and no further incoming/outgoing requests are possible.
+> 
+> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+> ---
+>  drivers/staging/greybus/loopback.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/loopback.c
+> index 1f19323b0e1a..9d0d4308ad25 100644
+> --- a/drivers/staging/greybus/loopback.c
+> +++ b/drivers/staging/greybus/loopback.c
+> @@ -1110,13 +1110,6 @@ static void gb_loopback_disconnect(struct gb_bundle *bundle)
+>  	gb_connection_latency_tag_disable(gb->connection);
+>  	debugfs_remove(gb->file);
+>  
+> -	/*
+> -	 * FIXME: gb_loopback_async_wait_all() is redundant now, as connection
+> -	 * is disabled at the beginning and so we can't have any more
+> -	 * incoming/outgoing requests.
+> -	 */
+> -	gb_loopback_async_wait_all(gb);
 
-Disable platform lowlevel hw resources such as phy, clock and
-regulators etc. in device shutdown hook to reduce non-necessary power
-consumption when the platform enters shutdown stage.
+How was this tested?  It might be redundant but I don't think you can
+delete this just yet, otherwise we would have done so a long time ago.
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/usb/dwc2/platform.c | 3 +++
- 1 file changed, 3 insertions(+)
+And your changelog just says the same thing as this comment, shouldn't
+you write something different?
 
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 12b4dc07d08a..3f83ecc9fc23 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -371,6 +371,9 @@ static void dwc2_driver_shutdown(struct platform_device *dev)
- 
- 	dwc2_disable_global_interrupts(hsotg);
- 	synchronize_irq(hsotg->irq);
-+
-+	if (hsotg->ll_hw_enabled)
-+		dwc2_lowlevel_hw_disable(hsotg);
- }
- 
- /**
--- 
-2.49.0
+thanks,
 
+greg k-h
 
