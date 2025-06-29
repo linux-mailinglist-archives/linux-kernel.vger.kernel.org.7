@@ -1,152 +1,164 @@
-Return-Path: <linux-kernel+bounces-708112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F47AECC19
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:10:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CA9AECC1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08B518975BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4003A16E639
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CFF21ADA2;
-	Sun, 29 Jun 2025 10:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5967921D3C0;
+	Sun, 29 Jun 2025 10:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="jbLTkcMk"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZCgyCrx"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582A021770D
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 10:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061CF1F4169;
+	Sun, 29 Jun 2025 10:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751191812; cv=none; b=Z4aC3DfThtfquWaUH26f9340DSLqKjduBOjmlfMOm8yHkFGN826f0LtazTxyibiGZTV6ZV7i97GaPV0zvs4zp2/YdIhvysX5fasV3r8c0S+kA6xd95oWn/oq0g/kaUVuoRM4j1GxCviIij+uv1pSYBLetPPyXcKU/4N3zFXimjY=
+	t=1751192112; cv=none; b=O0HEOIVtcHcLPhsQsJlgLXFyOjWbBRab+eQlCUPxfL1U0cp9c95IyoHlOvzi17KhcK5OmD5/F5HQftzhqL4OQt5OwELNZwGhRRpZXMxk00px7e8WwmwP+MKWWT4vtelTsUsptPLd+Eg6RTsPSsmkZqQ6t5YwMpv6vpgnsnjGvtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751191812; c=relaxed/simple;
-	bh=R6uSRM1xEjbR8Uh/ppwy7XPm0tCcOs8UMbZXeqNBPkY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=HJbkFOabvJ49QqAtFW7bx5U+g2kyR5/UO4xaxWu57TcRlDmPTYa6mfCiE30t8LE4VNAB1pcRc3EXaQBCUW5Y2iZXGyeyZCyH4aAZte1SVI0t3yuJVja51FlJtqP9KeTeqIbW7xkw191m3n1kpE0rj9awCfuEZ6r2vza8XlnUEv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=jbLTkcMk; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1751192112; c=relaxed/simple;
+	bh=W2Sj0FqzFPGvWpO0mkRbXNUzJ8KD1W3cwBit7XUJxzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NSPEF065vMMY5r4iuw7PkMPFEcOOS1cOLrmpmI8cyshlgISDkvvDjbuHRShecnD1mdzWnO4hY/TP2htC6fEEH+CmXBwboxAuLrXOm+2IKEU0SwNSuLnl9quyGvEqAlkM/Ql/mlP5l7DvR69/OhdFgvAsld1Cd4O9X97Fqbokfp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZCgyCrx; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so22796615e9.1;
+        Sun, 29 Jun 2025 03:15:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751192108; x=1751796908; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rv+KlWL8/gXlHieXHmmWXTDlacHPWEYy4YGQvjbJEp0=;
+        b=TZCgyCrxhKi9TTVqngok+s7B7wiQyshDBz3MS9kFqfLGy2Bi7Y+UqMlhpm79Vmi6eu
+         RJhx755DISyryVJlcOhDrCK45Af9PI1kx8io8+4oGXR0rMKDqirsZiCoZNrGGdP5NXWZ
+         ElxMOBYyWobQEXBLmOa0YzWBUTpAGDLZNzvDd6kOi8fXcO2epH3A/apjT4v/4C/U4Ajq
+         PXEVm4RjeN9rogVuZc4yUqAxMrNGH57P56Fh4Ar6Lm/36yC0ieHGhqnK2RtP6kQN0dow
+         z9RtCJgVkJh+IoHlUVNvVdbSavMVF+nsDjDmcizY5/NfwcbGmXTywgfleSwq81qDhKaT
+         VcKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751192108; x=1751796908;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rv+KlWL8/gXlHieXHmmWXTDlacHPWEYy4YGQvjbJEp0=;
+        b=Az6Yrm2G3twPyYoSfR9gwUA5v39bZANNU/SL89atdZ/dCZaTr0CmOycR4zbJGN56RB
+         YhqK33+31Kua49sJmYt+6EtDEOZCpHgZPXYMY6XVtLa54Xb8OsLnBtUdRNmNzQu9amCV
+         hweFWUXVLU5dTa7o//KylHBB4Rgmxpy9/9DenQwhJgaD1wdK0jhIgH/Tv0Tpz/kh0h2y
+         9YUbcip5LfgQyY4EBNQYKYUVV2dG5eIgQwUsWxJADcMpeu7wgrH7WAIhkIYyZ4QAsdtB
+         3E0PfB5lAGYKpkllA8oRAwTi4qWbR0NyK1EHl8C0+ztwhdAfYdOjnbsJrnMrtSFCHCEV
+         eqcg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/2qY5ym4bZKao1EiH5mZ785Ci698chCikl9gHt0m5ujMMrGaZEWLXFSa/y4J4kgV+qAjdljWaeiHPpEWP@vger.kernel.org, AJvYcCWuf9XqE9OnoEjgMHsKvUGRxnzb7iwgprCfxVyxKMShqcLRMmahIvmMyfyB0cmumOAY5TJsJ4fgc4OAR9nv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy28WRDh5UetJ1uiWkvNCTwbcaFjrTWutACgjmBq8MIyrRSbqp+
+	mb7PksvvL+lERDvO4NGaCHulU7T3EKBQoNtacboDPx7cQMc3dyuXnz0k
+X-Gm-Gg: ASbGncsARbwoBo+KHlGO0vEdDAmpc3usG8Gt4E28ufAaBhXf0GByH8QWWQTzTYZ2Uuf
+	RafKYOzM/X9yqJO6bE50CnOLjv3yI6WAPYbndMlwLChWAQGlpD/e9y10kNH97ZSNijvXAHE5v+l
+	F26GWeHJ33FB+FxwJr8fQ9vT9DF6suKB5Fpx2r47P44KUHqXvpc8BNXeUaK4p/VT5e8lk66tFz7
+	mx01fl49n1oNecy5SGkV8qDRoZGDfqAtQJJ2NIefhjypq3GY3DwkvCtRrxgDFYUM8CrD9zedoOK
+	DrFi+nTP8ZLoZb7DvmDeJjTMR7ZnCmdypPNHMudZ2pNknbCR5S404l6IFQUOmyVNNj1wjZlx09m
+	X7J8OYpkWshKnjfdzKpsMi5/Kq42S
+X-Google-Smtp-Source: AGHT+IEHSBTOuNU4gIJluwTcmrh+62LZDnnH7HDcmBH7HEYrjf3Wks9oCzUt76AUoKgLXxQD5c/hUA==
+X-Received: by 2002:a05:600c:8b69:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-4539ff478a7mr1146925e9.16.1751192108049;
+        Sun, 29 Jun 2025 03:15:08 -0700 (PDT)
+Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538f88efffsm72765615e9.17.2025.06.29.03.15.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 03:15:07 -0700 (PDT)
+Date: Sun, 29 Jun 2025 11:15:06 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, <mcgrof@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <kernel@pankajraghav.com>,
+ <gost.dev@samsung.com>, Matthew Wilcox <willy@infradead.org>, Zhang Yi
+ <yi.zhang@huawei.com>, Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH v4] fs/buffer: remove the min and max limit checks in
+ __getblk_slow()
+Message-ID: <20250629111506.7c58ccd7@pumpkin>
+In-Reply-To: <3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
+References: <20250626113223.181399-1-p.raghav@samsung.com>
+	<3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1751191803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H6Wlp3JgvEp0ycS0t6Z7WKduaZTKhf5gEm0eW6oKUXk=;
-	b=jbLTkcMkzlOS4+CCECrHk6uIoEiUlZ8gi1AojI4kxi/eKj82hZVBUd0JkXPnB663LhL/Ek
-	gVqtKR4nI0DDAfDOLpK/pQysjigMfgN3b1oiUOlRymhs+BHhUm9Z2CIhjA6/dxDofMziof
-	bnZIC1eACNKyzLAaEjVmvFIWqNG5ubaMMU3Bswi2HkrK89/j4dBSJJ+/1Zwh7tZHRPMd7F
-	h8lCIjiqZr5zNjUESE1775Fn9QF8oEovSIHTMpvWLnkHDCJkdQKwj0qhGDK74YgzHqetQ1
-	lUR6lfFU1Fa45OZRahJUi6V6lS9ljIdgWs2JFN09YMxLkfMYs6Tf+IRgJb//Zg==
-Content-Type: multipart/signed;
- boundary=43508436bcd3ad84eb98e0bb756b39ac53921fae364149a231ac9f8d2b94;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sun, 29 Jun 2025 12:09:49 +0200
-Message-Id: <DAYXOI4WITJW.1G5DBWEQDDY1Z@cknow.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "kernel test robot" <lkp@intel.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
-Cc: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>, "Dragan Simic"
- <dsimic@manjaro.org>, "Quentin Schulz" <quentin.schulz@cherry.de>, "Johan
- Jonker" <jbx6244@gmail.com>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/8] arm64: dts: rockchip: Refactor DSI nodes on rk3399
- boards
-References: <20250627152645.740981-3-didi.debian@cknow.org>
- <202506290852.bWro2lBe-lkp@intel.com>
-In-Reply-To: <202506290852.bWro2lBe-lkp@intel.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---43508436bcd3ad84eb98e0bb756b39ac53921fae364149a231ac9f8d2b94
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, 27 Jun 2025 10:02:30 +0800
+Baokun Li <libaokun1@huawei.com> wrote:
 
-Hi,
+> On 2025/6/26 19:32, Pankaj Raghav wrote:
+> > All filesystems will already check the max and min value of their block
+> > size during their initialization. __getblk_slow() is a very low-level
+> > function to have these checks. Remove them and only check for logical
+> > block size alignment.
+> >
+> > As this check with logical block size alignment might never trigger, add
+> > WARN_ON_ONCE() to the check. As WARN_ON_ONCE() will already print the
+> > stack, remove the call to dump_stack().
+> >
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>  
+> 
+> Makes sense. Feel free to add:
+> 
+> Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> 
+> > ---
+> > Changes since v3:
+> > - Use WARN_ON_ONCE on the logical block size check and remove the call
+> >    to dump_stack.
+> > - Use IS_ALIGNED() to check for aligned instead of open coding the
+> >    check.
+> >
+> >   fs/buffer.c | 11 +++--------
+> >   1 file changed, 3 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/buffer.c b/fs/buffer.c
+> > index d61073143127..565fe88773c2 100644
+> > --- a/fs/buffer.c
+> > +++ b/fs/buffer.c
+> > @@ -1122,14 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+> >   {
+> >   	bool blocking = gfpflags_allow_blocking(gfp);
+> >   
+> > -	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+> > -		     (size < 512 || size > PAGE_SIZE))) {
+> > -		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+> > -					size);
+> > -		printk(KERN_ERR "logical block size: %d\n",
+> > -					bdev_logical_block_size(bdev));
+> > -
+> > -		dump_stack();
+> > +	if (WARN_ON_ONCE(!IS_ALIGNED(size, bdev_logical_block_size(bdev)))) {
+> > +		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
+> > +		       size, bdev_logical_block_size(bdev));
+> >   		return NULL;
 
-On Sun Jun 29, 2025 at 2:32 AM CEST, kernel test robot wrote:
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on rockchip/for-next]
-> [also build test ERROR on next-20250627]
-> [cannot apply to robh/for-next krzk/for-next krzk-dt/for-next linus/maste=
-r v6.16-rc3]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Diederik-de-Haas/a=
-rm64-dts-rockchip-Refactor-DSI-nodes-on-px30-boards/20250627-233300
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockc=
-hip.git for-next
-> patch link:    https://lore.kernel.org/r/20250627152645.740981-3-didi.deb=
-ian%40cknow.org
-> patch subject: [PATCH 2/8] arm64: dts: rockchip: Refactor DSI nodes on rk=
-3399 boards
-> config: arm64-randconfig-002-20250629 (https://download.01.org/0day-ci/ar=
-chive/20250629/202506290852.bWro2lBe-lkp@intel.com/config)
-> compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd70=
-8029e0b2869e80abe31ddb175f7c35361f90)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20250629/202506290852.bWro2lBe-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202506290852.bWro2lBe-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->>> Error: arch/arm64/boot/dts/rockchip/rk3399-rockpro64-screen.dtso:75.1-6=
- syntax error
->    FATAL ERROR: Unable to parse input tree
+Shouldn't that use WARN_ONCE(condition, fmt, ...)
 
-The kernel test robot is right as the ``&mipi_out`` node is missing a
-closing ``;``, so thanks for that :-)
-The problem is also present in v2, so I'll send a v3 shortly.
+	David
+ 
+> >   	}
+> >   
+> >
+> > base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35  
+> 
+> 
+> 
 
-Luckily I've now found why my build script didn't catch it.
-```sh
-export PATH=3D~/dev/kernel.org/dt-schema-venv/bin/:$PATH CROSS_COMPILE=3Daa=
-rch64-linux-gnu- ARCH=3Darm64
-make distclean
-make debarm64_defconfig
-make CHECK_DTBS=3Dy W=3D1 rockchip/px30-cobra-ltk050h3146w-a2.dtb
-<quite-a-long-list-of-all-boards-at-least-I-thought-so>
-```
-
-(debarm64_defconfig is my own defconfig based on Debian's kernel config)
-
-That long list didn't have ``rockchip/rk3399-rockpro64-screen.dtbo``.
-Is there a better/simpler way to validate all rockchip boards without
-having to explicitly list each and every one of them?
-
-Cheers,
-  Diederik
-
---43508436bcd3ad84eb98e0bb756b39ac53921fae364149a231ac9f8d2b94
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaGEQ8wAKCRDXblvOeH7b
-bkmOAP9oM6RsgNp49/g+vN6x7caM8SHQCK0m03vWy5v9AUMPCAD9Gu0vIsw3p1fn
-Jw3UxbRGaW+2LtlZ/raAKpP6oBKDRA4=
-=vkok
------END PGP SIGNATURE-----
-
---43508436bcd3ad84eb98e0bb756b39ac53921fae364149a231ac9f8d2b94--
 
