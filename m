@@ -1,54 +1,51 @@
-Return-Path: <linux-kernel+bounces-708113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470F6AECC1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:14:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21CAAECC1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5551894994
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:14:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD41F18949DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E932D1EB5D0;
-	Sun, 29 Jun 2025 10:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD7A1993BD;
+	Sun, 29 Jun 2025 10:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SugUPofI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBZZJlD8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506281DDA15;
-	Sun, 29 Jun 2025 10:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1611E1F4169
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 10:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751192049; cv=none; b=VjTaQctfvtaMk2U09OlKvlXdAGN2CNuvjex7Z2l5U4voal5P1WIpQLc3frk/gbopyM4QAJzznM1TyxJfMmftuVV2b9ktba8Q5H4/4HNWu1g0HoLwvfFf/Inmxp+IFDfN1NPRC06qqY5wzMMwFuiczfV8IgGyOstoVt0AbzaO/hc=
+	t=1751192116; cv=none; b=g2VX4DHnWHdVxa5NFSNRSIqTsWP3vJ9TmljmeUFt2H+3pqjXXvf/Q0l8Ib1DFaXjW/lFR57qXnA7LIORjm43oImxvLIQTsJCLrs60sfFS9TG5Nkad3WUECjGwqOu5qI1RM/D5mvsckto4uMGV0qBS2V2Q6ZZTgE6SbsgTvZFPf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751192049; c=relaxed/simple;
-	bh=XdbvY3hb9xbkGi10tmDHNYZ5H0m/0HmqoivDL+4z5O0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t0xvwgKOsyEoevFKcZR2eFYrvCM5kJLt+d3XQHXYhV51xvGUXjRVQnDl5jLDh1iyWVaaqKKP4gZRKp7MIHK8GlCDSZ3D+jWZmTJ1sfPqCM8+3MztdHMkhSZKOAZB+hLtkQOUrnE15vR8mjeYp6FJFATOnPHjljXElyTYXyn3XoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SugUPofI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF04C4CEEB;
-	Sun, 29 Jun 2025 10:14:07 +0000 (UTC)
+	s=arc-20240116; t=1751192116; c=relaxed/simple;
+	bh=dECr4nkvseSg7N1+5IE3EZvxlUZeqMiCco8Y1FIv3e4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uGX/tc+M9xMCzzfwK0NOfbQ7AksiMVd1glO3aUygMWBVGqk4VIulTH1Mrm/MUwqlXR1zaPVvPUEum0DpZgtNYg1+4lTOk0YeBwMbNrYegexIz0CbUz+v7uTRpf5JRtYrNb8wkmfbzWudxhQWiuLjTi7DgVFKqcws7BgGf5U+ZFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBZZJlD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C3BC4CEEF;
+	Sun, 29 Jun 2025 10:15:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751192048;
-	bh=XdbvY3hb9xbkGi10tmDHNYZ5H0m/0HmqoivDL+4z5O0=;
+	s=k20201202; t=1751192114;
+	bh=dECr4nkvseSg7N1+5IE3EZvxlUZeqMiCco8Y1FIv3e4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=SugUPofIsg+lg/f0zWJ0eM1weJyTWWTh4pZGUf00/yh10BYPJMMU8tAOArt33fM+X
-	 Lrg9UQXcGn1JwWmbGlX9Ra+Uqjtq03yjDRZoMhzCllwJliKA0gQXdHcnMCzZMJTabP
-	 AfqbPy/yoEpMPlpSKyEfWcnpL1MdNWgsqfoQAYalEJit4MNRTFFR0xcT65l9l2lfc+
-	 2DX9+SjQGLSYUlD2au+1RX5NnmJsOkU2eiqMSxfLyrsOgue9LB/OSBYES7/7DlZVwh
-	 WT4czD+Qe3wvwlO9uTnh6laUIZxySZ4mKbQsaEyrWFKRBxw9Q7vXaGkaxkzMru8lNV
-	 /4RuxbWqQUIjw==
+	b=YBZZJlD8Fmds6axB/L/QQbNzPzOPLsKdgaDpGvcCx6utfz+VRcCGyunCXLRcxKbgs
+	 2WLMQ8EoTLX3a8dHQZqwFRD/EsW+7i7CuotUdnhQo/Tdnw/3sT4ib4VEkt+6BBloBq
+	 u6cWg25hYvlduKk62MprsnJKjNWiTnPA5mtD5VYPMbv90AGLnaGugQcMn3OnSsg38F
+	 Mm3wJU5OMv/CAoei/upaXSfcb3LRSQYMxJDy7nS1gJwuv1NljB0fZAmEj2TzlkzrKG
+	 EFDwqm1ximOgCzaX1Yz74IkdbE0vpzNRjr+reWY4QTFZvtgH/1y09Ym28tURwlrlbG
+	 m2SE1s8mPNjEg==
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] regulator: sy8827n: make enable gpio NONEXCLUSIVE
-Date: Sun, 29 Jun 2025 17:57:16 +0800
-Message-ID: <20250629095716.841-1-jszhang@kernel.org>
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: tps6287x-regulator: Enable REGCACHE_MAPLE
+Date: Sun, 29 Jun 2025 17:58:22 +0800
+Message-ID: <20250629095822.868-1-jszhang@kernel.org>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,28 +55,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On some platforms, the sy8827n enable gpio may also be used for other
-purpose, so make it NONEXCLUSIVE to support this case.
+Enable regmap cache to reduce i2c transactions and corresponding
+interrupts if regulator is accessed frequently.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/regulator/sy8827n.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/regulator/tps6287x-regulator.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/regulator/sy8827n.c b/drivers/regulator/sy8827n.c
-index f11ff38b36c9..0b811514782f 100644
---- a/drivers/regulator/sy8827n.c
-+++ b/drivers/regulator/sy8827n.c
-@@ -140,7 +140,8 @@ static int sy8827n_i2c_probe(struct i2c_client *client)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/regulator/tps6287x-regulator.c b/drivers/regulator/tps6287x-regulator.c
+index c0f5f0a186a3..7b7d3ae39206 100644
+--- a/drivers/regulator/tps6287x-regulator.c
++++ b/drivers/regulator/tps6287x-regulator.c
+@@ -27,10 +27,17 @@
+ #define TPS6287X_CTRL3		0x03
+ #define TPS6287X_STATUS		0x04
  
--	di->en_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-+	di->en_gpio = devm_gpiod_get_optional(dev, "enable",
-+			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
- 	if (IS_ERR(di->en_gpio))
- 		return PTR_ERR(di->en_gpio);
++static bool tps6287x_volatile_reg(struct device *dev, unsigned int reg)
++{
++	return reg == TPS6287X_STATUS;
++}
++
+ static const struct regmap_config tps6287x_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.max_register = TPS6287X_STATUS,
++	.cache_type = REGCACHE_MAPLE,
++	.volatile_reg = tps6287x_volatile_reg,
+ };
  
+ static const struct linear_range tps6287x_voltage_ranges[] = {
 -- 
 2.49.0
 
