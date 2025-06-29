@@ -1,106 +1,245 @@
-Return-Path: <linux-kernel+bounces-708357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82973AECF5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:56:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1389AECF63
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81DBC3AE491
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25EDF18951B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF8236451;
-	Sun, 29 Jun 2025 17:56:50 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08D9231856
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 17:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213E236429;
+	Sun, 29 Jun 2025 18:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NKuYfKRg"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B7C4A3C;
+	Sun, 29 Jun 2025 18:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751219810; cv=none; b=ibgna5/FEU5UAcAbym4KR01PEPnD6pD9TeXOb6aQofGO3LAl0rKsnUp2exAmyYFWpYjrAIuULLz3BRrb20bTff5XhWq1bWusDvdwBfx6pU5QtZ2avAWGo7vNlzJPOmYa7OczbvMfBRyoCbZiE/5WpcfTDVfutREzqPwSc633lig=
+	t=1751220108; cv=none; b=MbJh3/AR6WdtXEz1oggEpGqLhIWbIXXXDJyQDAGMVqBrCcPbQWzKC47ayMOT+GBMYcGgSw9B8Shny6tJRrMjzW/KqRV1B5khcrlaLmYDzWCRbo6jIVnODUCWupqOSz67G6B418TeiucRo29NT4j2tf5IBxoZmRrzS0VNqGKTz64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751219810; c=relaxed/simple;
-	bh=tXM8AJhl8bpSvAiAZTCg9Ecbjt17dQ93+7ODnd8JEUU=;
+	s=arc-20240116; t=1751220108; c=relaxed/simple;
+	bh=VVIZcmw3kGEOhZxUnEIWRa2PjCOG8sqv0cjaVfxJixE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZeEEppXOJcUfiLkt1xYWM/rswF0pPL0H0S06fg9PSM/9fug2Kg4tkpbxzOvw0YgLKvWsCjOHp1i+nebiceXRBONjkOH3O2GEyWD/+Gpx1Nv65OY7plXf7NhiROUvxPB2HhlYu8Jh8DsH03a3X64TL1N4KAzgW4IDtnsX4g+98Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 55THuetg021737;
-	Sun, 29 Jun 2025 19:56:40 +0200
-Date: Sun, 29 Jun 2025 19:56:40 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] tools/nolibc: move FD_* definitions to sys/select.h
-Message-ID: <20250629175640.GA21675@1wt.eu>
-References: <d8d9ab91-0617-468e-a82d-9f271c5e6a7f@t-8ch.de>
- <20250629092552.GA30947@1wt.eu>
- <029f24fa-3512-4736-94a0-e158c158cc8e@t-8ch.de>
- <20250629094048.GA26861@1wt.eu>
- <20250629151006.GA16826@1wt.eu>
- <e2513e72-5949-463d-a950-0778609141d7@t-8ch.de>
- <20250629160823.GA2302@1wt.eu>
- <2322d3a1-a5ff-40ec-ad7e-1580f85d95f4@t-8ch.de>
- <20250629161908.GB2302@1wt.eu>
- <38b487e0-4d72-4a87-8fc4-c13b4fb35feb@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=srXi4sC2Ebxx78ck/sJ/NngDvLYok/vmgzdcK/TxOgrYPBqLJOIC2IMoCN8DHLl3fISCmCuuyemOtkIYqO0N8wb3hYQb5h8uMDMIE7/6N2dhq+noRCPgNV8GuIq6SH/J0brgfEABrJLMMoKg60IQvHLJK4qIPkVfe009fzTl7ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NKuYfKRg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1EB9A16D7;
+	Sun, 29 Jun 2025 20:01:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751220082;
+	bh=VVIZcmw3kGEOhZxUnEIWRa2PjCOG8sqv0cjaVfxJixE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKuYfKRg7s6e2TtlWzHZyBD0lJlnl0zulGimGGfx3FsfYTnMNTnCBjirQkRg0ujz3
+	 i2lhPdVCzZb5bTuKY438MLuKOAwIBqobYJmd4U15iBs2LauyEXb9ofOmh/97hhazoo
+	 R2owP5LXUk2yarMPR0rk6mMt9pzM/CEe7uORAh9o=
+Date: Sun, 29 Jun 2025 21:01:19 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 09/12] media: uvcvideo: Add uvc_ctrl_query_entity
+ helper
+Message-ID: <20250629180119.GD6260@pendragon.ideasonboard.com>
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-9-5710f9d030aa@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <38b487e0-4d72-4a87-8fc4-c13b4fb35feb@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250605-uvc-orientation-v2-9-5710f9d030aa@chromium.org>
 
-On Sun, Jun 29, 2025 at 06:27:27PM +0200, Thomas Weißschuh wrote:
-> On 2025-06-29 18:19:08+0200, Willy Tarreau wrote:
-> > On Sun, Jun 29, 2025 at 06:14:01PM +0200, Thomas Weißschuh wrote:
-> > > On 2025-06-29 18:08:23+0200, Willy Tarreau wrote:
-> > > > On Sun, Jun 29, 2025 at 05:54:02PM +0200, Thomas Weißschuh wrote:
-> > > > > I saw the same issue, but only because of the changes to types.h.
-> > > > > And these should not be necessary in the first place.
-> > > > 
-> > > > You mean fd_set definition ? It's solely a matter of includes ordering
-> > > > in fact, since it depends on FD_SETSIZE.
-> > > 
-> > > No, I mean the '#include "sys/select.h"' in "types.h".
-> > 
-> > I had already dropped it as well.
+Hi Ricardo,
+
+On Thu, Jun 05, 2025 at 05:53:02PM +0000, Ricardo Ribalda wrote:
+> Create a helper function to query a control. The new function reduces
+> the number of arguments, calculates the length of the operation and
+> redirects the operation to the hardware or to the entity private
+> functions.
 > 
-> Hm, then I'm not sure where it commes from.
-
-I noticed that you included linux/unistd.h from sys/select.h, which I
-didn't have, maybe it plays a role as well.
-
-> > > That breaks the dependency order, as it pulls in all kinds of other
-> > > stuff into the beginning of "types.h" which themselves depend on
-> > > definitions of "types.h".
-> > 
-> > It was not just this. I'm pretty sure that what unbroke it for you is
-> > keeping fd_set in types.h.
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 81 ++++++++++++++++++++--------------------
+>  1 file changed, 41 insertions(+), 40 deletions(-)
 > 
-> But I *did* move fd_set to sys/select.h.
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index b2768080c08aafa85acb9b7f318672c043d84e55..21ec7b978bc7aca21db7cb8fd5d135d876f3330c 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -576,6 +576,34 @@ static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc15 = {
+>  				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
+>  };
+>  
+> +static int uvc_ctrl_query_entity(struct uvc_device *dev,
+> +				 const struct uvc_control *ctrl, u8 query,
+> +				 void *data)
+> +{
+> +	u16 len;
+> +
+> +	switch (query) {
+> +	case UVC_GET_INFO:
+> +		len = 1;
+> +		break;
+> +	case UVC_GET_LEN:
+> +		len = 2;
+> +		break;
+> +	default:
+> +		len = ctrl->info.size;
 
-Sorry then, I just didn't notice it while trying to comapre the
-differences.
+		break;
 
-> > > > > The below works nicely for me:
-> > > > 
-> > > > OK. Do you prefer that we take that one or just a stub ? I'm personally
-> > > > fine with both.
-> > > 
-> > > I prefer moving the code.
-> > 
-> > OK. Do you want me to merge your patch or will you take care of it ?
-> 
-> As you'll resubmit your series anyways, please pick up my proposal.
+> +	}
+> +
+> +	if (query == UVC_GET_CUR && ctrl->entity->get_cur)
+> +		return ctrl->entity->get_cur(dev, ctrl->entity,
+> +					     ctrl->info.selector, data, len);
+> +	if (query == UVC_GET_INFO && ctrl->entity->get_info)
+> +		return ctrl->entity->get_info(dev, ctrl->entity,
+> +					      ctrl->info.selector, data);
+> +
+> +	return uvc_query_ctrl(dev, query, ctrl->entity->id, dev->intfnum,
+> +			      ctrl->info.selector, data, len);
+> +}
+> +
+>  static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping(
+>  	struct uvc_video_chain *chain, struct uvc_control *ctrl)
+>  {
+> @@ -1222,35 +1250,27 @@ static int uvc_ctrl_populate_cache(struct uvc_video_chain *chain,
+>  	int ret;
+>  
+>  	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+> -		ret = uvc_query_ctrl(chain->dev, UVC_GET_DEF, ctrl->entity->id,
+> -				     chain->dev->intfnum, ctrl->info.selector,
+> -				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF),
+> -				     ctrl->info.size);
+> +		ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_DEF,
+> +					uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF));
+>  		if (ret < 0)
+>  			return ret;
+>  	}
+>  
+>  	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN) {
+> -		ret = uvc_query_ctrl(chain->dev, UVC_GET_MIN, ctrl->entity->id,
+> -				     chain->dev->intfnum, ctrl->info.selector,
+> -				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN),
+> -				     ctrl->info.size);
+> +		ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_MIN,
+> +					uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+>  		if (ret < 0)
+>  			return ret;
+>  	}
+>  	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX) {
+> -		ret = uvc_query_ctrl(chain->dev, UVC_GET_MAX, ctrl->entity->id,
+> -				     chain->dev->intfnum, ctrl->info.selector,
+> -				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX),
+> -				     ctrl->info.size);
+> +		ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_MAX,
+> +					uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+>  		if (ret < 0)
+>  			return ret;
+>  	}
+>  	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES) {
+> -		ret = uvc_query_ctrl(chain->dev, UVC_GET_RES, ctrl->entity->id,
+> -				     chain->dev->intfnum, ctrl->info.selector,
+> -				     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES),
+> -				     ctrl->info.size);
+> +		ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_RES,
+> +					uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+>  		if (ret < 0) {
+>  			if (UVC_ENTITY_TYPE(ctrl->entity) !=
+>  			    UVC_VC_EXTENSION_UNIT)
+> @@ -1291,16 +1311,7 @@ static int __uvc_ctrl_load_cur(struct uvc_video_chain *chain,
+>  		return 0;
+>  	}
+>  
+> -	if (ctrl->entity->get_cur)
+> -		ret = ctrl->entity->get_cur(chain->dev, ctrl->entity,
+> -					    ctrl->info.selector, data,
+> -					    ctrl->info.size);
+> -	else
+> -		ret = uvc_query_ctrl(chain->dev, UVC_GET_CUR,
+> -				     ctrl->entity->id, chain->dev->intfnum,
+> -				     ctrl->info.selector, data,
+> -				     ctrl->info.size);
+> -
+> +	ret = uvc_ctrl_query_entity(chain->dev, ctrl, UVC_GET_CUR, data);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -2164,11 +2175,8 @@ static int uvc_ctrl_commit_entity(struct uvc_device *dev,
+>  			continue;
+>  
+>  		if (!rollback)
+> -			ret = uvc_query_ctrl(dev, UVC_SET_CUR, ctrl->entity->id,
+> -				dev->intfnum, ctrl->info.selector,
+> -				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT),
+> -				ctrl->info.size);
+> -
+> +			ret = uvc_ctrl_query_entity(dev, ctrl, UVC_SET_CUR,
+> +				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+>  		if (!ret)
+>  			processed_ctrls++;
+>  
+> @@ -2570,13 +2578,7 @@ static int uvc_ctrl_get_flags(struct uvc_device *dev,
+>  	if (data == NULL)
+>  		return -ENOMEM;
+>  
+> -	if (ctrl->entity->get_info)
+> -		ret = ctrl->entity->get_info(dev, ctrl->entity,
+> -					     ctrl->info.selector, data);
+> -	else
+> -		ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id,
+> -				     dev->intfnum, info->selector, data, 1);
 
-OK will do that. Thanks.
-willy
+Here ctrl->info isn't filled yet, so replacing info->selector with
+ctrl->info.selector won't work. Usage of ctrl->info.selector in the
+->get_info() branch looks like a bug.
+
+> -
+> +	ret = uvc_ctrl_query_entity(dev, ctrl, UVC_GET_INFO, data);
+>  	if (!ret) {
+>  		info->flags &= ~(UVC_CTRL_FLAG_GET_CUR |
+>  				 UVC_CTRL_FLAG_SET_CUR |
+> @@ -2654,8 +2656,7 @@ static int uvc_ctrl_fill_xu_info(struct uvc_device *dev,
+>  	info->selector = ctrl->index + 1;
+>  
+>  	/* Query and verify the control length (GET_LEN) */
+> -	ret = uvc_query_ctrl(dev, UVC_GET_LEN, ctrl->entity->id, dev->intfnum,
+> -			     info->selector, data, 2);
+> +	ret = uvc_ctrl_query_entity(dev, ctrl, UVC_GET_LEN, data);
+
+Same here.
+
+>  	if (ret < 0) {
+>  		uvc_dbg(dev, CONTROL,
+>  			"GET_LEN failed on control %pUl/%u (%d)\n",
+
+-- 
+Regards,
+
+Laurent Pinchart
 
