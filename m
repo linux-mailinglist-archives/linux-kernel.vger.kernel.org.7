@@ -1,88 +1,56 @@
-Return-Path: <linux-kernel+bounces-708482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36305AED0FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C87AED03C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8333917478A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA893B4C67
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4497E23B61A;
-	Sun, 29 Jun 2025 20:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCDD238C3D;
+	Sun, 29 Jun 2025 20:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZnBDNab"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KGMJ9S+W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C892BB04;
-	Sun, 29 Jun 2025 20:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA26E230BC3;
+	Sun, 29 Jun 2025 20:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751228515; cv=none; b=Oc5zaeC96fqZ4TUXMPRwSbxJTthNc1B7EpWJNv5LJYPC9n3CPin2ZkCNB4OYogim5DSXaB8L/g8rXP4dI6Q1FLy+GqKToOwMJ2htKKcVj8C7rqTBD+Qhp5b6WGR51J2e9kB80VEHez2R7GkuV7+9/GWedTj8UAbK5wyq/jYp9lw=
+	t=1751228087; cv=none; b=VWPlcN9IQBp063JHgtEQTNyeQGrbAy3l39HaRLVRLuYuDOfgS3UT6HAz6hE3pj/kyRnUkFr9AnWk6ftURFUqW+/mCyui5QEVlapfrx0vKBCQfrkbShVmUAEwcmtljQPw9s9AcurKyaCoJDNQpGgRugVNq8hYz1W/pgEyf2wmyhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751228515; c=relaxed/simple;
-	bh=10NYvTis+ZoUDdKYTvYJpAMMRAFqChsF1l5t2Hsh7Q0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hp4y6V4Bto08c4lkIamaqvYA/mxfabkz+MKddSS2ydQ8EPeFcG3rfBNrn6suPcX7122lvCgCMfm2WQqC9dSLk56f9H1xHVI/AnijaNjo2l7w8jCj3xKsRDFmwRchqJxQVray6W1IC2CNjHax18aD/4lvtcCExLCgBm5WuNSEWno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZnBDNab; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6fadb9a0325so13030406d6.2;
-        Sun, 29 Jun 2025 13:21:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751228513; x=1751833313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PrGJhFj+uGvqfpm9hC0ZWZfkr1UzVV1w+QHF3h1Qi0A=;
-        b=RZnBDNabS8OhpA0gN5KUBEIbWEM5rL7pTSS2aYg/WUrdaGs+RJk+k9MkGpFZLthjEw
-         +Dkw2vyzh5bZKabQJqSYOme10jorwkQFKyt9REfMNgpr4RWzP9xtAGFcw1GkveR/aFja
-         OWJVYjSev9IJFjnOgItYhD0Ekjeur5eq7rMdjZJDZAiUq0Ai7o0N7X8QvE0CpS0eJ+mC
-         qu0b3velOzOn88m/3TcoGbnNWqtF/qbkfaU3F5NWR5QoimGInBrv0ImKk0yY6QsAp4m9
-         TcZvT5010xz1NwNBIUWw22bM1wue5BzSyYiQyeEQ76tqnyK8KNaq+VcB4v/8zuC7BWb9
-         hPtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751228513; x=1751833313;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PrGJhFj+uGvqfpm9hC0ZWZfkr1UzVV1w+QHF3h1Qi0A=;
-        b=NKuINORmNiEYVBnBr3+gECs+SKny/JbKbf8i/k46o8DtnpfyeVQNRyV6SmvNFHB4/M
-         LLBVzsN19sAPpvlz2zEKrj0byaqGzNQDqdX57a7CxbxvyXEY1WAxND95oevW7dx4XtgY
-         3ijq6IHTefifKDGELCsiXJMvm9AnU5JGTqngQhgTu5458+dAP95VXbvstF/q/cr7oeYi
-         vSr/wfJUILcjsm/le0PYPYx8HQ8Bbxl96SQk70vwoXb3asKAiwYXR2sY+/gY3t8X2Wkt
-         cnrAOHvg2nicJF8odo3Rf5OH2TXmWm2H97Hh86CKNTrNCAwg2cYcmW5J/bUEMwt7BbGx
-         5Zzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8AuXGXTMvmUHFz3rI/PeVVgCxDDuMKQO122UpLFP5m/Jh0pmqKpm1w2LSHpD5aMFixeC88urFoIRfHI=@vger.kernel.org, AJvYcCVCXApE5U0HsKk8vD5MfPaMhoMJPU9nosM7GNCAMC/XT5D3eFWJYL3c2O5fGEFm32G6qiGGMUhzwUSw@vger.kernel.org, AJvYcCXsvMec9jU31WyGftIXecqBlTAaFnQbQxt01i6T01y45gn8IQGv2JSGkNXZqlrfhm6ijIzEC5DE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn867cvTJ5vCRArjfHBd3DMZWMCoj64koB8L74EITIfCysBEsF
-	rOdPIdguG6YffezAYm2hqW6UxkPOvGH0HZLwNzC2RkU8pBBwUkn4iw6icWY3/IFYoEM=
-X-Gm-Gg: ASbGnctYtoYOdIDRGswYvDYMR87bebrVzOt5VPPFh6ryz4VWZG8iP+TLdrPTgR3YaX0
-	yzaScrGHiz1puhj1UCrdHKk8RL5tfR+YFccS63Bc6JO05xxGkw/ri6ERTq7S6WY6ZGVYr4Vzevt
-	CyygPbgqdjbRKR+KG1NaG8fJyuExWUOGoHBJUscMSt8EMmM+g6ltkCDqLUtyBtICAcZA0wMhgB6
-	i8oVsR0vORaLOP8KKc+srjU9wmIUe4hljirXdJJMGHMn1XflArekgyRxFOdIbPHZtujYuE26YDJ
-	mWZ9yV9pL1p0Z5X/JsjpVMnsFxt8xHz8LoYKogtwLeVD8PZJJAQaUjFlDusah5BLX0iStmPGFWI
-	yn/0t9esZxCJoUp2eeTbRqnpbKsBap3ZbafBa8of4Yaub9Ptgm/04ggQvNtVWIh6tqH5t
-X-Google-Smtp-Source: AGHT+IGd/xUQwP5gbHH76+NGUezmhBGyUXege7Vdxt3LU36HCfGLt++qwJJ6/1sqc7j7v3unPZBieA==
-X-Received: by 2002:a05:6214:440c:b0:6fa:ba15:e8d with SMTP id 6a1803df08f44-6ffed768083mr168190556d6.0.1751228512926;
-        Sun, 29 Jun 2025 13:21:52 -0700 (PDT)
-Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.81])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd7730aaf8sm56388186d6.109.2025.06.29.13.21.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 13:21:52 -0700 (PDT)
-From: Seungjin Bae <eeodqql09@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: pip-izony <eeodqql09@gmail.com>,
-	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-usb@vger.kernel.org,
+	s=arc-20240116; t=1751228087; c=relaxed/simple;
+	bh=YmhJzLmrTV4n3mJcdv9jvwEmM2fyyH58/UncPVtVPeQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rE9spatzx/ZMFkidklwS5k3kfm+lLBbB5Yn2nf0k89ExPYC1pmA9GkNLSlQKlqpGXVNAgEFmjbwjd3t1QpWojL8FEEHqYpU74gtuQuLy4ipc6EPUeQFMiSft2sFJhQxLtU80e/hp+YDSO9RUon/8H+ELWQ0BColXRpwfV+GAEP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KGMJ9S+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51BF3C4CEEB;
+	Sun, 29 Jun 2025 20:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751228086;
+	bh=YmhJzLmrTV4n3mJcdv9jvwEmM2fyyH58/UncPVtVPeQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KGMJ9S+WvCwARjvH/iV27nmgwV09I7E3caQcfwtrvVU2+xaXIstlxI6sJWLdKScwz
+	 TPt2TYz3WDjXLTo4RujNo21MOfFSL8aGnzPYvkS0Sww2QcVTesBNWOcvmy/V20BdOU
+	 FQOh/7iUgNYRq9h7t98QG+P8t/bsiHTHnYV80g6ywdqPe8PTIaPph+CcWls9S2MEfu
+	 ALy785hdz+aDLlD9tsF5l2DUK2tXebSgMbpOvjGUKnHrZzapBj5S3U1yV5JflQMqlc
+	 LkD/2zUmX+aarkRA+MBlEaf6gnWhK6Fg5CVkKWlzPnmt5VVwOySMTTwvhvXO0QjAFv
+	 pUl4Ip1IQQmhg==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: gadget: max3420_udc: Fix out-of-bounds endpoint index access
-Date: Sun, 29 Jun 2025 16:13:27 -0400
-Message-ID: <20250629201324.30726-4-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-mm@kvack.org
+Subject: [RFC PATCH 0/6] mm/damon/core: support multi-source reports-based access monitoring
+Date: Sun, 29 Jun 2025 13:14:37 -0700
+Message-Id: <20250629201443.52569-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,33 +59,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the max3420_set_clear_feature() function, the endpoint index `id` can have a value from 0 to 15.
-However, the udc->ep array is initialized with a maximum of 4 endpoints in max3420_eps_init().
-If host sends a request with a wIndex greater than 3, the access to `udc->ep[id]` will go out-of-bounds,
-leading to memory corruption or a potential kernel crash.
-This bug was found by code inspection and has not been tested on hardware.
+TL; DR: Extend DAMON core-operations set layers interface for operations
+set driven report-based monitoring such as per-CPU and write-only access
+monitoring.
 
-Fixes: 48ba02b2e2b1a ("usb: gadget: add udc driver for max3420")
-Cc: stable@vger.kernel.org
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
- drivers/usb/gadget/udc/max3420_udc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Background
+----------
 
-diff --git a/drivers/usb/gadget/udc/max3420_udc.c b/drivers/usb/gadget/udc/max3420_udc.c
-index 7349ea774adf..e4ecc7f7f3be 100644
---- a/drivers/usb/gadget/udc/max3420_udc.c
-+++ b/drivers/usb/gadget/udc/max3420_udc.c
-@@ -596,6 +596,8 @@ static void max3420_set_clear_feature(struct max3420_udc *udc)
- 			break;
- 
- 		id = udc->setup.wIndex & USB_ENDPOINT_NUMBER_MASK;
-+		if (id >= MAX3420_MAX_EPS)
-+			break;
- 		ep = &udc->ep[id];
- 
- 		spin_lock_irqsave(&ep->lock, flags);
+Existing DAMON operations set implementations, namely paddr, vaddr, and
+fvaddr, use Accessed bits of page tables as the main source of the
+access information.  Accessed bits has some restrictions, though.  For
+example, it cannot tell which CPU or CPU made the access, whether the
+access was read or write, and which part of the mapped entity was really
+accessed.  Also, it cannot capture accesses done without page table
+walks, e.g.,  TLB hit case, or unmapped pages.  Exisiting DAMON
+operations set can capture the accesses to unmapped pages utilizing
+PG_Idle, though.
+
+Depending on the use case, the limitations can be problematic.  Because
+the issue stems from the nature of page table Accessed bit, utilizing
+access information from different sources can mitigate the issue.  Page
+faults, memory access instructions sampling interrupts, system calls, or
+any information from other kernel space friends such as subsystems or
+device drivers of CXL or GPUs could be examples of the different
+sources.
+
+DAMON separates its core and operations set layer.  Operations set layer
+handles the low level access information handling, and the core layer
+handles more high level works such as the region-based overhead/accuracy
+control and access-aware system operations.  Hence we can extend DAMON
+to use the different sources by implementing and using another DAMON
+operations set.  The core layer features will still be available with
+the new sources, without additional changes.
+
+Nevertheless, the current interface between the core and the operations
+set layers is optimized for the Accessed bits case.  Specifically, the
+interface asks the operations set if a give part of memory has accessed
+or not in a given time period (last sampling interval).  It is easy for
+Accessed bit use case, since operations set can simply read the current
+value of the Accessed bit, which is already well manageed for each
+mapping entities by the memory management subsystems.  For some sources
+other than Accessed bits, the operations set may need to keep the access
+information on its own, and answer to the core layer's question by
+reading its own access information collection.  Similar implementations
+of such operations set internal access information may required for
+multiple operations set implementations.
+
+Core Layer Changes for Reporting-based Monitoring
+-------------------------------------------------
+
+Optimize such possible duplicated efforts, by updating DAMON core layer
+to support real time access reporting.  The updated interface allows
+operations set implementations to report (or, push) their information to
+the core layer, on their preferred schedule.  DAMON core layer will
+handle the reports by managing meta data and updating the final
+monitoring results (DAMON regions) accordingly.
+
+Also add another operations set callback to determine if a given access
+report is eligible to be used for given operations set.  For example, if
+the operations set implementation is for monitoring only specific CPU or
+writes, the operations set could ask core layer to ignore reported
+accesses that made by other CPUs, or was for reads.
+
+How Per-CPU or Write-only Monitoring Can Be Implemented
+-------------------------------------------------------
+
+With these core layer changes, we can implement new DAMON operations set
+that utilizes different information source for page table Accessed bits
+restricted use cases.  For example, to utilize page faults information,
+we could implement an operations set that installs the fake page fault
+protections to access sampling pages per DAMON region for every sampling
+interval.  For that, damon_operations->preapre_access_checks() callback
+coudl be a good place to implement.  Then the developer would need to
+further update PROT_NONE page fault handlers to report the access events
+using the new report API, namely damon_report_access().  The report
+could contain information about which CPU, process, or thread made the
+access, and whether the access is for read or write.  And finally
+implementing the report-ignore logic to ignore accesses made by CPUs of
+no interest or reads, we can do per-CPU or write-only access monitoring.
+
+Patches Sequence
+----------------
+
+The first patch introduces damon_report_access() that any kernel code
+that can sleep can use, to report their access information on their
+schedule.  The second patch adds DAMON core-operations set interface for
+ignoring specific types of data access reports for the given operations
+set configuration.  The third patch further update core layer to really
+use the reported access information for making the monitoring results
+(DAMON regions) for API callers and ABI users.  The fourth patch updates
+virtual address operations set to ignore access reports for none-target
+virtual spaces.
+
+The fifth and sixth patches are for only showing possible future
+extensions of the report struct for per-CPU and write-only monitoring.
+
+Plan for Dropping RFC
+---------------------
+
+This patch series is an RFC for early sharing of the idea that also
+shared on the last LSFMMBPF[1], as 'damon_report_access()' API plan.
+I actually wanted to post this later, but recently I received a few
+questiosn about this, so sharing this very early version.  The
+implementation is pretty simple and unoptimized.  No real use case of
+the changed interface (new operations set implementation) exists.  We
+will further optimize the core layer implementation and add one or more
+real operations set implementations that utilizing the report-based
+interface, by the final version of this patch series.
+
+[1] https://lwn.net/Articles/1016525/
+
+SeongJae Park (6):
+  mm/damon/core: introduce damon_report_access()
+  mm/damon/core: add eliglble_report() ops callback
+  mm/damon/core: check received access reports
+  mm/damon/vaddr: impleement eligible_report() callback
+  mm/damon: add node_id to damon_access_report
+  mm/damon: add write field to damon_access_report
+
+ include/linux/damon.h | 30 +++++++++++++++++
+ mm/damon/core.c       | 76 +++++++++++++++++++++++++++++++++++++++++++
+ mm/damon/vaddr.c      |  7 ++++
+ 3 files changed, 113 insertions(+)
+
+
+base-commit: 78af14fb3cf19eea2f204650a0090aa2c7022257
 -- 
-2.43.0
-
+2.39.5
 
