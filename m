@@ -1,239 +1,226 @@
-Return-Path: <linux-kernel+bounces-708344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3558BAECF2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:27:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E52AECF1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDACF3AF043
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:27:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F310F172FD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26AF239591;
-	Sun, 29 Jun 2025 17:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C4B239E81;
+	Sun, 29 Jun 2025 17:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebHmg64/"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THnU3M4J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938BE238D57;
-	Sun, 29 Jun 2025 17:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548921E8837;
+	Sun, 29 Jun 2025 17:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751217951; cv=none; b=iVR+sFm4cVGxBxzZyZmz+YiqksSUg6d5Y+g9lZvAVGnc4urYVBm9RriCg3DarR9aaALjbbndPSuAhZxVkt+qn7CIcKBKXJRwXXL7mHPOERrAMvoHFx+hhPHJ7sZKZ2Yf/R6h18FiEABKUzxKJINH+zGh0mubn1VIOCih3Wnl6KM=
+	t=1751217925; cv=none; b=XD2d+yLX/3bQVlU48HUAxrvMKrdgcPoONBe5QnL9srKObPRvNbUEZiAQNfpG+QEvPK9Bf7kEPUczDyZl/XB03GEKadVo58UxxU4Gf4oEB/AMGfJINzwOAosG0B2TMTSEw2dYj90H0j8TVFhMG//xOtQNbKEBmAoF63toTB4irjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751217951; c=relaxed/simple;
-	bh=dX5CgCff38oCxVYrv1myAPN8VV6/co07Gu9nbEQT2ec=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CfYxJdcz5jraFbjMx/kDjUHEHK1XRxN/e1O7WS2QtD28aPPSm4kOirVTRkWXI1DB0BKidPQmvySMsOloBOuFRzG0sl8Xy86mWrc0RuDv1Y4aqCwe2wpbJH0ZKhBYIPR2AhJdI8DG3FvmM1Om3a4cxpxoRUbd/wbpyCBN2gc9BII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ebHmg64/; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4a818ed5b51so1825011cf.1;
-        Sun, 29 Jun 2025 10:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751217948; x=1751822748; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CC9iUQpNk2KWt1DZhVabqrPCsFfxqA98Z3a6X4JvyBM=;
-        b=ebHmg64/Hx8o5Q46lfBuqitsGPMhQK1A4ZNTeO68+qZSP4h/DAPRsqm7isITBySEjw
-         idSE3xFvpjvToM/clc1y4Sq25aKGewRIiM+D69YHsDgDosLSsmi3t+n80CYqPi+j2fci
-         1R7Oj+tKyr7gzFH9oBJxMlcDdYBlmhXVO/1F4q5+KJl9PKWR4mndqAJYspiCrL2escLA
-         CbI7dyKXUplnaF/S4IiHfei6KbM2Ih1QfxiTem6eCM0io1zwTLlCaUEBIYauTvv4kqAR
-         hwFJg4j4eJuLqA94/2Tystao86FG9arT3WI2Xs6VeLa6mMPtuX1zHoQxXYZKvN4HYgEh
-         2OdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751217948; x=1751822748;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CC9iUQpNk2KWt1DZhVabqrPCsFfxqA98Z3a6X4JvyBM=;
-        b=jzFuaDuLZFyWry7XVaWQuA03tesf6vKwBgaJ+uplsEh5zf6zfMQHV2eyRQ/vEOGW12
-         pppSSJ1iAFoc8BZA77UoQtlzwKLRPnyRBAmaMl8T1oJUA6LFGZDsuVtic5biF6c9XlST
-         tFE2JLfdfFB48iFZ3nnoPBnY0Pr+jw0KTmYmyMowgotnqBi3PeOyVNMY2ug3Q1jmGP2s
-         ZvvIbCB7G/ZrcqOihxpfi8tppQa13QoeGP3orYffpHIfy0ZJHisqlBFCov7UYdgFMFE7
-         qqHD6OdDbzzafH8L8cyUkdSl8YNcDHLTbmkDr5D+q9Na8bgrZFnx063aY/F1rM3meQ38
-         dOgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVOgC8cJhFDCu2zjUNeaHG9CvKMwq4f7dqgNji6/BQ4VxtBcRbET2CZBncIE7lVwdRyh/7xUdCWirxmYg=@vger.kernel.org, AJvYcCUk8Rq8hSwGYbJUB3pM8wXjJeu1jmn/Urh2Ieyd/NSDsWczKnS+u3dKbDtkqZbEyTC1WIeOLQU+VNsXMcqAX3F3Sg==@vger.kernel.org, AJvYcCVDgCRx1n3MhgZOTzMx3z9bNuw+Ujiqn9eGGkVEvLm4hGADLvB25T3my4UwDEn9WvimN7657awrhao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwphXE4EMRiJDH/udE4n5naEfSAAxTWMFbHqlFQAnyvsEbIJjQ2
-	HUoUwQMAeRVPnTLujYJdgv/Otrr84SbQxL4jJRusM3f9QapH+ZDkT0lG
-X-Gm-Gg: ASbGncsESPHPln1r5Lxxa6lHH9zN3ZsjCBTPDdgM82rHQmwpa96DsgFHuwFPShh2Svp
-	FgqjEFnPX5FoYWvg0NQ9BUg0D/N/KP2KY4zUt9DKX6T+8cRc87RvnGT8cKhuGD/efWG60bRCIqe
-	94+Hf1cN/IsltmHrSR2AhyzuJfXrzlB5BSqqVtevPIxFzYEsq2YjYMKx+uo0P8k/bW0iKVTAMv0
-	tEZulUCccf3T5lEMWqMP1LIrhghX2W2irZAYplM8+MicdjsRYP5D4g1hAzZ3xlOqUTaoz+FBqCE
-	yIHJ2fqkppVb4ao4L7VQ6IHFGWUbLv4OC9H9SYSVupVyLGgUDCqMD+I8x/w/xHIodjqrqBpLW1x
-	OTLI=
-X-Google-Smtp-Source: AGHT+IHL+yIWTipjXDrBIV1HOTDHYJtyQk3xOUCkDv6eXNSuiH8iXZMcrL3wqtORw+/eQhaCGyQTew==
-X-Received: by 2002:a05:622a:5b03:b0:4a7:6e64:a52b with SMTP id d75a77b69052e-4a804b3926dmr128171311cf.35.1751217948303;
-        Sun, 29 Jun 2025 10:25:48 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a7c3:c88d:6da3:af6d:a237:3289])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4a7fc57d7dcsm45549761cf.60.2025.06.29.10.25.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 10:25:47 -0700 (PDT)
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@oss.nxp.com>,
-	daniel.baluta@nxp.com,
-	iuliana.prodan@oss.nxp.com,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v7 3/3] remoteproc: imx_rproc: detect and attach to pre-booted remote cores
-Date: Sun, 29 Jun 2025 14:25:12 -0300
-Message-Id: <20250629172512.14857-4-hiagofranco@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250629172512.14857-1-hiagofranco@gmail.com>
-References: <20250629172512.14857-1-hiagofranco@gmail.com>
+	s=arc-20240116; t=1751217925; c=relaxed/simple;
+	bh=T3i5nz/Q+wpJG//VJNZO4mD6Ybgyh26IwcwG2ujrvp8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uNR49suaKoCXsorer5zi3VKzAbuy8HQf06LV53SxmBTjoeoodo3O9NXh1vLj1DsSZnnAOqPgAvBZaqX5/tXrDvuPChJ2Hm2pgNptwZZrM9Y+9lmWZL2nLyLa+g3DzpKJomCjMPE/wC98xn8qnJG0zpgT9HxB0jpcp9sFkG3dobw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THnU3M4J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EACC7C4CEEB;
+	Sun, 29 Jun 2025 17:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751217925;
+	bh=T3i5nz/Q+wpJG//VJNZO4mD6Ybgyh26IwcwG2ujrvp8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=THnU3M4JFRtM/N51yvZnlPzjCoIVGD80GgF/pYjnHwNslRyGaRpadxGncyQTAKygo
+	 Zm2ly55bn4SVkTmsMtETijwL+SMtlkyy/sCgrl9uLqa3thkTRoiwNoCNwOuGUVkLCc
+	 UVqfwHzmyOlnAcOZww4SWVkEHoshKh4xCA9tNVYftj3Np8nP8QoN8Il4KfHRLm/TZ1
+	 svzHDcSpcjGaTwkcaf/MCpYIW5CdCS320GS/5oooy4KHZUx8TyONLY5RHC3AGMj9kl
+	 VkPs/io/FD3zsPOPGXYSmFaf8bUnrMaQGpE3UhLsmRy6UqYxG8DYGZG69RARzzGvtp
+	 Fz4IMISIMUNNA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D96C83026;
+	Sun, 29 Jun 2025 17:25:24 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v7 0/4] arm64: dts: qcom: Add Lenovo ThinkBook 16 device
+ tree
+Date: Sun, 29 Jun 2025 19:25:21 +0200
+Message-Id: <20250629-tb16-dt-v7-0-35276341338f@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAF3YWgC/33OwUrEMBDG8VdZcjaSSSaT1JPvIR7aZGoDZbM0t
+ ahL393sgnYv7fH/MfyYqyg8JS7i5XQVEy+ppHyu4Z5OIgzt+YNlirWFVtoqCyDnDkjGWbLHgMZ
+ E7zoQ9foycZ++7tLbe+0hlTlP33d4gdv6Z9h/YwGpZAzWI7XaBvSveYwlDDmPJY+fc/2lPHfpR
+ 9zART8itCG6Ii5g01C0niMdIuYB0bghpiLgWFNsjGVnDhHcQbAiOgCTAh9Nrw4RuyGk3IbYirS
+ MjTGEvdX2EKEdhCpC0BpoAJmd3kXWdf0FKNqAEwQCAAA=
+X-Change-ID: 20250511-tb16-dt-e84c433d87b1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751217923; l=5870;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=T3i5nz/Q+wpJG//VJNZO4mD6Ybgyh26IwcwG2ujrvp8=;
+ b=J2cmcH1U4J876TsSb+2f2c1DC3yqe5IhZA8GC8AdU1xuZO81Zq/4hpDQrvm+EaQve+C4h5WMd
+ yeTPtXkL5SJBtKQ5sFYk0t7diUgJe1acZjN0nGCvo32IWrj56bh76J0
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-From: Hiago De Franco <hiago.franco@toradex.com>
+Device tree for the Lenovo Thinkbook 16 G7 QOY
 
-When the Cortex-M remote core is started and already running before
-Linux boots (typically by the Cortex-A bootloader using a command like
-bootaux), the current driver is unable to attach to it. This is because
-the driver only checks for remote cores running in different SCFW
-partitions. However in this case, the M-core is in the same partition as
-Linux and is already powered up and running by the bootloader.
+The Laptop is a Snapdragon X1 / X1 Plus (Purwa) based device [1].
 
-This patch adds a check using dev_pm_genpd_is_on() to verify whether the
-M-core's power domains are already on. If all power domain devices are
-on, the driver assumes the M-core is running and proceed to attach to
-it.
+Supported features:
 
-To accomplish this, we need to avoid passing any attach_data or flags to
-dev_pm_domain_attach_list(), allowing the platform device become a
-consumer of the power domain provider without changing its current
-state.
+- USB type-c and type-a ports
+- Keyboard
+- Touchpad (all that are described in the dsdt)
+- Touchscreen (described in the dsdt, no known SKUss)
+- Display including PWM backlight control
+- PCIe devices
+- nvme
+- SDHC card reader
+- ath12k WCN7850 Wifi and Bluetooth
+- ADSP and CDSP
+- GPIO keys (Lid switch)
+- Sound via internal speakers / DMIC / USB / headphone jack
+- DP Altmode with 2 lanes (as all of these still do)
+- Integrated fingerprint reader (FPC)
+- Integrated UVC camera
+- X1-45 GPU
 
-During probe, also enable and sync the device runtime PM to make sure
-the power domains are correctly managed when the core is controlled by
-the kernel.
+Not supported yet:
 
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
+- HDMI port.
+- EC and some fn hotkeys.
+
+Limited support yet:
+
+- SDHC card reader is based on the on-chip sdhc_2 controller, but the driver from
+the Snapdragon Dev Kit is only a partial match. It can do normal slow sd cards,
+but not UHS-I (SD104) and UHS-II.
+
+Notes:
+
+- Putting the camera behind usb_2_dwc3 results in the camera switched off after 30
+seconds. With the stand-alone node as previously defined it stays usable and
+suspends, as intended. Sincethe sole reason for the USB camera to be in the
+devicetree is the required extra supply (which is guessed, as mentioned), and
+its handling by power management, I would propose to keep it this way.
+
+- The gpi_dma nodes appear to be implicitly enabled when a serial device is used.
+I added them, no change in behaviour, though. Since this would be the only X1
+device adding them afaik, I left them out.
+
+- The cma-memory is removed, it is not on all x1 devices as I assumed.
+Haven't found a case where it is required.
+
+- i2c2 defines the keyboard and 4 different touchpad interfaces. With the bundling
+of the pinctrl it seems to work better. I've had issues with only clock and touchpad
+pinctrl on the i2c2 node, and not keyboard.
+
+This work was done without any schematics or non-public knowledge of the device.
+So, it is based on the existing x1 device trees, dsdt analysis, using HWInfo
+ARM64, and pure guesswork. It has been confirmed, however, that the device really
+has 4 NXP PTN3222 eUSB2 repeaters, one of which doesn't have a reset GPIO (eusb5
+@43).
+
+I have brought up the Thinkbook over the last 5 months since the x1p42100-crd
+patches were available. The laptop is very usable now, and quite solid as a dev/
+test platform.
+
+Big thanks to Aleksandrs Vinarskis for helping (and sort of persisting) on the
+fingerprint, camera and HDMI issues.
+
+[1]: https://psref.lenovo.com/syspool/Sys/PDF/ThinkBook/ThinkBook_16_G7_QOY/ThinkBook_16_G7_QOY_Spec.pdf
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 ---
-v6 -> v7:
- - Added Peng reviewed-by.
-v5 -> v6:
- - Commit description improved, as suggested. Added Ulf Hansson reviewed
-   by. Comment on imx-rproc.c improved.
-v4 -> v5:
- - pm_runtime_get_sync() removed in favor of
-   pm_runtime_resume_and_get(). Now it also checks the return value of
-   this function.
- - Added pm_runtime_disable() and pm_runtime_put() to imx_rproc_remove()
-   function.
-v3 -> v4:
- - Changed to use the new dev_pm_genpd_is_on() function instead, as
-   suggested by Ulf. This will now get the power status of the two
-   remote cores power domains to decided if imx_rpoc needs to attach or
-   not. In order to do that, pm_runtime_enable() and
-   pm_runtime_get_sync() were introduced and pd_data was removed.
-v2 -> v3:
- - Unchanged.
-v1 -> v2:
- - Dropped unecessary include. Removed the imx_rproc_is_on function, as
-   suggested.
----
- drivers/remoteproc/imx_rproc.c | 37 +++++++++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 5 deletions(-)
+Changes in v7:
+- amended pinctrl order and indents where needed
+- interchanged enable-gpios and select-gpios for usb-sbu-mux as they are
+  defined in the dsdt - dp altmode function confirmed in both orientations
+- picked up reviewed-by and acked-by from Dmitry Baryshkob and Rob Herring
+- Link to v6: https://lore.kernel.org/r/20250607-tb16-dt-v6-0-61a31914ee72@oldschoolsolutions.biz
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 627e57a88db2..24597b60c5b0 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -18,6 +18,7 @@
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reboot.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-@@ -890,10 +891,8 @@ static int imx_rproc_partition_notify(struct notifier_block *nb,
- static int imx_rproc_attach_pd(struct imx_rproc *priv)
- {
- 	struct device *dev = priv->dev;
--	int ret;
--	struct dev_pm_domain_attach_data pd_data = {
--		.pd_flags = PD_FLAG_DEV_LINK_ON,
--	};
-+	int ret, i;
-+	bool detached = true;
- 
- 	/*
- 	 * If there is only one power-domain entry, the platform driver framework
-@@ -902,7 +901,22 @@ static int imx_rproc_attach_pd(struct imx_rproc *priv)
- 	if (dev->pm_domain)
- 		return 0;
- 
--	ret = dev_pm_domain_attach_list(dev, &pd_data, &priv->pd_list);
-+	ret = dev_pm_domain_attach_list(dev, NULL, &priv->pd_list);
-+	/*
-+	 * If all the power domain devices are already turned on, the remote
-+	 * core is already powered up and running when the kernel booted (e.g.,
-+	 * started by U-Boot's bootaux command). In this case attach to it.
-+	 */
-+	for (i = 0; i < ret; i++) {
-+		if (!dev_pm_genpd_is_on(priv->pd_list->pd_devs[i])) {
-+			detached = false;
-+			break;
-+		}
-+	}
-+
-+	if (detached)
-+		priv->rproc->state = RPROC_DETACHED;
-+
- 	return ret < 0 ? ret : 0;
- }
- 
-@@ -1146,6 +1160,15 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (dcfg->method == IMX_RPROC_SCU_API) {
-+		pm_runtime_enable(dev);
-+		ret = pm_runtime_resume_and_get(dev);
-+		if (ret) {
-+			dev_err(dev, "pm_runtime get failed: %d\n", ret);
-+			goto err_put_clk;
-+		}
-+	}
-+
- 	ret = rproc_add(rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed\n");
-@@ -1171,6 +1194,10 @@ static void imx_rproc_remove(struct platform_device *pdev)
- 	struct rproc *rproc = platform_get_drvdata(pdev);
- 	struct imx_rproc *priv = rproc->priv;
- 
-+	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
-+		pm_runtime_disable(priv->dev);
-+		pm_runtime_put(priv->dev);
-+	}
- 	clk_disable_unprepare(priv->clk);
- 	rproc_del(rproc);
- 	imx_rproc_put_scu(rproc);
+Changes in v6:
+- removed compatible for qcom,sm8550-pmic-glink" in pmic-glink
+- fixed malformed gpu node
+- Link to v5: https://lore.kernel.org/r/20250607-tb16-dt-v5-0-ae493364f525@oldschoolsolutions.biz
+
+Changes in v5:
+- removed patch for the CMN N160JCE-ELL panel, got reviewed
+- re-ordered code in onboard_usb_dev as requested by Dmitry Baryshkov
+- amended device tree with review notes from Dmitry Baryshkov where possible
+  and resuting in a working laptop - added notes section
+- Link to v4: https://lore.kernel.org/r/20250524-tb16-dt-v4-0-2c1e6018d3f0@oldschoolsolutions.biz
+
+Changes in v4:
+- squashed Makefile and dts commits to one
+- picked up r-b from Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+- Link to v3: https://lore.kernel.org/r/20250524-tb16-dt-v3-0-17e26d935e73@oldschoolsolutions.biz
+
+Changes in v3:
+- removed changes in x1e80100.dtsi and x1p42100.dtsi - resolved with [2]
+- fixed schema errors with correct compatible string for the model
+- added power management for the camera via onboard_usb_dev.c
+- amended node ordering
+- changed the panel driver used to edp-panel, added panel in the driver
+- amended x1e80100.dtsi for exposing PM8010: This one is not present in the design,
+  added /delete-node/ for it.
+- removed commented-out lines for sdhc, specified which don't work.
+- corrected ZAP shader firmware name
+- Link to v2: https://lore.kernel.org/r/20250516-tb16-dt-v2-0-7c4996d58ed6@oldschoolsolutions.biz
+
+Changes in v2:
+- removed nodes that gave DTC compile errors (pm8010_thermal, edp0_hpd_active)
+- amended qcom.yaml
+- shortened the commit titles to fit 75 chars
+- Link to v1: https://lore.kernel.org/r/20250515-tb16-dt-v1-0-dc5846a25c48@oldschoolsolutions.biz
+
+[2]: 20250520-topic-x1p4_tsens-v2-1-9687b789a4fb@oss.qualcomm.com
+
+---
+Jens Glathe (4):
+      dt-bindings: arm: qcom: Add Lenovo TB16 support
+      usb: misc: onboard_usb_dev: Add Bison Electronics Inc. Integrated Camera
+      firmware: qcom: scm: Allow QSEECOM on Lenovo Thinkbook 16
+      arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY device tree
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |    2 +-
+ .../boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts | 1676 ++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |    1 +
+ drivers/usb/misc/onboard_usb_dev.c                 |    2 +
+ drivers/usb/misc/onboard_usb_dev.h                 |    8 +
+ 7 files changed, 1691 insertions(+), 1 deletion(-)
+---
+base-commit: 2aeda9592360c200085898a258c4754bfe879921
+change-id: 20250511-tb16-dt-e84c433d87b1
+
+Best regards,
 -- 
-2.39.5
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
 
 
