@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-708078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A263AECBC8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:42:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66368AECBBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BDD7A774F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 08:41:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FE53B4DD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 08:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901C120468C;
-	Sun, 29 Jun 2025 08:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914381F9F47;
+	Sun, 29 Jun 2025 08:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Np8YppsQ"
-Received: from out.smtpout.orange.fr (out-73.smtpout.orange.fr [193.252.22.73])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Elr5YFAE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4338320B;
-	Sun, 29 Jun 2025 08:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB4B126BF1;
+	Sun, 29 Jun 2025 08:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751186562; cv=none; b=gmfmu22gnXt+OC5huai1oZp93b8SnPfU7lvRp0c655bM84NUSKRWuP2yTbTZXizdNahm+HpT6hDgiFyXcAtqSzgdgl6F6ou89p8p+vTfVuOSH8FHH7GSazDX+zTLgK7VX9CaVAVRkCREg/HPilDiml4v4JtopJ+ROayinpPrD9o=
+	t=1751186125; cv=none; b=KL7SEy3LtxFKYVmDvpQRR3xnS/anCMiCt6zcXRoNYK449cME47bCpO5HAicI2agMolJ5dUf/ng7afJaOpvXwJHnYyeJ+kAuRvTqROdAFjXZsJS5wDyWkft3wV93FxpjsMSxsnTrkOlpJYvwQNRmwNzcVKzSJghubOrYSTsYkI5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751186562; c=relaxed/simple;
-	bh=1vR0hCj7PS77chk+ubL9x0VnkldCCkTPBOGJDFRwQsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pEzG6GvL0ruiJEXhlAow9LC1hgx22B+QU1+vu2fpc0MptIrDYRDLbq5c3jHMz6h9iTmWzHmcoYPAdG2CfAezPHqJ5gQZYyNG2ena6DgAx3DvK6ivP7yIg21zfJbtDjkv5JnIuEF6CyxBpHw14VAm0b3o/nKTMg9eEzpPwJmMtAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Np8YppsQ; arc=none smtp.client-ip=193.252.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id VnTiu8Wnbr9nZVnTjuiCjq; Sun, 29 Jun 2025 10:33:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751186020;
-	bh=Ic120Tw4SXqu1SW29ua5MOX2cM3lmV7dZjeyQ5spDak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Np8YppsQTYN22Ynh59ZE6ov4rKNxBYq9+TFojWCFxTgeF0rODQpJyrm/palUs00Dp
-	 F5611DEn2R+07oUZ97NnFkzxjsIVDXazUAsUMJg9q6JxCZKIwG5oIotEmNT+OZW8G7
-	 qn+8yyYxlrPjlb08cCr3fFQ/k06lOwOd8dj40NtMqTsc1Zo++USfFMgk1VfKzNPzmL
-	 alWvROTp749Hdk38JYz11ziGEQZCGMKsXLoHG+K4pgel40QG9RGEOZk0mh/QdVRsHN
-	 G+nkOETaKGWz7S4siZkTDh0qF1+OSghiYDrnYOJ18oceT10ndI4AmtoFkGLirNPxzx
-	 L2s3eQgBXSxxw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 29 Jun 2025 10:33:40 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <a545127e-ee1d-44a5-bf43-149f81bda6a5@wanadoo.fr>
-Date: Sun, 29 Jun 2025 17:33:34 +0900
+	s=arc-20240116; t=1751186125; c=relaxed/simple;
+	bh=mrFp+fa2Ot1Q/rvbxMC0ldUW0RjVmgcoqPsSOOEvhdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MjYgZq4NgdDC03QGqaYQA5qqK/+vQbSINZ/Yafqj13SZd1tSoGJGVhIywtpn/dRuOJwz/yxLrCGamdKulaNsS0sdgCWoX6vj+kBfE1hruoPD3u0bcOOW5RKG3SQk+nnxMEqccyQ+jRRaH1ufmqi6BGKY0ppu7mDROy1QSKodwNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Elr5YFAE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8092140E0198;
+	Sun, 29 Jun 2025 08:35:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id w-Dlg_MbXOvo; Sun, 29 Jun 2025 08:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751186113; bh=1VZXEJEpugQR3EdGxvkK/5zvq3zJOuO5xMnezM7QQ6k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Elr5YFAER9ZnCXisdcmU8/Ogo9lti2/wlrNyuEYCKNyghUyANz8pWFxDjZXeKXhpf
+	 oH33Ikr0mTSVOA9SA8GgfcOAcXmvah47Eo4xsmhIMQzqJu4GXnm1uTZlSuc7uuNPeU
+	 o2s2wqfOC5Wx3gPctS31/cpNmj3JDiM2xseR/UP+VJNo5Em/1BwPlfVW+sjriV6nq/
+	 25ZhmIwTiQEWiWK0MLuGvlecMrtFAjX4mh+OanufUEoKnOgTHxp5Eavpx+qBL60C0D
+	 GW5xOlvhYyq5n6xma2Zs5CHik56qJKg3z/Sd++lPNHrChLMqX2GUdX4Ex6rOg61gJy
+	 Cgqbl859zPLLjoS/jrDVvDEHiHqx0qnDRJm/6FAW76rSQWGH8KTTY28Iewszor+R+b
+	 /zX3ThqJVxbQxmVYh44yMR8y0/YesL6AGnS7SWjpTTmFNR7e/kGuGnMHs6wdzQnHGD
+	 vfsF6htt/rcNJ+KaUMutt0E7wDL3Cbk0l+w70tQz6/j6KPaXnhUCfoOVKNMTrDLeV1
+	 4xah0xuByrtqzPgvaM7U5nHEHff8wjFAGiICdz/S6u1IhMOjhV427qAiHKKFvhuUen
+	 S0r38ySL5+7D5mPD0uETLV3SFdfLjYmdCeFRZMkMw4Pv2U9QoSoHukhSx9EwetvYOS
+	 F+Vlm9bLvh06VdYstN/2gzwk=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7C0AC40E00DC;
+	Sun, 29 Jun 2025 08:35:10 +0000 (UTC)
+Date: Sun, 29 Jun 2025 10:35:02 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC urgent for v6.16-rc4
+Message-ID: <20250629083502.GAaGD6tqBFp2YhK3Dr@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] can: ucan: Use two USB endpoint API functions rather than
- duplicating their implementations
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>,
- linux-can@vger.kernel.org
-References: <0a675827-33af-4ec4-97dc-2e4523e41194@web.de>
- <c44cf0e9-9510-4fe9-aa67-edeaa1be6253@wanadoo.fr>
- <1d773886-1657-4a90-87e1-aaaa169f5783@web.de>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <1d773886-1657-4a90-87e1-aaaa169f5783@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 29/06/2025 at 16:51, Markus Elfring wrote:
->> Please use the same email address:
-> 
-> You may omit the header specification “From:” (if you would find other presented
-> information acceptable), don't you?
+Hi Linus,
 
-You are sending a patch which has some checkpatch warnings and you think it is
-our duty to fix your mistakes? This is not how it works.
+please pull an EDAC fix for v6.16-rc4.
 
-> What does hinder you to support additional email addresses better?
+Thx.
 
-It is your behaviour and your unwillingness to follow the guidance from the
-maintainers which hinders me. Use whatever e-mail address you want, but if you
-fancy mixing different e-mail addresses, then just stop posting.
+---
 
-I do not want to waste any more time arguing with you.
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
 
-Nacked-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
 
-(no need to reply to this thread, I will not read your post anymore).
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.16_rc4
+
+for you to fetch changes up to a3f3040657417aeadb9622c629d4a0c2693a0f93:
+
+  EDAC/amd64: Fix size calculation for Non-Power-of-Two DIMMs (2025-06-25 16:40:03 +0200)
+
+----------------------------------------------------------------
+- Consider secondary address mask registers in amd64_edac in order to
+  get the correct total memory size of the system
+
+----------------------------------------------------------------
+Avadhut Naik (1):
+      EDAC/amd64: Fix size calculation for Non-Power-of-Two DIMMs
+
+ drivers/edac/amd64_edac.c | 57 ++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 21 deletions(-)
 
 
-Yours sincerely,
-Vincent Mailhol
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
