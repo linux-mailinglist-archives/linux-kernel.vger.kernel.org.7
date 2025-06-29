@@ -1,216 +1,124 @@
-Return-Path: <linux-kernel+bounces-708522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34554AED18D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 00:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAF1AED1BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 01:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451FF3ADBC1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99F818909A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 23:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F096723E344;
-	Sun, 29 Jun 2025 22:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2A0242900;
+	Sun, 29 Jun 2025 23:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="dZLcAFrT";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Snk5NeqI"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mSNCN0X2"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DF71DC988;
-	Sun, 29 Jun 2025 22:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129D6207A32;
+	Sun, 29 Jun 2025 23:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751234717; cv=none; b=H1AiahEbcPXClpqjQzuj489ecfVrQcuazOuBXEbuE2uJdF9b6hn9CpERUaZHjPKZup+ywmnlJ/e0UT07B11vBhlFcw2ShIm87k3wnP3WPWvJ1v6iYo1wK9EpvueexQgGPsAXtwcgAwTMwjawg2Hx5GMaHlcZ8MWGjAJxBBRh1EQ=
+	t=1751238768; cv=none; b=Me2TveiEQAvHC5G6zw2qO3OgQcxeZ8ZoweC/8Cyrx7rIP2V/SVhHFCUIA61ZX8B2SJKfuP1nDGqEHaoL9MAwQAM+v6iiwM67qrYtADzO7p5GdAnTr3Qo5IPmxAvnYnedQKps7RRb8D7e968OV3Qr67pSk/Xqn/A/00OjVCpTqL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751234717; c=relaxed/simple;
-	bh=FI3QegmqdgygByP3S8dUbw/0GVJZXkqD0oaE0+hUZ9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KO9G+PIm7vGitVfNmNHdq3F+YzFzKL3eJ3WagjTPYiLpMPy0mjvjaakhlWbXl99h7z1CxBoPRK5aBApiQE19eCfPthzTnTd+wegbhSXPRdwNAmzcP3Rpbzo2NLk0xdJkxSPTNDVMpgzuSHjspYfl0HjrXICA74clcuBPk9erzww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=dZLcAFrT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Snk5NeqI; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bVjyd3WvZz9stg;
-	Mon, 30 Jun 2025 00:05:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1751234713;
+	s=arc-20240116; t=1751238768; c=relaxed/simple;
+	bh=sM3UETa6XU90atN+ZfAZUAUfVRvrIpxXukJcVWBaQY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AUPemMbOh0K6OfzPPevNyfWG92E4WOE7JbySpyxPVNsiOhjvPw8dbGT5mWsTo2vUenEAke0T0gxW24S5sapdBF0IlBKJtF4irUF50cZZrrqV5hFcl7E2S3AYSfwAvfJN2DWUI3lMjpSx+SFtq9O4K6PyGvcPMkimd5xns2ByX1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mSNCN0X2; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id D19635811FD;
+	Sun, 29 Jun 2025 22:16:02 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9432243145;
+	Sun, 29 Jun 2025 22:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751235354;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=wonIqwqE+gZtcXn2WE6N/pAhGaGx6R/BhYVp+2etRMk=;
-	b=dZLcAFrTgcxfCPDqmmzeXnwWZKnWuxBRJphwxQJzOi5js7oJMhshlVu6cFT0bTbdemDgZy
-	klyRdP9Ogh1lcQ3A9y9LZ9U/t18I98zipzGoW3GC4hUhd+soTt49Arrq6uHZWersaqE4MD
-	nQSPuMu0ElXB9VpWzQ087MQjtBsK7OjilE1uXBT8fNbK8yXGEk06rGiqWmQiCuxEgVtjTu
-	/NSrXxT6LzqYod4aEH+Eo82WejKX28Ij0CMyLfBeAXdQSRGvO1UWfWYkc/ewwnr2/drojz
-	ltk6VhPF0RUA2w3VPT8TITwvmGgAQJTa5QNAXV82yuKvEvl2AsjotkLgme8PDg==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1751234711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wonIqwqE+gZtcXn2WE6N/pAhGaGx6R/BhYVp+2etRMk=;
-	b=Snk5NeqIxlYLkGoTYhqpTkOw+9tVflrQkjGl/vH4BnTRhwH+lxc0lzrqQN/YaT2+PAlmzq
-	15b7ei26HInKT4UZcQY1FPC2w5UpGsNjlFz4R4HJRoYO6RxwGpnFyKYiBkfN6AfUASnZsQ
-	f8eABpFDpgcPIy/THhwQ6fsCpqms6tV/min6CmxLEa8YY7s/26yBYtowQl/RnFsrK961wh
-	R1Ka4nQGzIWxOBMAHw+ZcwRcb2QFxS+rOBj4bPOMsbvLbwzFvOExxvfUnF8DeKa3RHEzeI
-	HGKEGUnDDikNEdFsg16vOZd26UEqq4Hf/FTT8+eIjpNaQ8c7wu+1I/Q5bNcnug==
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: dts: renesas: Add boot phase tags marking to Renesas RZ/A1
-Date: Mon, 30 Jun 2025 00:04:24 +0200
-Message-ID: <20250629220502.935717-1-marek.vasut+renesas@mailbox.org>
+	bh=XhgQsN0VnKkNhIK11az9LcSmeZmLtGa0pNcLMrP664s=;
+	b=mSNCN0X2OkntrGHVsj4zei9QPbkKr3dmRtbAXsHae3bS0oFD9ApZLfXQiHo700dcVaolP2
+	9aqrfsth9edO3jPhQp/5ck3GXyBn70P3qXcE6QIMt8sOV8l0jol6ef1ozmkCTIh4DGzWBn
+	HzZXx9L1W5lY87gfnX8VIT7QR6SyjpOsWWwx+zXTjZV0Ib76a8SVeT2Xa+RKP8Jwl30PRY
+	jrsWzLWQaLrFWkzO4c/zMx9FvSMjhhJrzPuCZqgHaPUH2cvin835IMWqPPckJfiVAjtT88
+	D8YyAouJ0rtNB7AhJ0fsVldtIH4tU30a/AFcKBprbZpKj/sA8b7GVhuT31svQA==
+Date: Mon, 30 Jun 2025 00:15:54 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RTC fixes for 6.16
+Message-ID: <202506292215542e5ecbab@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: cd501b2cf243314dd24
-X-MBO-RS-META: q69wwtg3rufy5stjqdw1npekmohmqoaf
-X-Rspamd-Queue-Id: 4bVjyd3WvZz9stg
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfggtggugfesthekredttddtjeenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhueeiffduudeiveetiedvhfetkeeuiedvueetleevgeehvdeuhffhudevueefheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 
-bootph-all as phase tag was added to dt-schema (dtschema/schemas/bootph.yaml)
-to describe various node usage during boot phases with DT. Add bootph-all for
-all nodes that are used in the bootloader on Renesas RZ/A1 SoC.
+Hello Linus,
 
-All SoC require BSC bus, PFC pin control and OSTM0 timer access during all
-stages of the boot process, those are marked using bootph-all property, and
-so is the SoC bus node which contains the PFC and OSTM IPs.
+Here are some fixes for 6.16. The cmos one is important for PREEMPT_RT. I've
+also added the s5m changes as they had a dependency on the MFD pull request that
+was included in 6.16-rc1 and we didn't synchronize before the merge window and
+they won't hurt.
 
-Each board console UART is also marked as bootph-all to make it available in
-all stages of the boot process.
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- arch/arm/boot/dts/renesas/r7s72100-genmai.dts   | 3 ++-
- arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts | 3 ++-
- arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts  | 2 ++
- arch/arm/boot/dts/renesas/r7s72100.dtsi         | 5 +++++
- 4 files changed, 11 insertions(+), 2 deletions(-)
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-index c81840dfb7da..13c0324b8def 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-genmai.dts
-@@ -258,6 +258,7 @@ mmcif_pins: mmcif {
- 	};
- 
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		/* P3_0 as TxD2; P3_2 as RxD2 */
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>, <RZA1_PINMUX(3, 2, 4)>;
- 	};
-@@ -286,7 +287,7 @@ &rtc {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-index 9d29861f23f1..e4f489522b2b 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-gr-peach.dts
-@@ -59,6 +59,7 @@ led1 {
- 
- &pinctrl {
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		/* P6_2 as RxD2; P6_3 as TxD2 */
- 		pinmux = <RZA1_PINMUX(6, 2, 7)>, <RZA1_PINMUX(6, 3, 7)>;
- 	};
-@@ -109,7 +110,7 @@ &ostm1 {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
--
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-index 25c6d0c78828..0bf106e9827e 100644
---- a/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/renesas/r7s72100-rskrza1.dts
-@@ -199,6 +199,7 @@ keyboard_pins: keyboard {
- 
- 	/* Serial Console */
- 	scif2_pins: serial2 {
-+		bootph-all;
- 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
- 			 <RZA1_PINMUX(3, 2, 4)>;	/* RxD2 */
- 	};
-@@ -278,6 +279,7 @@ &rtc {
- &scif2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scif2_pins>;
-+	bootph-all;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm/boot/dts/renesas/r7s72100.dtsi b/arch/arm/boot/dts/renesas/r7s72100.dtsi
-index 1a866dbaf5e9..c78131e3cd24 100644
---- a/arch/arm/boot/dts/renesas/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/renesas/r7s72100.dtsi
-@@ -41,6 +41,7 @@ bsc: bus {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0 0 0x18000000>;
-+		bootph-all;
- 	};
- 
- 	cpus {
-@@ -108,6 +109,8 @@ soc {
- 		#size-cells = <1>;
- 		ranges;
- 
-+		bootph-all;
-+
- 		L2: cache-controller@3ffff000 {
- 			compatible = "arm,pl310-cache";
- 			reg = <0x3ffff000 0x1000>;
-@@ -557,6 +560,7 @@ R7S72100_CLK_SDHI10 R7S72100_CLK_SDHI11
- 
- 		pinctrl: pinctrl@fcfe3000 {
- 			compatible = "renesas,r7s72100-ports";
-+			bootph-all;
- 
- 			reg = <0xfcfe3000 0x4230>;
- 
-@@ -639,6 +643,7 @@ ostm0: timer@fcfec000 {
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>;
- 			clocks = <&mstp5_clks R7S72100_CLK_OSTM0>;
- 			power-domains = <&cpg_clocks>;
-+			bootph-all;
- 			status = "disabled";
- 		};
- 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-6.16-fixes
+
+for you to fetch changes up to 08d82d0cad51c2b1d454fe41ea1ff96ade676961:
+
+  rtc: pcf2127: add missing semicolon after statement (2025-06-24 16:06:14 +0200)
+
+----------------------------------------------------------------
+RTC fixes for 6.16
+
+Drivers:
+ - cmos: use spin_lock_irqsave in cmos_interrupt
+ - pcf2127: fix SPI command byte for PCF2131
+ - s5m: add S2MPG10 support
+
+----------------------------------------------------------------
+André Draszik (7):
+      rtc: s5m: cache device type during probe
+      rtc: s5m: prepare for external regmap
+      rtc: s5m: add support for S2MPG10 RTC
+      rtc: s5m: fix a typo: peding -> pending
+      rtc: s5m: switch to devm_device_init_wakeup
+      rtc: s5m: replace regmap_update_bits with regmap_clear/set_bits
+      rtc: s5m: replace open-coded read/modify/write registers with regmap helpers
+
+Elena Popa (1):
+      rtc: pcf2127: fix SPI command byte for PCF2131
+
+Hugo Villeneuve (1):
+      rtc: pcf2127: add missing semicolon after statement
+
+Mateusz Jończyk (1):
+      rtc: cmos: use spin_lock_irqsave in cmos_interrupt
+
+ drivers/rtc/rtc-cmos.c    |  10 ++-
+ drivers/rtc/rtc-pcf2127.c |   7 +-
+ drivers/rtc/rtc-s5m.c     | 197 ++++++++++++++++++++++++++++++----------------
+ 3 files changed, 140 insertions(+), 74 deletions(-)
+
 -- 
-2.47.2
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
