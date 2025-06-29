@@ -1,192 +1,132 @@
-Return-Path: <linux-kernel+bounces-708058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2609AECB78
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 07:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E12AECB47
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 06:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64CB57A48E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 05:52:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC983B5089
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 04:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4A21C862D;
-	Sun, 29 Jun 2025 05:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26F51DF73C;
+	Sun, 29 Jun 2025 04:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a6Vcv7Z9"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2051.outbound.protection.outlook.com [40.107.212.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUakTEYO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819D51494D9
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 05:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751176453; cv=fail; b=cpL7Z7w4qRTltRmxJ7Fi9yNODjLb1SKqZMvn5TpcW671tCh/mCdPBIwdI7vd/W7vt8PlrBTi0PJ+OAD5X0O1zlZqxqQYheP4brt7EIjNy0uFnkM+xe7DxgXeM64kFbBH5Afqc0Skks07qO07Y0VKe4phcOjpXZaaIvzUYW9sldM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751176453; c=relaxed/simple;
-	bh=Py7REmUEwG5Yotzr6C+qvZsjkHoVyEuwyfBUXeeTsKY=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=X4vpaJApwFt2eG/aNRBCLsmnX6c78jFTGxai0TR2epjsSodlh0E+Av5BBATWbayuTBPUxyOiq5ss+mN8z4jckL53Os3Eq389Itc2enMDas6ZQ3IL8cmjiCW30Nm8BqzaNd+ymdt7q8jnzfw3nS+8WbvkReemBa8h8y5Y5209dA0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a6Vcv7Z9; arc=fail smtp.client-ip=40.107.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ee1iRadmOvOYmXlAdHJgitF9LnqXmwnhPRdgAjkcJ5r/m1BzyB4T9jkjNwWYmzG+ERKSQ5SRid+FCdnwY29WKeEem5PCeIX5T7QJmQUz+wAZoSVzkBC6HoyAcQvgP0XdqDSiHdLk2EEdskWoEZ1MXydymGQF+9Ic2QEsM/svExka7bpbAvRDlvlHc5HL216iKdIcM/Opy0ncIXPA+VyXWE3jxrH39aRuyO0GFyJ5qRcf+QN5RRHcpu0vmaoS788hfVRtuEQuqrHx8z5IaR+Kd2RTClIg9c158s7ny8nfMicZbLssyIS+yiFsOeU6fXwZEa/rHn3w24h4lpgiNUOrMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CzUnfsGMnxBOWwmoK+C6VGgcZ0c9DzmurnwgqrGnzDg=;
- b=ufoIbPPkhNy7KdX7mIMS2rNS/2t/XtncbtwvJDMt5o27Os/tL3M+QwfSlCyQXGpyr3M6+84xCEqTsQ9AAWASgu62DRj5tyG4ztDOfYsISyLz2E+FzsxV+z4OLDouB2lSPsLgpcpLxpHVExVtrio+HXa/I6UyLPeXPfy9+Wm99VfYx5vzaDkzDfjLPT809EFu8Sc9hFpRAO0QS4KQY9Lz22JGTfFmcqRsGseSod6PJLDsz7auXYmLC9jJWqWdvZC3wHwGSxixUco4DENMgazlYEz8bPIUsSHDdEdgw3IKLFH447lbr7hU8uomNyjmYxqh7C4/AbTCk3VyuPIOUX4R0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CzUnfsGMnxBOWwmoK+C6VGgcZ0c9DzmurnwgqrGnzDg=;
- b=a6Vcv7Z9dmv3nDWAdyETOCUpoxiZTCdQkKJxeIIDT0SLbey2/Y1shVAwCEot6a1mDO8BxR6Ny+GngCVD43XxysrxPCA8FEZSMMsHrjoAJNpDp2yvcK855ZNXiF1wXCaKKZwaE+Bvz4jlATZx5szf/KWQkVpas2KIx9IUR3mEMoQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- BL4PR12MB9724.namprd12.prod.outlook.com (2603:10b6:208:4ed::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8857.20; Sun, 29 Jun 2025 05:54:09 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%5]) with mapi id 15.20.8857.022; Sun, 29 Jun 2025
- 05:54:09 +0000
-Message-ID: <b3500475-f6e8-42fe-85bb-baca2b67d7a6@amd.com>
-Date: Sun, 29 Jun 2025 11:24:01 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/8] Introduce debugfs support in IOMMU
-To: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
- joro@8bytes.org, suravee.suthikulpanit@amd.com, will@kernel.org,
- robin.murphy@arm.com, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250604163647.1439-1-dheerajkumar.srivastava@amd.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20250604163647.1439-1-dheerajkumar.srivastava@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4P287CA0126.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:2b2::9) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C981993A3;
+	Sun, 29 Jun 2025 04:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751172311; cv=none; b=RFOZWDm8nuWqdhsvj2xYbidunwxHE4z/tLwULHqriftlgrFQhl1wJ0CqGL0qFxFBKxTSWI1IM0KqRdRCa5K4lm6KiyOyE8TC3Mu+uI3ICOPj25DBQ5Xu7LwAVmjeJalWkiCGTtf7LRc+pBJnMOs73scAWFXQWfUGl/iT75p7XLo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751172311; c=relaxed/simple;
+	bh=zSHtudQhspfSSyLk8tdd0fX3l7uamn9t+KhKu8UZiCY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WBQCtCSBmozQTxPf7liqLSsAMmOKL+qZ1R2GRrxFPREz78LQ7Y3mceWc0RV3r8tgmGmK//xpFwkv0PULZvcWg8RvYxX5LchwHMh5IeXmmSy9QZfdXxU16/vAr0I4R2ETSFzvsVakcDVc/Qy97AsPOys4lz91y5ftHlaynti7CKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUakTEYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7A3B2C4CEEB;
+	Sun, 29 Jun 2025 04:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751172310;
+	bh=zSHtudQhspfSSyLk8tdd0fX3l7uamn9t+KhKu8UZiCY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=AUakTEYOrNRL3YRUTzdJ8rMB6j5/WkxQhNFEPQ4g49jgbBZY3rZZFyU4EpCrIuSHv
+	 aE0PB4jugiwoBjDkrYpCGR/enVus4FwLuamJYcWuN/b8JoI3rJOk1kmmHI8g2GR6Hb
+	 7JqKgBHRapwAsJTHG9nQ/3KJfTH9WWngTlL6zGmNpGXqH5Sq7dY7JCfvZBxKxU4dLo
+	 sP93xyjaffny7WnQjvduzWDYiRhsn3gvmCmLSTBR30yM7V+U2QAHHiPd70uYXi77rD
+	 C0xjYSFwOm+NtSKA/oCbkMZbkg0Y47wvuEwz7gNutH59EdFMVGqmQW4vKZJyEpLY+3
+	 OX+wkQT3r8Ptg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3ACC83026;
+	Sun, 29 Jun 2025 04:45:10 +0000 (UTC)
+From: Cristian Cozzolino via B4 Relay <devnull+cristian_ci.protonmail.com@kernel.org>
+Subject: [PATCH v4 0/3] Add initial device tree for Billion Capture+
+Date: Sun, 29 Jun 2025 08:44:36 +0200
+Message-Id: <20250629-rimob-initial-devicetree-v4-0-7cf84fa142af@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|BL4PR12MB9724:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8df3887-db49-442c-86ff-08ddb6d15da6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a3RXWUNWbDA0c1YxNUdIcThyMWJHT3FwUEVGcXByV0o1ZUd1TXg2QlE5ZDVW?=
- =?utf-8?B?Vy9tNmI0RlZ3QmV4cW9XaEViYXk2UCtmeHZtdWJhK0JwTnZOVmxRRDdIUlBa?=
- =?utf-8?B?UnlRcWNVbUVDdWpzTTI3M3Z4aFplL3h3WVU5a0VhY2ExK0xtSW52QnJKUmpl?=
- =?utf-8?B?V0FVcVA4d0FYbzBZb3ZyeThQbU04VE1OLzVsSFZ3a0ZHTThiQzBzdUkrcnJu?=
- =?utf-8?B?WmV1cWJ6MkdvSTZIa3BNWmtnZlBLMmJIYnlzOUtKdnRLUzlPckthVDJCSG9q?=
- =?utf-8?B?MzhWUHk0elZMZnpNY2t5NTJjcmI5L3BGMFhoODRLdllzNDRsUEcwYmxNRmph?=
- =?utf-8?B?SThDM2pvQThsSWpUSk04WGI0RlpuZUtxZjZiMFl6Y01yL3l2K3dXMlZiWTdO?=
- =?utf-8?B?TEZ4VEhKQUE4NzZmQmx1eWNDa1g1M2NuU250dzU4ZVJXRU1PeVBGREpOMlpq?=
- =?utf-8?B?Q3A3cGNVMExRWW9Kb2MyaVFMS1Y1ZXd3alo1K2VvS3V6RnUycnNCaEJaVzZE?=
- =?utf-8?B?ZDE1QWgrUDgxQXFGS3NNTGJuNUQ2VGF2SjJZTHZFZDBYTStoUU9PdDJXYmcy?=
- =?utf-8?B?R1Y2UVZncGhUdnlTTC8yZGNEbncwdjlTVnJrUEtybHJjUmtOTFRiQlRqRUhz?=
- =?utf-8?B?QTVtbUJ4L2w3RTlVbXdkTTVwa3pDUUZzNHZrQXZBek9BRGZxNXFNcGF6RFd3?=
- =?utf-8?B?TVorcWsrVEc2c0dEQmM2MkFEcTVDVis2a0FzdGNVUno3bVQ3cmk2ek9lcDdk?=
- =?utf-8?B?d1NYc3JQdkludWs3clEzUFBqVW9KYzdscTFYYTFUVE5tZE9qS3RNMGNRaDJN?=
- =?utf-8?B?UTllTmowTG9pbG5oL2JNU1ROWUlZNGV6UFBLSjRUeG1wQzVZSkVQT0JpYVl6?=
- =?utf-8?B?UTN6ejlKQzRaZFltVngzWWVYZkE2YjI4TmZweG50TlNjQTc4dXNyd05zaG9X?=
- =?utf-8?B?Y09oS0N0NExhdG03TitvLzVjcE03d0tmcXdaVXNmOVJHVDYxZHhwZkxXaGdy?=
- =?utf-8?B?UVV5K2VaVHZFVlFYVnFEUUx2SkdubEx6NzRXM1B4Ky83Qm1PcHpHYldJK0hi?=
- =?utf-8?B?UHJaZTJUd0NsbGs3VnpMSm5hRDNyTlI1Wks3QVo3bnpGeUcyYWlsRUQzbFJq?=
- =?utf-8?B?RFhMdTY2b0dqQkxtR3B5cFd3MkVvWFM4WnRUeDdPZm9JM0JJa241L2hzYjEz?=
- =?utf-8?B?amVlU21FRVZ0SU8xcUQ0MmIyekJqcnl1dldRZWZhc1dRc0RBaC81RnBsMExk?=
- =?utf-8?B?MTVmV1lBdXNJM2NjcFUxSGFIVDNSV1FGMFhrZVA4a3AzSStDUjFIMmVYNVg3?=
- =?utf-8?B?N1JaM2JLVk1wNEZpUFVDZXFLS1ovRVNFRVlSVmRPTWhKeWdZTXFaeTl5dTBm?=
- =?utf-8?B?WkpSRUtmbTBPL2RyTWVvK1dEY0hGZDg2cW5VeUFkWDE4TjhRVS82S2poakNh?=
- =?utf-8?B?a3phVXNUTW1SQTU5RDJXMnVJZmxGVG9VRHZheVk4SkkrcjhuSnJPMjB6M3pV?=
- =?utf-8?B?bEpKQXc5TFpmYmFKeWVXdVBTUXUrUmo1MUhBejd4cnlqQ25pVVJrNzB5OCtY?=
- =?utf-8?B?TjhpRFlpYVlHSTIvaUZ2OHM1RGpYWEtqdytmZ1o0SGV0dnR3eXo5Y1lkaHNU?=
- =?utf-8?B?d0RKZlRKSlFQL3R5OFFFRmVST0FhcWM0dG11dTJxU1BRdG0xVkNabmhJeUJm?=
- =?utf-8?B?N09oSHlLbjFYL1lPYkZpQ3NMMnRZNXRiemNkRTJoN2IvNmg1NUVFZ2lGd1hO?=
- =?utf-8?B?NlhjVXA5T3NVeXhNclBvdXE3eWRZZDFzbGdlczI5d08vclcwYVRXOGJrRUo2?=
- =?utf-8?B?eTBiY0YwdXVReEdYRXNrSk1rTXVJVWswZW90UUhGb0txdE1aTkp4RWxjR2J6?=
- =?utf-8?B?dW5hUTNIZ1BuZ0JvMXZwMWhoMGE4RHVTNytWL09oVnJvYWpZSVEyd0pKUXVa?=
- =?utf-8?Q?xoF3IEKlMic=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N2VzU01ObFVZYzFESXNrNnhjVkh6d01JeGphTlBSQXc0WEVDNk1aenhQcjRz?=
- =?utf-8?B?NTgraUhoM1NpbVlWOU8rdDB5VzZBcWJaRUs5cHp2TkJGY3lNMndJSDBieUZY?=
- =?utf-8?B?SDBweWZDVjBpNmswVk54eUxWUmMzU1RxVm5nVXhPcTkzNUwydkp5VFl2VUVk?=
- =?utf-8?B?WEtOeGlFQmlLNXFwdVhSUk1qRW1XZXpkamlqQ3l4VDVZTHVmbGNnSCt2VXNi?=
- =?utf-8?B?c05LMkcwU2I5U1JTeGZyeE9OSDdGZndwVzFtbkxBMmFrbnZCcEdnM2VtNGZm?=
- =?utf-8?B?amZuQk4wR0FWOVhyS2NwWWpJRkRCOSs1MEsvRmZZVEJPU0h1WEpKZkZMMktY?=
- =?utf-8?B?Qm0yRmtJd1U4WnBvU1RuRnVnYWVjU0cxcEZxNnRCN3BXM0FFMXBhZzlHZnQ0?=
- =?utf-8?B?ZnRORVdpUnBvaUNqNnJVb00yVmF3SkdCaW5XMitFTkRnRkpYK0FZVzM2NmtK?=
- =?utf-8?B?SFVnOFJIdEVPaCtpUm9rUnBBai85ZzFVaGxTYVVua0pENFg4UHZERWhzVTM1?=
- =?utf-8?B?ek9QcjBmeUxNaG5CMVpJTm5zV1U3V09BTjRQbHFCZWs0Tk55V1FyK2lTRXlY?=
- =?utf-8?B?OE5ldWxLODlpbnRaK3RWbDVpdGpPT0hHZkNFL0Q5NnA3VWE5T09hbVg1UGpN?=
- =?utf-8?B?cUc4TWhhZ2pWTkJpcGMzRklLdElhVDcyZ3l0M3paVmdOUVF3WHFWK1pYbm1h?=
- =?utf-8?B?TVMxTzBRMkQvSjFobkI2a1lHOGpmcE5MY3ZWQitHblpwWG0wODFRUys0bnFD?=
- =?utf-8?B?UWQvTWdkeTdVbEpyOFZRVkJZNTY0eTZIZnFZZVlqeWlhbWNoY0ZpRm1tL1NL?=
- =?utf-8?B?WW1TakEwMWM2eFVMbGNkWFRSNkMyWHA2M012Z29SenpCV1hITmxPUmwzMWJh?=
- =?utf-8?B?TnJUOXBhKzNqSGVKRzIxckI1NW1Ea3hpQmpEZGVPUURDUlJzZkU2cWQyNkdw?=
- =?utf-8?B?M2F3eHV3RjVsVFdlY3RIcmJpdEl3R2ZiYm96dXFXZWcveGQ3MmtCa0trQVVD?=
- =?utf-8?B?akwvZThtYVlFb1I4Yjl3b001dmNxWWlsUHcxalZEQWhxc1pIK0dGU3JYY3JH?=
- =?utf-8?B?VXFqUlVvREFPNkMxN2hUVEZsbTlZcGE4Q0tEeko3MHB3aDVlRG01VXBVWDd1?=
- =?utf-8?B?N0orc2txMEg0R0RCTnZuRG0zaU52RG84TFY1M3pnbUpYQWJZelR4Z0VmVTB5?=
- =?utf-8?B?MDVhMXUrN0VrdVlPZE11SVJzeEZlQWFEelFJeldNV3pESXR1d05oa2Ixci9R?=
- =?utf-8?B?cVp6S2Z1c0J2cTVaMEZOVUVtN0dtZjhMVm5CZ1JWOHRyRFArb3UvV3BjYXgy?=
- =?utf-8?B?aVhWSlpob0IrMGJnWno1RlAwY3pUSWxNMlpiK1RFUEs5YmlQdDA0YU9KdzFa?=
- =?utf-8?B?Zk5UZkVoZWJrRXVmUytqOXZIL3p2NVRlYWx3ZCtsNjZobVowTDRyL3FXR0xk?=
- =?utf-8?B?T01ybmFyWjhtTndmLzBDcnVIbmMzcjM0NHRuSms2dTliNnBaTU4yeTRyOHR1?=
- =?utf-8?B?L0RHdUx1Tk5QZFl2eHdjMGZRUEQ4ZmJTNHdZUy9zcW9hMkxIditGazVzc1BT?=
- =?utf-8?B?T0F5MW5rNjh5WUhtSHVsMWtzdStpUjFMbDY0bmJEajg5cXVWaUs5d1YxZHlj?=
- =?utf-8?B?WXczMVBQMmJLMnFDMTVMblViQkFNbytPbDZidGVNaTRGQ0VzL2w0MjVONzds?=
- =?utf-8?B?UENacGRncjlaSWRlWU1la2NKcWN0RVkrMlEvQ0s4a2NzQkhmNHlrSWV4QjY5?=
- =?utf-8?B?RG9lRG82U24yZ3E1UXlXRmhJL2dOZG1xUUNpZ1ZWUXZFcjQ1NDRqOWtVSjVJ?=
- =?utf-8?B?SmJtOXBlajZTVm9ISnh6TVNxTnFYZjlEYVFnMEZHM1NkNXFtMWltSHVYNFc3?=
- =?utf-8?B?ZTl3RThjTzQxeWdpeHJUVm9oZnpOdmxqaGNOVFExa2pDVW9pczFta0VZUlFT?=
- =?utf-8?B?Y2NXZENPOFhQYWRHNStEU1U1M2ozQ2xuZ1BzRUk0aHo1cmRSM2JuZ1lvd0F6?=
- =?utf-8?B?ek8wR1V6VlpWU00zZzJXYXBZcFp6czFrUVRoVFdUUjhOcmtvS3pSYmVMSVp2?=
- =?utf-8?B?QkVkelduQ2dadTIwaHFrSktZOUUxOUFObm9iQ0NQWTJ0RFhXM1JWdXBsOUZm?=
- =?utf-8?Q?b+MyxnW+pTVMuc3qCKnm7t26u?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8df3887-db49-442c-86ff-08ddb6d15da6
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jun 2025 05:54:09.4572
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ytf1pE4MJ+pRsuklFQNqac3xrexY9nJwQgc/CxN2crOIxNTAmyNvQ7Kfn0BwdRgzE6mLSSA8GtI0AI5r3DiFpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9724
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANTgYGgC/43NQQqDMBCF4atI1k2JSYy2q96jdBGTSR1QI4lIi
+ 3j3RldCi3T5D7xvZhIhIERyzWYSYMKIvk8hTxkxje6fQNGmJpzxginOaMDO1xR7HFG31KaJgTE
+ AUKsrpYvaOVPVJM2HAA5fG31/pG4wjj68t09Tvl7/QKecMlqBUiVonruK34bgR993Gtuz8R1Z5
+ YnvNXmg8aQJ6RSTBdRGsJ+a2GvqQBNJkywvtbk4exH2S1uW5QP44IVpYQEAAA==
+X-Change-ID: 20250620-rimob-initial-devicetree-da86a5bffc8b
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, 
+ Cristian Cozzolino <cristian_ci@protonmail.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751179514; l=1750;
+ i=cristian_ci@protonmail.com; s=20250620; h=from:subject:message-id;
+ bh=zSHtudQhspfSSyLk8tdd0fX3l7uamn9t+KhKu8UZiCY=;
+ b=rhvxuydmL5s0TYucKsFuKoDAlvODOBD28ksHeqhEra0+S99uWxSS14Nd9I66CJ80e30IjdeJq
+ nxAhVzNGdp5C/W/iMeacQD994ZJE+ffXsAScpapDKT7TawejYIEFNp3
+X-Developer-Key: i=cristian_ci@protonmail.com; a=ed25519;
+ pk=xH5IvIPUNHV1Q8R0/pq2CfuVFR/wTiAyuyi6IwedjZY=
+X-Endpoint-Received: by B4 Relay for cristian_ci@protonmail.com/20250620
+ with auth_id=438
+X-Original-From: Cristian Cozzolino <cristian_ci@protonmail.com>
+Reply-To: cristian_ci@protonmail.com
 
-Dheeraj,
+Billion Capture+ is a handset using the MSM8953 SoC released in 2017
+and sold by Flipkart.
 
+Add a device tree with initial support for:
 
-On 6/4/2025 10:06 PM, Dheeraj Kumar Srivastava wrote:
-> Introducing debugfs support in AMD/IOMMU driver that will allow
-> userspace to dump below IOMMU information
-> 1) MMIO and Capability register per IOMMU
-> 2) Command buffer
-> 3) Device table entry
-> 4) Interrupt remapping table entry
-> 
+- GPIO keys
+- SDHCI (internal and external storage)
+- USB Device Mode
+- Regulators
+- Simple framebuffer
 
-Overall this series looks good to me. I have done some level of testing and its
-all fine. I still have few minor comments. Please address them.
+Signed-off-by: Cristian Cozzolino <cristian_ci@protonmail.com>
+---
+Changes in v4:
+- pick up tags (Rob);
+- Link to v3: https://lore.kernel.org/r/20250626-rimob-initial-devicetree-v3-0-4017ac9fd93d@protonmail.com
 
--Vasant
+Changes in v3:
+- (patch 3/3): pick up tag (Konrad);
+- Link to v2: https://lore.kernel.org/r/20250624-rimob-initial-devicetree-v2-0-34f6045ebc30@protonmail.com
 
+Changes in v2:
+- (patch 3/3):
+  - add unit address and label to qseecom (Luca);
+  - reorder properties alphabetically in gpio-keys node (Konrad);
+  - fix hex values in reg address and size cells: from 0x00 to 0x0 (Konrad);
+  - add regulator-allow-set-load property to regulators supplying sdhc1/sdhc2. 
+- Link to v1: https://lore.kernel.org/r/20250620-rimob-initial-devicetree-v1-0-8e667ea21f82@protonmail.com
 
+---
+Cristian Cozzolino (3):
+      dt-bindings: vendor-prefixes: Add Flipkart
+      dt-bindings: arm: qcom: Add Billion Capture+
+      arm64: dts: qcom: msm8953: Add device tree for Billion Capture+
 
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ .../arm64/boot/dts/qcom/msm8953-flipkart-rimob.dts | 255 +++++++++++++++++++++
+ 4 files changed, 259 insertions(+)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250620-rimob-initial-devicetree-da86a5bffc8b
+
+Best regards,
+-- 
+Cristian Cozzolino <cristian_ci@protonmail.com>
 
 
 
