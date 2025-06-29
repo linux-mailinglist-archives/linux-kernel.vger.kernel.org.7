@@ -1,134 +1,201 @@
-Return-Path: <linux-kernel+bounces-708534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD7BAED1B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 01:12:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E964AED1BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 01:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9173ACC5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 23:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B6B189253C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 23:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94AB23B622;
-	Sun, 29 Jun 2025 23:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB66F24290D;
+	Sun, 29 Jun 2025 23:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="GRjXIBEd"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F8/X7fwj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83E7207A32;
-	Sun, 29 Jun 2025 23:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8BC24113D
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 23:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751238760; cv=none; b=QHGE2rmnpSVddfvbkjFQkLqXeKMYN7wWD8u49vp2MwbhSSh0Vy6sHpy4kmxbROOHBKNl41kLwbQrQAe6qMUWhiGSNqp3aeYUCfsraY7BXapDfZw5JEbsPWJKdOHU3Vs9uowO/saN3nNyf5Sjc6T6SiuUwfC3XvnAbT83vNK3nE0=
+	t=1751238899; cv=none; b=pfisD7NXM/JcWLRYWVsT9cnenXOa6Gnj+m3RhFVl2kHO6+lxvGmZe5Z18c3NW2dFPL9uakam5NHd7gNgWk7MCWvCnT1rghu8zVnKHYYAVR2OpU5c/vpS6vMEJyFoBagy0YRBcZGtrdjvkC9+Suo1j+g/ttA9d71Cuqbwq8cIfv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751238760; c=relaxed/simple;
-	bh=MM8+F9NfQiipMoco2vrexssEB7cU5Cx6BfqreOJThFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A/dS2eAWDyndGHhH7dgUJhIWjDxfB6pOJ0C1Iq4Vyz5yk/4kEoXjKY73b8Mivhd8vMGshxQNqDJEh8Xfa+7dXDNYaFXV5nl+3D4JpHoxaePjHyP4Ptf594UrdmtNUKYrTjOs7vfBkSUBt5HgTdUAVeNlNJe5f8V6WeGGMyz6d4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=GRjXIBEd; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost.localdomain (unknown [178.69.224.101])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 8FD3A552F52B;
-	Sun, 29 Jun 2025 23:12:32 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 8FD3A552F52B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1751238753;
-	bh=CMWpdSXt+aQMl4gzAQ7WlEY+ZVcaSuxy8ltfzBBbdzw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GRjXIBEdgS0kOVv52MlLplQ3rDfOPqtxxJfXqvGLA1W1HSrcvGd/i6mvxiNn5qxXL
-	 Wed/dg9TKdN1N1QM1ixz/4L8eQy97J+rM5E1gcWTskAcVsxeim6EhtZjkjTTO7R2jV
-	 DMx5BjdOypZOUDi1abnS7ecV5vHQCMVcPN9tLwXA=
-From: Artem Sadovnikov <a.sadovnikov@ispras.ru>
-To: rcu@vger.kernel.org
-Cc: Artem Sadovnikov <a.sadovnikov@ispras.ru>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] refscale: Check that nreaders and loops multiplication doesn't overflow
-Date: Sun, 29 Jun 2025 23:12:12 +0000
-Message-ID: <20250629231212.1573-1-a.sadovnikov@ispras.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751238899; c=relaxed/simple;
+	bh=zXm10Gvs++RH5Oc5G0CBrarSvIdE4ZdUzCvPiUGDMg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fjTLa0jj6b1+d4ttAkpcuLk4TZhD6if+ti3EPPq/zoaVFPFWwnFN3q8dHs5rpU3GcHzvuZUNSQcPkJShx9n/LHEDsx8FnKoSsKm4czVyN7tqEw8OrDLJRgkGgh6Olacd1ZllCwF6CO33GdsbxB4XfablzBnUJUh1q5BnzksC9KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F8/X7fwj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55TM01SB021583
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 23:14:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=moUTcLn71exp8xhAgwmP4wIU
+	hIDn1m41gmRY4c0fElY=; b=F8/X7fwjKbBozMg/hPMgyz6M89bXtIBh9kgnj3Dg
+	ZQ1AhF+XRJ6yRWs5SSuznGeUCpzI1rcHse+uMAHgAv4S6f47yt4FouBgZ9IcgauI
+	TdTxdt0+jpE823qeCXxzx/Dwzsk9yCGlc2jz6NCjRs6w5cEImBW30hKZ+U485nnh
+	Si7Jn0Z45+7XcdBfLDMyXONumVFTEQC/qkOiV0YqphQ/lhDKwPTbY+nfYScd7Rs8
+	WyeM0N97Ip5WQESJTr/6HvVsbAOPKagEl5OkBwhtBDlnldLs64T0klxGIFRpj9UD
+	G26Vi5BWXHjulUzR8F+pwC2isQTElUFBX6ufJBQWpu9CJA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7qm2ty9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 23:14:56 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5bb68b386so1103149085a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 16:14:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751238895; x=1751843695;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=moUTcLn71exp8xhAgwmP4wIUhIDn1m41gmRY4c0fElY=;
+        b=ElgkkkkTDKguLAH9xo/XpehSM6gs5Fb4F//eSANCAY0TB1rS1rDShKXfoZNSxcS0SW
+         WYtmoJWg4DV8pil77EvnH/B9EnTee+2Hd7qGSlI+jUkElh99I0C+R38sN3a4nhXX6bew
+         smE5hwuM6pnN/nzxhjr7EfS3UrcnNzezBo66vSO6zmJnICAKa79ORsCaX2ipAyM4idbK
+         HHJFTyMvBuari/DzIT3bb3l5io2xCLJ2gLX8VdGVMyn66vmx6J8TyVnB5jGH8rp+TtYb
+         5J9mjPNQe+fOToo+hJNAVXHKS/clqK1zLKYFObttCWqnrST/+WTEldN8jS6UL3678i9A
+         1jTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcIpy2/gSFGTALJvb3xHYYfttwu7KlvztiwZQXvpS/Vnyft1qqkD1ZqsF29oSU+lbgCcLyGvHDMDQ/oJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4XCfFeKclD2CAgTI83+KEtFm9XM3IxdBECICeJ9Wnm16iudD+
+	SzGlzhjg0zuwKBI/fg6uPSq2HLae8/avfMUIsqeSFYtE9NJMADGJP+mXDTRnuHuFcNDq2i7Kf67
+	RMy5W57YHT0tk0kVAaPPYkKf1DRDWF5KsRPIQqNS3Cb0tCwmUWHy8JEyDoiYNkO3UX80Xm45ZLf
+	Mqtw==
+X-Gm-Gg: ASbGncs8ktdvtW/KodPdFaYxGI47a6G28NTwKog/xv0VMoSO8R/hbjRd9SOeLEErNFy
+	/U4u59BBkx1T+wAYGJdx+RA3ahKZcWXHMm1k8t2n26PqkQdwiirjybFCUJJEiLFNGHiWrjAHUFC
+	LGGlJ6eZDOLn1JRqrtysAFHL8BjPRIxp+U7oiAm9J2n+h0D2WjsyftFHVAgp/tjNwal7dKKa2Ud
+	KjPLRXVBEjjre/JzF1VyFJAlDZUdpJYe6qyivVvuqIehek1OH3x45dHyls1OVc9Md3jiOVRLH3R
+	vBvNRVbwisETCCrCgXihKHjj98zu9abD2tfsF9SQxYITU21dD2HZuqCekIaDN7BtIFjC8Pwh0l6
+	jzTHnWoOm1u7pSNI/ZqnjnX2UnTF0XyVRoXk=
+X-Received: by 2002:a05:620a:4006:b0:7c5:5e05:df33 with SMTP id af79cd13be357-7d4439b8a60mr1660900485a.51.1751238895270;
+        Sun, 29 Jun 2025 16:14:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEGtolllQv5PQ1tLpSY3ShpYSmRV9yanIB0jjWowyMAtnFeyB8J0IVdJGAeQDimlLkBi7mA1Q==
+X-Received: by 2002:a05:620a:4006:b0:7c5:5e05:df33 with SMTP id af79cd13be357-7d4439b8a60mr1660897885a.51.1751238894856;
+        Sun, 29 Jun 2025 16:14:54 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b24ed7esm1237565e87.81.2025.06.29.16.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 16:14:53 -0700 (PDT)
+Date: Mon, 30 Jun 2025 02:14:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Caleb Connolly <caleb.connolly@linaro.org>
+Cc: Casey Connolly <casey.connolly@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 09/11] power: supply: qcom_smbx: add smb5 support
+Message-ID: <ywav3k7tp3uoynpnbxfvevctwwmfcseltfxltiq7slixflitmp@qqrmp5adjytp>
+References: <20250619-smb2-smb5-support-v1-0-ac5dec51b6e1@linaro.org>
+ <20250619-smb2-smb5-support-v1-9-ac5dec51b6e1@linaro.org>
+ <anawfylnc5afpljxeooruyy3lgxn3wizy57jruvnmro6akfsx7@zdzsnludbl6f>
+ <87d8b81a-2ab9-49f2-9319-99d74f84081e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d8b81a-2ab9-49f2-9319-99d74f84081e@linaro.org>
+X-Authority-Analysis: v=2.4 cv=C4TpyRP+ c=1 sm=1 tr=0 ts=6861c8f0 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6IFa9wvqVegA:10 a=KKAkSRfTAAAA:8 a=YK0pAgHl7by2gtRoomsA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: P1n6qbXXrcf-Ow9XptzErbrHLdDOOJ94
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI5MDE5NiBTYWx0ZWRfX9Cp4KeNZKMxR
+ 43AhAuByETSqBR9e0G+4eIJ/BYHodXReC/tC9J9hQdowK8I4c0Cygi1uLHLT4nCaqXsNeMuIWYc
+ zDTitN3QYiExxN0EK8yMiuIOD+KxMUiqecyHh0iHQgML3RvK7ksSsip1+dn91yLL5XiwsK+HQ2e
+ EmPN9SBRu8nineJ8sL6/5rRUUHuvaFy7vp4hDBEgZ+09u8f5kGz93I+bsBY08oW76y8SVDUojIm
+ eHqVdTMhgY+KqX8PE9hyBNxZetj/i4lOCLGfZO7mbqhBNALlK01FbwIGHj0tAc7D9oawhsLiSAG
+ 8hDbX13rInACJDrYjP/yB0gUaxKtsng7Z9hiMwJ45UUA7DP7cbj2kXY1ARBNcC4DOG8ZSSbdS12
+ IrI0wHRzHXRF5LjuvFVkqwqwD5nKKM2R7VyrTWjvHDLttT97Ygt0wEN7RBLbvY1OMQQEiJ22
+X-Proofpoint-GUID: P1n6qbXXrcf-Ow9XptzErbrHLdDOOJ94
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_05,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506290196
 
-The nreaders and loops variables are exposed as module parameters, which,
-in certain combinations, can lead to multiplication overflow.
+On Mon, Jun 30, 2025 at 01:06:24AM +0200, Caleb Connolly wrote:
+> 
+> 
+> On 24/06/2025 03:06, Dmitry Baryshkov wrote:
+> > On Thu, Jun 19, 2025 at 04:55:17PM +0200, Casey Connolly wrote:
+> >> Introduce support for the SMB5 charger found on pm8150b and other more
+> >> modern Qualcomm SoCs.
+> >>
+> >> SMB5 is largely similar to SMB2, with a few register differences. The
+> >> main difference is the new Type-C hardware block which some registers
+> >> are moved to.
+> >>
+> >> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
+> >> ---
+> >>  drivers/power/supply/qcom_smbx.c | 367 +++++++++++++++++++++++++++++++++------
+> >>  1 file changed, 314 insertions(+), 53 deletions(-)
+> >>
+> >> diff --git a/drivers/power/supply/qcom_smbx.c b/drivers/power/supply/qcom_smbx.c
+> >> index 10ddd33a09599decb23c0f1ccd02fa9b56602543..d902f3f43548191d3d0310ce90e699918ed0f16f 100644
+> >> --- a/drivers/power/supply/qcom_smbx.c
+> >> +++ b/drivers/power/supply/qcom_smbx.c
 
-Besides, loops parameter is defined as long, while through the code is
-used as int, which can cause truncation on 64-bit kernels and possible
-zeroes where they shouldn't appear.
+> >> @@ -580,18 +721,100 @@ static const struct power_supply_desc smb_psy_desc = {
+> >>  	.property_is_writeable = smb_property_is_writable,
+> >>  };
+> >>  
+> >>  /* Init sequence derived from vendor downstream driver */
+> >> -static const struct smb_init_register smb_init_seq[] = {
+> >> -	{ .addr = AICL_RERUN_TIME_CFG, .mask = AICL_RERUN_TIME_MASK, .val = 0 },
+> >> +static const struct smb_init_register smb5_init_seq[] = {
+> >> +	{ .addr = USBIN_CMD_IL, .mask = USBIN_SUSPEND_BIT, .val = 0 },
+> >> +	/*
+> >> +	 * By default configure us as an upstream facing port
+> >> +	 * FIXME: This will be handled by the type-c driver
+> >> +	 */
+> > 
+> > All of this needs to be reworked to cooperate with the type-c driver.
+> > Otherwise it might try to reconfigure the Type-C mode _after_ the TCPM
+> > has negotiated some configuration. So, it can't go in in this way.
+> 
+> Hi Dmitry,
+> 
+> this is the smb2/pmi8998 init sequence, we don't have any type-c support
+> for this yet hence this. When we add role switching/type-c support it
+> will make sense to rework this but until then we need this.
 
-Since code uses result of multiplication as int anyway, it only makes sense
-to replace loops with int. Multiplication overflow check is also added
-due to possible multiplication between two very big numbers.
+No, it is not. It is smb5_init_seq, which is then being used for PM8150B
+and PM7250.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Kind regards,
+> 
+> > 
+> >> +	{ .addr = SMB5_TYPE_C_MODE_CFG,
+> >> +	  .mask = SMB5_EN_TRY_SNK_BIT | SMB5_EN_SNK_ONLY_BIT,
+> >> +	  .val = SMB5_EN_TRY_SNK_BIT },
+> >>
+> > 
+> 
+> -- 
+> // Casey (she/her)
+> 
 
-Fixes: 653ed64b01dc ("refperf: Add a test to measure performance of read-side synchronization")
-Signed-off-by: Artem Sadovnikov <a.sadovnikov@ispras.ru>
----
- kernel/rcu/refscale.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index f11a7c2af778..ab7fcdc94cc0 100644
---- a/kernel/rcu/refscale.c
-+++ b/kernel/rcu/refscale.c
-@@ -85,7 +85,7 @@ torture_param(int, holdoff, IS_BUILTIN(CONFIG_RCU_REF_SCALE_TEST) ? 10 : 0,
- // Number of typesafe_lookup structures, that is, the degree of concurrency.
- torture_param(long, lookup_instances, 0, "Number of typesafe_lookup structures.");
- // Number of loops per experiment, all readers execute operations concurrently.
--torture_param(long, loops, 10000, "Number of loops per experiment.");
-+torture_param(int, loops, 10000, "Number of loops per experiment.");
- // Number of readers, with -1 defaulting to about 75% of the CPUs.
- torture_param(int, nreaders, -1, "Number of readers, -1 for 75% of CPUs.");
- // Number of runs.
-@@ -1140,7 +1140,7 @@ static void
- ref_scale_print_module_parms(const struct ref_scale_ops *cur_ops, const char *tag)
- {
- 	pr_alert("%s" SCALE_FLAG
--		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%ld nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
-+		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%d nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
- 		 verbose, verbose_batched, shutdown, holdoff, lookup_instances, loops, nreaders, nruns, readdelay);
- }
- 
-@@ -1238,12 +1238,16 @@ ref_scale_init(void)
- 	// Reader tasks (default to ~75% of online CPUs).
- 	if (nreaders < 0)
- 		nreaders = (num_online_cpus() >> 1) + (num_online_cpus() >> 2);
--	if (WARN_ONCE(loops <= 0, "%s: loops = %ld, adjusted to 1\n", __func__, loops))
-+	if (WARN_ONCE(loops <= 0, "%s: loops = %d, adjusted to 1\n", __func__, loops))
- 		loops = 1;
- 	if (WARN_ONCE(nreaders <= 0, "%s: nreaders = %d, adjusted to 1\n", __func__, nreaders))
- 		nreaders = 1;
- 	if (WARN_ONCE(nruns <= 0, "%s: nruns = %d, adjusted to 1\n", __func__, nruns))
- 		nruns = 1;
-+	if (WARN_ONCE(loops > INT_MAX / nreaders,
-+		      "%s: nreaders * loops will overflow, adjusted loops to %d",
-+		      __func__, INT_MAX / nreaders))
-+		loops = INT_MAX / nreaders;
- 	reader_tasks = kcalloc(nreaders, sizeof(reader_tasks[0]),
- 			       GFP_KERNEL);
- 	if (!reader_tasks) {
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
