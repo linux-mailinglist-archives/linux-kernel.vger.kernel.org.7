@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-708081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E34AECBCD
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:46:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855A3AECBCF
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E45C1897782
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 08:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F4175EFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 08:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8BD1EFFB7;
-	Sun, 29 Jun 2025 08:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEA91FFC55;
+	Sun, 29 Jun 2025 08:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kKQwRgzX"
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aoBQxmd3"
 Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926C81AAC9
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 08:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9460478F4A
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 08:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751186801; cv=none; b=XjJ2zpQNRTJHCwpRqidmFC5qDQIJ/k/pJPQrVWcmoQkeF+R9QPaNdYRVAYp8JgTxJS9foxJXgYZNAwbqiUZHrpljCkeJFqwmuU79bbZijXCgo6T+l46qAQfr/zzXHiagMyD+Pu30PGh6BCyYF93ssWGbV6dHcY47/CTSbvuKBPo=
+	t=1751187004; cv=none; b=ABGXl+zpPxG1UO/MsBb8bCKInodjXwbIIB8NzlonaAcOX2ZjnqVdgJXlgqNtJBGmsHfuDDayRalPdhjmihq18eQlMkQkWlygL2oeNvNKoBAnWob+IWY7yNHDEY/O7DOroly4F0MKZP+gCHQvYrg7fZoxdtYBXhsrbqsO+oLrqg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751186801; c=relaxed/simple;
-	bh=NQMqcqKMHKSu/+DtiWDlp30Am/GNBYN9QQn17N45SBQ=;
+	s=arc-20240116; t=1751187004; c=relaxed/simple;
+	bh=p7ryK8qS1laqTOOKrVA8iL/QWVYbfWZmky6TsrRQslQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nP76fTyyTKSmhgJKbCwU7U8H2hmfCrjQ+hUqyssXPNEWOEiLozPQLiho2YeLQGhc/LIXGpc+wtUqHmpcOkSD4YuDulBnUqbYkAZB5nZo+svbFYBrAoVzmWOI2J0rg9t5UfQ4J/4qhMDVe0ksYwzXVbZnLB6KnAGLxJwMRsLxdCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kKQwRgzX; arc=none smtp.client-ip=65.109.113.108
+	 Content-Disposition; b=mihkMaOX14rf6h29e21yHtUwOo9o4p4AvLbR8ZBvoSPxXmyJo9d+rnxpzi86qTbHWkkQW0wnJun9HpZzBxD2Dca5XFfAq5JDMzn1JfdNkt6EIehiPE4xV/EPDv5Faju3Z7zobZjRGtfsW7sS6IaHGpz0oRi67GldDfpYpa+7Eio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aoBQxmd3; arc=none smtp.client-ip=65.109.113.108
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AF4F540E0198;
-	Sun, 29 Jun 2025 08:46:37 +0000 (UTC)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9858640E0198;
+	Sun, 29 Jun 2025 08:50:00 +0000 (UTC)
 X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
 Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
 	header.d=alien8.de
 Received: from mail.alien8.de ([127.0.0.1])
 	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 36onRKkodAGk; Sun, 29 Jun 2025 08:46:34 +0000 (UTC)
+	with ESMTP id lmND_zg0tCam; Sun, 29 Jun 2025 08:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751186794; bh=Dogwmhzaiebz3x7VShBgkGKE7kh9vwh1xWAKJckucAs=;
+	t=1751186997; bh=F7rm92ZWerKdhUL4+Hg/qw+uorETxgmeEov2q7V5k50=;
 	h=Date:From:To:Cc:Subject:From;
-	b=kKQwRgzXg+fKLR7givV+juZguY1W8o5UTqOPkMC3uUmmdlaLpgL47k5VwJFUbUZeV
-	 bvHhHzfZpmsc3nBJ+SZj1K5TpeZrNZetPXbglp+RwJU4Y0VSU+whxTkVbRENtoA1hM
-	 o1GQsrPGo9II9NIxb0BOVLVtkkBuJAsodYxqm6pdOB7WQl27n3jyWjm/4a6ApVR+SV
-	 tP+HOhpDlebYjBCOxhOUqgAw/OAcQgmk5f6wNDSQlnX4jBu4U+XY3IvleTezCywCVU
-	 KDyCJqNKqU65Y1UH9NFylCtxD1zd7TRY4wAqzAyKWGqN1AFe9t6zrTpFvhEM6xvsrq
-	 qpIZKmrCYawXFhdBb1TL54WOpjrOvxVWeWRmeQlGlmZBljjt3S1C1PAYX212pIlfMR
-	 FqiznilnSH8HfXAWpxg7cs8VVml0h+Bju52l8PJQnk0EK8wtoYyO442SIvprT9OjlO
-	 ItkIG/cCUZr5goCOn20qPSsS04hI9fVXUL3JZf5zpJSZwU2TK/jx9teHbY8EHIkDI7
-	 mOMXo0kDlfZMUNH3/0IdWWJg1+pxXDgCt848ZytFUamQImCswzWC3+A6JBP0wPFQxF
-	 yTR25FEaMDgu1WVLwqHQqDwe0nSEeh/Nf3VxrGM2K6rSdnaPCAVluNiT/9tLKJjOit
-	 pue47teVTaeJ0ENfiwq2/kzA=
+	b=aoBQxmd3SQwLV0Uk0SYph3M2tvOafDlWXk3imnIEtqM3gOgckL4E0/gAaP4/wTbVF
+	 nwoXej/3UsjRvopCizsUuSmeXwQFQocdigycE/DXAgNcqeh18foPOC0k726EksynnP
+	 re4z8CWtd1mxyssg1zwXjKfIavfXegSUIA7pDrStLiCAwwdhMdYBGr/RLXwHKNbPhu
+	 uRYePY6zdLtXUxj8Jp+pPunTDQDhfBJQycdRCdAHc/hVadQPcWyYlpXG79tvxLvlTS
+	 7X99KFZxBci/IrPSdLYa26Tno8G8u6UpdGQzmlaC7QBoNUWwq+gafSwSyikiYcs5nm
+	 uD8IcT2r6aja+D9AILCw4v0PBcmkLNb1u3uqoGH3xhz2LaprlNM89hUM4t/Jh1r1lf
+	 zNniDAV8/GIE4qo5NhwxtUbMe765v2yUGJpCseaDWcYSt/zgeYkRYJmNV9ECs5/l/o
+	 yBN59MKQF05Qxwu8jT9eEomExFvIUDL25YUk4npTvzi5SP02mwnhh1dqy5SUSUeG0s
+	 3JiUHxZ1gb56aRb+NIxnNPvhZo8pdh5cl56q07BryT+Aa70G9U/YsIFPhbre9cl5eJ
+	 mwx9SD4jBHRpG2XGxdvuFlycAPInmVmSHEl28/QE3vuCDJvp3uM3uY+pz2LPDOMSZ+
+	 okhcFgoZLJaJXbRNEmQn0K7c=
 Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3142240E00DC;
-	Sun, 29 Jun 2025 08:46:31 +0000 (UTC)
-Date: Sun, 29 Jun 2025 10:46:30 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4197B40E00DA;
+	Sun, 29 Jun 2025 08:49:54 +0000 (UTC)
+Date: Sun, 29 Jun 2025 10:49:53 +0200
 From: Borislav Petkov <bp@alien8.de>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/urgent for v6.16-rc4
-Message-ID: <20250629084630.GAaGD9ZoXfbOG272mA@fat_crate.local>
+Subject: [GIT PULL] perf/urgent for v6.16-rc4
+Message-ID: <20250629084953.GAaGD-MUAKHnWlFNiW@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,43 +76,34 @@ Content-Disposition: inline
 
 Hi Linus,
 
-please pull the x86/urgent lineup for v6.16-rc4.
+please pull a perf/urgent fix for v6.16-rc4.
 
 Thx.
 
 ---
 
-The following changes since commit 2aebf5ee43bf0ed225a09a30cf515d9f2813b759:
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
 
-  x86/alternatives: Fix int3 handling failure from broken text_poke array (2025-06-18 13:59:56 +0200)
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
 
 are available in the Git repository at:
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.16_rc4
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/perf_urgent_for_v6.16_rc4
 
-for you to fetch changes up to fa7d0f83c5c4223a01598876352473cb3d3bd4d7:
+for you to fetch changes up to 1476b218327b89bbb64c14619a2d34f0c320f2c3:
 
-  x86/traps: Initialize DR7 by writing its architectural reset value (2025-06-24 13:15:52 -0700)
-
-----------------------------------------------------------------
-- Make sure DR6 and DR7 are initialized to their architectural values and not
-  accidentally cleared, leading to misconfigurations
+  perf/aux: Fix pending disable flow when the AUX ring buffer overruns (2025-06-26 10:50:37 +0200)
 
 ----------------------------------------------------------------
-Xin Li (Intel) (2):
-      x86/traps: Initialize DR6 by writing its architectural reset value
-      x86/traps: Initialize DR7 by writing its architectural reset value
+- Make sure an AUX perf event is really disabled when it overruns
 
- arch/x86/include/asm/debugreg.h      | 19 +++++++++++++++----
- arch/x86/include/asm/kvm_host.h      |  2 +-
- arch/x86/include/uapi/asm/debugreg.h | 21 ++++++++++++++++++++-
- arch/x86/kernel/cpu/common.c         | 24 ++++++++++--------------
- arch/x86/kernel/kgdb.c               |  2 +-
- arch/x86/kernel/process_32.c         |  2 +-
- arch/x86/kernel/process_64.c         |  2 +-
- arch/x86/kernel/traps.c              | 34 +++++++++++++++++++++-------------
- arch/x86/kvm/x86.c                   |  4 ++--
- 9 files changed, 72 insertions(+), 38 deletions(-)
+----------------------------------------------------------------
+Leo Yan (1):
+      perf/aux: Fix pending disable flow when the AUX ring buffer overruns
+
+ kernel/events/core.c        | 6 +++---
+ kernel/events/ring_buffer.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 
 -- 
