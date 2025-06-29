@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-708280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5441AAECE8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:14:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE20AECE92
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9E43B04C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996FD16F6C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E6322FE08;
-	Sun, 29 Jun 2025 16:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="GlpdH2iE"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3191A23BD;
+	Sun, 29 Jun 2025 16:15:13 +0000 (UTC)
+Received: from glittertind.blackshift.org (glittertind.blackshift.org [116.203.23.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EC513790B
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 16:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2708E2327A3
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 16:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.23.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751213647; cv=none; b=Z85D7ebkt9SJl8aKrZ5wl45bHmi5YVPuelyN3BxNvwvA+lZfCM6cnu/UTw4MNz8qBWOO5DE5h3+mNYprrqevsCIDMOhgGeQ02dO2CtO9EDH/+udOuNl6NXrYyT1Ojxe+16ciUy8ioswRLa7aJIf5fMXc3qM2/sDjgB+pkZiRq+8=
+	t=1751213713; cv=none; b=idGPkndXmb4mC7G9IduCPMcNdcZ+B21gLlb6lUhknyNUcOUXBg++BUGjNNJtWHx57Pn8Zr85jUO7GUiqQ6ph+LjG41nxbFdy7fIvlmi7HuLz5Yg6sfqsiG2F379HghtE2BFU4qdP2dcBhuX4YcPfr04zO11wDUAYSlJfiZJWPdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751213647; c=relaxed/simple;
-	bh=c2uNjp77GZFOIkPT/mwzGnv1uJe0HlWkMI5MtwreWcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IiLKmilF9qmVwAnnazNLoKy8S0TehbaUgpppHhVmho+vrKUZs1m5LsII40zWfjJd7RggnFU7Gw9G6805Xd+Kbnuk8lvC7ctC4TyfGazWeNHC4d4Vy/gfvorsXeKoi7K5u2/sVoSoUNKd3n0J33x16T4A8EuufxQdrSoxArgW874=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=GlpdH2iE; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1751213643;
-	bh=c2uNjp77GZFOIkPT/mwzGnv1uJe0HlWkMI5MtwreWcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GlpdH2iE+5CtLws8QT5pqqOl3OROsh1i4GZd1l3dHQReKOouvlOC2cowWTkOxN104
-	 LxoAdy2X1c1wKgjDUFDBzyp09JBH8bIaqN6t/I/cB4IxQgJg3JiFUfNTesQCMyHSWu
-	 oS5m3UhpCo/NeENBvvFD1xo5bSDpFxIJVKaqsExk=
-Date: Sun, 29 Jun 2025 18:14:01 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] tools/nolibc: move FD_* definitions to sys/select.h
-Message-ID: <2322d3a1-a5ff-40ec-ad7e-1580f85d95f4@t-8ch.de>
-References: <07f5fdb4-2c5c-4723-b12a-abdb0c9f33b7@t-8ch.de>
- <20250623025618.GA29015@1wt.eu>
- <20250629084628.GA7992@1wt.eu>
- <d8d9ab91-0617-468e-a82d-9f271c5e6a7f@t-8ch.de>
- <20250629092552.GA30947@1wt.eu>
- <029f24fa-3512-4736-94a0-e158c158cc8e@t-8ch.de>
- <20250629094048.GA26861@1wt.eu>
- <20250629151006.GA16826@1wt.eu>
- <e2513e72-5949-463d-a950-0778609141d7@t-8ch.de>
- <20250629160823.GA2302@1wt.eu>
+	s=arc-20240116; t=1751213713; c=relaxed/simple;
+	bh=mN/wZHU9MM8JPH787Vs2rHsQj+D9q0m/GT/tcvghFOs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BXQ/heybNB7TnJrvgz6g29EAmaYpOUDXkhGYssXjGnzoyU6B6Tqb+lw9sjLiAn8TEICNXlPJYSA+DZz8DyorP0fJl1xbviUPyzo+lRRrVsJmHimT9RCkWR5ee+NqzTdYu6dhVrUFsQWsfytx6c0LpfdTgU0YGFwQQXm9b66VH9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=none smtp.mailfrom=hardanger.blackshift.org; arc=none smtp.client-ip=116.203.23.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hardanger.blackshift.org
+Received: from bjornoya.blackshift.org (unknown [IPv6:2003:e3:7f3d:bb00:dea6:32ff:feb1:177a])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1)
+	 client-signature RSA-PSS (4096 bits))
+	(Client CN "bjornoya.blackshift.org", Issuer "R10" (verified OK))
+	by glittertind.blackshift.org (Postfix) with ESMTPS id EEDE467B9C4
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 16:14:59 +0000 (UTC)
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id A745B43353B
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 16:14:59 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 432C6433537;
+	Sun, 29 Jun 2025 16:14:57 +0000 (UTC)
+Received: from hardanger.blackshift.org (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 061b3ba5;
+	Sun, 29 Jun 2025 16:14:54 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Sun, 29 Jun 2025 18:14:51 +0200
+Subject: [PATCH next] spi: Raise limit on number of chip selects to 24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250629160823.GA2302@1wt.eu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250629-spi-increase-number-of-cs-v1-1-df791bf4b370@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAHpmYWgC/x3MywqDQAxG4VeRrBuwU7zQV5EunJnfNgujJLYI4
+ rt3cPktzjnIYQKnZ3WQ4ScuixbcbxWlz6hvsORiCnVo6jZ07KuwaDKMDtbvHGG8TJycMxDDI6b
+ cdD2VfjVMsl/vgRT7Rq/z/AMlw/5UcQAAAA==
+X-Change-ID: 20250627-spi-increase-number-of-cs-deeb23bcd578
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-6f78e
+X-Developer-Signature: v=1; a=openpgp-sha256; l=792; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=mN/wZHU9MM8JPH787Vs2rHsQj+D9q0m/GT/tcvghFOs=;
+ b=owEBbQGS/pANAwAKAQx0Zd/5kJGcAcsmYgBoYWZ7EYbRFPNaiN8CnhmQuIn51t0fNI4TKs+hO
+ kH9LA6iCpmJATMEAAEKAB0WIQSf+wzYr2eoX/wVbPMMdGXf+ZCRnAUCaGFmewAKCRAMdGXf+ZCR
+ nJAvB/sGPfng/XOC5atAlRIqOp9yIdAHx9EmSi9ylQpI3yZTx5GnkhSC3r/qlmhkZLazJnxotmn
+ bdtnGp4iAjvJljZHokZ+WD0ql8YXXTRy/mZWmu3+fsmQ0XUDIx1xJu6qddYYrx6mQr5NswXqxO9
+ n0HuFdOP6ukJNdp+aTJd3Zndr+Wc7UgQ20NHeFUaUW3hPnGKuYe55ascOGzM94r12gKFkDfUwu7
+ v6z2nX3FbUi5Y2uhPxwQ/Hr50FUbd6dQEutJMTd42CYFlM1CHut5u6Y5MROFXPSc7wHo8imsKEN
+ yVb6rt2+IBIbkoIM1xEI4foevt3KZ55/iLCLieh1+AQI9ngc
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
 
-On 2025-06-29 18:08:23+0200, Willy Tarreau wrote:
-> On Sun, Jun 29, 2025 at 05:54:02PM +0200, Thomas Weißschuh wrote:
-> > I saw the same issue, but only because of the changes to types.h.
-> > And these should not be necessary in the first place.
-> 
-> You mean fd_set definition ? It's solely a matter of includes ordering
-> in fact, since it depends on FD_SETSIZE.
+We have a system which uses 24 SPI chip selects, raise the hard coded
+limit accordingly.
 
-No, I mean the '#include "sys/select.h"' in "types.h".
-That breaks the dependency order, as it pulls in all kinds of other
-stuff into the beginning of "types.h" which themselves depend on
-definitions of "types.h".
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ include/linux/spi/spi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > The below works nicely for me:
-> 
-> OK. Do you prefer that we take that one or just a stub ? I'm personally
-> fine with both.
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 4789f91dae94..e9ea43234d9a 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -21,7 +21,7 @@
+ #include <uapi/linux/spi/spi.h>
+ 
+ /* Max no. of CS supported per spi device */
+-#define SPI_CS_CNT_MAX 16
++#define SPI_CS_CNT_MAX 24
+ 
+ struct dma_chan;
+ struct software_node;
 
-I prefer moving the code.
+---
+base-commit: 3e36c822506d924894ff7de549b9377d3114c2d7
+change-id: 20250627-spi-increase-number-of-cs-deeb23bcd578
+
+Best regards,
+-- 
+Marc Kleine-Budde <mkl@pengutronix.de>
+
+
 
