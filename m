@@ -1,164 +1,149 @@
-Return-Path: <linux-kernel+bounces-708114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CA9AECC1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:15:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBE4AECC28
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4003A16E639
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:15:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727143B4888
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5967921D3C0;
-	Sun, 29 Jun 2025 10:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D2421A95D;
+	Sun, 29 Jun 2025 10:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZCgyCrx"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=jvpeetz@web.de header.b="tjo2GJal"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061CF1F4169;
-	Sun, 29 Jun 2025 10:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C79F1E521A;
+	Sun, 29 Jun 2025 10:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751192112; cv=none; b=O0HEOIVtcHcLPhsQsJlgLXFyOjWbBRab+eQlCUPxfL1U0cp9c95IyoHlOvzi17KhcK5OmD5/F5HQftzhqL4OQt5OwELNZwGhRRpZXMxk00px7e8WwmwP+MKWWT4vtelTsUsptPLd+Eg6RTsPSsmkZqQ6t5YwMpv6vpgnsnjGvtE=
+	t=1751192917; cv=none; b=GMl9rrnnmNqOv3dtQQ6FlU4g2QJgssaZui349f4vYXa32GSmrEENd++DRYwYgiWi5SCssjcRpM2/6Er6ScidJd6CmjfZtVgmqfxpX+mKyitYQHYHygEVEb+SkMvMcSCcA07xsyrCkqlGhkZ+0Gxj/ddWSQfbtyrcTKp3ola7f+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751192112; c=relaxed/simple;
-	bh=W2Sj0FqzFPGvWpO0mkRbXNUzJ8KD1W3cwBit7XUJxzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NSPEF065vMMY5r4iuw7PkMPFEcOOS1cOLrmpmI8cyshlgISDkvvDjbuHRShecnD1mdzWnO4hY/TP2htC6fEEH+CmXBwboxAuLrXOm+2IKEU0SwNSuLnl9quyGvEqAlkM/Ql/mlP5l7DvR69/OhdFgvAsld1Cd4O9X97Fqbokfp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZCgyCrx; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so22796615e9.1;
-        Sun, 29 Jun 2025 03:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751192108; x=1751796908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rv+KlWL8/gXlHieXHmmWXTDlacHPWEYy4YGQvjbJEp0=;
-        b=TZCgyCrxhKi9TTVqngok+s7B7wiQyshDBz3MS9kFqfLGy2Bi7Y+UqMlhpm79Vmi6eu
-         RJhx755DISyryVJlcOhDrCK45Af9PI1kx8io8+4oGXR0rMKDqirsZiCoZNrGGdP5NXWZ
-         ElxMOBYyWobQEXBLmOa0YzWBUTpAGDLZNzvDd6kOi8fXcO2epH3A/apjT4v/4C/U4Ajq
-         PXEVm4RjeN9rogVuZc4yUqAxMrNGH57P56Fh4Ar6Lm/36yC0ieHGhqnK2RtP6kQN0dow
-         z9RtCJgVkJh+IoHlUVNvVdbSavMVF+nsDjDmcizY5/NfwcbGmXTywgfleSwq81qDhKaT
-         VcKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751192108; x=1751796908;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rv+KlWL8/gXlHieXHmmWXTDlacHPWEYy4YGQvjbJEp0=;
-        b=Az6Yrm2G3twPyYoSfR9gwUA5v39bZANNU/SL89atdZ/dCZaTr0CmOycR4zbJGN56RB
-         YhqK33+31Kua49sJmYt+6EtDEOZCpHgZPXYMY6XVtLa54Xb8OsLnBtUdRNmNzQu9amCV
-         hweFWUXVLU5dTa7o//KylHBB4Rgmxpy9/9DenQwhJgaD1wdK0jhIgH/Tv0Tpz/kh0h2y
-         9YUbcip5LfgQyY4EBNQYKYUVV2dG5eIgQwUsWxJADcMpeu7wgrH7WAIhkIYyZ4QAsdtB
-         3E0PfB5lAGYKpkllA8oRAwTi4qWbR0NyK1EHl8C0+ztwhdAfYdOjnbsJrnMrtSFCHCEV
-         eqcg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/2qY5ym4bZKao1EiH5mZ785Ci698chCikl9gHt0m5ujMMrGaZEWLXFSa/y4J4kgV+qAjdljWaeiHPpEWP@vger.kernel.org, AJvYcCWuf9XqE9OnoEjgMHsKvUGRxnzb7iwgprCfxVyxKMShqcLRMmahIvmMyfyB0cmumOAY5TJsJ4fgc4OAR9nv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy28WRDh5UetJ1uiWkvNCTwbcaFjrTWutACgjmBq8MIyrRSbqp+
-	mb7PksvvL+lERDvO4NGaCHulU7T3EKBQoNtacboDPx7cQMc3dyuXnz0k
-X-Gm-Gg: ASbGncsARbwoBo+KHlGO0vEdDAmpc3usG8Gt4E28ufAaBhXf0GByH8QWWQTzTYZ2Uuf
-	RafKYOzM/X9yqJO6bE50CnOLjv3yI6WAPYbndMlwLChWAQGlpD/e9y10kNH97ZSNijvXAHE5v+l
-	F26GWeHJ33FB+FxwJr8fQ9vT9DF6suKB5Fpx2r47P44KUHqXvpc8BNXeUaK4p/VT5e8lk66tFz7
-	mx01fl49n1oNecy5SGkV8qDRoZGDfqAtQJJ2NIefhjypq3GY3DwkvCtRrxgDFYUM8CrD9zedoOK
-	DrFi+nTP8ZLoZb7DvmDeJjTMR7ZnCmdypPNHMudZ2pNknbCR5S404l6IFQUOmyVNNj1wjZlx09m
-	X7J8OYpkWshKnjfdzKpsMi5/Kq42S
-X-Google-Smtp-Source: AGHT+IEHSBTOuNU4gIJluwTcmrh+62LZDnnH7HDcmBH7HEYrjf3Wks9oCzUt76AUoKgLXxQD5c/hUA==
-X-Received: by 2002:a05:600c:8b69:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-4539ff478a7mr1146925e9.16.1751192108049;
-        Sun, 29 Jun 2025 03:15:08 -0700 (PDT)
-Received: from pumpkin (host-92-21-58-28.as13285.net. [92.21.58.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538f88efffsm72765615e9.17.2025.06.29.03.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 03:15:07 -0700 (PDT)
-Date: Sun, 29 Jun 2025 11:15:06 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Pankaj Raghav <p.raghav@samsung.com>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, <mcgrof@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <kernel@pankajraghav.com>,
- <gost.dev@samsung.com>, Matthew Wilcox <willy@infradead.org>, Zhang Yi
- <yi.zhang@huawei.com>, Yang Erkun <yangerkun@huawei.com>
-Subject: Re: [PATCH v4] fs/buffer: remove the min and max limit checks in
- __getblk_slow()
-Message-ID: <20250629111506.7c58ccd7@pumpkin>
-In-Reply-To: <3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
-References: <20250626113223.181399-1-p.raghav@samsung.com>
-	<3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1751192917; c=relaxed/simple;
+	bh=+5ikiu7XgWggN7GSucyZAOUndbzRvEOoaAP0VWIPI3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a3C+LBEqXJsxA8V3yYo7Z5cUT+2/zm4wxzJheV3sBju5FuGkHWj/W9Z9TigAFOAYty9ssM+FN4HdFoLqNfrUmDWZucKltrcbABi8SQej4+8WRTPY+7muboTm1AgifA5F12ndk0qt3fqNOn7kJ7JKXdkcc981Bhhm8JOaMjO0czA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=jvpeetz@web.de header.b=tjo2GJal; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1751192903; x=1751797703; i=jvpeetz@web.de;
+	bh=VOoNj+Cs4ODOAPIDCFLiLS4Oyrwj/PqYkV8MDlP7a5Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tjo2GJal00qnZ1cUvNp3M+MvvPEn5Qsz8jj7TE15V4xUGrAHVWx3+n2u+AS0jZtI
+	 3QssBOJir86cFnVApVRlgYrc9qZyYF4vwcRWy4QD8dnWTs1Rptdt67sOKJ31NiOyf
+	 oM63C9Y4SKuKTnx7NDJdiZNfGwpsUPrwkZMspiruVU0Uh/rul5E8EJ7JLNUvUrQUu
+	 2bzwZLoDVhRmR26snQUgvD2T9Zpo+EUjjm7ItIbytBeCEJgrZtTenUV3pIldCdlME
+	 bozrrcelfxL7wbz0qm5Z/RN1++mJNHMmDCPK20wCCBA6viryHvkGh9rXuQ2Ss7cAb
+	 D3VZ1hoBYEZ7YDckbA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from uruz.dynato.kyma ([84.132.145.192]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M59n6-1uWveA3zk4-00FMUG; Sun, 29
+ Jun 2025 12:22:51 +0200
+Received: from [127.0.0.1]
+	by uruz.dynato.kyma with esmtp (Exim 4.98.2)
+	(envelope-from <jvpeetz@web.de>)
+	id 1uVpBQ-000000007uM-0rch;
+	Sun, 29 Jun 2025 12:22:48 +0200
+Message-ID: <a17ab649-82ab-4fe9-a9f3-eca67e7d5953@web.de>
+Date: Sun, 29 Jun 2025 12:22:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.15.4
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc: lwn@lwn.net, jslaby@suse.cz, rafael@kernel.org, viresh.kumar@linaro.org,
+ linux-pm@vger.kernel.org
+Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel
+References: <2025062732-negate-landless-3de0@gregkh>
+Content-Language: en-US
+From: =?UTF-8?Q?J=C3=B6rg-Volker_Peetz?= <jvpeetz@web.de>
+In-Reply-To: <2025062732-negate-landless-3de0@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3U9BiSdo2aIEM1L0lH0O8Pj0LKu+eD8G0tjf6GbKvoFHpnJjFim
+ jlU+BF+OsvOBYdKW+eCXDbyDLkQ1PBxj41PKz1YKc6oNJDjMeUrUkk917Ww5B3LvgIW7DEU
+ hvwzNhAVqiHGKCqrnxsNzZP7Z4Kw77Gw+mkpcwmlhkYvMip8GWh5Xk6gN13e99J2Qnuz0BN
+ 4gMiwlEI9JVbDpm7ydrxQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ofCO3+W68z4=;q4VZ/JVniXYMCGCbQW8s1m8R0kb
+ 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
+ XNb6kaF3gH65Uc+08IVsRzavrLMdA==
 
-On Fri, 27 Jun 2025 10:02:30 +0800
-Baokun Li <libaokun1@huawei.com> wrote:
+Hi,
 
-> On 2025/6/26 19:32, Pankaj Raghav wrote:
-> > All filesystems will already check the max and min value of their block
-> > size during their initialization. __getblk_slow() is a very low-level
-> > function to have these checks. Remove them and only check for logical
-> > block size alignment.
-> >
-> > As this check with logical block size alignment might never trigger, add
-> > WARN_ON_ONCE() to the check. As WARN_ON_ONCE() will already print the
-> > stack, remove the call to dump_stack().
-> >
-> > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>  
-> 
-> Makes sense. Feel free to add:
-> 
-> Reviewed-by: Baokun Li <libaokun1@huawei.com>
-> 
-> > ---
-> > Changes since v3:
-> > - Use WARN_ON_ONCE on the logical block size check and remove the call
-> >    to dump_stack.
-> > - Use IS_ALIGNED() to check for aligned instead of open coding the
-> >    check.
-> >
-> >   fs/buffer.c | 11 +++--------
-> >   1 file changed, 3 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/buffer.c b/fs/buffer.c
-> > index d61073143127..565fe88773c2 100644
-> > --- a/fs/buffer.c
-> > +++ b/fs/buffer.c
-> > @@ -1122,14 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-> >   {
-> >   	bool blocking = gfpflags_allow_blocking(gfp);
-> >   
-> > -	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
-> > -		     (size < 512 || size > PAGE_SIZE))) {
-> > -		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
-> > -					size);
-> > -		printk(KERN_ERR "logical block size: %d\n",
-> > -					bdev_logical_block_size(bdev));
-> > -
-> > -		dump_stack();
-> > +	if (WARN_ON_ONCE(!IS_ALIGNED(size, bdev_logical_block_size(bdev)))) {
-> > +		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
-> > +		       size, bdev_logical_block_size(bdev));
-> >   		return NULL;
+upgrading from linux kernel 6.14.9 to 6.15.2 and still with 6.15.4 I notic=
+ed=20
+that on my system  with cpufreq scaling driver amd-pstate the frequencies=
+=20
+scaling_min_freq and scaling_max_freq increased, the min from 400 to 422.3=
+34=20
+MHz, the max from 4,673 to 4,673.823 MHz. The CPU is an AMD Ryzen 7 5700G.
 
-Shouldn't that use WARN_ONCE(condition, fmt, ...)
+Has anybody else noticed?
 
-	David
- 
-> >   	}
-> >   
-> >
-> > base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35  
-> 
-> 
-> 
+Is it intended?
+
+Regards,
+J=C3=B6rg
 
 
