@@ -1,81 +1,89 @@
-Return-Path: <linux-kernel+bounces-708235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B365AAECDEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 399A4AECDEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC5E172BAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80BA417288C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027CF22A4FA;
-	Sun, 29 Jun 2025 14:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9E7236A73;
+	Sun, 29 Jun 2025 14:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V61K5kZ3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pfzka5qg"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865B822540A;
-	Sun, 29 Jun 2025 14:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6782367AF;
+	Sun, 29 Jun 2025 14:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751207019; cv=none; b=CmeEvvOwPSXL82OKf+rUdZPaqEg1ThQ6xtXOlcHHMjo4zOXQuDawLkU29dtTWiC3oTOI82k1j014AklbSj/btVSu87P/ZodHXfuGLfkGx5DXtF2BVt3IGRlQkgSLnmsOocKSyJPGj25H4vM8Xs3w/hhUDBQHomnf9V/N3xkh8eY=
+	t=1751207004; cv=none; b=JChJWbiGfwzqYE6MmBtaM1ZZyp/JzPt1NHfk+mLJJtw5tGDb3eVEmy3MRHzQSiKjM1X8MNZ2XZh6LOwPJFTOvyRkiv6EJZLW7Cr2Sfl3PeW3WFmPDrXnwLRsdAPTuvef+QZsAUr/7gLCh2iuJp1NOuRILwxvJ8mm9WO7t6yriCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751207019; c=relaxed/simple;
-	bh=3IXZMlLqYK+fUUIJj6j+HqWjW2huSssVwLxqNpAYLfs=;
+	s=arc-20240116; t=1751207004; c=relaxed/simple;
+	bh=nAzkLf6fByBaHr2zsZXR+WogUuCuVekqUNUPbP7vlYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiCCKIDLJQMhAQ9xpuQEuhhHxnUWCD6T5N5QdlBsFcggKomOgeMRAoTtnc+LCnQqxXLkQtSYWybwAzK6wnXiiZOVsb9ZhGXvuFAy/AbjPRa1fBpNpnhaaYkAEX4eD9ajgTNnVzQYCs5bYuoHWa2269wpoItjzy8h+n2ZN/HE6Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V61K5kZ3; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751207016; x=1782743016;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3IXZMlLqYK+fUUIJj6j+HqWjW2huSssVwLxqNpAYLfs=;
-  b=V61K5kZ3Myi64vdV2M0tstjpdVArQ/0P4syDuSgA2IoC3KWeMDsFGKV+
-   u0dx4RskcPMt/rztI3fwJRKAYu/1J03MqfXst1j65+sKtG5TMxbl7b073
-   ESWEHYWtkfSPPigFSon/BZGoEdJewg4d0/FqbFo7nmVagt2FXDUrISzRI
-   vyM0PGHSj7SxyZdOfaV+OeCRiSmx8Q4q+vHEZlHY9LLuVwfvHQBRJ2uRc
-   dzODH2+5Hnf/SIvTa5r20d6i9kKeGYh43XrmaQtECOsQhr4TqYQuVKqBx
-   RAOLIokUXfE1nGYRWiazgkgtW6IbH7caDlVe++xcStLH77ZkKfzFyal4r
-   g==;
-X-CSE-ConnectionGUID: GkEdYgviQPyftOtgUwHm+A==
-X-CSE-MsgGUID: 8/iWhMdgSIi6uGYFTK0UeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="57126380"
-X-IronPort-AV: E=Sophos;i="6.16,275,1744095600"; 
-   d="scan'208";a="57126380"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 07:23:36 -0700
-X-CSE-ConnectionGUID: x+PxDHTZRiimHaKV1OkFyw==
-X-CSE-MsgGUID: B9V29v5aTvy1XkNs/n+NsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,275,1744095600"; 
-   d="scan'208";a="152969829"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 29 Jun 2025 07:23:31 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uVswL-000Xzm-1f;
-	Sun, 29 Jun 2025 14:23:29 +0000
-Date: Sun, 29 Jun 2025 22:23:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Lucien.Jheng" <lucienzx159@gmail.com>, linux-clk@vger.kernel.org,
-	andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, joseph.lin@airoha.com,
-	wenshin.chung@airoha.com, lucien.jheng@airoha.com,
-	albert-al.lee@airoha.com, "Lucien.Jheng" <lucienzx159@gmail.com>
-Subject: Re: [PATCH v1 net-next PATCH 1/1] net: phy: air_en8811h: Introduce
- resume/suspend and clk_restore_context to ensure correct CKO settings after
- network interface reinitialization.
-Message-ID: <202506292222.nBaJywJw-lkp@intel.com>
-References: <20250629115911.51392-1-lucienzx159@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCEukwPVS6XFbAFB7yXa5TtXOulDVzVUmfbvkfEacCuWe94hR8YpzyinljjRKTMNb44CUR598r0e7RDnvWJfiavASEUKQoiyl6r56X6rRwvE7V1nhMYMuSqVI9idxWD6uuKEHIlwoS7oVc2rIKBnn7Ahv+Qg61lT6ISB1Yj1y1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pfzka5qg; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-236377f00easo12778685ad.1;
+        Sun, 29 Jun 2025 07:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751207002; x=1751811802; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4XmE3HNeFPwhvV3YapnRmO/5DkoCIHrdHE5yflvWYiA=;
+        b=Pfzka5qgLdul3Gb1rfEqLZHPfPHl3vUmUDCaKp+R3D3jSWWy6weXW6qIHFS4B4n7Zb
+         uL4GDGo72r49p873rKIhEYsea9uteMWeFzrlUS+Q0cVfvPL1H4+5G7j8/1IWm81Lz933
+         S76GkMlmOe2GxcBYhHbZZkRwt9DbHct1CHDqF8F8Y91ZXPvE4T4wZWjJhohI2qpGKC8V
+         OjVkvaw41HAwO5bHo1oiJrWXEWHnvjGOy5eAP5PPT8DhyHAhxMLIJjRjST4GFDBd7/yg
+         6/0sLu4x7EBlYVcWL2+vvcbn27ECnRRu2h44/77QkEg3Cr7n3/c/I8P1ZLTgnVOyqg2I
+         H2YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751207002; x=1751811802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4XmE3HNeFPwhvV3YapnRmO/5DkoCIHrdHE5yflvWYiA=;
+        b=pbxoLsHTDaTlW9oMziNejOP1nNgy/GMrVH/4C5AGm9MnqnDnv5CeVOF4KLsfufwy6g
+         zpqvrnZongIiLhqJElafkJ5mZWsKwA/9qk77awcY1eoktM8TrBREss70cXwUdAiTwP/C
+         cLs1RzPRTdkKKLYSHnS9wSAFoLFX8MjulL+5qP9FRJK2s6dpQZRjA4hZ+2PmOzEsUCeH
+         vp1a4aWTFTQfYjFyQ2/Mxmm9zukbeQsagcR352snZmDB29jdqy72yU8P97AoWthaAGUI
+         8JG1bQuFhQ74cN3c+aoIZL2YpSsfxRHFJgaHPL+/Zax/7BBEQWwd11mTJvHvrCUn3aqb
+         74Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCWM0137MPlifS9M11hLPZw61DvusV/d1tz/OteViWyBVvEATGwD159TxoKPMrF7qWn9/0SP6rtHV2ZJj92h@vger.kernel.org, AJvYcCWpF0F3dNtzVsmIZJ1fSfApM1+X1dTFjx44HJAZ9A+rna/PMLIatGev8tUJluxxmdNdF1idfK7in4nX9w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsD66A1+zY3EoLYb8J9BYrIc4sD14th7OmTO5zc/jY4sNpdSi3
+	L0ntIQ/g8pV1oxOn20j2XU/vFGpdC4u1jCLq7n6h8e3tThkQ0WwP2InW
+X-Gm-Gg: ASbGncvsB7UAUerUhFMOPq9pBRClROx8jeH5JiuXVBCPb0L8XKB2CyWeQBJy8sWallc
+	vr59lfug3OGkkmkaAR5W3KBqTjdOO5GbabF1Y8lbcfasj0KNIIt/hIEHDSX3lc2Vcu1AFlvrpAv
+	rxOX1qG3JcA+cCT8vo5F9rGqWDD0W9O2/K7cjieeT1K+Q2UuHkJS4Pv59hyjjAwfMQ/q5P+OBCm
+	Ud4rxbk0xZBmWjf54b34+p6vwhLFT4cRhIRbyi2gdU1o5pfo4+j5tWqgpBSPyblhzz40zwcjem4
+	s6S7+kZavr2Q5x7fMxABu25KhCGLX7ia7X9H619koSZ9457HzOad6J0=
+X-Google-Smtp-Source: AGHT+IHXD8nXRq9dLp21pFDQyRXR7/wWUgH4S+2XEaLAGY7dzwkGVIgjA3e+5v3+0oNfgBvPx8YFhQ==
+X-Received: by 2002:a17:903:1aad:b0:234:ef42:5d5b with SMTP id d9443c01a7336-23ac3deb9a5mr167279295ad.16.1751207002043;
+        Sun, 29 Jun 2025 07:23:22 -0700 (PDT)
+Received: from essd ([49.37.221.186])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb39bd67sm60442735ad.136.2025.06.29.07.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 07:23:21 -0700 (PDT)
+Date: Sun, 29 Jun 2025 19:53:12 +0530
+From: Abdun Nihaal <abdun.nihaal@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: andy@kernel.org, dan.carpenter@linaro.org, gregkh@linuxfoundation.org, 
+	lorenzo.stoakes@oracle.com, tzimmermann@suse.de, riyandhiman14@gmail.com, 
+	willy@infradead.org, notro@tronnes.org, thomas.petazzoni@free-electrons.com, 
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v2 2/2] staging: fbtft: cleanup error handling in
+ fbtft_framebuffer_alloc()
+Message-ID: <eemnoitjhvt3nkt6k66dl6p75zqvsdttalyncfg2dqs2bcbkgy@pvr5wgx3x5xz>
+References: <cover.1751086324.git.abdun.nihaal@gmail.com>
+ <62320323049c72b6e3fda6fa7a55e080b29491e8.1751086324.git.abdun.nihaal@gmail.com>
+ <CAHp75VeSYesZuJ-NEfEAvaRepEUtdLmxGrYmthD1YkSg-bsK_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,32 +92,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250629115911.51392-1-lucienzx159@gmail.com>
+In-Reply-To: <CAHp75VeSYesZuJ-NEfEAvaRepEUtdLmxGrYmthD1YkSg-bsK_g@mail.gmail.com>
 
-Hi Lucien.Jheng,
+On Sat, Jun 28, 2025 at 10:58:20PM +0300, Andy Shevchenko wrote:
+> > +       struct fbtft_par *par = info->par;
+> > +
+> > +       if (par->txbuf.len > 0)
+> 
+> Do we really need this check? If txbuf.buf is kept NULL (please, check
+> this), the kfree() is NULL-aware.
 
-kernel test robot noticed the following build errors:
+I assumed that the par->txbuf.buf may be uninitialized, but I checked it
+now and it uses kzalloc to allocate, so it must be NULL to begin with.
 
-[auto build test ERROR on net-next/main]
+I'll remove the check, and send a v3.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lucien-Jheng/net-phy-air_en8811h-Introduce-resume-suspend-and-clk_restore_context-to-ensure-correct-CKO-settings-after-network-interf/20250629-200137
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250629115911.51392-1-lucienzx159%40gmail.com
-patch subject: [PATCH v1 net-next PATCH 1/1] net: phy: air_en8811h: Introduce resume/suspend and clk_restore_context to ensure correct CKO settings after network interface reinitialization.
-config: arm-randconfig-004-20250629 (https://download.01.org/0day-ci/archive/20250629/202506292222.nBaJywJw-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250629/202506292222.nBaJywJw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506292222.nBaJywJw-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__clk_get_enable_count" [drivers/net/phy/air_en8811h.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Nihaal
 
