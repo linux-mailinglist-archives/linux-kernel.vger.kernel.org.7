@@ -1,136 +1,258 @@
-Return-Path: <linux-kernel+bounces-708477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8AF4AED0F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:24:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827EBAED0FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D6F18838DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682C33B27C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D926561D;
-	Sun, 29 Jun 2025 20:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D4423B60B;
+	Sun, 29 Jun 2025 20:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Pjr5TwQe"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="U0/shR2q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gOEvyyPE"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94EE2417D4
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 20:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C312F288A8;
+	Sun, 29 Jun 2025 20:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751228238; cv=none; b=ANSpbQxVK/NEi03kQY95/B7WeTOeHVfAjjYq59i2+Ir6mMuzl0IhRxSKsf0AjwLeiF6acaejGbFLx+MqEZBXNqKPddNgey2zvsaXywpvw5004P9yzL2+tygrWV69Emc+PFMmKZ2/EJ3cfjQ3g0N9ZT+piCB5imbPUxvhSc/tHS8=
+	t=1751229437; cv=none; b=ZCEuT7xT1Z/JDhGVwV9Wq3DPhtKH7z/kdGVEjAObp07DCUFJ2ypzMLXXxpy4Dm7TRnGz1PsObMWZD34Vj1Uvi/GQTnU52XHky0Vy7mNfHJ7dAVP7n76ZvGQN8KRnYancSYKGImVqoytmkR4xRY0XE9DY1imgIMN/cA7jeApzf/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751228238; c=relaxed/simple;
-	bh=4M1BiJ4fQUn4575Pv2IZLCCJAhcWlofdy723u9ZVQrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XiKVaq/i6+N1EBtje9qorC3cEvA4gmTpAgb1d2IfHIlgd7rP9Ds6wL9KV866YXXtH8dRllh3VKgnD9iEYzFyFUV/Va/p0IBgBwZScLC5jzDusmwIIO4/JtH6yo7+UbGdZUlEkLxmKbUn907xmSk8TWOB/6u8BwCzvz4gYWV+fvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Pjr5TwQe; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1751228233;
-	bh=4M1BiJ4fQUn4575Pv2IZLCCJAhcWlofdy723u9ZVQrg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pjr5TwQePK57VngX9Hk/cb7c7MblfBraMssV5FebMswdtLmDGHSO3jizyu4zks2ny
-	 vJFlVoDljafZK9JYmAWfUNrFYZQswhQzD1Y13TP+AXu4N1Ftzu359f6O8lizesWsu3
-	 8ylCrY4IOORKppYF2H9x7V7Kb0UlTJzRlhuLY2dw=
-Date: Sun, 29 Jun 2025 22:17:12 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH v2 1/2] tools/nolibc: make the "headers" target
- install all supported archs
-Message-ID: <38941d56-dc2c-465c-99b3-2e986ea58423@t-8ch.de>
-References: <20250629170732.16817-1-w@1wt.eu>
- <20250629170732.16817-2-w@1wt.eu>
+	s=arc-20240116; t=1751229437; c=relaxed/simple;
+	bh=xkCrKZ4b34v3DhYT0LOfv7Tf8ZKD0AFx3TJaxGTwQ2Y=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=W6elo/OMi8wcUrcga4vkcmUS1E4UuopnZdDYb7hOSVS/fE9FskKUfKYwWPdr3MjxspOsLwiQKlJ9PmRBpkEN+ymKTqPIdOrP4n/dg0Mauw5GDoyx7hp1KihQ58RGiuOUOUv4WMeQG4FUAHydSuLukLJQGBZwwHF2qYI4M2jR24w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=U0/shR2q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gOEvyyPE; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E06061400111;
+	Sun, 29 Jun 2025 16:37:12 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Sun, 29 Jun 2025 16:37:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1751229432;
+	 x=1751315832; bh=LP6McOTsZ5t8dM3HbJrxNhMDYor79d2tpRu9hZs1ASI=; b=
+	U0/shR2qbxydbebEtUZg/LiEhlH2ox6/AC51VExpRsxicEC5nEiYJCzqp2ES5Ctn
+	Ex0zwrSJuvZVlEjbpyjXDPFGjXboIBIO8bRRC+XKZ5/Lfpxk5pIGXkr2W4hSTRYd
+	8mFl6ikIcpbgMjzGEXHzeK1ATaqQMZwwwHF+a4OoyeYcQ+89sHAJ5Q/EfY3nQinw
+	RN6KTMswOFwiZXv0QEAOP0imNFW4ANGYipSSEW36wUscdQDTpAKZ8tMnoduHlJLK
+	DsdWesaGSaITTGPd57TZbJfauoAH/WfmXj4/OCJVXifHOsFrT9x3s1b2zLbP28XH
+	Q7jA8Nu4qYX1ACuSCJ9N5A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751229432; x=
+	1751315832; bh=LP6McOTsZ5t8dM3HbJrxNhMDYor79d2tpRu9hZs1ASI=; b=g
+	OEvyyPEhD81rSqgl5SL7yxYLwtwBl0ViQtvtH5e9MoAqU1QKa5S6fqceXNsiRAue
+	wzVCUXigacEyMcQC02+I3uAixhaCXtt+pa1n/WD1xH/AbULZjhsxpzhv8KfdMtVE
+	ErL8srTQYuAB88aFOkWHXfdj+wedWA0H9tk/9FDvoENTucBn7bSYh90uTng1rQtT
+	swWaVifXYetQCyFq5OeD3OlmT9RfskKWtdeI4P/PPUmKmb34SphjQD84bFx0Sl5z
+	dNn7IZktSfBhZBeQFNMNfZswCjTKbfdQv+m1dm2tRwe94s0JU5KPn4Lc2NPSWw59
+	+GI1nCxb1tln62KEZItog==
+X-ME-Sender: <xms:-KNhaK3RP8i1C9z740RHypHd7BxLE_2312GlD_XQhZAE_iMZDUUfEQ>
+    <xme:-KNhaNHQ_zJFsxmogSWmysan45h1Av3yibz8yKbyyQ4MEguWw53Y5oAnF2R1JL3hU
+    jzQg8vcdIqxY37kleU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelkedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfofgrrhhkucfr
+    vggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrqe
+    enucggtffrrghtthgvrhhnpefhveekjeeuueekfefhleeljeehuedugfetffdvteekffej
+    udelffdvjeekfeehvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggp
+    rhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeighidqjhgrtg
+    hkihgvsedufeelrdgtohhmpdhrtghpthhtoheprghlihhrvgiirgdrsggvshhtsghohiih
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghtvghstghulhgrsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepkhhuuhhrthgssehgmhgrihhlrdgtohhmpdhrtghpthhtohepfigp
+    rghrmhhinhesghhmgidruggvpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslh
+    hinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughh
+    rghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:-KNhaC4HlEJgdih6N6bEfbwX1qIJtQw4dVhEu-vd8vw4NCGCNnkavw>
+    <xmx:-KNhaL3OxR5VsB5km6XPCSQlttqmd2GPJqc29J4qVYQ68jTJKWAQaw>
+    <xmx:-KNhaNGYdooI8S_kqn7b3bIzLyjmyynUR2iRdIzJhvFiYIwhgLnkbQ>
+    <xmx:-KNhaE9zXSHJMy-dcAxREzhM5mOInR1B-afClLQwIFiZbyIwAJK_EQ>
+    <xmx:-KNhaBNTeqhGEbH6fCUhmaaDjdRxpTA46-eMcGdgZsY_9-6M7jehR3qM>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1FC0C2CE0071; Sun, 29 Jun 2025 16:37:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250629170732.16817-2-w@1wt.eu>
+X-ThreadId: T706dce5c18d1b324
+Date: Mon, 30 Jun 2025 05:36:50 +0900
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Armin Wolf" <W_Armin@gmx.de>, "Kurt Borja" <kuurtb@gmail.com>,
+ "Jackie Dong" <xy-jackie@139.com>, alireza.bestboyy@gmail.com,
+ atescula@gmail.com
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <7f2496e7-7092-46a2-885f-8e8f44fc0af1@app.fastmail.com>
+In-Reply-To: <50361e3c-c947-4df8-97fd-4963d18ee4f2@gmx.de>
+References: <20250627195436.3877-1-W_Armin@gmx.de>
+ <DAXLSMRH9E6Y.3Q8Z59YG2B50C@gmail.com>
+ <fb08672d-881b-458c-b8ed-1a27ca93fe7d@gmx.de>
+ <DAXMVOI4AXHY.18HUV9THTG0DJ@gmail.com>
+ <50361e3c-c947-4df8-97fd-4963d18ee4f2@gmx.de>
+Subject: Re: [PATCH] platform/x86: lenovo-hotkey: Handle missing hardware features
+ gracefully
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-06-29 19:07:31+0200, Willy Tarreau wrote:
-> The efforts we go through by installing a single arch are counter
-> productive when the base directory already supports them all, and
-> the arch-specific files are really small. Let's make the "headers"
-> target simply install headers for all supported archs and stop
-> trying to build a hybrid "arch.h" file on the fly, to instead keep
-> the generic one.
-> 
-> Signed-off-by: Willy Tarreau <w@1wt.eu>
-> ---
->  tools/include/nolibc/Makefile | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
-> 
-> diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-> index c69d7bf60c71e..d5be3d213c885 100644
-> --- a/tools/include/nolibc/Makefile
-> +++ b/tools/include/nolibc/Makefile
-> @@ -24,6 +24,8 @@ Q=@
->  endif
->  
->  arch_file := arch-$(ARCH).h
+Hi Armin & Kurt,
 
-arch_file is unused now.
+On Sat, Jun 28, 2025, at 8:01 AM, Armin Wolf wrote:
+> Am 27.06.25 um 23:29 schrieb Kurt Borja:
+>
+>> On Fri Jun 27, 2025 at 6:17 PM -03, Armin Wolf wrote:
+>>> Am 27.06.25 um 22:38 schrieb Kurt Borja:
+>>>
+>>>> Hi Armin,
+>>>>
+>>>> On Fri Jun 27, 2025 at 4:54 PM -03, Armin Wolf wrote:
+>>>>> Not all devices support audio mute and microphone mute LEDs, so the
+>>>>> explicitly checks for hardware support while probing. However miss=
+ing
+>>>>> hardware features are treated as errors, causing the driver so fail
+>>>>> probing on devices that do not support both LEDs.
+>>>>>
+>>>>> Fix this by simply ignoring hardware features that are not present.
+>>>>> This way the driver will properly load on devices not supporting b=
+oth
+>>>>> LEDs and will stop throwing error messages on devices with no LEDS
+>>>>> at all.
+>>>> This patch makes me wonder what is the policy around issues like th=
+is.
+>>>> In fact I've submitted and changes that do the exact opposite :p
+>>>> Like commit: 4630b99d2e93 ("platform/x86: dell-pc: Propagate errors=
+ when
+>>>> detecting feature support")
+>>>>
+>>>> IMO missing features should be treated as errors. i.e. The probe sh=
+ould
+>>>> fail.
+>>> IMHO the probe should only fail if some features are deemed essentia=
+l, like
+>>> required ACPI methods. Optional features like in this case LEDs shou=
+ld be
+>>> handled by the driver in a graceful manner if possible.
+>>>
+>>>> Quoting documentation [1]:
+>>>>
+>>>> 	If a match is found, the device=E2=80=99s driver field is set to t=
+he
+>>>> 	driver and the driver=E2=80=99s probe callback is called. This giv=
+es the
+>>>> 	driver a chance to verify that it really does support the
+>>>> 	hardware, and that it=E2=80=99s in a working state.
+>>>>
+>>>> And again [2]:
+>>>>
+>>>> 	This callback holds the driver-specific logic to bind the driver
+>>>> 	to a given device. That includes verifying that the device is
+>>>> 	present, that it=E2=80=99s a version the driver can handle, that d=
+river
+>>>> 	data structures can be allocated and initialized, and that any
+>>>> 	hardware can be initialized.
+>>>>
+>>>> Both of these makes me wonder if such a "fail" or error message sho=
+uld
+>>>> be fixed in the first place. In this case the probe correctly check=
+s for
+>>>> device support and fails if it's not found, which is suggested to b=
+e the
+>>>> correct behavior.
+>>> The driver should only fail probing if it cannot handle some missing=
+ features.
+>>> In this case however both features (audio mute LED and mic mute LED)=
+ are completely
+>>> optional and the driver should not fail to load just because one of =
+them is absent.
+>> I agree, both are individually optional, but at least one should be
+>> required.
+>>
+>>> Just think about machines supporting only a single LED (audio or mic=
+ mute). Currently
+>>> the driver would fail to load on such devices leaving the users with=
+ nothing.
+>> That's very true.
+>>
+>> But I do still think if both fail the probe should still fail. Maybe
+>> there is a way to accomplish this?
+>>
+>> I'm thinking of something like
+>>
+>> if (lenovo_super_hotkey_wmi_led_init(MIC_MUTE, dev) ||
+>>      lenovo_super_hotkey_wmi_led_init(AUDIO_MUTE, dev))
+>>      return -ENODEV;
+>>
+>> What do you think?
+>
+> Normally i would agree to such a thing, but in this case the underlyin=
+g=20
+> WMI device
+> supports many more functions that are currently not supported by this=20
+> driver. Additionally
+> the driver cannot control when the WMI device is registered, so it has=20
+> to be prepared to
+> encounter a device without the features it supports.
+>
+> Also keep in mind that a failing probe attempt produces a irritating=20
+> error message.
+>
+>>>> BTW this also leaks `wpriv`, which would remain allocated for no re=
+ason.
+>>> wpriv will be freed using devres, so no memory leak here. However i =
+admit that there is
+>>> some room for optimizations, however i leave this to the maintainer =
+of the driver in
+>>> question.
+>> Leak was a bit of an overstatement :) But if both features are missing
+>> it would be kinda leaked, in practice.
+>
+> I see, however i would leave this to the maintainer of the driver=20
+> because i have no hardware
+> to test the resulting patches :/.
+>
 
-> +nolibc_supported_archs := arm64 arm loongarch m68k mips powerpc riscv s390 sparc x86
+As a note, I'm on vacation for three weeks and avoiding accessing work e=
+mails, so won't be able to discuss this with Jackie properly until I'm b=
+ack.
 
-Nitpick:
-Instead of having another variable, can we add the arch-foo.h files to
-all_files instead? In patch 2 they can be extracted from there with $(filter)?
+For history/context - this particular driver was a bit of a oddity as th=
+e Ideapads aren't in the Lenovo Linux program (hope they will be one day=
+). We had a Thinkbook that is using the same LUDS interface, that we wer=
+e Linux certifying, and LED support is a requirement to work.
 
-> +
->  all_files := \
->  		compiler.h \
->  		crt.h \
-> @@ -81,7 +83,7 @@ help:
->  	@echo "Supported targets under nolibc:"
->  	@echo "  all                 call \"headers\""
->  	@echo "  clean               clean the sysroot"
-> -	@echo "  headers             prepare a sysroot in \$${OUTPUT}sysroot"
-> +	@echo "  headers             prepare a multi-arch sysroot in \$${OUTPUT}sysroot"
+I do think this needs revisiting a bit. I am leaning to agreeing that it=
+ shouldn't error out - but we were also being careful to not have this c=
+ause problems on HW we ourselves don't have access to. It would be nice =
+if it could be extended to more platforms though.
 
-If multi-arch is the only remaining mode, do we need to mention it?
+I don't have the specs handy right now (would need to go on the Lenovo V=
+PN for that). Is it OK if we re-visit this when I'm back at home and wor=
+king?
+Jackie - please do have a look and think about this in the meantime.
 
->  	@echo "  headers_standalone  like \"headers\", and also install kernel headers"
->  	@echo "  help                this help"
->  	@echo ""
-> @@ -92,18 +94,12 @@ help:
->  	@echo "  OUTPUT  = $(OUTPUT)"
->  	@echo ""
->  
-> +# installs headers for all archs at once.
->  headers:
-> -	$(Q)mkdir -p $(OUTPUT)sysroot
-> -	$(Q)mkdir -p $(OUTPUT)sysroot/include
-> -	$(Q)cp --parents $(all_files) $(OUTPUT)sysroot/include/
-> -	$(Q)if [ "$(ARCH)" = "i386" -o "$(ARCH)" = "x86_64" ]; then \
-> -		cat arch-x86.h;                 \
-> -	elif [ -e "$(arch_file)" ]; then        \
-> -		cat $(arch_file);               \
-> -	else                                    \
-> -		echo "Fatal: architecture $(ARCH) not yet supported by nolibc." >&2; \
-> -		exit 1;                         \
-> -	fi > $(OUTPUT)sysroot/include/arch.h
-> +	$(Q)mkdir -p "$(OUTPUT)sysroot"
-> +	$(Q)mkdir -p "$(OUTPUT)sysroot/include"
-> +	$(Q)cp --parents $(all_files) arch.h "$(OUTPUT)sysroot/include/"
+Mark
 
-Can we add arch.h to all_files, to avoid the special case here?
 
-> +	$(Q)cp $(addsuffix .h,$(addprefix arch-,$(nolibc_supported_archs))) "$(OUTPUT)sysroot/include/"
->  
->  headers_standalone: headers
->  	$(Q)$(MAKE) -C $(srctree) headers
-> -- 
-> 2.17.5
-> 
 
