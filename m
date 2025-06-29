@@ -1,176 +1,141 @@
-Return-Path: <linux-kernel+bounces-708356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917F7AECF57
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:52:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262B0AECF5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912C43A6065
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FA818949EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB2F2367AF;
-	Sun, 29 Jun 2025 17:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0AF2356C6;
+	Sun, 29 Jun 2025 17:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lE/Xk1B9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huKwrJcG"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF252576;
-	Sun, 29 Jun 2025 17:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A886B2576
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 17:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751219520; cv=none; b=Yc2cYrh2vF/oTF7Fx/+7CvAPVx3KMqpQ5jm0GiyCj7MvEvZlQyBNhsQq8pLuVtjpGdx43mx73wS/cBoLB+BgywrQt93BAHlcPkGTyt9Xdj3uQWxv7vXR2mBBLfpYAiiTcTyPs1b+Ui1fz5y7TyFrpY12ovU+nA7CEE4IfuO8JJk=
+	t=1751219882; cv=none; b=GazksXYiNiqAOk+7xb6iLvV2R+5MrlxYAvBrJbkenlVACnrFMzFJtqrxvAYuupP3WntXhzL0K2Z5xSHzb39Y7YqOO5n2eVkJotGTqls1pmVol17iV644lt7E4g2FGajxlHcdjT0seDAmSqhipLS/VwscaTqPazQZlBSyrjWFMQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751219520; c=relaxed/simple;
-	bh=Prf/TUB7pIIY1tQutcBvAREu0B7HpCJ8U7iuapmx4w0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o9p01icim/LPl0ELVUd3oMwP/aEBHoDxmUsVruXc3QxcIRElQtGNeX8s7pm1NCg1WgHAECXxxz4rxtBS4e2hqafPqHLyE0Ur/vaqZNi0iInyFdvO1174XhCCVXCHNKs6SEbtmO6DV+vBHtckIQuGTh+jT5dh+HORbjvvnl+L/tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lE/Xk1B9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68CEAC4CEEF;
-	Sun, 29 Jun 2025 17:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751219518;
-	bh=Prf/TUB7pIIY1tQutcBvAREu0B7HpCJ8U7iuapmx4w0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lE/Xk1B9i566SJ5DYEVfz6jNuQt9HaVR4A1SZuEeECe9oSer7QMfL3UOduNmDuo7l
-	 ebW7pXkjH16Uorm4T7m+jyrrIHlNr4Kmw+we40MHU8wjQnd/t0rKKx2sx2g4aPwYHS
-	 fZDxIvTEs1J1WFl/4fBdm4gPYnifBdKnBNYg2EP3TRyzEvQlFHOrIVrJdYdXbnGU/6
-	 1fRzJDk2jhmDPQ3myoztBR8WmTZAb1MJAfvqkvZduEInHNdD3PCR8MuTEBxG9r/Z7S
-	 9/T2yRZun0CR9z5QBoXzxSvQ3DUx+kPnmggLm7ct1KLVnmVRaLm73p0epk9InsJD6Z
-	 hryEuvsQ26RIw==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553b584ac96so3461994e87.1;
-        Sun, 29 Jun 2025 10:51:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJX7LSHrT02ta0xbjs0g3DpnAUu6MhU3bgB9OVdZRzJmQLru96H1mO2uFzfsWVh3OR5jY7/XjTXeS2PWfsNg==@vger.kernel.org, AJvYcCVxNQshELe7MzdypV0aPfH8eQUUBLGUDR5yztf4ofyGd7NIUt7JmmJuNtTY64BEuADmtUcywkMQWjW9+po=@vger.kernel.org, AJvYcCXwootx34zFL3uVMaUCvrvkITtrHrrKkz9wiO8mOKJW7dYAYHsbuX69FK21jzvM0Wo4ux5a7UO7yazBIRbq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ca29MC1HG8kuNfObvZhpnSLURpfoV4lJFDT0P8cyrSyMore3
-	mZT0TvqgC3ZiMJa9p5raLoHVWCBzIdldGzjiPKFUG+gbCpuFVXCosJvMNjHpV+wWo7D1co0eUgu
-	xbRKJ+U3La+Lv2yPTCy0/48raLvUM0Dw=
-X-Google-Smtp-Source: AGHT+IHGzcfNbyV3nTioSzVq3CZ7iDMNUw8mckzCx1zMvJTjhKiI3PSf9s53U4g409i7ky4TD5Dn4mE0do6B0F84IgA=
-X-Received: by 2002:a05:6512:1193:b0:553:2e4a:bb58 with SMTP id
- 2adb3069b0e04-5550b869efdmr3015172e87.9.1751219517077; Sun, 29 Jun 2025
- 10:51:57 -0700 (PDT)
+	s=arc-20240116; t=1751219882; c=relaxed/simple;
+	bh=8VRY7iIYKKOvXmA4IBdMWrQNmFCY6oynst33IJndO+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e5vsWFxMkoqhXX1OqCyWaPAUzGnJqGQ5cnR3ZFcbihTDxRa4PSqNDLPrBk2QHrmEnpqUE4riTgjnb4dt1PfXOUT7FHekPPr/uJyfTF8WLcQfzsZspx2uPXjaklDfywv2EiTYdXD3dcP24+bEnnv4XJhC+5jPevIu8AGVaSRlNYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huKwrJcG; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2363616a1a6so7397325ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 10:58:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751219880; x=1751824680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=juEvSB7UCwmkXNJ/c/ZylWNOoOCKrXw9+aV2K2pHk2k=;
+        b=huKwrJcGf97kkBBgd5qCcodOebVLePHfcgOY/9zMDHv4sP8PGUEOYSQ9w9TKOySo00
+         rT0aOJaFPqolYPuvWt3SVLDYLMtoFqftu+q8wi8s69iVbMc9dgwNZpk5kBfRascR1m/C
+         DZVCs3m2aF7VZDQUF7CKYtmngKCNBlU+jpxmvwIMy90ngOZ/mcEn35vr2ueFUeKvpaDO
+         iCvumFQw35GQs/F2BQEKvyVtEjk/chArlMaLa4k2CR1w5yqBGvOwsqVgTiSfr24hgg8k
+         CJ+KAFDu4whc1ztr0s9l4sA4vp3NcShXdSA6S1KwlxfSgc1POvkRuQxeqGjdnMKDWQTt
+         9pTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751219880; x=1751824680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=juEvSB7UCwmkXNJ/c/ZylWNOoOCKrXw9+aV2K2pHk2k=;
+        b=ZrrHxdMEPmOl5lYXTAafVzwLXg1e2yBJPO+pLP2DwrqRhYbeQsoKPeVMesRMzJ9AAZ
+         nKQ2JhHGxWVmlkbTKWv361P6S/vi81qdP+E2sEv2vz6oUrwymm3EMCIsizd3vQoPSP2+
+         JvIZVBqHDI7I3X5kcryNlNOF/ZCMNET5j3kIbbdX+Je58m+R15NNtALfaTpmCbnFCYs7
+         EscdVHFUIGqAJBR/9xQHtbJkj/aowditf/Wz2dQNYUOZD1H285Oc4QSlGUxHvfd21pma
+         h5scpyFsfveHo/xppwGtkn7HQx1hFit92bJohXH7CFT/KkI4kBzaMkJSGP+hBNNVkw9u
+         89zQ==
+X-Gm-Message-State: AOJu0YyV/BBeAupDx10wFe/BH30RRsj551Ctlie6mNbTA5rPPRWsYbJC
+	MLd3rnWfBxy9F/Ko6NxorrJwBMBVFA0E/rYPQLXuOGLJoti2uZcfqHbR
+X-Gm-Gg: ASbGncsUfl4cJwKEJE4XUwE0kc2dKSCsfa7+lfe3Ubm8guk5CAafLunLuPaN9ysH9zO
+	F3m0WTvZeft8z8FB5ptVcOpLEamd8lKNT3g1qVYReXgcFV4/pDz4N2hCWpmQUbmac42qTtxRSwE
+	yxJZ93QdqVLBsgP6Wp+U1lKOo9WdvmI3L0gakd3JCbHKwIEVtQxl6a7rrHwCe+aAK/LZjjWP82Q
+	/C/gAG5/oKdekaHjS7JIU+J29iVwLS8ru+oNPtUXK36rakTtTmIo0N3M/WrfM3fCc7gb5jRaaCC
+	taHiQhAeVLz2OvwNjqHlyRpVbElRz34W1MKDn5yp9Pjy0PUtHNWwv19S1IYR+8Vj
+X-Google-Smtp-Source: AGHT+IFqB1Z5OPJqFWjLXBP2Tl5BXSP+82/IPvRcMKQStT10n5+RvvJ8+Lg4AGx0fZixqvrKevEvLA==
+X-Received: by 2002:a17:902:d483:b0:235:880:cf70 with SMTP id d9443c01a7336-23ac43d3001mr159736365ad.14.1751219879723;
+        Sun, 29 Jun 2025 10:57:59 -0700 (PDT)
+Received: from pop-os.. ([2401:4900:1c96:a08f:8018:9b6a:6fa5:a5e2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c4b2esm64676085ad.211.2025.06.29.10.57.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 10:57:59 -0700 (PDT)
+From: herculoxz <abhinav.ogl@gmail.com>
+To: morbidrsa@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	herculoxz <abhinav.ogl@gmail.com>
+Subject: [PATCH] Replace the use of scnprintf() with sysfs_emit_at() in several show functions to format the output into the sysfs buffer.
+Date: Sun, 29 Jun 2025 23:23:30 +0530
+Message-Id: <20250629175330.5834-1-abhinav.ogl@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623092350.3261118-2-gprocida@google.com> <20250625095215.4027938-1-gprocida@google.com>
-In-Reply-To: <20250625095215.4027938-1-gprocida@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 30 Jun 2025 02:51:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASNVh8fDErjSbcR1TiCfy=LM-j3iYSNpqAvp8OhGmsKjQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzvLpu_LygASIkWAtnx_s-9k2Pilxeog1cyF0ArojQilgT-M0HHJZzQe1w
-Message-ID: <CAK7LNASNVh8fDErjSbcR1TiCfy=LM-j3iYSNpqAvp8OhGmsKjQ@mail.gmail.com>
-Subject: Re: [PATCH] gendwarfksyms: order -T symtypes output by name
-To: Giuliano Procida <gprocida@google.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 6:52=E2=80=AFPM Giuliano Procida <gprocida@google.c=
-om> wrote:
->
-> When writing symtypes information, we iterate through the entire hash
-> table containing type expansions. The key order varies unpredictably
-> as new entries are added, making it harder to compare symtypes between
-> builds.
->
-> Resolve this by sorting the type expansions by name before output.
->
-> Signed-off-by: Giuliano Procida <gprocida@google.com>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  scripts/gendwarfksyms/types.c | 29 ++++++++++++++++++++++++++---
->  1 file changed, 26 insertions(+), 3 deletions(-)
->
-> [Adjusted the first line of the description. Added reviewer tags.
->  Added missing CC to linux-modules.]
->
-> diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksyms/types.=
-c
-> index 7bd459ea6c59..51c1471e8684 100644
-> --- a/scripts/gendwarfksyms/types.c
-> +++ b/scripts/gendwarfksyms/types.c
-> @@ -6,6 +6,8 @@
->  #define _GNU_SOURCE
->  #include <inttypes.h>
->  #include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
->  #include <zlib.h>
->
->  #include "gendwarfksyms.h"
-> @@ -179,20 +181,41 @@ static int type_map_get(const char *name, struct ty=
-pe_expansion **res)
->         return -1;
->  }
->
-> +static int cmp_expansion_name(const void *p1, const void *p2)
-> +{
-> +       struct type_expansion *const *e1 =3D p1;
-> +       struct type_expansion *const *e2 =3D p2;
-> +
-> +       return strcmp((*e1)->name, (*e2)->name);
-> +}
-> +
->  static void type_map_write(FILE *file)
->  {
->         struct type_expansion *e;
->         struct hlist_node *tmp;
-> +       struct type_expansion **es;
-> +       size_t count =3D 0;
-> +       size_t i =3D 0;
->
->         if (!file)
->                 return;
->
-> -       hash_for_each_safe(type_map, e, tmp, hash) {
-> -               checkp(fputs(e->name, file));
-> +       hash_for_each_safe(type_map, e, tmp, hash)
-> +               ++count;
-> +       es =3D xmalloc(count * sizeof(struct type_expansion *));
+This change improves clarity and ensures proper bounds checking in
+line with the preferred sysfs_emit() API usage for sysfs 'show'
+functions. The PAGE_SIZE check is now handled internally by the helper.
 
-Just a nit:
+No functional change intended.
 
-           es =3D xmalloc(count * sizeof(*es));
+Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+---
+ drivers/mcb/mcb-core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-is better?
+diff --git a/drivers/mcb/mcb-core.c b/drivers/mcb/mcb-core.c
+index 9b8c40a6459a..c1367223e71a 100644
+--- a/drivers/mcb/mcb-core.c
++++ b/drivers/mcb/mcb-core.c
+@@ -107,7 +107,7 @@ static ssize_t revision_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct mcb_bus *bus = to_mcb_bus(dev);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%d\n", bus->revision);
++	return sysfs_emit(buf, "%d\n", bus->revision);
+ }
+ static DEVICE_ATTR_RO(revision);
+ 
+@@ -116,7 +116,7 @@ static ssize_t model_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct mcb_bus *bus = to_mcb_bus(dev);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%c\n", bus->model);
++	return sysfs_emit(buf, "%c\n", bus->model);
+ }
+ static DEVICE_ATTR_RO(model);
+ 
+@@ -125,7 +125,7 @@ static ssize_t minor_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct mcb_bus *bus = to_mcb_bus(dev);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%d\n", bus->minor);
++	return sysfs_emit(buf, "%d\n", bus->minor);
+ }
+ static DEVICE_ATTR_RO(minor);
+ 
+@@ -134,7 +134,7 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct mcb_bus *bus = to_mcb_bus(dev);
+ 
+-	return scnprintf(buf, PAGE_SIZE, "%s\n", bus->name);
++	return sysfs_emit(buf, "%s\n", bus->name);
+ }
+ static DEVICE_ATTR_RO(name);
+ 
+-- 
+2.34.1
 
-> +       hash_for_each_safe(type_map, e, tmp, hash)
-> +               es[i++] =3D e;
-> +
-> +       qsort(es, count, sizeof(struct type_expansion *), cmp_expansion_n=
-ame);
-
-qsort(es, count, sizeof(*es), cmp_expansion_name);
-
-
-
-> +
-> +       for (i =3D 0; i < count; ++i) {
-> +               checkp(fputs(es[i]->name, file));
->                 checkp(fputs(" ", file));
-> -               type_list_write(&e->expanded, file);
-> +               type_list_write(&es[i]->expanded, file);
->                 checkp(fputs("\n", file));
->         }
-> +
-> +       free(es);
->  }
->
->  static void type_map_free(void)
-> --
-> 2.50.0.714.g196bf9f422-goog
->
->
-
-
---
-Best Regards
-Masahiro Yamada
 
