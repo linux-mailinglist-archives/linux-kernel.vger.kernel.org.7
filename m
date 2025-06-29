@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-708222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C42AECDB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C2DAECDB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6847164942
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D85816E8B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A96254864;
-	Sun, 29 Jun 2025 14:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FBB2571A1;
+	Sun, 29 Jun 2025 14:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BrLv/1jz"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RnhurXEW"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD6A24DCF3
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A0F25393D
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751206102; cv=none; b=dSiVW/m8qFdcwAmncN5ih7nTzhsAtXSHPF2aY+kYUVZ0zCgZi2rNFjT9VN4eJij2esSWURqJmESmdCIYpjo66mZK1RVZCUd50GXy5Bkqih3JuM1rzZb2UkklPd8qPB/glFrbN4/59XP1C7YD93hG8v1L4o73TYFD+XQM2JDPv8U=
+	t=1751206105; cv=none; b=fxIOs2hZ5Unl6hlosyjK+qdvuhGfX2sItRkTuZb5AjH1t8O2ZltFRU/uLfHaOjdwIj9x4V4/H+fxW87BTfDxSbi2Di0CexTEkZuNyqUNPlafItNaga0LB3i4w+LEEFson3oN9X+dmIiL/KIgm+WS1MNKUgF84I8I4jov2NJwA80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751206102; c=relaxed/simple;
-	bh=ayKPNIzMHytJlMgLXTS3H2whkdxFm6qzz5vdQc2N/d4=;
+	s=arc-20240116; t=1751206105; c=relaxed/simple;
+	bh=W8kPWjbVzloymT+WUD1vDHZMSH23Ip4gfQjinZZYu1Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RhsdIfqzQCPDHvPMK+iIvkMLrAiPfY86tSfzVmGoqx2dx+s2+XYmYNfeOuwFYgbDy3qwZBjmTUUc9A/fQS/94jdMRwHpieGchq2yUHLdGcGT/JB08gRRtqQOqOAGMyCiiuWH6SlULichpd+m1NlQFz/u+KAGwB9vR8SvnrwQDzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BrLv/1jz; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=kir1mQpxgw6VMUpcryd18o7y//tCfwwJSByJNMFX234jtjGfg/FbzltHG4dKOh2topNTYuoiEbGzzTelZ+krwJ/3DQXkIL3pIMeIUCSaOnKRDycaniU3h00zlS85g70fekin4QgFAUl/Mw61mkbvRk3HzRlwz+T9Hr6mnCE9QOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RnhurXEW; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55TAEeHI024207
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:08:19 GMT
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55TAgvJJ010227
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:08:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=k07yEnAyEzE
-	a9/0q+Hpj8bv2+DIU1Tpq9KBSOGFREQM=; b=BrLv/1jz9HuoGFdTMkip3HYRli4
-	mZUyfD8ATY8tG0dbrEqCF+eY7hbeRdvP5hBt+g0GP+PkyDeJL5+LuxFHp7KBU9kh
-	xCu4c5ivPZtVQuGgC736sAROPGlmBn9/gMAqJx/5Aiqm8kgd/1v1kExS+jQh+6lc
-	JRxd35QrvyQPrCj1nEeMyXIhX3zT/vUZjUaGlMOoo2YXmXSi5jGBQuEY2aIAK74J
-	+yMjdY38vniDkBYiBow/vCT8ll/bSMOn7aif0pRjENgvU+ZqfsL/nuzS+MwmReXM
-	Evn4MUrEY4AYWf7XaOQgS7HLaTqKXlGtQ7Ir5cBt83nUXr7R7ozV32P4F3A==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j801t7u0-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=b2JMHHLa1rE
+	J4Hs2IxSKvgFj2W/GQDFpMVFHK3adsj0=; b=RnhurXEWnAH8uYJ3s6DP5uG/WRL
+	F/5z9lItVk3+tUZspn/DgHu1wH31NA8wKMkAShUxYbPD0rco5Vz37TKdQsed8t0C
+	q2wAUZJv9+UU9Jq5QtHxCwQr32yqEPEf6dAXT1OVIZH8L1FhUOQYU+5C5+0Exazx
+	OmxZkTh4T3T+CwtW7on1M++KJpVnkrJi39X54R5qCkqdybvec+85ZMzvIjgRDMMJ
+	USEydlk/NEYtU1gAbUThCAMIgO4rahD7qsv9g0c10v9CqPlZbhoyd6X3KT7pt8Nb
+	i3vDdy7HKpMBV7Dnmlqa5CtR0Vz7L2DjLZ9mAW70SF1vJvYUAZ6Aqg8nU+g==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8fxa8gv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:08:19 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b31c8104e84so1017510a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 07:08:19 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:08:21 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-313c3915345so5324396a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 07:08:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751206098; x=1751810898;
+        d=1e100.net; s=20230601; t=1751206100; x=1751810900;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k07yEnAyEzEa9/0q+Hpj8bv2+DIU1Tpq9KBSOGFREQM=;
-        b=XW/qmpad3w6T+/Lcp96xiaXrK0czAuJfVU+t/w1mIU/d2f1nf0FCtBFDdD4QeF/Vve
-         MlPErhg5VhEGlkOomxDxaYg/XWAJ8J7FtFSYJQkmxPezm5HS3K3PF3YucJV+EDRVHoGs
-         hjvEtI4bcpGNhVRlVOrhzNmTWOOw2hxtOf2BQso8818xuWcrIugCl3sz6bCN4OMGIxtD
-         oAaBJ5uUGULBqUnqkOiyvilR/exJ8VV1+1EpBUC1o3fgY1utjhBFtXAAKcOqH9BYU9xx
-         qxfsqHVmwnyWZ2h85ucoPLGgD26CpdCBOMox9oCWub8T65JlhRR/4Gcm/OJERk3Jo6nr
-         ngdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzU7R0ktE1DphzqsQStvUx8SiCFdPokHUSL5fi0qED5kitKpjdsMqtwJQLmM4VcdMxkYgEzx/dxp7U+9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsFq5rGbQonLrH74JWK9ydj8rS2mEl9IrJdji+/GFOmW46cFjp
-	Qkcba9cKJrZL8xRPkBlewxqx4MmhrbEe9xJ2HA1aWQgZjSS+HcMPoviO9bchAJuljcYE6ekFxtj
-	T6ajS8B1axiek0tT7VZ+zKKgZjDlRY2B9cHIX6juhPpXPV7YWO2xpy8x3Skf//it2iqc=
-X-Gm-Gg: ASbGncvACJ3uZ3/JjcBbhrykI6TbPIG078A5Y77nYm2nMMY2zjX7S4niGWY3aW1V62B
-	zcLlCRGcdqg8vzgRO0lnXMQD8UMIfXxBRO8KLbGIQ4FIwalfdYFoDvlwKNx8sp0qeuBRb0zHN5v
-	9EPbh3SbyIRhVMQe+uDMVcBidaes9YHYRlZovB/6k5xZHUeKtHVKcifFvxL6+VhCUkfmmVs2yWy
-	L/CMhbJKrtU9ruqHp3tlV2ytXUkI09n7ucVxqZYAZggpN3KdSbW9AIbXVo9ORR/tsDpFYYUP1bU
-	2E6COUmZY7n8RV2oSIlIxZ62LUkMByhi
-X-Received: by 2002:a05:6a21:393:b0:220:33e9:15da with SMTP id adf61e73a8af0-220a12a6673mr15927711637.2.1751206098442;
-        Sun, 29 Jun 2025 07:08:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUhzRnC2Gzmes1F+eCUOlvqyKWiSWRnUQbOPPUCyCwcoSzMtVgC+1PBHnNQkUf+FfAkfUkNw==
-X-Received: by 2002:a05:6a21:393:b0:220:33e9:15da with SMTP id adf61e73a8af0-220a12a6673mr15927685637.2.1751206098054;
-        Sun, 29 Jun 2025 07:08:18 -0700 (PDT)
+        bh=b2JMHHLa1rEJ4Hs2IxSKvgFj2W/GQDFpMVFHK3adsj0=;
+        b=GoppuRF9Qq+CajON0Q2OOk1coMdOHsvNepqDvr/fgz1QiyEa/JpPVCQ+nzKMKX1ShC
+         r5AIyxl5+xCo0Z8HMKJ2H0vSQyMR+qpKeeIaGDSFzdewWPblgkaw3Ku6K+zuuLOXVUlK
+         uQ5dbRSzuMqd1Az5xzFubKBkuNaxnH4hKUulJON6NahJit2VXGwyRJI8gpRgCthwNdy2
+         WeqUh1B4nqrzxsMxRZxT3T5mE14imBaDt0SzyrDMURUQ8L+A2zfsN7sQ/Y2gHOSTfjX1
+         v85ijIVPabZ1OvZ/qLX9/izaFv638XNtvm12zkjx7fDg+O7o3Uprveyi0bUo7Q/6mC3z
+         gUAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWktmyKlacid19p8KNE4MOrDR+xQcwu0OBAJFFsjmTjUPB4pNk5PC7ldFiVYgXKRDA3pI5HqzTf80K7ggM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmr4BPB43SZlJFR+Jwm+4weDcDEne+eUxbZpgp5Ld60JkEQGQ/
+	uZ32xOTYotdhbCPB745auXniPyah0m1lsbRAFVV1+d7HoRGgmGxghZqj/9pex4zbNGyCSDLpAYF
+	r8xvAiQ1K3ZPF5DM2BJ8miqN4Kmr2C8MyOigfRjWv9Om4xOJW6Y4Vo7VLbjdUMdu5f8I=
+X-Gm-Gg: ASbGncsxehePuf7kSNngWSAIGXsLi2b1ewm0r0IxTXsUKtts/y2P06BsLnMlNshrnaB
+	rYxhkrEeYpNfPVZp36L9Aj3tIndyY9KjI6+nM7S1myEZrZE4MOA5hvFfuaE2/kxHUXGf0Swx37O
+	w1HHyuwyv9wgqOsqOvNer6eAJJlMeJPHB8D0WPqXcbf3WJavsdPmwkyi5ZBEoSGIbIIPAshaSnh
+	EAd2blxm09BTADlY4iedc3r+SRJfIGoItSk/oihu7EagF+Y+ibSgnzM2o54mM1KiBULbwPhGzrb
+	fMTySDcW1VVolASlHHxsLi7rVl5nuyNA
+X-Received: by 2002:a17:90b:4c89:b0:30e:8c5d:8ed with SMTP id 98e67ed59e1d1-318c92ec0b3mr12948873a91.19.1751206100134;
+        Sun, 29 Jun 2025 07:08:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFiDMbz31LMjbBb02d/S56Uv7tkiAC4YMLY2zh6CZRHS60/qIk/uFxuDOgoVcjoCDswRHPwiw==
+X-Received: by 2002:a17:90b:4c89:b0:30e:8c5d:8ed with SMTP id 98e67ed59e1d1-318c92ec0b3mr12948828a91.19.1751206099564;
+        Sun, 29 Jun 2025 07:08:19 -0700 (PDT)
 Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af5571b7asm6905338b3a.85.2025.06.29.07.08.17
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3b3afbsm59289295ad.161.2025.06.29.07.08.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 07:08:17 -0700 (PDT)
+        Sun, 29 Jun 2025 07:08:19 -0700 (PDT)
 From: Rob Clark <robin.clark@oss.qualcomm.com>
 To: dri-devel@lists.freedesktop.org
 Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         Connor Abbott <cwabbott0@gmail.com>,
         Antonino Maniscalco <antomani103@gmail.com>,
-        Danilo Krummrich <dakr@redhat.com>, Rob Clark <robdclark@chromium.org>,
+        Danilo Krummrich <dakr@redhat.com>,
         Rob Clark <robin.clark@oss.qualcomm.com>,
         Dmitry Baryshkov <lumag@kernel.org>,
         Abhinav Kumar <abhinav.kumar@linux.dev>,
@@ -91,10 +91,14 @@ Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
         Sean Paul <sean@poorly.run>,
         Marijn Suijten <marijn.suijten@somainline.org>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v8 40/42] drm/msm: Bump UAPI version
-Date: Sun, 29 Jun 2025 07:03:43 -0700
-Message-ID: <20250629140537.30850-41-robin.clark@oss.qualcomm.com>
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
+        linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
+Subject: [PATCH v8 41/42] drm/msm: Defer VMA unmap for fb unpins
+Date: Sun, 29 Jun 2025 07:03:44 -0700
+Message-ID: <20250629140537.30850-42-robin.clark@oss.qualcomm.com>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250629140537.30850-1-robin.clark@oss.qualcomm.com>
 References: <20250629140537.30850-1-robin.clark@oss.qualcomm.com>
@@ -105,57 +109,340 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: -gN9_DQKWKBfdFdee3-OC006cY3UIYOS
-X-Authority-Analysis: v=2.4 cv=YPWfyQGx c=1 sm=1 tr=0 ts=686148d3 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
- a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=KgEaFMypzpKrXJt10QQA:9
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: -gN9_DQKWKBfdFdee3-OC006cY3UIYOS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI5MDExOSBTYWx0ZWRfX0FHX3QwfSIDi
- ns9PT3jolTF2iKHZWJ0jJf4+5rCV+dJfMMRPaArS5d9ZGFxulCwD5rGJck0TBqLeEq0qTS6XkRs
- k08OfgAsSuoKCDOeii+lKuu7KZPln6By5wRRQ9fVoL5vV7K91t3tkrJeDHdGCgkTEuucwGv5uCJ
- J5CNPknUDld8r0d4JTpRQmA3M+rIBEiSaKe/R2OpWA3I528y4FCAAN5Sz+wjdkh5PIwxmM3zXpS
- FlSszhdY99NlrtsqCjoq4zTk15d7QTUuH1PwHbArKWJdR7YHb5xyl/Wd9D7bWyMCIUuGlxL4f62
- PPCHShWAuOSctqlu+qJ3pB+Md4W7manVxP/4XGN/66g0JqgPcQgNIVHdeLoa1vonRdUs+hOp/iz
- 7hlIw4CRPmvYdUq2z+rqclrC6Xjkovn/UjiKbXrTJ92Z4v+SHPylmwx16FEpVkgecAdlsVrS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI5MDExOSBTYWx0ZWRfX288mUkdQcoxx
+ u4dvbYqy9EqUsHSZNqJMYB7vogB6nFy44W8PR/khpEvJn6+Gfv/cppqhfk3Br0+YzrnPBZUBBRA
+ jXQSalchT8nEiubjxSZC58vxEtu/XAkJJQExLZaswX8jnaDWiSUtfoLayfp9Zq7EipoyzM9Zhad
+ N+M+y5xQv6TcljM+UrOwbgR7lsOQ9j/rFDmzQ2BdVcgY5/qirnRsdI5wX0EQHN1UJF+cHFZkJVx
+ WJPMKsfccFt52C03C9Bv561pKJS0rjBUva5mO5V3eSnkM+9beNg+4Am1GmkzfaNO1WC4J0dKZls
+ GmtvsCCNtUD42IQW4f+6YhULEZeQ5KYIyL9E6Q7uU1t+A70NlaKul1Rd2PfiJiIp81pHJb/njNp
+ dyzDy2/i4wf/z0QDEWn4yDi8sIArVMNWMZPsH6sBVknRAdDrGEZnQl3XqaolqCRiCgwytugG
+X-Proofpoint-GUID: G7DymsdL9lpj56jJ6IRckD-jifjWPHR4
+X-Proofpoint-ORIG-GUID: G7DymsdL9lpj56jJ6IRckD-jifjWPHR4
+X-Authority-Analysis: v=2.4 cv=TqPmhCXh c=1 sm=1 tr=0 ts=686148d5 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=xqWC_Br6kY4A:10 a=6IFa9wvqVegA:10
+ a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=HvHaJK4xSQnTU1JWlMsA:9
+ a=iS9zxrgQBfv6-_F4QbHw:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-27_05,2025-06-27_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 impostorscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2506290119
+ priorityscore=1501 bulkscore=0 mlxlogscore=919 suspectscore=0 adultscore=0
+ phishscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506290119
 
-From: Rob Clark <robdclark@chromium.org>
+With the conversion to drm_gpuvm, we lost the lazy VMA cleanup, which
+means that fb cleanup/unpin when pageflipping to new scanout buffers
+immediately unmaps the scanout buffer.  This is costly (with tlbinv,
+it can be 4-6ms for a 1080p scanout buffer, and more for higher
+resolutions)!
 
-Bump version to signal to userspace that VM_BIND is supported.
+To avoid this, introduce a vma_ref, which is incremented whenever
+userspace has a GEM handle or dma-buf fd.  When unpinning if the
+vm is the kms->vm we defer tearing down the VMA until the vma_ref
+drops to zero.  If the buffer is still part of a flip-chain then
+userspace will be holding some sort of reference to the BO, either
+via a GEM handle and/or dma-buf fd.  So this avoids unmapping the VMA
+when there is a strong possibility that it will be needed again.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
 Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
 Tested-by: Antonino Maniscalco <antomani103@gmail.com>
 Reviewed-by: Antonino Maniscalco <antomani103@gmail.com>
 ---
- drivers/gpu/drm/msm/msm_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_drv.c       |  1 +
+ drivers/gpu/drm/msm/msm_drv.h       |  1 +
+ drivers/gpu/drm/msm/msm_fb.c        |  5 ++-
+ drivers/gpu/drm/msm/msm_gem.c       | 60 ++++++++++++++++++-----------
+ drivers/gpu/drm/msm/msm_gem.h       | 28 ++++++++++++++
+ drivers/gpu/drm/msm/msm_gem_prime.c | 54 +++++++++++++++++++++++++-
+ 6 files changed, 123 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 7881afa3a75a..9b1f1c1a41d4 100644
+index 9b1f1c1a41d4..0597ff6da317 100644
 --- a/drivers/gpu/drm/msm/msm_drv.c
 +++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -41,9 +41,10 @@
-  * - 1.10.0 - Add MSM_SUBMIT_BO_NO_IMPLICIT
-  * - 1.11.0 - Add wait boost (MSM_WAIT_FENCE_BOOST, MSM_PREP_BOOST)
-  * - 1.12.0 - Add MSM_INFO_SET_METADATA and MSM_INFO_GET_METADATA
-+ * - 1.13.0 - Add VM_BIND
-  */
- #define MSM_VERSION_MAJOR	1
--#define MSM_VERSION_MINOR	12
-+#define MSM_VERSION_MINOR	13
- #define MSM_VERSION_PATCHLEVEL	0
+@@ -830,6 +830,7 @@ static const struct drm_driver msm_driver = {
+ 	.postclose          = msm_postclose,
+ 	.dumb_create        = msm_gem_dumb_create,
+ 	.dumb_map_offset    = msm_gem_dumb_map_offset,
++	.gem_prime_import   = msm_gem_prime_import,
+ 	.gem_prime_import_sg_table = msm_gem_prime_import_sg_table,
+ #ifdef CONFIG_DEBUG_FS
+ 	.debugfs_init       = msm_debugfs_init,
+diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+index 200c3135bbf9..2b49c4b800ee 100644
+--- a/drivers/gpu/drm/msm/msm_drv.h
++++ b/drivers/gpu/drm/msm/msm_drv.h
+@@ -269,6 +269,7 @@ void msm_gem_shrinker_cleanup(struct drm_device *dev);
+ struct sg_table *msm_gem_prime_get_sg_table(struct drm_gem_object *obj);
+ int msm_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map);
+ void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct iosys_map *map);
++struct drm_gem_object *msm_gem_prime_import(struct drm_device *dev, struct dma_buf *buf);
+ struct drm_gem_object *msm_gem_prime_import_sg_table(struct drm_device *dev,
+ 		struct dma_buf_attachment *attach, struct sg_table *sg);
+ struct dma_buf *msm_gem_prime_export(struct drm_gem_object *obj, int flags);
+diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
+index 8ae2f326ec54..bc7c2bb8f01e 100644
+--- a/drivers/gpu/drm/msm/msm_fb.c
++++ b/drivers/gpu/drm/msm/msm_fb.c
+@@ -89,6 +89,7 @@ int msm_framebuffer_prepare(struct drm_framebuffer *fb, bool needs_dirtyfb)
+ 		return 0;
  
- bool dumpstate;
+ 	for (i = 0; i < n; i++) {
++		msm_gem_vma_get(fb->obj[i]);
+ 		ret = msm_gem_get_and_pin_iova(fb->obj[i], vm, &msm_fb->iova[i]);
+ 		drm_dbg_state(fb->dev, "FB[%u]: iova[%d]: %08llx (%d)\n",
+ 			      fb->base.id, i, msm_fb->iova[i], ret);
+@@ -114,8 +115,10 @@ void msm_framebuffer_cleanup(struct drm_framebuffer *fb, bool needed_dirtyfb)
+ 
+ 	memset(msm_fb->iova, 0, sizeof(msm_fb->iova));
+ 
+-	for (i = 0; i < n; i++)
++	for (i = 0; i < n; i++) {
+ 		msm_gem_unpin_iova(fb->obj[i], vm);
++		msm_gem_vma_put(fb->obj[i]);
++	}
+ }
+ 
+ uint32_t msm_framebuffer_iova(struct drm_framebuffer *fb, int plane)
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index 3e87d27dfcb6..33d3354c6102 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -19,6 +19,7 @@
+ #include "msm_drv.h"
+ #include "msm_gem.h"
+ #include "msm_gpu.h"
++#include "msm_kms.h"
+ 
+ static void update_device_mem(struct msm_drm_private *priv, ssize_t size)
+ {
+@@ -39,6 +40,7 @@ static void update_ctx_mem(struct drm_file *file, ssize_t size)
+ 
+ static int msm_gem_open(struct drm_gem_object *obj, struct drm_file *file)
+ {
++	msm_gem_vma_get(obj);
+ 	update_ctx_mem(file, obj->size);
+ 	return 0;
+ }
+@@ -46,33 +48,13 @@ static int msm_gem_open(struct drm_gem_object *obj, struct drm_file *file)
+ static void put_iova_spaces(struct drm_gem_object *obj, struct drm_gpuvm *vm,
+ 			    bool close, const char *reason);
+ 
+-static void detach_vm(struct drm_gem_object *obj, struct drm_gpuvm *vm)
+-{
+-	msm_gem_assert_locked(obj);
+-	drm_gpuvm_resv_assert_held(vm);
+-
+-	struct drm_gpuvm_bo *vm_bo = drm_gpuvm_bo_find(vm, obj);
+-	if (vm_bo) {
+-		struct drm_gpuva *vma;
+-
+-		drm_gpuvm_bo_for_each_va (vma, vm_bo) {
+-			if (vma->vm != vm)
+-				continue;
+-			msm_gem_vma_unmap(vma, "detach");
+-			msm_gem_vma_close(vma);
+-			break;
+-		}
+-
+-		drm_gpuvm_bo_put(vm_bo);
+-	}
+-}
+-
+ static void msm_gem_close(struct drm_gem_object *obj, struct drm_file *file)
+ {
+ 	struct msm_context *ctx = file->driver_priv;
+ 	struct drm_exec exec;
+ 
+ 	update_ctx_mem(file, -obj->size);
++	msm_gem_vma_put(obj);
+ 
+ 	/*
+ 	 * If VM isn't created yet, nothing to cleanup.  And in fact calling
+@@ -99,7 +81,31 @@ static void msm_gem_close(struct drm_gem_object *obj, struct drm_file *file)
+ 
+ 	msm_gem_lock_vm_and_obj(&exec, obj, ctx->vm);
+ 	put_iova_spaces(obj, ctx->vm, true, "close");
+-	detach_vm(obj, ctx->vm);
++	drm_exec_fini(&exec);     /* drop locks */
++}
++
++/*
++ * Get/put for kms->vm VMA
++ */
++
++void msm_gem_vma_get(struct drm_gem_object *obj)
++{
++	atomic_inc(&to_msm_bo(obj)->vma_ref);
++}
++
++void msm_gem_vma_put(struct drm_gem_object *obj)
++{
++	struct msm_drm_private *priv = obj->dev->dev_private;
++	struct drm_exec exec;
++
++	if (atomic_dec_return(&to_msm_bo(obj)->vma_ref))
++		return;
++
++	if (!priv->kms)
++		return;
++
++	msm_gem_lock_vm_and_obj(&exec, obj, priv->kms->vm);
++	put_iova_spaces(obj, priv->kms->vm, true, "vma_put");
+ 	drm_exec_fini(&exec);     /* drop locks */
+ }
+ 
+@@ -656,6 +662,13 @@ int msm_gem_set_iova(struct drm_gem_object *obj,
+ 	return ret;
+ }
+ 
++static bool is_kms_vm(struct drm_gpuvm *vm)
++{
++	struct msm_drm_private *priv = vm->drm->dev_private;
++
++	return priv->kms && (priv->kms->vm == vm);
++}
++
+ /*
+  * Unpin a iova by updating the reference counts. The memory isn't actually
+  * purged until something else (shrinker, mm_notifier, destroy, etc) decides
+@@ -671,7 +684,8 @@ void msm_gem_unpin_iova(struct drm_gem_object *obj, struct drm_gpuvm *vm)
+ 	if (vma) {
+ 		msm_gem_unpin_locked(obj);
+ 	}
+-	detach_vm(obj, vm);
++	if (!is_kms_vm(vm))
++		put_iova_spaces(obj, vm, true, "close");
+ 	drm_exec_fini(&exec);     /* drop locks */
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/msm_gem.h b/drivers/gpu/drm/msm/msm_gem.h
+index 1ce97f8a30bb..5c0c59e4835c 100644
+--- a/drivers/gpu/drm/msm/msm_gem.h
++++ b/drivers/gpu/drm/msm/msm_gem.h
+@@ -211,9 +211,37 @@ struct msm_gem_object {
+ 	 * Protected by LRU lock.
+ 	 */
+ 	int pin_count;
++
++	/**
++	 * @vma_ref: Reference count of VMA users.
++	 *
++	 * With the vm_bo/vma holding a reference to the GEM object, we'd
++	 * otherwise have to actively tear down a VMA when, for example,
++	 * a buffer is unpinned for scanout, vs. the pre-drm_gpuvm approach
++	 * where a VMA did not hold a reference to the BO, but instead was
++	 * implicitly torn down when the BO was freed.
++	 *
++	 * To regain the lazy VMA teardown, we use the @vma_ref.  It is
++	 * incremented for any of the following:
++	 *
++	 * 1) the BO is exported as a dma_buf
++	 * 2) the BO has open userspace handle
++	 *
++	 * All of those conditions will hold an reference to the BO,
++	 * preventing it from being freed.  So lazily keeping around the
++	 * VMA will not prevent the BO from being freed.  (Or rather, the
++	 * reference loop is harmless in this case.)
++	 *
++	 * When the @vma_ref drops to zero, then kms->vm VMA will be
++	 * torn down.
++	 */
++	atomic_t vma_ref;
+ };
+ #define to_msm_bo(x) container_of(x, struct msm_gem_object, base)
+ 
++void msm_gem_vma_get(struct drm_gem_object *obj);
++void msm_gem_vma_put(struct drm_gem_object *obj);
++
+ uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
+ int msm_gem_prot(struct drm_gem_object *obj);
+ int msm_gem_pin_vma_locked(struct drm_gem_object *obj, struct drm_gpuva *vma);
+diff --git a/drivers/gpu/drm/msm/msm_gem_prime.c b/drivers/gpu/drm/msm/msm_gem_prime.c
+index 4d93f2daeeaa..c0a33ac839cb 100644
+--- a/drivers/gpu/drm/msm/msm_gem_prime.c
++++ b/drivers/gpu/drm/msm/msm_gem_prime.c
+@@ -6,6 +6,7 @@
+ 
+ #include <linux/dma-buf.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_prime.h>
+ 
+ #include "msm_drv.h"
+@@ -42,19 +43,68 @@ void msm_gem_prime_vunmap(struct drm_gem_object *obj, struct iosys_map *map)
+ 	msm_gem_put_vaddr_locked(obj);
+ }
+ 
++static void msm_gem_dmabuf_release(struct dma_buf *dma_buf)
++{
++	struct drm_gem_object *obj = dma_buf->priv;
++
++	msm_gem_vma_put(obj);
++	drm_gem_dmabuf_release(dma_buf);
++}
++
++static const struct dma_buf_ops msm_gem_prime_dmabuf_ops =  {
++	.attach = drm_gem_map_attach,
++	.detach = drm_gem_map_detach,
++	.map_dma_buf = drm_gem_map_dma_buf,
++	.unmap_dma_buf = drm_gem_unmap_dma_buf,
++	.release = msm_gem_dmabuf_release,
++	.mmap = drm_gem_dmabuf_mmap,
++	.vmap = drm_gem_dmabuf_vmap,
++	.vunmap = drm_gem_dmabuf_vunmap,
++};
++
++struct drm_gem_object *msm_gem_prime_import(struct drm_device *dev,
++					    struct dma_buf *buf)
++{
++	if (buf->ops == &msm_gem_prime_dmabuf_ops) {
++		struct drm_gem_object *obj = buf->priv;
++		if (obj->dev == dev) {
++			/*
++			 * Importing dmabuf exported from our own gem increases
++			 * refcount on gem itself instead of f_count of dmabuf.
++			 */
++			drm_gem_object_get(obj);
++			return obj;
++		}
++	}
++
++	return drm_gem_prime_import(dev, buf);
++}
++
+ struct drm_gem_object *msm_gem_prime_import_sg_table(struct drm_device *dev,
+ 		struct dma_buf_attachment *attach, struct sg_table *sg)
+ {
+ 	return msm_gem_import(dev, attach->dmabuf, sg);
+ }
+ 
+-
+ struct dma_buf *msm_gem_prime_export(struct drm_gem_object *obj, int flags)
+ {
+ 	if (to_msm_bo(obj)->flags & MSM_BO_NO_SHARE)
+ 		return ERR_PTR(-EPERM);
+ 
+-	return drm_gem_prime_export(obj, flags);
++	msm_gem_vma_get(obj);
++
++	struct drm_device *dev = obj->dev;
++	struct dma_buf_export_info exp_info = {
++		.exp_name = KBUILD_MODNAME, /* white lie for debug */
++		.owner = dev->driver->fops->owner,
++		.ops = &msm_gem_prime_dmabuf_ops,
++		.size = obj->size,
++		.flags = flags,
++		.priv = obj,
++		.resv = obj->resv,
++	};
++
++	return drm_gem_dmabuf_export(dev, &exp_info);
+ }
+ 
+ int msm_gem_prime_pin(struct drm_gem_object *obj)
 -- 
 2.50.0
 
