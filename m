@@ -1,59 +1,52 @@
-Return-Path: <linux-kernel+bounces-708106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4DAAECC09
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 11:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5262AECC13
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39DE21895A0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 09:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF71A3B15FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2953E21859A;
-	Sun, 29 Jun 2025 09:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6BF21C18E;
+	Sun, 29 Jun 2025 10:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Jxd7fEU8"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxXcuUpk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DF21CA84;
-	Sun, 29 Jun 2025 09:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED826217F23
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 10:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751191138; cv=none; b=Jn6bbqnVREi6P4MmXR7vBvmb/jyTDXFoY+yPk9kdZEHg5njQ9RJG3LZIB7IsCC5oBlI2ym0VbcpoT/MkbMC9upC3TagoEotGlxtG0UKcu6kTzCsLBciG0i9quFJ05+TIeRoOX14btvY60tMajlNqKFNWiADHck55Uec1DDidDsE=
+	t=1751191680; cv=none; b=A3ORaC5zcPNGEXoPzc64Gx5RCb9CUIM1U1C2n9LUxmvAWsj/6QkShI5BMrjRLmnTynYJnbGlw8MX5DoeWjzQgbPTI19PfIPIsvVzGA8PLbrai3crocnsYxJlFcDiYVwEngcHYenx657OWbc2pSnh0tU7ZlK4PJ8NFKX8LkpxIeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751191138; c=relaxed/simple;
-	bh=Hrliv2JoxVWlcymdZiOGwuH3Ex9wLHlVPK+l3T68CRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TrGmngYeN3FC410l333sRC9+0Qzhehjde8VxsH0naZVAJinyP13M/RkCve+voRg6Qmi0i6QqeVyz7JQU4gH6mnhlaX8Gtdul5GHMWk0SEy/SKFyS74koGvLcSyQqSOjoQQexeKQQf9PTE+H6jxPeN/91KaHGD0+UEp3LN0FaivQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Jxd7fEU8; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost.localdomain (unknown [178.69.224.101])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 29345552F52C;
-	Sun, 29 Jun 2025 09:58:45 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 29345552F52C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1751191125;
-	bh=4Wj/utsZiTg4gXT3s/0BCZb3A7rSjIgTPBKJ1fLaEF8=;
+	s=arc-20240116; t=1751191680; c=relaxed/simple;
+	bh=xl15sp93FApoJQWrZ6I3m5fCoKY4t7l9xkTS0g5f+rY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3/1amPElD3TVr4VgExRg3HE5ZyMZnaeQgljkd6J7Jtes2dretuQ2ckznSIaZ0KvNDvBJZJWvQBYHSa+YJvzD1RtmPS5/tELIL+Dg435LTSIjY8zyDSzttd0/zGTgbx3EE3nsjoYwtWOqnNIG8/EuVfnobtj48/YvB3kgQ+CrJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxXcuUpk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2988C4CEEF;
+	Sun, 29 Jun 2025 10:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751191679;
+	bh=xl15sp93FApoJQWrZ6I3m5fCoKY4t7l9xkTS0g5f+rY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Jxd7fEU8OMgfM24/d92RvB8OT/rmUP/Ah9DbQf8/2s8GkoPOs+UIEM8QSkxnMXcsb
-	 P689vNzP1lVaI55hYu4LjjljiThBLc08+C31zE/Aig1KcIRF4t7cayezBq0XQtXcGP
-	 JYNIWNzEMib0TfLcrKmAKtZIfeHd21jEGeVA6wmY=
-From: Artem Sadovnikov <a.sadovnikov@ispras.ru>
-To: kvm@vger.kernel.org
-Cc: Artem Sadovnikov <a.sadovnikov@ispras.ru>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] vfio/mlx5: fix possible overflow in tracking max
-Date: Sun, 29 Jun 2025 09:58:43 +0000
-Message-ID: <20250629095843.13349-1-a.sadovnikov@ispras.ru>
-X-Mailer: git-send-email 2.43.0
+	b=bxXcuUpk6s5rBzK0yc/AY7orQQZv41W0VvZwol7vzlfQZVCBU0EerHP67mADqgCqp
+	 mKLi5b5n8l6bMdSoCeXqHHaeRbduB9bvp3hNTyDVqRYe0FGgU011waPKEQtbcnFIPH
+	 MlNwB/uCPZSJIVg33auzLqSwOLAYFp0HVRTyIov+5EVXn0cOIR7qht3RUY61qSZud3
+	 gRDiDE6+rweVUXTYw5bZ6zS1CmjM5YW2dKhPx+3/ADA3CmFGrwWv3mg/fq16f/6k0p
+	 lIZVeKeKpR0MabQGGTbwmcAsSA8LxuJCknBAzBE0RnaQzeGNH/hLOMxtRjF2ZsbVwd
+	 bWSISsMP3tfKw==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: tps6286x-regulator: Enable REGCACHE_MAPLE
+Date: Sun, 29 Jun 2025 17:51:07 +0800
+Message-ID: <20250629095107.804-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,35 +55,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-MLX cap pg_track_log_max_msg_size consists of 5 bits, value of which is
-used as power of 2 for max_msg_size. This can lead to multiplication
-overflow between max_msg_size (u32) and integer constant, and afterwards
-incorrect value is being written to rq_size.
+Enable regmap cache to reduce i2c transactions and corresponding
+interrupts if regulator is accessed frequently.
 
-Fix this issue by extending max_msg_size up to u64 so multiplication will
-be extended to u64.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Artem Sadovnikov <a.sadovnikov@ispras.ru>
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 ---
- drivers/vfio/pci/mlx5/cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/tps6286x-regulator.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/vfio/pci/mlx5/cmd.c b/drivers/vfio/pci/mlx5/cmd.c
-index 5b919a0b2524..0bdaf1d23a78 100644
---- a/drivers/vfio/pci/mlx5/cmd.c
-+++ b/drivers/vfio/pci/mlx5/cmd.c
-@@ -1503,7 +1503,7 @@ int mlx5vf_start_page_tracker(struct vfio_device *vdev,
- 	struct mlx5_vhca_qp *fw_qp;
- 	struct mlx5_core_dev *mdev;
- 	u32 log_max_msg_size;
--	u32 max_msg_size;
-+	u64 max_msg_size;
- 	u64 rq_size = SZ_2M;
- 	u32 max_recv_wr;
- 	int err;
+diff --git a/drivers/regulator/tps6286x-regulator.c b/drivers/regulator/tps6286x-regulator.c
+index 75f441f36de7..778f169b0acc 100644
+--- a/drivers/regulator/tps6286x-regulator.c
++++ b/drivers/regulator/tps6286x-regulator.c
+@@ -19,13 +19,22 @@
+ #define TPS6286X_CONTROL_FPWM	BIT(4)
+ #define TPS6286X_CONTROL_SWEN	BIT(5)
+ 
++#define TPS6286X_STATUS		0x05
++
+ #define TPS6286X_MIN_MV		400
+ #define TPS6286X_MAX_MV		1675
+ #define TPS6286X_STEP_MV	5
+ 
++static bool tps6287x_volatile_reg(struct device *dev, unsigned int reg)
++{
++	return reg == TPS6286X_STATUS;
++}
++
+ static const struct regmap_config tps6286x_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
++	.cache_type = REGCACHE_MAPLE,
++	.volatile_reg = tps6287x_volatile_reg,
+ };
+ 
+ static int tps6286x_set_mode(struct regulator_dev *rdev, unsigned int mode)
 -- 
-2.43.0
+2.49.0
 
 
