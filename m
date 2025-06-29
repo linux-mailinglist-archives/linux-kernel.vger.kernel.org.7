@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-708102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781FCAECC01
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 11:41:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7956AECC0D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C4D18964EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 09:41:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A4A1757A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2751420F062;
-	Sun, 29 Jun 2025 09:40:54 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0481DB548
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 09:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74221A443;
+	Sun, 29 Jun 2025 10:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQjUOkTK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1180117A30F;
+	Sun, 29 Jun 2025 10:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751190053; cv=none; b=fgDbEyP7ZpsykCwsAZKkhNbqj4F/Y68FkVmurGpALzlADl8w4JdzlNWPsEKdW1GdqY4jbcsHZTGcwnIIecak18sL6c5+jOsKtyZiOSDgXxRVq19Z8uR+XYE36tS6cWQcxfcIS0Xx8EcF072e8CFzM57lpstC4HMqjbE0+d1VPt0=
+	t=1751191279; cv=none; b=l801pOpUhnl0hfzeu0oVugejZf12CBdo6JTZ8VwKx6i/ugcUHkbQFw2Osc6tGUvqmqC37I8vm8LdAhFG0fX0ntMxYej3HKP4qG0Nic+GCeHK27XZZUiGP3j+efCEElnOX+fOoH2AO+AttopIzWfqDbinoDGcbT+m6wBlznYuGls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751190053; c=relaxed/simple;
-	bh=x5kWgT89oI1QSxAu9EJcGTcUKttLMgr+HGE0DGqeI8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rgbm7C0NPSyHHVLai+Re8QComVcU4LWXf2J6sOvvrmaU5ALcKhfw/KpnqMJyl2uDK9cxXl9laddMpX4e/AynDoegjzrgJSP1ZmDNuB12crYeq+yVo/oEFl0EX62uEtVp9HDUh3x8W+cXfo0G/lIO49lLvQlK7T/Z5xpuM2LYWLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 55T9emEW022315;
-	Sun, 29 Jun 2025 11:40:48 +0200
-Date: Sun, 29 Jun 2025 11:40:48 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] tools/nolibc: move FD_* definitions to sys/select.h
-Message-ID: <20250629094048.GA26861@1wt.eu>
-References: <20250620100251.9877-1-w@1wt.eu>
- <20250620100251.9877-4-w@1wt.eu>
- <25eb3144-d19e-43d2-af4f-b0251d28808c@t-8ch.de>
- <20250622071958.GA3384@1wt.eu>
- <07f5fdb4-2c5c-4723-b12a-abdb0c9f33b7@t-8ch.de>
- <20250623025618.GA29015@1wt.eu>
- <20250629084628.GA7992@1wt.eu>
- <d8d9ab91-0617-468e-a82d-9f271c5e6a7f@t-8ch.de>
- <20250629092552.GA30947@1wt.eu>
- <029f24fa-3512-4736-94a0-e158c158cc8e@t-8ch.de>
+	s=arc-20240116; t=1751191279; c=relaxed/simple;
+	bh=K7nid7pX0MchgdtwTmBOugLK+wyPztiQQ+cOV64xZJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mVNFM5bucYDoMot9NZwVCArA0ihcTTU4hbhoWP4+BG7n2PgKz2gNLHwgIfgBOJerXELXtWi5cIRMKmq6ncYlpuUVENKAybEaPur1L+rBdNT/iMT+AdguKUXMbALmV9GAsLNA396c7Z11szG77If+Yv5RnIyO7ic4byS+PmhmLEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQjUOkTK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E7CC4CEEB;
+	Sun, 29 Jun 2025 10:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751191278;
+	bh=K7nid7pX0MchgdtwTmBOugLK+wyPztiQQ+cOV64xZJM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cQjUOkTKt80zjHWs/9616cRbQVAIzS0CSZtyKxtV2ed2MiCMnY8mqzfyLyiiNx8SA
+	 FJg1U5CqoLxiMgjlBerRWaJD4k3MgJz1npTzly9NU0l4J7ixbwB9/cMlH8q8YIqTAu
+	 F2WR3CFGWdjdJBIGxBwID9ZiExMEr+yY2h7DuoOQwIsQ7s4RhWmeLwfgNP8fp91mzk
+	 Xb0bmoxiqTY9kT7ttefcxVjntZ1Z7C9QXyoMrXOe/0e0Bum9xD0mVyr+KM93UDp2OT
+	 CVArBQArCJLElbqFYBQgqBDYnJ01Cm67c49q6Tw+i+kp62GIlPUIXFJs3Z8yXa7lX0
+	 uCLO/3Re25jIQ==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: stmmac: add support for dwmac 5.20
+Date: Sun, 29 Jun 2025 17:44:25 +0800
+Message-ID: <20250629094425.718-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <029f24fa-3512-4736-94a0-e158c158cc8e@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Jun 29, 2025 at 11:37:06AM +0200, Thomas Weißschuh wrote:
-> On 2025-06-29 11:25:52+0200, Willy Tarreau wrote:
-> > On Sun, Jun 29, 2025 at 10:53:34AM +0200, Thomas Weißschuh wrote:
-> > > On 2025-06-29 10:46:28+0200, Willy Tarreau wrote:
-> > > > On Mon, Jun 23, 2025 at 04:56:18AM +0200, Willy Tarreau wrote:
-> 
-> <snip>
-> 
-> > > > Trying it has reopened the circular dependencies can of worms :-(
-> > > > It's the same problem as usual that we've worked around till now
-> > > > by placing some types in types.h, except that this time fd_set is
-> > > > defined based on the macros FD_* that I moved to sys/select.h.
-> > > 
-> > > Can't fd_set also move to sys/select.h? This is how I read fd_set(3).
-> > 
-> > That was what I did and precisely what was causing the problem. We
-> > have sys.h defining select() with fd_set in it with sys/select not yet
-> > being included. I moved sys.h after all sys/* and it broke something
-> > else instead.
-> 
-> Ah. Then move select() also into sys/select.h; where it belongs. :-)
+The dwmac 5.20 IP can be found on some synaptics SoCs. Add a
+compatibility flag, and extend coverage of the dwmac-generic driver
+for the 5.20 IP.
 
-For an unknown reason I thought we avoided to move the syscall definitions
-there and only used sys/*, but I was apparently confused as we have exactly
-that in prctl or wait. I can give that one a try again.
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Willy
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+index b9218c07eb6b..cecce6ed9aa6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
+@@ -59,6 +59,7 @@ static const struct of_device_id dwmac_generic_match[] = {
+ 	{ .compatible = "snps,dwmac-3.72a"},
+ 	{ .compatible = "snps,dwmac-4.00"},
+ 	{ .compatible = "snps,dwmac-4.10a"},
++	{ .compatible = "snps,dwmac-5.20"},
+ 	{ .compatible = "snps,dwmac"},
+ 	{ .compatible = "snps,dwxgmac-2.10"},
+ 	{ .compatible = "snps,dwxgmac"},
+-- 
+2.49.0
+
 
