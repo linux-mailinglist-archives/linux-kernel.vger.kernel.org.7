@@ -1,89 +1,62 @@
-Return-Path: <linux-kernel+bounces-708234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399A4AECDEA
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:25:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 214D7AECDF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80BA417288C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79595172C3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9E7236A73;
-	Sun, 29 Jun 2025 14:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pfzka5qg"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D60B227EB2;
+	Sun, 29 Jun 2025 14:25:50 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6782367AF;
-	Sun, 29 Jun 2025 14:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3454227BA4;
+	Sun, 29 Jun 2025 14:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751207004; cv=none; b=JChJWbiGfwzqYE6MmBtaM1ZZyp/JzPt1NHfk+mLJJtw5tGDb3eVEmy3MRHzQSiKjM1X8MNZ2XZh6LOwPJFTOvyRkiv6EJZLW7Cr2Sfl3PeW3WFmPDrXnwLRsdAPTuvef+QZsAUr/7gLCh2iuJp1NOuRILwxvJ8mm9WO7t6yriCM=
+	t=1751207150; cv=none; b=ub3eNmKkMjNwyOa2TVaCPJsumxD7JEqiZBYjFo/F3zPncO5beaaqGIX5e4konkSUdhKjp1kvIjlzTxOhDueWD55IaKpiKiO0KHewGsjxzlMjJXjpA5EILxlwJkquq6upCCFRYwHxtTe0Tiz9SPHGiMAT4+2R94uqvXV1ofi5xgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751207004; c=relaxed/simple;
-	bh=nAzkLf6fByBaHr2zsZXR+WogUuCuVekqUNUPbP7vlYk=;
+	s=arc-20240116; t=1751207150; c=relaxed/simple;
+	bh=E6AUdqXg1UQebluQC1Qcloluh833TMA6tD31kT9MSCc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCEukwPVS6XFbAFB7yXa5TtXOulDVzVUmfbvkfEacCuWe94hR8YpzyinljjRKTMNb44CUR598r0e7RDnvWJfiavASEUKQoiyl6r56X6rRwvE7V1nhMYMuSqVI9idxWD6uuKEHIlwoS7oVc2rIKBnn7Ahv+Qg61lT6ISB1Yj1y1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pfzka5qg; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-236377f00easo12778685ad.1;
-        Sun, 29 Jun 2025 07:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751207002; x=1751811802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XmE3HNeFPwhvV3YapnRmO/5DkoCIHrdHE5yflvWYiA=;
-        b=Pfzka5qgLdul3Gb1rfEqLZHPfPHl3vUmUDCaKp+R3D3jSWWy6weXW6qIHFS4B4n7Zb
-         uL4GDGo72r49p873rKIhEYsea9uteMWeFzrlUS+Q0cVfvPL1H4+5G7j8/1IWm81Lz933
-         S76GkMlmOe2GxcBYhHbZZkRwt9DbHct1CHDqF8F8Y91ZXPvE4T4wZWjJhohI2qpGKC8V
-         OjVkvaw41HAwO5bHo1oiJrWXEWHnvjGOy5eAP5PPT8DhyHAhxMLIJjRjST4GFDBd7/yg
-         6/0sLu4x7EBlYVcWL2+vvcbn27ECnRRu2h44/77QkEg3Cr7n3/c/I8P1ZLTgnVOyqg2I
-         H2YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751207002; x=1751811802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4XmE3HNeFPwhvV3YapnRmO/5DkoCIHrdHE5yflvWYiA=;
-        b=pbxoLsHTDaTlW9oMziNejOP1nNgy/GMrVH/4C5AGm9MnqnDnv5CeVOF4KLsfufwy6g
-         zpqvrnZongIiLhqJElafkJ5mZWsKwA/9qk77awcY1eoktM8TrBREss70cXwUdAiTwP/C
-         cLs1RzPRTdkKKLYSHnS9wSAFoLFX8MjulL+5qP9FRJK2s6dpQZRjA4hZ+2PmOzEsUCeH
-         vp1a4aWTFTQfYjFyQ2/Mxmm9zukbeQsagcR352snZmDB29jdqy72yU8P97AoWthaAGUI
-         8JG1bQuFhQ74cN3c+aoIZL2YpSsfxRHFJgaHPL+/Zax/7BBEQWwd11mTJvHvrCUn3aqb
-         74Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCWM0137MPlifS9M11hLPZw61DvusV/d1tz/OteViWyBVvEATGwD159TxoKPMrF7qWn9/0SP6rtHV2ZJj92h@vger.kernel.org, AJvYcCWpF0F3dNtzVsmIZJ1fSfApM1+X1dTFjx44HJAZ9A+rna/PMLIatGev8tUJluxxmdNdF1idfK7in4nX9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsD66A1+zY3EoLYb8J9BYrIc4sD14th7OmTO5zc/jY4sNpdSi3
-	L0ntIQ/g8pV1oxOn20j2XU/vFGpdC4u1jCLq7n6h8e3tThkQ0WwP2InW
-X-Gm-Gg: ASbGncvsB7UAUerUhFMOPq9pBRClROx8jeH5JiuXVBCPb0L8XKB2CyWeQBJy8sWallc
-	vr59lfug3OGkkmkaAR5W3KBqTjdOO5GbabF1Y8lbcfasj0KNIIt/hIEHDSX3lc2Vcu1AFlvrpAv
-	rxOX1qG3JcA+cCT8vo5F9rGqWDD0W9O2/K7cjieeT1K+Q2UuHkJS4Pv59hyjjAwfMQ/q5P+OBCm
-	Ud4rxbk0xZBmWjf54b34+p6vwhLFT4cRhIRbyi2gdU1o5pfo4+j5tWqgpBSPyblhzz40zwcjem4
-	s6S7+kZavr2Q5x7fMxABu25KhCGLX7ia7X9H619koSZ9457HzOad6J0=
-X-Google-Smtp-Source: AGHT+IHXD8nXRq9dLp21pFDQyRXR7/wWUgH4S+2XEaLAGY7dzwkGVIgjA3e+5v3+0oNfgBvPx8YFhQ==
-X-Received: by 2002:a17:903:1aad:b0:234:ef42:5d5b with SMTP id d9443c01a7336-23ac3deb9a5mr167279295ad.16.1751207002043;
-        Sun, 29 Jun 2025 07:23:22 -0700 (PDT)
-Received: from essd ([49.37.221.186])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb39bd67sm60442735ad.136.2025.06.29.07.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 07:23:21 -0700 (PDT)
-Date: Sun, 29 Jun 2025 19:53:12 +0530
-From: Abdun Nihaal <abdun.nihaal@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: andy@kernel.org, dan.carpenter@linaro.org, gregkh@linuxfoundation.org, 
-	lorenzo.stoakes@oracle.com, tzimmermann@suse.de, riyandhiman14@gmail.com, 
-	willy@infradead.org, notro@tronnes.org, thomas.petazzoni@free-electrons.com, 
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v2 2/2] staging: fbtft: cleanup error handling in
- fbtft_framebuffer_alloc()
-Message-ID: <eemnoitjhvt3nkt6k66dl6p75zqvsdttalyncfg2dqs2bcbkgy@pvr5wgx3x5xz>
-References: <cover.1751086324.git.abdun.nihaal@gmail.com>
- <62320323049c72b6e3fda6fa7a55e080b29491e8.1751086324.git.abdun.nihaal@gmail.com>
- <CAHp75VeSYesZuJ-NEfEAvaRepEUtdLmxGrYmthD1YkSg-bsK_g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pX577WlsD30HHpsPN1MrhSx5F5vYRSNSNX1QqlJJrQ/VNhhHBs0F/kOyMc+lbh6xaGUzCVhHgWThPvJ3HHiTRTtyWW+XbHyPt3wBXBteFLqf9nMWMSLS4PPJYROEb4lpdDv22MLjOugLmFaE5y5nljHZgDZhrIR58+pJFHxYn2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uVsyM-0000000015j-3WGk;
+	Sun, 29 Jun 2025 14:25:34 +0000
+Date: Sun, 29 Jun 2025 15:25:25 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Sky Huang <skylake.huang@mediatek.com>, netdev@vger.kernel.org,
+	Sean Wang <sean.wang@mediatek.com>,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Felix Fietkau <nbd@nbd.name>
+Subject: Re: [PATCH net/next 3/3] net: ethernet: mtk_eth_soc: use genpool
+ allocator for SRAM
+Message-ID: <aGFM1UQ1P3IQjoex@makrotopia.org>
+References: <cover.1751072868.git.daniel@makrotopia.org>
+ <566ca90fc59ad0d3aff8bc8dc22ebaf0544bce47.1751072868.git.daniel@makrotopia.org>
+ <f9bec387-1858-4c79-bb4b-60e744457c9f@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,21 +65,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VeSYesZuJ-NEfEAvaRepEUtdLmxGrYmthD1YkSg-bsK_g@mail.gmail.com>
+In-Reply-To: <f9bec387-1858-4c79-bb4b-60e744457c9f@lunn.ch>
 
-On Sat, Jun 28, 2025 at 10:58:20PM +0300, Andy Shevchenko wrote:
-> > +       struct fbtft_par *par = info->par;
+On Sat, Jun 28, 2025 at 10:13:51AM +0200, Andrew Lunn wrote:
+> > +static void *mtk_dma_ring_alloc(struct mtk_eth *eth, size_t size,
+> > +				dma_addr_t *dma_handle)
+> > +{
+> > +	void *dma_ring;
 > > +
-> > +       if (par->txbuf.len > 0)
+> > +	if (WARN_ON(mtk_use_legacy_sram(eth)))
+> > +		return -ENOMEM;
+> > +
+> > +	if (eth->sram_pool) {
+> > +		dma_ring = (void *)gen_pool_alloc(eth->sram_pool, size);
+> > +		if (!dma_ring)
+> > +			return dma_ring;
+> > +		*dma_handle = gen_pool_virt_to_phys(eth->sram_pool, (unsigned long)dma_ring);
 > 
-> Do we really need this check? If txbuf.buf is kept NULL (please, check
-> this), the kfree() is NULL-aware.
+> I don't particularly like all the casting backwards and forwards
+> between unsigned long and void *. These two APIs are not really
+> compatible with each other. So any sort of wrapping is going to be
+> messy.
+> 
+> Maybe define a cookie union:
+> 
+> struct mtk_dma_cookie {
+> 	union {
+> 		unsigned long gen_pool;
+> 		void *coherent;
+> 	}
+> }
 
-I assumed that the par->txbuf.buf may be uninitialized, but I checked it
-now and it uses kzalloc to allocate, so it must be NULL to begin with.
+I've implemented that idea and the diffstat grew quite a lot. Also,
+it didn't really make the code more readable (see below why).
 
-I'll remove the check, and send a v3.
+> 
+> Only dma_handle appears to be used by the rest of the code, so only
+> the _alloc and _free need to know about the union.
 
-Regards,
-Nihaal
+That's not true. The void* ring->dma is used to access the RX and TX
+descriptors, so keeping it void* is useful and using the struct you
+are suggesting will make things even more messy than they already are.
+
+See all the places in the code where we assume ring->dma being void*.
+Converting all of those to use struct mtk_dma_cookie will not make things
+better imho.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n1337
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n1345
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n1358
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n1804
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n2172
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n2490
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n2638
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n2668
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/mediatek/mtk_eth_soc.c#n2904
+
+I think keeping the two casts in mtk_dma_ring_alloc() and
+mtk_dma_ring_free() is the better option.
 
