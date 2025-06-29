@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-708149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42335AECC95
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B87E2AECC85
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 14:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A27C17A8988
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E6E188C3A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE31220699;
-	Sun, 29 Jun 2025 12:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADEE221286;
+	Sun, 29 Jun 2025 12:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="GQ4CNfk0"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CZnPodQB"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80464226CE4
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 12:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2981D5147;
+	Sun, 29 Jun 2025 12:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751200744; cv=none; b=Ehna1l+h7daWq7P7mYlywqH6BB8ALSa/MBpd7+XWSXiTxW9oek0DKDno04xOYJOlfk0bOd/0/6TR5NJ5wvMFSZRQB8txIJ2kpBwr20l3ZzC3vK3a53FVWgqwUiG+lNY4LA5IrkKWg/pmHyeTM8eiuIIffSlgcPuMOO0oVdcXjHU=
+	t=1751200735; cv=none; b=BHIE057CZbJpSx5c77bA+FWYekJJzI0UrBSvngMj59VQbYlVaqUq9l6xgnMkLIB+lJ5NrO+VgWFGRv+Y0mFG9qtjog+y1uBdu2ElVTDBBqdH15AfPJTRdT8WutIX2zsCP+F+bIAMPyD5XzN19VtoSlevHEgJkJgL1h1YQlAe+P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751200744; c=relaxed/simple;
-	bh=nsAfoD3v/HBr6ID5bxFuUM7z5sm2UrulP0r+6b9gb7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pW7S6gLmCLIodZaYQ8FsNOZqi15RTFFeBoLUYt3kZSfdGRJbickdw2vxQiuzkMMXnVB9HTgNfoSOtwFs5HLQtZp30JUQWQJLT0TzYgmstjqBE2nZdUA9vh5JyxFd5O2hFcjQjKomsqUhOtWGTaoPQtwpebg15gnjoFgr6Cj2YnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=GQ4CNfk0; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1751200740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nOCOpdzyJGYo0WmyPHPzo5U4cOQf2vkC3N8qsd5gyAo=;
-	b=GQ4CNfk0xYcLdg3QU3SXwDgtJBjFrtjYOnP60c4J65IbFhmbgdnKCiH808hU9zytHkA6cT
-	tF1pijGHtg+ob3gSyJ5Ehr8trcQT//uH1wtvJ7VtSBtwp+5l4muHaDGZwlF2waUSLay3um
-	ERbafNgcMmplUtgHVNXeOcieTH6IS26Hi0yI8aU82SqTvR3CUyvKAgLw+33Fu1pMxuJ8SM
-	sad/A6QKkgijKK3sYl+ymD479c+DSvBr2qgu/G1d8kJhIncalUZ6quNT9DLKVN7RoS5ZHV
-	L2ijJLuopUDuvnDtsAjPcasKPa4O4Sidnvhc6Nl3a34aMdG3miwguqRFRVEWKg==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Dragan Simic <dsimic@manjaro.org>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Johan Jonker <jbx6244@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v3 10/10] arm64: dts: rockchip: Drop regulator-compatible property on rk3399
-Date: Sun, 29 Jun 2025 14:34:51 +0200
-Message-ID: <20250629123840.34948-11-didi.debian@cknow.org>
-In-Reply-To: <20250629123840.34948-1-didi.debian@cknow.org>
-References: <20250629123840.34948-1-didi.debian@cknow.org>
+	s=arc-20240116; t=1751200735; c=relaxed/simple;
+	bh=1DdA58ZvfVyvyJne9xRI6nI4Y07XDp6bvgXl/BpBMvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CYLkxZiJce7ByD8ou1KNBSW8ByIOAug3VhB0XCKUgkhVHTRJpAgSAlK7x1xMHeSTR33EGGNrR9jWoQMwyRhQdh6jPm0b4IUdYBFp/H1+jGitmJSM8ig3oqObfg65kVamhWHuGr49jQ6lAaku9GM+9eNWnq8em7LixoksjxnRFro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CZnPodQB; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id VrHvu4ESL84Z8VrHvuRtCb; Sun, 29 Jun 2025 14:37:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1751200661;
+	bh=44hnpk8QrNSS6VHiUDSP4T2PPRW+akObYkldAFkniy8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=CZnPodQBdNXT9Mr/sMliR8L8M3B2O9YmcmRwUvSGvGfZhKQqGwsx/W949L8HaBRzF
+	 5lI+xSU5Oh1MExu7B4mhsUwlgERFYbpQszo5XMUdvFE4zF87rQTBHicnEtJsAXeP+v
+	 Drq5OSP9unjeMaDBskJFujZSlwngw+25j0eIrlJZprFPSw5+cNOoOwhRs1BxgiM1Fq
+	 miqpmitAljqyn95n98RIjIJmw8VWM4qN0ahuTE7LCxSv8QteRWCSL/9PbpEa/ZIHdh
+	 mtybCwbmOxJDOIHtx/ZRJWPN/K4FUNjPqJvxp79+Q8/gsWAwyOPcLNsWqRwiSSJuid
+	 awnSn1PHQL2tQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 29 Jun 2025 14:37:41 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next 1/2] net: dsa: mv88e6xxx: Constify struct devlink_region_ops and struct mv88e6xxx_region
+Date: Sun, 29 Jun 2025 14:35:49 +0200
+Message-ID: <46040062161dda211580002f950a6d60433243dc.1751200453.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +68,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The regulator-compatible property has never existed in the
-regulator/fcs,fan53555.yaml binding, so drop it.
+'struct devlink_region_ops' and 'struct mv88e6xxx_region' are not modified
+in this driver.
 
-This fixes the following DTB validation warnings:
+Constifying these structures moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-  Unevaluated properties are not allowed
-  ('regulator-compatible' was unexpected)
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  18076	   6496	     64	  24636	   603c	drivers/net/dsa/mv88e6xxx/devlink.o
 
-Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  18652	   5920	     64	  24636	   603c	drivers/net/dsa/mv88e6xxx/devlink.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts   | 2 --
- arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts | 2 --
- 2 files changed, 4 deletions(-)
+Compile tested only
+---
+ drivers/net/dsa/mv88e6xxx/devlink.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
-index 81c4fcb30f39..352c8efb37e0 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-hugsun-x99.dts
-@@ -211,7 +211,6 @@ &i2c0 {
- 	vdd_cpu_b: syr827@40 {
- 		compatible = "silergy,syr827";
- 		reg = <0x40>;
--		regulator-compatible = "fan53555-reg";
- 		pinctrl-0 = <&vsel1_pin>;
- 		regulator-name = "vdd_cpu_b";
- 		regulator-min-microvolt = <712500>;
-@@ -229,7 +228,6 @@ regulator-state-mem {
- 	vdd_gpu: syr828@41 {
- 		compatible = "silergy,syr828";
- 		reg = <0x41>;
--		regulator-compatible = "fan53555-reg";
- 		pinctrl-0 = <&vsel2_pin>;
- 		regulator-name = "vdd_gpu";
- 		regulator-min-microvolt = <712500>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
-index 15da5c80d25d..962b8b231c96 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
-@@ -421,7 +421,6 @@ vdd_cpu_b: regulator@40 {
- 		compatible = "silergy,syr827";
- 		reg = <0x40>;
- 		fcs,suspend-voltage-selector = <1>;
--		regulator-compatible = "fan53555-reg";
- 		pinctrl-0 = <&vsel1_gpio>;
- 		vsel-gpios = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
- 		regulator-name = "vdd_cpu_b";
-@@ -440,7 +439,6 @@ vdd_gpu: regulator@41 {
- 		compatible = "silergy,syr828";
- 		reg = <0x41>;
- 		fcs,suspend-voltage-selector = <1>;
--		regulator-compatible = "fan53555-reg";
- 		pinctrl-0 = <&vsel2_gpio>;
- 		vsel-gpios = <&gpio1 RK_PB6 GPIO_ACTIVE_HIGH>;
- 		regulator-name = "vdd_gpu";
+diff --git a/drivers/net/dsa/mv88e6xxx/devlink.c b/drivers/net/dsa/mv88e6xxx/devlink.c
+index 195460a0a0d4..aec652e33fc1 100644
+--- a/drivers/net/dsa/mv88e6xxx/devlink.c
++++ b/drivers/net/dsa/mv88e6xxx/devlink.c
+@@ -647,7 +647,7 @@ static struct mv88e6xxx_region_priv mv88e6xxx_region_global1_priv = {
+ 	.id = MV88E6XXX_REGION_GLOBAL1,
+ };
+ 
+-static struct devlink_region_ops mv88e6xxx_region_global1_ops = {
++static const struct devlink_region_ops mv88e6xxx_region_global1_ops = {
+ 	.name = "global1",
+ 	.snapshot = mv88e6xxx_region_global_snapshot,
+ 	.destructor = kfree,
+@@ -658,32 +658,32 @@ static struct mv88e6xxx_region_priv mv88e6xxx_region_global2_priv = {
+ 	.id = MV88E6XXX_REGION_GLOBAL2,
+ };
+ 
+-static struct devlink_region_ops mv88e6xxx_region_global2_ops = {
++static const struct devlink_region_ops mv88e6xxx_region_global2_ops = {
+ 	.name = "global2",
+ 	.snapshot = mv88e6xxx_region_global_snapshot,
+ 	.destructor = kfree,
+ 	.priv = &mv88e6xxx_region_global2_priv,
+ };
+ 
+-static struct devlink_region_ops mv88e6xxx_region_atu_ops = {
++static const struct devlink_region_ops mv88e6xxx_region_atu_ops = {
+ 	.name = "atu",
+ 	.snapshot = mv88e6xxx_region_atu_snapshot,
+ 	.destructor = kfree,
+ };
+ 
+-static struct devlink_region_ops mv88e6xxx_region_vtu_ops = {
++static const struct devlink_region_ops mv88e6xxx_region_vtu_ops = {
+ 	.name = "vtu",
+ 	.snapshot = mv88e6xxx_region_vtu_snapshot,
+ 	.destructor = kfree,
+ };
+ 
+-static struct devlink_region_ops mv88e6xxx_region_stu_ops = {
++static const struct devlink_region_ops mv88e6xxx_region_stu_ops = {
+ 	.name = "stu",
+ 	.snapshot = mv88e6xxx_region_stu_snapshot,
+ 	.destructor = kfree,
+ };
+ 
+-static struct devlink_region_ops mv88e6xxx_region_pvt_ops = {
++static const struct devlink_region_ops mv88e6xxx_region_pvt_ops = {
+ 	.name = "pvt",
+ 	.snapshot = mv88e6xxx_region_pvt_snapshot,
+ 	.destructor = kfree,
+@@ -696,13 +696,13 @@ static const struct devlink_port_region_ops mv88e6xxx_region_port_ops = {
+ };
+ 
+ struct mv88e6xxx_region {
+-	struct devlink_region_ops *ops;
++	const struct devlink_region_ops *ops;
+ 	u64 size;
+ 
+ 	bool (*cond)(struct mv88e6xxx_chip *chip);
+ };
+ 
+-static struct mv88e6xxx_region mv88e6xxx_regions[] = {
++static const struct mv88e6xxx_region mv88e6xxx_regions[] = {
+ 	[MV88E6XXX_REGION_GLOBAL1] = {
+ 		.ops = &mv88e6xxx_region_global1_ops,
+ 		.size = 32 * sizeof(u16)
+@@ -768,7 +768,7 @@ int mv88e6xxx_setup_devlink_regions_global(struct dsa_switch *ds)
+ {
+ 	bool (*cond)(struct mv88e6xxx_chip *chip);
+ 	struct mv88e6xxx_chip *chip = ds->priv;
+-	struct devlink_region_ops *ops;
++	const struct devlink_region_ops *ops;
+ 	struct devlink_region *region;
+ 	u64 size;
+ 	int i, j;
 -- 
 2.50.0
 
