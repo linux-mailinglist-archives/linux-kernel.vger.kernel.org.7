@@ -1,205 +1,237 @@
-Return-Path: <linux-kernel+bounces-708373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9095CAECF92
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472FDAECF95
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C2418959C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124DC188DB60
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD6F239585;
-	Sun, 29 Jun 2025 18:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD472237707;
+	Sun, 29 Jun 2025 18:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JxXS9YGg"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/Dx0YNP"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA9722FE0F
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 18:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598D22BB04;
+	Sun, 29 Jun 2025 18:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751221719; cv=none; b=XrBkm0iTyBqDKcmOP6Q3JOAlLQF5TM/HZyW9jOX0jQOrzp7XBkL6bbbWipECnawHlmbakFBkmB5vgT0baE4Aev1WgaSBemsz0EcI3VQezlIGsPr66SnVtiupS7CPxUiyK4W9OLxzgj9D8cGYT4WNQfv87SS9vIoAw3Znz2Ma2d4=
+	t=1751222051; cv=none; b=HGTTyrTCZOVm8A2mr3XNMTPWOvrHBYQHRKtUU5+q2FVHs3EatEOiO1lhuw/dNfyFUoVlWHv9Q7DYOo9UVVEeNCl7csv7+XKEdZSYTgou6SjLRixFstp7hQic6Znli9a19LKn6MGJtc1fgVcjoQleGYaVzGQ4uQ6KR6takqxNI0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751221719; c=relaxed/simple;
-	bh=l0ew/rNxvpqXTq4nv93IRDOxuX6/hTc/lyPn4AugHqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oi7+PItq6+uNozbM+ZU94KIVsksYvgzCxf2gE2jrhWqmoLxfmNFD7JLw/Xdim2Ke7nMnXjJ+/10SBN4kJ5nvI4JWB5bvTU6hhIL9taDAMLMdjJha1nIl9Crmlt9oajK1NTTgwVqH0rsdSCCmj2mY06B+TzMnq+7E8QfM0VJoIGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JxXS9YGg; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2357c61cda7so145675ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 11:28:36 -0700 (PDT)
+	s=arc-20240116; t=1751222051; c=relaxed/simple;
+	bh=jrVu989F/TnS7OrvrDa2n6Iw2dhmPQwnlx/AVue9EDk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Wx6qGzR5mCXG8UFhoFKm58DEex/X8Z0akriqo4yIVoBsSGA1AMytWMol0tjuqx73cGfgqDPDX8ZEkNMCdl8aiV1WbgZ80xgjO9biAm7q0Wzx14rVuQNz5iXWe26sIuvfcQ+yuW2u7EkAP8u7mTN5phzBX2v4vG4wJ2V7R8fIUlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R/Dx0YNP; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7d098f7bd77so434767385a.0;
+        Sun, 29 Jun 2025 11:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751221716; x=1751826516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1l9JIPjHLpLWpV87RrF/MILzYtSbQffXmt07qUOMzw=;
-        b=JxXS9YGgSAu4i7johcgfPrXRvZyZs6EHCky5iiUutCuFIJcPBMjn/wnBGQgwTMM5f2
-         a/WBG68xvgkrSNPuZL1rVdfq2MNNPJNH5Oqbpt30t9fLMMWzr4JkZpKJmHCGRB/A/LoD
-         LgS+G/cu+rDOy2KHgA6yS7gZ7BP1t3s0dPl/TQQBL6CUaZYpw6/m4ablT6D4O/caVcYw
-         OXYmJsVn/i+4ZDsKFJcwyXu/xqPogfy9ugbX43LyAvWZIFrk2vmph8CW3wW5BMBk4Hdj
-         nrAgVWsdkxP+xIFWsnICSnq4F/aQWttDL+Zup3va2TVkuw65Q1xOXmUHXqPGT33Ffwxz
-         ZJ7Q==
+        d=gmail.com; s=20230601; t=1751222048; x=1751826848; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M/cjhqCcLmVGUCnBK893/yp/jMoU9tIeu5L0LyrcK/Y=;
+        b=R/Dx0YNPouZNfhDDmQgu0sLdkr9zAaPSAQhQE0k4Vd+3eyshwNhzg3LoQYTDsPNh9i
+         N9yfZ5O+n2VGuDewsh2H7RZU3LXk8q7HWulRp2MKUOx4Px5Hw2l63bUZl5KXXRLBXwku
+         zxvUknydw4qfF+NRNwxCn9vKrUFB0oxNq8+n/ENyRFyQXXw5oaw0Sid78HmMBBvNcVgx
+         PzL1gz4cd3NJqnO5YGbeF5pxdb4+6/GoeD1dXDkeiEONvC9qj3aNjcCSul35pH6kXh6Q
+         jUvxAsWno1BNaZ5g8gESZVcx1atwbvvRzfRRCDJEsj9AjnlcX07pVFvnuUAQcoK+Xh4G
+         OMWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751221716; x=1751826516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W1l9JIPjHLpLWpV87RrF/MILzYtSbQffXmt07qUOMzw=;
-        b=AaVQVMhcxmfYngi44YkxrjydRlmEF4rxu/jhtuD8kMjUmGahEfZwi/ofMF/ForN9bX
-         8ZE0ag+U63w+0ZulkYa8t4+tzMFNw9Oo+QmacicofvoZ29wMFf0PbTPYKshBnmj+hcqC
-         8UFHDpoP48s9yVaXtwBAZeDLkacWpEl58rEio6gV09i0djKAV6ls0hqK1TrYYLxSdkDU
-         kMoEKpP7VjpO2lgFullz6ICwy3IxixRi9SE/Alev4/aTcYX7g3diRe19SaAQnwLCYjtk
-         Ef+cZTdqybWG29EXAIITzo7zjBKXbM09824qvTP9sEtSsM2e99YhWltt+uCBnqa+7wuj
-         3E4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW/kqIa03mDPz4fwsYOIW7PDZjNz/4Iu91ha5IkaAbHXqv8nEDRVMO71Ov8Ba1DvJiya7q3C3WUXUvDkaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylyRlfcp6EVXAKQewFixAwgEepNnQwyQq+nsw/WqYBgl/K3HvO
-	PfOzjWUXnHclIezVxizmSUqR0dqWdfEuYch6OgcXS8fH9i9xEPi8HNwhDIAFc+va/tkDsCXqtcU
-	6kha9ZiV/WPEbfGd0ZYq0vhdHJB0HWZPIKOwu1eFv
-X-Gm-Gg: ASbGncsRqL83iOahMZaTkHvrcRQG0VHFluLfCY1vHb3hBATW2eC/ZcJG6b3ZgHqB8Ff
-	MbfKHVUFErgeCAtkLwo6dyBkK6j3nE2n11VlcQxOjesksjFr8oiYFci1yJKbYN2KbK/qbLh6M3b
-	wkeldrF/Cm6KxBZT3t4sBE6dwlfZGVIb9FrIf2pWgq6Y8BJZvfR0mQr4EGdRCUriNgFQtDlOBcT
-	IFZ
-X-Google-Smtp-Source: AGHT+IHdVA75hLFFAdHVzvO4EeTa+FUWamKY84vMMfGu7CzFa8alTxmn/cBaHHTKvAmeb6d7cowOhMdsvEuUdRooiZc=
-X-Received: by 2002:a17:902:e84a:b0:234:bca7:2934 with SMTP id
- d9443c01a7336-23ae8e8bdffmr3053245ad.6.1751221715515; Sun, 29 Jun 2025
- 11:28:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751222048; x=1751826848;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M/cjhqCcLmVGUCnBK893/yp/jMoU9tIeu5L0LyrcK/Y=;
+        b=aJbTzPllVYjJreoJb357B/aHfSyqBE6pVgW7j1uGPZCX8hmpcgX6IOv/dFui5B+ldb
+         Ai06vUpoGZVknLdGpGOyrzhRSFAPntxk5oo3yxB9SwKZMT29go5ZxHRUgzjt6wh2gKxz
+         AEY28D/yERlQptHdCYoLSeiM5zfrImGKy1kjG+Iqp09iXN46Sk/MZx+1QA1XN3W4EOMn
+         zfKxP7YhoSSfSOmOXiMBW44QW7BAfiLkxAiTttnRU7N+BBohE7Jr4Cpzh0KYvLxsN7qT
+         YHisex69PsHOTcpYe3k83iYpaI4rof1TsS4PmUoRNx1EqNmJ/JeJqh9XhXQkZjjYmSt3
+         PUxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpgvhrb+rhGlTN43houb95GnyRo5gprO6IdM2eB81bGHYrkwThKK39VLA80CzUyTHSXLx1o/zTPrizfHM=@vger.kernel.org, AJvYcCW3ZXVlr+HRspTHkd+OH0SjHpHCYltEHrCkO9eoJXtuU7dgCnJUYDM3rxFgrfp+p8TafrcrMlcFelePVxV/y8MJihCAPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDTZCmbE52WSFJTo4G+MApdnbOq7po5ZMhw4HFOk2Vdg2OAMqm
+	OsJqLDuYDLbT1zoI9i0nvhRq6Xw5edqO8zWGZXnKFD12SIrzW38XqSSV
+X-Gm-Gg: ASbGncu2DDUd5ftaIforCc+pvBdU3lLccc6676MTSn0DJyaTpwffhFlgavNo4ry8wKI
+	vn28nS4Neah1dDOv9GWN3P7Xl2hs31emcZBAT6OAkPDEQhkZoj1Bn3kXUmn9d2vPk0a7A1d9QhJ
+	y8MsC0vu9kKGR4AYAdRAB/EtpzR76riLmGiTHLmHbCGX11Yepym7YqU6X9Om7m7I6YZEh13aNga
+	KnfE4jX2bU70qk5O7Ll3jInF2Vq5Q7Z/EJf9jHrhXxCR8vBWQhVQs6r3BWc6igsTSX16MILa9u+
+	1eAa/C+UhiFYziNKbHOvrEZekOYVZ0i4jmzrTxUFYhBql/HFuR+lzPZ9ZQ3rxA==
+X-Google-Smtp-Source: AGHT+IFBfZq6IZw9PCCTfeTzHkfLxpaDY1FwR4g7fewr0TAosZVqbGHcnXQpg6iurWSq3PxHo6uEuw==
+X-Received: by 2002:a05:620a:4149:b0:7c0:af6d:a52a with SMTP id af79cd13be357-7d4441a75a0mr1307645585a.26.1751222048100;
+        Sun, 29 Jun 2025 11:34:08 -0700 (PDT)
+Received: from [192.168.1.26] ([181.88.247.122])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d4594acf00sm95196385a.31.2025.06.29.11.34.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 11:34:07 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+Date: Sun, 29 Jun 2025 15:33:04 -0300
+Subject: [PATCH] platform/x86: dell-wmi-sysman: Fix WMI data block
+ retrieval in sysfs callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <aFPGlAGEPzxlxM5g@yzhao56-desk.sh.intel.com>
- <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com>
-In-Reply-To: <d15bfdc8-e309-4041-b4c7-e8c3cdf78b26@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Sun, 29 Jun 2025 11:28:22 -0700
-X-Gm-Features: Ac12FXwYsllFJOo6Hodgf2pKamvDOx3QsF86HEiXlTZ2qWaN29U0KjYTlrTOQmg
-Message-ID: <CAGtprH-Kzn2kOGZ4JuNtUT53Hugw64M-_XMmhz_gCiDS6BAFtQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Yan Zhao <yan.y.zhao@intel.com>, Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-fsdevel@vger.kernel.org, aik@amd.com, ajones@ventanamicro.com, 
-	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
-	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250629-sysman-fix-v1-1-fce0000a781d@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAN+GYWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDMyNL3eLK4tzEPN20zApdy2RTI/NEI4s0w5QUJaCGgqJUoDDYsOjY2lo
+ AiiKClVwAAAA=
+X-Change-ID: 20250629-sysman-fix-9c527a28f1dd
+To: Prasanth Ksr <prasanth.ksr@dell.com>, Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Divya Bharathi <divya.bharathi@dell.com>, Armin Wolf <W_Armin@gmx.de>, 
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dell.Client.Kernel@dell.com, platform-driver-x86@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jan Graczyk <jangraczyk@yahoo.ca>, 
+ Kurt Borja <kuurtb@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6574; i=kuurtb@gmail.com;
+ h=from:subject:message-id; bh=jrVu989F/TnS7OrvrDa2n6Iw2dhmPQwnlx/AVue9EDk=;
+ b=owGbwMvMwCUmluBs8WX+lTTG02pJDBmJ7TJZXx8+n/bLWzLd2mBqnUlr6fMbjz/N15bv+7ti5
+ UmXy1puHaUsDGJcDLJiiiztCYu+PYrKe+t3IPQ+zBxWJpAhDFycAjCRxiKGv1K5B5q2zUnSnVc/
+ qf/19y9/DhowTV/w9MSHLg7euB1n57xj+F+tuJw77zZP8uvilNMGcx68No15fHm1XM4F0yn9Vz9
+ 6c/ACAA==
+X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
+ fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
 
-On Thu, Jun 19, 2025 at 1:59=E2=80=AFAM Xiaoyao Li <xiaoyao.li@intel.com> w=
-rote:
->
-> On 6/19/2025 4:13 PM, Yan Zhao wrote:
-> > On Wed, May 14, 2025 at 04:41:39PM -0700, Ackerley Tng wrote:
-> >> Hello,
-> >>
-> >> This patchset builds upon discussion at LPC 2024 and many guest_memfd
-> >> upstream calls to provide 1G page support for guest_memfd by taking
-> >> pages from HugeTLB.
-> >>
-> >> This patchset is based on Linux v6.15-rc6, and requires the mmap suppo=
-rt
-> >> for guest_memfd patchset (Thanks Fuad!) [1].
-> >>
-> >> For ease of testing, this series is also available, stitched together,
-> >> at https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page-supp=
-ort-rfc-v2
-> >
-> > Just to record a found issue -- not one that must be fixed.
-> >
-> > In TDX, the initial memory region is added as private memory during TD'=
-s build
-> > time, with its initial content copied from source pages in shared memor=
-y.
-> > The copy operation requires simultaneous access to both shared source m=
-emory
-> > and private target memory.
-> >
-> > Therefore, userspace cannot store the initial content in shared memory =
-at the
-> > mmap-ed VA of a guest_memfd that performs in-place conversion between s=
-hared and
-> > private memory. This is because the guest_memfd will first unmap a PFN =
-in shared
-> > page tables and then check for any extra refcount held for the shared P=
-FN before
-> > converting it to private.
->
-> I have an idea.
->
-> If I understand correctly, the KVM_GMEM_CONVERT_PRIVATE of in-place
-> conversion unmap the PFN in shared page tables while keeping the content
-> of the page unchanged, right?
+After retrieving WMI data blocks in sysfs callbacks, check for the
+validity of them before dereferencing their content.
 
-That's correct.
+Reported-by: Jan Graczyk <jangraczyk@yahoo.ca>
+Closes: https://lore.kernel.org/r/CAHk-=wgMiSKXf7SvQrfEnxVtmT=QVQPjJdNjfm3aXS7wc=rzTw@mail.gmail.com/
+Fixes: e8a60aa7404b ("platform/x86: Introduce support for Systems Management Driver over WMI for Dell Systems")
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/platform/x86/dell/dell-wmi-sysman/dell-wmi-sysman.h    | 7 +++++++
+ drivers/platform/x86/dell/dell-wmi-sysman/enum-attributes.c    | 5 +++--
+ drivers/platform/x86/dell/dell-wmi-sysman/int-attributes.c     | 5 +++--
+ drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c | 5 +++--
+ drivers/platform/x86/dell/dell-wmi-sysman/string-attributes.c  | 5 +++--
+ drivers/platform/x86/dell/dell-wmi-sysman/sysman.c             | 8 ++++----
+ 6 files changed, 23 insertions(+), 12 deletions(-)
 
->
-> So KVM_GMEM_CONVERT_PRIVATE can be used to initialize the private memory
-> actually for non-CoCo case actually, that userspace first mmap() it and
-> ensure it's shared and writes the initial content to it, after it
-> userspace convert it to private with KVM_GMEM_CONVERT_PRIVATE.
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/dell-wmi-sysman.h b/drivers/platform/x86/dell/dell-wmi-sysman/dell-wmi-sysman.h
+index 3ad33a094588c6a258786a02f952eaa6bf953234..792e7d865bfb1cfc13b59c90ddf7de47feff408f 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/dell-wmi-sysman.h
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/dell-wmi-sysman.h
+@@ -89,6 +89,13 @@ extern struct wmi_sysman_priv wmi_priv;
+ 
+ enum { ENUM, INT, STR, PO };
+ 
++enum {
++	ENUM_MIN_ELEMENTS	= 8,
++	INT_MIN_ELEMENTS	= 9,
++	STR_MIN_ELEMENTS	= 8,
++	PO_MIN_ELEMENTS		= 4,
++};
++
+ enum {
+ 	ATTR_NAME,
+ 	DISPL_NAME_LANG_CODE,
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/enum-attributes.c b/drivers/platform/x86/dell/dell-wmi-sysman/enum-attributes.c
+index 8cc212c852668312096f756bc1fb1e3054a1f5c0..fc2f58b4cbc6eff863f2c3293cb4322d28048bb8 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/enum-attributes.c
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/enum-attributes.c
+@@ -23,9 +23,10 @@ static ssize_t current_value_show(struct kobject *kobj, struct kobj_attribute *a
+ 	obj = get_wmiobj_pointer(instance_id, DELL_WMI_BIOS_ENUMERATION_ATTRIBUTE_GUID);
+ 	if (!obj)
+ 		return -EIO;
+-	if (obj->package.elements[CURRENT_VAL].type != ACPI_TYPE_STRING) {
++	if (obj->type != ACPI_TYPE_PACKAGE || obj->package.count < ENUM_MIN_ELEMENTS ||
++	    obj->package.elements[CURRENT_VAL].type != ACPI_TYPE_STRING) {
+ 		kfree(obj);
+-		return -EINVAL;
++		return -EIO;
+ 	}
+ 	ret = snprintf(buf, PAGE_SIZE, "%s\n", obj->package.elements[CURRENT_VAL].string.pointer);
+ 	kfree(obj);
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/int-attributes.c b/drivers/platform/x86/dell/dell-wmi-sysman/int-attributes.c
+index 951e75b538fad42509614c2ebf2ef77aa05b614f..73524806423914bf210b9b5f78c0b5b4f6a7984c 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/int-attributes.c
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/int-attributes.c
+@@ -25,9 +25,10 @@ static ssize_t current_value_show(struct kobject *kobj, struct kobj_attribute *a
+ 	obj = get_wmiobj_pointer(instance_id, DELL_WMI_BIOS_INTEGER_ATTRIBUTE_GUID);
+ 	if (!obj)
+ 		return -EIO;
+-	if (obj->package.elements[CURRENT_VAL].type != ACPI_TYPE_INTEGER) {
++	if (obj->type != ACPI_TYPE_PACKAGE || obj->package.count < INT_MIN_ELEMENTS ||
++	    obj->package.elements[CURRENT_VAL].type != ACPI_TYPE_INTEGER) {
+ 		kfree(obj);
+-		return -EINVAL;
++		return -EIO;
+ 	}
+ 	ret = snprintf(buf, PAGE_SIZE, "%lld\n", obj->package.elements[CURRENT_VAL].integer.value);
+ 	kfree(obj);
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c b/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
+index d8f1bf5e58a0f441cfd6c21f299c5426b2e28ce9..3167e06d416ede61cda5ad4c860dcb41b05cd5fa 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/passobj-attributes.c
+@@ -26,9 +26,10 @@ static ssize_t is_enabled_show(struct kobject *kobj, struct kobj_attribute *attr
+ 	obj = get_wmiobj_pointer(instance_id, DELL_WMI_BIOS_PASSOBJ_ATTRIBUTE_GUID);
+ 	if (!obj)
+ 		return -EIO;
+-	if (obj->package.elements[IS_PASS_SET].type != ACPI_TYPE_INTEGER) {
++	if (obj->type != ACPI_TYPE_PACKAGE || obj->package.count < PO_MIN_ELEMENTS ||
++	    obj->package.elements[IS_PASS_SET].type != ACPI_TYPE_INTEGER) {
+ 		kfree(obj);
+-		return -EINVAL;
++		return -EIO;
+ 	}
+ 	ret = snprintf(buf, PAGE_SIZE, "%lld\n", obj->package.elements[IS_PASS_SET].integer.value);
+ 	kfree(obj);
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/string-attributes.c b/drivers/platform/x86/dell/dell-wmi-sysman/string-attributes.c
+index c392f0ecf8b55ba722246d67ba0073772a4f0094..0d2c74f8d1aad7843effcd7b600dd42e6947dc15 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/string-attributes.c
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/string-attributes.c
+@@ -25,9 +25,10 @@ static ssize_t current_value_show(struct kobject *kobj, struct kobj_attribute *a
+ 	obj = get_wmiobj_pointer(instance_id, DELL_WMI_BIOS_STRING_ATTRIBUTE_GUID);
+ 	if (!obj)
+ 		return -EIO;
+-	if (obj->package.elements[CURRENT_VAL].type != ACPI_TYPE_STRING) {
++	if (obj->type != ACPI_TYPE_PACKAGE || obj->package.count < STR_MIN_ELEMENTS ||
++	    obj->package.elements[CURRENT_VAL].type != ACPI_TYPE_STRING) {
+ 		kfree(obj);
+-		return -EINVAL;
++		return -EIO;
+ 	}
+ 	ret = snprintf(buf, PAGE_SIZE, "%s\n", obj->package.elements[CURRENT_VAL].string.pointer);
+ 	kfree(obj);
+diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
+index d00389b860e4ea0655c740c78bc3751f323b6370..3c74d5e8350a413a55739ca5e9647be30bac50d4 100644
+--- a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
++++ b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
+@@ -407,10 +407,10 @@ static int init_bios_attributes(int attr_type, const char *guid)
+ 		return retval;
+ 
+ 	switch (attr_type) {
+-	case ENUM:	min_elements = 8;	break;
+-	case INT:	min_elements = 9;	break;
+-	case STR:	min_elements = 8;	break;
+-	case PO:	min_elements = 4;	break;
++	case ENUM:	min_elements = ENUM_MIN_ELEMENTS;	break;
++	case INT:	min_elements = INT_MIN_ELEMENTS;	break;
++	case STR:	min_elements = STR_MIN_ELEMENTS;	break;
++	case PO:	min_elements = PO_MIN_ELEMENTS;		break;
+ 	default:
+ 		pr_err("Error: Unknown attr_type: %d\n", attr_type);
+ 		return -EINVAL;
 
-I think you mean pKVM by non-coco VMs that care about private memory.
-Yes, initial memory regions can start as shared which userspace can
-populate and then convert the ranges to private.
+---
+base-commit: 173bbec6693f3f3f00dac144f3aa0cd62fb60d33
+change-id: 20250629-sysman-fix-9c527a28f1dd
+-- 
+ ~ Kurt
 
->
-> For CoCo case, like TDX, it can hook to KVM_GMEM_CONVERT_PRIVATE if it
-> wants the private memory to be initialized with initial content, and
-> just do in-place TDH.PAGE.ADD in the hook.
-
-I think this scheme will be cleaner:
-1) Userspace marks the guest_memfd ranges corresponding to initial
-payload as shared.
-2) Userspace mmaps and populates the ranges.
-3) Userspace converts those guest_memfd ranges to private.
-4) For both SNP and TDX, userspace continues to invoke corresponding
-initial payload preparation operations via existing KVM ioctls e.g.
-KVM_SEV_SNP_LAUNCH_UPDATE/KVM_TDX_INIT_MEM_REGION.
-   - SNP/TDX KVM logic fetches the right pfns for the target gfns
-using the normal paths supported by KVM and passes those pfns directly
-to the right trusted module to initialize the "encrypted" memory
-contents.
-       - Avoiding any GUP or memcpy from source addresses.
-
-i.e. for TDX VMs, KVM_TDX_INIT_MEM_REGION still does the in-place TDH.PAGE.=
-ADD.
-
-Since we need to support VMs that will/won't use in-place conversion,
-I think operations like KVM_TDX_INIT_MEM_REGION can introduce explicit
-flags to allow userspace to indicate whether to assume in-place
-conversion or not. Maybe
-kvm_tdx_init_mem_region.source_addr/kvm_sev_snp_launch_update.uaddr
-can be null in the scenarios where in-place conversion is used.
 
