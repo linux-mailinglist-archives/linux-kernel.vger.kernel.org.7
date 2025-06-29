@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-708277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C434EAECE72
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:02:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD5AAECE69
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0917F7A77E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 16:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020E616FC31
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835B9230264;
-	Sun, 29 Jun 2025 16:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CA023372C;
+	Sun, 29 Jun 2025 15:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="AtOxdF1r"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H81BHnh4"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D329128819;
-	Sun, 29 Jun 2025 16:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1C92F3E
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 15:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751212935; cv=none; b=T8lZzVytUQ8i3FfIGkf1kgjP3U0E7m1lHbBAoNgpycYpo6/mX6f405f7Nc2cEszxzR+XPN7o11wfRI+A0cO51pGyOYt+NScrmUVOKlAh+rXJ/GzRr5EdQrbcAdnEbKV4N+rUYqb7URSE/dnCTx0jhWpEKch02kKpyY6Q2Bn/O2A=
+	t=1751212664; cv=none; b=jYcB99abKFXR08iURsS3GOEpnmjG+A/RLP5jjQ5kEf30o/z1AmmIfw6xlrwKe14KE3vgy/KctsqXuM0vQnMOMxPFKfJtWzaCu+4zy0xUfjBFxAostYv6uVYCg3+IQyQG98yb50yh3wkbxzpG0iodGioX9M39v7zzC8EXIZmsPzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751212935; c=relaxed/simple;
-	bh=Q3NZ/Hs7IXDXg0EZbN/RJ1y/NoUVJyPO4WAfgzm7ugM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=DnjOr8+ztntjEd3AjNBvpj38WjrwGMFp2uV3+Ly82+l8yjd0XasXuIpVu9VxmbH3DLzZ9UqVyw2mDCdVQCLBqKZ0m759aS0NdrKzxBp1hdfZ7Cse/MsxMfix7ZvGHFPqyNVaTj2uEtbqWHmb6mxs5enEKLmWLX88Uk7tOyRwh54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=AtOxdF1r; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1751212621;
-	bh=rjiuaExuqilvnnkZXH6U2UQzWHA6Kj+xZY3GhDa4HWo=;
-	h=From:To:Cc:Subject:Date;
-	b=AtOxdF1rMf6IV6PPOX9e9467H+kuLtikVPrPuVWxHq2EE/riab9QlUWIxQPd4Jmax
-	 0VV1xHYLM0xFsSsOmJWDqo/zuk8+b+U7GmEAWQw4GtUVdag2IpDPjjrdbwWo9d3V84
-	 169KnJHH1KtkNyJ2m2QoDVo7A2IODr0Vk0jGbers=
-Received: from KernelDevBox.byted.org ([115.190.40.13])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id E3A3683E; Sun, 29 Jun 2025 23:56:58 +0800
-X-QQ-mid: xmsmtpt1751212618takwe3j1s
-Message-ID: <tencent_71CC9630D88A8792C2396A8844DCCD5C6D06@qq.com>
-X-QQ-XMAILINFO: Ne9q9v6AFM79dBrz8kR5U6Cz4mmV6e8rVzM5Nas1C5p3krQFksLLqJ7NCq3wzR
-	 SD478DuZr9QUTEpgNk5QYaW310myImXSTEG7iuf0iOpG7ZIRtFTNx2cqR6dTIHIQtiw9zbU0E6Ms
-	 Nhldmz6oEuKIvF0DsWyHwnPjc8vTEbr+VeU76laRaR2pbLf6HhQQafrQUocy+9W9NAqaszFaRqt0
-	 vw+m/fdesEXcX5uVAN62IQZK/8Hep3cxtLjqadJBW6fuCIxs76wYD4mLlvdBLqCvK74dWk6rzoRZ
-	 SN50i32+NYOFTZDZrzvbMUi5Tdlzovq24G0lCRw3K59mmcCt8fLm9hr/vxCPAgy7LBIjhsbyfs/u
-	 DFOg8mJEo+iqzmrAgJBXsrkZeVbVqOxVnWo/z+0gP7XYwM4lisekoBnttLI7Pda6wmxeYONvzdsQ
-	 zqWwmPuYKJUN1hRCcLKE+ah6J8LBsWzvjyQ3ZcSGGSvGb/0Od/7ZOREejtiHk2qRSDbKJ835EMdw
-	 tYhRvTJunw62a4bwhBv5bXlvcArXPyuj9GtvD2Fa8/BSlXWcvIPeZCES86Y5fwtWldQSw7rzUq5S
-	 EFhZMoLnMuZ4Hx791XpqejacNeotd6ncF1fvvDVRb3F+L77WGLKbZgF+y72P6roTJjY9UlUg+3gm
-	 3bYfABds0ySybQdv6Kq4ZcwcqBFO19foz92WAt/FV7y1GMaKCnFoNwBMBgkJj4znwDUZljtSpvqV
-	 lpTFJyZejeddaLIm2fkYYnWSLfjywwlqNIUeaO3HdjY6hXfbkHT2r7nCgaskuaaGMLCTj6l+uJnz
-	 HOEcXPZvvKNajdEga8SF9D1tHGaJoaDZDVuEdZHXqoUK01H6mdq6DAejKLTimTufF4dOSe0MCHxx
-	 U1yccSGBZDQ15g0iDALu5U6hyZP640OEuhYIEAZc9KDfwkwYvGOjNfsszGpFEafPwAoxrpqoUOWp
-	 3AxXsqCwWHG4mxxWmwFfeAJTeNsTOaoSnB6uBDRUMSTS58pHP8GFSGInPCnxLAMqM7GTMXuMNmOc
-	 klBCEnqtHsUkO7jRsN
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Zhang Shurong <zhang_shurong@foxmail.com>
-To: vkoul@kernel.org
-Cc: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robin.murphy@arm.com,
-	ulf.hansson@linaro.org,
-	kuninori.morimoto.gx@renesas.com,
-	u.kleine-koenig@baylibre.com,
-	dmaengine@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhang Shurong <zhang_shurong@foxmail.com>
-Subject: [PATCH] dmaengine: rcar-dmac: Fix PM usage counter imbalance
-Date: Sun, 29 Jun 2025 23:56:57 +0800
-X-OQ-MSGID: <20250629155657.2074439-1-zhang_shurong@foxmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751212664; c=relaxed/simple;
+	bh=oXWTCCX2xoYpHj5cJlHDVuUps+Oef7Z++7fLmHOGZEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Prz/9AXlpTq4JsVfzzl5beVItke18edw0PCl1DCD9DWHU6EkCsowNkSUbfYfiM39c3rNIRA2evycVya7JNfddXJdR/+IqdoFab6I6OKhhkAn79ZlZKfQv+osbiflldi1A7C2MK/f8MyTIysp3Gp9b+MNnOBTA5WmOs/Z313IJ30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H81BHnh4; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7b9e4743-bea3-497c-8972-4198d96284fa@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751212660;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SXGXG9jcUm1RkDFMCjRgOKff8nwHBp7Uh00l+YD/zgM=;
+	b=H81BHnh4nxcyftqTUQ7XBoGLxrWRXUWpIZuyvNQO0wsT8P7sI6NDM+uhkDAZfICPeEKE70
+	c2dte1ZPeAM+bezlHZeD77GAbJQ1DC13wzQ0CWGeMgIbkYLpYPRsCq9xDXxv/wp5sQKhX1
+	+Y5Zm5fWsHhBYpnFvgABCdaTZ+BL6Tc=
+Date: Sun, 29 Jun 2025 16:57:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [patch 3/3] ptp: Enable auxiliary clocks for
+ PTP_SYS_OFFSET_EXTENDED
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+ Christopher Hall <christopher.s.hall@intel.com>,
+ John Stultz <jstultz@google.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Miroslav Lichvar <mlichvar@redhat.com>,
+ Werner Abt <werner.abt@meinberg-usa.com>,
+ David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>,
+ Antoine Tenart <atenart@kernel.org>
+References: <20250626124327.667087805@linutronix.de>
+ <20250626131708.544227586@linutronix.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250626131708.544227586@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-pm_runtime_get_sync will increment pm usage counter
-even it failed. Forgetting to putting operation will
-result in reference leak here. We fix it by replacing
-it with pm_runtime_resume_and_get to keep usage counter
-balanced.
-
-Fixes: 87244fe5abdf ("dmaengine: rcar-dmac: Add Renesas R-Car Gen2 DMA Controller (DMAC) driver")
-Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
----
- drivers/dma/sh/rcar-dmac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 0c45ce8c74aa..c1ce3b0ae74d 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1068,7 +1068,7 @@ static int rcar_dmac_alloc_chan_resources(struct dma_chan *chan)
- 	if (ret < 0)
- 		return -ENOMEM;
- 
--	return pm_runtime_get_sync(chan->device->dev);
-+	return pm_runtime_resume_and_get(chan->device->dev);
- }
- 
- static void rcar_dmac_free_chan_resources(struct dma_chan *chan)
--- 
-2.39.5
-
+On 26/06/2025 14:27, Thomas Gleixner wrote:
+> Allow ioctl(PTP_SYS_OFFSET_EXTENDED*) to select CLOCK_AUX clock ids for
+> generating the pre and post hardware readout timestamps.
+> 
+> Aside of adding these clocks to the clock ID validation, this also requires
+> to check the timestamp to be valid, i.e. the seconds value being greater
+> than or equal zero. This is necessary because AUX clocks can be
+> asynchronously enabled or disabled, so there is no way to validate the
+> availability upfront.
+> 
+> The same could have been achieved by handing the return value of
+> ktime_get_aux_ts64() all the way down to the IOCTL call site, but that'd
+> require to modify all existing ptp::gettimex64() callbacks and their inner
+> call chains. The timestamp check achieves the same with less churn and less
+> complicated code all over the place.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   drivers/ptp/ptp_chardev.c |   21 ++++++++++++++++-----
+>   1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> --- a/drivers/ptp/ptp_chardev.c
+> +++ b/drivers/ptp/ptp_chardev.c
+> @@ -325,13 +325,19 @@ static long ptp_sys_offset_extended(stru
+>   	if (IS_ERR(extoff))
+>   		return PTR_ERR(extoff);
+>   
+> -	if (extoff->n_samples > PTP_MAX_SAMPLES ||
+> -	    extoff->rsv[0] || extoff->rsv[1] ||
+> -	    (extoff->clockid != CLOCK_REALTIME &&
+> -	     extoff->clockid != CLOCK_MONOTONIC &&
+> -	     extoff->clockid != CLOCK_MONOTONIC_RAW))
+> +	if (extoff->n_samples > PTP_MAX_SAMPLES || extoff->rsv[0] || extoff->rsv[1])
+>   		return -EINVAL;
+>   
+> +	switch (extoff->clockid) {
+> +	case CLOCK_REALTIME:
+> +	case CLOCK_MONOTONIC:
+> +	case CLOCK_MONOTONIC_RAW:
+> +	case CLOCK_AUX ... CLOCK_AUX_LAST:
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+>   	sts.clockid = extoff->clockid;
+>   	for (unsigned int i = 0; i < extoff->n_samples; i++) {
+>   		struct timespec64 ts;
+> @@ -340,6 +346,11 @@ static long ptp_sys_offset_extended(stru
+>   		err = ptp->info->gettimex64(ptp->info, &ts, &sts);
+>   		if (err)
+>   			return err;
+> +
+> +		/* Filter out disabled or unavailable clocks */
+> +		if (sts.pre_ts.tv_sec < 0 || sts.post_ts.tv_sec < 0)
+> +			return -EINVAL;
+> +
+>   		extoff->ts[i][0].sec = sts.pre_ts.tv_sec;
+>   		extoff->ts[i][0].nsec = sts.pre_ts.tv_nsec;
+>   		extoff->ts[i][1].sec = ts.tv_sec;
+> 
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
