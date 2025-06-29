@@ -1,173 +1,131 @@
-Return-Path: <linux-kernel+bounces-708394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037C2AECFC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 21:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B97AECFCA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 21:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BD73B41F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664493AD17C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B23123A993;
-	Sun, 29 Jun 2025 19:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45425239082;
+	Sun, 29 Jun 2025 19:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OJ0eoOuq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNOhTrRs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7307235046
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 19:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F85BE4A;
+	Sun, 29 Jun 2025 19:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751223701; cv=none; b=H2klkDADi7tqJ90XDhi2ZXwsx81R1jkQswi5tiWAg5H2D5kvYKWERm4a0J8Ki/Fucn1QNdjIM6A9iXwkxQyW7k7cUnhPfQASKHgJXaC1Gvy1hf7lMktsL1XS18uRNJRZO6QqUCTwMch+UJLEgmJPUcUCqGVNDEyxzLNFhdOa2OY=
+	t=1751223741; cv=none; b=mn8rXH9n14V0WIA9EN6xAFSjdXYKE/7e/y59+zg/BJjByITspQtEL4SbJa7tJqTq0QCqtx+CapFYsEqOPNum8K4HKYPVip0IdN74YlY25C5cRXTk+5xZpSLNVqIUmrTWP3o3rdVwvApeZzzfmQXM7FWVAC20qJbjcrlkdc0IZdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751223701; c=relaxed/simple;
-	bh=EFmQyAzbvTywXpktHkX/YDh7Ewrta6YRiwIu8/ulzq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u0LRfzUbyAW4PyjDdn/kcztx3AzKOKK0MZjpCYv7VUJQp2+O9+Vdx4iDv8oSKQPr92knexVgGLB6KEuMO2d7B59y1Xk1V25NjxR6NgRYG8U0uoDnEDTcFl+6RMwvJw3+TM3lBrykhb2Y2UTsg4Ap+W0UPf3EJq4uYM/KdeE0WlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OJ0eoOuq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751223698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sOZTk1W2BDyM6yj6NOHlOxoB6b1iPi73iwPCfqjIHAk=;
-	b=OJ0eoOuqZqlA5Uk+e3EYScIIAJn1fvjROts9Gil26RZEtvS6+qw8zkH6Wi8O+XW3Iis1gB
-	4SSYmyoq/FH4GkFFjFUMhKnZd06HnfU+u68LTaqBPLo6U2mMcu2KRsVv27DFRnusS9CQhz
-	QTkezcpCYzpH2ySi31RvcpiSEHB4ymc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-314-R2afe6VrNlOqAvE_C3S_iw-1; Sun,
- 29 Jun 2025 15:01:35 -0400
-X-MC-Unique: R2afe6VrNlOqAvE_C3S_iw-1
-X-Mimecast-MFC-AGG-ID: R2afe6VrNlOqAvE_C3S_iw_1751223690
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 54A611800368;
-	Sun, 29 Jun 2025 19:01:29 +0000 (UTC)
-Received: from [10.45.224.33] (unknown [10.45.224.33])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D828E19560A7;
-	Sun, 29 Jun 2025 19:01:22 +0000 (UTC)
-Message-ID: <dc3292a8-8f89-496c-8454-148af818da6f@redhat.com>
-Date: Sun, 29 Jun 2025 21:01:21 +0200
+	s=arc-20240116; t=1751223741; c=relaxed/simple;
+	bh=BKcKihhtowYCzyyiIXSJEIIzyxAqJMQrIKiBu6x3eXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TShCy8kpJyveXclnA2kXwWoszqogvX8nPj1aJr6YuN1PRhiwY5njmAyYy5tQbxBDnw5FZ3b4J3r/LkdU8lebUGb+cmoKGk/oN+bUWxh8fxUNIZCkqloxaWQb0emoIglDF2VoD0PfrwuGT/Zz9Id3e+ErYkT428tZ9aOvcZPWO88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNOhTrRs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5B3C4CEEB;
+	Sun, 29 Jun 2025 19:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751223741;
+	bh=BKcKihhtowYCzyyiIXSJEIIzyxAqJMQrIKiBu6x3eXE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fNOhTrRszSYEfCM0gNBzEz+pQ+d9+vQcr/fB16JtjXSEi2gkZGfivSpw9UcVAcj8B
+	 1UwL0h3Ig7KBUdiT7BnVMId+4VstNLIBeKouIPcx2f7Jpoy9o4GH6LbL9WvrqBQueO
+	 v3SXr/LIeZQQX7oGm8AggSqyQxzhMfz9z9EVugwouj06PTYdFUZs74UKkvRSstyqOF
+	 Z9Y57r05LnVJ3gaA7l2CI4SkDK4fY9bTrh7B0HGXAFrc1z6xZyEeo8Z53ArwN410Yf
+	 LxLpRzOoiHvrPcWHzfC2Ls5HvqdtpuunmsuElP6aWLTaK7p4Mgrb7adVX97hnVYlzv
+	 +87R1YjFXD0Tg==
+Date: Sun, 29 Jun 2025 14:02:19 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, brgl@bgdev.pl, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lukas@wunner.de,
+	Jim Quinlan <james.quinlan@broadcom.com>
+Subject: Re: [PATCH v3] PCI/pwrctrl: Move pci_pwrctrl_create_device()
+ definition to drivers/pci/pwrctrl/
+Message-ID: <20250629190219.GA1717534@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 13/14] dpll: zl3073x: Add support to get/set
- frequency on input pins
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Shannon Nelson <shannon.nelson@amd.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250616201404.1412341-1-ivecera@redhat.com>
- <20250616201404.1412341-14-ivecera@redhat.com>
- <72bab3b2-bdd6-43f6-9243-55009f9c1071@redhat.com>
- <ba027737-39df-4541-8fea-1c4cf489b43b@linux.dev>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <ba027737-39df-4541-8fea-1c4cf489b43b@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qy2nfwiu2g7pbzbk37wseapvsen7mx4fgqdkdwjbclsj5dltu5@7o2xtj3qhedm>
 
-
-
-On 19. 06. 25 2:15 odp., Vadim Fedorenko wrote:
-> On 19/06/2025 12:15, Paolo Abeni wrote:
->> On 6/16/25 10:14 PM, Ivan Vecera wrote:
->>> +/**
->>> + * zl3073x_dpll_input_ref_frequency_get - get input reference frequency
->>> + * @zldpll: pointer to zl3073x_dpll
->>> + * @ref_id: reference id
->>> + * @frequency: pointer to variable to store frequency
->>> + *
->>> + * Reads frequency of given input reference.
->>> + *
->>> + * Return: 0 on success, <0 on error
->>> + */
->>> +static int
->>> +zl3073x_dpll_input_ref_frequency_get(struct zl3073x_dpll *zldpll, u8 
->>> ref_id,
->>> +                     u32 *frequency)
->>> +{
->>> +    struct zl3073x_dev *zldev = zldpll->dev;
->>> +    u16 base, mult, num, denom;
->>> +    int rc;
->>> +
->>> +    guard(mutex)(&zldev->multiop_lock);
->>> +
->>> +    /* Read reference configuration */
->>> +    rc = zl3073x_mb_op(zldev, ZL_REG_REF_MB_SEM, ZL_REF_MB_SEM_RD,
->>> +               ZL_REG_REF_MB_MASK, BIT(ref_id));
->>> +    if (rc)
->>> +        return rc;
->>> +
->>> +    /* Read registers to compute resulting frequency */
->>> +    rc = zl3073x_read_u16(zldev, ZL_REG_REF_FREQ_BASE, &base);
->>> +    if (rc)
->>> +        return rc;
->>> +    rc = zl3073x_read_u16(zldev, ZL_REG_REF_FREQ_MULT, &mult);
->>> +    if (rc)
->>> +        return rc;
->>> +    rc = zl3073x_read_u16(zldev, ZL_REG_REF_RATIO_M, &num);
->>> +    if (rc)
->>> +        return rc;
->>> +    rc = zl3073x_read_u16(zldev, ZL_REG_REF_RATIO_N, &denom);
->>> +    if (rc)
->>> +        return rc;
->>> +
->>> +    /* Sanity check that HW has not returned zero denominator */
->>> +    if (!denom) {
->>> +        dev_err(zldev->dev,
->>> +            "Zero divisor for ref %u frequency got from device\n",
->>> +            ref_id);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    /* Compute the frequency */
->>> +    *frequency = base * mult * num / denom;
->>
->> As base, mult, num and denom are u16, the above looks like integer
->> overflow prone.
->>
->> I think you should explicitly cast to u64, and possibly use a u64 
->> frequency.
+On Sat, Jun 28, 2025 at 04:57:26AM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Jun 27, 2025 at 05:45:02PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Jun 16, 2025 at 11:02:09AM +0530, Manivannan Sadhasivam wrote:
+> > > pci_pwrctrl_create_device() is a PWRCTRL framework API. So it should be
+> > > built only when CONFIG_PWRCTRL is enabled. Currently, it is built
+> > > independently of CONFIG_PWRCTRL. This creates enumeration failure on
+> > > platforms like brcmstb using out-of-tree devicetree that describes the
+> > > power supplies for endpoints in the PCIe child node, but doesn't use
+> > > PWRCTRL framework to manage the supplies. The controller driver itself
+> > > manages the supplies.
+> > > 
+> > > But in any case, the API should be built only when CONFIG_PWRCTRL is
+> > > enabled. So move its definition to drivers/pci/pwrctrl/core.c and provide
+> > > a stub in drivers/pci/pci.h when CONFIG_PWRCTRL is not enabled. This also
+> > > fixes the enumeration issues on the affected platforms.
+> > 
+> > Finally circling back to this since I think brcmstb is broken since
+> > v6.15 and we should fix it for v6.16 final.
 > 
-> I might be a good idea to use mul_u64_u32_div together with mul_u32_u32?
-> These macroses will take care of overflow on 32bit platforms as well.
-
-Will fix
-
-Thanks for tip.
-
-Ivan
-
+> Yes! Sorry for the delay. The fact that I switched the job and had
+> to attend OSS NA prevented me from reworking this patch.
 > 
->>
->> /P
->>
+> > IIUC, v3 is the current patch and needs at least a fix for the build
+> > issue [1], and I guess the options are:
+> > 
+> >   1) Make CONFIG_PCI_PWRCTRL bool.  On my x86-64 system
+> >      pci-pwrctrl-core.o is 8880 bytes, which seems like kind of a lot
+> >      when only a few systems need it.
+> > 
+> >   2) Leave pci_pwrctrl_create_device() in probe.c.  It gets optimized
+> >      away if CONFIG_OF=n because of_pci_find_child_device() returns
+> >      NULL, but still a little ugly for readers.
+> > 
+> >   3) Put pci_pwrctrl_create_device() in a separate
+> >      drivers/pci/pwrctrl/ file that is always compiled even if PWRCTRL
+> >      itself is a module.  Ugly because then we sort of have two "core"
+> >      files (core.c and whatever new file is always compiled).
 > 
+> I guess, we could go with option 3 if you prefer. We could rename
+> the existing pwrctrl/core.c to pwrctrl/pwrctrl.c and move the
+> definition of pci_pwrctrl_create_device() to new pwrctrl/core.c. The
+> new file will depend on HAVE_PWRCTRL, which is bool.
 
+I think I forgot to mention that option 2 still requires a patch to
+wrap pci_pwrctrl_create_device() with some sort of #ifdef for
+CONFIG_PCI_PWRCTRL, right?  Seems like we need that regardless of the
+brcmstb situation so that we don't create pwrctrl devices when
+CONFIG_OF=y and CONFIG_PCI_PWRCTRL=n.
+
+That seems like a straightforward solution and the #ifdef would
+address my readability concern even though the code stays in probe.c.
+
+> > And I guess all of these options still depend on CONFIG_PCI_PWRCTRL
+> > not being enabled in a kernel that has brcmstb enabled?  If so, that
+> > seems ugly to me.  We should be able to enable both PWRCTRL and
+> > brcmstb at the same time, e.g., for a single kernel image that works
+> > both on a brcmstb system and a system that needs pwrctrl.
+> 
+> Right, that would be the end goal. As I explained in the reply to
+> the bug report [1], this patch will serve as an interim workaround.
+> Once my pwrctrl rework (which I didn't submit yet) is merged, I will
+> move this driver to use the pwrctrl framework.
+
+OK, so for now, Jim would still need to ensure CONFIG_PCI_PWRCTRL=n
+when brcmstb is enabled, but we do have a plan to adapt brcmstb work
+with pwrctrl.
+
+> [1]
+> https://lore.kernel.org/all/vazxuov2hdk5sezrk7a5qfuclv2s3wo5sxhfwuo3o4uedsdlqv@po55ny24ctne/
 
