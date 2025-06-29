@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-708104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494C9AECC06
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 11:47:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F42AECC11
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 12:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750CC3A775C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 09:47:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6AB17576F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 10:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9AC20D51C;
-	Sun, 29 Jun 2025 09:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E3521883F;
+	Sun, 29 Jun 2025 10:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v7IR09Z+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxepMrrv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ABA1A7AE3;
-	Sun, 29 Jun 2025 09:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B509A93D
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 10:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751190460; cv=none; b=OtP4L5ShD6zcyMZiIvQl4Qmr63wEAoH1BhoptihDuSkIj9Rf/oPt0jYOPjD4u6JPjFi8mYfGkhd3fsBlTYoyk02Al8cnc+KgPhpQKiQ49Qeqrf58MPCegMr/Jp35X7Pbk0Yn6b92milqPOQuUmpKNgwXTQL5WyRjI5I5/+Y3Nig=
+	t=1751191496; cv=none; b=HJckoxQTsH2867OhrF8KUvRCCFng9mkMT8crCDa83zEWppGz6b7CeS0WX+NEjDmTQMF7vnk6C1DgO9nz8NIjDzqVVFBuZ30PXDTaw9OQoHpnpkcYqNXZZe8UYe5ImLUraiC572bguSgFCW5Q6BV11RSILJTGO+smhjFKRjWt+g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751190460; c=relaxed/simple;
-	bh=3PsiXreKOO08zP3QkoiRqU3jk58Y08869vFWrOIe+v4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZMKOcSEtmELrWDDRJz+pvsUyLet4+aHT2XUAgRdgj7tT7WR7Jq6T7hClMF6NE4tYg0kwBtgKrlvuIM9Xn0EpzdQRew4emu2J/gadphF4WqYksWv4WTfT9HGYnZwqkSVM4Mo/1n71kzvhOdb9VdnoSi3ViwKlG1NwCQmmOaJV1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v7IR09Z+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78A2C4CEEB;
-	Sun, 29 Jun 2025 09:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751190455;
-	bh=3PsiXreKOO08zP3QkoiRqU3jk58Y08869vFWrOIe+v4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v7IR09Z+zK/FXdLr8CtBrByTZs73/BlZF6YxCy3rxHuvw8wXvUYcA3H45zgMbb8x9
-	 h/hpFeIWMUD7WDZd+1B03mSVID1mqZBa+0BMLgrgoqi6+FauY98T4Y/dfKM70aDB8R
-	 Q+xh9qeHV8x1DQd0BkqxHuDObaSI7a2hDQO0YxW8=
-Date: Sun, 29 Jun 2025 11:47:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, pure.logic@nexus-software.ie,
-	johan@kernel.org, elder@kernel.org, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] greybus: loopback: remove gb_loopback_async_wait_all()
-Message-ID: <2025062945-prologue-plutonium-870f@gregkh>
-References: <20250628063121.362685-1-pranav.tyagi03@gmail.com>
+	s=arc-20240116; t=1751191496; c=relaxed/simple;
+	bh=U6i18Vnf5LlcNLppMq8ML+MT2YpNCZVqfiXlyUVrYRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xhlj0H55PzNlLH+xc433RiciFSvj/PJD0jYLN7jRwbbWPvnO8HxNVGuBdrKZEKsw6vhRJs1ywVmH8vfDNH/Bhm2Cr1j0KFOGVjTopPXEcdTMK/wWSqDp27aExUxm5IaLhor/nFSmTXu68cKNAA6lUFeP5FSH6YOhdF0V2JxQaCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxepMrrv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 475E8C4CEEB;
+	Sun, 29 Jun 2025 10:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751191496;
+	bh=U6i18Vnf5LlcNLppMq8ML+MT2YpNCZVqfiXlyUVrYRw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lxepMrrvkWkBMQYm8PfeqeD0VeXSRA9jUtvbNmJ68DGzuSkqKyw67DRqNc6KzpTcU
+	 QHGBeBfkdVGaA0WHE4A9Rs9+8CoGp1SBHdnANAdKyXMNhLOIyZNCxslGzAHuQIvaeZ
+	 ZicSOojvruHyEOtXvbnqvGLiIbuj6n21DvHwX8s0u1gvymhNE9aY1Ze7cyvqvlOAJM
+	 eLFQpen00lPGd/qeOa26V8N5oMn4v3Uo0YAt2ypVG6iTEIfXZMAYCfAUJ78ARoO39U
+	 VWgjgDmykjU6xjPAeAjLv1YCCPXns7VLfYblpji9Dn/M3EECg9M7gB0Ox2EWDbfo+D
+	 x7Y0Ya7CKXe8g==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: rt5739: Enable REGCACHE_MAPLE
+Date: Sun, 29 Jun 2025 17:48:03 +0800
+Message-ID: <20250629094803.776-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250628063121.362685-1-pranav.tyagi03@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 28, 2025 at 12:01:21PM +0530, Pranav Tyagi wrote:
-> Remove redundant gb_loopback_async_wait_all() as connection is disabled
-> at the beginning and no further incoming/outgoing requests are possible.
-> 
-> Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> ---
->  drivers/staging/greybus/loopback.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/loopback.c
-> index 1f19323b0e1a..9d0d4308ad25 100644
-> --- a/drivers/staging/greybus/loopback.c
-> +++ b/drivers/staging/greybus/loopback.c
-> @@ -1110,13 +1110,6 @@ static void gb_loopback_disconnect(struct gb_bundle *bundle)
->  	gb_connection_latency_tag_disable(gb->connection);
->  	debugfs_remove(gb->file);
->  
-> -	/*
-> -	 * FIXME: gb_loopback_async_wait_all() is redundant now, as connection
-> -	 * is disabled at the beginning and so we can't have any more
-> -	 * incoming/outgoing requests.
-> -	 */
-> -	gb_loopback_async_wait_all(gb);
+Enable regmap cache to reduce i2c transactions and corresponding
+interrupts if regulator is accessed frequently.
 
-How was this tested?  It might be redundant but I don't think you can
-delete this just yet, otherwise we would have done so a long time ago.
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+---
+ drivers/regulator/rt5739.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-And your changelog just says the same thing as this comment, shouldn't
-you write something different?
+diff --git a/drivers/regulator/rt5739.c b/drivers/regulator/rt5739.c
+index 91412c905ce6..5fcddd7c2da7 100644
+--- a/drivers/regulator/rt5739.c
++++ b/drivers/regulator/rt5739.c
+@@ -24,6 +24,8 @@
+ #define RT5739_REG_NSEL1	0x01
+ #define RT5739_REG_CNTL1	0x02
+ #define RT5739_REG_ID1		0x03
++#define RT5739_REG_ID2		0x04
++#define RT5739_REG_MON		0x05
+ #define RT5739_REG_CNTL2	0x06
+ #define RT5739_REG_CNTL4	0x08
+ 
+@@ -236,11 +238,18 @@ static void rt5739_init_regulator_desc(struct regulator_desc *desc,
+ 	}
+ }
+ 
++static bool rt5739_volatile_reg(struct device *dev, unsigned int reg)
++{
++	return reg == RT5739_REG_MON;
++}
++
+ static const struct regmap_config rt5739_regmap_config = {
+ 	.name = "rt5739",
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.max_register = RT5739_REG_CNTL4,
++	.cache_type = REGCACHE_MAPLE,
++	.volatile_reg = rt5739_volatile_reg,
+ };
+ 
+ static int rt5739_probe(struct i2c_client *i2c)
+-- 
+2.49.0
 
-thanks,
-
-greg k-h
 
