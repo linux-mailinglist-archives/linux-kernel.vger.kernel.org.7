@@ -1,129 +1,136 @@
-Return-Path: <linux-kernel+bounces-708437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A12AED050
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8AF4AED0F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 22:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6F41723AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D6F18838DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE023ABBD;
-	Sun, 29 Jun 2025 20:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D926561D;
+	Sun, 29 Jun 2025 20:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AS5BE5OQ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Pjr5TwQe"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAFD2264BB;
-	Sun, 29 Jun 2025 20:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94EE2417D4
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 20:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751228126; cv=none; b=dbgpl0TaPukGigV2gUuF0DSz18TlcLr50S3/EMhAeXqZcONwBojJVpUKvOSqWBXRPvTDvvt7smK2kVrCWpKm6CRe0+FDUjs+mY4TXwO7M28pdCecQbru2OB89uVsGKwC/HuNE8EZ74LqwlifniCCXj9iE0Y8lZfe7CIZnDPBlHQ=
+	t=1751228238; cv=none; b=ANSpbQxVK/NEi03kQY95/B7WeTOeHVfAjjYq59i2+Ir6mMuzl0IhRxSKsf0AjwLeiF6acaejGbFLx+MqEZBXNqKPddNgey2zvsaXywpvw5004P9yzL2+tygrWV69Emc+PFMmKZ2/EJ3cfjQ3g0N9ZT+piCB5imbPUxvhSc/tHS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751228126; c=relaxed/simple;
-	bh=Hlf4CSq29Kol5yJgJRNTkjoHiyztG/31JL7w6N/iNTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DTwbFEeEjnI4sGoOPCbz9P0c8bYH2RglsT+dNZoZYYuGE1ppHFjiRPSaJhXE2DKprIK4hdtvt1Z8jVPFYLF7LBdFCI0CtF35QgGipYh2ZkVPCujM5ptWi7gvi1Zyf4L5sOWbaY0gZh+WnxU/Nx9nZA5JF9ZL9lN54Wuh6Ca1Nlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AS5BE5OQ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Wh53MEYY2wlUsLMNDdOnujXeqCUYamQqc1+DvHLI6tI=; b=AS5BE5OQ6M+dhBy/f6XmSpl1B0
-	lib8VTYE0IEvkNKBXALS9RRxmJxybmz8WcAn6c5LZGtA56r9MkBCLeihp86y1sEyQquSgI0YaGh3s
-	kyvXYjoQaZjUu+kDFFrw9JnC5TQB2NAnxmOS1N6GazOoJQLBVL/A9e5V2pRK9KEter3M6WYgIX11Y
-	zdsaRqT9gKsDDtI86UH8HzraZx/D9inSQcHcaE6tdS/uOtZixp/ltXJF1LqbL702IF+C6+fef6xSb
-	YtLosBCCy7QORsn9UYhe5AgLicUXaJ0oVtEwWPU2fQgQC9qpp43TtCrmKtFWvKvqbx9FhW8Rkbvq5
-	sikhvGlA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uVyQr-00000006ej5-2UuJ;
-	Sun, 29 Jun 2025 20:15:22 +0000
-Message-ID: <85eadc3b-391a-4fd1-a4b7-2e99de1ee6da@infradead.org>
-Date: Sun, 29 Jun 2025 13:15:19 -0700
+	s=arc-20240116; t=1751228238; c=relaxed/simple;
+	bh=4M1BiJ4fQUn4575Pv2IZLCCJAhcWlofdy723u9ZVQrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XiKVaq/i6+N1EBtje9qorC3cEvA4gmTpAgb1d2IfHIlgd7rP9Ds6wL9KV866YXXtH8dRllh3VKgnD9iEYzFyFUV/Va/p0IBgBwZScLC5jzDusmwIIO4/JtH6yo7+UbGdZUlEkLxmKbUn907xmSk8TWOB/6u8BwCzvz4gYWV+fvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Pjr5TwQe; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1751228233;
+	bh=4M1BiJ4fQUn4575Pv2IZLCCJAhcWlofdy723u9ZVQrg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pjr5TwQePK57VngX9Hk/cb7c7MblfBraMssV5FebMswdtLmDGHSO3jizyu4zks2ny
+	 vJFlVoDljafZK9JYmAWfUNrFYZQswhQzD1Y13TP+AXu4N1Ftzu359f6O8lizesWsu3
+	 8ylCrY4IOORKppYF2H9x7V7Kb0UlTJzRlhuLY2dw=
+Date: Sun, 29 Jun 2025 22:17:12 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH v2 1/2] tools/nolibc: make the "headers" target
+ install all supported archs
+Message-ID: <38941d56-dc2c-465c-99b3-2e986ea58423@t-8ch.de>
+References: <20250629170732.16817-1-w@1wt.eu>
+ <20250629170732.16817-2-w@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/66] kconfig: qconf: do not show checkbox icon for
- choice
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250624150645.1107002-1-masahiroy@kernel.org>
- <20250624150645.1107002-3-masahiroy@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250624150645.1107002-3-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250629170732.16817-2-w@1wt.eu>
 
-
-
-On 6/24/25 8:04 AM, Masahiro Yamada wrote:
-> When you select "Show All Options" or "Show Prompt Options", choice
-> entries display a check box icon, but this has no point because
-> choice is always y since commit
-
-                     since commit _____________________.
-
+On 2025-06-29 19:07:31+0200, Willy Tarreau wrote:
+> The efforts we go through by installing a single arch are counter
+> productive when the base directory already supports them all, and
+> the arch-specific files are really small. Let's make the "headers"
+> target simply install headers for all supported archs and stop
+> trying to build a hybrid "arch.h" file on the fly, to instead keep
+> the generic one.
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
 > ---
+>  tools/include/nolibc/Makefile | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
 > 
->  scripts/kconfig/qconf.cc | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+> diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
+> index c69d7bf60c71e..d5be3d213c885 100644
+> --- a/tools/include/nolibc/Makefile
+> +++ b/tools/include/nolibc/Makefile
+> @@ -24,6 +24,8 @@ Q=@
+>  endif
+>  
+>  arch_file := arch-$(ARCH).h
+
+arch_file is unused now.
+
+> +nolibc_supported_archs := arm64 arm loongarch m68k mips powerpc riscv s390 sparc x86
+
+Nitpick:
+Instead of having another variable, can we add the arch-foo.h files to
+all_files instead? In patch 2 they can be extracted from there with $(filter)?
+
+> +
+>  all_files := \
+>  		compiler.h \
+>  		crt.h \
+> @@ -81,7 +83,7 @@ help:
+>  	@echo "Supported targets under nolibc:"
+>  	@echo "  all                 call \"headers\""
+>  	@echo "  clean               clean the sysroot"
+> -	@echo "  headers             prepare a sysroot in \$${OUTPUT}sysroot"
+> +	@echo "  headers             prepare a multi-arch sysroot in \$${OUTPUT}sysroot"
+
+If multi-arch is the only remaining mode, do we need to mention it?
+
+>  	@echo "  headers_standalone  like \"headers\", and also install kernel headers"
+>  	@echo "  help                this help"
+>  	@echo ""
+> @@ -92,18 +94,12 @@ help:
+>  	@echo "  OUTPUT  = $(OUTPUT)"
+>  	@echo ""
+>  
+> +# installs headers for all archs at once.
+>  headers:
+> -	$(Q)mkdir -p $(OUTPUT)sysroot
+> -	$(Q)mkdir -p $(OUTPUT)sysroot/include
+> -	$(Q)cp --parents $(all_files) $(OUTPUT)sysroot/include/
+> -	$(Q)if [ "$(ARCH)" = "i386" -o "$(ARCH)" = "x86_64" ]; then \
+> -		cat arch-x86.h;                 \
+> -	elif [ -e "$(arch_file)" ]; then        \
+> -		cat $(arch_file);               \
+> -	else                                    \
+> -		echo "Fatal: architecture $(ARCH) not yet supported by nolibc." >&2; \
+> -		exit 1;                         \
+> -	fi > $(OUTPUT)sysroot/include/arch.h
+> +	$(Q)mkdir -p "$(OUTPUT)sysroot"
+> +	$(Q)mkdir -p "$(OUTPUT)sysroot/include"
+> +	$(Q)cp --parents $(all_files) arch.h "$(OUTPUT)sysroot/include/"
+
+Can we add arch.h to all_files, to avoid the special case here?
+
+> +	$(Q)cp $(addsuffix .h,$(addprefix arch-,$(nolibc_supported_archs))) "$(OUTPUT)sysroot/include/"
+>  
+>  headers_standalone: headers
+>  	$(Q)$(MAKE) -C $(srctree) headers
+> -- 
+> 2.17.5
 > 
-> diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-> index eaa465b0ccf9..546738a5c3b1 100644
-> --- a/scripts/kconfig/qconf.cc
-> +++ b/scripts/kconfig/qconf.cc
-> @@ -92,7 +92,6 @@ void ConfigItem::updateMenu(void)
->  {
->  	ConfigList* list;
->  	struct symbol* sym;
-> -	struct property *prop;
->  	QString prompt;
->  	int type;
->  	tristate expr;
-> @@ -105,11 +104,10 @@ void ConfigItem::updateMenu(void)
->  	}
->  
->  	sym = menu->sym;
-> -	prop = menu->prompt;
->  	prompt = menu_get_prompt(menu);
->  
-> -	if (prop) switch (prop->type) {
-> -	case P_MENU:
-> +	switch (menu->type) {
-> +	case M_MENU:
->  		if (list->mode == singleMode) {
->  			/* a menuconfig entry is displayed differently
->  			 * depending whether it's at the view root or a child.
-> @@ -123,10 +121,13 @@ void ConfigItem::updateMenu(void)
->  			setIcon(promptColIdx, QIcon());
->  		}
->  		goto set_prompt;
-> -	case P_COMMENT:
-> +	case M_COMMENT:
->  		setIcon(promptColIdx, QIcon());
->  		prompt = "*** " + prompt + " ***";
->  		goto set_prompt;
-> +	case M_CHOICE:
-> +		setIcon(promptColIdx, QIcon());
-> +		goto set_prompt;
->  	default:
->  		;
->  	}
-
--- 
-~Randy
-
 
