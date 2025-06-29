@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-708258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DFFAECE42
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:10:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 781FCAECE4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719151717A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B451892724
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371F2230BEB;
-	Sun, 29 Jun 2025 15:10:13 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5119E27456
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 15:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602E0232386;
+	Sun, 29 Jun 2025 15:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nITR9e32"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7348E2264AA;
+	Sun, 29 Jun 2025 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751209812; cv=none; b=Ixv1TYppFOkxqj3KoiWL2iLlf0kLvbJVC2Pg+xbKAKGWav9QPWhr9k27brQq7tpfddyXb2o9dYJTrvmalUcOuNPjArHPgNGgCvZg+SY/cZtoRGdGEKcMdmk+jEE5cdewH0D1iRAdqpwKO6U8rbG6AP2L3zRLYmnM+cGirqVmPyc=
+	t=1751209981; cv=none; b=FBKgTiDJnmtYlaDXAF51x55MJZEX3gTbH/LUUkGCxu10wF5ycHyatnnMvppOB24s+SwLLFF+svQXONVmklDvc1m8iN4E7nvBKkP6DZz3D9P0xtExNDhsvBPLPt1Il+UB2+sUYqalItZW3nclW8RfmrBnL74jI0Ukm6joXfFyHEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751209812; c=relaxed/simple;
-	bh=PybjCsqHb/nbbr6lHUL1oMOz7toY/9mLWqYI5xZLRhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UniRCu8v4XNFnI+V0DE24LoO0nebYVlxTthtgQsKu33aZWqva/2EcTbBO+pp5z4BlIy2LywYZS0OscFY4P4VWn/W9c73M7nacEy+dA/RlD29koJCH7k5/7V1z2gsdOnEOk1vvNK/KiXzUCpJMgxc+nlV814hcotmSIbUl4PUgMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 55TFA6ll029064;
-	Sun, 29 Jun 2025 17:10:06 +0200
-Date: Sun, 29 Jun 2025 17:10:06 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] tools/nolibc: move FD_* definitions to sys/select.h
-Message-ID: <20250629151006.GA16826@1wt.eu>
-References: <20250620100251.9877-4-w@1wt.eu>
- <25eb3144-d19e-43d2-af4f-b0251d28808c@t-8ch.de>
- <20250622071958.GA3384@1wt.eu>
- <07f5fdb4-2c5c-4723-b12a-abdb0c9f33b7@t-8ch.de>
- <20250623025618.GA29015@1wt.eu>
- <20250629084628.GA7992@1wt.eu>
- <d8d9ab91-0617-468e-a82d-9f271c5e6a7f@t-8ch.de>
- <20250629092552.GA30947@1wt.eu>
- <029f24fa-3512-4736-94a0-e158c158cc8e@t-8ch.de>
- <20250629094048.GA26861@1wt.eu>
+	s=arc-20240116; t=1751209981; c=relaxed/simple;
+	bh=DlXZJiL6zusV16+m1Mr1rdZ84u5PnvRI+6UWRyMW240=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ScnSl/rDenbLun1eUUJjn9dARuOh1XdPyPGip8MN0WK4jj/yDEbm2FvfYxIRvMBdmeun1hs/Do4MCLbeqOACJCQDFb7z0t5/86htu/c9npi0VCnkRzB+Qpvz0Eiw8s7GHMYivia7uI0kM0gWnqfEl/02/DTXupLnwq07xMgExf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nITR9e32; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23649faf69fso8843295ad.0;
+        Sun, 29 Jun 2025 08:13:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751209979; x=1751814779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zkw9DYUzhRXrslTyMDKuQWc5dd1qenhTI5GZLPFDxQA=;
+        b=nITR9e32beIjNcbHuI6ALpiNmDtPL+MI/q+d+jtAkk+tuPIlXYs7fqe0x/+bwqm492
+         Xlyak0pbFafUi3OpqgFH/OP4dBMLqQHgbR9TllHNL271XEhFexArx/WOSQbGUvJWiakh
+         U3xFSa3OiFeOH8fvafp8kdmtwE28kCyWnVo3cjof2bBhpzevVuozbOAQvKj6js8y6L4U
+         AMUcGDYKCJy5zJBi78RH+4hs7EUbMc3YGzCJ8r9WzsecTiPq1W3E73c3068CtQ4VUDoz
+         JzXPf9i9hkl7e3J7Z0F7dKKWg4+wGN/Jd7gy6U53j01ginKDqH3dm5PF+JbDKotAx43b
+         0HRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751209979; x=1751814779;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zkw9DYUzhRXrslTyMDKuQWc5dd1qenhTI5GZLPFDxQA=;
+        b=L6SDaeumMwv+L8VlLrpNeU6dY/2IzqCxvtz9ZNKCR+SeT2kJtD9X1Ku9bRhzOdn2tY
+         U3Od2D24Bc8NPophUskpEjnQJ8qVX/4kY3EA0+J8vAOg2OQgV22LxJBELZBrLZktK3bL
+         ELyYchwO4L94PxuyUlRKR6cy0Y1lmtvO74dvP+Ra5hGWJZSwTB1d8hF2senOoyQrQtLB
+         mNNk7dCAOlfFjLWMEiWANeD9D0HXUVbGhX08eQuzgiRpaL8XaVZeTftghimtLFrDTgOJ
+         hTVY6yPCP03xYYO7bvBxdA7mfjBQC+b1hEs4ZAUe8tgSSldiD809pI26c5xD8XmzAE/S
+         2RvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXksKw1MpPe2fUDbLyX7EW9CzTBjUwoq0oNeGb8oKS0FfTZy6WJ/cq8/dWX9KPOYWcLld0dpGzFOlfa7KU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGELoOxtvo64neya4jPfk+qtcWXTDOMLyy7xeie5MkR7SOgp3P
+	at9gTxMcDLf+l67IZiqAxEthFn7JtkKrHFHryHLZBgtTft/6JhrT5ZNbmzmLm3qNEmg=
+X-Gm-Gg: ASbGncvE0aml8h1m3sxo8octL09Heer8qwPMXs5EonqebULZjP5L9R7JrQgHDRri5Ba
+	ylBTgTm6HXBc9X1wHHu74p1KYSW95KQ12yHXPWs/ms9sl37hntmuUSYM3GXDh5piAfBen1IrC6V
+	0C0prTChEl89AB+Xo/OBeKQL7FFVRasTpYn9sraMDu2xAShfIZNEyRY/Q4n2ROLm3Nd4LyisgSN
+	D6eAfAplUQiEWVes3mcKS5N0F+2nerjF8Z525Irx5YDsnQbJkTJDIaIAg9dgu2gZk4wKPNx5zC9
+	JTH8eC05A31nmSz7N96M1vzP51B/19EVt9dxIT6VZiPm1pHdGKCU2R19IQJq/Lh0QMIuOapXXUC
+	Oy8ajQMYAPi28
+X-Google-Smtp-Source: AGHT+IF1A90KTnpYNA4i7uLkMlCS4CRj5KwfbtaFfgw+jBKmXEG450Q0SAx/BQLRuJEmt1dhQ/BnLg==
+X-Received: by 2002:a17:902:d2c2:b0:237:ec18:ead7 with SMTP id d9443c01a7336-23ac4633b87mr174188385ad.24.1751209979246;
+        Sun, 29 Jun 2025 08:12:59 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40d0:13a3:7a93:1d81:fc79:cbf8:87bb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e1a3bsm62828065ad.30.2025.06.29.08.12.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 08:12:58 -0700 (PDT)
+From: krikera <prafulrai522@gmail.com>
+To: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	krikera <prafulrai522@gmail.com>
+Subject: [PATCH] rust: helpers: sort includes alphabetically
+Date: Sun, 29 Jun 2025 20:40:28 +0530
+Message-ID: <20250629151028.969-1-prafulrai522@gmail.com>
+X-Mailer: git-send-email 2.41.0.windows.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250629094048.GA26861@1wt.eu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Jun 29, 2025 at 11:40:48AM +0200, Willy Tarreau wrote:
-> On Sun, Jun 29, 2025 at 11:37:06AM +0200, Thomas Weißschuh wrote:
-> > On 2025-06-29 11:25:52+0200, Willy Tarreau wrote:
-> > > On Sun, Jun 29, 2025 at 10:53:34AM +0200, Thomas Weißschuh wrote:
-> > > > On 2025-06-29 10:46:28+0200, Willy Tarreau wrote:
-> > > > > On Mon, Jun 23, 2025 at 04:56:18AM +0200, Willy Tarreau wrote:
-> > 
-> > <snip>
-> > 
-> > > > > Trying it has reopened the circular dependencies can of worms :-(
-> > > > > It's the same problem as usual that we've worked around till now
-> > > > > by placing some types in types.h, except that this time fd_set is
-> > > > > defined based on the macros FD_* that I moved to sys/select.h.
-> > > > 
-> > > > Can't fd_set also move to sys/select.h? This is how I read fd_set(3).
-> > > 
-> > > That was what I did and precisely what was causing the problem. We
-> > > have sys.h defining select() with fd_set in it with sys/select not yet
-> > > being included. I moved sys.h after all sys/* and it broke something
-> > > else instead.
-> > 
-> > Ah. Then move select() also into sys/select.h; where it belongs. :-)
-> 
-> For an unknown reason I thought we avoided to move the syscall definitions
-> there and only used sys/*, but I was apparently confused as we have exactly
-> that in prctl or wait. I can give that one a try again.
+The helper includes should be sorted alphabetically as indicated by the
+comment at the top of the file, but they were not. Sort them properly.
 
-So after one more hour on it, I'm admitting abandonning the battle.
-Adding the necessary includes there is causing "declared inside parameter"
-failures in random other totally unrelated stuff (e.g. in sys_getdents64()
-or msleep()). We'll have to really clear that circular includes mess again
-in a near future. For now I'll stay on the stub which works fine without
-affecting the rest.
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Link: https://github.com/Rust-for-Linux/linux/issues/1174
+Signed-off-by: krikera <prafulrai522@gmail.com>
+---
+ rust/helpers/helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Willy
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index b15b3cddad4e..d3867d09e356 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -29,9 +29,9 @@
+ #include "mm.c"
+ #include "mutex.c"
+ #include "page.c"
+-#include "platform.c"
+ #include "pci.c"
+ #include "pid_namespace.c"
++#include "platform.c"
+ #include "rbtree.c"
+ #include "rcu.c"
+ #include "refcount.c"
+-- 
+2.41.0.windows.3
+
 
