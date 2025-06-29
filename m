@@ -1,93 +1,63 @@
-Return-Path: <linux-kernel+bounces-708262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781FCAECE4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDEAAECE46
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B451892724
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED623171595
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 15:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602E0232386;
-	Sun, 29 Jun 2025 15:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nITR9e32"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E26C23370A;
+	Sun, 29 Jun 2025 15:10:53 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7348E2264AA;
-	Sun, 29 Jun 2025 15:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD9927456;
+	Sun, 29 Jun 2025 15:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751209981; cv=none; b=FBKgTiDJnmtYlaDXAF51x55MJZEX3gTbH/LUUkGCxu10wF5ycHyatnnMvppOB24s+SwLLFF+svQXONVmklDvc1m8iN4E7nvBKkP6DZz3D9P0xtExNDhsvBPLPt1Il+UB2+sUYqalItZW3nclW8RfmrBnL74jI0Ukm6joXfFyHEo=
+	t=1751209852; cv=none; b=BCnPzKK8HOyFgAUCHouODMqqxVI5S9CzY9ZQ+zvRiRR6485KZn3YTcy7tdOV6oUSXzTCaVpfXgsLUSw8dNKodP+MUMAgTZuTFMK8gSBQkIxRTi3BB564KsH1TI/DhI8o10dMJG8KU8LRkgkhvpb6CK32swZ4BSssilJzg7n72Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751209981; c=relaxed/simple;
-	bh=DlXZJiL6zusV16+m1Mr1rdZ84u5PnvRI+6UWRyMW240=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ScnSl/rDenbLun1eUUJjn9dARuOh1XdPyPGip8MN0WK4jj/yDEbm2FvfYxIRvMBdmeun1hs/Do4MCLbeqOACJCQDFb7z0t5/86htu/c9npi0VCnkRzB+Qpvz0Eiw8s7GHMYivia7uI0kM0gWnqfEl/02/DTXupLnwq07xMgExf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nITR9e32; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23649faf69fso8843295ad.0;
-        Sun, 29 Jun 2025 08:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751209979; x=1751814779; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zkw9DYUzhRXrslTyMDKuQWc5dd1qenhTI5GZLPFDxQA=;
-        b=nITR9e32beIjNcbHuI6ALpiNmDtPL+MI/q+d+jtAkk+tuPIlXYs7fqe0x/+bwqm492
-         Xlyak0pbFafUi3OpqgFH/OP4dBMLqQHgbR9TllHNL271XEhFexArx/WOSQbGUvJWiakh
-         U3xFSa3OiFeOH8fvafp8kdmtwE28kCyWnVo3cjof2bBhpzevVuozbOAQvKj6js8y6L4U
-         AMUcGDYKCJy5zJBi78RH+4hs7EUbMc3YGzCJ8r9WzsecTiPq1W3E73c3068CtQ4VUDoz
-         JzXPf9i9hkl7e3J7Z0F7dKKWg4+wGN/Jd7gy6U53j01ginKDqH3dm5PF+JbDKotAx43b
-         0HRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751209979; x=1751814779;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zkw9DYUzhRXrslTyMDKuQWc5dd1qenhTI5GZLPFDxQA=;
-        b=L6SDaeumMwv+L8VlLrpNeU6dY/2IzqCxvtz9ZNKCR+SeT2kJtD9X1Ku9bRhzOdn2tY
-         U3Od2D24Bc8NPophUskpEjnQJ8qVX/4kY3EA0+J8vAOg2OQgV22LxJBELZBrLZktK3bL
-         ELyYchwO4L94PxuyUlRKR6cy0Y1lmtvO74dvP+Ra5hGWJZSwTB1d8hF2senOoyQrQtLB
-         mNNk7dCAOlfFjLWMEiWANeD9D0HXUVbGhX08eQuzgiRpaL8XaVZeTftghimtLFrDTgOJ
-         hTVY6yPCP03xYYO7bvBxdA7mfjBQC+b1hEs4ZAUe8tgSSldiD809pI26c5xD8XmzAE/S
-         2RvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXksKw1MpPe2fUDbLyX7EW9CzTBjUwoq0oNeGb8oKS0FfTZy6WJ/cq8/dWX9KPOYWcLld0dpGzFOlfa7KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGELoOxtvo64neya4jPfk+qtcWXTDOMLyy7xeie5MkR7SOgp3P
-	at9gTxMcDLf+l67IZiqAxEthFn7JtkKrHFHryHLZBgtTft/6JhrT5ZNbmzmLm3qNEmg=
-X-Gm-Gg: ASbGncvE0aml8h1m3sxo8octL09Heer8qwPMXs5EonqebULZjP5L9R7JrQgHDRri5Ba
-	ylBTgTm6HXBc9X1wHHu74p1KYSW95KQ12yHXPWs/ms9sl37hntmuUSYM3GXDh5piAfBen1IrC6V
-	0C0prTChEl89AB+Xo/OBeKQL7FFVRasTpYn9sraMDu2xAShfIZNEyRY/Q4n2ROLm3Nd4LyisgSN
-	D6eAfAplUQiEWVes3mcKS5N0F+2nerjF8Z525Irx5YDsnQbJkTJDIaIAg9dgu2gZk4wKPNx5zC9
-	JTH8eC05A31nmSz7N96M1vzP51B/19EVt9dxIT6VZiPm1pHdGKCU2R19IQJq/Lh0QMIuOapXXUC
-	Oy8ajQMYAPi28
-X-Google-Smtp-Source: AGHT+IF1A90KTnpYNA4i7uLkMlCS4CRj5KwfbtaFfgw+jBKmXEG450Q0SAx/BQLRuJEmt1dhQ/BnLg==
-X-Received: by 2002:a17:902:d2c2:b0:237:ec18:ead7 with SMTP id d9443c01a7336-23ac4633b87mr174188385ad.24.1751209979246;
-        Sun, 29 Jun 2025 08:12:59 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40d0:13a3:7a93:1d81:fc79:cbf8:87bb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e1a3bsm62828065ad.30.2025.06.29.08.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 08:12:58 -0700 (PDT)
-From: krikera <prafulrai522@gmail.com>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	krikera <prafulrai522@gmail.com>
-Subject: [PATCH] rust: helpers: sort includes alphabetically
-Date: Sun, 29 Jun 2025 20:40:28 +0530
-Message-ID: <20250629151028.969-1-prafulrai522@gmail.com>
-X-Mailer: git-send-email 2.41.0.windows.3
+	s=arc-20240116; t=1751209852; c=relaxed/simple;
+	bh=+XqR8bvOHxkPqaJepQHhIXbhpGpTPU9EP0Oa/KDkYuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FL879nnDJpS53kmWtkpBoiborRI29ED8Ma9t3qGKKOj3/BN5HVbk0ohcOuh4iojgLRsZZLTjd0aPu1Ozo0olmoa9KPfEMrzgIsKLfA8L6XjG8aTYifnRuGZxI0w3iEudkswRxNwz/qfBZ13FVpMAbwFvwVJdOfOydjOemshhjjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:d1f3:4f54:4c66:bf44])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id A51A841E5E;
+	Sun, 29 Jun 2025 15:10:48 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:d1f3:4f54:4c66:bf44) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: syzbot+827ae2bfb3a3529333e9@syzkaller.appspotmail.com
+Cc: agordeev@linux.ibm.com,
+	alibuda@linux.alibaba.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	guwen@linux.alibaba.com,
+	horms@kernel.org,
+	jaka@linux.ibm.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com,
+	tonylu@linux.alibaba.com,
+	wenjia@linux.ibm.com
+Subject: syztest
+Date: Sun, 29 Jun 2025 16:10:42 +0100
+Message-ID: <20250629151042.50986-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67eaf9b8.050a0220.3c3d88.004a.GAE@google.com>
+References: <67eaf9b8.050a0220.3c3d88.004a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,33 +65,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175120984960.24200.8751488680677029462@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-The helper includes should be sorted alphabetically as indicated by the
-comment at the top of the file, but they were not. Sort them properly.
+#syz test
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Link: https://github.com/Rust-for-Linux/linux/issues/1174
-Signed-off-by: krikera <prafulrai522@gmail.com>
----
- rust/helpers/helpers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index b15b3cddad4e..d3867d09e356 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -29,9 +29,9 @@
- #include "mm.c"
- #include "mutex.c"
- #include "page.c"
--#include "platform.c"
- #include "pci.c"
- #include "pid_namespace.c"
-+#include "platform.c"
- #include "rbtree.c"
- #include "rcu.c"
- #include "refcount.c"
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -125,9 +125,12 @@ static struct sock *smc_tcp_syn_recv_sock(const struct sock *sk,
+ {
+ 	struct smc_sock *smc;
+ 	struct sock *child;
+-
++	read_lock_bh(&((struct sock *)sk)->sk_callback_lock);
+ 	smc = smc_clcsock_user_data(sk);
+ 
++	if (!smc)
++		goto drop;
++
+ 	if (READ_ONCE(sk->sk_ack_backlog) + atomic_read(&smc->queued_smc_hs) >
+ 				sk->sk_max_ack_backlog)
+ 		goto drop;
+@@ -148,9 +151,11 @@ static struct sock *smc_tcp_syn_recv_sock(const struct sock *sk,
+ 		if (inet_csk(child)->icsk_af_ops == inet_csk(sk)->icsk_af_ops)
+ 			inet_csk(child)->icsk_af_ops = smc->ori_af_ops;
+ 	}
++	read_unlock_bh(&((struct sock *)sk)->sk_callback_lock);
+ 	return child;
+ 
+ drop:
++	read_unlock_bh(&((struct sock *)sk)->sk_callback_lock);
+ 	dst_release(dst);
+ 	tcp_listendrop(sk);
+ 	return NULL;
 -- 
-2.41.0.windows.3
-
+2.43.0
 
