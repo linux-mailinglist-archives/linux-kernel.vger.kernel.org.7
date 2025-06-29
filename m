@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-708348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 480AEAECF3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:32:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4282EAECF45
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182C21892873
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:32:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0934A7A893C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3C01B5EB5;
-	Sun, 29 Jun 2025 17:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FD02376F5;
+	Sun, 29 Jun 2025 17:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NI7XviOg"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RTlHbRL/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B0338DEC;
-	Sun, 29 Jun 2025 17:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1AA1C36;
+	Sun, 29 Jun 2025 17:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751218346; cv=none; b=Uj+ikzzUx+XlT4e9TkdSC+gQMQhDYbdnz+AjxZvUJv4kf6GchaOi32yXOVtKV5rdSSchlEAGUEgxKCihdMSHcId0yrUOVQKikk0vfApnnENCHooIZMuxcAiFhpwoaaXAzwb+T8xm5hgYKj+R4XmHtk7aaknsVfq1qI+GaI+GzEc=
+	t=1751218825; cv=none; b=TxoI7CzYvQ1+Sogw9rjaL0mZoJ44vdjlrLwBb3dt4ux5olf2xS5I60jCA3NzHtk1rwbuwCCSvj9yLwjp05eXqHkVgkEMIy8veXCvERLV/9TTdwQj3XD2xQKNq+TwwCPGbyY2ztfskdlfiNTY4sFOE/GL008sLc81WP6cenrQ++M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751218346; c=relaxed/simple;
-	bh=wdwgNbsNRPBufkJ5VtM94BJhRN1c/3knJlzT3Ebe0MI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMFSsUAmHc7fJixvzDyvBozLqWxQoB4zLt9FRBKQrCYrMosqCp4fLU7fXLZJtOwfNAwsOpF1JKMKHLjc3TOuk/eqX/qeenlyOvJGea1lv/rHh/DqtVoWXpuhgy7MA/fFxQ4QyEQw7YPfoD4yHn72NUQDVsNlTxhj7bfs+ZyBIik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NI7XviOg; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6070293103cso2422196a12.0;
-        Sun, 29 Jun 2025 10:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751218343; x=1751823143; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B6xQ1Y7hBvJR57XJgMbIXAzfr8lk18+IiDuMHlwLxZQ=;
-        b=NI7XviOgZYA2nUuUG4U6qVjSOVDicKEpZaN/+Ane/5KawAMGZTzkbH75sudJvc5T6u
-         lkkxdb43dIOu8CPs4B7ekYl34z8AkNcnDyzCFpDWen6Cne8PoMliCqDgReROxabn12cI
-         yFGOsH8UHZwct3kGyX4ZsAvhWA2Ts5o53+oinxZyCPyeUPwFuyR6wYvuYGo2BY+tLcgU
-         ri0FIN7G60p7QXqbyfT8V0zNPfEZ59yj/78LvkgAq2m8RXGAM/08yRnCb5vCbWl84D6B
-         ts6XuzjHC3OGIS39YZ2QpLVbMJ0B02Qg8tMoDjJPLzjnNKZoyWGDR1NkGHNc1594mz8C
-         kugw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751218343; x=1751823143;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B6xQ1Y7hBvJR57XJgMbIXAzfr8lk18+IiDuMHlwLxZQ=;
-        b=rF032Hzj19J2hW8PBfViwhacszcmXXegSdac7dfqrApoC/XlIu0f78nux8y/aFNrz4
-         3mSBwt50APSmd+Zqzwikjtr2qgEVAjeLy9oEKit9eaa+rYNbRDIEqQAC83X5t7gBH9Kd
-         VItaT8XtbVhRMKWjqtjO/ZCytY2qpDODketCjlsAm7y7O6QfKeX++/7afuC7GzBuvrQ3
-         0TJgANTJbwyjiwibPukF1yWhxo8PD07uXZa1x9Yinbm1KbAM5bXP+ZstnMYbA7gcmkS4
-         mpxlJLo4gfZBe28fXdmsQbbPxk1vCVX+91+OVfBLh+C3NCvf+/1jDiryDcuvYdjLzEqd
-         y2Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZYULu4JyEWjbeywjMJiXvf70sOkp0Cwz++a2raOMVIbs5k9Q+nL33ZTjgYYf2OSaFwQReQH5WqibOE5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHiOnGi+/mQGEwI1iCJxdMWuID6EsRcg53jhtQ0jvkb3Nv8p9D
-	xY3PdOE9mtgD5qO+o2mnB0R/6tnsV5fYj+ZRkRBTnYGhsCzBkrgeODRT
-X-Gm-Gg: ASbGnctC4ykZCwx+aibAD9Ml6psX00WZy/8fU4JLlUPq3Nacxezqhg5+ZLPWjXwinwO
-	lXWkl+i16gpwOCBqd7C15ZVrGVFvGZFmQBAtF+zKDOP5uuEndWnTqlhvzbhRu0Z34/TKdd7QqHU
-	FfYjaX113vP5ad0jbIwwmDux/Y0d3HqrigPkETo0zGrq9WIe7G0QaUP0Rj8eYj3smqLBZYMbG9c
-	LoHua/89X16sslTeBbiFsPX0vgncrinz0fUMA91M+lDG2X5NL6ocAehtmu5FXHbfB7dz5qXphyJ
-	bEYEa1VYWdqUL7kfFunOAHJOYWGeJV1MUaAGX4j54Vv4o7Ef5CVj2hEZgT152SVSzHSrUZEVFgy
-	Bo2ND9tlZbQKmdw==
-X-Google-Smtp-Source: AGHT+IEkQU4DhfJJjyRDWns6fYatVrqoTFcRiDvvpFr1CvT5I3mlltWZlVGmaskJ6UNFDI5bDQF/Pg==
-X-Received: by 2002:a05:6402:2787:b0:60c:4782:e4e1 with SMTP id 4fb4d7f45d1cf-60c88e2fe32mr9889331a12.27.1751218342378;
-        Sun, 29 Jun 2025 10:32:22 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:2f0e:c51b:8900:a03f:12cb:72f7:9069])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c831ff8b3sm4607789a12.67.2025.06.29.10.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 10:32:21 -0700 (PDT)
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-To: sean.wang@mediatek.com,
-	olivia@selenic.com,
-	herbert@gondor.apana.org.au,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Subject: [PATCH] hwrng: mtk - handle devm_pm_runtime_enable errors
-Date: Sun, 29 Jun 2025 20:31:41 +0300
-Message-ID: <20250629173141.2423728-1-ovidiu.panait.oss@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751218825; c=relaxed/simple;
+	bh=kNTnA/HEHbrY20Y20zsb2ywwOhUAzW+t5QxcQgfHaLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyL3sSOKO2kJiDapBF58K5yHXIGTuV84vmwSdfdbyrloiT1F7O3gIkQcve3kiBwxrzpLoHrQTp/0EMCKUyKsPK6uXeqEvQaWMIUvHcPjURZaRs0XEZHqCHpbxwNTsRDpZkW/MKnreB1DLemhHyDrp3jxIycSXmKk+DtQm+wuS9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RTlHbRL/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CB96E16D7;
+	Sun, 29 Jun 2025 19:40:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751218801;
+	bh=kNTnA/HEHbrY20Y20zsb2ywwOhUAzW+t5QxcQgfHaLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RTlHbRL/r/r1gaRrFFI0Pgsd6sC5iZnTaGjpvzCh8yDmQqqJ36UICUp5SPUJBsuDD
+	 lZupLJwM96TKcMkxICNw74LmgHCLEZVmqe83P4sC7/4cE6SKjVlIJ8yuY96uTjnV/T
+	 y1JjJHo8g7Kwt1wTgFXX8fSGsp17BL0Ujaa6rc8k=
+Date: Sun, 29 Jun 2025 20:39:58 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 01/12] media: uvcvideo: Always set default_value
+Message-ID: <20250629173958.GA6260@pendragon.ideasonboard.com>
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-1-5710f9d030aa@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250605-uvc-orientation-v2-1-5710f9d030aa@chromium.org>
 
-Although unlikely, devm_pm_runtime_enable() call might fail, so handle
-the return value.
+Hi Ricardo,
 
-Fixes: 78cb66caa6ab ("hwrng: mtk - Use devm_pm_runtime_enable")
-Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
----
- drivers/char/hw_random/mtk-rng.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thank you for the patch.
 
-diff --git a/drivers/char/hw_random/mtk-rng.c b/drivers/char/hw_random/mtk-rng.c
-index b7fa1bc1122b..d09a4d813766 100644
---- a/drivers/char/hw_random/mtk-rng.c
-+++ b/drivers/char/hw_random/mtk-rng.c
-@@ -143,7 +143,9 @@ static int mtk_rng_probe(struct platform_device *pdev)
- 	dev_set_drvdata(&pdev->dev, priv);
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, RNG_AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_use_autosuspend(&pdev->dev);
--	devm_pm_runtime_enable(&pdev->dev);
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
- 
- 	dev_info(&pdev->dev, "registered RNG driver\n");
- 
+On Thu, Jun 05, 2025 at 05:52:54PM +0000, Ricardo Ribalda wrote:
+> If the control does not support GET_DEF, the field default_value will be
+> left uninitialized during queryctrl.
+> 
+> Fixes: c0efd232929c ("V4L/DVB (8145a): USB Video Class driver")
+
+Media CI rules require a Cc: stable.
+
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 44b6513c526421943bb9841fb53dc5f8e9f93f02..47e8ccc39234d1769384b55539a21df07f3d57c7 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1497,6 +1497,8 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+>  	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+>  		v4l2_ctrl->default_value = uvc_mapping_get_s32(mapping,
+>  				UVC_GET_DEF, uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF));
+> +	} else {
+> +		v4l2_ctrl->default_value = 0;
+>  	}
+
+While at it we can drop the curly braces.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  
+>  	switch (mapping->v4l2_type) {
+
 -- 
-2.49.0
+Regards,
 
+Laurent Pinchart
 
