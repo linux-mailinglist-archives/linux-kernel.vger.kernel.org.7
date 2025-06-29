@@ -1,141 +1,168 @@
-Return-Path: <linux-kernel+bounces-708521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D72AED170
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 23:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED3EAED168
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 23:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A41C3B2674
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 21:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03F21896620
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 21:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B924241131;
-	Sun, 29 Jun 2025 21:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E75123E34D;
+	Sun, 29 Jun 2025 21:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBs4oQol"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="P9BKVx8e"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7648A241114;
-	Sun, 29 Jun 2025 21:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAB6224B00
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 21:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751234048; cv=none; b=tZiOxIvFSDkgKifI1Mefw/JKKhc8unASLcyH236RNJTQsce7BN+sNsvdHK3yYyFua/4ISD9ktFofTGZE4YWSg563SG+p3Z7k5Ajxqv56M2mNPR0V/tGWvGzt+eHqUeBFZ52zUjjEmCdMikZiY1ijHvYOxvQJ0k9mJ7gzUeuGD0U=
+	t=1751233854; cv=none; b=Hl9eaFmmdLp/iO9aeMICOu5xbe1fxtXRlelpe0WCSSq2za2LH4rNyJIPFyllRh9oQ46J4zjVVrUVgSq5ClnTGSSk9eP/gR9IbOlBWKsEy1ojvFKGvMdc6wwgBKgs7KCkSfsGbtn9qvj2g+hTsw0kn6VtxWOYYC/8GbWfBqgQ4w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751234048; c=relaxed/simple;
-	bh=yCwguoRkXNC0/cqyRSOcs/kGHQRYviQaus+cpwdd2Ps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=irinnHwcR6uPhwhGIeSoVGSHxFcAvEvAx/V0lEFFqCiUlxGsoOi9yF+64JnmcMqJwG9It0E4zOrk0jdTn4bgBep7NJ+c981vMfV6YxqYrAHoj1XSeELGqgvmYzdFSyI/Eq6+Gg+9WWITIWqgcptfgypygNxUvXjCfUkASDTpGnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBs4oQol; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6fad4a1dc33so15023296d6.1;
-        Sun, 29 Jun 2025 14:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751234045; x=1751838845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wSoc6um4fj9fbTNru0L559gFTCmIRL8yZh5n8pLuklM=;
-        b=kBs4oQolLkmz/RK4K18KQTaatSBu/HPKfg0sgLtCYXo3zqj+iW707b2EgOtGljWb+H
-         Dr6AzwjpjCiku1LKi+9EuCNYdDYIWl8pXoBpE50gQ/7cC+5NnREnSpMjKIwoX9hVkt6N
-         61ugffUNKXADigr61yokoUBjnEUGsn2zsIu5NQ7sacs0JLPKF9UzJKB5MnfeJVcCI35u
-         CxXrmN7E/UU1KHp+V24hytKdEGt9FPZnHuzygJIsz+nJ5dvX6hNfzg02jHOBvp72Q5ZG
-         T4rBqcklpa8xMlYpfjxrvvqwCDLPlCa4vTsO3ZYuFmU3dbLUCJNrFxKCJB1fVOKVddM1
-         o7ew==
+	s=arc-20240116; t=1751233854; c=relaxed/simple;
+	bh=qO0rik26FBneJbzsa9ayRMc6c8wrTlvCm/fCbU3rTj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nsecbAEG9ZbAOdTRp4xGMqGkNMnvncWxEYKuKRQNM+nbUQA1g3+J9EFk6tFNbI7XJ0MwaEaVefTZDQ57/cq+ty4N29+td3zpKrhDWkeRAsrTZ/oSdJLAUzo9fZybXDxl2x90GjrSxD0xUyfLVy1za1D2sQO5Pn1/pDe2Iw8hrfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=P9BKVx8e; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 39E8E3F519
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 21:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1751233850;
+	bh=vxyvHsvR7bghBFrXwsxkgXknmV7/aeenDIgq9okrCzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=P9BKVx8eW9ksbAAaFN/FQ7Cu45/DjCnezcqz94z0g7nPZpyT60QRpvDMAZtLCtkvP
+	 vLe08C3kuHmGq1F3++Aj32xS3RRoghQy0QctYWPYVZPMJgkeqNnDLnPrsRqio2Txpz
+	 MkD3OrbyjLcvEQfNB5PZZfbZRidLoLMoCbDDNdrcX948q++nXlauI8Azk6AKxQM1Me
+	 Vf15eaNevi86u7CyVbTBMIZb0znQn2E/Adln8Mm1FeFHhKS6FjG9aa+WUFZ3q1ZYKV
+	 22gsTFaQaVjp7Kb5Rs+IY0604KKS9pIgsblHvwiE1F+hBLP0L/43hQaBfdPIZEZfsD
+	 EqoRrvyjmcG8Q==
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-4e7f690fc97so263662137.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 14:50:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751234045; x=1751838845;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1751233849; x=1751838649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wSoc6um4fj9fbTNru0L559gFTCmIRL8yZh5n8pLuklM=;
-        b=fOIMSovlPHpfv1f2tx4xAUePsPA9gkuA+mcl+FXlNLKUuZp7RGkZ+T2URpt10jjpso
-         CW3EsLZL24hVSLvuVgUNUxircvADbBoiXU0SGrKk2nYUgzIm9xpUaeaYSJzuNjTzVwEO
-         OMZh83ey3MIm8PsoL4eNOS6zH7p7XZo7h2EqbSATzkGvtaPwAipUF6LFTWcFQvqCEG+/
-         elT/lXSjHBc367e3LYRIs9FC4DOgyy6o1TDi41dspAQC0nX81tV2MfBXj2Zmyl4PO/iH
-         ifqYJnEb8fO2lX2FZv3liJE67dZkP8GcJsJHQgI1a8dC3gmoTGfPuS0NW8V6LaGk3/0Z
-         Jh4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVaPHHmfDoCxlI5Yxyl9jjq2IxLxbgEk1KRyTYFdvgfeyMra5TDdITbr8wZcX+a4PpQiTgMfuZ3@vger.kernel.org, AJvYcCWFM+7StfYkajjqRPSCGo2xwKU4GGRn0joAC61q+YI3HffkdOxJ98ctOPtE2Rkx3bkJbNnHem5gPKDLFGM=@vger.kernel.org, AJvYcCWlyGlnLKGam1w7ZT6uyhwaEGpYrRftUQORV7tPbVqEQLl+aAdkgR587MvOu8UW+ggNiydVm3SxkKT5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/+MluhWSR6xQQalga8BfuAH2CuHWsRITsUeJuvQPWr+P0ygwc
-	BxSFwZjtVy3++paCjGBbu68isx6Pd5TUmKk/YUKy2A1XYd0DcNgRuVKt
-X-Gm-Gg: ASbGncsWg35gRyMbAKWDAWWaCrTTVM0ccwY4V2SI5iGXlisfzfH1PVT/avYBNCyzB11
-	FDpo1J0Zx5WDfMAcujgWLDwagf09kZHBUmt8fvkowpcmEiq7fO8mFuMkP7eFY9eu08SxlRMU5RQ
-	+VOqZpu9JWhcwTXkakyOZLTCXEgrGLEAZOkUFOkNU2k4OzTrxbuxUJxLAu3zwxLtvbYJjbO/7KW
-	dfQkOSMzYHm7fqy6TbwrQk4tGcOvS4vM2hMwboQudBvzpkwpyTjM3j9nT6WXhjXOWEmwdTYKCmB
-	9P51St/GoNRcAvySbFQ2F9fZidV+U2uqnwsovUkEzgyXxsbyHcEpjKNbpNG2l6ImjbcVTnu+rZf
-	6Jw792VPFlT06NP/CS7AF1Tpss9peSVhmKB5quVJbt/BQSOaUwUuhm7NhWbb48zEtfARq
-X-Google-Smtp-Source: AGHT+IFJpNw6tlpwh806rj7OtEbWSnaeJ82dyANG/riA46oRJRHygpgtGapJTqqgsj6/APi15VmJKQ==
-X-Received: by 2002:a05:6214:540a:b0:6fd:5f35:9c84 with SMTP id 6a1803df08f44-7000174dc41mr206413746d6.9.1751234045446;
-        Sun, 29 Jun 2025 14:54:05 -0700 (PDT)
-Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.81])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd771b50e1sm56878656d6.34.2025.06.29.14.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 14:54:05 -0700 (PDT)
-From: Seungjin Bae <eeodqql09@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: pip-izony <eeodqql09@gmail.com>,
-	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
-	Jassi Brar <jaswinder.singh@linaro.org>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] usb: gadget: max3420_udc: Fix out-of-bounds endpoint index access
-Date: Sun, 29 Jun 2025 17:49:47 -0400
-Message-ID: <20250629214943.27893-6-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250629201324.30726-4-eeodqql09@gmail.com>
-References: <20250629201324.30726-4-eeodqql09@gmail.com>
+        bh=vxyvHsvR7bghBFrXwsxkgXknmV7/aeenDIgq9okrCzk=;
+        b=UMY7D/u+ldaOLgWngG/iH+tT1+cBo3sQmF88DTiWjxnk9CJXXFrJbyrtv3HEMNkik3
+         C5ZilKWzhxyohT9XffZ2a0JQ0cfb9Dz3H7rEe8BBi1Gyr70/Su+OK8A3uBHw+1TeYHD9
+         WXNzQ+0lPGGtKptRPwWJoOFd9qiroTLlstjpqEcHSqZ/ZxNUpRqXN/kUAN73RXj0J2Bj
+         KjtPVyEsaVSikQkIca2ISVDN7Tm+ZM8NDlHVM4pCw1A887czsviHX9Z+cHOsNZXGCqGH
+         FsjGLyUadh36ByI5BxXOnTOLnvsVjRAVtcE3l61KumrTEoZEyUlyZgHWE01WkOcoPuV/
+         Do0A==
+X-Gm-Message-State: AOJu0YxxMOjX953reyx+k0Q5R7sI3+h2rwB88Tl5IM/nbAG+Y+Iiun8x
+	PGH7k6gZsX+MJ5xedT0yMpAAk9H0r57xqTqVO3h1R5xezMiFWMTBhGfz+nUS5reB8HnQKr1Yr/S
+	YU80loInUQyvyk08RoJ2tGdG79Mkp2OXdcEMNgJ4MfXKoMEKM8gCqWN8Icp99twTiLkX+3c/WfW
+	ENyBvNFsKEA3ErepTN+pxJHj85BAKGfZ8vY+5GdXG3aAzaV360YNFEBjnZ
+X-Gm-Gg: ASbGncv/nZodG+3S+xCbNNtgBR18R8MJuZszOUPAeSFFXi1fyzVT+G2E5FFRyDiKI3p
+	hskY3T8E2+CrhWDZq8cvTstMF8NRb8rAEp9Jzo6m9xCRMDIJNxsb1MLrAXgvbEdaJ+tMGMO2ITP
+	wWITFO
+X-Received: by 2002:a05:6102:3586:b0:4ec:c53f:bd10 with SMTP id ada2fe7eead31-4ee4f71e193mr6111404137.16.1751233849178;
+        Sun, 29 Jun 2025 14:50:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3putHMCnjEhjB4xKrKlaxAT+T0n2581zYJq5hWZq+70KQno6CFRHk1W0b4NAbY4BvechoGFe9nlB5GwpCag4=
+X-Received: by 2002:a05:6102:3586:b0:4ec:c53f:bd10 with SMTP id
+ ada2fe7eead31-4ee4f71e193mr6111395137.16.1751233848849; Sun, 29 Jun 2025
+ 14:50:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250629214004.13100-1-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20250629214004.13100-1-aleksandr.mikhalitsyn@canonical.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Sun, 29 Jun 2025 23:50:37 +0200
+X-Gm-Features: Ac12FXyuOv83FzEnLL7pcPZHj9NI8wpeuDQ4Pk25uk-jiPgsNBgmrOk7LgpucO8
+Message-ID: <CAEivzxfLCdv1H6ye8pazG1jw5qiBvtCf2zxE1nom=ziNtwuNiA@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/6] allow reaped pidfds receive in SCM_PIDFD
+To: kuniyu@amazon.com
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Luca Boccassi <bluca@debian.org>, David Rheinsberg <david@readahead.eu>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Similar to max3420_set_clear_feature() function, the max3420_getstatus() function also fails to validate the endpoint index
-from wIndex before using it to access the udc->ep array.
+Dear friends,
 
-The udc->ep array is initialized to handle 4 endpoints, but the index derived from the `wIndex & USB_ENDPOINT_NUMBER_MASK`
-can be up to 15. This can lead to an out-of-bounds access, causing memory corruption or a potential kernel crash.
-This bug was found by code inspection and has not been tested on hardware.
+Please, ignore. I had to resent [1] the series because Kuniyuki
+Iwashima's email in @amazon.com is no longer valid.
 
-Fixes: 48ba02b2e2b1a ("usb: gadget: add udc driver for max3420")
-Cc: stable@vger.kernel.org
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
- v1 -> v2: Added a second patch to fix an out-of-bounds bug in the max3420_getstatus() function.
- 
- drivers/usb/gadget/udc/max3420_udc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+[1] https://lore.kernel.org/netdev/20250629214449.14462-1-aleksandr.mikhali=
+tsyn@canonical.com/
 
-diff --git a/drivers/usb/gadget/udc/max3420_udc.c b/drivers/usb/gadget/udc/max3420_udc.c
-index e4ecc7f7f3be..ff6c7f9d71d8 100644
---- a/drivers/usb/gadget/udc/max3420_udc.c
-+++ b/drivers/usb/gadget/udc/max3420_udc.c
-@@ -536,6 +536,7 @@ static void max3420_getstatus(struct max3420_udc *udc)
- {
- 	struct max3420_ep *ep;
- 	u16 status = 0;
-+	int id;
- 
- 	switch (udc->setup.bRequestType & USB_RECIP_MASK) {
- 	case USB_RECIP_DEVICE:
-@@ -548,7 +549,10 @@ static void max3420_getstatus(struct max3420_udc *udc)
- 			goto stall;
- 		break;
- 	case USB_RECIP_ENDPOINT:
--		ep = &udc->ep[udc->setup.wIndex & USB_ENDPOINT_NUMBER_MASK];
-+		id = udc->setup.wIndex & USB_ENDPOINT_NUMBER_MASK;
-+		if (id >= MAX3420_MAX_EPS)
-+			goto stall;
-+		ep = &udc->ep[id];
- 		if (udc->setup.wIndex & USB_DIR_IN) {
- 			if (!ep->ep_usb.caps.dir_in)
- 				goto stall;
--- 
-2.43.0
+Sorry for the inconvenience and extra noise.
 
+Kind regards,
+Alex
+
+On Sun, Jun 29, 2025 at 11:40=E2=80=AFPM Alexander Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
+>
+> This is a logical continuation of a story from [1], where Christian
+> extented SO_PEERPIDFD to allow getting pidfds for a reaped tasks.
+>
+> Git tree:
+> https://github.com/mihalicyn/linux/commits/scm_pidfd_stale
+>
+> Series based on https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.g=
+it/log/?h=3Dvfs-6.17.pidfs
+>
+> It does not use pidfs_get_pid()/pidfs_put_pid() API as these were removed=
+ in a scope of [2].
+> I've checked that net-next branch currently (still) has these obsolete fu=
+nctions, but it
+> will eventually include changes from [2], so it's not a big problem.
+>
+> Link: https://lore.kernel.org/all/20250425-work-pidfs-net-v2-0-450a19461e=
+75@kernel.org/ [1]
+> Link: https://lore.kernel.org/all/20250618-work-pidfs-persistent-v2-0-98f=
+3456fd552@kernel.org/ [2]
+>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Willem de Bruijn <willemb@google.com>
+> Cc: Leon Romanovsky <leon@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Cc: Lennart Poettering <mzxreary@0pointer.de>
+> Cc: Luca Boccassi <bluca@debian.org>
+> Cc: David Rheinsberg <david@readahead.eu>
+>
+> Alexander Mikhalitsyn (6):
+>   af_unix: rework unix_maybe_add_creds() to allow sleep
+>   af_unix: introduce unix_skb_to_scm helper
+>   af_unix: introduce and use __scm_replace_pid() helper
+>   af_unix: stash pidfs dentry when needed
+>   af_unix: enable handing out pidfds for reaped tasks in SCM_PIDFD
+>   selftests: net: extend SCM_PIDFD test to cover stale pidfds
+>
+>  include/net/scm.h                             |  46 +++-
+>  net/core/scm.c                                |  13 +-
+>  net/unix/af_unix.c                            |  76 ++++--
+>  .../testing/selftests/net/af_unix/scm_pidfd.c | 217 ++++++++++++++----
+>  4 files changed, 285 insertions(+), 67 deletions(-)
+>
+> --
+> 2.43.0
+>
 
