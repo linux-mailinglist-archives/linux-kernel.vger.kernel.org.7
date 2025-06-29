@@ -1,80 +1,151 @@
-Return-Path: <linux-kernel+bounces-708362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90437AECF6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:10:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D68AECF75
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 20:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79C1189574F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FABB3B0700
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 18:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04457235364;
-	Sun, 29 Jun 2025 18:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E62C239597;
+	Sun, 29 Jun 2025 18:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XCslqu7v"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kkPQfXy6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB464A3C;
-	Sun, 29 Jun 2025 18:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC051FBEA2;
+	Sun, 29 Jun 2025 18:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751220650; cv=none; b=QaI2wD2NoMwWWtsMczy7NmBK35IkrZGmFGArkumz7hhLIyrhAIL3JE3bMtBLAgEjZfx4Qg8A4Cnc/HKuGgSLOrk94cLcDRHcstl+8buOLk0cvPC9A2oT1r0cH6C8MKoy5JiwczzXRT51Dg2hFW4R5EDqqU2tfRhXVX7Z/NLbzVk=
+	t=1751220793; cv=none; b=JwpXRCUDQesoj1aoJCds/LJOMgIGTfgiCNhaFL+ZJaV6D+Coa3wOs4ylrF1VfxwQ6E9ULY7slHHj9GD734nKEr9Z/eDK+mA6zhGYRjFSmfWFrekgkugyHBzlLFESOwLA3gJyh0qc7mH0nwHJEXwCdVJmLMWB+qrOJ5zyQhCDVGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751220650; c=relaxed/simple;
-	bh=rQ13VObp17dm8Lf0rGOz6vSrG3BrY0W2QeZG0NRfLTM=;
+	s=arc-20240116; t=1751220793; c=relaxed/simple;
+	bh=Yj/BVhKh2ISdKb0hqkpxRkSF140a3z/27stRT9wv4yY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4WEFl6+w0bIT4V8DEW579s4DTM3ia2zR1E1CE7eAX97smiPiCuCzg770U8teFnA7wjWchg12BJ9bMPEp/BnPdwBoaI3A0a0MvXpIY/geOKwyzaSN1Y6NcNJUb6mqe7e/J4Kb80R4jBs+FFX2W/Lglhmg09+CjD/e1nHoCcbTOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XCslqu7v; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0SXtSx80cAdCDtcPv9j072wXjbBXpZrMW0XySoNhCpM=; b=XCslqu7v0e4xvy6nG6epE1EPIJ
-	2sMobVmbQNK5E5AeZNuOc5TPB/L6Q2pQdXLxEDIyJxii0LeUsjmEfeqS6NtgiwKkNDHBXrArzEHyQ
-	u+cywzWRihMoNasndy/IlJrhmXDdrSWZly0QGf3SUSDDZFRDTBYKkg5/l5+F2X0sJ46s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uVwTt-00HIBB-EX; Sun, 29 Jun 2025 20:10:21 +0200
-Date: Sun, 29 Jun 2025 20:10:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lucien.Jheng" <lucienzx159@gmail.com>
-Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com, wenshin.chung@airoha.com,
-	lucien.jheng@airoha.com, albert-al.lee@airoha.com
-Subject: Re: [PATCH v1 net-next PATCH 1/1] net: phy: air_en8811h: Introduce
- resume/suspend and clk_restore_context to ensure correct CKO settings after
- network interface reinitialization.
-Message-ID: <fe9a6e67-2790-489b-a5fa-a03ec041f48e@lunn.ch>
-References: <20250629115911.51392-1-lucienzx159@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTZAONCRv5J000Qf/64xYe6/NNuvSUI+NSVxYN5iXuEsinFQc0YWQMoefp9doXJj+efEPWUagG7KSzCihz3Z0vzf71AOcH9Ir0H7mW7FvaE52MV8pBTAo7PY2pULwV3ynonfcNiXyLkF62cNSFnS1z63F7m/ffLxjC8DgsDQjX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kkPQfXy6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0AE7BC67;
+	Sun, 29 Jun 2025 20:12:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751220769;
+	bh=Yj/BVhKh2ISdKb0hqkpxRkSF140a3z/27stRT9wv4yY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kkPQfXy6WgqHhbyOSw6c4BbI8jAULNNn7sTykSCEqAUhuE9SDVysxg11jktXPapUq
+	 IPf4TPqi2ihqFLLNpDnuS9Ov8N7tKW6799X/a7C6HvRsvRnUBKyFh4MlkEY1khbiiT
+	 FF5ehEhyp6JP68MZ2sGmSzmqcgKtl/FS5MLqKpQ0=
+Date: Sun, 29 Jun 2025 21:12:46 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v2 10/12] media: uvcvideo: Add get_* functions to
+ uvc_entity
+Message-ID: <20250629181246.GE6260@pendragon.ideasonboard.com>
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-10-5710f9d030aa@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250629115911.51392-1-lucienzx159@gmail.com>
+In-Reply-To: <20250605-uvc-orientation-v2-10-5710f9d030aa@chromium.org>
 
-> +static void en8811h_clk_restore_context(struct clk_hw *hw)
-> +{
-> +	if (!__clk_get_enable_count(hw->clk))
+Hi Ricardo,
 
-Using a __ functions seems wrong, they are supposed to be internal.
+Thank you for the patch.
 
-How about clk_ops save_context() and restore_context()?
+On Thu, Jun 05, 2025 at 05:53:03PM +0000, Ricardo Ribalda wrote:
+> Virtual entities need to provide more values than get_cur and get_cur
 
-    Andrew
+I think you meant "get_info and get_cur".
 
----
-pw-bot: cr
+> for their controls. Add support for get_def, get_min, get_max and
+> get_res.
+
+Do they ? The UVC specification defines controls that don't list
+GET_DEF, GET_MIN, GET_MAX and GET_RES as mandatory requests. Can't we do
+the same for the software controls ? This patch is meant to support the
+UVC_SWENTITY_ORIENTATION and UVC_SWENTITY_ROTATION control in the next
+patch, and those are read-only controls. Aren't GET_INFO and GET_CUR
+enough ?
+
+> 
+> This is a preparation patch.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 12 ++++++++++++
+>  drivers/media/usb/uvc/uvcvideo.h |  8 ++++++++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 21ec7b978bc7aca21db7cb8fd5d135d876f3330c..59be62ae24a4219fa9d7aacf2ae7382c95362178 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -596,6 +596,18 @@ static int uvc_ctrl_query_entity(struct uvc_device *dev,
+>  	if (query == UVC_GET_CUR && ctrl->entity->get_cur)
+>  		return ctrl->entity->get_cur(dev, ctrl->entity,
+>  					     ctrl->info.selector, data, len);
+> +	if (query == UVC_GET_DEF && ctrl->entity->get_def)
+> +		return ctrl->entity->get_def(dev, ctrl->entity,
+> +					     ctrl->info.selector, data, len);
+> +	if (query == UVC_GET_MIN && ctrl->entity->get_min)
+> +		return ctrl->entity->get_min(dev, ctrl->entity,
+> +					     ctrl->info.selector, data, len);
+> +	if (query == UVC_GET_MAX && ctrl->entity->get_max)
+> +		return ctrl->entity->get_max(dev, ctrl->entity,
+> +					     ctrl->info.selector, data, len);
+> +	if (query == UVC_GET_RES && ctrl->entity->get_res)
+> +		return ctrl->entity->get_res(dev, ctrl->entity,
+> +					     ctrl->info.selector, data, len);
+>  	if (query == UVC_GET_INFO && ctrl->entity->get_info)
+>  		return ctrl->entity->get_info(dev, ctrl->entity,
+>  					      ctrl->info.selector, data);
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index a931750bdea25b9062dcc7644bf5f2ed89c1cb4c..d6da8ed3ad4cf3377df49923e051fe04d83d2e38 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -261,6 +261,14 @@ struct uvc_entity {
+>  			u8 cs, u8 *caps);
+>  	int (*get_cur)(struct uvc_device *dev, struct uvc_entity *entity,
+>  		       u8 cs, void *data, u16 size);
+> +	int (*get_def)(struct uvc_device *dev, struct uvc_entity *entity,
+> +		       u8 cs, void *data, u16 size);
+> +	int (*get_min)(struct uvc_device *dev, struct uvc_entity *entity,
+> +		       u8 cs, void *data, u16 size);
+> +	int (*get_max)(struct uvc_device *dev, struct uvc_entity *entity,
+> +		       u8 cs, void *data, u16 size);
+> +	int (*get_res)(struct uvc_device *dev, struct uvc_entity *entity,
+> +		       u8 cs, void *data, u16 size);
+>  
+>  	unsigned int ncontrols;
+>  	struct uvc_control *controls;
+
+-- 
+Regards,
+
+Laurent Pinchart
 
