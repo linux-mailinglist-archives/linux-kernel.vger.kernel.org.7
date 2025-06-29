@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-708317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663CAAECEE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B29AECEE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 19:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B34D3AFBED
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC29162548
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 17:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CA223370A;
-	Sun, 29 Jun 2025 17:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7g6yf4j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C976249641;
-	Sun, 29 Jun 2025 17:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFA92376E6;
+	Sun, 29 Jun 2025 17:07:46 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F12322CBE6
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 17:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751216847; cv=none; b=IK1mHwpNlBOuRcm2ID0yMmqkxNw7zHWXUbnxDu6iasdGPWarEVCp6np6blOmqiB/eiwcH/v8Nt1n4xefTItqRXpBwBUm/FJjtT5wE13ayHf2wNXD2S+jJZwlNFOJLI1vv0AwumL9lo0bce55k7uzIWA/o3mzD8+MtBTcOqFQ3kQ=
+	t=1751216866; cv=none; b=EIW6KA3AOkOL/fVNbZ7LeEWTJeXR2hzW7ezESw5nDWWAvGqbrpy1QNk33yAGkqHsI3eL8z27spHHOuaAZeZ1BO1OWCqCREt8WEz/3QbK3fjYkusSI3m2Fbtg2YtSr9HOokkerFn/QJoBsm+sH9aLVtf1h1m8BfE8tEdMThxZQDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751216847; c=relaxed/simple;
-	bh=VaT2VO9nDKPP2JS4Dp+XvX6jBNPRAYSmNGQGia/lTFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R6noMHU3SktGRi0H27+UZpPvKPL4t770cpby8jKotK0QdP8SxiY38oolYFKEY/GiR3zvaZ8Z18PdCWDncojLDux6vc7Jqo1MfW52XCjluHaea5yUj8bNSEv9+aQknvBxATJUYpFP1dDkeXQdqmH9ZY3NeZMrhJffW8X0BNWTNgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7g6yf4j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF48EC4CEEB;
-	Sun, 29 Jun 2025 17:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751216847;
-	bh=VaT2VO9nDKPP2JS4Dp+XvX6jBNPRAYSmNGQGia/lTFo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F7g6yf4j0B9oCSYtgXNcAeawSrJC5a/2vGRorb8TGMwlkCHgRU1KTMs4z8RsB9qJ5
-	 I6fhxuA1/vTIMISOgEt7cmrXljfzP0y3sPoCzY5T6nwdpNiEtzNahNHtuqNyOJ06kT
-	 3PtLY6czZtXgF7QGTS+cUa2LCm82VTqsbt+frqXhovjTm7WIE6Xgg8HtYzRwadbT3f
-	 42uALZUeOO3bds4tq/oTneMcde4CcKdmXNovZBGfMxo2yK7yV85ifIMrI2BB4i7VZ4
-	 DX7At6XPBM9z+QvrrpgpG5WWeTNMUQIg17cbgX2mYcnb19u5nPZQ5L43aeHGSfz8Jl
-	 4h3m3lee0Jnnw==
-Date: Sun, 29 Jun 2025 18:07:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Kosina <jikos@kernel.org>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH] iio: common: hid-sensor-attributes: make
- unit_conversion const
-Message-ID: <20250629180721.32eb61b7@jic23-huawei>
-In-Reply-To: <20250628-iio-const-data-14-v1-1-4faa8015e122@baylibre.com>
-References: <20250628-iio-const-data-14-v1-1-4faa8015e122@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751216866; c=relaxed/simple;
+	bh=UC0Mwa2io6zH7BFh5FXcWTaucj+RZ6o9GbElHRZjv94=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ib2C2iMETJT4HCXBgv2lmEV7BSrb5ZONq5Qqlg7G5hSQgZEwMWbbAirEx6aiJilKO8J7HDtddoxSExswRD/oGqX3gWReodyf587/g/1EbeOAC9mSjMU+BuG2dwDimTMOdYwn/mOXZGlxkGS7H96qK5biTXeQc/9runRVjAOMS2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 55TH7cXa016861;
+	Sun, 29 Jun 2025 19:07:38 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Willy Tarreau <w@1wt.eu>
+Subject: [RFC PATCH v2 0/2] tools/nolibc: install unified multi-arch headers
+Date: Sun, 29 Jun 2025 19:07:30 +0200
+Message-Id: <20250629170732.16817-1-w@1wt.eu>
+X-Mailer: git-send-email 2.17.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sat, 28 Jun 2025 12:09:26 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+While the in-tree nolibc directory supports arch auto-detection,
+installing it is only performed for a single architecture at once,
+requiring as many sysroots as desired architectures. It is not
+convenient because external tools rarely expect to change their
+include path based on the target.
 
-> Add const qualifier to struct unit_conversion[]. This is read-only data
-> so it can be made const.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Applied as seems to be 'obviously correct'.
+Furthermore, when installing it along with the UAPI headers for
+use with the nolibc toolchains, the issue is reinforced as UAPI
+may only be installed for a single architecture, and in this case
+we cannot even count on the headers that would have been packaged
+along with the compiler and its accompanying libc.
 
-+CC rest of the hid-sensors maintainers. 
+This patchset proposes a convenient approach to satisfy all this.
 
+First, it updates nolibc's "headers" target so that it will install
+the headers for all supported archs, so that they appear just like
+in the original source tree, meaning that when uapi headers are
+available (e.g. provided with the toolchain), the build will succeed
+for any supported archs from a single installation directory.
 
-> ---
->  drivers/iio/common/hid-sensors/hid-sensor-attributes.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
-> index 2055a03cbeb187743e687c2ce3f8a339a2bd4cfc..a61428bfdce372ea0511fb7c3e80f4c43f427eb4 100644
-> --- a/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
-> +++ b/drivers/iio/common/hid-sensors/hid-sensor-attributes.c
-> @@ -11,7 +11,7 @@
->  #include <linux/hid-sensor-hub.h>
->  #include <linux/iio/iio.h>
->  
-> -static struct {
-> +static const struct {
->  	u32 usage_id;
->  	int unit; /* 0 for default others from HID sensor spec */
->  	int scale_val0; /* scale, whole number */
-> 
-> ---
-> base-commit: 14071b9cf2d751ff9bc8b5e43fa94fbf08aceea1
-> change-id: 20250628-iio-const-data-14-b3250e000af7
-> 
-> Best regards,
+Second, a new "install_all_archs" target iterates over all supported
+archs to install the corresponding UAPI headers, and moves each
+arch-specific "asm/" subdir to "asm-arch-$arch", then automatically
+recreates the files under asm/ to include the corresponding files based
+on the detected architecture. This results in a unified sysroot that
+can be used by any of the supported architectures without changing the
+include path.
 
+I finally didn't use Arnd's proposal to try to build up the include
+file name based on the architecture because I realized that it wouldn't
+work for programs that include asm/foo first (or we'd have to go back
+through a #include nolibc.h which is outside the scope of this change
+that tries to remain libc-agnostic). Instead a template file containing
+the #ifdefs for all archs is used for each file. It results in a slightly
+larger set of asm/ files than the first version which only contained the
+ifdefs for supported archs for each file, but compared to the unified
+UAPI size the difference remains pretty small.
+
+I'm marking this as RFC because the operations are entirely performed
+inside the nolibc Makefile, and I'm wondering whether there could be
+any interest in generalizing the principle and moving it to the
+generic uapi installation itself. However I don't see how this could
+be easily done in this case, because here we have no other option but
+iterate over all supported architectures, and iterating over multiple
+archs is not something standard in the kbuild system. But we could also
+imagine having a script under scripts/ to install UAPI headers for all
+archs at once for example, so ideas are welcome. Of course if there's
+no perceived interest in generalizing this to uapi then it can stay
+in nolibc where the maintenance cost should remain quite low anyway.
+
+Changes in v2:
+- merge of x86_64 and i386 extracted from the series
+- dropped the aarch64->arm64 mapping since already handled separately
+  by Thomas
+- made the "headers" target install headers for all archs as suggested
+  by Thomas.
+- dropped the #ifdef generation from the makefile and run sed over
+  a template instead.
+
+Thanks for any comments!
+
+---
+Willy Tarreau (2):
+  tools/nolibc: make the "headers" target install all supported archs
+  tools/nolibc: add a new "install_all_archs" target
+
+ tools/include/nolibc/Makefile       | 50 ++++++++++++++++++++++-------
+ tools/include/nolibc/asm-template.h | 25 +++++++++++++++
+ 2 files changed, 63 insertions(+), 12 deletions(-)
+ create mode 100644 tools/include/nolibc/asm-template.h
+
+-- 
+2.17.5
 
