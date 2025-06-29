@@ -1,46 +1,45 @@
-Return-Path: <linux-kernel+bounces-708048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001ECAECB6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 07:26:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5E9AECB6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 07:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D021772D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 05:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED8C77A6674
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Jun 2025 05:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C91C1DED53;
-	Sun, 29 Jun 2025 05:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E281F91C8;
+	Sun, 29 Jun 2025 05:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="RTfKV0kJ"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="rvi0AN10"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2771A238D
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 05:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4CE1E25E8
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 05:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751174779; cv=none; b=bvA5+zRvGvtwcJRHOoAVptKL0MCjch6/kZRc/77F+mL2Eknh2M9Gz1Uv0o9+3ETqvENBQGxaEMrtznnX2NYHFEnsTaUDyQeXJ1mCPXsqD4uCKCKJO4Lp2aYd9+SVypB6w95OyyjZUo4G+Nm7A1/uVusXIlnCbhDTYsyKocznuL4=
+	t=1751174782; cv=none; b=bBMecIYfNR5wN4Hp+3TeDAAWCC3nqJ94mr6XXh9zfXbOxlj+cL9fgfalPH0YTMFb3+NcNr71k5bnSv8pWCUHtqVzFOWTmcJG3tuqb9knSTQRnv15LGn6jIhQVqMCqQklhJ7PiDr/YyVTggUT0E2guQxJQzbWMxzTmktAgasjmKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751174779; c=relaxed/simple;
-	bh=wc6WuuCMBXTYVVfNP4h/5HpW5TFlBV0LHRP1VHveG7E=;
+	s=arc-20240116; t=1751174782; c=relaxed/simple;
+	bh=rB5DqLeiBXAqiVg83jmx61IJFozkp2QMZpO2BXo7fpc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NkxeZiM0uq22s2bkJm89cG+KEP3pnAtGqIDMxYa1zvh2VgJ/WqlOP87ydc1T/LDoBUVw4JzlS32DLfisDC1N4cKnpFLGBAqzU2crwqLRb0o2t16eAl4xSHU7ohZHt4NY2ql0Em66dvpdLmfGg4czk8yUb9CV9kQ9EGrhisg8RdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=RTfKV0kJ; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=mglR7xmRGxZmk8oh4Y0d7lSFVYtPzlXIhQHqWagT7+KW/mdI8IUlcmrsVbL/yAepedV0sJ/dCVpWdAAzi2aOWlBREHi5yJ/4KdymeF1t+Q49RXkwvCvcbSCr5rgm9RfJXOurNgshf/zvKCf7gE2gtMPmASd9SU6a8UMPMZHnCUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=rvi0AN10; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1751174775;
-	bh=wc6WuuCMBXTYVVfNP4h/5HpW5TFlBV0LHRP1VHveG7E=;
+	bh=rB5DqLeiBXAqiVg83jmx61IJFozkp2QMZpO2BXo7fpc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RTfKV0kJPOicKxylPwb47E4tjFXSRbfwM8oGWccOaU3Vtx8vKWKoUqG8zupKZTvZD
-	 jCuFqzT6Zz8+nVNGXR/ss8O1N02t54pYtzok+JztRkOnAstWnIJrws+Dg9y6DWdUYb
-	 PrKAsWhgsTuMcqVORmmPrtmRSHAlcymyG23nYDio=
+	b=rvi0AN105R96+KEcRqiyv2EBEQYlWJ+VLofVLkpCx72G40eniCzanJkjeghnZeA9P
+	 M+0hfgYCo3pX4wThFuCMBfCgdEeFiQilhfIpTFshgV5zpH/wdOHgwafSqIDq1J6JqR
+	 Pip1FYQUlpnDCFjl7XxqfIFaHZRVxho+9WTMXtK4=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 29 Jun 2025 07:26:06 +0200
-Subject: [PATCH v2 5/7] samples/kobject: add is_visible() callback to
- attribute group
+Date: Sun, 29 Jun 2025 07:26:07 +0200
+Subject: [PATCH v2 6/7] samples/kobject: constify 'struct foo_attribute'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +48,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250629-sysfs-const-attr-prep-v2-5-9ec5fe39083f@weissschuh.net>
+Message-Id: <20250629-sysfs-const-attr-prep-v2-6-9ec5fe39083f@weissschuh.net>
 References: <20250629-sysfs-const-attr-prep-v2-0-9ec5fe39083f@weissschuh.net>
 In-Reply-To: <20250629-sysfs-const-attr-prep-v2-0-9ec5fe39083f@weissschuh.net>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -57,52 +56,140 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751174775; l=1331;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751174775; l=4840;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=wc6WuuCMBXTYVVfNP4h/5HpW5TFlBV0LHRP1VHveG7E=;
- b=rMiVGOUrIoxdvnhsyRfxZi4GeqrhZqvJgzs5LD6wau344qXHRbvfDl4GS5gidjrao92M2Xzh9
- Et/nA8xY0+bC/27AeYfdwB5mosO98xYGoJyXmcZ1QKzDf2jKdILk8Kh
+ bh=rB5DqLeiBXAqiVg83jmx61IJFozkp2QMZpO2BXo7fpc=;
+ b=7rQr78GeQKq935dj28ZoPLHefWkqOScwEdxLXN8zXtalhUqKIQLkOl+pbryEsBIPzlBNXHyMu
+ bG4pIdnVJvNC73fBqNYO3hcmYPNV19pVBQHJsDBFrWCWC3KJbuWPQhP
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-There was no example for the is_visible() callback so far.
-
-It will also become an example and test for the constification of
-'struct attribute' later.
+Showcase and test the new 'struct attribute' constification facilities.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- samples/kobject/kset-example.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ samples/kobject/kset-example.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
 diff --git a/samples/kobject/kset-example.c b/samples/kobject/kset-example.c
-index 552d7e363539a8f82ab8e0446c732f85ed2c5612..7d8c68763ff8af696cbafaed1d5f1b173bb4860e 100644
+index 7d8c68763ff8af696cbafaed1d5f1b173bb4860e..cbcfa628cc2801a7c4fc0d868898c4cfa539825c 100644
 --- a/samples/kobject/kset-example.c
 +++ b/samples/kobject/kset-example.c
-@@ -178,7 +178,22 @@ static struct attribute *foo_default_attrs[] = {
- 	&bar_attribute.attr,
- 	NULL,	/* need to NULL terminate the list of attributes */
+@@ -37,10 +37,11 @@ struct foo_obj {
+ /* a custom attribute that works just for a struct foo_obj. */
+ struct foo_attribute {
+ 	struct attribute attr;
+-	ssize_t (*show)(struct foo_obj *foo, struct foo_attribute *attr, char *buf);
+-	ssize_t (*store)(struct foo_obj *foo, struct foo_attribute *attr, const char *buf, size_t count);
++	ssize_t (*show)(struct foo_obj *foo, const struct foo_attribute *attr, char *buf);
++	ssize_t (*store)(struct foo_obj *foo, const struct foo_attribute *attr,
++			 const char *buf, size_t count);
  };
--ATTRIBUTE_GROUPS(foo_default);
-+
-+static umode_t foo_default_attrs_is_visible(struct kobject *kobj,
-+					    struct attribute *attr,
-+					    int n)
-+{
-+	/* Hide attributes with the same name as the kobject. */
-+	if (strcmp(kobject_name(kobj), attr->name) == 0)
-+		return 0;
-+	return attr->mode;
-+}
-+
-+static const struct attribute_group foo_default_group = {
-+	.attrs		= foo_default_attrs,
-+	.is_visible	= foo_default_attrs_is_visible,
-+};
-+__ATTRIBUTE_GROUPS(foo_default);
+-#define to_foo_attr(x) container_of(x, struct foo_attribute, attr)
++#define to_foo_attr(x) container_of_const(x, struct foo_attribute, attr)
  
  /*
-  * Our own ktype for our kobjects.  Here we specify our sysfs ops, the
+  * The default show function that must be passed to sysfs.  This will be
+@@ -53,7 +54,7 @@ static ssize_t foo_attr_show(struct kobject *kobj,
+ 			     struct attribute *attr,
+ 			     char *buf)
+ {
+-	struct foo_attribute *attribute;
++	const struct foo_attribute *attribute;
+ 	struct foo_obj *foo;
+ 
+ 	attribute = to_foo_attr(attr);
+@@ -73,7 +74,7 @@ static ssize_t foo_attr_store(struct kobject *kobj,
+ 			      struct attribute *attr,
+ 			      const char *buf, size_t len)
+ {
+-	struct foo_attribute *attribute;
++	const struct foo_attribute *attribute;
+ 	struct foo_obj *foo;
+ 
+ 	attribute = to_foo_attr(attr);
+@@ -109,13 +110,13 @@ static void foo_release(struct kobject *kobj)
+ /*
+  * The "foo" file where the .foo variable is read from and written to.
+  */
+-static ssize_t foo_show(struct foo_obj *foo_obj, struct foo_attribute *attr,
++static ssize_t foo_show(struct foo_obj *foo_obj, const struct foo_attribute *attr,
+ 			char *buf)
+ {
+ 	return sysfs_emit(buf, "%d\n", foo_obj->foo);
+ }
+ 
+-static ssize_t foo_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
++static ssize_t foo_store(struct foo_obj *foo_obj, const struct foo_attribute *attr,
+ 			 const char *buf, size_t count)
+ {
+ 	int ret;
+@@ -128,14 +129,14 @@ static ssize_t foo_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
+ }
+ 
+ /* Sysfs attributes cannot be world-writable. */
+-static struct foo_attribute foo_attribute =
++static const struct foo_attribute foo_attribute =
+ 	__ATTR(foo, 0664, foo_show, foo_store);
+ 
+ /*
+  * More complex function where we determine which variable is being accessed by
+  * looking at the attribute for the "baz" and "bar" files.
+  */
+-static ssize_t b_show(struct foo_obj *foo_obj, struct foo_attribute *attr,
++static ssize_t b_show(struct foo_obj *foo_obj, const struct foo_attribute *attr,
+ 		      char *buf)
+ {
+ 	int var;
+@@ -147,7 +148,7 @@ static ssize_t b_show(struct foo_obj *foo_obj, struct foo_attribute *attr,
+ 	return sysfs_emit(buf, "%d\n", var);
+ }
+ 
+-static ssize_t b_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
++static ssize_t b_store(struct foo_obj *foo_obj, const struct foo_attribute *attr,
+ 		       const char *buf, size_t count)
+ {
+ 	int var, ret;
+@@ -163,16 +164,16 @@ static ssize_t b_store(struct foo_obj *foo_obj, struct foo_attribute *attr,
+ 	return count;
+ }
+ 
+-static struct foo_attribute baz_attribute =
++static const struct foo_attribute baz_attribute =
+ 	__ATTR(baz, 0664, b_show, b_store);
+-static struct foo_attribute bar_attribute =
++static const struct foo_attribute bar_attribute =
+ 	__ATTR(bar, 0664, b_show, b_store);
+ 
+ /*
+  * Create a group of attributes so that we can create and destroy them all
+  * at once.
+  */
+-static struct attribute *foo_default_attrs[] = {
++static const struct attribute *const foo_default_attrs[] = {
+ 	&foo_attribute.attr,
+ 	&baz_attribute.attr,
+ 	&bar_attribute.attr,
+@@ -180,7 +181,7 @@ static struct attribute *foo_default_attrs[] = {
+ };
+ 
+ static umode_t foo_default_attrs_is_visible(struct kobject *kobj,
+-					    struct attribute *attr,
++					    const struct attribute *attr,
+ 					    int n)
+ {
+ 	/* Hide attributes with the same name as the kobject. */
+@@ -190,8 +191,8 @@ static umode_t foo_default_attrs_is_visible(struct kobject *kobj,
+ }
+ 
+ static const struct attribute_group foo_default_group = {
+-	.attrs		= foo_default_attrs,
+-	.is_visible	= foo_default_attrs_is_visible,
++	.attrs_new	= foo_default_attrs,
++	.is_visible_new	= foo_default_attrs_is_visible,
+ };
+ __ATTRIBUTE_GROUPS(foo_default);
+ 
 
 -- 
 2.50.0
