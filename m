@@ -1,208 +1,125 @@
-Return-Path: <linux-kernel+bounces-709819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E8AEE2EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1223AEE2DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3111118868EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B495F1883CFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D4F28FA85;
-	Mon, 30 Jun 2025 15:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0238228FA9B;
+	Mon, 30 Jun 2025 15:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjNCpwim"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l/bvYIwT"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3757628EA76;
-	Mon, 30 Jun 2025 15:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9A928DF20
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 15:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751298098; cv=none; b=uaLykAMtujeFllCpyzHlGe7Y7cVZotwmTOmskR1OqOieaDhYGpfI5tuC7ecvLsmPJj9MY9Z4IF1k/MV83mvtdBMjWTKy38b7AdcdXQSw6iG/Vgfty86GZXBO+4nu6ZHtwZhtki51GqGe48LO5qSedSGsiM/EcpYcx3teMni3EvU=
+	t=1751298083; cv=none; b=jgmKM2puWA5gh9MXQN0sZr16lS+wnX59ebkUwD6cTT4BTFkD8WwcyBD9wWhie1cJcXYin9poCXZy1nI29pQ6WzutieWmqix4Gbz72DH9Ap4Sk+XRi8WBtUJmMtLrJ4otxH2Hfs9MHXVXRyPxTx+3vE1zVrFcwZPn6F8MFhD+TLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751298098; c=relaxed/simple;
-	bh=U/Cox21FflLFj8VZkRclH0nSlm2+lf5+a3+6iHEqdhg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HVheJOrFAja7UPiAInm9ZWG54IPaneR3gPd1ELso3aXdiP/v/xX0ACB03zImU6zj46ONPSF5wYbMYSPj9ALKxaG1bFpVCKiJLpLQ418AudAfT5Mi6bqkoBq8qiatc3tF0pU1Gx2vvHkalAUXDWnSTvEl63ksEaZpKw8iovpRk/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjNCpwim; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1C1C4CEEF;
-	Mon, 30 Jun 2025 15:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751298096;
-	bh=U/Cox21FflLFj8VZkRclH0nSlm2+lf5+a3+6iHEqdhg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RjNCpwimw2bncyOG4/NcCqnnn6i504PvtEG1ewWFF+WznPYjs4f31Y3JoiJ6ffReU
-	 Rb14n6OW3scOzyiAwcIfI9wezDWhJVV7CVpVa3wom2WopxH8rlyrixJX41b+dok3c7
-	 Yv5GLEDdFOgw3mOKAK5CCC92v4NYZCRWxce44qcBqM/6Rcve9rkbqkSmSEUKiEJnxt
-	 i7Cx6lqCi7n5fhr9SxaIgmBx8id6RA0e/lXRpWE1wKcEzpEW74yqk9B211QyA9UeLs
-	 eGGYb9v3QGvnLbqSVSk4W1XWyngqvJce7mwOM/aWE98VM/OVIaSSU/3ehTKOrmHGik
-	 zJ6YzUVUMOReA==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55502821bd2so2519892e87.2;
-        Mon, 30 Jun 2025 08:41:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfOLzyWMYpuwzEfQz8RBKrV1w8/pFr63neqbWWMwVhKtrVR4dYW7bx5vu2QwBC6wDcDmaDlf3sAhqQYZ9R@vger.kernel.org, AJvYcCVjYXQKqyMGZEhlDkbKcU0ubz1l+ztPuMEv2Z+I+D/XdZxDEyv8wdVsSYF+Kl9EuLtJ59bWViE/tBdLk6s=@vger.kernel.org, AJvYcCWSbr636inK6oYHqO99cnIUqInPmvDTasmoewnc5MxJIJfF8h+7spqzWwMNn3h45Km0aVaeWswQu5CNIsY9Fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+bVheeWtrEPvMrnZJYmAoMIcAZYJqi2Gua1YYPgxL8HCVU+Z
-	XrIhWwMW1nQVEH312M2hw6OKs4T+HbbywcSlyvl+MY/KFJXLMfVy/Hb8K794TrthKED3Rh8l1KU
-	MxwSf56D+VYA22GW9UChmaIgZcQOjT1o=
-X-Google-Smtp-Source: AGHT+IE7MU1OSdE0HWcTbqB/Z2gZNtSZo8xi396BsJAN275lk+KqWpRFVTfKZmP9/jZXHGVo6J1z+B9oYIGiaH3L3rw=
-X-Received: by 2002:a05:6512:15a5:b0:553:2e0f:96c with SMTP id
- 2adb3069b0e04-5550b84cdd0mr4095199e87.23.1751298095233; Mon, 30 Jun 2025
- 08:41:35 -0700 (PDT)
+	s=arc-20240116; t=1751298083; c=relaxed/simple;
+	bh=TxdOtgVn7aBHw3u7r5Eza56bp9saXogFpjFjd1vydaA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WbHuqul1WkF9VIrTir87SYjoLeBn4xDsodnJTmrTQDlowoilPjBulr2RZgS6T0grw5HZ3tzicoxi7UirjWZCjte853SbLrslZPAfSfibxLdq4ewQGy4UDltbdX7FmueGCXwDlg4OMe9BaVNJAg7CNl8LLmJKp82irSFqoj7+WbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l/bvYIwT; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4530921461aso30401395e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751298080; x=1751902880; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wIBoKnvqHm7jPzDveA9hy26/rZ1VMnuhsibGyxt03cs=;
+        b=l/bvYIwTLe+P/YxQ/fVthVLj/wfTXaueom7iYq9pGA7+Bvd4VgzG3PwqZ+lxILFWH7
+         hEGMmAd6MnVHwua0SxlkMHoKunanemfIY9O2nxdZD4SKsPBoDLP8YMsEG2jOiOzlE9fa
+         cKhdz14FkEtQen+0ydDmPnAYuzh/U3efxThxySe1s03BGkRizYEbjO3adrhWTZq/ruq5
+         vKUATi+Y4/8s0Hmk3OjrJr7FSvexq4nzkv421HRr1Gh6lA0kWpqgakO9qtJaXLbuzyph
+         BhFQ/jocYNXYRil7QSzNL7JcTqWIW+NhSK9PgAu7JeYdB8GPV3ztkB7N07npA+xLorDc
+         TBDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751298080; x=1751902880;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIBoKnvqHm7jPzDveA9hy26/rZ1VMnuhsibGyxt03cs=;
+        b=qp/NAfC5i1NEeNf2Kk2Vh/XDyc65ZvjpTNrEn2XYk/QalbnkctqHoVpiJWRlY6PkvP
+         yG3SQmHmuF5m7RHBRQp8x36HW4z+RNXncb/44JmKoJDeNEGHyeaQqmmKkFODSHzMtlVg
+         anbABzxwoWbCkaZ4Kb+staYCqT/5dXcAfp1d/Alysq54pu9CRCig0biLm5zB+YpUw+w9
+         kQ0rsAsG8+L5z5weqeAOwzDfZ9oQuQRQZe5JYxcL5qDv/SDvYAsEisaIZ09PKYozYqvD
+         m0ijHquT6z3kX0WKK80B5J1qnbKJJLfP749X4nPgCqogMbbRGsxhkVUSA9FeLGkKEunI
+         cA+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9R+5GhAWmCfSYh1KbrZNz3O0E9S2khp74Lt/YoZ3dE9xsR7j3Fc+3HIeA9l2TWnqkfFpBXIuwu5nXssQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZO/QDt7j77aR9WIB42LHSb1P+mZynYLdX0YRBIyUEw2kdCnmZ
+	qiJbF2W4fqIMWtbqrO7RhCBLFxML/pwSF/iSLR1F2tbEQ/7kZWaxI7Idti/TRkScbWI=
+X-Gm-Gg: ASbGncs5r35icmLvyPunQMWCkBKjeBaREbqR3zV8zCMydi8Mjhvwoj44SgMyfZKW+14
+	NT4RGwiYQVkkWUWgjwajY+BOTk+y3NP5PiIrmYZk84KM1EZZO0lJyjxOVo5WTWP0oWcu36R890k
+	ly4kVuz0LpZwfZqHyMy3/8r9fBuhewJycbBAw5ceppa93fR/XgfyfjbbokjW/tu9tAlujn5nKUm
+	74emcS4h8Txqvm4j+ipS3+8Vbn3ZXsSwlMO/jL8s8yGlCuRBCV7V14qyR4Ku+hgnFVSWIMBGsvc
+	XDehhsgxAWeFyb/h3G9XsJj76lf4M5xJ5q0r7QxECw1y5SFFm368a11YgJGmoEwpvIktg3ftRlG
+	AeciKTLg=
+X-Google-Smtp-Source: AGHT+IE4551ep9ypNSyk+kUT7ORHBKsH3ZNJO70PmyyYi6i5YwLUZhV22aROUA+T9WDlUEHG+Ihrqw==
+X-Received: by 2002:a05:600c:5392:b0:445:1984:2479 with SMTP id 5b1f17b1804b1-45390bad330mr126646345e9.5.1751298079968;
+        Mon, 30 Jun 2025 08:41:19 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad01csm170270975e9.22.2025.06.30.08.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 08:41:19 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Luca Weiss <luca@lucaweiss.eu>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+In-Reply-To: <20250611-fp3-display-v4-0-ef67701e7687@lucaweiss.eu>
+References: <20250611-fp3-display-v4-0-ef67701e7687@lucaweiss.eu>
+Subject: Re: (subset) [PATCH v4 0/4] Add display support for Fairphone 3
+ smartphone
+Message-Id: <175129807911.2286551.14063311790282968036.b4-ty@linaro.org>
+Date: Mon, 30 Jun 2025 17:41:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250623092350.3261118-2-gprocida@google.com> <20250625095215.4027938-1-gprocida@google.com>
- <CAK7LNASNVh8fDErjSbcR1TiCfy=LM-j3iYSNpqAvp8OhGmsKjQ@mail.gmail.com>
- <CAGvU0HnzfLxGhLT3Se4wNvyzEkpTKmd8ATFFgBRBVNrOKDXcgA@mail.gmail.com>
- <CAK7LNATp1n2c9RqNoe0oztRtLoMy8JqHF1KqSRsj5avp3vjHCQ@mail.gmail.com> <CAGvU0HkKacQKB1q9NWcqChLGoMB+1vu9UdqYc+tBRbTTc3++GQ@mail.gmail.com>
-In-Reply-To: <CAGvU0HkKacQKB1q9NWcqChLGoMB+1vu9UdqYc+tBRbTTc3++GQ@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 1 Jul 2025 00:40:57 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQo0CyMdsVSg4dfWjVU+uYUSMdmwgLEdpRfTVcgOTuwzg@mail.gmail.com>
-X-Gm-Features: Ac12FXyyzl9OrOby5-5Dtzs7KHIbfWmtldkF9gESl3FWHywGg2_mXLcsMMx9C-M
-Message-ID: <CAK7LNAQo0CyMdsVSg4dfWjVU+uYUSMdmwgLEdpRfTVcgOTuwzg@mail.gmail.com>
-Subject: Re: [PATCH] gendwarfksyms: order -T symtypes output by name
-To: Giuliano Procida <gprocida@google.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, Jun 30, 2025 at 10:46=E2=80=AFPM Giuliano Procida <gprocida@google.=
-com> wrote:
->
-> On Mon, 30 Jun 2025 at 14:24, Masahiro Yamada <masahiroy@kernel.org> wrot=
-e:
-> >
-> > On Mon, Jun 30, 2025 at 7:05=E2=80=AFPM Giuliano Procida <gprocida@goog=
-le.com> wrote:
-> > >
-> > > Hi.
-> > >
-> > > On Sun, 29 Jun 2025 at 18:51, Masahiro Yamada <masahiroy@kernel.org> =
-wrote:
-> > > >
-> > > > On Wed, Jun 25, 2025 at 6:52=E2=80=AFPM Giuliano Procida <gprocida@=
-google.com> wrote:
-> > > > >
-> > > > > When writing symtypes information, we iterate through the entire =
-hash
-> > > > > table containing type expansions. The key order varies unpredicta=
-bly
-> > > > > as new entries are added, making it harder to compare symtypes be=
-tween
-> > > > > builds.
-> > > > >
-> > > > > Resolve this by sorting the type expansions by name before output=
-.
-> > > > >
-> > > > > Signed-off-by: Giuliano Procida <gprocida@google.com>
-> > > > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > > Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
-> > > > > ---
-> > > > >  scripts/gendwarfksyms/types.c | 29 ++++++++++++++++++++++++++---
-> > > > >  1 file changed, 26 insertions(+), 3 deletions(-)
-> > > > >
-> > > > > [Adjusted the first line of the description. Added reviewer tags.
-> > > > >  Added missing CC to linux-modules.]
-> > > > >
-> > > > > diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksym=
-s/types.c
-> > > > > index 7bd459ea6c59..51c1471e8684 100644
-> > > > > --- a/scripts/gendwarfksyms/types.c
-> > > > > +++ b/scripts/gendwarfksyms/types.c
-> > > > > @@ -6,6 +6,8 @@
-> > > > >  #define _GNU_SOURCE
-> > > > >  #include <inttypes.h>
-> > > > >  #include <stdio.h>
-> > > > > +#include <stdlib.h>
-> > > > > +#include <string.h>
-> > > > >  #include <zlib.h>
-> > > > >
-> > > > >  #include "gendwarfksyms.h"
-> > > > > @@ -179,20 +181,41 @@ static int type_map_get(const char *name, s=
-truct type_expansion **res)
-> > > > >         return -1;
-> > > > >  }
-> > > > >
-> > > > > +static int cmp_expansion_name(const void *p1, const void *p2)
-> > > > > +{
-> > > > > +       struct type_expansion *const *e1 =3D p1;
-> > > > > +       struct type_expansion *const *e2 =3D p2;
-> > > > > +
-> > > > > +       return strcmp((*e1)->name, (*e2)->name);
-> > > > > +}
-> > > > > +
-> > > > >  static void type_map_write(FILE *file)
-> > > > >  {
-> > > > >         struct type_expansion *e;
-> > > > >         struct hlist_node *tmp;
-> > > > > +       struct type_expansion **es;
-> > > > > +       size_t count =3D 0;
-> > > > > +       size_t i =3D 0;
-> > > > >
-> > > > >         if (!file)
-> > > > >                 return;
-> > > > >
-> > > > > -       hash_for_each_safe(type_map, e, tmp, hash) {
-> > > > > -               checkp(fputs(e->name, file));
-> > > > > +       hash_for_each_safe(type_map, e, tmp, hash)
-> > > > > +               ++count;
-> > > > > +       es =3D xmalloc(count * sizeof(struct type_expansion *));
-> > > >
-> > > > Just a nit:
-> > > >
-> > > >            es =3D xmalloc(count * sizeof(*es));
-> > > >
-> > > > is better?
-> > > >
-> > > > > +       hash_for_each_safe(type_map, e, tmp, hash)
-> > > > > +               es[i++] =3D e;
-> > > > > +
-> > > > > +       qsort(es, count, sizeof(struct type_expansion *), cmp_exp=
-ansion_name);
-> > > >
-> > > > qsort(es, count, sizeof(*es), cmp_expansion_name);
-> > > >
-> > >
-> > > That's a fair point.
-> > >
-> > > However, in the gendwarfksyms code, all but one of the sizeofs uses a=
-n
-> > > explicit type name. The exception is sizeof(stats) where stats is an =
-array.
-> > >
-> > > I'll leave Sami's code as it is.
-> >
-> >
-> > This rule is clearly documented with rationale.
-> >
-> > See this:
-> > https://github.com/torvalds/linux/blob/v6.15/Documentation/process/codi=
-ng-style.rst?plain=3D1#L941
-> >
-> >
->
-> I can follow up with a change that adjusts all occurrences. That
-> shouldn't take long at all.
+Hi,
 
-I expected a new patch version (I do not know whether it is v2 or v3 since
-you do not add such a prefix),
-instead of breaking the style, and fixing it in a follow-up patch.
+On Wed, 11 Jun 2025 18:33:14 +0200, Luca Weiss wrote:
+> Add a driver for the HX83112B-based panel, and enable it on Fairphone 3
+> to enable display output, and enable GPU as well.
+> 
+> 
 
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
+[1/4] dt-bindings: vendor-prefixes: document Shenzhen DJN Optronics Technology
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/978a84297371ac33a15c56a7d31fd1b125427dac
+[2/4] dt-bindings: display: panel: Add Himax HX83112B
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/54bd1390e98450a2c1cad99da3e2594e92c41a4c
+[3/4] drm/panel: Add driver for DJN HX83112B LCD panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/df401fa1b80775109e2a52360fcb0b2b2300525a
 
+-- 
+Neil
 
-
-
-
---
-Best Regards
-Masahiro Yamada
 
