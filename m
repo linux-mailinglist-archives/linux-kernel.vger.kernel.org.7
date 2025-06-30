@@ -1,117 +1,170 @@
-Return-Path: <linux-kernel+bounces-709492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA4FAEDE7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:12:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFFF7AEDEB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E92B7ABB4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:11:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2423A2A73
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB74128DEF0;
-	Mon, 30 Jun 2025 13:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DF028A738;
+	Mon, 30 Jun 2025 13:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cfEIrMHh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9j2DPIkj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L05Dk8Jn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29E428DB4F
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6384723A987;
+	Mon, 30 Jun 2025 13:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288984; cv=none; b=S5+m3JpE6GaN+FUcFJu57/v18MGCSygXHqPH3mCG/66Unj90sj2inmVoestagyJsMJovKCAxsnhUsBw4RvjcqqhgMCIwlziIFp5xYgpmfsAyZ8VHCfx4D1lN3LiHKFdosCamM737quQThHiV7meH4GMi9EcndrHMCbQel1XRlD0=
+	t=1751289033; cv=none; b=DOfxVvC7Fwrbisb39wflfNSOAGH0I20LSSy7zwl3vHU3Uu/MVCcCDA2ZbzcOzd/eIi2M3j6Bol+YmDviBIimswaW9YkYkW9QTAWW8YOoZZr6ODX9D7XrUJ2rD6K8O6pky27a3o5k4Vq/fHAu6oStxWXLd8UEbPcCptFXakF8FXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288984; c=relaxed/simple;
-	bh=35kZcYzz/9LOBblfP10vus4j++96NgpU34q+9r+tf80=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UtiUk4El/EmL/oI0h7jexsb7OfwKbzTWZhAhzISoR0rmpODjUCaeboZwLGZ6XpWoaka2H281lkS+D4LU+ZuwR8aHp1BufQOPVqW4mN/l0c8h//IJeG2WHL7NCXJE/geDt2uE5dBFNCq5UKVXZ8anC3aDUNztSjge8gDEBflv4aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cfEIrMHh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9j2DPIkj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751288981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZhJ6zb19GsA/tbHqYrAYqtbxEY1uCHz3HH4IVAeWXuY=;
-	b=cfEIrMHh/YcrK4OmOLlwI/A4V9ojT6LGIxp08FOlNaeaIWpwwXTDlsjgNEW8Z8oweuBZxt
-	TpfwWC330P3SyAfbxw2h2QUMjxCBLGjal74MLlXacbQ5mrdhIffmfKqgjyXum/FmZGDU3T
-	HmdQViGtehZ7lW2XTIfR34jiGJJVmNku6z5/1OYrpvon7X2IR8DrFWXW0bgXcKeSClRsMU
-	PMPK4EFzdHEvqdcTlMQNnfs7fInCsPhWncKUvKwyy/TwW+W1mnVyfJ/R6Gh6vKFgzlhxhg
-	QySEDTrzF6Kzy2/FioXUeziLvpU680+ygLUJA13l0qyfZkzzK1hMtda5HDFUFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751288981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZhJ6zb19GsA/tbHqYrAYqtbxEY1uCHz3HH4IVAeWXuY=;
-	b=9j2DPIkjg4NrAAvh/9MSkzinoUFUUAFrtIZwvCbZtS5mkg5OCBlEkGUon2HJVDyBPROD6U
-	6WEJJThzY/qqhYDw==
-Date: Mon, 30 Jun 2025 15:09:35 +0200
-Subject: [PATCH] MAINTAINERS: bitmap: add UAPI headers
+	s=arc-20240116; t=1751289033; c=relaxed/simple;
+	bh=mZZD5+PO07CcheATfAnTTx+8kWiU0ytL1U4UNq+W0h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/UFehKY39NLzoczI+im3sSJH4NdfuI90ZykWFReYVHQYORnC86PPzE5F/X4JodFsdGlHcEJdoAk4bMye4cvwRXZj5Q4XMEh0sBf8FOPX3UgoR105oLQa2MRdaZmIXjMhRRP60yS1dDSyXuW+ZU+l/X2goG7R39O1htlnUAcy+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L05Dk8Jn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A7B9911EB;
+	Mon, 30 Jun 2025 15:10:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751289007;
+	bh=mZZD5+PO07CcheATfAnTTx+8kWiU0ytL1U4UNq+W0h8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L05Dk8Jn2QisbsgNo8u6bk0OMEJqFCQ4ksW7293E5Lhf0y5ks5GN2dfxFirTz8meT
+	 JHxZxr4SJjEC26DpPbue+TxNaUyHzWBZt1itcMm97kSj4DNShFWoyLv1gDCJr5lo0W
+	 0y8JH2dlOj6O//eicFZ5Y2hhz2jKGgfRYhftIpcU=
+Date: Mon, 30 Jun 2025 16:10:04 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] media: uvcvideo: Split uvc_stop_streaming()
+Message-ID: <20250630131004.GF20333@pendragon.ideasonboard.com>
+References: <20250616-uvc-fop-v4-0-250286570ee7@chromium.org>
+ <20250616-uvc-fop-v4-3-250286570ee7@chromium.org>
+ <04e10cfa-f1b1-4327-b0ca-c66f8450d42f@xs4all.nl>
+ <c97af8e7-5c11-45f4-838c-d934b0a379c1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250630-bitmap-maintainers-uapi-v1-1-f4fae7db5841@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAI6MYmgC/x2MywqAIBAAfyX23IIPiuhXooPpWnvQRCuC6N+TD
- nOYw8wDhTJTgbF5INPFhfdYRbYN2M3ElZBddVBCdaLXAhc+gkkYDMejQrngaRLj4JwVSktvvYd
- ap0ye7/88ze/7AT6HsGppAAAA
-X-Change-ID: 20250630-bitmap-maintainers-uapi-8ddc0231fcff
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751288979; l=1135;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=35kZcYzz/9LOBblfP10vus4j++96NgpU34q+9r+tf80=;
- b=1D7TNvfRWPj/b68yimt+IqJHwlQYql9ttORpmqjXB2CvCoz3GpKdyl+ex7ddVHOPmb8h4mQCI
- hgoyYdCLvzTChGxE46iIwzA2WlTKqRF5RxmFb/Zhb7V71wt+freGZKL
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c97af8e7-5c11-45f4-838c-d934b0a379c1@kernel.org>
 
-The UAPI headers have been split out from the kernel-only headers.
-They maintained as part of the bitmap library.
+On Mon, Jun 30, 2025 at 02:59:05PM +0200, Hans de Goede wrote:
+> On 17-Jun-25 11:27 AM, Hans Verkuil wrote:
+> > On 16/06/2025 17:24, Ricardo Ribalda wrote:
+> >> uvc_stop_streaming() is used for meta and video nodes. Split the function
+> >> in two to avoid confusion.
+> >>
+> >> Use this opportunity to rename uvc_start_streaming() to
+> >> uvc_start_streaming_video(), as it is only called by the video nodes.
+> >>
+> >> Reviewed-by: Hans de Goede <hansg@kernel.org>
+> >> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> >> ---
+> >>  drivers/media/usb/uvc/uvc_queue.c | 22 +++++++++++++++-------
+> >>  1 file changed, 15 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/drivers/media/usb/uvc/uvc_queue.c b/drivers/media/usb/uvc/uvc_queue.c
+> >> index 8f9737ac729546683ca48f5e71ce3dfacbae2926..3f357c2d48cfd258c26f0342007d1d12f1e01007 100644
+> >> --- a/drivers/media/usb/uvc/uvc_queue.c
+> >> +++ b/drivers/media/usb/uvc/uvc_queue.c
+> >> @@ -167,7 +167,7 @@ static void uvc_buffer_finish(struct vb2_buffer *vb)
+> >>  		uvc_video_clock_update(stream, vbuf, buf);
+> >>  }
+> >>  
+> >> -static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
+> >> +static int uvc_start_streaming_video(struct vb2_queue *vq, unsigned int count)
+> >>  {
+> >>  	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
+> >>  	struct uvc_streaming *stream = uvc_queue_to_stream(queue);
+> >> @@ -186,14 +186,22 @@ static int uvc_start_streaming(struct vb2_queue *vq, unsigned int count)
+> >>  	return ret;
+> >>  }
+> >>  
+> >> -static void uvc_stop_streaming(struct vb2_queue *vq)
+> >> +static void uvc_stop_streaming_video(struct vb2_queue *vq)
+> >>  {
+> >>  	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
+> >>  
+> >>  	lockdep_assert_irqs_enabled();
+> >>  
+> >> -	if (vq->type != V4L2_BUF_TYPE_META_CAPTURE)
+> >> -		uvc_video_stop_streaming(uvc_queue_to_stream(queue));
+> >> +	uvc_video_stop_streaming(uvc_queue_to_stream(queue));
+> >> +
+> >> +	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
+> >> +}
+> >> +
+> >> +static void uvc_stop_streaming_meta(struct vb2_queue *vq)
+> >> +{
+> >> +	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
+> >> +
+> >> +	lockdep_assert_irqs_enabled();
+> >>  
+> >>  	uvc_queue_return_buffers(queue, UVC_BUF_STATE_ERROR);
+> >>  }
+> >> @@ -203,15 +211,15 @@ static const struct vb2_ops uvc_queue_qops = {
+> >>  	.buf_prepare = uvc_buffer_prepare,
+> >>  	.buf_queue = uvc_buffer_queue,
+> >>  	.buf_finish = uvc_buffer_finish,
+> >> -	.start_streaming = uvc_start_streaming,
+> >> -	.stop_streaming = uvc_stop_streaming,
+> >> +	.start_streaming = uvc_start_streaming_video,
+> >> +	.stop_streaming = uvc_stop_streaming_video,
+> >>  };
+> >>  
+> >>  static const struct vb2_ops uvc_meta_queue_qops = {
+> >>  	.queue_setup = uvc_queue_setup,
+> >>  	.buf_prepare = uvc_buffer_prepare,
+> >>  	.buf_queue = uvc_buffer_queue,
+> >> -	.stop_streaming = uvc_stop_streaming,
+> >> +	.stop_streaming = uvc_stop_streaming_meta,
+> >>  };
+> > 
+> > I think there should be a comment stating that the metadata stream
+> > expects that video is streaming, it does not start streaming by itself.
+> > 
+> > Something like:
+> > 
+> > 	/*
+> > 	 * .start_streaming is not provided here. Metadata relies on
+> > 	 * video streaming being active. If video isn't streaming, then
+> > 	 * no metadata will arrive either.
+> > 	 */
+> > 
+> > It's unexpected that there is no start_streaming for metadata, so a
+> > comment wouldn't hurt.
+> 
+> I've added this comment while merging this series and I've now pushed
+> the entire series to uvc.git/for-next .
+> 
+> BTW it seems that both uvc.git/next and uvc.git/for-next are in
+> use now?  With uvc.git/next seemingly following media-commiters/next ?
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+As far as I understand, some jobs in the media CI use the next branch,
+for instance the bisect job that tries to compile every commit uses the
+next branch as a base. We therefore need to keep the next branch
+up-to-date, mirroring upstream.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4bac4ea21b64445069e1518bd906354627dca438..bb1d7642f5085106f9ef6647adee658b5794309f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4181,6 +4181,7 @@ F:	include/linux/cpumask_types.h
- F:	include/linux/find.h
- F:	include/linux/nodemask.h
- F:	include/linux/nodemask_types.h
-+F:	include/uapi/linux/bits.h
- F:	include/vdso/bits.h
- F:	lib/bitmap-str.c
- F:	lib/bitmap.c
-@@ -4193,6 +4194,7 @@ F:	tools/include/linux/bitfield.h
- F:	tools/include/linux/bitmap.h
- F:	tools/include/linux/bits.h
- F:	tools/include/linux/find.h
-+F:	tools/include/uapi/linux/bits.h
- F:	tools/include/vdso/bits.h
- F:	tools/lib/bitmap.c
- F:	tools/lib/find_bit.c
+> I thought we had agreed to only use uvc.git/for-next ?
 
----
-base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
-change-id: 20250630-bitmap-maintainers-uapi-8ddc0231fcff
-
-Best regards,
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Regards,
 
+Laurent Pinchart
 
