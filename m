@@ -1,190 +1,89 @@
-Return-Path: <linux-kernel+bounces-709233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B104AEDABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16220AEDAB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB7117809D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1118A1887872
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F7F24113A;
-	Mon, 30 Jun 2025 11:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGZkwMcN"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EC3226188;
+	Mon, 30 Jun 2025 11:21:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A5525A351;
-	Mon, 30 Jun 2025 11:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456C5239085
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 11:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751282502; cv=none; b=nm+Y7Kwx0NiOzZTsrp5b+Czs4XLyDBnQ0rUmT3eK2RIcam/o3ke6NRTVTijr34jXKhG+xqR6Kbg624Bwqp8T8SGPuQDlt82mI2FSvLbMmwV1NEHk6nW8oXcz4Ez8KdyI9PdcWQkasDcgHKIlG9v/ekonK2TqvsPrKCmy590f3dY=
+	t=1751282465; cv=none; b=DsCPw3+PO6N9hwvX8FS73MRg7ixLAxd61pMG7cdmYwZhrlyAyR27CVQpt6fKAU0iOncpWDTJfBniE/8Pqoi55+io11vzboE7p/GQ1w2GA4ORZyFBx+XC23IKJsItlAMQSUxQJAU/VieEdyKcdPPPGW10HWr60RJBqYnZ5wsiWKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751282502; c=relaxed/simple;
-	bh=NCU514sWwUJE9Z2TWXQPbFT8ayuK6ddhyUCCZiIEVIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RwHK/xzg2xE2mxHxMSan6psToYhfPt5HQC1azexvyUgqvm4SECLHKbS4/Pb0gnMk0MhF/Zkq7WiG4DkREe4aX/k1viOj1nIT3SJ8lU9oecaqC/2IzqPDq0R8WuBKrs+CLdlfhV259VPiSfjju0OeJEPi8Er6yXticS76BvvbSo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UGZkwMcN; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-747ef5996edso1706462b3a.0;
-        Mon, 30 Jun 2025 04:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751282500; x=1751887300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8J3oU3FmkEwSjLfjiK/dSK0NR+xWVZZ4VhglxPAf/2M=;
-        b=UGZkwMcN/QjmDb8ICxkGRFgdxlN7pP0OkzpP1rj4pZEpPF8EUNyR5ECxjVC3ZjQjxv
-         bjvoIw81flqOCVH4frXqCg5fY3sK5WU93q2GH6iOsIb87uX3dOTEItDVF7C5/A0LA/qp
-         Als6hR2WpcopZj50Tdw0ZBxG34DiRFVrNkkk66ch4Pu+W1rLccl/PZ4cw5wwUmBbcjBq
-         QTAiQVXp0gOqo4Z26FGtwRmxWl6VpJyXeJu1pKZA0ngrACM4RAzIDdZbsFOpyHVRHzPE
-         gY3WvZfN6LfOKy8bz/Lg7kPGf/snVDeWgVyuTS+s6pdoCGNhjFhYLv/AExLDFYriWGlm
-         shgg==
+	s=arc-20240116; t=1751282465; c=relaxed/simple;
+	bh=+aphM6TJQ7iJ2TJZpMW11fb+R+9crTfLJhUedDM7mag=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=t8MBh3bPlaK7k5xt3uy675zb7Yw/0NrRSYxp65vBZRxYyCPfc1OhiAQBpytO2LWzkZBTcEnXI9Wt7VCvfmCQ7yXEkg6dJ9FWPIZdniBR4UOyhv7A8U2yUGR5u3WVtH5l6IVYpAxebF00AXYg3BOmG4ZYyb3y1M58bZSx6SuboQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ddbfe1fc8fso106417275ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 04:21:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751282500; x=1751887300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8J3oU3FmkEwSjLfjiK/dSK0NR+xWVZZ4VhglxPAf/2M=;
-        b=HTGibGZNypLaIEgadfzw2TNU+AEulZzdxjhogbun3/jpNqKuf6DYvl62WwtFRknfI3
-         8DQJf0aXi9gAHk2uJEZiZChOoEjALWyEfSsqzpJCbyX8OLDNbGZH4lwm4UOcByUmcAFT
-         1/T0nDJft3gGk5VuLmCpMbQ7KBcy7nUvikyg89PhBAbLftzcC/R0YsYaZBZn5L3fwm6j
-         8MdWKzeO+hOVr4H3Hcz8eu/Ouxh+KUMrmOijdb5ZOKEbJ1TuUeh5zppMCI2e5OxVWK/y
-         8Nr5hhV+JkuSIlntl/j6Wxe2gRZGvIqVblV3/sFzbF6nwlEy3jqarl2bnn3l+n4kHYiZ
-         YJLA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7LS8ZPu1FC5lCSQ3d3sj0b4Vr7ml1gH1t+B2mNqS7pKYaW1mZqtiVh4WYTgfFpTGO1upzvsMgOXGesA4ZCffAUOMQJg==@vger.kernel.org, AJvYcCUH5b+F+O4JaTID8BRQmB4vXmN4kJsodQkExXEYXUmW0hUVcqi+382Og06RP5tBommzK0+vubRPqY75/Q==@vger.kernel.org, AJvYcCXgkjbO7z3l8GaQlgGe6rNfh9IbUa8ZR5isHxEdtcwMPjiHq9oTE/ylVSRKZVYakcodTxPqkDmxp/qFWdLW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhQl1pQSBS8kuy2fWozWJgZqYm8spGrcDnI7Jmug1vi9V5iCwi
-	9eu2lraw+lL/hayAt2unotLGSIDF9O6YZjxEnT3dK5qXbTeRI7d4N/V6g1YOwmsFWU2Hg9SXW+x
-	5b8SRau4VerTH/REdU3cj1CKH98DzbW0=
-X-Gm-Gg: ASbGnctve7hvSyaiq97K2/YmjZmOgpR4v/goxcVMq/TSprOLbZlVDOfqiTj3GkDD71E
-	Nq9/tMn5bn4aGd+nTYsYe7/K9gXOkQ/Ek6Ve3tmnffyd0zXT+zYLsrjCfvyZn//6LjOh3wUDfkD
-	e6ysJHBCUU7bgAZfbuQ/OKHAOK0G1ZdsDyMy+4df+EEf16ulT29tsO7RrDD5F6MdUgZzKEJaMLB
-	m+uCg==
-X-Google-Smtp-Source: AGHT+IGel8gwZk7cmvt1YCIp9yfYoFSQ3i1n6CaDsHWkLJCLxhmB2RQZN2NpmquyT2mQLHl4GyGcNrHfMFbUs2i4gpA=
-X-Received: by 2002:a05:6a00:2d18:b0:748:68dd:ecc8 with SMTP id
- d2e1a72fcca58-74af6f7a3ebmr17244165b3a.22.1751282499827; Mon, 30 Jun 2025
- 04:21:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751282463; x=1751887263;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Urt1qcGeF+OsaysPJf+JjXcDqkwzAs+PQYC4oWvv1/Y=;
+        b=JRJXVohagsh3eM8GS6PoaXJVHMJyHfQKN/pkDhdjaMw1aD9VMAl8niNQvnjS/NIWAX
+         hcbG5nb0UwvFWhtCwPu+EY8KVvuK73OeHQfhjc0InuHzwyV3YKCmstQ8Azhr0irCwNxv
+         SbHTnBgvEuYGSJvDamBHi3D9jfwQZZkIBAIQwxQIKNNbCubnMQ5fKw79lZXcplbMZJzk
+         U9gL4kVYFxK3KmB97osPYJRFhU0msUnGik9qEd68RevJWHNoaG64lbvaq6Or+NcCZhNR
+         JlKG0lKPGD2V/EI8AuMvE7MfOKo8VuIu3OIlO0KhFj4cElksyM8gjgTZy6gGw8YjVJx3
+         kjBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6waDAw28cExBd1y4wLs/RGy4pyWSMX8CKUBiLYBHR+dc+wpyf+6fYjJlg7m0mR4+KG3nmE7A+T2C57AQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIC0cRVrerP9v9mDqBxJRM4afVnQVm55O4jlJU2Lmjqjll4vmb
+	xd+TTOU8QEsOFq+PDYvx4239yYHGZ5DQhM90XNfSer/3e7vHfoRsHretdEnlYY1fyI+KuH7uS1a
+	rZUb8A0RHda+2+wPCbXCfmLBkimhIHXsPYd/ewQz+svcR5fq18q8FqJ0T8AM=
+X-Google-Smtp-Source: AGHT+IE9HPMx0ykR3AVayvI2tdTEcRU6v0jBBX7QQSnH4uEWaQ9zGHNuNy1V78dpTUKrB02Cc80VVg2nJzBmgSurAKxkAmrSZV/F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620004209.28250-1-vishnuocv@gmail.com> <5jgix7znkfrkopmwnmwkxx35dj2ovvdpplhadcozbpejm32o2j@yxnbfvmealtl>
- <4ad6e1e1-aca8-4774-aa4a-60edccaa6d0e@app.fastmail.com> <20250629205148.l2etpceayuzmhzph@pali>
-In-Reply-To: <20250629205148.l2etpceayuzmhzph@pali>
-From: Vishnu Sankar <vishnuocv@gmail.com>
-Date: Mon, 30 Jun 2025 20:21:02 +0900
-X-Gm-Features: Ac12FXyJREBHZUE3BDLX_Wweq50jfNnmNP1LCY3mZVSbuEU7aKBjMJPbMugfydg
-Message-ID: <CABxCQKucaDFHb+faMz6w6GOWNrbA_nDb4zhA8xrWmq=Qj8ZpgA@mail.gmail.com>
-Subject: Re: [PATCH] x86/Mouse: thinkpad_acpi/Trackpoint: Trackpoint Doubletap handling
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, hansg@kernel.org, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	tglx@linutronix.de, mingo@kernel.org, jon_xie@pixart.com, jay_lee@pixart.com, 
-	zhoubinbin@loongson.cn, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, Vishnu Sankar <vsankar@lenovo.com>
+X-Received: by 2002:a05:6e02:1a41:b0:3df:4811:ea2a with SMTP id
+ e9e14a558f8ab-3df4acc3068mr128274075ab.22.1751282463505; Mon, 30 Jun 2025
+ 04:21:03 -0700 (PDT)
+Date: Mon, 30 Jun 2025 04:21:03 -0700
+In-Reply-To: <e13eff57-579f-4eca-9bc3-9f6ec2d5f42fn@googlegroups.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6862731f.a70a0220.3b7e22.0db3.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in ni_rename
+From: syzbot <syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com>
+To: kapoorarnav43@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Pali,
+Hello,
 
-On Mon, Jun 30, 2025 at 5:51=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Monday 30 June 2025 05:42:45 Mark Pearson wrote:
-> > Hi Dmitry,
-> >
-> > On Fri, Jun 27, 2025, at 2:14 PM, Dmitry Torokhov wrote:
-> > > Hi Vishnu,
-> > >
-> > > On Fri, Jun 20, 2025 at 09:42:08AM +0900, Vishnu Sankar wrote:
-> > >> Newer ThinkPads have a doubletap feature that needs to be turned
-> > >> ON/OFF via the trackpoint registers.
-> > >> Systems released from 2023 have doubletap disabled by default and
-> > >> need the feature enabling to be useful.
-> > >>
-> > >> This patch introduces support for exposing and controlling the
-> > >> trackpoint doubletap feature via a sysfs attribute.
-> > >> /sys/devices/platform/thinkpad_acpi/tp_doubletap
-> > >> This can be toggled by an "enable" or a "disable".
-> > >>
-> > >> With this implemented we can remove the masking of events, and rely =
-on
-> > >> HW control instead, when the feature is disabled.
-> > >>
-> > >> Note - Early Thinkpads (pre 2015) used the same register for hysteri=
-s
-> > >> control, Check the FW IDs to make sure these are not affected.
-> > >>
-> > >> trackpoint.h is moved to linux/input/.
-> > >
-> > > No, please keep everything private to trackpoint.c and do not involve
-> > > thinkpad_acpi driver. By doing so you are introducing unwanted
-> > > dependencies (for both module loading, driver initialization, and
-> > > operation) and unsafe use of non-owned pointers/dangling pointers, et=
-c.
-> > >
-> >
-> > Do you have recommendations on how to handle this case then?
-> >
-> > This is a Thinkpad specific feature and hence the logic for involving t=
-hinkpad_acpi. There are Thinkpad hotkeys that will enable/disable the track=
-point doubletap feature - so there is some linkage. I'm not sure how to avo=
-id that.
-> >
-> > Is there a cleaner way to do this that you'd recommend we look at using=
-? It's a feature (albeit a minor one) on the laptops that we'd like to make=
- available to Linux users.
-> >
-> > Mark
->
-> Hello, I do not know what is doubletap and patch description does not
-> explain it. But for laptop / mouse interface, I'm just giving example
-> that dell-laptop.c for some particular laptop can enable/disable
-> touchpad led and uses PS/2 interface for it. See touchpad_led_init().
-> I do not know if it is ideal or preferred solution, just writing to let
-> you know, maybe it can be useful.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-FYR, please find the previous commits regarding Doubletap support for
-Trackpoint below:
+failed to apply patch:
+checking file fs/ntfs3/frecord.c
+Hunk #1 FAILED at 3027.
+1 out of 1 hunk FAILED
 
-https://github.com/torvalds/linux/commit/a9b0b1ee59a79d0d3853cba9a4b7376ea1=
-5be21f
-https://github.com/torvalds/linux/commit/fd1e3344d13f1eedb862804dd1d2d5e184=
-cf8eae
 
-Sorry if details are missing in the commit. I can add those.
 
-To be more precise, Thinkpad_acpi handles hotkeys, including Fn+G for doubl=
-etap.
-To make that work, we need an integration point.
+Tested on:
 
-Thinkpad_acpi.c
-Fn + G Hotkey - Enable/Disable the Trackpoint Double Tap.
-DoubleTap on Trackpoint - Generates a DoubleTap ACPI Event
+commit:         1343433e Add linux-next specific files for 20250630
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a3d8d413c6928dae
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0373017f711c06ada64
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=115cb88c580000
 
-trackpoint.c
-Enable/Disable the Doubletap functionality
-
-To enable (this is decided based on Fn + G toggle key) the Trackpoint
-Doubletap, we need to write to the Trackpoint extended register.
-Therefore, the event to enable or disable the double tap will be
-handled inside Thinkpad_acpi, but the actual write to the register is
-in trackpoint.c.
-
-I will check dell-laptop.c to understand the LED handling.
-
---=20
-
-Regards,
-
-      Vishnu Sankar
-     +817015150407 (Japan)
 
