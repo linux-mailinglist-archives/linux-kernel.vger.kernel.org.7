@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-709490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3105AEDE7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19133AEDE8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082A67AB53F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7BEA188D2E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A0A28C00C;
-	Mon, 30 Jun 2025 13:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD89328C87A;
+	Mon, 30 Jun 2025 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UaJlchgA"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OPddzOeR"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C4E28B513;
-	Mon, 30 Jun 2025 13:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E21283FCE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288973; cv=none; b=H5aKviqaYQQYP8mZpcXDD1yayBKt8Au6M2hqnhBnvCOKDTpE4lvA51gvzKvv698qbLITlEtxltz0QN54Ldz3PoGlDYdMAffprgudX6FAGkWtEfszZIavc/ZeQBr0L9q6TjTSMV/2zTi21L1dcZDryOaRHIxidn8m57CxLFfDPjA=
+	t=1751288826; cv=none; b=XO7mlIN4rvkMdbgIOvkdYxZREuV9WtFhTGW7VMmiUomtCCEF+chuTyK3WgxJeMMZbM+kxzxfIH/yT8vyTKVZzPUqcWjL2GhGvAy3B9c6jzyq/MrIVOM9Z7iRCN68XXLHHVaCtIRQ75cHLgIXRmrghvJ+odGBODEdp9VMb4fhV/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288973; c=relaxed/simple;
-	bh=dv3wBh5m+HW3Nx0rDQr4GPsSr/bsd0g+Sqa6i3BgbZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n/Q+B8JjQfLpIQlbxPVlK9CsQeg6lekIcHEM2kG+E6oBWHsaOKG1mr4HYeApKQPUwYW/QvpDCwSyqNv65RHxJtX1M7LD8cqNvBxDxSh7/RFqJim1CWijCChPfvn2TzxLE3+uX912EvY7mW8csFcdMX3HqBf6IAPJouVAVpu0bnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UaJlchgA; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UAxWXY001329;
-	Mon, 30 Jun 2025 15:09:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	+gPiTecoRPlnJ7Fm5WOws1ntoipek0S7ruHePGX3IMk=; b=UaJlchgAJfu5jbwv
-	xXTiLCcPL8RYmS8Jgjxawh24Elz5ge9gN2ap04aErAnLM9OfMtvwOjbHxktjizaJ
-	1ed/Y5EGLxsfF5OWihCiDgkpBrxyZf0wIBokFNu64lqvLep52pXLlG8A3Iv6OyDX
-	7SgL/J46RE4hNbsh3maton4NGSSKjQ7tf77CZRgSq/vzW9BTFOurv91W/8P8yURM
-	R2QLztwEjYAWz7pNjDls+HN3fwNFVcsYpVYXYkWddSkzrVklhYRTPGZj+pNzHWpu
-	dml5KaZkaaGw9dvwDMDhxxU2KX/Xv46AI6NILcr31U4PELoqigVf6LQwyI2zLx7V
-	tksNJA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tm0402-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 15:09:13 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CFD5F4004C;
-	Mon, 30 Jun 2025 15:07:49 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B8DFAB4A79D;
-	Mon, 30 Jun 2025 15:06:56 +0200 (CEST)
-Received: from [10.252.14.13] (10.252.14.13) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 15:06:55 +0200
-Message-ID: <117094db-1b6d-4284-917a-ac69cfaa4d96@foss.st.com>
-Date: Mon, 30 Jun 2025 15:06:54 +0200
+	s=arc-20240116; t=1751288826; c=relaxed/simple;
+	bh=XzSA8lqce7ObaJi4R2x6wnKGTAh2x5xLjrtEhvRLgZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tJnRP4amCRILILmsLvQtaWVDwZv38UY1AuxXSpNnTKimua+0RSSOW49rfdaTKdyT93fyK5cVjhcMXV4HhqAlSbw3BMfmoo+xfL7VrQgAbP7bNt9gSBFIyoOiG0jdwgMSsUhnCuwuGb+pmwz1C608dsbus1gRqdfNrcJUackWuck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OPddzOeR; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-607434e1821so3194061a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 06:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751288822; x=1751893622; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fjTqc5w8WVqrn6bONYW3G2Bp0s1AYzagFEFfl1Akrl4=;
+        b=OPddzOeRIk3YNhPdxHYL7w8/GQj4aeVwJUTambd8nomwNZYXveT5WhdXDixyHmv2Dw
+         B4pfGinQQeclX6LQhxXG/ZSuW+JehuyvHlfKyXQChpNzPKLNn2tUZ2ZX7C2UeB4Y0g3U
+         kK9hW1DSFVq/Y7kgIlJNlThQX6YhlH7WS6pKrkLrmNQGMOMLlSPQsSLJzlL1pFSNh2J2
+         jqKo0BWE4qBW7v7Bl4jRUOjOTpJdZWMkVUs8u60NSmJP7yPqalddVWPnGW5X9nfkc5g7
+         kanr+QlbqJj/2K9qDQSzIvVcq+3wGPyRQ3RkcZq00ycy0dqUuhPqzc+Vd7F6IMMdUmpO
+         Ewbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751288822; x=1751893622;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjTqc5w8WVqrn6bONYW3G2Bp0s1AYzagFEFfl1Akrl4=;
+        b=I1kfjVRzFLjvAvaZvlkPp1C1mKJ/8HGU/PbWEi3jXJBBBHUclAmis1M9CNfq8XMHON
+         Es1bDH/I41kMGrJR4hMGvqHHPhlE1Yn0BvQPMBLNNzDS+7sqwbQCFXlZNuHNRbOAKYSD
+         5y9/Xs9vSMhbbRdVMKQCKQ7Y68emi25nGToaYBFhS0CWHSdlYWaq8tnDenMXK+nKr+dI
+         u/9+74Jqg5SBV4yWhyUkv7t1jUVAFSV2oGSDxxdnd6Ys/k3Hv5s244ULeSRJBs5xT/gx
+         HndWS2OFph85nu1RiiMyY8bpQcKVud/Xee3wvL7ATZeJva8/KvS/TyoYNtam+OJaRiku
+         yZCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvDOL1p4U5WaO8sUx451fw+Xe6g/0KmeKfIspyvZhZuLfdHxSoWYx82U7/4HgBF+DTIzU+9RnWLjtu+xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAjrhluJMu6I+C4BVBivqSXaj9sY7882/nVAlVooWK+4V1ievj
+	TjMTBdRjW1E2VvltHkTvJeiALvaBeUlA8BE3X8SDrtemcfAORGMiTXsotK28QmuX1Pk=
+X-Gm-Gg: ASbGncvR5hdhrFLffOqOP1s/QXJsfPqCgdtZo6HEdy2ZimiAHXBacpKe4E3pSJYBbsv
+	40rvJEKpKroPdwOJfiIxJ3w7t/I/QY0vux/7kl049/JXNKXAE0Ns9mbp5JnzABd7gcaoOOA6s40
+	+4RKptCwtzSozsNZJ+JteDSuOEt7+EwikdOW2OzGAoSDf7m0rvgESfvlHCXrjrmthTlosVbxrQE
+	b8yG7AcP2uksSEcbDm6SCS4doXDsklBssunNbTc0Zf2KjBQ9TUaj1OMIR9ty8V2ezJgcAmLJo33
+	QD6DwVL+ImOaxc5Zs5vuV7ebAKNxPKXOakMw9xaR6XjNZkA1/fuv3eH03I/cOyUgrJ5Mr2JNHKh
+	yovIIahyzkgSV5amgCMvbuZYo2A==
+X-Google-Smtp-Source: AGHT+IGQQy4U19NiLnmRx9yAJ+yqWDYzFld5hJO9BbU/RWXFjYdkBLOk4FCpcLsDyCYGwv+95jV0NA==
+X-Received: by 2002:a17:907:3ccb:b0:ade:3413:8778 with SMTP id a640c23a62f3a-ae3500b8e0emr1306050466b.30.1751288822034;
+        Mon, 30 Jun 2025 06:07:02 -0700 (PDT)
+Received: from ?IPV6:2001:a61:13b1:b001:7c81:22a6:ebbb:9d2? ([2001:a61:13b1:b001:7c81:22a6:ebbb:9d2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c6bc08sm664696266b.131.2025.06.30.06.07.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jun 2025 06:07:01 -0700 (PDT)
+Message-ID: <9ca2c058-d562-4c9e-8d0c-695703573ed7@suse.com>
+Date: Mon, 30 Jun 2025 15:07:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,92 +81,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] i2c: stm32f7: unmap DMA mapped buffer
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
-        "Alain
- Volmat" <alain.volmat@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "M'boumba Cedric
- Madianga" <cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>
-References: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
- <20250630-i2c-upstream-v3-2-7a23ab26683a@foss.st.com>
+Subject: Re: [RFC PATCH 3/4] usb: core: Plug the usb authentication capability
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+ Oliver Neukum <oneukum@suse.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Kannappan R <r.kannappan@intel.com>,
+ Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Pawel Laszczak <pawell@cadence.com>,
+ Ma Ke <make_ruc2021@163.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>,
+ Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250620-usb_authentication-v1-0-0d92261a5779@ssi.gouv.fr>
+ <20250620-usb_authentication-v1-3-0d92261a5779@ssi.gouv.fr>
+ <94cd36e2-db7c-4693-9f43-01c855dc6891@suse.com>
+ <6dce47fd-01fb-4401-88a3-d9e85ee5529a@oss.cyber.gouv.fr>
 Content-Language: en-US
-From: Pierre Yves MORDRET <pierre-yves.mordret@foss.st.com>
-In-Reply-To: <20250630-i2c-upstream-v3-2-7a23ab26683a@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <6dce47fd-01fb-4401-88a3-d9e85ee5529a@oss.cyber.gouv.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Clement,
+Hi,
 
-
-On 6/30/25 14:55, Clément Le Goffic wrote:
-> Fix an issue where the mapped DMA buffer was not unmapped.
+On 30.06.25 14:34, Nicolas Bouchinet wrote:
+> Hi Olivier,
 > 
-> Fixes: 7ecc8cfde553 ("i2c: i2c-stm32f7: Add DMA support")
-> Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  drivers/i2c/busses/i2c-stm32f7.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Thank you for your review.
 > 
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index e4aaeb2262d0..042386b4cabe 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -1554,6 +1554,8 @@ static irqreturn_t stm32f7_i2c_handle_isr_errs(struct stm32f7_i2c_dev *i2c_dev,
->  	if (i2c_dev->use_dma) {
->  		stm32f7_i2c_disable_dma_req(i2c_dev);
->  		dmaengine_terminate_async(dma->chan_using);
-> +		dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
-> +				 dma->dma_data_dir);
->  	}
->  
->  	i2c_dev->master_mode = false;
-> @@ -1622,6 +1624,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  		if (i2c_dev->use_dma) {
->  			stm32f7_i2c_disable_dma_req(i2c_dev);
->  			dmaengine_terminate_async(dma->chan_using);
-> +			dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
-> +					 dma->dma_data_dir);
->  		}
->  		f7_msg->result = -ENXIO;
->  	}
-> @@ -1642,6 +1646,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  				dev_dbg(i2c_dev->dev, "<%s>: Timed out\n", __func__);
->  				stm32f7_i2c_disable_dma_req(i2c_dev);
->  				dmaengine_terminate_async(dma->chan_using);
-> +				dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
-> +						 dma->dma_data_dir);
->  				f7_msg->result = -ETIMEDOUT;
->  			}
->  		}
-> 
+> Indeed our current implementation of the usb authentication is still a bit
+> crude.
 
-Thx for this V3 submission
+that is understood, but the question here is not just whether they
+are crude, but whether they are sensible. You are putting the use of
+the authentication code in usb_new_device(). This means that the admin
+cannot change the settings of currently connected devices. It would seem
+to me that the check should go into usb_claim_interface().
 
-Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>
+	Regards
+		Oliver
 
-Regards
-
--- 
---
-~ Py MORDRET
---
 
