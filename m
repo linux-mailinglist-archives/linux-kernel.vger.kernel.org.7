@@ -1,173 +1,126 @@
-Return-Path: <linux-kernel+bounces-709667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F211AAEE0AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90597AEE14A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35A418891C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535FC1883E82
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6CD28D822;
-	Mon, 30 Jun 2025 14:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A9728F51A;
+	Mon, 30 Jun 2025 14:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fq7I9ZSy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="JDritgBc"
+Received: from sonic315-54.consmr.mail.gq1.yahoo.com (sonic315-54.consmr.mail.gq1.yahoo.com [98.137.65.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4898528C5CE;
-	Mon, 30 Jun 2025 14:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2952E28F514
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751293651; cv=none; b=ILHfKizQrc4OGISZ8NM6juw48og8ZMhkjTnsGNA7bYMF1F1hSDpz3nCQiVF+7o1XqgO6xbI/e+s3+62pdkzrmn6aR4fjVsZhi8NqHjCvVwqgIajM2pPNCjcuEZm16xU2bX9auttwQAAIGCOwGhCeN3UvgkbFps4TR7ybKWWd5ow=
+	t=1751294568; cv=none; b=AWFxnRMptno1dZYzoL8/Br+umf3JyNes2uI1zE7I/JfTkHXiGNbrUVAr0FGxmaLeFbAzR9P2egCwZST7bzrLOhgIpxu6JKf+RfYoiMPNPd+SGq2EwmriygisbhBHdy0kzk0wSyZ2+Zq6u0ep0UwPb6v+eza/+/HyDfw3CVuOi+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751293651; c=relaxed/simple;
-	bh=LuPF47WhT0AJn95Uf0PtKKadOSwppv1z8iDklhuyFAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+55LO2pBrOBF2OX60XEu+uI//SGA3bIdvYujvv+OLynFG+E3G/Nwu5LOCmUGMtbdWF1beAaj5c8zvR3ue43Pco69HVn7x7jxvwBTSUc4nuOnzpDPVxJkYFwKrsgZGd3xLZGqJQVitsWBUmYsitFR88tu5Yfvnbqv0C3p7sUDZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fq7I9ZSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E76C4CEE3;
-	Mon, 30 Jun 2025 14:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751293650;
-	bh=LuPF47WhT0AJn95Uf0PtKKadOSwppv1z8iDklhuyFAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fq7I9ZSyMC+55NSAgzCN3tL69hpCl4CwhmC3n0tv56trL2dGP/WsHr3pQd/eMPTjP
-	 mwGosZhofwYUcC8yQsEXlpIVigwGwF9btxbySx5AXDea0Z2n2CBdjS7G0RUA5XLt8O
-	 ficf0iHlU7yoYS1iuOjIlhyEenc7LwyE2XPJrmIAHrEGsNZiP5U8bcUW4QvUKBXxWP
-	 5GYJc0qw63wdQRbIbMvcx1SoXVHK2VT/LUaARMYt5r9eLeficss+9DyiRPBb+XWbon
-	 04fy1717BVMq7lkyJ8myidWHmnDHC0b/geDP99HfmUCAG6FICwHQdNjBrkp7ZSQX0Z
-	 PCru1U+uhJWWA==
-Date: Mon, 30 Jun 2025 10:27:29 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: kees@kernel.org, elver@google.com, linux-api@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tools@kernel.org,
-	workflows@vger.kernel.org
-Subject: Re: [RFC 00/19] Kernel API Specification Framework
-Message-ID: <aGKe0bcv1mzBnnQr@lappy>
-References: <aFNYQkbEctT6N0Hb@lappy>
- <20250623132803.26760-1-dvyukov@google.com>
- <aFsE0ogdbKupvt7o@lappy>
- <CACT4Y+Y04JC359J3DnLzLzhMRPNLem11oj+u04GoEazhpmzWTw@mail.gmail.com>
- <aFwb_3EE2VMEV_tf@lappy>
- <CACT4Y+b9u6_wx9BU0hH0L6ogGKN_+R5T7OsgJVFAWm8yeD0E7Q@mail.gmail.com>
- <CACT4Y+b1Sou9bzhsuJ_LAjwCtynWN1iNRnaUkkTecNWxLUfMUw@mail.gmail.com>
- <aF10Cu0GI092Sjr3@lappy>
- <CACT4Y+ZB45ovD0hX3xX_yTUVSRDc1UCXnVDB57jxyWPPc7k=MA@mail.gmail.com>
+	s=arc-20240116; t=1751294568; c=relaxed/simple;
+	bh=0iQTgytDpXPifoTXnzLi7AzAuu4j8wWJg3k4W5clvV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=T4SQja2RkuBGjOvN1UJmrKcdSZBkNvaB7DktjmBLojpfTk3szFA/NVyTAmbNKx4gUlP9ZSn0vrFbtJ9ZazCMBojVxy4eTL+UAbFUdjaN1xd74N6gdVhzqRJCxEPQL8R+bhMOvnU/bhuil2cVjU8ZtuLi/cFnYoktKvBMkNmVdBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=JDritgBc; arc=none smtp.client-ip=98.137.65.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1751294565; bh=1ReWLvjRkJ8pgsu7xZweYzjXrECUSPSYIVXB+9ZsJ3Y=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=JDritgBcRyAmegzrApj9ul90cWdv8/Q//rVibRu+vzEjkagSwrTOYEojyMlwxeZBgbz3Q7TSXRmrcW5/QGJefghOwuP1Ovk5VbpfVpjRf+rvmRQogm7BqCiSxZ2YJWNVFoIK3rjd3R75hTvscaEB25LY3+4grgCkc6dbqk7/3CXNcuyM4Ew1seMMaEw0Rl3UMRHizdq0TRSYDANnQAssVekCjxEeSknaAI5VdfhS6WP7Qr9ueiyvxrpwkb1AFH6ZauUEvVQHTCB6pvPi24VlRaHBWBVbNblFjOb2p9Ycz1jE6D+DhArbgK/SGF6rsKT/zAnENFBTvTZj40ZLRRMv0w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751294565; bh=Vsf5W+UUi4xMuoKFxR1E2TWeBDpRHdiLh3gyN4g975k=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=JI61cKjoZtayfF+0IvTlYXlcUygY2n891i4LBsythiSnyDJJGmLzAnpIISp8pvQ8piBOT3q8rc4ZmK9YBJoHiWdu/EdklvhIEVVWxBy08cRdlbMA92B+a67ajMQdV9InA4hO9weo940iQyFdfLowCYWEZKYcY9LEg6k9MuGIv5pIl2oGRpp80h2V/c8iv06qeMFKfdfBuymijskf9TcaErmJyfG0egBE7gayUxdxAN+GNbupSz73c+O77M2YZmyJ1l3MKXoeKgWHR0/O7SoVMmUItW8LVGvJeUr6IYA829V1bn9j1VYHcszhiCt42O+EefOcZU4TWM1VoHAGCa4XKg==
+X-YMail-OSG: vLXKlo8VM1kC_GBokyhKql3g5D3n44H0KS7CEHuPNMPBB3rW7_8zIWoEnU8iKuq
+ a2Vbpmdv2Byn1riR.rSw6iUBDGBz8JIu8Lpk8xgCHbIzcXTs18bALKOGtI8RE6VyultWkaxWNNoR
+ tV85q2OTc5ClhyTc1IwjRIEPbHF9O.xr1OO3iHAeDQ9prglGwONd4UqWaJU4NPuOWOu1SQ__G7oI
+ 3Vw09En51co0zTwnmEw6JIeeAdr.vAZhGOSrhbS3SBgvzK1_k3vE3ncTZJRn70w0H_cdj7S9bSRh
+ 84vc6aLumd1OfhVQdkm1tPd5dNTu1LzYsoWfg8rCpj59VHz1eCZVHcVRWEL6cMq5wzmNBciUYIhb
+ mNq9Ow..o2v2u81p.4oWVvAq3wqW7ukr1y9flI0nOH2QpijnmgppYsg_3kGHcKpCxxJvI2ZGVjl3
+ Qa5MbAdflQRQuGQNxCUiAlmRDvNFU9lCPZITt0DuLgngedZNUJ7lm9727bMwD8dBm4XUqNDlcQdk
+ 6bNUmUcF9tXq2JJljggYcPAh.C8w7r8.gNEiOQIJNTx4gMlxxqn8V9CuZOPFh9qUwMJJwzv28qjc
+ Ht3LP9zXi_LYfGmy6Wv5f5FuQXGE9rCAb58K.kVdoydwg0g.jENCi4OE_TXWFFirz7UIjDC5gMzs
+ BVIGuG9YIHkAwuL8oHmckjG24Ic.enNWwbF1_4SzabS4K6W2ohH0MyqD_WA1.zSspRbmY17s1BrF
+ IXJ9ApCwRkiL9Fy1IiD0jjF_ws_0MJSQGy9N2V6.kzMB4ty1b6VsYPwMCTgggah.jQ04aImQ4H8P
+ PTNae_Hz_kO7kQ4nhbQZFT2MB.VOu1IoJjGxwNXPaMfWRahTiiJAWiK1t1Lsocc29tPY9ndT0g1B
+ gE2T478K6W.CDDN9wV8D3tkpA4lw3sj_CERlyD33v_LtMjGINdEWYgPi.bvROiuLHZAYwUbdzq9w
+ aU0yd7fhpAutJRMUvMpruRpoX_MRK1gIDX.3nu2Zhj4rdPX4BOXwgdBGtMkbQPnS2I.Y0aPGGdEQ
+ cJBcrIoOaIvzFaQez5n8JgHNRiQXbso.BGAvsxHZs8gfIB6M_QZOpP7pc.YNW99YZeB5hZ2ItjVh
+ AGDhsG_5P1FwJcW7aPF.wvq_Og5gYtG91kMILnW.eaoUe3OAJouDshYlXGfLl3ME5gf3uD9Lle4y
+ Kl5q7I23WiJ11Loaf51yAUp9Diy7aocbQZeuAlAciaTt6p74m.yfvABeo814QrOkSYcMo4xcPn0f
+ DVzq4.Kt0WT3sEWeXBeB6CxRcxUEGMjJME_qlnKqcWir5qmjKWTxPEUhJaI7ms8REh_6dZpOfqd7
+ u6AbCgCVlOzCmPdp5EW5zrK0FJqJE.eg3jpwDZfnKBNrlGznp8I.idBBb3DpCQOyBl56MQwk4WdF
+ 8Pq7Cb5p3RvfEBfVydGjavsSKKk0KW7v0uFk2aHA5G6gb08N7teXyaXT6OwulUbWtss27UF1J_2i
+ HTx8JNNrMpLdzoAa98MAvxxDUBSZ_Ru_yPERslfRjH7QTB5Sai8I1aESw2eZbSxg_Wk_K9yZd1rF
+ F_m0QPehAyU3bV7iFrT4a8CJZDNQz64qVvkS2BA5DQaLL962.SisTenY0PUqptCFHvtNWEmy2f.9
+ S7yODoLnNuUqIW95nYxU6bcYHgHScym9H3yIHsC5VmdE39w8bZl4_PgwSarDvbjgrFNtKCWFgckk
+ Y6wT0jq5dQM9dv6xZV3yrvTlJAyBi.NF79bi3msDgkjmt750XBXJOMvw.M_0JNAU4xhK.DpBO4DY
+ ZAGZe29__DGhvdQs.QexC.AwqOl75vvEiIQHdW5v5rRJ3rGIk04rKaebgtl.b7ha7rF_1e3I4lLZ
+ GsPTm1BwEucICeJqRRYBAvKWpD1Aujm3qABtTJUVsH90i0cHwZz9YHSTW8G3pzJqbi.mhusvB7Xz
+ C3oyh2s4NUrBr94BHgeHzXRjlhRJ4isLT8yrRYnrhPVlrs77i7W9SctOeES2gvl5In5AScLJqY1j
+ UrN8GQml7QiVo2zhvWUbSHqjFaBBM2SVZzd7jFYH367vcOhc99RSib7a_ZfOQrUSRK4yGqNoAoWK
+ gc94tTP7PVwA2M3wu3BtchnKX4JE2T2srL4ZKuNnaz1XU326.ezsFDwbFLZ08XdymbtdQnDnMyvN
+ j.z_UOocrl7R_CsshTthFyXQieykh_M34eqcR4a_AO_1IT6Gs0x2RqM88yO2aEMXgFSPY6QW26rq
+ sdE6XOgY8AeHJJH3D9MtGX3qoUmuBTBRmEys.oMK4.yH2IZj1qJflvlun53zBiXc-
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 766bb39a-390c-4aee-9b1c-c2095b160f48
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Mon, 30 Jun 2025 14:42:45 +0000
+Received: by hermes--production-ir2-858bd4ff7b-vtq9f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e14431b72d654bdbc2a2f9f3f5f89e1e;
+          Mon, 30 Jun 2025 14:32:34 +0000 (UTC)
+From: Ruben Wauters <rubenru09@aol.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Ruben Wauters <rubenru09@aol.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] x86/cpu/intel: replace deprecated strcpy with strscpy
+Date: Mon, 30 Jun 2025 15:29:30 +0100
+Message-ID: <20250630143225.6059-1-rubenru09@aol.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZB45ovD0hX3xX_yTUVSRDc1UCXnVDB57jxyWPPc7k=MA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+References: <20250630143225.6059-1-rubenru09.ref@aol.com>
 
-On Fri, Jun 27, 2025 at 08:23:41AM +0200, Dmitry Vyukov wrote:
->On Thu, 26 Jun 2025 at 18:23, Sasha Levin <sashal@kernel.org> wrote:
->>
->> On Thu, Jun 26, 2025 at 10:37:33AM +0200, Dmitry Vyukov wrote:
->> >On Thu, 26 Jun 2025 at 10:32, Dmitry Vyukov <dvyukov@google.com> wrote:
->> >>
->> >> On Wed, 25 Jun 2025 at 17:55, Sasha Levin <sashal@kernel.org> wrote:
->> >> >
->> >> > On Wed, Jun 25, 2025 at 10:52:46AM +0200, Dmitry Vyukov wrote:
->> >> > >On Tue, 24 Jun 2025 at 22:04, Sasha Levin <sashal@kernel.org> wrote:
->> >> > >
->> >> > >> >6. What's the goal of validation of the input arguments?
->> >> > >> >Kernel code must do this validation anyway, right.
->> >> > >> >Any non-trivial validation is hard, e.g. even for open the validation function
->> >> > >> >for file name would need to have access to flags and check file precense for
->> >> > >> >some flags combinations. That may add significant amount of non-trivial code
->> >> > >> >that duplicates main syscall logic, and that logic may also have bugs and
->> >> > >> >memory leaks.
->> >> > >>
->> >> > >> Mostly to catch divergence from the spec: think of a scenario where
->> >> > >> someone added a new param/flag/etc but forgot to update the spec - this
->> >> > >> will help catch it.
->> >> > >
->> >> > >How exactly is this supposed to work?
->> >> > >Even if we run with a unit test suite, a test suite may include some
->> >> > >incorrect inputs to check for error conditions. The framework will
->> >> > >report violations on these incorrect inputs. These are not bugs in the
->> >> > >API specifications, nor in the test suite (read false positives).
->> >> >
->> >> > Right now it would be something along the lines of the test checking for
->> >> > an expected failure message in dmesg, something along the lines of:
->> >> >
->> >> >         https://github.com/linux-test-project/ltp/blob/0c99c7915f029d32de893b15b0a213ff3de210af/testcases/commands/sysctl/sysctl02.sh#L67
->> >> >
->> >> > I'm not opposed to coming up with a better story...
->> >
->> >If the goal of validation is just indirectly validating correctness of
->> >the specification itself, then I would look for other ways of
->> >validating correctness of the spec.
->> >Either removing duplication between specification and actual code
->> >(i.e. generating it from SYSCALL_DEFINE, or the other way around) ,
->> >then spec is correct by construction. Or, cross-validating it with
->> >info automatically extracted from the source (using
->> >clang/dwarf/pahole).
->> >This would be more scalable (O(1) work, rather than thousands more
->> >manually written tests).
->> >
->> >> Oh, you mean special tests for this framework (rather than existing tests).
->> >> I don't think this is going to work in practice. Besides writing all
->> >> these specifications, we will also need to write dozens of tests per
->> >> each specification (e.g. for each fd arg one needs at least 3 tests:
->> >> -1, valid fd, inclid fd; an enum may need 5 various inputs of
->> >> something; let alone netlink specifications).
->>
->> I didn't mean just for the framework: being able to specify the APIs in
->> machine readable format will enable us to automatically generate
->> exhaustive tests for each such API.
->>
->> I've been playing with the kapi tool (see last patch) which already
->> supports different formatters. Right now it outputs human readable
->> output, but I have proof-of-concept code that outputs testcases for
->> specced APIs.
->>
->> The dream here is to be able to automatically generate
->> hundreds/thousands of tests for each API in an automated fashion, and
->> verify the results with:
->>
->> 1. Simply checking expected return value.
->>
->> 2. Checking that the actual action happened (i.e. we called close(fd),
->> verify that `fd` is really closed).
->>
->> 3. Check for side effects (i.e. close(fd) isn't supposed to allocate
->> memory - verify that it didn't allocate memory).
->>
->> 4. Code coverage: our tests are supposed to cover 100% of the code in
->> that APIs call chain, do we have code that didn't run (missing/incorrect
->> specs).
->
->
->This is all good. I was asking the argument verification part of the
->framework. Is it required for any of this? How?
+strcpy is deprecated due to lack of bounds checking.
+This patch replaces strcpy with strscpy, the recommended alternative for
+null terminated strings, to follow best practices.
 
-Specifications without enforcement are just documentation :)
+Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+---
+This patch was reviewed by H. Peter Anvin and (by my understanding)
+was deemed ok to apply. I have not added a Reviewed-by tag as H.
+Peter Anvin did not do so.
 
-In my mind, there are a few reasons we want this:
+The last time I resent this patch was during the merge window so it
+understandably did not get applied or further reviewed.
+I have resent it again as the merge window has now closed, hopefully
+so it can be further reviewed and applied
+---
+ arch/x86/kernel/cpu/intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. For folks coding against the kernel, it's a way for them to know that
-the code they're writing fits within the spec of the kernel's API.
-
-2. Enforcement around kernel changes: think of a scenario where a flag
-is added to a syscall - the author of that change will have to also
-update the spec because otherwise the verification layer will complain
-about the new flag. This helps prevent divergence between the code and
-the spec.
-
-3. Extra layer of security: we can choose to enable this as an
-additional layer to protect us from missing checks in our userspace
-facing API.
-
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 584dd55bf739..b49bba30434d 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -607,7 +607,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		}
+ 
+ 		if (p)
+-			strcpy(c->x86_model_id, p);
++			strscpy(c->x86_model_id, p);
+ 	}
+ #endif
+ 
 -- 
-Thanks,
-Sasha
+2.48.1
+
 
