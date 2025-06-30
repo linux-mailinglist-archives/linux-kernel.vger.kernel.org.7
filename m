@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-708980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F36AED7BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:49:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035B0AED7C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB6D1899CFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3713A5DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132BF238C1F;
-	Mon, 30 Jun 2025 08:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OP/02MND"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20855224B06;
+	Mon, 30 Jun 2025 08:49:56 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD80215F72
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA441CDFCE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751273332; cv=none; b=SS0PSEIUuG1n3DbsVRVXF6ughScOdIT5C+sxp+fJ+48ig9u25wrEHHFZ3qQLOUUHGY9nu4or1iNjeksvnWfIMyUVRQbW3tHzK+YblAwYh/lTquEwsJuFvdDdUQmKuBYVq7pLrZxslKj1DQqL77Gq0vpJxj2oA080TyYAQgF/VfA=
+	t=1751273395; cv=none; b=dAY/7LiiMhSgoNfq3Zxs5jb85+89eQ+yq/GIPDF9K/g+upCX1rHjrqaK6/rNMhU8YceRYbtdH7q+w9nC6tS/a+uzRdR8zrW0nKCISoCOpZ0uCU0nHHuz0UmKpMuGk4HSFUucwpf0V1sC2OJlxuMHv1zfw+KcKkWn0OjJUmnllZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751273332; c=relaxed/simple;
-	bh=9LX9av9yvxOClo7gCs52aPEZGCecg5/87QicfzfhCEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4qK5kSUUBxLglRPPRQG6vuKWqZC6nR5G2UxV04P/2RC72p+BdlKAElRhhfC4MeDvOiSNM9Lvex9ugPkCxsprQHOFOepaewgv5rpd66GqHcWj6XyYuy+AS/KYwsWCTpgxaB6cck9KDRz4tR/ty3y22f+P8lfhw58JxN2BqJgoVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OP/02MND; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a582e09144so1349179f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 01:48:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1751273329; x=1751878129; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e0MFmQYTIhwQaPU7YK/VjsEzsIiL6rLtVHCSHLdz344=;
-        b=OP/02MND348iZGO/JSYbUVZDr7EKMIVoSp4PuVBXyDMeEjCkMzOBm1NzsJUvjzRRgg
-         7/QcuTJ2UGfZuTmwxzkvMA/PreLR5kBCyOpPD4gum4Tv+IH4ddUMQ7C4jhNf/6FRhfBV
-         KZN0VEkdsirC51kh74EvzVMONLyAXCjf/g6LlmHcafBG+LgsGGNUgnGUUoTW6JFr35l0
-         VNiDvsvdumNC2OJCpYd892Mx1XFu3BKiBtK3vGjh4Z7juc5UA/bSMz0Y+fn8FpHLQgCB
-         MvOlQ2xwSAC5EVZLYW8wbPOSUKxRk7qdYLBhlYB2WGXh0tFMdGP+vmPm/oT8DjXlc+DM
-         Mrlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751273329; x=1751878129;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e0MFmQYTIhwQaPU7YK/VjsEzsIiL6rLtVHCSHLdz344=;
-        b=bGMqQcvhYJu8sQ7aj23Jv7Yk3N0t9TuB9stDNnTH5+avuNA7oTwcS/5ICsb2YYIUQ9
-         Tu2a3+W3vJSQG2bwDkTI8KxbCAGffclUlP20lbi/bJe5ftQfwFvxpKj/eDGxKJTgC+Fq
-         5cSdYFv4tVaGnURbVWtc5p+kXJGKpoy/9UyQfJnk5ETrMlsj+T/q/UakzEugHP1I2HbF
-         JoQSqgLWYwlMjhuGWH0mtvPMPgRjJAs7gEHRE2eRyLgkiPtskuuk6oxu2FvYN5a9F8ci
-         gQyWxKDeaPzZiewCrw0CpgYQ8hcpBXfy5ec99RT5KIStXJFfn86gKdHr98GRHXGnHFr5
-         7TpQ==
-X-Gm-Message-State: AOJu0YzMcNnAGwbs2c0ljcyIOIM56jxunmEL42U0POJEhbTxAciLIsP3
-	hfXx6M6RrN7K0PLub+klo2wdla/5SW/RyvGhMYLoo6xjCUJ2eoXriJlGT+heso1/c5R6a8CkSH6
-	rFUdVKfQ=
-X-Gm-Gg: ASbGnctnrivQFsIe/rnrEIdD3HuqWLHQCpKU2bAWA7cN0sN64fYyG4PFzB0UQ2fGZyM
-	4beJQ9M+LQsCrw3fmK7ZsV3aE1dwJyfV15Qv7aK8xk348wu8cEFo7oVfhZ04+TRaRfzXZwa7G7v
-	3b7jqarDBZek1egRALNELT2sZaAp+kZh8bE3/v2TAYnUpu0DT/bpz0CGZOr7tBpWQJOoMVdfmvl
-	VsN+ripRbymAXQeR5rm2ipMjUuAo+ccHSy0iMmq2ZPsSSBi9LGb8FIyFKgDIzKYRwb87NctOCjl
-	BELOR5RRtdquWbtNlK4uxxteoHVXVythKKNBDWroiFJsDlR+Sg==
-X-Google-Smtp-Source: AGHT+IFkP2IxHQSzwTBSX2V8J3HFEeGEU2UchiOHVWbWGfVFsEoSfKrpjADgwPpJXxhXznoj1gfTMA==
-X-Received: by 2002:a05:6000:4b0d:b0:3a4:f435:5801 with SMTP id ffacd0b85a97d-3a8fdb2a190mr10032131f8f.17.1751273329044;
-        Mon, 30 Jun 2025 01:48:49 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::5485])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e7386sm9698288f8f.20.2025.06.30.01.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 01:48:48 -0700 (PDT)
-Date: Mon, 30 Jun 2025 10:48:47 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, iommu@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, Tomasz Jeznach <tjeznach@rivosinc.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Atish Patra <atishp@rivosinc.com>
-Subject: Re: [PATCH v3 3/3] iommu/riscv: Add ACPI support
-Message-ID: <20250630-43f937dcdcd84599d28169cd@orel>
-References: <20250630034803.1611262-1-sunilvl@ventanamicro.com>
- <20250630034803.1611262-4-sunilvl@ventanamicro.com>
+	s=arc-20240116; t=1751273395; c=relaxed/simple;
+	bh=/T1XmqLkHGmZ4HU8CZhuAPLKatyDiVqkgbmpJsILy3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CSjRl95Z1PNeIpKFwyuv8OEIVWtu6cM26zNxVGCwti8e8MIqyhMtpgQBx95KLkkB1QB6rX4gQnFOarriZV/MaEJWtByQEF8s26vLMOLkM5XCyH0vb9kDi8Px8DTIu9kNnB9q3lqbkf/vOGXg9aS5Weqf4VAsqljkFARpwPjUgnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.196] (p5dc55466.dip0.t-ipconnect.de [93.197.84.102])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 17BD061E64787;
+	Mon, 30 Jun 2025 10:49:17 +0200 (CEST)
+Message-ID: <16a1a6de-e2e2-4fed-9ca0-7bca50c7169c@molgen.mpg.de>
+Date: Mon, 30 Jun 2025 10:49:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630034803.1611262-4-sunilvl@ventanamicro.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Regression] Panel flickering on Dell XPS 13 9360 with
+ drm-fixes-2025-06-28 merged (Linux 6.16-rc4)
+To: Imre Deak <imre.deak@intel.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
+ regressions@lists.linux.dev
+References: <e8c595d4-716f-474c-99ae-c95a56e65d3d@molgen.mpg.de>
+ <aGI_tO6btgJluwUu@ideak-desk>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <aGI_tO6btgJluwUu@ideak-desk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 30, 2025 at 09:18:03AM +0530, Sunil V L wrote:
-> RISC-V IO Mapping Table (RIMT) provides the information about the IOMMU
-> to the OS in ACPI. Add support for ACPI in RISC-V IOMMU drivers by using
-> RIMT data.
-> 
-> The changes at high level are,
-> 
-> a) Register the IOMMU with RIMT data structures.
-> b) Enable probing of platform IOMMU in ACPI way using the ACPIID defined
->    for the RISC-V IOMMU in the BRS spec [1]. Configure the MSI domain if
->    the platform IOMMU uses MSIs.
-> 
-> [1] - https://github.com/riscv-non-isa/riscv-brs/blob/main/acpi-id.adoc
-> 
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  drivers/iommu/riscv/iommu-platform.c | 17 ++++++++++++++++-
->  drivers/iommu/riscv/iommu.c          | 10 ++++++++++
->  2 files changed, 26 insertions(+), 1 deletion(-)
->
+Dear Imre,
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+
+Thank you for your reply.
+
+
+Am 30.06.25 um 09:41 schrieb Imre Deak:
+> On Sun, Jun 29, 2025 at 11:04:31PM +0200, Paul Menzel wrote:
+
+>> Just a heads-up, that very likely, merging of branch *drm-fixes-2025-06-28*
+>> causes flickering of the panel of the Intel Kaby Lake laptop Dell XPS 13
+>> 9360. 6.16.0-rc3 works fine, and with 6.16-rc3-00329-gdfba48a70cb6 the panel
+>> flickers. I try to bisect, but maybe you already have an idea.
+> 
+> One possibility is:
+> a3ef3c2da675 ("drm/dp: Change AUX DPCD probe address from DPCD_REV to LANE0_1_STATUS")
+
+Yes, that is the one my bisection pinpointed.
+
+> Could you open a ticket for this and provide a drm.debug=0x10e log with
+> 6.16-rc4 and try if the following commits in drm-tip fixes the issue?:
+> 
+> 5281cbe0b55a ("drm/edid: Define the quirks in an enum list")
+> 0b4aa85e8981 ("drm/edid: Add support for quirks visible to DRM core and drivers")
+> b87ed522b364 ("drm/dp: Add an EDID quirk for the DPCD register access probe")
+> ed3648b9ec4c ("drm/i915/dp: Disable the AUX DPCD probe quirk if it's not required")
+> 
+> I also pushed these to:
+> https://github.com/ideak/linux/commits/dpcd-probe-quirk
+
+I created issue *[Regression] Panel flickering on Dell XPS 13 9360 with 
+drm-fixes-2025-06-28 merged (Linux 6.16-rc4)* [1], and will try your 
+proposed fixes later.
+
+[…]
+
+
+Kind regards,
+
+Paul
+
+
+[1]: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/14558
 
