@@ -1,64 +1,55 @@
-Return-Path: <linux-kernel+bounces-709208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6A4AEDA7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F3FAEDA79
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E6177A2692
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DEDA7A2050
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E143725B311;
-	Mon, 30 Jun 2025 11:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F6725A640;
+	Mon, 30 Jun 2025 11:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uWj5q0qT"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="l/TK0w2p"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700A41A3154;
-	Mon, 30 Jun 2025 11:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E8E126BF7;
+	Mon, 30 Jun 2025 11:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751281728; cv=none; b=rLwyjjQiCRwUnVL98TiE6eds0M1rEknR51N2Mt4xlO3FIK6K24u0dF2IbN1w3UY7wnkrXCnefhmCB/M+Ty6h9HOPImsFNSYWM7fT337xdem4Ex1jUc1roDpbzsAcQTX0xM9XGTpEcuLgpVm+ZgE5pV796+6HJskPH88IjHkwtw4=
+	t=1751281662; cv=none; b=WKKmdJFDtD657soDG+JE6oQpZcGpgxzyfbPmxk6cddkCSOUa8TK2ku/zwHHITJgZ/XqLHSaKNIONu4LzndUlljJfzZ76y59mC5HEfgB8YqQ8uFuOV60yQC7YR6JwvuKe7S+MwHZfYvprd/r8ELyCv+xMuh5+fKMLuliZlXIpytw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751281728; c=relaxed/simple;
-	bh=xeNpkjWQch2NbOHRUvdma+xIq5icCiLRNG/kXkIEEUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T1/T4+ftiJgGAUSSBckqOKtJRGoJAb11O5dOQU+s9g4SBowSXHS2SN0Urv3d22SxIkYgJO7aZsiOgGFIYrmxaUxM/LLn7yvRpqUgmB/sAwxZdjNgfG86c6iCCUFQP/6O9kgxb6P9HooKbS/6DQvfgA8C0xnQ888fAqg6TlbAKP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=uWj5q0qT; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8e10N013074;
-	Mon, 30 Jun 2025 13:08:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	hCK+JNiz/bYO7J2DWpXBYxNDtczevbXi8wneI/4lIHw=; b=uWj5q0qTavpWUevx
-	Vi+UdKWHC/3Qjeeq//y7qsv+iUrhsyGPhUrvKDhotvJQpmgoQsyj+uChnXxg53rz
-	ZhBIDSZGqASugloP88kwCxjv+Lve6TwDMz4vAK6awZOxHke/NXm8H/Do+KHH2JXp
-	13FxpfZfv5tLEelusizShyeg5mI3gv/m1aWPNJEqAqHdhAZs8+0Qa2Rd1vvsO5iQ
-	J26ATSfJuxfl78ji9BPXMqkXshp6GL28tz6R1gMlC0hM01bTA/jQW+ejNI2JGWoM
-	enkOd1nP4EWF+7Q6YLH3QXZ9ScvfaGxxKPNF3diZMzAT4UuJ1vBEldj65eNXlL6i
-	dMkAPg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47jsy4mtta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 13:08:41 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 132544006A;
-	Mon, 30 Jun 2025 13:07:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 70B94B17B06;
-	Mon, 30 Jun 2025 13:07:13 +0200 (CEST)
-Received: from [10.48.87.237] (10.48.87.237) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 13:07:11 +0200
-Message-ID: <13cb5cad-7ad4-40fd-a423-10187b327b8c@foss.st.com>
-Date: Mon, 30 Jun 2025 13:07:10 +0200
+	s=arc-20240116; t=1751281662; c=relaxed/simple;
+	bh=xfYoCknVjFKY7hexB2crz0/hJFMyOF7Z5INvKQpVLWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S1OG3xka8YmTH6w2adwH+ZOYB7KXvmqTMEpOXk5x2P9Y7xXR5uWSmwM3wYvFTfRZVHm164i/xSLHuvrM+0dRNOnoffpwISMckloHsU0dCyuHQ3vjNlaF4AYoxpuOXumooIRVqNunoM+8U9u0VD+LQWCb6pYaZpSohsMSCELKyUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=l/TK0w2p; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1tzNfrRTiSp2dVKABoPLLSFxhEriDVBQdVTSGrooIoY=; b=l/TK0w2pB3thTidPAS/qeRu30Q
+	w4/YrRy0CKBHYe8brbCLEXLqsjHJy/I9uvFWt/tA+1pSxfgho16tSV2RXx6wVyYH4rycEBWW1LdJ0
+	vUiE+ZsNQp8wfCd8DJ9mcnyR8w4aFx/5UDdUxTiZ8+6yDZbK+YpJPc7MxKeBbKj4Lof4HeSRxFU8C
+	jxXC3HSqnSUXxOapSCg6RZc/DpzlzeseTkwj1HC4nRj4qXPYhCnUIUUgWsOcxJEzqhZOcQzZyJOls
+	xejwJrt5UsOVUuQ/irF6ElVO/yrHB0QxjiSs0yGiTdgh6mNxzp4X2Q5H5Fs47ctRnAeYvvQJvdFCG
+	8BC7eQeg==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:20395 helo=[10.224.8.110])
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1uWCMF-0000000GqVZ-0eZI;
+	Mon, 30 Jun 2025 13:07:31 +0200
+Message-ID: <16140d2c-1d44-400b-93de-2216013f017f@oss.cyber.gouv.fr>
+Date: Mon, 30 Jun 2025 13:07:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,115 +57,244 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dmaengine: virt-dma: convert tasklet to BH
- workqueue for callback invocation
-To: Alexander Kochetkov <al.kochet@gmail.com>, Vinod Koul <vkoul@kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Nishad Saraf <nishads@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
-        Jacky Huang
-	<ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Paul Cercueil
-	<paul@crapouillou.net>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Manivannan Sadhasivam <mani@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-        Zhou
- Wang <wangzhou1@hisilicon.com>,
-        Longfang Liu <liulongfang@huawei.com>,
-        Andy
- Shevchenko <andy@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?=
-	<afaerber@suse.de>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang
-	<haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Paul
- Walmsley <paul.walmsley@sifive.com>,
-        Samuel Holland
-	<samuel.holland@sifive.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter Ujfalusi
-	<peter.ujfalusi@gmail.com>,
-        Kunihiko Hayashi
-	<hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Amit Vadhavana <av2082000@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Md Sadre Alam <quic_mdalam@quicinc.com>,
-        Casey
- Connolly <casey.connolly@linaro.org>,
-        Kees Cook <kees@kernel.org>, Fenghua Yu
-	<fenghua.yu@intel.com>,
-        Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-References: <20250616124934.141782-1-al.kochet@gmail.com>
- <20250616124934.141782-2-al.kochet@gmail.com>
+Subject: Re: [RFC PATCH 2/4] usb: core: Introduce usb authentication feature
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Kannappan R <r.kannappan@intel.com>,
+ Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Pawel Laszczak <pawell@cadence.com>,
+ Ma Ke <make_ruc2021@163.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>,
+ Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250620-usb_authentication-v1-0-0d92261a5779@ssi.gouv.fr>
+ <20250620-usb_authentication-v1-2-0d92261a5779@ssi.gouv.fr>
+ <2025062059-dangling-coping-1e17@gregkh>
 Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <20250616124934.141782-2-al.kochet@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+In-Reply-To: <2025062059-dangling-coping-1e17@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
+Hi Greg,
 
+Thank you very much for your review. We will take every style remarks into
+account in the next patch version. Other responses are inline (there is 
+only one):
 
-On 6/16/25 14:48, Alexander Kochetkov wrote:
-> Currently DMA callbacks are called from tasklet. However the tasklet is
-> marked deprecated and must be replaced by BH workqueue. Tasklet callbacks
-> are executed either in the Soft IRQ context or from ksoftirqd thread. BH
-> workqueue work items are executed in the BH context. Changing tasklet to
-> BH workqueue improved DMA callback latencies.
-> 
-> The commit changes virt-dma driver and all of its users:
-> - tasklet is replaced to work_struct, tasklet callback updated accordingly
-> - kill_tasklet() is replaced to cancel_work_sync()
-> - added include of linux/interrupt.h where necessary
-> 
-> Tested on Pine64 (Allwinner A64 ARMv8) with sun6i-dma driver. All other
-> drivers are changed similarly and tested for compilation.
-> 
-> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
-> ---
-...
->   drivers/dma/stm32/stm32-dma.c                  |  1 +
->   drivers/dma/stm32/stm32-dma3.c                 |  1 +
->   drivers/dma/stm32/stm32-mdma.c                 |  1 +
+On 6/20/25 16:54, Greg Kroah-Hartman wrote:
+> First off, thanks so much for doing this work, I've been wondering if
+> anyone would ever do it :)
+>
+> Just a few quick review comments that you might want to do for the next
+> round of your patches for some basic style things:
+>
+> On Fri, Jun 20, 2025 at 04:27:17PM +0200, nicolas.bouchinet@oss.cyber.gouv.fr wrote:
+>> +#include <linux/types.h>
+>> +#include <linux/usb.h>
+>> +#include <linux/usb/ch9.h>
+>> +#include <linux/usb/hcd.h>
+>> +#include <linux/usb/quirks.h>
+>> +#include <linux/module.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/device.h>
+>> +#include <linux/delay.h>
+>> +#include <asm/byteorder.h>
+>> +
+>> +#include "authent_netlink.h"
+>> +
+>> +#include "authent.h"
+> No need for the blank lines there.
+>
+>> +static int usb_authent_req_digest(struct usb_device *dev, uint8_t *const buffer,
+>> +				  uint8_t digest[256], uint8_t *mask)
+>> +{
+>> +	int ret = 0;
+>> +	struct usb_authent_digest_resp *digest_resp = NULL;
+>> +
+>> +	if (unlikely((buffer == NULL || mask == NULL))) {
+>> +		pr_err("invalid arguments\n");
+>> +		return -EINVAL;
+>> +	}
+>> +	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), AUTH_IN, USB_DIR_IN,
+>> +			      (USB_SECURITY_PROTOCOL_VERSION << 8) +
+>> +				      USB_AUTHENT_DIGEST_REQ_TYPE,
+>> +			      0, buffer, 260, USB_CTRL_GET_TIMEOUT);
+>> +	if (ret < 0) {
+>> +		pr_err("Failed to get digest: %d\n", ret);
+>> +		ret = -ECOMM;
+>> +		goto exit;
+>> +	}
+>> +
+>> +	// Parse received digest response
+>> +	digest_resp = (struct usb_authent_digest_resp *)buffer;
+>> +	pr_notice("received digest response:\n");
+>> +	pr_notice("	protocolVersion: %x\n", digest_resp->protocolVersion);
+>> +	pr_notice("	messageType: %x\n", digest_resp->messageType);
+>> +	pr_notice("	capability: %x\n", digest_resp->capability);
+>> +	pr_notice("	slotMask: %x\n", digest_resp->slotMask);
+> Always use the dev_*() macros instead of pr_*() ones as that way you
+> know what device is making the message please.
+>
+>> +
+>> +	*mask = digest_resp->slotMask;
+>> +	memcpy(digest, digest_resp->digests, 256);
+>> +
+>> +	ret = 0;
+>> +
+>> +exit:
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +struct usb_auth_cert_req {
+>> +	uint16_t offset;
+>> +	uint16_t length;
+>> +} __packed;
+> Kernel types are u16, not uint16_t.  The uint*_t types are from
+> userspace C code, not kernel code.  Yes, they are slowly sliding in in
+> places, but let's not do that unless really required for some specific
+> reason.
+>
+> And why packed?
 
-For STM32:
-Acked-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-Tested-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Since this structure is part of the usb authentication protocol, we need 
+to be
+sure it is sent as is on the usb bus.
+
+>
+> And what about endian issues, the data from the devices should be in a
+> specific format, right?
+>
+>
+>> +
+>> +/**
+>> + * @brief Request a specific part of a certificate chain from the device
+> Are you sure this is proper kerneldoc style?  Does this build properly?
+>
+>> + *
+>> + * Context: task context, might sleep
+>> + *
+>> + * Possible errors:
+>> + *  - ECOMM : failed to send or receive a message to the device
+>> + *  - EINVAL : if buffer or cert_part is NULL
+>> + *
+>> + * @param [in]     dev       : handle to the USB device
+>> + * @param [in,out] buffer    : buffer used for communication, caller allocated
+>> + * @param [in]     slot      : slot in which to read the certificate
+>> + * @param [in]     offset    : at which the certificate fragment must be read
+>> + * @param [in]     length    : of the certificate fragment to read
+>> + * @param [out]    cert_part : buffer to hold the fragment, caller allocated
+> Again, I don't think this is kerneldoc format.  Please build the kernel
+> documentation output and see what this results in.
+>
+>> + *
+>> + * @return 0 on SUCCESS else an error code
+>> + */
+>> +static int usb_auth_read_cert_part(struct usb_device *dev, uint8_t *const buffer,
+>> +				   const uint8_t slot, const uint16_t offset,
+>> +				   const uint16_t length, uint8_t *cert_part)
+>> +{
+>> +	struct usb_auth_cert_req cert_req = { 0 };
+>> +	int ret = -1;
+> Use real error values, not random integers :)
+>
+>> +
+>> +	if (unlikely(buffer == NULL || cert_part == NULL)) {
+> Only use likely/unlikely if you can measure the speed difference.  For
+> USB, and probe sequences, that will never be the casae.
+>
+>> +		pr_err("invalid argument\n");
+> Again, dev_err()?
+>
+> But how can these parameters not be set properly?  You control how they
+> are called, no need to always verify that you wrote the code properly :)
+>
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	cert_req.offset = offset;
+>> +	cert_req.length = length;
+>> +
+>> +	// AUTH OUT request transfer
+>> +	memcpy(buffer, &cert_req, sizeof(struct usb_auth_cert_req));
+>> +	ret = usb_control_msg(dev, usb_sndctrlpipe(dev, 0), AUTH_OUT,
+>> +			      USB_DIR_OUT,
+>> +			      (USB_SECURITY_PROTOCOL_VERSION << 8) +
+>> +				      USB_AUTHENT_CERTIFICATE_REQ_TYPE,
+>> +			      (slot << 8), buffer,
+>> +			      sizeof(struct usb_auth_cert_req),
+>> +			      USB_CTRL_GET_TIMEOUT);
+>> +	if (ret < 0) {
+>> +		pr_err("Failed to send certificate request: %d\n", ret);
+>> +		ret = -ECOMM;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	// AUTH IN certificate read
+>> +	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), AUTH_IN, USB_DIR_IN,
+>> +			      (USB_SECURITY_PROTOCOL_VERSION << 8) +
+>> +				      USB_AUTHENT_CERTIFICATE_RESP_TYPE,
+>> +			      (slot << 8), buffer, length + 4,
+>> +			      USB_CTRL_GET_TIMEOUT);
+>> +	if (ret < 0) {
+>> +		pr_notice("Failed to get certificate from peripheral: %d\n", ret);
+>> +		ret = -ECOMM;
+>> +		goto cleanup;
+>> +	}
+>> +
+>> +	// TODO: parse received header
+>> +	memcpy(cert_part, buffer + 4, length);
+>> +
+>> +	ret = 0;
+>> +
+>> +cleanup:
+>> +
+>> +	return ret;
+> As "cleanup:" does nothing, no need for it, just return the error value
+> above when you were doing a goto line.
+>
+>> +}
+>> +
+>> +/**
+>> + * usb_authent_read_certificate - Read a device certificate
+>> + * @dev:		[in] pointer to the usb device to query
+>> + * @buffer:		[inout] buffer to hold request data, caller allocated
+>> + * @slot:		[in] certificate chain to be read
+>> + * @cert_der:   [out] buffer to hold received certificate chain
+>> + * @cert_len:   [out] length of received certificate
+>> + *
+>> + * Context: task context, might sleep.
+>> + *
+>> + * Possible errors:
+>> + *  - EINVAL : NULL pointer or invalid slot value
+>> + *  - ECOMM  : failed to send request to device
+>> + *  - ENOMEM : failed to allocate memory for certificate
+>> + *
+>> + * Return: If successful, zero. Otherwise, a negative  error number.
+>> + */
+>> +static int usb_authent_read_certificate(struct usb_device *dev, uint8_t *const buffer,
+>> +					uint8_t slot, uint8_t **cert_der, size_t *cert_len)
+>> +{
+>> +	uint16_t read_offset = 0;
+>> +	uint16_t read_length = 0;
+>> +	uint8_t chain_part[64] = { 0 };
+> Again, u16 and u8 please.
+>
+> thanks,
+>
+> greg k-h
 
