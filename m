@@ -1,130 +1,160 @@
-Return-Path: <linux-kernel+bounces-708652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA47AED319
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:49:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E448FAED31C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85111894D9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 03:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387451733AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 03:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BD918B464;
-	Mon, 30 Jun 2025 03:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AAB187346;
+	Mon, 30 Jun 2025 03:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jvlrBwED"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5XqPo5z"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F175194A44;
-	Mon, 30 Jun 2025 03:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140C341760
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 03:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751255348; cv=none; b=T7QHycx2x3KXfRmwqjQOVK0ekevqZ7IEY7SAixgr/9EC3VeveI28E9qm3WdmsfukPI8izZVv1uhROLQ1z2kTY/Di0lQkma2rG52xeIobfkfktyxHx5tc3J3FHIPwaKyGEXg2AhIuJ4+8fGo/7UP0esD0Q6qc3JRRj0Kki5P0/cA=
+	t=1751255413; cv=none; b=j0QLPH17u79otDVe4WS1FePlqhlpMFkkL/LawjXhwqOWL1kln6OoCIbaStCtjKogdcBa5TBytTL7LhN/qkrdNu292VmYYs/lIsqC/1uOEUELU795tApSSYpRl8/koS7+AEJusImwGgSTtsnNi/IOln26Z9xFHMZbnHpRgdkymXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751255348; c=relaxed/simple;
-	bh=QPyADK9zPp0ngvuNL56VT5gNsd2clYF5WbJ46q3uXaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsP/uUY/OjGjUPGOWr98bU2TXCAEVuXZEk9VT3tLtPR2N9pTaW2YpZL1/kAUOgeAmpFA4KIcrAvdCLYNdE6d6hC/cYyvhIkVwbXOCxkKaaruyYOFkL0HspYkeEWK/HjpHdvRPoJfNOhv2UPACN0gedxsw1DWbf1oMw0beii4sQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jvlrBwED; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751255346; x=1782791346;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QPyADK9zPp0ngvuNL56VT5gNsd2clYF5WbJ46q3uXaA=;
-  b=jvlrBwEDABjfnDySfFpwDzRE7FkRo71yuLzBmtKfC3HyVWAZhcFkWlyt
-   N7dsjx5RAF0btPtSBIfYwPTFS4JTWBL07ac5ejo2UK8L9CQzrWs4sO6/M
-   CV/WmuDxAi1T/wqM7pJP1yGC8DxuLuU5fMKcyQAfJV4IBlTxg6W5SsnXl
-   yu48PeGnqpALp+R6Ufeee6WIIJAkxJolKdJYQRdzi39+YDB27/ep07189
-   1TPV1MzxqYVujbWeUCSmxB4LeGRu0nQyP6BtbFXLiooZHmMraKIoDHG4u
-   f6ESqyVRCrCvz5OmKvvImArICiDAIdGI1exro3MwcgeCpKEWAt9OJzcZn
-   A==;
-X-CSE-ConnectionGUID: +uMWrFreTHWI/3n/lD9IUQ==
-X-CSE-MsgGUID: wrWGeLEgROGGwNjWF1JxMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53412535"
-X-IronPort-AV: E=Sophos;i="6.16,276,1744095600"; 
-   d="scan'208";a="53412535"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 20:49:05 -0700
-X-CSE-ConnectionGUID: KQUAA6GzTP+FamccfauLqQ==
-X-CSE-MsgGUID: q8TfAvgnTNqN40i//1jc3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,276,1744095600"; 
-   d="scan'208";a="154049717"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Jun 2025 20:49:00 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uW5Vq-000YRG-1Z;
-	Mon, 30 Jun 2025 03:48:58 +0000
-Date: Mon, 30 Jun 2025 11:48:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: GONG Ruiqi <gongruiqi1@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: oe-kbuild-all@lists.linux.dev, Eric Snowberg <eric.snowberg@oracle.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, "Lee, Chun-Yi" <jlee@suse.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org, Lu Jialin <lujialin4@huawei.com>,
-	gongruiqi1@huawei.com
-Subject: Re: [PATCH v2] integrity: Extract secure boot enquiry function out
- of IMA
-Message-ID: <202506301150.yT6MxuHD-lkp@intel.com>
-References: <20250628063251.321370-1-gongruiqi1@huawei.com>
+	s=arc-20240116; t=1751255413; c=relaxed/simple;
+	bh=hP6Zj3x6ZxHTchOTvbcRoLgDuAgETcfBOEsMi4tGJCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RJIm+NEW/02lBzXhcy0pNhbTBCft8TamXaj+aJVZAnNHssNZ5k+0OmHz+V/wtO09R4dFEJWGZa2ejkmMwC8UhONEi8chLL+gzQqIrHJWg4GtbYEkjqRmbEfIXPepsLGXixyTDLyb3oM7PGZqhzADUXzmsAv0z5h/h9fF/FXKBls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5XqPo5z; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-747c2cc3419so3876650b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 20:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751255411; x=1751860211; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XS3uMD6coTyQ6ld95dZSw/chmAO1ya8AiyTyXgg1NkA=;
+        b=h5XqPo5zRAUAZuOS9I8buyn3xWjo6TkCIkfB3Z1qQYITDikoWgVZoK05768RsWU6fO
+         4Z4n2gl9CMekfh0VHs651VlYs8ZeGPxZPCx6GkY8Zqy8AhCD/DvWDId2sMRQSmgp0qzS
+         COjbNmd861IsQfUGHVXJ6MFZhYRfS3qrIuBJePLC+MeeWlpG+IzaqU+wW3pHKcAdBJqV
+         xnNfML7booC0kHbjSHvNllKPnTHREwFec/uWhcdIqMfV6YwXPfKzz1bC1QgFMGp3XeN6
+         m+liJkoOAGkS6Ol9n2J+My1GUmkl70+AxL4fcTbYxfqO3WbYMxs5kvMnywPAqnE2++CQ
+         7Jdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751255411; x=1751860211;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XS3uMD6coTyQ6ld95dZSw/chmAO1ya8AiyTyXgg1NkA=;
+        b=Yl52KF4HWGYiFY8I+XUH6Rc/PkHEb+Y9TvB4yOLvL9FyycMWEneIL3b9A8SdF2xhEu
+         p/3Tk68tICuNWm6IaBtJz50xQ2sXVWp6WkCpf3MdPxoTW+jQHKxm8LqVBnpnCgmCHlIm
+         AJLlM8883xO0XbrwzYjOy585Vd3mdlJbxIgtFrojax+6y9OsCRTD2321Su0WWMLGs0us
+         apN6qigEb6cRIoXQY9dXtkLYJzE1jxfo+iWR7MLetAXicr7hiza/zu7McCSNgxBFxWVp
+         cBZCF9D4/nCf4Zpn/cjUaAQowv9JJqiHiMjiPkbJpUuy+n6AvRHA6ao6iyeK3PnX3MYu
+         otaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFgwPsTjG0iH8X0jhpDc4bzxwP/BzCpbKhm+1PozgMWN/xG4t9R+DOYM0yFc+DUU01Nzfrhy16jhORG2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX8OOx3Au4k+wXgenxP+f/opFiZOw+b1ROupcwL5NLcUUNtehY
+	GkwHux0m9Xy9zReJP5XLv/4essWsgLyC1gt/7TboJRahq9OIm4aw0ehs3SC6kX5xAug=
+X-Gm-Gg: ASbGncuFEBZaeR1p8XrX5/Z/DCxA4GAknlj+kb8xI2ShJENIhfkAKcQQ7JmP155Vxpk
+	Fiqxc/AnCEBw0Mmr1q+Du3WE7mbfWr3gvTElXvgN/FmXMcq6Ni0n7lIAJpD4nAjwtmk+BkZk2EQ
+	6+LVX2ye/QWZLTNCwCXfvIeVBP6gmMKbz0RMtedRLi1ARlwla4OPam73yk/AiRgQIEe7VTTeMEM
+	Y+APnQtri0TCTRxAOeCe0GkWh4qA9mTVjpiK2yVPX8Aybmt3i1YRSUuqgVq7CxFwKqi2LO3DS4V
+	cSRd0cM3yP7YZtYtfYssr2dXwYS+ymT/4eq8M0j3sqEBWW0WAHR8lr+5pNo0DgYkmSlHNKepb9f
+	3wj0TClpZq+yZRK+u9XC2/KxuazVzRTkogJc6Z7kxzHc=
+X-Google-Smtp-Source: AGHT+IGm+3mueaY7vn0ufRWgnmJ1q3u/xndByjPzeluFETrUS5APHTdn4iIBDyvRfiCgViEMNUWXRw==
+X-Received: by 2002:a05:6a20:d486:b0:201:2834:6c62 with SMTP id adf61e73a8af0-220a16b359bmr17862154637.25.1751255411268;
+        Sun, 29 Jun 2025 20:50:11 -0700 (PDT)
+Received: from wuteng-VMware-Virtual-Platform.localdomain ([113.84.10.134])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e31bea17sm6912262a12.46.2025.06.29.20.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Jun 2025 20:50:10 -0700 (PDT)
+From: gigadevice2025@gmail.com
+To: miquel.raynal@bootlin.com,
+	richard@nod.at
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Teng Wu <gigadevice2025@gmail.com>
+Subject: [PATCH] mtd:spinand:gigadevice:Add support for GD5F1GM9 chips
+Date: Mon, 30 Jun 2025 11:49:31 +0800
+Message-ID: <20250630034931.7962-1-gigadevice2025@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250628063251.321370-1-gongruiqi1@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi GONG,
+From: Teng Wu <gigadevice2025@gmail.com>
 
-kernel test robot noticed the following build errors:
+- GD5F1GM9UExxG (ID:c89101 3.3V)
+- GD5F1GM9RExxG (ID:c88101 1.8V)
 
-[auto build test ERROR on zohar-integrity/next-integrity]
-[also build test ERROR on powerpc/next powerpc/fixes s390/features linus/master v6.16-rc4 next-20250627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Both device feature:
+  - 1Gb density (1024 blocks)
+  - 2048-byte page size with 128-byte OOB
+  - 8-bit ECC requirement per 512 bytes
+  - Quad I/O Read support (opcode EBH)
+  - tPROG ≤ 300us typical page program time
 
-url:    https://github.com/intel-lab-lkp/linux/commits/GONG-Ruiqi/integrity-Extract-secure-boot-enquiry-function-out-of-IMA/20250628-142236
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-patch link:    https://lore.kernel.org/r/20250628063251.321370-1-gongruiqi1%40huawei.com
-patch subject: [PATCH v2] integrity: Extract secure boot enquiry function out of IMA
-config: x86_64-randconfig-102-20250630 (https://download.01.org/0day-ci/archive/20250630/202506301150.yT6MxuHD-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250630/202506301150.yT6MxuHD-lkp@intel.com/reproduce)
+Testing environment:
+  - Platform: Raspberry PI-5 (Linux raspberry 6.15.0-rc6-v8)
+  - Operations verified:
+    * Full device read/write/erase cycles on all blocks
+    * Nandspeed:
+      ~ GD5F1GM9UE: 2.75MB/s read, 1.99MB/s write, 41.26MB/s erase
+      ~ GD5F1GM9RE: 1.84MB/s read, 1.45MB/s write, 41.04MS/s erase
+    * Nandbiterrs: Both corredted 8-bit errors per 512 bytes
+    * Stresstest: Both 144k cycles 0 bad block growth
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506301150.yT6MxuHD-lkp@intel.com/
+Full test log:
+ -U: https://gist.github.com/WT-886/b0f41fb50ddac3adc0020222c1f89b61
+ -R: https://gist.github.com/WT-886/8784e72f4632d519814928ff49225963
 
-All errors (new ones prefixed by >>):
+Datasheet:
+ -https://github.com/WT-886/DATASHEET/blob/main/GD5F1GM9-v1.0.pdf
 
->> ld.lld: error: undefined symbol: arch_integrity_get_secureboot
-   >>> referenced by ima_main.c:922 (security/integrity/ima/ima_main.c:922)
-   >>>               vmlinux.o:(ima_load_data)
+Signed-off-by: Teng Wu <gigadevice2025@gmail.com>
+---
+ drivers/mtd/nand/spi/gigadevice.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
+diff --git a/drivers/mtd/nand/spi/gigadevice.c b/drivers/mtd/nand/spi/gigadevice.c
+index d620bb02a..f781d0368 100644
+--- a/drivers/mtd/nand/spi/gigadevice.c
++++ b/drivers/mtd/nand/spi/gigadevice.c
+@@ -533,6 +533,26 @@ static const struct spinand_info gigadevice_spinand_table[] = {
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&gd5fxgqx_variant2_ooblayout,
+ 				     gd5fxgq4uexxg_ecc_get_status)),
++	SPINAND_INFO("GD5F1GM9UExxG",
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x91, 0x01),
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants_1gq5,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&gd5fxgqx_variant2_ooblayout,
++				     gd5fxgq4uexxg_ecc_get_status)),
++	SPINAND_INFO("GD5F1GM9RExxG",
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x81, 0x01),
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants_1gq5,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&gd5fxgqx_variant2_ooblayout,
++				     gd5fxgq4uexxg_ecc_get_status)),
+ };
+ 
+ static const struct spinand_manufacturer_ops gigadevice_spinand_manuf_ops = {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
 
