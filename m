@@ -1,68 +1,54 @@
-Return-Path: <linux-kernel+bounces-710026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7FBAEE613
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE88AEE618
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA9717A707D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF4B189235E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81BA2E540F;
-	Mon, 30 Jun 2025 17:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6A6292B50;
+	Mon, 30 Jun 2025 17:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDrzdZyp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obBBMxy3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FE228DF40;
-	Mon, 30 Jun 2025 17:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676C123ABB1;
+	Mon, 30 Jun 2025 17:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751305509; cv=none; b=DpzmcdtKkgxYbcSyA/KqlXt0UbAmq6x8ptVb63RT+k9FewGQIGoeEkfxOrgCAyjaua8x19MjY0iwAsfEX4wmRXvOafgevpt7xrLe4h/XaKD1N19QWM8qg11Ir1NywCTx3x4wCmxSBB4bx6AG9aKOnLrd/RjhqfFHM+Qck1X/M9o=
+	t=1751305790; cv=none; b=CYIM0O+0WWPHCwCR+/3NUHfmgHhHg0LXcOVlSyxS5x9bez8FCvqb/vPVz2Mjb6n/kxo4sWK+Um/H2D+ksnIQRDgjO4reHEw/Hdo0Z7WJjX1Z5RCWJP/omcfm8NiU7YHR81XeZMCIrOGgrGbTh66+6trxLT1kzjn0a3RF+WK6OWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751305509; c=relaxed/simple;
-	bh=i5RJ/sC/svK83YrMoFZztx4G0sX30XvRei6equEd/Hs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=THtJMMkgr70NbQ+QUh4Sql4h9u9qzfHVGwiBT+vUwK/QBjKd3uizM/rD8ZDk3lRiAsmPVvTLVYpMh5WkGz0DBbQCo4kaZ5zG4AULuKQ52VRweVNK4cYlJkdJwISQ8qtNfq3j9W2UChCJMLpbJ5Ch1KLEfr0WMBi/pnNe1AE/MjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDrzdZyp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A0CC4CEE3;
-	Mon, 30 Jun 2025 17:45:06 +0000 (UTC)
+	s=arc-20240116; t=1751305790; c=relaxed/simple;
+	bh=yoi4i5n4fYavqimbjruoWqPfoDDaWyBF/Jq0f8YDWfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b+kZQWM3s/4j4YMrgMG7UUm1V3MP7RPHrLqwKe6YMvFGlotj8kbVPHU6H8J9L8ZtapWRwpLjiy9Sn0VjsyEHYxxBaGhAKw85YLUGOKhVOiz0932KmlLWJYfZkFO7SrEKxj0M/zFA9UhJLyDXau6Kn6+DCPXEh3I6hwn3VtkYgCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obBBMxy3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0854C4CEE3;
+	Mon, 30 Jun 2025 17:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751305508;
-	bh=i5RJ/sC/svK83YrMoFZztx4G0sX30XvRei6equEd/Hs=;
+	s=k20201202; t=1751305790;
+	bh=yoi4i5n4fYavqimbjruoWqPfoDDaWyBF/Jq0f8YDWfk=;
 	h=From:To:Cc:Subject:Date:From;
-	b=oDrzdZypIrEsLQIZLa6c6QXtwB2jVjICOOVnRIfOHf86uSSrscF/DAl4rMU7Iu/Ls
-	 kprDTfME4Vm7NX98RUvXe+9xhVjM7USYFIJXWFXh1BunC6xyU8LFWPZDWyRKL3J0WS
-	 y6lRBPVlJXs4Tqabod4v179KaBriS7nWXPRtWdz1e359Vwb7tq497uc64wkFNeXLqj
-	 w5QJOosQu7ly8d//zo593m9/PqG6wcx+NlVbc/3vt8F8+DArH9MB5cUonsCp8SNm8C
-	 0JDQbqWZXASDlbh2/4/YRQTQYBsyZUscUfvbx0QMIhLjb9su6oOfilIAAd+AIu8EsK
-	 P+Imc9iQrWh/Q==
-From: Song Liu <song@kernel.org>
-To: live-patching@vger.kernel.org,
+	b=obBBMxy3BYFAIbQN+AMObBhPvreutHdvFk7yTDY8A+cNTdYBk98gSFqk4GADNqSyd
+	 sMZOT50584KhZdRUf44ZW1Ln4r+VePJl3cs+r3TMEZ86ltMHeYenz76amLMVgnU1sG
+	 uUHhQM3lFDfFjdY4cSNIc2e+kqdXzmcAoA9V3KIw+OKgTUhXQzUdkXVCKCDNVLZ/Nc
+	 7lQs8RZs7Eyc2nNAck9+1lUBJojyJA6vbs05Dr4ipTZRyIUL9R4JlKDwPVuPMHWREr
+	 5J7CGBabK0eGVLp/aR6suj+69CAzzk+UZdeSln7gJV51/KAIzejM1eVpjhTQ90eFun
+	 gHic5WT98P90g==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: apparmor@lists.ubuntu.com,
+	John Johansen <john.johansen@canonical.com>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: jpoimboe@kernel.org,
-	jikos@kernel.org,
-	mbenes@suse.cz,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	dylanbhatch@google.com,
-	fj6611ie@aa.jp.fujitsu.com,
-	mark.rutland@arm.com,
-	kernel-team@meta.com,
-	Song Liu <song@kernel.org>,
-	Suraj Jitindar Singh <surajjs@amazon.com>,
-	Torsten Duwe <duwe@suse.de>,
-	Breno Leitao <leitao@debian.org>,
-	Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v5] arm64: Implement HAVE_LIVEPATCH
-Date: Mon, 30 Jun 2025 10:45:02 -0700
-Message-ID: <20250630174502.842486-1-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2] apparmor: use SHA-256 library API instead of crypto_shash API
+Date: Mon, 30 Jun 2025 10:48:05 -0700
+Message-ID: <20250630174805.59010-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,126 +57,181 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allocate a task flag used to represent the patch pending state for the
-task. When a livepatch is being loaded or unloaded, the livepatch code
-uses this flag to select the proper version of a being patched kernel
-functions to use for current task.
+This user of SHA-256 does not support any other algorithm, so the
+crypto_shash abstraction provides no value.  Just use the SHA-256
+library API instead, which is much simpler and easier to use.
 
-In arch/arm64/Kconfig, select HAVE_LIVEPATCH and include proper Kconfig.
-
-This is largely based on [1] by Suraj Jitindar Singh.
-
-[1] https://lore.kernel.org/all/20210604235930.603-1-surajjs@amazon.com/
-
-Cc: Suraj Jitindar Singh <surajjs@amazon.com>
-Cc: Torsten Duwe <duwe@suse.de>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Tested-by: Breno Leitao <leitao@debian.org>
-Tested-by: Andrea della Porta <andrea.porta@suse.com>
-Signed-off-by: Song Liu <song@kernel.org>
-Acked-by: Will Deacon <will@kernel.org>
-
+Acked-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
 
-Changes v4 => v5:
-1. Update commit log.
+This is the slightly revised version of
+https://lore.kernel.org/r/20250428190430.850240-1-ebiggers@kernel.org/
+that I'm planning to apply to libcrypto-next for 6.17 to avoid a silent
+conflict with the sha256_state => sha256_ctx rename, as per the
+discussion in that thread.
 
-v4: https://lore.kernel.org/live-patching/20250617173734.651611-1-song@kernel.org/
+You can also get this patch and its dependencies from:
 
-Changes v3 => v4:
-1. Only keep 2/2 from v3, as 1/2 is now included in [3].
-2. Change TIF_PATCH_PENDING from 7 to 13.
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git apparmor-sha256-lib-v2
 
-v3: https://lore.kernel.org/linux-arm-kernel/20250320171559.3423224-1-song@kernel.org/
+ security/apparmor/Kconfig  |  3 +-
+ security/apparmor/crypto.c | 85 ++++++--------------------------------
+ 2 files changed, 13 insertions(+), 75 deletions(-)
 
-Changes v2 => v3:
-1. Remove a redundant check for -ENOENT. (Josh Poimboeuf)
-2. Add Tested-by and Acked-by on v1. (I forgot to add them in v2.)
-
-v2: https://lore.kernel.org/live-patching/20250319213707.1784775-1-song@kernel.org/
-
-Changes v1 => v2:
-
-1. Rework arch_stack_walk_reliable().
-
-v1: https://lore.kernel.org/live-patching/20250308012742.3208215-1-song@kernel.org/
----
- arch/arm64/Kconfig                   | 3 +++
- arch/arm64/include/asm/thread_info.h | 5 ++++-
- arch/arm64/kernel/entry-common.c     | 4 ++++
- 3 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index b7462424aa59..110218542920 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -280,6 +280,7 @@ config ARM64
- 	select USER_STACKTRACE_SUPPORT
- 	select VDSO_GETRANDOM
- 	select HAVE_RELIABLE_STACKTRACE
-+	select HAVE_LIVEPATCH
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 64cc3044a42ce..1e3bd44643dac 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -57,12 +57,11 @@ config SECURITY_APPARMOR_INTROSPECT_POLICY
+ 	  cpu is paramount.
+ 
+ config SECURITY_APPARMOR_HASH
+ 	bool "Enable introspection of sha256 hashes for loaded profiles"
+ 	depends on SECURITY_APPARMOR_INTROSPECT_POLICY
+-	select CRYPTO
+-	select CRYPTO_SHA256
++	select CRYPTO_LIB_SHA256
+ 	default y
  	help
- 	  ARM 64-bit (AArch64) Linux support.
+ 	  This option selects whether introspection of loaded policy
+ 	  hashes is available to userspace via the apparmor
+ 	  filesystem. This option provides a light weight means of
+diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
+index aad486b2fca65..227d47c149074 100644
+--- a/security/apparmor/crypto.c
++++ b/security/apparmor/crypto.c
+@@ -9,115 +9,54 @@
+  * Fns to provide a checksum of policy that has been loaded this can be
+  * compared to userspace policy compiles to check loaded policy is what
+  * it should be.
+  */
  
-@@ -2499,3 +2500,5 @@ endmenu # "CPU Power Management"
- source "drivers/acpi/Kconfig"
+-#include <crypto/hash.h>
++#include <crypto/sha2.h>
  
- source "arch/arm64/kvm/Kconfig"
-+
-+source "kernel/livepatch/Kconfig"
-diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-index 1269c2487574..f241b8601ebd 100644
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -70,6 +70,7 @@ void arch_setup_new_exec(void);
- #define TIF_SYSCALL_TRACEPOINT	10	/* syscall tracepoint for ftrace */
- #define TIF_SECCOMP		11	/* syscall secure computing */
- #define TIF_SYSCALL_EMU		12	/* syscall emulation active */
-+#define TIF_PATCH_PENDING	13	/* pending live patching update */
- #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
- #define TIF_FREEZE		19
- #define TIF_RESTORE_SIGMASK	20
-@@ -96,6 +97,7 @@ void arch_setup_new_exec(void);
- #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
-+#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
- #define _TIF_32BIT		(1 << TIF_32BIT)
-@@ -107,7 +109,8 @@ void arch_setup_new_exec(void);
- #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY | \
- 				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
- 				 _TIF_UPROBE | _TIF_MTE_ASYNC_FAULT | \
--				 _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING)
-+				 _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING | \
-+				 _TIF_PATCH_PENDING)
+ #include "include/apparmor.h"
+ #include "include/crypto.h"
  
- #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
- 				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
-diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-index 7c1970b341b8..a56878d7c733 100644
---- a/arch/arm64/kernel/entry-common.c
-+++ b/arch/arm64/kernel/entry-common.c
-@@ -8,6 +8,7 @@
- #include <linux/context_tracking.h>
- #include <linux/kasan.h>
- #include <linux/linkage.h>
-+#include <linux/livepatch.h>
- #include <linux/lockdep.h>
- #include <linux/ptrace.h>
- #include <linux/resume_user_mode.h>
-@@ -144,6 +145,9 @@ static void do_notify_resume(struct pt_regs *regs, unsigned long thread_flags)
- 				       (void __user *)NULL, current);
- 		}
+-static unsigned int apparmor_hash_size;
+-
+-static struct crypto_shash *apparmor_tfm;
+-
+ unsigned int aa_hash_size(void)
+ {
+-	return apparmor_hash_size;
++	return SHA256_DIGEST_SIZE;
+ }
  
-+		if (thread_flags & _TIF_PATCH_PENDING)
-+			klp_update_patch_state(current);
-+
- 		if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
- 			do_signal(regs);
+ char *aa_calc_hash(void *data, size_t len)
+ {
+-	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+ 	char *hash;
+-	int error;
+-
+-	if (!apparmor_tfm)
+-		return NULL;
  
+-	hash = kzalloc(apparmor_hash_size, GFP_KERNEL);
++	hash = kzalloc(SHA256_DIGEST_SIZE, GFP_KERNEL);
+ 	if (!hash)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	desc->tfm = apparmor_tfm;
+-
+-	error = crypto_shash_init(desc);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_update(desc, (u8 *) data, len);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_final(desc, hash);
+-	if (error)
+-		goto fail;
+-
++	sha256(data, len, hash);
+ 	return hash;
+-
+-fail:
+-	kfree(hash);
+-
+-	return ERR_PTR(error);
+ }
+ 
+ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
+ 			 size_t len)
+ {
+-	SHASH_DESC_ON_STACK(desc, apparmor_tfm);
+-	int error;
++	struct sha256_ctx sctx;
+ 	__le32 le32_version = cpu_to_le32(version);
+ 
+ 	if (!aa_g_hash_policy)
+ 		return 0;
+ 
+-	if (!apparmor_tfm)
+-		return 0;
+-
+-	profile->hash = kzalloc(apparmor_hash_size, GFP_KERNEL);
++	profile->hash = kzalloc(SHA256_DIGEST_SIZE, GFP_KERNEL);
+ 	if (!profile->hash)
+ 		return -ENOMEM;
+ 
+-	desc->tfm = apparmor_tfm;
+-
+-	error = crypto_shash_init(desc);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_update(desc, (u8 *) &le32_version, 4);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_update(desc, (u8 *) start, len);
+-	if (error)
+-		goto fail;
+-	error = crypto_shash_final(desc, profile->hash);
+-	if (error)
+-		goto fail;
+-
++	sha256_init(&sctx);
++	sha256_update(&sctx, (u8 *)&le32_version, 4);
++	sha256_update(&sctx, (u8 *)start, len);
++	sha256_final(&sctx, profile->hash);
+ 	return 0;
+-
+-fail:
+-	kfree(profile->hash);
+-	profile->hash = NULL;
+-
+-	return error;
+ }
+ 
+ static int __init init_profile_hash(void)
+ {
+-	struct crypto_shash *tfm;
+-
+-	if (!apparmor_initialized)
+-		return 0;
+-
+-	tfm = crypto_alloc_shash("sha256", 0, 0);
+-	if (IS_ERR(tfm)) {
+-		int error = PTR_ERR(tfm);
+-		AA_ERROR("failed to setup profile sha256 hashing: %d\n", error);
+-		return error;
+-	}
+-	apparmor_tfm = tfm;
+-	apparmor_hash_size = crypto_shash_digestsize(apparmor_tfm);
+-
+-	aa_info_message("AppArmor sha256 policy hashing enabled");
+-
++	if (apparmor_initialized)
++		aa_info_message("AppArmor sha256 policy hashing enabled");
+ 	return 0;
+ }
+-
+ late_initcall(init_profile_hash);
+
+base-commit: 1f7eb3c393ab9e56b5746f5fd31796a73bdd4d48
 -- 
-2.47.1
+2.50.0
 
 
