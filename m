@@ -1,198 +1,106 @@
-Return-Path: <linux-kernel+bounces-708883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90649AED641
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35178AED645
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA58218991A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A630174F8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF001239E82;
-	Mon, 30 Jun 2025 07:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5398A23496F;
+	Mon, 30 Jun 2025 07:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xxho2LsM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H3StGTsu"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC06238C1F
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CFC849C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751270124; cv=none; b=EYFM027iGsNRad4L6d1m8SVDoFnKLVINRnHBxLrOxHsv0+wbrXWCdwXZUbLJcUoIuWKuTsYrom7YcxlsBL6kYcrozsvPCdBa8RrfFTboBtxeietrjiCv9inGgrwoyTTkz3jCWPKhP23OfPiaInrhR6AIIetRZ25RDvfdE/rKWrE=
+	t=1751270207; cv=none; b=Wv4Dv4/PVlq9OPbCpsx2N8BJJ1TNYa6J0j84HU0mUIohJBzSLeSB0X/qgaAaK1WbZRhYZIXDCh0/sz5zEmvzGtDidYBNEbkVRWaaDo3RdUQLSBEJANXUBRFUbyd+84tdcqejHzbhT1QnQVZhfLZ2bDR3FRpQyNJV8oztLoqfymw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751270124; c=relaxed/simple;
-	bh=LzNv2BvRGjURAKfZb0y/U3sfNjK3dSR/PcGkU/riH2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXbgwetk6SLubY0KbuvYF1KyuNbRZiyc2RjIEW0z6JcAvMFKIF4p4fosaexAfQkk8d1G8sk1aul+QrqkjsMglyeSKF3VG3zFh/35Ee2XPMYUb1ZrKYBhzGsdXkL6u0IUPfg79VSugv+4QbNNOfjHfSDCyhJ6QaeJwEfuhL8CesA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xxho2LsM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751270121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7a9or9//L8s2LhuJ6xqmesus6OKnaoS7sHbZZSebooc=;
-	b=Xxho2LsMZ4q3M7ptp9h5kk6K2/dR1nt5vr8OXWtn7WjZsm1Qmxb4p+5wTQQJiKOrStvw4R
-	F5CjC/hkNDhiBiUhqxnvCMZhzriFFGfuVNPWfZkgb5nQBh3iyxmUh6Jkn8oVTf34mJ1hPv
-	SIxaoIKBFlRLyssX0PUSoeBnsVMPgWc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-zDprf9d1OGCcYLESRDCUuA-1; Mon, 30 Jun 2025 03:55:19 -0400
-X-MC-Unique: zDprf9d1OGCcYLESRDCUuA-1
-X-Mimecast-MFC-AGG-ID: zDprf9d1OGCcYLESRDCUuA_1751270118
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4532514dee8so25997795e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 00:55:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751270118; x=1751874918;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7a9or9//L8s2LhuJ6xqmesus6OKnaoS7sHbZZSebooc=;
-        b=kLdwa3GhIHTrPaMvvQyId5+yr2VxTpEWhHJy28LEa5NEPSOfkfIHlV03aU/8QvRCqW
-         lstDESKSBBfOl5Le4FO/2CjulfHYerF5FKA/DXd+zvI+fNXQT5/ZnlWRqvg4lo1v39Ly
-         m2NJ2L+1MRwKqx4q/qNwcwIOlhG263CyCHVYyeOy6mOq7UmyoRdYK/LvOBzAuFd5jrka
-         0Y0D55fUHmUHYByvtPTs3I9RUxR+FIrPq4a6Q+qUU+T56jXTeatIOCT1+hdJhMUhcMqc
-         KotguThTN/UXazypJ74duys/122qCY6aaj602XJMzgi/wSJ6cnX0e1L+2IlUSoIDgWjg
-         p7vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWR2iDqdEKJm4kR9sXpDKg+jwf8uOTEqCUO8acTA8Z80mfmoqKZyBxl47VVZNDLKSokt+Tg63cz1nnb7co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNEfAT8TYbsjVc8CG2Wrec9BOs2K8/ala7w7I3gDTmcJK9yA6i
-	5h29c0fCbfRkdzb+sNE7tqFrKG2gX/q+gkD/GhNxbV7RRoNRBRZuJ6qhIVq60XjpRq38n1kwwC2
-	9xT4p3pKtdD1AtGsQD6Y0jw6Di+mDifHRb3z03sGRzW5upozK/wFV1LFbSiLIoLfLxQ==
-X-Gm-Gg: ASbGncuiiQhBgV8cGHreo7vdGbEC3Q/OwWmuyxvsM4Qy+wosWU7H6vYAZHp8A8F2aPz
-	yfZqXBIxGD+dG3EmdNeEzrHa9ls3A1xVJ3yqiLAurj+7TC6movOnVPF4sU+VcVjcZ5A3KK2ktnt
-	/FS5T0YJoqGUtpDj4aevBqNsPPmEk+fqmm/oxeR9R91nDD9mzf6iVQGNOdXDGvqdR6508OnjXaD
-	WPV5E1qHYwRb3/8W/SeYqzY1i1xcymlAeuufDiDi2BfiKwUAmntLn0EsB9kJC88/Tw/qt3GWzYf
-	Z1PP8FaTDGP3/C9Yzh3MhBl+cdFjo92bwuv1G7gpwrQTY0ZaeN5rDha9UXIiRqk6StNxNeAgumq
-	ke4J4oDZF8iMJIAU3UzWOfQbRJ2HbDCGQUYACNBfHCkN3mWuBcQ==
-X-Received: by 2002:a05:600c:8709:b0:453:d3d:d9fd with SMTP id 5b1f17b1804b1-4538ee2786dmr118455715e9.12.1751270117641;
-        Mon, 30 Jun 2025 00:55:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWnv4XneJF4l3eD0X37whdACrcuTrwOArn291zYIRtD4BGnx1lqdzV0g3BMxMAGOMzm4CBBQ==
-X-Received: by 2002:a05:600c:8709:b0:453:d3d:d9fd with SMTP id 5b1f17b1804b1-4538ee2786dmr118455425e9.12.1751270117206;
-        Mon, 30 Jun 2025 00:55:17 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f40:b300:53f7:d260:aff4:7256? (p200300d82f40b30053f7d260aff47256.dip0.t-ipconnect.de. [2003:d8:2f40:b300:53f7:d260:aff4:7256])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823b6e9esm159541955e9.28.2025.06.30.00.55.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 00:55:16 -0700 (PDT)
-Message-ID: <2409b6e5-ee02-4cb6-abc8-5b821f58f540@redhat.com>
-Date: Mon, 30 Jun 2025 09:55:15 +0200
+	s=arc-20240116; t=1751270207; c=relaxed/simple;
+	bh=RsPzyl1QaWRfmgCh0kdzgypQXy2dsV/pLN06k69m3YI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W7JwwA5qHHfV2Bp258Wihx25toOxG2J3zXvZkjN788MsBWDdpLLm2JJ06xyM0IAfBnJ3JUW7T4ChxMYrVMYb0NwN69quIlK0PCx9YmKgGfasQECKYUFCINtOY3biNubu/r9HwE8E8xNS420/SlraAPElgnEyiXbKfvZOtM85hYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H3StGTsu; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=clXotmQK2fBKk6NffSDoLpVZjlb7gWYryEPzX0KmYXw=; b=H3StGTsu72IajGWEpgHO7DIDk9
+	2jth7bDUbnZtMlnVrG/T/Azv/YAK/67vCGHGscGAq125WlI2Ros/0nlh1q3RG0OCgcTdggMReuSi1
+	0m59RwzPQ/W7IPM9SSrGJkoDdJ7nUf2kIrM7E+CHkAzlQumLANsccybKxFWO0mP54w7Sokk2x/3v9
+	aYx5NwulPK2ZNiYm3j3MSwEFjd8fSaqHfgJSOofrr/7dmcTfrVOcXTj2mpkVewEikYcKv2QMD0FKW
+	rUPuCgHRhu6HJfLIq2Pj4b8qArqGkJqUwVGcz2+58USqdVnC1RoLqNZc1mw2V4d5N/DAT4UHcdHOC
+	VlJ8nIwQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uW9NX-00000006k9z-26hv;
+	Mon, 30 Jun 2025 07:56:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 14413300125; Mon, 30 Jun 2025 09:56:39 +0200 (CEST)
+Date: Mon, 30 Jun 2025 09:56:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, quic_jiangenj@quicinc.com,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	Aleksandr Nogikh <nogikh@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 02/11] kcov: apply clang-format to kcov code
+Message-ID: <20250630075638.GJ1613200@noisy.programming.kicks-ass.net>
+References: <20250626134158.3385080-1-glider@google.com>
+ <20250626134158.3385080-3-glider@google.com>
+ <20250627080248.GQ1613200@noisy.programming.kicks-ass.net>
+ <CAG_fn=XCEHppY3Fn+x_JagxTjHYyi6C=qt-xgGmHq7xENVy4Jw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] fs/proc/task_mmu: fix PAGE_IS_PFNZERO detection for
- the huge zero folio
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250617143532.2375383-1-david@redhat.com>
- <416514a7-0e0d-4cc8-912e-bcdd2bac5c2e@collabora.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <416514a7-0e0d-4cc8-912e-bcdd2bac5c2e@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG_fn=XCEHppY3Fn+x_JagxTjHYyi6C=qt-xgGmHq7xENVy4Jw@mail.gmail.com>
 
-On 30.06.25 07:18, Muhammad Usama Anjum wrote:
-> On 6/17/25 7:35 PM, David Hildenbrand wrote:
->> is_zero_pfn() does not work for the huge zero folio. Fix it by using
->> is_huge_zero_pmd().
->>
->> Found by code inspection.
->>
->> Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>
->> Probably we should Cc stable, thoughts?
->>
->> We should also extend the pagemap_ioctl selftest to cover this case, but I
->> don't have time for that right now. @Muhammad ?
-> Currently, we don't have any test case covering zero pfn. I'm trying to write
-> a few test cases. But I'm not able to get ZERO PFN. I've tried to allocate a
-> read only memory and then read it. Is there a trick to how to create ZERO PFN
-> memory from userspace?
+On Fri, Jun 27, 2025 at 02:50:18PM +0200, Alexander Potapenko wrote:
 
-You need a MAP_ANON | MAP_PRIVATE mapping and have to make sure that the 
-compiler does not optimize out the read.
+> Setting AlignConsecutiveDeclarations: AcrossEmptyLinesAndComments will
+> replace the above with the following diff:
+> 
+>  struct kcov_percpu_data {
+> -       void                    *irq_area;
+> -       local_lock_t            lock;
+> -
+> -       unsigned int            saved_mode;
+> -       unsigned int            saved_size;
+> -       void                    *saved_area;
+> -       struct kcov             *saved_kcov;
+> -       int                     saved_sequence;
+> +       void        *irq_area;
+> +       local_lock_t lock;
+> +
+> +       unsigned int saved_mode;
+> +       unsigned int saved_size;
+> +       void        *saved_area;
+> +       struct kcov *saved_kcov;
+> +       int          saved_sequence;
+>  };
+> 
+> (a bit denser, plus it aligns the variable names, not the pointer signs)
+> Does this look better?
 
-E.g.,
-
-char *mem =  mmap(...);
-char tmp = *mem;
-
-asm volatile("" : "+r" (tmp))
-
-or
-
-char *mem =  mmap(...);
-
-*(volatile char *)mem;
-
-
-To get the shared huge zero folio, you need a suitably aligned VMA. See 
-run_with_huge_zeropage() in in tools/testing/selftests/mm/cow.c as one 
-example.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Better yes, but still not really nice.
 
