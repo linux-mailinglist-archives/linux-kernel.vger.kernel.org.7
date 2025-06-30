@@ -1,134 +1,284 @@
-Return-Path: <linux-kernel+bounces-708695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166FFAED3AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:07:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC552AED3B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1B51892881
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E4E16EB74
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5671F1AA1DB;
-	Mon, 30 Jun 2025 05:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979901DE3C0;
+	Mon, 30 Jun 2025 05:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FrRVTqrQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tpog0BUF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09AD2745C;
-	Mon, 30 Jun 2025 05:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8C21C861B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751260022; cv=none; b=SGZaK/2wu2x88hXPgWWncMEsxUipDnuBSzbmrZmh6auwajU8GIbrgkLduVSBTzUxefmn5+p+8+HQzhLqUN+77rEmVXqlocX7Y+PGI5T9VDSK/pzHQT0HlUKBctxVavkKfkU7/+EUONb6Trrl4X5iepP+CgOIbZ3fPQG9+R2KhOA=
+	t=1751260201; cv=none; b=cgUELlFbtX7RONc9G2/lM9NwWfm5WrIh/ocOOPbdmxD7+j5hildDhZGO1Cs0s4FXdyyUmaGNc7DgH7Ezc0dwL8W3vyy8FXHR30aAZT61eXpG6GLxtYd1NMT+zlzBgaLkInAdoeP/E6bODCFHCcTGSdqUVrcUFYbCfJjjNSbZ4rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751260022; c=relaxed/simple;
-	bh=DGXltRkbg9KemiMxryS/esYXrIBegi2H8y9DdYmdKxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptekOgNFXF2BHta2xIhEF+C8HwrZ20ouBTOH1GClEVGCXxh2sgcalYO6UumEpjPwDxleqeC0NHVc/rprlkrV8mceCBLlLYLOYC1rYS2aCEiHWzpIydLCrDdmc8g2e/Tzh5M43G8svWa833LSBI/qu2eFPFjZYYbQcxrxOqwM1mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FrRVTqrQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8CB2C4CEE3;
-	Mon, 30 Jun 2025 05:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751260022;
-	bh=DGXltRkbg9KemiMxryS/esYXrIBegi2H8y9DdYmdKxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FrRVTqrQDs14OZUErAk4/NbzR8SdbjA3VUZfVevYkwkPjWVUUPSWFobno2GsF/l/y
-	 7U3hJQwRfoumdb9GYeCI9o1JK5NwEtshgjmBQsyXmbrSVpl3gvMahxniGrQxKhLHD6
-	 BrCCSbuIKk3UfVryu+9KuPf0h6/prbfPxT3o+kEE=
-Date: Mon, 30 Jun 2025 07:06:58 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Marcelo Moreira <marcelomoreira1905@gmail.com>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>, skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	~lkcamp/patches@lists.sr.ht, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC/amd64: replace sprintf with sysfs_emit in show
- functions
-Message-ID: <2025063001-marigold-renewed-6361@gregkh>
-References: <20250629182448.265407-1-marcelomoreira1905@gmail.com>
+	s=arc-20240116; t=1751260201; c=relaxed/simple;
+	bh=JWjmnMSXqklq9IN9cj/a+e53I1kMdgV5VDC4jVZ/pek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FhLkIa9gr5KilLtbqAy4i2aqaH1ldWst2oIZIPcj/acnYSeB4HUeDd1PdA9dhOQRhyKqRJBeXcEs17YDhSzj34Ch1CNDM1LJmLP/tX1Oy3qeIEQS/W+HW9apf5ZNpf6QUqxlD4Di17scaIGT4CyQbDuongBF2PAaPhhSmoCHga8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tpog0BUF; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751260200; x=1782796200;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JWjmnMSXqklq9IN9cj/a+e53I1kMdgV5VDC4jVZ/pek=;
+  b=Tpog0BUF1xMSofIU8gh49/C7IL1S3f2yEn7dvmDxSHSS+tVhy/IIdLJ0
+   uV1WPWj8Rah58rVEOMmpF9WAZmrlaF2JrhADrnFiTz6pqxS7T52Amro6E
+   C54H9qPIg0tPJUgAYWcbpSLOH4ujKetdS8/gLFJD8vf8K3LWlEimtuH3m
+   Z6qCjxZfaOkc40TZkMYuccwD8vCpH5QHPefwQ7SwzlEvNB0AwAGhoIqqa
+   NKBXcF3wjZR+fdcagL60tdqXao1GRyirgeGu0sbIy2tdgK+RBvcCHlM/O
+   R9zAyTr0CTmBHBvL7iHjvn8//Nj5Ol5yVxb8bjgcKojH5cP6pz66i97aw
+   g==;
+X-CSE-ConnectionGUID: 5aADmqVzT0CdIQHK0IffoA==
+X-CSE-MsgGUID: 77m1msSJR6i1IxBgROIa9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="57252713"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="57252713"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 22:10:00 -0700
+X-CSE-ConnectionGUID: xF8RxM6vRBy0C1z/ly1kgA==
+X-CSE-MsgGUID: lzGPO34hSdmxEwo1n0DoJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="153659062"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 22:09:56 -0700
+Message-ID: <b5b84208-e43c-483e-838b-c42375d3bada@linux.intel.com>
+Date: Mon, 30 Jun 2025 13:08:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250629182448.265407-1-marcelomoreira1905@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+To: Xu Yilun <yilun.xu@linux.intel.com>, jgg@nvidia.com, jgg@ziepe.ca,
+ kevin.tian@intel.com, will@kernel.org, aneesh.kumar@kernel.org
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, joro@8bytes.org,
+ robin.murphy@arm.com, shuah@kernel.org, nicolinc@nvidia.com, aik@amd.com,
+ dan.j.williams@intel.com, yilun.xu@intel.com
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 29, 2025 at 03:24:48PM -0300, Marcelo Moreira wrote:
-> Update all device attribute 'show' callbacks in the EDAC AMD64 driver to
-> utilize sysfs_emit(). This change adheres to the recommendation outlined
-> in Documentation/filesystems/sysfs.rst.
+On 6/27/25 11:38, Xu Yilun wrote:
+> Destroy iommufd_vdevice (vdev) on iommufd_idevice (idev) destroy so
+> that vdev can't outlive idev.
 > 
-> This modification aligns with current sysfs subsystem guidelines.
+> iommufd_device (idev) represents the physical device bound to iommufd,
+> while the iommufd_vdevice (vdev) represents the virtual instance of the
+> physical device in the VM. The lifecycle of the vdev should not be
+> longer than idev. This doesn't cause real problem on existing use cases
+> cause vdev doesn't impact the physical device, only provides
+> virtualization information. But to extend vdev for Confidential
+> Computing (CC), there are needs to do secure configuration for the vdev,
+> e.g. TSM Bind/Unbind. These configurations should be rolled back on idev
+> destroy, or the external driver (VFIO) functionality may be impact.
 > 
-> Signed-off-by: Marcelo Moreira <marcelomoreira1905@gmail.com>
+> Building the association between idev & vdev requires the two objects
+> pointing each other, but not referencing each other. This requires
+> proper locking. This is done by reviving some of Nicolin's patch [1].
+> 
+> There are 3 cases on idev destroy:
+> 
+>    1. vdev is already destroyed by userspace. No extra handling needed.
+>    2. vdev is still alive. Use iommufd_object_tombstone_user() to
+>       destroy vdev and tombstone the vdev ID.
+>    3. vdev is being destroyed by userspace. The vdev ID is already freed,
+>       but vdev destroy handler is not completed. Destroy the vdev
+>       immediately. To solve the racing with userspace destruction, make
+>       iommufd_vdevice_abort() reentrant.
+> 
+> [1]:https://lore.kernel.org/ 
+> all/53025c827c44d68edb6469bfd940a8e8bc6147a5.1729897278.git.nicolinc@nvidia.com/
+> 
+> Originally-by: Nicolin Chen<nicolinc@nvidia.com>
+> Suggested-by: Jason Gunthorpe<jgg@nvidia.com>
+> Co-developed-by: Aneesh Kumar K.V (Arm)<aneesh.kumar@kernel.org>
+> Signed-off-by: Aneesh Kumar K.V (Arm)<aneesh.kumar@kernel.org>
+> Signed-off-by: Xu Yilun<yilun.xu@linux.intel.com>
 > ---
->  drivers/edac/amd64_edac.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>   drivers/iommu/iommufd/device.c          | 42 +++++++++++++++++++++++
+>   drivers/iommu/iommufd/iommufd_private.h | 11 +++++++
+>   drivers/iommu/iommufd/main.c            |  1 +
+>   drivers/iommu/iommufd/viommu.c          | 44 +++++++++++++++++++++++--
+>   4 files changed, 95 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index b681c0663203..b6d211255ef0 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -552,7 +552,7 @@ static ssize_t reg##_show(struct device *dev,				\
->  	struct mem_ctl_info *mci = to_mci(dev);				\
->  	struct amd64_pvt *pvt = mci->pvt_info;				\
->  									\
-> -	return sprintf(data, "0x%016llx\n", (u64)pvt->reg);		\
-> +	return  sysfs_emit(data, "0x%016llx\n", (u64)pvt->reg);		\
+> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
+> index 86244403b532..0937d4989185 100644
+> --- a/drivers/iommu/iommufd/device.c
+> +++ b/drivers/iommu/iommufd/device.c
+> @@ -137,11 +137,53 @@ static struct iommufd_group *iommufd_get_group(struct iommufd_ctx *ictx,
+>   	}
+>   }
+>   
+> +static void iommufd_device_remove_vdev(struct iommufd_device *idev)
+> +{
+> +	struct iommufd_vdevice *vdev;
+> +
+> +	mutex_lock(&idev->igroup->lock);
+> +	/* vdev has been completely destroyed by userspace */
+> +	if (!idev->vdev)
+> +		goto out_unlock;
+> +
+> +	vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
+> +	if (IS_ERR(vdev)) {
+> +		/*
+> +		 * vdev is removed from xarray by userspace, but is not
+> +		 * destroyed/freed. Since iommufd_vdevice_abort() is reentrant,
+> +		 * safe to destroy vdev here.
+> +		 */
+> +		iommufd_vdevice_abort(&idev->vdev->obj);
+> +		goto out_unlock;
+> +	}
+> +
+> +	/* Should never happen */
+> +	if (WARN_ON(vdev != idev->vdev)) {
+> +		iommufd_put_object(idev->ictx, &vdev->obj);
+> +		goto out_unlock;
+> +	}
+> +
+> +	/*
+> +	 * vdev is still alive. Hold a users refcount to prevent racing with
+> +	 * userspace destruction, then use iommufd_object_tombstone_user() to
+> +	 * destroy it and leave a tombstone.
+> +	 */
+> +	refcount_inc(&vdev->obj.users);
+> +	iommufd_put_object(idev->ictx, &vdev->obj);
+> +	mutex_unlock(&idev->igroup->lock);
+> +	iommufd_object_tombstone_user(idev->ictx, &vdev->obj);
+> +	return;
+> +
+> +out_unlock:
+> +	mutex_unlock(&idev->igroup->lock);
+> +}
+> +
+>   void iommufd_device_destroy(struct iommufd_object *obj)
+>   {
+>   	struct iommufd_device *idev =
+>   		container_of(obj, struct iommufd_device, obj);
+>   
+> +	iommufd_device_remove_vdev(idev);
+>   	iommu_device_release_dma_owner(idev->dev);
+>   	iommufd_put_group(idev->igroup);
+>   	if (!iommufd_selftest_is_mock_dev(idev->dev))
+> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
+> index fbc9ef78d81f..f58aa4439c53 100644
+> --- a/drivers/iommu/iommufd/iommufd_private.h
+> +++ b/drivers/iommu/iommufd/iommufd_private.h
+> @@ -446,6 +446,7 @@ struct iommufd_device {
+>   	/* always the physical device */
+>   	struct device *dev;
+>   	bool enforce_cache_coherency;
+> +	struct iommufd_vdevice *vdev;
+>   };
+>   
+>   static inline struct iommufd_device *
+> @@ -621,6 +622,7 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>   void iommufd_viommu_destroy(struct iommufd_object *obj);
+>   int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>   void iommufd_vdevice_destroy(struct iommufd_object *obj);
+> +void iommufd_vdevice_abort(struct iommufd_object *obj);
+>   
+>   struct iommufd_vdevice {
+>   	struct iommufd_object obj;
+> @@ -628,8 +630,17 @@ struct iommufd_vdevice {
+>   	struct iommufd_viommu *viommu;
+>   	struct device *dev;
+>   	u64 id; /* per-vIOMMU virtual ID */
+> +	struct iommufd_device *idev;
+>   };
+>   
+> +static inline struct iommufd_vdevice *
+> +iommufd_get_vdevice(struct iommufd_ctx *ictx, u32 id)
+> +{
+> +	return container_of(iommufd_get_object(ictx, id,
+> +					       IOMMUFD_OBJ_VDEVICE),
+> +			    struct iommufd_vdevice, obj);
+> +}
+> +
+>   #ifdef CONFIG_IOMMUFD_TEST
+>   int iommufd_test(struct iommufd_ucmd *ucmd);
+>   void iommufd_selftest_destroy(struct iommufd_object *obj);
+> diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> index 620923669b42..64731b4fdbdf 100644
+> --- a/drivers/iommu/iommufd/main.c
+> +++ b/drivers/iommu/iommufd/main.c
+> @@ -529,6 +529,7 @@ static const struct iommufd_object_ops iommufd_object_ops[] = {
+>   	},
+>   	[IOMMUFD_OBJ_VDEVICE] = {
+>   		.destroy = iommufd_vdevice_destroy,
+> +		.abort = iommufd_vdevice_abort,
+>   	},
+>   	[IOMMUFD_OBJ_VEVENTQ] = {
+>   		.destroy = iommufd_veventq_destroy,
+> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+> index 01df2b985f02..632d1d7b8fd8 100644
+> --- a/drivers/iommu/iommufd/viommu.c
+> +++ b/drivers/iommu/iommufd/viommu.c
+> @@ -84,16 +84,38 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
+>   	return rc;
+>   }
+>   
+> -void iommufd_vdevice_destroy(struct iommufd_object *obj)
+> +void iommufd_vdevice_abort(struct iommufd_object *obj)
+>   {
+>   	struct iommufd_vdevice *vdev =
+>   		container_of(obj, struct iommufd_vdevice, obj);
+>   	struct iommufd_viommu *viommu = vdev->viommu;
+> +	struct iommufd_device *idev = vdev->idev;
+> +
+> +	lockdep_assert_held(&idev->igroup->lock);
+> +
+> +	/*
+> +	 * iommufd_vdevice_abort() could be reentrant, by
+> +	 * iommufd_device_unbind() or by iommufd_destroy(). Cleanup only once.
+> +	 */
+> +	if (!viommu)
+> +		return;
+>   
+>   	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
+>   	xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
+>   	refcount_dec(&viommu->obj.users);
+>   	put_device(vdev->dev);
+> +	vdev->viommu = NULL;
+> +	idev->vdev = NULL;
 
-Why the extra ' '?
+I feel it makes more sense to reorder the operations like this:
 
+	vdev->viommu = NULL;
+	vdev->idev = NULL;
+	idev->vdev = NULL;
+	put_device(vdev->dev);
 
->  }
->  
->  EDAC_DCT_ATTR_SHOW(dhar);
-> @@ -571,7 +571,7 @@ static ssize_t dram_hole_show(struct device *dev, struct device_attribute *mattr
->  
->  	get_dram_hole_info(mci, &hole_base, &hole_offset, &hole_size);
->  
-> -	return sprintf(data, "%llx %llx %llx\n", hole_base, hole_offset,
-> +	return sysfs_emit(data, "%llx %llx %llx\n", hole_base, hole_offset,
->  						 hole_size);
->  }
->  
-> @@ -602,7 +602,7 @@ static ssize_t inject_section_show(struct device *dev,
->  {
->  	struct mem_ctl_info *mci = to_mci(dev);
->  	struct amd64_pvt *pvt = mci->pvt_info;
-> -	return sprintf(buf, "0x%x\n", pvt->injection.section);
-> +	return sysfs_emit(buf, "0x%x\n", pvt->injection.section);
->  }
->  
->  /*
-> @@ -638,7 +638,7 @@ static ssize_t inject_word_show(struct device *dev,
->  {
->  	struct mem_ctl_info *mci = to_mci(dev);
->  	struct amd64_pvt *pvt = mci->pvt_info;
-> -	return sprintf(buf, "0x%x\n", pvt->injection.word);
-> +	return sysfs_emit(buf, "0x%x\n", pvt->injection.word);
->  }
->  
->  /*
-> @@ -675,7 +675,7 @@ static ssize_t inject_ecc_vector_show(struct device *dev,
->  {
->  	struct mem_ctl_info *mci = to_mci(dev);
->  	struct amd64_pvt *pvt = mci->pvt_info;
-> -	return sprintf(buf, "0x%x\n", pvt->injection.bit_map);
-> +	return sysfs_emit(buf, "0x%x\n", pvt->injection.bit_map);
+put_device(vdev->dev) could potentially trigger other code paths that
+might attempt to reference vdev or its associated pointers. Therefore,
+it's safer to null all the relevant reference pointers before calling
+put_device().
 
-There's nothing wrong with these sprintf() lines, so no need to change
-them, right?
+Others look good to me,
 
-I only recommend making this type of change when adding new sysfs files,
-no need for churn on old files when it is not needed at all.
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-thanks,
-
-greg k-h
+Thanks,
+baolu
 
