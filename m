@@ -1,98 +1,95 @@
-Return-Path: <linux-kernel+bounces-708962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C236AAED773
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:36:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E82AED77F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E4017A540D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83DC18989C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA8D24290B;
-	Mon, 30 Jun 2025 08:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83BE243953;
+	Mon, 30 Jun 2025 08:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKHQ5+0m"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7OJk7zB"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A426D2397B0;
-	Mon, 30 Jun 2025 08:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E83C1DE4FF;
+	Mon, 30 Jun 2025 08:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751272556; cv=none; b=MkyJy+X5binDkq8S3I1K7K97YCvtcVdawAPXQWiUJlHk0HmQ4xe2OEPXhOeH1QAV5gFNTmefaqUHjzSxc2J4BYp8IKheigLuianix2DvUqFKZTj1pT3CL5wbL6e3IGyBthFid/mfVsZMg0ApFnRTJYnuC+ldVWRqR2uhH33rr5M=
+	t=1751272706; cv=none; b=V5N7VPdx5DeiuHAOyTwTl8t2vqT7e75VLV21ha9anG5ecv7KVCzSmiZ48yxXWi90rp3S7fVX9iMBkVwBLQc+69evP+668Q55wyvGsdemRET0R9jigVVHm/0bsDbwv39CsiMs+QbtmWzFzxS45atjb2jW4VHE9+795RbeBSTzq+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751272556; c=relaxed/simple;
-	bh=hbl6aKOFyrCpAMd3O9ukAhgw6X3wjq6glq0MIKEE2gk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ErGUBPFysG91mUBF9ojvcghNbT9geuCUuAs0dB0i9q79NKEWFdFUd1uxKIo2fblix5T+4aeTf20lC0Ts49QvxcvPa4YvSyBohEUZ1ZePGIQntgS/XvX/oY4c4oimDnsCDhtRxCYhba1rA9ylyn80pduVvw23Pms8igTamTkn/RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKHQ5+0m; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1751272706; c=relaxed/simple;
+	bh=fOKokE5xSIuSezXDL92+Q446InjaoHoc0T4fTEZ/Fd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vDHj2RtQ2Rh1bkdaIXpGfVSfv/ZHbUuA18Rx4njTjVWVEJRFyDqyJwREO6iKIxUz6as5A+O2iFIn/auwgrXEKAt7JuTyeFBcgwpRVcK9fec/grVPpcRvPCUBe1sEs/ScB/dJdWuSI7gyD2GRrGi17ApJ52C4iHihqGMIbBdav1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7OJk7zB; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-74801bc6dc5so4034473b3a.1;
-        Mon, 30 Jun 2025 01:35:54 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4e62619afso455565f8f.1;
+        Mon, 30 Jun 2025 01:38:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751272554; x=1751877354; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751272702; x=1751877502; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4plGK5bq5RnwaM8ctVOu6ZgjjUnMHD+gm6XjSI880o=;
-        b=JKHQ5+0mIWsvzEMBMcDUAmcgBy55rmQ3rcn1DGIbNTcTC3GLWshpC85OVWQwJvehlC
-         NyDJrx8wdAACQYqlngeAK7X6bPQSsaVFawCNzIbb0bcHs0p+oOtrV6qb63kdPhjN7DYK
-         dbgxVdOo0xffpjb6QgPPnEmyDriPVWVn50OFgjnaAH9v4ozUIgPniQVvFV6daYXfsqd3
-         N1YZw1J8wKIDOSJHr38tdpB7hsOh7w8S0f9GMvd+ASqToYeYolnf3GAPhl5R7B/+sc39
-         LTTnzJoqfhxOozti/ufmjAJGkG0EUiiC6h/MwEwKcTOs9Y3Kq1k1apdJvfHibUsexSyr
-         FQDA==
+        bh=rFdfcEftPl4kbBYI2AsD040dwGd/MXL2A6FySR4WqJg=;
+        b=O7OJk7zBkH0OE2RFz5Wf2SObaxW6+bpZ+qrKwkGB9sTy37VsSrnxBC6mwMFxKaj0PB
+         Hxpvhq/j7xWmwYxlxLyOJuUCdNxSAD8CnjdTP0nNJUb5qNzliZsI4A8kO3j40rz0xxoG
+         Ta+ydBndjlzkqNArqOMUTwi4GFmUJNfxEn+NurR5buS5LigUuu/qvi6m72SJHdwJ1ug6
+         auyYfpaGlRdvJVXfLiTLMTZdTiR+cJlTS2kOmtAuMfisYhWSrVbpD2hd6ie5JQJ5py3+
+         5okFVImN9mkYRJXq/0KH0et/J0JpLAAwH5DY/GauvY10nc67KbKW7ZNEobGYa/jZs0bO
+         4FmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751272554; x=1751877354;
+        d=1e100.net; s=20230601; t=1751272702; x=1751877502;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c4plGK5bq5RnwaM8ctVOu6ZgjjUnMHD+gm6XjSI880o=;
-        b=Grn2rb/O4/qZj+u5KQSaBNW/jWtfzbY2uBLFr8GB6rAGh/HB+Y0MNRNKHkWNbgJbJX
-         3FLjFUylGXLK594tXXoV/P8iWlxCgvI6SH2GDV89h48B3CtEnxQTgASoNQ50ffgl6n71
-         NBne4vHT4Qxi6Ex6vJYuAsuQexB+8yrqIcrp5A32LlryOO4vSMIdeSnjqV7pwIm6V4L9
-         VrNDkqdwlsnaKlfB50NjwoQq7uSvy/3+Csc5eZOXfnW4N0NWobhL2jrIfXxvCpuSrsXm
-         P/tXDAUxcPqEulk4Ohd8IwaXbfNPRhFMHx577WxMnj3IYzc12lnn8OdRuzQzT/UaWdOg
-         ko3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWq5eLLt0bFdCGSWJsMi5sKVa2dFPljj8Ta0ZPslresfNXuYMFY+YbSPHedI+lkzRxKEIPTiZs1@vger.kernel.org, AJvYcCWtoGwAl3e37GNZJW+VFSdMOr4RDs8KzXW6wx7Vwb/mBGsgI5anL2wPn0bkQT54aGpaXb2QF834grGeuAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf2stLFz+Yuu2o/UbJBOiHQCXsJX9X/+0kVrIOz0KJGKd1jak8
-	FoCpvRrnX3eB2IU8RT24oxTgLsoeK/x28Rr6di/eSpT+4VKOV174RqKm
-X-Gm-Gg: ASbGncuRl58ZQxnpZt5OCT9BZvtcxOb9qLc5aTigArtkOMLsfbMdBetltwqiiySzeRK
-	r/OXZz11SGywNDKqPVZcKeII2BsRA5HGLtYZO3Y+kMDlgUqloVHMAhWdcmfZWMCLhclLS+VFb3V
-	2WBRoi0NI6Q9ffDANxDSnmq58kwEcdvqmNzdZ+JZv2bVf0mgGBYux4PpdoOonXTf3GUMLp3aBw1
-	NthaUKmj8SoYdVDK1UfteFCiEYt6N700mjEy4bbm9STq/7nu25XZacH5CLueVJlkn+Iofl5qPfE
-	mtVCOQDyK+6YgFwNPRd5HEhgRJe5J9CuQ1GIIRi5GjkX5dtRuet7AljOLmlCD2N/RK61UN00iYw
-	XlVFPow==
-X-Google-Smtp-Source: AGHT+IGM9wfHSeMMXfeBZheGggepk2ZqiWnb9R0ko13yd/AL0hGgh5N+CjMk8e3oprn88leMOC/mQA==
-X-Received: by 2002:a05:6a00:b52:b0:748:6a12:1b47 with SMTP id d2e1a72fcca58-74af7aef473mr17756726b3a.10.1751272553630;
-        Mon, 30 Jun 2025 01:35:53 -0700 (PDT)
-Received: from manjaro.domain.name ([2401:4900:1c31:3031:bed6:689:68b3:ea6e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af57ebcb5sm8320722b3a.151.2025.06.30.01.35.47
+        bh=rFdfcEftPl4kbBYI2AsD040dwGd/MXL2A6FySR4WqJg=;
+        b=ElQAv90EmpaLDSTANyYXJJRszO0DAXxJVSH0MxTXTg8IFKhc7Sf9MIFSVb6NyknzVe
+         BpfQuA0ubpkmzGcUZ7xtdYBgwKzk/ndThc7xlvpd0eAK7gNVu4muowoCAJAKtOsFt1df
+         3VYi0UrqjCLri6EaAKBYt5poDiO0e5xIgTM4Qj9t1so+PRTHsi9Ds2jGFNLlRJVsxZ/L
+         R99T8zu6UE2ECk9b5N5AbeNbOVsX613JMjg5nzPD0LYuLW1eCbCxPdS7ZOdVZrgqJ6X6
+         M3Ga5hyAPlWW4WUwOeXZkZK0MSlqbLth9CtYrU9mTnzhWGbPSbOPtg9LJ9c2Be1ZrAaX
+         z5/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoyP+nCGtBOcYOli1R9a0IwCbcVVkhqlW++NQI30S3rRkLh87oGI0LOw+Myn6RTFn8dx1NmA+xTbJGF0w=@vger.kernel.org, AJvYcCXtL5xKZS+AEJggNBmWJpkcGcJuKX6P08rtgxBAQg+iyML3C5Ur8RLoOIB6uNXmcbtJmziHW/Fd@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsHjjDymMrqVdiQ5HLo16z8H1pFhwd6sybUwPRk1HoVPyp7pWO
+	aGf8nPJdQo9LNxWvMXCxqQQJ67GobAv1xz999l75QgehYE4zxHZTWNNN
+X-Gm-Gg: ASbGncswcfxc/+VuKisQm9+R0IKzkZjEw4+htM3MG1Iz+Wm1f1ZE0EdvBID8pzL/kMp
+	q4YcKy9b9qZCuR/2dFVsIShsuQNl2qwYVTgdcnJa6Sqe3MMC/OBJ2oFt1wHwYz6Pn2GXWH1BgFn
+	vpoPI/hr0kj1xJPnkBGuUDbuL0+lM/OuavFnFWjwVJsQYdxVadDhng9Y/XSU1urNASH3xgXpJcu
+	bI+RBZ3TTEB57WLIB7iBQ7fimM29yaCuGBrCY3VYIqN8sjmh7CsWmKt7MHj0nS2OVakBaqg6/Te
+	NyeHv/4po160X/LgilUTyzODPVrlIde3CSDAN8Oty7LY3g7JWDCk3Rq90kCqiitoKXwO4+VKAOv
+	YidfMPH1umsnoQOEskkf6pp8EbQ==
+X-Google-Smtp-Source: AGHT+IEvKJqj/TVkGPGZ7v2Ha99spyvgOhQJ0B2GO5apmK6qXsAj7Vj46oKjzqw7IdEg+Na1JMjhHg==
+X-Received: by 2002:a05:600d:7:b0:43d:fa58:81d2 with SMTP id 5b1f17b1804b1-4539585f938mr22180605e9.9.1751272701911;
+        Mon, 30 Jun 2025 01:38:21 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:234c:3c9a:efe4:2b60])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a88c800eaasm9946144f8f.37.2025.06.30.01.38.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 01:35:53 -0700 (PDT)
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-To: ocfs2-devel@oss.oracle.com,
+        Mon, 30 Jun 2025 01:38:21 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Jonathan Currier <dullfire@yahoo.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	pvmohammedanees2003@gmail.com,
-	akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	skhan@linuxfoundation.org,
-	stable@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com,
-	Junxiao Bi <junxiao.bi@oracle.com>,
-	Changwei Ge <gechangwei@live.cn>,
-	Gang He <ghe@suse.com>,
-	Jun Piao <piaojun@huawei.com>,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>
-Subject: [PATCH 5.15.y] ocfs2: fix deadlock in ocfs2_get_system_file_inode
-Date: Mon, 30 Jun 2025 14:05:42 +0530
-Message-ID: <20250630083542.10121-1-pranav.tyagi03@gmail.com>
-X-Mailer: git-send-email 2.49.0
+Subject: [PATCH net v2] nui: Fix dma_mapping_error() check
+Date: Mon, 30 Jun 2025 10:36:43 +0200
+Message-ID: <20250630083650.47392-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,83 +98,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+dma_map_XXX() functions return values DMA_MAPPING_ERROR as error values
+which is often ~0.  The error value should be tested with
+dma_mapping_error().
 
-[ Upstream commit 7bf1823e010e8db2fb649c790bd1b449a75f52d8 ]
+This patch creates a new function in niu_ops to test if the mapping
+failed.  The test is fixed in niu_rbr_add_page(), added in
+niu_start_xmit() and the successfully mapped pages are unmaped upon error.
 
-syzbot has found a possible deadlock in ocfs2_get_system_file_inode [1].
-
-The scenario is depicted here,
-
-	CPU0					CPU1
-lock(&ocfs2_file_ip_alloc_sem_key);
-                               lock(&osb->system_file_mutex);
-                               lock(&ocfs2_file_ip_alloc_sem_key);
-lock(&osb->system_file_mutex);
-
-The function calls which could lead to this are:
-
-CPU0
-ocfs2_mknod - lock(&ocfs2_file_ip_alloc_sem_key);
-.
-.
-.
-ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
-
-CPU1 -
-ocfs2_fill_super - lock(&osb->system_file_mutex);
-.
-.
-.
-ocfs2_read_virt_blocks - lock(&ocfs2_file_ip_alloc_sem_key);
-
-This issue can be resolved by making the down_read -> down_read_try
-in the ocfs2_read_virt_blocks.
-
-[1] https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
-
-[ Backport to 5.15: context cleanly applied with no semantic changes.
-Build-tested. ]
-
-Link: https://lkml.kernel.org/r/20240924093257.7181-1-pvmohammedanees2003@gmail.com
-Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Reported-by: <syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
-Tested-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc:  <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Fixes: ec2deec1f352 ("niu: Fix to check for dma mapping errors.")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 ---
- fs/ocfs2/extent_map.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/sun/niu.c | 31 ++++++++++++++++++++++++++++++-
+ drivers/net/ethernet/sun/niu.h |  4 ++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-index 70a768b623cf..f7672472fa82 100644
---- a/fs/ocfs2/extent_map.c
-+++ b/fs/ocfs2/extent_map.c
-@@ -973,7 +973,13 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
- 	}
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index ddca8fc7883e..26119d02a94d 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -3336,7 +3336,7 @@ static int niu_rbr_add_page(struct niu *np, struct rx_ring_info *rp,
  
- 	while (done < nr) {
--		down_read(&OCFS2_I(inode)->ip_alloc_sem);
-+		if (!down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem)) {
-+			rc = -EAGAIN;
-+			mlog(ML_ERROR,
-+				 "Inode #%llu ip_alloc_sem is temporarily unavailable\n",
-+				 (unsigned long long)OCFS2_I(inode)->ip_blkno);
-+			break;
-+		}
- 		rc = ocfs2_extent_map_get_blocks(inode, v_block + done,
- 						 &p_block, &p_count, NULL);
- 		up_read(&OCFS2_I(inode)->ip_alloc_sem);
+ 	addr = np->ops->map_page(np->device, page, 0,
+ 				 PAGE_SIZE, DMA_FROM_DEVICE);
+-	if (!addr) {
++	if (np->ops->mapping_error(np->device, addr)) {
+ 		__free_page(page);
+ 		return -ENOMEM;
+ 	}
+@@ -6676,6 +6676,8 @@ static netdev_tx_t niu_start_xmit(struct sk_buff *skb,
+ 	len = skb_headlen(skb);
+ 	mapping = np->ops->map_single(np->device, skb->data,
+ 				      len, DMA_TO_DEVICE);
++	if (np->ops->mapping_error(np->device, mapping))
++		goto out_drop;
+ 
+ 	prod = rp->prod;
+ 
+@@ -6717,6 +6719,8 @@ static netdev_tx_t niu_start_xmit(struct sk_buff *skb,
+ 		mapping = np->ops->map_page(np->device, skb_frag_page(frag),
+ 					    skb_frag_off(frag), len,
+ 					    DMA_TO_DEVICE);
++		if (np->ops->mapping_error(np->device, mapping))
++			goto out_unmap;
+ 
+ 		rp->tx_buffs[prod].skb = NULL;
+ 		rp->tx_buffs[prod].mapping = mapping;
+@@ -6741,6 +6745,19 @@ static netdev_tx_t niu_start_xmit(struct sk_buff *skb,
+ out:
+ 	return NETDEV_TX_OK;
+ 
++out_unmap:
++	while (i--) {
++		const skb_frag_t *frag;
++
++		prod = PREVIOUS_TX(rp, prod);
++		frag = &skb_shinfo(skb)->frags[i];
++		np->ops->unmap_page(np->device, rp->tx_buffs[prod].mapping,
++				    skb_frag_size(frag), DMA_TO_DEVICE);
++	}
++
++	np->ops->unmap_single(np->device, rp->tx_buffs[rp->prod].mapping,
++			      skb_headlen(skb), DMA_TO_DEVICE);
++
+ out_drop:
+ 	rp->tx_errors++;
+ 	kfree_skb(skb);
+@@ -9644,6 +9661,11 @@ static void niu_pci_unmap_single(struct device *dev, u64 dma_address,
+ 	dma_unmap_single(dev, dma_address, size, direction);
+ }
+ 
++static int niu_pci_mapping_error(struct device *dev, u64 addr)
++{
++	return dma_mapping_error(dev, addr);
++}
++
+ static const struct niu_ops niu_pci_ops = {
+ 	.alloc_coherent	= niu_pci_alloc_coherent,
+ 	.free_coherent	= niu_pci_free_coherent,
+@@ -9651,6 +9673,7 @@ static const struct niu_ops niu_pci_ops = {
+ 	.unmap_page	= niu_pci_unmap_page,
+ 	.map_single	= niu_pci_map_single,
+ 	.unmap_single	= niu_pci_unmap_single,
++	.mapping_error	= niu_pci_mapping_error,
+ };
+ 
+ static void niu_driver_version(void)
+@@ -10019,6 +10042,11 @@ static void niu_phys_unmap_single(struct device *dev, u64 dma_address,
+ 	/* Nothing to do.  */
+ }
+ 
++static int niu_phys_mapping_error(struct device *dev, u64 dma_address)
++{
++	return false;
++}
++
+ static const struct niu_ops niu_phys_ops = {
+ 	.alloc_coherent	= niu_phys_alloc_coherent,
+ 	.free_coherent	= niu_phys_free_coherent,
+@@ -10026,6 +10054,7 @@ static const struct niu_ops niu_phys_ops = {
+ 	.unmap_page	= niu_phys_unmap_page,
+ 	.map_single	= niu_phys_map_single,
+ 	.unmap_single	= niu_phys_unmap_single,
++	.mapping_error	= niu_phys_mapping_error,
+ };
+ 
+ static int niu_of_probe(struct platform_device *op)
+diff --git a/drivers/net/ethernet/sun/niu.h b/drivers/net/ethernet/sun/niu.h
+index 04c215f91fc0..0b169c08b0f2 100644
+--- a/drivers/net/ethernet/sun/niu.h
++++ b/drivers/net/ethernet/sun/niu.h
+@@ -2879,6 +2879,9 @@ struct tx_ring_info {
+ #define NEXT_TX(tp, index) \
+ 	(((index) + 1) < (tp)->pending ? ((index) + 1) : 0)
+ 
++#define PREVIOUS_TX(tp, index) \
++	(((index) - 1) >= 0 ? ((index) - 1) : (((tp)->pending) - 1))
++
+ static inline u32 niu_tx_avail(struct tx_ring_info *tp)
+ {
+ 	return (tp->pending -
+@@ -3140,6 +3143,7 @@ struct niu_ops {
+ 			  enum dma_data_direction direction);
+ 	void (*unmap_single)(struct device *dev, u64 dma_address,
+ 			     size_t size, enum dma_data_direction direction);
++	int (*mapping_error)(struct device *dev, u64 dma_address);
+ };
+ 
+ struct niu_link_config {
 -- 
-2.49.0
+2.43.0
 
 
