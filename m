@@ -1,184 +1,200 @@
-Return-Path: <linux-kernel+bounces-709602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4027AEDFE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:01:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9D8AEDFD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1138F17A5AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDA53BD0AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2594628DB45;
-	Mon, 30 Jun 2025 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="uXGPeQOX"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7F228C872;
+	Mon, 30 Jun 2025 13:59:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFCE28C01C;
-	Mon, 30 Jun 2025 13:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A927828B7F9;
+	Mon, 30 Jun 2025 13:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751291967; cv=none; b=Sb8jaKpAIPv6/ZGXoESnqUBkdpnlLTrs5fA7SjPfAgK3Qcn/UgQ2W3YPZi4YTouFxf1s0X3cnPhvzGwxgITuBd+Tchff0oNbCeWS3yk4Q8l1XZylzLbyFeGgSKQ0fjQO1PF+ajB9CaJ8JMxuJl/YfTCX2JjIdeV0tSI7i7HwUtk=
+	t=1751291943; cv=none; b=LIbIL33UnsqVxAyq+EId+JQpnsjux4TWG+wuteP+PwWr9htpDNq1S07vsujBYE5JFK9F+jKzd1Y78O/IbE8iLpit6K3ZdQ8Kw7EI8TTU83LJi5EfRlVBJ37qD3REX/zDW68GUIkdXd9FMyO3UOE+QKeBABUV0gwRaAE6MuWXStA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751291967; c=relaxed/simple;
-	bh=A1yX+H85JhsfJK0CcHMjJeFLpZ22UZXv/+7RY3hEz5w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nHTj/IgOpHqD/7sbGWbnv5L3mKLUSmCmZiJccGH8dOyWt6mgn17xeBPKiIIm3DMic/W+G7/+dWCHJfMKr0Ly48L9gjPtFqXqbX7GoLgO0xSBO0b7LobAtTzJA06PKyx8PC6BOEhPLUGwgMW7ycWDbrOVC5zeGCLf3WIzkYN2bRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=uXGPeQOX; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UCx7uM010827;
-	Mon, 30 Jun 2025 09:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=lz2ok
-	0DGa1G7f+CjOHkG/qA3RigPwSA/naJ1HxP1Uvw=; b=uXGPeQOX3honDnQ8KJvNd
-	4ReJPjrqBwTl7yzWzjlH5VxcEXnKXHld9AjeObM/LFff09dXsukJpA6d7p3Ehv8P
-	YNWOYDHphln2AXncshCo9IqFY6qXbpKoKqqcn3iCcfGtKfo7pKR9ZG4uj48zGcjQ
-	H/v+t4hUlmpJwHHB4MF/Ey/H2HLV94Q266rODcJmpwsOmhrZOz4m+rCoMXL8+Z2S
-	xPSTH6ShaiISjnRJ9W6zDGHTOghVBhRGIqEXpFTlRMOURjI/22P3gHWCJQZbrpF/
-	NNQcrsVhKo98Dw9W1cIagXfUPHQtvDpTbmEs8KBgT7A0qSbdl05gUaXSewXoItUz
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 47kqwj18j3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 09:59:09 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 55UDx8Bo039317
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 30 Jun 2025 09:59:08 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 30 Jun 2025 09:59:08 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 30 Jun 2025 09:59:08 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 30 Jun 2025 09:59:08 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 55UDwp8E008266;
-	Mon, 30 Jun 2025 09:58:54 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <marcelo.schmitt1@gmail.com>
-Subject: [PATCH v7 03/12] iio: adc: ad4170-4: Add support for calibration gain
-Date: Mon, 30 Jun 2025 10:58:50 -0300
-Message-ID: <f87b5dd7ffa08f366feb2b977ffcbfb8b67bdf1c.1751289747.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1751289747.git.marcelo.schmitt@analog.com>
-References: <cover.1751289747.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1751291943; c=relaxed/simple;
+	bh=lnuCtoZ25M8XX5pqOcDT82hZ0f7dTMbUDFp1u5jiT1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SJF21ic0iSN8Ca8JYuHRosHUM2ddHvbZQNh7LHUWsvREKwi5ST5UTy1+rNzcJbqZ43/3mJNpSRKPg+BZYRZKXQdDqU1XoAyNHEIvCPVjoJfxXd8618WXXfcHvMnBfIzZPkRy5oPeTELXFIuesE0Ii5o16mVoX76M907pP7tFrAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bW7755qtczYQvGC;
+	Mon, 30 Jun 2025 21:58:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id A9B9D1A1447;
+	Mon, 30 Jun 2025 21:58:56 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP3 (Coremail) with SMTP id _Ch0CgAXeCUdmGJooO7dAA--.62190S3;
+	Mon, 30 Jun 2025 21:58:54 +0800 (CST)
+Message-ID: <0d7b0731-88c3-4114-a401-e6aa8a085c5f@huaweicloud.com>
+Date: Mon, 30 Jun 2025 21:58:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDExNSBTYWx0ZWRfX6GtN27aGMHCG
- PS9R8HtKCq8LhP18Jc/TyUcUlNnqVi2AW968jzkZVcLpVZJicx6vLBsLZztX3cfDQ965dXapkgk
- m4yxXlscG9ffCTmBtggTXQlQdzUXJKHrzOgTzxY/Hi+eC6yT8cfTJSOQMM9hwJmkd9nGuI46tKY
- KXWMvD+s6o2exfAohH4IT6dPFSbkr4SwVPMcwh1VlYb5hNMgXh754VRpoz7PN+gYMHiIEF8xI9P
- 8KiOcY3xxC4yiBO1lmvibAIAMi4iHJhhONPz/Yx/fqCus1e4ten00DODfqDoHeA3emnz5nLL1vS
- g3PzjHzST3X5sOE9rLK/K4CwSbAeoQkQyBxahNxR5gZSWIxYhhhqPTKWBlteShFjkA1oGwLr1aC
- ueUISbJ1hcS+qEAW9bofwEhj9wEOfWjci4xLvNETiCXgBzvCjxG4068jr7SdiJ8AMVBb5pem
-X-Proofpoint-GUID: dLAhPdNutIrmArxYDuuWLDRRBHnY6OT-
-X-Proofpoint-ORIG-GUID: dLAhPdNutIrmArxYDuuWLDRRBHnY6OT-
-X-Authority-Analysis: v=2.4 cv=SsiQ6OO0 c=1 sm=1 tr=0 ts=6862982d cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=6IFa9wvqVegA:10 a=gAnH3GRIAAAA:8 a=s1qB4CsIdprNQQnv0OQA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 mlxlogscore=999
- spamscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300115
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: fix JBD2 credit overflow with large folios
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, tytso@mit.edu
+References: <20250630131324.1253313-1-sashal@kernel.org>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250630131324.1253313-1-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgAXeCUdmGJooO7dAA--.62190S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3JF1DArWUGFyDGF47CF15Jwb_yoW7GryfpF
+	W7CFsxCr98Za4fu3WSkw4UZF1Fg348CF4UGF1fKrn2va98Wr1xKFn8tw15KFyjkr4xGwnY
+	qF15ur9rW3Z0yrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Add support for ADC calibration gain configuration.
+On 2025/6/30 21:13, Sasha Levin wrote:
+> When large folios are enabled, the blocks-per-folio calculation in
+> ext4_da_writepages_trans_blocks() can overflow the journal transaction
+> limits, causing the writeback path to fail with errors like:
+> 
+>   JBD2: kworker/u8:0 wants too many credits credits:416 rsv_credits:21 max:334
+> 
+> This occurs with small block sizes (1KB) and large folios (32MB), where
+> the calculation results in 32768 blocks per folio. The transaction credit
+> calculation then requests more credits than the journal can handle, leading
+> to the following warning and writeback failure:
+> 
+>   WARNING: CPU: 1 PID: 43 at fs/jbd2/transaction.c:334 start_this_handle+0x4c0/0x4e0
+>   EXT4-fs (loop0): ext4_do_writepages: jbd2_start: 9223372036854775807 pages, ino 14; err -28
+> 
+> Call trace leading to the issue:
+>   ext4_do_writepages()
+>     ext4_da_writepages_trans_blocks()
+>       bpp = ext4_journal_blocks_per_folio() // Returns 32768 for 32MB folio with 1KB blocks
+>       ext4_meta_trans_blocks(inode, MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp)
+>         // With bpp=32768, lblocks=34815, pextents=32768
+>         // Returns credits=415, but with overhead becomes 416 > max 334
+>     ext4_journal_start_with_reserve()
+>       jbd2_journal_start_reserved()
+>         start_this_handle()
+>           // Fails with warning when credits:416 > max:334
+> 
+> The issue was introduced by commit d6bf294773a47 ("ext4/jbd2: convert
+> jbd2_journal_blocks_per_page() to support large folio"), which added
+> support for large folios but didn't account for the journal credit limits.
+> 
+> Fix this by capping the blocks-per-folio value at 8192 in the writeback
+> path. This is the value we'd get with 32MB folios and 4KB blocks, or 8MB
+> folios with 1KB blocks, which is reasonable and safe for typical journal
+> configurations.
+> 
+> Fixes: d6bf294773a4 ("ext4/jbd2: convert jbd2_journal_blocks_per_page() to support large folio")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
-No changes since v5.
+Hi, Sasha!
 
- drivers/iio/adc/ad4170-4.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Thank you for the fix. However, simply limiting the credits is not enough,
+as this may result in a scenario where there are not enough credits
+available to map a large, non-contiguous folio. I've been working on this
+issue[1] and I'll release v3 tomorrow if my tests looks fine.
 
-diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
-index ecda8e8a41eb..c45203c0b479 100644
---- a/drivers/iio/adc/ad4170-4.c
-+++ b/drivers/iio/adc/ad4170-4.c
-@@ -623,6 +623,7 @@ static const struct iio_chan_spec ad4170_channel_template = {
- 	.differential = 1,
- 	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
- 			      BIT(IIO_CHAN_INFO_SCALE) |
-+			      BIT(IIO_CHAN_INFO_CALIBSCALE) |
- 			      BIT(IIO_CHAN_INFO_OFFSET),
- 	.info_mask_separate_available = BIT(IIO_CHAN_INFO_SCALE),
- 	.scan_type = {
-@@ -940,6 +941,9 @@ static int ad4170_read_raw(struct iio_dev *indio_dev,
- 		pga = FIELD_GET(AD4170_AFE_PGA_GAIN_MSK, setup->afe);
- 		*val = chan_info->offset_tbl[pga];
- 		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_CALIBSCALE:
-+		*val = setup->gain;
-+		return IIO_VAL_INT;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1054,6 +1058,18 @@ static int ad4170_set_pga(struct ad4170_state *st,
- 	return ad4170_write_channel_setup(st, chan->address, false);
- }
- 
-+static int ad4170_set_calib_gain(struct ad4170_state *st,
-+				 struct iio_chan_spec const *chan, int val)
-+{
-+	struct ad4170_chan_info *chan_info = &st->chan_infos[chan->address];
-+	struct ad4170_setup *setup = &chan_info->setup;
-+
-+	guard(mutex)(&st->lock);
-+	setup->gain = val;
-+
-+	return ad4170_write_channel_setup(st, chan->address, false);
-+}
-+
- static int __ad4170_write_raw(struct iio_dev *indio_dev,
- 			      struct iio_chan_spec const *chan, int val,
- 			      int val2, long info)
-@@ -1063,6 +1079,8 @@ static int __ad4170_write_raw(struct iio_dev *indio_dev,
- 	switch (info) {
- 	case IIO_CHAN_INFO_SCALE:
- 		return ad4170_set_pga(st, chan, val, val2);
-+	case IIO_CHAN_INFO_CALIBSCALE:
-+		return ad4170_set_calib_gain(st, chan, val);
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1089,6 +1107,8 @@ static int ad4170_write_raw_get_fmt(struct iio_dev *indio_dev,
- 	switch (info) {
- 	case IIO_CHAN_INFO_SCALE:
- 		return IIO_VAL_INT_PLUS_NANO;
-+	case IIO_CHAN_INFO_CALIBSCALE:
-+		return IIO_VAL_INT;
- 	default:
- 		return -EINVAL;
- 	}
--- 
-2.47.2
+[1] https://lore.kernel.org/linux-ext4/20250611111625.1668035-1-yi.zhang@huaweicloud.com/
+
+Thanks,
+Yi.
+
+> ---
+>  fs/ext4/inode.c | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index be9a4cba35fd5..860e59a176c97 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -2070,6 +2070,14 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
+>   */
+>  #define MAX_WRITEPAGES_EXTENT_LEN 2048
+>  
+> +/*
+> + * Maximum blocks per folio to avoid JBD2 credit overflow.
+> + * This is the value we'd get with 32MB folios and 4KB blocks,
+> + * or 8MB folios with 1KB blocks, which is reasonable and safe
+> + * for typical journal configurations.
+> + */
+> +#define MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK 8192
+> +
+>  /*
+>   * mpage_add_bh_to_extent - try to add bh to extent of blocks to map
+>   *
+> @@ -2481,6 +2489,18 @@ static int ext4_da_writepages_trans_blocks(struct inode *inode)
+>  {
+>  	int bpp = ext4_journal_blocks_per_folio(inode);
+>  
+> +	/*
+> +	 * With large folios, blocks per folio can get excessively large,
+> +	 * especially with small block sizes. For example, with 32MB folios
+> +	 * (order 11) and 1KB blocks, we get 32768 blocks per folio. This
+> +	 * leads to credit requests that overflow the journal's transaction
+> +	 * limit.
+> +	 *
+> +	 * Limit the value to avoid excessive credit requests.
+> +	 */
+> +	if (bpp > MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK)
+> +		bpp = MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK;
+> +
+>  	return ext4_meta_trans_blocks(inode,
+>  				MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp);
+>  }
+> @@ -2559,6 +2579,13 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+>  	handle_t *handle = NULL;
+>  	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
+>  
+> +	/*
+> +	 * With large folios, blocks per folio can get excessively large,
+> +	 * especially with small block sizes. Cap it to avoid credit overflow.
+> +	 */
+> +	if (bpp > MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK)
+> +		bpp = MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK;
+> +
+>  	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
+>  		tag = PAGECACHE_TAG_TOWRITE;
+>  	else
+> @@ -6179,6 +6206,13 @@ int ext4_writepage_trans_blocks(struct inode *inode)
+>  	int bpp = ext4_journal_blocks_per_folio(inode);
+>  	int ret;
+>  
+> +	/*
+> +	 * With large folios, blocks per folio can get excessively large,
+> +	 * especially with small block sizes. Cap it to avoid credit overflow.
+> +	 */
+> +	if (bpp > MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK)
+> +		bpp = MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK;
+> +
+>  	ret = ext4_meta_trans_blocks(inode, bpp, bpp);
+>  
+>  	/* Account for data blocks for journalled mode */
 
 
