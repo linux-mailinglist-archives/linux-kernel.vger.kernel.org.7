@@ -1,67 +1,51 @@
-Return-Path: <linux-kernel+bounces-708795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFD7AED526
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:07:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5CFAED437
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57E353ABE3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:06:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A492416F837
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5709821B9F5;
-	Mon, 30 Jun 2025 07:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E551DF965;
+	Mon, 30 Jun 2025 06:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZoWohJ5S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nVy5uQGW"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFFE8460;
-	Mon, 30 Jun 2025 07:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3BB1FDD;
+	Mon, 30 Jun 2025 06:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751267196; cv=none; b=B1rRktb3NU7b+3ntqyX9tNpqjTo7V0TVjBycxpN8+44D7Ku6qxGn9pdaU9d7qYIv0Fw+VX4YhgRaer/LlatqRmKcDW3D1FOUuRJMwOhZ+VN7n3fbqmuyqqRV2pPgVEustnPHRTchdVZrh3VE/w+mopNaLlj9hFtyInbb02E8uQM=
+	t=1751263606; cv=none; b=ndmKF5XfKkYrgzH+p1QBS5ZcTo1bpOhTZBGzHVM+D5RIuM/Gn2U+/PgiRn6luGPavI71EMJolCK/VxH6hB31w+5Yq1Hpau1+vd6ijZH68jZyCuLCRfkonCHmG2p9hTFGlJpCA/r8n1zq2EL62YOjJmkDfySKIWgr/4xxRZttFRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751267196; c=relaxed/simple;
-	bh=F9A1L1picuVE7aH3mlA5VT4iAZsIBj7DOqkWh55fbKQ=;
+	s=arc-20240116; t=1751263606; c=relaxed/simple;
+	bh=HUhY7PoUs24V3YBoQzZ9KGLJDEedXhxuIMG3qmkkfHg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WmQ0J9n6vsLcYuXLS7BHqYhfl4vigyJ2x8bl0sylaPLaHYwjfYz6iaSLLYPstwLTd2pZYQWU5cdaYUl1pQsaaCnQrBdTFiLLU2L+C8W3QiIKX0mez+ZVUeggfd9vH8GygGZByhD8K9XRUAcUO6JX7EFV9pLln5mHbxcj/dEuXyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZoWohJ5S; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751267195; x=1782803195;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=F9A1L1picuVE7aH3mlA5VT4iAZsIBj7DOqkWh55fbKQ=;
-  b=ZoWohJ5SDMAUj80LyvH8BCQi0sIp3bseJlSiITocFZ0+4XSYgCIMQQHK
-   bozeoeCKp4JQSfCSuPtZqaX+9qCid3TTWqZagTo9cASsNueDb5+wrHZka
-   sSJMHhex0At5UyCzEdlkYRCXAQUL82xNWrs063iwl/9hEehA08n9asE71
-   rIYXHAVHsY5roSoTDlIokmZhyhPJcIXUg22Hn7dWShWOShVfruTDgYTpA
-   S67LHT1mq+RFQjzi1hE0lwi+2RCpefTOiQfcLZfEyhYJYsMU6/oNoS7ID
-   8YvaoFENl6soljnJGDbkE2n2pSCwkWG4riah7mpD0CpQdh/2dt8H+X6Fw
-   g==;
-X-CSE-ConnectionGUID: h3FvI8RBSouitihCyCm9dA==
-X-CSE-MsgGUID: aM45HxH+SYy6ExEDNK9kWw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="52600152"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="52600152"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 00:06:34 -0700
-X-CSE-ConnectionGUID: RCPC3064TkWhloFNKaZnZw==
-X-CSE-MsgGUID: kN/TJ5P6TqihIZ2jsPEQlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="177046709"
-Received: from agladkov-desk.ger.corp.intel.com (HELO svinhufvud.fi.intel.com) ([10.245.244.57])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 00:06:32 -0700
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by svinhufvud.fi.intel.com (Postfix) with ESMTP id A1767427EA;
-	Mon, 30 Jun 2025 10:06:30 +0300 (EEST)
-Message-ID: <5a078dac-7e40-4145-aa06-59c57288b177@linux.intel.com>
-Date: Sun, 29 Jun 2025 13:20:34 +0300
+	 In-Reply-To:Content-Type; b=J0QQgp0A9fP05lhwm/Z9Z3hvoAF0c79YjqjyEH2nTFFppVzUHkpX9HJMUbVWDuhnz2+c6di04mb+VQD00JlU/X6a/g+HK5qDQXWqUIPUPQetyC7DSOYrzGvxR2VgWtbJBs3CmqAORqUxQwxSWy2Z0IJZrHkGi48m9keZcnCnxvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nVy5uQGW; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=4ut1Lv9D/BPjEG6Q/nzKguo7DsSLefV5+bwvE1C6ltc=; b=nVy5uQGW/TZGKhQIhpIx3Kw0lI
+	aeqvsE+nPJ2z9iKxND2YqtnhAXuDCc9vX7bCLYcV6JNkmxq/3ks70DbAk/Tjsr2kNEpfA9PZMfl0t
+	z8Hb5H1cQzON0refA+AdLbA1REsFIl/2A45L8yClAkpWAE4kwemCjPcmXUw7PyJnj892t42mgHraH
+	bZ5EvK4RdsV0zyACpnEGLpHsF9wEhT2eYFY6f4AQ0UzEjORtE9kDqGByJ829KiPuHvaC9wVHE7IyZ
+	Ect3iUcu6DjybNKQkCBTMgKXALzTLgAtq+2OPpAj4HIMINGcQwYUNYyhvWNXcEPHQJe+Cxyq2mJO/
+	OrcTNaxw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uW7f7-00000006jXI-3uxZ;
+	Mon, 30 Jun 2025 06:06:42 +0000
+Message-ID: <14122bc8-3e41-426a-ab78-81bf865d122d@infradead.org>
+Date: Sun, 29 Jun 2025 23:06:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,80 +53,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: imx334: add support for additional test
- patterns
+Subject: Re: [PATCH 66/66] kconfig: gconf: show GTK version in About dialog
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20250624150645.1107002-1-masahiroy@kernel.org>
+ <20250624150645.1107002-67-masahiroy@kernel.org>
 Content-Language: en-US
-To: Shravan.Chippa@microchip.com, kieran.bingham@ideasonboard.com,
- mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Conor.Dooley@microchip.com, Valentina.FernandezAlanis@microchip.com,
- Praveen.Kumar@microchip.com
-References: <20250624065438.2021044-1-shravan.chippa@microchip.com>
- <175075906452.3871677.12511426007175753529@ping.linuxembedded.co.uk>
- <PH0PR11MB561123C9612EF7E82A0530E5817AA@PH0PR11MB5611.namprd11.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-In-Reply-To: <PH0PR11MB561123C9612EF7E82A0530E5817AA@PH0PR11MB5611.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250624150645.1107002-67-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/26/25 10:09, Shravan.Chippa@microchip.com wrote:
-> Hi Kieran,
-> 
-> 
->> -----Original Message-----
->> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
->> Sent: Tuesday, June 24, 2025 3:28 PM
->> To: mchehab@kernel.org; sakari.ailus@linux.intel.com; shravan Chippa -
->> I35088 <Shravan.Chippa@microchip.com>
->> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; Conor Dooley -
->> M52691 <Conor.Dooley@microchip.com>; Valentina Fernandez Alanis -
->> M63239 <Valentina.FernandezAlanis@microchip.com>; Praveen Kumar -
->> I30718 <Praveen.Kumar@microchip.com>; shravan Chippa - I35088
->> <Shravan.Chippa@microchip.com>
->> Subject: Re: [PATCH] media: i2c: imx334: add support for additional test
->> patterns
->>
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the
->> content is safe
->>
->> Hi Shravan
->>
->> Quoting shravan kumar (2025-06-24 07:54:38)
->>> From: Shravan Chippa <shravan.chippa@microchip.com>
->>>
->>> Added support for three additional test patterns in the
->>> IMX334 driver: Black and Grey Bars, Black Color, and White Color.
->>>
->>> Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
->>> ---
->>>   drivers/media/i2c/imx334.c | 9 +++++++++
->>>   1 file changed, 9 insertions(+)
->>>
->>> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
->>> index 846b9928d4e8..43dd7edb48c8 100644
->>> --- a/drivers/media/i2c/imx334.c
->>> +++ b/drivers/media/i2c/imx334.c
->>> @@ -118,6 +118,9 @@
->>>   #define IMX334_REG_TP                  CCI_REG8(0x329e)
->>>   #define IMX334_TP_COLOR_HBARS          0xa
->>>   #define IMX334_TP_COLOR_VBARS          0xb
->>> +#define IMX334_TP_BLACK                        0x0
->>> +#define IMX334_TP_WHITE                        0x1
->>> +#define IMX334_TP_BLACK_GREY           0xC
->>
->> This should be lower case to match the other hex constants (0xc)
->>
->> I also wonder if this list should be in register address order ... but then it won't
->> match the menu items ...
-> 
-> This is just value to write in the register
 
-The menu items that are off the register value are already there so I'd 
-just keep them as-is. I'll apply this with the constant fixed.
+
+On 6/24/25 8:05 AM, Masahiro Yamada wrote:
+> Likewise xconfig, it is useful to display the GTK version in the About
+> dialog.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+> ---
+> 
+>  scripts/kconfig/gconf.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/kconfig/gconf.c b/scripts/kconfig/gconf.c
+> index 5b1b468e782d..7340407e4d6e 100644
+> --- a/scripts/kconfig/gconf.c
+> +++ b/scripts/kconfig/gconf.c
+> @@ -579,7 +579,11 @@ static void on_about1_activate(GtkMenuItem *menuitem, gpointer user_data)
+>  	dialog = gtk_message_dialog_new(GTK_WINDOW(main_wnd),
+>  					GTK_DIALOG_DESTROY_WITH_PARENT,
+>  					GTK_MESSAGE_INFO,
+> -					GTK_BUTTONS_CLOSE, "%s", about_text);
+> +					GTK_BUTTONS_CLOSE, "%s\nGTK version: %d.%d.%d",
+> +					about_text,
+> +					gtk_get_major_version(),
+> +					gtk_get_minor_version(),
+> +					gtk_get_micro_version());
+>  	gtk_dialog_run(GTK_DIALOG(dialog));
+>  	gtk_widget_destroy(dialog);
+>  }
 
 -- 
-Regards,
-
-Sakari Ailus
+~Randy
 
