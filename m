@@ -1,493 +1,214 @@
-Return-Path: <linux-kernel+bounces-708721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E85AED41D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:52:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D3EAED421
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2A73B000A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B8E1894315
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CC51AE877;
-	Mon, 30 Jun 2025 05:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X2Nm+uei"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228831C862C;
+	Mon, 30 Jun 2025 05:56:14 +0000 (UTC)
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023104.outbound.protection.outlook.com [40.107.44.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D584A23;
-	Mon, 30 Jun 2025 05:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751262771; cv=none; b=AILWGYcC5iNfyp+a1OdLRP5iglod8nsR4j0gId+M9+RYAHv0mPojlLOq6aKEfbaeVDoFMzDtZ9EdnBpK5UT3TiHiWHWv1b4OcdouXs8xW6wMCmsHslWa3RWY5St/TNcvLIh+NSxWQ3vX8wWT2AvvqOKyPnUBHYkSri+ibtf0pKU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751262771; c=relaxed/simple;
-	bh=0jzQ7l9bGASILY1ADhstzflAMRlcmeHwWKwSOHUKhYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vD3OrMXY3MkyH0FWogvQBpi19pjF+qqdM9NCzx9KPFoPx37zXgYg2VhbUi2hIwETRWFsbMtAd3lpFZ7TPrbRy8vis770v8JGPh9sf8PiGjv6HJ+rjpvZXbysP57Xt/A17HhZJb1SKCachNUnxnUQ/bVTR5Tr/sOJiwu4vOz76TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X2Nm+uei; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-74ad4533ac5so4239465b3a.0;
-        Sun, 29 Jun 2025 22:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751262768; x=1751867568; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pd8FEljx8I7jBuFPplv2jr5V9bIHjiPAM5MEEyq0iyU=;
-        b=X2Nm+ueie+u8afn3gm2tAvYbpKJ20F2Fxj7BbQaVYQ5VxFcMqIhGrTp+9nlLQ2PRl8
-         O8Y2bM39DfAZ+lpnPy8Loa+ZViagtDdYmzIfAXVtj7bqIojUka6a/tDRsWUoZcdnh7/j
-         83VFKGyNq10B1gHzwgM6uNjUHt8wY3p8/UvFBaLHK4qyjyMSThNqBQUNxoxK54QKLEjj
-         e/S1ST+Fx+15CxknY29rkY9kFN++HTytqqtUoSmA8+POQ+Ih55Qk8fTD3e4z+UuKmmFv
-         HZyJenFFPlzeqhTmAm1FJKWAL5vSNuq8aBaiuTpzBfywWK78Sf1NCTjVHzbzWKQREoos
-         wVSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751262768; x=1751867568;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pd8FEljx8I7jBuFPplv2jr5V9bIHjiPAM5MEEyq0iyU=;
-        b=Dh9ei/yYZbvzwu+i4RK/RUrX0hd63WHZ84ECEvXMahk5m16u76GkiNsaqs1fpfHI3S
-         JR60s2n/nZRkFo+1UcRz3SAc/QYIhHC59mdBZY3k639lUCYxBIIgaMc8QVzL6d6Uusyh
-         RCun2Ujz9mN85t5oyCEEXSBiZ0hxp72eqiyo7JA7ouHKLg8JYQRX/LsjeUKmZAJnmpfg
-         O5iOkEN9FNEOKiRRfGykJTvYtbPkbu1g2CJJ0aMwE0XjVjZJk4LbgkizU1lTyxQ0cLik
-         5XXhrs+sZhPwKTRCev2+cOKzyIEf2H3lNd9DHIZN+fauiplSG2UHaAE364dRWPIw+Y/f
-         jbdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvz5Csw4d+9rdJSMvGKgDT7PCtIQ4FbuqMLDjhK/afYRhcfMiqtIabXTB4ZXRSLAppB46FTycpqRF6gA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ4Cq8BPthiYyg881dNLDd/W4il5KUvSLuaSFOy7TUluIYYXRN
-	odpB2JyI3vlC0gUbCSwtSJUeLaTTEZEeglkhPl7sMWBqdZBK6wpI6i8IWpKTOA==
-X-Gm-Gg: ASbGncsnr45VEK+PvLyTzBMLp6LXuGfpNn+WBbPVcsDXWb0T39Ba+zj/s8M1gYzDivc
-	wWrFPkMd/goQLydqg/u9KZg12a2ckbKkI+bAhoy1OXVXjWylauD/rk8abWmkdmL8WR+98z6bNbs
-	vjYTKBCAsI3M3bzRLd9uJ2MjPQ00Eu9ms2JeQkgNHYGdZxGgfDAhy+1Ba3bkA96rDw/ep0k8EuI
-	q0wwg/S1qatC739/H3IYQ74H2qhB9YgCgYYqllUdv4qxa1L09TvZOl0Ct4Mn6SRdI73P/v5qOzp
-	5pfYP6sN39lvj+lmbKbzQToel8KOIdiyohX+F2aZgZO9R+0RqLfGh8hb33tpJyOyoJh6czP9
-X-Google-Smtp-Source: AGHT+IFjl5R7oqL6A9zWhjE1ScdqLSjQF082qrxlmVGkv0Ayqcipx54YPCqGWP5LuY5zXB+koF7Uig==
-X-Received: by 2002:a05:6a20:7344:b0:21f:4ecc:119d with SMTP id adf61e73a8af0-220a08dc772mr19268249637.7.1751262768123;
-        Sun, 29 Jun 2025 22:52:48 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c92b:c666:1f8:990e])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e31da845sm7086101a12.53.2025.06.29.22.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 22:52:47 -0700 (PDT)
-Date: Sun, 29 Jun 2025 22:52:45 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, 
-	=?utf-8?B?VG9tw6HFoSBKdcWZZW5h?= <jurenatomas@gmail.com>, linux-input@vger.kernel.org
-Subject: [PATCH] Input: tca6416-keypad - remove the driver
-Message-ID: <ajfsei3keh4jjasd4lshjicgqixew7bak3cmty3suoliskzgz4@vj3ijycfxy4i>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794C14A23;
+	Mon, 30 Jun 2025 05:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751262973; cv=fail; b=oePexjQ8vl5YUe+yCU+4O4T6qyma8O0m3Ibb9Qv4+rp9t0uQduizSkyfiL/cYIQxBrbGxKQpo/1OyEfKQRqq1mMPpnsy9YTB4WEarNdzsbINQ2UTr4PCPyVQNlvbsxINKplnuZLOtmrdSNY2sL1bTKGk7rrvC98qWzWTN84fS2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751262973; c=relaxed/simple;
+	bh=Z8nHYTPq8BoOvCRSK3wW8+990T3oN2eD1BKPi1Mxsmc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ojghEch1XV2y818AXlkh042jCFSqWxwJ1Ynyd7Nk2oQbOvF4b4NzoWYZcHPYQlbqIaU8gkAuFDH9/1xknk52IN+GsyamMAs5a4z1IVX/M/lVcjqR7RkLcSc+dCaFo3ll4S2nXZwt/d0k9PrV44do8h5b3O6fWK8KdxYuLRRa4Mk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cXINKt/WFa9jeEkRgob9XzFq1TLIOBTpQwIMA0rBNjB6iSYehsAcEKRtjQHrXpINfZMbsMl/UgnABen+NYA5CB70x3lmg0ai3HJ/oziK9g3LI6BSemXgZutOam/a5vUJskOUz9P69GCoJoNLOH7hYV5qmXvLdYokAKUIf+xBSMHh4WA7OrTEtDc5x3fZ+eLfn5KeSoZvf8qwXa3Xkcu/1uB5N5QijMs1ohs4Tzw9PiyjcfsZsL4a85xlGPHhaq7I+Ksp3rDsEbhDF0pfqVEScTte2Vcod6uWmyASkAWLaXWQDfrA9hSmcw0PQEH/iR5RnoLwHx2qiMCMMlDY9D87Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LsDBtlVmV266X8bdnaGfaTL+lt/JqDahPQSJQ2oUqRs=;
+ b=cKB9KtW0SXZMWbWcBWTKLk02kRrk2tPzHyiJ9KcWDIvaRYiMCUhitK0GHL36XaXhBUFrV9BaHVrg9I5r0/hPtWRhyw2VPbBG7NoDunN3Iffha2je9Bc1NfI+vKTqUoFbxWFM4YiRtxcj338ZjLpkypxpQK2ie5xp31gskCxCnUbdLvg7hjQBqVwXdLaJzzHbG97LHMnDz3rIiv5+S7+uvleQj4uwQ8SjpBQd/hUD1hL1kp+NUt2rperIPUvN+gr0fiwW6QMZhXFBS76V1ES8725WtAZ59iguKJVO46xvxGXdVMijvm/QwBbETwxTp8rODo77fzjC4i87+R5gqWHYsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2P153CA0009.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::18) by
+ SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8880.27; Mon, 30 Jun 2025 05:56:04 +0000
+Received: from SG1PEPF000082E3.apcprd02.prod.outlook.com
+ (2603:1096:4:140:cafe::57) by SI2P153CA0009.outlook.office365.com
+ (2603:1096:4:140::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.6 via Frontend Transport; Mon,
+ 30 Jun 2025 05:56:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E3.mail.protection.outlook.com (10.167.240.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Mon, 30 Jun 2025 05:56:02 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 32D9D41604E0;
+	Mon, 30 Jun 2025 13:56:01 +0800 (CST)
+Message-ID: <27fc6e49-91b5-430a-94b2-eb299d7c3ecf@cixtech.com>
+Date: Mon, 30 Jun 2025 13:56:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-This input driver predates proper GPIO driver for the chip and now can
-be replaced with the generic gpio-keys. Remove the driver.
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/Kconfig          |  18 --
- drivers/input/keyboard/Makefile         |   1 -
- drivers/input/keyboard/tca6416-keypad.c | 305 ------------------------
- include/linux/tca6416_keypad.h          |  30 ---
- 4 files changed, 354 deletions(-)
-
-diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-index 721ab69e84ac..84185f080b77 100644
---- a/drivers/input/keyboard/Kconfig
-+++ b/drivers/input/keyboard/Kconfig
-@@ -261,24 +261,6 @@ config KEYBOARD_GPIO_POLLED
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called gpio_keys_polled.
- 
--config KEYBOARD_TCA6416
--	tristate "TCA6416/TCA6408A Keypad Support"
--	depends on I2C
--	help
--	  This driver implements basic keypad functionality
--	  for keys connected through TCA6416/TCA6408A IO expanders.
--
--	  Say Y here if your device has keys connected to
--	  TCA6416/TCA6408A IO expander. Your board-specific setup logic
--	  must also provide pin-mask details(of which TCA6416 pins
--	  are used for keypad).
--
--	  If enabled the entire TCA6416 device will be managed through
--	  this driver.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called tca6416_keypad.
--
- config KEYBOARD_TCA8418
- 	tristate "TCA8418 Keypad Support"
- 	depends on I2C
-diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-index 1e0721c30709..bc387aaa9151 100644
---- a/drivers/input/keyboard/Makefile
-+++ b/drivers/input/keyboard/Makefile
-@@ -23,7 +23,6 @@ obj-$(CONFIG_KEYBOARD_EP93XX)		+= ep93xx_keypad.o
- obj-$(CONFIG_KEYBOARD_GOLDFISH_EVENTS)	+= goldfish_events.o
- obj-$(CONFIG_KEYBOARD_GPIO)		+= gpio_keys.o
- obj-$(CONFIG_KEYBOARD_GPIO_POLLED)	+= gpio_keys_polled.o
--obj-$(CONFIG_KEYBOARD_TCA6416)		+= tca6416-keypad.o
- obj-$(CONFIG_KEYBOARD_TCA8418)		+= tca8418_keypad.o
- obj-$(CONFIG_KEYBOARD_HIL)		+= hil_kbd.o
- obj-$(CONFIG_KEYBOARD_HIL_OLD)		+= hilkbd.o
-diff --git a/drivers/input/keyboard/tca6416-keypad.c b/drivers/input/keyboard/tca6416-keypad.c
-deleted file mode 100644
-index fbc674d7b9f0..000000000000
---- a/drivers/input/keyboard/tca6416-keypad.c
-+++ /dev/null
-@@ -1,305 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Driver for keys on TCA6416 I2C IO expander
-- *
-- * Copyright (C) 2010 Texas Instruments
-- *
-- * Author : Sriramakrishnan.A.G. <srk@ti.com>
-- */
--
--#include <linux/types.h>
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/delay.h>
--#include <linux/slab.h>
--#include <linux/interrupt.h>
--#include <linux/workqueue.h>
--#include <linux/i2c.h>
--#include <linux/input.h>
--#include <linux/tca6416_keypad.h>
--
--#define TCA6416_INPUT          0
--#define TCA6416_OUTPUT         1
--#define TCA6416_INVERT         2
--#define TCA6416_DIRECTION      3
--
--#define TCA6416_POLL_INTERVAL	100 /* msec */
--
--static const struct i2c_device_id tca6416_id[] = {
--	{ "tca6416-keys", 16, },
--	{ "tca6408-keys", 8, },
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, tca6416_id);
--
--struct tca6416_keypad_chip {
--	uint16_t reg_output;
--	uint16_t reg_direction;
--	uint16_t reg_input;
--
--	struct i2c_client *client;
--	struct input_dev *input;
--	int io_size;
--	u16 pinmask;
--	bool use_polling;
--	struct tca6416_button buttons[];
--};
--
--static int tca6416_write_reg(struct tca6416_keypad_chip *chip, int reg, u16 val)
--{
--	int error;
--
--	error = chip->io_size > 8 ?
--		i2c_smbus_write_word_data(chip->client, reg << 1, val) :
--		i2c_smbus_write_byte_data(chip->client, reg, val);
--	if (error < 0) {
--		dev_err(&chip->client->dev,
--			"%s failed, reg: %d, val: %d, error: %d\n",
--			__func__, reg, val, error);
--		return error;
--	}
--
--	return 0;
--}
--
--static int tca6416_read_reg(struct tca6416_keypad_chip *chip, int reg, u16 *val)
--{
--	int retval;
--
--	retval = chip->io_size > 8 ?
--		 i2c_smbus_read_word_data(chip->client, reg << 1) :
--		 i2c_smbus_read_byte_data(chip->client, reg);
--	if (retval < 0) {
--		dev_err(&chip->client->dev, "%s failed, reg: %d, error: %d\n",
--			__func__, reg, retval);
--		return retval;
--	}
--
--	*val = (u16)retval;
--	return 0;
--}
--
--static void tca6416_keys_scan(struct input_dev *input)
--{
--	struct tca6416_keypad_chip *chip = input_get_drvdata(input);
--	u16 reg_val, val;
--	int error, i, pin_index;
--
--	error = tca6416_read_reg(chip, TCA6416_INPUT, &reg_val);
--	if (error)
--		return;
--
--	reg_val &= chip->pinmask;
--
--	/* Figure out which lines have changed */
--	val = reg_val ^ chip->reg_input;
--	chip->reg_input = reg_val;
--
--	for (i = 0, pin_index = 0; i < 16; i++) {
--		if (val & (1 << i)) {
--			struct tca6416_button *button = &chip->buttons[pin_index];
--			unsigned int type = button->type ?: EV_KEY;
--			int state = ((reg_val & (1 << i)) ? 1 : 0)
--						^ button->active_low;
--
--			input_event(input, type, button->code, !!state);
--			input_sync(input);
--		}
--
--		if (chip->pinmask & (1 << i))
--			pin_index++;
--	}
--}
--
--/*
-- * This is threaded IRQ handler and this can (and will) sleep.
-- */
--static irqreturn_t tca6416_keys_isr(int irq, void *dev_id)
--{
--	tca6416_keys_scan(dev_id);
--
--	return IRQ_HANDLED;
--}
--
--static int tca6416_keys_open(struct input_dev *dev)
--{
--	struct tca6416_keypad_chip *chip = input_get_drvdata(dev);
--
--	if (!chip->use_polling) {
--		/* Get initial device state in case it has switches */
--		tca6416_keys_scan(dev);
--		enable_irq(chip->client->irq);
--	}
--
--	return 0;
--}
--
--static void tca6416_keys_close(struct input_dev *dev)
--{
--	struct tca6416_keypad_chip *chip = input_get_drvdata(dev);
--
--	if (!chip->use_polling)
--		disable_irq(chip->client->irq);
--}
--
--static int tca6416_setup_registers(struct tca6416_keypad_chip *chip)
--{
--	int error;
--
--	error = tca6416_read_reg(chip, TCA6416_OUTPUT, &chip->reg_output);
--	if (error)
--		return error;
--
--	error = tca6416_read_reg(chip, TCA6416_DIRECTION, &chip->reg_direction);
--	if (error)
--		return error;
--
--	/* ensure that keypad pins are set to input */
--	error = tca6416_write_reg(chip, TCA6416_DIRECTION,
--				  chip->reg_direction | chip->pinmask);
--	if (error)
--		return error;
--
--	error = tca6416_read_reg(chip, TCA6416_DIRECTION, &chip->reg_direction);
--	if (error)
--		return error;
--
--	error = tca6416_read_reg(chip, TCA6416_INPUT, &chip->reg_input);
--	if (error)
--		return error;
--
--	chip->reg_input &= chip->pinmask;
--
--	return 0;
--}
--
--static int tca6416_keypad_probe(struct i2c_client *client)
--{
--	const struct i2c_device_id *id = i2c_client_get_device_id(client);
--	struct tca6416_keys_platform_data *pdata;
--	struct tca6416_keypad_chip *chip;
--	struct input_dev *input;
--	int error;
--	int i;
--
--	/* Check functionality */
--	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE)) {
--		dev_err(&client->dev, "%s adapter not supported\n",
--			dev_driver_string(&client->adapter->dev));
--		return -ENODEV;
--	}
--
--	pdata = dev_get_platdata(&client->dev);
--	if (!pdata) {
--		dev_dbg(&client->dev, "no platform data\n");
--		return -EINVAL;
--	}
--
--	chip = devm_kzalloc(&client->dev,
--			    struct_size(chip, buttons, pdata->nbuttons),
--			    GFP_KERNEL);
--	if (!chip)
--		return -ENOMEM;
--
--	input = devm_input_allocate_device(&client->dev);
--	if (!input)
--		return -ENOMEM;
--
--	chip->client = client;
--	chip->input = input;
--	chip->io_size = id->driver_data;
--	chip->pinmask = pdata->pinmask;
--	chip->use_polling = pdata->use_polling;
--
--	input->phys = "tca6416-keys/input0";
--	input->name = client->name;
--
--	input->open = tca6416_keys_open;
--	input->close = tca6416_keys_close;
--
--	input->id.bustype = BUS_HOST;
--	input->id.vendor = 0x0001;
--	input->id.product = 0x0001;
--	input->id.version = 0x0100;
--
--	/* Enable auto repeat feature of Linux input subsystem */
--	if (pdata->rep)
--		__set_bit(EV_REP, input->evbit);
--
--	for (i = 0; i < pdata->nbuttons; i++) {
--		unsigned int type;
--
--		chip->buttons[i] = pdata->buttons[i];
--		type = (pdata->buttons[i].type) ?: EV_KEY;
--		input_set_capability(input, type, pdata->buttons[i].code);
--	}
--
--	input_set_drvdata(input, chip);
--
--	/*
--	 * Initialize cached registers from their original values.
--	 * we can't share this chip with another i2c master.
--	 */
--	error = tca6416_setup_registers(chip);
--	if (error)
--		return error;
--
--	if (chip->use_polling) {
--		error = input_setup_polling(input, tca6416_keys_scan);
--		if (error) {
--			dev_err(&client->dev, "Failed to setup polling\n");
--			return error;
--		}
--
--		input_set_poll_interval(input, TCA6416_POLL_INTERVAL);
--	} else {
--		error = devm_request_threaded_irq(&client->dev, client->irq,
--						  NULL, tca6416_keys_isr,
--						  IRQF_TRIGGER_FALLING |
--							IRQF_ONESHOT |
--							IRQF_NO_AUTOEN,
--						  "tca6416-keypad", input);
--		if (error) {
--			dev_dbg(&client->dev,
--				"Unable to claim irq %d; error %d\n",
--				client->irq, error);
--			return error;
--		}
--	}
--
--	error = input_register_device(input);
--	if (error) {
--		dev_dbg(&client->dev,
--			"Unable to register input device, error: %d\n", error);
--		return error;
--	}
--
--	i2c_set_clientdata(client, chip);
--
--	return 0;
--}
--
--static struct i2c_driver tca6416_keypad_driver = {
--	.driver = {
--		.name	= "tca6416-keypad",
--	},
--	.probe		= tca6416_keypad_probe,
--	.id_table	= tca6416_id,
--};
--
--static int __init tca6416_keypad_init(void)
--{
--	return i2c_add_driver(&tca6416_keypad_driver);
--}
--
--subsys_initcall(tca6416_keypad_init);
--
--static void __exit tca6416_keypad_exit(void)
--{
--	i2c_del_driver(&tca6416_keypad_driver);
--}
--module_exit(tca6416_keypad_exit);
--
--MODULE_AUTHOR("Sriramakrishnan <srk@ti.com>");
--MODULE_DESCRIPTION("Keypad driver over tca6416 IO expander");
--MODULE_LICENSE("GPL");
-diff --git a/include/linux/tca6416_keypad.h b/include/linux/tca6416_keypad.h
-deleted file mode 100644
-index 5cf6f6f82aa7..000000000000
---- a/include/linux/tca6416_keypad.h
-+++ /dev/null
-@@ -1,30 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * tca6416 keypad platform support
-- *
-- * Copyright (C) 2010 Texas Instruments
-- *
-- * Author: Sriramakrishnan <srk@ti.com>
-- */
--
--#ifndef _TCA6416_KEYS_H
--#define _TCA6416_KEYS_H
--
--#include <linux/types.h>
--
--struct tca6416_button {
--	/* Configuration parameters */
--	int code;		/* input event code (KEY_*, SW_*) */
--	int active_low;
--	int type;		/* input event type (EV_KEY, EV_SW) */
--};
--
--struct tca6416_keys_platform_data {
--	struct tca6416_button *buttons;
--	int nbuttons;
--	unsigned int rep:1;	/* enable input subsystem auto repeat */
--	uint16_t pinmask;
--	uint16_t invert;
--	int use_polling;	/* use polling if Interrupt is not connected*/
--};
--#endif
--- 
-2.50.0.727.gbf7dc18ff4-goog
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/14] dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex
+ bindings
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kw@linux.com, mpillai@cadence.com,
+ lpieralisi@kernel.org, krzk+dt@kernel.org, fugang.duan@cixtech.com,
+ kwilczynski@kernel.org, linux-pci@vger.kernel.org, mani@kernel.org,
+ guoyin.chen@cixtech.com, bhelgaas@google.com, devicetree@vger.kernel.org,
+ conor+dt@kernel.org, cix-kernel-upstream@cixtech.com, peter.chen@cixtech.com
+References: <20250630041601.399921-1-hans.zhang@cixtech.com>
+ <20250630041601.399921-11-hans.zhang@cixtech.com>
+ <175126181720.1510160.1051786130000478053.robh@kernel.org>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <175126181720.1510160.1051786130000478053.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E3:EE_|SEZPR06MB5576:EE_
+X-MS-Office365-Filtering-Correlation-Id: 42359f70-2407-464c-0b24-08ddb79acbd6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Uk9oWXhTamFSNHFZb2FBSEcvWS9UZGUyWVh0RUxiYTA2eXVNZysvd0xRU0Jk?=
+ =?utf-8?B?QjE3ZHRQVVFaR3RVbEZBd2REQmVKci81Zk45cDdlZ0dvVUJBQktiTHBJcUJs?=
+ =?utf-8?B?Yk5vQ251Zk9ZektZY2hhZEJITU9USE9tOVdwaFVibU5oL25EZDhhOWJnOU5n?=
+ =?utf-8?B?MTFGMlpDdW9zUXZRci9GREtrdXMxRVdpYkNER1NHY3hscW9HcnlkNDV4RGNm?=
+ =?utf-8?B?blFLSm42VnNZNFRtUFN4ajlDMTRiaGNUNUJhWFZVWmM1Z0haYVZkU0Q1dVQ5?=
+ =?utf-8?B?VCtYZUVpaDY1V0lFNXhhYW5RWVdIeFZ3NGVTUWlrZFpPTXplWE1PbXFBenJQ?=
+ =?utf-8?B?REdWZTI2aWEvR3lqYklkamZmbGMvUm5pQ2prZlYyWWJ3TFh3N0NKUi9ncTNn?=
+ =?utf-8?B?L3FaU3pUSXVvWkM1OFZPZG5tdHZKZjl4MzlFYmhBdGdrOS8rVUdXU1p6NGVB?=
+ =?utf-8?B?TEtMK3owQlI0VmRxVXlSMDZQMEkzc3dLbHhlczRrTWtkWTNpUG90TUh4VHdO?=
+ =?utf-8?B?eFZNYTRDUnpaU0hPUVRvSFcrWExPazFoWFhmdmJETURyOFRiZThTb0Rncjl0?=
+ =?utf-8?B?ZmV0NWpKTnMvVW51NzAyVitXOG95b1hWZWEwL2E0UmdRSDQzZFZ5ckNjMm1C?=
+ =?utf-8?B?dGc2bHNuMXhCeWdrc3hGU1UzdndYMXU0eC9aNytHSnlVMXdBZ2V4NEkzeE8w?=
+ =?utf-8?B?bHFKajJXL1JSNGtvZFZxdUJNa0N1bFQxeDJaRUF1ZTFQeFEwcUdYdUVnb1RV?=
+ =?utf-8?B?cGJoK2pwMnFPNTc0NHFvK2RxSmFaN0NpMmlPcFhuWWlkZ0RLUmFNT1JBbTNp?=
+ =?utf-8?B?VUl2RHA1L2V3NlMxdVFuNGN3Wk82N0NsZDhKVjNudjRzSDgwOXZjS3g1NUNG?=
+ =?utf-8?B?L0V4NHpnWk9YVEFxdnlUZVNzN0lPSjFtdEJOYWRyQ0JWRVdCblYxSjFJN3c4?=
+ =?utf-8?B?TTVlNFRwVkNuOFBDN3Zkb2oxQjBoNWQ3QWs4UGt0M0I5TVh2emUzVGZtSEc5?=
+ =?utf-8?B?bWIveDBKVDlYclBralp4d3VzMkNnM2hYbDlMc25PNVo3d25oWXVvV2plTm1z?=
+ =?utf-8?B?S2ZqZ3dvNmpEQ0NDQXd0RVVXdDEzOC9Db3V6VTRUek5sM2YzdFFkeklrbW5T?=
+ =?utf-8?B?dWRxM2xDVlM0cGVuL0JLMEhOUnJPVHExWmVsbG4wU0plNjJnM1BHY3M0VEF1?=
+ =?utf-8?B?RGNyZ09HODlGN24wOVJVcHVKZTFKL1FSQ1doTGc5L2FuNmI5UkxKaXdtV1Jj?=
+ =?utf-8?B?K0pyQ1lubkFzN3pncTNOVnd3SFp6enRxQ1JoTy9wdFMrbk1MQ0xiWWY5bVpC?=
+ =?utf-8?B?N2N1ZHo3bkdQRWM0dXFhWkNyMmd0YTEyVGpWeVQ5MDhFYllTcld5T3Y3ZnEx?=
+ =?utf-8?B?YW5Ba3U0UlZER0ZBNm5TbVdJajJpRyt4ay9mQXE5dVhWazIwK0NEZFdwUTIv?=
+ =?utf-8?B?citxdWgvUGZRckFiSTViaW9VaHdYVUpLU1VMMlVkUU5YcUQ2Z0doejNINE4z?=
+ =?utf-8?B?VERXOG1HQ0Q2a295M0hyQTZwazlJaVIwaUdCeEwzNitVRnM4N05PZWZOUWhK?=
+ =?utf-8?B?V3BtbklyMlR1QUU1OGs0SHFWVUNuVW11d3c0aFlSSEpGZ0pNK1FnNXBZanNB?=
+ =?utf-8?B?bVAwYWJaekQwdnlWbU9KOTkrNkNvU09CdFFFeTNtMjBVTTBORmVab01LazhU?=
+ =?utf-8?B?OUNHUFZrd1RWTHlibVdqV01MUXhBbmMvdW1YZEtMaEpVbWtsK3pmdkplSnBL?=
+ =?utf-8?B?RzlSRVFJZm5qRHM3bXFDV1Ird3RIQWMzTjJkeHZwODd4TnBSQk4yUGk1MXkx?=
+ =?utf-8?B?bmw5MEV3ZEluWU8yblFralhDK0FWQ2dVNlZxYTlnV0d0cEo1S2c0NEY4dG9y?=
+ =?utf-8?B?dDZzZGdMRlRNWDVZQnBHT0N1L1M0VUl0QlhzVDdsSG9JK2NKbDU2TVg2RlN1?=
+ =?utf-8?B?dWhuZ3dacm9ZYmp1RnJGMEZsTWJCNXNDVG5NYVRHUDRYNWxlaU1pNnJPRldO?=
+ =?utf-8?B?NkYyVFVCY2dBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 05:56:02.4443
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42359f70-2407-464c-0b24-08ddb79acbd6
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E3.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5576
 
 
--- 
-Dmitry
+
+On 2025/6/30 13:36, Rob Herring (Arm) wrote:
+> [Some people who received this message don't often get email from robh@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> EXTERNAL EMAIL
+> 
+> On Mon, 30 Jun 2025 12:15:57 +0800, hans.zhang@cixtech.com wrote:
+>> From: Hans Zhang <hans.zhang@cixtech.com>
+>>
+>> Document the bindings for CIX Sky1 PCIe Controller configured in
+>> root complex mode with five root port.
+>>
+>> Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
+>>
+>> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+>> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+>> Reviewed-by: Manikandan K Pillai <mpillai@cadence.com>
+>> ---
+>>   .../bindings/pci/cix,sky1-pcie-host.yaml      | 133 ++++++++++++++++++
+>>   1 file changed, 133 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml: properties:compatible:oneOf: [{'const': 'cix,sky1-pcie-host'}] should not be valid under {'items': {'propertyNames': {'const': 'const'}, 'required': ['const']}}
+>          hint: Use 'enum' rather than 'oneOf' + 'const' entries
+>          from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+> Error: Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dts:29.47-48 syntax error
+> FATAL ERROR: Unable to parse input tree
+> make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250630041601.399921-11-hans.zhang@cixtech.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
+
+Dear Rob,
+
+Thank you very much for your reply and reminder. The next version will fix.
+
+The modification is as follows: make dt_binding_check. There are no errors.
+
+s/sky1,pcie-ctrl-id/cix,pcie-ctrl-id/
+
+Best regards,
+Hans
+
 
