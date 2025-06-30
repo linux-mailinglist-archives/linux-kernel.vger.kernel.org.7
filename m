@@ -1,290 +1,123 @@
-Return-Path: <linux-kernel+bounces-709317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164A5AEDC0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B8CAEDC0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB4418909DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C9F3B59DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D561283FEE;
-	Mon, 30 Jun 2025 11:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nAYRs6Yn"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2087.outbound.protection.outlook.com [40.107.244.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B875A257452;
+	Mon, 30 Jun 2025 11:55:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4B8257452;
-	Mon, 30 Jun 2025 11:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751284467; cv=fail; b=NcfvQ7ZGqEwczzBx1bA5PNTG6Wu1X/f6Xzx0ouw++Dn28OgmQNnAKcwm/izzsKBUWk+w6M3UzG9ZWwo+Y4EQ4iUw2H8p4I6aCxQVt/FbdO4m4+l5Iaqi1kl18/01dgi/5ZVH9vTVxrIad3JKOF+VJAQd4r+5iRXw9sKs+hz12yY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751284467; c=relaxed/simple;
-	bh=AVImDrqEl/RPYGPaQA50G7nfRjiC+7U+ZwBRn378Ud4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qgDDjesqmif6ha5WtRZs7eW+Q+/ZzUcZj56CdTEvIx9jIA9+/AU3R1JISoqn+N9vFvEjVb3fOaPkLiRhrIsmCNArUr46mtwCE3OtWmqa8uoUzAR+s/bqodPHeClhPDnAx+ovN67s725HF1W2pNd5JxRVw0J0WruBvQzZcoLFB1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nAYRs6Yn; arc=fail smtp.client-ip=40.107.244.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KeNqrK9ecbjgYTsLZELjWmZ84WYmNk61ybIQN6EBKKdkIe2tE6Acth6hLRSQVYCiDS/XBhug2QqZ4Vc8HEJh4YnPqn5JkQZzm8v6mk71kVOFPgcfyadKKwaR7p6qMyAEWYNbRmVIQMf0UCRtNz/n2KoY2CwIwA9VyF2fQe64O0Hqz5b8hcUv/yD37E3/o4RYTQIUUtaVhaVs2Eb8/MDDReNIChAqqJosW7odqNMjguKFfjEEF7TAd5uZGUv2AXqkbI1+2A3G5ISlaGSKjuLLcpEEWcxVlrOsACu41SJ/kGIICxtpKi+Np0Grrfwp1n9jcprAldkhgkBqr2REvk6z1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zMWgl8m+/dtVibuEN9AB7pG82aPHMT41FrOHkGRGa9M=;
- b=cGS2HUS0GHGXbyCevZYi20lptHTKZJfql45yMagUtRje1gvA2cTuRTVIMAq3M4fYal4O4uCndeXT/kNU4zKe2qS59IqlcWNmOGDJ7afXAApTyYiKpgXVNrwhrvpeXkrCi+8WkpU82iaqUPfoisQm1DndfqiFGevuNX3GvVhcxQkEFCIbJnK6yywr4baNTstGlhztz34XRM2B3lX6R7fzv7b3mZFZDO4WkC/fvnuT1MwIowBFjjmMI1TkUu/klAjL4PmQX4K7WB0Q7nLkc48GJsSPkLR8qYktty3kIed3TJ5qJ/5BWj/xluSd2oTszZYZXYN0ShFtpaS/EapiurDZ5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zMWgl8m+/dtVibuEN9AB7pG82aPHMT41FrOHkGRGa9M=;
- b=nAYRs6YnkURMj0qhaJBXEVCuuYxG9gMP0tYMlXvMVFWhZyxGwCQrXFfXSVsgnkIA0gST0FC7eeXB+X6ohnjeWWaofsi13thQCc3tEUW7S//J8WGcWm41YFrF/8XwX5rRtKBfgMKZFBmsTbXhpSLUVxHrYcxzR/6rq4aHy7Az1So=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS0PR12MB7801.namprd12.prod.outlook.com (2603:10b6:8:140::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.24; Mon, 30 Jun
- 2025 11:54:23 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8880.027; Mon, 30 Jun 2025
- 11:54:23 +0000
-Message-ID: <ce04e266-6c3f-4256-aade-bafca8609ab3@amd.com>
-Date: Mon, 30 Jun 2025 13:54:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] drm/amdgpu: move GTT to SHM after eviction for
- hibernation
-To: Samuel Zhang <guoqing.zhang@amd.com>, rafael@kernel.org,
- len.brown@intel.com, pavel@kernel.org, alexander.deucher@amd.com,
- mario.limonciello@amd.com, lijo.lazar@amd.com
-Cc: victor.zhao@amd.com, haijun.chang@amd.com, Qing.Ma@amd.com,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250630104116.3050306-1-guoqing.zhang@amd.com>
- <20250630104116.3050306-2-guoqing.zhang@amd.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250630104116.3050306-2-guoqing.zhang@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0308.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f6::12) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48C025DCE5
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 11:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751284507; cv=none; b=Mz/z1RKrRgVnj7eLt0ZR9d/TvC1viyMACVmXZN7IeFqmXbTM+8ytu23xaLT0lC+N+50X7PKkaRIzECGFzqFpaQvosy8O4wFuze44pbrcgC0sTfIrYEIK9HilBIGMn3bQG/BDQnE6/xcW9G/+PW2KwZwiOz3H5PkWGU9aQ6acDNA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751284507; c=relaxed/simple;
+	bh=Ws6DFGRoSDTRT92XZumHmgCt5koISWrAkrtJoXcaQ+s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=imQU7X+hFmhbJjANtEtU2WILGZkY2Z+4BY6dlKRbS1FRu95yMR3TyZw5mXH/iaiqgj/O8KWE1pRuPUvc/g9oGYlxzUTI/RS5FXZ5FrCD7DBuGTl6DUjVdWu+s6e9Nf1r/eNHdv7/YUoz6CV3IKzddHbN8HI9IF2GJjWPVaGNA9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3ddce213201so37753105ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 04:55:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751284505; x=1751889305;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vkonErfnUrUyv0V4wfwSaciJeRp1ywEAqrtvBjZZHvQ=;
+        b=SRE3xW9k4hLHroi7EDtlMIHlIEKzGZy2TuQHvjLRKjvCXHQjnDqG9eTcih025u0fNU
+         /byGApsDMc3Mi2BDZdh0JSBn5eUBFTLbTcg5KsSXpkbCQY7BgcTqFgepL3uGeJrVjlTy
+         Y030xi3qzasvnbFr5ov8D19G6D235vSZkZPf0OKhyiPAovJAVIoTn4RyL3z6y6V2XL27
+         YahEBMgK/65qcykM3JQAWa8ss7BtP3x0qjXcDb9EA+FYI0h81ZmmGJyvKEWG7daWpkBR
+         NDVxm5ha3pBwv+BZ3B8gVSn3AdK0t5Kh7Yw1IZRRFrzqwjY8Ot0+C7DANrWZOXWQNhOi
+         O2fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXk9y0CMKpiOQf/tpAzeQzHhJ05NQW2bnSY8K0Pu53nek59uELcL5AtRUxaWuuqXvaK1xX1QbK8FOq2YFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPsEOwmqptrF2VuqUIxnOK3euC1CfI7mpwAxpEoU+xi2CZdnbt
+	+jlAEztvX6DCq1vjyz+QzHr9Hf2Cj20Gj6s/ZNub7edYs2t99WScK7VB5myG/ZbDZX24TIEAeY5
+	v/AzbgFLOavV6e1AD38mW7uBVp4S7twJuEHsu3PWqPtL7wBqynS+Ox4aZGis=
+X-Google-Smtp-Source: AGHT+IFagh6Ptgc8wY+wTGvPTvxsU14zR0OzeUl1X2QUWjUMLo8SJL4ESc+r4K+zrxa+xz7vRdBTC6e2jA4FoLeVxOX/BEabdeZE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB7801:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d4e3045-98c5-4d2d-e7e0-08ddb7ccdaed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eU1IeUZpVE1kcFQyQm90bTE2M1hJQU5VellubjdJekFCY0xyRjVPRW0xYWR5?=
- =?utf-8?B?WHgwb3h5dDArSHdCekplY0V1cWFVOEpkWUN5VTJVWktpdncrU1BwYVlhY013?=
- =?utf-8?B?U1lLSDEzdWY1YzNtcXlMM0xrRUI3M1dEWW5OazJ4Z3RrVWE5ZTNSdjhIZmFX?=
- =?utf-8?B?Z2ZVUGovRWJLUS9kenVQSHphYjllc3kreVRVYnFNbk4rMTJFdWhCVU96eHZj?=
- =?utf-8?B?VzNpUFlUZm5mL3gxZTBGZit0Q2t1Q1VUdmEyamFkbmMyV0xLcDRycHlvRHBo?=
- =?utf-8?B?a0t3VDV3bTc5bGxISHg0ZUxnWUFSZnhnR2MxY0pObHNuZGxxSG41Z20wUUhG?=
- =?utf-8?B?bHFwNzQydm50bm8wdndCVW14Yk1EQ2dkRWNFK2gvWWVGQzRRRHNNVlhOQ1Fj?=
- =?utf-8?B?ODZJbVM5U1ZCSThwdUc2b1VxWjF2YWVBNlRwWU9OK2h1Qy9CbTZCdDhrRk93?=
- =?utf-8?B?UktyVk9DNmJURXJCTnhibCs3TDFLS1d4cUR1NXRyL3h3bWRzYWI0UFBwdDd5?=
- =?utf-8?B?ejc4VXlaQ01nUTM5OWpNbmVKUVBiTTQ4WEZnanpDeVMxOEQ4RDM2MGc1NlQ2?=
- =?utf-8?B?aThZZXovTUxEb3g2SUhuakg4MUhjVlN2dW44UExEVnB6TFpMazBNVGVFYXNH?=
- =?utf-8?B?eCt6S0ExaDVCeFkxUUxDdUlib2o5cWNZZkN4S1h2WGVXYS9aaFNLakFOS3NR?=
- =?utf-8?B?MnVnc2g0ZGlWa3ZCMTNaOGxyN3VJNitXZURxMVZ3YWlHQ2JJNHA2WGpBemRT?=
- =?utf-8?B?U1h5c3ZmNnAvaVErWTdOMXY4ajk0alNndU9nUThNc3lRRXNIamhFWjZaQUF1?=
- =?utf-8?B?a3czdmtiL1pHL05ob0R5cjM0NlVjR0diZmZ5UVlka1ZIMmRVV1A1a2VGKzlL?=
- =?utf-8?B?N2VZTmY1a21WTVdkb1ljUThIN04zWWgwSXlmM1lrcG1paEZNTGhiV2dIZFpM?=
- =?utf-8?B?eHZ2SnZBaHhPTlVHa0REcmF2dStYMmZOQWR3Zit2UlN5RElHa08wWktFM3FP?=
- =?utf-8?B?QmluUWhVaDdiT3RhYTd0TFJqeVlYWUdkdklkNE96M2NKYTdNcVR4elZHbEZ0?=
- =?utf-8?B?a3hXTTQvUlFteXhhMzBlaHluVkVwRUF2UHBCNElyMDdySDZvNDRoM1lyNGFH?=
- =?utf-8?B?bGZZQWR3SXBSQzdtVFhsNDAzMldIQ2ZvYzBaOXdTMmtkZUZWcFJLbGcwbmVP?=
- =?utf-8?B?b1QyR2ovYzJHOFVTTHpRVWxqNkY3N1dsVnUzSXdldWZLSW5QRFlPLzdhWHUx?=
- =?utf-8?B?bVlsdHhnM090RCsxMWpmTTltUkxFMkZBUUUyalpIS1UvS3pKMGVTRFZXMTk0?=
- =?utf-8?B?Q0pvLzRjNVZKTlBERXUzWHBSVEFXNy8ybzhTZXAwMDhlWTg1cDEvSndZNGZu?=
- =?utf-8?B?SWE5VlJhdGJQOGxEOVZrMWNSMDEyL0FnazlLMGJrTjVHb0x3YjcxT3pNVXdC?=
- =?utf-8?B?alhETTF4YUZuelh5bUg2cUNvZGhlSmNvQm5hTGZyQko2OE1MdFFQOElUeGp6?=
- =?utf-8?B?Wjh6NXFFV2ZOeE90ejhtZFFOKzhkU0Q2RVQ3dngvM0pyVGJmN2NzNzlabklS?=
- =?utf-8?B?cXNqbmQ1MHdwMDRTdm9iSy9VU3pQRWQzd1k2cFVIQllhaVNIc01iN2pNZTdN?=
- =?utf-8?B?YTBlQUxHa1A2YVErcFgzMGtVQUtDcE5EYnZqbHo2UUtGejljZUFyS2x4WGZr?=
- =?utf-8?B?a25mM29IMGFhZ3RYMzd4a1BmMFJYUUNuWkE5dUlJZDBybHhIQjNlRDhKRnlQ?=
- =?utf-8?B?OUVnYzdSbkJ4eDcrMjBXcHJwNEhxK3FZSWhQR0cxcFRjc25RV3FhWWdYcnpV?=
- =?utf-8?B?bFNiUWpmSjR1VEc2RGVhYlVtWFVjZmtLdkJpREtJSkpSNlF5dTJLWkZmS0I1?=
- =?utf-8?B?YkhnQnJKTEpNc1luM3gyUi9qV25Eb09yTmpvdEI2MFhpeVE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VXV5Z3gveTB6eWFXTHhXUnlQRXhGS3hUQTJ4RXFtbHpGQVVFalRrOFZyTTBS?=
- =?utf-8?B?T1dYSWpPcTR4UzZnSXRnUnRYbXZSZWJ2VU1PTm55alpHdlJGV053M0lYQlZ4?=
- =?utf-8?B?d3kvQ2FJZTkya2M1L2thU1Q1S3p1T3lIQXM2enZ2aVdtTUtkUkJiM29iSDlT?=
- =?utf-8?B?RW55ZTc5YUpDdWxtdzhGZVNXNElQTXF1c3JKaHV3UFhOMWR2MitkcS95b0Jk?=
- =?utf-8?B?SkpiMVlEaVRLVWR6QTNWU292ellwWDdJUWJvVWIyK3UwbGRxVVc5S2lDWGtM?=
- =?utf-8?B?NHJRMFpBcU9ZRmVWaUVDdmxPcVhpcy9yTExvcUk2d2RuOXFOT0ZvbjhHbUpO?=
- =?utf-8?B?TmNKckFqcEE4RmhsZm1XOWJ3N1JxRVYvQmMxVkdHZFBZU0RVOXpyVG40elF3?=
- =?utf-8?B?b0YybkUrSUJiMFkydENzYStRS0I0ZEZWZXpLeG5WczRhSUx0WGRDd1Y1SHR1?=
- =?utf-8?B?L0oyMEU3QU9lM2tnVFZ0Uks4OUxSaGI4K1BsSXJQbVZqc3k1cStOWGlBWVA4?=
- =?utf-8?B?T0Q3bXRCWGxhUSt4UzBZdWR5SVdraGN0K1ZtbGIrdDNnSDBuVFoyU3d4Skht?=
- =?utf-8?B?ZjlpNStUZ1p1WEhhM1NtN3lQS1F3NEp3dXpLQnNCUnhiWklBeHArRWhlcUVE?=
- =?utf-8?B?aHFQTDJkUm05QTgwWG4wREhrMEtRQkN3S1licGQrTzF3bk1xUldMTWhnZ012?=
- =?utf-8?B?S0p3TUxQYVlTa2M5Tm9CbXh2NnZiYi9NK0Q3K3NkOGxoUGdyWUJpb3lkTWZE?=
- =?utf-8?B?YUNHdFkxRllCeTFRc29WZklKaXF0L0ZDaFRTZ3lIbXo4TDJtQ2xNRkFhdC8v?=
- =?utf-8?B?RzZSelpNQkxlZEdrV1ZpOHJPdFI1MDFEbUdiWjJzNnorczZQcWp4OFBaaVh3?=
- =?utf-8?B?aU1pYy84bVBncU9nQnRJUk5RWTVuelQzdmh5eE5iazNzRTZJN1Z5Y0tObXlv?=
- =?utf-8?B?WkNxZUltcWV2VVE2SWcyZ29uK2ZSTVhGTmU5RVp6STdnK0xtSGJBcGtmY2JC?=
- =?utf-8?B?L0ZKV0gzQW1oM1J2VVpBN240K3F3L2RMSkZtOExmNk5CMGFuMFE0M1pROTlH?=
- =?utf-8?B?NmpOZ0E0c2FpQVdDTXNCcmhiaDZxNHROZGhTRC9XTmRoSWNiSzhxWHljV1p5?=
- =?utf-8?B?RlhOOFZpTEt0ZEhNYitOYzBFOGt5b3VGSlorR0tOQjhDbElZN2NqcDg1Qm1r?=
- =?utf-8?B?bHdqK25IaTQ3NG1UUVloc3hSb1hEcHlVNGpOK3IwU0FmSHFXVGRyZGZSakVU?=
- =?utf-8?B?ZTFZUU5tOGNJOFVGNTFOMjNtM3grNUppNlV1MWpBSlFrNTVubnNDRERIZVVO?=
- =?utf-8?B?ckpLV1RkVnNhS3p5MEZhSjd5Z2Q3bVFNZlp5dG1VVm53QjYzTGVDL1I4Tlph?=
- =?utf-8?B?RXdHSysyZ2YyMnh5RVROQXZ2MEpmamxVaXpiTU8zckRaaGUzenk0N2FDeElj?=
- =?utf-8?B?RjhBeEF2Mmdjbkl2eVVzUW5RcUNyTjV1Y0NSSzB2endlU1dEZmpPcXNOVnB5?=
- =?utf-8?B?T3BUK0ljUThxTnpITmV6Y0l6bzFXdG9iekpyd1JTclFRY3B1SG9GT3pUcWpk?=
- =?utf-8?B?elJITmRDblVNOFQ2RldJdGJSMDI4a0c2SXZ3ZU81WnpmaXNrenZoajBzdUZJ?=
- =?utf-8?B?dlJzNG95WFByR1YrWWVwYkFUZVIwTGlPdHJ3ekI2TWRYZjNPYnVHTC9aaHg5?=
- =?utf-8?B?MW15bHlIM1diNmZqdGFzNHNjblJiazQ5QWozVkU3VmwyOXFndldoSjRHbkU3?=
- =?utf-8?B?b2RIcGFZcHNwdXo0V05yZG9GeHdtNHlONVZIOTRaK0VibUpUbThQMnBPb3pk?=
- =?utf-8?B?VGwzTGU2UjluQVRQNmtacU1hdEg5cjRYdDViWG9iT1dLSGovYk1vRlpPZW94?=
- =?utf-8?B?Z3N2WEQyeFRhUnBNVFVsVHZ1QmFWWW5RTjhTQUVTclBOL1dZd0RzNkZWL3Vo?=
- =?utf-8?B?NUpQOHBrcCt1TG9sVFBENUxnZldRbytBVjJYYjNJcExETDkvSndhUGEzVmdn?=
- =?utf-8?B?a3JzMmZ5TmxaMC9SKzd0T2x6Y0o1VEtuTldoSkpaRnlnWjNPNXlKanZqdmhx?=
- =?utf-8?B?Tm9vZ2V3bzZIZTZieG15VzNQdm5CRTdOTlZDS1FlOEVmN2puc3BqKytMblBr?=
- =?utf-8?Q?/A8Qv45toq7ga5tpLFDg8occG?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d4e3045-98c5-4d2d-e7e0-08ddb7ccdaed
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 11:54:23.2545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0uYp8QAPtfNPYiJHqA+bE+fl5lXRDPedYOXsQXbnOGIpCzoE2alTsktXhVMxlGSd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7801
+X-Received: by 2002:a05:6e02:b41:b0:3de:e74:be13 with SMTP id
+ e9e14a558f8ab-3df3e09c6b5mr214978595ab.0.1751284504896; Mon, 30 Jun 2025
+ 04:55:04 -0700 (PDT)
+Date: Mon, 30 Jun 2025 04:55:04 -0700
+In-Reply-To: <0620687c-30d7-405d-b4f3-636546ef1823n@googlegroups.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68627b18.a70a0220.3b7e22.0dcc.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] WARNING in ni_rename
+From: syzbot <syzbot+b0373017f711c06ada64@syzkaller.appspotmail.com>
+To: kapoorarnav43@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 30.06.25 12:41, Samuel Zhang wrote:
-> When hibernate with data center dGPUs, huge number of VRAM BOs evicted
-> to GTT and takes too much system memory. This will cause hibernation
-> fail due to insufficient memory for creating the hibernation image.
-> 
-> Move GTT BOs to shmem in KMD, then shmem to swap disk in kernel
-> hibernation code to make room for hibernation image.
+Hello,
 
-This should probably be two patches, one for TTM and then an amdgpu patch to forward the event.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in ni_rename
 
-> 
-> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 13 ++++++++++++-
->  drivers/gpu/drm/ttm/ttm_resource.c      | 18 ++++++++++++++++++
->  include/drm/ttm/ttm_resource.h          |  1 +
->  3 files changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> index 4d57269c9ca8..5aede907a591 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-> @@ -2889,6 +2889,7 @@ int amdgpu_fill_buffer(struct amdgpu_bo *bo,
->  int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
->  {
->  	struct ttm_resource_manager *man;
-> +	int r;
->  
->  	switch (mem_type) {
->  	case TTM_PL_VRAM:
-> @@ -2903,7 +2904,17 @@ int amdgpu_ttm_evict_resources(struct amdgpu_device *adev, int mem_type)
->  		return -EINVAL;
->  	}
->  
-> -	return ttm_resource_manager_evict_all(&adev->mman.bdev, man);
-> +	r = ttm_resource_manager_evict_all(&adev->mman.bdev, man);
-> +	if (r) {
-> +		DRM_ERROR("Failed to evict memory type %d\n", mem_type);
-> +		return r;
-> +	}
-> +	if (adev->in_s4 && mem_type == TTM_PL_VRAM) {
-> +		r = ttm_resource_manager_swapout();
-> +		if (r)
-> +			DRM_ERROR("Failed to swap out, %d\n", r);
-> +	}
-> +	return r;
->  }
->  
->  #if defined(CONFIG_DEBUG_FS)
-> diff --git a/drivers/gpu/drm/ttm/ttm_resource.c b/drivers/gpu/drm/ttm/ttm_resource.c
-> index fd41b56e2c66..07b1f5a5afc2 100644
-> --- a/drivers/gpu/drm/ttm/ttm_resource.c
-> +++ b/drivers/gpu/drm/ttm/ttm_resource.c
-> @@ -534,6 +534,24 @@ void ttm_resource_manager_init(struct ttm_resource_manager *man,
->  }
->  EXPORT_SYMBOL(ttm_resource_manager_init);
->  
-> +int ttm_resource_manager_swapout(void)
-
-This needs documentation, better placement and a better name.
-
-First of all put it into ttm_device.c instead of the resource manager.
-
-Then call it something like ttm_device_prepare_hibernation or similar.
+loop0: detected capacity change from 0 to 4096
+------------[ cut here ]------------
+WARNING: fs/ntfs3/frecord.c:3030 at ni_rename+0xee/0x100 fs/ntfs3/frecord.c:3029, CPU#0: syz.0.16/6714
+Modules linked in:
+CPU: 0 UID: 0 PID: 6714 Comm: syz.0.16 Not tainted 6.16.0-rc4-next-20250630-syzkaller-g1343433ed389 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:ni_rename+0xee/0x100 fs/ntfs3/frecord.c:3029
+Code: 8b 05 66 63 9a 0f 48 3b 44 24 10 75 22 44 89 e0 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 49 ac 6c 08 cc e8 b3 fe b9 fe 90 <0f> 0b 90 eb c5 e8 18 d2 69 08 0f 1f 84 00 00 00 00 00 90 90 90 90
+RSP: 0018:ffffc90002eb7ab8 EFLAGS: 00010293
+RAX: ffffffff8305ccdd RBX: 00000000fffffffe RCX: ffff888020b28000
+RDX: 0000000000000000 RSI: 00000000fffffffe RDI: 0000000000000000
+RBP: 00000000fffffffe R08: ffffffff8fa17437 R09: 1ffffffff1f42e86
+R10: dffffc0000000000 R11: fffffbfff1f42e87 R12: 0000000000000000
+R13: ffff88803385e600 R14: ffff888077140758 R15: ffff888066ebe6d0
+FS:  00007f59ac0016c0(0000) GS:ffff888125c1d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8e813c3000 CR3: 000000007f64a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ntfs_rename+0x6e2/0xb40 fs/ntfs3/namei.c:316
+ vfs_rename+0xbd7/0xf00 fs/namei.c:5129
+ do_renameat2+0x6ce/0xa80 fs/namei.c:5278
+ __do_sys_rename fs/namei.c:5325 [inline]
+ __se_sys_rename fs/namei.c:5323 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5323
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f59ab18e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f59ac001038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007f59ab3b5fa0 RCX: 00007f59ab18e929
+RDX: 0000000000000000 RSI: 0000200000001040 RDI: 0000200000000280
+RBP: 00007f59ab210b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f59ab3b5fa0 R15: 00007fff104b3398
+ </TASK>
 
 
-> +{
-> +	struct ttm_operation_ctx ctx = {
-> +		.interruptible = false,
-> +		.no_wait_gpu = false,
-> +		.force_alloc = true
-> +	};
-> +	int ret;
-> +
-> +	while (true) {
+Tested on:
 
-Make that:
-
-do {
-	ret = ...
-} while (ret > 0);
-
-> +		ret = ttm_global_swapout(&ctx, GFP_KERNEL);
-> +		if (ret <= 0)
-> +			break;
-> +	}
-> +	return ret;
-
-It's rather pointless to return the number of swapped out pages.
-
-Make that "return ret < 0 ? ret : 0;
-
-Regards,
-Christian.
-
-> +}
-> +EXPORT_SYMBOL(ttm_resource_manager_swapout);
-> +
->  /*
->   * ttm_resource_manager_evict_all
->   *
-> diff --git a/include/drm/ttm/ttm_resource.h b/include/drm/ttm/ttm_resource.h
-> index b873be9597e2..46181758068e 100644
-> --- a/include/drm/ttm/ttm_resource.h
-> +++ b/include/drm/ttm/ttm_resource.h
-> @@ -463,6 +463,7 @@ void ttm_resource_manager_init(struct ttm_resource_manager *man,
->  
->  int ttm_resource_manager_evict_all(struct ttm_device *bdev,
->  				   struct ttm_resource_manager *man);
-> +int ttm_resource_manager_swapout(void);
->  
->  uint64_t ttm_resource_manager_usage(struct ttm_resource_manager *man);
->  void ttm_resource_manager_debug(struct ttm_resource_manager *man,
+commit:         1343433e Add linux-next specific files for 20250630
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bfa770580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c1ce97baf6bd6397
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0373017f711c06ada64
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1147848c580000
 
 
