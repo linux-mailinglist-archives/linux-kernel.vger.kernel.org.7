@@ -1,194 +1,191 @@
-Return-Path: <linux-kernel+bounces-709150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCFDAED9DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:30:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D99AED9DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04298176819
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:30:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0074E7A6F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1916B248F55;
-	Mon, 30 Jun 2025 10:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9BA23E358;
+	Mon, 30 Jun 2025 10:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KGt7OTNr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8dsbeoV"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD64A1C862D;
-	Mon, 30 Jun 2025 10:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5912AF1B;
+	Mon, 30 Jun 2025 10:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751279423; cv=none; b=io0ZrNe3UVxMXOADbSccyXSL71KOn0wToly8V2rBdPHMulhZ72+4p8EWJh2m8aUfbvMKjQGKYC02bmI2tw6NgAg9jYl0SiVrvsjuxxnMmd8pGRLitFkE2CDfRXZjH0chM+iMHsFWoVkNBozTb5QA4umkdtRR/GP0TeKapX80cIc=
+	t=1751279459; cv=none; b=s40+QPiS6LKtkQ7RbprnZSl+CoaGz29QTVV6q+EtLlk4LUAVhEq4i93stot//nXSj6eD8WPcoBCpIMK/YfC72OhEkyc1lWB2ss0Hp0RTuvGKRaIq5CIlMSE9SjNS5xvQB2xbj/chfhrPEW25Bw0EjJWLsfJ7esGEMpAR81oDDBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751279423; c=relaxed/simple;
-	bh=D8Rid0bcVc5Pr2IELERjxtYwzLWTo01IYXtAN+LRJfk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cnhBKie74PaZn+bbmpQiZLiFN306odAjV1FJAFHKel2/9cppI700zrWE864nfJGda3azp3BsgmhlrTODNaHCvw7qFBOIIQzVJDUEFlw/3H25x9s6Llu0Ly/GSgvfOzvXAV3rCjl3dDOmzyFkteNFztKCagKXWeMNkH005l9M/Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KGt7OTNr; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751279422; x=1782815422;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=D8Rid0bcVc5Pr2IELERjxtYwzLWTo01IYXtAN+LRJfk=;
-  b=KGt7OTNrtG30Fej/UFoP4sKRBX/z24BCki2qyy0JjUqaKt2z07Uw6mxj
-   +fpfoqSm5tEojlxtqhLx5ygoGO7ijUNFhL87t46aNB9IcoNgI4uVSa/o5
-   dKZZ0YJ6L6Tbibh5HlIDSpz+5Ddv9MGSHKnt7BzHx5sGk7U3kFSaGzBMY
-   vQdldMqTZ6GwIZzAxBTL+OdxiZmQfAeGF7eT0HJqCHplDu77sSbMM3/me
-   +OcTkthhlt07Oe4de77ZTZHGavwhQtAG45ktLWCbdOpwqIl0qzDnyokJc
-   w+Y6TWQLD62AM/NtDw0PrSiURbsl574FxjI1YtDec/q3NH0QgQ0ANO7A4
-   A==;
-X-CSE-ConnectionGUID: gJstAsThTiqtlOd5D22reQ==
-X-CSE-MsgGUID: 43qohBGYSK6FLYYIWg5GDA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="78940308"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="78940308"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:30:21 -0700
-X-CSE-ConnectionGUID: xV/uDRqjS7atOjXTMdnVmA==
-X-CSE-MsgGUID: k9O9eEo4TdmfRaK2YxefHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="153050589"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:30:15 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 30 Jun 2025 13:30:12 +0300 (EEST)
-To: Mario Limonciello <superm1@kernel.org>
-cc: Mario Limonciello <mario.limonciello@amd.com>, 
-    Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
-    "H . Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Huang Rui <ray.huang@amd.com>, 
-    "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, 
-    Viresh Kumar <viresh.kumar@linaro.org>, 
-    "open list:AMD HETERO CORE HARDWARE FEEDBACK DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
-    "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-    "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v11 00/13] Add support for AMD hardware feedback
- interface
-In-Reply-To: <20250609200518.3616080-1-superm1@kernel.org>
-Message-ID: <5b312c44-346b-0499-962e-5a80a787e031@linux.intel.com>
-References: <20250609200518.3616080-1-superm1@kernel.org>
+	s=arc-20240116; t=1751279459; c=relaxed/simple;
+	bh=rzqf8KMfkh7J6fnUaHKXupiWofR6LjqFm240toyhNGI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8fMuuU7tbx1K3YbAQT4daVJx23wqwmaD/8LZ2hsuj5JaF8U/Fkb3WI2SpnXxEtYNxTPep0NlLEA2geRhA3gYuk5xYUiBeoJ79Me3rYGFOj7juafNeUZNczQk1BbvZfuaJYTZFKUpFbCVLA0cKJjw8rZNPfjtcSDp4+CM6T//Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8dsbeoV; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-555024588b1so2204969e87.1;
+        Mon, 30 Jun 2025 03:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751279455; x=1751884255; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8e/7v2ltNn1nX9ioUgVxorlkzFe2GpNMHMiKKK8K6ls=;
+        b=G8dsbeoV+V23kG3rZj+HIuRKarlKyFKQaNX6fBJvg90Xbxe+cLV1YQlJ1wU81h8uCe
+         Jtj+QF8V0VEnHWkgIzL4h/Y9SVPmG4IM6AixQoWEIlhJUWG5RskGHndQmn8BoFBG9YjD
+         ZgPyGKSkGh/yp8buV08p9fHMiyV7currBXu07+empKlqtmngCYLxbthDOYxDyHqdbAxR
+         WdvVffMxV5ICKl3CO0AuwLZax2mocwENakVQB8ftCPELXtRNkeTHlE7K0X/kMZFgfJTH
+         eIfwsR0q/UNjrxU2mqMlFSXDwnt2W+8eKKIOf++kFSnxE/ZdvKkZCDTAgVryKwaf8t4e
+         Dc0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751279455; x=1751884255;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8e/7v2ltNn1nX9ioUgVxorlkzFe2GpNMHMiKKK8K6ls=;
+        b=OdHHmZ+y2n8fLdknpJxrvSGHzLFBW1jETLnV9uIrAoXhwSyhjkIiVFAiW00MfBm1ll
+         NNE1iV8qAcgUieCWba83zvrwNHtkbZxXgWRAzk6B2MzQQy8PFtf47wnbQervXoGgH5um
+         wPyPHQQaIHEfWz0h3e9XTXEe/VqFzm52G42bt/rGedhgsxnG3Rthd9BOOs6PVDmv/bxP
+         qNoQxaPRBF9IHNjoSRfoMHjRYpzPffVRcs4ivCXtx4ntgCqg8v7FAz3WFQW1MgN7AHBj
+         x8qLqljHkzl1gbyr/40ol7p7uSd//mbfoWDrr8QVQc/wXONfLII9qP0jj7fk7fh5FmsN
+         Jq0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVrm7xMQ4MW0w5W0eb6r64M1AnW32NfzAP3Vrgnw1721hte8uOMPK13NSUWVCSyKK7WJMUZicvM0U7lY7eGxDE=@vger.kernel.org, AJvYcCX8BzOx3jALWFLcefjvpAGJDPgidWGiEDVTpHUmwuiayDkn5oaVDlWAZ6kn2ayZENeIKx5HTvLN7cByzh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbkINqGtnphVs4ksRHI2lS77f7ZMyw5VnWjHnVcQisbwphqnge
+	xeEg2G1ZJNYaG+njqxsbM54c8SQStmCSRlwNE+44CU7l+eVsAji8z/Fh
+X-Gm-Gg: ASbGncv+2hXG/BewB16luQBXrd0kJ69ZtB0qdMQhCFv5R/NTGWkiDYFyww57lAYfLZj
+	+iLLRnIL67YuCkn+KvTvIiAXJYX35/2vM9ZqdVauz/s0mGEspxqVgcFN92ejJs1kK0INOt1UoHE
+	bTQOLN+oVqC+XJxmfIAvGRMW9RvYZwZygpw3yFVeHFRtMkqxNtO+lqGlEkMEDxElcjlX9SvRGtU
+	VoWRwAYHhVECY5/F5lWwj86W4pUiDCueCNGzl4JuIjvRYbQycsx6IWUX9deJfQsy4jesn4B/A6z
+	NeWo2VMd4QxixSRfwUTbNsu+YB7Jm8JNlg9UQbttt20LREzWmcyoxpZ6HTqQa0HOgsSpGmB646n
+	SG6jD6pOZE6Q=
+X-Google-Smtp-Source: AGHT+IEF2nOl072KkJX5VOycpUDoH66uDeT/lt1cf4dthiOO6DxJCwj1jJ46PgB8pAi9UlOEqIa06g==
+X-Received: by 2002:a05:6512:318f:b0:553:510d:f46b with SMTP id 2adb3069b0e04-5550b8b0549mr4515221e87.32.1751279455093;
+        Mon, 30 Jun 2025 03:30:55 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b24d130sm1397220e87.54.2025.06.30.03.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 03:30:54 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 30 Jun 2025 12:30:52 +0200
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+Message-ID: <aGJnXLl_OLqwjAUt@pc636>
+References: <20250628102315.2542656-1-vitaly.wool@konsulko.se>
+ <20250628102537.2542789-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1730005503-1751279366=:7079"
-Content-ID: <16e53ef6-1677-69e6-f234-6f14e754d788@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250628102537.2542789-1-vitaly.wool@konsulko.se>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Sat, Jun 28, 2025 at 12:25:37PM +0200, Vitaly Wool wrote:
+> Reimplement vrealloc() to be able to set node and alignment should
+> a user need to do so. Rename the function to vrealloc_node_align()
+> to better match what it actually does now and introduce macros for
+> vrealloc() and friends for backward compatibility.
+> 
+> With that change we also provide the ability for the Rust part of
+> the kernel to set node and aligmnent in its allocations.
+> 
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> ---
+>  include/linux/vmalloc.h | 12 +++++++++---
+>  mm/vmalloc.c            | 20 ++++++++++++++++----
+>  2 files changed, 25 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index fdc9aeb74a44..68791f7cb3ba 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
+>  extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
+>  #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+>  
+> -void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> -		__realloc_size(2);
+> -#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+> +void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
+> +		unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+> +#define vrealloc_node_noprof(_p, _s, _f, _nid)	\
+> +	vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
+> +#define vrealloc_noprof(_p, _s, _f)		\
+> +	vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
+> +#define vrealloc_node_align(...)		alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
+> +#define vrealloc_node(...)			alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
+> +#define vrealloc(...)				alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>  
+>  extern void vfree(const void *addr);
+>  extern void vfree_atomic(const void *addr);
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6dbcdceecae1..d633ac0ff977 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -4089,12 +4089,15 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+>  EXPORT_SYMBOL(vzalloc_node_noprof);
+>  
+>  /**
+> - * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
+> + * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
+> + * remain unchanged
+>   * @p: object to reallocate memory for
+>   * @size: the size to reallocate
+> + * @align: requested alignment
+>   * @flags: the flags for the page level allocator
+> + * @nid: node id
+>   *
+> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is 0 and
+>   * @p is not a %NULL pointer, the object pointed to is freed.
+>   *
+>   * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+> @@ -4111,7 +4114,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+>   * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+>   *         failure
+>   */
+> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
+> +				 gfp_t flags, int nid)
+>  {
+>  	struct vm_struct *vm = NULL;
+>  	size_t alloced_size = 0;
+> @@ -4135,6 +4139,13 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>  		if (WARN(alloced_size < old_size,
+>  			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+>  			return NULL;
+> +		if (WARN(nid != NUMA_NO_NODE && nid != page_to_nid(vmalloc_to_page(p)),
+> +			 "vrealloc() has mismatched nids\n"))
+> +			return NULL;
+> +		if (WARN((uintptr_t)p & (align - 1),
+> +			 "will not reallocate with a bigger alignment (0x%lx)\n",
+> +			 align))
+> +			return NULL;
+>
+IMO, IS_ALIGNED() should be used instead. We have already a macro for this
+purpose, i.e. the idea is just to check that "p" is aligned with "align"
+request.
 
---8323328-1730005503-1751279366=:7079
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <8943e6f1-0a75-8515-3884-25951a634d31@linux.intel.com>
+Can you replace the (uintptr_t) casting to (ulong) or (unsigned long)
+this is how we mostly cast in vmalloc code?
 
-On Mon, 9 Jun 2025, Mario Limonciello wrote:
+WARN() probably is worth to replace. Use WARN_ON_ONCE() to prevent
+flooding.
 
-> From: Mario Limonciello <mario.limonciello@amd.com>
->=20
-> The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
-> provide behavioral classification of tasks.
->=20
-> Threads are classified during runtime into enumerated classes.
-> Currently, the driver supports 3 classes (0 through 2). These classes
-> represent thread performance/power characteristics that may benefit from
-> special scheduling behaviors. The real-time thread classification is
-> consumed by the operating system and is intended to be used to inform the=
- scheduler
-> of where the thread should be placed for optimal performance or energy ef=
-ficiency.
->=20
-> The thread classification can be used to helps to select CPU from a ranki=
-ng table
-> that describes an efficiency and performance ranking for each classificat=
-ion from
-> two dimensions. This is not currently done in this series, but is intende=
-d for future
-> follow ups after the plumbing is laid down.
->=20
-> The ranking data provided by the ranking table are numbers ranging from 0=
- to 255,
-> where a higher performance value indicates higher performance capability =
-and a higher
-> efficiency value indicates greater efficiency. All the CPU cores are rank=
-ed into
-> different class IDs. Within each class ranking, the cores may have differ=
-ent ranking
-> values. Therefore, picking from each classification ID will later allow t=
-he scheduler
-> to select the best core while threads are classified into the specified w=
-orkload class.
->=20
-> This series was originally submitted by Perry Yuan [1] but he is now doin=
-g a different
-> role and he asked me to take over.
->=20
-> Link: https://lore.kernel.org/all/cover.1724748733.git.perry.yuan@amd.com=
-/
->=20
-> v10->v11:
->  * rebase on v6.16-rc1
->  * Adjust for Randy's and Ingo's feedback
->=20
-> Mario Limonciello (5):
->   MAINTAINERS: Add maintainer entry for AMD Hardware Feedback Driver
->   cpufreq/amd-pstate: Disable preferred cores on designs with workload
->     classification
->   platform/x86/amd: hfi: Set ITMT priority from ranking data
->   platform/x86/amd: hfi: Add debugfs support
->   x86/itmt: Add debugfs file to show core priorities
->=20
-> Perry Yuan (8):
->   Documentation: x86: Add AMD Hardware Feedback Interface documentation
->   x86/msr-index: define AMD heterogeneous CPU related MSR
->   platform/x86: hfi: Introduce AMD Hardware Feedback Interface Driver
->   platform/x86: hfi: parse CPU core ranking data from shared memory
->   platform/x86: hfi: init per-cpu scores for each class
->   platform/x86: hfi: add online and offline callback support
->   platform/x86: hfi: add power management callback
->   x86/process: Clear hardware feedback history for AMD processors
->=20
->  Documentation/arch/x86/amd-hfi.rst    | 133 +++++++
->  Documentation/arch/x86/index.rst      |   1 +
->  MAINTAINERS                           |   9 +
->  arch/x86/include/asm/msr-index.h      |   5 +
->  arch/x86/kernel/itmt.c                |  23 ++
->  arch/x86/kernel/process_64.c          |   4 +
->  drivers/cpufreq/amd-pstate.c          |   6 +
->  drivers/platform/x86/amd/Kconfig      |   1 +
->  drivers/platform/x86/amd/Makefile     |   1 +
->  drivers/platform/x86/amd/hfi/Kconfig  |  18 +
->  drivers/platform/x86/amd/hfi/Makefile |   7 +
->  drivers/platform/x86/amd/hfi/hfi.c    | 551 ++++++++++++++++++++++++++
-
-I don't have objections to this series. But as discussed before, not all=20
-features are provided by this series and follow-up series will be=20
-required to provide what are documented as features (perhaps more than=20
-one).
-
-The pdx86 side seems pretty conflict free as this is new code. If e.g. x86=
-=20
-wants to merge this due to this series touching existing code there=20
-(besides the minor cpufreq bits), it would be fine with me,
-
-Acked-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
-
---=20
- i.
---8323328-1730005503-1751279366=:7079--
+--
+Uladzislau Rezki
 
