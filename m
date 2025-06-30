@@ -1,225 +1,83 @@
-Return-Path: <linux-kernel+bounces-708863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4E6AED60F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:47:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F70AED616
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012443B461A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4FF16EACB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282BF235056;
-	Mon, 30 Jun 2025 07:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E86GuxsB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rWcxBdQD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UrPIfwU0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="llgry64d"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588502376F5;
+	Mon, 30 Jun 2025 07:48:09 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F071FBCB0
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89E41E7C10;
+	Mon, 30 Jun 2025 07:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269638; cv=none; b=gqka6WrQvwRG1WI05iYV0cDUW8Todd8/LJCVhDcinSOWvPSpvzzfi3okYEtw7oVSyacSQrHZEEuQPECjgV9m1BeUvX0mvLVXcGV5iZa8B4Zlrk/pHsBN5ORq2k3Gwj6G8r5OdGm0ufcmvKHCWIVDlgBuBOQFzMyhRV3RyevzDhQ=
+	t=1751269689; cv=none; b=M1OkDShAmvfRVanuXjNums8ZHd+KNRxq8Gae7AOnjwB06KD9nEKzXCl7UppY0FI8lXmxW4b1w2mMys8QXsatboexs25N9Ni2Gavf2inF3KK+LYiMbfkYJdVwsxALRuNYpGbt2jTzGwgMxK+2Y7gcHKAI2E6GsoU1KIoyQodkxpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269638; c=relaxed/simple;
-	bh=N4/gemkwOOG9oZKd1jobRaruueJI6mhQQIOWpqNKuGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sgv2QcU4BlOibClDbsorHRr7y0tauEEnHLWb4jSIK9QzaGiTVEW+6zxOtQfJFSEeGhTVS2VGJ1hCaWweBjL1uGWGSxKA/aPpnhNRZ/Tg9NavRahqsZTewgFqMXkcZEsQGavm4a+NqkU9fObrB6K6IbBjdxQrlssFFO9spEWVpZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E86GuxsB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rWcxBdQD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UrPIfwU0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=llgry64d; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9294421161;
-	Mon, 30 Jun 2025 07:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751269634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G0xMeV4r4NgmZRD7f2uu1EqqO6HZViLKTYU5qUxhpb0=;
-	b=E86GuxsB7Lk7XJ9Y8PYu7aK+EUoPoyOT90eSY0utaqCRk3R4gVVIC1e+GobodoRf3XRRHy
-	4dnZRBS/sRBTqEeeH71KMQqrEVRQfPdDB5bh5hENMS9yVhLBPXFL2XOK1L0/OP4myBZCcS
-	6ItaOhRn/PHkmVNmcSuwxM89SOaLgL0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751269634;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G0xMeV4r4NgmZRD7f2uu1EqqO6HZViLKTYU5qUxhpb0=;
-	b=rWcxBdQDBMb9qf1WCRZzl+QVeNq8BQjPTsmtz3koGlqvFBn935oVtZ83oAEBvlxGPlmOTp
-	U3jG4iTKax8KWrDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751269633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G0xMeV4r4NgmZRD7f2uu1EqqO6HZViLKTYU5qUxhpb0=;
-	b=UrPIfwU0InrHCrmdmQhEs9y3FmBDiMeQeuDBKtpTkwjXxWD77YcoANZiE1qYV1SJVHIK4P
-	67UGyw6dpPTx45EjJ9elrtRFNKDZ5QmDvDYy6YuVEN9IdJszrfioWvW6h5JwjmiYM1Gn+e
-	RNSVYoAFQuqm4zPRy4OXs/Dk1CVs7vw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751269633;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G0xMeV4r4NgmZRD7f2uu1EqqO6HZViLKTYU5qUxhpb0=;
-	b=llgry64dSVfm6ADa4s4hLJMFBFdPJvnL6t2XbmnbKXBkuwjy1XhYe/UzSz+rvbqND0FilR
-	oitzWmHnZNEi4TBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C04013983;
-	Mon, 30 Jun 2025 07:47:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x8xCHgFBYmj8bAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 30 Jun 2025 07:47:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3E2F0A08D2; Mon, 30 Jun 2025 09:47:13 +0200 (CEST)
-Date: Mon, 30 Jun 2025 09:47:13 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux-kernel@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 03/16] ext4: remove unnecessary s_md_lock on update
- s_mb_last_group
-Message-ID: <mfybwoygcycblgaln2j4et4zmyzli2zibcgvixysanugjjhhh5@xyzoc4juy4wv>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-4-libaokun1@huawei.com>
- <xlzlyqudvp7a6ufdvc4rgsoe7ty425rrexuxgfbgwxoazfjd25@6eqbh66w7ayr>
- <1c2d7881-94bb-46ff-9cf6-ef1fbffc13e5@huawei.com>
+	s=arc-20240116; t=1751269689; c=relaxed/simple;
+	bh=Ncl3helxO+ZS9QeFzkQwEfUkOIHQAykAjG5n7efWSDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ViCk9UWgHdjkHZFhDYje4igju5A8OyDE80uuXwpnEtX90cmOMzLudj3VB8L/NJX0UNSTCJk+8z5n5ny/l7o+wW0vGqtBJburPYixBame7uriKHlStdm11tTvrenn1QrwPrk6reMyIOtjQfHYfJUOBGsfwJE1Ts/Ry0fijaz1jwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B32C4CEE3;
+	Mon, 30 Jun 2025 07:48:06 +0000 (UTC)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	linux-kernel@vger.kernel.org
+Cc: linux-rtc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH resend] rtc: Rename lib_test to rtc_lib_test
+Date: Mon, 30 Jun 2025 09:47:54 +0200
+Message-ID: <df1a73d4a14426ae0d3e8809aed40c686b67dd3e.1751268290.git.geert@linux-m68k.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c2d7881-94bb-46ff-9cf6-ef1fbffc13e5@huawei.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon 30-06-25 11:48:20, Baokun Li wrote:
-> On 2025/6/28 2:19, Jan Kara wrote:
-> > On Mon 23-06-25 15:32:51, Baokun Li wrote:
-> > > After we optimized the block group lock, we found another lock
-> > > contention issue when running will-it-scale/fallocate2 with multiple
-> > > processes. The fallocate's block allocation and the truncate's block
-> > > release were fighting over the s_md_lock. The problem is, this lock
-> > > protects totally different things in those two processes: the list of
-> > > freed data blocks (s_freed_data_list) when releasing, and where to start
-> > > looking for new blocks (mb_last_group) when allocating.
-> > > 
-> > > Now we only need to track s_mb_last_group and no longer need to track
-> > > s_mb_last_start, so we don't need the s_md_lock lock to ensure that the
-> > > two are consistent, and we can ensure that the s_mb_last_group read is up
-> > > to date by using smp_store_release/smp_load_acquire.
-> > > 
-> > > Besides, the s_mb_last_group data type only requires ext4_group_t
-> > > (i.e., unsigned int), rendering unsigned long superfluous.
-> > > 
-> > > Performance test data follows:
-> > > 
-> > > Test: Running will-it-scale/fallocate2 on CPU-bound containers.
-> > > Observation: Average fallocate operations per container per second.
-> > > 
-> > >                     | Kunpeng 920 / 512GB -P80|  AMD 9654 / 1536GB -P96 |
-> > >   Disk: 960GB SSD   |-------------------------|-------------------------|
-> > >                     | base  |    patched      | base  |    patched      |
-> > > -------------------|-------|-----------------|-------|-----------------|
-> > > mb_optimize_scan=0 | 4821  | 7612  (+57.8%)  | 15371 | 21647 (+40.8%)  |
-> > > mb_optimize_scan=1 | 4784  | 7568  (+58.1%)  | 6101  | 9117  (+49.4%)  |
-> > > 
-> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > ...
-> > 
-> > > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> > > index 5cdae3bda072..3f103919868b 100644
-> > > --- a/fs/ext4/mballoc.c
-> > > +++ b/fs/ext4/mballoc.c
-> > > @@ -2168,11 +2168,9 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
-> > >   	ac->ac_buddy_folio = e4b->bd_buddy_folio;
-> > >   	folio_get(ac->ac_buddy_folio);
-> > >   	/* store last allocated for subsequent stream allocation */
-> > > -	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC) {
-> > > -		spin_lock(&sbi->s_md_lock);
-> > > -		sbi->s_mb_last_group = ac->ac_f_ex.fe_group;
-> > > -		spin_unlock(&sbi->s_md_lock);
-> > > -	}
-> > > +	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC)
-> > > +		/* pairs with smp_load_acquire in ext4_mb_regular_allocator() */
-> > > +		smp_store_release(&sbi->s_mb_last_group, ac->ac_f_ex.fe_group);
-> > Do you really need any kind of barrier (implied by smp_store_release())
-> > here? I mean the store to s_mb_last_group is perfectly fine to be reordered
-> > with other accesses from the thread, isn't it? As such it should be enough
-> > to have WRITE_ONCE() here...
-> 
-> WRITE_ONCE()/READ_ONCE() primarily prevent compiler reordering and ensure
-> that variable reads/writes access values directly from L1/L2 cache rather
-> than registers.
+When compiling the RTC library functions test as a module, the module
+has the non-descriptive name "lib_test.ko".  Fix this by adding the
+subsystem's name as a prefix.
 
-I agree READ_ONCE() / WRITE_ONCE() are about compiler optimizations - in
-particular they force the compiler to read / write the memory location
-exactly once instead of reading it potentially multiple times in different
-parts of expression and getting inconsistent values, or possibly writing
-the value say byte by byte (yes, that would be insane but not contrary to
-the C standard).
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/rtc/Makefile                       | 2 +-
+ drivers/rtc/{lib_test.c => rtc_lib_test.c} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/rtc/{lib_test.c => rtc_lib_test.c} (100%)
 
-> They do not guarantee that other CPUs see the latest values. Reading stale
-> values could lead to more useless traversals, which might incur higher
-> overhead than memory barriers. This is why we use memory barriers to ensure
-> the latest values are read.
-
-But smp_load_acquire() / smp_store_release() have no guarantee about CPU
-seeing latest values either. They are just speculation barriers meaning
-they prevent the CPU from reordering accesses in the code after
-smp_load_acquire() to be performed before the smp_load_acquire() is
-executed and similarly with smp_store_release(). So I dare to say that
-these barries have no (positive) impact on the allocation performance and
-just complicate the code - but if you have some data that show otherwise,
-I'd be happy to be proven wrong.
-
-> If we could guarantee that each goal is used on only one CPU, we could
-> switch to the cheaper WRITE_ONCE()/READ_ONCE().
-
-Well, neither READ_ONCE() / WRITE_ONCE() nor smp_load_acquire() /
-smp_store_release() can guarantee that.
-
-								Honza
-
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index 4619aa2ac4697591..aa08d1c8a32ec23d 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -15,7 +15,7 @@ rtc-core-$(CONFIG_RTC_INTF_DEV)		+= dev.o
+ rtc-core-$(CONFIG_RTC_INTF_PROC)	+= proc.o
+ rtc-core-$(CONFIG_RTC_INTF_SYSFS)	+= sysfs.o
+ 
+-obj-$(CONFIG_RTC_LIB_KUNIT_TEST)	+= lib_test.o
++obj-$(CONFIG_RTC_LIB_KUNIT_TEST)	+= rtc_lib_test.o
+ 
+ # Keep the list ordered.
+ 
+diff --git a/drivers/rtc/lib_test.c b/drivers/rtc/rtc_lib_test.c
+similarity index 100%
+rename from drivers/rtc/lib_test.c
+rename to drivers/rtc/rtc_lib_test.c
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
