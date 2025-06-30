@@ -1,127 +1,178 @@
-Return-Path: <linux-kernel+bounces-709274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D507AEDB38
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF027AEDAE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87AF9178C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F051C16BFB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09C225EF97;
-	Mon, 30 Jun 2025 11:35:39 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B2325CC69;
+	Mon, 30 Jun 2025 11:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQ1ZdniB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373B25D21A;
-	Mon, 30 Jun 2025 11:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E9F235056;
+	Mon, 30 Jun 2025 11:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751283339; cv=none; b=boxu4FlYDTb4CvFMsLtRD57btB1BSiZinRL/7R1R640OWWvhmdW4jWlZDmBKB6pADMeAKziVQa8liL81+RENCtRQ75BO8s4mHRlMebZCy1yMKNvyNX5qwsFNVgWwANr4jq+zwS8mJFM6O9kOL0+54yEiZoE/WKxQKAhyXhMxNyo=
+	t=1751282916; cv=none; b=d0Gbggge3dwbxvCs6WPWt1AH9i90qZAkLMqNCHXKKmPYLAC4BWvmzgZ/QtDCySH1DJ4o9Z0L7rdFR9DFL114lllBlMHdEuW0G3DmcwwDPZjNGCsK2FlYsXMKvOEKtgzJP0Q77MR5YMHOb5ZirZiAIbXZHm0hz6ZVrh75167eR+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751283339; c=relaxed/simple;
-	bh=j8vjuXopMOzgU6kVsIB49GXlMX2NKPWeeErZMdyvwJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8Te/yFUI95U5gLZ0rj5n9PWA+eAhffFd3yog5RGn8KZsEysfKYvMUa+FAFnWiKmodTULvbyyL0hGjsHJR2PTMDPLkfJ1AMVzoEd/AORkup9F7o4yipjKMNyWTmjqD+7ImJnbPmk24Pz1TSOX+F2Kd1n9cF3yLv22BiRC7cohDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bW3xg3sxFzYQvwn;
-	Mon, 30 Jun 2025 19:35:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 68F031A1741;
-	Mon, 30 Jun 2025 19:35:34 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnxySCdmJomWTTAA--.54607S4;
-	Mon, 30 Jun 2025 19:35:32 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: hch@lst.de,
-	axboe@kernel.dk,
-	yukuai3@huawei.com
-Cc: penguin-kernel@I-love.SAKURA.ne.jp,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v2] brd: fix sleeping function called from invalid context in brd_insert_page()
-Date: Mon, 30 Jun 2025 19:28:28 +0800
-Message-Id: <20250630112828.421219-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1751282916; c=relaxed/simple;
+	bh=N/h64xLzq0goVwy4KzgtSusObZRIiU7ReaUoXVaeSDo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Z7UCg0qarbq8M9Ooz2YtrFFt7UChyyb5zCYQ2dMUJdcyj7m4BkZjR48iE6LqMoH2F01Jq2TZJFZI1b0HxusdMxy48cjgoBofpnOHUI0C6+p1KM0meBFOKfCVbJrOo6YopDd8iEEJ1d6dojch07g+Rhy8uF4V6w/lIhPSbgTn8dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQ1ZdniB; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751282915; x=1782818915;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=N/h64xLzq0goVwy4KzgtSusObZRIiU7ReaUoXVaeSDo=;
+  b=TQ1ZdniBSblIp/R+6pu8+u31xPqP9IZrXbnSXfNCYoBI2pR5CMulFBqs
+   R1c1YCaNWi2/D0CC/WPwJA7kR7vyaYtaZAFSZxof4f4MTBRVPPRv1RMS9
+   64gYlPkxhUqh82iOQYM8CtWBwd+Ohn06GTggA5GLY6gTfeEA2YAJ49Q/p
+   ZLYxmwvwo2HhK3BVJnJbIj4kuzfNCaY4So0wIuGmc4y92bxjZ9skq13Sc
+   zshwS4uQAGTlAEGgAQBzdAK64A6LPt6tipGxGk25tlJ7LF+V7lNsJH9H1
+   9R6rsZT1NyjOqWevCM+ezYc6+QqW8LrorPi/4LYIGq25+lqMihWxPxGFG
+   w==;
+X-CSE-ConnectionGUID: 4Z/I3u8fQOm7v3QAAxDNvQ==
+X-CSE-MsgGUID: OK1atbnARGejJL952XVxdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53653676"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="53653676"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 04:28:34 -0700
+X-CSE-ConnectionGUID: eaWahnIQRcaM/8ajVbVPYw==
+X-CSE-MsgGUID: V+LNQuoITJK5ORefNZtuNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="153904593"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 04:28:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Jun 2025 14:28:29 +0300 (EEST)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] platform/x86:intel/pmc: Enable SSRAM support for
+ Panther Lake
+In-Reply-To: <20250625063145.624585-6-xi.pardee@linux.intel.com>
+Message-ID: <9fccdef1-aabd-730c-d031-99d8319fba11@linux.intel.com>
+References: <20250625063145.624585-1-xi.pardee@linux.intel.com> <20250625063145.624585-6-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBnxySCdmJomWTTAA--.54607S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFW5XFW7JFyUGr17WryfZwb_yoW8Xr1xpF
-	ZIvFy7Cry5CF42v3W7Z3ZrCF1rGa93WayIkFyYqw1F9rW3Jry2934Ik34Yq3W5GrWxAFs8
-	ZFs0ywn5AFWDA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: multipart/mixed; boundary="8323328-1524790567-1751282909=:7079"
 
-From: Yu Kuai <yukuai3@huawei.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-__xa_cmpxchg() is called with rcu_read_lock(), and it will allocate
-memory if necessary.
+--8323328-1524790567-1751282909=:7079
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Fix the problem by moving rcu_read_lock() after __xa_cmpxchg(), meanwhile,
-it still should be held before xa_unlock(), prevent returned page to be
-freed by concurrent discard.
+On Tue, 24 Jun 2025, Xi Pardee wrote:
 
-Fixes: bbcacab2e8ee ("brd: avoid extra xarray lookups on first write")
-Reported-by: syzbot+ea4c8fd177a47338881a@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/685ec4c9.a00a0220.129264.000c.GAE@google.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-Changes in v2:
- - fix typo in the subject
- - add review tag.
+> Enable Panther Lake platforms to achieve PMC information from
+> Intel PMC SSRAM Telemetry driver and substate requirements data
+> from telemetry region.
+>=20
+> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel/pmc/core.h |  2 ++
+>  drivers/platform/x86/intel/pmc/ptl.c  | 30 +++++++++++++++++++++++++++
+>  2 files changed, 32 insertions(+)
+>=20
+> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86=
+/intel/pmc/core.h
+> index d8c7b28493055..cdb32f2203cff 100644
+> --- a/drivers/platform/x86/intel/pmc/core.h
+> +++ b/drivers/platform/x86/intel/pmc/core.h
+> @@ -301,6 +301,8 @@ enum ppfear_regs {
+>  #define PTL_PMC_LTR_CUR_ASLT=09=09=090x1C28
+>  #define PTL_PMC_LTR_CUR_PLT=09=09=090x1C2C
+>  #define PTL_PCD_PMC_MMIO_REG_LEN=09=090x31A8
+> +#define PTL_NUM_S0IX_BLOCKER=09=09=09106
+> +#define PTL_BLK_REQ_OFFSET=09=09=0955
+> =20
+>  /* SSRAM PMC Device ID */
+>  /* LNL */
+> diff --git a/drivers/platform/x86/intel/pmc/ptl.c b/drivers/platform/x86/=
+intel/pmc/ptl.c
+> index 394515af60d60..48be79b4e769f 100644
+> --- a/drivers/platform/x86/intel/pmc/ptl.c
+> +++ b/drivers/platform/x86/intel/pmc/ptl.c
+> @@ -10,6 +10,17 @@
+> =20
+>  #include "core.h"
+> =20
+> +/* PMC SSRAM PMT Telemetry GUIDS */
+> +#define PCDP_LPM_REQ_GUID 0x47179370
+> +
+> +/*
+> + * Die Mapping to Product.
+> + * Product PCDDie
+> + * PTL-H   PCD-H
+> + * PTL-P   PCD-P
+> + * PTL-U   PCD-P
+> + */
+> +
+>  static const struct pmc_bit_map ptl_pcdp_pfear_map[] =3D {
+>  =09{"PMC_0",               BIT(0)},
+>  =09{"FUSE_OSSE",           BIT(1)},
+> @@ -515,6 +526,22 @@ static const struct pmc_reg_map ptl_pcdp_reg_map =3D=
+ {
+>  =09.lpm_live_status_offset =3D MTL_LPM_LIVE_STATUS_OFFSET,
+>  =09.s0ix_blocker_maps =3D ptl_pcdp_blk_maps,
+>  =09.s0ix_blocker_offset =3D LNL_S0IX_BLOCKER_OFFSET,
+> +=09.num_s0ix_blocker =3D PTL_NUM_S0IX_BLOCKER,
+> +=09.blocker_req_offset =3D PTL_BLK_REQ_OFFSET,
+> +};
+> +
+> +static struct pmc_info ptl_pmc_info_list[] =3D {
+> +=09{
+> +=09=09.guid=09=3D PCDP_LPM_REQ_GUID,
+> +=09=09.devid=09=3D PMC_DEVID_PTL_PCDH,
+> +=09=09.map=09=3D &ptl_pcdp_reg_map,
+> +=09},
+> +=09{
+> +=09=09.guid   =3D PCDP_LPM_REQ_GUID,
+> +=09=09.devid  =3D PMC_DEVID_PTL_PCDP,
+> +=09=09.map    =3D &ptl_pcdp_reg_map,
+> +=09},
+> +=09{}
+>  };
+> =20
+>  #define PTL_NPU_PCI_DEV                0xb03e
+> @@ -543,6 +570,9 @@ static int ptl_core_init(struct pmc_dev *pmcdev, stru=
+ct pmc_dev_info *pmc_dev_in
+>  }
+> =20
+>  struct pmc_dev_info ptl_pmc_dev =3D {
+> +=09.pci_func =3D 2,
+> +=09.telem_info =3D SUB_REQ_BLK,
+> +=09.regmap_list =3D ptl_pmc_info_list,
+>  =09.map =3D &ptl_pcdp_reg_map,
+>  =09.suspend =3D cnl_suspend,
+>  =09.resume =3D ptl_resume,
+>=20
 
- drivers/block/brd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index b1be6c510372..0c2eabe14af3 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -64,13 +64,15 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
- 
- 	rcu_read_unlock();
- 	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
--	rcu_read_lock();
--	if (!page)
-+	if (!page) {
-+		rcu_read_lock();
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	xa_lock(&brd->brd_pages);
- 	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
- 			page, gfp);
-+	rcu_read_lock();
- 	if (ret) {
- 		xa_unlock(&brd->brd_pages);
- 		__free_page(page);
--- 
-2.39.2
+--=20
+ i.
 
+--8323328-1524790567-1751282909=:7079--
 
