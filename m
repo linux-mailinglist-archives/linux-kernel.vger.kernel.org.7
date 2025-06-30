@@ -1,38 +1,47 @@
-Return-Path: <linux-kernel+bounces-708643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35586AED301
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E42BAED2FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BA93A53AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 03:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470013A7A04
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 03:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDA0191F72;
-	Mon, 30 Jun 2025 03:46:25 +0000 (UTC)
-Received: from cosmicgizmosystems.com (cosgizsys.com [63.249.102.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23821547F2;
+	Mon, 30 Jun 2025 03:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PA03pMVe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988B823CE;
-	Mon, 30 Jun 2025 03:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.249.102.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1709679D2
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 03:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751255185; cv=none; b=H7KezdbLb9tsm1Pd54XHB3i1uQ+qLMywbOO4Su3t4EvV7HlS6cdes1FwcMylnDlbcdL/P0EMDMhhNyiINoGn4ahULrTLwOs7MRbtnjfBO1Hq6lcOblVK+g7i7TzY6PjdMWxKARN9Z899oVeK6e2/rmCBGK24Gj32NoSm1L5RwfA=
+	t=1751254903; cv=none; b=qYg603z9MY/e4BWTsQ8OkvU0lC2xd6396naRq2nftQWBwgovrPV3jafM5Sdfb1dFpDryYOjR6dV4Oq4QtK+ycs9+5XLsofZq1eKsHFJ1LjRHzdnqSBy3dpDSdHWtAGbM43IjJZedfkqH4o1FHgfh8yqjriBiR+06U6NW+lc8cPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751255185; c=relaxed/simple;
-	bh=vIbQ+oOCpoEJZX+mmjayNG5sy80Lm7EDqEBn3/cWReA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEXCZGviCANpIA4oPUZBQ3AFlcVqrS+x5I4Fdu56nxgQRPSmrTgxs8oErLN3g5jTYuOakyBlc8wW8s54LDEDJ5qlMTloSQP988/R1cp936qKrHvRmYaM1Y2e1Ti8gX31NDLzMYTOpmVGfDmHCs3axWCsCB/7Y2rNt/anZ3fgswY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com; spf=pass smtp.mailfrom=cosmicgizmosystems.com; arc=none smtp.client-ip=63.249.102.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cosmicgizmosystems.com
-Received: from [10.0.0.100] (c-71-193-224-155.hsd1.wa.comcast.net [71.193.224.155])
-	by host11.cruzio.com (Postfix) with ESMTPSA id 6D3501CD5295;
-	Sun, 29 Jun 2025 20:41:05 -0700 (PDT)
-Message-ID: <cce2d94e-8798-489f-8c9f-68f021bb21a7@cosmicgizmosystems.com>
-Date: Sun, 29 Jun 2025 20:41:04 -0700
+	s=arc-20240116; t=1751254903; c=relaxed/simple;
+	bh=csJVVF3ysLWf9LBqtyneSoacKYIJeT/DH5w1ddjGNfw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hUa3deneaWp9uN6dhLLN+hl9gbFZP9Gm/WSJ0cGXb6DulOESxFTxwbKvHNOtRBtGpxAROXMzf/RvVoRhH4Jesg+WZXVm9gg1HFxRFVAe8yyWFOoZNfs7NX4/Pm8rIMfML/eqD9dpJEkXXRC37WfwB2SGCgieUprrpH3gEZsnbP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PA03pMVe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67393C4CEEB;
+	Mon, 30 Jun 2025 03:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751254902;
+	bh=csJVVF3ysLWf9LBqtyneSoacKYIJeT/DH5w1ddjGNfw=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=PA03pMVew+3YX65tpjwgdFfIs6mL2WK9aPsq9RPuVkwvgHu83XjRiqZqINItjcdAa
+	 VVlJ3m1UGMwmHv3Iqi+yuBzU6awpY2k78GEbVYo31DxWrqII4yGhNzvUajXerucFTP
+	 GRlLR+eUdilde3McF+gCFR3KGHqBmsGcQX4q2hgUpGtlXsX1Bp9jbLnF4GdkjSt4RH
+	 lWfCPcdcNHwdVRuwcey+b5QSmfmQ/2eceMS8Psim6QGelsi/nLcdZUwYd01pISFKbi
+	 HyqC85lQ2cSZdEeVmMtIIFkFZI9Hy+0Yj5B6+0wBMJxscVoVn+JP9GpynXtHCeQtWa
+	 yVyANUYeHXE9A==
+Message-ID: <3c0d3d19-58b2-4702-b42b-1df7985def74@kernel.org>
+Date: Mon, 30 Jun 2025 11:41:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -40,58 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: playstation: DS4: Add BT poll interval adjustment
-To: Vadym Tytan <titanv3585@gmail.com>, kernel test robot <lkp@intel.com>,
- Roderick Colenbrander <roderick.colenbrander@sony.com>,
- Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-References: <20250508214305.836406-1-titanv3585@gmail.com>
- <202505100535.vKH3zHW6-lkp@intel.com>
- <f5594328-11e4-4310-b961-41d8ca0c8116@gmail.com>
+Cc: chao@kernel.org, feng.han@honor.com, jaegeuk@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v4 2/2] f2fs: don't allow unaligned truncation
+ to smaller/equal size on pinned file
+To: wangzijie <wangzijie1@honor.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <4a227a94-6e8e-4ab3-a6f4-fdebc6419764@kernel.org>
+ <20250630025023.3876706-1-wangzijie1@honor.com>
 Content-Language: en-US
-From: Terry Junge <linuxhid@cosmicgizmosystems.com>
-In-Reply-To: <f5594328-11e4-4310-b961-41d8ca0c8116@gmail.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250630025023.3876706-1-wangzijie1@honor.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 5/13/25 1:44 AM, Vadym Tytan wrote:
->> kernel test robot noticed the following build warnings:
+On 6/30/25 10:50, wangzijie wrote:
+>> On 6/24/25 11:59, wangzijie wrote:
+>>> To prevent scattered pin block generation, don't allow non-section aligned truncation
+>>> to smaller or equal size on pinned file. But for truncation to larger size, after
+>>> commit 3fdd89b452c2("f2fs: prevent writing without fallocate() for pinned files"),
+>>> we only support overwrite IO to pinned file, so we don't need to consider
+>>> attr->ia_size > i_size case.
 >>
->> sparse warnings: (new ones prefixed by >>)
->>>> drivers/hid/hid-playstation.c:1773:25: sparse: sparse: symbol 'dev_attr_dualshock4_bt_poll_interval' was not declared. Should it be static?
+>> Zijie, can you take a look generic/494? suspect that it is caused by this change.
 >>
->> vim +/dev_attr_dualshock4_bt_poll_interval +1773 drivers/hid/hid-playstation.c
+>> generic/494 3s ... - output mismatch (see /share/git/fstests/results//generic/494.out.bad)
+>>    --- tests/generic/494.out   2025-01-12 21:57:40.279440664 +0800
+>>    +++ /share/git/fstests/results//generic/494.out.bad 2025-06-30 10:01:37.000000000 +0800
+>>    @@ -2,7 +2,7 @@
+>>     Format and mount
+>>     Initialize file
+>>     Try to truncate
+>>    -ftruncate: Text file busy
+>>    +ftruncate: Invalid argument
+>>     Try to punch hole
+>>     fallocate: Text file busy
+>>    ...
+>>    (Run 'diff -u /share/git/fstests/tests/generic/494.out /share/git/fstests/results//generic/494.out.bad'  to see the entire diff)
+>> Ran: generic/494
+>> Failures: generic/494
+>> Failed 1 of 1 tests
 >>
->>    1772   
->>> 1773    struct device_attribute dev_attr_dualshock4_bt_poll_interval = {
->>    1774        .attr    = { .name = "bt_poll_interval", .mode = 0644 },
+>> Thanks,
+> 
+> Hi, Chao
+> generic/494 swapon file and try to ftruncate.
+> 
+> Before this change
+> swap_acticate:
+> set_inode_flag(inode, FI_PIN_FILE)
+> 
+> ftruncate:
+> setattr_prepare
+> -inode_newsize_ok
+> --return -ETXTBSY for SWAPFILE
+> 
+> After this change:
+> swap_acticate:
+> set_inode_flag(inode, FI_PIN_FILE)
+> 
+> ftruncate: 
+> prevent unaligned truncation before setattr_prepare()
+> return -EINVAL
+> 
+> Sorry for this. Maybe I should apply this check after setattr_prepare()? Or do
 
-Should it be      .attr    = { .name = "dualshock4_bt_poll_interval", .mode = 0644 },  ?
-
-Or did you not expand the macro fully on purpose?
+Check after setattr_prepare() looks fine to me, in addition, can you please add
+more comments for the reason why we relocate code there?
 
 Thanks,
-Terry
 
->>    1775        .show    = dualshock4_show_poll_interval,
->>    1776        .store    = dualshock4_store_poll_interval,
->>    1777    };
->>    1778   
+> you have some suggestions?
 > 
-> This piece of code is expanded `DEVICE_ATTR` macro with changed variable name.
-> `DEVICE_ATTR` is defined as:
-> ```c
-> // Reference: https://github.com/intel-lab-lkp/linux/blob/Vadym-Tytan/HID-playstation-DS4-Add-BT-poll-interval-adjustment/20250509-054413/include/linux/device.h#L138-L158
-> #define DEVICE_ATTR(_name, _mode, _show, _store) \
->     struct device_attribute dev_attr_##_name = __ATTR(_name, _mode, _show, _store)
-> ```
-> It doesn't use `static` so neither did I.
 > 
-> P.S. Macro was expanded and variable name was changed from `dev_attr_bt_poll_interval` to `dev_attr_dualshock4_bt_poll_interval` because this attribute only applies to DualShock4
-> 
+>>>
+>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>> ---
+>>> v4:
+>>> - convert sbi first and apply change
+>>> ---
+>>>  fs/f2fs/file.c | 11 +++++++++++
+>>>  1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index 209f43653..4809f0fd6 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -1048,6 +1048,17 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>>>  			!IS_ALIGNED(attr->ia_size,
+>>>  			F2FS_BLK_TO_BYTES(fi->i_cluster_size)))
+>>>  			return -EINVAL;
+>>> +		/*
+>>> +		 * To prevent scattered pin block generation, we don't allow
+>>> +		 * smaller/equal size unaligned truncation for pinned file.
+>>> +		 * We only support overwrite IO to pinned file, so don't
+>>> +		 * care about larger size truncation.
+>>> +		 */
+>>> +		if (f2fs_is_pinned_file(inode) &&
+>>> +			attr->ia_size <= i_size_read(inode) &&
+>>> +			!IS_ALIGNED(attr->ia_size,
+>>> +			F2FS_BLK_TO_BYTES(CAP_BLKS_PER_SEC(sbi))))
+>>> +			return -EINVAL;
+>>>  	}
+>>>  
+>>>  	err = setattr_prepare(idmap, dentry, attr);
 > 
 
 
