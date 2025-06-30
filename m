@@ -1,270 +1,138 @@
-Return-Path: <linux-kernel+bounces-708963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F226AAED777
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:38:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA6AAED781
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17EB1897F56
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFDFF188ED51
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72B02417EF;
-	Mon, 30 Jun 2025 08:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b8EiaXph";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fqITN2RK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b8EiaXph";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fqITN2RK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEAB2459C0;
+	Mon, 30 Jun 2025 08:38:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6761DE4FF
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D384242D9B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751272698; cv=none; b=bIAbbb9M70BvQIVmLQMW0oUjIjzhYT4RlsKynGSdIqlEjykm2UdeTEF2bpifL/SF6hu2BByl2iBWbu4BXp9t007NbrimiSRsW66WrviKvbj1mwTY7Pxz5Bb73Up4T9jMLaHL8DF5uUBUDOnmQopTXHDHQED5LwoCa2RSa0a2kiw=
+	t=1751272727; cv=none; b=QAOrWAYdc+SvYMOnlQgIKWXjFIvk7gYTVmyFo421ioULIon6nqcPQgaNW5jnPXWP4BDYgcN+f+jeAsxYoJwNe+0kTNU6FFbHtATCvLnhl/tY+vli11CtHupycNK5tml79WFeu6D5PbXXZ9tDMf6pWzf+mhIsljc/g4aqGZxLSnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751272698; c=relaxed/simple;
-	bh=5HJR6Ip4/vKwlAS2wmyEw7S9naxRwzxmIBnM7Kb7su4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eeu52eN6OG32LuRlFU9w/rpDPNAeaLhmcxwKZOYe4jrBo49EktT186Bt/fN7/1zMx3mM2AC00IAQ6Uy86Zevk76NdvE0rJWXTijFzwcOSi0ACb/lZnxaC0Od1ofoT4e8Xug6BSsK1CVWI/aFqJyLYJ/2kA5Q5rOY2Qn+qvbsdY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b8EiaXph; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fqITN2RK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b8EiaXph; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fqITN2RK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 035181F45B;
-	Mon, 30 Jun 2025 08:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751272693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
-	b=b8EiaXphj0uJBqIoWtFS/c8SfcKWHt0FfPBlD23oyjuw3dnV5ij0OeNljFH3gUBlhvxCO+
-	gadGfCL6L+OwFB/zY+2v5NnRpDvWSzdt+IZ5R2iyvbRGmOFvcjRloZRJiG4o52d5qmxXh3
-	jf2+k+whMwzWuE+zRmrAgREXg1LBlas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751272693;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
-	b=fqITN2RKQBK6qTFyS/fLhr1xhs76aD0i7HV61qpbQHixlWJRZRgmRhsEiY5fUCDVW+SE4L
-	Xot4Nu+aBvDH4uCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=b8EiaXph;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=fqITN2RK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751272693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
-	b=b8EiaXphj0uJBqIoWtFS/c8SfcKWHt0FfPBlD23oyjuw3dnV5ij0OeNljFH3gUBlhvxCO+
-	gadGfCL6L+OwFB/zY+2v5NnRpDvWSzdt+IZ5R2iyvbRGmOFvcjRloZRJiG4o52d5qmxXh3
-	jf2+k+whMwzWuE+zRmrAgREXg1LBlas=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751272693;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
-	b=fqITN2RKQBK6qTFyS/fLhr1xhs76aD0i7HV61qpbQHixlWJRZRgmRhsEiY5fUCDVW+SE4L
-	Xot4Nu+aBvDH4uCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D844C1399F;
-	Mon, 30 Jun 2025 08:38:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FN/ENPRMYmhifwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 30 Jun 2025 08:38:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 722B5A08D2; Mon, 30 Jun 2025 10:38:12 +0200 (CEST)
-Date: Mon, 30 Jun 2025 10:38:12 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux-kernel@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 04/16] ext4: utilize multiple global goals to reduce
- contention
-Message-ID: <qtdxe2rmnvrxdjmp26ro4l5erwq5lrbvmvysxfgqddadnpr7x4@xrkrdjkgsh67>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-5-libaokun1@huawei.com>
- <xmhuzjcgujdvmgmnc3mfd45txehmq73fiyg32vr6h7ldznctlq@rosxe25scojb>
- <77077598-45d6-43dd-90a0-f3668a27ca15@huawei.com>
+	s=arc-20240116; t=1751272727; c=relaxed/simple;
+	bh=GWGc5XkXW057UkUoas7KcMmCELtNfEXEicrspHRhoKc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sZrc7dz4NSTDP7LXpb+DtRSAl9VyKTkEubTd6fiaKEfy0RvqZzTkdt19biw9FWM0C6QJapVe0yUWGNjv7s/Kwcdgd5Ib8S0q74XJtm/jCYJ/oa9eTBtc4Rw8sY54rNRxDCLtZ3gWAsRyI7fxzQ9/LwaHcBjpqkbaS0pwK5/j8zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uWA1w-00011j-R3; Mon, 30 Jun 2025 10:38:24 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uWA1t-0064Zw-1S;
+	Mon, 30 Jun 2025 10:38:21 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uWA1t-0007Gn-14;
+	Mon, 30 Jun 2025 10:38:21 +0200
+Message-ID: <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
+Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>, 
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob
+ Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,  Jonathan Corbet
+ <corbet@lwn.net>, Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Date: Mon, 30 Jun 2025 10:38:21 +0200
+In-Reply-To: <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
+	 <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <77077598-45d6-43dd-90a0-f3668a27ca15@huawei.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 035181F45B
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon 30-06-25 14:50:30, Baokun Li wrote:
-> On 2025/6/28 2:31, Jan Kara wrote:
-> > On Mon 23-06-25 15:32:52, Baokun Li wrote:
-> > > When allocating data blocks, if the first try (goal allocation) fails and
-> > > stream allocation is on, it tries a global goal starting from the last
-> > > group we used (s_mb_last_group). This helps cluster large files together
-> > > to reduce free space fragmentation, and the data block contiguity also
-> > > accelerates write-back to disk.
-> > > 
-> > > However, when multiple processes allocate blocks, having just one global
-> > > goal means they all fight over the same group. This drastically lowers
-> > > the chances of extents merging and leads to much worse file fragmentation.
-> > > 
-> > > To mitigate this multi-process contention, we now employ multiple global
-> > > goals, with the number of goals being the CPU count rounded up to the
-> > > nearest power of 2. To ensure a consistent goal for each inode, we select
-> > > the corresponding goal by taking the inode number modulo the total number
-> > > of goals.
-> > > 
-> > > Performance test data follows:
-> > > 
-> > > Test: Running will-it-scale/fallocate2 on CPU-bound containers.
-> > > Observation: Average fallocate operations per container per second.
-> > > 
-> > >                     | Kunpeng 920 / 512GB -P80|  AMD 9654 / 1536GB -P96 |
-> > >   Disk: 960GB SSD   |-------------------------|-------------------------|
-> > >                     | base  |    patched      | base  |    patched      |
-> > > -------------------|-------|-----------------|-------|-----------------|
-> > > mb_optimize_scan=0 | 7612  | 19699 (+158%)   | 21647 | 53093 (+145%)   |
-> > > mb_optimize_scan=1 | 7568  | 9862  (+30.3%)  | 9117  | 14401 (+57.9%)  |
-> > > 
-> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > ...
-> > 
-> > > +/*
-> > > + * Number of mb last groups
-> > > + */
-> > > +#ifdef CONFIG_SMP
-> > > +#define MB_LAST_GROUPS roundup_pow_of_two(nr_cpu_ids)
-> > > +#else
-> > > +#define MB_LAST_GROUPS 1
-> > > +#endif
-> > > +
-> > I think this is too aggressive. nr_cpu_ids is easily 4096 or similar for
-> > distribution kernels (it is just a theoretical maximum for the number of
-> > CPUs the kernel can support)
-> 
-> nr_cpu_ids is generally equal to num_possible_cpus(). Only when
-> CONFIG_FORCE_NR_CPUS is enabled will nr_cpu_ids be set to NR_CPUS,
-> which represents the maximum number of supported CPUs.
+On Mo, 2025-06-23 at 11:27 +0200, Cl=C3=A9ment Le Goffic wrote:
+> Introduce the driver for the DDR Performance Monitor available on
+> STM32MPU SoC.
+>=20
+> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
+> that come from the DDR Controller such as read or write events.
+>=20
+> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
+> counter, there is a notion of set of events.
+> Events from different sets cannot be monitored at the same time.
+> The first chosen event selects the set.
+> The set is coded in the first two bytes of the config value which is on 4
+> bytes.
+>=20
+> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controlle=
+r
+> and may be secured by bootloaders.
+> Access controllers allow to check access to a resource. Use the access
+> controller defined in the devicetree to know about the access to the
+> DDRPERFM clock.
+>=20
+> Signed-off-by: Cl=C3=A9ment Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  drivers/perf/Kconfig         |  11 +
+>  drivers/perf/Makefile        |   1 +
+>  drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 905 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
+> new file mode 100644
+> index 000000000000..c0bce1f446a0
+> --- /dev/null
+> +++ b/drivers/perf/stm32_ddr_pmu.c
+> @@ -0,0 +1,893 @@
+[...]
+> +	if (of_property_present(pdev->dev.of_node, "resets")) {
+> +		rst =3D devm_reset_control_get(&pdev->dev, NULL);
 
-Indeed, CONFIG_FORCE_NR_CPUS confused me.
+Use devm_reset_control_get_optional_exclusive() instead. It returns
+NULL if the device tree doesn't contain a resets property.
 
-> > which seems like far too much for small
-> > filesystems with say 100 block groups.
-> 
-> It does make sense.
-> 
-> > I'd rather pick the array size like:
-> > 
-> > min(num_possible_cpus(), sbi->s_groups_count/4)
-> > 
-> > to
-> > 
-> > a) don't have too many slots so we still concentrate big allocations in
-> > somewhat limited area of the filesystem (a quarter of block groups here).
-> > 
-> > b) have at most one slot per CPU the machine hardware can in principle
-> > support.
-> > 
-> > 								Honza
-> 
-> You're right, we should consider the number of block groups when setting
-> the number of global goals.
-> 
-> However, a server's rootfs can often be quite small, perhaps only tens of
-> GBs, while having many CPUs. In such cases, sbi->s_groups_count / 4 might
-> still limit the filesystem's scalability.
+> +		if (IS_ERR(rst)) {
+> +			dev_err(&pdev->dev, "Failed to get reset\n");
 
-I would not expect such root filesystem to be loaded by many big
-allocations in parallel :). And with 4k blocksize 32GB filesystem would
-have already 64 goals which doesn't seem *that* limiting?
+Please consider using dev_err_probe() instead.
 
-Also note that as the filesystem is filling up and the free space is getting
-fragmented, the number of groups where large allocation can succeed will
-reduce. Thus regardless of how many slots for streaming goal you have, they
-will all end up pointing only to those several groups where large
-still allocation succeeds. So although large number of slots looks good for
-an empty filesystem, the benefit for aged filesystem is diminishing and
-larger number of slots will make the fs fragment faster.
+> +			ret =3D PTR_ERR(rst);
+> +			goto err_clk;
+> +		}
+> +		reset_control_assert(rst);
+> +		reset_control_deassert(rst);
 
-> Furthermore, after supporting LBS, the number of block groups will
-> sharply decrease.
+These can be done unconditionally, as they are no-ops for rst =3D=3D NULL.=
+=20
 
-Right. This is going to reduce scalability of block allocation in general.
-Also as the groups grow larger with larger blocksize the benefit of
-streaming allocation which just gives a hint about block group to use is
-going to diminish when the free block search will be always starting from
-0. We will maybe need to store ext4_fsblk_t (effectively combining
-group+offset in a single atomic unit) as a streaming goal to mitigate this.
-
-> How about we directly use sbi->s_groups_count (which would effectively be
-> min(num_possible_cpus(), sbi->s_groups_count)) instead? This would also
-> avoid zero values.
-
-Avoiding zero values is definitely a good point. My concern is that if we
-have sb->s_groups_count streaming goals, then practically each group will
-become a streaming goal group and thus we can just remove the streaming
-allocation altogether, there's no benefit.
-
-We could make streaming goal to be ext4_fsblk_t so that also offset of the
-last big allocation in the group is recorded as I wrote above. That would
-tend to pack big allocations in each group together which is benefitial to
-combat fragmentation even with higher proportion of groups that are streaming
-goals (and likely becomes more important as the blocksize and thus group
-size grow). We can discuss proper number of slots for streaming allocation
-(I'm not hung up on it being quarter of the group count) but I'm convinced
-sb->s_groups_count is too much :)
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+regards
+Philipp
 
