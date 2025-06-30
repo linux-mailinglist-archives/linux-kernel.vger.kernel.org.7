@@ -1,140 +1,169 @@
-Return-Path: <linux-kernel+bounces-710126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1473BAEE77D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:27:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6A2AEE781
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B224427CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FFB93BE210
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE742E6D1D;
-	Mon, 30 Jun 2025 19:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C87B1F4E57;
+	Mon, 30 Jun 2025 19:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koxDoWj1"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzHLCqZz"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D761DED49;
-	Mon, 30 Jun 2025 19:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0D43AA8;
+	Mon, 30 Jun 2025 19:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751311668; cv=none; b=a+GiTFSHPAfSlFcvPLnx9MujBTs5ulUjHSYMur5cDN0KqoBSZTseBuL6RsTgNEXibjhOtogZa04K6FK+b1KO/Q5YW2INRroZ669IOJYQgayIbwHPxiqtHNulo/g3/gv189slpzDMwDA5IIlt8fmkjOjyOj0j/B7EWd+OW+fjYSg=
+	t=1751312002; cv=none; b=WW3h5wDw0DHRg6jquE1zET/m5xhj92pGKNO7fbSDhjEOlLukqwfY8BrkN/4gWV+PcKyn7m0YN/dAXVWu6tqTZui+Bfpq3m/0GVOejUYfuPoefKDPj49nl6l50zl9plHb+MO3HBtyPBm/ZCFPhUorBarAo6No9TwQvjaEsp6/jNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751311668; c=relaxed/simple;
-	bh=DfDX/O7xP1nZjrC1FK+4ob51GVWC+vd6Yf1nZMDZ5Ok=;
+	s=arc-20240116; t=1751312002; c=relaxed/simple;
+	bh=kAgCkIezU6dLBy1qMupKYWlktOvfEHFfvi2Jw9Kl2mQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l2h/A1Y8/EraIDur0FR+7cEHBW3gIGgkRj7WiK1tgxqFN+kA95szhnE/fjYoVD4RXpgrzB4ZvQBQeg5U3wJyk0DJPC7Py2OK3fSvlSsYsYs4YjpKIP9V0+gkY+3Dg96bceIi7/CXYKVaPCFNO+6qrtXWXFp/Krl94SUX4bLI8hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=koxDoWj1; arc=none smtp.client-ip=209.85.208.175
+	 To:Cc:Content-Type; b=TjjQoDDKxPVn8yI/CijBA23Vqp/qnIODtsmp4w6wLDghuSfe/Ec9fw379/owGeUIOLcXkaC1kBDiaakeadjYjuGuTbvbJozSQxw1WspMcJaWza666MURhYn7O49N3w8N5wXA/Z6EEMadADYwFh5FEH4LxkBfOL6stUKnSn0GIb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzHLCqZz; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso46975931fa.1;
-        Mon, 30 Jun 2025 12:27:46 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-553b6a349ccso2815743e87.0;
+        Mon, 30 Jun 2025 12:33:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751311665; x=1751916465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751311999; x=1751916799; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SKxhp32ZYS91rGBb5JyVKJ/KNyC65qKnN6o9z2cXJKI=;
-        b=koxDoWj1nzVw8nveFGMpYfFiy7i010mVtgyuJX1+e9iCuPEWyl8mmABNsbPd/EEQkd
-         vzxyOQ8/kyFd6i1xTvgDMxqPXWJmHH6q2hlNULl2078k9BvULefIO9SRzI2s4I0AVhRk
-         0WrlzuVcWiIDNY6bvu4WbdJ+Qepie8i1ASwN1TsjQXX7V9B/W9ze1NyfOSwKT//BJd1P
-         mzwMXktBrMbftYvtupxpMQ+Qx6npMx3+3NGizayZNdfTbRljgCX3NFkQDETy8ewBCReF
-         4lx5wexuLHUrm5629qs+jeHyWMtTCSBZ3TCCJxhQJ2ZGAG7rohDWGcrNdTOU7GAZndHc
-         DNeg==
+        bh=UFs/ehALtL0+qFoc09farxfhDThHkq27kEeWKbJRfGk=;
+        b=UzHLCqZzj5VdFge5P2m69zRTiOQb3akVYozKL8eB0wVLA3pt1BpronGJobo/KBWeWD
+         DSO/85yqe0mhDPHOnvTFU0OatKWF4komXCQlESno6uhogZM7h2Oy2WTqMDoNUCFPnGrW
+         YKjZrC/vxJBeXQZBxnpZRJaPGZ7zkbVLrFD2lK8j/wmcb035sfZzAsN1+SWYGxN2TkOB
+         O+nxy2YSHVLj8OCJVSK4EGOFIx701r2DT1BAQthXg1RzLrVMiQNQ/+QrHEyxjKu9JUIO
+         vawL+9+nHbMVCiihEaA2QWnRCVmPgOXAW3+XaJN4DEl66O95ggUwDQMQDlMygnQD0bOT
+         hkYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751311665; x=1751916465;
+        d=1e100.net; s=20230601; t=1751311999; x=1751916799;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SKxhp32ZYS91rGBb5JyVKJ/KNyC65qKnN6o9z2cXJKI=;
-        b=eydY9h400kP13vwIduCE0pI08xB40irRBG5c/3Yg9gZ+fPvCsMvycWddoN67Xm/+yI
-         jKPBK0DYOfzU0r6SC5gcvkLiGROa2Avp6SKxdrGarU7OfKlwCWBXeMIL1Jrc2+qKWd2w
-         cCosVJTUDR1YHADJP+rdxrfwNsTiLMVapLD3s8K6n3IqfqqrMq6ytWc9O78yijYAWqpu
-         Rc17QAXpUzwHjcvxTBMrNWLrR5yqsYF1XoM0l31K8u1DrB2nqApa/bIK2Ml1rXZfES9b
-         9em4p7rw1uNSl87peGtxxuscT+vLwkA91B8djAsV/CuW6ADvQWwDgqNarB/Qq5e3571H
-         9E9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUsX9Hl5i/J/YA2bP47qI3Y1S76rrLbdM2ZdCS+iPdLRf2wBd939bZJyW38JqrbK7RuXoh7KRp4uZXb@vger.kernel.org, AJvYcCXRl59qKeFTTbO5FsBqZt9Fr4NQ+jdcHyEmQP0d0sY7z+M/r1bX6Jd7gxLySObun634n+O5/wW0x9BiEyY=@vger.kernel.org, AJvYcCXj5BV7Df3aOxdWN0wl+ItqCjMqbWnGcRo8qWQ0iPCACePhWfnFKtrQTYUkuzJ6FLB3Z3KQ3X7zcJM0S0qP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkCh8OHrN+p9hEq09ehphJ03DiE0ZorZKIsnxeCmzYUEusypQu
-	wfDu97eUTYYgrZx1naAVICQIaPaqNru5Jv2vgkXhD2Cv8eKW7DiQg0YNfWf7ir31CUcBe92wUQr
-	qIx5ezdD2xn7j86dTgfDElbCI7jN8Oj8=
-X-Gm-Gg: ASbGncuqOVtthN7lLaTJ1m2zS9769TR4p9yk3QoBTzTUME3cZnXeyWQmpQbSatj+X5/
-	msCSNf7CKudf5ha7lu3M5j6I/gEhk6rD7rbww/08SdwxYw8F7fzzHo45kMBxMpez4jf76heZLX8
-	D0bg50v/tBdAZljubK/6WpMiaFCKYC8Yst6DGbnRYQg8I=
-X-Google-Smtp-Source: AGHT+IEa0bNLNvvrJxIYMARb2nqo4t1aBB768pKUvFh6Ri7+8kEYthBndyHqVBBh2Z3GuscfGkAJNF19gpF1An4OS1I=
-X-Received: by 2002:a05:6512:3d9f:b0:553:5135:69fb with SMTP id
- 2adb3069b0e04-5550b869ff8mr3999969e87.10.1751311664459; Mon, 30 Jun 2025
- 12:27:44 -0700 (PDT)
+        bh=UFs/ehALtL0+qFoc09farxfhDThHkq27kEeWKbJRfGk=;
+        b=cpK0K8QGhudYWkGClAZwbZT45awnVDRI43QUsHR6bSrE1ua/fHa4dydXAPGqVV8a2j
+         DHE+mm3Q+IOoZCJ9G7V+ON8CqH3GVgcFn45+31Mqw7pCjwmb3XuQ1Its6W0rMr5NlKrD
+         MiCFjDB9/sYyglhQyMDK+9PSrx6PquISztLTmzgHY6NAo/1UrjRWU8+26k5y8cNnYEzW
+         Xob6lK4Z+Q5jpAPYfI36b/GmFBTLFsM8PXlT+Qc1Bg29r8xgeLIkFnfU7bxYY2ddAP+O
+         nSneXA/QcjR3Zs5qDY3ivnsVy/ItOT3TzxOxdWt+Akvao5gVPvMRPJRMpcZcHorymtz9
+         jqVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOFlw9So+YVi4sIyijQBrOly/lQQd+rmBnJrOCEwO6RALdjATTgUfwoqDEcCbPaD8SOsI1IfyJdA/SbPpO@vger.kernel.org, AJvYcCVkPBcB5VDrm3SbVUNg61LkAl8ktNstWfjHk5TehnzhEK7QugLjDJHXLc01mQYP/NmypdRQ2KBTCGSN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuFEDAzxFPB9m3HZ0x1KAphZ8IXU7/9r9GRT+nDfitCQy09YTr
+	vpa9tLAUg4ms4USKd5ofgVfPelolXY0nBGYbYzYl8QSZ7Le9HiMZgdt9C/sSK79O1ZcKSiu27I7
+	zLqgZxiUa2esTbWzu3QrkqaZZPw1AgAk=
+X-Gm-Gg: ASbGnctyGWeif/he9M2GEx0ChYrgnnVIjvMxutD0bi8sYB4zEsx7wGg/4A3cVoY9wmK
+	HZfAp3K98o36je5fqMcC1VluVuv9Gd41YXk/8N4sDHH8P+gR/OHByotkZCRvtv4r4xipAnaAw4M
+	4UXluQ1iYgmFxupI6ZreBaRx8Wb1NrfDPBXAhmwQv3sws=
+X-Google-Smtp-Source: AGHT+IGL1mELHdrz6HdxzWEWB3SBn7d/Rnj0vx3ffhkVy9NM2gVR9bObheCFocjQaqGhjFns4WPlclmCGQsLdR2UqGw=
+X-Received: by 2002:a05:6512:3055:b0:553:cc61:1724 with SMTP id
+ 2adb3069b0e04-5550b84e53dmr4479902e87.24.1751311998729; Mon, 30 Jun 2025
+ 12:33:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com> <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
-In-Reply-To: <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
+References: <20250522-gpio-palmas-gpio-v2-1-89f209d4a949@gmail.com> <CAMRc=Mdwa=DuubA6P+EnjUAQE8XupYsbo=3LuH-jYEBttREGqg@mail.gmail.com>
+In-Reply-To: <CAMRc=Mdwa=DuubA6P+EnjUAQE8XupYsbo=3LuH-jYEBttREGqg@mail.gmail.com>
 From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 30 Jun 2025 14:27:31 -0500
-X-Gm-Features: Ac12FXwgcp1mOdSq1DPjTVmz-A4VQy9yAvt_bxE2ebJGEwUsbFsdGO2-Es8pcY8
-Message-ID: <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 30 Jun 2025 14:33:07 -0500
+X-Gm-Features: Ac12FXxKnkWwA36VsVoD5Hl-K0ZXp6mKLB_zzh_TkqusAXbCh-DmgE3rxpQWCi4
+Message-ID: <CALHNRZ9=u9hrXZ79N3VzMwdFuJO75TomOzRzgDxzmcTEeatzAQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: palmas: Allow building as a module
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com=
-> wrote:
+On Mon, Jun 2, 2025 at 4:48=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
+wrote:
 >
-> On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
+> On Fri, May 23, 2025 at 12:22=E2=80=AFAM Aaron Kling via B4 Relay
 > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
 > >
 > > From: Aaron Kling <webgeek1234@gmail.com>
 > >
-> > The p3509 carrier board does not connect the id gpio. Prior to this, th=
-e
-> > gpio role switch driver could not detect the mode of the otg port.
+> > The driver works fine as a module, so allowing building as such. This
+> > drops the driver specific init in favor of the module macro which does
+> > the same, plus handling exit.
 > >
 > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 > > ---
-> >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.=
-dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df355bbcb6=
-91ef99b0d0c9d504e 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
-> > @@ -669,7 +669,6 @@ connector {
-> >                                         vbus-gpios =3D <&gpio
-> >                                                       TEGRA186_MAIN_GPI=
-O(L, 4)
-> >                                                       GPIO_ACTIVE_LOW>;
-> > -                                       id-gpios =3D <&pmic 0 GPIO_ACTI=
-VE_HIGH>;
-> >                                 };
-> >                         };
-> >
-> >
+> > Changes in v2:
+> > - Drop module alias and add module device table
+> > - Link to v1: https://lore.kernel.org/r/20250522-gpio-palmas-gpio-v1-1-=
+d6b1a3776ef5@gmail.com
 > > ---
-> > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> > change-id: 20250513-tx2nx-role-switch-37ec55d25189
+> >  drivers/gpio/Kconfig       |  2 +-
+> >  drivers/gpio/gpio-palmas.c | 10 +++++-----
+> >  2 files changed, 6 insertions(+), 6 deletions(-)
 > >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index f2c39bbff83a33dcb12b2d32aa3ebc358a0dd949..be5d823516d0e2bff4b4231=
+dac6a82bf10887118 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -1464,7 +1464,7 @@ config GPIO_MAX77650
+> >           These chips have a single pin that can be configured as GPIO.
 > >
+> >  config GPIO_PALMAS
+> > -       bool "TI PALMAS series PMICs GPIO"
+> > +       tristate "TI PALMAS series PMICs GPIO"
+> >         depends on MFD_PALMAS
+> >         help
+> >           Select this option to enable GPIO driver for the TI PALMAS
+> > diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+> > index 28dba7048509a3ef9c7972c1be53ea30adddabb0..eaef29f59292de5281f31e1=
+96961d90974e65b75 100644
+> > --- a/drivers/gpio/gpio-palmas.c
+> > +++ b/drivers/gpio/gpio-palmas.c
+> > @@ -140,6 +140,7 @@ static const struct of_device_id of_palmas_gpio_mat=
+ch[] =3D {
+> >         { .compatible =3D "ti,tps80036-gpio", .data =3D &tps80036_dev_d=
+ata,},
+> >         { },
+> >  };
+> > +MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
 > >
+> >  static int palmas_gpio_probe(struct platform_device *pdev)
+> >  {
+> > @@ -191,9 +192,8 @@ static struct platform_driver palmas_gpio_driver =
+=3D {
+> >         .driver.of_match_table =3D of_palmas_gpio_match,
+> >         .probe          =3D palmas_gpio_probe,
+> >  };
+> > +module_platform_driver(palmas_gpio_driver);
+> >
+> > -static int __init palmas_gpio_init(void)
+> > -{
+> > -       return platform_driver_register(&palmas_gpio_driver);
+> > -}
+> > -subsys_initcall(palmas_gpio_init);
 >
-> Friendly reminder about this patch.
+> This being put into an earlier initcall than device_initcall() makes
+> me think, someone had a reason for it and this change can break this.
+> I'm Cc'ing the original author who seems to still be active in the
+> kernel.
+>
+> Laxman: can you verify that this can be safely moved to module_initcall()=
+?
+>
 
-Re-reminder about this patch.
+Reminder about this patch/question. It's well into the 6.16 cycle now.
+If Laxman doesn't respond, is this mergeable? I didn't see any issues
+in my basic boot tests on a tegra124 device using a tps65913. But I
+didn't do anything close to full functionality tests.
 
 Aaron
 
