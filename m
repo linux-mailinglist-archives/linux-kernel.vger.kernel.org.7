@@ -1,195 +1,180 @@
-Return-Path: <linux-kernel+bounces-709204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B2CAEDA76
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:06:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6A4AEDA7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEE43A3EAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:06:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E6177A2692
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB445258CC1;
-	Mon, 30 Jun 2025 11:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E143725B311;
+	Mon, 30 Jun 2025 11:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UYL7nR9H";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Eha3Uff";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jt1BJgEP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2/dRnm/W"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uWj5q0qT"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A80126BF7
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 11:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700A41A3154;
+	Mon, 30 Jun 2025 11:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751281589; cv=none; b=Mjxi4eJ47+ftchWYXSQEft04h0Sd+nwqkUgbuNizsxqKVZPw8OqlrCS10KRGq3+e0T+Orn0caHq+gW40ozmb6VlXN3AhGpAtU0i4d39NIMZtPIs6QgBC7Rxx75ZP/INPKnunz4Y9OEvI/4lCJFtW+ppKIrgAk4VU848w6tIr2sU=
+	t=1751281728; cv=none; b=rLwyjjQiCRwUnVL98TiE6eds0M1rEknR51N2Mt4xlO3FIK6K24u0dF2IbN1w3UY7wnkrXCnefhmCB/M+Ty6h9HOPImsFNSYWM7fT337xdem4Ex1jUc1roDpbzsAcQTX0xM9XGTpEcuLgpVm+ZgE5pV796+6HJskPH88IjHkwtw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751281589; c=relaxed/simple;
-	bh=hkFqEHYPHy2Y68W7tkW11hTV8RVM9jdiv36TLl4g8kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fmijykm+wWx0L7lLfMmGFP809xuq4gRxdQhqjQ6mTE9WVborxq8DfPIfITt+FO3kvtsPECMNWEIxKaqxl4q5XhsL2QuVxrkKtjfd1Hw0z9x1dsBjflF6FuQrzmNsQ4baeXL5aj6pTN4DoTlqpSvIKT/nQEHjk3Po7InVw9Ohjzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UYL7nR9H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Eha3Uff; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jt1BJgEP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2/dRnm/W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DEBF41F451;
-	Mon, 30 Jun 2025 11:06:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751281585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgOsDb/evucy8q5GbAICoPJb1hC0VbCheDAQASWacj4=;
-	b=UYL7nR9H42HxhQuYY75ssiVv2vvZla16XVgFb04+Ym/m3J0Z6fxo2LGoO1UmuUoRkkD4MR
-	UkKSwMN1EKP3uVmWDysMpDH2zBgaM7j0OJ8B7b6F6kX5i6uT0kSXsltUiI1DQwKxLr1Muv
-	a1hf2S6LTIDT4JV07WWaRd/va7YBSjE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751281585;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgOsDb/evucy8q5GbAICoPJb1hC0VbCheDAQASWacj4=;
-	b=2Eha3UffbxJfztGmCmpUnh569R4x/f3dD/8IVM4AHxBbjz2CvCyb7heKx+GC2bzAMUfjwM
-	D/G2REujslsggUAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751281584; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgOsDb/evucy8q5GbAICoPJb1hC0VbCheDAQASWacj4=;
-	b=Jt1BJgEP/yoBa/DK1YFZtNEP9E6JTU0b+q1OCK8iXpA4dlS/J9eIdzb8WRg1hTPjN80tYu
-	oRt3MV8qkQC7/dzcGST26EQ9UQ3yBYMffjisaPEsY3MUDE2isuxE0DTop4nkaRyGNSsb5P
-	/z4jAorkShdQJ1OJm29vwqeI0kKPYS0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751281584;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgOsDb/evucy8q5GbAICoPJb1hC0VbCheDAQASWacj4=;
-	b=2/dRnm/WKs49XeY4AOMqIUSL40DQ5QxvYOSsWT5/qPSHNDNpA98LKtECPnXtNmrONHSV0x
-	ZJdrZArVDhQfzEBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D432F1399F;
-	Mon, 30 Jun 2025 11:06:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KdjJM7BvYmjJLwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 30 Jun 2025 11:06:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 50FDAA0A31; Mon, 30 Jun 2025 13:06:24 +0200 (CEST)
-Date: Mon, 30 Jun 2025 13:06:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Brahmajit Das <listout@listout.xyz>
-Cc: linux-kernel@vger.kernel.org, krisman@suse.de, jack@suse.cz
-Subject: Re: [RFC PATCH] samples: fix building fs-monitor on musl systems.
-Message-ID: <7fuj7wev3m7t4asaz5nn7kkwnzderzy33lq6s5xe57zrjmj3f7@q3ltze4tb75k>
-References: <20250630103011.27484-1-listout@listout.xyz>
+	s=arc-20240116; t=1751281728; c=relaxed/simple;
+	bh=xeNpkjWQch2NbOHRUvdma+xIq5icCiLRNG/kXkIEEUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T1/T4+ftiJgGAUSSBckqOKtJRGoJAb11O5dOQU+s9g4SBowSXHS2SN0Urv3d22SxIkYgJO7aZsiOgGFIYrmxaUxM/LLn7yvRpqUgmB/sAwxZdjNgfG86c6iCCUFQP/6O9kgxb6P9HooKbS/6DQvfgA8C0xnQ888fAqg6TlbAKP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=uWj5q0qT; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8e10N013074;
+	Mon, 30 Jun 2025 13:08:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	hCK+JNiz/bYO7J2DWpXBYxNDtczevbXi8wneI/4lIHw=; b=uWj5q0qTavpWUevx
+	Vi+UdKWHC/3Qjeeq//y7qsv+iUrhsyGPhUrvKDhotvJQpmgoQsyj+uChnXxg53rz
+	ZhBIDSZGqASugloP88kwCxjv+Lve6TwDMz4vAK6awZOxHke/NXm8H/Do+KHH2JXp
+	13FxpfZfv5tLEelusizShyeg5mI3gv/m1aWPNJEqAqHdhAZs8+0Qa2Rd1vvsO5iQ
+	J26ATSfJuxfl78ji9BPXMqkXshp6GL28tz6R1gMlC0hM01bTA/jQW+ejNI2JGWoM
+	enkOd1nP4EWF+7Q6YLH3QXZ9ScvfaGxxKPNF3diZMzAT4UuJ1vBEldj65eNXlL6i
+	dMkAPg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47jsy4mtta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 13:08:41 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 132544006A;
+	Mon, 30 Jun 2025 13:07:57 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 70B94B17B06;
+	Mon, 30 Jun 2025 13:07:13 +0200 (CEST)
+Received: from [10.48.87.237] (10.48.87.237) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
+ 2025 13:07:11 +0200
+Message-ID: <13cb5cad-7ad4-40fd-a423-10187b327b8c@foss.st.com>
+Date: Mon, 30 Jun 2025 13:07:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630103011.27484-1-listout@listout.xyz>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,listout.xyz:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dmaengine: virt-dma: convert tasklet to BH
+ workqueue for callback invocation
+To: Alexander Kochetkov <al.kochet@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Nishad Saraf <nishads@amd.com>, Lizhi Hou <lizhi.hou@amd.com>,
+        Jacky Huang
+	<ychuang3@nuvoton.com>,
+        Shan-Chun Hung <schung@nuvoton.com>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Paul Cercueil
+	<paul@crapouillou.net>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Manivannan Sadhasivam <mani@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+        Zhou
+ Wang <wangzhou1@hisilicon.com>,
+        Longfang Liu <liulongfang@huawei.com>,
+        Andy
+ Shevchenko <andy@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?=
+	<afaerber@suse.de>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang
+	<haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Paul
+ Walmsley <paul.walmsley@sifive.com>,
+        Samuel Holland
+	<samuel.holland@sifive.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter Ujfalusi
+	<peter.ujfalusi@gmail.com>,
+        Kunihiko Hayashi
+	<hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Amit Vadhavana <av2082000@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Md Sadre Alam <quic_mdalam@quicinc.com>,
+        Casey
+ Connolly <casey.connolly@linaro.org>,
+        Kees Cook <kees@kernel.org>, Fenghua Yu
+	<fenghua.yu@intel.com>,
+        Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+References: <20250616124934.141782-1-al.kochet@gmail.com>
+ <20250616124934.141782-2-al.kochet@gmail.com>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20250616124934.141782-2-al.kochet@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
 
-On Mon 30-06-25 16:00:11, Brahmajit Das wrote:
-> On musl systems with make allyesconfig fs-monitor.c fails to build with
+
+
+On 6/16/25 14:48, Alexander Kochetkov wrote:
+> Currently DMA callbacks are called from tasklet. However the tasklet is
+> marked deprecated and must be replaced by BH workqueue. Tasklet callbacks
+> are executed either in the Soft IRQ context or from ksoftirqd thread. BH
+> workqueue work items are executed in the BH context. Changing tasklet to
+> BH workqueue improved DMA callback latencies.
 > 
-> samples/fanotify/fs-monitor.c:22:9: error: unknown type name '__s32'
->    22 |         __s32 error;
->       |         ^~~~~
-> samples/fanotify/fs-monitor.c:23:9: error: unknown type name '__u32'
->    23 |         __u32 error_count;
->       |         ^~~~~
-> samples/fanotify/fs-monitor.c: In function 'handle_notifications':
-> samples/fanotify/fs-monitor.c:98:50: error: 'fsid_t' has no member named 'val'; did you mean '__val'?
->    98 |                                        fid->fsid.val[0], fid->fsid.val[1]);
->       |                                                  ^~~
->       |                                                  __val
-> samples/fanotify/fs-monitor.c:98:68: error: 'fsid_t' has no member named 'val'; did you mean '__val'?
->    98 |                                        fid->fsid.val[0], fid->fsid.val[1]);
->       |                                                                    ^~~
->       |                                                                    __val
+> The commit changes virt-dma driver and all of its users:
+> - tasklet is replaced to work_struct, tasklet callback updated accordingly
+> - kill_tasklet() is replaced to cancel_work_sync()
+> - added include of linux/interrupt.h where necessary
 > 
-> This is due to sys/fanotify.h on musl does not include
-> linux/fanotify.h[0] unlike glibc which includes it. This also results in
-> fsid not being of type __kernel_fsid_t, rather the libc's definition of
-> it which does not have val, but instead __val.
+> Tested on Pine64 (Allwinner A64 ARMv8) with sun6i-dma driver. All other
+> drivers are changed similarly and tested for compilation.
 > 
-> [0]: https://git.musl-libc.org/cgit/musl/tree/include/sys/fanotify.h
-> Signed-off-by: Brahmajit Das <listout@listout.xyz>
-
-Thanks! Added to my tree.
-
-								Honza
-
+> Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
 > ---
->  samples/fanotify/fs-monitor.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/samples/fanotify/fs-monitor.c b/samples/fanotify/fs-monitor.c
-> index 608db24c471e..28c0a652ffeb 100644
-> --- a/samples/fanotify/fs-monitor.c
-> +++ b/samples/fanotify/fs-monitor.c
-> @@ -12,6 +12,9 @@
->  #include <sys/fanotify.h>
->  #include <sys/types.h>
->  #include <unistd.h>
-> +#ifndef __GLIBC__
-> +#include <asm-generic/int-ll64.h>
-> +#endif
->  
->  #ifndef FAN_FS_ERROR
->  #define FAN_FS_ERROR		0x00008000
-> @@ -95,7 +98,11 @@ static void handle_notifications(char *buffer, int len)
->  				fid = (struct fanotify_event_info_fid *) info;
->  
->  				printf("\tfsid: %x%x\n",
-> +#if defined(__GLIBC__)
->  				       fid->fsid.val[0], fid->fsid.val[1]);
-> +#else
-> +				       fid->fsid.__val[0], fid->fsid.__val[1]);
-> +#endif
->  				print_fh((struct file_handle *) &fid->handle);
->  				break;
->  
-> -- 
-> 2.50.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+...
+>   drivers/dma/stm32/stm32-dma.c                  |  1 +
+>   drivers/dma/stm32/stm32-dma3.c                 |  1 +
+>   drivers/dma/stm32/stm32-mdma.c                 |  1 +
+
+For STM32:
+Acked-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Tested-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
 
