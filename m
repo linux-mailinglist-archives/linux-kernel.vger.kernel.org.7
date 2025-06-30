@@ -1,136 +1,194 @@
-Return-Path: <linux-kernel+bounces-710299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F304AEEA86
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:38:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1578AEEA9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3581BC3639
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 22:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3341BC400D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 22:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17605245033;
-	Mon, 30 Jun 2025 22:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFC923506A;
+	Mon, 30 Jun 2025 22:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QrU3Hb++"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQ674KCs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772E53365
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 22:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD654A0F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 22:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751323076; cv=none; b=ZFJZLhUehZTKtQoNYqGItu648LCPBVDXfK7vhBE8zxBip36eXk5SMaKzdRCmCGm/zjc2eiUDRFR5KI6L9VlNGmI7jPcvr469KeIaPZQ2xe75UssprlgRt1BHw+uT71VF2AY/Itj9afjxUtwt6PtPe+7kDDr9DrZuBToQeGbDLn8=
+	t=1751323620; cv=none; b=dfTvl29ximd8DTNFwD612VjSBLKLEP+7IdwFqjLBwN0IH5lW/ymYHJKegR36xG99RcOBNZg5odOzNQJw792FQ4emI212Cfh3an+MS6ohxnJ+zIBY5QiWqJotJJIj4D6aDDY+GafQmSD0EtNrSIKdrT67eRCAeN1uF20/0gOGMms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751323076; c=relaxed/simple;
-	bh=70ucvB4aUq/iqvMNuc+VM5RiPbZbdmEYZzLs1r23dvk=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Bgl0qQysYLyNZWqO/gOQhq4TvRbfQNACZW+onPYVkAbV2GGcQTnPe2+eTLIVO3yCFWlNQSQEmsJmY80RJ1/j5bXLkha6Da5678XkUyP8Po6pEjY21lPlW2D+hAWcyB5PLsNh/2iW8lWKD0R0sZw+HNQKtPRAeQ/l+NzFZ51fnSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QrU3Hb++; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751323073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BecaxFgtj7pMRsMs9KUUG3vkYqYBX4743BMREMi+3UU=;
-	b=QrU3Hb++jpPS5YcP3YxrCmSFAjDNalb6+3P26F3WBt2JsLqwZIuEnBrj6IndoIdlrCMOAb
-	OfjyNFM5zOjOSFEjcdBm86SuA6oLuv3ycJlQ99wYWq7hlxh2i9dzn3jiFcTgJuoT2PruIm
-	q8TSeus/vdC5K9dGcoJz8v+zhGl/Kfc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-111-zSDp7qCiP--Nt3jm6LTobw-1; Mon,
- 30 Jun 2025 18:37:51 -0400
-X-MC-Unique: zSDp7qCiP--Nt3jm6LTobw-1
-X-Mimecast-MFC-AGG-ID: zSDp7qCiP--Nt3jm6LTobw_1751323070
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 78AA218011EF;
-	Mon, 30 Jun 2025 22:37:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A6725195608F;
-	Mon, 30 Jun 2025 22:37:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250630180440.3eabb514@batman.local.home>
-References: <20250630180440.3eabb514@batman.local.home>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: dhowells@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-    Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-    Masami Hiramatsu <mhiramat@kernel.org>,
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Remove ring_buffer_read_prepare_sync()
+	s=arc-20240116; t=1751323620; c=relaxed/simple;
+	bh=6j2k/yDLl7AFcEJ7cfJPNKmXl31QcHaeZXcdt96J1Fk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sd8sRzhcZ0BFMVJSV9bD1d0T90BumBprQRr+uq3bySnivOjG6YximqYDdrqZDCLacDw56f6/Ul/elstzK2paBwiPnzxOX+wtctjqpr0hOXjsjQKFtUr66JZcNknJvs9b9E+fz81ndlz/OG1pi4dmcl49FtW0+EsYp2wDCJ8Z0MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQ674KCs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751323618; x=1782859618;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=6j2k/yDLl7AFcEJ7cfJPNKmXl31QcHaeZXcdt96J1Fk=;
+  b=XQ674KCs2hCd+fnSIK73k+qkvsr3T6u9bKrnz4LAl6uwaGBO/CmWDkYT
+   qcsG/hG+uSmPO53+p+AH2C7a1EzQZkVFNvBOPdJYQI84eZzDH7hZSl76K
+   jAX/SLj4X9KmiyOMcUPJGvTondKag2wlAdf5Us5ySY8wMnyWfLCQqqalD
+   UCezWk8k3lEu6whdGviEWSkI4dohJWkFnvAy8W63Jeb8zguPfWf82Bgjx
+   fw2CqOfMw9su0hY3hAuZZNM6Lpzi1MGe+sBXXo/eoen5CYF3xMel4NIkT
+   l1/8wubJ0vtj5sz+h0p18j2o4QVrzxsodwmEwx/bjCGEoJZz8GLuCyqwo
+   Q==;
+X-CSE-ConnectionGUID: IkzUhMNERXmoILuVSK2YdQ==
+X-CSE-MsgGUID: ildKZAJjRPaUc6k43IJIAg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="70994437"
+X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
+   d="scan'208";a="70994437"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 15:46:58 -0700
+X-CSE-ConnectionGUID: 4pJGDbMPRuKTEUEzHvfwWg==
+X-CSE-MsgGUID: 61U+zpsvRQaLTcAZlu0jTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
+   d="scan'208";a="153335299"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 15:46:57 -0700
+Date: Mon, 30 Jun 2025 15:46:55 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Anil Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Chen Yu <yu.c.chen@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v6 00/30] x86,fs/resctrl telemetry monitoring
+Message-ID: <aGMT35DktIVkzwjx@agluck-desk3>
+References: <20250626164941.106341-1-tony.luck@intel.com>
+ <6485574e-1405-49c1-90f9-1955ac2777ce@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2127242.1751323067.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 30 Jun 2025 23:37:47 +0100
-Message-ID: <2127243.1751323067@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6485574e-1405-49c1-90f9-1955ac2777ce@intel.com>
 
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Mon, Jun 30, 2025 at 10:51:50AM -0700, Reinette Chatre wrote:
+> 
+> Tony,
+> 
+> On 6/26/25 9:49 AM, Tony Luck wrote:
+> > Background
+> > ----------
+> > 
+> > Telemetry features are being implemented in conjunction with the
+> > IA32_PQR_ASSOC.RMID value on each logical CPU. This is used to send
+> > counts for various events to a collector in a nearby OOBMSM device to be
+> > accumulated with counts for each <RMID, event> pair received from other
+> > CPUs. Cores send event counts when the RMID value changes, or after each
+> > 2ms elapsed time.
+> 
+> To start a review of this jumbo series and find that the *first* [1]
+> (straight forward) request from previous review has not been addressed is
+> demoralizing. I was hoping that the previous version's discussions would result
+> in review feedback either addressed or discussed (never ignored). I
+> cannot imagine how requesting OOBMSM to be expanded can be invalid though.
+> 
+> Reinette
+> 
+> [1] https://lore.kernel.org/lkml/b8ddce03-65c0-4420-b30d-e43c54943667@intel.com/
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> =
+My profound apologies for blowing it (again). I went through the comments
+to patches multiple times to try and catch all your comments. But somehow
+skipped the cover letter :-( .
 
-> When the ring buffer was first introduced, reading the non-consuming
-> "trace" file required disabling the writing of the ring buffer. To make
-> sure the writing was fully disabled before iterating the buffer with a
-> non-consuming read, it would set the disable flag of the buffer and then
-> call an RCU synchronization to make sure all the buffers were
-> synchronized.
-> =
+Here's a re-write to address comments, but also to try to provide
+a better story line starting with how the logical processors capture
+the event data, following on with aggregator processing, etc.
 
-> The function ring_buffer_read_start() originally  would initialize the
-> iterator and call an RCU synchronization, but this was for each individu=
-al
-> per CPU buffer where this would get called many times on a machine with
-> many CPUs before the trace file could be read. The commit 72c9ddfd4c5bf
-> ("ring-buffer: Make non-consuming read less expensive with lots of cpus.=
-")
-> separated ring_buffer_read_start into ring_buffer_read_prepare(),
-> ring_buffer_read_sync() and then ring_buffer_read_start() to allow each =
-of
-> the per CPU buffers to be prepared, call the read_buffer_read_sync() onc=
-e,
-> and then the ring_buffer_read_start() for each of the CPUs which made
-> things much faster.
-> =
+-Tony
 
-> The commit 1039221cc278 ("ring-buffer: Do not disable recording when the=
-re
-> is an iterator") removed the requirement of disabling the recording of t=
-he
-> ring buffer in order to iterate it, but it did not remove the
-> synchronization that was happening that was required to wait for all the
-> buffers to have no more writers. It's now OK for the buffers to have
-> writers and no synchronization is needed.
-> =
+---
 
-> Remove the synchronization and put back the interface for the ring buffe=
-r
-> iterator back before commit 72c9ddfd4c5bf was applied.
-> =
+On Intel systems that support per-RMID telemetry monitoring each logical
+processor keeps a local count for various events. When the IA32_PQR_ASSOC.RMID
+value for the logical processor changes (or when a two millisecond counter
+expires) these event counts are transmitted to an event aggregator on
+the same package as the processor together with the current RMID value. The
+event counters are reset to zero to begin counting again.
 
-> Reported-by: David Howells <dhowells@redhat.com>
-> Fixes: 1039221cc278 ("ring-buffer: Do not disable recording when there i=
-s an iterator")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Each aggregator takes the incoming event counts and adds them to
+cumulative counts for each event for each RMID. Note that there can be
+multiple aggregators on each package with no architectural association
+between logical processors and an aggregator.
 
-Tested-by: David Howells <dhowells@redhat.com>
+All of these aggregated counters can be read by an operating system from
+the MMIO space of the Out Of Band Management Service Module (OOBMSM)
+device(s) on a system. Any counter can be read from any logical processor.
 
+Intel publishes details for each processor generation showing which
+events are counted by each logical processor and the offsets for each
+accumulated counter value within the MMIO space in XML files here:
+https://github.com/intel/Intel-PMT.
+
+For example there are two energy related telemetry events for the Clearwater
+Forest family of processors and the MMIO space looks like this:
+
+Offset	RMID	Event
+------	----	-----
+0x0000	0	core_energy
+0x0008	0	activity
+0x0010	1	core_energy
+0x0018	1	activity
+...
+0x23F0	575	core_energy
+0x23F8	575	activity
+
+In addition the XML file provides the units (Joules for core_energy,
+Farads for activity) and the type of data (fixed-point binary with
+bit 63 used as to indicate the data is valid, and the low 18 bits as a
+binary fraction).
+
+Finally, each XML file provides a 32-bit unique id (or guid) that is
+used as an index to find the correct XML description file for each
+telemetry implementation.
+
+The INTEL_PMT_DISCOVERY driver provides intel_pmt_get_regions_by_feature()
+to enumerate the aggregator instances on a platform. It provides:
+1) guid  - so resctrl can determine which events are supported
+2) mmio base address of counters
+3) package id
+
+Resctrl accumulates counts from all aggregators on a package in order
+to provide a consistent user interface across processor generations.
+
+Directory structure for the telemetry events looks like this:
+
+$ tree /sys/fs/resctrl/mon_data/
+/sys/fs/resctrl/mon_data/
+mon_data
+├── mon_PERF_PKG_00
+│   ├── activity
+│   └── core_energy
+└── mon_PERF_PKG_01
+    ├── activity
+    └── core_energy
+
+Reading the "core_energy" file from some resctrl mon_data directory shows
+the cumulative energy (in Joules) used by all tasks that ran with the RMID
+associated with that directory on a given package. Note that "core_energy"
+reports only energy consumed by CPU cores (data processing units,
+L1/L2 caches, etc.). It does not include energy used in the "uncore"
+(L3 cache, on package devices, etc.), or used by memory or I/O devices.
 
