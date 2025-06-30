@@ -1,184 +1,267 @@
-Return-Path: <linux-kernel+bounces-709480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80ADAEDE77
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D986FAEDE7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87706189032A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013E91899653
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FC228AAFF;
-	Mon, 30 Jun 2025 13:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB87F286419;
+	Mon, 30 Jun 2025 13:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kcJ1RNUT"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2089.outbound.protection.outlook.com [40.107.93.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OvP4la4T"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825F628A1D0;
-	Mon, 30 Jun 2025 13:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288560; cv=fail; b=u5tmI15BmIRg096vHRApEcY2RICXCwjjxf0fSyjOxbU5b8EnEEb9IUuxydy4UvmYbjwvcPv8YTUXHwOxnqWVyBkOzXyJv+QyF83y7nqCqn/aQqpO3j4tXJDZcpLw6Uk86eeD+b+ocoGVbYC2i612W93dU9rJDhysjcN8DUaSxlc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288560; c=relaxed/simple;
-	bh=Oq9ilult3Qbs0leF0oATT/hnCGPFPuulR8qI4tHD4ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=B/HWVuitpdMg411+hGwSBNX9FODp6svsZttvRA+VktXwjnLn2U2OeTdwB0JNg9v7TO8it63hMU59SJq8qpeSIYvQBmoahSlLQvKknxjJqT+1SuSdInyBtSQB4DlUKkYbY7gGUoby8/Se4+Z1861Jor/lRts/0/Xwa7IRH3l1H1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kcJ1RNUT; arc=fail smtp.client-ip=40.107.93.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tTHkDgZmp4g0sVVSXHn0qdER59thZ5qL6vbuZbmgUZpqLxyXwbo3bduSr6P6Qc7fbB3RUT3v3dVrHdIcCvoNdwcO7hNLU79ZCrshINep3FWsLfsk7kgCwcSsvlEb+Z0C7vx/5JL7DDDvaysI1LziCPJ6qB6xaO5HCZPLiPDPgZmbX10nrS2Rh26KQhz3fnZPzyuvVkKskpKtZDdQ8IW6AVRZtt+HtM4oZ8OJTSrCAH0EvWufeEaYADGxfV+X1Hmegl4pWgHQBGaNCkcW6FhqgmouTlnPCC5vP2TChUnyHg9hO9w6HFkAKfs2Gh37m7LHd3wSL/a6OGuUB/jPIcW5hQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KXOP8zNp67YIvPOK0OF9eRwVyEW+L52swm50jUYdlSI=;
- b=spc10I5y0Hv4mlMlDpJttdyXeDaoJwyDAK69Kr9i3YpVcCfsmQR/Rrs8m6m0VQhX589anqW3w2JwMZH9B0/yB5DLtZJNgtdpWhmTLI4Qnhee10A2WNN/jk8aax6qW5X4uAtfuCUxRP89mtq2MqS5fmHq5Wo+ZuFCqb121SbvvAXj+xKLi2Nhi07PlkoT+/cnc/D+ruygIXI6pMrTEG//NjPStgKLluGyGuTuGkQf3oaQcQKJKwiLbY0Kk2bh4reuQ3LvtrMigvjEfJ89+2T8cQ7/tR0l70CggcYTG6MIGtI3SqsuAjG1XYl/FOzVdfClxcgM2qDjvDg+EpxbN3ukyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KXOP8zNp67YIvPOK0OF9eRwVyEW+L52swm50jUYdlSI=;
- b=kcJ1RNUTnYXwpBisNpSY2/f1mmJe3WwHiA+3E7Ctkq5hLUP4Wbs8U+u2WDAmhKbhaA+aexBsOMK80k4MRL6JIfwSIXFnObMBn49di2LBX9LaNE3xC/VheGqxIFuxsal7cfHzcL9DypCmwoEN+MPrkmaKemKfQJYZNjq/Z6iDxO+x2WQ0a7t4ipxAr0m9knS8rxI1YyhpPzJA7qNA0gvQ2R6ZMY1q8dH2ZhOFtr+EWOVRoMLEfFQJkbHpcdqUVCAyOfX/5S9UCmcEJRtzkbEDe3Jl5q5mDqlsjWNqwr4BjQB0657vRNfp0SakinBJ9DhrnN5W2XsaPegsVLaoT/W3WQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by CH3PR12MB8902.namprd12.prod.outlook.com (2603:10b6:610:17d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.16; Mon, 30 Jun
- 2025 13:02:36 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8880.030; Mon, 30 Jun 2025
- 13:02:36 +0000
-Date: Mon, 30 Jun 2025 10:02:34 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Joerg Roedel <joro@8bytes.org>, Joerg Roedel <joerg.roedel@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Nicolin Chen <nicolinc@nvidia.com>
-Subject: Re: linux-next: manual merge of the iommufd tree with the iommu tree
-Message-ID: <20250630130234.GT167785@nvidia.com>
-References: <20250630160059.49544dde@canb.auug.org.au>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630160059.49544dde@canb.auug.org.au>
-X-ClientProxiedBy: SJ0PR13CA0074.namprd13.prod.outlook.com
- (2603:10b6:a03:2c4::19) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6C926ADD
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751288665; cv=none; b=nyc9VGLHe+r3iaY5zJm3RjojcsO75rjXQ7l3GUWaLhN+PyuUvgmDUBLHI0f8CqNSIQc0ZA6M7K1z7D+WWHGPpc4yD60ifu1XTe+QzZ9eRLRUU3r0vVV1MxzG5CQeF29JkQ4qei4VFnxtU5s+yZRfVyTOPKg6VYy9SkwChizoK+c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751288665; c=relaxed/simple;
+	bh=8ma29XIVyrlocB2TwxvieiVhXjMJz8cDSr2I0wEXjA0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W0Ht0r7rwS2fBW7Cz4xl5OwpECPoy19UH02s9fWWxolRLpDliIU6YQ9fZbv3XibV2p8dvbZFOIf8oBQE2HYOwJeHi0tLIrsQuovQzQD8HPuiyy9Ma4gSaike8oidxgmpWcZtoKam5Vedbq/RIJ/zrmWQ/FwqGWYgTA8XfcVmu6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OvP4la4T; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso2383563f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 06:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751288662; x=1751893462; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jtRCoaZRuy3SHZyDIOBlh8AQRBZoYHsrOyl5I3M3Usg=;
+        b=OvP4la4Ts2imD7kHl11x6TSySGOLVGHb5zDHKhB69o7ZV22ItVIVbriWPX0MKk8L8F
+         lwcfw2hItq9Ju0XCvwx4rxVh2EjMybs4C0L3WeIN6fcgpMAsr9qrvVIF7mX6tgg1p6FR
+         /mDNMM7k81px30WZPQoA9ds986DYq4ON6hRoJK9EoN6ZqrkXRngBpiQ64MKmdzRFVul2
+         F/smPVSrHgWQwroWqHWv8sfOZ9lzNQB87EL8w8OMH00oCuf7vcANK0mMKUhDAR+L9hte
+         wUqzaYGOc34hOBfOd67ZJA+vPodAG1eAGSz4OwIrR+rhOhS5TuHBn/7TaCoknExSl523
+         zuNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751288662; x=1751893462;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jtRCoaZRuy3SHZyDIOBlh8AQRBZoYHsrOyl5I3M3Usg=;
+        b=uE1dJIyxK2CmoBCkFJCBQDvSnhbYVkS4yYR1sbP21Vq/1CfYol9uhCFd2KcSJ0amC6
+         EvN9mVg74xiT1A1hN2g6/mJGzbcNt4nZSZL/rAiXFSJ8xHs60iT+Amzeuem1p3uQHCjB
+         wTwYAG2eOwuY91cDHGNh7BDwjAeyzNXSbWzko9EVuenIjMtqZh7tx6iGnX4ghPHPTAfA
+         3S3LwmoiudBgNo5/owbNvcTMdsOl7lDwBurzuvvWzjW3Au1qkSwnm9VqTyCTsQTmswbD
+         ArcfweKZjX5ddzKUDf5F2M7Tu6HRR2r3X7jyObOfhNnS0uqYbZlvu5mXICTt2mC6WAJ6
+         tfNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVzSAXG942qJjhLli2+SO8S2zzBsiTnNrEr3AgdsFuhtuictJx7ZoMESWkHV5ZGSFvUFy57aMeLru9PNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmk4LeiVeKobjnZO5BZYozIpQV4ch2b5cvfEtbpVygK4rFZ7yx
+	wloUEIMKcbwyo9wcsujfZ3dKP72LFq5ICxKhpKc8GN6qm2DWiKGiufkVZDonulbHTAM=
+X-Gm-Gg: ASbGnctiTmW2HxQqlHFQvGcGpwo/eFYUVZyIvsPSDA+kDc4wU0R6pI22bO1zYBTEAyr
+	J3KCy/tCbk5WrYzsXkCfkwL6M+S9f356jkQo/pwRwtQwSlFjziLOu35JUO6BG5MkRKbbHvtK40G
+	m242/3fu9+cjr+XOSljydo+UpdmuGJWnoK3JbxIewvE4RA8WNzbCXEmwXWiX+oyXPZXR3BOcW8p
+	xyYMj97QnUgig1cwhi1uZB71N2ZeDs7vncNQe/SIg5vX8uNoP14XTxAU9ezVEjgLqgJUUjkA4JD
+	J1eS34U1rC4hxCXoooOi5ubpLbWgoF8kyj9gIw2HVWmCwCjzfH4Mv4mgHUh9FXE=
+X-Google-Smtp-Source: AGHT+IG+KISEPRT59mnSmUbFYKshwUKdJDSOtcgpmTFgZsp3fC/pg+et65cMv5g4qUkmZujHStqtzA==
+X-Received: by 2002:adf:b649:0:b0:3a0:7d27:f076 with SMTP id ffacd0b85a97d-3a8fdb29f1emr11225299f8f.2.1751288660266;
+        Mon, 30 Jun 2025 06:04:20 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:19e3:6e9c:f7cd:ff6a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7facb3sm10447413f8f.30.2025.06.30.06.04.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 06:04:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: sim: allow to mark simulated lines as invalid
+Date: Mon, 30 Jun 2025 15:03:57 +0200
+Message-ID: <20250630130358.40352-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH3PR12MB8902:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a326553-f396-45e3-e3ae-08ddb7d662a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QM39QPMfkt59xse1iHLIMiAjWlhLEAtdvb8Be2RCPiEZTm6y+NJXDsZI+rZp?=
- =?us-ascii?Q?tsAZiw4pPWd7GZoAYGlYcImnu79Wqpx9axctyCrwLM8oDWqCzrvoIcW+JqyU?=
- =?us-ascii?Q?EV3L9A3iw4Q/yRqeqleIqBdX6bFADlvti5TQmO8fYN/sGaWdQkbqvnMaeACL?=
- =?us-ascii?Q?MeDrqBBNFULX/7PYXldQqPls6sUXrXor3ZTBUy7lcoWRulc04VDFZKMw7FVM?=
- =?us-ascii?Q?9rXiafjt6gB4VM/U2m7E0kEBWV6yPdKdaxQDocMxT29OI7FXY1kyGr4BR/7/?=
- =?us-ascii?Q?QRk5vA0vLlPNwwuUY2TIOcwmcMeJ9LJNjX5s1FW+ACPJsyf3JZ5omWDTc8qw?=
- =?us-ascii?Q?sv5xbWJmjgYnqI/ZN4tD0geDDjdIE1wqpqm4wlcxXoiWoTjAadSxOHh0qoHc?=
- =?us-ascii?Q?0cqxdqySaRYRTi8yXv7cX+ognTsHo5Geq7hYYhTR+3lFV7zl9cUUqAhYogBj?=
- =?us-ascii?Q?lE04vCq2ZqO5RE8WFUjHHHO/mn6ui//dtHtVbk9TiiO9WqXbtpfcsz0dCFQ0?=
- =?us-ascii?Q?NZQlF4uukH/mUYzm0YrNPky4luRsC3eB1wslWuVT/G7tuXgDiKIlHVvGpmJ5?=
- =?us-ascii?Q?/RPWHOVqYEGwGW/zv7khy0imaV6DZMmtvZGBzizQ/4ufk6EyGQKM7awRjLZE?=
- =?us-ascii?Q?MjamZddpDOYLqtDKvlacfG8tkHBIrUs8s7M4Snp2t7Bou5VHcDB79xTP58gy?=
- =?us-ascii?Q?GnyE49p2xoqAFhQVXKTmbO9IGeWW/uwrGXz4BoAtBkl2rQ8S+wU0NbFwEOv5?=
- =?us-ascii?Q?49wwbgt/vr99jw259f1XX1uOFLtUYMTatF6p0FEjvoiHIm77hBJLMBs25M46?=
- =?us-ascii?Q?4wH5ZAo/WBw8hkBhNXyyRkcXro90qDHpnUG2rmfTtXnpgYI1WVwpLUl+PF2d?=
- =?us-ascii?Q?Jc8/9L+NdN5x1L61uoTZy/dymUIDryMou0cBhca46SZdIfq3BZCGYj4k0UmM?=
- =?us-ascii?Q?s7/RQLM5d0w9+1/+AlS9HCNCj3g1QVZUdF0Nx41vvqSDHPHdmo52dQu4SzEn?=
- =?us-ascii?Q?ktL0dCLnPMsX8bYFNlwR/JkTshPRt/asoS0pUAHkITdtdcdUNhcsudlCeMqs?=
- =?us-ascii?Q?5lQlq9BlyF2w5wF5sTzumZpPYMobPhKzvymqMo3dvhIzU+7yPLo/RANgRXzs?=
- =?us-ascii?Q?rz2nIXmCcLgRiErl7EoxcdvugMk8wIpU6QELW5hsFraBZSWUbFfxAujA3CWA?=
- =?us-ascii?Q?w/UlhDKlx5BSCEmhDXQZydU+P+dv4Sq1M56sUs2By/FT2k0asr67+wNFaAiS?=
- =?us-ascii?Q?x82NPkiBBFn5uK514QGUHk04aLuw6/T5tqQwqzqfu0Y2EBGTVwysrSjbPaVb?=
- =?us-ascii?Q?3ehVWVw0g0D8Gjiw+whV0wpxqcA3r9kdNpCLuMyJ/DRHN7GMQjURM9Y66FT5?=
- =?us-ascii?Q?al2H+1quBHNokrCNE+m030Dnh7DZGtYwWu+joRciAd1KwxQ1oHfXuHE+4gsW?=
- =?us-ascii?Q?/cTA7uIHgz8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5zdgz7oFwMAaS4JxhLyUL4pzuzCnFRvxYNmuTNeTWmq/GIP+KOLVS0SQf64I?=
- =?us-ascii?Q?cOlxspBaFTt3XvlC0yfJ+Ztkh6kbt7HqY+NIiyHhmzkeftIXyS/e84PFLEW4?=
- =?us-ascii?Q?Ka2ULMXfC+w0ZjFcfpcE0jh51339Iq0BYEAXiEA/lrfSb5cmd1bhLHHXpdP5?=
- =?us-ascii?Q?C06HVN2VpqsjlCR/yWXnIdQ2TuILKJwPKDPUzmakO7vAnRGMGmhM9/3br2xD?=
- =?us-ascii?Q?aPgsseMhoYIDAuuH7gaFJASjZz3KgMpAHnRRKf68rP4FcazUrkIw1Ww5WQRS?=
- =?us-ascii?Q?lOWKk7ZedFvdC64u0/zBo3BejNitC1/rFv5wQVhwyzVOzFmrkvULPNn0UvdB?=
- =?us-ascii?Q?XVpzJ22u5elX2svt0wU3fl2tNd53gEgZaWcqm+RAbX2sOFySONIdETwJURE6?=
- =?us-ascii?Q?LJXHyfWxQ/ggDPdGOEUsY+YPvT+Ct3v3gDCsdnherPKJqLEu9XV3FwaGap/b?=
- =?us-ascii?Q?JKt8Nkc9L4mYD2Ay40rqveGk02AUly4/umwJ8mxKl7gKjgjLEpSa2D3RDben?=
- =?us-ascii?Q?gRYq+N+FX6U/XNlTJLvYCCk+IdipMmx68oPLljoNMxn/n2BPh8WhjWROsCc/?=
- =?us-ascii?Q?X15Mo2XbQy/aoihQPzXaWQ3y8X5PiMkSuHXmaUFYZIg5/OHcb0e9akyNlWmH?=
- =?us-ascii?Q?sKXXKfBTimd1EmFlthW//ZNU4biZxZ9jUDKdc+h+I8z1RtsXCmeyCUi7TQnE?=
- =?us-ascii?Q?loyk12llYWH7iHHClp61hDG6TGv5HwmWoMFcxgyQ19ynjW0YPUpb5cynfxfF?=
- =?us-ascii?Q?2nw57BX16k5sZJSe8JVbVD8AgoY1m/y60lENH6nozqdYyUOp8tcB7xuo4gMo?=
- =?us-ascii?Q?qR1unYYJ4kK6Yi6yiFlPpGuLE+iWEwhwnkOPwLEfiIls4wR3rNaIcgSOHxbb?=
- =?us-ascii?Q?IUW5BuoPRxTTK/aEomWtxzAzijgeor9m3X4yOYmAzOznZmxf+buOEmmHOM+G?=
- =?us-ascii?Q?nbx1KGz3fZihoE1VMgn9hH4YBY6BivYZxp8lt55QF+7ilaw8+Tc/OFXMAzdq?=
- =?us-ascii?Q?QtNpRi8JkVuxngBgcnHSwqC6SgjeHTptjp0K2ljM5DtuOcHiI1EXJeu3POwU?=
- =?us-ascii?Q?IrztgeLu632WJtpSCZGFPMmb+1arugjtNxUIcOeQaXUa2yn5OoDURVTNIDqL?=
- =?us-ascii?Q?Ph8HCMbGndpQPGBiP5JIuzd5IVrxISafcmYBKteEo05np6f8ZHFyh4K7XoL5?=
- =?us-ascii?Q?oR3aHGMCpbwmDNEiuSkY1PeVMecnPeCKAi8qsz6jIK/wt3wQsKNbN3AXE4wP?=
- =?us-ascii?Q?nmSJkru4xkPRn2BpXgdTzvd6UQWeEiOPv/5mhrBKlJjwrUjeqMDKWuad4D0N?=
- =?us-ascii?Q?S305K1zJLCUqVIyryPQqMCuI9l/qApfLMX4P1ds3dB/r10xpYAW3l4daxw0x?=
- =?us-ascii?Q?kDVVe3kon0uX8XA0sDzkDLXp2GJ9fcrZJDRi3X/0b6JJn7bt4VxYNY6kPGkR?=
- =?us-ascii?Q?kNPR3m3LX3om85To6ZUbJY0EU/XHhB3cRcmH4bORpcHDWXaRkORtijy6YVzt?=
- =?us-ascii?Q?v3Qkm6KHPLd9+qFs7MR2XLiIsSZ470uw2l1IEtSe/anZLFfiKjirj4kGm8Q6?=
- =?us-ascii?Q?oFqpS/ti+nAMnfIXku0QSU4PwgUrep9SNg1zMkBp?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a326553-f396-45e3-e3ae-08ddb7d662a5
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 13:02:36.6668
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d+8737tJSybiUZ3oipkLQFgrG1MJlzpMxUKdZ02jI/IYokdAKOcdGpl7iOL1kai0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8902
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 30, 2025 at 04:00:59PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the iommufd tree got a conflict in:
-> 
->   include/linux/iommu.h
-> 
-> between commit:
-> 
->   792ea7b6cafa ("iommu: Remove ops->pgsize_bitmap")
-> 
-> from the iommu tree and commits:
-> 
->   187f146d5de6 ("iommu: Introduce get_viommu_size and viommu_init ops")
->   f842ea208e43 ("iommu: Deprecate viommu_alloc op")
-> 
-> from the iommufd tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Looks right, thanks
+Add a new line-level, boolean property to the gpio-sim configfs
+interface called 'valid'. It's set by default and the user can unset it
+to make the line be included in the standard `gpio-reserved-ranges`
+property when the chip is registered with GPIO core. This allows users
+to specify which lines should not be available for requesting as GPIOs.
 
-Jason
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ Documentation/admin-guide/gpio/gpio-sim.rst |  7 +-
+ drivers/gpio/gpio-sim.c                     | 83 ++++++++++++++++++++-
+ 2 files changed, 86 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/admin-guide/gpio/gpio-sim.rst b/Documentation/admin-guide/gpio/gpio-sim.rst
+index 35d49ccd49e0..f5135a14ef2e 100644
+--- a/Documentation/admin-guide/gpio/gpio-sim.rst
++++ b/Documentation/admin-guide/gpio/gpio-sim.rst
+@@ -50,8 +50,11 @@ the number of lines exposed by this bank.
+ 
+ **Attribute:** ``/config/gpio-sim/gpio-device/gpio-bankX/lineY/name``
+ 
+-This group represents a single line at the offset Y. The 'name' attribute
+-allows to set the line name as represented by the 'gpio-line-names' property.
++**Attribute:** ``/config/gpio-sim/gpio-device/gpio-bankX/lineY/valid``
++
++This group represents a single line at the offset Y. The ``valid`` attribute
++indicates whether the line can be used as GPIO. The ``name`` attribute allows
++to set the line name as represented by the 'gpio-line-names' property.
+ 
+ **Item:** ``/config/gpio-sim/gpio-device/gpio-bankX/lineY/hog``
+ 
+diff --git a/drivers/gpio/gpio-sim.c b/drivers/gpio/gpio-sim.c
+index f638219a7c4f..9503296422fd 100644
+--- a/drivers/gpio/gpio-sim.c
++++ b/drivers/gpio/gpio-sim.c
+@@ -39,7 +39,7 @@
+ #include "dev-sync-probe.h"
+ 
+ #define GPIO_SIM_NGPIO_MAX	1024
+-#define GPIO_SIM_PROP_MAX	4 /* Max 3 properties + sentinel. */
++#define GPIO_SIM_PROP_MAX	5 /* Max 4 properties + sentinel. */
+ #define GPIO_SIM_NUM_ATTRS	3 /* value, pull and sentinel */
+ 
+ static DEFINE_IDA(gpio_sim_ida);
+@@ -629,6 +629,7 @@ struct gpio_sim_line {
+ 
+ 	unsigned int offset;
+ 	char *name;
++	bool valid;
+ 
+ 	/* There can only be one hog per line. */
+ 	struct gpio_sim_hog *hog;
+@@ -744,6 +745,36 @@ gpio_sim_set_line_names(struct gpio_sim_bank *bank, char **line_names)
+ 	}
+ }
+ 
++static unsigned int gpio_sim_get_reserved_ranges_size(struct gpio_sim_bank *bank)
++{
++	struct gpio_sim_line *line;
++	unsigned int size = 0;
++
++	list_for_each_entry(line, &bank->line_list, siblings) {
++		if (line->valid)
++			continue;
++
++		size += 2;
++	}
++
++	return size;
++}
++
++static void gpio_sim_set_reserved_ranges(struct gpio_sim_bank *bank,
++					 u32 *ranges)
++{
++	struct gpio_sim_line *line;
++	int i = 0;
++
++	list_for_each_entry(line, &bank->line_list, siblings) {
++		if (line->valid)
++			continue;
++
++		ranges[i++] = line->offset;
++		ranges[i++] = 1;
++	}
++}
++
+ static void gpio_sim_remove_hogs(struct gpio_sim_device *dev)
+ {
+ 	struct gpiod_hog *hog;
+@@ -844,9 +875,10 @@ static struct fwnode_handle *
+ gpio_sim_make_bank_swnode(struct gpio_sim_bank *bank,
+ 			  struct fwnode_handle *parent)
+ {
++	unsigned int prop_idx = 0, line_names_size, ranges_size;
+ 	struct property_entry properties[GPIO_SIM_PROP_MAX];
+-	unsigned int prop_idx = 0, line_names_size;
+ 	char **line_names __free(kfree) = NULL;
++	u32 *ranges __free(kfree) = NULL;
+ 
+ 	memset(properties, 0, sizeof(properties));
+ 
+@@ -870,6 +902,19 @@ gpio_sim_make_bank_swnode(struct gpio_sim_bank *bank,
+ 						line_names, line_names_size);
+ 	}
+ 
++	ranges_size = gpio_sim_get_reserved_ranges_size(bank);
++	if (ranges_size) {
++		ranges = kcalloc(ranges_size, sizeof(u32), GFP_KERNEL);
++		if (!ranges)
++			return ERR_PTR(-ENOMEM);
++
++		gpio_sim_set_reserved_ranges(bank, ranges);
++
++		properties[prop_idx++] = PROPERTY_ENTRY_U32_ARRAY_LEN(
++						"gpio-reserved-ranges",
++						ranges, ranges_size);
++	}
++
+ 	return fwnode_create_software_node(properties, parent);
+ }
+ 
+@@ -1189,8 +1234,41 @@ static ssize_t gpio_sim_line_config_name_store(struct config_item *item,
+ 
+ CONFIGFS_ATTR(gpio_sim_line_config_, name);
+ 
++static ssize_t
++gpio_sim_line_config_valid_show(struct config_item *item, char *page)
++{
++	struct gpio_sim_line *line = to_gpio_sim_line(item);
++	struct gpio_sim_device *dev = gpio_sim_line_get_device(line);
++
++	guard(mutex)(&dev->lock);
++
++	return sprintf(page, "%c\n", line->valid ? '1' : '0');
++}
++
++static ssize_t gpio_sim_line_config_valid_store(struct config_item *item,
++						const char *page, size_t count)
++{
++	struct gpio_sim_line *line = to_gpio_sim_line(item);
++	struct gpio_sim_device *dev = gpio_sim_line_get_device(line);
++	bool valid;
++	int ret;
++
++	ret = kstrtobool(page, &valid);
++	if (ret)
++		return ret;
++
++	guard(mutex)(&dev->lock);
++
++	line->valid = valid;
++
++	return count;
++}
++
++CONFIGFS_ATTR(gpio_sim_line_config_, valid);
++
+ static struct configfs_attribute *gpio_sim_line_config_attrs[] = {
+ 	&gpio_sim_line_config_attr_name,
++	&gpio_sim_line_config_attr_valid,
+ 	NULL
+ };
+ 
+@@ -1399,6 +1477,7 @@ gpio_sim_bank_config_make_line_group(struct config_group *group,
+ 
+ 	line->parent = bank;
+ 	line->offset = offset;
++	line->valid = true;
+ 	list_add_tail(&line->siblings, &bank->line_list);
+ 
+ 	return &line->group;
+-- 
+2.48.1
+
 
