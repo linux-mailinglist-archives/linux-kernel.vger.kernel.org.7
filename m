@@ -1,109 +1,153 @@
-Return-Path: <linux-kernel+bounces-709126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6287BAED997
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BFDAED9CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF4727A527E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94FEF176753
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFA62580E1;
-	Mon, 30 Jun 2025 10:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADDE258CC4;
+	Mon, 30 Jun 2025 10:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YbLdLqXs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fPfesW2j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E8E23FC49
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CE72580FB
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751278672; cv=none; b=r82CrVZT5zhXIPCAKU5w7Lik7/FUYYnDiJaWNAJA7SU2ZffC6exsIkZBGoGxIuMVIFksKJUjk3lF18KkKmRvfdAsA6JpBSmMtYd7O2aGrvvJZ4xo0v4HM11YPycK9ma2QWlhCmv/TTFGBR1LrQ86MeiN3Tl/Duik5LzqRkcew4Y=
+	t=1751279206; cv=none; b=Hfp1fPJqEazCTmBR+MAulac/V0FrWILJ3jCN17zIMnUuCNGEbKHVfdbBJuJtm+GuXW367YzeKOC4o2ML3KgQpNbPjJdntVynVfjnt5GAk0yUgMZ7K153JILfCAR9g4cr1HSZE7wKuOlDu4BNnUNqho1zA9kwapeBArChpLBJ6lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751278672; c=relaxed/simple;
-	bh=kud7Oy4k5Zo12Dvn4P4+d50kDoLhhX1ARxGeMCI8rRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UX50O0eoYzQh+jHDTYZE+YpECKnOC8oxuZUF+6JsEPI64Qg8wkeRdBfyYc/fDrJM0dZhcyAMyeMzqFLIohwlTHhzD0U03GHxzivrFLG0FicarkadZuc1w3hOjyzpX38KlPKEGCi12mQDZmiwzv6rABgpMT6HzyvkNpJoWKhy3uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YbLdLqXs; arc=none smtp.client-ip=192.198.163.11
+	s=arc-20240116; t=1751279206; c=relaxed/simple;
+	bh=lP9cZ5ZVd213PgYvBxRjMQzsYmVuhyx9RNU0p02YOoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvGBYdR4igamwkdRt+Nxa4MSUxyAynSYXLy7eHEmD/uiHB6QUKlWNo/xZq6c8YHrEW1QwiKb+sclI1jQ0nLN5X8oS+o7V8Qw+NJyrD3Zv667OnHjeWl5/2+PLnfKfgDpHdKO4nuOABn+lJyMzEn/apAOWNbAvxKxqD4uFedL74w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fPfesW2j; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751278671; x=1782814671;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kud7Oy4k5Zo12Dvn4P4+d50kDoLhhX1ARxGeMCI8rRk=;
-  b=YbLdLqXsQw8Vazowsl80OTmeEfNdSZjoN6mhf0zNrUgGOl6EwBlGVJLn
-   pJx9x8AYhfaWt0uUKWQ6xo4GZzLkCpu7nSg2fXHJyXDT23Jv45YQzeILB
-   hXELU+cj9OCKvPir20+53MkLnYB0kXYS7fyyh7zFshUoVP4ptgP8wxAvA
-   GgznTrn56FXWNtXao7Y8MpvJqs15tVpIJIi3YZUE0OAZlm3jNHC8GkR4y
-   ChBFIvMVIs9oL4lOO9wGgJ2/KkduZQVXXZWYBiYHkAgyHHMuaoUdM7NPZ
-   vP8QDsm5f2ggwZjbIyRILk7SpM+A8086+FwyW2GwzE9pPRkX7VYRZ2BQM
+  t=1751279206; x=1782815206;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lP9cZ5ZVd213PgYvBxRjMQzsYmVuhyx9RNU0p02YOoU=;
+  b=fPfesW2j89FgU9T2NtE++pAB/wY7F9nYLJSE8cu/g+95rKdoM6I2GP5L
+   X82b82zVfgnXmGANbsRoueChkG/d0wVRI2DmMgpjzXZJ5aT5z3W5tbsNH
+   TZkJj1JLT/1SnOJsf2+F9mV9y+NDJU7dX+O4nLqthOrDClXLAUZAcrV1y
+   X43o/LFVCR9cG8Shh5C9ZAh99GzB6noLH9nZu3dQq5sQp30cNBO3IEy6o
+   TmQ34mRsd98Ij3ef+Oc0oVEm6rj949xqcEcIVXtH/A+NmAPvQt/KJ9urj
+   h5gtmzHIe9kVD4DoYhrew3ee271Tv5nCXHqw+PjMuKfxYjCfBd8R7FxT0
    A==;
-X-CSE-ConnectionGUID: DzXEDvylTEm7QmTfp/TITA==
-X-CSE-MsgGUID: AgjYsR6QR0ueqbsT0f/rww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="64095578"
+X-CSE-ConnectionGUID: CZh3T9sfRweohpKnXch1DQ==
+X-CSE-MsgGUID: DnPl9310TDWt9o/UJyptyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53649399"
 X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="64095578"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:17:51 -0700
-X-CSE-ConnectionGUID: RGurCq6oRQy7VfnOSJfNHw==
-X-CSE-MsgGUID: tcJ1SOavQK6MS+9Rmx4W0A==
+   d="scan'208";a="53649399"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:26:45 -0700
+X-CSE-ConnectionGUID: 6QCD6s3aRCuhF1tFyrQ++Q==
+X-CSE-MsgGUID: ifNOHc7BR3KyP2lv8WUJbw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="177081726"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 30 Jun 2025 03:17:49 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D7EEB3AB; Mon, 30 Jun 2025 13:17:47 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] platform/chrome: chromeos_laptop - replace open coded variant of DEFINE_RES_IRQ()
-Date: Mon, 30 Jun 2025 13:17:45 +0300
-Message-ID: <20250630101745.1855918-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+   d="scan'208";a="152900050"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa006.jf.intel.com with ESMTP; 30 Jun 2025 03:26:41 -0700
+Date: Mon, 30 Jun 2025 18:18:50 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: "jgg@nvidia.com" <jgg@nvidia.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"will@kernel.org" <will@kernel.org>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
+	"aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+	"Xu, Yilun" <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
+Message-ID: <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-3-yilun.xu@linux.intel.com>
+ <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
 
-DEFINE_RES_*() are compound literals, and hence no need to do that explicitly.
-Besides that, we have no IRQ name provided, no need to use _NAMED() variant.
-Replace open coded variant of DEFINE_RES_IRQ().
-No functional changes intended.
+On Mon, Jun 30, 2025 at 06:27:51AM +0000, Tian, Kevin wrote:
+> > From: Xu Yilun <yilun.xu@linux.intel.com>
+> > Sent: Friday, June 27, 2025 11:38 AM
+> > 
+> > +static void iommufd_device_remove_vdev(struct iommufd_device *idev)
+> > +{
+> > +	struct iommufd_vdevice *vdev;
+> > +
+> > +	mutex_lock(&idev->igroup->lock);
+> > +	/* vdev has been completely destroyed by userspace */
+> > +	if (!idev->vdev)
+> > +		goto out_unlock;
+> > +
+> > +	vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
+> > +	if (IS_ERR(vdev)) {
+> > +		/*
+> > +		 * vdev is removed from xarray by userspace, but is not
+> > +		 * destroyed/freed. Since iommufd_vdevice_abort() is
+> > reentrant,
+> > +		 * safe to destroy vdev here.
+> > +		 */
+> > +		iommufd_vdevice_abort(&idev->vdev->obj);
+> > +		goto out_unlock;
+> > +	}
+> 
+> let's add a comment that vdev is still freed in iommufd_destroy()
+> in this situation.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/chrome/chromeos_laptop.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes.
 
-diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platform/chrome/chromeos_laptop.c
-index 3579c42b515e..0b92047265de 100644
---- a/drivers/platform/chrome/chromeos_laptop.c
-+++ b/drivers/platform/chrome/chromeos_laptop.c
-@@ -726,9 +726,9 @@ static int __init chromeos_laptop_setup_irq(struct i2c_peripheral *i2c_dev)
- 		if (irq < 0)
- 			return irq;
- 
--		i2c_dev->irq_resource  = (struct resource)
--			DEFINE_RES_NAMED(irq, 1, NULL,
--					 IORESOURCE_IRQ | i2c_dev->irqflags);
-+		i2c_dev->irq_resource = DEFINE_RES_IRQ(irq);
-+		i2c_dev->irq_resource.flags |= i2c_dev->irqflags;
-+
- 		i2c_dev->board_info.resources = &i2c_dev->irq_resource;
- 		i2c_dev->board_info.num_resources = 1;
- 	}
--- 
-2.47.2
+> 
+> > -void iommufd_vdevice_destroy(struct iommufd_object *obj)
+> > +void iommufd_vdevice_abort(struct iommufd_object *obj)
+> >  {
+> >  	struct iommufd_vdevice *vdev =
+> >  		container_of(obj, struct iommufd_vdevice, obj);
+> >  	struct iommufd_viommu *viommu = vdev->viommu;
+> > +	struct iommufd_device *idev = vdev->idev;
+> > +
+> > +	lockdep_assert_held(&idev->igroup->lock);
+> > +
+> > +	/*
+> > +	 * iommufd_vdevice_abort() could be reentrant, by
+> > +	 * iommufd_device_unbind() or by iommufd_destroy(). Cleanup only
+> > once.
+> > +	 */
+> > +	if (!viommu)
+> > +		return;
+> 
+> Just check idev->vdev, to be consistent with the other path.
+
+I think there is problem here. From your comments above, vdev could be
+aborted/destroyed by iommufd_destroy() again *after* idev is freed.
+That means in iommufd_vdevice_abort/destroy(), usage of vdev->idev or
+idev->vdev or vdev->idev->igroup->lock may be invalid.
+
+I need to reconsider this, seems we need a dedicated vdev lock to
+synchronize concurrent vdev abort/destroy.
+
+Thanks,
+Yilun
 
 
