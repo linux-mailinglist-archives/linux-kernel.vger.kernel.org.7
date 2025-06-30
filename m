@@ -1,118 +1,149 @@
-Return-Path: <linux-kernel+bounces-709359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35458AEDCA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:21:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00876AEDC64
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444E13A80B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A563B78B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB84B289817;
-	Mon, 30 Jun 2025 12:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1398289810;
+	Mon, 30 Jun 2025 12:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwNKtsBj"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rXF5bPxc"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BA91DFCE;
-	Mon, 30 Jun 2025 12:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09A727726
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751286101; cv=none; b=iH47RgHczzjFqSvfxo7mYaE2lSHBobBKERJ+72NcD79SKCUgZ8WFyC8Hq7qETX5Dt0QaQllqrPDNrSyqio1I1Zqq1d8pVjsdL86IojH3l26zYYXM0O7NRzF3/+Fkz9ah5Ff1XIO7gVxK2tyCyJoEJS2IcyG8YSMebfnryMIQqSs=
+	t=1751285533; cv=none; b=ZfuLW+vCZqqx0Oirmt87QmkT9rRpQjTDC3gCbLIgRFoAJndKAWJ9lWzRA1eo3q4kpLse6zgLD5jQpTpjDX41u7Hz1n2Ivx+P33GggioVaq9mHs03SiDNhmKfxGb8hUNiTKZAjL03t3GgvKHCzhSy613lpfilKWoe3RKZLqwE9sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751286101; c=relaxed/simple;
-	bh=gUBGn6LkNrYYfc0MMtJUx1r9qQ8A9wY7woWHmYabnzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nmGWvwu5DB2Xyvo1nkgrh+VleIhKlSi/TQ0bkKqXITBtcRb/4k7MsbV8/mX9V6UcZKpPpdTH3/hzh7cSC0LvEiqJgxC/zuvgwrAQeoJO+pf1LeI4vzfqz1+Wg6ep3YhiT4DzYMUGiwGJuoGCM/+Vz/rtbC6qdGwRAJTqVfN9t6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwNKtsBj; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-450828af36aso1447235e9.1;
-        Mon, 30 Jun 2025 05:21:37 -0700 (PDT)
+	s=arc-20240116; t=1751285533; c=relaxed/simple;
+	bh=XsZ01gn6SKmjRX1uNL50S5Fe3COtllINdgku1Ra0dhs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=InO5dZzOG3K5r37r3qG3ThHDyzoJsNUuvl2aocULr4rgUmKY5wxZHGP51/xnF/RmzimOaZMNSEIPAI0aMuAK4CI+E6BHb4wzYgIHapkt2EU0rHM8F8swDcGkkyc23+V/k7of3OyXsdjbtJPo9xoB+92mExUdIkTGkPtPbfn620M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rXF5bPxc; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a6d77b43c9so1809372f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751286096; x=1751890896; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CG85nVM05UH8KlWyPytsUQqw/p1VMbS1nOa01h9/4vY=;
-        b=UwNKtsBjdGV8s4FnYQZ5t8o3U0TKqXN9ijxOiTzkW3s3encDiccxuWDE0hubPZzruH
-         n1gVXiraWYNlrkDB+IathI+VBwPhFBADf50FNI7B6htmzItAF0MQ0ApbNlQdSELJoMPJ
-         LG32TKxnAYyxl+j4hn2TiAZYWFTVl7JSoibt9NRqfnAgSi1PK4koz5ynYud9Fr/e+CR9
-         HOOqYONcQC2XuU4uo02mtad2nu6aBpja4dYmW8GfyVkPDZnDIB1GIbm1MbZcIFoF+5aL
-         JySxYj5wA98WOJ+SL5nzZ7H0jGfrGDePWnSjIQ1vzU2JDHXyhKlpRJRSuDqCgMtEUkzW
-         npDQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751285530; x=1751890330; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1s8oUTZcjoh5Kq1JzK41PPsRuPDdA11TohyVqgN/ZZc=;
+        b=rXF5bPxcadU+tDESSukqX7Ao0KnIvEnszYBpDeZiq2taC5fvWE+RB2szlGqbKpZ/xI
+         duMJWYopRSjtWSGCnM6PCE8jgF7+fDRkAICmko2a7eJLcxkt9WpHHdQ4IqlUP++j887m
+         ZfquuPNP2NL0eluP31QAhT03Lj3Qb8dIsnHKYqwvXQJrerc6YPg/QDc5HYWbkb9XvAIv
+         3MPSyeikGIvwRWWKRdAAPEggyiSkcH6iKH9XXESCBf6OySD/6NORJh8eDncnNumBWGED
+         fwjRG+tS4D59hldf9X9RTQUiB6FPdLnyIUCpyrO/Y41gBOvz6Yso7TtphQHA+u2qrpyj
+         Y+uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751286096; x=1751890896;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1751285530; x=1751890330;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CG85nVM05UH8KlWyPytsUQqw/p1VMbS1nOa01h9/4vY=;
-        b=fb0pLa1YxpRFA3j9JKcCxJSJ1s7KvFLRm73JVBpsxw8hofF3TBl8mLZpFTGgsQt7qf
-         vW3peBD5Wyk9KS++IYdEErwLV79DiBJC4+xveyw2V9KjrRIM9ABUdclD+i0a3LSxannF
-         z4qGPX5VY4d+QPmgtjnNMYjTuLFFScckEtT+r+votangfUMmXa1Hpodr3SFXkOoZOlG0
-         KW8iaRenhf1+IGvqFEoutB5FNsn+qoXRNe2a9g/wTJ55R2dmL/buL4XCbUr2xZw85DPO
-         Mx6Bcgg8AA8OestwukYMjRSB8SLOA/T7VTpVfM+hvaQlEN2U8MdusO0FMkmNQVKUwin6
-         rAlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEEoCykQHO9pgvGydrGBqPxt0IMHDeKic1p2glWVUiaZpz9pi+G1i5LahgbisrePQI9aFQFWzS239nYRLv@vger.kernel.org, AJvYcCWLFaENRi/5LI6fBnbK3rzZLQmc5uZ1iD/SIx97izD0L1Een8OQktvnLCsE5f7VLZ847IUaHmkgQNWTYu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl1lcJ2sJtpKeiVxJpoN9J6P3hVAjgyBFJJu8D9g0/ThL7TUQO
-	xhoF0U7tAg3nA7L2V9zf7Y9xLjMh3qbP0erw+M8RPSK8Qtm9oXz+BFdk
-X-Gm-Gg: ASbGncusyLbOmb4xgvbsAFw1/PbOdnp/37Na+Lhp4T403VTIkNnt1uaMyxn3t4qgqxb
-	jjNdXZmV8Dn5uTcbsrYlHKXWG5hO/JXCHUxpj82LqWHDaF4UfkvveyBgwUFuN/xWY6N1z6o/6/D
-	g3ICj3UZM9eboUkre9bPKXTKDvM4N59HUKg2YHiauMyp+GXzt3RqKasaVrMyb/LBe6FsKVvV7sP
-	ZDV3Xyomo7A5GnE/rpcyXs2E/ddpkKhsVqf2anLxy3h+ciewhJjKk04Svn5RKmDpnx/eS1U8+qq
-	o59YEOFjH4Rbec5SoYClgaYqOpkdl4H3D8ToTg9JoOTUFNeojJZTT0dAkaNpcOhrhVeJPg2JUY4
-	7ZeiU5yi7SzFoOA==
-X-Google-Smtp-Source: AGHT+IGPyiTzplS597WFAua/Opv6CmYnj9L/8QI+8mgzvqs+dsPU1U9+4dQRWDdPswPQvm+BqCZ9Hw==
-X-Received: by 2002:a05:600c:681b:b0:453:8c5:95d3 with SMTP id 5b1f17b1804b1-453a017c020mr13353015e9.7.1751286095366;
-        Mon, 30 Jun 2025 05:21:35 -0700 (PDT)
-Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:43e:be8c:f80c:622a])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4538a3fe24esm133800375e9.23.2025.06.30.05.21.34
+        bh=1s8oUTZcjoh5Kq1JzK41PPsRuPDdA11TohyVqgN/ZZc=;
+        b=rsfz7x+HjpQ0qsl8brasAjDJE2XZ2hYs9kUQ5+lRk21ZuSuz47yXlsjX1lM7Cf7Lvr
+         YJHyGW7e4tCAAEBVSka0+Lhw3xtRNz+6AiWpWSHewozEvsNy5thKLqcr+wcGVvS1kWhC
+         qzfvu97kfirKTRDMq60OG4s5FVfuH3qTlUFeRYTbNYXQFVtdOJ0Y1VAmQHdWqtjw7wTL
+         SJeqc1X0DPfFh2EAQqbYhkpuz7SPbFFLLByx/3CDtqO1QRp+m59RC/MTen/02dt7X5KW
+         qSWnP8z+p14NOBv5864Yg2T4BouEe5j4UrDAaJWi2rv8qhLO4E5ozEpEDKBO5l87C7Fm
+         Ox6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUG5SXcwLXkuChwUPfxDSJPam1b+4FHPF7Vnzh5gRvZvtk6+Qp+ypmSL0yO70GtHG0u7ntRmmtsRmloARs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/VTdwknvkds0o4MWP2s2Ukw5FcO7ThyNcl7yx/qcsilrEpDYq
+	yuriLV5MLb+dYERureHOkgJ2v7ANVX5h8a9Soo6KfptQ82itUbNd2e9dQAY8IiY5c7o=
+X-Gm-Gg: ASbGncugZUkwlxaiE10y5Et1Osmi0f5p9jdbI+pb7ZQYO5H7vM9biubvzuVLX4K8tY+
+	0WC5bJ6FPfd5X0DrKXBjLLrBLv03buCFjvo8O5B+b5HNswO7pHNfjMcEOeFEE/wAfELas7II3L7
+	ivW2jW6JhboyjDeJshcF9SoMh1sHP9eRRTSj6CatTXcqNmasLOvM6Nze40T8wmNoxNmIq/Xe0eg
+	dJ0K3YsFmbu6qxWhxpDnrsvpC0FUP5ROnXaadbAN1RCG5FkRj+qU1wXu0IBnmjIFlJ3vaY/znT5
+	ZuHfg49I4DUW7E+7xTM8VoBxMz+1rlFf1i9O1RG+vhXE6BzbVQEozY0U7Ac/no0KJtc=
+X-Google-Smtp-Source: AGHT+IGMCvGG2EAsgade9JhSv7QJondLI23WTPAiEg9wfACf605/gxoJRn1uFiUWhBnYOR4zrnVkTA==
+X-Received: by 2002:a5d:584b:0:b0:3a5:3e64:1ac4 with SMTP id ffacd0b85a97d-3a8fee64d08mr12789671f8f.33.1751285529748;
+        Mon, 30 Jun 2025 05:12:09 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:19e3:6e9c:f7cd:ff6a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c800eaasm10470472f8f.37.2025.06.30.05.12.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 05:21:35 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH v2] pch_uart: Fix dma_sync_sg_for_device() nents value
-Date: Mon, 30 Jun 2025 14:10:19 +0200
-Message-ID: <20250630121021.106643-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Mon, 30 Jun 2025 05:12:09 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/4] firmware: qcom: scm: fix potential race condition
+ with tzmem
+Date: Mon, 30 Jun 2025 14:12:01 +0200
+Message-Id: <20250630-qcom-scm-race-v2-0-fa3851c98611@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABF/YmgC/13MQQ6CMBCF4auQWTumLZSqK+9hWGCdwiRCcWqIh
+ nB3K4kbl/9L3rdAImFKcCoWEJo5cRxzmF0Bvm/HjpBvucEoY1VtKnz4OGDyA0rrCS05V7rgQnk
+ MkD+TUODX5l2a3D2nZ5T3xs/6u/4k+yfNGhVWtlaadDDV4Xq+89hK3EfpoFnX9QNkpf6PqwAAA
+ A==
+X-Change-ID: 20250624-qcom-scm-race-5e7737f7f39f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Johan Hovold <johan+linaro@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1480;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=XsZ01gn6SKmjRX1uNL50S5Fe3COtllINdgku1Ra0dhs=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoYn8XKBa3WfXs7Ew1KDx/dg2P9K+SmsG2n0g09
+ v5VxgAAaNuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaGJ/FwAKCRARpy6gFHHX
+ cjjpEADDQuDiDUZ7oMhXf2Z2uRZbx8tEFpoyPk/Xt2w72efPG951JZQG1cJFOUYt10JrzxhNv62
+ OHhqnbuP5zYqtn0RQsORqLR1ZhxlSbJb+JBS36gKwR/YZqHYV7+VbnQ8A0D+eZzPTISOaq8Zyj4
+ UBsn6keaR0QQCd5EzgTC7wTsrtUzKLdALxj2ZiFIl4XRoSKFEOnCkeI+n38F2sbL4QeyNC0Om2T
+ UGr6sWwhWi4esJFH8pjFMIoJkkgXeqlnqJ6zmQpIigF8hTHz1/QROd3Ozs0XbWi6MoCT5wuRdFm
+ yoj4iQC9991Wf6PnVy2XY27NTXo8KhUeV15rURoVcNLP64cXLa6ujC+6zoWcoFChzZFNcToCQNO
+ 78Y0A/KVQ7X0oMusYWkPTS/3JzOy9tZiGsw0brQuaWwN/2mT5XQ/YGhbRauT4AMxcuIk5DtzghW
+ bS9cqP4BcrtAJLZ8D4B1RbI7Ucgn4XeciBi41DaikJVPg8ddPrQUB/LQFxCXF3XEuCX4aiXYmt+
+ eKiRAP2b6Ym2dSk7b3r5C5rICNDtq75AJG+hewCJzuF/TeB/C4pkNCw/gqgPdoUosWxp5iDjzFh
+ CZYchtADn9fWPTIrZDk3SEaZygsNQY2mYrAzKrzIQk9CVSP9QFCm+chjwMERKsu/IxMjnd52grU
+ d8xFbN1vCMMPKWQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-The dma_sync_sg_for_device() functions should be called with the same
-nents as the dma_map_sg(), not the value the map function returned.
+There's a race condition between the SCM call API consumers and the TZMem
+initialization in the SCM firmware driver. The internal __scm pointer is
+assigned - marking SCM as ready for accepting calls - before the tzmem
+memory pool is fully initialized. While the race is unlikely to be hit
+thanks to the SCM driver being initialized early, it still must be
+addressed.
 
-Fixes: da3564ee027e ("pch_uart: add multi-scatter processing")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/tty/serial/pch_uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- add comments explaining the ordering of operations in probe()
+- add Johan's Reported-by and Closes tags
+- Link to v1: https://lore.kernel.org/r/20250625-qcom-scm-race-v1-0-45601e1f248b@linaro.org
 
-diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-index 508e8c6f01d4..884fefbfd5a1 100644
---- a/drivers/tty/serial/pch_uart.c
-+++ b/drivers/tty/serial/pch_uart.c
-@@ -954,7 +954,7 @@ static unsigned int dma_handle_tx(struct eg20t_port *priv)
- 			__func__);
- 		return 0;
- 	}
--	dma_sync_sg_for_device(port->dev, priv->sg_tx_p, nent, DMA_TO_DEVICE);
-+	dma_sync_sg_for_device(port->dev, priv->sg_tx_p, num, DMA_TO_DEVICE);
- 	priv->desc_tx = desc;
- 	desc->callback = pch_dma_tx_complete;
- 	desc->callback_param = priv;
+---
+Bartosz Golaszewski (4):
+      firmware: qcom: scm: remove unused arguments from SHM bridge routines
+      firmware: qcom: scm: take struct device as argument in SHM bridge enable
+      firmware: qcom: scm: initialize tzmem before marking SCM as available
+      firmware: qcom: scm: request the waitqueue irq *after* initializing SCM
+
+ drivers/firmware/qcom/qcom_scm.c       | 95 ++++++++++++++++------------------
+ drivers/firmware/qcom/qcom_scm.h       |  1 +
+ drivers/firmware/qcom/qcom_tzmem.c     | 11 ++--
+ include/linux/firmware/qcom/qcom_scm.h |  5 +-
+ 4 files changed, 55 insertions(+), 57 deletions(-)
+---
+base-commit: f817b6dd2b62d921a6cdc0a3ac599cd1851f343c
+change-id: 20250624-qcom-scm-race-5e7737f7f39f
+
+Best regards,
 -- 
-2.43.0
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
