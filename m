@@ -1,193 +1,97 @@
-Return-Path: <linux-kernel+bounces-709978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3869AAEE595
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:20:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C820BAEE59F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEAB517DE6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE8A443B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C98C295DA6;
-	Mon, 30 Jun 2025 17:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7282296165;
+	Mon, 30 Jun 2025 17:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RCGZNPi9"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sfa9lqFa"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7CF28F94E;
-	Mon, 30 Jun 2025 17:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467A295524
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 17:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751303914; cv=none; b=iXK67Ju+Uv8LXmRljXjK2vB84gN9yWyBYgqtIHmqKqvKmdgYJCKYMM7vIgttZqQ3OyM97KuRLBYDCFYk6F0mUn+A8yjNZtfkxnLcG2SMN4mbz7d7lm57ibsdjwbZNQyNGyzpI0MvdWH/LdWfNT58arMaQ0LwvPY0SidIH8JXWRI=
+	t=1751303979; cv=none; b=U+RzNhNclcN7ketE3j7gonsjri8oPGO30RO93xkdsvCgfzHt6He0uYu8W3b3bUyq1frEYfDI9Rev/vd1kd6t+p0W57VXpjZwk3KfpCncIuwNa7sNLq17fcVovZucJU7PR63dr+dsomI88DRwh7179uEYwwxFRi2pIf81uwHgD7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751303914; c=relaxed/simple;
-	bh=mxYeHt3z88AgCGudK+INGVx9B4a5/myQ8Rf/7nEuHZ0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=TgTcGI2Imb6QHkjH/WTKdlTbC1Pu9DWaOw/wXfuDIJTylg5Kfm1iRNiP6SZudhOPrBgPkna/LeAljGCCOmSNxw0TvB6zotNRtgqIqj4RP+SLU+c3yu12ZTc9eBm5S6S5v564M/f+1hucHAgpJquQgzZsHiaAUcGiPpP/8jsD0N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RCGZNPi9; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E1D8D25D5F;
-	Mon, 30 Jun 2025 19:18:23 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id gncVtwY-5rfM; Mon, 30 Jun 2025 19:18:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1751303902; bh=mxYeHt3z88AgCGudK+INGVx9B4a5/myQ8Rf/7nEuHZ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=RCGZNPi9UixpOry4GnMbNnJlUiGyXPRr1zMTtiRKWNggma3UiKcmkpHY0cDI17jGC
-	 ET3e86sOvmVGOUDlIELumexcK6pIKC/vr/GqJ2Wy5p8rN+YtlBeFRkJXuL64rsgjrk
-	 rfg5Gy6YEI4lV0BEfTS8SWLcp6yvjJG2oZaQVNriU5SpLAr2xef90z2/JFfz8ylDeI
-	 qAF1lQq7SqaIpbpxU3f+ISharf/1xorxFN9Vg/xba+Lrik8H3xzaEFRN6J9QCxndSN
-	 HbjMyTEatTqsDoXzr+xX7qbAc1Wav35i4eF1xNfddWs7mnic3gtp2P2dMtXCh6S87G
-	 36HBVqzPDKTOw==
+	s=arc-20240116; t=1751303979; c=relaxed/simple;
+	bh=Z69WvqnqSuA76TfLex7V7kusjB/URZZSkAXwG8zMnbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cv/1oBwNGIL6LPKx3RzfVwS1pXIbFEcnKcB69x4Kl5JUq3+zKSXEN/doimXw8yHzpoyJQqUyCzzge4Ha0IMy7+UQLFp1he3TzbvThdp9GenLpDpISSbMMCEpl2aOyGJ2NQrroYTxAPR1gSbwsIojgfAGhirPkgwujSzGvUx90Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sfa9lqFa; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751303974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZmI8nMByS0MXzzMaQIPrJcZVorXLee3dlktB3PSrEP0=;
+	b=sfa9lqFaUMBM9emwrwz94QaLMN2gwynIpjJeVKl1ifv658ZJtuZZFR77Yh6RUGlEHJ4+O3
+	C062OZVr6uEAWFgKmub7e69Ey7ZuN3SMDfZOn2ylJ+x2r7PqWBExdehfp0H1mf63cDici0
+	vgyi2rCtTWFDOc4w1Y8Gm9+el0vu4V8=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/hugetlb: Use str_plural() in report_hugepages()
+Date: Mon, 30 Jun 2025 19:18:26 +0200
+Message-ID: <20250630171826.114008-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 30 Jun 2025 17:18:22 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: display: panel: document Samsung
- S6E8AA5X01 panel driver
-In-Reply-To: <80055981-3624-4165-af0c-3b60c345e8f8@linaro.org>
-References: <20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org>
- <20250625-panel-samsung-s6e8aa5x01-v3-1-9a1494fe6c50@disroot.org>
- <80055981-3624-4165-af0c-3b60c345e8f8@linaro.org>
-Message-ID: <4b9e44b14395ff4c64eba1bd71e63150@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-06-30 15:29, Neil Armstrong wrote:
-> On 25/06/2025 14:41, Kaustabh Chakraborty wrote:
->> Samsung S6E8AA5X01 is an AMOLED MIPI DSI panel controller. Document 
->> the
->> compatible and devicetree properties of this panel driver. Timings are
->> provided through the devicetree node as panels are available in
->> different sizes.
-> 
-> Wait, why ? Why not multiple compatibles ?
+Use the string choice helper function str_plural() to simplify the code
+and to fix the following Coccinelle/coccicheck warning reported by
+string_choices.cocci:
 
-The panel dimensions is the only thing which differs. The model name,
-controller, registers, and functionality are supposedly all similar, so
-I believe this is fine...
+  opportunity for str_plural(nrinvalid)
 
-> 
-> Neil
-> 
->> 
->> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>   .../bindings/display/panel/samsung,s6e8aa5x01.yaml | 78 
->> ++++++++++++++++++++++
->>   1 file changed, 78 insertions(+)
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa5x01.yaml 
->> b/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa5x01.yaml
->> new file mode 100644
->> index 
->> 0000000000000000000000000000000000000000..23dae6e961ae01c99de93bf4b4a067f2953f8edf
->> --- /dev/null
->> +++ 
->> b/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa5x01.yaml
->> @@ -0,0 +1,78 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: 
->> http://devicetree.org/schemas/display/panel/samsung,s6e8aa5x01.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Samsung S6E8AA5X01 display panel controller
->> +
->> +maintainers:
->> +  - Kaustabh Chakraborty <kauschluss@disroot.org>
->> +
->> +allOf:
->> +  - $ref: panel-common.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: samsung,s6e8aa5x01
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  vdd-supply:
->> +    description: core voltage supply
->> +
->> +  vci-supply:
->> +    description: voltage supply for analog circuits
->> +
->> +  reset-gpios: true
->> +  width-mm: true
->> +  height-mm: true
->> +  panel-timing: true
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - width-mm
->> +  - height-mm
->> +  - panel-timing
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/gpio/gpio.h>
->> +
->> +    dsi {
->> +        #address-cells = <1>;
->> +        #size-cells = <0>;
->> +
->> +        panel@0 {
->> +            compatible = "samsung,s6e8aa5x01";
->> +            reg = <0>;
->> +
->> +            vdd-supply = <&panel_vdd_reg>;
->> +            vci-supply = <&panel_vci_reg>;
->> +
->> +            reset-gpios = <&gpd3 4 GPIO_ACTIVE_HIGH>;
->> +
->> +            width-mm = <62>;
->> +            height-mm = <128>;
->> +
->> +            panel-timing {
->> +                clock-frequency = <73094400>;
->> +
->> +                hactive = <720>;
->> +                hsync-len = <2>;
->> +                hfront-porch = <62>;
->> +                hback-porch = <26>;
->> +
->> +                vactive = <1480>;
->> +                vsync-len = <2>;
->> +                vfront-porch = <12>;
->> +                vback-porch = <10>;
->> +            };
->> +        };
->> +    };
->> +
->> +...
->> 
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ mm/hugetlb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 9dc95eac558c..08abe7395f2f 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -25,6 +25,7 @@
+ #include <linux/mmdebug.h>
+ #include <linux/sched/signal.h>
+ #include <linux/rmap.h>
++#include <linux/string_choices.h>
+ #include <linux/string_helpers.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
+@@ -3724,7 +3725,7 @@ static void __init report_hugepages(void)
+ 			buf, h->nr_huge_pages);
+ 		if (nrinvalid)
+ 			pr_info("HugeTLB: %s page size: %lu invalid page%s discarded\n",
+-					buf, nrinvalid, nrinvalid > 1 ? "s" : "");
++					buf, nrinvalid, str_plural(nrinvalid));
+ 		pr_info("HugeTLB: %d KiB vmemmap can be freed for a %s page\n",
+ 			hugetlb_vmemmap_optimizable_size(h) / SZ_1K, buf);
+ 	}
+-- 
+2.50.0
+
 
