@@ -1,162 +1,177 @@
-Return-Path: <linux-kernel+bounces-709376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0456FAEDCE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:34:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B370CAEDCF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051073AD371
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:34:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5429175922
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562CC289E39;
-	Mon, 30 Jun 2025 12:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7A628A705;
+	Mon, 30 Jun 2025 12:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="c3dh3Tj3"
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkZ8+HM3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98B527054C;
-	Mon, 30 Jun 2025 12:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87C5285419;
+	Mon, 30 Jun 2025 12:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751286857; cv=none; b=j6RhIXkMvx33LrUNDtIrtg0DVI/p5LkaZYeu+dRwkgKQ4cyQNZjfmP+epRpkQYvTfNl8nifQASQO1K8md0raluwScEJ+CDE7C6CUK20Hx/rVpradVGWxrNciOo4k8KqbP1t982eif3eyVla4rMLFVxFjKd8JtDIk9Eq3t746Bcw=
+	t=1751286909; cv=none; b=rIgAe9xFWq7sEFF3YMN9Yr8S3ysdy6LYGz6g/P69tde/uT0PJ8RUVPR81lQmJB02rYOM5uGO4zlw/ju7k48nQ0i5VTbGjaK85OQxRjPLLEoNdp/XNpz+l1T+l6QZxZY+PuwnzrqYQC6xQhiBvHiQYDjbIiM86+vXzL0ZbeC55xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751286857; c=relaxed/simple;
-	bh=YmvdTn3Yb59iQwNFWY3RaUBVLJtG9DvMo8XScgsgnsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J3hmwqV/noj+buF+6lFt9NWpJCtOnFQbsPeIpJMWGiBID7tzFKNivLF8UtFO+UcA8bkFcyg5r3+cShlVaKO2jxlLbxsYfWexOsHc3AgRuZQFlGodn1lbEyDf9v4QSYH0ku8W5HOr+jJ7HafnK8TSVf2pbF5fEhEbqFSdxK6URuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=c3dh3Tj3; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NGnf4bhFU/j1HOvGLBdTQiqonwf7x0+KACKFefOASB8=; b=c3dh3Tj342SZjQS/lvgmtgByhz
-	ONc3yL8o9CZVZXgPoxWSHqp8J9/sry28+pEvjFzWxo3rCb1sPHJHavrAfdRmN9gjIVa+wB9CCt9bg
-	05sgw/7Bx0SshXHYmiHUjhZlm15H9A6RURjn+5/ETyUp1nyL9UoywLk/G7Jm6SY3ibpJRU2XqB2U6
-	Jm1n5OwoezCenLC3XMtbMpqUWShmJ6eQgz33vKshf+tBJtS/WBi89bF+eKJf+YNFXNQTRqQmXPi41
-	GrzEHGTrUZEQDTTV+G7tEqs//kVJ2cKut93RyoOALA4mN/oonufSRaRF6t/fqPYYDsMHTo4TGpGSg
-	uvniamtw==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:27863 helo=[10.224.8.110])
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1uWDi9-00000000PNw-1JF9;
-	Mon, 30 Jun 2025 14:34:13 +0200
-Message-ID: <6dce47fd-01fb-4401-88a3-d9e85ee5529a@oss.cyber.gouv.fr>
-Date: Mon, 30 Jun 2025 14:34:12 +0200
+	s=arc-20240116; t=1751286909; c=relaxed/simple;
+	bh=6rSwfj0OgqcpS0whNGrBhLm2Rs5oxE6X+ajo/xI0UWA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EWFQ/WY4t+MTgcLOgKnFbZhmqedqbswnQfKHWvZrn60w9Meh0tldnicsPjU/K3OAoguTQXrFU7LymbuuPpm1I9ATVSchlPwu9tkm1pBWYSZjpjWVuxKd+p0mqmAV5T2GLSXpPoG8rP17MfTGza9EQ3HU0ojunmR48Y0xFOOlYbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkZ8+HM3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26A44C4CEE3;
+	Mon, 30 Jun 2025 12:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751286909;
+	bh=6rSwfj0OgqcpS0whNGrBhLm2Rs5oxE6X+ajo/xI0UWA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=dkZ8+HM3yA9QIAJ94UkDi01PhTrCPGrdDPd+IvSAcVVO83QjQuUq2shSZcdU18p2u
+	 NA4QH1G1g2jepZFRwJ1qN5VDWvSZQQNKA2N+HuZLove+rZBK8Dz1l0Q1t0/gAvuF0Z
+	 WZLI0oCiJsdmoMSb1co22PqiikJGBxOlcz7s6TeUKsdANuABE2p8GK2rJ3lEe7cQCb
+	 DaN7DM62JmnVwr8r1Fd9SJFrNsXIxxHfrncmz8KzDRNgM6EYM3IyMoS4j5F3DOAmeV
+	 qk4KfNJrDQrB9VieUuKxbuVNvaJd6v6WDXJd+pZklBjVaEgv926eKPY9hbhHmwdQVU
+	 K06VGuq1s/0sQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17880C8302D;
+	Mon, 30 Jun 2025 12:35:09 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH v6 0/3] Add support for the IPQ5018 Internal GE PHY
+Date: Mon, 30 Jun 2025 16:34:59 +0400
+Message-Id: <20250630-ipq5018-ge-phy-v6-0-01be06378c15@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/4] usb: core: Plug the usb authentication capability
-To: Oliver Neukum <oneukum@suse.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
- Kannappan R <r.kannappan@intel.com>,
- Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Stefan Eichenberger <stefan.eichenberger@toradex.com>,
- Thomas Gleixner <tglx@linutronix.de>, Pawel Laszczak <pawell@cadence.com>,
- Ma Ke <make_ruc2021@163.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>,
- Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>,
- Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250620-usb_authentication-v1-0-0d92261a5779@ssi.gouv.fr>
- <20250620-usb_authentication-v1-3-0d92261a5779@ssi.gouv.fr>
- <94cd36e2-db7c-4693-9f43-01c855dc6891@suse.com>
-Content-Language: en-US
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-In-Reply-To: <94cd36e2-db7c-4693-9f43-01c855dc6891@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHOEYmgC/23QzU7DMAwH8FeZciYoduK03WnvgTjka2sELF07I
+ qap705aDhSy49+Wf7J9Z1MYY5jYfndnY8hxiulcgn7aMdeb8ynw6EtmKJCEkoLH4UICWl46Q3/
+ j3mpS5miUC56VoWEMx/i1gi+vJfdxuqbxtvoZluoPRUj/qQxccO+NbVtSAUke0uf1PaW3Z5c+2
+ IJl3AJtBeAKCC11o1wDrgbkL6AFVoAsgEKQsjFCgsUaUFugqwBVAPDSAJb90D04gTYAVO/MtJx
+ gTKc7Zb318BeY5/kbpdzPD7IBAAA=
+X-Change-ID: 20250430-ipq5018-ge-phy-db654afa4ced
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751286906; l=4361;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=6rSwfj0OgqcpS0whNGrBhLm2Rs5oxE6X+ajo/xI0UWA=;
+ b=Kvrm1AJSq5+XPEMqSTSBbz73Svierh5rH5IkmJtZWSQFxnpA9c5t37ljwFISOR59szpETEMy+
+ 9xJp5hJx82hAYhJ8VAVUvAFhRywRflhC6XAAhbjjz2fGsxgp57aQMnF
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Hi Olivier,
+The IPQ5018 SoC contains an internal Gigabit Ethernet PHY with its
+output pins that provide an MDI interface to either an external switch
+in a PHY to PHY link architecture or directly to an attached RJ45
+connector.
 
-Thank you for your review.
+The PHY supports 10BASE-T/100BASE-TX/1000BASE-T link modes in SGMII
+interface mode, CDT, auto-negotiation and 802.3az EEE.
 
-Indeed our current implementation of the usb authentication is still a bit
-crude.
-Currently, most, if not all of usb devices can't handle authentication. 
-If we
-want to have an integration that doesn't break on current hosts, we need to
-have a fail safe. We are still working on the best way to handle the
-combination of authentication and authorization.
-See the reply to Alan [1].
+The LDO controller found in the IPQ5018 SoC needs to be enabled to drive
+power to the CMN Ethernet Block (CMN BLK) which the GE PHY depends on.
+The LDO must be enabled in TCSR by writing to a specific register.
 
-[1]: 
-https://lore.kernel.org/linux-usb/8cc10112-23a7-41af-b81f-7fc0c097d34d@oss.cyber.gouv.fr/
+In a phy to phy architecture, DAC values need to be set to accommodate
+for the short cable length.
 
-On 6/23/25 20:15, Oliver Neukum wrote:
-> Hi,
->
-> I am afraid someone has to address this.
->
-> On 20.06.25 16:27, nicolas.bouchinet@oss.cyber.gouv.fr wrote:
->
->> +    // Set a default value for authenticated at true in order not to 
->> block devices
->> +    // that do not support the authentication
->> +    dev->authenticated = 1;
->
-> So the default is authenticated. OK.
->
->> +    if (le16_to_cpu(dev->descriptor.bcdUSB) >= 0x0201) {
->> +        pr_notice("bcdUSB >= 0x0201\n");
->> +        retval = usb_get_bos_descriptor(dev);
->> +        if (!retval) {
->> +            pr_notice("found BOS\n");
->> +#ifdef CONFIG_USB_AUTHENTICATION
->> +            if (dev->bos->authent_cap) {
->
-> If the device claims not to support authentication ...
->
->> +                /* If authentication cap is present, start device 
->> authent */
->> +                pr_notice("found Authent BOS\n");
->> +                retval = usb_authenticate_device(dev);
->> +                if (retval != 0) {
->> +                    pr_err("failed to authenticate the device: %d\n",
->> +                           retval);
->> +                } else if (!dev->authenticated) {
->> +                    pr_notice("device has been rejected\n");
->> +                    // return early from the configuration process
->> +                    return 0;
->> +                } else {
->> +                    pr_notice("device has been authorized\n");
->> +                }
->> +            } else {
->> +                // USB authentication unsupported
->> +                // Apply security policy on failed devices
->> +                pr_notice("no authentication capability\n");
->
-> ... we do nothing about it. We enumerate.
->
-> The purpose of authentication is guarding against unknown or malicious 
-> devices,
-> isn't it? This behavior seems to be kind of incompatible with the goal.
->
->     Regards
->         Oliver
->
->
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Changes in v6:
+- Rebased on top of linux-next which includes the bindings (patch 2 in
+  v5) and driver (patch 3 in v5) picked up from and merged by net-next,
+  no changes otherwise.
+- Link to v5: https://lore.kernel.org/r/20250610-ipq5018-ge-phy-v5-0-daa9694bdbd1@outlook.com
+
+Changes in v5:
+- Removed unused macro definition (IPQ5018_TCSR_ETH_LDO_READY)
+- Reverted sorting of header files for which a separate patch can be
+  submitted
+- Added a comment to explain why the FIFO buffer needs to be reset
+- Do not initialize local variable as caught by Russell
+- Updated macro definition names to more accurately describe the PHY
+  registers and their functions
+- Include SGMII as supported interface mode in driver commit message
+- Changed error handling of acquirement of PHY reset to use IR_ERR
+  instead of IS_ERR_OR_NULL
+- Link to v4: https://lore.kernel.org/r/20250609-ipq5018-ge-phy-v4-0-1d3a125282c3@outlook.com
+
+Changes in v4:
+- Updated description of qcom,dac-preset-short-cable property in
+  accordance with Andrew's recommendation to indicate that if the
+  property is not set, no DAC values will be modified.
+- Added newlines between properties
+- Added PHY ID as compatible in DT bindings for conditional check to
+  evaluate correctly. Did a 'git grep' on all other PHY IDs defined in
+  the driver but none are explicitly referenced so I haven't added them
+- Link to v3: https://lore.kernel.org/r/20250602-ipq5018-ge-phy-v3-0-421337a031b2@outlook.com
+
+Changes in v3:
+- Replace bitmask of GEPHY_MISC_ARES with GENMASK as suggested by Konrad
+- Removed references to RX and TX clocks as the driver need not
+  explicitly enable them. The GCC gatecontrols and routes the PHY's
+  output clocks, registered in the DT as fixed clocks, back to the PHY.
+  The bindings file has been updated accordingly.
+- Removed acquisition and enablement of RX and TX clocks from the driver
+- Link to v2: https://lore.kernel.org/r/20250528-ipq5018-ge-phy-v2-0-dd063674c71c@outlook.com
+
+Changes in v2:
+- Moved values for MDAC and EDAC into the driver and converted DT
+  property qca,dac to a new boolean: qcom,dac-preset-short-cable as per
+  discussion.
+- Added compatible string along with a condition with a description of
+  properties including clocks, resets, and qcom,dac-preset-short-cable
+  in the bindings to address bindings issues reported by Rob and to
+  bypass restrictions on nr of clocks and resets in ethernet-phy.yaml
+- Added example to bindings file
+- Renamed all instances of IPQ5018_PHY_MMD3* macros to IPQ5018_PHY_PCS*
+- Removed qca,eth-ldo-ready property and moved the TCSR register to the
+  mdio bus the phy is on as there's already support for setting this reg
+  property in the mdio-ipq4019 driver as per commit:
+  23a890d493e3ec1e957bc925fabb120962ae90a7
+- Explicitly probe on PHY ID as otherwise the PHY wouldn't come up and
+  initialize as found during further testing when the kernel is flashed
+  to NAND
+- Link to v1: https://lore.kernel.org/r/20250525-ipq5018-ge-phy-v1-0-ddab8854e253@outlook.com
+
+---
+George Moussalem (3):
+      clk: qcom: gcc-ipq5018: fix GE PHY reset
+      arm64: dts: qcom: ipq5018: Add MDIO buses
+      arm64: dts: qcom: ipq5018: Add GE PHY to internal mdio bus
+
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 48 +++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gcc-ipq5018.c        |  2 +-
+ 2 files changed, 47 insertions(+), 3 deletions(-)
+---
+base-commit: bc4672f3c5df8a47a3e5b4c31dead2b01103e70f
+change-id: 20250430-ipq5018-ge-phy-db654afa4ced
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
+
 
