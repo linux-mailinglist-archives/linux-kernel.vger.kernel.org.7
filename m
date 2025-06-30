@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-708800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDEDAED53C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:09:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39626AED549
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD4F1893B0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DBD6175656
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9974214813;
-	Mon, 30 Jun 2025 07:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944E521B9F4;
+	Mon, 30 Jun 2025 07:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LCHSMWzt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C393278F24;
-	Mon, 30 Jun 2025 07:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iPbGolaQ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C443621ABB1;
+	Mon, 30 Jun 2025 07:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751267369; cv=none; b=K5/aeZTH46f/rohTDgvzmi4ugwwWRCgohy0ymS1/BRhz6x+VBs55/WQnUUPeIbq0Fs4r+jNPPm0u74EKFIACCZABY3jJTrAu4/R/QgLy1HnbD0I15XgIMKIfdIa89S/gmB2Si0UfKXRSCaZCdxm+n5PDN+3MRFxc8VIOIRxSUNM=
+	t=1751267489; cv=none; b=uVaD5+kndoneFYO27zKge8uvNtq9e7Jzzmy37YcOSR/xWQbGZ2b60DEm6LuWv9ktg8jYOHajRCPw2KJcYV7C04Od5Drj585YMLTzYHAUIFa5oaWHtSshUbofoaeY99MCfuzLgo5a5npMn5H8XFYB7M/fMpvSRjB/xpjchoj9K+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751267369; c=relaxed/simple;
-	bh=2DtDh75BjjG1Bypjj77+rjJnfFomPfSyCzUXJ/6TNg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tFjVW6EE8hIHdy5j+xBBnTxRveApLKqbqB/5NOnyt+WXoEIP4F8RFsTCCIGNnHUUG+WSfD/T3gWnW9OzisiTgBTtO70FSbkw246xcO/njvz42NtzwW/ReVeT+BUFbQ9W6xNUToAJV0iAil8iHj2MuPXmcIbe46WkN5URfyG5iCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LCHSMWzt; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751267367; x=1782803367;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2DtDh75BjjG1Bypjj77+rjJnfFomPfSyCzUXJ/6TNg4=;
-  b=LCHSMWztD71CPBmeMlzVBpo5MP9I6PZBi8f/TVERpyfxNAUVKAkU97Bt
-   8oK98VE3//iuXmj3CiULGf3osAn97srB109sGgqlXGWhUTC/OvjjIE/F+
-   iXJ9zgY4UqHsiNTldcrxpqJhcaUuEn47DYHLuGKlSZHrys/jmaFBzkQ7M
-   jjqVYasgIVM3/6QCipkoC1NGUS35h3C739scNkwasbhNB3RRr44D912hy
-   kTFPsZ13AWdJfS/dR1cjsDhjjn22G4KaueTfiZ71RbmJxjcZ5yXY30s8a
-   So8Np0xEjRxPV+e6isSVgSE96O1H0jaGjWrmguHXa44GXZZOvKSCMYKwE
-   Q==;
-X-CSE-ConnectionGUID: 5A58bmdXSVyWIkB1Rkiwhw==
-X-CSE-MsgGUID: uhBP6YkQS5uRrjbCQJ5HZQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="70916533"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="70916533"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 00:09:27 -0700
-X-CSE-ConnectionGUID: Tb+bAqywTYed8cSYmtEGVA==
-X-CSE-MsgGUID: NTLoU24QQZSwYdYu57I+4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="153118599"
-Received: from unknown (HELO [10.238.0.239]) ([10.238.0.239])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 00:09:23 -0700
-Message-ID: <c8ea05e6-58e5-4371-88fe-cde3f09dd530@linux.intel.com>
-Date: Mon, 30 Jun 2025 15:09:19 +0800
+	s=arc-20240116; t=1751267489; c=relaxed/simple;
+	bh=aLJ5Fh7woyj6lcXkF33z0s0wIaI2PABc4me1NR5K6wA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EUF5PS8AY9N2Kdpkmxh18RIupzyNPNCVOx6P2pC1JDUxlxavCouFHKuP9Eb2ae/F7eGbBtGl8MJyYjH2k5ZbELC5j44zhLoCzVWfcRHqM/6e71qmePuspX9DRWKonZaAVqpHWA2tx9vFJkL0ejwzt7jvdBwcevdEpP97bpBJtRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iPbGolaQ; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=mq
+	+lCN5C85/urD5+hhWk5hPE/mDa4QuDWCpfswWybYs=; b=iPbGolaQYSsX2LY5Lg
+	YeS8LyytWOVYe7IWNc/iQ19vSx6etOz9qnODdMMDIC3dj8YApUId4XvKbmENke6w
+	a0saHNE93OvkVY4S6H5heKlRk1iRoTZX+5RWGUFcyMOaWXcts+6vmpO8r1R68CWh
+	7xakozcZpQdUraaw6f2ruoRvA=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDHzzBlOGJoS3s5Bg--.7606S2;
+	Mon, 30 Jun 2025 15:10:30 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	willemb@google.com,
+	almasrymina@google.com,
+	kerneljasonxing@gmail.com,
+	ebiggers@google.com,
+	asml.silence@gmail.com,
+	aleksander.lobakin@intel.com,
+	stfomichev@gmail.com,
+	david.laight.linux@gmail.com
+Cc: yangfeng@kylinos.cn,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] skbuff: Add MSG_MORE flag to optimize large packet transmission
+Date: Mon, 30 Jun 2025 15:10:29 +0800
+Message-Id: <20250630071029.76482-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] x86/sme: Use percpu boolean to control wbinvd
- during kexec
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: "Hansen, Dave" <dave.hansen@intel.com>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "bp@alien8.de"
- <bp@alien8.de>, "peterz@infradead.org" <peterz@infradead.org>,
- "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
- "seanjc@google.com" <seanjc@google.com>, "x86@kernel.org" <x86@kernel.org>,
- "sagis@google.com" <sagis@google.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>
-References: <cover.1750934177.git.kai.huang@intel.com>
- <b963fcd60abe26c7ec5dc20b42f1a2ebbcc72397.1750934177.git.kai.huang@intel.com>
- <ffcb59ff61de9b3189cf1f1cc2f331c5d0b54170.camel@intel.com>
- <b368fb3399d1e64e98fb9ad6a7a214387c097825.camel@intel.com>
- <0b8948ed672ebf6701ddc350914e4e325032ad87.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <0b8948ed672ebf6701ddc350914e4e325032ad87.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHzzBlOGJoS3s5Bg--.7606S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF17tFyktw15CFyrXF1UKFg_yoW8Aw1kpa
+	98WFWDZF47Jw13WFs7Jws8ur47Kws5GFyj9FWYv345GasFqr1vgrWDKrWYvFs5KrZ7CFy3
+	XrsFvF1UK3yYvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UZiSLUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiTg98eGhiNtQyRwAAsY
 
+From: Feng Yang <yangfeng@kylinos.cn>
 
+The "MSG_MORE" flag is added to improve the transmission performance of large packets.
+The improvement is more significant for TCP, while there is a slight enhancement for UDP.
 
-On 6/27/2025 8:30 AM, Huang, Kai wrote:
-[...]
->
-> And I am not 100% sure whether this issue exists, since allowing CPU hotplug
-> during kexec doesn't seem reasonable to me at least on x86, despite it is
-> indeed enabled kernel_kexec() common code:
->
->          /*
->           * migrate_to_reboot_cpu() disables CPU hotplug assuming that
->           * no further code needs to use CPU hotplug (which is true in
->           * the reboot case). However, the kexec path depends on using
->           * CPU hotplug again; so re-enable it here.
->           */
->           cpu_hotplug_enable();
->           pr_notice("Starting new kernel\n");
->           machine_shutdown();
->
-> I tried to git blame to find clue but failed since the history is lost
-> during file move/renaming etc.  I suspect it is for other ARCHs.
->
-Had a check in git history, it's related to powerpc kexec code.
+When using sockmap for forwarding, the average latency for different packet sizes
+after sending 10,000 packets(TCP) is as follows:
+size    old(us)         new(us)
+512     56              55
+1472    58              58
+1600    106             81
+3000    145             105
+5000    182             125
 
-First, commit e8e5c2155b00 ("powerpc/kexec: Fix orphaned offline CPUs across kexec")
-add the code to online each present CPU.
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+---
+Changes in v3:
+- Use Msg_MORE flag. Thanks: Eric Dumazet, David Laight.
+- Link to v2: https://lore.kernel.org/all/20250627094406.100919-1-yangfeng59949@163.com/
 
-Later, commit011e4b02f1da (" powerpc, kexec: Fix "Processor X is stuck" issue
-during kexec from ST mode") add the code in the common code kernel_kexec() to
-enable hotplug to fix the stuck issue.
+Changes in v2:
+- Delete dynamic memory allocation, thanks: Paolo Abeni,Stanislav Fomichev.
+- Link to v1: https://lore.kernel.org/all/20250623084212.122284-1-yangfeng59949@163.com/
+---
+ net/core/skbuff.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 85fc82f72d26..cd1ed96607a5 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3252,6 +3252,8 @@ static int __skb_send_sock(struct sock *sk, struct sk_buff *skb, int offset,
+ 		kv.iov_len = slen;
+ 		memset(&msg, 0, sizeof(msg));
+ 		msg.msg_flags = MSG_DONTWAIT | flags;
++		if (slen < len)
++			msg.msg_flags |= MSG_MORE;
+ 
+ 		iov_iter_kvec(&msg.msg_iter, ITER_SOURCE, &kv, 1, slen);
+ 		ret = INDIRECT_CALL_2(sendmsg, sendmsg_locked,
+@@ -3292,6 +3294,8 @@ static int __skb_send_sock(struct sock *sk, struct sk_buff *skb, int offset,
+ 					     flags,
+ 			};
+ 
++			if (slen < len)
++				msg.msg_flags |= MSG_MORE;
+ 			bvec_set_page(&bvec, skb_frag_page(frag), slen,
+ 				      skb_frag_off(frag) + offset);
+ 			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1,
+-- 
+2.43.0
 
 
