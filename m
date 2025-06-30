@@ -1,289 +1,182 @@
-Return-Path: <linux-kernel+bounces-709402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF76AEDD4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:44:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16262AEDD47
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB5F57A9C8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71AF7189CA09
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B33028B7EA;
-	Mon, 30 Jun 2025 12:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46002853FA;
+	Mon, 30 Jun 2025 12:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="W6Eb+0/U"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="M0x4Q5tn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAB1286D55;
-	Mon, 30 Jun 2025 12:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014DA28982E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751287249; cv=none; b=E1P1maR++Vx6PesUEcbsjoBnoEkEukIPTC1IotoA5QeuwTxjgpEuY9ex0BmIhYqaYUiq9TZGAlkLSJObvg1oOl06bOe14qeshqfptpDUZnU9BIn1Ji+UDstspGJDsdsaDkJ4peh3rejiO5X5eqnQSbHU3VMRilZNshAMdsjAvX8=
+	t=1751287269; cv=none; b=pvZstCePlGiqxMQKshVwm5BKr2A84+1M1R2Go0YjRiHwmeu9tdWuerYN4g30xgDGHuTE/c4kHKKzwqzEuOLylw05ECrc6OtcY3NpwaAft3MxOJo6i02RejSxV28QUA+zijmP3WDO6zSLoBkkat09ELk6wB6qpZKy4ey3o5zHUWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751287249; c=relaxed/simple;
-	bh=UnpMmZSh0GuFrhkQtJcvGJOvSG7U4zxLIdwKkWGqEas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ipezPe7KAWc7S/MuxagO8vR2mMmb1sPJC7UalP4wyy5g4MYAKH+xFf9UHCCTwz5SyzF3INsRBcb1AB2giAey5oaEKh4qYgJ5EeoYOK9RV67cDZpehVhrSdrBusqSQbXFxo/BqHLLc724B193Pxq6KogOxsikHicPU/FopQpr9mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=W6Eb+0/U; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1751287242; x=1751892042; i=w_armin@gmx.de;
-	bh=UnpMmZSh0GuFrhkQtJcvGJOvSG7U4zxLIdwKkWGqEas=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=W6Eb+0/UmLdf8yXWINsxyC7q+seofeH3gi5sPZ8S4zPzDAhGKXqVfGfrjIcEXi4v
-	 t/5tgfLbmrvDTOSH9nhTre+A0QobEolGIT2BOJgiu8V9JKy4XeBk9l1rgf556GGVi
-	 LtJYK7NXXnsYf7sBzmEB0omeTWNCLMkVBpyKWcHCN9SL9ppwA8OEXlW6yxmfc4vvw
-	 vONjljlzXV00jHyrIyb+xOTyv7ADJieEvvczuezalQbNVp4zRLqXknRXQE2HNPUmh
-	 zSDivVhpiu85nEHBTwadkHoKTlWvrWgxLwJSM4aW/DUdA3DQnoAhhHgkZUttBlDqp
-	 sYE96pqjPaAleIKHug==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8QWG-1uadfG1QqO-00G3Q4; Mon, 30
- Jun 2025 14:40:42 +0200
-Message-ID: <e167ed33-010d-4cdb-ae53-4afeb3efdea7@gmx.de>
-Date: Mon, 30 Jun 2025 14:40:35 +0200
+	s=arc-20240116; t=1751287269; c=relaxed/simple;
+	bh=B6n6w2gQ711jKzVaiI7qXcGx1qqLrRwBWVKjiG2AFSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjJhQakkSSdutxrbiw5wBlduSiA0gClftrm5Lbb7Y1jNX2dnAw05xAU7hk0YlNdPA1SpMFTjgvfP0GhINNjnPxo4jxVL74BQsU8wsdsORztAFTxQBSM3DhkI+LvJ/KRo9l7surf76yWbL9RFv8PmkXElfQSKmWJ4jaghy3DdM0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=M0x4Q5tn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DD84940E00DD;
+	Mon, 30 Jun 2025 12:41:01 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sLr0bVzyS3c3; Mon, 30 Jun 2025 12:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751287255; bh=qUznKdvuceQ1mqOavakZXMExqv94bo/QDurRQ3PrqUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M0x4Q5tnuA4mqyRjCuyCM/faoZig5hLkV6ZSz5g8i+xWQX0Am/0l5jEBose8U3nXR
+	 08G8rbo4oLyypWEH7g1KbmVHHrvwpvyMf0D9Hl9y3ru5Wq1xPVrsJbXOpVHv8eNWaT
+	 ElnnNMskA/JsA8eyP2ics1QNoDKFP53a9Z0dTQhIebe322yO0hxvyo1Qz9eiOOjV4v
+	 OoGkiGg81TDk3Dox/UmSPlPffkJN2KBHs7v80W/D0y3CiOagWsqwk4muRJxThSqkTE
+	 2Rzv3/n7VLf9+ifi5Ust9uS2LUvdigFevjihw6aayw9AoIyd4R4QbVL0TIxkpoCmte
+	 mg+f1HtexFmH2V8nXjTIQokR6Lww/bLqvcNLrzo4WicqWNVoGcVHXAkiWGy2DTOqjn
+	 4JIsipMf/O2Ldg+h9vmWbaHn0DWiafpSbrwY0DslfRujaTkegYFl4m8RkpCdpfqSwW
+	 4E9FZlQrO19VW4vhzmWlhqpxQzJLOXmDkDSRJ/vJGySeh84uBvKPQ4UVTOpcmaenXy
+	 b9yD2PLZHGWrj0EzRZwjCZZCT2o+sivvQWkCxziu0cW2HhJlTpovH9Hk9fNQnEzTBx
+	 sBU3b/+rHimTMWFZtFLSE8PV93AWqjaXXxnU2G6K8KR3O4LyI4AoB0hd12HaMCNiax
+	 oWEmqECQY123hlCSRfDUjrqI=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F24E540E01FC;
+	Mon, 30 Jun 2025 12:40:44 +0000 (UTC)
+Date: Mon, 30 Jun 2025 14:40:38 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 14/20] x86/bugs: Add attack vector controls for BHI
+Message-ID: <20250630124038.GFaGKFxtAiYEBUAFRy@fat_crate.local>
+References: <20250509162839.3057217-1-david.kaplan@amd.com>
+ <20250509162839.3057217-15-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] platform/x86: Add Uniwill laptop driver
-To: Werner Sembach <wse@tuxedocomputers.com>,
- =?UTF-8?Q?P=C5=91cze_Barnab=C3=A1s?= <pobrn@protonmail.com>,
- ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com, chumuzero@gmail.com,
- corbet@lwn.net, cs@tuxedo.de, ggo@tuxedocomputers.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20250615175957.9781-1-W_Armin@gmx.de>
- <20250615175957.9781-3-W_Armin@gmx.de>
- <1b79a3c3-c493-471b-aa37-92458b356e8d@protonmail.com>
- <7b0243fd-15c6-42da-8570-9ad9cd5163af@gmx.de>
- <7a58972f-5256-4598-b729-224f20f3ecd2@protonmail.com>
- <7b29df39-8146-4913-83ff-d71db26983c8@gmx.de>
- <c689db31-60cc-4494-b700-88744376f589@tuxedocomputers.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <c689db31-60cc-4494-b700-88744376f589@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uu3lV+VGTI/rU6v9vrabT1rRGRXFPJAJjt2Q9w2V/vaNyRrxqzS
- 6zHx1SQNU1rDPy5zx161bKZIX0/F0Rkre8sdlSDF6mTyvDmnD82KebZjZbH96qZ5bNmG9t8
- Ez0MgYoNjtMZQcxWOhQZMtMSuHs/W5mmxYT0bvRvWpkhXA9dkYQU1utFlt1DFSQeoTldDEx
- 9x1TdkNThvdm33CM62SjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/lrzYg4hDa0=;OrQAWKkl985NpTIrQ4K9FR5WQp8
- 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
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250509162839.3057217-15-david.kaplan@amd.com>
 
-Am 30.06.25 um 14:32 schrieb Werner Sembach:
+On Fri, May 09, 2025 at 11:28:33AM -0500, David Kaplan wrote:
+> There are two BHI mitigations, one for SYSCALL and one for VMEXIT.
+> Split these up so they can be selected individually based on attack
+> vector.
+> 
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 38 +++++++++++++++++++++++++++-----------
+>  1 file changed, 27 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 305a11fa9521..667385808400 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -1905,8 +1905,9 @@ static bool __init spec_ctrl_bhi_dis(void)
+>  enum bhi_mitigations {
+>  	BHI_MITIGATION_OFF,
+>  	BHI_MITIGATION_AUTO,
+> -	BHI_MITIGATION_ON,
+> +	BHI_MITIGATION_FULL,
+>  	BHI_MITIGATION_VMEXIT_ONLY,
+> +	BHI_MITIGATION_SYSCALL_ONLY
 
-> Hi,
->
-> Am 28.06.25 um 01:09 schrieb Armin Wolf:
->> Am 25.06.25 um 17:59 schrieb P=C5=91cze Barnab=C3=A1s:
->>
->>> Hi
->>>
->>> 2025. 06. 23. 0:36 keltez=C3=A9ssel, Armin Wolf =C3=ADrta:
->>>> Am 22.06.25 um 23:37 schrieb P=C5=91cze Barnab=C3=A1s:
->>>>
->>>>> Hi
->>>>>
->>>>>
->>>>> 2025. 06. 15. 19:59 keltez=C3=A9ssel, Armin Wolf =C3=ADrta:
->>>>>> Add a new driver for Uniwill laptops. The driver uses a ACPI WMI
->>>>>> interface to talk with the embedded controller, but relies on a
->>>>>> DMI whitelist for autoloading since Uniwill just copied the WMI
->>>>>> GUID from the Windows driver example.
->>>>>>
->>>>>> The driver is reverse-engineered based on the following information=
-:
->>>>>> - OEM software from intel
->>>>>> - https://github.com/pobrn/qc71_laptop
->>>>> Oh... I suppose an end of an era for me...
->>>> I now remember that we interacted on the mailing lists before,=20
->>>> sorry for not CCing
->>>> you on this patch series.
->>>>
->>>> Do you want a Co-developed-by tag on those patches?
->>> I'll leave it up to you.
->>>
->>>
->>>>>> - https://github.com/tuxedocomputers/tuxedo-drivers
->>>>>> - https://github.com/tuxedocomputers/tuxedo-control-center
->>>>>>
->>>>>> The underlying EC supports various features, including hwmon=20
->>>>>> sensors,
->>>>>> battery charge limiting, a RGB lightbar and keyboard-related=20
->>>>>> controls.
->>>>>>
->>>>>> Reported-by: cyear <chumuzero@gmail.com>
->>>>>> Closes: https://github.com/lm-sensors/lm-sensors/issues/508
->>>>>> Closes: https://github.com/Wer-Wolf/uniwill-laptop/issues/3
->>>>>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->>>>>> ---
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 .../ABI/testing/sysfs-driver-uniwill-lapto=
-p=C2=A0=C2=A0 | 53 +
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 Documentation/wmi/devices/uniwill-laptop.r=
-st=C2=A0 | 109 ++
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 8 +
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 drivers/platform/x86/uniwill/Kconfig=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 17 +
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 drivers/platform/x86/uniwill/Makefile=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 drivers/platform/x86/uniwill/uniwill-lapto=
-p.c | 1477=20
->>>>>> +++++++++++++++++
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 drivers/platform/x86/uniwill/uniwill-wmi.c=
-=C2=A0=C2=A0=C2=A0 | 3 +-
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 7 files changed, 1667 insertions(+), 1 del=
-etion(-)
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 create mode 100644=20
->>>>>> Documentation/ABI/testing/sysfs-driver-uniwill-laptop
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 create mode 100644 Documentation/wmi/devic=
-es/uniwill-laptop.rst
->>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 create mode 100644=20
->>>>>> drivers/platform/x86/uniwill/uniwill-laptop.c
->>>>>>
->>>> [...]
->>>>>> +
->>>>>> +static const unsigned int=20
->>>>>> uniwill_led_channel_to_bat_reg[LED_CHANNELS] =3D {
->>>>>> +=C2=A0=C2=A0=C2=A0 EC_ADDR_LIGHTBAR_BAT_RED,
->>>>>> +=C2=A0=C2=A0=C2=A0 EC_ADDR_LIGHTBAR_BAT_GREEN,
->>>>>> +=C2=A0=C2=A0=C2=A0 EC_ADDR_LIGHTBAR_BAT_BLUE,
->>>>>> +};
->>>>>> +
->>>>>> +static const unsigned int=20
->>>>>> uniwill_led_channel_to_ac_reg[LED_CHANNELS] =3D {
->>>>>> +=C2=A0=C2=A0=C2=A0 EC_ADDR_LIGHTBAR_AC_RED,
->>>>>> +=C2=A0=C2=A0=C2=A0 EC_ADDR_LIGHTBAR_AC_GREEN,
->>>>>> +=C2=A0=C2=A0=C2=A0 EC_ADDR_LIGHTBAR_AC_BLUE,
->>>>>> +};
->>>>>> +
->>>>>> +static int uniwill_led_brightness_set(struct led_classdev=20
->>>>>> *led_cdev, enum led_brightness brightness)
->>>>>> +{
->>>>>> +=C2=A0=C2=A0=C2=A0 struct led_classdev_mc *led_mc_cdev =3D=20
->>>>>> lcdev_to_mccdev(led_cdev);
->>>>>> +=C2=A0=C2=A0=C2=A0 struct uniwill_data *data =3D container_of(led_=
-mc_cdev, struct=20
->>>>>> uniwill_data, led_mc_cdev);
->>>>>> +=C2=A0=C2=A0=C2=A0 unsigned int value;
->>>>>> +=C2=A0=C2=A0=C2=A0 int ret;
->>>>>> +
->>>>>> +=C2=A0=C2=A0=C2=A0 ret =3D led_mc_calc_color_components(led_mc_cde=
-v, brightness);
->>>>>> +=C2=A0=C2=A0=C2=A0 if (ret < 0)
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->>>>>> +
->>>>>> +=C2=A0=C2=A0=C2=A0 for (int i =3D 0; i < LED_CHANNELS; i++) {
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Prevent the brightne=
-ss values from overflowing */
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D min(LED_MAX_B=
-RIGHTNESS,=20
->>>>>> data->led_mc_subled_info[i].brightness);
->>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D regmap_write(da=
-ta->regmap,=20
->>>>>> uniwill_led_channel_to_ac_reg[i], value);
->>>>> This is interesting. I am not sure which "control center"=20
->>>>> application you have looked at,
->>>>> but I found many lookup tables based on the exact model, etc. For=20
->>>>> example, on my laptop
->>>>> any value larger than 36 will simply turn that color component=20
->>>>> off. Have you seen
->>>>> anything like that?
->>>> I was using the Intel NUC studio software application during=20
->>>> reverse-engineering and had a user
->>>> test the resulting code on a Intel NUC notebook. AFAIK the OEM=20
->>>> software did not use a lookup table.
->>>>
->>>> If we extend this driver in the future then we might indeed use the=
-=20
->>>> quirk system to change the max.
->>>> LED brightness depending on the model.
->>> I see. So everything up to 200 works. And after that do you know if=20
->>> it turns off or what happens?
->>
->> The user who tested the driver reported that "the brightest lightbar=20
->> setting is 200", so i assume
->> that the lightbar simply clamps the values. However i would not trust=
-=20
->> the EC firmware in the slightest,
->> i can definitely imagine that other models react differently.
->
-> Iirc at least for keyboard backlight on tf devices there was a value=20
-> that could be overwritten to make the values 0-255 instead of 0-200,=20
-> maybe this is also true for the lightbar, but i don't know if this=20
-> affects the livespan of the leds.
->
-> Best regards,
->
-> Werner
->
-Interesting, do you know the register offset of this value?
+We usually call those USER_KERNEL or so...
 
-Thanks,
-Armin Wolf
+But I don't think you need it. The rename to _FULL is ok but the rest could
+look like this:
 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 32edf0b8a495..624d8d766dca 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -2096,7 +2096,7 @@ static bool __init spec_ctrl_bhi_dis(void)
+ enum bhi_mitigations {
+ 	BHI_MITIGATION_OFF,
+ 	BHI_MITIGATION_AUTO,
+-	BHI_MITIGATION_ON,
++	BHI_MITIGATION_FULL,
+ 	BHI_MITIGATION_VMEXIT_ONLY,
+ };
+ 
+@@ -2111,7 +2111,7 @@ static int __init spectre_bhi_parse_cmdline(char *str)
+ 	if (!strcmp(str, "off"))
+ 		bhi_mitigation = BHI_MITIGATION_OFF;
+ 	else if (!strcmp(str, "on"))
+-		bhi_mitigation = BHI_MITIGATION_ON;
++		bhi_mitigation = BHI_MITIGATION_FULL;
+ 	else if (!strcmp(str, "vmexit"))
+ 		bhi_mitigation = BHI_MITIGATION_VMEXIT_ONLY;
+ 	else
+@@ -2123,11 +2123,11 @@ early_param("spectre_bhi", spectre_bhi_parse_cmdline);
+ 
+ static void __init bhi_select_mitigation(void)
+ {
+-	if (!boot_cpu_has(X86_BUG_BHI) || cpu_mitigations_off())
++	if (!boot_cpu_has(X86_BUG_BHI))
+ 		bhi_mitigation = BHI_MITIGATION_OFF;
+ 
+ 	if (bhi_mitigation == BHI_MITIGATION_AUTO)
+-		bhi_mitigation = BHI_MITIGATION_ON;
++		bhi_mitigation = BHI_MITIGATION_FULL;
+ }
+ 
+ static void __init bhi_update_mitigation(void)
+@@ -2160,15 +2160,19 @@ static void __init bhi_apply_mitigation(void)
+ 	if (spec_ctrl_bhi_dis())
+ 		return;
+ 
+-	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
+-		pr_info("Spectre BHI mitigation: SW BHB clearing on VM exit only\n");
++	/* Mitigate KVM if guest->host protection is desired */
++	if (bhi_mitigation == BHI_MITIGATION_FULL ||
++	    bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
+ 		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
+-		return;
++		pr_info("Spectre BHI mitigation: SW BHB clearing on VM exit\n");
+ 	}
+ 
+-	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and VM exit\n");
+-	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
+-	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
++	/* Mitigate syscalls if user->kernel protection is desired */
++	if (bhi_mitigation == BHI_MITIGATION_FULL ||
++	    cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL)) {
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
++		pr_info("Spectre BHI mitigation: SW BHB clearing on syscall\n");
++	}
+ }
+ 
+ static void __init spectre_v2_select_mitigation(void)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
