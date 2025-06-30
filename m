@@ -1,238 +1,264 @@
-Return-Path: <linux-kernel+bounces-708720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62637AED411
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:48:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720B2AED41E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AB41896068
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:48:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199261891482
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B9419F137;
-	Mon, 30 Jun 2025 05:48:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4D543147
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751262482; cv=none; b=RKAVo5opN59Twf085dAD/PtQMmJN+vVoXnEEkHOnN/38yNTBKU+XeOjOV7YzEYHumifATIRW1xSzfU6sql90oCIF+nIsW34yGsnB0xQw4o0YO2gi96e8U41JWNrLVo3uF5pNEUcO1SnKivjyX5yaIzmuFkKldizX9cu1gZPis1Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751262482; c=relaxed/simple;
-	bh=2IruJvIGNeHKNHFZLJZCXUmlfpg/XFDsCde7VhwpoF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RKeBckvXXOYE9CPGCj0ZxA8AYl+J0ASxGkicy7VXqC406lB7gKxdSPhxL2HuoeFLIlgA/SaA+9W1+b6Vh9gkV8CSACUfIZTMmIwKhTNucL+EKJp1JKXhxYfX4EZEDw2mWuixSaZqYtX192EQiJk3tRCuaCoTG6CBsCfrxtHD7jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30BA91F60;
-	Sun, 29 Jun 2025 22:47:44 -0700 (PDT)
-Received: from [10.163.37.132] (unknown [10.163.37.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 042F93F6A8;
-	Sun, 29 Jun 2025 22:47:56 -0700 (PDT)
-Message-ID: <d7286c62-8c7a-493e-8149-72d9c77eca00@arm.com>
-Date: Mon, 30 Jun 2025 11:17:52 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373B21AE877;
+	Mon, 30 Jun 2025 05:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="We1fpioc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BD317C21C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751262877; cv=fail; b=qE1Lo0eIs1+sqyQiC9N7hQrYYOL7pkesj5cGAjs+bA/TqZu9dwm8MdqQZpGG+FB50Eg5r9kgRc8a7cNa1JH/ysDg0OeFz/fR3RemIBG5UJZHEFfjUVsMmehxYv0eF8OtQzofIh1ftrNs44sZ7CHticLmuCo5AyxCu72jt5ldA0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751262877; c=relaxed/simple;
+	bh=pIlDQEmHVpe9NbYnhyxKkj13RdIWrA5bSuOA9SVrUQ8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uNTy3dW6qQJOgyjESIpZoJEoMctTqn+3o0vF+17Fl7w0CKLyZCx+hqqqXLcN5+rg3CNonpWXVNZtON5ADeqbI6ZzXz27h0SP1WtuwiHHsU19MyGInI3cA9MeIc7FupKjPP2KVWSTWtmVT9IGrq+9TDJocNp6PVzuu0DlB0PiFqg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=We1fpioc; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751262875; x=1782798875;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=pIlDQEmHVpe9NbYnhyxKkj13RdIWrA5bSuOA9SVrUQ8=;
+  b=We1fpiocq32NfvPSm0bv+eviNexB1Q1Wt+zohw9bZuv4dBbWWoCNjWEb
+   oDjWwYb+bqPqwU4555A4wtbs90ixbeSuMF4kbJETJRaQMzOi/wRV6Dot6
+   1sWnXlIqtbDXieKWdKNfSnzBLo3bsrU4Acho3vqelbBTCSHqegtGLRR3y
+   UM143uf/IjRWvk8v0lGxeBeDgbbrht7Nzukt1mFyIvrypBPZXi9Nm2a+v
+   8QcDDfjLoUtup4NI9l3w7LRTosgqxoI7BCx8Ee4KBhWXZtgv6A3oIQ+NB
+   nmzcsNjU5Vi1+bGagRvJIuQ4Wo/iY2Oj5TXUmgkxjKvc6BVBszodq/Onw
+   g==;
+X-CSE-ConnectionGUID: 6xnABGFXTkqFW1PsOm4jsQ==
+X-CSE-MsgGUID: bF4HNAKURFSyl/eZy4JQdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="52593428"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="52593428"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 22:52:30 -0700
+X-CSE-ConnectionGUID: yGJdLM0iRCWpoqscjlnSlA==
+X-CSE-MsgGUID: sPI+HZoVShiiOog2dx6pFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="152747079"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 22:52:31 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Sun, 29 Jun 2025 22:52:30 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Sun, 29 Jun 2025 22:52:30 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.82)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Sun, 29 Jun 2025 22:52:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OBqAetIg+O+eftc0M37VyizWJ58JF5kONeb1TPVZvbUV6jSauRC/2Z9nx9oSezRUgopKybwhMyiaHr9ppLoHyqyLv9vCZNhtMZXtaLCsYbAVxE4lXa63KSevmYDTzfgqD2v7T3F3D/RTr29/PF+tVv+yFlnVMmT0zRtz/l4oj7h2LGRnBAmRlX+dzHhhv8/1amh+mRt9zRFPVpkLVh+DD/QcB2mncZ3A9i088CYZHfDhaS5ERvsc/BVXGQr4aCKQH4YV5kRUU6kc7dqT64sYvVpWiNaTW7lFgu7Jt1WFGWfviAhXrblg4/GypV/FfN5C6dXPO0e1OQr9uJd2IJPlpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pPyQXoPKqNZMvOZe7pjQqMP6FzRcoY9OuTGSxKSvr4c=;
+ b=Izn9KAqw+wMBikE58B8GgkuMMO2U9/hDfPxUUGCweytuuF79wFObuWl5BD9Qt02IC+wass/IYwfw/S5j0tSkABPn0aR63d85NFmZskS6Lg/pHUi92KcmaceTFfOsMah2sUZx33LFV2Qa89sLLHgynHkHB9GbeIMm0DxWjqlx6Mp7jyrDOlhXinudezwwE19ZPrernZjIEgBcPYfojdtwJZYWD1X+airpqHjqjz7Bx8W+7Ef6TpZoisIH8XW48BHkOUUU5KHQMSMOq9MpGXzQGiVpflNbPgBVaGjTWoTwoAafCeLIqMAJo5b94Em3vux8TMS8nh1ShO73RqEeB4ZeIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com (2603:10b6:208:31a::21)
+ by SJ2PR11MB8585.namprd11.prod.outlook.com (2603:10b6:a03:56b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.24; Mon, 30 Jun
+ 2025 05:52:26 +0000
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a]) by BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a%7]) with mapi id 15.20.8880.030; Mon, 30 Jun 2025
+ 05:52:26 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"jgg@ziepe.ca" <jgg@ziepe.ca>, "will@kernel.org" <will@kernel.org>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"nicolinc@nvidia.com" <nicolinc@nvidia.com>, "aik@amd.com" <aik@amd.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>, "baolu.lu@linux.intel.com"
+	<baolu.lu@linux.intel.com>, "Xu, Yilun" <yilun.xu@intel.com>
+Subject: RE: [PATCH v3 1/5] iommufd: Add iommufd_object_tombstone_user()
+ helper
+Thread-Topic: [PATCH v3 1/5] iommufd: Add iommufd_object_tombstone_user()
+ helper
+Thread-Index: AQHb5xYCtHs96qDSmE6Vr3JwXh7ZorQbNauA
+Date: Mon, 30 Jun 2025 05:52:26 +0000
+Message-ID: <BL1PR11MB5271410ADB704F459C77BC248C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-2-yilun.xu@linux.intel.com>
+In-Reply-To: <20250627033809.1730752-2-yilun.xu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5271:EE_|SJ2PR11MB8585:EE_
+x-ms-office365-filtering-correlation-id: e265b5b6-cbba-4d3b-b45c-08ddb79a4ae8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?x24neYZf25px0FN3aihorpgP1+zGN2lALih/3WLANluhQPNdeImk98D293d+?=
+ =?us-ascii?Q?0RwA81jR2eBku5DBylZlkdzSNPB3ocZHrgj0tm3rA+7RIcBcSABpBMlExeB+?=
+ =?us-ascii?Q?KVXaDdRliEgticoOghqBP16qyXE+HrckiU/6zxzVNRpskecqMTuT/+qSOeqk?=
+ =?us-ascii?Q?k653lJw7FUtqabazS6QnBiFVxn+yNhPWfQQA67zIjQdO4PDNPs/Wqo//jcKM?=
+ =?us-ascii?Q?8d6L2KX5WvpbnYrjZoXwW/2yCPezgjwh7cB8bH+ZjMAY9qoLu5g62UqPgOlR?=
+ =?us-ascii?Q?Y/daSFNNASOTa7fzWyDHtF1bbuFHpT0/dPppfem3UmhQHcHTUkCsdidvdpl5?=
+ =?us-ascii?Q?qq8dXEioII0kdhAiaLn4GOzBvks2pKU5M4/JvvLRPDykMDVGrNUJOzUGM8bK?=
+ =?us-ascii?Q?UMn5EYouPA3miOVshuCcaxVKdqSlQ2dc+RKdc68ocO6e6qkZLY18fEtvQsda?=
+ =?us-ascii?Q?d1nKSR0lWG7xbqmLMf52JqxKoQscBmDH5K3YUA7RFppxT4MHrVeH4EYJB/Bx?=
+ =?us-ascii?Q?PRK+PdvmUq7BMmag/kcezFfBIblSP6SifYFUgFuTN5QWjbz2JLdLVUWabmAT?=
+ =?us-ascii?Q?zPzIIwZj12hd77QOw7IcVAtjp3t5rK6rQM/o5RQnRNrkdVa351BMZMkTKP5e?=
+ =?us-ascii?Q?xQtbAncVIcPkowr9Sg1K9ugFkKho0dHa/KD228weGjUWXEsRumlAAUDDpmqT?=
+ =?us-ascii?Q?Sj+0+EBgZc+t7VYttdDDEoVIdSfFVK+XQ+M5fGod4vu3kdcX0eSVhOa9TwAx?=
+ =?us-ascii?Q?U5UtQa1+VUw4FPurgKVndIh5/qy+QVnhKYuvnzHNI/6CyweFtk4jf8eH2YOK?=
+ =?us-ascii?Q?08xS0/4u2c7KWipI2NjM4qfi9kbfSywmr4bCetfaM2LqAGKt7QgsSh1KC6x1?=
+ =?us-ascii?Q?ZbpXjnA+/rmvMEUOJxL5rcLkZ6oOFfkUlANwrcIUQHOJVRRpO73AebvJTR0T?=
+ =?us-ascii?Q?9RqAlxqE5TZcN8U1LK6/JH4zOaRag21Y+r5BkzaxFC1t0dIhUr1YQSrmqJkC?=
+ =?us-ascii?Q?SR72g/0JUlCUcphDp96A4lATRG940Q1oecG2ykSTysML77XcMbj5WuJwiatz?=
+ =?us-ascii?Q?bLPAl8BSkjQyIA7WxWW+c843C//jJxqamVJvT2LRhdZFNyHuN+OXoaddGLPT?=
+ =?us-ascii?Q?NfLvzdlRgK+cEZL2tpsZPPGCtmjNtN5AyxspafUcr1bfqSlHxe7+vm5KqsbK?=
+ =?us-ascii?Q?8IlE3ZECRpHPqRfgiQ+Y/9F+ybhb00qZgA02aMBm5XdYWqb8cD4BOdekF+aA?=
+ =?us-ascii?Q?O54OMdDa6usDGCOatIpV/bMMke4WKP/y2z3wAU/PwmiqP/1xwwjGhgP/1Mbp?=
+ =?us-ascii?Q?gIBbKlZdoC6DGTd+ubHMDvM2PbGKGblUIhkijA50SSh8O/rTaX2HfZitsTcs?=
+ =?us-ascii?Q?i9jFMGoEGgA4jdP8psR+9zhw9HDjCOLrIQI6TvCCrFsHnU7wU75FYqRsSsDW?=
+ =?us-ascii?Q?Z/W/MVTDW3yxmR4TECmtYI7AsiHZ3+gH1p/ICY4NVvzL9+9p1ThBxVfPyt9V?=
+ =?us-ascii?Q?XyknQ2kNURBpb90=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5271.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fCAp0kzzJ9x4e3Z9S7idfM9qUE4avNJH7KxHcVEaKKeuHBL2tu/kIJcEkQPL?=
+ =?us-ascii?Q?0Joc6xhlHc1zgSeaJhGZHpK5dEpJkw0jZGxaZJ5f5YICYWmupdFLRSBhGVqu?=
+ =?us-ascii?Q?ekJflHBMe7mRIwWPGGVjGu2L1+pQu6BuLmsE5J6nON6WNCj2GSmN+oZWArBY?=
+ =?us-ascii?Q?Pga1rRppiquhFaOeyQj2rodBlOdSPcruTDq2yVNUBJTU103xeT9r+LGch/vV?=
+ =?us-ascii?Q?Z1Ee5EVnsMjmmYark1FW3zHNwKbSWOwuq8+xYhJmFdDomt1ir8d+lLzTRZ0I?=
+ =?us-ascii?Q?YIzl+c86I/22CwYEXpKCbtsdvDA2WFgsusoeT0QayMpOaxgN3oRI8Jza5L7V?=
+ =?us-ascii?Q?7yC1uAL1UDABk+GUS3nC3p5+aIlFAfEv2qb+fJm9jQCK7f4hv5ClgYOdOcdj?=
+ =?us-ascii?Q?krYLO23jypOHLxtn4HHgkxIkPxiHysTwG5T3g0ALikqsfAa7KIP9FSn2H0Df?=
+ =?us-ascii?Q?VJL2wCo/iPICuZFiWpszai+7nOFCIxr76hmzR81Pf57DKi7D0GxMLMiKL0le?=
+ =?us-ascii?Q?8v+PWBE6avdrqxtl7GfATQvK8pPWXfG2ChI49ZQqv0ocebgvk2EeY6RIEIKr?=
+ =?us-ascii?Q?FauAifKSx4bODjg0b9AFarZAiTw6U3WR1mnaSOte2+LSOwm0ZcErjYPST2lx?=
+ =?us-ascii?Q?XkDBgg9E7gS8/gobVrjTsHvmthYG7tVH+exCxOK18WP99tranfYtnxSIeW4D?=
+ =?us-ascii?Q?PfJonGyMqhqGmWVLoo6gmpKwYS2SGuvTvuEb0EeLlw3+cz9qM8UlwZoTUmaY?=
+ =?us-ascii?Q?JPE4B8OGvM+tt4pFT+USedR5YsdcxPBVM0ZB6Spr5Nu0jq5ptphnfeYgJye8?=
+ =?us-ascii?Q?FxMiKgFURCregJViVOg0jkKwzM9XUdvoFLANI/QAEca1iv+cOakTFBm8b5iO?=
+ =?us-ascii?Q?iiYJJfBRQ4/oLJEx+lDYuNSyBB4TYwoeDJk+sntwbsJiRpIyxVShIVnIrZbS?=
+ =?us-ascii?Q?EIFMf8XkvTeEUUz3SbGxHCAJPVqVw/gHYrY8hu7s6ZlV6Qv6GBnwnxR1anuM?=
+ =?us-ascii?Q?TMD71ZJrW9DoeAuAgKoU3b0A/zMa5EynVxAzSuTQy/Dzd3rRHxXNEl/eUdJ4?=
+ =?us-ascii?Q?NcfFNqiW1fOza3qKJ/oeyw8f6P54hx6FTaPTZ6wxnCNqZVSkyO9RsSve9C4s?=
+ =?us-ascii?Q?eK5Pp5Tmpo9e6iiwcjjvFiaB+D1IG33pVn4ABujgf5JJ8OEj9fagdkJusMjs?=
+ =?us-ascii?Q?iF8XCVTiP2Ss6jmg3iSBcL2TDJ6fvMUsknt4qevlaNJcISyFrT/z3lFa6Cf6?=
+ =?us-ascii?Q?Dhx85pSYLOyR06j3rOdGf7DhvGs1teba7Q3IQLij+VXIq9ALGZlXfwdmri5a?=
+ =?us-ascii?Q?K3CjZkTa9RisljP09qN7uhsfDn5bsGDV1UE9Bdx72BsEIhMDkjznJAyodNAx?=
+ =?us-ascii?Q?U8dBbGgOkIkkoKALSguNPEC2/mp9bVphUFlNIfoQ9ku/t5e0UKf7isOvVYkq?=
+ =?us-ascii?Q?LpzfYBsXDeHMhdEre+0w3xJE2D/MW+d6XR4SxifSJqo6pJVAhSb0FZPpSN+y?=
+ =?us-ascii?Q?A2SPj2B2fEu/w1FVC67ajZvnkROzVm2Uq0XvzS80NJJXqqWZP6xCdB2qaLyb?=
+ =?us-ascii?Q?+1qO1dSf3/XeNYPfL9rkwg4MXxgn9g30FhxQFhLa?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/10] coresight: Refactor driver data allocation
-To: Leo Yan <leo.yan@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com>
- <20250627-arm_cs_fix_clock_v4-v4-8-0ce0009c38f8@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250627-arm_cs_fix_clock_v4-v4-8-0ce0009c38f8@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5271.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e265b5b6-cbba-4d3b-b45c-08ddb79a4ae8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2025 05:52:26.5544
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1r/kTSNtIbnR/MEwG/mC6rFMwfqFBUtroTI31p8FNZHame1p381tewS6y3HAfzGiYR+0rvW8Y2gbYr156UdXMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8585
+X-OriginatorOrg: intel.com
 
+> From: Xu Yilun <yilun.xu@linux.intel.com>
+> Sent: Friday, June 27, 2025 11:38 AM
+>
+> @@ -239,6 +239,7 @@ static int iommufd_fops_release(struct inode *inode,
+> struct file *filp)
+>  	struct iommufd_sw_msi_map *next;
+>  	struct iommufd_sw_msi_map *cur;
+>  	struct iommufd_object *obj;
+> +	bool empty;
 
+move into for(;;) loop
 
-On 27/06/25 5:21 PM, Leo Yan wrote:
-> The driver data no longer needs to be allocated separately in the static
-> and dynamic probes. Moved the allocation into the low-level functions to
-> avoid code duplication.
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>=20
+>  	/*
+>  	 * The objects in the xarray form a graph of "users" counts, and we
+> have
+> @@ -249,23 +250,35 @@ static int iommufd_fops_release(struct inode
+> *inode, struct file *filp)
+>  	 * until the entire list is destroyed. If this can't progress then ther=
+e
+>  	 * is some bug related to object refcounting.
+>  	 */
+> -	while (!xa_empty(&ictx->objects)) {
+> +	for (;;) {
+>  		unsigned int destroyed =3D 0;
+>  		unsigned long index;
+>=20
+> +		empty =3D true;
+>  		xa_for_each(&ictx->objects, index, obj) {
+> +			empty =3D false;
+>  			if (!refcount_dec_if_one(&obj->users))
+>  				continue;
+> +
+>  			destroyed++;
+>  			xa_erase(&ictx->objects, index);
+>  			iommufd_object_ops[obj->type].destroy(obj);
+>  			kfree(obj);
+>  		}
+> +
+> +		if (empty)
+> +			break;
+> +
+>  		/* Bug related to users refcount */
+>  		if (WARN_ON(!destroyed))
+>  			break;
+>  	}
+> -	WARN_ON(!xa_empty(&ictx->groups));
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+I didn't get the rationale of this change. tombstone only means the
+object ID reserved, but all the destroy work for the object has been
+done, e.g. after all idevice objects are destroyed there should be no
+valid igroup entries in ictx->groups (and there is no tombstone
+state for igroup).
 
-> ---
->  drivers/hwtracing/coresight/coresight-catu.c      | 20 +++++++-------------
->  drivers/hwtracing/coresight/coresight-cpu-debug.c | 21 +++++++--------------
->  drivers/hwtracing/coresight/coresight-tmc-core.c  | 20 +++++++-------------
->  3 files changed, 21 insertions(+), 40 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-> index 0f476a0cbd740c233d039c5c411ca192681e2023..a3ccb7034ae14d7339bc2549bccadf11e28c45e2 100644
-> --- a/drivers/hwtracing/coresight/coresight-catu.c
-> +++ b/drivers/hwtracing/coresight/coresight-catu.c
-> @@ -515,11 +515,17 @@ static int __catu_probe(struct device *dev, struct resource *res)
->  {
->  	int ret = 0;
->  	u32 dma_mask;
-> -	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
-> +	struct catu_drvdata *drvdata;
->  	struct coresight_desc catu_desc;
->  	struct coresight_platform_data *pdata = NULL;
->  	void __iomem *base;
->  
-> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +	if (!drvdata)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, drvdata);
-> +
->  	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
->  	if (ret)
->  		return ret;
-> @@ -580,14 +586,8 @@ static int __catu_probe(struct device *dev, struct resource *res)
->  
->  static int catu_probe(struct amba_device *adev, const struct amba_id *id)
->  {
-> -	struct catu_drvdata *drvdata;
->  	int ret;
->  
-> -	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata)
-> -		return -ENOMEM;
-> -
-> -	amba_set_drvdata(adev, drvdata);
->  	ret = __catu_probe(&adev->dev, &adev->res);
->  	if (!ret)
->  		pm_runtime_put(&adev->dev);
-> @@ -627,18 +627,12 @@ static struct amba_driver catu_driver = {
->  static int catu_platform_probe(struct platform_device *pdev)
->  {
->  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	struct catu_drvdata *drvdata;
->  	int ret = 0;
->  
-> -	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata)
-> -		return -ENOMEM;
-> -
->  	pm_runtime_get_noresume(&pdev->dev);
->  	pm_runtime_set_active(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
->  
-> -	dev_set_drvdata(&pdev->dev, drvdata);
->  	ret = __catu_probe(&pdev->dev, res);
->  	pm_runtime_put(&pdev->dev);
->  	if (ret)
-> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> index 5f6db2fb95d4623a0bab08828ae00442870abd7d..3edfb5d3d02056afcaab4da575d1101c68aeac80 100644
-> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> @@ -562,10 +562,16 @@ static void debug_func_exit(void)
->  
->  static int __debug_probe(struct device *dev, struct resource *res)
->  {
-> -	struct debug_drvdata *drvdata = dev_get_drvdata(dev);
-> +	struct debug_drvdata *drvdata;
->  	void __iomem *base;
->  	int ret;
->  
-> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +	if (!drvdata)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, drvdata);
-> +
->  	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, NULL);
->  	if (ret)
->  		return ret;
-> @@ -629,13 +635,6 @@ static int __debug_probe(struct device *dev, struct resource *res)
->  
->  static int debug_probe(struct amba_device *adev, const struct amba_id *id)
->  {
-> -	struct debug_drvdata *drvdata;
-> -
-> -	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata)
-> -		return -ENOMEM;
-> -
-> -	amba_set_drvdata(adev, drvdata);
->  	return __debug_probe(&adev->dev, &adev->res);
->  }
->  
-> @@ -694,14 +693,8 @@ static struct amba_driver debug_driver = {
->  static int debug_platform_probe(struct platform_device *pdev)
->  {
->  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	struct debug_drvdata *drvdata;
->  	int ret = 0;
->  
-> -	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata)
-> -		return -ENOMEM;
-> -
-> -	dev_set_drvdata(&pdev->dev, drvdata);
->  	pm_runtime_get_noresume(&pdev->dev);
->  	pm_runtime_set_active(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index ead3f5358d411b1d9e45f87986bd85cbe5be720a..e5ab4a0323354d826c831f68c71d81808cbcd8ff 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -785,10 +785,16 @@ static int __tmc_probe(struct device *dev, struct resource *res)
->  	u32 devid;
->  	void __iomem *base;
->  	struct coresight_platform_data *pdata = NULL;
-> -	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
-> +	struct tmc_drvdata *drvdata;
->  	struct coresight_desc desc = { 0 };
->  	struct coresight_dev_list *dev_list = NULL;
->  
-> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +	if (!drvdata)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, drvdata);
-> +
->  	ret = coresight_get_enable_clocks(dev, &drvdata->pclk, &drvdata->atclk);
->  	if (ret)
->  		return ret;
-> @@ -898,14 +904,8 @@ static int __tmc_probe(struct device *dev, struct resource *res)
->  
->  static int tmc_probe(struct amba_device *adev, const struct amba_id *id)
->  {
-> -	struct tmc_drvdata *drvdata;
->  	int ret;
->  
-> -	drvdata = devm_kzalloc(&adev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata)
-> -		return -ENOMEM;
-> -
-> -	amba_set_drvdata(adev, drvdata);
->  	ret = __tmc_probe(&adev->dev, &adev->res);
->  	if (!ret)
->  		pm_runtime_put(&adev->dev);
-> @@ -982,14 +982,8 @@ static struct amba_driver tmc_driver = {
->  static int tmc_platform_probe(struct platform_device *pdev)
->  {
->  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	struct tmc_drvdata *drvdata;
->  	int ret = 0;
->  
-> -	drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> -	if (!drvdata)
-> -		return -ENOMEM;
-> -
-> -	dev_set_drvdata(&pdev->dev, drvdata);
->  	pm_runtime_get_noresume(&pdev->dev);
->  	pm_runtime_set_active(&pdev->dev);
->  	pm_runtime_enable(&pdev->dev);
-> 
+Is it a wrong change by misreading ictx->groups as ictx->objects?
 
+> +
+> +	/*
+> +	 * There may be some tombstones left over from
+> +	 * iommufd_object_tombstone_user()
+> +	 */
+> +	xa_destroy(&ictx->groups);
+>=20
+
+And here should be ictx->objects?
 
