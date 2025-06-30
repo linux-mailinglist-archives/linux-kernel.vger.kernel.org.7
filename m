@@ -1,209 +1,104 @@
-Return-Path: <linux-kernel+bounces-708867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F3EAED61A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:48:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F1BAED61F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F0716DBC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:48:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3526E188F78C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB88D2376F2;
-	Mon, 30 Jun 2025 07:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82604235056;
+	Mon, 30 Jun 2025 07:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="G68ILadV"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i/3qzLN5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B5518E20
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3245849C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269730; cv=none; b=IxTfl9MplDXORCgC4/g+WQYFFSJS3bxL4aXkeoPWHVKl+wnAvIOR/CKaJECdjRThP5Gh+5+OmbqfRdzXfw5kA2pSl2GYyUnmUzfXrbZE4dzfE6NhO8SrsJiIFsXcECased0jISNTFg+BXx6Jjh93/o8zANHUkuwjp9lEUhKNJMA=
+	t=1751269792; cv=none; b=s85VyubQSHNhPI0IAaG9IGcCdVqe4NT7KfwC7OD/3T5O67YGs/KsWqRvHFoKPtH5RSdF7dTf8ptfeBY7HZIbkPm66cnzLcGEgcoXu/XqAH1P8kXNE59YdCPtfjwHQOcfO79fcLthz7DpuHZ1xjNoPNVMily8rn4qExmBWwnP8HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269730; c=relaxed/simple;
-	bh=qf8NaywLRmWMHaEJuLsltQXouTMmM7A/UAbuopsgvUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HeCX0o8FkfotnextPcBpdrMPKjsBGgVaYPNGd0nJoq5NotdjtQd7aYA1YLxaPhuxfUMYUPC8WfbmF0qdRfmUfMLGnkt6lzxuLIP2/Tkdc9RMH00nh5kZmIos0eDrBlJqd0a+HIFMnWiR+T9HMn90n39gPwPy/DIEsQbwWRY7pgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=G68ILadV; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60702d77c60so8289845a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 00:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mandelbit.com; s=google; t=1751269727; x=1751874527; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZ+BSaUYjMYZPFRc5ahI5f+VB6TZxnMY7+aM/BHB0gk=;
-        b=G68ILadVVZwyr8ugTC0v7wFBWa/DeA6lLn6W1yFZvySa5nJebBnTJnMtGqUCqytDtJ
-         y0nO5dNZ6CFAzLmez2Thsh6Xx6VvUEE0MUdwDwrYkUQYCv5b0gximxXfnCsI28U/6+g1
-         gnp0sml0albInrW9cB0UvHSHJT3YhXkSp0rEX3thEYTFNk0XEOeS/DeUgVLmx4jJi12h
-         pRQrkPfwb5xpMl3iVdDeFKeA+qbOQaAG2RM6Fm7SfhORZuc9NE4pe/h42LD9rcVsy5Jw
-         jWxPFiVun5aRzOs6iGdYPGx++f17kmtZNB3b6d3EmClXjvHImydMUmda4QzpoOtkVXtD
-         71JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751269727; x=1751874527;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tZ+BSaUYjMYZPFRc5ahI5f+VB6TZxnMY7+aM/BHB0gk=;
-        b=VC3rbnhl3V/Yxa379DcuJ9IbyD++XN3IWnLoUPQBhtJcmZ67kf9nNqHa5jUbzdymp6
-         yHI9g+O25XtRnsRFlSEJCJER+P9pAuu3niboweRoYKy2eNMz0yZ35552qYxUSvzxqZUA
-         ll6FtAwVAcOf8QT+VV+BeE2nsjEBGv0tWxXFz8q+FprDm0WzyhV9Yx6Q1SxD96gBVT1D
-         tkVKJc8nY1wmJIV1wc38PmIaSnj7zj0D6BZZ97hM2dS2pBf+qHiZiS3YuolvoAd6nUVY
-         XEqTBMmJTVcVS9r+RQmXBByFddmVoHQBBksgXWOXjv5DBjvyZwfLP8bxxkOTtSWaUTHq
-         bi4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZF8uLnoT2jD0MO98RzNsQPquUlnBLUn5b3MPKCeoCYYdlc8oDteZsTET5JILTpsr9+pYsWp23iNk2KSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCWtv1FrbgNQHMg5IsdZsZ3DkaWCKGt5jlvyJpuEd7EeeEFnMo
-	PtHhnztBbEppBue7QC33ezzwYJJixDa3ggHJGRwvsjw643fswesKcsGVEUaJNU2k0o8=
-X-Gm-Gg: ASbGncsDKRiMpaDv3fiDXMymx22fuvXD5wUYvIzdH3Sf2Am6K4AmUmztuHv9VtB79VL
-	FbtEwrZJbuffCeycN0EYh/OSYNgRIBLlyGZmuRiXPG2rjS8v96dbTTkuBwiamsn3v0BqVTn+a8V
-	D2jl/eKleKgK0q8ETuEFDS6Q5EUSWDLD5MDvXvQfXLiWJZB3hMw9aBogb7onvz1qSm8s5ZCAVsd
-	rogbQF6BmJ90OhyMdesPLlGx6TicpIOQpJdFmoVKoNl/mAtple5Nj9NOu+H8zbxMs4lxXLARXUi
-	CWfd5tbk7wHpm+YW4Lzn0sJ2XjWIIvos9EGpU3icU12Ydj8UF7wCGJY1K2rCnCNbiQVykbcw9v1
-	sL9DVZ2R7cPAmDo6Cu1ZNd4Cy
-X-Google-Smtp-Source: AGHT+IFG8mxwherCyB+H+Ce/MDetYKrbqKrvuEJkbWn3WcmopojqghsC9D4gNWRWL3XhXfmKmOCezQ==
-X-Received: by 2002:a17:907:8691:b0:ae0:ade2:606b with SMTP id a640c23a62f3a-ae34fd8ecebmr1192187566b.19.1751269726337;
-        Mon, 30 Jun 2025 00:48:46 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:f5fc:eb97:a20:8b31? ([2001:67c:2fbc:1:f5fc:eb97:a20:8b31])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35363b1c4sm623062966b.31.2025.06.30.00.48.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 00:48:45 -0700 (PDT)
-Message-ID: <1c6f4024-be8a-4734-a724-f12b85a52ed7@mandelbit.com>
-Date: Mon, 30 Jun 2025 09:48:44 +0200
+	s=arc-20240116; t=1751269792; c=relaxed/simple;
+	bh=jg211Mox4ogn3OGNwnvBYTugy0iLOS2ZtfUU2JwxfPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjek7xpYx7yW6i9TJwp77gXFbGXzSa6M5qWeHTp8VLuEyfw3YGJNlEeEVsneOoInDRkdtABhFb1qnc/FV15RCEkBZNHO2mKyYUzsMRVPo2mQzqcdhavWNWamPxpb68EI9h8FM2TgFUL3ZQBVnvpE637igZgKHPwktcldKeBjL40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i/3qzLN5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=l3fYRR450ammdDlTOiwajM+tXSXrmrYjTa8TBG4lRN0=; b=i/3qzLN5vV3pv40SYcFnPmDz5U
+	aTDvzmPcXciZCgSXlmQ/J5VpmC4ZgDoeoC314vbEMqesoDrWpSjq3XiL3CjSTRgt02qS3Ic5k888+
+	KGRW5z1wNbasAQzokmZ6zqvJtSJwKuHCRXE1qD3yh4rlgzmlMFA0MCS+XsskK6CzVrfk9oWFBbSiW
+	pJZC1UHPes7/tKgo2YuIxtXt/nVxu4kL1n73UvLYqDmYytoe++cgj3ixcXYdY1Qq3XQ8lCD6O33m3
+	CpjSpGmZn/Ly5DWgJIAh/u0+AasU3HO5m8px+YhQ7GDO9tm02QcuzPkr/CV2dXgjfQHduFvz/Ov6+
+	g8mAkAqQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uW9Gp-00000006k7R-0910;
+	Mon, 30 Jun 2025 07:49:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 96703300125; Mon, 30 Jun 2025 09:49:42 +0200 (CEST)
+Date: Mon, 30 Jun 2025 09:49:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, x86@kernel.org,
+	Aleksandr Nogikh <nogikh@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 06/11] kcov: x86: introduce CONFIG_KCOV_UNIQUE
+Message-ID: <20250630074942.GH1613200@noisy.programming.kicks-ass.net>
+References: <20250626134158.3385080-1-glider@google.com>
+ <20250626134158.3385080-7-glider@google.com>
+ <20250627081146.GR1613200@noisy.programming.kicks-ass.net>
+ <CAG_fn=UrOBF=hQ5y6VN9VuA67GeVOyaaWtrnaSLz4TnC7u1fiw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: stm32: fix NULL check on pointer-to-pointer variable
-To: Clement LE GOFFIC <clement.legoffic@foss.st.com>,
- linux-spi@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Brown
- <broonie@kernel.org>, Alain Volmat <alain.volmat@foss.st.com>
-References: <20250628000227.22895-1-antonio@mandelbit.com>
- <1f49b8f3-44c9-43f3-a3bf-b931fb0726f4@foss.st.com>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@mandelbit.com>
-Autocrypt: addr=antonio@mandelbit.com; keydata=
- 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
-Organization: Mandelbit SRL
-In-Reply-To: <1f49b8f3-44c9-43f3-a3bf-b931fb0726f4@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG_fn=UrOBF=hQ5y6VN9VuA67GeVOyaaWtrnaSLz4TnC7u1fiw@mail.gmail.com>
 
-Hi Clement,
-
-On 30/06/2025 09:34, Clement LE GOFFIC wrote:
-> Hi Antonio,
+On Fri, Jun 27, 2025 at 04:24:36PM +0200, Alexander Potapenko wrote:
+> On Fri, Jun 27, 2025 at 10:11 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Jun 26, 2025 at 03:41:53PM +0200, Alexander Potapenko wrote:
+> > > The new config switches coverage instrumentation to using
+> > >   __sanitizer_cov_trace_pc_guard(u32 *guard)
+> > > instead of
+> > >   __sanitizer_cov_trace_pc(void)
+> > >
+> > > This relies on Clang's -fsanitize-coverage=trace-pc-guard flag [1].
+> > >
+> > > Each callback receives a unique 32-bit guard variable residing in the
+> > > __sancov_guards section. Those guards can be used by kcov to deduplicate
+> > > the coverage on the fly.
+> >
+> > This sounds like a *LOT* of data; how big is this for a typical kernel
+> > build?
 > 
-> On 6/28/25 02:02, Antonio Quartulli wrote:
->> In stm32_spi_prepare_rx_dma_mdma_chaining() both rx_dma_desc
->> and rx_mdma_desc are passed as pointer-to-pointer arguments.
->>
->> The goal is to pass back to the caller the value returned
->> by dmaengine_prep_slave_sg(), when it is not NULL.
->>
->> However, the NULL check on the result is erroneously
->> performed without dereferencing the pointer.
->>
->> Add the proper dereference operator to both checks.
->>
->> Fixes: d17dd2f1d8a1 ("spi: stm32: use STM32 DMA with STM32 MDMA to 
->> enhance DDR use")
->> Addresses-Coverity-ID: 1644715 ("Null pointer dereferences 
->> (REVERSE_INULL)")
->> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
->> ---
->>   drivers/spi/spi-stm32.c | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
->> index 3d20f09f1ae7..e9fa17e52fb0 100644
->> --- a/drivers/spi/spi-stm32.c
->> +++ b/drivers/spi/spi-stm32.c
->> @@ -1529,7 +1529,7 @@ static int 
->> stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
->>                              DMA_PREP_INTERRUPT);
->>       sg_free_table(&dma_sgt);
->> -    if (!rx_dma_desc)
->> +    if (!*rx_dma_desc)
->>           return -EINVAL;
->>       /* Prepare MDMA slave_sg transfer MEM_TO_MEM (SRAM>DDR) */
->> @@ -1563,8 +1563,8 @@ static int 
->> stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
->>                           DMA_PREP_INTERRUPT);
->>       sg_free_table(&mdma_sgt);
->> -    if (!rx_mdma_desc) {
->> -        rx_dma_desc = NULL;
->> +    if (!*rx_mdma_desc) {
->> +        *rx_dma_desc = NULL;
->>           return -EINVAL;
->>       }
-> 
-> Good catch for both pointers !
-> 
-> For readability, I would suggest to define two dma_async_tx_descriptor 
-> ptr at the beginning of the function such as :
->      struct dma_async_tx_descriptor *_mdma_desc = *rx_mdma_desc;
->      struct dma_async_tx_descriptor *_dma_desc = *rx_dma_desc;
-> 
-> And then use them all along the function even in the assignation.
-> 
+> I have a 1.6Gb sized vmlinux, which has a .text section of 176Mb.
+> There are 1809419 calls to __sanitizer_cov_trace_pc_guard, and the
+> __sancov_guards section has a size of 6Mb, which are only allocated at
+> runtime.
 
-Thanks for the comment.
-Will send v2!
-
-Regards,
-
-
--- 
-Antonio Quartulli
-
-CEO and Co-Founder
-Mandelbit Srl
-https://www.mandelbit.com
-
+OK, that's less than I feared. That's ~3.5% of .text, and should be
+quite manageable.
 
