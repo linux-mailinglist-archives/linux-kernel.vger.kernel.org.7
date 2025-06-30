@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-708846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF74AED5D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:36:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A2CAED5C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746C916B2DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC02163704
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A74221F0A;
-	Mon, 30 Jun 2025 07:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="QA9ziUH7"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CA82222D8;
+	Mon, 30 Jun 2025 07:34:38 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B202221DB1;
-	Mon, 30 Jun 2025 07:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876751FBC8E;
+	Mon, 30 Jun 2025 07:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751268966; cv=none; b=gzTAfPcKeElm6/sed6X/uoOPW3cZ3bFlXC+G5r/TAoM+Rtigmp2s5ONQrqTtmDGXGOqoNA3ZptQpULr/I+c4KvhwNHXOjzWJWjPL4YseHkVpjuVtKrpxJYxyyVgunKurJ8FV8Q3wIJFCdhVWn2fj8ixxZi2styGL33uXDPEnla0=
+	t=1751268877; cv=none; b=qHvteiW/xsiFrTU94R4EMQA0j7UkliMU+LEDKGddld9B/ckYufFr50fHSbIzl6dT1sUTmVGHf1OQc9bnGajTSkKzkczRlncwdaaoAi3V59AK+p7ModPUPvZ5k8ezunn//NE93alhTop2VorvKVUYQyusv1AHExui5sNcsHdlndg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751268966; c=relaxed/simple;
-	bh=iNDrjh0tpRqFMUceSM9T2AlLoJiEFqU5pz2vsAYwVxA=;
+	s=arc-20240116; t=1751268877; c=relaxed/simple;
+	bh=iDFC2uzeH1O6YJJ+KNWE7uV0iY8CLCu4IrCkwx9Smio=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X0h/W4TdyZg7aLjX10dw/Lu9iyiD0Iu6zUmkXS6ncqv4NhYbAKy7jIrGV2a6jsjQ3qJynXAY/B/kg3ZPJCkpsn1NSqY6ZJdCvwgCsgjKoYPc0tXpDGNLYV0zcqoZltYpVtimZpMopQiHCMsbX0NRuCTgEfnaaFguI9Jau7Hghvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=QA9ziUH7; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U7AniW028032;
-	Mon, 30 Jun 2025 09:35:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	3TeFS+uiHYd7t7KK/aAu0N/KEC1YUemvKeluUuOfecA=; b=QA9ziUH74nPr8B5h
-	tSCcx7WJc5TajZUH1r7XpOAseYVJXtyyrECAhoHZ1w7H621FQsd/wZuiOntoOLux
-	xVb1f3Sq4tnnJX0KF9NbhrT7jrH06muly99q0vw2j8PJgb6cw7X3NQ9vQ6mYIzS7
-	FBVzTYysav1JdMt27wULU2nz24Dd7lfN8oNojqaj8xy/D1X7A3XL2xPzl1Tmm8T4
-	BhKW6UfEbWYU+dQrmaO10MTQwPFFPtS+ruX6uTVqgBZadAunJcSSjXzMMAfwlpiA
-	ANXefcNTmfzo4SoFirZNEOK8fZZWvUkGHf+r+v7WVek7sRmgn+VWHIAHWBqTlFPX
-	+f5lqA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j79h5udb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 09:35:43 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id ACD4540047;
-	Mon, 30 Jun 2025 09:34:43 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D342946AD15;
-	Mon, 30 Jun 2025 09:34:15 +0200 (CEST)
-Received: from [10.252.20.7] (10.252.20.7) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 09:34:15 +0200
-Message-ID: <1f49b8f3-44c9-43f3-a3bf-b931fb0726f4@foss.st.com>
-Date: Mon, 30 Jun 2025 09:34:13 +0200
+	 In-Reply-To:Content-Type; b=g5GzTeoizmrz+DVDFcXkSYH0+IQEzMXuICyRcU96Gxhulr+hjVrfEYaiD0ML7bgu/LgfkHN1sd6gwUnHvg/sqPH9qud/s/k0juhZ11P165LWsdoPc1G3yYqsZkTNkycbIk1I6Lei/Fg0RzV6FJzY28Z+cKIpuJF8rW12CbHDV1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bVyVV2D2szCsGj;
+	Mon, 30 Jun 2025 15:30:10 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0AA7E180486;
+	Mon, 30 Jun 2025 15:34:32 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Jun
+ 2025 15:34:31 +0800
+Message-ID: <5bf464c0-5cfe-4e29-8138-4fb85c83f5bb@huawei.com>
+Date: Mon, 30 Jun 2025 15:34:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,83 +47,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: stm32: fix NULL check on pointer-to-pointer variable
-To: Antonio Quartulli <antonio@mandelbit.com>, <linux-spi@vger.kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alain Volmat
-	<alain.volmat@foss.st.com>
-References: <20250628000227.22895-1-antonio@mandelbit.com>
+Subject: Re: [PATCH v2 10/16] ext4: fix largest free orders lists corruption
+ on mb_optimize_scan switch
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<ojaswin@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <stable@vger.kernel.org>,
+	Baokun Li <libaokun1@huawei.com>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
+ <20250623073304.3275702-11-libaokun1@huawei.com>
+ <a4rctz75l4c6vejweqq67ptzojs276eicqp6kqegpxinirk32n@dnhg6h4pbvdr>
 Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20250628000227.22895-1-antonio@mandelbit.com>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <a4rctz75l4c6vejweqq67ptzojs276eicqp6kqegpxinirk32n@dnhg6h4pbvdr>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_01,2025-06-27_01,2025-03-28_01
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Hi Antonio,
+On 2025/6/28 3:34, Jan Kara wrote:
+> On Mon 23-06-25 15:32:58, Baokun Li wrote:
+>> The grp->bb_largest_free_order is updated regardless of whether
+>> mb_optimize_scan is enabled. This can lead to inconsistencies between
+>> grp->bb_largest_free_order and the actual s_mb_largest_free_orders list
+>> index when mb_optimize_scan is repeatedly enabled and disabled via remount.
+>>
+>> For example, if mb_optimize_scan is initially enabled, largest free
+>> order is 3, and the group is in s_mb_largest_free_orders[3]. Then,
+>> mb_optimize_scan is disabled via remount, block allocations occur,
+>> updating largest free order to 2. Finally, mb_optimize_scan is re-enabled
+>> via remount, more block allocations update largest free order to 1.
+>>
+>> At this point, the group would be removed from s_mb_largest_free_orders[3]
+>> under the protection of s_mb_largest_free_orders_locks[2]. This lock
+>> mismatch can lead to list corruption.
+>>
+>> To fix this, a new field bb_largest_free_order_idx is added to struct
+>> ext4_group_info to explicitly track the list index. Then still update
+>> bb_largest_free_order unconditionally, but only update
+>> bb_largest_free_order_idx when mb_optimize_scan is enabled. so that there
+>> is no inconsistency between the lock and the data to be protected.
+>>
+>> Fixes: 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning")
+>> CC: stable@vger.kernel.org
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Hum, rather than duplicating index like this, couldn't we add to
+> mb_set_largest_free_order():
+>
+> 	/* Did mb_optimize_scan setting change? */
+> 	if (!test_opt2(sb, MB_OPTIMIZE_SCAN) &&
+> 	    !list_empty(&grp->bb_largest_free_order_node)) {
+> 		write_lock(&sbi->s_mb_largest_free_orders_locks[old]);
+> 		list_del_init(&grp->bb_largest_free_order_node);
+> 		write_unlock(&sbi->s_mb_largest_free_orders_locks[old]);
+> 	}
+>
+> Also arguably we should reinit bb lists when mb_optimize_scan gets
+> reenabled because otherwise inconsistent lists could lead to suboptimal
+> results... But that's less important to fix I guess.
+>
+> 								Honza
 
-On 6/28/25 02:02, Antonio Quartulli wrote:
-> In stm32_spi_prepare_rx_dma_mdma_chaining() both rx_dma_desc
-> and rx_mdma_desc are passed as pointer-to-pointer arguments.
-> 
-> The goal is to pass back to the caller the value returned
-> by dmaengine_prep_slave_sg(), when it is not NULL.
-> 
-> However, the NULL check on the result is erroneously
-> performed without dereferencing the pointer.
-> 
-> Add the proper dereference operator to both checks.
-> 
-> Fixes: d17dd2f1d8a1 ("spi: stm32: use STM32 DMA with STM32 MDMA to enhance DDR use")
-> Addresses-Coverity-ID: 1644715 ("Null pointer dereferences (REVERSE_INULL)")
-> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
-> ---
->   drivers/spi/spi-stm32.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-> index 3d20f09f1ae7..e9fa17e52fb0 100644
-> --- a/drivers/spi/spi-stm32.c
-> +++ b/drivers/spi/spi-stm32.c
-> @@ -1529,7 +1529,7 @@ static int stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
->   					       DMA_PREP_INTERRUPT);
->   	sg_free_table(&dma_sgt);
->   
-> -	if (!rx_dma_desc)
-> +	if (!*rx_dma_desc)
->   		return -EINVAL;
->   
->   	/* Prepare MDMA slave_sg transfer MEM_TO_MEM (SRAM>DDR) */
-> @@ -1563,8 +1563,8 @@ static int stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
->   						DMA_PREP_INTERRUPT);
->   	sg_free_table(&mdma_sgt);
->   
-> -	if (!rx_mdma_desc) {
-> -		rx_dma_desc = NULL;
-> +	if (!*rx_mdma_desc) {
-> +		*rx_dma_desc = NULL;
->   		return -EINVAL;
->   	}
->   
+Yeah, this looks good. We just need to remove groups modified when
+mb_optimize_scan=0 from the list. Groups that remain in the list after
+mb_optimize_scan is re-enabled can be used normally.
 
-Good catch for both pointers !
+As for the groups that were removed, they will be re-added to their
+corresponding lists during block freeing or block allocation when
+cr >= CR_GOAL_LEN_SLOW. So, I agree that we don't need to explicitly
+reinit them.
 
-For readability, I would suggest to define two dma_async_tx_descriptor 
-ptr at the beginning of the function such as :
-	struct dma_async_tx_descriptor *_mdma_desc = *rx_mdma_desc;
-	struct dma_async_tx_descriptor *_dma_desc = *rx_dma_desc;
 
-And then use them all along the function even in the assignation.
 
-Best regards,
-Clément
+Cheers,
+Baokun
+
+>> ---
+>>   fs/ext4/ext4.h    |  1 +
+>>   fs/ext4/mballoc.c | 35 ++++++++++++++++-------------------
+>>   2 files changed, 17 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> index 003b8d3726e8..0e574378c6a3 100644
+>> --- a/fs/ext4/ext4.h
+>> +++ b/fs/ext4/ext4.h
+>> @@ -3476,6 +3476,7 @@ struct ext4_group_info {
+>>   	int		bb_avg_fragment_size_order;	/* order of average
+>>   							   fragment in BG */
+>>   	ext4_grpblk_t	bb_largest_free_order;/* order of largest frag in BG */
+>> +	ext4_grpblk_t	bb_largest_free_order_idx; /* index of largest frag */
+>>   	ext4_group_t	bb_group;	/* Group number */
+>>   	struct          list_head bb_prealloc_list;
+>>   #ifdef DOUBLE_CHECK
+>> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+>> index e6d6c2da3c6e..dc82124f0905 100644
+>> --- a/fs/ext4/mballoc.c
+>> +++ b/fs/ext4/mballoc.c
+>> @@ -1152,33 +1152,29 @@ static void
+>>   mb_set_largest_free_order(struct super_block *sb, struct ext4_group_info *grp)
+>>   {
+>>   	struct ext4_sb_info *sbi = EXT4_SB(sb);
+>> -	int i;
+>> +	int new, old = grp->bb_largest_free_order_idx;
+>>   
+>> -	for (i = MB_NUM_ORDERS(sb) - 1; i >= 0; i--)
+>> -		if (grp->bb_counters[i] > 0)
+>> +	for (new = MB_NUM_ORDERS(sb) - 1; new >= 0; new--)
+>> +		if (grp->bb_counters[new] > 0)
+>>   			break;
+>> +
+>> +	grp->bb_largest_free_order = new;
+>>   	/* No need to move between order lists? */
+>> -	if (!test_opt2(sb, MB_OPTIMIZE_SCAN) ||
+>> -	    i == grp->bb_largest_free_order) {
+>> -		grp->bb_largest_free_order = i;
+>> +	if (!test_opt2(sb, MB_OPTIMIZE_SCAN) || new == old)
+>>   		return;
+>> -	}
+>>   
+>> -	if (grp->bb_largest_free_order >= 0) {
+>> -		write_lock(&sbi->s_mb_largest_free_orders_locks[
+>> -					      grp->bb_largest_free_order]);
+>> +	if (old >= 0) {
+>> +		write_lock(&sbi->s_mb_largest_free_orders_locks[old]);
+>>   		list_del_init(&grp->bb_largest_free_order_node);
+>> -		write_unlock(&sbi->s_mb_largest_free_orders_locks[
+>> -					      grp->bb_largest_free_order]);
+>> +		write_unlock(&sbi->s_mb_largest_free_orders_locks[old]);
+>>   	}
+>> -	grp->bb_largest_free_order = i;
+>> -	if (grp->bb_largest_free_order >= 0 && grp->bb_free) {
+>> -		write_lock(&sbi->s_mb_largest_free_orders_locks[
+>> -					      grp->bb_largest_free_order]);
+>> +
+>> +	grp->bb_largest_free_order_idx = new;
+>> +	if (new >= 0 && grp->bb_free) {
+>> +		write_lock(&sbi->s_mb_largest_free_orders_locks[new]);
+>>   		list_add_tail(&grp->bb_largest_free_order_node,
+>> -		      &sbi->s_mb_largest_free_orders[grp->bb_largest_free_order]);
+>> -		write_unlock(&sbi->s_mb_largest_free_orders_locks[
+>> -					      grp->bb_largest_free_order]);
+>> +			      &sbi->s_mb_largest_free_orders[new]);
+>> +		write_unlock(&sbi->s_mb_largest_free_orders_locks[new]);
+>>   	}
+>>   }
+>>   
+>> @@ -3391,6 +3387,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
+>>   	INIT_LIST_HEAD(&meta_group_info[i]->bb_avg_fragment_size_node);
+>>   	meta_group_info[i]->bb_largest_free_order = -1;  /* uninit */
+>>   	meta_group_info[i]->bb_avg_fragment_size_order = -1;  /* uninit */
+>> +	meta_group_info[i]->bb_largest_free_order_idx = -1;  /* uninit */
+>>   	meta_group_info[i]->bb_group = group;
+>>   
+>>   	mb_group_bb_bitmap_alloc(sb, meta_group_info[i], group);
+>> -- 
+>> 2.46.1
+>>
+
 
