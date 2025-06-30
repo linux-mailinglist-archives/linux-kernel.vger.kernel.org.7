@@ -1,179 +1,176 @@
-Return-Path: <linux-kernel+bounces-709611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9E1AEE011
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:05:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4717CAEE01A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27BF93BA8BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:03:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166871887ECD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC841BC2A;
-	Mon, 30 Jun 2025 14:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FD628B7EA;
+	Mon, 30 Jun 2025 14:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O1Da9mM2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y5fPjOco"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F09A28C5DE
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC7927F001;
+	Mon, 30 Jun 2025 14:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751292141; cv=none; b=cooyin07r8IsKWhnW57huKivXql3EYtdiXsI9x23yVPIQ4HIdX77JnfDHmUdmfLJz7JyZ61nttNyI1h8CriWPtIq91mt+XbYqj1MENfQADfQqaburFd0RBuk2z8pxUtUkxjK5RLW3YqbREt1a7U0VXkG4ROWwseggs5hUOrlAns=
+	t=1751292286; cv=none; b=m51fWBqrGRcxV4+hd8NkaMA9O6AZs8THTKVPP14xMZtukQ+hFmyOYhvv2SbuS3aMS+AnfM2ARRVAR4aJ/6o53eqxhW4qJTgEg96kVSFSUn3A7dFxrfZAsCKKuBE2qs7Hi984c5mma4xHAiqZ/HTnbXNUVkjRkN+nBA7CjkMOyd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751292141; c=relaxed/simple;
-	bh=+ZmXrSd/aQm2GxE0r/NBTgyZY1o97TCcPHZTmxk28X0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lgxer1/2PZfp00AB9YtQPOkUanuKjvseXh6fMQy2WHOybpSEWkRAXdoXuo+mjOGHcli3xgo5Fjo2DLEkLz/sRdgUzHUdU5PWjuAxurFkAqt8TXjgcErTczg0X/WAg3skND0GtKNdkvLc76Q+EtRVVLzm1Q2wwhoHfOr8mGLAM5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O1Da9mM2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751292139;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QE4qcuwReJRjoAWSX+l6qHylMOR9opoZLSNy6uw6e/0=;
-	b=O1Da9mM2C4S392mxidYTzR3wL2eM8TXS8oBS3Kzw2OLccJwH797Za8g5AtU8GNhvxJ0wHG
-	s0AFS43Tfk8qgoic/wOxg43GFxuq/LhEI6D/HjKu90qUiU2uhYIZ7p1YeRVpnAnzh2DOHt
-	av7aTTzM9xXpedVx33+8XNgyAbKOIOk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-52-CbMj-xn9OzWHBl8gavr2LQ-1; Mon, 30 Jun 2025 10:02:17 -0400
-X-MC-Unique: CbMj-xn9OzWHBl8gavr2LQ-1
-X-Mimecast-MFC-AGG-ID: CbMj-xn9OzWHBl8gavr2LQ_1751292136
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a58939191eso710830f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:02:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751292136; x=1751896936;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QE4qcuwReJRjoAWSX+l6qHylMOR9opoZLSNy6uw6e/0=;
-        b=gbmdK9h/tqCDp+ntlxw+lH2gUlUW6hGu3XcM3e3aRPyzhSuSIRYR+1mFUQTfW49UXq
-         z3slRgXfFUDZPKwYDOR4u6fyDZc4i2vNqH1aqTthaL0BI6APpQMjNoDn6vYetAzicW7O
-         xuwY05XS9CBsU/lO6O+MZqcG2sE4x48A0GC41Pwj1eJhauAEFigSB5lpja1Ou+qziJMs
-         fHh/RNuNCiKHovAsUdeTWAwIzLoFXzid//R5i9HwpsntLCYmgedNRPCmazg0eyFcyyyS
-         yByYYEA07m4BIRfIiKlC94kn9C6EgBC9syJtNhNnosoE3qTCgLh9kkIEjZWm4bJlfMXT
-         xYgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzpabhxoTrXaCoOy85/crtEDeRHn1HjmE2b19Gq+++9+FpeERDK4bO1qikeBJ2d04/7mXtv128rYGHbOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1pl2ujY1wMj73+CKjSQe1Z0k6faV42GoIW1O7nm4//nQPxpIG
-	3MmKIU+MB3MR9jldGdZv3LfEewLLeBQL2InhBHZLcH53SDtzKNeyaki6ytXdU8DSGZAIq0VAHct
-	tejl1mLVo9DTjWL+cs0pTEFuf6z0eLK8cx8QJddyU6FV5zvHqDPyQu4I4r+G2k/mZ0g==
-X-Gm-Gg: ASbGnct0SnLH5hoPOhHyDXQ1x+xxwrrk/n3ItIEG25VOVjneh4bbVAmbvhNl5xLgrXx
-	bpUdZASh3eC987D0vC/9RR04/ZExpGBaf2D0dhauCv4nlzrYzouV8S+CNkebNVErQM6NySQTlAD
-	RoRcgXS33Wz1hasxJTrYAVAPSycV1d8Vx9OCQct2nsWW/05kPt/PiG3xfpeBAJ49XQlgsd/3obk
-	mePbt+qA10lHikNaVPPVz5fe4pD8ZQIeKqX534AJ4nsDSSY5twWj0mYGeoIMr3dt0HrNbtmYdjH
-	CuQ+MOlQwHKYlLUPTk5MISVPRtplQIUB0shZVwGCBW5cw1D0Ab8ggsdK/whXebHuZsP1Al2oGmP
-	Mn7bGlPQlpVukKcHau6Qw8oUSbXTIgRyFLh6MMqzbNlGPbr1bOA==
-X-Received: by 2002:a05:6000:4109:b0:3a3:6a9a:5ebf with SMTP id ffacd0b85a97d-3a8f4ee1d85mr10717593f8f.20.1751292135811;
-        Mon, 30 Jun 2025 07:02:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6XOPH/wu4Z+k6Mr76lh2132mbBYyiffEPrBCJbJqN3wuNSo+L6mIDiB+liNXL/ferZmn88w==
-X-Received: by 2002:a05:6000:4109:b0:3a3:6a9a:5ebf with SMTP id ffacd0b85a97d-3a8f4ee1d85mr10717525f8f.20.1751292135037;
-        Mon, 30 Jun 2025 07:02:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f40:b300:53f7:d260:aff4:7256? (p200300d82f40b30053f7d260aff47256.dip0.t-ipconnect.de. [2003:d8:2f40:b300:53f7:d260:aff4:7256])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e52b9esm10617734f8f.61.2025.06.30.07.02.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 07:02:14 -0700 (PDT)
-Message-ID: <30f2e2ed-00b9-4473-a0b7-29fb734fb3c4@redhat.com>
-Date: Mon, 30 Jun 2025 16:02:13 +0200
+	s=arc-20240116; t=1751292286; c=relaxed/simple;
+	bh=lJo4k2xVeiDebpwc+lYdH4ZwZHtPsq3pOUWr892pgog=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uo8TCJ2ekZPVmry29oVjzlCysqC76BJXN9z6BzULQ7pTzBP4a996J8G0Fq6RsSh+zdOBRchQvBPWi0lxDQwHPpvuATwBT2+Uns+0JTgWtZp0Yiuyx7MD7SLH1ernNFycg4jT8lhqeGTZabAuLxrkbqV4oEfzDIYIfx/v/CAZ1yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y5fPjOco; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751292282;
+	bh=lJo4k2xVeiDebpwc+lYdH4ZwZHtPsq3pOUWr892pgog=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Y5fPjOcofU4G1ItuixmiIZQ7ZR3mTg9aTWlF2wqf9c25xRK4agkwggxNZ+s3uqH2Q
+	 Ee+0qRSB1BSSP1dH/gZWfNEzDfc35PKIN5UnBJCIlCvHR0VsPKOXrMbAT9J2g5auXL
+	 K+PRPbF9CzNQ03ZgDfmPHsleV6/tZlT8Xy1LCWG4Y/hcQqBGV9bUXsf8Rt0wLRspMN
+	 r+aEJi37BW8SNko2suUgtG6jliHSzqFMqnfdfsEzHXEjbT+EhVrLhIUMKduQoH81oe
+	 eenEeyGGs3R99mZXgL7cwGDOarDA1OVad4yKD+eL83vt2WkIzKY+J3d/PpSOgiLEpc
+	 JzaTTg3OhiA5Q==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AA1B417E07F2;
+	Mon, 30 Jun 2025 16:04:41 +0200 (CEST)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Mon, 30 Jun 2025 16:03:44 +0200
+Subject: [PATCH] Input: mtk-pmic-keys: Fix null pointer dereference when no
+ compatible data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: Add process_madvise() tests
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- wang lian <lianux.mm@gmail.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
- brauner@kernel.org, gkwang@linx-info.com, jannh@google.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- p1ucky0923@gmail.com, ryncsn@gmail.com, shuah@kernel.org, sj@kernel.org,
- vbabka@suse.cz, zijing.zhang@proton.me
-References: <20250624104654.4418-1-lianux.mm@gmail.com>
- <20250628113945.145588-1-lianux.mm@gmail.com>
- <694fca1d-1584-45d9-9e50-5c219b9c7c94@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <694fca1d-1584-45d9-9e50-5c219b9c7c94@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250630-mtk-pmic-keys-fix-crash-v1-1-e47351fa9d1f@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAD+ZYmgC/zWNwQrCMBBEfyXs2YUYjUh/RXpI48YuJWnNRqmU/
+ ntDi8c3w8xbQCgzCTRqgUxfFh5ThfNJge9dehHyszIYbay+XTTGMuAU2eNAP8HAM/rspMer6ax
+ 1wdw1BajrKVMt9+dHe3Cm96cKyhFC54TQjzFyaVSiueBfAu26bnCUhzmaAAAA
+X-Change-ID: 20250630-mtk-pmic-keys-fix-crash-42b55af280ef
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-input@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751292281; l=3806;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=lJo4k2xVeiDebpwc+lYdH4ZwZHtPsq3pOUWr892pgog=;
+ b=4hOq21N8D5aFlEKW2DcSULezu6veN9g5798DGmTfklmb5u7sWpNRKE7KpYYGunYkHmoo6aZQW
+ qz9saAYUu5mCtAHnUIH7z8d/6nfLeardHGP1xhvfpOSAjUxiCQIHQbz
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-On 30.06.25 15:51, Lorenzo Stoakes wrote:
-> On Sat, Jun 28, 2025 at 07:39:45PM +0800, wang lian wrote:
->> This patch adds tests for the process_madvise(), focusing on
->> verifying behavior under various conditions including valid
->> usage and error cases.
-> 
-> Hi sorry to be a pain, but I'm not sure this will get picked up properly like this.
-> 
-> Please resend this _not in reply to anything_ and with the subject:
-> 
-> [PATCH v2] selftests/mm: add process_madvise() tests
-> 
+In mtk_pmic_keys_probe function, the of_match_device function is
+called to retrieve the compatible platform device info but its return
+data pointer is not checked. It can lead to a null pointer deference
+later when accessing the data field, if of_match_device returned a null
+pointer. So, add a pointer check after calling of_match_device function
+and return an EINVAL error in null case.
 
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+---
+This patch fixes a NULL pointer dereference that occurs during the
+mtk_pmic_keys driver probe and observed at least on Mediatek Genio
+1200-EVK board with a kernel based on linux-next (tag: 20250630),
+when it is configured to have mtk_pmic_keys driver as builtin
+(CONFIG_KEYBOARD_MTK_PMIC=y):
+```
+Unable to handle kernel NULL pointer dereference at virtual address
+  00000000000000c0
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[00000000000000c0] user address but active_mm is swapper
+Internal error: Oops: 0000000096000004 [#1]  SMP
+Modules linked in:
+CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
+  6.16.0-rc4-next-20250630-00001-gea99c662a089 #145 PREEMPT 
+Hardware name: MediaTek Genio 1200 EVK-P1V2-EMMC (DT)
+pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : mtk_pmic_keys_probe+0x94/0x500
+lr : mtk_pmic_keys_probe+0x78/0x500
+sp : ffff80008275bb30
+x29: ffff80008275bb70 x28: ffff80008202bbb0 x27: ffff800081df00b0
+x26: ffff800081ef9060 x25: ffff0000c6fcf400 x24: 0000000000000000
+x23: 0000000000000000 x22: ffff0000c6fcf410 x21: ffff0000c09f8480
+x20: ffff0000c09f4b80 x19: 0000000000000000 x18: 00000000ffffffff
+x17: ffff8000824cb228 x16: 00000000d7fcbc9e x15: ffff0000c0a2b274
+x14: ffff80008275bad0 x13: ffff0000c0a2ba1c x12: 786d692d696d6373
+x11: 0000000000000040 x10: 0000000000000001 x9 : 0000000000000000
+x8 : ffff0000c09f8500 x7 : 0000000000000000 x6 : 000000000000003f
+x5 : 0000000000000040 x4 : ffff0000c6fcf410 x3 : ffff0000c6fcf6c0
+x2 : ffff0000c09f8400 x1 : ffff0000c36da000 x0 : ffff0000c6fcf410
+Call trace:
+ mtk_pmic_keys_probe+0x94/0x500 (P)
+ platform_probe+0x68/0xdc
+ really_probe+0xbc/0x2c0
+ __driver_probe_device+0x78/0x120
+ driver_probe_device+0x3c/0x154
+ __driver_attach+0x90/0x1a0
+ bus_for_each_dev+0x7c/0xdc
+ driver_attach+0x24/0x30
+ bus_add_driver+0xe4/0x208
+ driver_register+0x68/0x130
+ __platform_driver_register+0x24/0x30
+ pmic_keys_pdrv_init+0x1c/0x28
+ do_one_initcall+0x60/0x1d4
+ kernel_init_freeable+0x24c/0x2b4
+ kernel_init+0x20/0x140
+ ret_from_fork+0x10/0x20
+Code: aa1603e0 f90006b6 f9400681 f9000aa1 (f9406261) 
+---[ end trace 0000000000000000 ]---
+```
+---
+ drivers/input/keyboard/mtk-pmic-keys.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Hehe, there is a
+diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
+index 061d48350df661dd26832b307e1460ee8b8fd535..42fb93086db308ad87a276be4b53e9725a3a701b 100644
+--- a/drivers/input/keyboard/mtk-pmic-keys.c
++++ b/drivers/input/keyboard/mtk-pmic-keys.c
+@@ -316,6 +316,9 @@ static int mtk_pmic_keys_probe(struct platform_device *pdev)
+ 	const struct of_device_id *of_id =
+ 		of_match_device(of_mtk_pmic_keys_match_tbl, &pdev->dev);
+ 
++	if (!of_id)
++		return -EINVAL;
++
+ 	keys = devm_kzalloc(&pdev->dev, sizeof(*keys), GFP_KERNEL);
+ 	if (!keys)
+ 		return -ENOMEM;
 
-	[PATCH v2] selftests/vm: Add process_madvise() tests
+---
+base-commit: c6a68d8f7b81a6ce8962885408cc2d0c1f8b9470
+change-id: 20250630-mtk-pmic-keys-fix-crash-42b55af280ef
 
-in my inbox, but looks like only you and me were on CC.
-
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
 
