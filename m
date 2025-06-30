@@ -1,120 +1,266 @@
-Return-Path: <linux-kernel+bounces-709901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49116AEE469
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:25:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D59AEE455
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FBEA169FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF143AE47F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482BE28FFD2;
-	Mon, 30 Jun 2025 16:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8480292B2A;
+	Mon, 30 Jun 2025 16:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DnUaNgTr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qi+BF9Vf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3603191484;
-	Mon, 30 Jun 2025 16:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10872900A4
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 16:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751300670; cv=none; b=Jx7U9/3+NWuL1ju7wpgZ+L+v23VIVe//t9tyPc+4S5ZiP27OliTEf4Lei4+ozse5nIBfbZtzyAYC0cqo0dauGX8xgEE8Kyh1KcjsWOG54HxYZobfFskBUrAgdvMth9D0qmXEmsB/5b2Hn9KauHth/ycB2fhAigN+twIGfEx5C88=
+	t=1751300438; cv=none; b=FHPumJt9Ti451TUzqkDzarnuoXkXyeDKecckmo6EusLKAOfNoRiT4/ElDEkPw1DQK2GmghVbTQzd8QtVQ35ia7RFi3XdxVcPKmDr+nA4t+0WNO3FwNOjBdv1kfiRh7FhxwcWDdcwKLXZumCFoNoXDi9qWR82PpyCgnwnBB+NlzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751300670; c=relaxed/simple;
-	bh=aiWuN3GhqocDI35YBp5qTR55DHhbOh5tOWXvy8Qdgcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SgbiAIEdu5ncc4W554zsAZaJj7qjTvU3mShLo5mYvu08JngDJ1Ono9wIXJ8JjhBu0t761Y4GxmYUNbjjko5A/4AVPxDlwoWRYZpdrpn9ohcIBbOP6uoLVvqcESG806s+BxMClhlpTNfAAXvGnVex/q3Pz7eFBetLBSM6hOvJ/VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DnUaNgTr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D01C4CEE3;
-	Mon, 30 Jun 2025 16:24:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751300670;
-	bh=aiWuN3GhqocDI35YBp5qTR55DHhbOh5tOWXvy8Qdgcc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DnUaNgTrFrd5oOvO/6bSOKTcJRGYb1m3IgxrWXMjQ8qV6dHtKS2r1V7FDscI7TLZ9
-	 7/SBtIZ2Bw62EgSgJ+1JXea1GgYOpgsogllqdf72Wlf/sL8uEXALO3KDlMAciWwCUQ
-	 L6e7czVtx3FcorhEPkyJenfU+EtPGpL/xbmYJpK1dAkB9Hv9/K4VQStsi8LYGeFk2J
-	 ElItXwJsm/GcdKFNdSd/Ruk2krjr8yuonuHHx6uT+nrRaIcFpavwsedaaeC1OJL8LD
-	 /tQxNcuwl8IklFsrj0JC5gOtL/M0vFWoggCEyDOTBdb31pNx3Jlj4LZuQLBh6ENBJ9
-	 yZO3J4h/KcptQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v3 0/2] KUnit tests for SHA-2 library functions
-Date: Mon, 30 Jun 2025 09:20:12 -0700
-Message-ID: <20250630162014.6463-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1751300438; c=relaxed/simple;
+	bh=bO/jpswV1LWNhjalyWMDjdR/z42wKAwo8hIHFNHoxHc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QNv2mDeQju2xQiijwNsBbIo33KtnvF+L5VWnQ71Ylrkyb0yf77qdrwmCgUEHr9Ljbvlwhxywl0vNNMXXzVTKJIiijh5yI8cbHP+NBGZu1+vCHXPRpBcuc5IzbQbJir+pCEMFcFAfXaGMOnonTtg7AnrtwRlayM08u4evUutjA8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qi+BF9Vf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751300435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x/ldgdzsRv8e0UT+Jrv0yb/WEFGbntMvFcer/+29UGk=;
+	b=Qi+BF9VfeXZ5nMshbm+xDzhhUr+iNBU2s5ppGqYeXO1reBL1ohgGbjjYg1UZ1E6UNiRwrT
+	UFjYI2uJiQSAo6+AsPgevcWgNKzgZwXA8mMb9/MAWsHsaV+f+NWLy74HLlhdi/cpvDrFNc
+	CMtRBKPX9KhMZ96IaCu4KcukFIBNlGw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-107-6LuBw58rNlCL3BEBXI1HiQ-1; Mon, 30 Jun 2025 12:20:34 -0400
+X-MC-Unique: 6LuBw58rNlCL3BEBXI1HiQ-1
+X-Mimecast-MFC-AGG-ID: 6LuBw58rNlCL3BEBXI1HiQ_1751300433
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-450db029f2aso20884025e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:20:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751300433; x=1751905233;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x/ldgdzsRv8e0UT+Jrv0yb/WEFGbntMvFcer/+29UGk=;
+        b=Pcu/LLwZxKAiWBKB8pmwEgMqR6VTMVFHoS2d2PakNE1I1KQ3bIp7vxAA0Gfj9QYD2i
+         uhmw5Sa72siEWDFvG1cJZKw+WVXXoZhzrkjB6HIU8ywGldgGeVOEuUdjVhAGswWtgI1c
+         UB51hvQeMuC6ASFzowZ1rw0UPEZRT0tIPQ6CLE10lOJiUpT1j+zVsy+cHrYF0Z/89lZj
+         xTjndVROTBKFgoRzKH+R6x/5Esmon3g9vVtdk+R3UyMxyjfRofY27YX9KFTunp5czTn6
+         Lza52GCOWTLfQF7wRzYsEiugzm/v4OwfexpdapHc69MlwId9sGEp8M8EWzx3bVQK9u0d
+         EzYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLtkldoP4nOF6a6wyNcxprc9G1P820p/7n/zG93eysZalyZV1MM2+hNCxCg85Z8Qyr4QB+XeVbsLq1lHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4LjxSVLWJwFgm39xnMIZPPmE7VQCPYg4urEJ93jbcJ72nDG3j
+	VKYeI2PrVyLHp8kylcST7xTPpCldMAwJ056owee6oenn15uCl93AkAGCs/Hx8MdPRGLJb3Z2cuW
+	9LmhIRLhmC0xE/z2U9QAHCuzgalCaHGe9CmlvrE/xIHLSIHGi3OEmBOpMmzRUXceR
+X-Gm-Gg: ASbGncvCJ7v6PNWxCYoq8XeRzIjOmbk3gzkZR7PQdKUX4K8ospKA8hU+uHh6Ijdhotr
+	nCwx3B3c12j9BtMKGIGO8MYgeWH4LVPGeplQhut7Pc7z3Ddsf1reMw81peREMfL2Ft3hSEq19vE
+	idMzNtK8ZbXfIx+qXxy7sNoMCHHfke6Z+pYvSj1VDzeXgN6Rg94tJs6o+lAPiXzpRlL25MwanRB
+	v/1fWPo+vjCsVdJFqAqW65K9GxmLt36rwKGcp5PDcu8MN9eogvTSbCEjrG7Wca/e0aASv+WAuAx
+	/YL0pDNgqrbE5YmcA6iuTdQEXeMP
+X-Received: by 2002:a05:600c:458b:b0:450:b9c0:c7d2 with SMTP id 5b1f17b1804b1-45391b6b96dmr112684315e9.11.1751300433120;
+        Mon, 30 Jun 2025 09:20:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFduavveB4cdYSeQ2qocLMKSrImBMaC6aj6NuX+uihLHHyN/rjbOwaD5qNXSxUq7WLZl2/mug==
+X-Received: by 2002:a05:600c:458b:b0:450:b9c0:c7d2 with SMTP id 5b1f17b1804b1-45391b6b96dmr112684075e9.11.1751300432717;
+        Mon, 30 Jun 2025 09:20:32 -0700 (PDT)
+Received: from [127.0.0.2] (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c1easm168769245e9.3.2025.06.30.09.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 09:20:29 -0700 (PDT)
+From: Andrey Albershteyn <aalbersh@redhat.com>
+X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
+Date: Mon, 30 Jun 2025 18:20:12 +0200
+Subject: [PATCH v6 2/6] lsm: introduce new hooks for setting/getting inode
+ fsxattr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250630-xattrat-syscall-v6-2-c4e3bc35227b@kernel.org>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+In-Reply-To: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Casey Schaufler <casey@schaufler-ca.com>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Paul Moore <paul@paul-moore.com>
+Cc: linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+ selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5238; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=bO/jpswV1LWNhjalyWMDjdR/z42wKAwo8hIHFNHoxHc=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMpJ2ev2XWlBSZ1NT29LbkmzeYMpctqZpt8v5pdwnD
+ coswzK/b+ooZWEQ42KQFVNkWSetNTWpSCr/iEGNPMwcViaQIQxcnAIwkX2zGP5wFThm6IgLsXdV
+ /tpyS4eJUcfv1pbw5zrMD884LNDjf2LJyNAdtarms/SlmIr7p/6vnKwRF9nfmmrtkis1Y3v8UtZ
+ duqwAYNREEw==
+X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
+ fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-This series is also available at:
+Introduce new hooks for setting and getting filesystem extended
+attributes on inode (FS_IOC_FSGETXATTR).
 
-    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha2-kunit-v3
+Cc: selinux@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
 
-This series adds KUnit tests for the SHA-2 library functions.
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+---
+ fs/file_attr.c                | 19 ++++++++++++++++---
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      | 16 ++++++++++++++++
+ security/security.c           | 30 ++++++++++++++++++++++++++++++
+ 4 files changed, 64 insertions(+), 3 deletions(-)
 
-Most of this code was originally part of my series
-"SHA-512 library functions".  I made a few updates in
-"SHA-256 library improvements".  As per the request from Linus that the
-tests be kept last on the branch for a separate pull request, I've
-reordered the history to add the tests last.  Thus this patch series.
-
-Testing strategy:
-- Each SHA variant gets its own KUnit test suite, but a header is used
-  to share most of the test code among the SHA variants.
-- Test against vectors generated by the Python hashlib and hmac modules.
-- Test incremental computation.
-- Test with a guard page to catch buffer overruns even in assembly code.
-- Test various overlap and alignment cases.
-- Compute hashes in task, softirq, and hardirq context in parallel, to
-  verify that the functions work as expected in all contexts and that
-  fallback code paths are exercised.
-- Test that the finalization functions zeroize their context.
-- Include benchmarks, guarded by a separate Kconfig option.
-
-Eric Biggers (2):
-  lib/crypto: sha512: Add KUnit tests for SHA-384 and SHA-512
-  lib/crypto: sha256: Add KUnit tests for SHA-224 and SHA-256
-
- lib/crypto/Kconfig                    |   2 +
- lib/crypto/Makefile                   |   2 +
- lib/crypto/tests/Kconfig              |  25 +
- lib/crypto/tests/Makefile             |   6 +
- lib/crypto/tests/hash-test-template.h | 512 ++++++++++++++++++++
- lib/crypto/tests/sha224-testvecs.h    | 470 ++++++++++++++++++
- lib/crypto/tests/sha224_kunit.c       |  48 ++
- lib/crypto/tests/sha256-testvecs.h    | 470 ++++++++++++++++++
- lib/crypto/tests/sha256_kunit.c       |  48 ++
- lib/crypto/tests/sha384-testvecs.h    | 566 ++++++++++++++++++++++
- lib/crypto/tests/sha384_kunit.c       |  48 ++
- lib/crypto/tests/sha512-testvecs.h    | 662 ++++++++++++++++++++++++++
- lib/crypto/tests/sha512_kunit.c       |  48 ++
- scripts/crypto/gen-hash-testvecs.py   |  83 ++++
- 14 files changed, 2990 insertions(+)
- create mode 100644 lib/crypto/tests/Kconfig
- create mode 100644 lib/crypto/tests/Makefile
- create mode 100644 lib/crypto/tests/hash-test-template.h
- create mode 100644 lib/crypto/tests/sha224-testvecs.h
- create mode 100644 lib/crypto/tests/sha224_kunit.c
- create mode 100644 lib/crypto/tests/sha256-testvecs.h
- create mode 100644 lib/crypto/tests/sha256_kunit.c
- create mode 100644 lib/crypto/tests/sha384-testvecs.h
- create mode 100644 lib/crypto/tests/sha384_kunit.c
- create mode 100644 lib/crypto/tests/sha512-testvecs.h
- create mode 100644 lib/crypto/tests/sha512_kunit.c
- create mode 100755 scripts/crypto/gen-hash-testvecs.py
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 2910b7047721..be62d97cc444 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -76,10 +76,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
+ int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ {
+ 	struct inode *inode = d_inode(dentry);
++	int error;
+ 
+ 	if (!inode->i_op->fileattr_get)
+ 		return -ENOIOCTLCMD;
+ 
++	error = security_inode_file_getattr(dentry, fa);
++	if (error)
++		return error;
++
+ 	return inode->i_op->fileattr_get(dentry, fa);
+ }
+ EXPORT_SYMBOL(vfs_fileattr_get);
+@@ -242,12 +247,20 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		} else {
+ 			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+ 		}
++
+ 		err = fileattr_set_prepare(inode, &old_ma, fa);
+-		if (!err)
+-			err = inode->i_op->fileattr_set(idmap, dentry, fa);
++		if (err)
++			goto out;
++		err = security_inode_file_setattr(dentry, fa);
++		if (err)
++			goto out;
++		err = inode->i_op->fileattr_set(idmap, dentry, fa);
++		if (err)
++			goto out;
+ 	}
++
++out:
+ 	inode_unlock(inode);
+-
+ 	return err;
+ }
+ EXPORT_SYMBOL(vfs_fileattr_set);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index bf3bbac4e02a..9600a4350e79 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -157,6 +157,8 @@ LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *name)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
+ 	 const char *name)
++LSM_HOOK(int, 0, inode_file_setattr, struct dentry *dentry, struct fileattr *fa)
++LSM_HOOK(int, 0, inode_file_getattr, struct dentry *dentry, struct fileattr *fa)
+ LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_set_acl, struct dentry *dentry,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index dba349629229..9ed0d0e0c81f 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -451,6 +451,10 @@ int security_inode_listxattr(struct dentry *dentry);
+ int security_inode_removexattr(struct mnt_idmap *idmap,
+ 			       struct dentry *dentry, const char *name);
+ void security_inode_post_removexattr(struct dentry *dentry, const char *name);
++int security_inode_file_setattr(struct dentry *dentry,
++			      struct fileattr *fa);
++int security_inode_file_getattr(struct dentry *dentry,
++			      struct fileattr *fa);
+ int security_inode_need_killpriv(struct dentry *dentry);
+ int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
+ int security_inode_getsecurity(struct mnt_idmap *idmap,
+@@ -1052,6 +1056,18 @@ static inline void security_inode_post_removexattr(struct dentry *dentry,
+ 						   const char *name)
+ { }
+ 
++static inline int security_inode_file_setattr(struct dentry *dentry,
++					      struct fileattr *fa)
++{
++	return 0;
++}
++
++static inline int security_inode_file_getattr(struct dentry *dentry,
++					      struct fileattr *fa)
++{
++	return 0;
++}
++
+ static inline int security_inode_need_killpriv(struct dentry *dentry)
+ {
+ 	return cap_inode_need_killpriv(dentry);
+diff --git a/security/security.c b/security/security.c
+index 596d41818577..711b4de40b8d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2622,6 +2622,36 @@ void security_inode_post_removexattr(struct dentry *dentry, const char *name)
+ 	call_void_hook(inode_post_removexattr, dentry, name);
+ }
+ 
++/**
++ * security_inode_file_setattr() - check if setting fsxattr is allowed
++ * @dentry: file to set filesystem extended attributes on
++ * @fa: extended attributes to set on the inode
++ *
++ * Called when file_setattr() syscall or FS_IOC_FSSETXATTR ioctl() is called on
++ * inode
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_inode_file_setattr(struct dentry *dentry, struct fileattr *fa)
++{
++	return call_int_hook(inode_file_setattr, dentry, fa);
++}
++
++/**
++ * security_inode_file_getattr() - check if retrieving fsxattr is allowed
++ * @dentry: file to retrieve filesystem extended attributes from
++ * @fa: extended attributes to get
++ *
++ * Called when file_getattr() syscall or FS_IOC_FSGETXATTR ioctl() is called on
++ * inode
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_inode_file_getattr(struct dentry *dentry, struct fileattr *fa)
++{
++	return call_int_hook(inode_file_getattr, dentry, fa);
++}
++
+ /**
+  * security_inode_need_killpriv() - Check if security_inode_killpriv() required
+  * @dentry: associated dentry
 
 -- 
-2.50.0
+2.47.2
 
 
