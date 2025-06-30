@@ -1,141 +1,232 @@
-Return-Path: <linux-kernel+bounces-710102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E38AEE72C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:06:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18765AEE73C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6C43AE104
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8D23E074E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2291FBCB1;
-	Mon, 30 Jun 2025 19:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB662EA155;
+	Mon, 30 Jun 2025 19:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AzqMndmt"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7YIRQJn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6260E79D2
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 19:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADF620AF98;
+	Mon, 30 Jun 2025 19:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751310389; cv=none; b=iSEyqo3Nkuclr7dwIP1DptRAmaiLCHpuwKEo8/+yBeR9XUASL9zyaZRAu8WEtJ5avx5jonsZs76oZchk/w0zV7yZ4Y7Y1g6YnajOwgOEgdNNSSbFemDEHHTU8VBoDTK/Fi+J2Lq+cqwXD8osHjVczhOQT3GseERH6IZRb3kkCvI=
+	t=1751310403; cv=none; b=oEkA0VHydaAWtzHA47Qd+YxtNmB9PjmjPHFqeKiYqkLaNYxRp5oJduH1GH+ZhrVlMMnw6cokiYD4LkpDGjdzrJWkwFXXXsHkK89xVsUjGBX6YD5rndknMEDvzjGEXG9AbeNSAS91wyc/77xZUZW9DQz8LpsMEieK5FNtoiteL8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751310389; c=relaxed/simple;
-	bh=/CB611I8QUzospzLZMcGKKZNDa9b4jsHw04tVNUsc/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvtFB5Jje5nIdw0vaMn/N1iCnW5vK0Gx4uqEEVVvywUTePds/r7Sw93eUVK/IYVQxPjl9af23lyxJXZ4jqW5COkkBHxc2jsCOw8nPhEnDAa84xtmocoNpq69Va3bFuwihnrWLZ2KVWOF27giyuJ7byf1JKEadJ8hFW8L7sbfefg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=AzqMndmt; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-235ea292956so21433915ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1751310388; x=1751915188; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ifqxTBeQ+hR1fKmYKfMtsbKbYA3naoBciBfh4zZv5Y=;
-        b=AzqMndmtPxP3aWaiRD1Rv6Sx1O/p7d31daK2yjKaN33AeCkPgMG96IVTkI5562RWOX
-         ebxqi0Z3agQadBfejGdM3gVbFh0fG7FUwbQYlXjB+keUhF8BRimpiym5p4aMDSX3ez//
-         G7mSjSqgT2fGm1TbIpKPo4euXPthOIms/qKwA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751310388; x=1751915188;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ifqxTBeQ+hR1fKmYKfMtsbKbYA3naoBciBfh4zZv5Y=;
-        b=i4NNMIcTaFeN7oTE2NighZh80lPnCFiZPhI3BJ7RhcZ5AJGhEH3XnoNDjU82FAMMOX
-         d+H/4CXJhiYGN8QVuIccyozbW0Pvrve5g0CxsciCR8cwdufInlJn9ir99SXw5U7PtllK
-         ewjJ5dauAbEwbMoZA7gr5Bp0SjXgTPAljq/x/EsNSLkLCJyqCI4yAO6XqxwXGpU2MZMm
-         KJoO7EFt/ugjMy6oS6W/9NIeN/hXCYMcbmxM5Qmwak/YHMrY1AaucNkDN2PEnIz1Ikb2
-         FIkc/6pkqpc+IGBhiZFCXLIDAh+n82Tsu35JbQloKmWl5EqNBmSZeslTp9KfqvMVAhkq
-         0wZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXj/IkrRK/vzCdk7g+MoaI1WOdkKcAKqnKTGaw8sxAvIw6eexgmZwTDDyz0SsQfd3tN8tMZXroAO8M5elo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr4lXvtmsVI73SQL2ryooKEMVbO35fElcYX2Wx41IcYPMbIP+N
-	bkfx6SV1jPmmdI8D8s9dWi5iAFu1jl/Zw9ZbLyiP0bwV2yp1SgWAyOoeB0PPOc6LCg==
-X-Gm-Gg: ASbGncufyElNJTe3fL0XD8tEZw01qNbYONfmBIG36SCfC+DVA1TsEOFzfObXgLLdO7b
-	qYq8K5rOSb9rRMcvNTe7M6BAP/T2Wscxrjuml/1gtoV2s7iNgE1SMCydDIUe1/qICbmhG9uzQ2p
-	p91IdhY4o17dq+eqpsvs5+fp8IyP3235mpxIGfQH/jg95OC3GEmhHUZGvnjzJhmOTRsLRwT1aD6
-	liK4Bh8W7kgXYYDsM4rGD5zAA9DJXMYw1RSuAF05MKeHrnuNWSEl3cNCpdMrfSyWCC7ppHHe2LP
-	InW4SrxBmBO8aTHdn7usP+p4Bcu+cY7357FMYVX3Mv9fwwPsi9oqWnMiqLYUaCh35s9LzEYdXA7
-	XtoGD1Z7n+PddiuYhMr8VxxzonQ==
-X-Google-Smtp-Source: AGHT+IGrr+s2yHRofWEifQmJDsOPRoZeaxvkG2kjOYNFEpJTQ0qMZgmXnhWfnA7mYAH2pHmMqgczjw==
-X-Received: by 2002:a17:902:f606:b0:237:cc75:77b0 with SMTP id d9443c01a7336-23ac4633f4cmr184335375ad.30.1751310387627;
-        Mon, 30 Jun 2025 12:06:27 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3ba530sm85783255ad.200.2025.06.30.12.06.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 12:06:26 -0700 (PDT)
-Message-ID: <5a374bbf-8f2e-49fb-9e9f-a55a8362e134@broadcom.com>
-Date: Mon, 30 Jun 2025 12:06:25 -0700
+	s=arc-20240116; t=1751310403; c=relaxed/simple;
+	bh=e6VQ5ZPE0FJGZ2Ukbh7fpgQuBggI2xsJEjKqbvS8ZSE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dH+AACu1SEoxMrKPUNkO1zPVJ9JzFmAP6PH7W6ihcGGNZzG5zJjeqycvtJ/9tl/ijOBud0mn4QRTzLRIJOrQ1JqyhrJp0CJXVYT7RoljACPz+V5/MspaIot3OF7qqZc6Z0R2wFn+UUa9pEfo5c2rw/EqIv6pb7hLbPUoYpCdrlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7YIRQJn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BC62CC4CEE3;
+	Mon, 30 Jun 2025 19:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751310402;
+	bh=e6VQ5ZPE0FJGZ2Ukbh7fpgQuBggI2xsJEjKqbvS8ZSE=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=M7YIRQJn47wd0VicocRqviby/vl6zTzdE9wV7hsLbAvsnTosPD4+b4c1rVlZZ+c0k
+	 0vEuZhE+0OWxpgjPV+kt0dDjpLCs6Ya8lO+4GsFet9ttNpanSeK29+qB6dr86jl3fB
+	 KIRbbYRQ0YQ01zp0SmPtZihx/gVUUnVntTJk3zYV/OLkgygxdLi/z5HwMRM0iSNrSr
+	 gg6HoMTwQqBqEGdqqcsc4i3sDfrUFA8zEiyssRx/GgEA2h6M4Vytvfr+blAj3Y2sW3
+	 6rmkD+v3656G0GYrecciFWWq6mh/Kj9F/s/48qHH5TIQ8gYK+YXCPPxHX/1iG/Y7tT
+	 9BON2qkB3bJfQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85CCC8302B;
+	Mon, 30 Jun 2025 19:06:42 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v8 0/4] arm64: dts: qcom: Add Lenovo ThinkBook 16 device
+ tree
+Date: Mon, 30 Jun 2025 21:06:38 +0200
+Message-Id: <20250630-tb16-dt-v8-0-cf42a396e736@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: phy: Convert brcm,sr-usb-combo-phy to DT
- schema
-To: "Rob Herring (Arm)" <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250627220126.214577-1-robh@kernel.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250627220126.214577-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD7gYmgC/33OwUrEMBDG8VdZcjaSySSTxJPvIR7aZGoDy3Zpa
+ lGXvrvZBW0v7fH/MfyYmyg8Zi7i5XQTI8+55OFSwz+dROybywfLnGoLrbRVFkBOLZBMk2RvokF
+ M3rUg6vV15C5/PaS399p9LtMwfj/gGe7rn2H/jRmkkilab6jRNhr/OpxTif0wnMtw/pzqL+W5z
+ T/iDs56i9CK6Iq4aEKgZD0nOkRwg2izIlgRcKwpBbTs8BAxO4ipiI7ApMAn7NQhYleElFsRW5G
+ GTUAk01ltDxHaQagiBA1CAMPs9CHiNogOK+IqglY7QgOIvttFlmX5BS+FoIpJAgAA
+X-Change-ID: 20250511-tb16-dt-e84c433d87b1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751310400; l=6113;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=e6VQ5ZPE0FJGZ2Ukbh7fpgQuBggI2xsJEjKqbvS8ZSE=;
+ b=CjgBuA2n2T0gnmu/bagoCiYvFT5w114jzCNcEZadoCCd4hPm+lDDjCWNFmvQJOePkRGEaUL0Q
+ 7gS4E1pgKPzBNg6iIseu2sn+kqoRhI/+Gy0AecOYRZ+xeRhBrrrWHhB
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On 6/27/25 15:01, 'Rob Herring (Arm)' via BCM-KERNEL-FEEDBACK-LIST,PDL 
-wrote:
-> Convert the Broadcom Stingray USB PHY binding to DT schema format. It's
-> a straight forward conversion.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Device tree for the Lenovo Thinkbook 16 G7 QOY
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+The Laptop is a Snapdragon X1 / X1 Plus (Purwa) based device [1].
+
+Supported features:
+
+- USB type-c and type-a ports
+- Keyboard
+- Touchpad (all that are described in the dsdt)
+- Touchscreen (described in the dsdt, no known SKUss)
+- Display including PWM backlight control
+- PCIe devices
+- nvme
+- SDHC card reader
+- ath12k WCN7850 Wifi and Bluetooth
+- ADSP and CDSP
+- GPIO keys (Lid switch)
+- Sound via internal speakers / DMIC / USB / headphone jack
+- DP Altmode with 2 lanes (as all of these still do)
+- Integrated fingerprint reader (FPC)
+- Integrated UVC camera
+- X1-45 GPU
+
+Not supported yet:
+
+- HDMI port.
+- EC and some fn hotkeys.
+
+Limited support yet:
+
+- SDHC card reader is based on the on-chip sdhc_2 controller, but the driver from
+the Snapdragon Dev Kit is only a partial match. It can do normal slow sd cards,
+but not UHS-I (SD104) and UHS-II.
+
+Notes:
+
+- Putting the camera behind usb_2_dwc3 results in the camera switched off after 30
+seconds. With the stand-alone node as previously defined it stays usable and
+suspends, as intended. Sincethe sole reason for the USB camera to be in the
+devicetree is the required extra supply (which is guessed, as mentioned), and
+its handling by power management, I would propose to keep it this way.
+
+- The gpi_dma nodes appear to be implicitly enabled when a serial device is used.
+I added them, no change in behaviour, though. Since this would be the only X1
+device adding them afaik, I left them out.
+
+- The cma-memory is removed, it is not on all x1 devices as I assumed.
+Haven't found a case where it is required.
+
+- i2c2 defines the keyboard and 4 different touchpad interfaces. With the bundling
+of the pinctrl it seems to work better. I've had issues with only clock and touchpad
+pinctrl on the i2c2 node, and not keyboard.
+
+This work was done without any schematics or non-public knowledge of the device.
+So, it is based on the existing x1 device trees, dsdt analysis, using HWInfo
+ARM64, and pure guesswork. It has been confirmed, however, that the device really
+has 4 NXP PTN3222 eUSB2 repeaters, one of which doesn't have a reset GPIO (eusb5
+@43).
+
+I have brought up the Thinkbook over the last 5 months since the x1p42100-crd
+patches were available. The laptop is very usable now, and quite solid as a dev/
+test platform.
+
+Big thanks to Aleksandrs Vinarskis for helping (and sort of persisting) on the
+fingerprint, camera and HDMI issues.
+
+[1]: https://psref.lenovo.com/syspool/Sys/PDF/ThinkBook/ThinkBook_16_G7_QOY/ThinkBook_16_G7_QOY_Spec.pdf
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v8:
+- rebase to next-20250630
+- fix bleed-over of edp0_hpd_active - not in linux-next yet
+- fix bleed-over of hdmi definition 
+- Link to v7: https://lore.kernel.org/r/20250629-tb16-dt-v7-0-35276341338f@oldschoolsolutions.biz
+
+Changes in v7:
+- amended pinctrl order and indents where needed
+- interchanged enable-gpios and select-gpios for usb-sbu-mux as they are
+  defined in the dsdt - dp altmode function confirmed in both orientations
+- picked up reviewed-by and acked-by from Dmitry Baryshkob and Rob Herring
+- Link to v6: https://lore.kernel.org/r/20250607-tb16-dt-v6-0-61a31914ee72@oldschoolsolutions.biz
+
+Changes in v6:
+- removed compatible for qcom,sm8550-pmic-glink" in pmic-glink
+- fixed malformed gpu node
+- Link to v5: https://lore.kernel.org/r/20250607-tb16-dt-v5-0-ae493364f525@oldschoolsolutions.biz
+
+Changes in v5:
+- removed patch for the CMN N160JCE-ELL panel, got reviewed
+- re-ordered code in onboard_usb_dev as requested by Dmitry Baryshkov
+- amended device tree with review notes from Dmitry Baryshkov where possible
+  and resuting in a working laptop - added notes section
+- Link to v4: https://lore.kernel.org/r/20250524-tb16-dt-v4-0-2c1e6018d3f0@oldschoolsolutions.biz
+
+Changes in v4:
+- squashed Makefile and dts commits to one
+- picked up r-b from Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+- Link to v3: https://lore.kernel.org/r/20250524-tb16-dt-v3-0-17e26d935e73@oldschoolsolutions.biz
+
+Changes in v3:
+- removed changes in x1e80100.dtsi and x1p42100.dtsi - resolved with [2]
+- fixed schema errors with correct compatible string for the model
+- added power management for the camera via onboard_usb_dev.c
+- amended node ordering
+- changed the panel driver used to edp-panel, added panel in the driver
+- amended x1e80100.dtsi for exposing PM8010: This one is not present in the design,
+  added /delete-node/ for it.
+- removed commented-out lines for sdhc, specified which don't work.
+- corrected ZAP shader firmware name
+- Link to v2: https://lore.kernel.org/r/20250516-tb16-dt-v2-0-7c4996d58ed6@oldschoolsolutions.biz
+
+Changes in v2:
+- removed nodes that gave DTC compile errors (pm8010_thermal, edp0_hpd_active)
+- amended qcom.yaml
+- shortened the commit titles to fit 75 chars
+- Link to v1: https://lore.kernel.org/r/20250515-tb16-dt-v1-0-dc5846a25c48@oldschoolsolutions.biz
+
+[2]: 20250520-topic-x1p4_tsens-v2-1-9687b789a4fb@oss.qualcomm.com
+
+---
+Jens Glathe (4):
+      dt-bindings: arm: qcom: Add Lenovo TB16 support
+      usb: misc: onboard_usb_dev: Add Bison Electronics Inc. Integrated Camera
+      firmware: qcom: scm: Allow QSEECOM on Lenovo Thinkbook 16
+      arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY device tree
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |    2 +-
+ .../boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts | 1656 ++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |    1 +
+ drivers/usb/misc/onboard_usb_dev.c                 |    2 +
+ drivers/usb/misc/onboard_usb_dev.h                 |    8 +
+ 7 files changed, 1671 insertions(+), 1 deletion(-)
+---
+base-commit: 1343433ed38923a21425c602e92120a1f1db5f7a
+change-id: 20250511-tb16-dt-e84c433d87b1
+
+Best regards,
 -- 
-Florian
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
