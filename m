@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-709181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C44AEDA3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:46:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9037EAEDA40
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E0B3AA6C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839A81898D85
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EF9246BBD;
-	Mon, 30 Jun 2025 10:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFBD25B31E;
+	Mon, 30 Jun 2025 10:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QS2cHGEF"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BVjdNev+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F664199E9D
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC2E259CBF;
+	Mon, 30 Jun 2025 10:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751280405; cv=none; b=IwJhru8dHavTqOINQ8QvsqHoADC0EuHx6mTNtng0bEFNrpOg9sCZf+vC/ScFic23Q9hYMiVy4buuds1zFHLcikUR5QdcvA3Bor4wpVgVuo0Z/ItcW0cPrx8MOT2MfuYpDbXzSPMiamNhzfR01/rCQ1Ib+8s7TWAI+J2WjSlH/Rc=
+	t=1751280409; cv=none; b=exDY8lRpN30/+xQPJRrRQ6SwbdwiddJk1KZ8X7ji1NY9Suex44y268Ork25ELIvxaQS+/XkYwzcS2OoZQiwVwKrfZn+wSpbCJ5Zs8/hPFUOCsDNQUVulEWXrN/sMfW3RLHglSiZPd7Tvkay4R/VcYu9amdUHovAIwVR6Mn0wo2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751280405; c=relaxed/simple;
-	bh=gvyprsey8lBq/cwWETIidXRcGflIGW0KiZP0ucqQnYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aOzXPTWQRCN26fPsVcXhJ6rDkW2VglfzsDjOTbovIrLYiGHTuLIB9fiYW9+0fQs7eOgdC+R9UaNhfd3wskTGt+ye39hvmMZhhq8pUDIgRXV83kw4Tt++4G7ytm9KaxNP7/NmIL1KLdxKrrRVX7CH1v8YYXo7MZ2fSDPWkodQqic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QS2cHGEF; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-453634d8609so29497685e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 03:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751280401; x=1751885201; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HFNukEVeOuH7fRtCazTP0zdNBYQLRBbJSaq5WQ9/jSE=;
-        b=QS2cHGEF0LCLKtTg56W65PZeV1MqSaN02Tm+mgecpDqNuc5cIe35Kih5HZjpMTYC5N
-         GkfIam99sy2VzrR8JlhMvB2VqlTLJoNmd8b+8U4Ec1kYnRYcBek/TGw1jEHxUPmww03M
-         dhICwFjJU3J5sLY4MpSCWuTpdJqjhtlctrQ0OoLmWZ3dwN8o2jXWnuJRwN6JP5p1f4zE
-         bBQFhSgO1WbHWqCTajzN1jiS4llT7SIrVOYVv3Lv1K5k7nJo3LhBRtuaumeZGfBzz9tk
-         2j8bIOY7iLGblJDSgk9IziJXg4soNEhkCb673xARi3emBk0USPAbHjuOcB3KbafIFiLh
-         +1Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751280401; x=1751885201;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HFNukEVeOuH7fRtCazTP0zdNBYQLRBbJSaq5WQ9/jSE=;
-        b=GRgmeuNmwM3c1H1gKnX8BFyH0DwUvi/4sJrUX0E662Ck1rSz0qHgUtepJ0SxecUsN2
-         qiBnnl7lgdjUCzYvuD5MXxgo+lwYQdiyBaHWIIjrUuXRS+a+AxXZ2nBydbwE5pUePZxG
-         iSULxMeWtEtz3hVcZgfQuKQ9ZBzCq+VrHkGlz1eBPn9mByEivIIIJ7IADur+Q84/PVZe
-         hENwDsher/gfooMBP8vkcOCM2OiUF/bLLhJkWcexI3O0/b1e/J5PrNx+umvHbz1BdaWM
-         SjBlKoONlGTjjFhCv+3w5Y730K67kHROnrjNMA7fvMAVfHFhGhCTAow+P2hYfhvsKYXc
-         vo9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX2d0pBrM+u5ZJGKy1/cbTBspmE8j9zuHSS0QRmGIJC6vxiGel/S3mpTBa2oW9Uh9YAz+OqcBeQwEA1URk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFYhHMUYfJlYAcCDvocnXb8unG6/4Rgw9k6wYeNUozKNsdVwXg
-	NgxghdZSvRihINYwu2IlJsxXPdNKV9VNNeE9p/YAlhMA1qOlHavJb7PNglsOoUTevLo=
-X-Gm-Gg: ASbGncuHSLnKLg+q597venzDZ0lkdm0BKC4BwlhPVs4g488q77Yp0PoypUByQrA23e7
-	IIw/ETf95NOfZfgE5CcmvB6SEfEDPthprCbFNU0Tm8AgUm2bsbQkasbyQyuRhCpJBgTBDnbCsH5
-	IGy5an/R052IeVMMLEh8/Ye4SfRNQfkxr0XAxjFL2WlzFQc0L1Vj4+lrL4AIirFIuc8f6RJqIyB
-	hke1PIx0SIDU9YJW8Vbwa/6m2ntOgJVMk3NG6KsMngs6bZ3vghj1VIiTMKuU7XUSJRVsapaxBRH
-	4on9SkHRODiHeM76R5yfdviegcTCEuqDDgaLdz1w4oF7/7cvS5dNz/yH7RHUwqDOrEc=
-X-Google-Smtp-Source: AGHT+IELSI+nHvc6/8x9c+zD3eFzVE2pjiOsqeuYSJZ1xJs78DtrT3WanbqFwCoHNk3vMxHy8BC9hg==
-X-Received: by 2002:a05:6000:2013:b0:3a4:f7dc:8a62 with SMTP id ffacd0b85a97d-3a8f2f34f7cmr10696844f8f.0.1751280401373;
-        Mon, 30 Jun 2025 03:46:41 -0700 (PDT)
-Received: from [192.168.1.3] ([37.18.136.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453814ae64fsm106803355e9.1.2025.06.30.03.46.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 03:46:41 -0700 (PDT)
-Message-ID: <f4616741-9763-4221-b385-74c6d332b092@linaro.org>
-Date: Mon, 30 Jun 2025 11:46:40 +0100
+	s=arc-20240116; t=1751280409; c=relaxed/simple;
+	bh=FTNmyFRpGtxkFD1GDLfnBPdGgdYvPB1jbWNCgc5xVIU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qoz1PvLHAZjKCngSeXmgEdpAEFvTnwcL/Y22FN0rJ8O1g/pUPLGpI8t0dhDBJNXV9G4U7JpeMmB74KKwww13YvDZEmbw8O1iLjjWavjM7/U5LlKsDGRIQdywSfVpTrsmCqUqnqHSP3tILI1WlXIvgfsgFIbCnaDfEd8dhFg4KFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BVjdNev+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751280405;
+	bh=FTNmyFRpGtxkFD1GDLfnBPdGgdYvPB1jbWNCgc5xVIU=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BVjdNev+90LkCDIzyvyuDtaPNvXReOEWiKxGDI9zq9nIfMXHxtOxyJdoHsh0aV6Cs
+	 +klk6JUcV8BrB79SOZO9xmkDxEA/37IsajQ7pl9SiA4j5suuPTDM8kTccTtzGOxuKg
+	 RMVEgEmEMqBCbfBQpxNplMximpITyAEBUr+lYxm3EHc9k7FpVXlFZrch3XYXvzqF5E
+	 qxf75qSbzllj22ky4JX8VVuWvspVBz/HSvuk/y4zXBJ1coDLWp5ZRFAXeXomcjOixa
+	 DULA2fw1foHJTmuNWegN5PIx5g8qjN4LROJQlfvIERXr3olxPRo4H6hZoD+6WSW0z+
+	 syFtl6ek1IXnw==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2d600c8f85Cf092d4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3607817E0657;
+	Mon, 30 Jun 2025 12:46:45 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Date: Mon, 30 Jun 2025 12:46:43 +0200
+Subject: [PATCH] media: ti: j721e-csi2rx: fix list_del corruption
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] spi: spi-fsl-dspi: Report FIFO overflows as errors
-To: Mark Brown <broonie@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
- Larisa Grigore <larisa.grigore@nxp.com>, Christoph Hellwig <hch@lst.de>,
- linux-spi@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250627-james-nxp-spi-dma-v4-0-178dba20c120@linaro.org>
- <20250627-james-nxp-spi-dma-v4-6-178dba20c120@linaro.org>
- <aF73e/ggeycsYiaD@lizhi-Precision-Tower-5810>
- <22d69113-fec0-4405-872d-af76bd038c09@sirena.org.uk>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <22d69113-fec0-4405-872d-af76bd038c09@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250630-j721e-dma-fixup-v1-1-591e378ab3a8@collabora.com>
+X-B4-Tracking: v=1; b=H4sIABJrYmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDM2MD3SxzI8NU3ZTcRN20zIrSAl3TJJM0SzNziyTzRDMloK6ColSgBNj
+ E6NjaWgAL2KxUYQAAAA==
+X-Change-ID: 20250630-j721e-dma-fixup-5b4f9678b7a6
+To: kernel@collabora.com, Jai Luthra <jai.luthra@linux.dev>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Pratyush Yadav <p.yadav@ti.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Vaishnav Achath <vaishnav.a@ti.com>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd@collabora.com>, 
+ Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
+If ti_csi2rx_start_dma() fails in ti_csi2rx_dma_callback(), the buffer is
+marked done with VB2_BUF_STATE_ERROR but is not removed from the DMA queue.
+This causes the same buffer to be retried in the next iteration, resulting in
+a double list_del() and eventual list corruption.
 
+Fix this by removing the buffer from the queue before calling vb2_buffer_done()
+on error.
 
-On 27/06/2025 10:41 pm, Mark Brown wrote:
-> On Fri, Jun 27, 2025 at 03:56:43PM -0400, Frank Li wrote:
->> On Fri, Jun 27, 2025 at 11:21:42AM +0100, James Clark wrote:
-> 
->>> In target mode, the host sending more data than can be consumed would be
->>> a common problem for any message exceeding the FIFO or DMA buffer size.
->>> Cancel the whole message as soon as this condition is hit as the message
->>> will be corrupted.
-> 
->>> Only do this for target mode in a DMA transfer, it's not likely these
->>> flags will be set in host mode
-> 
->> "not likely", I think SPI controller should stop CLK if FIFO empty and full.
->> It should be "never" happen.
-> 
->> Only check FIFO error flags at target mode because it never happen at host mode.
-> 
->> You can remove below whole paragram.
-> 
-> I agree it *should* never happen in host mode but it can be good
-> practice to look in case something gets messed up.  That said extra
-> device accesses in the hot path are probably going to be noticable so
-> likely not worth it, but in the dspi_poll() case:
-> 
+This resolves a crash due to list_del corruption:
+[   37.811243] j721e-csi2rx 30102000.ticsi2rx: Failed to queue the next buffer for DMA
+[   37.832187]  slab kmalloc-2k start ffff00000255b000 pointer offset 1064 size 2048
+[   37.839761] list_del corruption. next->prev should be ffff00000255bc28, but was ffff00000255d428. (next=ffff00000255b428)
+[   37.850799] ------------[ cut here ]------------
+[   37.855424] kernel BUG at lib/list_debug.c:65!
+[   37.859876] Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+[   37.866061] Modules linked in: i2c_dev usb_f_rndis u_ether libcomposite dwc3 udc_core usb_common aes_ce_blk aes_ce_cipher ghash_ce gf128mul sha1_ce cpufreq_dt dwc3_am62 phy_gmii_sel sa2ul
+[   37.882830] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.16.0-rc3+ #28 VOLUNTARY
+[   37.890851] Hardware name: Bosch STLA-GSRV2-B0 (DT)
+[   37.895737] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   37.902703] pc : __list_del_entry_valid_or_report+0xdc/0x114
+[   37.908390] lr : __list_del_entry_valid_or_report+0xdc/0x114
+[   37.914059] sp : ffff800080003db0
+[   37.917375] x29: ffff800080003db0 x28: 0000000000000007 x27: ffff800080e50000
+[   37.924521] x26: 0000000000000000 x25: ffff0000016abb50 x24: dead000000000122
+[   37.931666] x23: ffff0000016abb78 x22: ffff0000016ab080 x21: ffff800080003de0
+[   37.938810] x20: ffff00000255bc00 x19: ffff00000255b800 x18: 000000000000000a
+[   37.945956] x17: 20747562202c3832 x16: 6362353532303030 x15: 0720072007200720
+[   37.953101] x14: 0720072007200720 x13: 0720072007200720 x12: 00000000ffffffea
+[   37.960248] x11: ffff800080003b18 x10: 00000000ffffefff x9 : ffff800080f5b568
+[   37.967396] x8 : ffff800080f5b5c0 x7 : 0000000000017fe8 x6 : c0000000ffffefff
+[   37.974542] x5 : ffff00000fea6688 x4 : 0000000000000000 x3 : 0000000000000000
+[   37.981686] x2 : 0000000000000000 x1 : ffff800080ef2b40 x0 : 000000000000006d
+[   37.988832] Call trace:
+[   37.991281]  __list_del_entry_valid_or_report+0xdc/0x114 (P)
+[   37.996959]  ti_csi2rx_dma_callback+0x84/0x1c4
+[   38.001419]  udma_vchan_complete+0x1e0/0x344
+[   38.005705]  tasklet_action_common+0x118/0x310
+[   38.010163]  tasklet_action+0x30/0x3c
+[   38.013832]  handle_softirqs+0x10c/0x2e0
+[   38.017761]  __do_softirq+0x14/0x20
+[   38.021256]  ____do_softirq+0x10/0x20
+[   38.024931]  call_on_irq_stack+0x24/0x60
+[   38.028873]  do_softirq_own_stack+0x1c/0x40
+[   38.033064]  __irq_exit_rcu+0x130/0x15c
+[   38.036909]  irq_exit_rcu+0x10/0x20
+[   38.040403]  el1_interrupt+0x38/0x60
+[   38.043987]  el1h_64_irq_handler+0x18/0x24
+[   38.048091]  el1h_64_irq+0x6c/0x70
+[   38.051501]  default_idle_call+0x34/0xe0 (P)
+[   38.055783]  do_idle+0x1f8/0x250
+[   38.059021]  cpu_startup_entry+0x34/0x3c
+[   38.062951]  rest_init+0xb4/0xc0
+[   38.066186]  console_on_rootfs+0x0/0x6c
+[   38.070031]  __primary_switched+0x88/0x90
+[   38.074059] Code: b00037e0 91378000 f9400462 97e9bf49 (d4210000)
+[   38.080168] ---[ end trace 0000000000000000 ]---
+[   38.084795] Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt
+[   38.092197] SMP: stopping secondary CPUs
+[   38.096139] Kernel Offset: disabled
+[   38.099631] CPU features: 0x0000,00002000,02000801,0400420b
+[   38.105202] Memory Limit: none
+[   38.108260] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt ]---
 
-Yeah the point was to be defensive. Even though it shouldn't happen I 
-don't see an issue with checking error flags.
+Fixes: b4a3d877dc92 ("media: ti: Add CSI2RX support for J721E")
+Suggested-by: Sjoerd Simons <sjoerd@collabora.com>
+Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
+---
+ drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-We could add a condition to only do it in target mode, but it doesn't 
-make the code more readable, and it wouldn't be any faster than just 
-checking the flags. So I'm not sure what problem we're trying to solve 
-by removing it.
+diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+index 6412a00be8eab89548950dd21b3b3ec02dafa5b4..0e358759e35faac95d1520e14a75096375c806bb 100644
+--- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
++++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+@@ -619,6 +619,7 @@ static void ti_csi2rx_dma_callback(void *param)
+ 
+ 		if (ti_csi2rx_start_dma(csi, buf)) {
+ 			dev_err(csi->dev, "Failed to queue the next buffer for DMA\n");
++			list_del(&buf->list);
+ 			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
+ 		} else {
+ 			list_move_tail(&buf->list, &dma->submitted);
 
->> @@ -1067,6 +1080,9 @@ static void dspi_poll(struct fsl_dspi *dspi)
->>                          regmap_read(dspi->regmap, SPI_SR, &spi_sr);
->>                          regmap_write(dspi->regmap, SPI_SR, spi_sr);
->>
->> +                       dspi->cur_msg->status = dspi_fifo_error(dspi, spi_sr);
->> +                       if (dspi->cur_msg->status)
->> +                               return;
-> 
-> we're reading the register anyway so the overhead is much lower.
+---
+base-commit: 1343433ed38923a21425c602e92120a1f1db5f7a
+change-id: 20250630-j721e-dma-fixup-5b4f9678b7a6
 
-In both poll and interrupt mode we're already reading it. Only DMA mode 
-didn't have a read and I didn't add a check for error flags there anyway.
+Best regards,
+-- 
+Julien Massot <julien.massot@collabora.com>
 
 
