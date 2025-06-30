@@ -1,85 +1,169 @@
-Return-Path: <linux-kernel+bounces-708862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663F8AED60C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:47:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387AEAED613
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1A03B1524
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:46:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49327169C67
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419392367C5;
-	Mon, 30 Jun 2025 07:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE85238C05;
+	Mon, 30 Jun 2025 07:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eB6bRmbH"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eAR9HS2J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AB71E7C10
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C117238C20
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269625; cv=none; b=D779K9/4aTE/F3h4JGiFLun8VcYKLFpMeahwYWwBQ5RD2NOBKPJlNytWLu1ens7QtOlJ2hDa5N+NTauMYYXFL4ncAVaWSpXxmDIMGVrov58i6X2a2U+W+RS8+lNxV2if+dQFJxmUsMAnby5Uqjx8X2pE7IV/WzuJgSNc1taMmKE=
+	t=1751269642; cv=none; b=d2TYt2NzXWlA0aoYKWa0FxtRzt2dFIJJuqmsoTRVAd7S+kQ3Du2mSTn8mb4qzoalhppjIi54JOWIDIwt34fekCp9jnH09E9aB3zvrFl0xCwLNtOgHzFr+AymFrIWai+tQH8EgaFY9YC6Ay0AvbyRPw+scM4om3mgOGVCLTyK0LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269625; c=relaxed/simple;
-	bh=5pztCelm+QdUKt7+dVmg1LMiRllSrYP8z/NcI57I88Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=izWA6TwS9fI8nnxp6gXfUiAddWNx190U1f4MkknDLVEah+iVtJ3e431E/R0EF+or7RwrJEEot5xD73ANmy8+oQO/4IcSGVOBgCntn4MoAJtayJFljHzYc4JQQvt1es+YoFFHXBxi2g75NdyngYmmFH2Lroa6LQjas33OSffIkdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eB6bRmbH; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751269619; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=rbt1gK5kRXCfoZvLCAkq87hyiuzyzzrWQC5AuFDUDjI=;
-	b=eB6bRmbHUe+Q5h13ocA75UmLjDgX5UNhmlfzmEeE1LHeWitfKf5FmVAC7vLbf21JqKpqYsaPozEN9iuraL7H3RdZJV7owOnsjvZow4gVLZx82X8L48ABiT6c8L3tuhG+vh+66XXtpY0Vb6Sy85RtpRiPU/aqvRSp6FwTDt3gBj4=
-Received: from 30.74.144.137(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wg7iJty_1751269618 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 30 Jun 2025 15:46:58 +0800
-Message-ID: <5e5b726c-b14b-45fa-b444-0e2aa5c84de1@linux.alibaba.com>
-Date: Mon, 30 Jun 2025 15:46:57 +0800
+	s=arc-20240116; t=1751269642; c=relaxed/simple;
+	bh=3WCJLLv4RhnKEvcl21V/JHUYDcouCFwoRzhLS4CQ9mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQ1+bdV7hXbwxwLZePHeYxGWOuWwY8nLScjLPMHfMR6jWgvY0bRuCL0+Dp/XfOROLrjzsh7XrCtCSfdJ8x4T4P47OEh0NDh0FudUgLGxtEV6kFoEmZyMg2D8zWRtCBUhZjFIRVRYSlOVblL5HFgLz6QEcc1mQXuB/Lb3veMrOQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eAR9HS2J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751269639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7ktNPhfijuEzODMwYTiQC+VuJwh6IE4+mAtetQ6pS/E=;
+	b=eAR9HS2JIH/1yTCatFSoOxyUm3JbHatFgTTUJzabdGWgC+yEdaroTSZ2HwpbeZgfwb/yzR
+	i/kdlXqIW9itMHcelTvuazzCbvsj57PBACa34aI17r+bMIDdqzigHbmiY8SCvqQPE43Mad
+	1LG7N4fgzejNFAyjBjVtN2mdgN5Gh3Q=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-543-sedZvx-JPrmrEvS75R_8Yg-1; Mon, 30 Jun 2025 03:47:16 -0400
+X-MC-Unique: sedZvx-JPrmrEvS75R_8Yg-1
+X-Mimecast-MFC-AGG-ID: sedZvx-JPrmrEvS75R_8Yg_1751269636
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a503f28b09so2082632f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 00:47:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751269636; x=1751874436;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ktNPhfijuEzODMwYTiQC+VuJwh6IE4+mAtetQ6pS/E=;
+        b=Ux3tlSK2PQbmzBOdGtvjtX3arrQaiRFyy3rvZ+G1Y7FzGj/dgu69/GdrV8QFMB6Wjs
+         4Cuac63l37dG/sAsaobA1HlETSnH5vKweXNHXveDxXbNEWZ6alCSpFv6og2vcf/2GZIf
+         eZxOmSCekr6BwYe73yUwvf1TS8v+iXejnMPR5bkc0ysx9ee9YDyOf1lJbi4v+qPVJfL5
+         27tFYr5KHEVJWwbJEneDDA1Xw+tsiq3n6gGrOVNp69BNJNWQVddEXqlrHy8BtvHmBMSo
+         0AjY/Y6DSzHN+QISXsXa27fbF0oN8vZhenm3Rgn6S00Y4bLfuBSPVeXJxoQjnQ6vPgZf
+         bDRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/xOa2utRySeh4MpMe24jyJy4P2tl9YIELgdyTUdcbo1Fik6moIlSAhS2ItRNpZUwc6Sl+BEy4GxdLg5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8vn6owDWQbVVozzP+pwIG3zz2ubHFwdf2jmg39fqZ/3hpCctT
+	qCbAnWY2bQhvaTPp8dBikthlColCSaXbuleT9sTNE2N1+57CPjr5MX5hbd/c0nMKIxqoSofw738
+	0v0MKfgjFN6GQrJSGnfrhESHcnl2uzKN62iaUuXpE84yakmxf/zoqcsYJBtu1Ys3G/A==
+X-Gm-Gg: ASbGncsFRupXpcKNmh7NbHxXbgmXbC6sFRVFc6xb/r7ebHF/TGVHFw/3DfoA0J3wMAn
+	37JQl5bhnx59P1snXXgJEo+PsLRn43iYd1DUXVHhG173aDAIKt69hdl3e+C/WrpG8B6jZ/PQGSf
+	BOQiheACAj2PQtadt9hp9nHmlS8JjpwWVvqABuLa56qMyIENqN2UVa6NcanMNCsH68A+ot3VbnI
+	YB5UEjXYF+N+BJXXd5x3i+wemRh2xsJeNhHgk8XKT+WDiO9BB49PM9iyNN0jP1ogkHvDWceqCII
+	bouOMTUDzuSWWvChsxS8BV/3npbx
+X-Received: by 2002:a05:6000:418a:b0:3a4:f70d:aff0 with SMTP id ffacd0b85a97d-3a6f312df2bmr9022658f8f.14.1751269635638;
+        Mon, 30 Jun 2025 00:47:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxPyEI4vtDCAHmMrt9Bgdg2700Ez6oVkN9Z1NlWqAtZ1aXzxk700hjPBCX6uj4jbe2vAmlKg==
+X-Received: by 2002:a05:6000:418a:b0:3a4:f70d:aff0 with SMTP id ffacd0b85a97d-3a6f312df2bmr9022638f8f.14.1751269635049;
+        Mon, 30 Jun 2025 00:47:15 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.177.127])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453814a6275sm105907065e9.1.2025.06.30.00.47.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 00:47:14 -0700 (PDT)
+Date: Mon, 30 Jun 2025 09:47:06 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Xuewei Niu <niuxuewei97@gmail.com>
+Cc: mst@redhat.com, pabeni@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, netdev@vger.kernel.org, stefanha@redhat.com, 
+	leonardi@redhat.com, decui@microsoft.com, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, fupan.lfp@antgroup.com, 
+	Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Subject: Re: [PATCH net-next v4 0/3] vsock: Introduce SIOCINQ ioctl support
+Message-ID: <gv5ovr6b4jsesqkrojp7xqd6ihgnxdycmohydbndligdjfrotz@bdauudix7zoq>
+References: <20250630073827.208576-1-niuxuewei.nxw@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] khugepaged: Reduce race probability between migration and
- khugepaged
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com
-Cc: ziy@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250630044837.4675-1-dev.jain@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250630044837.4675-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250630073827.208576-1-niuxuewei.nxw@antgroup.com>
 
+On Mon, Jun 30, 2025 at 03:38:24PM +0800, Xuewei Niu wrote:
+>Introduce SIOCINQ ioctl support for vsock, indicating the length of unread
+>bytes.
 
+I think something went wrong with this version of the series, because I 
+don't see the patch introducing support for SIOCINQ ioctl in af_vsock.c, 
+or did I miss something?
 
-On 2025/6/30 12:48, Dev Jain wrote:
-> Suppose a folio is under migration, and khugepaged is also trying to
-> collapse it. collapse_pte_mapped_thp() will retrieve the folio from the
-> page cache via filemap_lock_folio(), thus taking a reference on the folio
-> and sleeping on the folio lock, since the lock is held by the migration
-> path. Migration will then fail in
-> __folio_migrate_mapping -> folio_ref_freeze. Reduce the probability of
-> such a race happening (leading to migration failure) by bailing out
-> if we detect a PMD is marked with a migration entry.
-> 
-> This fixes the migration-shared-anon-thp testcase failure on Apple M3.
-> 
-> Note that, this is not a "fix" since it only reduces the chance of
-> interference of khugepaged with migration, wherein both the kernel
-> functionalities are deemed "best-effort".
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
+Thanks,
+Stefano
 
-Looks reasonable to me.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>
+>Similar with SIOCOUTQ ioctl, the information is transport-dependent.
+>
+>The first patch adds SIOCINQ ioctl support in AF_VSOCK.
+>
+>Thanks to @dexuan, the second patch is to fix the issue where hyper-v
+>`hvs_stream_has_data()` doesn't return the readable bytes.
+>
+>The third patch wraps the ioctl into `ioctl_int()`, which implements a
+>retry mechanism to prevent immediate failure.
+>
+>The last one adds two test cases to check the functionality. The changes
+>have been tested, and the results are as expected.
+>
+>Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+>
+>--
+>
+>v1->v2:
+>https://lore.kernel.org/lkml/20250519070649.3063874-1-niuxuewei.nxw@antgroup.com/
+>- Use net-next tree.
+>- Reuse `rx_bytes` to count unread bytes.
+>- Wrap ioctl syscall with an int pointer argument to implement a retry
+>  mechanism.
+>
+>v2->v3:
+>https://lore.kernel.org/netdev/20250613031152.1076725-1-niuxuewei.nxw@antgroup.com/
+>- Update commit messages following the guidelines
+>- Remove `unread_bytes` callback and reuse `vsock_stream_has_data()`
+>- Move the tests to the end of array
+>- Split the refactoring patch
+>- Include <sys/ioctl.h> in the util.c
+>
+>v3->v4:
+>https://lore.kernel.org/netdev/20250617045347.1233128-1-niuxuewei.nxw@antgroup.com/
+>- Hyper-v `hvs_stream_has_data()` returns the readable bytes
+>- Skip testing the null value for `actual` (int pointer)
+>- Rename `ioctl_int()` to `vsock_ioctl_int()`
+>- Fix a typo and a format issue in comments
+>- Remove the `RECEIVED` barrier.
+>- The return type of `vsock_ioctl_int()` has been changed to bool
+>
+>Xuewei Niu (3):
+>  hv_sock: Return the readable bytes in hvs_stream_has_data()
+>  test/vsock: Add retry mechanism to ioctl wrapper
+>  test/vsock: Add ioctl SIOCINQ tests
+>
+> net/vmw_vsock/hyperv_transport.c | 16 +++++--
+> tools/testing/vsock/util.c       | 32 +++++++++----
+> tools/testing/vsock/util.h       |  1 +
+> tools/testing/vsock/vsock_test.c | 80 ++++++++++++++++++++++++++++++++
+> 4 files changed, 117 insertions(+), 12 deletions(-)
+>
+>-- 
+>2.34.1
+>
+
 
