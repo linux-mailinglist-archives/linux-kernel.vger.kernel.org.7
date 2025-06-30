@@ -1,235 +1,124 @@
-Return-Path: <linux-kernel+bounces-709788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17307AEE26B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C01AEE274
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0AEE189BE28
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CB53BAA76
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C174828DF2F;
-	Mon, 30 Jun 2025 15:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AE828F92E;
+	Mon, 30 Jun 2025 15:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQLcD5jk"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t8r/XTh3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7CA25BEE8
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 15:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E62623E35B;
+	Mon, 30 Jun 2025 15:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751297364; cv=none; b=TirqSYYEcJevFLcRK273Vwyia5BJKZ9PVx4+lIiqY6Irdme0VdvJ73Jyvun8ICpiGRFLjJk9u28UtYt40krInDV05D9WjLj9RFkp1eFaGoPn4LcTHNNYMhXmya451OdMFXr5nsqx8fMBxqY9Wm5JZpLjULZx2MlorcvetK69uwM=
+	t=1751297421; cv=none; b=Tmoq3lrQ0WGA/OpdQBMCby09OjiFXhSQECkXHyL411ouw1ioBbgrB2ypnftcEUho7OJWooDKy6Sv6wF0BZiC+n5z1KAsLJOh84OxMsuFT/Q/ZxqGD6u/PltZRHVjogXa/I+gWDnkMSZ3IeQ/qJQA3oFG4QckBM3dvZMb9034M5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751297364; c=relaxed/simple;
-	bh=FI4/f7digVt5NrM9MGntnaOnvVtX0vdt0Zw4KYUO2eU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KkQElKiB7EkFSukbH7K/5hnaougSvCG1YSfewM1z7E4PqzlEUaQ8VTMN1jAZrcXwChDjzQBv5/vIG/Rn8kXMbOAEuFALbHrLJfyWLDhu0jbmd6zeLom/7rGJc/1JpRcEfsumbuQMmzKEyi5Hwk5Dvt4KBlAm38VdKV/pxNX+3iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQLcD5jk; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-453066fad06so30625295e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751297361; x=1751902161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lyhLcg43dCZkOg3r9AJzjxtQxVvDwA6brW0xDWkXp7g=;
-        b=bQLcD5jk2oXEL315oMtS346bWOtztlnHqcyCEOZv8OVyUZi9YUgSgSR62hU/TCXY3G
-         umIXSK9mFWxaE5aCNyqy9MJfxJoOVdCjts3DjZaKmB+OmBmkxsS+5GWUz4bKgAJLFymc
-         hJZDms+3i92gXUkoAwVHLr5m34yWbLzSBUXprZCUnfNyCWccPhyWk8cpNKJfuxFTE0Ns
-         OyrcTwltGPnBfbtsk3K6rn42HQoRjS8Ew2FRTjdgLXvj5Ra/eXE+MQWjCO3CuzVROcvH
-         4szlmDWDwdD9HAp8g/m/TPvDbXSlMC4o6kzACIW/k32ZSqaG9azh4ymlFzqxrgPOKUc9
-         mzvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751297361; x=1751902161;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lyhLcg43dCZkOg3r9AJzjxtQxVvDwA6brW0xDWkXp7g=;
-        b=QGlkkHjw0iKpjB7Mx+w/oAwxjjjTFQDrrN/FcaoRptZe2r7Tr9PgazRVLI7Ni8ldXw
-         DFUybvSHTmu6IH1AHUDfveEHGtnGeYxfreIjN5HR3QkKyiW1yVKeGUL5JHwfUNB+y6kx
-         ZZCMGEzqiMOd62i2WgeIoTq+m33BOycorKnxJy+HCV7P9PaRttaKXSH7FOzXR75n+by5
-         uzXmbVjRFRhDhgLWmsvDOAtU9gCXkCY6P35/uRPu1QEH3dQOrLekL/4nPmGnMkm1gAZc
-         gItSjOXM4LQ47+qOnEUZoluJH6XayvvrFgT2wJa4mjDIu0umUnNzhhd3d4CuLH0AVbgJ
-         hwyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo/cy1hqbcOY3TkgsGDCmkKQRcFmhWb86OHsqBGKQzbRGmZXfejNtAyq/nh4b0Sue5Q86aGSATfT67g+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv/d+s+TkTu/e/GNZ3Gnx+ZBr+xwVLZRwV6jXXFlcMeJSA3f/M
-	3tcgiSfJjy0bRnlnaUii1X6NzNnDpOqXBVGS3bGw6h+gKhaIwB1Y9V36N/9G871SvNo=
-X-Gm-Gg: ASbGncvBsjYTsa9bntjGwcw8q5Zks+MhWuReWkxSxx49Go6gLvNdu4ocoSBEnSJ4fYG
-	Ko1ks6ePM9BPGn7n1tpnvA4uw3jpqUApq1B8pG654B1UtsG0zxqcsHoa9UgEAs5skZGiaDkydil
-	mfmi0y9ydu6ayY2qemuaoNpnZ11EhAsfuZh4lpgwpTMkueAlkQ9oj3OGsC2Po+AvLtvRyw75Usl
-	+Fwcr7gl6L4e3ALBFwFylhcvc4wRLXs8cYt2mF0Dyos0fCZ47uOUJTp4p9mpnLyetC/2AqOR5aG
-	nXR8mK7KdXw+lVDYqIyicZLzTpvGLEOVoTamQ1ffvAR6WdZDQNRUnP7yimfFmaXuMyR7yYsyYo/
-	4Xkx/VNntT5dZbuUIBgyk6zVsncTRBkeQemYFxGpcCnQUVNSkOQ==
-X-Google-Smtp-Source: AGHT+IEnqbd8jzud+AKyN7wsGShNV1AQfJKdXYzndE6kZZl0r0O6j/o8j4SrtXPzHfSflaQKjGC8rA==
-X-Received: by 2002:a05:600c:3494:b0:453:5c30:a1fd with SMTP id 5b1f17b1804b1-453a33d6fb9mr28079915e9.8.1751297360613;
-        Mon, 30 Jun 2025 08:29:20 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:abe8:a49c:efe7:4dfb? ([2a01:e0a:3d9:2080:abe8:a49c:efe7:4dfb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a3a72dasm138329335e9.16.2025.06.30.08.29.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 08:29:20 -0700 (PDT)
-Message-ID: <80055981-3624-4165-af0c-3b60c345e8f8@linaro.org>
-Date: Mon, 30 Jun 2025 17:29:19 +0200
+	s=arc-20240116; t=1751297421; c=relaxed/simple;
+	bh=ByB0TJN8UfaSE0raJya+PITY78sQiH2Iukf2fD+Ie5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHsDtGfCXL5V2yloyGF26Ym+NQaiQEgOegseIN8y7k2H2bD8JKRrfb7o/yDfLXUBg0ZWfylE8+5TmJ36vnahZN1/hTqs6rQH3VfQInCBTgyiZ1dnJGRmExXQctzftFBrNu0tB0UEDMwT5RQWjo46byC/jXsFNyeVCjPRqV4x4RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t8r/XTh3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8027E928;
+	Mon, 30 Jun 2025 17:29:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751297396;
+	bh=ByB0TJN8UfaSE0raJya+PITY78sQiH2Iukf2fD+Ie5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t8r/XTh3bChfF7Wto2gfkMYHICJlIvznOwAjiYrUORyXO8VXe5tUQYWSGNeWQUxvQ
+	 UETcyXvldLV9ZZbnQyhAEwjnCsoJ54zmMqc9MLcjDfj1pwoNZmtX+REPmVPDDXR6ge
+	 anoj2x9chcbxJMT/s5lA3RDV6ItATh/eoUJk8NXQ=
+Date: Mon, 30 Jun 2025 18:29:52 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Desnes Nunes <desnesn@redhat.com>, hansg@kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: fix build error in uvc_ctrl_cleanup_fh
+Message-ID: <20250630152952.GG24861@pendragon.ideasonboard.com>
+References: <20250630150107.23421-1-desnesn@redhat.com>
+ <CANiDSCu83Ky-604gu2Yt34Wj1Km6Xh+TcPYzQxKZJNWdT7=m8A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: display: panel: document Samsung
- S6E8AA5X01 panel driver
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-References: <20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org>
- <20250625-panel-samsung-s6e8aa5x01-v3-1-9a1494fe6c50@disroot.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250625-panel-samsung-s6e8aa5x01-v3-1-9a1494fe6c50@disroot.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiDSCu83Ky-604gu2Yt34Wj1Km6Xh+TcPYzQxKZJNWdT7=m8A@mail.gmail.com>
 
-On 25/06/2025 14:41, Kaustabh Chakraborty wrote:
-> Samsung S6E8AA5X01 is an AMOLED MIPI DSI panel controller. Document the
-> compatible and devicetree properties of this panel driver. Timings are
-> provided through the devicetree node as panels are available in
-> different sizes.
-
-Wait, why ? Why not multiple compatibles ?
-
-Neil
-
+On Mon, Jun 30, 2025 at 05:15:38PM +0200, Ricardo Ribalda wrote:
+> Hi Desdes
 > 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->   .../bindings/display/panel/samsung,s6e8aa5x01.yaml | 78 ++++++++++++++++++++++
->   1 file changed, 78 insertions(+)
+> How did you trigger this build warning? I believe we use C11
 > 
-> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa5x01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa5x01.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..23dae6e961ae01c99de93bf4b4a067f2953f8edf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa5x01.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/samsung,s6e8aa5x01.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S6E8AA5X01 display panel controller
-> +
-> +maintainers:
-> +  - Kaustabh Chakraborty <kauschluss@disroot.org>
-> +
-> +allOf:
-> +  - $ref: panel-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: samsung,s6e8aa5x01
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: core voltage supply
-> +
-> +  vci-supply:
-> +    description: voltage supply for analog circuits
-> +
-> +  reset-gpios: true
-> +  width-mm: true
-> +  height-mm: true
-> +  panel-timing: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - width-mm
-> +  - height-mm
-> +  - panel-timing
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    dsi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        panel@0 {
-> +            compatible = "samsung,s6e8aa5x01";
-> +            reg = <0>;
-> +
-> +            vdd-supply = <&panel_vdd_reg>;
-> +            vci-supply = <&panel_vci_reg>;
-> +
-> +            reset-gpios = <&gpd3 4 GPIO_ACTIVE_HIGH>;
-> +
-> +            width-mm = <62>;
-> +            height-mm = <128>;
-> +
-> +            panel-timing {
-> +                clock-frequency = <73094400>;
-> +
-> +                hactive = <720>;
-> +                hsync-len = <2>;
-> +                hfront-porch = <62>;
-> +                hback-porch = <26>;
-> +
-> +                vactive = <1480>;
-> +                vsync-len = <2>;
-> +                vfront-porch = <12>;
-> +                vback-porch = <10>;
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> 
+> https://www.kernel.org/doc/html/latest/process/programming-language.html
 
+Note that the local declaration of the loop counter shadows the global
+one. I would have expected a different compiler warning though.
+
+The shadowing was introduced by
+
+commit 10acb9101355484c3e4f2625003cd1b6c203cfe4
+Author: Ricardo Ribalda <ribalda@chromium.org>
+Date:   Thu Mar 27 21:05:29 2025 +0000
+
+    media: uvcvideo: Increase/decrease the PM counter per IOCTL
+
+and I think it should be fixed (while at it, with an unsigned int local
+loop counter instead of a signed int) as it's not a good practice.
+
+> On Mon, 30 Jun 2025 at 17:07, Desnes Nunes <desnesn@redhat.com> wrote:
+> >
+> > This fixes the following compilation failure: "error: ‘for’ loop
+> > initial declarations are only allowed in C99 or C11 mode"
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 221cd51efe45 ("media: uvcvideo: Remove dangling pointers")
+> > Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index 44b6513c5264..532615d8484b 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -3260,7 +3260,7 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+> >  void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+> >  {
+> >         struct uvc_entity *entity;
+> > -       int i;
+> > +       unsigned int i;
+> >
+> >         guard(mutex)(&handle->chain->ctrl_mutex);
+> >
+> > @@ -3268,7 +3268,7 @@ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+> >                 return;
+> >
+> >         list_for_each_entry(entity, &handle->chain->dev->entities, list) {
+> > -               for (unsigned int i = 0; i < entity->ncontrols; ++i) {
+> > +               for (i = 0; i < entity->ncontrols; ++i) {
+> >                         if (entity->controls[i].handle != handle)
+> >                                 continue;
+> >                         uvc_ctrl_set_handle(handle, &entity->controls[i], NULL);
+
+-- 
+Regards,
+
+Laurent Pinchart
 
