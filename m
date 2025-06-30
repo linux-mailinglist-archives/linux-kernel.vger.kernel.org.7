@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-709506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BE7AEDEB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A02AEDEB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3400E16443C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12F3165F65
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AC128D8E9;
-	Mon, 30 Jun 2025 13:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="09/Q/zj6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C266D28B4F4;
+	Mon, 30 Jun 2025 13:15:08 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73807289E3D
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2265C28B3ED
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751289212; cv=none; b=rNuSnijWG7u9JlMU/iJezR5Kfzn5sc52zEp9UeD1yWKW4+zIQDc30/XuByUK3aoMa5ndffqZ1mZLjOn2prGN378vC4hE8YqQ8hLfE7nOqhxUahXM+WfrUGo9mL//65r6tEd5r2rTeTV9yuh9Rf/e4Y3lytJWeTgunryvyp4Q6QU=
+	t=1751289308; cv=none; b=ZnCyn5MW/5hOMfZ2wtBT1URK+gx0P11DgS9kpZH7nzvcJs2wu6Wnz9syUwceNyiUw/KoVHIGW9XwALqrdXqDKCuE7PLOTg6qlQRwgK5PKoyrfZhycItZSVNerr7khO8as02qsXCV/sPPJ8RlOmIzh4HvJb+q2rS3iCFbcryy/Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751289212; c=relaxed/simple;
-	bh=RIsLO3JXS84ulKACAzkHmSuFxU6FsbRilsOEmI7Iwmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvTL73hQLJrFPuIEgcU6wUxeeQURJnDU32TfByhFTj/UY6obawHuXO2caVBYd8in3O3mkSmsODCdnVfwgzMJujxkW+V28eraQsg2H1NX98i4ESAXBcV/FU4yn1rOHOJ/cEv8CoAN6d1MnHn3afGIcuujUH73rm7jXh/jQCr/K+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=09/Q/zj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E53C4CEE3;
-	Mon, 30 Jun 2025 13:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751289212;
-	bh=RIsLO3JXS84ulKACAzkHmSuFxU6FsbRilsOEmI7Iwmo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=09/Q/zj6T5YGkLUi2W/CEtIjzXeKS2kJhNMBDYdEDNH+VM+OJjsGbZtZ4HqgThHRO
-	 /q04WO5N9eoEV/UvvW6Yw8HQqhdNgJCgeXK6zogZkn/E5W0dQ5LVJzVv8BFGDsgVai
-	 AMP4ZArFuBQvpRmDVUaeIG7c5juhCA4I5APJnjNo=
-Date: Mon, 30 Jun 2025 15:13:29 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: "Abliyev, Reuven" <reuven.abliyev@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [char-misc-next v2 1/5] mei: set parent for char device
-Message-ID: <2025063030-surprise-blinker-89f8@gregkh>
-References: <20250630091942.2116676-1-alexander.usyskin@intel.com>
- <20250630091942.2116676-2-alexander.usyskin@intel.com>
- <2025063036-hypnoses-ajar-fdb0@gregkh>
- <CY5PR11MB6366307E6C7330B44132C6D7ED46A@CY5PR11MB6366.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1751289308; c=relaxed/simple;
+	bh=Uqr3YWdU3E8Wsegybq9yk4amCuftpic6b/mKpkgVMmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YT3dal+gToNbmebtIN20OMsePv375LJ65Ze8qTBSa8XJV3QG3ng1jCgyBuntIW8iUh55+pnYzIuYHbDXOsOZKFxy+s+KpwpVGDIeSpbxDiHUU4BTbDCTGySE9O5HAmYGTBcOy0VihOF4wMnrU4uKxacTdyum4J6NisIa+1LFyn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bW63q2xGnz2CfZj;
+	Mon, 30 Jun 2025 21:11:03 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 450DF1401E9;
+	Mon, 30 Jun 2025 21:15:03 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 30 Jun 2025 21:15:03 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 30 Jun 2025 21:15:02 +0800
+Message-ID: <15b82b51-4119-4cbc-94af-28cff068dc2f@huawei.com>
+Date: Mon, 30 Jun 2025 21:15:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6366307E6C7330B44132C6D7ED46A@CY5PR11MB6366.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 drm-dp 07/10] drm/hisilicon/hibmc: fix dp and vga
+ cannot show together
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
+References: <20250620093104.2016196-1-shiyongbang@huawei.com>
+ <20250620093104.2016196-8-shiyongbang@huawei.com>
+ <7mgk3hueodkzodedjxpkzpf2b4x2n3fdqi42lmtsgozlaxv2tc@4cx7nb5pg7tb>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <7mgk3hueodkzodedjxpkzpf2b4x2n3fdqi42lmtsgozlaxv2tc@4cx7nb5pg7tb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Mon, Jun 30, 2025 at 01:02:12PM +0000, Usyskin, Alexander wrote:
-> > Subject: Re: [char-misc-next v2 1/5] mei: set parent for char device
-> > 
-> > On Mon, Jun 30, 2025 at 12:19:38PM +0300, Alexander Usyskin wrote:
-> > > Connect char device to parent device to avoid
-> > > parent device unload while char device is
-> > > still held open by user-space.
-> > 
-> > No, that's not what cdev_set_parent() does.
-> > 
-> https://elixir.bootlin.com/linux/v6.16-rc3/source/fs/char_dev.c#L511
-> * cdev_set_parent() sets a parent kobject which will be referenced
->  * appropriately so the parent is not freed before the cdev. This
->  * should be called before cdev_add.
-> 
-> This is what written there. Is my interpretation wrong?
 
-It has nothing to do with a char device being open or closed from
-userspace, it has to deal with properly placing the device in the
-kobject tree and the object references being correct.
+> On Fri, Jun 20, 2025 at 05:31:01PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> If VGA and DP connected together, there will be only one can get crtc.
+>> Add encoder possible_clones to support two connectors enable.
+>>
+>> Fixes: 0ab6ea261c1f ("drm/hisilicon/hibmc: add dp module in hibmc")
+>> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v1 -> v2:
+>>    - don't tie VGA and DP status, suggested by Dmitry Baryshkov.
+>>    - use crtc clone to let 2 connectors can display simultaneous
+> How does this help? I had an impression that your hw can actually
+> display only either to DP or to VGA. Can it send the same (aka cloned)
+> video stream to both connectors at the same time?
 
-Surely the mei device had this set up before, right?  If not, how did
-sysfs look with these char devices with no real parent?
+Right, we support it. We support using KVM remotely operated, and
+local maintenance using DP at the same time. KVM and VGA are both
+using VDAC connector in driver. Actually, there are three outputs showing
+at the same time.
 
-thanks,
+Thanks,
+Baihan.
 
-greg k-h
+
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
 
