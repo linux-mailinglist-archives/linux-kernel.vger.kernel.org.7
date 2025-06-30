@@ -1,145 +1,188 @@
-Return-Path: <linux-kernel+bounces-708726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1214AED42F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:01:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F0FAED432
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF9F18943F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD91A7A7E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CB01DED52;
-	Mon, 30 Jun 2025 06:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BF01C84C0;
+	Mon, 30 Jun 2025 06:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXOpV5Ym"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="s/oYlGrY"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72B2F4A;
-	Mon, 30 Jun 2025 06:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C551C19994F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 06:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751263273; cv=none; b=dxExg7EEAWGDWvSHNjiV6vTKccFzEYb+co9XEZDFxa2vcGUajwo4zujeqksi3IsWmMkhO0z1dN1uj07ubQlX39vc2VpeXoZkInHc5rxruPl2kjxgIMMQIKeLS7ANqIO7QPRJ+8Va5ScmoDX5BFJUBho7h3epFpX2QRRILrRq/4U=
+	t=1751263328; cv=none; b=Fkl0fC5mhGF6jI65bXG6M/e6+4R2TITFrzwa6rAZhepKEL2keMFr72sYxVgfHyZv3C7uV8D9aZtgbWMCxBlA+LN5IOPPM1zp0l/WN5/JRmTM0pYDES2jHxpfTDYboBwHkmfLNoG3RKOyb68JSDtmM0l197vCcLogqE58shMc9c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751263273; c=relaxed/simple;
-	bh=v5/m+SptX3o0mtNDldvgpFmmeUsduy78ctRV5gEn5gI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=awiTzPQ5s+HjV805WPnS33Pc8vNHHgywH/Ai7S4W4+9jvL0yNhhDeSIMg0Nan5VGdR1NnBxYd16Bvrf9fGB4lSaJq0a9AnYPCXVOIhU78bG4LxizNzxsDfO04A2jzIsLsJdpQxAlh4Fi2b0jhrDIN7bg2IuOgA5voklbrWUyk+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXOpV5Ym; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB84C4CEE3;
-	Mon, 30 Jun 2025 06:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751263273;
-	bh=v5/m+SptX3o0mtNDldvgpFmmeUsduy78ctRV5gEn5gI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CXOpV5YmwRciSLOSQwnJlXJ/stw5SCA4NcsEyMpcmu/Zyp1vYNKkbw2BojHRNlpW2
-	 cjdxkq9dt28NXYdWkJ4f2ocbiPnrZ6CH/TKDy7lMAHtXDwtL6wP+7SwPK3rrahTJ84
-	 tnLDMI3zozG2vgUVE0gt2lnWGG/76I/D1XqrmgTf0uyp6HSYqtX8BqX8rS+v06HFJX
-	 +vjhKoobIBDX2iqc7hhbIYuXMy6xRTcKTwuoaomSnFeYxGSKyNMKObxem8HplpDkY5
-	 BBlqipu2TJNIKT6o/jTC5gbA4B9zR0fh3bc/Ist0Nhxrl8dMahv4TsagEWqtXr/s3U
-	 c5k7DDY931+Ww==
-Message-ID: <c6c90a4b-b8d2-45d1-928a-464281ce7b37@kernel.org>
-Date: Mon, 30 Jun 2025 08:01:04 +0200
+	s=arc-20240116; t=1751263328; c=relaxed/simple;
+	bh=ScDCbKztzH2ieoL0iYBisn4tcvXqoUj0at/V2ZcR/hs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F4VlKC8tQ2cjMCut1V3xk6CzAFzoCB2UF6eOMIyssJu9VaBwMGvarO4Mi6UKjsCzpUaQFIEhD/utYMLulYGty0d+eq0WIlr/+lWpWhWW837sdX2TDOx2sc6rRTizs389bvPChRh8konMY7um06lPqY5tCIw6kVT0pPsN2jfOoMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=s/oYlGrY; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ScDCbKztzH2ieoL0iYBisn4tcvXqoUj0at/V2ZcR/hs=; b=s/oYlGrYtA50WXtmY+kFnu5Nar
+	adXXK0i8EmAqwVST3UnUSn5F42euQlOzRHLqNe2/PRTxYtnCVQsl4LZihCt7oI0Ie2dlw68zs01eh
+	rXG+QFkGZCrEhuXe05YiqyjjEmHwyq5u2TNN8ZcpVKNQ9bsiA2C5QumhyuChyp6NFIaA4cjsEEQZB
+	v6S1OYPbofD0al4q+DipoAxhS8jgM9iIkTu0gDz04eO61K9p3YFWQQYDksdAALsw9gJfhgzgctLhv
+	wetPehFqBphC9PvSJzvc/Jm2QQt10SCepgzIig5XKKli2B43UAE6CsBYqzVwPrDQuE34X4YXuy7lo
+	wDs1nhoA==;
+Received: from [178.38.100.64] (helo=[10.10.1.179])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uW7aH-005wxd-3u; Mon, 30 Jun 2025 07:01:42 +0100
+Message-ID: <df7cb41da58dc80e2b293ab93fbaca6a9eab9a26.camel@codethink.co.uk>
+Subject: Re: [PATCH 0/5] sched/deadline: Fix GRUB accounting
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann	 <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall	 <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>, Valentin Schneider	 <vschneid@redhat.com>, Waiman
+ Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Luca Abeni <luca.abeni@santannapisa.it>
+Date: Mon, 30 Jun 2025 08:01:41 +0200
+In-Reply-To: <20250627115118.438797-1-juri.lelli@redhat.com>
+References: <20250627115118.438797-1-juri.lelli@redhat.com>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: exynos: gs101: ufs: add dma-coherent
- property
-To: Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, kernel-team@android.com,
- willmcvicker@google.com, stable@vger.kernel.org
-References: <20250314-ufs-dma-coherent-v1-0-bdf9f9be2919@linaro.org>
- <20250314-ufs-dma-coherent-v1-1-bdf9f9be2919@linaro.org>
- <CADrjBPqdr1NEd+W4ATJ-6Xi36y8Gi_=81LsFNtY_s2-pBPagFA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CADrjBPqdr1NEd+W4ATJ-6Xi36y8Gi_=81LsFNtY_s2-pBPagFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Sender: marcel.ziswiler@codethink.co.uk
 
-On 27/06/2025 18:28, Peter Griffin wrote:
-> Hi Krzysztof,
-> 
-> On Fri, 14 Mar 2025 at 15:38, Peter Griffin <peter.griffin@linaro.org> wrote:
->>
->> ufs-exynos driver configures the sysreg shareability as
->> cacheable for gs101 so we need to set the dma-coherent
->> property so the descriptors are also allocated cacheable.
->>
->> This fixes the UFS stability issues we have seen with
->> the upstream UFS driver on gs101.
->>
->> Fixes: 4c65d7054b4c ("arm64: dts: exynos: gs101: Add ufs and ufs-phy dt nodes")
->> Cc: stable@vger.kernel.org
->> Suggested-by: Will McVicker <willmcvicker@google.com>
->> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->> ---
-> 
-> Friendly ping about this patch :)
+Hi Juri
 
-Thanks, I dropped it from my queue based on comments on the bindings
-patch, but that was too hasty.
+On Fri, 2025-06-27 at 13:51 +0200, Juri Lelli wrote:
+> Hi All,
+>=20
+> This patch series addresses a significant regression observed in
+> `SCHED_DEADLINE` performance, specifically when `SCHED_FLAG_RECLAIM`
+> (Greedy Reclamation of Unused Bandwidth - GRUB) is enabled alongside
+> overrunning jobs. This issue was reported by Marcel [1].
+>=20
+> Marcel's team extensive real-time scheduler (`SCHED_DEADLINE`) tests on
+> mainline Linux kernels (amd64-based Intel NUCs and aarch64-based RADXA
+> ROCK5Bs) typically show zero deadline misses for 5ms granularity tasks.
+> However, with reclaim mode enabled and the same two overrunning jobs in
+> the mix, they observed a dramatic increase in deadline misses: 43
+> million on NUC and 600 thousand on ROCK55B. This highlights a critical
+> accounting issue within `SCHED_DEADLINE` when reclaim is active.
+>=20
+> This series fixes the issue by doing the following.
+>=20
+> - 1/5: sched/deadline: Initialize dl_servers after SMP
+> =C2=A0 Currently, `dl-servers` are initialized too early during boot, bef=
+ore
+> =C2=A0 all CPUs are online. This results in an incorrect calculation of
+> =C2=A0 per-runqueue `DEADLINE` variables, such as `extra_bw`, which rely =
+on a
+> =C2=A0 stable CPU count. This patch moves the `dl-server` initialization =
+to a
+> =C2=A0 later stage, after SMP initialization, ensuring all CPUs are onlin=
+e and
+> =C2=A0 correct `extra_bw` values can be computed from the start.
+>=20
+> - 2/5: sched/deadline: Reset extra_bw to max_bw when clearing root domain=
+s
+> =C2=A0 The `dl_clear_root_domain()` function was found to not properly ac=
+count
+> =C2=A0 for the fact that per-runqueue `extra_bw` variables retained stale
+> =C2=A0 values computed before root domain changes. This led to broken
+> =C2=A0 accounting. This patch fixes the issue by resetting `extra_bw` to
+> =C2=A0 `max_bw` before restoring `dl-server` contributions, ensuring a cl=
+ean
+> =C2=A0 state.
+>=20
+> - 3/5: sched/deadline: Fix accounting after global limits change
+> =C2=A0 Changes to global `SCHED_DEADLINE` limits (handled by
+> =C2=A0 `sched_rt_handler()` logic) were found to leave stale or incorrect
+> =C2=A0 values in various accounting-related variables, including `extra_b=
+w`.
+> =C2=A0 This patch properly cleans up per-runqueue variables before implem=
+enting
+> =C2=A0 the global limit change and then rebuilds the scheduling domains. =
+This
+> =C2=A0 ensures that the accounting is correctly restored and maintained a=
+fter
+> =C2=A0 such global limit adjustments.
+>=20
+> - 4/5 and 5/5 are simple drgn scripts I put together to help debugging
+> =C2=A0 this issue. I have the impression that they might be useful to hav=
+e
+> =C2=A0 around for the future.
+>=20
+> Please review and test.
 
-I applied it now.
+Over the weekend I run 312 mio. test runs on NUC and 231 mio. on ROCK55B wi=
+thout any single deadline misses.
+Therefore,
 
-Best regards,
-Krzysztof
+for the whole series:
+
+Tested-by: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk> # nuc & rock5b
+
+Thanks!
+
+> The set is also availabe at
+>=20
+> git@github.com:jlelli/linux.git upstream/fix-grub-tip
+>=20
+> 1 - https://lore.kernel.org/lkml/ce8469c4fb2f3e2ada74add22cce4bfe61fd5bab=
+.camel@codethink.co.uk/
+>=20
+> Thanks,
+> Juri
+>=20
+> Juri Lelli (5):
+> =C2=A0 sched/deadline: Initialize dl_servers after SMP
+> =C2=A0 sched/deadline: Reset extra_bw to max_bw when clearing root domain=
+s
+> =C2=A0 sched/deadline: Fix accounting after global limits change
+> =C2=A0 tools/sched: Add root_domains_dump.py which dumps root domains inf=
+o
+> =C2=A0 tools/sched: Add dl_bw_dump.py for printing bandwidth accounting i=
+nfo
+>=20
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 1 +
+> =C2=A0kernel/sched/core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +
+> =C2=A0kernel/sched/deadline.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 61 +++++++++++++++++++---------
+> =C2=A0kernel/sched/rt.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 +++
+> =C2=A0kernel/sched/sched.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0tools/sched/dl_bw_dump.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 57 ++++++++++++++++++++++++++
+> =C2=A0tools/sched/root_domains_dump.py | 68 +++++++++++++++++++++++++++++=
++++
+> =C2=A07 files changed, 177 insertions(+), 19 deletions(-)
+> =C2=A0create mode 100755 tools/sched/dl_bw_dump.py
+> =C2=A0create mode 100755 tools/sched/root_domains_dump.py
+
+Cheers
+
+Marcel
 
