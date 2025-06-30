@@ -1,86 +1,164 @@
-Return-Path: <linux-kernel+bounces-708831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90108AED5A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:31:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5935AED5AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5587618983BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:31:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F3537A360C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CF7221F0C;
-	Mon, 30 Jun 2025 07:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390D6221281;
+	Mon, 30 Jun 2025 07:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAC1e2gL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="JFUprPnD"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183372192E5;
-	Mon, 30 Jun 2025 07:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8556218AD4
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751268630; cv=none; b=qzyHaG/SCUgXQ9OcshFODUrEPf3SbnBli2K0rC5EWuLY16HihyQXNq5TjjtpOlwJmq+LN1387ZAsZCgkgUW+OWL4F9Q/D6+wrE5gJCJB9zlCdHNJbryarR3TNhoCSFNuPgKnooKl618nzVL6kJ1a+bdT9ERmq+VWWvLr2YQtCK4=
+	t=1751268687; cv=none; b=INoiVg8/r7icF4WHfjGyjCAHp5ZX8667Yd24HdC4YuimCg90ZQUUbqKY5n7lmmn/ebAeL8I8HQyhboF/0WF4yPD4dda36mHIkVNMzrvfK1xiAbavijO1qdYbi5XxpC3Wvb6kTb4MRu+IXkHM+Nsrg7dYf+PmqAmpwpFkcpqMrWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751268630; c=relaxed/simple;
-	bh=+W++RPlYJEyAeuhS3hRC53KAjTd0o4yYfaYBlxSa/zw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAHoqRRA/M+mkGVeXV4E0tYkTvLUKl7e/fPXpnc7KkeCaiD81kaEo0jWFZUQVI/Ilt9meUq6qncKmzx5cVm/B7H9uwyHZvlXnuI9uIUQ7fbreb735XP0dyQbrRXg4rW48s6RGXlWL+1C4Lcrqh97h/IrZ86tnfKBM26qZ2srNlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAC1e2gL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E810AC4CEF2;
-	Mon, 30 Jun 2025 07:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751268629;
-	bh=+W++RPlYJEyAeuhS3hRC53KAjTd0o4yYfaYBlxSa/zw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GAC1e2gLG7Df7mfRBYmNwG6e6iHLGCh+oVWTpyAYbdn3N/WC0KEt1U8m4VzEJeqT3
-	 O13ZFjZLLcPCegp0S15d0IvwXJ3s/pCOQ+3YPEa7DNsuFoSPBNctHpuwSlQLAHnFsl
-	 zG3W50+2cLWtxIbJlGz4Ko51w6S1w/acU67vl02gmVm7/29t/75UhfnscOME4WsasH
-	 kSutFgDcoVS+Um4UQ43LHcL9sN7VDjcMIkk3SC0c8XEsFGh6HamnTpw2d787yLfuGT
-	 1o44BUSbuTQLrbV5XFSurXgj4Z+VI6VgCNglgLVSkqE3tlrP9PUUNeslXBQQSiN1Nw
-	 CX/thVImS8hnw==
-Date: Mon, 30 Jun 2025 09:30:26 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: hans.zhang@cixtech.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, mpillai@cadence.com, fugang.duan@cixtech.com, 
-	guoyin.chen@cixtech.com, peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/14] dt-bindings: pci: cadence: Extend compatible
- for new RP configuration
-Message-ID: <20250630-heretic-space-bullfrog-d6b212@krzk-bin>
-References: <20250630041601.399921-1-hans.zhang@cixtech.com>
- <20250630041601.399921-2-hans.zhang@cixtech.com>
+	s=arc-20240116; t=1751268687; c=relaxed/simple;
+	bh=IFIH+MZeZGncc5oPqvS+TkU1/Rq4qHZHJMPO62is7RU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qigINJ90mLuHybRsOkxNcTbIJAqBHhWtIHTe3yJWa0iJSPU8OjlwFVLvv20X5qA0kQsy9KLSQ/5CDG333AQKxcTCOBPvsvW97nvGl6Lkj2IWqByMP3Hj0edQeFrQ7DiwxxGEnZL22Mx2Ew/9e7IK1t9gjgSwEHpOJEmRSml4uAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=JFUprPnD; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-748feca4a61so994133b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 00:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1751268685; x=1751873485; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=POxYgTmDu2e9RWNzg1dbBCkTKGEMfv0ASNz6IDybwM0=;
+        b=JFUprPnDZVsEi7JTE1op6i7IyINe3LBrDwYzkNVK1Wvu7hyCyVp0mpndnuQHoZu2i+
+         EdT4D7g7dY5U4FZgHgoqGKPEt4WVPFO6vWpWl84teRadFPqfy9MdQ3ovNlxo3MLuzX/v
+         rjDVfVuBBIuo/p86/JVpHRlPHCsHe0kTwP7cPG4xTuMXVv59Cty9K06JKoEslt56yKmL
+         CnaeJeWfY5bOPq3GQ9IAQxT5uIsLx4LuVvvlc12IjdI8OVQ+ZE/JOAwq//4csZpeWVp1
+         zSrN55F2KZMLAgNIczBGLM0sV9s6SmwX4gbeFMF/puKb0UhQsuV6muSC1X7PcE9nCEtu
+         oOXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751268685; x=1751873485;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=POxYgTmDu2e9RWNzg1dbBCkTKGEMfv0ASNz6IDybwM0=;
+        b=CxAkjxylkLxgKOsOI50kjlOEmI4nptAtFraoIQpbCIiIpJY9FuRSgx736I+Rw7asIO
+         ETfXocPurkdhUEgUIItBV96YtUxzdP6Ors1Z0GZcaM6OsYzlnq2Bk08pJMdqXmiLj6+j
+         5WacyRGtY2dXrRcp3murmnVd45oDGJZXoO4T7agwNPbPgvp9t0FfSK2uu4JPJWKpgpxn
+         oVXdHyNRfZ4ktCOVk8Qf83/kQYywS6iFTTNPODfRErILQUjiy/5EkMYtoaFA1bODkQaB
+         KtV8RockLCTJx2w3Ptlg+Yr2rvdFUiOkPML/bySuUbdALoniw09qJeXaTX+FL8zUQd/T
+         tOaA==
+X-Gm-Message-State: AOJu0YxRIhkhpc4FIszejFmqytINtSzQX1b/eK/UbYvEMkB3pIFLYgME
+	nmIBclyJgtjq4q2T8rszpSmbGYEyFoMhN7GvDUhKrtfPRDaG9CXZ115niGUOzqCAGkgt7jNMXmG
+	zExMT
+X-Gm-Gg: ASbGnctNMi0Sx/YrIRG7PuNAwsL6puF7yP+lzwViXuuO1Fkb7tat6GXKhxgNokZcLJV
+	kfQARYt88eM/rpc25P++xN1tEs7aEMyYsDnyrpocO84hLAPQ/58oeyGX37oH6uduVlXoP5vkUNi
+	rZyrj1zyWcYwF6iEYaBvWydy3emlXpGtCrH0cC77FGnF+1uZqsBcCK8JI7ic3m0fMgKvVP2I7tj
+	b4IIKhRFTEBNg/BbctsxfQPvufdsgCTttXoxpL+gX+yj+9Ih+dZ12ydUTZFYfJHutxFTrtIjLK6
+	wXDrkB1Jha5fbye8I78CbS8+lAqQVEk4EqUPWRR4iaJdZzlnLlD9fE4xoZimUY0na12wZI7ySZI
+	gSUDQXRv+rybI9c4iO/Oq1g7+WWiK+nVjjYmHZuMhKxheXZF2VIYB1bQrHDwvt1t7kwaZYRRibI
+	0Kurysfngvb/9fL8LrS5gK8a1/ZYfdriaXEZgLzAOLPxxG9+BmzMDI39A=
+X-Google-Smtp-Source: AGHT+IF2dJnHM1Gkfw8ZKgifsBXM1Dg3mh0qy29vCF7Kn90HV7QpAS1LvEjYMDtwWkrjgbtM4CyJuQ==
+X-Received: by 2002:a05:6a00:1403:b0:740:afda:a742 with SMTP id d2e1a72fcca58-74af6d381c6mr16618695b3a.0.1751268684834;
+        Mon, 30 Jun 2025 00:31:24 -0700 (PDT)
+Received: from ajye-OMEN-by-HP-Laptop-S.compal.com (2001-b011-2017-b5df-1684-9463-00f4-4a0e.dynamic-ip6.hinet.net. [2001:b011:2017:b5df:1684:9463:f4:4a0e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af56ceb74sm8512046b3a.135.2025.06.30.00.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 00:31:24 -0700 (PDT)
+From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-sound@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Takashi Iwai <tiwai@suse.com>,
+	Naveen Manohar <naveen.m@intel.com>,
+	Dharageswari R <dharageswari.r@intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mac Chiang <mac.chiang@intel.com>,
+	alsa-devel@alsa-project.org,
+	Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Subject: [PATCH v1] ASoC: Intel: soc-acpi-intel-ptl-match: Add rt721_l0 support
+Date: Mon, 30 Jun 2025 15:31:12 +0800
+Message-Id: <20250630073112.2823898-1-ajye_huang@compal.corp-partner.google.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250630041601.399921-2-hans.zhang@cixtech.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 30, 2025 at 12:15:48PM +0800, hans.zhang@cixtech.com wrote:
-> From: Manikandan K Pillai <mpillai@cadence.com>
-> 
-> Document the compatible property for HPA (High Performance Architecture)
-> PCIe controller RP configuration.
+Patch adds driver data & match table for rt721
+multi-function codec on PTL at sdw link0.
 
-I don't see Conor's comment addressed:
+Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+---
+ .../intel/common/soc-acpi-intel-ptl-match.c   | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-https://lore.kernel.org/linux-devicetree/20250424-elm-magma-b791798477ab@spud/
-
-You cannot just send someone's work and bypassing the review feedback.
-
-> 
-> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
-
-SoB.
-
-Best regards,
-Krzysztof
+diff --git a/sound/soc/intel/common/soc-acpi-intel-ptl-match.c b/sound/soc/intel/common/soc-acpi-intel-ptl-match.c
+index eae75f3f0fa4..0257e12e8b6e 100644
+--- a/sound/soc/intel/common/soc-acpi-intel-ptl-match.c
++++ b/sound/soc/intel/common/soc-acpi-intel-ptl-match.c
+@@ -330,6 +330,15 @@ static const struct snd_soc_acpi_adr_device rt1320_3_group1_adr[] = {
+ 	}
+ };
+ 
++static const struct snd_soc_acpi_adr_device rt721_0_single_adr[] = {
++	{
++		.adr = 0x000030025d072101ull,
++		.num_endpoints = ARRAY_SIZE(rt_mf_endpoints),
++		.endpoints = rt_mf_endpoints,
++		.name_prefix = "rt721"
++	}
++};
++
+ static const struct snd_soc_acpi_adr_device rt721_3_single_adr[] = {
+ 	{
+ 		.adr = 0x000330025d072101ull,
+@@ -339,6 +348,15 @@ static const struct snd_soc_acpi_adr_device rt721_3_single_adr[] = {
+ 	}
+ };
+ 
++static const struct snd_soc_acpi_link_adr ptl_rt721_l0[] = {
++	{
++		.mask = BIT(0),
++		.num_adr = ARRAY_SIZE(rt721_0_single_adr),
++		.adr_d = rt721_0_single_adr,
++	},
++	{}
++};
++
+ static const struct snd_soc_acpi_link_adr ptl_rt721_l3[] = {
+ 	{
+ 		.mask = BIT(3),
+@@ -664,6 +682,12 @@ struct snd_soc_acpi_mach snd_soc_acpi_intel_ptl_sdw_machines[] = {
+ 		.sof_tplg_filename = "sof-ptl-rt712-l3-rt1320-l3.tplg",
+ 		.get_function_tplg_files = sof_sdw_get_tplg_files,
+ 	},
++	{
++		.link_mask = BIT(0),
++		.links = ptl_rt721_l0,
++		.drv_name = "sof_sdw",
++		.sof_tplg_filename = "sof-ptl-rt721.tplg",
++	},
+ 	{
+ 		.link_mask = BIT(3),
+ 		.links = ptl_rt721_l3,
+-- 
+2.25.1
 
 
