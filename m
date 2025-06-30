@@ -1,206 +1,213 @@
-Return-Path: <linux-kernel+bounces-709666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A48AEE0AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0043AEE0B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 293403ACBE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747D93A96CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC43328C013;
-	Mon, 30 Jun 2025 14:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B4F28C877;
+	Mon, 30 Jun 2025 14:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WHkyl209"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C1YWcxWl"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C30328C2B1;
-	Mon, 30 Jun 2025 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F72B28C5D9
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751293643; cv=none; b=PzskdNEtaXvNwAbkqe3OIltLUvfpO/ijrnchNxPDokPTCsslWOiNl/rJci3N8yIoORk9fYZ7ePb2lXJBQzZg6PXn9wGcTkfqjtI9dD/OI7VhZCb7WV90L0/kMh4VC1otjpvLh1bOdgU9r+yKFvU8X2v4mrmmIzMZf7tst8FngvU=
+	t=1751293653; cv=none; b=FJZqzmE3aIc+kvY/2f0HEKSEFLnLPoL6rCRuHdY2zF5GDprgO9q09KrVDYlBgnQs1aY5oINAR6VJtx5OM62OhKwSAuGAxhWeLVAvgLPdYeU4q/sRPVrpt8e6zWbIRH1pgKMFTVT1+PujvQmqvfc0BHo4ByQ+4NnkvuJObLnKhms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751293643; c=relaxed/simple;
-	bh=nuAWTsMItNCCzscLTP8xkr9U8H1LoMJ5NrTQyP/NGvo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rm56f9nr0tGbFXiPHMj2pxExZwR5i5zFd9PcV3zWi73Knc4caHlwxnCEFCxZk3mKZSShIF7E+rRdp8AfBetSmPxJ4NMz16iZTWl09ZLVNAOxNiF+hEA+n5/LFKVhz4fdkNFVn9TbZtqtzJR5EwQyIHV547563J1+fmBENz92FfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WHkyl209; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751293642; x=1782829642;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nuAWTsMItNCCzscLTP8xkr9U8H1LoMJ5NrTQyP/NGvo=;
-  b=WHkyl2092MfQgWL5xTnlJmQ9HZwcLIwXLXbBuII8VhBCK20FvVgom9Z6
-   yF4q8MvGgkboelSeHa/hDTV4ti/SAl1URFEGu3PwA/iU//PfaTZS+5B2o
-   n148NJKWx6P9zvzE94NAOezsoTkhkav3x48zp0u1YJRZvt/0j2oHJ0MXR
-   H50hi9rW8VOyRnv7nxBff1/NWdJ6iJFZkGR3QUg4kytJbcrkp8F1gB/WT
-   HcIrFpMsMuUXFl3rLbX07OgzENWNfmABQEIqcXMdUWuEsein9Q8941SW2
-   vR3EowBvOSle0haEZKBF6y7X7uzOOQWrBP0vuWQbPePADxZuz9BinGldn
-   A==;
-X-CSE-ConnectionGUID: TQqkPNVhRMiNr0bIDuA27w==
-X-CSE-MsgGUID: 84iJt1sJQ5qaUGCRt+mfpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="76071121"
-X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
-   d="scan'208";a="76071121"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 07:27:21 -0700
-X-CSE-ConnectionGUID: 0vWuU3l9Tz6APbBipBzcfQ==
-X-CSE-MsgGUID: MEyr22i0SgOMn8ipV46Uwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
-   d="scan'208";a="153649823"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 07:27:17 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Rio <rio@r26.me>,
-	D Scott Phillips <scott@os.amperecomputing.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 3/3] PCI: Fix failure detection during resource resize
-Date: Mon, 30 Jun 2025 17:26:41 +0300
-Message-Id: <20250630142641.3516-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250630142641.3516-1-ilpo.jarvinen@linux.intel.com>
-References: <20250630142641.3516-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1751293653; c=relaxed/simple;
+	bh=9db6x0EMOe6E9j32qrzyr5EJwVkIl5FELxN4JFxD+Vo=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=KJnpjWHDQW4pRzY1BVmmMTuWf+P4aThsCf8Nv9+qyBwZHoNzs4Jgd2seumxZfs22WYFI1FSAVUrm/nRzq2SVHA4OakLJetZ59d8pAOE8HFzKx/q6+S/VBxxhAsFsi3/A11uj5vwWDr5dGB5wIRzpznZ1J/dPYX801glWzfaN2l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C1YWcxWl; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-453018b4ddeso25970155e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751293650; x=1751898450; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jA1+PqXVtq5JGGyS5bMqoIcyAvEWva/WB/dyQOqqHmU=;
+        b=C1YWcxWldsyRsfw5atRt3hcl6Q/3ThDImMsaj5pdObRaAl656fgCPpQ56T3UiycROw
+         MZVfJs4dur9pjWmuGEUbtRCvc4HWxg7m2Qs9BwDWO3EPJjq5XD8zHEC2YxzTHrec8The
+         tM1Bi5WPxS4HGcivDb1MCOE771QltsSwpBunAGRVQ6sHLAEG1a7wlo0sNdaKXWtdZXVn
+         t/mcPBeUR4z+QTFnUY0pYi3SevSp0y0EI2KVwRwujvnOVILyEWQ23KRdW+xCbeK24q8z
+         OjDswGQuIuvv58fYY3bbSE6djrFciRlKGZIrONwLBhBhquRajAgPXKVAIhnga4YO3S/i
+         Q98A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751293650; x=1751898450;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jA1+PqXVtq5JGGyS5bMqoIcyAvEWva/WB/dyQOqqHmU=;
+        b=YBlHsbH3eu6Pr0Z+cFI6rXhSwXd0JIi/1Q4bw3hcacxKHWKdpwGT33/nkGNwjV77rB
+         1of14kbQ8UcAbO64DTGnrKr5BhVrhDE+09J9ySBntyhEkNsshoMTCpX5S8eSWFhrBwaR
+         fqVXaPb2B+o4cVwRl01me5rKr6cLnZ4OA3V9ZY5PSmqDGvVc5w5jtTYbXyPQjC3GR0rx
+         3cbOPZTAS5aOhD6hya8QaV8EeK8E3NW5yj1Id28m2hxrmOEV7rpFCbnLLlSpdNlFxc8P
+         ibgE2aMoKIZHlGriVvHr0O/icS4c8yBI1jOAZEWEATTVeDzUkXGNIaJqzZ0CWpAg4lTg
+         NeTw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6MsibWTp2+GzPPQ43k0Hn5/86FGp1AwE+nL4q7GH24mPbM6BPw4zePearwGZR28yk5fidf3F4zu3e3to=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXpPt9V4N1MXpmd6yqDNIn6x+hBUXtma0BK8pLx5fn8wn2u0gj
+	P2qPuRJdFPG40sNAmcW5ikBmrmtnyWiwgyCnXJVhHzqtTgeSVRT7zxIPSsfzb83wrQSsovmorWf
+	oI9XxOa0ogu++dQ==
+X-Google-Smtp-Source: AGHT+IGBSz5ftj1hVRQWPOaVGaFLmn6ZsnaOVoP8vhVwAtD0CuhsE+mmDdNHq577mQqHbTmGbmGPqxLU19jd1Q==
+X-Received: from wmbay32.prod.google.com ([2002:a05:600c:1e20:b0:453:910:1a18])
+ (user=gprocida job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:c10c:b0:43c:fe90:1282 with SMTP id 5b1f17b1804b1-4538ef7f8d3mr97825305e9.7.1751293649607;
+ Mon, 30 Jun 2025 07:27:29 -0700 (PDT)
+Date: Mon, 30 Jun 2025 15:27:02 +0100
+In-Reply-To: <CAGvU0HkKacQKB1q9NWcqChLGoMB+1vu9UdqYc+tBRbTTc3++GQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250630142713.1816049-1-gprocida@google.com>
+Subject: [PATCH] gendwarfksyms: use preferred form of sizeof for allocation
+From: Giuliano Procida <gprocida@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Giuliano Procida <gprocida@google.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Since the commit 96336ec70264 ("PCI: Perform reset_resource() and build
-fail list in sync") the failed list is always built and returned to let
-the caller decide what to do with the failures. The caller may want to
-retry resource fitting and assignment and before that can happen, the
-resources should be restored to their original state (a reset
-effectively clears the struct resource), which requires returning them
-on the failed list so that the original state remains stored in the
-associated struct pci_dev_resource.
+The preferred form is to supply the variable being allocated to rather
+than an explicit type name which might become stale.
 
-Resource resizing is different from the ordinary resource fitting and
-assignment in that it only considers part of the resources. This means
-failures for other resource types are not relevant at all and should be
-ignored. As resize doesn't unassign such unrelated resources, those
-resource ending up into the failed list implies assignment of that
-resource must have failed before resize too. The check in
-pci_reassign_bridge_resources() to decide if the whole assignment is
-successful, however, is based on list emptiness which will cause false
-negatives when the failed list has resources with an unrelated type.
+Also do this for memset and qsort arguments.
 
-If the failed list is not empty, call pci_required_resource_failed()
-and extend it to be able to filter on specific resource types too (if
-provided).
-
-Calling pci_required_resource_failed() at this point is slightly
-problematic because the resource itself is reset when the failed list
-is constructed in __assign_resources_sorted(). As a result,
-pci_resource_is_optional() does not have access to the original
-resource flags. This could be worked around by restoring and
-re-reseting the resource around the call to pci_resource_is_optional(),
-however, it shouldn't cause issue as resource resizing is meant for
-64-bit prefetchable resources according to Christian König (see the
-Link which unfortunately doesn't point directly to Christian's reply
-because lore didn't store that email at all).
-
-Fixes: 96336ec70264 ("PCI: Perform reset_resource() and build fail list in sync")
-Link: https://lore.kernel.org/all/c5d1b5d8-8669-5572-75a7-0b480f581ac1@linux.intel.com/
-Reported-by: D Scott Phillips <scott@os.amperecomputing.com>
-Tested-by: D Scott Phillips <scott@os.amperecomputing.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: D Scott Phillips <scott@os.amperecomputing.com>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: <stable@vger.kernel.org>
+Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Giuliano Procida <gprocida@google.com>
 ---
- drivers/pci/setup-bus.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ scripts/gendwarfksyms/cache.c   | 2 +-
+ scripts/gendwarfksyms/die.c     | 4 ++--
+ scripts/gendwarfksyms/dwarf.c   | 2 +-
+ scripts/gendwarfksyms/kabi.c    | 2 +-
+ scripts/gendwarfksyms/symbols.c | 2 +-
+ scripts/gendwarfksyms/types.c   | 8 ++++----
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 24863d8d0053..dbbd80d78d3d 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -28,6 +28,10 @@
- #include <linux/acpi.h>
- #include "pci.h"
- 
-+#define PCI_RES_TYPE_MASK \
-+	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
-+	 IORESOURCE_MEM_64)
-+
- unsigned int pci_flags;
- EXPORT_SYMBOL_GPL(pci_flags);
- 
-@@ -384,13 +388,19 @@ static bool pci_need_to_release(unsigned long mask, struct resource *res)
- }
- 
- /* Return: @true if assignment of a required resource failed. */
--static bool pci_required_resource_failed(struct list_head *fail_head)
-+static bool pci_required_resource_failed(struct list_head *fail_head,
-+					 unsigned long type)
+diff --git a/scripts/gendwarfksyms/cache.c b/scripts/gendwarfksyms/cache.c
+index c9c19b86a686..1c640db93db3 100644
+--- a/scripts/gendwarfksyms/cache.c
++++ b/scripts/gendwarfksyms/cache.c
+@@ -15,7 +15,7 @@ void cache_set(struct cache *cache, unsigned long key, int value)
  {
- 	struct pci_dev_resource *fail_res;
+ 	struct cache_item *ci;
  
-+	type &= PCI_RES_TYPE_MASK;
-+
- 	list_for_each_entry(fail_res, fail_head, list) {
- 		int idx = pci_resource_num(fail_res->dev, fail_res->res);
- 
-+		if (type && (fail_res->flags & PCI_RES_TYPE_MASK) != type)
-+			continue;
-+
- 		if (!pci_resource_is_optional(fail_res->dev, idx))
- 			return true;
- 	}
-@@ -504,7 +514,7 @@ static void __assign_resources_sorted(struct list_head *head,
- 	}
- 
- 	/* Without realloc_head and only optional fails, nothing more to do. */
--	if (!pci_required_resource_failed(&local_fail_head) &&
-+	if (!pci_required_resource_failed(&local_fail_head, 0) &&
- 	    list_empty(realloc_head)) {
- 		list_for_each_entry(save_res, &save_head, list) {
- 			struct resource *res = save_res->res;
-@@ -1708,10 +1718,6 @@ static void __pci_bridge_assign_resources(const struct pci_dev *bridge,
- 	}
- }
- 
--#define PCI_RES_TYPE_MASK \
--	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
--	 IORESOURCE_MEM_64)
--
- static void pci_bridge_release_resources(struct pci_bus *bus,
- 					 unsigned long type)
+-	ci = xmalloc(sizeof(struct cache_item));
++	ci = xmalloc(sizeof(*ci));
+ 	ci->key = key;
+ 	ci->value = value;
+ 	hash_add(cache->cache, &ci->hash, hash_32(key));
+diff --git a/scripts/gendwarfksyms/die.c b/scripts/gendwarfksyms/die.c
+index 6183bbbe7b54..052f7a3f975a 100644
+--- a/scripts/gendwarfksyms/die.c
++++ b/scripts/gendwarfksyms/die.c
+@@ -33,7 +33,7 @@ static struct die *create_die(Dwarf_Die *die, enum die_state state)
  {
-@@ -2449,8 +2455,12 @@ int pci_reassign_bridge_resources(struct pci_dev *bridge, unsigned long type)
- 		free_list(&added);
+ 	struct die *cd;
  
- 	if (!list_empty(&failed)) {
--		ret = -ENOSPC;
--		goto cleanup;
-+		if (pci_required_resource_failed(&failed, type)) {
-+			ret = -ENOSPC;
-+			goto cleanup;
-+		}
-+		/* Only resources with unrelated types failed (again) */
-+		free_list(&failed);
- 	}
+-	cd = xmalloc(sizeof(struct die));
++	cd = xmalloc(sizeof(*cd));
+ 	init_die(cd);
+ 	cd->addr = (uintptr_t)die->addr;
  
- 	list_for_each_entry(dev_res, &saved, list) {
+@@ -123,7 +123,7 @@ static struct die_fragment *append_item(struct die *cd)
+ {
+ 	struct die_fragment *df;
+ 
+-	df = xmalloc(sizeof(struct die_fragment));
++	df = xmalloc(sizeof(*df));
+ 	df->type = FRAGMENT_EMPTY;
+ 	list_add_tail(&df->list, &cd->fragments);
+ 	return df;
+diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+index 13ea7bf1ae7d..3538a7d9cb07 100644
+--- a/scripts/gendwarfksyms/dwarf.c
++++ b/scripts/gendwarfksyms/dwarf.c
+@@ -634,7 +634,7 @@ static int get_union_kabi_status(Dwarf_Die *die, Dwarf_Die *placeholder,
+ 	 * Note that the user of this feature is responsible for ensuring
+ 	 * that the structure actually remains ABI compatible.
+ 	 */
+-	memset(&state.kabi, 0, sizeof(struct kabi_state));
++	memset(&state.kabi, 0, sizeof(state.kabi));
+ 
+ 	res = checkp(process_die_container(&state, NULL, die,
+ 					   check_union_member_kabi_status,
+diff --git a/scripts/gendwarfksyms/kabi.c b/scripts/gendwarfksyms/kabi.c
+index b3ade713778f..e3c2a3ccf51a 100644
+--- a/scripts/gendwarfksyms/kabi.c
++++ b/scripts/gendwarfksyms/kabi.c
+@@ -228,7 +228,7 @@ void kabi_read_rules(int fd)
+ 		if (type == KABI_RULE_TYPE_UNKNOWN)
+ 			error("unsupported kABI rule type: '%s'", field);
+ 
+-		rule = xmalloc(sizeof(struct rule));
++		rule = xmalloc(sizeof(*rule));
+ 
+ 		rule->type = type;
+ 		rule->target = xstrdup(get_rule_field(&rule_str, &left));
+diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
+index 327f87389c34..35ed594f0749 100644
+--- a/scripts/gendwarfksyms/symbols.c
++++ b/scripts/gendwarfksyms/symbols.c
+@@ -146,7 +146,7 @@ void symbol_read_exports(FILE *file)
+ 			continue;
+ 		}
+ 
+-		sym = xcalloc(1, sizeof(struct symbol));
++		sym = xcalloc(1, sizeof(*sym));
+ 		sym->name = name;
+ 		sym->addr.section = SHN_UNDEF;
+ 		sym->state = SYMBOL_UNPROCESSED;
+diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksyms/types.c
+index 51c1471e8684..9c3b053bf061 100644
+--- a/scripts/gendwarfksyms/types.c
++++ b/scripts/gendwarfksyms/types.c
+@@ -45,7 +45,7 @@ static int type_list_append(struct list_head *list, const char *s, void *owned)
+ 	if (!s)
+ 		return 0;
+ 
+-	entry = xmalloc(sizeof(struct type_list_entry));
++	entry = xmalloc(sizeof(*entry));
+ 	entry->str = s;
+ 	entry->owned = owned;
+ 	list_add_tail(&entry->list, list);
+@@ -122,7 +122,7 @@ static struct type_expansion *type_map_add(const char *name,
+ 	struct type_expansion *e;
+ 
+ 	if (__type_map_get(name, &e)) {
+-		e = xmalloc(sizeof(struct type_expansion));
++		e = xmalloc(sizeof(*e));
+ 		type_expansion_init(e);
+ 		e->name = xstrdup(name);
+ 
+@@ -202,11 +202,11 @@ static void type_map_write(FILE *file)
+ 
+ 	hash_for_each_safe(type_map, e, tmp, hash)
+ 		++count;
+-	es = xmalloc(count * sizeof(struct type_expansion *));
++	es = xmalloc(count * sizeof(*es));
+ 	hash_for_each_safe(type_map, e, tmp, hash)
+ 		es[i++] = e;
+ 
+-	qsort(es, count, sizeof(struct type_expansion *), cmp_expansion_name);
++	qsort(es, count, sizeof(*es), cmp_expansion_name);
+ 
+ 	for (i = 0; i < count; ++i) {
+ 		checkp(fputs(es[i]->name, file));
 -- 
-2.39.5
+2.50.0.727.gbf7dc18ff4-goog
 
 
