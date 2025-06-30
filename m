@@ -1,88 +1,61 @@
-Return-Path: <linux-kernel+bounces-710230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876ABAEE98F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A5FAEE993
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7EA189F06C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 722A4189EC39
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD29243953;
-	Mon, 30 Jun 2025 21:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CA4Oj7lt"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0EC241666;
+	Mon, 30 Jun 2025 21:46:44 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7716D242D8C;
-	Mon, 30 Jun 2025 21:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B67C4A23;
+	Mon, 30 Jun 2025 21:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751319988; cv=none; b=biXxINyKfoxuvLAHzssAQSn4pFBrYuLJ2OUCHwJnAa9TSPpau7IW7KPwykD9pLyo2mzrIsJoqCu61UjOElq3J/F57O3bGrs5wtGDnN3r5xrZH0TlQyqkTZQ0qX6pGK78fsr0VoHaGXV0GUQoTEqP1x/cRL/Nbj0POvv0mcCWg/c=
+	t=1751320004; cv=none; b=rDkvUOtRQ//5glmTvBBLgue6FI+FoSKq3qQfVAsY3FBQ4hJUzJ0Z5k2OM9g1SRPims0/o3dbAIh8aSs+YnUdCy1B1UkFTjvpYx8n/wfmEC+D4j4sUYgasqxthn52/ogT0cKr8UQAcNR/dFrCrtW2sdYRNfjjzvobRC0wXakp59E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751319988; c=relaxed/simple;
-	bh=4tYed55s6+bCA/lfL1XquKdBm6MZag+ntnyZoH4OjJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JNVBOb/rEreDRDvhlaY/XYcv1VkxwsC+5gq6TEYuFARUgCnq+lVJICT8u7Ov/SyIoiLehZPolamb5iAwVoChCCVbOa7kgDZHH56eFJDmKMnCp9InBlkqT/GjuagAH55SiJwUbipx5DejKGtiilHnzqYY+sE3qtIwKAIoDBZ7CTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CA4Oj7lt; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2350b1b9129so15734075ad.0;
-        Mon, 30 Jun 2025 14:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751319986; x=1751924786; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HMzvf0inoVdnAwUYh7Qa8/sYrJIk/w5RMhrgarH2W2E=;
-        b=CA4Oj7ltw2BrSo4BR/QSTe+03CwIB9zl7shCOdhu8CxtfuxB85eY8yW+Ko9cHszqFr
-         mymbaZorq0DXHx465Uqm44fOTtKiSF4QXo+kknc8zNtwasHlRylFqsbHWbjueFezcf3Y
-         hlKv6U/UNb9l0Kku0/Ph6d+cmY7iRfnf/U8wTNFFMsShvm+SIlQxHwZwRRdu2V5o0vS7
-         X2ZJd7Uc7LdcuXcC43P4t0p5j46Ax0DqqbzkyG0eiaXD8Uoola8sCHQwRQfi/c2lNPik
-         nHqZf1T1lzs5RDB5HPYTeMiYW+j88GnmDY58c/RIeJM2QBI8u0rPDXpWFmOgiuT4cTTu
-         imlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751319986; x=1751924786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMzvf0inoVdnAwUYh7Qa8/sYrJIk/w5RMhrgarH2W2E=;
-        b=i4eqpnB2EebJcUm976+OA77UxsTmbMcUNQ3QN+HiSTFT0dJ1WCCdFW8+XGOdZAtPgI
-         t5MJoZafgFQXsrpq3xa7Hj3QMYTxmEBs3M+dyoZG4PHVYHDLLEgGybYQCgRKHu3/A+gy
-         yiKNw4n/nBARPbxgo7FTkchB3jjCGpGxjmt8CTF1hlH7j+qbZUy9RQfs2R73l2JNVmqn
-         erI47KutgZsuumETJq6Pl/sE0hvajeLQwW1xWNcowJ7t4EVQ4eUDCyT4bUC54VfQU1YX
-         BFFCl6XOGrCn2n2X81WFyXeIDVkqj1fWmP290xh1lGK/VAbjLRZ4j0GfAgisL7L3XgUw
-         2wjw==
-X-Forwarded-Encrypted: i=1; AJvYcCX56mW/7qPeNDVRxux4C6WX5UJFy0LKxHZvxzd/DAUB0JL4jYGx8++JHIznsYGK/rClCBuxW5LPZfrvUmnu@vger.kernel.org, AJvYcCX7GVHlkutk7ra+DRT0rGcaAmjEOpsVL9pdTVy9Zoj2qhb9rCSNMXtXI1y8EktFpRfDVtIAd1Uhw4h6cA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxZexClQPGYZvDUgRsFPpoNxI5JttewVL7Kao6pCaCPdZoaE5J
-	YjpsremR1GxDNi6vG0hN7/kQ5V35t23rIogYKkJo6RmOUWNJXJup08ez
-X-Gm-Gg: ASbGncubglP+NMNm1gDKbYTJgo5lWIg/Duev7pgvWk/QpH0c1lOO4ahgtxU9tgOVSXE
-	CkNxlezeNFNe6ePnLELhmIcayb2SLivyTKB6Q+0GRHM8kknvHquecjhmZg9XSOas3aHIFWA1QjE
-	iDDFZy+pV7M58xwA06d9zO9yCMsJH8I4tyBQQMSgp5FFetRcyKRbNPHkfYxPRalBp0ybU/JaZPj
-	WcnrtXpwfgzCnuM79JUJwPA2GAU4KkU49GH5Sdfgd+3G/H2i9i1oH9K2b06Lp9TgkHvr8JJV46p
-	yLPT/PXaO0xJTDjoozTk2iNnJpM0Ymsdecqhb6wf8j3H2Tu8GQTCx6dQxY2yEA==
-X-Google-Smtp-Source: AGHT+IHKxSYWaV//bpv91swHLUVsoYm/dTB3IzxzX+iLpaTVjfaTfoTO6Q7QT+X+ehW3AxFWJ2qpBA==
-X-Received: by 2002:a17:902:da8a:b0:234:aa9a:9e0f with SMTP id d9443c01a7336-23ac40f5ae9mr236065555ad.23.1751319985602;
-        Mon, 30 Jun 2025 14:46:25 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c92b:c666:1f8:990e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb39b99esm93192165ad.102.2025.06.30.14.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 14:46:25 -0700 (PDT)
-Date: Mon, 30 Jun 2025 14:46:22 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, kernel@collabora.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	s=arc-20240116; t=1751320004; c=relaxed/simple;
+	bh=na9kxFZTHUrHRScfhIax634TeqcsdNTZh3ZBd+gwlWw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fj0eHpv0WqE9a6yu/Gz2p4JrQ8FtMO6axN+uDHTDPDMcjHy06moirFgkFE0sk/A43r5aA7gkUh+fGwGOHvNXWcKyaG2FvkdmpRYddMhXbnUsMhdwfF00cLCCr9E29ysV+5nBzVAhmPgYWnRaNFOBBHSQzMtWGhyD8dplf95UmJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uWMKj-000000007MR-1X2i;
+	Mon, 30 Jun 2025 21:46:37 +0000
+Date: Mon, 30 Jun 2025 22:46:34 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+	Sky Huang <skylake.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] Input: mtk-pmic-keys: Fix null pointer dereference when
- no compatible data
-Message-ID: <667whxdsghpao5irl66oh66l5y55m4k6n3ztifaizbqtrzccju@cmghlz2yauxq>
-References: <20250630-mtk-pmic-keys-fix-crash-v1-1-e47351fa9d1f@collabora.com>
- <41f3cc74-694e-41be-b767-20c7561990b8@linux.microsoft.com>
+Subject: [PATCH net-next v3 2/3] net: ethernet: mtk_eth_soc: fix kernel-doc
+ comment
+Message-ID: <4ce2fb696b94350cf54b4b623cebe4f6d3944312.1751319620.git.daniel@makrotopia.org>
+References: <cover.1751319620.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,17 +64,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <41f3cc74-694e-41be-b767-20c7561990b8@linux.microsoft.com>
+In-Reply-To: <cover.1751319620.git.daniel@makrotopia.org>
 
-On Mon, Jun 30, 2025 at 01:18:40PM -0700, Easwar Hariharan wrote:
-> 
-> Also, it may make sense to CC: stable@vger.kernel.org for backports
+Fix and add some missing field descriptions to kernel-doc comment of
+struct mtk_eth.
 
-What for? Stable does not need a patch papering over an oops, it needs a
-patch making the keypad working on the affected device.
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+v3: unchanged
+v2: unchanged
 
-Thanks.
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.h b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+index 9261c0e13b59..1ad9075a9b69 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.h
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.h
+@@ -1243,8 +1243,9 @@ struct mtk_soc_data {
+ /* struct mtk_eth -	This is the main datasructure for holding the state
+  *			of the driver
+  * @dev:		The device pointer
+- * @dev:		The device pointer used for dma mapping/alloc
++ * @dma_dev:		The device pointer used for dma mapping/alloc
+  * @base:		The mapped register i/o base
++ * @sram_base:		The mapped SRAM base
+  * @page_lock:		Make sure that register operations are atomic
+  * @tx_irq__lock:	Make sure that IRQ register operations are atomic
+  * @rx_irq__lock:	Make sure that IRQ register operations are atomic
 -- 
-Dmitry
+2.50.0
 
