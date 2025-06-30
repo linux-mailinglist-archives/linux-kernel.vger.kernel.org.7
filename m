@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-708964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A146AED77B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:38:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBAAAED785
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 393793B71CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51595175305
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C19242D8F;
-	Mon, 30 Jun 2025 08:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsPbnEVe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA032459C8;
+	Mon, 30 Jun 2025 08:38:57 +0000 (UTC)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2898A23D28B;
-	Mon, 30 Jun 2025 08:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197C24418E;
+	Mon, 30 Jun 2025 08:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751272705; cv=none; b=s3b//GlSKo3v7LE3nUnuyNH78YdGRXuDDTuOInKIGOzFbzfDwU4zEHD/sU21kRG00tUT8IG9p0W8xmA7T1aioQOZNrc4aSoSeC6QhY5yi2WAk0lZOA8nIeRAj2Ee7JIfhemqSIstytZ9grLCcvYAxMHp10/vJEwrYl4OS7dE7IM=
+	t=1751272736; cv=none; b=h/oxAygwjPDaKU/g/tRpVBbTkkiyrY4frFqPRR0qA87T53yv/IpN3uGCJgEv13Ax0pScGRrp5cw02Ctf7QfGFORE/7S/hYHC+dwlrc1saUJ3fkwDewrltchdbtnzzcFgIeu1ynqYbtei3mGnEF5qYCNP1QwGEOylpXh9ZI8azWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751272705; c=relaxed/simple;
-	bh=PLIXEwxWC7QQ+4j+LLRtCwneBwdS5keVrROQQcKq2wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqQTkBLOJ/hPQI7w+Z3sk9ntdJJ+7BtiWO+R2XjRb/Zc7v5w1xOVTGBtE0sIpopmZsr8Gzenm9l3CIRQmH41K/mUTpW2t2Bljfe3onme5Q9njS+xgMQOJWAPfrgsIYGNiNBVOsUIVMwcuIazUhaF/74G6TQXogtJWsdhyaUUpkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsPbnEVe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 378BAC4CEF2;
-	Mon, 30 Jun 2025 08:38:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751272704;
-	bh=PLIXEwxWC7QQ+4j+LLRtCwneBwdS5keVrROQQcKq2wg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AsPbnEVeeT6DMTbgBs5s9l+FTADNSJXYPbtIqiPsS/hU/aVY9Fy9OH3DwzduKxOUM
-	 fH2aIm8nT/GLFGZEsjjqzUeb352NzzCk0HbW7W4wFuN6Vom3QjrVjRUfTAq6jqIrkp
-	 NU6VZOrUnmat+iYPFSCC/VtJctGTXtBq8qveyVuyedbHsX7mCA95Ct0zAafMKEWrL5
-	 ZZyrTXPeFtyKU9Gm1Ccq0urSRwCPu6MSLl+1JbpmqNrjulRxwRWdjMpXVQAyajs0cs
-	 3uA1vTK0rMUERie5ddq8JL6W74ggIkLnTkRFFASbjlOqZD46FVe4GZkeVOHwjHrOy8
-	 mYHlD/8S21AFg==
-Date: Mon, 30 Jun 2025 10:38:21 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
-	Luca Weiss <luca.weiss@fairphone.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
- interconnects property
-Message-ID: <20250630-stirring-kiwi-of-adventure-8f22ba@houat>
-References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
- <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
- <20250627-mysterious-optimistic-bird-acaafb@krzk-bin>
- <DAX7ZB27SBPV.2Y0I09TVSF3TT@fairphone.com>
- <1129bc60-f9cb-40be-9869-8ffa3b3c9748@kernel.org>
- <8a3ad930-bfb1-4531-9d34-fdf7d437f352@redhat.com>
- <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
+	s=arc-20240116; t=1751272736; c=relaxed/simple;
+	bh=+4yjQWAsZkfU8NsCh7RM+iBUGBH14NL/rn43HsII/dM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fQX6TT3ZG4GSeIYOybB3Vn+DEYrpX7X51tQoWAlAfKTgOxktips8+eO3ZGlOJXxG1vdhccHfd3N8ZQhAWd8PMbV+KB+4Ytso3bVpMoceEB1rl8l/Hgchr7IyE8hIencw/wPU6ciTaHLD8keQKlWd6WiPvK5y4hy5dE9pDr8jZFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87f13aba2ccso442812241.3;
+        Mon, 30 Jun 2025 01:38:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751272733; x=1751877533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HyReJn5zseFX3ZIz/ns2toxwkOANwmqgOiT1aGJ1WH0=;
+        b=sTzx9er62KZMNRfKuqL93f35g0vb0xFGM7aA9ae4BQbQg5Q6+rwusTcznFpcdVkju9
+         a5CkYYdAfAWgpziDw8mlT0CQPK0AdJSDPmvZUDizcnkCf5D7c1NsoSv3EzVivPtbmp+H
+         cBS2bTnzuFpd6B6J8zCyEwC9VCeqWfetErzumJszOK+KmreQEacJYQ0ugFlmsyIHJ4/L
+         azOOQtOvTUe/HjQQD9+t6kdIBa9XvlilFAf/TbBJPBCaphRzc5o4N0ukwRWRE81lS9RT
+         Kbm+wtB4EO2tDww+b2SPXx6yzkVhDTe9oVM8FEp2ELlCeAZHqKVxTpP36m2v4JjONEYo
+         CeKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZQhneiEfM6mnRumeSnRFWJj0ozDfHZaRVxDL2lXaYHQKXZ6W25fjjejAP9WbnbDMUu148tacfjBRl@vger.kernel.org, AJvYcCVl27+o6Jhg4Nznv0fjZ5j2kdESfe/ky7lUIgfukNvu83TV4sU8zvxrQvGDudsXNZxg8HrvmwIpy/R7RQ==@vger.kernel.org, AJvYcCXl5s0IjjAWjRNKLW1mP13BSP97bh9s+BxFwaAZCkadIoufuaC9sIqTU+MkWtSf+XWo2ldMoZJzYWe2N0u1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza/quryKxfbMOV+vZnWg2CZ8fG5wt7gi618CEVs9Jh/5XEtFPO
+	Xvd1bErMuPPE712wtyEYS27Z7vQP22AGXh/4XUbOaaSmTCCvzgil3p7taT5Zal4/
+X-Gm-Gg: ASbGnctVertFYXwfW8vBdZdq28vJDuR+Cns0obrN496/f5JqxphhhkP/Y83Gv8VUWsT
+	Q9BLV/JFQwQnj0i072p4IPZLsB1b3Q+azEHLpWoxUq6vZhOFO/MCawkWlDbR4S6rfN2Mto/i6Q4
+	4QCa+f8oZrSegYYApyTgFq2amIyV/keC98ZJocTyRjrNq6oAnxsOloCpsSyjhc3zNJ+BHvPFSx9
+	9k9umkdaeTQb68njCdwS9cD9xMWwk7jfQNGmjbilgbLee+1b5CvB/5n+sqzvNTgmUh8rKity3D0
+	tJnN0nSLXwD6xSCg2g77o1z7IyCWUea7LE/pZ/YL4hUbIBq7qr21skRG36RdcDgibQ2wc4DFxAr
+	2OYty3YuSKkFbW0g/3xLlbcbfqlZ1tnd9eitv0Dc=
+X-Google-Smtp-Source: AGHT+IHebGfBWUO28zQZivFnlHzXC8tyy8rrbZiBc9Yu7JBp2vheur66LWIJedPc57truLBaQ3Fbkw==
+X-Received: by 2002:a05:6102:3708:b0:4e6:a33d:9925 with SMTP id ada2fe7eead31-4ee4f480368mr7144099137.5.1751272732739;
+        Mon, 30 Jun 2025 01:38:52 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4ee4c7e774csm1178130137.8.2025.06.30.01.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jun 2025 01:38:52 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5313ea766d8so1405296e0c.0;
+        Mon, 30 Jun 2025 01:38:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUc8Z6ufWGVO2xXxZEYI+aXIkFiNQX0pPJ63r7rtSDfI7YhIzcT2Z4PFY5Ec6shBx4lpcvdCaEoFjsjYg==@vger.kernel.org, AJvYcCVSy1gjSMu546ZxGlXPwKP1tnJWcme0goK/pV9oWyTFLdnwzbDgDsKmw1gHmlDj0wN7LAsZWflcxHGJ2466@vger.kernel.org, AJvYcCWnVxOjEVcbEhQsgwUKahfek0o/+7JCizMn2xCE3kUUajJ5n+35XT5herT/WiNcuB54jjrMtEra3g67@vger.kernel.org
+X-Received: by 2002:a05:6122:2526:b0:530:720b:abe9 with SMTP id
+ 71dfb90a1353d-5330bfbe262mr7226304e0c.7.1751272732090; Mon, 30 Jun 2025
+ 01:38:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="hbtofy4xtgn6gof3"
-Content-Disposition: inline
-In-Reply-To: <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
-
-
---hbtofy4xtgn6gof3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250629130002.49842-1-jefflessard3@gmail.com>
+ <20250629130002.49842-7-jefflessard3@gmail.com> <CAMuHMdW+vGr-KyvPr84qr_k1sJV88SFn+oF_oi8_MKJkbyHXbg@mail.gmail.com>
+ <760A6F11-6783-4B24-9A99-E043297CF039@gmail.com>
+In-Reply-To: <760A6F11-6783-4B24-9A99-E043297CF039@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Jun 2025 10:38:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVgEbbOh9t+k5eBoGTD1OTLrC7btgb8O6yZ5f0_y5Q2rw@mail.gmail.com>
+X-Gm-Features: Ac12FXyXU4uC2yPcHJkd5_O4blSGBeChGO91bmJOYDCnSyDkJYaozuzebbF_Dl0
+Message-ID: <CAMuHMdVgEbbOh9t+k5eBoGTD1OTLrC7btgb8O6yZ5f0_y5Q2rw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] dt-bindings: vendor-prefixes: Add Wuxi i-Core Electronics
+To: Christian Hewitt <christianshewitt@gmail.com>
+Cc: =?UTF-8?Q?Jean=2DFran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Boris Gjenero <boris.gjenero@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Paolo Sabatino <paolo.sabatino@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
- interconnects property
-MIME-Version: 1.0
 
-On Mon, Jun 30, 2025 at 10:24:06AM +0200, Krzysztof Kozlowski wrote:
-> On 29/06/2025 14:07, Hans de Goede wrote:
-> > Hi Krzysztof,
-> >=20
-> > On 28-Jun-25 1:49 PM, Krzysztof Kozlowski wrote:
-> >> On 27/06/2025 11:48, Luca Weiss wrote:
-> >>> Hi Krzysztof,
-> >>>
-> >>> On Fri Jun 27, 2025 at 10:08 AM CEST, Krzysztof Kozlowski wrote:
-> >>>> On Mon, Jun 23, 2025 at 08:44:45AM +0200, Luca Weiss wrote:
-> >>>>> Document the interconnects property which is a list of interconnect
-> >>>>> paths that is used by the framebuffer and therefore needs to be kept
-> >>>>> alive when the framebuffer is being used.
-> >>>>>
-> >>>>> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> >>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> >>>>> ---
-> >>>>>  Documentation/devicetree/bindings/display/simple-framebuffer.yaml =
-| 3 +++
-> >>>>>  1 file changed, 3 insertions(+)
-> >>>>>
-> >>>>> diff --git a/Documentation/devicetree/bindings/display/simple-frame=
-buffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffer.=
-yaml
-> >>>>> index 296500f9da05e296dbbeec50ba5186b6b30aaffc..f0fa0ef23d91043dfb2=
-b220c654b80e2e80850cd 100644
-> >>>>> --- a/Documentation/devicetree/bindings/display/simple-framebuffer.=
-yaml
-> >>>>> +++ b/Documentation/devicetree/bindings/display/simple-framebuffer.=
-yaml
-> >>>>> @@ -79,6 +79,9 @@ properties:
-> >>>>>    power-domains:
-> >>>>>      description: List of power domains used by the framebuffer.
-> >>>>> =20
-> >>>>> +  interconnects:
-> >>>>> +    description: List of interconnect paths used by the framebuffe=
-r.
-> >>>>> +
-> >>>>
-> >>>> maxItems: 1, or this is not a simple FB anymore. Anything which needs
-> >>>> some sort of resources in unknown way is not simple anymore. You need
-> >>>> device specific bindings.
-> >>>
-> >>> The bindings support an arbitrary number of clocks, regulators,
-> >>> power-domains. Why should I artificially limit the interconnects to o=
-nly
-> >>> one?
+Hi Christian,
+
+On Mon, 30 Jun 2025 at 10:31, Christian Hewitt
+<christianshewitt@gmail.com> wrote:
+> > On 30 Jun 2025, at 12:19=E2=80=AFpm, Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Sun, 29 Jun 2025 at 15:00, Jean-Fran=C3=A7ois Lessard
+> > <jefflessard3@gmail.com> wrote:
+> >> Assign vendor prefix "icore", based on their domain name.
 > >>
-> >> And IMO they should not. Bindings are not supposed to be generic.
-> >=20
-> > The simplefb binding is a binding to allow keeping the firmware, e.g.
-> > uboot setup framebuffer alive to e.g. show a boot splash until
-> > the native display-engine drive loads. Needing display-engine
-> > specific bindings totally contradicts the whole goal of=20
->=20
-> No, it does not. DT is well designed for that through expressing
-> compatibility. I did not say you cannot have generic fallback for simple
-> use case.
->=20
-> But this (and previous patchset) grows this into generic binding ONLY
-> and that is not correct.
+> >> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail.com>
+> >
+> > Thanks for your patch!
+> >
+> >> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> >> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> >> @@ -694,6 +694,8 @@ patternProperties:
+> >>     description: International Business Machines (IBM)
+> >>   "^ibm,.*":
+> >>     description: International Business Machines (IBM)
+> >> +  "^icore,.*":
+> >> +    description: Wuxi i-Core Electronics Co., Ltd.
+> >
+> > This sounds a bit too generic to me.  What is the domain name?
+>
+> Their domain/website is http://www.i-core.cn/en/ and i-Core is used
+> as the watermark in their datasheets [0]. We=E2=80=99ve thought to drop t=
+he
+> hyphen and use plain =E2=80=98icore=E2=80=99 to avoid future typos.
 
-Can we have a proper definition of what a correct device tree binding is
-then?
+OK (i-core.com seems to be unused, and parked).
 
-It's a bit surprising to have *that* discussion over a binding that is
-now well older than a decade now, and while there is definitely some
-generic bindings in ePAPR/DT spec, like the CPU ones.
+Gr{oetje,eeting}s,
 
-If you don't consider that spec to be correct DT bindings, please
-provide a definition of what that is, and / or reasonable alternatives.
+                        Geert
 
-Also, no, a device specific binding isn't reasonable here, because we
-*don't* have a device. From a technical standpoint, the firmware creates
-the framebuffer, Linux just uses it. Just like you don't have a
-device/platform specific compatible for PSCI, SCPI, et al.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-And from a process standpoint, that driver is typically used years
-before we even get to writing a driver for the actual display driver.
-And since bindings are far from standard and actually pretty
-opionionated, even if we submitted a binding to use a proper binding
-without having a clear idea of what the hardware is, or what a driver
-would want, we would end up with either a broken binding, or a broken
-driver.
-
-Maxime
-
---hbtofy4xtgn6gof3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaGJM/QAKCRAnX84Zoj2+
-dp8lAX0XjiHwXCRnaTDs4vlk7Mk0E+SF7vXGwL4XES2VVQuafyI5PHmNPASOj50l
-8IbNN4EBfjVbhdmCzLalbOYCKk+4j8bq9hixo+ZfPzxdRT2Esn8tvlUHMJa/Um+T
-DOcMcoHSYA==
-=uZYT
------END PGP SIGNATURE-----
-
---hbtofy4xtgn6gof3--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
