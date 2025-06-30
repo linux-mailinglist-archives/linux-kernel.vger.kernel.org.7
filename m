@@ -1,201 +1,106 @@
-Return-Path: <linux-kernel+bounces-709987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A06AEE5A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:24:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C31AEE5BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49FE440C73
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:23:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66B0D7A7D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86792D3EE3;
-	Mon, 30 Jun 2025 17:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1B4286D6F;
+	Mon, 30 Jun 2025 17:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YmXWKfoe"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YETbN4qM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1D2293C52
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 17:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F452C3273;
+	Mon, 30 Jun 2025 17:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751304245; cv=none; b=TgLycyMWfbZniwSDhnZTwb3WOzSNtPzdgf/UulwAK0L7hztCXGq+/SgBv0qFxs4c347s22K/v6WIdzGqFLGTi+ihfr6ybHbTjZkbkdtPF7CCcH8DCHgdH+5+UDwQwLzJhj49WPuo8ZwKNBE4Fqq7s4g/PhqA0jhGQ8akEnOfRF8=
+	t=1751304300; cv=none; b=feLGTdTuQlx1mt8Qhl+zapIu0BqPBSMFQ2KuzmQsDLrJtFb/57gx3xBtA9avk07FjsIiKXJlaIMi1SKqTHTTuxV5YQ6yoaviFq1VaumMMkxT0KPqDimSYLROGnWImR0IRzhyuUt5H7cZCuZdVmGJDSlbkw3TCFPb6l/48ErCqos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751304245; c=relaxed/simple;
-	bh=ueqwGGpg/Hdx6+MscgKsRoTQxKysqzX4M9FHcWBPNVs=;
+	s=arc-20240116; t=1751304300; c=relaxed/simple;
+	bh=uehCu0PQ3Rt5UP3Eqg8DxWd06wirGlh5cnhD9O7bFeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QD+XAN5Z+plCsbl04CvS+TUWP9oc6tcyGlK4FE2aLn/amGbrJF7Wy5E5l2/ozuOx1RLxmP6WJpbDQtFxIGdZkdaQ/6iyczlRQIA2qUQssQYtAE64l8/W1n1Xnv/BStUX+4dNCsAWdiuK7Nt368PXzn/VMEDTQ6GfdWOipGeuBG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YmXWKfoe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43E83C4CEE3;
-	Mon, 30 Jun 2025 17:24:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751304244;
-	bh=ueqwGGpg/Hdx6+MscgKsRoTQxKysqzX4M9FHcWBPNVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YmXWKfoepfC+IOxd3fRYxk+rNtDWqofPK8oO6MXqxviQGqUYMeMJBz4pKljOhOtvZ
-	 WSQcgGIvyRKqJPSZp6Yx/TCN3Dq2gGbMMatggHAZE1oQjg7Jrq00oUrpkgcntMYLgZ
-	 jA/jXUOJjncAKGQY6TTlL5miCjg8h1z3LA3VjNqA=
-Date: Mon, 30 Jun 2025 19:24:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [char-misc-next v2 2/5] mei: make char device control its own
- lifetime
-Message-ID: <2025063039-grab-reclining-1ad8@gregkh>
-References: <20250630091942.2116676-1-alexander.usyskin@intel.com>
- <20250630091942.2116676-3-alexander.usyskin@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXyNK8N4nvLmoyuajOVfXO3XbAaEKLZcbHFVorNHLUkeg80cwM/ANQO1/f32E8KtQeuJ8PsrauVT6ftdjq/9P8TglVgJSBIcjnJNDfF5MaLzN7xV7DNtHjJFNmc8Qn1a4wIJHknEQp4aRVlTV4MBrpXTn4YuyOb135b+31kXcis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=YETbN4qM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5EEC4CEE3;
+	Mon, 30 Jun 2025 17:24:59 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YETbN4qM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1751304298;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mmwZNE2u/jLWQ97nyzsa8bOnYBvTHITQRZ6hjwPm9kM=;
+	b=YETbN4qM+f1cBb669m1/hT7Q4hRI2+0z525cA9bYYlRfOYah39n5n+zgwzsVs0gbBi9NIU
+	M0yaSxKCDBssANSv6sXIfguOLhdf2+vNn3N+VpC3WaXidp2KGUdR6N0dutVq2bSHWVo22D
+	ft0Ay9OF7nLQl4y180ov5VQDK1aOpS8=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 21b57f64 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 30 Jun 2025 17:24:57 +0000 (UTC)
+Date: Mon, 30 Jun 2025 19:24:33 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] wireguard: queueing: simplify wg_cpumask_next_online()
+Message-ID: <aGLIUZXHyBTG4zjm@zx2c4.com>
+References: <20250619145501.351951-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250630091942.2116676-3-alexander.usyskin@intel.com>
+In-Reply-To: <20250619145501.351951-1-yury.norov@gmail.com>
 
-On Mon, Jun 30, 2025 at 12:19:39PM +0300, Alexander Usyskin wrote:
-> Allocate character device dynamically and allow to
-> control its own lifetime as it may outlive mei_device
-> structure while character device closes after parent
-> device is removed from the system.
+On Thu, Jun 19, 2025 at 10:54:59AM -0400, Yury Norov wrote:
+> From: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 > 
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> wg_cpumask_choose_online() opencodes cpumask_nth(). Use it and make the
+> function significantly simpler. While there, fix opencoded cpu_online()
+> too.
+> 
+> Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
 > ---
->  drivers/misc/mei/main.c    | 36 +++++++++++++++++++++++-------------
->  drivers/misc/mei/mei_dev.h |  4 ++--
->  2 files changed, 25 insertions(+), 15 deletions(-)
+> v1: https://lore.kernel.org/all/20250604233656.41896-1-yury.norov@gmail.com/
+> v2:
+>  - fix 'cpu' undeclared;
+>  - change subject (Jason);
+>  - keep the original function structure (Jason);
 > 
-> diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-> index 95d4c1d8e4e6..5335cf39d663 100644
-> --- a/drivers/misc/mei/main.c
-> +++ b/drivers/misc/mei/main.c
-> @@ -51,7 +51,9 @@ static int mei_open(struct inode *inode, struct file *file)
+>  drivers/net/wireguard/queueing.h | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/net/wireguard/queueing.h b/drivers/net/wireguard/queueing.h
+> index 7eb76724b3ed..56314f98b6ba 100644
+> --- a/drivers/net/wireguard/queueing.h
+> +++ b/drivers/net/wireguard/queueing.h
+> @@ -104,16 +104,11 @@ static inline void wg_reset_packet(struct sk_buff *skb, bool encapsulating)
 >  
->  	int err;
->  
-> -	dev = container_of(inode->i_cdev, struct mei_device, cdev);
-> +	dev = idr_find(&mei_idr, iminor(inode));
-> +	if (!dev)
-> +		return -ENODEV;
->  
->  	mutex_lock(&dev->device_lock);
->  
-> @@ -1118,7 +1120,10 @@ void mei_set_devstate(struct mei_device *dev, enum mei_dev_state state)
->  
->  	dev->dev_state = state;
->  
-> -	clsdev = class_find_device_by_devt(&mei_class, dev->cdev.dev);
-> +	if (!dev->cdev)
-
-How can this happen?
-
-> +		return;
-
-No error reported?
-
-
-> +
-> +	clsdev = class_find_device_by_devt(&mei_class, dev->cdev->dev);
->  	if (clsdev) {
->  		sysfs_notify(&clsdev->kobj, NULL, "dev_state");
->  		put_device(clsdev);
-> @@ -1223,16 +1228,21 @@ int mei_register(struct mei_device *dev, struct device *parent)
->  
->  	/* Fill in the data structures */
->  	devno = MKDEV(MAJOR(mei_devt), dev->minor);
-> -	cdev_init(&dev->cdev, &mei_fops);
-> -	dev->cdev.owner = parent->driver->owner;
-> -	cdev_set_parent(&dev->cdev, &parent->kobj);
-> +	dev->cdev = cdev_alloc();
-> +	if (!dev->cdev) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +	dev->cdev->ops = &mei_fops;
-> +	dev->cdev->owner = parent->driver->owner;
-> +	cdev_set_parent(dev->cdev, &parent->kobj);
->  
->  	/* Add the device */
-> -	ret = cdev_add(&dev->cdev, devno, 1);
-> +	ret = cdev_add(dev->cdev, devno, 1);
-
-Shouldn't this be cdev_device_add()?  If not, who frees the cdev when it
-is done?
-
->  	if (ret) {
->  		dev_err(parent, "unable to add device %d:%d\n",
->  			MAJOR(mei_devt), dev->minor);
-> -		goto err_dev_add;
-> +		goto err_del_cdev;
-
-The error name was correct, why change it?
-
->  	}
->  
->  	clsdev = device_create_with_groups(&mei_class, parent, devno,
-> @@ -1243,16 +1253,16 @@ int mei_register(struct mei_device *dev, struct device *parent)
->  		dev_err(parent, "unable to create device %d:%d\n",
->  			MAJOR(mei_devt), dev->minor);
->  		ret = PTR_ERR(clsdev);
-> -		goto err_dev_create;
-> +		goto err_del_cdev;
->  	}
->  
->  	mei_dbgfs_register(dev, dev_name(clsdev));
->  
->  	return 0;
->  
-> -err_dev_create:
-> -	cdev_del(&dev->cdev);
-> -err_dev_add:
-> +err_del_cdev:
-> +	cdev_del(dev->cdev);
-> +err:
->  	mei_minor_free(dev);
->  	return ret;
->  }
-> @@ -1262,8 +1272,8 @@ void mei_deregister(struct mei_device *dev)
+>  static inline int wg_cpumask_choose_online(int *stored_cpu, unsigned int id)
 >  {
->  	int devno;
->  
-> -	devno = dev->cdev.dev;
-> -	cdev_del(&dev->cdev);
-> +	devno = dev->cdev->dev;
-> +	cdev_del(dev->cdev);
+> -	unsigned int cpu = *stored_cpu, cpu_index, i;
+> +	unsigned int cpu = *stored_cpu;
+> +
+> +	if (unlikely(cpu >= nr_cpu_ids || !cpu_online(cpu)))
+> +		cpu = *stored_cpu = cpumask_nth(id % num_online_cpus(), cpu_online_mask);
 
-Was this tested?  What happens when cdev_del() is called like this?  Is
-the memory really freed?
+I was about to apply this but then it occurred to me: what happens if
+cpu_online_mask changes (shrinks) after num_online_cpus() is evaluated?
+cpumask_nth() will then return nr_cpu_ids?
 
->  
->  	mei_dbgfs_deregister(dev);
->  
-> diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
-> index 37d7fb15cad7..0cc943afa80a 100644
-> --- a/drivers/misc/mei/mei_dev.h
-> +++ b/drivers/misc/mei/mei_dev.h
-> @@ -471,7 +471,7 @@ struct mei_dev_timeouts {
->   * struct mei_device -  MEI private device struct
->   *
->   * @dev         : device on a bus
-> - * @cdev        : character device
-> + * @cdev        : character device pointer
->   * @minor       : minor number allocated for device
->   *
->   * @write_list  : write pending list
-> @@ -557,7 +557,7 @@ struct mei_dev_timeouts {
->   */
->  struct mei_device {
->  	struct device *dev;
-> -	struct cdev cdev;
-> +	struct cdev *cdev;
-
-So now nothing owns the lifetime of the mei_device object?  Do things
-still work at this point in time in the patch series?
-
-thanks,
-
-greg k-h
+Jason
 
