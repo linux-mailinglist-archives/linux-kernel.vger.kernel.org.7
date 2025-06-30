@@ -1,189 +1,144 @@
-Return-Path: <linux-kernel+bounces-710235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D5BAEE998
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45419AEE9BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EBB1BC29AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E45A420312
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC7923F405;
-	Mon, 30 Jun 2025 21:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12E5242D71;
+	Mon, 30 Jun 2025 21:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CyBJpy54"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awWrqABl"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110141EE033
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 21:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D231F2BB8;
+	Mon, 30 Jun 2025 21:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751320064; cv=none; b=FeG+up3LZGOXbtyef5sZ3Tri3RvEbUaa2HGDLIvgnmf3fzKUGbh7ct25m+4dcg8uHv4QZZZv43p5p9tuvzJ0vsgnxHOmBYrNnahLtTj+0M7ojeOq5r/rUap+HG02eXRZXoD1PFNekf8pe1p3gOZGfkZL5OlrYY45jfQpQP79W2M=
+	t=1751320414; cv=none; b=bS1jqQQhDDD3ptdGIk2HBI1Ud3y5/vEZ9YZIOjmhfG6cFb4rdJk0/wX0jZ9MUp+78CDbfd+kbYRL2UhBiHNbe7FzH4qVQ5U+83WgepjaKLBELsWPi133xzdLI51JaDAFbth3UwfzAVMh58jnJj5NgjxGZX/zUlEN990dqwSEsIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751320064; c=relaxed/simple;
-	bh=njp18cMH7lr4zfBcTGbAllVh9FmkFpTqoiFl+vPks8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l/dF7s7AZDs9Iz7yl1wjbTmJZXEAMF9kKMiQUH+/LYYsij/6NTUX6lgLvrYGbdCeYMv63+dNPPB04grAaBOEHIZBTIJD2nrG+oVqd+X/FQ2xgoPuRkQRxEt4mMu1EW/OqQ1LTPISrJAdmDZhEbLj8nqSv9HKPj4GJvVzPgr/lsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CyBJpy54; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-237f270513bso23165ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:47:42 -0700 (PDT)
+	s=arc-20240116; t=1751320414; c=relaxed/simple;
+	bh=Gw4w+JlfU8ZSipHyP2abRxrCX6poC9T1o7K49sJWZcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dSGUphSOrFE8nVoJtC4KHltpAtk7QxQ4blkFSFHl2WuC2x7cIZyJG+dXS03mecHGGcOOOghKmZFNv3Mrj4WFr62YljlDSPHNuYQTr2HRQGXl2FBQQm10/BxT1E7GmSlbCXWtKPgwH3ACvZQVMM94PV3CrbfgeZmUV1u9k1yitUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=awWrqABl; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a752944794so57601981cf.3;
+        Mon, 30 Jun 2025 14:53:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751320062; x=1751924862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=njp18cMH7lr4zfBcTGbAllVh9FmkFpTqoiFl+vPks8o=;
-        b=CyBJpy54HrdgrAdmcXj5TbVqL39fJny9fkO7ZYzz6okcCPm/kBoMEPsZsDYys8qI2y
-         xx4bt+UBpiBVXTNJcOvCEnEda82tLn1YneBuphHKl0gqukL2YYLqjIiXOjvCxfaDBaTv
-         XWvygiI4PNW6a++Si2CS0zJlX3UrdKyZdHYLISq/P9utqfPqtcbC1BOrhIbwPA1KSndf
-         I4CxaCfFgfAhzOoe7ato6PRx/Q0KKj5fpYbB5xJkCIPG6frDtywvJR/joQvvZm/nkh2S
-         94CkHZDc4Qi/pbzoiioolaPX2OvCHs4Ul8whv+yRwg/s3pultrkezNs3qZpT6DHPmvJ1
-         5pGQ==
+        d=gmail.com; s=20230601; t=1751320410; x=1751925210; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nOqcQ9E+8drflPFHAs4vSUWLT7BoxqpED98LP9u+w/s=;
+        b=awWrqABlyV2PxU2sAz61nh09jFkpIfD5kUM58Cx1DB6nXbhhV/iVS2EMURp4R7LzdL
+         kwu+kfGbwZv0Tsbd5xcdG06FHNMpOk0DxcIun/CTKNAj+A1Nz5rSWZUyB+gC9plllKbN
+         JlViHJkxrpSuEjGcHZchughkBlEQNvLGdPlk6Ago+W3BJe1NzLtYdwUWK3AZvr0tVLNJ
+         2pf4L37rgOU0jKdDaH8e5sS7UmlhDB8QYSt6TKA4bfadc75p9crEkOQKLyqLdBePo9SP
+         h7BqULWmN1qmBks+ippBFAx9wa8aN0g6KDwKdY2neTudDXe8TiV1cA0Z4C/ycU68oWha
+         LtWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751320062; x=1751924862;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=njp18cMH7lr4zfBcTGbAllVh9FmkFpTqoiFl+vPks8o=;
-        b=n/mixawz74PkdwP+xbacwD4tpnlv1EjPLgoOlTi5JjMvXS4uPw68rQLf+lL/NxQfDG
-         mjTYpzUMTdFdsLOSgGhFNh45p1GjYgb0AX3pYjELFyW6vKJatcz5GQO4sSBCwUIM+xYg
-         sg0ns05WS2Dn3qr0mTr4DW0nupsd0+rdya0QlWn0AvKY1QNCfZFAh64n5kafk5VP/8af
-         nPwelRbWkAt88h04EiGQB0jeAvp4C1csTOeiPK4hz+wtQ+QxM7aCsvOePnwiypip3gt0
-         C+8/ync3Wip5fSTxToiacsIJCRo8ZXVfsZ/ozMEcH6vJPPQPipCLgV068ipqwlOgMpU7
-         kQBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlgltBgSuCgI2gNyD8mOhKyripCzCO+EkkegmjFeWUHq5Y4TYxbZD+6NryZ0B5bfldEY/MM+nJvFAuhKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk2PS+i6U7KVcv8vl15tFEhqiGeSH3oazsCaBf2KIZGnThGdjM
-	UfPDbL42EKTUk051gXnGIxWC93qon3RF290m1nxFFNY3NcU7A8HoxLZ4ubHrDrkxTkzlNqeDz+5
-	4DRDUu2Zf/i5Vjodvch+NiPP7KENssYXeOQ4nRaGb
-X-Gm-Gg: ASbGnctXyZJEd5AFu+JglCH7GFghvVT9VA1ItSXcxPuOexwrl76KyENLs9bBmQDeupN
-	Ol096jZGjjVeIJRQz616H5E29SC7zuHltpD50TQJA/CC0tqtcRDWWHWNIt3yMuHVSpgavGQ7a02
-	G8137Yeg6tbE/B2Zap26jTAIgnq2JnHVMeeyGkBwSfUq+JoHErZ+YBYXxAmNYgJs9fXiS+SmASa
-	w==
-X-Google-Smtp-Source: AGHT+IHsWoC5sk+fyO84erG9pnGz0dVeBMB05RRyjItIsROjgVEDZADKjWslFCfn2O3PbQtz0KUZqLi2S0IiIcE95ac=
-X-Received: by 2002:a17:902:f547:b0:237:edb8:21c0 with SMTP id
- d9443c01a7336-23c5f5c9902mr247665ad.11.1751320061442; Mon, 30 Jun 2025
- 14:47:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751320410; x=1751925210;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nOqcQ9E+8drflPFHAs4vSUWLT7BoxqpED98LP9u+w/s=;
+        b=ecw/6eJyV1yakGaUkIGIWr9WVFxYYUepV8Wb0JWJ9PyA8NN87XWGR8inU5HSlO7qJV
+         4rLOUsUPGMzOIgeBcjV9cm7a0tJhZY2ra+BFyBt5fwXGLfwjhw1dAEHVE3xJ9EP48OKJ
+         d1Mscpiph3ARClrlMuoOkhXEdVAEeVQAQrCnCaWXMNVUhZbVADY9KCygq70g6jIXfTBc
+         FaRgv62yUpwLQ7HULFGipJf3RXONwpnb1YO06NRbPfFnN5cTtzkeOIqVrwyWvT5Y7ikw
+         cXZF1eAy0pIjc21ukclVB8qV7jT7Sa2QoeZ0kQ39QSiVYlVrT/s3hL9wGl20mPAOiYEh
+         Fpng==
+X-Forwarded-Encrypted: i=1; AJvYcCUq/EdMThiyDXYvoa+b9Zlw8Q3SR1Q2KZg9foN6vlBu466R97YQvr0FrlbYAeSgbjyaxjNPp/yTHYRnGfA=@vger.kernel.org, AJvYcCV4hvzK2MLEq7OD8OlXG+9EN6wM2qHzdITRRv3x7NpLol0Vpp/BmJXp4JNB2MYfxPVJ0L1El2N14QP8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUjQ1Aap6SRbUQlqHZCIT7eMvIRRD0NvuT3H0fle+FiC1WAkb3
+	SX9m3MFVpmi0AotC8ehg/tA3aJOFuOwTMSKT5yqut3vQocUJhmQcdPrS
+X-Gm-Gg: ASbGncvzW8j2IaC/azmZB/RbqxmgIUKhWJe807emsk4iTmvpRR+FHVXvaJG72oG+0y3
+	5jmexYuZZ9QrZSYA/G0p2x/efonBzNQSVBQmPNKJdTUFbYE9k7xROMDKyj2Yshhdh5I7EGZHVjB
+	ul7ur+0mq31J6i+WwTuuGqOYrVcVFaD5mNxmiLBvHWNiLyraGWOsSpQLy524RQm7qB2CMWNaCRP
+	ALIC7DxyFodlXtsd4oiH44tUrv/sS6jVHIZpzqgSgcJyqhYoeJx6R/nX6P/UYuXwGfb80fEcyLB
+	yw6HAnAH6HMjhPCq4JNAKNYfsx6MYemHTKeSWv9T9S9bfJbCwzC5jxELRABS
+X-Google-Smtp-Source: AGHT+IGpu1rUc2wPFEaXEFiIZuBQa75ZWCWrqwnzIwLkgnPr75eA1zu83NjRcG7DPZSdyWYMNBDIag==
+X-Received: by 2002:ad4:5b83:0:b0:6fd:cfe:eb95 with SMTP id 6a1803df08f44-70001a48ff4mr237172516d6.17.1751320410561;
+        Mon, 30 Jun 2025 14:53:30 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:4851::dead:c001])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd77307918sm74425236d6.101.2025.06.30.14.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 14:53:30 -0700 (PDT)
+Date: Mon, 30 Jun 2025 18:53:19 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rick wertenbroek <rick.wertenbroek@gmail.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Valmantas Paliksa <walmis@gmail.com>, linux-phy@lists.infradead.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/4] PCI: rockchip: Improve driver quality
+Message-ID: <cover.1751320056.git.geraldogabriel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <draft-diqzh606mcz0.fsf@ackerleytng-ctop.c.googlers.com>
- <diqzy0tikran.fsf@ackerleytng-ctop.c.googlers.com> <c69ed125c25cd3b7f7400ed3ef9206cd56ebe3c9.camel@intel.com>
- <diqz34bolnta.fsf@ackerleytng-ctop.c.googlers.com> <a3cace55ee878fefc50c68bb2b1fa38851a67dd8.camel@intel.com>
- <diqzms9vju5j.fsf@ackerleytng-ctop.c.googlers.com> <447bae3b7f5f2439b0cb4eb77976d9be843f689b.camel@intel.com>
- <zlxgzuoqwrbuf54wfqycnuxzxz2yduqtsjinr5uq4ss7iuk2rt@qaaolzwsy6ki>
- <4cbdfd3128a6dcc67df41b47336a4479a07bf1bd.camel@intel.com>
- <diqz5xghjca4.fsf@ackerleytng-ctop.c.googlers.com> <aGJxU95VvQvQ3bj6@yzhao56-desk.sh.intel.com>
- <a40d2c0105652dfcc01169775d6852bd4729c0a3.camel@intel.com>
-In-Reply-To: <a40d2c0105652dfcc01169775d6852bd4729c0a3.camel@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Mon, 30 Jun 2025 14:47:27 -0700
-X-Gm-Features: Ac12FXzpGhie6P7qqJellgAG_ykX6J8coKdCCg1rWv1bbXPxNkzaSLSQsh0c13s
-Message-ID: <CAGtprH9DNVBTMZJuDQEHYBRJqUfWQJgv-2cveXqdE=TSAvp0fA@mail.gmail.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "ackerleytng@google.com" <ackerleytng@google.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "Du, Fan" <fan.du@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "jroedel@suse.de" <jroedel@suse.de>, 
-	"Miao, Jun" <jun.miao@intel.com>, "pgonda@google.com" <pgonda@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jun 30, 2025 at 10:55=E2=80=AFAM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
->
-> On Mon, 2025-06-30 at 19:13 +0800, Yan Zhao wrote:
-> > > > ok! Lets go f/g. Unless Yan objects.
-> > I'm ok with f/g. But I have two implementation specific questions:
-> >
-> > 1. How to set the HWPoison bit in TDX?
-> > 2. Should we set this bit for non-guest-memfd pages (e.g. for S-EPT pag=
-es) ?
->
-> Argh, I guess we can keep the existing ref count based approach for the o=
-ther
-> types of TDX owned pages?
->
-> >
-> > TDX can't invoke memory_failure() on error of removing guest private pa=
-ges or
-> > S-EPT pages, because holding write mmu_lock is regarded as in atomic co=
-ntext.
-> > As there's a mutex in memory_failure(),
-> > "BUG: sleeping function called from invalid context at kernel/locking/m=
-utex.c"
-> > will be printed.
-> >
-> > If TDX invokes memory_failure_queue() instead, looks guest_memfd can in=
-voke
-> > memory_failure_queue_kick() to ensure HWPoison bit is set timely.
-> > But which component could invoke memory_failure_queue_kick() for S-EPT =
-pages?
-> > KVM?
->
-> Hmm, it only has queue of 10 pages per-cpu. If something goes wrong in th=
-e TDX
-> module, I could see exceeding this during a zap operation. At which point=
-, how
-> much have we really handled it?
->
->
-> But, at the risk of derailing the solution when we are close, some reflec=
-tion
-> has made me question whether this is all misprioritized. We are trying to=
- handle
-> a case where a TDX module bug may return an error when we try to release =
-gmem
-> pages. For that, this solution is feeling way too complex.
->
-> If there is a TDX module bug, a simpler way to handle it would be to fix =
-the
-> bug. In the meantime the kernel can take simpler, more drastic efforts to
-> reclaim the memory and ensure system stability.
->
-> In the host kexec patches we need to handle a kexec while the TDX module =
-is
-> running. The solution is to simply wbinvd on each pCPU that might have en=
-tered
-> the TDX module. After that, barring no new SEAMCALLs that could dirty
-> memory, the pages are free to use by the next kernel. (at least on system=
-s
-> without the partial write errata)
->
-> So for this we can do something similar. Have the arch/x86 side of TDX gr=
-ow a
-> new tdx_buggy_shutdown(). Have it do an all-cpu IPI to kick CPUs out of
-> SEAMMODE, wbivnd, and set a "no more seamcalls" bool. Then any SEAMCALLs =
-after
-> that will return a TDX_BUGGY_SHUTDOWN error, or similar. All TDs in the s=
-ystem
-> die. Zap/cleanup paths return success in the buggy shutdown case.
+During a 30-day debugging-run fighting quirky PCIe devices on RK3399
+some quality improvements began to take form and after feedback from
+community they reached more polished state.
 
-This approach makes sense to me.
+This will ensure maximum chance of retraining to 5.0GT/s, on all four
+lanes and fix async strobe TEST_WRITE disablement. On top of this,
+standard PCIe defines are now used to reference registers from offset
+at Capabilities Register.
 
->
-> Does it fit? Or, can you guys argue that the failures here are actually n=
-on-
-> special cases that are worth more complex recovery? I remember we talked =
-about
-> IOMMU patterns that are similar, but it seems like the remaining cases un=
-der
-> discussion are about TDX bugs.
->
+Unfortunately, it seems Rockchip-IP PCIe is unable to handle 16-bit
+register writes and there's risk of corrupting state of RW1C registers,
+an issue raised by Bjorn Helgaas. There's little I could do to fix that,
+so on this issue the situation remains the same.
+
+---
+V8 -> V9: modify third patch to better reflect authorship by Valmantas
+V7 -> V8: add Valmantas Paliksa Signed-off-by to third patch
+V6 -> V7: drop RFC tag as per Heiko Stuebner's reminder, update cover
+letter
+V5 -> V6: reflow to 75 cols, use 5.0GTs instead of Gen2 nomenclature,
+clarify strobe write adjustment and remove PHY_CFG_RD_MASK
+V4 -> V5: fix build failure, reflow commit messages and also convert
+registers for EP operation, all suggested by Ilpo
+V3 -> V4: fix setting-up of TLS in Link Control and Status Register 2,
+also adjust commit titles
+V2 -> V3: correctly clean-up with standard PCIe defines as per Bjorn's
+suggestion
+V1 -> V2: use standard PCIe defines as suggested by Bjorn
+
+Geraldo Nascimento (3):
+  PCI: rockchip: Use standard PCIe defines
+  PCI: rockchip: Set Target Link Speed before retraining
+  phy: rockchip-pcie: Properly disable TEST_WRITE strobe signal
+
+Valmantas Paliksa (1):
+  phy: rockchip-pcie: Enable all four lanes if required
+
+ drivers/pci/controller/pcie-rockchip-ep.c   |  4 +-
+ drivers/pci/controller/pcie-rockchip-host.c | 48 +++++++++++----------
+ drivers/pci/controller/pcie-rockchip.h      | 12 +-----
+ drivers/phy/rockchip/phy-rockchip-pcie.c    | 15 +++----
+ 4 files changed, 36 insertions(+), 43 deletions(-)
+
+-- 
+2.49.0
+
 
