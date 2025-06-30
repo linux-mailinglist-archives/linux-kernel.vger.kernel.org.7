@@ -1,149 +1,140 @@
-Return-Path: <linux-kernel+bounces-709995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D232FAEE5C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:27:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8290AAEE5C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E2FA7AD5D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E50616C4CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4018D29A301;
-	Mon, 30 Jun 2025 17:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BD72E4277;
+	Mon, 30 Jun 2025 17:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tpvwRlWq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JRR6aFMl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5038F54
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 17:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E70F292B35
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 17:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751304470; cv=none; b=KnPGrzQheMej/jhco5n5HP0IBqjRnphtMq3pENeo7+d2HuKCaFboRZuWisBMvbuQqBGySeA1t3eAxZpe0/kwITLmV9007VDx5phP5SJC7eCeZ8LRPv+aZyZvSDTRGFScgSstH5mwuGC2IYkDcjAnkAGVhvTYOUpHa/tQcG55XAs=
+	t=1751304520; cv=none; b=a5AkLxaaw8ED4P4h29y5CYFu0klW94O3bSk0A5cTFdK8EMaEI9Ip53tHGe9WT+2cJb8f2XKbhYJTg8RFROPYLYzbvlk5tLuPAFY/qCoS7LwVM296ezBVMyyLlIrkZUi9kkoDX6oPecs9O1SZivVG3zKbvtu3oAc6qdwn5IaiTpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751304470; c=relaxed/simple;
-	bh=YCbHZEpIXZjy1jxWCAr3ksBnmXEcq4E+jG1I2WWdpTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dH9cNGmkBKEJSpfmKq4lyGANOemCoGhpvVX31R1qHpvw5lSbZcEikDYSdrpmDyDski6/icqKFhZ6WjtGUFOHWu4jkJZ0sMCNyuWz0bUvO9JajpLM/w+TVB8zppdvSxnnqeh/EulLZnNibT+oFsS5GpBNVUfGwVx7t8azNB6mq3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tpvwRlWq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF223C4CEE3;
-	Mon, 30 Jun 2025 17:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751304470;
-	bh=YCbHZEpIXZjy1jxWCAr3ksBnmXEcq4E+jG1I2WWdpTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tpvwRlWq/kHENwrzP2osQniwZ61N7e9DO+wfKTsjruIKmv4zAxK7vtAoIylexNWN6
-	 bIC8lC7cZ7YmZlNzpLCBVUVoEgdrOBEiP9R0iDsCdHXwe1dHsVbvroROVDWt6tOXb2
-	 OoSgiI7gvedOH5f0ugdIPkg8h/KG5Hh8OdUVPs8o=
-Date: Mon, 30 Jun 2025 19:27:47 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [char-misc-next v2 5/5] mei: create dedicated device object
-Message-ID: <2025063045-bronchial-veggie-8288@gregkh>
-References: <20250630091942.2116676-1-alexander.usyskin@intel.com>
- <20250630091942.2116676-6-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1751304520; c=relaxed/simple;
+	bh=AZysZLAfMgjijyvGawDaXqme8p+2Ab++Mdy0TlE6OKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=txYDyI9j2n67b9RP0bZvIcS9P6VfLYqlYDvvGIvsUcuneFn8b+cfBnW+9QSpPz3yHZtJz390EEnskgRZL789QtctgTtY3ubAfm3ZO/zCp17zn/dSRd7VEGqdj8JDICinK5mN6gsV/WnAU3g5Z/74Q9eP1gjXpurquF7DYQ+oISQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JRR6aFMl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751304517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XTEw+AZQXJDFo+sYwotNPS7NL0XSe5VzVOicEJ3vP2I=;
+	b=JRR6aFMljSUZSkipX7pHQSTAS4suuH7aqdhHEEAkumdy+1hwrW3/snBonqq3lmKlSNaqNo
+	cvHrWcaHYbjkgqNvVQmldfIJs/x6fLYy3f3gXFuNb8pR8/IJYSg32mbGMZA+z+Qp5hX4s4
+	ny6vGz2yK3RVLtVXNbaSODExTDwa2W0=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-154-YWkc9KKxN8SvzF4-jv2ytA-1; Mon, 30 Jun 2025 13:28:35 -0400
+X-MC-Unique: YWkc9KKxN8SvzF4-jv2ytA-1
+X-Mimecast-MFC-AGG-ID: YWkc9KKxN8SvzF4-jv2ytA_1751304515
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ddd689c2b8so8089725ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:28:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751304515; x=1751909315;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XTEw+AZQXJDFo+sYwotNPS7NL0XSe5VzVOicEJ3vP2I=;
+        b=MTf6al/jHeVe1OR4HMk9D6PrRz19S56qLlGlbwOnz5RyBdSgsV9vF8o/RyS5lfROuD
+         A9UZHOsc9sGUHf1zq+NDFUz6AAinYHXlAyfp3w20fAENaRN7rqcGjt0zwMskthaLXShq
+         cU2iE+6oKNmrHTQ/11v4Vgiw2Ca0Uf4r1grL/hoFELGW6dA53nQBEpoS+kY+szxrrcx+
+         F5ld9zK5SlSSYbYcGjOQTvB8MczY1NCYDG2xBS8q30QXJDJoQ1F3PQRyYrDHNE9ZIWBn
+         dMJA+JnbKoVD0nOEUbSSH6kL8J4lL6H3bQkV/IyTYVj1aVmoDCbAselOCQEdzYdPnUt5
+         ca5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxdLZuBiuDgbCHZp5dDj0C3Ws5rkZPqSFJDsrizg2JH+/WEpS8wxU8/ZgrPV+a7kVJO3Ln2Y2DXGt/0q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz52jC/a8Nb/NjK1g6gchfLZcieEt1B2R4Hw8zgOBEPstK8QAx6
+	GHDC6kzjvJAj1ForfR7ysY4VU2QvKI5zaqUni3jtc2IN9Aq+272aZH9s/9mV5L7RXE+mXsSS3eS
+	AiO0Y1lDEarjlXJL3Np7oZR1D60CGkCYuxDSx22nuSyWEMObcBnFjyp/Hs/SETrhPpw==
+X-Gm-Gg: ASbGncv7jTjK0iqJgOa2bq8z7iJ0NoOjk/0KOvF5ISdLc2zKkJh1MqXY3pPO8z7FSwA
+	menvsgp6br41X9E8stGwh2z/dYVMbpzmA3lq6NQpZ0SE8+xobREqSSUby0mV7g3QvKCRc3FjL1u
+	UNG/XQTT8xmRFpOF5X6FFPw4KF8BIOtGFxKdIp6GDxIvRrm5oL6IoK1DQHSuPiVkNQw7UCTBvwU
+	1XuMSX0o43F+7chJU3aiuV/JwNohKANi1BzDKvfJJQaOa362rquQc+lLvdUezwYZPFnoW4RmDxY
+	GjM03fe4hPYu5OnwN8DHQctxbg==
+X-Received: by 2002:a05:6602:14c7:b0:85d:9738:54ac with SMTP id ca18e2360f4ac-8769649f507mr329258039f.2.1751304514872;
+        Mon, 30 Jun 2025 10:28:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBhqZGB3QLk7wR0Imzc7PvjRuRP90fkt1j/6bV+xvH6DMJu6hPhaHCi38lYJceTKtXqQLTKw==
+X-Received: by 2002:a05:6602:14c7:b0:85d:9738:54ac with SMTP id ca18e2360f4ac-8769649f507mr329256939f.2.1751304514474;
+        Mon, 30 Jun 2025 10:28:34 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50204860506sm2003757173.9.2025.06.30.10.28.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 10:28:33 -0700 (PDT)
+Date: Mon, 30 Jun 2025 11:28:31 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Artem Sadovnikov <a.sadovnikov@ispras.ru>
+Cc: kvm@vger.kernel.org, Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe
+ <jgg@ziepe.ca>, Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH] vfio/mlx5: fix possible overflow in tracking max
+Message-ID: <20250630112831.2207fa2e.alex.williamson@redhat.com>
+In-Reply-To: <20250629095843.13349-1-a.sadovnikov@ispras.ru>
+References: <20250629095843.13349-1-a.sadovnikov@ispras.ru>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630091942.2116676-6-alexander.usyskin@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 30, 2025 at 12:19:42PM +0300, Alexander Usyskin wrote:
-> mei_device lifetime is managed by devm procedure of parent device.
+On Sun, 29 Jun 2025 09:58:43 +0000
+Artem Sadovnikov <a.sadovnikov@ispras.ru> wrote:
 
-Ick, what could go wrong...
-
-Hint, devm is not a good thing to ever use for other reference counted
-structures that can be incremented/decremented independently.  This is
-probably never going to work.
-
-> But such memory is freed on device_del.
-> Mei_device object is used by client object that may be alive after
-> parent device is removed.
-> It may lead to use-after-free if discrete graphics driver
-> unloads mei_gsc auxiliary device while user-space holds
-> open handle to mei character device.
-
-Ah, are you trying to explain what happens today?  This isn't obvious.
-
-> Add dedicated device object to control driver
-> private data lifetime.
-
-But where is that device in sysfs now?
-
-> Rename exising parent device pointer from
-> dev to parent to avoid misuse.
-
-Why not do this rename first?
-
-> Leave power management on parent device as
-> user-space is expecting it there.
-
-Why?  That feels totally wrong.
-
-How does sysfs look before/after this change?  Is the bus still
-addressed properly?
-
+> MLX cap pg_track_log_max_msg_size consists of 5 bits, value of which is
+> used as power of 2 for max_msg_size. This can lead to multiplication
+> overflow between max_msg_size (u32) and integer constant, and afterwards
+> incorrect value is being written to rq_size.
 > 
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> Fix this issue by extending max_msg_size up to u64 so multiplication will
+> be extended to u64.
+
+Personally I'd go with changing the multiplier to 4ULL rather than
+changing the storage size here, but let's wait for Yishai and Jason.
+Thanks,
+
+Alex
+
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Signed-off-by: Artem Sadovnikov <a.sadovnikov@ispras.ru>
 > ---
->  drivers/misc/mei/bus-fixup.c    |   6 +-
->  drivers/misc/mei/bus.c          |  24 ++++---
->  drivers/misc/mei/client.c       |  82 +++++++++++-----------
->  drivers/misc/mei/client.h       |   6 +-
->  drivers/misc/mei/dma-ring.c     |   8 +--
->  drivers/misc/mei/gsc-me.c       |  13 ++--
->  drivers/misc/mei/hbm.c          | 121 +++++++++++++++-----------------
->  drivers/misc/mei/hw-me.c        | 101 +++++++++++++-------------
->  drivers/misc/mei/hw-txe.c       |  62 ++++++++--------
->  drivers/misc/mei/init.c         |  85 +++++++++++++++-------
->  drivers/misc/mei/interrupt.c    |  45 ++++++------
->  drivers/misc/mei/main.c         |   9 ++-
->  drivers/misc/mei/mei_dev.h      |  11 +--
->  drivers/misc/mei/pci-me.c       |  12 ++--
->  drivers/misc/mei/pci-txe.c      |  10 ++-
->  drivers/misc/mei/platform-vsc.c |  18 ++---
->  16 files changed, 331 insertions(+), 282 deletions(-)
+>  drivers/vfio/pci/mlx5/cmd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
-> index 90dba20b2de7..e6a1d3534663 100644
-> --- a/drivers/misc/mei/bus-fixup.c
-> +++ b/drivers/misc/mei/bus-fixup.c
-> @@ -386,7 +386,7 @@ static int mei_nfc_if_version(struct mei_cl *cl,
->  	ret = __mei_cl_send(cl, (u8 *)&cmd, sizeof(cmd), 0,
->  			    MEI_CL_IO_TX_BLOCKING);
->  	if (ret < 0) {
-> -		dev_err(bus->dev, "Could not send IF version cmd ret = %d\n", ret);
-> +		dev_err(&bus->dev, "Could not send IF version cmd ret = %d\n", ret);
->  		return ret;
->  	}
->  
-> @@ -401,14 +401,14 @@ static int mei_nfc_if_version(struct mei_cl *cl,
->  	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, &vtag,
->  				   0, 0);
->  	if (bytes_recv < 0 || (size_t)bytes_recv < if_version_length) {
-> -		dev_err(bus->dev, "Could not read IF version ret = %d\n", bytes_recv);
-> +		dev_err(&bus->dev, "Could not read IF version ret = %d\n", bytes_recv);
->  		ret = -EIO;
->  		goto err;
->  	}
->  
->  	memcpy(ver, reply->data, sizeof(*ver));
->  
-> -	dev_info(bus->dev, "NFC MEI VERSION: IVN 0x%x Vendor ID 0x%x Type 0x%x\n",
-> +	dev_info(&bus->dev, "NFC MEI VERSION: IVN 0x%x Vendor ID 0x%x Type 0x%x\n",
->  		 ver->fw_ivn, ver->vendor_id, ver->radio_type);
+> diff --git a/drivers/vfio/pci/mlx5/cmd.c b/drivers/vfio/pci/mlx5/cmd.c
+> index 5b919a0b2524..0bdaf1d23a78 100644
+> --- a/drivers/vfio/pci/mlx5/cmd.c
+> +++ b/drivers/vfio/pci/mlx5/cmd.c
+> @@ -1503,7 +1503,7 @@ int mlx5vf_start_page_tracker(struct vfio_device *vdev,
+>  	struct mlx5_vhca_qp *fw_qp;
+>  	struct mlx5_core_dev *mdev;
+>  	u32 log_max_msg_size;
+> -	u32 max_msg_size;
+> +	u64 max_msg_size;
+>  	u64 rq_size = SZ_2M;
+>  	u32 max_recv_wr;
+>  	int err;
 
-When drivers are working, they should be quiet :)
-
-thanks,
-
-greg k-h
 
