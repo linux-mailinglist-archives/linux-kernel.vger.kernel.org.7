@@ -1,107 +1,117 @@
-Return-Path: <linux-kernel+bounces-709421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF648AEDD82
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:50:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DCBAEDD87
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0A73BEE22
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0205E3A272B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA47028724A;
-	Mon, 30 Jun 2025 12:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9B228A41B;
+	Mon, 30 Jun 2025 12:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAl2458W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSyDPUrP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A08B2CCC9;
-	Mon, 30 Jun 2025 12:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E468285C9C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751287849; cv=none; b=aiLCr7ym3jjJngphjzvIGbkOlvT4SziAq+mX3fYIrDvggYvNwWDe54WZHTanw6q4GhHY9gEVHd5YiAnukoNsEkC8AlTHo6SEz429ufqTkSOE42iqoG/VMjL/msGXPK2Du6xhzhEHRFTFB2sc99Y2k/Df4pe9+8C/3vsbgrCW1S4=
+	t=1751287874; cv=none; b=DLkJNeGbX7T7PbziX9em2FmuJtdbpDNitEIJko9CMdIQMhswfP5KCQx/XcLi8LAoEeSJat/fKxjoOg9CgGvBTnmOl0wSEWO00JzjqZLBztMcBbmrR0+6QjAcAZ8L7sqREyFyc1cnE+je9iaMp2yjTLnKsbH52Vm0jUzoAJ2nelM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751287849; c=relaxed/simple;
-	bh=hsHw6bpXmSZW6CwH1/RrZulsuZqOy0tW9oGHlgfUVF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=clL8VfEWTv36E1BNHUvyK47K4Yt17WBgEIdXobZ4V1YAPunn9wsri45ngvg7Qhp4gcPaxSiwlGIzP1SEKZkZ3nHYq++qG5CD64+yZAmrK2wyKMBMlwhTGRyxcitfsfcm7LqJ2kPVIEH50S7hMo6fN4UV7c6UpUJ71SB+0eVVsGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAl2458W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 898C7C4CEF0;
-	Mon, 30 Jun 2025 12:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751287848;
-	bh=hsHw6bpXmSZW6CwH1/RrZulsuZqOy0tW9oGHlgfUVF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EAl2458W9At11F1iMq/0Arwgs8CoZ/KopI5BQ1ETxc9T0+4fNyvIo0sGbCP7EWQpf
-	 GXq669/I+ZNHd5LEzoINdfPJcoVLaFUyDXLuLYbeFBKyGys5HJhax1Vb9gSF6JwIyb
-	 N8JAg2qEbTCHwRTdleww73xb3rDU7BwuWE6CBt2aftu37w1DdAx04qOYU+0vTiXftp
-	 VmGCuG3LixSS7nDovbV/CEhEANKAN33tUuJmMEubnNxadcCW69foB1NWZHuIMBdOt5
-	 6zg1ZgeZgBj2ThvFqt2iQ3am+qTk5piUt/cl3161U6Mq4pQFbYf58XqFQswlCQTdEE
-	 NfAI2az8BBASA==
-Date: Mon, 30 Jun 2025 13:50:43 +0100
-From: Will Deacon <will@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>,
-	Steven Moreland <smoreland@google.com>,
-	Frederick Mayle <fmayle@google.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	netdev@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH 0/5] vsock/virtio: SKB allocation improvements
-Message-ID: <aGKII2RcxMpBY3Zc@willie-the-truck>
-References: <20250625131543.5155-1-will@kernel.org>
- <izmrcafyog7cxvef2nipk5f2vzxxptyc4fopnvl3heqslsp7q6@32ssw2piag6h>
+	s=arc-20240116; t=1751287874; c=relaxed/simple;
+	bh=8ujMhUl7i4M3zObpjxjLUh1ZT+VHzlsAgD+fcoPERC8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=obTXrWrUfdk0b2NAiCegdVfezC0OiiDxzwRBLC7jAIl9YfeiEW5XAjOwkfaPoTpREgAPIrlBI3vk9lodq92qr4JWU/4wUSL/jiax6TDeCQRKdTQi2lMCPbwfjXG19eyLcCdHFEoVzwI0Ns8JOtc090yg5LCnjkD7xSF8s4ayhuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TSyDPUrP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751287872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=84LuPZ9pN40vZZj6LotxaTZH2u/8fUAdfMA409beGHI=;
+	b=TSyDPUrP4Vj5OtqEA7MLBoNqkFaMa3sKRKU4Msq3IUaxJy2sW7xudL1j7AhEDYu/FPT4U+
+	YnkUl2zMZFhVSBgoUlETigXfFoCVjqSzMYoCoEHIX8ibod39okdS8shQy1lOPCNDumfYNT
+	q7WnnJvjdNQEx3TGBxLkgOhY/rl9344=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-624-CKIX6GAvPeiF6kLzFqpz0Q-1; Mon,
+ 30 Jun 2025 08:51:08 -0400
+X-MC-Unique: CKIX6GAvPeiF6kLzFqpz0Q-1
+X-Mimecast-MFC-AGG-ID: CKIX6GAvPeiF6kLzFqpz0Q_1751287866
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D6061800287;
+	Mon, 30 Jun 2025 12:51:05 +0000 (UTC)
+Received: from oldenburg3.str.redhat.com (unknown [10.44.33.80])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57A451956095;
+	Mon, 30 Jun 2025 12:50:56 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
+  bpf@vger.kernel.org,  x86@kernel.org,  Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,  Josh Poimboeuf <jpoimboe@kernel.org>,
+  Peter Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@kernel.org>,
+  Jiri Olsa <jolsa@kernel.org>,  Namhyung Kim <namhyung@kernel.org>,
+  Thomas Gleixner <tglx@linutronix.de>,  Andrii Nakryiko
+ <andrii@kernel.org>,  Indu Bhagat <indu.bhagat@oracle.com>,  "Jose E.
+ Marchesi" <jemarch@gnu.org>,  Beau Belgrave <beaub@linux.microsoft.com>,
+  Jens Remus <jremus@linux.ibm.com>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v11 00/14] unwind_user: x86: Deferred unwinding
+ infrastructure
+In-Reply-To: <20250625225600.555017347@goodmis.org> (Steven Rostedt's message
+	of "Wed, 25 Jun 2025 18:56:00 -0400")
+References: <20250625225600.555017347@goodmis.org>
+Date: Mon, 30 Jun 2025 14:50:52 +0200
+Message-ID: <878ql9mlzn.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <izmrcafyog7cxvef2nipk5f2vzxxptyc4fopnvl3heqslsp7q6@32ssw2piag6h>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Jun 27, 2025 at 12:51:45PM +0200, Stefano Garzarella wrote:
-> On Wed, Jun 25, 2025 at 02:15:38PM +0100, Will Deacon wrote:
-> > We're using vsock extensively in Android as a channel over which we can
-> > route binder transactions to/from virtual machines managed by the
-> > Android Virtualisation Framework. However, we have been observing some
-> > issues in production builds when using vsock in a low-memory environment
-> > (on the host and the guest) such as:
-> > 
-> >  * The host receive path hanging forever, despite the guest performing
-> >    a successful write to the socket.
-> > 
-> >  * Page allocation failures in the vhost receive path (this is a likely
-> >    contributor to the above)
-> > 
-> >  * -ENOMEM coming back from sendmsg()
-> > 
-> > This series aims to improve the vsock SKB allocation for both the host
-> > (vhost) and the guest when using the virtio transport to help mitigate
-> > these issues. Specifically:
-> > 
-> >  - Avoid single allocations of order > PAGE_ALLOC_COSTLY_ORDER
-> > 
-> >  - Use non-linear SKBs for the transmit and vhost receive paths
-> > 
-> >  - Reduce the guest RX buffers to a single page
-> > 
-> > There are more details in the individual commit messages but overall
-> > this results in less wasted memory and puts less pressure on the
-> > allocator.
-> > 
-> > This is my first time looking at this stuff, so all feedback is welcome.
-> 
-> Thank you very much for this series!
-> 
-> I left some minor comments, but overall LGTM!
+* Steven Rostedt:
 
-Cheers for going through it! I'll work through your comments now...
+> SFrames is now supported in gcc binutils and soon will also be supported
+> by LLVM.
 
-Will
+Is the LLVM support discussed here?
+
+  [RFC] Adding SFrame support to llvm
+  <https://discourse.llvm.org/t/rfc-adding-sframe-support-to-llvm/86900>
+
+Or is there a secone effort?
+
+> I have more patches on top of this series that add perf support, ftrace
+> support, sframe support and the x86 fix ups (for VDSO). But each of those
+> patch series can be worked on independently, but they all depend on this
+> series (although the x86 specific patches at the end isn't necessarily
+> needed, at least for other architectures).
+
+Related to perf support: I'm writing up the SFrame change proposal for
+Fedora, and I want to include testing instructions.  Any idea yet what a
+typical =E2=80=9Cperf top=E2=80=9D or =E2=80=9Cperf report=E2=80=9D command=
+ line would look like?
+
+Thanks,
+Florian
+
 
