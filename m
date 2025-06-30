@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-709437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61923AEDDB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:58:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A25CAEDD9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55A916C390
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F5DF7AC4A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2945828A73C;
-	Mon, 30 Jun 2025 12:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329EB28983B;
+	Mon, 30 Jun 2025 12:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6rP0z/AF"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="WF5QiUtZ"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD36328937C;
-	Mon, 30 Jun 2025 12:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FD823ABB4;
+	Mon, 30 Jun 2025 12:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288295; cv=none; b=t1UB7WXh2wmfp9L9G0L7nOc9G5pvom7zttYn/w760/WbnI8BkMBwvEOufnyDhzJO+QBfgxpyxPQDGHqSv8zia85XtOMMUbrvUpryt3kaKwT06/85nqEaVBxwdYwCh1O898O5dJfMuA+XGsHSHmpZGyAtyYpYqykIY0ThMYXebPY=
+	t=1751288120; cv=none; b=ok9q1PVAzcOnPwV/fnuwrIel0Sq4kAHGgotCu79IqmG74Zv0Vy5FaKx5GFJMOc7LvYcTq+B6xrvj9YI8YXpr4glOW4HUNvfogpeDtD9a2Q1SP19Y/gTYF5noZTpE6mUpf0DHH/aIOta4fggG9qFDm23jk2NvkKprY48R2YzAPB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288295; c=relaxed/simple;
-	bh=Nh/c3hjKu78CEgayyoBcA7xuQFdMtmHRxzXy3TmSi6w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=aPAohiEVXgeP7u0HZOfRERBkPoVKcpTIJDC2LgkXzoKxSwf6Lx+HZNpJnpVaYzKX3beG8hjk5sSmfEK7CB3DHWR1t6QzV4NEbM5ltvC8uycnZSVYYPOH4t/lUwi3vxCE3viTtjYWDnv+m2AT2/rS7bWTPjG3NKdPm3Xp5/ojez4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6rP0z/AF; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UC3k8G032278;
-	Mon, 30 Jun 2025 14:57:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	AUY/W3uZYvpU9kGJPaiqG3BU1z09PZZD5SKs655sSYg=; b=6rP0z/AFo2Uy98Hb
-	ct5F0DM7shcvTIRL0tF56qwheeEOs9jA6azlP9BvKg7k/2jKplRnYnd/qITfQTjD
-	AiScKPOACgl/ldlLBz6QlGEXbECIu0KOh4vo5QVcBCoZGB1jtA0w46HED5mW11k1
-	jNvgN7Kzp6nl29e9Twh+V5J0/QEIiWh+xL4NPALTRM9buC4E0axSw7AHnVSuZo/U
-	Ud8MlidfxQVkdkhHSYkAgjPBkus5qGogCrIISCgHeiSCDRmQb9iUTM9GL6HL/zv6
-	VkSmyzuDxXyidFbp+51mQa2Uf/ZRiaCSZPppNRStWsVHbsvi5FJ1W7F0YxhSdHJK
-	PzIwHQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j79h7b9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 14:57:51 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9481440050;
-	Mon, 30 Jun 2025 14:56:27 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 700E3B4290D;
-	Mon, 30 Jun 2025 14:55:24 +0200 (CEST)
-Received: from localhost (10.252.20.7) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 14:55:24 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+	s=arc-20240116; t=1751288120; c=relaxed/simple;
+	bh=E9j17VFj1xs2U0yxrbs57TdXUZaC0qMUp0dCf1Imlis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kglCuIxV/dM2eB/FPJJa/Da+z2moGoo0vMg2UQokokqTnGavuCdX/75URdiHxZkYW5jtDVa3pIXE180IQbxxh8LAXHW0oZr4XgUlWqyK2Ef3b0GHg3CxRxeQAdEmyNOLqbb7omWw6Fx8LbSB7BJR5rZvUHLx+rglqWniU7BUUEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=WF5QiUtZ; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (pd9e59880.dip0.t-ipconnect.de [217.229.152.128])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 581BA2FC0064;
+	Mon, 30 Jun 2025 14:55:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1751288113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Go3Ch64gcEiLFwM4fS4cZghHzD+7ZCcLijDp/oxzqbM=;
+	b=WF5QiUtZHQsg4zBTSSssFFVqMdJFbEox1bFjfcU2jF/gR+3gCr2qDJUbIiNibrhzFnDmWj
+	LnLEp16ydy+0Tj3s5p7F/FiluyyxUx88y4/ezajQ3Qq/5DlPb8ZTHZPECCrhc2z17ihTTt
+	hZWBagAtpBaDtyctfO2QAIcA/qRHdhU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <13ae680f-7384-4261-8555-d77ba94ecd3c@tuxedocomputers.com>
 Date: Mon, 30 Jun 2025 14:55:13 +0200
-Subject: [PATCH v3 1/3] i2c: stm32: fix the device used for the DMA map
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] platform/x86: Add Uniwill laptop driver
+To: Armin Wolf <W_Armin@gmx.de>, =?UTF-8?Q?P=C5=91cze_Barnab=C3=A1s?=
+ <pobrn@protonmail.com>, ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com,
+ chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de, ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org
+References: <20250615175957.9781-1-W_Armin@gmx.de>
+ <20250615175957.9781-3-W_Armin@gmx.de>
+ <1b79a3c3-c493-471b-aa37-92458b356e8d@protonmail.com>
+ <7b0243fd-15c6-42da-8570-9ad9cd5163af@gmx.de>
+ <7a58972f-5256-4598-b729-224f20f3ecd2@protonmail.com>
+ <7b29df39-8146-4913-83ff-d71db26983c8@gmx.de>
+ <c689db31-60cc-4494-b700-88744376f589@tuxedocomputers.com>
+ <e167ed33-010d-4cdb-ae53-4afeb3efdea7@gmx.de>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <e167ed33-010d-4cdb-ae53-4afeb3efdea7@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250630-i2c-upstream-v3-1-7a23ab26683a@foss.st.com>
-References: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
-In-Reply-To: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
-To: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Alain Volmat
-	<alain.volmat@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "M'boumba Cedric
- Madianga" <cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
 
-If the DMA mapping failed, it produced an error log with the wrong
-device name:
-"stm32-dma3 40400000.dma-controller: rejecting DMA map of vmalloc memory"
-Fix this issue by replacing the dev with the I2C dev.
 
-Fixes: bb8822cbbc53 ("i2c: i2c-stm32: Add generic DMA API")
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- drivers/i2c/busses/i2c-stm32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Am 30.06.25 um 14:40 schrieb Armin Wolf:
+> Am 30.06.25 um 14:32 schrieb Werner Sembach:
+>
+>> Hi,
+>>
+>> Am 28.06.25 um 01:09 schrieb Armin Wolf:
+>>> Am 25.06.25 um 17:59 schrieb Pőcze Barnabás:
+>>>
+>>>> Hi
+>>>>
+>>>> 2025. 06. 23. 0:36 keltezéssel, Armin Wolf írta:
+>>>>> Am 22.06.25 um 23:37 schrieb Pőcze Barnabás:
+>>>>>
+>>>>>> Hi
+>>>>>>
+>>>>>>
+>>>>>> 2025. 06. 15. 19:59 keltezéssel, Armin Wolf írta:
+>>>>>>> Add a new driver for Uniwill laptops. The driver uses a ACPI WMI
+>>>>>>> interface to talk with the embedded controller, but relies on a
+>>>>>>> DMI whitelist for autoloading since Uniwill just copied the WMI
+>>>>>>> GUID from the Windows driver example.
+>>>>>>>
+>>>>>>> The driver is reverse-engineered based on the following information:
+>>>>>>> - OEM software from intel
+>>>>>>> - https://github.com/pobrn/qc71_laptop
+>>>>>> Oh... I suppose an end of an era for me...
+>>>>> I now remember that we interacted on the mailing lists before, sorry for 
+>>>>> not CCing
+>>>>> you on this patch series.
+>>>>>
+>>>>> Do you want a Co-developed-by tag on those patches?
+>>>> I'll leave it up to you.
+>>>>
+>>>>
+>>>>>>> - https://github.com/tuxedocomputers/tuxedo-drivers
+>>>>>>> - https://github.com/tuxedocomputers/tuxedo-control-center
+>>>>>>>
+>>>>>>> The underlying EC supports various features, including hwmon sensors,
+>>>>>>> battery charge limiting, a RGB lightbar and keyboard-related controls.
+>>>>>>>
+>>>>>>> Reported-by: cyear <chumuzero@gmail.com>
+>>>>>>> Closes: https://github.com/lm-sensors/lm-sensors/issues/508
+>>>>>>> Closes: https://github.com/Wer-Wolf/uniwill-laptop/issues/3
+>>>>>>> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+>>>>>>> ---
+>>>>>>>      .../ABI/testing/sysfs-driver-uniwill-laptop   | 53 +
+>>>>>>>      Documentation/wmi/devices/uniwill-laptop.rst  | 109 ++
+>>>>>>>      MAINTAINERS                                   | 8 +
+>>>>>>>      drivers/platform/x86/uniwill/Kconfig          | 17 +
+>>>>>>>      drivers/platform/x86/uniwill/Makefile         | 1 +
+>>>>>>>      drivers/platform/x86/uniwill/uniwill-laptop.c | 1477 +++++++++++++++++
+>>>>>>>      drivers/platform/x86/uniwill/uniwill-wmi.c    | 3 +-
+>>>>>>>      7 files changed, 1667 insertions(+), 1 deletion(-)
+>>>>>>>      create mode 100644 
+>>>>>>> Documentation/ABI/testing/sysfs-driver-uniwill-laptop
+>>>>>>>      create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
+>>>>>>>      create mode 100644 drivers/platform/x86/uniwill/uniwill-laptop.c
+>>>>>>>
+>>>>> [...]
+>>>>>>> +
+>>>>>>> +static const unsigned int uniwill_led_channel_to_bat_reg[LED_CHANNELS] = {
+>>>>>>> +    EC_ADDR_LIGHTBAR_BAT_RED,
+>>>>>>> +    EC_ADDR_LIGHTBAR_BAT_GREEN,
+>>>>>>> +    EC_ADDR_LIGHTBAR_BAT_BLUE,
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> +static const unsigned int uniwill_led_channel_to_ac_reg[LED_CHANNELS] = {
+>>>>>>> +    EC_ADDR_LIGHTBAR_AC_RED,
+>>>>>>> +    EC_ADDR_LIGHTBAR_AC_GREEN,
+>>>>>>> +    EC_ADDR_LIGHTBAR_AC_BLUE,
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> +static int uniwill_led_brightness_set(struct led_classdev *led_cdev, 
+>>>>>>> enum led_brightness brightness)
+>>>>>>> +{
+>>>>>>> +    struct led_classdev_mc *led_mc_cdev = lcdev_to_mccdev(led_cdev);
+>>>>>>> +    struct uniwill_data *data = container_of(led_mc_cdev, struct 
+>>>>>>> uniwill_data, led_mc_cdev);
+>>>>>>> +    unsigned int value;
+>>>>>>> +    int ret;
+>>>>>>> +
+>>>>>>> +    ret = led_mc_calc_color_components(led_mc_cdev, brightness);
+>>>>>>> +    if (ret < 0)
+>>>>>>> +        return ret;
+>>>>>>> +
+>>>>>>> +    for (int i = 0; i < LED_CHANNELS; i++) {
+>>>>>>> +        /* Prevent the brightness values from overflowing */
+>>>>>>> +        value = min(LED_MAX_BRIGHTNESS, 
+>>>>>>> data->led_mc_subled_info[i].brightness);
+>>>>>>> +        ret = regmap_write(data->regmap, 
+>>>>>>> uniwill_led_channel_to_ac_reg[i], value);
+>>>>>> This is interesting. I am not sure which "control center" application you 
+>>>>>> have looked at,
+>>>>>> but I found many lookup tables based on the exact model, etc. For 
+>>>>>> example, on my laptop
+>>>>>> any value larger than 36 will simply turn that color component off. Have 
+>>>>>> you seen
+>>>>>> anything like that?
+>>>>> I was using the Intel NUC studio software application during 
+>>>>> reverse-engineering and had a user
+>>>>> test the resulting code on a Intel NUC notebook. AFAIK the OEM software 
+>>>>> did not use a lookup table.
+>>>>>
+>>>>> If we extend this driver in the future then we might indeed use the quirk 
+>>>>> system to change the max.
+>>>>> LED brightness depending on the model.
+>>>> I see. So everything up to 200 works. And after that do you know if it 
+>>>> turns off or what happens?
+>>>
+>>> The user who tested the driver reported that "the brightest lightbar setting 
+>>> is 200", so i assume
+>>> that the lightbar simply clamps the values. However i would not trust the EC 
+>>> firmware in the slightest,
+>>> i can definitely imagine that other models react differently.
+>>
+>> Iirc at least for keyboard backlight on tf devices there was a value that 
+>> could be overwritten to make the values 0-255 instead of 0-200, maybe this is 
+>> also true for the lightbar, but i don't know if this affects the livespan of 
+>> the leds.
+>>
+>> Best regards,
+>>
+>> Werner
+>>
+> Interesting, do you know the register offset of this value?
 
-diff --git a/drivers/i2c/busses/i2c-stm32.c b/drivers/i2c/busses/i2c-stm32.c
-index 157c64e27d0b..272a5dffb08f 100644
---- a/drivers/i2c/busses/i2c-stm32.c
-+++ b/drivers/i2c/busses/i2c-stm32.c
-@@ -118,7 +118,7 @@ int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
- 	dma->dma_len = len;
- 	chan_dev = dma->chan_using->device->dev;
- 
--	dma->dma_buf = dma_map_single(chan_dev, buf, dma->dma_len,
-+	dma->dma_buf = dma_map_single(dev, buf, dma->dma_len,
- 				      dma->dma_data_dir);
- 	if (dma_mapping_error(chan_dev, dma->dma_buf)) {
- 		dev_err(dev, "DMA mapping failed\n");
-@@ -150,7 +150,7 @@ int stm32_i2c_prep_dma_xfer(struct device *dev, struct stm32_i2c_dma *dma,
- 	return 0;
- 
- err:
--	dma_unmap_single(chan_dev, dma->dma_buf, dma->dma_len,
-+	dma_unmap_single(dev, dma->dma_buf, dma->dma_len,
- 			 dma->dma_data_dir);
- 	return ret;
- }
+Not out of my head, would have to dig for it again or even re reverse engineer 
+it again as I'm not sure if I wrote it down ...
 
--- 
-2.43.0
+So if it is not required I would like to leave it at that and only do the work 
+if it turns out to be needed.
 
+>
+> Thanks,
+> Armin Wolf
+>
 
