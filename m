@@ -1,81 +1,69 @@
-Return-Path: <linux-kernel+bounces-708906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F37AED687
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:03:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F204AED693
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F15FA188BA73
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8DDE1892A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFA2244186;
-	Mon, 30 Jun 2025 08:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DEX3d4oQ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289A524167B;
+	Mon, 30 Jun 2025 08:03:00 +0000 (UTC)
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023132.outbound.protection.outlook.com [40.107.44.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72619243364;
-	Mon, 30 Jun 2025 08:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751270527; cv=none; b=dEEvLgaA3gmFf03KhmBqagDzjJWuSCk7KZGNnT6eJb4nLMcH7KQaGOy26mwUDT2frd8rmpMtiR7op2v6c2vsMlEPnke/5EDlSzB9xmUXQ8tgGRIj2LptAVU3YXtR5LFnofUitzgqLDoGnw4wh9tW49Msg9DVSeon/itwR0KdgAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751270527; c=relaxed/simple;
-	bh=Hk4PWTSFyJ5ZH9OUolCbF/0vk1uY9caPI/PFr4sGiCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=huGfOUv0b0aXXf5Pg4agLKZopQFNHfRN6cjaEN4+0QiLvI2ZonPzwrmXuspewct7rSHXlOjHrebsyvvvzUP9jeUl5ArvqoYy43c1uTOU3EAe2uAjUh8MKLGjlLBhGWlzdhVuxjvhCIzf6xhjdjcr/APmiNaWwb0ISFpqBWcoBuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DEX3d4oQ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55TEOuIC016422;
-	Mon, 30 Jun 2025 08:01:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cEmo5W
-	Z9ENLCamzEsFC9RFxbGStIkBwOEpEwhYpQ33I=; b=DEX3d4oQpQEAilMMfEmIJv
-	InLzDjJJHvLde3IzFtfYYdmPlp2sM9Uec9yArw6abhGgBy204jeZAkrBIcaaxdU+
-	BRM2Cnx1K/HhNJVFZHlJfvl0K7fWrXekNGmJlmem0GN0ozNWkMpABSkBxhfNI7ph
-	aJmE0aZ/ZNW2EXXcSzmLO3CLGi6Xo7s+JXyrPIkteoIDYuAT3mk3m1BSgxTLQRVB
-	Ee+2xL5n/4BPzWf3AoKaqGOW7IWiZQjV2LHGWcGpzyMVvqpJt4ZP09gOAlui533x
-	tCg20DquAkCVK69Qcl7gJ09xAhZ9fnQNyYKp7RKXuIAllBVGApUos+ZMNgazG98g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5tt0c02-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 08:01:52 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55U81eSK017679;
-	Mon, 30 Jun 2025 08:01:51 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5tt0byd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 08:01:51 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55U4LgLo021095;
-	Mon, 30 Jun 2025 08:01:44 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jtqu543x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 08:01:44 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55U81h8p50725166
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Jun 2025 08:01:43 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 20C0A200E4;
-	Mon, 30 Jun 2025 08:01:43 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 75425200E3;
-	Mon, 30 Jun 2025 08:01:42 +0000 (GMT)
-Received: from [9.87.132.218] (unknown [9.87.132.218])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 30 Jun 2025 08:01:42 +0000 (GMT)
-Message-ID: <898927c3-e85f-4a9a-9374-6fdb49236410@linux.ibm.com>
-Date: Mon, 30 Jun 2025 10:01:41 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E1321B191;
+	Mon, 30 Jun 2025 08:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.132
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751270579; cv=fail; b=MVoc/2GswKX5peEMJxftshYo9KzEqvFehov9kaBe3K9rgOWA1hFx5Cbl+y8Nl8wNE+UfLjTvrQt+wczfcliBEyB6P0GorFqUBp4dopNT9xopEGHqscHTGkgyK6XBV7YEwAONmJvmEjGVuI8D2GgFI7ktKWUs1SEhL/ESu6UmSEc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751270579; c=relaxed/simple;
+	bh=HeVJNhAmf1lNQS/q8VEDjMYQqF5Tt5OoNVPmwKh68iE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=luRMn1OyMlKpMi0i0oni0Ra88sHVQg595WUfvT+swqCQ8QlZYf3eskmXRzzMHpYMWCNGpA0IClbSFZT2+sQUxkVFp6kLcsvHz980oQ9/iRtDuN542O0X2uG/8Pju/DuAotBoGYbnjeoa0AW/uoLjW73otqOlxgYZcQCEd2GpB54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ocIuveDVWXNqAFI7OAWH4yh+xmB2Tzj5hYzt/HE8s0egCwCO479+LSBa10NVln1oiDUOoWfdDMnqUq2hctBOF3mO2MBFshZ+78s1YBT67R5LVckF1ZcpIzAWTwqJrigUauzME0NG40s9k2u8szsab29FVTpsO72hW8uN73MG44BvAavWd4PROw9/kWvMUEkxYxHjyfINwhOmlv1ke2+VooJ4swcT9dP+G5Alp/O5OHNzDswD/eQx59WhCfSrhkOFAYT9LqcJ1eo0NYUfPbVYYh5DD/OY7Gj+LqhifncDJuWb47lwQ5OdIs+K1kZrH5NKWbv+SeDkgCOX29uwRvd50w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RJnmzNsuF7G5YZni2Ipu6cU5cBn/S7Wm4f1EU3GnDa8=;
+ b=A3bMadK08w8PBQej/dpBVUMw6HGWsmUHpTDbxjASKo4fwaWIxziccjskSvyhsXkAV0IsEb2PPc4r3v+BMhuzQ2WxuDnmG8fSp7wMK9WzMgF5CkiwRr0jIX+HHETBHZdRzoF88v0R0QnbBmURvxFbfRU1POCHgUxaw0MDhiqzxJVTQqHC/NL1HDnBltWr27SDKGy/HFFdipbj4QCpdMcN0OXSwqXn/CpCX9GJ63zsZpFK52GwBYbsfJTfGATBCeaWSSZoYvamgBHoo9iSslFQ3bJLDXt5RE4Zv0sPwi/FKXEQfBVP6KbUBYmiJZsCejQWywIXKIkK5hhLGjyP/Vsa/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TY2PR02CA0065.apcprd02.prod.outlook.com (2603:1096:404:e2::29)
+ by KL1PR06MB6162.apcprd06.prod.outlook.com (2603:1096:820:d3::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.30; Mon, 30 Jun
+ 2025 08:02:52 +0000
+Received: from TY2PEPF0000AB8A.apcprd03.prod.outlook.com
+ (2603:1096:404:e2:cafe::f9) by TY2PR02CA0065.outlook.office365.com
+ (2603:1096:404:e2::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.25 via Frontend Transport; Mon,
+ 30 Jun 2025 08:02:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB8A.mail.protection.outlook.com (10.167.253.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Mon, 30 Jun 2025 08:02:50 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 0873E44C3CAA;
+	Mon, 30 Jun 2025 16:02:45 +0800 (CST)
+Message-ID: <afeda0c7-1959-4501-b85b-5685698dc432@cixtech.com>
+Date: Mon, 30 Jun 2025 16:02:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,124 +71,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf test: Add basic callgraph test to record testing
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        James Clark <james.clark@linaro.org>,
-        Dapeng Mi <dapeng1.mi@linux.intel.com>,
-        Chun-Tse Shao <ctshao@google.com>, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250628015553.1270748-1-irogers@google.com>
+Subject: Re: [PATCH v5 01/14] dt-bindings: pci: cadence: Extend compatible for
+ new RP configuration
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
+ fugang.duan@cixtech.com, guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+ cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250630041601.399921-1-hans.zhang@cixtech.com>
+ <20250630041601.399921-2-hans.zhang@cixtech.com>
+ <20250630-heretic-space-bullfrog-d6b212@krzk-bin>
 Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <20250628015553.1270748-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: E8tYNO6g_34gN2s0vfMicyge2h8fBXHu
-X-Authority-Analysis: v=2.4 cv=UtNjN/wB c=1 sm=1 tr=0 ts=68624470 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=1XWaLZrsAAAA:8 a=KKAkSRfTAAAA:8 a=VnNF1IyMAAAA:8 a=_uuWfKpNdYwReMWUY6YA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: 1lqPsw7z0D82yPPHre2bR6sY2ryHaFln
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDA2NCBTYWx0ZWRfX0CMrc+Zc4oO/ UVjarByEad7x9bfMSnGvHJzGGWrqVXRscIMRZ9DtBRakHKStShUelys8xS7FxejVH4zj5kfSarD e2PvFZ7+GRS5MZysZrUv/Bvsz7kpYDOVzG0lhpZRv38OYJYaOZ2xBaV7ZlH+p6IpxLD/vd56j04
- bXzConnOxZnnmAItsh7jf6eORtIKhoDAq1/KO8vjhT7kCmsrZ/WEHKqItB8FPEZYQG61hCq1LO9 vATDb0ehZ8Pe/uV4fDdHJ/rUoeuJ1OdMeT8YfMOj9Y+ULoAmwpg/RYQt41BHWWFEarq0lpib4b1 JJYqPde3JOForm9f8l3yrbjR2DG1QmlXDT8GIxH+Ge/usXtiBRF7o6IdYJP6mf7Aw0nyFgNsC+B
- GGDiQ2KM1416jBogCpgh4YPIxUHigTAdPokR5KA5KvsCFjoRpEvwBc8beh/OykqLoBkjfnqh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300064
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <20250630-heretic-space-bullfrog-d6b212@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB8A:EE_|KL1PR06MB6162:EE_
+X-MS-Office365-Filtering-Correlation-Id: 664117c1-2c3e-4d38-24e4-08ddb7ac8275
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MllndEZDOUcrVmFaM25aeVJYMk5SamR5UTQxRlM0UjhoZXdpS1VxTE95ZDBt?=
+ =?utf-8?B?VXdxVWR2dnBOVTRwWFpNZ0FELzd3b1dxWTV6TmpyZmNSWThacnRMK1JSbnBj?=
+ =?utf-8?B?VkpnVG40akgrOFh4Nkl6Z2VDeitVdTVrNVJHVXdlVWt3blh6ekZGL2FZSXJt?=
+ =?utf-8?B?eS96cHA4VGZDeXoxMWxPSnJiSTVkY1o0aHhBbXNiUnlFY2NOWk9JTTNhakV6?=
+ =?utf-8?B?cUNDNXRvS0VOaGRlSFZVRGFjRlZ0SSs1bXBEZjJrRlpRWnppRjZiWDZzalJE?=
+ =?utf-8?B?cjROazdERjlvcS9wMmRQRGUyRlFsampZTGxmWE9NTWQ3UXFETnZWYldBSlZD?=
+ =?utf-8?B?N3JHdkpjc1Z3Uk1FSzMyUWxFZzhiZlVqeE1JZThZTWQyRzBvcGpKcXBQR3pY?=
+ =?utf-8?B?WlRqdlJMSmhSSFVhYnRGVTVmeWdQazM2QWVtU2prVTEvNlJYUWlPaVIzRE95?=
+ =?utf-8?B?LzNQUXdiVkhlTStNU1RvSC9lU1NkeXN6UEhHVWNsSHlUN1BHUnlwSldPQTUw?=
+ =?utf-8?B?bWNCd2ZYL01yZDBPb3ZyNXVYdlpmZ1RHTklWQ0R0b3VCc014azZRczcwL3U4?=
+ =?utf-8?B?cGo5dy8ydVNFcktJTXRhd3lIZTNYdFZQelNjVXJHcTIzMHo2ZE54NGtkZncz?=
+ =?utf-8?B?cEgyWTIxTEJiTnU3bTA2a2dmaStLeVN4VFFuc0ZIMXo5RnMxYXc0bnFMak5w?=
+ =?utf-8?B?cTk2OVhxMEp3djl5TURlcTRhOHlvN1JUNVJYWjA4ZUtvVmc4MkE0Q2M2REpr?=
+ =?utf-8?B?RTU0dUFIM1NxbXFkUFhvUHYrMTliUHlQdkQ3Y0RZbGl4RFpZZ2pjNlpRcGFZ?=
+ =?utf-8?B?eFE0MWlYWjNwUzBBUjlTVktRMThHNFZqMk1FZXBzQnBON253NGJLeGVzYzRI?=
+ =?utf-8?B?WllhbHhsQUhpN3R1a2VMRDBiNWMrUFdURWhYMFp1aHA5VDBSUjhaQ1diSW5Y?=
+ =?utf-8?B?SXAzREFlSEkwL1FOQkNHL0FZM0JDUlNmeCtOYUtEN0dyMHFsNEt5RldhUlkw?=
+ =?utf-8?B?ZmNZbTh2N0lvVHBEN3RQRi9EYWhaMm5KSjNLaGQ4Nk9Uc0YySnZEOFdnS1J5?=
+ =?utf-8?B?QlZmckpMUCs4RW1MSjYxTnNYYVdndk10eHJybVZ5eldvY1BkRlNDc1ZUNVV6?=
+ =?utf-8?B?bFZDWEVqNWlmMU1uYnlsdUlRTGxMVTBuYWQ2R0F5Mmd6aUR3NUN1QXptcHd1?=
+ =?utf-8?B?YVpGTjRXYVNWVjhVRW0zVlVSc28vbmVqeFR5VXlVSUJ4d1orQkNHSTkyM3Yx?=
+ =?utf-8?B?dEtraUhDSDhEeE1mZ0dPODB4bzFJRUhTT3JRNVlYNVdCUUxoVnZYR005MXpD?=
+ =?utf-8?B?ZEdDTVlSOXloRVJTdnVnRHJjMFhicUx3TSt1WGNwU0haa01lYnpDKzlaTlBK?=
+ =?utf-8?B?dEp5bkZOWDRDMm44STlJUHBVemFnRnRyQ0JmTmJVb1ExRkg3V1NCTjRTZ0Yw?=
+ =?utf-8?B?TnZIZHdrWmhwL01QYnBubExrSlVtaCtOM3lZaXhTaFFaalRKQ0w0emZldW82?=
+ =?utf-8?B?WW1iTms2SFBvMk1hbE5FdDVPRnE4T2dNWFJCSGlxUUVTd1pXWlR4a0JaL2p3?=
+ =?utf-8?B?VXlCS0Z3S1NVQ1FSRnRrK01lazRTcWVSSm02NTVHT01RNlJ6OW5WUzVDZHgx?=
+ =?utf-8?B?NktsU3J5bHliNFZZUWFsTFlObmJiWEF6R2RuZEdMN1pZbWhGZTUvTDNNMzBY?=
+ =?utf-8?B?V0pzVlBHNXNWUm96cHNseGhkYW9DbmE5MCtSdksxZ0JIeHc5NzBUVVovaGY0?=
+ =?utf-8?B?K0M5OXRmVUJaY1BYd0k4Q3pUN2VCMkQ0eFNCWlc2dGhCY2FDTkVQTVJUYmpO?=
+ =?utf-8?B?YWVJVWtBNkJROHdFRlFGNEEwZzdCMGFZTzE4RVFMQzUzbzVkU05QRDI3MXov?=
+ =?utf-8?B?ZU13aDI3dDJ6blltLzBQdnVwOGhIZ3V5RUVvRU0xVWZ1WGYyVFplZld2cEVX?=
+ =?utf-8?B?S3VHR3VpU3NTTXYvNUxGOExuYXdnQUtmelVDNFloejUyYkRROE1BZ2lxT2NU?=
+ =?utf-8?B?WDBzRlZsMUhQa09VMUMwTUxOREtkZGNXOSs0R0lHaENQejVLL00yODNYM1VU?=
+ =?utf-8?B?dVRLanFVeE5XKzIxWndodjdSWUkrSHVYNS9pUT09?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 08:02:50.5318
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 664117c1-2c3e-4d38-24e4-08ddb7ac8275
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	TY2PEPF0000AB8A.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6162
 
-On 6/28/25 03:55, Ian Rogers wrote:
-> Give some basic perf record callgraph coverage.
+
+
+On 2025/6/30 15:30, Krzysztof Kozlowski wrote:
+> EXTERNAL EMAIL
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> v2: Pick up s390's needed "--call-graph dwarf" as spotted by James
->     Clark <james.clark@linaro.org>.
-> ---
->  tools/perf/tests/shell/record.sh | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+> On Mon, Jun 30, 2025 at 12:15:48PM +0800, hans.zhang@cixtech.com wrote:
+>> From: Manikandan K Pillai <mpillai@cadence.com>
+>>
+>> Document the compatible property for HPA (High Performance Architecture)
+>> PCIe controller RP configuration.
 > 
-> diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-> index 2022a4f739be..b1ad24fb3b33 100755
-> --- a/tools/perf/tests/shell/record.sh
-> +++ b/tools/perf/tests/shell/record.sh
-> @@ -12,8 +12,10 @@ shelldir=$(dirname "$0")
->  . "${shelldir}"/lib/perf_has_symbol.sh
->  
->  testsym="test_loop"
-> +testsym2="brstack"
->  
->  skip_test_missing_symbol ${testsym}
-> +skip_test_missing_symbol ${testsym2}
->  
->  err=0
->  perfdata=$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-> @@ -359,6 +361,33 @@ test_precise_max() {
->    fi
->  }
->  
-> +test_callgraph() {
-> +  echo "Callgraph test"
-> +
-> +  case $(uname -m)
-> +  in s390x)
-> +       cmd_flags="--call-graph dwarf -e cpu-clock";;
-> +     *)
-> +       cmd_flags="-g";;
-> +  esac
-> +
-> +  if ! perf record -o "${perfdata}" $cmd_flags perf test -w brstack
-> +  then
-> +    echo "Callgraph test [Failed missing output]"
-> +    err=1
-> +    return
-> +  fi
-> +
-> +  if ! perf report -i "${perfdata}" 2>&1 | grep "${testsym2}"
-> +  then
-> +    echo "Callgraph test [Failed missing symbol]"
-> +    err=1
-> +    return
-> +  fi
-> +
-> +  echo "Callgraph test [Success]"
-> +}
-> +
->  # raise the limit of file descriptors to minimum
->  if [[ $default_fd_limit -lt $min_fd_limit ]]; then
->         ulimit -Sn $min_fd_limit
-> @@ -374,6 +403,7 @@ test_uid
->  test_leader_sampling
->  test_topdown_leader_sampling
->  test_precise_max
-> +test_callgraph
->  
->  # restore the default value
->  ulimit -Sn $default_fd_limit
+> I don't see Conor's comment addressed:
+> 
+> https://lore.kernel.org/linux-devicetree/20250424-elm-magma-b791798477ab@spud/
+> 
+> You cannot just send someone's work and bypassing the review feedback.
+> 
+>>
+>> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> SoB.
 
-Works ok for s390
+Dear Krzysztof,
 
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
+Thank you very much for your reply. The questions mentioned above, 
+please answer by Manikandan.
 
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+Sorry, I missed it. Will add:
+Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
 
-Geschäftsführung: David Faller
+Best regards,
+Hans
 
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+> 
+> Best regards,
+> Krzysztof
+> 
 
