@@ -1,146 +1,272 @@
-Return-Path: <linux-kernel+bounces-710223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462A4AEE97A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5FCAEE9BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4194E3BC08D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A2B3BC98B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26809242D9B;
-	Mon, 30 Jun 2025 21:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7912EE5EC;
+	Mon, 30 Jun 2025 21:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="kXPOClJk"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHMrOtrt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EDF1D7E41;
-	Mon, 30 Jun 2025 21:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3830624677B;
+	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751319214; cv=none; b=o5J3kasucIZFhZJ79XBqQTED83rMy9LW2gzKcwJi55LGQN/mRPoXRvjcy02vjAZL30xdQ8WbzC95nqfFboxwCrdW4Q97/wMKlqPptabNdrGR6Vw7+MFnD93BtHW6jegUcKg74F9bZfofj4D1rRx8WLFAvRKLTNULrERN6DRJW9A=
+	t=1751320365; cv=none; b=WoMcEdKThPN9/B8BhyAS5/7c9Tr3zrG1ZkNW75r+I9f6etLFTCUJbORZVrY/7LtbBU7IKpCVN20+/k4D2+AjSVxicI7WxM3R3TOGrkpqbkVY0axCO2iXTfilcdwttEZ5qBUO6c+fyqZe9KX0MuRS3S/3Bu/22jmztrzCfgIBqWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751319214; c=relaxed/simple;
-	bh=203ZgCZh+qPPesbZd4Z294GUTkzv22U70O3LqGCjSCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y+Dd2BeR3lBxynOsVXqM9WmknT/yFukaizchrl1OKz86BKB8ofGrF4ZT2Y1baqiyqodmwUU+OeOQ2rgKgw9AfFVfBaZbxm0+9gOF2XG9S/FCRZNei112YlCH+anSCiHGNV5/DFj+xuPAKXggqTPcAEPgSi6rzS4XGxwAAILQVPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=kXPOClJk; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=BTJWDoX6+dZpqVbCI05HYOZjmWwxTYx7suIMcGN7BKI=; b=kXPOClJk1Kmb/DiiyBtViPQ7s4
-	BtvZG0K9yDMyQ4fGAOW0in3ubCmp2jBQZQuvmSkNvuRkZoBH5+Cd9uXGWaJLcrZnzwTlI6ctkPg0E
-	MPCtQMCm0MxNBF+z6YN3VNCvT0Y5AP4nvgRmrHCPBIAzCPyr/yGFufXgaB7zRpS5fSshucWqrdNkz
-	cTRAN+LkSxuoc10IY9ad5dILrvGnMUn61DobyKVq28TF0PSvch2asNQdHHgXEZLWQArucI5zeklKY
-	dl7HGTSabPyPOfaLNFCCXbNHXk2/MWobnlFcqn2HpHbxaBkwOcjzD90tFzh6Nld+AGVo80RkSVSmM
-	XfhReTgw==;
-Received: from i53875bfd.versanet.de ([83.135.91.253] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uWM7s-00084a-BS; Mon, 30 Jun 2025 23:33:20 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
- Geraldo Nascimento <geraldogabriel@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Rick wertenbroek <rick.wertenbroek@gmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Valmantas Paliksa <walmis@gmail.com>, linux-phy@lists.infradead.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v8 3/4] phy: rockchip-pcie: Enable all four lanes if required
-Date: Mon, 30 Jun 2025 23:33:19 +0200
-Message-ID: <4006908.X513TT2pbd@diego>
-In-Reply-To:
- <d3e7dc38bd287aa93a5d6bba87bf3c428ae92ca4.1751307390.git.geraldogabriel@gmail.com>
-References:
- <cover.1751307390.git.geraldogabriel@gmail.com>
- <d3e7dc38bd287aa93a5d6bba87bf3c428ae92ca4.1751307390.git.geraldogabriel@gmail.com>
+	s=arc-20240116; t=1751320365; c=relaxed/simple;
+	bh=nm/MOABnlL9MNVwqwrrw0H7SIIDrR6b8+mGPh5LEKzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dtdE3juahWBqZd8xZGpFRKWp5WTSPKFXoPl3LuUBMEdlXHEOacyQwpgkUQYrt06Ti3pDfvCLLEOf43g2RbLb/SePLnQUesqGrBkCZBpCP0xbOLgoN8mlWaR5IINRidvuO52BUReBOSj3P+MXhqT/7npxtNub7Hos4S3n3J04GKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHMrOtrt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51770C4CEF3;
+	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751320364;
+	bh=nm/MOABnlL9MNVwqwrrw0H7SIIDrR6b8+mGPh5LEKzU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XHMrOtrt5NNxYkIxv7OYrmKHPkdrOLmzvnaFBSFtVuEJMPp2GBEbIbcVA1i2O3N8J
+	 XgDAKsc2U017t9ug7RvP0unWl0gouusji22kFOv6Db6rfMoIRDUY3vdsAWlFB7OqJV
+	 Ds6dPWifH4By0Jt3uYQufq0CF4cxjn4b/ZQAcn9qNcBxR1CNrfH4vawJxVkRNHqYk5
+	 0nWfBGKDaOD5VMH81Opr/Gl0oi48vI/68jDCjDg62xDWP4YJKHYsC+ZE/Rxcv6OtNr
+	 PhmG/hYB10lBdMPk5VHdz1iNlJmUsVVNxWbOaYfyVYKS/YYZ00CF8oBIsYVf6miFO4
+	 riNFSbTENXBJQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uWMQc-00000003QWG-1QqA;
+	Mon, 30 Jun 2025 23:52:42 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Sai Vishnu M <saivishnu725@gmail.com>
+Subject: [PATCH 00/15] Translate sphinx-pre-install to Python
+Date: Mon, 30 Jun 2025 23:34:48 +0200
+Message-ID: <cover.1751318230.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Am Montag, 30. Juni 2025, 20:22:01 Mitteleurop=C3=A4ische Sommerzeit schrie=
-b Geraldo Nascimento:
-> Current code enables only Lane 0 because pwr_cnt will be incremented on
-> first call to the function. Let's reorder the enablement code to enable
-> all 4 lanes through GRF.
->=20
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
->=20
-> Signed-off-by: Valmantas Paliksa <walmis@gmail.com>
-> Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+Hi Jon,
 
-hmm, if Valmantas is the original author you should probably keep that auth=
-orship
-  git commit --amend --author=3D"Valmantas Paliksa <walmis@gmail.com>"
-should do the trick.
+This series port scripts/sphinx-pre-install to Python. It started as
+a bug-compatible version with the old logic.
 
-The first signed-off should be from the patch author, then your signed-off
-indicates you handling the patch later as part of this series.
+Yet, while testing it with lxc and some Docker images, I opted
+to also drop legacy logic from it and to add support for some
+additional variants compatible with existing detection logic.
 
-[or, if you modified the code of the patch heavily, Co-developed-by could
- also be appropriate]
+It also fixes some issues that were present at the proposed
+install procedures that don't work anymore with new distro
+versions.
 
-Heiko
+I ended writing some scripts I used internally to test it.
+Such scripts compare the diff output of both the .pl and
+.py version. The differences were only blank lines for
+gentoo and some  warning reorder.
 
-> ---
->  drivers/phy/rockchip/phy-rockchip-pcie.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/phy/rockchip/phy-rockchip-pcie.c b/drivers/phy/rockc=
-hip/phy-rockchip-pcie.c
-> index bd44af36c67a..f22ffb41cdc2 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-pcie.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-pcie.c
-> @@ -160,6 +160,12 @@ static int rockchip_pcie_phy_power_on(struct phy *ph=
-y)
-> =20
->  	guard(mutex)(&rk_phy->pcie_mutex);
-> =20
-> +	regmap_write(rk_phy->reg_base,
-> +		     rk_phy->phy_data->pcie_laneoff,
-> +		     HIWORD_UPDATE(!PHY_LANE_IDLE_OFF,
-> +				   PHY_LANE_IDLE_MASK,
-> +				   PHY_LANE_IDLE_A_SHIFT + inst->index));
-> +
->  	if (rk_phy->pwr_cnt++) {
->  		return 0;
->  	}
-> @@ -176,12 +182,6 @@ static int rockchip_pcie_phy_power_on(struct phy *ph=
-y)
->  				   PHY_CFG_ADDR_MASK,
->  				   PHY_CFG_ADDR_SHIFT));
-> =20
-> -	regmap_write(rk_phy->reg_base,
-> -		     rk_phy->phy_data->pcie_laneoff,
-> -		     HIWORD_UPDATE(!PHY_LANE_IDLE_OFF,
-> -				   PHY_LANE_IDLE_MASK,
-> -				   PHY_LANE_IDLE_A_SHIFT + inst->index));
-> -
->  	/*
->  	 * No documented timeout value for phy operation below,
->  	 * so we make it large enough here. And we use loop-break
->=20
+The test script also ran the install procedure for system,
+venv and native Sphinx install.
 
+Since there are distros which has a default Python 3.6
+(like openSuse and RHEL8), I opted to make the script
+compatible with it. Yet, internally it requires at least
+Python 3.7(*) to support the build.
 
+The tests were done with those containers, obtained from
+lxc download templates or via podman run:
+
++--------------------|------------------------------|----------------+
+| Name               | release                      | container type |
++--------------------+------------------------------+----------------+
+| debian             | bookworm                     | lxc            |
+| ubuntu             | plucky                       | lxc            |
+| ubuntu-lts         | noble                        | lxc            |
+| almalinux          | 9                            | lxc            |
+| archlinux          | current                      | lxc            |
+| gentoo             | current                      | lxc            |
+| opensuse           | tumbleweed                   | lxc            |
+| devuan             | daedalus                     | lxc            |
+| kali               | current                      | lxc            |
+| mint               | wilma                        | lxc            |
+| fedora             | 42                           | lxc            |
+| centos             | 9-Stream                     | lxc            |
+| rockylinux         | 9                            | lxc            |
+| oracle             | 9                            | lxc            |
+| amazonlinux        | 2023                         | lxc            |
+| openeuler          | 25.03                        | lxc            |
+| springdalelinux    | 9                            | lxc            |
++--------------------+------------------------------+----------------+
+| mageia             | mageia:latest                | docker         |
+| openmandriva       | openmandriva/4.0             | docker         |
+| scientificlinux    | eurolinux/scientific-linux-7 | docker         |
+| rhel               | redhat/ubi8                  | docker         |
+| opensuse-leap      | opensuse/leap:15.6           | docker         |
++--------------------+------------------------------+----------------+
+ 
+It succeeded to install either with venv or system package (most
+for both) for all those OSes:
+
+Detected OS                : AlmaLinux release 9.6 (Sage Margay).
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 7.4.7
+Installing package_install : PASSED: Sphinx 3.4.3
+
+Detected OS                : Amazon Linux release 2023 (Amazon Linux).
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 7.4.7
+Installing package_install : PASSED: Sphinx 3.4.3
+
+Detected OS                : Arch Linux.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.2.3
+
+Detected OS                : CentOS Stream release 9.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 7.4.7
+Installing package_install : PASSED: Sphinx 3.4.3
+
+Detected OS                : Debian GNU/Linux 12.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 5.3.0
+
+Detected OS                : Devuan GNU/Linux 5.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 5.3.0
+
+Detected OS                : Fedora release 42 (Adams).
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.1.3
+
+Detected OS                : Gentoo Base System release 2.17.
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.2.3
+
+Detected OS                : Kali GNU/Linux 2025.2.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.1.3
+
+Detected OS                : Mageia 9.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.1.3
+Installing package_install : PASSED: Sphinx 6.1.3
+
+Detected OS                : Linux Mint 22.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.1.3
+Installing package_install : PASSED: Sphinx 4.3.2
+
+Detected OS                : openEuler release 25.03.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.1.3
+
+Detected OS                : OpenMandriva Lx 4.0.
+Installing venv            : WARNING: No such file or directory: 'sphinx-build'
+Installing package_install : PASSED: Sphinx 8.2.3
+
+Detected OS                : openSUSE Leap 15.6.
+Installing venv            : WARNING: No such file or directory: 'sphinx-build'
+Installing package_install : PASSED: Sphinx 7.2.6
+
+Detected OS                : openSUSE Tumbleweed.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.2.3
+
+Detected OS                : Oracle Linux Server release 9.6.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 7.4.7
+Installing package_install : WARNING: No such file or directory: 'sphinx-build'
+
+Detected OS                : Rocky Linux release 9.6 (Blue Onyx).
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 7.4.7
+Installing package_install : PASSED: Sphinx 3.4.3
+
+Detected OS                : Springdale Open Enterprise Linux release 9.2 (Parma).
+Installing venv            : PASSED: Sphinx 7.4.7
+Installing package_install : PASSED: Sphinx 3.4.3
+
+Detected OS                : Ubuntu 24.04.2 LTS.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 7.2.6
+
+Detected OS                : Ubuntu 25.04.
+Installing system_install  : PASSED
+Installing venv            : PASSED: Sphinx 8.2.3
+Installing package_install : PASSED: Sphinx 8.1.3
+
+It also properly detected RHEL 8 string:
+
+Detected OS                : Red Hat Enterprise Linux release 8.10 (Ootpa).
+Installing venv            : WARNING: No such file or directory: 'sphinx-build'
+Installing package_install : WARNING: No such file or directory: 'sphinx-build'
+
+But, at this particular docker container, no repositories had
+python3-sphinx nor python3-virtualenv, but I suspect that this
+is a problem on this particular image, as I'm almost sure we
+tested RHEL 8 in the past, so, I have hopes that this could
+still work with real RHEL, if it has Python >= 3.7.
+
+Yet, our goal is to support the latest LTS version, so
+RHEL 8 is out of scope.
+
+(*) Officially, the minimal Python version we endorse is
+3.9, as several Python scripts at the Kernel won't run
+with previous releases, but what we have for doc builds
+is currently compatible with 3.7. We may later increase
+it if you think it is a good idea. Yet, if you see the
+Sphinx version above, you'll notice that some venv installed
+7.4.7 as the latest version. It means that such distros
+still have Python <= 3.9.
+
+Mauro Carvalho Chehab (15):
+  scripts: sphinx-pre-install: fix version check for Fedora
+  scripts: sphinx-pre-install: rename it to
+    scripts/sphinx-pre-install.pl
+  scripts: sphinx-pre-install: Convert script to Python
+  scripts: sphinx-pre-install: Make it compatible with Python 3.6
+  scripts: sphinx-pre-install: run on a supported version
+  scripts: sphinx-pre-install: drop obsolete routines
+  scripts: sphinx-pre-install: drop support for old virtualenv
+  scripts: sphinx-pre-install: Address issues with OpenSUSE Leap 15.x
+  scripts: sphinx-pre-install.py fix opensuse hints
+  scripts: sphinx-pre-install.py: fix support for gentoo
+  scripts: sphinx-pre-install: Address issues with OpenSUSE Tumbleweed
+  scripts: sphinx-pre-install.py: only show portage hints once
+  scripts: sphinx-pre-install.py: cleanup rhel support
+  docs: Makefile: switch to the new scripts/sphinx-pre-install.py
+  scripts: sphinx-pre-install.pl: get rid of the old script
+
+ scripts/sphinx-pre-install | 2218 +++++++++++++++++++-----------------
+ 1 file changed, 1164 insertions(+), 1054 deletions(-)
+
+-- 
+2.50.0
 
 
 
