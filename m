@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-710244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD09AEE9B7
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026E7AEE9B9
 	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45374188A090
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:54:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B737177BA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649C02EA72F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA982EA75F;
 	Mon, 30 Jun 2025 21:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enprYEON"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+zkYomk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBCF241666;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082E424336D;
 	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751320365; cv=none; b=pM00unBi7oHbasvhE+Q0xgcQCRXVjGAelCsfM4F/6nqBpwpjovSJNF/dZpeAW77NsvzaVuAn5Qzg1svq6u/MlsbZOqquPJZJWZPlTYFMoiAeWnvN00DF/28vYbqVOggKEB8sKyq4MZ38kGS/4evDlj3YVwuexE7uX39zM75dKmM=
+	t=1751320365; cv=none; b=pd2ZVQELzPMxpEYDSGPPamr09GwB3Enh8egoFSgTZXGxt32DOZaZM+dYE/e1vCayA+k0EJp3wvHdNTGYD8MoS3DSuCLy7ZAOR1NpXh5vZR5nRU+3eWQSOp6VgyHiqwFNBOkOn17YCn4Uui1S7IGSOrxFk6R8EViczh3QMneQpuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751320365; c=relaxed/simple;
-	bh=ziyDRVvP7fisTUmklw0p9ITY4D1AfmB7FOFn6nzbObA=;
+	bh=75OOQGaZbWwBeHpHgcEDyXW9cfvWNPeCvA+D8R/RxPw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IpKF6vuaJWg8HB6wh88dkD8aNeRFKP1NtGUjc2Le+CuBPN9o6Hm+LH6RfnGBGKpoW7cR0lnkImlVXMgAM0FkSq3t/3GX98Y1FIFEpCpsDzLrz5bUZsYfUyuDOcXy1tqnP4d9PJXlI2ygo8fcH0sdQV/7U+A0XMqwmuXHG46/MSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enprYEON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA28C4CEF7;
+	 MIME-Version; b=H8BuS7jXTH1WW2KU4lPUjJA59tQhYoXeDzyzgth48r8f8PN1Icx+iLisxTPeI5vR8fr5LA1mEt+L6w/Domm5nYmYVuMhEUmuNJIP9317h7yc05kWBA0PPu366XuT/R70LApB4NzYix6ehmY/nyYwSJXg4KBhTXlBdEzSzPNt44o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+zkYomk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62480C4CEF6;
 	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751320364;
-	bh=ziyDRVvP7fisTUmklw0p9ITY4D1AfmB7FOFn6nzbObA=;
+	bh=75OOQGaZbWwBeHpHgcEDyXW9cfvWNPeCvA+D8R/RxPw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=enprYEONABk6EFw4X0Tre9NFX1RQEVtkC6qH6dLcbyAJ5SOTZJR6uuL1hCnpFf/Vf
-	 2c73Z66ntsRvjQfxYS62QGSn0cBrx7oy/1rchbBSM9aJZ7BxeT7/r3qIcpebKG+dMi
-	 PFIe0oFNFhaLkmFdeRiJVHDCzT8+3gpTy4F0s4WzRxsdwwhrH+jyKRBzGJlSue/Q5S
-	 i7FHxnsKnupJawFhAdEEDTrRxL6pJrt/vQhkFZ5qOnnQsK4SzIb2K0c/UxSo6nhMx2
-	 /Z6gkBCWesKfrjhCqrAhK9API9c3usrEoZ4msVxyHVHAzLPosSvWYv9k+faXhGwTHH
-	 oRo3qRjl66g/Q==
+	b=s+zkYomkrCFMsF0i7McMY0ubkPdJHfHxPutOXSRMy33fs6Rp7P/vtQd4nc7zBOtse
+	 FrrIQ+JaCyanxALZ4h/lnsRXqkfsGsa9iTgAvSRD+K38igbYEMeJhjyz6lrA0kJKyf
+	 EHadADjOZ9zpVBpxq46VK0ULQ6rvMQdboW20XwDB4DsADzNnjJjAD7KNRX4t+CX+um
+	 FiAGXH+tmgDKPj1vTQCTuRULtSi8yhkjUJyF/buoKJuvjxMG6IySHz2Ry+BP6xPtwv
+	 EliJ54roooRcovAWwjl7h0f5h5x67Nh4CSC5IzkzvQyNx9xibWyHiqMgWyP8AerilO
+	 trzXbA8kbBuMA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uWMQc-00000003QWp-2Tj0;
+	id 1uWMQc-00000003QWt-2aZH;
 	Mon, 30 Jun 2025 23:52:42 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -52,9 +52,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	"Sai Vishnu M" <saivishnu725@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 09/15] scripts: sphinx-pre-install.py fix opensuse hints
-Date: Mon, 30 Jun 2025 23:34:57 +0200
-Message-ID: <4c782ff5825d5437041e9a30d91141e59ab092a0.1751318230.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 10/15] scripts: sphinx-pre-install.py: fix support for gentoo
+Date: Mon, 30 Jun 2025 23:34:58 +0200
+Message-ID: <228d90e53fe73f6e1ae218f26d0bbc0e0808e4c9.1751318230.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1751318230.git.mchehab+huawei@kernel.org>
 References: <cover.1751318230.git.mchehab+huawei@kernel.org>
@@ -67,35 +67,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-yaml hints arw wrong.
+Some gentoo packages have changes. Fix it.
+
+While here, improve emerge portage enable logic.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/sphinx-pre-install.py | 35 ++++++++++++++++-------------------
+ 1 file changed, 16 insertions(+), 19 deletions(-)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index eca42d90ed01..69e2ea228df7 100755
+index 69e2ea228df7..9cbf548b0b9c 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -530,7 +530,7 @@ class SphinxDependencyChecker:
-             "python-sphinx": "python3-sphinx",
-             "virtualenv":    "python3-virtualenv",
-             "xelatex":       "texlive-xetex-bin",
--            "yaml":          "python3-pyyaml",
-+            "yaml":          "python3-pyyaml",     # or python3-PyYAML?
+@@ -669,12 +669,13 @@ class SphinxDependencyChecker:
+ 
+     def give_gentoo_hints(self):
+         progs = {
+-            "convert":      "media-gfx/imagemagick",
+-            "dot":          "media-gfx/graphviz",
+-            "rsvg-convert": "gnome-base/librsvg",
+-            "virtualenv":   "dev-python/virtualenv",
+-            "xelatex":      "dev-texlive/texlive-xetex media-fonts/dejavu",
+-            "yaml":         "dev-python/pyyaml",
++            "convert":       "media-gfx/imagemagick",
++            "dot":           "media-gfx/graphviz",
++            "rsvg-convert":  "gnome-base/librsvg",
++            "virtualenv":    "dev-python/virtualenv",
++            "xelatex":       "dev-texlive/texlive-xetex media-fonts/dejavu",
++            "yaml":          "dev-python/pyyaml",
++            "python-sphinx": "dev-python/sphinx",
          }
  
-         # On Tumbleweed, this package is also named rsvg-convert
-@@ -569,7 +569,7 @@ class SphinxDependencyChecker:
-                 progs.update({
-                     "python-sphinx": "python311-Sphinx",
-                     "virtualenv":    "python311-virtualenv",
--                    "yaml":          "python311-pyyaml",
-+                    "yaml":          "python311-PyYAML",
-                 })
+         if self.pdf:
+@@ -699,21 +700,17 @@ class SphinxDependencyChecker:
+             print("You should run:")
+         print("\n")
  
-         # FIXME: add support for installing CJK fonts
+-        imagemagick = "media-gfx/imagemagick svg png"
+-        cairo = "media-gfx/graphviz cairo pdf"
+-        portage_imagemagick = "/etc/portage/package.use/imagemagick"
+-        portage_cairo = "/etc/portage/package.use/graphviz"
+ 
+-        result = self.run(["grep", "imagemagick", portage_imagemagick],
+-                          stdout=subprocess.PIPE, text=True)
+-        if not result.stdout.strip():
+-            print(f"\tsudo su -c 'echo \"{imagemagick}\" > {portage_imagemagick}'")
++        portages = [
++            "media-gfx/imagemagick",
++            "media-gfx/graphviz",
++        ]
+ 
+-        result = self.run(["grep", "graphviz", portage_cairo],
+-                          stdout=subprocess.PIPE, text=True)
+-
+-        if not result.stdout.strip():
+-            print(f"\tsudo su -c 'echo \"{cairo}\" > {portage_cairo}'")
++        for p in portages:
++            result = self.run(["grep", p, "/etc/portage/package.use/*"],
++                               stdout=subprocess.PIPE, text=True)
++            if not result.stdout.strip():
++                print(f"\tsudo emerge -av1 {p}")
+ 
+         print(f"\tsudo emerge --ask {self.install}")
+ 
 -- 
 2.50.0
 
