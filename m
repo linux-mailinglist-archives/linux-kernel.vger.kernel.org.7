@@ -1,132 +1,498 @@
-Return-Path: <linux-kernel+bounces-709698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30963AEE12E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4900DAEE131
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED7517D4BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D55B417E7F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ACF28C5D1;
-	Mon, 30 Jun 2025 14:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35A128D8F8;
+	Mon, 30 Jun 2025 14:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hifiphile-com.20230601.gappssmtp.com header.i=@hifiphile-com.20230601.gappssmtp.com header.b="PyTzx8bt"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="im3lzhqG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7230828A718
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD83257AF0;
+	Mon, 30 Jun 2025 14:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751294326; cv=none; b=mLLHgCPYa9rNf91BX7evYrywVsEDv/JN95PO7Q80MIQnjiVQYP/aRGIjJKuc2tkasIxjcxxrrFyDutJFERfm6UBwMNEMDKQFHDmF6+PS8jtuRKUQlijgUteCwJSAtWvu2PUt4Scv+OYBGfRgkc3Y31s0sVgADP+9HxZb+y++N+E=
+	t=1751294334; cv=none; b=cKTJOdG5w7vHgRl2jS6DKJhATnlu1hljzV3RLqhNaZbEwvbw3ciLkHM0ABwcO3UEeIHrs5IVhLtPBk7duteEW1Un8nbSx4LTi5ToZQCiLWrjYVuagHgpRS3KAg4Lply1zK7SlEy50iz2U3wVm4f8oBA45FPXBh748QQhSXmxNpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751294326; c=relaxed/simple;
-	bh=q41UMOkYp6U8rXBQmxcMnX0PDl9yne69OVTJZiPDNQg=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Sf4XrwUL05DlWnyBjVvzN9Ycvd9/RNwxVnaXhKXk618iuEhMpQn0FwRYH4nzSDlJFe2H/O3XZDyrDZUD0c5HbIGIwtxdkms9ZH1pA/i5OeRnuPgViS3UIXA+K6lct2jdgQ6pbZd/uv8RUfznu7hPs6BIkjS85pW+zgDqnGlq9rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hifiphile.com; spf=none smtp.mailfrom=hifiphile.com; dkim=pass (2048-bit key) header.d=hifiphile-com.20230601.gappssmtp.com header.i=@hifiphile-com.20230601.gappssmtp.com header.b=PyTzx8bt; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hifiphile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hifiphile.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5550dca1241so2161981e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hifiphile-com.20230601.gappssmtp.com; s=20230601; t=1751294322; x=1751899122; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5aROwHTVbyl9D9zeojKZoCOh6LjGW5da//8YHEuJ/oI=;
-        b=PyTzx8btQ5qzpnwOOtYbHAOP8nuTpRUf+bwKaq7/dvF1+KGquUbFUCJMhb72Uin6Bv
-         M3yh44T0NyL0kH+9QCeUvYZg8bO5MAo+j/E/6nA6OH7aHDhBV2y9WyNp+kHGc4zRbJM/
-         jApjz7benoWiMnDobWa1KgKKhStvv7er3OhfKfTigyJUUAjIINETmpznkO9z7xv/Z1Mc
-         4cgFBkFWPcmuxch6wAG5jg8GBIYTKHEnguOgkZ1kbL1zCsW8jIbXxgFVNf5ubRJLvEsQ
-         9eh8rqm6sHR9ZrSZrJBl2z+vSX2P7QPLvvNcWDnwfXBa3fvd0pKgJBakQkO4NtqAOvqo
-         J7cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751294322; x=1751899122;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5aROwHTVbyl9D9zeojKZoCOh6LjGW5da//8YHEuJ/oI=;
-        b=bd47BiGl/US1VX/e2VDWJvFaIkU9B0Kxqpma1OaByi/F1ESKExpKy+r4c9hSCyMqL5
-         zK4zGdkRGPwY/flSkbs0Z9YuchUNkF/QmyJadyeo/RGCSShyrDUBtbsKZMseeaRi9bm3
-         Wc67N4Cv2W+dt1MwiuQadfUHxVtaKQjv334ycVhdvS5w5jfvqZ1hG2XOY+QD1QEVKHHG
-         ca3rFDBvzOqckIY5tE3fOUu2Bz7bmTmPmigA97JzAJE2dGN/xelBv71p2+MzcuSYRTP1
-         YeyzGQr3pUD5OHqr8ZWDkVzcLMW6u32jj58GPPakfGmdIhyFIUAx603yGR1yanvwC2xt
-         uF9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKMN1P1Y1lR2KLh5hJIUn+x7VMag+OZJJT5XXonD2/qf9Dsee1RifwsCZdF3J6HRZlWQn9UyxbWbV6jzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOIAMyp4CZyvoROKgHohF8tyqSVNEl2nWnUITWcvjTIzxAOKyh
-	pd2g5UMXNjH0lWB3xmjPpBl9Laagfp600d4/DytW9kvd4/5zOAWWffkJEsq4IQHxbJ5dGjhLiXQ
-	nFdPgyyGIW5Iy4zCZNe/CSSZbnAUE7C68moB/zFgxnQ==
-X-Gm-Gg: ASbGnctSzZcomoUs9o3+AybRsYWsVgKoasAeBgFFXYGsYga52EFRHepiHZ+qSR2YHfG
-	+/rn0v/SIczSd910Pz0KNqnPMZXv2F6ZozhCPSReaOMkosn6kxV1lfskQrnEH3+T5ii9nm7Nnvc
-	yyiU7WeUPTUmWOt2/JE3CVPGdsAcQLE7euBPMCw0bCtNU=
-X-Google-Smtp-Source: AGHT+IFnqcLpgxNaCsk7PoNMYONyRs0hnLK3ll4UkAxFSTpn8mAkmMX5sbsExFDwtXdwFg+jhcuCDPedsHKii9UuAHs=
-X-Received: by 2002:a05:651c:1116:20b0:32c:bc69:e91a with SMTP id
- 38308e7fff4ca-32cdc525e8amr30785301fa.36.1751294322210; Mon, 30 Jun 2025
- 07:38:42 -0700 (PDT)
+	s=arc-20240116; t=1751294334; c=relaxed/simple;
+	bh=H1eGsfDh2XvEyiDLmFiwfZKwF4b7/9liBP37HpQIPCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=o58X5v+QcYIFnI8YDAYUTd4+UQV6go8OrbCRbsiHpNiDCJX3ysMKHGrrVmDNfyZq5rt+61S9vkpjp6RaXB+iD4QSEXQN2OXbkw4+vh7ZaC6bfA3wySmJ/QU6eMn62kqaMCqLIiQPQYKiH7rW9+yXIqTC+3BymJesCPFL3J95k40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=im3lzhqG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UBTLdx012368;
+	Mon, 30 Jun 2025 14:38:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=c1SmB9aoBUHSFNebQ
+	ceGRLZxih19kgNxmRy29E7i8/Q=; b=im3lzhqGMxLzmiBzGlTPn6dywk4PpZ98A
+	ycFd5eMsSeU/iWkn171VydXEfa1qark1aSA30xXbG2BVy+sTX+1pktP93du/4Zyt
+	41gNoz11ZvH7C5KCpDtMzrcRXo2zWrOn68TYPbapI8t0lPsbjA4p8QwMZqGiIyTH
+	g9KrJCcY9cj9yUezNKGdmZrXSZmkQIf8Vh9+eovHOoPJwEI852PQCX348638OizA
+	4VlrCrx214fdPUTsK0PYEFwTdQuIzl8V3nxCEYcChELckWKcehyqKMK+8O53F18j
+	XcZiS27+nM54/qxNCu4cx1FyiFUYBNEvdEpChGGBN9GIHDyxwfWuw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j82fhr65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 14:38:46 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55UB733X021371;
+	Mon, 30 Jun 2025 14:38:45 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jwe35yb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 14:38:45 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55UEcisd43909396
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Jun 2025 14:38:44 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7CB0258059;
+	Mon, 30 Jun 2025 14:38:44 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B9A6158058;
+	Mon, 30 Jun 2025 14:38:43 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 30 Jun 2025 14:38:43 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
+        dhowells@redhat.com, simo@redhat.com,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v2 2/4] crypto: Add shake128/256 to generic sha3 module
+Date: Mon, 30 Jun 2025 10:38:32 -0400
+Message-ID: <20250630143834.2748285-3-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250630143834.2748285-1-stefanb@linux.ibm.com>
+References: <20250630143834.2748285-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Zixun LI <admin@hifiphile.com>
-Date: Mon, 30 Jun 2025 16:38:31 +0200
-X-Gm-Features: Ac12FXyz1YASyU_kIOho436uejsR4G8SmZtLl7LY6YsKeZfU1QFCNlm6WQE6lL0
-Message-ID: <CA+GyqebQnWQ3fj4Lrb4-hvzRpphuqw+jh4B9En1j2NDTNFumvQ@mail.gmail.com>
-Subject: mtd: rawnand: atmel: ECC error after update to kernel 6.6
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	linux-mtd@lists.infradead.org, 
-	"SoC support'" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eo-JcFUep7AhLykOG3knCDNuwIIDxXy7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDExNyBTYWx0ZWRfXzze742ORF/hP gEq4q+elVWBhC9GAu9buFclzaY5miEG9dKhD/T3WmVWLwR8JV4DBL8wGAJ4JnjM4VHyT147m0qT SV4AQuvG9+WGKie+m4IZ1FizFudrtxRbhLddnoSH5kWgPVddCGNtJBK2B++pCIkjVAuSvDD4UON
+ qCRNmsKUL5XDYnhRGvZO5iCHB2anAvlPrLvsL1p7y4cbzuJ0zau5dg+VeFSxOaIU1zZHNKjPmkH kRTo+DLq5QfMxzvXjo3c9jIFqRBEDfJOmvEqGchhSVCfTt3CB+DjGcIapibNX9S+yncHiFxFv+P QP23XzYbjLODiQhgumDpUO4Qoaj/pTX5/5mcfyYkw2zn5Rzi9+VlKHjIA2+GZzr6uTYCJVUEdqK
+ vd615lAzTSvE8V78IQ7V8zuN5tEOyRdUlgea10Ed46eVNix55qmyBjI+s1uGVXs/hKBvlsdH
+X-Authority-Analysis: v=2.4 cv=LpeSymdc c=1 sm=1 tr=0 ts=6862a176 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=7PqV0hYhwxvHinq54jsA:9
+X-Proofpoint-GUID: eo-JcFUep7AhLykOG3knCDNuwIIDxXy7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506300117
 
-Hi,
+Extend the sha3 module with shake128 & shake256. For this, implement
+functions to get (squeeze) a number of bytes or blocks from the keccak
+sponge. A block here corresponds to the number of bytes available in the
+state buffer following a keccak permutation. On top of this functionality
+implement the general squeeze function that returns a requested number of
+bytes to the caller. Implement the 'final' function on top of the squeeze
+function. The 'final' function will always request a fixed number of bytes
+from the squeeze function and set the 'final' parameter to true, clearing
+the state of the hash as usual.
 
-After updating our SAM9G25 device from kernel 3.16 to 6.6, we have
-encountered UBIFS failures with ECC errors:
+Adjust the maximum hash description and block sizes due to shake128.
 
-  ubi0 warning: ubi_io_read: error -74 (ECC error) while reading
-126976 bytes from PEB 8:4096, read only 126976 bytes, retry
+Extend the arrays for supported hashes with entries for shake128 and
+shake256.
 
-On the old system (kernel 3.16), nandtest passed successfully:
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ crypto/hash_info.c             |   4 +
+ crypto/sha3_generic.c          | 238 +++++++++++++++++++++++++++++++++
+ include/crypto/algapi.h        |   2 +-
+ include/crypto/hash.h          |   9 +-
+ include/crypto/sha3.h          |  19 +++
+ include/uapi/linux/hash_info.h |   2 +
+ 6 files changed, 268 insertions(+), 6 deletions(-)
 
-  nandtest -p 1 -l 0x40000 /dev/mtd2
-  ECC corrections: 1
-  ECC failures : 0
-  Bad blocks : 0
-  BBT blocks : 0
-  00020000: checking...
-  Finished pass 1 successfully
+diff --git a/crypto/hash_info.c b/crypto/hash_info.c
+index 9a467638c971..2e426be89463 100644
+--- a/crypto/hash_info.c
++++ b/crypto/hash_info.c
+@@ -32,6 +32,8 @@ const char *const hash_algo_name[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_SHA3_256]    = "sha3-256",
+ 	[HASH_ALGO_SHA3_384]    = "sha3-384",
+ 	[HASH_ALGO_SHA3_512]    = "sha3-512",
++	[HASH_ALGO_SHAKE128]	= "shake128",
++	[HASH_ALGO_SHAKE256]	= "shake256",
+ };
+ EXPORT_SYMBOL_GPL(hash_algo_name);
+ 
+@@ -59,5 +61,7 @@ const int hash_digest_size[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_SHA3_256]    = SHA3_256_DIGEST_SIZE,
+ 	[HASH_ALGO_SHA3_384]    = SHA3_384_DIGEST_SIZE,
+ 	[HASH_ALGO_SHA3_512]    = SHA3_512_DIGEST_SIZE,
++	[HASH_ALGO_SHAKE128]	= SHAKE128_DIGEST_SIZE,
++	[HASH_ALGO_SHAKE256]	= SHAKE256_DIGEST_SIZE,
+ };
+ EXPORT_SYMBOL_GPL(hash_digest_size);
+diff --git a/crypto/sha3_generic.c b/crypto/sha3_generic.c
+index 41d1e506e6de..f90484464afd 100644
+--- a/crypto/sha3_generic.c
++++ b/crypto/sha3_generic.c
+@@ -29,6 +29,8 @@
+ #define SHA3_INLINE	noinline
+ #endif
+ 
++#define DOMAIN_SEPARATOR_SHAKE	0x1F
++
+ #define KECCAK_ROUNDS 24
+ 
+ static const u64 keccakf_rndc[24] = {
+@@ -218,6 +220,216 @@ static int crypto_sha3_finup(struct shash_desc *desc, const u8 *src,
+ 	return 0;
+ }
+ 
++static int crypto_shake_init(struct shash_desc *desc)
++{
++	struct shake_state *sctx = shash_desc_ctx(desc);
++	unsigned int digest_size = crypto_shash_digestsize(desc->tfm);
++
++	sctx->rsiz = 200 - 2 * digest_size;
++	sctx->rsizw = sctx->rsiz / 8;
++	sctx->partial = 0;
++	sctx->ridx = 0;
++	sctx->finalized = false;
++	sctx->permute = false;
++	memset(sctx->st, 0, sizeof(sctx->st));
++
++	return 0;
++}
++
++static int crypto_shake_update(struct shash_desc *desc, const u8 *data,
++			       unsigned int len)
++{
++	struct shake_state *sctx = shash_desc_ctx(desc);
++	unsigned int done;
++	const u8 *src;
++
++	done = 0;
++	src = data;
++
++	if ((sctx->partial + len) > (sctx->rsiz - 1)) {
++		if (sctx->partial) {
++			done = -sctx->partial;
++			memcpy(sctx->buf + sctx->partial, data,
++			       done + sctx->rsiz);
++			src = sctx->buf;
++		}
++
++		do {
++			unsigned int i;
++
++			for (i = 0; i < sctx->rsizw; i++)
++				sctx->st[i] ^= get_unaligned_le64(src + 8 * i);
++			keccakf(sctx->st);
++
++			done += sctx->rsiz;
++			src = data + done;
++		} while (done + (sctx->rsiz - 1) < len);
++
++		sctx->partial = 0;
++	}
++	memcpy(sctx->buf + sctx->partial, src, len - done);
++	sctx->partial += (len - done);
++
++	return 0;
++}
++
++/*
++ * crypto_shake_squeeze_blocks - squeeze whole blocks
++ *
++ * @sctx: shake context
++ * @out: pointer to output buffer pointer
++ * @nblocks: number of whole blocks to return in @out
++ */
++static void crypto_shake_squeeze_blocks(struct shake_state *sctx,
++					u8 **out, size_t nblocks)
++{
++	__le64 *digest = (__le64 *)*out;
++	size_t i, j;
++
++	for (i = 0; i < nblocks; i++) {
++		if (sctx->permute)
++			keccakf(sctx->st);
++		sctx->permute = true;
++
++		for (j = 0; j < sctx->rsiz / 8; j++)
++			put_unaligned_le64(sctx->st[j], digest++);
++	}
++	*out = (u8 *)digest;
++}
++
++/*
++ * crypto_shake_squeeze_bytes - squeeze arbitrary number of bytes
++ *
++ * @sctx: shake context
++ * @out: output buffer
++ * @n: number of bytes to return in @out
++ */
++static void crypto_shake_squeeze_bytes(struct shake_state *sctx,
++				       u8 *out, size_t n)
++{
++	size_t i, j, to_copy, loops, nblocks;
++	__le64 *digest;
++
++	if (sctx->permute) {
++		keccakf(sctx->st);
++		sctx->permute = false;
++	}
++
++	while (n) {
++		to_copy = min(8 - (sctx->ridx & 7), n);
++		while (to_copy < 8) {
++			for (i = sctx->ridx; i < sctx->ridx + to_copy; i++)
++				*out++ = sctx->st[i / 8] >> 8 * (i & 7);
++
++			sctx->ridx += to_copy;
++			n -= to_copy;
++			if (sctx->ridx == sctx->rsiz) {
++				sctx->ridx = 0;
++				if (n == 0) {
++					sctx->permute = true;
++					return;
++				}
++				keccakf(sctx->st);
++			}
++			if (n == 0)
++				return;
++			if (n >= 8)
++				break;
++			to_copy = n;
++		}
++		/* sctx->ridx is 8-byte aligned now */
++
++		if (sctx->ridx == 0 && n >= sctx->rsiz) {
++			/* whole blocks */
++			nblocks = n / sctx->rsiz;
++			crypto_shake_squeeze_blocks(sctx, &out, nblocks);
++			n -= nblocks * sctx->rsiz;
++			if (n == 0)
++				return;
++			keccakf(sctx->st);
++			sctx->permute = false;
++		}
++
++		to_copy = min(n, sctx->rsiz - sctx->ridx);
++		while (to_copy >= 8) {
++			loops = to_copy / 8;
++
++			digest = (__le64 *)out;
++
++			j = sctx->ridx / 8;
++			for (i = j; i < j + loops; i++)
++				put_unaligned_le64(sctx->st[i], digest++);
++
++			sctx->ridx += loops * 8;
++			n -= loops * 8;
++			if (sctx->ridx == sctx->rsiz) {
++				sctx->ridx = 0;
++				if (n == 0) {
++					sctx->permute = true;
++					return;
++				}
++				keccakf(sctx->st);
++			}
++			if (n == 0)
++				return;
++
++			out = (u8 *)digest;
++			if (n >= sctx->rsiz || n < 8)
++				break;
++
++			to_copy = n;
++		}
++	}
++}
++
++static void crypto_shake_finalize(struct shake_state *sctx,
++				  u8 domsep)
++{
++	unsigned int inlen, i;
++
++	if (sctx->finalized)
++		return;
++
++	inlen = sctx->partial;
++	sctx->buf[inlen++] = domsep;
++	memset(sctx->buf + inlen, 0, sctx->rsiz - inlen);
++	sctx->buf[sctx->rsiz - 1] |= 0x80;
++
++	for (i = 0; i < sctx->rsizw; i++)
++		sctx->st[i] ^= get_unaligned_le64(sctx->buf + 8 * i);
++
++	sctx->finalized = true;
++	sctx->permute = true;
++}
++
++static int crypto_shake_squeeze(struct shash_desc *desc,
++				u8 *out, size_t outlen,
++				bool final)
++{
++	struct shake_state *sctx = shash_desc_ctx(desc);
++
++	if (!outlen)
++		goto done;
++
++	if (!sctx->finalized)
++		crypto_shake_finalize(sctx, DOMAIN_SEPARATOR_SHAKE);
++
++	crypto_shake_squeeze_bytes(sctx, out, outlen);
++done:
++	if (final)
++		memset(sctx, 0, sizeof(*sctx));
++
++	return 0;
++}
++
++static int crypto_shake_final(struct shash_desc *desc, u8 *out)
++{
++	unsigned int digest_size = crypto_shash_digestsize(desc->tfm);
++
++	return crypto_shake_squeeze(desc, out, digest_size, true);
++}
++
++
+ static struct shash_alg algs[] = { {
+ 	.digestsize		= SHA3_224_DIGEST_SIZE,
+ 	.init			= crypto_sha3_init,
+@@ -262,6 +474,28 @@ static struct shash_alg algs[] = { {
+ 	.base.cra_flags		= CRYPTO_AHASH_ALG_BLOCK_ONLY,
+ 	.base.cra_blocksize	= SHA3_512_BLOCK_SIZE,
+ 	.base.cra_module	= THIS_MODULE,
++}, {
++	.digestsize		= SHAKE128_DIGEST_SIZE,
++	.init			= crypto_shake_init,
++	.update			= crypto_shake_update,
++	.final			= crypto_shake_final,
++	.squeeze		= crypto_shake_squeeze,
++	.descsize		= sizeof(struct shake_state),
++	.base.cra_name		= "shake128",
++	.base.cra_driver_name	= "shake128-generic",
++	.base.cra_blocksize	= SHAKE128_BLOCK_SIZE,
++	.base.cra_module	= THIS_MODULE,
++}, {
++	.digestsize		= SHAKE256_DIGEST_SIZE,
++	.init			= crypto_shake_init,
++	.update			= crypto_shake_update,
++	.final			= crypto_shake_final,
++	.squeeze		= crypto_shake_squeeze,
++	.descsize		= sizeof(struct shake_state),
++	.base.cra_name		= "shake256",
++	.base.cra_driver_name	= "shake256-generic",
++	.base.cra_blocksize	= SHAKE256_BLOCK_SIZE,
++	.base.cra_module	= THIS_MODULE,
+ } };
+ 
+ static int __init sha3_generic_mod_init(void)
+@@ -288,3 +522,7 @@ MODULE_ALIAS_CRYPTO("sha3-384");
+ MODULE_ALIAS_CRYPTO("sha3-384-generic");
+ MODULE_ALIAS_CRYPTO("sha3-512");
+ MODULE_ALIAS_CRYPTO("sha3-512-generic");
++MODULE_ALIAS_CRYPTO("shake128");
++MODULE_ALIAS_CRYPTO("shake128-generic");
++MODULE_ALIAS_CRYPTO("shake256");
++MODULE_ALIAS_CRYPTO("shake256-generic");
+diff --git a/include/crypto/algapi.h b/include/crypto/algapi.h
+index 188eface0a11..72c29dd1de9a 100644
+--- a/include/crypto/algapi.h
++++ b/include/crypto/algapi.h
+@@ -20,7 +20,7 @@
+  * static buffers that are big enough for any combination of
+  * algs and architectures. Ciphers have a lower maximum size.
+  */
+-#define MAX_ALGAPI_BLOCKSIZE		160
++#define MAX_ALGAPI_BLOCKSIZE		168 /* shake128 */
+ #define MAX_ALGAPI_ALIGNMASK		127
+ #define MAX_CIPHER_BLOCKSIZE		16
+ #define MAX_CIPHER_ALIGNMASK		15
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 36b88d34c0dd..a94763913acf 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -177,14 +177,13 @@ struct shash_desc {
+ 
+ #define HASH_MAX_DIGESTSIZE	 64
+ 
+-/* Worst case is sha3-224. */
+-#define HASH_MAX_STATESIZE	 200 + 144 + 1
++/* Worst case is shake128 */
++#define HASH_MAX_STATESIZE	 200 + 168 + 5 * 4 + 4
+ 
+ /*
+- * Worst case is hmac(sha3-224-s390).  Its context is a nested 'shash_desc'
+- * containing a 'struct s390_sha_ctx'.
++ * Worst case is shake128
+  */
+-#define HASH_MAX_DESCSIZE	(sizeof(struct shash_desc) + 360)
++#define HASH_MAX_DESCSIZE	(sizeof(struct shash_desc) + 384)
+ #define MAX_SYNC_HASH_REQSIZE	(sizeof(struct ahash_request) + \
+ 				 HASH_MAX_DESCSIZE)
+ 
+diff --git a/include/crypto/sha3.h b/include/crypto/sha3.h
+index 41e1b83a6d91..cc393d06a8da 100644
+--- a/include/crypto/sha3.h
++++ b/include/crypto/sha3.h
+@@ -33,4 +33,23 @@ struct sha3_state {
+ 
+ int crypto_sha3_init(struct shash_desc *desc);
+ 
++
++#define SHAKE128_DIGEST_SIZE	(128 / 8)
++#define SHAKE128_BLOCK_SIZE	(200 - 2 * SHAKE128_DIGEST_SIZE)
++
++#define SHAKE256_DIGEST_SIZE	(256 / 8)
++#define SHAKE256_BLOCK_SIZE	(200 - 2 * SHAKE256_DIGEST_SIZE)
++
++struct shake_state {
++	u64		st[25];
++	unsigned int	rsiz;
++	unsigned int	rsizw;
++
++	unsigned int	partial;
++	u8		buf[SHAKE128_BLOCK_SIZE];
++	bool		finalized;
++	bool		permute;
++	unsigned int	ridx;
++};
++
+ #endif
+diff --git a/include/uapi/linux/hash_info.h b/include/uapi/linux/hash_info.h
+index 0af23ec196d8..97af74326d31 100644
+--- a/include/uapi/linux/hash_info.h
++++ b/include/uapi/linux/hash_info.h
+@@ -38,6 +38,8 @@ enum hash_algo {
+ 	HASH_ALGO_SHA3_256,
+ 	HASH_ALGO_SHA3_384,
+ 	HASH_ALGO_SHA3_512,
++	HASH_ALGO_SHAKE128,
++	HASH_ALGO_SHAKE256,
+ 	HASH_ALGO__LAST
+ };
+ 
+-- 
+2.49.0
 
-But on the new system (kernel 6.6), nandtest reports many errors:
-
-  nandtest -p 1 -l 0x40000 /dev/mtd2
-  ECC corrections: 1667
-  ECC failures : 1205
-  Bad blocks : 1
-  BBT blocks : 0
-  00000000: reading (1 of 4)...
-  218 bit(s) ECC corrected at 00000000
-
-After some diagnostics, I used devmem2 to compare SMC and PMECC
-registers between the two kernels. All values match except for the
-PMECC_CLK register, which is 2 in kernel 3.16 [1] and 0 in kernel 6.6
-[2]. It appears the clock setting is missing since the kernel 4.14
-refactor.
-
-According to the SAM9G25 datasheet this field must be programmed with 2.
-
-Manually setting PMECC_CLK to 2 (devmem2 0xffffe010 w 2) resolves the
-nandtest issue.
-
-Is the clock setting moved to elsewhere after the refactor ?
-
-Best regards,
-Zixun LI
-
-[1] https://github.com/torvalds/linux/blob/19583ca584d6f574384e17fe7613dfaeadcdc4a6/drivers/mtd/nand/atmel_nand.c#L1058
-[2] https://github.com/torvalds/linux/blob/ffc253263a1375a65fa6c9f62a893e9767fbebfa/drivers/mtd/nand/raw/atmel/pmecc.c#L772
 
