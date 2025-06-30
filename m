@@ -1,267 +1,156 @@
-Return-Path: <linux-kernel+bounces-709143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317BFAED9CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:26:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A25FAED9CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086853A9546
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3C0177EC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F738259C87;
-	Mon, 30 Jun 2025 10:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E43E258CD8;
+	Mon, 30 Jun 2025 10:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iGKH7SSu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RpAIem8w"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GQ7lQFld"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA3623E358;
-	Mon, 30 Jun 2025 10:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA472AF1B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751279188; cv=none; b=inhWksVm9AqXFJpogfCuh2ONpCkQnNACTYINpKy4IHmbUcrwwY4Ohcc4tYHout1aoLQ6r9WQTAtnqZtlRKxyuJp2kPNtYxJoamlKj1Gn1XZz0F3FMwZsaq8ATqXm8S0UIzrfIQFZU2rExxjwHvNpWnxlwQlqEgBh6r9vR8Q/dJk=
+	t=1751279226; cv=none; b=TH+vS3D05I+2rnO26RtnU+uBd8V71ATbv2dai/jlcUuCud4QGmOWOnckYLVsVzrcwGw61eGgXBmtOOGhmuPzF8wArbVoAy8RjQmwcy6b9/4EQGBcRfruKzHfPetYfeYcAAMqbRW7US8+bDR0X4YKlTxo3QAsbRTDWVutfYkC3+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751279188; c=relaxed/simple;
-	bh=SN/vAaTyYzDQhlYaCs17NxtmkAdA7yz8PzP/EMg93rU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eWuedIjAp2aeVnuM/u0Wkl5bzmu54mEX6vWRis3su42oT/A+kOYYNgMrC7uadhxuyMxrUBhieh0UkiT2G/JvimzC+zjhliyh4z/qaJPyB7jSRU6M2986F7sO4Q3ffLN1Z7FMEdB1BxBXTX6qh4pXkExXRN+abq6XEQgqZoM/Tcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iGKH7SSu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RpAIem8w; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751279184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yOUQVm3BJSm9B+6JOLgVfo34U1Tc6lgjFygyierZSZw=;
-	b=iGKH7SSu5vTHFP3nzhuB20bzyZTsOW9E1xKpfukwX7bxPa0JrjurRxDvgse5kXbR8G8Dmy
-	izAKLMJjCm7s9YR/V+7/YVOZ24kFGnA/V+JePBHXWCy7rTOcGjS9gxLiiBO30y4dnIpeVW
-	LDxTGsDNqnXl5XUclMq85kBdhNjx2j7nwI0yDwlm7+rkScg3s3guckB5umcMJmBgHme1En
-	0tDmpGR+3U0O61MOVFrQhqUNk2gy/oQjiWYjBQz5mTG44aMlmz4hVW9ZTGTEYtjY0nd2uD
-	z1Q6c4zEnoo/fnQjuJodGYQIlrMwk1s1rHHEGv4Cgu52piSntrnbsGrGtV7NBg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751279184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yOUQVm3BJSm9B+6JOLgVfo34U1Tc6lgjFygyierZSZw=;
-	b=RpAIem8wcOs3dVEz+DJK+TMZ79X8xVp2FthISR5jXA7X4CbIDrWYRkyCdgBA5efRL1zLbS
-	FOHhJ+FjGVzNCiCQ==
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH v2 2/2] x86/hyperv: Switch to msi_create_parent_irq_domain()
-Date: Mon, 30 Jun 2025 12:26:15 +0200
-Message-Id: <5c0ada725449176dfeeb1f7aa98c324066c39d2c.1751277765.git.namcao@linutronix.de>
-In-Reply-To: <cover.1751277765.git.namcao@linutronix.de>
-References: <cover.1751277765.git.namcao@linutronix.de>
+	s=arc-20240116; t=1751279226; c=relaxed/simple;
+	bh=H0MaE5zBOSHO3LkNCLftptGerNAPEoWExbl9pw4hqbk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PgkE3FEDmLrNfZ7fMMhio29B3DiQUsxI8lL5s0lp+Sd96PFtsoMm5zBcBvkpSHuyyNCnBtv/VKjseXgh4fBVB6pJjLSiZ6YxssLtDNlejCX5Zntqeq7DdV9iGQzWTvywgGfP+WBMgzGXUZKWW2BD4+m943KBsXH+/4VEN/rQm7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GQ7lQFld; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8D5D9008138;
+	Mon, 30 Jun 2025 10:26:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=RNwyz2uPyTgf5iTMXJhK4t
+	1OLAWKnwrjx6NHrYAot/k=; b=GQ7lQFld32m1MZciqSayJxeeWOAXoJ6L1PBpzy
+	oK1XDRoK6gt2Snee14kqS+W47yGJvpuvvNyBPtXgqgLEpk+mN31Oyb62b9o66jd9
+	K2JkbWTrZCVhDVqP8Vl8+R0Epjcdc9AHWPyCHLdjwYfqc/OrjoCpJmpbB/te1vZp
+	O6VzZtL2M1YTLYBEHMGpwNy7dw+qeHQ/t1h/hnebfx8jLigYO56z/m/+7LDbbHAp
+	6/BGRBTPNfAU3wWOkC05Fh5TI1f7tuHDdTvgx5of2yfufZwcgr5+Pat4iLv51hfp
+	XUe5gXVFb2UmOaNhV4ILTn1/X+1LDaq+bvdr4v7SxjO1MUiQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kkfms0e1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 10:26:56 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55UAQtLr028282
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 10:26:55 GMT
+Received: from yuanfang4-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 30 Jun 2025 03:26:53 -0700
+From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Date: Mon, 30 Jun 2025 18:26:19 +0800
+Subject: [PATCH] coresight: Only register perf symlink for sinks with
+ alloc_buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250630-etm_perf_sink-v1-1-e4a7211f9ad7@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAEpmYmgC/x3M0QpAQBBG4VfRXNsaK5JXkaT1D5Ms7UpK3t3m8
+ rs456GIoIjUZg8FXBp19wlFnpFbRj/D6JRMlm3FdckG5zYcCDJE9asBWJyIqxvLlJojQPT+f13
+ /vh+gPyWtXwAAAA==
+X-Change-ID: 20250630-etm_perf_sink-ee0fcffc6820
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>
+CC: <kernel@oss.qualcomm.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751279213; l=1521;
+ i=quic_yuanfang@quicinc.com; s=20241209; h=from:subject:message-id;
+ bh=H0MaE5zBOSHO3LkNCLftptGerNAPEoWExbl9pw4hqbk=;
+ b=vnAxtFOL7djNa+vwjH/7/Runb2sNbuIdgf67egd/SWFD/dYSYcr2rIv7OP0+2xsrWLoFZX6FR
+ oCNia01W7hCBe8E5Mg2tTmPjq6h4Q6rpiTbWCi56U2naomwflbxVPrn
+X-Developer-Key: i=quic_yuanfang@quicinc.com; a=ed25519;
+ pk=ZrIjRVq9LN8/zCQGbDEwrZK/sfnVjwQ2elyEZAOaV1Q=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _DvWm0v9RiTWO0ItHcZ0r8IqVpA07VDo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDA4NiBTYWx0ZWRfX2RpDxWFY9W5M
+ rLypVQu84WV8EWsCb4fGbsgF9Y7dSDUxJarec3Vh4DWv7+YQcUp3L8MVX2pShiSRKM1y+80U1Jx
+ 17ChT9LDERo0WBdIQcelkm6M1Ghhf6E1h9vWweQ+zC9VI1nyI+E0L/GH5ts99tHEerqbJ2srM+u
+ 5bS/28quVylRTPB0w4b8rmytbzXb9Izzska9NYRy6ylLa6A/yrGCEaqtypq2AeYh6VWy87Z8j2S
+ XyfNjBDounZ0ES/2Gj6cF/kb2M4YuyPLTuNoFa/ZY04Cwq2A79glx8gesOe3MBcyLUvEQ5uKPxE
+ KMZhtc5hO60j/UzMVv5Agmhm5pwxEU6ksGmBjiztRmx5eIHED6peZg/Vxb/yAZ1H+quvwJaXUvT
+ Wv9CYygC7T67sdM2AdsCYBUsWEdZyvNLf/pKek/zi2fnShCNPIgIeRqTjmmzAJCzb73SZgTC
+X-Authority-Analysis: v=2.4 cv=L9sdQ/T8 c=1 sm=1 tr=0 ts=68626670 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
+ a=biE8C0GMo9j7lGmchtYA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: _DvWm0v9RiTWO0ItHcZ0r8IqVpA07VDo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 phishscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 lowpriorityscore=0 adultscore=0 suspectscore=0 mlxlogscore=961
+ bulkscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506300086
 
-Move away from the legacy MSI domain setup, switch to use
-msi_create_parent_irq_domain().
+Ensure that etm_perf_add_symlink_sink() is only called for devices
+that implement the alloc_buffer operation. This prevents invalid
+symlink creation for dummy sinks that do not implement alloc_buffer.
 
-While doing the conversion, I noticed that hv_irq_compose_msi_msg() is
-doing more than it is supposed to (composing message content). The
-interrupt allocation bits should be moved into hv_msi_domain_alloc().
-However, I have no hardware to test this change, therefore I leave a TODO
-note.
+Without this check, perf may attempt to use a dummy sink that lacks
+alloc_buffer operationsu to initialise perf's ring buffer, leading
+to runtime failures.
 
-Signed-off-by: Nam Cao <namcao@linutronix.de>
+Fixes: 9d3ba0b6c0569 ("Coresight: Add coresight dummy driver")
+Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
 ---
- arch/x86/hyperv/irqdomain.c | 111 ++++++++++++++++++++++++------------
- drivers/hv/Kconfig          |   1 +
- 2 files changed, 77 insertions(+), 35 deletions(-)
+ drivers/hwtracing/coresight/coresight-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/hyperv/irqdomain.c b/arch/x86/hyperv/irqdomain.c
-index 31f0d29cbc5e3..9b3b65ffbd2e2 100644
---- a/arch/x86/hyperv/irqdomain.c
-+++ b/arch/x86/hyperv/irqdomain.c
-@@ -10,6 +10,7 @@
-=20
- #include <linux/pci.h>
- #include <linux/irq.h>
-+#include <linux/irqchip/irq-msi-lib.h>
- #include <asm/mshyperv.h>
-=20
- static int hv_map_interrupt(union hv_device_id device_id, bool level,
-@@ -276,59 +277,99 @@ static void hv_teardown_msi_irq(struct pci_dev *dev, =
-struct irq_data *irqd)
- 		hv_status_err(status, "\n");
- }
-=20
--static void hv_msi_free_irq(struct irq_domain *domain,
--			    struct msi_domain_info *info, unsigned int virq)
--{
--	struct irq_data *irqd =3D irq_get_irq_data(virq);
--	struct msi_desc *desc;
--
--	if (!irqd)
--		return;
--
--	desc =3D irq_data_get_msi_desc(irqd);
--	if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
--		return;
--
--	hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
--}
--
- /*
-  * IRQ Chip for MSI PCI/PCI-X/PCI-Express Devices,
-  * which implement the MSI or MSI-X Capability Structure.
-  */
- static struct irq_chip hv_pci_msi_controller =3D {
- 	.name			=3D "HV-PCI-MSI",
--	.irq_unmask		=3D pci_msi_unmask_irq,
--	.irq_mask		=3D pci_msi_mask_irq,
- 	.irq_ack		=3D irq_chip_ack_parent,
--	.irq_retrigger		=3D irq_chip_retrigger_hierarchy,
- 	.irq_compose_msi_msg	=3D hv_irq_compose_msi_msg,
--	.irq_set_affinity	=3D msi_domain_set_affinity,
--	.flags			=3D IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED,
-+	.irq_set_affinity	=3D irq_chip_set_affinity_parent,
- };
-=20
--static struct msi_domain_ops pci_msi_domain_ops =3D {
--	.msi_free		=3D hv_msi_free_irq,
--	.msi_prepare		=3D pci_msi_prepare,
-+static bool hv_init_dev_msi_info(struct device *dev, struct irq_domain *do=
-main,
-+				 struct irq_domain *real_parent, struct msi_domain_info *info)
-+{
-+	struct irq_chip *chip =3D info->chip;
-+
-+	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
-+		return false;
-+
-+	chip->flags |=3D IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MOVE_DEFERRED;
-+
-+	info->ops->msi_prepare =3D pci_msi_prepare;
-+
-+	return true;
-+}
-+
-+#define HV_MSI_FLAGS_SUPPORTED	(MSI_GENERIC_FLAGS_MASK | MSI_FLAG_PCI_MSIX)
-+#define HV_MSI_FLAGS_REQUIRED	(MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF=
-_CHIP_OPS)
-+
-+static struct msi_parent_ops hv_msi_parent_ops =3D {
-+	.supported_flags	=3D HV_MSI_FLAGS_SUPPORTED,
-+	.required_flags		=3D HV_MSI_FLAGS_REQUIRED,
-+	.bus_select_token	=3D DOMAIN_BUS_NEXUS,
-+	.bus_select_mask	=3D MATCH_PCI_MSI,
-+	.chip_flags		=3D MSI_CHIP_FLAG_SET_ACK,
-+	.prefix			=3D "HV-",
-+	.init_dev_msi_info	=3D hv_init_dev_msi_info,
- };
-=20
--static struct msi_domain_info hv_pci_msi_domain_info =3D {
--	.flags		=3D MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
--			  MSI_FLAG_PCI_MSIX,
--	.ops		=3D &pci_msi_domain_ops,
--	.chip		=3D &hv_pci_msi_controller,
--	.handler	=3D handle_edge_irq,
--	.handler_name	=3D "edge",
-+static int hv_msi_domain_alloc(struct irq_domain *d, unsigned int virq, un=
-signed int nr_irqs,
-+			       void *arg)
-+{
-+	/*
-+	 * TODO: The allocation bits of hv_irq_compose_msi_msg(), i.e. everything=
- except
-+	 * entry_to_msi_msg() should be in here.
-+	 */
-+
-+	int ret;
-+
-+	ret =3D irq_domain_alloc_irqs_parent(d, virq, nr_irqs, arg);
-+	if (ret)
-+		return ret;
-+
-+	for (int i =3D 0; i < nr_irqs; ++i) {
-+		irq_domain_set_info(d, virq + i, 0, &hv_pci_msi_controller, NULL,
-+				    handle_edge_irq, NULL, "edge");
-+	}
-+	return 0;
-+}
-+
-+static void hv_msi_domain_free(struct irq_domain *d, unsigned int virq, un=
-signed int nr_irqs)
-+{
-+	for (int i =3D 0; i < nr_irqs; ++i) {
-+		struct irq_data *irqd =3D irq_domain_get_irq_data(d, virq);
-+		struct msi_desc *desc;
-+
-+		desc =3D irq_data_get_msi_desc(irqd);
-+		if (!desc || !desc->irq || WARN_ON_ONCE(!dev_is_pci(desc->dev)))
-+			continue;
-+
-+		hv_teardown_msi_irq(to_pci_dev(desc->dev), irqd);
-+	}
-+	irq_domain_free_irqs_top(d, virq, nr_irqs);
-+}
-+
-+static const struct irq_domain_ops hv_msi_domain_ops =3D {
-+	.select	=3D msi_lib_irq_domain_select,
-+	.alloc	=3D hv_msi_domain_alloc,
-+	.free	=3D hv_msi_domain_free,
- };
-=20
- struct irq_domain * __init hv_create_pci_msi_domain(void)
- {
- 	struct irq_domain *d =3D NULL;
--	struct fwnode_handle *fn;
-=20
--	fn =3D irq_domain_alloc_named_fwnode("HV-PCI-MSI");
--	if (fn)
--		d =3D pci_msi_create_irq_domain(fn, &hv_pci_msi_domain_info, x86_vector_=
-domain);
-+	struct irq_domain_info info =3D {
-+		.fwnode		=3D irq_domain_alloc_named_fwnode("HV-PCI-MSI"),
-+		.ops		=3D &hv_msi_domain_ops,
-+		.parent		=3D x86_vector_domain,
-+	};
-+
-+	if (info.fwnode)
-+		d =3D msi_create_parent_irq_domain(&info, &hv_msi_parent_ops);
-=20
- 	/* No point in going further if we can't get an irq domain */
- 	BUG_ON(!d);
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 1cd188b73b743..e62a0f8b34198 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -10,6 +10,7 @@ config HYPERV
- 	select X86_HV_CALLBACK_VECTOR if X86
- 	select OF_EARLY_FLATTREE if OF
- 	select SYSFB if !HYPERV_VTL_MODE
-+	select IRQ_MSI_LIB if X86
- 	help
- 	  Select this option to run Linux as a Hyper-V client operating
- 	  system.
---=20
-2.39.5
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index fa758cc21827552a5c97b6bdd05d22dec4994b22..fddf04c5ee46eb4d559416296f7e85ce6c5689fa 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -1374,8 +1374,9 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+ 		goto out_unlock;
+ 	}
+ 
+-	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
+-	    csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
++	if ((csdev->type == CORESIGHT_DEV_TYPE_SINK ||
++	     csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) &&
++	    sink_ops(csdev)->alloc_buffer) {
+ 		ret = etm_perf_add_symlink_sink(csdev);
+ 
+ 		if (ret) {
+
+---
+base-commit: 408c97c4a5e0b634dcd15bf8b8808b382e888164
+change-id: 20250630-etm_perf_sink-ee0fcffc6820
+
+Best regards,
+-- 
+Yuanfang Zhang <quic_yuanfang@quicinc.com>
 
 
