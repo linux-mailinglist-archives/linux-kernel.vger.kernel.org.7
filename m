@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-709940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F00AEE4E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:44:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EEDCAEE4E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DF8A7A8796
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63404189C7B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA53290D9C;
-	Mon, 30 Jun 2025 16:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2567291880;
+	Mon, 30 Jun 2025 16:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="GrnR8y0h"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIMOWIph"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECD328F94E;
-	Mon, 30 Jun 2025 16:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751301885; cv=pass; b=mziRTddd1DvKNGeak5JOpt187ZGxnR691WXUxt0qYM6FgzyqMkZjfJ0YudLo+/AyYil2qeAWFqyXX/EK2eIKIcB3d2nYY46AY+mBPMTZcp2s6/VvhFqrCSysoBl8i3+E8oPZYXTXfJ3Jplk/NhrgeXen4GzItqaaG84vP1pxwJs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751301885; c=relaxed/simple;
-	bh=X+WMHR6KsltwxPV+rL43bY8Z2+VB1DMqHWRlFcMifQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJ4prU0DtOTuV5+Ir7sEijQxOfwK0WNDAHTeNtNl5iSJVGhnBlNZ9+7F4vRu+zhdaCgUlyx16ZdWc+c3BKisFpF9ilNLk+dQWWgIDMMx5F/bNIlkvPdmMbqKCdSdnYcGVVBiukVx3uSRs2ZXG0uBQqkgi52DOGWfRjK+m8aynGc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=GrnR8y0h; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751301858; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZKG1pUuIE3SbInx6lum+enVMNuGIW0ZN6xW94yLOaTmRBa72DDWfve2rMRITUUjXPs1k+A9aTnMOS4pLz8C2/feqkshU55AShExQXiZDCq1WxS2CSTyxKWqaN3CeMFAt5uPNtr5uMNi3cu8MM8CgYAZlVZSCIb3iHobJPCGSM24=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751301858; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=PzDU9nqyjpEDS4lSPx+RFrm4zapOV2CV9JDtSEwn19Y=; 
-	b=bvCepyT3rZsZlQALMYOAUCFNg4Hx8XFD+GNdKB17X09K6zFoi9thSvnKiwOg6xfczIPB4X8aD8Jd9M1j/ZOch89bir+uvvOjyi20jkhDZ2YdAlznC9qIQOSxSFAhPPbesavDrr0wDYnaVafsfuSMYw4NirgqzGaKL+xT02zaNWI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751301858;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=PzDU9nqyjpEDS4lSPx+RFrm4zapOV2CV9JDtSEwn19Y=;
-	b=GrnR8y0hL1DqLSOlikB5obbZISVLcVPNmo97EfbOwJBhnPyKxiV6sWXTqSWjma1E
-	mSIGx/s3Xmlj2KciJ3Vjyt115le/iQm06OBpCUz7JDRVymU/X/MqAj6LHYJvggpbOaM
-	M0CsArhsYoIvqdEmwflkPHuI3opxO+gvj3Sd6p9Y=
-Received: by mx.zohomail.com with SMTPS id 1751301856714404.94728450710375;
-	Mon, 30 Jun 2025 09:44:16 -0700 (PDT)
-Message-ID: <05a7c67f-d1fa-4ad4-a794-cc081cd04abc@collabora.com>
-Date: Mon, 30 Jun 2025 18:44:12 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC641990D8
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 16:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751301910; cv=none; b=ZHAFVfLpDA2JZEu5/7w+ohIF4c98Ud/KIT0xaHkAWBnJiAUAYLWvuctx/85wRJd7oW+vNpCJgTxM0adEox8UBT2hl/VxFrnP6QSGmrFMe+mfHgu0kzcxzqMxPp6lBwBfh3wwR2/5Nda+lst/Ms+sITMoUd7KPasezw/rmZ2AzCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751301910; c=relaxed/simple;
+	bh=iimtPmkJqIHY8+CdbyQ4Ml4IiC7bXO6UI6DKoOfU2ek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D4yl5dYJbRNBc7eVfcD3ZvVJr+TX0jOwZ7IMBZQaRjli88S2mzN5C98iPGH17WpKx7k9vHTRhtvR61TrdV5ulDtEffHS/DJYALI8Bh0Ra1078kTa9ebXhtFDPq8+1WqSa/9mELLZjYkbqsThicsuVqd5MOSHHWu5XLCav8VdN6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIMOWIph; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cfb790f7so39232395e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:45:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751301907; x=1751906707; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F28rxWH3aEX1Ni166QzFcf8v6CigBxTZA5+HuNofQDQ=;
+        b=DIMOWIphlDH5kELQr76EnVBOEfFBOS5l576eIqaK2/hXF3BRocSNASRNHt/jgfyFXY
+         0vbTLOKxCUILMy4k1Cw5FD+TaviIxXcTbIYNW5hShctukUBdcevUA8qxD6dtvMa9cINM
+         fNBEshSvhNP4VBKtFO0UNg8wZDwKTJeXYgVBysL8pKfhs7EQ+2FBr3Fdb18p/UZioGAx
+         RAxkFCnM/vKaSasrnBrooRx9xgIe6jwyjLmS5axk9Wvu5euYCKE8/6k+Ma9ps7NYVJWF
+         8smucVsBH11wC+R+AAqjGlypmFiATKNy92DkCk7Qh4+R8OkyuUkRtnECuGjb0PoVWp6T
+         6zxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751301907; x=1751906707;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F28rxWH3aEX1Ni166QzFcf8v6CigBxTZA5+HuNofQDQ=;
+        b=l3EM5K3k3mCNImnouCjRz/GkHdcR2gvahywUkGTgWM44s4oIpxr2qfzIiG32vl2ii3
+         Fnh8kpEgi8ZQ5D3h22PGoJ+9GI/4b1X9MWhHq85Ixq1Fg0l+5BZ7PYZgZFt0Jr+2sYGs
+         t4vWJgjuqJyNN3WfFfqjOzGKK9WgEMjLi01wpJ0uIn1tDHG8sYHQpWND0jR6Asvq7wZN
+         U6qyfrbg4KYrSRmUxnpS+2OUzBW4xUdJEzmkXRQbmhqR4SrwLVqeinWozPmHiVkMKBiz
+         j+qJ3Vo822IFzMaTsSvuNavy3bcEju0hDEAcXQ/jBfa9QOUk+wKAhJF3Sw1oMIx8j6H/
+         BVEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtHJdbKqZxUlF6YrF16nz/QVfaEO7OsAngA9xNsg9+ZRGxI44TUAQv7iP7knH8Sp4O9it8XqNfJeZRcdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLD1aSd/gIwChpTk5RZongS8vxOibuQaJyWkaZNwkQ/Gikj+cf
+	2MHh2Bw+BTEOczPgk8CMaY4TOROwyCOphs88X/UE0UOgAL2EHnPI4/dc
+X-Gm-Gg: ASbGncsV56160uf589YrNQEb6xzlAqS8U5l7k7D4okfnA4EArueiQjeqrX8v46n4/yp
+	z+wcGxxMMFZgWm5s+pg2A4ZXG+dSL1wTOnqiOxh/5nXr0nrRvuPKNO0CV0Jj7Gg4irROYQlNEmK
+	lv9WVPvZJVUU+frtExx7oiEamR3yKLnEIqlNPLKRxVCshTGNtTKuan07fpXyVB/SIRoH3gILYEW
+	lrv8MTBCkpr5+5MobxMEUrDFWdwjyaTD2UoZkMY93BFGyH59P2yG48wqW65MaDO63kjXu7xMr8r
+	NVs64pg/bLqTr1dhTuZm3WS5bd5vlwpqcDw375iTMxr2yeoLKmI39ZQpO+SY9ES1ottuezA0mi7
+	3WBOWn7Xazp3Gf35dO1s1eyY9rckBe+vPVXZJi2LW9ZcmtCk/Q2QFPJaWGDllC8sNnEy8O7O031
+	3v2SdiYkAehJp5kOvq7wzVRjDRJacG78c=
+X-Google-Smtp-Source: AGHT+IGtyZLJV5JuzoD1aAP4pupePO809LEum7y1pGUADJm5kY6rXHP/OKEUPGNjWu1MRkJBKyKxYA==
+X-Received: by 2002:a05:6000:4b1a:b0:3a4:f6d6:2d68 with SMTP id ffacd0b85a97d-3a9186574femr13158325f8f.56.1751301906524;
+        Mon, 30 Jun 2025 09:45:06 -0700 (PDT)
+Received: from cypher.home.roving-it.com (2.c.4.1.7.3.6.4.2.a.a.3.0.f.c.2.1.8.6.2.1.1.b.f.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:fb11:2681:2cf0:3aa2:4637:14c2])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a892e52ad2sm10731959f8f.48.2025.06.30.09.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 09:45:05 -0700 (PDT)
+From: Peter Robinson <pbrobinson@gmail.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-kernel@vger.kernel.org
+Cc: Peter Robinson <pbrobinson@gmail.com>
+Subject: [PATCH] reset: brcmstb: Enable reset drivers for ARCH_BCM2835
+Date: Mon, 30 Jun 2025 17:45:00 +0100
+Message-ID: <20250630164503.399835-1-pbrobinson@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] iommu: Add verisilicon IOMMU driver
-To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
- nicolas.dufresne@collabora.com, jgg@ziepe.ca
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- kernel@collabora.com
-References: <9d247bec-d206-495e-b8d6-23a7c3cc0882@suswa.mountain>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <9d247bec-d206-495e-b8d6-23a7c3cc0882@suswa.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+The BRCMSTB and BRCMSTB_RESCAL reset drivers are also
+used in the BCM2712, AKA the RPi5. The RPi platforms
+have typically used the ARCH_BCM2835, and the PCIe
+support for this SoC can use this config which depends
+on these drivers so enable building them when just that
+arch option is enabled to ensure the platform works as
+expected.
 
-Le 30/06/2025 à 18:13, Dan Carpenter a écrit :
-> Hi Benjamin,
->
-> kernel test robot noticed the following build warnings:
->
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Gaignard/dt-bindings-vendor-prefixes-Add-Verisilicon/20250623-234734
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-> patch link:    https://lore.kernel.org/r/20250623153931.158765-4-benjamin.gaignard%40collabora.com
-> patch subject: [PATCH v4 3/5] iommu: Add verisilicon IOMMU driver
-> config: alpha-randconfig-r073-20250627 (https://download.01.org/0day-ci/archive/20250629/202506290711.T0HOr5wS-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 8.5.0
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202506290711.T0HOr5wS-lkp@intel.com/
->
-> smatch warnings:
-> drivers/iommu/vsi-iommu.c:657 vsi_iommu_probe() error: uninitialized symbol 'err'.
->
-> vim +/err +657 drivers/iommu/vsi-iommu.c
->
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  639  static int vsi_iommu_probe(struct platform_device *pdev)
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  640  {
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  641  	struct device *dev = &pdev->dev;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  642  	struct vsi_iommu *iommu;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  643  	int err;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  644
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  645  	iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  646  	if (!iommu)
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  647  		return -ENOMEM;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  648
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  649  	iommu->dev = dev;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  650
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  651  	iommu->regs = devm_platform_ioremap_resource(pdev, 0);
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  652  	if (IS_ERR(iommu->regs))
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  653  		return -ENOMEM;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  654
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  655  	iommu->num_clocks = devm_clk_bulk_get_all(dev, &iommu->clocks);
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  656  	if  (iommu->num_clocks < 0)
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23 @657  		return err;
->
-> s/err/iommu->num_clocks/
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+---
+ drivers/reset/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I will fix that in next version but I will wait for more
-comments/review before send it.
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index d85be5899da6a..43151d12f88c3 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -51,7 +51,7 @@ config RESET_BERLIN
+ 
+ config RESET_BRCMSTB
+ 	tristate "Broadcom STB reset controller"
+-	depends on ARCH_BRCMSTB || COMPILE_TEST
++	depends on ARCH_BRCMSTB || ARCH_BCM2835 || COMPILE_TEST
+ 	default ARCH_BRCMSTB
+ 	help
+ 	  This enables the reset controller driver for Broadcom STB SoCs using
+@@ -60,11 +60,11 @@ config RESET_BRCMSTB
+ config RESET_BRCMSTB_RESCAL
+ 	tristate "Broadcom STB RESCAL reset controller"
+ 	depends on HAS_IOMEM
+-	depends on ARCH_BRCMSTB || COMPILE_TEST
++	depends on ARCH_BRCMSTB || ARCH_BCM2835 || COMPILE_TEST
+ 	default ARCH_BRCMSTB
+ 	help
+ 	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
+-	  BCM7216.
++	  BCM7216 or the BCM2712.
+ 
+ config RESET_EYEQ
+ 	bool "Mobileye EyeQ reset controller"
+-- 
+2.50.0
 
-Regards,
-Benjamin
-
->
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  658
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  659  	err = clk_bulk_prepare(iommu->num_clocks, iommu->clocks);
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  660  	if (err)
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  661  		return err;
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  662
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  663  	iommu->irq = platform_get_irq(pdev, 0);
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  664  	if (iommu->irq < 0)
-> 15ea72d5401fb7 Benjamin Gaignard 2025-06-23  665  		return iommu->irq;
->
 
