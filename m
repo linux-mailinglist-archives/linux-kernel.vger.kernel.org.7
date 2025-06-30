@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-709000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3CCAED801
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:58:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F36AED7BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE4517570E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:58:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB6D1899CFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06E2244689;
-	Mon, 30 Jun 2025 08:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132BF238C1F;
+	Mon, 30 Jun 2025 08:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="pyZQpbZr"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OP/02MND"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F6023F41A;
-	Mon, 30 Jun 2025 08:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD80215F72
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751273903; cv=none; b=JBJNGjl54yAxiAwFQnBKm40i9Xhe1TdZ9k58Hu5WfdK4HqrET6yd35Chue8BxnBlXUYc/nTAZRVbZuGWdbG0x8AS5Lor1Bxtm2f9B6V1uWspbe5ioZXK9OY/QP43Pgdf3erz3SlCLIj+Pd1x8ZGMOIP9XekoPzyAD8XUYDLe4yw=
+	t=1751273332; cv=none; b=SS0PSEIUuG1n3DbsVRVXF6ughScOdIT5C+sxp+fJ+48ig9u25wrEHHFZ3qQLOUUHGY9nu4or1iNjeksvnWfIMyUVRQbW3tHzK+YblAwYh/lTquEwsJuFvdDdUQmKuBYVq7pLrZxslKj1DQqL77Gq0vpJxj2oA080TyYAQgF/VfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751273903; c=relaxed/simple;
-	bh=/HZgvuisIfLWm4oYjEwmKUUiuxsFFNB7OUIbwfAJ8CI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=APbUOYIndbOHP7ZNclCg/pYZhaRhZTfOzjQAO8A+jFPaq2Gg/P1y+e0lyYiBlPMP1dJ2tfsG9jUPUlLVpQZ+jSoM9FodMGKpCPVwk5gRsOqTWrd9i5ORtWi99NBTj24V7aS47jYeRAcTqVjuzO6urRo9yMZh6OMi9q3R9cxnmoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=pyZQpbZr; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id E13AC6000256;
-	Mon, 30 Jun 2025 09:49:23 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id Bqp_2Y1ihYB3; Mon, 30 Jun 2025 09:49:21 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 669D16000867;
-	Mon, 30 Jun 2025 09:49:21 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1751273361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCTCtbJiF3BmOb1hgp2abe8fETWSITM45X9nykcOFUY=;
-	b=pyZQpbZrDtlTQh6A5Zp2UVg+a9+pztTNBZw6sgtRqyRJFJkWSDGbvFYz60J2Uy0Icte371
-	aDcz/6hdX/WSjZH5ulbKKFA6qActciesGLPiHSD5yRnN4P7OsVR/X+asQL60qF6Car4DaZ
-	USKItKARSTDyaIBVlAThCBn19KfQBSc=
-Received: from [192.168.1.69] (unknown [92.56.11.86])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 31D57360084;
-	Mon, 30 Jun 2025 09:49:20 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Date: Mon, 30 Jun 2025 09:48:44 +0100
-Subject: [PATCH v3 3/3] arm64: tegra: Add NVJPG node for Tegra210 platforms
+	s=arc-20240116; t=1751273332; c=relaxed/simple;
+	bh=9LX9av9yvxOClo7gCs52aPEZGCecg5/87QicfzfhCEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4qK5kSUUBxLglRPPRQG6vuKWqZC6nR5G2UxV04P/2RC72p+BdlKAElRhhfC4MeDvOiSNM9Lvex9ugPkCxsprQHOFOepaewgv5rpd66GqHcWj6XyYuy+AS/KYwsWCTpgxaB6cck9KDRz4tR/ty3y22f+P8lfhw58JxN2BqJgoVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OP/02MND; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a582e09144so1349179f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 01:48:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1751273329; x=1751878129; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e0MFmQYTIhwQaPU7YK/VjsEzsIiL6rLtVHCSHLdz344=;
+        b=OP/02MND348iZGO/JSYbUVZDr7EKMIVoSp4PuVBXyDMeEjCkMzOBm1NzsJUvjzRRgg
+         7/QcuTJ2UGfZuTmwxzkvMA/PreLR5kBCyOpPD4gum4Tv+IH4ddUMQ7C4jhNf/6FRhfBV
+         KZN0VEkdsirC51kh74EvzVMONLyAXCjf/g6LlmHcafBG+LgsGGNUgnGUUoTW6JFr35l0
+         VNiDvsvdumNC2OJCpYd892Mx1XFu3BKiBtK3vGjh4Z7juc5UA/bSMz0Y+fn8FpHLQgCB
+         MvOlQ2xwSAC5EVZLYW8wbPOSUKxRk7qdYLBhlYB2WGXh0tFMdGP+vmPm/oT8DjXlc+DM
+         Mrlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751273329; x=1751878129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e0MFmQYTIhwQaPU7YK/VjsEzsIiL6rLtVHCSHLdz344=;
+        b=bGMqQcvhYJu8sQ7aj23Jv7Yk3N0t9TuB9stDNnTH5+avuNA7oTwcS/5ICsb2YYIUQ9
+         Tu2a3+W3vJSQG2bwDkTI8KxbCAGffclUlP20lbi/bJe5ftQfwFvxpKj/eDGxKJTgC+Fq
+         5cSdYFv4tVaGnURbVWtc5p+kXJGKpoy/9UyQfJnk5ETrMlsj+T/q/UakzEugHP1I2HbF
+         JoQSqgLWYwlMjhuGWH0mtvPMPgRjJAs7gEHRE2eRyLgkiPtskuuk6oxu2FvYN5a9F8ci
+         gQyWxKDeaPzZiewCrw0CpgYQ8hcpBXfy5ec99RT5KIStXJFfn86gKdHr98GRHXGnHFr5
+         7TpQ==
+X-Gm-Message-State: AOJu0YzMcNnAGwbs2c0ljcyIOIM56jxunmEL42U0POJEhbTxAciLIsP3
+	hfXx6M6RrN7K0PLub+klo2wdla/5SW/RyvGhMYLoo6xjCUJ2eoXriJlGT+heso1/c5R6a8CkSH6
+	rFUdVKfQ=
+X-Gm-Gg: ASbGnctnrivQFsIe/rnrEIdD3HuqWLHQCpKU2bAWA7cN0sN64fYyG4PFzB0UQ2fGZyM
+	4beJQ9M+LQsCrw3fmK7ZsV3aE1dwJyfV15Qv7aK8xk348wu8cEFo7oVfhZ04+TRaRfzXZwa7G7v
+	3b7jqarDBZek1egRALNELT2sZaAp+kZh8bE3/v2TAYnUpu0DT/bpz0CGZOr7tBpWQJOoMVdfmvl
+	VsN+ripRbymAXQeR5rm2ipMjUuAo+ccHSy0iMmq2ZPsSSBi9LGb8FIyFKgDIzKYRwb87NctOCjl
+	BELOR5RRtdquWbtNlK4uxxteoHVXVythKKNBDWroiFJsDlR+Sg==
+X-Google-Smtp-Source: AGHT+IFkP2IxHQSzwTBSX2V8J3HFEeGEU2UchiOHVWbWGfVFsEoSfKrpjADgwPpJXxhXznoj1gfTMA==
+X-Received: by 2002:a05:6000:4b0d:b0:3a4:f435:5801 with SMTP id ffacd0b85a97d-3a8fdb2a190mr10032131f8f.17.1751273329044;
+        Mon, 30 Jun 2025 01:48:49 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::5485])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e7386sm9698288f8f.20.2025.06.30.01.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 01:48:48 -0700 (PDT)
+Date: Mon, 30 Jun 2025 10:48:47 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, iommu@lists.linux.dev, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, Tomasz Jeznach <tjeznach@rivosinc.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Anup Patel <apatel@ventanamicro.com>, 
+	Atish Patra <atishp@rivosinc.com>
+Subject: Re: [PATCH v3 3/3] iommu/riscv: Add ACPI support
+Message-ID: <20250630-43f937dcdcd84599d28169cd@orel>
+References: <20250630034803.1611262-1-sunilvl@ventanamicro.com>
+ <20250630034803.1611262-4-sunilvl@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250630-diogo-nvjpg-v3-3-a553c7e91354@tecnico.ulisboa.pt>
-References: <20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt>
-In-Reply-To: <20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt>
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751273350; l=1266;
- i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=/HZgvuisIfLWm4oYjEwmKUUiuxsFFNB7OUIbwfAJ8CI=;
- b=sR7AhyALXiAhK9pLgfAfjbtvFFugf3e1qywNfAHVoWUea5UMSa+xRtFaTVcZ4juxRojQT+X2C
- 2JuoXnXN6vuCW1uK2WPAmbW8QnnjJVMG6t3o/MAwHbGXSTbfwUeWWQY
-X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630034803.1611262-4-sunilvl@ventanamicro.com>
 
-The Tegra X1 chip contains a NVJPG accelerator capable of
-encoding/decoding JPEG files in hardware. Complete its DT node
-and enable it.
+On Mon, Jun 30, 2025 at 09:18:03AM +0530, Sunil V L wrote:
+> RISC-V IO Mapping Table (RIMT) provides the information about the IOMMU
+> to the OS in ACPI. Add support for ACPI in RISC-V IOMMU drivers by using
+> RIMT data.
+> 
+> The changes at high level are,
+> 
+> a) Register the IOMMU with RIMT data structures.
+> b) Enable probing of platform IOMMU in ACPI way using the ACPIID defined
+>    for the RISC-V IOMMU in the BRS spec [1]. Configure the MSI domain if
+>    the platform IOMMU uses MSIs.
+> 
+> [1] - https://github.com/riscv-non-isa/riscv-brs/blob/main/acpi-id.adoc
+> 
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> ---
+>  drivers/iommu/riscv/iommu-platform.c | 17 ++++++++++++++++-
+>  drivers/iommu/riscv/iommu.c          | 10 ++++++++++
+>  2 files changed, 26 insertions(+), 1 deletion(-)
+>
 
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-
----
-v1->v2:
-- Collect R-b from Mikko
-- Explicitly mention Tegra210 in commit subject
-- Be more precise in commit message about filling in an already existing
-  DT node.
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 6f8cdf012f0f12a16716e9d479c46b330bbb7dda..087f38256fd40f57c4685e907f9682eb49ee31db 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -253,7 +253,13 @@ vic@54340000 {
- 		nvjpg@54380000 {
- 			compatible = "nvidia,tegra210-nvjpg";
- 			reg = <0x0 0x54380000 0x0 0x00040000>;
--			status = "disabled";
-+			clocks = <&tegra_car TEGRA210_CLK_NVJPG>;
-+			clock-names = "nvjpg";
-+			resets = <&tegra_car 195>;
-+			reset-names = "nvjpg";
-+
-+			iommus = <&mc TEGRA_SWGROUP_NVJPG>;
-+			power-domains = <&pd_nvjpg>;
- 		};
- 
- 		dsib: dsi@54400000 {
-
--- 
-2.50.0
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
