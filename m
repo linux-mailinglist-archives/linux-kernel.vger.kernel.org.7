@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-708904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9158AED683
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:02:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E92AED694
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D525018994BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:02:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAC0B3B8297
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8672424293B;
-	Mon, 30 Jun 2025 08:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFE621B191;
+	Mon, 30 Jun 2025 08:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3LD/dPg"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KeRG9qk7"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DDA24290B;
-	Mon, 30 Jun 2025 08:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E734242D76;
+	Mon, 30 Jun 2025 08:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751270519; cv=none; b=UJNis2kxtjn1QnM0mv5gY6KxT5pr1MaDG1yj2RZpkEV2ovrURLpyBrmhU7ys9gPt3pgPw87wDN4zeh2gnH1B7TckYr1UyxUTNFzjBGtggNT7SXwGDzvWmvZ1evLkLJCQYuq7ck3/NaX/Ke23gt4btoFK6Iq9z3tWIrRTHUGpCes=
+	t=1751270524; cv=none; b=EyRKYKGM7Ugw7IhRVl0GJu5yPoNtjk2k3+OStu5YRZXDENvXtI5TuNaCXXHD9Fj6aeKgw/xADNXCt3s10h0vYz3V74ZTpMAU+U7NlpisunS38UY0zpTddL0fxYm/Ll9O8IrB2S+Y6dH8N3MCcSCJ8ep8hCKq2TbKZH21b/sT2XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751270519; c=relaxed/simple;
-	bh=1/uY3FjgYDtVpBV5UgGBGxzO4C9dj7R2QKPSjyd0w4E=;
+	s=arc-20240116; t=1751270524; c=relaxed/simple;
+	bh=liILi0h70NtnHMaTrnZq1JtW1kl+WBBQwRBtx4jqqqU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ayL19GpXLdKyn4K3MSSSbKy9DlcNhyAIt2E2pntOnp6lmgZN9lWD3g3Wk4u3dXr+BNM2zrcvU9NoldDJFW2sTnDRPzNUBHqK0mTZP62AFOMrt7VjpR0de8IVn1oULG+goG8+eKaUEcItExfAADlGuO2FemopSBXjjXiQMH+YVE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3LD/dPg; arc=none smtp.client-ip=209.85.219.53
+	 In-Reply-To:To:Cc; b=W3/JlZ+NiV8PSTFpPgQHEbH7KViCn9Z2NR3yIX/AB+HsBERT76phdbOB8CY9Q2mT3IQp9OAqLt1rgv0RhZEnA5p5dIFCt+POBXvOnr4ZgE6S9wjj/9uNs2kr/0kzr1ruiAKRxsK/Lc1u84Nva1aYPDYNGpbDvpRcefHKxYyFVPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KeRG9qk7; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fd0a3cd326so23137246d6.1;
-        Mon, 30 Jun 2025 01:01:57 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7d3f192a64eso381014385a.2;
+        Mon, 30 Jun 2025 01:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751270517; x=1751875317; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751270521; x=1751875321; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Whn+81gfDlilc+limqNRyBz7Xbl+U+qQ54Hz3BONpwk=;
-        b=J3LD/dPgZ4Wy4vdef/w+Id5cNvZ3/JDRHDc78hDIj3FC/5oO2lWWZTphb9vK1LRPUm
-         xUl/a+EI/ZV/qPZTWjKrDzL7s6VgYRV4C1sDZY/zeHDvm1bUn8PQ4Ojng5ihbEqp0LKW
-         xKyGVX81TUBVZ8r1wAIa3CNmbqfRUAB6JVIbIcNfuv498qelVZAw/rJ68Mw9Fwh7eAHs
-         HDIfOZfHA+UWEmBJo/b1aWfiAHmeJfQGxfPVgP7Ipjk+XNM6lpqSRIRTcmjrPOtnJ6Oz
-         93Ocbxm/4DNbrqvOc1X5Ssdufcj9jFIHxgApbJDDBA26i4eoaJrByU7Z7OSmyQBpOC6d
-         lqJQ==
+        bh=K2/KSwnwApNBj2qg4eJFgFllM2G5u9JrEk978fuXLkk=;
+        b=KeRG9qk7YxNJexqBFwir5APGPiCsRdvGUhbA11evtKV54tz9emegvh5+GUj2TRbR0K
+         6pKMG1dJDea1nsMynfRg3xyOoSCtFeuYQKXHXobCv1KxHP/jJZHc27ajFXPMQbnUorGw
+         j9oJB4B88Xkvp2/a95OGf70PIz0RfoKKLOaxspcyKJgvk1egqyi9qiiOmx1nIlCPWc8Z
+         xpDbhfS3SG2VqAEjInDIM9lE6F9z5DEoxlZ/wsAskYzpqXKw9VZR3pN3JxSctgsNhVbp
+         p2e4aKglG2uUOpTPykrsTj34jdOHXXC/lgOxUcUQryclkGgqXxnvJJT7oe13ZXWRPSY+
+         DEkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751270517; x=1751875317;
+        d=1e100.net; s=20230601; t=1751270521; x=1751875321;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Whn+81gfDlilc+limqNRyBz7Xbl+U+qQ54Hz3BONpwk=;
-        b=lrFI8TwRZp5w8yU+2e6YQe5tpYM4Zg0oT96s1DmdtH2t5u3lxIYjH6oDrjAAjsE0Ju
-         +qgxuNLyh5Y31B+iFA+GijC+QR5xMsWFLNe53vH0SX/e7Uq37MHvW9ETc9figC4V6f4/
-         8FD959C9GDpm5P56Uq2nUSToca6QJN7SvF2g2lOW0kBPrZXTgFPPx5+vNAN6hJXk5Fd4
-         LRqGugGpuwUq5Z4OK0/y64vVVXgHc3F1m+soDJyCNhTcH4nXXCaWdM1t1WbGhOtuux9X
-         9YVKJ7e8aTeaH/DjfpUMHnvn25aEb05ovJe/Z6CRJbScZzVyJ4Y0lrqpmNHrASKRdWEX
-         OUlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeK9C/PXncMyfyeZ0mXnb/B+MZCGH1YSmVDshvDWXP6xxhaGMWoRQ0T4zC60IaWQ5Yy4yO7oXgp6BG+XY=@vger.kernel.org, AJvYcCXEpiXL0oYz/tehU96441XqbMkuLdoQwDX5ipI/qdtVwB83PrNFoLRIvFg3w+/sX9hP7RJvQmoPj98wRBpUQctb27rI/g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyurlHlX75Zdl8IMYjLF3vQ5KDst4u6n9ZDrLX4lEP+eayEd0F+
-	LiBg7yRZLQPRAifpgSGGEaR9d/vEcIVkOXZCiu3W9NOIJfyrZqsJEw7z
-X-Gm-Gg: ASbGncveDIJx401jZePYoBjopZ0qP2ZUkXUGfn5Q94D12WNR2TWa/Unds8ojTzmBIa3
-	x6hZl08BKl9rwSTRcK0YE3PF6F4vnZIjpCB8E/ZnLeVnxXoT2lNheNzSgO1v09LRCj/A0A82svb
-	6Mf6aJJDHU6eGYkR+XSuJS6mQPB4WopdHg3M2RYKhz4WP+NttxLWGa2mA/Az8YYTgTHmQ2tOcxT
-	Ro2+ReDBmU49b7uymiurutn+hvcqJQv/4QaF582uzhEumodZUBbpqO25ThMgG3WuS92ywXzsY/M
-	rGcsaJLrUrODDKPuGbvUhhWXU7veqUScKIiC4w4g3CmYVAXWuNkeelrxNTzqqg==
-X-Google-Smtp-Source: AGHT+IHzODiFqjh2agzMecnsqWzAYvk8YwCXgRhF7MhOXYuSwJ7MXqPuK+QBrPXdM3fpz2ViJvBKPA==
-X-Received: by 2002:a05:6214:2a8e:b0:6fa:fd8b:54de with SMTP id 6a1803df08f44-70002915ae5mr190685226d6.30.1751270516816;
-        Mon, 30 Jun 2025 01:01:56 -0700 (PDT)
+        bh=K2/KSwnwApNBj2qg4eJFgFllM2G5u9JrEk978fuXLkk=;
+        b=uN1SWSvSXcQKtd+6ihFIiEdxnucKMKZMNTQl3/S//ninVK0H5aauKnr4f6myLBtk3X
+         TOc2aLw8qnMpXEgWGCmCC0NgZ9wbqjeuywMH8gJZkETIEF6mD+ci/rdfn2cdlNqo+Yjv
+         DLN2UulNHQSnC5nZkUedim4KlT2JkSeO0a9JWA3HQDAgr86cHi8ovnT0ks+utQ2z5P+B
+         Z64V+EI9akJzxnemx6pFYqf/WCoIG8Gu0NDl1ztWwGgfZnJY33Xe9v1NisJD0HaiYGsl
+         s32wK8KITOxCvf6MXVLnEzrH1CMBjtlZst34v3AyhlZX29/+07acnoOImXoaaloDFvOL
+         gQxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpWKsAjuTxiLoExfxToAebmUVmNCJr6K4kzgHVeFfsudlciuE/1IZoLvb2d8xkV8naQfHg8tZ1I39pDUM=@vger.kernel.org, AJvYcCWfh9PTagGri3sh9B8KRJUCXixLuoMgqjekSKL8BCDqLaW8altHePAJMT9HhvPQWakoi5tVetRwohm2L2x7YG0R4fyKzg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy50zRzSxCT8kgYG4O0lAw4LCfp4ywDoMM2gC0KQZZc+w/D12yk
+	olsppTpWbWj9Yp/QduxmY9ucmswNKwcK/EoLlYPvSBOysWhj9ZXi5rLK
+X-Gm-Gg: ASbGnct0BJA1nXii6x5GMV00ihrWkYnbdiY3Xw/nqcNPTcZCIRvFJLnXd7ZuJjo8b3u
+	AjqriuFQ33hcBc2Fjutux0hnAMfCF1UQ98GNBwHx0pMsdbJ9OL8XW7L/AHlYhlxSHI1GB5I8knM
+	SKmvXZE67y7mvl9qnu+gcEqFyl2BxiJ+2BNr5rkOweiBNyoS85mNCWlbFIBQcW4E1sffF6e8oWE
+	6THAYF3p4Xojnd5GeEkP0THn9vxkZ2Lqs7/AMMMcVMiR7WIUl7hDqPT3vf2r6seawtLucggnLF4
+	eYZ179LkVprA5shV+md92mCkh5SL9gRVzio97RGdJjyXFnyYkBohWunj3+sd4EMMBKl7jLYA
+X-Google-Smtp-Source: AGHT+IGi948axwW3grs/bp+26eYMfDmth0LKYtJPzBATa5xws7sjcNEmZBpdKS9xlkZrBJT50LStqQ==
+X-Received: by 2002:a05:620a:2910:b0:7d3:8da2:e9e2 with SMTP id af79cd13be357-7d443990ab8mr1720530085a.27.1751270521143;
+        Mon, 30 Jun 2025 01:02:01 -0700 (PDT)
 Received: from [192.168.1.26] ([181.88.247.122])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd772df637sm63677026d6.79.2025.06.30.01.01.52
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd772df637sm63677026d6.79.2025.06.30.01.01.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 01:01:56 -0700 (PDT)
+        Mon, 30 Jun 2025 01:02:00 -0700 (PDT)
 From: Kurt Borja <kuurtb@gmail.com>
-Date: Mon, 30 Jun 2025 05:01:10 -0300
-Subject: [PATCH v4 3/6] platform/x86: firmware_attributes_class: Move
- header to include directory
+Date: Mon, 30 Jun 2025 05:01:11 -0300
+Subject: [PATCH v4 4/6] platform/x86: samsung-galaxybook: Transition new
+ firmware_attributes API
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250630-fw-attrs-api-v4-3-1a04952b255f@gmail.com>
+Message-Id: <20250630-fw-attrs-api-v4-4-1a04952b255f@gmail.com>
 References: <20250630-fw-attrs-api-v4-0-1a04952b255f@gmail.com>
 In-Reply-To: <20250630-fw-attrs-api-v4-0-1a04952b255f@gmail.com>
 To: Hans de Goede <hdegoede@redhat.com>, 
@@ -98,98 +98,344 @@ Cc: Antheas Kapenekakis <lkml@antheas.dev>,
  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3715; i=kuurtb@gmail.com;
- h=from:subject:message-id; bh=1/uY3FjgYDtVpBV5UgGBGxzO4C9dj7R2QKPSjyd0w4E=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDBlJLsk3/ssIsGTOduz+w3WK+fTX7Q5hZ54U+Z95dF/g+
- bdzTs0vOkpZGMS4GGTFFFnaExZ9exSV99bvQOh9mDmsTCBDGLg4BWAiOxcwMmyKk9vFPunz8QZ3
- c/s1UupK4VJyqy82LtC37l2mmsSYYMjwv5bDVUtr37GytKBtu4okisufhRarS2xrn9V4TN0wOqG
- QCQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10903; i=kuurtb@gmail.com;
+ h=from:subject:message-id; bh=liILi0h70NtnHMaTrnZq1JtW1kl+WBBQwRBtx4jqqqU=;
+ b=owGbwMvMwCUmluBs8WX+lTTG02pJDBlJLskW2oYR7au2XeWV7Lb+PJt3/rV7XDGFroZWC/MM+
+ h43ll/tKGVhEONikBVTZGlPWPTtUVTeW78Dofdh5rAygQxh4OIUgIlsa2Fk+Mxx7p1TyWu93Ev2
+ fxQLL6y2bVlz+objEdVnl1OCPBU0fBj+qa900ikvFKi8YfSdsZKHpW/fNnfrw692HZfw2fohS/c
+ RLwA=
 X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
  fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
 
-Move firmware_attributes_class.h to include/linux/ to avoid hardcoding
-paths inside drivers/platform/x86/.
+Transition to new firmware_attributes API.
+
+Defining firmware_attributes groups statically through
+DEFINE_FWAT_ENUM_GROUP() incurs in a minor ABI change. In particular the
+display_name_language_code attribute is no longer created. Fortunately,
+this doesn't break user-space compatibility, because this attribute is
+not required, neither by the ABI specification nor by user-space tools.
 
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/dell-wmi-sysman/sysman.c                  | 2 +-
- drivers/platform/x86/firmware_attributes_class.c                    | 2 +-
- drivers/platform/x86/hp/hp-bioscfg/bioscfg.c                        | 2 +-
- drivers/platform/x86/lenovo/think-lmi.c                             | 2 +-
- drivers/platform/x86/samsung-galaxybook.c                           | 2 +-
- {drivers/platform/x86 => include/linux}/firmware_attributes_class.h | 0
- 6 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/platform/x86/samsung-galaxybook.c | 244 ++++++++----------------------
+ 1 file changed, 61 insertions(+), 183 deletions(-)
 
-diff --git a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-index d00389b860e4ea0655c740c78bc3751f323b6370..3aec09987ab145508ed05b02e61a6d94edf79484 100644
---- a/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-+++ b/drivers/platform/x86/dell/dell-wmi-sysman/sysman.c
-@@ -12,8 +12,8 @@
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/wmi.h>
-+#include <linux/firmware_attributes_class.h>
- #include "dell-wmi-sysman.h"
--#include "../../firmware_attributes_class.h"
- 
- #define MAX_TYPES  4
- #include <linux/nls.h>
-diff --git a/drivers/platform/x86/firmware_attributes_class.c b/drivers/platform/x86/firmware_attributes_class.c
-index 86d2a8bf4bb9debc81e38c928c5a3eb5a440cc18..4e7938b6f1ad4ab3fa5f5ecc560305a3fca4d57b 100644
---- a/drivers/platform/x86/firmware_attributes_class.c
-+++ b/drivers/platform/x86/firmware_attributes_class.c
-@@ -11,7 +11,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/string_choices.h>
--#include "firmware_attributes_class.h"
-+#include <linux/firmware_attributes_class.h>
- 
- #define FWAT_TYPE_NONE				-1
- 
-diff --git a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
-index 13237890fc92002e7e730b1c235ddf068a6737cd..2df31af8a3b4ac88710af1fae2d5dabbb3185f1d 100644
---- a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
-+++ b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
-@@ -12,7 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/wmi.h>
- #include "bioscfg.h"
--#include "../../firmware_attributes_class.h"
-+#include <linux/firmware_attributes_class.h>
- #include <linux/nls.h>
- #include <linux/errno.h>
- 
-diff --git a/drivers/platform/x86/lenovo/think-lmi.c b/drivers/platform/x86/lenovo/think-lmi.c
-index 34a47269e3d34d2eda6b71af73892656cd2bf67d..f61a6287eb0ebe9ac4c0c9445c3b54c12b276691 100644
---- a/drivers/platform/x86/lenovo/think-lmi.c
-+++ b/drivers/platform/x86/lenovo/think-lmi.c
-@@ -20,7 +20,7 @@
- #include <linux/types.h>
- #include <linux/dmi.h>
- #include <linux/wmi.h>
--#include "../firmware_attributes_class.h"
-+#include <linux/firmware_attributes_class.h>
- #include "think-lmi.h"
- 
- static bool debug_support;
 diff --git a/drivers/platform/x86/samsung-galaxybook.c b/drivers/platform/x86/samsung-galaxybook.c
-index 5878a351993eb05a4c5c2c75b4915d972ce9becc..9a5a7b956a9f6a2738470e83ce93f4cccf4bf3b4 100644
+index 9a5a7b956a9f6a2738470e83ce93f4cccf4bf3b4..d1db2a3f716aafc5a314f2bdc57f7c958a9ae346 100644
 --- a/drivers/platform/x86/samsung-galaxybook.c
 +++ b/drivers/platform/x86/samsung-galaxybook.c
-@@ -28,7 +28,7 @@
- #include <linux/uuid.h>
- #include <linux/workqueue.h>
- #include <acpi/battery.h>
--#include "firmware_attributes_class.h"
-+#include <linux/firmware_attributes_class.h>
+@@ -36,8 +36,6 @@ struct samsung_galaxybook {
+ 	struct platform_device *platform;
+ 	struct acpi_device *acpi;
  
- #define DRIVER_NAME "samsung-galaxybook"
+-	struct device *fw_attrs_dev;
+-	struct kset *fw_attrs_kset;
+ 	/* block in case firmware attributes are updated in multiple threads */
+ 	struct mutex fw_attr_lock;
  
-diff --git a/drivers/platform/x86/firmware_attributes_class.h b/include/linux/firmware_attributes_class.h
-similarity index 100%
-rename from drivers/platform/x86/firmware_attributes_class.h
-rename to include/linux/firmware_attributes_class.h
+@@ -60,36 +58,6 @@ struct samsung_galaxybook {
+ 	u8 profile_performance_modes[PLATFORM_PROFILE_LAST];
+ };
+ 
+-enum galaxybook_fw_attr_id {
+-	GB_ATTR_POWER_ON_LID_OPEN,
+-	GB_ATTR_USB_CHARGING,
+-	GB_ATTR_BLOCK_RECORDING,
+-};
+-
+-static const char * const galaxybook_fw_attr_name[] = {
+-	[GB_ATTR_POWER_ON_LID_OPEN] = "power_on_lid_open",
+-	[GB_ATTR_USB_CHARGING]      = "usb_charging",
+-	[GB_ATTR_BLOCK_RECORDING]   = "block_recording",
+-};
+-
+-static const char * const galaxybook_fw_attr_desc[] = {
+-	[GB_ATTR_POWER_ON_LID_OPEN] = "Power On Lid Open",
+-	[GB_ATTR_USB_CHARGING]      = "USB Charging",
+-	[GB_ATTR_BLOCK_RECORDING]   = "Block Recording",
+-};
+-
+-#define GB_ATTR_LANGUAGE_CODE "en_US.UTF-8"
+-
+-struct galaxybook_fw_attr {
+-	struct samsung_galaxybook *galaxybook;
+-	enum galaxybook_fw_attr_id fw_attr_id;
+-	struct attribute_group attr_group;
+-	struct kobj_attribute display_name;
+-	struct kobj_attribute current_value;
+-	int (*get_value)(struct samsung_galaxybook *galaxybook, bool *value);
+-	int (*set_value)(struct samsung_galaxybook *galaxybook, const bool value);
+-};
+-
+ struct sawb {
+ 	u16 safn;
+ 	u16 sasb;
+@@ -908,193 +876,106 @@ static int galaxybook_block_recording_init(struct samsung_galaxybook *galaxybook
+ 
+ /* Firmware Attributes setup */
+ 
+-static ssize_t type_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
++static const char * const galaxybook_possible_vals[] = {
++	[false] = "0", [true] = "1", NULL
++};
++
++static int power_on_lid_open_read(struct device *dev, long id, int *val_idx)
+ {
+-	return sysfs_emit(buf, "enumeration\n");
+-}
+-
+-static struct kobj_attribute fw_attr_type = __ATTR_RO(type);
+-
+-static ssize_t default_value_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+-{
+-	return sysfs_emit(buf, "0\n");
+-}
+-
+-static struct kobj_attribute fw_attr_default_value = __ATTR_RO(default_value);
+-
+-static ssize_t possible_values_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+-{
+-	return sysfs_emit(buf, "0;1\n");
+-}
+-
+-static struct kobj_attribute fw_attr_possible_values = __ATTR_RO(possible_values);
+-
+-static ssize_t display_name_language_code_show(struct kobject *kobj, struct kobj_attribute *attr,
+-					       char *buf)
+-{
+-	return sysfs_emit(buf, "%s\n", GB_ATTR_LANGUAGE_CODE);
+-}
+-
+-static struct kobj_attribute fw_attr_display_name_language_code =
+-	__ATTR_RO(display_name_language_code);
+-
+-static ssize_t display_name_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+-{
+-	struct galaxybook_fw_attr *fw_attr =
+-		container_of(attr, struct galaxybook_fw_attr, display_name);
+-
+-	return sysfs_emit(buf, "%s\n", galaxybook_fw_attr_desc[fw_attr->fw_attr_id]);
+-}
+-
+-static ssize_t current_value_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+-{
+-	struct galaxybook_fw_attr *fw_attr =
+-		container_of(attr, struct galaxybook_fw_attr, current_value);
+-	bool value;
++	struct samsung_galaxybook *galaxybook = dev_get_drvdata(dev);
++	bool val;
+ 	int err;
+ 
+-	err = fw_attr->get_value(fw_attr->galaxybook, &value);
++	err = power_on_lid_open_acpi_get(galaxybook, &val);
+ 	if (err)
+ 		return err;
+ 
+-	return sysfs_emit(buf, "%u\n", value);
++	*val_idx = val;
++
++	return 0;
+ }
+ 
+-static ssize_t current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
+-				   const char *buf, size_t count)
++static int power_on_lid_open_write(struct device *dev, long id, int val_idx)
+ {
+-	struct galaxybook_fw_attr *fw_attr =
+-		container_of(attr, struct galaxybook_fw_attr, current_value);
+-	struct samsung_galaxybook *galaxybook = fw_attr->galaxybook;
+-	bool value;
++	struct samsung_galaxybook *galaxybook = dev_get_drvdata(dev);
++
++	return power_on_lid_open_acpi_set(galaxybook, val_idx ? true : false);
++}
++
++DEFINE_FWAT_ENUM_GROUP(power_on_lid_open, "Power On Lid Open", galaxybook_possible_vals,
++		       false, 0644, FWAT_ENUM_ALL_ATTRS);
++
++static int usb_charging_read(struct device *dev, long id, int *val_idx)
++{
++	struct samsung_galaxybook *galaxybook = dev_get_drvdata(dev);
++	bool val;
+ 	int err;
+ 
+-	if (!count)
+-		return -EINVAL;
+-
+-	err = kstrtobool(buf, &value);
++	err = usb_charging_acpi_get(galaxybook, &val);
+ 	if (err)
+ 		return err;
+ 
+-	guard(mutex)(&galaxybook->fw_attr_lock);
++	*val_idx = val;
+ 
+-	err = fw_attr->set_value(galaxybook, value);
++	return 0;
++}
++
++static int usb_charging_write(struct device *dev, long id, int val_idx)
++{
++	struct samsung_galaxybook *galaxybook = dev_get_drvdata(dev);
++
++	return usb_charging_acpi_set(galaxybook, val_idx ? true : false);
++}
++
++DEFINE_FWAT_ENUM_GROUP(usb_charging, "USB Charging", galaxybook_possible_vals,
++		       false, 0644, FWAT_ENUM_ALL_ATTRS);
++
++static int block_recording_read(struct device *dev, long id, int *val_idx)
++{
++	struct samsung_galaxybook *galaxybook = dev_get_drvdata(dev);
++	bool val;
++	int err;
++
++	err = block_recording_acpi_get(galaxybook, &val);
+ 	if (err)
+ 		return err;
+ 
+-	return count;
++	*val_idx = val;
++
++	return 0;
+ }
+ 
+-#define NUM_FW_ATTR_ENUM_ATTRS  6
+-
+-static int galaxybook_fw_attr_init(struct samsung_galaxybook *galaxybook,
+-				   const enum galaxybook_fw_attr_id fw_attr_id,
+-				   int (*get_value)(struct samsung_galaxybook *galaxybook,
+-						    bool *value),
+-				   int (*set_value)(struct samsung_galaxybook *galaxybook,
+-						    const bool value))
++static int block_recording_write(struct device *dev, long id, int val_idx)
+ {
+-	struct galaxybook_fw_attr *fw_attr;
+-	struct attribute **attrs;
+ 
+-	fw_attr = devm_kzalloc(&galaxybook->platform->dev, sizeof(*fw_attr), GFP_KERNEL);
+-	if (!fw_attr)
+-		return -ENOMEM;
++	struct samsung_galaxybook *galaxybook = dev_get_drvdata(dev);
+ 
+-	attrs = devm_kcalloc(&galaxybook->platform->dev, NUM_FW_ATTR_ENUM_ATTRS + 1,
+-			     sizeof(*attrs), GFP_KERNEL);
+-	if (!attrs)
+-		return -ENOMEM;
+-
+-	attrs[0] = &fw_attr_type.attr;
+-	attrs[1] = &fw_attr_default_value.attr;
+-	attrs[2] = &fw_attr_possible_values.attr;
+-	attrs[3] = &fw_attr_display_name_language_code.attr;
+-
+-	sysfs_attr_init(&fw_attr->display_name.attr);
+-	fw_attr->display_name.attr.name = "display_name";
+-	fw_attr->display_name.attr.mode = 0444;
+-	fw_attr->display_name.show = display_name_show;
+-	attrs[4] = &fw_attr->display_name.attr;
+-
+-	sysfs_attr_init(&fw_attr->current_value.attr);
+-	fw_attr->current_value.attr.name = "current_value";
+-	fw_attr->current_value.attr.mode = 0644;
+-	fw_attr->current_value.show = current_value_show;
+-	fw_attr->current_value.store = current_value_store;
+-	attrs[5] = &fw_attr->current_value.attr;
+-
+-	attrs[6] = NULL;
+-
+-	fw_attr->galaxybook = galaxybook;
+-	fw_attr->fw_attr_id = fw_attr_id;
+-	fw_attr->attr_group.name = galaxybook_fw_attr_name[fw_attr_id];
+-	fw_attr->attr_group.attrs = attrs;
+-	fw_attr->get_value = get_value;
+-	fw_attr->set_value = set_value;
+-
+-	return sysfs_create_group(&galaxybook->fw_attrs_kset->kobj, &fw_attr->attr_group);
++	return block_recording_acpi_set(galaxybook, val_idx ? true : false);
+ }
+ 
+-static void galaxybook_kset_unregister(void *data)
+-{
+-	struct kset *kset = data;
+-
+-	kset_unregister(kset);
+-}
+-
+-static void galaxybook_fw_attrs_dev_unregister(void *data)
+-{
+-	struct device *fw_attrs_dev = data;
+-
+-	device_unregister(fw_attrs_dev);
+-}
++DEFINE_FWAT_ENUM_GROUP(block_recording, "Block Recording", galaxybook_possible_vals,
++		       false, 0644, FWAT_ENUM_ALL_ATTRS);
+ 
+ static int galaxybook_fw_attrs_init(struct samsung_galaxybook *galaxybook)
+ {
++	struct fwat_device *fdev;
+ 	bool value;
+ 	int err;
+ 
+-	err = devm_mutex_init(&galaxybook->platform->dev, &galaxybook->fw_attr_lock);
+-	if (err)
+-		return err;
+-
+-	galaxybook->fw_attrs_dev = device_create(&firmware_attributes_class, NULL, MKDEV(0, 0),
+-						 NULL, "%s", DRIVER_NAME);
+-	if (IS_ERR(galaxybook->fw_attrs_dev))
+-		return PTR_ERR(galaxybook->fw_attrs_dev);
+-
+-	err = devm_add_action_or_reset(&galaxybook->platform->dev,
+-				       galaxybook_fw_attrs_dev_unregister,
+-				       galaxybook->fw_attrs_dev);
+-	if (err)
+-		return err;
+-
+-	galaxybook->fw_attrs_kset = kset_create_and_add("attributes", NULL,
+-							&galaxybook->fw_attrs_dev->kobj);
+-	if (!galaxybook->fw_attrs_kset)
+-		return -ENOMEM;
+-	err = devm_add_action_or_reset(&galaxybook->platform->dev,
+-				       galaxybook_kset_unregister, galaxybook->fw_attrs_kset);
+-	if (err)
+-		return err;
++	fdev = devm_fwat_device_register(&galaxybook->platform->dev, DRIVER_NAME, galaxybook, NULL);
++	if (IS_ERR(fdev))
++		return PTR_ERR(fdev);
+ 
+ 	err = power_on_lid_open_acpi_get(galaxybook, &value);
+ 	if (!err) {
+-		err = galaxybook_fw_attr_init(galaxybook,
+-					      GB_ATTR_POWER_ON_LID_OPEN,
+-					      &power_on_lid_open_acpi_get,
+-					      &power_on_lid_open_acpi_set);
++		err = fwat_create_group(fdev, &power_on_lid_open_group_data);
+ 		if (err)
+ 			return err;
+ 	}
+ 
+ 	err = usb_charging_acpi_get(galaxybook, &value);
+ 	if (!err) {
+-		err = galaxybook_fw_attr_init(galaxybook,
+-					      GB_ATTR_USB_CHARGING,
+-					      &usb_charging_acpi_get,
+-					      &usb_charging_acpi_set);
++		err = fwat_create_group(fdev, &usb_charging_group_data);
+ 		if (err)
+ 			return err;
+ 	}
+@@ -1107,10 +988,7 @@ static int galaxybook_fw_attrs_init(struct samsung_galaxybook *galaxybook)
+ 
+ 	galaxybook->has_block_recording = true;
+ 
+-	return galaxybook_fw_attr_init(galaxybook,
+-				       GB_ATTR_BLOCK_RECORDING,
+-				       &block_recording_acpi_get,
+-				       &block_recording_acpi_set);
++	return fwat_create_group(fdev, &block_recording_group_data);
+ }
+ 
+ /*
 
 -- 
 2.50.0
