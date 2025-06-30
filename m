@@ -1,227 +1,172 @@
-Return-Path: <linux-kernel+bounces-709507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4549BAEDEDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD31AEDED2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE35A3BF356
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E623B2442
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CEF28DB69;
-	Mon, 30 Jun 2025 13:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12AC28D8D2;
+	Mon, 30 Jun 2025 13:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYBzNDgS"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjjR2m6w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF982749E1;
-	Mon, 30 Jun 2025 13:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E30B28B519;
+	Mon, 30 Jun 2025 13:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751289219; cv=none; b=l4NcjQF6sQX9ai6eXSQkO6ouh0k197w+Mkr1nXPdy4wsggzA89Aa1gOzk9DBjPVoGpKD2KTvWd68N0T/aAabdOrfB+RWu0I51JzgkeHciMgBe4Xk1iWTgpIxcG+q67ltnZo+/9ovgKuLTxjLvlTnCO96Yx9VPxZFPKiIv6PipUs=
+	t=1751289208; cv=none; b=hyCRXcklHj7sIZlMjxuxKnFuyJIRlDlfcJwKZIsNKbNf9dvPPCmB9KGddhDrS5301l3rEdicCOxLz9Bdak8s2Hk7GTg1xM1fEApqLrg7HjJiEW93kRY8jHUzXVgI7OlQ1bO6Zo9UbRhG3UjUpXxhBjNg7Z/Cl08D11dAAV154Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751289219; c=relaxed/simple;
-	bh=ticg8F/QpgM6uZ+Xc7lwFuLN1jw7UH52pw2WrhaQ6Oo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuQ8UMJDkIDI6g/+M6pHBzbabwLo7ioJXBY0Abb7vFcAKzyBB/5L5sSxNBbCkRRG8Qxrk6tXpSTU+/RU8WBSE2PRcqPD3qhQZPVpxUC8uRdgIQbWcK216bI5qNrzDXWMLpJdzypzm2swLRY6ek639vMBT/M+JiVOVGuiMMokcss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYBzNDgS; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-607cf70b00aso8997645a12.2;
-        Mon, 30 Jun 2025 06:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751289216; x=1751894016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fswOJF6o7qkEIMaZT5o1n79zw+u/hsqnIJovmiTNbVw=;
-        b=AYBzNDgS++l1+XVOLEK3vUgfJQAkpnUOFlJUwf3cutYC6nIdyewLXo8QrvsLcuc03m
-         Vwe6+zkXokW/U3hsUOS1swBDXcl8FtJklU7Zv7/tS6uzDH6wBVKTdTlkB/iE3uUN6seO
-         MFDniZzsabShMy64Fgtxby2rchTXmNq0mh9nOQ5DiGM8GYE1o757BgswGD8CBLVUdaVk
-         6NpjRBWUERowS7xzCmLJxd8PYYC+4UtyKrmekENYX+8FQ8O8oSKlHUe8ovKC137z6xrF
-         8p44jKyTO9r5oi/aEiandHmbT9NSSsZKmDAhhNSEUvTFXoeHYbsfsNsRF7+UMFYRyQKR
-         PGVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751289216; x=1751894016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fswOJF6o7qkEIMaZT5o1n79zw+u/hsqnIJovmiTNbVw=;
-        b=SEpFTNF+NgSZx7ehyAEFRtKJC+e5tu7JzeFKWKL6W6pmF7MYz+igcO77C5wv12zxvC
-         o+Akl3Cu6HjwmKw2dYdszrQUcNZ3jJq7eTwGSiQ9S8G89G5hnTd6KQrZR6tOty5VUgqu
-         pTVOslAh0CMLKv06uW4IxCcm87jnd3S4TEvNNQpNlNn2IlSpVIa0B3sQhh+Aq+Wzww2S
-         F6HxOENcxI+T91iBBL1n2OZ+kov5jLh09ROQ7BbJ9+KN/ZgIaobLFT5D5B38oPXaoSB9
-         8PVAJHaMpkjFyy1S338OKf96AXanyqa5E8BMycnqkba4pUAGvinkDGjNoYLOVA9tls6X
-         9maQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcdno2n8+TEW6nFIccE7SJZiMFCMwnTATeiZNgUnTwzTFtQWceS461nX0/Seo6R6mLeMQdICT893gGH40=@vger.kernel.org, AJvYcCXBbdupR+IxGmlhzurUNmluSo1D/A4HZgmcJZiAEE52Iyc+FhfSgP3FJE5LyTq0gbNwnDSZ/mxrUZzp6IU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgNrP3RXSXYSJlqlgXgT4S1f14pl1bTFc9yrlVT1VQFjG3wT7s
-	DoPuM3lY8QCASqtt8YWujhTS4TGtF76K1ZndYi7ZFhJ2UCWdOvr2WmYZ0VCCciEEifxy+5qPI86
-	bAFfxkgPvizS7LuZFQrB5yvN3+eot8/o=
-X-Gm-Gg: ASbGncstY46O+BXjkdGaGT9tRqWBKB+waGZX/xA5HGv4NFpSu5WCL5qUqbztcIEpO8J
-	PidXhb/XY7rF6ag5xfngHkU/kSS8tSq5BEmD5SSf0iirZIetlQbAeg0PTHWoL1YeLQHtzWBxn6B
-	l1lKV6XPkrJhoJfZvFZqRAECqlQddey8SE3JFn9tIi3Bs=
-X-Google-Smtp-Source: AGHT+IE/CC3UTiSZbneeJ7xdPR3D+CONWMBjZY1fQXWksoJ1Ise2YdpYc11zDtz5TdPhrowIOpBFW+ey/+B2c8Fx1NU=
-X-Received: by 2002:a17:907:3e27:b0:ae0:b34d:907 with SMTP id
- a640c23a62f3a-ae35012229amr1126361566b.44.1751289215905; Mon, 30 Jun 2025
- 06:13:35 -0700 (PDT)
+	s=arc-20240116; t=1751289208; c=relaxed/simple;
+	bh=oJRu8E8wcaqBMHFOS5BZfM24plB5VjY1CkIOzjkM+fE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XzNEl1OBh5oMuL3FSYbFy9WvXth3zsikm/ylu6otEEugM+EKYVSN8CvjOksJJ8YmbtBsTEO51LTMTfIMwdKfTMVTFw/oxHxBJwiJHW1s6UYoAqukCNC6MJDb5cCWeX7DkmlIx+3kO/qKL+/cACleaLQ0IwZLEmzEhY/Iy9ceS2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjjR2m6w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22CCC4CEEF;
+	Mon, 30 Jun 2025 13:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751289207;
+	bh=oJRu8E8wcaqBMHFOS5BZfM24plB5VjY1CkIOzjkM+fE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RjjR2m6wSBY0rZZrCZFhmKNWvsjzerQnlwdSGZaUStNrxj09Wvy+WRpD14QO+NyUY
+	 tGJRL+wurZ5nUbE/ryQP55Wv900pWoHYeRq7zbORXDalvJ8DulTOveta74apaNE0P2
+	 ky2LqK4BElPtrsKZjVcq1xfzNh8xkBaZEcPWRUZAwKaDYHM1TQUYQDvG1h5p1Z5HxP
+	 0lJUvuvYMkQ7QfBm0GkuLPGBtLc1cfpbxMVfJ8cztNhnUjwG8GRM2nrZ2lmdfnNgc7
+	 06/AEyu2RFk5BReaZeu2aObgrNXdbZwJKGI6+WymzxhSeqvyT6XOTthUiKG6fsIxPn
+	 O8HHRm4a+Y6QQ==
+From: Sasha Levin <sashal@kernel.org>
+To: tytso@mit.edu
+Cc: yi.zhang@huawei.com,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] ext4: fix JBD2 credit overflow with large folios
+Date: Mon, 30 Jun 2025 09:13:24 -0400
+Message-Id: <20250630131324.1253313-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250628181530.873795-1-pedro.nariyoshi@gmail.com>
- <c8b65585-18bb-435c-9667-b202fb768299@jjverkuil.nl> <CAHPgyW5s8HB5op9z8cMPJPJ-9=e4Ufp6R3U3jABOxXD0Rzt06g@mail.gmail.com>
-In-Reply-To: <CAHPgyW5s8HB5op9z8cMPJPJ-9=e4Ufp6R3U3jABOxXD0Rzt06g@mail.gmail.com>
-From: "Mr. Chromebox" <mrchromebox@gmail.com>
-Date: Mon, 30 Jun 2025 08:13:23 -0500
-X-Gm-Features: Ac12FXxBe-NEPpyJu-_Iu88iVvt-iIfxyFjpehXXJ6E0qwyuiKPHOgUZMjqEmNo
-Message-ID: <CAFTm+6CQ+EkMyt35bLzb0+GcHaCiCk8XFP5-dSwev90on4GT=A@mail.gmail.com>
-Subject: Re: [PATCH] media: cros-ec-cec: Add Fizz board variants, so driver
- can detect them
-To: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
-Cc: hans@jjverkuil.nl, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-media@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> (Sorry to those re-receiving this message, my email client added HTML tag=
-s to the links and I didn't notice until too late)
+When large folios are enabled, the blocks-per-folio calculation in
+ext4_da_writepages_trans_blocks() can overflow the journal transaction
+limits, causing the writeback path to fail with errors like:
 
-same apologies from me
+  JBD2: kworker/u8:0 wants too many credits credits:416 rsv_credits:21 max:334
 
-On Mon, Jun 30, 2025 at 7:52=E2=80=AFAM Pedro Nariyoshi
-<pedro.nariyoshi@gmail.com> wrote:
->
-> (Sorry to those re-receiving this message, my email client added HTML tag=
-s to the links and I didn't notice until too late)
->
-> Hello Hans,
-> I don't particularly have a preference on what we match against. I went i=
-n this direction because I felt it was less disruptive to add elements to a=
- table, than rewrite the matching function and the table (especially withou=
-t the hardware to validate the changes on). I started looking at devices ba=
-sed on the same board on the chromium developer list (searching for "Fizz")=
-:
->
-> https://www.chromium.org/chromium-os/developer-library/reference/developm=
-ent/developer-information-for-chrome-os-devices/
->
-> This list gave me Kench, Sion, Teemo and Wukong. Then I looked at the sup=
-ported list for the coreboot implementation I am using:
->
-> https://github.com/MrChromebox/scripts/blob/main/functions.sh
->
-> The remaining boards seem to be rare variants of these devices (google me=
-et hardware, i7 variants of the same board, etc). This gave me the rest of =
-the boards I have added. Although, I now realize, I should have just gone t=
-o the source of coreboot:
->
-> https://github.com/coreboot/coreboot/blob/main/src/mainboard/google/fizz/=
-mainboard.c#L184-L194
->
-> This made me realize I am missing Karma (an acer all-in-one) and Endeavor=
- (another google meet variant). I could add these two missing boards, but I=
- think it'd be helpful to have someone from Google chime in as to whether i=
-t'd make sense to change the matching scheme instead. Depending on what the=
-y think, I'd be open to rewrite the patch whichever way it is decided.
-> Regards,
->
-> Pedro Nariyoshi
->
-> On Mon, Jun 30, 2025 at 2:25=E2=80=AFAM <hans@jjverkuil.nl> wrote:
->>
->> Hi Pedro,
->>
->> On 28/06/2025 20:14, Pedro Nariyoshi wrote:
->> > I recently reflashed a Chromebox (Wukong variant of the Fizz board) wi=
-th
->> > coreboot and I noticed that the cec driver refused to load with a bit =
-of
->> > tinkering, I realized that the dmi_match_table was expecting the produ=
-ct
->> > name to be Fizz, but `dmidecode` reports `Wukong` as the product name.=
- I
->> > am not sure if this is the best approach, but adding this patch lets m=
-e
->> > load the driver and it works properly.
->> >
->> > Alternatively, we could instead match the DMI_PRODUCT_FAMILY, instead =
-of
->> > DMI_SYS_VENDOR and DMI_PRODUCT_NAME. In my board at least, that says
->> > "Google_Fizz".
->> >
->> > I am open to suggestions for alternative solutions and I hope I did't
->> > break any rules (this is my first kernel patch). (And sorry for the
->> > previous submissions with errors in the subject line)
->> >
->> > Signed-off-by: Pedro Nariyoshi <pedro.nariyoshi@gmail.com>
->>
->> Thank you for your patch, but I would like to have someone from Google
->> review this as well.
->>
->> The number of entries keeps increasing, so perhaps switching to
->> DMI_PRODUCT_FAMILY would make sense. But I have no insight in how this
->> is done internally at Google.
+This occurs with small block sizes (1KB) and large folios (32MB), where
+the calculation results in 32768 blocks per folio. The transaction credit
+calculation then requests more credits than the journal can handle, leading
+to the following warning and writeback failure:
 
-DMI_PRODUCT_FAMILY is the baseboard/reference board name (Fizz, Puff,
-Brask, etc). The individual boards/retail products each have their own
-codename as well, which Google sets as the ChromeOS HWID in their
-custom coreboot firmware. With upstream coreboot firmware, the
-individual board names are used for the DMI_PRODUCT_NAME as the HWID
-doesn't exist there, which is why the existing matching works with
-Google's firmware but not mine.
+  WARNING: CPU: 1 PID: 43 at fs/jbd2/transaction.c:334 start_this_handle+0x4c0/0x4e0
+  EXT4-fs (loop0): ext4_do_writepages: jbd2_start: 9223372036854775807 pages, ino 14; err -28
 
-I highly recommend switching to use the DMI_PRODUCT_FAMILY instead, as
-it's deterministic and a simpler match. Using it along with
-DMI_SYS_VENDOR is fine.
+Call trace leading to the issue:
+  ext4_do_writepages()
+    ext4_da_writepages_trans_blocks()
+      bpp = ext4_journal_blocks_per_folio() // Returns 32768 for 32MB folio with 1KB blocks
+      ext4_meta_trans_blocks(inode, MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp)
+        // With bpp=32768, lblocks=34815, pextents=32768
+        // Returns credits=415, but with overhead becomes 416 > max 334
+    ext4_journal_start_with_reserve()
+      jbd2_journal_start_reserved()
+        start_this_handle()
+          // Fails with warning when credits:416 > max:334
 
->> One question for Pedro: where did you get all the other code names
->> from? Based on the commit message you have the Wukong variant, but how
->> did you find all the other variants?
+The issue was introduced by commit d6bf294773a47 ("ext4/jbd2: convert
+jbd2_journal_blocks_per_page() to support large folio"), which added
+support for large folios but didn't account for the journal credit limits.
 
-they're available from many sources online, including my website
-(mrchromebox.tech) and the coreboot source code
+Fix this by capping the blocks-per-folio value at 8192 in the writeback
+path. This is the value we'd get with 32MB folios and 4KB blocks, or 8MB
+folios with 1KB blocks, which is reasonable and safe for typical journal
+configurations.
 
->> Regards,
->>
->>         Hans
->>
+Fixes: d6bf294773a4 ("ext4/jbd2: convert jbd2_journal_blocks_per_page() to support large folio")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ext4/inode.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-regards,
-Matt
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index be9a4cba35fd5..860e59a176c97 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2070,6 +2070,14 @@ static int mpage_submit_folio(struct mpage_da_data *mpd, struct folio *folio)
+  */
+ #define MAX_WRITEPAGES_EXTENT_LEN 2048
+ 
++/*
++ * Maximum blocks per folio to avoid JBD2 credit overflow.
++ * This is the value we'd get with 32MB folios and 4KB blocks,
++ * or 8MB folios with 1KB blocks, which is reasonable and safe
++ * for typical journal configurations.
++ */
++#define MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK 8192
++
+ /*
+  * mpage_add_bh_to_extent - try to add bh to extent of blocks to map
+  *
+@@ -2481,6 +2489,18 @@ static int ext4_da_writepages_trans_blocks(struct inode *inode)
+ {
+ 	int bpp = ext4_journal_blocks_per_folio(inode);
+ 
++	/*
++	 * With large folios, blocks per folio can get excessively large,
++	 * especially with small block sizes. For example, with 32MB folios
++	 * (order 11) and 1KB blocks, we get 32768 blocks per folio. This
++	 * leads to credit requests that overflow the journal's transaction
++	 * limit.
++	 *
++	 * Limit the value to avoid excessive credit requests.
++	 */
++	if (bpp > MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK)
++		bpp = MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK;
++
+ 	return ext4_meta_trans_blocks(inode,
+ 				MAX_WRITEPAGES_EXTENT_LEN + bpp - 1, bpp);
+ }
+@@ -2559,6 +2579,13 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+ 	handle_t *handle = NULL;
+ 	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
+ 
++	/*
++	 * With large folios, blocks per folio can get excessively large,
++	 * especially with small block sizes. Cap it to avoid credit overflow.
++	 */
++	if (bpp > MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK)
++		bpp = MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK;
++
+ 	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
+ 		tag = PAGECACHE_TAG_TOWRITE;
+ 	else
+@@ -6179,6 +6206,13 @@ int ext4_writepage_trans_blocks(struct inode *inode)
+ 	int bpp = ext4_journal_blocks_per_folio(inode);
+ 	int ret;
+ 
++	/*
++	 * With large folios, blocks per folio can get excessively large,
++	 * especially with small block sizes. Cap it to avoid credit overflow.
++	 */
++	if (bpp > MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK)
++		bpp = MAX_BLOCKS_PER_FOLIO_FOR_WRITEBACK;
++
+ 	ret = ext4_meta_trans_blocks(inode, bpp, bpp);
+ 
+ 	/* Account for data blocks for journalled mode */
+-- 
+2.39.5
 
->> > ---
->> >  drivers/media/cec/platform/cros-ec/cros-ec-cec.c | 9 ++++++++-
->> >  1 file changed, 8 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c b/driver=
-s/media/cec/platform/cros-ec/cros-ec-cec.c
->> > index 419b9a7abcce..a26473c3cd84 100644
->> > --- a/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
->> > +++ b/drivers/media/cec/platform/cros-ec/cros-ec-cec.c
->> > @@ -302,8 +302,15 @@ static const char *const port_ab_conns[] =3D { "P=
-ort A", "Port B", NULL };
->> >  static const char *const port_d_conns[] =3D { "Port D", NULL };
->> >
->> >  static const struct cec_dmi_match cec_dmi_match_table[] =3D {
->> > -     /* Google Fizz */
->> > +     /* Google Fizz and variants*/
->> >       { "Google", "Fizz", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Bleemo", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Excelsior", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Jax", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Kench", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Sion", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Teemo", "0000:00:02.0", port_b_conns },
->> > +     { "Google", "Wukong", "0000:00:02.0", port_b_conns },
->> >       /* Google Brask */
->> >       { "Google", "Brask", "0000:00:02.0", port_b_conns },
->> >       /* Google Moli */
->>
 
