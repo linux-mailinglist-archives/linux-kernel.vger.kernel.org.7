@@ -1,125 +1,134 @@
-Return-Path: <linux-kernel+bounces-709080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB34AED90E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780A0AED909
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC271895213
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB611893580
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF0C2472BE;
-	Mon, 30 Jun 2025 09:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AB72472A4;
+	Mon, 30 Jun 2025 09:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cykCsxnM"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LXhXt573"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21DB247280;
-	Mon, 30 Jun 2025 09:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC2C23AB8D;
+	Mon, 30 Jun 2025 09:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277062; cv=none; b=p5nyvYUEM3CwE20Bt9EZOls6y6rQaV79fVxLSCLu0Ar13wSP70hf1tj621nPxHCUOUBYsopJVqW9paDpKhqiWbI7YUXpxMmoMargRAU9wlGtookHQ2RBMKpxVtxmOvnN78q0ozqfQpC8jdxsPkiDA8im7ESVGPipKCDrtK5VZhI=
+	t=1751277017; cv=none; b=B56a89g46dW+rgbuGHiLdNMCwsF8oS5vAtBv+/FUi69TpcqqwniPC8m8vVziruFG0GDman83Bo9dCO2pnXCEFYJPde9oppNQvn12Bb/ROLF0AS0TyqKUX5wkly3atdAAMKCUFXMuO+8xaCS2v2a9aOWJT3hqPYbHo4uHS8FSK4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277062; c=relaxed/simple;
-	bh=O5oLr3bwWsZD8uL73nva/6Unk6JmucG8/TRTyuz5QlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c5sjwtRx4S9INjOCNAw2bQPYnae5112whPPgPI9NGYi46vt8PIZBCieBueaEeHy3ae1Pl2oi+kZfrzXUfFplSdlekBXtqey47ucwXRiOUld+DWIhGeFYh7HLqmb9ebqBvuq3dFzwaBd3SkU/z/3nmQ6jh/amW34MTCrs5YXSoZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cykCsxnM; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U84fBH004461;
-	Mon, 30 Jun 2025 09:50:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=DKjS5goKMi5rK2GbghAH6/rgG28ei
-	A8yPjSPHnwGwiU=; b=cykCsxnMIgofblcqsKXBVZ2xLbV5R2pH2FBysEBHvaMEl
-	GBsbPm4tbiJ6lNF37SwuY8M9mhSzQaD8FM/T7arH4x0uqMNAcY5srRTy2GxNqpmj
-	RExaCDGYjvV3MMQaoC2LrFH7Q7zGkuFjALXI7I7bSUs8e4NSR8yYujSLz5Xx0Qup
-	aQGbWjX5iP9YZ6JnkmnMuZV7SnysVTty9zhRU/yMlImgqXrEXX8MeXryX0MYlK8L
-	MdV76/tNdMae7kzYL7cFHpAikZY6xmA7eHr5jSbYhMJJWpB5DB3Cqmzav10+T9R5
-	UNwY8Ev/z3oZD3pTemZkPLHC0HeUVICFOfltSS4fw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j766a600-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Jun 2025 09:50:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8dmeK028997;
-	Mon, 30 Jun 2025 09:50:54 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u84adh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Jun 2025 09:50:54 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 55U9orcK038230;
-	Mon, 30 Jun 2025 09:50:53 GMT
-Received: from ca-dev110.us.oracle.com (ca-dev110.us.oracle.com [10.129.136.45])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47j6u84abs-1;
-	Mon, 30 Jun 2025 09:50:53 +0000
-From: Alok Tiwari <alok.a.tiwari@oracle.com>
-To: hansg@kernel.org, ilpo.jarvinen@linux.intel.com, vadimp@nvidia.com,
-        platform-driver-x86@vger.kernel.org
-Cc: alok.a.tiwari@oracle.com, darren.kenny@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/mellanox: Fix logic error in power state check in mlxreg-lc
-Date: Mon, 30 Jun 2025 02:49:51 -0700
-Message-ID: <20250630095001.598061-1-alok.a.tiwari@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1751277017; c=relaxed/simple;
+	bh=fn460stx93A77T5TqdGbNur4jkXpBAZ87mWiNl6p0wI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPRXBseUN6gL0VJyE4RPQl+7Ybxd/ooXI8qiSWDFhPY1p6Mp2sFHYMTxvZQi63mLO9ZHqpv6WoKkSJXdO43d4PzXlI6zvUFDwOJE2NoxOkKAp7UUinqNYtYp/FUzIxg0mTJkogbSpwThtUtKfFbaAQ4NlyZiXuyvMrLxs7aj43w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LXhXt573; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751277016; x=1782813016;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fn460stx93A77T5TqdGbNur4jkXpBAZ87mWiNl6p0wI=;
+  b=LXhXt573ZtM7ZUGScnT+rPT47bBBaOZjxob5lAgZYoKnvvy38cEwWmiM
+   RpVSX0D6k+aUeyrTrjh/hjqif8c1bSqaSaIK/0zbZbhZfPDwr1NbGfU9y
+   AGRHBj8fX7e7GlX1t9JT4mRsKCUMjY9qsmm9wKEy4Neu+fODxm1dk6wlh
+   jJTXvlnoFosgGCqse0x942amneLL0VEnXNhExlvPv3dZ8owIq4/2FE3n0
+   biO/hKFI8+ohzAuKYw76Pb0F6HrfeJfWeb4m5U47LWEpELU8AMYWrBIxf
+   Ah5yyqV2JFGX2SBDBK/fFlrtWZ0K6Nyy7QYDLbvYCD8y03q3iZRcI7lBw
+   Q==;
+X-CSE-ConnectionGUID: UP1kSkM0RBemUfoxf5H00A==
+X-CSE-MsgGUID: px5sdeohT2qhlKx03nxi9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="57176093"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="57176093"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:50:15 -0700
+X-CSE-ConnectionGUID: gVyBjp6QTu+7QkD3gRl1qQ==
+X-CSE-MsgGUID: 5n68rlX2S2GVeR4e7LSPsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="158922500"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 30 Jun 2025 02:50:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 1AC2D1FE; Mon, 30 Jun 2025 12:50:03 +0300 (EEST)
+Date: Mon, 30 Jun 2025 12:50:02 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Xin Li <xin@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv7 13/16] x86/traps: Handle LASS thrown #SS
+Message-ID: <rzexbyswvsulo75edyffqgigtckiutwcx4jxbnwhynhm6nwc6l@tocxnm74fshi>
+References: <20250625125112.3943745-1-kirill.shutemov@linux.intel.com>
+ <20250625125112.3943745-15-kirill.shutemov@linux.intel.com>
+ <c704ea9a-8c73-46c2-80d1-f7b93a221908@zytor.com>
+ <lvutnc4et6r4a5eayoweb5butpspvop2m2pjioiudjwa3mkpo7@drcsdchj66w5>
+ <20250630093027.38cd1ebc@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 adultscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2506300081
-X-Proofpoint-GUID: WHia3CpVMJ399UiOZItjb_KNX2mE4riw
-X-Proofpoint-ORIG-GUID: WHia3CpVMJ399UiOZItjb_KNX2mE4riw
-X-Authority-Analysis: v=2.4 cv=b82y4sGx c=1 sm=1 tr=0 ts=68625dff cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=6IFa9wvqVegA:10 a=Ikd4Dj_1AAAA:8 a=yPCof4ZbAAAA:8 a=gBumKNB3FYnGDgap0wUA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDA4MSBTYWx0ZWRfX6NWuw3aMVu1p uI9N3K4onrFfMNpk6+QyhY72nRShtBgwTqMUvukboNbBYRZdZ8ID7m9XAfrr9euRiTHCThauqpP IpFn2nKS7zazKA6FlKpimxFFP4uh3NpwHn75pBHS6RKISkFltYSImqfaFcLnmvbgZ++s8fUPTl4
- 5ft4Ag22Fnd/CZE8e5HWjy0ox4+HSqjZIPGXTgFifZtFc1Vq8gwcugHAgkR2/OU5y3LH1tFtnUq vDVfwfSZplwo/sXulJ1EWiE/ST//eKcPr899EMG5x5qkRCabW7oam+g5uZKkhcy3eQBhvM2bGt/ df/vD9x4TD76LvtpMmCCoUWl4DHHynW07Ld4VIiiOX1/c9rrrtA85HoP5jyLbA4GDjl6hvHp2/l
- WQnaMm6U5SYl48BUllvqT7bTOcxj0mcljod4ye1L4CjpvIs2LvwqdRH2+ZT985zYLlDNWp+y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630093027.38cd1ebc@pumpkin>
 
-Fixes a logic issue in mlxreg_lc_completion_notify() where the
-intention was to check if MLXREG_LC_POWERED flag is not set before
-powering on the device.
+On Mon, Jun 30, 2025 at 09:30:27AM +0100, David Laight wrote:
+> On Fri, 27 Jun 2025 13:31:44 +0300
+> "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+> 
+> > On Thu, Jun 26, 2025 at 10:57:47AM -0700, Xin Li wrote:
+> > > On 6/25/2025 5:51 AM, Kirill A. Shutemov wrote:  
+> > > > LASS throws a #GP for any violations except for stack register accesses,
+> > > > in which case it throws a #SS instead. Handle this similarly to how other
+> > > > LASS violations are handled.
+> > > > 
+> > > > In case of FRED, before handling #SS as LASS violation, kernel has to
+> > > > check if there's a fixup for the exception. It can address #SS due to
+> > > > invalid user context on ERETU[1]. See 5105e7687ad3 ("x86/fred: Fixup  
+> > > 
+> > > Forgot to put the link to [1]?  Maybe just remove "[1]"?  
+> > 
+> > I will add the link. It is important context.
+> 
+> Will the link still be valid in 5 years time when someone
+> is looking back at the changes?
 
-The original code used "state & ~MLXREG_LC_POWERED" to check for the
-absence of the POWERED bit. However this condition evaluates to true
-even when other bits are set, leading to potentially incorrect
-behavior.
+Re-reading the commit message I wrote, it is obvious that I reconsidered
+putting the link and referenced commit instead.
 
-Corrected the logic to explicitly check for the absence of
-MLXREG_LC_POWERED using !(state & MLXREG_LC_POWERED).
+I will drop [1];
 
-Suggested-by: Vadim Pasternak <vadimp@nvidia.com>
-Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
----
- drivers/platform/mellanox/mlxreg-lc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/mellanox/mlxreg-lc.c b/drivers/platform/mellanox/mlxreg-lc.c
-index aee395bb48ae4..8681ceb7144ba 100644
---- a/drivers/platform/mellanox/mlxreg-lc.c
-+++ b/drivers/platform/mellanox/mlxreg-lc.c
-@@ -688,7 +688,7 @@ static int mlxreg_lc_completion_notify(void *handle, struct i2c_adapter *parent,
- 	if (regval & mlxreg_lc->data->mask) {
- 		mlxreg_lc->state |= MLXREG_LC_SYNCED;
- 		mlxreg_lc_state_update_locked(mlxreg_lc, MLXREG_LC_SYNCED, 1);
--		if (mlxreg_lc->state & ~MLXREG_LC_POWERED) {
-+		if (!(mlxreg_lc->state & MLXREG_LC_POWERED)) {
- 			err = mlxreg_lc_power_on_off(mlxreg_lc, 1);
- 			if (err)
- 				goto mlxreg_lc_regmap_power_on_off_fail;
 -- 
-2.46.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
