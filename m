@@ -1,172 +1,206 @@
-Return-Path: <linux-kernel+bounces-709176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667FDAEDA28
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:43:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8471AEDA34
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEF53A68C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:43:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91C4B1897571
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A392550AF;
-	Mon, 30 Jun 2025 10:43:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE77323B60B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F8B25A626;
+	Mon, 30 Jun 2025 10:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wv8UFVB1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63B5259CBF;
+	Mon, 30 Jun 2025 10:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751280211; cv=none; b=TVhoeapLu/gbHB3D87cYbaY8Cz55iGD1FY2MfB8n5Oux5FE+E7IQlHfRsbkhzYCnTS0nPOrguLfvGFteA+9LqzPiEI1s9nJ+gndKUEWgvg6lSpRFizjSaNRvxsRT/0//wXZTX5jc+3tJFc15VpANDA6udAgj8teG8zfmaLVaTHM=
+	t=1751280310; cv=none; b=g7eGo3bK8jBw0ciQypCGI4p4pcN588F4wpRXnkeQ1XLFwZ9IM2n+hTD4IjYMgOm+whJHCPHG3KLSmLXc550jqA/xlLo4cIt3PbSR1/avJTgWDxpoWJGrTGL+wnUm4t9THD4vuVGWhYIdY/uggkpmvEAjYUp8rHTnKkSPP5Zostk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751280211; c=relaxed/simple;
-	bh=NMq1qdal3K1Txw8VMIjXXOG92KdCcYJ6FQYEtNaZEhQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZnW5PN8iAudzEtngEVu/qLN2P27SqeZNvluo43YI4x/1XnKuvDMgz0zHBiyCrzonS8TQLtExS2S9qhaz6ZX5OwILqMeaxFNxOtM6E3BcjWE/FUwKbe2wWKolfr0Y+wOWf7YbE4PNmMDgPKZY1HbALf03nI/n29Zn3da8ARfc64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EE991D34;
-	Mon, 30 Jun 2025 03:43:13 -0700 (PDT)
-Received: from [10.1.34.165] (XHFQ2J9959.cambridge.arm.com [10.1.34.165])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E6C53F58B;
-	Mon, 30 Jun 2025 03:43:24 -0700 (PDT)
-Message-ID: <051d5338-d073-4a92-abd2-c68367c17636@arm.com>
-Date: Mon, 30 Jun 2025 11:43:23 +0100
+	s=arc-20240116; t=1751280310; c=relaxed/simple;
+	bh=wXMWujE7XchWdZ1zs2TcjwFnfNGsISRibnIGmp2rHBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xd6wgnBOti4gve8SMRvyoDF2CGVi2n1naRzK6eqhFsXdxtl8XSluEKBvnZSM/oNE9CAgLsiIFk6gL5tCPhUqDDdpdh5z7NEzb5oWnO3Xs/0wZ0SG1Wxo+EJosGkkUEhCK07i8EAEnqz3/MP45WBrj+I30A3tLf3o/ZozuTg4kr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wv8UFVB1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78F1C4CEE3;
+	Mon, 30 Jun 2025 10:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751280310;
+	bh=wXMWujE7XchWdZ1zs2TcjwFnfNGsISRibnIGmp2rHBg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wv8UFVB1aU4AvzIw1ixfToJE1xEcqMoMHqYghwS78xjMENr06K8/DX6FHA3Mf3wDe
+	 Eo1Rr3ee6ZGEWGAmOKgF1i6f3GVlN3nDpwd+riFvj5z/BPnxA4R0AWJn0S6DItq05o
+	 8WK0Bl96+tRkn2HLbNoy1AJcIEkXViT3bIG340LONbwIuedqpekwlBzGYT9X4XwUWX
+	 W5ORZ8Ej2+zfwfiortCTzgSvQfJZ+6FspsFztS+1QHk2wTxbd7yzXeKoo4fZvrHJLW
+	 umdUfe8Bu2okJ3c99tNMqapZJfNw1yTPvNhE12oaOwYI3iQDTghzvzB50ZWBwK6TSh
+	 hvPlygaXqrocg==
+Date: Mon, 30 Jun 2025 12:45:07 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+	Luca Weiss <luca.weiss@fairphone.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
+ interconnects property
+Message-ID: <20250630-tapir-of-astonishing-artistry-ad0bd8@houat>
+References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
+ <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
+ <20250627-mysterious-optimistic-bird-acaafb@krzk-bin>
+ <DAX7ZB27SBPV.2Y0I09TVSF3TT@fairphone.com>
+ <1129bc60-f9cb-40be-9869-8ffa3b3c9748@kernel.org>
+ <8a3ad930-bfb1-4531-9d34-fdf7d437f352@redhat.com>
+ <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
+ <20250630-stirring-kiwi-of-adventure-8f22ba@houat>
+ <b9f010ca-1564-4a3a-b004-ef179d5c90a6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: Add batched versions of
- ptep_modify_prot_start/commit
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org
-Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
- joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
- kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250628113435.46678-1-dev.jain@arm.com>
- <20250628113435.46678-5-dev.jain@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250628113435.46678-5-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="2z4ar3mqh5a4nutv"
+Content-Disposition: inline
+In-Reply-To: <b9f010ca-1564-4a3a-b004-ef179d5c90a6@kernel.org>
 
-On 28/06/2025 12:34, Dev Jain wrote:
-> Override the generic definition of modify_prot_start_ptes() to use
-> get_and_clear_full_ptes(). This helper does a TLBI only for the starting
-> and ending contpte block of the range, whereas the current implementation
-> will call ptep_get_and_clear() for every contpte block, thus doing a
-> TLBI on every contpte block. Therefore, we have a performance win.
-> 
-> The arm64 definition of pte_accessible() allows us to batch in the
-> errata specific case:
-> 
-> #define pte_accessible(mm, pte)	\
-> 	(mm_tlb_flush_pending(mm) ? pte_present(pte) : pte_valid(pte))
-> 
-> All ptes are obviously present in the folio batch, and they are also valid.
-> 
-> Override the generic definition of modify_prot_commit_ptes() to simply
-> use set_ptes() to map the new ptes into the pagetable.
-> 
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+--2z4ar3mqh5a4nutv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
+ interconnects property
+MIME-Version: 1.0
 
-> ---
->  arch/arm64/include/asm/pgtable.h | 10 ++++++++++
->  arch/arm64/mm/mmu.c              | 28 +++++++++++++++++++++++-----
->  2 files changed, 33 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index ba63c8736666..abd2dee416b3 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -1643,6 +1643,16 @@ extern void ptep_modify_prot_commit(struct vm_area_struct *vma,
->  				    unsigned long addr, pte_t *ptep,
->  				    pte_t old_pte, pte_t new_pte);
->  
-> +#define modify_prot_start_ptes modify_prot_start_ptes
-> +extern pte_t modify_prot_start_ptes(struct vm_area_struct *vma,
-> +				    unsigned long addr, pte_t *ptep,
-> +				    unsigned int nr);
-> +
-> +#define modify_prot_commit_ptes modify_prot_commit_ptes
-> +extern void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-> +				    pte_t *ptep, pte_t old_pte, pte_t pte,
-> +				    unsigned int nr);
-> +
->  #ifdef CONFIG_ARM64_CONTPTE
->  
->  /*
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 3d5fb37424ab..38325616f467 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -26,6 +26,7 @@
->  #include <linux/set_memory.h>
->  #include <linux/kfence.h>
->  #include <linux/pkeys.h>
-> +#include <linux/mm_inline.h>
->  
->  #include <asm/barrier.h>
->  #include <asm/cputype.h>
-> @@ -1524,24 +1525,41 @@ static int __init prevent_bootmem_remove_init(void)
->  early_initcall(prevent_bootmem_remove_init);
->  #endif
->  
-> -pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
-> +pte_t modify_prot_start_ptes(struct vm_area_struct *vma, unsigned long addr,
-> +			     pte_t *ptep, unsigned int nr)
->  {
-> +	pte_t pte = get_and_clear_full_ptes(vma->vm_mm, addr, ptep, nr, 0);
-> +
->  	if (alternative_has_cap_unlikely(ARM64_WORKAROUND_2645198)) {
->  		/*
->  		 * Break-before-make (BBM) is required for all user space mappings
->  		 * when the permission changes from executable to non-executable
->  		 * in cases where cpu is affected with errata #2645198.
->  		 */
-> -		if (pte_user_exec(ptep_get(ptep)))
-> -			return ptep_clear_flush(vma, addr, ptep);
-> +		if (pte_accessible(vma->vm_mm, pte) && pte_user_exec(pte))
-> +			__flush_tlb_range(vma, addr, nr * PAGE_SIZE,
-> +					  PAGE_SIZE, true, 3);
->  	}
-> -	return ptep_get_and_clear(vma->vm_mm, addr, ptep);
-> +
-> +	return pte;
-> +}
-> +
-> +pte_t ptep_modify_prot_start(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep)
-> +{
-> +	return modify_prot_start_ptes(vma, addr, ptep, 1);
-> +}
-> +
-> +void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-> +			     pte_t *ptep, pte_t old_pte, pte_t pte,
-> +			     unsigned int nr)
-> +{
-> +	set_ptes(vma->vm_mm, addr, ptep, pte, nr);
->  }
->  
->  void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr, pte_t *ptep,
->  			     pte_t old_pte, pte_t pte)
->  {
-> -	set_pte_at(vma->vm_mm, addr, ptep, pte);
-> +	modify_prot_commit_ptes(vma, addr, ptep, old_pte, pte, 1);
->  }
->  
->  /*
+On Mon, Jun 30, 2025 at 11:36:51AM +0200, Krzysztof Kozlowski wrote:
+> On 30/06/2025 10:38, Maxime Ripard wrote:
+> > On Mon, Jun 30, 2025 at 10:24:06AM +0200, Krzysztof Kozlowski wrote:
+> >> On 29/06/2025 14:07, Hans de Goede wrote:
+> >>> Hi Krzysztof,
+> >>>
+> >>> On 28-Jun-25 1:49 PM, Krzysztof Kozlowski wrote:
+> >>>> On 27/06/2025 11:48, Luca Weiss wrote:
+> >>>>> Hi Krzysztof,
+> >>>>>
+> >>>>> On Fri Jun 27, 2025 at 10:08 AM CEST, Krzysztof Kozlowski wrote:
+> >>>>>> On Mon, Jun 23, 2025 at 08:44:45AM +0200, Luca Weiss wrote:
+> >>>>>>> Document the interconnects property which is a list of interconne=
+ct
+> >>>>>>> paths that is used by the framebuffer and therefore needs to be k=
+ept
+> >>>>>>> alive when the framebuffer is being used.
+> >>>>>>>
+> >>>>>>> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> >>>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> >>>>>>> ---
+> >>>>>>>  Documentation/devicetree/bindings/display/simple-framebuffer.yam=
+l | 3 +++
+> >>>>>>>  1 file changed, 3 insertions(+)
+> >>>>>>>
+> >>>>>>> diff --git a/Documentation/devicetree/bindings/display/simple-fra=
+mebuffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffe=
+r.yaml
+> >>>>>>> index 296500f9da05e296dbbeec50ba5186b6b30aaffc..f0fa0ef23d91043df=
+b2b220c654b80e2e80850cd 100644
+> >>>>>>> --- a/Documentation/devicetree/bindings/display/simple-framebuffe=
+r.yaml
+> >>>>>>> +++ b/Documentation/devicetree/bindings/display/simple-framebuffe=
+r.yaml
+> >>>>>>> @@ -79,6 +79,9 @@ properties:
+> >>>>>>>    power-domains:
+> >>>>>>>      description: List of power domains used by the framebuffer.
+> >>>>>>> =20
+> >>>>>>> +  interconnects:
+> >>>>>>> +    description: List of interconnect paths used by the framebuf=
+fer.
+> >>>>>>> +
+> >>>>>>
+> >>>>>> maxItems: 1, or this is not a simple FB anymore. Anything which ne=
+eds
+> >>>>>> some sort of resources in unknown way is not simple anymore. You n=
+eed
+> >>>>>> device specific bindings.
+> >>>>>
+> >>>>> The bindings support an arbitrary number of clocks, regulators,
+> >>>>> power-domains. Why should I artificially limit the interconnects to=
+ only
+> >>>>> one?
+> >>>>
+> >>>> And IMO they should not. Bindings are not supposed to be generic.
+> >>>
+> >>> The simplefb binding is a binding to allow keeping the firmware, e.g.
+> >>> uboot setup framebuffer alive to e.g. show a boot splash until
+> >>> the native display-engine drive loads. Needing display-engine
+> >>> specific bindings totally contradicts the whole goal of=20
+> >>
+> >> No, it does not. DT is well designed for that through expressing
+> >> compatibility. I did not say you cannot have generic fallback for simp=
+le
+> >> use case.
+> >>
+> >> But this (and previous patchset) grows this into generic binding ONLY
+> >> and that is not correct.
+> >=20
+> > Can we have a proper definition of what a correct device tree binding is
+> > then?
+> >=20
+> > It's a bit surprising to have *that* discussion over a binding that is
+> > now well older than a decade now, and while there is definitely some
+> > generic bindings in ePAPR/DT spec, like the CPU ones.
+>=20
+> Hm? In ARM world at least they are specific, e.g. they have specific
+> compatibles.
+>=20
+> >=20
+> > If you don't consider that spec to be correct DT bindings, please
+> > provide a definition of what that is, and / or reasonable alternatives.
+> >=20
+> > Also, no, a device specific binding isn't reasonable here, because we
+> > *don't* have a device. From a technical standpoint, the firmware creates
+>=20
+> You touch internal parts of the SoC and you list very specific SoC
+> parts. Interconnect is internal part of the SoC and only specific
+> devices are using it.
+>=20
+> You define here generic SW construct for something which is opposite of
+> generic: the interconnect connecting two specific, unique components of
+> one, given SoC.
+>=20
+> > the framebuffer, Linux just uses it. Just like you don't have a
+> > device/platform specific compatible for PSCI, SCPI, et al.
+>=20
+> They follow some sort of spec and still they do not reference chosen
+> SoC-design-specific properties.
 
+ish.
+
+I mean, on theory, you're absolutely correct. In practice,
+assigned-clock-parents, assigned-clock-rates, or protected-clocks for
+example exist and are *only* about SoC-design specific behaviours.
+
+Maxime
+
+--2z4ar3mqh5a4nutv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaGJqrwAKCRAnX84Zoj2+
+dh39AX9zdlE7lH+G78LqemzNaC1qyQx2EBeMEMVM3nimVQN4kHOYHHm+tp+q2szm
+O8OMuqkBgMxiYf+EbLKsRFdu5yB6Q8lQ1WgOmR8mtOKsPjecd8iby7KGmzt/2n/d
+5IpPDuJG2w==
+=h3OD
+-----END PGP SIGNATURE-----
+
+--2z4ar3mqh5a4nutv--
 
