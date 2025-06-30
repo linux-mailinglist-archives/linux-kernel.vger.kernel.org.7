@@ -1,197 +1,128 @@
-Return-Path: <linux-kernel+bounces-709307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0039AEDB90
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:49:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79A4AEDB99
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61904189B5C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:49:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1240F16CEB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F638280CD3;
-	Mon, 30 Jun 2025 11:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D445283C8D;
+	Mon, 30 Jun 2025 11:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QERaeucq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="wYg2ujN0"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D3C280338
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 11:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A5F217737;
+	Mon, 30 Jun 2025 11:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751284121; cv=none; b=QPAzrgymxwI8RuS5Sz6zMN5hvhgPJsbiQZddz0yQM9jAPkIWMutgLQch9SBRjhJeTVcSDTN+BrPOhD8PFH9GrJgcn2h3IalaXocHbIldvosJzySzJ4laEOZsIXGig5teO352bnF49l14LsdeBnLj9uFmld1KfNqBD5BjmjWsnTA=
+	t=1751284167; cv=none; b=lI0w7E+KK+Mzt+92DawFTpmuc0exzTmMdDKAuR7PlrJB2wKVo5WJRBJIYwRwWZ7dXKOIOOSw/7lHRJRHFozTAiTDofugJpMS7gJF7m3Ki3ASOsJMrXlCSqJL6WH38KnqItq7LRWkmaU8jHm9IcrF1wYMm4aTjOet8cqsc3Q8NyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751284121; c=relaxed/simple;
-	bh=H184gVZ771yrtruI4xoO2jE86Qijx3ArlxTZ+pxORMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxxr1Bsbi2ecZIfUMTEk52SJFbRk7H3HNmipDJo8SiQ94954Ah96nOrPdeg5CRrOVnjx1bk87LpRfYmuxOztbJZcJSLvVCnVQvJJINfOhrut/GGmbN+6rK7xcMY7yn+uKaNMZqGuFAwBiXKGPso3CrxP6iSRnjtbcInci/ddWS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QERaeucq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C71F3C4CEE3;
-	Mon, 30 Jun 2025 11:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751284121;
-	bh=H184gVZ771yrtruI4xoO2jE86Qijx3ArlxTZ+pxORMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QERaeucq4JWA9Qvl9kditWF4DbVCIQnmMeEDY7Wtr5mEgARFkJUr7J3T8tKscDDzq
-	 K+dvgRrID1nLArVWRaMFC+jOchrOKdohKMTolg6Q3nRkG+Z25pvuidzk+rd7Z0S6Dr
-	 exZUEtd1Mo2Abwpub3yH0ZaUOr8ncabv/FQDLDu1qHYX9bW1+wNxDkGMByKDc6FoaJ
-	 mN6tteUfm54fwlb40Z5fcLx29pMIAXMW2JqMN9RMnHgdZA1MaNYB02U4CTvsm92Qt3
-	 aB9ZynBO4wuOuYspGz7vVZGTeXyW/mxMJ97awTVnGoUZ+/CsLskhomQ90kGWJid80n
-	 O21/WxgINJDTg==
-Date: Mon, 30 Jun 2025 13:48:38 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mike Looijmans <mike.looijmans@topic.nl>, 
-	dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Michal Simek <michal.simek@amd.com>, 
-	Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dp: Support DRM_FORMAT_XRGB8888
-Message-ID: <20250630-enormous-evasive-scorpion-58bcbd@houat>
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.fb98a918-329e-4536-a0a5-a99b22ba0120@emailsignatures365.codetwo.com>
- <20250627145058.6880-1-mike.looijmans@topic.nl>
- <20250627181911.GF24912@pendragon.ideasonboard.com>
- <42af6260-c8af-42e1-a9bb-adfaaabf0190@topic.nl>
- <20250630-psychedelic-tested-smilodon-adcbb3@houat>
- <20250630091156.GE24861@pendragon.ideasonboard.com>
- <20250630-phenomenal-taipan-of-imagination-59b300@houat>
- <20250630093335.GC20333@pendragon.ideasonboard.com>
- <20250630-delicate-stirring-sawfly-dd81be@houat>
- <20250630113008.GD20333@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1751284167; c=relaxed/simple;
+	bh=SUdtaLzTkXHo0e1aJWVEHdmO3hMtHuWb595FqlIlbwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sB3f7OcrCq6ndRAyMs06LmqPPXx5llQ3WhZ3Dl1NtF6pv6JTZWhakxO/3LhqJQammjwjczaUnQxWNUoKjBnckI6Yl/OxdAl4wLnwt2et34eyZw7oOKttCvLUV60pX2TZryTOL52ccAhG8frc/4sZtKB1xrlJnZsfSmesbgHwdgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=wYg2ujN0; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=PMhrsG/YsbxMt+IC5JLuz7E1CuFXsvedzQusYHZo2XA=; b=wYg2ujN0VisunfydIG9JuMA9QI
+	jdxztCi+DTaQU7FBDGPgS0kip8gNcT6a/gOwmcq5E1PAzjNFcIIn6d+qGiEZ0hAI9VD//7WW69AP2
+	P4+bxHVVS745eHOcDNiFgRv6mxEeOulfZ/U28poZdbApyEwvEtFTx93/iVnS0Hov49LycPdIYLcEM
+	ndYLhkVqmsHVUz+XXBN2dk26TCOndtadsuCRQdSklXLGKfomBf/BQIrUwCRB3uFeKb3WfcEjyFzPn
+	1CEtWLMgqyf5QcnwSp/pMlbeA/Ldz+SS+DclVI2tikLDQW8c8pYDrGq6+u5IY1pMuefaBhoR0gVeH
+	OvRQGCvA==;
+Received: from i53875bfd.versanet.de ([83.135.91.253] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uWD0k-00006g-14; Mon, 30 Jun 2025 13:49:22 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH 2/4] Input: adc-keys - support types that aren't just keyboard
+ keys
+Date: Mon, 30 Jun 2025 13:49:21 +0200
+Message-ID: <10163666.lvqk35OSZv@diego>
+In-Reply-To: <20250630-rock4d-audio-v1-2-0b3c8e8fda9c@collabora.com>
+References:
+ <20250630-rock4d-audio-v1-0-0b3c8e8fda9c@collabora.com>
+ <20250630-rock4d-audio-v1-2-0b3c8e8fda9c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="6cnjeiuqjwcs7vod"
-Content-Disposition: inline
-In-Reply-To: <20250630113008.GD20333@pendragon.ideasonboard.com>
-
-
---6cnjeiuqjwcs7vod
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dp: Support DRM_FORMAT_XRGB8888
-MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Jun 30, 2025 at 02:30:08PM +0300, Laurent Pinchart wrote:
-> On Mon, Jun 30, 2025 at 12:52:48PM +0200, Maxime Ripard wrote:
-> > On Mon, Jun 30, 2025 at 12:33:35PM +0300, Laurent Pinchart wrote:
-> > > On Mon, Jun 30, 2025 at 11:29:08AM +0200, Maxime Ripard wrote:
-> > > > On Mon, Jun 30, 2025 at 12:11:56PM +0300, Laurent Pinchart wrote:
-> > > > > On Mon, Jun 30, 2025 at 10:27:55AM +0200, Maxime Ripard wrote:
-> > > > > > On Mon, Jun 30, 2025 at 10:03:16AM +0200, Mike Looijmans wrote:
-> > > > > > > On 27-06-2025 20:19, Laurent Pinchart wrote:
-> > > > > > > > On Fri, Jun 27, 2025 at 04:50:46PM +0200, Mike Looijmans wr=
-ote:
-> > > > > > > > > XRGB8888 is the default mode that Xorg will want to use. =
-Add support
-> > > > > > > > > for this to the Zynqmp DisplayPort driver, so that applic=
-ations can use
-> > > > > > > > > 32-bit framebuffers. This solves that the X server would =
-fail to start
-> > > > > > > > > unless one provided an xorg.conf that sets DefaultDepth t=
-o 16.
-> > > > > > > > >=20
-> > > > > > > > > Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> > > > > > > > > ---
-> > > > > > > > >=20
-> > > > > > > > >   drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
-> > > > > > > > >   1 file changed, 5 insertions(+)
-> > > > > > > > >=20
-> > > > > > > > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers=
-/gpu/drm/xlnx/zynqmp_disp.c
-> > > > > > > > > index 80d1e499a18d..501428437000 100644
-> > > > > > > > > --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> > > > > > > > > +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> > > > > > > > > @@ -312,6 +312,11 @@ static const struct zynqmp_disp_form=
-at avbuf_gfx_fmts[] =3D {
-> > > > > > > > >   		.buf_fmt	=3D ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
-> > > > > > > > >   		.swap		=3D true,
-> > > > > > > > >   		.sf		=3D scaling_factors_888,
-> > > > > > > > > +	}, {
-> > > > > > > > > +		.drm_fmt	=3D DRM_FORMAT_XRGB8888,
-> > > > > > > > > +		.buf_fmt	=3D ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
-> > > > > > > > > +		.swap		=3D true,
-> > > > > > > > > +		.sf		=3D scaling_factors_888,
-> > > > > > > >=20
-> > > > > > > > I'm afraid that's not enough. There's a crucial difference =
-between
-> > > > > > > > DRM_FORMAT_ARGB8888 (already supported by this driver) and
-> > > > > > > > DRM_FORMAT_XRGB8888: for the latter, the 'X' component must=
- be ignored.
-> > > > > > > > The graphics layer is blended on top of the video layer, an=
-d the blender
-> > > > > > > > uses both a global alpha parameter and the alpha channel of=
- the graphics
-> > > > > > > > layer for 32-bit RGB formats. This will lead to incorrect o=
-peration when
-> > > > > > > > the 'X' component is not set to full opacity.
-> > > > > > >=20
-> > > > > > > I spent a few hours digging in the source code and what I cou=
-ld find in the
-> > > > > > > TRM and register maps, but there's not enough information in =
-there to
-> > > > > > > explain how the blender works. The obvious "XRGB" implementat=
-ion would be to
-> > > > > > > just disable the blender.
-> > > > > > >=20
-> > > > > > > What I got from experimenting so far is that the alpha compon=
-ent is ignored
-> > > > > > > anyway while the video path isn't active. So as long as one i=
-sn't using the
-> > > > > > > video blending path, the ARGB and XRGB modes are identical.
-> > > > > > >=20
-> > > > > > > Guess I'll need assistance from AMD/Xilinx to completely impl=
-ement the XRGB
-> > > > > > > modes.
-> > > > > > >=20
-> > > > > > > (For our application, this patch is sufficient as it solves t=
-he issues like
-> > > > > > > X11 not starting up, OpenGL not working and horrendously slow=
- scaling
-> > > > > > > performance)
-> > > > > >=20
-> > > > > > Given that we consider XRGB8888 mandatory,
-> > > > >=20
-> > > > > How about platforms that can't support it at all ?
-> > > >=20
-> > > > We emulate it.
-> > >=20
-> > > Does that imply a full memcpy of the frame buffer in the kernel drive=
-r,
-> > > or is it emulated in userspace ?
-> >=20
-> > Neither :)
-> >=20
-> > The kernel deals with it through drm_fb_xrgb8888_to_* helpers, but only
-> > on the parts of the framebuffer that were modified through the damage
-> > API.
+Am Montag, 30. Juni 2025, 12:19:25 Mitteleurop=C3=A4ische Sommerzeit schrie=
+b Nicolas Frattaroli:
+> Instead of doing something like what gpio-keys is doing, adc-keys
+> hardcodes that all keycodes must be of type EV_KEY.
 >=20
-> Aahhh OK, it's for the fbdev emulation. So that means that drivers are
-> not required to support XRGB8888 ?
+> This limits the usefulness of adc-keys, and overcomplicates the code
+> with manual bit-setting logic.
+>=20
+> Instead, refactor the code to read the linux,input-type fwnode property,
+> and get rid of the custom bit setting logic, replacing it with
+> input_set_capability instead. input_report_key is replaced with
+> input_event, which allows us to explicitly pass the type.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>  drivers/input/keyboard/adc-keys.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/input/keyboard/adc-keys.c b/drivers/input/keyboard/a=
+dc-keys.c
+> index f1753207429db02ce6510e5ec0da9b24d9edb61d..339dd4d4a0842108da2c6136b=
+1e0098cd1f6a3cd 100644
+> --- a/drivers/input/keyboard/adc-keys.c
+> +++ b/drivers/input/keyboard/adc-keys.c
+> @@ -19,12 +19,14 @@
+>  struct adc_keys_button {
+>  	u32 voltage;
+>  	u32 keycode;
 
-No, it's for KMS.
+nit: consistency ... the above is still "keycode"
+Naming things "code" like in gpio-keys might make sense maybe?
+Though I guess, it could also just be needless churn
 
-Maxime
+> +	u32 type;
+>  };
+> =20
+>  struct adc_keys_state {
+>  	struct iio_channel *channel;
+>  	u32 num_keys;
+>  	u32 last_key;
 
---6cnjeiuqjwcs7vod
-Content-Type: application/pgp-signature; name="signature.asc"
+^^ same
 
------BEGIN PGP SIGNATURE-----
+I'v checked that the function transistions=20
+=2D __set_bit -> input_set_capability
+=2D input_report_key -> input_event
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaGJ5kgAKCRAnX84Zoj2+
-dtHkAXwNtyyEjsQUv8JQdIBXT6tm3KJUjlzGhpdjE5afhE4oZw2ADEyDXOnl54o2
-NwOIvLUBf3Mz48PkLBlxwmZ/gjbSF8CEQWhXESLyMBhNlyn/SG1J5QxjCXKVIxfO
-/sSVScdEYA==
-=AOip
------END PGP SIGNATURE-----
+do the right thing,
 
---6cnjeiuqjwcs7vod--
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
+
+
 
