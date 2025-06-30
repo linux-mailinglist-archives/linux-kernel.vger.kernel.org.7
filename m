@@ -1,181 +1,260 @@
-Return-Path: <linux-kernel+bounces-709652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F09AEE088
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A01CFAEE08D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 846C2189CB65
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:23:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62475189E2B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6706028EC15;
-	Mon, 30 Jun 2025 14:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C209A28C031;
+	Mon, 30 Jun 2025 14:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HeGFkQRQ"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRzhUCzi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB87D28C2C2
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0669925E46A;
+	Mon, 30 Jun 2025 14:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751293237; cv=none; b=Mw09L2SEl8eL60qUX71HXqkwO6NxwQmlMR14JF7C+cgam5u7St+RyZL0jL0VVmehg+ITt2GhECqwah0W1MgZQkSxhMyh7+3+dyyKEng09WKWLUxat2ybmTSksA4xMT4U2Y8BUbxbC9kGIlv6dgD9k+iHipbW7bfLvYMKpo2bxbU=
+	t=1751293263; cv=none; b=Kmp6wCUAUHpePce9X7izsd8INZ0niwyCi7TrtGiafh95CZjq80Et3+pdp3KCgYm94o4e96JbKfrTnRCqOwpTGpaEQje3ozNfJQsR4MsgN1PGb2RkTLmblDEk7aCLfJeIF6ZRyBURpsAmQW0xc+dXkSRixeFfdNGbK9wqiaA5tCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751293237; c=relaxed/simple;
-	bh=S0aFpFC4n3QawWa7V2OErQFJEBz53JWrHnAFsX28XUo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Jmqu/IGqCxN3ybKhF/19c8rmuf6f8QDJouT8unCYFWq9HbB5soNr1DWFvee6WZpr2ciA3Dw0rMXPVbGFc52xS351GdmpTDYu4SXWNICi4HfLr7XgWqA6jeXDiC5KO7k/tssFPmMQFxj/O8oZPGYhwul3WoQZAsqHjWhRgMowUTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HeGFkQRQ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553b165c80cso4577050e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1751293233; x=1751898033; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lV5zqtGaJFdq64Z/f4wEaBtjans6GYNhmk/s3Cxy0fg=;
-        b=HeGFkQRQRPUUfuokoQk5ewNWY/83Csji91i1/neKLNM58RpoN54B1szNCjLEDi/PGl
-         Cf3ugZ20+57Lr/ci1Z/M8R05HF9/CovJUoFXzWAN+U+lRhBJuu8R7a7OZnU0yppi1OxS
-         N4OuOJAJ3f3KOaQRmFlTgjaw+4qboE5sqnXXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751293233; x=1751898033;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lV5zqtGaJFdq64Z/f4wEaBtjans6GYNhmk/s3Cxy0fg=;
-        b=TWYvoAL8y8FFjGwgubebt7JgQ86/t46vuU1ax1brvxIx2OW4MsRQKC/usXxaMd3FUo
-         dCRs06MLYnnRMcIQLbmqeKccBdFUDYgQ7QpTbr3oqo8+cKZUPlFP/XkXz3MEMgtabpKE
-         lB5G7XkAYzgSLHFDz/aAO2HMtcGtCRWN4L78g2epFlK0f0Z6oKdZZMoaCKxO60RIiDir
-         X387+CsFprxgxgmolMFLU21kCwMG6wgE3dAeoRnyxq6siMl5UeN+XYhKz1U4LneA2/YG
-         rRkhtJCWATFcbFVw4yNWimwEafkyVyxaLscRlyCokqGKosmy0MHXoPVkgIn/oAIbRq6G
-         U4Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbTCXZFjxRda/Jd2CCA48bl8tAPIeB7KxrzX4j7k1AoAh+smtQjl76tPFChOu78UGSRVbAm3jKSM09HWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLQJ8aULvWy5sT3HC+mm2ShmMp0vMywxbCdHC2+fsQAhYMcpoZ
-	s2gn2DkDN1ImtpyrPhhYSfroMHvXOcTTwaD151+2wTcfIkF03a4uhbLJdmes7DhYR+Z6WZY6OBG
-	447NO0A==
-X-Gm-Gg: ASbGnctKUvZrDQ2g30+JCDjGiuADkTp71XZRFfkntro3sl1Xi/iEMYxjHqshoJgUsvo
-	eTGE6UWImgREcIl4/1ZK7zAy53jLXKNNOSzQAlSLg3f+273puSSAsyDblXyQ1/+2KsV7lNCR1lP
-	k3evmQEekQmJ198mm3uOyVf+Tp5gy4wXHCPXdHpj0sapw7Dxqt8jfGIl/0f9yowIOqEiEknRbeW
-	PkB+WKlzHEWNIF3FODP4IHR3HmXoB+J68lOXOUob4fkl4PhXYR/Q33Ev88KDbnD8ZtJl5Al3Tzv
-	jSUPSUhRznQSdolak6snEkSScJyh7BO4Josa15D1JL6aKQe/aPd/rDmj9F96NSC5oTyekDoGoQ5
-	VtFs/BQ+Wgl2+J1wPAmNQd9gpST9Iv1LdhpFDFN1MJw==
-X-Google-Smtp-Source: AGHT+IEHySu2ZYesyEoFEJ/oKpjAojmH1jxOLz5N72hVn7IAx/v2lionP8GlV1OsFKCtl8ojRqFamA==
-X-Received: by 2002:a05:6512:33c7:b0:553:aa32:4106 with SMTP id 2adb3069b0e04-5550b892b93mr4365091e87.23.1751293232698;
-        Mon, 30 Jun 2025 07:20:32 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2d8ea8sm1432363e87.210.2025.06.30.07.20.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 07:20:32 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Jun 2025 14:20:33 +0000
-Subject: [PATCH v3 8/8] media: uvcvideo: uvc_v4l2_unlocked_ioctl: Invert PM
- logic
+	s=arc-20240116; t=1751293263; c=relaxed/simple;
+	bh=AGPZJVVdHZw0WSjLqpq3nXG49DDSI8HhtnKhoZB7T8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4ekPudybFNz7tCOhe6jovfJwUxnzy+N2T7RQ7pO4isVT1zz8J+Lgz/Mq4TfezQzV2JYm4ecFbECb5WMf2DXmRhw8EOKZKyKy0NYwyrZgFMleubL4dYF9yMB1xnw/eQllE+XmJX0xo19lvPolN2k/N+tMD2Q9OWPKpIIZx5Y6/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRzhUCzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C326C4CEE3;
+	Mon, 30 Jun 2025 14:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751293262;
+	bh=AGPZJVVdHZw0WSjLqpq3nXG49DDSI8HhtnKhoZB7T8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HRzhUCzidJonVITkVO0/FIulGBPiwsQJms96ktW5chl1KeCY7+mH6//d/Gf+UZ9df
+	 t7HogmiSFj0cgypkMTkh0Zq21E/YdR2bemEn8nrzJNrFJVm3CTeuXEQ2TIfoiKdlD9
+	 XacZk/QDfVXktPxRJO7X50uwO+svoWbWdMNP5ltNa/2zdy/AjXqmhKC/t3KaGrUXiX
+	 VC6yaD8Qy6LzQ4e716zFPccK6TaB6gvxaTKcy66B6uha1lu/WCBeodXlGTMDzS7phB
+	 fNkoslMzDnQYLsDaeyDUSBQX+lGGPbI3wfhW49dYkRXwMMZv90ntZoQM3X9S7Nqq62
+	 MzLzBWrjDIrGw==
+Date: Mon, 30 Jun 2025 15:20:57 +0100
+From: Will Deacon <will@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>,
+	Steven Moreland <smoreland@google.com>,
+	Frederick Mayle <fmayle@google.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	netdev@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH 3/5] vhost/vsock: Allocate nonlinear SKBs for handling
+ large receive buffers
+Message-ID: <aGKdSVJTjg_vi-12@willie-the-truck>
+References: <20250625131543.5155-1-will@kernel.org>
+ <20250625131543.5155-4-will@kernel.org>
+ <orht2imwke5xhnmeewxrbey3xbn2ivjzujksqnrtfe3cjtgrg2@6ls6dyexnkvc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250630-uvc-grannular-invert-v3-8-abd5cb5c45b7@chromium.org>
-References: <20250630-uvc-grannular-invert-v3-0-abd5cb5c45b7@chromium.org>
-In-Reply-To: <20250630-uvc-grannular-invert-v3-0-abd5cb5c45b7@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>, 
- Hans de Goede <hansg@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>, Hans Verkuil <hans@jjverkuil.nl>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <orht2imwke5xhnmeewxrbey3xbn2ivjzujksqnrtfe3cjtgrg2@6ls6dyexnkvc>
 
-Instead of listing the IOCTLs that do not need to turn on the camera,
-list the IOCTLs that need to turn it on. This makes the code more
-maintainable.
+On Fri, Jun 27, 2025 at 12:45:45PM +0200, Stefano Garzarella wrote:
+> On Wed, Jun 25, 2025 at 02:15:41PM +0100, Will Deacon wrote:
+> > When receiving a packet from a guest, vhost_vsock_handle_tx_kick()
+> > calls vhost_vsock_alloc_skb() to allocate and fill an SKB with the
+> > receive data. Unfortunately, these are always linear allocations and can
+> > therefore result in significant pressure on kmalloc() considering that
+> > the maximum packet size (VIRTIO_VSOCK_MAX_PKT_BUF_SIZE +
+> > VIRTIO_VSOCK_SKB_HEADROOM) is a little over 64KiB, resulting in a 128KiB
+> > allocation for each packet.
+> > 
+> > Rework the vsock SKB allocation so that, for sizes with page order
+> > greater than PAGE_ALLOC_COSTLY_ORDER, a nonlinear SKB is allocated
+> > instead with the packet header in the SKB and the receive data in the
+> > fragments.
+> > 
+> > Signed-off-by: Will Deacon <will@kernel.org>
+> > ---
+> > drivers/vhost/vsock.c        | 15 +++++++++------
+> > include/linux/virtio_vsock.h | 31 +++++++++++++++++++++++++------
+> > 2 files changed, 34 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+> > index 66a0f060770e..cfa4e1bcf367 100644
+> > --- a/drivers/vhost/vsock.c
+> > +++ b/drivers/vhost/vsock.c
+> > @@ -344,11 +344,16 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
+> > 
+> > 	len = iov_length(vq->iov, out);
+> > 
+> > -	if (len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
+> > +	if (len < VIRTIO_VSOCK_SKB_HEADROOM ||
+> 
+> Why moving this check here?
 
-This patch changes the behaviour for unsupported IOCTLs. Those IOCTLs
-will not turn on the camera.
+I moved it here because virtio_vsock_alloc_skb_with_frags() does:
 
-Suggested-by: Hans Verkuil <hans@jjverkuil.nl>
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_v4l2.c | 52 +++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 27 deletions(-)
++       size -= VIRTIO_VSOCK_SKB_HEADROOM;
++       return __virtio_vsock_alloc_skb_with_frags(VIRTIO_VSOCK_SKB_HEADROOM,
++                                                  size, mask);
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 350cd2cc88f872d2e8bd19e2b8fb067894916364..94dc97448446d36a85a1b36d16c29f22af89c640 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -1222,37 +1222,35 @@ static long uvc_v4l2_unlocked_ioctl(struct file *file,
- 				    unsigned int cmd, unsigned long arg)
- {
- 	struct uvc_fh *handle = file->private_data;
-+	unsigned int converted_cmd = v4l2_translate_cmd(cmd);
- 	int ret;
+and so having the check in __virtio_vsock_alloc_skb_with_frags() looks
+strange as, by then, it really only applies to the linear case. It also
+feels weird to me to have the upper-bound of the length checked by the
+caller but the lower-bound checked in the callee. I certainly find it
+easier to reason about if they're in the same place.
+
+Additionally, the lower-bound check is only needed by the vhost receive
+code, as the transmit path uses virtio_vsock_alloc_skb(), which never
+passes a size smaller than VIRTIO_VSOCK_SKB_HEADROOM.
+
+Given all that, moving it to the one place that needs it seemed like the
+best option. What do you think?
+
+> > +	    len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
+> > 		return NULL;
+> > 
+> > 	/* len contains both payload and hdr */
+> > -	skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
+> > +	if (len > SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+> > +		skb = virtio_vsock_alloc_skb_with_frags(len, GFP_KERNEL);
+> > +	else
+> > +		skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
+> 
+> Can we do this directly in virtio_vsock_alloc_skb() so we don't need
+> to duplicate code on virtio/vhost code?
+
+We can, but then I think we should do something different for the
+rx_fill() path -- it feels fragile to rely on that using small-enough
+buffers to guarantee linear allocations. How about I:
+
+ 1. Add virtio_vsock_alloc_linear_skb(), which always performs a linear
+    allocation.
+
+ 2. Change virtio_vsock_alloc_skb() to use nonlinear SKBs for sizes
+    greater than SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER)
+
+ 3. Use virtio_vsock_alloc_linear_skb() to fill the guest RX buffers
+
+ 4. Use virtio_vsock_alloc_skb() for everything else
+
+If you like the idea, I'll rework the series along those lines.
+Diff below... (see end of mail)
+
+> > diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+> > index 67ffb64325ef..8f9fa1cab32a 100644
+> > --- a/include/linux/virtio_vsock.h
+> > +++ b/include/linux/virtio_vsock.h
+> > @@ -51,27 +51,46 @@ static inline void virtio_vsock_skb_rx_put(struct sk_buff *skb)
+> > {
+> > 	u32 len;
+> > 
+> > +	DEBUG_NET_WARN_ON_ONCE(skb->len);
+> 
+> Should we mention in the commit message?
+
+Sure, I'll add something. The non-linear handling doesn't accumulate len,
+so it's a debug check to ensure that len hasn't been messed with between
+allocation and here.
+
+> > 	len = le32_to_cpu(virtio_vsock_hdr(skb)->len);
+> > 
+> > -	if (len > 0)
+> 
+> Why removing this check?
+
+I think it's redundant: len is a u32, so we're basically just checking
+to see if it's non-zero. All the callers have already checked for this
+but, even if they didn't, skb_put(skb, 0) is harmless afaict.
+
+Will
+
+--->8
+
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index 3799c0aeeec5..a6cd72a32f63 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -349,11 +349,7 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
+ 		return NULL;
  
--	/* The following IOCTLs do not need to turn on the camera. */
--	switch (cmd) {
--	case UVCIOC_CTRL_MAP:
--	case VIDIOC_CREATE_BUFS:
--	case VIDIOC_DQBUF:
--	case VIDIOC_ENUM_FMT:
--	case VIDIOC_ENUM_FRAMEINTERVALS:
--	case VIDIOC_ENUM_FRAMESIZES:
--	case VIDIOC_ENUMINPUT:
--	case VIDIOC_EXPBUF:
--	case VIDIOC_G_FMT:
--	case VIDIOC_G_PARM:
--	case VIDIOC_G_SELECTION:
--	case VIDIOC_QBUF:
--	case VIDIOC_QUERYCAP:
--	case VIDIOC_REQBUFS:
--	case VIDIOC_SUBSCRIBE_EVENT:
--	case VIDIOC_UNSUBSCRIBE_EVENT:
--		return video_ioctl2(file, cmd, arg);
--	}
+ 	/* len contains both payload and hdr */
+-	if (len > SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+-		skb = virtio_vsock_alloc_skb_with_frags(len, GFP_KERNEL);
+-	else
+-		skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
 -
--	ret = uvc_pm_get(handle->stream->dev);
--	if (ret)
-+	/* The following IOCTLs need to turn on the camera. */
-+	switch (converted_cmd) {
-+	case UVCIOC_CTRL_QUERY:
-+	case VIDIOC_G_CTRL:
-+	case VIDIOC_G_EXT_CTRLS:
-+	case VIDIOC_G_INPUT:
-+	case VIDIOC_QUERYCTRL:
-+	case VIDIOC_QUERYMENU:
-+	case VIDIOC_QUERY_EXT_CTRL:
-+	case VIDIOC_S_CTRL:
-+	case VIDIOC_S_EXT_CTRLS:
-+	case VIDIOC_S_FMT:
-+	case VIDIOC_S_INPUT:
-+	case VIDIOC_S_PARM:
-+	case VIDIOC_TRY_EXT_CTRLS:
-+	case VIDIOC_TRY_FMT:
-+		ret = uvc_pm_get(handle->stream->dev);
-+		if (ret)
-+			return ret;
-+		ret = video_ioctl2(file, cmd, arg);
-+		uvc_pm_put(handle->stream->dev);
- 		return ret;
-+	}
++	skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
+ 	if (!skb)
+ 		return NULL;
  
--	ret = video_ioctl2(file, cmd, arg);
--
--	uvc_pm_put(handle->stream->dev);
--	return ret;
-+	/* The other IOCTLs can run with the camera off. */
-+	return video_ioctl2(file, cmd, arg);
+diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+index 0e265921be03..ed5eab46e3dc 100644
+--- a/include/linux/virtio_vsock.h
++++ b/include/linux/virtio_vsock.h
+@@ -79,16 +79,19 @@ __virtio_vsock_alloc_skb_with_frags(unsigned int header_len,
  }
  
- const struct v4l2_ioctl_ops uvc_ioctl_ops = {
-
--- 
-2.50.0.727.gbf7dc18ff4-goog
+ static inline struct sk_buff *
+-virtio_vsock_alloc_skb_with_frags(unsigned int size, gfp_t mask)
++virtio_vsock_alloc_linear_skb(unsigned int size, gfp_t mask)
+ {
+-	size -= VIRTIO_VSOCK_SKB_HEADROOM;
+-	return __virtio_vsock_alloc_skb_with_frags(VIRTIO_VSOCK_SKB_HEADROOM,
+-						   size, mask);
++	return __virtio_vsock_alloc_skb_with_frags(size, 0, mask);
+ }
+ 
+ static inline struct sk_buff *virtio_vsock_alloc_skb(unsigned int size, gfp_t mask)
+ {
+-	return __virtio_vsock_alloc_skb_with_frags(size, 0, mask);
++	if (size <= SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
++		return virtio_vsock_alloc_linear_skb(size, mask);
++
++	size -= VIRTIO_VSOCK_SKB_HEADROOM;
++	return __virtio_vsock_alloc_skb_with_frags(VIRTIO_VSOCK_SKB_HEADROOM,
++						   size, mask);
+ }
+ 
+ static inline void
+diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+index 4ae714397ca3..8c9ca0cb0d4e 100644
+--- a/net/vmw_vsock/virtio_transport.c
++++ b/net/vmw_vsock/virtio_transport.c
+@@ -321,7 +321,7 @@ static void virtio_vsock_rx_fill(struct virtio_vsock *vsock)
+ 	vq = vsock->vqs[VSOCK_VQ_RX];
+ 
+ 	do {
+-		skb = virtio_vsock_alloc_skb(total_len, GFP_KERNEL);
++		skb = virtio_vsock_alloc_linear_skb(total_len, GFP_KERNEL);
+ 		if (!skb)
+ 			break;
+ 
+diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+index 424eb69e84f9..f74677c3511e 100644
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -262,11 +262,7 @@ static struct sk_buff *virtio_transport_alloc_skb(struct virtio_vsock_pkt_info *
+ 	if (!zcopy)
+ 		skb_len += payload_len;
+ 
+-	if (skb_len > SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+-		skb = virtio_vsock_alloc_skb_with_frags(skb_len, GFP_KERNEL);
+-	else
+-		skb = virtio_vsock_alloc_skb(skb_len, GFP_KERNEL);
+-
++	skb = virtio_vsock_alloc_skb(skb_len, GFP_KERNEL);
+ 	if (!skb)
+ 		return NULL;
+ 
 
 
