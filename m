@@ -1,142 +1,102 @@
-Return-Path: <linux-kernel+bounces-708939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F77FAED702
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:22:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D245AED740
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342371897D94
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9CF3B6160
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D5723AB98;
-	Mon, 30 Jun 2025 08:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1794323BCEC;
+	Mon, 30 Jun 2025 08:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Vw5UtiKS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="s6P5h7yn"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CE2221286
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703FD1E2858;
+	Mon, 30 Jun 2025 08:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751271712; cv=none; b=XsUIj/MR23hMRcFhZ2TyA3j/edtmJnyPgG8EQwjP6KAEdCJOkfMDldEFt3KuDPRmsXwl/Mop2OQ++zTCIzR0UAcH3ygl3YnMWVxZ4/tmaVimEEFmLDd26Qoo+nhaHGDX4Q+dC1dX+MVFs3wIpmAfBQzqxcZbj8lRIMfEuQTDVos=
+	t=1751272031; cv=none; b=E/3y1RXk7r+1mmzJt6YvCUmE6L6qVH/3sJy8Hk78yO4BY74N0Wsy2RT8p7n52j32YWnZDMv+H1lRodNSGBzm0u5N6tqyt+HxkrBH/7x67Cn2/KPFZT377ASpiJ0YBo8p6ts0jyDrkg0Y0J4B48lG4YAkFvxAPWjGCmIDZ19pptY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751271712; c=relaxed/simple;
-	bh=EWa99hwmThBTiBF7TFwbpaAhJKWxk2bVrODee0yejRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYE+gPE+WyF3DmM7zvpuXYoESb8fNnjwUY+pcPWkDmUmc65F2htGJCz1vYkTHNo+inOSLOlPyXcdpMQdVK3vRWzrRJpUqoR9ZB1jDqiCX52i/3djj0O9WWJZrgevAiy6RrzSDV+DoZH2Y2JSS1QK3nbRRfq9oQfgQHvS1vnWMSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Vw5UtiKS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id D4F0A669;
-	Mon, 30 Jun 2025 10:21:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1751271687;
-	bh=EWa99hwmThBTiBF7TFwbpaAhJKWxk2bVrODee0yejRY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vw5UtiKSbBsI7TgkpcllqmCEwNxX+52wJ7wHrhxZae0pY1G/5rbor/lVFhirKIH53
-	 +e+k5HavIIjxHK/8F9H9ynXplWpRYgsbsIm/odpC4GLMrfck++Q7e9xKLV+6F4kRnp
-	 aHtNudCty5qV+s6uPaAoC1vp9abgQuxrJiiaWdAs=
-Date: Mon, 30 Jun 2025 11:21:23 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dp: Support DRM_FORMAT_XRGB8888
-Message-ID: <20250630082123.GA23516@pendragon.ideasonboard.com>
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.fb98a918-329e-4536-a0a5-a99b22ba0120@emailsignatures365.codetwo.com>
- <20250627145058.6880-1-mike.looijmans@topic.nl>
- <20250627181911.GF24912@pendragon.ideasonboard.com>
- <42af6260-c8af-42e1-a9bb-adfaaabf0190@topic.nl>
+	s=arc-20240116; t=1751272031; c=relaxed/simple;
+	bh=lLupGE83slk6Rc7n8lXUVq8/KuU2FXMNUgqrMet+k9Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=gZ+wire7R084mGRvkwEBfJR2W3kUp0x+kObBJgP2vL/xurXtLW0RDFhiDj3BTriLWRzW0RfVPba/46fZZ3tWoImNnceSUZplNeoHNVxmEOdw3TKLsvFWSZrqUkWmqEce4GiwnpbhF86nCH54M5b+f/llZQMHnSd9jp/YLmpuyVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=s6P5h7yn; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1751271715; bh=XZ0aFEqYQnkKoHskDEAXjLCNAGRjf4o/lr5Ys3ymZFk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=s6P5h7yn9w47iE+mDDC6mtgQGqZftLAdzLV7/kSKDlFmXIQvraow2XGLqY/IQJvaf
+	 y3rJePUFEVcXC2M+QhzS7cFddu5ntRCXZ0dXifzt9UkP5kwtEVP7tqKvYRxjLdlnmL
+	 IagrSF9uomHNt9cvBmxCBFv7BNnIshNtHs5f8828=
+Received: from VM-222-126-tencentos.localdomain ([14.22.11.161])
+	by newxmesmtplogicsvrszc13-1.qq.com (NewEsmtp) with SMTP
+	id 5762EAB6; Mon, 30 Jun 2025 16:21:54 +0800
+X-QQ-mid: xmsmtpt1751271714t64qi34cy
+Message-ID: <tencent_12DB60FFE724D17784666194FAB42BDC9A07@qq.com>
+X-QQ-XMAILINFO: NT7dO8ok7FP2v7xRnUhcmt4Rdgr/FlUPPDgif8LsnLpTyNsvGaF723Z0bqBqz0
+	 PshyKa3HtCjgKU2dVS/syvcz4z+xP9JipP1BjGfhUOJYwq6z5Atw59v9HrqtLdw2JeB+MRq7OYoL
+	 oAllUh54t7Z0pSKUybVcV2qIQUmA3uCMr916aFDOaJUX5PlslvMpNZz1ltwBlsdeMqF0TJmT8bHi
+	 /+oi9Z2JnQVY2rumIrgIQeyVLTrhY6MejW+FXB/sKS3eChe8t0Ss9PwU9voiH5BVPXXYLaHUMYKu
+	 MdpL8rLZdCBb01GAf2l/M+FKVNHEHlVZ0ZOL2kE2aCTyTP3e5uQwhSl/aIkiIpLjn0bfC11zQUG0
+	 592PPym8ooPEFEuueECg2wOap0ySHrZ9WlCSJKQJRYUKR5EabqAoUgiY5kZ9vx20v3AFzFyyrFb+
+	 VShQTTA3cAIkzAZ1WLrC3ACgJtxAjLD53ebFMED/pazYlX/XwSXo816Wc2AqPVGBJQ1tmmMphI0j
+	 rTV95XKG3HVpMd8uI4rq1SXFChaarn0bIUIJF0MpxwDouLWVTUFo1Ycj55HacSl90BLPyU+vSMvS
+	 cDF5CT0NlIiB9rtvSgCZBfI82TVQw8D2Q0rEMHRIHh/4cWZpdDITwEREkeMaaXQbtKeNW6kOROE3
+	 GX7XiMc6RgoGnBdCRmjb/ApuaKh/7EcUTfGZvaekpI8Gh7FaTlB3/lRIIOZc85rFmEySBomAlGqq
+	 SuGZVOaAOdkoY6WSqGlqzUezu5fjd8zV910J3eoOOw8lwc97adilROCNlxN5eQ3k7sQ6+odyV7n2
+	 7kMZw3xjw2xmMmStCuw6ploJ1mp41B0vIT0oVQOfxtz38O64M97XguszWa+j0eU/VpZNvxOiDAbV
+	 MobMSBmEc6adHwZRDO8CUrs9NjNVVrZ4Th/n1N7QDFoxyZvSSVyimdMiNamjFl6FJ94LC49ltNMf
+	 dnlv1xqnso5GlQAeNrHT1IGm1BH797axccGEHbZduCOJdE2IMJvxwVX0CgZbg66/Wiyhc+Gyea29
+	 miBy+t7TJ9ez6STSQsfyFoJ76zYaLMpzGuMIW77m19edtrqudfLN1U7szJbh/OaKFHdIODWw==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: jackysliu <1972843537@qq.com>
+To: 1972843537@qq.com
+Cc: James.Bottomley@HansenPartnership.com,
+	bvanassche@acm.org,
+	linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: RE:[PATCH] scsi: fix out of bounds error in /drivers/scsi
+Date: Mon, 30 Jun 2025 16:21:49 +0800
+X-OQ-MSGID: <20250630082149.3798936-1-1972843537@qq.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <tencent_D9A0F9052526AD09F7FF76DD5F2529FDDD05@qq.com>
+References: <tencent_D9A0F9052526AD09F7FF76DD5F2529FDDD05@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <42af6260-c8af-42e1-a9bb-adfaaabf0190@topic.nl>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 30, 2025 at 10:03:16AM +0200, Mike Looijmans wrote:
-> On 27-06-2025 20:19, Laurent Pinchart wrote:
-> > On Fri, Jun 27, 2025 at 04:50:46PM +0200, Mike Looijmans wrote:
-> >> XRGB8888 is the default mode that Xorg will want to use. Add support
-> >> for this to the Zynqmp DisplayPort driver, so that applications can use
-> >> 32-bit framebuffers. This solves that the X server would fail to start
-> >> unless one provided an xorg.conf that sets DefaultDepth to 16.
-> >>
-> >> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
-> >> ---
-> >>
-> >>   drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
-> >>   1 file changed, 5 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> >> index 80d1e499a18d..501428437000 100644
-> >> --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> >> +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> >> @@ -312,6 +312,11 @@ static const struct zynqmp_disp_format avbuf_gfx_fmts[] = {
-> >>   		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
-> >>   		.swap		= true,
-> >>   		.sf		= scaling_factors_888,
-> >> +	}, {
-> >> +		.drm_fmt	= DRM_FORMAT_XRGB8888,
-> >> +		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
-> >> +		.swap		= true,
-> >> +		.sf		= scaling_factors_888,
-> >
-> > I'm afraid that's not enough. There's a crucial difference between
-> > DRM_FORMAT_ARGB8888 (already supported by this driver) and
-> > DRM_FORMAT_XRGB8888: for the latter, the 'X' component must be ignored.
-> > The graphics layer is blended on top of the video layer, and the blender
-> > uses both a global alpha parameter and the alpha channel of the graphics
-> > layer for 32-bit RGB formats. This will lead to incorrect operation when
-> > the 'X' component is not set to full opacity.
-> 
-> I spent a few hours digging in the source code and what I could find in 
-> the TRM and register maps, but there's not enough information in there 
-> to explain how the blender works. The obvious "XRGB" implementation 
-> would be to just disable the blender.
+On 6/18/25 08:26 AM , Bart Van Assche wrote:
+>> Can I know what kind of impact this vulnerability will have?
+>
+>The worst possible impact I see is that the Linux kernel would decide 
+>that RSCS is supported although the device doesn't support it. This
+>could cause sd_read_io_hints() to print incorrect information. The
+>following message could be printed when it should not be printed:
+>"Unexpected: RSCS has been set and the permanent stream count is %u\n"
+>
+>> And is it possible to get a cve number?
+>
+>You are asking the wrong person. I don't know how to get a CVE number.
+>
+>Bart.
 
-That won't work when using global alpha unfortunately :-(
+Thank you Bart,for the patient review. I've submitted a new patch which 
+mentioned way of detection and influenced stable tags.
+Best regards.
 
-> What I got from experimenting so far is that the alpha component is 
-> ignored anyway while the video path isn't active. So as long as one 
-> isn't using the video blending path, the ARGB and XRGB modes are identical.
+Jackysliu
 
-Correct, *if* global alpha is set to full opaque, then you can disable
-the blender. That could confuse userspace though, enabling the graphics
-plane with XRGB would work, and then enabling the video plane with
-global alpha would fail.
-
-> Guess I'll need assistance from AMD/Xilinx to completely implement the 
-> XRGB modes.
-
-The blender can ignore the alpha channel of the graphics plane for
-formats that have no alpha channel. It would be nice if there was a bit
-to force that behaviour for 32-bit RGB too, but I couldn't find any :-(
-It's worth asking though.
-
-> (For our application, this patch is sufficient as it solves the issues 
-> like X11 not starting up, OpenGL not working and horrendously slow 
-> scaling performance)
-> 
-> >>   	}, {
-> >>   		.drm_fmt	= DRM_FORMAT_RGBA8888,
-> >>   		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_ABGR8888,
-
--- 
-Regards,
-
-Laurent Pinchart
 
