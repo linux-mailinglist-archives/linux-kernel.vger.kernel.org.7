@@ -1,65 +1,96 @@
-Return-Path: <linux-kernel+bounces-709438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7ECAEDDB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:58:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D08AEDDA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE271898B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D66A164A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D3128A73E;
-	Mon, 30 Jun 2025 12:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EE0289E23;
+	Mon, 30 Jun 2025 12:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="G62k8V8R"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtPNBY6w"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3D8289814;
-	Mon, 30 Jun 2025 12:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F33235074;
+	Mon, 30 Jun 2025 12:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288295; cv=none; b=XfqUCKKp3Xn1VKxuOYOOqgHyHSQUrXKBZ8qZFPtKWBbD5xJNe/GIYSqQCBmWkeID1aYuIvZEfaT4MKX1hzmfzl1knkQ7xvSb7tHuo3gy+5FND3m9IjvQ0HFJUW4Jx6Zsl9Ni8HieO8Vo6wszcuNpPaGE0W6DE2hrThtA4FqnOI8=
+	t=1751288156; cv=none; b=rreUh1K3pDYZ/ZrxzoHQxueMBDO7I7rS1u2N3aJsYrGuJVESx9m4sp6l14UsfLJRwjADViDTXkhwDHesGHnkbLoyypKLSONLh+r5rh+CfKLsEDcVSiqaTW7pQpG2Bcmrxre0eyjQAgpIdwYMKCY0zj+/+jRX18c7wIKkdr84t7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288295; c=relaxed/simple;
-	bh=2vajiVHjVJ5ffKfGqgBj6UtWWFnXOtI5JNPjqVY8yc4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=bKxHyu+lKl9xtxLGYQH6j/YIx8nZjxOWp9597mFmZpEcq5Y8kQKLJr0MZhYZ8WaXTiq7JdHACw9dQlCS95muQ9unZFaY9KiceG/Jbkd3O/UR4wqhKUkQNUOsPqq65f562aiMqPoQD/xvUI6HSInbfD1gSZPN3H4Du/zzxIeED2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=G62k8V8R; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UBxpaI008960;
-	Mon, 30 Jun 2025 14:57:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	yOw3lCVampqxfyk9oAF3ADllyOFT8WJA9FdDVtqo38s=; b=G62k8V8RY1FfrItE
-	Tvl+AoL9C4pMU7Gy4+slJ3TZTandK1RZ2+SJQk0Ted4pMT+nniEahXVOcHdy3KIz
-	imMPAF4Rxi8yIA3l7nwxq7belA6VB0ADr5ZesovNNw3GSKzTTQ65L8gX7FcQ5d27
-	vLTqB0PZrZK5XJ4ll4D5PABYQ7fPKhxGkDYfJiviCczscSG16q3QzZhQds8kjzaO
-	VG6wHqsgD3pnDGKlWpaHtuAqu0HLaq20RdoSwfG5DNPZw62YWhWMo/rdrFeuOn3h
-	NrCmCqiKo/RfHdrRN73mpfXSJTdihxFmizHN5cw8sKu7tzUEHN6MTEESmgtcFh2+
-	5F0/RA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5h8qk4k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 14:57:53 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9518940051;
-	Mon, 30 Jun 2025 14:56:31 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5D835B42C3E;
-	Mon, 30 Jun 2025 14:55:26 +0200 (CEST)
-Received: from localhost (10.252.20.7) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 14:55:25 +0200
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Mon, 30 Jun 2025 14:55:15 +0200
-Subject: [PATCH v3 3/3] i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
+	s=arc-20240116; t=1751288156; c=relaxed/simple;
+	bh=bHZX5qUURlsW3IxRaCkLaJ2+tiqr+7lPA6WGkySRe1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r/WZuf5SI2TvObemHrRKe5uIMFz30haSdC0kMKg/i2FzQBgOaKboZdp9+e7WoUfOsuUVmFNZV10guzZuRBCYIrVEo5jqPqOqAbSL4zdgAzRXRLufTBKI9eu1THbezqpAvCu++FDOP7zB/QcluwzDSF42eLQDwIgO5lbJWvMNCaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtPNBY6w; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45363645a8eso29984615e9.1;
+        Mon, 30 Jun 2025 05:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751288153; x=1751892953; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gVSrYd0eHTox1L8UaY8v5yKbEudXIuXJECQmzXWMQ4w=;
+        b=MtPNBY6wZh3X7JBQ+ZR8fAuISndIfFUX320WymL6MvDJ6S8MDFR8iAkdffNLDJu+j0
+         811a9d+dm838CXs+AAsLoioIAQzcIrSHTPwQmNWXDefOSNcVn0t+KbbRcU8fXLO9HxEb
+         2wBIokHba/M7CQAyhHFnjE82fHlwLqETWJeMimYr+WitE2l1LOW54QuCdA1P4gFyGfQN
+         T/l+G5d90OITA5iDBs7GJdb8CWvkR7jE2Qepjpvn+SoDN4pCjC2VFoMnsvxxOMJQXA3D
+         cCeJljuvfq/zx52gCPv+aDLnQFDbxQYvEfXo530Y1wMjReetC0+j/+v8xkNZDklR7iaZ
+         njpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751288153; x=1751892953;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gVSrYd0eHTox1L8UaY8v5yKbEudXIuXJECQmzXWMQ4w=;
+        b=fauQK0scIYFBFAWXtzsRzJ+6JsoATw59phmdRDOxJ5etLloUT8mIVYsSkol3fetCBW
+         O2IHIboIbYqiY6hOkEhBNsb6QGpUgbbzQhX/p4DycWncMJnChMvZiLyqc6YS9AWZgz4l
+         7PNZpgQ3H1jxg8sTerC3OuiprEuhT39YXYQpc/1Halc7KvcREHFrsoFQxsJRaiE8/mYT
+         2+lJ7HLxroNEWqPl3w1z+xARagO8R/4hkLeAP9ZXQo2ZroFKuSgv2r3bQsp0Fb47ibLK
+         q2ceK0Lo2gJ7Pp+RBStf45n4We2SM8eSrH1DXX+rRMCz3AzwmqFv74c2Ve4mrHNi3wu0
+         LiDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmuTkJBK4U8SFZ9f3it6GF8+qhHaCiFVofkR8rR/pNPYnyjQ1OcgE0c6MlPsU2j2Xj/D6KAGXj5n9dpbRFlcvK@vger.kernel.org, AJvYcCXVy1Q2MAdh/LpLv+hSwy8qyiZA79UlanQwvnE6SgCT/JHmO7C/N8zBb5pcQYJenHhXQsA=@vger.kernel.org, AJvYcCXu+AVqLgK5Iqzo5fJvbIZbYN7FaMOi4OSJ71zM0rQjBCbVPeUpeTHqT4RqEMEeFRu7y9Y4SvRiSgYweY2N@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2YMHkE0nXLwbCkRVyyecikeLfxmYO33SUFweq1i+NiC5KFv0g
+	HelTPfFeMxzhgRPTv1r522OUdN49tpqU6ScuKDr7c0cVHpUOL8z1p4jj
+X-Gm-Gg: ASbGncu7WzQWc5sbOhuw+PeBxWj9GlCPnxGevAp+wr1UTSIz3Fp8IwhhIWYmViLFetu
+	oR3FNNLRzKeh/t8LHbrbuB2OkOfHo0zUg11gXpIQjQW4p8hoAOmgZ9G9eTd8jZcp3adfS2jNVAJ
+	TLbJ0l6lYKsEFjfL5dKgQp2TCbpbzKbZWTI4RtO4GMr1PdekfrxPT8Qul1raUbKkF0te1lkXRjQ
+	ykpoq5UpOxPHoaLQrin2iKP42DwMDqN1DHFw87WOGlPHjJuT/sNsNzjzH827w6r6R31QlupXV7y
+	MebqZXtob8foK9Z2kzONlJMj1A85GYmJBCQ6omW+WqGxodQM5MeSvExMpwoj
+X-Google-Smtp-Source: AGHT+IFaYxlSF3efqtSuCLhqTE4oLLoRUny0RrlBdQ3yughk2Xn2MJDUHgEguqJrqhJQ9gZGcEIebA==
+X-Received: by 2002:a05:600c:a11b:b0:453:5d8d:d1b8 with SMTP id 5b1f17b1804b1-4538ee712f5mr108494835e9.30.1751288152509;
+        Mon, 30 Jun 2025 05:55:52 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4538234b1b9sm162196265e9.11.2025.06.30.05.55.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 05:55:51 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/bpf: Fix spelling mistake "subtration" -> "subtraction"
+Date: Mon, 30 Jun 2025 13:55:28 +0100
+Message-ID: <20250630125528.563077-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,125 +99,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-ID: <20250630-i2c-upstream-v3-3-7a23ab26683a@foss.st.com>
-References: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
-In-Reply-To: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
-To: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Alain Volmat
-	<alain.volmat@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        "Maxime
- Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "M'boumba Cedric
- Madianga" <cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
 
-Use the i2c-core-base APIs to allocate a DMA safe buffer when needed.
+There are spelling mistakes in description text. Fix these.
 
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/i2c/busses/i2c-stm32f7.c | 36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ tools/testing/selftests/bpf/progs/verifier_bounds.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 042386b4cabe..d06f0efdece3 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -742,9 +742,12 @@ static void stm32f7_i2c_dma_callback(void *arg)
- 	struct stm32f7_i2c_dev *i2c_dev = (struct stm32f7_i2c_dev *)arg;
- 	struct stm32_i2c_dma *dma = i2c_dev->dma;
- 	struct device *dev = dma->chan_using->device->dev;
-+	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
- 
- 	stm32f7_i2c_disable_dma_req(i2c_dev);
- 	dma_unmap_single(dev, dma->dma_buf, dma->dma_len, dma->dma_data_dir);
-+	if (!f7_msg->smbus)
-+		i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, true);
- 	complete(&dma->dma_complete);
+diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c b/tools/testing/selftests/bpf/progs/verifier_bounds.c
+index e52a24e15b34..6f986ae5085e 100644
+--- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
++++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
+@@ -1474,7 +1474,7 @@ __naked void sub64_full_overflow(void)
  }
  
-@@ -880,6 +883,7 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
- {
- 	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
- 	void __iomem *base = i2c_dev->base;
-+	u8 *dma_buf;
- 	u32 cr1, cr2;
- 	int ret;
+ SEC("socket")
+-__description("64-bit subtration, partial overflow, result in unbounded reg")
++__description("64-bit subtraction, partial overflow, result in unbounded reg")
+ __success __log_level(2)
+ __msg("3: (1f) r3 -= r2 {{.*}} R3_w=scalar()")
+ __retval(0)
+@@ -1514,7 +1514,7 @@ __naked void sub32_full_overflow(void)
+ }
  
-@@ -929,17 +933,23 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
- 
- 	/* Configure DMA or enable RX/TX interrupt */
- 	i2c_dev->use_dma = false;
--	if (i2c_dev->dma && f7_msg->count >= STM32F7_I2C_DMA_LEN_MIN
--	    && !i2c_dev->atomic) {
--		ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
--					      msg->flags & I2C_M_RD,
--					      f7_msg->count, f7_msg->buf,
--					      stm32f7_i2c_dma_callback,
--					      i2c_dev);
--		if (!ret)
--			i2c_dev->use_dma = true;
--		else
--			dev_warn(i2c_dev->dev, "can't use DMA\n");
-+	if (i2c_dev->dma && !i2c_dev->atomic) {
-+		dma_buf = i2c_get_dma_safe_msg_buf(msg, STM32F7_I2C_DMA_LEN_MIN);
-+		if (dma_buf) {
-+			f7_msg->buf = dma_buf;
-+			ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
-+						      msg->flags & I2C_M_RD,
-+						      f7_msg->count, f7_msg->buf,
-+						      stm32f7_i2c_dma_callback,
-+						      i2c_dev);
-+			if (ret) {
-+				dev_warn(i2c_dev->dev, "can't use DMA\n");
-+				i2c_put_dma_safe_msg_buf(f7_msg->buf, msg, false);
-+				f7_msg->buf = msg->buf;
-+			} else {
-+				i2c_dev->use_dma = true;
-+			}
-+		}
- 	}
- 
- 	if (!i2c_dev->use_dma) {
-@@ -1626,6 +1636,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
- 			dmaengine_terminate_async(dma->chan_using);
- 			dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
- 					 dma->dma_data_dir);
-+			if (!f7_msg->smbus)
-+				i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, false);
- 		}
- 		f7_msg->result = -ENXIO;
- 	}
-@@ -1648,6 +1660,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
- 				dmaengine_terminate_async(dma->chan_using);
- 				dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
- 						 dma->dma_data_dir);
-+				if (!f7_msg->smbus)
-+					i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, false);
- 				f7_msg->result = -ETIMEDOUT;
- 			}
- 		}
-
+ SEC("socket")
+-__description("32-bit subtration, partial overflow, result in unbounded u32 bounds")
++__description("32-bit subtraction, partial overflow, result in unbounded u32 bounds")
+ __success __log_level(2)
+ __msg("3: (1c) w3 -= w2 {{.*}} R3_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))")
+ __retval(0)
 -- 
-2.43.0
+2.50.0
 
 
