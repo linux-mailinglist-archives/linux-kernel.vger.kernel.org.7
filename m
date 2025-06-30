@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-709711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8F6AEE142
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:45:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46319AEE13F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5C7188F545
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FF447A474F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7357628CF5C;
-	Mon, 30 Jun 2025 14:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C36E28FFC7;
+	Mon, 30 Jun 2025 14:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vT5nk7U2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pGILP/Nw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vT5nk7U2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pGILP/Nw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/KgzVaY"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4828DF3A
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FAA28E5F3;
+	Mon, 30 Jun 2025 14:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751294554; cv=none; b=qWyxEePiG6+ieRFyInWknxgfAqHVIV+xxV4IapCwVDCUjL0PzN+mOT3XCvenV19iDK6g46mseju04yVk4KPKw0R8gu31/eN46OUCYn+jFBMN1nY9aJ99bu5UXoz8MHolFIUaqEN4tRNV+N1f4mPx37tVTjXZqKloNxwVWlgLZLU=
+	t=1751294572; cv=none; b=A9pEiYj4MzcSEZfObiCQUh/uSujNQ4gnyk93Tmeg563DmV+4fzoP4KoVFb7CEJqKUIzaYl8sp8hp9QKl3eBBUfk29oYBNphH07wv6CJGUSqb+Kvfl6wzAZacOqr4UgOgnJQO6PKuR+QGMstonS2QkdqDu7GMQgubVewr6N1lxtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751294554; c=relaxed/simple;
-	bh=3nimWEP4TU2hazlO9B3yM6uHoocXP+e13BqLuWR+t6U=;
+	s=arc-20240116; t=1751294572; c=relaxed/simple;
+	bh=yXGAI8fsp9QAmSJK3IamseOR28dXJb3MxGrhuL4c8hA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BisDToRzKC4Kf+2lu/Wr/0KYkSprkoExsYiGFUXTdc3T4XArn2HnUr/H1krTP8H+PvgEfbR22PHKv8AU0yn65aCdsLOvpHPLM97u12FhMEbuJAcbApXDcVrEbdm1QYelqTQQG+7TScf15yFlMGFttVaUt13Z/3dh1K/r3J/tze4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vT5nk7U2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pGILP/Nw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vT5nk7U2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pGILP/Nw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9D7F021166;
-	Mon, 30 Jun 2025 14:42:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751294537; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2K/Grp0pf+YGAmhL32U2P7mtv8DTunlS/1iRZeZXLDU=;
-	b=vT5nk7U2x5sYGl1gHXXtdT1TZ/nzdJ/nN9pctW1RRt3saa9YMiBLhcPSNg2xCgcFGm7QL3
-	Cjv36Jg1cL/tyKTZlwQTjbVdFJ6zUNcTlj6aV0QL14TnppRVC5q4/tSFPbpy8aaL5NWSWB
-	i69yoxhkaqV2NFH/pL/HugKoHzA/ER0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751294537;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2K/Grp0pf+YGAmhL32U2P7mtv8DTunlS/1iRZeZXLDU=;
-	b=pGILP/NwSeRJXhT9aK+GyG6qi3045fMfm8doOLh8QXNYLyYVDRM1rWFJpcsJsgGv4QtKrI
-	cdJxjiFxsCJHFpBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vT5nk7U2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="pGILP/Nw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751294537; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2K/Grp0pf+YGAmhL32U2P7mtv8DTunlS/1iRZeZXLDU=;
-	b=vT5nk7U2x5sYGl1gHXXtdT1TZ/nzdJ/nN9pctW1RRt3saa9YMiBLhcPSNg2xCgcFGm7QL3
-	Cjv36Jg1cL/tyKTZlwQTjbVdFJ6zUNcTlj6aV0QL14TnppRVC5q4/tSFPbpy8aaL5NWSWB
-	i69yoxhkaqV2NFH/pL/HugKoHzA/ER0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751294537;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2K/Grp0pf+YGAmhL32U2P7mtv8DTunlS/1iRZeZXLDU=;
-	b=pGILP/NwSeRJXhT9aK+GyG6qi3045fMfm8doOLh8QXNYLyYVDRM1rWFJpcsJsgGv4QtKrI
-	cdJxjiFxsCJHFpBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E6F41399F;
-	Mon, 30 Jun 2025 14:42:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MJCfBEmiYmjqdAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 30 Jun 2025 14:42:17 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Peter Xu <peterx@redhat.com>,
-	Gavin Guo <gavinguo@igalia.com>,
-	linux-mm@kvack.org,
+	 MIME-Version; b=RDE7j1pxrFQpeBh9dNeLqK5aUGCcgEIXB0ta3pLwgEwO8r54NjuoXyNQ6EKW5AI2Ag1F85jXkK2EyeBSYBS3w+tAaJ6+YKG/YWGUdXJqMnrhgBVd5Lsiic2ZhaEJ7YC9JVr7lw3u9Qym7lruhPizPFgYd5A0DqgJvVKIO0V1pIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/KgzVaY; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313154270bbso2129675a91.2;
+        Mon, 30 Jun 2025 07:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751294570; x=1751899370; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TatuTvD/KRI25aZVKetSkdRBKo49t17GGxSNN77vHt4=;
+        b=k/KgzVaYC5/wDF7IKDPIk2ygBCdaqI8o+f9izu0GcP7E5UKi13a8GBNfILMUfYGbQO
+         2iCb3i0JbcNcodQ8WynF6f1CKHT8gTY49XvON2A8tqMilqr0fubAi10jZNJCbDM+pv9M
+         vBflnmfdusiDjez1oEsO8kXHc/5Ul+5qkOvQdLLv7alL0AhYGLMSJ5+Tz1Blns8OblE6
+         ueO+kfpqakKGbIa8E+lsdVboglV0gNne6/vCR3n2EHSodz7Kx9nLrwARvU9Q0Xqz+y5d
+         soP31ThEGD36AMawpA7BR+69vCW2YSL4sE2qH+jAbNs2/4/hIKQZObSIWJanpQreQSZX
+         wiuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751294570; x=1751899370;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TatuTvD/KRI25aZVKetSkdRBKo49t17GGxSNN77vHt4=;
+        b=DGJd7rQX7MJEAdBgYxj+ne/kKhDDUlSU62nHHhhLahL8CDQ+PcyiEy/+ZrlV/PxAz8
+         X2+FCg2esiw4RSAOmSQKlMew6V+ywTvSnOyn9ct0idHu8CrZ+1KL0aqBV/VP0j2NWqJL
+         1kHA2ZAAb4+aGj79mY1Nmr6Ymur4hLf8pvbbaCt0keNUF+E1WGuhoq221KC5NV0MQ8Bi
+         eNDrBnrXsKEX2eN8Zs3YY7afYY4hGTgrdzujBa00aJPuXZIsX067JWkJXMjJsMOxfJzW
+         r9GTuPVMAO4QefUP9T+UseM5BH79YaLbtvWTDd8ulf8L8HjpOVynC8Jeeo2452b/UQTx
+         yDcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuJ5KU6A18JY+Op6rwBzVkyVsd2+uF4c/MQ6DAZ+dg0KqgfAMOaALpG2XFrjDuKJTClk3w7Me0Y8X8bbQq@vger.kernel.org, AJvYcCW7DxVmHQmIh9dqvAP+XkSIHS78WxYrLNXD/GQPq3CFE+y/7Jpx/xixeqtOTNiTvmTVa34=@vger.kernel.org, AJvYcCWLlJbREvyyOQI5xbGPuMvKA1Tmw691PbR/yZXumL7cMqC8rWgTgbQxmkV56VDMDqkEXwTqbBEp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNesvRxNxaBiHCHO2LCLFkN0CTBwpJcliEzv7EbqN2JPMqtTuR
+	bQLSYG6Lu1DlWR+gJT08DgbJHIYf7lr9qExtRVzuz+Pz7cn2We/0mvp0jLsQCw==
+X-Gm-Gg: ASbGnctQjqKBWDC7QeT5f1aS0/gCD02nmMt6fRqyew91c5xrs/QKmdWmscNTCO2lT0+
+	kCpln1Z21sLcI6W5bpW27UGJ5+BMmFWNvqnNM8pjnv6xL2sIjmivNaSaTB986aCXToJZyLutD9p
+	5vamjBckb4xNxV/tolqeI1WdVhXd263jTduVY1mPrN+r6kJyFhPSMo1U+yNEyVWQXoJJ1ulW4MA
+	BQCMuT3bUlUmPvvKZ6zE8EHEDsarz6n1JGtBpEPXk/N/sZO815HdA0AI6Y0g5szKK9BgcnP3TKk
+	gXe8XEcy4O3g43T4XfpS7yxigU5J9gbCa5z2lWMTpv2r9HYp76KczGj9mprElMAOhRMpA6wC1DB
+	6
+X-Google-Smtp-Source: AGHT+IETLZuBDgN03KgQWXJ9JG6CGzKwn4TSRbQqf09y4q790qyn1wuwU+dXImOnss1ZphjmrXsFHQ==
+X-Received: by 2002:a17:90b:5445:b0:311:c970:c9c0 with SMTP id 98e67ed59e1d1-318c9243c49mr16601470a91.22.1751294569638;
+        Mon, 30 Jun 2025 07:42:49 -0700 (PDT)
+Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:2f51:de71:60e:eca9])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-318c13a270csm9170017a91.16.2025.06.30.07.42.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 07:42:49 -0700 (PDT)
+From: Bui Quang Minh <minhquangbui99@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v4 2/5] mm,hugetlb: sort out folio locking in the faulting path
-Date: Mon, 30 Jun 2025 16:42:09 +0200
-Message-ID: <20250630144212.156938-3-osalvador@suse.de>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250630144212.156938-1-osalvador@suse.de>
-References: <20250630144212.156938-1-osalvador@suse.de>
+	bpf@vger.kernel.org,
+	Bui Quang Minh <minhquangbui99@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH net v2 1/3] virtio-net: ensure the received length does not exceed allocated size
+Date: Mon, 30 Jun 2025 21:42:10 +0700
+Message-ID: <20250630144212.48471-2-minhquangbui99@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250630144212.48471-1-minhquangbui99@gmail.com>
+References: <20250630144212.48471-1-minhquangbui99@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,124 +106,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,linux.dev:email];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9D7F021166
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -5.01
 
-Recent conversations showed that there was a misunderstanding about why we
-were locking the folio prior to call in hugetlb_wp().  In fact, as soon as
-we have the folio mapped into the pagetables, we no longer need to hold it
-locked, because we know that no concurrent truncation could have happened.
+In xdp_linearize_page, when reading the following buffers from the ring,
+we forget to check the received length with the true allocate size. This
+can lead to an out-of-bound read. This commit adds that missing check.
 
-There is only one case where the folio needs to be locked, and that is
-when we are handling an anonymous folio, because hugetlb_wp() will check
-whether it can re-use it exclusively for the process that is faulting it
-in.
-
-So, pass the folio locked to hugetlb_wp() when that is the case.
-
-Link: https://lkml.kernel.org/r/20250627102904.107202-3-osalvador@suse.de
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Suggested-by: David Hildenbrand <david@redhat.com>
-Cc: Gavin Guo <gavinguo@igalia.com>
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Peter Xu <peterx@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
+Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
 ---
- mm/hugetlb.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/net/virtio_net.c | 38 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 14274a02dd14..31d39e2a0879 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -6434,6 +6434,7 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 	pte_t new_pte;
- 	bool new_folio, new_pagecache_folio = false;
- 	u32 hash = hugetlb_fault_mutex_hash(mapping, vmf->pgoff);
-+	bool folio_locked = true;
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index e53ba600605a..31661bcb3932 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -778,6 +778,26 @@ static unsigned int mergeable_ctx_to_truesize(void *mrg_ctx)
+ 	return (unsigned long)mrg_ctx & ((1 << MRG_CTX_HEADER_SHIFT) - 1);
+ }
  
- 	/*
- 	 * Currently, we are forced to kill the process in the event the
-@@ -6599,6 +6600,14 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
++static int check_mergeable_len(struct net_device *dev, void *mrg_ctx,
++			       unsigned int len)
++{
++	unsigned int headroom, tailroom, room, truesize;
++
++	truesize = mergeable_ctx_to_truesize(mrg_ctx);
++	headroom = mergeable_ctx_to_headroom(mrg_ctx);
++	tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
++	room = SKB_DATA_ALIGN(headroom + tailroom);
++
++	if (len > truesize - room) {
++		pr_debug("%s: rx error: len %u exceeds truesize %lu\n",
++			 dev->name, len, (unsigned long)(truesize - room));
++		DEV_STATS_INC(dev, rx_length_errors);
++		return -1;
++	}
++
++	return 0;
++}
++
+ static struct sk_buff *virtnet_build_skb(void *buf, unsigned int buflen,
+ 					 unsigned int headroom,
+ 					 unsigned int len)
+@@ -1797,7 +1817,8 @@ static unsigned int virtnet_get_headroom(struct virtnet_info *vi)
+  * across multiple buffers (num_buf > 1), and we make sure buffers
+  * have enough headroom.
+  */
+-static struct page *xdp_linearize_page(struct receive_queue *rq,
++static struct page *xdp_linearize_page(struct net_device *dev,
++				       struct receive_queue *rq,
+ 				       int *num_buf,
+ 				       struct page *p,
+ 				       int offset,
+@@ -1817,18 +1838,27 @@ static struct page *xdp_linearize_page(struct receive_queue *rq,
+ 	memcpy(page_address(page) + page_off, page_address(p) + offset, *len);
+ 	page_off += *len;
  
- 	hugetlb_count_add(pages_per_huge_page(h), mm);
- 	if ((vmf->flags & FAULT_FLAG_WRITE) && !(vma->vm_flags & VM_SHARED)) {
-+		/*
-+		 * No need to keep file folios locked. See comment in
-+		 * hugetlb_fault().
-+		 */
-+		if (!anon_rmap) {
-+			folio_locked = false;
-+			folio_unlock(folio);
++	/* Only mergeable mode can go inside this while loop. In small mode,
++	 * *num_buf == 1, so it cannot go inside.
++	 */
+ 	while (--*num_buf) {
+ 		unsigned int buflen;
+ 		void *buf;
++		void *ctx;
+ 		int off;
+ 
+-		buf = virtnet_rq_get_buf(rq, &buflen, NULL);
++		buf = virtnet_rq_get_buf(rq, &buflen, &ctx);
+ 		if (unlikely(!buf))
+ 			goto err_buf;
+ 
+ 		p = virt_to_head_page(buf);
+ 		off = buf - page_address(p);
+ 
++		if (check_mergeable_len(dev, ctx, buflen)) {
++			put_page(p);
++			goto err_buf;
 +		}
- 		/* Optimization, do the COW without a second fault */
- 		ret = hugetlb_wp(vmf);
- 	}
-@@ -6613,7 +6622,8 @@ static vm_fault_t hugetlb_no_page(struct address_space *mapping,
- 	if (new_folio)
- 		folio_set_hugetlb_migratable(folio);
- 
--	folio_unlock(folio);
-+	if (folio_locked)
-+		folio_unlock(folio);
- out:
- 	hugetlb_vma_unlock_read(vma);
- 
-@@ -6801,15 +6811,20 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	if (flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE)) {
- 		if (!huge_pte_write(vmf.orig_pte)) {
--			/* hugetlb_wp() requires page locks of pte_page(vmf.orig_pte) */
-+			/*
-+			 * Anonymous folios need to be lock since hugetlb_wp()
-+			 * checks whether we can re-use the folio exclusively
-+			 * for us in case we are the only user of it.
-+			 */
- 			folio = page_folio(pte_page(vmf.orig_pte));
--			if (!folio_trylock(folio)) {
-+			if (folio_test_anon(folio) && !folio_trylock(folio)) {
- 				need_wait_lock = true;
- 				goto out_ptl;
- 			}
- 			folio_get(folio);
- 			ret = hugetlb_wp(&vmf);
--			folio_unlock(folio);
-+			if (folio_test_anon(folio))
-+				folio_unlock(folio);
- 			folio_put(folio);
- 			goto out_ptl;
- 		} else if (likely(flags & FAULT_FLAG_WRITE)) {
++
+ 		/* guard against a misconfigured or uncooperative backend that
+ 		 * is sending packet larger than the MTU.
+ 		 */
+@@ -1917,7 +1947,7 @@ static struct sk_buff *receive_small_xdp(struct net_device *dev,
+ 		headroom = vi->hdr_len + header_offset;
+ 		buflen = SKB_DATA_ALIGN(GOOD_PACKET_LEN + headroom) +
+ 			SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+-		xdp_page = xdp_linearize_page(rq, &num_buf, page,
++		xdp_page = xdp_linearize_page(dev, rq, &num_buf, page,
+ 					      offset, header_offset,
+ 					      &tlen);
+ 		if (!xdp_page)
+@@ -2252,7 +2282,7 @@ static void *mergeable_xdp_get_buf(struct virtnet_info *vi,
+ 	 */
+ 	if (!xdp_prog->aux->xdp_has_frags) {
+ 		/* linearize data for XDP */
+-		xdp_page = xdp_linearize_page(rq, num_buf,
++		xdp_page = xdp_linearize_page(vi->dev, rq, num_buf,
+ 					      *page, offset,
+ 					      XDP_PACKET_HEADROOM,
+ 					      len);
 -- 
-2.50.0
+2.43.0
 
 
