@@ -1,334 +1,173 @@
-Return-Path: <linux-kernel+bounces-708915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C93AED6A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:06:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97240AED6AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8A23AA6F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19E63B7623
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1110226165;
-	Mon, 30 Jun 2025 08:05:18 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8042E220F2A;
+	Mon, 30 Jun 2025 08:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YC7wlbx7"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1EF4A23;
-	Mon, 30 Jun 2025 08:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D921B191
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751270718; cv=none; b=l+cMbCWY//n2TtKreZkmDn/wp2WofrYZK/mJ3H0/2zm9q2GQBEPYB5ZmsF4oZ8Ur26KZCu4+EwSGMa8W9vIt70cwbcPfDDp8uZxA6sFEFOdsVfFYpYR8icJDKZlMsL6Febt/MC9wEZ98jyzS0AjePmH3v1NpO1pY7MxL/u+7T5s=
+	t=1751270777; cv=none; b=U4/EvyhJSIM1t+7RxSjGctukQnotN2Ov+HiT3MrwA94puhMAKDq65oigdwTRccb0VtGeTmBeYMUlo5ln+7mG8AeUcn/OY3bd9XS3l5YurFOMvP1YCXqczimFkS+09B/0SXrdr8XRELFYikObLHQAz9jIvgLPO8K3kzTVp96JKSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751270718; c=relaxed/simple;
-	bh=UnDG+RGaC/E/rcaTg09jRcXzVPbJxQYBm4gVZR4+/hs=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=eG8+2AyeJnmkxxlF2M3st0JEo5DOYGSfVUA63AE0b2qxKQNFxglI1DIwxZZXuEejuWQOu0yAAtuuk8qFIuJL0SjGR+lPijJJxnTLaW67IXy4B3KhaHOTP1day5NZCx+oVuEas0Y3iIz7aMy3qHBGRIH054IHKn3w6oi+iJOOv6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bVzGv4TZ7z5F2lr;
-	Mon, 30 Jun 2025 16:05:11 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 55U84mDn044609;
-	Mon, 30 Jun 2025 16:04:48 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 30 Jun 2025 16:04:50 +0800 (CST)
-Date: Mon, 30 Jun 2025 16:04:50 +0800 (CST)
-X-Zmail-TransId: 2afb68624522ffffffffe3f-35612
-X-Mailer: Zmail v1.0
-Message-ID: <2025063016045077919B2mfJO_YO81tg6CKfHY@zte.com.cn>
+	s=arc-20240116; t=1751270777; c=relaxed/simple;
+	bh=S/EpnBGQ23gp4JiHzy5oq+JGfLpcnQ3MnqsaAokNUT0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sq/TNjDB279NYCiloa90veNxfWlP7tuPMWYrCwuS0N4CrhFE58efwnydzMqGXFpke61wsevl9CbXUhDhaDEdDtaNEwebgYnBMFiO1ZR7aSwkFBI/qk+me6xnZZ/pi0ESj8yXApKd/Rdg2hMD9wfkstBJLXLHYWPG2uqvX0SRneo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YC7wlbx7; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-234f17910d8so37214195ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 01:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751270776; x=1751875576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhC93MdNH/UajdLJw5ecd5t+o/SSFcevhmB+meDS1bE=;
+        b=YC7wlbx7XUv+DiIxniIDBKdkqtupAVDMcJsfJ1q2Kpz92yb3+xstgPqGkH+WQHgGl2
+         U9oCrCTtbCkiazyd1jT7Jqg2A7EgnvSsz+twH5JRxBbT5/fPOX46xgIffBFHQ3MzXiL6
+         OZJqsEghe+eGl6XrNT3nPbnZJ3ssCzno56zLRZceiOQi2B7GnYkrIZ2qWVtjWteqaFxV
+         KznAA5MuqoFX6zrJeMhlsJ8YlRVz47YWYkvX7OOi5KxAvWopINghMT1Rnggu0QuUvQ2D
+         4XWryJSbFQE3XwEZ6Vse7GKUk+p+jm5MFRkgpcQoaR7jYP5XsWYS9hl4dxQukk9F+Ffa
+         HthQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751270776; x=1751875576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qhC93MdNH/UajdLJw5ecd5t+o/SSFcevhmB+meDS1bE=;
+        b=Bc5u6ic9NcqXaf584WEzQ2e17xax3WqTjJIbNQVyxQYytbq4eWirl0B7nFhU6Q9OsR
+         ZfQ5x7U35nXlRr4A55tt8CdYu5YhMjADi+S/JmELpZm5I9HMn2zg10qLoZifXMFnrCrq
+         a+hk5B60wzwn8AJKDwoiQyJmw41/vGpt/kS74Zs+xDuAnzUe27LMK649CiqN4hDR+iZ7
+         lxzGNib5zI4p4BQMq7kv9qZpQCpPogIoMmy4RlGEDCRf9GKYk4Z/k/2eOZVfaJfkRPA1
+         qlVwCOCm16ypehOdMlWHPKyA5JYYvZQcTmoowsWE5+mFo4VJlontd+VxT1yJ0HWP6/J2
+         H1CA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxPzCkrVLSIg74kb13vAXJZbXKL+1HrLB19YNFJr8AtSv4pRlasB42xJdWkAuWSf79LoD27NUUFmW8GHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI9gyh+MiwEUteljWFNOPOBA1rhM0seiCDDdHlHL4R2zDyp5JT
+	kVBAZGvSi2cbX6P17mofY6jyDCUJKtAY8wSpPmcT8cJLC37qZCw3e2iU
+X-Gm-Gg: ASbGnctTeNdWf5wcDJ9AGkY0OcA2kaj7nal5pRM8xRzAAtt5nWZyNVPGjPKM+bhuURj
+	MeJR8yCGeQFlD6ha4DyYvpb7cMe0S6DaZv7e1g2bZv+as1VcjGJ7JsFrMXgG9fq+HBZMf4fK9+W
+	YRNRsEO5dAESUlpd1Vujsohs1px69baoXUSvgK4Cjjs1ruErWniBuuUI7Azoy3dvBM8FauKq0ta
+	JKd0x63z+4xTaeZgVvP+cAr8O6qnnGRMwZ9KWjG2UVTNNTJHrd8JwPl37OUcvdU5RYNjAkqyRz8
+	X2NkPRf1MJ3yX5uxZN4JbavYfMDiIcbbBDDTq1qEYOKTMZoVsd94b7P8XtRBGCVfXnnj826WAxa
+	gq9GDIZk8LBcCulbAChPUA224PQ==
+X-Google-Smtp-Source: AGHT+IFYFmTkEVvMadrUbJdKv+7Ssnr4mG3NMLJzWM81hFR4r3jACsts3LwVX1i57j4OWVs3w3Hgsw==
+X-Received: by 2002:a17:902:ec89:b0:234:8a4a:adad with SMTP id d9443c01a7336-23ac46824a1mr205108515ad.26.1751270775574;
+        Mon, 30 Jun 2025 01:06:15 -0700 (PDT)
+Received: from localhost.localdomain ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3023a11sm6525673a12.25.2025.06.30.01.06.10
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 30 Jun 2025 01:06:15 -0700 (PDT)
+From: Hao Jia <jiahao.kernel@gmail.com>
+To: akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	yuzhao@google.com,
+	kinseyho@google.com,
+	david@redhat.com,
+	mhocko@kernel.org,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	lorenzo.stoakes@oracle.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Jia <jiahao1@lixiang.com>
+Subject: [PATCH] mm/mglru: Stop try_to_inc_min_seq() if the oldest generation LRU lists are not empty
+Date: Mon, 30 Jun 2025 16:06:03 +0800
+Message-Id: <20250630080603.36171-1-jiahao.kernel@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <kuba@kernel.org>, <edumazet@google.com>, <kuniyu@amazon.com>,
-        <ncardwell@google.com>, <davem@davemloft.net>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-trace-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <jiang.kun2@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0XSB0Y3A6IGFkZCByZXRyYW5zbWlzc2lvbiBxdWl0IHJlYXNvbnMgdG8gdHJhY2Vwb2ludA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 55U84mDn044609
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68624537.000/4bVzGv4TZ7z5F2lr
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Fan Yu <fan.yu9@zte.com.cn>
+From: Hao Jia <jiahao1@lixiang.com>
 
-Problem
-=======
-When TCP retransmits a packet due to missing ACKs, the retransmission
-may fail for various reasons (e.g., packets stuck in driver queues,
-sequence errors, or routing issues). Currently, these failure reasons
-are internally handled in __tcp_retransmit_skb() but lack visibility to
-userspace, which makes it difficult to diagnose retransmission failures in
-production environments.
+In try_to_inc_min_seq(), if the oldest generation of LRU lists
+(anonymous and file) are not empty. Then we should return directly
+to avoid unnecessary subsequent overhead.
 
-Solution
-=======
-This patch adds a reason field to the tcp_retransmit_skb tracepoint,
-enumerating with explicit failure cases:
-TCP_RETRANS_IN_HOST_QUEUE	   (packet still queued in driver)
-TCP_RETRANS_END_SEQ_ERROR	   (invalid end sequence)
-TCP_RETRANS_TRIM_HEAD_NOMEM	 (trim head no memory)
-TCP_RETRANS_UNCLONE_NOMEM    (skb unclone keeptruesize no memory)
-TCP_RETRANS_FRAG_NOMEM       (fragment no memory)
-TCP_RETRANS_ROUTE_FAIL       (routing failure)
-TCP_RETRANS_RCV_ZERO_WINDOW  (closed recevier window)
-TCP_RETRANS_PSKB_COPY_NOBUFS (no buffer for skb copy)
-TCP_RETRANS_QUIT_UNDEFINED   (quit reason undefined)
+Corollary: If the lrugen->folios[gen][type][zone] lists of both
+anonymous and file are not empty, try_to_inc_min_seq() will fail.
 
-Impact
-======
-1. Enables BPF programs to filter retransmission failures by reason.
-2. Allows precise failure rate monitoring via ftrace.
+Proof: Taking LRU_GEN_ANON as an example, consider the following two cases:
 
-Co-developed-by: xu xin <xu.xin16@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+Case 1: min_seq[LRU_GEN_ANON] <= seq (seq is lrugen->max_seq - MIN_NR_GENS)
+
+Since min_seq[LRU_GEN_ANON] has not increased,
+so min_seq[LRU_GEN_ANON] is still equal to lrugen->min_seq[LRU_GEN_ANON].
+Therefore, in the following judgment:
+min_seq[LRU_GEN_ANON] <= lrugen->min_seq[LRU_GEN_ANON] is always true.
+So, we will not increase the seq of the oldest generation of anonymous,
+and try_to_inc_min_seq() will return false.
+
+case 2: min_seq[LRU_GEN_ANON] > seq (seq is lrugen->max_seq - MIN_NR_GENS)
+
+If min_seq[LRU_GEN_ANON] > seq, that is, lrugen->min_seq[LRU_GEN_ANON] > seq
+Then min_seq[LRU_GEN_ANON] is assigned seq.
+Therefore, in the following judgment:
+min_seq[LRU_GEN_ANON] (seq) <= lrugen->min_seq[LRU_GEN_ANON] is always true.
+So, we will not update the oldest generation seq of anonymous,
+and try_to_inc_min_seq() will return false.
+
+It is similar for LRU_GEN_FILE. Therefore, in try_to_inc_min_seq(),
+if the oldest generation LRU lists (anonymous and file) are not empty,
+in other words, min_seq[type] has not increased.
+we can directly return false to avoid unnecessary checking overhead later.
+
+Signed-off-by: Hao Jia <jiahao1@lixiang.com>
 ---
- include/linux/tcp.h        | 13 +++++++++
- include/trace/events/tcp.h | 54 +++++++++++++++++++++++++-------------
- net/ipv4/tcp_output.c      | 52 ++++++++++++++++++++++++++----------
- 3 files changed, 87 insertions(+), 32 deletions(-)
+ mm/vmscan.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index 29f59d50dc73..ca04d0e69b7b 100644
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -530,6 +530,19 @@ enum tsq_flags {
- 	TCPF_ACK_DEFERRED		= BIT(TCP_ACK_DEFERRED),
- };
-
-+enum tcp_retransmit_quit_reason {
-+	TCP_RETRANS_SUCCESS = 1,
-+	TCP_RETRANS_IN_HOST_QUEUE,
-+	TCP_RETRANS_END_SEQ_ERROR,
-+	TCP_RETRANS_TRIM_HEAD_NOMEM,
-+	TCP_RETRANS_UNCLONE_NOMEM,
-+	TCP_RETRANS_FRAG_NOMEM,
-+	TCP_RETRANS_ROUTE_FAIL,
-+	TCP_RETRANS_RCV_ZERO_WINDOW,
-+	TCP_RETRANS_PSKB_COPY_NOBUFS,
-+	TCP_RETRANS_QUIT_UNDEFINED,
-+};
-+
- #define tcp_sk(ptr) container_of_const(ptr, struct tcp_sock, inet_conn.icsk_inet.sk)
-
- /* Variant of tcp_sk() upgrading a const sock to a read/write tcp socket.
-diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-index 54e60c6009e3..530cfa9b23af 100644
---- a/include/trace/events/tcp.h
-+++ b/include/trace/events/tcp.h
-@@ -13,17 +13,38 @@
- #include <linux/sock_diag.h>
- #include <net/rstreason.h>
-
--/*
-- * tcp event with arguments sk and skb
-- *
-- * Note: this class requires a valid sk pointer; while skb pointer could
-- *       be NULL.
-- */
--DECLARE_EVENT_CLASS(tcp_event_sk_skb,
-+#define TCP_RETRANSMIT_QUIT_REASON		\
-+		ENUM(TCP_RETRANS_SUCCESS,		"retransmit successfully")		\
-+		ENUM(TCP_RETRANS_IN_HOST_QUEUE,		"packet still queued in driver")	\
-+		ENUM(TCP_RETRANS_END_SEQ_ERROR,		"invalid end sequence")			\
-+		ENUM(TCP_RETRANS_TRIM_HEAD_NOMEM,	"trim head no memory")			\
-+		ENUM(TCP_RETRANS_UNCLONE_NOMEM,		"skb unclone keeptruesize no memory")	\
-+		ENUM(TCP_RETRANS_FRAG_NOMEM,		"fragment no memory")			\
-+		ENUM(TCP_RETRANS_ROUTE_FAIL,		"routing failure")			\
-+		ENUM(TCP_RETRANS_RCV_ZERO_WINDOW,	"closed recevier window")		\
-+		ENUM(TCP_RETRANS_PSKB_COPY_NOBUFS,	"no buffer for skb copy")		\
-+		ENUMe(TCP_RETRANS_QUIT_UNDEFINED,	"quit reason undefined")
-+
-+/* Redefine for export. */
-+#undef ENUM
-+#undef ENUMe
-+#define ENUM(a, b)	TRACE_DEFINE_ENUM(a);
-+#define ENUMe(a, b)	TRACE_DEFINE_ENUM(a);
-+
-+TCP_RETRANSMIT_QUIT_REASON
-+
-+/* Redefine for symbolic printing. */
-+#undef ENUM
-+#undef ENUMe
-+#define ENUM(a, b)	{ a, b },
-+#define ENUMe(a, b)	{ a, b }
-+
-+TRACE_EVENT(tcp_retransmit_skb,
-
--	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
-+	TP_PROTO(const struct sock *sk, const struct sk_buff *skb,
-+		enum tcp_retransmit_quit_reason quit_reason),
-
--	TP_ARGS(sk, skb),
-+	TP_ARGS(sk, skb, quit_reason),
-
- 	TP_STRUCT__entry(
- 		__field(const void *, skbaddr)
-@@ -36,6 +57,7 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
- 		__array(__u8, daddr, 4)
- 		__array(__u8, saddr_v6, 16)
- 		__array(__u8, daddr_v6, 16)
-+		__field(enum tcp_retransmit_quit_reason, quit_reason)
- 	),
-
- 	TP_fast_assign(
-@@ -58,21 +80,17 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
-
- 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
- 			      sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
-+
-+		__entry->quit_reason = quit_reason;
- 	),
-
--	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s",
-+	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s quit_reason=%s",
- 		  __entry->skbaddr, __entry->skaddr,
- 		  show_family_name(__entry->family),
- 		  __entry->sport, __entry->dport, __entry->saddr, __entry->daddr,
- 		  __entry->saddr_v6, __entry->daddr_v6,
--		  show_tcp_state_name(__entry->state))
--);
--
--DEFINE_EVENT(tcp_event_sk_skb, tcp_retransmit_skb,
--
--	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
--
--	TP_ARGS(sk, skb)
-+		  show_tcp_state_name(__entry->state),
-+		  __print_symbolic(__entry->quit_reason, TCP_RETRANSMIT_QUIT_REASON))
- );
-
- #undef FN
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 3ac8d2d17e1f..6038661689e2 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -3326,6 +3326,7 @@ static void tcp_retrans_try_collapse(struct sock *sk, struct sk_buff *to,
-  */
- int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- {
-+	enum tcp_retransmit_quit_reason reason = TCP_RETRANS_QUIT_UNDEFINED;
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	unsigned int cur_mss;
-@@ -3336,8 +3337,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 	if (icsk->icsk_mtup.probe_size)
- 		icsk->icsk_mtup.probe_size = 0;
-
--	if (skb_still_in_host_queue(sk, skb))
--		return -EBUSY;
-+	if (skb_still_in_host_queue(sk, skb)) {
-+		reason = TCP_RETRANS_IN_HOST_QUEUE;
-+		err = -EBUSY;
-+		goto out;
-+	}
-
- start:
- 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
-@@ -3348,14 +3352,22 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 		}
- 		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
- 			WARN_ON_ONCE(1);
--			return -EINVAL;
-+			reason = TCP_RETRANS_END_SEQ_ERROR;
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq)) {
-+			reason = TCP_RETRANS_TRIM_HEAD_NOMEM;
-+			err = -ENOMEM;
-+			goto out;
- 		}
--		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
--			return -ENOMEM;
- 	}
-
--	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk))
--		return -EHOSTUNREACH; /* Routing failure or similar. */
-+	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk)) {
-+		reason = TCP_RETRANS_ROUTE_FAIL;
-+		err = -EHOSTUNREACH; /* Routing failure or similar. */
-+		goto out;
-+	}
-
- 	cur_mss = tcp_current_mss(sk);
- 	avail_wnd = tcp_wnd_end(tp) - TCP_SKB_CB(skb)->seq;
-@@ -3366,8 +3378,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 	 * our retransmit of one segment serves as a zero window probe.
- 	 */
- 	if (avail_wnd <= 0) {
--		if (TCP_SKB_CB(skb)->seq != tp->snd_una)
--			return -EAGAIN;
-+		if (TCP_SKB_CB(skb)->seq != tp->snd_una) {
-+			reason = TCP_RETRANS_RCV_ZERO_WINDOW;
-+			err = -EAGAIN;
-+			goto out;
-+		}
- 		avail_wnd = cur_mss;
- 	}
-
-@@ -3379,11 +3394,17 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 	}
- 	if (skb->len > len) {
- 		if (tcp_fragment(sk, TCP_FRAG_IN_RTX_QUEUE, skb, len,
--				 cur_mss, GFP_ATOMIC))
--			return -ENOMEM; /* We'll try again later. */
-+				 cur_mss, GFP_ATOMIC)) {
-+			reason = TCP_RETRANS_FRAG_NOMEM;
-+			err = -ENOMEM;  /* We'll try again later. */
-+			goto out;
-+		}
- 	} else {
--		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC))
--			return -ENOMEM;
-+		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC)) {
-+			reason = TCP_RETRANS_UNCLONE_NOMEM;
-+			err = -ENOMEM;
-+			goto out;
-+		}
-
- 		diff = tcp_skb_pcount(skb);
- 		tcp_set_skb_tso_segs(skb, cur_mss);
-@@ -3421,6 +3442,7 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 				nskb->dev = NULL;
- 				err = tcp_transmit_skb(sk, nskb, 0, GFP_ATOMIC);
- 			} else {
-+				reason = TCP_RETRANS_PSKB_COPY_NOBUFS;
- 				err = -ENOBUFS;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index f8dfd2864bbf..3ba63d87563f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3928,6 +3928,7 @@ static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
+ 	int gen, type, zone;
+ 	bool success = false;
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
++	int seq_inc_flags[ANON_AND_FILE] = {0};
+ 	DEFINE_MIN_SEQ(lruvec);
+ 
+ 	VM_WARN_ON_ONCE(!seq_is_valid(lruvec));
+@@ -3943,11 +3944,20 @@ static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
  			}
- 		} tcp_skb_tsorted_restore(skb);
-@@ -3438,7 +3460,7 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 				  TCP_SKB_CB(skb)->seq, segs, err);
-
- 	if (likely(!err)) {
--		trace_tcp_retransmit_skb(sk, skb);
-+		reason = TCP_RETRANS_SUCCESS;
- 	} else if (err != -EBUSY) {
- 		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRETRANSFAIL, segs);
+ 
+ 			min_seq[type]++;
++			seq_inc_flags[type] = 1;
+ 		}
+ next:
+ 		;
  	}
-@@ -3448,6 +3470,8 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
- 	 */
- 	TCP_SKB_CB(skb)->sacked |= TCPCB_EVER_RETRANS;
-
-+out:
-+	trace_tcp_retransmit_skb(sk, skb, reason);
- 	return err;
- }
-
+ 
++	/*
++	 * If the oldest generation of LRU lists (anonymous and file)
++	 * are not empty, we can directly return false to avoid unnecessary
++	 * checking overhead later.
++	 */
++	if (!seq_inc_flags[LRU_GEN_ANON] && !seq_inc_flags[LRU_GEN_FILE])
++		return success;
++
+ 	/* see the comment on lru_gen_folio */
+ 	if (swappiness && swappiness <= MAX_SWAPPINESS) {
+ 		unsigned long seq = lrugen->max_seq - MIN_NR_GENS;
 -- 
-2.25.1
+2.34.1
+
 
