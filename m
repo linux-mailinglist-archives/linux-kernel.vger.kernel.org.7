@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-709021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CEDAED849
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21269AED84C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3778F176757
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CA8176D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447E1246784;
-	Mon, 30 Jun 2025 09:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108E124467B;
+	Mon, 30 Jun 2025 09:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tXfSVQ9r"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EsKha93m"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A9B24469C
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF2020E032
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751274717; cv=none; b=fQ6PF7V17I/HSAUDdKFB1aJ9Bq1IdOyQ3f62b09K5+yn0g8nOV2pxdx1zlfzP3i+iit5iD7ZInpY4wyyBbYyHwvl2nwj6YjKWijjjalFV+mqwmgguRJ9zUdtJoRZb4oMNogljPcfcWQcVxbGKZPYUz7DZCoFK6qBCUtH+mK/Fs0=
+	t=1751274745; cv=none; b=NSv1TurAbcqL09ifBHDqTwk2guv6qgeC6Y59RSEdkWmRYHhp3MwpQ6e3vJGrrDbwQ/4iPDSptSnbt5BxWhiDLn9MJ20MikcNRwBhnJ38wHkDnm8T5JTMZW3Al3zK2IMPHWjtC6x9ovGsT1gOrKg8BhinWi1FwrfoL5HqubzFGcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751274717; c=relaxed/simple;
-	bh=NHJzgU0aQXfK39wYCmHOvMeydl7411silGVJgkwozwA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QH2x8pOm+5nvJinGXjMkGQozIkuddiEj9qYcA9ucYBxQYYbwGDbjKCYVMxwDrYCEnG2joo3bQAFXCvkKvArY1aDTGGPvmWdQFI4b8/Ycmcpu1gt8XJQcb57PcJzLPDcRulMNsNa55/vnAocmKOHshFgm/rV8R0qVc/uuFexRNPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tXfSVQ9r; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4a8244e897fso1586941cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 02:11:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751274714; x=1751879514; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6UU13DdMIaksh/X1KjKcl/Raj5wdqxWH1R0ASLRmV2M=;
-        b=tXfSVQ9rNVLvEQn/S262F4MAUbzK3EX67lMCCkpm0foF4u9S0N1ntvvwqJhR4Fvn8W
-         ClRbpQj+cfoLPAh2BIjvopomjlurSeL+vBSwcR/CasXCW1VQei1PYpRcmtlhNq86iZa6
-         ADPVUDq0hjBQ8Znj5LxNq3ScgZeUTYoJXkA50l5dXqd7f8YmuJZwQvSAIsi8YZa9igto
-         g+8vY4eJDVMc3vwmDbxsk/B3gMd7eB/7Ch/JRUycJ6IfVUuX6zorePzWaDGGz4LBE2Rw
-         /Em12r+Oxt84VffUz4VNzHqY+jZfnJOXYNoOhUWsk9rHa4A51HYMGGZVijfjzt2MLJXM
-         Ev+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751274714; x=1751879514;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6UU13DdMIaksh/X1KjKcl/Raj5wdqxWH1R0ASLRmV2M=;
-        b=XLYzjnqnXKtOpfOoaohW0zkGnCiP/f4v9MeJJrM5cSwNGtUC3DaUY8Wm/k8g44gOPY
-         loRGlFrDWjGE/DcKarAOlMhfaobO84OeGKV4GUEf7C6QbETGuBdauhV2O5FKnMlp6ERH
-         LQMWBm+Ujc8Jybi+gWJf8haOtin7nIM9FlBpTtLvGTnUiDr1mA6gLC4VmtrMwelTBTaf
-         gxhfamYDoAHXm+OBd9QzsMQAoIW9ylKz4TdxQftyuHtq9hTC5MyKY2ridMEZnv8SUrxp
-         RIcbSDrdKcjPyqIxRhjd5oaPnQYBAfehgQZiNjsaHKCnbBnHFxVOvyAdlI3r+WKL+YnZ
-         C1mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnZkqTeMaktW+3SSbF4QkdonhIVttTI08vIqgB9fYyCZ3lKGte/tE0LjRsMdGCB0j0QzvXBW3tyQuH5oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0rj2HxCNOGm6k1pmPefro5tzRlZDW0phaYaHhG4DWZKPpxVQS
-	t41DkxZ3tXMh5yKRE3cNd/+zhHazhpgx7u1+Uju5qwJ3VjVPHeFaTCmxYVXIV6pK7K3xN5fIR8M
-	wuVOclS8TO3PzEXmWBgK0SBSP4vbZZLXJT22/qKdC
-X-Gm-Gg: ASbGncs6XrNfE5hf3nuHCOUMcwcfrF6LeiV70Ym1IEnune72rXZXqBf1FJEC7d/PtNf
-	kvE8inoOaWYinWL/PqVYmX+NjAgyvmL/FJOTT65OrVAm3+wATumiNqij+DYpmHno7gT+hkMuw3Y
-	77hXvgIY9oOPDpo9BDkAGz1NDDahGP7VE5lUdK/CH04Hxl/FpjtBektw==
-X-Google-Smtp-Source: AGHT+IH4S1MS+PwPXkrKUOVhav123OJMtGMBPV3RNEHzL2SXQX+WgUbIwZMUSECufylzadW0GY39deoW/5+5+fET5lE=
-X-Received: by 2002:a05:622a:34c:b0:494:a436:5af6 with SMTP id
- d75a77b69052e-4a7fcb12fcamr225013811cf.47.1751274713821; Mon, 30 Jun 2025
- 02:11:53 -0700 (PDT)
+	s=arc-20240116; t=1751274745; c=relaxed/simple;
+	bh=Xk1VTz99oaXPXWle19G2zMHoIPpOeSvs6Qc/pVHBAnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxL1mwqSY3t15DeBDR2nGYdOcLr4aLdLzyK/dLvtlcgYK67h8nrG9dxYVkv0UcJ+imo6sRU2+0fikt9bl2Jzn1rlCD4gH08Q+hNcujh9KXvqjad3DQKXJKxJqdFOp50zWhx/dtbzFKNKW8XoJ0ARld1+1Q71EOqt8G9kN2wl/TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EsKha93m; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 1CA20EFF;
+	Mon, 30 Jun 2025 11:12:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751274720;
+	bh=Xk1VTz99oaXPXWle19G2zMHoIPpOeSvs6Qc/pVHBAnA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EsKha93mqQrmPtUWxFH2IC0l8vxECmEaf2z03chq8Hrcd4Vt7rjcbA1BKUrT05/JQ
+	 fbXrMTGnuNulIzMcsMqYEtud0xn+ApPjs8jGMut1pvsAnAoWGo9mJmvA5b0X/OCla1
+	 qS76F+yZW/A4HkTwqCsliyLT+Vyvp+BZrQCRQWZM=
+Date: Mon, 30 Jun 2025 12:11:56 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Mike Looijmans <mike.looijmans@topic.nl>,
+	dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: xlnx: zynqmp_dp: Support DRM_FORMAT_XRGB8888
+Message-ID: <20250630091156.GE24861@pendragon.ideasonboard.com>
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.fb98a918-329e-4536-a0a5-a99b22ba0120@emailsignatures365.codetwo.com>
+ <20250627145058.6880-1-mike.looijmans@topic.nl>
+ <20250627181911.GF24912@pendragon.ideasonboard.com>
+ <42af6260-c8af-42e1-a9bb-adfaaabf0190@topic.nl>
+ <20250630-psychedelic-tested-smilodon-adcbb3@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2025063016045077919B2mfJO_YO81tg6CKfHY@zte.com.cn>
-In-Reply-To: <2025063016045077919B2mfJO_YO81tg6CKfHY@zte.com.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 30 Jun 2025 02:11:42 -0700
-X-Gm-Features: Ac12FXx3UzoZ7hTWdmIYc8ImdO8NBaHRWiXy_DXplPKrL4pToPVr0gT-jxkA6CI
-Message-ID: <CANn89iK-6kT-ZUpNRMjPY9_TkQj-dLuKrDQtvO1140q4EUsjFg@mail.gmail.com>
-Subject: Re: [PATCH net-next] tcp: add retransmission quit reasons to tracepoint
-To: xu.xin16@zte.com.cn
-Cc: kuba@kernel.org, kuniyu@amazon.com, ncardwell@google.com, 
-	davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, yang.yang29@zte.com.cn, 
-	fan.yu9@zte.com.cn, tu.qiang35@zte.com.cn, jiang.kun2@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250630-psychedelic-tested-smilodon-adcbb3@houat>
 
-On Mon, Jun 30, 2025 at 1:05=E2=80=AFAM <xu.xin16@zte.com.cn> wrote:
->
-> From: Fan Yu <fan.yu9@zte.com.cn>
->
-> Problem
-> =3D=3D=3D=3D=3D=3D=3D
-> When TCP retransmits a packet due to missing ACKs, the retransmission
-> may fail for various reasons (e.g., packets stuck in driver queues,
-> sequence errors, or routing issues). Currently, these failure reasons
-> are internally handled in __tcp_retransmit_skb() but lack visibility to
-> userspace, which makes it difficult to diagnose retransmission failures i=
-n
-> production environments.
->
-> Solution
-> =3D=3D=3D=3D=3D=3D=3D
-> This patch adds a reason field to the tcp_retransmit_skb tracepoint,
-> enumerating with explicit failure cases:
-> TCP_RETRANS_IN_HOST_QUEUE          (packet still queued in driver)
-> TCP_RETRANS_END_SEQ_ERROR          (invalid end sequence)
-> TCP_RETRANS_TRIM_HEAD_NOMEM      (trim head no memory)
-> TCP_RETRANS_UNCLONE_NOMEM    (skb unclone keeptruesize no memory)
-> TCP_RETRANS_FRAG_NOMEM       (fragment no memory)
-> TCP_RETRANS_ROUTE_FAIL       (routing failure)
-> TCP_RETRANS_RCV_ZERO_WINDOW  (closed recevier window)
-> TCP_RETRANS_PSKB_COPY_NOBUFS (no buffer for skb copy)
-> TCP_RETRANS_QUIT_UNDEFINED   (quit reason undefined)
+On Mon, Jun 30, 2025 at 10:27:55AM +0200, Maxime Ripard wrote:
+> On Mon, Jun 30, 2025 at 10:03:16AM +0200, Mike Looijmans wrote:
+> > On 27-06-2025 20:19, Laurent Pinchart wrote:
+> > > On Fri, Jun 27, 2025 at 04:50:46PM +0200, Mike Looijmans wrote:
+> > > > XRGB8888 is the default mode that Xorg will want to use. Add support
+> > > > for this to the Zynqmp DisplayPort driver, so that applications can use
+> > > > 32-bit framebuffers. This solves that the X server would fail to start
+> > > > unless one provided an xorg.conf that sets DefaultDepth to 16.
+> > > > 
+> > > > Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> > > > ---
+> > > > 
+> > > >   drivers/gpu/drm/xlnx/zynqmp_disp.c | 5 +++++
+> > > >   1 file changed, 5 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > > > index 80d1e499a18d..501428437000 100644
+> > > > --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > > > +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > > > @@ -312,6 +312,11 @@ static const struct zynqmp_disp_format avbuf_gfx_fmts[] = {
+> > > >   		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
+> > > >   		.swap		= true,
+> > > >   		.sf		= scaling_factors_888,
+> > > > +	}, {
+> > > > +		.drm_fmt	= DRM_FORMAT_XRGB8888,
+> > > > +		.buf_fmt	= ZYNQMP_DISP_AV_BUF_FMT_NL_GFX_RGBA8888,
+> > > > +		.swap		= true,
+> > > > +		.sf		= scaling_factors_888,
+> > > 
+> > > I'm afraid that's not enough. There's a crucial difference between
+> > > DRM_FORMAT_ARGB8888 (already supported by this driver) and
+> > > DRM_FORMAT_XRGB8888: for the latter, the 'X' component must be ignored.
+> > > The graphics layer is blended on top of the video layer, and the blender
+> > > uses both a global alpha parameter and the alpha channel of the graphics
+> > > layer for 32-bit RGB formats. This will lead to incorrect operation when
+> > > the 'X' component is not set to full opacity.
+> > 
+> > I spent a few hours digging in the source code and what I could find in the
+> > TRM and register maps, but there's not enough information in there to
+> > explain how the blender works. The obvious "XRGB" implementation would be to
+> > just disable the blender.
+> > 
+> > What I got from experimenting so far is that the alpha component is ignored
+> > anyway while the video path isn't active. So as long as one isn't using the
+> > video blending path, the ARGB and XRGB modes are identical.
+> > 
+> > Guess I'll need assistance from AMD/Xilinx to completely implement the XRGB
+> > modes.
+> > 
+> > (For our application, this patch is sufficient as it solves the issues like
+> > X11 not starting up, OpenGL not working and horrendously slow scaling
+> > performance)
+> 
+> Given that we consider XRGB8888 mandatory,
 
-'undefined' ?
+How about platforms that can't support it at all ?
 
->
-> Impact
-> =3D=3D=3D=3D=3D=3D
-> 1. Enables BPF programs to filter retransmission failures by reason.
-> 2. Allows precise failure rate monitoring via ftrace.
->
-> Co-developed-by: xu xin <xu.xin16@zte.com.cn>
-> Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+> this patch is a good thing to
+> have anyway, even if suboptimal, or broken in some scenario we can
+> always fix later.
 
-Problem is that this patch breaks the original trace point, without
-any mention of the potential consequences in the changelog ?
+It needs to at least be updated to disallow XRGB8888 usage when the
+video plan is enabled, or when global alpha is set to a non-opaque
+value.
 
-commit e086101b150ae8e99e54ab26101ef3835fa9f48d
-Author: Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Fri Oct 13 13:03:16 2017 -0700
+-- 
+Regards,
 
-    tcp: add a tracepoint for tcp retransmission
+Laurent Pinchart
 
