@@ -1,301 +1,202 @@
-Return-Path: <linux-kernel+bounces-708873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC9AED627
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B6DAED62C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D999E1670A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365DD16E250
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB07238C20;
-	Mon, 30 Jun 2025 07:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3F5239E77;
+	Mon, 30 Jun 2025 07:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tpa9jmpR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QL2/x/RK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sytREZYN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8764721A437
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D5D849C;
+	Mon, 30 Jun 2025 07:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269906; cv=none; b=lXHCFw9xESVdY4hu4ofnHaudCbmKoHPL+piuxC85GSr6s9rER09L+qYNy2eOw8beocS2N+Nb9T189lFNbZq1p3QnBPZorb8KXadm/6lbEV1jtYzhLj2rg58FZWMNLPKfjD4Y+dGaRxkruZMU0JMEhWOPGDJkcg9OzljNCmmnH/M=
+	t=1751269975; cv=none; b=MoJLFKkvzSNGWBRDxfeCbI/JrIr2VSwS6E7Qh15FKiVuckDeotNnaJM3k01/Sng5bA+HagPG3Z2QoxMJSvjroL5N1RHwP9ON5pRZcyN9hVYyaA8RgHAV+Gp4/+vpabL7roM70vmyT/YH/M0rmgHCbEnMTV9txbWTf8QeCaam/yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269906; c=relaxed/simple;
-	bh=emoAFZ1b+GgUOpO3M8FG4gUGAnp3Cyx8bdpFZ0xrJzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NEMAKmf6YHPUkv4zw3X45W9ayJBM3DQcRDfYJqVV6GiXSHYIFiPoy22ZK9ssfYQOZLZRBSFczZafePbTBDXKRZrprGKbbbC/D0+Tq1nW/lKqhu1V2G7S31ii3xQ39jv5SIjKH18z5fxoEzIuLyc89TRRgHaTK89tgL0TjyuMM+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tpa9jmpR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QL2/x/RK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751269903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+/+TJx5zGjOq+57kScFIM4NRFWqBfLwRzYM+FCAdPE=;
-	b=Tpa9jmpR9R4eR+6ZmGSZUo9a8/Y0x2dYDGUmq6n2Nk3k9HuceEBH6WcLNMBZBumlfOJvYH
-	Eh8E1z1UzSKrqle7LKSZHG0LKCtaOCN3sumMRdkhcxua/va8IweAW1dIX1mSngTDBdUIvP
-	JDNbTGNg4uvRtG06Md8DNZO9J6qJM6TWBhfO5cW8TWVGkQWCC7NZwcQKd9EH7578t1hytj
-	Aj4WuW9uEPzTp7Qqgjws7DO0izQ29rZ3NkrlSIzYflHuEfn3M4s2vqhXFpKG0Qt3BLYbA8
-	9pz+qOEAxk9famxNFfDP9J8TekOj6CxOb35dmp78rD3ExYkg71ZB1uL9K84gyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751269903;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+/+TJx5zGjOq+57kScFIM4NRFWqBfLwRzYM+FCAdPE=;
-	b=QL2/x/RKcshGQ9/es5pF4slQbyxeOkKJYTAHuWFeZGEXBRaGRTjWmephoraE3y+dQyn2mg
-	AaazCQbMldepN1CA==
-To: linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Cc: tglx@linutronix.de,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v3 1/1] local_lock: Move this_cpu_ptr() notation from internal to main header.
-Date: Mon, 30 Jun 2025 09:51:38 +0200
-Message-ID: <20250630075138.3448715-2-bigeasy@linutronix.de>
-In-Reply-To: <20250630075138.3448715-1-bigeasy@linutronix.de>
-References: <20250630075138.3448715-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1751269975; c=relaxed/simple;
+	bh=DSsJ6kjTNeq8qXIdq818j+xseGZxh3dhzRyitg5Q7dM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZR2v3BV1YbD0Y6dXRb2A9fG0uZmrn6hkMjafcwc8KLWE/h+XMQakswkuKaYj7/5L6rFtPIZgnR+hMmH+cjWjBRSuIQ9+2ST1YhvZI+XretTyWCawdL5GghMYMXMzUWF9qVAnUJpHdwhyHDyJd0F7FRcwyFDi2GTJkhAPars/eV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sytREZYN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55TKccQs027955;
+	Mon, 30 Jun 2025 07:52:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=AbRQ9o
+	Z33wngkp6Ayc/JxaLhfE3vapA+reHwN0evvAA=; b=sytREZYNe8uQAF0uUpFI+y
+	7iyVsVZS9mBOGs+aUzAoyA7mt9CWu8RCf+HKX+SUDLkolMaUhDNRN77IOki8Hum+
+	aBAxRHBYGIS2SOhMuEQVmZ3kkzhbHGpEnAHHYyvgHP5v5mJlxcwWsHpNLI7/Sv5o
+	AFe33o2tkbpUEutVkDt4LKqsSxbDP1zgLcu9NE392vihZWZFaDc9EWdqmba+VydN
+	5jTEVOwAGxYiulNrFpNTHRulciSqfGa6qxjOf0lWymjL71uK4ymvFwQlPDubbU2s
+	/XeFyNOTaUQ0M3TZMzbuvy79yeCaNBSIFkLBefFJlRUwMKgrotHwdRPZUj9GWsuA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84cyy8v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 07:52:40 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55U7qes5002574;
+	Mon, 30 Jun 2025 07:52:40 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84cyy8r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 07:52:40 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55U4jAkO032157;
+	Mon, 30 Jun 2025 07:52:39 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47ju40d19h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 07:52:38 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55U7qbWk21496106
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Jun 2025 07:52:37 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F234F202DB;
+	Mon, 30 Jun 2025 07:52:21 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 63EF7202DC;
+	Mon, 30 Jun 2025 07:52:21 +0000 (GMT)
+Received: from [9.87.132.218] (unknown [9.87.132.218])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 30 Jun 2025 07:52:21 +0000 (GMT)
+Message-ID: <00441b6d-176f-4dd4-862d-08d414dfec66@linux.ibm.com>
+Date: Mon, 30 Jun 2025 09:52:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf test annotate: Use --percent-limit rather than
+ head to reduce output
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250628015832.1271229-1-irogers@google.com>
+Content-Language: en-US
+From: Thomas Richter <tmricht@linux.ibm.com>
+Organization: IBM
+In-Reply-To: <20250628015832.1271229-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pBUK_H8ywgp5vhGRDmEsxo0ll-TqV_zr
+X-Proofpoint-GUID: 1ZrrW4K4W3pO9wyR0xsOcj8M_aSfrQR0
+X-Authority-Analysis: v=2.4 cv=Ib6HWXqa c=1 sm=1 tr=0 ts=68624248 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=1XWaLZrsAAAA:8 a=bj4Rs4kvGp4denB0YwQA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDA2NCBTYWx0ZWRfXzNV5IyANDPRZ Wjc1jzRb2O8idCoJyV+grDH7+juTjNQq7Jg+QEiE6LFvchgSiqwH0K1GrRSq5TS60jiNdzCcUcK /ppwFxdQtO5x6wLvcyDHWZH/rksDYCdKDGQPLVNwLv6a5pK4LGad348fcYVFo7SbkEPMA0oiCau
+ xkgLU7THf7jseGzQJfaMinjiRrDYa0fCrTKjwrMEj/jvR0Gm4hempTGY4qJDXjA5euqpflQ6Ki4 M0R0A8j+tiIhq268AEPzxmDEBMULFVyvDo7r9eF1U1tmaOrJj9FRqZCWYWsRL7ASYNw8mHym/7j /K2lANWlH6i62KDqOcWrekdxxgfMcmoqkpraTlC8YeYAMPO8p6UqwZdks9sJPWiZk/QKEUMyQTW
+ pEn9JONE9ipBRS3MG1mnjUBkxWSPaXvZnnKxeavq2yhXkzHeDZdx4u1R3WZkYBSy1JRsvRGq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1011 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506300064
 
-The local_lock.h is the main entry for the local_lock_t type and
-provides wrappers around internal functions prefixed with __ in
-local_lock_internal.h.
+On 6/28/25 03:58, Ian Rogers wrote:
+> The annotate test was sped up by Thomas Richter
+> <tmricht@linux.ibm.com> in commit
+> 658a8805cb60 ("perf test: Speed up test case 70 annotate basic tests")
+> by reducing the annotate output using head. This causes flakes on
+> hybrid machines where the first event dumped may not have the samples
+> for the test within it. Rather than reduce the output using `head`
+> switch to `--percent-limit 10` which will stop annotate dumping
+> functions that have an overhead of less than 10%, the noploop program
+> should be using more.
+> 
+> Add the missing objdump option for the pipe mode version of the
+> objdump with a command test.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/shell/annotate.sh | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
+> index 16a1ccd06089..689de58e9238 100755
+> --- a/tools/perf/tests/shell/annotate.sh
+> +++ b/tools/perf/tests/shell/annotate.sh
+> @@ -53,21 +53,22 @@ test_basic() {
+>    # Generate the annotated output file
+>    if [ "x${mode}" == "xBasic" ]
+>    then
+> -    perf annotate --no-demangle -i "${perfdata}" --stdio 2> /dev/null > "${perfout}"
+> +    perf annotate --no-demangle -i "${perfdata}" --stdio --percent-limit 10 2> /dev/null > "${perfout}"
+>    else
+> -    perf annotate --no-demangle -i - --stdio 2> /dev/null < "${perfdata}" > "${perfout}"
+> +    perf annotate --no-demangle -i - --stdio 2> /dev/null --percent-limit 10 < "${perfdata}" > "${perfout}"
+>    fi
+>  
+>    # check if it has the target symbol
+> -  if ! head -250 "${perfout}" | grep -q "${testsym}"
+> +  if ! grep -q "${testsym}" "${perfout}"
+>    then
+>      echo "${mode} annotate [Failed: missing target symbol]"
+> +    cat "${perfout}"
+>      err=1
+>      return
+>    fi
+>  
+>    # check if it has the disassembly lines
+> -  if ! head -250 "${perfout}" | grep -q "${disasm_regex}"
+> +  if ! grep -q "${disasm_regex}" "${perfout}"
+>    then
+>      echo "${mode} annotate [Failed: missing disasm output from default disassembler]"
+>      err=1
+> @@ -92,11 +93,11 @@ test_basic() {
+>    # check one more with external objdump tool (forced by --objdump option)
+>    if [ "x${mode}" == "xBasic" ]
+>    then
+> -    perf annotate --no-demangle -i "${perfdata}" --objdump=objdump 2> /dev/null > "${perfout}"
+> +    perf annotate --no-demangle -i "${perfdata}" --percent-limit 10 --objdump=objdump 2> /dev/null > "${perfout}"
+>    else
+> -    perf annotate --no-demangle -i - "${testsym}" 2> /dev/null < "${perfdata}" > "${perfout}"
+> +    perf annotate --no-demangle -i - "${testsym}" --percent-limit 10 --objdump=objdump 2> /dev/null < "${perfdata}" > "${perfout}"
+>    fi
+> -  if ! head -250 "${perfout}" | grep -q -m 3 "${disasm_regex}"
+> +  if ! grep -q -m 3 "${disasm_regex}" "${perfout}"
+>    then
+>      echo "${mode} annotate [Failed: missing disasm output from non default disassembler (using --objdump)]"
+>      err=1
+Works ok on s390
 
-Move the this_cpu_ptr() dereference of the variable from the internal to
-the main header. Since it is all macro implemented, this_cpu_ptr() will
-still happen within the preempt/ IRQ disabled section.
-This will free the internal implementation (__) to be used on
-local_lock_t types which are local variables and must not be accessed
-via this_cpu_ptr().
+Tested-by: Thomas Richter <tmricht@linux.ibm.com>
 
-Acked-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/local_lock.h          | 20 +++++++++----------
- include/linux/local_lock_internal.h | 30 ++++++++++++++---------------
- 2 files changed, 25 insertions(+), 25 deletions(-)
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+IBM Deutschland Research & Development GmbH
 
-diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
-index 16a2ee4f8310b..2ba8464195244 100644
---- a/include/linux/local_lock.h
-+++ b/include/linux/local_lock.h
-@@ -13,13 +13,13 @@
-  * local_lock - Acquire a per CPU local lock
-  * @lock:	The lock variable
-  */
--#define local_lock(lock)		__local_lock(lock)
-+#define local_lock(lock)		__local_lock(this_cpu_ptr(lock))
-=20
- /**
-  * local_lock_irq - Acquire a per CPU local lock and disable interrupts
-  * @lock:	The lock variable
-  */
--#define local_lock_irq(lock)		__local_lock_irq(lock)
-+#define local_lock_irq(lock)		__local_lock_irq(this_cpu_ptr(lock))
-=20
- /**
-  * local_lock_irqsave - Acquire a per CPU local lock, save and disable
-@@ -28,19 +28,19 @@
-  * @flags:	Storage for interrupt flags
-  */
- #define local_lock_irqsave(lock, flags)				\
--	__local_lock_irqsave(lock, flags)
-+	__local_lock_irqsave(this_cpu_ptr(lock), flags)
-=20
- /**
-  * local_unlock - Release a per CPU local lock
-  * @lock:	The lock variable
-  */
--#define local_unlock(lock)		__local_unlock(lock)
-+#define local_unlock(lock)		__local_unlock(this_cpu_ptr(lock))
-=20
- /**
-  * local_unlock_irq - Release a per CPU local lock and enable interrupts
-  * @lock:	The lock variable
-  */
--#define local_unlock_irq(lock)		__local_unlock_irq(lock)
-+#define local_unlock_irq(lock)		__local_unlock_irq(this_cpu_ptr(lock))
-=20
- /**
-  * local_unlock_irqrestore - Release a per CPU local lock and restore
-@@ -49,7 +49,7 @@
-  * @flags:      Interrupt flags to restore
-  */
- #define local_unlock_irqrestore(lock, flags)			\
--	__local_unlock_irqrestore(lock, flags)
-+	__local_unlock_irqrestore(this_cpu_ptr(lock), flags)
-=20
- /**
-  * local_lock_init - Runtime initialize a lock instance
-@@ -64,7 +64,7 @@
-  * locking constrains it will _always_ fail to acquire the lock in NMI or
-  * HARDIRQ context on PREEMPT_RT.
-  */
--#define local_trylock(lock)		__local_trylock(lock)
-+#define local_trylock(lock)		__local_trylock(this_cpu_ptr(lock))
-=20
- /**
-  * local_trylock_irqsave - Try to acquire a per CPU local lock, save and d=
-isable
-@@ -77,7 +77,7 @@
-  * HARDIRQ context on PREEMPT_RT.
-  */
- #define local_trylock_irqsave(lock, flags)			\
--	__local_trylock_irqsave(lock, flags)
-+	__local_trylock_irqsave(this_cpu_ptr(lock), flags)
-=20
- DEFINE_GUARD(local_lock, local_lock_t __percpu*,
- 	     local_lock(_T),
-@@ -91,10 +91,10 @@ DEFINE_LOCK_GUARD_1(local_lock_irqsave, local_lock_t __=
-percpu,
- 		    unsigned long flags)
-=20
- #define local_lock_nested_bh(_lock)				\
--	__local_lock_nested_bh(_lock)
-+	__local_lock_nested_bh(this_cpu_ptr(_lock))
-=20
- #define local_unlock_nested_bh(_lock)				\
--	__local_unlock_nested_bh(_lock)
-+	__local_unlock_nested_bh(this_cpu_ptr(_lock))
-=20
- DEFINE_GUARD(local_lock_nested_bh, local_lock_t __percpu*,
- 	     local_lock_nested_bh(_T),
-diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock=
-_internal.h
-index 8d5ac16a9b179..d80b5306a2c0c 100644
---- a/include/linux/local_lock_internal.h
-+++ b/include/linux/local_lock_internal.h
-@@ -99,14 +99,14 @@ do {								\
- 		local_trylock_t *tl;					\
- 		local_lock_t *l;					\
- 									\
--		l =3D (local_lock_t *)this_cpu_ptr(lock);			\
-+		l =3D (local_lock_t *)(lock);				\
- 		tl =3D (local_trylock_t *)l;				\
- 		_Generic((lock),					\
--			__percpu local_trylock_t *: ({			\
-+			local_trylock_t *: ({				\
- 				lockdep_assert(tl->acquired =3D=3D 0);	\
- 				WRITE_ONCE(tl->acquired, 1);		\
- 			}),						\
--			__percpu local_lock_t *: (void)0);		\
-+			local_lock_t *: (void)0);			\
- 		local_lock_acquire(l);					\
- 	} while (0)
-=20
-@@ -133,7 +133,7 @@ do {								\
- 		local_trylock_t *tl;				\
- 								\
- 		preempt_disable();				\
--		tl =3D this_cpu_ptr(lock);			\
-+		tl =3D (lock);					\
- 		if (READ_ONCE(tl->acquired)) {			\
- 			preempt_enable();			\
- 			tl =3D NULL;				\
-@@ -150,7 +150,7 @@ do {								\
- 		local_trylock_t *tl;				\
- 								\
- 		local_irq_save(flags);				\
--		tl =3D this_cpu_ptr(lock);			\
-+		tl =3D (lock);					\
- 		if (READ_ONCE(tl->acquired)) {			\
- 			local_irq_restore(flags);		\
- 			tl =3D NULL;				\
-@@ -167,15 +167,15 @@ do {								\
- 		local_trylock_t *tl;					\
- 		local_lock_t *l;					\
- 									\
--		l =3D (local_lock_t *)this_cpu_ptr(lock);			\
-+		l =3D (local_lock_t *)(lock);				\
- 		tl =3D (local_trylock_t *)l;				\
- 		local_lock_release(l);					\
- 		_Generic((lock),					\
--			__percpu local_trylock_t *: ({			\
-+			local_trylock_t *: ({				\
- 				lockdep_assert(tl->acquired =3D=3D 1);	\
- 				WRITE_ONCE(tl->acquired, 0);		\
- 			}),						\
--			__percpu local_lock_t *: (void)0);		\
-+			local_lock_t *: (void)0);			\
- 	} while (0)
-=20
- #define __local_unlock(lock)					\
-@@ -199,11 +199,11 @@ do {								\
- #define __local_lock_nested_bh(lock)				\
- 	do {							\
- 		lockdep_assert_in_softirq();			\
--		local_lock_acquire(this_cpu_ptr(lock));	\
-+		local_lock_acquire((lock));			\
- 	} while (0)
-=20
- #define __local_unlock_nested_bh(lock)				\
--	local_lock_release(this_cpu_ptr(lock))
-+	local_lock_release((lock))
-=20
- #else /* !CONFIG_PREEMPT_RT */
-=20
-@@ -227,7 +227,7 @@ typedef spinlock_t local_trylock_t;
- #define __local_lock(__lock)					\
- 	do {							\
- 		migrate_disable();				\
--		spin_lock(this_cpu_ptr((__lock)));		\
-+		spin_lock((__lock));				\
- 	} while (0)
-=20
- #define __local_lock_irq(lock)			__local_lock(lock)
-@@ -241,7 +241,7 @@ typedef spinlock_t local_trylock_t;
-=20
- #define __local_unlock(__lock)					\
- 	do {							\
--		spin_unlock(this_cpu_ptr((__lock)));		\
-+		spin_unlock((__lock));				\
- 		migrate_enable();				\
- 	} while (0)
-=20
-@@ -252,12 +252,12 @@ typedef spinlock_t local_trylock_t;
- #define __local_lock_nested_bh(lock)				\
- do {								\
- 	lockdep_assert_in_softirq_func();			\
--	spin_lock(this_cpu_ptr(lock));				\
-+	spin_lock((lock));					\
- } while (0)
-=20
- #define __local_unlock_nested_bh(lock)				\
- do {								\
--	spin_unlock(this_cpu_ptr((lock)));			\
-+	spin_unlock((lock));					\
- } while (0)
-=20
- #define __local_trylock(lock)					\
-@@ -268,7 +268,7 @@ do {								\
- 			__locked =3D 0;				\
- 		} else {					\
- 			migrate_disable();			\
--			__locked =3D spin_trylock(this_cpu_ptr((lock)));	\
-+			__locked =3D spin_trylock((lock));	\
- 			if (!__locked)				\
- 				migrate_enable();		\
- 		}						\
---=20
-2.50.0
+Vorsitzender des Aufsichtsrats: Wolfgang Wendt
 
+Geschäftsführung: David Faller
+
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
