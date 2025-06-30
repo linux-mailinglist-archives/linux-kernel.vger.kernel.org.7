@@ -1,110 +1,174 @@
-Return-Path: <linux-kernel+bounces-709941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30AF0AEE4E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:45:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF15AEE4C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46C6162F88
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:45:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 337E41BC03EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F18292B2F;
-	Mon, 30 Jun 2025 16:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBE128FABA;
+	Mon, 30 Jun 2025 16:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="VoZvzgPS"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BMZUCUzV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E379C29009A;
-	Mon, 30 Jun 2025 16:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5A628FAA5;
+	Mon, 30 Jun 2025 16:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751301886; cv=none; b=vA51dUDU9bGGBX9CDSghJ5GPKc6HzLNWQyEG4dzBa9a5csEe8MUcV6MPeeUiuO3pSdgJyJ8Ov1oHFDJQhKFh9G++MBcMs9aAn13WgWpQ7mkAaY4b3Xj95FV94B9u2TrvYPntfPuvXrqDY5pYxAb3vfk84U6JHgdNjiR+ikkVi/I=
+	t=1751301275; cv=none; b=IRzizjVJKj+sWSlax4pOCxZzwn9EyjPF4RTnL4mt6sHabdPPjEysj6sxNs69slFNUrvlGQh6YFMlpaoZD63DSuMg4IpBxh6Xbfn4M1x3dBPk1WtEXwtp99+wm3DLBHTTTa4N1ZeVt39A58WdLZScpmrRJmEK+5WtiMoPpg7rO4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751301886; c=relaxed/simple;
-	bh=BfXV8nqJ4EJ9pAm1ijz8SPYTeiXmwHI+9FWI3o9x+xA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sm9AzbnzBf+el2HZ738JzlG79iJztnb7vNyvaO9M1AFrjUC7b1ZzplF4e+OWYQDkmw/6OcGP5w7mfIhdAtwuHzpgnzqBtvJZlgtgbM7G8JrBlb861/a1t8d8N79fPQloGKtjH4iCXpal7je7pkv3dhmW0OM9UPw3dipWNBg33mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=VoZvzgPS; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1751301223;
-	bh=BfXV8nqJ4EJ9pAm1ijz8SPYTeiXmwHI+9FWI3o9x+xA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=VoZvzgPSHgQz64AOBA4PTZyz7X7SB6QqJVzFGTBWN9We1UDw27WHcc32a2BX+JIRN
-	 UfnaQgWCo3DgKP0YpEAm67lwobotgv3nGri4FqNmT4TeH22VyWpt7h7FJLLM2i1O6W
-	 vXMpYk2kyO941eYmixOvVjyWGh4ORET2NNPiW2jI=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 0D18540748; Mon, 30 Jun 2025 09:33:43 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 0BDDB401E1;
-	Mon, 30 Jun 2025 09:33:43 -0700 (PDT)
-Date: Mon, 30 Jun 2025 09:33:43 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, arnd@arndb.de, 
-    catalin.marinas@arm.com, will@kernel.org, peterz@infradead.org, 
-    akpm@linux-foundation.org, mark.rutland@arm.com, harisokn@amazon.com, 
-    ast@kernel.org, memxor@gmail.com, zhenglifeng1@huawei.com, 
-    xueshuai@linux.alibaba.com, joao.m.martins@oracle.com, 
-    boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v3 5/5] arm64: barrier: Handle waiting in
- smp_cond_load_relaxed_timewait()
-In-Reply-To: <20250627044805.945491-6-ankur.a.arora@oracle.com>
-Message-ID: <e2e8788d-86b4-092a-37f5-286b776cc061@gentwo.org>
-References: <20250627044805.945491-1-ankur.a.arora@oracle.com> <20250627044805.945491-6-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1751301275; c=relaxed/simple;
+	bh=mEHgqV03o6VTz0DapeBgcIdYMe2Zhh2E6lJ6zYMRoDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRTqNap/QUvixKvhvfvq2KUA7/nFNSnj2EdDAxyAQUSWCs96luOpwIUJSzQzBZGYYe0dOvDo9yqm9cFzMfm4oLay2U2vr/t2dRir0A9JD3/GL2nrPxNY61e83a231j77i4iBslNjrDpEH6XbUNwvkzphjIFCbEmUqolGLQ16mZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BMZUCUzV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D075740E0198;
+	Mon, 30 Jun 2025 16:34:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id wScW8kbuQCJS; Mon, 30 Jun 2025 16:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751301259; bh=EnhzZidqHbMAwNFsHGf6+uqGMdAMCcl5F1jBVz6QWgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BMZUCUzVVCYUN+c75XBck4//dLcc6OVn8555COXfzRHQN2jufiCIy47cd4CfOGk7+
+	 ymghOobXcEjp8GqUiwbPrImcJTX2MXN/GULqM0cgHpPqO+ELRjaWmY/F79fcDHZVsB
+	 d9dDNy+6I00tN3J+ZUbz6WWY7F35eMRd3QgNVTGanFTuIXfE1OjJ7+hDfatmeWCQ14
+	 x+97/wisPlpc6U2lVsIvjXGVweLd8bumwzVebVAKiG62we3YVGiWwjuWKZdHiNFmaB
+	 SZn5L30tUkgPDir4fv8KgEZBc/h+e8HCCjhpSAUIWoX5i/albOH0cR2D+Jj35UKhL8
+	 JZakHzgWoK3NhLd/Ofr5dObcCqkKtrhWokWRGWQP5+uZ1sU2M/gQnaHjQ5sKVoc6n5
+	 zjgfx5kw585maa7oHuoig3YnxkGn9h/c8WbExP8tqav6P9jgBdaKvtomzXRHJfs+mK
+	 c8A0CWiXZ+eV+wdUydjOZKBGEpj1mcCGmqITaYjVfEQoM+coCqOh/QmygdSRu9TBct
+	 U43jaqMRc3ZC+cLk763DM09RudZidK9jMp4RU1p5ZE0hDIrClArLsmgFxdOCbOBxse
+	 rMu+gkoqxnTs4Z7KSp9zfFCmxOOqfl9lSoFgeE/StRhz95n94La0pdh3XHsVw/IUJF
+	 oTm8SUbvrG6IYuCuEo5MZ7Bs=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7244C40E00DD;
+	Mon, 30 Jun 2025 16:34:04 +0000 (UTC)
+Date: Mon, 30 Jun 2025 18:33:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Vijay Balakrishna <vijayb@linux.microsoft.com>
+Cc: Tony Luck <tony.luck@intel.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [v11 PATCH 1/2] EDAC: Add EDAC driver for ARM Cortex A72 cores
+Message-ID: <20250630163357.GGaGK8dbT4fp68PplM@fat_crate.local>
+References: <1748487628-30123-1-git-send-email-vijayb@linux.microsoft.com>
+ <1748487628-30123-2-git-send-email-vijayb@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1748487628-30123-2-git-send-email-vijayb@linux.microsoft.com>
 
-On Thu, 26 Jun 2025, Ankur Arora wrote:
+On Wed, May 28, 2025 at 08:00:27PM -0700, Vijay Balakrishna wrote:
+> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+> index a8f2d8f6c894..136416f43b44 100644
+> --- a/drivers/edac/Makefile
+> +++ b/drivers/edac/Makefile
+> @@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
+>  obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
+>  obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
+>  obj-$(CONFIG_EDAC_LOONGSON)		+= loongson_edac.o
+> +obj-$(CONFIG_EDAC_CORTEX_A72)		+= edac_a72.o
 
-> @@ -222,6 +223,53 @@ do {									\
->  #define __smp_timewait_store(ptr, val)					\
->  		__cmpwait_relaxed(ptr, val)
->
+The drivers filename format is
+
+	edac_<something>.c
+
+So a72_edac.c
+
+> diff --git a/drivers/edac/edac_a72.c b/drivers/edac/edac_a72.c
+> new file mode 100644
+> index 000000000000..4f40616d40a0
+> --- /dev/null
+> +++ b/drivers/edac/edac_a72.c
+> @@ -0,0 +1,230 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Redefine ARCH_TIMER_EVT_STREAM_PERIOD_US locally to avoid include hell.
+> + * Cortex A72 EDAC L1 and L2 cache error detection
+> + *
+> + * Copyright (c) 2020 Pengutronix, Sascha Hauer <s.hauer@pengutronix.de>
+> + * Copyright (c) 2025 Microsoft Corporation, <vijayb@linux.microsoft.com>
+> + *
+> + * Based on Code from:
+> + * Copyright (c) 2018, NXP Semiconductor
+> + * Author: York Sun <york.sun@nxp.com>
 > + */
-> +#define __ARCH_TIMER_EVT_STREAM_PERIOD_US 100UL
-> +extern bool arch_timer_evtstrm_available(void);
 > +
-> +static inline u64 ___smp_cond_spinwait(u64 now, u64 prev, u64 end,
-> +				       u32 *spin, bool *wait, u64 slack);
-> +/*
-> + * To minimize time spent spinning, we want to allow a large overshoot.
-> + * So, choose a default slack value of the event-stream period.
-> + */
-> +#define SMP_TIMEWAIT_DEFAULT_US __ARCH_TIMER_EVT_STREAM_PERIOD_US
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/bitfield.h>
+> +#include <asm/smp_plat.h>
 > +
-> +static inline u64 ___smp_cond_timewait(u64 now, u64 prev, u64 end,
-> +				       u32 *spin, bool *wait, u64 slack)
-> +{
-> +	bool wfet = alternative_has_cap_unlikely(ARM64_HAS_WFXT);
-> +	bool wfe, ev = arch_timer_evtstrm_available();
-
-An unitialized and initialized variable on the same line. Maybe separate
-that. Looks confusing and unusual to me.
-
-> +	u64 evt_period = __ARCH_TIMER_EVT_STREAM_PERIOD_US;
-> +	u64 remaining = end - now;
+> +#include "edac_module.h"
 > +
-> +	if (now >= end)
-> +		return 0;
-> +	/*
-> +	 * Use WFE if there's enough slack to get an event-stream wakeup even
-> +	 * if we don't come out of the WFE due to natural causes.
-> +	 */
-> +	wfe = ev && ((remaining + slack) > evt_period);
+> +#define DRVNAME		"edac-a72"
+> +
+> +#define SYS_CPUMERRSR_EL1	sys_reg(3, 1, 15, 2, 2)
+> +#define SYS_L2MERRSR_EL1	sys_reg(3, 1, 15, 2, 3)
+> +
+> +#define CPUMERRSR_EL1_RAMID		GENMASK(30, 24)
+> +#define L2MERRSR_EL1_CPUID_WAY	GENMASK(21, 18)
+> +
+> +#define CPUMERRSR_EL1_VALID		BIT(31)
+> +#define CPUMERRSR_EL1_FATAL		BIT(63)
+> +#define L2MERRSR_EL1_VALID		BIT(31)
+> +#define L2MERRSR_EL1_FATAL		BIT(63)
+> +
+> +#define L1_I_TAG_RAM	0x00
+> +#define L1_I_DATA_RAM	0x01
+> +#define L1_D_TAG_RAM	0x08
+> +#define L1_D_DATA_RAM	0x09
+> +#define TLB_RAM			0x18
+> +
+> +#define MESSAGE_SIZE	64
 
-The line above does not matter for the wfet case and the calculation is
-ignored. We hope that in the future wfet will be the default case.
+I had written
+
+"Please group all defines together, align them vertically and then put other
+definitions below. Look at other drivers for inspiration."
+
+in my previous review
+
+Message-ID: <20250519085130.GFaCrxEnZvaoETKrao@fat_crate.local>
+
+but seems like this got ignored.
+
+Oh well, I'll ignore your submission too until you address *all* my review
+feedback.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
