@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-708992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D315AED7E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C83F4AED7F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11AC73A78C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:55:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32F93B45C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5147C23F40A;
-	Mon, 30 Jun 2025 08:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9378823B63F;
+	Mon, 30 Jun 2025 08:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tyox2WDd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3FVT4QBN"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D47623ABBD;
-	Mon, 30 Jun 2025 08:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6759D14F70
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751273704; cv=none; b=QWF5sITgJYEjBd2+RS8V+q41e5BWXHEDkfvVhQwINEzaO46YgA6U98cNEQIWgyTYWFLcn19nZXaS2ONz8DxdCsteGdw6h2gKWSXwx2hvTV+prSgn8gjq8gqiOKJwiS1Z/rl6Xws+PqHrI30MMXZNzYFGu19VVxxfrx2iU07VW78=
+	t=1751273841; cv=none; b=HX/kXbvOu6MN0uLPdR2/M11+fU72R6AR062qwhyXiAYEszGGEFQBdmdaHfI/nVKQYyZGRb14mciyOJ0lRAxav9zLNm7LXDv57SzoTxSZ2MvxzcSNdBJHDFuQKtSSQS6Yj3aBtyP5jaeUFVjeHyfhtee2br8NVF4a2czBbKLGJxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751273704; c=relaxed/simple;
-	bh=ZoeV7hTvZ7zyNoBAbk7ZU3OwDw7OdAz1SLsJTafGCD4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=d9AZ4lc0jVVVnpYpITS7ZZs3jKcxeuDHoCu1nC5iXhb9FMsNgRGMjpLecDw2UrTr3tGzlKJkk8cKGHSmbg1in4ZsRRqhYtrOrQPxOWUqqa6wN8549iNORlLVK22BQrPoRaFO9wAIPROI+uPlC+agekUL0Tjj7layhCzQjNm3tHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tyox2WDd; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751273703; x=1782809703;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ZoeV7hTvZ7zyNoBAbk7ZU3OwDw7OdAz1SLsJTafGCD4=;
-  b=Tyox2WDd1A3JOTZ9wy6s6D3m9QLCfb4A/3MPJbQ63VgzsNVE3FCVBq1m
-   UuNs2ilRBkE4qHXIjpoz6sKFrjZ/B9pc3VNY/B2c6RTl5FtqN3BcPKmsx
-   phxRJhG1iDbDwyYp7aaZTOJbt+hrZ/HkSWAtsnUrOiTYaoIjskg87U5nC
-   vcBDKuIH95yQmPTCrA2+xszmxw4yMzSBYpXmed0smXQQJHUQstpJaT3w2
-   UPXYaK5JFwD4hYDlTe1RxiqSNihmtHoS33TdlbFknQo4D1pXa1wp/H3Wn
-   1akWeYyVxu19RQZBD3trDls1S3UpzqpduKTdWzNWD7XH2MOodzbH6P/M3
-   g==;
-X-CSE-ConnectionGUID: OEtSLuXcQTCVxK2tVI5Sbw==
-X-CSE-MsgGUID: ++m/29glTaiOvIrTkro3lA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="64187078"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="64187078"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 01:55:02 -0700
-X-CSE-ConnectionGUID: aMxdty3SS/uZdck4/t10kQ==
-X-CSE-MsgGUID: +BPBSCjGTuStozTxft5gCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="153872392"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 01:54:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 30 Jun 2025 11:54:55 +0300 (EEST)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] platform/x86: think-lmi: Fix resource cleanup
- flaws
-In-Reply-To: <20250628-lmi-fix-v2-0-c530e1c959d7@gmail.com>
-Message-ID: <5ee91db8-8ed1-6860-7736-9fb723371bc1@linux.intel.com>
-References: <20250628-lmi-fix-v2-0-c530e1c959d7@gmail.com>
+	s=arc-20240116; t=1751273841; c=relaxed/simple;
+	bh=tHwsdwlV2RdkOWQDFpeoiWYoZwLF4ObvF548D0kUzbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VN4teQAckWHqEKC0CJabkAKmM6OmGUcxNBvbWG9DHERSMGrDlEVrHSrPHcI7GVu0cdK+sgwuddByOzYxmsDSzcYMmEAwsFAVRzNJLH88JonHrTzsmLpuB9xyoKvu64InuVnrkxMTmO6aJy0x8LftCwiwfUyyo1KVonyvAMekJ8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3FVT4QBN; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553dceb345eso2196111e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 01:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751273837; x=1751878637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1/xWSuspPIRwEvJOqsaKy++PiaBV+Pm9M/ghPEWy/as=;
+        b=3FVT4QBNeVs4vQas3m1v8QJU1M01Iq0dvFNHHKJXa5N4rWYbhbcNa1NlnQIYqIj64A
+         BU36dbQcCh22NgHQLb21ZJ85+VG8KV4fdL6w+UuSKB0PkQnbABWsN1VDZoGGDFLAN2iM
+         2vcUnza/2k7uF1z/PeXRR7Vy4TqwykTKQWcmM03m1nCEUNc1EcxdoIIX1AXjacQWFNis
+         j4l36Q882gpkVga8k3eBYom6LqTk+IaznUS4kRpXijrKftZkczs7xLkr/vlcmnqNchD2
+         wjLNQx58tIQnLMLwL3j0mY1uX6G86FN68hhoZAYsAamYPk63pgYr6mkemhppp9T6H07A
+         SYsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751273837; x=1751878637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1/xWSuspPIRwEvJOqsaKy++PiaBV+Pm9M/ghPEWy/as=;
+        b=w7vUBjHfWx0irL/xhuGgf3C5WviQMNLZKYpSd71UCaN1fjUOC/K7s47lj8/kC6mOoH
+         U3pKX/kfA8dqFc6qiky8JEY8Bk5j05ybROwbedAXOt6lEMUrDeYzl1C5lbJEoZuUeIe7
+         xuINDlb8bF9cBgm4NALKWpxAB/2sqVer0Y+nY+05hDHmEKXjPOgk+mU7IPxfs/cw1KN6
+         AcWRGILlgiVUGI3wTzQFbI3raMazJlFzPEGPTnnggoRtIeMdmnYJIznR4Jt4DtPZ67h4
+         dFCiikJDWfbQBp0uw/6Z+mC4yznrQPyNUCFsGRR0g2ADQGGRjiJ+sm3EPp05rurTFhVN
+         pncw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpKdxYyy7NsRJ/xIZdB6Of7EmgiuzQzIbxo7Ub7uN7/FOiPv3du+GG83pNmoCwrOdEAQG/d5bZdE1yFdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOr432eG6RUoGgTWTx75rRBJBZmVKJ5Nxfaw9kKI9n2WpTiqGC
+	uCqRFEFLPRe+NOIUB/xotiYegS7OgcJmZfHYErYt89trDXpCL2P83JcxrLEvIbHoOoJ7tfhbt9W
+	N+8NdExrPIvnSx05lYPHDvA5Y9ClDzlcplLyjQh1TZg==
+X-Gm-Gg: ASbGnctoWGgRrIbkP8aXmkKuLYQnmNaG6kdYDechqQZXPRE43zPJx4Y2XuUwYpEuEtI
+	g1NcdaUZj2y6smOEM5TUlkaayfzhbUoIKMm/XF0sZkcFllc7oafJx4sk53hMKNvH9yWivXWDKBb
+	Wn0+wP7EYzFQXftZb8Afzrlf+6+6V2sPnxOrB7lsFI/lSmAa5TYjyZO3F50mKRkSn1FCVXWHd2Z
+	2g=
+X-Google-Smtp-Source: AGHT+IEZFMQfEkJUH+3rY8y+TTsjGBa4rf9U72HmIeYMgNLHPeZASdF9kS2CmUz3M5ntnAe3s+m3HBmPq0QCOl4h/9E=
+X-Received: by 2002:a05:6512:3b9d:b0:553:2bf7:77be with SMTP id
+ 2adb3069b0e04-5550b84cb93mr4367395e87.22.1751273837415; Mon, 30 Jun 2025
+ 01:57:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-406320142-1751273695=:7079"
+References: <20250623-gpio-sysfs-chip-export-v2-0-d592793f8964@linaro.org>
+ <20250623-gpio-sysfs-chip-export-v2-4-d592793f8964@linaro.org> <aF67oAqLmRJzy4Zt@black.fi.intel.com>
+In-Reply-To: <aF67oAqLmRJzy4Zt@black.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 30 Jun 2025 10:57:06 +0200
+X-Gm-Features: Ac12FXwUwnOAqU4puVzSKb72DH7ePHLAhCj8ihvhutkV1VkA2A2c_2dH8givJoE
+Message-ID: <CAMRc=MfXVTqncPsJ3QKqsGDi36gK4weWX1iygpqg1C-XinCEGg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] gpio: sysfs: don't use driver data in sysfs
+ callbacks for line attributes
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>, Kent Gibson <warthog618@gmail.com>, 
+	=?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, Marek Vasut <marex@denx.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Jun 27, 2025 at 5:41=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Mon, Jun 23, 2025 at 10:59:52AM +0200, Bartosz Golaszewski wrote:
+> >
+> > Currently each exported GPIO is represented in sysfs as a separate clas=
+s
+> > device. This allows us to simply use dev_get_drvdata() to retrieve the
+> > pointer passed to device_create_with_groups() from sysfs ops callbacks.
+> >
+> > However, we're preparing to add a parallel set of per-line sysfs
+> > attributes that will live inside the associated gpiochip group. They ar=
+e
+> > not registered as class devices and so have the parent device passed as
+> > argument to their callbacks (the GPIO chip class device).
+> >
+> > Put the attribute structs inside the GPIO descriptor data and
+> > dereference the relevant ones using container_of() in the callbacks.
+> > This way, we'll be able to reuse the same code for both the legacy and
+> > new GPIO attributes.
+>
+> ...
+>
+> > -     struct gpiod_data *data =3D dev_get_drvdata(dev);
+> > +     struct gpiod_data *data =3D container_of(attr, struct gpiod_data,
+> > +                                            dir_attr);
+>
+> Defining once something like
+>
+> #define to_gpiod_data() ...
+>
+> we may leave this and others as one-liners.
 
---8323328-406320142-1751273695=:7079
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+We'd need one per every attribute. Look closer, we do get a different
+attr address in every pair of callbacks.
 
-On Sat, 28 Jun 2025, Kurt Borja wrote:
+>
+> ...
+>
+> > +     attrs[GPIO_SYSFS_LINE_ATTR_ACTIVE_LOW] =3D
+> > +                                             &data->active_low_attr.at=
+tr;
+>
+> What's the point of two lines here?
+>
 
-> Hi all,
->=20
-> First patch is a prerequisite in order to avoid NULL pointer
-> dereferences in error paths. Then two fixes follow.
+I tend to stick with the 80 chars limit even though it was lifted.
 
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Bart
 
-Please send v3 with stable Cc tags in all these so that this dependency=20
-gets automatically handled (as per documentation).
-
-I'll apply this through the fixes branch but I can deal with the removal=20
-of the lenovo/ folder from the file names myself while applying.
-
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
-> Changes in v2:
->=20
-> [PATCH 02]
->   - Remove kobject_del() and commit message remark. It turns out it's
->     optional to call this (my bad)
->   - Leave only one fixes tag. The other two are not necessary.
->=20
-> - Link to v1: https://lore.kernel.org/r/20250628-lmi-fix-v1-0-c6eec9aa3ca=
-7@gmail.com
->=20
-> ---
-> Kurt Borja (3):
->       platform/x86: think-lmi: Create ksets consecutively
->       platform/x86: think-lmi: Fix kobject cleanup
->       platform/x86: think-lmi: Fix sysfs group cleanup
->=20
->  drivers/platform/x86/lenovo/think-lmi.c | 90 +++++++++++----------------=
-------
->  1 file changed, 30 insertions(+), 60 deletions(-)
-> ---
-> base-commit: 73f0f2b52c5ea67b3140b23f58d8079d158839c8
-> change-id: 20250628-lmi-fix-98143b10d9fd
->=20
-
---=20
- i.
-
---8323328-406320142-1751273695=:7079--
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
