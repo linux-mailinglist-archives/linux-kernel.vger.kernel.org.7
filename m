@@ -1,71 +1,135 @@
-Return-Path: <linux-kernel+bounces-709099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2111EAED942
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC403AED949
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4513616E51E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:03:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FCE23BA980
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF42505BB;
-	Mon, 30 Jun 2025 10:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FCE248F71;
+	Mon, 30 Jun 2025 10:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BD7t9lKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjyAgmLR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647D824DD06
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642852475F7;
+	Mon, 30 Jun 2025 10:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277781; cv=none; b=LrwoQQD0npm6z30I8/W4nvnbk9s3Jlt2cabfmnAWzDynHrmLrF/8mPOb7SEBUZ9S71li4tXHp/u6hDCcK4ARvJnFTCT06pyegDftto3A/pS9uXl3JQmQpAyhLc5jXm6qA4ogxVEpclsxYD5Onx0r77WvGE5FFNvy4N0+2Q4IRms=
+	t=1751277811; cv=none; b=uzXb0nBT6ON0WM7ASC/Y2ydlzt8y4CMXozcwzpfW/7rqdmsNnnYFTq0nxOY1b1ZZRavwg2+ZeCuk3ARJVgXLLyb2O7DG11knePG/sNiYBq2QO98s2pr8yOAotALaikzcwxd2dXKRD13DbG1O2IJdIgbLdv350p+OEG1UAM8GQ1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277781; c=relaxed/simple;
-	bh=Ept0/W178IJMijBe25QaMcfMQGcHXNSB78FXBxkenak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIGgoJe/u2NUO5vXWRSSiUXRIAXOI+0J9KD1B3oa0x9aiSZ6HIdO+8IzrrHJNZUxjjWQZEREc+YrxzPTDnigHOH51zleNjYfZ7ewJn0bTqxPO92pa+lnxEfVfOhV/JGPf5CUOIGGH1JadpSHB/wdiryMAp13pMuqfGiJlpte+fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BD7t9lKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC04BC4CEE3;
-	Mon, 30 Jun 2025 10:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751277781;
-	bh=Ept0/W178IJMijBe25QaMcfMQGcHXNSB78FXBxkenak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BD7t9lKzb5N36Vy7y/G/qKyp6olMo/2bmzKfO8YO7lUdiU+AHgrpBZB9RsKu0vogs
-	 8REZqH5ukh7G1kXvr87Rd8dFMDRvKdnZm/XtEL21te/JGl94aqqiQbpVbYPR52rwB5
-	 CQA9MCZwAh57zPu/OrkQDK0ib+4aG6+IEH2uCfDI=
-Date: Mon, 30 Jun 2025 12:02:58 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [char-misc-next v2 0/5] mei: fix mei_device lifetime
-Message-ID: <2025063050-finale-single-11b2@gregkh>
-References: <20250630091942.2116676-1-alexander.usyskin@intel.com>
+	s=arc-20240116; t=1751277811; c=relaxed/simple;
+	bh=gFCA79flgaQXnugGgdIo3m8Y3CQG8kjvj8+trQjJNeA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MZlTwCtfDP7N/mVkAfBY1b8mM3g+jPlbpm5YJ7y4uT2wY3bJ/ALCUF3gCdzouAx6qsKoiSRlrMJla9yWpwuT8wlKirssF5k/5XiEg7mlqdagdM02XbZC2L0JNvS4gZfFXb60sMo2hUdA3g6e9HEvKVbkA3kOL1az98o4kO1eDXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjyAgmLR; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751277810; x=1782813810;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=gFCA79flgaQXnugGgdIo3m8Y3CQG8kjvj8+trQjJNeA=;
+  b=hjyAgmLRePO5j9EUDQR4lO0MpC4KrBUR3pAKVRkN6v+NYr52WlI9f6A6
+   Rb8aGVwtL5P4S1cfVpWIqwi57JXIDW5UcYal3YFshSM3jE6tUVhfBhG3b
+   a8WTeKqo38PF9iBhNcFAtaDC+yGT8EQqkBX5XJH1g2iv7S7dRKMT548GF
+   l7oOOaX6t6uqbd0qnM0jWXn5d5/T4Mx63TrdBmotosLpc5eX23fD77z2j
+   hvYgoa8JLkLfDGdKbdhQ/2kGX2CBXZgpEW9CvnwVa7I9wVyAbSwWvbXt0
+   1PnYLbyRbMgb/kBAd8gecdiglzZRCttgPm+LIY+edHubHOyxhjry47D/4
+   Q==;
+X-CSE-ConnectionGUID: AQgpCvdFTcq6pEc1pZyNyA==
+X-CSE-MsgGUID: TrHRK+NvRzyuYBUqIUIF2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="64094586"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="64094586"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:03:30 -0700
+X-CSE-ConnectionGUID: p6Tg9e3YQrWI2l6W9ZCvRQ==
+X-CSE-MsgGUID: 17Wdq6ufS9+Kq572OrFMRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="177079776"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:03:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Jun 2025 13:03:24 +0300 (EEST)
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+cc: hansg@kernel.org, vadimp@nvidia.com, platform-driver-x86@vger.kernel.org, 
+    darren.kenny@oracle.com, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/mellanox: Fix logic error in power state check
+ in mlxreg-lc
+In-Reply-To: <8e86e409-0a19-ec74-f126-2e5315e3dc0a@linux.intel.com>
+Message-ID: <fad3e60f-b6c2-19bd-020c-9306d1c88a99@linux.intel.com>
+References: <20250630095001.598061-1-alok.a.tiwari@oracle.com> <8e86e409-0a19-ec74-f126-2e5315e3dc0a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630091942.2116676-1-alexander.usyskin@intel.com>
+Content-Type: multipart/mixed; boundary="8323328-1482056202-1751277804=:7079"
 
-On Mon, Jun 30, 2025 at 12:19:37PM +0300, Alexander Usyskin wrote:
-> mei_device data structure is allocated using devm_* functions
-> and hooked to the parent device.
-> It works for client systems where parent device is pci one.
-> When parent device is auxiliary bus device produced by
-> graphics driver, the parent can be destroyed before child
-> and on the way it cleans all allocated memory.
-> This leads to use-after-free if mei character device is
-> opened when parent device is destroyed.
-> Introduce device to hook the mei_device lifetime on it and
-> decouple cdev from main structure to allow all memory
-> to be released when it is unused and not before.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-How was any of this tested?
+--8323328-1482056202-1751277804=:7079
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Mon, 30 Jun 2025, Ilpo J=E4rvinen wrote:
+> On Mon, 30 Jun 2025, Alok Tiwari wrote:
+
+Also please move mlxreg-lc into prefixes (see some earlier commits made=20
+into that file).
+
+> > Fixes a logic issue in mlxreg_lc_completion_notify() where the
+> > intention was to check if MLXREG_LC_POWERED flag is not set before
+> > powering on the device.
+> >=20
+> > The original code used "state & ~MLXREG_LC_POWERED" to check for the
+> > absence of the POWERED bit. However this condition evaluates to true
+> > even when other bits are set, leading to potentially incorrect
+> > behavior.
+> >=20
+> > Corrected the logic to explicitly check for the absence of
+> > MLXREG_LC_POWERED using !(state & MLXREG_LC_POWERED).
+> >=20
+> > Suggested-by: Vadim Pasternak <vadimp@nvidia.com>
+> > Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+>=20
+> Makes sense but please add Fixes tag and resubmit as v2.
+>=20
+> > ---
+> >  drivers/platform/mellanox/mlxreg-lc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/platform/mellanox/mlxreg-lc.c b/drivers/platform/m=
+ellanox/mlxreg-lc.c
+> > index aee395bb48ae4..8681ceb7144ba 100644
+> > --- a/drivers/platform/mellanox/mlxreg-lc.c
+> > +++ b/drivers/platform/mellanox/mlxreg-lc.c
+> > @@ -688,7 +688,7 @@ static int mlxreg_lc_completion_notify(void *handle=
+, struct i2c_adapter *parent,
+> >  =09if (regval & mlxreg_lc->data->mask) {
+> >  =09=09mlxreg_lc->state |=3D MLXREG_LC_SYNCED;
+> >  =09=09mlxreg_lc_state_update_locked(mlxreg_lc, MLXREG_LC_SYNCED, 1);
+> > -=09=09if (mlxreg_lc->state & ~MLXREG_LC_POWERED) {
+> > +=09=09if (!(mlxreg_lc->state & MLXREG_LC_POWERED)) {
+> >  =09=09=09err =3D mlxreg_lc_power_on_off(mlxreg_lc, 1);
+> >  =09=09=09if (err)
+> >  =09=09=09=09goto mlxreg_lc_regmap_power_on_off_fail;
+> >=20
+>=20
+>=20
+
+--=20
+ i.
+
+--8323328-1482056202-1751277804=:7079--
 
