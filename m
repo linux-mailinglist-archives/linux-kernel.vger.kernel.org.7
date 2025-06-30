@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-710247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA8CAEE9B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:54:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FABAEE9BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C800D17A69E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2056E1893F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868AB2EA75C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3AD2EAB62;
 	Mon, 30 Jun 2025 21:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZ/aDM/g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nogtk7Au"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05278242D8F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B8C242D93;
 	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751320365; cv=none; b=aZXyUW+u3P1ROELfJkpjEjM5nmLb7XwUEVtuHVSVyL93yaPdGuGGCyaet2vkfctLkqc9uKc2JFHXz4xQ/aV1wXnhdrqdqCw2i5287sBd2SwafX+cHebmu+xIwwyXAI0wIRkhD72QVz5ebSh9loAptmKBwwY5Z9szj3kCVmI3zW8=
+	t=1751320365; cv=none; b=GqdoWMt2TJS4MrkGS3W6hB+gfnd6OkIsTiG9dZNEtWGwEY8BUJ9t69yZn+mT4LhQdvTmCK72M010Ev0YaUyTYXPXQo0rDpGvAKBT/60Aql8RXCMDGyb75q/65400liAA7c8yx5FxI/fceT/Pr55wKIABJeRWxTc62TLSxzTdy1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751320365; c=relaxed/simple;
-	bh=Ygtsq+De4GW5sas3J8PyjFBax+Pkg5M1g2qs8BnKYFE=;
+	bh=klFInMyMuyuTpAHmohUw1L/ykD0tdIFslFtkTRkiwWc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fN73d8Fdjx0Xm6YoPfjTauE4W6/mR5pYiU33/xAp9VaDhmh0WEG+SiSft0IHhQmT+Pq2pPGQkSpQWeiDctIFsTUHqnbO9mlEPaQF8D/VjJqFl1/dUzWTKUPVHoyQxQw6uuTuceoXLIt1AqM6fmp2MfLU3yOHk+1x7s5HJJSZRsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZ/aDM/g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DFF4C4CEFC;
+	 MIME-Version; b=YpBT6USzDWqwWeyoh65/6zUqWlfjE9Uz3fsWuA5Abn3Rhhh3AaUmUj2mpBsTuZyvPicPSnImFgev8TFRNtHcsltSCi9Z84a1Jeu+tZ8sk7NTCzvGmm69tOdbjLTTKQFziyCm6hfMOTrohY1tiqUkhW55YfRIFoLTPjPCtuyjpbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nogtk7Au; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71B25C4CEFE;
 	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751320364;
-	bh=Ygtsq+De4GW5sas3J8PyjFBax+Pkg5M1g2qs8BnKYFE=;
+	bh=klFInMyMuyuTpAHmohUw1L/ykD0tdIFslFtkTRkiwWc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lZ/aDM/gEQHlykyeQunFAOnvgm2VsQEJMctRRiRa13N1U7VAIgPpPAGd+ckwPRTKl
-	 RiuHHlr3h8mItnI/6tm6xT/S4nGopZ0XaGdq5X4EyZj0qDCnLXF25JPDe5C2Y0Va3g
-	 Q8saZ0A3nSfx5ZLq4rpBP3ZO9jOEArGNeNZvhxKTHOBQIBwWC9sulpfdpbJK27dgsZ
-	 abH+Zv92y5cfaGZGyWxcuQpEDHvGz3SvTGCLzXwkIu1ieD+IBHI7tZhJD6IOhN2ea3
-	 yd4iI1ZzNn4bc+zMzpwak65Rje7e8vqi7Def8X1zsOW+XqUQjDwzkiEMSABqB+rPCc
-	 L7tSPGRROHFiw==
+	b=nogtk7AumGtIlLzpISDJom9kpWJ1jKR2T0xxAG9CyHydMJ715WhehUmAHPrOrH8i3
+	 j5fHuWn2DA0FlQZHCSca2oikq7I48SQ8R+qKinagBF5hfYPth7/XtcDHTmKsun8Mn0
+	 SNld8GOqUin+kAG9x4EY1zR0UlaJ00el/xViZ7kmcpzm+XyvXicOr9LS2u9J9MU4Ok
+	 3JdHNtcLRNUJ+pfDbcS3d8p3Y18d/cKlj6bFnUYXLDQ/wfOL5yXOKGMOW6undZQ1va
+	 o7GD5LnPqrIOxVkiaPPfs/905OEsnVzWOaZBO+TYJ6jdpcygGF1wBLMDF8RL8E+XDY
+	 R1G0tu6Ars4Ow==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uWMQc-00000003QX5-2ulK;
+	id 1uWMQc-00000003QX9-31Yn;
 	Mon, 30 Jun 2025 23:52:42 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -52,9 +52,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	"Sai Vishnu M" <saivishnu725@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 13/15] scripts: sphinx-pre-install.py: cleanup rhel support
-Date: Mon, 30 Jun 2025 23:35:01 +0200
-Message-ID: <c5bffc12e48dd902c9e1b4ee9aa272fc55d8f9aa.1751318230.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 14/15] docs: Makefile: switch to the new scripts/sphinx-pre-install.py
+Date: Mon, 30 Jun 2025 23:35:02 +0200
+Message-ID: <2528a42b09a5bc955ff506dc91500d268bcf7eca.1751318230.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1751318230.git.mchehab+huawei@kernel.org>
 References: <cover.1751318230.git.mchehab+huawei@kernel.org>
@@ -67,58 +67,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Rhel < 8.0 is not supported anymore. Drop support for it.
-
-Rhel 8 is problematic: at least on the tests I did with a
-docker repo, it didn't work, but it could be due to the issue
-that it is actually different than a real One.
+Now that we have a better, improved Python script, use it when
+checking for documentation build dependencies.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ Documentation/Makefile                             | 14 +++++++-------
+ .../{sphinx-pre-install.py => sphinx-pre-install}  |  0
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+ rename scripts/{sphinx-pre-install.py => sphinx-pre-install} (100%)
 
-diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index a941eae17a9e..50413b7d2f2c 100755
---- a/scripts/sphinx-pre-install.py
-+++ b/scripts/sphinx-pre-install.py
-@@ -487,15 +487,31 @@ class SphinxDependencyChecker:
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index c486fe3cc5e1..b98477df5ddf 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -46,7 +46,7 @@ ifeq ($(HAVE_SPHINX),0)
+ .DEFAULT:
+ 	$(warning The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed and in PATH, or set the SPHINXBUILD make variable to point to the full path of the '$(SPHINXBUILD)' executable.)
+ 	@echo
+-	@$(srctree)/scripts/sphinx-pre-install.pl
++	@$(srctree)/scripts/sphinx-pre-install
+ 	@echo "  SKIP    Sphinx $@ target."
  
-             progs["virtualenv"] = "python-virtualenv"
+ else # HAVE_SPHINX
+@@ -121,7 +121,7 @@ $(YNL_RST_DIR)/%.rst: $(YNL_YAML_DIR)/%.yaml $(YNL_TOOL)
+ htmldocs texinfodocs latexdocs epubdocs xmldocs: $(YNL_INDEX)
  
--            if rel and rel < 8:
-+            if not rel or rel < 8:
-                 old = 1
-                 self.pdf = False
+ htmldocs:
+-	@$(srctree)/scripts/sphinx-pre-install.pl --version-check
++	@$(srctree)/scripts/sphinx-pre-install --version-check
+ 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,html,$(var),,$(var)))
  
--                # RHEL 7 is in ELS, currently up to Jun, 2026
-+                print("ERROR: Distro not supported. Too old?")
-+                return
-+
-+            # TODO: check if RHEL8 still works.
-+            # On my tests with  docker "redhat/ubi8" image, there's no
-+            # python3-sphinx (or similar) package. It comes with Python 3.6,
-+            # but there are other python packages over there, so it may be
-+            # possible to work with venv.
-+
-+            if self.first_hint:
-+                print("Note: RHEL-based distros typically require extra repositories.\n" \
-+                      "For most, enabling epel and crb are enough:\n" \
-+                      "\tsudo dnf install -y epel-release", \
-+                      "\tsudo dnf config-manager --set-enabled crb\n" \
-+                      "Yet, some may have other required repositories. Those commands could be useful:" \
-+                      "\tsudo dnf repolist all" \
-+                      "\tsudo repoquery --available --info <pkgs>",
-+                      "\tsudo dnf config-manager --set-enabled '*' # enable all - probably not what you want")
-+
-+                self.first_hint = False
+ # If Rust support is available and .config exists, add rustdoc generated contents.
+@@ -135,7 +135,7 @@ endif
+ endif
  
--                print("Note: texlive packages on RHEL/CENTOS <= 7 are incomplete. Can't support PDF output")
--                print("If you want to build PDF, please read:")
--                print("\thttps://www.systutorials.com/241660/how-to-install-tex-live-on-centos-7-linux/")
+ texinfodocs:
+-	@$(srctree)/scripts/sphinx-pre-install.pl --version-check
++	@$(srctree)/scripts/sphinx-pre-install --version-check
+ 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,texinfo,$(var),texinfo,$(var)))
  
-         if self.pdf:
-             pdf_pkgs = [
+ # Note: the 'info' Make target is generated by sphinx itself when
+@@ -147,7 +147,7 @@ linkcheckdocs:
+ 	@$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,linkcheck,$(var),,$(var)))
+ 
+ latexdocs:
+-	@$(srctree)/scripts/sphinx-pre-install.pl --version-check
++	@$(srctree)/scripts/sphinx-pre-install --version-check
+ 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,latex,$(var),latex,$(var)))
+ 
+ ifeq ($(HAVE_PDFLATEX),0)
+@@ -160,7 +160,7 @@ else # HAVE_PDFLATEX
+ 
+ pdfdocs: DENY_VF = XDG_CONFIG_HOME=$(FONTS_CONF_DENY_VF)
+ pdfdocs: latexdocs
+-	@$(srctree)/scripts/sphinx-pre-install.pl --version-check
++	@$(srctree)/scripts/sphinx-pre-install --version-check
+ 	$(foreach var,$(SPHINXDIRS), \
+ 	   $(MAKE) PDFLATEX="$(PDFLATEX)" LATEXOPTS="$(LATEXOPTS)" $(DENY_VF) -C $(BUILDDIR)/$(var)/latex || sh $(srctree)/scripts/check-variable-fonts.sh || exit; \
+ 	   mkdir -p $(BUILDDIR)/$(var)/pdf; \
+@@ -170,11 +170,11 @@ pdfdocs: latexdocs
+ endif # HAVE_PDFLATEX
+ 
+ epubdocs:
+-	@$(srctree)/scripts/sphinx-pre-install.pl --version-check
++	@$(srctree)/scripts/sphinx-pre-install --version-check
+ 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,epub,$(var),epub,$(var)))
+ 
+ xmldocs:
+-	@$(srctree)/scripts/sphinx-pre-install.pl --version-check
++	@$(srctree)/scripts/sphinx-pre-install --version-check
+ 	@+$(foreach var,$(SPHINXDIRS),$(call loop_cmd,sphinx,xml,$(var),xml,$(var)))
+ 
+ endif # HAVE_SPHINX
+diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install
+similarity index 100%
+rename from scripts/sphinx-pre-install.py
+rename to scripts/sphinx-pre-install
 -- 
 2.50.0
 
