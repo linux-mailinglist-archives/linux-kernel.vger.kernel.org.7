@@ -1,202 +1,88 @@
-Return-Path: <linux-kernel+bounces-709493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9418EAEDE85
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794E8AEDE92
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ADBE7ABE45
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E101881918
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97FD28C029;
-	Mon, 30 Jun 2025 13:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D27A28CF6D;
+	Mon, 30 Jun 2025 13:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pBg5XVT8"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iaDX5f4i"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9DA28B7D4;
-	Mon, 30 Jun 2025 13:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AF1283FCE;
+	Mon, 30 Jun 2025 13:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751289001; cv=none; b=qDqhQ7sUQHXyxKGxJY667Nc0opZKsArXhFLvlnuEOfd+ih/REY+5XHxXg/S32kdxez1AbnSFRZcKyMK3TQmWLsS0MMfGsAnUxlT0Kzj60QkEntmcSU1AYSWfzIGyleTVohgMzSKrXMEnM4kpF5VaMacpf+ceZgyNpBOK64TD0f8=
+	t=1751288858; cv=none; b=s4/lJckJm0DqxVqSIof8L/gXFdBmSz+gfkyCwECtoG1pAnxpk7QCeUNZSOmmykzC3OPOpbEyIjikSDmaXT3maU2lcC41yHmMw/HdZxi/C5jRGHUqqHuAofvzePc/2wly7tOyEugdmclNR+SzWYNYvQIbUMdoQHf2YLSot41PNZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751289001; c=relaxed/simple;
-	bh=HyPlXMrc9xrAdA7GVaJ7JofLJq3ayXCcPOeFElNxizs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y38W7StLJumZ0kMuhJZ0MrJMVZYDpFgcVOH91cjfhLtNwbaPqIu9y7GMRLBdHaYdgVhVn9RCfBblt34ySxs8WVU1qo/Br9UwTgZu3TeV4PJLUrqIaiNZ+AdL73NJdvLc5Qx3OxJ7yO/Jg5q+AApMGSvs6dLygIP5O76mG3ydk28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pBg5XVT8; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UBlus3021366;
-	Mon, 30 Jun 2025 15:09:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	s6SnTj7TQmM6IV7OH8vHiU8wCQ741Ir076aqyio17M0=; b=pBg5XVT8Yg+YHR19
-	hSMKT4IhjJyppJ/mHjK699QA1oMWSFbCESVoG39WjiLB4ou3GCGBkQ0ICIUT33BH
-	BDDNh622ioVsXNwqrH+no+HJDTdyoHoMxVDSQ+PUcyYg66tIkzTLpP4yjoB8kcwX
-	MWjj+SATjcY0SCtMAqZAsMHRJG5mSlW5G302JRVljZ5EkPfyEWcSJXlk9XeYYni2
-	9U62A0DtoY9YYSKILLetlmYf7g4uD2d2Rad9VzI1FsxmwVb6LTW/dS+eCESicZ+d
-	F0xix/SV8A5wQ5+Uu5WHBYhLYRNVJFZW1KljFhcCxVJZXaPUZ/QJcr0kvzqUAx+B
-	dYiAhA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j7r5yt8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 15:09:37 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DBE5A4004B;
-	Mon, 30 Jun 2025 15:08:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 48160B4CBCE;
-	Mon, 30 Jun 2025 15:07:22 +0200 (CEST)
-Received: from [10.252.14.13] (10.252.14.13) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 15:07:21 +0200
-Message-ID: <74981e35-1d0f-4649-bb10-2b54e4db5e47@foss.st.com>
-Date: Mon, 30 Jun 2025 15:07:20 +0200
+	s=arc-20240116; t=1751288858; c=relaxed/simple;
+	bh=m8VBM58aGaU+6xvtNkMoQZt0IjZAuRYz5bs6w7J+ct4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHMq1ExCMGIKP3YXLgq8GzCoPcDEYS57b8HwKESdpQm3B82CV0XRRFkreH6d1lVul9vK3hSHMNXNVR6lY5rBiC1d9Gb9doAb54gIy5ueQvbvEu4xQCGUtENqIZ8U1SUUkOkYQLmhlmqvKvcQ+V6Ruw6H1GZgalJgkvAj/Eg5Tas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iaDX5f4i; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sEov6JC4NDe7+ZoMd7zO649rqboiBPEO080p+eAfOKE=; b=iaDX5f4iU1f+Jp4v5eQtNdEbnT
+	DkDuvqOYchSii9OESk6khJ2SXw9i8/TPsEvZ0kOhf0hWA/AHFNq5a7EwXfJN8GGuw5uOdZNN/WRGY
+	Vm7JJkKhR/8XwRO3AyOZW4U9gN7788qJyxZQ5zM8yxeSxxi5s92FZ/WSlJ8d38wyjjHtdF0nioO7B
+	leM+/rvhBJlfeI1hnrstWwmvbmQMuG3Kom1fByfjbwt4BlVEkdJNbyEZhBAnGgqBIEQX/2pT4NbYc
+	N2yvGOnRuqsc8UL9cZG/7FoMUK9rZf76PPSOKp27LHsPryWIcatYv7QfNunTlNsxFqTPn/1FPJygq
+	UL03Ly6g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uWEEQ-00000006mJ5-0PZ8;
+	Mon, 30 Jun 2025 13:07:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F2006300158; Mon, 30 Jun 2025 15:07:32 +0200 (CEST)
+Date: Mon, 30 Jun 2025 15:07:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH v3 1/1] local_lock: Move this_cpu_ptr() notation from
+ internal to main header.
+Message-ID: <20250630130732.GK1613376@noisy.programming.kicks-ass.net>
+References: <20250630075138.3448715-1-bigeasy@linutronix.de>
+ <20250630075138.3448715-2-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
-        "Alain
- Volmat" <alain.volmat@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        "Maxime Coquelin" <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "M'boumba Cedric
- Madianga" <cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>
-References: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
- <20250630-i2c-upstream-v3-3-7a23ab26683a@foss.st.com>
-Content-Language: en-US
-From: Pierre Yves MORDRET <pierre-yves.mordret@foss.st.com>
-In-Reply-To: <20250630-i2c-upstream-v3-3-7a23ab26683a@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630075138.3448715-2-bigeasy@linutronix.de>
 
-Hi Clement,
-
-On 6/30/25 14:55, Clément Le Goffic wrote:
-> Use the i2c-core-base APIs to allocate a DMA safe buffer when needed.
+On Mon, Jun 30, 2025 at 09:51:38AM +0200, Sebastian Andrzej Siewior wrote:
+> The local_lock.h is the main entry for the local_lock_t type and
+> provides wrappers around internal functions prefixed with __ in
+> local_lock_internal.h.
 > 
-> Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  drivers/i2c/busses/i2c-stm32f7.c | 36 +++++++++++++++++++++++++-----------
->  1 file changed, 25 insertions(+), 11 deletions(-)
+> Move the this_cpu_ptr() dereference of the variable from the internal to
+> the main header. Since it is all macro implemented, this_cpu_ptr() will
+> still happen within the preempt/ IRQ disabled section.
+> This will free the internal implementation (__) to be used on
+> local_lock_t types which are local variables and must not be accessed
+> via this_cpu_ptr().
 > 
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index 042386b4cabe..d06f0efdece3 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -742,9 +742,12 @@ static void stm32f7_i2c_dma_callback(void *arg)
->  	struct stm32f7_i2c_dev *i2c_dev = (struct stm32f7_i2c_dev *)arg;
->  	struct stm32_i2c_dma *dma = i2c_dev->dma;
->  	struct device *dev = dma->chan_using->device->dev;
-> +	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
->  
->  	stm32f7_i2c_disable_dma_req(i2c_dev);
->  	dma_unmap_single(dev, dma->dma_buf, dma->dma_len, dma->dma_data_dir);
-> +	if (!f7_msg->smbus)
-> +		i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, true);
->  	complete(&dma->dma_complete);
->  }
->  
-> @@ -880,6 +883,7 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
->  {
->  	struct stm32f7_i2c_msg *f7_msg = &i2c_dev->f7_msg;
->  	void __iomem *base = i2c_dev->base;
-> +	u8 *dma_buf;
->  	u32 cr1, cr2;
->  	int ret;
->  
-> @@ -929,17 +933,23 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
->  
->  	/* Configure DMA or enable RX/TX interrupt */
->  	i2c_dev->use_dma = false;
-> -	if (i2c_dev->dma && f7_msg->count >= STM32F7_I2C_DMA_LEN_MIN
-> -	    && !i2c_dev->atomic) {
-> -		ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
-> -					      msg->flags & I2C_M_RD,
-> -					      f7_msg->count, f7_msg->buf,
-> -					      stm32f7_i2c_dma_callback,
-> -					      i2c_dev);
-> -		if (!ret)
-> -			i2c_dev->use_dma = true;
-> -		else
-> -			dev_warn(i2c_dev->dev, "can't use DMA\n");
-> +	if (i2c_dev->dma && !i2c_dev->atomic) {
-> +		dma_buf = i2c_get_dma_safe_msg_buf(msg, STM32F7_I2C_DMA_LEN_MIN);
-> +		if (dma_buf) {
-> +			f7_msg->buf = dma_buf;
-> +			ret = stm32_i2c_prep_dma_xfer(i2c_dev->dev, i2c_dev->dma,
-> +						      msg->flags & I2C_M_RD,
-> +						      f7_msg->count, f7_msg->buf,
-> +						      stm32f7_i2c_dma_callback,
-> +						      i2c_dev);
-> +			if (ret) {
-> +				dev_warn(i2c_dev->dev, "can't use DMA\n");
-> +				i2c_put_dma_safe_msg_buf(f7_msg->buf, msg, false);
-> +				f7_msg->buf = msg->buf;
-> +			} else {
-> +				i2c_dev->use_dma = true;
-> +			}
-> +		}
->  	}
->  
->  	if (!i2c_dev->use_dma) {
-> @@ -1626,6 +1636,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  			dmaengine_terminate_async(dma->chan_using);
->  			dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
->  					 dma->dma_data_dir);
-> +			if (!f7_msg->smbus)
-> +				i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, false);
->  		}
->  		f7_msg->result = -ENXIO;
->  	}
-> @@ -1648,6 +1660,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  				dmaengine_terminate_async(dma->chan_using);
->  				dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
->  						 dma->dma_data_dir);
-> +				if (!f7_msg->smbus)
-> +					i2c_put_dma_safe_msg_buf(f7_msg->buf, i2c_dev->msg, false);
->  				f7_msg->result = -ETIMEDOUT;
->  			}
->  		}
-> 
+> Acked-by: Waiman Long <longman@redhat.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Thx for this V3 submission
-
-Reviewed-by: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>
-
-Regards
-
--- 
---
-~ Py MORDRET
---
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
