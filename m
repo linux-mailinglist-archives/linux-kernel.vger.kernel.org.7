@@ -1,84 +1,131 @@
-Return-Path: <linux-kernel+bounces-709880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D75AEE416
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:17:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C863CAEE427
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AE2441C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFEFD188A5C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295882E54AB;
-	Mon, 30 Jun 2025 16:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363722E54DA;
+	Mon, 30 Jun 2025 16:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gN1yM8vi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/+OnS8d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7E02E5421;
-	Mon, 30 Jun 2025 16:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98929117A;
+	Mon, 30 Jun 2025 16:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751299773; cv=none; b=T7GMFy6fm+6ppFv0CnFBFHx0waUo6ZwMfNJtThsGZbJ1DEL/40DcAh9uUb2Y3zN9SH3PWRVLtMeRD2nhDDYiCDrlDVqD6CJoX0Du+0vS7NGSVlOQukUUM3uxd5YVrbKcecHQrkdONQDcvv3j0S2EbhE3aZO1wX47qUJ9iufiEAg=
+	t=1751299786; cv=none; b=p+vbk4H0es7VFKAbRslYotkpYCiIzTXBjBnWQC2EFNKOGg+3TKsWoTbF70uCUaoTa7vwA0Vq/UvcsryzNC9X6zHl32D4IQxTMpUdvaHPGWKdytoG2XuLDRCHO2L2r18zIHDisngTC5qsuOx5RnO7gR/DV1kI26oaxVbfWa9HGls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751299773; c=relaxed/simple;
-	bh=SE9eZEcNzQCiD5gbUHyqcf5TMYGHEfi7eExeFYrl3q8=;
+	s=arc-20240116; t=1751299786; c=relaxed/simple;
+	bh=s43vrdBkB//7/xBOt9UWghrfxrjsGXZHPE7NijbiwcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcJ302VNnH6GWuHo/DucHbBoJY7qrjoP1tNcjO0xq1CcihHyZPrXbR1weij49vWxF0VPJR9dfLRWXAr2NEtW7NvoJoKV5uPGW/gk1qVXbDLIABcpv5msnXjEghyjs4Q5lVJazI+kpqMieN5lCAebevgnDTcDSSHS4CN+MHTEjZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gN1yM8vi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B2DC4CEEF;
-	Mon, 30 Jun 2025 16:09:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oe9tTozTUs3os4OjgfA1dScwUWDeGYuoShv/fvG/5DBhqNagML3p0p8GzKDW2tRG4ukr8i8tUuarxVlBhAEp3OxFVpNwvBUWWuRwew+13KBT7UwRXf3GOvNxoOCeIXrI5DCy4zq1qYwa3AWPDczi0Ed+TYkJugLjNmk1fOSshC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/+OnS8d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1124FC4CEE3;
+	Mon, 30 Jun 2025 16:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751299773;
-	bh=SE9eZEcNzQCiD5gbUHyqcf5TMYGHEfi7eExeFYrl3q8=;
+	s=k20201202; t=1751299786;
+	bh=s43vrdBkB//7/xBOt9UWghrfxrjsGXZHPE7NijbiwcQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gN1yM8vicWiVSnh1wR0wbQoEyKIuI93qMK24J+yJv6ntdqyqiinjKIM5jTV1Q70e/
-	 u9xGDcMJVcW4RbVFG5CC7vRSPTTt53amdKkwhUpyrhQzdKNkURyYYtAvWQGJsJsCmd
-	 BiQmRMgQf5Oe9vTTpUitWmhFGpowjvfpSnZLr0ullQCrnrBq/75TOu3sj0VK5oyrB0
-	 fr5YNqfdYyJ1x000eVZK1SRWTTX7RfpgX/I0hekwpi/OREUXD7wWTBINGtyhq4dwOv
-	 R30hINjQKSAGIrJOTtbOsdGT+TZSm1CNRniqdKX6j9INBoZlFYKPY4LR8MgwmfZosw
-	 o3n1oxrIP7+fA==
-Date: Mon, 30 Jun 2025 17:09:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andrea Mayer <andrea.mayer@uniroma2.it>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Stefano Salsano <stefano.salsano@uniroma2.it>,
-	Paolo Lungaroni <paolo.lungaroni@uniroma2.it>
-Subject: Re: [PATCH net-next 2/2] selftests: seg6: fix instaces typo in
- comments
-Message-ID: <20250630160927.GI41770@horms.kernel.org>
-References: <20250629171226.4988-1-andrea.mayer@uniroma2.it>
- <20250629171226.4988-3-andrea.mayer@uniroma2.it>
+	b=B/+OnS8dtPRKXQrplTbUDQmYHFCFp06TE+Zaq5dWdEQeCdRzIyvlBTYzBY44kfy9X
+	 Gt0pWgS4K2fYJpZ5T8aQuxdqafsrINv4/HTxaZ/Try75t8K5cWi4f8cXCOvyZgHhkt
+	 EQAOwb7OJ28rc6utillI3Vs5dopoI/wL8R/9oNkTqGh0HYlYpBzmc50dLevdIHTVaO
+	 D/meXKCWm1GcLxH6HHRyt6QQnTunsatY2WbQ3+ZB2EDq08OK/u3C3lVuPARAmbTF+R
+	 uTEfK9Ciaq5nx7qnxOO5SP8RHovBcKuD/W1F3g5daHj0YF5y1kQJFX84ykNGOb/XKt
+	 E1zt48XIX8kDg==
+Date: Mon, 30 Jun 2025 09:09:41 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	acme@kernel.org, agordeev@linux.ibm.com, gor@linux.ibm.com,
+	sumanthk@linux.ibm.com, hca@linux.ibm.com, japo@linux.ibm.com
+Subject: Re: [PATCH] perf test: perf header test fails on s390
+Message-ID: <aGK2xQNQOd1WoDVk@google.com>
+References: <20250630091613.3061664-1-tmricht@linux.ibm.com>
+ <CAP-5=fWGiitgromQRTxEsU3cY99gFAU6WPLnmiS7-Q8vQNGbYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250629171226.4988-3-andrea.mayer@uniroma2.it>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWGiitgromQRTxEsU3cY99gFAU6WPLnmiS7-Q8vQNGbYw@mail.gmail.com>
 
-On Sun, Jun 29, 2025 at 07:12:26PM +0200, Andrea Mayer wrote:
-> Fix a typo:
->   instaces -> instances
+On Mon, Jun 30, 2025 at 08:42:01AM -0700, Ian Rogers wrote:
+> On Mon, Jun 30, 2025 at 2:16 AM Thomas Richter <tmricht@linux.ibm.com> wrote:
+> >
+> > commit 2d584688643fa ("perf test: Add header shell test")
+> > introduced a new test case for perf header. It fails on s390
+> > because call graph option -g is not supported on s390.
+> > Also the option --call-graph dwarf is only supported for
+> > the event cpu-clock.
+> >
+> > Remove this option and the test succeeds.
+> >
+> > Output after:
+> >  # ./perf test 76
+> >  76: perf header tests                           : Ok
+> >
+> > Fixes: 2d584688643fa ("perf test: Add header shell test")
+> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+> > Cc: Ian Rogers <irogers@google.com>
 > 
-> The typo has been identified using codespell, and the tool does not
-> report any additional issues in the selftests considered.
+> Thanks Thomas! Given the s390 restriction to require dwarf, should we
+> switch the default "-g" meaning on s390 to mean use dwarf? James Clark
+> proposed this previously. It doesn't affect the change here so:
 > 
-> Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+
+Unrelated but I found this test is failing on my machine.
+
+  $ ./perf test -v header
+  --- start ---
+  test child forked, pid 42799
+  Test perf header file
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.182 MB /tmp/__perf_test_header.perf.data.vvFUf (4114 samples) ]
+  Test perf header file [Done]
+  Test perf header pipe
+  Failed to find expect hostname in output
+  Failed to find expect os release in output
+  Failed to find expect arch in output
+  Failed to find expect cpuid in output
+  Failed to find expect nrcpus in output
+  Failed to find expect event in output
+  Failed to find expect cmdline in output
+  Failed to find expect perf version in output
+  Failed to find expect sibling (cores|dies|threads) in output
+  Failed to find expect sibling threads in output
+  Failed to find expect total memory in output
+  Test perf header pipe [Done]
+  ---- end(-1) ----
+   83: perf header tests                                               : FAILED!
+  
+The pipe mode doesn't have the headers.
+
+  $ ./perf record -o- -g -- ./perf test -w noploop | ./perf report -i- -I --header-only
+  # ========
+  # captured on    : Mon Jun 30 09:02:09 2025
+  # header version : 1
+  # data offset    : 0
+  # data size      : 0
+  # feat offset    : 0
+  # ========
+  #
 
 Thanks,
+Namhyung
 
-With this patch in place I see that codespell only flags
-false-positives for tools/testing/selftests/net/srv6_*
-
-Reviewed-by: Simon Horman <horms@kernel.org>
 
