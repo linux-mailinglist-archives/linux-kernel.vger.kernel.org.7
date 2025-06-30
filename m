@@ -1,75 +1,83 @@
-Return-Path: <linux-kernel+bounces-709165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FB4AEDA06
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:40:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B318AED9D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 542E31887A45
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF4E27A4398
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C5924A044;
-	Mon, 30 Jun 2025 10:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106E3246788;
+	Mon, 30 Jun 2025 10:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="HVFwtCGJ"
-Received: from jpms-ob01-os7.noc.sony.co.jp (jpms-ob01-os7.noc.sony.co.jp [211.125.139.71])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dvyzNDwT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8761D6AA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA32248F42;
+	Mon, 30 Jun 2025 10:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751280007; cv=none; b=UacHPcXwzYQTJaT2eJoEK/BqyqHH2Gf6PhPeDVupVRkXiYc8vrPj4tkxsVTFeYovPoBxHdPuFYp1NLfFJd1lAB5vKsj4l4OIE/0NJzp4lRiU5EHSajvFZ9+PtuRsx26JASHlIpZ56gPnFL9F9C03b9SYXr0ZwOIuwCVxV+UClKA=
+	t=1751279402; cv=none; b=BVKsHPuoqTWrTFoU36rPNXmNcQZap5jhbPv0lpFHoY3V0Pp/sE7DTECofYF22pUEh5ZrfDyZGILocI3i4CZgXgSFSyAtVKBIuzquW/rPWYjHjLuAERPB7jnBEOmBfbjaTprmrBiyNvvULp+fnd0mE2O22hRx1/BVbmlDOIfyzsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751280007; c=relaxed/simple;
-	bh=BoduCq/Gvf3oL+PCY3BKYpk4CBuUkJoN/jD6A9E/eY0=;
+	s=arc-20240116; t=1751279402; c=relaxed/simple;
+	bh=jAN144/a/Vxcpv+1HYhL0sUxs0gT2akYTGdKswj8FMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDBCLyHNkNKmv3I6RMLEEQ+rQcdwYKYvgvxdSqUsS7iwejvATpLemiT79CFgiAjsBTQdITMGyQN5QuoR1bj3reoEaOpHwSjrjAW2IZ39HdLUhPT5dTeOpWutgkzX4+jEuQJFS/VaXTFFXRZL+87eGixN/rCMpFDeMcQiejoXnwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=HVFwtCGJ; arc=none smtp.client-ip=211.125.139.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1751280005; x=1782816005;
+	 Content-Type:Content-Disposition:In-Reply-To; b=QagoypkZlL8uzVA4JhaCIxT4XSC86+po1IinnZLl80pUO+pzDbClC8AU9nIjVKhz/3C6bsle0eNyzOA3NqY6wqWYa8B1Wbtjd+z3dHLxMwtPgqJOmG3zVXrpn+nltdY6NIf+/tdFLrV+xXkPSK3NNSrD5EIADUZWlOpa+W8cTgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dvyzNDwT; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751279401; x=1782815401;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=u4+i+fCG0zXOAmrMwSL4XzdeT83nVSjToGPcdOCxeS8=;
-  b=HVFwtCGJtSl5L1iWAsb4SbOSNeEGJCUOfe1mi+F5d3N5vAHWOfAKmkdl
-   QKgXQX1FrAJw9QHtm6oqlnWZGV2/UYntmBsN7rwoPTIOayHTp6kOgbz1J
-   7L+Cqhrot6dPeUMDlCeR2FeEhLL9jFFzZ62F59xABAtWJ4t3H8r0zB1Qu
-   XrJzEcfyPS9X1XH5KNXqlV+0mpADJsGqie0P0r5Q/HHyZEZXirvOd/xt2
-   D2qnVjq4DoDvorEFW+opB+nXx+oRDQmaJAJywfTFyko7qzRQid7z0w3bi
-   /20RTrFEhvB+nQL4IdXRh0Y4Ol8+9QW7TqIwUxN+r7fQTeNwfBlVZYAqT
-   g==;
-Received: from unknown (HELO jpmta-ob01-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::6])
-  by jpms-ob01-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 19:29:55 +0900
-X-IronPort-AV: E=Sophos;i="6.16,277,1744038000"; 
-   d="scan'208";a="2171375"
-Received: from unknown (HELO JPC00244420) ([IPv6:2001:cf8:1:573:0:dddd:eb3e:119e])
-  by jpmta-ob01-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 19:29:55 +0900
-Date: Mon, 30 Jun 2025 19:29:51 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
-	Sia Jee Heng <jeeheng.sia@starfivetech.com>,
-	James Morse <james.morse@arm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rahul Bukte <rahul.bukte@sony.com>,
-	Daniel Palmer <daniel.palmer@sony.com>,
-	Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [RFC PATCH] kernel/cpu: in freeze_secondary_cpus() ensure
- primary cpu is of domain type
-Message-ID: <aGJnH0Ka2Y0koGAX@JPC00244420>
-References: <20250630082103.829352-1-shashank.mahadasyam@sony.com>
- <20250630084808.GH1613376@noisy.programming.kicks-ass.net>
+  bh=jAN144/a/Vxcpv+1HYhL0sUxs0gT2akYTGdKswj8FMM=;
+  b=dvyzNDwTxLwjVQY8WlDnuqSVz2FFWrAmYrIEkEQsLlTnZNfukBsTsAR0
+   y1U6VPbgHmU9jvFQ4h1rvWG0Kr1+I1CgQ0QTnzCo8LgxzJ7IadFL57JBa
+   p2HwcN1ActhBOi6ABhISwP09j7hP6Wg7Wfu/gK1NJvbWLxNI2VR6W9/Ji
+   plHAvjbzIYJgT9DPCSBLKahJh5z7nDKiP5/9Fcy3so8tGnLVt5E4Fjtgv
+   OHYM5tPXpZLT53QvPujwqiMFaLoyrdCb/5l2MzOOix472yVKqJMwc/wac
+   DadOFT2pYO+ZIa5618BkGzAR4CzkFeWDoAOei3l2YbttHU07ehqX/B4JR
+   w==;
+X-CSE-ConnectionGUID: WOnwVUtERD+MC/XGUNySDg==
+X-CSE-MsgGUID: gEx9KJO2SeCRZIG+F+yZrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="78940253"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="78940253"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:30:00 -0700
+X-CSE-ConnectionGUID: QedmlS3nQyiLOtoXpr4K4g==
+X-CSE-MsgGUID: SKryV/GeRbSGlARSMjG5AA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="153050524"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:29:58 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWBlr-0000000BHCn-0Ruu;
+	Mon, 30 Jun 2025 13:29:55 +0300
+Date: Mon, 30 Jun 2025 13:29:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v18] pwm: airoha: Add support for EN7581 SoC
+Message-ID: <aGJnItQ3hjQ80rlz@smile.fi.intel.com>
+References: <20250626224805.9034-1-ansuelsmth@gmail.com>
+ <aF5dHDr8yDSKlp5j@smile.fi.intel.com>
+ <685e6544.5d0a0220.20cf55.9440@mx.google.com>
+ <aF5xrHkTr8Tb71ZH@smile.fi.intel.com>
+ <685e73cf.df0a0220.214b10.9998@mx.google.com>
+ <aF544lt-9YJq8r0y@smile.fi.intel.com>
+ <686264ac.df0a0220.feace.3044@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,170 +86,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250630084808.GH1613376@noisy.programming.kicks-ass.net>
+In-Reply-To: <686264ac.df0a0220.feace.3044@mx.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Peter,
+On Mon, Jun 30, 2025 at 12:19:22PM +0200, Christian Marangi wrote:
+> On Fri, Jun 27, 2025 at 01:56:34PM +0300, Andy Shevchenko wrote:
+> > On Fri, Jun 27, 2025 at 12:34:49PM +0200, Christian Marangi wrote:
+> > > On Fri, Jun 27, 2025 at 01:25:48PM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Jun 27, 2025 at 11:32:46AM +0200, Christian Marangi wrote:
+> > > > > On Fri, Jun 27, 2025 at 11:58:04AM +0300, Andy Shevchenko wrote:
+> > > > > > On Fri, Jun 27, 2025 at 12:47:53AM +0200, Christian Marangi wrote:
 
-On Mon, Jun 30, 2025 at 10:48:08AM +0200, Peter Zijlstra wrote:
-> > diff --git a/kernel/cpu.c b/kernel/cpu.c
-> > index a59e009e0be4..d9167b0559a5 100644
-> > --- a/kernel/cpu.c
-> > +++ b/kernel/cpu.c
-> > @@ -1902,12 +1902,28 @@ int freeze_secondary_cpus(int primary)
-> >  
-> >  	cpu_maps_update_begin();
-> >  	if (primary == -1) {
-> > -		primary = cpumask_first(cpu_online_mask);
-> > -		if (!housekeeping_cpu(primary, HK_TYPE_TIMER))
-> > -			primary = housekeeping_any_cpu(HK_TYPE_TIMER);
-> > +		primary = cpumask_first_and_and(cpu_online_mask,
-> > +								housekeeping_cpumask(HK_TYPE_TIMER),
-> > +								housekeeping_cpumask(HK_TYPE_DOMAIN));
+...
+
+> > > > > > > +	/* Global mutex to protect bucket used refcount_t */
+> > > > > > > +	struct mutex mutex;
+> > > > > > 
+> > > > > > This makes a little sense. Either you use refcount_t (which is atomic) or
+> > > > > > use mutex + regular variable.
+> > > > > 
+> > > > > Using a regular variable I lose all the benefits of refcount_t with
+> > > > > underflow and other checks.
+> > > > 
+> > > > Then drop the mutex, atomic operations do not need an additional
+> > > > synchronisation. Btw, have you looked at kref APIs? Maybe that
+> > > > would make the intention clearer?
+> > > 
+> > > It's needed for
+> > > 
+> > > +       mutex_lock(&pc->mutex);
+> > > +       if (refcount_read(&pc->buckets[bucket].used) == 0) {
+> > > +               config_bucket = true;
+> > > +               refcount_set(&pc->buckets[bucket].used, 1);
+> > > +       } else {
+> > > +               refcount_inc(&pc->buckets[bucket].used);
+> > > +       }
+> > > +       mutex_unlock(&pc->mutex);
+> > > 
+> > > the refcount_read + refcount_set.
+> > 
+> > Which is simply wrong. Nobody should use atomics in such a way.
+> > Imagine if somebody wants to copy something like this in their
+> > code (in case of no mutex is there), they most likely won't notice
+> > this subtle bug.
+> >
 > 
-> That's terrible indenting, please align after the opening bracket like:
+> Yes I understand that someone might think the additional mutex can be
+> ""optional""
 > 
-> 		primary = cpumask_first_and_and(cpu_online_mask,
-> 						housekeeping_cpumask(HK_TYPE_TIMER),
-> 						housekeeping_cpumask(HK_TYPE_DOMAIN));
+> > > As you explained there might be case where refcount_read is zero but nother
+> > > PWM channel is setting the value so one refcount gets lost.
+> > 
+> > Right, because you should use refcount_inc_and_test() and initialise it
+> > to -MAX instead of 0. Or something like this.
 > 
-> Also, IIRC HK_TYPE_HRTIMER is deprecated and should be something like
-> HK_TYPE_NOISE or somesuch. Frederic?
->     <snip>
-> > +			primary = cpumask_first_and(cpu_online_mask,
-> > +								housekeeping_cpumask(HK_TYPE_DOMAIN));
+> Mhhh I think API for _inc_and_test doesn't currently exist and I don't
+> feel too confident implementing them currently.
+
+Ther is refcount_inc_not_zero(), but the main point here that refcount_t seems
+not fit the case. It doesn't work with negative values, and 0 is special.
+
+> > > kref I checked but not useful for the task.
+> > 
+> > Okay.
+> > 
+> > > The logic here is
+> > > 
+> > > - refcount init as 0 (bucket unused)
+> > > - refcount set to 1 on first bucket use (bucket get configured)
+> > > - refcount increased if already used
+> > > - refcount decreased when PWM channel released
+> > > - bucket gets flagged as unused when refcount goes to 0 again
 > 
-> Indenting again.
+> Do you think I should bite the bullet and just drop using refcount and
+> implement a simple int variable protected by a mutex?
 
-Sorry about the indentation. I've now set my editor to use 8-space tabs.
-I'll have it fixed in the next version of the patch.
+Yes.
 
-HK_TYPE_KERNEL_NOISE was added by commit 6010d245ddc9f463bbf0
-(sched/isolation: Consolidate housekeeping cpumasks that are always identical).
-I'll replace HK_TYPE_TIMER with HK_TYPE_KERNEL_NOISE in the next
-version.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
-> > +			if (primary >= nr_cpu_ids) {
-> > +				error = -ENODEV;
-> > +				pr_err("No suitable primary CPU found. Ensure at least one non-isolated CPU is online\n");
-> > +				goto abort;
-> > +			}
-> > +		} else if (!housekeeping_cpu(primary, HK_TYPE_DOMAIN)) {
-> > +			error = -ENODEV;
-> > +			pr_err("Primary CPU %d should not be isolated\n", primary);
-> > +			goto abort;
-> > +		}
-> >  	}
-> >  
-> >  	/*
-> > @@ -1943,6 +1959,7 @@ int freeze_secondary_cpus(int primary)
-> >  	else
-> >  		pr_err("Non-boot CPUs are not disabled\n");
-> >  
-> > +abort:
-> >  	/*
-> >  	 * Make sure the CPUs won't be enabled by someone else. We need to do
-> >  	 * this even in case of failure as all freeze_secondary_cpus() users are
-> 
-> 
-> Also; doesn't the above boil down to something like:
-> 
-> 	if (primary == -1) {
-> 		primary = cpumask_first_and_and(cpu_online_mask,
-> 						housekeeping_cpumask(HK_TYPE_TIMER),
-> 						housekeeping_cpumask(HK_TYPE_DOMAIN));
-> 	} if (!cpu_online(primary)) {
-> 		primary = cpumask_first_and(cpu_online_mask,
-> 					    housekeeping_cpumask(HK_TYPE_DOMAIN));
-> 	} 
-> 
-> 	if (primary >= nr_cpu_ids || !housekeeping_cpu(primary, HK_TYPE_DOMAIN)) {
-> 		error = -ENODEV;
-> 		pr_err("Primary CPU %d should not be isolated\n", primary);
-> 		goto abort;
-> 	}
-> 
-> Yes, this has less error string variation, but the code is simpler.
-
-If primary >= nr_cpu_ids, primary should not be used in the error
-string. But I do think it can be simplified as so, at the cost of the
-error string not being completely accurate:
-
-	if (primary == -1) {
-		primary = cpumask_first_and_and(cpu_online_mask,
-						housekeeping_cpumask(HK_TYPE_TIMER),
-						housekeeping_cpumask(HK_TYPE_DOMAIN));
-	} else if (!cpu_online(primary)) {
-		primary = cpumask_first_and(cpu_online_mask,
-					    housekeeping_cpumask(HK_TYPE_DOMAIN));
-	}
-	if (primary >= nr_cpu_ids) {
-		error = -ENODEV;
-		pr_err("No suitable primary CPU found. Ensure at least one non-isolated CPU is online\n");
-		goto abort;
-	} else if (!housekeeping_cpu(HK_TYPE_DOMAIN)) {
-		error = -ENODEV;
-		pr_err("Primary CPU %d should not be isolated\n", primary);
-		goto abort;
-	}
-
-The "Ensure at lest one non-isolated CPU is online" is only partially
-true in the case primary = -1 was passed and we couldn't find a suitable
-cpu because we were looking for an online cpu that's non-isolated _and_
-non-nohz_full. But the "non-nohz_full" condition isn't taken care of in
-the !cpu_online(primary) branch. Although, I do think it should be
-(question 2 below): in both the branches, we should look for a cpu that's online,
-non-isolated, and of domain type. That would further simplify the above snippet to,
-
-	if (primary == -1 || !cpu_online(primary)) {
-		primary = cpumask_first_and_and(cpu_online_mask,
-						housekeeping_cpumask(HK_TYPE_TIMER),
-						housekeeping_cpumask(HK_TYPE_DOMAIN));
-	}
-	if (primary >= nr_cpu_ids) {
-		error = -ENODEV;
-		pr_err("No suitable primary CPU found. Ensure at least one non-isolated, non-nohz_full CPU is online\n");
-		goto abort;
-	} else if (!housekeeping_cpu(HK_TYPE_DOMAIN) || !housekeeping_cpu(HK_TYPE_TIMER)) {
-		error = -ENODEV;
-		pr_err("Primary CPU %d should not be isolated or nohz_full\n", primary);
-		goto abort;
-	}
-
-Now the error string is accurate.
-
->2. This concerns the following snippet of freeze_secondary_cpus():
->
->        if (primary == -1) {
->            primary = cpumask_first(cpu_online_mask);
->            if (!housekeeping_cpu(primary, HK_TYPE_TIMER))
->                primary = housekeeping_any_cpu(HK_TYPE_TIMER);
->        } else {
->            if (!cpu_online(primary))
->                primary = cpumask_first(cpu_online_mask);
->        }
->
->    suspend_disable_secondary_cpus() calls freeze_secondary_cpus() with primary = -1,
->    if CONFIG_PM_SLEEP_SMP_NONZERO_CPU, and primary = 0 otherwise. On x86 and arm64,
->    for example, it's called with primary = 0. In the primary != -1 branch, why
->    isn't primary checked for HK_TYPE_TIMER as is done in the primary == 1 branch?
->    On x86 this is fine, since it doesn't advertise ARCH_SUSPEND_NONZERO_CPU,
->    cpu 0 will be removed out of the nohz_full mask even if it's specified. And it
->    also cannot be offlined. So on x86, the primary cpu will always be online and
->    non-nohz_full. But on arm64, for example, cpu 0 _can_ be offlined. So
->    cpumask_first(cpu_online_mask) will find the next online cpu, which may not
->    be non-nohz_full.
->
->    Also, why the requirement for the primary cpu to be of HK_TYPE_TIMER?
-
-The HK_TYPE_TIMER check was added by Nicholas in
-commit 9ca12ac04bb7d7cfb28aa5 (kernel/cpu: Allow non-zero CPU to be primary
-for suspend / kexec freeze) [1], but it was added only to the primary = -1 branch.
-I'm not sure why we don't check for HK_TYPE_TIMER when primary is specified.
-
-[1] https://lore.kernel.org/all/20190411033448.20842-4-npiggin@gmail.com/
-
-Thanks,
-Shashank
 
 
