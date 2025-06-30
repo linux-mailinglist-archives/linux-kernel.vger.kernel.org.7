@@ -1,198 +1,305 @@
-Return-Path: <linux-kernel+bounces-709774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627EFAEE234
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:18:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDB4AEE252
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB35C166644
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:18:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBD34178A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FA228C854;
-	Mon, 30 Jun 2025 15:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F4428AAE3;
+	Mon, 30 Jun 2025 15:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FVJ/QVxb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="noSEuLPV";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ILSRFAyn"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FF425BEFD
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 15:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751296682; cv=none; b=QkEMrskGOWfT8PQTrnWcWplTzi92AtAprkNQeLkCELYQQY96iCwQRRbDdjBKR/ebpJ9tfqLLmq0LVjouKotn9ROdVtiNuM5Poxi8KtMU2mAwLDQL2beMQEqSr1QQXHmtp4fiAMgtSuqsezKIjLrbVxheBLARfUrKQA2W5ie0Uq8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751296682; c=relaxed/simple;
-	bh=95GeipPPKyWx5+tfllxtGFXfLbYbkzW/7ZaVM/sj7R4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=q815znaGUeq5OfZLBGUnp79OYACeAE9XMW8eYUYDcXWdm4zegMKMvOHtqjj6pipZUAFPygxYjl32wj/ERcB3w+Xv7moBlkPYIZn1BXmhxpk8TU2+V/yuxsYBSEmE6DYZkJbVLu0645R/KfLur5k5QGA7/nJBiEAcHw+ZHj61iWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FVJ/QVxb; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751296680; x=1782832680;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=95GeipPPKyWx5+tfllxtGFXfLbYbkzW/7ZaVM/sj7R4=;
-  b=FVJ/QVxb6lMZJaVZAZ50QW4OtzSM9Nt/V2n9YMyaplDLQ4HeREGJ8xfn
-   3ojr7CQFdYYD3fJi99p+YQ00ujy208WfzAmTvVuxz6fvl4ybnFavouZ1t
-   aZZjxAU4epwAmy4G07rI5gPvWc2iGIVrFn/55CJfnk/L3Ty2NIaFjU4PO
-   HyQxvERSCoDKmAhd5b/z9OfA7DZI67fNp88SXImnsiJRP+5Ol2wz3WT2I
-   Z4qTrA6zXujMIxA/lBtZOy6rMr5ftpMHCI0AuIj4UUCzp/VgwbN9DZBkQ
-   1jFASBJClVNA99gettB1MMoiHx2R8WV2KqqEWl2DEHgS8AVi6eNLSNHXs
-   w==;
-X-CSE-ConnectionGUID: 97xyFfNlTNa47LDe47OuHQ==
-X-CSE-MsgGUID: sQLqkx0WSCaahNCK1LYqow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="71094229"
-X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
-   d="scan'208";a="71094229"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 08:17:54 -0700
-X-CSE-ConnectionGUID: 6N4gYov3R72t2UOhzFIRTg==
-X-CSE-MsgGUID: JwpWgP3NRmmDUv8PRjDF0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
-   d="scan'208";a="158033107"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 30 Jun 2025 08:17:51 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uWGGS-000Z7w-2b;
-	Mon, 30 Jun 2025 15:17:48 +0000
-Date: Mon, 30 Jun 2025 23:16:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: [tip:sched/core 20/43] kernel/sched/core.c:8216: undefined reference
- to `scx_rq_activate'
-Message-ID: <202506302317.HmsFxI84-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBF428C2B1;
+	Mon, 30 Jun 2025 15:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751297070; cv=fail; b=TA/TUBLC2y9KZyzufNJohFw+OPq98LXcXAEgP3D8AxVGA/Sc1EwHR+el2ymtG29uD7/skMgrblpcOPv9cclrqYBJ622JgMZe+qdUMwNFP43ZIUkHsPuzKvPhol+CrU915nJe7W+MV+Pk5rmVgoG0//Ghz1zpltMof9jBXFXNNBU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751297070; c=relaxed/simple;
+	bh=zWecJbHxTbg1/bH1kaVu7SrzXjJrorTfKbfxJMAioWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OStqnXH5ty46to6pfhngLjlcjsTY/9pK6F5+ufLe9rhakCIWU1ldukaeQeGqahgLoimaoDIxWB86TNsdyN3mxZTsf6nYqdVP2ZmOCP6lAY8Kwa/kXorHyXco/jHbz2M9ZLh4M/PRubTP2Cg/MwqtQQOADF7lNZX8rQ2M6bKE3TY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=noSEuLPV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ILSRFAyn; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UElAq5020137;
+	Mon, 30 Jun 2025 15:18:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=qtzBvvNhKjJxGcJFIR
+	E3kK4dLNdItU6NUHq+6o7O9Uk=; b=noSEuLPVhOlGu9KYZ8OX3nXOw6WQNrnEWx
+	2Lxcr75MpDD4Aj6v0hPkxMsBiCFnwAO0Pb+X6zzk1r35+lotucJobr4AspNsI4To
+	KpanbUwIdXGvHxaqGO4e23KBTxFghCh3sdQgD1UIHIvI1mgqut1IHho7Upx7oxYf
+	LYzT3PNt8cQk/9P2AZex5cLYDo33BuPcOWPNZsmA3vZa+uPJ+Nv9Ou7R5eUNW8Tq
+	IgoU9Wpe69ILjeaQdQajJdo0bFCaJySKtZWdzz1mZC1kS657B1eIS0VsBDEBOpXM
+	gKQxvdyIrRHTpb2r847F+IVp26//OBsQ/yjuy/s5QUOKGZSJTS+Q==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47jum7t2t0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Jun 2025 15:18:00 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55UE3QJV009072;
+	Mon, 30 Jun 2025 15:17:58 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2049.outbound.protection.outlook.com [40.107.92.49])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u8g19v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Jun 2025 15:17:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TbEvPiPbFr6FdMss5HVvobpYI8RI6IPLfktamMJEshq2JRLAbOOoaiiTXLwKARy5ZK/Bh3Qpo264iJPDOXZt6g/9Ljnaxh0tN0CSyKaWTc8ZPP4KprI5ufYUdEhXFcDftBAGfHjHcFHKMljXcRKiiqqR27dmC4MswU0E0I/Pt1RHcll0EC9qrr4ODBBJZyDn18uhjUaF6oCEGp7gJ1hs1AFap07a8wUyF8iPl+ktyW728dDwqoUUAx/k4GQToJY7PQ4O1sDk6vPOxnT9dwYmrIS6mDNZseG7K8bH8CfTAYT6cZLxMcCAmZdC593Jdh2z51V5O6VzLqSszmWyog+62A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qtzBvvNhKjJxGcJFIRE3kK4dLNdItU6NUHq+6o7O9Uk=;
+ b=CPWL+wNCEQ3xyI/qSMrez99y6bM45hIGnxKaQKiuJZuwjzGwILWPy++0YAUkJ992rv6tkZu+wbvw3FpnBYJBfqO4K0z3fECm24kuSRuMAgZLlXWCZ3ie5lzOUMvPqc9HlTXunlZqqEZt7h6xwb58UbxxReMPkSlTsjgrlEhX+dGrbYtnTKC+V6l++89MDEdIR7MUVfIp8vWJvRbgxChX5nf+BMPkOpWA0bl37ewYdAvPfXN2w9rxNWt1r9kntqeuYl5Ujx+/Us38H+7IQORkupdFsOPk+lUeaWfhP6Rg425SVqGkNeE6GyVje31vLz/la1SUp/AjwLYWFOAeMs7stw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qtzBvvNhKjJxGcJFIRE3kK4dLNdItU6NUHq+6o7O9Uk=;
+ b=ILSRFAyn85SN060xUSkznd/wHF9TpgdELQB14BkDHoJR50v0TtXt5TTWqqCx+kjrUvjh+3im0gw9ynWvYBz2RtTkr55OObHr1qphUwj1xepELHpH/dves5Ef3VEqDqdJsYl5RQtzKTj1XiBl/5oysT9wMpZRP/VmDKaoSDebphE=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DM6PR10MB4219.namprd10.prod.outlook.com (2603:10b6:5:216::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Mon, 30 Jun
+ 2025 15:17:55 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Mon, 30 Jun 2025
+ 15:17:55 +0000
+Date: Mon, 30 Jun 2025 16:17:53 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Brendan Jackman <jackmanb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
+        Xu Xin <xu.xin16@zte.com.cn>,
+        Chengming Zhou <chengming.zhou@linux.dev>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Naoya Horiguchi <nao.horiguchi@gmail.com>,
+        Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
+        Harry Yoo <harry.yoo@oracle.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH v1 03/29] mm/zsmalloc: drop PageIsolated() related
+ VM_BUG_ONs
+Message-ID: <ccc333aa-46c2-49ae-8d0f-ffbde95cb22d@lucifer.local>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-4-david@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630130011.330477-4-david@redhat.com>
+X-ClientProxiedBy: LO4P265CA0036.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ae::12) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM6PR10MB4219:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88c1c045-5b2a-4b69-61a2-08ddb7e949f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?blJHNrFBGBthgLPIvVlPHL7ifjl9i5pim7MWksFOMtBCu9sn62lPfphlJMn8?=
+ =?us-ascii?Q?BQapaOQJsOAuWtbT6zGayCMVR3jSEZuyFRL/dAS7HybLsgWx6X/RgwCi6B2+?=
+ =?us-ascii?Q?DJ001DuxR/B2zAcDWxWOLlZcg/TIKeYkJ7MsVMKS4uKYIgyetvDVMFNGD229?=
+ =?us-ascii?Q?IFpI/GbAJv8WGIcmdlANax5o3XbctwKH1MZ+4Lxl9s1X35w4zZEU9vyEJhnj?=
+ =?us-ascii?Q?LmTx17lRQH5g0pmrKav0JoOqbbo3oBIvZ4Omi8Mt272iejJgL/F3GErdXXE+?=
+ =?us-ascii?Q?p4x6vAuIjKCqZHNZ6hB0UkPQR9zxqhVlQVYts+3sbsytGwA6cZ2qLSDbnQf4?=
+ =?us-ascii?Q?ZSrp34eS3CvPwaOmGfXXdHsJvkvt2i4EJoavHeEnZ/p3Q7eaKPqu/Lh+uLwx?=
+ =?us-ascii?Q?/PJZ3Qlz6OiCCJWWqc6T8jWMn5xdhPVIQF1eJtPlUDQ4cgcY74tT0t+fjg/y?=
+ =?us-ascii?Q?fE62bVilGi0hjsVn7hzTTg3BiNMT0KinWpIjROT9Sr0J3K8r3k19MsxZ3dlt?=
+ =?us-ascii?Q?7pUm1DVI5kMC9HUXUqBCdJHl006cOEPl8rd7msJpKs21isXK4AOvDwalp2Jq?=
+ =?us-ascii?Q?D1njer83Mv951//r0F5wsNCv1b1S33P/B+zdtYBVXTZ8mrj10fvikrMLEo7w?=
+ =?us-ascii?Q?NB6+EvVnWh9FZn9aeDM5dSL3wCUdk5DZAEpYaMSt+IT62IeQWlu83rnPur/6?=
+ =?us-ascii?Q?ZCpz97LmsEs/kWXYR1JpwxhpJ3ftK1kpmOarpIyOjC10itGPyApQdoI3OerO?=
+ =?us-ascii?Q?fCvsgtfUoAXIfZ4SU8t/uAFYWviSEWjgF1QlKPiQq2Zx88Epa/eXnAiqqmt/?=
+ =?us-ascii?Q?wA+pBF+hHBE1Sg36QUFsWBS2g1kDaeuA0azwZLj+lN9/ut3tfyUNuIBKmkBu?=
+ =?us-ascii?Q?RqSRY90oHJUKNbQ/FmrQ91CDTcPl1E/OS95HZnY6+RHEs0BSNk6vej1tJ8p1?=
+ =?us-ascii?Q?MbMfbhm7jufVu+/yBa/1cfu67agSe8qLxtYaCOb8Zk2+M5Y9T29U+Z2+6PY6?=
+ =?us-ascii?Q?9mnsw7RRgeCpyNQ/BXe2Zb1EBgcpqgM2NXxj++ItKJUSV6yTktqFGo0IEZHV?=
+ =?us-ascii?Q?/RpnJQh+KnJWzwJgVsEQNW+uEneurBi+PGa7A+NNCvHN+HjrUq/qPE+zwFI3?=
+ =?us-ascii?Q?67fXkoG3ruhRhh1lhCriYwaNHUi99YT6YlN8/mTTPUHpfCfMHlS7ewhN3hha?=
+ =?us-ascii?Q?RleN+S6BSTOKQgyMNDyqhNV5MzU8FSedP32nor+EVKXh9alU+IhvD+odKIUL?=
+ =?us-ascii?Q?F1QckrzbkD6IfzDFmpc1sEt/vExx8SH8fWxhoa6RXLoZ4vNm3Zq43szJZhdu?=
+ =?us-ascii?Q?PtsvB3RNOs3MClyKmf280NnAj+cmMotT/aaedNfxbmrFa2QIU8NHbCNjSKQY?=
+ =?us-ascii?Q?48keIWvfD144Th2i78zW4iVviGzv/F2xpWXd0+dHzv6DTecdPswicsxDOxPU?=
+ =?us-ascii?Q?EoC7Gmrnoe4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PTn+GKiJjBGt4SgeIpbFxQ79TUMUGFU5OgOyT2rfAbDaAcZbaZThyrRJXG/K?=
+ =?us-ascii?Q?iOMcJmcRhtXyX4fN68mFFIQXBqpD24k2dry9+AXCRtkbUGaXLb9pByN8VbSo?=
+ =?us-ascii?Q?0RMs1DVg7+3eg4DNUikxiR/59EcEVdQyysBbnD2g1zL1L8pJxcdXC+2T80tD?=
+ =?us-ascii?Q?U/FHrJyAwlH9PjXsnVdHPmQmb3MUaYEP+gAAFb7QVxVsrXSADoZl3CtUGfyk?=
+ =?us-ascii?Q?+F09FPYMD3zyR8eG+aRLVExJ21R8315lKfSM45W+M0q+83khpf4KBJWqGjD3?=
+ =?us-ascii?Q?TjCXFPYgw8RW4qWLwymIRiqIjOCQt5Js59NDulv/nFkq3IsmYK8Y5CXmn8ov?=
+ =?us-ascii?Q?82t8eDF4bcgsFvdE40gnuLJ/Qj1Po8T1kTLv2CTxrWnc2XtxIB37RsFYQ8BF?=
+ =?us-ascii?Q?gDVFWKUFmPxD1OoK/VYVeIKvNwQ6Wa6eW1n5LlgalHC4Ds4XQxAliFAe6z40?=
+ =?us-ascii?Q?9q9kkcAs6w4z7vRztrx38NQEc32MWMxUyZvHsvPK7fGRzPJo67OhwOuvq6r5?=
+ =?us-ascii?Q?AFZjgKrv+nKDUUvFWTHlUmzC2nybApeC6/M09MK/w1kipzZR2mZX7gJWyHw+?=
+ =?us-ascii?Q?946vF47FL+kUByGKFcBJtN91zxJG9RYcx8EDVmT6PlHU24fGEuzsnvqMQOi/?=
+ =?us-ascii?Q?JJmUma5tK8EM6yu5JMJp1d3lYycAOqkdPxYidEnplKV8ZYAKS5aIhxXzcRrc?=
+ =?us-ascii?Q?pgMPjwwpfE37zFogoqRGbFRGDGPykXFaaeW1b/DvNUe1kxyffqKrvX3fen5x?=
+ =?us-ascii?Q?dqIAQT7HE8hZCZFAP2mXJcUwNAmdTjSCgBw6KGWcPCFZ56LH5akK9xvaPP0r?=
+ =?us-ascii?Q?kwdaEgP89FXteuvxXNC/vt+3V0ifgYUCA2ERsbWnO+RN8TCqizuZ24Lb8rt4?=
+ =?us-ascii?Q?oHHokKbeTXLJpWE3LjehPZrsclbbbX0iAmpOsEwpR1lKldCQeLJkNsWM+Brp?=
+ =?us-ascii?Q?IJoSvTDXJm4gAu2hAqAKxGS+UQTGyIr5wmTu7IcJXGFAsMv8gkI5om6oK/0c?=
+ =?us-ascii?Q?ayOKzEWViMi7OKOooHaei3x15OkcXaDo+IDgYfGafKQuv8NFBvHp6iRv8n4Y?=
+ =?us-ascii?Q?yGkLfgCNGdpc3RjieqPziaCv4DBI4htNIl8w0kAVSA8spdwExXqfgoYUFJnE?=
+ =?us-ascii?Q?w8VPCPkzWQg+OVT+Hima7lU+WUeZMxAZqGx/aZ4GrV3t3L1tkfYxWV0v2iah?=
+ =?us-ascii?Q?K++ABhOcTx1Je2b9DpW+kDRZxZJ0ThBH+2fQwWOnhQNfQQ6skG7cag5YqbHk?=
+ =?us-ascii?Q?pjMoA3j8MtEuevVPPJg+j71Tt80wHMsNzyPGun3EDObquz6RTQtkMBfGD1lF?=
+ =?us-ascii?Q?DdeyAB3ABkCoYTMAu0N4uaqadCjzS668ZRL4v1ucX6FSFCVxxZuqinmad6LY?=
+ =?us-ascii?Q?cD+a/zRijRANOwWFhBTYVRx9Y8MZxUSWfl12dPpAXdwn4uEypJ8vMa9kr5/2?=
+ =?us-ascii?Q?Z2+xIrMiIoYDBipNl+sM1hzd8FFILl2vO7J/KuIDTDIGj63FD9VxTwOeiYiU?=
+ =?us-ascii?Q?JTZdJ7opT33UwGx7XuGda9hYZ2TBRuAYEL/D+qm+lQiIsOJ+lNsWRGq6Nw4J?=
+ =?us-ascii?Q?ibN5pK3mywOXjMVAYngzM4oook4lIIYDMT+ZLPRv8Dvm3nqzZCDk+uBmvqt6?=
+ =?us-ascii?Q?fw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	HJQP0RuCJ12Z7uCkVtBqoa6mFCOJup153adKH3iPDx2X0w7V9bLR1bCDgcp30IRwlQ49Zc9QerDcyKXurNoHtARROiq8sbYHikn8BURPepU8+xq2Oh1MgQeg9HNkVWXQSwXMjlZZ/VYPa1bxt1qMQW44yIXFR+6xf+eAPDx2s8/Kx6jJv25a2Gupgpn+ILP4mGXuH+YhAieQTVOWGRBHWOSn6RSQGwAn2yXyeSReGokEo0GOMLxE21cjmDRx253TUpOTB5SmoB/v3D9Yz3T87rMRARV3fdO/GuyTbos9E+8mUCGOItet3DsCiwnqKcSX+6cGYn1t7lb/w9esOxRzqQ7RyTZyhCtkat7z2f/pg+qalj3DET3ci/GZFky3uAtUg0Ig+FUi17QLDKAqhasgHDFQfNddvBnbqUkwsbiDvdic921ICz+1S1EIX3ylj0LxIZgiTbRvib4z1GHqnC34juePy/RuB9+L3ZCXZZsy5YjCOxtxHrYsMSXDp/3g3cP7sZf02jci3NXeLIT5vFWo9Bxeey29pxNbs9i0oMO1xvH4D9L01NJI2hh0hLzExP/4G6w3y48SDVSI2gdJN3kE5BbVThEuS+lk8MGG/D9vpTM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88c1c045-5b2a-4b69-61a2-08ddb7e949f2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 15:17:55.3082
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oMSDZot3SXQSZ+/d72PxPa4Tyy8l8MxkQ+eQYvhEFo6ncv6WsGVIb3u/mOLTXDTepY1IfR37di9c1niLdUMpU7Nc0ZXL7IFQONnDuA+L+HU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4219
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_04,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2506300125
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDEyNiBTYWx0ZWRfX/+XOFYXShQ3M DrVSIldYMb80FmkPdep+TC3I7BOebHqF8B/oLzZrUZPYaQbZyzl9nWPP/fiOyH1Z6yjNRFL8NKi kotTvh+f213qDU5J0HO/3hRr8aL6HgTQHA5vALP/JPQpy0u+oPdYm4RMrduJRxPQQj1eKM3ZoVi
+ nqPv9geMKUa6/FkElLNROE84QoV3aM16uEDlV0xnD8nBa4ewT/Tsv3fWpdeAizqav0Clm+TIsXG nwN3otfkxcCMVDqW0BmtlyERZGENt5to/DQ/LUh1340oHS3hLq885npNvb373hUCxBzmwuzEVV+ Zvuji3lcqBioB+wfDupzMyipXPxLwo3k5zghdefgjfW4RQQd99sy6POl4UhQITd1p9nPJMlOHrl
+ Y8+tzq/igzwvxFXLkL4Zb5BbC0DACFAyImBFFmGPJRD7pW/Tz7dvlOZRvGmnky5A8+Vx5gvz
+X-Authority-Analysis: v=2.4 cv=MvBS63ae c=1 sm=1 tr=0 ts=6862aaa8 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=cm27Pg_UAAAA:8 a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=ZkVTOE4x5hDWK6vl1aUA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:14723
+X-Proofpoint-ORIG-GUID: TKRMaYLVLgoX6V45NaJl39ofPqCHo7US
+X-Proofpoint-GUID: TKRMaYLVLgoX6V45NaJl39ofPqCHo7US
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-head:   5bc34be478d09c4d16009e665e020ad0fcd0deea
-commit: cac5cefbade90ff0bb0b393d301fa3b5234cf056 [20/43] sched/smp: Make SMP unconditional
-config: sparc64-randconfig-001-20250630 (https://download.01.org/0day-ci/archive/20250630/202506302317.HmsFxI84-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250630/202506302317.HmsFxI84-lkp@intel.com/reproduce)
+On Mon, Jun 30, 2025 at 02:59:44PM +0200, David Hildenbrand wrote:
+> Let's drop these checks; these are conditions the core migration code
+> must make sure will hold either way, no need to double check.
+>
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Acked-by: Harry Yoo <harry.yoo@oracle.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506302317.HmsFxI84-lkp@intel.com/
+LGTM, one comment below.
 
-All errors (new ones prefixed by >>):
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-   sparc64-linux-ld: kernel/sched/core.o: in function `sched_cpu_activate':
->> kernel/sched/core.c:8216: undefined reference to `scx_rq_activate'
-   sparc64-linux-ld: kernel/sched/core.o: in function `sched_cpu_deactivate':
->> kernel/sched/core.c:8272: undefined reference to `scx_rq_deactivate'
+> ---
+>  mm/zpdesc.h   | 5 -----
+>  mm/zsmalloc.c | 5 -----
+>  2 files changed, 10 deletions(-)
+>
+> diff --git a/mm/zpdesc.h b/mm/zpdesc.h
+> index d3df316e5bb7b..5cb7e3de43952 100644
+> --- a/mm/zpdesc.h
+> +++ b/mm/zpdesc.h
+> @@ -168,11 +168,6 @@ static inline void __zpdesc_clear_zsmalloc(struct zpdesc *zpdesc)
+>  	__ClearPageZsmalloc(zpdesc_page(zpdesc));
+>  }
+>
+> -static inline bool zpdesc_is_isolated(struct zpdesc *zpdesc)
+> -{
+> -	return PageIsolated(zpdesc_page(zpdesc));
+> -}
+> -
+>  static inline struct zone *zpdesc_zone(struct zpdesc *zpdesc)
+>  {
+>  	return page_zone(zpdesc_page(zpdesc));
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index 999b513c7fdff..7f1431f2be98f 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -1719,8 +1719,6 @@ static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
+>  	 * Page is locked so zspage couldn't be destroyed. For detail, look at
+>  	 * lock_zspage in free_zspage.
+>  	 */
+> -	VM_BUG_ON_PAGE(PageIsolated(page), page);
+> -
+>  	return true;
+>  }
+>
+> @@ -1739,8 +1737,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+>  	unsigned long old_obj, new_obj;
+>  	unsigned int obj_idx;
+>
+> -	VM_BUG_ON_PAGE(!zpdesc_is_isolated(zpdesc), zpdesc_page(zpdesc));
+> -
+>  	/* The page is locked, so this pointer must remain valid */
+>  	zspage = get_zspage(zpdesc);
+>  	pool = zspage->pool;
+> @@ -1811,7 +1807,6 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+>
+>  static void zs_page_putback(struct page *page)
+>  {
+> -	VM_BUG_ON_PAGE(!PageIsolated(page), page);
+>  }
 
+Can we just drop zs_page_putback from movable_operations() now this is empty?
 
-vim +8216 kernel/sched/core.c
-
-31b164e2e4af84 kernel/sched/core.c Yang Yingliang         2024-07-03  8193  
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8194  int sched_cpu_activate(unsigned int cpu)
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8195  {
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8196  	struct rq *rq = cpu_rq(cpu);
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8197  
-22f667c97aadbf kernel/sched/core.c Peter Zijlstra         2021-01-15  8198  	/*
-b5c4477366fb5e kernel/sched/core.c Peter Zijlstra         2021-01-21  8199  	 * Clear the balance_push callback and prepare to schedule
-b5c4477366fb5e kernel/sched/core.c Peter Zijlstra         2021-01-21  8200  	 * regular tasks.
-22f667c97aadbf kernel/sched/core.c Peter Zijlstra         2021-01-15  8201  	 */
-2558aacff85866 kernel/sched/core.c Peter Zijlstra         2020-09-11  8202  	balance_push_set(cpu, false);
-2558aacff85866 kernel/sched/core.c Peter Zijlstra         2020-09-11  8203  
-ba2591a5993eab kernel/sched/core.c Peter Zijlstra         2018-05-29  8204  	/*
-c5511d03ec0909 kernel/sched/core.c Peter Zijlstra (Intel  2018-11-25  8205) 	 * When going up, increment the number of cores with SMT present.
-ba2591a5993eab kernel/sched/core.c Peter Zijlstra         2018-05-29  8206  	 */
-31b164e2e4af84 kernel/sched/core.c Yang Yingliang         2024-07-03  8207  	sched_smt_present_inc(cpu);
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8208  	set_cpu_active(cpu, true);
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8209  
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8210  	if (sched_smp_initialized) {
-0fb3978b0aac3a kernel/sched/core.c Ying Huang             2022-02-14  8211  		sched_update_numa(cpu, true);
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8212  		sched_domains_numa_masks_set(cpu);
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8213  		cpuset_cpu_active();
-e761b772523427 kernel/sched.c      Max Krasnyansky        2008-07-15  8214  	}
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8215  
-60c27fb59f6cff kernel/sched/core.c Tejun Heo              2024-06-18 @8216  	scx_rq_activate(rq);
-60c27fb59f6cff kernel/sched/core.c Tejun Heo              2024-06-18  8217  
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8218  	/*
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8219  	 * Put the rq online, if not already. This happens:
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8220  	 *
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8221  	 * 1) In the early boot process, because we build the real domains
-d1ccc66df8bfe3 kernel/sched/core.c Ingo Molnar            2017-02-01  8222  	 *    after all CPUs have been brought up.
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8223  	 *
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8224  	 * 2) At runtime, if cpuset_cpu_active() fails to rebuild the
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8225  	 *    domains.
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8226  	 */
-2f027354122f58 kernel/sched/core.c Yang Yingliang         2024-07-03  8227  	sched_set_rq_online(rq, cpu);
-7d97669933eb94 kernel/sched/core.c Thomas Gleixner        2016-03-10  8228  
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8229  	return 0;
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8230  }
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8231  
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8232  int sched_cpu_deactivate(unsigned int cpu)
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8233  {
-120455c514f732 kernel/sched/core.c Peter Zijlstra         2020-09-25  8234  	struct rq *rq = cpu_rq(cpu);
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8235  	int ret;
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8236  
-53916d5fd3c0b6 kernel/sched/core.c Juri Lelli             2024-11-15  8237  	ret = dl_bw_deactivate(cpu);
-53916d5fd3c0b6 kernel/sched/core.c Juri Lelli             2024-11-15  8238  
-53916d5fd3c0b6 kernel/sched/core.c Juri Lelli             2024-11-15  8239  	if (ret)
-53916d5fd3c0b6 kernel/sched/core.c Juri Lelli             2024-11-15  8240  		return ret;
-53916d5fd3c0b6 kernel/sched/core.c Juri Lelli             2024-11-15  8241  
-e0b257c3b71bd9 kernel/sched/core.c Anna-Maria Behnsen     2020-12-15  8242  	/*
-e0b257c3b71bd9 kernel/sched/core.c Anna-Maria Behnsen     2020-12-15  8243  	 * Remove CPU from nohz.idle_cpus_mask to prevent participating in
-e0b257c3b71bd9 kernel/sched/core.c Anna-Maria Behnsen     2020-12-15  8244  	 * load balancing when not active
-e0b257c3b71bd9 kernel/sched/core.c Anna-Maria Behnsen     2020-12-15  8245  	 */
-e0b257c3b71bd9 kernel/sched/core.c Anna-Maria Behnsen     2020-12-15  8246  	nohz_balance_exit_idle(rq);
-e0b257c3b71bd9 kernel/sched/core.c Anna-Maria Behnsen     2020-12-15  8247  
-135fb3e19773e6 kernel/sched/core.c Thomas Gleixner        2016-03-10  8248  	set_cpu_active(cpu, false);
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8249  
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8250  	/*
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8251  	 * From this point forward, this CPU will refuse to run any task that
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8252  	 * is not: migrate_disable() or KTHREAD_IS_PER_CPU, and will actively
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8253  	 * push those tasks away until this gets cleared, see
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8254  	 * sched_cpu_dying().
-741ba80f6f9a47 kernel/sched/core.c Peter Zijlstra         2021-01-16  8255  	 */
-975707f227b07a kernel/sched/core.c Peter Zijlstra         2021-01-20  8256  	balance_push_set(cpu, true);
-975707f227b07a kernel/sched/core.c Peter Zijlstra         2021-01-20  8257  
-b2454caa8977ad kernel/sched/core.c Peter Zijlstra         2016-03-10  8258  	/*
-975707f227b07a kernel/sched/core.c Peter Zijlstra         2021-01-20  8259  	 * We've cleared cpu_active_mask / set balance_push, wait for all
-975707f227b07a kernel/sched/core.c Peter Zijlstra         2021-01-20  8260  	 * preempt-disabled and RCU users of this state to go away such that
-975707f227b07a kernel/sched/core.c Peter Zijlstra         2021-01-20  8261  	 * all new such users will observe it.
-b2454caa8977ad kernel/sched/core.c Peter Zijlstra         2016-03-10  8262  	 *
-5ba2ffba13a1e2 kernel/sched/core.c Peter Zijlstra         2021-01-12  8263  	 * Specifically, we rely on ttwu to no longer target this CPU, see
-5ba2ffba13a1e2 kernel/sched/core.c Peter Zijlstra         2021-01-12  8264  	 * ttwu_queue_cond() and is_cpu_allowed().
-5ba2ffba13a1e2 kernel/sched/core.c Peter Zijlstra         2021-01-12  8265  	 *
-402de7fc880fef kernel/sched/core.c Ingo Molnar            2024-05-27  8266  	 * Do sync before park smpboot threads to take care the RCU boost case.
-b2454caa8977ad kernel/sched/core.c Peter Zijlstra         2016-03-10  8267  	 */
-309ba859b95085 kernel/sched/core.c Paul E. McKenney       2018-07-11  8268  	synchronize_rcu();
-40190a78f85fec kernel/sched/core.c Thomas Gleixner        2016-03-10  8269  
-2f027354122f58 kernel/sched/core.c Yang Yingliang         2024-07-03  8270  	sched_set_rq_offline(rq, cpu);
-120455c514f732 kernel/sched/core.c Peter Zijlstra         2020-09-25  8271  
-60c27fb59f6cff kernel/sched/core.c Tejun Heo              2024-06-18 @8272  	scx_rq_deactivate(rq);
-60c27fb59f6cff kernel/sched/core.c Tejun Heo              2024-06-18  8273  
-c5511d03ec0909 kernel/sched/core.c Peter Zijlstra (Intel  2018-11-25  8274) 	/*
-c5511d03ec0909 kernel/sched/core.c Peter Zijlstra (Intel  2018-11-25  8275) 	 * When going down, decrement the number of cores with SMT present.
-c5511d03ec0909 kernel/sched/core.c Peter Zijlstra (Intel  2018-11-25  8276) 	 */
-31b164e2e4af84 kernel/sched/core.c Yang Yingliang         2024-07-03  8277  	sched_smt_present_dec(cpu);
-3c474b3239f12f kernel/sched/core.c Peter Zijlstra         2021-08-19  8278  
-
-:::::: The code at line 8216 was first introduced by commit
-:::::: 60c27fb59f6cffa73fc8c60e3a22323c78044576 sched_ext: Implement sched_ext_ops.cpu_online/offline()
-
-:::::: TO: Tejun Heo <tj@kernel.org>
-:::::: CC: Tejun Heo <tj@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>  static const struct movable_operations zsmalloc_mops = {
+> --
+> 2.49.0
+>
 
