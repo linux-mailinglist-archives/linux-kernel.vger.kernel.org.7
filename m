@@ -1,144 +1,107 @@
-Return-Path: <linux-kernel+bounces-708860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656EDAED606
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:46:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044B9AED5FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08963A4AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE7D16537B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B552242D73;
-	Mon, 30 Jun 2025 07:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893E72222D8;
+	Mon, 30 Jun 2025 07:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="WGpDSjxV"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RxYbVixa"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A2124168D;
-	Mon, 30 Jun 2025 07:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269532; cv=pass; b=XuKQdB87uQx1xda6isZ3o+bUYWiB+l+/6ZhtaWF2xjD2LF0vgCwawfkCGcDDdpGvs4rJMbVDglwImwEGF5duYGKXDb+GNuNvOI6TMEbTPziXAhm+eGtAl4e6A69ST0KPL4Tk0TTO2mZs5BSqGL18gNrQxa87Qh4/MfkoAcBZl3o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269532; c=relaxed/simple;
-	bh=j1xv/Qn5dLAoYoR8VHIw9acjzWzOm5sWBpC4Zyzq9Jw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G90YI6Mu8aefGv9plIXL0xitAaay1h9hlIS0xwMYbE3RH7uGLJwZSasFuUqf4AUB8sq2qaIDyUUzdPwJvIIzaOWI7C3E14a12ADeDzxRrkmRVF4o4F1GsaljbGYaFx15QCbzRLm6FlnmSc7jr+wIukwfIR/YTp9k1c5ai4pOViw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=WGpDSjxV; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751269483; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XGxFZzOgso314U88svUkjhZdO0Qh39BYpQTUm1Scir/2cxiYNWh51lY56mEXskd13RkbZWc/LoToSFE/eSZFsqd0gfSC2lMEOyQqk5Uy4194TapE6XtNIFCfBP0WfwsIMojTzxaV8BIE9iWQ09y2xQ4PTHPR0LhVSjRepm1bB5w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751269483; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=uV8S0JK7uX8xYk9O0AqGs9CFpRRSYI7UmJ+uMI5PmQs=; 
-	b=N2GdNEELh25VdHU/JfFHjVD5rRasxbVWOlxdgoHBobHssMjS9crleUumwwI+XwFM+83NRrxUPq7eKY4qcWTqhOzXNx4OwP1EFDSsNYrAeCMA+iJpJWUAmXWpxeZDedK6ucbB4DjL+lrPrV1BAPiWxk64JFTHvxLdKX+7xXb3ieY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751269483;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=uV8S0JK7uX8xYk9O0AqGs9CFpRRSYI7UmJ+uMI5PmQs=;
-	b=WGpDSjxVGnc/HCN4ZIY3kCu34NKFqF6M+6tziUE4RPNau5eyoZXqQzfWcyaIn3C6
-	IIqCgN8VE2zeqArJNvOKNuCJPW0GX5Vk4JhtPzmQqONPrg+MQNzOgUiYE6BXOu8zWn5
-	suvL3ro4tTUU+qR1Sk1OYcYdUaqdyYyqf0E2eY0w=
-Received: by mx.zohomail.com with SMTPS id 1751269481985439.6433346986413;
-	Mon, 30 Jun 2025 00:44:41 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Manivannan Sadhasivam <mani@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-	Youssef Samir <quic_yabdulra@quicinc.com>,
-	Matthew Leung <quic_mattleun@quicinc.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Yan Zhen <yanzhen@vivo.com>,
-	Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Alex Elder <elder@kernel.org>,
-	Kunwu Chan <chentao@kylinos.cn>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Siddartha Mohanadoss <smohanad@codeaurora.org>,
-	Sujeev Dias <sdias@codeaurora.org>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	John Crispin <john@phrozen.org>,
-	Muna Sinada <quic_msinada@quicinc.com>,
-	Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
-	Maharaja Kennadyrajan <quic_mkenna@quicinc.com>,
-	mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org
-Cc: kernel@collabora.com
-Subject: [PATCH 3/3] bus: mhi: keep device context through suspend cycles
-Date: Mon, 30 Jun 2025 12:43:30 +0500
-Message-Id: <20250630074330.253867-4-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250630074330.253867-1-usama.anjum@collabora.com>
-References: <20250630074330.253867-1-usama.anjum@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84801190072
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751269433; cv=none; b=IB4QsjlNqCwSC/EtEQsNjO5PIoaxRADu0ROgy8N5FEo8wFZBn38siH+A1kXTtj1sCRlE/wrxceZbRmqv3D2OE+aq6Q07qRPu1p3MnwxaW5R2YIw0xD0xfDPM7Mod3B90TZpwpjwQozES27L3w2s3hL3HLs7rEi1S0ZFOK3XMpQA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751269433; c=relaxed/simple;
+	bh=wzUGC/g+Kc8HmaXcAsTiLRM+HXcGRpv8ZDrFBKUT/RQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGoYbzTnx7mQCAVJve4mS2OsAZ7yqmh1vL7g3f9535OJLXVlhKBB/RbXzC92s52t+qrqNOCDv14zJDZHbOlQojbj4o9wBRuTmLFGcUhtpY4bp7l0pWp9+Wa+TjXdX38X9wGreZmv1uV03QhfFkpVVsOzs6ZEpMlfgqomZGL3eKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RxYbVixa; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=dZfCzIqS0Ptn3nr+ORDa8qmkAF49TPrkMwvLYPx4ASQ=; b=RxYbVixaDDn8+Urggx6I/btjqP
+	shrYdEUFHBReVh8KOjMgtkEVE+SmioppDETTCs8Rrte46Vw2+NW+hUX9JIU6cGvGBI+GxLeZe7fW+
+	cizZJfDtO8Ci+9qhpgIwkXhtaY2Xy+5t3icqx4qZ4doCDQQwqWjUpGWj2cXZ5BUFs552vu5N+0PAW
+	cidREqmWzEDjYXyn3hdFs/PoyDO2IAfl62Ujk39uwkuEwjBSmXiFB6X9r/a4bdSHRIJgA0BxryjuZ
+	Pz+XhhgVaUKPlJwA+WBARvzsUXRhrsBGh2ImT2X/4OH853kb0XyGS8k4S8RNlxqrFX/OqueMRHUp6
+	aZmWKJxA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uW9Ay-00000006k4c-3Gmx;
+	Mon, 30 Jun 2025 07:43:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 57ABF300125; Mon, 30 Jun 2025 09:43:40 +0200 (CEST)
+Date: Mon, 30 Jun 2025 09:43:40 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 01/11] x86: kcov: disable instrumentation of
+ arch/x86/kernel/tsc.c
+Message-ID: <20250630074340.GG1613200@noisy.programming.kicks-ass.net>
+References: <20250626134158.3385080-1-glider@google.com>
+ <20250626134158.3385080-2-glider@google.com>
+ <20250627075905.GP1613200@noisy.programming.kicks-ass.net>
+ <CAG_fn=XvYNkRp00A_BwL4xRn5hTFcGmvJw=M0XU1rWPMWEZNjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <CAG_fn=XvYNkRp00A_BwL4xRn5hTFcGmvJw=M0XU1rWPMWEZNjA@mail.gmail.com>
 
-Don't deinitialize the device context while going into suspend or
-hibernation cycles. Otherwise the resume may fail if at resume time, the
-memory pressure is high and no dma memory is available.
+On Fri, Jun 27, 2025 at 12:51:47PM +0200, Alexander Potapenko wrote:
+> On Fri, Jun 27, 2025 at 9:59 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Jun 26, 2025 at 03:41:48PM +0200, Alexander Potapenko wrote:
+> > > sched_clock() appears to be called from interrupts, producing spurious
+> > > coverage, as reported by CONFIG_KCOV_SELFTEST:
+> >
+> > NMI context even. But I'm not sure how this leads to problems. What does
+> > spurious coverage even mean?
+> 
+> This leads to KCOV collecting slightly different coverage when
+> executing the same syscall multiple times.
+> For syzkaller that means higher chance to pick a less interesting
+> input incorrectly assuming it produced some new coverage.
+> 
+> There's a similar discussion at
+> https://lore.kernel.org/all/20240619111936.GK31592@noisy.programming.kicks-ass.net/T/#u
 
-Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
+Clearly I'm not remembering any of that :-)
 
-Fixes: 3000f85b8f47 ("bus: mhi: core: Add support for basic PM operations")
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- drivers/bus/mhi/host/init.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Anyway, looking at kcov again, all the __sanitize_*() hooks seem to have
+check_kcov_mode(), which in turn has something like:
 
-diff --git a/drivers/bus/mhi/host/init.c b/drivers/bus/mhi/host/init.c
-index 2e0f18c939e68..8f56e73fdc42e 100644
---- a/drivers/bus/mhi/host/init.c
-+++ b/drivers/bus/mhi/host/init.c
-@@ -1133,9 +1133,11 @@ int mhi_prepare_for_power_up(struct mhi_controller *mhi_cntrl)
- 
- 	mutex_lock(&mhi_cntrl->pm_mutex);
- 
--	ret = mhi_init_dev_ctxt(mhi_cntrl);
--	if (ret)
--		goto error_dev_ctxt;
-+	if (!mhi_cntrl->mhi_ctxt) {
-+		ret = mhi_init_dev_ctxt(mhi_cntrl);
-+		if (ret)
-+			goto error_dev_ctxt;
-+	}
- 
- 	ret = mhi_read_reg(mhi_cntrl, mhi_cntrl->regs, BHIOFF, &bhi_off);
- 	if (ret) {
-@@ -1212,8 +1214,6 @@ void mhi_deinit_dev_ctxt(struct mhi_controller *mhi_cntrl)
- {
- 	mhi_cntrl->bhi = NULL;
- 	mhi_cntrl->bhie = NULL;
--
--	__mhi_deinit_dev_ctxt(mhi_cntrl);
- }
- 
- void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
-@@ -1234,6 +1234,7 @@ void mhi_unprepare_after_power_down(struct mhi_controller *mhi_cntrl)
- 	}
- 
- 	mhi_deinit_dev_ctxt(mhi_cntrl);
-+	__mhi_deinit_dev_ctxt(mhi_cntrl);
- }
- EXPORT_SYMBOL_GPL(mhi_unprepare_after_power_down);
- 
--- 
-2.39.5
+ if (!in_task() ..)
+   return false;
 
+Which should be filtering out all these things, no? If this filter
+'broken' ?
 
