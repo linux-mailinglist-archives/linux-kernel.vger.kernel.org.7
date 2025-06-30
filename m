@@ -1,257 +1,268 @@
-Return-Path: <linux-kernel+bounces-708943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD34AED70C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE34DAED6F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 070997A267F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10ACD3A9E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0074241CB2;
-	Mon, 30 Jun 2025 08:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006AA238D49;
+	Mon, 30 Jun 2025 08:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IZZPY6+6"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010062.outbound.protection.outlook.com [52.101.84.62])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DyctieVi"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2066.outbound.protection.outlook.com [40.107.223.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C940924166A;
-	Mon, 30 Jun 2025 08:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907611EB5B;
+	Mon, 30 Jun 2025 08:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751271828; cv=fail; b=OhrE73zQbGLKQuJYyPqAEVQZWZ0k4wbRdVEtWDnqPTuhCtgtpKyM3COtGnirbRfblZuBy9CrL3A/dx9l37s8wKUkfvTunzyf+VUXndaPwDlEMhcrsAzG6wsOuu48SObAjSiTYFcm0N4LkCmrNMJo3pTLGN/GJa0KfercEr0gceU=
+	t=1751271568; cv=fail; b=kQaUDLJWK7w6T+tqy6rTpVsQRM5h4fx9Jb4qFq69TuMN3MvqW8IcoFa8NY9w/lCREMt3EAxrxvT7oqKhT9yntUZ2xtbujm1Rxgx7w9JvOTghPCEt0LpxPqOtf78pdRIi3xBde0PsiDoOWty45s0KhLunTFoJkyQFNys2nrJ9YEY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751271828; c=relaxed/simple;
-	bh=MHiRt6BRvQdBs9Yuo5AoH7riwn7uHaTxFzABCw64uh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PP963qFhGjTV7kKY9P6w/SnPukJvuY8dPEHz1Irgi1thCGxXE8s8T6ICDoDvR7AYuJPTJSy8GgjR5Cj5UYfrdwxqiFA+yDK2Ypf65bg988N7+W2oLU3VmlwWxk44XTgUJXZlksPatm8k+epiLIpUe0Z/gTI41LfyzbliX7z2+4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IZZPY6+6; arc=fail smtp.client-ip=52.101.84.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1751271568; c=relaxed/simple;
+	bh=j9bRbi9uGFGDfnIoQQMzYtL0o2evGBmyiMihw1Tm2W8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PwGEvOjEDVT1fNWds76re4cjU2X/EXQkN4WcTuTdAQBtJu3fTnZRTezjOckwwFzAYAYubRLYtQDbN4RSvhTwoJPnPx/rOxE53Y1tfi8WKVVxYyxXjsDbI2fKJdaO+Qq7EVDnnxZDr1CRvw9aTWJk+L1JQ3BhyB8Za3H+CXmCdW0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DyctieVi; arc=fail smtp.client-ip=40.107.223.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ttj/6Y2DzA5CmMI/uqz2TV9w5onmuEkoawHbncpfCiy2BL1KarIqo3hdX4m394e3QRDC60fza9EoB3IaskW5gEDJzOmBbK7tGuQG/prUVytP76jNBKeugQ1Io8IuV4KBIdzAko5PL5L8k9hCEyjXD9XzTNcp/aWZqy/Nlyw4bNmNHSQv98uzYvJDDsKo/GnVlHpMz7sZyraLzUjOKBfnHY30tBIS3COgmlz2fTZJts1SwSz8slmdRXIA/XIVE/1zg/Gj8fj25PMJk/gupHzSIC19sdVq+A0nEwCHRbdab+Stf7mc1cFhsVDOtKswj2Y+LvmCzALS3obLuUN958B7BA==
+ b=lZCq1n1P/MSTSOMMgSv6nBMHJNMD7tns8quFvbFyNNTZhA/y6eX9CujZOKUNta2vojljyiE0xCev2QfGEqT85QNxBPV4Z+GScUeZuV38KNejBfNIUy/lMUOHfXyRtxTl2OkaGovmLGj80z3L4pKtpDtoiVTBtpq4IzG6WjOmZkcSqv0oC+qxOJhKOktcP0PG2ksNFjivLAv/UgCzXRugI3nIx7oxoc0NaUWC1mpnvPXu8bbQNVghI2VBzUaMBqe4JU1mW6Kpcg6yV6YDX4lR0rPPKSIqXTN/54pDT5YAyXAWJFxJYuiK3C9E4J5XP8qK4NKAHHHjQ5hHC+mZO5nYvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=odOa7NBnUIPKua65+OUbpJ4xD7sDqXygvxXU/cZcJxA=;
- b=zCzEcIB5bSHNCljG4+M0mDt5GrXiQCqRmuzXtYKi4ILTy+XxRryOj+jfd26pWl1BlgAjT4hpQ7MdPZ024SOdobLxR460loMEH+4zIDLzFIE5gCwsND9w5MMfzrutv5xCv15SU5PnZ+1l+DqXkZFMm18LWws9Khpt1qQpP5NiLwkUWiplXrhp7DeecvEH51iE4HrjoSorBdGkyLqSrPynsG/enwMWtwgxxrBN0b3MFcld2GDTz6wkawGbnQSKimGMkCAYYguqjHQJ6iznoByze6mDQevOY+Snf1XK2F1zICfhePlPYgjdXReq0t0O5qxl6v4KIXMrMbRFzSdlSAcoQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=zJlq190yapPsITuj87PGdpMVU9i3bMUeLrl4fX7wR3E=;
+ b=HkElFOIrCMNR10eDwl76qSoSo4JE1CjYM3vYgPExgjRfm0h0fUqlYP/pJXQlvjFpN7Q2jkSKaaAasSKimacKXf4Kx/vlxghppsqguyn1nfsgY193BxgUVokM5hkPKkTXVuXosZH1L/npaHnB+NIRQJrEIUtcFws7IhYommJJWkKlQcIZbBxH48g/6Slu9JOiNp7uDB0ZEJHR8F/YZxmdp049W75Oklj+pszb+9+vPxmZ+R7F0TnvvPaOa7sAH6zRdBJu/IIjdLLNFLYr21WNkehPntYWIWa0jGbasdc9+tJZOjDv++UZFeTMyEweX2pBTtr2T9MhS6gTdrEaGN7QLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=odOa7NBnUIPKua65+OUbpJ4xD7sDqXygvxXU/cZcJxA=;
- b=IZZPY6+6bDuMsNTCeJG5R82qqRMS/NoBjTjBYPlxvqgZvsYZ5gB/03YrvPs/zpSiDipSiZx8bQgpIhH/sbnJND4bJI9LB3BtAYFeVl5Vi6GCq/His6E6tKs1WvXZ6zPplaFXfeLDjW7KmRI1BljaagTAgwB/vOlhk03CPiFYDZExlAPMmB6J6wnZcHoKsXgvRdgiDv71PJJGXNm5C7UB4ZIdV8XC9XdVII6T/2xuD/n2fE6hZBP7951rfAaFPY5D4YH29gCvxrDUH9th9a/h2u4trH90voUU+MOx/MN4amUXnr7U2h93xL/+B+rFJDk1b/rHcI0qP9We2da2iB+81w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com (2603:10a6:10:2e1::11)
- by VI2PR04MB10192.eurprd04.prod.outlook.com (2603:10a6:800:229::16) with
+ bh=zJlq190yapPsITuj87PGdpMVU9i3bMUeLrl4fX7wR3E=;
+ b=DyctieViqpobetG2PtaVcnXTA9g73JSLTuKgidzO70/xL/V7BbPs1DZACGgKRCu+LGjncfWNWuN7NMK8ZekquScLTHcQ2THl8BWk8/gwZ2VJn3XEqsl2mYqmB3a8ml+kNx8PNRSjv61JslA24WnRo8pP9Q48G4AldTG1YJBHPBM=
+Received: from BYAPR21CA0029.namprd21.prod.outlook.com (2603:10b6:a03:114::39)
+ by DS0PR12MB7512.namprd12.prod.outlook.com (2603:10b6:8:13a::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.25; Mon, 30 Jun
- 2025 08:23:42 +0000
-Received: from DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7]) by DU2PR04MB8822.eurprd04.prod.outlook.com
- ([fe80::4e24:c2c7:bd58:c5c7%6]) with mapi id 15.20.8880.027; Mon, 30 Jun 2025
- 08:23:42 +0000
-Date: Mon, 30 Jun 2025 16:18:51 +0800
-From: Xu Yang <xu.yang_2@nxp.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: ezequiel@vanguardiasur.com.ar, mchehab@kernel.org, 
-	laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, gregkh@linuxfoundation.org, 
-	mingo@kernel.org, tglx@linutronix.de, andriy.shevchenko@linux.intel.com, 
-	viro@zeniv.linux.org.uk, thomas.weissschuh@linutronix.de, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH v2 1/3] usb: core: add dma-noncoherent buffer alloc and
- free API
-Message-ID: <wddmyx4lccthln7mbngkd4zbh6y7mwetdba5e7ob6u4xevecmj@zopp65eqbeuu>
-References: <20250627101939.3649295-1-xu.yang_2@nxp.com>
- <20250627101939.3649295-2-xu.yang_2@nxp.com>
- <1c4f505f-d684-4643-bf77-89d97e01a9f2@rowland.harvard.edu>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c4f505f-d684-4643-bf77-89d97e01a9f2@rowland.harvard.edu>
-X-ClientProxiedBy: MA0PR01CA0087.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ae::17) To DU2PR04MB8822.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::11)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.30; Mon, 30 Jun
+ 2025 08:19:23 +0000
+Received: from SJ1PEPF000023CB.namprd02.prod.outlook.com
+ (2603:10b6:a03:114:cafe::1a) by BYAPR21CA0029.outlook.office365.com
+ (2603:10b6:a03:114::39) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8922.7 via Frontend Transport; Mon,
+ 30 Jun 2025 08:19:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023CB.mail.protection.outlook.com (10.167.244.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8901.15 via Frontend Transport; Mon, 30 Jun 2025 08:19:22 +0000
+Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
+ 2025 03:19:18 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <x86@kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+	<thomas.lendacky@amd.com>, <aik@amd.com>, <dionnaglaze@google.com>, "Nikunj A
+ Dadhania" <nikunj@amd.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3] x86/sev: Use TSC_FACTOR for Secure TSC frequency calculation
+Date: Mon, 30 Jun 2025 13:48:58 +0530
+Message-ID: <20250630081858.485187-1-nikunj@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8822:EE_|VI2PR04MB10192:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e4ed2a6-0ef6-4ff9-5cbf-08ddb7af6c6b
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CB:EE_|DS0PR12MB7512:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82cf728d-8a81-4d5a-f789-08ddb7aed1e3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|52116014|19092799006|7416014|376014|38350700014;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?3dyuPMmDKwoSEAQ/UMInNfAC1+9MD6Un+/pSmeWCkZVp6G4zv8g+IRdrsQdL?=
- =?us-ascii?Q?lm2/OpR3STqdoYXykWuVvEg4/fJX6QljkHv7ZqGghJ7v8vDZ/7dhRKCC4Pj5?=
- =?us-ascii?Q?XX/HiY4k6w4urazLCpq68ewfMp5JNThd4VwJFub14Jjl4CEgAdFGII9oeG8H?=
- =?us-ascii?Q?J5YErmuuQVPgL0ggm5nmpxJwu+YLWn7+TUow9koQ8LEhPTMZAXeuefSaAize?=
- =?us-ascii?Q?WhEHChUEZLfGoEOVObeOjioT4Z/abu/3fQeV1DaQp31x3zMO4sJs8HkwnKRn?=
- =?us-ascii?Q?p6WRpCWsKYW3f9C6iN1RKEjWEhxHPQKYUzL98YaecishYCF+PSjjXQKbgCAB?=
- =?us-ascii?Q?cbPCbQAzFrtawqyDZcSKNt7DaIi/3K2BSZlbSvTXtdQiKNqn/yC/elmva410?=
- =?us-ascii?Q?BJ9uQF9PoKdrffpYaOW2xBN5BuL6jlz/A6Oou8nSsYIY4vPRwAcSZE6hByq1?=
- =?us-ascii?Q?EH3G55A7DtcksNLl1Fn0Wq9K2aXlCIqahHIDSAwIt/VWILCtaWvzWm8V87dw?=
- =?us-ascii?Q?io1BG4s7oLtC6D02tH4Hjb+aHqxMeIPsK5XkO7s/yNIZ1k8tkAwpOqSjpVjy?=
- =?us-ascii?Q?MSZyzuIEvT8ez735/VLUqkC1D2VFYoKAGNpCPg16R5ibpcEzAQHnBKsS8HL9?=
- =?us-ascii?Q?f7IZaA8YpYT8hqEDI+xw7AN8G27y5R9p5YNS29dei+aVe2QvPehp4hba70PI?=
- =?us-ascii?Q?NnTt8rQwkaDMXD+beEYBQejKi0zmXJj2Db3U7UoVCNrSUl2D6zU04QpF0aEa?=
- =?us-ascii?Q?XCIJPgMdshjxhRemrrRU9SO4/xGjFGQq94g5RCxnI9lO/2+z2XJoh2B4N/1G?=
- =?us-ascii?Q?KNK0T5eQR1SU93sbdickzJOYoCnpbwfH11OkmLG50gGmrGxT3jC/peWvvsgU?=
- =?us-ascii?Q?Z4hztiSTeKMX2JiymUiNZcJpCZ8pk3XBfc5N+GlYyrs2QW0m1YWkdAUTfvPz?=
- =?us-ascii?Q?Ik7SLgTw9SsBvA9QQHaJ2uNZVmvMWJBOfOCeN/P4D3ir7I3tKaPxfcsHDoEb?=
- =?us-ascii?Q?4uBaBNm+Kk5IOO3NSDYJYSroL8bRSTyR5JePs33DkAKKLyDPC5vHaMxspDCb?=
- =?us-ascii?Q?AGqLwFqJckOYq1/ixB+bhrXBYZAa9uOTvVZ0Cia+hwUB7CpGt6+aaFTclNX/?=
- =?us-ascii?Q?J8Om/+6fuVLBoFDTBAvh4HDW9h3zvyPF5Eczji0gLPlhQj59Bl/jfM/D2jTK?=
- =?us-ascii?Q?7045qbpNert19lyQgWvEMDlb0/nyuApMg/N7tEyR/pt7r9Ixc8pVAr0dy1p6?=
- =?us-ascii?Q?VdDETIcQH7EdhFvz6p5CtaLY8iAZOhjhj4gkLvuPLprNobLjnUIDo41Ro9qV?=
- =?us-ascii?Q?DuDu+PqAxoj5h5F69FBruauzTRFGoIEydJ3tP2MahcoS/I+3RKlT/Knwjw7z?=
- =?us-ascii?Q?I5JLxR3CKCe6jpGGQsgZyr08cHGj4EEIMI1esy9b74v/areAy1qgMWNZzYGX?=
- =?us-ascii?Q?BHS9/pmrxlSvgHcb8ztJ+za4FdslYjmgOiQ8AOniYmFBLpYF6muM9jYSbFBR?=
- =?us-ascii?Q?Aio1DugFm7JfFHg=3D?=
+	=?us-ascii?Q?YhE25ofsDar61+Tc5A18Nq1n/9NtTO0uFuMl0XbjSUTJ100BLVoyPWKIsI4z?=
+ =?us-ascii?Q?RcEgydKFe35rTrhf5GceV+jmmL5eshOq3kYZczjyn0bpVMBGWXMpTqOB25pi?=
+ =?us-ascii?Q?iKB+pqGxxbXIXSgKLRYMXgktq7IBR5pZVAxEudMn9LzJTYgBbQ1rOV3n5mwL?=
+ =?us-ascii?Q?qOa0HKgbFjixtdnrc8fglYP96YUbU8ejShX8gEIdt2E11SAMz30+bes3Um0A?=
+ =?us-ascii?Q?IE8C7b7mC6qj5RyGSHTfwxfZnznJmsLEJhQw7K4VvlO/i9yDNCnWj/dYTdEz?=
+ =?us-ascii?Q?+AbZrdh0DxbJpCUDhMF/z30jwxdF6c0vCMOM8v1UP6plFfeoGifNUGwaB2bk?=
+ =?us-ascii?Q?b1AiKzP679c080fXqAV2j1y6CCl8aBDaT/A+GG9bcZRsQOun1RuTdbZ4Q9qR?=
+ =?us-ascii?Q?Urb+lmPnGKT8CYbMBPFA+iP3Ck0TCPpBtNOvLpulMO6TNuabFFvroIOYN3SK?=
+ =?us-ascii?Q?xI/ThqJ8XiqcOMNL6UX0ocG6SG2Tu8bet2OFAwJCIP8Qc81vYpgbQVcTdohg?=
+ =?us-ascii?Q?IIDhuFeVMrxn80rZcduoosSVskSK5Bq93huXfbUakUjRjukUYIjN9R4jFvcf?=
+ =?us-ascii?Q?hWYyxURBs7Ym2rCiaZz5uarBY/ZJ3GX6g2Sebe7nCbCLVpKvqIxf/ttPk00X?=
+ =?us-ascii?Q?Olu7CNZOF/TJTXG364FNHks+pWpalQNGjvAw8g56B/a8TyVIecn0/TdPMqFA?=
+ =?us-ascii?Q?r/pxVgB778Jx0k1G0NROKOuaVCZScY+n3aw2A88/BHkpEZ1lGNsGuihaMioh?=
+ =?us-ascii?Q?R36YXbGfmi13Al+4zwg9zX1Qg+1v1TTDxuDVdok8aNcVmlqQYr2Rl4AzVFz/?=
+ =?us-ascii?Q?AfqcaYCQytxBnR3oIpqUwCW9TcxiAzyfFwH5rWLJCalJF4oTYhzG+kPTC8fB?=
+ =?us-ascii?Q?C0ShUSyu3SmlXTFfXv25/qUKGXVaevQRS4T438ba2vxrPu94U1438Bl1Ot8X?=
+ =?us-ascii?Q?zoNt9a3DzENknz4t5g/lTFb3eYOfHtMrfV3oZiYS7n/QcidXTT0rz7lw7xrx?=
+ =?us-ascii?Q?9qEAtnY4cgitb/mwoFsMw69SACKgWkX0iL4XaQoTwRPoOnL1BgrTk+sODNjh?=
+ =?us-ascii?Q?CZm8Phkn1E/6V5+h2sn7giEPL4GKH051s0lAuwIbXF42pmxqOae2jPYx1+hk?=
+ =?us-ascii?Q?h4OGfhi81FKAz78HBNAeqmQU1QiFSjBrUHudHLFiN0I2odCHPdH1w9GSSDss?=
+ =?us-ascii?Q?o16p8zsBTpNvUkx9ASj7+OIehawKMzXSJf/DP0lV79xb0mHgMsKlAj43jtEG?=
+ =?us-ascii?Q?8rO04tncZ1fsXXuUJTFlYv7mlfyb1JJPzBuYf0PW9KZZnMxEC1ftDUcDPsqM?=
+ =?us-ascii?Q?ZWjmR7pACfCcm5waNZSAcHYjdKaLZseGxEFKaRkQYi1DrgoAVIEKROVd4OuF?=
+ =?us-ascii?Q?7cCvYRu6uCTg5xnzlFIUh2tycTLf8K6RbHd/xLtd+4wwBxdIFvk6jZSBFeex?=
+ =?us-ascii?Q?DFUuMSwkkvAM7kCDaUx+9sTocPlOxo5sCASEO9+AdRqtWVO9N+MwEcjyxs0x?=
+ =?us-ascii?Q?tUAcx/W4CR2VEeFR+crZ8NUNV89PhnVRffkp?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8822.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(19092799006)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?vzWkJpWfDERskYLVUnEkteojrdtde3/tNr6m/uMIZlhZWdhDjaVMoiCoq7qv?=
- =?us-ascii?Q?wik8Vv3tE+NkGK07mMUQiOhDIw2eFI6r7r5ViqpeFCdFGD1QW7kp6MsOBYf1?=
- =?us-ascii?Q?29EYsRB3ZtkZQ63+iZgcsvc2ZCdtWpZZAkos0doCyAhkwGEY6E+9ydCahJdT?=
- =?us-ascii?Q?hzTFicSAaSDk+FYA/cACPzV49jC6Wd0FmsgXeBRckosG2QVRO9rD9WrH/Ysp?=
- =?us-ascii?Q?cYSJn0oxNZ/nIkPWIyits8GrrmSyBOVlwOfIAy5pAR98DKxiqzhMiLq5kOcm?=
- =?us-ascii?Q?Fe7WiIjeE6trLYdymZTcGyMlilZad+TxAO2Y9GB2XQvFqI9mImeFenOqCU3j?=
- =?us-ascii?Q?ieZ7O2+piDpCGpl1qHgc+MTV2yM2dUh60q8HGoWSM3SLNJ7AH0Zb7aXmZS0r?=
- =?us-ascii?Q?dBCrK4gWpHXy82sJutR+EPOzeqdSvbsUANeZqkq+a7FPXSn8phTF5G6iSkwT?=
- =?us-ascii?Q?EIMT7qnuIBZ/uUEyATvb324GK/gQh323BAWHZwveYG7GPujndqWaIU7s+DrK?=
- =?us-ascii?Q?TA47YM/xL3TTlN5lZHA42ZF1AMcxfyr0xfkWLjq8E60I35l6DBfZ82qjRDbS?=
- =?us-ascii?Q?RGHmdZq0td4EC6/yKTyl1nMJY1U+uXGUmGR42HaMfvxz2srVUkwNB9LbNNAi?=
- =?us-ascii?Q?2hjGJPSc/+czrGmHVDX5zariCDSBsNsu6jiqXAx0vUgPbyG1AMi8IKG1xYCL?=
- =?us-ascii?Q?xnuFUSWfW+63mMge65vyeQZJeWUTO9KDXkc5q6U9JHKNpf2wL+a8hBKtCKBY?=
- =?us-ascii?Q?LL3TlLzVMLO8mQWUX97ehFYYGGN1cYEPWea5Ufe/r1apnK30K9bLC3RA3SdF?=
- =?us-ascii?Q?uCQutKVyeTsC/0kNDwlR4KkXT/YA8jIXDCYDR/iqc0eN820ig5ILAg/nP/TT?=
- =?us-ascii?Q?uz702qFbGppmOLSD/Mnyqc2m4rWnOPDX/AcCDX5k45Tf4yoabMHIEEO3QrL/?=
- =?us-ascii?Q?/kpYEGQQBO0I1iIgnrHqDxc/NmR2J6m0ryPpPfti3Y30UPGq27IZZrB9Zrju?=
- =?us-ascii?Q?Ao39GY13GLeU6zA6/GfFMVxbpUV4ygivu6guD6VZsfCPcF0O2EpGo1u/0YzB?=
- =?us-ascii?Q?c6THcxXNtG/grz1nSRJ0k0C8xLUH7WPI9jAsvozwpi2gH0sTbj/D2F5lmvBa?=
- =?us-ascii?Q?whqb0hi/1WLCOLv5/KLzZoAFNgumYQcJlMZQ0iP2Y+AOYaNtQr/2ilBKuNpH?=
- =?us-ascii?Q?+Burix+iAwPwWfed4IAukd4ST2Kb+eIb6dV6nXSusCxSkerN59XScZXNJUGg?=
- =?us-ascii?Q?UpzOW3ZDkoxocqcupGkQrlmCik4arNjLPE0nilz7vUmbh0FtDsa7VgyPVxzL?=
- =?us-ascii?Q?P31zKK/uOeJQnMVL1xO73N+odB3hU/Xj9wm7cx0/etevATVhqc7Wu4mFfPkm?=
- =?us-ascii?Q?0hpdjGqcdU2vuPM/DHlIvCayEcEN5UIYkwsofJnb13km6vWS93uBFX39JA5A?=
- =?us-ascii?Q?ZfF81SmX508LezZt5EVsrkkEfc3OBLlx2dNIxjlhEawszXscTah/5e1hoDFc?=
- =?us-ascii?Q?lpwmJ4b8TRn1caknKSmkRhLGVy/GA4mz8lKbnrSV7MVUrlnDBnC29E+UWkx8?=
- =?us-ascii?Q?Mk1asz7IO2vJESUygfdl/5bKl8W2FbDuyPkTSgdM?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4ed2a6-0ef6-4ff9-5cbf-08ddb7af6c6b
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8822.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 08:23:42.4252
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 08:19:22.8695
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3kJdG4q/5aewk0RJACOD+qhzmER3eVQKYMzj4Ey1ZBJI9NOW6BQQ9b7QqBd8tGwQ4mj/k5IhHxO2AzuuBp+qJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10192
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82cf728d-8a81-4d5a-f789-08ddb7aed1e3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023CB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7512
 
-Hi Alan,
+When using Secure TSC, the GUEST_TSC_FREQ MSR reports a frequency based on
+the nominal P0 frequency, which deviates slightly (typically ~0.2%) from
+the actual mean TSC frequency due to clocking parameters. Over extended VM
+uptime, this discrepancy accumulates, causing clock skew between the
+hypervisor and SEV-SNP VM, leading to early timer interrupts as perceived
+by the guest.
 
-On Fri, Jun 27, 2025 at 10:23:36AM -0400, Alan Stern wrote:
-> On Fri, Jun 27, 2025 at 06:19:37PM +0800, Xu Yang wrote:
-> > This will add usb_alloc_noncoherent() and usb_free_noncoherent()
-> > functions to support alloc and free buffer in a dma-noncoherent way.
-> > 
-> > To explicit manage the memory ownership for the kernel and device,
-> > this will also add usb_dma_noncoherent_sync_for_cpu/device() functions
-> > and call it at proper time.  The management requires the user save
-> > sg_table returned by usb_alloc_noncoherent() to urb->sgt.
-> > 
-> > Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> > ---
-> >  drivers/usb/core/hcd.c | 30 ++++++++++++++++
-> >  drivers/usb/core/usb.c | 80 ++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/usb.h    |  9 +++++
-> >  3 files changed, 119 insertions(+)
-> > 
-> > diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> > index c22de97432a0..5fa00d32afb8 100644
-> > --- a/drivers/usb/core/hcd.c
-> > +++ b/drivers/usb/core/hcd.c
-> > @@ -1496,6 +1496,34 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
-> >  }
-> >  EXPORT_SYMBOL_GPL(usb_hcd_map_urb_for_dma);
-> >  
-> > +static void usb_dma_noncoherent_sync_for_cpu(struct usb_hcd *hcd,
-> > +					     struct urb *urb)
-> > +{
-> > +	enum dma_data_direction dir;
-> > +
-> > +	if (!urb->sgt)
-> > +		return;
-> > +
-> > +	dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> 
-> Are the following operations really necessary if the direction is OUT?  
-> There are no bidirectional URBs, and an OUT transfer never modifies the 
-> contents of the transfer buffer so the buffer contents will be the same 
-> after the URB completes as they were when the URB was submitted.
+The guest kernel relies on the reported nominal frequency for TSC-based
+timekeeping, while the actual frequency set during SNP_LAUNCH_START may
+differ. This mismatch results in inaccurate time calculations, causing the
+guest to perceive hrtimers as firing earlier than expected.
 
-According to Laurent's reply email, it may be needed for some archs.
+Utilize the TSC_FACTOR from the SEV firmware's secrets page (see "Secrets
+Page Format" in the SNP Firmware ABI Specification) to calculate the mean
+TSC frequency, ensuring accurate timekeeping and mitigating clock skew in
+SEV-SNP VMs.
 
-> 
-> > +	invalidate_kernel_vmap_range(urb->transfer_buffer,
-> > +				     urb->transfer_buffer_length);
-> > +	dma_sync_sgtable_for_cpu(hcd->self.sysdev, urb->sgt, dir);
-> > +}
-> 
-> This entire routine should be inserted at the appropriate place in 
-> usb_hcd_unmap_urb_for_dma() instead of being standalone.
+Use early_ioremap_encrypted() to map the secrets page as
+ioremap_encrypted() uses kmalloc() which is not available during early TSC
+initialization and causes a panic.
 
-Okay.
+Fixes: 73bbf3b0fbba ("x86/tsc: Init the TSC for Secure TSC guests")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
 
-> 
-> > +static void usb_dma_noncoherent_sync_for_device(struct usb_hcd *hcd,
-> > +						struct urb *urb)
-> > +{
-> > +	enum dma_data_direction dir;
-> > +
-> > +	if (!urb->sgt)
-> > +		return;
-> > +
-> > +	dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> > +	flush_kernel_vmap_range(urb->transfer_buffer,
-> > +				urb->transfer_buffer_length);
-> > +	dma_sync_sgtable_for_device(hcd->self.sysdev, urb->sgt, dir);
-> > +}
-> 
-> Likewise, this code belongs inside usb_hcd_map_urb_for_dma().
+---
+v3:
+* Remove unnecessary parenthesis (Ingo)
+* To avoid type cast, harmonize the types of snp_tsc_freq_khz and
+  securetsc_get_tsc_khz() (Ingo)
+* Use rdmsr for GUEST_TSC_FREQ and extract BIT[17:0] from lower 32-bit
 
-Okay.
+v2:
+* Move the SNP TSC scaling constant to the header (Dionna)
+* Drop the unsigned long cast and add in securetsc_get_tsc_khz (Tom)
+* Drop the RB from Tom as the code has changed
+---
+ arch/x86/include/asm/sev.h | 18 +++++++++++++++++-
+ arch/x86/coco/sev/core.c   | 22 ++++++++++++++++++----
+ 2 files changed, 35 insertions(+), 5 deletions(-)
 
-> 
-> Also, the material that this routine replaces in the uvc and stk1160 
-> drivers do not call flush_kernel_vmap_range().  Why did you add that 
-> here?  Was this omission a bug in those drivers?
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index a81769a32eaa..cfa3ace227e6 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -223,6 +223,19 @@ struct snp_tsc_info_resp {
+ 	u8 rsvd2[100];
+ } __packed;
+ 
++
++/*
++ * Obtain the mean TSC frequency by decreasing the nominal TSC frequency with
++ * TSC_FACTOR as documented in the SNP Firmware ABI specification:
++ *
++ * GUEST_TSC_FREQ * (1 - (TSC_FACTOR * 0.00001))
++ *
++ * which is equivalent to:
++ *
++ * GUEST_TSC_FREQ -= (GUEST_TSC_FREQ * TSC_FACTOR) / 100000;
++ */
++#define SNP_SCALE_TSC_FREQ(freq, factor) ((freq) - (freq) * (factor) / 100000)
++
+ struct snp_guest_req {
+ 	void *req_buf;
+ 	size_t req_sz;
+@@ -283,8 +296,11 @@ struct snp_secrets_page {
+ 	u8 svsm_guest_vmpl;
+ 	u8 rsvd3[3];
+ 
++	/* The percentage decrease from nominal to mean TSC frequency. */
++	u32 tsc_factor;
++
+ 	/* Remainder of page */
+-	u8 rsvd4[3744];
++	u8 rsvd4[3740];
+ } __packed;
+ 
+ struct snp_msg_desc {
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 46bd89578ec7..115a5750c40d 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -88,7 +88,7 @@ static const char * const sev_status_feat_names[] = {
+  */
+ static u64 snp_tsc_scale __ro_after_init;
+ static u64 snp_tsc_offset __ro_after_init;
+-static u64 snp_tsc_freq_khz __ro_after_init;
++static unsigned long snp_tsc_freq_khz __ro_after_init;
+ 
+ DEFINE_PER_CPU(struct sev_es_runtime_data*, runtime_data);
+ DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
+@@ -2174,15 +2174,29 @@ static unsigned long securetsc_get_tsc_khz(void)
+ 
+ void __init snp_secure_tsc_init(void)
+ {
+-	unsigned long long tsc_freq_mhz;
++	unsigned long tsc_freq_mhz, dummy;
++	struct snp_secrets_page *secrets;
++	void *mem;
+ 
+ 	if (!cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
+ 		return;
+ 
++	mem = early_memremap_encrypted(sev_secrets_pa, PAGE_SIZE);
++	if (!mem) {
++		pr_err("Unable to get TSC_FACTOR: failed to map the SNP secrets page.\n");
++		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SECURE_TSC);
++	}
++
++	secrets = (__force struct snp_secrets_page *)mem;
++
+ 	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+-	rdmsrq(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz);
+-	snp_tsc_freq_khz = (unsigned long)(tsc_freq_mhz * 1000);
++	rdmsr(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz, dummy);
++	/* Extract the GUEST TSC MHZ from BIT[17:0], rest is reserved space */
++	tsc_freq_mhz = tsc_freq_mhz & GENMASK_ULL(17, 0);
++	snp_tsc_freq_khz = SNP_SCALE_TSC_FREQ(tsc_freq_mhz * 1000, secrets->tsc_factor);
+ 
+ 	x86_platform.calibrate_cpu = securetsc_get_tsc_khz;
+ 	x86_platform.calibrate_tsc = securetsc_get_tsc_khz;
++
++	early_memunmap(mem, PAGE_SIZE);
+ }
 
-According to dma-api.rst:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/tree/Documentation/core-api/dma-api.rst?h=linux-6.15.y#n664
+base-commit: 4da71e9f8939987cd2063e0b2ab5bb5eafc80a87
+-- 
+2.43.0
 
-"Once a non-contiguous allocation is mapped using this function, the
-flush_kernel_vmap_range() and invalidate_kernel_vmap_range() APIs must
-be used to manage the coherency between the kernel mapping, the device
-and user space mappings (if any)."
-
-Possibly the uvc and stk1160 missed calling it, but since they won't be
-the only user of the USB core, so we'd better call these APIs.
-
-Thanks,
-Xu Yang
-
-> 
-> Alan Stern
 
