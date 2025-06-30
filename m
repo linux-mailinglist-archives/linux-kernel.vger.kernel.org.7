@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-709066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4159AED8E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:40:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B363CAED905
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20E8189021F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D052D174F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F45246BB0;
-	Mon, 30 Jun 2025 09:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A9F244695;
+	Mon, 30 Jun 2025 09:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDg/VS9m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="H7CMqKrj"
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FBAC8CE;
-	Mon, 30 Jun 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B843E7404E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751276418; cv=none; b=ryKNznM7KBmIhduQB/TezVy8ltUREmRmULO77guijTYM2JZ+Quk/R7HU+lA8JsVG3p23bWJZUPE5x8+AXStIF2fMbAG8hdtMhhGPHGEhuw63QrQyD3jpBvCzZewp0GeNGqTbS8YowlcZS5pvjTqWelIA3u4rC0LguAz/xxNbz2E=
+	t=1751276971; cv=none; b=ji5+B+r26Q9QZnG/xaC+vn4LBb9desg/jDnzS7jCP4uw9hre0pPOXWSlZn6OQcfNNtwFg8A6kLHPh9T+EU6bkMalcUEs/341E/E5KJF8IfaHPM4n8QqDv7GFWVHzFpPgzW6dxspyxffFuILUJ3TDABnnnTKqDegO/zQvRayC+Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751276418; c=relaxed/simple;
-	bh=a8BIoSpJulmP8dEpPRPih9G6XOFwJxzxZhEGBuOEH5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vC8iG4mpH6B/36thZAqDjov+2mNypp65IvQgxoMgQAFULEsIdSRTAmct0iY8gCplFTuHjGoZ1wVgbMjwhN2oZ/5IvXRP2NFfw9ojQlvFugjyMpkS1hWQW1GNctc8X43LPIObLcjx8v9ejEm+CFLU/vxi0IOIvJEzimEJ+ueG2fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDg/VS9m; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751276417; x=1782812417;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=a8BIoSpJulmP8dEpPRPih9G6XOFwJxzxZhEGBuOEH5w=;
-  b=NDg/VS9mLUFKNmcnFIijs2tEFsZpp2KS09GOGTawM72jZJ6vu4wTIvsT
-   tTsWQoHnH7wIgc5xOV6IVKWz6WKBE1I4dDYwty80+kgAue2oCJDXfE0SJ
-   gVgWjrLoAIJhHjuZtnJ7PyU4gbSFxXFKpJCu9MOY8GZukAA20XWs0eR8C
-   BcZXJi/kO2foAkCPiGOs4GGcJPhvLobRXs6TGQj3GMyUHKHh4JiCKC+E7
-   ewXkUY4Rb7NUanEBERlunnrxosVrPkBbUyPVMmkUUFCvfHF0ydJRmno+B
-   AwSHnG0w1trmpB5NLT+o/SCq7FgVkphbn/d0l4yScqddyt2Qx7Rq5PvTt
-   g==;
-X-CSE-ConnectionGUID: Bw8pxgEsRjyngDMwRlq5QA==
-X-CSE-MsgGUID: MPLYHB1aQz69K0mXd5Zidw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="63752390"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="63752390"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:39:11 -0700
-X-CSE-ConnectionGUID: UcvK3hX3Q4C313NWFyiBjw==
-X-CSE-MsgGUID: cTlKUx1qTx6DRggmgChIzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="154126324"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Jun 2025 02:39:09 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 11D681FE; Mon, 30 Jun 2025 12:39:08 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lee Jones <lee@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pavel Machek <pavel@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v1 1/1] leds: pca955x: Avoid potential overflow when filling default_label (take 2)
-Date: Mon, 30 Jun 2025 12:39:06 +0300
-Message-ID: <20250630093906.1715800-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1751276971; c=relaxed/simple;
+	bh=9/Pvq0WY1sYNzPktOn10uj39CmA1imLYf9C5hVYfwFU=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
+	 In-Reply-To; b=m3742NbIzzWrusK529olh/GVYZMc2SQhLxOuDcKrMRroIeQbtI4QWiBQMxzBfHHhiS8KSeEcV5N7r1LhP2Ps+I7smA6ChOpUFvDF1bAxK3AB1wHo7Cn6pZ3wqY21OYN9sQGdt8Zo20Syl7UIZ1IouGun9npgJXzJ32U1wEoA0ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=H7CMqKrj; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id B669610C;
+	Mon, 30 Jun 2025 11:40:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1751276409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
+	 references:references; bh=9/Pvq0WY1sYNzPktOn10uj39CmA1imLYf9C5hVYfwFU=;
+	b=H7CMqKrjjwduzohcLlYNC2KPKKiE54GtbG0UXi8RMQjlMvkNy/KUS7tCKEaVW3nXO25Fsk
+	yJTxpGaaQ//JwA85vUXnjV9qJeG5azMY//2vak9E7Uc77ZfoiDYkFO2bX2kKEy5XKJctHw
+	/RkilStMgMS2WbdX+7940u7sZAXBRVh/2dLFovlIPfnRbevPqGgVk/hGltwAE6Dt8HDXkj
+	KC14NB+abcmH3ekLowwOOLOWYjye0dNWlY6SVvBhCDozaJSOab9qoF+7bcoD+uUcIXEK4s
+	EAyv4RP9OZ1Yq+o1Y31RP/dOG9GbscHWOUR1CHwpo65LedYwiRdOrTbS5g7L9w==
+Content-Type: multipart/signed;
+ boundary=966e033f37f2d4f4fc473532ff78d6a575d67b30c1d1668f1feb4b49830d;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 30 Jun 2025 11:40:07 +0200
+Message-Id: <DAZROB4RXK9C.WMSDJSU3N9CL@walle.cc>
+Subject: Re: [PATCH] drm/tidss: Set crtc modesetting parameters with
+ adjusted mode
+Cc: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <michael@walle.cc>
+To: "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Jayesh Choudhary"
+ <j-choudhary@ti.com>, <jyri.sarha@iki.fi>,
+ <dri-devel@lists.freedesktop.org>, <devarsht@ti.com>
+X-Mailer: aerc 0.16.0
+References: <20250624080402.302526-1-j-choudhary@ti.com>
+ <d6ac1fe1-eeac-430c-ada6-d19386781b53@ideasonboard.com>
+In-Reply-To: <d6ac1fe1-eeac-430c-ada6-d19386781b53@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-GCC compiler v8.5.0 is not happy about printing
-into a too short buffer (when build with `make W=1`):
+--966e033f37f2d4f4fc473532ff78d6a575d67b30c1d1668f1feb4b49830d
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-  drivers/leds/leds-pca955x.c:696:5: note: 'snprintf' output between 2 and 11 bytes into a destination of size 8
+Hi Tomi,
 
-Unfortunately this is a false positive from the old GCC versions,
-but we may still improve the code by using '%hhu' format specifier
-and reduce buffer size by 4 bytes.
+On Tue Jun 24, 2025 at 1:47 PM CEST, Tomi Valkeinen wrote:
+> On 24/06/2025 11:04, Jayesh Choudhary wrote:
+> > TIDSS uses crtc_* fields to propagate its registers and set the
+> > clock rates. So set the CRTC modesetting timing parameters with
+> > the adjusted mode when needed, to set correct values.
+> >=20
+> > Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> > ---
+> >=20
+> > Hello All,
+> >=20
+> > After the DSI fixes[0], TIDSS is using crtc_* timings while programming
+> > hardware[1]. But while testing on TI's J784S4-EVM platform, I noticed
+> > that crtc_timings are not propagated properly.
+> >=20
+> > The display pipeline there looks like:
+> > TIDSS -> CDNS-DSI -> SN65DSI86 bridge -> DisplayPort
+> >=20
+> > Consider the case of 1920x1080 resolution where the EDID mode has clock
+> > of 148500kHz. After adjustment, the clock changes to 148800kHz. While
+> > this change is reflected in mode->clock, its not propagated to
+> > mode->crtc_clock.
+>
+> Hmm, so CDNS-DSI changes the adjusted_mode->clock, but in the end tidss
+> doesn't actually use the adjusted clock at all? I'm pretty sure I tested
+> that... I need to try it (and this) again.
 
-Fixes: bd3d14932923 ("leds: pca955x: Avoid potential overflow when filling default_label")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506282159.TXfvorYl-lkp@intel.com/
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/leds-pca955x.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+FWIW, without this patch, DSI isn't working on my board (DSI -> DSI85
+-> eDP). At least without the (now dropped) patch "drm/tidss: Adjust
+the pclk based on the HW capabilities" [1].
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index 42fe056b1c74..70d109246088 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -587,7 +587,7 @@ static int pca955x_probe(struct i2c_client *client)
- 	struct pca955x_platform_data *pdata;
- 	bool keep_psc0 = false;
- 	bool set_default_label = false;
--	char default_label[8];
-+	char default_label[4];
- 	int bit, err, reg;
- 
- 	chip = i2c_get_match_data(client);
-@@ -693,7 +693,7 @@ static int pca955x_probe(struct i2c_client *client)
- 			}
- 
- 			if (set_default_label) {
--				snprintf(default_label, sizeof(default_label), "%u", i);
-+				snprintf(default_label, sizeof(default_label), "%hhu", i);
- 				init_data.default_label = default_label;
- 			} else {
- 				init_data.default_label = NULL;
--- 
-2.47.2
+That is, it was working with v3 of your DSI patch series, but not
+with v4. I'll need this patch together with v4 to get DSI working.
 
+Maybe that helps,
+-michael
+
+[1] https://lore.kernel.org/all/20250402-cdns-dsi-impro-v2-3-4a093eaa5e27@i=
+deasonboard.com/
+
+--966e033f37f2d4f4fc473532ff78d6a575d67b30c1d1668f1feb4b49830d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaGJbeBEcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+BHiAX9DJFRcAbwH02oCGkRueG+13LtNgmiCzp+H
+eqWrhagx5aZAEsSrHAF8Q2D4tJLv9HMBf38xCW0EuhlUq8su5Trfs3JE1RDjmZ7n
+R/PtTjmFS/4x0jcQpL+Oh7Mf+Qq5rmyXsg==
+=yXux
+-----END PGP SIGNATURE-----
+
+--966e033f37f2d4f4fc473532ff78d6a575d67b30c1d1668f1feb4b49830d--
 
