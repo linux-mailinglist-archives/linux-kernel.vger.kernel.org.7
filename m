@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-708868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38682AED61C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:49:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0079CAED617
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A42616F7DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DCB7A8A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA83238178;
-	Mon, 30 Jun 2025 07:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBBB239E77;
+	Mon, 30 Jun 2025 07:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SNxOXlQZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a/d4+f4m"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYbRsJfK"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B197E1E7C10;
-	Mon, 30 Jun 2025 07:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C70B2367CB;
+	Mon, 30 Jun 2025 07:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269744; cv=none; b=dsHV8HSBfUI50s/24T4M1fxQ71ELGivvqj/GJdtEBJzH5yYPPqX9PtOWd7s0+MhpGSQ6jYEnBsYV66ZFJfhvviJYSCnwACgvhOadQ42UbrqnhftSCaVKEnfx15y4SNwLWzk2UL45ueaDyP51jHCFW7J980dpEXhAdqaPlDWKX4U=
+	t=1751269694; cv=none; b=U21yeSGBEh9N8+bbwN6Wc8dhX9jLJznrXGI4ZO7TnRrZfDeQ91SDMIhlAtXb+UVi/P9udCmi4X8jda02richNKiHyVD3Yl87cU8n21WlDnZmV7IqaAx0HPKWA8kNZajp8LShS5cfeRhkbiLZZB00AHccZzA+l/y4a70oMqjNd0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269744; c=relaxed/simple;
-	bh=2ZqCOQCDU4e20dlPkgw2JsI4HO3iLuuInFCI+rMWS6s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=S7b1cKhpBaXGNSFiNJ20lU9IHVomQCkcjhKb+a0Hr8PmIHUIcK9w3RZMtWSgESZjM2dqbDDMImbwbOykKluvFiELkgIc8lwVXwDDxdzQmcVwlok+cqBAWQUcI40z7BVyvrgk4uFz9KI0TnRc7Jte1VPjpOhW9lNPaQ2VI0h86lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SNxOXlQZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=a/d4+f4m; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 6D01E1D00161;
-	Mon, 30 Jun 2025 03:49:00 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 30 Jun 2025 03:49:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751269740;
-	 x=1751356140; bh=2ZqCOQCDU4e20dlPkgw2JsI4HO3iLuuInFCI+rMWS6s=; b=
-	SNxOXlQZyL9Oq2I4GRpokV8scZvw8Z38mDYuhwKSD99bLH7i0Pueqw86g8BW410b
-	YIeN59Aa6Op9VWU9QbiRMEpTl/Rbz7svK7a0DqS4eJgl8xVSEj60lh+daJEVo19i
-	+d5DFxiCxVn98MWLneFfWiUaoN0mIyk8A7bVSY2a01e7IuftxljMX49qWMvNpZUk
-	oeLtWASOC4q17oNfrzUoAEkSaZgO0aGu9dQuUxzL4tssLyvaxeGIP+TY2CAx7fIa
-	JQjac1mKzK8Qh7IUdTXiCn/AEIaSC/ekHxEXcuxxsn6/TCRN/xJbDmazBMcDI5T2
-	YKCt9oeri3Bx+OCfkGQQAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751269740; x=
-	1751356140; bh=2ZqCOQCDU4e20dlPkgw2JsI4HO3iLuuInFCI+rMWS6s=; b=a
-	/d4+f4mnM79Y5T+pzVKY9v7swzfASLL1RhmWw/fmy99YfsLOdqecBMd2StFIfbr2
-	fkmAqFDMZyi3bA6B9a4C+J7B7kNGRH6BvpRjoLFYCrr53VNjqDkVp2Bsb5KaClsp
-	eyr/jPYmXchvIjU5USKUws6lFizcsnUp1ruC94dVyM5VBCMcY3QDjDAgnBrV7+D0
-	Fhri/sbpMIOdT/kCoQctNStsJ+An9ahL56aAg5V3D2/f5T6ka0sXkoxTIpTzW0Vb
-	Tbl84RB6qhy/3F1r8WempqEXkmlwTmTfpeg2NxubtU/HmPh6YWiWuznoSsCuXUp3
-	9/Sa8ZPhomPBKtEGUjKIg==
-X-ME-Sender: <xms:a0FiaGTNjN3ACZ9D22CF-KPIfVnbRFg0yOTF158rjy905thge8t70g>
-    <xme:a0FiaLxnoS1FK-x8eTLoWBlkXNXr7U0ZwOLjjvCvZIIAY__MvfEjcWhIOnVBM-dvD
-    KxD2Bs7a8h08-4nyHE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepjhhprghnihhssegsrgihlhhisghrvgdrtghomhdprhgtphhtthhope
-    hlghhirhgufihoohgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrohhonhhivges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrgh
-X-ME-Proxy: <xmx:a0FiaD1rnBFWt5xL9tPWpOAN7t2DBqECvzHvLM_dmWOU02HPAeaWBg>
-    <xmx:a0FiaCDjEQ_mpBPR5EYgnc4qf72UqASCVQhcio_pLTBs3LLgIx2Kuw>
-    <xmx:a0FiaPg4cNpmsoDZO7RGwQ6CcT7Xf7pyP_yNHFsdJmQ06AdtgBTIUQ>
-    <xmx:a0FiaOqtfepci8NWB5LSgfmMmys_s6N4UVyKH-tVMMWnTqbkw6eP5g>
-    <xmx:bEFiaAei7bwcu6KxSqfZASuYasaVExh6rkRioyW2b6qStGYue-yvhl7B>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D3B23700068; Mon, 30 Jun 2025 03:48:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751269694; c=relaxed/simple;
+	bh=VmVkc4NDqlE1eCTqylwVONlN47uave8nHFmJ3UNaPUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mLGdO+Zb3Z5yw2Z/kSWiV8ZqjWgfZELw0It6GNNf+TU8QaBTD6SOG0GMI3Qi5o9YXA8UXS2hLxME9bL/qxtNKi9xdrYjNNM/Ki4fAYkaxcrYBeWVj4c/OAVd79SFnxVR0LSBzSpmAV5RfqW8hW0b4RNzmzqDaF3D5IqCg8NKGVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYbRsJfK; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553b544e7b4so1789942e87.3;
+        Mon, 30 Jun 2025 00:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751269690; x=1751874490; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bXFSBFS/Fsc3zonUF83Eqw+cmF6YkWtHb9J7Fk7Gc80=;
+        b=LYbRsJfK2t9ZCQbcPNYPqb8isK6HXU5PwMbcK6q0z0YHpTGVUZFguJn/6eXcPq6nt+
+         h1aPA8OJzZJPkJGrQZJOF2qaD/GtVdgvqj4bglSdA1olfLVhMqN/VW0asmIx2QF4v/0l
+         trUjPvObYREVj1aTir0W7QRA+IWOQ+R9y9PD8RU9Lte0sFuYuqNMb9jW2vhQJc2IV+rR
+         aBVjFlR6SMOWLtddZsZ2Lgnpz0PNj/+0Au68RQFsgtxZchsQgAHoWSh6Fjg6x1+5X/ag
+         4yiuh133nVP+QC456ZLFBsxCkoUBDVcwAlyKyOBPa0OD9vA46xe33oAvDkJnIPN4kN/J
+         zXiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751269690; x=1751874490;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bXFSBFS/Fsc3zonUF83Eqw+cmF6YkWtHb9J7Fk7Gc80=;
+        b=YfGll3WXFgeMd8y3F5c+eew6E2QHr3tN8m2h5S+lmVajO4H1ir8n2Xqk6DGjW/oSmN
+         lcI+IpmgFTLnmnXFxu26yk3v7DwLyvKzPJN0b+aojbSLVWAl0zDLG90/tRADMa+lEs1A
+         J/osiEGisDbsEUnl5Oxe2QuSL3EBa1b3vySmxeBTO+Dl30KsCqD/a5mSFOJnlXsJaX2N
+         OGKiGtaWp4POskNfvSsbGbQETmgjJziYzAQz7X+JKi95qfN9M+bjOqyo0uXrF9KnDA+5
+         mkSY+SvQFquTZ48A3kOIjBVM/K52agPXanm6cdPWk5tbrS9L40E0yWJIT//wuRksjA9R
+         CeNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnL6HuwpPYBehDMI3RkIcqajxMrcS2Y5XhUI6SAbtmLh2ST6pjrleq5yY5B8Ijx/b06DWq6VzoH64qCz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLswrPhL1C2pM7nNgEr+sRdxRt6bILBgdDAjUkXpEEs8UcKbi/
+	Gk878q7tirSwwLR0jXcYnBgHmHeFWQ37+1zhSpj2gt1YEdaSUMsbHHKw
+X-Gm-Gg: ASbGnctSsDUkr2YxvmaZdutJJnYOAwbRzT2wH4i/tKjb1gNPbgCBxeN0v8t7EgFcrO0
+	IxJmNk6rCDN9wJwgbp1S5m+cJ7cm+Cy/6J+yYT1xrpDPmzpjx/hKpoxxQKQRqb3jCWvv76yNTYu
+	jrYdTG9Iv7LgwMunPCBJSvzgUAiOJBac5btQwVUuHqeDbOF5o4lCu5YqIE32bbpTnxDHKKw2da5
+	3UPI+AgB/yjeHRW9LC/PFpzhoXjNjT65cqAUa9ILEb7vp4BCOCuWjE6YNE5MBdKkHTThWlq/k5Z
+	KgXSkmfw83xJkktyWPgviTQFZH44+Z1f9uTSlqgVuc9frl9w3Bf8Gl29N8NudW1Pc+utBX4O/0I
+	/auOk3c95m0DYJAshvh74DJeTb6WIzWz9igCH97A=
+X-Google-Smtp-Source: AGHT+IEjGFbT+2UJY4kKWiRGgpwWa5SKukWH4D3VbO4nfmfAhxfFEnGkspsGJRSmRO+9iY3LZVTzCA==
+X-Received: by 2002:a05:6512:130c:b0:553:2438:8d02 with SMTP id 2adb3069b0e04-5550b8e9404mr3472093e87.47.1751269690098;
+        Mon, 30 Jun 2025 00:48:10 -0700 (PDT)
+Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b240103sm1329013e87.52.2025.06.30.00.48.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jun 2025 00:48:09 -0700 (PDT)
+Message-ID: <a5679ca1-aa22-4a05-92fb-f1e95805c864@gmail.com>
+Date: Mon, 30 Jun 2025 10:48:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T53991f9249d0193f
-Date: Mon, 30 Jun 2025 09:48:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Michael Walle" <mwalle@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>,
- "Julien Panis" <jpanis@baylibre.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Message-Id: <c07229ed-d4b8-4e5f-a518-ea9d703fa617@app.fastmail.com>
-In-Reply-To: <20250613114518.1772109-3-mwalle@kernel.org>
-References: <20250613114518.1772109-1-mwalle@kernel.org>
- <20250613114518.1772109-3-mwalle@kernel.org>
-Subject: Re: [PATCH v2 2/7] misc: tps6594-pfsm: Add TI TPS652G1 PMIC PFSM
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: dma: require mutable reference for as_slice_mut()
+ and write()
+To: Danilo Krummrich <dakr@kernel.org>, daniel.almeida@collabora.com,
+ robin.murphy@arm.com, a.hindborg@kernel.org, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu, acourbot@nvidia.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250628165120.90149-1-dakr@kernel.org>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <20250628165120.90149-1-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 13, 2025, at 13:45, Michael Walle wrote:
-> The TPS652G1 is a stripped down TPS65224, but the PFSM is the same.
-> Thus, handle it the same way as the TPS65224 in the driver.
->
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
 
-Acked-by: Arnd Bergmann <arnd@arndb.de> # drivers/misc/
+
+On 28/06/2025 19:49, Danilo Krummrich wrote:
+> Given the safety requirements of as_slice_mut() and write() taking an
+> immutable reference is technically not incorrect.
+> 
+> However, let's leverage the compiler's capabilities and require a
+> mutable reference to ensure exclusive access.
+> 
+> This also fixes a clippy warning introduced with 1.88:
+> 
+>    warning: mutable borrow from immutable input(s)
+>       --> rust/kernel/dma.rs:297:78
+>        |
+>    297 |     pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Result<&mut [T]> {
+>        |                                                                              ^^^^^^^^
+> 
+> Fixes: d37a39f607c4 ("rust: dma: add as_slice/write functions for CoherentAllocation")
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>   rust/kernel/dma.rs | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 25dfa0e6cc3c..2ac4c47aeed3 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -294,7 +294,7 @@ pub unsafe fn as_slice(&self, offset: usize, count: usize) -> Result<&[T]> {
+>       ///   slice is live.
+>       /// * Callers must ensure that this call does not race with a read or write to the same region
+>       ///   while the returned slice is live.
+> -    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Result<&mut [T]> {
+> +    pub unsafe fn as_slice_mut(&mut self, offset: usize, count: usize) -> Result<&mut [T]> {
+>           self.validate_range(offset, count)?;
+>           // SAFETY:
+>           // - The pointer is valid due to type invariant on `CoherentAllocation`,
+> @@ -326,7 +326,7 @@ pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Result<&mut [T
+>       /// unsafe { alloc.write(buf, 0)?; }
+>       /// # Ok::<(), Error>(()) }
+>       /// ```
+> -    pub unsafe fn write(&self, src: &[T], offset: usize) -> Result {
+> +    pub unsafe fn write(&mut self, src: &[T], offset: usize) -> Result {
+>           self.validate_range(offset, src.len())?;
+>           // SAFETY:
+>           // - The pointer is valid due to type invariant on `CoherentAllocation`
+> 
+> base-commit: c7e03c5cf06a90ff234ae3c628c6b74e5cba7426
+
+Reviewed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+
 
