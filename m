@@ -1,240 +1,206 @@
-Return-Path: <linux-kernel+bounces-709103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC62FAED94C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:04:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471F4AED955
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639DF164FB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B0E18844DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BBB248F5B;
-	Mon, 30 Jun 2025 10:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547A224A04F;
+	Mon, 30 Jun 2025 10:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SKHd8eGc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lkaUtHQ7"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74F7246BCC
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F61024889B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277843; cv=none; b=LJFqYSHyefl6qGI0ZV/q163qTtOLApn4RrPUBwwzRU69NYkx1vkCuVfHPQ5Vp/sd6Vavbt18egZQyIvD+SbcruMzqnWk1Bk9L8HagG2YgoG8L24nGu28ADjHAKsXwU6+xeQZUi1+YIReo/R890Lw9BKerH1PAaa/7svp/DWDaWE=
+	t=1751277957; cv=none; b=qHHJx2qNz6vv+Uhmj9HIt6aG4ycF8F5aWpaHnIYfrfebzCGhRW4bBSeSB7u1j6wd5hH5l7WNN3BWXmphFpl8irycdTxM5M3h3T3KzmPKj8+1u/A8cQ0Hu6SqK2t8Hg7ejc4Chpno0VOkhldpGp9mfE0k6qbcT9RrPXPX3YaJuSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277843; c=relaxed/simple;
-	bh=AEODnrMS16lb5KVlrtGAqxppDZZws9s1JxVfGXYy7yY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Dfbl6UVJsop1XiYtH/6x0lfnbbXYNunVBjCpafvBbodEJl8VkszXT+VpL69qAtYt08c80PIwirNDP7kRHVViOH1QJkGKX1QHROEBxrGboCASWKypARUOl4SU5apBjWd7XVdzw9JHy2qqhCiAHvwUGPUbnaVSxZmpY+p5ebdKmtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SKHd8eGc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8DDPP018597;
-	Mon, 30 Jun 2025 10:03:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xJKWEiBayTIfW0AYuKnleMaC6ErR2HE+2N2I/JaciHE=; b=SKHd8eGcbHn/z6bm
-	P2fgX42kptcG4nHQCDWp4NU8my23o32XN3ZqJHGUjPTNKvzgSgewH+Ps/5K3l9qa
-	wpIUCrTH0NlcvHPCgQ8y24bSbm/hjSmJuSpjhQiGLazCKIerwvYQrMi11PGn28zw
-	UCrQx89eI4ecdiA7RZx+G2b7WwIKFVzjW6ItGDoin55ucW8m354NJ71yPjQMtWQ5
-	0CgvsNFyfpeL5safYRXZ2lpzGef/2DVdME3MPcyL7hSteRhgdIhLq43u1cM8bWAG
-	8/sXea6xb/sThw2e+W0QMWaGFQYT3CNy7yeLrT8UJ/txCoXmVbSh1uS48Wji4+l3
-	/OW/iQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8fxc98p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 10:03:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 55UA3mJ2020557
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 10:03:48 GMT
-Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 30 Jun
- 2025 03:03:45 -0700
-Message-ID: <416f8284-ad98-4922-96d8-7ec873f7b9b8@quicinc.com>
-Date: Mon, 30 Jun 2025 18:03:43 +0800
+	s=arc-20240116; t=1751277957; c=relaxed/simple;
+	bh=cND8KnHFqjASahdvxji0sLcbPl2XO4nal1045B0qiPc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cFZ9hxX52A9qOouKIGIlCDCy+QlbPyW5XUnjGB7Qs0GqwZ/mK3zqsgUmkiNJ3U4dPyqikE2L4mBNtxsL9Fo0QuisutcLRX8Dq6Uhhk2QYT7YWX9QvRCkd813/yMIOUR4KxHj/FsduGDeP7jLa5mMuwAY3nmpTz6ZPkZ0Eg+v2NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lkaUtHQ7; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-553a66c3567so7395e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 03:05:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751277953; x=1751882753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y5W/aCkH5j3ZLhBzUnk4+o0iMGbCFsEB9QPytpHfm7c=;
+        b=lkaUtHQ7s6Qovu0Bu7CWOB4E6beA1euHJmtgrce8hLSQ8LiIkRu76mRVQdyVokoohk
+         TJ6MSZ+ER+ZmRptxNls6FS5wGJTvYSIpEIB+AELMjNucYJLcNUQ++9Y0q94mXYxg0FPe
+         Eivf961N6XtYs9YQf2HRf45c4HJMOr/pNtNrzmjESmgR76SMjibSrllt7mk/WBPWuF32
+         nZKoSJOmx1+Y8gQl0TDDhQbH0a61+ypj/H6p21KLpngImdoGPUSMBDwFvCN6wtFixt1j
+         4zT4fiUExe2S+fDp6FQc+Wsc/LCR2GkwrXmoeTCFQRqc3NEEZDa5q2SAkA5orQtAFK2K
+         iqxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751277953; x=1751882753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y5W/aCkH5j3ZLhBzUnk4+o0iMGbCFsEB9QPytpHfm7c=;
+        b=CcftQQZU85FwFY41GsVSsKqyEsIyLYgGk7KrNQKac+KLa0VDiHdfzaXTt5KtIcunim
+         QnUEeFm9hKdCHCIzbfRNUdMROHGftW6tKMZvQqgNTwy3XSx1dDpa/+PCKlU4i3DV/14h
+         tw/0Nq+oEOIkgTdH6rJdgSJCs4vey0ROYDlgjpDPouCMJ8Ys0qTDdM6rKTGgmmbG4dPW
+         vVD5GpxvbxOAHzma1/mu/Ve29GtoNMs7oUP9t2TPhzIJ1JHF72nrhmTgXb4e2tCf+CKm
+         L1WuK5bx9S1uabqqhO//9S5MUdxEBr+6sezby/elwu+gwFOegqpohfD+IuG+29wOmkEU
+         q0QA==
+X-Forwarded-Encrypted: i=1; AJvYcCVirzkmGTGVx2kPk9yOrswSKoZQ7YgUssXE9aCjYS9BTjkda5ATBTpaIRS/hP+Y2zC0fkC3HasmNDeIv2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc87ypaXBR99P3RJAz9QqKHUx46ftFAlfvyLJTqF6EznD52pVm
+	/xkls4NMrkMY1NFqGC8I2mIgK8m5eEgkDWpPtMwteOkYRfPE8JcABx6WsUW02TymbbC1nj5Q3c1
+	LFP6CK87f8WXFN/IGTYjVMEmy+rn6XqqNgN1a84X7
+X-Gm-Gg: ASbGncuvuVtHndPt8xTfIjIhp7Yq1voOwaLTcDpnJ8+ShICh4dYh9MH7Z+sw0dBm3Im
+	9di4cPcwDRIXbjZxpw0sXRAF8122Zo8D31OFh16lirPRqoK9B2IS0F75qi/NSAGUylsXPqSlFv9
+	tzX+QzmFGd4gdppdmyv/CIxd5/MCCPZMkQ9jYVPzPr419e7L3LIJvMEi4YqVAkeb6cj/hiPyg=
+X-Google-Smtp-Source: AGHT+IEehaw/D/wnspUhLXMrazPF9xkSjn2yt6Mt9vV9dtn4BkBRGAGPcuzi4KGS7PFJfVQUk50Qzwro6et5OzesapA=
+X-Received: by 2002:a05:6512:228b:b0:555:4de:c172 with SMTP id
+ 2adb3069b0e04-55513fc99eemr271882e87.3.1751277953101; Mon, 30 Jun 2025
+ 03:05:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] coresight-tmc: Add configurable timeout for flush and
- tmcready
-To: James Clark <james.clark@linaro.org>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>, Leo Yan
-	<leo.yan@arm.com>
-CC: <kernel@oss.qualcomm.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <20250627-flush_timeout-v1-1-2f46a8e9f842@quicinc.com>
- <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
-Content-Language: en-US
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-In-Reply-To: <78f2179d-26c2-47f0-bc19-b72e5e51ad29@linaro.org>
+References: <20250623092350.3261118-2-gprocida@google.com> <20250625095215.4027938-1-gprocida@google.com>
+ <CAK7LNASNVh8fDErjSbcR1TiCfy=LM-j3iYSNpqAvp8OhGmsKjQ@mail.gmail.com>
+In-Reply-To: <CAK7LNASNVh8fDErjSbcR1TiCfy=LM-j3iYSNpqAvp8OhGmsKjQ@mail.gmail.com>
+From: Giuliano Procida <gprocida@google.com>
+Date: Mon, 30 Jun 2025 11:05:16 +0100
+X-Gm-Features: Ac12FXxmNoP6PvMu6OOoOXG12Jh_6-R_MmbOZXUFBdsR8S9d8WpM8vXppST1XSk
+Message-ID: <CAGvU0HnzfLxGhLT3Se4wNvyzEkpTKmd8ATFFgBRBVNrOKDXcgA@mail.gmail.com>
+Subject: Re: [PATCH] gendwarfksyms: order -T symtypes output by name
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Sami Tolvanen <samitolvanen@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDA4MyBTYWx0ZWRfX1lv9szCI4A2q
- JMbUVgNERJbDT0tyZU6JRvwgk2l5DKwPGWBwZJlcAYOUq5Zi7GrVuL2YmXJvmWxtr4yLJfJm/Rk
- 1WtJlxB8lmrvNrOHRD3nwS2MEIHtfTGZhNoH4UY8gksTSywP6ods9XA/IY4jIReWVt7skH7Yd04
- FG8BLEdjXERrVlulKkv7Crqm7K61jwxVEEKOd5WfmdsRqYxyL6ZLdRAQNy+TH7Bb5BaNE4XRtvf
- 3RVCLPU8WLnYaOLj4EEo4r2YAfyIr9z+HoHGNLtEYleNhVHJEoY75Hoj6w+GjxGjdX/Rxfw5hI7
- IfH2X7V6AXYfjWYak0Gu6UpzvLcyBy9MUe3TjcT9muU7esjEI2qWp4uF+0OFpb5vf4MOm1Vn68X
- joPgAsdAKgWt1LAp8ykc1ZZhVPVSqhbVRMckEdDZoyKJNPiNYz0RtnAcQahvceWtamIdeSYM
-X-Proofpoint-GUID: nArRLsHPLiAPnZli7AK9LYgX6c9q9yBG
-X-Proofpoint-ORIG-GUID: nArRLsHPLiAPnZli7AK9LYgX6c9q9yBG
-X-Authority-Analysis: v=2.4 cv=TqPmhCXh c=1 sm=1 tr=0 ts=68626105 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=COk6AnOGAAAA:8
- a=l3ZCduS5h3iTd8WGH-EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
- impostorscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300083
+Content-Transfer-Encoding: quoted-printable
 
+Hi.
 
+On Sun, 29 Jun 2025 at 18:51, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Wed, Jun 25, 2025 at 6:52=E2=80=AFPM Giuliano Procida <gprocida@google=
+.com> wrote:
+> >
+> > When writing symtypes information, we iterate through the entire hash
+> > table containing type expansions. The key order varies unpredictably
+> > as new entries are added, making it harder to compare symtypes between
+> > builds.
+> >
+> > Resolve this by sorting the type expansions by name before output.
+> >
+> > Signed-off-by: Giuliano Procida <gprocida@google.com>
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+> > ---
+> >  scripts/gendwarfksyms/types.c | 29 ++++++++++++++++++++++++++---
+> >  1 file changed, 26 insertions(+), 3 deletions(-)
+> >
+> > [Adjusted the first line of the description. Added reviewer tags.
+> >  Added missing CC to linux-modules.]
+> >
+> > diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksyms/type=
+s.c
+> > index 7bd459ea6c59..51c1471e8684 100644
+> > --- a/scripts/gendwarfksyms/types.c
+> > +++ b/scripts/gendwarfksyms/types.c
+> > @@ -6,6 +6,8 @@
+> >  #define _GNU_SOURCE
+> >  #include <inttypes.h>
+> >  #include <stdio.h>
+> > +#include <stdlib.h>
+> > +#include <string.h>
+> >  #include <zlib.h>
+> >
+> >  #include "gendwarfksyms.h"
+> > @@ -179,20 +181,41 @@ static int type_map_get(const char *name, struct =
+type_expansion **res)
+> >         return -1;
+> >  }
+> >
+> > +static int cmp_expansion_name(const void *p1, const void *p2)
+> > +{
+> > +       struct type_expansion *const *e1 =3D p1;
+> > +       struct type_expansion *const *e2 =3D p2;
+> > +
+> > +       return strcmp((*e1)->name, (*e2)->name);
+> > +}
+> > +
+> >  static void type_map_write(FILE *file)
+> >  {
+> >         struct type_expansion *e;
+> >         struct hlist_node *tmp;
+> > +       struct type_expansion **es;
+> > +       size_t count =3D 0;
+> > +       size_t i =3D 0;
+> >
+> >         if (!file)
+> >                 return;
+> >
+> > -       hash_for_each_safe(type_map, e, tmp, hash) {
+> > -               checkp(fputs(e->name, file));
+> > +       hash_for_each_safe(type_map, e, tmp, hash)
+> > +               ++count;
+> > +       es =3D xmalloc(count * sizeof(struct type_expansion *));
+>
+> Just a nit:
+>
+>            es =3D xmalloc(count * sizeof(*es));
+>
+> is better?
+>
+> > +       hash_for_each_safe(type_map, e, tmp, hash)
+> > +               es[i++] =3D e;
+> > +
+> > +       qsort(es, count, sizeof(struct type_expansion *), cmp_expansion=
+_name);
+>
+> qsort(es, count, sizeof(*es), cmp_expansion_name);
+>
 
-On 6/27/2025 7:23 PM, James Clark wrote:
-> 
-> 
-> On 27/06/2025 12:10 pm, Yuanfang Zhang wrote:
->> The current implementation uses a fixed timeout via
->> coresight_timeout(), which may be insufficient when multiple
->> sources are enabled or under heavy load, leading to TMC
->> readiness or flush completion timeout.
->>
->> This patch introduces a configurable timeout mechanism for
->> flush and tmcready.
->>
-> 
-> What kind of values are you using? Is there a reason to not increase the global one?
-1000, Because only TMC FLUSH will face timeout situations.
-> 
-> I don't think it's important what value we choose because it's only to stop hangs and make it terminate eventually. As far as I can see it wouldn't matter if we set it to a huge value like 1 second. That would only cause a big delay when something has actually gone wrong. Under normal circumstances the timeout won't be hit so it doesn't really need to be configurable.
+That's a fair point.
 
-But in some cases, TMC doesn't hang up, it just requires a longer waiting time.
-> 
->> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-tmc-core.c | 43 ++++++++++++++++++++++--
->>   1 file changed, 41 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
->> index 88afb16bb6bec395ba535155228d176250f38625..286d56ce88fe80fbfa022946dc798f0f4e72f961 100644
->> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
->> @@ -8,6 +8,7 @@
->>   #include <linux/kernel.h>
->>   #include <linux/init.h>
->>   #include <linux/types.h>
->> +#include <linux/delay.h>
->>   #include <linux/device.h>
->>   #include <linux/idr.h>
->>   #include <linux/io.h>
->> @@ -35,13 +36,31 @@ DEFINE_CORESIGHT_DEVLIST(etb_devs, "tmc_etb");
->>   DEFINE_CORESIGHT_DEVLIST(etf_devs, "tmc_etf");
->>   DEFINE_CORESIGHT_DEVLIST(etr_devs, "tmc_etr");
->>   +static u32 tmc_timeout;
->> +
->> +static void tmc_extend_timeout(struct csdev_access *csa, u32 offset, int pos, int val)
->> +{
->> +    int i;
->> +
->> +    for (i = tmc_timeout; i > 0; i--) {
->> +        if (i - 1)
-> 
-> I didn't get what the if is for here? Removing it does basically the same thing, but if you do want to keep it maybe if (i > 1) is more explanatory.
-sure.
-> 
->> +            udelay(1);
-> 
-> Can you not do udelay(tmc_timeout)?
-sure.
-> 
->> +    }
->> +}
->> +
->> +static int tmc_wait_status(struct csdev_access *csa, u32 offset, int pos, int val)
->> +{
->> +    return coresight_timeout_action(csa, offset, pos, val,
->> +            tmc_extend_timeout);
->> +}
->> +
->>   int tmc_wait_for_tmcready(struct tmc_drvdata *drvdata)
->>   {
->>       struct coresight_device *csdev = drvdata->csdev;
->>       struct csdev_access *csa = &csdev->access;
->>         /* Ensure formatter, unformatter and hardware fifo are empty */
->> -    if (coresight_timeout(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1)) {
->> +    if (tmc_wait_status(csa, TMC_STS, TMC_STS_TMCREADY_BIT, 1)) {
->>           dev_err(&csdev->dev,
->>               "timeout while waiting for TMC to be Ready\n");
->>           return -EBUSY;
->> @@ -61,7 +80,7 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata)
->>       ffcr |= BIT(TMC_FFCR_FLUSHMAN_BIT);
->>       writel_relaxed(ffcr, drvdata->base + TMC_FFCR);
->>       /* Ensure flush completes */
->> -    if (coresight_timeout(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0)) {
->> +    if (tmc_wait_status(csa, TMC_FFCR, TMC_FFCR_FLUSHMAN_BIT, 0)) {
->>           dev_err(&csdev->dev,
->>           "timeout while waiting for completion of Manual Flush\n");
->>       }
->> @@ -561,11 +580,31 @@ static ssize_t stop_on_flush_store(struct device *dev,
->>     static DEVICE_ATTR_RW(stop_on_flush);
->>   +static ssize_t timeout_cfg_show(struct device *dev,
->> +                struct device_attribute *attr, char *buf)
->> +{
->> +    return scnprintf(buf, PAGE_SIZE, "%d\n", tmc_timeout);
->> +}
->> +
->> +static ssize_t timeout_cfg_store(struct device *dev,
->> +                 struct device_attribute *attr,
->> +                 const char *buf, size_t size)
->> +{
->> +    unsigned long val;
->> +
->> +    if (kstrtoul(buf, 0, &val))
->> +        return -EINVAL;
->> +    tmc_timeout = val;
->> +
->> +    return size;
->> +}
->> +static DEVICE_ATTR_RW(timeout_cfg);
->>   
-> 
-> Seeing as the existing timeout is global for all devices, if we do want a configurable one shouldn't we make the global one configurable rather than per-device? That seems too fine grained to me.
-sure.
-> 
->>   static struct attribute *coresight_tmc_attrs[] = {
->>       &dev_attr_trigger_cntr.attr,
->>       &dev_attr_buffer_size.attr,
->>       &dev_attr_stop_on_flush.attr,
->> +    &dev_attr_timeout_cfg.attr,
->>       NULL,
->>   };
->>  
->> ---
->> base-commit: 408c97c4a5e0b634dcd15bf8b8808b382e888164
->> change-id: 20250627-flush_timeout-a598b4c0ce7b
->>
->> Best regards,
-> 
+However, in the gendwarfksyms code, all but one of the sizeofs uses an
+explicit type name. The exception is sizeof(stats) where stats is an array.
 
+I'll leave Sami's code as it is.
+
+Giuliano.
+
+>
+> > +
+> > +       for (i =3D 0; i < count; ++i) {
+> > +               checkp(fputs(es[i]->name, file));
+> >                 checkp(fputs(" ", file));
+> > -               type_list_write(&e->expanded, file);
+> > +               type_list_write(&es[i]->expanded, file);
+> >                 checkp(fputs("\n", file));
+> >         }
+> > +
+> > +       free(es);
+> >  }
+> >
+> >  static void type_map_free(void)
+> > --
+> > 2.50.0.714.g196bf9f422-goog
+> >
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
