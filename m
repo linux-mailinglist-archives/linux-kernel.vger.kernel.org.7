@@ -1,85 +1,45 @@
-Return-Path: <linux-kernel+bounces-708777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BA6AED4F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:52:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C383EAED4F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD39174216
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:52:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04853A738C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7871A2165E2;
-	Mon, 30 Jun 2025 06:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XL12VkNx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AC2204C3B;
+	Mon, 30 Jun 2025 06:53:53 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2CC1F7904
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 06:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ACE2A1CA;
+	Mon, 30 Jun 2025 06:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751266303; cv=none; b=IkZ9WfAqJZXpPGta2jeWluaKnEwOrciZ1xd4sD9eiQfQRsgoIcsMdPnTDRg1CXIFv/L65LPEOp2Kxi2DfkW4PCXOkge6NfXiw+ZCib3FZRd1z4ZU061WHFYph36ecpKqb57dsgjdVm0Xh4kQgOUsMFezIsWb7x8Xm9RdyRBqlXQ=
+	t=1751266433; cv=none; b=cV/JG32N4L6Y6ujGJzzFYU1lSfnyhXQanr++Pf6yPRZ2utLwb+luWpe2EmTFmlPXNbkWG4iA4RWmFwATK0tZd1KihyruOmI4jYW3IMYgMlxyw7C/sai3CE7AuTESYfO3jHSmDLWzSsKIVuJfG/ImxNT7HKgGcPAnai/yONB/2tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751266303; c=relaxed/simple;
-	bh=1j/BOe6+uj6Rz+5EFQPn/l2EbhGasamVZqKuVWNilXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HN8GOGc7y7UTUmx+0GG5qp4Oo0jBTDnAbq2k6ijuDaYKbOQX9xavFFAApOBgkrgAb2jNieqpF/aM6pd1WzdCbC3ihBv3SzXf3Oml6XkYaOf65hTC4iNkw+A/fdDERulvppnqsUPCOdcja3TrQvWAZV5VNuszFtzHWV10stJmsus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XL12VkNx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751266301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=14L4bSmzMK+Na24jtHZlikcuCB46GClv+lCWBOsYn3k=;
-	b=XL12VkNxRj85syYOQHSpKb9ocN7rCtq1D0rKSh1cOaBoMY14rglkWKs/CqfMeSAb0pa7sJ
-	njGphRe9YeCXsq2JKXXNBhilGNedRMq210b4SkjkCpKbd5muDeZZmC6Pj/yFxq/rXRXu5N
-	8EE75N8vzmzBPZIVSAkYYGDJUY9HnOM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-dHvYnZqjMLWfZNR8JWTLtA-1; Mon, 30 Jun 2025 02:51:39 -0400
-X-MC-Unique: dHvYnZqjMLWfZNR8JWTLtA-1
-X-Mimecast-MFC-AGG-ID: dHvYnZqjMLWfZNR8JWTLtA_1751266298
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-450d244bfabso14367865e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 23:51:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751266298; x=1751871098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=14L4bSmzMK+Na24jtHZlikcuCB46GClv+lCWBOsYn3k=;
-        b=Xy5707Xje4N5fPRVRQlLfBSMKjkCM82nB6PO2ENb3hiNl7R/xeL31Q986bXr0xbTV+
-         zT2wUiq8vYekjPmtEvplRo2znYInmXS1gBztDXuZo+mfWw5sZ5DFBkYxFu4vASEBnQXS
-         yyvTRd26coF7QEPq6ULAdhA9KAAC+MCI63x+bBrRnm3RQzf6V/8IU9xz+fiExqwtPl3O
-         XfHP4UJlcUrt5PP7eRFhysySgd6hFw3NPH+GnXQ2IeP+ZVd5u2KWwE1xrkupTWflOUms
-         9xR54jBCF4voDNTkLdqfIDllE6YoOM1nZuZ9nLMyS/PXsJ/Du/c8tZG3QGgK0oCCRMne
-         vT8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWgRqOAAQvN+NsYbHvdhBIPwz2m4ubE94Q8clXaYLjIYNG4p+PWK1P1Cf1Qj4RN3M7SOz5WWsnJM1ryJPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTw2fbHMcBaxWHG2ZCok6FCqIrYu/TYeNjIZrLHdmMF4onCsQl
-	XtAWwZ0mX11OqROxNfjAShzIzKRcg5DZi7UHnoCdkPrcNEqe6c/oQRAYZ950KUrSZpL24NDaFx8
-	FbjpPWw+O3POQS7qjNtKxWXo3zbljCXrZa2iecj3sG+B3OUJR4EHnDQAFPmu47tGDQA==
-X-Gm-Gg: ASbGncuwgu+dokiqWG8+L4ODjmpiOVqKamcH++xzTGywVPo42db+uNPigzyyXBEwQ41
-	LuFmPXadbS98sAmZLfh3+hySGdIbREiPJ9ajnbo90daobktOoL7l7/ORBmxjcY26yx0JgBTxrj0
-	SJLJJb+jYrNYIlXD2HMOSiry7OKZDtO5rWrMCkfwOS97xDQuND8hN23mjq6O8phbtLTm1XDThuL
-	pcdLAL6Y0YRVoK8XRlT+O64iPmOh3scIGBRZ8+5lzg3wx1ZHjGFPL9ACA2E+sl0RUHQiqtsi3R/
-	9peZlQOCOhO59Ad7591qqScpy9sR7vNTbbKrtVXWZdNfQv7ya2j9o4QKR3Z/S+QgvUUyvw==
-X-Received: by 2002:a05:600c:3e8e:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-4538ee5ce0cmr113844435e9.8.1751266298034;
-        Sun, 29 Jun 2025 23:51:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8OzcnlTDoCi5GaakFcUjFo98VZ0Lu6zkZMiLKUwkNiF4+gQI+xZELrNOEu2y/m9jGEUvL0Q==
-X-Received: by 2002:a05:600c:3e8e:b0:442:e9ec:4654 with SMTP id 5b1f17b1804b1-4538ee5ce0cmr113844085e9.8.1751266297611;
-        Sun, 29 Jun 2025 23:51:37 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:247b:5810:4909:7796:7ec9:5af2? ([2a0d:3344:247b:5810:4909:7796:7ec9:5af2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3aba76e40c0sm5286272f8f.59.2025.06.29.23.51.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Jun 2025 23:51:37 -0700 (PDT)
-Message-ID: <83640113-ae18-4d5a-945a-44eef600d42e@redhat.com>
-Date: Mon, 30 Jun 2025 08:51:35 +0200
+	s=arc-20240116; t=1751266433; c=relaxed/simple;
+	bh=yRFqEHoJQzbPVzLUCQehKeaWsx+eIRFoUN+yQRANVjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=b/bsP82gOzg8bxG83+rgWaNT+BKRjCUWCBr/vJVGVnlZ/z94WLva+/UTx2tlyRsexAYSIQU0k6gQFpTxGknECC1hd8EXua3TwwWtD6ODHrxdh2pRNoju35yqrhUJAH99qU/ZhRHR/xb/xEopyvLFQ88Au0InCux6K6XWmfuja6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bVxg66PFzztSd8;
+	Mon, 30 Jun 2025 14:52:34 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 17C10140257;
+	Mon, 30 Jun 2025 14:53:43 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Jun
+ 2025 14:53:42 +0800
+Message-ID: <649000b5-dd4d-4b08-8615-be07fdfdfe5e@huawei.com>
+Date: Mon, 30 Jun 2025 14:53:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,72 +47,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: syztest
-To: Arnaud Lecomte <contact@arnaud-lcm.com>,
- syzbot+827ae2bfb3a3529333e9@syzkaller.appspotmail.com
-Cc: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net,
- edumazet@google.com, guwen@linux.alibaba.com, horms@kernel.org,
- jaka@linux.ibm.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-References: <67eaf9b8.050a0220.3c3d88.004a.GAE@google.com>
- <20250629132933.33599-1-contact@arnaud-lcm.com>
+Subject: Re: [PATCH v2 09/16] ext4: fix zombie groups in average fragment size
+ lists
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<ojaswin@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <stable@vger.kernel.org>,
+	Baokun Li <libaokun1@huawei.com>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
+ <20250623073304.3275702-10-libaokun1@huawei.com>
+ <pouh5hfd7lswwhczu667k2pywuawaetvv4lr44zinexbb75jeu@rgaaqa5myop7>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250629132933.33599-1-contact@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <pouh5hfd7lswwhczu667k2pywuawaetvv4lr44zinexbb75jeu@rgaaqa5myop7>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On 6/29/25 3:29 PM, Arnaud Lecomte wrote:
-> #syz test
-> 
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -123,11 +123,14 @@ static struct sock *smc_tcp_syn_recv_sock(const struct sock *sk,
->  					  struct request_sock *req_unhash,
->  					  bool *own_req)
->  {
-> +        read_lock_bh(&((struct sock *)sk)->sk_callback_lock);
->  	struct smc_sock *smc;
->  	struct sock *child;
-> -
->  	smc = smc_clcsock_user_data(sk);
->  
-> +	if (!smc)
-> +		goto drop;
-> +
->  	if (READ_ONCE(sk->sk_ack_backlog) + atomic_read(&smc->queued_smc_hs) >
->  				sk->sk_max_ack_backlog)
->  		goto drop;
-> @@ -148,9 +151,11 @@ static struct sock *smc_tcp_syn_recv_sock(const struct sock *sk,
->  		if (inet_csk(child)->icsk_af_ops == inet_csk(sk)->icsk_af_ops)
->  			inet_csk(child)->icsk_af_ops = smc->ori_af_ops;
->  	}
-> +	read_unlock_bh(&((struct sock *)sk)->sk_callback_lock);
->  	return child;
->  
->  drop:
-> +	read_unlock_bh(&((struct sock *)sk)->sk_callback_lock);
->  	dst_release(dst);
->  	tcp_listendrop(sk);
->  	return NULL;
-> @@ -2613,7 +2618,7 @@ int smc_listen(struct socket *sock, int backlog)
->  	int rc;
->  
->  	smc = smc_sk(sk);
-> -	lock_sock(sk);
-> +	lock_sock(sock->sk);
->  
->  	rc = -EINVAL;
->  	if ((sk->sk_state != SMC_INIT && sk->sk_state != SMC_LISTEN) ||
+On 2025/6/28 3:14, Jan Kara wrote:
+> On Mon 23-06-25 15:32:57, Baokun Li wrote:
+>> Groups with no free blocks shouldn't be in any average fragment size list.
+>> However, when all blocks in a group are allocated(i.e., bb_fragments or
+>> bb_free is 0), we currently skip updating the average fragment size, which
+>> means the group isn't removed from its previous s_mb_avg_fragment_size[old]
+>> list.
+>>
+>> This created "zombie" groups that were always skipped during traversal as
+>> they couldn't satisfy any block allocation requests, negatively impacting
+>> traversal efficiency.
+>>
+>> Therefore, when a group becomes completely free, bb_avg_fragment_size_order
+> 					     ^^^ full
 
-Please stop cc-ing netdev and other kernel ML with this tests. You
-should keep just the syzkaller related MLs and a very restricted list of
-individuals (i.e. no maintainers).
+Oh, thank you for pointing out that typo!
+I'll correct it in the next version.
+
 
 Thanks,
+Baokun
 
-Paolo
+>> is now set to -1. If the old order was not -1, a removal operation is
+>> performed; if the new order is not -1, an insertion is performed.
+>>
+>> Fixes: 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning")
+>> CC: stable@vger.kernel.org
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Good catch! The patch looks good. Feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> 								Honza
+>
+>> ---
+>>   fs/ext4/mballoc.c | 36 ++++++++++++++++++------------------
+>>   1 file changed, 18 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+>> index 94950b07a577..e6d6c2da3c6e 100644
+>> --- a/fs/ext4/mballoc.c
+>> +++ b/fs/ext4/mballoc.c
+>> @@ -841,30 +841,30 @@ static void
+>>   mb_update_avg_fragment_size(struct super_block *sb, struct ext4_group_info *grp)
+>>   {
+>>   	struct ext4_sb_info *sbi = EXT4_SB(sb);
+>> -	int new_order;
+>> +	int new, old;
+>>   
+>> -	if (!test_opt2(sb, MB_OPTIMIZE_SCAN) || grp->bb_fragments == 0)
+>> +	if (!test_opt2(sb, MB_OPTIMIZE_SCAN))
+>>   		return;
+>>   
+>> -	new_order = mb_avg_fragment_size_order(sb,
+>> -					grp->bb_free / grp->bb_fragments);
+>> -	if (new_order == grp->bb_avg_fragment_size_order)
+>> +	old = grp->bb_avg_fragment_size_order;
+>> +	new = grp->bb_fragments == 0 ? -1 :
+>> +	      mb_avg_fragment_size_order(sb, grp->bb_free / grp->bb_fragments);
+>> +	if (new == old)
+>>   		return;
+>>   
+>> -	if (grp->bb_avg_fragment_size_order != -1) {
+>> -		write_lock(&sbi->s_mb_avg_fragment_size_locks[
+>> -					grp->bb_avg_fragment_size_order]);
+>> +	if (old >= 0) {
+>> +		write_lock(&sbi->s_mb_avg_fragment_size_locks[old]);
+>>   		list_del(&grp->bb_avg_fragment_size_node);
+>> -		write_unlock(&sbi->s_mb_avg_fragment_size_locks[
+>> -					grp->bb_avg_fragment_size_order]);
+>> -	}
+>> -	grp->bb_avg_fragment_size_order = new_order;
+>> -	write_lock(&sbi->s_mb_avg_fragment_size_locks[
+>> -					grp->bb_avg_fragment_size_order]);
+>> -	list_add_tail(&grp->bb_avg_fragment_size_node,
+>> -		&sbi->s_mb_avg_fragment_size[grp->bb_avg_fragment_size_order]);
+>> -	write_unlock(&sbi->s_mb_avg_fragment_size_locks[
+>> -					grp->bb_avg_fragment_size_order]);
+>> +		write_unlock(&sbi->s_mb_avg_fragment_size_locks[old]);
+>> +	}
+>> +
+>> +	grp->bb_avg_fragment_size_order = new;
+>> +	if (new >= 0) {
+>> +		write_lock(&sbi->s_mb_avg_fragment_size_locks[new]);
+>> +		list_add_tail(&grp->bb_avg_fragment_size_node,
+>> +				&sbi->s_mb_avg_fragment_size[new]);
+>> +		write_unlock(&sbi->s_mb_avg_fragment_size_locks[new]);
+>> +	}
+>>   }
+>>   
+>>   /*
+>> -- 
+>> 2.46.1
+>>
 
 
