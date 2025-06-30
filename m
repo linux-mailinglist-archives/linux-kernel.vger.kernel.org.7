@@ -1,157 +1,301 @@
-Return-Path: <linux-kernel+bounces-708879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3853EAED636
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC9AED627
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253321898027
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:54:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D999E1670A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B38238C0A;
-	Mon, 30 Jun 2025 07:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB07238C20;
+	Mon, 30 Jun 2025 07:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="XlvFYBUJ"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tpa9jmpR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QL2/x/RK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B8A849C;
-	Mon, 30 Jun 2025 07:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8764721A437
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751270063; cv=none; b=cZ0NIToNFFWIVpbz4vSCZ1EaLjagegwLvqTqyRf4GeiNAX73/LO2Y3eqDzsfpLMYODimYQ/n0dBtqdjafDVVneq8dXE8uN+GIyeucI2AbET/yMu2qxwQCp78ZUjbkLJajpkRrr01v8jsiYxp47WvJfYuO0fUKyOul1HoJ5AL/Pw=
+	t=1751269906; cv=none; b=lXHCFw9xESVdY4hu4ofnHaudCbmKoHPL+piuxC85GSr6s9rER09L+qYNy2eOw8beocS2N+Nb9T189lFNbZq1p3QnBPZorb8KXadm/6lbEV1jtYzhLj2rg58FZWMNLPKfjD4Y+dGaRxkruZMU0JMEhWOPGDJkcg9OzljNCmmnH/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751270063; c=relaxed/simple;
-	bh=PXl0ept1ioy+QNjeSyQT0UI/4ZmVoSjFJun6pODJeUk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4qQFgx/uyTlOOUl14Wm7SbSnOFvjS3vM//SA0Y4v5JVm4tFKvvDckl0BnlKQ4MXpr/JXSApyRSZS5ayjgnX0R6dg2kdzRf1pInU4/MTrGWTcgP8aN+YYXHQ6rH/jhvnsTm68rAUORAqu0uciYWFWC04fYGfCe4u5gB/n3gDNoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=XlvFYBUJ; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U7PgYh007537;
-	Mon, 30 Jun 2025 09:53:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	wU4b/pQnY6PfcV136ZndGUeB/WVMZpBJ2uNidSqaKfU=; b=XlvFYBUJ8zEm1NxJ
-	yzZ22zCKffPVgXkJ+VhVlfnzkcGwKwp2RXG6msNcfNt2RVkLFqgImggp5Xlrt26D
-	AAusboM74tBSL59bIRlaaKwv0Sfkcg8VkLEvrmAxz64MGRl+QSrgxa+qWjQ/ZeTU
-	ooDY7Ts9YmirFsH+Yr6SXInWj3RmQwqUDQCwgiul0n5DaIY1SwkWGjxJBOmYkmCN
-	tHuwSanEJJ7Otem91wMMGH8SzYzVRFn+FkXKr5nPbtjq9fa5lF81lRcpLD8+u9Ug
-	G7ax+VAlGFCfr2vlRecVN1KxRKqBS2lzAp2HzGz0M839Tqt4kA9hMgF8iqCBeRqw
-	gSkRxw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47jsy4ku6v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 09:53:57 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 62F6840054;
-	Mon, 30 Jun 2025 09:52:34 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 000385C2DE5;
-	Mon, 30 Jun 2025 09:51:40 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 09:51:40 +0200
+	s=arc-20240116; t=1751269906; c=relaxed/simple;
+	bh=emoAFZ1b+GgUOpO3M8FG4gUGAnp3Cyx8bdpFZ0xrJzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NEMAKmf6YHPUkv4zw3X45W9ayJBM3DQcRDfYJqVV6GiXSHYIFiPoy22ZK9ssfYQOZLZRBSFczZafePbTBDXKRZrprGKbbbC/D0+Tq1nW/lKqhu1V2G7S31ii3xQ39jv5SIjKH18z5fxoEzIuLyc89TRRgHaTK89tgL0TjyuMM+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tpa9jmpR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QL2/x/RK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751269903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+/+TJx5zGjOq+57kScFIM4NRFWqBfLwRzYM+FCAdPE=;
+	b=Tpa9jmpR9R4eR+6ZmGSZUo9a8/Y0x2dYDGUmq6n2Nk3k9HuceEBH6WcLNMBZBumlfOJvYH
+	Eh8E1z1UzSKrqle7LKSZHG0LKCtaOCN3sumMRdkhcxua/va8IweAW1dIX1mSngTDBdUIvP
+	JDNbTGNg4uvRtG06Md8DNZO9J6qJM6TWBhfO5cW8TWVGkQWCC7NZwcQKd9EH7578t1hytj
+	Aj4WuW9uEPzTp7Qqgjws7DO0izQ29rZ3NkrlSIzYflHuEfn3M4s2vqhXFpKG0Qt3BLYbA8
+	9pz+qOEAxk9famxNFfDP9J8TekOj6CxOb35dmp78rD3ExYkg71ZB1uL9K84gyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751269903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q+/+TJx5zGjOq+57kScFIM4NRFWqBfLwRzYM+FCAdPE=;
+	b=QL2/x/RKcshGQ9/es5pF4slQbyxeOkKJYTAHuWFeZGEXBRaGRTjWmephoraE3y+dQyn2mg
+	AaazCQbMldepN1CA==
+To: linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Cc: tglx@linutronix.de,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v3 1/1] local_lock: Move this_cpu_ptr() notation from internal to main header.
 Date: Mon, 30 Jun 2025 09:51:38 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Andi Shyti
-	<andi.shyti@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?=
-	<christian.koenig@amd.com>,
-        M'boumba Cedric Madianga
-	<cedric.madianga@gmail.com>,
-        Wolfram Sang <wsa@kernel.org>,
-        "Pierre-Yves
- MORDRET" <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>
-Subject: Re: [PATCH v2 2/3] i2c: stm32f7: unmap DMA mapped buffer
-Message-ID: <20250630075138.GB396213@gnbcxd0016.gnb.st.com>
-References: <20250627-i2c-upstream-v2-0-8c14523481dc@foss.st.com>
- <20250627-i2c-upstream-v2-2-8c14523481dc@foss.st.com>
+Message-ID: <20250630075138.3448715-2-bigeasy@linutronix.de>
+In-Reply-To: <20250630075138.3448715-1-bigeasy@linutronix.de>
+References: <20250630075138.3448715-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250627-i2c-upstream-v2-2-8c14523481dc@foss.st.com>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_01,2025-06-27_01,2025-03-28_01
+Content-Transfer-Encoding: quoted-printable
 
-Hello Clément,
+The local_lock.h is the main entry for the local_lock_t type and
+provides wrappers around internal functions prefixed with __ in
+local_lock_internal.h.
 
-On Fri, Jun 27, 2025 at 12:12:57PM +0200, Clément Le Goffic wrote:
-> Fix an issue where the mapped DMA buffer was not unmapped.
-> 
-> Fixes: 7ecc8cfde553 ("i2c: i2c-stm32f7: Add DMA support")
-> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  drivers/i2c/busses/i2c-stm32f7.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index e4aaeb2262d0..042386b4cabe 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -1554,6 +1554,8 @@ static irqreturn_t stm32f7_i2c_handle_isr_errs(struct stm32f7_i2c_dev *i2c_dev,
->  	if (i2c_dev->use_dma) {
->  		stm32f7_i2c_disable_dma_req(i2c_dev);
->  		dmaengine_terminate_async(dma->chan_using);
-> +		dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
-> +				 dma->dma_data_dir);
->  	}
->  
->  	i2c_dev->master_mode = false;
-> @@ -1622,6 +1624,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  		if (i2c_dev->use_dma) {
->  			stm32f7_i2c_disable_dma_req(i2c_dev);
->  			dmaengine_terminate_async(dma->chan_using);
-> +			dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
-> +					 dma->dma_data_dir);
->  		}
->  		f7_msg->result = -ENXIO;
->  	}
-> @@ -1642,6 +1646,8 @@ static irqreturn_t stm32f7_i2c_isr_event_thread(int irq, void *data)
->  				dev_dbg(i2c_dev->dev, "<%s>: Timed out\n", __func__);
->  				stm32f7_i2c_disable_dma_req(i2c_dev);
->  				dmaengine_terminate_async(dma->chan_using);
-> +				dma_unmap_single(i2c_dev->dev, dma->dma_buf, dma->dma_len,
-> +						 dma->dma_data_dir);
->  				f7_msg->result = -ETIMEDOUT;
->  			}
->  		}
-> 
+Move the this_cpu_ptr() dereference of the variable from the internal to
+the main header. Since it is all macro implemented, this_cpu_ptr() will
+still happen within the preempt/ IRQ disabled section.
+This will free the internal implementation (__) to be used on
+local_lock_t types which are local variables and must not be accessed
+via this_cpu_ptr().
 
-Thanks for the update. Looks good to me.
+Acked-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ include/linux/local_lock.h          | 20 +++++++++----------
+ include/linux/local_lock_internal.h | 30 ++++++++++++++---------------
+ 2 files changed, 25 insertions(+), 25 deletions(-)
 
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
+diff --git a/include/linux/local_lock.h b/include/linux/local_lock.h
+index 16a2ee4f8310b..2ba8464195244 100644
+--- a/include/linux/local_lock.h
++++ b/include/linux/local_lock.h
+@@ -13,13 +13,13 @@
+  * local_lock - Acquire a per CPU local lock
+  * @lock:	The lock variable
+  */
+-#define local_lock(lock)		__local_lock(lock)
++#define local_lock(lock)		__local_lock(this_cpu_ptr(lock))
+=20
+ /**
+  * local_lock_irq - Acquire a per CPU local lock and disable interrupts
+  * @lock:	The lock variable
+  */
+-#define local_lock_irq(lock)		__local_lock_irq(lock)
++#define local_lock_irq(lock)		__local_lock_irq(this_cpu_ptr(lock))
+=20
+ /**
+  * local_lock_irqsave - Acquire a per CPU local lock, save and disable
+@@ -28,19 +28,19 @@
+  * @flags:	Storage for interrupt flags
+  */
+ #define local_lock_irqsave(lock, flags)				\
+-	__local_lock_irqsave(lock, flags)
++	__local_lock_irqsave(this_cpu_ptr(lock), flags)
+=20
+ /**
+  * local_unlock - Release a per CPU local lock
+  * @lock:	The lock variable
+  */
+-#define local_unlock(lock)		__local_unlock(lock)
++#define local_unlock(lock)		__local_unlock(this_cpu_ptr(lock))
+=20
+ /**
+  * local_unlock_irq - Release a per CPU local lock and enable interrupts
+  * @lock:	The lock variable
+  */
+-#define local_unlock_irq(lock)		__local_unlock_irq(lock)
++#define local_unlock_irq(lock)		__local_unlock_irq(this_cpu_ptr(lock))
+=20
+ /**
+  * local_unlock_irqrestore - Release a per CPU local lock and restore
+@@ -49,7 +49,7 @@
+  * @flags:      Interrupt flags to restore
+  */
+ #define local_unlock_irqrestore(lock, flags)			\
+-	__local_unlock_irqrestore(lock, flags)
++	__local_unlock_irqrestore(this_cpu_ptr(lock), flags)
+=20
+ /**
+  * local_lock_init - Runtime initialize a lock instance
+@@ -64,7 +64,7 @@
+  * locking constrains it will _always_ fail to acquire the lock in NMI or
+  * HARDIRQ context on PREEMPT_RT.
+  */
+-#define local_trylock(lock)		__local_trylock(lock)
++#define local_trylock(lock)		__local_trylock(this_cpu_ptr(lock))
+=20
+ /**
+  * local_trylock_irqsave - Try to acquire a per CPU local lock, save and d=
+isable
+@@ -77,7 +77,7 @@
+  * HARDIRQ context on PREEMPT_RT.
+  */
+ #define local_trylock_irqsave(lock, flags)			\
+-	__local_trylock_irqsave(lock, flags)
++	__local_trylock_irqsave(this_cpu_ptr(lock), flags)
+=20
+ DEFINE_GUARD(local_lock, local_lock_t __percpu*,
+ 	     local_lock(_T),
+@@ -91,10 +91,10 @@ DEFINE_LOCK_GUARD_1(local_lock_irqsave, local_lock_t __=
+percpu,
+ 		    unsigned long flags)
+=20
+ #define local_lock_nested_bh(_lock)				\
+-	__local_lock_nested_bh(_lock)
++	__local_lock_nested_bh(this_cpu_ptr(_lock))
+=20
+ #define local_unlock_nested_bh(_lock)				\
+-	__local_unlock_nested_bh(_lock)
++	__local_unlock_nested_bh(this_cpu_ptr(_lock))
+=20
+ DEFINE_GUARD(local_lock_nested_bh, local_lock_t __percpu*,
+ 	     local_lock_nested_bh(_T),
+diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock=
+_internal.h
+index 8d5ac16a9b179..d80b5306a2c0c 100644
+--- a/include/linux/local_lock_internal.h
++++ b/include/linux/local_lock_internal.h
+@@ -99,14 +99,14 @@ do {								\
+ 		local_trylock_t *tl;					\
+ 		local_lock_t *l;					\
+ 									\
+-		l =3D (local_lock_t *)this_cpu_ptr(lock);			\
++		l =3D (local_lock_t *)(lock);				\
+ 		tl =3D (local_trylock_t *)l;				\
+ 		_Generic((lock),					\
+-			__percpu local_trylock_t *: ({			\
++			local_trylock_t *: ({				\
+ 				lockdep_assert(tl->acquired =3D=3D 0);	\
+ 				WRITE_ONCE(tl->acquired, 1);		\
+ 			}),						\
+-			__percpu local_lock_t *: (void)0);		\
++			local_lock_t *: (void)0);			\
+ 		local_lock_acquire(l);					\
+ 	} while (0)
+=20
+@@ -133,7 +133,7 @@ do {								\
+ 		local_trylock_t *tl;				\
+ 								\
+ 		preempt_disable();				\
+-		tl =3D this_cpu_ptr(lock);			\
++		tl =3D (lock);					\
+ 		if (READ_ONCE(tl->acquired)) {			\
+ 			preempt_enable();			\
+ 			tl =3D NULL;				\
+@@ -150,7 +150,7 @@ do {								\
+ 		local_trylock_t *tl;				\
+ 								\
+ 		local_irq_save(flags);				\
+-		tl =3D this_cpu_ptr(lock);			\
++		tl =3D (lock);					\
+ 		if (READ_ONCE(tl->acquired)) {			\
+ 			local_irq_restore(flags);		\
+ 			tl =3D NULL;				\
+@@ -167,15 +167,15 @@ do {								\
+ 		local_trylock_t *tl;					\
+ 		local_lock_t *l;					\
+ 									\
+-		l =3D (local_lock_t *)this_cpu_ptr(lock);			\
++		l =3D (local_lock_t *)(lock);				\
+ 		tl =3D (local_trylock_t *)l;				\
+ 		local_lock_release(l);					\
+ 		_Generic((lock),					\
+-			__percpu local_trylock_t *: ({			\
++			local_trylock_t *: ({				\
+ 				lockdep_assert(tl->acquired =3D=3D 1);	\
+ 				WRITE_ONCE(tl->acquired, 0);		\
+ 			}),						\
+-			__percpu local_lock_t *: (void)0);		\
++			local_lock_t *: (void)0);			\
+ 	} while (0)
+=20
+ #define __local_unlock(lock)					\
+@@ -199,11 +199,11 @@ do {								\
+ #define __local_lock_nested_bh(lock)				\
+ 	do {							\
+ 		lockdep_assert_in_softirq();			\
+-		local_lock_acquire(this_cpu_ptr(lock));	\
++		local_lock_acquire((lock));			\
+ 	} while (0)
+=20
+ #define __local_unlock_nested_bh(lock)				\
+-	local_lock_release(this_cpu_ptr(lock))
++	local_lock_release((lock))
+=20
+ #else /* !CONFIG_PREEMPT_RT */
+=20
+@@ -227,7 +227,7 @@ typedef spinlock_t local_trylock_t;
+ #define __local_lock(__lock)					\
+ 	do {							\
+ 		migrate_disable();				\
+-		spin_lock(this_cpu_ptr((__lock)));		\
++		spin_lock((__lock));				\
+ 	} while (0)
+=20
+ #define __local_lock_irq(lock)			__local_lock(lock)
+@@ -241,7 +241,7 @@ typedef spinlock_t local_trylock_t;
+=20
+ #define __local_unlock(__lock)					\
+ 	do {							\
+-		spin_unlock(this_cpu_ptr((__lock)));		\
++		spin_unlock((__lock));				\
+ 		migrate_enable();				\
+ 	} while (0)
+=20
+@@ -252,12 +252,12 @@ typedef spinlock_t local_trylock_t;
+ #define __local_lock_nested_bh(lock)				\
+ do {								\
+ 	lockdep_assert_in_softirq_func();			\
+-	spin_lock(this_cpu_ptr(lock));				\
++	spin_lock((lock));					\
+ } while (0)
+=20
+ #define __local_unlock_nested_bh(lock)				\
+ do {								\
+-	spin_unlock(this_cpu_ptr((lock)));			\
++	spin_unlock((lock));					\
+ } while (0)
+=20
+ #define __local_trylock(lock)					\
+@@ -268,7 +268,7 @@ do {								\
+ 			__locked =3D 0;				\
+ 		} else {					\
+ 			migrate_disable();			\
+-			__locked =3D spin_trylock(this_cpu_ptr((lock)));	\
++			__locked =3D spin_trylock((lock));	\
+ 			if (!__locked)				\
+ 				migrate_enable();		\
+ 		}						\
+--=20
+2.50.0
 
-Regards,
-Alain
-
-> -- 
-> 2.43.0
-> 
 
