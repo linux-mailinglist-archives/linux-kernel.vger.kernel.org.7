@@ -1,111 +1,163 @@
-Return-Path: <linux-kernel+bounces-708816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A550AED579
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:24:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF294AED57E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EF921658D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:24:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2C2816DC4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C761421CC54;
-	Mon, 30 Jun 2025 07:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C3521CA14;
+	Mon, 30 Jun 2025 07:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gokvFfCU"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JonI0cEi"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA62217704
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638E81E8837
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751268290; cv=none; b=LLZEX3oxdtrAMJ+WSZi6mfUzE164QVUDJ1eyhxM0fhw6vCLS5f/eSn49Hci5u3SWYyiZtMEEfQ9AfPdthwbhHDNqhX7owd39paZ8o6drSBIoCrwAu3lrGc35svhvIEjlUMR1K1eL4eQwCBxlDNC4vctMKu5qWMm9LbrXtMuOxL8=
+	t=1751268381; cv=none; b=sGKKDQTLj3Jruzw9KdiywfhkrODEXv2HFzwHjEJQdCZqGD1c2L2JOAdjsmFWgsVEKsO+sX6pVX8G4ppAG9m3epf0ehf4So/edfr9UaTwpHDmC+YeQympRZTur7n9T0EeBZDqUXjWlVlCdB1Gjn2S4tVJdYjtdRcKtRNlsgnjrK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751268290; c=relaxed/simple;
-	bh=yuON+dCC7nR1Z56t2DHFyKGVGNZljvXsafghrJjNU8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PYkis5dWBG0VvOPDRgb2kcpMS5I+4SrTzL755JQ6MAjP9am6N3nBWnJSbuAWG8GBT3+Xr19C7uQrpPfAVrUKkeun+4Slpa1NmSlBwMFPMqf+2VoYK4dR8o5XgWqkv2JwsNUiOl9NAZSB8iUXeS9dViluvF+pvOqPzmcUCYom0fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gokvFfCU; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751268286; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=pAOeCrfOd2UplQbpDhRXR3pcI2FjIBmJ9quPrr2A9Tc=;
-	b=gokvFfCUTkrC9+lqdWr+reUg+STrxMuqmzxhown/9t7szqzMr65y117qdbAgPGJ9IHyEiXCBkgJpNNXew30q2Z37tSGCXqeoX/pU8LXdoKaf0Djk3YevBLz/siy+6bPEWfKPbgRUEEFln1AodDMOcRS83fgDyz+F5GdzrNGLOG4=
-Received: from 30.74.144.137(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wg5a4LZ_1751268284 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 30 Jun 2025 15:24:44 +0800
-Message-ID: <19e1d864-a0b5-4854-9f10-56cf6be7638d@linux.alibaba.com>
-Date: Mon, 30 Jun 2025 15:24:44 +0800
+	s=arc-20240116; t=1751268381; c=relaxed/simple;
+	bh=I5aXpogNojpmKmR+yCXkyrMsR8ui+2Tod3Gs6ibm7u4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kyVLMchvT4+xkq5I24Elc3AT0z/bX2g9IF6pLwQAzRL0sOiIeMhNdY0mhRjwSbQ7yqyay+a/0DOGEP2yswjszuGPLauCSet2vH9xBJ/ncfvlluiQBE2dXJI5yWhDNeRUbhc8PCjNIi+qCVHo96ulVp2zbNLkhLysEwuxoDOFqkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JonI0cEi; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2350fc2591dso36259115ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 00:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1751268379; x=1751873179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vjIw3BQMQkuEtqIZpSqBzYxhDfFJxgtZiU6HzDMOlNc=;
+        b=JonI0cEiL4FS4PzWFn99SaYHAhkkMUUvSJ2SPEOmsbE3HOM2m+9cKQAo0qDgSVtu1E
+         MEJPXJoTG7YJWAy8h1cMRopka5UL0yZHzP1SLzod605ED/BayFcGXd5HytVZ46kGin3c
+         sSTRRYCblEMJgakoptWlKw6LdsD03XCFBCztjEWF1IAcNd4DwujUAtE7fejbYkapHVCv
+         YszkkaKjd3TL+45vCAP3MAF8wQi7uAeNXti/0dOHynIF79Dbu8JO1zOJrmZVU+zarrLp
+         ES3prVkRGwWkgiuO56e1c8t93Svp5DnynqHJR7VA20Nh26zpkPlfW1ZEaSQbW5M8Pg7j
+         +VAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751268379; x=1751873179;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vjIw3BQMQkuEtqIZpSqBzYxhDfFJxgtZiU6HzDMOlNc=;
+        b=qXrryOuy3AJkNkj3ZWwL3THHaVch7O55KZLh4AuZ7vE8kFgv/aJNlaLh41Nl4cGuRD
+         ePpK1ZCj2ua2bRyX4QM5yNHI071ZDYIOjlIKx1dSP4yV9KReMdsIhPwIfCgyelp8T8uC
+         vk+CE2HqimLUrrGPRc4XUGIOuiw+/iS2tJ/CQhDMerYxrv7bsoWQYJLDmay8leynMEoo
+         R1mxwqfQTnsH4bvmz2gkn6jfayX6PsC7cwtu+q6dOHISRu+Eq+LMGeNAdNUNlEDMVepV
+         JPRKuR10BzEm0C/wT5lqwWpwnF4EQ9Ccm3L101dw1vxOPF6yZp2X6lMkwmrKSkZJpeDT
+         3O1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2nOz5JOyinuk7XPnmk2nRxYtCJ3wD7ZI14xM6XS7mxpDR0BavchbRcqRZZw7p2hjqPZVPY5CoBMqW5R8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaUuOGDj40zYKjQevyt3y5KAyHtV6Hwn5Tk1ZG4IffuhB+F3HV
+	AExsB0PSrIfHQiQu9q5/7TInhO0ZDDaSs+cZx8BWrGIfOZ+8TUAw4sYwEuV1ncvnAbO21Ll3p/n
+	FN94a
+X-Gm-Gg: ASbGncsW3aIcSmhtC7tDUeSfvlU+rnllyKCnisrgPe/FKpqpWphs80J+mk6qFxX7d3P
+	t7KLzssWC1JieoxW+0fgNBsQL62lOcleNQj3a4g4tvRF5DvIqFUAR7R3eWUJXQbzl9rienjLb4D
+	xHIwCvwnCyHi3SFw2THktBRdBtLXeyZBbfxhCQOSbHS+qK8ny3pKi7o/J2dYnRM4toz9jP+lnBD
+	Zq1fEMu0GhLesUOce2IkeJ6qHqmXe8sgNTHTWvKhh/M7cmevi9n/v2monRF/WCA0NgFSwletG27
+	n9cI+rxDXTen8E1/sXUEPoJJ1xgjNj3sMYbtFn0oonBoM5jrgOKzagWWJeeTvIsJAi9j8TV+86q
+	RxTF91kHwDhUPHQ==
+X-Google-Smtp-Source: AGHT+IGafeZ2azc3t18RXEN8peJr6PmRhM9ZfzpHzNFPkcgsDxEqmtV9RKi7UPzP5ti8qyp0RUJeug==
+X-Received: by 2002:a17:902:f815:b0:235:f091:11e5 with SMTP id d9443c01a7336-23ac4ed5479mr113205755ad.10.1751268378623;
+        Mon, 30 Jun 2025 00:26:18 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.189.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f17f5sm77237555ad.62.2025.06.30.00.26.15
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 30 Jun 2025 00:26:18 -0700 (PDT)
+From: lizhe.67@bytedance.com
+To: alex.williamson@redhat.com,
+	jgg@ziepe.ca,
+	david@redhat.com,
+	peterx@redhat.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lizhe.67@bytedance.com
+Subject: [PATCH 0/4] vfio/type1: optimize vfio_pin_pages_remote() and vfio_unpin_pages_remote() for large folio
+Date: Mon, 30 Jun 2025 15:25:14 +0800
+Message-ID: <20250630072518.31846-1-lizhe.67@bytedance.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/7] mm/shmem, swap: never use swap cache and readahead
- for SWP_SYNCHRONOUS_IO
-To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Chris Li <chrisl@kernel.org>,
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>,
- Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250627062020.534-1-ryncsn@gmail.com>
- <20250627062020.534-6-ryncsn@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250627062020.534-6-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Li Zhe <lizhe.67@bytedance.com>
 
+This patchset is an consolidation of the two previous patchsets[1][2].
 
-On 2025/6/27 14:20, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> Currently if THP swapin failed due to reasons like partially conflicting
-> swap cache or ZSWAP enabled, it will fallback to cached swapin.
-> 
-> Right now the swap cache has a non-trivial overhead, and readahead is
-> not helpful for SWP_SYNCHRONOUS_IO devices, so we should always skip
-> the readahead and swap cache even if the swapin falls back to order 0.
-> 
-> So handle the fallback logic without falling back to the cached read.
-> 
-> Also slightly tweak the behavior if the WARN_ON is triggered (shmem
-> mapping is corrupted or buggy code) as a side effect, just return
-> with -EINVAL. This should be OK as things are already very wrong
-> beyond recovery at that point.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->   mm/shmem.c | 68 ++++++++++++++++++++++++++++++------------------------
->   1 file changed, 38 insertions(+), 30 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 5be9c905396e..5f2641fd1be7 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1975,13 +1975,15 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->   	return ERR_PTR(error);
->   }
->   
-> -static struct folio *shmem_swap_alloc_folio(struct inode *inode,
-> +static struct folio *shmem_swapin_direct(struct inode *inode,
->   		struct vm_area_struct *vma, pgoff_t index,
->   		swp_entry_t entry, int order, gfp_t gfp)
->   {
->   	struct shmem_inode_info *info = SHMEM_I(inode);
->   	int nr_pages = 1 << order;
->   	struct folio *new;
-> +	pgoff_t offset;
-> +	gfp_t swap_gfp;
+When vfio_pin_pages_remote() is called with a range of addresses that
+includes large folios, the function currently performs individual
+statistics counting operations for each page. This can lead to significant
+performance overheads, especially when dealing with large ranges of pages.
 
-Nit: The term 'swap' always reminds me of swap allocation:) But here 
-it's actually about allocating a folio. Would 'alloc_gfp' be a better 
-name? Otherwise look good to me.
+The function vfio_unpin_pages_remote() has a similar issue, where executing
+put_pfn() for each pfn brings considerable consumption.
+
+This patchset optimizes the performance of the relevant functions by
+batching the less efficient operations mentioned before.
+
+The first patch optimizes the performance of the function
+vfio_pin_pages_remote(), while the remaining patches optimize the
+performance of the function vfio_unpin_pages_remote().
+
+The performance test results, based on v6.16-rc4, for completing the 16G
+VFIO MAP/UNMAP DMA, obtained through unit test[3] with slight
+modifications[4], are as follows.
+
+Base(6.16-rc4):
+./vfio-pci-mem-dma-map 0000:03:00.0 16
+------- AVERAGE (MADV_HUGEPAGE) --------
+VFIO MAP DMA in 0.047 s (340.2 GB/s)
+VFIO UNMAP DMA in 0.135 s (118.6 GB/s)
+------- AVERAGE (MAP_POPULATE) --------
+VFIO MAP DMA in 0.280 s (57.2 GB/s)
+VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
+------- AVERAGE (HUGETLBFS) --------
+VFIO MAP DMA in 0.052 s (310.5 GB/s)
+VFIO UNMAP DMA in 0.136 s (117.3 GB/s)
+
+With this patchset:
+------- AVERAGE (MADV_HUGEPAGE) --------
+VFIO MAP DMA in 0.027 s (596.4 GB/s)
+VFIO UNMAP DMA in 0.045 s (357.6 GB/s)
+------- AVERAGE (MAP_POPULATE) --------
+VFIO MAP DMA in 0.288 s (55.5 GB/s)
+VFIO UNMAP DMA in 0.288 s (55.6 GB/s)
+------- AVERAGE (HUGETLBFS) --------
+VFIO MAP DMA in 0.031 s (508.3 GB/s)
+VFIO UNMAP DMA in 0.045 s (352.9 GB/s)
+
+For large folio, we achieve an over 40% performance improvement for VFIO
+MAP DMA and an over 66% performance improvement for VFIO DMA UNMAP. For
+small folios, the performance test results show little difference compared
+with the performance before optimization.
+
+[1]: https://lore.kernel.org/all/20250529064947.38433-1-lizhe.67@bytedance.com/
+[2]: https://lore.kernel.org/all/20250620032344.13382-1-lizhe.67@bytedance.com/
+[3]: https://github.com/awilliam/tests/blob/vfio-pci-mem-dma-map/vfio-pci-mem-dma-map.c
+[4]: https://lore.kernel.org/all/20250610031013.98556-1-lizhe.67@bytedance.com/
+
+Li Zhe (4):
+  vfio/type1: optimize vfio_pin_pages_remote() for large folios
+  vfio/type1: batch vfio_find_vpfn() in function
+    vfio_unpin_pages_remote()
+  vfio/type1: introduce a new member has_rsvd for struct vfio_dma
+  vfio/type1: optimize vfio_unpin_pages_remote() for large folio
+
+ drivers/vfio/vfio_iommu_type1.c | 121 ++++++++++++++++++++++++++------
+ 1 file changed, 100 insertions(+), 21 deletions(-)
+
+-- 
+2.20.1
+
 
