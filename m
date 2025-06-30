@@ -1,168 +1,164 @@
-Return-Path: <linux-kernel+bounces-709193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0421BAEDA55
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3D8AEDA5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C2D1712F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36423B6165
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0755259CBF;
-	Mon, 30 Jun 2025 10:56:45 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D07923E34D;
-	Mon, 30 Jun 2025 10:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E5D25B1C5;
+	Mon, 30 Jun 2025 10:57:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C722525A2D2
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751281005; cv=none; b=jyrE/fiM3JR4r788nKfZNT5MBUW1RUdW/2Wy5IsyCQroFgD1D/JZapnzgPEC9TmF7B/ZA/ouL8PUXmQV5TZ5ME+TeanXhEPZYe3k8sXDUTiNqOIvyo3zNqnKUeg8gcVuQqPQ0nOhoZR9ZYKbrxUBARSNlXvh4PfrfXfr0awXaPc=
+	t=1751281039; cv=none; b=tQj5OfvhXxzf7XIelhLmm53IOXe+CcPJm3HCGV/I3oTQCoEwrVOCB6QKKi+s4mcBCBZBOCvDAJYtelyOap/BdooeVPa39xq9IwScTvXz23/tFxVoxyxGcIG7k1n2O44sdaXeJJ8+lXEPJSEEpzuGVnOb8DZ3/wHAljb2MkPSf00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751281005; c=relaxed/simple;
-	bh=2aecDWoj7rxVTizGkUEIiXj76Ti0ZfTcY1V1cAjM+cs=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=tuWCr5Tl1kmeSbOla7o7sziHtKAh874hNZidveDaRzdVBNBXR7DpNM6UNWHEJ07BNaqNPcSMgdkvxLY3HSPfnwCTazvnOUz4DNoGeFddFKlxKtfeQCTJVCgpESfvvUt+YGiD13Q+Fb6xUB0p92k30nOJFCVQ4ZpV4l7DU/RyqPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bW34m0f29z5F2lr;
-	Mon, 30 Jun 2025 18:56:40 +0800 (CST)
-Received: from njy2app08.zte.com.cn ([10.40.13.206])
-	by mse-fl1.zte.com.cn with SMTP id 55UAuR9h024743;
-	Mon, 30 Jun 2025 18:56:27 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njy2app08[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Mon, 30 Jun 2025 18:56:30 +0800 (CST)
-Date: Mon, 30 Jun 2025 18:56:30 +0800 (CST)
-X-Zmail-TransId: 2b0068626d5effffffffc1d-351f2
-X-Mailer: Zmail v1.0
-Message-ID: <20250630185630910BT_3WfN1DPPZ5M1L2duP0@zte.com.cn>
+	s=arc-20240116; t=1751281039; c=relaxed/simple;
+	bh=Y3ct+Bm80V6qjU5crvSqSe6leEQFQvXClN1d0cyIRTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XACjIf1JAU7TWHmjYVs7NDqbssf5xX7fEiOAjhaFZShPePLwLDRLbiYL6mI/hG8HOLzpKJCdU5AbMUIhRkQbN0dRu3YJSn+uKI8oTrk8PuDp4+DFc9zSxuSsZRKfQP4ZzsdIkeJMIAouwSvAJcQK40atSWthFjD0xq31QCMgbjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B2AB1D34;
+	Mon, 30 Jun 2025 03:57:01 -0700 (PDT)
+Received: from [10.1.34.165] (XHFQ2J9959.cambridge.arm.com [10.1.34.165])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D7723F6A8;
+	Mon, 30 Jun 2025 03:57:13 -0700 (PDT)
+Message-ID: <2ca5cbb3-9795-49ef-ae53-11c3143edee1@arm.com>
+Date: Mon, 30 Jun 2025 11:57:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Cc: <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <wang.yaxin@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHYzXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgYWxpYXMucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 55UAuR9h024743
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68626D68.000/4bW34m0f29z5F2lr
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] mm: convert FPB_IGNORE_* into FPB_HONOR_*
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Dev Jain <dev.jain@arm.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>
+References: <20250627115510.3273675-1-david@redhat.com>
+ <20250627115510.3273675-2-david@redhat.com>
+ <5c3428c6-25be-4a94-811a-6bb6718f6c58@arm.com>
+ <cc846c55-0505-4ad6-9664-ac799d9c0226@redhat.com>
+ <5375208d-2c11-4579-a303-e8416ab07159@arm.com>
+ <aa9c4bd5-f36e-4820-9ca2-1154b44b8908@arm.com>
+ <f0ccb18b-4297-4741-9dd9-d020b171c28d@redhat.com>
+ <79525362-2377-441b-8575-d2307bd77f26@arm.com>
+ <8993dbc9-6c9a-4ac7-8c04-813851eba938@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <8993dbc9-6c9a-4ac7-8c04-813851eba938@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Qiu Yutan <qiu.yutan@zte.com.cn>
+On 30/06/2025 10:24, David Hildenbrand wrote:
+> On 30.06.25 11:18, Ryan Roberts wrote:
+>> On 30/06/2025 10:08, David Hildenbrand wrote:
+>>> On 30.06.25 11:04, Ryan Roberts wrote:
+>>>> On 30/06/2025 04:34, Dev Jain wrote:
+>>>>>
+>>>>> On 29/06/25 2:30 am, David Hildenbrand wrote:
+>>>>>> On 28.06.25 05:37, Dev Jain wrote:
+>>>>>>>
+>>>>>>> On 27/06/25 5:25 pm, David Hildenbrand wrote:
+>>>>>>>> Honoring these PTE bits is the exception, so let's invert the meaning.
+>>>>>>>>
+>>>>>>>> With this change, most callers don't have to pass any flags.
+>>>>>>>>
+>>>>>>>> No functional change intended.
+>>>>>>>
+>>>>>>> FWIW I had proposed this kind of change earlier to Ryan (CCed) and
+>>>>>>> he pointed out: "Doesn't that argument apply in reverse if you want
+>>>>>>> to ignore something new in future?
+>>>>>>>
+>>>>>>> By default we are comparing all the bits in the pte when determining the
+>>>>>>> batch.
+>>>>>>> The flags request to ignore certain bits.
+>>>>>>
+>>>>>> That statement is not true: as default we ignore the write and young bit. And
+>>>>>> we don't have flags for that ;)
+>>>>>>
+>>>>>> Now we also ignore the dirty and soft-dity bit as default, unless told not to
+>>>>>> do that by one very specific caller.
+>>>>>>
+>>>>>>> If we want to ignore extra bits in
+>>>>>>> future, we add new flags and the existing callers don't need to be updated.
+>>>>>>
+>>>>>> What stops you from using FPB_IGNORE_* for something else in the future?
+>>>>>>
+>>>>>> As a side note, there are not that many relevant PTE bits to worry about in
+>>>>>> the near future ;)
+>>>>>>
+>>>>>> I mean, uffd-wp, sure, ... and before we add a FPB_HONOR_UFFD_WP to all users
+>>>>>> to be safe (and changing the default to ignore), you could add a
+>>>>>> FPB_IGNORE_UFFD_WP first, to then check who really can tolerate just ignoring
+>>>>>> it (most of them, I assume).
+>>>>> I agree.
+>>>>
+>>>> Meh. Personally I think if you start mixing HONOR and IGNORE flags, it becomes
+>>>> very confusing to work out what is being checked for and what is not. I
+>>>> stand by
+>>>> my original view. But yeah, writable and young confuse it a bit... How about
+>>>> generalizing by explicitly requiring IGNORE flags for write and young, then
+>>>> also
+>>>> create a flags macro for the common case?
+>>>>
+>>>> #define FPB_IGNORE_COMMON (FPB_IGNORE_WRITE | FPB_IGNORE_YOUNG |    \
+>>>>                 FPB_IGNORE_DIRTY | FPB_IGNORE_SOFT_DIRTY)
+>>>>
+>>>> It's not a hill I'm going to die on though...
+>>>
+>>> How about we make this function simpler, not more complicated? ;)
+>>
+>> I think here we both have different views of what is simpler... You are trying
+>> to optimize for the callers writing less code. I'm trying to optimize for the
+>> reader to be able to easily determine what the function will do for a given
+>> caller.
+> 
+> See patch number #3: I want the default function -- folio_pte_batch() -- to not
+> have any flags at all.
+> 
+> And I don't want to achieve that by internally using flags when calling
+> folio_pte_batch_ext().
+> 
+> If you don't specify flags (folio_pte_batch()), behave just as if calling
+> folio_pte_batch_ext() without flags. Anything else would be more confusing IMHO.
 
-translate the "alias.rst" into Simplified Chinese
+OK, sorry I don't have the context of your actual series... I was just trying to
+defend what my quote that Dev sent. I'll go take a look at your series.
 
-Update to commit 735dadf894f0("docs: networking:
-Convert alias.txt to rst")
+> 
+> I agree that mixing HONOR and IGNORE is not a good idea. But then, it's really
+> only uffd-wp that still could be batched, and likely we want it to be the
+> default, and respect/honor/whatever instead in the cases where we really have to.
+> 
+> (If we really want to go down that path and batch it :) )
 
-Signed-off-by: Qiu Yutan <qiu.yutan@zte.com.cn>
-Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
----
-v2->v3
-1. Add reviewer tag.
+FWIW, I think we will need to honor the write bit for Dev's mprotect series (I
+just sent review comments against his v4). So if you want most callers to just
+call folio_pte_batch() and that will ignore the write bit, then I guess
+folio_pte_batch_ext() will have to accept a FPB_HONOR_WRITE bit? Which I guess
+aligns with what you are doing here to make all the flags HONOR.
 
- .../translations/zh_CN/networking/alias.rst   | 56 +++++++++++++++++++
- .../translations/zh_CN/networking/index.rst   |  2 +-
- 2 files changed, 57 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/networking/alias.rst
 
-diff --git a/Documentation/translations/zh_CN/networking/alias.rst b/Documentation/translations/zh_CN/networking/alias.rst
-new file mode 100644
-index 000000000000..d94fc38a3d2e
---- /dev/null
-+++ b/Documentation/translations/zh_CN/networking/alias.rst
-@@ -0,0 +1,56 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/networking/alias.rst
-+
-+:翻译:
-+
-+ 邱禹潭 Qiu Yutan <qiu.yutan@zte.com.cn>
-+
-+:校译:
-+
-+======
-+IP别名
-+======
-+
-+IP别名是管理每个接口存在多个IP地址/子网掩码的一种过时方法。
-+虽然更新的工具如iproute2支持每个接口多个地址/前缀，
-+但为了向后兼容性，别名仍被支持。
-+
-+别名通过在使用 ifconfig 时在接口名后添加冒号和一个字符串来创建。
-+这个字符串通常是数字，但并非必须。
-+
-+
-+别名创建
-+========
-+
-+别名的创建是通过“特殊的”接口命名机制完成的：例如，
-+要为eth0创建一个 200.1.1.1 的别名...
-+::
-+
-+  # ifconfig eth0:0 200.1.1.1  等等
-+	~~ -> 请求为eth0创建别名#0（如果尚不存在）
-+
-+该命令也会设置相应的路由表项。请注意：路由表项始终指向基础接口。
-+
-+
-+别名删除
-+========
-+
-+通过关闭别名即可将其删除::
-+
-+  # ifconfig eth0:0 down
-+	~~~~~~~~~~ -> 将删除别名
-+
-+
-+别名（重新）配置
-+================
-+
-+别名不是真实的设备，但程序应该能够正常配置和引用它们（ifconfig、route等）。
-+
-+
-+与主设备的关系
-+==============
-+
-+如果基础设备被关闭，则其上添加的所有别名也将被删除。
-diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-index d07dd69f980b..e0073087735f 100644
---- a/Documentation/translations/zh_CN/networking/index.rst
-+++ b/Documentation/translations/zh_CN/networking/index.rst
-@@ -21,6 +21,7 @@
-    :maxdepth: 1
-
-    msg_zerocopy
-+   alias
-
- Todolist:
-
-@@ -45,7 +46,6 @@ Todolist:
- *   page_pool
- *   phy
- *   sfp-phylink
--*   alias
- *   bridge
- *   snmp_counter
- *   checksum-offloads
--- 
-2.27.0
 
