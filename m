@@ -1,224 +1,172 @@
-Return-Path: <linux-kernel+bounces-709370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4355AEDCC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BEAAEDCD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FF9F7A4E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EA8176E54
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E06520E716;
-	Mon, 30 Jun 2025 12:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F94B286D4B;
+	Mon, 30 Jun 2025 12:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BNrukPs/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LB8Vi2OA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D7420458A
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFF6285053;
+	Mon, 30 Jun 2025 12:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751286624; cv=none; b=V0n0ui2yVqNmHYC4w2SLgG+8mhS0r8J5frm+DB4nKYEuNjnZTt4ZJfQcOaJjLSXbx4fM5YadcMBnyYIMHMquYuROEkeJb2izPM8/Mmj3yDbS5Zeh7MN9mmAjGmeV2Pe6OI06r5Gn7lIwvmprFfcOxLjmysn3nFUMIwr7Tb1vIxI=
+	t=1751286757; cv=none; b=qSCr6N4YqngIS3SwJEjWFSM+nNtrrgb/ug55PB27gZyMYCbuoYah1cq0RbCpBf2JurGQ3I/3VJDEmuJwyhCaM3MGkWRDYDFF/RMCzd5txSNzsBLkAgXoQSIjjY0LsrwwrZK/ISG4q0Rak9ZISmoSLhkE02DQx1nrMKUlH+zbrtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751286624; c=relaxed/simple;
-	bh=3f1Py/orZHfiSTe0C6MP8gxhoceXINqIBaCHjb7/zSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=byrk9T1KBisn8AuhSVp5wvhafn9jymVYk7CDtXj6gEHA0KFdKbdmWjlSMmUdfrKvJm67yreZGwRZgfNo+hqsCs44MVnAlaitjmDMErGCLj5dQo5l13b20ZacROUbEKNq7YyAiPvXLfmp718lZkPUPRz3imE2KjNDiTbZ7aqxuxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BNrukPs/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8DKo9008527
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:30:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2dWxWYq2K7GOUCuWuG1yENQqxzaE0+54jEHV+QMm2Os=; b=BNrukPs/nNJ0qaHS
-	LWTu6LjgvbZFBSLNC+oAhIPnl4Us9Elul9jdAnKMZFFftOO8B1obXtZVxfvO7MWt
-	shjEpSEADQTPkOSUhhPFsDln/dstCoJv+fn/SCyOWkk+mqZRZPfUxaduo6El6Onp
-	PujuZ5mZtOb3wgl6JOnwoMg3F20KBzIzIvOKEU31qhTzUpXpkuXnn0mo+JSk3uo2
-	+optlSS+dEXRhNKnoLnzfmU/XAMOkGRgk4JKMcyIbBRMPUzxegd7TNDi0wRzIbWM
-	Cu73+s1G02hJSxfvTxdoaPFITrFBdp3D2lN8HLg+N/zSQ2yfYWbQIlJ8EQMwnv1Z
-	LouDFQ==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kkfmsd9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:30:22 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7489ac848f3so3749520b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:30:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751286621; x=1751891421;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2dWxWYq2K7GOUCuWuG1yENQqxzaE0+54jEHV+QMm2Os=;
-        b=Hnp/A27UlHGfUe8cmfJ0Efk5TOzbGZRaJsnD4l1h14OaDcjh4nmm2i21LNH9ApSdae
-         VbKM16rw41pMamCFiI8VEZ94AoRQvrQAFCW8QP5fmLuUq5ZRIZg6V94b/Q1erV3EXy0e
-         1M8V7RrITH018BEkBj8ene/gT/8VbNgq/dJdcsQgl5VWFgblS9ryZWXRYzhwHZDqei9Y
-         7dMbRW+XvqmfbZQ7soSAbpDkoS00Nx9fxfS24wjip6hMRJdYmRoIq10kl8zM6DnkKEha
-         bMQnUD/rACGohoUxCbFlgtSo3nVPQejbJ8fGkaPMGxY+7kAtpNl4E2cZp9qj+1t6st1a
-         2neA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJPzR36PdtjUnxsLn6fXDw+Z4qznqh36JGFvOcQHNDNF3KOZy39pKZQa/nMwBCUGPIJ8+EXQMCxsY8XuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN3D/yr3yBjGVhHNgplaly9p5VMlDbpsLF/NXC8XLUl7d0McMJ
-	qgrQ5Dql6jY8opzecrK026rOEcxCd9pGD+7G0SqXEu7AGktgIH/PhGasFU3PjJC9VYdOwFOcakT
-	oWpKX6PaRUt3G7dIX6i9lH3l/o3ENNRSdmUC/lxwlREbx/w88XnfWUUjq0IRG4f9xkvs=
-X-Gm-Gg: ASbGncsPSDlcni4p0VAt8KaNh5ORBkJ1B9YB+gvA55XPuu/J3f1ZdDlEE4qAwZwlTBb
-	R1DpCe5If1zRrjVadAv9dGKTdEoOek/WsEiVz4IesZV8uzdtlHUDNS3fNMXdHVXghzPo3SJM/n/
-	9TxLNC2QYG2ufKP+6SmOUQTUoMdy7OUcOuLUroKPh3mQ1/nDOLW5FdzalvFqCdUkPe1v78V+r2A
-	ZUOugceHhGNo3nbQyH6UFK2mXtu4K9LLeTUSD1AkvXo5VlgHCh5FbnCW+jQP3PXhqM1qFXgGVQI
-	PG4GBXhK+OlwqBeEUjRMPSimfpXv7CDQ+DRfNBLYlep9nMkHjntt
-X-Received: by 2002:a05:6a00:1988:b0:748:f365:bedd with SMTP id d2e1a72fcca58-74af6f4d4bcmr17197282b3a.17.1751286620556;
-        Mon, 30 Jun 2025 05:30:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkaFNPxqWvP2slDuEpYtj3r5EnhD15Tr2DIQp6ChiI+aHrargB99nmYkj5G7fm4yQY9LxhLg==
-X-Received: by 2002:a05:6a00:1988:b0:748:f365:bedd with SMTP id d2e1a72fcca58-74af6f4d4bcmr17197201b3a.17.1751286619834;
-        Mon, 30 Jun 2025 05:30:19 -0700 (PDT)
-Received: from [10.92.200.128] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af55c6a3asm8487704b3a.118.2025.06.30.05.30.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 05:30:19 -0700 (PDT)
-Message-ID: <4bae822e-e7bd-461f-99cc-866771c0b954@oss.qualcomm.com>
-Date: Mon, 30 Jun 2025 18:00:12 +0530
+	s=arc-20240116; t=1751286757; c=relaxed/simple;
+	bh=gYCG8FHDoxPiS4cChv4vaWjc2p2+Rm2TYd/XSHuij1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ep8gB6SptnyYPm7tQ4F5n0q+GqX/rCGuOgzbmzuNM60ZH+MYK306f65nisFNc3J2bEIGLaPfGnWP1ePeFC3d6u0xnZ9wp6dq9P1UJkMRzeXnInX/x7e3VSnJH94VI9G0MvuWSwO6Ujs/iIxHn0N7VZLOXzKzQAePKdLGakBioa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LB8Vi2OA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U6gHw4011086;
+	Mon, 30 Jun 2025 12:31:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=4/4W5HOVsxTPqI9wS6wr9RV849JR3+
+	7l1M8P6DKnK7E=; b=LB8Vi2OACgTppHxL4gQCI1A+GKWdbknClc9UVU5sjvPPbc
+	dVnMk+PdxxmazNNLEQtJFsdNescZIPGdHqvmmzGuBgmu6MSVCrZlSLBO4sNnhKDC
+	+TCO5g+SoawK8YYzgTA8R/AvZ5sR73DCwEG5xPkbipDLTYGjUj9bO7LbZhWQvo5s
+	QBRCPI2tlSvfy5BrI8EFkTmv5L3qNiCmoCS9l4sFWI728JVtXwReVVFiMyagm30/
+	557kETEAGIC1MZ/ITL0WFLL87P/j4L/6m5BHOqpRYCCxp1AQWQCJ/2kxdt46bpdH
+	Op/+/fV+KYuSSWcGugl5NBqxkM2MsHlM4dqfaxJQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j82fh257-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 12:31:09 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55UCTi7R021773;
+	Mon, 30 Jun 2025 12:31:09 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j82fh254-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 12:31:08 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55U9adWG021906;
+	Mon, 30 Jun 2025 12:31:08 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47juqpdspx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 12:31:07 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55UCV30356820034
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Jun 2025 12:31:03 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9FB8B20043;
+	Mon, 30 Jun 2025 12:31:03 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 35F6B2004B;
+	Mon, 30 Jun 2025 12:31:02 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 30 Jun 2025 12:31:02 +0000 (GMT)
+Date: Mon, 30 Jun 2025 14:31:00 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
+        dvyukov@google.com, vincenzo.frascino@arm.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org,
+        kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+        alex@ghiti.fr, hca@linux.ibm.com, gor@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        akpm@linux-foundation.org, nathan@kernel.org,
+        nick.desaulniers+lkml@gmail.com, morbo@google.com,
+        justinstitt@google.com, arnd@arndb.de, rppt@kernel.org,
+        geert@linux-m68k.org, mcgrof@kernel.org, guoweikang.kernel@gmail.com,
+        tiwei.btw@antgroup.com, kevin.brodsky@arm.com, benjamin.berg@intel.com,
+        kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-mm@kvack.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 01/11] kasan: unify static kasan_flag_enabled across
+ modes
+Message-ID: <aGKDhPBgDv2JjJZr@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20250626153147.145312-1-snovitoll@gmail.com>
+ <20250626153147.145312-2-snovitoll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] PCI: qcom: Move PERST# GPIO & phy retrieval from
- controller to PCIe bridge node
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski
- <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
-References: <20250605-perst-v4-0-efe8a0905c27@oss.qualcomm.com>
- <y3umoz5yuofaoloseapugjbebcgkefanqzggdjd5svq5dkchnb@rkbjfpiiveng>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <y3umoz5yuofaoloseapugjbebcgkefanqzggdjd5svq5dkchnb@rkbjfpiiveng>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: Q4Mz73Wq7u7uc3D6QA-UEVyWbeSW3KzA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDEwMiBTYWx0ZWRfX4oExg6Mc6Iep
- eiME5phijGI10CH8iy0rrGgPhtODlQflAowVAu1AXBastqV/4cA4bskMlVykqd4/h/F08hMfU5r
- YnV34DXV+7ISTguRmvRuW1jboyCxLyWdY1UX3wTg6uUgVS1TMEjXgfiJDXLl77cJZlljI09Xfge
- 49aeBiPrQg5s3kmWjvqWXAl44TnWPLxGDor3l6PZ3Ox9ZeLj9jvkM1IJqgYS2mGRItMBiA8QHER
- Yrz3mCPoWN9mJn2P5aSgW5AE5ayW1oUSPT+Me6u4cIL4mdaow/lW+QrzQI/hsJ3Lnhi5CEeoe+7
- vL08cNT5jWd7AlSc1F/uMVa8ic3KFOpUYsKyh4nNJMn+YuqEO61IkzEDDKNU4W8IIG4JAjNtSat
- X13FzS47zPQYdp6+g7HGaeSQBmx0qKF2uYImk9wdpkXv9vvDVFfQb7th6nCUu7u07TXxmKLL
-X-Authority-Analysis: v=2.4 cv=L9sdQ/T8 c=1 sm=1 tr=0 ts=6862835e cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=qGq9QQooCmLM_m6diiQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: Q4Mz73Wq7u7uc3D6QA-UEVyWbeSW3KzA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250626153147.145312-2-snovitoll@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: R7Lk-5oMpjro9s1CXJZKtYujyDGXFMxp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDEwMCBTYWx0ZWRfX2xhLgGojvA6t r8g7/ecZ+357bnq+V4oK+PEwZaj+zHbXyN+Ru1n3DrFdaSLAos0buS5jL9C1tta7atkJYiZIQaF 9sZWyxHNaJUrQqIMbo0QDjD1aBJf17TqXpAKHau1WcUR0r9MB3HXL9faXzF4lvrkQdsuGxUK17d
+ z3tORR8HbmqzluxydjcIqwSK3SZaH8E4vH7dXCceoC74KSHRAZLLwuOQaLM4i+tX7f/u/Ckvpml 5uKodiLIM+IjigsvvYu04D4oduCbahyVPqy6GNw4VE+yf6xOzYsj1s/uUrTjsgyO/jp3mfjTdFr /qtf53aSQ4op7pY9TqPllefkk/R6721w5VzJc11hrTLtAQeHUx9tUD6J7VDv5TGalxp7Ob0FALy
+ f7LBwFKXJq+utLCJBkCcPsmtnhAftjy9J/oYjEBrOgpvCYmkO++L/gKuaTAOTK1/jfEyvMMe
+X-Authority-Analysis: v=2.4 cv=LpeSymdc c=1 sm=1 tr=0 ts=6862838d cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=mW8dxBt0ZUAMIGVGd2EA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: UVJc73yvgF4Y4S9SoMFvV1Dqh0my0GoM
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 phishscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 lowpriorityscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
- bulkscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011
+ impostorscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300102
+ definitions=main-2506300100
 
+On Thu, Jun 26, 2025 at 08:31:37PM +0500, Sabyrzhan Tasbolatov wrote:
 
+Hi Sabyrzhan,
 
-On 6/23/2025 4:37 PM, Manivannan Sadhasivam wrote:
-> On Thu, Jun 05, 2025 at 02:00:36PM +0530, Krishna Chaitanya Chundru wrote:
->> The main intention of this series is to move wake# to the root port node.
->> After this series we will come up with a patch which registers for wake IRQ
->> from the pcieport driver. The wake IRQ is needed for the endpoint to wakeup
->> the host from D3cold. The driver change for wake IRQ is posted here[1].
->>
->> There are many places we agreed to move the wake and perst gpio's
->> and phy etc to the pcie root port node instead of bridge node[2] as the
->> these properties are root port specific and does not belongs to
->> bridge node.
->>
->> So move the phy, phy-names, wake-gpio's in the root port.
->> There is already reset-gpio defined for PERST# in pci-bus-common.yaml,
->> start using that property instead of perst-gpio.
->>
->> For backward compatibility, don't remove any existing properties in the
->> bridge node.
->>
->> There are some other properties like num-lanes, max-link-speed which
->> needs to be moved to the root port nodes, but in this series we are
->> excluding them for now as this requires more changes in dwc layer and
->> can complicate the things.
->>
->> Once this series gets merged all other platforms also will be updated
->> to use this new way.
->>
->> Note:- The driver change needs to be merged first before dts changes.
->> Krzysztof Wilczyński or Mani can you provide the immutable branch with
->> these PCIe changes.
->>
-> 
-> You've dropped the DTS changes in this revision. So the above comment is stale.
-> 
->> [1] https://lore.kernel.org/all/20250401-wake_irq_support-v1-0-d2e22f4a0efd@oss.qualcomm.com/
->> [2] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
->>
-> 
-> I don't have a device to test this series right now. So could you please test
-> this series with the legacy binding and make sure it is not breaking?
-> 
-> Once you confirm, I'll merge this series.
-> 
-I have verified with legacy binding with this change and it is working fine.
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index d54e89f8c3e..32c432df24a 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -36,6 +36,17 @@
+>  #include "kasan.h"
+>  #include "../slab.h"
+>  
+> +/*
+> + * Initialize Generic KASAN and enable runtime checks.
+> + * This should be called from arch kasan_init() once shadow memory is ready.
+> + */
+> +void __init kasan_init_generic(void)
+> +{
+> +	static_branch_enable(&kasan_flag_enabled);
 
-- Krishna Chaitanya.
-> - Mani
-> 
->> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> ---
->> Changes in v4:
->> - Removed dts patch as Mani suggested to merge driver and dt-binding
->>    patch in this release and have dts changes in the next release.
->> - Remove wake property from as this will be addressed in
->>    pci-bus-common.yaml (Mani)
->> - Did couple of nits in the comments, function names code etc (Mani).
->> - Link to v3: https://lore.kernel.org/r/20250419-perst-v3-0-1afec3c4ea62@oss.qualcomm.com
->>
->> Changes in v3:
->> - Make old properties as deprecated, update commit message (Dmitry)
->> - Add helper functions wherever both multiport and legacy methods are used. (Mani)
->> - Link to v2: https://lore.kernel.org/r/20250414-perst-v2-0-89247746d755@oss.qualcomm.com
->>
->> Changes in v2:
->> - Remove phy-names property and change the driver, dtsi accordingly (Rob)
->> - Link to v1: https://lore.kernel.org/r/20250322-perst-v1-0-e5e4da74a204@oss.qualcomm.com
->>
->> ---
->> Krishna Chaitanya Chundru (2):
->>        dt-bindings: PCI: qcom: Move phy & reset gpio's to root port
->>        PCI: qcom: Add support for multi-root port
->>
->>   .../devicetree/bindings/pci/qcom,pcie-common.yaml  |  32 +++-
->>   .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  |  16 +-
->>   drivers/pci/controller/dwc/pcie-qcom.c             | 177 +++++++++++++++++----
->>   3 files changed, 192 insertions(+), 33 deletions(-)
->> ---
->> base-commit: ec7714e4947909190ffb3041a03311a975350fe0
->> change-id: 20250101-perst-cb885b5a6129
->>
->> Best regards,
->> -- 
->> krishnachaitanya-linux <krishna.chundru@oss.qualcomm.com>
->>
-> 
+s390 crashes at this line, when the whole series is applied.
+
+FWIW, it looks like kasan is called while its state is not yet finalized.
+E.g. whether calling __asan_report_store4_noabort() before kasan_init_generic()
+is expected?
+
+ 32e0a54:       c0 e5 fe a9 70 56       brasl   %r14,80eb00 <__asan_report_store4_noabort>
+ 32e0a5a:       c4 28 ff cb bb a3       lgrl    %r2,2c581a0 <_GLOBAL_OFFSET_TABLE_+0x70c0>
+        sort_extable(__start_amode31_ex_table, __stop_amode31_ex_table);        
+ 32e0a60:       a5 ac 00 1c             llihh   %r10,28                         
+        init_task.kasan_depth = 0;                                              
+ 32e0a64:       e3 40 2b c8 01 71       lay     %r4,7112(%r2)                   
+ 32e0a6a:       e5 4c 40 00 00 00       mvhi    0(%r4),0                        
+        kasan_init_generic();                                                   
+ 32e0a70:       c0 e5 00 01 e7 3c       brasl   %r14,331d8e8 <kasan_init_generic>
+
+> +	pr_info("KernelAddressSanitizer initialized (generic)\n");
+> +}
+
+Thanks!
 
