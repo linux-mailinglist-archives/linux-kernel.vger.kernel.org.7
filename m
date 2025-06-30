@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel+bounces-709881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C863CAEE427
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:20:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92622AEE41B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFEFD188A5C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:14:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CB91683CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363722E54DA;
-	Mon, 30 Jun 2025 16:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56E5293C6D;
+	Mon, 30 Jun 2025 16:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/+OnS8d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbkKMYdK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98929117A;
-	Mon, 30 Jun 2025 16:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37794293B5C;
+	Mon, 30 Jun 2025 16:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751299786; cv=none; b=p+vbk4H0es7VFKAbRslYotkpYCiIzTXBjBnWQC2EFNKOGg+3TKsWoTbF70uCUaoTa7vwA0Vq/UvcsryzNC9X6zHl32D4IQxTMpUdvaHPGWKdytoG2XuLDRCHO2L2r18zIHDisngTC5qsuOx5RnO7gR/DV1kI26oaxVbfWa9HGls=
+	t=1751299929; cv=none; b=EnIsAVVzCTw0pj1ibL8wNNQPqu43XTu1ANxvMnub4gmzDfgvqP/GPDCGnOpuNINdmfnvj/Ds2uOU5HctuwxYZXYTPWcywEsiqYwIKJ6/wWcgxT0XkDSj9SHsq8Dz3Y8H7WW1JgkZlKjP2oneZ14b8CAwUS4/iFuRcH+juEyb3Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751299786; c=relaxed/simple;
-	bh=s43vrdBkB//7/xBOt9UWghrfxrjsGXZHPE7NijbiwcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oe9tTozTUs3os4OjgfA1dScwUWDeGYuoShv/fvG/5DBhqNagML3p0p8GzKDW2tRG4ukr8i8tUuarxVlBhAEp3OxFVpNwvBUWWuRwew+13KBT7UwRXf3GOvNxoOCeIXrI5DCy4zq1qYwa3AWPDczi0Ed+TYkJugLjNmk1fOSshC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/+OnS8d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1124FC4CEE3;
-	Mon, 30 Jun 2025 16:09:46 +0000 (UTC)
+	s=arc-20240116; t=1751299929; c=relaxed/simple;
+	bh=pMdI6QJaU0k9Tifk5m6sg1z61/DI88a7J1nzMO0v4cE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NDT8lkxazAcVkVJaT6u0AGhTvbx95jS7tjqNmp75BQtsN41+2JYvy1ocw4Xn/4uKUb3n2R3nO3TKELAhfy5n4SBEdACgoBqfA1UiRXfdr+BpEnaWTZhhtMr8YRfgzaJH1nbG72Tc+Tz59oUjfbcUApAtYQUGcbCUZnUs/Org5zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbkKMYdK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48084C4CEE3;
+	Mon, 30 Jun 2025 16:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751299786;
-	bh=s43vrdBkB//7/xBOt9UWghrfxrjsGXZHPE7NijbiwcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B/+OnS8dtPRKXQrplTbUDQmYHFCFp06TE+Zaq5dWdEQeCdRzIyvlBTYzBY44kfy9X
-	 Gt0pWgS4K2fYJpZ5T8aQuxdqafsrINv4/HTxaZ/Try75t8K5cWi4f8cXCOvyZgHhkt
-	 EQAOwb7OJ28rc6utillI3Vs5dopoI/wL8R/9oNkTqGh0HYlYpBzmc50dLevdIHTVaO
-	 D/meXKCWm1GcLxH6HHRyt6QQnTunsatY2WbQ3+ZB2EDq08OK/u3C3lVuPARAmbTF+R
-	 uTEfK9Ciaq5nx7qnxOO5SP8RHovBcKuD/W1F3g5daHj0YF5y1kQJFX84ykNGOb/XKt
-	 E1zt48XIX8kDg==
-Date: Mon, 30 Jun 2025 09:09:41 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	acme@kernel.org, agordeev@linux.ibm.com, gor@linux.ibm.com,
-	sumanthk@linux.ibm.com, hca@linux.ibm.com, japo@linux.ibm.com
-Subject: Re: [PATCH] perf test: perf header test fails on s390
-Message-ID: <aGK2xQNQOd1WoDVk@google.com>
-References: <20250630091613.3061664-1-tmricht@linux.ibm.com>
- <CAP-5=fWGiitgromQRTxEsU3cY99gFAU6WPLnmiS7-Q8vQNGbYw@mail.gmail.com>
+	s=k20201202; t=1751299929;
+	bh=pMdI6QJaU0k9Tifk5m6sg1z61/DI88a7J1nzMO0v4cE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JbkKMYdKLwJlbbYUyG93oRN55gMsdPUa16eCyB9QXrfNcfm/oKrmIDeQ148OE1sJ1
+	 l9FstzDwuLqEGpHVE6PeHYwZ8EBJ4+dmwJ1ODI35QnsM94xYT7s4Zw/zZqlfyHhk+m
+	 qT1Y6VL5IFf7rfk9uQ4S4eDvWpA4LezxIfmC/v5xi06vbbzBkMzv/ZQXAvJUNHsSOJ
+	 O5osbfYFt64BQYZjuwKgumkRBIDmlMDOWiQZQyY+zSc/iB0Qpmt8JUVvX/tdUX4yCA
+	 cD3pJ98XWWUKK/BZKs6bRQPxxSgPUS7kM+kcSiFBIbYolXh1Ave8u7J7ABaqNUz1f1
+	 EAwuVgzrGJ8Pg==
+Message-ID: <e64c20ae-5aaf-44cf-a463-c7eb1134daee@kernel.org>
+Date: Mon, 30 Jun 2025 18:12:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWGiitgromQRTxEsU3cY99gFAU6WPLnmiS7-Q8vQNGbYw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Introduce Tyr
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Daniel Stone <daniels@collabora.com>, Rob Herring <robh@kernel.org>,
+ Alice Ryhl <alice.ryhl@google.com>, Beata Michalska
+ <beata.michalska@arm.com>, Carsten Haitzler <carsten.haitzler@foss.arm.com>,
+ Ashley Smith <ashley.smith@collabora.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ kernel@collabora.com
+References: <20250627-tyr-v1-1-cb5f4c6ced46@collabora.com>
+ <aF8lYpK_l2I-ts1k@pollux> <20250630180631.5e8066cd@fedora>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250630180631.5e8066cd@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 30, 2025 at 08:42:01AM -0700, Ian Rogers wrote:
-> On Mon, Jun 30, 2025 at 2:16 AM Thomas Richter <tmricht@linux.ibm.com> wrote:
-> >
-> > commit 2d584688643fa ("perf test: Add header shell test")
-> > introduced a new test case for perf header. It fails on s390
-> > because call graph option -g is not supported on s390.
-> > Also the option --call-graph dwarf is only supported for
-> > the event cpu-clock.
-> >
-> > Remove this option and the test succeeds.
-> >
-> > Output after:
-> >  # ./perf test 76
-> >  76: perf header tests                           : Ok
-> >
-> > Fixes: 2d584688643fa ("perf test: Add header shell test")
-> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-> > Cc: Ian Rogers <irogers@google.com>
+On 6/30/25 6:06 PM, Boris Brezillon wrote:
+> On Sat, 28 Jun 2025 01:12:34 +0200
+> Danilo Krummrich <dakr@kernel.org> wrote:
 > 
-> Thanks Thomas! Given the s390 restriction to require dwarf, should we
-> switch the default "-g" meaning on s390 to mean use dwarf? James Clark
-> proposed this previously. It doesn't affect the change here so:
+>>> +    pub(crate) fn log(&self, pdev: &platform::Device) {
+>>> +        let major = (self.gpu_id >> 16) & 0xff;
+>>> +        let minor = (self.gpu_id >> 8) & 0xff;
+>>> +        let status = self.gpu_id & 0xff;
+>>> +
+>>> +        let model_name = if let Some(model) = GPU_MODELS
+>>> +            .iter()
+>>> +            .find(|&f| f.major == major && f.minor == minor)
+>>> +        {
+>>> +            model.name
+>>> +        } else {
+>>> +            "unknown"
+>>> +        };
+>>> +
+>>> +        dev_info!(
+>>> +            pdev.as_ref(),
+>>> +            "mali-{} id 0x{:x} major 0x{:x} minor 0x{:x} status 0x{:x}",
+>>> +            model_name,
+>>> +            self.gpu_id >> 16,
+>>> +            major,
+>>> +            minor,
+>>> +            status
+>>> +        );
+>>> +
+>>> +        dev_info!(
+>>> +            pdev.as_ref(),
+>>> +            "Features: L2:{:#x} Tiler:{:#x} Mem:{:#x} MMU:{:#x} AS:{:#x}",
+>>> +            self.l2_features,
+>>> +            self.tiler_features,
+>>> +            self.mem_features,
+>>> +            self.mmu_features,
+>>> +            self.as_present
+>>> +        );
+>>> +
+>>> +        dev_info!(
+>>> +            pdev.as_ref(),
+>>> +            "shader_present=0x{:016x} l2_present=0x{:016x} tiler_present=0x{:016x}",
+>>> +            self.shader_present,
+>>> +            self.l2_present,
+>>> +            self.tiler_present
+>>> +        );
+>>> +
+>>> +        dev_info!(
+>>> +            pdev.as_ref(),
+>>> +            "PA bits: {}, VA bits: {}",
+>>> +            self.pa_bits(),
+>>> +            self.va_bits()
+>>> +        );
+>>> +    }
+>>
+>> This is called from probe() and seems way too verbose for dev_info!(), please
+>> use dev_dbg!() instead.
 > 
-> Reviewed-by: Ian Rogers <irogers@google.com>
+> We do have the same level of verbosity in Panthor, and it's proven
+> useful when people are filling bug reports. Asking them to reload
+> the module with debug prints enabled is kinda annoying, and I don't
+> think I've heard anyone complaining that this was too verbose or slowing
+> down the boot, so I'd be tempted to keep it like that, and least for
+> the information printed in this function.
 
-Unrelated but I found this test is failing on my machine.
-
-  $ ./perf test -v header
-  --- start ---
-  test child forked, pid 42799
-  Test perf header file
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.182 MB /tmp/__perf_test_header.perf.data.vvFUf (4114 samples) ]
-  Test perf header file [Done]
-  Test perf header pipe
-  Failed to find expect hostname in output
-  Failed to find expect os release in output
-  Failed to find expect arch in output
-  Failed to find expect cpuid in output
-  Failed to find expect nrcpus in output
-  Failed to find expect event in output
-  Failed to find expect cmdline in output
-  Failed to find expect perf version in output
-  Failed to find expect sibling (cores|dies|threads) in output
-  Failed to find expect sibling threads in output
-  Failed to find expect total memory in output
-  Test perf header pipe [Done]
-  ---- end(-1) ----
-   83: perf header tests                                               : FAILED!
-  
-The pipe mode doesn't have the headers.
-
-  $ ./perf record -o- -g -- ./perf test -w noploop | ./perf report -i- -I --header-only
-  # ========
-  # captured on    : Mon Jun 30 09:02:09 2025
-  # header version : 1
-  # data offset    : 0
-  # data size      : 0
-  # feat offset    : 0
-  # ========
-  #
-
-Thanks,
-Namhyung
-
+Yeah, I think for the GPU revision bits that's reasonable, but do you really
+also need the other prints to be dev_info()? Don't you know this information
+from the combination of the GPU revision bits and the kernel version?
 
