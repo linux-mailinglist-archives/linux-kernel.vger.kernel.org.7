@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-708807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E91EAED55A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:13:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92522AED448
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B28A1898036
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:13:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2313188AFCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDB2218E97;
-	Mon, 30 Jun 2025 07:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D114D1DF965;
+	Mon, 30 Jun 2025 06:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="NFaZ1cW4"
-Received: from mail.kapsi.fi (mail-auth.kapsi.fi [91.232.154.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZQR96tQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7284478F24;
-	Mon, 30 Jun 2025 07:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BBF126BF1;
+	Mon, 30 Jun 2025 06:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751267588; cv=none; b=IMUUa9EZHgLFF/fKzJnHj0LOzmmEHJwKc/6zOfsZjUUxWIqzn+xnI1CGfIWdZLG25VYU4nbYggm8sJZLvD8yrgKLw3V0qz9HnyNKnHNCo9aNQQWu2n6FVmlTDX47/hxxdd4Qf9xAjwCztr7uB0IpLY+5O+51GzAR260tQNu1xdo=
+	t=1751263945; cv=none; b=IJcyM/wOt0VuXXymAEy8Pz8FdaRIMgbrz8YoUNcTk5tFbTGslI2d6+j23j0g65s6ncquF+6Vh02XsJj9IoQqkev2KUtU94EM938LtRiAOgNayixI6O+/b2ZyuiLS/qXl2FpcmJyQG9YaaDb17yZAyUxkbLotUONII3/v7QOvqe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751267588; c=relaxed/simple;
-	bh=a0mOBBVvKHJ/p2pgWeUj2C0zQvdkOKWWtMUYv9nVwY4=;
+	s=arc-20240116; t=1751263945; c=relaxed/simple;
+	bh=OXC6fK+jEIvZa/zjiKJX+9r79IRQwYdqFYJbvN1VWCo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h1XylhgwfYHlyqv+LQ1QvQAVh9sgm2IaKKHe83ZYX3oPA3rVdrUpW48Jx103UnNMce7iItsykKCZtiDRmtKJx9vlHVctpf0So4yxqkHmhEZuSBSxpdMdM8wuOA97xGIE87iRlDiX5/HogeVvlpGdJfg6dwqAsk2IMQ4fEKBxy/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=NFaZ1cW4; arc=none smtp.client-ip=91.232.154.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hdpPcH72q71eFKMVk37M5XbLZ4kKadKnisDL++Ydm+w=; b=NFaZ1cW4W6ByCiKmTde1ZePKCJ
-	43LK9PnLdTN7kpwb4rGLfvELiphWVDL65ANp8TCqExFHc7WCEd1957r/VbyI8OZ3WgYq/RU+YNqte
-	i7uQnJAFDQP3LlicQDfrWk3wyTlCqrYtpsQJqd8HDS+8aXmHjzvcbz1WJuPis4H0DYaOZvJ61d04g
-	eA3mrIOQ+N1QhP00S8JaISLfkBa+u1QqZ9nw0YqSStp5g50tHZhWQNdC6MYCpg6zB0Yy6UmoHNnRJ
-	lmEehZBIc/JPQle0y7hZ4qVMPXAgdX+7DxYDQM0lwZQDyhiN1Nd1Q1AjsrJnCzJebhwJWwF0ExYxk
-	1GwrpFoQ==;
-Received: from [2404:7a80:b960:1a00:5eaa:b33c:a197:a90f]
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1uW7lC-00A4zL-2n;
-	Mon, 30 Jun 2025 09:12:59 +0300
-Message-ID: <0bed2152-8bf7-4091-8c2d-126f1ec3be5b@kapsi.fi>
-Date: Mon, 30 Jun 2025 15:11:34 +0900
+	 In-Reply-To:Content-Type; b=ti79qg+ANFJ9gZCrW3ycdjyxH+IqjQXoIWLNI7fwS5JQuOlg1c25I+J44dbBuRggWkBIBX4AnPv+9nMhsxRaVCpxJXGOYVTvK9v3xrDbdr+klG0omUy3ioTWBepcubir1D++WI9lwV0lHZTk+tItNHlvc62twxSDfCjdfMXxp/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZQR96tQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD496C4CEE3;
+	Mon, 30 Jun 2025 06:12:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751263944;
+	bh=OXC6fK+jEIvZa/zjiKJX+9r79IRQwYdqFYJbvN1VWCo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pZQR96tQ5sGHjxlRNA3N18PLGWppp1mtWGMNbWQIdgrkUTE1cxRP+MNQVkmWFB91f
+	 FYv1ydC75ttHhFYhrW2qBbS4y/jpSn7Of1BkC0vmPcryPwW4OW+6zkkUtin1EDcbqy
+	 2TdMXgMMDtOULq4cmGG990McSbxg/03ecRqP+jmrQQNp4AmGfZMuMRYk06IxUOOedG
+	 3XOlfqMAVNFSOQnSBt4HVxc31gTvDFoKsHe4vSvCJNDi9qYFcMJjIGkH/xn84AXqzO
+	 WEa408T2M0NP6JtWr8OLPHeXQ6gdWHAQGC+iFTFPOoWS+0WHAUmlPpTPrmKrKHowFL
+	 VIBL2JS+cz/aQ==
+Message-ID: <47d24e31-1c6f-4299-aeaf-669c474c4459@kernel.org>
+Date: Mon, 30 Jun 2025 08:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,64 +49,505 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] drm/tegra: Add NVJPG driver
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 7/8] auxdisplay: Add Titanmec TM16xx 7-segment display
+ controllers driver
+To: =?UTF-8?Q?Jean-Fran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250611-diogo-nvjpg-v2-0-01f8c76ea90f@tecnico.ulisboa.pt>
- <20250611-diogo-nvjpg-v2-1-01f8c76ea90f@tecnico.ulisboa.pt>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, devicetree@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Boris Gjenero <boris.gjenero@gmail.com>,
+ Christian Hewitt <christianshewitt@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Paolo Sabatino <paolo.sabatino@gmail.com>
+References: <20250629130002.49842-1-jefflessard3@gmail.com>
+ <20250629131830.50034-1-jefflessard3@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Mikko Perttunen <cyndis@kapsi.fi>
-In-Reply-To: <20250611-diogo-nvjpg-v2-1-01f8c76ea90f@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2404:7a80:b960:1a00:5eaa:b33c:a197:a90f
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250629131830.50034-1-jefflessard3@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 6/11/25 9:18 PM, Diogo Ivo wrote:
-> ...
-> +static int nvjpg_load_falcon_firmware(struct nvjpg *nvjpg)
+On 29/06/2025 15:18, Jean-François Lessard wrote:
+> This patch introduces a new auxiliary display driver for TM16XX family LED controllers and compatible chips:
+
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
+
+> - Shenzhen Titan Micro Electronics: TM1618, TM1620, TM1628, TM1650
+> - Fuzhou Fuda Hisi Microelectronics: FD620, FD628, FD650, FD655, FD6551
+> - Wuxi i-Core Electronics: AiP650, AiP1618, AiP1628
+> - Princeton Technology: PT6964
+> - Shenzhen Winrise Technology: HBS658
+> 
+
+
+...
+
+> + * tm16xx_parse_dt - Parse device tree data
+> + * @dev: Pointer to device structure
+> + * @display: Pointer to tm16xx_display structure
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int tm16xx_parse_dt(struct device *dev, struct tm16xx_display *display)
 > +{
-> +	struct host1x_client *client = &nvjpg->client.base;
-> +	struct tegra_drm *tegra = nvjpg->client.drm;
-> +	dma_addr_t iova;
-> +	size_t size;
-> +	void *virt;
-> +	int err;
+> +	struct fwnode_handle *child;
+> +	int ret, i, max_grid = 0;
+> +	u8 *digits;
 > +
-> +	if (nvjpg->falcon.firmware.virt)
-> +		return 0;
+> +	display->transpose_display_data =
+> +		device_property_read_bool(dev, "titanmec,transposed");
+
+Wrong wrapping.
+
 > +
-> +	err = falcon_read_firmware(&nvjpg->falcon, nvjpg->config->firmware);
-> +	if (err < 0)
-> +		return err;
+> +	ret = device_property_count_u8(dev, "titanmec,digits");
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to count 'titanmec,digits' property: %d\n", ret);
+> +		return ret;
+> +	}
 > +
-> +	size = nvjpg->falcon.firmware.size;
+> +	display->num_digits = ret;
+> +	dev_dbg(dev, "Number of digits: %d\n", display->num_digits);
 > +
-> +	if (!client->group) {
-> +		virt = dma_alloc_coherent(nvjpg->dev, size, &iova, GFP_KERNEL);
+> +	digits = devm_kcalloc(dev, display->num_digits, sizeof(*digits), GFP_KERNEL);
+> +	if (!digits)
+> +		return -ENOMEM;
 > +
-> +		err = dma_mapping_error(nvjpg->dev, iova);
-> +		if (err < 0)
-> +			return err;
+> +	ret = device_property_read_u8_array(dev, "titanmec,digits", digits,
+> +					    display->num_digits);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to read 'titanmec,digits' property: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	display->digits = devm_kcalloc(dev, display->num_digits, sizeof(*display->digits),
+> +				       GFP_KERNEL);
+> +	if (!display->digits)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < display->num_digits; i++) {
+> +		if (digits[i] >= display->controller->max_grids) {
+> +			dev_err(dev, "Digit grid %d exceeds controller max_grids %d\n",
+> +				digits[i], display->controller->max_grids);
+> +			return -EINVAL;
+> +		}
+> +
+> +		display->digits[i].grid = digits[i];
+> +		max_grid = umax(max_grid, digits[i]);
+> +	}
+> +
+> +	devm_kfree(dev, digits);
+> +
+> +	ret = device_property_read_u8_array(dev, "titanmec,segment-mapping",
+> +					    display->segment_mapping, DIGIT_SEGMENTS);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to read 'titanmec,segment-mapping' property: %d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	display->digit_bitmask = 0;
+> +	for (i = 0; i < DIGIT_SEGMENTS; i++) {
+> +		if (display->segment_mapping[i] < MIN_SEGMENT ||
+> +		    display->segment_mapping[i] > MAX_SEGMENT) {
+> +			dev_err(dev,
+> +				"Invalid 'titanmec,segment-mapping' value: %d (must be between %d and %d)\n",
+> +				display->segment_mapping[i], MIN_SEGMENT, MAX_SEGMENT);
+> +			return -EINVAL;
+> +		}
+> +
+> +		display->digit_bitmask |= BIT(display->segment_mapping[i]);
+> +	}
+> +
+> +	display->num_leds = 0;
+> +	device_for_each_child_node(dev, child) {
+> +		u32 reg[2];
+> +
+> +		ret = fwnode_property_read_u32_array(child, "reg", reg, 2);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to read 'reg' property of led node: %d\n",
+> +				ret);
+> +			fwnode_handle_put(child);
+> +			return ret;
+> +		}
+> +
+> +		if (reg[0] >= display->controller->max_grids) {
+> +			dev_err(dev, "LED grid %d exceeds controller max_grids %d\n",
+> +				reg[0], display->controller->max_grids);
+> +			fwnode_handle_put(child);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (reg[1] < MIN_SEGMENT || reg[1] > MAX_SEGMENT) {
+> +			dev_err(dev,
+> +				"LED segment %d is invalid (must be between %d and %d)\n",
+> +				reg[1], MIN_SEGMENT, MAX_SEGMENT);
+> +			fwnode_handle_put(child);
+> +			return -EINVAL;
+> +		}
+> +
+> +		max_grid = umax(max_grid, reg[0]);
+> +		display->num_leds++;
+> +	}
+> +
+> +	dev_dbg(dev, "Number of LEDs: %d\n", display->num_leds);
+> +
+> +	display->display_data_len = max_grid + 1;
+> +	dev_dbg(dev, "Number of display grids: %zu\n", display->display_data_len);
+> +
+> +	display->display_data = devm_kcalloc(dev, display->display_data_len,
+> +					     sizeof(*display->display_data), GFP_KERNEL);
+> +	if (!display->display_data)
+> +		return -ENOMEM;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * tm16xx_probe - Probe function for tm16xx devices
+> + * @display: Pointer to tm16xx_display structure
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int tm16xx_probe(struct tm16xx_display *display)
+> +{
+> +	struct device *dev = display->dev;
+> +	struct fwnode_handle *child;
+> +	int ret, i;
+> +
+> +	ret = tm16xx_parse_dt(dev, display);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to parse device tree: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	mutex_init(&display->lock);
+> +	INIT_WORK(&display->flush_init, tm16xx_display_flush_init);
+> +
+> +	/* Initialize work structure with appropriate flush function */
+> +	if (display->transpose_display_data) {
+> +		INIT_WORK(&display->flush_display, tm16xx_display_flush_data_transposed);
+> +		dev_info(display->dev, "Operating in transposed mode\n");
+> +	} else {
+> +		INIT_WORK(&display->flush_display, tm16xx_display_flush_data);
+> +	}
+> +
+> +	display->main_led.name = TM16XX_DEVICE_NAME;
+> +	display->main_led.brightness = display->controller->max_brightness;
+> +	display->main_led.max_brightness = display->controller->max_brightness;
+> +	display->main_led.brightness_set = tm16xx_brightness_set;
+> +	display->main_led.groups = tm16xx_main_led_groups;
+> +	display->main_led.flags = LED_RETAIN_AT_SHUTDOWN | LED_CORE_SUSPENDRESUME;
+> +
+> +	ret = devm_led_classdev_register(dev, &display->main_led);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to register main LED: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	display->leds =
+> +		devm_kcalloc(dev, display->num_leds, sizeof(*display->leds), GFP_KERNEL);
 
-This needs to check the return value of dma_alloc_coherent. Looks like 
-this was fixed in vic.c by Robin 
-(5566174cb10a5167d59b0793871cab7990b149b8) but the issue persisted into 
-nvdec.c in parallel, so it needs to be fixed there as well. I can send 
-out the fix for nvdec.c.
+Wrong wrapping. Use kernel style, not clang style.
 
-With that fixed,
 
-Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
+> +	if (!display->leds)
+> +		return -ENOMEM;
+> +
+> +	i = 0;
+> +	device_for_each_child_node(dev, child) {
+> +		struct tm16xx_led *led = &display->leds[i];
+> +		struct led_init_data led_init = {
+> +			.fwnode = child,
+> +			.devicename = display->main_led.name,
+> +			.devname_mandatory = true,
+> +		};
+> +		u32 reg[2];
+> +
+> +		ret = fwnode_property_read_u32_array(child, "reg", reg, 2);
+> +		if (ret < 0) {
+> +			fwnode_handle_put(child);
+> +			dev_err(dev, "Failed to read LED reg property: %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		led->grid = reg[0];
+> +		led->segment = reg[1];
+> +
+> +		led->cdev.max_brightness = 1;
+> +		led->cdev.brightness_set = tm16xx_led_set;
+> +		led->cdev.flags = LED_RETAIN_AT_SHUTDOWN | LED_CORE_SUSPENDRESUME;
+> +
+> +		ret = devm_led_classdev_register_ext(dev, &led->cdev, &led_init);
+> +		if (ret < 0) {
+> +			fwnode_handle_put(child);
+> +			dev_err(dev, "Failed to register LED %s: %d\n", led->cdev.name,
+> +				ret);
+> +			return ret;
+> +		}
+> +
+> +		i++;
+> +	}
+> +
+> +	ret = tm16xx_display_init(display);
+> +	if (ret < 0) {
+> +		dev_err(display->dev, "Failed to initialize display: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dev_info(display->dev, "Display initialized successfully\n");
 
-Thanks!
-Mikko
+Drop, drivers should be silent on success. See coding style.
 
+> +	return 0;
+> +}
+> +
+> +/* SPI specific code */
+> +static int tm16xx_spi_probe(struct spi_device *spi)
+> +{
+> +	const struct tm16xx_controller *controller;
+> +	struct tm16xx_display *display;
+> +	int ret;
+> +
+> +	controller = of_device_get_match_data(&spi->dev);
+> +	if (!controller)
+> +		return -EINVAL;
+> +
+> +	display = devm_kzalloc(&spi->dev, sizeof(*display), GFP_KERNEL);
+> +	if (!display)
+> +		return -ENOMEM;
+> +
+> +	display->client.spi = spi;
+> +	display->dev = &spi->dev;
+> +	display->controller = controller;
+> +
+> +	spi_set_drvdata(spi, display);
+> +
+> +	ret = tm16xx_probe(display);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static void tm16xx_spi_remove(struct spi_device *spi)
+> +{
+> +	struct tm16xx_display *display = spi_get_drvdata(spi);
+> +
+> +	tm16xx_display_remove(display);
+> +}
+> +
+> +// clang-format off
+
+Drop
+
+> +static const struct of_device_id tm16xx_spi_of_match[] = {
+> +	{ .compatible = "titanmec,tm1618", .data = &tm1618_controller },
+> +	{ .compatible = "titanmec,tm1620", .data = &tm1628_controller },
+> +	{ .compatible = "titanmec,tm1628", .data = &tm1628_controller },
+> +	{ .compatible = "fdhisi,fd620", .data = &tm1628_controller },
+> +	{ .compatible = "fdhisi,fd628", .data = &tm1628_controller },
+> +	{ .compatible = "icore,aip1618", .data = &tm1618_controller },
+> +	{ .compatible = "icore,aip1628", .data = &tm1628_controller },
+> +	{ .compatible = "princeton,pt6964", .data = &tm1628_controller },
+> +	{ .compatible = "winrise,hbs658", .data = &hbs658_controller },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, tm16xx_spi_of_match);
+> +
+> +static const struct spi_device_id tm16xx_spi_id[] = {
+> +	{ "tm1618", 0 },
+> +	{ "tm1620", 0 },
+> +	{ "tm1628", 0 },
+> +	{ "fd620", 0 },
+> +	{ "fd628", 0 },
+> +	{ "aip1618", 0 },
+> +	{ "aip1628", 0 },
+> +	{ "pt6964", 0 },
+> +	{ "hbs658", 0 },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(spi, tm16xx_spi_id);
+> +// clang-format on
+
+Drop
+
+> +
+> +static struct spi_driver tm16xx_spi_driver = {
+> +	.driver = {
+> +		.name = TM16XX_DRIVER_NAME,
+> +		.of_match_table = tm16xx_spi_of_match,
+> +	},
+> +	.probe = tm16xx_spi_probe,
+> +	.remove = tm16xx_spi_remove,
+> +	.shutdown = tm16xx_spi_remove,
+> +	.id_table = tm16xx_spi_id,
+> +};
+> +
+> +/* I2C specific code */
+> +static int tm16xx_i2c_probe(struct i2c_client *client)
+> +{
+> +	const struct tm16xx_controller *controller;
+> +	struct tm16xx_display *display;
+> +	int ret;
+> +
+> +	controller = of_device_get_match_data(&client->dev);
+> +	if (!controller)
+> +		return -EINVAL;
+> +
+> +	display = devm_kzalloc(&client->dev, sizeof(*display), GFP_KERNEL);
+> +	if (!display)
+> +		return -ENOMEM;
+> +
+> +	display->client.i2c = client;
+> +	display->dev = &client->dev;
+> +	display->controller = controller;
+> +
+> +	i2c_set_clientdata(client, display);
+> +
+> +	ret = tm16xx_probe(display);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static void tm16xx_i2c_remove(struct i2c_client *client)
+> +{
+> +	struct tm16xx_display *display = i2c_get_clientdata(client);
+> +
+> +	tm16xx_display_remove(display);
+> +}
+> +
+> +// clang-format off
+
+Drop
+
+> +static const struct of_device_id tm16xx_i2c_of_match[] = {
+> +	{ .compatible = "titanmec,tm1650", .data = &tm1650_controller },
+> +	{ .compatible = "icore,aip650", .data = &tm1650_controller },
+> +	{ .compatible = "fdhisi,fd650", .data = &tm1650_controller },
+> +	{ .compatible = "fdhisi,fd6551", .data = &fd6551_controller },
+> +	{ .compatible = "fdhisi,fd655", .data = &fd655_controller },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, tm16xx_i2c_of_match);
+> +
+> +static const struct i2c_device_id tm16xx_i2c_id[] = {
+> +	{ "tm1650", 0 },
+> +	{ "aip650", 0 },
+> +	{ "fd650", 0 },
+> +	{ "fd6551", 0 },
+> +	{ "fd655", 0 },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, tm16xx_i2c_id);
+> +// clang-format on
+
+Drop.
+
+> +
+> +static struct i2c_driver tm16xx_i2c_driver = {
+> +	.driver = {
+> +		.name = TM16XX_DRIVER_NAME,
+> +		.of_match_table = tm16xx_i2c_of_match,
+> +	},
+> +	.probe = tm16xx_i2c_probe,
+> +	.remove = tm16xx_i2c_remove,
+> +	.shutdown = tm16xx_i2c_remove,
+> +	.id_table = tm16xx_i2c_id,
+> +};
+> +
+> +static int __init tm16xx_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = spi_register_driver(&tm16xx_spi_driver);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = i2c_add_driver(&tm16xx_i2c_driver);
+> +	if (ret) {
+> +		spi_unregister_driver(&tm16xx_spi_driver);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void __exit tm16xx_exit(void)
+> +{
+> +	i2c_del_driver(&tm16xx_i2c_driver);
+> +	spi_unregister_driver(&tm16xx_spi_driver);
+> +}
+> +
+> +module_init(tm16xx_init);
+> +module_exit(tm16xx_exit);
+
+
+> +
+> +MODULE_AUTHOR("Jean-François Lessard");
+> +MODULE_DESCRIPTION("TM16XX Compatible LED Display Controllers");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("spi:tm16xx");
+> +MODULE_ALIAS("i2c:tm16xx");
+
+Drop these two.
+
+
+
+Best regards,
+Krzysztof
 
