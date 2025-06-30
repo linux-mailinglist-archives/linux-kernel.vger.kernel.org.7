@@ -1,91 +1,54 @@
-Return-Path: <linux-kernel+bounces-708608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992A5AED282
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 04:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E5EAED2CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 05:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CB23B4AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 02:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F76170710
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 03:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5313187346;
-	Mon, 30 Jun 2025 02:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BeRiULvz"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DE61547F2;
+	Mon, 30 Jun 2025 03:06:08 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935596BFCE
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 02:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E4928F1
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 03:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751251541; cv=none; b=u48QLJfCOprny0y/MTkfzf4lHxHnHgaCNpvtef9FbwTKKbdMX+5VyOS9O5jQBXDKEyAgwwh2COzNatUklDiEsdVh26jByCcLOz+R8h2Hsival5lY9W7WdYKIynwn6hlB9XXrwuHk7TdUClQe76G1vzlBEy+PKTvRTgvcVpIYra8=
+	t=1751252767; cv=none; b=PjkyC0OYNSfBL9lIZ57GgEjDwFmEm3x2dFLQw0ee0bYVvxVKbSio2XQ2S3+P+OYQfYd6eI1HzAPO2l+u/cz8jKtTLLrMgUQ9k+EAYoNxEeEHUsO3XPd7bNpJvRgWr4RZtE5iPehhXj+bjR6Oz8p66EG5wbv4KIwOItdCNfZwxPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751251541; c=relaxed/simple;
-	bh=UHNjZp9vnc8N0fE+mqLUroxaGrEdiH+dy5HU8/n87p4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SixkQ58Ub9HFRxnYBsyaOag511zgmNCF/jW2u1L6VRqrs9GC9EiUElFuNFk4JozuHdhHpCOQGnX9JLpi973+DbMTsPc+J90Lm8vYTyurkhwlh+68DwBSoDW2j3CyCAk2u+1iPkkVVLNFop72MwxkwA1/NDqAg77IixjqeDT4GzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BeRiULvz; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23aeac7d77aso10548065ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Jun 2025 19:45:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1751251538; x=1751856338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2eh2c0RNhVOz1J8G3YkRJ2Bdd8xTOnKuaM/L2dwLoys=;
-        b=BeRiULvzpWO6jNpWdQwr01JamXztuAbkA+VZYdwrY9Kd20L4gZSLs1hgVJlfjWo6Sb
-         g4IBKG9G7/rPgnHyBDHiMAHDY7YSPtfyZmI1IMO7lQPNXAKiISTQeZf7XY+0OVVt8vVy
-         znjEx50EgaKxplVQ5X7JZf6RBAWyQBCgZpxEaNULrk1a9SZ3+0DWwA/jehJdGXAJ5nqc
-         ULdWZkNvd6w+5QWiVuQjiHmSuqtX18QlOaQ+AUJibUssxBOJRqioH93f8HpONqpckqTb
-         vCModUw/PKzFGxVeXSAXVzbtJgt1mqhvXWBpM8TIe9M/RJlbNRr9MF2WFHCnps9CgSC1
-         leiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751251538; x=1751856338;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2eh2c0RNhVOz1J8G3YkRJ2Bdd8xTOnKuaM/L2dwLoys=;
-        b=HkHcP1VE+Qi4dCgAJ70QRyKh+5hvhv+LDCwYdhe/q2lF76LxeP+0+KRBnBngDV/jmI
-         MB7+lJ5nJetLybJpwyhFIHIM2b1H1Kv0serXGgs+8Z5wgAIZZWJXtT9ilnbBIZpNRhjj
-         9cL0Wm60TYDMIaTJeqqclk5xg/+f8m/zXBb+U9R7hS/umnTsVDWxmZmhrelkFZ6PWlO/
-         xsRFijejwPLbS+frMYYbkV7N+GQLc8mnFqAPq/kD5QDWBno5NB9OYLqqp+jwN5ErthS6
-         Ic7AWG4+4yNJWV8JG1lW1wc+fyWoWt7+3svhcKbN02O9b5xnTZvR1UaYYT+XKzkhsyZz
-         ul2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUDmY9sM0ns1RJrNlr11JAJC6oBukAjaUXGd4TOxDh3rqk7vx53Lb339eUguRx5dNGK3M4mIKiygReNpFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfjobtSXWdgQcvUz8BSLrBMvTA65MLKXG5VAcXDAAU1kxIEJkl
-	sTpbUP6r0tCzg7XNYO+QoqsvdB0g9YvKs9sgUriw6Fd1QAMDLyXVOY2ehlDdMmb5wDo=
-X-Gm-Gg: ASbGncto16Nypw15OJX/rlgKcjO+jcnOq+BhX6iPe7ZczCHb6oFAimiWN+Stgq1Uwwf
-	V9kBUpbpNOxcp8JsynPiMzvW72VH9uZTDuHHK7jIy6zE9gv5qt74/+syKleKAgmYd9XQGFLFyGv
-	eK0KxXRZ6qVXLMDs/Fq3OvqWPK+CmoCIGE9CvRlUivgxrhY9JWb6eYlsH/ZHk33I7jTu5M6/n6S
-	oaP9dZb2VSaHOzjMbvGe9qpzHRrAL5kuyscrSai9ry2BWx9QWcsm4dORa16QSs0zdi8sesF4C+I
-	eJyHnjPS7n/m3a+TkRXdDv476VE5RwQBKm3/XYRZVGCjlUQh5/KKbMFNIzEXJSBCUpU/J2xK+xX
-	9LiGEQs4=
-X-Google-Smtp-Source: AGHT+IHkMW4IThiZ2urOldb1y5zT3OBTJNJjaWpv+ESNfp/34TTRddvqxjqDrw748ODDT4UHRObB2g==
-X-Received: by 2002:a17:902:db0a:b0:231:d0a8:5179 with SMTP id d9443c01a7336-23ac3df2193mr178800645ad.23.1751251537746;
-        Sun, 29 Jun 2025 19:45:37 -0700 (PDT)
-Received: from localhost.localdomain ([2001:c10:ff04:0:1000:0:1:a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3b7915sm70255965ad.165.2025.06.29.19.45.34
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 29 Jun 2025 19:45:37 -0700 (PDT)
-From: lizhe.67@bytedance.com
-To: alex.williamson@redhat.com
-Cc: david@redhat.com,
-	jgg@ziepe.ca,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lizhe.67@bytedance.com,
-	peterx@redhat.com
-Subject: Re: [PATCH v5 1/3] vfio/type1: batch vfio_find_vpfn() in function vfio_unpin_pages_remote()
-Date: Mon, 30 Jun 2025 10:45:31 +0800
-Message-ID: <20250630024531.12377-1-lizhe.67@bytedance.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250627154059.0e134073.alex.williamson@redhat.com>
-References: <20250627154059.0e134073.alex.williamson@redhat.com>
+	s=arc-20240116; t=1751252767; c=relaxed/simple;
+	bh=Wt0vPJZZQdFBm6sRPr2s5cgrwmzjSgk8OV3nE9ZfszM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z6VWmp1GPdx49eoTKMEA7hwH4RCJvKEtjlKtuZ+VoxW8oGWrmm7+JyyBkBJq4U4KKioFvwQT4H4vnvz3lq3QOLX8qWCp5eSlchm20garuTwfNQI8UJqcVi0p2zRMfsUNEx+P/3d3ma40D2e7NQc3Vr7n2QQYQ7wTYmIcJP37nac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w002.hihonor.com (unknown [10.68.28.120])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bVrDz4gPyzYm65y;
+	Mon, 30 Jun 2025 10:48:03 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w002.hihonor.com
+ (10.68.28.120) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Jun
+ 2025 10:50:24 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Jun
+ 2025 10:50:23 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
+Subject: Re: [f2fs-dev] [PATCH v4 2/2] f2fs: don't allow unaligned truncation to smaller/equal size on pinned file
+Date: Mon, 30 Jun 2025 10:50:23 +0800
+Message-ID: <20250630025023.3876706-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <4a227a94-6e8e-4ab3-a6f4-fdebc6419764@kernel.org>
+References: <4a227a94-6e8e-4ab3-a6f4-fdebc6419764@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,33 +56,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
+ (10.68.31.243)
 
-On Fri, 27 Jun 2025 15:40:59 -0600, alex.williamson@redhat.com wrote:
+>On 6/24/25 11:59, wangzijie wrote:
+>> To prevent scattered pin block generation, don't allow non-section aligned truncation
+>> to smaller or equal size on pinned file. But for truncation to larger size, after
+>> commit 3fdd89b452c2("f2fs: prevent writing without fallocate() for pinned files"),
+>> we only support overwrite IO to pinned file, so we don't need to consider
+>> attr->ia_size > i_size case.
+>
+>Zijie, can you take a look generic/494? suspect that it is caused by this change.
+>
+>generic/494 3s ... - output mismatch (see /share/git/fstests/results//generic/494.out.bad)
+>    --- tests/generic/494.out   2025-01-12 21:57:40.279440664 +0800
+>    +++ /share/git/fstests/results//generic/494.out.bad 2025-06-30 10:01:37.000000000 +0800
+>    @@ -2,7 +2,7 @@
+>     Format and mount
+>     Initialize file
+>     Try to truncate
+>    -ftruncate: Text file busy
+>    +ftruncate: Invalid argument
+>     Try to punch hole
+>     fallocate: Text file busy
+>    ...
+>    (Run 'diff -u /share/git/fstests/tests/generic/494.out /share/git/fstests/results//generic/494.out.bad'  to see the entire diff)
+>Ran: generic/494
+>Failures: generic/494
+>Failed 1 of 1 tests
+>
+>Thanks,
 
-> On Fri, 20 Jun 2025 11:23:42 +0800
-> lizhe.67@bytedance.com wrote:
-> 
-> > From: Li Zhe <lizhe.67@bytedance.com>
-> > 
-> > This patch is based on patch 'vfio/type1: optimize
-> > vfio_pin_pages_remote() for large folios'[1].
-> 
-> The above and the below link are only necessary in the cover letter, or
-> below the --- marker below, they don't really make sense in the
-> committed log.
-> 
-> Anyway, aside from that and one nit on 2/ (sent separately), the series
-> looks ok to me and I hope David and Jason will chime in with A-b/R-b
-> give the previous discussions.
-> 
-> Given the build bot error[1] I'd suggest resending all your work in a
-> single series, the previous map optimization and the unmap optimization
-> here.  That way the dependency is already included, and it's a good
-> nudge for acks.  Thanks,
+Hi, Chao
+generic/494 swapon file and try to ftruncate.
 
-Thank you for your review. I will send a new patchset that includes
-the latest optimizations for both map and unmap.
+Before this change
+swap_acticate:
+set_inode_flag(inode, FI_PIN_FILE)
 
-Thanks,
-Zhe
+ftruncate:
+setattr_prepare
+-inode_newsize_ok
+--return -ETXTBSY for SWAPFILE
+
+After this change:
+swap_acticate:
+set_inode_flag(inode, FI_PIN_FILE)
+
+ftruncate: 
+prevent unaligned truncation before setattr_prepare()
+return -EINVAL
+
+Sorry for this. Maybe I should apply this check after setattr_prepare()? Or do
+you have some suggestions?
+
+
+>> 
+>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>> ---
+>> v4:
+>> - convert sbi first and apply change
+>> ---
+>>  fs/f2fs/file.c | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>> 
+>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>> index 209f43653..4809f0fd6 100644
+>> --- a/fs/f2fs/file.c
+>> +++ b/fs/f2fs/file.c
+>> @@ -1048,6 +1048,17 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>>  			!IS_ALIGNED(attr->ia_size,
+>>  			F2FS_BLK_TO_BYTES(fi->i_cluster_size)))
+>>  			return -EINVAL;
+>> +		/*
+>> +		 * To prevent scattered pin block generation, we don't allow
+>> +		 * smaller/equal size unaligned truncation for pinned file.
+>> +		 * We only support overwrite IO to pinned file, so don't
+>> +		 * care about larger size truncation.
+>> +		 */
+>> +		if (f2fs_is_pinned_file(inode) &&
+>> +			attr->ia_size <= i_size_read(inode) &&
+>> +			!IS_ALIGNED(attr->ia_size,
+>> +			F2FS_BLK_TO_BYTES(CAP_BLKS_PER_SEC(sbi))))
+>> +			return -EINVAL;
+>>  	}
+>>  
+>>  	err = setattr_prepare(idmap, dentry, attr);
+
 
