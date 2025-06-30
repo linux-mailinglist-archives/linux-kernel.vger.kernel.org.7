@@ -1,232 +1,270 @@
-Return-Path: <linux-kernel+bounces-708965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E82AED77F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F226AAED777
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83DC18989C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17EB1897F56
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83BE243953;
-	Mon, 30 Jun 2025 08:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72B02417EF;
+	Mon, 30 Jun 2025 08:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7OJk7zB"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b8EiaXph";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fqITN2RK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b8EiaXph";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fqITN2RK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E83C1DE4FF;
-	Mon, 30 Jun 2025 08:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6761DE4FF
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751272706; cv=none; b=V5N7VPdx5DeiuHAOyTwTl8t2vqT7e75VLV21ha9anG5ecv7KVCzSmiZ48yxXWi90rp3S7fVX9iMBkVwBLQc+69evP+668Q55wyvGsdemRET0R9jigVVHm/0bsDbwv39CsiMs+QbtmWzFzxS45atjb2jW4VHE9+795RbeBSTzq+w=
+	t=1751272698; cv=none; b=bIAbbb9M70BvQIVmLQMW0oUjIjzhYT4RlsKynGSdIqlEjykm2UdeTEF2bpifL/SF6hu2BByl2iBWbu4BXp9t007NbrimiSRsW66WrviKvbj1mwTY7Pxz5Bb73Up4T9jMLaHL8DF5uUBUDOnmQopTXHDHQED5LwoCa2RSa0a2kiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751272706; c=relaxed/simple;
-	bh=fOKokE5xSIuSezXDL92+Q446InjaoHoc0T4fTEZ/Fd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vDHj2RtQ2Rh1bkdaIXpGfVSfv/ZHbUuA18Rx4njTjVWVEJRFyDqyJwREO6iKIxUz6as5A+O2iFIn/auwgrXEKAt7JuTyeFBcgwpRVcK9fec/grVPpcRvPCUBe1sEs/ScB/dJdWuSI7gyD2GRrGi17ApJ52C4iHihqGMIbBdav1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7OJk7zB; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a4e62619afso455565f8f.1;
-        Mon, 30 Jun 2025 01:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751272702; x=1751877502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFdfcEftPl4kbBYI2AsD040dwGd/MXL2A6FySR4WqJg=;
-        b=O7OJk7zBkH0OE2RFz5Wf2SObaxW6+bpZ+qrKwkGB9sTy37VsSrnxBC6mwMFxKaj0PB
-         Hxpvhq/j7xWmwYxlxLyOJuUCdNxSAD8CnjdTP0nNJUb5qNzliZsI4A8kO3j40rz0xxoG
-         Ta+ydBndjlzkqNArqOMUTwi4GFmUJNfxEn+NurR5buS5LigUuu/qvi6m72SJHdwJ1ug6
-         auyYfpaGlRdvJVXfLiTLMTZdTiR+cJlTS2kOmtAuMfisYhWSrVbpD2hd6ie5JQJ5py3+
-         5okFVImN9mkYRJXq/0KH0et/J0JpLAAwH5DY/GauvY10nc67KbKW7ZNEobGYa/jZs0bO
-         4FmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751272702; x=1751877502;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rFdfcEftPl4kbBYI2AsD040dwGd/MXL2A6FySR4WqJg=;
-        b=ElQAv90EmpaLDSTANyYXJJRszO0DAXxJVSH0MxTXTg8IFKhc7Sf9MIFSVb6NyknzVe
-         BpfQuA0ubpkmzGcUZ7xtdYBgwKzk/ndThc7xlvpd0eAK7gNVu4muowoCAJAKtOsFt1df
-         3VYi0UrqjCLri6EaAKBYt5poDiO0e5xIgTM4Qj9t1so+PRTHsi9Ds2jGFNLlRJVsxZ/L
-         R99T8zu6UE2ECk9b5N5AbeNbOVsX613JMjg5nzPD0LYuLW1eCbCxPdS7ZOdVZrgqJ6X6
-         M3Ga5hyAPlWW4WUwOeXZkZK0MSlqbLth9CtYrU9mTnzhWGbPSbOPtg9LJ9c2Be1ZrAaX
-         z5/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoyP+nCGtBOcYOli1R9a0IwCbcVVkhqlW++NQI30S3rRkLh87oGI0LOw+Myn6RTFn8dx1NmA+xTbJGF0w=@vger.kernel.org, AJvYcCXtL5xKZS+AEJggNBmWJpkcGcJuKX6P08rtgxBAQg+iyML3C5Ur8RLoOIB6uNXmcbtJmziHW/Fd@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsHjjDymMrqVdiQ5HLo16z8H1pFhwd6sybUwPRk1HoVPyp7pWO
-	aGf8nPJdQo9LNxWvMXCxqQQJ67GobAv1xz999l75QgehYE4zxHZTWNNN
-X-Gm-Gg: ASbGncswcfxc/+VuKisQm9+R0IKzkZjEw4+htM3MG1Iz+Wm1f1ZE0EdvBID8pzL/kMp
-	q4YcKy9b9qZCuR/2dFVsIShsuQNl2qwYVTgdcnJa6Sqe3MMC/OBJ2oFt1wHwYz6Pn2GXWH1BgFn
-	vpoPI/hr0kj1xJPnkBGuUDbuL0+lM/OuavFnFWjwVJsQYdxVadDhng9Y/XSU1urNASH3xgXpJcu
-	bI+RBZ3TTEB57WLIB7iBQ7fimM29yaCuGBrCY3VYIqN8sjmh7CsWmKt7MHj0nS2OVakBaqg6/Te
-	NyeHv/4po160X/LgilUTyzODPVrlIde3CSDAN8Oty7LY3g7JWDCk3Rq90kCqiitoKXwO4+VKAOv
-	YidfMPH1umsnoQOEskkf6pp8EbQ==
-X-Google-Smtp-Source: AGHT+IEvKJqj/TVkGPGZ7v2Ha99spyvgOhQJ0B2GO5apmK6qXsAj7Vj46oKjzqw7IdEg+Na1JMjhHg==
-X-Received: by 2002:a05:600d:7:b0:43d:fa58:81d2 with SMTP id 5b1f17b1804b1-4539585f938mr22180605e9.9.1751272701911;
-        Mon, 30 Jun 2025 01:38:21 -0700 (PDT)
-Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:234c:3c9a:efe4:2b60])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a88c800eaasm9946144f8f.37.2025.06.30.01.38.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 01:38:21 -0700 (PDT)
-From: Thomas Fourier <fourier.thomas@gmail.com>
-To: 
-Cc: Thomas Fourier <fourier.thomas@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jonathan Currier <dullfire@yahoo.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] nui: Fix dma_mapping_error() check
-Date: Mon, 30 Jun 2025 10:36:43 +0200
-Message-ID: <20250630083650.47392-2-fourier.thomas@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751272698; c=relaxed/simple;
+	bh=5HJR6Ip4/vKwlAS2wmyEw7S9naxRwzxmIBnM7Kb7su4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eeu52eN6OG32LuRlFU9w/rpDPNAeaLhmcxwKZOYe4jrBo49EktT186Bt/fN7/1zMx3mM2AC00IAQ6Uy86Zevk76NdvE0rJWXTijFzwcOSi0ACb/lZnxaC0Od1ofoT4e8Xug6BSsK1CVWI/aFqJyLYJ/2kA5Q5rOY2Qn+qvbsdY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b8EiaXph; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fqITN2RK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b8EiaXph; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fqITN2RK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 035181F45B;
+	Mon, 30 Jun 2025 08:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751272693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
+	b=b8EiaXphj0uJBqIoWtFS/c8SfcKWHt0FfPBlD23oyjuw3dnV5ij0OeNljFH3gUBlhvxCO+
+	gadGfCL6L+OwFB/zY+2v5NnRpDvWSzdt+IZ5R2iyvbRGmOFvcjRloZRJiG4o52d5qmxXh3
+	jf2+k+whMwzWuE+zRmrAgREXg1LBlas=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751272693;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
+	b=fqITN2RKQBK6qTFyS/fLhr1xhs76aD0i7HV61qpbQHixlWJRZRgmRhsEiY5fUCDVW+SE4L
+	Xot4Nu+aBvDH4uCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=b8EiaXph;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=fqITN2RK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751272693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
+	b=b8EiaXphj0uJBqIoWtFS/c8SfcKWHt0FfPBlD23oyjuw3dnV5ij0OeNljFH3gUBlhvxCO+
+	gadGfCL6L+OwFB/zY+2v5NnRpDvWSzdt+IZ5R2iyvbRGmOFvcjRloZRJiG4o52d5qmxXh3
+	jf2+k+whMwzWuE+zRmrAgREXg1LBlas=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751272693;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rjr1wzhf+8qcZOiOvTCjm4oRU6y/wppcg9keS2Tojaw=;
+	b=fqITN2RKQBK6qTFyS/fLhr1xhs76aD0i7HV61qpbQHixlWJRZRgmRhsEiY5fUCDVW+SE4L
+	Xot4Nu+aBvDH4uCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D844C1399F;
+	Mon, 30 Jun 2025 08:38:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FN/ENPRMYmhifwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 30 Jun 2025 08:38:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 722B5A08D2; Mon, 30 Jun 2025 10:38:12 +0200 (CEST)
+Date: Mon, 30 Jun 2025 10:38:12 +0200
+From: Jan Kara <jack@suse.cz>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux-kernel@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 04/16] ext4: utilize multiple global goals to reduce
+ contention
+Message-ID: <qtdxe2rmnvrxdjmp26ro4l5erwq5lrbvmvysxfgqddadnpr7x4@xrkrdjkgsh67>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
+ <20250623073304.3275702-5-libaokun1@huawei.com>
+ <xmhuzjcgujdvmgmnc3mfd45txehmq73fiyg32vr6h7ldznctlq@rosxe25scojb>
+ <77077598-45d6-43dd-90a0-f3668a27ca15@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <77077598-45d6-43dd-90a0-f3668a27ca15@huawei.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 035181F45B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.01
 
-dma_map_XXX() functions return values DMA_MAPPING_ERROR as error values
-which is often ~0.  The error value should be tested with
-dma_mapping_error().
+On Mon 30-06-25 14:50:30, Baokun Li wrote:
+> On 2025/6/28 2:31, Jan Kara wrote:
+> > On Mon 23-06-25 15:32:52, Baokun Li wrote:
+> > > When allocating data blocks, if the first try (goal allocation) fails and
+> > > stream allocation is on, it tries a global goal starting from the last
+> > > group we used (s_mb_last_group). This helps cluster large files together
+> > > to reduce free space fragmentation, and the data block contiguity also
+> > > accelerates write-back to disk.
+> > > 
+> > > However, when multiple processes allocate blocks, having just one global
+> > > goal means they all fight over the same group. This drastically lowers
+> > > the chances of extents merging and leads to much worse file fragmentation.
+> > > 
+> > > To mitigate this multi-process contention, we now employ multiple global
+> > > goals, with the number of goals being the CPU count rounded up to the
+> > > nearest power of 2. To ensure a consistent goal for each inode, we select
+> > > the corresponding goal by taking the inode number modulo the total number
+> > > of goals.
+> > > 
+> > > Performance test data follows:
+> > > 
+> > > Test: Running will-it-scale/fallocate2 on CPU-bound containers.
+> > > Observation: Average fallocate operations per container per second.
+> > > 
+> > >                     | Kunpeng 920 / 512GB -P80|  AMD 9654 / 1536GB -P96 |
+> > >   Disk: 960GB SSD   |-------------------------|-------------------------|
+> > >                     | base  |    patched      | base  |    patched      |
+> > > -------------------|-------|-----------------|-------|-----------------|
+> > > mb_optimize_scan=0 | 7612  | 19699 (+158%)   | 21647 | 53093 (+145%)   |
+> > > mb_optimize_scan=1 | 7568  | 9862  (+30.3%)  | 9117  | 14401 (+57.9%)  |
+> > > 
+> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> > ...
+> > 
+> > > +/*
+> > > + * Number of mb last groups
+> > > + */
+> > > +#ifdef CONFIG_SMP
+> > > +#define MB_LAST_GROUPS roundup_pow_of_two(nr_cpu_ids)
+> > > +#else
+> > > +#define MB_LAST_GROUPS 1
+> > > +#endif
+> > > +
+> > I think this is too aggressive. nr_cpu_ids is easily 4096 or similar for
+> > distribution kernels (it is just a theoretical maximum for the number of
+> > CPUs the kernel can support)
+> 
+> nr_cpu_ids is generally equal to num_possible_cpus(). Only when
+> CONFIG_FORCE_NR_CPUS is enabled will nr_cpu_ids be set to NR_CPUS,
+> which represents the maximum number of supported CPUs.
 
-This patch creates a new function in niu_ops to test if the mapping
-failed.  The test is fixed in niu_rbr_add_page(), added in
-niu_start_xmit() and the successfully mapped pages are unmaped upon error.
+Indeed, CONFIG_FORCE_NR_CPUS confused me.
 
-Fixes: ec2deec1f352 ("niu: Fix to check for dma mapping errors.")
-Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
----
- drivers/net/ethernet/sun/niu.c | 31 ++++++++++++++++++++++++++++++-
- drivers/net/ethernet/sun/niu.h |  4 ++++
- 2 files changed, 34 insertions(+), 1 deletion(-)
+> > which seems like far too much for small
+> > filesystems with say 100 block groups.
+> 
+> It does make sense.
+> 
+> > I'd rather pick the array size like:
+> > 
+> > min(num_possible_cpus(), sbi->s_groups_count/4)
+> > 
+> > to
+> > 
+> > a) don't have too many slots so we still concentrate big allocations in
+> > somewhat limited area of the filesystem (a quarter of block groups here).
+> > 
+> > b) have at most one slot per CPU the machine hardware can in principle
+> > support.
+> > 
+> > 								Honza
+> 
+> You're right, we should consider the number of block groups when setting
+> the number of global goals.
+> 
+> However, a server's rootfs can often be quite small, perhaps only tens of
+> GBs, while having many CPUs. In such cases, sbi->s_groups_count / 4 might
+> still limit the filesystem's scalability.
 
-diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
-index ddca8fc7883e..26119d02a94d 100644
---- a/drivers/net/ethernet/sun/niu.c
-+++ b/drivers/net/ethernet/sun/niu.c
-@@ -3336,7 +3336,7 @@ static int niu_rbr_add_page(struct niu *np, struct rx_ring_info *rp,
- 
- 	addr = np->ops->map_page(np->device, page, 0,
- 				 PAGE_SIZE, DMA_FROM_DEVICE);
--	if (!addr) {
-+	if (np->ops->mapping_error(np->device, addr)) {
- 		__free_page(page);
- 		return -ENOMEM;
- 	}
-@@ -6676,6 +6676,8 @@ static netdev_tx_t niu_start_xmit(struct sk_buff *skb,
- 	len = skb_headlen(skb);
- 	mapping = np->ops->map_single(np->device, skb->data,
- 				      len, DMA_TO_DEVICE);
-+	if (np->ops->mapping_error(np->device, mapping))
-+		goto out_drop;
- 
- 	prod = rp->prod;
- 
-@@ -6717,6 +6719,8 @@ static netdev_tx_t niu_start_xmit(struct sk_buff *skb,
- 		mapping = np->ops->map_page(np->device, skb_frag_page(frag),
- 					    skb_frag_off(frag), len,
- 					    DMA_TO_DEVICE);
-+		if (np->ops->mapping_error(np->device, mapping))
-+			goto out_unmap;
- 
- 		rp->tx_buffs[prod].skb = NULL;
- 		rp->tx_buffs[prod].mapping = mapping;
-@@ -6741,6 +6745,19 @@ static netdev_tx_t niu_start_xmit(struct sk_buff *skb,
- out:
- 	return NETDEV_TX_OK;
- 
-+out_unmap:
-+	while (i--) {
-+		const skb_frag_t *frag;
-+
-+		prod = PREVIOUS_TX(rp, prod);
-+		frag = &skb_shinfo(skb)->frags[i];
-+		np->ops->unmap_page(np->device, rp->tx_buffs[prod].mapping,
-+				    skb_frag_size(frag), DMA_TO_DEVICE);
-+	}
-+
-+	np->ops->unmap_single(np->device, rp->tx_buffs[rp->prod].mapping,
-+			      skb_headlen(skb), DMA_TO_DEVICE);
-+
- out_drop:
- 	rp->tx_errors++;
- 	kfree_skb(skb);
-@@ -9644,6 +9661,11 @@ static void niu_pci_unmap_single(struct device *dev, u64 dma_address,
- 	dma_unmap_single(dev, dma_address, size, direction);
- }
- 
-+static int niu_pci_mapping_error(struct device *dev, u64 addr)
-+{
-+	return dma_mapping_error(dev, addr);
-+}
-+
- static const struct niu_ops niu_pci_ops = {
- 	.alloc_coherent	= niu_pci_alloc_coherent,
- 	.free_coherent	= niu_pci_free_coherent,
-@@ -9651,6 +9673,7 @@ static const struct niu_ops niu_pci_ops = {
- 	.unmap_page	= niu_pci_unmap_page,
- 	.map_single	= niu_pci_map_single,
- 	.unmap_single	= niu_pci_unmap_single,
-+	.mapping_error	= niu_pci_mapping_error,
- };
- 
- static void niu_driver_version(void)
-@@ -10019,6 +10042,11 @@ static void niu_phys_unmap_single(struct device *dev, u64 dma_address,
- 	/* Nothing to do.  */
- }
- 
-+static int niu_phys_mapping_error(struct device *dev, u64 dma_address)
-+{
-+	return false;
-+}
-+
- static const struct niu_ops niu_phys_ops = {
- 	.alloc_coherent	= niu_phys_alloc_coherent,
- 	.free_coherent	= niu_phys_free_coherent,
-@@ -10026,6 +10054,7 @@ static const struct niu_ops niu_phys_ops = {
- 	.unmap_page	= niu_phys_unmap_page,
- 	.map_single	= niu_phys_map_single,
- 	.unmap_single	= niu_phys_unmap_single,
-+	.mapping_error	= niu_phys_mapping_error,
- };
- 
- static int niu_of_probe(struct platform_device *op)
-diff --git a/drivers/net/ethernet/sun/niu.h b/drivers/net/ethernet/sun/niu.h
-index 04c215f91fc0..0b169c08b0f2 100644
---- a/drivers/net/ethernet/sun/niu.h
-+++ b/drivers/net/ethernet/sun/niu.h
-@@ -2879,6 +2879,9 @@ struct tx_ring_info {
- #define NEXT_TX(tp, index) \
- 	(((index) + 1) < (tp)->pending ? ((index) + 1) : 0)
- 
-+#define PREVIOUS_TX(tp, index) \
-+	(((index) - 1) >= 0 ? ((index) - 1) : (((tp)->pending) - 1))
-+
- static inline u32 niu_tx_avail(struct tx_ring_info *tp)
- {
- 	return (tp->pending -
-@@ -3140,6 +3143,7 @@ struct niu_ops {
- 			  enum dma_data_direction direction);
- 	void (*unmap_single)(struct device *dev, u64 dma_address,
- 			     size_t size, enum dma_data_direction direction);
-+	int (*mapping_error)(struct device *dev, u64 dma_address);
- };
- 
- struct niu_link_config {
+I would not expect such root filesystem to be loaded by many big
+allocations in parallel :). And with 4k blocksize 32GB filesystem would
+have already 64 goals which doesn't seem *that* limiting?
+
+Also note that as the filesystem is filling up and the free space is getting
+fragmented, the number of groups where large allocation can succeed will
+reduce. Thus regardless of how many slots for streaming goal you have, they
+will all end up pointing only to those several groups where large
+still allocation succeeds. So although large number of slots looks good for
+an empty filesystem, the benefit for aged filesystem is diminishing and
+larger number of slots will make the fs fragment faster.
+
+> Furthermore, after supporting LBS, the number of block groups will
+> sharply decrease.
+
+Right. This is going to reduce scalability of block allocation in general.
+Also as the groups grow larger with larger blocksize the benefit of
+streaming allocation which just gives a hint about block group to use is
+going to diminish when the free block search will be always starting from
+0. We will maybe need to store ext4_fsblk_t (effectively combining
+group+offset in a single atomic unit) as a streaming goal to mitigate this.
+
+> How about we directly use sbi->s_groups_count (which would effectively be
+> min(num_possible_cpus(), sbi->s_groups_count)) instead? This would also
+> avoid zero values.
+
+Avoiding zero values is definitely a good point. My concern is that if we
+have sb->s_groups_count streaming goals, then practically each group will
+become a streaming goal group and thus we can just remove the streaming
+allocation altogether, there's no benefit.
+
+We could make streaming goal to be ext4_fsblk_t so that also offset of the
+last big allocation in the group is recorded as I wrote above. That would
+tend to pack big allocations in each group together which is benefitial to
+combat fragmentation even with higher proportion of groups that are streaming
+goals (and likely becomes more important as the blocksize and thus group
+size grow). We can discuss proper number of slots for streaming allocation
+(I'm not hung up on it being quarter of the group count) but I'm convinced
+sb->s_groups_count is too much :)
+
+								Honza
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
