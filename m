@@ -1,154 +1,140 @@
-Return-Path: <linux-kernel+bounces-709796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F37AEE28F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:33:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12F0AEE299
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF85D7A2F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:31:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D075189CD48
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A88928CF5C;
-	Mon, 30 Jun 2025 15:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3D228E574;
+	Mon, 30 Jun 2025 15:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ib7iG3QQ"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZUAHLyzo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59C528F53B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 15:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F69624503F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 15:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751297569; cv=none; b=bhY+gIWUDh1SoQjspuBHD43soFo79prwaW+LV4qDUAIX8yrQIQlUWdmmtRZiRMgBJtd38am5zmvtoMFSKd8i6ynzHnzQWE01YbJBwmVDPGqZagSEq3RHPL7/bl+VJZb3DTmXLIKteYkxdnTQhQVi+KIeby05BO9G2f0lX032Myw=
+	t=1751297586; cv=none; b=MMR/wyFjjIQMR6x46x3/9+57ELkmmCCBsYp3q/zCCqaj+orPcyeTw1RV5bf+LMewtc4bgkvUJnpYHobusTuVjLbwRmxupoLibtuLDxUsdnOwPr7IBuehV8pA3s7a9qk9EyA519KXhUvjxkng338f6tGdLpKlG4fggyieVilAE2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751297569; c=relaxed/simple;
-	bh=8jE24o7YZNAkQDGENd9+5jokCstRAjfx8mRG6Xlu7I4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Y2hznoHQmA26JcCymYLyPUJ8FCMYq4EOLNZSltro1W93J4q74/Yr2ZbD/S3WEzVd82Q769Xkz8EhNA8XBzcQ3SRSJOJdJvJqrl4AJyTvMzM0dfrxDsSFOwhMVvLAchKpSDygfyv0IY0MAmOiprGfJBOZhpcxbmIax13dvDrVXf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ib7iG3QQ; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a365a6804eso2410223f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:32:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751297566; x=1751902366; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=atA/KC1m61iI/EQIA0gGrqTkbU+o+kg8hTMAb8HLbKE=;
-        b=ib7iG3QQJPM5EV4ORhLmZhmx/v46+2gDTumaaywpZTxxCXVHonYToiAOfdlHPQZkiX
-         YKVTrcMK5UiecsCotjd7g62LB1Wkq/LhBRBTEcIpTghVLm6+C7qoGYZBnBZqPrvpD4Aq
-         thyD5r1qGil7VEusHT1Zd0KI5wzgLYPiqkZQZq/itytSCoSjXo3u+2isnGE3qB52GWv8
-         jfE0mPHENMJu7gclX/SuHGkfG6DtrakQ35FiCQR+k/XBrXzxpxFYQ5wRcc6FdUcfHQgZ
-         r09maOW5DAYrF11BZCvYfiSeiVCA/7ILxhuDO5plr3cQY3t/1MVAgO+echbv4nfaDBhL
-         2E7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751297566; x=1751902366;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=atA/KC1m61iI/EQIA0gGrqTkbU+o+kg8hTMAb8HLbKE=;
-        b=RonWX0MSyOsu83IBv6ZI0Y9IpbkntivWTVmAGRk2+8rQrYsElwCW6pUbocjfonD1Bw
-         hPw1gXeWz6Bprxgb9rx3gDz8dSgcLyxXsBSjzUZybA986oIzA2JK/R6JpyJt0YoikbOz
-         zghH7dcxPUgq3RMdtTwc9hw491ufOk1cz0DfNtrtMaZXUHbP66q0cijYfNobj4s+3SkE
-         XqvJeU2xejLfUZFcXZu+WxggDcgS28VFGkh381+CxyifvV/xhIs/XS/4frPp1ZV4HkK6
-         tEN03RdxdcaZu2Hq6QeMRgzMkMOHu4pj15siDMaHoCx+wN0HZ4ZrA8pXNLgSBIakKEEJ
-         18DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTkLkbUT3xRtaIKu+J0lFCuTAkoWGYX6kL4M+lWU16xkc3DIy1/mRhSH6Qn4dPqrfkcPnAY5+6+0Eg1UM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjOW7xj5FKLDFjAqukatbfhbxQE54Ru7Y3vLcaYg6mKIdcqOJD
-	So9CcRGMTA9MFBiFdlcAtjCdvlRUHVvCAqsTfQBc1XyCunfGoo56MU+yhARk7zdqo9g=
-X-Gm-Gg: ASbGncu7dNyq25t4ySAi4orSVbfudVFw0HpRyQkPaAQp6fQ/Am5Zfa0oHN8IowXK+pX
-	vH9EpJcLnjyOfM1sqxIThB+YmPiFzwzjMCL3RbWHsjuYAnfodHf6+yoin711hSv6QQwnEBU4xwO
-	ULu3/3oP1GO7RketGGU0Srw/Jxyc2W0urw4SoEcd6ws3Kp/YLVgxBHeDRlj4fvSt6n21lSpaIkY
-	EPkgci9fIESp1b0vlA0pjzOYFrlDrfPMMalUrYf2qpxf7vYsf1vfquJIX0VPByRqcU2ae9/B+X1
-	ybTUGcv3w00V+8QOECLAhssuAvBkK5JN3Eh9s2GOPFjkae7LVyz9RcO7XJUKjXiUuasJeSE6Tpe
-	/rSeVUkFRwqc186Z/3NMkbqpdFJOyXPbjYVXpzHY=
-X-Google-Smtp-Source: AGHT+IF1MxZOvenNiix21YlE5Sm5JmNj/5PZM5XXAtE+bWTuEZDv9V6ZtvTAasrMlYozwOUVfjtjdw==
-X-Received: by 2002:a5d:55c9:0:b0:3a4:dd02:f724 with SMTP id ffacd0b85a97d-3a900575c7amr9522396f8f.43.1751297566132;
-        Mon, 30 Jun 2025 08:32:46 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:abe8:a49c:efe7:4dfb? ([2a01:e0a:3d9:2080:abe8:a49c:efe7:4dfb])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5f8e1sm10573229f8f.88.2025.06.30.08.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 08:32:45 -0700 (PDT)
-Message-ID: <2f317041-bdab-4cc1-a45e-952c97398687@linaro.org>
-Date: Mon, 30 Jun 2025 17:32:45 +0200
+	s=arc-20240116; t=1751297586; c=relaxed/simple;
+	bh=+tiFBHASS9ApEGuhGgBZ1uGEL82XGoSYrrQBTP8gc38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwWS98XSx7FS9gn85vjKmvULjgJyoGURE2vRb3Dsk5aJIcAOKG/hMAILTR1sQYu8FA3+qcM8WVRFZo7TXQUb4VPBjjJGl9L+r1Pfj340LqbTfanZALn1iDGClGh3jE2rRssfCLeT+XKbQFC8irltPNXYE7caFgDM6pTwcD63j4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZUAHLyzo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UDgKhG000747;
+	Mon, 30 Jun 2025 15:32:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=zpNsqei2QFEyuLVyVO39jdFYSbIC8N
+	oB5Ab/RaHUwvA=; b=ZUAHLyzoVMX+gSYfXm9P+usKtePNi1cX0aRM9xnXOfs1eC
+	69086ER4gIhMWthuj/D04kPhsWHOICtz7uDQWmgX5swr/6SCAFNh24L+Bkvq+5Hp
+	A5+rjmfsJyF/hnaGyvLA3uPBGLO4F364oMYHo5bl8Z9DhMulpRrQYaLb+M1V7+u1
+	N7TSiz56aNxZb0MYKx00pYpdHe3TSs+e3lQhRBLPPgB0fsMhhSwVNUEDLnQ4xuJY
+	5pO4HudmivcwpaF06d7sk9GAQboZV4DMrHvc2+c8TA9P/nnX44W8t+FO2yfH3NtJ
+	eTazpF9dePb/wBA8giSaaJFTVmVVRTHflyTYU/fQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j84d292y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 15:32:58 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55UBaHgp021361;
+	Mon, 30 Jun 2025 15:32:57 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jwe365eg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 15:32:57 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55UFWpUs42861028
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Jun 2025 15:32:51 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 640552004D;
+	Mon, 30 Jun 2025 15:32:51 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2275B20049;
+	Mon, 30 Jun 2025 15:32:51 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 30 Jun 2025 15:32:51 +0000 (GMT)
+Date: Mon, 30 Jun 2025 17:32:49 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>,
+        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH 0/2] scripts/gdb/symbols: make lx-symbols skip the s390
+ decompressor
+Message-ID: <aGKuIf0PV8CfITRp@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20250625154220.75300-1-iii@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] drm/panel: raydium-rm67200: Add missing drm_display_mode
- flags
-To: Andy Yan <andyshrk@163.com>
-Cc: quic_jesszhan@quicinc.com, mripard@kernel.org, simona@ffwll.ch,
- tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Andy Yan <andy.yan@rock-chips.com>
-References: <20250618080955.691048-1-andyshrk@163.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250618080955.691048-1-andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250625154220.75300-1-iii@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VJmooM9g4XkzKFnuhz0pgPMVHuBmzp_7
+X-Proofpoint-GUID: VJmooM9g4XkzKFnuhz0pgPMVHuBmzp_7
+X-Authority-Analysis: v=2.4 cv=Ib6HWXqa c=1 sm=1 tr=0 ts=6862ae2a cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=pcLcdM1_4t_Ntr76G24A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDEyNiBTYWx0ZWRfX5FdrlzxMqDlc hOZffhWnmD/72PeazI3drdUAoyHP2EenYWncgvtYL44AvSBYmZ96bqKY/2DxgmPCJasvkygyJJZ eO4lGbPe3e8fdF/mWacry5X9wothvdcfkXJswdvu5G4eIP4rMeTuNBGqxffu+tLJhpBA1IL8IH4
+ DZ3Bn41zSZbL0VPj5YiLrGK1lozMUKWOxaU+TPY4cMMdAsDQ/VeI0Q9eiepe9AkgW7kr1G6Nkwu qJaWsjxQNx0/tZRYUhFV7XXpXWPKY0j45NkB0c2tGyx5LTbf8NHIazyaAF6SE70I4LbH2je6l2o HRX4QLB/jG80aDk3omk60kzFIB5xvNnjfZJDn0NDrQtrt50PrY8Y6sYCVSfkwlkGQwiCxZD9VfM
+ TR/3Z6Lv1wtb6Aw7JqiKp8qfO1e8feVU/zhU1GrDLPC7UORhVTDTYoDuBdVZZCa0gvgZlKZL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_04,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1011 mlxlogscore=529 lowpriorityscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2506300126
 
-On 18/06/2025 10:09, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
+On Wed, Jun 25, 2025 at 05:36:50PM +0200, Ilya Leoshkevich wrote:
+> Hi,
 > 
-> Add missing drm_display_mode DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC
-> flags. Those are used by various bridges(e.g. dw-mipi-dsi) in the
-> pipeline to correctly configure its sync signals polarity.
+> In order to debug the early s390 kernel boot, one has to skip the
+> decompressor code, which requires some private scripts or memorized
+> commands. This series makes it work out of the box with the lx-symbols
+> command.
 > 
-> Tested on rk3568/rk3576/rk3588 EVB.
+> Patch 1 adds helper infrastructure to the s390 decompressor code; it is
+> already acked by Heiko.
 > 
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> ---
+> Patch 2 is the implementation; it would be great to have an Ack from
+> one of the GDB scripts maintainers.
 > 
->   drivers/gpu/drm/panel/panel-raydium-rm67200.c | 1 +
->   1 file changed, 1 insertion(+)
+> We would like to get this series via the s390 tree, if possible.
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-raydium-rm67200.c b/drivers/gpu/drm/panel/panel-raydium-rm67200.c
-> index add6099ae8a64..92c3e20b903f0 100644
-> --- a/drivers/gpu/drm/panel/panel-raydium-rm67200.c
-> +++ b/drivers/gpu/drm/panel/panel-raydium-rm67200.c
-> @@ -478,6 +478,7 @@ static const struct raydium_rm67200_panel_info w552793baa_info = {
->   		.vtotal = 1952,
->   		.width_mm = 68, /* 68.04mm */
->   		.height_mm = 121, /* 120.96mm */
-> +		.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
->   		.type = DRM_MODE_TYPE_DRIVER,
->   	},
->   	.regulators = w552793baa_regulators,
+> Best regards,
+> Ilya
+> 
+> Ilya Leoshkevich (2):
+>   s390/boot: Introduce jump_to_kernel() function
+>   scripts/gdb/symbols: make lx-symbols skip the s390 decompressor
+> 
+>  arch/s390/boot/Makefile      |  2 +-
+>  arch/s390/boot/boot.h        |  1 +
+>  arch/s390/boot/ipl_data.c    |  9 ++++++++-
+>  arch/s390/boot/startup.c     |  2 +-
+>  arch/s390/boot/trampoline.S  |  9 +++++++++
+>  scripts/gdb/linux/symbols.py | 26 ++++++++++++++++++++++++++
+>  6 files changed, 46 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/s390/boot/trampoline.S
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Tested-by: Alexander Gordeev <agordeev@linux.ibm.com>
+
+Thanks!
 
