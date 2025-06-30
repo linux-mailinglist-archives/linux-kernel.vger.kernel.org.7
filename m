@@ -1,134 +1,244 @@
-Return-Path: <linux-kernel+bounces-709322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5BFAEDC1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA32AEDC24
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC111897859
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1113318977A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D01286420;
-	Mon, 30 Jun 2025 11:57:15 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960AB287246;
+	Mon, 30 Jun 2025 11:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Oow6qVdA"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2066.outbound.protection.outlook.com [40.107.92.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3DC28640B;
-	Mon, 30 Jun 2025 11:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751284634; cv=none; b=drR1Y2/0ZrFSvraywePkfkHmxqG63cqpCaNu9m+OgTdiPzCA367oNsaxLE2DM3yjhkrwZw9lIY7t530wms8NzhnVJHrp46WHILsuazRyPov5BKUndHaIvS6sxp02kXtgA4sqJAcLvZdU+zCF+QGJGKwwoVRFzecZFhAAjds/jfY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751284634; c=relaxed/simple;
-	bh=k4b30wy86niFYnjeLt6fAZ5xe54pStRVreSw97NvVO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFb+VomZJlt+gn4WqnDkBbukdZoOMK+sfW1wPnsR6W8Q+9sHeb0zKfrUBxjuzwf+IL5V9aghkF1/kTbSvpm4oRExT8XRPQhy7xTs28IpCYSCF3ecXAttwn/ZLu5OmzcXQPLMZQFeQSPtDUfnsodhCdZ1Ne2l3pa3bhVrEUssCzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bW4QY6ZwKzYQvYv;
-	Mon, 30 Jun 2025 19:57:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id C618A1A0A3D;
-	Mon, 30 Jun 2025 19:57:08 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP3 (Coremail) with SMTP id _Ch0CgA3mSaRe2Jo3_bUAA--.59770S3;
-	Mon, 30 Jun 2025 19:57:07 +0800 (CST)
-Message-ID: <f81aab8c-50f5-40b2-86b5-59ed33f20c02@huaweicloud.com>
-Date: Mon, 30 Jun 2025 19:57:05 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BE3218EA2;
+	Mon, 30 Jun 2025 11:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751284707; cv=fail; b=AgoKen+3FKWPLP4O7MNwkBVTKmgKsce+e6R4Dj2uQtjy0xhgOYQpu+R8EOfhQ42RI3MEyQnyF3OgcUWQyIDz37oQvlvEm4s0r+TA+REpPTpE5DVkH2/JR0c8UKWyNk1pbvJYPjBNX81zmQbqVYO8LsfLV1pifKrqG8aLNk7F/K0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751284707; c=relaxed/simple;
+	bh=bFnCqn5JwcGswKbBTdZI+tyPKdA0yxUxx2KjX52K320=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QgH2b3Wg2urO8kBViHxu8bBmH9ml3Plc4F9MbpudsjyUjd+uZk/AFM8zxea9qgoRU40hb1U+hRgJ5fa9rbCKIveIjN2b/47yJBVKB02HGBNzEYl6HG5id7HTN+OjqmurYL7hCkLeTgZ6mRqCRmFjuuQhRk1rM3iyG7Q7rr8hhBk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Oow6qVdA; arc=fail smtp.client-ip=40.107.92.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A/IlUS1PKQPnsxMQjHDJEOE7aONjdRic5m1ysLJbwitbou9hJ5iW/55FgLmBr6txDsINJVsFsaHbdW+1VZaUMauwyygEvab2+kTXh+cB6DyKsnDXoir8bjAL58zcfJtvl1VPgOKgOx0T7oh7LWc3MoflcBt9pAdJ8jscnWlgZuERJHVbEorUiJP2ozpACOzwo0AldG3OK/ZBnEkUD6xXwVZgg0lWa9o6iKqF5c6sg81kJ4lk30yk6d5gUp48VWZ8rKxAbm8d7JJok2pdvWq5E3XvzuCtZcqUFkElno0Su/SoHhvHePdeDoOo357zr7BwrYg+VRg8sNribrBz5Py2gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cXhW9lH2xrMO1zm/Hw2E0sOkTMT6BVtsQhFT0EQcM2w=;
+ b=oBmJImP2I6qz8XZqSlVtloRadsfOHRku5XvXqcrWDGdD82UycIe/t5N48PGLvBiejjyTgppphGI7DCqtNI9vn0eBQH+lrVCt5MqDaO+w97RiVJ800Tvf/z82kO8XGR112VCjU0RgRVj+lOegCQPP7c97Gzdcj115VBBGalTAkp6tzP9rduTbos7i/QBl/3w5BjqkkJzyf6bH3iCp3pusm9iFgdjCQIlezkSuH515mHbBL1IjIJWZVG9bj9+pBvW7uvFCnssXrU3DD7NIA+VN28paI3sTBUaSsUjfZ3ulXuvk0YR4oeHOxb1QeIDsnrlSgEoPESN2VujlPHbR/eM/bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cXhW9lH2xrMO1zm/Hw2E0sOkTMT6BVtsQhFT0EQcM2w=;
+ b=Oow6qVdAvbS8nCF2X7+chWkD7Dc2quvX7G5KhXBybqFWl2IStMU1TL9SKQrpIytjTmfOGxOeY65ztLsBEdU5EAkPRNRBheUC1iWBgJjKDNPZUfXuJ/szaVV+MY412z6MiYXFDAfKBzB97bI6xBCmLXlMniFwav/b8otVKSeS6io=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DS0PR12MB7801.namprd12.prod.outlook.com (2603:10b6:8:140::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.24; Mon, 30 Jun
+ 2025 11:58:23 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8880.027; Mon, 30 Jun 2025
+ 11:58:23 +0000
+Message-ID: <8806781b-90d1-4b99-a798-dd1d29d4c8c0@amd.com>
+Date: Mon, 30 Jun 2025 13:58:18 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] drm/amdgpu: skip kfd resume_process for
+ dev_pm_ops.thaw()
+To: Samuel Zhang <guoqing.zhang@amd.com>, rafael@kernel.org,
+ len.brown@intel.com, pavel@kernel.org, alexander.deucher@amd.com,
+ mario.limonciello@amd.com, lijo.lazar@amd.com
+Cc: victor.zhao@amd.com, haijun.chang@amd.com, Qing.Ma@amd.com,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250630104116.3050306-1-guoqing.zhang@amd.com>
+ <20250630104116.3050306-4-guoqing.zhang@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250630104116.3050306-4-guoqing.zhang@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0125.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b9::13) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/libfs: don't assume blocksize <= PAGE_SIZE in
- generic_check_addressable
-To: Pankaj Raghav <p.raghav@samsung.com>
-Cc: Baokun Li <libaokun1@huawei.com>, linux-kernel@vger.kernel.org,
- kernel@pankajraghav.com, linux-fsdevel@vger.kernel.org,
- gost.dev@samsung.com, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>, mcgrof@kernel.org,
- Christian Brauner <brauner@kernel.org>
-References: <20250630104018.213985-1-p.raghav@samsung.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250630104018.213985-1-p.raghav@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgA3mSaRe2Jo3_bUAA--.59770S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1rGF1xuF18CF43AF1kXwb_yoW8Xw4rpa
-	yvqw1Ykr1rGFyxWF42gr1vqry8Canxta17WrWjqr15Z343Jr4IgryqkryYvanFqrWfAa9r
-	WF4rJF43GFWUJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB7801:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d5f9dcd-583d-4027-ad2d-08ddb7cd6a34
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OXdaeVBHNTRBdzhQbHBPb0RydlRVMTliUmdUNlpPMEJCWXBnbk5PS2YvTG5m?=
+ =?utf-8?B?VGIwOGpQaVJwOUsvVlE1RU9heTQzRWpDdE1wQ1RDWXNZeW0zbUhjR1hNREx5?=
+ =?utf-8?B?NlMrTERFVUYzQU82L2gwa1NPekk3Y0srR2p0eFdCaGNTNFBIQ1puejgySk00?=
+ =?utf-8?B?djlhNTRFK1A4VDcrQ0NJN2w1bSs1V3ZXZHQ3OXYvczl5TDhrZGNOcFBDOE9s?=
+ =?utf-8?B?dGJSbVBRUllOaE9OUmRmclcvRnd2R1dEY0puaTNXQ2o0dDluTTl1bnA5N2Js?=
+ =?utf-8?B?cTA1U2RzN3M3cDRIZ1VOUFY1b0RnNW5QUys2S2VsNEcyaTM2OG9hSEpRd251?=
+ =?utf-8?B?enBwU1Juck40WUljZldvbHpwVGxRa2QyRGFKcVFyc3FiUGNRZjlxRko4cWhJ?=
+ =?utf-8?B?VnE1MWJoZ0J2bTdyajJJMGZYUTlGRmU0U3lqSUpCNmhHRFpkSzRSelpZTXds?=
+ =?utf-8?B?RzVZMmkyZS9BRmVVaUZZZ2MvUHhvYjBmeFVWVStuUkFXTlY5N2VZRGpNanZW?=
+ =?utf-8?B?Vk5IcjdLalJVL2UxQ0hidGFGY0Q5Wld5cTdXOHFOa2xtNG9qR2F0S21Pdmk5?=
+ =?utf-8?B?YXA0R1NwZ1ZBZGZBQmFFS0Z4Ti9PWmIvdFRadXFQOFFuakVwV09KeGtkbkcw?=
+ =?utf-8?B?d0Y2b1ZIVFhzZ2RDczRucVZMNVRERXcwNGdxYU81SW1kV0doVFBZTzZsZnkx?=
+ =?utf-8?B?WnIxYXRGM3VwUlAzc3lXdlo1SEdubGFLcmlZRE05dVJnM0w5MkppOUhDSXY3?=
+ =?utf-8?B?alpCcFhzSkdLZUFjQkNVV3pCOVNDdE4wbWd4azY2VHdXVUlZaE1wUW5FMWJW?=
+ =?utf-8?B?YkhuSGVndnZiOTJvaHZDUitiZHg4YW5TZDIrM1QvbHpXais4YXl6eGVzUmg5?=
+ =?utf-8?B?Ui9Fbk5CR1JSaFhCN2lIc1d6TVFyZ1lWekMzOUJPVmJSeHQwVkFzRlBraWFG?=
+ =?utf-8?B?NDB4VGROcm1yaU9lRDZSQm9DVG1yZHJ4Y1h1cnhrc3AwNE1KaGEwRWp2eWJ0?=
+ =?utf-8?B?YTFFK2RFS3UwZGJFY2diaFM2bDNpODZSYklYYW9HODFrb0cyK1BOd2hDck1G?=
+ =?utf-8?B?Z0U2MjJRMDBRdW9DUUw4NHBlRk55THRSZytkWG1ndW9ZV0FBSlE5eTBvNkVt?=
+ =?utf-8?B?dUI5SUV1aXQweE9yM0NUUWoyQWY0eWkvNjVGNFM2UjZqTUZsQnFVVmZmVWl0?=
+ =?utf-8?B?dWpkTitWR00vMDVFbVVqdlcyTThzd1JUMHFMWEF5REtVRTNBOG1keEtETDlE?=
+ =?utf-8?B?cEkyaUNONTI4Vks5Mi8wcFplUDJyazFGdXpibkVkWFBMV1ZVTWxVMUwxZ3hs?=
+ =?utf-8?B?WUozLzdPSEFiVDQyT2N6cTBOWTE4QmxsUStZZmVjdlVXd2xEeE8rS3YzOVRT?=
+ =?utf-8?B?V29ERDhxQjVwbTBSbXZleEVMT0JjdHVTUHpESmxTeEg2amR4ODRCTThIbCtH?=
+ =?utf-8?B?TDBxbEw1ekNGWXVjOVNRL1dTMDNMSzlZb2pFN1NpVnZmQVZIakpwaG5jUkNa?=
+ =?utf-8?B?Z1RVWlZ1Q1VqeitDWnpFNVBmdnZXcEt4MXJKeFp1Qng1azUxNFIrVzlPTmRp?=
+ =?utf-8?B?Yk1lNFhOdlVaNDNzNVRSTkg4eitSOTk1OUNldDNKODJtWkYrZ3lOVUF3Z1dr?=
+ =?utf-8?B?ZHNvbkpYYUZoMCsrSWtQNzJaNXJuaVl2Wlowbm95MlBzN01pdmRGamt0UEEw?=
+ =?utf-8?B?NVAzQnFJU2QzMWJpQ0pTSjR4NkF5aEc0NGdveTIxdmpRRXl1bzF0SjJIdG4v?=
+ =?utf-8?B?V2JjQ0Z2UEFGRDJKOEZ3OXdiTGdEQ0tlRDk5Z0VYOGtWTnVwcFl1UEwxUEJt?=
+ =?utf-8?B?Ujd6ZzJKcE9SdldtWGczc095emVjZ0I3WndWVTBUTFEwSE5NNmVjWm91WXVU?=
+ =?utf-8?B?Q2VkY0cxVTZIMEZxeWh5NWNvL0NaK2h4TVNNSkxsRFZwNDRXUzRJOWJmbGhE?=
+ =?utf-8?Q?1ETZfi4N/vI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OXd3c1pFY0dDRlhHaG1VdDh3dGpJU002aFdBVllsa3pzMG9RM21HbEZDdEF3?=
+ =?utf-8?B?Z3I2MlI0M28wRWpiZjN0VVc4V1N3R2tiTDRxNTA3NHFuQ0ZYcCtMeC9jVDM3?=
+ =?utf-8?B?MmRucXVBNEZnVFhmRDYrUmphWkQ5b3VVOU4reXNKT3BYdUVxUDZwMXZ3Rjly?=
+ =?utf-8?B?VzZMTFQ5T3haU1pBQitHK3V6UlB0N1JFUmVHQ0ZKYVY0RUx1UUZHUFNEMzdh?=
+ =?utf-8?B?aW8vbjNpaUZyRER4VTZldmQwa0ZnVXNUVnRFaXlRNm1PbzVQMWllcDZycnhM?=
+ =?utf-8?B?bkVnVVBUemhFSnk2ZnFuMTJEN1FQczNPa1k4dE0rbHkyZ0x1eTZEWFNxb2xH?=
+ =?utf-8?B?VHVwdmVaeWluc25DdWFzakk4Q0hJWjlqZFFLRVQ3MmZZaTU2dXgwNkV5YUdq?=
+ =?utf-8?B?MGVnNjd5aEJ4Nm9tL2xJZ0JCL1o5MkF6Y2xRbXFnc0ZiOWhKNUl4a1llTGZO?=
+ =?utf-8?B?Wm0vRjU4YUxYRCs4TloyMGFaMC9pMG04cDd1ZUJGUzJ4UmQ2Wk5taGJaL0NC?=
+ =?utf-8?B?YlhiL3N0TUNFMENEYjBoTjNQRDRGTkNkbnhEdTdrMnZTN1ZMUUY4cXBEYzYx?=
+ =?utf-8?B?MC9EejNHS0V4V0NicnluVms4d20rQythMnN6Rmc2OFZtQW9IMGxtQ1J2YzdZ?=
+ =?utf-8?B?TnNBUk91ak9xSVNKQmFRRDRGc01mNlVKanRxMkY4dlplaTE0QU5hQkhWdkZ5?=
+ =?utf-8?B?ZUpOTTRtRzV0Q3REdkx1ZlFCUDdKYXduVWZkdUtFRk1jVE16VldQbURCMDFV?=
+ =?utf-8?B?Y2Rxa0xVQkhBMmRLOEVOc01xbG9JR24yTkg0YnI4WDZXcnNXRTJGa2VKRVVH?=
+ =?utf-8?B?TnJtNUN4bWxsYUhlVFZzTU0rS0NaOVpMSkFJMm5sZVFXUUF2Q0N0d2V2aHgy?=
+ =?utf-8?B?aW11QU1XbGcxamtqVWEzcDZscDhRTzQ4SVVTa3ZoallCVC9oNG1ubElabXlD?=
+ =?utf-8?B?a0Qrbk5wUm90ajl1NmNVeGF2d0ZBYXJhaE1sa1lldTJldk9NM0dWMXpoaEQv?=
+ =?utf-8?B?clJnRFpVZDNLRXBUMkhoSHp5c1JXeDlIekMyL3VQM2EvV0ZzcHVhU1ZUU1lm?=
+ =?utf-8?B?OTdvc2kzNEZub2NqZWluS2N3ODJtOHlLaE1paDdWYkhLYmg0b1hyN3pKb2xa?=
+ =?utf-8?B?NmpyQmJBbjBtY3JyOGFzRkNKVWdNYk5zcjJleGd5cFRrZEUvMmVMSWE1U2oy?=
+ =?utf-8?B?b3BZWlAyMmp2SG1BRXBiS3VBNktRbXB0YTlpTDllRFY5aGR0SFpGQm9DaVUr?=
+ =?utf-8?B?RmxIVll0K3dDOGtPeStGS3ZpTnVRZ25UYkFYaitBUTFEQ0grcDYzWUk2dXM5?=
+ =?utf-8?B?OHhJbnByU21UTDBic1RkNFpyb3QrcHJpSUkzSGlGMGE4ZE04Q3BLU2puMXRD?=
+ =?utf-8?B?RGw4OTlNb25MTURWdFdQUlZrMHJ5ditBZkJlSDFYV0JnR1JmcmhKRXVBU1F2?=
+ =?utf-8?B?bnBGQlhocjMvYXRSZ2taRGlwU0UrTlE4WkR3VHNyN3Q0cktOWEVwRGlYb1hE?=
+ =?utf-8?B?SmJJbEJqa2E0c3R4eDJ3TmViMXJRS2NRc01LWlN0WEk0VHJsNDc5TFNIQ0dC?=
+ =?utf-8?B?ZVBjNy9zRjV2VUNGZ2JLN3NHK1VNZDU2WldDODM4b21MTmlKMEF6N0ZYZ0xU?=
+ =?utf-8?B?K3hNakNwMThjcW80ZUVudWhXa1kwSndjSXVZbTNtK2t0emNpckpPTHBZdFE1?=
+ =?utf-8?B?TGdRMkYxdkxlZXlUN0I1SHhUcU9Vd1M3R05sdlNGbk5hdTZIN1JLODM2OWo1?=
+ =?utf-8?B?bnRqMlBXbDI2SHBQc2FsVTRUUmdhdkY2WUd2SHlxWXEwNnE0M0JZdHliY3NC?=
+ =?utf-8?B?RGRIQk5JcGd4VUFkUDdlRk4wMFowZ0ZGOGk2RW0xVEZpakZ6U0VHVXptZlBB?=
+ =?utf-8?B?QTFtbE9ETFRLc2Z4RFhmbGx4SUFOQmU2Q3BaNm54aDFvK2ZvdExET3FDTCt0?=
+ =?utf-8?B?UDdjaUd6ZGpScHRRbEZsOXpGVjIxUXo3NVV6WmJFOVNNNVNyVkQva0RxaVJB?=
+ =?utf-8?B?M1ZRVHdUU1pjbk1FYWZtMmVlb0xPUXJTejZTNW81MHU4WnZMeW40YVFPcndh?=
+ =?utf-8?B?QU4raitEOGJKY1RMSmNtRkNBdlgvcVczVnhtQXMyNnJMTUNBWEp3WllJV21s?=
+ =?utf-8?Q?xYGPh+7c4FmBitllcgx1lq5IC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d5f9dcd-583d-4027-ad2d-08ddb7cd6a34
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 11:58:23.5688
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T8mFV2LdDPJATDiCoE6UnNnoyC2+nA03mG1QVC+st25KIXX64MP6Yp4VY0oBuFEp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7801
 
-On 2025/6/30 18:40, Pankaj Raghav wrote:
-> Since [1], it is possible for filesystems to have blocksize > PAGE_SIZE
-> of the system.
+On 30.06.25 12:41, Samuel Zhang wrote:
+> The hibernation successful workflow:
+> - prepare: evict VRAM and swapout GTT BOs
+> - freeze
+> - create the hibernation image in system memory
+> - thaw: swapin and restore BOs
+
+Why should a thaw happen here in between?
+
+> - complete
+> - write hibernation image to disk
+> - amdgpu_pci_shutdown
+> - goto S5, turn off the system.
 > 
-> Remove the assumption and make the check generic for all blocksizes in
-> generic_check_addressable().
+> During prepare stage of hibernation, VRAM and GTT BOs will be swapout to
+> shmem. Then in thaw stage, all BOs will be swapin and restored.
+
+That's not correct. This is done by the application starting again and not during thaw.
+
 > 
-> [1] https://lore.kernel.org/linux-xfs/20240822135018.1931258-1-kernel@pankajraghav.com/
+> On server with 192GB VRAM * 8 dGPUs and 1.7TB system memory,
+> the swapin and restore BOs takes too long (50 minutes) and it is not
+> necessary since the follow-up stages does not use GPU.
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> This patch is to skip BOs restore during thaw to reduce the hibernation
+> time.
 
-Looks good to me.
+As far as I can see that doesn't make sense. The KFD processes need to be resumed here and that can't be skipped.
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Regards,
+Christian.
 
+> 
+> Signed-off-by: Samuel Zhang <guoqing.zhang@amd.com>
 > ---
-> Changes since v1:
-> - Removed the unnecessary parantheses.
-> - Added RVB from Jan Kara (Thanks).
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    | 2 ++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
->  fs/libfs.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 4d1862f589e8..f99ecc300647 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1584,13 +1584,17 @@ EXPORT_SYMBOL(generic_file_fsync);
->  int generic_check_addressable(unsigned blocksize_bits, u64 num_blocks)
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index a8f4697deb1b..b550d07190a2 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -5328,7 +5328,7 @@ int amdgpu_device_resume(struct drm_device *dev, bool notify_clients)
+>  		amdgpu_virt_init_data_exchange(adev);
+>  		amdgpu_virt_release_full_gpu(adev, true);
+>  
+> -		if (!adev->in_s0ix && !r && !adev->in_runpm)
+> +		if (!adev->in_s0ix && !r && !adev->in_runpm && !adev->in_s4)
+>  			r = amdgpu_amdkfd_resume_process(adev);
+>  	}
+>  
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> index 571b70da4562..23b76e8ac2fd 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -2734,7 +2734,9 @@ static int amdgpu_pmops_poweroff(struct device *dev)
+>  static int amdgpu_pmops_restore(struct device *dev)
 >  {
->  	u64 last_fs_block = num_blocks - 1;
-> -	u64 last_fs_page =
-> -		last_fs_block >> (PAGE_SHIFT - blocksize_bits);
-> +	u64 last_fs_page, max_bytes;
-> +
-> +	if (check_shl_overflow(num_blocks, blocksize_bits, &max_bytes))
-> +		return -EFBIG;
-> +
-> +	last_fs_page = (max_bytes >> PAGE_SHIFT) - 1;
+>  	struct drm_device *drm_dev = dev_get_drvdata(dev);
+> +	struct amdgpu_device *adev = drm_to_adev(drm_dev);
 >  
->  	if (unlikely(num_blocks == 0))
->  		return 0;
+> +	adev->in_s4 = false;
+>  	return amdgpu_device_resume(drm_dev, true);
+>  }
 >  
-> -	if ((blocksize_bits < 9) || (blocksize_bits > PAGE_SHIFT))
-> +	if (blocksize_bits < 9)
->  		return -EINVAL;
->  
->  	if ((last_fs_block > (sector_t)(~0ULL) >> (blocksize_bits - 9)) ||
-> 
-> base-commit: b39f7d75dc41b5f5d028192cd5d66cff71179f35
 
 
