@@ -1,125 +1,178 @@
-Return-Path: <linux-kernel+bounces-708877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE95AED630
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:53:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39815AED63A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D00A7A2820
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A7B16A583
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F023E35F;
-	Mon, 30 Jun 2025 07:53:06 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF31A23AB87;
+	Mon, 30 Jun 2025 07:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrrhH6Im"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0B4238D49;
-	Mon, 30 Jun 2025 07:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBDC223338;
+	Mon, 30 Jun 2025 07:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269986; cv=none; b=Nkr/ymAjXtEdwTaEeWx//clgzZxXw9kddWFX4s5OKg5tP4YNrwdgJdvj+l1QNhrUsMvJ8a7Hwu0/vU7dsv20LXWFX/Fq/ZLyrPWiMn3wFSvOD55aqO9TRvsa/bXwHiCYv884iU1IpWsjJ8oMCXau4dCaIDZjAKhOMwiWoiXXp+Y=
+	t=1751270071; cv=none; b=Hr93khtI3XNhdscve+AaWiV11047MTWORn2hArS4SVyUSizF8H+/hWnBulifIfqvAyov3xrF3M+TZzDJLVsXFUGVbJxkYHfsSR2nNTTg1NdaRMUFMt+R/DGjorVK1tc7znn46bT/UgsCnanzELrXUbRiIeomMdGeb+dkHG9ZGF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269986; c=relaxed/simple;
-	bh=jLG1g68Fzf6UnSPXgYxIdIwcEV5BFxcNl48BpGZSf4U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZsCSEDQwx/3BMR9BLGq7LKRp2/pr2znBQgYAd8yl8CyDNwq89W3oEVL65UzowxyAYYEOSdoXx73970CW1yXpmu6R8pmpi9wVe7DBddP91SkCf2Tu8ULHkjs93WpFjQWJfAIaD+rbsOehRazdDjRf0XJlZjZYVF4kJSUjcDa9TWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bVyzX3qgHztSdd;
-	Mon, 30 Jun 2025 15:51:52 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id B9FB11402C8;
-	Mon, 30 Jun 2025 15:53:00 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Jun
- 2025 15:52:59 +0800
-Message-ID: <c12d955b-d1d2-4e54-b972-8455d20ae637@huawei.com>
-Date: Mon, 30 Jun 2025 15:52:58 +0800
+	s=arc-20240116; t=1751270071; c=relaxed/simple;
+	bh=Qu4BKUUZZQUC3bM147FV56y9K9VT5HonDkFSvdwo1nU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Y5Z5enk0LLcIMCAhFIoMjmV32A8vVkuwh6nYEJnWjI6RKWF9sp/FInwL2xhku43tX1D8w2SB/q0xfhra+IqK/I8QGJG4/nywYUF/wnE2kYvtL8xExBZ4TPIgdr8KUDmnWXgqUkfUaGIbZFihHJ08w8oc5xRYxObGEG3XyGXS5Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VrrhH6Im; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ef62066eso48502855ad.3;
+        Mon, 30 Jun 2025 00:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751270069; x=1751874869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2husDRPyYglRpELzS6mWxDDH6zO8JWO9HlqXQ8aytvQ=;
+        b=VrrhH6ImqmZKP7pSRzPDeOJNIqsCqix/iPzVVPDtCXKQETLMp9VhxDuZjWZV4LD6Hw
+         F5UPMwq1BYm3kf3RSRFiepqo36HF7KNcicE9SVw4gRJTcC0SSlX6gRsxZHw+7jLy98jS
+         hc/jtB4D2yZMYDlPmtMEN1b98oY3CtpkHMZNX5gmYowmV3VGjYfnYl75dPEUu0nasBgF
+         IuHMLpn8xFmjTwFeCY4UCvNqh846w1p3pVEw3sw9HisDN2Lty2AmfV8ATF8gr9wCqk/a
+         Onmsu9iKr7T1QJkl6DS5dj1W+99ijYcdT868kPZgdTkCMeJ6ii5VF/Gpfi0Jg2zcpKyA
+         WZdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751270069; x=1751874869;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2husDRPyYglRpELzS6mWxDDH6zO8JWO9HlqXQ8aytvQ=;
+        b=TNnEjj9nxDibkbtO/6fKDunOPULHFbonEnDhgyIX/TthPnILqFO066YYZTI9aMFio/
+         bAQl43I0RLZDFY3v/vC2OKqDNxL5Hp+FBn91Iven6yLJ8scgzeGvnWhPwDd0RUJezVyk
+         JxKvs/vL6gbt+weI7KEGIM60S12Li6/rznNVvNvKwsFvwVYFM/NDvEgoTP9e3Dp3YbHI
+         if687fcDShwX1XlZ5fvzV7TqsfywB8bqlSX3jHzms6X+KnJhwpRP3aqrAswKw9waFZrp
+         FZDrVLxI/SCJvLqwH/1mMxZR1jb3c9aE2mljIbLKaET5U6jE0WklAD5MNcn5GfjhRj6o
+         Gq3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJWzRlqLQtDQRA9RJLoDJiUcKxbXrCWBAMvoaSqT4cwoCyoJ91mvgEYe6kIBgPrFWbZ6I=@vger.kernel.org, AJvYcCWf+5uU5128P4yzE7JTcCLA7VgFMa6JnWxdSmHVSnvFft64XcbaXkiXO0znyPwX2uYr8NiWyjl7UGHO2u6e@vger.kernel.org, AJvYcCXApddKkju3JrQ3mhuMbTjvuwtksrPKpw87MioDbdr4s4E2ulUs3UqjgKaUs+QkRWgoIYftlio8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygv19yRnHtjfHF63ILU1leaOnqqE8bm8Cji9I1dbCHS4RCGErH
+	7171bTSPL5z7IfpLhEKBy4x7/5vqEPwQc2BoUxLCK7TLqtEtYOGmecIs
+X-Gm-Gg: ASbGncv4/L6mOyEZX0AbjqsOMxJCy4A3UgK5LNbSnjWfR7Aphl+db1hzE37S+a+ibg0
+	oKBKZxYe4/W1EdXSD0adRUr9uiGamTTfrMJ0Zs0+ttW5H9J0L2VXAtzt6sK9VO79kQlUWtnLvea
+	MjlRwyB6YBVwVujB4HogGC6SQEnrCuKwrEMX50+Ns5ta4DTBG64gQsdgAeztVnQAHbWVFGvMWoz
+	B0qb46Qx+/dkhnIIVzhGVk1qF+ZrUvD9at+NYaDkp8TTn3VRIWndn7BbptuJBuZvbhLsZl0mNym
+	/KudONCBXqYbZgPY1CBk1px20Vufm6l686eR120v+M1OXKEdk3vKIggWChFKKF1jh3AKiccwb16
+	hC6mUT/Yh
+X-Google-Smtp-Source: AGHT+IEZr3xbQKLTkP0IjxZrSMRNxBeFyMR2/3Jbw4FnoAZ37eaI6AARNvB9QQwQ1MQVoMMLZszg1A==
+X-Received: by 2002:a17:902:e746:b0:234:d292:be7a with SMTP id d9443c01a7336-23ac3bffdbdmr186477195ad.1.1751270069004;
+        Mon, 30 Jun 2025 00:54:29 -0700 (PDT)
+Received: from devant.antgroup-inc.local ([47.89.83.0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f544050csm13450541a91.42.2025.06.30.00.54.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 00:54:28 -0700 (PDT)
+From: Xuewei Niu <niuxuewei97@gmail.com>
+X-Google-Original-From: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+To: sgarzare@redhat.com
+Cc: davem@davemloft.net,
+	decui@microsoft.com,
+	fupan.lfp@antgroup.com,
+	jasowang@redhat.com,
+	kvm@vger.kernel.org,
+	leonardi@redhat.com,
+	linux-kernel@vger.kernel.org,
+	mst@redhat.com,
+	netdev@vger.kernel.org,
+	niuxuewei.nxw@antgroup.com,
+	niuxuewei97@gmail.com,
+	pabeni@redhat.com,
+	stefanha@redhat.com,
+	virtualization@lists.linux.dev,
+	xuanzhuo@linux.alibaba.com
+Subject: [PATCH net-next v4 0/3] vsock: Introduce SIOCINQ ioctl support
+Date: Mon, 30 Jun 2025 15:54:11 +0800
+Message-Id: <20250630075411.209928-1-niuxuewei.nxw@antgroup.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <gv5ovr6b4jsesqkrojp7xqd6ihgnxdycmohydbndligdjfrotz@bdauudix7zoq>
+References: <gv5ovr6b4jsesqkrojp7xqd6ihgnxdycmohydbndligdjfrotz@bdauudix7zoq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/16] ext4: remove unnecessary s_mb_last_start
-To: Jan Kara <jack@suse.cz>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<ojaswin@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, Baokun Li
-	<libaokun1@huawei.com>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-3-libaokun1@huawei.com>
- <3p5udvc7fgd73kruz563pi4dmc6vjxvszmnegyym2xhuuauw5j@sjudcmk7idht>
- <0bcfc7c6-003f-4b4d-ac65-e01308a74f3b@huawei.com>
- <mztj3kc4slq3j6gxfk77omt4tdphg55jophea2j2dw5vj5hixq@ppj5lfxz2svk>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <mztj3kc4slq3j6gxfk77omt4tdphg55jophea2j2dw5vj5hixq@ppj5lfxz2svk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Transfer-Encoding: 8bit
 
-On 2025/6/30 15:31, Jan Kara wrote:
-> On Mon 30-06-25 11:32:16, Baokun Li wrote:
->> On 2025/6/28 2:15, Jan Kara wrote:
->>> On Mon 23-06-25 15:32:50, Baokun Li wrote:
->>>> ac->ac_g_ex.fe_start is only used in ext4_mb_find_by_goal(), but STREAM
->>>> ALLOC is activated after ext4_mb_find_by_goal() fails, so there's no need
->>>> to update ac->ac_g_ex.fe_start, remove the unnecessary s_mb_last_start.
->>>>
->>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> I'd just note that ac->ac_g_ex.fe_start is also used in
->>> ext4_mb_collect_stats() so this change may impact the statistics gathered
->>> there. OTOH it is questionable whether we even want to account streaming
->>> allocation as a goal hit... Anyway, I'm fine with this, I'd just mention it
->>> in the changelog.
->> Yes, I missed ext4_mb_collect_stats(). However, instead of explaining
->> it in the changelog, I think it would be better to move the current
->> s_bal_goals update to inside or after ext4_mb_find_by_goal().
->>
->> Then, we could add another variable, such as s_bal_stream_goals, to
->> represent the hit count for global goals. This kind of statistic would
->> help us fine-tune the logic for optimizing inode goals and global goals.
->>
->> What are your thoughts on this?
-> Sure that sounds good to me.
+> On Mon, Jun 30, 2025 at 03:38:24PM +0800, Xuewei Niu wrote:
+> >Introduce SIOCINQ ioctl support for vsock, indicating the length of unread
+> >bytes.
+> 
+> I think something went wrong with this version of the series, because I 
+> don't see the patch introducing support for SIOCINQ ioctl in af_vsock.c, 
+> or did I miss something?
 
-Ok, I will add a patch to implement that logic in the next version.
+Oh yes. Since adding a patch for hyper-v, I forgot to update the `git
+format-patch` command...
 
->
->>>> @@ -2849,7 +2848,6 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
->>>>    		/* TBD: may be hot point */
->>>>    		spin_lock(&sbi->s_md_lock);
->>>>    		ac->ac_g_ex.fe_group = sbi->s_mb_last_group;
->>>> -		ac->ac_g_ex.fe_start = sbi->s_mb_last_start;
->>> Maybe reset ac->ac_g_ex.fe_start to 0 instead of leaving it at some random
->>> value? Just for the sake of defensive programming...
->>>
->> ac->ac_g_ex.fe_start holds the inode goal's start position, not a random
->> value. It's unused after ext4_mb_find_by_goal() (if s_bal_stream_goals is
->> added). Thus, I see no need for further modification. We can always re-add
->> it if future requirements change.
-> Yeah, I was imprecise. It is not a random value. But it is not an offset in
-> the group we are now setting. Therefore I'd still prefer to reset fe_start
-> to 0 (or some invalid value like -1 to catch unexpected use).
->
-> 								Honza
+Please ignore this patchset and I'll resend a new one.
 
-When ext4_mb_regular_allocator() fails, it might retry and get called
-again. In this scenario, we can't reliably determine if ac_g_ex has
-already been modified. Therefore, it might be more appropriate to set
-ac_g_ex.fe_start to -1 after ext4_mb_find_by_goal() fails. We can then
-skip ext4_mb_find_by_goal() when ac_g_ex.fe_start < 0.
+Thanks,
+Xuewei
 
-
-Cheers,
-Baokun
-
+> >Similar with SIOCOUTQ ioctl, the information is transport-dependent.
+> >
+> >The first patch adds SIOCINQ ioctl support in AF_VSOCK.
+> >
+> >Thanks to @dexuan, the second patch is to fix the issue where hyper-v
+> >`hvs_stream_has_data()` doesn't return the readable bytes.
+> >
+> >The third patch wraps the ioctl into `ioctl_int()`, which implements a
+> >retry mechanism to prevent immediate failure.
+> >
+> >The last one adds two test cases to check the functionality. The changes
+> >have been tested, and the results are as expected.
+> >
+> >Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+> >
+> >--
+> >
+> >v1->v2:
+> >https://lore.kernel.org/lkml/20250519070649.3063874-1-niuxuewei.nxw@antgroup.com/
+> >- Use net-next tree.
+> >- Reuse `rx_bytes` to count unread bytes.
+> >- Wrap ioctl syscall with an int pointer argument to implement a retry
+> >  mechanism.
+> >
+> >v2->v3:
+> >https://lore.kernel.org/netdev/20250613031152.1076725-1-niuxuewei.nxw@antgroup.com/
+> >- Update commit messages following the guidelines
+> >- Remove `unread_bytes` callback and reuse `vsock_stream_has_data()`
+> >- Move the tests to the end of array
+> >- Split the refactoring patch
+> >- Include <sys/ioctl.h> in the util.c
+> >
+> >v3->v4:
+> >https://lore.kernel.org/netdev/20250617045347.1233128-1-niuxuewei.nxw@antgroup.com/
+> >- Hyper-v `hvs_stream_has_data()` returns the readable bytes
+> >- Skip testing the null value for `actual` (int pointer)
+> >- Rename `ioctl_int()` to `vsock_ioctl_int()`
+> >- Fix a typo and a format issue in comments
+> >- Remove the `RECEIVED` barrier.
+> >- The return type of `vsock_ioctl_int()` has been changed to bool
+> >
+> >Xuewei Niu (3):
+> >  hv_sock: Return the readable bytes in hvs_stream_has_data()
+> >  test/vsock: Add retry mechanism to ioctl wrapper
+> >  test/vsock: Add ioctl SIOCINQ tests
+> >
+> > net/vmw_vsock/hyperv_transport.c | 16 +++++--
+> > tools/testing/vsock/util.c       | 32 +++++++++----
+> > tools/testing/vsock/util.h       |  1 +
+> > tools/testing/vsock/vsock_test.c | 80 ++++++++++++++++++++++++++++++++
+> > 4 files changed, 117 insertions(+), 12 deletions(-)
+> >
+> >-- 
+> >2.34.1
+> >
 
