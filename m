@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-710265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77465AEE9FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31C5AEEA03
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F463B6C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 22:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B324177E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 22:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24406242D8C;
-	Mon, 30 Jun 2025 22:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D1C28C029;
+	Mon, 30 Jun 2025 22:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bcvh4UYE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RL89DStq"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCC021D59F;
-	Mon, 30 Jun 2025 22:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB1A253350;
+	Mon, 30 Jun 2025 22:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751321360; cv=none; b=X3l5UmfmlJAsY9Dl/gvpQL7D6dqSEoonTo7kkscIpSczLmhiLlwLi18H9thdTA/ycgt3gxsW0LuLYCQaQ/ews/MTGocsaoZdrMjoAc0cjabo4isY01nVTANn0B8qsMGq5QPM9XIEELiDp/xdjcP37vAyJur3bo9jHtzPxgjb2n0=
+	t=1751321393; cv=none; b=fWR8SzdGgTfDMH2InkH34Tw6uPQLWO8rPlk1sL3IaqXyt/jLYt2vG+BFVimNAbvfqqOhuboocFOZAXvC7c90FLdUwUDG2wB4H5C35DoY1LE1iPV6ILf8Iq7Ag584QDhvm2Rg8kAF/KwG/BxfBP1EHLdM5A54aLSCiMooMTltQkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751321360; c=relaxed/simple;
-	bh=CWF8K0+JEFix5jRu+JNhGBEpCZPOlQ8Ny5a89ql8Tlw=;
+	s=arc-20240116; t=1751321393; c=relaxed/simple;
+	bh=BunDYpz6CivJtXJ6Ep6qUVEGCQ60ZFk86DGMDme+kgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=STjXOw+a5pmDYNLviIU0KN25VWEkQPPmPeQ60Feu2phgrXBHnJ8fAnmSt8r9HAFEIVr3R6FAoNQ9r1u58a/hfAcVFOGGQ0LNOlH7rAUOUZpoUVYMa6oVZI9tDh/4dg1dkbtxl8wf+f8HgV70dhVV3kA7fHlbHTmLGdUWiTTcNic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bcvh4UYE; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751321359; x=1782857359;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CWF8K0+JEFix5jRu+JNhGBEpCZPOlQ8Ny5a89ql8Tlw=;
-  b=Bcvh4UYEJEi5IuzPlumsFFGnZuAE7x0+ctg94P0oXg7Hexu3V/suE0SE
-   /Dq+ONUZ/pdX/YdaNlgdR6mJUTFhB3U8oRtQbyhxV3iqlRu1vbokRQlwC
-   5eM4IpfOFAhm6UAP8rmJrEDd2kLVd4ubWcTGmFa9zqw019QxyuWEn0sMa
-   nOzF/6ocZt6hvH9cKttJuvDPE+s1aGVVYIYGoJfuzsUsqqt0KAq84qN1+
-   qy+3YCo7yF2I57dsLxwKOy6OBmUR+75Rn+Dxa+ZaS+N/km07b27tcL9AD
-   T5MhwB4IcyUAeaM6QoNGm2alHWNSdeHbt7CqJHodv9+QGic0oXsvoVBnp
-   A==;
-X-CSE-ConnectionGUID: sWHWhzk0SYCILXw0FGx+JA==
-X-CSE-MsgGUID: axsakdRHRbSBzV2VoBa/GQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="52676696"
-X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
-   d="scan'208";a="52676696"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 15:09:18 -0700
-X-CSE-ConnectionGUID: 9nz+v2rvRQmegypfaMeFXg==
-X-CSE-MsgGUID: m5ujfXIKTwek1eo9LxXxbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,278,1744095600"; 
-   d="scan'208";a="152965787"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 30 Jun 2025 15:09:14 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uWMgZ-000ZQ2-39;
-	Mon, 30 Jun 2025 22:09:11 +0000
-Date: Tue, 1 Jul 2025 06:08:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Joshua Grisham <josh@joshuagrisham.com>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Armin Wolf <W_Armin@gmx.de>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, Antheas Kapenekakis <lkml@antheas.dev>,
-	"Derek J. Clark" <derekjohn.clark@gmail.com>,
-	Prasanth Ksr <prasanth.ksr@dell.com>,
-	Jorge Lopez <jorge.lopez2@hp.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dell.Client.Kernel@dell.com, Kurt Borja <kuurtb@gmail.com>
-Subject: Re: [PATCH v4 1/6] platform/x86: firmware_attributes_class: Add
- device initialization methods
-Message-ID: <202507010553.vgtA0xlb-lkp@intel.com>
-References: <20250630-fw-attrs-api-v4-1-1a04952b255f@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7Q7lvkGmKCJz7MZ9xBpvDwPv/PVcjqY+LmxyVZTHCXRfftkVymbE1v/9GIDZhdW1VVZUI3SafXE/IqcaKyrMhEIAbAeOuatWcMBW/K6qn2EGyhrp4K0C5FGkvPeRD8pCHsZ4IR29LbpenBpQTLWA4hdnna2NzUdUkVtjzbZpYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RL89DStq; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4CA00169;
+	Tue,  1 Jul 2025 00:09:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1751321367;
+	bh=BunDYpz6CivJtXJ6Ep6qUVEGCQ60ZFk86DGMDme+kgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RL89DStqP4zYsQyh3OIPjSxwYbWiqYEdpifU8oSDuNU8gwaV3TrOVN7FeoylgLDMt
+	 hYIuVQbYf30Z6vcKkujH/WIzBioehHy8OZbo90Xov5IIWTFf2N0AE8ZJ/GrbRIOjBi
+	 AQMYdadg9CGMBMPi/pkdTJTSJUrEIstevEuDIAHM=
+Date: Tue, 1 Jul 2025 01:09:23 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] media: uvcvideo: Turn on the camera if
+ V4L2_EVENT_SUB_FL_SEND_INITIAL
+Message-ID: <20250630220923.GA15184@pendragon.ideasonboard.com>
+References: <20250630-uvc-grannular-invert-v3-0-abd5cb5c45b7@chromium.org>
+ <20250630-uvc-grannular-invert-v3-5-abd5cb5c45b7@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250630-fw-attrs-api-v4-1-1a04952b255f@gmail.com>
+In-Reply-To: <20250630-uvc-grannular-invert-v3-5-abd5cb5c45b7@chromium.org>
 
-Hi Kurt,
+On Mon, Jun 30, 2025 at 02:20:30PM +0000, Ricardo Ribalda wrote:
+> If we subscribe to an event with V4L2_EVENT_SUB_FL_SEND_INITIAL, the
+> driver needs to report back some values that require the camera to be
+> powered on. But VIDIOC_SUBSCRIBE_EVENT is not part of the ioctls that
+> turn on the camera.
+> 
+> We could unconditionally turn on the camera during
+> VIDIOC_SUBSCRIBE_EVENT, but it is more efficient to turn it on only
+> during V4L2_EVENT_SUB_FL_SEND_INITIAL, which we believe is not a common
+> usecase.
+> 
+> To avoid a list_del if uvc_pm_get() fails, we move list_add_tail to the
+> end of the function.
+> 
+> Reviewed-by: Hans de Goede <hansg@kernel.org>
+> Fixes: d1b618e79548 ("media: uvcvideo: Do not turn on the camera for some ioctls")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 303b7509ec47964dc1bf0e28127075b4a3867511..e84aaf130c73403a6c818deceadf404a2975c816 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -2072,18 +2072,23 @@ static int uvc_ctrl_add_event(struct v4l2_subscribed_event *sev, unsigned elems)
+>  		goto done;
+>  	}
+>  
+> -	list_add_tail(&sev->node, &mapping->ev_subs);
+>  	if (sev->flags & V4L2_EVENT_SUB_FL_SEND_INITIAL) {
+>  		struct v4l2_event ev;
+>  		u32 changes = V4L2_EVENT_CTRL_CH_FLAGS;
+>  		s32 val = 0;
+>  
+> +		ret = uvc_pm_get(handle->chain->dev);
+> +		if (ret)
+> +			goto done;
+> +
+>  		if (uvc_ctrl_mapping_is_compound(mapping) ||
+>  		    __uvc_ctrl_get(handle->chain, ctrl, mapping, &val) == 0)
+>  			changes |= V4L2_EVENT_CTRL_CH_VALUE;
+>  
+>  		uvc_ctrl_fill_event(handle->chain, &ev, ctrl, mapping, val,
+>  				    changes);
+> +
+> +		uvc_pm_put(handle->chain->dev);
 
-kernel test robot noticed the following build warnings:
+Add a blank line here.
 
-[auto build test WARNING on 73f0f2b52c5ea67b3140b23f58d8079d158839c8]
+>  		/*
+>  		 * Mark the queue as active, allowing this initial event to be
+>  		 * accepted.
+> @@ -2092,6 +2097,7 @@ static int uvc_ctrl_add_event(struct v4l2_subscribed_event *sev, unsigned elems)
+>  		v4l2_event_queue_fh(sev->fh, &ev);
+>  	}
+>  
+> +	list_add_tail(&sev->node, &mapping->ev_subs);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kurt-Borja/platform-x86-firmware_attributes_class-Add-device-initialization-methods/20250630-160549
-base:   73f0f2b52c5ea67b3140b23f58d8079d158839c8
-patch link:    https://lore.kernel.org/r/20250630-fw-attrs-api-v4-1-1a04952b255f%40gmail.com
-patch subject: [PATCH v4 1/6] platform/x86: firmware_attributes_class: Add device initialization methods
-config: x86_64-randconfig-073-20250701 (https://download.01.org/0day-ci/archive/20250701/202507010553.vgtA0xlb-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250701/202507010553.vgtA0xlb-lkp@intel.com/reproduce)
+And here.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507010553.vgtA0xlb-lkp@intel.com/
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-All warnings (new ones prefixed by >>):
-
->> Warning: drivers/platform/x86/firmware_attributes_class.c:39 function parameter 'drvdata' not described in 'fwat_device_register'
->> Warning: drivers/platform/x86/firmware_attributes_class.c:39 Excess function parameter 'data' description in 'fwat_device_register'
+>  done:
+>  	mutex_unlock(&handle->chain->ctrl_mutex);
+>  	return ret;
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+
+Laurent Pinchart
 
