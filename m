@@ -1,107 +1,202 @@
-Return-Path: <linux-kernel+bounces-708878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0DDAED632
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:53:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9948AED62E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 644A77A18D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:52:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FF437A61AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1482239E80;
-	Mon, 30 Jun 2025 07:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A70723ABAE;
+	Mon, 30 Jun 2025 07:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="jo+VDgf5"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X1qzCi4a"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC6B237704;
-	Mon, 30 Jun 2025 07:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731E1239E78;
+	Mon, 30 Jun 2025 07:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751269998; cv=none; b=gKsjbTs0cX11YIJygEIGa9uOotxsEChMrRRMR5hYXwt4dWWCXhlCmJFOt3XiN/jRJxDBBjJxGcJJHXvyV/1/dgmgdgkrOM3SdEXa/iFlqecFj2kG3paqlFLUe29LCgoC5IYelNRRfydt2MGYqrUsz9WDlVrN/ZU9chAlrawTeKo=
+	t=1751269978; cv=none; b=bInw2NfxOHKSEhY0Ciwwe1AFaZ/o+rEoVfyHdZ/YueVAcE3r3MOMOKUI2IoZah0gZo+wLvzUuRStoPmpqXbD4W5o+1tMaNuFzllorHxo/F2BFAg9Fs2ZqNwgpPHXQW5JgQEGRzVXdOeHvjNW/GmTpjSvZi+jwDoxZBzUE69SzT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751269998; c=relaxed/simple;
-	bh=43trQA6JGX0q1DkUsOqI2l4Rd2xx3J+EmFJrrvGcEmI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iUWAKMasNhDAvfiSSj1NvO1l1N71w1w7u1U93aE7LX/fwge/RH9a3xhYo+Sqn6v/XtE8yJ0MON21gpG5RFVfwM4XRCEsOrr4H/t53YtFRPRdJgxOoNc1+U+6NZQXl6tZ3lTOfqFSWFLB7VJshoRxNrl30jxPf8/d52Rs+74+WRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=jo+VDgf5; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
-	s=protonmail; t=1751269975; x=1751529175;
-	bh=e5HFJV7m/E4MoUGLl0jUTtR9BOfcOHJtokCPnk30wuw=;
-	h=From:Date:Subject:Message-Id:To:Cc:From:To:Cc:Date:Subject:
-	 Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=jo+VDgf5qezUy/YQSZMw1m4mkYN9Zrp4+7S0iKD2JEHBRwp3EBwCwiZzUqA7G11Ai
-	 H102tz3RbQTc0z0mvbQLjgakWC7q4czR+rPjSj3MMxD5prwGZ5+sC7D+uu4mow/5gH
-	 FqVqv0DTXFaxx5PfwFOV6Zb//zCYJg3kJJvof8VXWhTAzuff3pxFJygh82byWjAA5H
-	 AWW0UwfVhji4cTQfOMf2stBSuckfWeDDspZhAX2ButvqyoVOdRhx/ffdxmd3l3P4Pu
-	 oRBTe79E6Wgg4xzowCgeubsD6xNgh22Y1wPv541wmejWKrwe9JvxfUmMWFiWYaI4Re
-	 3N7vrpl6/UNlg==
-X-Pm-Submission-Id: 4bVz0f0s7GzB53
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Mon, 30 Jun 2025 09:52:44 +0200
-Subject: [PATCH v2] can: m_can: apply rate-limiting to lost msg in rx
+	s=arc-20240116; t=1751269978; c=relaxed/simple;
+	bh=F4dN++TbVjarRlIMkNwmoUP9mUy+taXHwWY073gkpLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jyCuk3hTPCc7I+U7wPXChKyZQasmdb1627OA9YjSEreDxHRwMxk6WbXqTWAF3dnMrWHu2i3e90sHdsxTkeLe/A3W6P2zf4IZrD4y/n8WItVQ7hwP5J1906HkDGVAAkJYY+1Air49eB+5NNVCz8w7ORNyDkOrrczDXEE7Hp9y3xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X1qzCi4a; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1751269974;
+	bh=F4dN++TbVjarRlIMkNwmoUP9mUy+taXHwWY073gkpLI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X1qzCi4a6sZ+fy5WJ4JZADlnr9O/1cCWEIIRDCBxrBLYUPVapMum6TTLTwo1WRkiU
+	 pnjTWkvKzeRRIu2W+JiUeYhXCGo+ZgLjnRgehgEmndKhlNzKjV1597Ry9ERBOHFqcn
+	 WvRoSTsqEvNu3XpwBAii7E+jOzPedFPBpdjBfty339KiF/WdSMXERm22akYtEGRQUG
+	 hAvNRcxR547RCyEiRzsW7oQ3pwz7eeXt4nNjnnF3MaEqonMiIW94J089z2KePOHvCx
+	 qOFZW67huLbUxkwKlR0fZXoHCDRU6vVfQ6mMC1f+z+BVo2hVcgdCi/yTAhSncWeUhV
+	 dkOE94Xq2N87g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DD1CD17E0B0D;
+	Mon, 30 Jun 2025 09:52:53 +0200 (CEST)
+Message-ID: <c5dffc8c-2abe-4fd3-a062-6d1adb417d27@collabora.com>
+Date: Mon, 30 Jun 2025 09:52:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250630-mcan_ratelimit-v2-1-6b7a01341ea9@geanix.com>
-X-B4-Tracking: v=1; b=H4sIAEtCYmgC/3XMSwrDIBSF4a2EO65F7cOmo+6jhCLmmlyoGlQkJ
- bj32sw7/A+cb4OEkTDBvdsgYqFEwbeQhw7MrP2EjMbWILm88KvkzBntX1FnfJOjzFChsP14s7o
- 30E5LREvrDj6H1jOlHOJn94v4rX+pIpho3lkhnrhVwj4m1J7WowkOhlrrFwtJ7QWtAAAA
-X-Change-ID: 20250620-mcan_ratelimit-e7e1f9d8fa9c
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- Fengguang Wu <fengguang.wu@intel.com>, 
- Varka Bhadram <varkabhadram@gmail.com>, Dong Aisheng <b29396@freescale.com>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sean Nyekjaer <sean@geanix.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] dt-bindings: regulator: Document MediaTek MT6363
+ PMIC Regulators
+To: Chen-Yu Tsai <wenst@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20250624073548.29732-1-angelogioacchino.delregno@collabora.com>
+ <20250624073548.29732-4-angelogioacchino.delregno@collabora.com>
+ <20250627-neon-hidden-sheep-ed8dae@krzk-bin>
+ <CAGXv+5GLJ7cfAQW_kbTqqe_QO+RfU7KL57n77qenpDiRS5BybA@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAGXv+5GLJ7cfAQW_kbTqqe_QO+RfU7KL57n77qenpDiRS5BybA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Wrap the "msg lost in rxf0" error in m_can_handle_lost_msg() with
-a call to net_ratelimit() to prevent flooding the kernel log
-with repeated debug messages.
+Il 30/06/25 05:25, Chen-Yu Tsai ha scritto:
+> On Fri, Jun 27, 2025 at 4:24 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Tue, Jun 24, 2025 at 09:35:45AM +0200, AngeloGioacchino Del Regno wrote:
+>>> Add bindings for the regulators found in the MediaTek MT6363 PMIC,
+>>> usually found in board designs using the MT6991 Dimensity 9400 and
+>>> on MT8196 Kompanio SoC for Chromebooks, along with the MT6316 and
+>>> MT6373 PMICs.
+>>>
+>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> ---
+>>>   .../regulator/mediatek,mt6363-regulator.yaml  | 123 ++++++++++++++++++
+>>>   1 file changed, 123 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
+>>> new file mode 100644
+>>> index 000000000000..f866c89c56f7
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6363-regulator.yaml
+>>> @@ -0,0 +1,123 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6363-regulator.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: MediaTek MT6363 PMIC Regulators
+>>> +
+>>> +maintainers:
+>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> +
+>>> +description:
+>>> +  The MT6363 SPMI PMIC provides 10 BUCK and 26 LDO (Low Dropout) regulators
+>>> +  and can optionally provide overcurrent warnings with one ocp interrupt
+>>> +  for each voltage regulator.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: mediatek,mt6363-regulator
+>>> +
+>>> +  interrupts:
+>>> +    description: Overcurrent warning interrupts
+>>
+>> Are you sure interrupts are physically not connected?
 
-Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
-Changes in v2:
-- Changed to dbg msg
-- Link to v1: https://lore.kernel.org/r/20250620-mcan_ratelimit-v1-1-e747ee30f71f@geanix.com
----
- drivers/net/can/m_can/m_can.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes, I'm sure, they are not.
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 6c656bfdb3235e1f5d6405c49b07b821ddacc1b9..9f43111609d364c01c6df10489fc4708deab9fbb 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -665,7 +665,8 @@ static int m_can_handle_lost_msg(struct net_device *dev)
- 	struct can_frame *frame;
- 	u32 timestamp = 0;
- 
--	netdev_err(dev, "msg lost in rxf0\n");
-+	if (net_ratelimit())
-+		netdev_dbg(dev, "msg lost in rxf0\n");
- 
- 	stats->rx_errors++;
- 	stats->rx_over_errors++;
+> 
+> Side note:
+> 
+> I wonder if we really need to describe _all_ the interrupts here.
+> 
+> Looking at the PMIC as a whole, the interrupt tree is something like
+> 
+> SoC <- SPMI inband IRQ - PMIC top level IRQ block <- sub-function IRQ blocks:
+> 
+>      - BUCK (buck regulator over current)
+>      - LDO (LDO regulator over current)
+>      - PSC (key press / system low voltage)
+>      - MISC (protected registers accessed / SPMI stuff)
+> 
+> And some other blocks that may apply to other MediaTek PMICs:
+> 
+>      - HK (some threshold triggered interrupt)
+>      - BM (battery management related)
+> 
+> The thing I'm trying to get to is that all these interrupt vectors are
+> internal to the whole PMIC. Do we really need to spell them out in the
+> device tree? The top level compatible should already imply how all the
+> internals are wired up.
+> 
 
----
-base-commit: db22720545207f734aaa9d9f71637bfc8b0155e0
-change-id: 20250620-mcan_ratelimit-e7e1f9d8fa9c
+Chen-Yu:
 
-Best regards,
--- 
-Sean Nyekjaer <sean@geanix.com>
+Yes, we do: not all boards need overcurrent protection on all of the rails, but
+especially, in the past I have seen (multiple times) board designs (not MediaTek,
+but that doesn't mean anything) that will trigger the overcurrent protection due
+to a high inrush upon rail enablement - in these cases, the ocp would have to be
+either ignored completely or reset and read after a while.
+
+Not only that: since not all rails are actually used, due to EMI (and other issues
+which usually mean suboptimally built boards) some of those may randomly trigger
+OCP, and that's another case in which that should be ignored.
+
+So... yes, we want to define the overcurrent interrupts in the devicetree.
+
+> 
+> ChenYu
+> 
+>>> +    minItems: 1
+>>> +    maxItems: 36
+>>> +
+>>> +  interrupt-names:
+>>> +    description:
+>>> +      Names for the overcurrent interrupts are the same as the name
+>>> +      of a regulator (hence the same as each regulator's node name).
+>>> +      For example, the interrupt name for regulator vs2 will be "vs2".
+>>
+>> You need to define the items or pattern if this is really flexible in
+>> the hardware (not drivers).
+
+krzk:
+
+It's flexible in the hardware... but how do I define a pattern here?
+I avoided to define the items because you can miss some; I mean....
+
+You may have, on one board:
+"vs1", "vsram", "someother", "another"
+
+on another: "vsram", "another"
+
+...and another: "vs1", "another"
+
+(etc etc)
+
+Is there any way to allow missing items in between?
+Because then there's 36 possible items, so there are more than 100 possible
+combinations (keeping the order, but missing something in between..!).
+
+Cheers,
+Angelo
+
+
 
 
