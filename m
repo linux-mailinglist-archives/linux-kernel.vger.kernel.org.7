@@ -1,103 +1,196 @@
-Return-Path: <linux-kernel+bounces-709344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11ACAEDC60
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:12:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4C6AEDC63
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2315188532F
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017A2166482
 	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E92289814;
-	Mon, 30 Jun 2025 12:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8279F289E16;
+	Mon, 30 Jun 2025 12:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="XqE9fh3D"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cciHYJrA"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F4E27726;
-	Mon, 30 Jun 2025 12:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE51289E00
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751285528; cv=none; b=LIP/tJZzmPv76CIDxbql686aDqQFy79dN8mRRiQOV/t2L3/0YsUq9LPZtILLUWNOBGX2JdW/y7SCqcmQq3szR4kelbWUbPPAY4BGMhEmqczJIUdjVXsvNLItNgGSK5GbVhRe0+Ga0qCAaKBscnbPBmE+9Zwy+TALknuoN5+7wrI=
+	t=1751285533; cv=none; b=f9RbyNPEtkDEMbotLK+iAJpt3rRH00rCKBuzwolVDdWjVhmrw/vk5x99nPttAaWc9KeRu6YO0hKCBoIUK78t8rxZJz3uaDBwajmxqq4i8w/FKTVzPo843Icv72UDDBl8Bsny9lXjsn2IZhaZbqKK2WUu2KhJkXIusVrDEpM5Dig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751285528; c=relaxed/simple;
-	bh=vivnRFXDAAz82GUWwNPXDfAlxh69B6b3d2ENBZfVKsQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u8Ee23xUvcn3BvfJNZmFrqlBn3xqHX+d95NJfI0+Lba3jTsIKzBmNZpJrAYyvh3k//EPxVA51bRtMFTScArvhd+ZdqqCxFOvzmKcrNArv8JNZfMGtWEPCoOmjrpQ3aWoXv285BGzfXCc5kysL6ZeeJCy8QHhAazghLXhmZgkiPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=XqE9fh3D; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=4Utdtws3qFpWd3h2rnJnLtmtOA+LpMly7BwnrC1eTp4=;
-	t=1751285526; x=1752495126; b=XqE9fh3D1S4doURDty84xRwA+Z9lgnjsqXE6g+r1f3bhuHk
-	nT3K9P1kcwpzfEQRvudMrgaRGUo/n8cKVPTB33ATXfSIjtoongMNGi4du3T0WBzTqTIIId8HEMEuv
-	SS5N0vBPlJl6LHI5WVR7ZqnXO7N0OVWGwhZ309OhgfW3H6nTwRRY9tly6btFycFktkF6sx05tY90Z
-	1u5c6+NHfCTMw0vByfLUMF/2z/PUPZmMue3Npjh6AcJGlTZeEYwHCBdGK2RXATPp89aHwhX27JKvw
-	H5clGpt/HvS0Jbo4n1cXUgmKwzbqKOCmYAgN0giIeDIN69TgUHLUA9aT0kO7+P+w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uWDMh-00000001CMh-0HFR;
-	Mon, 30 Jun 2025 14:12:03 +0200
-Message-ID: <3cfa6ddfb5493aff609c5a51c84d61a7ed36d13f.camel@sipsolutions.net>
-Subject: Re: [PATCH 0/3] wifi: brcm80211: Deadcoding around phy_cmn
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: arend.vanspriel@broadcom.com, kvalo@kernel.org, 
-	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, 
-	brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1751285533; c=relaxed/simple;
+	bh=JHEMWVgoh1hSEWV3+LxISOVNHVENn+umGgBSK+L7G3s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=neIc2ROZIYMi1rVzbzVCfgLszBYdbOn+OKWRIZwv+UBggwJe7IdyWHVYitehb93ylkCRY6r36i56hcbWO9Tr4Lt16HdfIuRUvizrVp1A89wf5BytNstB20wTbBwvz6Ulvc9CwNmE592V+oLkyHWAg2EZ/jSjDSH3HxiXMaI4AdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cciHYJrA; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a52874d593so1732335f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751285531; x=1751890331; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K2w7Xf8pzyPjjaTg20uEoTHzkbLaYJGlVAM+8SRoxsE=;
+        b=cciHYJrAXlUy1SPHDsCQucTPvkh5WgD/ijOhyQ2Q+aazK4ZAzTEpGAANIDmrjMDTyp
+         sWg/Vx4lKB1UnY0vdX2ubq9jFYEIBGKLW3ZGrIbROlPeIMCBIhuo+KpNUtYgoQlXvt8s
+         lMzJJJEDSi4Rr4zpgv1F8+suZUAJR0R71S3E2VabUlbf90opKkPQvNLYOYya40SZeWq+
+         Wf6ye/0oGv/2lCGEFWmmyndI5OsNZFPGJHp8jz2xJqG5q/BpXX8s7iZMiXgtxTfPj5MO
+         rN/TGSLk0z3aWCy8CB3Q+BIc7t08+DwQD4kjNXXvxlQRqjMmYZ9AyVT+XGQ/xnqi7F7Q
+         3UHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751285531; x=1751890331;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K2w7Xf8pzyPjjaTg20uEoTHzkbLaYJGlVAM+8SRoxsE=;
+        b=Scv+oXMOT+Xhb11A89YtaVrrTsW6fqQEeB++SCue4YQoGBqUsJ5zmgtvkCg7HIs/wU
+         Y8RnKv645hm2cNm0Q4wOJH2IKM9wyHan4mdBtX+zC6LHtLc1GNUsr11t8SeFAfLIBCv8
+         wm8LOd/qpP0EimubAmTvjWFLIWiJHZ5bP7FJOqqEytmrTHMdJ0DfAW+lYjBmGshLcXft
+         /9dWiXwkY+eWdQTZhJth2C1VUY9TNoBkagaviKQO3ws22McNkMlqsFiK4SgoloRwrbcc
+         /mweW2M7YbMndch7b5RUl0tafGjiwq+UBAQ+Eco1ycFD5EtOjCQOhCMxYxdQZZ77nva0
+         kbtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbElwPpdPkif9p+ejDvJjLZZj7NEadcCLUMwpRYpW1ivzT3uhJP0XUcod15j/vxRxe4+XyMIyIqMZILPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfnjTkUGRX7pDqgACAKtevyAdejgOCN6KanMCUT+wtC/GavLA8
+	RVo9WBps7LsrkR6XtFc/hDjH6/44CiACFLoZAE/53+ZoRx+PuqMdhJ1dAYQuj/Wizk4=
+X-Gm-Gg: ASbGncuPXp+poVbOhRD26kiQnB0nO6YG0nFr78c68p2W3CT0mDnsC5MuSVswjHuWpqO
+	WbG8yvr9mSQdpWQO863auEVfOSTXrbYW5oPmoOrIH+JSivAx9MSZw13akS346VX7QqJB4iyyXRz
+	Xc10Mdsg/BG92Q7MApOEZFARLWm931SDP6fn63QdkDoorNIhzA/R8+dTSDvGbjZhoOnjZSd7svl
+	WBYO2D2EgHr+0S6rMS5ZwrPS3NaWpsIxuajsrqSZ9wQThj8IiGHvrB/WVIkTPtPmEutzMaF9ti9
+	y68YMeiD8WnhFhYx3VXbWN6FdkFb5Yx3BPFyWUPMQx3AECyQV2QLDubN
+X-Google-Smtp-Source: AGHT+IFhId39qI7YjHzEzjthugvk1G5r/371+xQVx/G8j/lKjEuyHz1PoyVGN9Y5kQEyv/NFSXv6lw==
+X-Received: by 2002:adf:cb8c:0:b0:3a5:8a68:b81d with SMTP id ffacd0b85a97d-3a8ff520200mr8265438f8f.43.1751285530559;
+        Mon, 30 Jun 2025 05:12:10 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:19e3:6e9c:f7cd:ff6a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c800eaasm10470472f8f.37.2025.06.30.05.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 05:12:10 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
 Date: Mon, 30 Jun 2025 14:12:02 +0200
-In-Reply-To: <aF7aPZc3xXfcc-UR@gallifrey>
-References: <20250626140812.56700-1-linux@treblig.org>
-	 <7625f178e7c2be9fd11f1b4cdeb4da47a4635c93.camel@sipsolutions.net>
-	 <aF7aPZc3xXfcc-UR@gallifrey>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+Subject: [PATCH v2 1/4] firmware: qcom: scm: remove unused arguments from
+ SHM bridge routines
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250630-qcom-scm-race-v2-1-fa3851c98611@linaro.org>
+References: <20250630-qcom-scm-race-v2-0-fa3851c98611@linaro.org>
+In-Reply-To: <20250630-qcom-scm-race-v2-0-fa3851c98611@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3243;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=tDndb84vpRLLlB0tqAD10LKSmWnhIuaAzdlt5YEE7gM=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoYn8X/J+02BKiQNIqcB/qSsY5HFRAecbon0pNX
+ 9L1Tl2a5UyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaGJ/FwAKCRARpy6gFHHX
+ cmPuD/99ROP6cyXEEdebUl5yHEUYgSjlKZ56OZ5qC8VeYAbPj5FbN19gApc9L6fd4UGu96fNJQF
+ BkE9QqPgjk046VHjE3n2auh0Gvj0+wYwN4FblV8vqf+BgD3mlF7UMlVMR40pxTIiYZiuy6jPeOH
+ etOO5Gzc0sjzcb2OWjfMhwz5ex52jH8ICbRWUeS9ZV/s7MxzBEL93t0JPvyjJ7Cpw1cGLbGN7c9
+ smdQpWN+D8ti+fJpjZ/2icgkgTMHCT0INfogztBZyxCCwd+IooCqR7I/J++H6UsWW0Vq1inegjS
+ Uu0tRgpJ4xYOob4R5No+dSMFJgi0Ut9uuFTJru9lOPqvQ4oyIRAsKd0+ETc2BGphz15RlkOiftc
+ OO0BbNRmHlULs5IXxnSpa7oAsEir4CgsHz4r7YImjwHlFTCp2OHY0WQT+4oNs/wmy9J2toyEzAp
+ +e/P8r041rGi5jxXnqmXcRr+DZ8MV6ZJ5NhvG/wiBfD3mYvzLZd0mwOc9RCXL8Hw3X/9XHZIu36
+ bX2tp7wRhVSGnaCf3LkzgnTvK32VmR5SAxPCQd25hQxaPeAJUi6E+8E+s9q8PVgodVkrUs7ohtS
+ lXQOicMwbFoA6yGI1KkcIXUYUQ0buj5ntClbpeCtoNQxI5xmM62Zuzrw7mSl+FDfvtUKjwSOBjt
+ /EBQFtreWnouIOQ==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> > 2) it'd help for the automatic bot runs etc. to have, in the subject,
-> >    '[PATCH wireless-next]' (or perhaps rtw-next etc.)
->=20
-> Oh right; that wasn't too obvious to me because get_maintainer has
-> linux-wireless@ in the list but also had the brcm80211 - so I
-> didn't know if this went through brcm or wireless picked it up.
-> And what's rtw ?
+qcom_scm_shm_bridge_create() and qcom_scm_shm_bridge_delete() take
+struct device as argument but don't use it. Remove it from these
+functions' prototypes.
 
-Hmm, right, brcm80211 does have a separate list but patches still flow
-only via the wireless list.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/firmware/qcom/qcom_scm.c       | 4 ++--
+ drivers/firmware/qcom/qcom_tzmem.c     | 8 ++++----
+ include/linux/firmware/qcom/qcom_scm.h | 4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-Currently, we have:
-ath/ath-next - Qualcomm drivers
-rtw/rtw-next - Realtek drivers
-iwlwifi-fixes/iwlwifi-next - Intel iwlwifi driver
-mt76 - Mediatek drivers
-wireless / wireless-next - catch-all for everything else
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index f63b716be5b027550ae3a987e784f0814ea6d678..d830511a0082a6a52e544a4b247b2863d8b06dbd 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1631,7 +1631,7 @@ int qcom_scm_shm_bridge_enable(void)
+ }
+ EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_enable);
+ 
+-int qcom_scm_shm_bridge_create(struct device *dev, u64 pfn_and_ns_perm_flags,
++int qcom_scm_shm_bridge_create(u64 pfn_and_ns_perm_flags,
+ 			       u64 ipfn_and_s_perm_flags, u64 size_and_flags,
+ 			       u64 ns_vmids, u64 *handle)
+ {
+@@ -1659,7 +1659,7 @@ int qcom_scm_shm_bridge_create(struct device *dev, u64 pfn_and_ns_perm_flags,
+ }
+ EXPORT_SYMBOL_GPL(qcom_scm_shm_bridge_create);
+ 
+-int qcom_scm_shm_bridge_delete(struct device *dev, u64 handle)
++int qcom_scm_shm_bridge_delete(u64 handle)
+ {
+ 	struct qcom_scm_desc desc = {
+ 		.svc = QCOM_SCM_SVC_MP,
+diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+index 94196ad87105c6efc229bccebfd15e0be55f72c0..4fe333fd2f075a4e92ac6462d854848255665e18 100644
+--- a/drivers/firmware/qcom/qcom_tzmem.c
++++ b/drivers/firmware/qcom/qcom_tzmem.c
+@@ -124,9 +124,9 @@ static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
+ 	if (!handle)
+ 		return -ENOMEM;
+ 
+-	ret = qcom_scm_shm_bridge_create(qcom_tzmem_dev, pfn_and_ns_perm,
+-					 ipfn_and_s_perm, size_and_flags,
+-					 QCOM_SCM_VMID_HLOS, handle);
++	ret = qcom_scm_shm_bridge_create(pfn_and_ns_perm, ipfn_and_s_perm,
++					 size_and_flags, QCOM_SCM_VMID_HLOS,
++					 handle);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -142,7 +142,7 @@ static void qcom_tzmem_cleanup_area(struct qcom_tzmem_area *area)
+ 	if (!qcom_tzmem_using_shm_bridge)
+ 		return;
+ 
+-	qcom_scm_shm_bridge_delete(qcom_tzmem_dev, *handle);
++	qcom_scm_shm_bridge_delete(*handle);
+ 	kfree(handle);
+ }
+ 
+diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+index 983e1591bbba75215cc1ae3eb28455c0c360e0ce..82b1b8c50ca3e5f97665e6975e8d7e8e4299e65d 100644
+--- a/include/linux/firmware/qcom/qcom_scm.h
++++ b/include/linux/firmware/qcom/qcom_scm.h
+@@ -149,10 +149,10 @@ bool qcom_scm_lmh_dcvsh_available(void);
+ int qcom_scm_gpu_init_regs(u32 gpu_req);
+ 
+ int qcom_scm_shm_bridge_enable(void);
+-int qcom_scm_shm_bridge_create(struct device *dev, u64 pfn_and_ns_perm_flags,
++int qcom_scm_shm_bridge_create(u64 pfn_and_ns_perm_flags,
+ 			       u64 ipfn_and_s_perm_flags, u64 size_and_flags,
+ 			       u64 ns_vmids, u64 *handle);
+-int qcom_scm_shm_bridge_delete(struct device *dev, u64 handle);
++int qcom_scm_shm_bridge_delete(u64 handle);
+ 
+ #ifdef CONFIG_QCOM_QSEECOM
+ 
 
-> (Perhaps a Documenation/process/maintainer-wireless.rst would be good? )
+-- 
+2.48.1
 
-Yeah, perhaps, though it's kind of difficult to really pin down the
-exact list, it has been changing a bit.
-
-TBH, wireless / wireless-next is mostly just fine anyway. Only if
-something depends on other work in the specific trees would the other
-tags really be needed, i.e. for people who work on it more actively.
-With wireless / wireless-next the bot will still build-test it etc.,
-whereas without a tag it may never do that at all.
-
-johannes
 
