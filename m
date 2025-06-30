@@ -1,161 +1,170 @@
-Return-Path: <linux-kernel+bounces-708563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7FBAED21B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 03:03:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F35FAED212
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 02:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534451895797
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 01:04:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CE03B3D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 00:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE704F5E0;
-	Mon, 30 Jun 2025 01:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007CF433C8;
+	Mon, 30 Jun 2025 00:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="A229tJ1I"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qkk20LGz"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F0A8479;
-	Mon, 30 Jun 2025 01:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DAF286A9;
+	Mon, 30 Jun 2025 00:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751245419; cv=none; b=AqZ/6X8efQWGqnAEWBoVs0n8glZOAYYy3OJdYWO1a4EmyUoAgrTopr64RYQCvjuGSHlpleeIdm85nW+iZ4xIgNP39UGbqVbuS4m/MvzTBxUy3Sp4hujAggyKAcgiYBf5Eo5yaEKyz7n3NCrm3My2BrhHi2N9sTmRMJNgNJ046eM=
+	t=1751245118; cv=none; b=MiPHI2OxWJx7yGvHs5IZdCFsF3YRgZEjJbj4ffN8Xg6OpytqiOsthBTJSLZAwaAkJYEPDMxmEPWroNr1rezsZksXvW8go/u5eaBdMgfBX04MLzronIqPz2TtHCy3X+0Jww4jHiWdMGqQkjwzjlm6BC6I7utHym1A6i48l+0UsUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751245419; c=relaxed/simple;
-	bh=D24S1QGo63Mvn+RPZq3ItemdRDY0yJs6VmQvMVfkjw8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mF9QqCy3O7c4JhI8jD7VZkV9i3Z1iQnfzxu2KzFVCBLHC3FbTcu6GqCSx/60G70r4o+e598xhx57kEMxiYzh6aSJre6JWSKN43qB2n63LQdU+3FppDouiAg0Fpozch5dd94k+SP3Il3fJkmfccQdSYKKo0+kR2utiGORcZm0200=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=A229tJ1I; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1751245409; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=KE5Ke26crJ20g62CV0eTsdMDqmR58zlWRKiqOi/7eNA=;
-	b=A229tJ1I9ClWjaUj2mVAGYIsqG/1dWVSyjCT5ywnSgnvNcQv4qO/ysMvD8Q6qcbSwAoWCVvm46UhZ0vBagIZ1spumsIzfM+naijTKEG6jfk0QlqfUxANdEBtP7jnUaqjHfPANkkeV3/dE5Gh1FgLa/rSRKPGZXL0MwuZ6pJWnq0=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wg25R9f_1751245082 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 30 Jun 2025 08:58:04 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>,  Zi Yan <ziy@nvidia.com>,  Matthew
- Wilcox <willy@infradead.org>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  linux-doc@vger.kernel.org,
-  linuxppc-dev@lists.ozlabs.org,  virtualization@lists.linux.dev,
-  linux-fsdevel@vger.kernel.org,  Andrew Morton
- <akpm@linux-foundation.org>,  Jonathan Corbet <corbet@lwn.net>,  Madhavan
- Srinivasan <maddy@linux.ibm.com>,  Michael Ellerman <mpe@ellerman.id.au>,
-  Nicholas Piggin <npiggin@gmail.com>,  Christophe Leroy
- <christophe.leroy@csgroup.eu>,  Jerrin Shaji George
- <jerrin.shaji-george@broadcom.com>,  Arnd Bergmann <arnd@arndb.de>,  Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,  "Michael S. Tsirkin"
- <mst@redhat.com>,  Jason Wang <jasowang@redhat.com>,  Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>,  Eugenio =?utf-8?Q?P=C3=A9rez?=
- <eperezma@redhat.com>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Matthew Brost
- <matthew.brost@intel.com>,  Joshua Hahn <joshua.hahnjy@gmail.com>,  Rakie
- Kim <rakie.kim@sk.com>,  Byungchul Park <byungchul@sk.com>,  Gregory Price
- <gourry@gourry.net>,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,  "Liam
- R. Howlett" <Liam.Howlett@oracle.com>,  Vlastimil Babka <vbabka@suse.cz>,
-  Mike Rapoport <rppt@kernel.org>,  Suren Baghdasaryan <surenb@google.com>,
-  Michal Hocko <mhocko@suse.com>,  Minchan Kim <minchan@kernel.org>,
-  Sergey Senozhatsky <senozhatsky@chromium.org>,  Brendan Jackman
- <jackmanb@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Jason
- Gunthorpe <jgg@ziepe.ca>,  John Hubbard <jhubbard@nvidia.com>,  Peter Xu
- <peterx@redhat.com>,  Xu Xin <xu.xin16@zte.com.cn>,  Chengming Zhou
- <chengming.zhou@linux.dev>,  Miaohe Lin <linmiaohe@huawei.com>,  Naoya
- Horiguchi <nao.horiguchi@gmail.com>,  Oscar Salvador <osalvador@suse.de>,
-  Rik van Riel <riel@surriel.com>,  Harry Yoo <harry.yoo@oracle.com>,  Qi
- Zheng <zhengqi.arch@bytedance.com>,  Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH RFC 07/29] mm/migrate: rename isolate_movable_page() to
- isolate_movable_ops_page()
-In-Reply-To: <nr4e7unt2dtfav5y5ckmsrehu37xejqonarlulzcn6mnhnnvxl@o3ppo34wqyyj>
-	(Alistair Popple's message of "Mon, 30 Jun 2025 10:20:56 +1000")
-References: <20250618174014.1168640-1-david@redhat.com>
-	<20250618174014.1168640-8-david@redhat.com>
-	<9F76592E-BB0E-4136-BDBA-195CC6FF3B03@nvidia.com>
-	<aFMH0TmoPylhkSjZ@casper.infradead.org>
-	<4D6D7321-CAEC-4D82-9354-4B9786C4D05E@nvidia.com>
-	<bef13481-5218-4732-831d-fe22d95184c1@redhat.com>
-	<87h5zyrdl9.fsf@DESKTOP-5N7EMDA>
-	<nr4e7unt2dtfav5y5ckmsrehu37xejqonarlulzcn6mnhnnvxl@o3ppo34wqyyj>
-Date: Mon, 30 Jun 2025 08:58:03 +0800
-Message-ID: <878qlaqc4k.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1751245118; c=relaxed/simple;
+	bh=DWCuqNlL/nJDJrF1XCLLx4Ug3PwyI2NYe6xUAPJl8zA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qr2zuNysK/wuUPQNeG/Nrapz1zDxBrQj6DM8dri9ogDC6SZ1tayWtlfi6Y84GEkQUhU+aWPd5JIHvodLz7xfoL3krYWqqvc3HXs6V/pbA4nc+FG6UOSAvbBtx+e392PwLKLulD8ozxMkbkiM/KibI1R7Wp2Ke8jLzxnTL/QxBKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qkk20LGz; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=7Ug7UKkM2aUpFSdjWpuIagY1cxUJU5mNnOIW9P4Hx10=; b=Qkk20LGzNHOo2BsFWoVy7ijOTo
+	aWOv73t4khbol+V29hNgLVejMVhEbBu1jB95cUJhHJvSDKEr/VMAforrb8+g99vtE6c4A/Gb9xo1n
+	KbCWQYrcBoFlty/bDaIhybAXa1aneNSZskEwZoGIv9iCvH/CHOLlvqYNV1OTfy1pqglm+ElmIuX87
+	zJYIFhvfaqtSHuLiFCkflsUgwqcwQKB8Wqj8lZSYRSnQwd4866Y0Cwfp3eJbfuYj+Eg9OnqOXJkHD
+	NJix91wM9VnubPs6hIeB4MxsDNS7Z+Egovl3Ft9fcFcwpNaXGTvAO5RH2DDjZwR8Pj2CqZbMjMCzs
+	luNQzDTw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uW2qi-00000006hbc-18WR;
+	Mon, 30 Jun 2025 00:58:23 +0000
+Message-ID: <e0aeb40c-0c51-42bf-9ec3-7aaf89794ee4@infradead.org>
+Date: Sun, 29 Jun 2025 17:58:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/66] kconfig: rename menu_get_parent_menu() to
+ menu_get_menu_or_parent_menu()
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20250624150645.1107002-1-masahiroy@kernel.org>
+ <20250624150645.1107002-5-masahiroy@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250624150645.1107002-5-masahiroy@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Alistair Popple <apopple@nvidia.com> writes:
 
-> On Sun, Jun 29, 2025 at 07:28:50PM +0800, Huang, Ying wrote:
->> David Hildenbrand <david@redhat.com> writes:
->> 
->> > On 18.06.25 20:48, Zi Yan wrote:
->> >> On 18 Jun 2025, at 14:39, Matthew Wilcox wrote:
->> >> 
->> >>> On Wed, Jun 18, 2025 at 02:14:15PM -0400, Zi Yan wrote:
->> >>>> On 18 Jun 2025, at 13:39, David Hildenbrand wrote:
->> >>>>
->> >>>>> ... and start moving back to per-page things that will absolutely not be
->> >>>>> folio things in the future. Add documentation and a comment that the
->> >>>>> remaining folio stuff (lock, refcount) will have to be reworked as well.
->> >>>>>
->> >>>>> While at it, convert the VM_BUG_ON() into a WARN_ON_ONCE() and handle
->> >>>>> it gracefully (relevant with further changes), and convert a
->> >>>>> WARN_ON_ONCE() into a VM_WARN_ON_ONCE_PAGE().
->> >>>>
->> >>>> The reason is that there is no upstream code, which use movable_ops for
->> >>>> folios? Is there any fundamental reason preventing movable_ops from
->> >>>> being used on folios?
->> >>>
->> >>> folios either belong to a filesystem or they are anonymous memory, and
->> >>> so either the filesystem knows how to migrate them (through its a_ops)
->> >>> or the migration code knows how to handle anon folios directly.
->> >
->> > Right, migration of folios will be handled by migration core.
->> >
->> >> for device private pages, to support migrating >0 order anon or fs
->> >> folios
->> >> to device, how should we represent them for devices? if you think folio is
->> >> only for anon and fs.
->> >
->> > I assume they are proper folios, so yes. Just like they are handled
->> > today (-> folios)
->
-> Yes, they should be proper folios.
 
-So, folios include file cache, anonymous, and some device private.
+On 6/24/25 8:04 AM, Masahiro Yamada wrote:
+> The current menu_get_parent_menu() does not always return the parent
+> menu; if the given argument is itself a menu, it returns that menu.
+> 
+> Rename this function to better reflect this behavior.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
->> > I was asking a related question at LSF/MM in Alistair's session: are
->> > we sure these things will be folios even before they are assigned to a
->> > filesystem? I recall the answer was "yes".
->> >
->> > So we don't (and will not) support movable_ops for folios.
->> 
->> Is it possible to use some device specific callbacks (DMA?) to copy
->> from/to the device private folios (or pages) to/from the normal
->> file/anon folios in the future?
->
-> I guess we could put such callbacks on the folio->pgmap, but I'm not sure why
-> we would want to. Currently all migration to/from device private (or coherent)
-> folios is managed by the device, which is one of the features of ZONE_DEVICE.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-Yes.  The is the current behavior per my understanding too.
+Thanks.
 
-> Did you have some particular reason/idea for why we might want to do this?
+> ---
+> 
+>  scripts/kconfig/conf.c   | 2 +-
+>  scripts/kconfig/lkc.h    | 2 +-
+>  scripts/kconfig/menu.c   | 8 +++++++-
+>  scripts/kconfig/qconf.cc | 6 +++---
+>  4 files changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+> index 8abe57041955..a7b44cd8ae14 100644
+> --- a/scripts/kconfig/conf.c
+> +++ b/scripts/kconfig/conf.c
+> @@ -594,7 +594,7 @@ static void check_conf(struct menu *menu)
+>  		default:
+>  			if (!conf_cnt++)
+>  				printf("*\n* Restart config...\n*\n");
+> -			rootEntry = menu_get_parent_menu(menu);
+> +			rootEntry = menu_get_menu_or_parent_menu(menu);
+>  			conf(rootEntry);
+>  			break;
+>  		}
+> diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+> index fbc907f75eac..5cc85c3d4aaa 100644
+> --- a/scripts/kconfig/lkc.h
+> +++ b/scripts/kconfig/lkc.h
+> @@ -97,7 +97,7 @@ bool menu_is_empty(struct menu *menu);
+>  bool menu_is_visible(struct menu *menu);
+>  bool menu_has_prompt(const struct menu *menu);
+>  const char *menu_get_prompt(const struct menu *menu);
+> -struct menu *menu_get_parent_menu(struct menu *menu);
+> +struct menu *menu_get_menu_or_parent_menu(struct menu *menu);
+>  int get_jump_key_char(void);
+>  struct gstr get_relations_str(struct symbol **sym_arr, struct list_head *head);
+>  void menu_get_ext_help(struct menu *menu, struct gstr *help);
+> diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+> index 7d48a692bd27..ccb690bbf05d 100644
+> --- a/scripts/kconfig/menu.c
+> +++ b/scripts/kconfig/menu.c
+> @@ -575,7 +575,13 @@ const char *menu_get_prompt(const struct menu *menu)
+>  	return NULL;
+>  }
+>  
+> -struct menu *menu_get_parent_menu(struct menu *menu)
+> +/**
+> + * menu_get_menu_or_parent_menu - return the parent menu or the menu itself
+> + * @menu: pointer to the menu
+> + * return: the parent menu. If the given argument is already a menu, return
+> + *         itself.
+> + */
+> +struct menu *menu_get_menu_or_parent_menu(struct menu *menu)
+>  {
+>  	enum prop_type type;
+>  
+> diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+> index 68640e507ec4..dc056b0a8fde 100644
+> --- a/scripts/kconfig/qconf.cc
+> +++ b/scripts/kconfig/qconf.cc
+> @@ -577,7 +577,7 @@ void ConfigList::setParentMenu(void)
+>  	oldroot = rootEntry;
+>  	if (rootEntry == &rootmenu)
+>  		return;
+> -	setRootMenu(menu_get_parent_menu(rootEntry->parent));
+> +	setRootMenu(menu_get_menu_or_parent_menu(rootEntry->parent));
+>  
+>  	QTreeWidgetItemIterator it(this);
+>  	while (*it) {
+> @@ -1540,7 +1540,7 @@ void ConfigMainWindow::setMenuLink(struct menu *menu)
+>  	switch (configList->mode) {
+>  	case singleMode:
+>  		list = configList;
+> -		parent = menu_get_parent_menu(menu);
+> +		parent = menu_get_menu_or_parent_menu(menu);
+>  		if (!parent)
+>  			return;
+>  		list->setRootMenu(parent);
+> @@ -1551,7 +1551,7 @@ void ConfigMainWindow::setMenuLink(struct menu *menu)
+>  			configList->clearSelection();
+>  			list = configList;
+>  		} else {
+> -			parent = menu_get_parent_menu(menu->parent);
+> +			parent = menu_get_menu_or_parent_menu(menu->parent);
+>  			if (!parent)
+>  				return;
+>  
 
-No.  Just want to check whether there are some requirements for that.  I
-think that it's just another way to organize code.
-
----
-Best Regards,
-Huang, Ying
+-- 
+~Randy
 
