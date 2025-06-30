@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-709144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BFDAED9CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:27:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58E1AED99C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94FEF176753
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AC5175F30
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADDE258CC4;
-	Mon, 30 Jun 2025 10:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B484254864;
+	Mon, 30 Jun 2025 10:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fPfesW2j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH4rrLza"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CE72580FB
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD81A34CF5;
+	Mon, 30 Jun 2025 10:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751279206; cv=none; b=Hfp1fPJqEazCTmBR+MAulac/V0FrWILJ3jCN17zIMnUuCNGEbKHVfdbBJuJtm+GuXW367YzeKOC4o2ML3KgQpNbPjJdntVynVfjnt5GAk0yUgMZ7K153JILfCAR9g4cr1HSZE7wKuOlDu4BNnUNqho1zA9kwapeBArChpLBJ6lc=
+	t=1751278768; cv=none; b=UZuPhTgC3M4uhKeshbWl4KIFcQKKTmMsAE4iebGfeLmC6x9bmUJyE52JSyBOwom6WBCL+tCxgucokbaCvIGBGo+0sTGjdEXzbcWw6Ween59/2GXE5PMO5d5k08kZMUfxSO70rIQ4YSgn2reNnzT5zcqMoZsuK8M99O7tVKWU9yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751279206; c=relaxed/simple;
-	bh=lP9cZ5ZVd213PgYvBxRjMQzsYmVuhyx9RNU0p02YOoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvGBYdR4igamwkdRt+Nxa4MSUxyAynSYXLy7eHEmD/uiHB6QUKlWNo/xZq6c8YHrEW1QwiKb+sclI1jQ0nLN5X8oS+o7V8Qw+NJyrD3Zv667OnHjeWl5/2+PLnfKfgDpHdKO4nuOABn+lJyMzEn/apAOWNbAvxKxqD4uFedL74w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fPfesW2j; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751279206; x=1782815206;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lP9cZ5ZVd213PgYvBxRjMQzsYmVuhyx9RNU0p02YOoU=;
-  b=fPfesW2j89FgU9T2NtE++pAB/wY7F9nYLJSE8cu/g+95rKdoM6I2GP5L
-   X82b82zVfgnXmGANbsRoueChkG/d0wVRI2DmMgpjzXZJ5aT5z3W5tbsNH
-   TZkJj1JLT/1SnOJsf2+F9mV9y+NDJU7dX+O4nLqthOrDClXLAUZAcrV1y
-   X43o/LFVCR9cG8Shh5C9ZAh99GzB6noLH9nZu3dQq5sQp30cNBO3IEy6o
-   TmQ34mRsd98Ij3ef+Oc0oVEm6rj949xqcEcIVXtH/A+NmAPvQt/KJ9urj
-   h5gtmzHIe9kVD4DoYhrew3ee271Tv5nCXHqw+PjMuKfxYjCfBd8R7FxT0
-   A==;
-X-CSE-ConnectionGUID: CZh3T9sfRweohpKnXch1DQ==
-X-CSE-MsgGUID: DnPl9310TDWt9o/UJyptyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53649399"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="53649399"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:26:45 -0700
-X-CSE-ConnectionGUID: 6QCD6s3aRCuhF1tFyrQ++Q==
-X-CSE-MsgGUID: ifNOHc7BR3KyP2lv8WUJbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="152900050"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa006.jf.intel.com with ESMTP; 30 Jun 2025 03:26:41 -0700
-Date: Mon, 30 Jun 2025 18:18:50 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "jgg@nvidia.com" <jgg@nvidia.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"will@kernel.org" <will@kernel.org>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
-	"aik@amd.com" <aik@amd.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Xu, Yilun" <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 2/5] iommufd: Destroy vdevice on idevice destroy
-Message-ID: <aGJkitx6wjfQ888t@yilunxu-OptiPlex-7050>
-References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
- <20250627033809.1730752-3-yilun.xu@linux.intel.com>
- <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1751278768; c=relaxed/simple;
+	bh=o0/xe/4JWB/9UT/btiB4gjB1qHYPUz0dQhHO847HiS8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvwiOM9mCY+MXNdrTTovhIAbKSPMrQKGiXaeJvvBrsXYspoaCDaXwrUfsRiziKK5xjJ9TwDxUTUpYi8f++C+3BZcfKyA8osm9AQfkBm6NEHAG4+huHUgS/+28KPv31uOLDJFuim+JM2GF+3y9IsEYrMIMFRx4jKqXPkaIdPTvMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH4rrLza; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a6e2d85705so2353963f8f.0;
+        Mon, 30 Jun 2025 03:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751278765; x=1751883565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYytyjnVKf5f7mpQA+qzmKhKa7r+QZu71oHHNPXV1Qw=;
+        b=PH4rrLzaXKduyyz1sE7QJSrtQidLp55BHHxfSTu/+1d4Ziix6S0E7za1BPx5yxzHtf
+         tSNNQGLpNj29QmqQ8azlZ2aLlyC+NOmBBLfzPhcmSNY0lg36XBSghzgfnPnkSzdMJUfY
+         o5ybge26veLvYTk2VetN+2ZRHsiXSJ9Y6n42mmyGGyiJG0k3yzmxLL8FHN+9YEhPAUQ1
+         T5zTnpP/KMoeNKlVvY8m9WzBNhoncuEF/iwZKH/cAmgWXMj4WptXG3u8Lwj95yEx6wgB
+         W01L+OTO+TEF1y7SiG1BWfoZN9UIcmEEbzxuPA31Z8dEQ1WiW9PwyD9lNvT5fnk8BEVC
+         5GAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751278765; x=1751883565;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YYytyjnVKf5f7mpQA+qzmKhKa7r+QZu71oHHNPXV1Qw=;
+        b=oQ87e7oZCud8G1K23FvX8ZKc/zXNfx5SS3Zv5QQ/CmhChKWnxfU7u4mYVc63MG5kBC
+         rVdtKy9yUfB2qyi5P93jYBYG11jdIWFptHBtU4Kt+j5VOpreaJslmhufEMTb+zkRfm5Z
+         m7QgtaaBCq0j+93GjOAcXo8Po05aBN7nF9OQ4dfF48NevESIjnN+v4a9aF1+CDiawF02
+         6nJD3uFrzM9ZgjJBzTDJznVC2PgDo1YHzV5kgT0QUdVz0e7NSvDo35rzPMSvTQa/rPDL
+         MqkIbWmq/xtZGFExfNt3KCwIxV/j6RRGllgwyAc4sFOR2k/Pa5SmGGP/JITq6ZcDI9O8
+         Zr1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrUC90QHjDgzS5MDqRmcnkwFJhtpOw1yFoXcAkWHjuSg99UpC+hUJoHesYfWZq9TOhiRNz8cqIZzO7@vger.kernel.org, AJvYcCX1VSJ3as1cVzP2tO9QAIKohXMOOB0U5BaZOuwrM7p39jA7ry9wI3FovXw/T6I8g/ZLXkBSlJW+ghv0QQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6CSvMqekPyidNJdjjweYE2Mnux/Xu8nBxUbjfGtmPwHxKioV1
+	24I6XzsdWrkx16cM1Ym6aWq2UuNEyEIi/1D0tUswwkt2y+iUdyLvzXnj
+X-Gm-Gg: ASbGncuHeguvm++lNXGXlKd/QqBHu99s3Z114Tq2OjMpAJwqCfI/m4/+X/Axxhh3u77
+	HHBwQy5OSVSZNmqUIx7J8TyIESuDuR/5iLkq73rvTJ6tcFnsSE0wSUZ0b0x/lJsLrIwZsPYC8K+
+	703AdnUr+O3xxOmk1v0+PDThcwbOcC2tjty20PKwSfrutcAW05DpNwmD9j62Pf1vN7lUqt20jCY
+	IRsLKfL/Ebw7PgYwhCeWPUZAhFGv6aqaqtrRXyfEKVXoe5re9QVHLN7zbsxJh2apeHN+kknZsgp
+	PwOkTOiaWv0jxr0zdl81GTMFmPDognppsDV9fqztikVxXGn7UsIoTKNfI+18IXq7mYFClLNrpxV
+	3MsI+LDGKHpJAD+LWwOfLIjIYwmipb5I=
+X-Google-Smtp-Source: AGHT+IHpTZWldZLghotIau2Mlg0lfLxdb5ZY7nUx9Y4IMUxtmaELb1sia+Q2PUSneM7iCe6V3UVM0g==
+X-Received: by 2002:a05:6000:20c4:b0:3aa:c95b:d1d9 with SMTP id ffacd0b85a97d-3aac95bd1ddmr4729133f8f.6.1751278764716;
+        Mon, 30 Jun 2025 03:19:24 -0700 (PDT)
+Received: from Ansuel-XPS. (host-87-3-254-137.retail.telecomitalia.it. [87.3.254.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c8013b3sm9999344f8f.39.2025.06.30.03.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 03:19:24 -0700 (PDT)
+Message-ID: <686264ac.df0a0220.feace.3044@mx.google.com>
+X-Google-Original-Message-ID: <aGJkqsNwztdjl-ow@Ansuel-XPS.>
+Date: Mon, 30 Jun 2025 12:19:22 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [PATCH v18] pwm: airoha: Add support for EN7581 SoC
+References: <20250626224805.9034-1-ansuelsmth@gmail.com>
+ <aF5dHDr8yDSKlp5j@smile.fi.intel.com>
+ <685e6544.5d0a0220.20cf55.9440@mx.google.com>
+ <aF5xrHkTr8Tb71ZH@smile.fi.intel.com>
+ <685e73cf.df0a0220.214b10.9998@mx.google.com>
+ <aF544lt-9YJq8r0y@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,68 +96,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BL1PR11MB52712CE938B57E41C34580908C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+In-Reply-To: <aF544lt-9YJq8r0y@smile.fi.intel.com>
 
-On Mon, Jun 30, 2025 at 06:27:51AM +0000, Tian, Kevin wrote:
-> > From: Xu Yilun <yilun.xu@linux.intel.com>
-> > Sent: Friday, June 27, 2025 11:38 AM
+On Fri, Jun 27, 2025 at 01:56:34PM +0300, Andy Shevchenko wrote:
+> On Fri, Jun 27, 2025 at 12:34:49PM +0200, Christian Marangi wrote:
+> > On Fri, Jun 27, 2025 at 01:25:48PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Jun 27, 2025 at 11:32:46AM +0200, Christian Marangi wrote:
+> > > > On Fri, Jun 27, 2025 at 11:58:04AM +0300, Andy Shevchenko wrote:
+> > > > > On Fri, Jun 27, 2025 at 12:47:53AM +0200, Christian Marangi wrote:
+> 
+> ...
+> 
+> > > > > > +	/* Global mutex to protect bucket used refcount_t */
+> > > > > > +	struct mutex mutex;
+> > > > > 
+> > > > > This makes a little sense. Either you use refcount_t (which is atomic) or
+> > > > > use mutex + regular variable.
+> > > > 
+> > > > Using a regular variable I lose all the benefits of refcount_t with
+> > > > underflow and other checks.
+> > > 
+> > > Then drop the mutex, atomic operations do not need an additional
+> > > synchronisation. Btw, have you looked at kref APIs? Maybe that
+> > > would make the intention clearer?
 > > 
-> > +static void iommufd_device_remove_vdev(struct iommufd_device *idev)
-> > +{
-> > +	struct iommufd_vdevice *vdev;
-> > +
-> > +	mutex_lock(&idev->igroup->lock);
-> > +	/* vdev has been completely destroyed by userspace */
-> > +	if (!idev->vdev)
-> > +		goto out_unlock;
-> > +
-> > +	vdev = iommufd_get_vdevice(idev->ictx, idev->vdev->obj.id);
-> > +	if (IS_ERR(vdev)) {
-> > +		/*
-> > +		 * vdev is removed from xarray by userspace, but is not
-> > +		 * destroyed/freed. Since iommufd_vdevice_abort() is
-> > reentrant,
-> > +		 * safe to destroy vdev here.
-> > +		 */
-> > +		iommufd_vdevice_abort(&idev->vdev->obj);
-> > +		goto out_unlock;
-> > +	}
+> > It's needed for
+> > 
+> > +       mutex_lock(&pc->mutex);
+> > +       if (refcount_read(&pc->buckets[bucket].used) == 0) {
+> > +               config_bucket = true;
+> > +               refcount_set(&pc->buckets[bucket].used, 1);
+> > +       } else {
+> > +               refcount_inc(&pc->buckets[bucket].used);
+> > +       }
+> > +       mutex_unlock(&pc->mutex);
+> > 
+> > the refcount_read + refcount_set.
 > 
-> let's add a comment that vdev is still freed in iommufd_destroy()
-> in this situation.
+> Which is simply wrong. Nobody should use atomics in such a way.
+> Imagine if somebody wants to copy something like this in their
+> code (in case of no mutex is there), they most likely won't notice
+> this subtle bug.
+>
 
-Yes.
+Yes I understand that someone might think the additional mutex can be
+""optional""
 
+> > As you explained there might be case where refcount_read is zero but nother
+> > PWM channel is setting the value so one refcount gets lost.
 > 
-> > -void iommufd_vdevice_destroy(struct iommufd_object *obj)
-> > +void iommufd_vdevice_abort(struct iommufd_object *obj)
-> >  {
-> >  	struct iommufd_vdevice *vdev =
-> >  		container_of(obj, struct iommufd_vdevice, obj);
-> >  	struct iommufd_viommu *viommu = vdev->viommu;
-> > +	struct iommufd_device *idev = vdev->idev;
-> > +
-> > +	lockdep_assert_held(&idev->igroup->lock);
-> > +
-> > +	/*
-> > +	 * iommufd_vdevice_abort() could be reentrant, by
-> > +	 * iommufd_device_unbind() or by iommufd_destroy(). Cleanup only
-> > once.
-> > +	 */
-> > +	if (!viommu)
-> > +		return;
+> Right, because you should use refcount_inc_and_test() and initialise it
+> to -MAX instead of 0. Or something like this.
 > 
-> Just check idev->vdev, to be consistent with the other path.
 
-I think there is problem here. From your comments above, vdev could be
-aborted/destroyed by iommufd_destroy() again *after* idev is freed.
-That means in iommufd_vdevice_abort/destroy(), usage of vdev->idev or
-idev->vdev or vdev->idev->igroup->lock may be invalid.
+Mhhh I think API for _inc_and_test doesn't currently exist and I don't
+feel too confident implementing them currently.
 
-I need to reconsider this, seems we need a dedicated vdev lock to
-synchronize concurrent vdev abort/destroy.
+> > kref I checked but not useful for the task.
+> 
+> Okay.
+> 
+> > The logic here is
+> > 
+> > - refcount init as 0 (bucket unused)
+> > - refcount set to 1 on first bucket use (bucket get configured)
+> > - refcount increased if already used
+> > - refcount decreased when PWM channel released
+> > - bucket gets flagged as unused when refcount goes to 0 again
+>
 
-Thanks,
-Yilun
+Do you think I should bite the bullet and just drop using refcount and
+implement a simple int variable protected by a mutex?
 
+-- 
+	Ansuel
 
