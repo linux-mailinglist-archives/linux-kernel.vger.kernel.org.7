@@ -1,169 +1,135 @@
-Return-Path: <linux-kernel+bounces-709779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B9BAEE253
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D935AEE294
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4971A189756C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C883B592D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549D128F53F;
-	Mon, 30 Jun 2025 15:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A3828FAA1;
+	Mon, 30 Jun 2025 15:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ab5IZRmw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="MnqXWOgg"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAFA28DF2F;
-	Mon, 30 Jun 2025 15:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB7E28A1D4;
+	Mon, 30 Jun 2025 15:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751297062; cv=none; b=cjLCNiwJN/m6LcPFJPTtXTwUmDK1hhpD9SmL9HwATXEnpQdF7u/tO54fC/oSzM3jI3jmk2A2Zb20SwxtAHuvzhTyt7Ytjg9FFuin0+vNMb0Ub3oXHMbC5QeClWRPqlLjFrTU8cfX5U+GvZGtMSKPnTEZJTljP0cHsT9TBWFdZdE=
+	t=1751297571; cv=none; b=frCN7F50NT7Lv89lVHXybBDPqzHM5PfRkCJtQ1FX3LB4YYjS/1vIyOGY3qZUUChGhcO0nn9NnO0RiVE5JP+9erP4mTfjM0JNYU2xIOSjUpmgKyCgAM1YaKwqZDD2TPsxnegO0rkGxUeKRqQODfMAMsQueNT5mxqQNMN1nKNVt54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751297062; c=relaxed/simple;
-	bh=ZmxA/O+WlPMqkZNTI4ye++2c81KIMiHo9zxGKmnzRNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaQg5K9Kq9hE0SsULTFLGJYNevF/kvKf9lV5idi3/ZL/c+M4Bk1V1XaltOFXSNKVxnLiVjiMlvc8ILWKwbs00b97e851SbNIb6uTNng1Ivqs7pcXJzeX8xqAa0rbT1xnx+2Ejr6Dis9MnvvbzEZaPokGsvbPeAfDTsveOhtXxOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ab5IZRmw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8V2Ia000758;
-	Mon, 30 Jun 2025 15:23:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=6FceECBbuO6Z4x2Rp39hcL1hfD2xOI
-	56xCXiWcKK9WA=; b=Ab5IZRmwLvmMk3AiZ89wAAQHApO3HRzY/FKi33YccoEVV8
-	62jDs8lp3GuMhnbp5PvwJeVzIOTdSyIpma+gS0Ugks/c8ATcOXl8/K0Lujz+g0Ad
-	dM1SgFXrBuUMrFqGRGP0yd+oVE8+JDooGZJbbiLjhPut5GCRrRHFIebtiR9AW6Jx
-	+jqh3I+r86Dc9UH2RwXLLF7G0y4EGIwXIEG+8EQguDuTyxyDmyjszA0gk24KkYF+
-	WMQi8/9cdZV76CjE0Ytj99DnJbIc8orRNj1BD/lhbit4VZ05IUXEHPr+1f9T4Iaf
-	PZjXXX61nBxSuq0zpSNKKHaNRcKWSqGn9BNz7ZPg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5tt2hv1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 15:23:21 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 55UFKkJT001633;
-	Mon, 30 Jun 2025 15:23:20 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j5tt2hut-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 15:23:20 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55UF6Jrx006928;
-	Mon, 30 Jun 2025 15:23:19 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jvxm687n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 15:23:19 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55UFNFi141091496
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Jun 2025 15:23:15 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E3012004E;
-	Mon, 30 Jun 2025 15:23:15 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EF2520043;
-	Mon, 30 Jun 2025 15:23:14 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 30 Jun 2025 15:23:14 +0000 (GMT)
-Date: Mon, 30 Jun 2025 17:23:12 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
-        glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
-        vincenzo.frascino@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org,
-        kernel@xen0n.name, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-        alex@ghiti.fr, borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        chris@zankel.net, jcmvbkbc@gmail.com, akpm@linux-foundation.org,
-        nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
-        justinstitt@google.com, arnd@arndb.de, rppt@kernel.org,
-        geert@linux-m68k.org, mcgrof@kernel.org, guoweikang.kernel@gmail.com,
-        tiwei.btw@antgroup.com, kevin.brodsky@arm.com, benjamin.berg@intel.com,
-        kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-mm@kvack.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 01/11] kasan: unify static kasan_flag_enabled across
- modes
-Message-ID: <aGKr4DgJ4w3TfJm1@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20250626153147.145312-1-snovitoll@gmail.com>
- <20250626153147.145312-2-snovitoll@gmail.com>
- <aGKDhPBgDv2JjJZr@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <20250630143934.15284Caf-hca@linux.ibm.com>
+	s=arc-20240116; t=1751297571; c=relaxed/simple;
+	bh=T5lSKSr/aPOKJcx+aLJlz6q2pyOBR4NaNMddccYdZtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aUueSX0p8zAmrriGdCr46hY2Ucc/op8oaxFDSr3BakMRYCyasymAitSRisWrX+F+dy4h19rMEG0ez8sDJgYuDHT5loP8LMSqBvDAlxKuDjz8ussPNHdFO5Wt215UBNKlQ/dyWazqZDNQvVlyV445WZGGCxjzWwbxI7riKYp2RUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=MnqXWOgg reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4bW91K5Vlnz1DDh0;
+	Mon, 30 Jun 2025 17:24:05 +0200 (CEST)
+Received: from [10.10.15.6] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4bW91K1FcDz1DNGp;
+	Mon, 30 Jun 2025 17:24:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1751297045;
+	bh=TCuz8wYG0OMRJ5WGli0CVDLwlocoMhb5D/fgiqVnow0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=MnqXWOgg+jJ+lZh0c5wrl4nReL6iOScU6lufaG3dZAGHiHfytBMOHPZqvRHbD2Ch+
+	 m3U5qEx3lGc07rftyLldqu3P2rEUhxMgpqRgnKbqNB6rbm8ZPGl7Z5GRnNFl54NULj
+	 cYGVNSDVLDwWcXicbCo0wu4QY5q7gNpubXjqI4du0EyF4EA2MUgnuuZsd5YJi0CMQO
+	 OI+x59rBYIg79jAvqHYkOBQrXlm9kSd8nSZSQW7LLcrL0TtyRDXliUDBjbg3ybYuXg
+	 MFrtWV18MT54DALHfihwuneTrj6shn+LnBXam7JCPVDFdqwVyx38JJRsKW+4/r+53h
+	 OSYvaYC3MnG0A==
+Message-ID: <dfd0a228-940d-4c30-b07e-9f3910e3aeaf@gaisler.com>
+Date: Mon, 30 Jun 2025 17:24:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630143934.15284Caf-hca@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: z4_YQR3yiIx6CG78lyz9FOWfFKu_sVzX
-X-Authority-Analysis: v=2.4 cv=UtNjN/wB c=1 sm=1 tr=0 ts=6862abe9 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=DoNX2vE5F4BLjyZpJB8A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: tSMJYZyFhxN0ELYUCpeHLTTc07NMO3uI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDEyNiBTYWx0ZWRfX8gNfFxZTXHKZ dZ80+g69PboCFvZ7mBnOUfK0bCwcv0dSYRqbRWUQ19q/nN1wI6TuhuYqwHy593nbcEA7jlbJwZD 77dnrz9oUStk3kQiVeqmPXKGtKxsdBJ2rMDUHOTQC4GBaAbPZwrp6WqFZf9dFe5sx5xhOKbWCy/
- NwZq+dxl31GEeh7qeRCnnHi4Qxd16CxChbxAbT7vyTZGkfYmt2gzAZsQ9WVivWWtyFljm9LUYUu /A210g10AJ2Cdlfpn7GA0E0mvRxrp+tSiKfaUfSUuPHgdjtBlrSqzSrHD/D2Xsqd7rUwWfMIZjW fInaitcISkEwByhpED+nxsY2XtLUIBynWgUbXHjHc6nBJWSN0rrJzyr4x5ElJH4AxMuQUcAIOs7
- 1rhZuhkKthJv/kG2udE/dGMrx+Msfn4q3zQeVCOUgtPKntnHQoMJd3LZcLGKdzNOHbuQfZDm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_04,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300126
+User-Agent: Mozilla Thunderbird
+Subject: Re: kernel/fork.c:3088:2: warning: clone3() entry point is missing,
+ please fix
+To: Arnd Bergmann <arnd@arndb.de>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ kernel test robot <lkp@intel.com>, Philip Li <philip.li@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-sh@vger.kernel.org,
+ Dinh Nguyen <dinguyen@kernel.org>,
+ Simon Schuster <schuster.simon+binutils@siemens-energy.com>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ Christian Brauner <brauner@kernel.org>
+References: <202506282120.6vRwodm3-lkp@intel.com>
+ <2ef5bc91-f56d-4c76-b12e-2797999cba72@app.fastmail.com>
+ <57101e901013a8e6ff44e10c93d1689490c714bf.camel@physik.fu-berlin.de>
+ <46c6b0f6-6155-4366-9cbf-9fbbfb95ce30@app.fastmail.com>
+ <5375b5bb7221cf878d1f93e60e72807f66e26154.camel@physik.fu-berlin.de>
+ <ccf937cb-a139-4a07-aa47-4006b880b025@app.fastmail.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <ccf937cb-a139-4a07-aa47-4006b880b025@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 30, 2025 at 04:39:34PM +0200, Heiko Carstens wrote:
-> > > +/*
-> > > + * Initialize Generic KASAN and enable runtime checks.
-> > > + * This should be called from arch kasan_init() once shadow memory is ready.
-> > > + */
-> > > +void __init kasan_init_generic(void)
-> > > +{
-> > > +	static_branch_enable(&kasan_flag_enabled);
-> > 
-> > s390 crashes at this line, when the whole series is applied.
-> > 
-> > FWIW, it looks like kasan is called while its state is not yet finalized.
-> > E.g. whether calling __asan_report_store4_noabort() before kasan_init_generic()
-> > is expected?
+On 2025-06-30 14:07, Arnd Bergmann wrote:
+> On Mon, Jun 30, 2025, at 12:45, John Paul Adrian Glaubitz wrote:
+>> On Mon, 2025-06-30 at 12:02 +0200, Arnd Bergmann wrote:
+>>> Some architectures have custom calling conventions for the
+>>> fork/vfork/clone/clone3 syscalls, e.g. to handle copying all the
+>>> registers correctly when the normal syscall entry doesn't do that,
+>>> or to handle the changing stack correctly.
+>>>
+>>> I see that both sparc and hexagon have a custom clone() syscall,
+>>> so they likely need a custom clone3() as well, while sh and
+>>> nios2 probably don't.
+>>>
+>>> All four would need a custom assembler implementation in userspace
+>>> for each libc, in order to test the userspace calling the clone3()
+>>> function. For testing the kernel entry point itself, see Christian's
+>>> original test case[1].
+>>
+>> Thanks for the explanation. So, I guess as long as a proposed implementation
+>> of clone3() on sh would pass Arnd's test program, it should be good for merging?
 > 
-> It crashes because with this conversion a call to static_branch_enable() is
-> introduced. This one get's called way before jump_label_init() init has been
-> called. Therefore the STATIC_KEY_CHECK_USE() in static_key_enable_cpuslocked()
-> triggers.
+> Yes, Christian's test program should be enough for merging into
+> the kernel, though I would recommend also coming up with the matching
+> glibc patch, in order to ensure it can actually be regression tested
+> automatically, and to use the new features provided by glibc clone3().
 > 
-> This again tries to emit a warning. Due to lack of console support that early
-> the kernel crashes.
+> Right now glibc assumes that clone3() is available on linux-5.3 or
+> higher and uses it to implement the normal clone() in that case,
+> except where the implementation is missing.
 > 
-> One possible solution would be to move the kasan init function to
-> arch/s390/kernel/setup.c, after jump_label_init() has been called.
-> If we want this, is a different question.
-> 
-> It seems to work, so I see no reason for not doing that.
+> I see that at alpha, csky, parisc and microblaze have a kernel
+> implementation in modern Linux versions, but are missing the
+> glibc wrapper for it, as the kernel side was done later without
+> the glibc version. sparc and sh are the only ones with a glibc
+> port that are missing both the kernel and userspace side,
+> while hexagon and nios2 are not currently part of mainline glibc.
 
-IIRC, we wanted to have kasan coverage as early as possible.
-Delaying it past jump_label_init() leaves out pretty big chunk of code?
+Thanks for all the input Arnd! All this will be very good to have at
+hand when looking into implementing and testing it!
 
-> Vasily, since you did nearly all of the KASAN work for s390, do you have any
-> opinion about this?
+I was not aware that clone3 was used under the hood in glibc. Given that
+clone3 is not exposed by glibc to the outside I did not realize that
+glibc would actually use it, so it never got high enough up in the
+priority even though I have been well aware of it being missing.
+
+Stopping the testing of these architectures in lkp because of the
+missing clone3 would be unfortunate and a bit excessive in my view. That
+testing is and has been very useful!
+
+Cheers,
+Andreas
 
