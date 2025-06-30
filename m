@@ -1,106 +1,137 @@
-Return-Path: <linux-kernel+bounces-709430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6B9AEDD9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:55:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E503AEDDB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB257AC10D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DE11898E2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F252289810;
-	Mon, 30 Jun 2025 12:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B8628B408;
+	Mon, 30 Jun 2025 12:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GGDMa+TJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Esr/VsQn"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC27235074
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0127027726;
+	Mon, 30 Jun 2025 12:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288101; cv=none; b=D2wRsYlIjU+ZTwfy0Bj54DpU7i3o0u9WlDfaDucarVD20vDRGiguNMaWj1pXEnICjmxuC4ScmD6BxWJp50bxUYiU9kXjn+Qdt5saC2r706aqS7Rz6F3I3ANCZgip3+3OeE/bOsM2GtwxPt9hIUjfwChMtoEw4fn1PYv8+I4aRzM=
+	t=1751288296; cv=none; b=fSyOnm9hmTNI8rLaa9cmjYrpvT1sL2XmQKqZgRthtiUCrgbiyehk7lDttsgv51iqes8WtLZGhwy8oo01vgcvqrBlRGpnH/6ZK4NCXrtIE7Vn29eapzQNtHTlTkLmLOmGkh5WkSbgTgnSGKmiKGcs6e8f+4Xz+rCxN6ZwsUDWVhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288101; c=relaxed/simple;
-	bh=120QU6A9t6aYG5PTSl23sa0udVq59hsYqgehlJS2Kjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Msr2RoSH1ttl3+o4m0J9YuPdV/eJvJzQ3QAGpEGanTeebi8WoluZuAruZiOTfBVZpmcdi2UvrAHm20BmNRq4GcAyN70xavwaZStN8iCIjV2LMSeHMTKE2MoZPtjHgST85bi4HzoKGyDPGJ03ZamRAnAYXCx7pf7YVAFMzYTawgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GGDMa+TJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44697C4CEE3;
-	Mon, 30 Jun 2025 12:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751288100;
-	bh=120QU6A9t6aYG5PTSl23sa0udVq59hsYqgehlJS2Kjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGDMa+TJxWZMYFieaYGSLwXDroThg4x90nLKbB7mSCF2xlZosON+SY+Hey18d4HSk
-	 C3iJQXpeFCItH5/v81RYgEodKrCjzAevrvdTn4kAgRBCXmF9/rLzaWue8q+pjN3cUi
-	 CfXPuxm393Gr0xiL4SWYBs4OuaOnXoH9i9OnTdo8=
-Date: Mon, 30 Jun 2025 14:54:57 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: "Abliyev, Reuven" <reuven.abliyev@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [char-misc-next v2] mei: bus: fix device leak
-Message-ID: <2025063042-usual-acutely-0d3b@gregkh>
-References: <20250624110520.1403597-1-alexander.usyskin@intel.com>
- <2025062836-twentieth-kudos-1148@gregkh>
- <CY5PR11MB63664DE1B93F480CCC199D8FED46A@CY5PR11MB6366.namprd11.prod.outlook.com>
- <2025063022-riverbed-country-5c2b@gregkh>
- <CY5PR11MB6366BBFF44C7F21C24292590ED46A@CY5PR11MB6366.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1751288296; c=relaxed/simple;
+	bh=T7kfgnNMrQ5va5/Q6TdW3ICribflYFmyl+hiADpXtWo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=suV2znrTq8JlT8HQirLuBfE6xl07DCAIKUZCQIRf9sPgpQGgKQXw0JWg4ops1Du6YAuPRuU22C7JySd6EIAa2ZylBH7CkJ0i6DWFIB39GRNkOL60qZk89ZT/SS0foFtyV3vSVIrl9sJa+ioLLH1RVFuINuu109/07T5KyHEWvBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Esr/VsQn; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UAX7hQ009897;
+	Mon, 30 Jun 2025 14:57:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=uzwpacVr2LDq5kXvxCDUAt
+	NWqyaw9cIFdQ9xmj0ioPk=; b=Esr/VsQn/f4180soFFWYt9BFaYfONy5OyL4uY7
+	bWHr81wKH7xj8/aPYzLmpbHVWKiBZS6MKchZJWGmyolwKMvl+9Lu5jl4Qa8wiNz7
+	BxUwJ2/RTmqnktLySHmr3zDI8RVftAuqg1BZ18tZPJ9+zjj46CcAe6G9diP0l6lk
+	1cM9NXXntZHnb2gJg4tOdW7LWmMOwV8Aggc/Wo+lUFDz7VVATsqEs6F28eev9ecT
+	ujfuAjQK4w7oiP8XNJ7i61nxhHmhr868Ytoj8RBXxS/OJMAfP8PzJE113WZm+9Vo
+	8oSILwgrWBYmoG7K/AhxR+L16nU4B0pAvg8OCQtMwP2Drhxw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j79h7b9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 14:57:53 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 962744004D;
+	Mon, 30 Jun 2025 14:56:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 80204B42908;
+	Mon, 30 Jun 2025 14:55:23 +0200 (CEST)
+Received: from localhost (10.252.20.7) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
+ 2025 14:55:23 +0200
+From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Subject: [PATCH v3 0/3] Fix STM32 I2C dma operations
+Date: Mon, 30 Jun 2025 14:55:12 +0200
+Message-ID: <20250630-i2c-upstream-v3-0-7a23ab26683a@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6366BBFF44C7F21C24292590ED46A@CY5PR11MB6366.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADCJYmgC/12Oyw6CMBQFf4V0bUlft4Ar/8O4wLZIF1DSi42G8
+ O8W3IjLOclMzkLQRe+QnIuFRJc8+jBmkKeCmL4dH456m5kIJoCBqKgXhj4nnKNrB+rgrhtgXEL
+ TkqxM0XX+teeut8y9xznE915PfFu/Ic31MZQ4ZVQJKy3ISjkNly4gljiXJgxkSyXxo///SCLrt
+ eEKhFQ1t+aor+v6AZ5tRpHpAAAA
+X-Change-ID: 20250527-i2c-upstream-e5b69501359a
+To: Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Alain Volmat
+	<alain.volmat@foss.st.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "M'boumba Cedric
+ Madianga" <cedric.madianga@gmail.com>,
+        Wolfram Sang <wsa@kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        <linux-i2c@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>,
+        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
+	<clement.legoffic@foss.st.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
 
-On Mon, Jun 30, 2025 at 11:27:14AM +0000, Usyskin, Alexander wrote:
-> > Subject: Re: [char-misc-next v2] mei: bus: fix device leak
-> > 
-> > On Mon, Jun 30, 2025 at 10:52:08AM +0000, Usyskin, Alexander wrote:
-> > > > Subject: Re: [char-misc-next v2] mei: bus: fix device leak
-> > > >
-> > > > On Tue, Jun 24, 2025 at 02:05:20PM +0300, Alexander Usyskin wrote:
-> > > > > The bus rescan function creates bus devices for all clients.
-> > > > > The fixup routine is executed on all devices, unneeded
-> > > > > devices are removed and fully initialized once set
-> > > > > is_added flag to 1.
-> > > >
-> > > > I don't understand why the mei bus is so special that it has to have
-> > > > this type of flag, when no other bus has that for its devices.  The bus
-> > > > code should know if the device has been properly added or not, if not,
-> > > > then no release function can be called and the structure isn't even
-> > > > viable to be used or touched at all.
-> > > >
-> > > > So why is this needed?
-> > >
-> > > It seems that is_added can be replaced by device_is_registered().
-> > 
-> > Again, why do you need to track that?
-> > 
-> > But yes, that should work, although using it is usually a sign that
-> > something is a bit broken in the design.
-> > 
-> 
-> Mei bus uses device_initialize() and device_add() pair.
-> After device_initialize() there are different hooks and filters called,
-> that may lead to dropping the device or adding with device_add().
-> Thus, we should track if device_add() is called when destroying the device.
-> Not sure if this can be re-architected to use device_register().
+This patch series aims to fix some issues inside the driver's DMA
+handling.
+It also uses newer I2C DMA API.
 
-You don't need to use device_register() but perhaps stop it with the
-"rescan the bus and attempt to add all devices again" logic that is in
-mei_cl_bus_rescan()?  There's no need to call device_add() on a device
-and then way later attempt to initialize it, right?
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+Changes in v3:
+- Add Alain Volmat's "Acked-by" on patch 1 and 2
+- Link to v2: https://lore.kernel.org/r/20250627-i2c-upstream-v2-0-8c14523481dc@foss.st.com
 
-Just find any new devices that you don't already have on your list of
-registered devices, and then only add/initialize them, should be a lot
-simpler logic overall than what the code is currently doing.
+Changes in v2:
+- Fix the dev used in dma_unmap also in the error path of
+  `stm32_i2c_prep_dma_xfer`
+- Add a dma_unmap_single also in the ITs error handler
+- Add Alain Volmat's "Acked-by" on patch 3
+- Link to v1: https://lore.kernel.org/r/20250616-i2c-upstream-v1-0-42d3d5374e65@foss.st.com
 
-greg k-h
+---
+Clément Le Goffic (3):
+      i2c: stm32: fix the device used for the DMA map
+      i2c: stm32f7: unmap DMA mapped buffer
+      i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
+
+ drivers/i2c/busses/i2c-stm32.c   |  4 ++--
+ drivers/i2c/busses/i2c-stm32f7.c | 42 +++++++++++++++++++++++++++++-----------
+ 2 files changed, 33 insertions(+), 13 deletions(-)
+---
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+change-id: 20250527-i2c-upstream-e5b69501359a
+
+Best regards,
+-- 
+Clément Le Goffic <clement.legoffic@foss.st.com>
+
 
