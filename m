@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-709971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172AAAEE55D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829C9AEE56F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26E4E7A347A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:07:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EAE17A9FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F4E292B40;
-	Mon, 30 Jun 2025 17:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75005291C30;
+	Mon, 30 Jun 2025 17:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtzfYnaJ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DOsbfGRd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1937228D822;
-	Mon, 30 Jun 2025 17:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A292459C4;
+	Mon, 30 Jun 2025 17:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751303351; cv=none; b=s0aUkMUxhM3ngRaVgfXX7+0mIeWiW6BywQ0NcZKFWts+6+BWU5Zransbyf4p3cIll16fpM1cnBGgerJM+vMcMt98b5bkFkFp/soPkQKFcMxPdwN+lGFgajxE+u9xDmWoI4iKleRxs9zc/VW6nZM3ui52LJA+8AZi7jae/+1ogzE=
+	t=1751303801; cv=none; b=o5uwlaIqVwzURyiI+TaI/dejZ3tN5gshAXkkulJRXkiCMk/2yTFMdnCl23qXryiAl6AoH/uMkiVQfN22sGoqdRkCjka5bNhK/MxvYp6C3JGlyT5Al7vUgy0GeQNUrzrr7mVn8zQ2XKMr4XNVgt8CgzUdN55nXHLCF50iBvtvLq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751303351; c=relaxed/simple;
-	bh=1300F16jOLHJYdm+B9ZlsabbWI8vL/9OqAKPHA1ppIE=;
+	s=arc-20240116; t=1751303801; c=relaxed/simple;
+	bh=o46b+qzEeO5R+D3GfcJjy0xzYMzH4gfbKZTrdNsCCQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OwYp83/rjrqsQ4X7OW66/xx8YMTLPr73na3yPTf8NgPwAF7/7DsZ76yh/UHAKj6fJp5VOBQ/6i9TB45t3ksQ6M14EuJ3IJcaQ5Ydha833lMcYjuPs9aeSO8NB5VZbs8J107S2yPCDJkTkiYyNCM6mi3d0PCgm1VQiJ8c18A5ZBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtzfYnaJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0982CC4CEE3;
-	Mon, 30 Jun 2025 17:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751303350;
-	bh=1300F16jOLHJYdm+B9ZlsabbWI8vL/9OqAKPHA1ppIE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxQxKwXbNmGKXt7ob+S3lEZhkS4s5aDFP48Vm4BmyYQ1HyI9TFSH2UTQUSUpds1wDuBdH0k0DestCHXHqGYALUOCgmg38FeskoXzl85fuhqgErDb5K2d8AKdpaDT+f4X4G/BhyQCvc0admj3GnpGgV5V8m+dHuhwIixJEdq0opU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DOsbfGRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4A0C4CEE3;
+	Mon, 30 Jun 2025 17:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751303801;
+	bh=o46b+qzEeO5R+D3GfcJjy0xzYMzH4gfbKZTrdNsCCQY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DtzfYnaJmM4wzpkiJU0Ul5iDpm8MEC5B9QeDsaIo2QhoaQbQigBsXZzJIRGp3+/Z+
-	 QP5/M3MNXhIuLXOz6QESFbLI4DEmLTqP7+OAhlKV9yvLMI7/IP/GpTjmSmzgCcmzsZ
-	 fZOADdo2NF2QSLg40mJ3SYe9bP7HA9RxHrUOnYl8vk4/kFDoE1rzKYR8s0gsLz28Ro
-	 Yk7BFskNPVVBYI58g+mQ5EU6siWuyr6e+M0Bwc2moZSMpV+kfRTW3x2W8DveI2Fs3b
-	 AktBdUzYSU/qN/IMzmzMZ40sYJgRouFp40trAb7B7BP9yHkeMYUsjYtOc+Hoj8iJmT
-	 5X6KUSKxUx/LQ==
-Date: Mon, 30 Jun 2025 18:09:06 +0100
-From: Simon Horman <horms@kernel.org>
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jonathan Currier <dullfire@yahoo.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] nui: Fix dma_mapping_error() check
-Message-ID: <20250630170906.GN41770@horms.kernel.org>
-References: <20250630083650.47392-2-fourier.thomas@gmail.com>
+	b=DOsbfGRdjmqBhSjcurza6/J672t3KpGEeR9L9vM56lWHXo6AndByMKkYi2RXmzMuH
+	 1leVCf3j5rj9rWhkqKfISe8yIXBjosIT1yPIwxCywADlK33B1GrdabVqESroC2qwp3
+	 O1peHe2k3f9xco2dbJZPvfqFJqkE/uOKUQFOXvcY=
+Date: Mon, 30 Jun 2025 19:16:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abdun Nihaal <abdun.nihaal@gmail.com>
+Cc: andy@kernel.org, dan.carpenter@linaro.org, lorenzo.stoakes@oracle.com,
+	tzimmermann@suse.de, riyandhiman14@gmail.com, willy@infradead.org,
+	notro@tronnes.org, thomas.petazzoni@free-electrons.com,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v3 2/2] staging: fbtft: cleanup error handling in
+ fbtft_framebuffer_alloc()
+Message-ID: <2025063022-chump-pointless-6580@gregkh>
+References: <cover.1751207100.git.abdun.nihaal@gmail.com>
+ <4e062d040806dc29d6124ac0309e741c63f13ac0.1751207100.git.abdun.nihaal@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,55 +59,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250630083650.47392-2-fourier.thomas@gmail.com>
+In-Reply-To: <4e062d040806dc29d6124ac0309e741c63f13ac0.1751207100.git.abdun.nihaal@gmail.com>
 
-On Mon, Jun 30, 2025 at 10:36:43AM +0200, Thomas Fourier wrote:
-> dma_map_XXX() functions return values DMA_MAPPING_ERROR as error values
-> which is often ~0.  The error value should be tested with
-> dma_mapping_error().
+On Sun, Jun 29, 2025 at 08:10:11PM +0530, Abdun Nihaal wrote:
+> The error handling in fbtft_framebuffer_alloc() mixes managed allocation
+> and plain allocation, and performs error handling in an order different
+> from the order in fbtft_framebuffer_release().
 > 
-> This patch creates a new function in niu_ops to test if the mapping
-> failed.  The test is fixed in niu_rbr_add_page(), added in
-> niu_start_xmit() and the successfully mapped pages are unmaped upon error.
+> Fix them by moving vmem allocation closer to where it is used, and using
+> plain kzalloc() for txbuf allocation.
 > 
-> Fixes: ec2deec1f352 ("niu: Fix to check for dma mapping errors.")
-
-I think it fixes a bit more than that.
-But perhaps the above tag is sufficient.
-
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
-
-Overall this looks good to me, thanks for the update.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Abdun Nihaal <abdun.nihaal@gmail.com>
 > ---
->  drivers/net/ethernet/sun/niu.c | 31 ++++++++++++++++++++++++++++++-
->  drivers/net/ethernet/sun/niu.h |  4 ++++
->  2 files changed, 34 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+> v2->v3: 
+> - Remove the if check before kfree of txbuf.buf, because it is zero
+>   initialized on allocation, and kfree is NULL aware.
 
-...
+This patch does not apply to my tree, can you rebase and resend?
 
-> @@ -10019,6 +10042,11 @@ static void niu_phys_unmap_single(struct device *dev, u64 dma_address,
->  	/* Nothing to do.  */
->  }
->  
-> +static int niu_phys_mapping_error(struct device *dev, u64 dma_address)
-> +{
-> +	return false;
+thanks,
 
-No need to resend just because of this, but
-from a type PoV this should probably be:
-
-	return 0;
-
-> +}
-> +
->  static const struct niu_ops niu_phys_ops = {
->  	.alloc_coherent	= niu_phys_alloc_coherent,
->  	.free_coherent	= niu_phys_free_coherent,
-
-...
+greg k-h
 
