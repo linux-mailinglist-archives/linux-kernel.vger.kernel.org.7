@@ -1,123 +1,171 @@
-Return-Path: <linux-kernel+bounces-710125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163D0AEE777
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:26:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB857AEE77E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456BA3A15F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:26:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C081687FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866912E62AF;
-	Mon, 30 Jun 2025 19:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EA92E7F0E;
+	Mon, 30 Jun 2025 19:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNSsVETm"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iueSnIjU"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B871EBA0D;
-	Mon, 30 Jun 2025 19:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8080286D7C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 19:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751311580; cv=none; b=j1Ow89UvfMEHTSktW8u+jX/R9I6adJ2YYDkuPk/O0W0PkeTSl23oixB6dsp2catAFig6oRP5GnhB1bA3GXuYPcdBnYFyrC2G8UJOqViNjxfwp42gDPWNiy8JfsPzdasltpM4pRZwz6t6JaUkyzcXleP+pS4jWVtHfRZx6FnRklY=
+	t=1751311669; cv=none; b=M7pgD7uc4ssT1AG3Zr8BF4rQsB0v4vzlzvgN0POcqSOKSjV7QEs/OVBE68cnL+4mvnwOtdErxtGRUjSwfwrIe2g8TDGymYU4OTY9gGP0Mw4maDrS/aEGYp7pShBrMOs3PAX72pM2zyFohwwnXLvztm5b3ZxON9K8ViGmBPBxMmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751311580; c=relaxed/simple;
-	bh=wKRcjJ8IJ5I1/hcwkxE8abvJ8pZVh3LuCx0XVjbKl3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ye093KeGEF8260XAWwwxUF2p+BFxOqkAOJ8yeSkYbpu0USjYRriHv35n8if8rSn7q2LWN6SwPAEK5dgXYoLeGOPgWdbnFjMLZiikcXklNZXOw9++yRCiUnMc1vPApZF0guIvEseNBM92j/Xr2Cwt2ERpKiHjPICXqACEXAlljhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mNSsVETm; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-553dceb345eso2994280e87.1;
-        Mon, 30 Jun 2025 12:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751311577; x=1751916377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wKRcjJ8IJ5I1/hcwkxE8abvJ8pZVh3LuCx0XVjbKl3k=;
-        b=mNSsVETmSLc1f7dJl2x1G+u+EzgZHz1kkOwrZ/LSp1HMPA/5FpGUD9D3tMQGINoh55
-         50PFAk/+YYO2lu5NXuQqEcsDxyDJJPAyjt7n9R7XYlo3RE0Yhc1LYe3G83ITLFfD2HTN
-         AFWaoqfuEd0w09/bRuzmMPfPq3Xfq3c6Qi+dyRX8qCYWYTkPPZczTlU2fzRh26VWPROL
-         MaCd7JRMEas+jH3bathYtwCI1EtW87FieFnJ/Jg7BtVu0Re+USG2CLsOgUk5HOOtoit7
-         XBJKZSi/COWdEbo0kDm5Gy6cpZ6lUpvBhq/060a3Jg86ZocpJiiMCBhHrfuOIT++1itY
-         hcHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751311577; x=1751916377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wKRcjJ8IJ5I1/hcwkxE8abvJ8pZVh3LuCx0XVjbKl3k=;
-        b=o/vOGyfRbcrmryDg/qEwjlerFdtPWa7B6O6ybhCXyCPbXFkUAyRj7zux/684+b0zpV
-         n2UkiAEhy4gcXo6TG9SYqYOdbV7bzMUOEdrN1E87iv7tOdupfRhT5tRclKk/Qh54NMLi
-         PtNNoQcZrk5VturddPizVtrgmediKZj/9Rh2Fu5JjnYZEXU8zxuAyvW4/c/rfD4CC1ko
-         ma7GMc6CSp/zDaHys1YwyQLBgl6Bn125F0fodbqykkPefE/ZVTOv8jB4NjzBm5bpkuA1
-         cJa4mHNYgtfCJ/ZIyi5jpHDKqwTyKYiBUUa6iJCAHNe1qbkK620j2iRXz14KNyGMc5R1
-         JvKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkQawQOvSwU4/Fn/xLnZSyFn/isL74gtXk1zK/ErF0IVovYJXyLWC8hpkzOLnpPdc7psS+LUr0kRVm@vger.kernel.org, AJvYcCWzW5atgHnyMU3CqJ6Y0sDjsR8J+a9WNhODxfvURWHUhN72z9uUOYwrK5q5wRmYF88TvyK55JgmxOdS7xOd@vger.kernel.org, AJvYcCXDqnGsRlwrhdd3qdxPadhUu61hJMEbFSveIC2nL6BVBr7mFYGPJympdvB8MDTBGNVjrDWTj6/QU1LGoWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx77ZCaq6F7hKdmjhszIr0w0YOe+DAy63i2jz0nkT2X7UdPTVWw
-	zFnXhnj8IfV24uXFP+d+roPbxTzGfM+I7hWZfwS4lXaYbL050gWN9goZupbIKaBKW4U9KJMQIHE
-	aJRKFanpbCS9qq/m22mG2WU/9pRjmCaM=
-X-Gm-Gg: ASbGncv5gCyHDnJavg6NTsfaPbyISVnxvvvHCErQdcR1wnb4NPP9mUb/Bx2E4J/JpGD
-	v43XNayRW0drZFXohvz/PZGnARJ9RJiyTE1pN0sLuCvLRGYe7fDY6q53MXzN3NBUoGjFm6pI6sc
-	Ocq4H9SJKMuobcEfYoTl40rTchgmMbvFeBIAmjKt60gQk=
-X-Google-Smtp-Source: AGHT+IHnQj7y+Dl9g5kiC3I+E0jB7g5wgs7HmhJsfXnM4AlrTPCijnp0mIeFvDPT88kU7jYenEX31bWfp2XcsKVTEOQ=
-X-Received: by 2002:a05:6512:e96:b0:553:314e:81f7 with SMTP id
- 2adb3069b0e04-5550b817b57mr5015974e87.17.1751311577095; Mon, 30 Jun 2025
- 12:26:17 -0700 (PDT)
+	s=arc-20240116; t=1751311669; c=relaxed/simple;
+	bh=/5v9+Oem/sa90XF+iXlgpHPKclkh5N4FEXm0lw14B2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SreZZoVi9phHHliVUplXm5yGJXJgLnziwBoQHLE04DPi6u/HsBO/T0+tJ3cwQ4uwQy8Xnj24tSFKVh82Ok6U5Maa6vxMqPHDQ8TrZ3miNVRWXOOaqS13D2iUX5rOMAs7JBK5LOaE1SfNjVcpyuR+CWIV3PrQjqPdiiSWUQwbewg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iueSnIjU; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 707B940E0198;
+	Mon, 30 Jun 2025 19:27:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eZg4ToE6zv2C; Mon, 30 Jun 2025 19:27:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1751311659; bh=JwMp4PEKSVdwIntK+K5Mg38tpT3bbDtNm7jOkNtENtc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iueSnIjUt++7R3TXmOwnR2eJpVsum3n19Xw/fckJ80mL+XHaBbCoaZvtKIbQN1lWz
+	 GC8itO+csVyVD41EJU9bUqTFdInUEYQ7DhtQ8ietZNZzmb/1bkTD7DZZ7hnlXhMlp6
+	 5dxhltvOVLesW4hN6Qj17RJJrOJeD/pTED4ieBqMIkW/4+krQ8lz/SZa8cMwJxCajF
+	 gWRTS3DKvMXZAyoLaBQYwext/hSCphgxtIGgmEeZ/lfAzoz7ZIReMIJ2G/hR3dMIhI
+	 xcOVQrm0vAHAjfy5XID4BK6mOLmhWirZPVTu8RKH8R0yUUO987KJby/07qDWw6wXCM
+	 OfvmXaPwH8IGOdw2Pg/blvwfycvLl3AmqfarD0X2qtFHlbRyJnn057Ie4155VxOjJq
+	 T2V3BH9aLG7S9S/3vig6Wv4X/EjNGVNJgbfJQ84eeOA5wXC7FaxViNA/jtxg9rVyx4
+	 YSwves7amsPRIty4/qT83huTf8cNfIOX8u30c787Gk3eMXisE1YATOUrU0JQM3nMxM
+	 0e05faH3eMKvbS5h7BFWWKNuwY3pX4MieM89iHImSpCXIaLH4WfFnTYssTDeXno2iT
+	 vRrr2QQP8GwKT+SldPtCEp52hKynHwkOYRKcTVjJhLzHCQO/ZD36H01wW4fUqwlDmx
+	 5txIzz3VD0Vc4UWgqzyHvDQw=
+Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E15A040E015E;
+	Mon, 30 Jun 2025 19:27:32 +0000 (UTC)
+Date: Mon, 30 Jun 2025 21:27:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: kernel test robot <lkp@intel.com>
+Cc: Nikunj A Dadhania <nikunj@amd.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip:x86/urgent 1/1] arch/x86/coco/sev/core.c:2170:30: warning:
+ variable 'dummy' set but not used
+Message-ID: <20250630192726.GBaGLlHl84xIopx4Pt@fat_crate.local>
+References: <202507010218.3O5Ge0Xt-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250508-tegra210-emc-dt-v2-0-d33dc20a1123@gmail.com>
- <qhhv27thjnbz7rtcfja767bpxjvwa6iivc2bphar7t2wobuzb7@aspkmrgp2ihy>
- <CALHNRZ-q7W9CfeD4ipmwFVqHm7oGfTgJpwNoVhfbSXFPDxF91Q@mail.gmail.com>
- <eba00bd5-fa1a-4cad-bb41-b395011235e1@kernel.org> <CALHNRZ_WPUM8wKSLcyyZm4jc9onBYiP3oLd=39k4=hoqLzHhrA@mail.gmail.com>
- <ckimvttxjgx44xhfql3nov3qbf35y73nbu3p4m63nqbi22vh37@6p2ji7he5toy> <CALHNRZ-r_U+ByS0FWxamv9ozzjBWdkqAh2wJOt3s3cMsX6K_kQ@mail.gmail.com>
-In-Reply-To: <CALHNRZ-r_U+ByS0FWxamv9ozzjBWdkqAh2wJOt3s3cMsX6K_kQ@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 30 Jun 2025 14:26:06 -0500
-X-Gm-Features: Ac12FXyaTeW4lrs8R7FQvoMe70nThJ0r6JGE-5KdWbLLXq1Ag3ZQhyfvTrrx5-A
-Message-ID: <CALHNRZ8qyu6wsTTnmRWtNgYL4XWR8G7TFammqTFPfHH5d==LbA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] memory: tegra210-emc: Support Device Tree EMC Tables
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202507010218.3O5Ge0Xt-lkp@intel.com>
 
-On Wed, May 28, 2025 at 12:41=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com=
-> wrote:
->
-> On Thu, May 8, 2025 at 7:48=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Thu, May 08, 2025 at 07:27:52AM -0500, Aaron Kling wrote:
-> > [...]
-> > > The devices I'm talking about are not yet end of life, so it is
-> > > physically possible for them to get a bootloader update to conform to
-> > > the existing mainline model. But I'm just one guy trying to do 3rd
-> > > party support for these devices, I can't affect what Nvidia does with
-> > > the signed bootloader on these devices. I'd love to be able to swap
-> > > out an open source bootloader on these, but the secure boot setup
-> > > prevents that.
-> >
-> > I've reached out to our Android team internally to see if there's
-> > anything we can realistically do about this.
-> >
-> > Thierry
->
-> Thierry, has there been any feedback about this?
->
+On Tue, Jul 01, 2025 at 02:43:31AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+> head:   4a35d2b5254af89595fd90dae9ee0c8f990a148d
+> commit: 4a35d2b5254af89595fd90dae9ee0c8f990a148d [1/1] x86/sev: Use TSC_FACTOR for Secure TSC frequency calculation
+> config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20250701/202507010218.3O5Ge0Xt-lkp@intel.com/config)
+> compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
 
-Reminder about this question. Has there been any response from the
-Nvidia Android team? Or do I/we need to continue pursuing independent
-solutions?
+Pff, doesn't fire with clang-19.
 
-Aaron
+That damn compiler.
+
+gcc used to complain about those but they fixed their interprocedural analysis
+or whatnot.
+
+clang is simply complaining more.
+
+/facepalm 1
+
+And the 0day bot - because it doesn't have anything better to do - is doing
+W=1 builds. I did complain about that waste of resources in the past but
+nothing happened.
+
+/facepalm 2
+
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250701/202507010218.3O5Ge0Xt-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507010218.3O5Ge0Xt-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> arch/x86/coco/sev/core.c:2170:30: warning: variable 'dummy' set but not used [-Wunused-but-set-variable]
+>     2170 |         unsigned long tsc_freq_mhz, dummy;
+>          |                                     ^
+>    1 warning generated.
+> 
+> 
+> vim +/dummy +2170 arch/x86/coco/sev/core.c
+> 
+>   2167	
+>   2168	void __init snp_secure_tsc_init(void)
+>   2169	{
+> > 2170		unsigned long tsc_freq_mhz, dummy;
+
+And it is actually my damn fault because even if that dummy crap variable was
+bugging me, I thought we want to "harmonize".
+
+/facepalm 3
+
+Which is a total nonsense because that code doesn't build in 32-bit.
+
+So this should've stayed like this:
+
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 47d10d9a28e9..36c167333d04 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -2167,8 +2167,8 @@ static unsigned long securetsc_get_tsc_khz(void)
+ 
+ void __init snp_secure_tsc_init(void)
+ {
+-	unsigned long tsc_freq_mhz, dummy;
+ 	struct snp_secrets_page *secrets;
++	unsigned long tsc_freq_mhz;
+ 	void *mem;
+ 
+ 	if (!cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
+@@ -2183,7 +2183,7 @@ void __init snp_secure_tsc_init(void)
+ 	secrets = (__force struct snp_secrets_page *)mem;
+ 
+ 	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+-	rdmsr(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz, dummy);
++	rdmsrq(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz);
+ 	/* Extract the GUEST TSC MHZ from BIT[17:0], rest is reserved space */
+ 	tsc_freq_mhz = tsc_freq_mhz & GENMASK_ULL(17, 0);
+ 	snp_tsc_freq_khz = SNP_SCALE_TSC_FREQ(tsc_freq_mhz * 1000, secrets->tsc_factor);
+
+What a f*cking mess. I don't have enough room on my face anymore from
+facepalms.
+
+Oh boy.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
