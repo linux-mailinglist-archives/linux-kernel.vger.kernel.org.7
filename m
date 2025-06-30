@@ -1,98 +1,96 @@
-Return-Path: <linux-kernel+bounces-709039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D79AED87E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:20:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B128AED877
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC81189A40B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:20:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6E54169AA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE8F2441A6;
-	Mon, 30 Jun 2025 09:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34802405E4;
+	Mon, 30 Jun 2025 09:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AJU6dmeK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANBWgHI/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A382244683;
-	Mon, 30 Jun 2025 09:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4052723C39A;
+	Mon, 30 Jun 2025 09:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751275214; cv=none; b=LXUeOkGPHN4hMVwUK7/nVlEEcLrzk8Pd36/OyqzUpiYMNR1CZE/up9Vo6XyfQmWpKKisqXf6F2mvtT8GWdxrnd47M1XEbB3oyKYDc9uSEavD5fqG38lWyoyiqvKwC58+eJPj0TCkLJSlgcaf92w28jLUBE6juJMF+h32oWxT3qg=
+	t=1751275182; cv=none; b=dfT/RCBD/4G9enBKaHS3Ak+TnJZxsCW+UDZrBI0sqgoEhKXG3Y8i1qU31+R5sjEpU0oBeYr9mtvKXIx02z3sQRVjD+kCfbm7S2DmHthvkyRykF+5dtdBkVh2F0yqqGzfc/u19k0iTuHdWk25+a+dBi0FxvA8uf1kPO+VNn9gSQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751275214; c=relaxed/simple;
-	bh=Mnxh7S95aPYMyXut+5E/LrXFcWBM9KTFY05nUBytcYA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LRGWs1aXzggIim6XFhCp0f4mKLKjM5w2UMMqUawxKpwLnrsoR0jv6a+0MqqyaFX9AKG95nMhVJyr2sC2DNIM05DSuasS6SBx0NFI5Hk6WI87qUHY77TFb0BPasxmgLeSHm1nM1BO5FqdccrNhdbfwZy0QBwvpKQW6G+QUEcXs8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AJU6dmeK; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751275213; x=1782811213;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=Mnxh7S95aPYMyXut+5E/LrXFcWBM9KTFY05nUBytcYA=;
-  b=AJU6dmeKYTE5i+1s2qOvhZhbjKW9LoJA1q800Kix+9e/+ssGtLZSIpRo
-   JL6Ksay7+YgAJF3eMJiF1zZIC4g1Yh47nJMtKGUkzpxc0DbR8cBu00r+v
-   s0jOpaWYOEf/e47ZUv3db6rEv3moFhcnD2pKuXK4tcxIFLimTX9h8Cu6S
-   C1tZL7IrnzYCJsA+KV9DyCUeoJ3FsqaczT6rxcZrVHznyZJcMQ8EO7Nwt
-   RTXBjL6Mal0o5rZS/x12muOOIpgCSrhPNj4fc8B2jyOLt5fDv0mnvbG4U
-   t1ZVdmMYWzcvRD5Sbg/b+eCMP6OfCMfqdz4LeqTgnCMXKtW/NA/T9L2tg
-   g==;
-X-CSE-ConnectionGUID: F/0Dk8v6Tau15y+0CNDaqA==
-X-CSE-MsgGUID: Ln8KrCU1S1O5FCANa7eJCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53434250"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="53434250"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:20:13 -0700
-X-CSE-ConnectionGUID: wzfjYss+SM+1Wr3kc3dDVw==
-X-CSE-MsgGUID: bzd2HcsaTnS92SxDWrcZfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="190579847"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:20:11 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hansg@kernel.org>, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250617232913.3314765-1-srinivas.pandruvada@linux.intel.com>
-References: <20250617232913.3314765-1-srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH] Platform/x86/intel/hid: Add Wildcat Lake support
-Message-Id: <175127520520.2486.15515642255802707801.b4-ty@linux.intel.com>
-Date: Mon, 30 Jun 2025 12:20:05 +0300
+	s=arc-20240116; t=1751275182; c=relaxed/simple;
+	bh=OaGFhytglZ8f3wf/FalzVY9HkEox8Uvz34SHduA0e50=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Tj6LFx10bUK6+kaZFVMpmyTgQrsfJ3yeLs817lO+CrboQCyrBG8+ms0sDAu2M60PdccbpkNz2xc0FRam7cxJp2BkjWvsKxRRLA3FQfof1e/BYIBSaJ9OfRyG7VWDO6P83+eXx+4ppLsNBJK+nG9T0vZG0EChuyIWjlF5s5m9oq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANBWgHI/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B36D5C4CEE3;
+	Mon, 30 Jun 2025 09:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751275181;
+	bh=OaGFhytglZ8f3wf/FalzVY9HkEox8Uvz34SHduA0e50=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ANBWgHI/r4OUflplYDYlTGpp+uLCHb0M5ibpUjRjWyK3PC8Dho7ZWoRL8XREVYBhx
+	 5dUsV4im/PLWLzFrwIHQaM4qBFDf+y2gGFFg6ISuY4PJZoOuT+6f9q3T03o/JdfZI3
+	 0zW9WJvP7laH2H58xyrTk2/dQg3a/KKP0pIfL2iNb07xmlLjrPOB1vdBlgRVW90eHS
+	 /NzQuPKaM2FcpenHmIGvyEVEAzvQ07bsUtie8Gwf5VZKkdWc0m2woMyY7dxxsU9TBi
+	 Vi6gAAa8njc754mFV1bwtXyfmJdbI160t8MJTwKLYdtL6fZI507yi1563QbeyUE4J5
+	 f2jlMXReBdWJw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DFC383BA00;
+	Mon, 30 Jun 2025 09:20:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] net/mlx5e: Fix error handling in RQ memory
+ model
+ registration
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175127520701.3307680.6593592387964609243.git-patchwork-notify@kernel.org>
+Date: Mon, 30 Jun 2025 09:20:07 +0000
+References: <20250626053003.45807-1-wangfushuai@baidu.com>
+In-Reply-To: <20250626053003.45807-1-wangfushuai@baidu.com>
+To: Fushuai Wang <wangfushuai@baidu.com>
+Cc: saeedm@nvidia.com, tariqt@nvidia.com, leon@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yanjun.zhu@linux.dev, dtatulea@nvidia.com
 
-On Tue, 17 Jun 2025 16:29:13 -0700, Srinivas Pandruvada wrote:
+Hello:
 
-> Add ACPI ID for Wildcat Lake.
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Thu, 26 Jun 2025 13:30:03 +0800 you wrote:
+> Currently when xdp_rxq_info_reg_mem_model() fails in the XSK path, the
+> error handling incorrectly jumps to err_destroy_page_pool. While this
+> may not cause errors, we should make it jump to the correct location.
 > 
+> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+> Acked-by: Dragos Tatulea <dtatulea@nvidia.com>
 > 
+> [...]
 
+Here is the summary with links:
+  - [net-next,v2] net/mlx5e: Fix error handling in RQ memory model registration
+    https://git.kernel.org/netdev/net-next/c/7012d4f3c7a8
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-The list of commits applied:
-[1/1] Platform/x86/intel/hid: Add Wildcat Lake support
-      commit: 690be4bc589a145dc211b8d66b8f851713abd344
-
---
- i.
 
 
