@@ -1,217 +1,141 @@
-Return-Path: <linux-kernel+bounces-709098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17755AED93E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:03:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC51AED947
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D0A1898616
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82BC5177F95
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877D724A063;
-	Mon, 30 Jun 2025 10:02:57 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E1D253F2A;
+	Mon, 30 Jun 2025 10:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W6bmcTLT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6448F248F71;
-	Mon, 30 Jun 2025 10:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2167253331;
+	Mon, 30 Jun 2025 10:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277777; cv=none; b=GpIbdjmtd9ReqM/RJ2GOWMBcAvwMR9GMwZOReVXh3QH75Oz/JFngrWm0n407Vff3kG0vo5XGviHAu32o1qlWI1QoVTKQ0qhZ+z/4pvMmxM1D4sHigCC4x1JZhaOSRWgKsU8MV0LshmkpnO4fqdO1QTmH33Wg0KPppQH76LH5wFI=
+	t=1751277786; cv=none; b=McvSB/YoVzVDWRD04GLZzYRrt1/xxrsdEbBgxvlpm61uIhS62Nmyp8m05reDQsFGKBcQtPzsE0Uv7+9h6AWf4NfUvEV5yrkt7Go63WOc6oCzUnXCi6od4NsT6RLRkrrVmAyqZqccoj+3P/Kq4zuiVOAWPEPFgjYYaTzLehKx0fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277777; c=relaxed/simple;
-	bh=NyVT655muCwMeK+wcA1oZ5Wpn3kTCXV00ptp3XX4WIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pWUtmFymk3G1rgNC044oVC0h42RvTRvgsuTojBGr52hr1NE/OG8o+sVxJvJfO7eN8LB13uq+9AlkusanQtEoAplP+/QGCuiKep5Cqhig/94zayAR0FFARTQ7glxShkrDmJe7ro4KeXdssbT2irLPbyQDEHMdQPd+HJ4fibl5bZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bW1nG6s20z14LqC;
-	Mon, 30 Jun 2025 17:58:10 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8C0831402CF;
-	Mon, 30 Jun 2025 18:02:50 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Jun
- 2025 18:02:49 +0800
-Message-ID: <4f15d0aa-39e0-42ef-a9ca-ddbb3ff36060@huawei.com>
-Date: Mon, 30 Jun 2025 18:02:49 +0800
+	s=arc-20240116; t=1751277786; c=relaxed/simple;
+	bh=wNvXIKtXvn6NfqG8kHUW3OxzPA4DPds/TwxFtq3HPoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfMhDR+7luH+55TuQTneme4cUEq6nZWU1bgbxqOhR3fDPtF/BG4dK5erErwudhXg9uXSVYvdoKsfKkGhHL1BmvLX9Iw/lsNDiyw5WQYcUeoNxIgVmurQ5m3nYE42zP4Sxm2sOeibx1t3buMyAUHqQj1dqP31GjMyliZWJJ39NiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W6bmcTLT; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751277785; x=1782813785;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wNvXIKtXvn6NfqG8kHUW3OxzPA4DPds/TwxFtq3HPoo=;
+  b=W6bmcTLTVYPMvsDTN4SBLEhPR2ItTXK0O0XsSH+Bb9AfwlljAhG9juoe
+   60yHmhvLHtODpZDGrvyiEEctx+o9RobEEdpYF37j5dgBim2MAQJuaa/E7
+   IPANcpZXIxmRSYnu+jTLpzzdo9KdiMbFiWVIik6meLdS0O8VdB/jOoRqc
+   kZQxKMIMHtTgZC9vq6eLUTBq9A/T7UhYUwetwUzWZ3oX7mFReOcEH9eQ1
+   M6AcvcY4WD9jYlXhDuU/Tj9wTDmX5atc5+ZVkBhpvIWjwH7TIpqmeCM0S
+   oxFJVG8Ek9/S/4HjRCHlHgvOl3+C/DdJQV3nJJ+YWDUjtwHqfv95wshP2
+   Q==;
+X-CSE-ConnectionGUID: dwEMDsbSSUeAtKiW7tvqrA==
+X-CSE-MsgGUID: XtvOGhUUQHWcgpttyAvW3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53359673"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="53359673"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:03:04 -0700
+X-CSE-ConnectionGUID: Mte4yZEWQ7ePO1tG76oQBw==
+X-CSE-MsgGUID: 0KLmOUJvRNOWydQS4DSd1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="159145392"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:03:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWBLl-0000000BGqE-0VOl;
+	Mon, 30 Jun 2025 13:02:57 +0300
+Date: Mon, 30 Jun 2025 13:02:56 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Raag Jadav <raag.jadav@intel.com>,
+	"Tauro, Riana" <riana.tauro@intel.com>,
+	"Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	intel-xe@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] i2c: designware: Add quirk for Intel Xe
+Message-ID: <aGJg0FZK__xYGP7C@smile.fi.intel.com>
+References: <20250627135314.873972-1-heikki.krogerus@linux.intel.com>
+ <20250627135314.873972-2-heikki.krogerus@linux.intel.com>
+ <aF6nEOVhLURyf616@smile.fi.intel.com>
+ <aF8N0dYk_WAJjvVu@intel.com>
+ <aGI9C6MR8qhe0MHR@smile.fi.intel.com>
+ <aGJGWFOpccaNzpni@kuha.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/16] ext4: utilize multiple global goals to reduce
- contention
-To: Jan Kara <jack@suse.cz>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<ojaswin@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, Baokun Li
-	<libaokun1@huawei.com>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-5-libaokun1@huawei.com>
- <xmhuzjcgujdvmgmnc3mfd45txehmq73fiyg32vr6h7ldznctlq@rosxe25scojb>
- <77077598-45d6-43dd-90a0-f3668a27ca15@huawei.com>
- <qtdxe2rmnvrxdjmp26ro4l5erwq5lrbvmvysxfgqddadnpr7x4@xrkrdjkgsh67>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <qtdxe2rmnvrxdjmp26ro4l5erwq5lrbvmvysxfgqddadnpr7x4@xrkrdjkgsh67>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGJGWFOpccaNzpni@kuha.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 2025/6/30 16:38, Jan Kara wrote:
-> On Mon 30-06-25 14:50:30, Baokun Li wrote:
->> On 2025/6/28 2:31, Jan Kara wrote:
->>> On Mon 23-06-25 15:32:52, Baokun Li wrote:
->>>> When allocating data blocks, if the first try (goal allocation) fails and
->>>> stream allocation is on, it tries a global goal starting from the last
->>>> group we used (s_mb_last_group). This helps cluster large files together
->>>> to reduce free space fragmentation, and the data block contiguity also
->>>> accelerates write-back to disk.
->>>>
->>>> However, when multiple processes allocate blocks, having just one global
->>>> goal means they all fight over the same group. This drastically lowers
->>>> the chances of extents merging and leads to much worse file fragmentation.
->>>>
->>>> To mitigate this multi-process contention, we now employ multiple global
->>>> goals, with the number of goals being the CPU count rounded up to the
->>>> nearest power of 2. To ensure a consistent goal for each inode, we select
->>>> the corresponding goal by taking the inode number modulo the total number
->>>> of goals.
->>>>
->>>> Performance test data follows:
->>>>
->>>> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
->>>> Observation: Average fallocate operations per container per second.
->>>>
->>>>                      | Kunpeng 920 / 512GB -P80|  AMD 9654 / 1536GB -P96 |
->>>>    Disk: 960GB SSD   |-------------------------|-------------------------|
->>>>                      | base  |    patched      | base  |    patched      |
->>>> -------------------|-------|-----------------|-------|-----------------|
->>>> mb_optimize_scan=0 | 7612  | 19699 (+158%)   | 21647 | 53093 (+145%)   |
->>>> mb_optimize_scan=1 | 7568  | 9862  (+30.3%)  | 9117  | 14401 (+57.9%)  |
->>>>
->>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>> ...
->>>
->>>> +/*
->>>> + * Number of mb last groups
->>>> + */
->>>> +#ifdef CONFIG_SMP
->>>> +#define MB_LAST_GROUPS roundup_pow_of_two(nr_cpu_ids)
->>>> +#else
->>>> +#define MB_LAST_GROUPS 1
->>>> +#endif
->>>> +
->>> I think this is too aggressive. nr_cpu_ids is easily 4096 or similar for
->>> distribution kernels (it is just a theoretical maximum for the number of
->>> CPUs the kernel can support)
->> nr_cpu_ids is generally equal to num_possible_cpus(). Only when
->> CONFIG_FORCE_NR_CPUS is enabled will nr_cpu_ids be set to NR_CPUS,
->> which represents the maximum number of supported CPUs.
-> Indeed, CONFIG_FORCE_NR_CPUS confused me.
->
->>> which seems like far too much for small
->>> filesystems with say 100 block groups.
->> It does make sense.
->>
->>> I'd rather pick the array size like:
->>>
->>> min(num_possible_cpus(), sbi->s_groups_count/4)
->>>
->>> to
->>>
->>> a) don't have too many slots so we still concentrate big allocations in
->>> somewhat limited area of the filesystem (a quarter of block groups here).
->>>
->>> b) have at most one slot per CPU the machine hardware can in principle
->>> support.
->>>
->>> 								Honza
->> You're right, we should consider the number of block groups when setting
->> the number of global goals.
->>
->> However, a server's rootfs can often be quite small, perhaps only tens of
->> GBs, while having many CPUs. In such cases, sbi->s_groups_count / 4 might
->> still limit the filesystem's scalability.
-> I would not expect such root filesystem to be loaded by many big
-> allocations in parallel :). And with 4k blocksize 32GB filesystem would
-> have already 64 goals which doesn't seem *that* limiting?
+On Mon, Jun 30, 2025 at 11:10:00AM +0300, Heikki Krogerus wrote:
+> On Mon, Jun 30, 2025 at 10:30:19AM +0300, Andy Shevchenko wrote:
+> > On Fri, Jun 27, 2025 at 05:32:01PM -0400, Rodrigo Vivi wrote:
+> > > On Fri, Jun 27, 2025 at 05:13:36PM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Jun 27, 2025 at 04:53:11PM +0300, Heikki Krogerus wrote:
 
-Docker's default path is on the rootfs. Our rootfs size is typically 70GB,
-but we might have 300+ or even 500+ CPUs. This could lead to scalability
-issues in certain specific scenarios. However, in general,
-sbi->s_groups_count / 4 does appear to be sufficient.
+...
 
-> Also note that as the filesystem is filling up and the free space is getting
-> fragmented, the number of groups where large allocation can succeed will
-> reduce. Thus regardless of how many slots for streaming goal you have, they
-> will all end up pointing only to those several groups where large
-> still allocation succeeds. So although large number of slots looks good for
-> an empty filesystem, the benefit for aged filesystem is diminishing and
-> larger number of slots will make the fs fragment faster.
-I don't think so. Although we're now splitting into multiple goals, these
-goals all start from zero. This means 'n' goals will cause us to scan all
-groups 'n' times. We'll repeatedly search for free space on disk rather
-than creating more fragmentation.
+> > > > >  static int dw_i2c_plat_probe(struct platform_device *pdev)
+> > > > >  {
+> > > > > +	u32 flags = (uintptr_t)device_get_match_data(&pdev->dev);
+> > > > 
+> > > > > -	dev->flags = (uintptr_t)device_get_match_data(device);
+> > > > >  	if (device_property_present(device, "wx,i2c-snps-model"))
+> > > > > -		dev->flags = MODEL_WANGXUN_SP | ACCESS_POLLING;
+> > > > > +		flags = MODEL_WANGXUN_SP | ACCESS_POLLING;
+> > > > >  
+> > > > >  	dev->dev = device;
+> > > > >  	dev->irq = irq;
+> > > > > +	dev->flags = flags;
+> > > > 
+> > > > Maybe I'm missing something, but why do we need these (above) changes?
+> > > 
+> > > in between, it is introduced a new one:
+> > > flags |= ACCESS_POLLING;
+> > > 
+> > > So, the initialization moved up, before the ACCESS_POLLING, and
+> > > it let the assignment to the last, along with the group.
+> > 
+> > I still don't get. The cited code is complete equivalent.
+> 
+> This was requested by Jarkko.
 
-This approach can actually solve the issue where a single goal, despite
-having 4K free space available, causes an 8K allocation request to skip it,
-forcing subsequent 4K allocation requests to split larger free spaces.
->
->> Furthermore, after supporting LBS, the number of block groups will
->> sharply decrease.
-> Right. This is going to reduce scalability of block allocation in general.
-> Also as the groups grow larger with larger blocksize the benefit of
-> streaming allocation which just gives a hint about block group to use is
-> going to diminish when the free block search will be always starting from
-> 0. We will maybe need to store ext4_fsblk_t (effectively combining
-> group+offset in a single atomic unit) as a streaming goal to mitigate this.
-I don't think that's necessary. We still need to consider block group lock
-contention, so the smallest unit should always be the group.
->
->> How about we directly use sbi->s_groups_count (which would effectively be
->> min(num_possible_cpus(), sbi->s_groups_count)) instead? This would also
->> avoid zero values.
-> Avoiding zero values is definitely a good point. My concern is that if we
-> have sb->s_groups_count streaming goals, then practically each group will
-> become a streaming goal group and thus we can just remove the streaming
-> allocation altogether, there's no benefit.
-Having 'n' goals simply means we scan the groups 'n' times; it's not
-related to the number of groups. However, when there are too many goals,
-the probability of contention due to identical goals increases.
-Nevertheless, this is always better than having a single goal, where they
-would always contend for the same one.
+Okay, but why? Sounds to me like unneeded churn. Can't we do this later when
+required?
 
-Now that we're hashing based on an inode's ino, we can later specify the
-corresponding inode ino based on the CPU ID during inode allocation.
->
-> We could make streaming goal to be ext4_fsblk_t so that also offset of the
-> last big allocation in the group is recorded as I wrote above. That would
-> tend to pack big allocations in each group together which is benefitial to
-> combat fragmentation even with higher proportion of groups that are streaming
-> goals (and likely becomes more important as the blocksize and thus group
-> size grow). We can discuss proper number of slots for streaming allocation
-> (I'm not hung up on it being quarter of the group count) but I'm convinced
-> sb->s_groups_count is too much :)
->
-> 								Honza
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I think sbi->s_groups_count / 4 is indeed acceptable. However, I don't
-believe recording offsets is necessary. As groups become larger,
-contention for groups will intensify, and adding offsets would only
-make this contention worse.
-
-
-Regards,
-Baokun
 
 
