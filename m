@@ -1,233 +1,175 @@
-Return-Path: <linux-kernel+bounces-709051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D97E9AED8BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:33:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EC2AED8C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B572A189A471
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:33:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 458707A5137
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D15824679F;
-	Mon, 30 Jun 2025 09:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E8324678A;
+	Mon, 30 Jun 2025 09:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oKHMoiWE"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShNzzdJ6"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A8821420F;
-	Mon, 30 Jun 2025 09:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C90242D6C;
+	Mon, 30 Jun 2025 09:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751275970; cv=none; b=VuV0Cw9LqacTHunwibNUgm/Hvjof0xGhRCyGXbtqZRKLmn/7NxYVhXCAfN4Ec5JX2+oOgjHzIM8r0gq3cYvXgOupPtQDOq6V5Kvi4FQlfy47xHTxkRykScz/hpPcf5jIT9TMCUUkDWRkwqCMqoKZIrVxCRD3ATxfB8Iymu/2aXQ=
+	t=1751275980; cv=none; b=j2GF6RwUA2Xb/OqKaQ0yztpZkpvCt+jqVZ8/9F9c7j6fOP+wPKLLbSP5CTVu0ziq8d+4CoPeT4OlqqtrQwZzlukuYvR6vJ/va+n0J+upL7/McbFW/rqhOVhbl/M5gZGywp8P3QKM3o5b5gkf8CjK3RDOA291XaLK6bNA1gnxZCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751275970; c=relaxed/simple;
-	bh=QWD/CZiB02p5Y9rO/SrSW4JBcHFnpOwu/VqcsLoMJnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFO72G/SViNGC//stCU5YkWrZZZOgwiOdEix58rGhH7aAJ9YW4ePIf5M6g+jqFE84GTw7a8UePXyNHo2DswGtbTO2NTksC9XK2zX3LICDE5Vd9Yhwqf7kfqLRzEZus1K+hsZu4DHVwp8jEGFFG3lNKwUScdyo35K28vQFV4XTfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oKHMoiWE; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751275966;
-	bh=QWD/CZiB02p5Y9rO/SrSW4JBcHFnpOwu/VqcsLoMJnI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oKHMoiWElN1piNx6lnOGBBN3mlX0nfB2KP6BBJZTI1844D6x9kqssN/NSARTunD/O
-	 Ssvf7n3hq2l1a/tXIkqNMBYw2mouhknv+SULB3ZWJAIDdT2XQ1Bbc6osdiJ11jhWmg
-	 LXAcogkiNNgFrY579znmNLB4/eadkA8SAb6Tw7Ymy5+A+2NP9Ut3gaF/pHqX1aJT2S
-	 5le/dPJ9sVRkcqg2TQ/vj7mUik7b+MrPeKbirQkcFpgkXxzm1d0Ud0ABULYtLzQddv
-	 UsX+Y5OI0dq9iV14BmXHfQEqAfRjiTT1WD0D+GXUMqdNPRp3iWqXn4AhXjiPuToH/Y
-	 fDVbEv3hrOwIw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9985B17E0B0D;
-	Mon, 30 Jun 2025 11:32:45 +0200 (CEST)
-Message-ID: <e958afe7-b338-47dc-905e-f3223b4f3cdb@collabora.com>
-Date: Mon, 30 Jun 2025 11:32:45 +0200
+	s=arc-20240116; t=1751275980; c=relaxed/simple;
+	bh=cmRrk0/alHFnMCDh8ZgBmDGAlsiNNk6OQwjwWvua4eE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gawP9Ve4L9VswbWp16oKtiCLryGmGmUGxUhK7LvAsCOmyWo8iuCyI0HXy8CerO7pICa95o85jl2LUAVTlfEQ3y/ePU6JqPW3331MtprFpmJreb97Rcq2RXSURDl9WEyVFlus0W71KEVjXPwOb7txmjIgXsiPITNBdXWEZaOuLDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ShNzzdJ6; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a6cdc27438so1587354f8f.2;
+        Mon, 30 Jun 2025 02:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751275977; x=1751880777; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3EpjeoxeqTMuRKQnTiajZ8lmWioJMNpbepadmsjR9rk=;
+        b=ShNzzdJ6X//3PXalcNrI6T8GnKFxapjbwLrLKOmaP4MRyc9LSk0kUtl3F2YY+0UPae
+         opMw+MHtud+FqWRpE7YkLo4LLEtqViiU41pLKcW8jTIWobrdFkMlJWm3uMXDrIu7hnP+
+         hiXBQPCGjvaZhK5XNadwgOVZ5BuUhmkhcwEd42Dpyl61ugU1O8iAPZteTzduVSnQV9uZ
+         f/7qHPRSeiCARTkfH9FR+uY2sgVhWnSTfhHNY1ezRVwPGUc/cis8bXBh0J4vxnQsafUQ
+         hvXH8V3Q7tkmIs3wizXhsblhKrLfXD6x49IlOOftPIwTBOQmYpJ5nf5NXmHym+XicX3o
+         dGDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751275977; x=1751880777;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3EpjeoxeqTMuRKQnTiajZ8lmWioJMNpbepadmsjR9rk=;
+        b=s0QihumOlCjgQyaiCIRmaQouuro7ZOxHvfk4gT6TfyzqjRw8yJQis3xM36u9CbN9q7
+         Ta7ofH5FS0Lg3nXnwwIsx9esLb5Rt9OLmguH/uctKwwYSnvaOCjPVTqE2iu1JCT4vdmH
+         9JzCiTEqLtkIU5eSyOw9SL1bjBwetGz6beBgsQJS5+UYroebXgMoZo10NTUY0940RILs
+         nfvLIrm3sACmYcLFS9svZwFdsLPiC5DtRpqxDYOdmhyg/717OTuYQOcdtCTZjwT8AFY0
+         MITxLr13QZkTjmdeoRnrqQaEVTJk4l0Mu0tl+Nl91OxULJc6Ciq5lwMZWk9Xvt9iCfNT
+         xEaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2BRH1Yfj6aVXa/U8pkZDSzzcEctcRc5kAinzzSsM0dvpcLaw+HeZTa71lfw28nwGmWRHBLOpNX78fsg==@vger.kernel.org, AJvYcCXi9E/LZZRFGresND4x8xXD9C6FlVxkwjpmwbdAUhuPdij8pJSO8MZbhPovCO3I1O/gK2NTsfSVVNYnVFT4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya6Va7FXOm8p1DB+xaZqR+2Ejl+jQeWQk5lVOo+t1z4lFpAg5B
+	rS665LptUXoUS71bq5mWpL32GbUvb1rJ6Ur4LXYMTUj1fh+Z1Kf9mgJw
+X-Gm-Gg: ASbGncvC82VpmaKhyy4dPSjssjkew2Yj3Nk4tRsDnXVlo2K0+iwuknOWq/0NJzvokii
+	Hm+/qFv2lsdISzQIvGftA38bGGkADXAHd2obosi/44B6FV6lnXbE027xkFnJZPeEfTzLKHa8Da9
+	hmj2duLCnK+tRbX8oLa6D/CvEFBGgTSdlAn/MNMbwJrJUYGPkcQuqzT2zzeljf7g4R5SU7YoWNc
+	afoj6FJstTR/svnuJKe/zf9agD9i2wBG4QNo4e9joVMrqbSZ/VMFip0vX3GFX4JvwVLTHEC+u3+
+	arx0Bg/KzP10qkasEVQHSGUbsehIT9gjQ98LQeJhjjbgRB3059FNBQt/A/E=
+X-Google-Smtp-Source: AGHT+IGHvz7hvIJ1+tHuW3jfh163ytUZXhFdLp1KKKYn3HMiIW+9gH2CLBSNlrNBIT+tb0MdMi6pCg==
+X-Received: by 2002:a05:6000:2a04:b0:3a4:ee3f:e9a6 with SMTP id ffacd0b85a97d-3a8feb8479fmr7995116f8f.54.1751275976472;
+        Mon, 30 Jun 2025 02:32:56 -0700 (PDT)
+Received: from fedora ([94.73.34.56])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c80bb28sm9684934f8f.43.2025.06.30.02.32.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 02:32:56 -0700 (PDT)
+Date: Mon, 30 Jun 2025 11:32:54 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] HID: magicmouse: avoid setting up battery timer when
+ not needed
+Message-ID: <aGJZxlV-Vyi0EDN7@fedora>
+References: <PN3PR01MB95973218D6B4ECDAE8ECF60BB87BA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <PN3PR01MB95970C5D46483D0367C1D63CB87BA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/13] pmdomain: mediatek: Refactor bus protection
- regmaps retrieval
-To: Fei Shao <fshao@chromium.org>
-Cc: linux-mediatek@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, ulf.hansson@linaro.org,
- y.oudjana@protonmail.com, wenst@chromium.org, lihongbo22@huawei.com,
- mandyjh.liu@mediatek.com, mbrugger@suse.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-pm@vger.kernel.org, kernel@collabora.com
-References: <20250623120154.109429-1-angelogioacchino.delregno@collabora.com>
- <20250623120154.109429-3-angelogioacchino.delregno@collabora.com>
- <CAC=S1njT6ygGuZDPU5KDW94Nu-TbM21DM-6HdR7Pio=WTD_eQA@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAC=S1njT6ygGuZDPU5KDW94Nu-TbM21DM-6HdR7Pio=WTD_eQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN3PR01MB95970C5D46483D0367C1D63CB87BA@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 
-Il 27/06/25 14:12, Fei Shao ha scritto:
-> On Mon, Jun 23, 2025 at 8:02 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> In preparation to add support for new generation SoCs like MT8196,
->> MT6991 and other variants, which require to set bus protection on
->> different busses than the ones found on legacy chips, and to also
->> simplify and reduce memory footprint of this driver, refactor the
->> mechanism to retrieve and use the bus protection regmaps.
->>
->> This is done by removing the three pointers to struct regmap from
->> struct scpsys_domain (allocated for each power domain) and moving
->> them to the main struct scpsys (allocated per driver instance) as
->> an array of pointers to regmap named **bus_prot.
->>
->> That deprecates the old devicetree properties to grab phandles to
->> the three predefined busses (infracfg, infracfg-nao and smi) and
->> replaces it with a new property "mediatek,bus-protection" that is
->> meant to be an array of phandles holding the same busses where
->> required (for now - for legacy SoCs).
->>
->> The new bus protection phandles are indexed by the bus_prot_index
->> member of struct scpsys, used to map "bus type" (ex.: infra, smi,
->> etc) to the specific *bus_prot[x] element.
->>
->> While the old per-power-domain regmap pointers were removed, the
->> support for old devicetree was retained by still checking if the
->> new property (in DT) and new-style declaration (in SoC specific
->> platform data) are both present at probe time.
->>
->> If those are not present, a lookup for the old properties will be
->> done in all of the children of the power controller, and pointers
->> to regmaps will be retrieved with the old properties, but then
->> will be internally remapped to follow the new style regmap anyway
->> as to let this driver benefit of the memory footprint reduction.
->>
->> Finally, it was necessary to change macros in mtk-pm-domains.h and
->> in mt8365-pm-domains.h to make use of the new style bus protection
->> declaration, as the actual HW block is now recognized not by flags
->> but by its own scpsys_bus_prot_block enumeration.
->>
->> The BUS_PROT_(STA)_COMPONENT_{INFRA,INFRA_NAO,SMI} flags were also
->> removed since they are now unused, and because that enumeration was
->> initially meant to vary the logic of bus protection and not the bus
->> where work is performed, anyway!
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
-> 
-> <snip>
-> 
->>
->> +static int scpsys_get_bus_protection_legacy(struct device *dev, struct scpsys *scpsys)
->> +{
->> +       const u8 bp_blocks[3] = {
->> +               BUS_PROT_BLOCK_INFRA, BUS_PROT_BLOCK_SMI, BUS_PROT_BLOCK_INFRA_NAO
->> +       };
->> +       struct device_node *np = dev->of_node;
->> +       struct device_node *node, *smi_np;
->> +       int num_regmaps = 0, i, j;
->> +       struct regmap *regmap[3];
->> +
->> +       /*
->> +        * Legacy code retrieves a maximum of three bus protection handles:
->> +        * some may be optional, or may not be, so the array of bp blocks
->> +        * that is normally passed in as platform data must be dynamically
->> +        * built in this case.
->> +        *
->> +        * Here, try to retrieve all of the regmaps that the legacy code
->> +        * supported and then count the number of the ones that are present,
->> +        * this makes it then possible to allocate the array of bus_prot
->> +        * regmaps and convert all to the new style handling.
->> +        */
->> +       node = of_find_node_with_property(np, "mediatek,infracfg");
->> +       if (node) {
->> +               regmap[0] = syscon_regmap_lookup_by_phandle(node, "mediatek,infracfg");
->> +               of_node_put(node);
->> +               num_regmaps++;
->> +               if (IS_ERR(regmap[0]))
->> +                       return dev_err_probe(dev, PTR_ERR(regmap[0]),
->> +                                            "%pOF: failed to get infracfg regmap\n",
->> +                                            node);
->> +       } else {
->> +               regmap[0] = NULL;
->> +       }
->> +
->> +       node = of_find_node_with_property(np, "mediatek,smi");
->> +       if (node) {
->> +               smi_np = of_parse_phandle(node, "mediatek,smi", 0);
->> +               of_node_put(node);
->> +               if (!smi_np)
->> +                       return -ENODEV;
->> +
->> +               regmap[1] = device_node_to_regmap(smi_np);
->> +               num_regmaps++;
->> +               of_node_put(smi_np);
->> +               if (IS_ERR(regmap[1]))
->> +                       return dev_err_probe(dev, PTR_ERR(regmap[1]),
->> +                                            "%pOF: failed to get SMI regmap\n",
->> +                                            node);
->> +       } else {
->> +               regmap[1] = NULL;
->> +       }
->> +
->> +       node = of_find_node_with_property(np, "mediatek,infracfg-nao");
->> +       if (node) {
->> +               regmap[2] = syscon_regmap_lookup_by_phandle(node, "mediatek,infracfg-nao");
->> +               num_regmaps++;
->> +               of_node_put(node);
->> +               if (IS_ERR(regmap[2]))
->> +                       return dev_err_probe(dev, PTR_ERR(regmap[2]),
->> +                                            "%pOF: failed to get infracfg regmap\n",
->> +                                            node);
->> +       } else {
->> +               regmap[2] = NULL;
->> +       }
->> +
->> +       scpsys->bus_prot = devm_kmalloc_array(dev, num_regmaps,
->> +                                             sizeof(*scpsys->bus_prot), GFP_KERNEL);
->> +       if (!scpsys->bus_prot)
->> +               return -ENOMEM;
->> +
->> +       for (i = 0, j = 0; i < num_regmaps; i++) {
-> 
-> Did you mean BUS_PROT_BLOCK_COUNT?
-> Consider a case where only regmap[2] is configured.
-> 
+Hi Aditya,
 
-Yep. None of the many platforms that we have tested hit this issue, but it's as
-bad as it sounds! :')
-
-Thanks for spotting this one!
-
-Cheers,
-Angelo
-
-> Regards,
-> Fei
+On Wed, Jun 25, 2025 at 07:46:04PM +0530, Aditya Garg wrote:
+> Currently, the battery timer is set up for all devices using
+> hid-magicmouse, irrespective of whether they actually need it or not.
 > 
->> +               enum scpsys_bus_prot_block bp_type;
->> +
->> +               if (!regmap[i])
->> +                       continue;
->> +
->> +               bp_type = bp_blocks[i];
->> +               scpsys->bus_prot_index[bp_type] = j;
->> +               scpsys->bus_prot[j] = regmap[i];
->> +
->> +               j++;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
+> The current implementation requires the battery timer for Magic Mouse 2
+> and Magic Trackpad 2 when connected via USB only. Add checks to ensure
+> that the battery timer is only set up when they are connected via USB.
 > 
-> <snip>
+> Fixes: 0b91b4e4dae6 ("HID: magicmouse: Report battery level over USB")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  drivers/hid/hid-magicmouse.c | 36 +++++++++++++++++++++++-------------
+>  1 file changed, 23 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+> index f49405d38..3e531905b 100644
+> --- a/drivers/hid/hid-magicmouse.c
+> +++ b/drivers/hid/hid-magicmouse.c
+> @@ -863,18 +863,22 @@ static int magicmouse_probe(struct hid_device *hdev,
+>  		return ret;
+>  	}
+>  
+> -	timer_setup(&msc->battery_timer, magicmouse_battery_timer_tick, 0);
+> -	mod_timer(&msc->battery_timer,
+> -		  jiffies + msecs_to_jiffies(USB_BATTERY_TIMEOUT_MS));
+> -	magicmouse_fetch_battery(hdev);
+> -
+> -	if (id->vendor == USB_VENDOR_ID_APPLE &&
+> -	    (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
+> -	     id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2_USBC ||
+> -	     ((id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
+> -	       id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
+> -	      hdev->type != HID_TYPE_USBMOUSE)))
+> -		return 0;
+> +	if (id->vendor == USB_VENDOR_ID_APPLE) {
+> +		bool is_mouse2 = (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
+> +				  id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2_USBC);
+> +		bool is_trackpad2 = (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
+> +				     id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC);
+> +
+> +		if (is_mouse2 || is_trackpad2) {
+> +			timer_setup(&msc->battery_timer, magicmouse_battery_timer_tick, 0);
+> +			mod_timer(&msc->battery_timer,
+> +				  jiffies + msecs_to_jiffies(USB_BATTERY_TIMEOUT_MS));
+> +			magicmouse_fetch_battery(hdev);
+> +		}
+> +
+> +		if (is_mouse2 || (is_trackpad2 && hdev->type != HID_TYPE_USBMOUSE))
+> +			return 0;
+> +	}
+
+Instead of duplicating these conditions here and in magicmouse_remove(),
+you could move them into a helper function.
+
+Also, watch out the `err_stop_hw:` error case, the timer could be used
+there uninitialized.
+
+Jose
+
+>  	if (!msc->input) {
+>  		hid_err(hdev, "magicmouse input not registered\n");
+> @@ -947,7 +951,13 @@ static void magicmouse_remove(struct hid_device *hdev)
+>  
+>  	if (msc) {
+>  		cancel_delayed_work_sync(&msc->work);
+> -		timer_delete_sync(&msc->battery_timer);
+> +		if (hdev->vendor == USB_VENDOR_ID_APPLE &&
+> +		    (hdev->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
+> +		     hdev->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2_USBC ||
+> +		     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
+> +		     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC))
+> +
+> +			timer_delete_sync(&msc->battery_timer);
+>  	}
+>  
+>  	hid_hw_stop(hdev);
+> -- 
+> 2.43.0
+> 
 
