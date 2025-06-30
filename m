@@ -1,88 +1,223 @@
-Return-Path: <linux-kernel+bounces-709488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794E8AEDE92
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:14:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F944AEDE9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E101881918
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:12:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7411BC0518
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D27A28CF6D;
-	Mon, 30 Jun 2025 13:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iaDX5f4i"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C45328DEE4;
+	Mon, 30 Jun 2025 13:09:44 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AF1283FCE;
-	Mon, 30 Jun 2025 13:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AE428DB61
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288858; cv=none; b=s4/lJckJm0DqxVqSIof8L/gXFdBmSz+gfkyCwECtoG1pAnxpk7QCeUNZSOmmykzC3OPOpbEyIjikSDmaXT3maU2lcC41yHmMw/HdZxi/C5jRGHUqqHuAofvzePc/2wly7tOyEugdmclNR+SzWYNYvQIbUMdoQHf2YLSot41PNZE=
+	t=1751288984; cv=none; b=N84bY0eTVwQljceJW1bIrwkUZbF5SGrZaV27yrAtVxN4TkycaFsU07Gwb4QzbkzsBN4myutmev2x2iV4K+EUft5s4oFCWpahHlkIgLNw0MH2OHCh/+F1LSohmwkdj1MmDow3cJKvhavOekkOtxacP2JLv+aZlggkWyy3Ng8Z7No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288858; c=relaxed/simple;
-	bh=m8VBM58aGaU+6xvtNkMoQZt0IjZAuRYz5bs6w7J+ct4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cHMq1ExCMGIKP3YXLgq8GzCoPcDEYS57b8HwKESdpQm3B82CV0XRRFkreH6d1lVul9vK3hSHMNXNVR6lY5rBiC1d9Gb9doAb54gIy5ueQvbvEu4xQCGUtENqIZ8U1SUUkOkYQLmhlmqvKvcQ+V6Ruw6H1GZgalJgkvAj/Eg5Tas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iaDX5f4i; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sEov6JC4NDe7+ZoMd7zO649rqboiBPEO080p+eAfOKE=; b=iaDX5f4iU1f+Jp4v5eQtNdEbnT
-	DkDuvqOYchSii9OESk6khJ2SXw9i8/TPsEvZ0kOhf0hWA/AHFNq5a7EwXfJN8GGuw5uOdZNN/WRGY
-	Vm7JJkKhR/8XwRO3AyOZW4U9gN7788qJyxZQ5zM8yxeSxxi5s92FZ/WSlJ8d38wyjjHtdF0nioO7B
-	leM+/rvhBJlfeI1hnrstWwmvbmQMuG3Kom1fByfjbwt4BlVEkdJNbyEZhBAnGgqBIEQX/2pT4NbYc
-	N2yvGOnRuqsc8UL9cZG/7FoMUK9rZf76PPSOKp27LHsPryWIcatYv7QfNunTlNsxFqTPn/1FPJygq
-	UL03Ly6g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWEEQ-00000006mJ5-0PZ8;
-	Mon, 30 Jun 2025 13:07:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id F2006300158; Mon, 30 Jun 2025 15:07:32 +0200 (CEST)
-Date: Mon, 30 Jun 2025 15:07:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: [PATCH v3 1/1] local_lock: Move this_cpu_ptr() notation from
- internal to main header.
-Message-ID: <20250630130732.GK1613376@noisy.programming.kicks-ass.net>
-References: <20250630075138.3448715-1-bigeasy@linutronix.de>
- <20250630075138.3448715-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1751288984; c=relaxed/simple;
+	bh=Fq5nfJeiMtzs3Dz+f7zY+wE00t5cjdP1CT8kturx1Ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Tu+aHWec/ZtbES4Ix9YzngSadXa3gmozKueofpkm/P23fgv+QnyRiAYQ20fBLRh6F+6iAT9U7o5FepGXjWKijTx+Z+t7/8p26J9BVSMFWZEf22XQOKYYZRcHvc3um02A1lsPJTyHcIOxrQQWGADYvJ8qYuC3dqpdP0hwYAWoHcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4bW5zL0rkSz1d1jd;
+	Mon, 30 Jun 2025 21:07:10 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5203C180064;
+	Mon, 30 Jun 2025 21:09:37 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 30 Jun 2025 21:09:37 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 30 Jun 2025 21:09:36 +0800
+Message-ID: <16a13fe1-2311-44c0-9611-9002189cd2be@huawei.com>
+Date: Mon, 30 Jun 2025 21:09:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630075138.3448715-2-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 drm-dp 06/10] drm/hisilicon/hibmc: add dp mode valid
+ check
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
+References: <20250620093104.2016196-1-shiyongbang@huawei.com>
+ <20250620093104.2016196-7-shiyongbang@huawei.com>
+ <qrmfobeguesumq2jjajrqaoyiwatlaz4wcklalmmhjinoql3oe@ulcv7jmocsjo>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <qrmfobeguesumq2jjajrqaoyiwatlaz4wcklalmmhjinoql3oe@ulcv7jmocsjo>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Mon, Jun 30, 2025 at 09:51:38AM +0200, Sebastian Andrzej Siewior wrote:
-> The local_lock.h is the main entry for the local_lock_t type and
-> provides wrappers around internal functions prefixed with __ in
-> local_lock_internal.h.
-> 
-> Move the this_cpu_ptr() dereference of the variable from the internal to
-> the main header. Since it is all macro implemented, this_cpu_ptr() will
-> still happen within the preempt/ IRQ disabled section.
-> This will free the internal implementation (__) to be used on
-> local_lock_t types which are local variables and must not be accessed
-> via this_cpu_ptr().
-> 
-> Acked-by: Waiman Long <longman@redhat.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> On Fri, Jun 20, 2025 at 05:31:00PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> If DP is connected, add mode check and BW check in mode_valid_ctx() to
+>> ensure DP's cfg is usable.
+>>
+>> Fixes: f9698f802e50 ("drm/hisilicon/hibmc: Restructuring the header dp_reg.h")
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v1 -> v2:
+>>    - delete if (!dp->is_connected) in hibmc_dp_mode_valid(), suggested by Dmitry Baryshkov.
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 10 ++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  6 +++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 51 +++++++++++++++++++
+>>   3 files changed, 67 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> index 98cc534ba794..5b1f943b601c 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> @@ -273,6 +273,16 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp)
+>>   	dp->dp_dev->link.status.channel_equalized = false;
+>>   }
+>>   
+>> +u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp)
+>> +{
+>> +	return dp->dp_dev->link.cap.link_rate;
+>> +}
+>> +
+>> +u8 hibmc_dp_get_lanes(struct hibmc_dp *dp)
+>> +{
+>> +	return dp->dp_dev->link.cap.lanes;
+>> +}
+>> +
+>>   static const struct hibmc_dp_color_raw g_rgb_raw[] = {
+>>   	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
+>>   	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> index 9b45e88e47e4..0059a2648a38 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> @@ -12,6 +12,10 @@
+>>   #include <drm/drm_print.h>
+>>   #include <drm/display/drm_dp_helper.h>
+>>   
+>> +/* 27 * 10000000 * 80% = 216000000 */
+>> +#define DP_MODE_VALI_CAL	216000000
+>> +#define BPP_24				24
+>> +
+>>   struct hibmc_dp_dev;
+>>   
+>>   enum hibmc_dp_cbar_pattern {
+>> @@ -62,5 +66,7 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp);
+>>   void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
+>>   void hibmc_dp_enable_int(struct hibmc_dp *dp);
+>>   void hibmc_dp_disable_int(struct hibmc_dp *dp);
+>> +u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp);
+>> +u8 hibmc_dp_get_lanes(struct hibmc_dp *dp);
+>>   
+>>   #endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> index c0de796225b7..40f95880b278 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -15,6 +15,28 @@
+>>   
+>>   #define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
+>>   
+>> +struct hibmc_dp_disp_clk {
+>> +	u16 hdisplay;
+>> +	u16 vdisplay;
+>> +	u32 clock;
+>> +};
+>> +
+>> +static const struct hibmc_dp_disp_clk hibmc_dp_clk_table[] = {
+>> +	{640, 480, 25175}, /* 25175 khz */
+>> +	{800, 600, 40000}, /* 40000 khz */
+>> +	{1024, 768, 65000}, /* 65000 khz */
+>> +	{1152, 864, 80000}, /* 80000 khz */
+>> +	{1280, 768, 79500}, /* 79500 khz */
+>> +	{1280, 720, 74250}, /* 74250 khz */
+>> +	{1280, 960, 108000}, /* 108000 khz */
+>> +	{1280, 1024, 108000}, /* 108000 khz */
+>> +	{1440, 900, 106500}, /* 106500 khz */
+>> +	{1600, 900, 108000}, /* 108000 khz */
+>> +	{1600, 1200, 162000}, /* 162000 khz */
+>> +	{1920, 1080, 148500}, /* 148500 khz */
+>> +	{1920, 1200, 193250}, /* 193250 khz */
+>> +};
+>> +
+>>   static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>>   {
+>>   	const struct drm_edid *drm_edid;
+>> @@ -49,9 +71,38 @@ static int hibmc_dp_detect(struct drm_connector *connector,
+>>   	return connector_status_disconnected;
+>>   }
+>>   
+>> +static int hibmc_dp_mode_valid(struct drm_connector *connector,
+>> +			       const struct drm_display_mode *mode,
+>> +			       struct drm_modeset_acquire_ctx *ctx,
+>> +			       enum drm_mode_status *status)
+>> +{
+>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
+>> +	u64 cur_val, max_val;
+>> +
+>> +	/* check DP link BW */
+>> +	cur_val = (u64)mode->htotal * mode->vtotal * drm_mode_vrefresh(mode) * BPP_24;
+>> +	max_val = (u64)hibmc_dp_get_link_rate(dp) * DP_MODE_VALI_CAL * hibmc_dp_get_lanes(dp);
+>> +
+>> +	*status = cur_val > max_val ? MODE_CLOCK_HIGH : MODE_OK;
+>> +
+>> +	/* check the clock */
+> Why? Is it really fixed to the values in the table?
+
+Right, our chip spec said that one resolution can only support one clock, and we only support 11 clocks
+above in the struct hibmc_dp_disp_clk{}, which is the limited of our display block.
+
+Thanks,
+Baihan.
+
+
+>> +	for (size_t i = 0; i < ARRAY_SIZE(hibmc_dp_clk_table); i++) {
+>> +		if (hibmc_dp_clk_table[i].hdisplay == mode->hdisplay &&
+>> +		    hibmc_dp_clk_table[i].vdisplay == mode->vdisplay) {
+>> +			if (hibmc_dp_clk_table[i].clock != mode->clock) {
+>> +				*status = MODE_CLOCK_RANGE;
+>> +				return 0;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>>   	.get_modes = hibmc_dp_connector_get_modes,
+>>   	.detect_ctx = hibmc_dp_detect,
+>> +	.mode_valid_ctx = hibmc_dp_mode_valid,
+>>   };
+>>   
+>>   static int hibmc_dp_late_register(struct drm_connector *connector)
+>> -- 
+>> 2.33.0
+>>
 
