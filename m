@@ -1,140 +1,135 @@
-Return-Path: <linux-kernel+bounces-709301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527C4AEDB7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:45:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CFDAEDB95
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BC1B7A407C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:43:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87C217A1201
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5522749DB;
-	Mon, 30 Jun 2025 11:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF0228315A;
+	Mon, 30 Jun 2025 11:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9XJ/TJf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="cFNtvq2G"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963F32749D1;
-	Mon, 30 Jun 2025 11:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3F1283C91;
+	Mon, 30 Jun 2025 11:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751283896; cv=none; b=QRxP73iDGkVU1ezak+6R4JniG/AYfECU020rxFRDRUvwqdluyUbKyrJ9+mbSJGG83RfbgVlJ4i++P/Yf/jfGm6VmlQ/0+5ZphXUtp/bKkrNSFwUV9vp4HE6dJ75uiteUCG6+Z0VZG/Bxg5R7rEGHDwprJSweOctx2Vy08AHRt1c=
+	t=1751284133; cv=none; b=im6PzjmzberAvco940KHCI/gdAhl0vfLjmfjZyR5x3R5JhDYbXOg3cofGzsRcn52AZYjpd/CL6zDPKuSkhl3cfsZG/mD8Zamg03lNsAInbMgEcy6q93RByJXD+vRjJYYfHmFYPG51tssv4oYSNSjloJI5zjgZR+8lOCXmv9mlaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751283896; c=relaxed/simple;
-	bh=DqZJQgp9Fs00ASgigomQ+vjSEETpD7ZaFTeuzYQKI2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmKZGpAC+NvKt/sgefJz4Q6PqQcRJsuMEoP29SG6/fAeVhuxCDCEY0+NnajIQGCGyVpCdATtWkTFT3sN6tHo7UogJ6GzgnW6gtv2OhLtI0zfIUy7PFX4I83yZLUjARUNd8Re/WbUIq3+Hdzjqcn4+cjdZfauMy9iLsSairWUXlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9XJ/TJf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19D3EC4CEE3;
-	Mon, 30 Jun 2025 11:44:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751283896;
-	bh=DqZJQgp9Fs00ASgigomQ+vjSEETpD7ZaFTeuzYQKI2M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g9XJ/TJfHhCBP0/5gnuGekyq8GdU3qvQo3vIKGOR01lOlZx+xZ1JlnLNK5KW1ghXd
-	 X9kxRd9WmdCb/9ASn2ukRh5y0upEShNRMDM04JQM+0gintAHAKo1Gj1MTEqEcqz1W5
-	 DDFqVuf2rv0HPjMPTa3hyWmQkAbegQwhUh5k47SRePqB84TPmmgZmojprMw9WedIhS
-	 IYS09FXmXDWgTb6QBwV376LYdGRF6ZFKq6hAzDAWBLlGRRRhN8sRTH8kxaGDLjM5EG
-	 VSLH7hw2YqQsqwgOk/t6yFZCqYn/4ipP1OaUSla5yLiYsfk60jY3jDIltQO5+Q8pIh
-	 pP6lIwWcZ65aw==
-Message-ID: <fe0a6cb5-3d63-484b-ad54-08d1865e1c23@kernel.org>
-Date: Mon, 30 Jun 2025 13:44:53 +0200
+	s=arc-20240116; t=1751284133; c=relaxed/simple;
+	bh=DUJjBO7T5MaF7dBk+qD2Lmzq5qH9wDFK0AwvSWOj9Bs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biUkwsWm2d2JO4r/5NJikSls8xFJarInpzTfZQBrjMQy7a1eldH7AAZ/9aL7nJyXbycFAUPrnSzRz+4BXawp+y0ud4ysVeciq7UulUk38+FXzHUYXxYiscbW1ueVmRBWVxAmGs7UKsnx7Ik0+gCUuIpG28i1dhqM8ly8zbgLhq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=cFNtvq2G; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U7x1gK025447;
+	Mon, 30 Jun 2025 13:48:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	91jH5cFvvocFD9cZk0oZNMRRI8Lu1LwSiDDduj/iv9Q=; b=cFNtvq2G6gSzql0A
+	9toSeVBYzuHhPRn3p4gNSVQ6W6jAkSgqNetkM09uJ8qpEOncJd5IJZlDB6zf+WOO
+	A8hcTWHKsVQV5inpukGA+dgpKqGzNMWzXh6wo2ea/VLU/wcWDeGWXAy81n4RQcPo
+	yLyqI/J90HIom9VcxytldkfLF5ZeN5w8y+6PEuEXht5LKk5Qeg7/lw+r1FPb8Au5
+	vFBp8TjpQHTEr4keKHkx+N4V+8rYOcqUeqmKCmy7j3Q22voEx71SBs+RdTUFatK/
+	1IdrP7bn69pDx3XrZQ5LuDrGI6DpPM9BI6TaoLZqiFvNGLW5AsDq7WdyuuQr89vE
+	Jn4Inw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47jsy4myxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 13:48:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F1A2C4004B;
+	Mon, 30 Jun 2025 13:47:40 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D89CDB28C48;
+	Mon, 30 Jun 2025 13:47:10 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
+ 2025 13:47:10 +0200
+Date: Mon, 30 Jun 2025 13:47:09 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+CC: Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Dan
+ Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] spi: stm32: fix sram pool free in probe error path
+Message-ID: <20250630114709.GB398774@gnbcxd0016.gnb.st.com>
+References: <20250630-spi-fix-v1-1-2e671c006e15@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pch_uart: Fix dma_sync_sg_for_device() nents value
-To: Thomas Fourier <fourier.thomas@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250630114124.102326-2-fourier.thomas@gmail.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250630114124.102326-2-fourier.thomas@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250630-spi-fix-v1-1-2e671c006e15@foss.st.com>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
 
-On 30. 06. 25, 13:41, Thomas Fourier wrote:
-> The dma_sync_sg_for_device() functions should be called with the same
-> nents as the dma_map_sg(), not the value the map function returned.
+Hi Clément,
+
+On Mon, Jun 30, 2025 at 10:20:13AM +0200, Clément Le Goffic wrote:
+> Add a test to check whether the sram_pool is NULL before freeing it.
 > 
-> Fixes: da3564ee027e ("pch_uart: add multi-scatter processing")
-> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> Fixes: d17dd2f1d8a1 ("spi: stm32: use STM32 DMA with STM32 MDMA to enhance DDR use")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 > ---
->   drivers/tty/serial/pch_uart.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/spi/spi-stm32.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/tty/serial/pch_uart.c b/drivers/tty/serial/pch_uart.c
-> index 508e8c6f01d4..5aee3fdba8a1 100644
-> --- a/drivers/tty/serial/pch_uart.c
-> +++ b/drivers/tty/serial/pch_uart.c
-> @@ -954,7 +954,7 @@ static unsigned int dma_handle_tx(struct eg20t_port *priv)
->   			__func__);
->   		return 0;
->   	}
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+> index 3d20f09f1ae7..858470a2cab5 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -2486,7 +2486,9 @@ static int stm32_spi_probe(struct platform_device *pdev)
+>  	if (spi->mdma_rx)
+>  		dma_release_channel(spi->mdma_rx);
+>  err_pool_free:
+> -	gen_pool_free(spi->sram_pool, (unsigned long)spi->sram_rx_buf, spi->sram_rx_buf_size);
+> +	if (spi->sram_pool)
+> +		gen_pool_free(spi->sram_pool, (unsigned long)spi->sram_rx_buf,
+> +			      spi->sram_rx_buf_size);
+>  err_dma_release:
+>  	if (spi->dma_tx)
+>  		dma_release_channel(spi->dma_tx);
+> 
 
-I don't follow, given:
-   priv->nent = nent;
-few lines above.
+Looks good to me. Thanks.
+Acked-by: Alain Volmat <alain.volmat@foss.st.com>
 
-> -	dma_sync_sg_for_device(port->dev, priv->sg_tx_p, nent, DMA_TO_DEVICE);
-> +	dma_sync_sg_for_device(port->dev, priv->sg_tx_p, priv->nent, DMA_TO_DEVICE);
->   	priv->desc_tx = desc;
->   	desc->callback = pch_dma_tx_complete;
->   	desc->callback_param = priv;
+Regards,
+Alain
 
-
--- 
-js
-suse labs
+> ---
+> base-commit: 045719b1d0aab98e6abdd7715e8587b997d1cefa
+> change-id: 20250630-spi-fix-860416bfb96d
+> 
+> Best regards,
+> -- 
+> Clément Le Goffic <clement.legoffic@foss.st.com>
+> 
 
