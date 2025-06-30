@@ -1,178 +1,138 @@
-Return-Path: <linux-kernel+bounces-709252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF027AEDAE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D2CAEDAF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F051C16BFB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:28:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406FF17199E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B2325CC69;
-	Mon, 30 Jun 2025 11:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEBC24A05D;
+	Mon, 30 Jun 2025 11:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQ1ZdniB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+W9TpPb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E9F235056;
-	Mon, 30 Jun 2025 11:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D451B25D546;
+	Mon, 30 Jun 2025 11:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751282916; cv=none; b=d0Gbggge3dwbxvCs6WPWt1AH9i90qZAkLMqNCHXKKmPYLAC4BWvmzgZ/QtDCySH1DJ4o9Z0L7rdFR9DFL114lllBlMHdEuW0G3DmcwwDPZjNGCsK2FlYsXMKvOEKtgzJP0Q77MR5YMHOb5ZirZiAIbXZHm0hz6ZVrh75167eR+Q=
+	t=1751282936; cv=none; b=N0W180nyrH/c3XY7h9HOtXpGFcvR5XHPzAybhIi/rNBjZ/foOqOC0JZxVNSEc+lmB+CdB1K222izTJysng5/ggeM5IDYEjnajB3lN2kIPKnNlFuRA78MPXyOgFlMpGXxfZRpmYu1OmZvdnWQW088SgbQT2CMKVNJ5s749fnf/CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751282916; c=relaxed/simple;
-	bh=N/h64xLzq0goVwy4KzgtSusObZRIiU7ReaUoXVaeSDo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Z7UCg0qarbq8M9Ooz2YtrFFt7UChyyb5zCYQ2dMUJdcyj7m4BkZjR48iE6LqMoH2F01Jq2TZJFZI1b0HxusdMxy48cjgoBofpnOHUI0C6+p1KM0meBFOKfCVbJrOo6YopDd8iEEJ1d6dojch07g+Rhy8uF4V6w/lIhPSbgTn8dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQ1ZdniB; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751282915; x=1782818915;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=N/h64xLzq0goVwy4KzgtSusObZRIiU7ReaUoXVaeSDo=;
-  b=TQ1ZdniBSblIp/R+6pu8+u31xPqP9IZrXbnSXfNCYoBI2pR5CMulFBqs
-   R1c1YCaNWi2/D0CC/WPwJA7kR7vyaYtaZAFSZxof4f4MTBRVPPRv1RMS9
-   64gYlPkxhUqh82iOQYM8CtWBwd+Ohn06GTggA5GLY6gTfeEA2YAJ49Q/p
-   ZLYxmwvwo2HhK3BVJnJbIj4kuzfNCaY4So0wIuGmc4y92bxjZ9skq13Sc
-   zshwS4uQAGTlAEGgAQBzdAK64A6LPt6tipGxGk25tlJ7LF+V7lNsJH9H1
-   9R6rsZT1NyjOqWevCM+ezYc6+QqW8LrorPi/4LYIGq25+lqMihWxPxGFG
-   w==;
-X-CSE-ConnectionGUID: 4Z/I3u8fQOm7v3QAAxDNvQ==
-X-CSE-MsgGUID: OK1atbnARGejJL952XVxdw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53653676"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="53653676"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 04:28:34 -0700
-X-CSE-ConnectionGUID: eaWahnIQRcaM/8ajVbVPYw==
-X-CSE-MsgGUID: V+LNQuoITJK5ORefNZtuNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="153904593"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 04:28:31 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 30 Jun 2025 14:28:29 +0300 (EEST)
-To: Xi Pardee <xi.pardee@linux.intel.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] platform/x86:intel/pmc: Enable SSRAM support for
- Panther Lake
-In-Reply-To: <20250625063145.624585-6-xi.pardee@linux.intel.com>
-Message-ID: <9fccdef1-aabd-730c-d031-99d8319fba11@linux.intel.com>
-References: <20250625063145.624585-1-xi.pardee@linux.intel.com> <20250625063145.624585-6-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1751282936; c=relaxed/simple;
+	bh=adC3bt0x2TOMzWtbW7bV1ts0yPrgUhFCsmuOPP7bnAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O87TFz9AirmHRwkXiRyAB5w9YVAT+I/lQG6PwFFaBt7sM5yB+8aEyNi4QRiuWReeUmDymkPBGOc3HfWifAxs5GW+M5E1pFRSp7/02pH3uj/WkHdRw7M7CB1Sf+Lll9DfZIYRg+z+t7zYdeGSEpiZlWr4auHeeBfK3GPVGJ+LmLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+W9TpPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 052E7C4CEF0;
+	Mon, 30 Jun 2025 11:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751282935;
+	bh=adC3bt0x2TOMzWtbW7bV1ts0yPrgUhFCsmuOPP7bnAU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=b+W9TpPbTN6JTkf34iwN2NrmZEKTn0Za6XQu1JTI0dE9lGTPRd7TMYjYuSBQKsVHX
+	 YAImuvagvnR/txANJX8ADaEbQy9Xxa79g0DGTe+JZN88L3Ux/s+dALCU6puHFUdYrr
+	 MGRE/TTleLzcwIrKpgjWnfV5zoDiPNcBme6FUDahTFGrmK+3uvy9i9MfS+pSqc4RUX
+	 p66+mNDJjgSdK9W2/Azl9zag7fA2uxI/8ygurkX53+/C6rLyfh9pMEUA876LDHqNEd
+	 Glj+XjxogaZ3Q/n1NZyM2fuVkkN16YJYh3fAhjaKIxEmBwW7ajqSpdrwU3SlPt49tJ
+	 hpv8SejTvrKcA==
+Message-ID: <a2c8e8ea-4cd1-43ca-8973-ac7210f821c2@kernel.org>
+Date: Mon, 30 Jun 2025 13:28:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1524790567-1751282909=:7079"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: trivial-devices: Add mp2869a/mp29612a
+ device entry
+To: tzuhao.wtmh@gmail.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>,
+ Michal Simek <michal.simek@amd.com>, Fabio Estevam <festevam@gmail.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>,
+ Henry Wu <Henry_Wu@quantatw.com>, Grant Peltier <grantpeltier93@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Alex Vdovydchenko
+ <xzeol@yahoo.com>,
+ John Erasmus Mari Geronimo <johnerasmusmari.geronimo@analog.com>,
+ Leo Yang <leo.yang.sy0@gmail.com>, Ninad Palsule <ninad@linux.ibm.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Kim Seer Paller <kimseer.paller@analog.com>, Nuno Sa <nuno.sa@analog.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: peteryin.openbmc@gmail.com
+References: <20250630112120.588246-1-Henry_Wu@quantatw.com>
+ <20250630112120.588246-3-Henry_Wu@quantatw.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250630112120.588246-3-Henry_Wu@quantatw.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 30/06/2025 13:20, tzuhao.wtmh@gmail.com wrote:
+> From: Henry Wu <Henry_Wu@quantatw.com>
+> 
+> Add trivial-devices binding for mp2869a/mp29612a to enable automatic matching
+> in device tree.
 
---8323328-1524790567-1751282909=:7079
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Nothing improved. You did not respond to my comments and just sent the same.
 
-On Tue, 24 Jun 2025, Xi Pardee wrote:
+No, implement and respond to comments.
 
-> Enable Panther Lake platforms to achieve PMC information from
-> Intel PMC SSRAM Telemetry driver and substate requirements data
-> from telemetry region.
->=20
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/pmc/core.h |  2 ++
->  drivers/platform/x86/intel/pmc/ptl.c  | 30 +++++++++++++++++++++++++++
->  2 files changed, 32 insertions(+)
->=20
-> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86=
-/intel/pmc/core.h
-> index d8c7b28493055..cdb32f2203cff 100644
-> --- a/drivers/platform/x86/intel/pmc/core.h
-> +++ b/drivers/platform/x86/intel/pmc/core.h
-> @@ -301,6 +301,8 @@ enum ppfear_regs {
->  #define PTL_PMC_LTR_CUR_ASLT=09=09=090x1C28
->  #define PTL_PMC_LTR_CUR_PLT=09=09=090x1C2C
->  #define PTL_PCD_PMC_MMIO_REG_LEN=09=090x31A8
-> +#define PTL_NUM_S0IX_BLOCKER=09=09=09106
-> +#define PTL_BLK_REQ_OFFSET=09=09=0955
-> =20
->  /* SSRAM PMC Device ID */
->  /* LNL */
-> diff --git a/drivers/platform/x86/intel/pmc/ptl.c b/drivers/platform/x86/=
-intel/pmc/ptl.c
-> index 394515af60d60..48be79b4e769f 100644
-> --- a/drivers/platform/x86/intel/pmc/ptl.c
-> +++ b/drivers/platform/x86/intel/pmc/ptl.c
-> @@ -10,6 +10,17 @@
-> =20
->  #include "core.h"
-> =20
-> +/* PMC SSRAM PMT Telemetry GUIDS */
-> +#define PCDP_LPM_REQ_GUID 0x47179370
-> +
-> +/*
-> + * Die Mapping to Product.
-> + * Product PCDDie
-> + * PTL-H   PCD-H
-> + * PTL-P   PCD-P
-> + * PTL-U   PCD-P
-> + */
-> +
->  static const struct pmc_bit_map ptl_pcdp_pfear_map[] =3D {
->  =09{"PMC_0",               BIT(0)},
->  =09{"FUSE_OSSE",           BIT(1)},
-> @@ -515,6 +526,22 @@ static const struct pmc_reg_map ptl_pcdp_reg_map =3D=
- {
->  =09.lpm_live_status_offset =3D MTL_LPM_LIVE_STATUS_OFFSET,
->  =09.s0ix_blocker_maps =3D ptl_pcdp_blk_maps,
->  =09.s0ix_blocker_offset =3D LNL_S0IX_BLOCKER_OFFSET,
-> +=09.num_s0ix_blocker =3D PTL_NUM_S0IX_BLOCKER,
-> +=09.blocker_req_offset =3D PTL_BLK_REQ_OFFSET,
-> +};
-> +
-> +static struct pmc_info ptl_pmc_info_list[] =3D {
-> +=09{
-> +=09=09.guid=09=3D PCDP_LPM_REQ_GUID,
-> +=09=09.devid=09=3D PMC_DEVID_PTL_PCDH,
-> +=09=09.map=09=3D &ptl_pcdp_reg_map,
-> +=09},
-> +=09{
-> +=09=09.guid   =3D PCDP_LPM_REQ_GUID,
-> +=09=09.devid  =3D PMC_DEVID_PTL_PCDP,
-> +=09=09.map    =3D &ptl_pcdp_reg_map,
-> +=09},
-> +=09{}
->  };
-> =20
->  #define PTL_NPU_PCI_DEV                0xb03e
-> @@ -543,6 +570,9 @@ static int ptl_core_init(struct pmc_dev *pmcdev, stru=
-ct pmc_dev_info *pmc_dev_in
->  }
-> =20
->  struct pmc_dev_info ptl_pmc_dev =3D {
-> +=09.pci_func =3D 2,
-> +=09.telem_info =3D SUB_REQ_BLK,
-> +=09.regmap_list =3D ptl_pmc_info_list,
->  =09.map =3D &ptl_pcdp_reg_map,
->  =09.suspend =3D cnl_suspend,
->  =09.resume =3D ptl_resume,
->=20
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
---8323328-1524790567-1751282909=:7079--
+Best regards,
+Krzysztof
 
