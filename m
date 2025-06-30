@@ -1,182 +1,163 @@
-Return-Path: <linux-kernel+bounces-708979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D736FAED7B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:48:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A6EAED802
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3DB87A355A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74A7189A036
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E161215F72;
-	Mon, 30 Jun 2025 08:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A520E244692;
+	Mon, 30 Jun 2025 08:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m/eEcyjR"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="eqJbug3M"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671BE1D9663
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E9923D28C;
+	Mon, 30 Jun 2025 08:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751273304; cv=none; b=tLEuiNvolA17RtThO38oZ+LPJtTbk9S7KSEqHz8jleiJ6X6OlzxF11vATIr6u5ZUe8FGmvLclMx8cHz9BccpQeksYpGzSI+/cNV7WupgM6ieJZwsgwfe1RGXcALJanWHOxb9CbxzSfjmwGXTopnQOyArqr05FkkaeVoQHwtPtzc=
+	t=1751273903; cv=none; b=p6B8uidnjtZZHTjig+SFS7/JYWNOtwWR+ZTZUi+TSmSCNJCMYSes0gyTvdssOMheACcbEjWtYnVl5E0Rz8nJd3Dm4hzPCjKAf3pUsUJ2CltVuHoYg0ZGKKRSEu/all7uIAQGiylORHp41HpwajMHGEHL0DzINVc13MDSHCevFz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751273304; c=relaxed/simple;
-	bh=GLyuwmhfQTbO6A0KpqxLq0nFrLsDd5zxBBhnfG9f2ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bC0weDHBqi5GlZfjfWpxWfRcusL5h2VUwqbRnoOL/lDa6bvvbHuqwToWrwO7g+SwQdj4Q3N5nkPfUDLrFqEdPVEX3Ek5NzG4UllS8yOqLnpQI4UK6ToxijHWMpGumLW2fHo5KGgw6r6IoEA8Z4CM0hnFoI1IHhzSftbIVsxK/k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m/eEcyjR; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aZUzmgr4awk2OfqDwSA49N0EKn2TsPmuSjz/m/RegPQ=; b=m/eEcyjRCcdugCM6rkkWkm7M93
-	Bx47kBqlwjxKiY7ZRPwO0ae0JRCqZ2RK2a6CUwp2PvRw8KUWJ2PWp/YoQTr5waa3fXT/RMri5NDDa
-	WbuxrVpQweEsW7NKXmVaHYTshttKTjSsQmcrimXo8BP6bGphzBkQJ6RlTyp4ALS2BY8pzN9Duk99i
-	U6WIR68onUX5amQX6gworqxx2EEJSrBb2DiGAmOb2YHaY1Uhw9+LC1eNsWQGbLCakAk+0niEUUiPB
-	COFY3kJzQuzlQRLI8PUhBKbYXo3RcMp/KG72P8IpTZnK4352WcANip9rX+88H1vvLIRn7ZiPQttZk
-	KH/EtBdA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWABO-00000003Ktl-0L60;
-	Mon, 30 Jun 2025 08:48:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EAADD300125; Mon, 30 Jun 2025 10:48:08 +0200 (CEST)
-Date: Mon, 30 Jun 2025 10:48:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shashank Balaji <shashank.mahadasyam@sony.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
-	Sia Jee Heng <jeeheng.sia@starfivetech.com>,
-	James Morse <james.morse@arm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Rahul Bukte <rahul.bukte@sony.com>,
-	Daniel Palmer <daniel.palmer@sony.com>,
-	Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [RFC PATCH] kernel/cpu: in freeze_secondary_cpus() ensure
- primary cpu is of domain type
-Message-ID: <20250630084808.GH1613376@noisy.programming.kicks-ass.net>
-References: <20250630082103.829352-1-shashank.mahadasyam@sony.com>
+	s=arc-20240116; t=1751273903; c=relaxed/simple;
+	bh=yVRgDYthw0QSa8gzZJJyAZDMS/AvxucxK9cfZfnatyo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SEGoqGFCx/hleiLFfl75FwQ4bVr1hKV3qnSEflour5HeWy6gXNNaJqU7994k3z6Dai7I6WAFXpPHzVsYhUMLW0GI/exUp3l60MWQ4i41NZh5YoWuDVCwRwm7b8rtr30TQ1pyzu+Lx92kdR2bahIoZapivGUlAqepE+BCMAz3nAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=eqJbug3M; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 9167E6000258;
+	Mon, 30 Jun 2025 09:49:20 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id Xf_wChehqG2Z; Mon, 30 Jun 2025 09:49:18 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id A4A1C60010AB;
+	Mon, 30 Jun 2025 09:49:17 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1751273357;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Gf08E0wZsmIUXEMAnTZrONNO6RnUNdCjKGL56Y0nNl4=;
+	b=eqJbug3MAXNqqo7r8C/btW1U8crawbL0acRZ3SUEs6EbGmzMke6z4/307BLK0cg8J3WybR
+	ouNt4hMf5EGi0BLL2T/fVXUSEZJV+TAAp/Qw+h722aEGIiQtaAtsMJghqcyIz6guKnTqLe
+	puJRol53CXaIOtTPp1XRkFpchSnQdDI=
+Received: from [192.168.1.69] (unknown [92.56.11.86])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 00F9B360075;
+	Mon, 30 Jun 2025 09:49:15 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Subject: [PATCH v3 0/3] NVIDIA Tegra210 NVJPG support
+Date: Mon, 30 Jun 2025 09:48:41 +0100
+Message-Id: <20250630-diogo-nvjpg-v3-0-a553c7e91354@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630082103.829352-1-shashank.mahadasyam@sony.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGlPYmgC/23M0QrCIBiG4VsZHudQl6511H1EB5v73f4IFV1Sj
+ N17bhA06PD94HtmEiEgRHIuZhIgYURnc1SHguixtQNQ7HMTwYRkiknaoxsctenuBwqsP2pZc6G
+ 0JPnhAxh8bdr1lnvEOLnw3vDE1/XrqJ2TOGVUGqErZQC6qrlMoC1qVz4fGDvXln4iK5jED8L5H
+ hEZYdycdK2gbZj5iyzL8gH913UM9AAAAA==
+X-Change-ID: 20250605-diogo-nvjpg-e0d4c57126c5
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, 
+ Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751273350; l=2623;
+ i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
+ bh=yVRgDYthw0QSa8gzZJJyAZDMS/AvxucxK9cfZfnatyo=;
+ b=wDMdcP7d3cTNvN2v+YfmY6X/CM8RvvxYa84Aw8ELVrvp9QF5YmKJd0+/5VXOxTaUcaLXGAnlY
+ RW/CT0O+sYHAqpWQfmxDI8ty1Oq+v9UF4Lxhi5+4C/qipsfcsdvqOwz
+X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
-On Mon, Jun 30, 2025 at 05:20:59PM +0900, Shashank Balaji wrote:
-> On an x86 machine, when cpu 0 is isolated with "isolcpus=", on initiating
-> suspend to memory, a warning is triggered, followed by a kernel crash. This is
-> on a defconfig + CONFIG_ENERGY_MODEL kernel:
+Hello,
 
-> This happens because in order to offline the last secondary cpu, i.e. cpu 1,
-> build_sched_domains() ends up being passed an empty cpumask, since the only remaining
-> cpu (cpu 0) is isolated. It warns and fails, after which perf domains are
-> are attempted to be built, which crashes the kernel. The same problem occurs
-> during cpu hotplug, but that was fixed by
-> commit 38685e2a0476127d ("cpu/hotplug: Don't offline the last non-isolated CPU").
-> 
-> Fix this by ensuring that the primary cpu, the last standing cpu, is of domain
-> type, so that build_sched_domains() is not passed an empty cpumask.
-> 
+This series adds support for the NVJPG hardware accelerator found in the
+Tegra210 SoC.
 
-> Co-developed-by: Rahul Bukte <rahul.bukte@sony.com>
-> Signed-off-by: Rahul Bukte <rahul.bukte@sony.com>
-> Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
-> ---
->  kernel/cpu.c | 27 ++++++++++++++++++++++-----
->  1 file changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index a59e009e0be4..d9167b0559a5 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -1902,12 +1902,28 @@ int freeze_secondary_cpus(int primary)
->  
->  	cpu_maps_update_begin();
->  	if (primary == -1) {
-> -		primary = cpumask_first(cpu_online_mask);
-> -		if (!housekeeping_cpu(primary, HK_TYPE_TIMER))
-> -			primary = housekeeping_any_cpu(HK_TYPE_TIMER);
-> +		primary = cpumask_first_and_and(cpu_online_mask,
-> +								housekeeping_cpumask(HK_TYPE_TIMER),
-> +								housekeeping_cpumask(HK_TYPE_DOMAIN));
+The kernel driver is essentially a copy of the NVDEC driver as both
+engines are Falcon-based.
 
-That's terrible indenting, please align after the opening bracket like:
+For the userspace part I have written a Mesa Gallium backend [1] that,
+while still very much experimental, works in decoding images with VA-API.
 
-		primary = cpumask_first_and_and(cpu_online_mask,
-						housekeeping_cpumask(HK_TYPE_TIMER),
-						housekeeping_cpumask(HK_TYPE_DOMAIN));
+I have been using ffmpeg to call VA-API with the following command:
 
-Also, IIRC HK_TYPE_HRTIMER is deprecated and should be something like
-HK_TYPE_NOISE or somesuch. Frederic?
+ffmpeg -v verbose -hwaccel vaapi -hwaccel_device /dev/dri/renderD129 -i <input.jpg> -pix_fmt bgra -f fbdev /dev/fb0
 
-> +		if (primary >= nr_cpu_ids) {
-> +			error = -ENODEV;
-> +			pr_err("No suitable primary CPU found. Ensure at least one non-isolated, non-nohz_full CPU is online\n");
-> +			goto abort;
-> +		}
->  	} else {
-> -		if (!cpu_online(primary))
-> -			primary = cpumask_first(cpu_online_mask);
-> +		if (!cpu_online(primary)) {
-> +			primary = cpumask_first_and(cpu_online_mask,
-> +								housekeeping_cpumask(HK_TYPE_DOMAIN));
+which decodes <input.jpg> and shows the result in the framebuffer.
 
-Indenting again.
+The firmware for the engine can be obtained from a Linux for Tegra
+distribution. Due to the way the Gallium implementation works for Tegra
+the GPU also needs to be enabled.
 
-> +			if (primary >= nr_cpu_ids) {
-> +				error = -ENODEV;
-> +				pr_err("No suitable primary CPU found. Ensure at least one non-isolated CPU is online\n");
-> +				goto abort;
-> +			}
-> +		} else if (!housekeeping_cpu(primary, HK_TYPE_DOMAIN)) {
-> +			error = -ENODEV;
-> +			pr_err("Primary CPU %d should not be isolated\n", primary);
-> +			goto abort;
-> +		}
->  	}
->  
->  	/*
-> @@ -1943,6 +1959,7 @@ int freeze_secondary_cpus(int primary)
->  	else
->  		pr_err("Non-boot CPUs are not disabled\n");
->  
-> +abort:
->  	/*
->  	 * Make sure the CPUs won't be enabled by someone else. We need to do
->  	 * this even in case of failure as all freeze_secondary_cpus() users are
+Thanks!
 
+Diogo
 
-Also; doesn't the above boil down to something like:
+To: Thierry Reding <thierry.reding@gmail.com>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Jonathan Hunter <jonathanh@nvidia.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-tegra@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 
-	if (primary == -1) {
-		primary = cpumask_first_and_and(cpu_online_mask,
-						housekeeping_cpumask(HK_TYPE_TIMER),
-						housekeeping_cpumask(HK_TYPE_DOMAIN));
-	} if (!cpu_online(primary)) {
-		primary = cpumask_first_and(cpu_online_mask,
-					    housekeeping_cpumask(HK_TYPE_DOMAIN));
-	} 
+[1]: https://gitlab.freedesktop.org/d.ivo/mesa/-/tree/diogo/vaapi_gl?ref_type=heads
 
-	if (primary >= nr_cpu_ids || !housekeeping_cpu(primary, HK_TYPE_DOMAIN)) {
-		error = -ENODEV;
-		pr_err("Primary CPU %d should not be isolated\n", primary);
-		goto abort;
-	}
+---
+Changes in v3:
+- [01/03]: Properly handle dma_alloc_coherent error path
+- Link to v2: https://lore.kernel.org/r/20250611-diogo-nvjpg-v2-0-01f8c76ea90f@tecnico.ulisboa.pt
 
-Yes, this has less error string variation, but the code is simpler.
+Changes in v2:
+- [01/03]: Remove reset handling, set clk rate to max
+- [02/03]: Explicitly mention Tegra210 in the commit subject
+- [03/03]: Explicitly mention Tegra210 in the commit subject
+- Link to v1: https://lore.kernel.org/r/20250606-diogo-nvjpg-v1-0-5f2c36feeb39@tecnico.ulisboa.pt
+
+---
+Diogo Ivo (3):
+      drm/tegra: Add NVJPG driver
+      arm64: tegra: Add Tegra210 NVJPG power-domain node
+      arm64: tegra: Add NVJPG node for Tegra210 platforms
+
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi |  14 +-
+ drivers/gpu/drm/tegra/Makefile           |   1 +
+ drivers/gpu/drm/tegra/drm.c              |   2 +
+ drivers/gpu/drm/tegra/drm.h              |   1 +
+ drivers/gpu/drm/tegra/nvjpg.c            | 329 +++++++++++++++++++++++++++++++
+ 5 files changed, 346 insertions(+), 1 deletion(-)
+---
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+change-id: 20250605-diogo-nvjpg-e0d4c57126c5
+
+Best regards,
+-- 
+Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+
 
