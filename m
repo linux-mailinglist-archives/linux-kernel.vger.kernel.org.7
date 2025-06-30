@@ -1,438 +1,334 @@
-Return-Path: <linux-kernel+bounces-708913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4E0AED6A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C93AED6A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4DE3BBD15
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:04:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8A23AA6F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19189239E7F;
-	Mon, 30 Jun 2025 08:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjFyH3wW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1110226165;
+	Mon, 30 Jun 2025 08:05:18 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D1E21FF55;
-	Mon, 30 Jun 2025 08:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1EF4A23;
+	Mon, 30 Jun 2025 08:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751270668; cv=none; b=bGERMZLZvH7fO2naprwK023+QBKajFggELjkZlG26SnbMzK05CmEpGJcp3aIyqj9a40A+JYERIBdRhhJTKBq5C9Un6RcvdsOBCQLR0IaZJ5+OHwwOX4RDH13cjWT/Lai8y0W7xqSTcE4MDSe9tH9UvHKC2tPPE43NdtxwnHzm8s=
+	t=1751270718; cv=none; b=l+cMbCWY//n2TtKreZkmDn/wp2WofrYZK/mJ3H0/2zm9q2GQBEPYB5ZmsF4oZ8Ur26KZCu4+EwSGMa8W9vIt70cwbcPfDDp8uZxA6sFEFOdsVfFYpYR8icJDKZlMsL6Febt/MC9wEZ98jyzS0AjePmH3v1NpO1pY7MxL/u+7T5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751270668; c=relaxed/simple;
-	bh=bwchRmcLVbZYLZGHfdDl6K19HLcH2bDZCDHH2eaUt34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X8KtZiwtwmDGbBc84iugIX6fe5uliEJeU0wCYh9A2AeLkYS9CAuObMPuaZcHkAiLWL1i7CTp6kFw4XmCxXU7ZCTTJXK5k+Ddj+04sCyN8BMZW4u0slm4xyrwQXGxGw9wlNDI648mHIDIdpRH3MQYsBkj7KCLZQZoXb6nlcGX2Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjFyH3wW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB41C4CEEB;
-	Mon, 30 Jun 2025 08:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751270667;
-	bh=bwchRmcLVbZYLZGHfdDl6K19HLcH2bDZCDHH2eaUt34=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AjFyH3wWyGhc00UmXWf/Baghr444XwrDHmaZNwUt2B5oJAD9XJ9p6rWTP9Uf+mXUy
-	 XT6HYoLBjhuDCMyf5JQkvkzyIZzRMdEn33rpS8bVI/3XQjZ/gujtmDsuImDsku1gtk
-	 8M9KBZH/xeBFtbaSPoCvVI8+QsiLNIen9FuflgdrgYMMRXsgITLgO7Zzg3ulEUg62M
-	 6zAkkvbNFNxQP8M90e/Sk7/XqChjbT0sAfUl2bbfDBD3GrBnq4eUA4d8uG8b4tmTRQ
-	 in9EX2JtthhCdNUxGdTST6chzGxTX3LmCjkrgxSd4ZdcGtb4rBMs3/o3gROTNxDJJd
-	 P7tfxJM7tTlTA==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6097d144923so8779568a12.1;
-        Mon, 30 Jun 2025 01:04:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLOhmXhbSujYsZeZaiDg8PgX4gXHvEuVt/rZDuSgiG7N8cOiEDQyZ6Uxyi40sZGgVy5J8=@vger.kernel.org, AJvYcCWr6YqPSevI4aNzuc4dcYKZVaUAziIfsk1ipmE8+FI/ikPEW47nnroMNmJesu7fYDGWF+lR2/OVwCiSgtHv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0AKtjnvvEi1BK7ksHmNlvEpsm+8XSIJSr1/d/Do55cYN2w+vh
-	eArVWh3DSzLwW1vJztkkSuLrYenYVOkemub7cr/SfI8kk8ZzcjbKMlh7i2bOrjcGrwA50+Ry1zY
-	gwfLR/wMk7sansNH2O8ZnzPZa1SWHwmI=
-X-Google-Smtp-Source: AGHT+IHvs0BPl27zV28ojmMXtogxYdBLQpI0Nb2lzudY4Dal6psVvwXmOrDtSymaTj8NC9aMyua2eiATokD9CrBpBhw=
-X-Received: by 2002:a05:6402:34cd:b0:60c:6a8d:8511 with SMTP id
- 4fb4d7f45d1cf-60c6a8d89c8mr13781147a12.12.1751270666189; Mon, 30 Jun 2025
- 01:04:26 -0700 (PDT)
+	s=arc-20240116; t=1751270718; c=relaxed/simple;
+	bh=UnDG+RGaC/E/rcaTg09jRcXzVPbJxQYBm4gVZR4+/hs=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=eG8+2AyeJnmkxxlF2M3st0JEo5DOYGSfVUA63AE0b2qxKQNFxglI1DIwxZZXuEejuWQOu0yAAtuuk8qFIuJL0SjGR+lPijJJxnTLaW67IXy4B3KhaHOTP1day5NZCx+oVuEas0Y3iIz7aMy3qHBGRIH054IHKn3w6oi+iJOOv6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4bVzGv4TZ7z5F2lr;
+	Mon, 30 Jun 2025 16:05:11 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 55U84mDn044609;
+	Mon, 30 Jun 2025 16:04:48 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 30 Jun 2025 16:04:50 +0800 (CST)
+Date: Mon, 30 Jun 2025 16:04:50 +0800 (CST)
+X-Zmail-TransId: 2afb68624522ffffffffe3f-35612
+X-Mailer: Zmail v1.0
+Message-ID: <2025063016045077919B2mfJO_YO81tg6CKfHY@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250619071449.1714869-1-maobibo@loongson.cn>
-In-Reply-To: <20250619071449.1714869-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 30 Jun 2025 16:04:14 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H42wPsxNCSp-4wy1+f-2yAJ1fuWbsC57bvQkHL0E3n=-g@mail.gmail.com>
-X-Gm-Features: Ac12FXzXFS8OKvbl7bkuwM5E_l_CPBg3TGydOuvuMTVVQgYvoLr_GH3pLufkJ4o
-Message-ID: <CAAhV-H42wPsxNCSp-4wy1+f-2yAJ1fuWbsC57bvQkHL0E3n=-g@mail.gmail.com>
-Subject: Re: [PATCH v2] LoongArch: KVM: INTC: Add IOCSR MISC register emulation
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <kuba@kernel.org>, <edumazet@google.com>, <kuniyu@amazon.com>,
+        <ncardwell@google.com>, <davem@davemloft.net>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <jiang.kun2@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0XSB0Y3A6IGFkZCByZXRyYW5zbWlzc2lvbiBxdWl0IHJlYXNvbnMgdG8gdHJhY2Vwb2ludA==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 55U84mDn044609
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68624537.000/4bVzGv4TZ7z5F2lr
 
-Hi, Bibo,
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-On Thu, Jun 19, 2025 at 3:15=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> IOCSR MISC register 0x420 controlls some features of eiointc, such as
-> BIT 48 enables eiointc and BIT 49 set interrupt encoding mode.
->
-> When kernel irqchip is set, IOCSR MISC register should be emulated in
-> kernel also. Here add IOCSR MISC register emulation in kernel side.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
-> v1 ... v2:
->   1. Add separate file arch/loongarch/kvm/intc/misc.c for IOCSR MISC
->      register 0x420 emulation, since it controls feature about AVEC
->      irqchip also.
-I found we can decouple the misc register and EIOINTC in addition:
-1, Move misc.c out of intc directory;
-2, Call kvm_loongarch_create_misc() in kvm_arch_init_vm();
-3, Call kvm_loongarch_destroy_misc() in kvm_arch_destroy_vm();
-4, Then maybe misc_created can be removed.
+Problem
+=======
+When TCP retransmits a packet due to missing ACKs, the retransmission
+may fail for various reasons (e.g., packets stuck in driver queues,
+sequence errors, or routing issues). Currently, these failure reasons
+are internally handled in __tcp_retransmit_skb() but lack visibility to
+userspace, which makes it difficult to diagnose retransmission failures in
+production environments.
 
-At last you can make this patch and others from another series to be a
-new series.
+Solution
+=======
+This patch adds a reason field to the tcp_retransmit_skb tracepoint,
+enumerating with explicit failure cases:
+TCP_RETRANS_IN_HOST_QUEUE	   (packet still queued in driver)
+TCP_RETRANS_END_SEQ_ERROR	   (invalid end sequence)
+TCP_RETRANS_TRIM_HEAD_NOMEM	 (trim head no memory)
+TCP_RETRANS_UNCLONE_NOMEM    (skb unclone keeptruesize no memory)
+TCP_RETRANS_FRAG_NOMEM       (fragment no memory)
+TCP_RETRANS_ROUTE_FAIL       (routing failure)
+TCP_RETRANS_RCV_ZERO_WINDOW  (closed recevier window)
+TCP_RETRANS_PSKB_COPY_NOBUFS (no buffer for skb copy)
+TCP_RETRANS_QUIT_UNDEFINED   (quit reason undefined)
 
+Impact
+======
+1. Enables BPF programs to filter retransmission failures by reason.
+2. Allows precise failure rate monitoring via ftrace.
 
-Huacai
+Co-developed-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+---
+ include/linux/tcp.h        | 13 +++++++++
+ include/trace/events/tcp.h | 54 +++++++++++++++++++++++++-------------
+ net/ipv4/tcp_output.c      | 52 ++++++++++++++++++++++++++----------
+ 3 files changed, 87 insertions(+), 32 deletions(-)
 
->
->   2. Define macro MISC_BASE as LOONGARCH_IOCSR_MISC_FUNC rather than
->      hard coded 0x420
-> ---
->  arch/loongarch/include/asm/kvm_eiointc.h |   2 +
->  arch/loongarch/include/asm/kvm_host.h    |   2 +
->  arch/loongarch/include/asm/kvm_misc.h    |  17 +++
->  arch/loongarch/include/asm/loongarch.h   |   1 +
->  arch/loongarch/kvm/Makefile              |   1 +
->  arch/loongarch/kvm/intc/eiointc.c        |  61 +++++++++++
->  arch/loongarch/kvm/intc/misc.c           | 125 +++++++++++++++++++++++
->  7 files changed, 209 insertions(+)
->  create mode 100644 arch/loongarch/include/asm/kvm_misc.h
->  create mode 100644 arch/loongarch/kvm/intc/misc.c
->
-> diff --git a/arch/loongarch/include/asm/kvm_eiointc.h b/arch/loongarch/in=
-clude/asm/kvm_eiointc.h
-> index a3a40aba8acf..2d1c183f2b1b 100644
-> --- a/arch/loongarch/include/asm/kvm_eiointc.h
-> +++ b/arch/loongarch/include/asm/kvm_eiointc.h
-> @@ -119,5 +119,7 @@ struct loongarch_eiointc {
->
->  int kvm_loongarch_register_eiointc_device(void);
->  void eiointc_set_irq(struct loongarch_eiointc *s, int irq, int level);
-> +int kvm_eiointc_get_status(struct kvm_vcpu *vcpu, unsigned long *value);
-> +int kvm_eiointc_update_status(struct kvm_vcpu *vcpu, unsigned long value=
-, unsigned long mask);
->
->  #endif /* __ASM_KVM_EIOINTC_H */
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inclu=
-de/asm/kvm_host.h
-> index a3c4cc46c892..f463ec52d86c 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -132,6 +132,8 @@ struct kvm_arch {
->         struct loongarch_ipi *ipi;
->         struct loongarch_eiointc *eiointc;
->         struct loongarch_pch_pic *pch_pic;
-> +       struct kvm_io_device misc;
-> +       bool   misc_created;
->  };
->
->  #define CSR_MAX_NUMS           0x800
-> diff --git a/arch/loongarch/include/asm/kvm_misc.h b/arch/loongarch/inclu=
-de/asm/kvm_misc.h
-> new file mode 100644
-> index 000000000000..621e4228dea2
-> --- /dev/null
-> +++ b/arch/loongarch/include/asm/kvm_misc.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2025 Loongson Technology Corporation Limited
-> + */
-> +
-> +#ifndef __ASM_KVM_MISC_H
-> +#define __ASM_KVM_MISC_H
-> +
-> +#include <asm/loongarch.h>
-> +
-> +#define MISC_BASE              LOONGARCH_IOCSR_MISC_FUNC
-> +#define MISC_SIZE              0x8
-> +
-> +int kvm_loongarch_create_misc(struct kvm *kvm);
-> +void kvm_loongarch_destroy_misc(struct kvm *kvm);
-> +
-> +#endif /* __ASM_KVM_MISC_H */
-> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/incl=
-ude/asm/loongarch.h
-> index d84dac88a584..e30d330d497e 100644
-> --- a/arch/loongarch/include/asm/loongarch.h
-> +++ b/arch/loongarch/include/asm/loongarch.h
-> @@ -1141,6 +1141,7 @@
->  #define  IOCSR_MISC_FUNC_SOFT_INT      BIT_ULL(10)
->  #define  IOCSR_MISC_FUNC_TIMER_RESET   BIT_ULL(21)
->  #define  IOCSR_MISC_FUNC_EXT_IOI_EN    BIT_ULL(48)
-> +#define  IOCSR_MISC_FUNC_INT_ENCODE    BIT_ULL(49)
->  #define  IOCSR_MISC_FUNC_AVEC_EN       BIT_ULL(51)
->
->  #define LOONGARCH_IOCSR_CPUTEMP                0x428
-> diff --git a/arch/loongarch/kvm/Makefile b/arch/loongarch/kvm/Makefile
-> index cb41d9265662..25fa3866613d 100644
-> --- a/arch/loongarch/kvm/Makefile
-> +++ b/arch/loongarch/kvm/Makefile
-> @@ -18,6 +18,7 @@ kvm-y +=3D vcpu.o
->  kvm-y +=3D vm.o
->  kvm-y +=3D intc/ipi.o
->  kvm-y +=3D intc/eiointc.o
-> +kvm-y +=3D intc/misc.o
->  kvm-y +=3D intc/pch_pic.o
->  kvm-y +=3D irqfd.o
->
-> diff --git a/arch/loongarch/kvm/intc/eiointc.c b/arch/loongarch/kvm/intc/=
-eiointc.c
-> index f39929d7bf8a..87d01521e92f 100644
-> --- a/arch/loongarch/kvm/intc/eiointc.c
-> +++ b/arch/loongarch/kvm/intc/eiointc.c
-> @@ -4,6 +4,7 @@
->   */
->
->  #include <asm/kvm_eiointc.h>
-> +#include <asm/kvm_misc.h>
->  #include <asm/kvm_vcpu.h>
->  #include <linux/count_zeros.h>
->
-> @@ -708,6 +709,56 @@ static const struct kvm_io_device_ops kvm_eiointc_op=
-s =3D {
->         .write  =3D kvm_eiointc_write,
->  };
->
-> +int kvm_eiointc_get_status(struct kvm_vcpu *vcpu, unsigned long *value)
-> +{
-> +       unsigned long data, flags;
-> +       struct loongarch_eiointc *eiointc =3D vcpu->kvm->arch.eiointc;
-> +
-> +       if (!eiointc) {
-> +               kvm_err("%s: eiointc irqchip not valid!\n", __func__);
-> +               return -EINVAL;
-> +       }
-> +
-> +       data =3D 0;
-> +       spin_lock_irqsave(&eiointc->lock, flags);
-> +       if (eiointc->status & BIT(EIOINTC_ENABLE))
-> +               data |=3D IOCSR_MISC_FUNC_EXT_IOI_EN;
-> +
-> +       if (eiointc->status & BIT(EIOINTC_ENABLE_INT_ENCODE))
-> +               data |=3D IOCSR_MISC_FUNC_INT_ENCODE;
-> +       spin_unlock_irqrestore(&eiointc->lock, flags);
-> +
-> +       *value =3D data;
-> +       return 0;
-> +}
-> +
-> +int kvm_eiointc_update_status(struct kvm_vcpu *vcpu, unsigned long value=
-, unsigned long mask)
-> +{
-> +       struct loongarch_eiointc *eiointc =3D vcpu->kvm->arch.eiointc;
-> +       unsigned long old, flags;
-> +
-> +       if (!eiointc) {
-> +               kvm_err("%s: eiointc irqchip not valid!\n", __func__);
-> +               return -EINVAL;
-> +       }
-> +
-> +       old =3D 0;
-> +       spin_lock_irqsave(&eiointc->lock, flags);
-> +       if (eiointc->status & BIT(EIOINTC_ENABLE))
-> +               old |=3D IOCSR_MISC_FUNC_EXT_IOI_EN;
-> +       if (eiointc->status & BIT(EIOINTC_ENABLE_INT_ENCODE))
-> +               old |=3D IOCSR_MISC_FUNC_INT_ENCODE;
-> +
-> +       value |=3D (old & ~mask);
-> +       eiointc->status &=3D ~(BIT(EIOINTC_ENABLE_INT_ENCODE) | BIT(EIOIN=
-TC_ENABLE));
-> +       if (value & IOCSR_MISC_FUNC_INT_ENCODE)
-> +               eiointc->status |=3D BIT(EIOINTC_ENABLE_INT_ENCODE);
-> +       if (value & IOCSR_MISC_FUNC_EXT_IOI_EN)
-> +               eiointc->status |=3D BIT(EIOINTC_ENABLE);
-> +       spin_unlock_irqrestore(&eiointc->lock, flags);
-> +       return 0;
-> +}
-> +
->  static int kvm_eiointc_virt_read(struct kvm_vcpu *vcpu,
->                                 struct kvm_io_device *dev,
->                                 gpa_t addr, int len, void *val)
-> @@ -993,6 +1044,15 @@ static int kvm_eiointc_create(struct kvm_device *de=
-v, u32 type)
->                 kfree(s);
->                 return ret;
->         }
-> +
-> +       ret =3D kvm_loongarch_create_misc(kvm);
-> +       if (ret < 0) {
-> +               kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &s->device)=
-;
-> +               kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &s->device_=
-vext);
-> +               kfree(s);
-> +               return ret;
-> +       }
-> +
->         kvm->arch.eiointc =3D s;
->
->         return 0;
-> @@ -1010,6 +1070,7 @@ static void kvm_eiointc_destroy(struct kvm_device *=
-dev)
->         eiointc =3D kvm->arch.eiointc;
->         kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &eiointc->device);
->         kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, &eiointc->device_ve=
-xt);
-> +       kvm_loongarch_destroy_misc(kvm);
->         kfree(eiointc);
->  }
->
-> diff --git a/arch/loongarch/kvm/intc/misc.c b/arch/loongarch/kvm/intc/mis=
-c.c
-> new file mode 100644
-> index 000000000000..edee66afa36e
-> --- /dev/null
-> +++ b/arch/loongarch/kvm/intc/misc.c
-> @@ -0,0 +1,125 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2025 Loongson Technology Corporation Limited
-> + */
-> +#include <asm/kvm_vcpu.h>
-> +#include <asm/kvm_eiointc.h>
-> +#include <asm/kvm_misc.h>
-> +
-> +static int kvm_misc_read(struct kvm_vcpu *vcpu, struct kvm_io_device *de=
-v,
-> +                       gpa_t addr, int len, void *val)
-> +{
-> +       unsigned long data;
-> +       unsigned int ret;
-> +
-> +       addr -=3D MISC_BASE;
-> +       if (addr & (len - 1)) {
-> +               kvm_err("%s: eiointc not aligned addr %llx len %d\n", __f=
-unc__, addr, len);
-> +               return -EINVAL;
-> +       }
-> +
-> +       ret =3D kvm_eiointc_get_status(vcpu, &data);
-> +       if (ret)
-> +               return ret;
-> +
-> +       data =3D data >> ((addr & 7) * 8);
-> +       switch (len) {
-> +       case 1:
-> +               *(unsigned char *)val =3D (unsigned char)data;
-> +               break;
-> +
-> +       case 2:
-> +               *(unsigned short *)val =3D (unsigned short)data;
-> +               break;
-> +
-> +       case 4:
-> +               *(unsigned int *)val =3D (unsigned int)data;
-> +               break;
-> +
-> +       default:
-> +               *(unsigned long *)val =3D data;
-> +               break;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int kvm_misc_write(struct kvm_vcpu *vcpu, struct kvm_io_device *d=
-ev,
-> +               gpa_t addr, int len, const void *val)
-> +{
-> +       unsigned long data, mask;
-> +       unsigned int shift;
-> +
-> +       addr -=3D MISC_BASE;
-> +       if (addr & (len - 1)) {
-> +               kvm_err("%s: eiointc not aligned addr %llx len %d\n", __f=
-unc__, addr, len);
-> +               return -EINVAL;
-> +       }
-> +
-> +       shift =3D (addr & 7) * 8;
-> +       switch (len) {
-> +       case 1:
-> +               data =3D *(unsigned char *)val;
-> +               mask =3D 0xFF;
-> +               mask =3D mask << shift;
-> +               data =3D data << shift;
-> +               break;
-> +
-> +       case 2:
-> +               data =3D *(unsigned short *)val;
-> +               mask =3D 0xFFFF;
-> +               mask =3D mask << shift;
-> +               data =3D data << shift;
-> +               break;
-> +
-> +       case 4:
-> +               data =3D *(unsigned int *)val;
-> +               mask =3D UINT_MAX;
-> +               mask =3D mask << shift;
-> +               data =3D data << shift;
-> +               break;
-> +
-> +       default:
-> +               data =3D *(unsigned long *)val;
-> +               mask =3D ULONG_MAX;
-> +               mask =3D mask << shift;
-> +               data =3D data << shift;
-> +               break;
-> +       }
-> +
-> +       return kvm_eiointc_update_status(vcpu, data, mask);
-> +}
-> +
-> +static const struct kvm_io_device_ops kvm_misc_ops =3D {
-> +       .read   =3D kvm_misc_read,
-> +       .write  =3D kvm_misc_write,
-> +};
-> +
-> +int kvm_loongarch_create_misc(struct kvm *kvm)
-> +{
-> +       struct kvm_io_device *device;
-> +       int ret;
-> +
-> +       if (kvm->arch.misc_created)
-> +               return 0;
-> +
-> +       device =3D &kvm->arch.misc;
-> +       kvm_iodevice_init(device, &kvm_misc_ops);
-> +       ret =3D kvm_io_bus_register_dev(kvm, KVM_IOCSR_BUS, MISC_BASE, MI=
-SC_SIZE, device);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       kvm->arch.misc_created =3D true;
-> +       return 0;
-> +}
-> +
-> +void kvm_loongarch_destroy_misc(struct kvm *kvm)
-> +{
-> +       struct kvm_io_device *device;
-> +
-> +       if (kvm->arch.misc_created) {
-> +               device =3D &kvm->arch.misc;
-> +               kvm_io_bus_unregister_dev(kvm, KVM_IOCSR_BUS, device);
-> +               kvm->arch.misc_created =3D false;
-> +       }
-> +}
->
-> base-commit: 52da431bf03b5506203bca27fe14a97895c80faf
-> --
-> 2.39.3
->
+diff --git a/include/linux/tcp.h b/include/linux/tcp.h
+index 29f59d50dc73..ca04d0e69b7b 100644
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -530,6 +530,19 @@ enum tsq_flags {
+ 	TCPF_ACK_DEFERRED		= BIT(TCP_ACK_DEFERRED),
+ };
+
++enum tcp_retransmit_quit_reason {
++	TCP_RETRANS_SUCCESS = 1,
++	TCP_RETRANS_IN_HOST_QUEUE,
++	TCP_RETRANS_END_SEQ_ERROR,
++	TCP_RETRANS_TRIM_HEAD_NOMEM,
++	TCP_RETRANS_UNCLONE_NOMEM,
++	TCP_RETRANS_FRAG_NOMEM,
++	TCP_RETRANS_ROUTE_FAIL,
++	TCP_RETRANS_RCV_ZERO_WINDOW,
++	TCP_RETRANS_PSKB_COPY_NOBUFS,
++	TCP_RETRANS_QUIT_UNDEFINED,
++};
++
+ #define tcp_sk(ptr) container_of_const(ptr, struct tcp_sock, inet_conn.icsk_inet.sk)
+
+ /* Variant of tcp_sk() upgrading a const sock to a read/write tcp socket.
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 54e60c6009e3..530cfa9b23af 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -13,17 +13,38 @@
+ #include <linux/sock_diag.h>
+ #include <net/rstreason.h>
+
+-/*
+- * tcp event with arguments sk and skb
+- *
+- * Note: this class requires a valid sk pointer; while skb pointer could
+- *       be NULL.
+- */
+-DECLARE_EVENT_CLASS(tcp_event_sk_skb,
++#define TCP_RETRANSMIT_QUIT_REASON		\
++		ENUM(TCP_RETRANS_SUCCESS,		"retransmit successfully")		\
++		ENUM(TCP_RETRANS_IN_HOST_QUEUE,		"packet still queued in driver")	\
++		ENUM(TCP_RETRANS_END_SEQ_ERROR,		"invalid end sequence")			\
++		ENUM(TCP_RETRANS_TRIM_HEAD_NOMEM,	"trim head no memory")			\
++		ENUM(TCP_RETRANS_UNCLONE_NOMEM,		"skb unclone keeptruesize no memory")	\
++		ENUM(TCP_RETRANS_FRAG_NOMEM,		"fragment no memory")			\
++		ENUM(TCP_RETRANS_ROUTE_FAIL,		"routing failure")			\
++		ENUM(TCP_RETRANS_RCV_ZERO_WINDOW,	"closed recevier window")		\
++		ENUM(TCP_RETRANS_PSKB_COPY_NOBUFS,	"no buffer for skb copy")		\
++		ENUMe(TCP_RETRANS_QUIT_UNDEFINED,	"quit reason undefined")
++
++/* Redefine for export. */
++#undef ENUM
++#undef ENUMe
++#define ENUM(a, b)	TRACE_DEFINE_ENUM(a);
++#define ENUMe(a, b)	TRACE_DEFINE_ENUM(a);
++
++TCP_RETRANSMIT_QUIT_REASON
++
++/* Redefine for symbolic printing. */
++#undef ENUM
++#undef ENUMe
++#define ENUM(a, b)	{ a, b },
++#define ENUMe(a, b)	{ a, b }
++
++TRACE_EVENT(tcp_retransmit_skb,
+
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
++	TP_PROTO(const struct sock *sk, const struct sk_buff *skb,
++		enum tcp_retransmit_quit_reason quit_reason),
+
+-	TP_ARGS(sk, skb),
++	TP_ARGS(sk, skb, quit_reason),
+
+ 	TP_STRUCT__entry(
+ 		__field(const void *, skbaddr)
+@@ -36,6 +57,7 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+ 		__array(__u8, daddr, 4)
+ 		__array(__u8, saddr_v6, 16)
+ 		__array(__u8, daddr_v6, 16)
++		__field(enum tcp_retransmit_quit_reason, quit_reason)
+ 	),
+
+ 	TP_fast_assign(
+@@ -58,21 +80,17 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+
+ 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
+ 			      sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
++
++		__entry->quit_reason = quit_reason;
+ 	),
+
+-	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s",
++	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s quit_reason=%s",
+ 		  __entry->skbaddr, __entry->skaddr,
+ 		  show_family_name(__entry->family),
+ 		  __entry->sport, __entry->dport, __entry->saddr, __entry->daddr,
+ 		  __entry->saddr_v6, __entry->daddr_v6,
+-		  show_tcp_state_name(__entry->state))
+-);
+-
+-DEFINE_EVENT(tcp_event_sk_skb, tcp_retransmit_skb,
+-
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
+-
+-	TP_ARGS(sk, skb)
++		  show_tcp_state_name(__entry->state),
++		  __print_symbolic(__entry->quit_reason, TCP_RETRANSMIT_QUIT_REASON))
+ );
+
+ #undef FN
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 3ac8d2d17e1f..6038661689e2 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3326,6 +3326,7 @@ static void tcp_retrans_try_collapse(struct sock *sk, struct sk_buff *to,
+  */
+ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ {
++	enum tcp_retransmit_quit_reason reason = TCP_RETRANS_QUIT_UNDEFINED;
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	unsigned int cur_mss;
+@@ -3336,8 +3337,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	if (icsk->icsk_mtup.probe_size)
+ 		icsk->icsk_mtup.probe_size = 0;
+
+-	if (skb_still_in_host_queue(sk, skb))
+-		return -EBUSY;
++	if (skb_still_in_host_queue(sk, skb)) {
++		reason = TCP_RETRANS_IN_HOST_QUEUE;
++		err = -EBUSY;
++		goto out;
++	}
+
+ start:
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
+@@ -3348,14 +3352,22 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 		}
+ 		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
+ 			WARN_ON_ONCE(1);
+-			return -EINVAL;
++			reason = TCP_RETRANS_END_SEQ_ERROR;
++			err = -EINVAL;
++			goto out;
++		}
++		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq)) {
++			reason = TCP_RETRANS_TRIM_HEAD_NOMEM;
++			err = -ENOMEM;
++			goto out;
+ 		}
+-		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
+-			return -ENOMEM;
+ 	}
+
+-	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk))
+-		return -EHOSTUNREACH; /* Routing failure or similar. */
++	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk)) {
++		reason = TCP_RETRANS_ROUTE_FAIL;
++		err = -EHOSTUNREACH; /* Routing failure or similar. */
++		goto out;
++	}
+
+ 	cur_mss = tcp_current_mss(sk);
+ 	avail_wnd = tcp_wnd_end(tp) - TCP_SKB_CB(skb)->seq;
+@@ -3366,8 +3378,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	 * our retransmit of one segment serves as a zero window probe.
+ 	 */
+ 	if (avail_wnd <= 0) {
+-		if (TCP_SKB_CB(skb)->seq != tp->snd_una)
+-			return -EAGAIN;
++		if (TCP_SKB_CB(skb)->seq != tp->snd_una) {
++			reason = TCP_RETRANS_RCV_ZERO_WINDOW;
++			err = -EAGAIN;
++			goto out;
++		}
+ 		avail_wnd = cur_mss;
+ 	}
+
+@@ -3379,11 +3394,17 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	}
+ 	if (skb->len > len) {
+ 		if (tcp_fragment(sk, TCP_FRAG_IN_RTX_QUEUE, skb, len,
+-				 cur_mss, GFP_ATOMIC))
+-			return -ENOMEM; /* We'll try again later. */
++				 cur_mss, GFP_ATOMIC)) {
++			reason = TCP_RETRANS_FRAG_NOMEM;
++			err = -ENOMEM;  /* We'll try again later. */
++			goto out;
++		}
+ 	} else {
+-		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC))
+-			return -ENOMEM;
++		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC)) {
++			reason = TCP_RETRANS_UNCLONE_NOMEM;
++			err = -ENOMEM;
++			goto out;
++		}
+
+ 		diff = tcp_skb_pcount(skb);
+ 		tcp_set_skb_tso_segs(skb, cur_mss);
+@@ -3421,6 +3442,7 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 				nskb->dev = NULL;
+ 				err = tcp_transmit_skb(sk, nskb, 0, GFP_ATOMIC);
+ 			} else {
++				reason = TCP_RETRANS_PSKB_COPY_NOBUFS;
+ 				err = -ENOBUFS;
+ 			}
+ 		} tcp_skb_tsorted_restore(skb);
+@@ -3438,7 +3460,7 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 				  TCP_SKB_CB(skb)->seq, segs, err);
+
+ 	if (likely(!err)) {
+-		trace_tcp_retransmit_skb(sk, skb);
++		reason = TCP_RETRANS_SUCCESS;
+ 	} else if (err != -EBUSY) {
+ 		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRETRANSFAIL, segs);
+ 	}
+@@ -3448,6 +3470,8 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	 */
+ 	TCP_SKB_CB(skb)->sacked |= TCPCB_EVER_RETRANS;
+
++out:
++	trace_tcp_retransmit_skb(sk, skb, reason);
+ 	return err;
+ }
+
+-- 
+2.25.1
 
