@@ -1,106 +1,208 @@
-Return-Path: <linux-kernel+bounces-709814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3093AEE2D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:40:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E8AEE2EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B30516DD1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3111118868EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C73D28D8F8;
-	Mon, 30 Jun 2025 15:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D4F28FA85;
+	Mon, 30 Jun 2025 15:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2eQBEW++"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjNCpwim"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F26728ECF5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 15:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3757628EA76;
+	Mon, 30 Jun 2025 15:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751297995; cv=none; b=VqbIrCt7LlfK567AGCsGtL4HVavsS0NRPevu/ianQ0LtTwqu5e4zL5WmjpzIp3H65ssSJie05dPPIXO7/34Ms9vFsa7T2ZJwPR7DbMWbO8qh62XXlsvutA5+uckWX4mnoVo0TSc3Aj6ynLOMO8Ufn992zCx7O1VxEmy8SABhMqc=
+	t=1751298098; cv=none; b=uaLykAMtujeFllCpyzHlGe7Y7cVZotwmTOmskR1OqOieaDhYGpfI5tuC7ecvLsmPJj9MY9Z4IF1k/MV83mvtdBMjWTKy38b7AdcdXQSw6iG/Vgfty86GZXBO+4nu6ZHtwZhtki51GqGe48LO5qSedSGsiM/EcpYcx3teMni3EvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751297995; c=relaxed/simple;
-	bh=3w63HtcrTJ91JYwdGPTwy1GlgEB58Nzr8tG6+Ue5pOU=;
+	s=arc-20240116; t=1751298098; c=relaxed/simple;
+	bh=U/Cox21FflLFj8VZkRclH0nSlm2+lf5+a3+6iHEqdhg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnLPfKdg119UhK/aP13DmOGyFaPDxmRh2gTavIULVYkmdnGYZXbF4+GHM9b9ju2rZ5RJaxDqvPvnifZGf/Taq7/6PN4ZHm6PkpbXmrZWrsds8CVkyYxWDvkKhNdi+tjL1F8zAMcau2E+bK27k4Kwpryru3BcsEocaN3gQejN1wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2eQBEW++; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3df2fa612c4so531615ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:39:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751297992; x=1751902792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3w63HtcrTJ91JYwdGPTwy1GlgEB58Nzr8tG6+Ue5pOU=;
-        b=2eQBEW++n9SvD07n9szVeQCXHDN5flWmK9rIXRKf1mHHrbvmwluudTar7JiDhmAfUo
-         +/kDOlRn91Kb7VVuLOsun4SPXTzF6UpxW7nT2Von18z/VF5AuvR9rNIpfIji6hCpGHrM
-         g3iia87lDjcRuOiOhB3dBo6maiE6Fc+PMEBibzHJYvgNgcwNhmhxbTpTPH292adqfNfm
-         3K2KxJqH43VgnEyKbui4sWs1q4gDAZe22+1RiEvGpDECRo7er8WwxaFuC5pw23QN4XVn
-         8xtc8En3w2sIK/X5wKRn1Swqsr7awRzMVHLzkySp+5DQ2Cgtslk7Dj5FVyDtbxcp5U6H
-         zgXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751297992; x=1751902792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3w63HtcrTJ91JYwdGPTwy1GlgEB58Nzr8tG6+Ue5pOU=;
-        b=eopZ6qhOOBIS3sH7cEn/ilagk185a6Q242hTVUueu50RSbeHWteismn9MSjvnD8hZP
-         ANr34AHQvTdLYLDzZmNJ7L8zGk5OlDpwGhFVSGSnbSZWTh5hnEOHHOFjfKVFjllPin9s
-         oMd9fe6bKZwNpOTwFFE8UKgz5rjKvGNN9jxZGBBIOkHwMKZaYvMcRs2xpz+Fh/4HqEIo
-         lQfY1H4yJYraR3z6JAKNUJLv+zu/g0AQwhSphjmI5ayFjsdkmIyFxdws3CtlPcw3NYy9
-         UexnLTQ7MPsmIep78ECSqC2PWfNsJIq1Xda8rir091p7Gr6HwL4EU/O5OR4m8fGTs+dp
-         wBYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVoaNUtQwH3tgC2UgJE2WlQmwZqLaJ2wkYA4cNZ85tWIXAOU0cuZbbJDrUmOnEx8p42Nx6mGDyniX2VeYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwn+fy8F1YKgsHS2roLntw1xtMKwtR+cG20cxOEusM/JZ9B+Gi
-	WTFNY37bDS2ffe9EKn+8T914GHG/rYB3dDZJZsnzeoaGYGKGI6cpR7JCjPcagMEX3NshHEaDkI0
-	3LSUG9tCHh5ZtTz8Fbo+/RfuAYW2XuxAK0GyTy4/C
-X-Gm-Gg: ASbGncuNt1RRbl2jpC563iU0DwvZUIbRUmV1Mcf9AnK0uqNe0zLp/3aCWkBkhrOFSgZ
-	mfkiqjyuW/6cK940c91+QttovoN6V9ZCK8XL/Cw1vWgy4+c8tnWnMaslEHXF4tJPxgzTl3APkf8
-	cvCtvjk+LxiRwEQxYojtsaZdO740WFT8+Kb6fIiWh8y30+pucKgbNviYsPwifDklzjqsf5UW1Jd
-	N2CCSbfXg==
-X-Google-Smtp-Source: AGHT+IE3Gjk62YQq72+SdA23cor3rISzp+2vi5ogIScgBjQ8JLbbC6ZC7DtLKd3NdBa5DEDq5THLgobbPpD7gEYD/hQ=
-X-Received: by 2002:a05:6e02:1606:b0:3dd:cc4c:382c with SMTP id
- e9e14a558f8ab-3df558794bemr7428205ab.24.1751297992362; Mon, 30 Jun 2025
- 08:39:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=HVheJOrFAja7UPiAInm9ZWG54IPaneR3gPd1ELso3aXdiP/v/xX0ACB03zImU6zj46ONPSF5wYbMYSPj9ALKxaG1bFpVCKiJLpLQ418AudAfT5Mi6bqkoBq8qiatc3tF0pU1Gx2vvHkalAUXDWnSTvEl63ksEaZpKw8iovpRk/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjNCpwim; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1C1C4CEEF;
+	Mon, 30 Jun 2025 15:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751298096;
+	bh=U/Cox21FflLFj8VZkRclH0nSlm2+lf5+a3+6iHEqdhg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RjNCpwimw2bncyOG4/NcCqnnn6i504PvtEG1ewWFF+WznPYjs4f31Y3JoiJ6ffReU
+	 Rb14n6OW3scOzyiAwcIfI9wezDWhJVV7CVpVa3wom2WopxH8rlyrixJX41b+dok3c7
+	 Yv5GLEDdFOgw3mOKAK5CCC92v4NYZCRWxce44qcBqM/6Rcve9rkbqkSmSEUKiEJnxt
+	 i7Cx6lqCi7n5fhr9SxaIgmBx8id6RA0e/lXRpWE1wKcEzpEW74yqk9B211QyA9UeLs
+	 eGGYb9v3QGvnLbqSVSk4W1XWyngqvJce7mwOM/aWE98VM/OVIaSSU/3ehTKOrmHGik
+	 zJ6YzUVUMOReA==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55502821bd2so2519892e87.2;
+        Mon, 30 Jun 2025 08:41:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfOLzyWMYpuwzEfQz8RBKrV1w8/pFr63neqbWWMwVhKtrVR4dYW7bx5vu2QwBC6wDcDmaDlf3sAhqQYZ9R@vger.kernel.org, AJvYcCVjYXQKqyMGZEhlDkbKcU0ubz1l+ztPuMEv2Z+I+D/XdZxDEyv8wdVsSYF+Kl9EuLtJ59bWViE/tBdLk6s=@vger.kernel.org, AJvYcCWSbr636inK6oYHqO99cnIUqInPmvDTasmoewnc5MxJIJfF8h+7spqzWwMNn3h45Km0aVaeWswQu5CNIsY9Fw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt+bVheeWtrEPvMrnZJYmAoMIcAZYJqi2Gua1YYPgxL8HCVU+Z
+	XrIhWwMW1nQVEH312M2hw6OKs4T+HbbywcSlyvl+MY/KFJXLMfVy/Hb8K794TrthKED3Rh8l1KU
+	MxwSf56D+VYA22GW9UChmaIgZcQOjT1o=
+X-Google-Smtp-Source: AGHT+IE7MU1OSdE0HWcTbqB/Z2gZNtSZo8xi396BsJAN275lk+KqWpRFVTfKZmP9/jZXHGVo6J1z+B9oYIGiaH3L3rw=
+X-Received: by 2002:a05:6512:15a5:b0:553:2e0f:96c with SMTP id
+ 2adb3069b0e04-5550b84cdd0mr4095199e87.23.1751298095233; Mon, 30 Jun 2025
+ 08:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612000224.780337-1-irogers@google.com> <CAP-5=fVGqnWuQNYM9XULyLuDvx-yAuyCMRh=uS0gybiEsYH9jw@mail.gmail.com>
- <fe821704ddd4a3ae5169ec974cc8cfde8dc44e7d.camel@intel.com>
-In-Reply-To: <fe821704ddd4a3ae5169ec974cc8cfde8dc44e7d.camel@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 30 Jun 2025 08:39:39 -0700
-X-Gm-Features: Ac12FXzCbmaQnlvNe8l_BtMCouk1SBtEALi3aMKfEu6hBpoEXaSqQxQQetV8l-Y
-Message-ID: <CAP-5=fWC_buKxJ9aSOWeRY2Z+NrhQy0QvVWaMLJa-Eqfwf-NHg@mail.gmail.com>
-Subject: Re: [PATCH v1 00/15] perf vendor events: Update Intel events
-To: "Falcon, Thomas" <thomas.falcon@intel.com>
-Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
-	"Biggers, Caleb" <caleb.biggers@intel.com>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, 
-	"Baker, Edward" <edward.baker@intel.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"mani@kernel.org" <mani@kernel.org>, "acme@kernel.org" <acme@kernel.org>, "afaerber@suse.de" <afaerber@suse.de>, 
-	"jolsa@kernel.org" <jolsa@kernel.org>, "namhyung@kernel.org" <namhyung@kernel.org>
+References: <20250623092350.3261118-2-gprocida@google.com> <20250625095215.4027938-1-gprocida@google.com>
+ <CAK7LNASNVh8fDErjSbcR1TiCfy=LM-j3iYSNpqAvp8OhGmsKjQ@mail.gmail.com>
+ <CAGvU0HnzfLxGhLT3Se4wNvyzEkpTKmd8ATFFgBRBVNrOKDXcgA@mail.gmail.com>
+ <CAK7LNATp1n2c9RqNoe0oztRtLoMy8JqHF1KqSRsj5avp3vjHCQ@mail.gmail.com> <CAGvU0HkKacQKB1q9NWcqChLGoMB+1vu9UdqYc+tBRbTTc3++GQ@mail.gmail.com>
+In-Reply-To: <CAGvU0HkKacQKB1q9NWcqChLGoMB+1vu9UdqYc+tBRbTTc3++GQ@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 1 Jul 2025 00:40:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQo0CyMdsVSg4dfWjVU+uYUSMdmwgLEdpRfTVcgOTuwzg@mail.gmail.com>
+X-Gm-Features: Ac12FXyyzl9OrOby5-5Dtzs7KHIbfWmtldkF9gESl3FWHywGg2_mXLcsMMx9C-M
+Message-ID: <CAK7LNAQo0CyMdsVSg4dfWjVU+uYUSMdmwgLEdpRfTVcgOTuwzg@mail.gmail.com>
+Subject: Re: [PATCH] gendwarfksyms: order -T symtypes output by name
+To: Giuliano Procida <gprocida@google.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 30, 2025 at 7:21=E2=80=AFAM Falcon, Thomas <thomas.falcon@intel=
-.com> wrote:
-> Hi Ian, not sure what happened but I can't find this series in my inbox. =
-Could you resend it?
+On Mon, Jun 30, 2025 at 10:46=E2=80=AFPM Giuliano Procida <gprocida@google.=
+com> wrote:
+>
+> On Mon, 30 Jun 2025 at 14:24, Masahiro Yamada <masahiroy@kernel.org> wrot=
+e:
+> >
+> > On Mon, Jun 30, 2025 at 7:05=E2=80=AFPM Giuliano Procida <gprocida@goog=
+le.com> wrote:
+> > >
+> > > Hi.
+> > >
+> > > On Sun, 29 Jun 2025 at 18:51, Masahiro Yamada <masahiroy@kernel.org> =
+wrote:
+> > > >
+> > > > On Wed, Jun 25, 2025 at 6:52=E2=80=AFPM Giuliano Procida <gprocida@=
+google.com> wrote:
+> > > > >
+> > > > > When writing symtypes information, we iterate through the entire =
+hash
+> > > > > table containing type expansions. The key order varies unpredicta=
+bly
+> > > > > as new entries are added, making it harder to compare symtypes be=
+tween
+> > > > > builds.
+> > > > >
+> > > > > Resolve this by sorting the type expansions by name before output=
+.
+> > > > >
+> > > > > Signed-off-by: Giuliano Procida <gprocida@google.com>
+> > > > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+> > > > > ---
+> > > > >  scripts/gendwarfksyms/types.c | 29 ++++++++++++++++++++++++++---
+> > > > >  1 file changed, 26 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > [Adjusted the first line of the description. Added reviewer tags.
+> > > > >  Added missing CC to linux-modules.]
+> > > > >
+> > > > > diff --git a/scripts/gendwarfksyms/types.c b/scripts/gendwarfksym=
+s/types.c
+> > > > > index 7bd459ea6c59..51c1471e8684 100644
+> > > > > --- a/scripts/gendwarfksyms/types.c
+> > > > > +++ b/scripts/gendwarfksyms/types.c
+> > > > > @@ -6,6 +6,8 @@
+> > > > >  #define _GNU_SOURCE
+> > > > >  #include <inttypes.h>
+> > > > >  #include <stdio.h>
+> > > > > +#include <stdlib.h>
+> > > > > +#include <string.h>
+> > > > >  #include <zlib.h>
+> > > > >
+> > > > >  #include "gendwarfksyms.h"
+> > > > > @@ -179,20 +181,41 @@ static int type_map_get(const char *name, s=
+truct type_expansion **res)
+> > > > >         return -1;
+> > > > >  }
+> > > > >
+> > > > > +static int cmp_expansion_name(const void *p1, const void *p2)
+> > > > > +{
+> > > > > +       struct type_expansion *const *e1 =3D p1;
+> > > > > +       struct type_expansion *const *e2 =3D p2;
+> > > > > +
+> > > > > +       return strcmp((*e1)->name, (*e2)->name);
+> > > > > +}
+> > > > > +
+> > > > >  static void type_map_write(FILE *file)
+> > > > >  {
+> > > > >         struct type_expansion *e;
+> > > > >         struct hlist_node *tmp;
+> > > > > +       struct type_expansion **es;
+> > > > > +       size_t count =3D 0;
+> > > > > +       size_t i =3D 0;
+> > > > >
+> > > > >         if (!file)
+> > > > >                 return;
+> > > > >
+> > > > > -       hash_for_each_safe(type_map, e, tmp, hash) {
+> > > > > -               checkp(fputs(e->name, file));
+> > > > > +       hash_for_each_safe(type_map, e, tmp, hash)
+> > > > > +               ++count;
+> > > > > +       es =3D xmalloc(count * sizeof(struct type_expansion *));
+> > > >
+> > > > Just a nit:
+> > > >
+> > > >            es =3D xmalloc(count * sizeof(*es));
+> > > >
+> > > > is better?
+> > > >
+> > > > > +       hash_for_each_safe(type_map, e, tmp, hash)
+> > > > > +               es[i++] =3D e;
+> > > > > +
+> > > > > +       qsort(es, count, sizeof(struct type_expansion *), cmp_exp=
+ansion_name);
+> > > >
+> > > > qsort(es, count, sizeof(*es), cmp_expansion_name);
+> > > >
+> > >
+> > > That's a fair point.
+> > >
+> > > However, in the gendwarfksyms code, all but one of the sizeofs uses a=
+n
+> > > explicit type name. The exception is sizeof(stats) where stats is an =
+array.
+> > >
+> > > I'll leave Sami's code as it is.
+> >
+> >
+> > This rule is clearly documented with rationale.
+> >
+> > See this:
+> > https://github.com/torvalds/linux/blob/v6.15/Documentation/process/codi=
+ng-style.rst?plain=3D1#L941
+> >
+> >
+>
+> I can follow up with a change that adjusts all occurrences. That
+> shouldn't take long at all.
 
-Will do. I'll rebase and send as a v2.
+I expected a new patch version (I do not know whether it is v2 or v3 since
+you do not add such a prefix),
+instead of breaking the style, and fixing it in a follow-up patch.
 
-Thanks,
-Ian
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
