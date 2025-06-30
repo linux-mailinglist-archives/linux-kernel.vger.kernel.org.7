@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-709180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96CEAEDA3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D9AAEDA3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD74F1897CAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:46:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6F2176FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5DF222597;
-	Mon, 30 Jun 2025 10:45:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5707084A2B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF7525A631;
+	Mon, 30 Jun 2025 10:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HHvPJy1A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DF4222597;
+	Mon, 30 Jun 2025 10:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751280358; cv=none; b=UwVsITFZItx5aeIIe8KNYJMnQLKq21VxBx7F04pxcpJlrbTF1Vf42aEPE+2PlJ98/2QhQalLIgk65WJzvf1mrNP2MYkGR6pvlyIkT1DZRlmEAkJkoCasKohydPbbAntRbt0cfIN8NuSjJ2Os+F1DoDBf3DjDAaQkWMMNkG+NhuM=
+	t=1751280407; cv=none; b=h8fIzE6BI6g4HyvNkW3wa0sDHaqrjNxXz7+WV2jhe4gLC5ajWT3vO4HQVgWcmrToSl6MJsixDb0NvoGIyfCxnTtMHVFzFkS6VWty8QE5tlQhoDa71o8tFWhLnjVMAlJBXXU8BD3LKhwZBFvw12g5IVVsjE9IsurUZbceQs58K9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751280358; c=relaxed/simple;
-	bh=ckfqOjrElKSUbuKeCm9a1f9djSvgw3q0SgTJaaFcTAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A5NuZFkiCES/xnc77rFjn9BlQlJnbMr4N81AeLUzcsJtsk+MTY4HRGJgDSSa4Pl3h8s7E6QgflW7ex1EONWeKQ4zEb+Hv1V/qJhiC7i5T+9+yStLdM7xivwRMTWnHYa1bIE9qIkJAArIXQ/z+RPzgkNubRo6Iw8YYgn+4xv8Bo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8E0B1F60;
-	Mon, 30 Jun 2025 03:45:40 -0700 (PDT)
-Received: from [10.1.34.165] (XHFQ2J9959.cambridge.arm.com [10.1.34.165])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A96E03F58B;
-	Mon, 30 Jun 2025 03:45:52 -0700 (PDT)
-Message-ID: <7eaee53b-d538-4991-addd-379a380b8ee2@arm.com>
-Date: Mon, 30 Jun 2025 11:45:50 +0100
+	s=arc-20240116; t=1751280407; c=relaxed/simple;
+	bh=6hn4Jcbt8dG1IC3Ga4bKV/Nz0qNkj1yaEdy0zsmucXA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QGMgBiw2uJ1qMRpVddLNq+ndqg8BZ9kSkadoF7SQj+yyDMUzxvjDJhmUVCgCtQtoTJoTyBVNOduvoQ6B3uoEwtEX9Eq5j7oMh7Ym+RgxzAOUyBGE4/Rq5frNpIIV7JU1RhiWPyWNFMtrBHPSCQuBZTxlqrfJJbB044J3Q0PEGYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HHvPJy1A; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751280406; x=1782816406;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=6hn4Jcbt8dG1IC3Ga4bKV/Nz0qNkj1yaEdy0zsmucXA=;
+  b=HHvPJy1AA/3QdmIJaPRG86gjPg8HCmT5hEakBz4LZdsdwMVD4BydsnP7
+   +GPdIHwcTvyB0u+QzrIvUYAjqqk7tLty/XyzvVWKegI4bCxjvc0HS+va5
+   pIkmeaR5NtXd0zEywj20p1Vy3Cw+10Va14F0iiczXLHfqdJzvmCGHRYfe
+   CVcl7Zk7hjv8qFmVDnsaLSC047/6CpR4TRuqI3kFi+Af1Iq7B81eE8+4k
+   0KDZiSD7vR8loAVuv0W+292MGZKlh60rj8LZqawf6PgKpckoWhAhGvYUV
+   b1R1P7uhL106LQ5ojGBwe+D3X4IXxRxZQC93OyPXkWgqWwhMPK2zZZQdw
+   g==;
+X-CSE-ConnectionGUID: 0iqG9NrnTgyTcZDv07LyVw==
+X-CSE-MsgGUID: KkyV/3MdS2WUoyOs83Bk5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="64555063"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="64555063"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:46:45 -0700
+X-CSE-ConnectionGUID: BbPfNzhxRAC3i0+5+4jLQA==
+X-CSE-MsgGUID: miiu3+DXQFmp+ecZ65NmBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="184348456"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:46:38 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Jun 2025 13:46:35 +0300 (EEST)
+To: Andi Shyti <andi.shyti@kernel.org>
+cc: Hans de Goede <hansg@kernel.org>, Mario Limonciello <superm1@kernel.org>, 
+    Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, 
+    "H . Peter Anvin" <hpa@zytor.com>, Jean Delvare <jdelvare@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, 
+    "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>, 
+    "open list:AMD PMC DRIVER" <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH 1/2] Move FCH header to a location accessible by all
+ archs
+In-Reply-To: <zkbd5qdfj3xrjh7l6sviqzsu6foyxpwsko47czrpet55kgqzfv@aw3igwk34irc>
+Message-ID: <a6ccabd7-1436-ff73-398f-b92e546d3701@linux.intel.com>
+References: <20250610205817.3912944-1-superm1@kernel.org> <c3d78272-c80d-47fa-a32d-151c137251e3@kernel.org> <zkbd5qdfj3xrjh7l6sviqzsu6foyxpwsko47czrpet55kgqzfv@aw3igwk34irc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] Optimize mprotect() for large folios
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: david@redhat.com, willy@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
- jannh@google.com, anshuman.khandual@arm.com, peterx@redhat.com,
- joey.gouly@arm.com, ioworker0@gmail.com, baohua@kernel.org,
- kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250628113435.46678-1-dev.jain@arm.com>
- <20250629160549.da922e78d202c510a1ec68f8@linux-foundation.org>
- <29f418be-31c4-47b0-bcac-3375f57d00e7@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <29f418be-31c4-47b0-bcac-3375f57d00e7@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 30/06/2025 04:33, Dev Jain wrote:
+On Wed, 25 Jun 2025, Andi Shyti wrote:
+
+> Hi,
 > 
-> On 30/06/25 4:35 am, Andrew Morton wrote:
->> On Sat, 28 Jun 2025 17:04:31 +0530 Dev Jain <dev.jain@arm.com> wrote:
->>
->>> This patchset optimizes the mprotect() system call for large folios
->>> by PTE-batching. No issues were observed with mm-selftests, build
->>> tested on x86_64.
->> um what.  Seems to claim that "selftests still compiles after I messed
->> with stuff", which isn't very impressive ;)  Please clarify?
+> On Thu, Jun 12, 2025 at 10:36:31AM +0200, Hans de Goede wrote:
+> > Hi,
+> > 
+> > On 10-Jun-25 10:58 PM, Mario Limonciello wrote:
+> > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > 
+> > > A new header fch.h was created to store registers used by different AMD
+> > > drivers.  This header was included by i2c-piix4 in
+> > > commit 624b0d5696a8 ("i2c: piix4, x86/platform: Move the SB800 PIIX4 FCH
+> > > definitions to <asm/amd/fch.h>"). To prevent compile failures on non-x86
+> > > archs i2c-piix4 was set to only compile on x86 by commit 7e173eb82ae9717
+> > > ("i2c: piix4: Make CONFIG_I2C_PIIX4 dependent on CONFIG_X86").
+> > > This was not a good decision because loongarch and mips both actually
+> > > support i2c-piix4 and set it enabled in the defconfig.
+> > > 
+> > > Move the header to a location accessible by all architectures.
+> > > 
+> > > Fixes: 624b0d5696a89 ("i2c: piix4, x86/platform: Move the SB800 PIIX4 FCH definitions to <asm/amd/fch.h>")
+> > > Suggested-by: Hans de Goede <hansg@kernel.org>
+> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> > 
+> > Thanks, patch looks good to me:
+> > 
+> > Reviewed-by: Hans de Goede <hansg@kernel.org>
 > 
-> Sorry I mean to say that the mm-selftests pass.
+> I don't see this series in yet. I thought you were taking it,
+> shall I take it through i2c?
 
-I think you're saying you both compiled and ran the mm selftests for arm64. And
-additionally you compiled for x86_64? (Just trying to help clarify).
+I'm sorry I seem to have missed this inquiry until now. I thought x86 
+would handle it this but apparently they haven't.
 
+(I'm the primary person handling pdx86 patches, not Hans any more).
 
-> 
->>
->>> We use the following test cases to measure performance, mprotect()'ing
->>> the mapped memory to read-only then read-write 40 times:
->>>
->>> Test case 1: Mapping 1G of memory, touching it to get PMD-THPs, then
->>> pte-mapping those THPs
->>> Test case 2: Mapping 1G of memory with 64K mTHPs
->>> Test case 3: Mapping 1G of memory with 4K pages
->>>
->>> Average execution time on arm64, Apple M3:
->>> Before the patchset:
->>> T1: 7.9 seconds   T2: 7.9 seconds   T3: 4.2 seconds
->>>
->>> After the patchset:
->>> T1: 2.1 seconds   T2: 2.2 seconds   T3: 4.3 seconds
->> Well that's tasty.
->>
->>> Observing T1/T2 and T3 before the patchset, we also remove the regression
->>> introduced by ptep_get() on a contpte block. And, for large folios we get
->>> an almost 74% performance improvement, albeit the trade-off being a slight
->>> degradation in the small folio case.
->>>
+I can take this now.
+
+-- 
+ i.
 
 
