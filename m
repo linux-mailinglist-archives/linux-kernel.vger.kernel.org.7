@@ -1,235 +1,170 @@
-Return-Path: <linux-kernel+bounces-710147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5FDAEE7BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76363AEE7C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F7A93BF9A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:47:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CADE73A996F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756532E88A2;
-	Mon, 30 Jun 2025 19:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C230B2E8DF5;
+	Mon, 30 Jun 2025 19:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CT0XWJUc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fuC2cZA4"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE2328D8C1;
-	Mon, 30 Jun 2025 19:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751312853; cv=none; b=nTwnGtbXh8WJBXUz+JQAXo0bF+pX5BVqb1UKFKZZMw7+2uvRLAJnbGdwdUPSH2IJ1SxlmF3bibxnF9kblVznSAcfZZ3cRYJA3WUSOOVAwUVxMsr2R9XEcWRcw3kmMdNEd2V8w1j0dl6fdegS7zvQURX57rL0LURvKtDItyOWch8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751312853; c=relaxed/simple;
-	bh=yQzwGTfoQW42Q3ttrqDuIZAauSAP0gUZF8vh0ehDdrU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ow8Xv3u4g84SkOHY1jdhltg4GSkwUvZX2TuJciPqrhwDTC1dPqZQDmEPekmr7kq0UWG069EJHhE4pICBjKzq8Fu4sZOxDCy1eFjiuLf/aDMd7j0wU4SH02shGZddNCvf6YUa0JH03+MpbpU9jX23dk+R1ujZbtz3FcOlUBykqw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CT0XWJUc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5539EC4AF0B;
-	Mon, 30 Jun 2025 19:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751312853;
-	bh=yQzwGTfoQW42Q3ttrqDuIZAauSAP0gUZF8vh0ehDdrU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CT0XWJUcprPtjCM0zeKtPozAMhp2P/MnDiu7L4pL5468Yhg69abajiDd/mNVRQMkX
-	 xW7XjtfKGUmjAe0kNNOzMGOUh7M4fGS2ElLIhDPLCnO7Ekabw4W6fNtWniZWJWihjL
-	 epvXtJSP0bNlhRhYaxW83ACJhvGWFAECMA/zTzs8ymbBBWsb4OyTz2lK1HqEC0uCAA
-	 7z5LylM+6WhpCati1MoJKQcxy8QejBgexw/p27uPvR7zcVe7Om4C8mIUQTDpUzk3Hz
-	 p2Lq4OnOddcclh6Me7djhVry38CirGliMSvZ6OyzotonBDnNlEVpAWdkCZb4WKK7Ke
-	 BVJyQnnTMjkPg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46838C8303B;
-	Mon, 30 Jun 2025 19:47:33 +0000 (UTC)
-From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Date: Mon, 30 Jun 2025 21:47:31 +0200
-Subject: [PATCH v6 3/3] iio: imu: inv_icm42600: add wakeup functionality
- for Wake-on-Motion
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE4A2E888A
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 19:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751313080; cv=fail; b=QYDn9FhBhcGHn6fGYJq6292isFsH/A7TNyGIxSDCDSofQpdGlW0mkyC/hD11qZBJGThPuhRaIWrKUocFwk5je3VpJ2FUDMZ47yFTHNMDDyhYCgy1qlLX5NyH5ArpcboMPw2QbQGCircmLtfVnTIhSbsWankVcTRLVFu3XzA3f2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751313080; c=relaxed/simple;
+	bh=hKPEEhae42EEwEpz/6ZfC3reRl4mL/7pzHBBaWGYQ1U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgnD+3R/GxQ8iY6VlNHNwFxXUs2sxExc9/15paZ906ByGDdkB0paw/gnvXtlkov3sXtzFG9k+OCs04Jd4grkNHnhCscBFOP8rGzsOVxKLAcD2FwDx0+OLdUFuSJob38S1YpZdupBqowKXA/CVYoFTtzSElRJ789e7FeJszNcGbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fuC2cZA4; arc=fail smtp.client-ip=40.107.243.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=igiSrN2LQ4hZM9lJJZ2b5JLE3akm/qGl53mJLhJ0jQWQVfGmciuh7uKKSE6jEnDtSXFCO8CDdD92OXbLTZ9P5YlZVzkZdeiQuVbi//Ke/FchLS0FZ471/JGKWm2jp7+rDMIyabVqa8sjERxOjzdEobZ06qbA68Z9MbRgNdHoYC5xn5K4rgdrkDSpdZGotkQ19HIlbFiec5i1d+pstZ0G0JNdsjcqzfsDfB0tzL9tlMq/fT5KqhorCoeO9abIC+Z6dYwhxPDM/4Nkja21RuIi0aOlEVNeDZ/C6l2TrmjlyuY9HYpst3fCbU8wltxPLMvBZ5U33nDLu1cuS40MS/hJSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XRjPmltJkslEastg9NSFvvHYY4bfacacuX3TrLhCXJE=;
+ b=g77r373jQ0GTLeoxDao/faqcZMj6uE/ksvnQ73zbKvdw/m6k0HVoOCZVbgo0mJCu3fYror/gou5PYcI0QxBW7pl3Grb7+0aEkwvKb6S++YW9KxhDox9yza6N8F2+y2SGa2AHSkuDe+bDuDftVn4gjgtESWjO1CoDvK8Ol++NFRf0Ow36r9YNp3XbrXerM4dWMJNThCK4xAJGtirTEC2NlvOAodQ7kXsA6xNkug9c2HI3OsJGT0gfk7UjivhJnmpWZc078ora/AHoPvLz8hSRaZL44Cc8A5b2WSfwHIpRuyQWj8D4TaGj8xao7eNBoAina9ixJdVNXAra1OEOo6ANFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XRjPmltJkslEastg9NSFvvHYY4bfacacuX3TrLhCXJE=;
+ b=fuC2cZA4acRMj9AHY00gT/Op0wnjYqHuOZhsHAJzldFXkYlm/qqVYIfR5Bt+6RPKlw3pxqENVQigJcU8R2HprHOTBJJFGS25rh9RUeJMxP/d50O6GS3AgSLb/ehdsBsnq8fYyp3iRz+HToKXDDnuZ81+QNQbizDUh9ml2+kDEsnwwaLbTrEkXUlt4JPYL3LJEYZQ1klPaOLi7t25VXdhyxDwaIYBsYYvOtPjGY1L80K8vUfSYB1iexuskijr7/c8klVM4vsB0Y+cL/o4SZp89P6A61AH4FZ0cdk49/Kmon5hZTb/DamUa0F8jyN5+65pMG1oYDS+uJKCSsu8GY3GlQ==
+Received: from SJ0PR13CA0228.namprd13.prod.outlook.com (2603:10b6:a03:2c1::23)
+ by MW4PR12MB7167.namprd12.prod.outlook.com (2603:10b6:303:225::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.18; Mon, 30 Jun
+ 2025 19:51:13 +0000
+Received: from SJ1PEPF000026C6.namprd04.prod.outlook.com
+ (2603:10b6:a03:2c1:cafe::2a) by SJ0PR13CA0228.outlook.office365.com
+ (2603:10b6:a03:2c1::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.18 via Frontend Transport; Mon,
+ 30 Jun 2025 19:51:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF000026C6.mail.protection.outlook.com (10.167.244.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8901.15 via Frontend Transport; Mon, 30 Jun 2025 19:51:12 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 30 Jun
+ 2025 12:51:00 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 30 Jun
+ 2025 12:50:59 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 30 Jun 2025 12:50:58 -0700
+Date: Mon, 30 Jun 2025 12:50:57 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>
+CC: <jgg@nvidia.com>, <jgg@ziepe.ca>, <kevin.tian@intel.com>,
+	<will@kernel.org>, <aneesh.kumar@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <joro@8bytes.org>, <robin.murphy@arm.com>,
+	<shuah@kernel.org>, <aik@amd.com>, <dan.j.williams@intel.com>,
+	<baolu.lu@linux.intel.com>, <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 1/5] iommufd: Add iommufd_object_tombstone_user()
+ helper
+Message-ID: <aGLqoSTOfppG1MbB@Asurada-Nvidia>
+References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
+ <20250627033809.1730752-2-yilun.xu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250630-losd-3-inv-icm42600-add-wom-support-v6-3-5bb0c84800d9@tdk.com>
-References: <20250630-losd-3-inv-icm42600-add-wom-support-v6-0-5bb0c84800d9@tdk.com>
-In-Reply-To: <20250630-losd-3-inv-icm42600-add-wom-support-v6-0-5bb0c84800d9@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751312852; l=5335;
- i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
- bh=SaLakCKt+NqOOSEferE17zBIRIXDHhlZGgHzBhvkUV8=;
- b=zZ7hA/4X8TCUv3Nk5Y4+xNr75IgVEOxgL9UBuG3UrY7x/gRXJt2T4hGi9DyNvOdoTkRUgYg/A
- mUPlqtPCK6cBzGSHdqcsZKR4J4z5fo+US5M2mpJdiK5x4BXzkhf3rgn
-X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
- pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
-X-Endpoint-Received: by B4 Relay for
- jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
-X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Reply-To: jean-baptiste.maneyrol@tdk.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250627033809.1730752-2-yilun.xu@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C6:EE_|MW4PR12MB7167:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1752e9a-fc9a-40ec-41fb-08ddb80f77bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?d1igaRvnDFWpQIX1myKclwfdnrwbEf0/HhWMsW203hG35bSRY7c6C3+HWCAb?=
+ =?us-ascii?Q?SrBLfyMffZQGjdSv2UWc26ag5wZAV63sqNqf2q47o8RRCymlAKC8HEiTtl7w?=
+ =?us-ascii?Q?skeGwmYtPdIwdSzxJv1aaoV6ZA1/1OORVXjobrN5/qfe+vwyEW7s305TR00M?=
+ =?us-ascii?Q?x00xZMK3twxX3qdwCPRWngmr+4YrJaGhQ2Y3SSrO5Zv0UduFzinCijms/sPb?=
+ =?us-ascii?Q?MuK6qotacOfX8An1gxl3HKAxzvjlYKyb8QQmRbZMbxNjQGRQuuH1maH6beAs?=
+ =?us-ascii?Q?NABjxCPNsG7abP6Zp654EcjpcP6QSk+iC8K0nGAEF5iEY/q7HsnUdxpZZQb1?=
+ =?us-ascii?Q?xXKAax/LgTqyW3ZyVvMhNr5dgmAABDjGkgZsaY/daceagePOePpWlMKLILkH?=
+ =?us-ascii?Q?4jXM4+tk2bgYay3rLW+0TP7zVgSjAs1KCoGmiC/7sGITgwoAeFOLz5eHlWRu?=
+ =?us-ascii?Q?opMQ41KlLnSFv4QoI5Sji5wnBVke8Yxwx7BuDH9gIOOaWa+Ri53yaIvZ58Az?=
+ =?us-ascii?Q?fKOb8qZ7GvxBWI7ZtsK6V/PbXoB6VgZVx62rbykjbBbncg6gv3Kzo48MA2v3?=
+ =?us-ascii?Q?nUs2OgLCEBE/gVUs4l9WcYL53nXHz39gP3v5+FCX4KFenGfvtc+4nuW1TEHT?=
+ =?us-ascii?Q?WykmXWRZN8uc3AjOon/mwDC7Wj61LlF5mStOGnPodsjbUrSMeUA12Pp3vwax?=
+ =?us-ascii?Q?zPCuBNcAeA1+6WMbjitD5Xv+ROc6hjQYBkEHjOlmToNrOoQxfTU5bGMT/Nvh?=
+ =?us-ascii?Q?K2p6+MH+Z4/ajYfzkiyhy4PHa57cDFOgnN7828HxursvcjphH4nY9y7ex66Q?=
+ =?us-ascii?Q?UtX02VlCyw+Lq+kqqGcZoVAA8wDUMNLXRuepEEidAUZ+Js1QOfYiJiuhQDor?=
+ =?us-ascii?Q?VzFb12RGcjw61RohfFjHfB47KQcmRDcu3XXU8F8NaRq3p5mMY/4wlS4qEgxX?=
+ =?us-ascii?Q?yqSky+zRF8oYbehWUQ5kkIqbnY11rXC+gXt5JLbRlNfEF5SPZi1AAp8Oie62?=
+ =?us-ascii?Q?Kv6lpgDMHTL/3vtjumMYOgBawLjNs0+IlrvL5KNijk/tRINFQm0gH+lPvi4Y?=
+ =?us-ascii?Q?KzbOAaFuS+xNY2cU4nroAHuDY5xQTDgpmDonD9+lmfNclRkIj8A44Xm154GI?=
+ =?us-ascii?Q?7PpasnXuf9wkRSiYZVpmAwX3eycAHrz8nqbCFktjR/5lEGP7vZo3Fx1Ytk/J?=
+ =?us-ascii?Q?7CTlgd9j6mEZVI8Epc5skk+WMOccB2eJPPKHBMiaL6PIr/N+jZgGUANppVth?=
+ =?us-ascii?Q?FeZm0M5kLPEONBEOKisfMExVdgq+2iNhNCLj+peEoJKiOGEefpL9PKhsQmxW?=
+ =?us-ascii?Q?YgIw2p3kleQLq7++DJMWpUPwUaPCAoWEzslPheedJmJ6oWpBB+/H20LWOYFs?=
+ =?us-ascii?Q?njg9FqjMsohGMZfy2sf0Uo6NXx2TFn6WmLNdI8pkVlIT2bctdh5EhZqQrY8d?=
+ =?us-ascii?Q?msLdA9J9iPEUCNxjRxVoygWuz+9G6ZaIF5Xi0mAq2uMkQu5H1jLXLa+rVF1F?=
+ =?us-ascii?Q?+wksK1lrh6MIgHIQ9Lj4XWuXZ18F5G+qS7pf?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 19:51:12.8990
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1752e9a-fc9a-40ec-41fb-08ddb80f77bc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000026C6.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7167
 
-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+On Fri, Jun 27, 2025 at 11:38:05AM +0800, Xu Yilun wrote:
+> Add the iommufd_object_tombstone_user() helper, which allows the caller
+> to destroy an iommufd object created by userspace.
 
-When Wake-on-Motion is on, enable system wakeup and keep the chip on
-for waking up the system with an interrupt.
+Should we describe it "partially destroy"?
 
-Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
----
- drivers/iio/imu/inv_icm42600/inv_icm42600.h       |  2 +
- drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c |  5 +++
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c  | 53 +++++++++++++++++------
- 3 files changed, 47 insertions(+), 13 deletions(-)
+> This is useful on some destroy paths when the kernel caller finds the
+> object should have been removed by userspace but is still alive. With
+> this helper, the caller destroys the object but leave the object ID
+> reserved (so called tombstone). The tombstone prevents repurposing the
+> object ID without awareness of the original user.
+> 
+> Since this happens for abnomal userspace behavior, for simplicity, the
 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-index 6af96df9f0ed195a211c40ca0075678f80b9424f..1430ab4f1dea5d5ba6277d74275fc44a6cd30eb8 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-@@ -151,6 +151,7 @@ struct inv_icm42600_apex {
-  *  @map:		regmap pointer.
-  *  @vdd_supply:	VDD voltage regulator for the chip.
-  *  @vddio_supply:	I/O voltage regulator for the chip.
-+ *  @irq:		chip irq, required to enable/disable and set wakeup
-  *  @orientation:	sensor chip orientation relative to main hardware.
-  *  @conf:		chip sensors configurations.
-  *  @suspended:		suspended sensors configuration.
-@@ -168,6 +169,7 @@ struct inv_icm42600_state {
- 	struct regmap *map;
- 	struct regulator *vdd_supply;
- 	struct regulator *vddio_supply;
-+	int irq;
- 	struct iio_mount_matrix orientation;
- 	struct inv_icm42600_conf conf;
- 	struct inv_icm42600_suspended suspended;
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-index c52d77cab040dcfb11bc1f9430a3b1dfd52660a9..7a28051330b79098bfa94b8c8c78c2bce20b7230 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c
-@@ -1206,6 +1206,11 @@ struct iio_dev *inv_icm42600_accel_init(struct inv_icm42600_state *st)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-+	/* accel events are wakeup capable */
-+	ret = devm_device_init_wakeup(&indio_dev->dev);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
- 	return indio_dev;
- }
- 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-index 283483ed82ff42b4f9b80d99084c118786054c37..a4d42e7e21807f7954def431e9cf03dffaa5bd5e 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -765,6 +765,7 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip,
- 	mutex_init(&st->lock);
- 	st->chip = chip;
- 	st->map = regmap;
-+	st->irq = irq;
- 
- 	ret = iio_read_mount_matrix(dev, &st->orientation);
- 	if (ret) {
-@@ -843,6 +844,9 @@ EXPORT_SYMBOL_NS_GPL(inv_icm42600_core_probe, "IIO_ICM42600");
- static int inv_icm42600_suspend(struct device *dev)
- {
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
-+	struct device *accel_dev;
-+	bool wakeup;
-+	int accel_conf;
- 	int ret;
- 
- 	mutex_lock(&st->lock);
-@@ -863,20 +867,32 @@ static int inv_icm42600_suspend(struct device *dev)
- 			goto out_unlock;
- 	}
- 
--	/* disable APEX features */
--	if (st->apex.wom.enable) {
--		ret = inv_icm42600_disable_wom(st);
--		if (ret)
--			goto out_unlock;
-+	/* keep chip on and wake-up capable if APEX and wakeup on */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = st->apex.on && device_may_wakeup(accel_dev);
-+	if (wakeup) {
-+		/* keep accel on and setup irq for wakeup */
-+		accel_conf = st->conf.accel.mode;
-+		enable_irq_wake(st->irq);
-+		disable_irq(st->irq);
-+	} else {
-+		/* disable APEX features and accel if wakeup disabled */
-+		if (st->apex.wom.enable) {
-+			ret = inv_icm42600_disable_wom(st);
-+			if (ret)
-+				goto out_unlock;
-+		}
-+		accel_conf = INV_ICM42600_SENSOR_MODE_OFF;
- 	}
- 
- 	ret = inv_icm42600_set_pwr_mgmt0(st, INV_ICM42600_SENSOR_MODE_OFF,
--					 INV_ICM42600_SENSOR_MODE_OFF, false,
--					 NULL);
-+					 accel_conf, false, NULL);
- 	if (ret)
- 		goto out_unlock;
- 
--	regulator_disable(st->vddio_supply);
-+	/* disable vddio regulator if chip is sleeping */
-+	if (!wakeup)
-+		regulator_disable(st->vddio_supply);
- 
- out_unlock:
- 	mutex_unlock(&st->lock);
-@@ -892,13 +908,24 @@ static int inv_icm42600_resume(struct device *dev)
- 	struct inv_icm42600_state *st = dev_get_drvdata(dev);
- 	struct inv_icm42600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
- 	struct inv_icm42600_sensor_state *accel_st = iio_priv(st->indio_accel);
-+	struct device *accel_dev;
-+	bool wakeup;
- 	int ret;
- 
- 	mutex_lock(&st->lock);
- 
--	ret = inv_icm42600_enable_regulator_vddio(st);
--	if (ret)
--		goto out_unlock;
-+	/* check wakeup capability */
-+	accel_dev = &st->indio_accel->dev;
-+	wakeup = st->apex.on && device_may_wakeup(accel_dev);
-+	/* restore irq state or vddio if cut off */
-+	if (wakeup) {
-+		enable_irq(st->irq);
-+		disable_irq_wake(st->irq);
-+	} else {
-+		ret = inv_icm42600_enable_regulator_vddio(st);
-+		if (ret)
-+			goto out_unlock;
-+	}
- 
- 	pm_runtime_disable(dev);
- 	pm_runtime_set_active(dev);
-@@ -911,8 +938,8 @@ static int inv_icm42600_resume(struct device *dev)
- 	if (ret)
- 		goto out_unlock;
- 
--	/* restore APEX features */
--	if (st->apex.wom.enable) {
-+	/* restore APEX features if disabled */
-+	if (!wakeup && st->apex.wom.enable) {
- 		ret = inv_icm42600_enable_wom(st);
- 		if (ret)
- 			goto out_unlock;
+s/abnomal/abnormal
 
--- 
-2.49.0
-
-
+Nicolin
 
