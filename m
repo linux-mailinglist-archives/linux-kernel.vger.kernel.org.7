@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-708773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B159AED4E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E00AED4D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5F6168315
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66315169777
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 06:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D69D1FDE22;
-	Mon, 30 Jun 2025 06:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718691F584C;
+	Mon, 30 Jun 2025 06:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="maFBdTrQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D48433A4
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 06:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jS9fPYq/"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8361D79A5;
+	Mon, 30 Jun 2025 06:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751266196; cv=none; b=iLae571oRDc/sf5azTUmGT+Gt+U44ju9KmoDMLQ5FIxcT+scdazJqqCJb069vmBIOJihNzCk3m9+PY3dAmsL5LhLH/6+r0qYWG+yVUgxqQBv6JMRM2Hp0mghMc4wwaOSVKaVFFvntdOrMTskSRdgObA257BNMqdIc5tSLjDIfgE=
+	t=1751265778; cv=none; b=Ml9qKjKwjIgJmUHQ4X5WWE2Mcy4ZL0kBg78/0GL2/D1feFUvmV21hbDFoMjZ8exn2UnuQ74M73cLnv+xPTYGow5VbICgoWkqgh9n0z2MLJ562QT4ZN0PdarZzr+DchnXZR36+79kttxNpxnhKIYoza/JD38HOYNDTbswdvuIzdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751266196; c=relaxed/simple;
-	bh=eHUuaA4RfF+uW9zm/55GGGBJbAeQ0GdtoByOHi+5vfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtFOcrJ8I4L9RVWi+1XNvi4CzwGLYY5rkN/ymXr8IsNJQUAy2FP47j2NvEWuXrnXbN6GPfsrbu53X+kGcUwXPPuhLuh7afE8QHf/706PQCw4VInV9coD+j3iDGCkIsXWVWME5cYdhUA2eQEI6i2Fs58Z8JZSnNcGZ8JuQOH1Di8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=maFBdTrQ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751266195; x=1782802195;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eHUuaA4RfF+uW9zm/55GGGBJbAeQ0GdtoByOHi+5vfI=;
-  b=maFBdTrQU6xcg6D4ncPqA5kIwEWbGsrBEtlcdfYfXXPB0Tb9KlDGtfCP
-   eMxBbBlEnaasLEMY4V5VcX3CmI1z+yZsXUayGSF6q2QCEsq8uKCL+7ABo
-   d0FDx+KWLFZbAvvWGLkFIFom6DwbOs3/6PW77lVsEn6+F8G4tYfUxyfum
-   X0CoCSao385yZt6aXwwpIu/CGARemjOyK4L+lRoM0LL+5byNr4QGD/1Sq
-   1aRhSPGWtgipCLqDdLEr7UD2BCcF8qOiHPsSDoQ9AD2JvBApmwxUcXvxr
-   Vc67aELqfVScoEN2dw+FBpE609yASLM0IG5+X+Z55oVPc5YaIVISM8ltq
-   w==;
-X-CSE-ConnectionGUID: LyjVFNwITUGku/znVwXTnw==
-X-CSE-MsgGUID: VqOUIJg1SgeCbGvWHMD/Bw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="64079798"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="64079798"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2025 23:49:51 -0700
-X-CSE-ConnectionGUID: 2WnOCjOVQNKlR15kNVQnWA==
-X-CSE-MsgGUID: 50bHyLX8Qcm3bl+aw5hy1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="154083462"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Jun 2025 23:49:47 -0700
-Date: Mon, 30 Jun 2025 14:41:56 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "jgg@nvidia.com" <jgg@nvidia.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"will@kernel.org" <will@kernel.org>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"nicolinc@nvidia.com" <nicolinc@nvidia.com>,
-	"aik@amd.com" <aik@amd.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Xu, Yilun" <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 1/5] iommufd: Add iommufd_object_tombstone_user()
- helper
-Message-ID: <aGIxtMZa1UsvACs4@yilunxu-OptiPlex-7050>
-References: <20250627033809.1730752-1-yilun.xu@linux.intel.com>
- <20250627033809.1730752-2-yilun.xu@linux.intel.com>
- <BL1PR11MB5271410ADB704F459C77BC248C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1751265778; c=relaxed/simple;
+	bh=dmBlpegE9rKAvLD82Gm4eaxuW6Mr6OFStIpe4VEMhW8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bB2QgIHgpVvoYvm5JBcLNeW8favYdll5DcOQ2794rwQKbaQkKvcamZQFw4oIGAoo7M1OXKeBAuoNoAUoe/tbfUYMBymk0UnP2tkjr8kSnInvyQAxlll3GdvkuqOoORfoIOS5kht+b+n/FataYBV41kARwWoFDrrKu5v2PUXtXEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jS9fPYq/; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Mj
+	0//ntO7V6GTvOGZ5O6Fosu16j1jVIMCZpAZZqbU/I=; b=jS9fPYq/60AsWixize
+	aFVygS+QLr9kEHzab7bH6X9c0DnxuzB/wG5kiova5gNYZDPzXiGeqEqSl+NrUQQN
+	FvMbzfax8JrMRlZ7SuqQ3jdU+oz2Y0qWZcWNacTDbA8vQGz2KGAv1ukh1lUTiUok
+	xTWzZPbpMET6NGa+FdwIWa8wY=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3T42+MWJomBI0Bg--.44606S2;
+	Mon, 30 Jun 2025 14:42:06 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: david.laight.linux@gmail.com
+Cc: aleksander.lobakin@intel.com,
+	almasrymina@google.com,
+	asml.silence@gmail.com,
+	davem@davemloft.net,
+	ebiggers@google.com,
+	edumazet@google.com,
+	horms@kernel.org,
+	kerneljasonxing@gmail.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	stfomichev@gmail.com,
+	willemb@google.com,
+	yangfeng59949@163.com,
+	yangfeng@kylinos.cn
+Subject: Re: [PATCH v2] skbuff: Improve the sending efficiency of __skb_send_sock
+Date: Mon, 30 Jun 2025 14:42:06 +0800
+Message-Id: <20250630064206.70948-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250629123339.0dd73fb1@pumpkin>
+References: <20250629123339.0dd73fb1@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL1PR11MB5271410ADB704F459C77BC248C46A@BL1PR11MB5271.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3T42+MWJomBI0Bg--.44606S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr13uF1kGw1UKr47Jw1DKFg_yoW8Zw4Dpa
+	95WFyqvFsrJ3WYgrs2q3yrAr4Yy3s5Ca48u3yFqas5t3s0gr9Ygr4UKF4Yka4Fgrs7Cry3
+	XF4qvw1ak397ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRcTmhUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiZQx8eGhiLyBRZwAAse
 
-On Mon, Jun 30, 2025 at 05:52:26AM +0000, Tian, Kevin wrote:
-> > From: Xu Yilun <yilun.xu@linux.intel.com>
-> > Sent: Friday, June 27, 2025 11:38 AM
+On Fri, 27 Jun 2025 03:23:24 -0700 Eric Dumazet <edumazet@google.com> wrote:
+
+> On Fri, Jun 27, 2025 at 3:19 AM Eric Dumazet <edumazet@google.com> wrote:
 > >
-> > @@ -239,6 +239,7 @@ static int iommufd_fops_release(struct inode *inode,
-> > struct file *filp)
-> >  	struct iommufd_sw_msi_map *next;
-> >  	struct iommufd_sw_msi_map *cur;
-> >  	struct iommufd_object *obj;
-> > +	bool empty;
+> > On Fri, Jun 27, 2025 at 2:44 AM Feng Yang <yangfeng59949@163.com> wrote:
+> > >
+> > > From: Feng Yang <yangfeng@kylinos.cn>
+> > >
+> > > By aggregating skb data into a bvec array for transmission, when using sockmap to forward large packets,
+> > > what previously required multiple transmissions now only needs a single transmission, which significantly enhances performance.
+> > > For small packets, the performance remains comparable to the original level.
+> > >
+> > > When using sockmap for forwarding, the average latency for different packet sizes
+> > > after sending 10,000 packets is as follows:
+> > > size    old(us)         new(us)
+> > > 512     56              55
+> > > 1472    58              58
+> > > 1600    106             79
+> > > 3000    145             108
+> > > 5000    182             123
+> > >
+> > > Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+> >
+> > Instead of changing everything, have you tried strategically adding
+> > MSG_MORE in this function ?
 > 
-> move into for(;;) loop
-
-Yes.
-
+> Untested patch:
 > 
-> > 
-> >  	/*
-> >  	 * The objects in the xarray form a graph of "users" counts, and we
-> > have
-> > @@ -249,23 +250,35 @@ static int iommufd_fops_release(struct inode
-> > *inode, struct file *filp)
-> >  	 * until the entire list is destroyed. If this can't progress then there
-> >  	 * is some bug related to object refcounting.
-> >  	 */
-> > -	while (!xa_empty(&ictx->objects)) {
-> > +	for (;;) {
-> >  		unsigned int destroyed = 0;
-> >  		unsigned long index;
-> > 
-> > +		empty = true;
-> >  		xa_for_each(&ictx->objects, index, obj) {
-> > +			empty = false;
-> >  			if (!refcount_dec_if_one(&obj->users))
-> >  				continue;
-> > +
-> >  			destroyed++;
-> >  			xa_erase(&ictx->objects, index);
-> >  			iommufd_object_ops[obj->type].destroy(obj);
-> >  			kfree(obj);
-> >  		}
-> > +
-> > +		if (empty)
-> > +			break;
-> > +
-> >  		/* Bug related to users refcount */
-> >  		if (WARN_ON(!destroyed))
-> >  			break;
-> >  	}
-> > -	WARN_ON(!xa_empty(&ictx->groups));
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index d6420b74ea9c6a9c53a7c16634cce82a1cd1bbd3..b0f5e8898fdf450129948d829240b570f3cbf9eb
+> 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -3252,6 +3252,8 @@ static int __skb_send_sock(struct sock *sk,
+> struct sk_buff *skb, int offset,
+>                 kv.iov_len = slen;
+>                 memset(&msg, 0, sizeof(msg));
+>                 msg.msg_flags = MSG_DONTWAIT | flags;
+> +               if (slen < len)
+> +                       msg.msg_flags |= MSG_MORE;
 > 
-> I didn't get the rationale of this change. tombstone only means the
-> object ID reserved, but all the destroy work for the object has been
-> done, e.g. after all idevice objects are destroyed there should be no
-> valid igroup entries in ictx->groups (and there is no tombstone
-> state for igroup).
+>                 iov_iter_kvec(&msg.msg_iter, ITER_SOURCE, &kv, 1, slen);
+>                 ret = INDIRECT_CALL_2(sendmsg, sendmsg_locked,
+> @@ -3292,6 +3294,8 @@ static int __skb_send_sock(struct sock *sk,
+> struct sk_buff *skb, int offset,
+>                                              flags,
+>                         };
 > 
-> Is it a wrong change by misreading ictx->groups as ictx->objects?
+> +                       if (slen < len)
+> +                               msg.msg_flags |= MSG_MORE;
+>                         bvec_set_page(&bvec, skb_frag_page(frag), slen,
+>                                       skb_frag_off(frag) + offset);
+>                         iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1,
 
-Sorry, this is a true mistake.
-
-> 
-> > +
-> > +	/*
-> > +	 * There may be some tombstones left over from
-> > +	 * iommufd_object_tombstone_user()
-> > +	 */
-> > +	xa_destroy(&ictx->groups);
-> > 
-> 
-> And here should be ictx->objects?
-
-Yes, thanks for catching up.
-
--       xa_destroy(&ictx->groups);
-+       xa_destroy(&ictx->objects);
-+
-+       WARN_ON(!xa_empty(&ictx->groups));
-
-Thanks,
-Yilun
-
-
-
+After testing, there is a performance improvement for large packets in both TCP and UDP.
+Thanks.
 
 
