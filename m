@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-709036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97464AED879
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B46AED8C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FAC3A830F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F08A83B4C05
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A850244684;
-	Mon, 30 Jun 2025 09:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077382494D8;
+	Mon, 30 Jun 2025 09:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rv8FQoEW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTJMjBhv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E99244664;
-	Mon, 30 Jun 2025 09:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1001E242D6C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751275186; cv=none; b=EspCC6mlUoBLRgzFeNzoebx8os9v2z2VwrxX97Df7lHUIcTHczINsEQoEHnjsiBL6iUAmqkOhiVT2JbNoLhA+JfwcRIVWlpB6UxfQkVs2pLO8tLiubBxXSvjWnJs1X5dLeQK6I9mWOZeWO1PyhyxgkeWt9vtsnN3NqRrgTz354U=
+	t=1751275986; cv=none; b=MvauvEGsAkSLjX051/sgC8SjYe8MogEC3+jktoXkNWRn8sSQ0D/RpuB6XWxgolue9701U4heRlL8XF8e4TKk6XvvJkcdvTWS8Xt8RKChx7QUjUW7DRqKR1fi45AvBZxGeKh0T49t6BQ2L8gSDMZat+755DdzyvDAa1Pi1N/VNHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751275186; c=relaxed/simple;
-	bh=HzOC8ReOOr/Gp7Sb4wbuD5vyKncI41XqdTEB56Jw3Y0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DyFfvDpKpm4TAlRsfK466qOMW7LRuilIPBIWtIXtGM0iypSG6GPU3fgU3zU3+Zbn20vYuCTLumsGOCDbZH5snBWRyeiRt0NhY/JsMceHxDunSWUlgP3KR/yqordQPQ9om949z1ZNfqCo3CwRVMXHS13qfzZ3zmsVBqwcDWN+ozw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rv8FQoEW; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1751275986; c=relaxed/simple;
+	bh=u+ZGIprYPz4AfFrUHryY9pVM19USjmI9lToFxhGnjJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FzVd6NdTYixpHClPxdpnEk35BE+A4RVOXEfYpS+xl/5KadzotQCf/eP9lZBVWDDU0F748crLekSooPgpe2v+c6zzv32MsIPrpa/UPVrpJSA1sOmBKHwDtdflTgVCd9z68P6g6QiuU+u1bQxSLow5VrjsEoRGMULPCjsl1Ccb820=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTJMjBhv; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751275185; x=1782811185;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=HzOC8ReOOr/Gp7Sb4wbuD5vyKncI41XqdTEB56Jw3Y0=;
-  b=Rv8FQoEW95gOuW8aqbEna2CL+30pukPBolGRDedIPgV/s09fCrpOgvEW
-   /wA9jmOiRc5tbeeQsMTY7Qomd97A5LWbNqNJcE/sH5q4Zdc0A37xbrQNa
-   vRqmZCqJkA8WihTNDQYm6uTYbyw4n7eNTePQVrfJ/nylG84SDaF/lT7I7
-   qGwJGrHBoa1zussRGdBd3jhlsZKZxzzO1nuACrDbScxyBeykq/CaZxBPX
-   JSlPa3MCSynvvdOoi/pytSNaJv8cSsKYOXXFSvat2jS4CpR8QfERQPkER
-   575MkpSkZuy5l7qg0hs5nhAyOtIRCP5+LaxyqKT3FVy5XyaU1U8sgufLa
-   g==;
-X-CSE-ConnectionGUID: sG/ZPK91StOKoFMFq56wFQ==
-X-CSE-MsgGUID: 2wtQJRpYQ7udwK97riqSzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="57300481"
+  t=1751275984; x=1782811984;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=u+ZGIprYPz4AfFrUHryY9pVM19USjmI9lToFxhGnjJo=;
+  b=aTJMjBhvNPiqzvHVoJXZUplmKYtYZDY8w+V9b/H61ZJm5HgPlAf3XrBY
+   aHI5ESdDOzLYp0cwCbzi4B8Fy0wbHTAEYqb3jqOdx6vyfTh0eJeO2IwAO
+   PkRf8lv/PXXiii/df90YKzETV+vdPZmYBBUY1yWpw6GSYFeXowffZ44GQ
+   zFeapH/prFCnFXfFGF3/1wiJu8Nhzj/eygbxbzUWyHrOBo0EmG/QSx2T4
+   KKv9XXNOf4gSIjscCudO79h+/0xAw9tTlbqYRxbnu1WOX73ArPChKDAkW
+   3Lm3TJNLWg9xL98gRDbWuEWgkO61TZjaOXL0isLahbIEcfdyosaTyOAC5
+   Q==;
+X-CSE-ConnectionGUID: td1066ELQ6q0LyyYUYeTMw==
+X-CSE-MsgGUID: 20mP8wIETIiK0KscRuC3OQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="53218588"
 X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="57300481"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:19:44 -0700
-X-CSE-ConnectionGUID: rqR/kIFiR+CdjSPBv0dkFQ==
-X-CSE-MsgGUID: uPkVVIL+QrSDjXHLO1XxXw==
+   d="scan'208";a="53218588"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:33:04 -0700
+X-CSE-ConnectionGUID: 6l22WxozTP+eSBHN3qSPyQ==
+X-CSE-MsgGUID: zG+IhRcERiSfyaJUqo5ipQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="153499264"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:19:39 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Prasanth Ksr <prasanth.ksr@dell.com>, Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- Divya Bharathi <divya.bharathi@dell.com>, Armin Wolf <W_Armin@gmx.de>, 
- Linus Torvalds <torvalds@linux-foundation.org>, 
- Kurt Borja <kuurtb@gmail.com>
-Cc: Dell.Client.Kernel@dell.com, platform-driver-x86@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jan Graczyk <jangraczyk@yahoo.ca>
-In-Reply-To: <20250630-sysman-fix-v2-1-d185674d0a30@gmail.com>
-References: <20250630-sysman-fix-v2-1-d185674d0a30@gmail.com>
-Subject: Re: [PATCH v2] platform/x86: dell-wmi-sysman: Fix WMI data block
- retrieval in sysfs callbacks
-Message-Id: <175127517470.2486.17723027460891485584.b4-ty@linux.intel.com>
-Date: Mon, 30 Jun 2025 12:19:34 +0300
+   d="scan'208";a="153039555"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 02:33:02 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [char-misc-next v2 0/5] mei: fix mei_device lifetime
+Date: Mon, 30 Jun 2025 12:19:37 +0300
+Message-ID: <20250630091942.2116676-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 30 Jun 2025 00:43:12 -0300, Kurt Borja wrote:
+mei_device data structure is allocated using devm_* functions
+and hooked to the parent device.
+It works for client systems where parent device is pci one.
+When parent device is auxiliary bus device produced by
+graphics driver, the parent can be destroyed before child
+and on the way it cleans all allocated memory.
+This leads to use-after-free if mei character device is
+opened when parent device is destroyed.
+Introduce device to hook the mei_device lifetime on it and
+decouple cdev from main structure to allow all memory
+to be released when it is unused and not before.
 
-> After retrieving WMI data blocks in sysfs callbacks, check for the
-> validity of them before dereferencing their content.
-> 
-> 
+Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/14201
 
+V2: Make cdev patches first to avoid double refcounting
+    in the middle of the series.
+    Replace manual refcount with special device.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+Alexander Usyskin (5):
+  mei: set parent for char device
+  mei: make char device control its own lifetime
+  mei: bus: use cldev in prints
+  mei: more prints with client prefix
+  mei: create dedicated device object
 
-The list of commits applied:
-[1/1] platform/x86: dell-wmi-sysman: Fix WMI data block retrieval in sysfs callbacks
-      commit: eb617dd25ca176f3fee24f873f0fd60010773d67
+ drivers/misc/mei/bus-fixup.c    |  16 ++--
+ drivers/misc/mei/bus.c          |  42 +++++-----
+ drivers/misc/mei/client.c       |  82 +++++++++----------
+ drivers/misc/mei/client.h       |   6 +-
+ drivers/misc/mei/dma-ring.c     |   8 +-
+ drivers/misc/mei/gsc-me.c       |  13 +--
+ drivers/misc/mei/hbm.c          | 135 +++++++++++++++-----------------
+ drivers/misc/mei/hw-me.c        | 101 ++++++++++++------------
+ drivers/misc/mei/hw-txe.c       |  62 +++++++--------
+ drivers/misc/mei/init.c         |  85 ++++++++++++++------
+ drivers/misc/mei/interrupt.c    |  47 ++++++-----
+ drivers/misc/mei/main.c         |  99 ++++++++++++-----------
+ drivers/misc/mei/mei_dev.h      |  15 ++--
+ drivers/misc/mei/pci-me.c       |  12 ++-
+ drivers/misc/mei/pci-txe.c      |  10 ++-
+ drivers/misc/mei/platform-vsc.c |  18 +++--
+ 16 files changed, 404 insertions(+), 347 deletions(-)
 
---
- i.
+-- 
+2.43.0
 
 
