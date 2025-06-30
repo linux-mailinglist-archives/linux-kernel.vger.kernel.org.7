@@ -1,132 +1,136 @@
-Return-Path: <linux-kernel+bounces-709105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB7DAED952
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:05:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04545AED956
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0176C188646B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66698164FB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4D72512C3;
-	Mon, 30 Jun 2025 10:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6737624A052;
+	Mon, 30 Jun 2025 10:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L+sC/Taw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="zuotKfvT"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACB924DD14;
-	Mon, 30 Jun 2025 10:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6739D6BFC0;
+	Mon, 30 Jun 2025 10:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277927; cv=none; b=LmPVo0tIS0lALk2ncJWa+Zu/lHkGiSNA5kEmzG8E2brATbVc/0QMZM+6fq8PV8JT2ur7TlcdEm749cf2ZHcisX+65lRMUkPPKkjNRQ5ZjKV4qR1mxQxIghibfs9/g/C3H7SUhTDPkTYkHgAmPGyzT0Cr44mWX9FPUitvLt6/xVc=
+	t=1751277970; cv=none; b=uZ66a8pEtl9YcdeKrFm9ZP+xATyFr6yUusT6XF7h1707mc3qjGONeR6HeUH+axutCsfb55sMJwWqgYWYwCah6DI5koQJWVzkAJsRkMmoc2X6JJAstd3/VAublTAJIwhIDOovF9ZfRtRoCSqNXCC5jOZcm60aCllqZrVZvA/1+Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277927; c=relaxed/simple;
-	bh=ZkxpKL7HyuHwZc3WHtxTqeW1UtBpp9vPfi99JxpA4x0=;
+	s=arc-20240116; t=1751277970; c=relaxed/simple;
+	bh=idmzxaWZUEccbmv3UFhsjZX2rlSRens+xjcxcEIn1F8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUQMFXIlNIWDYY0mHfQfUJLGgE0NRbzUqzptFnSHcuDG2gBXpM3vHT/sw4Lr5PKAxSWYPRVjmcVK5j8zHxoDFWrD+RE9m2IuFlniz6D+NKh1XM21Rzt8miu1LMPdaXvkwnhiv7RLFy3l+RxRCDwloHOfX7LZfyfinGDuQeLE9y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L+sC/Taw; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751277926; x=1782813926;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZkxpKL7HyuHwZc3WHtxTqeW1UtBpp9vPfi99JxpA4x0=;
-  b=L+sC/TawAgQeNPkPK8y7kFW34JEVuxri6mWomA6oUq68M63BjbcKl1Hx
-   7CHCgA/LyFALobNqfbqVtHJjir4ElMO9XMOErj6zybCpPxO9wt193yLNA
-   +KjehdyJ73enhYeB6fh2FCqI4Qv9v4VkS8s9hctdIeqibP6jhhihBqw6h
-   nV+o8Gc7oxj/9CC7X4ruUGrsl/qLA/sTYioYV2UQgkfVVdsZ8p4m0KmAG
-   faGTCOQAdcWBJauvfQnaznXLerubQahQ3ae5nH1cfcjmxAJ8Ip5iA+7mO
-   tmePRRq42G9LbmYVBU9u+WiT/35j2BzEykkYKhx2KQxsMmKdiT2JzvvVa
-   A==;
-X-CSE-ConnectionGUID: +T8jNg4cQ3iYTn9SCZfdLA==
-X-CSE-MsgGUID: rBIyA9HNQNGFFHgtynfa5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="57277759"
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="57277759"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:05:25 -0700
-X-CSE-ConnectionGUID: 1fuKA7zuRaCBuxOw1I0PTQ==
-X-CSE-MsgGUID: gduxAuPNSU6vx8Op17+ALA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
-   d="scan'208";a="190588077"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 03:05:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uWBO3-0000000BGrq-1AeU;
-	Mon, 30 Jun 2025 13:05:19 +0300
-Date: Mon, 30 Jun 2025 13:05:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Kent Gibson <warthog618@gmail.com>,
-	Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 4/9] gpio: sysfs: don't use driver data in sysfs
- callbacks for line attributes
-Message-ID: <aGJhX9MhFAIopdwy@smile.fi.intel.com>
-References: <20250623-gpio-sysfs-chip-export-v2-0-d592793f8964@linaro.org>
- <20250623-gpio-sysfs-chip-export-v2-4-d592793f8964@linaro.org>
- <aF67oAqLmRJzy4Zt@black.fi.intel.com>
- <CAMRc=MfXVTqncPsJ3QKqsGDi36gK4weWX1iygpqg1C-XinCEGg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdyV+cqw3Jc1S6Tms3hQOHA+pb+1o3fpBOf3UeKy7Rro09E9wZFvdGq/bc4D7I4cnr9D7hcsaIRQf++s4WKSn+pjs0UF22QSI1wpKs+2ol2mKtA2gpThrQiiHjUQSPUnkRCxpefCjtYxoMInraJjIMIqpb/tfOTv2EOpZp3yqZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=zuotKfvT; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bW1yN51X8z9sqc;
+	Mon, 30 Jun 2025 12:06:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1751277964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FUqY6p8xHWIMOVC9OJie7vZ2SH/5zciF2FM6fFp1tPg=;
+	b=zuotKfvTKbBNr1XDp7EnliGK08aysOe25VVCo+8rUypcZBOouhwTjkRdSF35Twqw4juFE5
+	sY2zRtelnAw5GmqnoOLvQsFrD5gSZpTMKHiJpa49mPEfXw1u/Z/8zD4StVtPE6xWbGGUs7
+	vNTBG7xssauguqtbD57PTLNe3gH7nnAL6X6scmuEr9XikUWT5xnUSshyAmW96XIrWEZ5tQ
+	Es+JiAqk714dlnGaoZdpjcvpo/D18+FAy3NPw9dTeKhh9RMN1Tf0aFtiBnHU4LlunZQolZ
+	7yPmB0iFqwjNIKSr6L/7t4D6gFS2Iv9s34M9UFCAYKQqNnThqyCxF+M3Zeh8dw==
+Date: Mon, 30 Jun 2025 12:05:54 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Baokun Li <libaokun1@huawei.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, mcgrof@kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	gost.dev@samsung.com, Matthew Wilcox <willy@infradead.org>, 
+	Zhang Yi <yi.zhang@huawei.com>, Yang Erkun <yangerkun@huawei.com>
+Subject: Re: [PATCH v4] fs/buffer: remove the min and max limit checks in
+ __getblk_slow()
+Message-ID: <4qln6l2oc4y3yvfm36tbsgkxxaq4i7yvxbzlnz36yrvajdwmfs@lkk7ujwbulq2>
+References: <20250626113223.181399-1-p.raghav@samsung.com>
+ <3398cb62-3666-4a79-84c1-3b967059cd77@huawei.com>
+ <20250629111506.7c58ccd7@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfXVTqncPsJ3QKqsGDi36gK4weWX1iygpqg1C-XinCEGg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250629111506.7c58ccd7@pumpkin>
+X-Rspamd-Queue-Id: 4bW1yN51X8z9sqc
 
-On Mon, Jun 30, 2025 at 10:57:06AM +0200, Bartosz Golaszewski wrote:
-> On Fri, Jun 27, 2025 at 5:41 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Mon, Jun 23, 2025 at 10:59:52AM +0200, Bartosz Golaszewski wrote:
-
-...
-
-> > Defining once something like
-> >
-> > #define to_gpiod_data() ...
-> >
-> > we may leave this and others as one-liners.
+On Sun, Jun 29, 2025 at 11:15:06AM +0100, David Laight wrote:
+> On Fri, 27 Jun 2025 10:02:30 +0800
+> Baokun Li <libaokun1@huawei.com> wrote:
 > 
-> We'd need one per every attribute. Look closer, we do get a different
-> attr address in every pair of callbacks.
-
-I see, thanks for pointing that out.
-
-...
-
-> > > +     attrs[GPIO_SYSFS_LINE_ATTR_ACTIVE_LOW] =
-> > > +                                             &data->active_low_attr.attr;
-> >
-> > What's the point of two lines here?
-> >
+> > On 2025/6/26 19:32, Pankaj Raghav wrote:
+> > > All filesystems will already check the max and min value of their block
+> > > size during their initialization. __getblk_slow() is a very low-level
+> > > function to have these checks. Remove them and only check for logical
+> > > block size alignment.
+> > >
+> > > As this check with logical block size alignment might never trigger, add
+> > > WARN_ON_ONCE() to the check. As WARN_ON_ONCE() will already print the
+> > > stack, remove the call to dump_stack().
+> > >
+> > > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>  
+> > 
+> > Makes sense. Feel free to add:
+> > 
+> > Reviewed-by: Baokun Li <libaokun1@huawei.com>
+> > 
+> > > ---
+> > > Changes since v3:
+> > > - Use WARN_ON_ONCE on the logical block size check and remove the call
+> > >    to dump_stack.
+> > > - Use IS_ALIGNED() to check for aligned instead of open coding the
+> > >    check.
+> > >
+> > >   fs/buffer.c | 11 +++--------
+> > >   1 file changed, 3 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/fs/buffer.c b/fs/buffer.c
+> > > index d61073143127..565fe88773c2 100644
+> > > --- a/fs/buffer.c
+> > > +++ b/fs/buffer.c
+> > > @@ -1122,14 +1122,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
+> > >   {
+> > >   	bool blocking = gfpflags_allow_blocking(gfp);
+> > >   
+> > > -	if (unlikely(size & (bdev_logical_block_size(bdev) - 1) ||
+> > > -		     (size < 512 || size > PAGE_SIZE))) {
+> > > -		printk(KERN_ERR "getblk(): invalid block size %d requested\n",
+> > > -					size);
+> > > -		printk(KERN_ERR "logical block size: %d\n",
+> > > -					bdev_logical_block_size(bdev));
+> > > -
+> > > -		dump_stack();
+> > > +	if (WARN_ON_ONCE(!IS_ALIGNED(size, bdev_logical_block_size(bdev)))) {
+> > > +		printk(KERN_ERR "getblk(): block size %d not aligned to logical block size %d\n",
+> > > +		       size, bdev_logical_block_size(bdev));
+> > >   		return NULL;
 > 
-> I tend to stick with the 80 chars limit even though it was lifted.
+> Shouldn't that use WARN_ONCE(condition, fmt, ...)
 
-The above looks just ugly. Saving one character on the line here doesn't
-justify readability loss.
+We need to return NULL if the check fails. So having the condition and
+the format as an `if` condition does not look nice. Plus the formatting
+will look weird.
 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--
+Pankaj
 
