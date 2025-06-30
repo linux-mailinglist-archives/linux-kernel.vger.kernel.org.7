@@ -1,111 +1,163 @@
-Return-Path: <linux-kernel+bounces-709962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BCFAEE540
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:06:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2228AEE543
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 19:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 573007A7FE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24618189ED2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 17:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F5F292B25;
-	Mon, 30 Jun 2025 17:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED61B292B49;
+	Mon, 30 Jun 2025 17:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV9AGgVd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N6MijQSv"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B48CA4E;
-	Mon, 30 Jun 2025 17:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A7A292B36
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 17:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751303163; cv=none; b=ToJpx9qtQFCEQ50xDmB647JozNATpjq2WPsJ6NCcraILDQU7tjMGruqX3e5k4ncjAm18VZJrCXvLTvztRIYhOahKayyCQRUfN4PbOycoB4Ry8BYI9mNrU94GIBwHbXTgng1kUq+kM2SBRk2tXXC5tgcjCXnBBkuXlEKyAodoXiA=
+	t=1751303176; cv=none; b=hQsI8hHR9/wGdPgct9d9NyM88YNYk9VZ0fg6uGbYcsTp6C25O3CJzO0iJhe+f3TAvhp2joVVwlqZ9TV3VlRiwRP8JaS2G0UpDQi6hso+sSg7XD1k//hoFroG+B9vsf6JExa+2o3YTcxiR37s2oJo1xscVAdvnb8wK3JFObfMOK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751303163; c=relaxed/simple;
-	bh=YS1h67nHopU5jEDVPXIholPcSs4LOSkc7OQ/xawugyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=n6YRhX2uJ7iPYt9siBz3FkAIvunESXWTpR8DOTGSCnf6nETS19AtmHuKbqiOfttDMuyWoleyksuB+IDkTBp2jy0+rnzhIEuPO6bvrB6U4/uM9YYj7sYfViZbT++c5eJdNmjnFgWNDSG7JI/E5fAdhzfb+2bsCxF1Svfy7DAc+Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV9AGgVd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809A9C4CEE3;
-	Mon, 30 Jun 2025 17:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751303162;
-	bh=YS1h67nHopU5jEDVPXIholPcSs4LOSkc7OQ/xawugyw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=hV9AGgVdssVMQd1wnnDfmJ0GOhvJ+r/NtVR9vxunWsbWGlijCdQnQw1Z3LMXp3Ord
-	 tOMaOM6uC0Gp1V9N5x+SfFkqYP0PTcshgQ4gsFokjlEqTQi43h7iXhvIHaQsEmkIkE
-	 nhxr1yMj7FMimmZvTFk+Z31JuUN8RHKfUwqoY/uR1Zo+o4N0QqpoWQnLe59E82OoeY
-	 SBnNXOrBdaE5MO+3csoUYVUZKSvbEm4THrxRTvgLL9lqSGkvFT/LR53/hPoh6s0Cd5
-	 e50UN0lWjypg109AU0g1KPpzav8hadhQ4dnbZG7l69POuCPcie6p71hvo/AVEtRkJ6
-	 SRPj4laswAyfQ==
-Date: Mon, 30 Jun 2025 12:06:01 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] PCI: host-generic: Fix driver_data overwriting bugs
-Message-ID: <20250630170601.GA1785925@bhelgaas>
+	s=arc-20240116; t=1751303176; c=relaxed/simple;
+	bh=pjFJVY2DAp0wxsONkQePUbbOGI1/Uhq8I/8sgsXujUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEgc1U00rgh/m+ALe5vaerGvFvlPTxlKOhxHwDjQKJcTpTYIYjdZRxmiJW3mlYC/591CRcWyAM093XHHPWynB6Nbs16yFapYosewW5MNrqNtpd6wGt45EW1ekBkCxs2dL4VFuBadG7DLN741C+seSSpUU5sMe7khh43Sz6BDPD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=N6MijQSv; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-311da0bef4aso2433314a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 10:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1751303174; x=1751907974; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeiZ9sUl/sPQepg8w+B0NuXnsnwAyrJ4/1H7mMXSJyg=;
+        b=N6MijQSvvIB97GiPiJkWj4Il6sau0/Rp/041DGphpZdU1TvuG2tvKLzJdSx6edj9TJ
+         lw4Z4khyoEdFBt7LAkBdgwkQi6meflwZl9x3aCvtcjs84X2UQgUHVJd4qbIN7g+qZgky
+         CoRWlcGmiImE7aknlz+iBlr0D66+iZCpml4tM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751303174; x=1751907974;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YeiZ9sUl/sPQepg8w+B0NuXnsnwAyrJ4/1H7mMXSJyg=;
+        b=CCns+hnbChxds+oNY0DFzwYn85vM6T3oPIQoRm17ixQ0ymn3X0oRclI7ZZEI3FFAxD
+         Vp7EXVhGxTyL1uAFAyyVk0swA7fJrBv7davd0LAPwmCp1pAgVIjGehk1OciyItZBfymA
+         CmIdAeq0sRUvoGSuUEFmHVCFbW8HttakL7uEw4YTq7yW12g0+1fNCoN5af6XLooapHNm
+         T+JsCixxwmZdglNZM4L8AQbTcH4EXU/CknUna1dEF7Om6S7TCkgZiNFGNPB9smwhXf9b
+         UdznwN125AA5yQy2fRySujMmaFMe0XqCofPrcTtGW6cM/Qzx7C/QQcygSKsisD1WjAGk
+         F60w==
+X-Forwarded-Encrypted: i=1; AJvYcCWa6i+az9j+H5LY4DZX3pufuQfIbTye/tuTxbk6zHfjbLpwePlZE9AE7cHxOC6xeb41qyypzp4Q/AoAf+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvPuLN41mM2pmlqT8e0hRo+AKD4hA8dF/EQxpDUJ9tQS/UIOLO
+	bQOSFBlG88hiRWUMCFASjjsoxa6LzI6854JXK9RV3cBxP9PJSDgPuMjt5pTLGr9rXA==
+X-Gm-Gg: ASbGnctQlBA6hIP5Rn83hz2nIkfewUtxp5oQ3VnIckUs+eWbTEZV0Wanra2pgg5K8nU
+	IAs4LYPbk18QrvaW/P84XB8C4/BOWOaOWOnEX+7E/4cKgMB2/v+kC3SOSEo+6xTDCqx5SnMiBl/
+	XUYoZjTGwIoxS084xh8WBsuA9GDSK5LAKfFfJtJrwH8CRQeb3+PwefG9Ks2FjjJoh1iPN0QNXSy
+	niDTHZMlXmxQD/4rvXfRfnHb4p5LXyXUCbBk5PpwgtarYA2C9TMyYGnpXLG+ztaHgpdjQcy7q8s
+	WUGSqTM262uYsNQaxfv4Aq5ZzDh5mntZC//ArboQks2IfTp41Hvg1TWqZUqYFauwzhnzLC4Ek0e
+	SRbmlIjvMDbvjTwvHrKd98vg7/g==
+X-Google-Smtp-Source: AGHT+IFY8d/sUB+A8uAwUeKsbw68IOwDG201lnCyROt+Sdl9vBBWxot2+dUbghHEvlDQYaDwEpf6dw==
+X-Received: by 2002:a17:90a:e7cc:b0:312:959:dc41 with SMTP id 98e67ed59e1d1-318c92e112bmr20333229a91.27.1751303174222;
+        Mon, 30 Jun 2025 10:06:14 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f5437a26sm13396729a91.38.2025.06.30.10.06.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jun 2025 10:06:13 -0700 (PDT)
+Message-ID: <0839af85-44a0-4960-a565-c036087fa3bc@broadcom.com>
+Date: Mon, 30 Jun 2025 10:06:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625111806.4153773-1-maz@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v4 0/4] net: phy: bcm54811: Fix the PHY initialization
+To: =?UTF-8?Q?Kamil_Hor=C3=A1k_-_2N?= <kamilh@axis.com>,
+ florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+ andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org, andrew+netdev@lunn.ch
+References: <20250630135837.1173063-1-kamilh@axis.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250630135837.1173063-1-kamilh@axis.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 12:18:03PM +0100, Marc Zyngier wrote:
-> Geert reports that some drivers do rely on the device driver_data
-> field containing a pointer to the bridge structure at the point of
-> initialising the root port, while this has been recently changed to
-> contain some other data for the benefit of the Apple PCIe driver.
+On 6/30/25 06:58, Kamil Horák - 2N wrote:
+> PATCH 1 - Add MII-Lite PHY interface mode as defined by Broadcom for
+>     their two-wire PHYs. It can be used with most Ethernet controllers
+>     under certain limitations (no half-duplex link modes etc.).
 > 
-> This small series builds on top of Geert previously posted (and
-> included as a prefix for reference) fix for the Microchip driver,
-> which breaks the Apple driver. This is basically swapping a regression
-> for another, which isn't a massive deal at this stage, as the
-> follow-up patch fixes things for the Apple driver by adding extra
-> tracking.
+> PATCH 2 - Add MII-Lite PHY interface type
+> 
+> PATCH 3 - Activation of MII-Lite interface mode on Broadcom bcm5481x
+>     PHYs
+> 
+> PATCH 4 - Fix the BCM54811 PHY initialization so that it conforms
+>     to the datasheet regarding a reserved bit in the LRE Control
+>     register, which must be written to zero after every device reset.
+>     Also fix the LRE Status register reading, there is another bit to
+>     be ignored on bcm54811.
+> 
+> Changes in v2:
+>    - Applied reviewers' comments
+>    - Divided into more patches (separated common and Broadcom
+>     PHY specific code)
+> 
+> Changes in v3:
+>    - Added MII-Lite documentation
+> 
+> Changes in v4:
+>    - Added missing Fixes headers
 
-Is there a bisection hole between patches 1 and 2?
+Kamil, you posted your v4 less than 24 hrs after the v3, please don't do 
+that per:
 
-  1: PCI: host-generic: Set driver_data before calling gen_pci_init()
-  2: PCI: apple: Add tracking of probed root ports
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#updating-patch-status
+-- 
+Florian
 
-If so, would it be practical to avoid the hole by reordering those
-patches?
-
-> Finally, we can revert a one-liner that glued the whole thing
-> together, and that isn't needed anymore.
-> 
-> All of this is candidate for 6.16, as we have regressed the Microchip
-> driver in -rc1, and that fixing it breaks the Apple driver.
-> 
-> Geert Uytterhoeven (1):
->   PCI: host-generic: Set driver_data before calling gen_pci_init()
-> 
-> Marc Zyngier (2):
->   PCI: apple: Add tracking of probed root ports
->   Revert "PCI: ecam: Allow cfg->priv to be pre-populated from the root
->     port device"
-> 
->  drivers/pci/controller/pci-host-common.c |  4 +-
->  drivers/pci/controller/pcie-apple.c      | 53 ++++++++++++++++++++++--
->  drivers/pci/ecam.c                       |  2 -
->  3 files changed, 51 insertions(+), 8 deletions(-)
-> 
-> -- 
-> 2.39.2
-> 
 
