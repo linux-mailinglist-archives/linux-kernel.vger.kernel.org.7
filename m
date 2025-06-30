@@ -1,400 +1,191 @@
-Return-Path: <linux-kernel+bounces-709392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F43AEDD1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:39:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECFCAEDD19
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A742B3BCC92
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E097E166DED
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 12:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319D328C02A;
-	Mon, 30 Jun 2025 12:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1216828B7DA;
+	Mon, 30 Jun 2025 12:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3gVzq4pk"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="MYu6ROeC"
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010009.outbound.protection.outlook.com [52.103.67.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E425128B7CD
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 12:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751287051; cv=none; b=Adac+qUxmv4Ts/zg9LXeJVF+TAA2NfHm8n+lD2Mk1+Eu6+/CHaD6nmIbzkk5EcFcxxHaQyUxwvkK8mWVX4NN5PuP3tQDVf2pTU0iW5s0x2hHKonMZiuM+hHytAHQKh0CIkj4VQYVZvM1FqhDZF77/960KuFT25byOKvcY/DeE/4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751287051; c=relaxed/simple;
-	bh=dVhptWyUX31qCV18QbJjEQNflGg+smlFPAVFwZj+iCQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aPVulgcODg1ZepiBaTzH22QgwKWP/RBf8txCL2PXC+PbW06ajxCVoK2rPeWJVC3WSnFHwrWHv82gy9xdgrnchtVOuv680t6ktU/+PktDyNPChtDrFUSEaTdz4j+dZk3+aFlv5SZEIVTlGg+1iZ8aJkrAw2+kEFA+8Ydo0sZBSEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3gVzq4pk; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453647147c6so48040155e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 05:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751287047; x=1751891847; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=imVsZbAQBzDf1SazNgg1aOZFVItNJ6dUg7IELdUFoDw=;
-        b=3gVzq4pko5JNqzs1TgY+w7cZ2ukGP861DHN5TCceIZprvCBO2Rpi6FQurO4QuokMfB
-         Aq8Mj9FeMuVj48UngTb8HVd5mn7L1jfjERHaUdUqNRqS8iNmVhKP8UGUwATQoOiL7pNL
-         M3dWa2zvRB4CCxXYXmheSQNs+dvQiAZnZDQHaSvKy0X2ZYcN4qS8p/o0zLTk8lyLtLjt
-         8NaC8HtISliSmzTv7cZZFl01Hh6MSufAYhEqzrIETeGrHvw90eSo61zMzo7SK1O6BF2f
-         QZxFMH2s2Napx5ah+plaDYQbTYFn2jQICza7/lI9PE4OkB3BBUjCAouWW+TxqNQAf7ji
-         IVIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751287047; x=1751891847;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=imVsZbAQBzDf1SazNgg1aOZFVItNJ6dUg7IELdUFoDw=;
-        b=kkNOKMOd1jNHl2wK1pyKcsPELjvqzPDjm6Adp7qZWrO659HHyB6cV6753/tmE8piEB
-         O8nROqQBFWCv3aCFQzjLxUIErhpyb4h8soetZKjM/RUSi2gNG09X5RQ5U4iGgjNCRByF
-         fS1F7Fht4r0Rg5932kVZ1HIeyTWDeWHs5KRV1ZTQjjbh2lxue5fta0vBC8KPNGV+TCkb
-         ldg1ZJqlYdrqYAbPWF/24luJzGGSKhFSFtIfWzY2mPEoJMFKhdO4LYTd4RRXTf71KYwH
-         DZ1UX6wXrk0X65trjkCbpU1pL3kMhUqMfx16FGn7+RcuFLJkZsreEmZfbH6iyJfTXFEh
-         1XLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvF9BnoZY7CZB7SjlKvpav/B5D0dYAFrB4UJ2PW3Ph6ObWdxD7ulPkZ9p7yo1iiNLRm21QT59KEn+2ARY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+ova2o+HIMdbKHA7C71vOlklB2hyPhz6mL1WAiK8+Bdh6kD/v
-	A/e4WpvfEaOrgSq5vxLz1gysXQGpxCkOeuQ5GdKi1VqjTBKL0KQeKQe1H2xHvBgDVe0=
-X-Gm-Gg: ASbGncs9Xm7BuoYCIT/CaHHlfPLA9y9JERfSCktFQg/BRuLoDKxdGgcc6PSF3TlLnHn
-	Mzk3KRvD3sLFkJ4KUZVuVphNz6tqTba+dY+WLRPkq0MH896fI8WIIYuxOwCoz6Sk0DV59aME0a0
-	TbWdfjVfDXo2pztixJRMPYYgJNBi2HPNNDNwDJgQ0omeaT+8LJMJZQi7G2K6BsNyRbymVcb8CTq
-	hNcFPA+fK96hliwsfadB33mHMz44q1cAJypIgVm4aC4/Azs/81K6wM88gWXc1JgqT0WIa/JN2AF
-	uOWawEfUhWlAqgAYxak79s9GnAL4qJ0GZnreAo+uEg+ZSOaPW4tQuJ9E
-X-Google-Smtp-Source: AGHT+IFy8BmpnlqFffwzEz5rP8UGbLV8yOnRroXjVD1iAIVS9avXwdHhASRds44KvyfDifpY4wEa4w==
-X-Received: by 2002:a05:6000:402a:b0:3a5:300d:5e17 with SMTP id ffacd0b85a97d-3a917603734mr11753529f8f.29.1751287047155;
-        Mon, 30 Jun 2025 05:37:27 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:19e3:6e9c:f7cd:ff6a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fa2a7sm10238192f8f.21.2025.06.30.05.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 05:37:26 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 30 Jun 2025 14:37:13 +0200
-Subject: [PATCH v3 06/10] gpio: sysfs: don't use driver data in sysfs
- callbacks for line attributes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C47628A73E;
+	Mon, 30 Jun 2025 12:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751287048; cv=fail; b=gikKC6qZsFKuXCFOE6nEy0cLPd1p5zJbqPdNVbbiYQaFNBcawFU2Dy4F5/LCvLxdOcrgw+HGOCphQ8SSpxhfWf5ulh5vwHfuXDjtRJWXLzpX8FIq1WfqFrZS6sz4Ap1fVZ5cV1n9prEsw4PcogTvhGQHdmNSXKl1n2nxmaIF7Ws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751287048; c=relaxed/simple;
+	bh=ijI6W+xl4Hc2lI2fE/Dbel4nuLCiZIuGLPlmLZO/ciA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NgRQFjtvfvoHUurlpF6rP9F3Dcxz9yeILl7KxD80dwURr7muR3/7XCHbxOqI8oDqPoLIbrNtorhDyZ2RdsPx8rzSAq1bZbxgy6FWB9z+7xqtEJfy2HqZfaO43lwCLDyQ5EeDHXdNNGHjgba63G4p2K/ZG8QScKwgmXD32evVr7Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=MYu6ROeC; arc=fail smtp.client-ip=52.103.67.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xvIFVRfHm6w9U106IxlihD98MiKF7+0aw1MD7J3oWFCmjegc3wjqcACFICwoT1RqWt1ZYVZb7Qy/YvRBAa0MM5jF98bvbUJWFyElk8ZYYFV1+VE0ZP/fm/4qVhMKqHNgvpXngr89w2ZwguDmqdrxakIHJ8mH/ZX+hllCFM/jcMg61tW7bklp4+A9t58S6bnJnCcrbCsJZ6DyH/T5NHF7RO3lXryjh9RmlIb93jdSmExWcsFZMs5vZQWnBnDs5PNG9rVvrWwPMFcgvL2lrphEpoYLteG/IUSs5RlVB94MfxNTEm7aBhkfl8pLXtCyjM+YZHYP0bNE3orTV6aEFPoaeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0ydKpT0kZT2eeDewhb8GNTEAcnBHWPize5apas1H2I8=;
+ b=zUswhFpLFSA/aVYRN8JLB5N/UdAThq5GtivZzOOVtRgTHy7PKhAi7Pf8t7M2epiF6Qv3BLRUGsGopJBdYYaubir/Q1Zu6bGkhjHCUwJivsFs+YyVlm7AMlvUmtr6CIu4kzQFABe5MttCA8uy5VSC+6RPS/2AqpfRxRQaah3w59futjvUDGBmtZ45z4fREjFbRSrjMln6KRB+uFBBYjxDGI3yvV/Wkg1yqYtQX84bsDPkoMHUzQQQ/mDp8apLZo1kfq6r5W6Mbh/MHRLXfeavP70Dt6xEZ5Hd50grClwYRCkATjN353itg49bc/jLpERKrAfghBeT9FlcyefU9i/ZxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0ydKpT0kZT2eeDewhb8GNTEAcnBHWPize5apas1H2I8=;
+ b=MYu6ROeCJT6yHee+7BI0U5xaZC4nZYpEJ/1nf0Pl/HrU71mxkgAMr4i2R5XBOAS98ndRxzJocTfkijmkkeon/H0IcEkNNK++dbRizHGcnAN3nY9ckEMbFZJnpApsGSzOrQ4/q8shd2ED+t1xkWCXEQ/MtLddv9kL12gh1I3PCPQB9CMyzfxnk8lL1NQVRYyPEjnvolH42Me3uzyPm0ZrRAOl0uDa6oF/Rvn5/bjDQKZDRCDCfJwuk9KP6wCNutGGdPSOHq99p7FJ073xNFdBM/xNwu97Jz9lG2h3F9tyToYUXCqNJCbM1llfbKPGJhqO2Yenbo7KDpFUC1tJJG+oqA==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN0PR01MB6210.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:6b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.30; Mon, 30 Jun
+ 2025 12:37:15 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%3]) with mapi id 15.20.8880.029; Mon, 30 Jun 2025
+ 12:37:15 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+CC: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v2 4/4] HID: magicmouse: use secs_to_jiffies() for battery
+ timeout
+Thread-Topic: [PATCH v2 4/4] HID: magicmouse: use secs_to_jiffies() for
+ battery timeout
+Thread-Index: AQHb6bu1ukwnBxp1nkGwMXr+sXicfw==
+Date: Mon, 30 Jun 2025 12:37:14 +0000
+Message-ID: <20250630123649.80395-5-gargaditya08@live.com>
+References: <20250630123649.80395-1-gargaditya08@live.com>
+In-Reply-To: <20250630123649.80395-1-gargaditya08@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN0PR01MB6210:EE_
+x-ms-office365-filtering-correlation-id: 9f079017-4241-4bba-982c-08ddb7d2d84a
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799006|15080799009|8062599006|7092599006|8060799009|461199028|38102599003|52005399003|40105399003|440099028|3412199025|102099032;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Tv3QI9hlu1YBS9Cuc8CPlDxPlVY/aoeENm7wiJzd7kldAQJjs46H6olsMH?=
+ =?iso-8859-1?Q?fNTfWbvpVjeUHgTcvpfRxRps56uDDix+ubmGSVoV+8vFN0vTXTOvPvXzeR?=
+ =?iso-8859-1?Q?kiuDieyrODmRpj1cZLQJVU3JwsCD/tpluWRot9KFgXmGRlXr/OLFA3mdwM?=
+ =?iso-8859-1?Q?TpqRPlWrwXVhdMxu1LhFBWG30NiXgysbiFF4dKqcxjPkiFG2Xy9C4Zgkw2?=
+ =?iso-8859-1?Q?QEUUp6w0PoPpqFCfhdX8GI8Ce+O0+E65hyAy3QY55Gj0rM8RWvSzAygCLg?=
+ =?iso-8859-1?Q?Syz1fyjeWtfK5Xqy2XKpRDnAVhf5LX4yeHBLxypaUlgCoAmn02siZPHi+o?=
+ =?iso-8859-1?Q?wKiijItqay5NwVS4voLfyUolw5giNQyqXkl68151XYzP/H3FS8w1MRG7jo?=
+ =?iso-8859-1?Q?CACtRL5mRv6QVIa0oXhPGWE5FMFRJYsMxOtqEMoJEWr5gh6XZEDo47t8Xj?=
+ =?iso-8859-1?Q?y3Eb6ApgaHLTgava2ji2sQ/zRmRDE0VKOWyzPDIVIl66uzu0OCBa221jZL?=
+ =?iso-8859-1?Q?iZHzjOLPe4XYjLF+oXxs+ytC1e0zUhwfBHXDG+3IQSfynPxi6KJEdS++YD?=
+ =?iso-8859-1?Q?k+t6R31dzZYQ9JQdOVMIqPkwQVs8YnYYdifp8IfoTadd44joJNEdm2kam8?=
+ =?iso-8859-1?Q?CUGtVl3WvcH3TytvQa62YIMbbdDEADblMxnQCBjitWDkt9UAATTzP0i91t?=
+ =?iso-8859-1?Q?5kvotG8UH1FF7t6pZP+eqrVFmJ2BshuJZO7mygDP5UQgfHQl47ICQFCRhc?=
+ =?iso-8859-1?Q?5jo2OucwE7QLwn4u7f02smb/u03GAR2KN5hrfVFClyRE/DiQr0P9e8mq0b?=
+ =?iso-8859-1?Q?KLb18ZP9IKnHVPVG1FjObv0n4G73z5XCNri3dwtksRwgpB5H2aiapIS9eX?=
+ =?iso-8859-1?Q?3P8cA0E89gxn31CSx0qfdrcbAJ5QdWeN0BpP7ShixfSQQKsaMRYCt/Pulv?=
+ =?iso-8859-1?Q?ZOeWztuRSyB8Us9T22jr5784DyOuwEWQGwaAxtDf/ESPe5jdOZVsfo/nrU?=
+ =?iso-8859-1?Q?4+m701R3q1wwsLpCdwHX6N8W0UgendLM7zK8/tx7sIU7LwRvvZ6G9yr8Ko?=
+ =?iso-8859-1?Q?/5DxRP1KyG/KF9lQ/ec4uOaMOEJykY8EhPKtqiapgs9Y7+EIQ3VhjCxFv+?=
+ =?iso-8859-1?Q?2xB/lNN+ae2IOYTGxDT2/CQwLa8/zh9Ed9j5+l/TYNs6L4YdPpeoYFR6hC?=
+ =?iso-8859-1?Q?TwQ///RPUcPhrquqBLAWxvKF9Z2GHnWtE4zE/J8FfZKfvHy1b2dGqr4uvo?=
+ =?iso-8859-1?Q?ImXU/nSGiN7c0RgkjFfw=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?XtORvR7E+L/FrAHUBUxzMZgw/C9RxjD6tgHmdl/slSSTmsY0hNBajXf17N?=
+ =?iso-8859-1?Q?UVrpmWt4RyCiom10LBrhXhmhiFZaC/U9diOv10lDlN0C/fgXpuQCDenaWy?=
+ =?iso-8859-1?Q?wgJnmWx/9owlos8OTnr+0tfKO9/qraAzPyLCdnmRFa8MZoVqJrW5qi2x+e?=
+ =?iso-8859-1?Q?V2dy3RCitQBkDILORxBdjkIQ+Ms7kiCM8D8KvQbXcOiXhKEhAigxHG1RFi?=
+ =?iso-8859-1?Q?KrzOOiSuFGhRAmSlQSG/R08G0cx90EchzC4f+UiiLkojDb6fN++2WPa6sh?=
+ =?iso-8859-1?Q?8Girs/QdbCSNo8dubGdq4SxzC5I7aF7DVcQRRyvKzrLI35hTEF1TWf6ifG?=
+ =?iso-8859-1?Q?gCPcYQv6pYUpcq+wn9OIyPdDZbamv1MB1aNEGBfpDLpwbotEEnH+X/yXFU?=
+ =?iso-8859-1?Q?ihr0HNMeW+7uH7w5tVx23hTBkLfJRU89sMOPOIH5jCOK7k7lRAjhmeAv6v?=
+ =?iso-8859-1?Q?tGPdduuYkFfiHwDsv0GBb23ynIfEaAWFI+QpQE0akwQ4dtY5v+5/P9hctr?=
+ =?iso-8859-1?Q?eYKmBo0p0MGAam9VDKd5uaDgAbvNAyIKmFekZp757jKDAUgrVKlDN9dCmI?=
+ =?iso-8859-1?Q?fXJflbHAVjgj3KFOFCXXhR6jkbhjPH1Fy4uNJwK50h7P5ilI2TlE63NsJr?=
+ =?iso-8859-1?Q?l6HqKQ3/ptl7tO9CQVeqrjkQsjZsxbONhYI56bj3WOARKqD6a8Vqsu4Ds7?=
+ =?iso-8859-1?Q?Tq3BZXegutdRBmGjtGQXr77tpyvP1YCBF1uiNGS86UQ7Nr0iYS8KjyuQBq?=
+ =?iso-8859-1?Q?m1IDGZ3+TVy9k9Ukip5A/haxeZ90RQS5zqFDITiG0Qs43pvL/B2CwrWOR/?=
+ =?iso-8859-1?Q?BcX1FzqjMZdu2SQj5dNOY54pgUPFcDjA0OLBI3hfBZLcm3F6Wj3oGJlnd4?=
+ =?iso-8859-1?Q?F0eCf385kVQEfJ6CL/coYm4bBnM8hQ1RczffmGNO3soz2JPUQT6x96hUDh?=
+ =?iso-8859-1?Q?9BK8IhlCIv2JxFwKXEOrN5AhpBnAizAfqRb+3q3kH8di73TmiL95IKyKd8?=
+ =?iso-8859-1?Q?GT2nIzA18GLccLWOTTG6FuOxAXOdhJ4ALY3j0wZhplBVSwCUArGMMnz6kK?=
+ =?iso-8859-1?Q?DIk0wjeKmx8MaKaaaiip7+Pny5VtSz2MhDqsYWCNyoWtZI0C92mup6tkud?=
+ =?iso-8859-1?Q?EN3o5wpX3qyLakA0Nb7FWWCzK1h/YG2SygYgdJ1KgqWyduzRxBpGGLAZtz?=
+ =?iso-8859-1?Q?vtJEh8WSXURPkZ6vu2K77CjcX6n9Q5EGOduN8Z2P7iXMDEMIowgioOip8N?=
+ =?iso-8859-1?Q?ALLihz95ykG//MoDtRtqrSVgGl5woLvWKQ79yU0Co=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250630-gpio-sysfs-chip-export-v3-6-b997be9b7137@linaro.org>
-References: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
-In-Reply-To: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>, 
- Kent Gibson <warthog618@gmail.com>, 
- =?utf-8?q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, 
- Marek Vasut <marex@denx.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Andy Shevchenko <andriy.shevchenko@intel.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9706;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=Nc7Thy8NzSvpAfuT6mt4NjvezmoUliNEfqX7HBQaQK4=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBoYoT9Vrl01mtlYmTmCiQ5Nrdm+1CUdCDUY0MLB
- CQooHmbpu6JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaGKE/QAKCRARpy6gFHHX
- cn5TEACIjXKqB2x+cELon4IFX0pg0YFRYxd11UsJzkA7Mihr9oTasNh8pSBOpJSkkkphvR+O+/B
- 4IW/h+DZJ7j3cUBtyPyQytRmsynzry+AXzEcYQGdxlW8UNZSK+Cs5ZiS9aXy/MxoIEViZteSGCF
- eDuY6PCrX7R2CFzDXKaqDiEWZ6uFi7m8YcKiMoCl/SunfK6jbxbMK0hzHZdp5qh0ImMMbsTjhRU
- HclLYhnZWV1EBt+lktIA2gHXj3PJJDUpIDR+zy+xzE0xS3qhCWIxZqfMQAEwWby8hdQLB2i/qdH
- eP25ft3rr9SUqDtPE0J+bv8CW9s8E+lU91unsXfzq91qK94ubH0/794cV9jyXj0GoPkI9JAOIn6
- 64xlDbVthzB2JEzm/Z2WoCF5ERHzj6GDkUbBbbhqVumpc73T5UtLVV15F4EsopzD1tIxul9DPAu
- 4sCXO7oJ44t6LDDGb28+av8c3VlTLd1KgfEbm2otikCA8Vpr6z+5VtcmZzQe994sez4mKn4Ah+s
- dxyMwon1RifyXVEc87wvpgwPz7tyi0tuoivJX5lw5uV3ahe3jhfnw/82FglNSRCRR9y+rsGVUYC
- LEklLk5cNL2b+2LvE6Qg+nbOn7zAoH4torTrKlBsqqK/f3VQcm2PPMu7WftcR9Qsly0venA8jgN
- 9a4s7IfpHyIsL4A==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-OriginatorOrg: sct-15-20-8813-0-msonline-outlook-f2c18.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f079017-4241-4bba-982c-08ddb7d2d84a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jun 2025 12:37:14.9219
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0PR01MB6210
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The kernel now has a secs_to_jiffies() function which expands to a simpler
+code than msecs_to_jiffies(). Use the same for battery timeout which was
+using 60000 milliseconds (60 seconds).
 
-Currently each exported GPIO is represented in sysfs as a separate class
-device. This allows us to simply use dev_get_drvdata() to retrieve the
-pointer passed to device_create_with_groups() from sysfs ops callbacks.
-
-However, we're preparing to add a parallel set of per-line sysfs
-attributes that will live inside the associated gpiochip group. They are
-not registered as class devices and so have the parent device passed as
-argument to their callbacks (the GPIO chip class device).
-
-Put the attribute structs inside the GPIO descriptor data and
-dereference the relevant ones using container_of() in the callbacks.
-This way, we'll be able to reuse the same code for both the legacy and
-new GPIO attributes.
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
 ---
- drivers/gpio/gpiolib-sysfs.c | 122 +++++++++++++++++++++++++++++--------------
- 1 file changed, 82 insertions(+), 40 deletions(-)
+ drivers/hid/hid-magicmouse.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index dba9dceb5e79db16f466ee40255c8f646b6b6d15..c1de8846cc4c1fc9e871dfa4a7d7a8f287043c7d 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -32,6 +32,15 @@ struct kernfs_node;
- #define GPIO_IRQF_TRIGGER_BOTH		(GPIO_IRQF_TRIGGER_FALLING | \
- 					 GPIO_IRQF_TRIGGER_RISING)
- 
-+enum {
-+	GPIO_SYSFS_LINE_ATTR_DIRECTION = 0,
-+	GPIO_SYSFS_LINE_ATTR_VALUE,
-+	GPIO_SYSFS_LINE_ATTR_EDGE,
-+	GPIO_SYSFS_LINE_ATTR_ACTIVE_LOW,
-+	GPIO_SYSFS_LINE_ATTR_SENTINEL,
-+	GPIO_SYSFS_LINE_ATTR_SIZE,
-+};
-+
- struct gpiod_data {
- 	struct gpio_desc *desc;
- 
-@@ -41,6 +50,14 @@ struct gpiod_data {
- 	unsigned char irq_flags;
- 
- 	bool direction_can_change;
-+
-+	struct device_attribute dir_attr;
-+	struct device_attribute val_attr;
-+	struct device_attribute edge_attr;
-+	struct device_attribute active_low_attr;
-+	struct attribute *attrs[GPIO_SYSFS_LINE_ATTR_SIZE];
-+	struct attribute_group attr_group;
-+	const struct attribute_group *attr_groups[2];
- };
- 
- struct gpiodev_data {
-@@ -79,7 +96,8 @@ static DEFINE_MUTEX(sysfs_lock);
- static ssize_t direction_show(struct device *dev,
- 			      struct device_attribute *attr, char *buf)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       dir_attr);
- 	struct gpio_desc *desc = data->desc;
- 	int value;
- 
-@@ -95,7 +113,8 @@ static ssize_t direction_store(struct device *dev,
- 			       struct device_attribute *attr, const char *buf,
- 			       size_t size)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       dir_attr);
- 	struct gpio_desc *desc = data->desc;
- 	ssize_t status;
- 
-@@ -112,12 +131,12 @@ static ssize_t direction_store(struct device *dev,
- 
- 	return status ? : size;
- }
--static DEVICE_ATTR_RW(direction);
- 
- static ssize_t value_show(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       val_attr);
- 	struct gpio_desc *desc = data->desc;
- 	ssize_t status;
- 
-@@ -133,7 +152,8 @@ static ssize_t value_show(struct device *dev, struct device_attribute *attr,
- static ssize_t value_store(struct device *dev, struct device_attribute *attr,
- 			   const char *buf, size_t size)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       val_attr);
- 	struct gpio_desc *desc = data->desc;
- 	ssize_t status;
- 	long value;
-@@ -150,7 +170,6 @@ static ssize_t value_store(struct device *dev, struct device_attribute *attr,
- 
- 	return size;
- }
--static DEVICE_ATTR_PREALLOC(value, S_IWUSR | S_IRUGO, value_show, value_store);
- 
- static irqreturn_t gpio_sysfs_irq(int irq, void *priv)
- {
-@@ -247,7 +266,8 @@ static const char *const trigger_names[] = {
- static ssize_t edge_show(struct device *dev, struct device_attribute *attr,
- 			 char *buf)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       edge_attr);
- 	int flags;
- 
- 	scoped_guard(mutex, &data->mutex)
-@@ -262,7 +282,8 @@ static ssize_t edge_show(struct device *dev, struct device_attribute *attr,
- static ssize_t edge_store(struct device *dev, struct device_attribute *attr,
- 			  const char *buf, size_t size)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       edge_attr);
- 	ssize_t status = size;
- 	int flags;
- 
-@@ -289,7 +310,6 @@ static ssize_t edge_store(struct device *dev, struct device_attribute *attr,
- 
- 	return size;
- }
--static DEVICE_ATTR_RW(edge);
- 
- /* Caller holds gpiod-data mutex. */
- static int gpio_sysfs_set_active_low(struct gpiod_data *data, int value)
-@@ -318,7 +338,8 @@ static int gpio_sysfs_set_active_low(struct gpiod_data *data, int value)
- static ssize_t active_low_show(struct device *dev,
- 			       struct device_attribute *attr, char *buf)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       active_low_attr);
- 	struct gpio_desc *desc = data->desc;
- 	int value;
- 
-@@ -332,7 +353,8 @@ static ssize_t active_low_store(struct device *dev,
- 				struct device_attribute *attr,
- 				const char *buf, size_t size)
- {
--	struct gpiod_data *data = dev_get_drvdata(dev);
-+	struct gpiod_data *data = container_of(attr, struct gpiod_data,
-+					       active_low_attr);
- 	ssize_t status;
- 	long value;
- 
-@@ -344,48 +366,34 @@ static ssize_t active_low_store(struct device *dev,
- 
- 	return gpio_sysfs_set_active_low(data, value) ?: size;
- }
--static DEVICE_ATTR_RW(active_low);
- 
- static umode_t gpio_is_visible(struct kobject *kobj, struct attribute *attr,
- 			       int n)
- {
--	struct device *dev = kobj_to_dev(kobj);
--	struct gpiod_data *data = dev_get_drvdata(dev);
--	struct gpio_desc *desc = data->desc;
-+	struct device_attribute *dev_attr = container_of(attr,
-+						struct device_attribute, attr);
- 	umode_t mode = attr->mode;
--	bool show_direction = data->direction_can_change;
-+	struct gpiod_data *data;
- 
--	if (attr == &dev_attr_direction.attr) {
--		if (!show_direction)
-+	if (strcmp(attr->name, "direction") == 0) {
-+		data = container_of(dev_attr, struct gpiod_data, dir_attr);
-+
-+		if (!data->direction_can_change)
- 			mode = 0;
--	} else if (attr == &dev_attr_edge.attr) {
--		if (gpiod_to_irq(desc) < 0)
-+	} else if (strcmp(attr->name, "edge") == 0) {
-+		data = container_of(dev_attr, struct gpiod_data, edge_attr);
-+
-+		if (gpiod_to_irq(data->desc) < 0)
- 			mode = 0;
--		if (!show_direction && test_bit(FLAG_IS_OUT, &desc->flags))
-+
-+		if (!data->direction_can_change &&
-+		    test_bit(FLAG_IS_OUT, &data->desc->flags))
- 			mode = 0;
+diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+index 4ca0cbac9..e933bebf6 100644
+--- a/drivers/hid/hid-magicmouse.c
++++ b/drivers/hid/hid-magicmouse.c
+@@ -60,7 +60,7 @@ MODULE_PARM_DESC(report_undeciphered, "Report undeciphere=
+d multi-touch state fie
+ #define MOUSE_REPORT_ID    0x29
+ #define MOUSE2_REPORT_ID   0x12
+ #define DOUBLE_REPORT_ID   0xf7
+-#define USB_BATTERY_TIMEOUT_MS 60000
++#define USB_BATTERY_TIMEOUT_SEC 60
+=20
+ /* These definitions are not precise, but they're close enough.  (Bits
+  * 0x03 seem to indicate the aspect ratio of the touch, bits 0x70 seem
+@@ -841,7 +841,7 @@ static void magicmouse_battery_timer_tick(struct timer_=
+list *t)
+=20
+ 	if (magicmouse_fetch_battery(hdev) =3D=3D 0) {
+ 		mod_timer(&msc->battery_timer,
+-			  jiffies + msecs_to_jiffies(USB_BATTERY_TIMEOUT_MS));
++			  jiffies + secs_to_jiffies(USB_BATTERY_TIMEOUT_SEC));
  	}
- 
- 	return mode;
  }
- 
--static struct attribute *gpio_attrs[] = {
--	&dev_attr_direction.attr,
--	&dev_attr_edge.attr,
--	&dev_attr_value.attr,
--	&dev_attr_active_low.attr,
--	NULL,
--};
--
--static const struct attribute_group gpio_group = {
--	.attrs = gpio_attrs,
--	.is_visible = gpio_is_visible,
--};
--
--static const struct attribute_group *gpio_groups[] = {
--	&gpio_group,
--	NULL
--};
--
- /*
-  * /sys/class/gpio/gpiochipN/
-  *   /base ... matching gpio_chip.base (N)
-@@ -645,6 +653,21 @@ gdev_get_data(struct gpio_device *gdev) __must_hold(&sysfs_lock)
- 	return dev_get_drvdata(cdev);
- };
- 
-+static void gpiod_attr_init(struct device_attribute *dev_attr, const char *name,
-+			    ssize_t (*show)(struct device *dev,
-+					    struct device_attribute *attr,
-+					    char *buf),
-+			    ssize_t (*store)(struct device *dev,
-+					     struct device_attribute *attr,
-+					     const char *buf, size_t count))
-+{
-+	sysfs_attr_init(&dev_attr->attr);
-+	dev_attr->attr.name = name;
-+	dev_attr->attr.mode = 0644;
-+	dev_attr->show = show;
-+	dev_attr->store = store;
-+}
-+
- /**
-  * gpiod_export - export a GPIO through sysfs
-  * @desc: GPIO to make available, already requested
-@@ -665,6 +688,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- {
- 	struct gpiod_data *desc_data;
- 	struct gpio_device *gdev;
-+	struct attribute **attrs;
- 	struct device *dev;
- 	int status;
- 
-@@ -709,8 +733,26 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	else
- 		desc_data->direction_can_change = false;
- 
-+	gpiod_attr_init(&desc_data->dir_attr, "direction",
-+			direction_show, direction_store);
-+	gpiod_attr_init(&desc_data->val_attr, "value", value_show, value_store);
-+	gpiod_attr_init(&desc_data->edge_attr, "edge", edge_show, edge_store);
-+	gpiod_attr_init(&desc_data->active_low_attr, "active_low",
-+			active_low_show, active_low_store);
-+
-+	attrs = desc_data->attrs;
-+	desc_data->attr_group.is_visible = gpio_is_visible;
-+	attrs[GPIO_SYSFS_LINE_ATTR_DIRECTION] = &desc_data->dir_attr.attr;
-+	attrs[GPIO_SYSFS_LINE_ATTR_VALUE] = &desc_data->val_attr.attr;
-+	attrs[GPIO_SYSFS_LINE_ATTR_EDGE] = &desc_data->edge_attr.attr;
-+	attrs[GPIO_SYSFS_LINE_ATTR_ACTIVE_LOW] = &desc_data->active_low_attr.attr;
-+
-+	desc_data->attr_group.attrs = desc_data->attrs;
-+	desc_data->attr_groups[0] = &desc_data->attr_group;
-+
- 	dev = device_create_with_groups(&gpio_class, &gdev->dev,
--					MKDEV(0, 0), desc_data, gpio_groups,
-+					MKDEV(0, 0), desc_data,
-+					desc_data->attr_groups,
- 					"gpio%u", desc_to_gpio(desc));
- 	if (IS_ERR(dev)) {
- 		status = PTR_ERR(dev);
-
--- 
-2.48.1
+=20
+@@ -881,7 +881,7 @@ static int magicmouse_probe(struct hid_device *hdev,
+ 	    is_usb_magictrackpad2(id->vendor, id->product)) {
+ 		timer_setup(&msc->battery_timer, magicmouse_battery_timer_tick, 0);
+ 		mod_timer(&msc->battery_timer,
+-			  jiffies + msecs_to_jiffies(USB_BATTERY_TIMEOUT_MS));
++			  jiffies + secs_to_jiffies(USB_BATTERY_TIMEOUT_SEC));
+ 		magicmouse_fetch_battery(hdev);
+ 	}
+=20
+--=20
+2.49.0
 
 
