@@ -1,85 +1,132 @@
-Return-Path: <linux-kernel+bounces-708830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AC5AED5A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4279AED5A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78DC716AD56
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D1416ADBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C29522A;
-	Mon, 30 Jun 2025 07:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B8B221FC0;
+	Mon, 30 Jun 2025 07:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aa0jE+HD"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXlmBR6u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B914C220F23;
-	Mon, 30 Jun 2025 07:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76341BD9CE;
+	Mon, 30 Jun 2025 07:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751268611; cv=none; b=F2MkiDsPIPEzC+OGeMFUQo8Zlb/Zfbx/6iYZ1oqbqTT3wbxpSwfcTJQ4mVf/3279AmA7fg+WpOyW30v+f/4yC++rGmhsBIwN/P2KSXz8TqEQ/aDLXGx0BrJzIrgg29ROZNt9qzXwV+odQz8zKajCYo1Atlqw6YpjKTrTAzVUfuM=
+	t=1751268630; cv=none; b=DD8tx7+LUVKPCGpKvDittLLnslRg6oEA3r7wrGsDBknKarzRNWwX5gx3Bbb/pl+aJlSn2wQn2OjeaRJtMN8umNhJjtG75V+hs5foP2pnFOvuXlpL/3INmYGS+VAO9nfJWcCLwJ1Fy/8uZ/ji5iM/PIz7YeLSHBSSrGIOTJnzd8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751268611; c=relaxed/simple;
-	bh=h3+BbSsRzFSbCWdeIHhuw9v25Gxev7MQWBIq8T/6F3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=D8ZE+I1MA6ULzk7rLkAyWVOrmJJkC7CSVqjDyX9ppOwvojHx1EpmOEncPbikQVnRRDWOwSbNYdDJwesXV4049rFgA1OoN68qLSSdAnMWfSazDRvImulZnJgEvpbTuNeoxflkNlVGbqSi0/ky/ciBIkgoKqihz3HPS2LGGf5IGx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aa0jE+HD; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751268607;
-	bh=h3+BbSsRzFSbCWdeIHhuw9v25Gxev7MQWBIq8T/6F3k=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=aa0jE+HDyg7qAOkBA0l+7XGeqlGtp7ZiPTI9HCT25cmM/J6GI2hCOV0v7C3yzx2Mh
-	 LktFuM+PfqaeYwQ5w5AlUmTsGn1gbfFJbW20fCLVTh0noO/PbrFR5EkTMtmvAsDv29
-	 8SY3mOGCS6KysPRAmRCSRLredMiOf+A09CotRf2oZS3dVvOk9byVdoHBL5iqep81sj
-	 pJAvSoXW+KrExpONnWGBf87BH1W7mkcGtnRSTniqmVZ6vxf0+kWoIXX4ZxAhcT7HCP
-	 r6y03zs6ta3j10t8n2mn1SkkAvxFtjNdUOqisLPQ1Oni8flReaK41SSWGE2kOal/uJ
-	 oMlQNW1iQ+gWQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D461217E0B0D;
-	Mon, 30 Jun 2025 09:30:06 +0200 (CEST)
-Message-ID: <ef28bb5d-8d5b-4505-8b00-56c9e5abd90d@collabora.com>
-Date: Mon, 30 Jun 2025 09:30:06 +0200
+	s=arc-20240116; t=1751268630; c=relaxed/simple;
+	bh=UDxbpQ15IxVf+2wTqZbQJ3fTPgg8IaZ8MiQmaAHvyqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOTJYU47iQJQcK+vpCezGsYLHr1Yk/sEu4ItUW0Zm5YEvF5VAGqv+ouDOYRSq2fmgWCPVgP6AKHoyZ5Etca1SpBiiheg3qcr9MeaRlqJWISHLlju/xj2wZ/RDRzO3OgBzuBxzMOnZG3FholZL3a8QYQKYNy2ERE4yID10nRWD+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXlmBR6u; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751268629; x=1782804629;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UDxbpQ15IxVf+2wTqZbQJ3fTPgg8IaZ8MiQmaAHvyqc=;
+  b=MXlmBR6urTT4oeEQMa6q+0NP3vUEJ55iaPEspAolBO53Ix57QXZnlnb3
+   hchwFNzLiSijzlW14zcHNNh3icTTsGZOl/EnsqNNfeIswXeoyqCbnWiM3
+   Qr/ShRQMS8yb+C/s+XNSJuNlpSaE0RT8JBxpj6npKJMR6iLFQBGdW1wcv
+   9UxbqnrvoaTBkNr9/tYPZuOOBSHxklLxf20A08IOzACra4f6LhSz6fO5D
+   GxGFm1EuIyDcgRofgZvxNNQjFol6tWf3O7LuWwtCra5IGow+l5GTJJ+jp
+   xaA9wHRIghOsZkYIby5W4HbaETzUc41QmB8G6I+yRtihYEXMy91kSqjKk
+   A==;
+X-CSE-ConnectionGUID: 6OCl2JetSqernA1uaT9FZA==
+X-CSE-MsgGUID: 7zBsP5J+QUu169/NgGcEUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11479"; a="71053033"
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="71053033"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 00:30:28 -0700
+X-CSE-ConnectionGUID: kx5SBltdRq+aJvVD5fhRnQ==
+X-CSE-MsgGUID: pr28x6e/Q8q298J8osKVhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,277,1744095600"; 
+   d="scan'208";a="153479666"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 00:30:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uW8y3-0000000BEf9-2j4t;
+	Mon, 30 Jun 2025 10:30:19 +0300
+Date: Mon, 30 Jun 2025 10:30:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Raag Jadav <raag.jadav@intel.com>,
+	"Tauro, Riana" <riana.tauro@intel.com>,
+	"Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	intel-xe@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] i2c: designware: Add quirk for Intel Xe
+Message-ID: <aGI9C6MR8qhe0MHR@smile.fi.intel.com>
+References: <20250627135314.873972-1-heikki.krogerus@linux.intel.com>
+ <20250627135314.873972-2-heikki.krogerus@linux.intel.com>
+ <aF6nEOVhLURyf616@smile.fi.intel.com>
+ <aF8N0dYk_WAJjvVu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: iio: adc: Add support for MT7981
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, rafael@kernel.org,
- daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, zhiyong.tao@mediatek.com, linux-pm@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250628223837.848244-1-olek2@wp.pl>
- <20250628223837.848244-4-olek2@wp.pl>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250628223837.848244-4-olek2@wp.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aF8N0dYk_WAJjvVu@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Il 29/06/25 00:38, Aleksander Jan Bajkowski ha scritto:
-> The temperature sensor in the MT7981 is same as in the MT7986.
-> Add compatible string for mt7981.
+On Fri, Jun 27, 2025 at 05:32:01PM -0400, Rodrigo Vivi wrote:
+> On Fri, Jun 27, 2025 at 05:13:36PM +0300, Andy Shevchenko wrote:
+> > On Fri, Jun 27, 2025 at 04:53:11PM +0300, Heikki Krogerus wrote:
+
+...
+
+> > >  static int dw_i2c_plat_probe(struct platform_device *pdev)
+> > >  {
+> > > +	u32 flags = (uintptr_t)device_get_match_data(&pdev->dev);
+> > 
+> > > -	dev->flags = (uintptr_t)device_get_match_data(device);
+> > >  	if (device_property_present(device, "wx,i2c-snps-model"))
+> > > -		dev->flags = MODEL_WANGXUN_SP | ACCESS_POLLING;
+> > > +		flags = MODEL_WANGXUN_SP | ACCESS_POLLING;
+> > >  
+> > >  	dev->dev = device;
+> > >  	dev->irq = irq;
+> > > +	dev->flags = flags;
+> > 
+> > Maybe I'm missing something, but why do we need these (above) changes?
 > 
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> in between, it is introduced a new one:
+> flags |= ACCESS_POLLING;
+> 
+> So, the initialization moved up, before the ACCESS_POLLING, and
+> it let the assignment to the last, along with the group.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I still don't get. The cited code is complete equivalent.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
