@@ -1,190 +1,102 @@
-Return-Path: <linux-kernel+bounces-708835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC2DAED5B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:32:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E655AED5B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA333AAE00
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:31:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA11416DB30
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 07:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7825221F0C;
-	Mon, 30 Jun 2025 07:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEDF2309B0;
+	Mon, 30 Jun 2025 07:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZVA2tAbc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uRnkOO20";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="17AulgZ+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AyQ5exhj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY6B9QZo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7BF220F37
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB35221FC0;
+	Mon, 30 Jun 2025 07:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751268716; cv=none; b=IRTRLRbvMnN1OgPzHVz2LzYlMZckCXkeJk/OTzZmkaZhrSvVkbhX2a+lCt30BNv7ilb+SL8W705wrHh1jOC4DUXrBG8K3ZZgxlTvCayCRwsXWkAoitGZozqhYfEe8CI2DRI9b2JDShOaPxWp575mnWVBz6mAJFPkjSGeS847Xms=
+	t=1751268729; cv=none; b=HlAYRteuu0TylRRJ7gbdUSi5i6H4wBnRAYo8QDcGI1ObqBk2K31F/ChiNHi9W9aRO5FD+AC4WblFo+2jsZQkeNPNDEGBzp452HF3IC8Ntzr9k/j/8gFwelJr5MAUHlfKUVsm6JoeJku1PuRfbwObbfhCPIBNA2kHLzfrJXTkT7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751268716; c=relaxed/simple;
-	bh=4NL8UsYtV8Nr0DA0sTxLX6ZzfeHF3QNep/tyEDeAGDk=;
+	s=arc-20240116; t=1751268729; c=relaxed/simple;
+	bh=LjtmnEynmF1tjotg53OHblcoKybFNNuF9mQaAiduAWY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aaL0Yj0OF1ex1u2N6pMGKWNlJA7nxTUNblmIBSvoGDgcf9H+mbndiMJPhiIDoDTIg9uxHsIj7TsWdUpLmJC7KKuopOwjPlkbr9okffAlHWm0Q74sdq0MFqxNSl3F4Ibs+zX+J3ERy4aCLP9EOSUba8I4rAvXATRIsTF86efOrmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZVA2tAbc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uRnkOO20; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=17AulgZ+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AyQ5exhj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E42271F38C;
-	Mon, 30 Jun 2025 07:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751268712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJrT3PqZewzWhJ6K1x8yJe75/062yU6iPGJzkoQxjSo=;
-	b=ZVA2tAbc4fi289S+t/YnLPbz0tqJXYFDqZQidZo2EurO0jikDYan4JGYD5hW3tN20aHutH
-	ZsU2HUjatvpA+/ZBTBixID7UuEdJ+Cwe1XUjoevWUuCH/hZDub1SERi7t1nJqOBepYGjyr
-	+ecHYJLuj9IOFMBWnJl4he46xchTfBg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751268712;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJrT3PqZewzWhJ6K1x8yJe75/062yU6iPGJzkoQxjSo=;
-	b=uRnkOO20hhyqaz+vwKPdAT0Ka+t0ZKfIGMcFYtQSABKTfNWury5oBprfsWe4u67BzToS0b
-	B1XsalGXQUj256Dg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=17AulgZ+;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=AyQ5exhj
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751268711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJrT3PqZewzWhJ6K1x8yJe75/062yU6iPGJzkoQxjSo=;
-	b=17AulgZ+whlfWoV0e/NPGTv5BoXsAEVxKKhmhFeGIYEf7tPBH/k9E0TimzJtOI+lEra/gN
-	JazfzYwjWl1YkZpf8DmwT6DKvBDV+vJKr0s80ZV5T8SN2B6P9SqXHr19mZBSH6c55yD8zT
-	v9ViWnmnyNCLCXgoc/WQcgNkNGKRKBw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751268711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJrT3PqZewzWhJ6K1x8yJe75/062yU6iPGJzkoQxjSo=;
-	b=AyQ5exhj2z7yrXLBGUWRXF9Cu+7ntNqsJTlcwsx1QAaoR+xYbbwlSt8IioD7FUAjO7tnCD
-	dzou5swcjnN/jZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D834E13983;
-	Mon, 30 Jun 2025 07:31:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gl7BNGc9YmjgaAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 30 Jun 2025 07:31:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8389AA08D2; Mon, 30 Jun 2025 09:31:51 +0200 (CEST)
-Date: Mon, 30 Jun 2025 09:31:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, linux-kernel@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 02/16] ext4: remove unnecessary s_mb_last_start
-Message-ID: <mztj3kc4slq3j6gxfk77omt4tdphg55jophea2j2dw5vj5hixq@ppj5lfxz2svk>
-References: <20250623073304.3275702-1-libaokun1@huawei.com>
- <20250623073304.3275702-3-libaokun1@huawei.com>
- <3p5udvc7fgd73kruz563pi4dmc6vjxvszmnegyym2xhuuauw5j@sjudcmk7idht>
- <0bcfc7c6-003f-4b4d-ac65-e01308a74f3b@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UK1HSLTX7d9IxSkq4BN5yrrTgp3D8RSmt94JwQAlrMbHf5tYOCT3+n9VuKA90Q3l8bV3kuQwvlZgcAPmxu9CcsVzxfPTIRKUZ8ofPiAMrFSzEIWqCjWq1zzr0o73Qg4pjmi0gnRZFj/FKQrU6CzfRu44ZIkWu7aaxfuHTUn6z2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY6B9QZo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AEC3C4CEE3;
+	Mon, 30 Jun 2025 07:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751268729;
+	bh=LjtmnEynmF1tjotg53OHblcoKybFNNuF9mQaAiduAWY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZY6B9QZoJ/pjUbWvL9hI2CkMDM/HTrSNFxLhyenWw4Vl33x59KjgK6NdiNlseVTLh
+	 YZGtF9cZhqj5d8Q780GYpZGEx7+R/TNvTnkrY7DTVebYGbSETUg6/0r1ncEDvx5WCh
+	 k3ltu27su7eECsVpeo3MMTwFZGLtxvSnLEW2dUsLnXLfe+HsLa6JJmLWnC5T679H/a
+	 Y964s/c4jftvRCvzh1qVnC2YWmiXfSrJXxzRehmxBYahhsNQpfHzZ1zZnAw9J8Kz2B
+	 H9kW1PpOfoxSVwCvBr8W6G5tY/kTqgpoOo5zReNG5A/dJs7Co5awcA27W9y47G8ke+
+	 7Vc3ToaBCONhw==
+Date: Mon, 30 Jun 2025 09:32:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mpillai@cadence.com, fugang.duan@cixtech.com, 
+	guoyin.chen@cixtech.com, peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 14/14] arm64: dts: cix: Enable PCIe on the Orion O6
+ board
+Message-ID: <20250630-stylish-pretty-stoat-bde7f3@krzk-bin>
+References: <20250630041601.399921-1-hans.zhang@cixtech.com>
+ <20250630041601.399921-15-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0bcfc7c6-003f-4b4d-ac65-e01308a74f3b@huawei.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: E42271F38C
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <20250630041601.399921-15-hans.zhang@cixtech.com>
 
-On Mon 30-06-25 11:32:16, Baokun Li wrote:
-> On 2025/6/28 2:15, Jan Kara wrote:
-> > On Mon 23-06-25 15:32:50, Baokun Li wrote:
-> > > ac->ac_g_ex.fe_start is only used in ext4_mb_find_by_goal(), but STREAM
-> > > ALLOC is activated after ext4_mb_find_by_goal() fails, so there's no need
-> > > to update ac->ac_g_ex.fe_start, remove the unnecessary s_mb_last_start.
-> > > 
-> > > Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> > I'd just note that ac->ac_g_ex.fe_start is also used in
-> > ext4_mb_collect_stats() so this change may impact the statistics gathered
-> > there. OTOH it is questionable whether we even want to account streaming
-> > allocation as a goal hit... Anyway, I'm fine with this, I'd just mention it
-> > in the changelog.
-> Yes, I missed ext4_mb_collect_stats(). However, instead of explaining
-> it in the changelog, I think it would be better to move the current
-> s_bal_goals update to inside or after ext4_mb_find_by_goal().
+On Mon, Jun 30, 2025 at 12:16:01PM +0800, hans.zhang@cixtech.com wrote:
+> From: Hans Zhang <hans.zhang@cixtech.com>
 > 
-> Then, we could add another variable, such as s_bal_stream_goals, to
-> represent the hit count for global goals. This kind of statistic would
-> help us fine-tune the logic for optimizing inode goals and global goals.
+> Add PCIe RC support on Orion O6 board.
 > 
-> What are your thoughts on this?
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+> Reviewed-by: Manikandan K Pillai <mpillai@cadence.com>
 
-Sure that sounds good to me.
+Where? Please provide lore links. The happened AFTER the SoB, so they
+must have been made public, right?
 
-> > > @@ -2849,7 +2848,6 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
-> > >   		/* TBD: may be hot point */
-> > >   		spin_lock(&sbi->s_md_lock);
-> > >   		ac->ac_g_ex.fe_group = sbi->s_mb_last_group;
-> > > -		ac->ac_g_ex.fe_start = sbi->s_mb_last_start;
-> > Maybe reset ac->ac_g_ex.fe_start to 0 instead of leaving it at some random
-> > value? Just for the sake of defensive programming...
-> > 
-> ac->ac_g_ex.fe_start holds the inode goal's start position, not a random
-> value. It's unused after ext4_mb_find_by_goal() (if s_bal_stream_goals is
-> added). Thus, I see no need for further modification. We can always re-add
-> it if future requirements change.
+> ---
+>  arch/arm64/boot/dts/cix/sky1-orion-o6.dts | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> index d74964d53c3b..44710d54ddad 100644
+> --- a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> +++ b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+> @@ -37,3 +37,23 @@ linux,cma {
+>  &uart2 {
+>  	status = "okay";
+>  };
+> +
+> +&pcie_x8_rc {
+> +	status = "okay";
 
-Yeah, I was imprecise. It is not a random value. But it is not an offset in
-the group we are now setting. Therefore I'd still prefer to reset fe_start
-to 0 (or some invalid value like -1 to catch unexpected use).
+And really two people reviewed this trivial changes? Really?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Plus what their review actually checked? This is obviously wrong - not
+following DTS coding style, so what such review meant? What did it
+
+Best regards,
+Krzysztof
+
 
