@@ -1,203 +1,199 @@
-Return-Path: <linux-kernel+bounces-708942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F08AED708
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB6EAED714
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371B43A6DF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:23:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 991DD1744C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E5C23B635;
-	Mon, 30 Jun 2025 08:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3071E5018;
+	Mon, 30 Jun 2025 08:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p3xZUkRH"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+Bb7Inn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EE54A01;
-	Mon, 30 Jun 2025 08:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E74221286;
+	Mon, 30 Jun 2025 08:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751271822; cv=none; b=uik2hTTdEUbMIofQJZ1bsPwSONgzHt292vZNBIvQ/czfVMRiev7LvA5gCjT+gkWp+GMqqhYB5H/HEpq1ommRbObQuxdANQUvJquuZ8TKzJpwjmDLdBy5PTVte1UxYsQELtoPrBctQX+N8nJk1UyMD5x/5BcbwKXflXb8slT3olY=
+	t=1751271856; cv=none; b=BjsIFR+84f8WnAVNTpIqZ/GFUeInLoa6x1tHEIz865NES5BQu/hY2/eoFrBJU9+FBWrmxooyY6Uym3NhgdBZiuUH6cfaW2pjVCW32s9HTxX+GUXRSlBqG6oQolMuf5kLEgWSi2fZjMSlA0/9Wc5cd0b6o462akNTZicF4wKEEAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751271822; c=relaxed/simple;
-	bh=cXUNp9MnIeeBtbqrhr7CXj8lPcvnwGlKcnzokzRWvAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNBtJjm8OKHwxrf9nI2Y35kl0aviWmnr1VAypbACIjMW5nc29s0OxqNpH19pLEaSmU4pXbO+oImg1QxJIcgE2+p7Gfz4QZr+0sATCx1uNaarhFssbMbM90qhM7vZXSCLMQLJEUQWJlkIhX4pjYf/WmvSbyQrvis6C6iiWA0bTKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p3xZUkRH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 6F16C6BE;
-	Mon, 30 Jun 2025 10:23:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1751271797;
-	bh=cXUNp9MnIeeBtbqrhr7CXj8lPcvnwGlKcnzokzRWvAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p3xZUkRHrBjB6g4qDBCqjfk5L7Q+CGaKtAwu2cSmSFbknHAhVyGdBas/HbcPRW88L
-	 tH+w+kXX63VwZ3Nwp5Wz0yLow10xhkhYAxVwzL7ohxLqgxk2QiE1i4fNdI0BAYALfT
-	 opL6jnh5OLq0Qe9czqOZjMJghGI72ocIUDiKJ+54=
-Date: Mon, 30 Jun 2025 11:23:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Christoph Hellwig <hch@lst.de>, Alan Stern <stern@rowland.harvard.edu>,
-	Xu Yang <xu.yang_2@nxp.com>, ezequiel@vanguardiasur.com.ar,
-	mchehab@kernel.org, hdegoede@redhat.com, gregkh@linuxfoundation.org,
-	mingo@kernel.org, tglx@linutronix.de,
-	andriy.shevchenko@linux.intel.com, viro@zeniv.linux.org.uk,
-	thomas.weissschuh@linutronix.de, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH v2 1/3] usb: core: add dma-noncoherent buffer alloc and
- free API
-Message-ID: <20250630082313.GB23516@pendragon.ideasonboard.com>
-References: <20250627101939.3649295-1-xu.yang_2@nxp.com>
- <20250627101939.3649295-2-xu.yang_2@nxp.com>
- <1c4f505f-d684-4643-bf77-89d97e01a9f2@rowland.harvard.edu>
- <20250629233924.GC20732@pendragon.ideasonboard.com>
- <CANiDSCswzMouJrRn2A3EAbGzHTf88q_qQ=DC_KX7dbf_LJzqBg@mail.gmail.com>
+	s=arc-20240116; t=1751271856; c=relaxed/simple;
+	bh=KnqdYmSo9s5NiZ0efI74+ehXh+hBILnC72jZRK1fvLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7IOZi1n6c/LL+cx5AaZ6ghpjsBZJ9+PT2rRgAHALY7H/y8RTRXeoFaOqie9I30CAJ31xAGEucr2njp1qvNewhqWEfEDxYOWO/3HLwWS6eOrxQFNssIeXb9g77y0jI9cAVfadc7kOQppcCKlPipM7uUD6TNfEd9NSaiNKUYeyXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+Bb7Inn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2659CC4CEE3;
+	Mon, 30 Jun 2025 08:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751271854;
+	bh=KnqdYmSo9s5NiZ0efI74+ehXh+hBILnC72jZRK1fvLM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r+Bb7Inn8Vy22KXD38198pUWEe8FBp2sBCqQ/yUmybovKrqN9wygoCuEuRVC5SMm2
+	 gm5xd3AkSqygRW7xfmyOBN6Csv2e8N44KurbNvRX+ALrOeI1elU4d5Q+a1lIXLnoR6
+	 0Q3rUcmlKktOzdHPRgv7FLNFvu4prXlIcGskbjkE7UphuvtsJJP65JhMGMUOYs5Cqi
+	 2LYK52Rve1YoVwrRXIw1UUyWvAzX7AioHPSu2chfAnP9EYo4++db3BEsed0ItGEzzL
+	 7znY+g/b6ynYiqNdOLnrUTGNdZARlYsWenJDUc21bFeLYj3jl7jOyCVQVTET9p3kDe
+	 lKhTxR/iCX6iw==
+Message-ID: <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
+Date: Mon, 30 Jun 2025 10:24:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCswzMouJrRn2A3EAbGzHTf88q_qQ=DC_KX7dbf_LJzqBg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
+ interconnects property
+To: Hans de Goede <hdegoede@redhat.com>, Luca Weiss <luca.weiss@fairphone.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
+ <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
+ <20250627-mysterious-optimistic-bird-acaafb@krzk-bin>
+ <DAX7ZB27SBPV.2Y0I09TVSF3TT@fairphone.com>
+ <1129bc60-f9cb-40be-9869-8ffa3b3c9748@kernel.org>
+ <8a3ad930-bfb1-4531-9d34-fdf7d437f352@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <8a3ad930-bfb1-4531-9d34-fdf7d437f352@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 30, 2025 at 08:48:23AM +0200, Ricardo Ribalda wrote:
-> On Mon, 30 Jun 2025 at 01:39, Laurent Pinchart wrote:
-> > On Fri, Jun 27, 2025 at 10:23:36AM -0400, Alan Stern wrote:
-> > > On Fri, Jun 27, 2025 at 06:19:37PM +0800, Xu Yang wrote:
-> > > > This will add usb_alloc_noncoherent() and usb_free_noncoherent()
-> > > > functions to support alloc and free buffer in a dma-noncoherent way.
-> > > >
-> > > > To explicit manage the memory ownership for the kernel and device,
-> > > > this will also add usb_dma_noncoherent_sync_for_cpu/device() functions
-> > > > and call it at proper time.  The management requires the user save
-> > > > sg_table returned by usb_alloc_noncoherent() to urb->sgt.
-> > > >
-> > > > Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> > > > ---
-> > > >  drivers/usb/core/hcd.c | 30 ++++++++++++++++
-> > > >  drivers/usb/core/usb.c | 80 ++++++++++++++++++++++++++++++++++++++++++
-> > > >  include/linux/usb.h    |  9 +++++
-> > > >  3 files changed, 119 insertions(+)
-> > > >
-> > > > diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> > > > index c22de97432a0..5fa00d32afb8 100644
-> > > > --- a/drivers/usb/core/hcd.c
-> > > > +++ b/drivers/usb/core/hcd.c
-> > > > @@ -1496,6 +1496,34 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(usb_hcd_map_urb_for_dma);
-> > > >
-> > > > +static void usb_dma_noncoherent_sync_for_cpu(struct usb_hcd *hcd,
-> > > > +                                        struct urb *urb)
-> > > > +{
-> > > > +   enum dma_data_direction dir;
-> > > > +
-> > > > +   if (!urb->sgt)
-> > > > +           return;
-> > > > +
-> > > > +   dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> > >
-> > > Are the following operations really necessary if the direction is OUT?
-> > > There are no bidirectional URBs, and an OUT transfer never modifies the
-> > > contents of the transfer buffer so the buffer contents will be the same
-> > > after the URB completes as they were when the URB was submitted.
-> >
-> > The arch part of dma_sync_sgtable_for_cpu(DMA_TO_DEVICE) is a no-op on
-> > all architectures but microblaze, mips, parisc and powerpc (at least in
-> > some configurations of those architectures).
-> >
-> > The IOMMU DMA mapping backend calls into the arch-specific code, and
-> > also handles swiotlb, which is a no-op for DMA_TO_DEVICE. There's also
-> > some IOMMU-related arch-specific handling for sparc.
-> >
-> > I think dma_sync_sgtable_for_cpu() should be called for the
-> > DMA_TO_DEVICE direction, to ensure proper operation in those uncommon
-> > but real cases where platforms need to perform some operation. It has a
-> > non-zero cost on other platforms, as the CPU will need to go through a
-> > few function calls to end up in no-ops and then go back up the call
-> > stack.
-> >
-> > invalidate_kernel_vmap_range() may not be needed. I don't recall why it
-> > was added. The call was introduced in
-> >
-> > commit 20e1dbf2bbe2431072571000ed31dfef09359c08
-> > Author: Ricardo Ribalda <ribalda@chromium.org>
-> > Date:   Sat Mar 13 00:55:20 2021 +0100
-> >
-> >     media: uvcvideo: Use dma_alloc_noncontiguous API
-> >
-> > Ricardo, do we need to invalidate the vmap range in the DMA_TO_DEVICE
-> > case ?
+On 29/06/2025 14:07, Hans de Goede wrote:
+> Hi Krzysztof,
 > 
-> That change came from Christoph
-> https://lore.kernel.org/linux-media/20210128150955.GA30563@lst.de/
+> On 28-Jun-25 1:49 PM, Krzysztof Kozlowski wrote:
+>> On 27/06/2025 11:48, Luca Weiss wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On Fri Jun 27, 2025 at 10:08 AM CEST, Krzysztof Kozlowski wrote:
+>>>> On Mon, Jun 23, 2025 at 08:44:45AM +0200, Luca Weiss wrote:
+>>>>> Document the interconnects property which is a list of interconnect
+>>>>> paths that is used by the framebuffer and therefore needs to be kept
+>>>>> alive when the framebuffer is being used.
+>>>>>
+>>>>> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/display/simple-framebuffer.yaml | 3 +++
+>>>>>  1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
+>>>>> index 296500f9da05e296dbbeec50ba5186b6b30aaffc..f0fa0ef23d91043dfb2b220c654b80e2e80850cd 100644
+>>>>> --- a/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/display/simple-framebuffer.yaml
+>>>>> @@ -79,6 +79,9 @@ properties:
+>>>>>    power-domains:
+>>>>>      description: List of power domains used by the framebuffer.
+>>>>>  
+>>>>> +  interconnects:
+>>>>> +    description: List of interconnect paths used by the framebuffer.
+>>>>> +
+>>>>
+>>>> maxItems: 1, or this is not a simple FB anymore. Anything which needs
+>>>> some sort of resources in unknown way is not simple anymore. You need
+>>>> device specific bindings.
+>>>
+>>> The bindings support an arbitrary number of clocks, regulators,
+>>> power-domains. Why should I artificially limit the interconnects to only
+>>> one?
+>>
+>> And IMO they should not. Bindings are not supposed to be generic.
 > 
-> """
+> The simplefb binding is a binding to allow keeping the firmware, e.g.
+> uboot setup framebuffer alive to e.g. show a boot splash until
+> the native display-engine drive loads. Needing display-engine
+> specific bindings totally contradicts the whole goal of 
+
+No, it does not. DT is well designed for that through expressing
+compatibility. I did not say you cannot have generic fallback for simple
+use case.
+
+But this (and previous patchset) grows this into generic binding ONLY
+and that is not correct.
+
+
 > 
-> Given that we vmap the addresses this also needs
-> flush_kernel_vmap_range / invalidate_kernel_vmap_range calls for
-> VIVT architectures.
+> It is generic by nature and I really do not see how clocks and
+> regulators are any different then interconnects here.
+
+Yeah, they are also wrong. I already commented on this.
+
 > 
-> """
+> Note that we had a huge discussion about adding clock
+> and regulators to simplefb many years ago with pretty
+> much the same arguments against doing so. In the end it was
+> decided to add regulator and clocks support to the simplefb
+> bindings and non of the feared problems with e.g. ordening
+> of turning things on happened.
+> 
+> A big part of this is that the claiming of clks / regulators /
+> interconnects by the simplefb driver is there to keep things on,
+> so it happens before the kernel starts tuning off unused resources
+> IOW everything is already up and running and this really is about
+> avoiding turning things off.
 
-Thank you, I looked for such a discussion in the list archive yesterday
-but somehow missed it.
+No one asks to drop them from the driver. I only want specific front
+compatible which will list and constrain the properties. It is not
+contradictory to your statements, U-boot support, driver support. I
+really do not see ANY argument why this cannot follow standard DT rules.
 
-Christoph, you mentioned
-
-  Right now we don't have a proper state machine for the
-  *_kernel_vmap_range, but we should probably add one once usage of this
-  grows.
-
-Has there been any progress on that front ?
-
-> > > > +   invalidate_kernel_vmap_range(urb->transfer_buffer,
-> > > > +                                urb->transfer_buffer_length);
-> > > > +   dma_sync_sgtable_for_cpu(hcd->self.sysdev, urb->sgt, dir);
-> >
-> > In the DMA_FROM_DEVICE case, shouldn't the vmap range should be
-> > invalidated after calling dma_sync_sgtable_for_cpu() ? Otherwise I think
-> > speculative reads coming between invalidation and dma sync could result
-> > in data corruption.
-> >
-> > > > +}
-> > >
-> > > This entire routine should be inserted at the appropriate place in
-> > > usb_hcd_unmap_urb_for_dma() instead of being standalone.
-> > >
-> > > > +static void usb_dma_noncoherent_sync_for_device(struct usb_hcd *hcd,
-> > > > +                                           struct urb *urb)
-> > > > +{
-> > > > +   enum dma_data_direction dir;
-> > > > +
-> > > > +   if (!urb->sgt)
-> > > > +           return;
-> > > > +
-> > > > +   dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
-> > > > +   flush_kernel_vmap_range(urb->transfer_buffer,
-> > > > +                           urb->transfer_buffer_length);
-> > > > +   dma_sync_sgtable_for_device(hcd->self.sysdev, urb->sgt, dir);
-> > > > +}
-> > >
-> > > Likewise, this code belongs inside usb_hcd_map_urb_for_dma().
-> > >
-> > > Also, the material that this routine replaces in the uvc and stk1160
-> > > drivers do not call flush_kernel_vmap_range().  Why did you add that
-> > > here?  Was this omission a bug in those drivers?
-> > >
-> > > Alan Stern
-
--- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Krzysztof
 
