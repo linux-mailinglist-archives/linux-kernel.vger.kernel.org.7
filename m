@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-709716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFC0AEE154
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76636AEE152
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE0A1889B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 604103B32F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA740290BB4;
-	Mon, 30 Jun 2025 14:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4152228C030;
+	Mon, 30 Jun 2025 14:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqsTFAst"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fNw2Cazx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rdJ1dDrX";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fNw2Cazx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rdJ1dDrX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616928E5F3;
-	Mon, 30 Jun 2025 14:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF31928DB58
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751294578; cv=none; b=FyDUqEW8IGTmix0Z1XZJW/3B1y8n0OqnXjlz6RT+pPUQ/ftwPHzW73m3W4diRWiX3/hD2uAy+kzQ4173SC+LA+X19XZpGbCYuO/9kRRHDvk55TCCLjp+xNg6OXpumAmnOdECpNjrdSGScTnV5/wZHazgVAqSaLOKAzgIGdH7Bv4=
+	t=1751294548; cv=none; b=icoNUKyhq882mMIb+uMu/zvrYPTBrx3EU2uO9rSRV9RPuHDChAIjE53i5E6cDqTaR2R89FEtO5zZq6LSf5svQLI6TJ0Ck7ZogUzipLogECii2ItVzhpVOKBR13LG33nDPWm8iHEiPiH84LTDZF8AwnjddQJ/pW5wpaYhjfMO3vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751294578; c=relaxed/simple;
-	bh=BSZ5vT3FSMrvM5IrsoJDnsX7sNGVr+Y34WTBiYQdwUs=;
+	s=arc-20240116; t=1751294548; c=relaxed/simple;
+	bh=gxQmOOof0otsKlpt20PyNg5TbDDZsnanmCIdzr3GZmk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vGDJU+W7zE9c2d1prUft3QW6cr/VsOFfFHOETWdRvXZRu0Gm93KsOyTwr1r0Ou8p5YsKP//U1+oPejwY1mjfXNKq77cEZXbQ66WOgNejh2iBvL7QRhhuYoripWHjKqnA2AiNy42nQjPhYcn9dPz3IXtTFqj/fh9GJVBSGR+zKlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqsTFAst; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-23636167b30so17800465ad.1;
-        Mon, 30 Jun 2025 07:42:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751294575; x=1751899375; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YLmL/hbSV60WQ5txcK/zp8yoe+ubCK5iYtglAmsrLSE=;
-        b=VqsTFAstirc2FUxDnAUxU2kJksb1QqFkTMO0L8XXINGfUkVukIWXE0i/4Z5I6Y+jM6
-         52O6o5KktskoczysvnFOXHpOAuPmK2u1RZ9ZxHdZr7SVL+kBLPZZauXEl31Pzl8xEuNc
-         CKJLlO+paztSs0MNlEV9RV9ykoyMfXMOooGOag43K7a2g/Eleg64Oc7kp4wJBQtgceZN
-         QGNSvP8u1MMJoz0WlTg/su/SCDwNPmmhFkv8ps/CXSCDKJRj4L48GZVlUDKGmB3m5ASn
-         wfvs7IBe0yLimlrzDhvd3/EaAJhMQUVEb0T9odOadHQiYTPJeAcjGaCfEI80HiBCYEVm
-         B3CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751294575; x=1751899375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YLmL/hbSV60WQ5txcK/zp8yoe+ubCK5iYtglAmsrLSE=;
-        b=mfWe3FBOHmQI4+HbsRWZDyunvIGHTeMkL5OZa9buUtpNQVlM1ZapkkrHGBCzpvI1uS
-         mTcKmn/XQOxDhc9mE4IWpNhsqRxaFRrhU+KBmiL3Z0oNpDh9+cXGLyEc6HI0G/CiyhgD
-         k/1zUGal1htlZj9h6TQpk3AmpJqDqSx0AfEz2+DRy+Kt0SLjhlZTj+dqzDoHPSyO1Ix3
-         jfxpxCVc9W2bKzbdmMey0xpa8CHwn06ktQB8KaZA6Aid7/iO+mfGE2g/edEabexRj0TO
-         X0OCWTfqxVUApu1RK+iJ17+Jf8S4j1zLJhlCUIB56JYu7vIOBouZakO3EvhuS1CHS9mt
-         jxbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCETNfcV0s2f8JQ2Z4VJ1QfTacmwZ3fGE8JkcPk0AQaTul247JX7VxBEVapehmvhgeLIObwgT+0UiTFl1d@vger.kernel.org, AJvYcCVMakvbs6uC7mD6FpTKwNWdzmmK3BU9soqA3Yo4W0ulri/F7yowsRoYC5+u06FidvmIdcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKaCCY5UEus1GK4WHhiOaop7WXtnXBet3F00alXJodcYS5qXSb
-	Z1xdpzLQ/l8LCML9Mbvly7zJvCYK7+iZJp8UrdFNooAjpcnJ3i5JJP3NmMDHGw==
-X-Gm-Gg: ASbGncudoob+xWZGXqNmr9eMh2p/HaEBf2A8ty6fRtNyLCr8mxLfDmYYB6yBd4dMOKK
-	/cNI1Zafl7PPfaNoOh0qjUYnc1zIrjFz7W72iHKqSgZ+CJ37MQPfkuB07fHoihg7MOVTWgfCzB/
-	GU+qX3woAk9cQrpILGpXGFjJ9EVyERN8PZxeFZIu9PrVc97+9n0CZQGZMseTps36276yp4jerHU
-	6V5z3Q/x8pffxmvrq1kD63OeVEwZ1T8YUVkv/8XTjpS0ItL9tfW3Q57JINzRWexyxf8iBoPElSZ
-	BjYo4MtSC65Dwq05TxjloSJbsWej5m93bcPUy5EGzLWM16DlDhBx3N0i+DY6+PlvowG90JyB3W1
-	E
-X-Google-Smtp-Source: AGHT+IFYuZr8i/s3T0h77aKO3ys5BfKYJLS5aKf0P+CB6IP+gtk0942n8ugs4IGHLFscQ/B6DDNpGw==
-X-Received: by 2002:a17:90b:3b82:b0:315:c77b:37d6 with SMTP id 98e67ed59e1d1-318c92ef8e1mr17269051a91.23.1751294575415;
-        Mon, 30 Jun 2025 07:42:55 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f0e:fb30:2f51:de71:60e:eca9])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-318c13a270csm9170017a91.16.2025.06.30.07.42.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 07:42:55 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	virtualization@lists.linux.dev,
+	 MIME-Version; b=k01UfJH1ec5XK1KowvzyhEtfpyCqPEkhT5DnbDcwuZxpuGdJJxyvuLLN0l+56EKUl0JYZ5NhOnh1/ohHzvnJKAV2yOHppDdKD3utkSQmuAjCEXBdRLVxj0v5Q5Xa5tVitVK7OPnXCkjLBx2e9abcAyCQQFlH3TWf64kqJTbEivU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fNw2Cazx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rdJ1dDrX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fNw2Cazx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rdJ1dDrX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BC94A1F393;
+	Mon, 30 Jun 2025 14:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751294538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lswS/npHHg2FpDwDpRgpwsvZxZdHN4e8MQowvC+BDOQ=;
+	b=fNw2CazxDou2e5Lf3A6ZpxG208/WtbJYxDUzNf/EmvLIOgHbGYNuPbMbFnGGoXzcc8KbqJ
+	TCcwNkI1krvkJ0Y9wBqNCvhAEPZ57ed397g9O8o5IzrU5jPxFEgYuQ8Wirhicq+8ZOvGM6
+	waztCYLASagVbGBicUFfrf6loAKUWOw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751294538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lswS/npHHg2FpDwDpRgpwsvZxZdHN4e8MQowvC+BDOQ=;
+	b=rdJ1dDrXteqCeY+23etpuh5UTIjzLFA3F0g9luhVSs3raT3CwR8xP9Ucfx5ctWcSh9UPhg
+	n6GhkTkAZBXbbLAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751294538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lswS/npHHg2FpDwDpRgpwsvZxZdHN4e8MQowvC+BDOQ=;
+	b=fNw2CazxDou2e5Lf3A6ZpxG208/WtbJYxDUzNf/EmvLIOgHbGYNuPbMbFnGGoXzcc8KbqJ
+	TCcwNkI1krvkJ0Y9wBqNCvhAEPZ57ed397g9O8o5IzrU5jPxFEgYuQ8Wirhicq+8ZOvGM6
+	waztCYLASagVbGBicUFfrf6loAKUWOw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751294538;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lswS/npHHg2FpDwDpRgpwsvZxZdHN4e8MQowvC+BDOQ=;
+	b=rdJ1dDrXteqCeY+23etpuh5UTIjzLFA3F0g9luhVSs3raT3CwR8xP9Ucfx5ctWcSh9UPhg
+	n6GhkTkAZBXbbLAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46BB11399F;
+	Mon, 30 Jun 2025 14:42:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2LmWDkqiYmjqdAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Mon, 30 Jun 2025 14:42:18 +0000
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Peter Xu <peterx@redhat.com>,
+	Gavin Guo <gavinguo@igalia.com>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>
-Subject: [PATCH net v2 2/3] virtio-net: remove redundant truesize check with PAGE_SIZE
-Date: Mon, 30 Jun 2025 21:42:11 +0700
-Message-ID: <20250630144212.48471-3-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250630144212.48471-1-minhquangbui99@gmail.com>
-References: <20250630144212.48471-1-minhquangbui99@gmail.com>
+	Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v4 4/5] mm,hugetlb: drop obsolete comment about non-present pte and second faults
+Date: Mon, 30 Jun 2025 16:42:11 +0200
+Message-ID: <20250630144212.156938-5-osalvador@suse.de>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250630144212.156938-1-osalvador@suse.de>
+References: <20250630144212.156938-1-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,46 +109,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,linux.dev:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Level: 
 
-The truesize is guaranteed not to exceed PAGE_SIZE in
-get_mergeable_buf_len(). It is saved in mergeable context, which is not
-changeable by the host side, so the check in receive path is quite
-redundant.
+There is a comment in hugetlb_fault() that does not hold anymore.  This
+one:
 
-Acked-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+ /*
+  * vmf.orig_pte could be a migration/hwpoison vmf.orig_pte at this
+  * point, so this check prevents the kernel from going below assuming
+  * that we have an active hugepage in pagecache. This goto expects
+  * the 2nd page fault, and is_hugetlb_entry_(migration|hwpoisoned)
+  * check will properly handle it.
+  */
+
+This was written because back in the day we used to do:
+
+ hugetlb_fault () {
+  ptep = huge_pte_offset(...)
+  if (ptep) {
+    entry = huge_ptep_get(ptep)
+    if (unlikely(is_hugetlb_entry_migration(entry))
+        ...
+    else if (unlikely(is_hugetlb_entry_hwpoisoned(entry)))
+        ...
+  }
+
+  ...
+  ...
+
+  /*
+   * entry could be a migration/hwpoison entry at this point, so this
+   * check prevents the kernel from going below assuming that we have
+   * a active hugepage in pagecache. This goto expects the 2nd page fault,
+   * and is_hugetlb_entry_(migration|hwpoisoned) check will properly
+   * handle it.
+   */
+  if (!pte_present(entry))
+          goto out_mutex;
+  ...
+ }
+
+The code was designed to check for hwpoisoned/migration entries upfront,
+and then bail out if further down the pte was not present anymore, relying
+on the second fault to properly handle migration/hwpoison entries that
+time around.
+
+The way we handle this is different nowadays, so drop the misleading
+comment.
+
+Link: https://lkml.kernel.org/r/20250627102904.107202-5-osalvador@suse.de
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Gavin Guo <gavinguo@igalia.com>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Peter Xu <peterx@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/net/virtio_net.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ mm/hugetlb.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 31661bcb3932..535a4534c27f 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2157,9 +2157,9 @@ static int virtnet_build_xdp_buff_mrg(struct net_device *dev,
- {
- 	struct virtio_net_hdr_mrg_rxbuf *hdr = buf;
- 	unsigned int headroom, tailroom, room;
--	unsigned int truesize, cur_frag_size;
- 	struct skb_shared_info *shinfo;
- 	unsigned int xdp_frags_truesz = 0;
-+	unsigned int truesize;
- 	struct page *page;
- 	skb_frag_t *frag;
- 	int offset;
-@@ -2207,9 +2207,8 @@ static int virtnet_build_xdp_buff_mrg(struct net_device *dev,
- 		tailroom = headroom ? sizeof(struct skb_shared_info) : 0;
- 		room = SKB_DATA_ALIGN(headroom + tailroom);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 67f3c9c16348..ba078aa1cb96 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -6745,13 +6745,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
  
--		cur_frag_size = truesize;
--		xdp_frags_truesz += cur_frag_size;
--		if (unlikely(len > truesize - room || cur_frag_size > PAGE_SIZE)) {
-+		xdp_frags_truesz += truesize;
-+		if (unlikely(len > truesize - room)) {
- 			put_page(page);
- 			pr_debug("%s: rx error: len %u exceeds truesize %lu\n",
- 				 dev->name, len, (unsigned long)(truesize - room));
+ 	ret = 0;
+ 
+-	/*
+-	 * vmf.orig_pte could be a migration/hwpoison vmf.orig_pte at this
+-	 * point, so this check prevents the kernel from going below assuming
+-	 * that we have an active hugepage in pagecache. This goto expects
+-	 * the 2nd page fault, and is_hugetlb_entry_(migration|hwpoisoned)
+-	 * check will properly handle it.
+-	 */
++	/* Not present, either a migration or a hwpoisoned entry */
+ 	if (!pte_present(vmf.orig_pte)) {
+ 		if (unlikely(is_hugetlb_entry_migration(vmf.orig_pte))) {
+ 			/*
 -- 
-2.43.0
+2.50.0
 
 
