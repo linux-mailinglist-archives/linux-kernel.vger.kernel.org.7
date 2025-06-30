@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-709545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C4DAEDF21
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F0BAEDF29
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 15:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E82188E518
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:31:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652451881079
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD37528B4EB;
-	Mon, 30 Jun 2025 13:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A425328B7C7;
+	Mon, 30 Jun 2025 13:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d0DYH4zV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nEDF8MM2"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBD924DD10
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7FE28B7C3
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 13:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751290266; cv=none; b=cQs+eHZZkl3Uabp6iG+O1yUExGU6GikJEB7lAAZgnFBWoSoFS9jA+XlFtW4FWnMZkDElQR2Q3bfMuT8pY9NeBmrV2pH32WNIg/xhXdOGMNEzUsZZI0eDmhQywMbVNi4uhlCw9hdVLXCT+Uqhw563kYwpJyt4LsqJPyaknlfZFxs=
+	t=1751290429; cv=none; b=ZOEHbaAX2I3LGX47YI2N3G5xj0isu3yMMINNwYGcCee81t0twT9+vqP8NUORmSWLVmqKHEtXxhDcXIgE6mMxb/xphj+3tdxNdlNvg0ytGGGIKG9ycgiUIUvAbew528BOXbOkm2chmXwW6Vl4AswRdP1XaprLfaRwa05u1Tvpno0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751290266; c=relaxed/simple;
-	bh=0/FZCiLaRndiTPePRIo/GUOxbR20fxMdpfov79uN7uQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=NWa84m2UEiMJtYq42CsHsRU/J7TNO4ngGGkV4y1ahiytAA+ib9TWuy6eWEl+Mafgwt3jYT6kAPbLjjc9J5J3O+po/LHD1xdkyyTsB5L2MXbULXmk7sEOV/HfPYywyWU039yFV0FM5BYT6eY+TnnubMDyd1RNdjLY2wv3vz41vZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d0DYH4zV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751290263;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jz9RQCLVSvMznWWKk2eRSrkkyI7/meflTI0QApH5lD4=;
-	b=d0DYH4zV/wtw8RFwzLsERABJKh15VOTgW8VzsVvz5QkxiEruVw7PYgys0rGaFAN/6fQLoQ
-	2mkbp14yAnTThcWTOKDzLl1K1M9DjAgT1XVF08hLXqzks2wqJaI7j1TznG0o1xnyPWlsyO
-	eTVrpP0N1mI3tzBAdheTloA+szYBGSE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-VVFOYvEXNZqE0X_VvTDHeQ-1; Mon,
- 30 Jun 2025 09:31:00 -0400
-X-MC-Unique: VVFOYvEXNZqE0X_VvTDHeQ-1
-X-Mimecast-MFC-AGG-ID: VVFOYvEXNZqE0X_VvTDHeQ_1751290255
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B148B190FBC6;
-	Mon, 30 Jun 2025 13:30:54 +0000 (UTC)
-Received: from [10.22.80.10] (unknown [10.22.80.10])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 20F3E195609D;
-	Mon, 30 Jun 2025 13:30:50 +0000 (UTC)
-Date: Mon, 30 Jun 2025 15:30:48 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Dongsheng Yang <dongsheng.yang@linux.dev>
-cc: agk@redhat.com, snitzer@kernel.org, axboe@kernel.dk, hch@lst.de, 
-    dan.j.williams@intel.com, Jonathan.Cameron@Huawei.com, 
-    linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev, 
-    dm-devel@lists.linux.dev
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v1_00=2F11=5D_dm-pcache_=E2=80=93_pe?=
- =?UTF-8?Q?rsistent-memory_cache_for_block_devices?=
-In-Reply-To: <20250624073359.2041340-1-dongsheng.yang@linux.dev>
-Message-ID: <8d383dc6-819b-2c7f-bab5-2cd113ed9ece@redhat.com>
-References: <20250624073359.2041340-1-dongsheng.yang@linux.dev>
+	s=arc-20240116; t=1751290429; c=relaxed/simple;
+	bh=o45INCbiSeQE2IgHq1YnHw8Gfkpjyezwdh5cW/jtGEk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M2mt34bp8xXoW2J9sDLkilmhWd+7ovc8+tMXp4eLkbCkXGjdwsGgYKwFvSZVSxMKL4SsbSv9kVJh8e0ZdQMZu+aBv7yaX5qeFiXBfhJfodUUpYUMWXmctel8dwl1bJP05Y3oojnvIJ/49Nut5Ni2vya2KOB8mQYDaOZbD+DiC9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nEDF8MM2; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-453749aef9eso15905565e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 06:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751290424; x=1751895224; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o45INCbiSeQE2IgHq1YnHw8Gfkpjyezwdh5cW/jtGEk=;
+        b=nEDF8MM2pc7lbtsVi3CTNhTyrzz6UkXzdgcX0fhTCrPjr834pmMvFk52be2MR4awJ2
+         2iZxXtR+m0LYrOA07pY7LU8wCNwAHrg3qDBc3H1e+CWspixjdCYJyNEtNfj9nqyiaAWQ
+         i8qZLNe68flg2qa7cKoyhxqVfNuPLX8o31yTJFWrvC+gTfrxY2X7kv7LNDgxz0kDg8+M
+         png/m9NgUoS+8Ictbqop2IAFtG77TozE36kwQ5i0J2B+B/MzQgRUHDjY0RDjgddNQW3I
+         OrPQBM/IGfi+N0Nk/dSbQbFUtBO9JTWu1S2LAAEJeOWhjPew/dnpviw0LX7IYKD4+Jrh
+         o/6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751290424; x=1751895224;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o45INCbiSeQE2IgHq1YnHw8Gfkpjyezwdh5cW/jtGEk=;
+        b=Kkx1Q6U6I77xAZvVJPVO9HOdbMliLK4gaQMWmshNZbiOMB7nBqgeCIpHivShTu+YRG
+         yk8TP/62FC83JgnwM6VcJ/8LVSqVtTsR1wtmOF1psUCcmILXVmAf+96WgS32NuKER6tQ
+         wggq09GxzQOM17ii1cPfktoW44he+AoXVUbQG+xq+pSloYmZSnLpJ3MR00JWyZQR40nh
+         hjbHq8nWU8U8+xXjPNnSAnA1NCUZczeQO+8ruvasMivg5R5d4Hh24PyaxfiPQftM12oY
+         ZVHt54iIDMDCQzxArP7BskHXDY/1ISWio6/85q+2iw0WTmy9qL/DKS8qdCXgMddyjECe
+         +RmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXx+s7I0zfZQgrdWlsBZxfGZ8H5PULJotHnzVCDMGDAT2J1pkqRNEPnDmoCF7w0Y8BvIn1F9wS5gRomJLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzaXL8OgbxhYXDTv0RDz60ldEz+0ceS5hfSOsxoGiup/l8Zcie
+	KRer/qfPN4do451OtxjtTElCYlI80WnND6JiNvSu4LqNhbdczFwfZ4N/zLTLC8SsBybyBGBxE/m
+	pf6H4dzzX/0vxEcBu2RO2zXnSg8JfQaC5/1Yzt8Um
+X-Gm-Gg: ASbGnctJXq4wdwR+vj9lFa70FQoeBbOWiXe6dtQ9QCkC0Gn4tE9ccl6B/zadaTlWGO8
+	W/XokgMPooBVtikgf3jgcMX3WtdalHLZ4TiRIVgYUgC6XhJQ94CWHd0a4TtXYnGp6gx56gbNFBb
+	4JOKmA/8BG6NWiat0+JBSal/tnC9408J+qOpmedCFdOliXCJgNDRVV6Rym58Dws/peMrp0tz6i
+X-Google-Smtp-Source: AGHT+IGVJu/D277FQPc0r0siJTAo3I5FJWrKQJdxkbD3ntuYhNVrd8Ps5yu0EVn0gdE5xaSnpYRMnPIuj1WaKYAXRKc=
+X-Received: by 2002:a05:600c:698e:b0:43c:f513:958a with SMTP id
+ 5b1f17b1804b1-4538ee3bb38mr125353655e9.13.1751290424357; Mon, 30 Jun 2025
+ 06:33:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20250630131011.405219-1-fujita.tomonori@gmail.com>
+In-Reply-To: <20250630131011.405219-1-fujita.tomonori@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 30 Jun 2025 15:33:31 +0200
+X-Gm-Features: Ac12FXxucSgJGsLEUQk81gSz3INXTFu7cO5Eq9OXyDy2vbnALYwRo8UAsMt7WH4
+Message-ID: <CAH5fLgirsNn9WwEUgFaY2z9+9gG3SWssCoNSzpE56F=sS02kEw@mail.gmail.com>
+Subject: Re: [PATCH v1] rust: time: make ClockSource unsafe trait
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
+	boqun.feng@gmail.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
+	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 30, 2025 at 3:10=E2=80=AFPM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> Mark the ClockSource trait as unsafe and document its safety
+> requirements. Specifically, implementers must guarantee that their
+> `ktime_get()` implementation returns a value in the inclusive range
+> [0, KTIME_MAX].
+>
+> Update all existing implementations to use `unsafe impl` with
+> corresponding safety comments.
+>
+> Note that there could be potential users of a customized clock source [1]
+> so we don't seal the trait.
+>
+> Link: https://lore.kernel.org/rust-for-linux/Z9xb1r1x5tOzAIZT@boqun-archl=
+inux/ [1]
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
+LGTM:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-On Tue, 24 Jun 2025, Dongsheng Yang wrote:
+Though you're missing `` around [0; KTIME_MAX] in some places, which
+may be worth adding.
 
-> Hi Mikulas,
-> 	This is V1 for dm-pcache, please take a look.
-> 
-> Code:
->     https://github.com/DataTravelGuide/linux tags/pcache_v1
-> 
-> Changelogs from RFC-V2:
-> 	- use crc32c to replace crc32
-> 	- only retry pcache_req when cache full, add pcache_req into defer_list,
-> 	  and wait cache invalidation happen.
-> 	- new format for pcache table, it is more easily extended with
-> 	  new parameters later.
-> 	- remove __packed.
-> 	- use spin_lock_irq in req_complete_fn to replace
-> 	  spin_lock_irqsave.
-> 	- fix bug in backing_dev_bio_end with spin_lock_irqsave.
-> 	- queue_work() inside spinlock.
-> 	- introduce inline_bvecs in backing_dev_req.
-> 	- use kmalloc_array for bvecs allocation.
-> 	- calculate ->off with dm_target_offset() before use it.
-
-Hi
-
-The out-of-memory handling still doesn't seem right.
-
-If the GFP_NOWAIT allocation doesn't succeed (which may happen anytime, 
-for example it happens when the machine is receiving network packets 
-faster than the swapper is able to swap out data), create_cache_miss_req 
-returns NULL, the caller changes it to -ENOMEM, cache_read returns 
--ENOMEM, -ENOMEM is propagated up to end_req and end_req will set the 
-status to BLK_STS_RESOURCE. So, it may randomly fail I/Os with an error.
-
-Properly, you should use mempools. The mempool allocation will wait until 
-some other process frees data into the mempool.
-
-If you need to allocate memory inside a spinlock, you can't do it reliably 
-(because you can't sleep inside a spinlock and non-sleepng memory 
-allocation may fail anytime). So, in this case, you should drop the 
-spinlock, allocate the memory from a mempool with GFP_NOIO and jump back 
-to grab the spinlock - and now you holding the allocated object, so you 
-can use it while you hold the spinlock.
-
-
-Another comment:
-set_bit/clear_bit use atomic instructions which are slow. As you already 
-hold a spinlock when calling them, you don't need the atomicity, so you 
-can replace them with __set_bit and __clear_bit.
-
-Mikulas
-
+Alice
 
