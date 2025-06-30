@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-708966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA6AAED781
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A146AED77B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFDFF188ED51
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 393793B71CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEAB2459C0;
-	Mon, 30 Jun 2025 08:38:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C19242D8F;
+	Mon, 30 Jun 2025 08:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsPbnEVe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D384242D9B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2898A23D28B;
+	Mon, 30 Jun 2025 08:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751272727; cv=none; b=QAOrWAYdc+SvYMOnlQgIKWXjFIvk7gYTVmyFo421ioULIon6nqcPQgaNW5jnPXWP4BDYgcN+f+jeAsxYoJwNe+0kTNU6FFbHtATCvLnhl/tY+vli11CtHupycNK5tml79WFeu6D5PbXXZ9tDMf6pWzf+mhIsljc/g4aqGZxLSnM=
+	t=1751272705; cv=none; b=s3b//GlSKo3v7LE3nUnuyNH78YdGRXuDDTuOInKIGOzFbzfDwU4zEHD/sU21kRG00tUT8IG9p0W8xmA7T1aioQOZNrc4aSoSeC6QhY5yi2WAk0lZOA8nIeRAj2Ee7JIfhemqSIstytZ9grLCcvYAxMHp10/vJEwrYl4OS7dE7IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751272727; c=relaxed/simple;
-	bh=GWGc5XkXW057UkUoas7KcMmCELtNfEXEicrspHRhoKc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sZrc7dz4NSTDP7LXpb+DtRSAl9VyKTkEubTd6fiaKEfy0RvqZzTkdt19biw9FWM0C6QJapVe0yUWGNjv7s/Kwcdgd5Ib8S0q74XJtm/jCYJ/oa9eTBtc4Rw8sY54rNRxDCLtZ3gWAsRyI7fxzQ9/LwaHcBjpqkbaS0pwK5/j8zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uWA1w-00011j-R3; Mon, 30 Jun 2025 10:38:24 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uWA1t-0064Zw-1S;
-	Mon, 30 Jun 2025 10:38:21 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uWA1t-0007Gn-14;
-	Mon, 30 Jun 2025 10:38:21 +0200
-Message-ID: <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
-Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: =?ISO-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>, 
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,  Jonathan Corbet
- <corbet@lwn.net>, Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
+	s=arc-20240116; t=1751272705; c=relaxed/simple;
+	bh=PLIXEwxWC7QQ+4j+LLRtCwneBwdS5keVrROQQcKq2wg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqQTkBLOJ/hPQI7w+Z3sk9ntdJJ+7BtiWO+R2XjRb/Zc7v5w1xOVTGBtE0sIpopmZsr8Gzenm9l3CIRQmH41K/mUTpW2t2Bljfe3onme5Q9njS+xgMQOJWAPfrgsIYGNiNBVOsUIVMwcuIazUhaF/74G6TQXogtJWsdhyaUUpkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsPbnEVe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 378BAC4CEF2;
+	Mon, 30 Jun 2025 08:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751272704;
+	bh=PLIXEwxWC7QQ+4j+LLRtCwneBwdS5keVrROQQcKq2wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AsPbnEVeeT6DMTbgBs5s9l+FTADNSJXYPbtIqiPsS/hU/aVY9Fy9OH3DwzduKxOUM
+	 fH2aIm8nT/GLFGZEsjjqzUeb352NzzCk0HbW7W4wFuN6Vom3QjrVjRUfTAq6jqIrkp
+	 NU6VZOrUnmat+iYPFSCC/VtJctGTXtBq8qveyVuyedbHsX7mCA95Ct0zAafMKEWrL5
+	 ZZyrTXPeFtyKU9Gm1Ccq0urSRwCPu6MSLl+1JbpmqNrjulRxwRWdjMpXVQAyajs0cs
+	 3uA1vTK0rMUERie5ddq8JL6W74ggIkLnTkRFFASbjlOqZD46FVe4GZkeVOHwjHrOy8
+	 mYHlD/8S21AFg==
 Date: Mon, 30 Jun 2025 10:38:21 +0200
-In-Reply-To: <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
-References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
-	 <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+From: Maxime Ripard <mripard@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+	Luca Weiss <luca.weiss@fairphone.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Javier Martinez Canillas <javierm@redhat.com>, Helge Deller <deller@gmx.de>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
+ interconnects property
+Message-ID: <20250630-stirring-kiwi-of-adventure-8f22ba@houat>
+References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
+ <20250623-simple-drm-fb-icc-v2-1-f69b86cd3d7d@fairphone.com>
+ <20250627-mysterious-optimistic-bird-acaafb@krzk-bin>
+ <DAX7ZB27SBPV.2Y0I09TVSF3TT@fairphone.com>
+ <1129bc60-f9cb-40be-9869-8ffa3b3c9748@kernel.org>
+ <8a3ad930-bfb1-4531-9d34-fdf7d437f352@redhat.com>
+ <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="hbtofy4xtgn6gof3"
+Content-Disposition: inline
+In-Reply-To: <85521ded-734d-48e8-8f76-c57739102ded@kernel.org>
 
-On Mo, 2025-06-23 at 11:27 +0200, Cl=C3=A9ment Le Goffic wrote:
-> Introduce the driver for the DDR Performance Monitor available on
-> STM32MPU SoC.
+
+--hbtofy4xtgn6gof3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: simple-framebuffer: Add
+ interconnects property
+MIME-Version: 1.0
+
+On Mon, Jun 30, 2025 at 10:24:06AM +0200, Krzysztof Kozlowski wrote:
+> On 29/06/2025 14:07, Hans de Goede wrote:
+> > Hi Krzysztof,
+> >=20
+> > On 28-Jun-25 1:49 PM, Krzysztof Kozlowski wrote:
+> >> On 27/06/2025 11:48, Luca Weiss wrote:
+> >>> Hi Krzysztof,
+> >>>
+> >>> On Fri Jun 27, 2025 at 10:08 AM CEST, Krzysztof Kozlowski wrote:
+> >>>> On Mon, Jun 23, 2025 at 08:44:45AM +0200, Luca Weiss wrote:
+> >>>>> Document the interconnects property which is a list of interconnect
+> >>>>> paths that is used by the framebuffer and therefore needs to be kept
+> >>>>> alive when the framebuffer is being used.
+> >>>>>
+> >>>>> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> >>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> >>>>> ---
+> >>>>>  Documentation/devicetree/bindings/display/simple-framebuffer.yaml =
+| 3 +++
+> >>>>>  1 file changed, 3 insertions(+)
+> >>>>>
+> >>>>> diff --git a/Documentation/devicetree/bindings/display/simple-frame=
+buffer.yaml b/Documentation/devicetree/bindings/display/simple-framebuffer.=
+yaml
+> >>>>> index 296500f9da05e296dbbeec50ba5186b6b30aaffc..f0fa0ef23d91043dfb2=
+b220c654b80e2e80850cd 100644
+> >>>>> --- a/Documentation/devicetree/bindings/display/simple-framebuffer.=
+yaml
+> >>>>> +++ b/Documentation/devicetree/bindings/display/simple-framebuffer.=
+yaml
+> >>>>> @@ -79,6 +79,9 @@ properties:
+> >>>>>    power-domains:
+> >>>>>      description: List of power domains used by the framebuffer.
+> >>>>> =20
+> >>>>> +  interconnects:
+> >>>>> +    description: List of interconnect paths used by the framebuffe=
+r.
+> >>>>> +
+> >>>>
+> >>>> maxItems: 1, or this is not a simple FB anymore. Anything which needs
+> >>>> some sort of resources in unknown way is not simple anymore. You need
+> >>>> device specific bindings.
+> >>>
+> >>> The bindings support an arbitrary number of clocks, regulators,
+> >>> power-domains. Why should I artificially limit the interconnects to o=
+nly
+> >>> one?
+> >>
+> >> And IMO they should not. Bindings are not supposed to be generic.
+> >=20
+> > The simplefb binding is a binding to allow keeping the firmware, e.g.
+> > uboot setup framebuffer alive to e.g. show a boot splash until
+> > the native display-engine drive loads. Needing display-engine
+> > specific bindings totally contradicts the whole goal of=20
 >=20
-> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
-> that come from the DDR Controller such as read or write events.
+> No, it does not. DT is well designed for that through expressing
+> compatibility. I did not say you cannot have generic fallback for simple
+> use case.
 >=20
-> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
-> counter, there is a notion of set of events.
-> Events from different sets cannot be monitored at the same time.
-> The first chosen event selects the set.
-> The set is coded in the first two bytes of the config value which is on 4
-> bytes.
->=20
-> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controlle=
-r
-> and may be secured by bootloaders.
-> Access controllers allow to check access to a resource. Use the access
-> controller defined in the devicetree to know about the access to the
-> DDRPERFM clock.
->=20
-> Signed-off-by: Cl=C3=A9ment Le Goffic <clement.legoffic@foss.st.com>
-> ---
->  drivers/perf/Kconfig         |  11 +
->  drivers/perf/Makefile        |   1 +
->  drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 905 insertions(+)
->=20
-[...]
-> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
-> new file mode 100644
-> index 000000000000..c0bce1f446a0
-> --- /dev/null
-> +++ b/drivers/perf/stm32_ddr_pmu.c
-> @@ -0,0 +1,893 @@
-[...]
-> +	if (of_property_present(pdev->dev.of_node, "resets")) {
-> +		rst =3D devm_reset_control_get(&pdev->dev, NULL);
+> But this (and previous patchset) grows this into generic binding ONLY
+> and that is not correct.
 
-Use devm_reset_control_get_optional_exclusive() instead. It returns
-NULL if the device tree doesn't contain a resets property.
+Can we have a proper definition of what a correct device tree binding is
+then?
 
-> +		if (IS_ERR(rst)) {
-> +			dev_err(&pdev->dev, "Failed to get reset\n");
+It's a bit surprising to have *that* discussion over a binding that is
+now well older than a decade now, and while there is definitely some
+generic bindings in ePAPR/DT spec, like the CPU ones.
 
-Please consider using dev_err_probe() instead.
+If you don't consider that spec to be correct DT bindings, please
+provide a definition of what that is, and / or reasonable alternatives.
 
-> +			ret =3D PTR_ERR(rst);
-> +			goto err_clk;
-> +		}
-> +		reset_control_assert(rst);
-> +		reset_control_deassert(rst);
+Also, no, a device specific binding isn't reasonable here, because we
+*don't* have a device. From a technical standpoint, the firmware creates
+the framebuffer, Linux just uses it. Just like you don't have a
+device/platform specific compatible for PSCI, SCPI, et al.
 
-These can be done unconditionally, as they are no-ops for rst =3D=3D NULL.=
-=20
+And from a process standpoint, that driver is typically used years
+before we even get to writing a driver for the actual display driver.
+And since bindings are far from standard and actually pretty
+opionionated, even if we submitted a binding to use a proper binding
+without having a clear idea of what the hardware is, or what a driver
+would want, we would end up with either a broken binding, or a broken
+driver.
 
-regards
-Philipp
+Maxime
+
+--hbtofy4xtgn6gof3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaGJM/QAKCRAnX84Zoj2+
+dp8lAX0XjiHwXCRnaTDs4vlk7Mk0E+SF7vXGwL4XES2VVQuafyI5PHmNPASOj50l
+8IbNN4EBfjVbhdmCzLalbOYCKk+4j8bq9hixo+ZfPzxdRT2Esn8tvlUHMJa/Um+T
+DOcMcoHSYA==
+=uZYT
+-----END PGP SIGNATURE-----
+
+--hbtofy4xtgn6gof3--
 
