@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-709243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20EEAEDAD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:25:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CE9AEDAC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 13:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9B0189A859
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD36189178D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1C225CC5B;
-	Mon, 30 Jun 2025 11:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F240E25C708;
+	Mon, 30 Jun 2025 11:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b="Zdato96S"
-Received: from esa1.hc555-34.eu.iphmx.com (esa1.hc555-34.eu.iphmx.com [23.90.104.144])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="efVc9BvE"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DE325C833
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 11:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.90.104.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6258C2594B4;
+	Mon, 30 Jun 2025 11:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751282736; cv=none; b=r3An7cj5S+vCq1ZUg4djbIu1p166iwpyt0CO0RCxigJAsf6THHJQrYCrM9PclrMFjySYRCQReuyzH/cN7PqJTA34e+leKXRvdGMXO8HfRbQUcg127Z3gyic7CvCwjgZWtBkyT6SP9HNB0sHcjSO9I6zezTKjPpPqSmQgVYdww2g=
+	t=1751282534; cv=none; b=Z2BjTqoyrEZqM3DmQBffH2B1+w7bJ4sh+Jm6g7kr1lEwML9LFfeg96uzKRnE6hExF3L8h93LTd9dQl1+Ic5X+DzgPyKysOppqeQGOXfqup/W8t2iq2V9HYNOL0sWGECoDn0RddTiOPi81QWnmjpDgeZJK7z1dMMZD/F0idhYKOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751282736; c=relaxed/simple;
-	bh=rtGozj1Eecsc0Y022urCuSqjhAue5dzTmGXqpT9ZSF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hLkhQf+34NJIRGuIwVjjQ9m5jqRoxcX1L3cc4sjC5/0/vC0ocdawz5yg93fAakonnMPN7MFHpmWTL0xCYX0JFo0/yu144hnp4fdUceR55SEHOmszxytj9gTjtMNIqKmSxeinPMyw3I/0J7pkp3rNCX4G6Md0obS4mfXIqw404SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com; spf=pass smtp.mailfrom=mobileye.com; dkim=fail (0-bit key) header.d=mobileye.com header.i=@mobileye.com header.b=Zdato96S reason="key not found in DNS"; arc=none smtp.client-ip=23.90.104.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mobileye.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mobileye.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=mobileye.com; i=@mobileye.com; q=dns/txt; s=MoEyIP;
-  t=1751282733; x=1782818733;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rtGozj1Eecsc0Y022urCuSqjhAue5dzTmGXqpT9ZSF0=;
-  b=Zdato96SMsdpspCP6+o3hW1QhQvbvnTRjEGNmovk3kWtvnU3mmdAzMkO
-   13WIuE1hYqZbsTeGSzqtm8VEm+UjB9dxP0LxVkvsul+ceJksezkSU2mXq
-   gqreCTyQdTBhgwa3ElorCXpDqCTw9mG8G7dKQVg7WnK6/Ca8YSbuVDw67
-   pmRJu08sauYsT/AtB6fxG4dxNCthqQXvPc8zLXg0aLQDrjGE+ENCp0P5s
-   Y4ViQOjI2o/8V3O6xmY+q14fyq8m/+nAiI3qyW+snQIIBdmwZu3BXsPb7
-   /vDoNToPckUrmGzuv9HqzOJm+er1wWf4y1dUru/x9TShPCoYUvkdi4uVo
-   g==;
-X-CSE-ConnectionGUID: jt4cel4LSSyMcgztyyK8gA==
-X-CSE-MsgGUID: XUCIx9tMQJm/fIYqhoQdSw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from unknown (HELO ces04_data.me-crop.lan) ([146.255.191.134])
-  by esa1.hc555-34.eu.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 14:24:22 +0300
-X-CSE-ConnectionGUID: IGZG9yLwTFKAHMP+1UGyIQ==
-X-CSE-MsgGUID: bfdPHOXyTq2LEkMUeDkMhw==
-Received: from unknown (HELO epgd034.me-corp.lan) ([10.154.54.6])
-  by ces04_data.me-crop.lan with SMTP; 30 Jun 2025 14:24:20 +0300
-Received: by epgd034.me-corp.lan (sSMTP sendmail emulation); Mon, 30 Jun 2025 14:24:21 +0300
-From: Pnina Feder <pnina.feder@mobileye.com>
-To: bjorn@kernel.org
-Cc: alex@ghiti.fr,
-	bjorn@rivosinc.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	mick@ics.forth.gr,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	Pnina Feder <pnina.feder@mobileye.com>
-Subject: [PATCH 1/1] riscv: Change memblock reserved name to be recognized on kexec
-Date: Mon, 30 Jun 2025 14:21:30 +0300
-Message-ID: <20250630112309.97162-4-pnina.feder@mobileye.com>
-In-Reply-To: <20250409182129.634415-1-bjorn@kernel.org>
-References: <20250409182129.634415-1-bjorn@kernel.org>
+	s=arc-20240116; t=1751282534; c=relaxed/simple;
+	bh=1bYhbuvaWAJUJvzUh/GTOLonJNXtyEs9OxUNE2UftcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XyCc5WnztlnoGNO8lkxi/dFOImRXr890ZyAdYp0/Wz2gXNvRxAI+neIJGNY4VZ2gKDnwL5dapjDaGx97on4DXC6Rzr5b1eL4RheVXDAacqtaVxBf2SkYUrU5AmXZAG5VjwdADZ1gJXUf3qRlMN7xAy499kgS8BJClsUQQbRaElw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=efVc9BvE; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=kb6pBthkR87A0/ZI5+bsHban2xuUDD2pS2s55zWu6hs=; b=efVc9BvE3b+6DFi03dY5sdz69b
+	laq9Wkyq9Kw0IVwUv4YxiDJah0dgnWQQY9c+iSBBFFc4tp6leiMQV9l5vEHTKskgOgGaE/XXtlUGB
+	/qIcSU83M0KwBofRXKsWACSzKjgEgETqOlDgJl72vfG5mr9kcFL/guORaUYT/4CcuHdTf0sK9GWO4
+	3qtQkMubv/Rg0m4l/7CrI2ZxWtWB43LR46CssJ/BsTTOM3496kDdXsBL/qlWzCnY1Fj8d7hYKizWF
+	FACa6xgYRrBtromoERDjnIlAoMMRHHdoqJMjBGORLqiXbv4/R8AHjy2kgwb8ZUdlwnUyJWb6EzpHK
+	g/hExCmg==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:36744 helo=[10.224.8.110])
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1uWCaP-0000000GwQK-38Ng;
+	Mon, 30 Jun 2025 13:22:09 +0200
+Message-ID: <dea91aa3-abfb-4ecd-9801-f915269bfce2@oss.cyber.gouv.fr>
+Date: Mon, 30 Jun 2025 13:22:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 4/4] usb: core: Add Kconfig option to compile usb
+ authorization
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Kannappan R <r.kannappan@intel.com>,
+ Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Pawel Laszczak <pawell@cadence.com>,
+ Ma Ke <make_ruc2021@163.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>,
+ Luc Bonnafoux <luc.bonnafoux@oss.cyber.gouv.fr>,
+ Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20250620-usb_authentication-v1-0-0d92261a5779@ssi.gouv.fr>
+ <20250620-usb_authentication-v1-4-0d92261a5779@ssi.gouv.fr>
+ <2025062104-debate-compactly-9aee@gregkh>
+Content-Language: en-US
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+In-Reply-To: <2025062104-debate-compactly-9aee@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-memblock resreved exposes as Reserved on iomem,
-kexec tool doesn't take those parts to vmcore, but
-the kernel use those address and it needed when opening the vmcore.
-Without this fix the crash-tool fails.
 
-Fixes: e94eb7ea6f20 ("riscv: Properly export reserved regions in /proc/iomem")
-Signed-off-by: Pnina Feder <pnina.feder@mobileye.com>
----
- arch/riscv/kernel/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 6/21/25 09:22, Greg Kroah-Hartman wrote:
+> On Fri, Jun 20, 2025 at 04:27:19PM +0200, nicolas.bouchinet@oss.cyber.gouv.fr wrote:
+>> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>>
+>> This enables the usb authentication protocol implementation.
+>>
+>> Co-developed-by: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
+>> Signed-off-by: Luc Bonnafoux <luc.bonnafoux@ssi.gouv.fr>
+>> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+>> ---
+>>   drivers/usb/core/Kconfig  | 8 ++++++++
+>>   drivers/usb/core/Makefile | 4 ++++
+>>   2 files changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+>> index 58e3ca7e479392112f656384c664efc36bb1151a..07ba67137b7fe16ecb1e993a51dbbfd4dd3ada88 100644
+>> --- a/drivers/usb/core/Kconfig
+>> +++ b/drivers/usb/core/Kconfig
+>> @@ -143,3 +143,11 @@ config USB_DEFAULT_AUTHORIZATION_MODE
+>>   	  ACPI selecting value 2 is analogous to selecting value 0.
+>>   
+>>   	  If unsure, keep the default value.
+>> +
+>> +config USB_AUTHENTICATION
+>> +	bool "Enable USB authentication function"
+>> +	default n
+> Nit, "default n" is the default, no need to ever list it.
 
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 14888e5ea19a..16e0cebed170 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -249,7 +249,7 @@ static int __init reserve_memblock_reserved_regions(void)
- 			if (start > mem->end || end < mem->start)
- 				continue;
- 
--			reserve_region_with_split(mem, start, end, "Reserved");
-+			reserve_region_with_split(mem, start, end, "Reserved-memblock");
- 		}
- 	}
- 
--- 
-2.43.0
+Done, fixes will be sent in the next patch version.
 
+>
+> thanks,
+>
+> greg k-h
 
