@@ -1,88 +1,64 @@
-Return-Path: <linux-kernel+bounces-708949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-708951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9027EAED747
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:28:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829ECAED74E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 10:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67373188D664
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A50167C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 08:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF09624166B;
-	Mon, 30 Jun 2025 08:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE40221540;
+	Mon, 30 Jun 2025 08:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Np6/mk64"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pN/5zQWC"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADB523ABB1
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F9F1F1317;
+	Mon, 30 Jun 2025 08:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751272105; cv=none; b=JE9tsEUZoip8NvoRqV7A5VNXWj7Z04ToTkwU9CPw1IHzpVAdlYHPRpT045x1T6k2f7TNMkBdov8oxnXSpAo2ZRQY1xYKS7dbz/r0ajA207qjUdHwS/OsL1yn33RAUGi7TYNyMIOKp863WCqwno85D8dbnTAjDVxNNpXyTawol4g=
+	t=1751272234; cv=none; b=e8mxKUtZYJPAX35egEus3+IBGl9gCrdeaU+ucyhqCdJXMx886v1rDniPz3y0Fu+CP4qF9Cy0dUGIfNeh7oq63yKm7PdDgR3KoDooSQO0k77hLRc4VJ1VuQGIldewA0q5ukS2J0LAG2LhRsoGuA4GugOmKThgROTY+ueBUnB/jRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751272105; c=relaxed/simple;
-	bh=opuEB7LyWEqgR61ttBKTDpTpAkIB9+/UeaBrxZSbziY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rf/1V6VUMVFQMwPnn3EcKYDBLC+Z7ewAwtjbhwVUQRxvZStTTBM5gEqZV8lK4nV3DoTbEd93Z5JvNQalUrpQvaK+KbYfrtnUFtufZyrQZius1dKdpbER5u3zDGrVWrj5y/Cm27OKlYJF2VHjAom7xP8cvX0dTuIplW7G4kVJFyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Np6/mk64; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8DTXh000438
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:28:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	s=arc-20240116; t=1751272234; c=relaxed/simple;
+	bh=WhUH3kd8yTWl4hqtKNADtnS30bPb+kigzXqNcalUCds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gN6mHmyBY/BvFyFQ4Q5ZuDQ8awg4YACGOfFzNo0HUkcG1tMRVbNRihsq2VWgWeWXeHaj5xtt8UpRNDjTy+pFs+Cr2OQgmE3mscKhZCROiLN6YNp7wbpD9ROx6dxMEhXfb3pbzZoce0RT47xJnNZA/koDGy/07C0rErRE9ZRYfPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pN/5zQWC; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U7pr62007947;
+	Mon, 30 Jun 2025 10:30:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vKpr6yzIcJB1d9WyXdee0CZFQ4Hog1591SCG7KI65o0=; b=Np6/mk64Wnssv3Zz
-	qL236c9QdxAfqMiESBMSJ7eZ2BUw7Nfv3R6sDMyzXYZwdbZ9VpejQLHsN0czm9U1
-	WKtvbvp/o80RDjV9fzdRFfyk/Db9r2jGWSJ04AyuYMq3Jra2WvIONRUEVYb8eE/N
-	+ANgnuqGT4wBKeA+D4HJFKIdtKTUIQIZxtzjthPKhOUihLxF7b00uFsvNB6Yqgdl
-	ZUvqhA+8yP5mzUuozDwxxasRXbjbadZGW5Egai9oin2jzU/fKCMEA/AaYDdQGtkk
-	FouYeoUk+V2J4mExMLQQuF2YNgejMLbOUwMkZpF2+CJtKAz+WVU/xzrlMT2A9UAJ
-	a9NuYQ==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7qm3wke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 08:28:22 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b3510c0cfc7so558067a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 01:28:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751272101; x=1751876901;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKpr6yzIcJB1d9WyXdee0CZFQ4Hog1591SCG7KI65o0=;
-        b=uEf7aHfapuvrtvmxxFlgbqv7wEJXnG9tZtSCvZaRtDF0wxD2iw7Bvmtk6eYwkYzikD
-         Rr2Wd8w4WLI2INSAJGap/oEyeROYE7Y7JZhIdNxcY3PKSQVq0+htHMVGDz6e1ZJhB2oR
-         1AcK0qj08H/TBvOQ8iWO5eMKkDlLI9+BbdEoXcBzP9SKG+SsdkLDhoLEVA8w1mrMYpz9
-         +zP9SNdU/rnfsmrgRgMkf70zwkC6VhDaFVWHUT90DqkhZz2xo9xSmvCGI5inXSMbA8AK
-         vdWA/LKj/MDS3/RFdROiqD7wb6BkKpR5imTR675rJO5xEkrVTXJEqJpzmkVXBGA0ERk4
-         aGrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWXDirCJ1a5Pu6X13xe1KxZWVeGZLOcjygl7jQLkeD2sMciSP+anj6m019k0MO4BBMIHduevBRPJjBgdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPpUMAKBsV2/6xBQdCHi2uRIh68G9BYy8TWVzMopRjxzBedSZb
-	G7j0tpEG3JFbER/Z5W5DGRZpFwe0vyS6i1R253oI13tBtMU4HaqnoTJIXbhWbr5zgHYfcU6wVSi
-	CvJ+BXCe9plt728+ydhzuwxfc19ZFE9533msXegS9vlVwqlfMShCZJSrNSlHfuKIxEpzh3Dvt3s
-	Q=
-X-Gm-Gg: ASbGncup767AphgjSx/yzw+/NOtApX0EErlzWPa0qJYWGAb+lH7azlV+/y2hdoebMxK
-	9jcbSzRyELokFUkQPc88jmnNmST7/M0vVq6chqtzv5AHkrkMIhaBOQZ0Ylh/9CHv49BjBkdB256
-	QR1oiXeSCdxDSyHy+IgtDG1zRWgrUDceImHozgD6mOZyETssZKH7yfSQI1iUnWKs4fdkH4d1uDl
-	KYMQuxoqJmrqO7/OVTGWeCZhrtHG/1efsYZs3jIPwkMFXW5cWVnlvFwIgL0J0tWfLPTMaNv2JTL
-	s0fxW0XlGmGhub5p9DAdin2RI1sUkM/Pa4ndTWPHAPbjPh3LvXJY5hy80b9k0dFpq2EVxNXAqGh
-	Xex6btfx2UKA=
-X-Received: by 2002:a17:903:46cd:b0:233:f3df:513d with SMTP id d9443c01a7336-23ac4607b79mr203783835ad.35.1751272100783;
-        Mon, 30 Jun 2025 01:28:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFFpoJe/E22crPOG7XWE9BLjLycCr22wMPAkT8qjvh8z5NDNDo/Aolfr358a5ZWAnCeRRw7gg==
-X-Received: by 2002:a17:903:46cd:b0:233:f3df:513d with SMTP id d9443c01a7336-23ac4607b79mr203783485ad.35.1751272100359;
-        Mon, 30 Jun 2025 01:28:20 -0700 (PDT)
-Received: from [10.133.33.109] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e1b54sm75066315ad.15.2025.06.30.01.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 01:28:19 -0700 (PDT)
-Message-ID: <e9160bb8-2b5c-4c30-b60f-520decde851e@oss.qualcomm.com>
-Date: Mon, 30 Jun 2025 16:28:14 +0800
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	MMhEswzfz6Tdga1zQpQyWh8QYxmL/LddetOQ1V55ux0=; b=pN/5zQWCnOEyU639
+	+qKc397SzTfJYoQP9dKXkQCFh5cqxElAX4z1jItyu3OExiThXPfQ+TXlXVGATpEx
+	yVy7GcyeoDpKa7RVik4OQtTmjYrGo75a0vZF/3zTFZndMDZWTZFxcSpzVxKbNAch
+	YqpoNI8XNHy9LkLuSrQ+ligkl+Wl+TGkl0woYBmxdHDO7DYqsSW7E/ERhIPwJAPP
+	Ftz/mEwNhbdMW9oNIAt/NyFLJjZV2JP+5MCE/NXaaBXCvf0WHkSZpSUu5KrSWzyZ
+	Kzbp21wHS64tB41Rn5XCykFeJb5ne7ZQAE+3Moni0R1Pr6rREDOAn5BeRCaF6udC
+	vtO8qw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tkxsvm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 10:30:20 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9F8324002D;
+	Mon, 30 Jun 2025 10:29:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E4DA16F3FFE;
+	Mon, 30 Jun 2025 10:28:51 +0200 (CEST)
+Received: from [10.252.20.7] (10.252.20.7) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
+ 2025 10:28:51 +0200
+Message-ID: <5e61da51-cd02-41fd-9773-8bd776e1db62@foss.st.com>
+Date: Mon, 30 Jun 2025 10:28:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,133 +66,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] power: supply: core: Add resistance power supply
- property
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250530-qcom_battmgr_update-v2-0-9e377193a656@oss.qualcomm.com>
- <20250530-qcom_battmgr_update-v2-1-9e377193a656@oss.qualcomm.com>
- <b7m55sjc2rtvtelvez6sxnjvdostvxmfjhhsr4uxhyhh4bxrcd@xmioz2bsgis2>
+Subject: Re: [PATCH v2] spi: stm32: fix pointer-to-pointer variables usage
+To: Antonio Quartulli <antonio@mandelbit.com>, <linux-spi@vger.kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alain Volmat
+	<alain.volmat@foss.st.com>
+References: <20250630081253.17294-1-antonio@mandelbit.com>
 Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <b7m55sjc2rtvtelvez6sxnjvdostvxmfjhhsr4uxhyhh4bxrcd@xmioz2bsgis2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=C4TpyRP+ c=1 sm=1 tr=0 ts=68624aa6 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
- a=N6g_Jt28wG8IcqWndf0A:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: L5e2107uExrXUtxM0FbruHEa6mxMKDBP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDA2OSBTYWx0ZWRfX37e+mQQtefjP
- xEtEIY/iOvwG/QzKbI1zdqWhkcy52e2x9x3ALandXHgjEjx6BlhWd1PFHyTwreIto8V01dBrjg/
- V66m9BXyh/1Mt+ZP9/YkycuWeLrhSBVATVO7StKKFQW79Z/rbb2fbRuofRiVDqPUIukL80TUeI7
- Tzl48K0ZLPrYT8/O89zi2PlZl2qMi37JhsS3BdTja3INDNBSVzuNnh8UGZJRXpthRtSXOusgil5
- ek5y0fmQ0+GKEDfzdb8mW5g7UGeNrMFqrzHH7ZvVC+rQYkiTKBG8rySpMb4v00Wamww01fE4s27
- ++TguVWxQWnEFm4+9huYHh2ZtOLX5ncPTlTB+19vaIa3rw1GdgFfJ/OfmdyQmnkJ99Nar8imDXc
- sJbdfpud/PfJWkVG1lTUJoBckrDorUmkjOvQ5143ii0xDN4aMUGbiL9sdvQdYngBzd/zsZlE
-X-Proofpoint-GUID: L5e2107uExrXUtxM0FbruHEa6mxMKDBP
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <20250630081253.17294-1-antonio@mandelbit.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-06-30_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300069
 
+On 6/30/25 10:12, Antonio Quartulli wrote:
+> In stm32_spi_prepare_rx_dma_mdma_chaining() both rx_dma_desc
+> and rx_mdma_desc are passed as pointer-to-pointer arguments.
+> 
+> The goal is to pass back to the caller the value returned
+> by dmaengine_prep_slave_sg(), when it is not NULL.
+> 
+> However, these variables are wrongly handled as simple pointers
+> during later assignments and checks.
+> 
+> Fix this behaviour by introducing two pointer variables
+> which can then be treated accordingly.
+> 
+> Fixes: d17dd2f1d8a1 ("spi: stm32: use STM32 DMA with STM32 MDMA to enhance DDR use")
+> Addresses-Coverity-ID: 1644715 ("Null pointer dereferences (REVERSE_INULL)")
+> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
+> 
+> ---
+> Changes from v1:
+> * introduce *_mdma_desc and *_dma_desc for better readability
+> * fix another instance of rx_dma_desc bogus assignment in case of
+>    failure of sg_alloc_table()
+> * commit title/message reworded accordingly to the previous point
+> ---
+>   drivers/spi/spi-stm32.c | 22 ++++++++++++----------
+>   1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+> index 3d20f09f1ae7..4b7f074fdba9 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -1474,6 +1474,8 @@ static int stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
+>   						  struct dma_async_tx_descriptor **rx_dma_desc,
+>   						  struct dma_async_tx_descriptor **rx_mdma_desc)
+>   {
+> +	struct dma_async_tx_descriptor *_mdma_desc = *rx_mdma_desc;
+> +	struct dma_async_tx_descriptor *_dma_desc = *rx_dma_desc;
+>   	struct dma_slave_config rx_mdma_conf = {0};
+>   	u32 sram_period, nents = 0, spi_s_len;
+>   	struct sg_table dma_sgt, mdma_sgt;
+> @@ -1524,18 +1526,18 @@ static int stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
+>   		}
+>   	}
+>   
+> -	*rx_dma_desc = dmaengine_prep_slave_sg(spi->dma_rx, dma_sgt.sgl,
+> -					       dma_sgt.nents, rx_dma_conf->direction,
+> -					       DMA_PREP_INTERRUPT);
+> +	_dma_desc = dmaengine_prep_slave_sg(spi->dma_rx, dma_sgt.sgl,
+> +					    dma_sgt.nents, rx_dma_conf->direction,
+> +					    DMA_PREP_INTERRUPT);
+>   	sg_free_table(&dma_sgt);
+>   
+> -	if (!rx_dma_desc)
+> +	if (!_dma_desc)
+>   		return -EINVAL;
+>   
+>   	/* Prepare MDMA slave_sg transfer MEM_TO_MEM (SRAM>DDR) */
+>   	ret = sg_alloc_table(&mdma_sgt, nents, GFP_ATOMIC);
+>   	if (ret) {
+> -		rx_dma_desc = NULL;
+> +		_dma_desc = NULL;
+>   		return ret;
+>   	}
+>   
+> @@ -1558,13 +1560,13 @@ static int stm32_spi_prepare_rx_dma_mdma_chaining(struct stm32_spi *spi,
+>   		}
+>   	}
+>   
+> -	*rx_mdma_desc = dmaengine_prep_slave_sg(spi->mdma_rx, mdma_sgt.sgl,
+> -						mdma_sgt.nents, rx_mdma_conf.direction,
+> -						DMA_PREP_INTERRUPT);
+> +	_mdma_desc = dmaengine_prep_slave_sg(spi->mdma_rx, mdma_sgt.sgl,
+> +					     mdma_sgt.nents, rx_mdma_conf.direction,
+> +					     DMA_PREP_INTERRUPT);
+>   	sg_free_table(&mdma_sgt);
+>   
+> -	if (!rx_mdma_desc) {
+> -		rx_dma_desc = NULL;
+> +	if (!_mdma_desc) {
+> +		_dma_desc = NULL;
+>   		return -EINVAL;
+>   	}
+>   
 
-On 6/22/2025 9:26 AM, Sebastian Reichel wrote:
-> Hi,
->
-> On Fri, May 30, 2025 at 03:35:06PM +0800, Fenglin Wu via B4 Relay wrote:
->> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->>
->> Some battery drivers provide the ability to export resistance as a
->> parameter. Add resistance power supply property for that purpose.
-> This is missing some information and the naming is bad.
->
-> Which resistance (I suppose battery internal resistance)?
->
-> That is heavily dependent on the battery temperature. So this needs
-> to document if this is for the current temperature or for some
-> specific one.
->
-> -- Sebastian
+Thank you, LGTM
+You can add my Reviewed-by
 
-This is battery internal resistance calculated by battery management 
-system, using the real-time temperature measured by the thermistor 
-inside the battery pack.
-
-I can update the name to something like "rt_internal_resistance" and 
-update the description accordingly.
-
->> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->> ---
->>   Documentation/ABI/testing/sysfs-class-power | 10 ++++++++++
->>   drivers/power/supply/power_supply_sysfs.c   |  1 +
->>   include/linux/power_supply.h                |  1 +
->>   3 files changed, 12 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
->> index 560124cc31770cde03bcdbbba0d85a5bd78b15a0..22a565a6a1c509461b8c483e12975295765121d6 100644
->> --- a/Documentation/ABI/testing/sysfs-class-power
->> +++ b/Documentation/ABI/testing/sysfs-class-power
->> @@ -552,6 +552,16 @@ Description:
->>   			Integer > 0: representing full cycles
->>   			Integer = 0: cycle_count info is not available
->>   
->> +What:		/sys/class/power_supply/<supply_name>/resistance
->> +Date:		May 2025
->> +Contact:	linux-arm-msm@vger.kernel.org
->> +Description:
->> +		Reports the resistance of the battery power supply.
->> +
->> +		Access: Read
->> +
->> +		Valid values: Represented in microohms
->> +
->>   **USB Properties**
->>   
->>   What:		/sys/class/power_supply/<supply_name>/input_current_limit
->> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
->> index a438f7983d4f6a832e9d479184c7c35453e1757c..dd829148eb6fda5dcd7eab53fc70f99081763714 100644
->> --- a/drivers/power/supply/power_supply_sysfs.c
->> +++ b/drivers/power/supply/power_supply_sysfs.c
->> @@ -220,6 +220,7 @@ static struct power_supply_attr power_supply_attrs[] __ro_after_init = {
->>   	POWER_SUPPLY_ATTR(MANUFACTURE_YEAR),
->>   	POWER_SUPPLY_ATTR(MANUFACTURE_MONTH),
->>   	POWER_SUPPLY_ATTR(MANUFACTURE_DAY),
->> +	POWER_SUPPLY_ATTR(RESISTANCE),
->>   	/* Properties of type `const char *' */
->>   	POWER_SUPPLY_ATTR(MODEL_NAME),
->>   	POWER_SUPPLY_ATTR(MANUFACTURER),
->> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
->> index c4cb854971f53a244ba7742a15ce7a5515da6199..de3e88810e322546470b21258913abc7707c86a7 100644
->> --- a/include/linux/power_supply.h
->> +++ b/include/linux/power_supply.h
->> @@ -174,6 +174,7 @@ enum power_supply_property {
->>   	POWER_SUPPLY_PROP_MANUFACTURE_YEAR,
->>   	POWER_SUPPLY_PROP_MANUFACTURE_MONTH,
->>   	POWER_SUPPLY_PROP_MANUFACTURE_DAY,
->> +	POWER_SUPPLY_PROP_RESISTANCE,
->>   	/* Properties of type `const char *' */
->>   	POWER_SUPPLY_PROP_MODEL_NAME,
->>   	POWER_SUPPLY_PROP_MANUFACTURER,
->>
->> -- 
->> 2.34.1
->>
->>
+Best regards,
+Clément
 
