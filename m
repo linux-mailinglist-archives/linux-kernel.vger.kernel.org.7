@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-710236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAAEAEE9AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45000AEE9B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 23:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF1E3BD713
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D43E4204EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 21:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4234024678B;
-	Mon, 30 Jun 2025 21:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBAB2EA735;
+	Mon, 30 Jun 2025 21:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bj5xMQTd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCX2LGTo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3811EBA0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3647242D8C;
 	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751320364; cv=none; b=E8eqUEibCNMmT/fIXhaXt8crm2kzz/J7uShlVOl03FfrPpfsyfzc7T0IurpO5fFhMEwXf7lpCbhziSXqz//w9ghY+A3E2ZY1LXw2n3Yn5cciRejIRKcuzq2A5Ld4eWEI17t6V0ubKI7/5GRekxFU6+Y7c2KfvVQys0Fx7QXVKcA=
+	t=1751320365; cv=none; b=SgrWBnUuMAgNna7dA7PY0t4wSUAdh1gnD2R9/88cgOHFjkjUJr7jlzQSAvE2G/5fWNeY62L8X/n+DExez9BDHD4F7XIBfa5B91mOj2yw/Cz4cazSwObTAiYYiRwIXKj6XKc5I50QMc3oCknZpNPtItAAPOu77PXu430s8nRTmDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751320364; c=relaxed/simple;
-	bh=ZwhknBqlHdkBeAIFTDnGtCR/SgMMaoQkTrq3Mjl5ySI=;
+	s=arc-20240116; t=1751320365; c=relaxed/simple;
+	bh=ibyDFfdHR/o/ZTsMrzSIxlRYX/epHuKw1deAOw9XBLw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZVam6R1OZEYwSGzo4wxkkVLc7yCcqerw55J95HFnVeWBfZNvpdP24pImFgA8uHTfhUML7ApVslzLNv61v1FfHScAStF5K5GdOPnG1A1BR6/D5XwA8MOB0WgUR+joWIBJonDAnP7olj9t/zC12Iqdux31U4d12b2qWFUK/jW6aDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bj5xMQTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54373C4AF09;
+	 MIME-Version; b=F9qw/YWbFqw/qZsVoN6cSLcAx4x2Ms89CWCac0/XjSkQ/Jzc9j2K49B75M66ZXfc9adItFf5v/hKnODWgxNuJ7KoMMHnQaoVINiu77w5pn8c+YUdUKi1fbhq76w5y3xWCaR3dNh5sY7FW68PZF6/+MqalKZmTyT4USINOljd9hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCX2LGTo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D89DC4CEF4;
 	Mon, 30 Jun 2025 21:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751320364;
-	bh=ZwhknBqlHdkBeAIFTDnGtCR/SgMMaoQkTrq3Mjl5ySI=;
+	bh=ibyDFfdHR/o/ZTsMrzSIxlRYX/epHuKw1deAOw9XBLw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bj5xMQTd/AlShkhpDFPAAnYzd/ZXaXZ+ZXMCs95/aFVD3fr8bH59+3BHnw7hRXN6i
-	 exrLrrkEmyhP0UmTTPSIfVI33CHyDzDCgCLpGoLi101Kovjo8d6fV2vynOA3EROakH
-	 yZ35//HOVrlTVnvTasAs0mqw2+64JkSML9OTGHg5XywvvSweuZfFEkSh1r0PQWzO0k
-	 yIKOzs4O5DwZHv00jxzKKwWy89nc+ru3qaLjZvZf7ktxy5cHoT6/Bb3od5HKrrl2cw
-	 Du0OCvq80ovKUuJ2cy4E1yhA7iPFamp+s3WaRUvnTaCjZZKRVwCbXg/xM0jD5SeGv6
-	 bUdc3i2J5QyvA==
+	b=qCX2LGToglU5BugwCVGf5Qs1+e+NMWM/TLBRHrZ6XAbNQP8H0oYf+Hw2YwtACSYSH
+	 OgyBewFq9JxtcOK7+S6kCVbReDT+mpZWIRwW7gZQJA3wWr+U09OkRN/ZhEeu6W67/b
+	 j/HSPpnHEmVzArJptDWsydOgbodTLD3eJP08rLGpuB9nByrjTzOl2T6ZxCOSz93+ns
+	 SJyGXTqihl9gdvniRXYaLwFUjHIUqw/N5FYnhqZwZK1PitLtp7L7L5FVgLwsfs1hhD
+	 qlJqYaDvGFAkLLeaGpXAjfGpQYnwd1+aGymPn6oaFBjbLQPi8ECfMRp1I/+PEvBxjd
+	 qSp6JLW+EIbjA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uWMQc-00000003QWh-2G2Q;
+	id 1uWMQc-00000003QWl-2Mrh;
 	Mon, 30 Jun 2025 23:52:42 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -52,9 +52,9 @@ Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	"Sai Vishnu M" <saivishnu725@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 07/15] scripts: sphinx-pre-install: drop support for old virtualenv
-Date: Mon, 30 Jun 2025 23:34:55 +0200
-Message-ID: <000c49af2cedd9e25b7ceacc3d69be8d73c876c6.1751318230.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 08/15] scripts: sphinx-pre-install: Address issues with OpenSUSE Leap 15.x
+Date: Mon, 30 Jun 2025 23:34:56 +0200
+Message-ID: <c8dbcb0d7151e1604ad4a594f844787af2fa3b76.1751318230.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <cover.1751318230.git.mchehab+huawei@kernel.org>
 References: <cover.1751318230.git.mchehab+huawei@kernel.org>
@@ -67,123 +67,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Up to Python 3.2, the virtual environment were created
-via virtualenv binary.
+On openSUSE Leap 15.6, which is the current LTS version, has two
+Sphinx packages. The normal one requires Python 3.6, which we
+don't support anymore. However, it also has Python 3.11 with a
+newer Sphinx version (7.2.6).
 
-As we dropped support for such old version, clean up the code.
+Suggest the newer version:
+
+        Detected OS: openSUSE Leap 15.6.
+        ERROR: at least python 3.7 is required to build the kernel docs
+        Warning: python version is not supported.
+        Warning: better to also install "convert".
+        Warning: better to also install "dot".
+        ERROR: please install "yaml", otherwise, build won't work.
+        You should run:
+
+                sudo zypper install --no-recommends ImageMagick graphviz python311-pyyaml
+
+        Sphinx needs to be installed either:
+        1) via pip/pypi with:
+
+           Currently not possible.
+
+           Please upgrade Python to a newer version and run this script again
+
+        2) As a package with:
+
+                sudo zypper install --no-recommends python311-Sphinx
+
+            Please note that Sphinx >= 3.0 will currently produce false-positive
+           warning when the same name is used for more than one type (functions,
+           structs, enums,...). This is known Sphinx bug. For more details, see:
+                https://github.com/sphinx-doc/sphinx/pull/8313
+
+        Can't build as 2 mandatory dependencies are missing
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/sphinx-pre-install.py | 69 +++++++++--------------------------
- 1 file changed, 18 insertions(+), 51 deletions(-)
+ scripts/sphinx-pre-install.py | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/scripts/sphinx-pre-install.py b/scripts/sphinx-pre-install.py
-index b639acd455cc..0a73b1b33842 100755
+index 0a73b1b33842..eca42d90ed01 100755
 --- a/scripts/sphinx-pre-install.py
 +++ b/scripts/sphinx-pre-install.py
-@@ -80,7 +80,6 @@ class SphinxDependencyChecker:
-         self.need_symlink = 0
-         self.need_sphinx = 0
-         self.need_pip = 0
--        self.need_virtualenv = 0
-         self.rec_sphinx_upgrade = 0
-         self.verbose_warn_install = 1
+@@ -556,6 +556,22 @@ class SphinxDependencyChecker:
  
-@@ -919,12 +918,14 @@ class SphinxDependencyChecker:
-         else:
-             print("\nSphinx needs to be installed either:\n1) via pip/pypi with:\n")
+         progs["latexmk"] = "texlive-latexmk-bin"
  
--        self.python_cmd = os.path.abspath(sys.argv[0])
--
--        print(f"\t{virtualenv_cmd} {self.virtenv_dir}")
--        print(f"\t. {self.virtenv_dir}/bin/activate")
--        print(f"\tpip install -r {self.requirement_file}")
--        self.deactivate_help()
-+        if not virtualenv_cmd:
-+            print("   Currently not possible.\n")
-+            print("   Please upgrade Python to a newer version and run this script again")
-+        else:
-+            print(f"\t{virtualenv_cmd} {self.virtenv_dir}")
-+            print(f"\t. {self.virtenv_dir}/bin/activate")
-+            print(f"\tpip install -r {self.requirement_file}")
-+            self.deactivate_help()
- 
-         print("\n2) As a package with:")
- 
-@@ -953,6 +954,7 @@ class SphinxDependencyChecker:
- 
-     def check_needs(self):
-         self.get_system_release()
-+        self.python_cmd = sys.executable
- 
-         # Check if Sphinx is already accessible from current environment
-         self.check_sphinx()
-@@ -965,56 +967,21 @@ class SphinxDependencyChecker:
-             ver = ver_str(self.cur_version)
-             print(f"Sphinx version: {ver}\n")
- 
--        # FIXME: Check python command line, trying first python3
--        self.python_cmd = self.which("python3")
--        if not self.python_cmd:
--            self.python_cmd = self.check_program("python", 0)
--
-         # Check the type of virtual env, depending on Python version
--        if self.python_cmd:
--            if self.virtualenv:
--                try:
--                    result = self.run(
--                        [self.python_cmd, "--version"],
--                        capture_output=True,
--                        text=True,
--                        check=True,
--                    )
-+        virtualenv_cmd = None
- 
--                    output = result.stdout + result.stderr
--
--                    match = re.search(r"(\d+)\.(\d+)\.", output)
--                    if match:
--                        major = int(match.group(1))
--                        minor = int(match.group(2))
--
--                        if major < 3:
--                            sys.exit("Python 3 is required to build the kernel docs")
--                        if major == 3 and minor < 3:
--                            self.need_virtualenv = True
--                    else:
--                        sys.exit(f"Warning: couldn't identify {self.python_cmd} version!")
--
--                except subprocess.CalledProcessError as e:
--                    sys.exit(f"Error checking Python version: {e}")
--            else:
--                self.add_package("python-sphinx", 0)
-+        if sys.version_info < MIN_PYTHON_VERSION:
-+            min_ver = ver_str(MIN_PYTHON_VERSION)
-+            print(f"ERROR: at least python {min_ver} is required to build the kernel docs")
-+            self.need_sphinx = 1
- 
-         self.venv_ver = self.recommend_sphinx_upgrade()
- 
--        virtualenv_cmd = ""
--
-         if self.need_pip:
--            # Set virtualenv command line, if python < 3.3
--            # FIXME: can be removed as we're now with an upper min requirement
--            #        but then we need to check python version
--            if self.need_virtualenv:
--                virtualenv_cmd = self.which("virtualenv-3")
--                if not virtualenv_cmd:
--                    virtualenv_cmd = self.which("virtualenv-3.5")
--                if not virtualenv_cmd:
--                    self.check_program("virtualenv", 0)
--                    virtualenv_cmd = "virtualenv"
-+            if sys.version_info < MIN_PYTHON_VERSION:
-+                self.need_pip = False
-+                print("Warning: python version is not supported.")
++        match = re.search(r"(Leap)\s+(\d+).(\d)", self.system_release)
++        if match:
++            rel = int(match.group(2))
 +
-             else:
-                 virtualenv_cmd = f"{self.python_cmd} -m venv"
-                 self.check_python_module("ensurepip", 0)
++            # Leap 15.x uses Python 3.6, which is not compatible with
++            # the build system anymore. Suggest Python 3.11
++            if rel == 15:
++                if not self.which(self.python_cmd):
++                    self.add_package(self.python_cmd, 0)
++
++                progs.update({
++                    "python-sphinx": "python311-Sphinx",
++                    "virtualenv":    "python311-virtualenv",
++                    "yaml":          "python311-pyyaml",
++                })
++
+         # FIXME: add support for installing CJK fonts
+         #
+         # I tried hard, but was unable to find a way to install
 -- 
 2.50.0
 
