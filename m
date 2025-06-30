@@ -1,411 +1,117 @@
-Return-Path: <linux-kernel+bounces-710093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEC2AEE712
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 20:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14735AEE717
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 20:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF5A7177886
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C492A4404AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 18:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BC22E6139;
-	Mon, 30 Jun 2025 18:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867F32E8E16;
+	Mon, 30 Jun 2025 18:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/BWPyKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vNcGMPnf"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387AE28C853;
-	Mon, 30 Jun 2025 18:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905331D63DD
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 18:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751309949; cv=none; b=rwSMcxdkOdWhgo9S14wqm1wPx1ry2spP7orAwGLGS6l/XsrnDlxuF7KcQyej1kEipd/gH/pJaY96wzDh/nVWr+jSWf4BzFAtL5Uo1M53PnitxWooOZbMHVkK7xPhuq1lC1Sy0kCYNTPT4IvM+Z9bCchAONMhVeHj7vkFIGuRsJI=
+	t=1751309961; cv=none; b=qq5taep2R6MtlXYMlxv4BTuQqpH34+iFnIQugXa2IGMpqb4oZjt/DBW+RE/nXZ6xGp+IRSWb58Ins01JuSgSKNUcm6paUaKQ5Ngip6hGSRcpC4TtFCeELENL5csj2ATp3HIz49fsgH7U8eqxjmzaUxoHDnn/WPfUpIoR6k7t7sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751309949; c=relaxed/simple;
-	bh=M1FM4VwEtrNTVg28Bv7xMO2ZMXHTJcEXhSYtxobS5Qc=;
+	s=arc-20240116; t=1751309961; c=relaxed/simple;
+	bh=jiu0+hMEGOVBbPvfArelw7aUGG6y6JNsAsa0sxGu4qE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oiD7x1mUfDRO+ItoDngetz9rXhyBX3Ys5c1sSEvu5an61N6UtHRq6J1CIhPS0IgU9oecRxUIEiyXTFUAqeLOOMq+3AaCfgzT970jl0vbHP7ii3J4ZbTW9zIPrPOWhmQu8V31vLgA39IqH+G6gReJN0ecHKVy4F7807FDJ75QnE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/BWPyKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CF8C4CEF3;
-	Mon, 30 Jun 2025 18:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751309948;
-	bh=M1FM4VwEtrNTVg28Bv7xMO2ZMXHTJcEXhSYtxobS5Qc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e/BWPyKzKViTZgymKZi7TlX86Bq9iDV0ZrgX7+i4A+r9Lwlb+10UZ7JhDOcVKekYO
-	 o9Diychbrie0xoPgSTUhuRotJ7BczGq7vwywlBtec5dULSTPr6eRgPU7S4EqelYx4i
-	 NYUgxex8rWgGd8L1XCEwp27+GYyO7n6nPLJM92OPv9vWWHfgo1pZ3zfZgoSjGgptM4
-	 FiOgY3pClGHrz9ghrkuElnmktlcfd6RVUAqrFv8y0cUrgZB32+li1Qa5mMH3gr0dhT
-	 CkroQWI4rewMk2PdShQSd+raV4kdFxxMbtNmPospwovVotrNOavp32t/VXeYvIUYfc
-	 Ribh5PDH7sCHg==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6113f0cafb2so1142484eaf.1;
-        Mon, 30 Jun 2025 11:59:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV0x1CVvtF8h/0G5S8wFgoVmfwj+6Pwcltfpkpox43LsENz1b1ZBIzf+mjqy5/nfbXcKfXoDDiyEV0Ys9hz@vger.kernel.org, AJvYcCVqvOCwOZj9hnX/A6ae8531VkW3FtazOrcvT03czZO3TOYZo9cQ7YD30bugMT8hlNW4PJI78HZF0f+t@vger.kernel.org, AJvYcCW83ZkddJazHShS1zM8yqZMO3TYRe7acTbfiyHMr8QpuCQH3JulamqUiO1Lc/bW9mYhXw4zxgVt9PqCclvl@vger.kernel.org, AJvYcCX8m/HbgJqwvKBtFBTYA9f2c9BUTNpSQazdvFy4E7P5XLeJcyj3ZIIii+nfxsgJIf6MJDNp2XEvwd3X8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb6bjhUsc1QoG59STDs9l+GwIHcFEcnBARSbz22DBC/D7dk2Jb
-	ANDmbWxKq3IorrFZ2vLCzgLSWTglpwyWVJIxgt2HwN/lRENeyYuIjg/eKKuU7Lsal3I7jQigMa/
-	IzZ+Tnx9mr56VReEB0hHtHXBQjxqj0pI=
-X-Google-Smtp-Source: AGHT+IHEJ9Y+G2jV0lqRzzlxN1lHqmcrhVJmP2S/oDnA8VnrmZH07M+WkfquAq/Ofr98Eg5G/cKMNa+iaMRogkER08Y=
-X-Received: by 2002:a05:6820:290f:b0:611:a799:c900 with SMTP id
- 006d021491bc7-611b901c5fdmr10076223eaf.2.1751309947946; Mon, 30 Jun 2025
- 11:59:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=Uj9AGpQVW5VoaQDejvaYX5f38bNIlz8NDCMVqG44PZ0HapurYB6d9SXVucfFIaFr8xvSjC5lgpdmDT8H307S1m22wm5WV6OXRvXBWLe187DcQRtDwvmvchnJvhoSZfKQQjSY53J2v3G9Y8R0jvTdBhwsueoqWdrxMxyUx+Uap1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vNcGMPnf; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-31329098ae8so4055245a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 11:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751309959; x=1751914759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jiu0+hMEGOVBbPvfArelw7aUGG6y6JNsAsa0sxGu4qE=;
+        b=vNcGMPnffJnhjm3fRDaHSDYxYoAWrEo4yKxYmFJZcAf5fUELU2C7u1j19aCQwAVSV4
+         BNKQ5zkh9mKdJshesoPr4cCJLL+IB4E8Vo/Qx+PfHDa7zChlA6VZ/0rjGboggA/J9uwT
+         IvwkUA2cj4gNcjFjYHCLNx6v9W4QUfE5AqUJj1BT2eZERyoP+5oKV7wyIGTYDpOkiAq7
+         f6ogmf35XFKqiSDESLbsOJ4jI/sWAYcZ9la8ycxdQnOckFJVeGFJ3k4A5tAOipYsXAV/
+         jhwvo/GfFDqNn2bOGzEYFFj16nIDWW21rdIAYBdx7HtPLuhUjWiW4sryUU9dWf7RwZLU
+         V+Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751309959; x=1751914759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jiu0+hMEGOVBbPvfArelw7aUGG6y6JNsAsa0sxGu4qE=;
+        b=dw6n3oi+hqlLLK4fA1PN1AowfVdnafu6mFXz5/kZtwiFolodYPChNzO3cOl5A7jyuP
+         dAE9mvlU1RvqYNAdDdQpg97P1EEi2kYlT8wS/QlrA4wm7sYvmGnC7QOCKKYWGO5b9qkf
+         s045cz1azOrtslA/So814RK71B3LZ2vcmWCxl7Rh/9yIUD4bNoteUAP1pKz1zicteh39
+         7o8IqlHp8+WwCH5o9C1e8soGKtZIMk1m+Mrb8vLIjBQMki0mTWEATKGo6zBZqG/3zemS
+         eZT7eLwl/DXbnjzM7DEaThuLwCYy6/lLxwuB3PkdmxgeFx5c7qNlLydso7OGnE6LJgBH
+         PyGg==
+X-Gm-Message-State: AOJu0Yz4hNrMygf2eafFUJlU3USClhUxviPy5qqE+Bhxy7LxN7dnomg6
+	MRei5XF2DO0EXihXqc7vKXrAFBZJdfaOBQmvDFFMKBRd29rZ5VtM192L5/joxw7THFr9SQkYt/h
+	8fMqPsuj6E81b4y9LaybNrhuzr0Ne9R4caWH/KPzACFOnkydzLp3nbHz0lGKeMw==
+X-Gm-Gg: ASbGncvebYlnLjXPtqgtatr+RayTRV89nFa/ggjmbXaZcnB1Y4l7HdBrCQ0QDoPf7u0
+	eiiwCxBT+AKjDN1BuvxQZ8/Z05TfNTyuoSl/2ivjvPc6m8eziVI3gdAYEt0VkYbyHbJsTkkMK88
+	Ze2BH1bQxuZ9PyzJkOpp0/zR+Lr2htbkfRU42neEcnFNh3daCKpXeC+pVdQKkEjqIt3yslNNmKr
+	w==
+X-Google-Smtp-Source: AGHT+IEHeRuWilp8GcPNmBTSkqpOEL9X9afdNRP8SzPgcgvaVfsEoIRowf7+dqoEoXi5E8+rYSgYulvRYGYg8UIREt4=
+X-Received: by 2002:a17:90b:2e4a:b0:2fa:2133:bc87 with SMTP id
+ 98e67ed59e1d1-31939ad7d19mr832328a91.6.1751309958529; Mon, 30 Jun 2025
+ 11:59:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250627-rneri-wakeup-mailbox-v5-0-df547b1d196e@linux.intel.com> <20250627-rneri-wakeup-mailbox-v5-2-df547b1d196e@linux.intel.com>
-In-Reply-To: <20250627-rneri-wakeup-mailbox-v5-2-df547b1d196e@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 30 Jun 2025 20:58:56 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iw9zi8cZK=2j-fWR4tzYgaSMPYoNHf=F+-51cbkxGYSg@mail.gmail.com>
-X-Gm-Features: Ac12FXw1OdI8CIB8KE9tERSq5bMJMJZnNyt0kEwvQnyD939DOR_WjSVE_QixSik
-Message-ID: <CAJZ5v0iw9zi8cZK=2j-fWR4tzYgaSMPYoNHf=F+-51cbkxGYSg@mail.gmail.com>
-Subject: Re: [PATCH v5 02/10] x86/acpi: Move acpi_wakeup_cpu() and helpers to smpwakeup.c
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Michael Kelley <mhklinux@outlook.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Saurabh Sengar <ssengar@linux.microsoft.com>, 
-	Chris Oo <cho@microsoft.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ricardo Neri <ricardo.neri@intel.com>, Yunhong Jiang <yunhong.jiang@linux.intel.com>
+References: <20250629214449.14462-1-aleksandr.mikhalitsyn@canonical.com> <20250629214449.14462-3-aleksandr.mikhalitsyn@canonical.com>
+In-Reply-To: <20250629214449.14462-3-aleksandr.mikhalitsyn@canonical.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Mon, 30 Jun 2025 11:59:06 -0700
+X-Gm-Features: Ac12FXx8h6qFKS4tZCgWPmiRsjQA12jiJH52womORS_f6_CKqpkkAAOXlUIFp3c
+Message-ID: <CAAVpQUAOwF5a63hZ6hK9ffLixpYN18PzaGjquNgNnG5++iNhqA@mail.gmail.com>
+Subject: Re: [RESEND PATCH net-next 2/6] af_unix: introduce unix_skb_to_scm helper
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, 
+	Lennart Poettering <mzxreary@0pointer.de>, Luca Boccassi <bluca@debian.org>, 
+	David Rheinsberg <david@readahead.eu>, Kuniyuki Iwashima <kuniyu@amazon.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 28, 2025 at 5:35=E2=80=AFAM Ricardo Neri
-<ricardo.neri-calderon@linux.intel.com> wrote:
+On Sun, Jun 29, 2025 at 2:45=E2=80=AFPM Alexander Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
 >
-> The bootstrap processor uses acpi_wakeup_cpu() to indicate to firmware th=
-at
-> it wants to boot a secondary CPU using a mailbox as described in the
-> Multiprocessor Wakeup Structure of the ACPI specification.
+> Instead of open-coding let's consolidate this logic in a separate
+> helper. This will simplify further changes.
 >
-> The platform firmware may implement the mailbox as described in the ACPI
-> specification but enumerate it using a DeviceTree graph. An example of
-> this is OpenHCL paravisor.
+> Cc: linux-kernel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Simon Horman <horms@kernel.org>
+> Cc: Leon Romanovsky <leon@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Kuniyuki Iwashima <kuniyu@google.com>
+> Cc: Lennart Poettering <mzxreary@0pointer.de>
+> Cc: Luca Boccassi <bluca@debian.org>
+> Cc: David Rheinsberg <david@readahead.eu>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com=
 >
-> Move the code used to setup and use the mailbox for CPU wakeup out of the
-> ACPI directory into a new smpwakeup.c file that both ACPI and DeviceTree
-> can use.
 
-IMV "that can be used by both ACPI and DeviceTree" would sound better.
-
-> No functional changes are intended.
->
-> Co-developed-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-
-With the above addressed
-
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-> ---
-> Changes since v4:
->  - Removed dependency on CONFIG_OF. It will be added in a later patch.
->    (Rafael)
->  - Rebased on v6.16-rc3.
->
-> Changes since v3:
->  - Create a new file smpwakeup.c instead of relocating it to smpboot.c.
->    (Rafael)
->
-> Changes since v2:
->  - Only move to smpboot.c the portions of the code that configure and
->    use the mailbox. This also resolved the compile warnings about unused
->    functions that Michael Kelley reported.
->  - Edited the commit message for clarity.
->
-> Changes since v1:
->  - None.
-> ---
->  arch/x86/Kconfig                   |  7 ++++
->  arch/x86/kernel/Makefile           |  1 +
->  arch/x86/kernel/acpi/madt_wakeup.c | 76 --------------------------------=
---
->  arch/x86/kernel/smpwakeup.c        | 83 ++++++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 91 insertions(+), 76 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 71019b3b54ea..e3009cb59928 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1114,6 +1114,13 @@ config X86_LOCAL_APIC
->         depends on X86_64 || SMP || X86_UP_APIC || PCI_MSI
->         select IRQ_DOMAIN_HIERARCHY
->
-> +config X86_MAILBOX_WAKEUP
-> +       def_bool y
-> +       depends on ACPI_MADT_WAKEUP
-> +       depends on X86_64
-> +       depends on SMP
-> +       depends on X86_LOCAL_APIC
-> +
->  config ACPI_MADT_WAKEUP
->         def_bool y
->         depends on X86_64
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 0d2a6d953be9..1fce3d20cf2d 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -94,6 +94,7 @@ apm-y                         :=3D apm_32.o
->  obj-$(CONFIG_APM)              +=3D apm.o
->  obj-$(CONFIG_SMP)              +=3D smp.o
->  obj-$(CONFIG_SMP)              +=3D smpboot.o
-> +obj-$(CONFIG_X86_MAILBOX_WAKEUP) +=3D smpwakeup.o
->  obj-$(CONFIG_X86_TSC)          +=3D tsc_sync.o
->  obj-$(CONFIG_SMP)              +=3D setup_percpu.o
->  obj-$(CONFIG_X86_MPPARSE)      +=3D mpparse.o
-> diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/ma=
-dt_wakeup.c
-> index c3ac5ecf3e7d..a7e0158269b0 100644
-> --- a/arch/x86/kernel/acpi/madt_wakeup.c
-> +++ b/arch/x86/kernel/acpi/madt_wakeup.c
-> @@ -2,12 +2,10 @@
->  #include <linux/acpi.h>
->  #include <linux/cpu.h>
->  #include <linux/delay.h>
-> -#include <linux/io.h>
->  #include <linux/kexec.h>
->  #include <linux/memblock.h>
->  #include <linux/pgtable.h>
->  #include <linux/sched/hotplug.h>
-> -#include <asm/apic.h>
->  #include <asm/barrier.h>
->  #include <asm/init.h>
->  #include <asm/intel_pt.h>
-> @@ -15,12 +13,6 @@
->  #include <asm/processor.h>
->  #include <asm/reboot.h>
->
-> -/* Physical address of the Multiprocessor Wakeup Structure mailbox */
-> -static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
-> -
-> -/* Virtual address of the Multiprocessor Wakeup Structure mailbox */
-> -static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
-> -
->  static u64 acpi_mp_pgd __ro_after_init;
->  static u64 acpi_mp_reset_vector_paddr __ro_after_init;
->
-> @@ -127,63 +119,6 @@ static int __init acpi_mp_setup_reset(u64 reset_vect=
-or)
->         return 0;
->  }
->
-> -static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip, unsigned =
-int cpu)
-> -{
-> -       if (!acpi_mp_wake_mailbox_paddr) {
-> -               pr_warn_once("No MADT mailbox: cannot bringup secondary C=
-PUs. Booting with kexec?\n");
-> -               return -EOPNOTSUPP;
-> -       }
-> -
-> -       /*
-> -        * Remap mailbox memory only for the first call to acpi_wakeup_cp=
-u().
-> -        *
-> -        * Wakeup of secondary CPUs is fully serialized in the core code.
-> -        * No need to protect acpi_mp_wake_mailbox from concurrent access=
-es.
-> -        */
-> -       if (!acpi_mp_wake_mailbox) {
-> -               acpi_mp_wake_mailbox =3D memremap(acpi_mp_wake_mailbox_pa=
-ddr,
-> -                                               sizeof(*acpi_mp_wake_mail=
-box),
-> -                                               MEMREMAP_WB);
-> -       }
-> -
-> -       /*
-> -        * Mailbox memory is shared between the firmware and OS. Firmware=
- will
-> -        * listen on mailbox command address, and once it receives the wa=
-keup
-> -        * command, the CPU associated with the given apicid will be boot=
-ed.
-> -        *
-> -        * The value of 'apic_id' and 'wakeup_vector' must be visible to =
-the
-> -        * firmware before the wakeup command is visible.  smp_store_rele=
-ase()
-> -        * ensures ordering and visibility.
-> -        */
-> -       acpi_mp_wake_mailbox->apic_id       =3D apicid;
-> -       acpi_mp_wake_mailbox->wakeup_vector =3D start_ip;
-> -       smp_store_release(&acpi_mp_wake_mailbox->command,
-> -                         ACPI_MP_WAKE_COMMAND_WAKEUP);
-> -
-> -       /*
-> -        * Wait for the CPU to wake up.
-> -        *
-> -        * The CPU being woken up is essentially in a spin loop waiting t=
-o be
-> -        * woken up. It should not take long for it wake up and acknowled=
-ge by
-> -        * zeroing out ->command.
-> -        *
-> -        * ACPI specification doesn't provide any guidance on how long ke=
-rnel
-> -        * has to wait for a wake up acknowledgment. It also doesn't prov=
-ide
-> -        * a way to cancel a wake up request if it takes too long.
-> -        *
-> -        * In TDX environment, the VMM has control over how long it takes=
- to
-> -        * wake up secondary. It can postpone scheduling secondary vCPU
-> -        * indefinitely. Giving up on wake up request and reporting error=
- opens
-> -        * possible attack vector for VMM: it can wake up a secondary CPU=
- when
-> -        * kernel doesn't expect it. Wait until positive result of the wa=
-ke up
-> -        * request.
-> -        */
-> -       while (READ_ONCE(acpi_mp_wake_mailbox->command))
-> -               cpu_relax();
-> -
-> -       return 0;
-> -}
-> -
->  static void acpi_mp_disable_offlining(struct acpi_madt_multiproc_wakeup =
-*mp_wake)
->  {
->         cpu_hotplug_disable_offlining();
-> @@ -246,14 +181,3 @@ int __init acpi_parse_mp_wake(union acpi_subtable_he=
-aders *header,
->
->         return 0;
->  }
-> -
-> -void __init acpi_setup_mp_wakeup_mailbox(u64 mailbox_paddr)
-> -{
-> -       acpi_mp_wake_mailbox_paddr =3D mailbox_paddr;
-> -       apic_update_callback(wakeup_secondary_cpu_64, acpi_wakeup_cpu);
-> -}
-> -
-> -struct acpi_madt_multiproc_wakeup_mailbox *acpi_get_mp_wakeup_mailbox(vo=
-id)
-> -{
-> -       return acpi_mp_wake_mailbox;
-> -}
-> diff --git a/arch/x86/kernel/smpwakeup.c b/arch/x86/kernel/smpwakeup.c
-> new file mode 100644
-> index 000000000000..5089bcda615d
-> --- /dev/null
-> +++ b/arch/x86/kernel/smpwakeup.c
-> @@ -0,0 +1,83 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/io.h>
-> +#include <linux/printk.h>
-> +#include <linux/types.h>
-> +#include <asm/apic.h>
-> +#include <asm/barrier.h>
-> +#include <asm/processor.h>
-> +
-> +/* Physical address of the Multiprocessor Wakeup Structure mailbox */
-> +static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
-> +
-> +/* Virtual address of the Multiprocessor Wakeup Structure mailbox */
-> +static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
-> +
-> +static int acpi_wakeup_cpu(u32 apicid, unsigned long start_ip, unsigned =
-int cpu)
-> +{
-> +       if (!acpi_mp_wake_mailbox_paddr) {
-> +               pr_warn_once("No MADT mailbox: cannot bringup secondary C=
-PUs. Booting with kexec?\n");
-> +               return -EOPNOTSUPP;
-> +       }
-> +
-> +       /*
-> +        * Remap mailbox memory only for the first call to acpi_wakeup_cp=
-u().
-> +        *
-> +        * Wakeup of secondary CPUs is fully serialized in the core code.
-> +        * No need to protect acpi_mp_wake_mailbox from concurrent access=
-es.
-> +        */
-> +       if (!acpi_mp_wake_mailbox) {
-> +               acpi_mp_wake_mailbox =3D memremap(acpi_mp_wake_mailbox_pa=
-ddr,
-> +                                               sizeof(*acpi_mp_wake_mail=
-box),
-> +                                               MEMREMAP_WB);
-> +       }
-> +
-> +       /*
-> +        * Mailbox memory is shared between the firmware and OS. Firmware=
- will
-> +        * listen on mailbox command address, and once it receives the wa=
-keup
-> +        * command, the CPU associated with the given apicid will be boot=
-ed.
-> +        *
-> +        * The value of 'apic_id' and 'wakeup_vector' must be visible to =
-the
-> +        * firmware before the wakeup command is visible.  smp_store_rele=
-ase()
-> +        * ensures ordering and visibility.
-> +        */
-> +       acpi_mp_wake_mailbox->apic_id       =3D apicid;
-> +       acpi_mp_wake_mailbox->wakeup_vector =3D start_ip;
-> +       smp_store_release(&acpi_mp_wake_mailbox->command,
-> +                         ACPI_MP_WAKE_COMMAND_WAKEUP);
-> +
-> +       /*
-> +        * Wait for the CPU to wake up.
-> +        *
-> +        * The CPU being woken up is essentially in a spin loop waiting t=
-o be
-> +        * woken up. It should not take long for it wake up and acknowled=
-ge by
-> +        * zeroing out ->command.
-> +        *
-> +        * ACPI specification doesn't provide any guidance on how long ke=
-rnel
-> +        * has to wait for a wake up acknowledgment. It also doesn't prov=
-ide
-> +        * a way to cancel a wake up request if it takes too long.
-> +        *
-> +        * In TDX environment, the VMM has control over how long it takes=
- to
-> +        * wake up secondary. It can postpone scheduling secondary vCPU
-> +        * indefinitely. Giving up on wake up request and reporting error=
- opens
-> +        * possible attack vector for VMM: it can wake up a secondary CPU=
- when
-> +        * kernel doesn't expect it. Wait until positive result of the wa=
-ke up
-> +        * request.
-> +        */
-> +       while (READ_ONCE(acpi_mp_wake_mailbox->command))
-> +               cpu_relax();
-> +
-> +       return 0;
-> +}
-> +
-> +void __init acpi_setup_mp_wakeup_mailbox(u64 mailbox_paddr)
-> +{
-> +       acpi_mp_wake_mailbox_paddr =3D mailbox_paddr;
-> +       apic_update_callback(wakeup_secondary_cpu_64, acpi_wakeup_cpu);
-> +}
-> +
-> +struct acpi_madt_multiproc_wakeup_mailbox *acpi_get_mp_wakeup_mailbox(vo=
-id)
-> +{
-> +       return acpi_mp_wake_mailbox;
-> +}
->
-> --
-> 2.43.0
->
+Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
 
