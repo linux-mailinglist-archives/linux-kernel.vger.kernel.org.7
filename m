@@ -1,77 +1,65 @@
-Return-Path: <linux-kernel+bounces-709074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52313AED8FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:46:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111A1AED8F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD4F176C97
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23D063B63A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF8F24888C;
-	Mon, 30 Jun 2025 09:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFAC242D8A;
+	Mon, 30 Jun 2025 09:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Pu/fibC1"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cha4O35O"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B2E246BDE;
-	Mon, 30 Jun 2025 09:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED6BFC1D;
+	Mon, 30 Jun 2025 09:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751276781; cv=none; b=GFUckcUyIXuJWHOVb1feSpvrbozZ4WakqZ1prObfeQzu+vtGPSQEorOgllwz/b5xPXyaPxzPmX3OIS/j4fAtwseJupZ7OSe+nDw6SwyS264ksKxz0SiRr4x9B5YBZ+c4dGsIMx+RvTSU8C4DKVWF97X72AzUQoNp5NCccvp97E0=
+	t=1751276764; cv=none; b=bYyqke4lgay4xPWuLur8OTo2RNE4foi3Z13oJhBEwGIXhgYk4EldEqTshy1OQc3fWRccycPda9GBXC+SKWcTy4IvQhRhX1GRTPiNUHQxw54zqLL9OgAQpbP/76I6q+txAtXSn6rFvzY1Oi4UcQqLqxjyscfb1xU2UBtu+FWqPW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751276781; c=relaxed/simple;
-	bh=PLueSt++Ts2krxIFLmq/SQC+sljmxI5Q0voO9Xojcq4=;
+	s=arc-20240116; t=1751276764; c=relaxed/simple;
+	bh=lb2tpgsxG5/hQZJGyUa6eqq0qMhboF3PKqjWS4Z8kj4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tPdcza8yRrp0K5BqsRiLeAmiKFE60hGK4K1/r/XpDRQx7lEbeGvWb2j+D7R1u/S4QnJaCUjZl81bcxID1i6/OAuWiSCLRFtcqL6fnLqkOzLXjAs1GRf+I4pw0JQkV9SaYp/A9HJh2QuM1AP8r02E+dnhtKPjVA3cMZEM++s4/F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Pu/fibC1; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=l9U1qu2RmJ/Phc60gSBTyPHIpDpNhKjw762xHAEJ1tYgBGXQd2v0D72o7gX6+Q+OmMAI4Uf87uXl0OkzVVFc7vEgYIOOWSoY1aCuWu/pXQvRbc9PUmtOkVM+baIuvDAULiy5SwqoKaYIZKmd7WrfFBwTdxfuu7oKTAMXsltyOV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cha4O35O; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=Y9NDST3Jz+7qAkVnnzdeFtTSjYFFZgsmdrwgsOErAQY=; b=Pu/fibC1BioK2jFS+/Suan3gfe
-	zBYwD4ZBY7ZB1zEtAPgJm2z3UNMA+PnhtTqRzjvNcvb2KuMnEWkHaxxUCCHHEQXpWGq20qDhRLWU+
-	G+wtiuiql6xdkh6SD9oiHa53LDdVNnmwh1AoRN/Y1RAiWEqA2sx+mW2pCf99z5xSyw0NYAXItuI5V
-	Ce/KUF5+ZK7a9RrW3DQsMM8EAhCh1Elb69rFXWZA38eEQCx8AsIed1xwO1+Au+ILf4RaTNOxuHZEy
-	XA7OR98Su158f5OEA3BxePxjf1vptmkojr1my+NDYGstJnVBCVo4c/wBt7IGPXyWj9cJXDWDc3jzE
-	VAWVHt1Q==;
+	bh=4cCF6vjX7ITShKbqsLVLjUwSKKlXqYMqcfegwunYLhM=; b=cha4O35OOJHdKOGKk6ME/vjkG/
+	gkFx7rAvs1cXJErSj+lYsZ5N0RxvwHGZ/mCmpq4tIDNmKkf5h/g1i60rYTYovtz4i3vk0NsiZ7zIx
+	RDnDNXUHBy9nHXYdBr6/slIZgfiaBBzetZQ52L2X2IG4XWnmCUu8h8IrRSVmUsp5f3TB2MFI9THSl
+	z3pvDEUJ5ZjGD/7hyVThTZHfWlN/9rExzTCZpT011eLj8uoDPBvdvZvYeHFPhKgGcQK4gTmATdOie
+	uKmiJ88iWT6pho2e/Z3mQ4JAb29yi+PnTtsvj/6gshptThLXbODuz5WnHI5iyBvcPIodu3blcxva8
+	lITv+MWQ==;
 Received: from i53875bfd.versanet.de ([83.135.91.253] helo=localhost.localdomain)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1uWB5J-0006Zc-NW; Mon, 30 Jun 2025 11:45:57 +0200
+	id 1uWB5K-0006Zc-4K; Mon, 30 Jun 2025 11:45:58 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+	Jonas Karlman <jonas@kwiboo.se>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	kernel@collabora.com,
-	Andy Yan <andyshrk@163.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/3] arm64: dts: rockchip: Fix HDMI output on RK3576
-Date: Mon, 30 Jun 2025 11:45:43 +0200
-Message-ID: <175127673170.138768.2750019660187884094.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix eMMC HS200 mode on Radxa E20C
+Date: Mon, 30 Jun 2025 11:45:44 +0200
+Message-ID: <175127673172.138768.2799587757457210088.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250612-rk3576-hdmitx-fix-v1-0-4b11007d8675@collabora.com>
-References: <20250612-rk3576-hdmitx-fix-v1-0-4b11007d8675@collabora.com>
+In-Reply-To: <20250621165832.2226160-1-jonas@kwiboo.se>
+References: <20250621165832.2226160-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,25 +70,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 12 Jun 2025 00:47:46 +0300, Cristian Ciocaltea wrote:
-> Since commit c871a311edf0 ("phy: rockchip: samsung-hdptx: Setup TMDS
-> char rate via phy_configure_opts_hdmi"), the workaround of passing the
-> PHY rate from DW HDMI QP bridge driver via phy_set_bus_width() became
-> partially broken, unless the rate adjustment is done as with RK3588,
-> i.e. by CCF from VOP2.
+On Sat, 21 Jun 2025 16:58:30 +0000, Jonas Karlman wrote:
+> eMMC HS200 mode (1.8V I/O) is supported by the MMC host controller on
+> RK3528 and works with the optional on-board eMMC module on Radxa E20C.
 > 
-> Attempting to fix this up at PHY level would not only introduce
-> additional hacks, but it would also fail to adequately resolve the
-> display issues that are a consequence of the system CRU limitations.
+> Be explicit about HS200 support in the device tree for Radxa E20C.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[2/3] arm64: dts: rockchip: Enable HDMI PHY clk provider on rk3576
-      commit: aba7987a536cee67fb0cb724099096fd8f8f5350
-[3/3] arm64: dts: rockchip: Add HDMI PHY PLL clock source to VOP2 on rk3576
-      commit: 4ab8b8ac952fb08d03655e1da0cfee07589e428f
+[1/1] arm64: dts: rockchip: Fix eMMC HS200 mode on Radxa E20C
+      commit: 6e3071f4e03997ca0e4388ca61aa06df2802dcd1
 
 Best regards,
 -- 
