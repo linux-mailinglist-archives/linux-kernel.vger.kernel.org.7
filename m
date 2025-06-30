@@ -1,183 +1,132 @@
-Return-Path: <linux-kernel+bounces-709702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B79AEE112
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:40:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30963AEE12E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 16:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7EF17AD57C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED7517D4BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 14:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F212528DF28;
-	Mon, 30 Jun 2025 14:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ACF28C5D1;
+	Mon, 30 Jun 2025 14:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HAyuKSw6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=hifiphile-com.20230601.gappssmtp.com header.i=@hifiphile-com.20230601.gappssmtp.com header.b="PyTzx8bt"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A049D28C5C3;
-	Mon, 30 Jun 2025 14:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7230828A718
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 14:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751294336; cv=none; b=sRKJU1f7T8jnPabHuVGJKriDQuFog4ZuHo0KdD7XqwjU7tXOAK8WYDAaXIgNs1O1zN2MYLtb5zaiLy+6ybZC7nEgCDa5KOE7/0+f/CgezHXl9enHw7h2p8wbWSS636d4ziSSJLLgV7kYEU2zm1ohL3e2o+R0df/tqENLdTGHGMo=
+	t=1751294326; cv=none; b=mLLHgCPYa9rNf91BX7evYrywVsEDv/JN95PO7Q80MIQnjiVQYP/aRGIjJKuc2tkasIxjcxxrrFyDutJFERfm6UBwMNEMDKQFHDmF6+PS8jtuRKUQlijgUteCwJSAtWvu2PUt4Scv+OYBGfRgkc3Y31s0sVgADP+9HxZb+y++N+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751294336; c=relaxed/simple;
-	bh=YkpdTWyHs7BogwjbVOCLLOWPQw2lUFU7xGgB8Vz4XiI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hNdVhKMRdZFqtxlSemi93xCv71rba1pmFKyFISa2yFhybEl+BvCIREijxC2v97j9jxMg7sgtkNTykZU0abVRFAf5j5kP7Pa6ELlwmpII1Z/bCrO4jJUhBsNBjrWby/aerRU21FHV7OAxgY8mLIVwKQBoIRpt/RUWBDwAaKxa7X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HAyuKSw6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55U8xoV4015498;
-	Mon, 30 Jun 2025 14:38:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=FoXKg6Hji1p/ojTmp
-	Vp6/rHsjyhOOpO76o2a912PFZE=; b=HAyuKSw6G1bEEBkwwq418GlX3dUv8m1BQ
-	FtvhdX9W5/XPxD+8eAt8onoT17SQuNQCdp5cDonxcQabxSAONdSyV1Bl0aDJ4Qfu
-	l6D/b4WvXFNWigI0Uy5vtWDZjsXGm/ypuUV5pT1EnldKKTUMGPJbjt7zSv1U2ooz
-	RPCZ0WhLi0tDzc7W9nH1ARj5/AA6WCBHTmAf7tKDVQVcC+UTcuVZjoV3Dya/DJUu
-	m7nZzKpYIsq5kRxJJzjTMR67K16BlXdGnGFyc9g82W9f1biDwOFgMuYvqMe9kDW7
-	vXIDKSIlhNOpAae+reTLHFpiCCBNOBQDSHS+XLqb+i1AINnF8mwow==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j7wra05s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 14:38:45 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 55UB733W021371;
-	Mon, 30 Jun 2025 14:38:44 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jwe35yax-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 14:38:44 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 55UEchip17105504
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Jun 2025 14:38:43 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9503C58059;
-	Mon, 30 Jun 2025 14:38:43 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D20B658058;
-	Mon, 30 Jun 2025 14:38:42 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 30 Jun 2025 14:38:42 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
-        dhowells@redhat.com, simo@redhat.com,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 1/4] crypto: Add squeeze function to shash_alg for support of XOFs
-Date: Mon, 30 Jun 2025 10:38:31 -0400
-Message-ID: <20250630143834.2748285-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250630143834.2748285-1-stefanb@linux.ibm.com>
-References: <20250630143834.2748285-1-stefanb@linux.ibm.com>
+	s=arc-20240116; t=1751294326; c=relaxed/simple;
+	bh=q41UMOkYp6U8rXBQmxcMnX0PDl9yne69OVTJZiPDNQg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Sf4XrwUL05DlWnyBjVvzN9Ycvd9/RNwxVnaXhKXk618iuEhMpQn0FwRYH4nzSDlJFe2H/O3XZDyrDZUD0c5HbIGIwtxdkms9ZH1pA/i5OeRnuPgViS3UIXA+K6lct2jdgQ6pbZd/uv8RUfznu7hPs6BIkjS85pW+zgDqnGlq9rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hifiphile.com; spf=none smtp.mailfrom=hifiphile.com; dkim=pass (2048-bit key) header.d=hifiphile-com.20230601.gappssmtp.com header.i=@hifiphile-com.20230601.gappssmtp.com header.b=PyTzx8bt; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hifiphile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hifiphile.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5550dca1241so2161981e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 07:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hifiphile-com.20230601.gappssmtp.com; s=20230601; t=1751294322; x=1751899122; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5aROwHTVbyl9D9zeojKZoCOh6LjGW5da//8YHEuJ/oI=;
+        b=PyTzx8btQ5qzpnwOOtYbHAOP8nuTpRUf+bwKaq7/dvF1+KGquUbFUCJMhb72Uin6Bv
+         M3yh44T0NyL0kH+9QCeUvYZg8bO5MAo+j/E/6nA6OH7aHDhBV2y9WyNp+kHGc4zRbJM/
+         jApjz7benoWiMnDobWa1KgKKhStvv7er3OhfKfTigyJUUAjIINETmpznkO9z7xv/Z1Mc
+         4cgFBkFWPcmuxch6wAG5jg8GBIYTKHEnguOgkZ1kbL1zCsW8jIbXxgFVNf5ubRJLvEsQ
+         9eh8rqm6sHR9ZrSZrJBl2z+vSX2P7QPLvvNcWDnwfXBa3fvd0pKgJBakQkO4NtqAOvqo
+         J7cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751294322; x=1751899122;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5aROwHTVbyl9D9zeojKZoCOh6LjGW5da//8YHEuJ/oI=;
+        b=bd47BiGl/US1VX/e2VDWJvFaIkU9B0Kxqpma1OaByi/F1ESKExpKy+r4c9hSCyMqL5
+         zK4zGdkRGPwY/flSkbs0Z9YuchUNkF/QmyJadyeo/RGCSShyrDUBtbsKZMseeaRi9bm3
+         Wc67N4Cv2W+dt1MwiuQadfUHxVtaKQjv334ycVhdvS5w5jfvqZ1hG2XOY+QD1QEVKHHG
+         ca3rFDBvzOqckIY5tE3fOUu2Bz7bmTmPmigA97JzAJE2dGN/xelBv71p2+MzcuSYRTP1
+         YeyzGQr3pUD5OHqr8ZWDkVzcLMW6u32jj58GPPakfGmdIhyFIUAx603yGR1yanvwC2xt
+         uF9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWKMN1P1Y1lR2KLh5hJIUn+x7VMag+OZJJT5XXonD2/qf9Dsee1RifwsCZdF3J6HRZlWQn9UyxbWbV6jzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOIAMyp4CZyvoROKgHohF8tyqSVNEl2nWnUITWcvjTIzxAOKyh
+	pd2g5UMXNjH0lWB3xmjPpBl9Laagfp600d4/DytW9kvd4/5zOAWWffkJEsq4IQHxbJ5dGjhLiXQ
+	nFdPgyyGIW5Iy4zCZNe/CSSZbnAUE7C68moB/zFgxnQ==
+X-Gm-Gg: ASbGnctSzZcomoUs9o3+AybRsYWsVgKoasAeBgFFXYGsYga52EFRHepiHZ+qSR2YHfG
+	+/rn0v/SIczSd910Pz0KNqnPMZXv2F6ZozhCPSReaOMkosn6kxV1lfskQrnEH3+T5ii9nm7Nnvc
+	yyiU7WeUPTUmWOt2/JE3CVPGdsAcQLE7euBPMCw0bCtNU=
+X-Google-Smtp-Source: AGHT+IFnqcLpgxNaCsk7PoNMYONyRs0hnLK3ll4UkAxFSTpn8mAkmMX5sbsExFDwtXdwFg+jhcuCDPedsHKii9UuAHs=
+X-Received: by 2002:a05:651c:1116:20b0:32c:bc69:e91a with SMTP id
+ 38308e7fff4ca-32cdc525e8amr30785301fa.36.1751294322210; Mon, 30 Jun 2025
+ 07:38:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=E/PNpbdl c=1 sm=1 tr=0 ts=6862a175 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=6IFa9wvqVegA:10 a=VnNF1IyMAAAA:8 a=n-XTF91Upou305-BhzYA:9
-X-Proofpoint-GUID: j1g4INO6doFYn94WUF0KCeDfofzljWv-
-X-Proofpoint-ORIG-GUID: j1g4INO6doFYn94WUF0KCeDfofzljWv-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjMwMDExNyBTYWx0ZWRfX0JMMKHrpI+i8 tVnKZ1ZvwHlioFw74gQz98Y/wwo2WxNGCSzIkovOiE3USUS5svXsdc1VJB2Ds8cP+l5e90JXZFY Fg+Zgbe5O9Ek5bW/TueUub9HONcw05qJzbzxecKNnSs/eX0YyJKdwB5qBwkm0NrbzNAvwivlkJ6
- A6T4bDmYOyhoU5mloEHh65ElpnbctdWrrkI+vpZI0xb/pr/r9OCqhLXsub0yUXig1TRBrmvqf50 GK1PkWsuCUtkXEjmPx9XNKOe32kAacgKBDSAizfNvCl62oCVFkRz1sMpxG1tIYYY9fML46Nlf+2 v5+wETc7nHAit1WNSx1Gk9l0v0V2kVE2/iPUJNGu7Vibe3vZG+2dT75gzhCUcfI/d7Ofd7Dewmd
- 6Srwx0PrIskTyiE+T35yoBqXOU/yu1vxaAgIj2DxrEcypPfQ/7TRUSsoBNMc+6xOLn09mBvD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_03,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 mlxscore=0 clxscore=1015 adultscore=0 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2506300117
+From: Zixun LI <admin@hifiphile.com>
+Date: Mon, 30 Jun 2025 16:38:31 +0200
+X-Gm-Features: Ac12FXyz1YASyU_kIOho436uejsR4G8SmZtLl7LY6YsKeZfU1QFCNlm6WQE6lL0
+Message-ID: <CA+GyqebQnWQ3fj4Lrb4-hvzRpphuqw+jh4B9En1j2NDTNFumvQ@mail.gmail.com>
+Subject: mtd: rawnand: atmel: ECC error after update to kernel 6.6
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	linux-mtd@lists.infradead.org, 
+	"SoC support'" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add a squeeze function for support of shake128/256 XOFs. This function
-accepts a variable-length output buffer for the XOFs to return their data
-in. The 'final' parameter clears the state of an XOF and should only be set
-to 'true' when the last output is requested.
+Hi,
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- crypto/shash.c        |  9 +++++++++
- include/crypto/hash.h | 19 +++++++++++++++++++
- 2 files changed, 28 insertions(+)
+After updating our SAM9G25 device from kernel 3.16 to 6.6, we have
+encountered UBIFS failures with ECC errors:
 
-diff --git a/crypto/shash.c b/crypto/shash.c
-index 4721f5f134f4..12b3882e9a26 100644
---- a/crypto/shash.c
-+++ b/crypto/shash.c
-@@ -86,6 +86,15 @@ int crypto_shash_init(struct shash_desc *desc)
- }
- EXPORT_SYMBOL_GPL(crypto_shash_init);
- 
-+int crypto_shash_squeeze(struct shash_desc *desc, u8 *out, size_t outlen,
-+			 bool final)
-+{
-+	if (!crypto_shash_alg(desc->tfm)->squeeze)
-+		return -EINVAL;
-+	return crypto_shash_alg(desc->tfm)->squeeze(desc, out, outlen, final);
-+}
-+EXPORT_SYMBOL_GPL(crypto_shash_squeeze);
-+
- static int shash_default_finup(struct shash_desc *desc, const u8 *data,
- 			       unsigned int len, u8 *out)
- {
-diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-index 6f6b9de12cd3..36b88d34c0dd 100644
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -209,6 +209,7 @@ struct shash_desc {
-  * @final: see struct ahash_alg
-  * @finup: see struct ahash_alg
-  * @digest: see struct ahash_alg
-+ * @squeeze: Get data from an XOF type of hash
-  * @export: see struct ahash_alg
-  * @import: see struct ahash_alg
-  * @export_core: see struct ahash_alg
-@@ -241,6 +242,8 @@ struct shash_alg {
- 		     unsigned int len, u8 *out);
- 	int (*digest)(struct shash_desc *desc, const u8 *data,
- 		      unsigned int len, u8 *out);
-+	int (*squeeze)(struct shash_desc *desc, u8 *out, size_t outlen,
-+		       bool final);
- 	int (*export)(struct shash_desc *desc, void *out);
- 	int (*import)(struct shash_desc *desc, const void *in);
- 	int (*export_core)(struct shash_desc *desc, void *out);
-@@ -1011,6 +1014,22 @@ static inline int crypto_shash_final(struct shash_desc *desc, u8 *out)
- 	return crypto_shash_finup(desc, NULL, 0, out);
- }
- 
-+/**
-+ * crypto_shash_squeeze() - get xof message digest data
-+ * @desc: operational state handle that is already filled with data
-+ * @out: output buffer filled with the XOF message digest
-+ * @outlen: number of bytes to get from the XOF
-+ * @final: whether this is the final squeeze call
-+ *
-+ * Get message digest data from an extend output function (XOF)
-+ *
-+ * Context: Any context.
-+ * Return: 0 if the data could be created successfully; < 0 if an error
-+ *         occurred
-+ */
-+int crypto_shash_squeeze(struct shash_desc *desc, u8 *out, size_t outlen,
-+			 bool final);
-+
- static inline void shash_desc_zero(struct shash_desc *desc)
- {
- 	memzero_explicit(desc,
--- 
-2.49.0
+  ubi0 warning: ubi_io_read: error -74 (ECC error) while reading
+126976 bytes from PEB 8:4096, read only 126976 bytes, retry
 
+On the old system (kernel 3.16), nandtest passed successfully:
+
+  nandtest -p 1 -l 0x40000 /dev/mtd2
+  ECC corrections: 1
+  ECC failures : 0
+  Bad blocks : 0
+  BBT blocks : 0
+  00020000: checking...
+  Finished pass 1 successfully
+
+But on the new system (kernel 6.6), nandtest reports many errors:
+
+  nandtest -p 1 -l 0x40000 /dev/mtd2
+  ECC corrections: 1667
+  ECC failures : 1205
+  Bad blocks : 1
+  BBT blocks : 0
+  00000000: reading (1 of 4)...
+  218 bit(s) ECC corrected at 00000000
+
+After some diagnostics, I used devmem2 to compare SMC and PMECC
+registers between the two kernels. All values match except for the
+PMECC_CLK register, which is 2 in kernel 3.16 [1] and 0 in kernel 6.6
+[2]. It appears the clock setting is missing since the kernel 4.14
+refactor.
+
+According to the SAM9G25 datasheet this field must be programmed with 2.
+
+Manually setting PMECC_CLK to 2 (devmem2 0xffffe010 w 2) resolves the
+nandtest issue.
+
+Is the clock setting moved to elsewhere after the refactor ?
+
+Best regards,
+Zixun LI
+
+[1] https://github.com/torvalds/linux/blob/19583ca584d6f574384e17fe7613dfaeadcdc4a6/drivers/mtd/nand/atmel_nand.c#L1058
+[2] https://github.com/torvalds/linux/blob/ffc253263a1375a65fa6c9f62a893e9767fbebfa/drivers/mtd/nand/raw/atmel/pmecc.c#L772
 
