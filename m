@@ -1,138 +1,202 @@
-Return-Path: <linux-kernel+bounces-709079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-709081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99C7AED90C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E007DAED910
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 11:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB9918943ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35019177323
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Jun 2025 09:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20AAC24A058;
-	Mon, 30 Jun 2025 09:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3CB247294;
+	Mon, 30 Jun 2025 09:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="OKbbifEZ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="VYBsmTf4"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FF9248F4B;
-	Mon, 30 Jun 2025 09:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823C5242D8A
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 09:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751277023; cv=none; b=cfe9n0ru9b6L+liJmsBHR8dno99Sx5G42Z/ItTtX+VXoChhAacSACVqkfaikL8erTtEOhazjw/nSQmNqFjwozPhL2O6jdOoCu2xFMCjdGv9OLecqDvjV5r8gZvO9MATSWR+OwfGNdBFwP+TTU2s9cetNh4acHlc0sIBNvj7W5zI=
+	t=1751277081; cv=none; b=Yw7PgaZOMT4w36QC+HEMv2YnlRSfh/nm3exfnz0EWLUlcyY5vuQyYoQ4/XJ1UICNWE3Yxtf6HamfRDExiIiaPfjpdJD2j1YevzHpW/PHtcTP42Cj27sDzPdRo7UuCc6erl9RJ+qD5lwBCvZ2m7bgvCx3xoRquxpvO2cVip1BdVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751277023; c=relaxed/simple;
-	bh=OlR9PO94f1hpbZsfLLpaoTmAlbcl6nqpnsyTcK20dmY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jlpwIFFvwRcb/i6JyEhlQGTyif1THPWbm0FvcKk34KF0VrxeWfNSurpXkFZvHhJByYq8BjHS8FRvadHrXMwZoSeIBVUL2bt9c4YW4NGXsZyQexOxINQM5t0BzX/0OCojsCdbTOM4/2m4mMVp5jZxoRym5OCdsCDB67jof9cQewY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=OKbbifEZ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=fdCzhVsNXpe5AUC2cbbE/8xzVg3QlWI9Hb+MzbVyv/U=; b=OKbbifEZUNsRrPyg/milb2gP6P
-	Lo2KatzmVJ+9ENyCsgIIQ5f4iQPQ1FOk5hemSdMqb+pbAsqtHLlUqf6VAhM1MOqOWy/GeDHNBy5xf
-	ZIUEYXZdhdvfFeM4fDtf4+9FWUkluhSmHBG1yhA7ridYmCy63fgzTmHa5FGFfxJyWeUxaIuYM9Oot
-	F4FbPP8wwK1npthTkVx3BkLHcVhJUZ5YpYbqPSDxHm7As9nAoXivSp4o6DHeFxxndUy/THVqBI3KW
-	jbAN4pP3/DaJxjgM+nz6G3CaOhLIKUKEWuxejLgRMmHfNUVpXjeKtrK4f/3HCHy7Cm4Wb2Ua3XUKy
-	s0DXQP7g==;
-Received: from i53875bfd.versanet.de ([83.135.91.253] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uWB9Q-0006dy-Kw; Mon, 30 Jun 2025 11:50:12 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Olivier Benjamin <olivier.benjamin@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Nicholas Roth <nicholas@rothemail.net>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>, imx@lists.linux.dev,
- ~diederik/pine64-discuss@lists.sr.ht, Dragan Simic <dsimic@manjaro.org>,
- Ondrej Jirman <megi@xff.cz>
-Subject: Re: [PATCH v4 0/4] Describe the cameras in the PinePhone Pro dts
-Date: Mon, 30 Jun 2025 11:50:11 +0200
-Message-ID: <7067942.rnE6jSC6OK@diego>
-In-Reply-To: <aFknh7weIKoGKajQ@kekkonen.localdomain>
-References:
- <20250620-camera-v4-0-0201a8ed5fae@bootlin.com> <13788127.uLZWGnKmhe@phil>
- <aFknh7weIKoGKajQ@kekkonen.localdomain>
+	s=arc-20240116; t=1751277081; c=relaxed/simple;
+	bh=iqcbsqqx91hRFW3nOeQh2fCgpjZp4yNOzZLmUmGbW98=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t+4Do0BnoN+/A2UOr4xZ1j0SEqwnPccZHVWb/eW3VFa/Ryc6jfk8wx14+G9xnrpIwUD2Ep2BkXh0hpm3y/Ls3z8j/HoW+5jIek0vnoSyFVgSFpngeqXmMQnuWmeIvQLKe+v3j1Mj96usAL2ERLtDjloJNhbAmCL4phzG4VQwj3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=VYBsmTf4; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31223a4cddeso846383a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 02:51:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1751277077; x=1751881877; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1axG9UN4guwGf2MhIje1rzGErylNfM2qtIpn5Wq0YrA=;
+        b=VYBsmTf47dKbSkUhsOd2ZIbuVW56Xaek8A1Qiuhql52Tu/sQEOLBS46O/B15SRAIaz
+         HcFpPz+RuzK5JWARO+aTjjhNCZYhDpUKv49gKC9zPlCIj1179jh10LHDTwV/c5YdNnb1
+         f3QoxeL9NMklZTjw4BWw01oDyb23qkkfsn6RmUKPliepRsinYvkJHElypZhEhu2M93Zo
+         qIv3a13Va+ANZowf9zOCi78KrcxaS9CECPYuQUubLYI0AxaRBmpJlbJqR5hx/swV2aYv
+         VEwCV7Scz3h5bumsjp5J06zu5dNiOv9yPC6X3QuedX45X+ywrjL0VgzeSuHKmeTUvnXI
+         7u6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751277077; x=1751881877;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1axG9UN4guwGf2MhIje1rzGErylNfM2qtIpn5Wq0YrA=;
+        b=qrixs5gnhtVHE++rAttVMJQDoHokYdtu0NaKrZUsfhjLjJJyhr5BDfwofBk5wz5T2C
+         l4CrqBgpajw7L3I1l0Lkf/hNVKT6pYXVIcNhkrgCPpEXGAY9MyB67U3+AQRpLxbeEDW2
+         C+wX6Ste1Ty6Ad9YejHHAgOG/Jhoc1hnE7BuAPPsY63t7pSVbcXLS+aUZaLfnpnAbqCV
+         81hPOCWmg7J+oo7cb7HrxVim8I9TloBc6S7r3C1ByAMy0/DukkEhr0barLOjKTME28eB
+         yr9/oUxhYD+FpMY2RAPIqyz/yb7hRhWjNPOlvsdQ6L3axLzWGejwLV8eJTobh+9i4iQR
+         6ULA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjFlm0Jwc3WjQEQEtPgOvgsR/3GtRZBmcspNMNnLAlk6e6uGLDKcEP6DS/IcWa4AaGDnOmfJqFD2uKFLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4BIKp65zOOqcnATrKeUHQ6zg9SB3FqW6YpJORc0Zd+ECfP3r+
+	97RVR+2nBnBLEoEdHJ/z16It//pzddOzHXsAj3vKgiV0f+C/foaCQce1QK6gb7IMGHA=
+X-Gm-Gg: ASbGncvrO+B+5zX2W6uX0rJ2ed3zpUtgpDDIwhYuKOQU8452YZYnkNOLU4MKOYEL3ao
+	sNXqJZqkkVi9mr8YmcL2rf5QUUWSmLujsXQz+Oo9aw4IP2TKD/SyDIjI+MmENTyw6oG7RR9x9Pi
+	5uxUWdVtVdFaUXthWuXBZXsc49x/L8RH3jGXnSV2rzCJLHlbyFTlXsBRS7XA3KAwFfIy1P77WqQ
+	DV1oxFiD+FNfHr7eMqucm+koo6AIufFIokXByAV4dKAltrwHpkDmmZBonpPvhcwHo/49WV9qROY
+	zqqO3gqrSSkFJfwWfqoIWzMUb7L4MwyxJtPfhkChe5H5/CJJzk3OrA9RU91Y/qxJLTg6BP23
+X-Google-Smtp-Source: AGHT+IHPgTj4lH/A7AaOqx4zS1bLYGSTxDSUFaa71SvEDg6oNnPYe86WGVy9RGJSkXmiLAkS60LykA==
+X-Received: by 2002:a17:90b:35ce:b0:312:db8:dbdd with SMTP id 98e67ed59e1d1-318c925a50fmr17658008a91.28.1751277077433;
+        Mon, 30 Jun 2025 02:51:17 -0700 (PDT)
+Received: from vexas.. ([203.208.189.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-318c14e18bbsm8409468a91.23.2025.06.30.02.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 02:51:17 -0700 (PDT)
+From: Zigit Zo <zuozhijie@bytedance.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: zuozhijie@bytedance.com,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] virtio-net: fix a rtnl_lock() deadlock during probing
+Date: Mon, 30 Jun 2025 17:51:09 +0800
+Message-ID: <20250630095109.214013-1-zuozhijie@bytedance.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am Montag, 23. Juni 2025, 12:08:07 Mitteleurop=C3=A4ische Sommerzeit schrie=
-b Sakari Ailus:
-> Hi Heiko,
->=20
-> On Mon, Jun 23, 2025 at 12:05:22PM +0200, Heiko Stuebner wrote:
-> > Hi,
-> >=20
-> > Am Montag, 23. Juni 2025, 08:47:44 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb Sakari Ailus:
-> > > Hi Olivier,
-> > >=20
-> > > On Fri, Jun 20, 2025 at 05:21:31PM +0200, Olivier Benjamin wrote:
-> > > > This series adds support for the Pine64 PinePhone Pro's rear and fr=
-ont
-> > > > cameras in Device Tree.
-> > > > This is based on some of Ondrej Jirman's patches hosted in his tree=
- at
-> > > > https://codeberg.org/megi/linux, but I have also fully reviewed and
-> > > > re-written the code from the RK3399 datasheet, the PinePhone Pro
-> > > > schematic, and the IMX258-0AQH5 software reference manual.
-> > > >=20
-> > > > I have tested these changes on my PinePhone Pro and am able to take
-> > > > photos from both cameras using libcamera's cam.
-> > > >=20
-> > > > This series has raised a question about the proper label name for t=
-he
-> > > > front/user camera and rear/world camera for phones.
-> > > > This series is using "ucam" and "wcam", which is used in a few other
-> > > > Rockship DTBs:
-> > > >  - arch/arm64/boot/dts/rockchip/px30-evb.dts
-> > > >  - rk3399-gru-scarlet.dtsi
-> > > >=20
-> > > > Signed-off-by: Olivier Benjamin <olivier.benjamin@bootlin.com>
-> > >=20
-> > > Thanks for the patches.
-> > >=20
-> > > I've picked the first two in the set, presumably the rest will be mer=
-ged
-> > > via another tree?
-> >=20
-> > correct, and with the first two being applied, I can now also safely pi=
-ck
-> > the other two :-)
->=20
-> Once in my tree, they'll next end up to the media committers' tree and
-> after some time you should be able to find them in linux-next. This proce=
-ss
-> will take some time. Just FYI.
+This bug happens if the VMM sends a VIRTIO_NET_S_ANNOUNCE request while
+the virtio-net driver is still probing with rtnl_lock() hold, this will
+cause a recursive mutex in netdev_notify_peers().
 
-thanks for the heads up :-) .
+Fix it by skip acking the annouce in virtnet_config_changed_work() when
+probing. The annouce will still get done when ndo_open() enables the
+virtio_config_driver_enable().
 
-So I'll give that a bit more time for the bindings to appear.
+We've observed a softlockup with Ubuntu 24.04, and can be reproduced with
+QEMU sending the announce_self rapidly while booting.
 
-Thanks
-Heiko
+[  494.167473] INFO: task swapper/0:1 blocked for more than 368 seconds.
+[  494.167667]       Not tainted 6.8.0-57-generic #59-Ubuntu
+[  494.167810] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  494.168015] task:swapper/0       state:D stack:0     pid:1     tgid:1     ppid:0      flags:0x00004000
+[  494.168260] Call Trace:
+[  494.168329]  <TASK>
+[  494.168389]  __schedule+0x27c/0x6b0
+[  494.168495]  schedule+0x33/0x110
+[  494.168585]  schedule_preempt_disabled+0x15/0x30
+[  494.168709]  __mutex_lock.constprop.0+0x42f/0x740
+[  494.168835]  __mutex_lock_slowpath+0x13/0x20
+[  494.168949]  mutex_lock+0x3c/0x50
+[  494.169039]  rtnl_lock+0x15/0x20
+[  494.169128]  netdev_notify_peers+0x12/0x30
+[  494.169240]  virtnet_config_changed_work+0x152/0x1a0
+[  494.169377]  virtnet_probe+0xa48/0xe00
+[  494.169484]  ? vp_get+0x4d/0x100
+[  494.169574]  virtio_dev_probe+0x1e9/0x310
+[  494.169682]  really_probe+0x1c7/0x410
+[  494.169783]  __driver_probe_device+0x8c/0x180
+[  494.169901]  driver_probe_device+0x24/0xd0
+[  494.170011]  __driver_attach+0x10b/0x210
+[  494.170117]  ? __pfx___driver_attach+0x10/0x10
+[  494.170237]  bus_for_each_dev+0x8d/0xf0
+[  494.170341]  driver_attach+0x1e/0x30
+[  494.170440]  bus_add_driver+0x14e/0x290
+[  494.170548]  driver_register+0x5e/0x130
+[  494.170651]  ? __pfx_virtio_net_driver_init+0x10/0x10
+[  494.170788]  register_virtio_driver+0x20/0x40
+[  494.170905]  virtio_net_driver_init+0x97/0xb0
+[  494.171022]  do_one_initcall+0x5e/0x340
+[  494.171128]  do_initcalls+0x107/0x230
+[  494.171228]  ? __pfx_kernel_init+0x10/0x10
+[  494.171340]  kernel_init_freeable+0x134/0x210
+[  494.171462]  kernel_init+0x1b/0x200
+[  494.171560]  ret_from_fork+0x47/0x70
+[  494.171659]  ? __pfx_kernel_init+0x10/0x10
+[  494.171769]  ret_from_fork_asm+0x1b/0x30
+[  494.171875]  </TASK>
 
+Fixes: df28de7b0050 ("virtio-net: synchronize operstate with admin state on up/down")
+Signed-off-by: Zigit Zo <zuozhijie@bytedance.com>
+---
+ drivers/net/virtio_net.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index e53ba600605a..0290d289ebee 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -6211,7 +6211,8 @@ static const struct net_device_ops virtnet_netdev = {
+ 	.ndo_tx_timeout		= virtnet_tx_timeout,
+ };
+ 
+-static void virtnet_config_changed_work(struct work_struct *work)
++static void __virtnet_config_changed_work(struct work_struct *work,
++					  bool check_announce)
+ {
+ 	struct virtnet_info *vi =
+ 		container_of(work, struct virtnet_info, config_work);
+@@ -6221,7 +6222,7 @@ static void virtnet_config_changed_work(struct work_struct *work)
+ 				 struct virtio_net_config, status, &v) < 0)
+ 		return;
+ 
+-	if (v & VIRTIO_NET_S_ANNOUNCE) {
++	if (check_announce && (v & VIRTIO_NET_S_ANNOUNCE)) {
+ 		netdev_notify_peers(vi->dev);
+ 		virtnet_ack_link_announce(vi);
+ 	}
+@@ -6244,6 +6245,11 @@ static void virtnet_config_changed_work(struct work_struct *work)
+ 	}
+ }
+ 
++static void virtnet_config_changed_work(struct work_struct *work)
++{
++	__virtnet_config_changed_work(work, true);
++}
++
+ static void virtnet_config_changed(struct virtio_device *vdev)
+ {
+ 	struct virtnet_info *vi = vdev->priv;
+@@ -7030,7 +7036,10 @@ static int virtnet_probe(struct virtio_device *vdev)
+ 	   otherwise get link status from config. */
+ 	netif_carrier_off(dev);
+ 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+-		virtnet_config_changed_work(&vi->config_work);
++		/* The check_annouce work will get scheduled when ndo_open()
++		 * doing the virtio_config_driver_enable().
++		 */
++		__virtnet_config_changed_work(&vi->config_work, false);
+ 	} else {
+ 		vi->status = VIRTIO_NET_S_LINK_UP;
+ 		virtnet_update_settings(vi);
+
+base-commit: 2def09ead4ad5907988b655d1e1454003aaf8297
+-- 
+2.49.0
 
 
