@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-711095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F5AAEF5FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:02:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B0EAEF604
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B2C1C017A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:02:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E46D7A4AA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D3627057D;
-	Tue,  1 Jul 2025 11:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9A5271450;
+	Tue,  1 Jul 2025 11:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqm81N8l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EbAYtmfM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617A5231A24;
-	Tue,  1 Jul 2025 11:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D156B264626;
+	Tue,  1 Jul 2025 11:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751367715; cv=none; b=AaAaL8H5KPS178TG1ouIm6ZrDssQt6y4GwQBYvW9M0oTgQ4pIIEwzVmr+xp6hGcBpaQdny7IQLBG/2f7/m2/WGO/4/+csxhofKtIe3JXIDDGlUivr7pIU7x5rlfmZ5sj9miFJXPgmRToLZY8aG413Z2P6X9LP9JEGyQ9s6M5j3U=
+	t=1751367800; cv=none; b=FoIYfxOMtbDcaZMfDrONAyZTxEOVz3Hhek3JVlLp5mG/M1oyjWWNYVR7o0UNA7DgU5lBPTjOhicNc0/xaSvuNoVpVK+9nep0aohtVE6Kqgtwb5JnyRcpV03LspARsuSc8RSSvSzE8Y0053obhlYARysj/Jm8To8Hs53xFCoy3Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751367715; c=relaxed/simple;
-	bh=x+/jfhbvrQZRQ7RfI+BdPxv9r5V+E7gboa1JLBgD3lE=;
+	s=arc-20240116; t=1751367800; c=relaxed/simple;
+	bh=6kNKJ2mFTxTcmBjI382PaBWELeHf7O/jzRNGF2VoYfc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHLNR7qee+WM0+GAbYeAVgBBX+mmpFMk9a8OXtaclFV1sRe6j5yJMCY94DuvuoTK1DdZMezGb6hHi+5gEl7cN+yrZQlQvI7bFh9EeBNoCl4WhUIYNl8i5ub4/oc84WOVlcO+rG/eBCSirMAKWTChoxvFEa6zVPMlI3Nk/8YFEj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqm81N8l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B1EC4CEEE;
-	Tue,  1 Jul 2025 11:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751367715;
-	bh=x+/jfhbvrQZRQ7RfI+BdPxv9r5V+E7gboa1JLBgD3lE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nqm81N8lvDX7N/u3xjG7hXMTvGqO54jyHyE2S26wmNaQflgz/pCQwdOLBaUoGESOT
-	 UDXcnu+0St+FBVUhbE1ZXYHxCq1/aaIDgs25i4S+Nc3HZmf5pEw4B6Wlce9mnI6v5d
-	 PHyKnIjNkUQ5a7JeexhNEKCoCAqOTReLXzznchKJsbh0ArjuB6dDOeklRvElOW7AFX
-	 galPphzb0O/qlHWhDUhq0t4Wjf6tkO23p2hh+XiRWqq2tDgHMkURWqVv9jU4GPAXV9
-	 JsMhrCDq9SWqebzlQ0d1d2As2JL+n19bD8ySqDEg8+KiH8KsqIkmfFm1TMKyCdw7m1
-	 ifQtrqKbZYV6A==
-Date: Tue, 1 Jul 2025 12:01:50 +0100
-From: Lee Jones <lee@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chris Morgan <macroalpha82@gmail.com>,
-	Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH] mfd: axp20x: Skip PEK on AXP313A/AXP323 if no interrupt
- line is available
-Message-ID: <20250701110150.GJ10134@google.com>
-References: <20250630135249.3961621-1-wens@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0vnUaEQ9kxk44YIa3+1HZOdGvvNJ8CvJ1qnCfQI9oFKtYyN8RUi5mRYfH2LNMVaACDG/oiLUc5bQ5t44aqXMuwoka3YaI2APFnggF3WBgy5S1VYQ4B+qYjvHDL/Pt30WXjO3m2pfWybAVdYKCejw23WjwBi3XvVPwfTHMJ+lJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EbAYtmfM; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751367797; x=1782903797;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6kNKJ2mFTxTcmBjI382PaBWELeHf7O/jzRNGF2VoYfc=;
+  b=EbAYtmfMA28hnMRh+T/NSLZy/AXML7AaCqsEKfFdKE8zC0gYxp39YiZ/
+   AjAqxKdRAZD8XZIkMwvgocpYdFLq8XYzcHznlKg+GDZWkXC/Lb27h9rsA
+   5Tzs1MMpsjW7Xp2lLZc8O6oMFtqO6vf/aQbZPqHYaltlpFwHMLa4jX6Zc
+   7dHxmREbJ94EtIzfp7K1ZeBvM3JjAETArmLFv4im4m0r7z8BPFcHUHncU
+   2JdLlYoUkM2zV6k46I6A78Q2VbehesJjW6pvYghdKDtlbhAaCmC0p+wNX
+   hdvA0OdE/cwyscpQ2ew1GdGICokXsS7JmFkxofA9JfHN1y2S/fN/pykNi
+   A==;
+X-CSE-ConnectionGUID: cG4js02XRLifbLCMTCTtCA==
+X-CSE-MsgGUID: 6Bkamq6JRHy1IDUuVCdmJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="71189314"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="71189314"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 04:03:16 -0700
+X-CSE-ConnectionGUID: 5cI7/pJ0QSqlP2QGqmcjTg==
+X-CSE-MsgGUID: 4KTUbD3rTP6h/BIVcGBvwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="153352936"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 01 Jul 2025 04:03:14 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uWYlb-000a2s-35;
+	Tue, 01 Jul 2025 11:03:11 +0000
+Date: Tue, 1 Jul 2025 19:02:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chung <seokwoo.chung130@gmail.com>, hao.wu@intel.com,
+	trix@redhat.com, mdf@kernel.org, yilun.xu@intel.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-fpga@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ryan Chung <seokwoo.chung130@gmail.com>
+Subject: Re: [PATCH] fpga: dfl: Replace scnprintf() with sysfs_emit()
+Message-ID: <202507011805.BSIqVlhe-lkp@intel.com>
+References: <20250630125018.48417-1-seokwoo.chung130@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250630135249.3961621-1-wens@kernel.org>
+In-Reply-To: <20250630125018.48417-1-seokwoo.chung130@gmail.com>
 
-On Mon, 30 Jun 2025, Chen-Yu Tsai wrote:
+Hi Ryan,
 
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> Originally an explicit ID for the AXP313/AXP323 regulator was set to
-> avoid a conflict with the primary AXP717 PMIC on Allwinner A523 family
-> boards.
-> 
-> This didn't entirely work since on some or all of these boards, the
-> interrupt line on this secondary PMIC was left unconnected, and thus
-> the driver would fall back to the generic "no interrupt; only regulators"
-> case, which didn't have the explicit ID set, thus undoing the intended
-> fix.
-> 
-> Explicitly exclude the PEK cell in the no IRQ case for the
-> AXP313/AXP323, instead of using the generic fallback.
-> 
-> Fixes: 249abf9b1e25 ("mfd: axp20x: Set explicit ID for AXP313 regulator")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> The other option would be to move the explicit ID to the generic
-> fallback case instead. This is really only visible in sysfs and the
-> kernel logs, so probably not that important.
-> ---
->  drivers/mfd/axp20x.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> index 25c639b348cd..8877482a95a1 100644
-> --- a/drivers/mfd/axp20x.c
-> +++ b/drivers/mfd/axp20x.c
-> @@ -1055,6 +1055,7 @@ static const struct mfd_cell axp152_cells[] = {
->  static struct mfd_cell axp313a_cells[] = {
->  	/* AXP323 is sometimes paired with AXP717 as sub-PMIC */
->  	MFD_CELL_BASIC("axp20x-regulator", NULL, NULL, 0, 1),
-> +	/* Keep PEK as last entry for exclusion in no-irq cases */
->  	MFD_CELL_RES("axp313a-pek", axp313a_pek_resources),
->  };
->  
-> @@ -1306,12 +1307,18 @@ int axp20x_match_device(struct axp20x_dev *axp20x)
->  		axp20x->irq_flags = IRQF_TRIGGER_LOW;
->  		break;
->  	case AXP313A_ID:
-> +		/* Exclude PEK if no IRQ is available */
-> +		nr_cells_no_irq = ARRAY_SIZE(axp313a_cells) - 1;
+kernel test robot noticed the following build warnings:
 
-This is too fragile.  Please fine another way to achieve your goal.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.16-rc4 next-20250630]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +		cells_no_irq = axp313a_cells;
->  		axp20x->nr_cells = ARRAY_SIZE(axp313a_cells);
->  		axp20x->cells = axp313a_cells;
->  		axp20x->regmap_cfg = &axp313a_regmap_config;
->  		axp20x->regmap_irq_chip = &axp313a_regmap_irq_chip;
->  		break;
->  	case AXP323_ID:
-> +		/* Exclude PEK if no IRQ is available */
-> +		nr_cells_no_irq = ARRAY_SIZE(axp313a_cells) - 1;
-> +		cells_no_irq = axp313a_cells;
->  		axp20x->nr_cells = ARRAY_SIZE(axp313a_cells);
->  		axp20x->cells = axp313a_cells;
->  		axp20x->regmap_cfg = &axp323_regmap_config;
-> -- 
-> 2.39.5
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chung/fpga-dfl-Replace-scnprintf-with-sysfs_emit/20250630-205221
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250630125018.48417-1-seokwoo.chung130%40gmail.com
+patch subject: [PATCH] fpga: dfl: Replace scnprintf() with sysfs_emit()
+config: sparc-randconfig-r112-20250701 (https://download.01.org/0day-ci/archive/20250701/202507011805.BSIqVlhe-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250701/202507011805.BSIqVlhe-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507011805.BSIqVlhe-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/fpga/dfl-afu-main.c:159:32: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected char const *fmt @@     got unsigned long @@
+   drivers/fpga/dfl-afu-main.c:159:32: sparse:     expected char const *fmt
+   drivers/fpga/dfl-afu-main.c:159:32: sparse:     got unsigned long
+   drivers/fpga/dfl-afu-main.c:478:32: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected char const *fmt @@     got unsigned long @@
+   drivers/fpga/dfl-afu-main.c:478:32: sparse:     expected char const *fmt
+   drivers/fpga/dfl-afu-main.c:478:32: sparse:     got unsigned long
+
+vim +159 drivers/fpga/dfl-afu-main.c
+
+   152	
+   153	static ssize_t
+   154	id_show(struct device *dev, struct device_attribute *attr, char *buf)
+   155	{
+   156		struct dfl_feature_dev_data *fdata = to_dfl_feature_dev_data(dev);
+   157		int id = port_get_id(fdata);
+   158	
+ > 159		return sysfs_emit(buf, PAGE_SIZE, "%d\n", id);
+   160	}
+   161	static DEVICE_ATTR_RO(id);
+   162	
 
 -- 
-Lee Jones [李琼斯]
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
