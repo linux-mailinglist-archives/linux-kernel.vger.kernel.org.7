@@ -1,157 +1,173 @@
-Return-Path: <linux-kernel+bounces-710802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76249AEF15B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:38:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18612AEF166
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9DF3BA87E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B1C16CD7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9034726A1AD;
-	Tue,  1 Jul 2025 08:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924DA26B77F;
+	Tue,  1 Jul 2025 08:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EmYWP3c0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ckt+g1s9"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D11C1E515;
-	Tue,  1 Jul 2025 08:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A27C26A087
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751359116; cv=none; b=s+h5hpC0xJIHg3Mb2Bn1dQ1WRI6sQGqqgAhn0frPLMCgWvf0W7YMuCPXUf8XG+rVHunmdj2cYBdI+ccfuxvp9FcOZBee9jBabGRtqasX1Gv9Mo8HXbwcLhtsCL1JhPCI0X3wgOZ2WzWhMSgNv3ATbP+i2Biu3PaVI/JM+mmhZ8A=
+	t=1751359182; cv=none; b=T8271tB6xtv6UkPiYqEiSLKaTuUjJIaJKn/xMylUvyLGvumKeWDScVbrzMSDyIoJqBwBw+NLvZDG+EKoYpj4aCToF5ubY1jn9snWt78awNieFlxCDmoSzHHLNFKOHiDHtjqBcAiIlTz9mYiPLGMcPs6ARlWsKTZ9BP324tI9Ofs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751359116; c=relaxed/simple;
-	bh=JDUNap3GHFKuWRWyBdvTiLwReRa/kNcyF2eZUEuoTFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IEEZ8knpH+wOywrmlzZ3aHGqIP4fA/jSHPv/BpIKyzM96u+HOS79jpKYa36VX2/EH8Y0SCBufevG6kvBkmhz3FJNniT6KVY5aqUYdCJhry21hU4NF85TS/OfkuidAzItv2b6xA2bRdzQDwNlT5V9MLFMCjAAbz98zqf9oEGY1Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EmYWP3c0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5613W3QD029344;
-	Tue, 1 Jul 2025 08:38:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sQK6jGek7VHu0q3g0+xBlO8ZxvXBA8trensas9hggfU=; b=EmYWP3c0zdlI3zHo
-	knvCfaBMywvwnx5nEdCGNyK/H2PKIZqAkXccIml7j9BUk3EwEqlODsw3t3Ddmd3f
-	kJCkmGrEQY+wCMaFKT14U9gPGsS6DOUys/LOBv2hx1XoumMER8H4w6IDehDB60r8
-	dGO+vV5xWSEvLtkJUchCoLO1Df4WYV5EcTjSK9bc+x90Yv/gXOxYesUAWGAV+L1Z
-	yeLAWO2TJGg7G5+o7kyS7IOfKmeT9eoL4c0aLK6IwRumRBVE7YKh4kEFYZaKtsBI
-	IMy3+vGaKVJAX1zox575jGxyH6FWtyvD/6zBdAWT4ofiSg0r2wjsKADXmlXLvOXF
-	Xqg0Rw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j95hyr20-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 08:38:31 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5618cUPb005646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 1 Jul 2025 08:38:30 GMT
-Received: from [10.217.217.109] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 1 Jul 2025
- 01:38:27 -0700
-Message-ID: <ec4e017e-ace8-4975-b8f0-a95c11fdb07d@quicinc.com>
-Date: Tue, 1 Jul 2025 14:08:24 +0530
+	s=arc-20240116; t=1751359182; c=relaxed/simple;
+	bh=dNFssYStWjlkvyhvt83/IFm0+gTNQR2fGINvxCNov/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhIK6QBZb/c4zkrXk+oSFlAoO9dikdiPu4PIDneJmmm/qJynpnOr1HMhPFAtoBRAldkovt8nEN/xvgfuPQoQ5LxNdhSnM8Uwqicn6/6ty4au35ecJsGr4oNKVx8edkNQtcNST1nJe7Jm6nLVnoWKDREnmSOFo//KfFY2ytpkP78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ckt+g1s9; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E002E3F71D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1751359178;
+	bh=4yp1+vuew+zECrTXb7RcSP/djBI2o2M9gov6DQJnyao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=Ckt+g1s97M2NpPHPActBKVnDMPJJ6wsekaY+LmY14i6rx37PH/84lZh4WjYp47dof
+	 V4S5WdnD0UqDI/QvJ2wFdlIroAgLljK59Bt6NX8jyauTvvr4lbggGEAYj5mruSj5Hf
+	 dGi0KNH7j7vzyIDAtanUEVAdApgGlyNTDrCrlxLxB3Y5u5tYNC8O148yF0z9byI9Yt
+	 quuyXjD+dS0g7k1/kI6txssaLfAEqmbanXIT95jUOOFlfDmxevV7f62jYs+U6O8Mdf
+	 UX08cJ4aX300fWGimVELJgOrH6sn4thsEWonpXiYRuwC+rT+lxglWWnofMHHf3zu2T
+	 BYFePOs0N1ZPw==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ae0c11adcd2so217200766b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 01:39:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751359177; x=1751963977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4yp1+vuew+zECrTXb7RcSP/djBI2o2M9gov6DQJnyao=;
+        b=NsDLgVZLGywJZrs8Leq0DrvJ2tPLGYq3/Eygk8DLQIVky/E3ToMb3QhHoPLeiP0sul
+         K6bzNSDRq5oqltaShShEr85t8Gf0/QwZeIHhjnIxdaMosvy5h794FZvgUAa1F3h6khnP
+         Qq/adGbyLXbRYzCPbrGQW++ZbW5lVEUL+WJLomo7go8a9FUV4lN8Zba8gAmPIYIHDSUJ
+         chFjqMhM0qonsTbS7KB1nm9C2Y0ItpEYiTQzchSiBiYXrZTf+vY0sDXd813oQxyRI915
+         fzBZtHy0+PL/hLZAhg56TeQ1mVEIR80wytXBSbWO8r3347U8Hy9HkWq0mD/qY8QuG6+3
+         wyKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwOtcuz3TWm/MvJNo71IxD5jv3rceZIHoEVPRZXXs+Uv/WdqzhEmUwcO/+1xv5dniff3NiMW4h3BCp/30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3V+YAR9qf+QS85tccsFs3rjj5atthV7c3m9c3pJY5m921iBrg
+	8s2lUGRobb8VcCuW68Biy7JBLvNb+Q39UbZcSNp3KkK3ZPDwhechFp80Avej4hcBOvyDClfyDKo
+	a9QxMfnCupUA8TVdSZDcuQaAbrM6zLnz0j2o+kuPUVhQiEFtwY/hNA4NwgqgwtPW+xD2qOu78rb
+	E4arwjpw==
+X-Gm-Gg: ASbGncsY3pKO0O5NFWENXCwWgutoZFj1tmoKGPBslyPlpCMhWjY6BFcWh63fu1CrMeu
+	Qvt4vpXVgLNzfo4Su5TF3XbQQJu9F+2obLf7BjBxfgzfbnI/V8v0WNg5/E8PkpkJevK3ouxjUU4
+	BPLyWQ3rcQCMsg6O3FcdV5sUl4FIyqGFI4ulT9L2qlSFJGF4wCWBhHcrcf6erwB7y6RoH/WVZDg
+	ccReyVJoGQHvP6zthjQUXifT6BKzoeftl9B0O9XHU6Bizrb7kkuVxUNtocLbMiFLTfeWIMLlJ7u
+	cLrAgjAvHiLOCLTwFEWE5BgO26Zu7POwOsiuuwOm0uR4CU0zsw==
+X-Received: by 2002:a17:907:1c1d:b0:ae0:c803:c96 with SMTP id a640c23a62f3a-ae34fddefb3mr1615648366b.24.1751359176481;
+        Tue, 01 Jul 2025 01:39:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNYW89qpdmfY3sZqsrYphW2DREJSdqhOYO6cQ7meUyqCU15mTrlKFcHLmzEEQga566TkO9uw==
+X-Received: by 2002:a17:907:1c1d:b0:ae0:c803:c96 with SMTP id a640c23a62f3a-ae34fddefb3mr1615645566b.24.1751359176025;
+        Tue, 01 Jul 2025 01:39:36 -0700 (PDT)
+Received: from amikhalitsyn.lan ([178.24.219.243])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35363b416sm812427166b.28.2025.07.01.01.39.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 01:39:35 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: kuniyu@google.com
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Luca Boccassi <bluca@debian.org>,
+	David Rheinsberg <david@readahead.eu>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next v2 0/6] allow reaped pidfds receive in SCM_PIDFD
+Date: Tue,  1 Jul 2025 10:39:09 +0200
+Message-ID: <20250701083922.97928-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs615: Add CPU scaling clock
- node
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250625-qcs615-mm-cpu-dt-v4-v4-0-9ca880c53560@quicinc.com>
- <20250625-qcs615-mm-cpu-dt-v4-v4-2-9ca880c53560@quicinc.com>
- <xkvn3r7yphlccurdqzncz5qegs7xc254xc2ou2dzuilatk5f5j@eq5ynce4aepg>
- <2b29ae78-e4a0-4d25-a694-abb10883086d@quicinc.com>
- <66c71817-442c-4a7b-8d10-48e6751c8e2f@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <66c71817-442c-4a7b-8d10-48e6751c8e2f@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA0OSBTYWx0ZWRfX9gWuux2DCY+L
- EKmnsfrT+pDnDGURl+ND9pcKB3OZjYxYDiCoJae/FSEzUu9WZHty81HdFZHu0OoxthYn2Oe3EDn
- HdrFVe9HtbVI4ollgK6Z1bBplylS6znaQSGJzXFXbAekmCOtVV2gU5lIv4DNzn4vUxi2/G1WAPC
- 0R0Fu4zmAhkXhNokJUwCmD5uLZ1hUf1lbrNkSR3Veyq6UScY6T27TO2NHq4h1P8VfYu+EPr56Zb
- z7zKw+Uj9JIUwM/YV71Dp15AO9H0U4MI3/mps1LIUSI28qV9S1u3VWzNSbdUF6/uN/cY8wvhtFL
- FuXjLsji02wc9Dc7JAV128TPyZdlY/YMGO2w3WMmi4FPpw15xTDYgVEtAfxULc/wtlUDL1akTkH
- duzsuyDxMKUiIUX4mGSidZIm1Q6rKKUaFaA1BpKUi0USyGnxtZpB3bMiZIs3Q92/+rjPEuNC
-X-Proofpoint-ORIG-GUID: UZcPiZ8t0JDNjJHSFiA-rcA_mGSc4uLe
-X-Authority-Analysis: v=2.4 cv=EuHSrTcA c=1 sm=1 tr=0 ts=68639e87 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=4nQvkLI_yURXtyyxFtUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: UZcPiZ8t0JDNjJHSFiA-rcA_mGSc4uLe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=853 malwarescore=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507010049
 
+This is a logical continuation of a story from [1], where Christian
+extented SO_PEERPIDFD to allow getting pidfds for a reaped tasks.
 
+Git tree (based on vfs/vfs-6.17.pidfs):
+v2: https://github.com/mihalicyn/linux/commits/scm_pidfd_stale.v2
+current: https://github.com/mihalicyn/linux/commits/scm_pidfd_stale
 
-On 6/27/2025 6:05 PM, Dmitry Baryshkov wrote:
-> On 27/06/2025 06:52, Taniya Das wrote:
->>
->>
->> On 6/25/2025 5:06 PM, Dmitry Baryshkov wrote:
->>> On Wed, Jun 25, 2025 at 04:44:01PM +0530, Taniya Das wrote:
->>>> Add cpufreq-hw node to support CPU frequency scaling.
->>>>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 29 ++++++++++++++++++++++++
->>>> +++++
->>>>   1 file changed, 29 insertions(+)
->>>>
->>>> @@ -3891,6 +3907,19 @@ glink_edge: glink-edge {
->>>>                   qcom,remote-pid = <2>;
->>>>               };
->>>>           };
->>>> +
->>>> +        cpufreq_hw: cpufreq@18323000 {
->>>> +            compatible = "qcom,sc7180-cpufreq-hw", "qcom,cpufreq-hw";
->>>
->>> Why? Other platforms use a true SoC as the first entry.
->>>
->> Dmitry, from cpufreq-hw perspective SC7180 is a exact match for QCS615
->> and that was the reason to use the same.
-> 
-> Please look around. A quick `git grep` would show that every SoC uses
-> SoC-specific compatible (although some of them are definitely
-> compatible). The reason is pretty simple: each platform might have SoC-
-> specific tunings and quirks.
-> 
+Changelog for version 2:
+ - renamed __skb_set_pid() -> unix_set_pid_to_skb() [ as Kuniyuki suggested ]
+ - get rid of extra helper (__scm_set_cred()) I've introduced before [ as Kuniyuki suggested ]
+ - s/__inline__/inline/ for functions I touched [ as Kuniyuki suggested ]
+ - get rid of chunk in unix_destruct_scm() with NULLifying UNIXCB(skb).pid [ as Kuniyuki suggested ]
+ - added proper error handling in scm_send() for scm_set_cred() return value [ found by me during rework ]
+ - don't do get_pid() in __scm_replace_pid() [ as Kuniyuki suggested ]
+ - move __scm_replace_pid() from scm.h to scm.c [ as Kuniyuki suggested ]
+ - fixed kdoc for unix_maybe_add_creds() [ thanks to Kuniyuki's review ]
+ - added RWB tags from Christian and Kuniyuki
 
-Sure Dmitry, I will update to use "qcom,qcs615-cpufreq-hw"
+Links to previous versions:
+v1: https://lore.kernel.org/netdev/20250629214449.14462-1-aleksandr.mikhalitsyn@canonical.com
+tree: https://github.com/mihalicyn/linux/commits/scm_pidfd_stale.v1
+
+/!\ Notice
+Series based on https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.17.pidfs
+It does not use pidfs_get_pid()/pidfs_put_pid() API as these were removed in a scope of [2].
+I've checked that net-next branch currently (still) has these obsolete functions, but it
+will eventually include changes from [2], so it's not a big problem.
+
+Link: https://lore.kernel.org/all/20250425-work-pidfs-net-v2-0-450a19461e75@kernel.org/ [1]
+Link: https://lore.kernel.org/all/20250618-work-pidfs-persistent-v2-0-98f3456fd552@kernel.org/ [2]
+
+Cc: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Willem de Bruijn <willemb@google.com>
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: Lennart Poettering <mzxreary@0pointer.de>
+Cc: Luca Boccassi <bluca@debian.org>
+Cc: David Rheinsberg <david@readahead.eu>
+
+Alexander Mikhalitsyn (6):
+  af_unix: rework unix_maybe_add_creds() to allow sleep
+  af_unix: introduce unix_skb_to_scm helper
+  af_unix: introduce and use __scm_replace_pid() helper
+  af_unix: stash pidfs dentry when needed
+  af_unix: enable handing out pidfds for reaped tasks in SCM_PIDFD
+  selftests: net: extend SCM_PIDFD test to cover stale pidfds
+
+ include/net/scm.h                             |  33 ++-
+ net/core/scm.c                                |  30 ++-
+ net/unix/af_unix.c                            |  75 ++++--
+ .../testing/selftests/net/af_unix/scm_pidfd.c | 217 ++++++++++++++----
+ 4 files changed, 285 insertions(+), 70 deletions(-)
+
+-- 
+2.43.0
 
 
