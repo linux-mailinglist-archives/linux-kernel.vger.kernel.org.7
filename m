@@ -1,153 +1,158 @@
-Return-Path: <linux-kernel+bounces-711203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA18AEF792
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:59:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7BDAEF7A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA8D16D4FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6041898ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3E4283689;
-	Tue,  1 Jul 2025 11:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA36273D7A;
+	Tue,  1 Jul 2025 11:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Gh2oMzmq"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UZ+VDBVv"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA63A283128;
-	Tue,  1 Jul 2025 11:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B52E273819
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370652; cv=none; b=Aa9LtSM5cj2a6PoT0aZwoyiPpjSNukUf942bSwL/i8SPIj7ywuvjf0l6l2VLRsqzkezB2LPYRo1F3od715B6QA/vTIP5tWhWVHBLbN5OuFXsFUz76OR3vJ83cUzaZsDjDyODEHHdDI0yJ6zxC4xSeKglVFUg7fctxgAnlstrmsM=
+	t=1751370766; cv=none; b=Acr/pKNpOxYfczfi2rmkg49eVUpSBJ7VYzuuWsbkZnpYeki8+4dCeYveGKmj0yBrCmnusxnmYxN845Uo8k29MIk4fcku5poiEoOVC/Eg0vafI/TMLKMhMPrWqQ+bpV0Nmv3unQPjizk6X4+CDePcZooBO2PMNOxUR9XfTpyXzl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370652; c=relaxed/simple;
-	bh=6FJ0+qzy8kGCwdfloTTbqs+b10xzGGPR1Y78CzrKzO0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iOm7Dc4+SSECSNlFvUlcCKPVZji1tvIIRw811qa55Y9W1MUjEl7+GvkP+r76WKYtQs+o+uHpSpFBtcjCoBGl1ajTT4kZ1N+WauNmJqLUAKS29bSXUQNV1I4pnXlNT02CUAAjXKt+H+SCvKbC8WVcwfnJATsIuxFVqbTY5+b0wLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Gh2oMzmq; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EEED6103972AB;
-	Tue,  1 Jul 2025 13:50:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1751370647; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZjpXei11sZqko3mrnHeBKkfQuI9xs36ulJ4JU6z/E6s=;
-	b=Gh2oMzmqzw0HGKxgkR5rHtXpI+TuvYbd//kIvUM1VjTNVPYGHI7fWNKEwHQmeWnVNmAuGa
-	b8MXJLBruc3tXV7CPkiz5ddorjqzGMcxEs4kQ38roq1Esli94hAIq7ysWqH2G79m95ib23
-	oY9D87L4E83at1aztXspfphJxlpvAruSQPlDUyfBqtgHSRVy478lZQByOsBR2H3HoMencj
-	be5dbpK2bmCMHBJPNPwkgsORM/94H7rNCho7Mw0IaxUWzz7PaQo26wOySnLsaRnJdsMmHO
-	HANfPzNBIW/M+HeluknGJYLnTP+MXEpwZGqeecgoNldY5dKpEcTTGA+9HmMwGg==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v14 12/12] ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2 switch
-Date: Tue,  1 Jul 2025 13:49:57 +0200
-Message-Id: <20250701114957.2492486-13-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250701114957.2492486-1-lukma@denx.de>
-References: <20250701114957.2492486-1-lukma@denx.de>
+	s=arc-20240116; t=1751370766; c=relaxed/simple;
+	bh=jrHyPTE0Cbbg51nU/1dDVkkk444gMusx+i7f5CaT3BM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UyBTWtiOEV3wu5pO0nL5SB/m7oL7nL+T9XGDfKNAtQZz5Im6I3J5lLYdjHuWiryXfCiPnGq9K/yvouvJfdB+cnc9whOXTMWSGeIM/sAA5eMch7JI8O/rbcludsUVmeZnim/6GANzKn4hH/SERbYxCMSR+fdEjAeStuywSDoJl+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UZ+VDBVv; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4fb9c2436so3213386f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751370762; x=1751975562; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=veoFO+1wdpPDWz3qRkvkxT3szkUu/z2wjkK1DneZyWM=;
+        b=UZ+VDBVvIPiPg+KusvlM1G13dxaBGmTxAHDPOhozNVmQ4QQaMCKXI44cJTUy4z/E4H
+         mGYecZsXg0KR7EJ4BM7G5VibZne/WSo1NpG1yM+s3+4p22UL+IXiEgXdWdi9utxWUE8K
+         DoIwmqth+I8ukbb57iVMTu+/d3HgdEYtqO11xBTA9JKciT2O4EWiAj62f973pT0ZZmOY
+         mUGJSaS5DJnLoCsLUd1KWqo4BN2vs3m/Ur4NZ80lX1NeY5Jq0Ter+QAmfYVDTP2lePgf
+         0Ini4agqU+8AuCsFBgVvfW4vEUab9Pi4uZyFC2jOtmH3way9Z/4wMDIU/y9fWL8bK4H+
+         OQOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751370762; x=1751975562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=veoFO+1wdpPDWz3qRkvkxT3szkUu/z2wjkK1DneZyWM=;
+        b=OUib5UufDDsl/9fCut/8jzTQKbWkoa7mytil0MfVC/NwevGItx0XzCqsDtOI0ov9Te
+         tSlkdZESuZGJmeD12Cgtfu6ToczGhX1wrTXmg0s/bjHK5Px6vLa6jl5g07XjLOKo9vp4
+         dWc1i6EUAAoIA+hzMotq9oZ/gz6NPU34H8JsEYcT1mYrKyEqiap3CAISmQeq83lflQLc
+         FEbY0cPn3RKv2VTeH8hPMQNp3v0Uz/wduZZ6edJKgIK2dPK4by3oUijspMlRe2cS+uAB
+         XnzwCWdJaamkdxQzJ6Jt9GK30usAYvw6N2X6yalrmNarVn9YnssMo2qMG8Q64WMwUXXt
+         E1ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTPLP4ryHWhBtS3QiUmWDH595ws8ZriY2FNb5+s09Z0hEJkAESTfd2NUctGmM1F1QklUl03Jr6nR2zndk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQr9ZHFEH0kOH0vpuphh1KzASV9/MKjQUvxNU8XpEfV66cBgR4
+	rD5odBzAQIfhig4M/dvL3QFw1cOwjmo5gWFAfXGL+OY/zKYjDoE7GIVNrzoIynKcXrXZSUk0Lp+
+	dL2fy8JGcMQJFGxaj8rXLoUaovbhaZfTVC3cF7pmiu9H/CbnODwi7HzcF
+X-Gm-Gg: ASbGncvivTAd1tqdrFVlE024iMjOUtnrLkaCiIx4mCz0FLBPqpHtvPqgrkgIpljozl6
+	6Z3NexA28+fKc/ly+MEN2nJpTp0MfUoqNX2ZtWRuIBStLjtt6jp3xBcJlZnJX3DhoP/lGNqomOl
+	SypumWjd5AFHxOYXJqQrJDZJGxSD9mb2g7MizzaQVZXLa8FMtVCG1er50=
+X-Google-Smtp-Source: AGHT+IFUlJySjsgWCyutnog4gDVqPy3/yBi31gYRy/p63NPCINHZ/bW019+CCuJmHTVh0LKrHnBPA0F6FZ0BNIhxi30=
+X-Received: by 2002:a05:6000:2188:b0:3a5:2465:c0c8 with SMTP id
+ ffacd0b85a97d-3a8fdb2acd9mr11587808f8f.7.1751370762366; Tue, 01 Jul 2025
+ 04:52:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250630221511.3325123-1-vitaly.wool@konsulko.se>
+ <20250630221640.3325306-1-vitaly.wool@konsulko.se> <aGO5qadROziFuO35@google.com>
+ <3D58CB40-CB1C-47A2-BB71-5C32B3609AE0@konsulko.se>
+In-Reply-To: <3D58CB40-CB1C-47A2-BB71-5C32B3609AE0@konsulko.se>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 1 Jul 2025 13:52:29 +0200
+X-Gm-Features: Ac12FXzcpTlny4SSlNLGwk5zd2CXwwCXOFc_w3xt_vRf8kazpRdDDaXsreX05Ek
+Message-ID: <CAH5fLghKvWgaVT_=TYpwqBJ4z_XYDbT8kbLvkxAT95+Sjg5zYg@mail.gmail.com>
+Subject: Re: [PATCH v9 3/4] rust: add support for NUMA ids in allocations
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch enables support for More Than IP L2 switch available on some
-imx28[7] devices.
+On Tue, Jul 1, 2025 at 1:19=E2=80=AFPM Vitaly Wool <vitaly.wool@konsulko.se=
+> wrote:
+>
+>
+>
+> > On Jul 1, 2025, at 12:34=E2=80=AFPM, Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> >
+> > On Tue, Jul 01, 2025 at 12:16:40AM +0200, Vitaly Wool wrote:
+> >> Add a new type to support specifying NUMA identifiers in Rust
+> >> allocators and extend the allocators to have NUMA id as a
+> >> parameter. Thus, modify ReallocFunc to use the new extended realloc
+> >> primitives from the C side of the kernel (i. e.
+> >> k[v]realloc_node_align/vrealloc_node_align) and add the new function
+> >> alloc_node to the Allocator trait while keeping the existing one
+> >> (alloc) for backward compatibility.
+> >>
+> >> This will allow to specify node to use for allocation of e. g.
+> >> {KV}Box, as well as for future NUMA aware users of the API.
+> >>
+> >> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> >
+> > My main feedback is that we should consider introducing a new trait
+> > instead of modifying Allocator. What we could do is have a NodeAllocato=
+r
+> > trait that is a super-trait of Allocator and has additional methods wit=
+h
+> > a node parameter.
+> >
+> > A sketch:
+> >
+> > pub unsafe trait NodeAllocator: Allocator {
+> >    fn alloc_node(layout: Layout, flags: Flags, nid: NumaNode)
+> >                -> Result<NonNull<[u8]>, AllocError>;
+> >
+> >    unsafe fn realloc_node(
+> >        ptr: Option<NonNull<u8>>,
+> >        layout: Layout,
+> >        old_layout: Layout,
+> >        flags: Flags,
+> >        nid: NumaNode,
+> >    ) -> Result<NonNull<[u8]>, AllocError>;
+> > }
+> >
+> > By doing this, it's possible to have allocators that do not support
+> > specifying the numa node which only implement Allocator, and to have
+> > other allocators that implement both Allocator and NumaAllocator where
+> > you are able to specify the node.
+> >
+> > If all allocators in the kernel support numa nodes, then you can ignore
+> > this.
+>
+> This is an elegant solution indeed but I think that keeping the existing =
+approach goes better with the overall kernel trend of having better NUMA su=
+pport. My point is, if we add NodeAllocator as a super-trait and in a fores=
+eeable future all the Rust allocators will want/be required to support NUMA=
+ (which is likely to happen), we=E2=80=99ll have to =E2=80=9Cflatten=E2=80=
+=9D the traits and effectively go back to the approach expressed in this pa=
+tch.
 
-Moreover, it also enables CONFIG_SWITCHDEV and CONFIG_BRIDGE required
-by this driver for correct operation.
+If we are not going to have allocators without numa support, then what
+you did is reasonable. Though in that case I would consider just
+changing the existing methods instead of having methods both with and
+without a numa node argument.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
----
-Changes for v4:
-- New patch
-
-Changes for v5:
-- Apply this patch on top of patch, which updates mxs_defconfig to
-  v6.15-rc1
-- Add more verbose commit message with explanation why SWITCHDEV and
-  BRIDGE must be enabled as well
-
-Changes for v6:
-- None
-
-Changes for v7:
-- None
-
-Changes for v8:
-- None
-
-Changes for v9:
-- None
-
-Changes for v10:
-- None
-
-Changes for v11:
-- None
-
-Changes for v12:
-- None
-
-Changes for v13:
-- None
-
-Changes for v14:
-- None
----
- arch/arm/configs/mxs_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm/configs/mxs_defconfig b/arch/arm/configs/mxs_defconfig
-index b1a31cb914c8..ef4556222274 100644
---- a/arch/arm/configs/mxs_defconfig
-+++ b/arch/arm/configs/mxs_defconfig
-@@ -34,6 +34,8 @@ CONFIG_IP_PNP_DHCP=y
- CONFIG_SYN_COOKIES=y
- # CONFIG_INET_DIAG is not set
- # CONFIG_IPV6 is not set
-+CONFIG_BRIDGE=y
-+CONFIG_NET_SWITCHDEV=y
- CONFIG_CAN=m
- # CONFIG_WIRELESS is not set
- CONFIG_DEVTMPFS=y
-@@ -52,6 +54,7 @@ CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+CONFIG_FEC_MTIP_L2SW=y
- CONFIG_ENC28J60=y
- CONFIG_ICPLUS_PHY=y
- CONFIG_MICREL_PHY=y
--- 
-2.39.5
-
+Alice
 
