@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-711548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3703AEFC13
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F39AEFC16
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87922485A55
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:17:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059C7445F31
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE938275B09;
-	Tue,  1 Jul 2025 14:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3699A22759C;
+	Tue,  1 Jul 2025 14:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="U3CnYPmP"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rwerCEIA"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5594271A7C;
-	Tue,  1 Jul 2025 14:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70586279333
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751379338; cv=none; b=iViWbpH/QwiUIoCLsUkV4lOyGpD+iOxqI+bKM9A2ulVut/JUBV2ZxY+ASCWjXE9G6n0E/zOe+1PnSd8ycwM3thQXhOrNGoKeOrVGMKmYck7ykXQHhyKIlVeTyIAa73duX5TxC0WYUDuil7LzvpgXxoDUZ86Gb7LHV141faadCuo=
+	t=1751379359; cv=none; b=ktBkVUvPIDHddmJuq/KFI6UM74AxKpLGncS+yxUTzZOPV2IIeEpXJhZYJT9uayuc9ivb1dWWeD11GiFes+gDuW1ThN6h4vpCaMYr1W8t9HRZODFxeS8CyD34FhKGvrOSih5DTfqOF/66XmkjROhSfyY4KLzbLNzYnpTHuaQBkgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751379338; c=relaxed/simple;
-	bh=jHdi8+bTev54Ym5dBuCrjPQtYHExSbRkMbKWgPuA8Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=koiW/YypZNVfBV6PiWhw65+6z8td6xd0ZqB2Rxn036iC3FHAKynxSA09XbEbNk266w6xLtR4blEDqzjpVQnclZJh0cAvSnTYCQInXFfKJOA78ONdYNrYHBFNBtyCTjUqY2BeGUmLhFjKiXjSUCcoDWz3Nhs8vnZYqDTiRvFfEDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=U3CnYPmP; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=BTWZ3fHGa7D6q7y60m0EG2fACXLmItVUIq7xJ4IjjQY=;
-	b=U3CnYPmPEVwCoaI0np4ka5Gsdc2I4ORmD17aTa2WfYQDoNSHi9mdV3lbg68Sjk
-	4vQ2dmezvfuCeJRm9pLq4AAGmbVAZaOeQi6zLmghRQrIx3Ww/OaGDjWfAULoj3Ar
-	6EC3XChsX8k1tCEaNfiAbYisoRRFRr9tZ01RSZTiEF/Cw=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgD336hg7WNovcABAA--.3851S3;
-	Tue, 01 Jul 2025 22:14:58 +0800 (CST)
-Date: Tue, 1 Jul 2025 22:14:56 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andrew@lunn.ch, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] arm64: dts: freescale: imx8mp-var-som: Add EQoS
- support with MaxLinear PHY
-Message-ID: <aGPtYHLk+UbRscnk@dragon>
-References: <20250609160949.35654-1-stefano.radaelli21@gmail.com>
+	s=arc-20240116; t=1751379359; c=relaxed/simple;
+	bh=GJP7Xa/2ev6INSY+ZGt6Xkxf+i9v+ytOpFJCc009TJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LOe0w9UcgIizyu4IRV0R3+JtR5caEwh3HglBVCjK/u9kFxA4F9pdmp8HXPWbp5L0WRm7+qRIxvOQGkz03SH7hjPwoDSnHqXBIFLWP5UCpfuSBScNF2yzFRmRuQKQBfXMIKSbm6Ilz9rubBzITZ45BZXIjc03c4/DXrv7AswXN6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rwerCEIA; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0a96ce38-163e-4566-b666-b074bd82c75a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751379345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CbwuurgTDZ+BaZBkyMf18Zq8IPSFXnHhnJxSaiCg6gM=;
+	b=rwerCEIAJb39fesv0EF8pOU/ob/YjbEMZ4v0sWNU2xHq0OxhcXljvBD2n5VH+/cKs1v5qS
+	GEq/jLdRP4QJopKUgt18uPvXuzdrO+Gw3KUgU3FysEGlvfuCeVyGbBJd7yShJDeT+1GSXC
+	8ObslLOB3iUPbBIQR6Kfi8w4SylwS7k=
+Date: Tue, 1 Jul 2025 22:15:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250609160949.35654-1-stefano.radaelli21@gmail.com>
-X-CM-TRANSID:Mc8vCgD336hg7WNovcABAA--.3851S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jr1kKFykCry7XrykKFWxJFb_yoWDAFbE9F
-	W3Xr48J34UtFyfGanYgrW8JF1Fkan5XF10gr4UWr93taySvws3AFyvqa45KF4UXayftrsx
-	Z392krWFv34rWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjVbyJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxx9ZWhjvz7WaAAAs7
+Subject: Re: [PATCH v3 1/1] mm/rmap: fix potential out-of-bounds page table
+ access during batched unmap
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ 21cnbao@gmail.com
+Cc: baolin.wang@linux.alibaba.com, chrisl@kernel.org, kasong@tencent.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ lorenzo.stoakes@oracle.com, ryan.roberts@arm.com, v-songbaohua@oppo.com,
+ x86@kernel.org, huang.ying.caritas@gmail.com, zhengtangquan@oppo.com,
+ riel@surriel.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ harry.yoo@oracle.com, mingzhe.yang@ly.com, stable@vger.kernel.org,
+ Barry Song <baohua@kernel.org>, Lance Yang <ioworker0@gmail.com>
+References: <20250630011305.23754-1-lance.yang@linux.dev>
+ <330f29ee-ba55-4ae6-a695-ddaba58d5cb8@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <330f29ee-ba55-4ae6-a695-ddaba58d5cb8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jun 09, 2025 at 06:09:48PM +0200, Stefano Radaelli wrote:
-> Enable the EQoS Ethernet controller on the i.MX8MP VAR-SOM with the
-> integrated Maxlinear MXL86110 PHY. The PHY is connected to the EQOS
-> MDIO bus at address 4.
-> 
-> This patch adds:
-> - EQOS controller configuration with RGMII interface.
-> - Proper reset timings.
-> - PHY power supply regulators.
-> - RGMII pinmux configuration for all data, control and clock signals.
-> - LED configuration for link status indication via the LED subsystem
->   under /sys/class/leds/, leveraging the support implemented in the.
->   mxl86110 PHY driver (drivers/net/phy/mxl-86110.c).
->   Two LEDs are defined to match the LED configuration on the Variscite
->   VAR-SOM Carrier Boards:
->     * LED@0: Yellow, netdev trigger.
->     * LED@1: Green, netdev trigger.
-> 
-> The RGMII TX/RX delays are implemented in SOM via PCB passive
-> delays, so no software delay configuration is required.
-> 
-> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
 
-Applied, thanks!
+
+On 2025/7/1 22:03, David Hildenbrand wrote:
+> On 30.06.25 03:13, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> As pointed out by David[1], the batched unmap logic in try_to_unmap_one()
+>> may read past the end of a PTE table when a large folio's PTE mappings
+>> are not fully contained within a single page table.
+>>
+>> While this scenario might be rare, an issue triggerable from userspace 
+>> must
+>> be fixed regardless of its likelihood. This patch fixes the out-of-bounds
+>> access by refactoring the logic into a new helper, 
+>> folio_unmap_pte_batch().
+>>
+>> The new helper correctly calculates the safe batch size by capping the 
+>> scan
+>> at both the VMA and PMD boundaries. To simplify the code, it also 
+>> supports
+>> partial batching (i.e., any number of pages from 1 up to the calculated
+>> safe maximum), as there is no strong reason to special-case for fully
+>> mapped folios.
+>>
+>> [1] https://lore.kernel.org/linux-mm/ 
+>> a694398c-9f03-4737-81b9-7e49c857fcbe@redhat.com
+>>
+>> Fixes: 354dffd29575 ("mm: support batched unmap for lazyfree large 
+>> folios during reclamation")
+>> Cc: <stable@vger.kernel.org>
+>> Acked-by: Barry Song <baohua@kernel.org>
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+> 
+> Realized this now: This should probably be a "Reported-by:" with the 
+> "Closes:" and and a link to my mail.
+
+Got it. Both tags (Reported-by/Closes) will be in the next commit ;)
 
 
