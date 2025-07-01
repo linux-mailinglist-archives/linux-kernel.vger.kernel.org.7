@@ -1,189 +1,226 @@
-Return-Path: <linux-kernel+bounces-711695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A1E5AEFE1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:26:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFEFAEFE4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0264A5911
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:26:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940031887E35
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AF0279354;
-	Tue,  1 Jul 2025 15:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C170D26F44C;
+	Tue,  1 Jul 2025 15:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FN15I14p"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aK8Qo6eA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E756427A101;
-	Tue,  1 Jul 2025 15:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1DA2777FC;
+	Tue,  1 Jul 2025 15:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751383539; cv=none; b=F9UFmPMR0TXl5EHljuqMH07kpFvUUTTDFzgDaZkhVPRxOZwuH15lSghLhx+wndDjT4svFKSktWc/+qqOsa9MmxyE+XTah2ndXOYa9LNQkNdInB8AERbieKDa4bQ1FvcS1A2XE/cp5kjVmIGNtpPEl5SqMQ453yuib4PexZN1wkE=
+	t=1751383534; cv=none; b=FGG5QXkjoR0W2tn3LmNcLnz9j3CgqXAnO6oNIIL8vgAMKfAtv3qus545OUGgoBpIW7ybPOZFj5uP6bTrHE6qP/rkdej+EHPCpaF08+c/lAjaAMWptHHSqIO7L+PUFpxxq1EHIhA4lixBi61V03OE7LxdcQ1SlK8PUKDDJ2bjgGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751383539; c=relaxed/simple;
-	bh=H69zG5gO7h9M6iKs5G+TtTbg5NtVZiozRw1J2ZHqQt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6ZsG4xnp2WL/rSSR9LgsUxpE8vkzWdN7R/EwwCoz6d+/rHC+TQ0tqFyrSDA+rY+mJro3j3xEh5TVbf+vXaoGm/APW63phKh4tqFpa94kiLw1N5nLwYjTxKrn5a0ba5MTjG8Udg4dxyWZVpV6em0ObhUnq1hbW3HqPk9A5fiIgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FN15I14p; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6facf4d8e9eso33965006d6.1;
-        Tue, 01 Jul 2025 08:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751383537; x=1751988337; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H69zG5gO7h9M6iKs5G+TtTbg5NtVZiozRw1J2ZHqQt8=;
-        b=FN15I14pzIS50f6zmvi461CWhZpkE7pncsv7IITewV14SyAI6kNXp50jay0VmPOTTd
-         j3jTX0pD2qU9aOff2tZt/76bIDazWeDH9J/KWX1TtHQLW4xX/16R+Y4fZNZsjG2MVZqO
-         RNfiq95uVAfwyOd24LYO1Ix2gIwkC3+eUczjz8hkMgTLUbHjq0WPUcUMxqosOvv9Stam
-         bpJb4lwhP2CKCyxBBYl9comPPwUElxo+njbuprrkbys6f7nwklsxsr3Rc6nDM8iHvrxs
-         Se356pp6o4xutLFFQGXf+1omJIRext+W3joz+Ap+wKADlte3xCt/NoVz+mXIl5sjFgKe
-         PWRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751383537; x=1751988337;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H69zG5gO7h9M6iKs5G+TtTbg5NtVZiozRw1J2ZHqQt8=;
-        b=M9jpwCuC8hfptiOpIQ+bPDmtVzQNlooSnBM4x0BkkjWq1Uwet8cg/uFyY+0lrwh7WO
-         vPeiaIei4ZVt5tU/hUlbuc/gXngymaMFS1EusYnNXFcQ9Xri7xQnnCfG2tlGWmluOGJr
-         HLWfl8gqQb9jYRn0emecGXJN5qtr+9QFx/WPCYusLaH8oUHuGneZLXNRaaxsGnh5T/eu
-         symNotMIdL+OasQX7KKQbPy2uMRAXWkDVGzgqzKvmdag+pJ3Nw2L1aJIeyxIFRQS1gjh
-         H4bTMhqI8ni03Bj9jzet1dmhoPVzqZTje1xqTXO+UBBCLLGyRScDvW/S+Kn+ICHH9AyR
-         kU0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUg8G9na4cfivTc+s2Sjrz7/m3LzwKs/bTA5xN+1rIZhE+H7GzGRPk0+kb/yq+w2qrIFD95rmfRE4YD@vger.kernel.org, AJvYcCUjDhcVrj0pV5atMR9PKZx4JIrPvPOsugY5vcseaVv0dH2pjJfw1DuVJTtKntqekwDa3kFmZQIDovkS@vger.kernel.org, AJvYcCUxxOe1BbSftvWumOBOLz6bdkyP7Cq4g33nsF8xL0qW8wgAeopC7xDRiUOEnNXXPyXzSWbbvt6FqYKH@vger.kernel.org, AJvYcCVANU4I+G4gZlArL32aU1K+uMkg8KOLeJupU5OXozUXPTvpDnQifF35M01GEvkKMm3+75E0EHcqBweFLWNKjf0fx8U=@vger.kernel.org, AJvYcCVJNXGcr4wBqYVvQXkLymaGwi4K6zcBGTaidKdI/0G1b+LCcJYr5ddcXZI/AqKfDNWTR4vSAET5IQ+Qjms=@vger.kernel.org, AJvYcCVSEm7RuVCnkI+nmluD+p0RLQk4aKepZlV8etHWLmyLTFreABO4oVb6srMrTO5csAgjjZRhHViXL8MY1oAV@vger.kernel.org, AJvYcCW1GP1audEAFmDgUHI4Hbl42MjrYXp1EXFYI7YhB13PYxZy4h//Hc3OR2mYfWEPZjZgVpPVnrAdPefO@vger.kernel.org, AJvYcCW7BLTRgffeNC+R8bLpyqMjUNmL2GLpYetg7WhwBrAviMuJEOs0OxMentvVUC8ouVMF+3Svp+vg4KET@vger.kernel.org, AJvYcCWHPFcC1zd5UF6ge/XHDefUcyCOaqNHEwmNN4cBBhXr+XrKJh9A/0UmNn/7q9FWZp4FEVXftWpmND+QnA==@vger.kernel.org, AJvYcCX1gDCFbt24sIMrL1jP6ywg
- 0Iye7Nb1wiyPWHkgEJqvFvHw6OiEnpQ52Xc2tpZa+mGPkX46b5fi2JY=@vger.kernel.org, AJvYcCX2KssI84V5pMGsjr94WSx9UUqFzzmrIroKvPHFN2ed77OXaCRssglvPXG9veAS5Ia0nUCkoodZUG1YNwdW@vger.kernel.org, AJvYcCXLlx0soRgl6Mitrb/LHF3gjG68SADUVxfaK1yFujlGNq5b1PoeCLvyxxFAXpoL7E7ybwE3Cl9+G5CHFw==@vger.kernel.org, AJvYcCXfiCAUzmc0bhcJUeIY+djeq0bfdREOAJ/Myk/1ZGRxorqkhR4M0ki4ZD/eiHDgXyhvbHAXDssm@vger.kernel.org, AJvYcCXg9tRXAKvYieCg30KWuQ2F0wy3zb9TB/tnj9jFRDjc4+aNmTk80+GDZ5+n5f6twcfIzQuHvUmnVJKY@vger.kernel.org, AJvYcCXj3RusA8Rb9XY/uQtVs5mapGgZG+NiFqkdNc2IcqKrhLpXVwyI8TPmrZwEWusrI0It6BS66HID5QPKHkc=@vger.kernel.org, AJvYcCXmfFEOOwER0WPdU4HmtlnDcTdeksQCUZEtgLJ+qZdtrdK6ePt5+SCqfKVcwSHq+SIFIIO4llJJWWYwcw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPM1LXpZOgY/TqKT4K7vWF4oxg2/l8/w4OEJ0vRc0uORNIHJNE
-	z034VnCZ6YFKNEZ2B9nypXZoZr05sZchPd+OPHOJZMgM2aFU2u+ugV9P
-X-Gm-Gg: ASbGnctzJRCDDV0wwJ7EhRy5fPGb66Racp3VykfLMV3ReqGzwKWjbYBOXrHmI/gOiOm
-	xgZs1/d2kIm9AQiKniGW6Wf/drY8fKqihQogGHkiyINrMd1SOqtGrPUFDlVtW5OFbRbPpdvBV03
-	MUvaPdNn5THzzpvYFlVMID0rIjDh2duzdO5W2WoWFuPFiQlgjZ0erhfK4nU5NbKQKtxCDHoZ4Ne
-	TGVzPU0Q0Zw8FffPG1Az7bw4u3Dm4PMwZeD9bKKdjakGZ4iY3Sp9Szu/Sy+ZCcCs1fQn4p6DoX3
-	j80+L2TqU5rYwrK1yM2KxzDK/qU51mFHiDW+toGKLT1Nx+8hfqMUmQ8Iitlj
-X-Google-Smtp-Source: AGHT+IFGwV5rgzZNlThD3qZhxiETqJeu0UK36HZAls92ncvO2dh0OxLl48BruxfcxiFAUDT+MVUh3g==
-X-Received: by 2002:a05:6214:d08:b0:6e8:fbb7:675b with SMTP id 6a1803df08f44-7000291854amr270803556d6.32.1751383536220;
-        Tue, 01 Jul 2025 08:25:36 -0700 (PDT)
-Received: from geday ([2804:7f2:800b:517d::dead:c001])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd771acfe6sm85521916d6.31.2025.07.01.08.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 08:25:35 -0700 (PDT)
-Date: Tue, 1 Jul 2025 12:25:12 -0300
-From: Geraldo Nascimento <geraldogabriel@gmail.com>
-To: Waqar Hameed <waqar.hameed@axis.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Peter Rosin <peda@axentia.se>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Song Qiang <songqiang1304521@gmail.com>, Crt Mori <cmo@melexis.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Karol Gugala <kgugala@antmicro.com>,
-	Mateusz Holenko <mholenko@antmicro.com>,
-	Gabriel Somlo <gsomlo@gmail.com>, Joel Stanley <joel@jms.id.au>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Han Xu <han.xu@nxp.com>, Haibo Chen <haibo.chen@nxp.com>,
-	Yogesh Gaur <yogeshgaur.83@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, kernel@axis.com,
-	linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
-	linux-mmc@vger.kernel.org, imx@lists.linux.dev,
-	netdev@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-spi@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH] Remove error prints for devm_add_action_or_reset()
-Message-ID: <aGP92Aqcxt-x78nu@geday>
-References: <pnd7c0s6ji2.fsf@axis.com>
+	s=arc-20240116; t=1751383534; c=relaxed/simple;
+	bh=DIA69QI1E2BrYc+r2/ZtTjhWU3b//5pH+ynl6jTsDVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N98JsZiEnW+s3m80cm8tnzcChU2EZAa7iabkZRGgwbJ0T82AfY7eEa+xlJm1MEqMB40spaZ/Cz3czQajjrssWkQ01SqAiOmETGx0rOl6VjipT2BJY5vK1Y2QenjoD1zyFEYDK5HxZsSRRfDOQ4FEeKl9Bbt7oVwA3MB0oJg+1R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aK8Qo6eA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23963C4CEEB;
+	Tue,  1 Jul 2025 15:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751383533;
+	bh=DIA69QI1E2BrYc+r2/ZtTjhWU3b//5pH+ynl6jTsDVY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aK8Qo6eAJR/z7niGBhdup+2w8j7tc9w4vStYDQKRZbfm5lY2tw8IEJ5Vbzn5Pxa/Z
+	 IP9Bgy8jA0RvDhH0nxjirtELANGofmKOJiMUZJXZ208uh1DH+u9PXhVEUbQ+ulku/W
+	 7MAUlUpxSoUyWmClDX94IoGQ3pKISWMFA5qjk1DD+6qoOvX4n3ZYOSQYoiSHQ11J0H
+	 l1N8iSAmIDwB+0inds9d9kfL4OQhoUDq0InomACOTZG9e/pS+aYJ+lPdCRaf5KXIZy
+	 1mp/wZoN4j6NTwB30RCGMSMIVJzg8quVwgKpG2SWweijScQTQpSB0qUajmighDMjEh
+	 lk/OPqPC9G6Lg==
+Date: Tue, 1 Jul 2025 17:25:27 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-api@vger.kernel.org,
+ workflows@vger.kernel.org, tools@kernel.org
+Subject: Re: [RFC v2 01/22] kernel/api: introduce kernel API specification
+ framework
+Message-ID: <20250701172527.5adde449@sal.lan>
+In-Reply-To: <aGPvR-Mj6aR4Y8B5@lappy>
+References: <20250624180742.5795-1-sashal@kernel.org>
+	<20250624180742.5795-2-sashal@kernel.org>
+	<874ivxuht8.fsf@trenco.lwn.net>
+	<20250701002058.1cae5a7e@foz.lan>
+	<aGPvR-Mj6aR4Y8B5@lappy>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pnd7c0s6ji2.fsf@axis.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 01, 2025 at 05:03:33PM +0200, Waqar Hameed wrote:
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
+Em Tue, 1 Jul 2025 10:23:03 -0400
+Sasha Levin <sashal@kernel.org> escreveu:
 
-Hi Waqar,
+> On Tue, Jul 01, 2025 at 12:20:58AM +0200, Mauro Carvalho Chehab wrote:
+> >Em Mon, 30 Jun 2025 13:53:55 -0600
+> >Jonathan Corbet <corbet@lwn.net> escreveu:
+> > =20
+> >> Sasha Levin <sashal@kernel.org> writes:
+> >> =20
+> >> > Add a comprehensive framework for formally documenting kernel APIs w=
+ith
+> >> > inline specifications. This framework provides:
+> >> >
+> >> > - Structured API documentation with parameter specifications, return
+> >> >   values, error conditions, and execution context requirements
+> >> > - Runtime validation capabilities for debugging (CONFIG_KAPI_RUNTIME=
+_CHECKS)
+> >> > - Export of specifications via debugfs for tooling integration
+> >> > - Support for both internal kernel APIs and system calls
+> >> >
+> >> > The framework stores specifications in a dedicated ELF section and
+> >> > provides infrastructure for:
+> >> > - Compile-time validation of specifications
+> >> > - Runtime querying of API documentation
+> >> > - Machine-readable export formats
+> >> > - Integration with existing SYSCALL_DEFINE macros
+> >> >
+> >> > This commit introduces the core infrastructure without modifying any
+> >> > existing APIs. Subsequent patches will add specifications to individ=
+ual
+> >> > subsystems.
+> >> >
+> >> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> >> > ---
+> >> >  Documentation/admin-guide/kernel-api-spec.rst |  507 ++++++ =20
+> >>
+> >> You need to add that file to index.rst in that directory or it won't be
+> >> pulled into the docs build.
+> >>
+> >> Wouldn't it be nice to integrate all this stuff with out existing
+> >> kerneldoc mechanism...? :) =20
+> >
+> >+1
+> >
+> >Having two different mechanisms (kapi and kerneldoc) makes a lot harder
+> >to maintain kAPI. =20
+>=20
+> I hated the idea of not reusing kerneldoc.
+>=20
+> My concern with kerneldoc was that I can't manipulate the
+> information it stores in the context of a kernel build. So for example,
+> I wasn't sure how I can expose information stored within kerneldoc via
+> debugfs on a running system (or how I can store it within the vmlinux
+> for later extraction from the binary built kernel).
+>=20
+> I did some research based on your proposal, and I think I was incorrect
+> with the assumption above. I suppose we could do something like the
+> following:
+>=20
+> 1. Add new section patterns to doc_sect regex in to include API
+> specification sections: api-type, api-version, param-type, param-flags,
+> param-constraint, error-code, capability, signal, lock-req, since...
+>  =20
+> 2. Create new output module (scripts/lib/kdoc/kdoc_apispec.py?) to
+> generate C macro invocations from parsed data.
+>=20
+> Which will generate output like:
+>=20
+>     DEFINE_KERNEL_API_SPEC(function_name)
+>         KAPI_DESCRIPTION("...")=20
+>         KAPI_PARAM(0, "name", "type", "desc")
+>             KAPI_PARAM_TYPE(KAPI_TYPE_INT)
+>             KAPI_PARAM_FLAGS(KAPI_PARAM_IN)
+>         KAPI_PARAM_END
+>     KAPI_END_SPEC=20
 
-thank you for the patch. However I personally advise you to split the
-patches per-file and remember to then precede each individual patch
-subject with the proper subsystem and driver touched.
+> 3. And then via makefile we can:=20
+>     - Generate API specs from kerneldoc comments
+>     - Include generated specs conditionally based on CONFIG_KERNEL_API_SP=
+EC
+>=20
+> Allowing us to just have these in the relevant source files:
+>     #ifdef CONFIG_KERNEL_API_SPEC
+>     #include "socket.apispec.h"
+>     #endif
+>=20
+>=20
+> In theory, all of that will let us have something like the following in
+> kerneldoc:
+>=20
+> - @api-type: syscall
+> - @api-version: 1
+> - @context-flags: KAPI_CTX_PROCESS | KAPI_CTX_SLEEPABLE
+> - @param-type: family, KAPI_TYPE_INT
+> - @param-flags: family, KAPI_PARAM_IN
+> - @param-range: family, 0, 45
+> - @param-mask: type, SOCK_TYPE_MASK | SOCK_CLOEXEC | SOCK_NONBLOCK
+> - @error-code: -EAFNOSUPPORT, "Address family not supported"
+> - @error-condition: -EAFNOSUPPORT, "family < 0 || family >=3D NPROTO"
+> - @capability: CAP_NET_RAW, KAPI_CAP_GRANT_PERMISSION
+> - @capability-allows: CAP_NET_RAW, "Create SOCK_RAW sockets"
+> - @since: 2.0
+> - @return-type: KAPI_TYPE_FD
+> - @return-check: KAPI_RETURN_ERROR_CHECK
+>=20
+> How does it sound? I'm pretty excited about the possiblity to align this
+> with kerneldoc. Please poke holes in the plan :)
 
-While this looks like a nit-pick, it really isn't, and my suggestion
-will make reviewing much more easier and you'll get your Reviewed-by's
-and Acked-by's much more smoothly.
+Sounds like a plan!
 
-The cover-letter should probably be preceded by "treewide" instead of
-a specific subsystem.
+We did something somewhat similar on IGT.=20
 
-Thank you,
-Geraldo Nascimento
+The python classes there were written with the goal to document
+tests, so its examples are related to test docs, but I wrote it
+to be generic.
+
+There, all fields comes form a JSON file like this:
+
+	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/intel=
+/xe_test_config.json?ref_type=3Dheads
+
+which describes what fields will be used. It also lists file
+patterns that will use it. The fields allow hierarchical
+grouping, with could be interesting for some types of fields.
+
+=46rom the json example (I dropped the optional field description
+from the example, to make it cleaner):
+
+	"Category": {
+	    "Mega feature": {
+            	"Sub-category": {},
+	    }
+	...
+ 	"Test category": {},
+	"Issue": {},
+	...
+
+The hierarchical part is useful to properly order kapi content
+without the need to add multiple Sphinx markups to manually reorder
+the output inside the .rst files.
+
+(*) I would avoid hardcoding the fields/structures, as eventually
+    we may need more flexibility to add fields and/or having some
+    fields that are specific, for instance, to debugfs or sysfs.
+
+The python class it uses is at:
+	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/scripts/tes=
+t_list.py?ref_type=3Dheads
+
+and caller is at:
+	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/scripts/igt=
+_doc.py?ref_type=3Dheads
+
+Eventually you may find something useful there. If so, feel free to
+pick from it.
+
+Regards,
+Mauro
 
