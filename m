@@ -1,117 +1,170 @@
-Return-Path: <linux-kernel+bounces-711538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62387AEFBDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:17:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76A8AEFBED
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F028E4400BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03CE74E177F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0226275AEC;
-	Tue,  1 Jul 2025 14:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3882F275854;
+	Tue,  1 Jul 2025 14:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OzhsDA3C"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvz7jciY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0C272E46
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B498274B2D;
+	Tue,  1 Jul 2025 14:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751379263; cv=none; b=qnxdMReoCyZCigt6CNDsY13CRpltrGRjpGFMSdYvy6tJ5HxkXPbz2uo1uulhdCJzafaVlGBp5BFtBeibrc4UKnh938vOeo095ySWPb7dX7+RUlVNdmUahpxv/SzpoB06tKUbCIYhZ8gykDb9guGtkpERVDCTNr0NZgIOrKmcUOs=
+	t=1751379306; cv=none; b=nNxdeoN/oRqwUpgKP0AMnblAkthz01Q8DU1ARLsla6JU3wzdn5lnJCnknOtV8Ja/uXcI9dqRhV1F+v5DAwKK6PWOKpkmW6eO6+7CQIXckYgZhrAoaJKPdKvualeQtuOm09f0PnY4C8xBBslCzkxQLruk7DyTKNeG1yby3wc78hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751379263; c=relaxed/simple;
-	bh=5OuLPJkS7/FW06Kbx8KtlQhZFZ40qlvkY0aEbvH701c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JylDdH0VbMjBlx+QVzwPii+iZWu/c4vUgkXuJduGAsy98T/nkNFKTk5vEOClnD6VBHzOJQ2RJslWq2HBRrp5iERkvScA2EUuNrAl6ZDtLRWJdzr50D2QfnbsnkzSKe749GqyXumV3bc/tLq2X17KCSzpOTFGguenEFiv+Ys1F58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OzhsDA3C; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3dddc17e4e4so10862625ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 07:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751379260; x=1751984060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZmzCkliGIgc/w9CprIKleCb6nmEfP7kYHQXw+v1QCyA=;
-        b=OzhsDA3CRP9ZuwaW//WaVIxPQZDj+5RgvrGHpwMDmdUHIIjZgl9x2CmUfQfHyg2jHp
-         MVajJFbbNa31aSf1zolxcR8T7zUnso3B59vWdYlygpnieVyAP5j4oas/F2fmcZpnb6cH
-         xdG4VaCz1y0fsYonpuzyqaewkg7dypI0iXjlpy1046uhC6TyfplXvBrv8VzfrI5saTj4
-         saj/WyPRxKDKbRix0vmYMmIkNnP+33XWZGsoMFNDuq2wMo/xxBKNVJFlbg88kePkHpFS
-         oRkKss9SMir+kWdCvddwMG0ic0po4nuGhPXgZvOqtmCh9TQaakgo52D1gU/M7Gzk/tzd
-         i5QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751379260; x=1751984060;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZmzCkliGIgc/w9CprIKleCb6nmEfP7kYHQXw+v1QCyA=;
-        b=Lb/tU8Aqz4TL3ycgXUflPqp8X85zdoFzFHPTn4dCYJZarYBqJAPuhDl4OfHPaTRjCz
-         uZgDv5g3w3nUk8tPl4mlzeT6Q8oEW7mB9pBKvFi8nSdl0PE4C9y9q9xFa3mPmCk6GaCs
-         eHRM3J9CUXaVbqQOeEHFNQq+ddHAbK4UyG7Yjrx1oaogCIusmdoLvGpIT5GnkW1VAybd
-         TlOPvvsC118TqnKnCUcq5aAU1lhMaj5JNf8lR/xgtdaf6kRVTSCcBvDf6NjYaGnJs1iF
-         SOhb3FEDFJytWtrr1TJkB6jP9gQ9Ulkeunu2S8j5jcFmv/J/ILJPWxyWKO4xQImC8exP
-         sg5w==
-X-Forwarded-Encrypted: i=1; AJvYcCX7wnA/B4z3gu7AyS/ljz3b6sQWcI+FGaQnL1kSqzxdIZIXbMXtzxlX+pL6K747jqNkuZsD1mlmm0aFmXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzVmhaab4e+X6oTrCVRA7U4sbnSgsfl7of6gAeib411YJycPwT
-	gHQ+gbA3tmgMEnmJZwKdc9RL3KVjKCPTe9oIQNMRZ1ytZuvv9NzcdkjsKuZaafNcP2fNQLt3E6G
-	sscvp
-X-Gm-Gg: ASbGnctIzauCu3s8kD8lxfusNzeZ2CoV+sTiFl0lseqinr0cqGy67jfHgeQkq737MA3
-	wXyjq+NTzZudLpAp/dGWq/JwZctVP+tH+4KY/PsHz+f6t7r3AP634kpqlJ88vcGq6GYyGupwvi4
-	xHbj+SywSWp4yNCNbLC4lPrltKvsLakhpRuy5G9iosnX36x7TAQVgUg41IEFAp440qghlpwp1kU
-	Mg/PMuQuszEIA9EgY9+EJ9N0j2Vr0e6efvwjI74CSbXq6mCDpKZmRRXvtka4wEBzkNS6qo2bPCL
-	ygma43xmziK09bMoBvRw2GH7weiaIufDBzrx0e+ipGD4dxiFaBiVvo9FN3d+kRZG
-X-Google-Smtp-Source: AGHT+IHB54piwldk5JvCGymkNdiDgT55hx3SHr7B9jacyIo19MjXnu+NW0AhuMQH0JmTjiSmrjmDSw==
-X-Received: by 2002:a05:6e02:19cf:b0:3df:3afa:28d6 with SMTP id e9e14a558f8ab-3df4ab56adfmr188248595ab.2.1751379257608;
-        Tue, 01 Jul 2025 07:14:17 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-502048c49b1sm2489377173.49.2025.07.01.07.14.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 07:14:17 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: hch@lst.de, yukuai3@huawei.com, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: penguin-kernel@I-love.SAKURA.ne.jp, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
- johnny.chenyi@huawei.com
-In-Reply-To: <20250630112828.421219-1-yukuai1@huaweicloud.com>
-References: <20250630112828.421219-1-yukuai1@huaweicloud.com>
-Subject: Re: [PATCH v2] brd: fix sleeping function called from invalid
- context in brd_insert_page()
-Message-Id: <175137925672.318770.9783780559206172712.b4-ty@kernel.dk>
-Date: Tue, 01 Jul 2025 08:14:16 -0600
+	s=arc-20240116; t=1751379306; c=relaxed/simple;
+	bh=d3jbnlo0yloagQLxKasfaTIoGVOeJedPwxIAjOz5ETo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rJO6J8r4V+ixTTNYRWEKI/r8USlydvY2J0ZgOAEqw4wueuAd4Q1v0cz1hsO6/CQ/DNnMoos+o10bNmzPDN3dYzm4XF8GyQUzfx3CC/CuYevGeF+HfyGVde4Mr0is+U506eHfhcBeDwc9R83I1mcW31tT4y2+JNocJyYVyq0c01Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvz7jciY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CFBC4CEEB;
+	Tue,  1 Jul 2025 14:15:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751379306;
+	bh=d3jbnlo0yloagQLxKasfaTIoGVOeJedPwxIAjOz5ETo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=tvz7jciYq7khZaH8OSLQc9tcx4gOsIr7mTHkNRuVVM5/o/JSdziFciDB9OshdCA63
+	 4fYz3Mat6l7P86IuypHKtnQJi1G/pIjKy6xpafQBN8X7f4bW3NxIudOpDw6im9hILP
+	 c3Egrvoje0aDf2pNV2fUM4an31rDWNXpOWi/OkP28kSt3zEREJ+jBoFw4rb/Ur1Ah2
+	 tqBmbPYXh1dLU4VC7vUB/jdRYxVP4pxP2b622/4pAIo3lzCPFP4U6+48GgYywS3ROG
+	 JGPHZS6rIFy+LHlRRNdD7nTeLtyEvYo98m0WQyBLSygrs40N4fwoSYd/9YDxhzT7sq
+	 hX7t6KWBKN4DQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Masahiro Yamada" <masahiroy@kernel.org>,
+  "Nathan Chancellor" <nathan@kernel.org>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Nicolas
+ Schier" <nicolas.schier@linux.dev>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu" <petr.pavlu@suse.com>,
+  "Sami Tolvanen" <samitolvanen@google.com>,  "Daniel Gomez"
+ <da.gomez@samsung.com>,  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg
+ KH" <gregkh@linuxfoundation.org>,  "Fiona Behrens" <me@kloenk.dev>,
+  "Daniel Almeida" <daniel.almeida@collabora.com>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v13 2/6] rust: introduce module_param module
+In-Reply-To: <DB0LKI8BO3HZ.3FF03JN4364RM@kernel.org> (Benno Lossin's message
+	of "Tue, 01 Jul 2025 11:05:43 +0200")
+References: <20250612-module-params-v3-v13-0-bc219cd1a3f8@kernel.org>
+	<DARCZYNPIJVZ.3JJSZ6PSAEMEC@kernel.org> <877c126bce.fsf@kernel.org>
+	<Mg1_h6lRpg9tdi0VjiyDfIEy2juzgDWxOhYX61qSUfyEpeMMksWW1e-blTka_G1dXUvpZVktdD-zL3X1a6T6Cg==@protonmail.internalid>
+	<DATW0XWNN45X.1L2WMZ41JJ5O8@kernel.org> <87v7om4jhq.fsf@kernel.org>
+	<RPPvXQKnjK77Kp9mKaiFxbNj1fTHKb_I7_nbY81fZop-Wz8n5TTi4_lpXP9U9AwjocvZKqJPI8PGKufJn9cIzQ==@protonmail.internalid>
+	<DAU0J3T0IEVM.2K7ZRQOVOHF8H@kernel.org> <878qlh4aj1.fsf@kernel.org>
+	<87plepzke5.fsf@kernel.org>
+	<xFouVLxX1_t1mH69FDYwlIhBlI72M0IzQEKn0ntG_wT9z7V5DtbxiwVP_frH_yiS-Gf0q_AhqetbLmuvJ_yP5Q==@protonmail.internalid>
+	<DAX65TRN0TGP.25VZ9DYV86XWY@kernel.org> <87wm8txysl.fsf@kernel.org>
+	<9G3W1seaM7elcwWXaeoaa2nfpFYCf-AmBdvZhACGP13KGUtTPVMwGNYdTQsdtp8ru7GIP3-UYTzXscC1MRUKrg==@protonmail.internalid>
+	<DAZV8OGL8BMH.11SLXBXQ17ZJ9@kernel.org> <87h5zxxtdw.fsf@kernel.org>
+	<H78pT7YnQEhAXdxzl_hhnGVUiQuFpibB21_bjH658fMz_5JYbwsPLYYVh8u1gYnzK3N3ilTEAvqOpkuptVx3rg==@protonmail.internalid>
+	<DB03MZI2FCOW.2JBFL3TY38FK@kernel.org> <87bjq4xpv7.fsf@kernel.org>
+	<ffROWpeKczrWSBlKYov2atJG-QD5l5fUOb2dVCNkWlcT9h6DJpa4joGQpjqtYyLP7HX227fCAayyDQunZ464XQ==@protonmail.internalid>
+	<DB0LKI8BO3HZ.3FF03JN4364RM@kernel.org>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Tue, 01 Jul 2025 16:14:55 +0200
+Message-ID: <87zfdovvz4.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-d7477
+Content-Type: text/plain
 
+"Benno Lossin" <lossin@kernel.org> writes:
 
-On Mon, 30 Jun 2025 19:28:28 +0800, Yu Kuai wrote:
-> __xa_cmpxchg() is called with rcu_read_lock(), and it will allocate
-> memory if necessary.
-> 
-> Fix the problem by moving rcu_read_lock() after __xa_cmpxchg(), meanwhile,
-> it still should be held before xa_unlock(), prevent returned page to be
-> freed by concurrent discard.
-> 
-> [...]
+> On Tue Jul 1, 2025 at 10:43 AM CEST, Andreas Hindborg wrote:
+>> "Benno Lossin" <lossin@kernel.org> writes:
+>>> On Mon Jun 30, 2025 at 3:15 PM CEST, Andreas Hindborg wrote:
+>>>> "Benno Lossin" <lossin@kernel.org> writes:
+>>>>> On Mon Jun 30, 2025 at 1:18 PM CEST, Andreas Hindborg wrote:
+>>>>>> "Benno Lossin" <lossin@kernel.org> writes:
+>>>>>>> (no idea if the orderings are correct, I always have to think way to
+>>>>>>> much about that... especially since our atomics seem to only take one
+>>>>>>> ordering in compare_exchange?)
+>>>>>>>
+>>>>>>>> As far as I can tell, atomics may not land in v6.17, so this series
+>>>>>>>> will probably not be ready for merge until v6.18 at the earliest.
+>>>>>>>
+>>>>>>> Yeah, sorry about that :(
+>>>>>>
+>>>>>> Actually, perhaps we could aim at merging this code without this
+>>>>>> synchronization?
+>>>>>
+>>>>> I won't remember this issue in a few weeks and I fear that it will just
+>>>>> get buried. In fact, I already had to re-read now what the actual issue
+>>>>> was...
+>>>>>
+>>>>>> The lack of synchronization is only a problem if we
+>>>>>> support custom parsing. This patch set does not allow custom parsing
+>>>>>> code, so it does not suffer this issue.
+>>>>>
+>>>>> ... In doing that, I saw my original example of UB:
+>>>>>
+>>>>>     module! {
+>>>>>         // ...
+>>>>>         params: {
+>>>>>             my_param: i64 {
+>>>>>                 default: 0,
+>>>>>                 description: "",
+>>>>>             },
+>>>>>         },
+>>>>>     }
+>>>>>
+>>>>>     static BAD: &'static i64 = module_parameters::my_param.get();
+>>>>>
+>>>>> That can happen without custom parsing, so it's still a problem...
+>>>>
+>>>> Ah, got it. Thanks.
+>>>
+>>> On second thought, we *could* just make the accessor function `unsafe`.
+>>> Of course with a pinky promise to make the implementation safe once
+>>> atomics land. But I think if it helps you get your driver faster along,
+>>> then we should do it.
+>>
+>> No, I am OK for now with configfs.
+>>
+>> But, progress is still great. How about if we add a copy accessor
+>> instead for now, I think you proposed that a few million emails ago:
+>>
+>>     pub fn get(&self) -> T;
+>>
+>> or maybe rename:
+>>
+>>     pub fn copy(&self) -> T;
+>>
+>> Then we are fine safety wise for now, right? It is even sensible for
+>> these `T: Copy` types.
+>
+> That is better than getting a reference, but still someone could read at
+> the same time that a write is happening (though we need some new
+> abstractions AFAIK?). But I fear that we forget about this issue,
+> because it'll be some time until we land parameters that are `!Copy` (if
+> at all...)
 
-Applied, thanks!
+No, that could not happen when we are not allowing custom parsing or
+sysfs access. Regarding forgetting, I already added a `NOTE` on `!Copy`,
+and I would add one on this issue as well.
 
-[1/1] brd: fix sleeping function called from invalid context in brd_insert_page()
-      commit: 0d519bb0de3bf0ac9e6f401d4910fc119062d7be
 
 Best regards,
--- 
-Jens Axboe
+Andreas Hindborg
 
 
 
