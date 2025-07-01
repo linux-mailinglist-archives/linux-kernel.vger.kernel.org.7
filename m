@@ -1,114 +1,190 @@
-Return-Path: <linux-kernel+bounces-711116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49947AEF662
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:20:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D8DAEF58D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52A73BC67B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D3E77A4BDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC932737E6;
-	Tue,  1 Jul 2025 11:20:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288CE272E7F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1FA270579;
+	Tue,  1 Jul 2025 10:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfgZEFId"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B966425A33A;
+	Tue,  1 Jul 2025 10:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751368837; cv=none; b=OuJ6MEEH8ZDmbi5ijW630RRCK4QGX7XAYCpfnyMRryfT4eiypRoAMpf8DnsfeM9wPKkwvYbiZBRoQ7V/0u3iK+mv93bTiW1N0A/bbGIy/ZmBIUs0IUXz05TLASBGXB85pHgxg2hH2JGzVssIYuGfw3X1CeOx38hKgJ4kno8tLnk=
+	t=1751367026; cv=none; b=R8Rf3jMLqj/PCkivslikMHUAZ9MNqb3AofID8ZZ5fI06HXG1Qab247diyVWhvIH9jVFKhZkSbT6hHpWTnYa7e1sNS9RCFS7Hhat156OTTyGR+8U4hkkfEihnHP+61zj7pLne7hZMgLp071wcyIpOLfA2Er5oR556NTb0bfLfEdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751368837; c=relaxed/simple;
-	bh=Fmh/oUteSMJXBwASChJwBISKL4lDdtXTv5z370N0ZhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I8NzhAYqzEbrUznKY1rkRaagr0OD63jh2VL9zM0gvzjODB2ZRZtrXM+bJ0cizdsc0ymuBVofjufA4a8woGSm8E2jB3ekgnKHa5afoxo1n+oizjd+vGkQldxmWwCGNlLisNTOLlcqh5cqlbMFqGRwkp4UrEhmgwy13NwFdofX0Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bWftm1SCKz9v6s;
-	Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 9ZjP7bqju4rm; Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bWftm0rDHz9v6d;
-	Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 17B0C8B765;
-	Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id XdqZhR-nxYqf; Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AB5E48B763;
-	Tue,  1 Jul 2025 12:50:07 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] arch/powerpc: Remove support for older GCC and binutils
-Date: Tue,  1 Jul 2025 12:50:07 +0200
-Message-ID: <b6b94cba7492c8581e8d5d25b15962e5ad7a37c2.1751366979.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751367026; c=relaxed/simple;
+	bh=vB2ciRLGq2buT1g4Abr9vSFpfnkL7pCjDw8BJb6OhgI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHflLeJBm26LRrJV1kiYzLAdb35SjhF57BDgqdLLISub/VgMOZNQJZp8lkqaW53WDsje9e2NbiuvWpZeIFb6fw1tLLB31bdrqym6gRdaSESrXmpuwSGmNS/3Yikdeas5WSeyyBqNNC0ULo/fLOTAhfBkFfPgjOGnKI5qA2bPaAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfgZEFId; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-553d771435fso4655559e87.3;
+        Tue, 01 Jul 2025 03:50:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751367023; x=1751971823; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6nCukVMyBo3RqFnHOfcz0HJrttovy5ZOtQsinnvZ25E=;
+        b=TfgZEFIdkuWKKefjLCe7//mH2nIyLc5rEnwlNyRK4HqS/6YadGTQH94MUdLNUTam3s
+         vNnclzbalTFRrVNpwFRotjXmAfkK+8Do7o5OlKY7adoYwQCVb11kLQHj4n0Lq7YjYS7C
+         dpcqrRWUCf4Ea5bkB5HHDgmqSp5XIkc9oGNAaXbP08tY49ApWo6jpCyhVxaCRZKNKmI+
+         UirP0TJvXx6hQuiGGayxflP81NGa+JzPWwB+d+8Da2TBd6IjZRpuF79nWStsYmXCwoDX
+         e1/0YBkVCv+BIje7LZwjT5tbCh0jMd5lMlkLm884OiYnXrnbSwexhCB5UI6DwN1bg6JZ
+         dRKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751367023; x=1751971823;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6nCukVMyBo3RqFnHOfcz0HJrttovy5ZOtQsinnvZ25E=;
+        b=AtMihS+IZVeP64/fsLCzjB3R0s8xsxbjAasjqmr0pQq9DUEZAn5Q/b4wM+jVeu0g6m
+         aUXAZzVa4PHNjRMA4IEHk6p75sBFlE/9bQq/7J27gvYTiSxDtCyGw7MSFdsssw8w4D1U
+         A8vczCTfVzX1mrJCZMt4bVuSaCR9ZP8gGQiq1PgxiTCxp9r/4bKtzFFIsu7jgq/4IQhT
+         X3z25MTJ+rXAkf5Ln+UzzTmjl3EE8+NkHvp5GK4s4IF7RNaAxInH+JBM16OnxbsWNaPw
+         dNh9HmqP66MrI/RHFQ+7rm8Pr/VALKAVbgYT+P0I6bCc3zWCivB2zeIskp+WpgEIvgA0
+         bLJw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+D1MjLBVhIdiHi+utlm+zJFODhxRhUCUS5xU2MLymWjvcU52caBKzLVn0f3Zm69DZe2+8qH/DDvngeCw=@vger.kernel.org, AJvYcCUWtA3/S7YeGeRSs24P589xQigZaRy196aeTT/+NFpqLP9L2oAK4j/A/rVpciqR6RQPtMROeVZr/eeaEcCIYTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOAj5wIOVj6cFY6EP51ZPPJD7T4BbOrPTctRnm031taVKfcD8n
+	VT9ke5UAd2tN3Kkuv92ZctyMNkcJqZGh/eNIWLeHe2qOE2FwSfkYUKfkhLiNpw==
+X-Gm-Gg: ASbGncslGZwakzp3W9oFA0lkcdKtED/lZ9qzmF5FWHEv8LInQHrIeSdeHDAt2OhCKRa
+	BZKnhVs4OYAv9ySeTlc/gHZTBwpHp81pen0ylvMACz1R5+4bqBq8fBUtmI1UEH8psEF+GT/tF9T
+	Mh+2HxDIbvjECOW0R+tWZldzk6bfP1zIGhzwXLTPKUF5GbcozifpLtb8Zulyx6bsFEnKyMzx/sl
+	a/YrrB4Ui+5glTJZ824nIMN0q85ROYtacgMGC3goMsmPEtHArj6RAEPuLPVGnC7o7aO3FZcWgL5
+	Whp5bWlj6y8VznoJhNzd/PvKDvPRiIkTSp/e6r80y8XM3Tx+/ZmhvMB5RVkJl72uzAGAtfD/SxH
+	F2MpRuqY8LgU=
+X-Google-Smtp-Source: AGHT+IElki988gDWr2y8ghmyNq4FVP1tCS8rW7LXaS5acajXsEXL5t8ekDHYSztkNjljjTDBGKI6rw==
+X-Received: by 2002:a05:6512:ac5:b0:553:2c92:fdcb with SMTP id 2adb3069b0e04-5550b8699f2mr6857763e87.3.1751367022393;
+        Tue, 01 Jul 2025 03:50:22 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2d9e35sm1767155e87.216.2025.07.01.03.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 03:50:21 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 1 Jul 2025 12:50:19 +0200
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, Uladzislau Rezki <urezki@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v9 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+Message-ID: <aGO9a06HutqljjNS@pc636>
+References: <20250630221511.3325123-1-vitaly.wool@konsulko.se>
+ <20250630221615.3325221-1-vitaly.wool@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751367007; l=1618; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Fmh/oUteSMJXBwASChJwBISKL4lDdtXTv5z370N0ZhY=; b=em+8ziEW8wo/UJ208nB+/sKg9HEwdRL83AvMPAfM06pEayyHy/vcuDHEd/uGf/UuyUM1w/fRE cQI0OzWzOY5CGFcZiLtT0DgcNJiHgc5dffaHH0OVFbmtnkKvS1VHC5c
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630221615.3325221-1-vitaly.wool@konsulko.se>
 
-Commit 118c40b7b503 ("kbuild: require gcc-8 and binutils-2.30") raised
-minimum GCC_VERSION and LD_VERSION.
+On Tue, Jul 01, 2025 at 12:16:15AM +0200, Vitaly Wool wrote:
+> Reimplement vrealloc() to be able to set node and alignment should
+> a user need to do so. Rename the function to vrealloc_node_align()
+> to better match what it actually does now and introduce macros for
+> vrealloc() and friends for backward compatibility.
+> 
+> With that change we also provide the ability for the Rust part of
+> the kernel to set node and aligmnent in its allocations.
+> 
+> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> ---
+>  include/linux/vmalloc.h | 12 +++++++++---
+>  mm/vmalloc.c            | 19 +++++++++++++++----
+>  2 files changed, 24 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index fdc9aeb74a44..68791f7cb3ba 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
+>  extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
+>  #define vcalloc(...)		alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+>  
+> -void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> -		__realloc_size(2);
+> -#define vrealloc(...)		alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+> +void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
+> +		unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+> +#define vrealloc_node_noprof(_p, _s, _f, _nid)	\
+> +	vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
+> +#define vrealloc_noprof(_p, _s, _f)		\
+> +	vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
+> +#define vrealloc_node_align(...)		alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
+> +#define vrealloc_node(...)			alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
+> +#define vrealloc(...)				alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>  
+>  extern void vfree(const void *addr);
+>  extern void vfree_atomic(const void *addr);
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6dbcdceecae1..776c68f84ce2 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -4089,12 +4089,15 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+>  EXPORT_SYMBOL(vzalloc_node_noprof);
+>  
+>  /**
+> - * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
+> + * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
+> + * remain unchanged
+>   * @p: object to reallocate memory for
+>   * @size: the size to reallocate
+> + * @align: requested alignment
+>   * @flags: the flags for the page level allocator
+> + * @nid: node id
+>   *
+> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is 0 and
+>   * @p is not a %NULL pointer, the object pointed to is freed.
+>   *
+>   * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+> @@ -4111,7 +4114,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+>   * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+>   *         failure
+>   */
+> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
+> +				 gfp_t flags, int nid)
+>  {
+>  	struct vm_struct *vm = NULL;
+>  	size_t alloced_size = 0;
+> @@ -4135,6 +4139,11 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>  		if (WARN(alloced_size < old_size,
+>  			 "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+>  			return NULL;
+> +		if (WARN(!IS_ALIGNED((unsigned long)p, align),
+> +			 "will not reallocate with a bigger alignment (0x%lx)\n", align))
+> +			return NULL;
+> +		if (nid != NUMA_NO_NODE && nid != page_to_nid(vmalloc_to_page(p)))
+> +			goto need_realloc;
+>
+By this goto change, you bypass the two important checks below. For
+example if you shrink the allocated size, you do not need to perform
+any allocations. Instead the patch goes and allocates a new area.
 
-Simplify powerpc build accordingly.
+You just need to remove:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/Kconfig      | 2 +-
- arch/powerpc/boot/wrapper | 6 +-----
- 2 files changed, 2 insertions(+), 6 deletions(-)
+-		if (nid != NUMA_NO_NODE && nid != page_to_nid(vmalloc_to_page(p)))
+-			goto need_realloc;
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c3e0cc83f120..cd35d90dfb49 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -252,7 +252,7 @@ config PPC
- 	select HAVE_FUNCTION_ERROR_INJECTION
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER		if !COMPILE_TEST && (PPC64 || (PPC32 && CC_IS_GCC))
--	select HAVE_GCC_PLUGINS			if GCC_VERSION >= 50200   # plugin support on gcc <= 5.1 is buggy on PPC
-+	select HAVE_GCC_PLUGINS
- 	select HAVE_GENERIC_VDSO
- 	select HAVE_HARDLOCKUP_DETECTOR_ARCH	if PPC_BOOK3S_64 && SMP
- 	select HAVE_HARDLOCKUP_DETECTOR_PERF	if PERF_EVENTS && HAVE_PERF_EVENTS_NMI
-diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
-index 3d8dc822282a..a75baefd1cff 100755
---- a/arch/powerpc/boot/wrapper
-+++ b/arch/powerpc/boot/wrapper
-@@ -226,11 +226,7 @@ ld_is_lld()
- 
- # Do not include PT_INTERP segment when linking pie. Non-pie linking
- # just ignores this option.
--LD_VERSION=$(${CROSS}ld --version | ld_version)
--LD_NO_DL_MIN_VERSION=$(echo 2.26 | ld_version)
--if [ "$LD_VERSION" -ge "$LD_NO_DL_MIN_VERSION" ] ; then
--	nodl="--no-dynamic-linker"
--fi
-+nodl="--no-dynamic-linker"
- 
- # suppress some warnings in recent ld versions
- nowarn="-z noexecstack"
--- 
-2.49.0
+to make it working.
 
+--
+Uladzislau Rezki
 
