@@ -1,431 +1,248 @@
-Return-Path: <linux-kernel+bounces-710788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F6DAEF129
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:32:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF050AEF135
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268064A0888
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:32:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A1B43A9C0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7BE26A0DF;
-	Tue,  1 Jul 2025 08:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7597925F99B;
+	Tue,  1 Jul 2025 08:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y3uCNoRB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UKzXGr+d"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCA572602;
-	Tue,  1 Jul 2025 08:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751358739; cv=none; b=FkD2ZLHR1TmhT2FNhVLaHPp+XaDrdStaczgE9ewKTUeq7xvMFsoiFk2dKtycgVc58J/6yWcv8/tE4ZWK3wUmrk/yw9q1qOqV4A0RgnqVBbU0RskfRGy92HYDMw14hCijIgmgf2/TWVE7dLdl9rS7PtsKZ4HUTaROioDB9HyjHGE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751358739; c=relaxed/simple;
-	bh=HRKh4yc4dh+enOBD//jx5vaaO25FLftCjZwUXnx5iGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=so5l67QfcGOe9sXeSOWs+dHsxfZY9SoKFGblI8Gv2IWad9hvPEyXzrdNRC7ii/0JRnFC0TmsxPQYMzjyps/DLhuJdzgcNxt7yj1668eJbmIDvDMTtii/BgRJ/VObSoa6rzqDq5UABx+ztyWXt9UYbaF8bAyX/XcCFzznugMAgws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y3uCNoRB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACA99C4CEEB;
-	Tue,  1 Jul 2025 08:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751358738;
-	bh=HRKh4yc4dh+enOBD//jx5vaaO25FLftCjZwUXnx5iGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y3uCNoRBdzVLyV1qZdLiDTZncyTp7yzBk1nv+BNEmMC1KkeCqmjgeraa8yp/1ZOCq
-	 bZYUG+Od8ZfOpTwm6HXJWQV41dw0o6CWUXBOXbvzMNembUDDiQ1Np/KhRQz6dmq0cf
-	 SmSzxN2a1se0hDrFPZai4Ra4QAeksIvCfECo8gw0=
-Date: Tue, 1 Jul 2025 10:32:15 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andrei Kuchynski <akuchynski@chromium.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	Guenter Roeck <groeck@chromium.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	"Christian A. Ehrhardt" <lk@c--e.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 04/10] usb: typec: Expose mode priorities via sysfs
-Message-ID: <2025070159-judgingly-baggage-042a@gregkh>
-References: <20250630141239.3174390-1-akuchynski@chromium.org>
- <20250630141239.3174390-5-akuchynski@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12EE1465A1
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751358780; cv=fail; b=OhX8G6R2zT0OhPj1/2Pfqdg0cXuMz42Wi5I96HtnDKKyEW/2X6JjlY/8vdvnmBJdgY3kR8y6w4OeRUi9hv1BjKuIdNli2avciPoHqc4LetcmNdveqI4k62rQM6q9RHpCDm+De0NCRzaYCbqPY50mEALpMe4OtXLplCoF1t8OduI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751358780; c=relaxed/simple;
+	bh=vUwFPb2sNIlv4n8RjUqCoAioaaEWOPEMuS7XAWaNMTI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cMbBLzT+kO5YPAuuLYknRfDvrDKNoxjhyvtwDVi7BkuYxAPvTh+vrQHlKT4Uc+mAVHlwvuLRZaBMMmjUEU7nUekl29uWvqB5hYvM9r87XH+TxRqwtzU8ZgD3vyQZ/DxHR8Rby3nNxlZZ3Guj2Kdr2cJoyyByZKUudNspl624dnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UKzXGr+d; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751358779; x=1782894779;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=vUwFPb2sNIlv4n8RjUqCoAioaaEWOPEMuS7XAWaNMTI=;
+  b=UKzXGr+d12YdyIUG2s3sa0XEdSNj8TBkbIx2Qa/wAs7+Es47fBgznrvL
+   rAJLkZJUi7HzkiMe5ug9rb4WCNX25kGUhiIsLLDrkITCytWrd4hpWGX9P
+   s8mqoGprh5dsmM37t/rdp5rKkEhlz1BlUZngJiEKGaDf0VMNcu3NxsQCW
+   aUGDeTOYSDcCqVIa75mc4ZaQRMTlD3JLR5ZzZrNI8hXlw+jBQJGoKyp2+
+   pfQPbzggiUSlvY9dopfNv6UD7hUsQI1gxxiVSK30wSJwWTM4EUwQfas2O
+   AC+H58EJvwpi17k/nF8gTi3GSYe0vRnAWDK0oxSj5RrBQiPZBszLtD8iR
+   Q==;
+X-CSE-ConnectionGUID: aynQZVWfSSyoUGezZKZt5w==
+X-CSE-MsgGUID: cud9zvbyTf2LgtO7ydEhOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="53548016"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="53548016"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 01:32:58 -0700
+X-CSE-ConnectionGUID: 1v4PaJDJQSu8lUZi22u/lA==
+X-CSE-MsgGUID: 6ivHBdPESmSL72H1O0N39g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="153096336"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 01:32:58 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 1 Jul 2025 01:32:57 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 1 Jul 2025 01:32:57 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.71)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 1 Jul 2025 01:32:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vQZVyfDBQMTqd+1kbl4LeBAfVK5rnLORVsOfJMbOjexJS+nv9FG2ngkbojUX9A4yfvwUgvQB8hCp5Q3jE+Z0EcElo2V10t5ZXHynxV6aM8wfRmvpF+OmyCPsD/lAoMYCLntpE6NDiHAVhdQzBOQM8jnaralppIxga0k0evuvA7NRpLfvJ+wfNXPLxl9U5PAOooMlwjlwG8noLYT5MVVGyrBS5xJ1iFIBF1P6+SxESoB17ZlCne2sgf9YKOdrM7fbs25/x0liNxHiqVuElb7iWAkJdSHrKHcqrDsTk/ZMOpnikRQ0iDqhlLFH85otv+e0oVrqrf9TUSZb+2TigY/ZZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vUwFPb2sNIlv4n8RjUqCoAioaaEWOPEMuS7XAWaNMTI=;
+ b=QyDXNn/NlyXfcljTPYSLryXwDEHLhtvCHsPDj/Iig3zMWfBb4SzhPGfwAiAkqrp591LVUoCej7TyTa4hwpG6xj3KwfdUAeanPaWs24hzvXAJZk/R/1F0K8X7PtMxz0t3IvsL5togipWoaLcbIEDO8eFcIItLLSL1mBeL2udtjsgiBRvPk7ix1pDWNKuBlNF1FfI7Lz/JjfL6m2VSpSZjku+VhT07lWniJvmkpijTij4kNU39i3sueJXhV/X1Jt2JFh9tGtje/HkACztFLi50UpoA1ev96VTSE9L/+SQYAWCGo7zcA1pCP1YfjYP/NIT6NpCOWRinc5Y2CY9+hgIOvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY5PR11MB6366.namprd11.prod.outlook.com (2603:10b6:930:3a::8)
+ by MW3PR11MB4668.namprd11.prod.outlook.com (2603:10b6:303:54::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.24; Tue, 1 Jul
+ 2025 08:32:21 +0000
+Received: from CY5PR11MB6366.namprd11.prod.outlook.com
+ ([fe80::6826:6928:9e6:d778]) by CY5PR11MB6366.namprd11.prod.outlook.com
+ ([fe80::6826:6928:9e6:d778%5]) with mapi id 15.20.8901.018; Tue, 1 Jul 2025
+ 08:32:21 +0000
+From: "Usyskin, Alexander" <alexander.usyskin@intel.com>
+To: "Nilawar, Badal" <badal.nilawar@intel.com>, Greg KH
+	<gregkh@linuxfoundation.org>
+CC: "intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Gupta,
+ Anshuman" <anshuman.gupta@intel.com>, "Vivi, Rodrigo"
+	<rodrigo.vivi@intel.com>, "Ceraolo Spurio, Daniele"
+	<daniele.ceraolospurio@intel.com>
+Subject: RE: [PATCH v4 02/10] mei: late_bind: add late binding component
+ driver
+Thread-Topic: [PATCH v4 02/10] mei: late_bind: add late binding component
+ driver
+Thread-Index: AQHb5fIovEVVgypf8kmRHl0YtfTjo7QYgfaAgARwjgCAAALLAIAAAWsAgAACblA=
+Date: Tue, 1 Jul 2025 08:32:21 +0000
+Message-ID: <CY5PR11MB6366894B5667A90759A7EADDED41A@CY5PR11MB6366.namprd11.prod.outlook.com>
+References: <20250625170015.33912-1-badal.nilawar@intel.com>
+ <20250625170015.33912-3-badal.nilawar@intel.com>
+ <2025062808-grant-award-ee22@gregkh>
+ <a0e54703-721e-4e87-9962-7007771f947b@intel.com>
+ <2025070131-snaking-trolling-87dc@gregkh>
+ <BN9PR11MB55308686A2B95B0234C8B889E541A@BN9PR11MB5530.namprd11.prod.outlook.com>
+In-Reply-To: <BN9PR11MB55308686A2B95B0234C8B889E541A@BN9PR11MB5530.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR11MB6366:EE_|MW3PR11MB4668:EE_
+x-ms-office365-filtering-correlation-id: ce45a0d8-c569-43b0-3652-08ddb879cc71
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?VnNlcW44aVZKUy96RUFoMk9qdVdINlNZREFWQUEybmFFaFdWcFd5ZTdZdTZi?=
+ =?utf-8?B?Qi83eDF2eVVJK0NYS1QxblFNUWhIUGNSTVh2bkFjdFY4QmhMSVZ4SzFPK3VZ?=
+ =?utf-8?B?NExTVEcyUkxaQ0VxK2hIVU91ckk0VHZrNXR4YnNRYjdOTVltU21WOTFhOFRD?=
+ =?utf-8?B?eVo4d2g2Q1hPYnJTbFc4T284N1pSVzNZakRRWXFkelRaQmUxMnFGOFhTK0gr?=
+ =?utf-8?B?bHNhVzlpMVgreGZSaWlsU25CaFpsV0hnNFQ4LzZGOTloK3N4bStQZE90bFgy?=
+ =?utf-8?B?aEFoUUIvWURMWVA2bWZZdklDWFZjKzlpTEhLOTZqNjBhT0NXU0hLV2p0TWxa?=
+ =?utf-8?B?VUREMmRzZVNVNkVQV0ZxK3RWVGVXUGtwcFA4d2RhSjhBUmZOdVk5Yk1LeHVv?=
+ =?utf-8?B?MVFBQ3lDRTRYaUNCemRZVWl4cXdNTVAwcDFweTF4MUhKVytzYytWczlYNEt2?=
+ =?utf-8?B?SlA3OGxOTS8zNjRhL3RiQUUvWWtyd0kwVmRnUW1vT1dod3BzdkdRYU1kT2NX?=
+ =?utf-8?B?QXFYblJNQmJCRUNjaURYQlJvV1BPOWZKcXVTMEZEeGg0SGRORk8vNzNHSWNk?=
+ =?utf-8?B?eGR0dDBSa0dXYkpVOFJyQkdEbmhQaE1ydm82VnhNc0hqNnhvQUwveHJaQkQr?=
+ =?utf-8?B?aGxFTlgvaHRSSmppWDBjNGVJd05IeGVkc1N3aGppL0hZY3Y5MEhCREMwcEor?=
+ =?utf-8?B?dlh4QWNyUE9lWE1zYkxzUW5aNkk1T1RpbzhTZ3lCU2JDbUlrODVWQzlUTGdt?=
+ =?utf-8?B?VFdyNGZFS24zcXkya2J6VXhiWi9rYVg0ZklLUnZpdGpLMFpDTjE0UnZOZGtv?=
+ =?utf-8?B?K1p2YzFnQjJuUmF3Z3kyUFRFcUlKS3U2emxOeG54bWdpbmdBQXRpNVMrYldx?=
+ =?utf-8?B?VzlSNjhxZ3l1WUdiOWtVQmFxV1RkekdKQVZxWjhpdXV0U0lpQ0pDVHVITDJ3?=
+ =?utf-8?B?ZmIzR0t0Uk1QVFJaVm9CYUVIbnY4RXRKSStkdUpPVVdZeDAveWRueXZncUJV?=
+ =?utf-8?B?dkZ1bk5mRnM0SnZZVTJPOWVSbWZxU2pQRStUZEFMUXBqRlFONkV1YSs2Ti82?=
+ =?utf-8?B?MnpsazNNN2c4aGRnYUcxcFl5bGxZMzNkZkY5N0ZUVlNVb1Nka0JKWXBQaC9E?=
+ =?utf-8?B?TnBlMHhobmRhMWtzdDUzSjIxY0x3MGdPbVVZN1l3eDhMeHRadXpxVDRydTdB?=
+ =?utf-8?B?d0YyMk93UGYzNG5Ra3B6b0JvYno5Z2NqMFlpTEtHeFgyRzhMSXlRNTFhQkVQ?=
+ =?utf-8?B?NHRxZmExcHNIQVRsNlZqcCtsaE9iSTVaNW1hUld6ODVEaFNNZitnVHYwdFV3?=
+ =?utf-8?B?NExWbmo3dlVHVGdtRGZNQ09IYlNCc2JWZ09wcTU0eVE4UWFHRkxFUkxaOUg5?=
+ =?utf-8?B?cldQT1dtVDJITWY3NkU0NndRcHh0czJLRDBIdVU5ZmhhVGdkQzJHcXZJZU9m?=
+ =?utf-8?B?TFE5WjV6UGIvOXlRODdmYWY0TDZNcVhvbkN0Vy9Qdit5ZlJ1TmNUS2NRNUEv?=
+ =?utf-8?B?andZdGEwL3M5Y1J2S1M0aUdWRHB6R3preE1MaUJndlJZSzJYUmp2UjVGM3NN?=
+ =?utf-8?B?R3haM3NuYkk5d3N3bFBjNnJDT09xRVFoMFhuczVaYjRFaWlvTVZYY1NOK2tH?=
+ =?utf-8?B?MkhlWldiNUhwY0grNDB3YVpXdElMc0ErV09DWXZQeGhWem92Q3poanVhYUNt?=
+ =?utf-8?B?MmpMSTVXVkxOTDg0RkJLZ1d5YXg2WEJsemUxdDQ1ZXZwdnpnMXlBY2VVM0Fk?=
+ =?utf-8?B?RXhTREErS3dxdklzajRMSjc2L0tuWThERk5GTUM2Z0dCRTRLTDFCZzBwV0k5?=
+ =?utf-8?B?b1dFcy9LNlkvYll2NFdGNXI3YnR6cThhN2tnWEtyclJFUzRKeUtZUVppUWhY?=
+ =?utf-8?B?MlpmWG9QSVRFSHB3SHRKOWx3Y1JUMWZ0NnZIUVQyalFGY3RrK1hVS2RPOFFx?=
+ =?utf-8?B?ZW5rdm5EbTRFeVZDTlY1RHBzYWpQNE1nM1JZWXhrYXZHWHkwcGUzUjhHZzhr?=
+ =?utf-8?Q?07djpdNTu8W41yaRHZNHtzgY+o8nmg=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6366.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RG1RUmJYQkU1MUZKZmN1MmpSbWpnaEtBcjdWQlFscDdFNC9IWXZJWElpdTRX?=
+ =?utf-8?B?TTNSMy9GbysrN2tyeSt1dmlWd2FjUFRxYlVNTk9md3VNbWhYMGdmeUtWcmdo?=
+ =?utf-8?B?Y1h6WFN1SWdTUXNyNTRYS0pGVDJuUE5sZktPODdNdWlIcWNWTUQ0MklrVVJ3?=
+ =?utf-8?B?cm5rWUFweWdtN2FoTXJTWmJUeEtzWGdxcnRIb3dxUWs0bUUzRXJFSzcvNVNE?=
+ =?utf-8?B?SzNtOWxqYldXMXgwaVJUQTZ3WElTbVpGWjlzTnN0ZEFCUW5VRnNyU3RZdXcw?=
+ =?utf-8?B?SVEzWnZ4Um5hKytHdE03QXQvMzhZTUhnQk5oMnc4TnY2d3N5akVZS2VVY3cy?=
+ =?utf-8?B?Z3JWN0wrL1NMZUhIMnJEVjM5SGRKbEZVRDNjbkIwVTNZZlNMdUpZYldvbi82?=
+ =?utf-8?B?OFNUTWRJVFhVdnd0RXhYZ1pnenR0VEFHRjNWc0l1a29zdnFwSWJxTVQ1azRW?=
+ =?utf-8?B?U1RNOFd3ZE5NUWUvVVFyN2pzWVJOWjZvcFlPTXNVMVZXaDI1cEROcjNVUE03?=
+ =?utf-8?B?SVF3VE1kajQ3VXIrYXVMbGFheU50SDNJb01lRnFpZ0dFY3pPL0FzbmlzN3k1?=
+ =?utf-8?B?OUdFVXluWUdDczRqZnpGQkhYRUxncmp6YlhCQjFEYjY3MDJHUFlzRDcwOE5V?=
+ =?utf-8?B?d1RxWjkyVDN1eUU0QzNuQ1B0MGxTeEhDTWFsQm00dDk4Z1Q4NDA0MUFWU2ln?=
+ =?utf-8?B?MmZWTzZzcWMyYWRWSVMrVEoyWEJhQno4dEFkUDlvdjJmam15ak05d1JiREgz?=
+ =?utf-8?B?M3ZwRXlVTDBYZDI1NTgyOFgxd0xKNy8xTzhrK3pnT3hvaE8wNFZNMWo4S2FH?=
+ =?utf-8?B?NFFwNmJnS1dVUXJmbW9hOVdORWc0OXhTVTVKODFQTFJ5Ujd2WnlEZTlNYnp6?=
+ =?utf-8?B?VVBqRVJnaEJLVXd2V25iOXZOUjBXMTJueHZtN3BHRjJUcmlqM1haeVE4WFZm?=
+ =?utf-8?B?ZWwweGNtTG82Vm1ZYlhLSHFWcHVNL21qa2pzN2dGM0p4YlYwZ2txdHRYZzZU?=
+ =?utf-8?B?RDY3QXcwVGE2bWF5NnZyeHRPbjdlbEUzd1pPSlI1VFVjMnROTll4OWNkNVZ5?=
+ =?utf-8?B?OHJUUnRsSURyN3Z1WUg3RWV5cDlOMXBJejFZYStqZFI2M2Z4NEV4YktNY2ZV?=
+ =?utf-8?B?SEY0Qi82R0NvbFVidlZIcnBaRW16ZzRpTit5dVUyVy9OTTI1dTVoMUdsay9p?=
+ =?utf-8?B?SWtsMXRudGtocytsbTlMYU13dFlpVXR1S1N2RzlVU3ZrcWpPbUVqV0VXUDJC?=
+ =?utf-8?B?akVhbmJhNmpxZXVFMU5PSklzN2lISnlZb2xYKzJUWVovRFJEZEhnYXlDNlNR?=
+ =?utf-8?B?akJJZ0RCL24vemI3ZXI3eTh4MHRUUHNBMC9kRzRKcUs3RkVScERJSFdTMTZj?=
+ =?utf-8?B?RTlDdmV4RzZ6bWhkT2hWODFQSGpwNEUxdVFLcWNuUFE0Q2k3eFJlSktpNnhl?=
+ =?utf-8?B?Q1NhTmxqcDZkbGJSeno5TVZxQ1ArSEdOOGsyNStNSkRPa21zYmo0bGxTWFcz?=
+ =?utf-8?B?YlJ3aWp0UkhSelIwRzZHaVZXRXNVc3kzL1hzT1JpYjZoSU1vRTVCVHlXeUFK?=
+ =?utf-8?B?cm8ramZpdXh3dEVSL0VwblozNndxelkzSHJvSTBGTGdMN2VwZzY1QnNHTlls?=
+ =?utf-8?B?Zkp2ZGx2bTU4aWZGdG92RnhwVEV5QTZkVHpqUysyS2JOV1MrQ0k4NVRkenJj?=
+ =?utf-8?B?U1E3Zm4weTNBRHloNmY4cGpsZUFDVWpJY0FPcG04WWtqdzdJMDBEZGxzSU1J?=
+ =?utf-8?B?dWhHeE9Lemd1QWxVWTF2cmI3NjJHZzRqbDhXSTZtTWVpejk5VWxmMkRBS0Yy?=
+ =?utf-8?B?Yzl4UFRaZUJ2dlh0NXZZMnhnNjlaamgzV3FaQVBkNUw4S1NNZDYydVcvdHZR?=
+ =?utf-8?B?RU9IS0VaV20vUzAwb0pYVllqQ1RpY2N2NDdOT3BLeS9vUXdGR1J6WVM1SVdI?=
+ =?utf-8?B?QkZsQ3oxUm4zZms5dlloUkhNTFJUWlJ6Z3JTckN6aTQwUVNtTUR0bVJkNVNJ?=
+ =?utf-8?B?WUoydjgzVFNmOFpzYnlJUGFaTkdiMWNuc20yeWRRRXY0SWlvL0FDWTFHVkxP?=
+ =?utf-8?B?WlhKc1pyR2hCbEd5cFdyMXFuMXRzVEZVbjVndXd2Qlp0cHRpNnNSVmlCb3lz?=
+ =?utf-8?B?K3VKNEhzM3dzV2NKQW0zS0trTzc0RGpxd1BuT1RuRUwybjVPdnVRejgwcFZT?=
+ =?utf-8?B?ZWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630141239.3174390-5-akuchynski@chromium.org>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6366.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce45a0d8-c569-43b0-3652-08ddb879cc71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2025 08:32:21.6540
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WaKptRZww3H3BvsXnc5d1Em1ZKBG9kbOR/XyV+hFdNsRJW61ZqgZiYuRuuGvvSgk9a5Cu5DtbeI4d5V+3uG1N/z9adMV13gk0iOg4C6kcAE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4668
+X-OriginatorOrg: intel.com
 
-On Mon, Jun 30, 2025 at 02:12:33PM +0000, Andrei Kuchynski wrote:
-> This sysfs attribute specifies the preferred order for enabling
-> DisplayPort, Thunderbolt alternate modes, and USB4 mode.
-> 
-> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
-> ---
->  Documentation/ABI/testing/sysfs-class-typec |  16 +++
->  drivers/usb/typec/Makefile                  |   2 +-
->  drivers/usb/typec/class.c                   |  28 ++++-
->  drivers/usb/typec/class.h                   |   4 +
->  drivers/usb/typec/mode_selection.c          | 116 ++++++++++++++++++++
->  drivers/usb/typec/mode_selection.h          |  19 ++++
->  include/linux/usb/typec_altmode.h           |   7 ++
->  7 files changed, 190 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/usb/typec/mode_selection.c
->  create mode 100644 drivers/usb/typec/mode_selection.h
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-typec b/Documentation/ABI/testing/sysfs-class-typec
-> index 38e101c17a00..ff3296ee8e1c 100644
-> --- a/Documentation/ABI/testing/sysfs-class-typec
-> +++ b/Documentation/ABI/testing/sysfs-class-typec
-> @@ -162,6 +162,22 @@ Description:	Lists the supported USB Modes. The default USB mode that is used
->  		- usb3 (USB 3.2)
->  		- usb4 (USB4)
->  
-> +What:		/sys/class/typec/<port>/mode_priorities
-> +Date:		June 2025
-> +Contact:	Andrei Kuchynski <akuchynski@chromium.org>
-> +Description:	Lists the modes supported by the port, ordered by their
-> +		activation priority. It defines the preferred sequence for activating
-> +		modes such as Displayport alt-mode, Thunderbolt alt-mode and USB4 mode.
-> +		The default order can be modified by writing a new sequence to this
-> +		attribute. Any modes omitted from a user-provided list will be
-> +		automatically placed at the end of the list.
-> +
-> +		Example values:
-> +		- "USB4 TBT DP": default priority order
-> +		- "USB4 DP TBT": modified priority order after writing "USB4 DP TBT" or
-> +			"USB4 DP"
-> +		- "DP": the port only supports Displayport alt-mode
-
-Multiple value sysfs files are generally frowned apon.  sysfs files that
-also have to be manually parsed in the kernel are also frowned apon.
-Are you _SURE_ there is no other way that you could possibly do this?
-
-> +
->  USB Type-C partner devices (eg. /sys/class/typec/port0-partner/)
->  
->  What:		/sys/class/typec/<port>-partner/accessory_mode
-> diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
-> index 7a368fea61bc..8a6a1c663eb6 100644
-> --- a/drivers/usb/typec/Makefile
-> +++ b/drivers/usb/typec/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_TYPEC)		+= typec.o
-> -typec-y				:= class.o mux.o bus.o pd.o retimer.o
-> +typec-y				:= class.o mux.o bus.o pd.o retimer.o mode_selection.o
->  typec-$(CONFIG_ACPI)		+= port-mapper.o
->  obj-$(CONFIG_TYPEC)		+= altmodes/
->  obj-$(CONFIG_TYPEC_TCPM)	+= tcpm/
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index a72325ff099a..93eadbcdd4c0 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -19,6 +19,7 @@
->  #include "bus.h"
->  #include "class.h"
->  #include "pd.h"
-> +#include "mode_selection.h"
->  
->  static DEFINE_IDA(typec_index_ida);
->  
-> @@ -540,7 +541,7 @@ static void typec_altmode_release(struct device *dev)
->  }
->  
->  const struct device_type typec_altmode_dev_type = {
-> -	.name = "typec_alternate_mode",
-> +	.name = ALTERNATE_MODE_DEVICE_TYPE_NAME,
->  	.groups = typec_altmode_groups,
->  	.release = typec_altmode_release,
->  };
-> @@ -1942,6 +1943,25 @@ static ssize_t orientation_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(orientation);
->  
-> +static ssize_t mode_priorities_store(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       const char *buf, size_t size)
-> +{
-> +	struct typec_port *port = to_typec_port(dev);
-> +	int ret = typec_mode_priorities_set(port, buf);
-
-You don't pass in size here, what could go wrong...
-
-> +
-> +	return ret ? : size;
-
-Please do not use ? : unless you have to.  Spell it out, it makes code
-easier to maintain.  Remember, we write code for people first, compilers
-second.
-
-> +}
-> +
-> +static ssize_t mode_priorities_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct typec_port *port = to_typec_port(dev);
-> +
-> +	return typec_mode_priorities_get(port, buf);
-> +}
-> +static DEVICE_ATTR_RW(mode_priorities);
-> +
->  static struct attribute *typec_attrs[] = {
->  	&dev_attr_data_role.attr,
->  	&dev_attr_power_operation_mode.attr,
-> @@ -1954,6 +1974,7 @@ static struct attribute *typec_attrs[] = {
->  	&dev_attr_port_type.attr,
->  	&dev_attr_orientation.attr,
->  	&dev_attr_usb_capability.attr,
-> +	&dev_attr_mode_priorities.attr,
->  	NULL,
->  };
->  
-> @@ -1992,6 +2013,9 @@ static umode_t typec_attr_is_visible(struct kobject *kobj,
->  			return 0;
->  		if (!port->ops || !port->ops->default_usb_mode_set)
->  			return 0444;
-> +	} else if (attr == &dev_attr_mode_priorities.attr) {
-> +		if (!port->alt_mode_override)
-> +			return 0;
->  	}
->  
->  	return attr->mode;
-> @@ -2652,6 +2676,8 @@ struct typec_port *typec_register_port(struct device *parent,
->  	else if (cap->usb_capability & USB_CAPABILITY_USB2)
->  		port->usb_mode = USB_MODE_USB2;
->  
-> +	typec_mode_priorities_set(port, "");
-> +
->  	device_initialize(&port->dev);
->  	port->dev.class = &typec_class;
->  	port->dev.parent = parent;
-> diff --git a/drivers/usb/typec/class.h b/drivers/usb/typec/class.h
-> index f05d9201c233..28b3c19a0632 100644
-> --- a/drivers/usb/typec/class.h
-> +++ b/drivers/usb/typec/class.h
-> @@ -5,6 +5,7 @@
->  
->  #include <linux/device.h>
->  #include <linux/usb/typec.h>
-> +#include <linux/usb/typec_altmode.h>
->  
->  struct typec_mux;
->  struct typec_switch;
-> @@ -82,6 +83,7 @@ struct typec_port {
->  	struct device			*usb3_dev;
->  
->  	bool				alt_mode_override;
-> +	int				mode_priority_list[TYPEC_MODE_MAX];
->  };
->  
->  #define to_typec_port(_dev_) container_of(_dev_, struct typec_port, dev)
-> @@ -111,4 +113,6 @@ static inline int typec_link_ports(struct typec_port *connector) { return 0; }
->  static inline void typec_unlink_ports(struct typec_port *connector) { }
->  #endif
->  
-> +#define ALTERNATE_MODE_DEVICE_TYPE_NAME "typec_alternate_mode"
-> +
->  #endif /* __USB_TYPEC_CLASS__ */
-> diff --git a/drivers/usb/typec/mode_selection.c b/drivers/usb/typec/mode_selection.c
-> new file mode 100644
-> index 000000000000..cb7ddf679037
-> --- /dev/null
-> +++ b/drivers/usb/typec/mode_selection.c
-> @@ -0,0 +1,116 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2025 Google LLC.
-> + */
-> +
-> +#include <linux/usb/typec_altmode.h>
-> +#include <linux/vmalloc.h>
-> +#include "mode_selection.h"
-> +#include "class.h"
-> +
-> +static const char * const mode_names[] = {
-> +	[TYPEC_DP_ALTMODE] = "DP",
-> +	[TYPEC_TBT_ALTMODE] = "TBT",
-> +	[TYPEC_USB4_MODE] = "USB4",
-
-No TYPEC_MODE_MAX entry?  Why not?  This is going to get out of sync,
-see below for my comment about that.
-
-> +};
-> +static const char * const default_priorities = "USB4 TBT DP";
-
-A comment here about what this is for?
-
-> +
-> +/* -------------------------------------------------------------------------- */
-> +/* port 'mode_priorities' attribute */
-> +static int typec_mode_parse_priority_string(const char *str, int *list)
-> +{
-> +	const bool user_settings = list[0] == TYPEC_MODE_MAX;
-> +	char *buf, *ptr;
-> +	char *token;
-> +	int ret = 0;
-> +
-> +	buf = vmalloc(strlen(str) + 1);
-
-Why vmalloc for such a small chunk of memory?
-
-> +	if (!buf)
-> +		return -ENOMEM;
-> +	for (int i = 0; i <= strlen(str); i++)
-> +		buf[i] = (str[i] == '\n') ? '\0' : str[i];
-
-Please spell out if statements, especially ones that do assignements in
-them.  This is going to be a pain to maintain over time, right?  Make it
-obvious what is happening please.
-
-
-> +	ptr = buf;
-> +
-> +	while ((token = strsep(&ptr, " ")) && !ret) {
-> +		if (strlen(token)) {
-> +			int mode = 0;
-> +
-> +			while ((mode < TYPEC_MODE_MAX) &&
-> +				strcmp(token, mode_names[mode]))
-> +				mode++;
-> +			if (mode == TYPEC_MODE_MAX) {
-> +				ret = -EINVAL;
-> +				continue;
-> +			}
-> +
-> +			for (int i = 0; i < TYPEC_MODE_MAX; i++) {
-> +				if (list[i] == TYPEC_MODE_MAX) {
-> +					list[i] = mode;
-> +					break;
-> +				}
-> +				if (list[i] == mode) {
-> +					if (user_settings)
-> +						ret = -EINVAL;
-> +					break;
-> +				}
-> +			}
-> +		}
-> +	}
-> +	vfree(buf);
-
-Why not just use a free() type model and that way your error paths above
-are much simpler?
-
-
-> +
-> +	return ret;
-> +}
-> +
-> +int typec_mode_priorities_set(struct typec_port *port,
-> +		const char *user_priorities)
-> +{
-> +	int list[TYPEC_MODE_MAX];
-> +	int ret;
-> +
-> +	for (int i = 0; i < TYPEC_MODE_MAX; i++)
-> +		list[i] = TYPEC_MODE_MAX;
-> +
-> +	ret = typec_mode_parse_priority_string(user_priorities, list);
-> +	if (!ret)
-> +		ret = typec_mode_parse_priority_string(default_priorities, list);
-> +
-> +	if (!ret)
-> +		for (int i = 0; i < TYPEC_MODE_MAX; i++)
-> +			port->mode_priority_list[i] = list[i];
-> +
-> +	return ret;
-> +}
-> +
-> +static int port_altmode_supported(struct device *dev, void *data)
-> +{
-> +	if (!strcmp(dev->type->name, ALTERNATE_MODE_DEVICE_TYPE_NAME)) {
-> +		struct typec_altmode *alt = to_typec_altmode(dev);
-> +
-> +		if (*(int *)data == typec_svid_to_altmode(alt->svid))
-> +			return 1;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static bool port_mode_supported(struct typec_port *port, int mode)
-> +{
-> +	if (mode >= TYPEC_MODE_MAX)
-> +		return false;
-> +	if (mode == TYPEC_USB4_MODE)
-> +		return !!(port->cap->usb_capability & USB_CAPABILITY_USB4);
-> +	return device_for_each_child(&port->dev, &mode, port_altmode_supported);
-> +}
-> +
-> +int typec_mode_priorities_get(struct typec_port *port, char *buf)
-> +{
-> +	ssize_t count = 0;
-> +
-> +	for (int i = 0; i < TYPEC_MODE_MAX; i++) {
-> +		int mode = port->mode_priority_list[i];
-> +
-> +		if (port_mode_supported(port, mode))
-> +			count += sysfs_emit_at(buf, count, "%s ", mode_names[mode]);
-> +	}
-> +
-> +	return count + sysfs_emit_at(buf, count, "\n");
-> +}
-> diff --git a/drivers/usb/typec/mode_selection.h b/drivers/usb/typec/mode_selection.h
-> new file mode 100644
-> index 000000000000..c595c84e26a4
-> --- /dev/null
-> +++ b/drivers/usb/typec/mode_selection.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#include <linux/usb/typec_dp.h>
-> +#include <linux/usb/typec_tbt.h>
-> +
-> +static inline int typec_svid_to_altmode(const u16 svid)
-> +{
-> +	switch (svid) {
-> +	case USB_TYPEC_DP_SID:
-> +		return TYPEC_DP_ALTMODE;
-> +	case USB_TYPEC_TBT_SID:
-> +		return TYPEC_TBT_ALTMODE;
-> +	}
-> +	return TYPEC_MODE_MAX;
-> +}
-> +
-> +int typec_mode_priorities_set(struct typec_port *port,
-> +		const char *user_priorities);
-> +int typec_mode_priorities_get(struct typec_port *port, char *buf);
-> diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/typec_altmode.h
-> index b3c0866ea70f..4f05c5f5c91d 100644
-> --- a/include/linux/usb/typec_altmode.h
-> +++ b/include/linux/usb/typec_altmode.h
-> @@ -145,6 +145,13 @@ enum {
->  
->  #define TYPEC_MODAL_STATE(_state_)	((_state_) + TYPEC_STATE_MODAL)
->  
-> +enum {
-> +	TYPEC_DP_ALTMODE = 0,
-> +	TYPEC_TBT_ALTMODE,
-> +	TYPEC_USB4_MODE,
-> +	TYPEC_MODE_MAX,
-
-This list is going to get out of order and sync with your string list
-elsewhere in the other .c file.  What is going to ensure that this does
-not happen?
-
-Again, I'm really not happy with this api, it feels fragile and tricky
-and will get out of sync very easily over time.  We need loads of
-justification for why this really is the only possible way this can be
-done, and some type of proof that this actually has been tested (and
-maybe fuzzed?)
-
-thanks,
-
-greg k-h
+PiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMDIvMTBdIG1laTogbGF0ZV9iaW5kOiBhZGQgbGF0
+ZSBiaW5kaW5nIGNvbXBvbmVudA0KPiA+IGRyaXZlcg0KPiA+DQo+ID4gT24gVHVlLCBKdWwgMDEs
+IDIwMjUgYXQgMDE6Mzc6MzZQTSArMDUzMCwgTmlsYXdhciwgQmFkYWwgd3JvdGU6DQo+ID4gPg0K
+PiA+ID4gT24gMjgtMDYtMjAyNSAxNzo0OSwgR3JlZyBLSCB3cm90ZToNCj4gPiA+ID4gT24gV2Vk
+LCBKdW4gMjUsIDIwMjUgYXQgMTA6MzA6MDdQTSArMDUzMCwgQmFkYWwgTmlsYXdhciB3cm90ZToN
+Cj4gPiA+ID4gPiArLyoqDQo+ID4gPiA+ID4gKyAqIHN0cnVjdCBsYXRlX2JpbmRfY29tcG9uZW50
+X29wcyAtIG9wcyBmb3IgTGF0ZSBCaW5kaW5nIHNlcnZpY2VzLg0KPiA+ID4gPiA+ICsgKiBAb3du
+ZXI6IE1vZHVsZSBwcm92aWRpbmcgdGhlIG9wcw0KPiA+ID4gPiA+ICsgKiBAcHVzaF9jb25maWc6
+IFNlbmRzIGEgY29uZmlnIHRvIEZXLg0KPiA+ID4gPiA+ICsgKi8NCj4gPiA+ID4gPiArc3RydWN0
+IGxhdGVfYmluZF9jb21wb25lbnRfb3BzIHsNCj4gPiA+ID4gPiArCXN0cnVjdCBtb2R1bGUgKm93
+bmVyOw0KPiA+ID4gPiBJIGRvbid0IHRoaW5rIHlvdSBldmVyIHNldCB0aGlzIGZpZWxkLCBzbyB3
+aHkgaXMgaXQgaGVyZT8NCj4gPiA+ID4NCj4gPiA+ID4gT3IgZGlkIEkgbWlzcyBpdCBzb21ld2hl
+cmU/DQo+ID4gPg0KPiA+ID4gSXQgaXMgc2V0IGluIGRyaXZlcnMvbWlzYy9tZWkvbGF0ZV9iaW5k
+L21laV9sYXRlX2JpbmQuYw0KPiA+ID4NCj4gPiA+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgbGF0ZV9i
+aW5kX2NvbXBvbmVudF9vcHMgbWVpX2xhdGVfYmluZF9vcHMgPSB7DQo+ID4gPiDCoCDCoCDCoCDC
+oCAub3duZXIgPSBUSElTX01PRFVMRSwNCj4gPiA+IMKgIMKgIMKgIMKgIC5wdXNoX2NvbmZpZyA9
+IG1laV9sYXRlX2JpbmRfcHVzaF9jb25maWcsIH07DQo+ID4NCj4gPiBBaC4gIEJ1dCB0aGVuIHdo
+byB1c2VzIGl0PyAgQW5kIHdoeT8gIE5vcm1hbGx5IGZvcmNpbmcgY2FsbGVycyB0byBzZXQgLm93
+bmVyDQo+IGlzDQo+ID4gZnJvd25lZCBhcG9uLCB1c2UgYSAjZGVmaW5lIGNvcnJlY3RseSB0byBo
+YXZlIGl0IGF1dG9tYXRpY2FsbHkgc2V0IGZvciB5b3UgaW4NCj4gPiB0aGUgcmVnaXN0cmF0aW9u
+IGZ1bmN0aW9uIHBsZWFzZS4NCj4gPg0KPiA+IEFuZCBhcmUgeW91IF9zdXJlXyB5b3UgbmVlZCBp
+dD8NCj4gDQo+IEluIHhlIGttZCBvbmx5IHVzZXMgLnB1c2hfY29uZmlnIHNvIC5vd25lciBjYW4g
+YmUgZHJvcHBlZC4gTG9va3MgbGlrZSBpdCBnb3QNCj4gcHJvcGFnYXRlZCBmcm9tIHByZXZpb3Vz
+bHkgaW1wbGVtZW50ZWQgbWVpIGNvbXBvbmVudHMgYnV0IGZvciBub25lIG9mDQo+IHRoZSBjb21w
+b25lbnQgLm93bmVyIGlzIHVzZWQuICBTbyBpdCdzIGZpbmUgdG8gZHJvcCBpdC4NCj4gQFVzeXNr
+aW4sIEFsZXhhbmRlciBwbGVhc2Ugc2hhcmUgeW91ciB0aG91Z2h0cyBvbiB0aGlzLg0KPiANCg0K
+QXMgY2FsbGVyIGRvIG5vdCBuZWVkIHRoaXMsIGNhbiBiZSBkcm9wcGVkLg0KDQotIC0gDQpUaGFu
+a3MsDQpTYXNoYQ0KDQoNCg0KPiBCYWRhbA0KPiANCj4gPg0KPiA+IHRoYW5rcywNCj4gPg0KPiA+
+IGdyZWcgay1oDQo=
 
