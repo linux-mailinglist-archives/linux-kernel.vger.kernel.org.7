@@ -1,134 +1,144 @@
-Return-Path: <linux-kernel+bounces-711138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D15AEF6C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD430AEF6D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E860E7A34F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E115F3AA4D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D46E2737EA;
-	Tue,  1 Jul 2025 11:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DACC273D63;
+	Tue,  1 Jul 2025 11:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="drMkqzHa"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eAw3+99z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60802272E72
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEDC2737E4;
+	Tue,  1 Jul 2025 11:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370021; cv=none; b=Rw+J9rbkDwgKRMRbxAyuZR1IFOOljKqfbG+WS9/kRxVieKCHhDeLMK5nWEXBNqHQFCRXrcQ3rc/LEKGYCwDVeEpUnW+c1ztMcpJ+vJmn39cycp3ZG/IoiuiIIMJrieyPowdfT4qGizepIT++jv/UGJICZXXJ9ZlVTsQkSI3dul0=
+	t=1751370042; cv=none; b=lB4T6lUBQZzHza8QrZQOHU6OgmLrQtDovDgLvDtx9lJ9sEE0Mt5snFsc8agxuRk4ugbGuwMhSm2bHsvKlLZsFtdrsk7y2XtHoPwWm6laNfMvfzXivkAdlE0VLvBLdf2tGm6AKi9gCxu1YGgB+RTqnY7vD7PDp4uVV0bLZnlm3dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370021; c=relaxed/simple;
-	bh=HQPwv+SP31wl6xpFSXy3aqogQXVMr+08f8HTHj811aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6kYRbm4X4AbsMghFUfac/6a04sGm1bvNT9eTs/SBLW7rMH3w0AgquZob2hDYcQ0Uzm/8Ix4hSg570gdmuigtJhWKu1TG7z3S3OwQ7zGanC3fIFMfQSP87Db5pz9WSxefHiBjItzKqUXv6IoeXdsewME9K6zpZ+5WnuNHlLvFCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=drMkqzHa; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=N5pMuijdxQ5pavWYy4u6FlQuP1SvJsDKv6i9SCb7BX8=; b=drMkqzHaEU/qSkQ3v9EVpJmEWL
-	dExZMJ+Qvjwb777P8MBcuOvEZRXu+mXLx/aqPvtWGJ6LspqpkYX2yRBmKqqs26HtQeO3yOYN1ojbt
-	w1n5tx34rNdj9Ijht98hvzj5v7uloGYGyk2x0yPFDov6y1qJT41FA6CGBGetvOhWE1/fNmanxlGeU
-	exp9HoCFxkB/03Z8P5PPL5mxNhTGsTSg3MwShXovX/1ooqyTSXvmOqM8KISJykCktYfctIcDN1JSb
-	nfWU1r15z0u8oIFBSQv5p53TPR55TSfq/KfYMZ62TJCxm0FriETDSOdGmzYvkKS1BThygXvfSe+pt
-	glA9126g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWZLP-000000074pu-3Ry3;
-	Tue, 01 Jul 2025 11:40:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id ED23B30012D; Tue, 01 Jul 2025 13:40:10 +0200 (CEST)
-Date: Tue, 1 Jul 2025 13:40:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, bigeasy@linutronix.de,
-	vineethr@linux.ibm.com
-Subject: Re: [PATCH V6 1/7] Sched: Scheduler time slice extension
-Message-ID: <20250701114010.GP1613376@noisy.programming.kicks-ass.net>
-References: <20250701003749.50525-1-prakash.sangappa@oracle.com>
- <20250701003749.50525-2-prakash.sangappa@oracle.com>
- <87cyakmhdv.ffs@tglx>
- <20250701105653.GO1613376@noisy.programming.kicks-ass.net>
- <1170c037-15c0-4f22-8e2d-456ad17396cf@amd.com>
+	s=arc-20240116; t=1751370042; c=relaxed/simple;
+	bh=6moDTEAqfj09soYGb51b0EQaMHRpv2YEEHH6GZ5pyk4=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=CktQ+MrrxE2HVpqEFplgUXToxsYq/s+qETsk0DyWYJmc23mrPqopDGZ8VtENPCxMDPmp1NtcSKRSUqFF3NpnMySP5gteqZPDVBQekGrr/PooMkK47MUU1sfzGGxNQdbb9RJlWDVcVk2c5tqHSGxpEBZ2oqo7lKk164NnyaBJ3Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eAw3+99z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 561AiHlB029319;
+	Tue, 1 Jul 2025 11:40:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=BtrOrgQ/TVBGd/VArg88VP
+	LE3pJuXwrGYmenI+BfVvA=; b=eAw3+99z8NBZWoLioa9jHIS4bJLQtOfYbLBk4A
+	BlfwyiiabOa856LqdorU5Bfyq+TeRUD8UzeYSdeenCLBxRU2hg9UrDMDhmwOsbbg
+	IoYt5/EPBQmZBJY59fq4dAPkxezhL2EUOkmYubktR7VyuTDBhmaxt6HncMX3Ck7p
+	2EOtUx+pCZDgC06APwqDEAN7EQ/fWSsY09nWCcjO0AsYjPny7Vhd6Gp90NJs3Kr0
+	vXHLPaQbp+KLjj5WR/xmT+fJqc16Pd/WOhPuJfEpLVEIE4lzm7s0LecR7rHlxbgf
+	+ybLE02yyD889D6PJD9kBQ+2h3ylul7Q6IDlQkex2CkI+NMA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j95j0h5w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 11:40:32 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561BeWEX010811
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Jul 2025 11:40:32 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 1 Jul 2025 04:40:27 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v2 0/2] Add video clock controller DT support for sc8180x
+Date: Tue, 1 Jul 2025 17:10:17 +0530
+Message-ID: <20250701-sc8180x-videocc-dt-v2-0-b05db66cc1f6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1170c037-15c0-4f22-8e2d-456ad17396cf@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACHJY2gC/32NQQ6CMBBFr0K6dsxMQURX3sOwMNNBZiHVFhsM6
+ d2tHMDle8l/fzVRgko052o1QZJG9VMBu6sMj7fpLqCusLFoD9jaGiJ31OECSZ14ZnAzNMI147G
+ loXOmDJ9BBl226LUvPGqcffhsH4l+9m8uERCcnCVkarBFvLzeyjrxnv3D9DnnL159cmy2AAAA
+X-Change-ID: 20250623-sc8180x-videocc-dt-4ec3c0761f8d
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA3MiBTYWx0ZWRfX1HSzi/ScT/kV
+ w70xG2LSAD3gnPzmGwJf6yuUSHBIdPJNSwRSu15+Ki3Y4XsPSJ23b6Vm+mHKp3mhI4SA9+ZXfxZ
+ xThymwt1uCToZMvhFZ5B+gUKb+jPofKT8Szdj7eB77d5UC7qf0YYgWbK8VmggaZZO8kBgymG9hF
+ ZPiy0so4oZ0wsuGBsaHJzY8AAcqxN/6iZo97eagm2tpBrHMcdxkfZE/xuQ7dr2ILnIEsJQtJ3iU
+ CasMbCxBV9N/tO5OV1p56NjOcmrmjRVHJJSRVVzs2I+78JyFZ56DcM01CkqAJvSgpbGG0eGWI6U
+ Qiys/BEgPLJrodS0o3hQV/DbjPHY1g4KI2D5n8HUBoYQLh8UFUEVYOu283vPdQlYwasV8ze3xsJ
+ dESrH9lKGrPFc5hhlCdotNqlRFMdrRTcTaZNppoBJlX/dJERfcMUiam2UueAkbHyM/ur9pWA
+X-Proofpoint-ORIG-GUID: qMhYgQ1511n-EYYlLJlA7xw4WcZVIqrl
+X-Authority-Analysis: v=2.4 cv=EuHSrTcA c=1 sm=1 tr=0 ts=6863c930 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=NFWEofW9e4JWmly9Js0A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: qMhYgQ1511n-EYYlLJlA7xw4WcZVIqrl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=816 malwarescore=0 mlxscore=0 phishscore=0
+ spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507010072
 
-On Tue, Jul 01, 2025 at 04:58:26PM +0530, K Prateek Nayak wrote:
-> Hello Peter,
-> 
-> On 7/1/2025 4:26 PM, Peter Zijlstra wrote:
-> > On Tue, Jul 01, 2025 at 10:42:36AM +0200, Thomas Gleixner wrote:
-> > 
-> > > What's worse is that it breaks the LAZY semantics. I explained this to
-> > > you before and this thing needs to be tied on the LAZY bit otherwise a
-> > > SCHED_OTHER task can prevent a real-time task from running, which is
-> > > fundamentally wrong.
-> > 
-> > So here we disagree, I don't want this tied to LAZY.
-> > 
-> > SCHED_OTHER can already inhibit a RT task from getting ran by doing a
-> > syscall, this syscall will have non-preemptible sections and the RT task
-> > will get delayed.
-> > 
-> > I very much want this thing to be limited to a time frame where a
-> > userspace critical section (this thing) is smaller than such a kernel
-> > critical section.
-> > 
-> > That is, there should be no observable difference between the effects of
-> > this new thing and a syscall doing preempt_disable().
-> > 
-> > 
-> > That said; the reason I don't want this tied to LAZY is that RT itself
-> > is not subject to LAZY and this then means that RT threads cannot make
-> > use of this new facility, whereas I think it makes perfect sense for
-> > them to use this.
-> 
-> Thinking out loud: I know we are trying to keep the overhead to a
-> minimum but is it acceptable to go through with schedule() and decide
-> on extending the time slice in pick_next_task_fair() / pick_task_rt()?
-> 
-> Then, a higher priority task can always preempt us when preemption is
-> enabled and between the tasks of same class, it is just a redundant
-> schedule() loop.
-> 
-> It'll require some additional care to start accounting for delay from
-> the time when NEED_RESCHED was set and not when schedule() is actually
-> called but would the overhead be that bad?
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Changes in v2:
+- Introduce new compatible for sc8180x videocc and use sm8150 as
+  fallback. 
+- Add new patch to update the bindings accordingly.
+- Link to v1: https://lore.kernel.org/r/20250623-sc8180x-videocc-dt-v1-1-9d210c140600@quicinc.com
 
-Probably not -- if care was taken to make sure all callers have an
-up-to-date rq->clock (many will have today, some might need updating).
-Then its just a matter of saving a copy.
+---
+Satya Priya Kakitapalli (2):
+      dt-bindings: clock: qcom,videocc: Add sc8180x compatible
+      arm64: dts: qcom: sc8180x: Add video clock controller node
 
-Basically stick assert_clock_updated() in __resched_curr() and make all
-the splats go away.
+ .../devicetree/bindings/clock/qcom,videocc.yaml       | 19 ++++++++++++-------
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi                 | 15 +++++++++++++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
+---
+base-commit: 5d4809e25903ab8e74034c1f23c787fd26d52934
+change-id: 20250623-sc8180x-videocc-dt-4ec3c0761f8d
 
-> Or would we like to prevent preemption from RT tasks too on
-> !PREMMPT_RT since whatever the task asking for the extended slice is
-> doing is considered important enough?
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 
-I'm not sure I see the need for this complication -- under the premise
-that the duration is strictly limited to less than what syscalls can
-already inflict upon us, there should be no observable difference in
-worst case timing.
-
-But yes, if this makes some people feel better, then I suppose can look
-at this.
 
