@@ -1,60 +1,49 @@
-Return-Path: <linux-kernel+bounces-712137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D9CAF0541
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:58:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC96AAF054B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D861C03BCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41025189B7FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764BF302CCD;
-	Tue,  1 Jul 2025 20:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE9D302068;
+	Tue,  1 Jul 2025 20:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="s6JvMXDL"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2nPHEoj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E39F30205E;
-	Tue,  1 Jul 2025 20:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEBC2FEE29;
+	Tue,  1 Jul 2025 20:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751403480; cv=none; b=tunFXxew9DBNmAO4bSrrqJac+kVX7O0Tm8/aK+KRRvhM9KSyxU7/wkTsnJFF4JMHUYrsGH4ndi++QZ/jV0v9/2LiHEHMt1+c+qPaPfJell6ZdAbG9qNd6n7iG+D0wh25GQ9pF8iFDsLv62AKxg2wzbK4KGn9ajjVZiAhRSP2Vgg=
+	t=1751403583; cv=none; b=p6KDhPDfc9QghteNBydv/MQKc6xsMbi5aS6z5VhBVHx76AigkPGV4w73Dvgr9pnKDAnHv37Zp+se+Pmho3C6ZCTOcfFGOHwfP5zQ57sCm5/IhGwVy/XnFwNXKBc7yWFtCl+sdiTYYSBrvWJS8xkIgnjLyiHde/1K7X2p1O8IuOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751403480; c=relaxed/simple;
-	bh=hdpGtK68M+XvvOVPSZyN4HZX2pXXmSiwJyQ18ETu3nI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HkziUQq7vavFdzIrcGe/2OyK1MV+3Ib5RnX0f9cAfeuRrjEALEonQzLTBVn9N3skS1mTQ2XcR09ReltbJjQHjx2Et48aODYJvP3BrvzkD5Z0cm6PAEdNWzrD0/4QkIe9qfrz13bV9xd+A4YhoV/hV/5bVqEU+Ohwgg0EtfCJtEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=s6JvMXDL; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9963640AD8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751403474; bh=TgRHmnD9p/dcTjvHMT/O3rjBTcvebrZIoBEnST2G+eA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s6JvMXDLKphB81ffbri4jUyYW+0wVO+BNDqKLFdSrpS9dcflyzCA9/yexj9yzRicu
-	 YX97yJHC20rKbYRrk9Ia9t3qi/JECcgCbNEtUINxSIVMvs+oZEB0U5SjLa5IZIXfuz
-	 ZdcTy1em6hOVB6KcUeWF6E5Rro4BjQIfAk+3G9Ldb47g6UUUlCd4LzzIALnNAtMxgl
-	 4DDQ4uVeeR6Ix8rmqckY2Be1GndvtQzJtNZlZqMwfNsGGgQo2Iugxrkw6HCjaPclfQ
-	 EjmlLTFVRTXaDbfpw247V2Kcdja0+PCW/apora88+gty0ExG5Tq+RSR7WWndqLezOK
-	 5UmehBkje5h0Q==
-Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 9963640AD8;
-	Tue,  1 Jul 2025 20:57:54 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 7/7] docs: kdoc: pretty up dump_enum()
-Date: Tue,  1 Jul 2025 14:57:30 -0600
-Message-ID: <20250701205730.146687-8-corbet@lwn.net>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250701205730.146687-1-corbet@lwn.net>
-References: <20250701205730.146687-1-corbet@lwn.net>
+	s=arc-20240116; t=1751403583; c=relaxed/simple;
+	bh=LdFKXc5zIIFbkF6UTCMWqKAWCcBGTFsXoiLEfjtzXHo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=i4NQafJ4jRvB8+M5T15JAzP1L9XFcm2s0mPGQAgQQSo1IVnNScsawQhXaOjHgApYK9q0Iqaaz/CXjBcBYEPjMbFmwuZ1TfcRCD9VXyAzm8jcdm024mZsEgD/99Bst4ABvwA+58wonXgBUB0Gek4XM2CLp8QF2SLjhvJi5FODr+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2nPHEoj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F51C4CEEB;
+	Tue,  1 Jul 2025 20:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751403582;
+	bh=LdFKXc5zIIFbkF6UTCMWqKAWCcBGTFsXoiLEfjtzXHo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Z2nPHEojQXwfwmA0KzYM9JkdBM/1gIys9m39NasT6EhWLuizYi1BUGm1BCuYEpz9x
+	 hBK+Qg/XGY82eXc/A8dRYMhUewbO1Xz8usDydaK0ZtZY9anTWLu0c/79vnShCUvag6
+	 VV0bjyPCP4m9MoHwD9wFHhr9x9xJ942ARSKNe0jSp4+CYtXPIj09mzqk/B3+mO4TFS
+	 bolrVmZPW4msfAglG/WXTqNAzMLg+0sbc3xkYa+Q6BjWahBvVeiRrShCxQvGSV+v2l
+	 hufPmmV8/q//wkcuQXgimLhVnaekeGfQTAxpwMISP5lmaNyZOxD7i+oTcykXifDkOm
+	 zEjsBm+KQtv4w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DD5383B273;
+	Tue,  1 Jul 2025 21:00:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,93 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next] selftests/bpf: don't call fsopen() as privileged
+ user
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175140360726.116693.10341336783596879643.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Jul 2025 21:00:07 +0000
+References: <20250701183123.31781-1-technoboy85@gmail.com>
+In-Reply-To: <20250701183123.31781-1-technoboy85@gmail.com>
+To: Matteo Croce <technoboy85@gmail.com>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, andrii@kernel.org,
+ brauner@kernel.org, song@kernel.org, linux-kernel@vger.kernel.org,
+ teknoraver@meta.com
 
-Add some comments to dump_enum to help the next person who has to figure
-out what it is actually doing.
+Hello:
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- scripts/lib/kdoc/kdoc_parser.py | 39 +++++++++++++++++++++------------
- 1 file changed, 25 insertions(+), 14 deletions(-)
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index d5ef3ce87438..50e25cf62863 100644
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -860,39 +860,48 @@ class KernelDoc:
-         # Strip #define macros inside enums
-         proto = KernRe(r'#\s*((define|ifdef|if)\s+|endif)[^;]*;', flags=re.S).sub('', proto)
- 
--        members = None
--        declaration_name = None
--
-+        #
-+        # Parse out the name and members of the enum.  Typedef form first.
-+        #
-         r = KernRe(r'typedef\s+enum\s*\{(.*)\}\s*(\w*)\s*;')
-         if r.search(proto):
-             declaration_name = r.group(2)
-             members = r.group(1).rstrip()
-+        #
-+        # Failing that, look for a straight enum
-+        #
-         else:
-             r = KernRe(r'enum\s+(\w*)\s*\{(.*)\}')
-             if r.match(proto):
-                 declaration_name = r.group(1)
-                 members = r.group(2).rstrip()
--
--        if not members:
--            self.emit_msg(ln, f"{proto}: error: Cannot parse enum!")
--            return
--
-+        #
-+        # OK, this isn't going to work.
-+        #
-+	    else:
-+                self.emit_msg(ln, f"{proto}: error: Cannot parse enum!")
-+                return
-+        #
-+        # Make sure we found what we were expecting.
-+        #
-         if self.entry.identifier != declaration_name:
-             if self.entry.identifier == "":
-                 self.emit_msg(ln,
-                               f"{proto}: wrong kernel-doc identifier on prototype")
-             else:
-                 self.emit_msg(ln,
--                              f"expecting prototype for enum {self.entry.identifier}. Prototype was for enum {declaration_name} instead")
-+                              f"expecting prototype for enum {self.entry.identifier}. "
-+                              f"Prototype was for enum {declaration_name} instead")
-             return
- 
-         if not declaration_name:
-             declaration_name = "(anonymous)"
--
-+        #
-+        # Parse out the name of each enum member, and verify that we
-+        # have a description for it.
-+        #
-         member_set = set()
--
--        members = KernRe(r'\([^;]*?[\)]').sub('', members)
--
-+        members = KernRe(r'\([^;)]*\)').sub('', members)
-         for arg in members.split(','):
-             if not arg:
-                 continue
-@@ -903,7 +912,9 @@ class KernelDoc:
-                 self.emit_msg(ln,
-                               f"Enum value '{arg}' not described in enum '{declaration_name}'")
-             member_set.add(arg)
--
-+        #
-+        # Ensure that every described member actually exists in the enum.
-+        #
-         for k in self.entry.parameterdescs:
-             if k not in member_set:
-                 self.emit_msg(ln,
+On Tue,  1 Jul 2025 20:31:23 +0200 you wrote:
+> From: Matteo Croce <teknoraver@meta.com>
+> 
+> In the BPF token example, the fsopen() syscall is called as privileged
+> user. This is unneeded because fsopen() can be called also as
+> unprivileged user from the user namespace.
+> As the `fs_fd` file descriptor which was sent back and fort is still the
+> same, keep it open instead of cloning and closing it twice via SCM_RIGHTS.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next] selftests/bpf: don't call fsopen() as privileged user
+    https://git.kernel.org/bpf/bpf-next/c/212ec9229567
+
+You are awesome, thank you!
 -- 
-2.49.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
