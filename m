@@ -1,203 +1,158 @@
-Return-Path: <linux-kernel+bounces-712113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFB0AF04EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A215AF04EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44CE4847EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9134E3BCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442872F19B8;
-	Tue,  1 Jul 2025 20:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C7A2EF9D2;
+	Tue,  1 Jul 2025 20:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="VH26fMwz"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2098.outbound.protection.outlook.com [40.107.237.98])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=florian.bezdeka@siemens.com header.b="Y6kN1y46"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE7D2EFDBE;
-	Tue,  1 Jul 2025 20:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751401687; cv=fail; b=WvysQw3fUFNGEIaYXZVm9TtYLfq2l74pUAPeQajXWpDCsjkNrGUoJ5KcrHGbjs1JQOuRgq2NVNx73c5n/d4lIQiYdZ8jXjf5iJNdVjvaP/E+W6H+1kv4V/F5SjEGlTcHFSTa2zJX4R84H0AQHJmZ6Yp6Jkgcx9J+RKupi44xIwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751401687; c=relaxed/simple;
-	bh=wasBNtUEn7bp/0zcFhO21l4GoYcsVPb4OUeNpfZS2j8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z1fbZgZDaxQnPEMRlV0BbQ2hBbB+GQe34jiyuBx39Jw6zsahuRpol8C0oChfTIL66tlc99Nrcuoj+HCOdqIUe05OGIGYvOLxAipMwo63lp6F3Yf7LqbGCh5W2EbEUDVk9O/rNzXUwnodHEwAMAxe/7EA0CJ/aThQ6XzsuSIrgdE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=VH26fMwz; arc=fail smtp.client-ip=40.107.237.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w0qjL2EulWfvP0jsImf0sMx6Ibgj76uglhSEONRuH20zuqbksklGz9h5vLrOh6Ow2eXdgaXhQyxPtvGU0+cFnR/xVaNVJvXHwwYACMbvqiRY4Wp4TvG28/ZkuBpbU5o9WRPCM5ewokodzRAxPIudN3eXIDyXbrtbuiSHrrfRO9kq/zrfyEBvM5JJTXiL1C/eH2d7JxHva5U1AZtIYm0fd0nG2ff5yO4WER6AxfEVVl+3XKZdyoM0JO37c3gEoyVEH8zXuTzTATNtTmEy3PLdjw5ajLE0bcptmlmn/4r86Vn0MvMcmAcM3dVgFDew2upiw332IxsGOE687xP9X/AGMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YEIMn8KbBodtPsyGOKZRn3S+q7LI0uFCEfEjI4itVoo=;
- b=xllUcVXU4kbykViigT/AiRXuyk5lSsTepMmYOGyUY6SKo9BQU6/EDAIz3YjoLu5GJwU3/y3Kqheo746IQa9AYFife6NYWUGk+sbqoczMluwohcytAsVJPqc544WR+nKolx7p6UEM85t3sUBdDlVJgf/tZXtuSMlH3xHqbWUCoU04o6Gp2tQR+tI6iUykd+UJ4PBI6NQAIAq9zL8iv2vUS6euLAIx25wz3yo29gmD//BmhEcRZZ6UMjAIJADjcPF1f6UlQL5FFWYlMlIfHfdJzrrXm5KHTYKIZdKUq/kxRjHVqsMEDrQGUODSJ8qhOZlLw6sg+bLe9px7mWfWu0HrQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 50.233.182.194) smtp.rcpttodomain=amd.com smtp.mailfrom=axiado.com;
- dmarc=none action=none header.from=axiado.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YEIMn8KbBodtPsyGOKZRn3S+q7LI0uFCEfEjI4itVoo=;
- b=VH26fMwzROpu9PyzC0hUGja+nAlulYCTvgkYsR6wqJ5sFD6ogEFevgLhf/Cr3jRR/XhvznEqytfPVq/uVh44TQYYhYVUH9eJrQF5CtyAMTGoVgkAR4jEXK1staM2pqqJZGrs9YS9+ltCLX5ts+I4wzR5NJhBRK3PadDeglaPHHsinQDmf/dBpoDrzS8VdF/oAs7MT/c4TkCuzziVYW6wqj6GdS4hHuysSLQdmKsERaqJpIbjZza1e/GA4WL4I5JGxWcTsn4N5fdPMhHTozfnVA63k8qbPgy6w2vzLNwCETruNHTIQUCmUIftLutIHYOZWV/sewdAeGvrcs/VBB2dzQ==
-Received: from DM6PR14CA0039.namprd14.prod.outlook.com (2603:10b6:5:18f::16)
- by LV8PR18MB5915.namprd18.prod.outlook.com (2603:10b6:408:22a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Tue, 1 Jul
- 2025 20:28:02 +0000
-Received: from DS2PEPF0000343E.namprd02.prod.outlook.com
- (2603:10b6:5:18f:cafe::e6) by DM6PR14CA0039.outlook.office365.com
- (2603:10b6:5:18f::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8880.32 via Frontend Transport; Tue,
- 1 Jul 2025 20:28:02 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
- smtp.mailfrom=axiado.com; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axiado.com;
-Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
- designate 50.233.182.194 as permitted sender)
- receiver=protection.outlook.com; client-ip=50.233.182.194; helo=[127.0.1.1];
-Received: from [127.0.1.1] (50.233.182.194) by
- DS2PEPF0000343E.mail.protection.outlook.com (10.167.18.41) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.15
- via Frontend Transport; Tue, 1 Jul 2025 20:28:01 +0000
-From: Harshit Shah <hshah@axiado.com>
-Date: Tue, 01 Jul 2025 13:27:34 -0700
-Subject: [PATCH v4 10/10] MAINTAINERS: Add entry for Axiado
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE362868BE
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 20:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751401995; cv=none; b=J9CFJGCC5jNB5FVGAgS43W463bl89ZLJXCVNDm6OzvcvJlywwxkbjPafYuE3WyeqYBa3gHh0mJ+o+lEQONdvODrlUmA0cF9uEjXo6A9lOOcTJvhae5XnJv7zs4faZmi/24hBYYaLQZC2KVBUlXz3C1RZkv7FM65ChoYG0dJg8oY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751401995; c=relaxed/simple;
+	bh=911JYjHmj6gjJY5DPIg00EEUOKP+CfWg2wJM8NLTVE0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FihU3ef/LMcdOD5GIILfNchRKeQMQJ8H7oIrpyePHzX1rqxSok0k9kvvhV1y1mw2S628ZC1FNR3hpjOemGqs+jSzq3v5Nuq35+w1bnyJ8BSjLMfLvXIuk538wWy7YY60iLMUT+SSNUVAS6XkjHeobcPDfr9dqpN7EBGeCCkAlWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=florian.bezdeka@siemens.com header.b=Y6kN1y46; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250701203308d90f4c435bf0ec4ce5
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 01 Jul 2025 22:33:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=florian.bezdeka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=Md1ee6YGuXICMCHtrMUM5ihwD3M3vo1BsbApFOWCUKM=;
+ b=Y6kN1y46aoIqKlsuyz3ipyhxjA8T3yrHi7FTv7uqzZV1VRWR6FV6ZS62sR939Z65UEDhhv
+ FVvuTkMXVlc2RpyqYHzxBdA0HkyAUz3YtuSxqGXAvM32fAyGSrC7sFzHb0wk69k0JdmoWXoL
+ c0q52117v+p8JSyYJn7RvdK7eqnS2A6ZmBON75zJUDPLRFh3F90izn/b8ERM4R+ZKqtmIo3T
+ xY6HtvN2aHeaNwwZdGy+wGE4fXBr5vNVVupLrBM8Ph59F2wRWDxE3qaSkekpSxm6r+4261VN
+ HQ5Q/RMJHuIQw8kxHrm+8gZlhDOpsdVXkvx0EI2VaYjdPhexVs5Vd1SA==;
+Message-ID: <7d49c9b5b533ee2b4b1883faf4c87ac8ebf60eb4.camel@siemens.com>
+Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
+From: Florian Bezdeka <florian.bezdeka@siemens.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Nam Cao
+ <namcao@linutronix.de>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,  Sebastian
+ Andrzej Siewior	 <bigeasy@linutronix.de>, John Ogness
+ <john.ogness@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, 	linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-rt-devel@lists.linux.dev,
+ linux-rt-users@vger.kernel.org, Joe Damato	 <jdamato@fastly.com>, Martin
+ Karsten <mkarsten@uwaterloo.ca>, Jens Axboe	 <axboe@kernel.dk>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Valentin Schneider
+	 <vschneid@redhat.com>
+Date: Tue, 01 Jul 2025 22:33:05 +0200
+In-Reply-To: <773266ac-aa33-497f-b889-6d9f784e850b@amd.com>
+References: <20250527090836.1290532-1-namcao@linutronix.de>
+	 <773266ac-aa33-497f-b889-6d9f784e850b@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-axiado-ax3000-soc-and-evaluation-board-support-v4-10-11ba6f62bf86@axiado.com>
-References: <20250701-axiado-ax3000-soc-and-evaluation-board-support-v4-0-11ba6f62bf86@axiado.com>
-In-Reply-To: <20250701-axiado-ax3000-soc-and-evaluation-board-support-v4-0-11ba6f62bf86@axiado.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Jan Kotas <jank@cadence.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Michal Simek <michal.simek@amd.com>, 
- =?utf-8?q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Frank Li <Frank.Li@nxp.com>, Boris Brezillon <bbrezillon@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
- soc@lists.linux.dev, Jan Kotas <jank@cadence.com>, 
- linux-serial@vger.kernel.org, linux-i3c@lists.infradead.org, 
- Harshit Shah <hshah@axiado.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=912; i=hshah@axiado.com;
- h=from:subject:message-id; bh=wasBNtUEn7bp/0zcFhO21l4GoYcsVPb4OUeNpfZS2j8=;
- b=owEB7QES/pANAwAKAfFYcxGhMtX7AcsmYgBoZES+9O9oR3sufRteAsLg6LrdHOZb5t52fqRaO
- rlZPTZiV0SJAbMEAAEKAB0WIQRO3pC/7SkLS2viWOvxWHMRoTLV+wUCaGREvgAKCRDxWHMRoTLV
- +7cUC/9Qvio31GqCCg0/jpiyKEjseGQiYUSsMvG3LGHcYc5aID497z7hwf/EYHPw700mOPD0Ls5
- 7o+Xyr6gry2N2SFIJv3U4DC1GuSZm0g4B69etSmcZXa965QHVNire3m8qLRvxVqNYyvIMBM1p2q
- IqAGkz1iD5ha6mRH2P4XEMrbsLXKKwvGVmNRZP+rKDvHU/H/ZBHuy1AEkKvOe9gRGMWEb2J0NIy
- HGkWljSQMavpl3E9vP+0r1qDm3Dzk6kEg/jphQG1zWfiWNbDPCKY3dZBf0rMsbUkRaaRKksDwi+
- otAYHe5S30aIvriq09WazSWBRMTKAqDPIQ61mP0o2JnWk4tqdlWi31ABpvxAXLboA5kcJMk+yFN
- 7m9XgqY8WCgdW6phs9ud2VvNtQzRnBQgerYZE+8dJu8otsJ81ZMOYqZYJD32LSPCALwAR3oHMAF
- I3JseL/QmGsXxxb3D8yG+mBFRdAhq9HToXqw5aD7oXp7+idCY+qcJnKJwPD7yXOBegTZo=
-X-Developer-Key: i=hshah@axiado.com; a=openpgp;
- fpr=4EDE90BFED290B4B6BE258EBF1587311A132D5FB
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343E:EE_|LV8PR18MB5915:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9221cd0-d911-45c0-092b-08ddb8ddc755
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHkvZ084QW9WRmQzVjBpbWdvditVeTJLNVdKejV4bnN5RHNwMnNaTWx1UWRq?=
- =?utf-8?B?M2REeVJzZUNObnZqR3Awenl0TE01bkZwVytndVN4NjZLM00weWxQTXR1NlYy?=
- =?utf-8?B?cXVCSWlLbno1WWdLdmZERmd0V2J6Q1pkU0ppYy9rUlVQWlNpaDZqSFBoOFQ1?=
- =?utf-8?B?a2pHNDFLNWJjT0d4U3BIdVFENUg3REtCY1YvR3AzZy9Sblk1ZExZUUJjdDE5?=
- =?utf-8?B?ZzhrQlE1YytiTnFOdmw4L1c3eWx4Z1QxRG9vWDdMMlZYS1owNi9wQTlYS29x?=
- =?utf-8?B?VG50ZUtjMWVCa1BKTnhPTHRQY2R5L3lMN3lDVS9VQy9yZlQ2d0xlckhwQXVY?=
- =?utf-8?B?WXNwUmFoT1dPZWp1SlFHaTRoR0dXTTdEOFp6NEtrbzJmNWJOeWVaSHNkUE10?=
- =?utf-8?B?QVRyK2huL3FXNEhaMzBzdkJ2MjdIbGVneWFSWmJ1N09yYnArVkNITVkvRnNH?=
- =?utf-8?B?Qmlld3BkekU4WWlYL1EzRFJCZEI0WXI1bXQ0bHFTL0JNZmFOR0ZLYkppS0JB?=
- =?utf-8?B?Zm5SbWNkL21uckRZYnRzYU9xalRYdEdmVk0vWGdSd1VHNXRsRGRiV0t4N1kw?=
- =?utf-8?B?UjNSeGNOcnl1R2JrbEppV2xZSEtlS2p2dGk4b1ZWbjhNRDRGVmtlelFUejRC?=
- =?utf-8?B?WHE2VFN3T1pQNGNLRUtJdUozNGQ3ZW1palFhbVkrUStNS3JldVZERUYxeGxi?=
- =?utf-8?B?R28zRXd0eWxkWlB4K3JwWXJKcS9Vb3hPZ0pnc3V6ai80WTNPNXhzMzJhQ1ZH?=
- =?utf-8?B?TGUySTZieS9KYjhWREczcWxpUWFWWG9mVExRVkJrSVlSVndPSUJrdHI4Qlp6?=
- =?utf-8?B?ZXd0dmlZUWtRd3lrWkhqeC9NSXNuam5YZ3NIMHhodXZaMUluUHAweUtiWlI2?=
- =?utf-8?B?eHJZZFplQ2VXSFcrRGw0MkRZZyt1RjBsa0sraGJFV1N6Z2lVeVAxQ2E4Nkpm?=
- =?utf-8?B?ZUs3VzNmaHhTOHEyRk4vUnFYVGtaTDhRbDZUTGQzZFVzdk8vWGJiMU9oZE95?=
- =?utf-8?B?L1JoSjJxZE93VnN6M0QwTDRXTlkvSVB3MUZWTkxVUEcxci92U09QOTVYOVdW?=
- =?utf-8?B?Q0RIMW9MOXR1UGFueSt6K0pnZE51Q0FEM0xzMFNEd1ZhNUJxQ1NvRWIweG5X?=
- =?utf-8?B?VG5jOVVzYU45SHZVQkdsY0hqYnFoUXZld2JoZ3owVlVtcVc1VjJRVmFkOGxn?=
- =?utf-8?B?SXhWUmdOQkFqQXRFd3o5enI3SVVMYTI1aHB0SHlaVVViRTNneStuNjZNTldG?=
- =?utf-8?B?ZWVVMGlGallpdHV5LytrWTE2NzFVUkNpbkZyVnViQzZ4ampMQTVPZjJDS0Fo?=
- =?utf-8?B?TG1EeVB6L0VmRlBkVDJ2d1BFclBlUkpXS283NzF1Ny9mZnBVSENLbXJiVGd5?=
- =?utf-8?B?dXhnekpmKzJpdURLdmtKTUllUWczNGs2bmNnSDU3Z0xxSzkweUVWSWcyUmxP?=
- =?utf-8?B?bWhPeXZZUjE5RmVuaS9MelNDZDVCWnJJVTlRR0Q1RHFadEZGOXRveGVPU1hZ?=
- =?utf-8?B?Q3Q1WHdJQ2MvTy9OTWFhazBaVE15cW1zbXNSd1E4WCtIeFJ3U1dhU2s3RStC?=
- =?utf-8?B?S09Ha2ZFOVpFRWRXaG1sc053UzlBTzNneGRLUVJWbE5EVFVNYlo4Qmd4bXA0?=
- =?utf-8?B?NjZaY05CZ09mTml5WWpZcFFZRnMrSFIrb3RBWkVYeVBLaWF5eExTNHMwajNX?=
- =?utf-8?B?aFFicm1kbzd6dUNrbnJMblptZnhPN0FWdkNqbXJTbGs4dmkxd0NTc0x5MVpx?=
- =?utf-8?B?dlZSWGdUUW1RS2dDcGp6RlB3L2M0RG1MeThETjhVWExuUEN6R3dkeXpUcis3?=
- =?utf-8?B?V0MyOUJJTVhKd3VYRElLTitLdHlOSFU2aVVaYjdFNlNnOE4xZjM4Mm1Bb3V6?=
- =?utf-8?B?ZFhMN2lHZmQ4YzAvbExwS3RHSE5nbzFQdit3cExVV1pBZGV6UUtrK1J6aDZz?=
- =?utf-8?B?VHFPYWF2endrN1ptNWRBQWMwSGtyczVyS1V0WHJHYWxrQ0FJQU4rczlNaW52?=
- =?utf-8?B?V2kvU1BFVFZLNWpoNU91SHNCMHhPZElXbEpPUnA4RWsyWVJIRFFqSlYzNjFV?=
- =?utf-8?B?bDduYjgydmV2cVprd2pzeVc3T3VYQ3pkUFZSZz09?=
-X-Forefront-Antispam-Report:
-	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:[127.0.1.1];PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-OriginatorOrg: axiado.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 20:28:01.5439
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9221cd0-d911-45c0-092b-08ddb8ddc755
-X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[[127.0.1.1]]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR18MB5915
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-68982:519-21489:flowmailer
 
-Add entry for Axiado maintainer and related files
+On Mon, 2025-06-30 at 20:38 +0530, K Prateek Nayak wrote:
+> Hello Nam,
+>=20
+> On 5/27/2025 2:38 PM, Nam Cao wrote:
+> > The ready event list of an epoll object is protected by read-write
+> > semaphore:
+> >=20
+> >    - The consumer (waiter) acquires the write lock and takes items.
+> >    - the producer (waker) takes the read lock and adds items.
+> >=20
+> > The point of this design is enabling epoll to scale well with large num=
+ber
+> > of producers, as multiple producers can hold the read lock at the same
+> > time.
+> >=20
+> > Unfortunately, this implementation may cause scheduling priority invers=
+ion
+> > problem. Suppose the consumer has higher scheduling priority than the
+> > producer. The consumer needs to acquire the write lock, but may be bloc=
+ked
+> > by the producer holding the read lock. Since read-write semaphore does =
+not
+> > support priority-boosting for the readers (even with CONFIG_PREEMPT_RT=
+=3Dy),
+> > we have a case of priority inversion: a higher priority consumer is blo=
+cked
+> > by a lower priority producer. This problem was reported in [1].
+> >=20
+> > Furthermore, this could also cause stall problem, as described in [2].
+> >=20
+> > To fix this problem, make the event list half-lockless:
+> >=20
+> >    - The consumer acquires a mutex (ep->mtx) and takes items.
+> >    - The producer locklessly adds items to the list.
+> >=20
+> > Performance is not the main goal of this patch, but as the producer now=
+ can
+> > add items without waiting for consumer to release the lock, performance
+> > improvement is observed using the stress test from
+> > https://github.com/rouming/test-tools/blob/master/stress-epoll.c. This =
+is
+> > the same test that justified using read-write semaphore in the past.
+> >=20
+> > Testing using 12 x86_64 CPUs:
+> >=20
+> >            Before     After        Diff
+> > threads  events/ms  events/ms
+> >        8       6932      19753    +185%
+> >       16       7820      27923    +257%
+> >       32       7648      35164    +360%
+> >       64       9677      37780    +290%
+> >      128      11166      38174    +242%
+> >=20
+> > Testing using 1 riscv64 CPU (averaged over 10 runs, as the numbers are
+> > noisy):
+> >=20
+> >            Before     After        Diff
+> > threads  events/ms  events/ms
+> >        1         73        129     +77%
+> >        2        151        216     +43%
+> >        4        216        364     +69%
+> >        8        234        382     +63%
+> >       16        251        392     +56%
+> >=20
+>=20
+> I gave this patch a spin on top of tip:sched/core (PREEMPT_RT) with
+> Jan's reproducer from
+> https://lore.kernel.org/all/7483d3ae-5846-4067-b9f7-390a614ba408@siemens.=
+com/.
+>=20
+> On tip:sched/core, I see a hang few seconds into the run and rcu-stall
+> a minute after when I pin the epoll-stall and epoll-stall-writer on the
+> same CPU as the Bandwidth timer on a 2vCPU VM. (I'm using a printk to
+> log the CPU where the timer was started in pinned mode)
+>=20
+> With this series, I haven't seen any stalls yet over multiple short
+> runs (~10min) and even a longer run (~3Hrs).
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Harshit Shah <hshah@axiado.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Many thanks for running those tests and posting the results as comments
+to this series. Highly appreciated!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0c1d245bf7b84f8a78b811e0c9c5a3edc09edc22..7a04bee308cda1d8079ef61d1c0c68bafa89fa12 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2414,6 +2414,14 @@ F:	arch/arm/boot/dts/aspeed/
- F:	arch/arm/mach-aspeed/
- N:	aspeed
- 
-+ARM/AXIADO ARCHITECTURE
-+M:	Harshit Shah <hshah@axiado.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/arm/axiado.yaml
-+F:	arch/arm64/boot/dts/axiado/
-+N:	axiado
-+
- ARM/AXM LSI SOC
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+Florian
 
--- 
-2.25.1
 
 
