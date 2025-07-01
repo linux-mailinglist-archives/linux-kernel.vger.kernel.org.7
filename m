@@ -1,41 +1,40 @@
-Return-Path: <linux-kernel+bounces-711630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 903B6AEFD64
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:59:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 360B8AEFD6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94DA31C08002
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F970161A0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D29327FD40;
-	Tue,  1 Jul 2025 14:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34D0280305;
+	Tue,  1 Jul 2025 14:54:41 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4061527FB03
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D363027FD5D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751381678; cv=none; b=FeemcYvOxxP4mBY5D9Sfwn2bbnznvXa+goU3VkPYDLUT382r5tOvS8ASpilSgMeZWBSC+JM3CsNKxT/bK03+KRD3Dnf397LlM2QhGU41hqDA6M1tyreBeQmUYIcGEcJyg8zyWgcu99U6UWR66qO0sDw+FDR1OU7/aMWiCpLy24o=
+	t=1751381681; cv=none; b=CRju2zTsWPn5NrDS32EI3ibIHPOZEBotLQAa9Nz2ZRLJjKYsTeI94/sLGLLFimV1OgNKU7DOwq9kcSvH+0Je0xdhxV618o+EbuECkUf6GHI7aeI7NnqlCsDYuHuI0j+/ye3YNxbQo6DSxl4Nn1Z1Tpd1LF7r1qpR6b0a8Cnd0K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751381678; c=relaxed/simple;
-	bh=bnoqGLGLvkQZM71kWFaBE9XSAfVwfMZlT8ssFD7sZow=;
+	s=arc-20240116; t=1751381681; c=relaxed/simple;
+	bh=8KnowfizcKTwHx9JascrgsezO+T6JM3qkVi26atwE48=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vhn43DU6xJbuofKVZ5KSXiYSxsaJKxWrtNZ2xdfI02mBIutACoJrzEtsj/GE0CQJizJmoZDBHgX19gcG8DDUKE7lgXUQC77uoTfCjOY2/lM9An0M+tji7nhjBvYp3xCWmnnaSNb0vzdrN7YV+y6gdtt5UTbydLA9ciL77nzeeGc=
+	 In-Reply-To:To:Cc; b=cnTmYhOVVeEgNU4fsp/0TTuaqsBWGNhZBTPnbdYWvxSy9+/dG4k7kv6vq8XdcSB2gzo7VEXqjRn05C2xTAezt8o5xcO4M856A2iUzeSjih9R1As/V/PZVYB0L4pZmlWXqixECSe68Rqoz3vBZIlvbCpsw3HzOUZwM9CGPnTgwGI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81E4E2379;
-	Tue,  1 Jul 2025 07:54:21 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7DD512FC;
+	Tue,  1 Jul 2025 07:54:23 -0700 (PDT)
 Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C79453F66E;
-	Tue,  1 Jul 2025 07:54:34 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 293D23F66E;
+	Tue,  1 Jul 2025 07:54:37 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
-Date: Tue, 01 Jul 2025 15:53:45 +0100
-Subject: [PATCH v2 20/28] coresight: cti: Properly handle modes in CPU PM
- notifiers
+Date: Tue, 01 Jul 2025 15:53:46 +0100
+Subject: [PATCH v2 21/28] coresight: Add per-CPU path pointer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-arm_cs_pm_fix_v3-v2-20-23ebb864fcc1@arm.com>
+Message-Id: <20250701-arm_cs_pm_fix_v3-v2-21-23ebb864fcc1@arm.com>
 References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
 In-Reply-To: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
@@ -57,86 +56,113 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751381627; l=2826;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751381627; l=3722;
  i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=bnoqGLGLvkQZM71kWFaBE9XSAfVwfMZlT8ssFD7sZow=;
- b=80Tlb6gH6ObmrEHBgVOfdT7YeEX140AFqPYxSUE3gKFwvgSlzUEa/uQP08pPsuEaTGf5bqG+A
- tfqjQQn6r88AiBRNfj94GxraPPJRdmpTR0cUO1gBxagTwDmMlHltaUg
+ bh=8KnowfizcKTwHx9JascrgsezO+T6JM3qkVi26atwE48=;
+ b=gPP+nUzhLlf6ecDk58Jt4hCmgdvZgMFpc899ez+vsNs/AL3f3trJGGmyTl5tF02sRIRHuVRgB
+ g88q5FvfzFeArzQxP79zxQZj8+eUlX9ZUJ0s/DWcOa31/Fd1CuxxnHt
 X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
  pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-This commit distinguishes CPU PM flows based on the mode.
+Introduce per-CPU path pointers, save activated paths into the
+structure. This will be used by later changes for controlling the path
+during CPU idle.
 
-The CTI driver retains its existing behavior for the CS_MODE_DEBUG mode.
+The path pointer is assigned before setting the source device mode to
+active, and it is cleared after the device is changed to an inactive
+mode. So safe access to path pointers is guaranteed when the device is
+in an active mode.
 
-For modes other than DEBUG, a future change will be made to manage CTI
-devices by iterating through the CoreSight path in the core layer. To
-avoid conflicts, the CTI driver no longer controls CTI hardware in CPU
-PM notifiers for non DEBUG modes.
-
-However, the CTI driver continues to update the hw_powered flag for all
-modes to reflect the device's power state.
+The path enabling has been refactored: a new _coresight_enable_path()
+function is introduced to enable components in the path. The existing
+coresight_enable_path() function now calls this new helper and updates
+the per-CPU pointers accordingly.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-cti-core.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/hwtracing/coresight/coresight-core.c | 48 ++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
-index ba4635dfc2e30b4e9ae4972f91bdc6647975b719..c91d339d7ccbf71db71cb7156f9a6f2961ae2198 100644
---- a/drivers/hwtracing/coresight/coresight-cti-core.c
-+++ b/drivers/hwtracing/coresight/coresight-cti-core.c
-@@ -141,6 +141,9 @@ static void cti_cpuhp_enable_hw(struct cti_drvdata *drvdata)
- 	raw_spin_lock(&drvdata->spinlock);
- 	config->hw_powered = true;
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index 45f15a1f51295b298073551cb328d20cc2c36cdb..ef2a0de366d9b12b4f609027c8b67f690cf84558 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -35,6 +35,27 @@ DEFINE_MUTEX(coresight_mutex);
+ static DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
+ static DEFINE_PER_CPU(struct coresight_device *, csdev_source);
  
-+	if (coresight_get_mode(drvdata->csdev) != CS_MODE_DEBUG)
-+		goto cti_hp_not_enabled;
++/*
++ * Activated path pointer for a per-CPU source device. When enabling a path,
++ * the path pointer is first assigned, followed by a synchronous SMP call on
++ * the target CPU to transition the device mode from DISABLED to an enabled
++ * state. Conversely, during the disable flow, an SMP call on the target CPU
++ * transitions the device mode to DISABLED, after which the path pointer is
++ * cleared.
++ *
++ *  per_cpu(csdev_cpu_path, csdev->cpu) = path
++ *  coresight_take_mode(csdev, CS_MODE_SYSFS or CS_MODE_PERF)
++ *
++ *  // Safe to access per_cpu(csdev_cpu_path, cpu);
++ *
++ *  coresight_set_mode(csdev, CS_MODE_DISABLED)
++ *  per_cpu(csdev_cpu_path, csdev->cpu) = NULL
++ *
++ * As a result, the device mode is used to determine whether it is safe
++ * to access the path pointer.
++ */
++static DEFINE_PER_CPU(struct coresight_path *, csdev_cpu_path);
 +
- 	/* no need to do anything if no enable request */
- 	if (!drvdata->config.enable_req_count)
- 		goto cti_hp_not_enabled;
-@@ -697,21 +700,27 @@ static int cti_cpu_pm_notify(struct notifier_block *nb, unsigned long cmd,
- 	case CPU_PM_ENTER:
- 		/* CTI regs all static - we have a copy & nothing to save */
- 		drvdata->config.hw_powered = false;
--		if (drvdata->config.hw_enabled)
-+		if ((coresight_get_mode(drvdata->csdev) == CS_MODE_DEBUG) &&
-+		    drvdata->config.hw_enabled)
- 			coresight_disclaim_device(csdev);
- 		break;
+ /**
+  * struct coresight_node - elements of a path, from source to sink
+  * @csdev:	Address of an element.
+@@ -508,6 +529,12 @@ static void coresight_disable_path_from(struct coresight_path *path,
  
- 	case CPU_PM_ENTER_FAILED:
- 		drvdata->config.hw_powered = true;
--		if (drvdata->config.hw_enabled) {
-+		if ((coresight_get_mode(drvdata->csdev) == CS_MODE_DEBUG) &&
-+		    drvdata->config.hw_enabled) {
- 			if (coresight_claim_device(csdev))
- 				drvdata->config.hw_enabled = false;
- 		}
- 		break;
- 
- 	case CPU_PM_EXIT:
--		/* write hardware registers to re-enable. */
- 		drvdata->config.hw_powered = true;
+ void coresight_disable_path(struct coresight_path *path)
+ {
++	struct coresight_device *source;
 +
-+		if (coresight_get_mode(drvdata->csdev) != CS_MODE_DEBUG)
-+			break;
++	source = coresight_get_source(path);
++	if (coresight_is_percpu_source(source))
++		per_cpu(csdev_cpu_path, source->cpu) = NULL;
 +
-+		/* write hardware registers to re-enable. */
- 		drvdata->config.hw_enabled = false;
- 
- 		/* check enable reference count to enable HW */
-@@ -760,7 +769,8 @@ static int cti_dying_cpu(unsigned int cpu)
- 
- 	raw_spin_lock(&drvdata->spinlock);
- 	drvdata->config.hw_powered = false;
--	if (drvdata->config.hw_enabled)
-+	if ((coresight_get_mode(drvdata->csdev) == CS_MODE_DEBUG) &&
-+	    drvdata->config.hw_enabled)
- 		coresight_disclaim_device(drvdata->csdev);
- 	raw_spin_unlock(&drvdata->spinlock);
+ 	coresight_disable_path_from(path, NULL);
+ }
+ EXPORT_SYMBOL_GPL(coresight_disable_path);
+@@ -531,8 +558,8 @@ static int coresight_enable_helpers(struct coresight_device *csdev,
  	return 0;
+ }
+ 
+-int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
+-			  void *sink_data)
++static int _coresight_enable_path(struct coresight_path *path,
++				  enum cs_mode mode, void *sink_data)
+ {
+ 	int ret = 0;
+ 	u32 type;
+@@ -599,6 +626,23 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
+ 	goto out;
+ }
+ 
++int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
++			  void *sink_data)
++{
++	int ret;
++	struct coresight_device *source;
++
++	ret = _coresight_enable_path(path, mode, sink_data);
++	if (ret)
++		return ret;
++
++	source = coresight_get_source(path);
++	if (coresight_is_percpu_source(source))
++		per_cpu(csdev_cpu_path, source->cpu) = path;
++
++	return 0;
++}
++
+ struct coresight_device *coresight_get_sink(struct coresight_path *path)
+ {
+ 	struct coresight_device *csdev;
 
 -- 
 2.34.1
