@@ -1,133 +1,204 @@
-Return-Path: <linux-kernel+bounces-711131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0937AEF6A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:35:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F244EAEF5AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9160A3B9618
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:34:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08581BC7556
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5634626C3B5;
-	Tue,  1 Jul 2025 11:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5020225A33A;
+	Tue,  1 Jul 2025 10:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="NlTMdQLJ"
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Ahe/qpzT";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="vtYwSA0N"
+Received: from mailrelay-egress12.pub.mailoutpod2-cph3.one.com (mailrelay-egress12.pub.mailoutpod2-cph3.one.com [46.30.211.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDEC25B1CE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FAD242D8C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751369712; cv=none; b=VV3lDrsYk5qT3dbTQo9jmxLfj3zxh7jTSp2VqGkiBO43tusIt0YdL3+kcBTkdorxonTIADCQ12h+BOu54fGdHK0kvj0Pws2rshlz0vN1h4MNXQQWIE/tBwcEuiQ3Gj4Tk9HkUyRmVLN/EineiHOolzy9PxlS67yglsb9QoRADXM=
+	t=1751367293; cv=none; b=E1NqlnHNIWB5hPkhX1BAy6P8xLKztiFyDQIJHsdIPXl25uoG5BVztwQ+xGbV3T0HvbJq3wwZbJi48IB2Ej36E0tU0FdfSNNlkdoTlrLRvTedi3ToJPg1SmoIbAYJ5vt9MGfegt73cY94sL+QJGvXhgGPFPiRXQjToCfAZrB0zU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751369712; c=relaxed/simple;
-	bh=toy7KDrxRKaBrKEHAnZbNH7DtmKUMTVQeK+rdhzUSuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OeKR4WI5xbezrjJO27dz2N6eoVmPjJhG2rOmpE+3p+8siewqx28W9mUfa1ZF0YvmVSIuZZVRtGUCrQmAW9JiC+M7tolh9AUh6lsY381CCAO70nef+Wr+v0eK5D5MMQ4Pio9rMq8TqylAQNulcBCv7aG4vSvS2CaTuP1lcqzVZDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=NlTMdQLJ; arc=none smtp.client-ip=185.136.64.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250701105441ebbc6e3793791ffcb9
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 01 Jul 2025 12:54:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=pKdITuxJaA8EUNftYYb9o+8QYm/n/GOV6BYJNqWHBdI=;
- b=NlTMdQLJsQKRO+x5KTq2hOtxXWNHIw353VOH8ecekqR3fqCkYXcy1GzkN9+2Xg9zIpPkNS
- sIRAboDhQrWMSj8jSueadSK4W+XMLHWoccNhJf+HoWpcXJjQQOnEB5m2EceC8fcDC62X3BtH
- kvzdFOmQUmHRD/2kVxsxPE6dhP3BdwfiGnGcGG976L4ED6bZJHdwd7D4KzCw1cYZz5AKsuR/
- Bo7Y2cGuwVUKQVGThkbxmxByWBd1p+EZr0DYDF6AajBbXL6eq8keZCa1AbFRUKdDyHKK6/dx
- RI578UZhJNo0TpgPfkvGI0xYWezdfGKm1q2MS8tWtcizhHKizrbVHTzw==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: devicetree@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: ti: k3-pinctrl: Enable Schmitt Trigger by default
-Date: Tue,  1 Jul 2025 12:54:35 +0200
-Message-ID: <20250701105437.3539924-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1751367293; c=relaxed/simple;
+	bh=8TcNQLm7r9snbdU/mMbeqwD+vBQ9+i7Q3p+wwRVt6H8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Y4k7h9QZHuTBNHwuvcYo7mCTYdoffZ+bxD31k/pf7Kcrvgmeb/Ep5KAQ1Iwz9CQkVNn5cnH7kGo6omv3WWz82NxB3G5EOyF+6Quzhnw9tfED6AiC9Pxz9tjFK/MTX6P7aU8I90V6HeFytd1uzr8mN7iBJwXfwh/O/plbmKFgYQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Ahe/qpzT; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=vtYwSA0N; arc=none smtp.client-ip=46.30.211.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751367287; x=1751972087;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=O6ogmbzCR79Zt1lKRcnTrEHJnz3sk69NVq+UdqhlbdM=;
+	b=Ahe/qpzTwR34N7lQ0cJ1V6/jHhr5ISQVHq12lCT0D70lWJ/YLhN2ekMlm7QoUf+VMcblfgQjI93lV
+	 ZFj/RPOqze51Ye4i8J3EBYGZYFfykd8gKdNHB33FRX3Mh0fPohRwbxDuSMYL5QAygYdHICj4kyw0LY
+	 kdnOu37aBv9jYQyWDSfl0MrtvN5Pit97Tm2ky+ZUCclIKqK1tqnUguvxG5PWsFzP0aVCaXoQ9ilyPr
+	 nXCCTh81X0FwTq9S0kBvifw/LvP42Rqafco1AfD56y0T1M4bDsSzm+8f/h+nMTKN0mOT3RY7S3wzcP
+	 vMIh4xFHodyrVZ9znWfGeqi//FUYUSA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751367287; x=1751972087;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=O6ogmbzCR79Zt1lKRcnTrEHJnz3sk69NVq+UdqhlbdM=;
+	b=vtYwSA0NUdeGf2LV+PMDWUmAsu8HGlxt/c+PLNa3ZOY7kolB1kBZPyC8Bgtkof85Pa8UTXnfhy76z
+	 ARFeAWyCQ==
+X-HalOne-ID: cd93c720-5669-11f0-aacd-85eb291bc831
+Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
+	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id cd93c720-5669-11f0-aacd-85eb291bc831;
+	Tue, 01 Jul 2025 10:54:47 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v9 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <aGO9a06HutqljjNS@pc636>
+Date: Tue, 1 Jul 2025 12:54:36 +0200
+Cc: linux-mm@kvack.org,
+ akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <31E257E1-AB52-4115-A264-56F545AB84A9@konsulko.se>
+References: <20250630221511.3325123-1-vitaly.wool@konsulko.se>
+ <20250630221615.3325221-1-vitaly.wool@konsulko.se> <aGO9a06HutqljjNS@pc636>
+To: Uladzislau Rezki <urezki@gmail.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Switch Schmitt Trigger functions for PIN_INPUT* macros by default. This is
-HW PoR configuration, the slew rate requirements without ST enabled are
-pretty tough for these devices. We've noticed spurious GPIO interrupts even
-with noise-free edges but not meeting slew rate requirements (3.3E+6 V/s
-for 3.3v LVCMOS).
 
-It's not obvious why one might want to disable the PoR-enabled ST on any
-pin. Just enable it by default. As it's not possible to provide OR-able
-macros to disable the ST, shall anyone require it, provide a set of
-new macros with _NOST suffix.
+> On Jul 1, 2025, at 12:50=E2=80=AFPM, Uladzislau Rezki =
+<urezki@gmail.com> wrote:
+>=20
+> On Tue, Jul 01, 2025 at 12:16:15AM +0200, Vitaly Wool wrote:
+>> Reimplement vrealloc() to be able to set node and alignment should
+>> a user need to do so. Rename the function to vrealloc_node_align()
+>> to better match what it actually does now and introduce macros for
+>> vrealloc() and friends for backward compatibility.
+>>=20
+>> With that change we also provide the ability for the Rust part of
+>> the kernel to set node and aligmnent in its allocations.
+>>=20
+>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>> ---
+>> include/linux/vmalloc.h | 12 +++++++++---
+>> mm/vmalloc.c            | 19 +++++++++++++++----
+>> 2 files changed, 24 insertions(+), 7 deletions(-)
+>>=20
+>> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+>> index fdc9aeb74a44..68791f7cb3ba 100644
+>> --- a/include/linux/vmalloc.h
+>> +++ b/include/linux/vmalloc.h
+>> @@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t =
+size, gfp_t flags) __alloc_size(1
+>> extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, =
+2);
+>> #define vcalloc(...) alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+>>=20
+>> -void * __must_check vrealloc_noprof(const void *p, size_t size, =
+gfp_t flags)
+>> - __realloc_size(2);
+>> -#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>> +void *__must_check vrealloc_node_align_noprof(const void *p, size_t =
+size,
+>> + unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+>> +#define vrealloc_node_noprof(_p, _s, _f, _nid) \
+>> + vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
+>> +#define vrealloc_noprof(_p, _s, _f) \
+>> + vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
+>> +#define vrealloc_node_align(...) =
+alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
+>> +#define vrealloc_node(...) =
+alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
+>> +#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>>=20
+>> extern void vfree(const void *addr);
+>> extern void vfree_atomic(const void *addr);
+>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>> index 6dbcdceecae1..776c68f84ce2 100644
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -4089,12 +4089,15 @@ void *vzalloc_node_noprof(unsigned long size, =
+int node)
+>> EXPORT_SYMBOL(vzalloc_node_noprof);
+>>=20
+>> /**
+>> - * vrealloc - reallocate virtually contiguous memory; contents =
+remain unchanged
+>> + * vrealloc_node_align_noprof - reallocate virtually contiguous =
+memory; contents
+>> + * remain unchanged
+>>  * @p: object to reallocate memory for
+>>  * @size: the size to reallocate
+>> + * @align: requested alignment
+>>  * @flags: the flags for the page level allocator
+>> + * @nid: node id
+>>  *
+>> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If =
+@size is 0 and
+>> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If =
+@size is 0 and
+>>  * @p is not a %NULL pointer, the object pointed to is freed.
+>>  *
+>>  * If __GFP_ZERO logic is requested, callers must ensure that, =
+starting with the
+>> @@ -4111,7 +4114,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+>>  * Return: pointer to the allocated memory; %NULL if @size is zero or =
+in case of
+>>  *         failure
+>>  */
+>> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+>> +void *vrealloc_node_align_noprof(const void *p, size_t size, =
+unsigned long align,
+>> + gfp_t flags, int nid)
+>> {
+>> struct vm_struct *vm =3D NULL;
+>> size_t alloced_size =3D 0;
+>> @@ -4135,6 +4139,11 @@ void *vrealloc_noprof(const void *p, size_t =
+size, gfp_t flags)
+>> if (WARN(alloced_size < old_size,
+>> "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+>> return NULL;
+>> + if (WARN(!IS_ALIGNED((unsigned long)p, align),
+>> + "will not reallocate with a bigger alignment (0x%lx)\n", align))
+>> + return NULL;
+>> + if (nid !=3D NUMA_NO_NODE && nid !=3D =
+page_to_nid(vmalloc_to_page(p)))
+>> + goto need_realloc;
+>>=20
+> By this goto change, you bypass the two important checks below. For
+> example if you shrink the allocated size, you do not need to perform
+> any allocations. Instead the patch goes and allocates a new area.
+>=20
+> You just need to remove:
+>=20
+> - if (nid !=3D NUMA_NO_NODE && nid !=3D =
+page_to_nid(vmalloc_to_page(p)))
+> - goto need_realloc;
+>=20
+> to make it working.
+>=20
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
-This patch could be considered a v2 of [1] but the subject has been changed.
+I am not sure I=E2=80=99m following. If we get a request to reallocate =
+for a different node then we should either reject it or do the new =
+allocation for this new node and copy the data to the new place. =
+Shrinking the allocation on the old node doesn=E2=80=99t seem to be =
+right. Or am I missing something?
 
-[1] Link: https://lore.kernel.org/all/20250627131332.2806026-1-alexander.sverdlin@siemens.com/
-
- arch/arm64/boot/dts/ti/k3-pinctrl.h | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-index cac7cccc11121..38590188dd51c 100644
---- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
-+++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-@@ -8,6 +8,7 @@
- #ifndef DTS_ARM64_TI_K3_PINCTRL_H
- #define DTS_ARM64_TI_K3_PINCTRL_H
- 
-+#define ST_EN_SHIFT		(14)
- #define PULLUDEN_SHIFT		(16)
- #define PULLTYPESEL_SHIFT	(17)
- #define RXACTIVE_SHIFT		(18)
-@@ -19,6 +20,10 @@
- #define DS_PULLUD_EN_SHIFT	(27)
- #define DS_PULLTYPE_SEL_SHIFT	(28)
- 
-+/* Schmitt trigger configuration */
-+#define ST_DISABLE		(0 << ST_EN_SHIFT)
-+#define ST_ENABLE		(1 << ST_EN_SHIFT)
-+
- #define PULL_DISABLE		(1 << PULLUDEN_SHIFT)
- #define PULL_ENABLE		(0 << PULLUDEN_SHIFT)
- 
-@@ -32,9 +37,13 @@
- #define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
- #define PIN_OUTPUT_PULLUP	(INPUT_DISABLE | PULL_UP)
- #define PIN_OUTPUT_PULLDOWN	(INPUT_DISABLE | PULL_DOWN)
--#define PIN_INPUT		(INPUT_EN | PULL_DISABLE)
--#define PIN_INPUT_PULLUP	(INPUT_EN | PULL_UP)
--#define PIN_INPUT_PULLDOWN	(INPUT_EN | PULL_DOWN)
-+#define PIN_INPUT		(INPUT_EN | ST_ENABLE | PULL_DISABLE)
-+#define PIN_INPUT_PULLUP	(INPUT_EN | ST_ENABLE | PULL_UP)
-+#define PIN_INPUT_PULLDOWN	(INPUT_EN | ST_ENABLE | PULL_DOWN)
-+/* Input configurations with Schmitt Trigger disabled */
-+#define PIN_INPUT_NOST		(INPUT_EN | PULL_DISABLE)
-+#define PIN_INPUT_PULLUP_NOST	(INPUT_EN | PULL_UP)
-+#define PIN_INPUT_PULLDOWN_NOST	(INPUT_EN | PULL_DOWN)
- 
- #define PIN_DEBOUNCE_DISABLE	(0 << DEBOUNCE_SHIFT)
- #define PIN_DEBOUNCE_CONF1	(1 << DEBOUNCE_SHIFT)
--- 
-2.50.0
+~Vitaly
 
 
