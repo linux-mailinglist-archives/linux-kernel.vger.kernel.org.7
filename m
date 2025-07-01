@@ -1,47 +1,90 @@
-Return-Path: <linux-kernel+bounces-711023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9260AAEF4B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:15:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A722AAEF48E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E44A4A2DC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170A048051D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EE827057D;
-	Tue,  1 Jul 2025 10:15:32 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4523D2737FB;
+	Tue,  1 Jul 2025 10:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itSvZOop"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660C92356CE;
-	Tue,  1 Jul 2025 10:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9527381A;
+	Tue,  1 Jul 2025 10:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751364932; cv=none; b=NkBJ+EYELlxkuqHyyn9K+HIyy5HKikoECEKJMAkTV/s9ogsmjqQw8MdK+rjszm9QFtH3FRd+8Mw34QXi5WMRIAuShxGBG8YRmi6bobNDK9Rbv2u2qjVZBywbw1M+UMARXLMWSFNKXqWKc5HxUrjnMd6jpdFZWosC5GT9sG77upc=
+	t=1751364348; cv=none; b=BWmsvc9O674cLJSa0hRhNw6uzsj9boNNI0cU6y3tudEdL07hLd1g0w6HvlnUAi/xBEIH22pDWO8aTGG3rTOQPbtayCLJLFIwDPYkq6O270VmkpxTN8TiLeezY5TA07xS9mQbDt/PfG1y8EvoZzheHbQvThi00xFyne0/EjhquPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751364932; c=relaxed/simple;
-	bh=UER6UP57mrgWSjf4gyDsjMn+GpFS6MZjgA5BfuK8RzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=umMW4GpDjzSs/GZE5iUr3wbsh/t7QACoJPUShv/edhAMkaxjP82GS8rCuI67LEO6ubu4/X14xJDykbQCGlbtYJh9VnJd/PsYHQeNo2kia/9Cter98EU5raSyB8N9Gf0pahU8v5e5SmfFQmjquxLKZGKYvW+hgQkFnKi32jUlvmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [116.25.94.38])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1a8790b15;
-	Tue, 1 Jul 2025 18:00:08 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH v2 1/1] USB: serial: option: add GosunCn GM800 series
-Date: Tue,  1 Jul 2025 18:00:02 +0800
-Message-Id: <20250701100002.798372-2-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250701100002.798372-1-amadeus@jmu.edu.cn>
-References: <20250701100002.798372-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1751364348; c=relaxed/simple;
+	bh=jBkWrmYg85LJDEJOzQbvK9KxHKJ2Rxy2fOsHy69Bk70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PUpkwApcex1FYGmYlkDAdgDoXpRcIbjXrqSz2sx7pSzPr5Y2tBSdqaIwjmNkCbP9dETnxgAPlEfW1QpLt3QPTulrp/yHQoQESm9nUVYNbv3WdIuWDlc075CmRViS3N35XVlLcZeG76Wdbyt7ETxR0J521glgQcC1CNhuxUuRg/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itSvZOop; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ade76b8356cso607339566b.2;
+        Tue, 01 Jul 2025 03:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751364345; x=1751969145; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iadSvd9ADK8oMvjZilYGUvx8+bST1k9toFEmq4yiSaY=;
+        b=itSvZOopTgPUTkkB/8SfgO1lRqsT10VqHNDnMoaZouWpIBjmJppthy+7yirK8dAJcG
+         rZE2zWGOQB71ZRqzqgjggzoP/uWwJ8WATLvwcPYSps0h0dpaRUS3tfZohkDpGVdj24/l
+         VF+RrhRXJA1mrLnr+0wujRdwdsaxjlDfO9e0B6aS+SmyCHuJmQOkSm1iuWGYHs1IiR0h
+         hJX0DMMWa/hM+q3d6ENUe6I9fjdR2+HaqpUsx4X1hUSK7F0S5HKusQwCOQXHX/NwTUkH
+         /R89dDIsbMjToUHPCU+ENLzMVnvmTG5UahJJPOSFBJORAl/fuio0nqPzl5dtBuWUqsQ7
+         DN3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751364345; x=1751969145;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iadSvd9ADK8oMvjZilYGUvx8+bST1k9toFEmq4yiSaY=;
+        b=jWiMwdScNu0dfqoeDN+d1Qk6C9OSlXnSzMw7zMruU5y8RqhTjiN4TIq1XJf18WUfaR
+         UtF/gzitrCTHgaWadk5rURej2yEyDyyVwr3y+5B3KP8mLGQFPmnUpbY7vqDgXukmG/32
+         1f+43AzZugSkPK7DwgwkCu5CG+8l0DTId7k3KONJS1KsiRZE0moQ15DKu2NldQbGzGy6
+         9W58Ie937bVGVkfLh67Xri7/s78D60VLNOQgDOLq3KnfSdFEM5mA3jH4wYCKrX8ltI1y
+         c1pmm1GrWa0Yf0iv061AKliaZQW7uCPubINCQP/JZpsThfs365DS1hBeojoEN0Go7PTp
+         22/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZRNlwA0EJiTXwhO7f6/TWFd8+HfpPFOV3yRa0Np+GxNwzdKO4W0ca/zDt5axWL1pI+09mreRhZi/55ddZ@vger.kernel.org, AJvYcCW7JSd1QguCvx7yUlRHEO/SFjZnRADPfT5szcuW7gbX4zNdYfOCY4HEvD89AYieJpNcWdyTx77gxs/n@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy2cplS43rEtsLVoOuRFo21YvSLvjOTyaKgsZ6FWNzPLK6HAHs
+	U4rWKcK48osEWK1ofmY5V08VeyLtqbjgrycNgJifeZEMYm1ofBBMpOjfszY1ucHbs9k=
+X-Gm-Gg: ASbGnctNcVnnf6vSImJ+pc4DzUBUPyekzQ2dzlrZhyp0iW9j5+08P0bO6DRTlFkTdLB
+	ccunfRW8xOpaafabZCWWsLQUjghOQzZLTv5cKSqs7HooZD/siLm5FudqSaNA/j5odlywrrOBhbi
+	lrxJDCeUweusRVulZ14mqbdxl3i4MiCHJVhY/dHgNyDtNRs5Yhpf2sJ0AkuHj09Ko2sqMSbCJp2
+	KUEdWP89gVlY1O6k6CLLSFsBAC9QXtH8TFnEFUodjQ7n+oUh3BUyITwivMhD/HX6mDwa5zmh4I2
+	U3aXnvMIJG52QpkjsH/6b5AhKnLWGihU8u0c210h9zQSiwnQiEpKID9rTrJevW1tJfno0DbH2LK
+	xHWemmqkgo4VA1pCEQw==
+X-Google-Smtp-Source: AGHT+IHQIGQ2Hch4gyaPW7HZupOC2DjnJn7l+GVqB7yhcz8qD/KnPlOuAVlsMHk5Rv61bStbPBh69w==
+X-Received: by 2002:a17:907:96ab:b0:adb:2ef9:db38 with SMTP id a640c23a62f3a-ae3500f2822mr1907835166b.36.1751364344429;
+        Tue, 01 Jul 2025 03:05:44 -0700 (PDT)
+Received: from maria-HP-Pavilion-Laptop.home ([178.226.54.132])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a15fsm850718066b.55.2025.07.01.03.05.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 03:05:43 -0700 (PDT)
+From: Maria Garcia <mariagarcia7293@gmail.com>
+To: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maria Garcia <mariagarcia7293@gmail.com>,
+	Maria Garcia <mgarcia@qblox.com>
+Subject: [PATCH 0/2] *** Add support for TI TCA6418 GPIO chip ***
+Date: Tue,  1 Jul 2025 12:05:35 +0200
+Message-ID: <20250701100537.91491-1-mariagarcia7293@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,251 +92,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSEMdVkIdSE1MGhhOQh9CS1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSk1VSU5VQk9VSENZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0tVSktLVUtZBg
-	++
-X-HM-Tid: 0a97c56dfbf203a2kunma1c93f498732f
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OC46Lio*TDE8EkscPE85CQMT
-	HlEKCzZVSlVKTE5KSE1PS0tCQkNNVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	TVVJTlVCT1VIQ1lXWQgBWUFKSUlKQjcG
 
-Add support for GosunCn GM800 series which are based on Qualcomm
-SDX55 chip. The ID of MBIM/ECM/RNDIS mode is the same as GM500.
+This series introduces support for the Texas Instruments TCA6418 
+GPIO expander chip, added to the gpio-pca953x driver. It also includes the 
+necessary device tree binding definition.
 
-Download mode:
-0x1402: DIAG + AT + MODEM
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=305a ProdID=1402 Rev= 4.14
-S:  Manufacturer=GSW
-S:  Product=GSW_GM800_123456
-S:  SerialNumber=12345678
-C:* #Ifs= 3 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-RmNet mode (old):
-0x1403: DIAG + AT + MODEM + RMNET + ADB
-T:  Bus=08 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=305a ProdID=1403 Rev= 4.14
-S:  Manufacturer=QCOM
-S:  Product=SDXPRAIRIE-MTP _SN:12345678
-S:  SerialNumber=12345678
-C:* #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-E:  Ad=86(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-RNDIS mode:
-0x1404: DIAG + AT + MODEM + RNDIS + ADB
-T:  Bus=08 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=305a ProdID=1404 Rev= 4.14
-S:  Manufacturer=QCOM
-S:  Product=SDXPRAIRIE-MTP _SN:12345678
-S:  SerialNumber=12345678
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=896mA
-A:  FirstIf#= 0 IfCount= 2 Cls=ef(misc ) Sub=04 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
-E:  Ad=81(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-MBIM mode:
-0x1405: DIAG + AT + MODEM + MBIM + ADB
-T:  Bus=08 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=305a ProdID=1405 Rev= 4.14
-S:  Manufacturer=QCOM
-S:  Product=SDXPRAIRIE-MTP _SN:12345678
-S:  SerialNumber=12345678
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=896mA
-A:  FirstIf#= 3 IfCount= 2 Cls=02(comm.) Sub=0e Prot=00
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=0e Prot=00 Driver=cdc_mbim
-E:  Ad=86(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-I:* If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-ECM mode:
-0x1406: DIAG + AT + MODEM + MBIM + ADB
-T:  Bus=08 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  5 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=305a ProdID=1406 Rev= 4.14
-S:  Manufacturer=QCOM
-S:  Product=SDXPRAIRIE-MTP _SN:12345678
-S:  SerialNumber=12345678
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=896mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
-E:  Ad=86(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:* If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-RmNet mode:
-0x1421: DIAG + AT + MODEM + RMNET + ADB
-T:  Bus=08 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  7 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=305a ProdID=1421 Rev= 4.14
-S:  Manufacturer=QCOM
-S:  Product=SDXPRAIRIE-MTP _SN:12345678
-S:  SerialNumber=12345678
-C:* #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-E:  Ad=86(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-EAP mode:
-0x1422: RNDIS + RMNET + IPC + DIAG + MODEM + AT + ADB
-T:  Bus=08 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  8 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=305a ProdID=1422 Rev= 4.14
-S:  Manufacturer=QCOM
-S:  Product=SDXPRAIRIE-MTP _SN:12345678
-S:  SerialNumber=12345678
-C:* #Ifs= 8 Cfg#= 1 Atr=80 MxPwr=896mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=03
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=e0(wlcon) Sub=01 Prot=03 Driver=rndis_host
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-E:  Ad=83(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=(none)
-E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=86(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 6 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=89(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=88(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=06(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=8a(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+Signed-off-by: Maria Garcia <mariagarcia7293@gmail.com>
 ---
- drivers/usb/serial/option.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Changes in v2:
+ - gpio-pca953x.c: address review feedback: remove some else statements, 
+   turn some if-else statements into switch statements.
+Maria Garcia (2):
+  dt-bindings: gpio: pca95xx: add TI TCA6418
+  gpio: pca953x: Add support for TI TCA6418
 
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index c0c44e594d36..55347d973c60 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2382,9 +2382,13 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x2dee, 0x4d22, 0xff, 0xff, 0x40) },	/* MeiG Smart SRM825L */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x2dee, 0x4d22, 0xff, 0xff, 0x60) },	/* MeiG Smart SRM825L */
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2df3, 0x9d03, 0xff) },			/* LongSung M5710 */
--	{ USB_DEVICE_INTERFACE_CLASS(0x305a, 0x1404, 0xff) },			/* GosunCn GM500 RNDIS */
--	{ USB_DEVICE_INTERFACE_CLASS(0x305a, 0x1405, 0xff) },			/* GosunCn GM500 MBIM */
--	{ USB_DEVICE_INTERFACE_CLASS(0x305a, 0x1406, 0xff) },			/* GosunCn GM500 ECM/NCM */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1402, 0xff, 0, 0) },		/* GosunCn GM800 (Download) */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1403, 0xff, 0, 0) },		/* GosunCn GM800 (RMNET, old) */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1404, 0xff, 0, 0) },		/* GosunCn GM500/GM800 RNDIS */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1405, 0xff, 0, 0) },		/* GosunCn GM500/GM800 MBIM */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1406, 0xff, 0, 0) },		/* GosunCn GM500/GM800 ECM */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1421, 0xff, 0, 0) },		/* GosunCn GM800 (RMNET) */
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x305a, 0x1422, 0xff, 0, 0) },		/* GosunCn GM800 (EAP) */
- 	{ USB_DEVICE(0x33f8, 0x0104),						/* Rolling RW101-GL (laptop RMNET) */
- 	  .driver_info = RSVD(4) | RSVD(5) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x33f8, 0x01a2, 0xff) },			/* Rolling RW101-GL (laptop MBIM) */
+ .../bindings/gpio/gpio-pca95xx.yaml           |   1 +
+ drivers/gpio/gpio-pca953x.c                   | 139 +++++++++++++++---
+ 2 files changed, 121 insertions(+), 19 deletions(-)
+
 -- 
-2.25.1
+2.43.0
 
 
