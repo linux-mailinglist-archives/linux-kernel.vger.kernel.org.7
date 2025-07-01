@@ -1,199 +1,167 @@
-Return-Path: <linux-kernel+bounces-711990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B128AF0327
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0149FAF0396
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12084A4C75
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:49:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E316B1C08977
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5AB281355;
-	Tue,  1 Jul 2025 18:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iavTYV90"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D72287273;
+	Tue,  1 Jul 2025 19:19:04 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74A5258CE8;
-	Tue,  1 Jul 2025 18:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD39287254;
+	Tue,  1 Jul 2025 19:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751395763; cv=none; b=FBGqvzSdxjowIwgMYEE+TXyICK6G4hn51aei7RqlNqGbbY+lHKAU6S/kgZzm7wUMHBFOHqf2CZeJ7r+RVW4fICanThujfNiXvf2GWkcWzlN0rCH3huotPjvjhmwLq0gB4HE4PWn2Nnhf8N9hdNCjUnuY65j1R98C8brfI97ByJk=
+	t=1751397543; cv=none; b=OLL2CH9ocTh9+wfUmC2scsOyThuiQ0qKZ+v9qlabcNG9RFXZvmNVQaGp11FVnVtUqzzw9IZnbSV5Gp0TU/Zi/PJOY7qsx5MiqXFztUlqSB4ZnFuBvPL2TW3c4kPCFOv5fan2DU+A7Lfgi9gYRcA1mGJVwPJlSnd6KJ8vPob8xsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751395763; c=relaxed/simple;
-	bh=auft5QMJz3JBw8guzVy3fSYxhiMqLYHXCpyih2sdaFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RRRvYHtZGS1wXI3g5WfqwWLkW5rn73rrEWtkzAEAfx3AGmHGNK0tUmUyoy0gfFrrG0bL0aPZTrqhCtwPzf+BeDDD4mKK1mKQITQ5A5gwxKFj9D213yFt4y65mW55hHbrYmhWp279el7FrnDvb1nN8CGkijN9xoWQwvVbxGAh45Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iavTYV90; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72c172f1de1so1902680a34.3;
-        Tue, 01 Jul 2025 11:49:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751395761; x=1752000561; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dlocpt7CECBU87LrrF2s/X5hZPUr9DDE65AWKyn7Ey8=;
-        b=iavTYV90wDtVeBYmZxACRPhxDPbA6mK/2l08fjCavI6Bj/3z4OV+WbgOTcgEi3OqEd
-         PlN9s8JEZbhldeU9GudffHKp2rB0jHP9VnGwCUNkWAc+5CKO09tNV7a/xgGoagsYQ7da
-         OVnJKBRNsDKGfHfViisxKjO8OBwEbQ0KY3gnDel/BNR6OeTpHlKkqIIDVtEoXWMasjTV
-         MyU1lDjMKwwBC6FH6HAMwI9IuE2HYItroolPtkEIj67uyiDOoHJ04jQMeYDTEGmq83U/
-         HOF1xUueRke3aT3n8ujU9FCPDGEyhNCBxBCmBDsre3IAs4rnk7W1lf0nLCPNbF+VxCHl
-         oolw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751395761; x=1752000561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dlocpt7CECBU87LrrF2s/X5hZPUr9DDE65AWKyn7Ey8=;
-        b=JXZ+iVA0SSKQh9NGAmPkoqusxoS+yyywFutrfyIanbQo+wseZIj+X2tBBI4HyoNnw+
-         HHUwuxjNGaJdhcLckvhTKoZzrTXWc7eaz2i0kfgCU3yW6DyyoeuSvFe3KwYUZhwgzWx8
-         76trZuMKHRQeq9kXD1Ucs5OCuYngEKa9l6j8RyBlNZj6dHtgoh/D1Uq+oaUE40Tj9Bxt
-         eds+l3t866eBg8cUtd1p9RRWSgBxzT/yHuqpcBjpZdqvGiMdRkceWCmyQvUzqAtDVc/s
-         zjXOZ/KkYJ33DjlCk8o3lCBvDtlL9zPE1wRNjSIWF2nn3tJxgaBuNeVrCoHe9tAL9H4Q
-         V5IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsEsTvXPorNe3Hl8a0UcXoo61ZLhQedsXV3Alu7jUI4nlPZ2zZUMu6nHz1r3I4yMozXY39dtORBtNY6hd/TVQY@vger.kernel.org, AJvYcCWZTZFTAkqCQwJShjlqeBi3wG3wX4Mu9R1VULwLaAg6JMNR53WlKNuUMdmg7GteTyDaqhniRmZ4EafE9Go=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfj8IImwztRifpGhynNzxJ4LVxAZkZSnw4aVUB60nOxIYXYpiJ
-	1frjKXsXVyJf6ti4jjIfMegBSKgqDfVWey4+np1mpOu4E2t9LgQWLMpLooZhVM6Hd+Y=
-X-Gm-Gg: ASbGncs41EFCiObRVWt48H/lJ46dsKIAexy3wUQaVhQXl9H3TLsx1DTFydpSqXf/k7b
-	lHUBbpK3+4tJq/6dL931nNBF1lqJRAB87p4eT2sX0bSPGCJNCUeU6OiiH1COV2kZgtJbjTdJOhu
-	9Vq9oGjW+Xzhvw2PsHws2vZGqlZjDZ9DgfT35XMsrlMvYJH9qMMIL/eKcDnaOZJ5la7ecBmeroj
-	2fMyPmefBJA4pVFDSHhpQYxlFXjv4H+sTja5oEGN1FqL9ZA9qsNRWTQxvLofy2kJFxeyVzFVfAB
-	5ZExgQLJslomSGcik7JJCnljjVeGHpmOuL/m4FUFqPwyT4VecdXQJiR1kRECPDw=
-X-Google-Smtp-Source: AGHT+IGD6GYhV0TyC/EZGQWTN/JNDfKd7qgK/xYCQH+qgaNeT3VqCslC9FibejmA5HPhSxwD102TRw==
-X-Received: by 2002:a05:6830:91e:b0:72b:8fd3:e2dc with SMTP id 46e09a7af769-73b4cbe37a2mr82752a34.21.1751395760847;
-        Tue, 01 Jul 2025 11:49:20 -0700 (PDT)
-Received: from skc-Dell-Pro-16-Plus-PB16250.. ([132.237.156.254])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afb0e3160sm2213242a34.44.2025.07.01.11.49.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 11:49:20 -0700 (PDT)
-From: Suresh K C <suresh.k.chandrappa@gmail.com>
-X-Google-Original-From: Suresh K C
-To: nphamcs@gmail.com,
-	hannes@cmpxchg.org,
-	joshua.hahnjy@gmail.com,
-	shuah@kernel.org
-Cc: linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Suresh K C <suresh.k.chandrappa@gmail.com>
-Subject: [PATCH v2 2/2] selftest: improve mmap test clarity
-Date: Wed,  2 Jul 2025 00:19:02 +0530
-Message-ID: <20250701184902.8927-2-suresh.k.chandrappa@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250701184902.8927-1-suresh.k.chandrappa@gmail.com>
-References: <20250701184902.8927-1-suresh.k.chandrappa@gmail.com>
+	s=arc-20240116; t=1751397543; c=relaxed/simple;
+	bh=vLz4eRZOkx/18G2Of9b/1TTaGPM/bDTdQjRk6I5nDVU=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=hXLhFbgw6fPXGo7u+pWaXn6kZdTwifjPKwlneRe74HDocbAlteg8FClE6DZFolHMvWGIy3lWo9BrPPclQeq6ZqZj0v1sgCttx6r9dcANTrgYCFWJ22PEHbwje0gEEnFvL0c8pmeeCBedUvOsVm5AWMOCVddn7WiIuORtrljAtDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 400FCC4CEEB;
+	Tue,  1 Jul 2025 19:19:03 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1uWg3r-00000007gmh-33L4;
+	Tue, 01 Jul 2025 14:50:31 -0400
+Message-ID: <20250701184939.026626626@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 01 Jul 2025 14:49:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>
+Subject: [PATCH v7 00/12] unwind_deferred: Implement sframe handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Suresh K C <suresh.k.chandrappa@gmail.com>
 
-This patch refactors the mmap test logic to remove redundancy and improve
-error reporting. It also removes leftover test code that is no longer needed.
+This code is based on top of:
 
-Changes since v1:
-- Refactored mmap logic into a switch statement as suggested
-- Removed the last-character difference, which was only used for testing
-- Added clearer error messages to indicate whether shmem or mmap failed
-- Combined patches into a series for better context
-- Addressed feedback on patch origin and versioning
+ https://lore.kernel.org/linux-trace-kernel/20250701005321.942306427@goodmis.org/
+ git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git unwind/core
 
-Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
----
- .../selftests/cachestat/test_cachestat.c      | 52 +++++++++++++------
- 1 file changed, 35 insertions(+), 17 deletions(-)
+This is the implementation of parsing the SFrame section in an ELF file.
+It's a continuation of Josh's last work that can be found here:
 
-diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
-index b6452978dae0..0549b7224ba1 100644
---- a/tools/testing/selftests/cachestat/test_cachestat.c
-+++ b/tools/testing/selftests/cachestat/test_cachestat.c
-@@ -206,6 +206,17 @@ static int test_cachestat(const char *filename, bool write_random, bool create,
- out:
- 	return ret;
- }
-+const char* file_type_str(enum file_type type) {
-+	switch (type) {
-+		case FILE_SHMEM:
-+			return "shmem";
-+		case FILE_MMAP:
-+			return "mmap";
-+		default:
-+			return "unknown";
-+	}
-+}
-+
- 
- bool run_cachestat_test(enum file_type type)
- {
-@@ -225,34 +236,41 @@ bool run_cachestat_test(enum file_type type)
- 		fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
- 
- 	if (fd < 0) {
--		ksft_print_msg("Unable to create file.\n");
-+		ksft_print_msg("Unable to create %s file.\n",file_type_str(type));
- 		ret = false;
- 		goto out;
- 	}
- 
- 	if (ftruncate(fd, filesize)) {
--		ksft_print_msg("Unable to truncate file.\n");
--		ret = false;
--		goto close_fd;
--	}
--
--	if (!write_exactly(fd, filesize)) {
--		ksft_print_msg("Unable to write to file.\n");
-+		ksft_print_msg("Unable to truncate %s file.\n",file_type_str(type));
- 		ret = false;
- 		goto close_fd;
- 	}
- 
--	if (type == FILE_MMAP){
--		char *map = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
--		if (map == MAP_FAILED) {
--			ksft_print_msg("mmap failed.\n");
-+	switch (type){
-+		case FILE_SHMEM:
-+			if (!write_exactly(fd, filesize)) {
-+				ksft_print_msg("Unable to write to file.\n");
-+				ret = false;
-+				goto close_fd;
-+			}
-+			break;
-+		case FILE_MMAP:
-+			char *map = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+			if (map == MAP_FAILED) {
-+				ksft_print_msg("mmap failed.\n");
-+				ret = false;
-+				goto close_fd;
-+			}
-+			for (int i = 0; i < filesize; i++) {
-+				map[i] = 'A';
-+			}
-+			break;
-+		default:
-+			ksft_print_msg("Unsupported file type.\n");
- 			ret = false;
- 			goto close_fd;
--		}
--		for (int i = 0; i < filesize; i++) {
--			map[i] = 'A';
--		}
--		map[filesize - 1] = 'X';
-+			break;
- 	}
- 	syscall_ret = syscall(__NR_cachestat, fd, &cs_range, &cs, 0);
- 
--- 
-2.43.0
+   https://lore.kernel.org/all/cover.1737511963.git.jpoimboe@kernel.org/
 
+Currently the only way to get a user space stack trace from a stack
+walk (and not just copying large amount of user stack into the kernel
+ring buffer) is to use frame pointers. This has a few issues. The biggest
+one is that compiling frame pointers into every application and library
+has been shown to cause performance overhead.
+
+Another issue is that the format of the frames may not always be consistent
+between different compilers and some architectures (s390) has no defined
+format to do a reliable stack walk. The only way to perform user space
+profiling on these architectures is to copy the user stack into the kernel
+buffer.
+
+SFrames[1] is now supported in gcc binutils and soon will also be supported
+by LLVM. SFrames acts more like ORC, and lives in the ELF executable
+file as its own section. Like ORC it has two tables where the first table
+is sorted by instruction pointers (IP) and using the current IP and finding
+it's entry in the first table, it will take you to the second table which
+will tell you where the return address of the current function is located
+and then you can use that address to look it up in the first table to find
+the return address of that function, and so on. This performs a user
+space stack walk.
+
+Now because the SFrame section lives in the ELF file it needs to be faulted
+into memory when it is used. This means that walking the user space stack
+requires being in a faultable context. As profilers like perf request a stack
+trace in interrupt or NMI context, it cannot do the walking when it is
+requested. Instead it must be deferred until it is safe to fault in user
+space. One place this is known to be safe is when the task is about to return
+back to user space.
+
+This series makes the deferred unwind code implement SFrames.
+
+[1] https://sourceware.org/binutils/wiki/sframe
+
+The code for this patch series can be found here:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git unwind/sframe
+
+Changes since v6: https://lore.kernel.org/linux-trace-kernel/20250617225009.233007152@goodmis.org/
+
+- Rebased on top of unwind/core
+
+- Moved the addition of the prctl(), that allows libraries to add the elf
+  sections to the kernel, to the last patch and labeled it as "DO NOT APPLY".
+  This should instead be a proper system call and work to make it robust and
+  flexible still needs to be done. The prctl() patch is added for debugging
+  purposes only.
+
+Head SHA1: 5d24854c7069f833449e8310bd3253624213c08d
+
+
+Josh Poimboeuf (12):
+      unwind_user/sframe: Add support for reading .sframe headers
+      unwind_user/sframe: Store sframe section data in per-mm maple tree
+      x86/uaccess: Add unsafe_copy_from_user() implementation
+      unwind_user/sframe: Add support for reading .sframe contents
+      unwind_user/sframe: Detect .sframe sections in executables
+      unwind_user/sframe: Wire up unwind_user to sframe
+      unwind_user/sframe/x86: Enable sframe unwinding on x86
+      unwind_user/sframe: Remove .sframe section on detected corruption
+      unwind_user/sframe: Show file name in debug output
+      unwind_user/sframe: Enable debugging in uaccess regions
+      unwind_user/sframe: Add .sframe validation option
+      [DO NOT APPLY] unwind_user/sframe: Add prctl() interface for registering .sframe sections
+
+----
+ MAINTAINERS                       |   1 +
+ arch/Kconfig                      |  23 ++
+ arch/x86/Kconfig                  |   1 +
+ arch/x86/include/asm/mmu.h        |   2 +-
+ arch/x86/include/asm/uaccess.h    |  39 ++-
+ fs/binfmt_elf.c                   |  49 ++-
+ include/linux/mm_types.h          |   3 +
+ include/linux/sframe.h            |  60 ++++
+ include/linux/unwind_user_types.h |   1 +
+ include/uapi/linux/elf.h          |   1 +
+ include/uapi/linux/prctl.h        |   6 +-
+ kernel/fork.c                     |  10 +
+ kernel/sys.c                      |   9 +
+ kernel/unwind/Makefile            |   3 +-
+ kernel/unwind/sframe.c            | 612 ++++++++++++++++++++++++++++++++++++++
+ kernel/unwind/sframe.h            |  71 +++++
+ kernel/unwind/sframe_debug.h      |  99 ++++++
+ kernel/unwind/user.c              |  25 +-
+ mm/init-mm.c                      |   2 +
+ 19 files changed, 998 insertions(+), 19 deletions(-)
+ create mode 100644 include/linux/sframe.h
+ create mode 100644 kernel/unwind/sframe.c
+ create mode 100644 kernel/unwind/sframe.h
+ create mode 100644 kernel/unwind/sframe_debug.h
 
