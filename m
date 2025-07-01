@@ -1,168 +1,204 @@
-Return-Path: <linux-kernel+bounces-711797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BD2AEFFBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:27:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B375AAEFFB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63D8188289F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6583163D8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369BF2798EC;
-	Tue,  1 Jul 2025 16:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB0027E052;
+	Tue,  1 Jul 2025 16:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ltPjtZ98"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3VyhwdT"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBD11AA1DB;
-	Tue,  1 Jul 2025 16:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEB71DE89A;
+	Tue,  1 Jul 2025 16:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387115; cv=none; b=Z2ECUAY328lvNSXMs8PHk56HEa69uIAYEjAAn5/cDZGed59BhOPai99Xn0pOdHB9xfZQnun1VrqCvQZXPSPOZHY6BSfNglunXsb3D4pETDKUrmdxZV5qVbAsijHWEsHUMb4SkfF8DW1OgdjEdwAozZk8Mp5XY5J3zwKMMRiOZu4=
+	t=1751387146; cv=none; b=PJm0RjpE11z6YTgGxbpgyEAGnDypxassDp+KPb3CCBmCPhwUaMWg7aYxxasLzMfAUsds5gIG9KPNipbXpSUuTb2F7LlljgbEsqRd6GQMmhJ9hSAGLwji6wOQxYn+axF9Tt5G3Bb93wwPAcYs+s3CFP7TCNpIh4PB6+EGnhs4M1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387115; c=relaxed/simple;
-	bh=v/N4QvvT3ATX2IBwWwvEzAtudi8W1mMlQFC6impuzOQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxjwSpdL7bNZZI6/N1IKkLD3MiWtuJcVL21SISi8CvZjJTttXaAqaeiZ3mMTrEXm+KpYPQnVz9hsQKDr/oYucj4KrveSXKFM2vXMEKe/H1uKr2bOQ01pRcOlS0ejySbYwc0qc0zQ62T4I+5nUlUSQa8Ogpf4Bm/BTlxNNmFhoik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ltPjtZ98; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 561GP4qi3678843;
-	Tue, 1 Jul 2025 11:25:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1751387104;
-	bh=F0aaeqii1FsfQz1PyoUyvITJVetiar7DEiLzMVrI2l8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=ltPjtZ98RAhON84b4aXNpNH51/kttGd5AsEdJ0PEqFE8DzOe1sgs9ruAzwtSUZfB+
-	 OA9lXihCXvhCvJmfNlBzp8o1DmtOO82ULt24DbfT+V6Y9AWPqvpkBYVy5fuIJQOR7K
-	 KKcjtVquzA1fZx5Dg7Mm3c5NOYlP9HuKI6qIWXEY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 561GP4VY2716776
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 1 Jul 2025 11:25:04 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 1
- Jul 2025 11:25:04 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 1 Jul 2025 11:25:03 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 561GP43p1598131;
-	Tue, 1 Jul 2025 11:25:04 -0500
-Date: Tue, 1 Jul 2025 11:25:04 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Paresh Bhagat <p-bhagat@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>, <kristo@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
-        <afd@ti.com>, <devarsht@ti.com>, <s-vadapalli@ti.com>,
-        <andrew@lunn.ch>
-Subject: Re: [PATCH v5 4/4] arm64: dts: ti: Add support for AM62D2-EVM
-Message-ID: <20250701162504.dck3763ik6kpo7ec@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20250627115753.2246881-1-p-bhagat@ti.com>
- <20250627115753.2246881-5-p-bhagat@ti.com>
+	s=arc-20240116; t=1751387146; c=relaxed/simple;
+	bh=ZUqpZFwfZJt5F5fCgCl/+TyIxH9HhSMeCYCIU8CIEkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=polFHdK2v9tASY8hdUCeKW+Jc7G3/mnY8XsP2ujmUISG4lwqHmM+SgB5Hqt56cTI4IwmDKuiE78Y/nhEW9yFKQzdtMnDyBf02RJsH+aLtk84WRWvMvW2eAx9eB+rUQWpay7pp9vlpqdkajWz75StrapS3FK4FZyaTu0zqdopdZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3VyhwdT; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7d4495753a7so395036185a.0;
+        Tue, 01 Jul 2025 09:25:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751387144; x=1751991944; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MwCrqmYe9TCJHuYWG2jCcUWVn5259lJARsV/a3PINFE=;
+        b=V3VyhwdTLToEsXD1YWSqIQIEN6M3yFpJxlHafcEkdsyuTU9kSsPawgEKuYVZvt+63y
+         AOkMQ4WeD95HEDyK1kzTWz++3vmfla148a7LUsMaMLO1aNT/lOnPACDhbx8hjueMLFsZ
+         H7/fNbaqWg5132GcfBK14esSecPdDu6iMMQ2fgfdvxEbnETs5OR4+I7/TKEuwTcpnfho
+         a+PnYguIWf1Evfd8NsDq7Qfl5337xSqEv/r/D32QT/N904G74urtm0eWHqsMHkRi7wrB
+         oYA8vTYXRaKAaXfPIbD5z5ppixsWVnZZbgtQ94I+GloXToT31vjnJNqIpu2bCz2lA4Iv
+         GoPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751387144; x=1751991944;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MwCrqmYe9TCJHuYWG2jCcUWVn5259lJARsV/a3PINFE=;
+        b=d3O1Q46y7GjYeFmuj+LvpbB4ZFa2pZQTC8AQVn3YmoKFwkFQYUIkrpV/OZt1XxlCqB
+         njaQomCBFWAbsijnTMfA9K2zNmUbptriDmOmf/OXdRgqhaZOGUyFXPeS+s3y8kU3w1PU
+         3zgrUSgLTlStJLGKMNMG7rRRWXzKIzlvbJzqtPMEKWwywP4f1d07qv8DJVtA1QsNhX2n
+         SdM8oQmDifqxZ08RRMaV1wKGvXsHMpaMmemiC+zpkraTmE4Vps4Hn9SCuMV/L/SNmXWg
+         BidniE91X97ZmOkwb+ke1rK5+O7goxvOgfkQsY++y84FWHGrtDPsosuj0/WLZHzy99d0
+         xYPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHQ/OyfIFrD+b08yZBhlRbcDZY7PkU0hf+HwnnIRV/NzShVI3WbfRxuf/n7AKhIZ6vw2jClEX1KhGD9Nd6nMc/bS0=@vger.kernel.org, AJvYcCUQKasfDe+rp3DwfSrtQ/ueJLBfFE/ekA7+wLOXrbTHwbkjZc6DBWE5qHlTHpoKkQonYxPnebsDZm2X@vger.kernel.org, AJvYcCUTtwMQXxOiku1W4DPoznOpC9GAHgze7aQxkD7Hhv4CnTwJPjcuJZ8uiKrjkLA7IwybLZAsyl1BVdr/@vger.kernel.org, AJvYcCUd3JZIEKW40w8Yxq+s7tETHdbkO6ZFHggwoI2kXl6azfEOOCgbfUTaxPUxaOtUHfS1oV7OrAAfgWFB@vger.kernel.org, AJvYcCVMu6p0Xj9ttwa4s+9GUymFzAICct63LcCjIIFSSLADQDPMME0APx6mZFiUv2UB+Uel5mj5SfhcyTKauw==@vger.kernel.org, AJvYcCVeBI+pPUT4Nn+ttTiR5Dkz3X52TEI0hmH+y5InBDyLXaozNVqXfIB/BOYjcIMq5RgCftOGMfnTpTeE@vger.kernel.org, AJvYcCWZM09PhLExxb8BbF43SbstG2tuyVMjw5m1LwIj5Y1f80QHnSkR9IIdewtPtfJgkKWs+L3YSA6PpYs=@vger.kernel.org, AJvYcCWZXg2Jz2+urxdnVTWy+xiSfCKCNjXc1b3eRwyhPpwUaHVfn69m5H1lgGguKTXT+//TcxP+8IoPpDGhZg==@vger.kernel.org, AJvYcCWaCOSTSRPZ4j0ioatChp/2r3ZzF670v7xKRaM+0uRWQgDAWOtzeJnzMa+aHlqyPrczUYGdz+C6lC3P62eK@vger.kernel.org, AJvYcCWt97SJoMr75UwejnOtHzs3
+ HPHYKHSBJiye1THCLaD/CicDGlUvRe6XEuQYMLFbLcwSM05qDTvPry0meT67@vger.kernel.org, AJvYcCWw2O0e5YKiQmsX20BaCE+sq63vNbBtFLOBHzVHSabPxt00omU+ltiyfAMMm+U72j47zm4ZNqTDyepXel8=@vger.kernel.org, AJvYcCX6wIcpVo2H30Czq9L/WWZHQ4+CK9nntWKpFruy4k4/WWjfYNAIUOcsc8i5oR9wY0kK/y01V9nZbsNq@vger.kernel.org, AJvYcCX8isyPjbEqlX+ncRcW0i4zBx25Cxo2hQQm8sbOdsrjahW/FvvOdT/cGXiOUcb7p6wwKUpfqEcmLYJKwA==@vger.kernel.org, AJvYcCXZmS8nR/XEooGubYFQAQv3KRzuMiddPGhyTG4qvsf/7hisRCoUOambrJQcYMJF4zDtcVTAnMUTFWFU9W4=@vger.kernel.org, AJvYcCXnEAbBSVNl6iw5Jj6Be9UwqX2i9gOhLDYY7TiLMFF8btW36t7LLUknaTjsz5Q8urK+0eEikg2/4m5+@vger.kernel.org, AJvYcCXsUQAuhCc9ZXqG5nYlC1tSXwRxllGi92h43jp51KoAxZHJDC2gu2OvZ09ZsPlUjMUJ5KwhBjTb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqLCXNyFyfh4/UXw2sSskVfZwqcJ95Ja7QgTGS9zoBx6Akd/Mc
+	5lDQUqPcRTOSCFfPAHJW2y3vrapRW/daK5PmWSrvvxjb7dOTLMOfbMT5
+X-Gm-Gg: ASbGnctj8faWoiIgfFIvgrprRXQi9O+Yh+cst0zqdVw4mNc1V962QZzUy9fKKegXMwM
+	z9/3RxcQZC2MjO4HAM8uVk7XEM1/xQGrhfy+C3nkSMAuiiUdlmt+3uNE5Axxr0/IJ61pnZTsYg1
+	sZAU2hgbsOiC6/AE2nyPhDFGzkvtsIZFj8OZ/7z+IsSdy4oGTseOvBiUAQnMve8+c3H/2LW2hOT
+	7I9EcKNVvm9hYpyKXUoGhO3zw+zEUan5qb+mVJFYcpsgg54P6iQvcYh4PsfGqinxvtrTqIfb2nI
+	Fas4VO0EBFTZoRSodESSv4RcBYTbiMILwKVKWvLC9ycHnFV29Q==
+X-Google-Smtp-Source: AGHT+IFaquJkOuj7GD/t4hRYC7j2CE8mxqIujMtOYOepN4kjeXyf+EKHtvQBv03/JpyXmxYQUG4sHA==
+X-Received: by 2002:a05:620a:1a1a:b0:7c5:95e6:ce1d with SMTP id af79cd13be357-7d4438566f9mr2476294085a.0.1751387143543;
+        Tue, 01 Jul 2025 09:25:43 -0700 (PDT)
+Received: from geday ([2804:7f2:800b:55e2::dead:c001])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd772e4305sm86349236d6.66.2025.07.01.09.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 09:25:43 -0700 (PDT)
+Date: Tue, 1 Jul 2025 13:25:19 -0300
+From: Geraldo Nascimento <geraldogabriel@gmail.com>
+To: Waqar Hameed <waqar.hameed@axis.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Peter Rosin <peda@axentia.se>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Song Qiang <songqiang1304521@gmail.com>, Crt Mori <cmo@melexis.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Karol Gugala <kgugala@antmicro.com>,
+	Mateusz Holenko <mholenko@antmicro.com>,
+	Gabriel Somlo <gsomlo@gmail.com>, Joel Stanley <joel@jms.id.au>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Han Xu <han.xu@nxp.com>, Haibo Chen <haibo.chen@nxp.com>,
+	Yogesh Gaur <yogeshgaur.83@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, kernel@axis.com,
+	linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
+	linux-mmc@vger.kernel.org, imx@lists.linux.dev,
+	netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-spi@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH] Remove error prints for devm_add_action_or_reset()
+Message-ID: <aGQL72Ssa4RHShIp@geday>
+References: <pnd7c0s6ji2.fsf@axis.com>
+ <aGP92Aqcxt-x78nu@geday>
+ <pndsejf6g5k.fsf@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250627115753.2246881-5-p-bhagat@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <pndsejf6g5k.fsf@axis.com>
 
-On June 27, 2025 thus sayeth Paresh Bhagat:
-> AM62D-EVM evaluation module (EVM) is a low-cost expandable platform board
-> designed for AM62D2 SoC from TI. It supports the following interfaces:
+On Tue, Jul 01, 2025 at 06:15:51PM +0200, Waqar Hameed wrote:
+> On Tue, Jul 01, 2025 at 12:25 -0300 Geraldo Nascimento <geraldogabriel@gmail.com> wrote:
 > 
-> * 4 GB LPDDR4 RAM
-> * x2 Gigabit Ethernet expansion connectors
-> * x4 3.5mm TRS Audio Jack Line In
-> * x4 3.5mm TRS Audio Jack Line Out
-> * x2 Audio expansion connectors
-> * x1 Type-A USB 2.0, x1 Type-C dual-role device (DRD) USB 2.0
-> * x1 UHS-1 capable micro SD card slot
-> * 32 GB eMMC Flash
-> * 512 Mb OSPI NOR flash
-> * x4 UARTs via USB 2.0-B
-> * XDS110 for onboard JTAG debug using USB
-> * Temperature sensors, user push buttons and LEDs
+> > [Some people who received this message don't often get email from geraldogabriel@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >
+> > On Tue, Jul 01, 2025 at 05:03:33PM +0200, Waqar Hameed wrote:
+> >> When `devm_add_action_or_reset()` fails, it is due to a failed memory
+> >> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
+> >> anything when error is `-ENOMEM`. Therefore, remove the useless call to
+> >> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
+> >> return the value instead.
+> >
+> > Hi Waqar,
+> >
+> > thank you for the patch. However I personally advise you to split the
+> > patches per-file and remember to then precede each individual patch
+> > subject with the proper subsystem and driver touched.
+> >
+> > While this looks like a nit-pick, it really isn't, and my suggestion
+> > will make reviewing much more easier and you'll get your Reviewed-by's
+> > and Acked-by's much more smoothly.
+> >
+> > The cover-letter should probably be preceded by "treewide" instead of
+> > a specific subsystem.
 > 
-> Although AM62D2 and AM62A7 differ in peripheral capabilities example
-> multimedia, VPAC, and display subsystems, the core architecture remains
-> same. To reduce duplication, AM62D support reuses the AM62A dtsi and the
-> necessary overrides will be handled in SOC specific dtsi file and a
-> board specific dts.
-> 
-> Add basic support for AM62D2-EVM.
-> 
-> Schematics Link - https://www.ti.com/lit/zip/sprcal5
-> 
-> Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
->  arch/arm64/boot/dts/ti/Makefile          |   3 +
->  arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 599 +++++++++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-am62d2.dtsi    |  25 +
->  3 files changed, 627 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
->  create mode 100644 arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> 
+> Thank you for the suggestion Geraldo! I will do that (as also answered
+> to David).
 
-...
+You're welcome Waqar! Note that David's suggestion is even smarter than
+mine: instead of patch-bombing lots of maintainers with changes unrelated
+to their subsystems through a treewide change, he suggests you split the
+patch into one series per subsystem. This is indeed advisable.
 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62d2.dtsi 
-> b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> new file mode 100644
-> index 000000000000..70aeb40872a9
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-am62d2.dtsi
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Device Tree Source for AM62D2 SoC family in Quad core configuration
-> + *
-> + * TRM: https://www.ti.com/lit/pdf/sprujd4
-> + *
-> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "k3-am62a7.dtsi"
-
-If we want to reuse the AM62A chassis I think we should probably reused 
-the AM62AX_IOPAD() macro instead of creating a new one.
-
-> +
-> +/ {
-> +	model = "Texas Instruments K3 AM62D SoC";
-> +	compatible = "ti,am62d2";
-> +};
-> +
-> +&vpu {
-> +	status = "disabled";
-> +};
-> +
-> +&e5010 {
-> +	status = "disabled";
-> +};
-
-So I could be a little out of date on the style guidelines here, but my 
-intuition is device trees, much like real trees, can only grow, so we 
-can't inherit the am62a.dtsi and remove things.
-
-My understanding is we have to create a full am62d.dtsi with its 
-features that the am62a.dtsi can extend with the vpu{} and e5010{} nodes
-
-~Bryan
+Thanks,
+Geraldo Nascimento
 
