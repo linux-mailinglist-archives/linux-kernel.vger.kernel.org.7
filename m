@@ -1,48 +1,51 @@
-Return-Path: <linux-kernel+bounces-711498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FDBAEFB6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:01:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE19AEFB82
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790CA1BC7DDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E11D3AF5D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8947827E7DA;
-	Tue,  1 Jul 2025 13:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB09827F011;
+	Tue,  1 Jul 2025 13:57:07 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B719827CCE7;
-	Tue,  1 Jul 2025 13:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63827EC73
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378225; cv=none; b=USA1a+dpC9l+zBUvgc8+3MORFNgG96aKWKFkzw9Swbwj1Ltxvp5pk6vxOZ8HeRIT9BEfcG64cACVTbWOYYg5YQ9yEaDmEWDyG7yqVucijKPy2fenI2v33U5O30fYlG7RyNX60nBPTLESrge9A0uE69tzLtMH+OkkzTgcpJ3rBM8=
+	t=1751378227; cv=none; b=KJR+PNZNfq0UYAwYP+H5lw31mOOQeQwIk++Fzyd17+AfhblBrwt50WLT554uqS4CjXsVhqL3pUmCEWN/l3qfRdNcbrWN9x/lfqy9Qp3wvNPg4lnv2iTgmkd+Dx0g9ISdLfsSjvqpnJ3SK6LgSOqbN02DEpsl0Kd/uU6x4daFO18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378225; c=relaxed/simple;
-	bh=d4Nv715iVso4a24D+ONygCJMrkBaGt6upCgmBSm/1jI=;
+	s=arc-20240116; t=1751378227; c=relaxed/simple;
+	bh=oJJGSSQc4j6H3A33cfZyxTTalHG3CGfOj84UsBWoA4Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E7He0mW6u4X4mvkAZGblPpAJNnZEVIXZKaw3M25+fHNsZujzT12DdB+NG/RKuiYajHom8weU+F16eo9AEQX8amuRbtZS5iOyRj7p7589MCzrEbe2pp57B4XWmXmfYPdSWp+4WaBigtzj/9jt6va5Y3N/+xxyceJ3iDDmUiM5fcs=
+	 MIME-Version; b=YHiIWM0I70wbZgQ5qgOwc79fv1N0VuMJltmrYGbHK2vq3jYIPpcg7E72yWg//ltEs62qwjjU/tQvnBmLwK4UMafGq3wrgytob2juDjLqc/r2vWvwJ9UvD6zNvj9W89s49cJmuKkBqkabpBXsy1iE9RvA/hKQEhMr26Ym6DApwyg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FB5B2F28;
-	Tue,  1 Jul 2025 06:56:48 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EB432F60;
+	Tue,  1 Jul 2025 06:56:50 -0700 (PDT)
 Received: from e133380.cambridge.arm.com (e133380.arm.com [10.1.197.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 195AA3F58B;
-	Tue,  1 Jul 2025 06:57:01 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B13FC3F58B;
+	Tue,  1 Jul 2025 06:57:03 -0700 (PDT)
 From: Dave Martin <Dave.Martin@arm.com>
 To: linux-kernel@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	Oleg Nesterov <oleg@redhat.com>,
 	Kees Cook <kees@kernel.org>,
 	Akihiko Odaki <akihiko.odaki@daynix.com>,
-	sparclinux@vger.kernel.org
-Subject: [PATCH 19/23] sparc: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
-Date: Tue,  1 Jul 2025 14:56:12 +0100
-Message-Id: <20250701135616.29630-20-Dave.Martin@arm.com>
+	x86@kernel.org
+Subject: [PATCH 20/23] x86/ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+Date: Tue,  1 Jul 2025 14:56:13 +0100
+Message-Id: <20250701135616.29630-21-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250701135616.29630-1-Dave.Martin@arm.com>
 References: <20250701135616.29630-1-Dave.Martin@arm.com>
@@ -58,79 +61,122 @@ Instead of having the core code guess the note name for each regset,
 use USER_REGSET_NOTE_TYPE() to pick the correct name from elf.h.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Kees Cook <kees@kernel.org>
 Cc: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: sparclinux@vger.kernel.org
+Cc: x86@kernel.org
 ---
- arch/sparc/kernel/ptrace_32.c | 4 ++--
- arch/sparc/kernel/ptrace_64.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/ptrace.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/sparc/kernel/ptrace_32.c b/arch/sparc/kernel/ptrace_32.c
-index c273ccebea46..c56333975fb1 100644
---- a/arch/sparc/kernel/ptrace_32.c
-+++ b/arch/sparc/kernel/ptrace_32.c
-@@ -218,7 +218,7 @@ static const struct user_regset sparc32_regsets[] = {
- 	 *	PSR, PC, nPC, Y, WIM, TBR
- 	 */
- 	[REGSET_GENERAL] = {
--		.core_note_type = NT_PRSTATUS,
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index 095f04bdabdc..3dcadc13f09a 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -1236,7 +1236,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
+ 
+ static struct user_regset x86_64_regsets[] __ro_after_init = {
+ 	[REGSET64_GENERAL] = {
+-		.core_note_type	= NT_PRSTATUS,
 +		USER_REGSET_NOTE_TYPE(PRSTATUS),
- 		.n = 38,
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.regset_get = genregs32_get, .set = genregs32_set
-@@ -234,7 +234,7 @@ static const struct user_regset sparc32_regsets[] = {
- 	 *	FPU QUEUE (64 32-bit ints)
- 	 */
- 	[REGSET_FP] = {
--		.core_note_type = NT_PRFPREG,
+ 		.n		= sizeof(struct user_regs_struct) / sizeof(long),
+ 		.size		= sizeof(long),
+ 		.align		= sizeof(long),
+@@ -1244,7 +1244,7 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
+ 		.set		= genregs_set
+ 	},
+ 	[REGSET64_FP] = {
+-		.core_note_type	= NT_PRFPREG,
 +		USER_REGSET_NOTE_TYPE(PRFPREG),
- 		.n = 99,
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.regset_get = fpregs32_get, .set = fpregs32_set
-diff --git a/arch/sparc/kernel/ptrace_64.c b/arch/sparc/kernel/ptrace_64.c
-index 4deba5b6eddb..9fc67fa9336f 100644
---- a/arch/sparc/kernel/ptrace_64.c
-+++ b/arch/sparc/kernel/ptrace_64.c
-@@ -420,7 +420,7 @@ static const struct user_regset sparc64_regsets[] = {
- 	 *	TSTATE, TPC, TNPC, Y
- 	 */
- 	[REGSET_GENERAL] = {
--		.core_note_type = NT_PRSTATUS,
+ 		.n		= sizeof(struct fxregs_state) / sizeof(long),
+ 		.size		= sizeof(long),
+ 		.align		= sizeof(long),
+@@ -1253,7 +1253,7 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
+ 		.set		= xfpregs_set
+ 	},
+ 	[REGSET64_XSTATE] = {
+-		.core_note_type	= NT_X86_XSTATE,
++		USER_REGSET_NOTE_TYPE(X86_XSTATE),
+ 		.size		= sizeof(u64),
+ 		.align		= sizeof(u64),
+ 		.active		= xstateregs_active,
+@@ -1261,7 +1261,7 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
+ 		.set		= xstateregs_set
+ 	},
+ 	[REGSET64_IOPERM] = {
+-		.core_note_type	= NT_386_IOPERM,
++		USER_REGSET_NOTE_TYPE(386_IOPERM),
+ 		.n		= IO_BITMAP_LONGS,
+ 		.size		= sizeof(long),
+ 		.align		= sizeof(long),
+@@ -1270,7 +1270,7 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
+ 	},
+ #ifdef CONFIG_X86_USER_SHADOW_STACK
+ 	[REGSET64_SSP] = {
+-		.core_note_type	= NT_X86_SHSTK,
++		USER_REGSET_NOTE_TYPE(X86_SHSTK),
+ 		.n		= 1,
+ 		.size		= sizeof(u64),
+ 		.align		= sizeof(u64),
+@@ -1297,7 +1297,7 @@ static const struct user_regset_view user_x86_64_view = {
+ #if defined CONFIG_X86_32 || defined CONFIG_IA32_EMULATION
+ static struct user_regset x86_32_regsets[] __ro_after_init = {
+ 	[REGSET32_GENERAL] = {
+-		.core_note_type	= NT_PRSTATUS,
 +		USER_REGSET_NOTE_TYPE(PRSTATUS),
- 		.n = 36,
- 		.size = sizeof(u64), .align = sizeof(u64),
- 		.regset_get = genregs64_get, .set = genregs64_set
-@@ -432,7 +432,7 @@ static const struct user_regset sparc64_regsets[] = {
- 	 *	FPRS
- 	 */
- 	[REGSET_FP] = {
--		.core_note_type = NT_PRFPREG,
+ 		.n		= sizeof(struct user_regs_struct32) / sizeof(u32),
+ 		.size		= sizeof(u32),
+ 		.align		= sizeof(u32),
+@@ -1305,7 +1305,7 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
+ 		.set		= genregs32_set
+ 	},
+ 	[REGSET32_FP] = {
+-		.core_note_type	= NT_PRFPREG,
 +		USER_REGSET_NOTE_TYPE(PRFPREG),
- 		.n = 35,
- 		.size = sizeof(u64), .align = sizeof(u64),
- 		.regset_get = fpregs64_get, .set = fpregs64_set
-@@ -750,7 +750,7 @@ static const struct user_regset sparc32_regsets[] = {
- 	 *	PSR, PC, nPC, Y, WIM, TBR
- 	 */
- 	[REGSET_GENERAL] = {
--		.core_note_type = NT_PRSTATUS,
-+		USER_REGSET_NOTE_TYPE(PRSTATUS),
- 		.n = 38,
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.regset_get = genregs32_get, .set = genregs32_set
-@@ -766,7 +766,7 @@ static const struct user_regset sparc32_regsets[] = {
- 	 *	FPU QUEUE (64 32-bit ints)
- 	 */
- 	[REGSET_FP] = {
--		.core_note_type = NT_PRFPREG,
-+		USER_REGSET_NOTE_TYPE(PRFPREG),
- 		.n = 99,
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.regset_get = fpregs32_get, .set = fpregs32_set
+ 		.n		= sizeof(struct user_i387_ia32_struct) / sizeof(u32),
+ 		.size		= sizeof(u32),
+ 		.align		= sizeof(u32),
+@@ -1314,7 +1314,7 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
+ 		.set		= fpregs_set
+ 	},
+ 	[REGSET32_XFP] = {
+-		.core_note_type	= NT_PRXFPREG,
++		USER_REGSET_NOTE_TYPE(PRXFPREG),
+ 		.n		= sizeof(struct fxregs_state) / sizeof(u32),
+ 		.size		= sizeof(u32),
+ 		.align		= sizeof(u32),
+@@ -1323,7 +1323,7 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
+ 		.set		= xfpregs_set
+ 	},
+ 	[REGSET32_XSTATE] = {
+-		.core_note_type	= NT_X86_XSTATE,
++		USER_REGSET_NOTE_TYPE(X86_XSTATE),
+ 		.size		= sizeof(u64),
+ 		.align		= sizeof(u64),
+ 		.active		= xstateregs_active,
+@@ -1331,7 +1331,7 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
+ 		.set		= xstateregs_set
+ 	},
+ 	[REGSET32_TLS] = {
+-		.core_note_type	= NT_386_TLS,
++		USER_REGSET_NOTE_TYPE(386_TLS),
+ 		.n		= GDT_ENTRY_TLS_ENTRIES,
+ 		.bias		= GDT_ENTRY_TLS_MIN,
+ 		.size		= sizeof(struct user_desc),
+@@ -1341,7 +1341,7 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
+ 		.set		= regset_tls_set
+ 	},
+ 	[REGSET32_IOPERM] = {
+-		.core_note_type	= NT_386_IOPERM,
++		USER_REGSET_NOTE_TYPE(386_IOPERM),
+ 		.n		= IO_BITMAP_BYTES / sizeof(u32),
+ 		.size		= sizeof(u32),
+ 		.align		= sizeof(u32),
 -- 
 2.34.1
 
