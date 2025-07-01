@@ -1,194 +1,192 @@
-Return-Path: <linux-kernel+bounces-711180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47259AEF743
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:53:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0419DAEF72A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17B41C0242A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:53:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449DF4A3433
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2B1273D91;
-	Tue,  1 Jul 2025 11:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D5127700A;
+	Tue,  1 Jul 2025 11:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Phee2/pV"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MPBgrhp7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43D32797AF
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FCE275AFF;
+	Tue,  1 Jul 2025 11:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370501; cv=none; b=GTGKIC/EreiTpf6YwwzC64NMqjeHjREyvOk9ND2Xk92n9sz2DE0KNMOzcW9cfHBuM9bfgQWJuioSlcOlsYO5WzVYAAMkSgGoZJ0XYiHeLgJdyRyxzp9DujwXOLoAM+o7qzrdN1lAdsA6t2qSAPVtYQu6GdYGMqd4w88vpoYCzZM=
+	t=1751370487; cv=none; b=q58iSdYDDbyIMD8fNXblHV9uEp+N7xJzijQ50TR81rcTqtqsXv4ZJmEYa+rLgl2/fu7bw7nshh44uNhvW/PoKSpW84+ebaxoYjxOj5/tutfxIgV1akuWokW7XcWq8zmsjsJbWtXhCO8T4KwnP654BSp3fuwDFzmabpEa7WCvOUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370501; c=relaxed/simple;
-	bh=IcMPWNtWz+Yq437eto4KGz4yBcEZPkVOdOxFSJOvbLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ULrafCYrDu4pBxD6HJNuD2diBYfs7k9DgfEfF3rfp6j9VQLHw7NNCwthYa8LXE8ITysIz3yA7DptdcjsH+nAGwHNdNLLotjwZpqXsRJf4Jy3E6AcPhZQJ2JuB7qcwucmjEfduvOJtMp8XN5lxpX3wktoXBpxTT4ltL65Q5hKdf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Phee2/pV; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553ba7f11cbso6547436e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751370497; x=1751975297; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KSVn2mrG7zN+yugOBdym77+gEsZFQXOddpv10aEY7jo=;
-        b=Phee2/pVjtu8knDXoTq8OmkVIeCVsYjZAnC27+3H1AYhu0wR/2lEGDuuAChsfdLvZE
-         +Bb6jW2s6iPyT7/I0E9tEZ08/om/BSIWgCLXwik7QAoA1ReuZECDnS9MipC4t4MMgKgv
-         6354MpRjmKG8wklTq8t+pLZWkd3P7yuq2O3o8TK7kpJzfZ6bU3F45ZkEDAs86pkNfJAt
-         wH+OnmYuSQ4lSMtylZYDetL7YZYQ1BArRLXkSrwKJoMbWRzTr5T/yYsZC8Qz81U3Evp2
-         Oxsu17cZMxYU2GtulFR8wSpcEmi1Rv4JnWIkNVlUhrUJ+LhCfu49Gc6uHC/Q2/AYeeEP
-         iBkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751370497; x=1751975297;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KSVn2mrG7zN+yugOBdym77+gEsZFQXOddpv10aEY7jo=;
-        b=B+QJIFHi3jNBcpkKkQk9cZrUWl1Xx7MewTHP2ZSgnwW2xCVprxYxasecxFjo3pYZZ4
-         xr6aCMbGtW3pvECxaTa8757x6UBhRGjr5zRgiycuL30BhNFBAvBzSBvYWwQWhph6PrxD
-         sU/DJEIEPHNjDuWgBSTtfdl7eQnHdPWDS9snLJxgUh7fCKaIx65W9iC+ITqQx1zXy42I
-         APECoHz0p11JdBPOj9dbEg3KK14d72fKAc4mK2ekyVXlznZJ0Q7q2ECVX2404bWb3uVh
-         qefWekrnZfQD5iT5NtVhyoNy3GOohMwHQH5ILiRjRcjQBwbCk85RKz2Jq22lQ+UOyOAk
-         13Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFquVhRmce4vC76kVyL4zZyvxjbr0r0QoIxLTRckanZzQuHvkQ7c0GbP6ZbguCyn86bf6NmNV1CVHdWUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycTggPPPr25YPfRjwlA6YCYPL+5vqEp5fq2ppkD3jkrAfP0H8x
-	gREdTrGT3S/3YFW4VEKQQSlS8bCUx2T41ElsmKTfxSzdQ25E6iZRx6MbhqT/O4qjUKc=
-X-Gm-Gg: ASbGncucxv91b6SD1v6UnIh9pVOstjm1peiQ2RP+oKixAJvmAaskW74J/p2qBNxsMNj
-	wrWYmcheIjMP93/P2uHuyMv0RVwb9ASJLwdsGLEf3vj3msWzfniidsNbxIbwGUr0SbOrKAglDOM
-	I7LDXbKv9TTwOjcZL0JsUGxpIFrHgnYxvMP5NqrLaUVgpvFYbV3z99QdDaeOzJB+AOuxVgtxohZ
-	WnPu7yOrdsaEJjubFPhEbJp7F1LITMKOUFg65x2RP44sB8CkomW2uOeQFCBzBNfIMiIukcDkpSP
-	xn0bTaXuRvSZf9FROrD4Ni2wVi3KIr8FfTJyv9qkJ/66GgurpxP1FQnE9f2cuDFn2ceADAQQTqd
-	E0R1gCmJVy/A77gfQiegOdAlfqWQESyiIHgHGFX7hIDF1H6E=
-X-Google-Smtp-Source: AGHT+IHDgDRPfHPY98/LHxFMoQy3YVLaarT1QmySpf801TGvHsjckA9nhAnZDzSK8mfVyqtwI0kzDA==
-X-Received: by 2002:a05:6512:159a:b0:553:522f:61bb with SMTP id 2adb3069b0e04-5550b7e7b62mr4991989e87.12.1751370496991;
-        Tue, 01 Jul 2025 04:48:16 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2f162dsm1800592e87.248.2025.07.01.04.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 04:48:16 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Saravana Kannan <saravanak@google.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Peng Fan <peng.fan@oss.nxp.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Johan Hovold <johan@kernel.org>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anup Patel <anup@brainfault.org>,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v3 24/24] cpuidle: riscv-sbi: Drop redundant sync_state support
-Date: Tue,  1 Jul 2025 13:47:26 +0200
-Message-ID: <20250701114733.636510-25-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250701114733.636510-1-ulf.hansson@linaro.org>
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1751370487; c=relaxed/simple;
+	bh=mSARHChrsSkZqv4FL5ywNNlM+mfq9RkAadWkjMMswZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eaFXdoRa9RxudpZLK6Az5uOsrvowsqD5Enak/E6SBF5YTOO0Cu3BCPeM3UtNTVFS9ETAedsPP7zkgU5KzgMWrT1UAouwToZxTO31bisvnykUXit3l7zJHukww2C0lmowSpBAi+G+QznIXEyrr5XyRjsBPWmfabAb3ieUXCCINuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MPBgrhp7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5618lCvZ026544;
+	Tue, 1 Jul 2025 11:47:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rCGpL5WtLCGHD7lGDK/ISop6wOAMqbvqcoNsJwiihW0=; b=MPBgrhp7EkFMuk/i
+	WvA1LuBdxuKhUs5pH0lkPCj+KvzspP8lCVgVeCn0zUo4mgxPfhWYjB9a3U7PAd56
+	Bo1VuKvFgqBOIFWnInNfxIg9/YFOrK8a8V1iiW/dpwciJPdpf6EoiuFPCsNQUZOn
+	/DogWUZySNf+K7FVN0tz7KuTX0fauaLt2fi12l5J7gDWa4hnxeDHTxqjliJ+lBK6
+	gIWHrLPmxm7N762zm9lPUDEOhBf920q8jRjVqHcsNhmyA584VA8+cbuEy+O2idMw
+	Fp7Urk6tyqY+yb+lkX5ZvVWM0qTfgYy6pPfqSzvDt7yT3Ss2LEKMi7BSBiQHBpsT
+	p1HHtw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j9pcrm2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 11:47:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561BlrvZ020980
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Jul 2025 11:47:53 GMT
+Received: from [10.217.222.28] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Jul
+ 2025 04:47:47 -0700
+Message-ID: <2455f20c-130c-4f27-9cf4-6411e485b845@quicinc.com>
+Date: Tue, 1 Jul 2025 17:17:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 08/12] firmware: qcom: tzmem: export shm_bridge
+ create/delete
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Apurupa Pattapu
+	<quic_apurupa@quicinc.com>,
+        Kees Cook <kees@kernel.org>,
+        "Gustavo A. R.
+ Silva" <gustavoars@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+CC: Harshal Dev <quic_hdev@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <linux-doc@vger.kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+References: <20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-0-024e3221b0b9@oss.qualcomm.com>
+ <20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-8-024e3221b0b9@oss.qualcomm.com>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-8-024e3221b0b9@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ztKxMaTHEsgXeingGXCKylzfZjaG2-ty
+X-Proofpoint-ORIG-GUID: ztKxMaTHEsgXeingGXCKylzfZjaG2-ty
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA3MyBTYWx0ZWRfX74DO11z9dMYF
+ 62b2TucWlwr7aP2wLjZ5GJ8VxyRAYqmoReJedk6CNfnGBZJatEM1OJrxmydL4DRvLfDVKk0HSaA
+ glGZa43wXvVkw2RNorrrDsT4ohoJw23givoio+J4JT9e/Hl2q/3PXbKXE+zYKGWyQ4nIZf/gX/x
+ 0ygEgUAUl4FzOcg4AoT3/bKo4Ebv9c//GZKuU6wOBpOmIJ8xM3KNdFtLFJeJVYgtJ/wQHRhXx5t
+ 8smIEsHc/qD5i5mML4oYknS7mIIQko5H7+L0qHY+ISOyaPPxqcBIb2UT8LymslIwxMEQzt9YzTg
+ n4t9AjjbkwFN7EiF6/75yhn9k5v8CoFMGTOfN3Gk1JPh9kXi6WPxG7qRXFFayej7yueJMXnlc23
+ +VdTOVUtCt62g4uAKYeR/hiM109i/duCv/ogYnnAOajxoeL8VSKAQRXcAvhJEhkPTRXvgCNO
+X-Authority-Analysis: v=2.4 cv=QMFoRhLL c=1 sm=1 tr=0 ts=6863caea cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8
+ a=EUspDBNiAAAA:8 a=T2KzT_qPCcxtbzpLTyEA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 bulkscore=0 spamscore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
+ clxscore=1011 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507010073
 
-The recent updates to the genpd core, can entirely manage the sync_state
-support for the cpuidle-riscv-sbi-domain. More precisely, genpd prevents
-our ->power_off() callback from being invoked, until all of our consumers
-are ready for it.
 
-Let's therefore drop the sync_state support for the
-cpuidle-riscv-sbi-domain as it has become redundant.
+On 5/27/2025 12:26 PM, Amirreza Zarrabi wrote:
+> Anyone with access to contiguous physical memory should be able to
+> share memory with QTEE using shm_bridge.
+> 
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> ---
+>  drivers/firmware/qcom/qcom_tzmem.c       | 57 +++++++++++++++++++++++++-------
+>  include/linux/firmware/qcom/qcom_tzmem.h | 15 +++++++++
+>  2 files changed, 60 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+> index 4fe333fd2f07..e9e4f06924ae 100644
+> --- a/drivers/firmware/qcom/qcom_tzmem.c
+> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+> @@ -108,25 +108,61 @@ static int qcom_tzmem_init(void)
+>  	return 0;
+>  }
+>  
+> -static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
+> +/**
+> + * qcom_tzmem_shm_bridge_create() - Create a SHM bridge.
+> + * @paddr: Physical address of the memory to share.
+> + * @size: Size of the memory to share.
+> + * @handle: Handle to the SHM bridge.
+> + *
+> + * On platforms that support SHM bridge, this function creates a SHM bridge
+> + * for the given memory region with QTEE. The handle returned by this function
+> + * must be passed to qcom_tzmem_shm_bridge_delete() to free the SHM bridge.
+> + *
+> + * Return: On success, returns 0; on failure, returns < 0.
+> + */
+> +int qcom_tzmem_shm_bridge_create(phys_addr_t paddr, size_t size, u64 *handle)
+>  {
+>  	u64 pfn_and_ns_perm, ipfn_and_s_perm, size_and_flags;
+> -	int ret;
+>  
+>  	if (!qcom_tzmem_using_shm_bridge)
+>  		return 0;
+>  
+> -	pfn_and_ns_perm = (u64)area->paddr | QCOM_SCM_PERM_RW;
+> -	ipfn_and_s_perm = (u64)area->paddr | QCOM_SCM_PERM_RW;
+> -	size_and_flags = area->size | (1 << QCOM_SHM_BRIDGE_NUM_VM_SHIFT);
+> +	pfn_and_ns_perm = paddr | QCOM_SCM_PERM_RW;
+> +	ipfn_and_s_perm = paddr | QCOM_SCM_PERM_RW;
+> +	size_and_flags = size | (1 << QCOM_SHM_BRIDGE_NUM_VM_SHIFT);
+> +	if (qcom_scm_shm_bridge_create(pfn_and_ns_perm, ipfn_and_s_perm,
+> +				       size_and_flags, QCOM_SCM_VMID_HLOS,
+> +				       handle))
 
-Cc: Anup Patel <anup@brainfault.org>
-Cc: linux-riscv@lists.infradead.org
-Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
-Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/cpuidle/cpuidle-riscv-sbi.c | 22 +---------------------
- 1 file changed, 1 insertion(+), 21 deletions(-)
+Can we add a debug log here to ease debugging in future?
+Something like this can also work.
 
-diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
-index 83d58d00872f..a360bc4d20b7 100644
---- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-+++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-@@ -44,7 +44,6 @@ static DEFINE_PER_CPU_READ_MOSTLY(struct sbi_cpuidle_data, sbi_cpuidle_data);
- static DEFINE_PER_CPU(struct sbi_domain_state, domain_state);
- static bool sbi_cpuidle_use_osi;
- static bool sbi_cpuidle_use_cpuhp;
--static bool sbi_cpuidle_pd_allow_domain_state;
- 
- static inline void sbi_set_domain_state(u32 state)
- {
-@@ -345,20 +344,6 @@ static int sbi_cpuidle_init_cpu(struct device *dev, int cpu)
- 	return ret;
- }
- 
--static void sbi_cpuidle_domain_sync_state(struct device *dev)
--{
--	struct sbi_pd_provider *pd_provider;
--
--	/*
--	 * All devices have now been attached/probed to the PM domain
--	 * topology, hence it's fine to allow domain states to be picked.
--	 */
--	sbi_cpuidle_pd_allow_domain_state = true;
--
--	list_for_each_entry(pd_provider, &sbi_pd_providers, link)
--		of_genpd_sync_state(pd_provider->node);
--}
--
- #ifdef CONFIG_DT_IDLE_GENPD
- 
- static int sbi_cpuidle_pd_power_off(struct generic_pm_domain *pd)
-@@ -369,9 +354,6 @@ static int sbi_cpuidle_pd_power_off(struct generic_pm_domain *pd)
- 	if (!state->data)
- 		return 0;
- 
--	if (!sbi_cpuidle_pd_allow_domain_state)
--		return -EBUSY;
--
- 	/* OSI mode is enabled, set the corresponding domain state. */
- 	pd_state = state->data;
- 	sbi_set_domain_state(*pd_state);
-@@ -401,8 +383,7 @@ static int sbi_pd_init(struct device_node *np)
- 	if (!pd_provider)
- 		goto free_pd;
- 
--	pd->flags |= GENPD_FLAG_IRQ_SAFE | GENPD_FLAG_CPU_DOMAIN |
--		     GENPD_FLAG_NO_SYNC_STATE;
-+	pd->flags |= GENPD_FLAG_IRQ_SAFE | GENPD_FLAG_CPU_DOMAIN;
- 
- 	/* Allow power off when OSI is available. */
- 	if (sbi_cpuidle_use_osi)
-@@ -570,7 +551,6 @@ static struct platform_driver sbi_cpuidle_driver = {
- 	.probe = sbi_cpuidle_probe,
- 	.driver = {
- 		.name = "sbi-cpuidle",
--		.sync_state = sbi_cpuidle_domain_sync_state,
- 	},
- };
- 
+pr_err("Shm bridge creation failed, ret: %d, NS PA|Perm: 0x%llx,
+size|flags: 0x%llx\n", ret, pfn_and_ns_perm_flags, size_and_flags);
+
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_tzmem_shm_bridge_create);
+
 -- 
-2.43.0
+Regards
+Kuldeep
 
 
