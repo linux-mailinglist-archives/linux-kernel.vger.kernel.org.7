@@ -1,139 +1,233 @@
-Return-Path: <linux-kernel+bounces-710633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D0AAEEF04
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:42:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97084AEEF07
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F22C87AE6F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25A116DC72
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AD625BF1C;
-	Tue,  1 Jul 2025 06:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1203025B1FC;
+	Tue,  1 Jul 2025 06:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tet3ugo9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iiyRng5t"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F61826AD9
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 06:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4313248F42
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 06:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751352140; cv=none; b=O+nu+h/aSNC6EenhIfUZatFuKd/joQ7vA99leXP2mKaci/HWk4M1d0fOCYdsd9W+mSFGO6J9IjukbKY07MOu2tnMRuEW119kgsPMDwSahfhgUnKnaaRJKR+v+BaD/i8LpHkFtTpxwwD0wbGrYvz8mB5PS3vrbqQGkPRq7h/cM24=
+	t=1751352164; cv=none; b=cNI78enbyKH+ICHB7Msqc0fXeO6+lc+rbiSYZLHG4XPpdA2Jx651AvrqSe72sZn2cE9uSYWMuUC4qqsXORmzvQKePL0WnCt5h6beNuPxgIGv6AEYat3v+7ZFWKnehP/spcYIUzcbLfCFVhxZXBDoZQdsRptI7SnpdLI1fk3pyg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751352140; c=relaxed/simple;
-	bh=K3Al7D1G7wePfIr0haOB5cZ0BREvvGzr3BvThBzFKuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZcwrlorWBELqVmL6LbmvfheFNY92SE/770SiLRkbGte+1PKv8H63cFwms+iXAOOBAe7QyotVh+d8UkC/b5ybx33+4vhn1hlKX/MnG5+oSlLp68QCfi9WTTvC3wrPyXeK2WXq3yDZQotXVrPQFJwiiIgCCtIdRyVLfdSFLEkMJ50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tet3ugo9; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1751352164; c=relaxed/simple;
+	bh=Pn7B9GeTDeFtWMYue92MhPEUhquMznz1o4o0hmqyizs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpBfg4HQW8EgPcuEjg87ZhtQ2MC9KUuEZwsv1vepqTRySdoscJK9ZXTxXarnM28U3BOkwYVscfljrvMi0nSLnrF0gXInic3OxYk+jir5TWLzLvSWBpFKmeAZCodeIACtvDPrjRISDUi4m08RGOo/6ienivKxixYY9PtJTOVdSYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iiyRng5t; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751352138;
+	s=mimecast20190719; t=1751352161;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nh2uVd7pRoUTCK6irPkfWlzRluxl2PTNeAPLCnx0f8I=;
-	b=Tet3ugo9UlS1WJGm4LsW3g+HFDbcQpOWxsHKguD91f7ASiluLY04umERmV9EeOLxVpQQ9q
-	R20u0dLQFiDxyRDoORk39PbYEGf669nP18Om3HYYNwXW6MGyezu3kvFy8hc8akPJCTdp8d
-	O17Jh9g82wSH5UREIAbx2a+ppxWBzjQ=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=nt9aO5ssi1t8CygdESv19zrIGluhJLXZKgDo3123Dfc=;
+	b=iiyRng5trUcW8RWHN6tpWshmYRxAyNnMxT3E1aGyFpEbmpG/aReeo6rsEU3Wf2K2Cdloub
+	CzclQRQB5jA/VM3xyjENdJ0VBce7WfhxWLOsyy9QNyyZfMJ8bVPXLXAwWlhvfxgPMHXJUm
+	czKZvnvdh4ilvceIgDhCga3M7XAx8GI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-403-8NKMPyC1OrGJR3TZfkbtGQ-1; Tue, 01 Jul 2025 02:42:17 -0400
-X-MC-Unique: 8NKMPyC1OrGJR3TZfkbtGQ-1
-X-Mimecast-MFC-AGG-ID: 8NKMPyC1OrGJR3TZfkbtGQ_1751352136
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2354ba59eb6so48933335ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 23:42:17 -0700 (PDT)
+ us-mta-315-Q1H7vQ0lNjuA5A1_S3zCaQ-1; Tue, 01 Jul 2025 02:42:40 -0400
+X-MC-Unique: Q1H7vQ0lNjuA5A1_S3zCaQ-1
+X-Mimecast-MFC-AGG-ID: Q1H7vQ0lNjuA5A1_S3zCaQ_1751352159
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a4f6ff23ccso3498723f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 23:42:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751352134; x=1751956934;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nh2uVd7pRoUTCK6irPkfWlzRluxl2PTNeAPLCnx0f8I=;
-        b=btiIf7x61z4wUc28ijZie0F8qUP7GVgNWVSKwLMuIHQEGilDeePRG7WsfYkmYhNtUq
-         6JEtXlmlsX7hmsWTZM33VHVK26Ug9w9OMnIBBpk8VaEvsJGvD0npbLEi6Iz0uyx4yo4W
-         JXAr7+tt5zxnXy3GGHWiKl2VzXtq7sxJYIsCTJvdcB+OzVoJVY3RXyj422cjeRvC6Koz
-         XKmKupcPRFCQSLfBu4XNDcKGK1CJSxNBJZJ5KPybVYmxh3mBxoofcy09FrUFDnWZlDde
-         ck6znFrvXqgZtKISil/7Czkr7oLW64qaTcMuTYyleMKTLJTNKhywbzQ/F+HqfSshPOAv
-         Jnfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQhljdUeHUVSU1ykZ0AYS+YLXp9zky7S+oqF6wMgPq+Ro/iaCiWEwzkHf+fljiBPhBwdgwaLXR/x/KPSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiDRh1qrcMVGKEwAlohgB/W7Jp3v4JaV5LSbLDV8NMQkvvf935
-	bFb7wMyFdstn0XrD1WRqBifCtFIK7y9se7EdNSuPajjWQl1TRJehXAeroZMXY3aKuzvZesS5sGp
-	WAZ1Pt8a6sNCf380l6KVx4PleZ1DDbu/RspkJzRS36ZkCpmpWbeIQoAcdbnccOTgTEyfNX4+Avy
-	pS
-X-Gm-Gg: ASbGncv+RYMZkPSYNhlum4lhsFlwGtsKwsyGdDfHQPNpCC2QJRBxSKjKohNcLtNGIMt
-	s2OVHYRtNDaVgUn7z0mBSXxgm/922QWNOrQtHSd23AkaT8Gk070xxvfwPUMLqgRnybr7g2YxizR
-	N8IrQud877w3F/NbRQ6zem7o5DgY0NCjb6WkXbFI1ql1mTSuPuiO/alUHkjVFJZv6YSgfemsnpx
-	yPZ+e4hjuN0lrq7hTyhzqahzfJuNjF8IzAQbWrrItXVzTAMZojN5dB0Ode2eNY5Gi3KZQ4aQ4yj
-	83OVRmR/6yf++zVzXlGw82WWhO4UmSueeQYEut/dlsj5TfUvJ4BLIpS7ZOfShA==
-X-Received: by 2002:a17:903:1aab:b0:235:eefe:68f4 with SMTP id d9443c01a7336-23ac46066bcmr278419875ad.29.1751352134047;
-        Mon, 30 Jun 2025 23:42:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHl2aE+m8eiWUtPLXKvS7q68VAQ4UGGYsv/Yl574znsMqgsWf8nwxSoY/4U5XcisW0xX3aQWQ==
-X-Received: by 2002:a17:903:1aab:b0:235:eefe:68f4 with SMTP id d9443c01a7336-23ac46066bcmr278419475ad.29.1751352133719;
-        Mon, 30 Jun 2025 23:42:13 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3c689bsm97301335ad.224.2025.06.30.23.42.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Jun 2025 23:42:10 -0700 (PDT)
-Message-ID: <5d520f90-f49d-4926-bc04-80979531aa11@redhat.com>
-Date: Tue, 1 Jul 2025 16:42:01 +1000
+        d=1e100.net; s=20230601; t=1751352159; x=1751956959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nt9aO5ssi1t8CygdESv19zrIGluhJLXZKgDo3123Dfc=;
+        b=A5MVNGAjQ5//eJ4dAz0iU8feZMrUuRolBFeFIfmWguyobnhGiKlnwTI2nlkZ9KharM
+         unEx91qhnr2kn/ihmnV7MUwJiTMJYlRpfze8ehTMQ80IkWaCFWuRtDp5B7pwAkk8nwCx
+         ifwWirM8mTYCv4H1F7VOVoSscLy9fqwYVdHhEXUjtSJgc3KdfI5oTeXg9Qh9BTBfJ5LJ
+         Ip5ApvZl7jHqD8NqDRwCarSuKbHCAjcWoAdj8HpKSd/4v6urHqIkXBFfdBEiSNytff2m
+         FPflg2cuFSwfzN6Jgh46SaGWxTuzT6lVg40OmdHoCUbN9Tz7ysKlETu5p8VB0V3D06cT
+         GE2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVyI0aWLjMMec9emyVxn0PnhruAMs4XWSbsWKFos5q+4OgPku0sF/3Wg0QXwPZ8E8ttNHzFzpXs84EbUV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziJfDgi8nRHgYnqPkSY4Pgq/opH0AwJ2Z4eTN411UD2ePMsihO
+	mc1WNGFPZi1pLclH6nRJZUOjbWF+X5i5UyiUBXf0YAL3pz6r12dhZe5/U3bia5BlI2JEo9ATbUv
+	YWs3XjUyq++ae3KlINxDllziMcXffGba2okHXMBYlCrw1UFDs5Fy/zla371Z5IIUW6MVn/nQkug
+	==
+X-Gm-Gg: ASbGncvenK+LDDfmXsSmKUm5oWc141xL5K3WNAP6m1+4Ik8WZJCcsN5llzJuSf7gC/S
+	g7KzPue7TgKfLR/2iqrOeqrGRKUPC95T+4RZ12LI38Vxk+4GOoU1nhRBW2q/+TLY53tzWsP5nNF
+	y11ditPu2lG4f9L9V7mQECxg0rssTtqEhmDANyR30D9ktUcMuAWSB8k0t57EOm16UYLwAZA4/LC
+	UGlE3GLyNGTZd5nrN/zkMb+2STfGHUyd5iuutGr60kiPJwr8lkp7a+lu34Q7kw1h72KxUA6DvrK
+	W2h9/ddDDHxIpuOP
+X-Received: by 2002:adf:9ccf:0:b0:3a5:1241:c1a3 with SMTP id ffacd0b85a97d-3a91818ca6cmr9550227f8f.50.1751352159127;
+        Mon, 30 Jun 2025 23:42:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEDjxR68XICmHiVr/QGaYyfS+N2TUgWC0OzSJHuzN9hU5FIv9SmkNToFgbTwtepgk2VkSqSiQ==
+X-Received: by 2002:adf:9ccf:0:b0:3a5:1241:c1a3 with SMTP id ffacd0b85a97d-3a91818ca6cmr9550193f8f.50.1751352158142;
+        Mon, 30 Jun 2025 23:42:38 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152e:1400:856d:9957:3ec3:1ddc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e7481sm12488983f8f.14.2025.06.30.23.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 23:42:37 -0700 (PDT)
+Date: Tue, 1 Jul 2025 02:42:35 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 14/19] virtio_ring: determine descriptor flags at one
+ time
+Message-ID: <20250701023157-mutt-send-email-mst@kernel.org>
+References: <20250616082518.10411-1-jasowang@redhat.com>
+ <20250616082518.10411-15-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 14/43] KVM: arm64: Support timers in realm RECs
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
- Emi Kisanuki <fj0570is@fujitsu.com>
-References: <20250611104844.245235-1-steven.price@arm.com>
- <20250611104844.245235-15-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250611104844.245235-15-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616082518.10411-15-jasowang@redhat.com>
 
-On 6/11/25 8:48 PM, Steven Price wrote:
-> The RMM keeps track of the timer while the realm REC is running, but on
-> exit to the normal world KVM is responsible for handling the timers.
+On Mon, Jun 16, 2025 at 04:25:12PM +0800, Jason Wang wrote:
+> Let's determine the last descriptor by counting the number of sg. This
+> would be consistent with packed virtqueue implementation and ease the
+> future in-order implementation.
 > 
-> The RMM doesn't provide a mechanism to set the counter offset, so don't
-> expose KVM_CAP_COUNTER_OFFSET for a realm VM.
-> 
-> A later patch adds the support for propagating the timer values from the
-> exit data structure and calling kvm_realm_timers_update().
-> 
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 > ---
-> Changes since v7:
->   * Hide KVM_CAP_COUNTER_OFFSET for realm guests.
-> ---
->   arch/arm64/kvm/arch_timer.c  | 48 +++++++++++++++++++++++++++++++++---
->   arch/arm64/kvm/arm.c         |  2 +-
->   include/kvm/arm_arch_timer.h |  2 ++
->   3 files changed, 47 insertions(+), 5 deletions(-)
+>  drivers/virtio/virtio_ring.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
 > 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index af32d1a1a1db..d5e4d4cd2487 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -570,7 +570,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+>  	struct vring_desc_extra *extra;
+>  	struct scatterlist *sg;
+>  	struct vring_desc *desc;
+> -	unsigned int i, n, avail, descs_used, prev, err_idx;
+> +	unsigned int i, n, c, avail, descs_used, err_idx;
+>  	int head;
+>  	bool indirect;
+>  
+> @@ -626,46 +626,47 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+>  		return -ENOSPC;
+>  	}
+>  
+> +	c = 0;
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+initialize at point of declaration?
+
+>  	for (n = 0; n < out_sgs; n++) {
+> +		sg = sgs[n];
+>  		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+>  			dma_addr_t addr;
+>  			u32 len;
+> +			u16 flags = 0;
+>  
+>  			if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr, &len, premapped))
+>  				goto unmap_release;
+>  
+> -			prev = i;
+> +			if (++c != total_sg)
+> +				flags = VRING_DESC_F_NEXT;
+> +
+
+Don't like it how the logic is split.
+flags isn't used before that.
+So I prefer:
+
+	flags = ++c == total_sg ? 0 : VRING_DESC_F_NEXT;
+
+and at that point, we do not really need flags anymore:
+
+
+>  			/* Note that we trust indirect descriptor
+>  			 * table since it use stream DMA mapping.
+>  			 */
+>  			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+> -						     VRING_DESC_F_NEXT,
+> +						     flags,
+
+So just:
+
+
+	i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+				     ++c == total_sg ? 0 : VRING_DESC_F_NEXT,
+
+here and we are done.
+
+
+>  						     premapped);
+>  		}
+>  	}
+>  	for (; n < (out_sgs + in_sgs); n++) {
+>  		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> +			u16 flags = VRING_DESC_F_WRITE;
+>  			dma_addr_t addr;
+>  			u32 len;
+>  
+>  			if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &addr, &len, premapped))
+>  				goto unmap_release;
+>  
+> -			prev = i;
+> +			if (++c != total_sg)
+> +				flags |= VRING_DESC_F_NEXT;
+> +
+
+Don't like it that above it's "=" here it is "|=".
+And flags isn't used before that.
+So I prefer:
+
+	flags = ++c == total_sg ? VRING_DESC_F_WRITE : VRING_DESC_F_WRITE | VRING_DESC_F_NEXT;
+
+and again we don't really need the variable:
+
+
+>  			/* Note that we trust indirect descriptor
+>  			 * table since it use stream DMA mapping.
+>  			 */
+>  			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+> -						     VRING_DESC_F_NEXT |
+> -						     VRING_DESC_F_WRITE,
+
+
+so just:
+
+		i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+					     (++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
+					     VRING_DESC_F_WRITE,
+
+
+is clearer, and the patch smaller.
+
+
+
+> -						     premapped);
+> +						     flags, premapped);
+>  		}
+>  	}
+> -	/* Last one doesn't continue. */
+> -	desc[prev].flags &= cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_NEXT);
+> -	if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
+> -		vq->split.desc_extra[prev & (vq->split.vring.num - 1)].flags &=
+> -			~VRING_DESC_F_NEXT;
+>  
+>  	if (indirect) {
+>  		/* Now that the indirect table is filled in, map it. */
+> -- 
+> 2.34.1
 
 
