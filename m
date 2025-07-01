@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-711110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1E9AEF649
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E506AEF627
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409313AB0CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B625F1688BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C55D257451;
-	Tue,  1 Jul 2025 11:15:54 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE5126E703;
+	Tue,  1 Jul 2025 11:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QIonUO9G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F74A8821;
-	Tue,  1 Jul 2025 11:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0076130A73
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751368553; cv=none; b=aElERXsC9AToqVQP8y4Gs5EGTKFRXPJrYRSIy/jFpZ64A9V+MpHNvHUXW6p3NBziV3qMpbInJAQW8B++BQLO0OPSyn2LsrVktikwUvQG5e5awU/V60H/gKyC4HWhBeJoqHe/66Pd78WJmR9B3hSz/mE0F7z/vTS2+3Vcazu0feQ=
+	t=1751368187; cv=none; b=A6BT7RSYvJ2dcLcT9jnxq4fekTVBk60PEjxBCtKoz43Fuid217rG2YeRvDwF9CRljRD1g4gyz94uWc22KPYMKFytliZFBoHoD/2YRVDHbjXs50yW6UzT0bA88rP/0DNNcRZOhiOVauAvinZ6s/68p3auv0zHOr5TVR64fvM+cL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751368553; c=relaxed/simple;
-	bh=sIHLF/03qzznOY1kF3mGCrsDOoVA3PeIx2kY/q8U6zE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k5rMu9JAb6QCta5tYfJolPL3tPXVKqKjg0BalOHjy0kS/Jei2J7rsp0V7kEodbjBPJIUxy9VkVPXrV8fyM5Sq7ZCED69LxGUnkkfbgu6204CTDK/RZ0gt/1Nd4zsncreCOvR6AurNMCIObk5w9/gBu60MHwjrJdZJVYkC6gPWyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bWgSH5QX1zKHMtp;
-	Tue,  1 Jul 2025 19:15:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 295331A0F0F;
-	Tue,  1 Jul 2025 19:15:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgBnxyRcw2NouS89AQ--.19855S4;
-	Tue, 01 Jul 2025 19:15:41 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH RFC] mm/readahead: improve randread performance with readahead disabled
-Date: Tue,  1 Jul 2025 19:08:34 +0800
-Message-Id: <20250701110834.3237307-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1751368187; c=relaxed/simple;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=FR2rlFrgov32tUse7Ibl41/CsmsR4Fl/TQ8C4abtooLalmpteJ2rmqTCnZAcatuDha2VwDY15XZOia5VJnzOZuOBOsBZvmXBIyGaIPGRkYNQiopKc3Y2YEbxNnO3XYVYy6SdG9Y/4gPgrzX7CaHyO11VaeAzf0jKGDn/JASM0hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QIonUO9G; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751368184;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	b=QIonUO9GJqbKpSMj960yJ7u7lWF6JSmKXU80WxnHBa1PUTZJTqbzRzXJ4ECFQIySrqVbRG
+	wtMfIp0EJe1oYIaUyAbQx08/+MD8kThW62rjw2L+auPV4SOeO87G3J57PcNKqSqvoQ+HzS
+	VKC4NCdpCu1FNVvg8QRR4vHaYFImZzQ=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-463-8PFFoPqVMQKjsK45jSWZFw-1; Tue, 01 Jul 2025 07:09:43 -0400
+X-MC-Unique: 8PFFoPqVMQKjsK45jSWZFw-1
+X-Mimecast-MFC-AGG-ID: 8PFFoPqVMQKjsK45jSWZFw_1751368183
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fb4eed1914so77651496d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:09:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751368182; x=1751972982;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=d4qFGXZ+l89S1Xu+8GzbSa4nlr/SO2PH9BECx6iucgR4TM8FEmPdvRyUCBpPWoEL7O
+         U5G1WGfyX1xuv+l/YMyJtjFgPmHC6Ln2EUiYkp4B+AzgJd9OklhxbIXGwh7W6lPshMll
+         WLTaAOnWt4Mrd4K4taI3uCK4Cj+SDvaHvt4s+zX4rs8L6Yst3I4pjvzLI+pCiLRJ+Ayf
+         ykyXF6hLGn6divW0x6vMPbEELxO2i1pLS3us9dQgzx8BEBABOfwpgGxrRnUKHafQCthN
+         tfqR+eGW/LjnGwCmA+s4sbPDUq68JMV3rG9bc5iNCc57waubefHoW2jpuamEwzfWxRew
+         4Pdw==
+X-Gm-Message-State: AOJu0YyYI5zPHrnFRFrPEYGXmDWp0Guf5akcP5hjVX4OlBxeLJMHMAJN
+	gKtbAQHIUBnRKXiaxYhYjURacI+e3Mls1FPlCBdlvB9uJzmRCfvkJ4rocMGPZP4v3WZSuFxZs1U
+	40aVAjw50wVya6di15CsfkZ1XvGo8bMNfSp7fOzFtZ4G2ZFPpS6HRSIcXaVt1LAeLlI/gh/hcwl
+	Ry3I2Ech2iQ5V6ZU9P56Z0nrxRrxxamjMrTZmG62j8r18FGCE=
+X-Gm-Gg: ASbGncu+S7khAa/utvprA5TcU/aL9F6xVY6x6fnmOXywu117hRuiTlDuREtztwzO4g1
+	AJIAa4iEr5/BjxGToXf1AkXQmwMN92gvkHgh+CbqkAKBGDLMX/03aqFs4w2bC442yftyIROhFOr
+	yQo+iXJWg1sGICfEjkjb6LH2DXr/5JQoyotzsq51pS3dsSCUBCL7eKuiHATjZglVp8leX7VmDBo
+	7ZbsQozHgZ4Gta7Z2tTRilQb9FFwDjCjf0Q8HsJZaRdasUJAMdapy7meUwAf3zZIIOK4u3xStQn
+	WNzv1zvTAA1/Szgoo3SxFW3dgwVxhEKnYbK7aspFLocan3XENhuPOO5y2jPJ4kCM3H3z4g==
+X-Received: by 2002:a05:6214:2b0c:b0:6fa:bb74:8d72 with SMTP id 6a1803df08f44-6ffed759587mr271562456d6.0.1751368182252;
+        Tue, 01 Jul 2025 04:09:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHwmXfi/7hKHG19msH883lzOSK23pI+wqCzcfBmVTXHnBl25IbWVzY7wYOl/lEW+4bA1gxkA==
+X-Received: by 2002:a05:6214:2b0c:b0:6fa:bb74:8d72 with SMTP id 6a1803df08f44-6ffed759587mr271562026d6.0.1751368181819;
+        Tue, 01 Jul 2025 04:09:41 -0700 (PDT)
+Received: from ?IPV6:2603:6000:d605:db00:2067:3372:85b3:36fe? ([2603:6000:d605:db00:2067:3372:85b3:36fe])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd771ab9d6sm83228556d6.28.2025.07.01.04.09.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 04:09:41 -0700 (PDT)
+Message-ID: <d9f2e0ac-1e13-4c14-bb8c-fd3715d15657@redhat.com>
+Date: Tue, 1 Jul 2025 07:09:40 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgBnxyRcw2NouS89AQ--.19855S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4rWF18CrykCF47CFyUJrb_yoW8CF1fpr
-	W3CF4xtr18XryrZrWxJa4UXr4fKFs3ZF4fJFy3J345Aw13Gr4akr97Xw4UuFW0yr1xXay2
-	9r4DZF9xZr4jvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
-
-From: Yu Kuai <yukuai3@huawei.com>
-
-We have a workload of random 4k-128k read on a HDD, from iostat we observed
-that average request size is 256k+ and bandwidth is 100MB+, this is because
-readahead waste lots of disk bandwidth. Hence we disable readahead and
-performance from user side is indeed much better(2x+), however, from
-iostat we observed request size is just 4k and bandwidth is just around
-40MB.
-
-Then we do a simple dd test and found out if readahead is disabled,
-page_cache_sync_ra() will force to read one page at a time, and this
-really doesn't make sense because we can just issue user requested size
-request to disk.
-
-Fix this problem by removing the limit to read one page at a time from
-page_cache_sync_ra(), this way the random read workload can get better
-performance with readahead disabled.
-
-PS: I'm not sure if I miss anything, so this version is RFC
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- mm/readahead.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 20d36d6b055e..1df85ccba575 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -561,13 +561,21 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	 * Even if readahead is disabled, issue this request as readahead
- 	 * as we'll need it to satisfy the requested range. The forced
- 	 * readahead will do the right thing and limit the read to just the
--	 * requested range, which we'll set to 1 page for this case.
-+	 * requested range.
- 	 */
--	if (!ra->ra_pages || blk_cgroup_congested()) {
-+	if (blk_cgroup_congested()) {
- 		if (!ractl->file)
- 			return;
-+		/*
-+		 * If the cgroup is congested, ensure to do at least 1 page of
-+		 * readahead to make progress on the read.
-+		 */
- 		req_count = 1;
- 		do_forced_ra = true;
-+	} else if (!ra->ra_pages) {
-+		if (!ractl->file)
-+			return;
-+		do_forced_ra = true;
- 	}
- 
- 	/* be dumb */
--- 
-2.39.2
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-kernel <linux-kernel@vger.kernel.org>
+From: Steve Dickson <steved@redhat.com>
+Subject: unsubscribe
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
