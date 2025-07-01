@@ -1,159 +1,132 @@
-Return-Path: <linux-kernel+bounces-711840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8BE5AF0076
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE74AF0062
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06BD1887DB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A13523E7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB7727EFF1;
-	Tue,  1 Jul 2025 16:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB4D27F178;
+	Tue,  1 Jul 2025 16:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="MIFcsZyi"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9iRQWCy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445F927E079
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298C927EFFC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751388106; cv=none; b=Urbg3hfJ8Xo3lAlQv4dVcb2nYOfYoMAsSKkifl28TJw3AMUeDc9aiJBe1hDxBB9ROgJa3Bx6+hiHu5bJwvoOUnbfeIN+UXQUmO8WL/JL/QlQl7gzh6gpewKKgJV0FFU2t93OxTm5yHr/hUZw3G2GPXYcf/eJCwqJi6LGxNaoZ90=
+	t=1751388136; cv=none; b=DpUYqFB9BXSEWLugo/dK1lK/SkHaVajG+HXbgk0+hRnhi884kkuOGzeCOA/L+bG4JHh9ZKJ/q01q+oZUZSvNi++gxCzzhpzQQA31yci5RSXgh7Spw5CmLewCsrxHDjP+P6+XJlZzhzgAigtTfEOwa5SIP2gTh7oqB2ytI3BV0Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751388106; c=relaxed/simple;
-	bh=IWPGg61zB1oth4kd/0y/wwEehBXGlVgrzvdrkzTEs5A=;
+	s=arc-20240116; t=1751388136; c=relaxed/simple;
+	bh=YuhJGORAh613fAJrS7istVlyL0AiBBpQmS7vJlip+3Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NWOA/h3ZdBcTKmEpbO09oAnuqjNOk28tkwaRA0sBxA8WQQgtklJBOQImG+o8xFsui+bVKqUYeQRx73sfLQMJsCL2+5IXBBjcqztSwJDjq501gGm+zRQmzicDuWkzLz7yWOhXZ6tRdt1odWZLUIhZmhT0pXz4e3spP7RhQutl19k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=MIFcsZyi; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-555024588b1so4075338e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 09:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1751388102; x=1751992902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IWPGg61zB1oth4kd/0y/wwEehBXGlVgrzvdrkzTEs5A=;
-        b=MIFcsZyiAJebptflBYP0VN2SOUilf8saxuKU4To8S160uqUYfQNF0S3O4Bj10naZHP
-         eS3MGX5sJEJ7xLveyJ1GxDpLQu3q0qZ3S1He1kouTwXAdh8drBB/C8xRKY68C8o+Gx9X
-         E5BiynJ5iuB3gdfeygT7oK+1/2GTz/OyOS0/KuwXI71EIhASm9LbVpxmRe4YjVE2Ur4x
-         DzlE4blBaVOFckGhyuDQfX2/WShn9Rzi3NXqUgEFQxQIDEi4XhlivCKCzj/red5J1w8P
-         RDg8LmoMZMfozgkEE4CPE3BN4Oo3Mp3bdpIFxsXtJhOOoa+GitLhso6fDpdILQhYoVR0
-         qDtA==
+	 To:Cc:Content-Type; b=Hpdhh4NOsZBK+6HtvkYAA1RxYVZZ3HFynJhZs9JX3rACgaV0SJHY6kNIdFmkxrK/wH/yW3x96oW8bqNNjTyBMvIrrNuZ4DjEjfnKd9uRKuF/kOB6S978fzM/ewiGqr4XKS3CgZEnPD/mki07e3xUJARha1HGen25BXi/yZrlv0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9iRQWCy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751388134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vw0CeK7q4A0Zgl7Tz8NsidMajuM4JFnR3OqNxAKfMlA=;
+	b=H9iRQWCywV3ERYtOAJLRkgtb7uWbpftzVHib+FlynVsyVFFaYKMbtJWg30Tubfmvq8kne9
+	6PPPX2HtvwcZbfxv9i3SurJUh5MDjjcGLlASeg+PBaokv/rq6VLWKnHIPSI/m5fQbnCbfR
+	S4Ls8e06YguSjlVdKjxbuOpe+QCtsHM=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-0hbRKIGtOnWzAl1mwfoAgg-1; Tue, 01 Jul 2025 12:42:13 -0400
+X-MC-Unique: 0hbRKIGtOnWzAl1mwfoAgg-1
+X-Mimecast-MFC-AGG-ID: 0hbRKIGtOnWzAl1mwfoAgg_1751388132
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-6098216df4eso6066577a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 09:42:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751388102; x=1751992902;
+        d=1e100.net; s=20230601; t=1751388131; x=1751992931;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IWPGg61zB1oth4kd/0y/wwEehBXGlVgrzvdrkzTEs5A=;
-        b=fN6fFBsWh1hBhwnQoyiGI5Z6nLrzX+XgTWYPwkHKid0K2YKssBr8UC3ejFFIiTlcuS
-         pjSLJl5VpbU9+lLF2w133CgP6+DXR3yJelYMcyIZR2bfpcwMaPbxHoWLWULcldyDrZMk
-         a0z1aHZvf7bp84uYYVCUINeu14WsPDsVyInt3UewemnmOxYvthmkQEho+kmcYC9b9Z0K
-         A2hhVbSmztyRaDPKXw1SL//+H4SdIZF3pTctR+vG9W13yzF7+0hFfPLI0Lut2YiRjqaI
-         p0NtUp4+Zd4LaCFCU2whrmz2hqvlyMWlr2HGFS1i8hzdgk165Y7SXjpNQm60U1nwV0sE
-         4etQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXe49/8HkAe4ppFSWFdcM6LbOYBuI6dv5DZiyXEhh1C+XE9/HTUxuyai5NqhGh+5Q2jQ96Hz0qhNGndppE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsvh1YyL3qPHnHFmJGlR1gC07QgFlC8joizABBtotLXuPU4qzL
-	R2YU7lweV8GINPS9wKOqzxxbvYZPN6dtycLkDtCSMi5X3hx+YOgfCpE5aBB0uDTS9tqXmzsmeR4
-	aPlZogvLeKYVos2JCKz0OjxxErMBMKk4EhXt+VbU4Yg==
-X-Gm-Gg: ASbGncvyynFkmdAKZk8xahtDgG21eb8U6yhdzcRzLM40Ry1lz5xHQ+jDXkhodJUBEZX
-	Ik9HMXWu0A4WihuQiaVViY9/KO8yUSBkmhjrqMRbIl7y4PqaOqHOKXXvAxeisi7AT4IZiMl5rI2
-	BI8CdFahBP2huxnwC9x/s9swKH0lUSwsdo1690mD7ZJJLJM7S9cUCEV+hqQNpBZQ==
-X-Google-Smtp-Source: AGHT+IHEq5ypAjgPeGrXgSB+iQb7yMaRQQKfYmf1cOj3A7y4mag1GtbmVbmT4BQ62LbNkTcruSd+EqYyt3TiF72QD1o=
-X-Received: by 2002:a05:6512:4012:b0:553:297b:3d45 with SMTP id
- 2adb3069b0e04-5550b8dd339mr6809093e87.43.1751388102208; Tue, 01 Jul 2025
- 09:41:42 -0700 (PDT)
+        bh=vw0CeK7q4A0Zgl7Tz8NsidMajuM4JFnR3OqNxAKfMlA=;
+        b=U5P1RjS5GGmtuKwKbRah3AX0laQ7YbNbRQc1re1OMX55kddWqQ/GpDiHFZDWj39OXA
+         T3f76+yFZuET3UiH50vZs6kkocMK6rQket1gNxmUgBl4uoO20dblgdMB6BRIusTyDErr
+         GmQoeiXbrpU6I9JxF934aDeS12m7wEugiUA1KyPbQC7qGCJ9ivpTnkF9DIBlbc2pitQh
+         LB84nRjfPy4R614mwQ2wgUpw9/GVyNOb+W8sIsvU2Uxjfg6PF9mbvnGE/IBTXVH438KF
+         I+85zqF8UBKu56vJ89YU2xAucnIgNHDX5oBtfBBJ/881jWlOLpn/UA2mQ+HBE0psR9qu
+         g8yQ==
+X-Gm-Message-State: AOJu0YzcGdAEff06yYDzMmeszJ0tPtyXIU6kz2rRS2kUIHyyDK+RLiNk
+	6zK0Y8nT3sLmmNJSovmPymD9F0yvA3n+HUmPjl+9MnNAe2eR+I1AdkKHjMRLrBsmAg3zCsp3tQ/
+	Zl5nJJ/H6fPMFC6gylDqgsSI/rB5n9DPiZg9x62FLhq0JNy6ihH9vNotUzMoCNop/EiyUGFzMGe
+	vcA9cBAntMMKN/l/B3vXdjlnQGA0btVazmxJDHXaneo0AUweC0
+X-Gm-Gg: ASbGncvwxvFVjcAgV2APJHEKV8+v97esW/s1LfHj0M4Dxe7ouJfNsEb7y5BaFFyk16A
+	jcw4bOaOkAwRpfqPaeQK4JFbze6lK+b7znlZ8nB21LKUfM3CR1ugofYVSJkcvgcG2/dAPygqyCy
+	hGTbM7DUeSOUEgeKJsYz6J2pQ/dzjl05SgMxA=
+X-Received: by 2002:a17:907:7ea6:b0:ae0:b7f6:9d76 with SMTP id a640c23a62f3a-ae3aa343839mr512725166b.28.1751388131581;
+        Tue, 01 Jul 2025 09:42:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7ahuDZJ0hseQj1gt954NIxdhtEGQDH5Fz4VFqVfnIlENRCGL2S9hGGBgO6x8A4Gxv0citTs5mUn7lFMlZsJc=
+X-Received: by 2002:a17:907:7ea6:b0:ae0:b7f6:9d76 with SMTP id
+ a640c23a62f3a-ae3aa343839mr512722466b.28.1751388131125; Tue, 01 Jul 2025
+ 09:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250616095532.47020-1-matt@readmodwrite.com> <CAPhsuW4ie=vvDSc97pk5qH+faoKjz+b51MDYGA3shaJwNd677Q@mail.gmail.com>
- <CAENh_SQPLHC8pswTRoqh0bQR84HHQmnO3bM07UQa1Xu9uY_3WA@mail.gmail.com>
- <CAADnVQ+QyPqi7XJ2p=S9FVDbOxMXvVPU859n+2ApuRQv5T2S5w@mail.gmail.com>
- <CAENh_SQgZ5yVpshKRhiezhGMDAMvgV7SmwD_8u++mACE33oNrg@mail.gmail.com>
- <CAADnVQJgOyBCCySnBkTk-VCsz0dy+ppdGHpggxbtDpBBGhaXVg@mail.gmail.com>
- <CALrw=nFvUwmpjUMYh5iJqjo6SbAO8fZt8pkys7iDjZHfpF2DxQ@mail.gmail.com>
- <CAADnVQLC44+D-FAW=k=iw+RQA057_ohTdwTYePm5PVMY-BEyqw@mail.gmail.com>
- <CAENh_SSduKpUtkW_=L5Gg0PYcgDCpkgX4g+7grm4kxucWmq0Ag@mail.gmail.com>
- <CAADnVQ+_UZ2xUaV-=mb63f+Hy2aVcfC+y9ds1X70tbZhV8W9gw@mail.gmail.com>
- <CAGis_TUNfUOD3+GdbJn1U33W8wW5pWmASxiMa5e5+5-BqJ-PKw@mail.gmail.com> <CAADnVQJp-AtrRj_XESbE5TUj6_dGNDwpRWwu2vEHv1HGOb4Fdw@mail.gmail.com>
-In-Reply-To: <CAADnVQJp-AtrRj_XESbE5TUj6_dGNDwpRWwu2vEHv1HGOb4Fdw@mail.gmail.com>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Tue, 1 Jul 2025 18:41:29 +0200
-X-Gm-Features: Ac12FXyOUK2ie89s6D74HJ8lkPkT67UPAFc_lYbeFJHGKWlptLg9cG1ciKg7zYQ
-Message-ID: <CALrw=nEAXCG6-qWBkPudM-c4pLhZ49jdyDKH5CT=hz9YwgBCBQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf: Call cond_resched() to avoid soft lockup in trie_free()
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Matt Fleming <mfleming@cloudflare.com>, Matt Fleming <matt@readmodwrite.com>, 
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-team <kernel-team@cloudflare.com>, Jesper Dangaard Brouer <hawk@kernel.org>
+References: <20250530200305.85319-2-jsavitz@redhat.com> <CAL1p7m53yJ-dpg6L2QVQM7bshWYXAxOJjrVGdTG8cDMEhNogyA@mail.gmail.com>
+ <CAL1p7m4bK1LA6Atc4P0h_wC1Kb47Vzb93C8tmJtMiEBDLy6yzA@mail.gmail.com>
+In-Reply-To: <CAL1p7m4bK1LA6Atc4P0h_wC1Kb47Vzb93C8tmJtMiEBDLy6yzA@mail.gmail.com>
+From: Joel Savitz <jsavitz@redhat.com>
+Date: Tue, 1 Jul 2025 12:41:54 -0400
+X-Gm-Features: Ac12FXxFhxG4MCSSRZZALRtZQeKbfMMuWT5AGEznjBPbW34aRaCM4ExJFaWdOCs
+Message-ID: <CAL1p7m4PzOvrAT70RVWR-cQ48-h2MZ_nms-SE_GsZ_GLujZXnQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] kernel/nsproxy: Minor nsproxy code simplification
+To: linux-kernel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 1, 2025 at 6:25=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+On Wed, Jun 18, 2025 at 3:49=E2=80=AFPM Joel Savitz <jsavitz@redhat.com> wr=
+ote:
 >
-> On Mon, Jun 30, 2025 at 6:28=E2=80=AFAM Matt Fleming <mfleming@cloudflare=
-.com> wrote:
+> On Mon, Jun 9, 2025 at 10:23=E2=80=AFAM Joel Savitz <jsavitz@redhat.com> =
+wrote:
 > >
-> > On Fri, 27 Jun 2025 at 20:36, Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
+> > On Fri, May 30, 2025 at 4:03=E2=80=AFPM Joel Savitz <jsavitz@redhat.com=
+> wrote:
 > > >
-> > > Good. Now you see my point, right?
-> > > The cond_resched() doesn't fix the issue.
-> > > 1hr to free a trie of 100M elements is horrible.
-> > > Try 100M kmalloc/kfree to see that slab is not the issue.
-> > > trie_free() algorithm is to blame. It doesn't need to start
-> > > from the root for every element. Fix the root cause.
+> > > The first patch removes an unnecessary guard by the same logic as
+> > > commit 5caa2d89b7f1 ("kernel/nsproxy: remove unnecessary guards").
+> > >
+> > > The second patch fixes the total ordering of resource acquisition
+> > > in validate_nsset().
+> > >
+> > > The third patch implements usage of the cleanup helper added by commi=
+t
+> > > d057c108155a ("nsproxy: add a cleanup helper for nsproxy").
+> > >
+> > > Joel Savitz (3):
+> > >   kernel/nsproxy: remove unnecessary guard in validate_nsset()
+> > >   kernel/nsproxy: fix put_*() call ordering in validate_nsset()
+> > >   kernel/nsproxy: utilize cleanup helper for nsproxy references
+> > >
+> > >  kernel/nsproxy.c | 12 +++---------
+> > >  1 file changed, 3 insertions(+), 9 deletions(-)
+> > >
+> > > --
+> > > 2.45.2
+> > >
 > >
-> > It doesn't take an hour to free 100M entries, the table showed it
-> > takes about a minute (67 or 62 seconds).
+> > ping
 >
-> yeah. I misread the numbers.
->
-> > I never claimed that kmalloc/kfree was at fault. I said that the loop
-> > in trie_free() has no preemption, and that's a problem with tries with
-> > millions of entries.
-> >
-> > Of course, rewriting the algorithm used in the lpm trie code would
-> > make this less of an issue. But this would require a major rework.
-> > It's not as simple as improving trie_free() alone. FWIW I tried using
-> > a recursive algorithm in trie_free() and the results are slightly
-> > better, but it still takes multiple seconds to free 10M entries (4.3s)
-> > and under a minute for 100M (56.7s). To fix this properly it's
-> > necessary to use more than two children per node to reduce the height
-> > of the trie.
->
-> What is the height of 100m tree ?
->
-> What kind of "recursive algo" you have in mind?
-> Could you try to keep a stack of nodes visited and once leaf is
-> freed pop a node and continue walking.
-> Then total height won't be a factor.
-> The stack would need to be kmalloc-ed, of course,
-> but still should be faster than walking from the root.
->
-> > And in the meantime, anyone who uses maps with millions
-> > of entries is gonna have the kthread spin in a loop without
-> > preemption.
->
-> Yes, because judging by this thread I don't believe you'll come
-> back and fix it properly.
-> I'd rather have this acute pain bothering somebody to fix it
-> for good instead of papering over.
+> ping 2
 
-I think we need both anyway just for the reason we need something to
-backport to stable. A full re-implementation of trie might be viewed
-as a new feature, but older kernels need to be "fixed" as well.
+ping 3
+
 
