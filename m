@@ -1,118 +1,208 @@
-Return-Path: <linux-kernel+bounces-711471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E3BAEFB38
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B875EAEFB42
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B4C189E6F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB6818910B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52C2749CA;
-	Tue,  1 Jul 2025 13:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5A527585C;
+	Tue,  1 Jul 2025 13:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUKq4jIP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mdMixECc"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046EA2749C9;
-	Tue,  1 Jul 2025 13:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ADF2749CA;
+	Tue,  1 Jul 2025 13:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378062; cv=none; b=r25W0TphJmXjU4ave5X4C33+pTjujXf/4LglDn7J0c5bQkzvT+f9mS49O/SQA3t1zaQYl6qNHiHhL1WPvRG+FxIqH8VwpX6ypBVuOtK5gNoCcFHO0ofcLc0JkCOf2FWkSTkHC7DembXuIxgj81va09/p3bRobFKc3DO2oydBOnU=
+	t=1751378142; cv=none; b=qTsVovkP4+FgUSpiytG87Rgixi6ri3K/GUDAxbz4pRvUS5jXhmGiIt+GJtY1Ooq6Muy6qdsFeOBCZrRwZ4Q3OEtVeOF04xtbJbTiw1hiu5E/1UF3fv+6JEJdTm5OqeW/kY1/NLmEYve8/ndWV8znPQdQ6RrA7RPzbpMFuLSHe+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378062; c=relaxed/simple;
-	bh=Jng3wkmeznNgaZJCbfupk58RsqV3AADGX9KcfOwgqY0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J3Gzjtrwm6a8DKJw9Yn1x+eU8jfWlLivp4E4ANGQs9WTwOTs909z24ZcwgGhri2fIPI2wnNgQt3e4V2Fp64jFAUg9PjQZXees92k41BOqOgBkGHpt6w2R09+EHHa3Ll0YSPPVNBjCVWXVYwHnlEdgRzsQad6U7XPiTRdxiRC4IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uUKq4jIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA55C4CEF3;
-	Tue,  1 Jul 2025 13:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751378061;
-	bh=Jng3wkmeznNgaZJCbfupk58RsqV3AADGX9KcfOwgqY0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uUKq4jIPUxYByK6SlEFyvyt/h0fGGotsrjQ6Q3Xe4WxxwEeNQTBhOVmVeHIXwomb4
-	 Cf/wkVx1zZ6E2MbtfuDxJI9dZK2dzucNRIwix+R17zFavhXsQWYLprFY+/xy1ic/UA
-	 ditp3Bqh2xRhYEJNmEfoZ9jdd7Z1ysUwnpw9RDYkuXkAYveQeJVw+hXO4T297IfE9m
-	 7qlezuIDgzHIHF0zOy1bbu2nmQUzWLWltV+XT5ERreJPYYFObopx6XTZTsldEE+K00
-	 37w0xaDyD0p99AVc8uCWl/+pJ7ia/8ggqYNJ3CcHHgmek+DCJ1723zrRyN7Bqrw8hi
-	 vZn16wYO9hlMw==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6116d9bb6ecso1852018eaf.3;
-        Tue, 01 Jul 2025 06:54:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9rwdMQQo/8e5RYcuIj2Pu/qcS5W8vlt6at0bEpGDf5spu/NxXY8O07O7ohviem7hFZbO4eYskQJdb@vger.kernel.org, AJvYcCXzTQBfvbmbEkrVr3GhRUfKKxFnQMGFX51bT3o8tCQKeqQa24iEZ5CN0CfPVi6KfDk/JUCiptEj0TQB5Rmx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQklBWdd/EVtTTQ+6waF4wlt/oQ4B/bkR6s6MG6GA7nO/Qa1uf
-	MqT78TwO5hxu4anYUOfxQNWCEPWKSo2I7ez1nM/Pj27gRr6xqI8fooclLUxg8YbKXKXgRihN735
-	WQzii0zZrvoGvHQcKtJDOw+oSJ/QObko=
-X-Google-Smtp-Source: AGHT+IF8seE+Id7xG8WQlhFiBqridThxc49oWjknLWJxi/lTNTz9icUtsuqR9A2rhC3Lo+dq/lpP/fUkCq2qp3nRons=
-X-Received: by 2002:a05:6820:994:b0:611:b561:258e with SMTP id
- 006d021491bc7-611b90965aemr11674984eaf.3.1751378060915; Tue, 01 Jul 2025
- 06:54:20 -0700 (PDT)
+	s=arc-20240116; t=1751378142; c=relaxed/simple;
+	bh=j8DqhOjO/y33zK4keb4QH8Ti7vNpk1R1IA2kSO2tRI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g644Ez2tsDvQ4ve9p70PUBnS97sXCY/WIutNmYLPzuECqQtauB35PAzicp+4kd/bTKVtcDeN+fQZFnaxN2Sv9KNABH9+aQ2pEr3g/nwYxqemsEMCDxfex7OIl1jigBGGFqKCSKqat8Kw3urDlCLbUchvrJ5vQJSP6UzJJT53vvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mdMixECc; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=GwNQqB8pBJVwu+Xy+ljesQ25T/+91BIQflo1XREJg40=;
+	b=mdMixECcLagBJQzyNSbxLKjgirGpbSIPT6x2HT/8O2EpMR17+Byz+sqe1JLTY/
+	lAyKizyHyoNHO6ZomxZOwgR0m7sC3MaPg6bzzo5wsuHifiunl0uJc0qhK6mQbKVj
+	FNT0NPsUI02xkLVZyWysdE1D8qNIn5MN7Rv9Ej2+tE2qo=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDnL6eS6GNopYgBAA--.3609S3;
+	Tue, 01 Jul 2025 21:54:28 +0800 (CST)
+Date: Tue, 1 Jul 2025 21:54:26 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Stefano Radaelli <stefano.radaelli21@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	othacehe@gnu.org, andrew@lunn.ch, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3] arm64: dts: freescale: imx93-var-som: update eqos
+ support for MaxLinear PHY
+Message-ID: <aGPokie6sW/FCjWc@dragon>
+References: <20250605085904.12199-1-stefano.radaelli21@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620131309.126555-1-me@linux.beauty> <20250620131309.126555-2-me@linux.beauty>
- <aGPMM9Nw2-99sWRL@arm.com>
-In-Reply-To: <aGPMM9Nw2-99sWRL@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 1 Jul 2025 15:54:09 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h06-uQq57So7GzBMJ48dr42z3hY0EBFHSUmsjsVaUgjw@mail.gmail.com>
-X-Gm-Features: Ac12FXz4Xi7TozQTSvDj_v42bWdO4aRE3ZuU9eQvEt5OUBffGU8gt-jQaTTOshI
-Message-ID: <CAJZ5v0h06-uQq57So7GzBMJ48dr42z3hY0EBFHSUmsjsVaUgjw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ACPI: Return -ENODEV from acpi_parse_spcr() when
- SPCR support is disabled
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Li Chen <me@linux.beauty>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Hanjun Guo <guohanjun@huawei.com>, Will Deacon <will@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Liu Wei <liuwei09@cestc.cn>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250605085904.12199-1-stefano.radaelli21@gmail.com>
+X-CM-TRANSID:Mc8vCgDnL6eS6GNopYgBAA--.3609S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFW3tryfuF4DJF4ruw4Uurg_yoWrKF48pa
+	yfurWIqrZ3t34fK3yxWa13CF1jya15Ar9rur15trW093WxCF9rtr1Skws8Xr4DCrW8Aw13
+	Xryq9F13C3Z293DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYyIUUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNBdSt2hj6JeipQAA31
 
-On Tue, Jul 1, 2025 at 1:53=E2=80=AFPM Catalin Marinas <catalin.marinas@arm=
-.com> wrote:
->
-> On Fri, Jun 20, 2025 at 09:13:07PM +0800, Li Chen wrote:
-> > From: Li Chen <chenl311@chinatelecom.cn>
-> >
-> > If CONFIG_ACPI_SPCR_TABLE is disabled, acpi_parse_spcr()
-> > currently returns 0, which may incorrectly suggest that
-> > SPCR parsing was successful. This patch changes the behavior
-> > to return -ENODEV to clearly indicate that SPCR support
-> > is not available.
-> >
-> > This prepares the codebase for future changes that depend
-> > on acpi_parse_spcr() failure detection, such as suppressing
-> > misleading console messages.
-> >
-> > Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
-> > ---
-> >  include/linux/acpi.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > index f102c0fe34318..71e692f952905 100644
-> > --- a/include/linux/acpi.h
-> > +++ b/include/linux/acpi.h
-> > @@ -1503,7 +1503,7 @@ int acpi_parse_spcr(bool enable_earlycon, bool en=
-able_console);
-> >  #else
-> >  static inline int acpi_parse_spcr(bool enable_earlycon, bool enable_co=
-nsole)
-> >  {
-> > -     return 0;
-> > +     return -ENODEV;
-> >  }
-> >  #endif
->
-> Rafael, are you ok with this patch going via the arm64 tree?
+On Thu, Jun 05, 2025 at 10:59:04AM +0200, Stefano Radaelli wrote:
+> Variscite has updated the Ethernet PHY on the VAR-SOM-MX93 from the
+> ADIN1300BCPZ to the MaxLinear MXL86110, as documented in the
+> August 2023 revision changelog.
+> Link: https://variwiki.com/index.php?title=VAR-SOM-MX93_rev_changelog
+> 
+> Update the device tree accordingly:
+> - Drop the regulator node used to power the previously PHY.
+> - Add support for the reset line using GPIO1_IO07 with proper timings.
+> - Configure the PHY LEDs via the LED subsystem under /sys/class/leds/,
+>   leveraging the support implemented in the mxl86110 PHY driver
+>   (drivers/net/phy/mxl-86110.c).
+>   Two LEDs are defined to match the LED configuration on the Variscite
+>   VAR-SOM Carrier Boards:
+>     * LED@0: Yellow, netdev trigger.
+>     * LED@1: Green, netdev trigger.
+> - Adjust the RGMII clock pad control settings to match the updated PHY
+>   requirements.
+> 
+> These changes ensure proper PHY initialization and LED status indication
+> for the new MaxLinear MXL86110, improving board compatibility with the
+> latest hardware revision.
+> 
+> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
+> ---
+> v3:
+>   - Add "PATCH" to subject line.
+>   - Fix wrong reference to previous PHY in commit message.
+> 
+> v2: https://lore.kernel.org/imx/20250604153510.55689-1-stefano.radaelli21@gmail.com/
+>   - Clarified the use of 'rgmii' mode by adding a comment in the DT,
+>     explaining that hardware delays are already implemented on the SOM PCB.
+> 
+> v1: https://lore.kernel.org/imx/20250603221416.74523-1-stefano.radaelli21@gmail.com/
+> 
+>  .../boot/dts/freescale/imx93-var-som.dtsi     | 45 ++++++++++++-------
+>  1 file changed, 30 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
+> index 783938245e4f..cea8d792328c 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
+> @@ -19,26 +19,19 @@ mmc_pwrseq: mmc-pwrseq {
+>  		reset-gpios = <&gpio4 14 GPIO_ACTIVE_LOW>,	/* WIFI_RESET */
+>  			      <&gpio3 7 GPIO_ACTIVE_LOW>;	/* WIFI_PWR_EN */
+>  	};
+> -
+> -	reg_eqos_phy: regulator-eqos-phy {
+> -		compatible = "regulator-fixed";
+> -		pinctrl-names = "default";
+> -		pinctrl-0 = <&pinctrl_reg_eqos_phy>;
+> -		regulator-name = "eth_phy_pwr";
+> -		regulator-min-microvolt = <3300000>;
+> -		regulator-max-microvolt = <3300000>;
+> -		gpio = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+> -		enable-active-high;
+> -		startup-delay-us = <100000>;
+> -		regulator-always-on;
+> -	};
+>  };
+>  
+>  &eqos {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_eqos>;
+> +	/*
+> +	 * The required RGMII TX and RX 2ns delays are implemented directly
+> +	 * in hardware via passive delay elements on the SOM PCB.
+> +	 * No delay configuration is needed in software via PHY driver.
+> +	 */
+>  	phy-mode = "rgmii";
+>  	phy-handle = <&ethphy0>;
+> +	snps,clk-csr = <5>;
+>  	status = "okay";
+>  
+>  	mdio {
+> @@ -51,6 +44,27 @@ ethphy0: ethernet-phy@0 {
+>  			compatible = "ethernet-phy-ieee802.3-c22";
+>  			reg = <0>;
+>  			eee-broken-1000t;
+> +			reset-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
+> +			reset-assert-us = <10000>;
+> +			reset-deassert-us = <100000>;
 
-Yes, I am, thanks!
+Missing a newline between property list and child node.
+
+I fixed it up and applied the patch.
+
+Shawn
+
+> +			leds {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				led@0 {
+> +					reg = <0>;
+> +					color = <LED_COLOR_ID_YELLOW>;
+> +					function = LED_FUNCTION_LAN;
+> +					linux,default-trigger = "netdev";
+> +				};
+> +
+> +				led@1 {
+> +					reg = <1>;
+> +					color = <LED_COLOR_ID_GREEN>;
+> +					function = LED_FUNCTION_LAN;
+> +					linux,default-trigger = "netdev";
+> +				};
+> +			};
+>  		};
+>  	};
+>  };
+> @@ -75,14 +89,15 @@ MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x57e
+>  			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x57e
+>  			MX93_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2			0x57e
+>  			MX93_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3			0x57e
+> -			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x5fe
+> +			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x58e
+>  			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL		0x57e
+>  			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0			0x57e
+>  			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1			0x57e
+>  			MX93_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2			0x57e
+>  			MX93_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3			0x57e
+> -			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x5fe
+> +			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x58e
+>  			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x57e
+> +			MX93_PAD_UART2_TXD__GPIO1_IO07				0x51e
+>  		>;
+>  	};
+>  
+> 
+> base-commit: a9dfb7db96f7bc1f30feae673aab7fdbfbc94e9c
+> prerequisite-patch-id: 2335ebcc90360b008c840e7edf7e34a595880edf
+> -- 
+> 2.43.0
+> 
+
 
