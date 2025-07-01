@@ -1,168 +1,260 @@
-Return-Path: <linux-kernel+bounces-711972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA88AF02D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:33:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5330DAF02D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559EC1C20367
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:33:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2923E7ADC1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBBE246BAF;
-	Tue,  1 Jul 2025 18:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB546275AE5;
+	Tue,  1 Jul 2025 18:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NCWuiaQe"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LS4YGSf5"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACEA1386B4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 18:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CA41386B4
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 18:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751394777; cv=none; b=ZouToyZii1QMGJDfQBfPmz+GMFPr98JB1eXjF0F2xgeEXysRZNeW1biINBgyAgG1i6QL/FI8kwtvvtcHsKr6NtUNawvnOj19LD5NqXq46Dkdcau43bsMnP7h9aV8ssvx+IeSDU3jUZBNbLydx92S76SgkXtkx6EcF34aTQeLH04=
+	t=1751394946; cv=none; b=W5M12KW2KKk0YRZ1Rm0cXIkYc0t1sMj/D5O9PbszL9IP01CGC+8WB1dxuxjBG+2YaAX3mzaaDJwxbeFerxn5WkReWe7GUwgdbzrnXpYmPinUYZA1waHqcY9KG6HsvhWbTMf1c9Mi5QrNpLoJIPtU7aGIcTtKWWHVxvvbZqEC5bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751394777; c=relaxed/simple;
-	bh=d9wnrHFnmPDUmXQX+GwkpxvTJXuZ/r6tQtF+p2zmkQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ay7tjdE9uFMFHGBGrEgOY6iMg6FmDuOsHP1U803Wnxxh2fPy31B2g3XRcN/hwck8XHuKkCJho3UUBtxrereIn3KtKK/ePXMzJ/WS3yzcuY1+7cC3LlRkvf7mRGKnRIrC3wtpWMV0hnxEj+8yL3nfNgFLhDLuSP2tpGP8iFvUpcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NCWuiaQe; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-609b169834cso16427a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 11:32:55 -0700 (PDT)
+	s=arc-20240116; t=1751394946; c=relaxed/simple;
+	bh=c2RhFuOovKH8cruUl7l5/QuJDFYyICSNcAchlL5X3C8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jRhZxT7RNuNRBBKm/JC9pzWyBkHIRZ+Q6aOZR+/279S1pe2gF07UJQw+tZKoOBr0EesEexyJXbBZuZpeSYqC9x+cVZzalGqS9izyUtDMOxLCapO+jrWE/sg+uLsc5zhjSBRAfCz/3WRO3s4QAi88KLnOsqdFx/Vnsb6l0AOWMQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LS4YGSf5; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-748fe69a7baso5815504b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 11:35:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751394774; x=1751999574; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YQXvVz9WRAegKYfmIxpfPI85E7REg9LgrNVKoNzlSWo=;
-        b=NCWuiaQeW5oHtwRXtV7hfuExcDe0KwkLxqzyzAitJ8D96JPMsybDbwHmLFsmxHfN7E
-         vPnwukbYXOPlaIBNivpRTAWim7GhiZuDvkIG2eTqrToKHJIfiQBVFh1Hk3eYhG4Z5FRY
-         n507apuDcGW1V7RvNN3zqDfw5qz47jO2MFJyYpr3jcEtru7BDDL/zQPees2KFWXjYKwI
-         C0aaP/uUROqLIvdh9pm8rKwBGMx2T8kNUejv2Ffnfz49ohZ+7PSpGnFKX6VbrPc/QvRq
-         iGm5x1q7FupjNmt9a6O+Cwrv+kWg/UKtdGUtK45jSo7LONvlUVmX4pGf8LOqvB80ZT6f
-         pCoA==
+        d=chromium.org; s=google; t=1751394945; x=1751999745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c0U+s0Vyp4n94b4KR+Hv16kd0qrpXrvauaZ60DPcAJM=;
+        b=LS4YGSf5lUUhIFfLt6pOjWai/CavTgk2tYzeXgI8OnTHtcqGjtfgWvKfq2hqdKavpl
+         gOQk67hS0ZDdE7tUhzSYusT8Hgi+5ZPaL3K9Dzo20ADlpu/lV6EzoBjxTZpIa3XgU9Ky
+         nsW7vYlP+C+ijkbHC6CiidLnDfOlNsnWqsRUM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751394774; x=1751999574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YQXvVz9WRAegKYfmIxpfPI85E7REg9LgrNVKoNzlSWo=;
-        b=uS4eEl+M6nmY0l2VialoffSRijkUkcAVR1oBa8NN+2zhLxFH8VhUzlNWaOJjzHwbvn
-         NvBqC2vWgi9fLWNMlM5vU+f47s+H7EF6me9aEU+R8kkiXtpj+CZOtHUdGdTt1x3eFnO6
-         1rDcVYtxpSYLtYX5ullD07gqAPRuy72MDeB+T8OnQVsqxKMCshFBMkuzzR2qSbcJYfAF
-         AMEhfNCKtESIny/lL9X+s02P5xel7mMaXnGGIKokyN5ShvMs1EXRh1MnRxGFEXify/HC
-         u+HttbEDv6BA55vVtNT2HF1lOCT3xP8obiump+KHVTog77OTO4o8NbiMZXUg01loM0Ed
-         rbEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0WL2u20asiLKcnvTjDxem43M7h4sXt3RH2m0cmd5yQ+avN8lXbGgZAl+ocrD8IT4CXl70MdOyWjLTWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3JyBbKHIdSWbKr/xNd3bnb9HUjkmweyHWLl7fLp/Tv9BOAVMR
-	9Oo/GEbw6ubNqAY2q/nxfcQ95SsOYstQCcHw7vWV/9mdKQwmTYtou8etvtqpjm1GN2kWmlkfEfX
-	d4HnpsvF5tUKxuZMkoG36ohgAk+pw2QkN3GtC9mBV
-X-Gm-Gg: ASbGncuq9aTyHfDoVLTDCpe6IxabKorao9NVI9asYbMMl/BolC4NethGdbjCjjplOnc
-	TeuWAr1VfD0i3yNFkLaFkH97Dd5540MIJ87xGr1pcori/+Vv+07FdNkt08056SBzr1JV2bdaCQw
-	R4bAS8+wWGiOfoh9nn84blXuz95yyep7DdVbHVBoPwrOGqm+69xkBE9GbSFtj0/AdCtnJn0BnG
-X-Google-Smtp-Source: AGHT+IGv7/Tr+sUazGCtuAmUl3War4uVSjVimZL9/8SAcTJFtKZPXxA57SH/Rd6iX4Z7K7emCqya4lKJ0k0S7eXOusg=
-X-Received: by 2002:aa7:c342:0:b0:608:fb55:bf12 with SMTP id
- 4fb4d7f45d1cf-60e38a44816mr103298a12.4.1751394773651; Tue, 01 Jul 2025
- 11:32:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751394945; x=1751999745;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c0U+s0Vyp4n94b4KR+Hv16kd0qrpXrvauaZ60DPcAJM=;
+        b=gdC/+V9cWhOiyNb+X9IPcW9QdKRjqLSkK5H3gG2mqglgnwGA+5zf+sdra0z+wgSq9/
+         QqABpB/RvdElFvzVwLTWVLHufrc+8zJoi7XleVT1T6AA7cfIRjEeys2390LAh4Jry0dK
+         H1TzM03oXqDCi7ynPHuf3qz0uD9VvsfRMmDAOGnep/yDhjx+uL3nteeUwHYh7t3ZgTas
+         yJdqcBd/5p+KrWU0MjLaTI7e+u4y8oMNLer5tq0cI2VbjftDPfxkeDMF+asKZrNrTMvh
+         uZhqV0F6omR3KiZIRDWG+KTI4U+EfcVJuXXc2cBrvdkUpX+Ni591ZgYwpiBWjEGr5Oge
+         3+IQ==
+X-Gm-Message-State: AOJu0Ywmrl6Mr1wsLW3Xm9J4wmqZpgeo2TyxO4KIZuyI9gxTT7g93nQQ
+	aHLo5wLgB4d4lIQtTLfThfERzmqv27g8MDp0unYMCTgiPzgTS56PNWKWHrq3xm8Epw==
+X-Gm-Gg: ASbGnctNxyBl1G/O9FFU7J6c8+/kZ0+9MJVmpWTjwk+sm7zqLvfbWFOyLo4j/XtKnx6
+	3aRhOw1Zv9ydd+B/BzN4Vn4kWBYiztE7NBJ1N2tJIIe/RAoJBRvR63EmQqXLjpkwQIm7py83mqr
+	sVyoPgm/jxcT9j3WyG1XhlQqzXotRxvEmhjeDqDt5pP0d9Z6/64qN8le/oA3Jm2g3nZocQcSdbd
+	c3r3+3D1CKqpp1Vv7qATdLLFNRpFPwXDfPUAl4TwnpbHcAgr9GUJKw4SGWUcm2QKLF2GnNZ+/yJ
+	mnJvJ3luZSXJk90p6yFB8vpgP/0MfWaApveuHR5YeJ/lJ5NQYuuSVVdoneWl2sK6OFMVla08FY6
+	8/GzsAtHnmZoJ1wDvNBmwz3A6
+X-Google-Smtp-Source: AGHT+IF+6ZLLBRZomIJJdPMOAh4wc+2Ijkc9vDXh1llkvdnbb8AaWnGCg/lc8coDH2IswaSx1grzmw==
+X-Received: by 2002:a05:6a00:18a7:b0:736:4644:86ee with SMTP id d2e1a72fcca58-74af6f4078bmr24502776b3a.14.1751394944650;
+        Tue, 01 Jul 2025 11:35:44 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:ff18:310e:c453:9166])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-74af541cc81sm12246277b3a.58.2025.07.01.11.35.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 11:35:44 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>
+Cc: linux-kernel@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH v3] checkpatch: Check for missing sentinels in ID arrays
+Date: Tue,  1 Jul 2025 11:34:00 -0700
+Message-ID: <20250701183537.501225-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250627-debugfs-rust-v8-0-c6526e413d40@google.com>
- <20250627-debugfs-rust-v8-6-c6526e413d40@google.com> <2025070148-primer-stillness-0409@gregkh>
- <CAGSQo00UiOUAgYODhXT9BWLW0bXoCxMzt9fV2F2aiTEOG1vwyA@mail.gmail.com> <aGQcODIzMiB46gKF@pollux>
-In-Reply-To: <aGQcODIzMiB46gKF@pollux>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Tue, 1 Jul 2025 11:32:42 -0700
-X-Gm-Features: Ac12FXwdB0dtf1DsDpcngkMBzE-ux_LwOBiMCEQhM-Doq7UBSaODLP7eEK6fGyk
-Message-ID: <CAGSQo02tdxoqTE1z5_M8g0PpXYEdWr4Yy31yaoPK8C_O2G_QoQ@mail.gmail.com>
-Subject: Re: [PATCH v8 6/6] rust: samples: Add debugfs sample
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, 
-	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 1, 2025 at 10:34=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Tue, Jul 01, 2025 at 10:24:04AM -0700, Matthew Maurer wrote:
-> > On Tue, Jul 1, 2025 at 7:03=E2=80=AFAM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Fri, Jun 27, 2025 at 11:18:29PM +0000, Matthew Maurer wrote:
-> > > > +        // An `Arc<Mutex<usize>>` doesn't implement display, so le=
-t's give explicit instructions on
-> > > > +        // how to print it
-> > > > +        let file_2 =3D sub.fmt_file(c_str!("arc_backed"), my_arc.c=
-lone(), &|val, f| {
-> > > > +            writeln!(f, "locked value: {:#010x}", *val.lock())
-> > > > +        });
-> > >
-> > > While cute, is this really going to be the way to describe all "custo=
-m"
-> > > debugfs function callbacks?  No other way to point to a function itse=
-lf
-> > > instead?  Look at "fun" debugfs functions like qh_lines() in
-> > > drivers/usb/host/ehci-dbg.c that is dumping tons of data out.  Puttin=
-g
-> > > that inline here is going to be a bit ackward :)
-> >
-> > Good news, function pointers are legal to pass in here as well
-> > already, I can add that usage to make it clear.
-> >
-> > >
-> > > So can you show an example of a "traditional" debugfs file output wit=
-h
-> > > multiple lines that is dealing with a dynamically allocated device th=
-at
-> > > is associated with the module (not the static example you showed here=
-),
-> > > as that's going to be the real way this is used, not with static
-> > > variables.
-> >
-> > Sure, do we want to:
-> > * Finish creating the driver struct early in `init`, then call dynamic
-> > `.create(&str)` or `.destroy(&str)` `.modify(&str)` type things on it
-> > in `init` to show how it would work
-> > * Actually wire up an input source to drive create/destroy/modify
-> > dynamically (e.g. I could implement a miscdevice) - if you want this
-> > one, do you have a preference on where I get my input signal from?
->
-> I think the idea was to show how it works in a real driver context, e.g. =
-a
-> platform driver, just like what samples/rust/rust_driver_platform.rs does=
-. Not a
-> miscdevice registered from a module, which is a rather rare use-case.
->
-> If you rebase on the latest driver-core-next, you can write a platform dr=
-iver
-> with an ACPI ID table, which can easily probed by passing
-> `-acpitable file=3Dssdt.aml` to qemu, i.e. no need to mess with OF.
+All of the ID tables based on <linux/mod_devicetable.h> (of_device_id,
+pci_device_id, ...) require their arrays to end in an empty sentinel
+value. That's usually spelled with an empty initializer entry (e.g.,
+"{}"), but also sometimes with explicit 0 entries, field initializers
+(e.g., '.id = ""'), or even a macro entry (like PCMCIA_DEVICE_NULL).
 
-I'm confused as to how registering as a platform driver would result
-in an input source that would let me trigger the creation/destruction
-of DebugFS files. I need some kind of input stream to do that. Is
-there some input stream that's available to a platform driver that I'm
-missing, or are you suggesting that the input stream would effectively
-be the probe's `id_info` field? If I did that, wouldn't I still have a
-static arrangement of DebugFS files in my driver struct?
+Without a sentinel, device-matching code may read out of bounds.
 
-I could have misunderstood, but I don't think that's what Greg is
-asking for - I think he wants to see how at a data structure level, I
-can handle creating and destroying DebugFS files that correspond to
-some kind of object being created and destroyed, rather than just
-having a static list of slots in my driver struct for keeping them
-alive.
+I've found a number of such bugs in driver reviews, and we even
+occasionally commit one to the tree. See commit 5751eee5c620 ("i2c:
+nomadik: Add missing sentinel to match table") for example.
+
+Teach checkpatch to find these ID tables, and complain if it looks like
+there wasn't a sentinel value.
+
+Test output:
+
+  $ git format-patch -1 a0d15cc47f29be6d --stdout | scripts/checkpatch.pl -
+  ERROR: missing sentinel in ID array
+  #57: FILE: drivers/i2c/busses/i2c-nomadik.c:1073:
+  +static const struct of_device_id nmk_i2c_eyeq_match_table[] = {
+   	{
+   		.compatible = "XXXXXXXXXXXXXXXXXX",
+   		.data = (void *)(NMK_I2C_EYEQ_FLAG_32B_BUS | NMK_I2C_EYEQ_FLAG_IS_EYEQ5),
+   	},
+   };
+
+  total: 1 errors, 0 warnings, 66 lines checked
+
+  NOTE: For some of the reported defects, checkpatch may be able to
+        mechanically convert to the typical style using --fix or --fix-inplace.
+
+  "[PATCH] i2c: nomadik: switch from of_device_is_compatible() to" has style problems, please review.
+
+  NOTE: If any of the errors are false positives, please report
+        them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+When run across the entire tree (scripts/checkpatch.pl -q --types
+MISSING_SENTINEL -f ...), false positives exist:
+
+* where macros are used that hide the table from analysis
+  (e.g., drivers/gpu/drm/radeon/radeon_drv.c / radeon_PCI_IDS).
+  There are fewer than 5 of these.
+
+* where such tables are processed correctly via ARRAY_SIZE() (fewer than
+  5 instances). This is by far not the typical usage of *_device_id
+  arrays.
+
+* some odd parsing artifacts, where ctx_statement_block() seems to quit
+  in the middle of a block due to #if/#else/#endif.
+
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ v1: https://lore.kernel.org/all/20241218232716.3624531-1-briannorris@chromium.org/
+
+Changes in v3:
+ * actually CC LKML this time (sorry, I accidentally sent v2 directly to
+   maintainers)
+ * no other change
+
+Changes in v2:
+ * add a few ID types I missed (i2c, i3c, ieee1394); this time I parsed:
+     grep 'struct .*_device_id {' include/linux/mod_devicetable.h
+ * account for some alternative sentinels (e.g.,
+   ISAPNP_DEVICE_SINGLE_END)
+
+ scripts/checkpatch.pl | 82 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 664f7b7a622c..cfa7db17fe0b 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -685,6 +685,64 @@ our $tracing_logging_tags = qr{(?xi:
+ 	[\.\!:\s]*
+ )};
+ 
++# Device ID types from include/linux/mod_devicetable.h.
++our $dev_id_types = qr{(?x:
++	acpi |
++	ap |
++	apr |
++	auxiliary |
++	bcma |
++	ccw |
++	cdx |
++	coreboot |
++	css |
++	dfl |
++	eisa |
++	fsl_mc |
++	hda |
++	hid |
++	hv_vmbus |
++	i2c |
++	i3c |
++	ieee1394 |
++	input |
++	ipack |
++	isapnp |
++	ishtp |
++	mcb |
++	mdio |
++	mei_cl |
++	mhi |
++	mips_cdmm |
++	of |
++	parisc |
++	pci |
++	pci_epf |
++	pcmcia |
++	platform |
++	pnp |
++	pnp_card |
++	rio |
++	rpmsg |
++	sdio |
++	sdw |
++	serio |
++	slim |
++	spi |
++	spmi |
++	ssam |
++	ssb |
++	tee_client |
++	typec |
++	ulpi |
++	usb |
++	vchiq |
++	vio |
++	virtio |
++	wmi |
++	zorro
++)_device_id};
++
+ sub edit_distance_min {
+ 	my (@arr) = @_;
+ 	my $len = scalar @arr;
+@@ -7678,6 +7736,30 @@ sub process {
+ 			WARN("DUPLICATED_SYSCTL_CONST",
+ 				"duplicated sysctl range checking value '$1', consider using the shared one in include/linux/sysctl.h\n" . $herecurr);
+ 		}
++
++# Check that *_device_id tables have sentinel entries.
++		if (defined $stat && $line =~ /struct $dev_id_types .*\[\] = \{/) {
++			my $stripped = $stat;
++
++			# Strip diff line prefixes.
++			$stripped =~ s/(^|\n)./$1/g;
++			# Line continuations.
++			$stripped =~ s/\\\n/\n/g;
++			# Strip whitespace, empty strings, zeroes, and commas.
++			$stripped =~ s/""//g;
++			$stripped =~ s/0x0//g;
++			$stripped =~ s/[\s$;,0]//g;
++			# Strip field assignments.
++			$stripped =~ s/\.$Ident=//g;
++
++			if (!(substr($stripped, -4) eq "{}};" ||
++			      substr($stripped, -6) eq "{{}}};" ||
++			      $stripped =~ /PCMCIA_DEVICE_NULL};$/ ||
++			      $stripped =~ /ISAPNP_DEVICE_SINGLE_END}};$/ ||
++			      $stripped =~ /ISAPNP_CARD_END}};$/)) {
++				ERROR("MISSING_SENTINEL", "missing sentinel in ID array\n" . "$here\n$stat\n");
++			}
++		}
+ 	}
+ 
+ 	# If we have no input at all, then there is nothing to report on
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
