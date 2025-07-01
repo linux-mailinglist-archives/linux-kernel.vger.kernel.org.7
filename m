@@ -1,400 +1,301 @@
-Return-Path: <linux-kernel+bounces-711309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019C0AEF8EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:41:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A4AEF8D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0164845AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 665817A72A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371BA2749D5;
-	Tue,  1 Jul 2025 12:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8400A27381C;
+	Tue,  1 Jul 2025 12:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RfVUWE9Q"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2071.outbound.protection.outlook.com [40.107.223.71])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KWNzPBcZ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MMB7KwzH"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C422749C5;
-	Tue,  1 Jul 2025 12:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1BD26F477
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373600; cv=fail; b=ouf3QnuOdF3YEaZnM1NL8Q8jWkBoyIWwXJPlADdsIKPalmVUG2uHZ7fN+mAbZdgEq+BPxCVcCcy7K13SbvXVX1dRqWWGIF2NJv2HB9ILCN0iBp9XnBeXGmSqqrrDCYKNs2mPhAy3UmW0uIjeKqGjDslOJATzKGEdYscBxd22G4Q=
+	t=1751373567; cv=fail; b=qO1rjwxPIUnOaN9p2jpBiLOoid5Mijp717Y/ES+GZiTl6FVeATWswIeEf+zASsLi/X1wjmxw7YA7im4oO5RomG8/Yuh4JB4WjHJlYekOKPmdxIYnJwi84vr+HQUnc3LhduSiveQWS6bowtdko18+a41olfcqzhbXxVTvC6veij0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373600; c=relaxed/simple;
-	bh=/3UH7IAI6govNjy+N/5L4ozr/+OdBEQDTROh8DjjhnU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kIpk9DURYHex4YzrnV/uF2VhQ5BHBzu6cHnDXJ28UaXHsat2HZj820hlbWL2ytoDhUXU/dD4QDLBZZrv1JMjBdsnCG2ozsYXOEqAWwi7+DOmxFqmR7xWtr7aL2y2V0yDt08RwRfULOKk5rR0fopje8/VXb5oo3JGQzHVvgEaRzA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RfVUWE9Q; arc=fail smtp.client-ip=40.107.223.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1751373567; c=relaxed/simple;
+	bh=4P1ymbxrORbi/ZElbA4TAYtCH8VcMrfA0Zs5lvLuo+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VAo6BpbTeNqL2cl1la2kgf8hMhttVY1Ls46O7/hSUJZaol1whJFH7e2cxt8ZXjmZSuFOn+9I+dKddeRQMdhqTxYuwKuaHC0+VOzgNyDgLtZvqsIp0LoPXIW5+3Xpe6jwd5C1Yaqf6fy+auED4GqaGuFpvKdc0hW5x+PLh/cFgNU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KWNzPBcZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MMB7KwzH; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 561COdEb023930;
+	Tue, 1 Jul 2025 12:39:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=4P1ymbxrORbi/ZElbA4TAYtCH8VcMrfA0Zs5lvLuo+I=; b=
+	KWNzPBcZ2GQ7KT8RvwWLryKNc4AnPHb9jNzyzIcWOc8WobHtsx6gRt4jaqjUfoAu
+	5pb3HtapWXjrZxWfDx+ItcqyyCePJWmmzoQPvRL1H1LzjbLA43GexiTFYwGt6161
+	BLM+wlEoviJT8jTdy3fi36cBvHPh3iH11vMKhMnBOXSGBZ2orbHLlgWUngfJDqiD
+	R7i66LUQw9GBtKSsC/UV1IKfmT77yk7sNrE6Qrroi6QjZW0lk8aWfGoT0KZE2bZQ
+	IvBbf11jU8e9/iXk/Jsf+xXCCl6zh3y8vRd3tXrDfkYe0qfp1Zf03cWh1UYWKUJk
+	5jd9fpuwBJq0GwdqI0frsg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j8ef4pmu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Jul 2025 12:39:12 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 561BGpFd011459;
+	Tue, 1 Jul 2025 12:39:11 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u9f7ca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 01 Jul 2025 12:39:11 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SMxbSDG0DWXu6YRxm3O7rI8Iy2CcMofrp8kZ8cUdwJ7pEmO3fb4CR8Y9Fi2EmCseAk0GKb9O+ClELPuYU9TjMrS9ytq4mowE4V1uFZGawA8ajQxmwCq1ULgEtpc3w/caUectgmhlgqQNjIxmmfUnoX8qo57CEYUItFXMU7663oVXtLVnjoWBSmPDCIHNoeRxAcOKY0cKNr6kYG1WIVO6Vd56WlbyIgTZzJqe619Htraic/YWFqRgm4CUwcAlvqjCUyr1FXhFnZdYVWzxLqi650tXFCO1hKUy92N3bjcnfDkgqTsn/IfKUia703NsehwXtOXc4SNs20tH0CBiZjsKRw==
+ b=vWfl7NgiwKgmDFLjDAsVFBj1aiiZRU9SmFXlP2drXHnvr0gSVXb/QZkTsx8q1QYl2RQUVSgQKLVxyavgdnX3216sFkgFsbEdkKxV3sCTdz9qSj5iw+hwmfmx0WH0naW5YR2ILAWIU+B8erGSm3l/T42C0/iO+Ly7sY01mudoi3IQkkup45sTYk6vrFm0QnJKA2EBrstJ9AXRvi+lC7tmCE5fGz2b7BAd3TER+OUC/lQlC3+RKZSidcol19qOU+Wk1Pm+wmxHfum3m6wLRE4vgAwkNMkBtwbRTKa4kFM7+e4stkXegdBuZUE+1V8yNHKPsIT6DW589H1PEXmK9LujBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5bUodoDEB9M6C/kNFoF7PwuLtrAZCuStWYe8oa8hRCM=;
- b=gnKl02D61ih0iXxHZMzhvowe33R8hHTDs8iTigBMSeKDWiZCFi0Y98PkWepOaQF/2/zUamx101c7IFxZyK/lt1VubWx5UbcjAN7hJV30EUN2MainXmUVtcSG0J86R56BGiTbXZ4JvyY100lQjOwX0Id8qJIPj4bR2z4I3MpT5rkURMi4zj1CHILCcgQqwSUrFUXZVdRM3icrUuVmLO/GUNztVUlOzbxMg+etaK6tV02cH18JOqZrt/1dF+ZClx9pNHwrIsJ6w1Xcs5i490B+MshG+R4pf0bWqK0CinMLHRNXYwRkTDnPvVJzjtfqNVrQ7qYnyi4CNxoFG7U4dfXgpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=4P1ymbxrORbi/ZElbA4TAYtCH8VcMrfA0Zs5lvLuo+I=;
+ b=bdjng1g1fdYYjwSnS1DKGxINC4BUfQI+PNZOyMzwiUJZKNIXBevVi56/B5y1GzTiV9GiE6KuNMLZJ1hUzbS6akvWU2mbGBBaGrjAkZ1LA3nJ1pB5XnfNS3fp5u+7jTCjOvjDYL1YBfFQHt4lHVpsq8pQfZtJn2cXipdVOVDfof/wAbytS8gOaduiaCJKyF1MMh2fn38C0+xF90ZE52ogtvrLQ237w3utESOvVGmwvNGZ75z06B/5w6SJZyP2rhvJmo0pu4UWOibHPMXqv7W2cyyY2nZAzgCwCKHnFgc8AhUMMkQJOiZdIOzonB8W43UtK8PDJLmsMGv5iLJCoqGXRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5bUodoDEB9M6C/kNFoF7PwuLtrAZCuStWYe8oa8hRCM=;
- b=RfVUWE9Q4rdJGGd5RNsysUw7yuKJR5FH+O0bphvJlecJ4JqiW3+X0oXz6WNrdn+V1zyvJox6+rzSqZUX7ywJDywRkBLw/1TfRnaHrE19JzWLERkgipyZ6L/7T6L0P/8JPsjs/5BHiojFSCKRYrM3EwhAGSN1bZ2U1dQE5bbOc2c=
-Received: from MW4PR04CA0099.namprd04.prod.outlook.com (2603:10b6:303:83::14)
- by CYYPR12MB8870.namprd12.prod.outlook.com (2603:10b6:930:bb::18) with
+ bh=4P1ymbxrORbi/ZElbA4TAYtCH8VcMrfA0Zs5lvLuo+I=;
+ b=MMB7KwzHF4QZVxaEcO4bCt5yMpWRBym+N0z3n25I8FSEj9CcxaQHicnpucemFMPDp3DCHPPtALsbLG1BoxSn+8Bq02V5mh4/ns/60LpMW4eQt+wTbGwJASSHbI6AUKkbsiTcEQiRuN1mNB6AO7cGKRVZ2YLL3jL2v4FZCkuYqe8=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB4462.namprd10.prod.outlook.com (2603:10b6:a03:2d7::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.26; Tue, 1 Jul
- 2025 12:39:56 +0000
-Received: from SJ1PEPF00001CE4.namprd03.prod.outlook.com
- (2603:10b6:303:83:cafe::16) by MW4PR04CA0099.outlook.office365.com
- (2603:10b6:303:83::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.19 via Frontend Transport; Tue,
- 1 Jul 2025 12:39:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE4.mail.protection.outlook.com (10.167.242.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8901.15 via Frontend Transport; Tue, 1 Jul 2025 12:39:56 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 1 Jul
- 2025 07:39:55 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 1 Jul
- 2025 07:39:54 -0500
-Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 1 Jul 2025 07:39:53 -0500
-From: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-To: <michal.simek@amd.com>, <linus.walleij@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <git@amd.com>
-CC: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-Subject: [PATCH 3/3] drivers: firmware: xilinx: Switch to new family code in zynqmp_pm_get_family_info()
-Date: Tue, 1 Jul 2025 05:38:51 -0700
-Message-ID: <20250701123851.1314531-4-jay.buddhabhatti@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250701123851.1314531-1-jay.buddhabhatti@amd.com>
-References: <20250701123851.1314531-1-jay.buddhabhatti@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.29; Tue, 1 Jul
+ 2025 12:39:09 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
+ 12:39:09 +0000
+Date: Tue, 1 Jul 2025 13:39:06 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: siddhartha@kenip.in
+Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mgorman@suse.de
+Subject: Re: [PATCH] mm: limit THP alignment =?utf-8?Q?=E2=80=93_performan?=
+ =?utf-8?Q?ce?= gain observed in AI inference workloads
+Message-ID: <5c3d307f-d303-48c3-b730-99a83d4815ec@lucifer.local>
+References: <d8ffe547-5516-43e5-9f33-56b2698a0b4f@arm.com>
+ <ba2c89bd-88de-48f8-abd0-b62d8b1d50b3@lucifer.local>
+ <5816677a-705e-4a8f-b598-d74ff6198a02@arm.com>
+ <ee92d6a9-529a-4ac5-b3d0-0ff4e9085786@lucifer.local>
+ <e7152150-2f3e-4ad7-a6c5-f4b77e5c0e05@arm.com>
+ <f746d3aa-17e7-4b42-9e08-97cdb2cad89b@lucifer.local>
+ <80b849d4-faf3-47a9-8b8c-e8053299cfb2@arm.com>
+ <2e99712b-8dac-4762-9fc5-fe3ef569b65e@lucifer.local>
+ <afe95bb0-185b-4c4a-ae41-e02457422cc3@arm.com>
+ <787639a1e6a27c0f3b0e3ae658e1b8e7@kenip.in>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <787639a1e6a27c0f3b0e3ae658e1b8e7@kenip.in>
+X-ClientProxiedBy: LO6P265CA0025.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ff::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE4:EE_|CYYPR12MB8870:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ba55613-6cc7-45f5-f58d-08ddb89c6274
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB4462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1aa52695-1012-4f16-184f-08ddb89c46ad
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NfhL4vjV6byAYEfqxkZf2DIqcUV5BUrLz3QRR7hoomOClEixCtDWFBoOtJrI?=
- =?us-ascii?Q?pjS7h+Cjw+L9VeEQw+GuczXdZ5+VL5I8SaR/PDRM/Z/bTwOC85+ABSjiOY5Q?=
- =?us-ascii?Q?o5wDxnrkcSefxErkHRcdl8253RNxeKFjZdrhsO+3fD6swLbiALg96UaR4LEn?=
- =?us-ascii?Q?zOG7OytGI+eHFB890EMToQSwAWtBkNn5gGZ5cKMTxc/tI3GUs0AD+pWy2AND?=
- =?us-ascii?Q?imDnH4u67fMjGYODgp1FwX8VI9+celzpUSlomTaZv+w9Q1PvQP6efQfhCNoU?=
- =?us-ascii?Q?E8OkRjZoku3mg2SpyiQoLFMaOTnWmNFvrM5qhipfS32qejrRAjJiDbgpxXQv?=
- =?us-ascii?Q?EYr+NJmDS/y8VSatqDU/La6P5NnUBvbb8Sfr5xY0+61S+lATDqx717Pei0jV?=
- =?us-ascii?Q?ANp2YZD+r8HYTr1INToiPydizXrPO8ZEhpE6MOyyUGSFng8uRBbR+BmNHMMt?=
- =?us-ascii?Q?hK2EK1qEOZP6IzW7Ke2uH+y2qvO1MqoLzGyEFn/3gdx48W5aL+yLhGFpgsS2?=
- =?us-ascii?Q?Yc5SQRGMpC9RSp22+8ym/AREPsH9xKz/x0TQiPZRWzS6UYKh7O72gpJMnouP?=
- =?us-ascii?Q?OdzR2EswB5q7wtkIgJ8br8Lmhv4ROuBF6hFC8VO8CySKEgJbCgUS/qCvXxd3?=
- =?us-ascii?Q?nXYcG1BYktkY3i7F+R1z2soZ7LKUzp+/yulyZh6oaUi9RpETnIjnn56mVek3?=
- =?us-ascii?Q?PSUG312vQlvecgXmX5zYhhgGX9QSsMU6qiFqbXnbHics0DnWpOMfagyu22nw?=
- =?us-ascii?Q?ShRGwxaZHqE+3Zt6ogqIfi1tEYea2oVnDs0nIHkM4y/GSrvmvAadPB0za6fW?=
- =?us-ascii?Q?OC1ZS1BMBIVLhzxUQOhOlug0O/Of9wBB3OKn7ihU9XJHDqXwnkCoX33+0o1Y?=
- =?us-ascii?Q?dmWcPoPK8dLt71OLn5Ff0neQ4g8tgzheTKEb/DjJhZFoc7L6xBWfxUncOs7x?=
- =?us-ascii?Q?T4CEKzowF0OPFAiGIKE7B8g8PAWYP9jGw2i7oqZdEQvQxkTFrofk+hBGVnUv?=
- =?us-ascii?Q?r2BEXzUCG5IVulskZ96CLuwlOMrEF8T59JV7shKHC7hPH08JrGFTkW3I4zyK?=
- =?us-ascii?Q?ipA6PDTmd3BiSWJH8rM8eA4Vlom4PQMChn2jmwit58WMEzHFEooBxO0DpXOY?=
- =?us-ascii?Q?RBpE3MGACNn03iyxnaBmatvNbXnlbdMwRdEburPplofnLnGT3XWhv1cDyVNk?=
- =?us-ascii?Q?lQ4BCstwWLhM8TYEW5QvRcLYRXwksfBb2f29Cx/Bi4pogYJHheX/uxPTafyX?=
- =?us-ascii?Q?yyFQUv86m08Kj4SmYzJWua5bE0g4EM6awMEoz8TA6nWAwY0rJCUliL/AL/Uq?=
- =?us-ascii?Q?iAnKKBJNgAKxzH6yUSj3mhsRX2RrQQHHE/UU8phVSHrxEtVL8ibPlyeujfku?=
- =?us-ascii?Q?HZ2PptoMpB+4nYQXhproHb6IGGRGz1F2KegX3SG4spqqBV4PlZCxJI2d3hFB?=
- =?us-ascii?Q?l5SVsF0jQY8TsPospAZoQvygRtZ21Ta5d7Gdxvhclr+AdIozqPOX0sTDjDB5?=
- =?us-ascii?Q?YHc6i6vGHs9Og49nH3euUSm4znRA4RWEUUEH?=
+	=?utf-8?B?MGhPUDM3bjNtdExqS09KV284VkRnNWtMVHRpU2Q1dHFoc0g1M1FSM2FYR0R2?=
+ =?utf-8?B?b1hueG9jS3FKZ3VMZlZFTExGeHQvUHhCZDVMSitXZ1FOVDNZRk12K0Y1Sjgz?=
+ =?utf-8?B?Q3hzbjhYU3RMWVppSGJ3RW9jMUNJQ3pJU3ltWHZlWU9TUFY1dEpOUTNncXk5?=
+ =?utf-8?B?TGM0RVJJYWxvSHdWaUE3TWlUWjAvdFdkeStuRG9mYVY5WWcxTGdOemE3Mnlk?=
+ =?utf-8?B?TnRxR0xtNGtyd29jSlZyREJxQWpHUVNFdHRMSEFVUnZYMUR5dklLU0wxU0di?=
+ =?utf-8?B?aGsrZHVkZVFUcmU3M0JFQURVM2NweFUyZmZFVjJoRFJ4Z1JaaVluWmdIVFcr?=
+ =?utf-8?B?UkxuMS9GT3E5SGh3eTNXR3JWUHh3bG1wVUtGUjZzYUEzdm0wakxYZWlBV3Ax?=
+ =?utf-8?B?QklQUXFhb1Bvb21QY25QZkI2YWNBdGFHTlZLMlYrSnpmaExFOVJRUEFOdDVM?=
+ =?utf-8?B?QVJhSHc4VSs4M1NiZXV0M0ZaeTRNakY1VGhEOVdPbSt4bFN2OWRHV3laTGpB?=
+ =?utf-8?B?c3k0UlR3Y0VKTERnZFhhOVY2ZWVaZTBwYWVIZk5SNGFnU0ljSUg4OXIzSXp2?=
+ =?utf-8?B?bkowT0NSVStUYXBtVkY0U2pQU25iREE1d09kUXZBY2h4VWpXREtOeURrbkdx?=
+ =?utf-8?B?M3kzbm1lUlFBVjBuOUFURUNVUlRuM3FWNGE4L1RwblVKQzhnSmlhNEhkOXpU?=
+ =?utf-8?B?Tm5RSjY0ODRrem5yZHlvQ1Y0dk9KS09EV2QyTHBidXZPbmRsSXJiMzhXOXJa?=
+ =?utf-8?B?SkdzUWdjUE1uUzcrNWpJQlVaSUpjWVVZWitpd1lkTW1FTjA4aW5IaTNmeVJF?=
+ =?utf-8?B?eE5mSTNQRm9waE9CWkNWWW5LanR5RWozQjBZTE1IcXkrQWo1QUl0N1ZZTHl1?=
+ =?utf-8?B?a3lwcGJidE9VYXgvR0tkdGtPaUl3aTY2SktYNWF0K2VUdEpWUTFhejF3ZTNF?=
+ =?utf-8?B?ays3QVdUTGMyTmI2RGdxL3FpRzl6c2VnNzhSMk9JOXRqa2kzT3BCM2h1cyt1?=
+ =?utf-8?B?MjBwZ216TGdqY3kzWVNHUzVjTWFLamNCM2hDOTY3eHBReUZNV1UvTlp0UW5B?=
+ =?utf-8?B?cm9YT1FVRTJyUFFKQTZUKzZIcVYyV1hjUFczVnhwMnFnN3lqeTl2Tk9jeWJn?=
+ =?utf-8?B?WVRlREtsK05rVkNpTHNSeUlUUERTTUZMYWNuK2VYbmpNVHdHRFdSMllXNlhW?=
+ =?utf-8?B?aXg1SVJOUzMvZXQ4UElRUFBNaXUvZFBEQlcrVWZBZHRXek5vTHRXU1FKQmY2?=
+ =?utf-8?B?TkNUMFRXSDdJVEViZUNtMHlXbVpraTNid21COERLeFQxeFF5VS9PNXNpS0Zt?=
+ =?utf-8?B?bHRCYlZzNlNxdTBvZ3E4dzhyN2o3aEFGb2tLd3BPcVRzNXphbGtMbVlTMDhu?=
+ =?utf-8?B?aXlSU0hlVFRNdTNTUXlRamF4N0dGUlIwOWZHNjJ2cmxKOWd6L1Fid095WGJP?=
+ =?utf-8?B?YnlVRThYZDNscTFadVA5ZXQzWUxFcXR1a25TUnNvN0txcXFyN2xQVW1RNFdp?=
+ =?utf-8?B?UDNKbCtvNXl4bGRpL0hVWTRjTVVGZkU3MHl2cVM4aWl2WDg0QWZmNmVqcFpt?=
+ =?utf-8?B?NEpUcU1GakpYVXBhbUxxTWcxWnN2M0o5YjNYWXJ6aDVzbDRvYWF4QUhNVVdD?=
+ =?utf-8?B?dEY5MGYxQTZSNjZFL3BUSitrSFZYeWtnTkhsOHZ1bE9sKzl2YS9TN0U3cXhN?=
+ =?utf-8?B?anRXNUxSQnYrTzd2SE5FWDlSTStMZG1nazBiTmRkM3NVMjVvclJVOEFYdjRG?=
+ =?utf-8?B?VUJCK0N5VlQ4ZXRqN25GUXZjenVSNVFyZWlwY0srV2xVYlJXVm0zcmZaUHkv?=
+ =?utf-8?B?TGVDOTk2QS9Sc0lnd0syd3IyeFVPTnpvQ0RPbG4vSThwVlV1YjFBQk1QTWZp?=
+ =?utf-8?B?R3VhTDk4SGRhQ1NhRDVkN2pNSU9xSHRRZHAwYklYOTg1emcrRTh0eDNONFdO?=
+ =?utf-8?Q?1U5ChgsTo54=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 12:39:56.1376
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WXRJUENPWTBpNEhVVHJqc3hlT1N1RDRQOThsekVhUW4ya1ZEWUIyR1FEbUt5?=
+ =?utf-8?B?YjdwU09qeW02SUlSaVB6QVI2WFh0UkI3aUZNeEVpMCsxa2tLc1NIWE9aVURJ?=
+ =?utf-8?B?djFnQ2FBbnlrb2wwWVRMT0R4bDVFTWJHZGtIRG0rYkJOdTlGQng2MHM4UkZo?=
+ =?utf-8?B?QWVYeEhxb3pqYTNKVUZHUG9pQlJaYjd4N3ZGU01OKzRFaXhjOXhkYk1RQUpS?=
+ =?utf-8?B?Z2toV1NGMnBUQ3dKY05IVzM4UU9UaWdya1djYktOcHl1UEpBWVB2Ny9lZHAv?=
+ =?utf-8?B?MkdiWnhCMkJ3TGdMZHU4cEJwMUtKMEpGWmxIQ3JyNzBRLzdvNVRBaGZBTmJY?=
+ =?utf-8?B?bnNKbDRvVmt5S29heTZEWStEWUU5ZlFrbUc4clBVSERDUjEvQVFPK2pNR3g3?=
+ =?utf-8?B?ekUrdi9jSG5icGJ3MFd2NUVTOVFMdmZWOWJrVStBNEZTZkoweXFYeVBVYllE?=
+ =?utf-8?B?WG1sclZVWjZOWVFocmdqY3p1MGR1VGc1aitWUzEzY1pZRjJPamVhMVZKTzN3?=
+ =?utf-8?B?UzZzeGphU2VVaGhUWWgxd2lPMTJBa09pOFdyQThFbTltZERNZlM0RE82TGVS?=
+ =?utf-8?B?QWNvYUlXQnROeFp1SDNMUHR6bGNpZnNjL2ZSQzc4Yk9hcUlnaVVKZHVPTENl?=
+ =?utf-8?B?UTNWbndhYTdaZlFDbm92TGlpb0h5R0JZUEw5Tzk3T3VrNmFya1E2ZjVhTFVs?=
+ =?utf-8?B?RWx1a2sveUdxOEtYdFJYOWg4dDRrUWw0TDM5dkxDdStNSlM4OHpCaXRSQzZx?=
+ =?utf-8?B?cyt6TnVTbEY0VnRpeUgxay9CWW43cSt3K1c1bWVYS1QwYnZhM0FNYzBXL0pS?=
+ =?utf-8?B?dXlReG9ldGRpTjZzOVFmaDlmYkFtbHNOdzhpSUJaSGJLcnM3Y2lSbEhkWmNP?=
+ =?utf-8?B?b0JKYnhsNGRzOElkZEJiTFJxakV3VDlvYm5YZ2VpUy9sWDNsV2FMZFJweHJC?=
+ =?utf-8?B?aHZ5QUpHQmlubVdqa1FHdVBQUVltQ0ZINVdKU2JEQnZucFVuNkhzdS91REsw?=
+ =?utf-8?B?VUx2elpqT2NCNXZ5Rkp6T2tseGRtRVA5aENDRGRjNlppSHkyT0pwRjZDRjhF?=
+ =?utf-8?B?VFBjL0pDTHNCOEVwWWt6TVVpck9PaHFXWk16STRMbHJvL3FIOEJZQjMwZFBO?=
+ =?utf-8?B?djdlVWt4NmZpTHJSL1U3dW9JL1lBbVNxdFJYM1lmODArL25OeVU2akcvenNE?=
+ =?utf-8?B?TzZzV2JGK0ZZaGJFUUpCT3NaekVIWTl6RW94dkZaT3dUTE9QMXRoQmhDVEJU?=
+ =?utf-8?B?T1hGRndkY0g1TjVldTE2eXJ5UUYvdlRPcC9xYy9RaXppOGU5S2cxNHAyY0da?=
+ =?utf-8?B?MGFDKzhSS2tWSFVVclFTcHcycnFZSW1aVHpFd1JYRmlZS2RkdGNKWGgxci85?=
+ =?utf-8?B?bUlNRU56YWR2Njd3S1FSTkJQSlhsTUxCU3pwTGZTT0xwaGpxNDZkbHZBMkVG?=
+ =?utf-8?B?c3NTdjZOcWZaRWhGSnNLYlJ1RnlLUTREOGY4WVArZVhlOFBjR2M4aVNVSk9V?=
+ =?utf-8?B?b3IyeFNmNktQSEEzNStGckNXeko0S01TSmJWMEI4akg3aTcxZGhTWlZnR1J0?=
+ =?utf-8?B?dG5mZXJ0MERtM2NUNVU0MFdNaEIzZTlBS1lvMjI5WEplemRhRDFiMkZLanU5?=
+ =?utf-8?B?NW51cUprc0JGcTV2dGxtYlRsQm9zY2JieFh1RFJjVjVKbEJmbzdiVkQzU1VT?=
+ =?utf-8?B?V3ZCQjNDcFU1K3pYdmNmSFN2TjErS1NiWkRlZVFJdnFVV3U0RU9OZ0ZqaWRE?=
+ =?utf-8?B?ck00bFZ0c3owamRmL1IxSi9ZSldXcDdHcHFHY2I5cDRocjVYckZVRG5oOE4x?=
+ =?utf-8?B?Q0c1empmaXRER2dHbjc1NkpnaVlGSXdxRVhKcGw0eE83RTM4cmtEcU5PSTdp?=
+ =?utf-8?B?WFFhMlgrYnhreGZycDE2LytUN0JyMGNkdUl1RXdzaWtGVjdkY29aUHN6RkxQ?=
+ =?utf-8?B?ekRQK25DdTlhaHkrY3d6blRiZGNqRXNFK0RTTDFsZGdvaG9QY3A3L2xHeW1E?=
+ =?utf-8?B?eGlnNDE1Z3NrSEJQaEJGcDg4R3RKdWMyOEhVdEcrMUZvNTBkdXlCSFUxWjVl?=
+ =?utf-8?B?M09EbU1rUE5xNDVjdGFuRXdxYlVDeU5nVXk4S2dKTXJPQUxsNVBRT0tqY09P?=
+ =?utf-8?B?R2FZMk96blpEUkxtM0paT0FjTEgvVUR5T0k3VUNZbVpvaGZzMVFPaEVOZVF2?=
+ =?utf-8?B?NXc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	lRMSUyjzKcBhMvWsEjO15k6av8yclcsq9aY1qlJNx/T5BVGTAAcmTyzxeRzgTAwFINdW6xN3evY3NM6WsVyDgx5b64a+dDfGDtjX2jExsZjoO43B52AVOj4EA324Rqj16Lf8viteqeJQWIB8/3qWSAtt7jct0jaXk79AwOAw5FHvJzFcuhjkQvESvCPjwH/pQDZUkg7HJlPCu6ehqMRMDGXFgh+XEnHiz/Zwz8zxdAxlGG6Lc49Ice2NLddqSJ+KxKPRxTtQ6B7p+Gsc8Xai3Jm0Vxvnsmzgg/R732TBF5Uqv+b2FgUwekFdaAPyhGqF9cEsSYUyf5mfsX0Nn+jzausMNFsF4nCN4OkGa635VCXz4KF80lCVDZiA+eh5fOSm5q7Fy6PyQdHLe5/FD0k7g3BhgYEK5+IeeUb1OwIU1A0N8FlwwRQivQ3I/3j1vuySYvIblpp0oC004g3Zq9NSh23vU8e4nkRm4koIOqIjVaYtLjaySggBtKEI35ER7H2Nz29EB08sB0bSb3O61SdD+MpWD3xqwiRGYVvbwtlDa+1rGR4QTO/eMTS946HARy34MgE8/RviCt7hAawbITHUgyFrn9+kohRtsXiWalFUf1Y=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1aa52695-1012-4f16-184f-08ddb89c46ad
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 12:39:09.7378
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ba55613-6cc7-45f5-f58d-08ddb89c6274
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8870
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hbv3YWNKttfXjgn8z6gdq/O/gz1rwtu9EyYEh3cJ17qUV7tZMXeLW2OeL1XLC++pv9e3UVbOIrgiT4z2IBCI9Wc5RSg6fSUj9U/DpxkdwS4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4462
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 adultscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2507010079
+X-Proofpoint-GUID: 5pqKYDoE-yE2xdMQundT7LeLc1dDT72-
+X-Proofpoint-ORIG-GUID: 5pqKYDoE-yE2xdMQundT7LeLc1dDT72-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA3OSBTYWx0ZWRfXzdr+ctGCoDLV rYk35iHuBP1o64FS415dNmKVNiqfpr21XktcVv7Tvger/MDziQAWksM82f8ytjUmcEU/chYDl+V 1Bdie8Z1HEhDNBq613rmRRnaq2A8QGGHF+VkOCgJEc85F9Pkes6OLGrgf8GUzXvntCmhpApPLxW
+ GJMLgne3Fadwlzz/PnwAKUv1sPZqs/N77kfAt4o069GKhBFn7PKb9SlHarkD8sJqJbupiX0sSm5 oM5rnPuDFbjPfzmaqic5Q0k3Vzv4EDDiW6GaSmU2m/s+QbdJc0flIMiSTYk7SYX486XwPBNDA7j C6XfAlFQm6TTc5d/q1BM7UccVNDBbp1Or5IJWRPehUaHPbSyIzcMPQynQJvxvcjQgNN8YUl0zgr
+ 3DjD0UKzh+mS/Ler8Tj+RRzBwt3R3lkyUkceJsCSBCVwSEjcekY3OLz2+ie6/INrI+ES55WK
+X-Authority-Analysis: v=2.4 cv=ONgn3TaB c=1 sm=1 tr=0 ts=6863d6f0 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=5KLPUuaC_9wA:10 a=GoEa3M9JfhUA:10 a=2rFDjVRrivpQT0tBCEEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
 
-Currently, the family code and subfamily code are derived from the
-PMC_TAP_IDCODE register. Versal, Versal NET share the same family
-code. Also some platforms share the same subfamily code, making it
-difficult to distinguish between platforms. Update
-zynqmp_pm_get_family_info() to use IDs derived from the compatible
-string instead of silicon ID codes derived from PMC_TAP_IDCODE register.
+On Tue, Jul 01, 2025 at 05:45:51PM +0530, siddhartha@kenip.in wrote:
+> 🧩 1. Does the patch cause VMAs to be merged eventually?
+> You're correct: VMA merging only happens at mmap() time (via
+> __mmap_region()). What the patch affects is the behavior of
+> thp_get_unmapped_area_vmflags() before the mmap is placed.
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
----
- drivers/firmware/xilinx/zynqmp.c        | 42 ++++++++++---------------
- drivers/pinctrl/pinctrl-zynqmp.c        |  7 ++---
- drivers/soc/xilinx/xlnx_event_manager.c |  8 ++---
- drivers/soc/xilinx/zynqmp_power.c       | 10 +++---
- include/linux/firmware/xlnx-zynqmp.h    | 15 ++-------
- 5 files changed, 31 insertions(+), 51 deletions(-)
+[...]
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 2fb1c29314b7..17156eea78f2 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -472,8 +472,6 @@ int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...)
- 
- static u32 pm_api_version;
- static u32 pm_tz_version;
--static u32 pm_family_code;
--static u32 pm_sub_family_code;
- 
- int zynqmp_pm_register_sgi(u32 sgi_num, u32 reset)
- {
-@@ -540,32 +538,18 @@ EXPORT_SYMBOL_GPL(zynqmp_pm_get_chipid);
- /**
-  * zynqmp_pm_get_family_info() - Get family info of platform
-  * @family:	Returned family code value
-- * @subfamily:	Returned sub-family code value
-  *
-  * Return: Returns status, either success or error+reason
-  */
--int zynqmp_pm_get_family_info(u32 *family, u32 *subfamily)
-+int zynqmp_pm_get_family_info(u32 *family)
- {
--	u32 ret_payload[PAYLOAD_ARG_CNT];
--	u32 idcode;
--	int ret;
--
--	/* Check is family or sub-family code already received */
--	if (pm_family_code && pm_sub_family_code) {
--		*family = pm_family_code;
--		*subfamily = pm_sub_family_code;
--		return 0;
--	}
-+	if (!active_platform_fw_data)
-+		return -ENODEV;
- 
--	ret = zynqmp_pm_invoke_fn(PM_GET_CHIPID, ret_payload, 0);
--	if (ret < 0)
--		return ret;
-+	if (!family)
-+		return -EINVAL;
- 
--	idcode = ret_payload[1];
--	pm_family_code = FIELD_GET(FAMILY_CODE_MASK, idcode);
--	pm_sub_family_code = FIELD_GET(SUB_FAMILY_CODE_MASK, idcode);
--	*family = pm_family_code;
--	*subfamily = pm_sub_family_code;
-+	*family = active_platform_fw_data->family_code;
- 
- 	return 0;
- }
-@@ -1246,8 +1230,13 @@ int zynqmp_pm_pinctrl_set_config(const u32 pin, const u32 param,
- 				 u32 value)
- {
- 	int ret;
-+	u32 pm_family_code;
-+
-+	ret = zynqmp_pm_get_family_info(&pm_family_code);
-+	if (ret)
-+		return ret;
- 
--	if (pm_family_code == ZYNQMP_FAMILY_CODE &&
-+	if (pm_family_code == PM_ZYNQMP_FAMILY_CODE &&
- 	    param == PM_PINCTRL_CONFIG_TRI_STATE) {
- 		ret = zynqmp_pm_feature(PM_PINCTRL_CONFIG_PARAM_SET);
- 		if (ret < PM_PINCTRL_PARAM_SET_VERSION) {
-@@ -2016,6 +2005,7 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct zynqmp_devinfo *devinfo;
-+	u32 pm_family_code;
- 	int ret;
- 
- 	ret = get_set_conduit_method(dev->of_node);
-@@ -2059,8 +2049,8 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
- 	pr_info("%s Platform Management API v%d.%d\n", __func__,
- 		pm_api_version >> 16, pm_api_version & 0xFFFF);
- 
--	/* Get the Family code and sub family code of platform */
--	ret = zynqmp_pm_get_family_info(&pm_family_code, &pm_sub_family_code);
-+	/* Get the Family code of platform */
-+	ret = zynqmp_pm_get_family_info(&pm_family_code);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -2087,7 +2077,7 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
- 
- 	zynqmp_pm_api_debugfs_init();
- 
--	if (pm_family_code == VERSAL_FAMILY_CODE) {
-+	if (pm_family_code != PM_ZYNQMP_FAMILY_CODE) {
- 		em_dev = platform_device_register_data(&pdev->dev, "xlnx_event_manager",
- 						       -1, NULL, 0);
- 		if (IS_ERR(em_dev))
-diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-index fddf0fef4b13..71eaac81deb1 100644
---- a/drivers/pinctrl/pinctrl-zynqmp.c
-+++ b/drivers/pinctrl/pinctrl-zynqmp.c
-@@ -100,7 +100,6 @@ struct zynqmp_pctrl_group {
- 
- static struct pinctrl_desc zynqmp_desc;
- static u32 family_code;
--static u32 sub_family_code;
- 
- static int zynqmp_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
- {
-@@ -605,7 +604,7 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
- 				return -ENOMEM;
- 
- 			for (pin = 0; pin < groups[resp[i]].npins; pin++) {
--				if (family_code == ZYNQMP_FAMILY_CODE)
-+				if (family_code == PM_ZYNQMP_FAMILY_CODE)
- 					__set_bit(groups[resp[i]].pins[pin], used_pins);
- 				else
- 					__set_bit((u8)groups[resp[i]].pins[pin] - 1, used_pins);
-@@ -958,11 +957,11 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 	if (!pctrl)
- 		return -ENOMEM;
- 
--	ret = zynqmp_pm_get_family_info(&family_code, &sub_family_code);
-+	ret = zynqmp_pm_get_family_info(&family_code);
- 	if (ret < 0)
- 		return ret;
- 
--	if (family_code == ZYNQMP_FAMILY_CODE) {
-+	if (family_code == PM_ZYNQMP_FAMILY_CODE) {
- 		ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
- 						      &zynqmp_desc.npins);
- 	} else {
-diff --git a/drivers/soc/xilinx/xlnx_event_manager.c b/drivers/soc/xilinx/xlnx_event_manager.c
-index a572d15f6161..6fdf4d14b7e7 100644
---- a/drivers/soc/xilinx/xlnx_event_manager.c
-+++ b/drivers/soc/xilinx/xlnx_event_manager.c
-@@ -77,17 +77,17 @@ struct registered_event_data {
- 
- static bool xlnx_is_error_event(const u32 node_id)
- {
--	u32 pm_family_code, pm_sub_family_code;
-+	u32 pm_family_code;
- 
--	zynqmp_pm_get_family_info(&pm_family_code, &pm_sub_family_code);
-+	zynqmp_pm_get_family_info(&pm_family_code);
- 
--	if (pm_sub_family_code == VERSAL_SUB_FAMILY_CODE) {
-+	if (pm_family_code == PM_VERSAL_FAMILY_CODE) {
- 		if (node_id == VERSAL_EVENT_ERROR_PMC_ERR1 ||
- 		    node_id == VERSAL_EVENT_ERROR_PMC_ERR2 ||
- 		    node_id == VERSAL_EVENT_ERROR_PSM_ERR1 ||
- 		    node_id == VERSAL_EVENT_ERROR_PSM_ERR2)
- 			return true;
--	} else {
-+	} else if (pm_family_code == PM_VERSAL_NET_FAMILY_CODE) {
- 		if (node_id == VERSAL_NET_EVENT_ERROR_PMC_ERR1 ||
- 		    node_id == VERSAL_NET_EVENT_ERROR_PMC_ERR2 ||
- 		    node_id == VERSAL_NET_EVENT_ERROR_PMC_ERR3 ||
-diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
-index ae59bf16659a..9b7b2858b22a 100644
---- a/drivers/soc/xilinx/zynqmp_power.c
-+++ b/drivers/soc/xilinx/zynqmp_power.c
-@@ -285,7 +285,7 @@ static int register_event(struct device *dev, const enum pm_api_cb_id cb_type, c
- static int zynqmp_pm_probe(struct platform_device *pdev)
- {
- 	int ret, irq;
--	u32 pm_api_version, pm_family_code, pm_sub_family_code, node_id;
-+	u32 pm_api_version, pm_family_code, node_id;
- 	struct mbox_client *client;
- 
- 	ret = zynqmp_pm_get_api_version(&pm_api_version);
-@@ -315,14 +315,16 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
- 		INIT_WORK(&zynqmp_pm_init_suspend_work->callback_work,
- 			  zynqmp_pm_init_suspend_work_fn);
- 
--		ret = zynqmp_pm_get_family_info(&pm_family_code, &pm_sub_family_code);
-+		ret = zynqmp_pm_get_family_info(&pm_family_code);
- 		if (ret < 0)
- 			return ret;
- 
--		if (pm_sub_family_code == VERSALNET_SUB_FAMILY_CODE)
-+		if (pm_family_code == PM_VERSAL_NET_FAMILY_CODE)
- 			node_id = PM_DEV_ACPU_0_0;
--		else
-+		else if (pm_family_code == PM_VERSAL_FAMILY_CODE)
- 			node_id = PM_DEV_ACPU_0;
-+		else
-+			return -ENODEV;
- 
- 		ret = register_event(&pdev->dev, PM_NOTIFY_CB, node_id, EVENT_SUBSYSTEM_RESTART,
- 				     false, subsystem_restart_event_callback);
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index f112cd211c5e..4bfe314e99ef 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -51,22 +51,11 @@
- 
- #define PM_PINCTRL_PARAM_SET_VERSION	2
- 
--#define ZYNQMP_FAMILY_CODE 0x23
--#define VERSAL_FAMILY_CODE 0x26
--
- /* Family codes */
- #define PM_ZYNQMP_FAMILY_CODE 0x1 /* ZynqMP family code */
- #define PM_VERSAL_FAMILY_CODE 0x2 /* Versal family code */
- #define PM_VERSAL_NET_FAMILY_CODE 0x3 /* Versal NET family code */
- 
--/* When all subfamily of platform need to support */
--#define ALL_SUB_FAMILY_CODE		0x00
--#define VERSAL_SUB_FAMILY_CODE		0x01
--#define VERSALNET_SUB_FAMILY_CODE	0x03
--
--#define FAMILY_CODE_MASK	GENMASK(27, 21)
--#define SUB_FAMILY_CODE_MASK	GENMASK(20, 19)
--
- #define API_ID_MASK		GENMASK(7, 0)
- #define MODULE_ID_MASK		GENMASK(11, 8)
- #define PLM_MODULE_ID_MASK	GENMASK(15, 8)
-@@ -569,7 +558,7 @@ int zynqmp_pm_invoke_fw_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...);
- #if IS_REACHABLE(CONFIG_ZYNQMP_FIRMWARE)
- int zynqmp_pm_get_api_version(u32 *version);
- int zynqmp_pm_get_chipid(u32 *idcode, u32 *version);
--int zynqmp_pm_get_family_info(u32 *family, u32 *subfamily);
-+int zynqmp_pm_get_family_info(u32 *family);
- int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out);
- int zynqmp_pm_clock_enable(u32 clock_id);
- int zynqmp_pm_clock_disable(u32 clock_id);
-@@ -649,7 +638,7 @@ static inline int zynqmp_pm_get_chipid(u32 *idcode, u32 *version)
- 	return -ENODEV;
- }
- 
--static inline int zynqmp_pm_get_family_info(u32 *family, u32 *subfamily)
-+static inline int zynqmp_pm_get_family_info(u32 *family)
- {
- 	return -ENODEV;
- }
--- 
-2.34.1
+>
+> 📐 2. Why aren’t the VMAs mergeable before the patch?
+> Great question. Even if the VMA flags are identical, gaps introduced by
+> forced alignment from get_unmapped_area() break the precondition for
+> merging:
 
+[...]
+
+> 💡 4. Why this patch complements Rik’s rather than contradicts it:
+
+I'm really perplexed as to why you felt the need to (seemingly via LLM)
+reply with the explanation I've already provided here?...
+
+There's errors in things you say here too.
+
+With respect, please don't do this.
+
+(I'm the co-maintainer of pretty much all the relevant code here and wrote
+the VMA merge logic you're referring to.)
+
+>
+> 🤖 3. How does this impact AI workloads like Hugging Face Transformers?
+> Tokenization and dynamic batching create non-deterministic memory allocation
+> patterns:
+>
+> Models like BERT and T5 dynamically allocate intermediate buffers per
+> token-length, batch size, and attention window.
+>
+> Hugging Face + ONNX Runtime uses multiple small-ish anonymous mmap()s, often
+> 512KB–1.8MB.
+>
+> These allocations come in bursts — but due to forced alignment, the kernel
+> was placing them with artificial gaps, defeating THP eligibility entirely.
+>
+> By not force-aligning non-PMD-sized mappings, we avoid injecting gaps. The
+> result is that:
+>
+> a. VMAs remain adjacent → mergeable
+>
+> b. Physical memory is contiguous → eligible for khugepaged collapse
+>
+> c. THP utilization increases → fewer TLB misses → lower latency → higher
+> throughput
+>
+
+This is very useful information and it's appreciated! Let's not drown this
+out with restatements of stuff already covered.
+
+>
+> ⚙️ 5. mTHP note
+> Although this patch doesn’t target mTHP directly, I believe a similar logic
+> tweak could apply there too — especially with shmem-backed workloads (common
+> in model servers using shared tensor memory). I’d be happy to help test any
+> changes proposed there to derive the consequent results.
+
+Dev - could we hold off on any effort to do something like this until I've
+had a chance to refactor THP somewhat? This is already a mess and I'd like
+to avoid us piling on more complexity.
+
+We can revisit this at a later stage.
+
+>
+> Thanks again for the detailed discussion. Let me know if you’d like a trace
+> or VMA map from a Hugging Face benchmarked run (happy to generate one
+> locally).
+>
+
+Thanks! Much appreciated.
+
+Cheers, Lorenzo
 
