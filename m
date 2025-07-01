@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-710676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C53AEEFA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8AAAEEFAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31D1D3AE4A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29CC441D1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B7D258CD0;
-	Tue,  1 Jul 2025 07:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E3125B1F4;
+	Tue,  1 Jul 2025 07:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upd/VbPZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9aem4Pe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC44C1EA6F;
-	Tue,  1 Jul 2025 07:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D017721019E;
+	Tue,  1 Jul 2025 07:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751354380; cv=none; b=Nr6hYHfflXydeP8Ra6jSqxhW1XMFCD6WxRfryY5JOwtj+UZStcaVQj61k5Zf18c6W6dW+FS+cgMvvo8SqsOGfkMp/UXTpE+ljw+NXEVIRF7v0uQTERtZ9lwnLS1P58YL2eMMRXOYpTXX/MUS5S5Kdb0aEy0BkzsWYXmFPYBw4Xc=
+	t=1751354433; cv=none; b=gNqGCWig0Nu6+FzaH7xdSquMSnXxCj4qrMspjrnmxjAVTFj/zkIk3njiZ2vshrBZsFHXXL3ifqffOLu6U2t4AGPmLkfEtiitGjbkmyAgOu6RAJUnde1EXm874pD2SPXy8JSZhDJkzQJJDNApmtTv0y6gcTOLg3hNlEXTytLaTBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751354380; c=relaxed/simple;
-	bh=RdC1b/J9a0B1FwKlrcoXTqoAmRaXAhA9LvceeEfGy5c=;
+	s=arc-20240116; t=1751354433; c=relaxed/simple;
+	bh=xoJlJq3UmIDAD9e5v19NSnRBXYkBfCcxuYbY1MCCtnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jGH3MOerp4IsOFK2AjLNPZKTsJUqoFI7Jl36BZwM0xZ5eGz0OxaBE6bNHMqHJ23/1cUlURHnz0rK5bqg+ZxKmhLX63Ou0uHv2Nlwfpj/LVXYqXwCIz6tNVJ0nr25axVXr6Wpgru2EnARPfuXrRGiG5g4il7YTAmoBkQKDb/SHvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upd/VbPZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C474C4CEEE;
-	Tue,  1 Jul 2025 07:19:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qo1X1KKS99TTNo+v9L/vtm0zeZlWSbrd5vTwki345qMrrNQzXe91vyTySbQmv6vF8rLBflrtId/lJlCMtljS1cP3S/Z5mRxB+p1oI+zkD+j1xneLLRBTpCsQurxG80NPiB41vbtqRUK6fnUt6JRAnq94Q3hjDZHuOjRHbDzpT44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9aem4Pe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDB7C4CEEB;
+	Tue,  1 Jul 2025 07:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751354380;
-	bh=RdC1b/J9a0B1FwKlrcoXTqoAmRaXAhA9LvceeEfGy5c=;
+	s=k20201202; t=1751354433;
+	bh=xoJlJq3UmIDAD9e5v19NSnRBXYkBfCcxuYbY1MCCtnc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=upd/VbPZATRrgVeK1gTpaFdeL4r5MxGkkyhQ2axHQqIRQ//DIhT3CrExq4C9RcsSl
-	 Yzzp4Ho8LVIvHxnIZxJirpcfUKFMgPUW3/gfaUus6EMObtsOPVKJB+3XuDrCFwXFWK
-	 rkFVRAvnKFgJLhv90MeLXagl/Viyillg/D3TDTnHSwthkPYhgLV2XRlAqB9joXpX0V
-	 T5ah4xTIV7tVcBBRni2ROSjpzJn0HfFwqYM74vkYLuHlzXbDLitT/WFw+2FrB4zMIY
-	 HW5PVlAOxwtykEVmOPRRdMHMoiYLurOMoz3p3CdTF6iXD1x1D1+owGtHvjsd0p7rm1
-	 Z8h0kWwzLLnPg==
-Date: Tue, 1 Jul 2025 07:19:37 +0000
+	b=H9aem4Pe4788lwlBBBHYy3C9Rh+ct75f8wOp28C3zxFwhkOu3EErE7z8FadefYRds
+	 S7iZKRy2xppryDUiyseB0xKhcO0l7tptXJ9yaGjB/rx3EJqJkPLJMupgOAGfBr9TFY
+	 4fSW3Sa1is/SSmf/N4qQdNOLAeRef8R5sMvGQsHLU6HGMhyk7Bo8oqgFqhGYCwx/X8
+	 yzZ6QIM2SbHgGKb+rH80gAraoyNgZZz3Ldek/yJZrswIwEIo1WJKfArjk+zRyz/e1K
+	 uICOhCYGEJWHf4DoKDikDmtAsrOfZBk4JZ554BsMIrmVY/CLvIPHTp7c65usWsy68S
+	 0l2+yliMpWAgA==
+Date: Tue, 1 Jul 2025 07:20:30 +0000
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
 	Benson Leung <bleung@chromium.org>
-Subject: Re: [PATCH v1 1/1] platform/chrome: chromeos_laptop - Remove
- duplicate check
-Message-ID: <aGOMCSXpW2VQLb47@google.com>
-References: <20250630101225.1855431-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] platform/chrome: chromeos_laptop - replace open
+ coded variant of DEFINE_RES_IRQ()
+Message-ID: <aGOMPmy1UloEyOC5@google.com>
+References: <20250630101745.1855918-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,18 +57,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250630101225.1855431-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250630101745.1855918-1-andriy.shevchenko@linux.intel.com>
 
-On Mon, Jun 30, 2025 at 01:12:25PM +0300, Andy Shevchenko wrote:
-> fwnode_remove_software_node() is aware of invalid input,
-> no need to perform checks in the caller.
+On Mon, Jun 30, 2025 at 01:17:45PM +0300, Andy Shevchenko wrote:
+> DEFINE_RES_*() are compound literals, and hence no need to do that explicitly.
+> Besides that, we have no IRQ name provided, no need to use _NAMED() variant.
+> Replace open coded variant of DEFINE_RES_IRQ().
+> No functional changes intended.
+> 
+> [...]
 
 Applied to
 
     https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
 
-[1/1] platform/chrome: chromeos_laptop - Remove duplicate check
-      commit: 0c8fe93f4e7767b0e579959de051dcaddd7197fd
+[1/1] platform/chrome: chromeos_laptop - replace open coded variant of DEFINE_RES_IRQ()
+      commit: 5af89b6309417bdc2ff6835509d33a172c4a3218
 
 Thanks!
 
