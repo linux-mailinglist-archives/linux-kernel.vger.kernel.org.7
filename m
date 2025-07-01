@@ -1,79 +1,266 @@
-Return-Path: <linux-kernel+bounces-711528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DBBAEFBB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:11:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B864DAEFBBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54ACE1C03A93
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:09:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D01188710A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100C2798F3;
-	Tue,  1 Jul 2025 14:05:18 +0000 (UTC)
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42A4275874;
+	Tue,  1 Jul 2025 14:07:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BC6279794;
-	Tue,  1 Jul 2025 14:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C1726E6F1;
+	Tue,  1 Jul 2025 14:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378718; cv=none; b=jhIEtOy6OoAbwRbohZZO1018wQjmLEqM4yXsyjCONSdQPi7nQS3OYOEI3aAKJnfUYiNMAYvDP8LBMh+mUSv4nuI1MNB0U4jRtuadEHZimOGLnDnylOsOX07EDlkSaGRC2zEZY3ijdtF4/f44HT/3/sqopcYqfxyGGiUEYHTh2EQ=
+	t=1751378848; cv=none; b=Br9RMxcqWxN0gNllgtfoSiE/+bLMAsv50x3X880i1uoCt2IqWjNzqCUJh5qkZ+fWAtnLaDiPN3TaNuxgRAMyGC2+Un6zfluFgKW2wh1hAysAOfOmzl7GEMSkREssc1htgufd6O7JRGaG/4UiOWsT5L/WMzdh6O3Hm+REt+PvUuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378718; c=relaxed/simple;
-	bh=Y9pAIOixd6orCBEIX66d20TJ1MUVJfSdbmAuxAB3020=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXro3W8eUmlXof7i+GURCJR2x8NzcyGdWdumXtAdMcucmUw7SbKSY99PVfqs2R2+31o+UBB/pvuf924jGtqDsfQbR7F5CXtdpOXV8RHzqeI1jaBUQTNueey3IhpoZDEbteVsrU3JGH4XrhYSmhM/qhLv1UWKMD0NAhV8xEsSN9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id AA73546ECA;
-	Tue,  1 Jul 2025 16:05:14 +0200 (CEST)
-Date: Tue, 1 Jul 2025 16:05:14 +0200
-From: Gabriel Goller <g.goller@proxmox.com>
-To: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipv6: add `do_forwarding` sysctl to enable per-interface
- forwarding
-Message-ID: <26eakfopegf7medtwme5gecxoxfgttp5ed2eqahqmnzc54ffwf@po2minrxkxka>
-Mail-Followup-To: Nicolas Dichtel <nicolas.dichtel@6wind.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625142607.828873-1-g.goller@proxmox.com>
- <f674f8ac-8c4a-4c1c-9704-31a3116b56d6@6wind.com>
- <hx3lbafvwebj7u7eqh4zz72gu6r7y6dn2il7vepylecvvrkeeh@hybyi2oizwuj>
- <99780599-91e8-4fc7-98be-1afa849e7db2@6wind.com>
+	s=arc-20240116; t=1751378848; c=relaxed/simple;
+	bh=UPnoahqZpQxa6C4f25PSY/O5uLDsByabLi7HuBuSwEY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TEOPpKXa+R0NWHzc4bQoo3xcYvZ51aiTHydytUoi+VOLQDGLJKlmyOupf4y1OY9PoTprdt18+OevDav87DBynfQFrGhdKkPuVkqyAuwZFoXctoZFpedhsVOJEsJOFlmTi1tVkFMhJIr740pvPyD79V/eAwKFBS+24lKnvY4jWkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bWlFJ6Bylz6M4jF;
+	Tue,  1 Jul 2025 22:06:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 13A511402EA;
+	Tue,  1 Jul 2025 22:07:23 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 1 Jul
+ 2025 16:07:22 +0200
+Date: Tue, 1 Jul 2025 15:07:21 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dongsheng Yang <dongsheng.yang@linux.dev>
+CC: <mpatocka@redhat.com>, <agk@redhat.com>, <snitzer@kernel.org>,
+	<axboe@kernel.dk>, <hch@lst.de>, <dan.j.williams@intel.com>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<dm-devel@lists.linux.dev>
+Subject: Re: [PATCH v1 03/11] dm-pcache: add cache device
+Message-ID: <20250701150721.00003e67@huawei.com>
+In-Reply-To: <20250624073359.2041340-4-dongsheng.yang@linux.dev>
+References: <20250624073359.2041340-1-dongsheng.yang@linux.dev>
+	<20250624073359.2041340-4-dongsheng.yang@linux.dev>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <99780599-91e8-4fc7-98be-1afa849e7db2@6wind.com>
-User-Agent: NeoMutt/20241002-35-39f9a6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 30.06.2025 16:53, Nicolas Dichtel wrote:
->Le 27/06/2025 à 16:47, Gabriel Goller a écrit :
->[snip]
->>
->> Sent a new patch just now, thanks for reviewing!
->>
->FWIW, I didn't see any new patch from you.
+On Tue, 24 Jun 2025 07:33:50 +0000
+Dongsheng Yang <dongsheng.yang@linux.dev> wrote:
 
-It's out now, forgot to actually send it -_-
+> Add cache_dev.{c,h} to manage the persistent-memory device that stores
+> all pcache metadata and data segments.  Splitting this logic out keeps
+> the main dm-pcache code focused on policy while cache_dev handles the
+> low-level interaction with the DAX block device.
+>=20
+> * DAX mapping
+>   - Opens the underlying device via dm_get_device().
+>   - Uses dax_direct_access() to obtain a direct linear mapping; falls
+>     back to vmap() when the range is fragmented.
+>=20
+> * On-disk layout
+>   =E2=94=8C=E2=94=80 4 KB =E2=94=80=E2=94=90  super-block (SB)
+>   =E2=94=9C=E2=94=80 4 KB =E2=94=80=E2=94=A4  cache_info[0]
+>   =E2=94=9C=E2=94=80 4 KB =E2=94=80=E2=94=A4  cache_info[1]
+>   =E2=94=9C=E2=94=80 4 KB =E2=94=80=E2=94=A4  cache_ctrl
+>   =E2=94=94=E2=94=80 ...  =E2=94=80=E2=94=98  segments
+>   Constants and macros in the header expose offsets and sizes.
+>=20
+> * Super-block handling
+>   - sb_read(), sb_validate(), sb_init() verify magic, CRC32 and host
+>     endianness (flag *PCACHE_SB_F_BIGENDIAN*).
+>   - Formatting zeroes the metadata replicas and initialises the segment
+>     bitmap when the SB is blank.
+>=20
+> * Segment allocator
+>   - Bitmap protected by seg_lock; find_next_zero_bit() yields the next
+>     free 16 MB segment.
+>=20
+> * Lifecycle helpers
+>   - cache_dev_start()/stop() encapsulate init/exit and are invoked by
+>     dm-pcache core.
+>   - Gracefully handles errors: CRC mismatch, wrong endianness, device
+>     too small (< 512 MB), or failed DAX mapping.
+>=20
+> Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
+> ---
+>  drivers/md/dm-pcache/cache_dev.c | 299 +++++++++++++++++++++++++++++++
+>  drivers/md/dm-pcache/cache_dev.h |  70 ++++++++
+>  2 files changed, 369 insertions(+)
+>  create mode 100644 drivers/md/dm-pcache/cache_dev.c
+>  create mode 100644 drivers/md/dm-pcache/cache_dev.h
+>=20
+> diff --git a/drivers/md/dm-pcache/cache_dev.c b/drivers/md/dm-pcache/cach=
+e_dev.c
+> new file mode 100644
+> index 000000000000..4dcebc9c167e
+> --- /dev/null
+> +++ b/drivers/md/dm-pcache/cache_dev.c
+> @@ -0,0 +1,299 @@
 
->Regards,
->Nicolas
+> +static int build_vmap(struct dax_device *dax_dev, long total_pages, void=
+ **vaddr)
+> +{
+> +	struct page **pages;
+> +	long i =3D 0, chunk;
+> +	pfn_t pfn;
+> +	int ret;
+> +
+> +	pages =3D vmalloc_array(total_pages, sizeof(struct page *));
 
+Perhaps if DM allows it, use __free() here to avoid need to manually clean =
+it up and
+allow early returns on errors.
+
+> +	if (!pages)
+> +		return -ENOMEM;
+> +
+> +	do {
+> +		chunk =3D dax_direct_access(dax_dev, i, total_pages - i,
+> +					  DAX_ACCESS, NULL, &pfn);
+> +		if (chunk <=3D 0) {
+> +			ret =3D chunk ? chunk : -EINVAL;
+> +			goto out_free;
+> +		}
+> +
+> +		if (!pfn_t_has_page(pfn)) {
+> +			ret =3D -EOPNOTSUPP;
+> +			goto out_free;
+> +		}
+> +
+> +		while (chunk-- && i < total_pages) {
+> +			pages[i++] =3D pfn_t_to_page(pfn);
+> +			pfn.val++;
+> +			if (!(i & 15))
+> +				cond_resched();
+> +		}
+> +	} while (i < total_pages);
+> +
+> +	*vaddr =3D vmap(pages, total_pages, VM_MAP, PAGE_KERNEL);
+> +	if (!*vaddr)
+> +		ret =3D -ENOMEM;
+> +out_free:
+> +	vfree(pages);
+> +	return ret;
+> +}
+> +
+> +static int cache_dev_dax_init(struct pcache_cache_dev *cache_dev)
+> +{
+> +	struct dm_pcache	*pcache =3D CACHE_DEV_TO_PCACHE(cache_dev);
+> +	struct dax_device	*dax_dev;
+> +	long			total_pages, mapped_pages;
+> +	u64			bdev_size;
+> +	void			*vaddr;
+> +	int			ret;
+> +	int			id;
+
+combine ret and id on one line.
+
+> +	pfn_t			pfn;
+> +
+> +	dax_dev	=3D cache_dev->dm_dev->dax_dev;
+> +	/* total size check */
+> +	bdev_size =3D bdev_nr_bytes(cache_dev->dm_dev->bdev);
+> +	if (bdev_size < PCACHE_CACHE_DEV_SIZE_MIN) {
+> +		pcache_dev_err(pcache, "dax device is too small, required at least %ll=
+u",
+> +				PCACHE_CACHE_DEV_SIZE_MIN);
+> +		ret =3D -ENOSPC;
+> +		goto out;
+		return -ENOSPC;
+
+
+
+
+> +int cache_dev_start(struct dm_pcache *pcache)
+> +{
+> +	struct pcache_cache_dev *cache_dev =3D &pcache->cache_dev;
+> +	struct pcache_sb sb;
+> +	bool format =3D false;
+> +	int ret;
+> +
+> +	mutex_init(&cache_dev->seg_lock);
+> +
+> +	ret =3D cache_dev_dax_init(cache_dev);
+> +	if (ret) {
+> +		pcache_dev_err(pcache, "failed to init cache_dev %s via dax way: %d.",
+> +			       cache_dev->dm_dev->name, ret);
+> +		goto err;
+> +	}
+> +
+> +	ret =3D sb_read(cache_dev, &sb);
+> +	if (ret)
+> +		goto dax_release;
+> +
+> +	if (le64_to_cpu(sb.magic) =3D=3D 0) {
+> +		format =3D true;
+> +		ret =3D sb_init(cache_dev, &sb);
+> +		if (ret < 0)
+> +			goto dax_release;
+> +	}
+> +
+> +	ret =3D sb_validate(cache_dev, &sb);
+> +	if (ret)
+> +		goto dax_release;
+> +
+> +	cache_dev->sb_flags =3D le32_to_cpu(sb.flags);
+> +	ret =3D cache_dev_init(cache_dev, sb.seg_num);
+> +	if (ret)
+> +		goto dax_release;
+> +
+> +	if (format)
+> +		sb_write(cache_dev, &sb);
+> +
+> +	return 0;
+> +
+> +dax_release:
+> +	cache_dev_dax_exit(cache_dev);
+> +err:
+
+In these cases just return instead of going to the label. It gives
+generally more readable code.
+
+> +	return ret;
+> +}
+> +
+> +int cache_dev_get_empty_segment_id(struct pcache_cache_dev *cache_dev, u=
+32 *seg_id)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&cache_dev->seg_lock);
+
+If DM is fine with guard() use it here.
+
+> +	*seg_id =3D find_next_zero_bit(cache_dev->seg_bitmap, cache_dev->seg_nu=
+m, 0);
+> +	if (*seg_id =3D=3D cache_dev->seg_num) {
+> +		ret =3D -ENOSPC;
+> +		goto unlock;
+> +	}
+> +
+> +	set_bit(*seg_id, cache_dev->seg_bitmap);
+> +	ret =3D 0;
+> +unlock:
+> +	mutex_unlock(&cache_dev->seg_lock);
+> +	return ret;
+> +}
 
