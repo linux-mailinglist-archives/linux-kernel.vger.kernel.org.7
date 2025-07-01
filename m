@@ -1,59 +1,106 @@
-Return-Path: <linux-kernel+bounces-711475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B875EAEFB42
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC181AEFB3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB6818910B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB03447114
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5A527585C;
-	Tue,  1 Jul 2025 13:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB84276059;
+	Tue,  1 Jul 2025 13:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="mdMixECc"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qW7LzJ++";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p10Zy082";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qW7LzJ++";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p10Zy082"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ADF2749CA;
-	Tue,  1 Jul 2025 13:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542C5275AFF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378142; cv=none; b=qTsVovkP4+FgUSpiytG87Rgixi6ri3K/GUDAxbz4pRvUS5jXhmGiIt+GJtY1Ooq6Muy6qdsFeOBCZrRwZ4Q3OEtVeOF04xtbJbTiw1hiu5E/1UF3fv+6JEJdTm5OqeW/kY1/NLmEYve8/ndWV8znPQdQ6RrA7RPzbpMFuLSHe+U=
+	t=1751378091; cv=none; b=nKXHQCyu9sCkqS7qE7CYVHx3llEucKvc+IwjlBsXSZHiXU+PO+2bZ5BYIv8JBQ9PThIR3N3yo2yrkopq5CVORhSf1HDy1mnoAXWNL/r8MYfSyPBDLdt1asrATcwTWDEnJ7OGUbrUaorksgcWepKnewS05iliciCE8HEvratql2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378142; c=relaxed/simple;
-	bh=j8DqhOjO/y33zK4keb4QH8Ti7vNpk1R1IA2kSO2tRI8=;
+	s=arc-20240116; t=1751378091; c=relaxed/simple;
+	bh=OZa4yKRHVDO+7SZUwMFN1ZqXJzB6v61X3RuYjqeq4EI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g644Ez2tsDvQ4ve9p70PUBnS97sXCY/WIutNmYLPzuECqQtauB35PAzicp+4kd/bTKVtcDeN+fQZFnaxN2Sv9KNABH9+aQ2pEr3g/nwYxqemsEMCDxfex7OIl1jigBGGFqKCSKqat8Kw3urDlCLbUchvrJ5vQJSP6UzJJT53vvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=mdMixECc; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=GwNQqB8pBJVwu+Xy+ljesQ25T/+91BIQflo1XREJg40=;
-	b=mdMixECcLagBJQzyNSbxLKjgirGpbSIPT6x2HT/8O2EpMR17+Byz+sqe1JLTY/
-	lAyKizyHyoNHO6ZomxZOwgR0m7sC3MaPg6bzzo5wsuHifiunl0uJc0qhK6mQbKVj
-	FNT0NPsUI02xkLVZyWysdE1D8qNIn5MN7Rv9Ej2+tE2qo=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDnL6eS6GNopYgBAA--.3609S3;
-	Tue, 01 Jul 2025 21:54:28 +0800 (CST)
-Date: Tue, 1 Jul 2025 21:54:26 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	othacehe@gnu.org, andrew@lunn.ch, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] arm64: dts: freescale: imx93-var-som: update eqos
- support for MaxLinear PHY
-Message-ID: <aGPokie6sW/FCjWc@dragon>
-References: <20250605085904.12199-1-stefano.radaelli21@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4PHapo+Ls1dFnB9m4WNSZdQ19lx3bwfm6Zb4xyS39m4lP/LnLSYBeZvh52aI9cADLXV8BdauzNKhW0HyJg+jOTg+FIcyeO+cCJNKkDHXvBU0Omt3pruRIMFSjnzrdDIoM+pjL8pcA7NmpCFSWL2Ik2BDx3uWFz5QhaGNdv7HCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qW7LzJ++; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p10Zy082; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qW7LzJ++; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p10Zy082; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 96C8D1F393;
+	Tue,  1 Jul 2025 13:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751378088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OZa4yKRHVDO+7SZUwMFN1ZqXJzB6v61X3RuYjqeq4EI=;
+	b=qW7LzJ++TZAzgZzJJ8dmmAQ3FyyHzXkr28sOR7UKjG+7dWpaaMSxDYuzxYJ90697etJ2fs
+	oqLVJPIJNNtOoXor5lYq0cqHsB6quP7YUwFrJICByatLKoRqvjSGs/sO9tD6aU7VWRcV+u
+	mmXFtKYwwysFM+lKd3sIE2zEFo1bSOQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751378088;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OZa4yKRHVDO+7SZUwMFN1ZqXJzB6v61X3RuYjqeq4EI=;
+	b=p10Zy082goSNDSHYdjSff+NcvPSNoCEK4P0Pp5IS1mnYA/UxSuvlPWc9Ynakx8tMU51g6B
+	1AmCwGgHFnVN82AA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751378088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OZa4yKRHVDO+7SZUwMFN1ZqXJzB6v61X3RuYjqeq4EI=;
+	b=qW7LzJ++TZAzgZzJJ8dmmAQ3FyyHzXkr28sOR7UKjG+7dWpaaMSxDYuzxYJ90697etJ2fs
+	oqLVJPIJNNtOoXor5lYq0cqHsB6quP7YUwFrJICByatLKoRqvjSGs/sO9tD6aU7VWRcV+u
+	mmXFtKYwwysFM+lKd3sIE2zEFo1bSOQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751378088;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OZa4yKRHVDO+7SZUwMFN1ZqXJzB6v61X3RuYjqeq4EI=;
+	b=p10Zy082goSNDSHYdjSff+NcvPSNoCEK4P0Pp5IS1mnYA/UxSuvlPWc9Ynakx8tMU51g6B
+	1AmCwGgHFnVN82AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 740281364B;
+	Tue,  1 Jul 2025 13:54:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OMToGajoY2i3BQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 01 Jul 2025 13:54:48 +0000
+Date: Tue, 1 Jul 2025 15:54:43 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: Christoph Hellwig <hch@infradead.org>, 
+	John Garry <john.g.garry@oracle.com>, Daniel Wagner <wagi@kernel.org>, "Sean A." <sean@ashe.io>, 
+	"James.Bottomley@hansenpartnership.com" <James.Bottomley@hansenpartnership.com>, "kashyap.desai@broadcom.com" <kashyap.desai@broadcom.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, 
+	"mpi3mr-linuxdrv.pdl@broadcom.com" <mpi3mr-linuxdrv.pdl@broadcom.com>, "sreekanth.reddy@broadcom.com" <sreekanth.reddy@broadcom.com>, 
+	"sumit.saxena@broadcom.com" <sumit.saxena@broadcom.com>
+Subject: Re: [RFC PATCH v2 1/1] scsi: mpi3mr: Introduce smp_affinity_enable
+ module parameter
+Message-ID: <c4c82ac2-c9f9-4bef-8f6f-a6cc9a2a0545@flourine.local>
+References: <1xjYfSjJndOlG0Uro2jPuAmIrfqi5AVbfpFeWh7RfLfzqqH9u8ePoqgaP32ElXrGyOB47UvesV_Y2ypmM3cZtWit2EPnV3aj6i9w_DMo1eI=@ashe.io>
+ <077ffc15-f949-41d4-a13b-4949990ba830@oracle.com>
+ <aFjjf3qbuEOeWUjt@infradead.org>
+ <0233e47b-894f-49e0-822c-bc1436352c98@flourine.local>
+ <itze7fhv7yx6j4l4ammx2znkknr2v6iducahcsxdjpfbasdsz5@nz4hvmv3s234>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,147 +109,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250605085904.12199-1-stefano.radaelli21@gmail.com>
-X-CM-TRANSID:Mc8vCgDnL6eS6GNopYgBAA--.3609S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZFW3tryfuF4DJF4ruw4Uurg_yoWrKF48pa
-	yfurWIqrZ3t34fK3yxWa13CF1jya15Ar9rur15trW093WxCF9rtr1Skws8Xr4DCrW8Aw13
-	Xryq9F13C3Z293DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYyIUUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNBdSt2hj6JeipQAA31
+In-Reply-To: <itze7fhv7yx6j4l4ammx2znkknr2v6iducahcsxdjpfbasdsz5@nz4hvmv3s234>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
 
-On Thu, Jun 05, 2025 at 10:59:04AM +0200, Stefano Radaelli wrote:
-> Variscite has updated the Ethernet PHY on the VAR-SOM-MX93 from the
-> ADIN1300BCPZ to the MaxLinear MXL86110, as documented in the
-> August 2023 revision changelog.
-> Link: https://variwiki.com/index.php?title=VAR-SOM-MX93_rev_changelog
-> 
-> Update the device tree accordingly:
-> - Drop the regulator node used to power the previously PHY.
-> - Add support for the reset line using GPIO1_IO07 with proper timings.
-> - Configure the PHY LEDs via the LED subsystem under /sys/class/leds/,
->   leveraging the support implemented in the mxl86110 PHY driver
->   (drivers/net/phy/mxl-86110.c).
->   Two LEDs are defined to match the LED configuration on the Variscite
->   VAR-SOM Carrier Boards:
->     * LED@0: Yellow, netdev trigger.
->     * LED@1: Green, netdev trigger.
-> - Adjust the RGMII clock pad control settings to match the updated PHY
->   requirements.
-> 
-> These changes ensure proper PHY initialization and LED status indication
-> for the new MaxLinear MXL86110, improving board compatibility with the
-> latest hardware revision.
-> 
-> Signed-off-by: Stefano Radaelli <stefano.radaelli21@gmail.com>
-> ---
-> v3:
->   - Add "PATCH" to subject line.
->   - Fix wrong reference to previous PHY in commit message.
-> 
-> v2: https://lore.kernel.org/imx/20250604153510.55689-1-stefano.radaelli21@gmail.com/
->   - Clarified the use of 'rgmii' mode by adding a comment in the DT,
->     explaining that hardware delays are already implemented on the SOM PCB.
-> 
-> v1: https://lore.kernel.org/imx/20250603221416.74523-1-stefano.radaelli21@gmail.com/
-> 
->  .../boot/dts/freescale/imx93-var-som.dtsi     | 45 ++++++++++++-------
->  1 file changed, 30 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi b/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
-> index 783938245e4f..cea8d792328c 100644
-> --- a/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx93-var-som.dtsi
-> @@ -19,26 +19,19 @@ mmc_pwrseq: mmc-pwrseq {
->  		reset-gpios = <&gpio4 14 GPIO_ACTIVE_LOW>,	/* WIFI_RESET */
->  			      <&gpio3 7 GPIO_ACTIVE_LOW>;	/* WIFI_PWR_EN */
->  	};
-> -
-> -	reg_eqos_phy: regulator-eqos-phy {
-> -		compatible = "regulator-fixed";
-> -		pinctrl-names = "default";
-> -		pinctrl-0 = <&pinctrl_reg_eqos_phy>;
-> -		regulator-name = "eth_phy_pwr";
-> -		regulator-min-microvolt = <3300000>;
-> -		regulator-max-microvolt = <3300000>;
-> -		gpio = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-> -		enable-active-high;
-> -		startup-delay-us = <100000>;
-> -		regulator-always-on;
-> -	};
->  };
->  
->  &eqos {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_eqos>;
-> +	/*
-> +	 * The required RGMII TX and RX 2ns delays are implemented directly
-> +	 * in hardware via passive delay elements on the SOM PCB.
-> +	 * No delay configuration is needed in software via PHY driver.
-> +	 */
->  	phy-mode = "rgmii";
->  	phy-handle = <&ethphy0>;
-> +	snps,clk-csr = <5>;
->  	status = "okay";
->  
->  	mdio {
-> @@ -51,6 +44,27 @@ ethphy0: ethernet-phy@0 {
->  			compatible = "ethernet-phy-ieee802.3-c22";
->  			reg = <0>;
->  			eee-broken-1000t;
-> +			reset-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
-> +			reset-assert-us = <10000>;
-> +			reset-deassert-us = <100000>;
+On Wed, Jun 25, 2025 at 09:03:42AM -0400, Aaron Tomlin wrote:
+> Understood. I agree, common functionality is indeed preferred.
+> Daniel, I look forward to your submission.
 
-Missing a newline between property list and child node.
+Sorry for the delay. I found a few bugs in the new cpu queue mapping
+code and it took a while to debug and fix them all. I should have it
+ready to post by tomorrow. Currently, my brain overheating due to summer
+:)
 
-I fixed it up and applied the patch.
-
-Shawn
-
-> +			leds {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				led@0 {
-> +					reg = <0>;
-> +					color = <LED_COLOR_ID_YELLOW>;
-> +					function = LED_FUNCTION_LAN;
-> +					linux,default-trigger = "netdev";
-> +				};
-> +
-> +				led@1 {
-> +					reg = <1>;
-> +					color = <LED_COLOR_ID_GREEN>;
-> +					function = LED_FUNCTION_LAN;
-> +					linux,default-trigger = "netdev";
-> +				};
-> +			};
->  		};
->  	};
->  };
-> @@ -75,14 +89,15 @@ MX93_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0			0x57e
->  			MX93_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1			0x57e
->  			MX93_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2			0x57e
->  			MX93_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3			0x57e
-> -			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x5fe
-> +			MX93_PAD_ENET1_RXC__CCM_ENET_QOS_CLOCK_GENERATE_RX_CLK	0x58e
->  			MX93_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL		0x57e
->  			MX93_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0			0x57e
->  			MX93_PAD_ENET1_TD1__ENET_QOS_RGMII_TD1			0x57e
->  			MX93_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2			0x57e
->  			MX93_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3			0x57e
-> -			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x5fe
-> +			MX93_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x58e
->  			MX93_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x57e
-> +			MX93_PAD_UART2_TXD__GPIO1_IO07				0x51e
->  		>;
->  	};
->  
-> 
-> base-commit: a9dfb7db96f7bc1f30feae673aab7fdbfbc94e9c
-> prerequisite-patch-id: 2335ebcc90360b008c840e7edf7e34a595880edf
-> -- 
-> 2.43.0
-> 
-
+FWIW, the last standing issue is that the qla2xxx driver allocates
+queues for scsi and reuses a subset of these queues for nvme. So the irq
+allocating is done for the scsi queues, e.g 16 queues, but the nvme code
+limits it to 8 queues. Currently, there is a disconnect between the irq
+mapping and the cpu mapping code. The solution here is to use the
+irq_get_affinity function instead creating a new map based only on the
+housekeeping cpumask.
 
