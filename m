@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-710453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9F5AEEC9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 04:57:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4B5AEEC98
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 04:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13AB21BC31F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F3117F008
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08291DF268;
-	Tue,  1 Jul 2025 02:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="L4tooCxj"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3EE1E04BD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 02:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40BC1DF268;
+	Tue,  1 Jul 2025 02:55:38 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9278F5D;
+	Tue,  1 Jul 2025 02:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751338638; cv=none; b=UWDD3PUHYa4EK6fDp1GBFrTRnaKNy0jah+Km8rd8ZduEqUI/GeLSOy1ygamEjrL+F63kanhDA6CvPkCcCf37uI4bJoa4JE7TdOSBPGUr2KVCyeW0xoP08ZHmZFD4uNk3S1ITM0RZQohTbeImXs11pUyAWSHltlChWDzbRfLoSFg=
+	t=1751338538; cv=none; b=WFxHFoGBS4i6+K7iC0j7GZuRyzChPUquM8TZ/MWvjkgqGlMtjWjrY82gFINJmuPD6IoZ23IfEmY6fqGICNdhc3JneJW4Y/IxykECSFpHNkYmKwQdZIDw4xXynRcmR5ciKI4L6Sq9m/6gD/XhDWqj1LoQjs9iDqyXmIW9mJXEgT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751338638; c=relaxed/simple;
-	bh=EbsERdb/+9Inezm701cZKLZk9xhFlzUwx4J0s6tfxDI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=em0VzXNWLZWjfO4MbSwxpTuraVnz9r4nmnmwuajZ91Pp/LJOErzjA4Qv0+BFxqYdjPP73Upo7hD9ans3Q3cib12gCOwb22OB9Ll9BsqDAsSkIdeXxkk+RoZhtQ3ZhxbcJsCdjSkdpWIqAcdFC71CCEx7vLl9gn5h8YqiDBqwiQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=L4tooCxj reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=Sg2mYFgUwmv5/+xuBpG048q/hO1BMCXZutXVptqmaoo=; b=L
-	4tooCxj3QmlsHYS0OAIYxN0pJfpNk/Zi2A8x4mW+PyryfHoHDI07L6bmevwYRY3R
-	NtJbCAPzFFiGtABr+dxDANpWmtDDFtpYKqTsnY/5wRFxKq+mpA02wlPA3PO/uMXi
-	hpbm01NwxJd4n+lWo70HkHiEr+snRDs41GxFAkJ8OY=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-146 (Coremail) ; Tue, 1 Jul 2025 10:55:00 +0800 (CST)
-Date: Tue, 1 Jul 2025 10:55:00 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Konstantin Shabanov" <mail@etehtsea.me>
-Cc: "Sandy Huang" <hjc@rock-chips.com>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	"Andy Yan" <andy.yan@rock-chips.com>,
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Maxime Ripard" <mripard@kernel.org>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>, "Dan Callaghan" <djc@djc.id.au>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"Daniel Stone" <daniel@fooishbar.org>
-Subject: Re:[PATCH V5 RESEND] drm/rockchip: Reject AFBC for res >2560 on
- rk3399
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250604090054.7070-1-mail@etehtsea.me>
-References: <20250604090054.7070-1-mail@etehtsea.me>
-X-NTES-SC: AL_Qu2eA/+Yt00r5iadYekfmkcVgOw9UcO5v/Qk3oZXOJF8jCzr+QYventMEmfc3vOOKwaIkReYbSho7uZ8WbNyZqYgFat2EzuoShH/1RflS4VtwQ==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1751338538; c=relaxed/simple;
+	bh=j8mvDC9ShxcbStXL1aZdO5mHCD7KxGG/dV5WZmv+KBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XR4EAQJ9iGXD13FThN5DpFlZ6UscOCb2a4E13y9rqvbsZiR02SsKiskPksoav97MWXiR4y9UUABdYtoJvXIOVzI9dnbS4fEaA3VsfJktvCk7VVqJXtaAlJWGA8M3BPYnyKPDWl55IIam4c1d5YlOmCa9LBWVk3+PWmZY+dzDfuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id B9C931D3506;
+	Tue,  1 Jul 2025 02:55:31 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 8C86E6000B;
+	Tue,  1 Jul 2025 02:55:27 +0000 (UTC)
+Date: Mon, 30 Jun 2025 22:56:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH v12 02/14] unwind_user: Add frame pointer support
+Message-ID: <20250630225603.72c84e67@gandalf.local.home>
+In-Reply-To: <CAHk-=wiWOYB4c3E-Cc=D89j0txbN4AGqm0j1dojqHq3uzJ+LqQ@mail.gmail.com>
+References: <20250701005321.942306427@goodmis.org>
+	<20250701005450.888492528@goodmis.org>
+	<CAHk-=wiWOYB4c3E-Cc=D89j0txbN4AGqm0j1dojqHq3uzJ+LqQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3682f894.3077.197c3e8c232.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:kigvCgDXH6oETmNodugoAA--.5380W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAV9XmhjSIa4vwABs1
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: uxdqmqi3mkftdm3kkxodbidb8rjbd1u8
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 8C86E6000B
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/DhGnpR+zUD75ZuNKjF+V9XwX8hjqOjNg=
+X-HE-Tag: 1751338527-525059
+X-HE-Meta: U2FsdGVkX1+5SmoCvb2Vcbzey9cRTVgntfEmEbwJO9W59eah++685e1pnXPH9dzoRae6PmUVDEstvcGyXEOIxd6Pdy2gLOm1ySSusqHIzqmjO16HiYhIKII8crc+9TbhKYYcoOHq8bAERyk7LNkWQaMvk/q5YuAty0OBvTJqKfbQGF6uypUOpvBtnJSKGcJ2/g3DnFAwT5yPHQ6fdWlUAlLsrp/FDH4aYWWNF/E9ioCgBMPTjvQsLP+BmzHFoenovpj1sQANw/LTXcRBAKnl1SB8psqy3esHh1ecNPuMa7wGIxFXkcDoIWyfYPD2vUAr+WWYG+IzQ/JPWlPK/b2Kq5NnVNLWl1irf2tI50g7qb0w99RyAf3WHnVCGb90Hjbs4JlXoVOt7nXsU+xeGcZZpXYtB+bhyg8FLFXTAB/89uVrkt3itqFTNsQa4bmjVxuv
 
-CgpIZWxsbyBLb25zdGFuaW4gYW5kICBEYW5pZWzvvIwKCkF0IDIwMjUtMDYtMDQgMTc6MDA6NTMs
-ICJLb25zdGFudGluIFNoYWJhbm92IiA8bWFpbEBldGVodHNlYS5tZT4gd3JvdGU6Cj5BcyBpdCBp
-c24ndCBzdXBwb3J0ZWQgYnkgcmszMzk5LiBGcm9tIHRoZSBkYXRhc2hlZXRbMV0KPigiMS4yLjEw
-IFZpZGVvIElOL09VVCIsICJEaXNwbGF5IEludGVyZmFjZSIsIHAuIDE3KToKPgo+ICBTdXBwb3J0
-IEFGQkMgZnVuY3Rpb24gY28tb3BlcmF0aW9uIHdpdGggR1BVCj4gICAgKiBzdXBwb3J0IDI1NjB4
-MTYwMCBVSQo+Cj5TaWduZWQtb2ZmLWJ5OiBLb25zdGFudGluIFNoYWJhbm92IDxtYWlsQGV0ZWh0
-c2VhLm1lPgo+UmVwb3J0ZWQtYnk6IERhbiBDYWxsYWdoYW4gPGRqY0BkamMuaWQuYXU+Cj5DbG9z
-ZXM6IGh0dHBzOi8vZ2l0bGFiLmZyZWVkZXNrdG9wLm9yZy9tZXNhL21lc2EvLS9pc3N1ZXMvNzk2
-OAo+Cj5bMV06IGh0dHBzOi8vb3BlbnNvdXJjZS5yb2NrLWNoaXBzLmNvbS9pbWFnZXMvZC9kNy9S
-b2NrY2hpcF9SSzMzOTlfRGF0YXNoZWV0X1YyLjEtMjAyMDAzMjMucGRmCj4tLS0KPiBWNCAtPiBW
-NTogRXh0cmFjdCBBRkJDIHN1cHBvcnQgY2hlY2sgaW50byBkcnYKPiBWMyAtPiBWNDogQ29ycmVj
-dCByZWR1bmRhbnQgaGVhZGVyIGluY2x1c2lvbgo+IFYyIC0+IFYzOiBSdW4gY2hlY2sgb25seSBv
-biByazMzOTkKPiBWMSAtPiBWMjogTW92ZSB0aGUgY2hlY2sgdG8gdGhlIGZiX2NyZWF0ZSBjYWxs
-YmFjawo+Cj4gQUZCQyBjaGVjayBpcyBpbXBsZW1lbnRlZCBpbiBhIHNpbWlsYXIgbWFubmVyIGFz
-IGluIHRoZSBtYWxpZHAgZHJpdmVyLgo+IFJlc2VuZCBvZiB0aGUgaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvYWxsLzIwMjUwNTIxMTYwNTU2LjE0MzQ2LTItbWFpbEBldGVodHNlYS5tZS8uCj4gCj4g
-ZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyB8IDE2ICsrKysrKysr
-KysrKysrKysKPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5oIHwg
-IDIgKysKPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2ZiLmMgIHwgIDMg
-KysrCj4gMyBmaWxlcyBjaGFuZ2VkLCAyMSBpbnNlcnRpb25zKCspCj4KPmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUv
-ZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYwo+aW5kZXggMTgwZmFkNWQ0OWFkLi45ZmIw
-NDAyMmIyZjMgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBf
-ZHJtX2Rydi5jCj4rKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Ry
-di5jCj5AQCAtNDIsNiArNDIsOCBAQAo+ICNkZWZpbmUgRFJJVkVSX01BSk9SCTEKPiAjZGVmaW5l
-IERSSVZFUl9NSU5PUgkwCj4gCj4rI2RlZmluZSBSSzMzOTlfQUZCQ19NQVhfV0lEVEgJCTI1NjAK
-PisKPiBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9kcml2ZXIgcm9ja2NoaXBfZHJtX2RyaXZlcjsK
-PiAKPiAvKgo+QEAgLTM1MCw2ICszNTIsMjAgQEAgaW50IHJvY2tjaGlwX2RybV9lbmRwb2ludF9p
-c19zdWJkcml2ZXIoc3RydWN0IGRldmljZV9ub2RlICplcCkKPiAJcmV0dXJuIGZhbHNlOwo+IH0K
-PiAKPitib29sIHJvY2tjaGlwX3ZlcmlmeV9hZmJjX2ZyYW1lYnVmZmVyX3NpemUoc3RydWN0IGRy
-bV9kZXZpY2UgKmRldiwKPisJCQkJCSAgIGNvbnN0IHN0cnVjdCBkcm1fbW9kZV9mYl9jbWQyICpt
-b2RlX2NtZCkKPit7Cj4rCWlmIChvZl9tYWNoaW5lX2lzX2NvbXBhdGlibGUoInJvY2tjaGlwLHJr
-MzM5OSIpICYmCj4rCSAgICBtb2RlX2NtZC0+d2lkdGggPiBSSzMzOTlfQUZCQ19NQVhfV0lEVEgp
-IHsKPisJCURSTV9ERUJVR19LTVMoIkFGQkMgaXMgbm90IHN1cHBvcnRlZCBmb3IgdGhlIHdpZHRo
-ICVkIChtYXggJWQpXG4iLAo+KwkJCSAgICAgIG1vZGVfY21kLT53aWR0aCwKPisJCQkgICAgICBS
-SzMzOTlfQUZCQ19NQVhfV0lEVEgpOwo+KwkJcmV0dXJuIGZhbHNlOwo+Kwl9Cj4rCj4rCXJldHVy
-biB0cnVlOwo+K30KPisKPiBzdGF0aWMgdm9pZCByb2NrY2hpcF9kcm1fbWF0Y2hfcmVtb3ZlKHN0
-cnVjdCBkZXZpY2UgKmRldikKPiB7Cj4gCXN0cnVjdCBkZXZpY2VfbGluayAqbGluazsKPmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5oIGIvZHJp
-dmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuaAo+aW5kZXggYzE4M2U4MmE0
-MmE1Li41ZGFiY2VhYTRmZDYgMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-cm9ja2NoaXBfZHJtX2Rydi5oCj4rKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2No
-aXBfZHJtX2Rydi5oCj5AQCAtODYsNiArODYsOCBAQCBpbnQgcm9ja2NoaXBfZHJtX3dhaXRfdmFj
-dF9lbmQoc3RydWN0IGRybV9jcnRjICpjcnRjLCB1bnNpZ25lZCBpbnQgbXN0aW1lb3V0KTsKPiBp
-bnQgcm9ja2NoaXBfZHJtX2VuY29kZXJfc2V0X2NydGNfZW5kcG9pbnRfaWQoc3RydWN0IHJvY2tj
-aGlwX2VuY29kZXIgKnJlbmNvZGVyLAo+IAkJCQkJICAgICAgc3RydWN0IGRldmljZV9ub2RlICpu
-cCwgaW50IHBvcnQsIGludCByZWcpOwo+IGludCByb2NrY2hpcF9kcm1fZW5kcG9pbnRfaXNfc3Vi
-ZHJpdmVyKHN0cnVjdCBkZXZpY2Vfbm9kZSAqZXApOwo+K2Jvb2wgcm9ja2NoaXBfdmVyaWZ5X2Fm
-YmNfZnJhbWVidWZmZXJfc2l6ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAo+KwkJCQkJICAgY29u
-c3Qgc3RydWN0IGRybV9tb2RlX2ZiX2NtZDIgKm1vZGVfY21kKTsKPiBleHRlcm4gc3RydWN0IHBs
-YXRmb3JtX2RyaXZlciBjZG5fZHBfZHJpdmVyOwo+IGV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJp
-dmVyIGR3X2hkbWlfcm9ja2NoaXBfcGx0Zm1fZHJpdmVyOwo+IGV4dGVybiBzdHJ1Y3QgcGxhdGZv
-cm1fZHJpdmVyIGR3X2hkbWlfcXBfcm9ja2NoaXBfcGx0Zm1fZHJpdmVyOwo+ZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmIuYwo+aW5kZXggNTgyOWVlMDYxYzYxLi5mMDUy
-N2YxMmY1NjggMTAwNjQ0Cj4tLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBf
-ZHJtX2ZiLmMKPisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZmIu
-Ywo+QEAgLTUyLDYgKzUyLDkgQEAgcm9ja2NoaXBfZmJfY3JlYXRlKHN0cnVjdCBkcm1fZGV2aWNl
-ICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSwKPiAJfQo+IAoKCkkgZm91bmQgdGhhdCB3aGVu
-IGNhbGxpbmcgZHJtX2dlbV9mYl9pbml0X3dpdGhfZnVuY3MgZWFybGllciwgIGRybV9hbnlfcGxh
-bmVfaGFzX2Zvcm1hdCB3b3VsZCBiZSBjYWxsZWQuCgpib29sIGRybV9wbGFuZV9oYXNfZm9ybWF0
-KHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lLAogICAgICAgICAgICAgICAgICAgICAgICAgIHUzMiBm
-b3JtYXQsIHU2NCBtb2RpZmllcikKeyAgICAgICAgICAgICAgIAogICAgICAgIHVuc2lnbmVkIGlu
-dCBpOwoKICAgICAgICBmb3IgKGkgPSAwOyBpIDwgcGxhbmUtPmZvcm1hdF9jb3VudDsgaSsrKSB7
-CiAgICAgICAgICAgICAgICBpZiAoZm9ybWF0ID09IHBsYW5lLT5mb3JtYXRfdHlwZXNbaV0pCiAg
-ICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOyAKICAgICAgICB9ICAgICAgIAogICAgICAgIGlm
-IChpID09IHBsYW5lLT5mb3JtYXRfY291bnQpCiAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7
-CgogICAgICAgIGlmIChwbGFuZS0+ZnVuY3MtPmZvcm1hdF9tb2Rfc3VwcG9ydGVkKSB7CiAgICAg
-ICAgICAgICAgICBpZiAoIXBsYW5lLT5mdW5jcy0+Zm9ybWF0X21vZF9zdXBwb3J0ZWQocGxhbmUs
-IGZvcm1hdCwgbW9kaWZpZXIpKQogICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7
-CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgIGlmICghcGxhbmUtPm1vZGlmaWVyX2Nv
-dW50KQoKSWYgd2UgZXh0ZW5kIHRoZSBmb3JtYXRfbW9kX3N1cHBvcnRlZCAgYnkgcGFzcyBkb3du
-IGZi77yMIHdlIHN0aWxsIGNhbiBkbyB0aGlzCmNoZWNrIGJ5IGZvcm1hdF9tb2Rfc3VwcG9ydGVk
-IGF0IHRoZSBmYiBjcmVhdGUgc3RhdGUg77yfCgoKCj4gCWlmIChkcm1faXNfYWZiYyhtb2RlX2Nt
-ZC0+bW9kaWZpZXJbMF0pKSB7Cj4rCQlpZiAoIXJvY2tjaGlwX3ZlcmlmeV9hZmJjX2ZyYW1lYnVm
-ZmVyX3NpemUoZGV2LCBtb2RlX2NtZCkpCj4rCQkJcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7Cj4r
-Cj4gCQlyZXQgPSBkcm1fZ2VtX2ZiX2FmYmNfaW5pdChkZXYsIG1vZGVfY21kLCBhZmJjX2ZiKTsK
-PiAJCWlmIChyZXQpIHsKPiAJCQlkcm1fZnJhbWVidWZmZXJfcHV0KCZhZmJjX2ZiLT5iYXNlKTsK
-Pgo+YmFzZS1jb21taXQ6IDY4NWM0MDdmMTY4Y2I0OWExMmNjNzAzMjMwZDFlMmQ2Mjc2N2JmZDIK
-Pi0tIAo+Mi40OS4wCg==
+On Mon, 30 Jun 2025 19:10:09 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Mon, 30 Jun 2025 at 17:54, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > +       /* stack going in wrong direction? */
+> > +       if (cfa <= state->sp)
+> > +               goto done;  
+> 
+> I suspect this should do a lot more testing.
+
+Sure.
+
+> 
+> > +       /* Find the Return Address (RA) */
+> > +       if (get_user(ra, (unsigned long *)(cfa + frame->ra_off)))
+> > +               goto done;
+> > +
+> > +       if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
+> > +               goto done;  
+> 
+> .. and this should check the frame for validity too.  At a minimum it
+> should be properly aligned, but things like "it had better be above
+> the current frame" to avoid having some loop would seem to be a good
+> idea.
+
+Makes sense.
+
+> 
+> Maybe even check that it's the same vma?
+
+Hmm, I call on to Jens Remus and ask if s390 can do anything whacky here?
+Where something that isn't allowed on other architectures may be allowed
+there? I know s390 has some strange type of stack usage.
+
+-- Steve
 
