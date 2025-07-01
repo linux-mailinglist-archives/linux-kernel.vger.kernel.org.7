@@ -1,245 +1,236 @@
-Return-Path: <linux-kernel+bounces-712126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE801AF051C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:46:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318EBAF057D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B37E3A2EC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141E73A9DC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AC92FEE3B;
-	Tue,  1 Jul 2025 20:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FA8302075;
+	Tue,  1 Jul 2025 21:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ildLjMwu"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djIUcdPn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF11E246781;
-	Tue,  1 Jul 2025 20:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E873B281531;
+	Tue,  1 Jul 2025 21:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751402767; cv=none; b=dH+XxC6KNubdyufXYdw5jvjMet3oN4NpNFax0E/dfJ/ShHwU6EytFhDdDzQJIHOvwfeSJTsoa8Zek4RnmevdGeEEN9i5y2VJLhJC38GqvA3quAKTT7k79G9/JcEjKQEbioIh26Hd012JMG2wjv0AgP9UCuuOI/Igs+tea+tOois=
+	t=1751404369; cv=none; b=XpT6cuBcjZkJslZ+wtCVsN9kHWQoCQU6ZQfscyp3qiya4e/xC4xJhRUkCSvjhPZTftvOckK2Wya4oVGRwZpKAApuiuD6sTrUgqfvbd53wy9hPtF9EGCt8Vrhk3u2T8LQPuRmykT1MFDcuIWTwBlwIpGPUmhUjejCkGs2mH7k8mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751402767; c=relaxed/simple;
-	bh=cgf2UXP07i29I0Sz7Ucz+VMLeoyIB1XYNHnEU1OdDfM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QQR4wiDjE/0cBORpz2Vkpp/VlRKcf9mxgCo46MbxNP+NPCVhjOABb3+vSM7gxSg4vmg/51yyuWhKd4w+CHXIU9HkYv+BUPAm95Q+4Pe22Xq/Sex2uzV7CNx8g+OvBSGN4wXpgNFc6YiFfs8EoDjrRwfk1ram1FZ84WmHP3HyLAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ildLjMwu; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3226307787so2846444a12.1;
-        Tue, 01 Jul 2025 13:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751402765; x=1752007565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hCgrlLfo9Mns92U/5iXO12KGKM9lhSDCM+Q2c4kfSmE=;
-        b=ildLjMwu8XfJILGEu8lDB/KokcoMaCVPu8ab7XnvASRTMjtYt5uhd0nitARask9NBK
-         edjtW3FcD3iBmLflyj0qkBF9+HAu47lQsgfdXhy8niOIksuurSsp5hmhA++koRVc5I4j
-         +ot6VPnt+k0BAzU+ajgUFzq4mc/nCArsn4J1Bjnd68ugorwNKs4DWUiInpf8rTDaSvO3
-         w5nc9EbgIh5QgoMLlFL/WQ+cqWnAWzeyeojvi785yiYsJQV9vy4fCc0ac2tsasP+WXXz
-         JK8BOc470k9cPee6ihxmnLmoCL50Dz5L6obKzPkbaFSm+A5LbnGcFA+uA1YMQUj1N0dD
-         /TKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751402765; x=1752007565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hCgrlLfo9Mns92U/5iXO12KGKM9lhSDCM+Q2c4kfSmE=;
-        b=dFb0rpgY34MJSz1AxJFeoFMvBpYLnRvvUmQ2y9gZSvoyqr8fVIw2u0S5Zq9OOoI7e5
-         J1fBqZsCk0Fn+p8Ib/dCFIx7+57hyWK8PaZYPn+9w5f6Pfx+Y3FKk4NR33TQq+EPmYW6
-         6l643QA95r2c1GiSnuzlPOtaojY4MYo6QNklY3Vy04VSvHFY4EAyQaWq+IP/bYVkVtD6
-         ulpEartgA1oYsu6Z3IEQmE+rY34047fDEDkYtpaiyaskbj/jT5Bo0T9XMyj6ttmDZKnc
-         ZKVJwXuwRq4rRCcCFPH0P5/aEXUVL2tAq3TkXuLOSx2y/Ogt4VuhENFZtCQSYj9Tj4pl
-         iRsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJSgltE6JBfKmKESnypbOuT+VeMOAfHvioSV73Nffjs2x8LxqVFJyqq2J8/wJd5lvDFtE=@vger.kernel.org, AJvYcCVlUMi3FXt5l5sKJMUPWJi1a7AXtLv5QMGzdzZThHi5wxOkLnPsE+NlN/ELrIXWJaicDXRfD7wsrj1sHIXS@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZrJT1D7BWNjbJS2MGXcVYzlMdTvjCse8d9W6tJQ1tyyC9cYdZ
-	ZUA/NUbrVY2/mQsm9Paphb8HFcfFyusE8vFBX7FhwITOKBH9Hyb+Kl7U6FTDJrWo0RUIbgeXwqH
-	QhjGGfompTWqXPoq8lAWNj09b3yTT8iM=
-X-Gm-Gg: ASbGncv93eHdFyIQ247+3BDCX28RkKpFiu9NsWQ/IIV0M0/wdFVhyY6ag2YhQWFVn5C
-	enoyqAKwYlkPYlaO+IuzfW/AvAyV4zgQZwXWgwd4mwZRX9pmK61hqf4hosk/iuoUkswDyKwMSXu
-	cuxXPZHY9IFyWXTfw6gbKDud/pR0MFn3f3UlwaeqwU66dgfTcW2alUxrkkFa4=
-X-Google-Smtp-Source: AGHT+IE0GrZOy0np0jvotiCpIi/pC4GYr+OPKKBtDYVBM8itFJuYyOIpiylRF1p1h/76mb4orDWecoU4sJTxm4EJHfg=
-X-Received: by 2002:a17:90b:2c8d:b0:311:c1ec:7cfb with SMTP id
- 98e67ed59e1d1-31a90bd47aemr511891a91.21.1751402765101; Tue, 01 Jul 2025
- 13:46:05 -0700 (PDT)
+	s=arc-20240116; t=1751404369; c=relaxed/simple;
+	bh=2VQNHtAFW203Lh7ygCI+rqhuOSRLMZnXZaMW/rALbxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/EEgOOZnPy/Xl1Sbnm+DpSL4VInDw+JINeJ+TDJC6SnmDy0Ixmin31gBJK0K8GD//ytgqZePay3ys94/yMMiEYXK/Rnp0psYNacAIfMS7CFwONBwcZ55+M5sUkSuFsnLtalGSugEngFIVpEcaN77SDu4+evgMzvNCABo/psd4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djIUcdPn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8612C4CEEB;
+	Tue,  1 Jul 2025 21:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751404368;
+	bh=2VQNHtAFW203Lh7ygCI+rqhuOSRLMZnXZaMW/rALbxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=djIUcdPnTWv6WkqOHsMBAycrGrqMBKFDjdQP0A5+yjKVE5tf0e2aCM20zMqgUpf3g
+	 20btQlGOgkau6hGF3EPKOHqXfKz4iUPrGPoCwKx3Q5YrOB3sbRO8pfTRUN+UioFekj
+	 pQjv5Lhn0mlepVORCVZNDCwojAHSduKAdtSFrKWsZUBPQeUZO/adLJ239n5DR+8IUu
+	 Mho4ncuy9e25FvXorp03/4i8EwraAlnjCn3h3RVtFXCdiep1ZG+6lVXt6roLzO4ByL
+	 2Ke+9BMbzsu0jOmPlyP2j2lfL4xEQh/KXvfXWl6G1feOX0qbDBmiFNGX63XNLEJ0Uv
+	 S3wURF5CNy37w==
+Date: Tue, 1 Jul 2025 16:50:42 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-api@vger.kernel.org, workflows@vger.kernel.org,
+	tools@kernel.org, Kate Stewart <kstewart@linuxfoundation.org>,
+	Gabriele Paoloni <gpaoloni@redhat.com>,
+	Chuck Wolber <chuckwolber@gmail.com>
+Subject: Re: [RFC v2 01/22] kernel/api: introduce kernel API specification
+ framework
+Message-ID: <aGRKIuR6hgW0YLc_@lappy>
+References: <20250624180742.5795-1-sashal@kernel.org>
+ <20250624180742.5795-2-sashal@kernel.org>
+ <874ivxuht8.fsf@trenco.lwn.net>
+ <20250701002058.1cae5a7e@foz.lan>
+ <aGPvR-Mj6aR4Y8B5@lappy>
+ <8734bfspko.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250620113846.3950478-1-arnd@kernel.org> <CAADnVQKAT3UPzcpzkJ6_-powz4YTiDAku4-a+++hrhYdJUnLiw@mail.gmail.com>
- <361eb614-e145-49dc-aa32-12f313f61b96@linux.dev>
-In-Reply-To: <361eb614-e145-49dc-aa32-12f313f61b96@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 1 Jul 2025 13:45:50 -0700
-X-Gm-Features: Ac12FXyI7Qso7jRBjHBJtEsaXWo4_BsHAlGq7GXcFjjswLG4pAt_g_gsBh58Zpg
-Message-ID: <CAEf4BzahSLGiW_F4LtG1tMAb0O1b6D-kO0AcrU2O+nLKVbkvZA@mail.gmail.com>
-Subject: Re: [PATCH] bpf: turn off sanitizer in do_misc_fixups for old clang
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Arnd Bergmann <arnd@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
-	Luis Gerhorst <luis.gerhorst@fau.de>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <8734bfspko.fsf@trenco.lwn.net>
 
-On Tue, Jul 1, 2025 at 1:03=E2=80=AFPM Yonghong Song <yonghong.song@linux.d=
-ev> wrote:
+On Tue, Jul 01, 2025 at 01:01:27PM -0600, Jonathan Corbet wrote:
+>[Adding some of the ELISA folks, who are working in a related area and
+>might have thoughts on this.  You can find the patch series under
+>discussion at:
 >
->
->
-> On 6/23/25 2:32 PM, Alexei Starovoitov wrote:
-> > On Fri, Jun 20, 2025 at 4:38=E2=80=AFAM Arnd Bergmann <arnd@kernel.org>=
- wrote:
-> >> From: Arnd Bergmann <arnd@arndb.de>
-> >>
-> >> clang versions before version 18 manage to badly optimize the bpf
-> >> verifier, with lots of variable spills leading to excessive stack
-> >> usage in addition to likely rather slow code:
-> >>
-> >> kernel/bpf/verifier.c:23936:5: error: stack frame size (2096) exceeds =
-limit (1280) in 'bpf_check' [-Werror,-Wframe-larger-than]
-> >> kernel/bpf/verifier.c:21563:12: error: stack frame size (1984) exceeds=
- limit (1280) in 'do_misc_fixups' [-Werror,-Wframe-larger-than]
-> >>
-> >> Turn off the sanitizer in the two functions that suffer the most from
-> >> this when using one of the affected clang version.
-> >>
-> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> >> ---
-> >>   kernel/bpf/verifier.c | 11 +++++++++--
-> >>   1 file changed, 9 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> >> index 2fa797a6d6a2..7724c7a56d79 100644
-> >> --- a/kernel/bpf/verifier.c
-> >> +++ b/kernel/bpf/verifier.c
-> >> @@ -19810,7 +19810,14 @@ static int do_check_insn(struct bpf_verifier_=
-env *env, bool *do_print_state)
-> >>          return 0;
-> >>   }
-> >>
-> >> -static int do_check(struct bpf_verifier_env *env)
-> >> +#if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 180100
-> >> +/* old clang versions cause excessive stack usage here */
-> >> +#define __workaround_kasan  __disable_sanitizer_instrumentation
-> >> +#else
-> >> +#define __workaround_kasan
-> >> +#endif
-> >> +
-> >> +static __workaround_kasan int do_check(struct bpf_verifier_env *env)
-> > This looks too hacky for a workaround.
-> > Let's figure out what's causing such excessive stack usage and fix it.
-> > We did some of this work in
-> > commit 6f606ffd6dd7 ("bpf: Move insn_buf[16] to bpf_verifier_env")
-> > and similar.
-> > Looks like it wasn't enough or more stack usage crept in since then.
-> >
-> > Also make sure you're using the latest bpf-next.
-> > A bunch of code was moved out of do_check().
-> > So I bet the current bpf-next/master doesn't have a problem
-> > with this particular function.
-> > In my kasan build do_check() is now fully inlined.
-> > do_check_common() is not and it's using 512 bytes of stack.
-> >
-> >>   {
-> >>          bool pop_log =3D !(env->log.level & BPF_LOG_LEVEL2);
-> >>          struct bpf_verifier_state *state =3D env->cur_state;
-> >> @@ -21817,7 +21824,7 @@ static int add_hidden_subprog(struct bpf_verif=
-ier_env *env, struct bpf_insn *pat
-> >>   /* Do various post-verification rewrites in a single program pass.
-> >>    * These rewrites simplify JIT and interpreter implementations.
-> >>    */
-> >> -static int do_misc_fixups(struct bpf_verifier_env *env)
-> >> +static __workaround_kasan int do_misc_fixups(struct bpf_verifier_env =
-*env)
-> > This one is using 832 byte of stack with kasan.
-> > Which is indeed high.
-> > Big chunk seems to be coming from chk_and_sdiv[] and chk_and_smod[].
-> >
-> > Yonghong,
-> > looks like you contributed that piece of code.
-> > Pls see how to reduce stack size here.
-> > Daniel used this pattern in earlier commits. Looks like
-> > we took it too far.
->
-> With llvm17, I got the following error:
->
-> /home/yhs/work/bpf-next/kernel/bpf/verifier.c:24491:5: error: stack frame=
- size (2552) exceeds limit (1280) in 'bpf_check' [-
-> Werror,-Wframe-larger-than]
->   24491 | int bpf_check(struct bpf_prog **prog, union bpf_attr *attr, bpf=
-ptr_t uattr, __u32 uattr_size)
->         |     ^
-> /home/yhs/work/bpf-next/kernel/bpf/verifier.c:19921:12: error: stack fram=
-e size (1368) exceeds limit (1280) in 'do_check' [-
-> Werror,-Wframe-larger-than]
->   19921 | static int do_check(struct bpf_verifier_env *env)
->         |            ^
-> 2 errors generated.
->
-> I checked IR and found the following memory allocations which may contrib=
-ute
-> excessive stack usage:
->
-> attr.coerce1, i32 noundef %uattr_size) local_unnamed_addr #0 align 16 !db=
-g !19800 {
-> entry:
->    %zext_patch.i =3D alloca [2 x %struct.bpf_insn], align 16, !DIAssignID=
- !19854
->    %rnd_hi32_patch.i =3D alloca [4 x %struct.bpf_insn], align 16, !DIAssi=
-gnID !19855
->    %cnt.i =3D alloca i32, align 4, !DIAssignID !19856
->    %patch.i766 =3D alloca [3 x %struct.bpf_insn], align 16, !DIAssignID !=
-19857
->    %chk_and_sdiv.i =3D alloca [1 x %struct.bpf_insn], align 4, !DIAssignI=
-D !19858
->    %chk_and_smod.i =3D alloca [1 x %struct.bpf_insn], align 4, !DIAssignI=
-D !19859
->    %chk_and_div.i =3D alloca [4 x %struct.bpf_insn], align 16, !DIAssignI=
-D !19860
->    %chk_and_mod.i =3D alloca [4 x %struct.bpf_insn], align 16, !DIAssignI=
-D !19861
->    %chk_and_sdiv343.i =3D alloca [8 x %struct.bpf_insn], align 16, !DIAss=
-ignID !19862
->    %chk_and_smod472.i =3D alloca [9 x %struct.bpf_insn], align 16, !DIAss=
-ignID !19863
->    %desc.i =3D alloca %struct.bpf_jit_poke_descriptor, align 8, !DIAssign=
-ID !19864
->    %target_size.i =3D alloca i32, align 4, !DIAssignID !19865
->    %patch.i =3D alloca [2 x %struct.bpf_insn], align 16, !DIAssignID !198=
-66
->    %patch355.i =3D alloca [2 x %struct.bpf_insn], align 16, !DIAssignID !=
-19867
->    %ja.i =3D alloca %struct.bpf_insn, align 8, !DIAssignID !19868
->    %ret_insn.i.i =3D alloca [8 x i32], align 16, !DIAssignID !19869
->    %ret_prog.i.i =3D alloca [8 x i32], align 16, !DIAssignID !19870
->    %fd.i =3D alloca i32, align 4, !DIAssignID !19871
->    %log_true_size =3D alloca i32, align 4, !DIAssignID !19872
-> ...
->
-> So yes, chk_and_{div,mod,sdiv,smod} consumes quite some stack and
-> can be coverted to runtime allocation but that is not enough for 1280
-> stack limit, we need to do more conversion from stack to memory
-> allocation. Will try to have uniform way to convert
-> 'alloca [<num> x %struct.bpf_insn]' to runtime allocation.
->
+>  https://lore.kernel.org/all/20250624180742.5795-1-sashal@kernel.org
 
-Do we need to go all the way to dynamic allocation? See env->insns_buf
-(which some parts of this function are already using for constructing
-instruction patch), let's just converge on that? It pre-allocates
-space for 32 instructions, should be sufficient for all the use cases,
-no?
+Yup, we all met at OSS and reached the conclusion that we should lean
+towards a machine readable spec, which we thought was closer to my
+proposal than the kerneldoc work.
+
+However, with your suggestion, I think it makes more sense to go back to
+kerneldoc as that can be made machine readable.
+
+>> In theory, all of that will let us have something like the following in
+>> kerneldoc:
+>>
+>> - @api-type: syscall
+>> - @api-version: 1
+>> - @context-flags: KAPI_CTX_PROCESS | KAPI_CTX_SLEEPABLE
+>> - @param-type: family, KAPI_TYPE_INT
+>> - @param-flags: family, KAPI_PARAM_IN
+>> - @param-range: family, 0, 45
+>> - @param-mask: type, SOCK_TYPE_MASK | SOCK_CLOEXEC | SOCK_NONBLOCK
+>> - @error-code: -EAFNOSUPPORT, "Address family not supported"
+>> - @error-condition: -EAFNOSUPPORT, "family < 0 || family >= NPROTO"
+>> - @capability: CAP_NET_RAW, KAPI_CAP_GRANT_PERMISSION
+>> - @capability-allows: CAP_NET_RAW, "Create SOCK_RAW sockets"
+>> - @since: 2.0
+>> - @return-type: KAPI_TYPE_FD
+>> - @return-check: KAPI_RETURN_ERROR_CHECK
+>>
+>> How does it sound? I'm pretty excited about the possiblity to align this
+>> with kerneldoc. Please poke holes in the plan :)
+>
+>I think we could do it without all the @signs.  We'd also want to see
+>how well we could integrate that information with the minimal structure
+>we already have: getting the return-value information into the Returns:
+>section, for example, and tying the parameter constraints to the
+>parameter descriptions we already have.
+
+Right!
+
+So I have a proof of concept which during the build process creates
+.apispec.h which are generated from kerneldoc and contain macros
+identical to the ones in my RFC.
+
+Here's an example of sys_mlock() spec:
+
+/**
+  * sys_mlock - Lock pages in memory
+  * @start: Starting address of memory range to lock
+  * @len: Length of memory range to lock in bytes
+  *
+  * Locks pages in the specified address range into RAM, preventing them from
+  * being paged to swap. Requires CAP_IPC_LOCK capability or RLIMIT_MEMLOCK
+  * resource limit.
+  *
+  * long-desc: Locks pages in the specified address range into RAM, preventing
+  *   them from being paged to swap. Requires CAP_IPC_LOCK capability
+  *   or RLIMIT_MEMLOCK resource limit.
+  * context-flags: KAPI_CTX_PROCESS | KAPI_CTX_SLEEPABLE
+  * param-type: start, KAPI_TYPE_UINT
+  * param-flags: start, KAPI_PARAM_IN
+  * param-constraint-type: start, KAPI_CONSTRAINT_NONE
+  * param-constraint: start, Rounded down to page boundary
+  * param-type: len, KAPI_TYPE_UINT
+  * param-flags: len, KAPI_PARAM_IN
+  * param-constraint-type: len, KAPI_CONSTRAINT_RANGE
+  * param-range: len, 0, LONG_MAX
+  * param-constraint: len, Rounded up to page boundary
+  * return-type: KAPI_TYPE_INT
+  * return-check-type: KAPI_RETURN_ERROR_CHECK
+  * return-success: 0
+  * error-code: -ENOMEM, ENOMEM, Address range issue,
+  *   Some of the specified range is not mapped, has unmapped gaps,
+  *   or the lock would cause the number of mapped regions to exceed the limit.
+  * error-code: -EPERM, EPERM, Insufficient privileges,
+  *   The caller is not privileged (no CAP_IPC_LOCK) and RLIMIT_MEMLOCK is 0.
+  * error-code: -EINVAL, EINVAL, Address overflow,
+  *   The result of the addition start+len was less than start (arithmetic overflow).
+  * error-code: -EAGAIN, EAGAIN, Some or all memory could not be locked,
+  *   Some or all of the specified address range could not be locked.
+  * error-code: -EINTR, EINTR, Interrupted by signal,
+  *   The operation was interrupted by a fatal signal before completion.
+  * error-code: -EFAULT, EFAULT, Bad address,
+  *   The specified address range contains invalid addresses that cannot be accessed.
+  * since-version: 2.0
+  * lock: mmap_lock, KAPI_LOCK_RWLOCK
+  * lock-acquired: true
+  * lock-released: true
+  * lock-desc: Process memory map write lock
+  * signal: FATAL
+  * signal-direction: KAPI_SIGNAL_RECEIVE
+  * signal-action: KAPI_SIGNAL_ACTION_RETURN
+  * signal-condition: Fatal signal pending
+  * signal-desc: Fatal signals (SIGKILL) can interrupt the operation at two points:
+  *   when acquiring mmap_write_lock_killable() and during page population
+  *   in __mm_populate(). Returns -EINTR. Non-fatal signals do NOT interrupt
+  *   mlock - the operation continues even if SIGINT/SIGTERM are received.
+  * signal-error: -EINTR
+  * signal-timing: KAPI_SIGNAL_TIME_DURING
+  * signal-priority: 0
+  * signal-interruptible: yes
+  * signal-state-req: KAPI_SIGNAL_STATE_RUNNING
+  * examples: mlock(addr, 4096);  // Lock one page
+  *   mlock(addr, len);   // Lock range of pages
+  * notes: Memory locks do not stack - multiple calls on the same range can be
+  *   undone by a single munlock. Locks are not inherited by child processes.
+  *   Pages are locked on whole page boundaries. Commonly used by real-time
+  *   applications to prevent page faults during time-critical operations.
+  *   Also used for security to prevent sensitive data (e.g., cryptographic keys)
+  *   from being written to swap. Note: locked pages may still be saved to
+  *   swap during system suspend/hibernate.
+  *
+  *   Tagged addresses are automatically handled via untagged_addr(). The operation
+  *   occurs in two phases: first VMAs are marked with VM_LOCKED, then pages are
+  *   populated into memory. When checking RLIMIT_MEMLOCK, the kernel optimizes
+  *   by recounting locked memory to avoid double-counting overlapping regions.
+  * side-effect: KAPI_EFFECT_MODIFY_STATE | KAPI_EFFECT_ALLOC_MEMORY, process memory, Locks pages into physical memory, preventing swapping, reversible=yes
+  * side-effect: KAPI_EFFECT_MODIFY_STATE, mm->locked_vm, Increases process locked memory counter, reversible=yes
+  * side-effect: KAPI_EFFECT_ALLOC_MEMORY, physical pages, May allocate and populate page table entries, condition=Pages not already present, reversible=yes
+  * side-effect: KAPI_EFFECT_MODIFY_STATE | KAPI_EFFECT_ALLOC_MEMORY, page faults, Triggers page faults to bring pages into memory, condition=Pages not already resident
+  * side-effect: KAPI_EFFECT_MODIFY_STATE, VMA splitting, May split existing VMAs at lock boundaries, condition=Lock range partially overlaps existing VMA
+  * state-trans: memory pages, swappable, locked in RAM, Pages become non-swappable and pinned in physical memory
+  * state-trans: VMA flags, unlocked, VM_LOCKED set, Virtual memory area marked as locked
+  * capability: CAP_IPC_LOCK, KAPI_CAP_BYPASS_CHECK, CAP_IPC_LOCK capability
+  * capability-allows: Lock unlimited amount of memory (no RLIMIT_MEMLOCK enforcement)
+  * capability-without: Must respect RLIMIT_MEMLOCK resource limit
+  * capability-condition: Checked when RLIMIT_MEMLOCK is 0 or locking would exceed limit
+  * capability-priority: 0
+  * constraint: RLIMIT_MEMLOCK Resource Limit, The RLIMIT_MEMLOCK soft resource limit specifies the maximum bytes of memory that may be locked into RAM. Unprivileged processes are restricted to this limit. CAP_IPC_LOCK capability allows bypassing this limit entirely. The limit is enforced per-process, not per-user.
+  * constraint-expr: RLIMIT_MEMLOCK Resource Limit, locked_memory + request_size <= RLIMIT_MEMLOCK || CAP_IPC_LOCK
+  * constraint: Memory Pressure and OOM, Locking large amounts of memory can cause system-wide memory pressure and potentially trigger the OOM killer. The kernel does not prevent locking memory that would destabilize the system.
+  * constraint: Special Memory Areas, Some memory types cannot be locked or are silently skipped: VM_IO/VM_PFNMAP areas (device mappings) are skipped; Hugetlb pages are inherently pinned and skipped; DAX mappings are always present in memory and skipped; Secret memory (memfd_secret) mappings are skipped; VM_DROPPABLE memory cannot be locked and is skipped; Gate VMA (kernel entry point) is skipped; VM_LOCKED areas are already locked. These special areas are silently excluded without error.
+  *
+  * Context: Process context. May sleep. Takes mmap_lock for write.
+  *
+  * Return: 0 on success, negative error code on failure
+  */
+
+>The other thing I would really like to see, to the extent we can, is
+>that a bunch of patches adding all this data to the source will actually
+>be accepted by the relevant maintainers.  It would be a shame to get all
+>this infrastructure into place, then have things stall out due to
+>maintainer pushback.  Maybe you should start by annotating the
+>scheduler-related system calls; if that works the rest should be a piece
+>of cake :)
+
+In the RFC I've sent out I've specced out API from different subsystems
+to solicit some feedback on those, but so fair it's been quiet.
+
+I'll resend a "lean" RFC v3 with just the base macro spec infra +
+kerneldoc support + "tricker" sched API + "trickier" mm API.
+
+I'm thinking that if it's still quiet in a month or two I'll propose a
+talk at LPC around it, or maybe try and feedback/consensus during
+maintainer's summit.
+
+But yes, it doesn't make sense to take it in until we have an ack from a
+few larger subsystems.
+
+-- 
+Thanks,
+Sasha
 
