@@ -1,157 +1,169 @@
-Return-Path: <linux-kernel+bounces-711739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC60AEFEBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:58:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9727DAEFEC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA93517B27C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C85D446916
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA5327A127;
-	Tue,  1 Jul 2025 15:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544EA27B4F2;
+	Tue,  1 Jul 2025 15:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LCf6D5nM"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b="NyELBZvB"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0161E26B775
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E6E27B4EB
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751385510; cv=none; b=m6mafNmCUga6EKYseSpsXRW0RwoofG1VjuRCesvwQTWKC9WfM5h+LSk5Y/JTTey9KQOomGKgdil7mQYvIEDXdW9xLP+PtnYmElwKUA/3O1mSFsgW+aAd7prG8cJiR6Y9bTxtHZyI0h70abPdbZGu3ht+ftCoF4N0keRcJV3HIhQ=
+	t=1751385531; cv=none; b=fj/a+B+dLlBlup/j6CVjBmvjn3HWCQjhYzq/sMaa58x1klhBzHi8GamL5RGhThKGIVMD4pTJ55pZz3MAVp73aAlB2nI9p+2xhWMHoUUPIXJSS0mczpkx9EFOKdGfqjPXjnQzTbEFDwguwiOL2YGpEzOZrp8y3CNdn6t3eaeEk/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751385510; c=relaxed/simple;
-	bh=syPUi+0YtPu1O+gGSw7VCpWonVdjEchNW4o+VNeuDEY=;
+	s=arc-20240116; t=1751385531; c=relaxed/simple;
+	bh=QSAY2cavr+hAtXa06F5WuFx/c09q1MQ9F8YFB1GGlxA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OlJ+KUkpD7yZeKXOE0ZhlMnBobhISG/xd5e7JMhuXiKqnjLmvcf2n9QWfEuT4pWyBc4puOBcOXNKhL+2iyD1tMRQ+jHXBjbBWhiYFb6pOIBclFopu8ekULWJ2lZgTHgPpdzbDH191IT4FKt1CtWGIC4pD2sH65gH/89fXh6zr9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LCf6D5nM; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <da00c7cf-a433-4498-9deb-87c34c731413@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751385506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w2kAki3XpnwBL+mLkNUk+5SoguiQ5CR7AwD5fcQ1qkE=;
-	b=LCf6D5nMVousjPj22Yq9MIVuXuCsGUWRMJQL8yIpDDKKskQYVmtbtQKehikg9+R6TFSI+k
-	VHbp+IJMsuRaF06E9UCcz8Xk6J2YufaEsM/Kt6ByOy/tzA1zK8q/YEVNNsLUApgBaGKAOY
-	iAd+YdRiUPR3RcXq3EPn65URvIMBELM=
-Date: Tue, 1 Jul 2025 11:58:17 -0400
+	 In-Reply-To:Content-Type; b=IiUQMDMOLhUCDg/yb2zUNGwBV3MLvHVJjSRH6YAjv+ZlSGlyyZLccLWrWZG1WXlS7/wF20uB5NXUA5kSiw05yq7bM5BLkwMgcO0spHhl6c6rldEO9PRCpMNz9aj7OEBvK/eOeuy4FcBKevB656l8imFOnzy+RpcIjfRrD8XGAbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com; spf=pass smtp.mailfrom=6wind.com; dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b=NyELBZvB; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=6wind.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a4eed70f24so789661f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 08:58:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind.com; s=google; t=1751385527; x=1751990327; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YhrekkuV81u85I0nCYoyFYWO/iQISbDoWTniOveqI+w=;
+        b=NyELBZvBrHycyMWM1vTcTDddjbbJVdm+b9HYHFBktbGVHdgTePCtzZDjdWdV0Ah/vP
+         Q8fesE9oqpdkA7Ji74z/t90QaVhzuWwBGuSIlckEazZAcDawlnZ8nC0LZh/g9PClw9tp
+         RwQzM4D0qJc4X9jXzBDRTPdqjhcG/2u6YqrIDJjDTLqoUWRT3uyIMHZaVw+D1ZCdH698
+         loQPti7htEhOEY+VlDX23yS0LPjzApS110pi5jw/PYUkCcYoQLF4NDwaX8BI3jFQg0uq
+         u4n4rQ5XyXSJb+foXeXFBZEUNVQcIC6yLUlitTaQExoahg2msvRohSdiUkxrT59GeSMt
+         iMwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751385527; x=1751990327;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YhrekkuV81u85I0nCYoyFYWO/iQISbDoWTniOveqI+w=;
+        b=abR2v2BZIy92M76f9AfQ+YTrIkYrXmfOJWUaFV0cMCcHtDw1GTaGdoW+E/8sbqkO37
+         OxKcnnJ0HerzvdINXgmVdndEJ3uZTeLbGziDr1EaqjXeD0Ln8ZgPHSZfwHFzHJZpMj7f
+         /3vDoz021BkMCvhfFrWFcvpprjA+cvXVVuFhvF8CAiT2A9qAxsS3a0wNDwynsB1KPU42
+         3IVUTa9YZ3hAFOy20EDplOMKDbmAqpXqdKp6ADQKSs0JG8jewFA/PX+ugANqcYNXVPKX
+         zeXEUy5qXNMZZgyQJdZl8fK/K1zJ064uzxF3/DwzhGtXh/oCswXQo5nukUAgcybpP9BC
+         XEUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZaHLMEVDXX2U5qtFmoBXgwTzWoE14cpVg2WAZMvN8leOoFXhDfx7H3FXzkgFrXOdTKEL3J+MlInmvwZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywru2oahDP3RVGpAwmFH5L8Vi5kWtX0eypbBzoy19Tbe/dUNZwK
+	bAgUUIHBjjbA0ByNTm7HNF+AfhRrxGVKL7/mpM/hP082Fdt/5bK5jtbMLBWxXuSUDNc=
+X-Gm-Gg: ASbGncsWGwhMTlQhxptzh7bNstq1RGjDiazw/wUHgv8jCWuFkZ0QiI/GKBmDt5ROARM
+	qP26fvYj47qCGmbTCZfZ9Q4fVh1B+JQ86xH3pIUPAPeEjKWCEuf+RIGlBaojvz4z7q4g7+b81Mw
+	P2MYGmIwfQZGmH5bDaDp+fvfuckeBDfmkpttKQza6fG1tUb7SH9+MAM+esa2UcVDbN5pWVXe3Fn
+	IpczOCb1qQIG3Fp1ADnEIo2QCXS7D6rDMCV/m4XhAh0RE/bXkoChl0urK4orkHqOemTgo/nDA5K
+	vZS/zOk3fbJb4314LL8advYFp/ZIplV6qRQf1fa9jq4C1wOA3dvu89aZPjkMCYpMDnaBSJFyXrg
+	58Ng2QQmVRKz8Ei4IknpKpU4C7m/sD9HUK+OH
+X-Google-Smtp-Source: AGHT+IEgqW2tesitKhmnUcBygNXVUscrvykBlr5WbS8x1oTHDseSXjU/Z8mwQaDABjFVm8GOa4CGSA==
+X-Received: by 2002:a05:6000:18a9:b0:3a4:f912:86af with SMTP id ffacd0b85a97d-3af23ad08d1mr1306061f8f.2.1751385526598;
+        Tue, 01 Jul 2025 08:58:46 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:b41:c160:3c4c:7e68:5ff:ce49? ([2a01:e0a:b41:c160:3c4c:7e68:5ff:ce49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233c523sm198939125e9.6.2025.07.01.08.58.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 08:58:45 -0700 (PDT)
+Message-ID: <40dffba2-6dbd-442d-ba02-3803f305acb3@6wind.com>
+Date: Tue, 1 Jul 2025 17:58:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 09/18] net: macb: sort #includes
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+User-Agent: Mozilla Thunderbird
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH v2] ipv6: add `force_forwarding` sysctl to enable
+ per-interface forwarding
+To: Gabriel Goller <g.goller@proxmox.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>,
- Cyrille Pitchen <cyrille.pitchen@atmel.com>,
- Harini Katakam <harini.katakam@xilinx.com>,
- Rafal Ozieblo <rafalo@cadence.com>,
- Haavard Skinnemoen <hskinnemoen@atmel.com>, Jeff Garzik <jeff@garzik.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Andrew Lunn <andrew@lunn.ch>
-References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
- <20250627-macb-v2-9-ff8207d0bb77@bootlin.com>
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250701140423.487411-1-g.goller@proxmox.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250627-macb-v2-9-ff8207d0bb77@bootlin.com>
+Organization: 6WIND
+In-Reply-To: <20250701140423.487411-1-g.goller@proxmox.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 6/27/25 05:08, Théo Lebrun wrote:
-> Sort #include preprocessor directives.
+Le 01/07/2025 à 16:04, Gabriel Goller a écrit :
+> It is currently impossible to enable ipv6 forwarding on a per-interface
+> basis like in ipv4. To enable forwarding on an ipv6 interface we need to
+> enable it on all interfaces and disable it on the other interfaces using
+> a netfilter rule. This is especially cumbersome if you have lots of
+> interface and only want to enable forwarding on a few. According to the
+> sysctl docs [0] the `net.ipv6.conf.all.forwarding` enables forwarding
+> for all interfaces, while the interface-specific
+> `net.ipv6.conf.<interface>.forwarding` configures the interface
+> Host/Router configuration.
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> Introduce a new sysctl flag `force_forwarding`, which can be set on every
+> interface. The ip6_forwarding function will then check if the global
+> forwarding flag OR the force_forwarding flag is active and forward the
+> packet.
+> 
+> To preserver backwards-compatibility reset the flag (global and on all
+> interfaces) to 0 if the net.ipv6.conf.all.forwarding flag is set to 0.
+> 
+> [0]: https://www.kernel.org/doc/Documentation/networking/ip-sysctl.txt
+> 
+> Signed-off-by: Gabriel Goller <g.goller@proxmox.com>
 > ---
->  drivers/net/ethernet/cadence/macb_main.c | 36 ++++++++++++++++----------------
->  1 file changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index be667cb5acce85a9d11aaea1f5081a3380b60ef2..a6633e076644089c796453f856a766299bae2ec6 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -6,36 +6,36 @@
->   */
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> -#include <linux/clk.h>
-> +#include <linux/circ_buf.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/clk.h>
->  #include <linux/crc32.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/etherdevice.h>
-> +#include <linux/firmware/xlnx-zynqmp.h>
-> +#include <linux/inetdevice.h>
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/ip.h>
-> +#include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
-> -#include <linux/kernel.h>
-> -#include <linux/types.h>
-> -#include <linux/circ_buf.h>
-> -#include <linux/slab.h>
-> -#include <linux/init.h>
-> -#include <linux/io.h>
-> -#include <linux/interrupt.h>
->  #include <linux/netdevice.h>
-> -#include <linux/etherdevice.h>
-> -#include <linux/dma-mapping.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/phylink.h>
->  #include <linux/of.h>
->  #include <linux/of_mdio.h>
->  #include <linux/of_net.h>
-> -#include <linux/ip.h>
-> -#include <linux/udp.h>
-> -#include <linux/tcp.h>
-> -#include <linux/iopoll.h>
->  #include <linux/phy/phy.h>
-> +#include <linux/phylink.h>
-> +#include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/ptp_classify.h>
->  #include <linux/reset.h>
-> -#include <linux/firmware/xlnx-zynqmp.h>
-> -#include <linux/inetdevice.h>
-> +#include <linux/slab.h>
-> +#include <linux/tcp.h>
-> +#include <linux/types.h>
-> +#include <linux/udp.h>
->  #include "macb.h"
->  
->  /* This structure is only used for MACB on SiFive FU540 devices */
-> 
 
-Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
+[snip]
+
+> @@ -896,6 +907,16 @@ static int addrconf_fixup_forwarding(const struct ctl_table *table, int *p, int
+>  						     NETCONFA_IFINDEX_DEFAULT,
+>  						     net->ipv6.devconf_dflt);
+>  
+> +		/*
+> +		 * With the introduction of force_forwarding, we need to be backwards
+> +		 * compatible, so that means we need to set the force_forwarding global
+> +		 * flag to 0 if the global forwarding flag is set to 0. Below in
+> +		 * addrconf_forward_change(), we also set the force_forwarding flag on every
+> +		 * interface to 0 if the global forwarding flag is set to 0.
+> +		 */
+> +		if (newf == 0)
+> +			WRITE_ONCE(net->ipv6.devconf_all->force_forwarding, newf);
+Hmm, is this true? Configuring the default value only impacts new interfaces.
+And before your patch, only the 'all' entry is took into account. In other
+words, configuring the default entry today doesn't change the current behavior,
+so I don't see the backward compat point.
+
+> +
+>  		addrconf_forward_change(net, newf);
+>  		if ((!newf) ^ (!old))
+>  			inet6_netconf_notify_devconf(net, RTM_NEWNETCONF,
+
+[snip]
+
+> +static int addrconf_sysctl_force_forwarding(const struct ctl_table *ctl, int write,
+> +					    void *buffer, size_t *lenp, loff_t *ppos)
+> +{
+> +	int *valp = ctl->data;
+> +	int ret;
+> +	int old, new;
+> +
+> +	old = *valp;
+> +	ret = proc_douintvec(ctl, write, buffer, lenp, ppos);
+> +	new = *valp;
+Maybe you can limit values to 0 and 1, like it was done in the v1.
+
+
+Regards,
+Nicolas
 
