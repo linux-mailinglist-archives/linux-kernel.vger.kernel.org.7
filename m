@@ -1,140 +1,256 @@
-Return-Path: <linux-kernel+bounces-710683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB46AEEFB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:24:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8786CAEEFB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F323BD662
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D1811BC3FCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9DF25C6EE;
-	Tue,  1 Jul 2025 07:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3842F25A655;
+	Tue,  1 Jul 2025 07:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAO8BAaH"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hQiDh9sL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBEF1EA6F;
-	Tue,  1 Jul 2025 07:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755231EA6F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 07:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751354645; cv=none; b=KeLci6bZisVbAw+1y2zzDo9AoExAL5h5m3y2t1ho/IygbbGKe1QvSYh/YIMmRsAKJkaz51XPCP95tmaVG0IBgg/n+AknXPh3wUQZCsHTWUkp4k4vP9mQAyZ7cgFG6R7KYgz+0ZUgEx3o9gb+qIrJo4S/8h9m2HxE2BSfKwampyE=
+	t=1751354744; cv=none; b=tLXAD5sISVjoXIbBIqVzr1WzfAOw971m8kwBKKcojznYXvJGRbqrJQYi2JlFDmg7835pjk9TZTA4iH9hO0bfbFpOKHZPyW1NavOgGp1y1anTuSmhJbobFme1MB+OJJ+MqzCX3vMJFT8q7iR5CFscqHBGIctIeB4kn9AuG9pxTX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751354645; c=relaxed/simple;
-	bh=HjDtuauV+NnY+Z2hB3G2b2MUF68nvfulxc5469nqt+c=;
+	s=arc-20240116; t=1751354744; c=relaxed/simple;
+	bh=zli4l6+3Cz6XqiZS68d2p3HIE0BKInGPc9eQIG4Kzvk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JHx7rgBSaKJD2f699hGK56l//ztySEYWRs8TlnAMTVkfCwTPhDvftVIU2SVBng7H1nx5uXIs3VPhwjfJ+HLF0k6tC6wMl2de4A4ML3Edy19Yw3VcuvGkGourLAhUvDHTl9AtKff7aY7G5MYI/RBfVUNumci8qk+ru0xqyxkjhXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAO8BAaH; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7152d8c5602so934697b3.3;
-        Tue, 01 Jul 2025 00:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751354642; x=1751959442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PD1ojVs/o5EGP3bpZItqlANn0Caes40vz6lO01Z9vf8=;
-        b=RAO8BAaHaTlSr5M/pNuP3SltTOw10ueLiGEAaNQ4I1TP5XUnLPx/ZLDDZfusxCKKRv
-         gMktOxmn724RywcqbIY4Ycfv+brYn6Hxib/ILeSt7xOyYcR7PL0TWz8Q8hIeZYUHYdR5
-         J+YLxxul/NbwB8I8IxQpGx0W7sNc7VKka/I5XcUShPelPTl3zvJUKRyK4/RQhAm7+Uj8
-         lOP9cXnX8BsRTzyFhDreTsesiQH5vD0x7kZc1NUd/NW8y1Vw0vSGXBvg6RrqU/lp8ku3
-         vAC7eoOFzjqwA6vhJSs3Xgo4P0yee3amOEL6AJUUh4OS2f0ReT0IEcdb1LKgxHareOVH
-         6faQ==
+	 To:Cc:Content-Type; b=kpAIs2MkBOKP5JiGQtxJlM+R0dqFDW+BwoCIFTs9PG0GRDu5J0X7ivaYSR/SKo1qlGaiQ469B1MAikSgA0/V9fFSNsEs5IIwpBGVFppRkVulVqtpHyfHh4eSAdTygQxVoy7LAo0EPwCjHmX1366r6pT+tOTsi1sg4xG7YAQ2N6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hQiDh9sL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751354741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RqfjgkpvPqfNyTCCIdxVSSiYliy/Ldo4Tby8Qm2Lb+I=;
+	b=hQiDh9sLhrybXSVvkB1JYYhySejakw0xETAib/B2qqEG0LywcCs+vL2LXTb9CAH0JZzTpN
+	jNCQMKy1o/aeyL0sswjDLBM0t/fFy3zUxt3LanuTsVHXfzUq7vBEQCkKjx4MojYUO94eUT
+	HUF52DQqQL/NzqSsJUyU/ChrOqMMwws=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-txx9GHz2PEeEU1FPUOW18A-1; Tue, 01 Jul 2025 03:25:39 -0400
+X-MC-Unique: txx9GHz2PEeEU1FPUOW18A-1
+X-Mimecast-MFC-AGG-ID: txx9GHz2PEeEU1FPUOW18A_1751354739
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3121cffd7e8so2277567a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 00:25:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751354642; x=1751959442;
+        d=1e100.net; s=20230601; t=1751354739; x=1751959539;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PD1ojVs/o5EGP3bpZItqlANn0Caes40vz6lO01Z9vf8=;
-        b=I798922YRrUAob9lw/cWdqAhOZrOwEI6OFHCH3T+djCIK9dkcUpvwS+YkY/SnqppkV
-         gtBhrgE3wX4KqLQcryoPBCC5NOTNLxtv1tXUtqRdxeV7d+aaZbeR6nAUlpG43aGET1ID
-         Z2Mod+3iBnQHxIVEt89zvorp3WJo9EVFS5JmtWP0VIZfmB3lzAuDE7cWQUyc6F2nUBND
-         tel3dWM2DCWqnYTAt73HKjBXvBojOva0aQS9s7URF7DhSA0WZVaotZfPiVYKAUvhLQ03
-         43EkL4leU42IffHVUaIL4RG3PVqjIIC/JP+GLzXFnChmXkiqhS1z75gh9zSkTNCN07Xw
-         8teQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyTB8VWvqdT0nsHsDJ40h/xVgs6g+wrIyRrVa2PrqEOI6MII6v24qOot+NXjTxZrryIHtuBeqCzMJB0O6d@vger.kernel.org, AJvYcCW6FcDrfcpoHQPwbArdIa7O02lyqx98l3PX8WCmCF3xUvNUcBgdTAOMh6wtwsRqhlxrR5h5DPOpwe4l@vger.kernel.org, AJvYcCWzABLWIdbZza11WyGWGBg3RCGXCAOAsWPZXpMhznS8nhBWukw9q3anDWiPVAIZE9cXd9h5wI/XQjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP8mqfLSSyPqPrM1hHf4114ZGpsMJGmUGPVy5+8SvOCctQlM8i
-	vdRYcR/2+4A0OsJWrE61ve8Z7eU54ut1JxRi/H4LiaRgMwIpXTfmaqIhj5RKnincXZFjYy/LK/1
-	AThKeJhGU8qcwmI5LJ03vaqsKBbwu2YU=
-X-Gm-Gg: ASbGnctPxBmlrRBcpufvMzyf7e/pEo5d18+dA/M9syQcpF2OKraNNgRrJhiQxbUQ5kC
-	/lbw7SmbHdt63EoKSnnw6+tQb1thwK1rY61BNgxlOItQyaOqFi8+Mm4kEW5o2pykftVbeaR1gJL
-	yytrRTsIUtjXAgo5Eh5ZNQLyxxQRT+DvIvQmhoxzEZwiU=
-X-Google-Smtp-Source: AGHT+IF9Zs+xVGv7NWWeAGJEQldTJ/+ArWtLpje4jFNAtPBQW1QmDtdZ/TG5sZniRJkBIdKlz8QjDtHJ1iVcsohX168=
-X-Received: by 2002:a05:690c:dc6:b0:70f:7bea:5dd with SMTP id
- 00721157ae682-7163f7a475bmr13322897b3.9.1751354642320; Tue, 01 Jul 2025
- 00:24:02 -0700 (PDT)
+        bh=RqfjgkpvPqfNyTCCIdxVSSiYliy/Ldo4Tby8Qm2Lb+I=;
+        b=lqF/x5j6i8YrBWlh2VIShBhMgUrRN9CZPuPNW1BCsMajhWBY5AzLEAzi5VxtG7Z+kn
+         DhBv46lhuOylhsLRiZGySd01YV5Dm8Hm1pou3SABofLtKcpcs41blkEJE7I7jC7+j0m7
+         pu9YgBtToP5SJ98CRKQoRNngK6lGJIFun49cXGErIsjsd6M90/G+UkWfHGeO9ei5OA1P
+         Fled7X7DBN4MYSbyUtHECwpSEZK9caGu3RXQR3o4OqZe+u+r6Ptbqk9Klh8rTx+NbPM2
+         3JFEjeuu0MvV3sIKNpwcefJOdWNofWbSfuBu3rfsmt5oQ6ZnxM3X1YG2B4CivW47NXc+
+         sQFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYiCdU27ZUPboYeWUIQUARvh/hgC9i5s+tK6XJHEtfGVf9KV4QsG2TI+M17uoAFeIjNSrBq21xY7Jui3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhpKHYL0lNKQtgWx/Ns3VuVvGXKODq25G/1v6vA+Y8B0K61Mmr
+	NWPCegcBDMz51x7RAGaxXd3G2TleajLPbWcmyQtA9vXf96/rbropSsKj8jYzQRxFlnSwwgWq1Nm
+	wo6MylPqGU2ZTJMIA5HUn37uT/Hz/94QvKsn6tY8unz73WXOFh7wXQMHDhr0KwSO4bh/cZg+gP5
+	mJJt1Kwm7Gi6Kag6CmOW+qJXgYhgutaXLGMCV761gB
+X-Gm-Gg: ASbGncvRG0GbEJZzwFqk8+fKCTVQIEZCC23aaeGfgo3VAOR6O8g8GTw6oOBai+VX2Um
+	+ejMkuRcY2J6IyMkpXtNSHpRjBtcOP9H4rKyISjbsKzvvt99Dxr6JkPcVQj4c7/LJQZ2ShuA7io
+	/g
+X-Received: by 2002:a17:90b:1c0f:b0:30c:540b:9ba with SMTP id 98e67ed59e1d1-318c8ee5649mr22932469a91.10.1751354738655;
+        Tue, 01 Jul 2025 00:25:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOq+uG0FaUURtz7jeSaS2hmgJsfIY1SbLYfvpWWdj22laRnsWVajTqtVC9jWNJzKXroXYApr8VhD3fK3IByrw=
+X-Received: by 2002:a17:90b:1c0f:b0:30c:540b:9ba with SMTP id
+ 98e67ed59e1d1-318c8ee5649mr22932441a91.10.1751354738143; Tue, 01 Jul 2025
+ 00:25:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250622122937.156930-1-l.rubusch@gmail.com> <20250622122937.156930-4-l.rubusch@gmail.com>
- <20250628181643.0ce0ed51@jic23-huawei>
-In-Reply-To: <20250628181643.0ce0ed51@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Tue, 1 Jul 2025 09:23:26 +0200
-X-Gm-Features: Ac12FXyuIYmL7BOfvP9uigNF6Ur5ogoR_YGPM0_xQgtI48zhiu_X1NSTPSUUk-w
-Message-ID: <CAFXKEHYS2rRYtPShU-yyEetQQoo+EbCscjUUGcWdWJQA2UwiYA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/8] iio: accel: adxl313: add buffered FIFO watermark
- with interrupt handling
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, corbet@lwn.net, 
-	lucas.p.stankus@gmail.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	bagasdotme@gmail.com, linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250616082518.10411-1-jasowang@redhat.com> <20250616082518.10411-15-jasowang@redhat.com>
+ <20250701023157-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250701023157-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 1 Jul 2025 15:25:26 +0800
+X-Gm-Features: Ac12FXxqBoyRRVzktN6qu-dSbPSkI2Sh4uKMEzaFGTTMmSWmu6MM19PxRao70Rk
+Message-ID: <CACGkMEu=BC5eYoExaUqLp-QZFKq31BrGvvEy0xvAwfCg28690Q@mail.gmail.com>
+Subject: Re: [PATCH V3 14/19] virtio_ring: determine descriptor flags at one time
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 28, 2025 at 7:16=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
+On Tue, Jul 1, 2025 at 2:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
+wrote:
 >
-> On Sun, 22 Jun 2025 12:29:32 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> On Mon, Jun 16, 2025 at 04:25:12PM +0800, Jason Wang wrote:
+> > Let's determine the last descriptor by counting the number of sg. This
+> > would be consistent with packed virtqueue implementation and ease the
+> > future in-order implementation.
+> >
+> > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > ---
+> >  drivers/virtio/virtio_ring.c | 25 +++++++++++++------------
+> >  1 file changed, 13 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.=
+c
+> > index af32d1a1a1db..d5e4d4cd2487 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -570,7 +570,7 @@ static inline int virtqueue_add_split(struct vring_=
+virtqueue *vq,
+> >       struct vring_desc_extra *extra;
+> >       struct scatterlist *sg;
+> >       struct vring_desc *desc;
+> > -     unsigned int i, n, avail, descs_used, prev, err_idx;
+> > +     unsigned int i, n, c, avail, descs_used, err_idx;
+> >       int head;
+> >       bool indirect;
+> >
+> > @@ -626,46 +626,47 @@ static inline int virtqueue_add_split(struct vrin=
+g_virtqueue *vq,
+> >               return -ENOSPC;
+> >       }
+> >
+> > +     c =3D 0;
 >
-> > Cover the following tasks:
-> > - Add scan_mask and scan_index to the IIO channel configuration. The
-> > scan_index sets up buffer usage. According to the datasheet, the ADXL31=
-3
-> > uses a 13-bit wide data field in full-resolution mode. Set the
-> > signedness, number of storage bits, and endianness accordingly.
+> initialize at point of declaration?
+
+Fine.
+
+>
+> >       for (n =3D 0; n < out_sgs; n++) {
+> > +             sg =3D sgs[n];
+> >               for (sg =3D sgs[n]; sg; sg =3D sg_next(sg)) {
+> >                       dma_addr_t addr;
+> >                       u32 len;
+> > +                     u16 flags =3D 0;
 > >
-> > - Parse the devicetree for an optional interrupt line and configure the
-> > interrupt mapping based on its presence. If no interrupt line is
-> > specified, keep the FIFO in bypass mode as currently implemented.
+> >                       if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr=
+, &len, premapped))
+> >                               goto unmap_release;
 > >
-> > - Set up the interrupt handler. Add register access to detect and
-> > evaluate interrupts. Implement functions to clear status registers and
-> > reset the FIFO.
+> > -                     prev =3D i;
+> > +                     if (++c !=3D total_sg)
+> > +                             flags =3D VRING_DESC_F_NEXT;
+> > +
+>
+> Don't like it how the logic is split.
+> flags isn't used before that.
+> So I prefer:
+>
+>         flags =3D ++c =3D=3D total_sg ? 0 : VRING_DESC_F_NEXT;
+>
+> and at that point, we do not really need flags anymore:
+>
+>
+> >                       /* Note that we trust indirect descriptor
+> >                        * table since it use stream DMA mapping.
+> >                        */
+> >                       i =3D virtqueue_add_desc_split(vq, desc, extra, i=
+, addr, len,
+> > -                                                  VRING_DESC_F_NEXT,
+> > +                                                  flags,
+>
+> So just:
+>
+>
+>         i =3D virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+>                                      ++c =3D=3D total_sg ? 0 : VRING_DESC=
+_F_NEXT,
+>
+> here and we are done.
+>
+>
+> >                                                    premapped);
+> >               }
+> >       }
+> >       for (; n < (out_sgs + in_sgs); n++) {
+> >               for (sg =3D sgs[n]; sg; sg =3D sg_next(sg)) {
+> > +                     u16 flags =3D VRING_DESC_F_WRITE;
+> >                       dma_addr_t addr;
+> >                       u32 len;
 > >
-> > - Implement FIFO watermark configuration and handling. Allow the
-> > watermark level to be set, evaluate the corresponding interrupt, read
-> > the FIFO contents, and push the data to the IIO channel.
+> >                       if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &ad=
+dr, &len, premapped))
+> >                               goto unmap_release;
 > >
-> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> Hi Lothar,
+> > -                     prev =3D i;
+> > +                     if (++c !=3D total_sg)
+> > +                             flags |=3D VRING_DESC_F_NEXT;
+> > +
+>
+> Don't like it that above it's "=3D" here it is "|=3D".
+> And flags isn't used before that.
+> So I prefer:
+>
+>         flags =3D ++c =3D=3D total_sg ? VRING_DESC_F_WRITE : VRING_DESC_F=
+_WRITE | VRING_DESC_F_NEXT;
+>
+> and again we don't really need the variable:
+>
+>
+> >                       /* Note that we trust indirect descriptor
+> >                        * table since it use stream DMA mapping.
+> >                        */
+> >                       i =3D virtqueue_add_desc_split(vq, desc, extra, i=
+, addr, len,
+> > -                                                  VRING_DESC_F_NEXT |
+> > -                                                  VRING_DESC_F_WRITE,
+>
+>
+> so just:
+>
+>                 i =3D virtqueue_add_desc_split(vq, desc, extra, i, addr, =
+len,
+>                                              (++c =3D=3D total_sg ? 0 : V=
+RING_DESC_F_NEXT) |
+>                                              VRING_DESC_F_WRITE,
+>
+>
+> is clearer, and the patch smaller.
+
+Right, I just copy the logic of packed.
+
+Let me do that for both split and packed for the next version.
+
+Thanks
+
+>
+>
+>
+> > -                                                  premapped);
+> > +                                                  flags, premapped);
+> >               }
+> >       }
+> > -     /* Last one doesn't continue. */
+> > -     desc[prev].flags &=3D cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_=
+NEXT);
+> > -     if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
+> > -             vq->split.desc_extra[prev & (vq->split.vring.num - 1)].fl=
+ags &=3D
+> > -                     ~VRING_DESC_F_NEXT;
+> >
+> >       if (indirect) {
+> >               /* Now that the indirect table is filled in, map it. */
+> > --
+> > 2.34.1
 >
 
-Hi Jonathan, there's still one thing about this patch [PATCH v6 3/8],
-I wanted to address:
-
-        struct mutex    lock; /* lock to protect transf_buf */
-+       u8 watermark;
-        __le16          transf_buf __aligned(IIO_DMA_MINALIGN);
-+       __le16          fifo_buf[ADXL313_NUM_AXIS * ADXL313_FIFO_SIZE + 1];
- };
-
-Is this correct usage of the IIO_DMA_MINALIGN? My intention here is to
-have transf_buf and fifo_buf[...] aligned with the IIO_DMA_MINALIGN.
-
-Sorry, I should have asked this earlier. I saw the sensor operating,
-but I'm unsure if perhaps DMA usage is setup correctly. Perhaps you
-could drop me a line of feedback here?
-
-Best,
-L
 
