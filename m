@@ -1,257 +1,98 @@
-Return-Path: <linux-kernel+bounces-711303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C2AAEF8D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:39:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C01AEF8CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22E047A4401
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C97354A4823
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E8827381C;
-	Tue,  1 Jul 2025 12:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27A42741BC;
+	Tue,  1 Jul 2025 12:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JaAjpfC8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AqABSae2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78833273D91
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FA72741A1;
+	Tue,  1 Jul 2025 12:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373552; cv=none; b=ZwDWqHdaHlcStc0uQ7rMfxyzJS6Saadt4oRJUXB3Z58+cnBJug/3u3NG4FIIrdn91o/r2TaXtxPDfWW201MyKS//n6FHjMYS9LqappRuGrpg1uA3CryhNKl/EjdeEypq0CD+zW695nrsXrDprDAogfPVTy6dei4gNzVtaaFP87Y=
+	t=1751373510; cv=none; b=pxCGCQqpfU9yx711srfobBamWULBYOLCG4e4XG2VjBs69hsjQu9/AZG2x2+qB9vXoap3+UhjsflkYcxP35kaqi+m0aUBvBlc5l0wV/eRCqKAXhC23j66mTAa5u/vH9udaNr5HPXlPE6TirQcCA6SbbQCxg2rCDor/8qdCEpOxrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373552; c=relaxed/simple;
-	bh=iQ35RxRMNQCWuVz6wds1TDAoTWkyLxSttohSUd9h/uw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=AXZM7yIhe6sQZwcwq+MbEcvJ/V3xLyvtCjENZORh8k3d79zidUKKAJwCfTKiKgfdxV5mbNFBAmFzcjq0YeZYXhjaBF5ToMz0FaVV78vOUbfGjaLk4QryJoXzg2vNPbyUKNuMlx5LQ2wOa21AWRFOIcD2ffMt26I2hFiFa7RcHgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JaAjpfC8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5619xE8R025936;
-	Tue, 1 Jul 2025 12:38:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=D0xSXwHIHKslGMCqKYomGW
-	DSUYjDlcHuSehLtkzTcd8=; b=JaAjpfC8Z25Yaw7qsM5+8bRvQXaiiyTL27ckxX
-	wjtumROwd/TYVcv37ZAK2fxWoqIejY8K9RxlVb89t7ZSkVR5VFbi9r8k+owC+fhv
-	aElLOueRIoRXBlee/4hlrJ+ybALxfzpwXTqVW7uVyKVxtxEfD8PUcrslCCE7EMMH
-	mwbtuq9D52NbfJWQlphEeMgiZtFMosJnxTj64xHpyG6rpBpgdxKSdMFyh3DodX5w
-	Z4Ehta0e2v5PoNktviGlHNRmsg0sOAArrxFHhXEYIcGPhrka6d9qYEI8NvG3TKW5
-	mx1XAF1PrWGpAML7g4POcBMcWawWv3jJKtv4Yofw0+4iKB/g==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kd64p4uy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 12:38:40 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561CcchC006483
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 1 Jul 2025 12:38:38 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 1 Jul 2025 05:38:34 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Tue, 1 Jul 2025 20:38:24 +0800
-Subject: [PATCH v7] coccinelle: misc: Add field_modify script
+	s=arc-20240116; t=1751373510; c=relaxed/simple;
+	bh=/jvyLpcGhPB03tF3eqbvEXwDgmNMzvglQGW69LsdiFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrwH296e149cuzHpDMHdanVT6YHo0Wy56pKn7mxwLvB3Q4V2HATa2lsAIeWVqpPtFtaZGMMgRdW7k1SyZuxvgmwaGMBcRdc1R5RFShFOPYe+cir0TJ7usALPZp69NkY+pIms6OPt3hUvXEPHXN8GtQYFlLT6k+muhpUxDDG8JJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AqABSae2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FAEFC4CEEF;
+	Tue,  1 Jul 2025 12:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751373509;
+	bh=/jvyLpcGhPB03tF3eqbvEXwDgmNMzvglQGW69LsdiFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AqABSae2j6kV3XBiOGE7BUFoXMiXHrzLB88Vfl72cP6n4eHS9TgfyNlcdl6U6iZj6
+	 fFhi9DjUm/N8RuIMT/fNtETgCZ9w2aKzxryGTDbkM/cXciq8bwNmiFWYDuXUuRPojf
+	 YjtR+4YQg/lXsjU/ymEwvRfNRMEu/a4Ai6BJnX5k=
+Date: Tue, 1 Jul 2025 14:38:27 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH v5] wifi: cfg80211: move away from using a fake platform
+ device
+Message-ID: <2025070125-spent-glowworm-7405@gregkh>
+References: <2025070116-growing-skeptic-494c@gregkh>
+ <0004f9e5eb62f9ccad3dec52ebc935bfec42c949.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250701-field_modify-v7-1-eacf13f215b4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMDWY2gC/2XOTQrCMBCG4atI1kby10zrynuISEwyOqCtthos0
- rsbdaG2y2/geZkH62JLsWPL2YO1MVFHTZ0HzGfMH1y9j5xC3kwJVQgrFUeKx7A9NYGw5wqkrtC
- CLkvJMjm3Een+zq03eR+ouzZt/64n+bp+QkbCfyhpLrhFqCrlHPodrC438lT7hW9O7JVK5ssnf
- ySTuYsGwQRnCmenvPjhyox4wSX3wYJUILSIZsrtL7cjbjNXQgREp0snRs8Pw/AEiIY1/WcBAAA
- =
-To: Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        "Nicolas
- Palix" <nicolas.palix@imag.fr>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Oliver Upton
-	<oliver.upton@linux.dev>,
-        Joey Gouly <joey.gouly@arm.com>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>
-CC: <linux-kernel@vger.kernel.org>, <cocci@inria.fr>,
-        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-        <andrew@lunn.ch>, <quic_kkumarcs@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <Markus.Elfring@web.de>, Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751373513; l=4063;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=iQ35RxRMNQCWuVz6wds1TDAoTWkyLxSttohSUd9h/uw=;
- b=PJ4oIhaUHoma23HiPVd0lWXVogfovoMYZ7O6mYUHM1NF9N8vtT7r/NkoIBcsz/fhqchWHidRZ
- ADsLjFBjxmjBgoegKDUkjoc6PSGNJ7xucLDKfbGLga0p2AUFRvzW5kw
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Z+PsHGRA c=1 sm=1 tr=0 ts=6863d6d0 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=05oQ047nAAAA:8 a=S47agHus8KO1I0bcMDsA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=vNAg3JWiabyzeNEprMgK:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA3OSBTYWx0ZWRfX1OqJOzwSyxTt
- KJOHDEbQ9y0kYIQU8Vjc0CjD50f9XGch41WwBGvcw4ccB19toIz6sS7Lw0H7ImoN8TfRsIr4MHj
- GVO1Fqg12GvZZkndtbU/EWRvixOyuvvwO4CZy16lDo7YD/JeKnlqJA/8dn5u3IHNBcM2DQit1JA
- +qol2OCuAJc46cciR4RBx4SLC2kEOpiwjoEUjvpxuvKirl4Ctccfe+4HHVIf4DowR2dj/6kRvBC
- tDbz4eQO7G2dEusTUuMVMepYKfsi2Zy2PpakjbHTHfUyZ9G1yDBfjrB79ge1NSnbG4/odJfJSNc
- XHGO8MgDg5hdPheL+xgcbcXMsZSHIX2IidAFpdFZO+o8ZaPXeBOQFoxGWEXtM1aK4j77spKE+7S
- UtFd6Q/TldBskckU6zemMRx+oWendbVk0+25abYcAd/W2aFugOu25/YVG0L3PLNbN3U633L2
-X-Proofpoint-GUID: tO_1oIxOmqPMp9vNYDv0s4FdLkUaFSSS
-X-Proofpoint-ORIG-GUID: tO_1oIxOmqPMp9vNYDv0s4FdLkUaFSSS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0 mlxlogscore=999
- spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507010079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0004f9e5eb62f9ccad3dec52ebc935bfec42c949.camel@sipsolutions.net>
 
-Find and suggest conversions of opencoded field modify patterns with
-the wrapper FIELD_MODIFY() API defined in include/linux/bitfield.h
-for catching the possible parameter type error in the compile time.
+On Tue, Jul 01, 2025 at 01:06:46PM +0200, Johannes Berg wrote:
+> On Tue, 2025-07-01 at 12:56 +0200, Greg Kroah-Hartman wrote:
+> > Downloading regulatory "firmware" needs a device to hang off of, and so
+> > a platform device seemed like the simplest way to do this.  Now that we
+> > have a faux device interface, use that instead as this "regulatory
+> > device" is not anything resembling a platform device at all.
+> > 
+> > Cc: Johannes Berg <johannes@sipsolutions.net>
+> > Cc: <linux-wireless@vger.kernel.org>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> > v5: - rebase against 6.16-rc4 and actually cc: the relevant maintainers
+> >       and mailing lists this time, doh!
+> 
+> I did wonder for a second why it's v5 and I never saw it ;-)
+> 
+> >  int __init regulatory_init(void)
+> >  {
+> > -	reg_pdev = platform_device_register_simple("regulatory", 0, NULL, 0);
+> > -	if (IS_ERR(reg_pdev))
+> > -		return PTR_ERR(reg_pdev);
+> > +	reg_fdev = faux_device_create("regulatory", NULL, NULL);
+> > +	if (!reg_fdev)
+> > +		return -ENODEV;
+> 
+> Is that really -ENODEV rather than say -ENOMEM? Having a hard time
+> imagining how a faux device creation would end up failing in any other
+> case, there's no underlying device to bind to, after all? :)
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
-Add the helper FIELD_MODIFY() to the FIELD_XXX family of bitfield
-macros. It is functionally similar as xxx_replace_bits(), but adds
-the compile time checking to catch incorrect parameter type errors.
+There are some low-level functions that could fail, but the error that
+I thought should be told to init would be "no device" as the device was
+not created which is what really matters :)
 
-This series also converts the four instances of opencoded FIELD_MODIFY()
-that are found in the core kernel files, to instead use the new
-FIELD_MODIFY() macro. This is achieved with Coccinelle, by adding
-the script field_modify.cocci.
+> Anyway, that's not really all that relevant. I assume you want me to
+> merge it through wireless-next, since we have faux.h in the tree now?
 
-The changes are validated on IPQ9574 SoC which uses ARM64 architecture.
----
-Changes in v7:
-- Use a formatted string literal as the function parameter for the
-  report mode.
-- Link to v6: https://lore.kernel.org/r/20250626-field_modify-v6-1-200dffa38a07@quicinc.com
+Please do, thanks!
 
-Changes in v6:
-- Adopt the suggested code variant for the org mode.
-- Link to v5: https://lore.kernel.org/r/20250624-field_modify-v5-1-cd67127030e4@quicinc.com
-
-Changes in v5:
-- Remove ARM64 patches based on the discussion in v3 and v4 versions of
-  this series.
-- Simplify the condition selections in coccinelle script.
-- Link to v4: https://lore.kernel.org/r/20250612-field_modify-v4-0-ae4f74da45a6@quicinc.com
-
-Changes in v4:
-- Add org, report and context mode for coccinelle script.
-- Fix other comments on coccinelle script patch.
-- Remove the FIELD_MODIFY patch as it is merged.
-- Link to v3: https://lore.kernel.org/r/20250417-field_modify-v3-0-6f7992aafcb7@quicinc.com
-
-Changes in v3:
-- Correct the order of header files included.
-- Add the Coccinelle script field_modify.cocci..
-- Convert the opencoded FIELD_MODIFY() variants inside arm64 directory,
-  identified by field_modify.cocci.
-- Link to v2: https://lore.kernel.org/all/20250410131048.2054791-1-quic_luoj@quicinc.com/
-
-Changes in v2:
-- Update the documented example for FIELD_MODIFY().
-- Improve the commit message to describe the need for the change.
-- Link to v1: https://lore.kernel.org/all/20250318071526.1836194-1-quic_luoj@quicinc.com/
----
- scripts/coccinelle/misc/field_modify.cocci | 59 ++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
-
-diff --git a/scripts/coccinelle/misc/field_modify.cocci b/scripts/coccinelle/misc/field_modify.cocci
-new file mode 100644
-index 000000000000..3ed3739fdf10
---- /dev/null
-+++ b/scripts/coccinelle/misc/field_modify.cocci
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/// Replace below code with the wrapper FIELD_MODIFY(MASK, &reg, val)
-+/// - reg &= ~MASK;
-+/// - reg |= FIELD_PREP(MASK, val);
-+//
-+// Confidence: High
-+// Author: Luo Jie <quic_luoj@quicinc.com>
-+// Copyright: (C) 2025 Qualcomm Innovation Center, Inc.
-+// Keywords: FIELD_PREP, FIELD_MODIFY
-+// Options: --include-headers
-+
-+virtual context
-+virtual patch
-+virtual org
-+virtual report
-+
-+@depends on context@
-+identifier reg, val;
-+constant mask;
-+symbol FIELD_PREP;
-+@@
-+
-+*reg &= ~mask;
-+*reg |= FIELD_PREP(mask, val);
-+
-+@depends on patch@
-+identifier reg, val;
-+constant mask;
-+symbol FIELD_PREP, FIELD_MODIFY;
-+@@
-+
-+-reg &= ~mask;
-+-reg |= FIELD_PREP(mask, val);
-++FIELD_MODIFY(mask, &reg, val);
-+
-+@r depends on org || report@
-+identifier reg, val;
-+constant mask;
-+symbol FIELD_PREP;
-+position p;
-+@@
-+
-+reg &= ~mask;
-+reg |= FIELD_PREP@p(mask, val);
-+
-+@script:python depends on report@
-+p << r.p;
-+x << r.reg;
-+@@
-+
-+coccilib.report.print_report(p[0], f"WARNING: Consider using FIELD_MODIFY helper on {x}")
-+
-+@script:python depends on org@
-+p << r.p;
-+x << r.reg;
-+@@
-+
-+msg = f"WARNING: Consider using FIELD_MODIFY helper on {x}"
-+coccilib.org.print_todo(p[0], msg.replace("[","@(").replace("]",")"))
-
----
-base-commit: 0bb71d301869446810a0b13d3da290bd455d7c78
-change-id: 20250612-field_modify-27139f673881
-
-Best regards,
--- 
-Luo Jie <quic_luoj@quicinc.com>
-
+greg k-h
 
