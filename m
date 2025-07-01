@@ -1,251 +1,182 @@
-Return-Path: <linux-kernel+bounces-711415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF84BAEFA7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:29:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEBAAEF9F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70E348799C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F5C188A448
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1DA27466D;
-	Tue,  1 Jul 2025 13:23:51 +0000 (UTC)
-Received: from lgeamrelo07.lge.com (lgeamrelo07.lge.com [156.147.51.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1262749F8;
+	Tue,  1 Jul 2025 13:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCY3ppOE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C90F27466E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E725B22094;
+	Tue,  1 Jul 2025 13:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376231; cv=none; b=IKWt51YR2O1VEHX9t/GwzUi/78tavX6V3HdLKUqTfLTKEFSQvN+h9Bc0ivm8JF1mqGTDMjcXs9Y2nsqx7kgItW9yY6tjSyzUYRYFK2yOdwUlUZlAQemjON7Pn9sg7rls4SUziS3SQy9oYC+Ct8xf02fnz4jsgTM/iH09+qbUCL4=
+	t=1751375546; cv=none; b=NGM98DerLbhsGy0QJOJtsGCjisDpZG/flqcN8fqZEHCAByQoBBv86RfJr/frihEdDfaL5qwesCUjpBwwss79GZiX+qvB8/D/DxE9e/D/IQZWSHyOhMvhefq5nhb8XlG9Az51yrCM/w25NkLsbbtzeHQix8idquOtmzapaOqug/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751376231; c=relaxed/simple;
-	bh=r0Qq+d5yiYc+tQ/JPUYcbNQRbrbArG3O8z/RqToMgaU=;
+	s=arc-20240116; t=1751375546; c=relaxed/simple;
+	bh=VqeOLlcaihFUrQrb2RD4VyHVweYthx0AYzfCJ3MqztU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIviYU3/SJD53A6Au/Z0SBh7pi6lLp/mbFs+kkho/X7N0Dcyb/crxkFYNVJmcswg3gUethorP/8+z9BzK2FBwwUbHrb5YMPTlXZGI+A2yawfqIeRBsWlz7peL6aJXuTx1766KdHyzEo4S3J2/8yrbgBu2JW59NhIY/cpuYE1bC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
-	by 156.147.51.103 with ESMTP; 1 Jul 2025 22:08:46 +0900
-X-Original-SENDERIP: 10.177.112.156
-X-Original-MAILFROM: youngjun.park@lge.com
-Date: Tue, 1 Jul 2025 22:08:46 +0900
-From: YoungJun Park <youngjun.park@lge.com>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
-	bhe@redhat.com, baohua@kernel.org, chrisl@kernel.org,
-	muchun.song@linux.dev, iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
-	gunho.lee@lge.com
-Subject: Re: [RFC PATCH 1/2] mm/swap, memcg: basic structure and logic for
- per cgroup swap priority control
-Message-ID: <aGPd3hIuEVF2Ykoy@yjaykim-PowerEdge-T330>
-References: <20250612103743.3385842-1-youngjun.park@lge.com>
- <20250612103743.3385842-2-youngjun.park@lge.com>
- <pcji4n5tjsgjwbp7r65gfevkr3wyghlbi2vi4mndafzs4w7zs4@2k4citaugdz2>
- <aFIJDQeHmTPJrK57@yjaykim-PowerEdge-T330>
- <rivwhhhkuqy7p4r6mmuhpheaj3c7vcw4w4kavp42avpz7es5vp@hbnvrmgzb5tr>
- <aFKsF9GaI3tZL7C+@yjaykim-PowerEdge-T330>
- <bhcx37fve7sgyod3bxsky5wb3zixn4o3dwuiknmpy7fsbqgtli@rmrxmvjro4ht>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5rPWcPCaZmpoCgBHfoiovzJE+XtRBBUqIMfpevOMBKtUZOB12c8KHZqFp2Dzfjpd+lb5sJTP0+Zbuy5LFYaekhwqaV2ksGvaB8kb5OqtaarHKIF3ck/fP/AdZZreP2S3HsG4A/j3PMalEN7kbZqYKnMPe7PsMty28W3itwERfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCY3ppOE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C75C4CEEB;
+	Tue,  1 Jul 2025 13:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751375545;
+	bh=VqeOLlcaihFUrQrb2RD4VyHVweYthx0AYzfCJ3MqztU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NCY3ppOE66EphEt/LfyDewrDYSgx9co27DIVPTcIcDPPFLSJAnhYoCXp9VOly9gFx
+	 roW+3i11Si7D+RqKBP3nEK3UrwpYYC0L2ORza5BVYkaV75e26yIm3C3ku3cYD6lJmd
+	 qlaxD8Tzgf3caG1uicFHT9kjpblWU3CmIeDjrfDF06a0CpoPSvYvZ7/PrjkfSB2wQq
+	 icocx/skBkrO5/YAl7kzySqqQg2n3wGC87yQNA5PlmdiEEvMXRMa5D4/B+n0RttfaR
+	 U1iC2TAfpDUHb46NMgtENynSqWTd07Bogu7AEhs/NFKTl5FWwTPscoVF1H8mK9ntTn
+	 GD16ulnuJ7k5Q==
+Date: Tue, 1 Jul 2025 15:12:19 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, david.m.ertman@intel.com, ira.weiny@intel.com,
+	leon@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/8] rust: device: add drvdata accessors
+Message-ID: <aGPesxbxR-ob_Hqr@pollux>
+References: <20250621195118.124245-1-dakr@kernel.org>
+ <20250621195118.124245-3-dakr@kernel.org>
+ <2025070159-perkiness-bullion-da76@gregkh>
+ <aGO_SS20fttVZM6D@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bhcx37fve7sgyod3bxsky5wb3zixn4o3dwuiknmpy7fsbqgtli@rmrxmvjro4ht>
+In-Reply-To: <aGO_SS20fttVZM6D@pollux>
 
-On Mon, Jun 30, 2025 at 07:39:47PM +0200, Michal Koutný wrote:
-> On Wed, Jun 18, 2025 at 09:07:51PM +0900, YoungJun Park <youngjun.park@lge.com> wrote:
-> > This is because cgroups can still restrict swap device usage and control 
-> > device order without requiring explicit priorities for all devices.
-> > In this view, the cgroup interface serves more as a limit or preference 
-> > mechanism across the full set of available swap devices, rather than
-> > requiring full enumeration and configuration.
+On Tue, Jul 01, 2025 at 12:58:24PM +0200, Danilo Krummrich wrote:
+> On Tue, Jul 01, 2025 at 11:27:54AM +0200, Greg KH wrote:
+> > On Sat, Jun 21, 2025 at 09:43:28PM +0200, Danilo Krummrich wrote:
+> 
+> > > +impl Device<Internal> {
+> > > +    /// Store a pointer to the bound driver's private data.
+> > > +    pub fn set_drvdata(&self, data: impl ForeignOwnable) {
+> > > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
+> > > +        unsafe { bindings::dev_set_drvdata(self.as_raw(), data.into_foreign().cast()) }
+> > > +    }
+> > 
+> > Ah, but a driver's private data in the device is NOT a bus-specific
+> > thing, it's a driver-specific thing, so your previous patch about
+> > Internal being there for busses feels odd.
+> 
+> It's because we only want to allow the bus abstraction to call
+> Device::set_drvdata().
+> 
+> The reason is the lifecycle of the driver's private data:
+> 
+> It starts when the driver returns the private data object in probe(). In the bus
+> abstraction's probe() function, we're calling set_drvdata().
+> 
+> At this point the ownership of the object technically goes to the device. And it
+> is our responsibility to extract the object from dev->driver_data at some point
+> again through drvdata_obtain(). With calling drvdata_obtain() we take back
+> ownership of the object.
+> 
+> Obviously, we do this in the bus abstraction's remove() callback, where we then
+> let the object go out of scope, such that it's destructor gets called.
+> 
+> In contrast, drvdata_borrow() does what its name implies, it only borrows the
+> object from dev->driver_data, such that we can provide it for the driver to use.
+> 
+> In the bus abstraction's remove() callback, drvdata_obtain() must be able to
+> proof that the object we extract from dev->driver_data is the exact object that
+> we set when calling set_drvdata() from probe().
+> 
+> If we'd allow the driver to call set_drvdata() itself (which is unnecessary
+> anyways), drivers could:
+> 
+>   1) Call set_drvdata() multiple times, where every previous call would leak the
+>      object, since the pointer would be overwritten.
+> 
+>   2) We'd loose any guarantee about the type we extract from dev->driver_data
+>      in the bus abstraction's remove() callback wioth drvdata_obtain().
+> 
+> > > +
+> > > +    /// Take ownership of the private data stored in this [`Device`].
+> > > +    ///
+> > > +    /// # Safety
+> > > +    ///
+> > > +    /// - Must only be called once after a preceding call to [`Device::set_drvdata`].
+> > > +    /// - The type `T` must match the type of the `ForeignOwnable` previously stored by
+> > > +    ///   [`Device::set_drvdata`].
+> > > +    pub unsafe fn drvdata_obtain<T: ForeignOwnable>(&self) -> T {
+> > > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
+> > > +        let ptr = unsafe { bindings::dev_get_drvdata(self.as_raw()) };
+> > > +
+> > > +        // SAFETY: By the safety requirements of this function, `ptr` comes from a previous call to
+> > > +        // `into_foreign()`.
+> > > +        unsafe { T::from_foreign(ptr.cast()) }
+> > > +    }
+> > > +
+> > > +    /// Borrow the driver's private data bound to this [`Device`].
+> > > +    ///
+> > > +    /// # Safety
+> > > +    ///
+> > > +    /// - Must only be called after a preceding call to [`Device::set_drvdata`] and before
+> > > +    ///   [`Device::drvdata_obtain`].
+> > > +    /// - The type `T` must match the type of the `ForeignOwnable` previously stored by
+> > > +    ///   [`Device::set_drvdata`].
+> > > +    pub unsafe fn drvdata_borrow<T: ForeignOwnable>(&self) -> T::Borrowed<'_> {
+> > > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
+> > > +        let ptr = unsafe { bindings::dev_get_drvdata(self.as_raw()) };
+> > > +
+> > > +        // SAFETY: By the safety requirements of this function, `ptr` comes from a previous call to
+> > > +        // `into_foreign()`.
+> > > +        unsafe { T::borrow(ptr.cast()) }
+> > > +    }
+> > > +}
+> > 
+> > Why can't this be part of Core?
+> 
+> Device::drvdata_borrow() itself can indeed be part of Core. It has to remain
+> unsafe though, because the type T has to match the type that the driver returned
+> from probe().
+> 
+> Instead, we should provide a reference of the driver's private data in every bus
+> callback, such that drivers don't need unsafe code.
+> 
+> In order to not tempt drivers to use the unsafe method drvdata_borrow()
+> directly, I went for hiding it behind the BusInternal device context.
 
-Hello Michal,
+Also, I want to add that I already looked into implementing a safe drvdata()
+accessor for &Device<Bound>.
 
-Thank you very much for your thoughtful review and for sharing your
-insights.
+&Device<Bound> would be fine, since the private driver data is guaranteed to be
+valid as long as the device is bound to the driver.
 
-I’d like to share my thoughts and the reasoning behind my current
-direction, including some points I considered in relation to your
-suggestions.
+(Note that we'd need to handle calling dev.drvdata() from probe() gracefully,
+since probe() creates and returns the driver's private data and hence
+dev->driver_data is only set subsequently in the bus abstraction's probe()
+callback.)
 
-> I was wondering whether your use cases would be catered by having
-> memory.swap.max limit per device (essentially disable swap to undesired
-> device(s) for given group). The disadvantage is that memory.swap.max is
-> already existing as scalar. Alternatively, remapping priorities to
+The drvdata() accessor would also need to ensure that it returns the correct
+type of the driver's private data, which the device itself does not know, which
+requires additional complexity.
 
-I did consider implementing this kind of control.
-In that design, it would work similarly to memory.swap.max but per
-device: the implementation would iterate through the swap devices in
-priority order and maintain per-cgroup counters for each device’s usage.
-It would also need to handle proper counter cleanup after use, and
-ensure that usage checks also happen on the fastpath where per-CPU
-caches for swap device clusters come into play.
-
-From a runtime behavior perspective, the priority-based approach seemed
-preferable, as it allows more flexible control: the configured cgroup
-can strongly prefer the desired device and benefit from faster selection
-at allocation time.
-
-I also considered how this would coexist with the existing swap.max
-interface, but given the additional implementation and runtime overhead
-this would introduce, I decided to hold it back and chose a priority-based
-approach instead.
-
-> already existing as scalar. Alternatively, remapping priorities to
-> memory.swap.weight -- with sibling vs sibling competition and children
-> treated with weight of parent when approached from the top. I find this
-> weight semantics little weird as it'd clash with other .weight which are
-> dual to this (cgroups compete over one device vs cgroup is choosing
-> between multiple devices).
-
-Your point about the semantic mismatch is very valid. I agree that
-reusing .weight semantics here could be confusing: .weight usually
-expresses competition among siblings for a shared resource, whereas
-here, the goal is to steer selection among multiple devices within a
-single cgroup’s scope.
-
-The swap priority concept already exists as an
-independent mechanism, so mapping it into a .weight field might not
-align well in practice.
- 
-> Please try to take the existing distribution models into account not to
-> make something overly unidiomatic,
-
-I also thought about possible alignment with existing mechanisms like
-zswap.writeback. One alternative could be to adopt an on/off style mechanism
-similar to zswap.writeback including propagation strategy. 
-On implementation-wise, this could be handled by including
-or excluding devices from the cgroup’s swap device priority list.
-(The direction I suggested on)
-
-However, this approach also has limitations in certain use cases. For
-example, if we want to enforce a different ordering than the global
-system swap priority, an on/off switch alone is not sufficient.
-
-One possible example would be:
-(Some cgroup use the slowest available swap device but with a larger capacity
-avoiding swap failure.)
-
-Global swap: A (fast) -> B (slower) -> C (slowest)
-Cgroup swap: C (slowest) -> B (slower) -> A (fast)
-
-This kind of configuration cannot be achieved only with an on/off
-switch.
-
-I think that priority approach might not map perfectly to the existing
-major distribution models (like limit, weight, etc.),
-I cautiously see this as an extension of the resource control interfaces, 
-building on the solid foundation that the cgroup mechanism already provides.
-
-I am working to ensure that the proposed interface and propagation
-behavior integrate properly with parent cgroups and follow the same
-interface style. Here is the current version I am working on now.
-(It turned out a bit long, but I felt it might be useful to share it with you.)
-
-  memory.swap.priority
-        A read-write flat-keyed file which exists on non-root cgroups.
-
-        Example: (after swapon)
-          $ swapon
-          NAME     TYPE      SIZE  USED PRIO
-          /dev/sdb partition 300M   0B   10
-          /dev/sdc partition 300M   0B    5
-          /dev/sdd partition 300M   0B   -2
-
-        To assign priorities to swap devices in the current cgroup,
-        write one or more lines in the following format:
-
-          <swap_device_unique_id> <priority>
-
-        Example: (writing priorities)
-          $ echo "1 4" > memory.swap.priority
-          $ echo "2 -2" > memory.swap.priority
-          $ echo "3 -1" > memory.swap.priority
-
-        Example: (reading after write)
-          $ cat memory.swap.priority
-          1 4
-          2 -2
-          3 -1
-
-        The priority semantics are consistent with the global swap
-        system:
-
-          - Higher values indicate higher preference.
-          - See Documentation/admin-guide/mm/swap_numa.rst for swap numa
-            autobinding.
-
-        Note:
-          A special value of -1 means the swap device is completely
-          excluded from use by this cgroup. Unlike the global swap
-          priority, where negative values simply lower the priority,
-          setting -1 here disables allocation from that device for the
-          current cgroup only.
-
-        If any ancestor cgroup has set a swap priority configuration, it
-        is inherited by all descendants. In that case, the child’s own
-        configuration is ignored and the topmost configured ancestor
-        determines the effective priority ordering.
-
-  memory.swap.priority.effective
-        A read-only file showing the effective swap priority ordering
-        actually applied to this cgroup, after resolving inheritance
-        from ancestors.
-
-        If there is no configuration in the current cgroup and its
-        ancestors, this file shows the global swap device priority from
-        `swapon`, in the form of unique_id priority pairs.
-
-        Example: (global only)
-          $ swapon
-          NAME     TYPE      SIZE  USED PRIO
-          /dev/sdb partition 300M   0B   10
-          /dev/sdc partition 300M   0B    5
-          /dev/sdd partition 300M   0B   -2
-
-          $ cat /sys/fs/cgroup/parent/child/memory.swap.priority.effective
-          1 10
-          2 5
-          3 -2
-
-        Example: (with parent override)
-          # Parent cgroup configuration
-          $ cat /sys/fs/cgroup/parent/memory.swap.priority
-          1 4
-          2 -2
-
-          # Child cgroup configuration (ignored because parent overrides)
-          $ cat /sys/fs/cgroup/parent/child/memory.swap.priority
-          1 8
-          2 5
-
-          # Effective priority seen by the child
-          $ cat /sys/fs/cgroup/parent/child/memory.swap.priority.effective
-          1 4
-          2 -2
-
-        In this case:
-          - If no cgroup sets any configuration, the output matches the
-            global `swapon` priority.
-          - If an ancestor has a configuration, the child inherits it
-            and ignores its own setting.
-
-I hope my explanation clarifies my intention, 
-and I would truly appreciate your positive consideration 
-and any further thoughts you might have.
-
-Best regards, 
-Youngjun Park
+I have ideas for solving that, but I don't think we actually gonna need to
+access the private data stored in the device from anywhere else than bus device
+callbacks (I also don't think it is desirable), hence I'd really want to wait
+and see a good reason for making this accessible.
 
