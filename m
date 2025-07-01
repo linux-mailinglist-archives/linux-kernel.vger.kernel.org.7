@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-710608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3066AEEEA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:26:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56AAAEEEB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB22E1BC4AE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB931442929
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBBD25EF90;
-	Tue,  1 Jul 2025 06:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B54C25DAFC;
+	Tue,  1 Jul 2025 06:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7NRF8nz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="POH/UCP4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3C925A631;
-	Tue,  1 Jul 2025 06:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72D24503F;
+	Tue,  1 Jul 2025 06:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751351140; cv=none; b=jUS/gma8AUoHqwQYpgxsMS9B90fVoPe9RttMH3mSc6SAXVlSpCnLTwAaruQjLAmsjR4z2tVz2y4DNueuR3emLOt5hwdfGLwOBpVsnC4k/jaAoP1gne/D4BJ6bq6+5O2bgN3yOp/QipxPcfxCEc+r1EPLtBHXs/k+qMhBx/UXF98=
+	t=1751351201; cv=none; b=R3v6cpBCKqh1iC+I3s3iil0i41rhR5zqbtrxGvaBsmMp/0OQ2s8Ei6fJ0brO82nxrkyTkDrAddU7DZbb+vF/5mwk7FTjxoVfpsSP1aanvAVTpZSwNTwtsCWD3gL5Ojtu9VGAuMVP+jXCt2qrRpQLvZyhNZ1WJPEsMsbqHvhNsY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751351140; c=relaxed/simple;
-	bh=jpp29UZcLJ0WwYutQ8qsGjJqabZOEG+1euvx0Os75vk=;
+	s=arc-20240116; t=1751351201; c=relaxed/simple;
+	bh=k/ticS7hIAAWxY9laIuFjHn3kYId2TOgfiR6jOhFUBY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FEvznEzdB0hWZd2bHbqeQiB7qA/DCZ6XPYpn/v/46kjx0uc83Ty63iNKz2E0/l3MW/0d4jX9qgf2ErTwJ8dMam1fnuNwDk6814AxHeHBGICJiyduBnctq1eGv1mESawDk5saO87l0zNQe881jfVrqEjsy63h6geZe8AcwNmIiVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7NRF8nz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C8F1C4CEF1;
-	Tue,  1 Jul 2025 06:25:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=rjUxD/gJcr+iWS8C+YpO/lLHse0DM1qx45rqKbs47Njl2+vc9n+S4Z+rOn7FWq0DW/kBZSu41RToPrUKmnD17CDzHxWKdLnxdIgY2f4xB3QSAYEXiVTIOGdpEHRifYLxc17Q5TRuoE+rY1BycJovOAzTmd10jdC2UGfhEftGHuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=POH/UCP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BC5FC4CEEB;
+	Tue,  1 Jul 2025 06:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751351136;
-	bh=jpp29UZcLJ0WwYutQ8qsGjJqabZOEG+1euvx0Os75vk=;
+	s=k20201202; t=1751351201;
+	bh=k/ticS7hIAAWxY9laIuFjHn3kYId2TOgfiR6jOhFUBY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i7NRF8nzIYANG64I2/rZDt4gjpaa0F1BFgF3uEHNMEVfRnxTjClS6UZuWb8edqACB
-	 6mokYeiHHQbp6Yv02wfm6djw38gvJmUth5/8Ua2U+UsL+Ls2tyv4z7xV7i1i8v+G6K
-	 7UorPbT1Ef/nZp8eFiDsCbRgPJKGDml46R4+wR+99bN7TchE3fIpKW3Zuu5bkcEe24
-	 mYzCOAVEvkG2w8FBr5PKin2I/ND+Rjr5EjRGNMmmZP1jqty4OTIpUcAgHCp1V8tj7B
-	 d/GPxugXFJ//cwttKX8Rp1kLVppiGmIJDRdXXGUS8gVRgmOBRIVbpyvjPC3Vhd6jlQ
-	 OyvOH6xFlU3xQ==
-Message-ID: <aea586a9-bb5d-41eb-bf5f-3cf72e9f8af2@kernel.org>
-Date: Tue, 1 Jul 2025 08:25:25 +0200
+	b=POH/UCP42qv1aCRSzVAaU2IDqIdvF0SihBBqRF1GtoqeNKrysTCFQ34LndoWUQbok
+	 06mVAiNlLtZLccSNPpqMvKx7ieF10csL/fx/QTY8c+6odRjopiT45TT9w0VN1ufeeo
+	 Rh23X8wfltIejM5NgyZjnXuyJz6kpiIrtDC9DdgL7OopQr5OQImHAJnAkYppZGBScv
+	 ULhD53XlLzJBJ6Z/zJzgO7RMhQ2RgdFQBhxGhZpqf5xzImI9g/wIh3D8sLfYorsydZ
+	 YvBvz+5jj2StYPpEtyiLJwaf82CGFSnXJsuVlgXYmz45STnnHT+NxsHgcOyMmUx2TQ
+	 l2SLAa7FXaowQ==
+Message-ID: <a5107266-853e-4658-ba90-d6a08882d2a8@kernel.org>
+Date: Tue, 1 Jul 2025 08:26:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next RFC v4 1/4] dt-bindings: net: Add support for
- Sophgo CV1800 dwmac
+Subject: Re: [PATCH net-next RFC v4 0/4] riscv: dts: sophgo: Add ethernet
+ support for cv18xx
 To: Inochi Amaoto <inochiama@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
@@ -65,10 +65,9 @@ To: Inochi Amaoto <inochiama@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
  Ze Huang <huangze@whut.edu.cn>
 Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
  sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Longbin Li <looong.bin@gmail.com>,
- Conor Dooley <conor.dooley@microchip.com>
+ linux-riscv@lists.infradead.org, Longbin Li <looong.bin@gmail.com>
 References: <20250701011730.136002-1-inochiama@gmail.com>
- <20250701011730.136002-2-inochiama@gmail.com>
+ <vxnvovuetfd6rzgaenwplpkhxm62fhw6t3vi4wkyigul7p4bkx@pwlprna4pyul>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,39 +113,59 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250701011730.136002-2-inochiama@gmail.com>
+In-Reply-To: <vxnvovuetfd6rzgaenwplpkhxm62fhw6t3vi4wkyigul7p4bkx@pwlprna4pyul>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/07/2025 03:17, Inochi Amaoto wrote:
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    ethernet@4070000 {
-> +      compatible = "sophgo,cv1800b-dwmac", "snps,dwmac-3.70a";
-> +      reg = <0x04070000 0x10000>;
-> +      clocks = <&clk 35>, <&clk 36>;
-> +      clock-names = "stmmaceth", "ptp_ref";
-> +      interrupts = <31 IRQ_TYPE_LEVEL_HIGH>;
-> +      interrupt-names = "macirq";
-> +      resets = <&rst 12>;
-> +      reset-names = "stmmaceth";
-> +      rx-fifo-depth = <8192>;
-> +      tx-fifo-depth = <8192>;
-> +      snps,multicast-filter-bins = <0>;
-> +      snps,perfect-filter-entries = <1>;
-> +      snps,aal;
-> +      snps,txpbl = <8>;
-> +      snps,rxpbl = <8>;
-> +      snps,mtl-rx-config = <&gmac0_mtl_rx_setup>;
-> +      snps,mtl-tx-config = <&gmac0_mtl_tx_setup>;
-> +      snps,axi-config = <&gmac0_stmmac_axi_setup>;
-> +      status = "disabled";
+On 01/07/2025 03:23, Inochi Amaoto wrote:
+> On Tue, Jul 01, 2025 at 09:17:25AM +0800, Inochi Amaoto wrote:
+>> Add device binding and dts for CV18XX series SoC, this dts change series
+>> required the reset patch [1] for the dts, which is already taken.
+>>
+>> [1] https://lore.kernel.org/all/20250617070144.1149926-1-inochiama@gmail.com
+>>
+>> The patch is marked as RFC as it require reset dts.
+>>
+>> Change from RFC v3:
+>> - https://lore.kernel.org/all/20250626080056.325496-1-inochiama@gmail.com
+>> 1. patch 3: change internal phy id from 0 to 1
+>>
+>> Change from RFC v2:
+>> - https://lore.kernel.org/all/20250623003049.574821-1-inochiama@gmail.com
+>> 1. patch 1: fix wrong binding title
+>> 2. patch 3: fix unmatched mdio bus number
+>> 3. patch 4: remove setting phy-mode and phy-handle in board dts and move
+>> 	    them into patch 3.
+>>
+>> Change from RFC v1:
+>> - https://lore.kernel.org/all/20250611080709.1182183-1-inochiama@gmail.com
+>> 1. patch 3: switch to mdio-mux-mmioreg
+>> 2. patch 4: add configuration for Huashan Pi
+>>
+>> Inochi Amaoto (4):
+>>   dt-bindings: net: Add support for Sophgo CV1800 dwmac
+>>   riscv: dts: sophgo: Add ethernet device for cv18xx
+>>   riscv: dts: sophgo: Add mdio multiplexer device for cv18xx
+>>   riscv: dts: sophgo: Enable ethernet device for Huashan Pi
+>>
+>>  .../bindings/net/sophgo,cv1800b-dwmac.yaml    | 113 ++++++++++++++++++
+>>  arch/riscv/boot/dts/sophgo/cv180x.dtsi        |  73 +++++++++++
+>>  .../boot/dts/sophgo/cv1812h-huashan-pi.dts    |   8 ++
+>>  3 files changed, 194 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/net/sophgo,cv1800b-dwmac.yaml
+>>
+>> --
+>> 2.50.0
+>>
+> 
+> As this is mark as RFC due to the reset dependency, now it is OK
+> to merge it as the reset patch is taken and this patch is a minor
+> change . I hopeif anyone can take the binding patch so I can take
+> the devicetree patches.
 
-This cannot be disabled.
-
-Also means it was not really tested.
+I don't understand why you target net-next with your DTS patches. The
+subject prefix is here not correct and probably this should be split.
+Anyway, bindings have issues, so no, it cannot be merged.
 
 Best regards,
 Krzysztof
