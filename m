@@ -1,146 +1,87 @@
-Return-Path: <linux-kernel+bounces-711366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04440AEF9B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473BFAEF9CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDAEC4E1901
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:05:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056AC1C05175
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618DA274667;
-	Tue,  1 Jul 2025 13:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC6F274656;
+	Tue,  1 Jul 2025 13:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PmeHa8dx"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="eZ07VeVY"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6C7273D93
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892DA14A60C;
+	Tue,  1 Jul 2025 13:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751375122; cv=none; b=th0svjKcDu4mlpbtFMo5pPf/myLEsNeg9DU7edlkSxe3o0EUX7CvJljX+zA4ArMfa4xRNDJTfaN7Q9lLrjAsz13IbjJUYNZc5Hbw7TRmPC8SIP5Hwa5gekOP9KejyS6bwlEztswAfEH55OFVRAq3YELf3mLtYmJot7wq+Q689ZY=
+	t=1751375215; cv=none; b=iU3HHLop3DtLst70IL9hvNm2sJRWtlUSgS//S0K7fRlviDuye/mrM2A2TMvWUkAK6qGJ7XzPmzPM1xqLPK9Z5KcSmOeo+tqwGrIn6jLF7KpW7X2fbdi7oQBXoQNHKE7u4stVIbhhEutJjZHT4ChZoMpgjTbTrps0TdywLg797Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751375122; c=relaxed/simple;
-	bh=jFvD1ZrKqKPn4xo4zK1Zi3MX9OLA3KyQqmOz21pWQTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZ0BssAPuWrlWM793EMsz/hlBMys9WShtpHmJ3TRL3064Q19tLul9skN80655rwwWPo6lnX7oJD+EIDniol4U0zQ5StTP5kxsABS+ZP7SIyL5tNXNcEWNO/9tUxSjMm0ute20MfKQWRbczplzgfP6AmaKlm9L3K+NNB+/GoV0xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PmeHa8dx; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c6ed7efb1dso2415289fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 06:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751375119; x=1751979919; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1TWX8rTsCZMwR7J7QVpBk+kp2Qgls/iNpOzUF5Kdzek=;
-        b=PmeHa8dx9QxTIB8157wvVlAFB+n3gyQwq61dHzacWyo8czqdvviUGXGqGVOCBjiIis
-         lECQPB5MUL+PdZ+ArTpkqYtylFp/qMgtDo65Lsnh9CG+4MziVenXsQW2kIQ1Dtmc4QWC
-         vQ/MJPuKhjXb4JUm5oqFa5IxIZ+z6I1H2RAPvbAtJCew/RjLI2aBA6+YKpmT/DfmjC1d
-         UKqM+Q5k7XcbQ3FeyDVy3N/+DCp6WyYVl7UaFdsUnZQKvFt/tXk24nqRO41ApGRuNt1I
-         etg+j0B5hf1DywAjShxEoK/u1LDpca7/gAj4rsSul4+ZekeHNJAEIUkOwSV0u5oFJgt2
-         YlUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751375119; x=1751979919;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1TWX8rTsCZMwR7J7QVpBk+kp2Qgls/iNpOzUF5Kdzek=;
-        b=b6Wq+xcIeiFyihTFgmWQ9cUqnRuBNYZF1XwQpFhZQ3bvR4iXPFC033O+IpJhCVdkzq
-         1iKDHtsM4IwlzfoeMu8HLOU3yzYHvJ/t3FSIfWXYn8Q8DY1DPLfnm+eOmJAVxlxGNafp
-         7//GzZk9OYgqYdhpDrugdCeT0OGH6YJa6x8tz16MxbBDOb9j9ijzbHzSLc9N6SCZssiL
-         uCRSTS+i2KuDqFe/HzsQryw3aIJd/s1ExeURyHqJwTCGinIgIGPht2q/ZaPLzAeV3fqe
-         7p/+XJBD1khSmgHI4ZWo/PbzpiGOc0kkkfPRhgCJGJbjDvWGAiGabIQ93HzdWhklXrlk
-         +0Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Vrfd0Xb/Gj0wdgHdPL+pQHCPujEDgSXZVOdHGgR59H4K87PIPcZme/MoZ9jvsD1jlRGbyYwCyd6AAwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx13EWR55KoEp7+QeCApELg/LOFJm/aLcQo0oWIrw+uaR5BfpMZ
-	m10+zrS9qu8XF1IzWlex2KYyM08iySfx9ivMpWxGMKtxPKajIaPL6GvDI2M4b0CCg6qVVgGTLje
-	tqRItrpm2XAanxLoqPTdQcspU2+dyECyN5d+7Avcy
-X-Gm-Gg: ASbGncuOmMGQR3Cn5+2xYYqAMIwosY4a2BMSl6y0R7Xp8wjA8ZMgDNd50mI7QLVynch
-	V7qdyGlmpqE4R/bEd82UEo2DWe1lQyN3XN8jU9u0GOfTXviPA0vqCNW3n1PBKMSw6eCOgPosACW
-	YwJI8f5GNOssiZx5A8YRGzYeo5HnWbJMEiGDLd1uM8
-X-Google-Smtp-Source: AGHT+IGFPwC9D7ECA270DEQ7V6Lz7pqeKr+PsMPIMsAOBbe6/HXkq3nYn8ORiGwcf/0z2ZOafHpxuFP09EI+CVKrlh8=
-X-Received: by 2002:a05:6871:6c07:b0:2c2:174b:c829 with SMTP id
- 586e51a60fabf-2efed4ff09cmr12077120fac.15.1751375117445; Tue, 01 Jul 2025
- 06:05:17 -0700 (PDT)
+	s=arc-20240116; t=1751375215; c=relaxed/simple;
+	bh=fuT/LDLh5OxFNOcsCU4pYYDRvoCcLPF3BEgrFESR5YU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtEbAUUKyA/VJQzHme6DV6UevfDWh9FIV6tYXkX6XyUc0EV8kHh9qRisFbKOFftrUd0MlnNDK2AQQQ3vOKfONnFEo4FqWuKNxeRft5IdlQToBkJRSCnbrY5ysBmo1wQjfj4HHoowNQ/aP/clqqpRsdAYedy43/His/7Mo6NZYro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=eZ07VeVY; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=sEnrDDcCW0+uNi7Li/7EBjKT/lB/N/YIH1Gam18Rgys=;
+	b=eZ07VeVYykK8lNUX1eBXrC/u3PXr/45h/URm8aa1PhSrcmLsoJDRgGWmGWoMHb
+	jXDL4U0F0EwXNHekUBnBFb0gg/1c8+rAeBpWQUO+z3bL3KJoZVKeJOUskb8xlFx/
+	Re94eKkN+NRJNicXXsWimzKC+EEcA+enODCIvQJ/y0tSM=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDHVuQ43WNo87YbAA--.10731S3;
+	Tue, 01 Jul 2025 21:06:01 +0800 (CST)
+Date: Tue, 1 Jul 2025 21:05:59 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Primoz Fiser <primoz.fiser@norik.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH] arm64: dts: freescale: imx93-phyboard-nash: Move ADC
+ vref to SoM
+Message-ID: <aGPdNy8Bn37XiOpy@dragon>
+References: <20250602125207.2265222-1-primoz.fiser@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAL0q8a6pOBZbWYdwKzC1U-PuH4rgf2miv0jcF=fWVZt_dUZHmw@mail.gmail.com>
- <20250630133343.GA26040@lst.de> <aGLyswGYD6Zai_sI@kbusch-mbp>
-In-Reply-To: <aGLyswGYD6Zai_sI@kbusch-mbp>
-From: Ben Copeland <ben.copeland@linaro.org>
-Date: Tue, 1 Jul 2025 14:05:04 +0100
-X-Gm-Features: Ac12FXxPwbXsIZXwCl1ZRik9WUZfYk8dZINVCxusvm1y0dN6VUD7U0a8B3GvEuQ
-Message-ID: <CAL0q8a7acv-9N1XUmJ9LAojdhm947eiira6Kx0tew-VVVCY6kg@mail.gmail.com>
-Subject: Re: next-20250627: IOMMU DMA warning during NVMe I/O completion after 06cae0e3f61c
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, 
-	regressions@lists.linux.dev, linux-nvme@lists.infradead.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>, axboe@kernel.dk, sagi@grimberg.me, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250602125207.2265222-1-primoz.fiser@norik.com>
+X-CM-TRANSID:Ms8vCgDHVuQ43WNo87YbAA--.10731S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xr15WF17tw47WryruF4xCrg_yoWxKFc_ua
+	48WFWvyr1UJF4xua13GF12v3s3G3WUJrWxZr4fGrn3tr92yayxG3sYy345Jw47Xw4DArsI
+	vF1rAa1rur1Y9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUj7DGUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIBp43Whj3TqWqAAA3N
 
-On Mon, 30 Jun 2025 at 21:25, Keith Busch <kbusch@kernel.org> wrote:
->
-> On Mon, Jun 30, 2025 at 03:33:43PM +0200, Christoph Hellwig wrote:
-> > Hi Ben,
-> >
-> > > [   32.857521] iommu_dma_unmap_page+0xc4/0xe8 (P)
-> >
-> > Can you resolve this to a source location for me. i.e.
-> >
-> > gdb vmlinux
-> >
-> > l *(iommu_dma_unmap_page+0xc4)
-> >
-> > Also what IOMMU driver is this device using?  It looks like it
-> > might not support a 4k IOMMU page size.
->
-> I think the PRP handling is broken. At the very least, handling the last
-> element is wrong if it appears at the end of the list, so I think we
-> need something like this:
->
-> ---
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -701,7 +701,7 @@ static void nvme_free_prps(struct request *req)
->         prp_list = iod->descriptors[desc];
->         do {
->                 dma_unmap_page(dma_dev, dma_addr, dma_len, dir);
-> -               if (i == NVME_CTRL_PAGE_SIZE >> 3) {
-> +               if (i == NVME_CTRL_PAGE_SIZE >> 3 && length > NVME_CTRL_PAGE_SIZE) {
->                         prp_list = iod->descriptors[++desc];
->                         i = 0;
->                 }
-> --
->
-> But even that, the PRP setup doesn't match the teardown. We're calling
-> dma_map_page() on each PRP even if consecutive PRP's came from the same
-> dma mapping segment. So even if it had been coalesced, but if the device
-> doesn't support SGLs, then it would use the prp unmap path.
+On Mon, Jun 02, 2025 at 02:52:07PM +0200, Primoz Fiser wrote:
+> Move configuration for ADC voltage reference from board DTS to a SoM
+> include file. The SoC ADC reference voltage is connected to a "VDDA_1V8"
+> voltage node and supplied by the PMIC's BUCK5 regulator. The reference
+> voltage is thus defined by the SoM and cannot be changed by the carrier
+> board design and as such belongs into the SoM include file.
+> 
+> Moreover, with this in place, customers designing own carrier boards can
+> simply include imx93-phycore-som.dtsi and enable adc1 in their own DTS
+> without the need to define dummy ADC vref regulator themselves anymore.
+> 
+> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
 
-Even though SGLs are not supported, I gave you the patch a spin and
-saw the same stack traces.
+Applied, thanks!
 
->
-> Ben, can you check if your device supports sgl?
->
->   # nvme id-ctrl /dev/nvme0 | grep sgl
-
-sgl is not supported by the drive.. Here was my output:
-
----
-sgls      : 0
-
-
-
-
-Ben
 
