@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-711150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162A3AEF6EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:44:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D974FAEF6F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01C11BC2F75
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044091C010CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3662737EE;
-	Tue,  1 Jul 2025 11:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA79242D8B;
+	Tue,  1 Jul 2025 11:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAoNNpUO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6phUvPK"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5BD1A29A;
-	Tue,  1 Jul 2025 11:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B71B1F4CBD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370255; cv=none; b=aIRg1/NafgxPqBB8l7JvYG7VtWo+hkRtuUNKDWkkMkzvsRHYCF6f+dNl78Pp8Acyx+byNQLUzWX3E9BpzmKQ/0XLcf3Gt6QYlD4YFmZipwh9YCNAjtYxj8b3jIUPvGuMBaewtkWiOrwtkqBvnYMupzMeb/IaO9H8IN3ojpEEdjo=
+	t=1751370334; cv=none; b=PF+axuhzsJYMfvuWD0XCEuwCkZSWPySk7VXkguequ0ySdhtgxuJ/lt7X0kb1k5H5cyVk23qmMH8Ko1avFc2LYljwTAoytAeZwMDxVorpW8ZEcpD97gv4CP9NYvTTClOWgy84C7n3oyvpqQTaoj9ovSYKxioCmhoUtKDvi5pp3vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370255; c=relaxed/simple;
-	bh=3W3vz6KPse/FZf4/O+7bTK70CyiE8f9Poxe2UbwtLRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjPMWVJek5pcEl1yPC0YEd/uXuYeAZAZfiMDV38YhTETSwMoJWp0I5YrKPb5DyRvSP9Bd5+Ojyd7dyqJj0CFvhSsRF+p5xM7Vr6sV5OGiDyrDN+KRaqgYK/y80d2yjkA5/7/X3SB2pwYJ8ev6PF5jmDSWFg6APeD6gIQgPee6+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAoNNpUO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBA1C4CEEB;
-	Tue,  1 Jul 2025 11:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751370254;
-	bh=3W3vz6KPse/FZf4/O+7bTK70CyiE8f9Poxe2UbwtLRM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UAoNNpUOWmcTYsGKU6I7lRTt3C569aeV0uxR50NAAOTSLhbFWEHoyQxc6ZjlKomu1
-	 /+3nbOn+yzUDV7+WFeFm4mUlH9IGBLC3GGOou6TtxoftasUQNGhDK5FQOtA6PI9aWF
-	 /yFSwbwb6EaWOkgU8WAoQFdDOAy0flmnR8v3GcU3/uivUflZ6bFmBqFSqJ0d+taXGg
-	 a7ye7SSqWAb1sppD+1Po+GMUsX+uWD3Zg1yo0Cak5ew7PwaTy3mVkFdlW/Opnd2vo1
-	 P8OWQhRRHF/a1hch5IOkTNWx3av5Y/ew0eQCWINNGevwTIv79tOZVsunDz2GMGka2l
-	 qBjG8EFsVAW5Q==
-Message-ID: <587072c7-6614-4b4e-96f5-c3defe56c73b@kernel.org>
-Date: Tue, 1 Jul 2025 13:44:05 +0200
+	s=arc-20240116; t=1751370334; c=relaxed/simple;
+	bh=gTUNr+PscDQrSl2I0O8sibm9zmoEPk3B5YEs5fMDJn0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=obVRqOP5NHcTdPHlwbHqAoCK7wTeUDhDg2FqhSvOKMfCmKy1kiUXPtmP3FRuMoZidMDSLJUuAI0AsbLsli9Dw32CtG1qiB3rndjiLvMvMZCsLAyj9D4lrV0rWaKNQz+ppxeTulCn6w6f8C7oeGa3UEqu/BhXF81H58hdGbyRHxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6phUvPK; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a4eb4dfd8eso860093f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751370331; x=1751975131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZqV2cSc9JcT72sZ3WvX374nk7Y11QAirdR7fnD3P+JI=;
+        b=h6phUvPKxPxFrREizYVnkTnMMkcAymtAbuXVc1bMOMnj9PWfolNDT/Jyms0Si6muk1
+         sBm5HgY0LuIZVA/bUiSaeYBWw4RcSp4SF1tbm6JZq/JFAHTedqkCMeXL7PX74AntHtUn
+         kiZn+yOhX8N+VFo5o4kue4svwCb4izxGe4JSoLiOMcYqe7tQSLkqz7qMD14acx9oEDz3
+         WSp8RabehaCwb9kipfIHd9d+6iMIloUIsYz78zyOy9BPvNwLrHNhn2wq0/l7O9ywDilP
+         3WpMn7sN4/3u8aiDYE8ZYWR8g/fNjm8N7TuYv2+MHuPgDs0pYrQWzMkyrkV3vgxMCU1Y
+         180w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751370331; x=1751975131;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZqV2cSc9JcT72sZ3WvX374nk7Y11QAirdR7fnD3P+JI=;
+        b=kNILH1Sk2+pn/8QmAcFCs0+TiYYKKc3yXadCzTNrHVyGCPT4ornM6pJCQOtI88BeKy
+         AmkWpdSV/KV+yzhD6YIAk1+BrsGQrmfHiwqtNGh3MkXi8beRhZwBCjncmJ1MQJ3bRCIn
+         lpBaaLoLe/SuLRuME+mX/4KjnpUl1T1H3yMDrjS2IkgijHSzmH3P1jTcJNysdCBd6g9E
+         sQIKR+CfYxKlvmho2sncdIt1LEsb+HGA128vRpKwJdfcieyhA6ncMLYbYdKrRCvklu8n
+         42m4uXbHdwJWrv/hNPb4NmJ7ox+s3tcE4ANYY6mFGzIAO6og4SyDLzUg56uIqYOlEnAe
+         ep1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJ7m1JynKZtmPsyGkoIUe+FbD/u7IPzNGQr0cPrbhx3cVKx/lOqndOyHQ557xo94y2VdOqWqeVFCzmzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIH+ujNuYs2EGhQteYBXtjRvD30yVi228QnjH7v642v7MnuGKB
+	JotWviIbqoJJnjbnIc+fERcWVG5n9Cg1bEa8sAqeAZ3a3kW+ktU0JPmRxL7ogIdj
+X-Gm-Gg: ASbGnctzv6KRTqLPOn6d7FQ24yru0EIbVKLkwDEfwQXiyVUpH8/3EgZlORHBHXOhk3N
+	Hgk2It46FyifGFI+4mnn5xq2Q7cQSKkUZBxzK8/oylK3tzy9N8klSTzcdHTCWVz//gmJ/c/2jDX
+	z6LUqQy6s6elDHn+mnjMneNtI6y19H+k7QxFJqxr71Dnvl1OoBX42fTNhAWEopoWwWqRMWhVzKi
+	4LeTDTo3KGU3Z3HQMNT9KGDJIyG8i+jiSy+3iJ9hmeKLLoTjHJEjJi0H4l6Bx+l8ajSV7hqu3ma
+	9tgO8SeojGddfsWsGY/6qRSNrscI81SmqZbFY6KNGRqh5fReb1SoueXN0J5JdVr1KwufDad+SD4
+	029OFp/NSzFYqdHw=
+X-Google-Smtp-Source: AGHT+IE0MARjLwFpVKy3XcqNu0YHZaj2TRqPNQZA5Vxs8cyk8AFUVhx3QiWGdqMXOzIEmt1ArxrW6A==
+X-Received: by 2002:a05:6000:440f:b0:3a4:d4a0:1315 with SMTP id ffacd0b85a97d-3af246671cbmr642564f8f.6.1751370331232;
+        Tue, 01 Jul 2025 04:45:31 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:a723:4386:e2f6:bd22])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453823b6e9esm197218935e9.28.2025.07.01.04.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 04:45:30 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Alexander Dahl <ada@thorsis.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	linux-mtd@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: nand: Fix dma_mapping_error() address
+Date: Tue,  1 Jul 2025 13:44:23 +0200
+Message-ID: <20250701114427.24910-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom,videocc: Add sc8180x
- compatible
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250701-sc8180x-videocc-dt-v2-0-b05db66cc1f6@quicinc.com>
- <20250701-sc8180x-videocc-dt-v2-1-b05db66cc1f6@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250701-sc8180x-videocc-dt-v2-1-b05db66cc1f6@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/07/2025 13:40, Satya Priya Kakitapalli wrote:
-> The sc8180x video clock controller block is identical to that
-> of sm8150. Add a new compatible string for sc8180x videocc and
-> use sm8150 as fallback.
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,videocc.yaml       | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
+It seems like what was intended is to test if the dma_map of the
+previous line failed but the wrong dma address was passed.
 
-Never tested. Please don't send untested patches.
+Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/mtd/nand/raw/atmel/nand-controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+index dedcca87defc..84ab4a83cbd6 100644
+--- a/drivers/mtd/nand/raw/atmel/nand-controller.c
++++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+@@ -373,7 +373,7 @@ static int atmel_nand_dma_transfer(struct atmel_nand_controller *nc,
+ 	dma_cookie_t cookie;
+ 
+ 	buf_dma = dma_map_single(nc->dev, buf, len, dir);
+-	if (dma_mapping_error(nc->dev, dev_dma)) {
++	if (dma_mapping_error(nc->dev, buf_dma)) {
+ 		dev_err(nc->dev,
+ 			"Failed to prepare a buffer for DMA access\n");
+ 		goto err;
+-- 
+2.43.0
+
 
