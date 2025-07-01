@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-710666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A689EAEEF75
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60491AEEF8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5B83BF990
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96D093B31BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44684263892;
-	Tue,  1 Jul 2025 07:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB5A25D209;
+	Tue,  1 Jul 2025 07:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pn//zpZZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Jn7H8vOc"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A243825C83E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 07:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F4B1E515;
+	Tue,  1 Jul 2025 07:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751353638; cv=none; b=Od2bwhqSkB5UvlEW1AItaovSp3CC6qpSvWHLHnS6qg4NTEIo6lHr/144oibsTLzQJaRtuhJmNgwXsC3KQ5HmNcXxNVNz7XOXAnR0A5H4d/qxdiOrzFD2Qq413+WvP6VEHs5kPT69ekSAsQPqtAPcuwFioTmkFIoN+UTccvzANsk=
+	t=1751353920; cv=none; b=Ma6eGaTUmXNJ+L8EqFaOQy0Fe2Yi44AYazRvMbH49JJnqJvu5ip+LOwTMTXBjUJSA3b5n77K0wWf6VxuA6PsMziX++37JRlt5vkVQngrqbXdvjKNLIFoeiWVv9iaSJ2hu7G8bYzi31F050LROaygUbEs1aM7TvJl4FZVARTqdtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751353638; c=relaxed/simple;
-	bh=lk4M686Bx0BvzXTrQUku+8V3HgOcKLRqezUoSSdCZmo=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=ODkL5OmzuCg7VJAoteIFuviX+1v6jstPRXcV3qdahdcqmZtOzmOuS/4OyzPJ4w/Fzg/VMNeRWgnV0sCY2U/ty4dztWBgmg2ZEoXfrapk2+D4o98P1q29vQVrmT6gcnHDHhzSJ8S89CP3MmRAJ4u30rLzBmPgTY3tlodljNTse9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pn//zpZZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3302C4CEEE;
-	Tue,  1 Jul 2025 07:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751353635;
-	bh=lk4M686Bx0BvzXTrQUku+8V3HgOcKLRqezUoSSdCZmo=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=pn//zpZZ5CHUEhJFXAxlPfOPi9t4GB/YmdJ9JN9inGHm/dJog5dT0BGf6lRAqu1mm
-	 78L5cWc31tjU/39Tro61BILPfUiv2xekiOrlUjRuCl8iQ3mK0rTBGGLABrR3A+VucU
-	 sUv0ksuM82u7ZSsZrwKkcGQPvLEv861fxfQo0sJrAiOKKDGsTm9euIQZE1MPK9X5v7
-	 0m4sKanRI3MHpUdcFCAFNO1wUIQ3Kcm+mHA3jNYTEYPMShkVF5pyDRNH1H3VfQYPC4
-	 dyVnajXWRpRNeDOlTZkCvouyWYe0xm7zgtxVxno9GxPqdg1J0dV8tuY9wwKzfGVtqj
-	 +ZPcupY/YgkHw==
-Content-Type: multipart/signed;
- boundary=4330f9573f003d1ff9f1b456a236d9a4f92e9099905690fb0c4407407adb;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 01 Jul 2025 09:07:10 +0200
-Message-Id: <DB0J1QW7DG98.CDM408QMNM74@kernel.org>
-Subject: Re: [bug] spi-nor not unlocking on Ubiquiti XW and WA
-Cc: <tim.j.wilkinson@gmail.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Jean-Marc Ranger" <jmranger@hotmail.com>, <tudor.ambarus@linaro.org>,
- <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
- <vigneshr@ti.com>, <linux-mtd@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.16.0
-References: <DM6PR06MB561177323DC5207E34AF2A06C547A@DM6PR06MB5611.namprd06.prod.outlook.com> <DAZRDAEP431C.26ALRPF1GSJQH@kernel.org> <DM6PR06MB5611F88B8684C981CB986867C546A@DM6PR06MB5611.namprd06.prod.outlook.com>
-In-Reply-To: <
- <DM6PR06MB5611F88B8684C981CB986867C546A@DM6PR06MB5611.namprd06.prod.outlook.com>
+	s=arc-20240116; t=1751353920; c=relaxed/simple;
+	bh=r9eNb2w072WvQ8hTLi0qds1C3mGmLZw/n+2hp5N2wPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h2K/43qZ/PD0U2T3prN+36s2CHRi/mqovLZdQJfr/lQt3mtJB87oqHPA4uYbB9P+4o5tf48btw/HlR4UqVS/dgLnO/zrmUWXSWO5n61/STDFYQfTn78AZIrOPvn+0qzFOMCymqWD33iz5At76mgLhj+9w1P2KTa4jfIwrM5JaCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Jn7H8vOc; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5612IZfh012666;
+	Tue, 1 Jul 2025 09:11:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	pjEU9ubolXq6bNyzBdOl3AlCHglaTXh8+re7Vdnli3k=; b=Jn7H8vOcNMzX2slj
+	XzBW1YVZpqYxreG+phG/EWQUK5cjaSMAFvyr4ircFjTLgeyKt/K/GVEr9JmSJ7H+
+	sZ0DgzlhQ2WFAoKx1IXs9k4bktUtqGc18MBGdoNiEzPCWWQp4BZ/g7/rgiwwOVqT
+	XzRf3NYqKYM60MspwnJpyyBGLV1eyk04Aa0O7UFWXEjt+mnlXnUHfHsZLqUPPS3v
+	SHd2IL+MfukystmnC4Od8EGySAYy0Hv8ItD5EstgTqqcfEfG/0emb5z2TjW8nI1q
+	dtQzGNLKNIXjV7wTNqjZ2nbXLW7YGFK62EuOBrnheoU3cLfAoh7QBK09MaokwTFI
+	xRoIhg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j7r637m7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 09:11:37 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5F4CC40058;
+	Tue,  1 Jul 2025 09:10:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8B1A5B83746;
+	Tue,  1 Jul 2025 09:09:33 +0200 (CEST)
+Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 1 Jul
+ 2025 09:09:32 +0200
+Message-ID: <cd2f6752-6d3a-4fca-93c5-70ad7529617f@foss.st.com>
+Date: Tue, 1 Jul 2025 09:09:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spi: stm32: delete stray tabs in
+ stm32h7_spi_data_idleness()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Alain Volmat <alain.volmat@foss.st.com>, Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
+Content-Language: en-US
+From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
+In-Reply-To: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
 
---4330f9573f003d1ff9f1b456a236d9a4f92e9099905690fb0c4407407adb
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi Dan,
 
-On Mon Jun 30, 2025 at 7:50 PM CEST, Jean-Marc Ranger wrote:
-> On 2025-06-30 05:25, Michael Walle wrote:
-> > This seems to be due to the use of the uninitalized "mtd->size".
-> > Could you try the following patch which is based on the latest
-> > next kernel. It replaces mtd->size with nor->params->size, so you
-> > could backport it to 6.6, but maybe it will apply anyway.
->
-> Thank you so much for taking the time!
->
-> Your patch applies automatically on 6.6.93, with minimal fuzzing and=20
-> offset changes. And it fixes the issue! Formally:
-> Tested-by: Jean-Marc Ranger <jmranger@hotmail.com>
+Thank you.
 
-Great. I'll prepare a proper patch shortly.
 
-But I have to wonder whether this flash is locked by default after
-each power-up or if it's just locked once after it comes out of the
-factory.
+On 6/30/25 21:35, Dan Carpenter wrote:
+> These lines were indented one tab more than they should be.  Delete
+> the stray tabs.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/spi/spi-stm32.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+> index 3d20f09f1ae7..afb54198bde7 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -1895,8 +1895,8 @@ static void stm32h7_spi_data_idleness(struct stm32_spi *spi, struct spi_transfer
+>   		if (spi_delay_ns) {
+>   			dev_warn(spi->dev, "Overriding st,spi-midi-ns with word_delay_ns %d\n",
+>   				 spi_delay_ns);
+> -				spi->cur_midi = spi_delay_ns;
+> -			}
+> +			spi->cur_midi = spi_delay_ns;
+> +		}
+>   	} else {
+>   		spi->cur_midi = spi_delay_ns;
+>   	}
 
-The MX25L12805D datasheet reads:
+Reviewed-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 
-  BP3, BP2, BP1, BP0 bits. The Block Protect (BP3, BP2, BP1, BP0)
-  bits, non-volatile bits, indicate the protected area(as defined in
-  table 1) of the device to against the program/erase instruction
-  without hardware protection mode being set.
-
-Does the bootloader enable the protection bits on each bootup? If
-that's the case be aware that the bits might wear out over time
-depending on how often that device is restarted ;) Likely won't
-happen but it's still not nice if the bootloader fights against what
-linux is doing (or the other way around).
-
--michael
-
---4330f9573f003d1ff9f1b456a236d9a4f92e9099905690fb0c4407407adb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaGOJHxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hiCAF/WdENLB+OmvVRleGVn8UKquWONyjuauGm
-sOeusNIWuor2qKCQLLc00hSMXYJHgHUIAYDkRIpeYjPpcnpyhlZdlWDbMULzDipD
-QbiQSjwj+71RvwGKO4dEYGZz96RT0EGM3tM=
-=faSi
------END PGP SIGNATURE-----
-
---4330f9573f003d1ff9f1b456a236d9a4f92e9099905690fb0c4407407adb--
+Best regards,
+Clément
 
