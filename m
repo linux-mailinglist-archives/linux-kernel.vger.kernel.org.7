@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-710368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28038AEEB4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899A6AEEB4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13F41887B6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:39:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD0B1173661
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAA6155389;
-	Tue,  1 Jul 2025 00:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987791494A8;
+	Tue,  1 Jul 2025 00:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gMPBJMUU"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UHg1KOYB"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F3186328
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 00:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6FC469D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 00:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751330320; cv=none; b=F0IXHDd1AIcoO4D5IpIoXK4pfk4QzUulc4/IMEI2d4T3qF98ENf01cB8Q7ydYZjz+mcGpY4SjEvqkI0j1qacRpsjoy7A8vF63f4cIjJDG3vpOo/k7/+3cbDlCjz/+i/TwqOWT4G6SQttWNaWCW/iyZC/JRt7oOyzr4PHQIG9eTo=
+	t=1751330319; cv=none; b=hvwH78yXdkgW6m3ChSf8/2o2l9M/KWqHcpFtu59FT6HqWkbDPNoE9oaPE8rbiGpHG68fYHo7GRoDic5gmxzJOmZwCBImK55TGmakWh2cerFDmkc2pN1A6waSClLZ4HFN9RE0x6e0ccLoaU7MhFKxJDOwAYoYk6xHsYrvWOunlZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751330320; c=relaxed/simple;
-	bh=cB+AyQBm3Vfw1IrDC1azeCRsmvjxinflrt0ymlU5Yrk=;
+	s=arc-20240116; t=1751330319; c=relaxed/simple;
+	bh=0N+geEJZC9bxJsprhJXBQmWk03ePIjN+UbskQ8v6fXc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IyhJP7zSwTmZOjrsOgXDde/bzuSQorFjjfjF+l5BbY+bS/vAursJzumB7mFdayvMly/cYIZxQ4qH8c+kHCdEGeNTgOYRLk4x1/JnQJWCOo8cO2Z7R2gLTt65l1Bw9ot1KWoRAHQKjjVR0ld5o9CaG23MxDaIO+7eDQFONW9Sox8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gMPBJMUU; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version; b=JGLs/tX04Zn7dk+fRv36/ea0EKA4lV1PYJq5MChcsUAEa79/Ns2CYPlmqDeHpQGve/ALq8DcxlMWu5bNfkb8M6rOikiHGP7Ji0eu9yiUajzmIbV9VFrCivwsllV+UQdir/QHIsssqPtzfvl3qaOwxWuVhE2YhOkkuYVnOR38xX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UHg1KOYB; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UIBxpL003650;
-	Tue, 1 Jul 2025 00:38:08 GMT
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UIBx3d012330;
+	Tue, 1 Jul 2025 00:38:09 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=FsY2D
-	KKLC/0tkiNL1jCbJcYDiNBCsD6bXamS8zhaBV0=; b=gMPBJMUUb8jcKH8qPTgiK
-	TX4IzAWpNYjcCDFJm7aXBAntmr9pLpi/lW8YkigvPREmuDjb9MJbil9lS7ZKuzjk
-	ExMITAgLT9Rzyah/hsPGJsL76v6ha2IgVEJLXSaJOg4VswY2GRFqT0j1gkM/UywO
-	h6rwaW3jEWCDJUUi5bmmfexRmyfT85UHZHcB4wVT6QpDBu1XmmxUsE43fvkFpuz6
-	yVOhivleryLwCsMRHAOA4NDtEldyszLGOpSHMSp48NIKWcLR15PPG3sD2GcKecjf
-	D652uvbGwyIRA7JP/vqWsoEqorNdlqr2jRxZZiGuAX6yH6DHZ2BG52fCGhTgAqrH
-	Q==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=k+YGq
+	wjnxQblgAVUYVpPFdXsdNqALvGFMzuBJFXvJm4=; b=UHg1KOYB/q+w4/UDnS+Bx
+	v+oLzU5e4gOYbaIa9txJG1t6/kCUQPf6RGNE3ZihIw7a/DJwgGv3/rxKU9Bew7LY
+	k4riKaQgoMGuWj8kvX+kRQrw6uPuTR8/OvIyhXptA04cpUf+cwf+D2gGx2KZEtSh
+	BA+BY+ECQbJZm9hA0Eow6edt1HjBa2S7nPZAZ5CNn6TnAjZosx+41SKiaPGwq95K
+	wHX7/845QGe64CqyD/5XcDenP48KGojWmd2TodmGccuZXsTAEclZ/qsrwHq2r7Bx
+	y4KROaRpiYEnwW43ChzQoEIdTXooHy1uOdiRGRaU6JCYENGhYYKvPIahd59DfBle
+	w==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j80w3k31-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j6tfbkvw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 01 Jul 2025 00:38:08 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55UNDxNY009139;
-	Tue, 1 Jul 2025 00:38:07 GMT
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55UNDxNZ009139;
+	Tue, 1 Jul 2025 00:38:08 GMT
 Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u92pxj-3
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u92pxj-4
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Tue, 01 Jul 2025 00:38:07 +0000
 From: Prakash Sangappa <prakash.sangappa@oracle.com>
@@ -59,9 +59,9 @@ To: linux-kernel@vger.kernel.org
 Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
         tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
         vineethr@linux.ibm.com
-Subject: [PATCH V6 2/7] Sched: Indicate if thread got rescheduled
-Date: Tue,  1 Jul 2025 00:37:44 +0000
-Message-ID: <20250701003749.50525-3-prakash.sangappa@oracle.com>
+Subject: [PATCH V6 3/7] Sched: Tunable to specify duration of time slice extension
+Date: Tue,  1 Jul 2025 00:37:45 +0000
+Message-ID: <20250701003749.50525-4-prakash.sangappa@oracle.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20250701003749.50525-1-prakash.sangappa@oracle.com>
 References: <20250701003749.50525-1-prakash.sangappa@oracle.com>
@@ -79,123 +79,170 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spams
  phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2507010002
-X-Proofpoint-GUID: rlaOoYskALshdZfrp_gZQ07_gQ9Fv-4a
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDAwMiBTYWx0ZWRfXy9e0Tb92UX8i QAsGFTYCOMiCo9tZJYdOJDOf+2SnIXSlhPVQB+/P9+jkP4bdNWC3Gai3Wfs5+ca6jW3edKGZZKB F4lUz/zTqm797RvKW9KSNCFKrNRYG5tiJcsgG+AiFlK3/je3c+mmAEG1kjhP8vFoluV1tEVIT8V
- TU29wBCvIuB/8REO8UvRRk5EsjxRbP3O5tEYJTXvXo5XB6SpkLkeJHqdAFnbkxd1QOl5iL8ksjd 7b0eV6NfAR5ZZ6sYC9E139g1+oGaJFl2Ylw8wEau4yXAKSomIFEuCGtai2QnhQIOgjSu7XZZied emiZUfYTqi8Kbby88lMI5NtEOc78YxgKBaPnoxh+CUo6MXGkTnv8uU+xb7kErl/cj/cRNTeaZ5L
- ch5IplX0tLADdFDvyTWUCyrFajrr0co0REaQZCm+7cFfR6heduaUTbOLI6sjRbzoT8kz4A/l
-X-Authority-Analysis: v=2.4 cv=D6hHKuRj c=1 sm=1 tr=0 ts=68632df0 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=qx7APbdOUbj-W9D39agA:9 cc=ntf awl=host:14723
-X-Proofpoint-ORIG-GUID: rlaOoYskALshdZfrp_gZQ07_gQ9Fv-4a
+X-Authority-Analysis: v=2.4 cv=CMMqXQrD c=1 sm=1 tr=0 ts=68632df0 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=p7qRMtwlg9ZQNcIIFPQA:9 cc=ntf awl=host:14723
+X-Proofpoint-GUID: arnoM5LtkQM_lMdmb62Rv17LFT97urPj
+X-Proofpoint-ORIG-GUID: arnoM5LtkQM_lMdmb62Rv17LFT97urPj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDAwMiBTYWx0ZWRfX/j5YKwae8K3/ pyGqJK92QgIfKVEyfG3Y2VvnRif9aFYS60+vg06H2sIhZzHEXE2/sD2O+noV6kH6+FksSJIPuRE ncWyElXSsBp694oSTO7pYvkarKfe/Etxx/gfn6dGNBSsDbX72A7y58vocitLZtDmRXPWQcyjdN7
+ B+suHo0+Ag01wCmR9vDKHo69rPXuMBEuiv3GQnDE7fWbsy56ihuB3XLZ+4xRDILlC41Rbjl5h1i 6Acyfipco9UmnSL2Hais5dDrqkDlox+VndJqwCGGsdjK+L/7hEhMK1BVQt59ie2vHwU2rIgi2SF axIsTfVS0RTGVo7rD2w8PQVbLXf/qzOw2gZPvDIZkDKqp4pRrDhkUd8+ZbYQ1P+aVrElPtukXDv
+ 5eFJTUFwm8lKajvsWDsJAPifeCitRk/cBtIOFNVep9bX9E85XHbyWRPuUPI+waORtC4k3Tkx
 
-Use a bit in rseq flags to indicate if the thread got rescheduled
-after the cpu time extension was graned. The user thread can check this
-flag before calling sched_yield() to yield the cpu.
+Add a tunable to specify duration of scheduler time slice extension.
+The default will be set to 30us and the max value that can be specified
+is 100us. Setting it to 0, disables scheduler time slice extension.
 
 Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
 ---
- include/linux/sched.h     |  2 ++
- include/uapi/linux/rseq.h | 10 ++++++++++
- kernel/rseq.c             | 19 +++++++++++++++++++
- kernel/sched/core.c       |  3 +--
- 4 files changed, 32 insertions(+), 2 deletions(-)
+v5 -> v6
+- Added documentation for tunable 'sysctl_sched_preempt_delay_us'.
+---
+ .../admin-guide/kernel-parameters.txt         |  8 ++++
+ include/linux/sched.h                         |  5 +++
+ include/uapi/linux/rseq.h                     |  5 ++-
+ kernel/rseq.c                                 |  7 +++-
+ kernel/sched/core.c                           | 40 +++++++++++++++++++
+ 5 files changed, 61 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 0ee6c5314637..1e0f86cda0db 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6398,6 +6398,14 @@
+ 
+ 	sched_verbose	[KNL,EARLY] Enables verbose scheduler debug messages.
+ 
++	sched_preempt_delay_us=	[KNL]
++			Scheduler preemption delay in microseconds.
++			Allowed range is 0 to 100us. A thread can request
++			extending its scheduler time slice on the cpu by
++			delaying preemption. Duration of preemption delay
++			granted is specified by this parameter. Setting it
++			to 0 will disable this feature.
++
+ 	schedstats=	[KNL,X86] Enable or disable scheduled statistics.
+ 			Allowed values are enable and disable. This feature
+ 			incurs a small amount of overhead in the scheduler
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 9b4670d85131..0a6d564d2745 100644
+index 0a6d564d2745..a0661f1d423b 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -2252,12 +2252,14 @@ unsigned long sched_cpu_util(int cpu);
- extern bool rseq_delay_resched(void);
- extern void rseq_delay_resched_fini(void);
- extern void rseq_delay_resched_tick(void);
-+extern void rseq_delay_schedule(struct task_struct *tsk);
- 
- #else
- 
- static inline bool rseq_delay_resched(void) { return false; }
- static inline void rseq_delay_resched_fini(void) { }
- static inline void rseq_delay_resched_tick(void) { }
-+static inline void rseq_delay_schedule(struct task_struct *tsk) { }
- 
+@@ -406,6 +406,11 @@ static inline void sched_domains_mutex_lock(void) { }
+ static inline void sched_domains_mutex_unlock(void) { }
  #endif
  
++#ifdef CONFIG_RSEQ
++/* Scheduler time slice extension */
++extern unsigned int sysctl_sched_preempt_delay_us;
++#endif
++
+ struct sched_param {
+ 	int sched_priority;
+ };
 diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
-index 25fc636b17d5..f4813d931387 100644
+index f4813d931387..015534f064af 100644
 --- a/include/uapi/linux/rseq.h
 +++ b/include/uapi/linux/rseq.h
-@@ -27,6 +27,7 @@ enum rseq_cs_flags_bit {
- 	RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT	= 1,
- 	RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT	= 2,
- 	RSEQ_CS_FLAG_DELAY_RESCHED_BIT		= 3,
-+	RSEQ_CS_FLAG_RESCHEDULED_BIT		= 4,
- };
- 
- enum rseq_cs_flags {
-@@ -38,6 +39,9 @@ enum rseq_cs_flags {
- 		(1U << RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT),
- 	RSEQ_CS_FLAG_DELAY_RESCHED		=
- 		(1U << RSEQ_CS_FLAG_DELAY_RESCHED_BIT),
-+	RSEQ_CS_FLAG_RESCHEDULED		=
-+		(1U << RSEQ_CS_FLAG_RESCHEDULED_BIT),
-+
- };
- 
- /*
-@@ -135,6 +139,12 @@ struct rseq {
+@@ -137,8 +137,9 @@ struct rseq {
+ 	 *     this thread.
+ 	 * - RSEQ_CS_FLAG_DELAY_RESCHED
  	 *     Request by user thread to delay preemption. With use
- 	 *     of a timer, kernel grants extra cpu time upto 30us for this
- 	 *     thread before being rescheduled.
-+	 * - RSEQ_CS_FLAG_RESCHEDULED
-+	 *     Set by kernel if the thread was rescheduled in the extra time
-+	 *     granted due to request RSEQ_CS_DELAY_RESCHED. This bit is
-+	 *     checked by the thread before calling sched_yield() to yield
-+	 *     cpu. User thread sets this bit to 0, when setting
-+	 *     RSEQ_CS_DELAY_RESCHED to request preemption delay.
- 	 */
- 	__u32 flags;
- 
+-	 *     of a timer, kernel grants extra cpu time upto 30us for this
+-	 *     thread before being rescheduled.
++	 *     of a timer, kernel grants extra cpu time upto the tunable
++	 *     'sched_preempt_delay_us' value for this thread before it gets
++	 *     rescheduled.
+ 	 * - RSEQ_CS_FLAG_RESCHEDULED
+ 	 *     Set by kernel if the thread was rescheduled in the extra time
+ 	 *     granted due to request RSEQ_CS_DELAY_RESCHED. This bit is
 diff --git a/kernel/rseq.c b/kernel/rseq.c
-index dba44ca9f624..eb20622634ef 100644
+index eb20622634ef..545123ca60b0 100644
 --- a/kernel/rseq.c
 +++ b/kernel/rseq.c
-@@ -504,6 +504,25 @@ void rseq_delay_resched_tick(void)
+@@ -456,6 +456,8 @@ bool rseq_delay_resched(void)
+ 	if (!IS_ENABLED(CONFIG_SCHED_HRTICK))
+ 		return false;
+ 
++	if (!sysctl_sched_preempt_delay_us)
++		return false;
+ 	if (!t->rseq)
+ 		return false;
+ 
+@@ -489,8 +491,9 @@ void rseq_delay_resched_fini(void)
+ 	 * If your critical section is longer than 30 us you get to keep the
+ 	 * pieces.
+ 	 */
+-	if (t->sched_time_delay)
+-		hrtick_local_start(30 * NSEC_PER_USEC);
++	if (sysctl_sched_preempt_delay_us && t->sched_time_delay)
++		hrtick_local_start(sysctl_sched_preempt_delay_us *
++				   NSEC_PER_USEC);
  #endif
  }
  
-+void rseq_delay_schedule(struct task_struct *tsk)
-+{
-+#ifdef CONFIG_SCHED_HRTICK
-+	u32 flags;
-+
-+	if (tsk->sched_time_delay) {
-+		tsk->sched_time_delay = 0;
-+		if (!tsk->rseq)
-+			return;
-+		if (copy_from_user_nofault(&flags, &tsk->rseq->flags,
-+                        sizeof(flags)))
-+                        return;
-+                flags |= RSEQ_CS_FLAG_RESCHEDULED;
-+                copy_to_user_nofault(&tsk->rseq->flags, &flags,
-+                        sizeof(flags));
-+	}
-+#endif
-+}
-+
- #ifdef CONFIG_DEBUG_RSEQ
- 
- /*
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index c1b64879115f..e163822d5381 100644
+index e163822d5381..6d50eff9be8c 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -6752,8 +6752,7 @@ static void __sched notrace __schedule(int sched_mode)
- picked:
- 	clear_tsk_need_resched(prev);
- 	clear_preempt_need_resched();
--	if (IS_ENABLED(CONFIG_RSEQ))
--		prev->sched_time_delay = 0;
-+	rseq_delay_schedule(prev);
- 	rq->last_seen_need_resched_ns = 0;
+@@ -149,6 +149,17 @@ __read_mostly int sysctl_resched_latency_warn_once = 1;
+  */
+ __read_mostly unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
  
- 	is_switch = prev != next;
++#ifdef CONFIG_RSEQ
++/*
++ * Scheduler time slice extension, duration in microsecs.
++ * Max value allowed 100us, default is 30us.
++ * If set to 0, scheduler time slice extension is disabled.
++ */
++#define SCHED_PREEMPT_DELAY_DEFAULT_US	30
++__read_mostly unsigned int sysctl_sched_preempt_delay_us =
++	SCHED_PREEMPT_DELAY_DEFAULT_US;
++#endif
++
+ __read_mostly int scheduler_running;
+ 
+ #ifdef CONFIG_SCHED_CORE
+@@ -4678,6 +4689,24 @@ static int sysctl_schedstats(const struct ctl_table *table, int write, void *buf
+ #endif /* CONFIG_PROC_SYSCTL */
+ #endif /* CONFIG_SCHEDSTATS */
+ 
++#ifdef CONFIG_PROC_SYSCTL
++#ifdef CONFIG_RSEQ
++static int sysctl_sched_preempt_delay(const struct ctl_table *table, int write,
++		void *buffer, size_t *lenp, loff_t *ppos)
++{
++	int err;
++
++	err = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (err < 0)
++		return err;
++	if (sysctl_sched_preempt_delay_us > SCHED_PREEMPT_DELAY_DEFAULT_US)
++		pr_warn("Sched preemption delay time set higher then default value %d us\n",
++			SCHED_PREEMPT_DELAY_DEFAULT_US);
++	return err;
++}
++#endif /* CONFIG_RSEQ */
++#endif /* CONFIG_PROC_SYSCTL */
++
+ #ifdef CONFIG_SYSCTL
+ static const struct ctl_table sched_core_sysctls[] = {
+ #ifdef CONFIG_SCHEDSTATS
+@@ -4725,6 +4754,17 @@ static const struct ctl_table sched_core_sysctls[] = {
+ 		.extra2		= SYSCTL_FOUR,
+ 	},
+ #endif /* CONFIG_NUMA_BALANCING */
++#ifdef CONFIG_RSEQ
++	{
++		.procname	= "sched_preempt_delay_us",
++		.data		= &sysctl_sched_preempt_delay_us,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= sysctl_sched_preempt_delay,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE_HUNDRED,
++	},
++#endif /* CONFIG_RSEQ */
+ };
+ static int __init sched_core_sysctl_init(void)
+ {
 -- 
 2.43.5
 
