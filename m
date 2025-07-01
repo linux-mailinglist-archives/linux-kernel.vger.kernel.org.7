@@ -1,125 +1,183 @@
-Return-Path: <linux-kernel+bounces-712175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F83AF05A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:38:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B316AF05B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0F41C06A38
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C11F7A8AF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F9C2FEE30;
-	Tue,  1 Jul 2025 21:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAB4302CAB;
+	Tue,  1 Jul 2025 21:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8R6DFMX"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ANanGD/2"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309B27055E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 21:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10892222A6
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 21:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751405865; cv=none; b=g82uttAbuiyLFcqJf6cTJIocJudAIoUoTGU9LdMHDpDznR4/n9gEUmpEV1wS22deHblv5+Y+PIHLHNJoU4NdJbIBawQhztRzazsk2ZFATil452ihpHgVAyGJciQgHo1OIHUzm2HxQem7/JgK8QnI92hrHyo4ueqCQSevdLZANS8=
+	t=1751405974; cv=none; b=i7zq+fHGlCT1Rs4wCXiwYOatGvsTfPbXEZm3/lnveiph09ietKkt3xy9A6mNPEtB8YdJvUZzAwLKdIdBCNglj/2Ry0y5m+hfOIvInMePboIePEflSYY2SdpXIVTD/rKeaVNNR8564ovASX3ZgkMqNUH3ipF7BvSF/X0LPhbqJV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751405865; c=relaxed/simple;
-	bh=mC/l6q4CWSnnwGzOfbly5ZqDi3wwhuV0jt4g7O1wZcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L30KZWNGWSoc35K1c4J/R7kSVMyKGOCByfzLGvbustpfpzh639o2kdMiz1vcupAkqCATemXj0sMLnG7Kdx7DHGXnqpVxdfdh0paiosGWvEAhr2D3LxIfSANPR3L5H3ChOvLtGqUZ7J77rijaHnqp1G0M/H6VFA7DWfHjGk9YFCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8R6DFMX; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-74264d1832eso4668621b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 14:37:44 -0700 (PDT)
+	s=arc-20240116; t=1751405974; c=relaxed/simple;
+	bh=VxYROUM2GfmJ/KXDwxe8XCPoe5O2XiSmt5z/jZcbr3M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Yz1FBNwZBAMJzb+/RWAEsNegWL2ZOpnVpEZjLGuZKujN41LTWeZ6A/85TuMjUlytat+WOlJUt8/sgh1CpLftJF/zzTD39+5owXiEfVWb2cHmmD3R/OePA6AkA8TUeAFqAWG5+NwCuBBOXVe2S+wPeF+BUIFftvoe7EpB67kFeYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ANanGD/2; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-4080548891fso2153537b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 14:39:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751405864; x=1752010664; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OdmRU/xL8sd153MKFf5ld1ppQiJmRDfnpnmDu5gQhkw=;
-        b=U8R6DFMXl8c1X835wRuzitbJomobZE265Ux3mUN41Rzo1ERT15u+pAueoToT2oCUmF
-         dWT8/djmrdFbRIGcoBCkkL77AgK6NZHgAt0MUvkMolZ1+aaz0DGLjGhrZZqjxibEsBRd
-         /n775fH0pRlOCw7estZPmQ7Zycl3a7S+FVyw+WtRyFHoyR2vcnPVObjdwNgbrCNQPd6d
-         m0png9svGlK0IpO/M66RrLTcCkh28PJvikLRxEhXRwVBq4HkRymlO0/f7eQ9tAwVFeM/
-         v/QlwUO34VS1/ifPqi+/4Qj+ql8fEsMixu+yvSr6qR26+bbM5hysLRQ6QpsFNXqpwd22
-         sx3w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751405971; x=1752010771; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FhZPY2wdf4iLhO1Z5AiYBhsJE4q+NPXvJ5l9xNX680M=;
+        b=ANanGD/2CPOtDOWa9dJlBvDj0Ia856+R4cb3N3r7ond96Nj610Nd/VzOBMEuFqRwVw
+         RMoes33uq/AFLKfXnNQTUYr37eQxm1AC17QImVxR6iUVM5wRf8J+3f5BH8E+EM+vMW4H
+         5gMXMScKFA7TC1919ai+U7OBbzpLtsi3HSIqQzum+O7Zfq/gIC0TOtNH0mtRwdEn8UMh
+         Cl8335zl0eZOL5CWqU96a4+cvJIxym51EOdH1IeJHlgQE3uQv594dpit4fowiRtiHErT
+         FZSIw7MyyRYvOZiIVxf49fmsJqmNIzgIgP85AQl3qlybSJ1jh2MtSv0YaKA1ZCzoSjhM
+         XUFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751405864; x=1752010664;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OdmRU/xL8sd153MKFf5ld1ppQiJmRDfnpnmDu5gQhkw=;
-        b=jBaojKC5HgIspDD7x31ljZIuN+NTzpcolG7C5PdUi0wATGttZVW+2O0KL2gbPBvyQX
-         XAkf199HFXkZDyJgVFmyJmmiu7wCEL0kGLN0ke1ldZRKbteFq6vVGGxTzYeCFUL5KGda
-         d4GL7TTb7DMRrZxSieWyv9KyAgHOfjrH2LmVYpBD46pyzgeEHwEVQJUKGnoA3wq6VJq0
-         wMOUWGePXdw0X50M4IOLP0Qsuk+EolYzUGcEf01H2vnSu0g1NWFaHby4J35z1p9NRZxF
-         IBUwQKWH9Pz5mCLRQWLPrjtB0SvoqEpmeHV46oy5HivXq4bYbbXXRDotN6n2FdNC6k0i
-         mNuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3qIwoNrNb8pul78HlYJZYl3hTTn0TH5Hs2I6vKHngd2xR0BMvoVASjF6sXvdTLuFJ5FIMmCQ3UMAD9ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfV6pPhv5zD0sE8M/nbKJO5ImE4XPqrgllmCybzrxdo59RbYkn
-	+7kpCz/+J2TtajR1kQEwOEJs3ejAKj0kDUUcMpphwsN4jjmg2pktzWXE
-X-Gm-Gg: ASbGncskQ9mgNjYUBzF4yzv3VO+K7CAk5ktcXhLXbtbIWALe5qEEykFrcNwIcq0GU61
-	ajzyuJGGvsNF5qbKEjkALWyp7BjJOdYJg1gTdoCVYSirUPhNiHycI9prIP8q87fMOb2hP1yJzEk
-	Atl4dQ+pw6MHgKWKJXI54HyMi3XUucq7BocFx7BWw/Bs+f1L4yz3RAMg1Wlz3Nau9VwujaE+Is6
-	IKzYt/DjsA5btzYNwJMVbB8P11mz5U+TN9ZYkgVG8O+0jsUFZsZICRHsIf3byRYgNDQFsa1OR9F
-	MxKFJMqhamqxs/nQMB2T7tYCBkZpVEwH/yVTGx+3v3VMUtmjtGNjSTBUUySTfg==
-X-Google-Smtp-Source: AGHT+IHLXSEn4ikmGzjZbo3sSfHwWloeSWhunrHaXBB2o/ZdMTc7Y3bgH2+9jpDCT3tcXQPfrsIMYw==
-X-Received: by 2002:a05:6a00:1ad0:b0:740:9d7c:8f5c with SMTP id d2e1a72fcca58-74b514c3b03mr463974b3a.18.1751405863519;
-        Tue, 01 Jul 2025 14:37:43 -0700 (PDT)
-Received: from localhost ([216.228.127.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af57e7279sm12198867b3a.150.2025.07.01.14.37.42
+        d=1e100.net; s=20230601; t=1751405971; x=1752010771;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FhZPY2wdf4iLhO1Z5AiYBhsJE4q+NPXvJ5l9xNX680M=;
+        b=NDaWFRtWH7azZOqmHT5haZpXA0IVNOwNWkX5fFw+bDUEdKG88tjvxxmOLn4DVEm8Dn
+         epjrWSb95zv6adAJLEdWiVJASDqfd2Zbty+VedjfoqD666zmYejW93xFhst/DYz8oWqm
+         fVtWa8NLPdOO4LjZ8Jbjwa8TuYYRLNdHRZZQIJW6s6ZVVGkUabSe2LOsmHb/nABJU4ft
+         A2MAvsxnQK31Zrj/G4YQrNdnC0UaQwxuifS0HcjYToDiMYfdQlvWhqGwEEpUq7dYH4cU
+         y8KeCqzGY4S50+ataB06bmDCeI2zjZSdhCOKX0SGjg7F93sI23nOpuNTT2fD12kWCSbi
+         dKeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXadOSgaRf+xII/aJi9D2aa5Q55sxO/ntXz95hO0Lsa9WL2cGETLXLDdF+uZfEnd+dPmQLAFk15fJbH5T8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBi+QHouQENbovOWIu5WmFDgQR3i1vkwcQGf3mCb63BwSoG7tw
+	Vs/SFUxevMfdWamvA34G544XUTN8tv1sKP3Rt1G/eYUOVG/KIoTC8ndxoR7i1AQNou8=
+X-Gm-Gg: ASbGncvL8q5soorCILbsCznqFZXJo5tgXi9X/P+GrG8ikkrKY5uwHy+cvgdTvUsxF9y
+	sKIkV2+p8g3RRnxIABdkGv4u4yjYotr+6GkoqcMxLua+765oeIEpUic7641sijch2hLNetFBo9Z
+	EmnasUBLJFSWT45yKwcatW/G113z1lK+XdJ4hD+XDpY985Ar1NsRWGOCoTcHojhSslGFuZs3/PG
+	fAWVTr87utslSiFIOGe5dhMsLBUe64FbZznmXlien1Zbrah4qSQiA9JmRfu7wdHpi/+WhtyqFNK
+	HswR41dh92jGZm/bCKwuLGru7oQsOGir3qDaIX16FmNOcpLhZHd+xD1ugztZbUUUuWWA
+X-Google-Smtp-Source: AGHT+IEmIlyTP9bN5FcZOGUVizFGWHz30kCL8m/3oyY91aEG/xyVWS8vK2c7mTxX1xDiOK9rPl6j2A==
+X-Received: by 2002:a05:6808:bcd:b0:40b:1597:b2d1 with SMTP id 5614622812f47-40b88798a87mr254209b6e.17.1751405970662;
+        Tue, 01 Jul 2025 14:39:30 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:70a7:ca49:a250:f1d5])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40b3243deeesm2288335b6e.48.2025.07.01.14.39.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 14:37:42 -0700 (PDT)
-Date: Tue, 1 Jul 2025 17:37:40 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uapi: bitops: use UAPI-safe variant of BITS_PER_LONG
- again (2)
-Message-ID: <aGRVJHZF36KGVs4c@yury>
-References: <20250630-uapi-genmask-v1-1-eb0ad956a83e@linutronix.de>
- <aGKkw6b1QPTf9yii@yury>
+        Tue, 01 Jul 2025 14:39:30 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v3 00/12] iio: adc: ad7173: add SPI offload support
+Date: Tue, 01 Jul 2025 16:37:48 -0500
+Message-Id: <20250701-iio-adc-ad7173-add-spi-offload-support-v3-0-42abb83e3dac@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aGKkw6b1QPTf9yii@yury>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACxVZGgC/5WOPW7DMAxGr2JoDgP9RFKcqfcoOsg21RBILFdSj
+ ASB717WXoJO7UCQHwG+x6comAmLODVPkXGmQmnkYHaN6M9h/ESggbPQUlvptASiBGHoubzyhts
+ AZSJIMV5S4Pk2TSlXMDoof+ycc8EIhk0ZI91X0fvHljN+3dhXt6XoQkHo0/VK9dSMeK+wOaUVP
+ wdnKjXlx/rorNaL//40K5AgvXPR6dYfjHzrwuNCXcY9e1fLrF/J/s9kzeR4aHtrbdsqZX6Rl2X
+ 5BtiZwhZqAQAA
+X-Change-ID: 20250620-iio-adc-ad7173-add-spi-offload-support-32a178b666a3
+To: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-spi@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>, 
+ Andy Shevchenko <andriy.shevchenko@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3089; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=VxYROUM2GfmJ/KXDwxe8XCPoe5O2XiSmt5z/jZcbr3M=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoZFU0eriObLuCHhRkzBiZdtTzSKJ84cqD8X+HT
+ VCZuuW6AY6JATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaGRVNAAKCRDCzCAB/wGP
+ wJ5JB/9wNv/tkmGqHpQE0xdU0nKNPjt5uVZZSRpYMwVniV7Bgoqplhyejh5v798/ScFEMUwcEYq
+ h7aLymK9ZBWobXWBfPbJPheF9klRDCsOhaYRcUURuqQL4718tnqn6hyjxJjW3CXKLBSK/Ef/0x1
+ 5GkmpAIBkpYsGDmLaoA7qqEfHV486yiKA9K/IECYmrqMOkw+9YUBLd/6LbR5X8q3zbD1zGfDsvq
+ suIYqmbcxmDjewYiC81WPnGDdVLbHnAKgQB3lNxJaOhHiz/wd7M4nywrcnJQ0WFek3tbuOntqH1
+ OckR7WOWS6YVwvmtX2ZgWF2mbnbyNWecno2qDinrbSrC3G0P
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Mon, Jun 30, 2025 at 10:52:54AM -0400, Yury Norov wrote:
-> On Mon, Jun 30, 2025 at 03:02:18PM +0200, Thomas Weiﬂschuh wrote:
-> > BITS_PER_LONG does not exist in UAPI headers, so can't be used by the UAPI
-> > __GENMASK(). Instead __BITS_PER_LONG needs to be used.
-> > 
-> > When __GENMASK() was introduced in commit 3c7a8e190bc5 ("uapi: introduce uapi-friendly macros for GENMASK"),
-> > the code was fine. A broken revert in 1e7933a575ed ("uapi: Revert "bitops: avoid integer overflow in GENMASK(_ULL)"")
-> > introduced the incorrect usage of BITS_PER_LONG.
-> > That was fixed in commit 11fcf368506d ("uapi: bitops: use UAPI-safe variant of BITS_PER_LONG again").
-> > But a broken sync of the kernel headers with the tools/ headers in
-> > commit fc92099902fb ("tools headers: Synchronize linux/bits.h with the kernel sources")
-> > undid the fix.
-> > 
-> > Reapply the fix and while at it also fix the tools header.
-> > 
-> > Fixes: fc92099902fb ("tools headers: Synchronize linux/bits.h with the kernel sources")
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> 
-> Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> 
-> Arnaldo, do you want to move it yourself or with my branch?
+Here comes another series for adding SPI offload support to an ADC.
 
-OK, added this in bitmap-for-next together with the MAINTAINERS patch.
+The primary target is AD411x, but since this uses the ad_sigma_delta
+shared module, a lot of this series is focused on that.
 
-Thanks Tomas for looking after that!
+To start with, we have some cleanups to the ad_sigma_delta code, so feel
+free to pick these up as they are ready as they generally stand on their
+own.
 
-Thanks,
-Yury
+Then before adding proper SPI offload support, we make use of
+spi_optimize_message() to reduce CPU usage of all users of this driver
+during buffered reads.
+
+Also there is a new dt-binding and driver for a special SPI offload
+trigger FPGA IP core that is used in this particular setup.
+
+Then finally actual SPI offload support is added to the ad_sigma_delta
+module and the ad7173 driver.
+
+This was tested using EVAL-AD4112ARDZ on a DE10-Nano.
+
+---
+Changes in v3:
+- Added extra patch to replace 8 with sizeof(s64) in ALIGN() [4/12]
+- Fixed typo in commit message. [6/12]
+- Fixed includes in spi offload trigger driver. [10/12]
+- Link to v2: https://lore.kernel.org/r/20250627-iio-adc-ad7173-add-spi-offload-support-v2-0-f49c55599113@baylibre.com
+
+Changes in v2:
+- New patch to fix overallocation of buffer size. [1/11]
+- Also change int64_t to s64. [3/11]
+- Fix typo in commit message. [4/11]
+- Factor out scan_type to reduce line wraps. [4/11]
+- New patch to clean up include more. [5/11]
+- Duplicate comment about odd case of 24-bit data. [7/11]
+- Fixed missing MODULE_IMPORT_NS() [10/11]
+- Link to v1: https://lore.kernel.org/r/20250620-iio-adc-ad7173-add-spi-offload-support-v1-0-0766f6297430@baylibre.com
+
+---
+David Lechner (12):
+      iio: adc: ad_sigma_delta: don't overallocate scan buffer
+      iio: adc: ad_sigma_delta: sort includes
+      iio: adc: ad_sigma_delta: use u8 instead of uint8_t
+      iio: adc: ad_sigma_delta: use sizeof() in ALIGN()
+      iio: adc: ad_sigma_delta: use BITS_TO_BYTES() macro
+      iio: adc: ad_sigma_delta: audit included headers
+      iio: adc: ad_sigma_delta: refactor setting read address
+      iio: adc: ad_sigma_delta: use spi_optimize_message()
+      dt-bindings: trigger-source: add ADI Util Sigma-Delta SPI
+      spi: offload trigger: add ADI Util Sigma-Delta SPI driver
+      iio: adc: ad_sigma_delta: add SPI offload support
+      iio: adc: ad7173: add SPI offload support
+
+ .../trigger-source/adi,util-sigma-delta-spi.yaml   |  49 ++++
+ MAINTAINERS                                        |   7 +-
+ drivers/iio/adc/ad7173.c                           |  13 +
+ drivers/iio/adc/ad_sigma_delta.c                   | 295 +++++++++++++--------
+ drivers/spi/Kconfig                                |   5 +
+ drivers/spi/Makefile                               |   1 +
+ .../spi/spi-offload-trigger-adi-util-sigma-delta.c |  62 +++++
+ include/linux/iio/adc/ad_sigma_delta.h             |  27 +-
+ 8 files changed, 345 insertions(+), 114 deletions(-)
+---
+base-commit: d02f330b0c78bcf76643fbb7d3215a58b181f829
+change-id: 20250620-iio-adc-ad7173-add-spi-offload-support-32a178b666a3
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
