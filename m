@@ -1,116 +1,165 @@
-Return-Path: <linux-kernel+bounces-711009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A722AAEF48E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:09:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F205BAEF493
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 170A048051D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2257A1C0096C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4523D2737FB;
-	Tue,  1 Jul 2025 10:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9DA26B0B9;
+	Tue,  1 Jul 2025 10:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itSvZOop"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6QhC9oY"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9527381A;
-	Tue,  1 Jul 2025 10:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEADD18DB35;
+	Tue,  1 Jul 2025 10:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751364348; cv=none; b=BWmsvc9O674cLJSa0hRhNw6uzsj9boNNI0cU6y3tudEdL07hLd1g0w6HvlnUAi/xBEIH22pDWO8aTGG3rTOQPbtayCLJLFIwDPYkq6O270VmkpxTN8TiLeezY5TA07xS9mQbDt/PfG1y8EvoZzheHbQvThi00xFyne0/EjhquPU=
+	t=1751364622; cv=none; b=nanKMf3RiEVnXU24euEDHOHoRiBAHUZL4gEmXLSrTmOzpeeJT4XycxF94kO4N+DP4qolaqs+f0swCmOb5fKqVDWeyVKEju31j01tl3e09ebHCcgUZ4sozRo5V94TENOv/q7MZFSyFvwecdMvvw+wFv7rcOnDXWl/j4b2r6El46w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751364348; c=relaxed/simple;
-	bh=jBkWrmYg85LJDEJOzQbvK9KxHKJ2Rxy2fOsHy69Bk70=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PUpkwApcex1FYGmYlkDAdgDoXpRcIbjXrqSz2sx7pSzPr5Y2tBSdqaIwjmNkCbP9dETnxgAPlEfW1QpLt3QPTulrp/yHQoQESm9nUVYNbv3WdIuWDlc075CmRViS3N35XVlLcZeG76Wdbyt7ETxR0J521glgQcC1CNhuxUuRg/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itSvZOop; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1751364622; c=relaxed/simple;
+	bh=Wp7TC5nSz+8PwA/4ATcFGGxnqfSCKNySOL7+6Yn+9OY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VO50f3w18qUOmt/c8IxmdrpJCeJyU/4qOgo16xPL9gXfu1E1IKy8IPxocyl7jbmrEkJel+XGp9erHMkGwcAkrzDjlWzWxPyGHkhIDWI2vSu0RxJGE0ZKvXwp4ZAGkeQZLv7SIhfxAnsPQTBO4RRc1sTLPWACoeZrIjUtdswayr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6QhC9oY; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ade76b8356cso607339566b.2;
-        Tue, 01 Jul 2025 03:05:46 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-453398e90e9so24746305e9.1;
+        Tue, 01 Jul 2025 03:10:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751364345; x=1751969145; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iadSvd9ADK8oMvjZilYGUvx8+bST1k9toFEmq4yiSaY=;
-        b=itSvZOopTgPUTkkB/8SfgO1lRqsT10VqHNDnMoaZouWpIBjmJppthy+7yirK8dAJcG
-         rZE2zWGOQB71ZRqzqgjggzoP/uWwJ8WATLvwcPYSps0h0dpaRUS3tfZohkDpGVdj24/l
-         VF+RrhRXJA1mrLnr+0wujRdwdsaxjlDfO9e0B6aS+SmyCHuJmQOkSm1iuWGYHs1IiR0h
-         hJX0DMMWa/hM+q3d6ENUe6I9fjdR2+HaqpUsx4X1hUSK7F0S5HKusQwCOQXHX/NwTUkH
-         /R89dDIsbMjToUHPCU+ENLzMVnvmTG5UahJJPOSFBJORAl/fuio0nqPzl5dtBuWUqsQ7
-         DN3Q==
+        d=gmail.com; s=20230601; t=1751364619; x=1751969419; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+U9qFNfxKwKhoB7NC6h6Lu3o/jexQUeWxNnkfZW9HME=;
+        b=V6QhC9oYAH2DaTZLntnNw6qwCRstXSkLd/3PaCTeqF4SBDKLNSW2SCKmmWRb8SCgYy
+         PF5vFL+Li1fe4hnv67Y53LPYawmDZUJikKEumQL/1jIG/9YulZkhRvPNjHu3BKZYMK5r
+         KoMWcc7RAISnOFvCQ5c5K24ytETKFf6DG9oJZmV6A6/4YFvPClItv+7Io6lPL2G9mDJR
+         TuI6qHnb3IlTvKOGXAqS6Mxz63U9FpyqK1Fy6ApDCVw2ZqKwdPa67egmpS72XjC2b/6z
+         QZ/XU3Px+wIz65XmvgJw6ckbG4Tc2CrRsbJIVLZ0N8aMAMIpVlKiUgOrLmbPKnKoXTGa
+         PUEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751364345; x=1751969145;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1751364619; x=1751969419;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iadSvd9ADK8oMvjZilYGUvx8+bST1k9toFEmq4yiSaY=;
-        b=jWiMwdScNu0dfqoeDN+d1Qk6C9OSlXnSzMw7zMruU5y8RqhTjiN4TIq1XJf18WUfaR
-         UtF/gzitrCTHgaWadk5rURej2yEyDyyVwr3y+5B3KP8mLGQFPmnUpbY7vqDgXukmG/32
-         1f+43AzZugSkPK7DwgwkCu5CG+8l0DTId7k3KONJS1KsiRZE0moQ15DKu2NldQbGzGy6
-         9W58Ie937bVGVkfLh67Xri7/s78D60VLNOQgDOLq3KnfSdFEM5mA3jH4wYCKrX8ltI1y
-         c1pmm1GrWa0Yf0iv061AKliaZQW7uCPubINCQP/JZpsThfs365DS1hBeojoEN0Go7PTp
-         22/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZRNlwA0EJiTXwhO7f6/TWFd8+HfpPFOV3yRa0Np+GxNwzdKO4W0ca/zDt5axWL1pI+09mreRhZi/55ddZ@vger.kernel.org, AJvYcCW7JSd1QguCvx7yUlRHEO/SFjZnRADPfT5szcuW7gbX4zNdYfOCY4HEvD89AYieJpNcWdyTx77gxs/n@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy2cplS43rEtsLVoOuRFo21YvSLvjOTyaKgsZ6FWNzPLK6HAHs
-	U4rWKcK48osEWK1ofmY5V08VeyLtqbjgrycNgJifeZEMYm1ofBBMpOjfszY1ucHbs9k=
-X-Gm-Gg: ASbGnctNcVnnf6vSImJ+pc4DzUBUPyekzQ2dzlrZhyp0iW9j5+08P0bO6DRTlFkTdLB
-	ccunfRW8xOpaafabZCWWsLQUjghOQzZLTv5cKSqs7HooZD/siLm5FudqSaNA/j5odlywrrOBhbi
-	lrxJDCeUweusRVulZ14mqbdxl3i4MiCHJVhY/dHgNyDtNRs5Yhpf2sJ0AkuHj09Ko2sqMSbCJp2
-	KUEdWP89gVlY1O6k6CLLSFsBAC9QXtH8TFnEFUodjQ7n+oUh3BUyITwivMhD/HX6mDwa5zmh4I2
-	U3aXnvMIJG52QpkjsH/6b5AhKnLWGihU8u0c210h9zQSiwnQiEpKID9rTrJevW1tJfno0DbH2LK
-	xHWemmqkgo4VA1pCEQw==
-X-Google-Smtp-Source: AGHT+IHQIGQ2Hch4gyaPW7HZupOC2DjnJn7l+GVqB7yhcz8qD/KnPlOuAVlsMHk5Rv61bStbPBh69w==
-X-Received: by 2002:a17:907:96ab:b0:adb:2ef9:db38 with SMTP id a640c23a62f3a-ae3500f2822mr1907835166b.36.1751364344429;
-        Tue, 01 Jul 2025 03:05:44 -0700 (PDT)
-Received: from maria-HP-Pavilion-Laptop.home ([178.226.54.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a15fsm850718066b.55.2025.07.01.03.05.43
+        bh=+U9qFNfxKwKhoB7NC6h6Lu3o/jexQUeWxNnkfZW9HME=;
+        b=JKevqqAH3p5UDDaHXajk8ygUT297pJq1dVjsM0W49U7nD+dWRjtX6I2bHYlzIlwmx1
+         JCtZ7pUfA/E3Lr72KsGe9EBmmpvo6zs6eMLdb3KHHdF8eCv1OIpkjCtsotDyt567OT59
+         o3D1MUMsP2HncK0l0lMaIQhqkg5a7eO2DwIhX07IeawcKTj4gWWSjhtPqNHso8yOXPQb
+         TkJPJZcyHvRYOzA0vfYKZ6XyFxu5o6Ot13SWbjJPVcdKtNIukuSK0Nn9prtd7j7jodVI
+         Bee/sEbFS2icsQpN12tQ6qm0F+daIwZ+k7iQ0IJ3+HAnI2J837IC23HF/91kqGL1NoD5
+         X2cg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmq9lyK/YzF6LI23XUDsiLyo7Eic+kbkgNQbI7jKU58iLncZmevLafrBD5y3ojpRjcwrOFLJnm6kqwe5qX@vger.kernel.org, AJvYcCXT0c3vIjYf0yK5sZgvNQWitvpmXlu5AWAFmDxcSC+s16KhbimSnULHhNKwkjRLnWP0iFW8JLHpa+CH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw951dcD4FtnYKV+9vbfvaK8Bh7pY2obqGp3wT2BLxipoq7ffyn
+	MXUFkKuth9zaggW2l8HqcaJdf7Ff6yYu4tQ5X6upfzgJz1KJ19Pqh49niatQ0Q==
+X-Gm-Gg: ASbGncveCiCw95PrtUm/DAmYGsPGrsbzj6E5L82eQu6CSFasPnL214MQ+vPstthjYhC
+	U7rQri3G8I1nuo0Sjb7PmwSShZuw6kw8NahnN6z2vFKecNZxUFfNti7ojimTpEqZc+VlMIhBtrc
+	tIVaygmXAhP3avW5j4lN6dQk4PjOOu+DwR9akILlP78qgKBtCFPO+4iDFQFhL89RRzkIClII6WR
+	DpM/cmsbxrM5nxF/F7fnyrfI1LQKktFGrmUGoUEW3bWNXHXWuhLQJp3CXs6xsTdxIyb3mSOYs3W
+	CoXw5d1mJYrhdMzkvwqaCpZZr86y42hrmepPWnF1eHgQtA+17zg/gMFZZcLQIGpJTLNH27poy9P
+	29MxGyJ3gy87eOb8=
+X-Google-Smtp-Source: AGHT+IEMbn4eAcCLNfXuQ1moFOKF7EXVX4p6uSonTqTbWlvmW6uUlHQpb57mpyLdE9iF1gSGF51JaA==
+X-Received: by 2002:a05:600c:4e07:b0:43c:f629:66f4 with SMTP id 5b1f17b1804b1-454a1082dccmr1535395e9.0.1751364618882;
+        Tue, 01 Jul 2025 03:10:18 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4538233c05csm191321355e9.5.2025.07.01.03.10.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 03:05:43 -0700 (PDT)
-From: Maria Garcia <mariagarcia7293@gmail.com>
-To: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maria Garcia <mariagarcia7293@gmail.com>,
-	Maria Garcia <mgarcia@qblox.com>
-Subject: [PATCH 0/2] *** Add support for TI TCA6418 GPIO chip ***
-Date: Tue,  1 Jul 2025 12:05:35 +0200
-Message-ID: <20250701100537.91491-1-mariagarcia7293@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 01 Jul 2025 03:10:18 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Tue, 01 Jul 2025 12:10:13 +0200
+Subject: [PATCH] arm64: dts: qcom: ipq9574-rdp433: remove unused
+ 'sdc-default-state'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250701-rdp433-remove-sdc-state-v1-1-ca0f156a42d5@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAS0Y2gC/x3MywqDMBBG4VeRWTuQxGqJryJd2OS3zsILMyIF8
+ d0buvwW51xkUIFRX12kOMVkWwt8XVGax/UDllxMwYXWPZ1nzfujaVixbCfYcmI7xgPcxTC1iD7
+ ld6RS74pJvv/z8LrvHwtWPw1pAAAA
+X-Change-ID: 20250701-rdp433-remove-sdc-state-692f5e91cdb9
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-This series introduces support for the Texas Instruments TCA6418 
-GPIO expander chip, added to the gpio-pca953x driver. It also includes the 
-necessary device tree binding definition.
+Since commit 8140d10568a8 ("arm64: dts: qcom: ipq9574: Remove eMMC node"),
+the 'sdc-default-state' pinctrl state is not used so remove that.
 
-Signed-off-by: Maria Garcia <mariagarcia7293@gmail.com>
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 ---
-Changes in v2:
- - gpio-pca953x.c: address review feedback: remove some else statements, 
-   turn some if-else statements into switch statements.
-Maria Garcia (2):
-  dt-bindings: gpio: pca95xx: add TI TCA6418
-  gpio: pca953x: Add support for TI TCA6418
+Note: dtbcheck produces the warnings below, but those are present even
+without the patch:
 
- .../bindings/gpio/gpio-pca95xx.yaml           |   1 +
- drivers/gpio/gpio-pca953x.c                   | 139 +++++++++++++++---
- 2 files changed, 121 insertions(+), 19 deletions(-)
+  DTC [C] arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb
+/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: usb@8af8800: interrupt-names: ['pwr_event'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: usb@8af8800: interrupts-extended: [[1, 0, 134, 4]] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+---
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 32 -----------------------------
+ 1 file changed, 32 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+index fa7bb521e78603fc4fd6499f398b74c99b018772..5a546a14998b04a4b52abfc12571ec0f793f959b 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
++++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+@@ -128,36 +128,4 @@ wake-n-pins {
+ 			bias-pull-up;
+ 		};
+ 	};
+-
+-	sdc_default_state: sdc-default-state {
+-		clk-pins {
+-			pins = "gpio5";
+-			function = "sdc_clk";
+-			drive-strength = <8>;
+-			bias-disable;
+-		};
+-
+-		cmd-pins {
+-			pins = "gpio4";
+-			function = "sdc_cmd";
+-			drive-strength = <8>;
+-			bias-pull-up;
+-		};
+-
+-		data-pins {
+-			pins = "gpio0", "gpio1", "gpio2",
+-			       "gpio3", "gpio6", "gpio7",
+-			       "gpio8", "gpio9";
+-			function = "sdc_data";
+-			drive-strength = <8>;
+-			bias-pull-up;
+-		};
+-
+-		rclk-pins {
+-			pins = "gpio10";
+-			function = "sdc_rclk";
+-			drive-strength = <8>;
+-			bias-pull-down;
+-		};
+-	};
+ };
+
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250701-rdp433-remove-sdc-state-692f5e91cdb9
+
+Best regards,
 -- 
-2.43.0
+Gabor Juhos <j4g8y7@gmail.com>
 
 
