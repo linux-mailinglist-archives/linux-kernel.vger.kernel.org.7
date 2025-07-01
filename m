@@ -1,102 +1,80 @@
-Return-Path: <linux-kernel+bounces-711448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18CEAEFAE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:40:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A44AEFB1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5410E1884C86
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71A13AE114
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CF426A0CC;
-	Tue,  1 Jul 2025 13:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE16275AED;
+	Tue,  1 Jul 2025 13:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1a8rR5Xw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ca1OAjzS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="gzWZYDLf"
+Received: from proxy41134.mail.163.com (proxy25214.mail.163.com [103.129.252.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C07242D82
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5A01E515;
+	Tue,  1 Jul 2025 13:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.252.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751377016; cv=none; b=X286RXlkw1xbrvxHGyhLKsuZ03QDpsV+kFFhwj1FTXSZkfCInxx5+w5i41Fzu+S7dizYrOTFeCbyVRLdbuEhTn5LlTR3WBYwwhBTACr5x13rK7SzdlMj6acIXep55w7a/f8WGsJvM6avUMeOOF5tqtfMJI/8JYSrPUp7eU/ArfY=
+	t=1751377699; cv=none; b=EyNV1O0C9XomZpYfHIBUFW4a8xBerRHNZOi8ud5auUrTNJM1SIFMjpRPVeOm1iEeIJc9WONOFFVDcs/XaNREUG92FNBRfRbyQ+CckFUPLW5qLj2x8IPioItwDo0/gAXw9ARYwUb4uhFC35K8+mAL9ejEOgO7w9S+tzdVv2EMaew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751377016; c=relaxed/simple;
-	bh=9QFqR5XGnA9haLq+DpclluDTvXFmW6DXOr1EjPzn/h8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BM3grPo5opvAsdc+Pgs9arX9mT7nGrp/8QsBRATgUub56VYc5BtL82mwbaRQ8g5Rp+SSeRHfZEfpH17KzNOnBQ6NemSC1qu3Mo85oPSbIyQminthVXTALQHi2glgMdoAD1c6XcmyY8Fs4qp/vPyFzefxDzo3sISXULT82dtFTUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1a8rR5Xw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ca1OAjzS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751377013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5lWjty2NLIA3jfDEqCO2NP4ste3v3OPji2XeNBHu04Q=;
-	b=1a8rR5XwxuV+onsRKmUHrr37JR7RTff0ha9iblWnSriwG0y0JPrzWIZ+ii6l6Bns88DIhB
-	jmyMVzxY61nvA7VWKV1FtiIwSwlnK4QUVXnT/7BJKfUldENS/rN/oCKS/iunhVSpO6Oxfa
-	F/QIASQjTgLa3Xljim7C4HUQW6rxxZo9uRJu0CaCEpX0ezzojFm1+HQSoR3qBq/gMFzo6T
-	ZimGNyH31GHJJ6gzBGZF/9I16q33WgdRnmQjTLUuYOkLicTps27UZ9NTA8PDP1V1AC55ZY
-	g9fh0vCvyJmj4aimgnU6Z+SfsH5Aj5Az7jmHDnHn1ExvHn/Pg9bcTPGEvRKLYA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751377013;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5lWjty2NLIA3jfDEqCO2NP4ste3v3OPji2XeNBHu04Q=;
-	b=Ca1OAjzSfo9LE3vgZsyC4bL4/dSzUIORqXl0DZiej1Je5CRGZlMoZJ/6PPp/Mx+dUMMKvo
-	96ba7IRD8ob9iIBA==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, John Stultz
- <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH RESEND] time/timecounter: fix the lie that struct
- cyclecounter is const
-In-Reply-To: <2025070124-backyard-hurt-783a@gregkh>
-References: <2025070124-backyard-hurt-783a@gregkh>
-Date: Tue, 01 Jul 2025 15:36:52 +0200
-Message-ID: <87qzz0kp6z.ffs@tglx>
+	s=arc-20240116; t=1751377699; c=relaxed/simple;
+	bh=xXJ+4r/mndrrBd4NJCUWqI4Iip4PrylMZolQjOynkGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkbBeWx8CUVccf9wMtlDSNFw3k9lLj4ax7UWqWghoD2vSLVp78OIXuzAQrJMzK5knQVDehsnbla5qs1Qv/d7E2TrNNvcqw4GxxUyriW+rAxohX7NxdnyCgisqQC6tRl76CkM+qJbHNW7VNJXmIFQi6K2glsyz/85NvsUtBOJ0Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=gzWZYDLf; arc=none smtp.client-ip=103.129.252.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Q7ztE35OyDH09bsd9BKX6KL/UpDZEx4le33a86DXqi8=;
+	b=gzWZYDLfLHUZsX+mSJguhIdK6R3/deiH2vVUhnxK86Bxmat3zJL7GJIA62+cZB
+	fXxmq4o3DNa0S6axfUXcS+tIUX0+fFrcqW+iMoF1WtxTbyyp2ZJw1z+jJRr2aAP8
+	Ouus4i/MbTKOZasV2nPBiBnYKHLdF3NLtg2qGNIp2sGfs=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3vwmB5GNoGAkcAA--.36385S3;
+	Tue, 01 Jul 2025 21:37:07 +0800 (CST)
+Date: Tue, 1 Jul 2025 21:37:05 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Tim Harvey <tharvey@gateworks.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: imx8mp-venice-gw74xx: update name of
+ M2SKT_WDIS2# gpio
+Message-ID: <aGPkgXt9gP0sAnLl@dragon>
+References: <20250604225104.1429156-1-tharvey@gateworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250604225104.1429156-1-tharvey@gateworks.com>
+X-CM-TRANSID:Ms8vCgD3vwmB5GNoGAkcAA--.36385S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOksqUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIgNMsWhj5IMU3QAA35
 
-On Tue, Jul 01 2025 at 14:32, Greg Kroah-Hartman wrote:
-> In both the read callback for struct cyclecounter, and in struct
-> timecounter, struct cyclecounter is declared as a const pointer.
-> Unfortunatly, a number of users of this pointer treat it as a non-const
-> pointer as it is burried in a larger structure that is heavily modified
-> by the callback function when accessed.  This lie had been hidden by the
-> fact that container_of() "casts away" a const attribute of a pointer
-> without any compiler warning happening at all.
->
-> Fix this all up by removing the const attribute in the needed places so
-> that everyone can see that the structure really isn't const, but can,
-> and is, modified by the users of it.
->
-> Cc: John Stultz <jstultz@google.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> First version seems to have been ignored:
-> 	https://lore.kernel.org/r/2025052321-plank-hardcopy-e895@gregkh
-> so resent
+On Wed, Jun 04, 2025 at 03:51:04PM -0700, Tim Harvey wrote:
+> The GW74xx D revision has added a M2SKT_WDIS2# GPIO which routes to the
+> W_DISABLE2# pin of the M.2 socket. Update the gpio name for consistency.
+> 
+> Fixes: 6a5d95b06d93 ("arm64: dts: imx8mp-venice-gw74xx: add M2SKT_GPIO10 gpio configuration")
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 
-Duh, sorry. I had seen it and I actually tagged it for merging, but
-typoed the tag so it went into the archive ....
+Applied, thanks!
 
-Let me pick it up now.
-
-Thanks,
-
-        tglx
 
