@@ -1,87 +1,56 @@
-Return-Path: <linux-kernel+bounces-710935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C335FAEF34F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:29:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18C0AEF368
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87E5717384A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E723B05D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1515326FA70;
-	Tue,  1 Jul 2025 09:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E346726E71A;
+	Tue,  1 Jul 2025 09:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z8s/K30a"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jrd5r3pp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D6326FA52
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FB026D4CA;
+	Tue,  1 Jul 2025 09:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751362105; cv=none; b=d9x+RrZaufm1zE1+gYqH2tQTeqHy0NKXHTujIazAp54KMNBEk6x7NX4fejvYk/B6aLqFk0i1Kjur5xl9ABUijzQb5YQhR4hNpqZW9NA5C9io2UUe725LkEUgTDX2NNyQ1YGPxfN0pbLZZ1jpwBBq2lckVj3xz7PU/QW9cDo33sM=
+	t=1751362214; cv=none; b=MCaJzDeSWtiw/qd+zQ1jU+bBvmkvUUvfITqNXStRvLiVmV2D5fgHQwqOMicUIsiq8fJbqVP8tRvjEZBXDZFOzQX7yZ0A9av3CMBQDMEVZxfAC3qTZYO+ShLGKS56EgxY9gx++zX9EG+RNpHGmPqVjjuf0rb/vDbJCVKG+UBpNms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751362105; c=relaxed/simple;
-	bh=xU+kDdU0gwzb9LPPDqkZf5rUekFrGYUlG52+CjTps7A=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNFSgsRfKTqPAJnBfD400CXAoyM46Z+Fr1t5/wV+5hUmU2Fme8EXfm5Dysv6KI8LxaLqR84jtmICNNc7LGh6mMuJtplAoLb3VcKzUe9NHG9loJMOFJs0RCLaPtFWSzprs0urR20sxloE7TT8HizFXpIDjhpNdewy1qFsjA1SG7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z8s/K30a; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acb5ec407b1so544611566b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751362101; x=1751966901; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vW8tXWZC+/EOEMWh/X8OhS7IFKfYxgh/KBq6rDgPsK4=;
-        b=Z8s/K30aun/xPgKGqAjd0fMnXCDU3mgK0OgZbHXARIBxjPzOL3aQ60RPO7OmD0ETKn
-         Rfe4sLdiiP8HTDHybRwu2slNwtUM204NfDhAeCqMl8q6DME2aEFWaIr5Btak2+Odytpm
-         M1U25VIpmqsW43umLqsTK5jVNv9x4iXFCiJkA0assksKUv/WB90O2JqNfRx6zkXRIbJb
-         pCijUpnNDCc9pVw36K7nrSkXGkZsYwnrVTGTNvJ++/x943jGME9P/7zqcVO3dOeYKQLm
-         DBfa1royiNE+C6c9QTGYw4dZrHriapjZRAGwdbw/rs5MOV0RpEkn/lekzvfK5MNyDgEp
-         vF6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751362101; x=1751966901;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vW8tXWZC+/EOEMWh/X8OhS7IFKfYxgh/KBq6rDgPsK4=;
-        b=xI0o2nB4Y7khQZfJmNcs5sLmC1/6s9FWo45cgWstbEgJxEh0IsVOhzMud6xpFU7hnN
-         Q1noimF7e6H3tp2yL+WAUMCjk8BpocmUSbxJ6cAM5FQZC9e1/sVceSS282L63BFU5O7/
-         ihnxW5J8RxAVa7d4425mrg4Rb/DdmN0+C800z7YGhSY21WZVYxTq9Oz+gnfEMX9yVEQb
-         3ck7sCRT//1vd9Azg0FkDfZ9t+xnUXKPhB7Ud/9tG9/Gkrnr93bWRmsfHYBJNZ/Ckmm/
-         gM+mAYEJY7TNn0u8Uw/b2ul04ikuaSHCWMbKHFAO7dx01WkGuWCBNFvZCp4YJx/PI3oz
-         vWPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDMDJDj1njdZG9zDzQZZcjJ6Kcitvk2gAQLJehbTsfYV37PBWTEYb6+5Rdb2aya5JPwrtm+4gNRNUrJYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmcMROmwIAfviLNtwxwxdX6fRSitctTUPkFRWYHMrAcXlMCP7A
-	JivP3iknI/zUJtYqDHa/jOcsgf6BgiKOASCVxLN45u7mx+BFM5Rpo0dY2RvFNU6mRT0=
-X-Gm-Gg: ASbGncuzfs/vvThrW8WHcC8b98j9VvfXJSwM6JoobEho6SlhT+hhquxap4h8ZKnGPnM
-	BQMsW5IoLgTnQIfO9BD51LHBvFdmKjCsWeQ6eXw5+OJFQfKWG6rtdGUrVDFRvn80a4Gs0I8YU4+
-	sWY2k6SJBb+X8iRvOVgZ8EsllX5iBk0C96672IRbzmuzqyvBtvUc7EEt+PNPjS8uUyxOlf3ERbe
-	HNBgocBQslxw+Iew6iYm8z0h495GsFIHhF7UOjk6pJnbaqxeQehAbbTfXpZH/MWs6honyykwlPc
-	BMiRdKn2jMWWhWuPxClm8uP6Y86TukrFWPxcQ7qiW+9JAsD0GrgKnFEg5fZcqkjjiDtNr1IjlAl
-	071PJ3+QNyugnh766Y4UCpXj7QcH5V1SR
-X-Google-Smtp-Source: AGHT+IHbFo4CW/gWO5mfmqvdr8G+K+m/vpRfFZfo55Xt83CarSb1cUQYS0Vzv+Vrkh5sEZMITIneQQ==
-X-Received: by 2002:a17:907:a4e:b0:ae0:635c:a400 with SMTP id a640c23a62f3a-ae35016b435mr1478913866b.51.1751362101509;
-        Tue, 01 Jul 2025 02:28:21 -0700 (PDT)
-Received: from localhost (host-79-23-237-223.retail.telecomitalia.it. [79.23.237.223])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60e2a743d53sm1292386a12.28.2025.07.01.02.28.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 02:28:21 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 1 Jul 2025 11:30:01 +0200
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: rp1: silence uninitialized variable warning
-Message-ID: <aGOqmd5cvCeBjWMI@apocalypse>
-References: <748d256a-dc9d-4f85-aaa4-d480b7c4fd22@sabinyo.mountain>
+	s=arc-20240116; t=1751362214; c=relaxed/simple;
+	bh=unCvwSHCZ9bTTw5zoAQ4qelo85nP20ruT74PbSMjF8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=igs3wbzE7WC67BEFHGMsDyvlZ/z+7D4oln6uRvyxfEL2uIxqMWFn7Rcw4FVqZvuWzDwJ73QOEJ4hXLdBewsNqln/OcYxkvIJRkUyyb+uuQawBGQ4o5+vJHDhHlogJi4kftlKPuNmMnc15KXUyxsfhcoEyl0eHC8rUhVZCLPdAR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jrd5r3pp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD23C4CEEB;
+	Tue,  1 Jul 2025 09:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751362214;
+	bh=unCvwSHCZ9bTTw5zoAQ4qelo85nP20ruT74PbSMjF8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jrd5r3ppONphEHNx5Q2dIIXU6MFC13Ypmcqh7qCZiQlk29yCNRgrgsqRrAXRAGhgi
+	 7nW99krx9AGPtEQ/Jmiox9wAEz4cCMf1EDIXz6Z47K/KOhMfRsX0S/sUhZzFIsydT6
+	 oQdAILH98o8EgLZzBup+kuoeo4y2u0mIPxfq8k5A=
+Date: Tue, 1 Jul 2025 11:30:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, david.m.ertman@intel.com, ira.weiny@intel.com,
+	leon@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH 4/8] rust: pci: use generic device drvdata accessors
+Message-ID: <2025070142-scrambler-ramp-cd7e@gregkh>
+References: <20250621195118.124245-1-dakr@kernel.org>
+ <20250621195118.124245-5-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,72 +59,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <748d256a-dc9d-4f85-aaa4-d480b7c4fd22@sabinyo.mountain>
+In-Reply-To: <20250621195118.124245-5-dakr@kernel.org>
 
-Hi Dan,
-
-On 14:35 Mon 30 Jun     , Dan Carpenter wrote:
-> This default path could probably can't be reached but Smatch can't
-> verify it so it complains that "arg" isn't initialized on this path.
+On Sat, Jun 21, 2025 at 09:43:30PM +0200, Danilo Krummrich wrote:
+> Take advantage of the generic drvdata accessors of the generic Device
+> type.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Thanks for your patch!
-
+> While at it, use from_result() instead of match.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
-> I didn't add a Fixes tag because this likely isn't a real bug.  Plus this
-> code is very new so it doesn't need to be backported anyway.
+>  rust/helpers/pci.c | 10 ----------
+>  rust/kernel/pci.rs | 31 ++++++++++++++-----------------
+>  2 files changed, 14 insertions(+), 27 deletions(-)
 > 
-> Also checkpatch complains:
-> 
-> 	WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
-> 
-> But I left it that way so it's consistent with the other return in
-> the function.  Maybe we should change both?
-
-We really can't get rid of that warning by replacing ENOTSUPP with
-EOPNOTSUPP because the core pinctrl code still rely on the 'wrong'
-define, like this excerpt from drivers/pinctrl/pinconf-generic.c:
-
-...
-	if (gname)
-		ret = pin_config_group_get(dev_name(pctldev->dev),
-					   gname, &config);
-	else
-		ret = pin_config_get_for_pin(pctldev, pin, &config);
-	/* These are legal errors */
-	if (ret == -EINVAL || ret == -ENOTSUPP)
-		continue;
-...
-
-Also, many drivers still rely on ENOTSUPP. Maybe a patch that will
-fix all of them at once (drivers and core code) is in order, I have
-it in my todo list, indeed.
-Besides that,
-
-Reviewed-by: Andrea della Porta <andrea.porta@suse.com>
-
-Many thanks,
-Andrea
-
-> 
->  drivers/pinctrl/pinctrl-rp1.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
-> index d300f28c52cd..f9cc6b28994c 100644
-> --- a/drivers/pinctrl/pinctrl-rp1.c
-> +++ b/drivers/pinctrl/pinctrl-rp1.c
-> @@ -1524,6 +1524,8 @@ static int rp1_pinconf_get(struct pinctrl_dev *pctldev, unsigned int offset,
->  		case RP1_PAD_DRIVE_12MA:
->  			arg = 12;
->  			break;
-> +		default:
-> +			return -ENOTSUPP;
->  		}
->  		break;
->  	case PIN_CONFIG_BIAS_DISABLE:
+> diff --git a/rust/helpers/pci.c b/rust/helpers/pci.c
+> index cd0e6bf2cc4d..ef9cb38c81a6 100644
+> --- a/rust/helpers/pci.c
+> +++ b/rust/helpers/pci.c
+> @@ -2,16 +2,6 @@
+>  
+>  #include <linux/pci.h>
+>  
+> -void rust_helper_pci_set_drvdata(struct pci_dev *pdev, void *data)
+> -{
+> -	pci_set_drvdata(pdev, data);
+> -}
+> -
+> -void *rust_helper_pci_get_drvdata(struct pci_dev *pdev)
+> -{
+> -	return pci_get_drvdata(pdev);
+> -}
+> -
+>  resource_size_t rust_helper_pci_resource_len(struct pci_dev *pdev, int bar)
+>  {
+>  	return pci_resource_len(pdev, bar);
+> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> index 8435f8132e38..064e74a90904 100644
+> --- a/rust/kernel/pci.rs
+> +++ b/rust/kernel/pci.rs
+> @@ -10,11 +10,11 @@
+>      device_id::RawDeviceId,
+>      devres::Devres,
+>      driver,
+> -    error::{to_result, Result},
+> +    error::{from_result, to_result, Result},
+>      io::Io,
+>      io::IoRaw,
+>      str::CStr,
+> -    types::{ARef, ForeignOwnable, Opaque},
+> +    types::{ARef, Opaque},
+>      ThisModule,
+>  };
+>  use core::{
+> @@ -66,35 +66,32 @@ extern "C" fn probe_callback(
+>          // `struct pci_dev`.
+>          //
+>          // INVARIANT: `pdev` is valid for the duration of `probe_callback()`.
+> -        let pdev = unsafe { &*pdev.cast::<Device<device::Core>>() };
+> +        let pdev = unsafe { &*pdev.cast::<Device<device::Internal>>() };
+>  
+>          // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct pci_device_id` and
+>          // does not add additional invariants, so it's safe to transmute.
+>          let id = unsafe { &*id.cast::<DeviceId>() };
+>          let info = T::ID_TABLE.info(id.index());
+>  
+> -        match T::probe(pdev, info) {
+> -            Ok(data) => {
+> -                // Let the `struct pci_dev` own a reference of the driver's private data.
+> -                // SAFETY: By the type invariant `pdev.as_raw` returns a valid pointer to a
+> -                // `struct pci_dev`.
+> -                unsafe { bindings::pci_set_drvdata(pdev.as_raw(), data.into_foreign() as _) };
+> -            }
+> -            Err(err) => return Error::to_errno(err),
+> -        }
+> +        from_result(|| {
+> +            let data = T::probe(pdev, info)?;
+>  
+> -        0
+> +            pdev.as_ref().set_drvdata(data);
+> +            Ok(0)
+> +        })
+>      }
+>  
+>      extern "C" fn remove_callback(pdev: *mut bindings::pci_dev) {
+>          // SAFETY: The PCI bus only ever calls the remove callback with a valid pointer to a
+>          // `struct pci_dev`.
+> -        let ptr = unsafe { bindings::pci_get_drvdata(pdev) }.cast();
+> +        //
+> +        // INVARIANT: `pdev` is valid for the duration of `remove_callback()`.
+> +        let pdev = unsafe { &*pdev.cast::<Device<device::Internal>>() };
+>  
+>          // SAFETY: `remove_callback` is only ever called after a successful call to
+> -        // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
+> -        // `KBox<T>` pointer created through `KBox::into_foreign`.
+> -        let _ = unsafe { KBox::<T>::from_foreign(ptr) };
+> +        // `probe_callback`, hence it's guaranteed that `Device::set_drvdata()` has been called
+> +        // and stored a `Pin<KBox<T>>`.
+> +        let _ = unsafe { pdev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() };
+>      }
+>  }
+>  
 > -- 
-> 2.47.2
+> 2.49.0
 > 
+> 
+
+Overall, I like this, same for the other bus types.  But again, can't it
+be part of Core?
+
+thanks,
+
+greg k-h
 
