@@ -1,158 +1,220 @@
-Return-Path: <linux-kernel+bounces-712208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27ADAF0626
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:02:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83753AF062E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BCF3BF8AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FBB16BB7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF37283FD4;
-	Tue,  1 Jul 2025 22:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF452FE386;
+	Tue,  1 Jul 2025 22:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GfIMVpRf"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwmLeB8m"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4E2269CE5;
-	Tue,  1 Jul 2025 22:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218ED27A903;
+	Tue,  1 Jul 2025 22:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751407359; cv=none; b=rcjgsIUhIGdcIV77mkC3ux6gQZSO/AVzKoeD28r0EIcpdu6N5+j8FsGvBQ3WW1UfuAumGdx/HXIX00mwL9po1wpjMXAka5U/k2vnugBow1hwDHUk4NnHGcAI9gC1O4yeekBSX9DIKwl1NUOw1Ecb8f7FyP4zOk1/BfKg9/EmuXM=
+	t=1751407502; cv=none; b=G+nYqzJCuc54K061giN6le4/zKzfKbpgMtw3s0rj8Dz8bdgwCz+9W+raxxx1i/Zh3B/T35IhOoFS/YQuFh/ttQ8KUqoRGRIZyprnZvMXGYiQIf7LFTTi9V/RuEIV/VH+irsJ17XNklM7He6Mg9AbCRcRwEvB/8BmfDy25q57rxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751407359; c=relaxed/simple;
-	bh=5KS4WpX0v/dFCdLjrGD3LG42ND5wUVQSViSpz8G/ZsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W/+yAHZYuX/zyj2Sq8B1o/F7zNS03WUwVH3kuhbBTxa6pU8ARTuEBSf50XPiQC1DELY405qnV/Wguk2yLdDmgF5SYmE64g2Yu8L7XA9kMMFRtVK1mauec8h+7JUvNfbNGBHG9twv1hpg8VINgudQM6qf8Mw6AZJnHrPl48D5BgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GfIMVpRf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=H1uFGwDeNOpk8or4A3y67qS+sg2s+Vji69hu8RBbx84=; b=GfIMVpRf0kxKC0cjSvfuLCOb6a
-	bfgW0ITaDbHNIR3qupRVkz4lbgLw4j0uqUR35HqJvuyHXGQJb1IiSSPnlW6xQ62F6/LfFpx4aR2xK
-	fmjIgw34df2CrLPfsNnaWeX5pNbafsFF2mrlvjaoEHmahnN59iGPnrbf8+JANYMt8MFr4+M0bsptl
-	DQtLSSSUbzK1NoUQWSOgjnBPtqEw1VfdB88ai0OHNb6MrPbJmIOEdIOsMW8WOqJRjTEi3zO5nitzp
-	3rWclBXAtFMdIJEw+RcoXbikJn/FDY/9hTEhaf0K7HbqbM5FzyHhHqLVTAICW60zcLH3y/m1QedG5
-	vAI9SBog==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWj3j-00000006jgu-3ubp;
-	Tue, 01 Jul 2025 22:02:35 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org
-Cc: mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	s.prabhu@samsung.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi_debug: Fix shared UUID issue when creating multiple hosts
-Date: Tue,  1 Jul 2025 15:02:34 -0700
-Message-ID: <20250701220234.1605559-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1751407502; c=relaxed/simple;
+	bh=ppyu9gsbxrpZ5wf+weVHPIJpVDOSetdVu4g7Nd8pDvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kkZ0BjRVOAp7lJo9AAFI4z0W68zutkp3WIO6YbGEAnoZsiVBVUhgP2YewOBARnKUcwbaivdsEfTL33tiJSLoyqnmd0Gp1jHfY8zVvHvcIqBxDIXcB+bHp6WlwVCUGV8d+Tzf1/iBU9fjx+33DgkV9nu/I5pAqMeN73jYQXDarQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwmLeB8m; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a522224582so3243676f8f.3;
+        Tue, 01 Jul 2025 15:05:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751407499; x=1752012299; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mlce9+BeXYIb9jHut9yceCFyP7M78KNxQm8S2SUpS/U=;
+        b=MwmLeB8mGz//ZMuq/BTLY+TnncIOEtP202I7IQwmrTgkzwgfaHT0zTrhWxfRpuYDHE
+         mmuVR0PAdz5tmodedL1n1LvKs6DkvdLW7GAXdccUkDEEzbr5maUhVNUSkR+jc+ODW1bs
+         qaDJ2cN39O3UpXibbvkBsFLppMb61NqZX78P2ev0DZBtpkBSQbSncUrDDIm+c7/2OnE6
+         1Ecb5ZwepOd803b0s+v2CY88HK3zqc0qA2Z3Xyi0iJcS4qX0WyFqyVw80tlTEZ9XhDQs
+         Vdxjsc1HLgTywnGd/XTY0zcSriLbRm2JZIIiLS9ESk0KBSGuoiEqzxCzxTdBKwyhCGVz
+         3J9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751407499; x=1752012299;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mlce9+BeXYIb9jHut9yceCFyP7M78KNxQm8S2SUpS/U=;
+        b=vb5kHlolGVF759B6AQmPjmZtAcjDoSYBR0BZp75ip68QU+E5GDIhJc0QVsynCXcPqP
+         ouOHZd5iBgeVRwShTkW8YPAsc5BrgxeSszWPoX7NDZbPGGDPf21w6EWemgTdan2UmR8O
+         /Lm4z8YtM17y4SEUKrOq7iuPJi43Ul0ljswltfLBrD11FNlWRWGwlfjJJRcJd1GRyYo+
+         xyL8RxP04JdW3nFRbGPwFjjeil7pYNKtPS+P/iGQk6m+3awzJNfNwcZ6Tm1ZC23+JtsY
+         /fb3k15BRy2RvzxA5ahZVnaAW/pt5ykZAfLcroKv5/AFsGo4eggTXG4kvf4xB5dZogAC
+         SUPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXD/KsHnOoIfnv/6Ffmiez0COV2OgXR6eQE691zz4GUiSW9nWIBE6hqEaCZNVhCjaRu7Us57zlbgy4vZHP@vger.kernel.org, AJvYcCWRx0aJ5/dnmwirQNlhhzWURx7EbZGAapHfW/C6ISw5iUxBd4DJ5YefpMqM2HU+NZvYqs8jztillBV6@vger.kernel.org, AJvYcCXK7E/ABVzWBfSI2eatrn33Xz17Z+/h3blsxJzKAY8KU0B8cs0mbSorrlIYrC98vubgzRzMNIAoNG2PUTC3zQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDVq/iBkpFawpXFPlLYtLNc/Fwq9GA6oOwcnWpNPoE6LQc3XmM
+	1osrDjPJzEWHOgA3G7ejiu9Y6AD4sqTDbjpio9rTjKam0Ix3GSty6e4Nj+SmSDcVutU8z/SaVvW
+	nVBHuQcPN9cF0ZmSdRkv+exE5v0NHdw==
+X-Gm-Gg: ASbGncuiKN4CcqzmMrsnEZ99YXNia1m7XpQ4lUoOOVdb+D1DX1LpX5K0ySEhYqe/Grr
+	mMHl1WL0da2jWpyWpVjb6IFS1+4YAqCAIPvuuWqxl9xnEuOBY6RdgF2dvJoxR87PYWFzxkrLny2
+	nGWJiCRZo2k9EDqfs2e49S9uLP3QI7n9SXQAFCONJXfnQ=
+X-Google-Smtp-Source: AGHT+IHjLaG9uF4AM4EItWeYaIVJxKo6+RzYJTHMBps8viAftxipMeaZJC6Qc8Ep9KjZU4hh3ATWv5tQbD/6trWHavg=
+X-Received: by 2002:a05:6000:4287:b0:3a4:f7dc:8a62 with SMTP id
+ ffacd0b85a97d-3b1fb0666bdmr139399f8f.0.1751407499166; Tue, 01 Jul 2025
+ 15:04:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20250424-qcom-linux-arm64-for-6-16-dell-inspiron14p-v1-0-ace76b31d024@linaro.org>
+ <86116ada-51e6-4eef-bff1-f8b10a5edacc@gmail.com> <266fdeb50ba3926a3edbda71201ffa021afecd62.camel@packett.cool>
+In-Reply-To: <266fdeb50ba3926a3edbda71201ffa021afecd62.camel@packett.cool>
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Date: Wed, 2 Jul 2025 00:04:48 +0200
+X-Gm-Features: Ac12FXzuppBAG49XsmSbJt1Ald2C7YNcvTNDKcyljW0_CK-KpUrTr0TdTrfqVzQ
+Message-ID: <CAMcHhXqcf5F+02+9XnpXWSvUrkhmfbaAtK9sJtghD4sh9yKA9w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add x1e Dell Inpsiron 14p
+To: Val Packett <val@packett.cool>
+Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When creating multiple scsi_debug hosts (e.g., modprobe scsi_debug
-add_host=2), all devices share the same backing storage by default.
-This causes filesystem UUIDs to be shared between devices like /dev/sda
-and /dev/sdb, leading to confusion and potential mount issues.
+On Tue, 1 Jul 2025 at 23:48, Val Packett <val@packett.cool> wrote:
+>
+> On Tue, 2025-07-01 at 22:43 +0200, Aleksandrs Vinarskis wrote:
+> >
+> > On 4/24/25 01:53, Bryan O'Donoghue wrote:
+> > > Add in a dtsi for the Dell Inspiron 14p.
+> > >
+> > > I'm currently using this as a daily driver including sending this
+> > > series
+> > > from. Its reasonably stable on 6.15-rcX.
+> > >
+> > > The first two patches can be applied without dependency, the final
+> > > patch
+> > > relies on patches staged for -next in the media tree to be applied,
+> > > presently.
+> > >
+> > > https://gitlab.freedesktop.org/linux-media/media-committers/-/commit/2ab7f87a7f4bf392e3836a2600f115a1baa1415c
+> > > https://lore.kernel.org/linux-media/20250407-b4-media-comitters-next-25-03-13-ov02e10-v4-0-211e3e6fae90@linaro.org/
+> > >
+> > > Working for me included in this series:
+> > >
+> > > - USB
+> > >    Both Type-C USB ports
+> > >    Type-A port
+> > >    Fingerprint reader
+> > > - WiFi
+> > > - Bluetooth
+> > > - RGB Camera
+> > > - Toucpad, keyboard
+> > > - Display
+> > >
+> > > Working for me but not included:
+> > > - Audio jack
+> > > - Iris
+> > >
+> > > Not working:
+> > > - Speaker output
+> > >    Still WiP haven't touched this in a while
+> > >
+> > > - Battery
+> > >    Dell has its own Embedded Controller likely from the x86
+> > > platform reused
+> > >    on Qcom which we need to reverse engineer or get some
+> > > information on to
+> > >    make faster progress on.
+> > >
+> > > - cDSP
+> > >    Haven't tried to bring this up.
+> > >
+> > > - EVA
+> > >    No driver haven't tried it.
+> > >
+> > > - Bugs
+> > >    Occasionally when resuming I get a fencing error with hyperlock
+> > > and
+> > >    freedreno, TBH it looks like something in the GPU or SMMU
+> > > according to
+> > >    Rob Clark: https://pastebin.com/AWjCyaap
+> > >
+> > >    Ath12k has been splatting for me up to 6.14 when removing a
+> > > SSID.
+> > >    I switched on ath12k debug when going to 6.15 and predictably
+> > > couldn't
+> > >    reproduce the bug, either because the timings have changed as a
+> > > result
+> > >    of Heisenbugging or because a fix has been slipped into ath12k.
+> > >
+> > >    Other than those two I'm pretty happy with this system.
+> > >
+> > >    The DTS is based on Aleksandrs Vinarskis XPS, Lenovo T14s and
+> > > Qcom CRD.
+> > >
+> > >
+> > > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> >
+> > Hi,
+> >
+> > Just noticed that the device name is misspelled in a few occasions,
+> > need
+> > to s/inspirion/inspiron/. DT filename is wrong, model name in DT is
+> > wrong, one of commit messages is wrong. Firmware paths and compatible
+> > in
+> > DT are correct.
+>
+> (BTW, in this submission in particular, firmware paths are not
+> consistent with existing models: the XPS uses lowercase 'dell')
+>
 
-For example:
-  # modprobe scsi_debug add_host=2 dev_size_mb=1024
-  # mkfs.xfs -f /dev/sda
-  # wipefs /dev/sda /dev/sdb
-Both devices show the same UUID, which is incorrect behavior.
+Good catch
 
-Fix this by automatically enabling separate per-host stores when
-multiple hosts are created, while preserving backward compatibility
-for single-host scenarios. Users can still explicitly control this
-behavior via the per_host_store parameter.
+> > Otherwise, is the plan to wait for CAMSS to land, and then land this
+> > one, or perhaps the rest of it can go in already? There is also
+> > Latitude
+> > that was recently submitted which is very similar, perhaps those
+> > should
+> > be unified (CC: Val), probably easier to do if Inspiron lands first.
+> >
+>
+> I have a unified patchset pretty much ready to go since yesterday.
+> With the way I have it, landing any one of the non-unified
+> submissions would only increase churn. I'll submit it now.
+>
 
-After this fix:
-- Single host: Uses shared store (unchanged behavior)
-- Multiple hosts: Automatically uses separate stores (fixes UUID issue)
-- Explicit per_host_store=1: Always separate stores (unchanged behavior)
+Nice, then my assumption was wrong, ignore it.
 
-Reported-by: Swarna Prabhu <s.prabhu@samsung.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- drivers/scsi/scsi_debug.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Thanks,
+Alex
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index f0eec4708ddd..4d0b17861adb 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -8034,12 +8034,18 @@ static ssize_t add_host_store(struct device_driver *ddp, const char *buf,
- 	bool found;
- 	unsigned long idx;
- 	struct sdeb_store_info *sip;
-+	bool uniq_uuid_required = false;
- 	bool want_phs = (sdebug_fake_rw == 0) && sdebug_per_host_store;
- 	int delta_hosts;
- 
- 	if (sscanf(buf, "%d", &delta_hosts) != 1)
- 		return -EINVAL;
- 	if (delta_hosts > 0) {
-+		if (delta_hosts > 1) {
-+			uniq_uuid_required = true;
-+			if (sdebug_fake_rw == 0)
-+				want_phs = true;
-+		}
- 		do {
- 			found = false;
- 			if (want_phs) {
-@@ -8054,7 +8060,7 @@ static ssize_t add_host_store(struct device_driver *ddp, const char *buf,
- 				else
- 					sdebug_do_add_host(true);
- 			} else {
--				sdebug_do_add_host(false);
-+				sdebug_do_add_host(uniq_uuid_required);
- 			}
- 		} while (--delta_hosts);
- 	} else if (delta_hosts < 0) {
-@@ -8383,6 +8389,7 @@ static struct device *pseudo_primary;
- static int __init scsi_debug_init(void)
- {
- 	bool want_store = (sdebug_fake_rw == 0);
-+	bool uniq_uuid_required = false;
- 	unsigned long sz;
- 	int k, ret, hosts_to_add;
- 	int idx = -1;
-@@ -8578,6 +8585,9 @@ static int __init scsi_debug_init(void)
- 	}
- 
- 	hosts_to_add = sdebug_add_host;
-+	if (hosts_to_add > 1)
-+		uniq_uuid_required = true;
-+
- 	sdebug_add_host = 0;
- 
- 	sdebug_debugfs_root = debugfs_create_dir("scsi_debug", NULL);
-@@ -8593,8 +8603,9 @@ static int __init scsi_debug_init(void)
- 				break;
- 			}
- 		} else {
--			ret = sdebug_do_add_host(want_store &&
--						 sdebug_per_host_store);
-+			bool use_store = want_store &&
-+				(sdebug_per_host_store || uniq_uuid_required);
-+			ret = sdebug_do_add_host(use_store);
- 			if (ret < 0) {
- 				pr_err("add_host k=%d error=%d\n", k, -ret);
- 				break;
--- 
-2.45.2
-
+> > Regards,
+> > Alex
+> >
+> > > ---
+> > > Bryan O'Donoghue (3):
+> > >        dt-bindings: arm: qcom: Add Dell Inspiron 14 Plus 7441
+> > >        arm64: dts: qcom: Add support for X1E80100 Dell Inspirion 14
+> > > Plus 7441
+> > >        arm64: dts: qcom: x1e80100-dell-inspiron14-7441: Switch on
+> > > CAMSS RGB sensor
+> > >
+> > >   Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+> > >   arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+> > >   .../qcom/x1e80100-dell-inspirion-14-plus-7441.dts  | 1490
+> > > ++++++++++++++++++++
+> > >   3 files changed, 1492 insertions(+)
+> > > ---
+> > > base-commit: f7570505263aff2b63142f0d68fa607cd60eb060
+> > > change-id: 20250417-qcom-linux-arm64-for-6-16-dell-inspiron14p-
+> > > ed68cd65ebad
+> > >
+> > > Best regards,
 
