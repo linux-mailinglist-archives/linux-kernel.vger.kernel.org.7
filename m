@@ -1,188 +1,108 @@
-Return-Path: <linux-kernel+bounces-712013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BD9AF0380
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:18:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E93CAF03AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C16144508C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7BD71C09DF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAE281538;
-	Tue,  1 Jul 2025 19:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE8F289E29;
+	Tue,  1 Jul 2025 19:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCASdAs5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pi7muLhS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7331245029;
-	Tue,  1 Jul 2025 19:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28722289368;
+	Tue,  1 Jul 2025 19:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751397470; cv=none; b=OzJql1cztdAOkLApNvuL3TmgUenJRaKQiknPuQMoXKB/xzdJBD8rlLntoJJUOTM1/UoEAzJ+z46a2+1fd/kxUFZcwaEjfdpgTXn8vFLoWSXPAKsdKeE29qQ5Cmz5iEhmY7phFfTioLMXS7FFwLzzaYsWL3HsEBhPnHIdBx5D60w=
+	t=1751397556; cv=none; b=ryngnBqs+lriUdL1iOn/u58qxF2R6yXvn76TqNp1AK5a8t/4RV5UOnOMZvYZz6qISAnSg+yx6jflGDP2SBeA87Aca4OkII4c5/UkL3+HH7H6PN5maMkK/DF89V/53qCOfqYQ4cGm6q0RntqxU746u+8euKsqHCtRbNXvrfxQFfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751397470; c=relaxed/simple;
-	bh=zwjUMwmbU0XuNCcjMMGtYZ9p614+0YJV+3FSL46Cf/k=;
+	s=arc-20240116; t=1751397556; c=relaxed/simple;
+	bh=8MHjH/6XZDvpT7djI41gL9aJAkFZWYXWBGKE1Obf8YY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0MkVnbCrKwXvSO7s/uv2U9lENsOb0KZvc0ShkNfrFew8qSUEWcMrvBHfdcDc0z6CcOmEZ94TozhGUMPddxFiQ4lof8kUHmmUY5ekzCBxjb9Nu8E/9t0DXBee0N+LyHrDh8nfw9qbSbB06M6QJBHy2f+rewwMYa5VILNbYWJWJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCASdAs5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF409C4CEEB;
-	Tue,  1 Jul 2025 19:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751397469;
-	bh=zwjUMwmbU0XuNCcjMMGtYZ9p614+0YJV+3FSL46Cf/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jCASdAs5zbT8BAc4F3QlNKAGzdX00hGEDNLN88KkxNqL2OJwfzXx2FPaLWp1M8Nhb
-	 20aPKa5aCdxDXdG0yQp6qTBEtVMrU7i1NhJCRw4heO9hiZ2K5Ltq8eamSKrGrkBr+7
-	 OdrGd8VZBkW+U/UsAVrAy86ewyJwysEXA3IpqMipc4EmStraLdbqM37T/BI9bMGXgQ
-	 UqyDM1nvjaAHNe1kA7a2/9FzTYNGZ5F8E60c452ajGahWmLucpY625aB6tLdA6Be1l
-	 ZA5aU/FdTdrCgrXucehKKpKM8M3aNhe+oEg8v4x+KRNak1RcothtATe5gYJ/tTP+Nt
-	 B2GUnMhxONgJw==
-Received: by pali.im (Postfix)
-	id 00B145D6; Tue,  1 Jul 2025 21:17:46 +0200 (CEST)
-Date: Tue, 1 Jul 2025 21:17:46 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>,
-	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250701191746.cekhigo4e6xespjj@pali>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
- <20250701184317.GQ10009@frogsfrogsfrogs>
- <20250701185457.jvbwhiiihdauymrg@pali>
- <20250701190857.GR10009@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwM3JqmDg9fMpQrPPQX3pCOyn64zmmE8G+/8hYUKR7nMC4mJe7H3c4Twpts3buKjLtedVNipgisNUBxAkP5O9r8g66QPc4dCwt+rbOVgqIrZI9/1EJa2A2Qiy8q6YMYGLOr6io49MYP0S8fgMwv/rO+Xc1S+TFese39pXWzTvTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pi7muLhS; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751397555; x=1782933555;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8MHjH/6XZDvpT7djI41gL9aJAkFZWYXWBGKE1Obf8YY=;
+  b=Pi7muLhSHD2hNg1oKlz3lwzYPTFW/4RMsv+wyQB0uKJ2Fvwsv9w+i0gb
+   NZeaKQTEcogkkUhQYvP5mVsTKntpgRB2MjMqh64swp0U4nqxYSVBQaZMK
+   sDgIc/B5rB5TxL7h7TJ5LXm1r+mv/ErobQ2MyZi3nB0KbqSSPjolHD3xi
+   B1O1JbYGtoOpC5qpzPWxDUkcGVWE+Pw+JvuGah/mO+cr+5vWsLOGlu177
+   ZLa5sFiT3DXue2S/fzbllIBSr7jwusz5KlpMXI/uy/oe2tD2q+0/3dNc5
+   vL2g+02OCzaBMQaQuS2Nwo9haH+RU7AWgLoZco9hBHQbgryOT9w2CJ5wQ
+   g==;
+X-CSE-ConnectionGUID: ztDqNVr6QZey78KtCisYdA==
+X-CSE-MsgGUID: fEqDT+1LSJ2S60NQYz2Dxg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53821610"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="53821610"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 12:19:14 -0700
+X-CSE-ConnectionGUID: ZPla5lKLSbumskX2qcs/iQ==
+X-CSE-MsgGUID: dHqb5JBxQzeoSp6IompcSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="184802034"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 12:19:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWgVZ-0000000Bfxc-2RHt;
+	Tue, 01 Jul 2025 22:19:09 +0300
+Date: Tue, 1 Jul 2025 22:19:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+Cc: jean-baptiste.maneyrol@tdk.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: imu: inv_mpu6050: Replace scnprintf with
+ sysfs_emit
+Message-ID: <aGQ0re136jUaPN-o@smile.fi.intel.com>
+References: <20250701154720.54276-1-chelsyratnawat2001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250701190857.GR10009@frogsfrogsfrogs>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20250701154720.54276-1-chelsyratnawat2001@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tuesday 01 July 2025 12:08:57 Darrick J. Wong wrote:
-> On Tue, Jul 01, 2025 at 08:54:57PM +0200, Pali Rohár wrote:
-> > On Tuesday 01 July 2025 11:43:17 Darrick J. Wong wrote:
-> > > On Mon, Jun 30, 2025 at 06:20:16PM +0200, Andrey Albershteyn wrote:
-> > > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > > > index 0098b0ce8ccb..0784f2033ba4 100644
-> > > > --- a/include/uapi/linux/fs.h
-> > > > +++ b/include/uapi/linux/fs.h
-> > > > @@ -148,6 +148,24 @@ struct fsxattr {
-> > > >  	unsigned char	fsx_pad[8];
-> > > >  };
-> > > >  
-> > > > +/*
-> > > > + * Variable size structure for file_[sg]et_attr().
-> > > > + *
-> > > > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
-> > > > + * As this structure is passed to/from userspace with its size, this can
-> > > > + * be versioned based on the size.
-> > > > + */
-> > > > +struct fsx_fileattr {
-> > > > +	__u32	fsx_xflags;	/* xflags field value (get/set) */
-> > > 
-> > > Should this to be __u64 from the start?  Seeing as (a) this struct is
-> > > not already a multiple of 8 bytes and (b) it's likely that we'll have to
-> > > add a u64 field at some point.  That would also address brauner's
-> > > comment about padding.
-> > 
-> > Hello!
-> > 
-> > As I have already mentioned, after this syscall API/ABI is finished, I'm
-> > planning to prepare patches for changing just selected fields / flags by
-> > introducing a new mask field, and support for additional flags used by
-> > existing filesystems (like windows flags).
-> > 
-> > My idea is extending this structure for a new "u32 fsx_xflags_mask"
-> > and new "u32 fsx_xflags2" + "u32 fsx_xflags2_mask". (field names are
-> > just examples).
-> > 
-> > So in case you are extending the structure now, please consider if it
-> > makes sense to add all members, so we do not have to define 2 or 3
-> > structure versions in near feature.
-> > 
-> > Your idea of __u64 for fsx_xflags means that it will already cover the
-> > "u32 fsx_xflags2" field.
-> 
-> Ah, ok, so that work *is* still coming. :)
+On Tue, Jul 01, 2025 at 08:47:20AM -0700, Chelsy Ratnawat wrote:
+> Documentation/filesystems/sysfs.rst mentions that show() should only
+> use sysfs_emit() or sysfs_emit_at() when formating the value to be
+> returned to user space. So replace scnprintf() with sysfs_emit().
 
-Yes. I'm just waiting until this patch series is accepted.
+...
 
-In past I have already sent RFC patches to the list which modifies the
-existing ioctl interface. So you can look at it if you want :-)
+> -		return scnprintf(buf, PAGE_SIZE,
+> -			"%d, %d, %d; %d, %d, %d; %d, %d, %d\n",
+> +		return sysfs_emit(buf, "%d, %d, %d; %d, %d, %d; %d, %d, %d\n",
+>  			m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
 
-> Are you still planning to add masks for xflags bits that are clearable
-> and settable?  i.e.
-> 
-> 	__u64	fa_xflags;		/* state */
-> 	...
-> 	<end of V0 structure>
-> 
-> 	__u64	fa_xflags_mask;		/* bits for setattr to examine */
-> 	__u64	fa_xflags_clearable;	/* clearable bits */
-> 	__u64	fa_xflags_settable;	/* settable bits */
-> 
-> I think it's easier just to define u64 in the V0 structure and then add
-> the three new fields in V1.  What do you think?
+Ideally second line should be reindented, but I won't be bothered by that
+right now.
 
-I wanted the interface which would allow to atomically change specified
-bit/flag without the need for get-modify-set. And I think that this
-would not work as the fa_xflags requires the state.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-My idea is following:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-  __u64 fa_xflags;
-  ...
-  <end of V0 structure>
-  __u64 fa_xflags_mask;
 
-The fa_xflags_mask will specify which bits from the fa_xflags and from
-other fa_* fields in V0 struct are going to be changed.
-
-> --D
-> 
-> > > --D
-> > > 
-> > > > +	__u32	fsx_extsize;	/* extsize field value (get/set)*/
-> > > > +	__u32	fsx_nextents;	/* nextents field value (get)   */
-> > > > +	__u32	fsx_projid;	/* project identifier (get/set) */
-> > > > +	__u32	fsx_cowextsize;	/* CoW extsize field value (get/set) */
-> > > > +};
-> > > > +
-> > > > +#define FSX_FILEATTR_SIZE_VER0 20
-> > > > +#define FSX_FILEATTR_SIZE_LATEST FSX_FILEATTR_SIZE_VER0
-> > > > +
-> > > >  /*
-> > > >   * Flags for the fsx_xflags field
-> > > >   */
-> > > > diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-> > > > index 580b4e246aec..d1ae5e92c615 100644
-> > > > --- a/scripts/syscall.tbl
-> > > > +++ b/scripts/syscall.tbl
-> > > > @@ -408,3 +408,5 @@
-> > > >  465	common	listxattrat			sys_listxattrat
-> > > >  466	common	removexattrat			sys_removexattrat
-> > > >  467	common	open_tree_attr			sys_open_tree_attr
-> > > > +468	common	file_getattr			sys_file_getattr
-> > > > +469	common	file_setattr			sys_file_setattr
-> > > > 
-> > > > -- 
-> > > > 2.47.2
-> > > > 
-> > > > 
-> > 
 
