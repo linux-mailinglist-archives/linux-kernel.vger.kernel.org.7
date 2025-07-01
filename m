@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-712015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E515AF0386
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB27AF033A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B2C1C07A8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60D9446425
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7DE283155;
-	Tue,  1 Jul 2025 19:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0E1280324;
+	Tue,  1 Jul 2025 18:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKc2G48m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9DC17BD3;
-	Tue,  1 Jul 2025 19:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DC323AB87;
+	Tue,  1 Jul 2025 18:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751397533; cv=none; b=EkvMmuPrbmVD4gDbh+qcrLYWdSZ6qjxDpU5WJi9FwQDyYwxrHek8kjYa3abRbi+552NssJ7NXVR+FdZaq42bUFeFBIayo2vCQGvcgWhQaoHh8R+jYWqvm/Ye89MXF+y2dKbQCoe+DNIKeebsmdqVZ/RkqinqmbEAGdjidG7Yxd4=
+	t=1751396101; cv=none; b=a4AAWxYqaCisv4jw/LstB+f8xOTqUC6Gk9Z7mdSneqSDnoFSrWkwbCqXuby9sK5vH5/JY6mkvDjwLmifOSUT418kH5JPpCTV5n4h6QMaUfg1jgboXU885zWjk43cVoGIUayUGyOOgWgj4ZwMmwFHIlZV4reaEGhVrqKcrhdtTpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751397533; c=relaxed/simple;
-	bh=/FbdkqgsRHQT3grN+rP3vo0JEynwNZBN/vKs+JQRgx0=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=RiCr4Z2jn4hNRVQSYbDW2a/o1OHW/VKi3gZvJ2Leo9Db19npYbi1yGfPBj18Ykdzq/avj7r050xrZVB52PLBRbI2ijRJZz39KZ/9dCXX3w5HslAMkAmUrWgh7idojWE9vUgQAXH3rfPKvcFADMkNI+ASJmQjn51Jz/j+L2wapYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7154BC4CEF4;
-	Tue,  1 Jul 2025 19:18:53 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1uWg3t-00000007gsY-3CIR;
-	Tue, 01 Jul 2025 14:50:33 -0400
-Message-ID: <20250701185033.617068929@goodmis.org>
-User-Agent: quilt/0.68
-Date: Tue, 01 Jul 2025 14:49:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org,
- x86@kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>,
- "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>,
- Jens Remus <jremus@linux.ibm.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>,
- Florian Weimer <fweimer@redhat.com>
-Subject: [PATCH v7 12/12] [DO NOT APPLY] unwind_user/sframe: Add prctl() interface for
- registering .sframe sections
-References: <20250701184939.026626626@goodmis.org>
+	s=arc-20240116; t=1751396101; c=relaxed/simple;
+	bh=3+LOkK7yAmYcFvOKVchdX4D20Wx83qWmNEjojDTk/VI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=liVOR/qj+mmN/rogCs/AZxcXBm4uoUSI60lmEtzYNdP1iaBS0fM8JU+ztAntpV2HxOukdLCqyUHTBpR50QPCRke6HgCmWCiY7otMYtKhwC7fZPiCiXJBbRGPyDr1jjUfsD6HenWINlgzI9B1dCzP4Swd5nfTeK41ZJU3Exq4rd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKc2G48m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1176AC4CEEB;
+	Tue,  1 Jul 2025 18:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751396100;
+	bh=3+LOkK7yAmYcFvOKVchdX4D20Wx83qWmNEjojDTk/VI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MKc2G48mS21Kpe0iKnEQYljIa2CEQz2BOO+Ufl7FEMSRo9Y2SbiRlQdoQjApKDgTz
+	 Ayc5ye0NVomKu+7pIdiLy06V+WQ23nJL32pfhvg4CvGOKNGaRVLP3jSbQiVezdqmiu
+	 TTp3VT+YrXP1c8/Jjd1inXIYscX/Y1r3iKm2OVGZ7XnwHK3FtQivSdMd2zyzPHVVss
+	 hq8prZgyR3KeWOKalhwGrQiiwQz61Pn8l25II3zmeOkmBKaefE9jnimbfzYYqXQSwu
+	 L+sTJl3nEHHQ7edwxM4Fdd4SQLAgUujG5YdbHFKTQskCOdTzIGIND1MRRHYlR5iJsD
+	 oKbKvgolToCPw==
+Received: by pali.im (Postfix)
+	id DD3A85D6; Tue,  1 Jul 2025 20:54:57 +0200 (CEST)
+Date: Tue, 1 Jul 2025 20:54:57 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, selinux@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
+ syscalls
+Message-ID: <20250701185457.jvbwhiiihdauymrg@pali>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
+ <20250701184317.GQ10009@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701184317.GQ10009@frogsfrogsfrogs>
+User-Agent: NeoMutt/20180716
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
+On Tuesday 01 July 2025 11:43:17 Darrick J. Wong wrote:
+> On Mon, Jun 30, 2025 at 06:20:16PM +0200, Andrey Albershteyn wrote:
+> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > index 0098b0ce8ccb..0784f2033ba4 100644
+> > --- a/include/uapi/linux/fs.h
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -148,6 +148,24 @@ struct fsxattr {
+> >  	unsigned char	fsx_pad[8];
+> >  };
+> >  
+> > +/*
+> > + * Variable size structure for file_[sg]et_attr().
+> > + *
+> > + * Note. This is alternative to the structure 'struct fileattr'/'struct fsxattr'.
+> > + * As this structure is passed to/from userspace with its size, this can
+> > + * be versioned based on the size.
+> > + */
+> > +struct fsx_fileattr {
+> > +	__u32	fsx_xflags;	/* xflags field value (get/set) */
+> 
+> Should this to be __u64 from the start?  Seeing as (a) this struct is
+> not already a multiple of 8 bytes and (b) it's likely that we'll have to
+> add a u64 field at some point.  That would also address brauner's
+> comment about padding.
 
-The kernel doesn't have direct visibility to the ELF contents of shared
-libraries.  Add some prctl() interfaces which allow glibc to tell the
-kernel where to find .sframe sections.
+Hello!
 
-[
-  This adds an interface for prctl() for testing loading of sframes for
-  libraries. But this interface should really be a system call. This patch
-  is for testing purposes only and should not be applied to mainline.
-]
+As I have already mentioned, after this syscall API/ABI is finished, I'm
+planning to prepare patches for changing just selected fields / flags by
+introducing a new mask field, and support for additional flags used by
+existing filesystems (like windows flags).
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- include/uapi/linux/prctl.h | 6 +++++-
- kernel/sys.c               | 9 +++++++++
- 2 files changed, 14 insertions(+), 1 deletion(-)
+My idea is extending this structure for a new "u32 fsx_xflags_mask"
+and new "u32 fsx_xflags2" + "u32 fsx_xflags2_mask". (field names are
+just examples).
 
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 43dec6eed559..c575cf7151b1 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -351,7 +351,7 @@ struct prctl_mm_map {
-  * configuration.  All bits may be locked via this call, including
-  * undefined bits.
-  */
--#define PR_LOCK_SHADOW_STACK_STATUS      76
-+#define PR_LOCK_SHADOW_STACK_STATUS	76
- 
- /*
-  * Controls the mode of timer_create() for CRIU restore operations.
-@@ -371,4 +371,8 @@ struct prctl_mm_map {
- # define PR_FUTEX_HASH_GET_SLOTS	2
- # define PR_FUTEX_HASH_GET_IMMUTABLE	3
- 
-+/* SFRAME management */
-+#define PR_ADD_SFRAME			79
-+#define PR_REMOVE_SFRAME		80
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index adc0de0aa364..cf788e66dc86 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -65,6 +65,7 @@
- #include <linux/rcupdate.h>
- #include <linux/uidgid.h>
- #include <linux/cred.h>
-+#include <linux/sframe.h>
- 
- #include <linux/nospec.h>
- 
-@@ -2824,6 +2825,14 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 	case PR_FUTEX_HASH:
- 		error = futex_hash_prctl(arg2, arg3, arg4);
- 		break;
-+	case PR_ADD_SFRAME:
-+		error = sframe_add_section(arg2, arg3, arg4, arg5);
-+		break;
-+	case PR_REMOVE_SFRAME:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = sframe_remove_section(arg2);
-+		break;
- 	default:
- 		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
- 		error = -EINVAL;
--- 
-2.47.2
+So in case you are extending the structure now, please consider if it
+makes sense to add all members, so we do not have to define 2 or 3
+structure versions in near feature.
 
+Your idea of __u64 for fsx_xflags means that it will already cover the
+"u32 fsx_xflags2" field.
 
+> --D
+> 
+> > +	__u32	fsx_extsize;	/* extsize field value (get/set)*/
+> > +	__u32	fsx_nextents;	/* nextents field value (get)   */
+> > +	__u32	fsx_projid;	/* project identifier (get/set) */
+> > +	__u32	fsx_cowextsize;	/* CoW extsize field value (get/set) */
+> > +};
+> > +
+> > +#define FSX_FILEATTR_SIZE_VER0 20
+> > +#define FSX_FILEATTR_SIZE_LATEST FSX_FILEATTR_SIZE_VER0
+> > +
+> >  /*
+> >   * Flags for the fsx_xflags field
+> >   */
+> > diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
+> > index 580b4e246aec..d1ae5e92c615 100644
+> > --- a/scripts/syscall.tbl
+> > +++ b/scripts/syscall.tbl
+> > @@ -408,3 +408,5 @@
+> >  465	common	listxattrat			sys_listxattrat
+> >  466	common	removexattrat			sys_removexattrat
+> >  467	common	open_tree_attr			sys_open_tree_attr
+> > +468	common	file_getattr			sys_file_getattr
+> > +469	common	file_setattr			sys_file_setattr
+> > 
+> > -- 
+> > 2.47.2
+> > 
+> > 
 
