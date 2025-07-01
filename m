@@ -1,180 +1,113 @@
-Return-Path: <linux-kernel+bounces-710999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02BAAEF46B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:06:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FA6AEF45D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD18480270
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290324A4BCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97E6273D98;
-	Tue,  1 Jul 2025 10:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elMpgcGH"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C62826F445;
+	Tue,  1 Jul 2025 10:01:32 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D1C273D81
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4D6270EDF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751364101; cv=none; b=rNikXrhURI/V2wTfyTCdY7Hr1dncdHYzX/HHew3wez0d49/ii2hUKg2CV3AnHKobaDXGjwNWzZC4H2z014qvwcSxVaIoaJ/Gw8px2EbAGWPIN+jS4SR8ChwkYLkrcJhieC7srEDECk/79/Ee7Bc6LDN2KYyhgC1bQUBBYSWuDz4=
+	t=1751364092; cv=none; b=Ocfu6clodczvUfJq2C0mNI8Sv+Vlahpkf3w5WmlcSXZJ0wxySWaB97S3ys0YnXsu3/1qxZf4evdG0aMoVfzCVvzU4dp6BP9US6Ly+9wN/EYECG3KrPKNoqtSckmEecn+vhVUJFg4Cah5HiaIuacv5ZF6lGI2VlepH7ksRuUFN7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751364101; c=relaxed/simple;
-	bh=Mi1AEloK4FOgIp5PsdiFEhlUsQcP6bOwwbl2otpJ134=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=HGpih7ehcdPdkweWtYfA4C7aSNqCkWp/x4EI1DvS6LGyj3ywo2X3TR3UoGU0d6Ob28sMo5jjUQTZx26Q3PuH9g0qaqv6DBWud4wi8eapbS/+UPyH14G/23vPHNY5Q0HFzk/eg3dJ32Y30aXPjPGzQkqHGnvmuMiAqo28oWdrxwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=elMpgcGH; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e8600a33792so2171079276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 03:01:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751364095; x=1751968895; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Mi1AEloK4FOgIp5PsdiFEhlUsQcP6bOwwbl2otpJ134=;
-        b=elMpgcGHgDCZrOeoIHDV8eNqgRtsvr5s0YmtsD7JgqIXC+9zxAEfhxAH2sxfig9J5G
-         t5gJvPJQVfvdA9RxczuTBRFWOrdmQ3PrUQ6pm85aokqHuQZjHEHcK7kE0IkZIIGddFdG
-         sTcYQu7aQLXuNOY9J0RBrgeaUBQtiHgkwrZqaQbEJIs/jzYylSykykPl9yu3oDfXzDc2
-         MzMsHDhoEoLxSmx+uh+CD7qSwCUqytI7BP2OABcoQlVNeoQqzHmFmXEvkKW8k3c26Mje
-         D4YZ9tTxdVNCZMAgQQo73PPMx43HpV8UIE10W2msr87O03DKSafD6ig8439VtMwC8npu
-         xoAg==
+	s=arc-20240116; t=1751364092; c=relaxed/simple;
+	bh=P5Rt189e8qUG+MHvROZmWhZjXpiZa0oSmFfwPWBZtUg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bz30Nu94lfTe6z5UiQyHZI5lWf6Gwoy2UFgwbuy9itm+4TXFDkMib31dhRwrr4a9w3GuyefHOQYEgg2wtHEQF4/SGK8Vb9P5PLQWXoaDmOs2Gp/xZj6HudefSC2oTHq+FY77rWO/0kMja4HpA5YGmxEEJbBKe9Q8OTCpUPkl2B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-873fd6e896bso491874139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 03:01:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751364095; x=1751968895;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1751364089; x=1751968889;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mi1AEloK4FOgIp5PsdiFEhlUsQcP6bOwwbl2otpJ134=;
-        b=nqbGQtjArlciMNbAe3988qmNlODNqMT0/pqVxd6z6kPIyteOD648H2c39i2BJNXUu1
-         QWctWUIXwSIiiddem6TGts5PjapT0tgmqy+Jx8AX1/Ys5DANofW7aTwMCWOXY2n2a2h3
-         MfC/LP/wujgu8hHBAjWE01ozEl92vQX9Hi57GfezUKzB5FtuLhNTK2bqU4BUY7lTPaUC
-         unrEvPXRDU9j1RkFxkS/ha3Ge3air9rT9okDXljI2DelTEs/MuS3xi8I3I/vEtrk6ZuE
-         kQwNbsFzOdIwP/Sv6TPo0wgveqWG0239n9INMdtOYdjf7wiHsEjKvPrMD4zAQTzWL2Ss
-         Bfyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzTf/+dCtK/5Eb+kYbQmkEwz+234qS1CH7+xgRvfY59zvEv29l6obMYRVpcqSgwh6XKVU40N/qOPzrz9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEAsMSxEltHL0GXZME+8TZOnXE48MnjQgpNoMDnDxJ2+lO9TX9
-	XRk93SP46X1af1Kwmbt29XFZacdTWRIVG/PmPrTjxfkDU4JetAaMwi2TcN3N77iEfW8Q3j82S3Z
-	hHQnBwzrgwEuKa5N2bWRFJPKdUi6IE5481C8j
-X-Gm-Gg: ASbGncvNSThrdE0RdRAswypjzoupHviXx7Z8Gg3uc1myFbzoLNOIQNqrOkcVip++R+J
-	eC4n5GBZLUp6SLsWNhXYXQLa+Fi/eHTbJrDA9NvAzB4T7SUdJ1L/v6OKMaNxNur+pUB9Qja1K1q
-	Dk52a01oVT1DmAu/sr/l095we1D7oGo/ikgR4I8z2G/UI=
-X-Google-Smtp-Source: AGHT+IGKSXsR04EFgOp8byn66gtuEnuLj+d4Wfl/Rsw1o64kyyqDOHjfiCeFlop+b9b0aQjhgHMA9QZymgJlE2s5p6o=
-X-Received: by 2002:a05:6902:1a49:b0:e87:a878:3 with SMTP id
- 3f1490d57ef6-e87a8780060mr20961158276.47.1751364094486; Tue, 01 Jul 2025
- 03:01:34 -0700 (PDT)
+        bh=JBnYfLShZRP+QHc7hp6xE5I2iMcE/JPwNu1jf/ePmmo=;
+        b=Ur/Y+SiXgikPE/H5n/mPzsA8ZBTBVnYmeXLJ1rZ4jo40YGdrCpufFZDqQLE+l4c2hO
+         Uw0J90ib1VYD7+wCrxqaSHJ+4KYKr9sTNjFrngGAKvyT1FYs9V8op4GECUQI4Cndqrs0
+         4Pz55HR0oIEQhI1SQaXsrPhwL44Rv3fa2LXiljtq3E9h2pgC2NKSPwZ6z/VGIoEtG5ZG
+         eDmQg5HW5ifnrs15j+g1MwfWsYjDVMj5/jEFIesH4jgWEkIZLadj5j1NK8bHT0jF9J76
+         ZH36gbngmfInNEAMnlrR+tMeD6ObLB8AaQbDSw+FAVtaIV65FVHLmBZAkq1301svEe2w
+         QY/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1silQvTktdGIGxA3UPEM+C/EursZO2kXWh0snudjULvMjqsf1B92JZZO+kv30n3/pm5azUN2nlf8WY+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJQ7su3+ZAaGdDios+yZNM2SnTABfgmylYLLy1CttktM0ym7pH
+	IFiPC46NDSf8VigkUq4AC54nAFeQcBqVgz0QEyeb/9EoxCrllTbmqLCfbOxGCIKfl6b8OWptqtw
+	L7xtrx0iab8rS05t76vNu9f6c+28JF7msmK6tYekR8Bp+cQU+/kCTobhxFKI=
+X-Google-Smtp-Source: AGHT+IHgtx7SqShvK0/sNakTaVtzibjONzpxOzeKpEIP0Jy8y46gQyIV2NTDXUQD4Cc414qVDKPq5z23SppLkt2Y/BoTCvaEWEau
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rafal Vonau <rafal.vonau@gmail.com>
-Date: Tue, 1 Jul 2025 12:01:23 +0200
-X-Gm-Features: Ac12FXyap6bqfEiC_lqZhRvzyo_EhWKcmv1Kt2i-8Acybgb2lT8USk1l6jg2iwA
-Message-ID: <CABj3Bj_aM4sA1pLhSGpYPYzskW7raASHzWmtzjFq3s1ziWpHBw@mail.gmail.com>
-Subject: [PATCH] mtd: rawnand: pl35x: Fix BBT write operations by adding pure
- data out pattern
-To: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000b99ce20638db3a41"
-
---000000000000b99ce20638db3a41
-Content-Type: multipart/alternative; boundary="000000000000b99ce00638db3a3f"
-
---000000000000b99ce00638db3a3f
+X-Received: by 2002:a05:6602:1691:b0:876:1c5e:8c50 with SMTP id
+ ca18e2360f4ac-876885d256amr1917863439f.7.1751364089410; Tue, 01 Jul 2025
+ 03:01:29 -0700 (PDT)
+Date: Tue, 01 Jul 2025 03:01:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6863b1f9.a70a0220.3b7e22.1936.GAE@google.com>
+Subject: [syzbot] Monthly ocfs2 report (Jul 2025)
+From: syzbot <syzbot+listcb86ed7f103eeb1415ee@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-The PL35x NAND controller driver was failing to write Bad Block Tables
-due to missing support for pure data out operations. When the NAND
-subsystem
-attempted to write BBT data using just DATA_OUT commands without preceding
-address cycles or commands, the operation parser failed to match any
-pattern.
+Hello ocfs2 maintainers/developers,
 
-This patch:
+This is a 31-day syzbot report for the ocfs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ocfs2
 
-Adds a dedicated execution function for pure data out operations
+During the period, 4 new issues were detected and 0 were fixed.
+In total, 69 issues are still open and 17 have already been fixed.
 
-Includes a new pattern in the op parser for DATA_OUT only operation
+Some of the still happening issues:
 
-The fix maintains proper separation of concerns where:
+Ref  Crashes Repro Title
+<1>  65257   Yes   possible deadlock in dqget
+                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+<2>  47058   Yes   possible deadlock in ocfs2_acquire_dquot
+                   https://syzkaller.appspot.com/bug?extid=51244a05705883616c95
+<3>  22465   Yes   possible deadlock in ocfs2_reserve_suballoc_bits
+                   https://syzkaller.appspot.com/bug?extid=5d516fba7bc3c966c9a9
+<4>  14511   Yes   possible deadlock in ocfs2_init_acl
+                   https://syzkaller.appspot.com/bug?extid=4007ab5229e732466d9f
+<5>  14041   Yes   possible deadlock in ocfs2_reserve_local_alloc_bits
+                   https://syzkaller.appspot.com/bug?extid=843fa26882088a9ee7e3
+<6>  8235    Yes   possible deadlock in ocfs2_setattr
+                   https://syzkaller.appspot.com/bug?extid=d78497256d53041ee229
+<7>  3182    No    possible deadlock in ocfs2_xattr_set
+                   https://syzkaller.appspot.com/bug?extid=ba9a789bd1f4d21fcefe
+<8>  2603    No    possible deadlock in ocfs2_lock_global_qf
+                   https://syzkaller.appspot.com/bug?extid=b53d753ae8fb473e2397
+<9>  2163    Yes   possible deadlock in __ocfs2_flush_truncate_log
+                   https://syzkaller.appspot.com/bug?extid=6bf948e47f9bac7aacfa
+<10> 1551    Yes   possible deadlock in ocfs2_del_inode_from_orphan
+                   https://syzkaller.appspot.com/bug?extid=78359d5fbb04318c35e9
 
-Command sequences are handled by nand_prog_page_begin_op/end_op
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Data writing is handled by the controller's data out operation
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-BBT writes now complete successfully
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-Tested on Xilinx Zynq with Micron MT29F2G08ABBEAH4 NAND flash.
-
-Signed-off-by: Rafal Vonau <rafal.vonau@gmail.com>
-
---000000000000b99ce00638db3a3f
-Content-Type: text/html; charset="UTF-8"
-
-<div dir="ltr"><span style="font-family:monospace"><span style="color:rgb(0,0,0)">The PL35x NAND controller driver was failing to write Bad Block Tables
-</span><br>due to missing support for pure data out operations. When the NAND subsystem
-<br>attempted to write BBT data using just DATA_OUT commands without preceding
-<br>address cycles or commands, the operation parser failed to match any pattern.
-<br>
-<br>This patch:
-<br>
-<br>Adds a dedicated execution function for pure data out operations
-<br>
-<br>Includes a new pattern in the op parser for DATA_OUT only operation
-<br>
-<br>The fix maintains proper separation of concerns where:
-<br>
-<br>Command sequences are handled by nand_prog_page_begin_op/end_op
-<br>
-<br>Data writing is handled by the controller&#39;s data out operation
-<br>
-<br>BBT writes now complete successfully
-<br>
-<br>Tested on Xilinx Zynq with Micron MT29F2G08ABBEAH4 NAND flash.
-<br>
-<br>Signed-off-by: Rafal Vonau &lt;<a href="mailto:rafal.vonau@gmail.com">rafal.vonau@gmail.com</a>&gt;<br>
-<br></span></div>
-
---000000000000b99ce00638db3a3f--
---000000000000b99ce20638db3a41
-Content-Type: text/x-patch; charset="US-ASCII"; name="zynq-pl35x-bbt-patch.patch"
-Content-Disposition: attachment; filename="zynq-pl35x-bbt-patch.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mckcydpf0>
-X-Attachment-Id: f_mckcydpf0
-
-ZGlmZiAtLWdpdCBhL2xpbnV4L2RyaXZlcnMvbXRkL25hbmQvcmF3L3BsMzV4LW5hbmQtY29udHJv
-bGxlci5jIGIvbGludXgvZHJpdmVycy9tdGQvbmFuZC9yYXcvcGwzNXgtbmFuZC1jb250cm9sbGVy
-LmMKaW5kZXggMWQzZjAyNjFhNy4uYTJlOGJhOWRjNCAxMDA2NDQKLS0tIGEvbGludXgvZHJpdmVy
-cy9tdGQvbmFuZC9yYXcvcGwzNXgtbmFuZC1jb250cm9sbGVyLmMKKysrIGIvbGludXgvZHJpdmVy
-cy9tdGQvbmFuZC9yYXcvcGwzNXgtbmFuZC1jb250cm9sbGVyLmMKQEAgLTc1NSw2ICs3NTUsMzMg
-QEAgc3RhdGljIGludCBwbDM1eF9uYW5kX2V4ZWNfb3Aoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCwK
-IAlyZXR1cm4gMDsKIH0KIAorCitzdGF0aWMgaW50IHBsMzV4X25hbmRfZXhlY19kYXRhX291dF9v
-cChzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwLAorCQkJCSAgICAgIGNvbnN0IHN0cnVjdCBuYW5kX3N1
-Ym9wICpzdWJvcCkKK3sKKwlzdHJ1Y3QgcGwzNXhfbmFuZGMgKm5mYyA9IHRvX3BsMzV4X25hbmRj
-KGNoaXAtPmNvbnRyb2xsZXIpOworCWNvbnN0IHN0cnVjdCBuYW5kX29wX2luc3RyICppbnN0cjsK
-Kwl1bnNpZ25lZCBpbnQgbGVuLCBvZmZzZXQ7CisKKwlpZiAoc3Vib3AtPm5pbnN0cnMgIT0gMSB8
-fCBzdWJvcC0+aW5zdHJzWzBdLnR5cGUgIT0gTkFORF9PUF9EQVRBX09VVF9JTlNUUikgeworCQlk
-ZXZfZXJyKG5mYy0+ZGV2LCAiSW52YWxpZCBkYXRhIG91dCBvcGVyYXRpb25cbiIpOworCQlyZXR1
-cm4gLUVJTlZBTDsKKwl9CisKKwlpbnN0ciA9ICZzdWJvcC0+aW5zdHJzWzBdOworCW9mZnNldCA9
-IG5hbmRfc3Vib3BfZ2V0X2RhdGFfc3RhcnRfb2ZmKHN1Ym9wLCAwKTsKKwlsZW4gPSBuYW5kX3N1
-Ym9wX2dldF9kYXRhX2xlbihzdWJvcCwgMCk7CisKKwlkZXZfZGJnKG5mYy0+ZGV2LCAiRXhlY3V0
-aW5nIGRhdGEgb3V0IG9wOiBsZW49JXUsIG9mZnNldD0ldVxuIiwgbGVuLCBvZmZzZXQpOworCisJ
-cGwzNXhfbmFuZF93cml0ZV9kYXRhX29wKGNoaXAsIGluc3RyLT5jdHguZGF0YS5idWYub3V0ICsg
-b2Zmc2V0LAorCQkJCSBsZW4sIGluc3RyLT5jdHguZGF0YS5mb3JjZV84Yml0LAorCQkJCSAwLCBQ
-TDM1WF9TTUNfREFUQV9QSEFTRV9DTEVBUl9DUyk7CisKKwlyZXR1cm4gMDsKK30KKworCiBzdGF0
-aWMgY29uc3Qgc3RydWN0IG5hbmRfb3BfcGFyc2VyIHBsMzV4X25hbmRjX29wX3BhcnNlciA9IE5B
-TkRfT1BfUEFSU0VSKAogCU5BTkRfT1BfUEFSU0VSX1BBVFRFUk4ocGwzNXhfbmFuZF9leGVjX29w
-LAogCQkJICAgICAgIE5BTkRfT1BfUEFSU0VSX1BBVF9DTURfRUxFTSh0cnVlKSwKQEAgLTc3NCw2
-ICs4MDEsOSBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG5hbmRfb3BfcGFyc2VyIHBsMzV4X25hbmRj
-X29wX3BhcnNlciA9IE5BTkRfT1BfUEFSU0VSKAogCQkJICAgICAgIE5BTkRfT1BfUEFSU0VSX1BB
-VF9EQVRBX09VVF9FTEVNKGZhbHNlLCAyMTEyKSwKIAkJCSAgICAgICBOQU5EX09QX1BBUlNFUl9Q
-QVRfQ01EX0VMRU0odHJ1ZSksCiAJCQkgICAgICAgTkFORF9PUF9QQVJTRVJfUEFUX1dBSVRSRFlf
-RUxFTSh0cnVlKSksCisJLyogUHVyZSBkYXRhIG91dCBvcGVyYXRpb24gKGZvciBCQlQgd3JpdGVz
-KSAqLworCU5BTkRfT1BfUEFSU0VSX1BBVFRFUk4ocGwzNXhfbmFuZF9leGVjX2RhdGFfb3V0X29w
-LAorCQkJICAgICAgIE5BTkRfT1BfUEFSU0VSX1BBVF9EQVRBX09VVF9FTEVNKGZhbHNlLCAyMTEy
-KSksCiAJKTsKIAo=
---000000000000b99ce20638db3a41--
+You may send multiple commands in a single email message.
 
