@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-711081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97E4AEF5A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0937AEF6A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C0D27A48CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9160A3B9618
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A8922F76F;
-	Tue,  1 Jul 2025 10:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5634626C3B5;
+	Tue,  1 Jul 2025 11:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fEhZNrrE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="NlTMdQLJ"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ADA51022
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDEC25B1CE
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751367266; cv=none; b=oTCaaZ1KI0+R9rXmVWWjOg8s4VFXuHIA8IpP/08diMtOvQQZ0/sIkxGXOJ/eY1OJH29LcxMQrTn3JanU0EWhzh6ylk7QIqglVW2xRJB0fWeq8A9xGTAPBE1Q+KJJv6EE/pxtDbE/6ACcyk6mgpbHlNnlOuqbr7Ry/LvIh3o5o8U=
+	t=1751369712; cv=none; b=VV3lDrsYk5qT3dbTQo9jmxLfj3zxh7jTSp2VqGkiBO43tusIt0YdL3+kcBTkdorxonTIADCQ12h+BOu54fGdHK0kvj0Pws2rshlz0vN1h4MNXQQWIE/tBwcEuiQ3Gj4Tk9HkUyRmVLN/EineiHOolzy9PxlS67yglsb9QoRADXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751367266; c=relaxed/simple;
-	bh=Iy5KudkkfMC3VwgAnDQaDikBuBnSajHd89CSgYTrzgc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CWcRedzSKJs83nZbWikXhVm5TfFjaC+K2hXUqxMLUdX5XR1Advo9+UGHybD3Jw40MIMySWxkr7OrJ1iMCitWfaZDaG0LsLwd1srCOuc/BqaXyF6PwSYjgXHGbO2MYuoBY7veOfwFXqm/rAVta3xInD0kzGXnNTKa/z99HqIS3Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fEhZNrrE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D38C4CEEB;
-	Tue,  1 Jul 2025 10:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751367266;
-	bh=Iy5KudkkfMC3VwgAnDQaDikBuBnSajHd89CSgYTrzgc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fEhZNrrE8JtR1skHpmMOHtT47yQahDH/+3+wek8y9mv8Xh0Cp21yID1dVh8rtn8tm
-	 9l47F/ayh0K1EpDmfw5x4A9TFvQnixKdreRLSmFCofFcs6nrjJVJp7mYbSmX5O/KK+
-	 E4nx0DaaW/CHBK4Lq8+reKVzItUvnraUDeuxrVuY=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v5] x86/microcode: move away from using a fake platform device
-Date: Tue,  1 Jul 2025 12:54:22 +0200
-Message-ID: <2025070121-omission-small-9308@gregkh>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1751369712; c=relaxed/simple;
+	bh=toy7KDrxRKaBrKEHAnZbNH7DtmKUMTVQeK+rdhzUSuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OeKR4WI5xbezrjJO27dz2N6eoVmPjJhG2rOmpE+3p+8siewqx28W9mUfa1ZF0YvmVSIuZZVRtGUCrQmAW9JiC+M7tolh9AUh6lsY381CCAO70nef+Wr+v0eK5D5MMQ4Pio9rMq8TqylAQNulcBCv7aG4vSvS2CaTuP1lcqzVZDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=NlTMdQLJ; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250701105441ebbc6e3793791ffcb9
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 01 Jul 2025 12:54:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=pKdITuxJaA8EUNftYYb9o+8QYm/n/GOV6BYJNqWHBdI=;
+ b=NlTMdQLJsQKRO+x5KTq2hOtxXWNHIw353VOH8ecekqR3fqCkYXcy1GzkN9+2Xg9zIpPkNS
+ sIRAboDhQrWMSj8jSueadSK4W+XMLHWoccNhJf+HoWpcXJjQQOnEB5m2EceC8fcDC62X3BtH
+ kvzdFOmQUmHRD/2kVxsxPE6dhP3BdwfiGnGcGG976L4ED6bZJHdwd7D4KzCw1cYZz5AKsuR/
+ Bo7Y2cGuwVUKQVGThkbxmxByWBd1p+EZr0DYDF6AajBbXL6eq8keZCa1AbFRUKdDyHKK6/dx
+ RI578UZhJNo0TpgPfkvGI0xYWezdfGKm1q2MS8tWtcizhHKizrbVHTzw==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: devicetree@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: ti: k3-pinctrl: Enable Schmitt Trigger by default
+Date: Tue,  1 Jul 2025 12:54:35 +0200
+Message-ID: <20250701105437.3539924-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 79
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2676; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=Iy5KudkkfMC3VwgAnDQaDikBuBnSajHd89CSgYTrzgc=; b=owGbwMvMwCRo6H6F97bub03G02pJDBnJ++JOl50WF2x1PbvqSRP7duM9CRtyXl/2PTU7yS/pb /uKbvGbHbEsDIJMDLJiiixftvEc3V9xSNHL0PY0zBxWJpAhDFycAjCRu7kM86y+LupQLgxWjgzq mPSKp1rr1s2nCxnmmXJN+rN/iVqJ1/1Ha/YX5bJwSISfAwA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-Downloading firmware needs a device to hang off of, and so a platform
-device seemed like the simplest way to do this.  Now that we have a faux
-device interface, use that instead as this "microcode device" is not
-anything resembling a platform device at all.
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: <x86@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Switch Schmitt Trigger functions for PIN_INPUT* macros by default. This is
+HW PoR configuration, the slew rate requirements without ST enabled are
+pretty tough for these devices. We've noticed spurious GPIO interrupts even
+with noise-free edges but not meeting slew rate requirements (3.3E+6 V/s
+for 3.3v LVCMOS).
+
+It's not obvious why one might want to disable the PoR-enabled ST on any
+pin. Just enable it by default. As it's not possible to provide OR-able
+macros to disable the ST, shall anyone require it, provide a set of
+new macros with _NOST suffix.
+
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 ---
-v5: - rebase against 6.16-rc4 and actually cc: the relevant maintainers
-      this time, doh!
-v4: - api tweaked due to parent pointer added to faux_device create
-      function.
-v3: - no change
-v2: - new patch in a larger series
+This patch could be considered a v2 of [1] but the subject has been changed.
 
- arch/x86/kernel/cpu/microcode/core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+[1] Link: https://lore.kernel.org/all/20250627131332.2806026-1-alexander.sverdlin@siemens.com/
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index fe50eb5b7c4a..b92e09a87c69 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -17,8 +17,8 @@
+ arch/arm64/boot/dts/ti/k3-pinctrl.h | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+index cac7cccc11121..38590188dd51c 100644
+--- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
++++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+@@ -8,6 +8,7 @@
+ #ifndef DTS_ARM64_TI_K3_PINCTRL_H
+ #define DTS_ARM64_TI_K3_PINCTRL_H
  
- #define pr_fmt(fmt) "microcode: " fmt
++#define ST_EN_SHIFT		(14)
+ #define PULLUDEN_SHIFT		(16)
+ #define PULLTYPESEL_SHIFT	(17)
+ #define RXACTIVE_SHIFT		(18)
+@@ -19,6 +20,10 @@
+ #define DS_PULLUD_EN_SHIFT	(27)
+ #define DS_PULLTYPE_SEL_SHIFT	(28)
  
--#include <linux/platform_device.h>
- #include <linux/stop_machine.h>
-+#include <linux/device/faux.h>
- #include <linux/syscore_ops.h>
- #include <linux/miscdevice.h>
- #include <linux/capability.h>
-@@ -249,7 +249,7 @@ static void reload_early_microcode(unsigned int cpu)
- }
++/* Schmitt trigger configuration */
++#define ST_DISABLE		(0 << ST_EN_SHIFT)
++#define ST_ENABLE		(1 << ST_EN_SHIFT)
++
+ #define PULL_DISABLE		(1 << PULLUDEN_SHIFT)
+ #define PULL_ENABLE		(0 << PULLUDEN_SHIFT)
  
- /* fake device for request_firmware */
--static struct platform_device	*microcode_pdev;
-+static struct faux_device *microcode_fdev;
+@@ -32,9 +37,13 @@
+ #define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
+ #define PIN_OUTPUT_PULLUP	(INPUT_DISABLE | PULL_UP)
+ #define PIN_OUTPUT_PULLDOWN	(INPUT_DISABLE | PULL_DOWN)
+-#define PIN_INPUT		(INPUT_EN | PULL_DISABLE)
+-#define PIN_INPUT_PULLUP	(INPUT_EN | PULL_UP)
+-#define PIN_INPUT_PULLDOWN	(INPUT_EN | PULL_DOWN)
++#define PIN_INPUT		(INPUT_EN | ST_ENABLE | PULL_DISABLE)
++#define PIN_INPUT_PULLUP	(INPUT_EN | ST_ENABLE | PULL_UP)
++#define PIN_INPUT_PULLDOWN	(INPUT_EN | ST_ENABLE | PULL_DOWN)
++/* Input configurations with Schmitt Trigger disabled */
++#define PIN_INPUT_NOST		(INPUT_EN | PULL_DISABLE)
++#define PIN_INPUT_PULLUP_NOST	(INPUT_EN | PULL_UP)
++#define PIN_INPUT_PULLDOWN_NOST	(INPUT_EN | PULL_DOWN)
  
- #ifdef CONFIG_MICROCODE_LATE_LOADING
- /*
-@@ -690,7 +690,7 @@ static int load_late_locked(void)
- 	if (!setup_cpus())
- 		return -EBUSY;
- 
--	switch (microcode_ops->request_microcode_fw(0, &microcode_pdev->dev)) {
-+	switch (microcode_ops->request_microcode_fw(0, &microcode_fdev->dev)) {
- 	case UCODE_NEW:
- 		return load_late_stop_cpus(false);
- 	case UCODE_NEW_SAFE:
-@@ -841,9 +841,9 @@ static int __init microcode_init(void)
- 	if (early_data.new_rev)
- 		pr_info_once("Updated early from: 0x%08x\n", early_data.old_rev);
- 
--	microcode_pdev = platform_device_register_simple("microcode", -1, NULL, 0);
--	if (IS_ERR(microcode_pdev))
--		return PTR_ERR(microcode_pdev);
-+	microcode_fdev = faux_device_create("microcode", NULL, NULL);
-+	if (!microcode_fdev)
-+		return -ENODEV;
- 
- 	dev_root = bus_get_dev_root(&cpu_subsys);
- 	if (dev_root) {
-@@ -862,7 +862,7 @@ static int __init microcode_init(void)
- 	return 0;
- 
-  out_pdev:
--	platform_device_unregister(microcode_pdev);
-+	faux_device_destroy(microcode_fdev);
- 	return error;
- 
- }
+ #define PIN_DEBOUNCE_DISABLE	(0 << DEBOUNCE_SHIFT)
+ #define PIN_DEBOUNCE_CONF1	(1 << DEBOUNCE_SHIFT)
 -- 
 2.50.0
 
