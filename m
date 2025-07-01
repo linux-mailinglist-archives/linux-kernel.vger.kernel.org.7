@@ -1,335 +1,270 @@
-Return-Path: <linux-kernel+bounces-710798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FB1AEF148
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:35:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8F6AEF13F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D27D1BC651D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787131BC3954
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121426B0BE;
-	Tue,  1 Jul 2025 08:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCD426A0EB;
+	Tue,  1 Jul 2025 08:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QoKmNEWK";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZpXbJwSj"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TrvU4jE2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B3266F0D
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751358911; cv=fail; b=m1T5V/FQMmIYYHW8k2qoz12pvH9r5MuIXvuaYtSsItftZTYVpFgdSZbwRd5m2dnWWKK6LlgaiDUdCIR8Br2DXXuDGkfSwSrNzl2L2y0xV2sSDirn2gN2XTzTHcTMn1Dngk1PLyCCTyBbAnfmi3AcZehWGeyWAt/QZIg/SOWjfiM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751358911; c=relaxed/simple;
-	bh=YybYTVInCRpUKceI4+ZzpZZTwsIDdBr7QaBXiUZuDvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WLpYbANWu9M6ysj4SctpO5NNhZyVBqBH3sNYlx7V6eYzp3hWjgI8bNF+Qj/dKXppbomkF/5lHwegBfTqaQi85xHk3vFM0bsTOFWDNDafyVS+Mr8CZ1TRgGmxiXjBFeoSlIMrT8j8XaOueywP54KwTkbqdABTEh8ZleeNGbKll8g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QoKmNEWK; dkim=fail (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZpXbJwSj reason="signature verification failed"; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5611MtcY005431;
-	Tue, 1 Jul 2025 08:34:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=2fMPb/Oc6JYS+rt94UesW5LimrV/TC1d+eoWcMFVuHQ=; b=
-	QoKmNEWKciKuNoLCfIG4GloMYFS1W6sIC0RNG+EtCnLP4zfhjcElqvUbucq+c2pa
-	6EHS2YmE/Vve+KjLdEw3RpzaUR6xdYCAJrc0ULgS6jYsWQX4+LZRv8VCKWJGgP2E
-	tGwOPID0LTGhOUGVffN19SjeYQYu++vLRa1m07c0nztt50EjHeW/J5sooSnX8kQG
-	GUPQSHGhhB8Fr+zYik/if3KaRKsv8s5Hy1mo5fr59yU0jFJQantJZdgEHp3K9N9n
-	EtOdAYCtRw5mzg9BqhC63Qnt30XEKWZDYlsl5KpOOdeO79/3eczm22bmNu49CA5S
-	wGrmFR0RNt7KtEYBtDBA3w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j704c827-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 08:34:39 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56174nnQ005961;
-	Tue, 1 Jul 2025 08:34:37 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6ugpv19-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 08:34:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H033Jx0PSTRHYWIxCH0KzRp6NOifXOMfif8WPcasrIS3o/9Mq2YTbD0uklQMz+I0yJe4QOpsmmuMTXJLztGL/uPQeVO24kX/Oat3vD9ypfW3O/liGcldFr2kmJIJT0Q/P/ieDpq5Tl9HrBGMaky73jLRkbv+bXQV3t89vQ8jaso949QW8BZ6eSICFVTYIhYkBCo8wD7F1Q8qK/2ATf6R40JgCOfW0iO7MQibchj/DKFTmJM5H8RMRWncC5W364PCrQSmeAppDLNnwQ34nZAe82BGjaT3mh6OMLjW5XYt0fU4MiFkpu3La6vHyX6NDeYjZ6HU4BgsmzlzhAIRhjDE4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SmOqK0/7Zgrc29Kl9ivWg5CUTMKDl48xG1I9heGtyp4=;
- b=uB5LszFKGSwZWAaVJawAjw3BxV75UmuzdBd1SG1SbPoM6a4Xu8Nnsq1+P0avynji8Dsrpg8unxtbgVAmQ4Cif/NsDC9cndIKzwmA1XHqbT4DXYajLR0xPqRWsKgg6g5DXdojY+0jc8gzaaoxZZe1T8oyfg6yJjw+EXx7jQxFTpJjUsItqw11uAfJE+RvLwQ0lEhjojQesZHAie9+4/OzQ+KqpTRZZml1KTSfkSHIfOC89cUN+qxDmfZ2CsWZv4117DTQi/MqryDCcgGJZM9NDLN7VWd/dR2jjq0RAQss9V8gb6H0NMW8nPF+u1Sue1m6Qz2Emkeieja2lI+1V4roXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SmOqK0/7Zgrc29Kl9ivWg5CUTMKDl48xG1I9heGtyp4=;
- b=ZpXbJwSjHDvpsxP1UxUeu0zItrXHUIMdsP1VcrOfIZFHFuzmhJDcrWDd5wokZg/FSKJ4HJuXBWpbRJAy/PIx7yDadcePn6fiLnF9HXI8oKFJ/zNV9N4gpvH+yzCZXw11vS+iKt6Y1TTyAevJLkHjjOof8LzkrTUa8XiksCL5ADU=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH0PR10MB5871.namprd10.prod.outlook.com (2603:10b6:510:149::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 1 Jul
- 2025 08:34:34 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
- 08:34:34 +0000
-Date: Tue, 1 Jul 2025 09:34:32 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
-        willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
-        vbabka@suse.cz, jannh@google.com, anshuman.khandual@arm.com,
-        peterx@redhat.com, joey.gouly@arm.com, ioworker0@gmail.com,
-        baohua@kernel.org, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
-        christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
-        linux-arm-kernel@lists.infradead.org, hughd@google.com,
-        yang@os.amperecomputing.com, ziy@nvidia.com
-Subject: Re: [PATCH v4 2/4] mm: Add batched versions of
- ptep_modify_prot_start/commit
-Message-ID: <e54949b6-3635-4578-b98f-08c029d7796c@lucifer.local>
-References: <20250628113435.46678-1-dev.jain@arm.com>
- <20250628113435.46678-3-dev.jain@arm.com>
- <a305816d-7770-47ec-bb21-1572c7c7783b@lucifer.local>
- <c12e2958-5a51-439d-aa86-e72d85699562@arm.com>
- <23a213b8-280a-4544-a210-7c18a0caf8a9@arm.com>
- <b214edda-4162-47fd-a9e0-c2a4cee3ac88@lucifer.local>
- <3959a598-c7c0-4321-ae2f-f45e5ff144e4@arm.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3959a598-c7c0-4321-ae2f-f45e5ff144e4@arm.com>
-X-ClientProxiedBy: LO4P265CA0165.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:312::8) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0F01FDD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751358882; cv=none; b=RhQnNSLjJ0sHK3MYKpnoSmPhPYejKsswx7eExl9OgXp8+O2wwDafOAhAubdbisty63VQYLV11WCZI3on0rWY0StG7dRh0SE04UfKJYZWKx8aSNM7rV7v1yp1cu6Y5/DM6faJkEsIRyqeLpOGUJzfCNZRWZKvbHh9Py3wxVHItm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751358882; c=relaxed/simple;
+	bh=lbS24cMJ3Oc3OQhNt/DSzGyRJOx2dd6GD9LmhgcNCIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ir1AlOf1Bi9UwVtVOnrpLtS9fU9jg+JBmLAkzJ+cVurMbq8tZqE1WuiC4fhmqESZtLlJ13eZBjwK5LVNo6nRUt6BXf8U1T74JOIFyJYhXWBojtLVCH5MC07JTsVYyOStW1tVfDlwcQ0V94WwVqKpqTi+KFnNKj5VB72PmjcyZdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TrvU4jE2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751358880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XqmCuun4O9S0uzldpDEz2Hy5OKYqaKQE+fhycCpdDZQ=;
+	b=TrvU4jE2sSNKwHtHjRFHdxMtnaGP48GvZwVsdTSdKlku5B+Mwbt4QUvtK+WmrEgXtZA8lp
+	pvm4Ra9r2B9oQZfPUXfWvooSgSk3lxfqTzn+hYPbw89s10+kfthyA+DHKynL6AiT15HCLb
+	2DCz+0WPbK6viRfodCkNKgrKZ6sgjEs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-536-QOmFTm9oNf6F-_rcUfC3dA-1; Tue, 01 Jul 2025 04:34:39 -0400
+X-MC-Unique: QOmFTm9oNf6F-_rcUfC3dA-1
+X-Mimecast-MFC-AGG-ID: QOmFTm9oNf6F-_rcUfC3dA_1751358877
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f6ff23ccso3582948f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 01:34:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751358877; x=1751963677;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XqmCuun4O9S0uzldpDEz2Hy5OKYqaKQE+fhycCpdDZQ=;
+        b=USmbF45HRDHQ9zJe5wihu4Kuhb2qIZhNNp2W9JQzKCftZoBPOlfYBuDK/jJh0W8/H2
+         mIRIldVPgraqQflO836c2gdHD/MvhH7WyOUxYBrdiQ967lusHwPqJDUyRxGti5UFiXvS
+         qQjnT2N7ffZ0lbhobVytVFjRwYaWr86FaxOwaWSYCQuhJq68s1yM9o0kz6fABID7ps3o
+         sUyvTGUYkQ/J1WZApO2PxrxLsZ/WGXW2g7yFX4cjLCS+rlusABpdrnCcgcBU9BXee1xi
+         GrkE0JOubrfo65nNlQkkHGhuOJ0MIyvHszfMU6Qn28NsJIEHG8eXuwz+xffc87SgLf65
+         WhXQ==
+X-Gm-Message-State: AOJu0YwJdvK9aD5u/qcE3Mbrh99TU2FJ9XngcMI2ipQbUxTBMCRG2C03
+	KJPbFWPpkaUtH85YCNrHxJZ/3Kb6zxHurJ/NUYkSMApCtb20/biTkOZL5B62JV7b9N0eTdL86/+
+	TOlxLbyhhICL2pGyMtX2rBg7xNpvwypWXGnFf84R2FXh4LBQ/mvDiVzBCPi48iKT7aQ==
+X-Gm-Gg: ASbGnctv2HutRgO/QJsS9oUxCI0GESOPNjkN24ItTJlc91Id9yig6HMGM9MejYqOhum
+	gB5wvm2PY4b3d7YbXFfKxZacEu3OviaC09+QNnL01gKY91bp42Z/uCgIZBYc7nluG2n0/zsRrca
+	TeihoWT3L0sDHBSgm8CJ0aV8pCDHRxgBKjLfMtGfN1g7xqgp04dHbc8ENj6UJOKLx8m/piMZdUV
+	aTXqOrqrmWVnNLTcyoo5WGozihXe7mrOWhFKCUwTaS1iZtblRCMb4+cjWbqKhfl/3n32F01vRaP
+	EqnuffLQvBqHN6JQjaoBAr2ROcC373ILm6zXE1EJHp3VJtHrTw9xknBsx8V7VT2YPvLLc8hLGt8
+	V0DILFjsY2phC+exg0hHeb3YDFfqFGRrqkyipsAi+FE5ntGkruA==
+X-Received: by 2002:a5d:60c4:0:b0:3a4:d898:3e2d with SMTP id ffacd0b85a97d-3a90d69c269mr11346916f8f.24.1751358877361;
+        Tue, 01 Jul 2025 01:34:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEF8cObrwLhR7FvJoCAh0zan/cCbAjnhUquLcc9ptC1Omlee0lmAh8jtPfZiWWwygYZe4cdqg==
+X-Received: by 2002:a5d:60c4:0:b0:3a4:d898:3e2d with SMTP id ffacd0b85a97d-3a90d69c269mr11346880f8f.24.1751358876846;
+        Tue, 01 Jul 2025 01:34:36 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e5f943sm12511942f8f.101.2025.07.01.01.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 01:34:35 -0700 (PDT)
+Message-ID: <84e1eeeb-c78f-4735-a6d2-4bb15ea1fbce@redhat.com>
+Date: Tue, 1 Jul 2025 10:34:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB5871:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9478e0e-d183-4581-a4b8-08ddb87a1bb6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?bwdiuZJ++124e+TPEoP90yiQl4/9tBUDjb8O8BvULBqRmp956kqDpoipkF?=
- =?iso-8859-1?Q?08nelR4/QsOGh3juwYnO0aqXRckV/Q9D8EZZ/ojjjrJvphTWsEFEgB3yGw?=
- =?iso-8859-1?Q?Ziz7yILcqIMOC6PDlyxGjJ2k8POCYfUnyL9IU/8GSFN3CA8nLDrM/kRd0r?=
- =?iso-8859-1?Q?mfBhAYheohmd2LK6+BX6j2kKK88KJ3ACB8wGkXQRxM5jcr/pq9wc18TNXq?=
- =?iso-8859-1?Q?gbWEAasblSg6qU0rNAD666gA/ntIoHk5ylTA1mCH9GSDU9tfvGuPCGNNgO?=
- =?iso-8859-1?Q?WBWx9E9FUFN0GAcgXVgU1EY/oeKlNqZMD72IJJhgZCUIzh/OwsKLFBzRL6?=
- =?iso-8859-1?Q?WdNpIYefjK6m4D3AGtpOMBsZFVzBlJIrL2XerGYy0Myvhhx/Y8Ja+PifnN?=
- =?iso-8859-1?Q?KK0K2Aarsu0R6p1voeBe3vOjPBrYUWcGLGgKi2sjwEuO7yOEU2bcIC4ZiB?=
- =?iso-8859-1?Q?GW57n4vqhEay9Pb6COgVYLqp4Dsu8h5mUErcn7mhrEXhtcaf6reeIwcMJD?=
- =?iso-8859-1?Q?mEPxlvLlzd3pyy1W4Lcc8nCd1aORc30cTShnfRFfbo6ukPdIq5wYJIfrxj?=
- =?iso-8859-1?Q?TBUoXbxR/6+vO5xsuRi1kuv7nDT1DPdjMRwoqzH0asmtYdtUcSVC9VbSui?=
- =?iso-8859-1?Q?6uR19UFvR0Akdc6mdMzHSFD5jscZ04noTgYrPvalI6utrOG7LxdzmD89U3?=
- =?iso-8859-1?Q?Z8HAcRMg4rHrpFDRkzcHM6djMYMvgBV0BEWI+rv/u5QodbBcGN0Dn+rEx4?=
- =?iso-8859-1?Q?4TSJBIgNt47OSvAJTTEQ3U/phIfFHG/M3nJ4ybmFdu12NklEjBeu3+GisS?=
- =?iso-8859-1?Q?UXZjbKu9qFDg3nNIRwVbo7r+7sMcj6L7K2/rmHPTdb1qNXgxLcVjYDUqsa?=
- =?iso-8859-1?Q?hDBD/ZKqJjl4Rv/p4WZlHUdzUQpW7xcDwViLfkbdZIEgg0ruqPPFRWMYqv?=
- =?iso-8859-1?Q?/XyXiihHRNuXA0PZ6RKVg4N/lgEJY2OpZD/WRyQleZOLFDLQbXWtCJ1XQo?=
- =?iso-8859-1?Q?nFM/QQVNtOWnPCs8QRXH0q5DXsQwIP6812IsmdEczm1nRmNiXFIQEYLgMq?=
- =?iso-8859-1?Q?wHBCCl4Eqi/tG0c3WcyNLCj/trsG81b9ZDGQyikS8to0OTRsqw6SY+4LXB?=
- =?iso-8859-1?Q?NNNai1JhIn5VuA2oZgO6hintws1Sz43dVYaSds9ptJ0j4N+c4X+zzhw9Ds?=
- =?iso-8859-1?Q?4lRMQD3wdyQk660jzDeivd9d+DfMWxFhjtuU6j8tMXWcH5knhoFTOj1GAL?=
- =?iso-8859-1?Q?jXShVLc5+TUEFHkQ9AUYce53kWdmLgn6Ws443OSnxrNhOMiBgPwV8YhkEw?=
- =?iso-8859-1?Q?oeS/PpJie7ITSGEI9VbJp6CMgvyW7ym7AIjNO+75KJAc9x0jB7jWs8YnSV?=
- =?iso-8859-1?Q?44LfHRd4WqQQFrZAiGwN2ftPoJmtoX7kDuiW1dahDb8LBPcpvL3Qor5u0E?=
- =?iso-8859-1?Q?dYos7xXIr6A6TvucjCwbjtqnLdMH5e7t9f7qHg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?l5xTzSEx810aQ53DEJ/PM3uw7GH97olPM/Jtu+IInU5xE0QiRcm16OlARH?=
- =?iso-8859-1?Q?wDoTm2euhfhke3fb+lK/+wE1XbvxYHju3p209FTBccp9fLjWgTO7vIewcg?=
- =?iso-8859-1?Q?kYBhKchyz6YPvFybHwYwsXXdkC7SbBZWnm3XlNmyrFACsM31eA2Ie0xBGk?=
- =?iso-8859-1?Q?Pv6fi4K1p4OyoP67lilItFmdMrL2YcxEUxGohSQhyfpa3cVelLZInYx+Za?=
- =?iso-8859-1?Q?aUl5RKdd7FfzfDanWlz5IzjqtYEkc87h1+bAxSow1uC6TwBcf5Eydx1vf4?=
- =?iso-8859-1?Q?iAYjboG+e0cy7PynNyrktvAp1NKy23y+TyGUBXdLhoGvIxPgZxWqUnkL64?=
- =?iso-8859-1?Q?JnBT5eaI49qBLiUJzGvqrmp9WyUBE4k0aa4oJy4Pz/DXHnEx+II4P96IZH?=
- =?iso-8859-1?Q?NhZnLt8A4M7eiGtVwY37HgPVyMbYSqVfdtMedc7w3c2YA2imiEFZyiJFbY?=
- =?iso-8859-1?Q?QWbaxENQ56AYTXr/NBbH9FgxHErSywwAPc5JUmEF1XIXS+HTWT/+wFXcIM?=
- =?iso-8859-1?Q?icdTUqq40dMCbe6mh3FpTG5D/F66Tupa9qerqDi9Q22STtWquzq5cdaWgy?=
- =?iso-8859-1?Q?33KyNnVgkNKzmgpv+VY1466K+PzbI/vVS02tHgaymZ97Wz9EuWe4RihYnX?=
- =?iso-8859-1?Q?StlWOB7hVO8nXQDt1W88NxQoSKcLOCD/2QBSJNZZeC070M3Hovm9q2Cw1M?=
- =?iso-8859-1?Q?7umR+T5E0+201hFf/jXo8hhM7dhCoveUMP6AyvNx6DhakBK5EAi/VCbXbo?=
- =?iso-8859-1?Q?yaRmcl1b9M6V7eaJM8/sZUAoX4CISwNlstKMfCQlYuALNSwhCm06H89ZwL?=
- =?iso-8859-1?Q?5BAh26xV/D6sNuWaXY3GD6ss13abiKUfDhJlVOR8O2PrjnSWCol8PPMEsA?=
- =?iso-8859-1?Q?iCvC1z6vqmAG0syXLe/cMwpWwRyPucPNpXnjIiUcpnyDyQ1s/HJZPK3OzR?=
- =?iso-8859-1?Q?fnp0+NgCn/w4by66YqvYtfGD02e4yUTiz8FRTpUX2LbxAHO/rJ/i/UUsiS?=
- =?iso-8859-1?Q?vSoQ7i9iTJIXX2rMHWqdgygfW2QdhonARBBToAEdb0S4WkEWOanAoJQR3K?=
- =?iso-8859-1?Q?ZxnfCf+SmbG03s/+B8co4yhrrdWaZuRpuXyc9F73lLeFLdZNw+2KqlAs4h?=
- =?iso-8859-1?Q?24ZIt/1AdJDAwl6JuPETBr+bBhy5M/upuYkS0MVWaP0FwTQ/cTCK1PqCEG?=
- =?iso-8859-1?Q?UsVcWpDzWJMMR9eKn5mvr64NUHs4WSSj4q76urup60W7zLpe9uxT57+rkL?=
- =?iso-8859-1?Q?ABpkYTHzjdj4olGonyZoGDyswg/6ZNSnKOMdnqKmcqGtCHT4j0SirfHMk+?=
- =?iso-8859-1?Q?V5n8Zxmw5TWigenesZIZYfXuOvD4a3An1pNhRxl+W/tLPP4ojeWZmFwUOW?=
- =?iso-8859-1?Q?xmCo3XcWHZbngrPenrQO9nVaFv5HPJydyT51v86NyBgpm+eqkd7dh+mX90?=
- =?iso-8859-1?Q?95DKNgz9X+8u0Hdg8TaK6huyeFMXRN+shtfVUbLvk3u9l764HwsH4TwNOp?=
- =?iso-8859-1?Q?e8rqf2hvsww+VbtyhzLdIJW157LBInMzrc/kQ8/+zEs664w8d0/bd4XMni?=
- =?iso-8859-1?Q?fIEDDIENeUN9DKyenAkvvN8UrsdK8QH9MXXiOKqXeyCE0uD0lfw32dwJzJ?=
- =?iso-8859-1?Q?ySYCStxsb9W6Su/s6ReOVAcuvOzQEkPFvfS498KXY8OJL2trWT3Ubm/Q?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	WDuW4hM9P4QXo+CfYEvsHSV6Yj1o55eXF58Hp6pKDYoL/8oymrdDk2mcdA6kNO0npVHTuOrMIDCl3Wvh5csQ265PvJnsNpgrgEdoICQumGIdFLYF2ajzIOGPuqepcK7TsFvFh5feYSXjpNq+cMXKjfjzmV+nH5DrTmpDNvfmsdiDS/G/9JLfiC7+Uj7R5ULKxf42QMAVQS6SJGx7pXqU+VmSvNYtIJIa7x0fPcIpsbwyPiI+cbAVk3Y05uujh2cX4uX7r/2Bjezco8scqZTQx0EJQ9fzj0H+CClGmIzGGa+WMIHnPAfJKmtqrFUqbe2+POlcZBkXxpQU2A4sG5u/XYdPZWuS+hx+8pgt5zlrFyvhA7kPuDjXNTIWW5pa7Z0KNdW34pJpcHhJ37Ot+6HJOhgvx0pR4JgTBcqpmrnCjCP8n7McaDxKBmDQ93uAqEmplBRZNY2i7aFHoWejdpR2+98S0XQV2NJxC43U2X49wKWnipbOKnsyJCClfvCeQ4VObfIY51M36YhofZjdLbN9rfSkeL6cjOQQ2cOzwaHXLO0jINrD+3/TcqNb+BTVFskRh1SlcaWSENAwYaJUKAFMO8kIPpK6igRA6rsynbNFkA0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9478e0e-d183-4581-a4b8-08ddb87a1bb6
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 08:34:34.7545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rvtGbhFj5RpZbyILNOlabc519DePpfSEhTIRbrAysQf99mtK2l5ySZVjR7ZAQjFd13OHlK0FBPLfD2hW1nE7ZJDkmNVA505V1+QOsBlbUK0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5871
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507010049
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA0OSBTYWx0ZWRfXwkbzWhkDN2Y1 LFM3a3ea1bUNsSFk9N87EDvep901TakAdRXOzgJjjZQ0sE91seImgT+cLB2wfNzW1OplB17mFSD weBiZMUd/uW/oZsvu0F5k/Cf0Nrv6ciaQp0kjvMp4qHbyKEaWL4CiCXGYJsXrbDKduL0/qqpgsf
- P3laDFGYjPC38ZwlkwMtSOnWU22MG1vlWf5o3K3eKLv5SbNS5nzwrZ28ZveYP15Py4MVqf5iL1G d9Zx1RF2wOSJdtbMNH/LkQ1urXfbTgq+ekVJMz8oN1STK5uEAdMbFi6XMnE63ui4NxUFBPwh5Yj EJ8FHLfIsnP01NJjMgamkNyBPUuGt3DomiXgvUm2MBR9cdyuLUuEX4Zltj379AeRFKUowGmQoC6
- pU2KAd54HX7aT34CEN5T8ZsYkiWECRBDlsCtpcCyKWbixp+diOSDIocWOeucgs3kADggTtqa
-X-Authority-Analysis: v=2.4 cv=LcU86ifi c=1 sm=1 tr=0 ts=68639d9f b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=tngGr7c-m90JZK_C6tkA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 cc=ntf awl=host:13215
-X-Proofpoint-GUID: 9hws4dcbAHH2ePB2xpLwWRnWnX5b6ULD
-X-Proofpoint-ORIG-GUID: 9hws4dcbAHH2ePB2xpLwWRnWnX5b6ULD
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 04/29] mm/page_alloc: let page freeing clear any set
+ page type
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin
+ <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-5-david@redhat.com>
+ <8c5392d6-372c-4d5d-8446-6af48fba4548@lucifer.local>
+ <d4d8b891-008d-4cbc-950f-2e44c4445904@redhat.com>
+ <06e260cf-9b63-4d7c-809c-a9f2cda58939@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <06e260cf-9b63-4d7c-809c-a9f2cda58939@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 01, 2025 at 09:23:05AM +0100, Ryan Roberts wrote:
-> >>>>> +#ifndef modify_prot_commit_ptes
-> >>>>> +static inline void modify_prot_commit_ptes(struct vm_area_struct *vma,
-> >>>>> unsigned long addr,
-> >>>>> +        pte_t *ptep, pte_t old_pte, pte_t pte, unsigned int nr)
-> >>>>> +{
-> >>>>> +    int i;
-> >>>>> +
-> >>>>> +    for (i = 0; i < nr; ++i) {
-> >>>>> +        ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
-> >>>>> +        ptep++;
-> >>>> Weird place to put this increment, maybe just stick it in the for loop.
-> >>>>
-> >>>>> +        addr += PAGE_SIZE;
-> >>>> Same comment here.
-> >>>
-> >>> Sure.
-> >>>
-> >>>>
-> >>>>> +        old_pte = pte_next_pfn(old_pte);
-> >>>> Could be:
-> >>>>
-> >>>>         old_pte = pte;
-> >>>>
-> >>>> No?
-> >>>
-> >>> We will need to update old_pte also since that
-> >>> is used by powerpc in radix__ptep_modify_prot_commit().
-> >>
-> >> I think perhaps Lorenzo has the model in his head where old_pte is the previous
-> >> pte in the batch. That's not the case. old_pte is the value of the pte in the
-> >> current position of the batch before any changes were made. pte is the new value
-> >> for the pte. So we need to expliticly advance the PFN in both old_pte and pte
-> >> each iteration round the loop.
-> >
-> > Yeah, you're right, apologies, I'd misinterpreted.
-> >
-> > I really, really, really hate how all this is implemented. This is obviously an
-> > mprotect() and legacy thing but it's almost designed for confusion. Not the
-> > fault of this series, and todo++ on improving mprotect as a whole (been on my
-> > list for a while...)
->
-> Agreed. I struggled for a long time with some of the pgtable helper abstractions
-> to the arch and all the assumptions they make. But ultimately all Dev is trying
-> to do here is make some incremental improvements, following the established
-> patterns. Hopefully you agree that cleanups on a larger scale should be reserved
-> for a systematic, focussed series.
+On 01.07.25 10:27, Lorenzo Stoakes wrote:
+> On Tue, Jul 01, 2025 at 10:17:13AM +0200, David Hildenbrand wrote:
+>> On 30.06.25 17:27, Lorenzo Stoakes wrote:
+>>> On Mon, Jun 30, 2025 at 02:59:45PM +0200, David Hildenbrand wrote:
+>>>> Currently, any user of page types must clear that type before freeing
+>>>> a page back to the buddy, otherwise we'll run into mapcount related
+>>>> sanity checks (because the page type currently overlays the page
+>>>> mapcount).
+>>>>
+>>>> Let's allow for not clearing the page type by page type users by letting
+>>>> the buddy handle it instead.
+>>>>
+>>>> We'll focus on having a page type set on the first page of a larger
+>>>> allocation only.
+>>>>
+>>>> With this change, we can reliably identify typed folios even though
+>>>> they might be in the process of getting freed, which will come in handy
+>>>> in migration code (at least in the transition phase).
+>>>>
+>>>> In the future we might want to warn on some page types. Instead of
+>>>> having an "allow list", let's rather wait until we know about once that
+>>>> should go on such a "disallow list".
+>>>
+>>> Is the idea here to get this to show up on folio dumps or?
+>>
+>> As part of the netmem_desc series, there was a discussion about removing the
+>> mystical PP checks -- page_pool_page_is_pp() in page_alloc.c and replacing
+>> them by a proper page type check.
+>>
+>> In that case, we would probably want to warn in case we get such a netmem
+>> page unexpectedly freed.
+>>
+>> But, that page type does not exist yet in code, so the sanity check must be
+>> added once introduced.
+> 
+> OK, and I realise that the UINT_MAX thing is a convention for how a reset
+> page_type looks anyway now.
+> 
+>>
+>>>
+>>>>
+>>>> Reviewed-by: Zi Yan <ziy@nvidia.com>
+>>>> Acked-by: Harry Yoo <harry.yoo@oracle.com>
+>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>> ---
+>>>>    mm/page_alloc.c | 3 +++
+>>>>    1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>> index 858bc17653af9..44e56d31cfeb1 100644
+>>>> --- a/mm/page_alloc.c
+>>>> +++ b/mm/page_alloc.c
+>>>> @@ -1380,6 +1380,9 @@ __always_inline bool free_pages_prepare(struct page *page,
+>>>>    			mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+>>>>    		page->mapping = NULL;
+>>>>    	}
+>>>> +	if (unlikely(page_has_type(page)))
+>>>> +		page->page_type = UINT_MAX;
+>>>
+>>> Feels like this could do with a comment!
+>>
+>> /* Reset the page_type -> _mapcount to -1 */
+> 
+> Hm this feels like saying 'the reason we set it to -1 is to set it to -1' :P
 
-Totally agree, when I mention my distaste for existing logic, see those as
-asides, I'm not asking the series to be blocked until that's fixed :)
+Bingo! Guess why I didn't add a comment in the first place :P
 
-I'm happy for us to take Dev's changes obviously once review issues are
-resolved.
+> 
+> I'd be fine with something simple like
+> 
+> /* Set page_type to reset value */
 
-I think my suggestion below helps get us to a good compromise (modulo
-mm's beautifully overloaded/confusing use of terminology :>)
+"Reset the page_type (which overlays _mapcount)"
 
->
-> >
-> > So we're ultimately updating ptep (this thing that we update, of course, is
-> > buried in the middle of the function invocation) in:
-> >
-> > 	ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
-> >
-> > We are setting *ptep++ = pte essentially (roughly speaking) right?
->
-> Yeah, pretty much.
->
-> The API was originally created for Xen IIRC. The problem is that the HW can
-> update the A/D bits asynchronously if the PTE is valid (from the HW perspective)
-> so the previous approach was to get_and_clear (atomic), modify, write. But that
-> required 2 Xen hypervisor calls per PTE. This start/commit approach allows Xen
-> to both avoid the get_and_clear() and batch the writes for all PTEs in a lazy
-> mmu batch. So hypervisor calls are reduced from 2 per PTE to 1 per lazy mmu
-> batch. TBH I'm no Xen expert; some of those details may be off, but big picture
-> is correct.
+?
 
-Yeah, here we go again with some horror show stuff on Xen's behalf. I've played
-Half Life, so I already know to fear Xen ;)
+ > > But... Can't we just put a #define somewhere here to make life 
+easy? Like:
 
-I believe David has _thoughts_ on this :)
+Given that Willy will change all that soon, I'm not in favor of doing 
+that in this series.
 
-Again this is aside stuff.
+-- 
+Cheers,
 
->
-> Anyway, arm64 doesn't care about any of that, but it does override
-> ptep_modify_prot_start() / ptep_modify_prot_commit() to implement an erratum
-> workaround. And it can benefit substantially from batching.
+David / dhildenb
 
-Ack. And of course, the batching part is why we're all here!
-
->
-> >
-> > And the arch needs to know about any bits that have changed I guess hence
-> > providing old_pte as well right?
-> >
-> > OK so yeah, I get it now, we're not actually advancing through ptes here, we're
-> > just advancing the PFN and applying the same 'template'.
-> >
-> > How about something like:
-> >
-> > static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned long addr,
-> > 	       pte_t *ptep, pte_t old_pte, pte_t pte, unsigned int nr)
-> > {
-> > 	int i;
-> >
-> > 	for (i = 0; i < nr; i++, ptep++, addr += PAGE_SIZE) {
-> > 		ptep_modify_prot_commit(vma, addr, ptep, old_pte, pte);
-> >
-> > 		/* Advance PFN only, set same flags. */
-> > 		old_pte = pte_next_pfn(old_pte);
-> > 		pte = pte_next_pfn(pte);
-> > 	}
-> > }
-> >
-> > Neatens it up a bit and makes it clear that we're effectively propagating the
-> > flags here.
->
-> Yes, except we don't usually refer to the non-pfn parts of a pte as "flags". We
-> normally call them pgprot or prot. God knows why...
-
-Ah of course we love to do this kind of thing to oursevles :>)
-
-Dev - suggestion above then but s/flags/prot/.
 
