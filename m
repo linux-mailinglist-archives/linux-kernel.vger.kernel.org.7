@@ -1,277 +1,727 @@
-Return-Path: <linux-kernel+bounces-711843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8262AAF0053
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9FDAF007B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D59967A64EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:43:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36401C01E2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330E228153D;
-	Tue,  1 Jul 2025 16:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5D27F003;
+	Tue,  1 Jul 2025 16:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XJTEyzYp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLe0aiJM"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6EF28152F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751388144; cv=fail; b=lNj6SkKpMkClXJ5Ay6/6ULAZVuSZsTpd9cq/WgZ9VWmsRThmumSrgDmdOtg2mz++IIIYpePU3GOd5GgEng3wHIfBe3k32MzLGkwfPlglP2MkSQo2XIp2MKmnSolkEGdFLV85M6bfPKxGgv4uT5kXOH87LAlNIalrE6yf+UkITFo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751388144; c=relaxed/simple;
-	bh=Acp+zR4qxi/5e+V7bQCK8tulljr2z8kD9zK/Q19C0N8=;
-	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rm8r1jhW7vqwMfYhl4kQ8jE/V0QKN5lnP9LvbdwxRGdwNT86/Qd8zXVo33FXWNR7igP/laKZjEfMdnMEJKRqDgLADP5sZcBjwSsNSxroBgnw2v6J9n0I2OclmR+dA0MRDApLZcLdC94kdaDcjwVMDnzsSCWTeh6UVqcuL7o2EhA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XJTEyzYp; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751388143; x=1782924143;
-  h=message-id:date:subject:from:to:cc:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Acp+zR4qxi/5e+V7bQCK8tulljr2z8kD9zK/Q19C0N8=;
-  b=XJTEyzYpfnpOoH+f9tJcwWm2oJIrrqalLWJ2TxumU8weCd40XF0fVAu6
-   bhzxZDktAaMZlxvVGHbpkJkfzTf4FfrNVwX2o0FHzKRXGCQpNT32Pyr1Y
-   K7AQMfLedae1w+JBVK/GZDBYqQrmANmmw0I7r+NyLzICShLNbsn2JHCAG
-   BLmCu383OLVC0FnUppI2t+655EIwTvMEslEgwIIVJPddzJovWH7HnsX+m
-   7HRb0zM6fAgnWr3oruK1htyUjxu62KNwEM5niE7ZGLu+iAEKA3SJCYVqW
-   vGE/1Kle2V5V/T86FFs8sqbvZcRO7y/YudnAfy0xLxnv5cTzHnMDCMpVa
-   w==;
-X-CSE-ConnectionGUID: S2P7m+U8SOOSnF3RMuTa3g==
-X-CSE-MsgGUID: BHdXXCL7Tdqt02t7cEvzKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53785520"
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="53785520"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 09:42:23 -0700
-X-CSE-ConnectionGUID: 0q1Y5gTcTt6mIJbB/4tNXA==
-X-CSE-MsgGUID: iT1bxF6FTgOrxrj7NMzuow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="153289702"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 09:42:22 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 1 Jul 2025 09:42:21 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 1 Jul 2025 09:42:21 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.82)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 1 Jul 2025 09:42:20 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eWG3+W/fAXMc09KHEnxJO2AyalkT/5b3tnfALVaq8Wucevjcxuyr9LRHffCypnox6uhzsXbMsVgMGYjrEPzHNcRrBNPEYJON/lW9eHOue/Vdnqh9xHwjaNT8HeeSUHyfCk9+LVPPihzRbeTlIlJtMLzM1aixDBQESuXuVqi+1hs67/AOPaOH+c5Zlmchdv1eMWAbbFkSuUyz64IHPhG82X50EWr9BpebIaV2n/RRD/namfUvcqUqZ1CDY0AWbGpEryr/o89BCWCr6O9Bc4E1a1E7m2MxjDaiE2iDMJppbrsN4qInvqU6pvdxQF/WexgR3a0TkjQovmujrRQ+x9Evbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P1J84qo4O25m3jeFP1A0JkzrYcD1qkGVALe2H47eewk=;
- b=AeCuVsfhcLxNyXCMi3z2+glWtVcCHTsLJtEfpKSEXw7f5RcJPSlP0eLXwsBEoVk3rT/ZwnMloz/3RZ8ZMkbQSdqWFirSs+MyCxsDEQnptbC7TxPSwALC4BS9e/vYL7+JyP1XNzdbP66m58nqXtYzk4XtgRezhT3JM7I2k9HgsxYPEgphZewfeQPph0R5flqyNbXZpXhtgRRXdCmPkBWgbI8Cor2Jb56Q0lRniLC+BBH5J0+CscOQdYZm265euwcRgUkhk/U73CXv5MiJlLUae+b6ckj5w2ziU5SgqT1D5eH+e+1hvSl4EOpfT3agu/nxwdlSPWc0W4Fs9DY4inJstg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
- by PH7PR11MB7002.namprd11.prod.outlook.com (2603:10b6:510:209::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.29; Tue, 1 Jul
- 2025 16:42:05 +0000
-Received: from BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
- ([fe80::13bd:eb49:2046:32a9%4]) with mapi id 15.20.8880.015; Tue, 1 Jul 2025
- 16:42:04 +0000
-Message-ID: <c48b565e-73c9-4222-83b6-dc3597427db6@intel.com>
-Date: Tue, 1 Jul 2025 22:11:54 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/10] mei: late_bind: add late binding component
- driver
-From: "Nilawar, Badal" <badal.nilawar@intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <anshuman.gupta@intel.com>,
-	<rodrigo.vivi@intel.com>, <daniele.ceraolospurio@intel.com>
-References: <20250625170015.33912-1-badal.nilawar@intel.com>
- <20250625170015.33912-3-badal.nilawar@intel.com>
- <2025062834-scraggly-barracuda-7ea6@gregkh>
- <205cc43a-4254-4d27-9b4f-139006e871e4@intel.com>
- <2025070140-dad-jaywalker-0774@gregkh>
- <eab7307a-d6a2-402b-945b-674e9c5f608b@intel.com>
-Content-Language: en-US
-In-Reply-To: <eab7307a-d6a2-402b-945b-674e9c5f608b@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0047.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:81::18) To BN9PR11MB5530.namprd11.prod.outlook.com
- (2603:10b6:408:103::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFF427EFFC;
+	Tue,  1 Jul 2025 16:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751388124; cv=none; b=f1Pgt+5Zq1pAFu3y812ay4E19ko/hYaPAqyuXDNrrudNvTbah80Q7IizNpg26Q0Nah3FOKY9iIiPpgHgfHD52D8D09+w4P/UgwGuGQtfr1tltJ2CnCz5JA+TP9xwBX27R2dzIIQJ/GDw459Y13oYN/OcGY0MAnFSw9jaAuiq6iM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751388124; c=relaxed/simple;
+	bh=tlqFb4QzT+Towoppgk8fZUq986S05txLx2SiV+Ig3Xw=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=tajsjJVDeBUHcItHejA8VEZUncSL7sot1d01V1T7DYkxez+LJCka89aBsn9OVx4WSF1DSod2LdMi2k92cg8G0XIXfwaUrrATz9T58fFRB38wcy37tdxrTZaptpHY9PHigo0CZGbDhJ8SLd0CqXHFPY5i1WZEr8FUZ3VwMHN8NyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLe0aiJM; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-879d2e419b9so4502735a12.2;
+        Tue, 01 Jul 2025 09:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751388121; x=1751992921; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mYm//X2c6CkzKqiHcfSRati5sKR2t9EkIij8w256a4=;
+        b=RLe0aiJMLzGm5kM2OlmY+nEpbht0SdYsvibkFFA0q5L3z7zWxv32cGUorfLhkIjSK8
+         Pv5oP2E2dpzXd5sEFY0IyPb0qn6ZBbi1g1Pn9Fi4r5PzKO/hrPCFZj+4ZOnqITi5gOUO
+         SaDSJfrYesmoQpmaA+6UAgBBhWWL1KpZXpX4Ijc0EMHNTaUmvyZU2y252cRiEZ6MHjkI
+         rZ4/FBl3zBuGS1VeuLX689AVn34TgN/br0Vzz0gq13fd57Jk/Mecdw+0UIqL5rcjT2kH
+         /tIj6msCeWaJdb4ASddIiFsOihv25i+AsyK+7QHKLDRk/QAWyFIv6WOGwfHtGCGJzNKY
+         3k5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751388121; x=1751992921;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mYm//X2c6CkzKqiHcfSRati5sKR2t9EkIij8w256a4=;
+        b=nxWYGhEwFoIyB1ge5ARfv/LYlbbGeQJ4ncpZLSBe6Gi9zm0vUudusNpwvalg4kj/qn
+         9sVBc0Hxj2DHQ3NEUI3EnS01eicafrjOSk/wO4z+T8+8/jyn3YGB3fnE3g5qjfUgGpdh
+         eocdOMug2k+GbP15VfxGrz1NvPiWQECkJ4t6gfVkhbmsuH/52VloqYAhgd9hUebKviRJ
+         ZUGhoWmEtrUdHjXrBXIrK223kTztviD+Rvw7mbuQyIoJsuaveDo+v+dzBph5F7BYawv3
+         UHDnYzuAIOmKp1rKIM1SQ+AXssr+9yK8bO2nWSeKlSmJcZ4dQypwjHEhAdz8LMTNPvWq
+         DdSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUH+sw3+sJVpc6gvhp6c9BIn+17IpBD7nNW04Z5EYpVDWYQPSV0QV2Gm02IzDDHhLs7tv7ihX5wtYK+wcn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxera1lDLy1K9Y41qO7k1iBl2XzvMHmq7fByz9KMxp1MDhyXeLP
+	DmFv+iNHHI1qkKGugJHGOhcF1YsXQm2epnJUR4ppUMdDeYfvWiVkaX8FBpG+sbtXo9U=
+X-Gm-Gg: ASbGnctdKydkEuynjuGIiD5YDZYWuyTG/LxXIv4bkK1l1OAD/DQfL75asSj3TThAhr5
+	jEsN9y+XBs+YVk64/oNxuxWA0Xa8XyX463Y2d5QzFn/KLOJbtHPmFlABIOWUY1dvYsmmrmrK1Km
+	Dvyu4I6YSaC0/IOwyDnPKLvypnZfRjjSVV+xcUZXzZxqQNoHeQ82uiOZsdLvP4GyERRldFFpEGj
+	ejPO9AZoqRzIZI7XWzzXg4FJQmEPULqnoyprC44DAUIyKu8vX+N1irbMngjtMbiT16T9b7EgPi2
+	pc1kA+l3X6M7OBee6rU5Z1UTsyPOw0y8T3+dpnWPorco0zu4Px88hXPiLlqFBIgVkdT4
+X-Google-Smtp-Source: AGHT+IHO1dTGdlVTU1BebulDjAokrYLwCj9i6Gj58S1syZ7ML8XWTp+jJJ9tJAIex4AtP//ukAVxwA==
+X-Received: by 2002:a05:6a21:1505:b0:218:96ad:720d with SMTP id adf61e73a8af0-220a1277230mr25572415637.1.1751388120796;
+        Tue, 01 Jul 2025 09:42:00 -0700 (PDT)
+Received: from [192.168.1.12] ([223.185.43.246])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3205b3dsm10782664a12.78.2025.07.01.09.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 09:42:00 -0700 (PDT)
+Message-ID: <9052e70eb1cf8571c1b37bb0cee19aaada7dfe3d.camel@gmail.com>
+Subject: [BUG] KASAN: slab-out-of-bounds in vsnprintf triggered by large
+ stack frame
+From: Shardul Bankar <shardulsb08@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de, 
+	senozhatsky@chromium.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org
+Date: Tue, 01 Jul 2025 22:11:55 +0530
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|PH7PR11MB7002:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5119646-2021-46f8-14d4-08ddb8be35fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?TUpEZ1hpdkovMk5HRnNvUDhqWmNUSFNSTUFWMDZNd0Q5RDNSd2xncGxEWmJx?=
- =?utf-8?B?M3JmREJyUzFxMkpqc3VTcFV2dzg2b2VRQlJ3c3pxWnV1ZGJPVysxVGh3TEtH?=
- =?utf-8?B?Mjd3ejNvOTNxbXRNT0FmdS83aFJhUnhFOGJ1ZnRtR1pZM3Mxb1EyeEJmaDhI?=
- =?utf-8?B?MXFMZzZ2Sm5QZjBxSXNYNUZYbkJXUHNTd3I3OUFRWU5oSzllQ0dGQ2IxQmpX?=
- =?utf-8?B?bUdURnlUa0V4RWQyek9EZmRucUJESVNDYlh1OUs5azcrY3E5eWJtbzA2dTlG?=
- =?utf-8?B?U2lUNDFoZ0diRmo4UnphbEx0OG5HNHFOcE9PUGo0MSt1NmlURm0xSy93dlFF?=
- =?utf-8?B?WUFBbXE1dmZYSjhyeGRsTzI4UTkzNXJBZzRIM1ZGTWdYQkk0ZjIxYlB5MENo?=
- =?utf-8?B?QWRlNUc4aVVmUmw4S3ZtNi9OODVOYmxtVG1tbEo0dGt3ZDNiQ1BtT3F4aVI4?=
- =?utf-8?B?ZTFEdDNXcXhFSmM5UnFhbXA5bVpkNXpMYUVuUTkrOW53VUJmeDNzSmRIYVNU?=
- =?utf-8?B?TWphaGZQNHdqaG1ZLys1bjVUTEZ0Zi83QkF6U3ArbjRqK2dJeFB2ZHAvT2Vw?=
- =?utf-8?B?UnBTTVlPd1BtLy9mSkNINE04MmIvZFRQNzNaUEU0TjJiWHFGYkMwc3BoU0Ex?=
- =?utf-8?B?VHh4a0J2NkVFdGMzMEhyTzlSS0ZNODhmVkE4cERlMElvb2ZMU0RGNUVNZHZK?=
- =?utf-8?B?dkc3a2tQUDY3dzZkeU96K1hYTzJVVWY2YWdhUFBPV1kweFp6Q05QeTNtTmhY?=
- =?utf-8?B?SzNmSWJqVEFEaHRSbEk4WjdjV1pPeE5ScWdWU3RsUWs2dEhLYXJZRnVDYk1G?=
- =?utf-8?B?WjJta3ZmS1pzZFZKME5QQ3krZDRLQis4SGZWQ2g5TTBHaEVhdDVVTzViQm5X?=
- =?utf-8?B?ZGhqOC8zcVJQWjEyOW94Umc3enBPVHVZZkdvU1B4ZjM0U2lIb0JXR0h4VWds?=
- =?utf-8?B?a2N1WEVQOXk0MnhVYk1Wb3B4dmdFRzUvMjFmVVJnbWxQL0I2MDFwWkZkR2cr?=
- =?utf-8?B?eW1paHJ2VjZpRGJIa0tqL2IxUVVKVTBBSEJYcGVMUDZjbjQwcDhiS280YU5N?=
- =?utf-8?B?VEhOenpLKzQvN0d1UUFMVVYrRW9ORFJDbUZ3YkJuWS9PcjVjSGJHV1kwUWNF?=
- =?utf-8?B?WFNCWkxaOGRocGFsM3IzMkttd3lPczgvS0xlZGxiZk5UR0R5UjE2a0Z1UHVV?=
- =?utf-8?B?R0RlSDNrRTRLNGhIcUF6ZmZFVFVnejE2Mm9OUmdoY09RRVdQWlNMLy9lOEFE?=
- =?utf-8?B?NU9KRXc2TzhvL2xqcDc1dmN4aXdjTFhNTDFla2lXZGVscWZ5Z3V5Ynp4M3FT?=
- =?utf-8?B?VGZubHZqOFNUZ3NMSUQ2RnIzNXV1enVJdnNpcVpzTUlPSDdjL0Ftek15dHk2?=
- =?utf-8?B?d0g3WFh3NTcyZUJaTjJHTlgrZDNnQnUycDJCMitKdjVhek5MbGl4YXd6OG9T?=
- =?utf-8?B?cmtvTW04Q2w1U2JyMFFDNmdON29GZU40amJ4YWhrOWFVU3J6K0tBUFlZekVS?=
- =?utf-8?B?bHVrbFdjbzJvWHpWUmdKaUQrM0xHTlJ3SDN1dTJTV1BobzNlbnVnSWNiZm44?=
- =?utf-8?B?K25vTXlLZ1lMQ0xhWU9WbGVmUExqWDhYRHlsc1EzM2tkQXZ5Z05jUjRZRkxo?=
- =?utf-8?B?dnJTUThkemplWjJMeUFkMHV6WTlEQ2hHS2NFTGJnQ2FRTW9Sb1RiVzFnZnZo?=
- =?utf-8?B?U09IREo0N1NKYWRLRTRmSGtkcDVNVnhwam1UZDNwTk5KVE9kVC9HdmErNWVn?=
- =?utf-8?B?bEZEUkFFODdJOTcyL0VjMmNnU2prSjBzTjZNSXhNc3ZEVDRDaTdFVUo4TzZp?=
- =?utf-8?B?Nlh3UXUzc2p5S0ZIZjZoMG9VN2NVdmhDejg1cWZ1dEdJQVllclY0bWVaaWJa?=
- =?utf-8?B?NnJBenkzbzYxc05aNDhjVUp3NWpQMm80M1BzazdzSFBTdVZUSlJVc1BlWXZp?=
- =?utf-8?Q?BhQopGFBu9w=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZXN4dld3SGFQbXV2dStrd0UzNnJTR2dSTVBqaStCbi80bFRwS05JcVN6RVdj?=
- =?utf-8?B?R0xHakVvMENHcnlUVGJhaGRsMnFHeUJ2NUJBVHFyQzV0OU11Q0dWY1hGNEgz?=
- =?utf-8?B?MWt5cWtZK1B6UzNsOHo1eVpGK1FqNFM4SnRRYWtUUEtCYmwyVmdZRTF2WUNt?=
- =?utf-8?B?cktQQWRqWFZ2a1pNdDFsTWpBMkdwVWJycGovREg5alBjZCtoVjZBbjgxUjEz?=
- =?utf-8?B?MUhQTE4yaGJ4a0ZLUGY5T0d5VllmUGtkSC9KSGhiMVJZQndtOVdXNGJTMWRj?=
- =?utf-8?B?ZmcxVGxudURyNlRSNVNPcy9tcFRSZVRadGYzcmx2T3djS3loRUorY05nNHMy?=
- =?utf-8?B?VEI4MmloVm14dGUyZlFESVVRekt3Z0NUQ3FVK29BcU5Nb0xNcDBvc1dQZHhT?=
- =?utf-8?B?QmNTUkdFVDE3QW9Fd3kzQlNtTGtQUVV2dGhycTVGVVp2YUdvUCtlNzN5MUxO?=
- =?utf-8?B?eUFKK3NyQ252clA5dHllb2FFdXV5UFlSdDFTL3ZQREpUNGFndHdPandZbitO?=
- =?utf-8?B?WWVDVHdlMWlHcHZpd1dSM3dLdVBGblg5K2RWS1VPT2thNmxUaTQ2WmpZYWdB?=
- =?utf-8?B?dkFWSmN0TVE1MTQzaGZKWXcvMnRvcVRpWkUybGxtd01TejNEWE03VStSQ04v?=
- =?utf-8?B?NDRkbTA0dzhmM0Q3ZnozcTRLZWgwa1ZPdVBhYWdyLzhjYlYvaVBNOVlWTjNp?=
- =?utf-8?B?ZG42VDdPWS9XTWo3d0tubG4rU3hOUFNMcXM4QWh0UkhHUHRUcnp2djBQZENO?=
- =?utf-8?B?d3BZTlh3Q1h0UmhHYkhqTXZCSWNZSTg5T25STnRMTVVRWGdxaFFMRmwzWSsr?=
- =?utf-8?B?SGZlZng5THp3T3BmZFhUc2ZaTFJLaEVITkkrcjBkczl1eG81NU9kYWhTQWFN?=
- =?utf-8?B?bVNyTnNYMXVNUkZLOGs0cDNHOUtnc28wb1dlM0NCSWJpQkJrbW5zM21pR3BM?=
- =?utf-8?B?dWlSVEc0ek5VOUVLa1I5WmtFRUtWTTVWQTAyeE41N0ZUam00U2NiTEhVL1RP?=
- =?utf-8?B?TGhreVFYZEtVRTBObjdvbnF0K2VKZVVlNTFuZm82dU5NSDcyVVlRK2ErRTRC?=
- =?utf-8?B?VW0wU1FqWkRxZEF0YTNZSFJ1bnRwaEpkeGNIVVU2VnUxTWFZWjVKWkpIK3Iy?=
- =?utf-8?B?WElsRFpQcU5MRVpYWmt6N3l4NFhJZmpVVjNFRFJCZXl6bFlaSTErVEdTd2hq?=
- =?utf-8?B?VXRneTZEVGtpZEk3VFpFbDJKM2I5Z2RtMVljV2pZNnphMEZMZVJKb3NyWHZ3?=
- =?utf-8?B?V0x4bHVjY2NCaDRsWGNHbzFrQU9DT3JoaEtpZThjMTZBaERJNDZ2WFBjbkRB?=
- =?utf-8?B?a1o4ejJ3K2RZMUt6a1dJSlBpdkNOVStXbnVvWGd3NjF3K1RqVVhJeUp1MlZy?=
- =?utf-8?B?WGY0bDdMalBXNWtQUjJlNlBjeU40dGlhSExQV0d4cDN1WVoyc0o1R3dPUHEz?=
- =?utf-8?B?UHNIVGk0NnQ5cnpUcVNNUzR3ZUs0eWgzcWNzOENXb0dxRVVYek5YdGw0THVO?=
- =?utf-8?B?Y2JkWnpicXRLRVNnUmhvdXlDQnpLeDlKRnJ5MDFTUTVKYno1ZzIvUEw1aEFH?=
- =?utf-8?B?Tkt5eC9CZE5OVkxUTjRDVkM4SDJGMjZjbTR6SFZ3dTUzS1hnaVBvNlZuamEv?=
- =?utf-8?B?S05WM3RoL21ESG04RlMzMVdia1lBMFFxWFB1aDlGaXp6WEhtT2duTUVzVmxO?=
- =?utf-8?B?bVRwUHZzTyt6VWljMHFlc1o4bDJDN05HYUYrc2ZRYlJ0eG1FTmF3U2xBTFRl?=
- =?utf-8?B?dnhqeHZVa0g3YmtVdFdhSWtyZlIvdTY5b0tZdVhJVTByT2pnU2RVQmRMOHBz?=
- =?utf-8?B?eDBZV3U3Tm12Z0YvZHVLa050aTBwaGwrNGZTWVpZcHpucnBHWjlRTEUvUTVV?=
- =?utf-8?B?cnJXWFd2WE5OZThQQitmQjN6SUtZZnlTaTJsUlA4YU5aSjduc0FLeFhVM1Nt?=
- =?utf-8?B?K09maWZFWVNiT21QL20rdFlic25NQ2NaNGlaaVJCeVJNLzRxWXY2TDZrRlBp?=
- =?utf-8?B?dEZVdVlwQUtQeWI3MFFwZWMvWXRVL0RCNkxEcG9VekJJNUhNQnB2ZytxamFi?=
- =?utf-8?B?T0wwMUVwWEtFeG9QVGdVTGVPclo1TXFWT1RGclBLN2t6WEVKSDB6S3RNY0Ev?=
- =?utf-8?B?TzRGR3FrcGZ0L3VFR1ZzbTdhaFYxSjVwKyt1OTBSUWJrWndTTnFLdDRhQVQy?=
- =?utf-8?B?OUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5119646-2021-46f8-14d4-08ddb8be35fd
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 16:42:04.8697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z2CTdEsZ3E8sCMiPgKPuVrnqHlGqEyIwrfMCF9Rcklc00OzXwWKdS7stZdMmOa6rIu1aUOcseRbpxgFSOX3dkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7002
-X-OriginatorOrg: intel.com
+
+Hello,
+
+I would like to report a slab-out-of-bounds bug that can be reliably
+reproduced with a purpose-built kernel module. This report was
+initially sent to security@kernel.org, and I was advised to move it to
+the public lists.
+
+I have confirmed this issue still exists on the latest mainline kernel
+(v6.16.0-rc4).
+
+Bug Summary:
+
+The bug is a KASAN-reported slab-out-of-bounds write within vsnprintf.
+It appears to be caused by a latent memory corruption issue, likely
+related to the names_cache slab.
+
+The vulnerability can be triggered by loading a kernel module that
+allocates an unusually large stack frame. When compiling the PoC
+module, GCC explicitly warns about this: warning: the frame size of
+29760 bytes is larger than 2048 bytes. This "stack grooming" positions
+the task's stack to overlap with a stale pointer from a freed
+names_cache object. A subsequent call to pr_info() then uses this
+corrupted value, leading to the out-of-bounds write.
+
+Reproducer:
+
+The following minimal kernel module reliably reproduces the crash on my
+x86-64 test system.
+
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/printk.h>
+
+#define STACK_FOOTPRINT (3677 * sizeof(void *))
+
+static int __init final_poc_init(void)
+{
+    volatile char stack_eater[STACK_FOOTPRINT];
+    stack_eater[0] =3D 'A'; // Prevent optimization
+
+    pr_info("Final PoC: Triggering bug with controlled stack
+layout.\n");
+
+    return -EAGAIN;
+}
+
+static void __exit final_poc_exit(void) {}
+
+module_init(final_poc_init);
+module_exit(final_poc_exit);
+MODULE_LICENSE("GPLv2");
+MODULE_DESCRIPTION("A PoC to trigger a kernel bug by creating a large
+stack frame.");
 
 
-On 01-07-2025 18:04, Nilawar, Badal wrote:
->
-> On 01-07-2025 15:15, Greg KH wrote:
->> On Tue, Jul 01, 2025 at 02:02:15PM +0530, Nilawar, Badal wrote:
->>> On 28-06-2025 17:48, Greg KH wrote:
->>>>> + * @payload_size: size of the payload data in bytes
->>>>> + * @payload: data to be sent to the firmware
->>>>> + */
->>>>> +struct csc_heci_late_bind_req {
->>>>> +    struct mkhi_msg_hdr header;
->>>>> +    u32 type;
->>>>> +    u32 flags;
->>>> What is the endian of these fields?  And as this crosses the
->>>> kernel/hardware boundry, shouldn't these be __u32?
->>> endian of these fields is little endian, all the headers are little 
->>> endian.
->>> I will add comment at top.
->> No, use the proper types if this is little endian.  Don't rely on a
->> comment to catch things when it goes wrong.
->>
->>> On __u32 I doubt we need to do it as csc send copy it to internal 
->>> buffer.
->> If this crosses the kernel boundry, it needs to use the proper type.
->
-> Understood. I will proceed with using __le32 in this context, provided 
-> that Sasha agrees.
+KASAN Crash Log (on mainline v6.16.0-rc4):
 
-I believe __le{32, 16} is used only when the byte order is fixed and 
-matches the host system's native endianness. Since the CSC controller is 
-little-endian, is it necessary to specify the endianness here?
-If it is mandatory to use the __le{32, 16} endian type, then is there 
-need to convert endianness using cpu_to_le and le_to_cpu?
+Loading the module produces the following KASAN report and kernel
+panic:
 
->
->>
->>>>> +{
->>>>> +    struct mei_cl_device *cldev;
->>>>> +    struct csc_heci_late_bind_req *req = NULL;
->>>>> +    struct csc_heci_late_bind_rsp rsp;
->>>>> +    size_t req_size;
->>>>> +    ssize_t ret;
->>>>> +
->>>>> +    if (!dev || !payload || !payload_size)
->>>>> +        return -EINVAL;
->>>> How can any of these ever happen as you control the callers of this
->>>> function?
->>> I will add WARN here.
->> So you will end up crashing the machine and getting a CVE assigned for
->> it?
->>
->> Please no.  If it can't happen, then don't check for it.  If it can
->> happen, great, handle it properly.  Don't just give up and cause a
->> system to reboot, that's a horrible way to write kernel code.
->
-> Fine, will drop the idea of WARN here.
->
-> Thanks,
-> Badal
->
->>
->> thanks,
->>
->> greg k-h
+[  214.241371] 006_state_corruption_poc_reduce_size: loading out-of-
+tree module taints kernel.
+  214.242338] Final PoC: Triggering bug with controlled stack layout.
+[  214.242340]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  214.242341] BUG: KASAN: slab-out-of-bounds in vsnprintf+0x5a6/0x1400
+[  214.242346] Write of size 1 at addr ffff88814269fee0 by task
+insmod/2258
+[  214.242348]
+[  214.242350] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G       =20
+OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
+[  214.242353] Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[  214.242354] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  214.242355] Call Trace:
+[  214.242356]  <TASK>
+[  214.242359]  ? console_emit_next_record+0x12b/0x450
+[  214.242362]  ? __pfx_console_emit_next_record+0x10/0x10
+[  214.242363]  ? __asan_memmove+0x3c/0x60
+[  214.242367]  ? console_flush_all+0x36c/0x570
+[  214.242368]  ? __pfx_console_flush_all+0x10/0x10
+[  214.242370]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242372]  ? console_unlock+0xbf/0x240
+[  214.242373]  ? __pfx_console_unlock+0x10/0x10
+[  214.242375]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
+[  214.242377]  ? vprintk_emit+0x412/0x4b0
+[  214.242379]  ? __pfx_vprintk_emit+0x10/0x10
+[  214.242380]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242382]  ? _printk+0xc7/0x100
+[  214.242384]  ? __pfx__printk+0x10/0x10
+[  214.242386]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242388]  ? final_poc_init+0xd7/0xff0
+[006_state_corruption_poc_reduce_size]
+[  214.242390]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242486]  ? do_one_initcall+0xa4/0x380
+[  214.242488]  ? __pfx_do_one_initcall+0x10/0x10
+[  214.242490]  ? kasan_unpoison+0x44/0x70
+[  214.242492]  ? do_init_module+0x2cc/0x8e0
+[  214.242494]  ? __pfx_do_init_module+0x10/0x10
+[  214.242495]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
+[  214.242542]  ? init_module_from_file+0xe1/0x150
+[  214.242543]  ? __pfx_init_module_from_file+0x10/0x10
+[  214.242544]  ? vfs_read+0x6da/0xa40
+[  214.242547]  ? _raw_spin_lock+0x83/0xe0
+[  214.242549]  ? __pfx__raw_spin_lock+0x10/0x10
+[  214.242550]  ? cred_has_capability.isra.0+0x12c/0x220
+[  214.242553]  ? idempotent_init_module+0x224/0x750
+[  214.242555]  ? __pfx_idempotent_init_module+0x10/0x10
+[  214.242557]  ? fdget+0x53/0x4a0
+[  214.242558]  ? security_capable+0x87/0x150
+[  214.242561]  ? __x64_sys_finit_module+0xcd/0x150
+[  214.242562]  ? do_syscall_64+0x82/0x2c0
+[  214.242564]  ? count_memcg_events+0x1aa/0x410
+[  214.242567]  ? handle_mm_fault+0x492/0x910
+[  214.242569]  ? do_user_addr_fault+0x4b0/0xa30
+[  214.242571]  ? exc_page_fault+0x75/0xd0
+[  214.242573]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.242575]  </TASK>
+[  214.242576]
+[  214.242577] Allocated by task 2255:
+[  214.242578]  kasan_save_stack+0x30/0x50
+[  214.242580]  kasan_save_track+0x14/0x30
+[  214.242581]  __kasan_slab_alloc+0x7e/0x90
+[  214.242582]  kmem_cache_alloc_noprof+0x148/0x420
+[  214.242584]  getname_flags.part.0+0x48/0x540
+[  214.242586]  do_sys_openat2+0xb1/0x180
+[  214.242588]  __x64_sys_openat+0x10e/0x210
+[  214.242590]  do_syscall_64+0x82/0x2c0
+[  214.242591]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.242592]
+[  214.242592] Freed by task 2255:
+[  214.242593]  kasan_save_stack+0x30/0x50
+[  214.242594]  kasan_save_track+0x14/0x30
+[  214.242595]  kasan_save_free_info+0x3b/0x70
+[  214.242596]  __kasan_slab_free+0x52/0x70
+[  214.242598]  kmem_cache_free+0x17b/0x540
+[  214.242599]  do_sys_openat2+0x109/0x180
+[  214.242601]  __x64_sys_openat+0x10e/0x210
+[  214.242602]  do_syscall_64+0x82/0x2c0
+[  214.242603]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.242604]
+[  214.242605] Last potentially related work creation:
+[  214.242605] ------------[ cut here ]------------
+[  214.242606] pool index 109701 out of bounds (339) for stack id
+a1bbac86
+[  214.242623] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:451
+depot_fetch_stack+0x68/0xb0
+[  214.242626] Modules linked in:
+006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
+binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
+parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
+net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
+i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
+vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
+vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
+9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
+pata_acpi(E) fuse(E) qemu_fw_cfg(E)
+[  214.242652] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
+padlock_aes(E):2
+[  214.242657] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G       =20
+OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
+[  214.242659] Tainted: [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[  214.242660] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  214.242660] RIP: 0010:depot_fetch_stack+0x68/0xb0
+[  214.242663] Code: c1 e7 04 81 e7 f0 3f 00 00 48 01 f8 8b 50 1c 85 d2
+74 2a 48 83 c4 10 e9 16 a2 91 01 89 f9 48 c7 c7 08 61 c8 a5 e8 68 2f 58
+fe <0f> 0b 31 c0 48 83 c4 10 c3 cc cc cc cc 0f 0b 31 c0 eb f1 0f 0b 31
+[  214.242664] RSP: 0018:ffff88814269faf8 EFLAGS: 00010046
+[  214.242666] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
+0000000000000001
+[  214.242667] RDX: 1ffff110284d3f47 RSI: 0000000000000004 RDI:
+ffff88848ab2cf48
+[  214.242668] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
+ffffed10915659e9
+[  214.242669] R10: ffffed10915659ea R11: 0000000000000001 R12:
+ffff88814269fbe0
+[  214.242670] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
+ffff88814269fdc8
+[  214.242671] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
+knlGS:0000000000000000
+[  214.242672] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  214.242673] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
+00000000000006f0
+[  214.242675] Call Trace:
+[  214.242676]  <TASK>
+[  214.242678]  ? console_emit_next_record+0x12b/0x450
+[  214.242680]  ? __pfx_console_emit_next_record+0x10/0x10
+[  214.242681]  ? __asan_memmove+0x3c/0x60
+[  214.242684]  ? console_flush_all+0x36c/0x570
+[  214.242685]  ? __pfx_console_flush_all+0x10/0x10
+[  214.242687]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242689]  ? console_unlock+0xbf/0x240
+[  214.242690]  ? __pfx_console_unlock+0x10/0x10
+[  214.242692]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
+[  214.242694]  ? vprintk_emit+0x412/0x4b0
+[  214.242695]  ? __pfx_vprintk_emit+0x10/0x10
+[  214.242697]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242699]  ? _printk+0xc7/0x100
+[  214.242701]  ? __pfx__printk+0x10/0x10
+[  214.242703]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242704]  ? final_poc_init+0xd7/0xff0
+[006_state_corruption_poc_reduce_size]
+[  214.242706]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242834]  ? do_one_initcall+0xa4/0x380
+[  214.242835]  ? __pfx_do_one_initcall+0x10/0x10
+[  214.242837]  ? kasan_unpoison+0x44/0x70
+[  214.242839]  ? do_init_module+0x2cc/0x8e0
+[  214.242841]  ? __pfx_do_init_module+0x10/0x10
+[  214.242842]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
+[  214.242855]  ? init_module_from_file+0xe1/0x150
+[  214.242856]  ? __pfx_init_module_from_file+0x10/0x10
+[  214.242858]  ? vfs_read+0x6da/0xa40
+[  214.242859]  ? _raw_spin_lock+0x83/0xe0
+[  214.242861]  ? __pfx__raw_spin_lock+0x10/0x10
+[  214.242862]  ? cred_has_capability.isra.0+0x12c/0x220
+[  214.242864]  ? idempotent_init_module+0x224/0x750
+[  214.242866]  ? __pfx_idempotent_init_module+0x10/0x10
+[  214.242867]  ? fdget+0x53/0x4a0
+[  214.242868]  ? security_capable+0x87/0x150
+[  214.242871]  ? __x64_sys_finit_module+0xcd/0x150
+[  214.242872]  ? do_syscall_64+0x82/0x2c0
+[  214.242874]  ? count_memcg_events+0x1aa/0x410
+[  214.242875]  ? handle_mm_fault+0x492/0x910
+[  214.242877]  ? do_user_addr_fault+0x4b0/0xa30
+[  214.242879]  ? exc_page_fault+0x75/0xd0
+[  214.242880]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.242882]  </TASK>
+[  214.242883] ---[ end trace 0000000000000000 ]---
+[  214.242884] ------------[ cut here ]------------
+[  214.242885] corrupt handle or use after stack_depot_put()
+[  214.242892] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:723
+stack_depot_print+0x43/0x50
+[  214.242895] Modules linked in:
+006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
+binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
+parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
+net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
+i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
+vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
+vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
+9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
+pata_acpi(E) fuse(E) qemu_fw_cfg(E)
+[  214.242915] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
+padlock_aes(E):2
+[  214.242919] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        W
+OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
+[  214.242921] Tainted: [W]=3DWARN, [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[  214.242921] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  214.242922] RIP: 0010:stack_depot_print+0x43/0x50
+[  214.242924] Code: ff ff 48 85 c0 74 17 8b 70 14 85 f6 74 0b 48 8d 78
+20 31 d2 e9 2e eb 85 fe c3 cc cc cc cc 48 c7 c7 40 61 c8 a5 e8 8d 28 58
+fe <0f> 0b c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90
+[  214.242925] RSP: 0018:ffff88814269fb10 EFLAGS: 00010046
+[  214.242926] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
+0000000000000001
+[  214.242927] RDX: 1ffff110284d3f4a RSI: 0000000000000004 RDI:
+ffff88848ab2cf48
+[  214.242928] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
+ffffed10915659e9
+[  214.242929] R10: ffffed10915659ea R11: ffffffffa87b4d46 R12:
+ffff88814269fbe0
+[  214.242930] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
+ffff88814269fdc8
+[  214.242931] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
+knlGS:0000000000000000
+[  214.242932] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  214.242933] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
+00000000000006f0
+[  214.242935] Call Trace:
+[  214.242935]  <TASK>
+[  214.242937]  ? console_emit_next_record+0x12b/0x450
+[  214.242939]  ? __pfx_console_emit_next_record+0x10/0x10
+[  214.242940]  ? __asan_memmove+0x3c/0x60
+[  214.242942]  ? console_flush_all+0x36c/0x570
+[  214.242944]  ? __pfx_console_flush_all+0x10/0x10
+[  214.242946]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242947]  ? console_unlock+0xbf/0x240
+[  214.242949]  ? __pfx_console_unlock+0x10/0x10
+[  214.242950]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
+[  214.242952]  ? vprintk_emit+0x412/0x4b0
+[  214.242954]  ? __pfx_vprintk_emit+0x10/0x10
+[  214.242956]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242958]  ? _printk+0xc7/0x100
+[  214.242959]  ? __pfx__printk+0x10/0x10
+[  214.242961]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.242963]  ? final_poc_init+0xd7/0xff0
+[006_state_corruption_poc_reduce_size]
+[  214.242965]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243090]  ? do_one_initcall+0xa4/0x380
+[  214.243091]  ? __pfx_do_one_initcall+0x10/0x10
+[  214.243093]  ? kasan_unpoison+0x44/0x70
+[  214.243095]  ? do_init_module+0x2cc/0x8e0
+[  214.243097]  ? __pfx_do_init_module+0x10/0x10
+[  214.243098]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
+[  214.243110]  ? init_module_from_file+0xe1/0x150
+[  214.243111]  ? __pfx_init_module_from_file+0x10/0x10
+[  214.243113]  ? vfs_read+0x6da/0xa40
+[  214.243114]  ? _raw_spin_lock+0x83/0xe0
+[  214.243116]  ? __pfx__raw_spin_lock+0x10/0x10
+[  214.243117]  ? cred_has_capability.isra.0+0x12c/0x220
+[  214.243119]  ? idempotent_init_module+0x224/0x750
+[  214.243121]  ? __pfx_idempotent_init_module+0x10/0x10
+[  214.243122]  ? fdget+0x53/0x4a0
+[  214.243123]  ? security_capable+0x87/0x150
+[  214.243126]  ? __x64_sys_finit_module+0xcd/0x150
+[  214.243127]  ? do_syscall_64+0x82/0x2c0
+[  214.243129]  ? count_memcg_events+0x1aa/0x410
+[  214.243130]  ? handle_mm_fault+0x492/0x910
+[  214.243132]  ? do_user_addr_fault+0x4b0/0xa30
+[  214.243134]  ? exc_page_fault+0x75/0xd0
+[  214.243135]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.243137]  </TASK>
+[  214.243138] ---[ end trace 0000000000000000 ]---
+[  214.243138]
+[  214.243139] Second to last potentially related work creation:
+[  214.243139] ------------[ cut here ]------------
+[  214.243140] pool index 131070 out of bounds (339) for stack id
+ffffffff
+[  214.243148] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:451
+depot_fetch_stack+0x68/0xb0
+[  214.243150] Modules linked in:
+006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
+binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
+parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
+net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
+i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
+vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
+vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
+9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
+pata_acpi(E) fuse(E) qemu_fw_cfg(E)
+[  214.243171] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
+padlock_aes(E):2
+[  214.243174] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        W
+OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
+[  214.243176] Tainted: [W]=3DWARN, [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[  214.243176] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  214.243177] RIP: 0010:depot_fetch_stack+0x68/0xb0
+[  214.243179] Code: c1 e7 04 81 e7 f0 3f 00 00 48 01 f8 8b 50 1c 85 d2
+74 2a 48 83 c4 10 e9 16 a2 91 01 89 f9 48 c7 c7 08 61 c8 a5 e8 68 2f 58
+fe <0f> 0b 31 c0 48 83 c4 10 c3 cc cc cc cc 0f 0b 31 c0 eb f1 0f 0b 31
+[  214.243180] RSP: 0018:ffff88814269faf8 EFLAGS: 00010046
+[  214.243181] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
+0000000000000001
+[  214.243182] RDX: 1ffff110284d3f47 RSI: 0000000000000004 RDI:
+ffff88848ab2cf48
+[  214.243183] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
+ffffed10915659e9
+[  214.243184] R10: ffffed10915659ea R11: 0000000000000001 R12:
+ffff88814269fbe0
+[  214.243185] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
+ffff88814269fdc8
+[  214.243186] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
+knlGS:0000000000000000
+[  214.243187] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  214.243187] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
+00000000000006f0
+[  214.243189] Call Trace:
+[  214.243190]  <TASK>
+[  214.243192]  ? console_emit_next_record+0x12b/0x450
+[  214.243193]  ? __pfx_console_emit_next_record+0x10/0x10
+[  214.243194]  ? __asan_memmove+0x3c/0x60
+[  214.243197]  ? console_flush_all+0x36c/0x570
+[  214.243198]  ? __pfx_console_flush_all+0x10/0x10
+[  214.243200]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243202]  ? console_unlock+0xbf/0x240
+[  214.243203]  ? __pfx_console_unlock+0x10/0x10
+[  214.243205]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
+[  214.243207]  ? vprintk_emit+0x412/0x4b0
+[  214.243208]  ? __pfx_vprintk_emit+0x10/0x10
+[  214.243210]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243212]  ? _printk+0xc7/0x100
+[  214.243214]  ? __pfx__printk+0x10/0x10
+[  214.243216]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243217]  ? final_poc_init+0xd7/0xff0
+[006_state_corruption_poc_reduce_size]
+[  214.243219]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243344]  ? do_one_initcall+0xa4/0x380
+[  214.243346]  ? __pfx_do_one_initcall+0x10/0x10
+[  214.243347]  ? kasan_unpoison+0x44/0x70
+[  214.243350]  ? do_init_module+0x2cc/0x8e0
+[  214.243351]  ? __pfx_do_init_module+0x10/0x10
+[  214.243353]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
+[  214.243364]  ? init_module_from_file+0xe1/0x150
+[  214.243365]  ? __pfx_init_module_from_file+0x10/0x10
+[  214.243367]  ? vfs_read+0x6da/0xa40
+[  214.243369]  ? _raw_spin_lock+0x83/0xe0
+[  214.243370]  ? __pfx__raw_spin_lock+0x10/0x10
+[  214.243371]  ? cred_has_capability.isra.0+0x12c/0x220
+[  214.243373]  ? idempotent_init_module+0x224/0x750
+[  214.243375]  ? __pfx_idempotent_init_module+0x10/0x10
+[  214.243376]  ? fdget+0x53/0x4a0
+[  214.243377]  ? security_capable+0x87/0x150
+[  214.243380]  ? __x64_sys_finit_module+0xcd/0x150
+[  214.243381]  ? do_syscall_64+0x82/0x2c0
+[  214.243383]  ? count_memcg_events+0x1aa/0x410
+[  214.243384]  ? handle_mm_fault+0x492/0x910
+[  214.243386]  ? do_user_addr_fault+0x4b0/0xa30
+[  214.243388]  ? exc_page_fault+0x75/0xd0
+[  214.243389]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.243391]  </TASK>
+[  214.243392] ---[ end trace 0000000000000000 ]---
+[  214.243392] ------------[ cut here ]------------
+[  214.243393] corrupt handle or use after stack_depot_put()
+[  214.243401] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:723
+stack_depot_print+0x43/0x50
+[  214.243403] Modules linked in:
+006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
+binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
+parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
+net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
+i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
+vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
+vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
+9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
+pata_acpi(E) fuse(E) qemu_fw_cfg(E)
+[  214.243423] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
+padlock_aes(E):2
+[  214.243426] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        W
+OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
+[  214.243428] Tainted: [W]=3DWARN, [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODULE
+[  214.243429] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  214.243429] RIP: 0010:stack_depot_print+0x43/0x50
+[  214.243431] Code: ff ff 48 85 c0 74 17 8b 70 14 85 f6 74 0b 48 8d 78
+20 31 d2 e9 2e eb 85 fe c3 cc cc cc cc 48 c7 c7 40 61 c8 a5 e8 8d 28 58
+fe <0f> 0b c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90
+[  214.243432] RSP: 0018:ffff88814269fb10 EFLAGS: 00010046
+[  214.243433] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
+0000000000000001
+[  214.243434] RDX: 1ffff110284d3f4a RSI: 0000000000000004 RDI:
+ffff88848ab2cf48
+[  214.243435] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
+ffffed10915659e9
+[  214.243436] R10: ffffed10915659ea R11: ffffffffa87b6f46 R12:
+ffff88814269fbe0
+[  214.243437] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
+ffff88814269fdc8
+[  214.243438] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
+knlGS:0000000000000000
+[  214.243439] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  214.243440] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
+00000000000006f0
+[  214.243441] Call Trace:
+[  214.243442]  <TASK>
+[  214.243444]  ? console_emit_next_record+0x12b/0x450
+[  214.243445]  ? __pfx_console_emit_next_record+0x10/0x10
+[  214.243446]  ? __asan_memmove+0x3c/0x60
+[  214.243449]  ? console_flush_all+0x36c/0x570
+[  214.243450]  ? __pfx_console_flush_all+0x10/0x10
+[  214.243452]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243454]  ? console_unlock+0xbf/0x240
+[  214.243455]  ? __pfx_console_unlock+0x10/0x10
+[  214.243457]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
+[  214.243459]  ? vprintk_emit+0x412/0x4b0
+[  214.243460]  ? __pfx_vprintk_emit+0x10/0x10
+[  214.243462]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243464]  ? _printk+0xc7/0x100
+[  214.243466]  ? __pfx__printk+0x10/0x10
+[  214.243468]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243469]  ? final_poc_init+0xd7/0xff0
+[006_state_corruption_poc_reduce_size]
+[  214.243471]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.243596]  ? do_one_initcall+0xa4/0x380
+[  214.243598]  ? __pfx_do_one_initcall+0x10/0x10
+[  214.243600]  ? kasan_unpoison+0x44/0x70
+[  214.243602]  ? do_init_module+0x2cc/0x8e0
+[  214.243603]  ? __pfx_do_init_module+0x10/0x10
+[  214.243605]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
+[  214.243616]  ? init_module_from_file+0xe1/0x150
+[  214.243617]  ? __pfx_init_module_from_file+0x10/0x10
+[  214.243618]  ? vfs_read+0x6da/0xa40
+[  214.243620]  ? _raw_spin_lock+0x83/0xe0
+[  214.243622]  ? __pfx__raw_spin_lock+0x10/0x10
+[  214.243623]  ? cred_has_capability.isra.0+0x12c/0x220
+[  214.243625]  ? idempotent_init_module+0x224/0x750
+[  214.243626]  ? __pfx_idempotent_init_module+0x10/0x10
+[  214.243628]  ? fdget+0x53/0x4a0
+[  214.243629]  ? security_capable+0x87/0x150
+[  214.243631]  ? __x64_sys_finit_module+0xcd/0x150
+[  214.243633]  ? do_syscall_64+0x82/0x2c0
+[  214.243634]  ? count_memcg_events+0x1aa/0x410
+[  214.243636]  ? handle_mm_fault+0x492/0x910
+[  214.243638]  ? do_user_addr_fault+0x4b0/0xa30
+[  214.243640]  ? exc_page_fault+0x75/0xd0
+[  214.243641]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.243643]  </TASK>
+[  214.243643] ---[ end trace 0000000000000000 ]---
+[  214.243644]
+[  214.243645] The buggy address belongs to the object at
+ffff88814269e600
+[  214.243645]  which belongs to the cache names_cache of size 4096
+[  214.243646] The buggy address is located 2272 bytes to the right of
+[  214.243646]  allocated 4096-byte region [ffff88814269e600,
+ffff88814269f600)
+[  214.243648]
+[  214.243648] The buggy address belongs to the physical page:
+[  214.243649] page: refcount:0 mapcount:0 mapping:0000000000000000
+index:0x0 pfn:0x142698
+[  214.243651] head: order:3 mapcount:0 entire_mapcount:0
+nr_pages_mapped:0 pincount:0
+[  214.243652] anon flags:
+0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=3D0x1fffff)
+[  214.243654] page_type: f5(slab)
+[  214.243656] raw: 0017ffffc0000040 ffff88810039d680 0000000000000000
+dead000000000001
+[  214.243658] raw: 0000000000000000 0000000000070007 00000000f5000000
+0000000000000000
+[  214.243659] head: 0017ffffc0000040 ffff88810039d680 0000000000000000
+dead000000000001
+[  214.243660] head: 0000000000000000 0000000000070007 00000000f5000000
+0000000000000000
+[  214.243661] head: 0017ffffc0000003 ffffea000509a601 00000000ffffffff
+00000000ffffffff
+[  214.243662] head: ffffffffffffffff 0000000000000000 00000000ffffffff
+0000000000000008
+[  214.243663] page dumped because: kasan: bad access detected
+[  214.243663]
+[  214.243664] Memory state around the buggy address:
+[  214.243665]  ffff88814269fd80: 00 00 00 00 00 f1 f1 f1 f1 00 00 00
+f3 f3 f3 f3
+[  214.243666]  ffff88814269fe00: f3 fc fc fc fc fc 00 00 00 00 00 00
+00 00 00 00
+[  214.243667] >ffff88814269fe80: 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+fc fc fc fc
+[  214.243668]                                                        ^
+[  214.243669]  ffff88814269ff00: f3 f3 f3 f3 00 00 00 00 00 00 00 00
+00 00 00 00
+[  214.243670]  ffff88814269ff80: 00 00 f1 f1 f1 f1 00 00 00 f2 f2 f2
+f2 f2 00 00
+[  214.243671]
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[  214.243695] Disabling lock debugging due to kernel taint
+[  214.403690] Kernel panic - not syncing: corrupted stack end detected
+inside scheduler
+[  214.404200] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G    B   W
+OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
+[  214.404904] Tainted: [B]=3DBAD_PAGE, [W]=3DWARN, [O]=3DOOT_MODULE,
+[E]=3DUNSIGNED_MODULE
+[  214.405459] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[  214.406193] Call Trace:
+[  214.406558]  <TASK>
+[  214.406910]  ? dump_stack_lvl+0x5d/0x80
+[  214.407336]  ? panic+0x257/0x4eb
+[  214.407738]  ? __pfx_panic+0x10/0x10
+[  214.408147]  ? __asan_memcpy+0x3c/0x60
+[  214.408564]  ? this_cpu_in_panic+0x1a/0x70
+[  214.408994]  ? _prb_read_valid+0x166/0x2e0
+[  214.409423]  ? this_cpu_in_panic+0x1a/0x70
+[  214.409855]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.410438]  ? __schedule+0x17b1/0x17c0
+[  214.410865]  ? __pfx___schedule+0x10/0x10
+[  214.411296]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.411889]  ? __pfx_prb_read_valid+0x10/0x10
+[  214.412341]  ? console_unlock+0xe5/0x240
+[  214.412776]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.413368]  ? preempt_schedule+0x53/0x90
+[  214.413811]  ? preempt_schedule_thunk+0x16/0x30
+[  214.414273]  ? this_cpu_in_panic+0x1a/0x70
+[  214.414714]  ? vprintk_emit+0x35c/0x4b0
+[  214.415144]  ? __pfx_vprintk_emit+0x10/0x10
+[  214.415584]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.416176]  ? _printk+0xc7/0x100
+[  214.416582]  ? __pfx__printk+0x10/0x10
+[  214.417006]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.417591]  ? final_poc_init+0xd7/0xff0
+[006_state_corruption_poc_reduce_size]
+[  214.418160]  ? __pfx_final_poc_init+0x10/0x10
+[006_state_corruption_poc_reduce_size]
+[  214.418871]  ? do_one_initcall+0xa4/0x380
+[  214.419302]  ? __pfx_do_one_initcall+0x10/0x10
+[  214.419752]  ? kasan_unpoison+0x44/0x70
+[  214.420174]  ? do_init_module+0x2cc/0x8e0
+[  214.420599]  ? __pfx_do_init_module+0x10/0x10
+[  214.421043]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
+[  214.421580]  ? init_module_from_file+0xe1/0x150
+[  214.422033]  ? __pfx_init_module_from_file+0x10/0x10
+[  214.422497]  ? vfs_read+0x6da/0xa40
+[  214.422904]  ? _raw_spin_lock+0x83/0xe0
+[  214.423322]  ? __pfx__raw_spin_lock+0x10/0x10
+[  214.423760]  ? cred_has_capability.isra.0+0x12c/0x220
+[  214.424225]  ? idempotent_init_module+0x224/0x750
+[  214.424675]  ? __pfx_idempotent_init_module+0x10/0x10
+[  214.425139]  ? fdget+0x53/0x4a0
+[  214.425520]  ? security_capable+0x87/0x150
+[  214.425942]  ? __x64_sys_finit_module+0xcd/0x150
+[  214.426380]  ? do_syscall_64+0x82/0x2c0
+[  214.426787]  ? count_memcg_events+0x1aa/0x410
+[  214.427210]  ? handle_mm_fault+0x492/0x910
+[  214.427614]  ? do_user_addr_fault+0x4b0/0xa30
+[  214.428026]  ? exc_page_fault+0x75/0xd0
+[  214.428407]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  214.428841]  </TASK>
+[  214.429413] Kernel Offset: 0x20400000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  214.430091] ---[ end Kernel panic - not syncing: corrupted stack end
+detected inside scheduler ]---
+
+
+This is my first time reporting a bug on the mailing list, so please
+let me know if any additional information or formatting is required.
+
+Thank you,
+Shardul Bankar
 
