@@ -1,338 +1,143 @@
-Return-Path: <linux-kernel+bounces-711493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906FEAEFB67
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:00:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B5CAEFB83
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A87318842C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5F33B3879
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2542F27AC44;
-	Tue,  1 Jul 2025 13:56:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E10527F4CB;
+	Tue,  1 Jul 2025 13:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahU48zzh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0700027A127;
-	Tue,  1 Jul 2025 13:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD90B27E7FC;
+	Tue,  1 Jul 2025 13:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378218; cv=none; b=EpzVgiqfe1/zcIOuIgRnxlK7dgExPeAq4uWQmyyV3xrVytB/3M4dbSNjKYrElrHz7bZZtrOph3FLAcyhuaPicLoBzZ2eSDZcXu4PkR7Q4i3lCn4xXa0pBqeGsebA8kbUm846IzDqkLk/2y95MWryVCsdEgT7rlYk4s7ghuD2OTk=
+	t=1751378229; cv=none; b=Afbrpv4q2huOnuepVlPlfh3mt9m2l3t0D2cO2zi6FcQnLCBNrP3BUGyWekeHoCqoFEqajqZeJ+wDV25j4cVEtGM7Gqco8ulfpYebe/peIWsretbqs/S+1Si/unUUnDc/m/pP98gztzbsjGi1FIQfgIbUOgHR4EP7uGyAfpX/d3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378218; c=relaxed/simple;
-	bh=Z1BzRknngBIxH7d9GNoJJiTwd8p6a5uKI4XIyALfOTc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k4leOOVDDrMeSRH3tbOHQMcJ/ObkMl9c4xnp1YWo49RZtbbD5ulfQimVlpbCHX+o05h8H7lgokHqX0vu5ygUwIkByPHtEexKvJ4hzU3JWu7mNSuEATlkg2b8MYTC/6sAMKsmT6ZG7aqXU1RF63nIND3x0oAWjO7anFVkSK4bxZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bWl1B487yz6M4jF;
-	Tue,  1 Jul 2025 21:55:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BBC9C1402F4;
-	Tue,  1 Jul 2025 21:56:52 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 1 Jul
- 2025 15:56:52 +0200
-Date: Tue, 1 Jul 2025 14:56:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Dongsheng Yang <dongsheng.yang@linux.dev>
-CC: <mpatocka@redhat.com>, <agk@redhat.com>, <snitzer@kernel.org>,
-	<axboe@kernel.dk>, <hch@lst.de>, <dan.j.williams@intel.com>,
-	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<dm-devel@lists.linux.dev>
-Subject: Re: [PATCH v1 02/11] dm-pcache: add backing device management
-Message-ID: <20250701145650.00004e72@huawei.com>
-In-Reply-To: <20250624073359.2041340-3-dongsheng.yang@linux.dev>
-References: <20250624073359.2041340-1-dongsheng.yang@linux.dev>
-	<20250624073359.2041340-3-dongsheng.yang@linux.dev>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751378229; c=relaxed/simple;
+	bh=bfyf64/9Lz8TeBB7ZRQVJI6e73cpzQVKOsse3DwDWRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZuznBmkR8XfmmWI4SZ7dyqWJ/HytVTGGBLqK9XLO4rQDy8xS4jRO64XL9jJHHMbLtlyIi7MLDh1B/X9bRagtWB+xW32IevjbWBeKb7bL/2xHj7fI+MzMsRTLCtmOcfhsSqMGI4HWmxqnVaDSae1CRJtziDnjJU0YHDvWPFAFFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahU48zzh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D558C4CEF7;
+	Tue,  1 Jul 2025 13:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751378229;
+	bh=bfyf64/9Lz8TeBB7ZRQVJI6e73cpzQVKOsse3DwDWRA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ahU48zzhuH3p0zjEEHJCC+eyqLqcVOS6ZGsdCIeneizv3aQAg97P2s3FrQBaEpu/T
+	 zc6YioylJbdVu47UwHW6qo6wJ93aZz+E5j/MLruvSvwKVzzRgtiu+4bhm4mOx6a06c
+	 n13afKMjPR6sxyjncmIFbIzvBdQcbgj/Zp7Qb2lmlWWu1xL/3ZQeYGtfkcIB3C3HuR
+	 REmvCvt4QUcSQ2rJwPKk3CZJVSxp+SrfxLAWXGjn86gF6xll986zDjE4k2e9xzKYJZ
+	 g4lAAgQ71DCVPESNVYtMOZyJ9B/Igc9pk8NkaEZGLZTyQjKe8OhxkAvMi4TTsbZ2sX
+	 5XwpoS4YiTdwA==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6118c1775dbso1681003eaf.1;
+        Tue, 01 Jul 2025 06:57:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXnN3znckr+n/FMKKO1StreYa4w05oGe3de2T/lkcOh8KJZRmacvBkUm8QPPWbvFHyCGkXsIXImLvmc@vger.kernel.org, AJvYcCXslInms+M45J32zTtsKd+0FGQm0cOYjm7JB1N9P/cyJhuYfqeJQ/oYX+pmlUGYSZlzJjAy/25waNfH0w==@vger.kernel.org, AJvYcCXsoqwh17eLWjaVhEtNw80L19nBh2XVGv5iL5UL2Cxmd2pVqsw9Fg/QNra/a2QBDcjHX516zDhZ+05t5UYS@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt5RVXSzqTrWqavbudZrBfIGuEkFmMh0B8Nmd45gseX1oM8En8
+	3rAN5lBMQMS//oajI2AoR/Jw/0eQ/Tk5vioA/SwqT8yv6/SmzSwIKXsPCWHGwFHOay5zomWy6pH
+	56ALjP7l4YI7u0xG50iFjgG7PUrAJpZQ=
+X-Google-Smtp-Source: AGHT+IH8y5e96zUJRFb1OuI8gvD6XWj6u4OkFPyGcGOEmUKVc6TEctKaRmc0KPqe/ewtdYlc9kWivElDVmZVzHILVRs=
+X-Received: by 2002:a4a:ee96:0:b0:605:f34d:7e00 with SMTP id
+ 006d021491bc7-611b914ca94mr11199187eaf.7.1751378226833; Tue, 01 Jul 2025
+ 06:57:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250404112050.42040-1-xueshuai@linux.alibaba.com>
+ <20250404112050.42040-2-xueshuai@linux.alibaba.com> <0c0bc332-0323-4e43-a96b-dd5f5957ecc9@huawei.com>
+ <709ee8d2-8969-424c-b32b-101c6a8220fb@linux.alibaba.com> <353809e7-5373-0d54-6ddb-767bc5af9e5f@huawei.com>
+ <653abdd4-46d2-4956-b49c-8f9c309af34d@linux.alibaba.com> <de5d2417-dc92-b276-1125-4feb5151de7f@huawei.com>
+ <f60f1128-0d42-48e5-9a06-6ed7ca10767f@linux.alibaba.com> <20250428152350.GA23615@willie-the-truck>
+ <6671c3cc-5119-4544-bcb5-17e8cc2d7057@linux.alibaba.com>
+In-Reply-To: <6671c3cc-5119-4544-bcb5-17e8cc2d7057@linux.alibaba.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 1 Jul 2025 15:56:53 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j3NC2ki1XPXfznxZRBLaReDBJ+nzHFgvqMx5+MgERL-A@mail.gmail.com>
+X-Gm-Features: Ac12FXx9H-3vG8ZmZDA8pugDyN2jgQvzGSowL6_ycQvP5EUOr-jzraGGBrVWxV0
+Message-ID: <CAJZ5v0j3NC2ki1XPXfznxZRBLaReDBJ+nzHFgvqMx5+MgERL-A@mail.gmail.com>
+Subject: Re: [RESEND PATCH v18 1/2] ACPI: APEI: send SIGBUS to current task if
+ synchronous memory error not recovered
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: Will Deacon <will@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, rafael@kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, "Luck, Tony" <tony.luck@intel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com, 
+	ardb@kernel.org, ying.huang@linux.alibaba.com, ashish.kalra@amd.com, 
+	baolin.wang@linux.alibaba.com, tglx@linutronix.de, 
+	dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com, 
+	robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com, 
+	zhuo.song@linux.alibaba.com, sudeep.holla@arm.com, lpieralisi@kernel.org, 
+	linux-acpi@vger.kernel.org, yazen.ghannam@amd.com, mark.rutland@arm.com, 
+	mingo@redhat.com, robin.murphy@arm.com, Jonathan.Cameron@huawei.com, 
+	bp@alien8.de, linux-arm-kernel@lists.infradead.org, 
+	wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com, 
+	linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com, 
+	tongtiangen@huawei.com, gregkh@linuxfoundation.org, jarkko@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 24 Jun 2025 07:33:49 +0000
-Dongsheng Yang <dongsheng.yang@linux.dev> wrote:
+On Tue, Jul 1, 2025 at 1:00=E2=80=AFPM Shuai Xue <xueshuai@linux.alibaba.co=
+m> wrote:
+>
+>  >=E5=9C=A8 2025/4/28 23:23, Will Deacon =E5=86=99=E9=81=93:
+>  >> On Fri, Apr 25, 2025 at 09:10:09AM +0800, Shuai Xue wrote:
+>  >>> =E5=9C=A8 2025/4/25 09:00, Hanjun Guo =E5=86=99=E9=81=93:
+>  >>>> Call force_sig(SIGBUS) directly in ghes_do_proc() is not my favouri=
+te,
+>  >>>> but I can bear that, please add
+>  >>>>
+>  >>>> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+>  >>>>
+>  >>>> Thanks
+>  >>>> Hanjun
+>  >>>
+>  >>> Thanks. Hanjun.
+>  >>>
+>  >>> @Rafael, @Catalin,
+>  >>>
+>  >>> Both patch 1 and 2 have reviewed-by tag from the arm64 ACPI
+> maintainers, Hanjun,
+>  >>> now. Are you happpy to pick and queue this patch set to acpi tree
+> or arm tree?
+>  >>
+>  >> Since this primarily touches drivers/acpi/apei/ghes.c, I think it sho=
+uld
+>  >> go via the ACPI tree and not the arm64 one.
+>  >>
+>  >> Will
+>  >
+>  >Hi, Will,
+>  >
+>  >Thank you for your confirmation :)
+>  >
+>  >@Rafael, do you have more comments on this patch set?
+>  >
+>  >Thanks you.
+>  >
+>  >Best Regards,
+>  >Shuai
+>
+> Hi, all,
+>
+> Gentle ping.
+>
+> Does ACPI or APEI tree still active? Looking forward to any response.
 
-> This patch introduces *backing_dev.{c,h}*, a self-contained layer that
-> handles all interaction with the *backing block device* where cache
-> write-back and cache-miss reads are serviced.  Isolating this logic
-> keeps the core dm-pcache code free of low-level bio plumbing.
->=20
-> * Device setup / teardown
->   - Opens the target with `dm_get_device()`, stores `bdev`, file and
->     size, and initialises a dedicated `bioset`.
->   - Gracefully releases resources via `backing_dev_stop()`.
->=20
-> * Request object (`struct pcache_backing_dev_req`)
->   - Two request flavours:
->     - REQ-type =E2=80=93 cloned from an upper `struct bio` issued to
->       dm-pcache; trimmed and re-targeted to the backing LBA.
->     - KMEM-type =E2=80=93 maps an arbitrary kernel memory buffer
->       into a freshly built.
->   - Private completion callback (`end_req`) propagates status to the
->     upper layer and handles resource recycling.
->=20
-> * Submission & completion path
->   - Lock-protected submit queue + worker (`req_submit_work`) let pcache
->     push many requests asynchronously, at the same time, allow caller
->     to submit backing_dev_req in atomic context.
->   - End-io handler moves finished requests to a completion list processed
->     by `req_complete_work`, ensuring callbacks run in process context.
->   - Direct-submit option for non-atomic context.
->=20
-> * Flush
->   - `backing_dev_flush()` issues a flush to persist backing-device data.
->=20
-> Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
-> ---
->  drivers/md/dm-pcache/backing_dev.c | 292 +++++++++++++++++++++++++++++
->  drivers/md/dm-pcache/backing_dev.h |  88 +++++++++
->  2 files changed, 380 insertions(+)
->  create mode 100644 drivers/md/dm-pcache/backing_dev.c
->  create mode 100644 drivers/md/dm-pcache/backing_dev.h
->=20
-> diff --git a/drivers/md/dm-pcache/backing_dev.c b/drivers/md/dm-pcache/ba=
-cking_dev.c
-> new file mode 100644
-> index 000000000000..590c6415319d
-> --- /dev/null
-> +++ b/drivers/md/dm-pcache/backing_dev.c
-> @@ -0,0 +1,292 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +#include <linux/blkdev.h>
-> +
-> +#include "../dm-core.h"
-> +#include "pcache_internal.h"
-> +#include "cache_dev.h"
-> +#include "backing_dev.h"
-> +#include "cache.h"
-> +#include "dm_pcache.h"
-> +
-> +static void backing_dev_exit(struct pcache_backing_dev *backing_dev)
-> +{
-> +	kmem_cache_destroy(backing_dev->backing_req_cache);
-> +}
-> +
-> +static void req_submit_fn(struct work_struct *work);
-> +static void req_complete_fn(struct work_struct *work);
-> +static int backing_dev_init(struct dm_pcache *pcache)
-> +{
-> +	struct pcache_backing_dev *backing_dev =3D &pcache->backing_dev;
-> +	int ret;
-> +
-> +	backing_dev->backing_req_cache =3D KMEM_CACHE(pcache_backing_dev_req, 0=
-);
-> +	if (!backing_dev->backing_req_cache) {
-> +		ret =3D -ENOMEM;
+For APEI changes, you need an ACK from one of the reviewers listed in
+the MAINTAINERS entry for APEI.
 
-return -ENOMEM;=20
-
-and drop the err label.
-
-> +		goto err;
-> +	}
-> +
-> +	INIT_LIST_HEAD(&backing_dev->submit_list);
-> +	INIT_LIST_HEAD(&backing_dev->complete_list);
-> +	spin_lock_init(&backing_dev->submit_lock);
-> +	spin_lock_init(&backing_dev->complete_lock);
-> +	INIT_WORK(&backing_dev->req_submit_work, req_submit_fn);
-> +	INIT_WORK(&backing_dev->req_complete_work, req_complete_fn);
-> +
-> +	return 0;
-> +err:
-> +	return ret;
-> +}
-
-> +static void req_complete_fn(struct work_struct *work)
-> +{
-> +	struct pcache_backing_dev *backing_dev =3D container_of(work, struct pc=
-ache_backing_dev, req_complete_work);
-
-Very long line.  Wrap it somewhere.
-
-> +	struct pcache_backing_dev_req *backing_req;
-> +	LIST_HEAD(tmp_list);
-> +
-> +	spin_lock_irq(&backing_dev->complete_lock);
-> +	list_splice_init(&backing_dev->complete_list, &tmp_list);
-> +	spin_unlock_irq(&backing_dev->complete_lock);
-> +
-> +	while (!list_empty(&tmp_list)) {
-> +		backing_req =3D list_first_entry(&tmp_list,
-> +					    struct pcache_backing_dev_req, node);
-> +		list_del_init(&backing_req->node);
-> +		backing_dev_req_end(backing_req);
-> +	}
-> +}
-> +
-> +static void backing_dev_bio_end(struct bio *bio)
-> +{
-> +	struct pcache_backing_dev_req *backing_req =3D bio->bi_private;
-> +	struct pcache_backing_dev *backing_dev =3D backing_req->backing_dev;
-> +	unsigned long flags;
-> +
-> +	backing_req->ret =3D bio->bi_status;
-> +
-> +	spin_lock_irqsave(&backing_dev->complete_lock, flags);
-> +	list_move_tail(&backing_req->node, &backing_dev->complete_list);
-> +	queue_work(BACKING_DEV_TO_PCACHE(backing_dev)->task_wq, &backing_dev->r=
-eq_complete_work);
-> +	spin_unlock_irqrestore(&backing_dev->complete_lock, flags);
-> +}
-> +
-> +static void req_submit_fn(struct work_struct *work)
-> +{
-> +	struct pcache_backing_dev *backing_dev =3D container_of(work, struct pc=
-ache_backing_dev, req_submit_work);
-
-Very long line.  Wrap after =3D
-
-
-> +	struct pcache_backing_dev_req *backing_req;
-> +	LIST_HEAD(tmp_list);
-> +
-> +	spin_lock(&backing_dev->submit_lock);
-> +	list_splice_init(&backing_dev->submit_list, &tmp_list);
-> +	spin_unlock(&backing_dev->submit_lock);
-> +
-> +	while (!list_empty(&tmp_list)) {
-> +		backing_req =3D list_first_entry(&tmp_list,
-> +					    struct pcache_backing_dev_req, node);
-> +		list_del_init(&backing_req->node);
-> +		submit_bio_noacct(&backing_req->bio);
-> +	}
-> +}
-
-> +
-> +static void bio_map(struct bio *bio, void *base, size_t size)
-> +{
-> +	struct page *page;
-> +	unsigned int offset;
-> +	unsigned int len;
-> +
-> +	if (!is_vmalloc_addr(base)) {
-> +		page =3D virt_to_page(base);
-> +		offset =3D offset_in_page(base);
-> +
-> +		BUG_ON(!bio_add_page(bio, page, size, offset));
-
-		BUG_ON(!bio_add_page(bio, virt_to_page(base), size
-				     offset_in_page(base));
-
-Seems readable enough. Obviously that depends on whether those
-local variables get more useage in later patches.
-
-> +		return;
-> +	}
-> +
-> +	flush_kernel_vmap_range(base, size);
-> +	while (size) {
-> +		page =3D vmalloc_to_page(base);
-> +		offset =3D offset_in_page(base);
-> +		len =3D min_t(size_t, PAGE_SIZE - offset, size);
-> +
-> +		BUG_ON(!bio_add_page(bio, page, len, offset));
-> +		size -=3D len;
-> +		base +=3D len;
-> +	}
-> +}
-
-> +
-> +static struct pcache_backing_dev_req *kmem_type_req_create(struct pcache=
-_backing_dev *backing_dev,
-> +						struct pcache_backing_dev_req_opts *opts)
-> +{
-> +	struct pcache_backing_dev_req *backing_req;
-> +	struct bio *backing_bio;
-> +	u32 n_vecs =3D get_n_vecs(opts->kmem.data, opts->kmem.len);
-> +
-> +	backing_req =3D kmem_cache_zalloc(backing_dev->backing_req_cache, opts-=
->gfp_mask);
-> +	if (!backing_req)
-> +		return NULL;
-> +
-> +	if (n_vecs > BACKING_DEV_REQ_INLINE_BVECS) {
-> +		backing_req->kmem.bvecs =3D kmalloc_array(n_vecs, sizeof(struct bio_ve=
-c), opts->gfp_mask);
-> +		if (!backing_req->kmem.bvecs)
-> +			goto err_free_req;
-> +	} else {
-> +		backing_req->kmem.bvecs =3D backing_req->kmem.inline_bvecs;
-> +	}
-> +
-> +	backing_req->type =3D BACKING_DEV_REQ_TYPE_KMEM;
-> +
-> +	bio_init(&backing_req->bio, backing_dev->dm_dev->bdev, backing_req->kme=
-m.bvecs,
-> +			n_vecs, opts->kmem.opf);
-
-Odd alignment.  Align second line under &
-
-> +
-> +	backing_bio =3D &backing_req->bio;
-> +	bio_map(backing_bio, opts->kmem.data, opts->kmem.len);
-> +
-> +	backing_bio->bi_iter.bi_sector =3D (opts->kmem.backing_off) >> SECTOR_S=
-HIFT;
-> +	backing_bio->bi_private =3D backing_req;
-> +	backing_bio->bi_end_io =3D backing_dev_bio_end;
-> +
-> +	backing_req->backing_dev =3D backing_dev;
-> +	INIT_LIST_HEAD(&backing_req->node);
-> +	backing_req->end_req	=3D opts->end_fn;
-> +	backing_req->priv_data	=3D opts->priv_data;
-
-Bit of a mixture of formatting between aligned =3D and not.  Pick one style.
-I prefer never forcing alignment but others do like it.  I'm fine with that
-too, just not a mix.
-
-
-> +
-> +	return backing_req;
-> +
-> +err_free_req:
-> +	kmem_cache_free(backing_dev->backing_req_cache, backing_req);
-> +	return NULL;
-> +}
-> +
-> +struct pcache_backing_dev_req *backing_dev_req_create(struct pcache_back=
-ing_dev *backing_dev,
-> +						struct pcache_backing_dev_req_opts *opts)
-> +{
-> +	if (opts->type =3D=3D BACKING_DEV_REQ_TYPE_REQ)
-> +		return req_type_req_create(backing_dev, opts);
-> +	else if (opts->type =3D=3D BACKING_DEV_REQ_TYPE_KMEM)
-
-returned in earlier branch so go with simpler
-
-	if (opts->type..)
-
-Or use a switch statement if you expect to get more entries in this over ti=
-me.
-
-> +		return kmem_type_req_create(backing_dev, opts);
-> +
-> +	return NULL;
-> +}
-> +
-> +void backing_dev_flush(struct pcache_backing_dev *backing_dev)
-> +{
-> +	blkdev_issue_flush(backing_dev->dm_dev->bdev);
-> +}
-
-
+Thanks!
 
