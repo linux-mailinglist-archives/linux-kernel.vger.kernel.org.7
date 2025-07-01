@@ -1,233 +1,276 @@
-Return-Path: <linux-kernel+bounces-711417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A85AEFA80
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E522AEFCB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203431884F1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB80169518
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E411927585E;
-	Tue,  1 Jul 2025 13:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C7027700B;
+	Tue,  1 Jul 2025 14:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="UvtfmaQS"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011018.outbound.protection.outlook.com [52.101.65.18])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="GoVbTy2C"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A5B274B53;
-	Tue,  1 Jul 2025 13:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92131D79A5;
+	Tue,  1 Jul 2025 14:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376248; cv=fail; b=O5nKn4d7+owDrOV5W0dJFi82HChglU47d1VQ7RpjSl0q821nK//La0Ie3GHBrkvAfPgwzb3i43oHgCHgCmleIWIuzRMxIPbJMi4kAkmzDwe6yxgCGvixamEfEuQF71Wl0+VhJLoKIqdFHItW1iNvPy2pUyqJk/Vd8PBC/EdCXCY=
+	t=1751380534; cv=pass; b=pHVemZJB0lX52QAOETu1+/zyzPi9gRJGsRLqAwjp/k2lKtkX6IocaQRaZQt8be97CtPhb9ixTj1dH7Q5cMFy0MWSXx4nyCQ9IKDcUI3eZw/KSBdozjTdWRabL1MnmPxQdaVH3xom43mHIkDabgyWwKrAxCj8dI1aQN+iddQ9hHA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751376248; c=relaxed/simple;
-	bh=UvT0nuVA+YtswpL8TP4g5pL/7ZGieIKy4p7+WZl5+a8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oV2Iwa2GtHKbP03a2aCVKiY7qQ77vQ8MjU88HA2ahvI0Ig3WR3GzxAlCTXuFFnxALGzZEi8AqD7AJts+UxFKPq4xndZRuPhW4YIuWz5n40Qr+aV8GV0xiV2U5WsIpwDYnejsBzffbxM2tVdIrTrFt6JOqKpnatCygCvFydVGv6M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=UvtfmaQS; arc=fail smtp.client-ip=52.101.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ONXUxtFAicoIpaCpxVfMxRmIKcLOQQPu7cPonGFm2UZiImmoPqGlEgl6GLFNz8I4lbOSz0zVYwcpIWqgIXtUW1dr92Zs5qaBcR1MckZ/NTNKcy3ix+yomFhExOyng3pWdY5Khb/al6LUrNoh/Td0QJPf0eHDgSIpZQxaloM/JJ5mlFKBTwDauF0kZRdt9kA9fhXNSq6mAHJiAxDE+UV7wIJSCM3Q9FxmysNCBMoDRQ2pffl+fIMdYp9nZQB+emOZi4xNabTfZshYCeU2j0N9ch+HJ0ZReHxU9mWfaIzLdC6TObPmmY3kZ+Fr9N3Eze8LDFQzuyshlC0sVhbmAMxB9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wu3eB8uqgpffjIj3biODbLbSjeFmZ6za1NKqg+WiZms=;
- b=oN6RlPitG8OwrXOC+b+6NiB8Y31uNQ1u2+rUu2AqS0IlzhslGk78NOwhmzmfqlc+JEKwpMKUDF0ArXVM0MsL569pcpjY08cbVK5PJOgTXXynFO+iE1H3En0803Wu35uswD9eHNDqfV38LgUcjBAfWNi0f8d0jleGelQRfNtU4btUTy/g2GXZJF4xtNI4WfSwCZa2atOaN/licI8NLrCs1xfKKTby3nkqEuOpUxem+88O0wXhGWn9I3H4N9MIjZsoFvPSMb7XwSw2pf6xJQgCYsANbUqW7254Z3XvYEytX/OAW1QSgAqt1B62f/9/8Z6GSDy/PmBU4dqgyBvJ6EHShA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wu3eB8uqgpffjIj3biODbLbSjeFmZ6za1NKqg+WiZms=;
- b=UvtfmaQSWgifYOzRfVDlBpyneOBVH9kqoPntkv6nYrwfWliPN974n3jFkw66uGQIt/2u/WXSE9buWbCsPLSnFO8udA+0D/EGyuekdllq+kZUSOPIstki6Ae2zyIW2mfGluTj+5aXLTywHBgTIQ0VM3YbrgZcAv2T9FtRv9pkHDuUCJqvIlJya/BV68CYf87fjmc8GAtlg2bxs2XhWPBp7XlLOkqhR5bjRUqTxtLZZAG0tuX4BU0mFGj0zu4BaET5akM9yNrm9Ed/lZIOVvye7lol2ltC2c7RgvU7gcYR6ZatCqyzsBoFzI57BqeKges9FdXS+mpBc5pXsu3BxxqKQQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM8PR04MB7267.eurprd04.prod.outlook.com (2603:10a6:20b:1df::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.32; Tue, 1 Jul
- 2025 13:24:01 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8880.029; Tue, 1 Jul 2025
- 13:24:01 +0000
-Date: Tue, 1 Jul 2025 22:34:33 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH 5/5] arm64: dts: imx943: Add LVDS/DISPLAY CSR nodes
-Message-ID: <20250701143432.GA20538@nxa18884-linux>
-References: <20250701-imx95-blk-ctl-7-1-v1-0-00db23bd8876@nxp.com>
- <20250701-imx95-blk-ctl-7-1-v1-5-00db23bd8876@nxp.com>
- <466b4352-91b9-4259-94b0-b8228d8282e9@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <466b4352-91b9-4259-94b0-b8228d8282e9@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MAXPR01CA0098.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:5d::16) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	s=arc-20240116; t=1751380534; c=relaxed/simple;
+	bh=GNS5MBfnyCzDkLtrQxaJRkLUgvusRreAZgvHPDlOnGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M8/KM73uAE6nMcgXwGRiLVNeD3z2sn7KnTUIOg+TeXbiEJBhLrGAxKUmeKy8YAqrmojltYMW6pJBROH8gp7PYUms37xxNTcx/apqVI1ECJWQIZfe6ZIJ84IHB6npHobbuAMXgxUCut2S/7EmhxraIsyttw2hfIO+BOlWFIo+htg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=GoVbTy2C; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751380507; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JnTF7mQM1nu2yHe055DZH6vnU1789keoPquXZFjmNNSZ2+Vlch8oWx9qhW+nMZ+Rtrelq0PLNOTo/Euy4V13XP4RHs3ifFHDI8MBAV6b0nhIPHJ0r1tXadu7Jv4b8OQneek4tL1LJrWe7VzPGepuK/1D+JSWPL4jISDBWNwMvg8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751380507; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iGYUxOVLNyr0EJX9bY+jWfcpDzJkAr/EkhLgtanbeWk=; 
+	b=K6AX+eALUaGsP5x8eEMyGUPtVYfyY/Hj7tiP3yAeBkJet0E6uQAiWnVhkqLpha34cQAweKhieWfi09WWniBJOFHvOfOCCM48FSrkWLYXZZWruDFwQuAxtY14kohtp1WjPR3mPhYqfkVNvGbDGkrvMiMhNPxMbOUaMN0PA+SyaM4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751380507;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=iGYUxOVLNyr0EJX9bY+jWfcpDzJkAr/EkhLgtanbeWk=;
+	b=GoVbTy2CI8D89/m7Z7h3sHfqQN9Fq2fBwNFY9wLGtPTYhl5y1vmI2X4KnPrg3RBK
+	W6piUQoJdFOAU6IxAdBn7U1h3o4lgFDOGXoSXatjkUfXNfykpy5tgb5jCyXMKiZgSw2
+	4g79QXo0LRB1LhLghpL5OE6uzUiyt/VK39xfXYPE=
+Received: by mx.zohomail.com with SMTPS id 1751380504773815.8869809951292;
+	Tue, 1 Jul 2025 07:35:04 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH v11 0/4] rust: platform: add Io support
+Date: Tue, 01 Jul 2025 11:34:38 -0300
+Message-Id: <20250701-topics-tyr-platform_iomem-v11-0-6cd5d5061151@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM8PR04MB7267:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e50c1e4-adb1-4be8-bb76-08ddb8a28acb
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zVqL6F598ZprRyfFLVMH1hpGxZ+lRjzm1DxOhAmqPla5PWlM/znzV1zDVSre?=
- =?us-ascii?Q?alBreb3JxIqSyP3T97rytFpjNijdlNM6eBH0NEUiGB2A+eeZiZxsyjHAfJRZ?=
- =?us-ascii?Q?V2sXhnxyhFVQrrNmOcwrfO3YYshnW5hjfkXacrzG75illP7U0XhsFf8DITWD?=
- =?us-ascii?Q?RaMPqEJrkoDkdJYMjCMDdRC3zjOyV4wRBdTZqZeqQSsOe+KCyHiQ7qvgBe3x?=
- =?us-ascii?Q?p1yz+yiRMVZcSWyvJkBO8eji6wt2NPr4E72fPM3xxLpBf0+gdjIxNGg5mcsD?=
- =?us-ascii?Q?d9edNAYQ9X+2kXzmozX0MpU3JFlGTzl5pQ/ejZBUGyGaGZbFGJVHzPNmVtMG?=
- =?us-ascii?Q?GPrib+FXXS97rFOUYUgtCNY8x3KpKX3FQDJc0dWZAMDzaBL+s4/8pIdN++19?=
- =?us-ascii?Q?0gxwk3AmarvOnhleC+S/wQ2DkOr2mt5QSItgx995Z1GWLlcJsznHJ12nadPu?=
- =?us-ascii?Q?9XY+25MZ+td3/5xahaFzDBHyQbdD2S0G5gs59NSANwNBx9hAeC0IaD5O4XI7?=
- =?us-ascii?Q?eAlnr5awjYENFjEoNE9iA2xi002u2Ia8Ilh5sIHo8P2hcVFCnzihN2QniDiu?=
- =?us-ascii?Q?YpjAV2TyWUCiBIqe19bzhi1NE4G+ZkMXUI1TCSn6oiAT2TzjmgDnJe2sekC+?=
- =?us-ascii?Q?yl4gCeeU6XjRPAufvrEOCPj3rCpNjzj3oHl10N20kaAKtK39C0V1zcCpzHfa?=
- =?us-ascii?Q?oZdzRa9GGDgeRrRMLlXx/qgmY+cmwH/tNNZe+6Ur3Qb0L1jRbgup/CF1pVvj?=
- =?us-ascii?Q?twMRYeohtEt/O37lSUSmTl01zkuFB3V6dP9Z+taMcopbUtv6vHAr+eUnVjLh?=
- =?us-ascii?Q?IvVWP+WWHul8j4FcgEWlTh893OevuhVWAilwa8nUpCT5wTADF9grJFLNwT5m?=
- =?us-ascii?Q?UiwHJ86ACdltiVUnbVpiOekxU5z72vLSHhlq4N3XEvNmrMAho1hKsHUIAtMG?=
- =?us-ascii?Q?IyX1QuBcMohX9QLM39lKuk6auuQzhCMrvlxr9txvEER08zFDRmadyzypiofP?=
- =?us-ascii?Q?Z0cXi2x0ZvSsY+hRCpkt3bGy0lLxAKL9NvxNX9twXe03bxLWC6TNHyHR6MCw?=
- =?us-ascii?Q?lv4Vee1Do0P32rk9d3NbvABAhGmU1cw51Aeib5OVjGgESR9+YCwj2fSXUuWP?=
- =?us-ascii?Q?UqtX6dqkzV2/V4ize8hzTRdxnQ+WFqfVKnHZvU8EyO8sCHNCi14+CX7x1zlD?=
- =?us-ascii?Q?jDNipWJNYZlzddU9nuolOk/dF3PbWzBdYa5EWZ1ZGJc4dxnWIdR+Rz4ARw1X?=
- =?us-ascii?Q?TBLHjYBC1PsUKwIBH4CinxK6A5BMp1nBd9ikZv7SX/KnMcSiRMa/IyfYZvQK?=
- =?us-ascii?Q?YUlCki3rh7XbeQ6EpaYUavUtvNP1amGitDYBrySf+AsuFy2p/nz7puX8qpTI?=
- =?us-ascii?Q?TYyt++LvAVr3ZJL6/te+U70AwAGW7wq3jJI0lNf0COBsjflvlsJntDlDr0Tp?=
- =?us-ascii?Q?8vIxc/xA+uKBwONMqUkUYSWfnVtqx9gJdWoQrDDzveFhLyrdSdZtLG3EhqvQ?=
- =?us-ascii?Q?DC1My43QsIdTfLw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?J+/hejWtEYoAvEj9bRjQ1LCY3t+1es3tjKjrzs3of9Mfdu6XzWs9JknBTaaG?=
- =?us-ascii?Q?8mdgJtNtOi7jANchvmP+VRtWsND0S4tCqKfUBFKMauMaWe17ljBx6YzVgi8f?=
- =?us-ascii?Q?ZHqvx3c1enmI2yE896DmVEXbxA70UaBAu91rC3ZjGuiPOFFMuV/9waMjIENM?=
- =?us-ascii?Q?L9ajPSrWne3wFjtJrHIEwW7yX/+OP/nI+yud5CvnbSeKTq8Ztru/ImCwP2St?=
- =?us-ascii?Q?HnVJz+PFfYuZ+UJk5J6DX+hLJHfm5dBU/1QJJquyXG0LZ+Lrjhpd8rxmNlZ/?=
- =?us-ascii?Q?/+ctG3dOrTA0Oi4Yg7N6NfODzpr7AJpJs/IbWDdQUcN7iF1AFUUxL+1IPYSA?=
- =?us-ascii?Q?e0x6NMWxgVcRM+gTwiWEg3A+Dety88hqxOsGN1TGLWdOJLRd8dzjycHK+9gD?=
- =?us-ascii?Q?0aNTQzfFY3KeoebUl4EjcjNTM46D+unA/zsQ6H8Qo6m4B1PiUTsn4THslk6o?=
- =?us-ascii?Q?DZbdehzexeVQldjDNvpWlEAdtOeFaDN6EhHi59EWmjIgELk5srymXCm3zgmN?=
- =?us-ascii?Q?EBRXg8yYb0cPHoo3bioTibJ4uz+fuArP79dnI0oa3jTp7yBu2W6YZpdKmbjP?=
- =?us-ascii?Q?w3iIb+JL37Urasjo7F4mmEApUg4mBCPqss5NwVVW6jzwTCUui0ff7wx8bfX9?=
- =?us-ascii?Q?2zzDZouphqIqqf/Np/ffgpBayBLECMMBv/f/hwKSxmeyk3Du+2WBMcEjtsKX?=
- =?us-ascii?Q?MLz4h1rW9qCVOxIlLVDvtPnSrGmPSNqQGETR2Sr6Vl3+qZqI4+fFHHVjJd+l?=
- =?us-ascii?Q?F+O9KoHHt8LySawnc8g7BcClBUVFV7ci77DUPfdNcLFcdvtKAG6LowPixAku?=
- =?us-ascii?Q?qlWO3MQcJ2wzl0JhsvNHVOtwFhh6sgiA0GEZei0xEgSkxOanNXNu9TTEm/OH?=
- =?us-ascii?Q?w1GC7vbBWp7MlQsJSdcGaEqa/R7M+qTQO+OxeDXpZG1jGbT/84KyXn2erUFC?=
- =?us-ascii?Q?mbTx2IZPVfVAugbSH4eotBWDMhaKczEgERobdF7Hl7nE0MXdf3NyAV74ITlX?=
- =?us-ascii?Q?+OPPZ7Vr4vOi5FLE3FmE45pA57HSqbUlFeDSK5Op9JuGy8ifjq93jrmwH9ef?=
- =?us-ascii?Q?Rjgo9O1Er699z4zI/Z7KHbHRG5j+PgZvWDp+ZQq9IKosfkdW7q0OAU17z23e?=
- =?us-ascii?Q?Ow4mm1NJIYJaFqDq5WnTKqkUj4YD00DkbOU9gFnICXdLGY/UyDpfQ8AVWjqr?=
- =?us-ascii?Q?tgkQO8dtmdh3gu8GPObfgsBCzO5ViEXKk7A4lQiOEuo/apmkLQkk3YCbw8Tj?=
- =?us-ascii?Q?e74gONUIABCjRPJuENw0NouVGGx2Xn8il3ojJ5ipB92YK+P5Yqe1MvFMIrHq?=
- =?us-ascii?Q?ceHf9rlO8LcrnK/zJVI8mLGSWkAF4vRl/wBKsi4LdKBEDsVfvpV0WMTazL/b?=
- =?us-ascii?Q?/U7ebG/+hYW/uwrh/TVTNQTiemu47Bk4ZrTZu8NcDMX8u7sYEDHz9I2AzRt2?=
- =?us-ascii?Q?dFvzuQyuBeHGhJC0CIH0uJNVJmNP/iWL0hWjpE7mO7k5mB9hr8KFZwqSOTMy?=
- =?us-ascii?Q?UiNd1IAB9KrXR24250DamzIzuqSmuSCkXicer0Hn+Tjb7senTzomkyp07gbW?=
- =?us-ascii?Q?+Y4b5gEtrmsLNMnYJRK9SJ0AJ6ufNsRLdFl5evTf?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e50c1e4-adb1-4be8-bb76-08ddb8a28acb
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 13:24:01.2260
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bKuXJPfhtoIFdIVuYEqVkQpzUyFztHz/cwXviUK7CJdRqikEK0kYs4yfIaeIONxNeCIfVOxObEo6NecrzTGkQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7267
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP7xY2gC/43O3WqEMBCG4VtZctzITDR/Pep9lFJSM+kG1EgU6
+ bJ4742eWLZFevgNzMN7ZxPlSBN7vtxZpiVOMQ1lID5dWHt1wyfx6MuBCRASajR8TmNsJz7fMh8
+ 7N4eU+/eYeuo5agSHWhP6wMr/mCnErx1/fSs75NTz+ZrJHSLWIARIYSulpLGKI/duiNRVruspe
+ vfSpq5zHym7qk39xl7jNKd825MXveH/iVs0B66b2iiL3lLQD/AWuJhDk2DPNFM0sgG1kK6BX5m
+ 7Zg9NQX2m2aI5oQkalJpq+ktD+MGJUw5hq/NGgZNK2AYevXVdvwEa7Kv3+gEAAA==
+X-Change-ID: 20250318-topics-tyr-platform_iomem-1710a177e1df
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Ying Huang <huang.ying.caritas@gmail.com>, Benno Lossin <lossin@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Fiona Behrens <me@kloenk.dev>, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
+X-ZohoMailClient: External
 
-On Tue, Jul 01, 2025 at 01:38:11PM +0200, Krzysztof Kozlowski wrote:
->On 01/07/2025 09:04, Peng Fan wrote:
->> Add nodes for LVDS/DISPLAY CSR.
->> 
->> Add ldb_pll_div7 node which is used for clock source of DISPLAY CSR.
->> 
->> Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx943.dtsi | 34 +++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/freescale/imx943.dtsi b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> index 45b8da758e87771c0775eb799ce2da3aac37c060..cf67dba21e4f6f27fff7e5d29744086e4ec9c021 100644
->> --- a/arch/arm64/boot/dts/freescale/imx943.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx943.dtsi
->> @@ -3,6 +3,8 @@
->>   * Copyright 2025 NXP
->>   */
->>  
->> +#include <dt-bindings/clock/nxp,imx94-clock.h>
->> +
->>  #include "imx94.dtsi"
->>  
->>  / {
->> @@ -145,4 +147,36 @@ l3_cache: l3-cache {
->>  			cache-unified;
->>  		};
->>  	};
->> +
->> +	ldb_pll_pixel: ldb_pll_div7 {
->
->Not a DTS coding style.
->
->Please use name for all fixed clocks which matches current format
->recommendation: 'clock-<freq>' (see also the pattern in the binding for
->any other options).
+Changes in v11:
+- Rebased on top of driver-core-next (to get the latest Devres changes)
+- Changed the order between requesting the resource and mapping it
+  (Danilo)
+- Link to v10: https://lore.kernel.org/r/20250623-topics-tyr-platform_iomem-v10-0-ed860a562940@collabora.com
 
-oops, I should use '-'. And the rate is not fixed, so not able to
-use clock-<freq> for node name.
+rust: platform: add Io support
 
-grep "fixed-factor-clock" ./Documentation/devicetree/bindings/ -rn, I
-checked renesas,emev2-smu.yaml, fixed-factor-clock.yaml,
-I could use "ldb-pll-div7-clk" in V2.
+Changes in v10:
+- Rebased on driver-core-next
+- Fixed examples (they were still using try_access())
+- Removed map_err() from the examples, as it was not needed.
+- Added a pub use for Resource in io.rs
+- Reworked the platform code to make use of the pub use above
+- Link to v9: https://lore.kernel.org/r/20250603-topics-tyr-platform_iomem-v9-0-a27e04157e3e@collabora.com
 
-Thanks,
-Peng
+Changes in v9:
+- Rebased on top of nova-next (for Devres::access())
+- Reworked the documentation to add more markdown.
+- Converted to &raw mut instead of addr_of_mut!()
+- Renamed 'from_ptr' to 'as_ref' for consistency
+- Changed the IoMem examples to use the signature for probe()
+- Changed resource() to resource_by_index(). It's a better fit given
+  the existance of resource_by_name().
+- Created a separate patch for the resource accessors above.
+- Moved the accessors into the generic impl block, so they work with all
+  Device contexts.
+- Take Device<Bound> where applicable
+- Renamed "ioremap_*" to "iomap_*", in order to be consistent with the code
+  in pci.rs
+- Switched to Devres::access()
+- Link to v8: https://lore.kernel.org/r/20250509-topics-tyr-platform_iomem-v8-0-e9f1725a40da@collabora.com
 
->
->https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
->
->> +		compatible = "fixed-factor-clock";
->> +		#clock-cells = <0>;
->> +		clocks = <&scmi_clk IMX94_CLK_LDBPLL>;
->> +		clock-div = <7>;
->> +		clock-mult = <1>;
->> +		clock-output-names = "ldb_pll_div7";
->> +	};
->
->
->
->Best regards,
->Krzysztof
+rust: platform: add Io support
+
+Changes in v8:
+- Rebased on driver-core-next
+- Opted to wait for 'rust/revocable: add try_with() convenience method' to
+  land instead of using the suggested closure (let me know if we should
+  just switch to the closure anyways)
+- Cc'd more people
+- Link to v7: https://lore.kernel.org/r/20250318-topics-tyr-platform_iomem-v7-0-7438691d9ef7@collabora.com
+
+Changes in v7:
+
+- Rebased on top of rust-next
+- Fixed a few Clippy lints
+- Fixed typos (Thanks Daniel!)
+- "struct Flags" now contains a usize (thanks Daniel)
+- Fixed "Doc list without indentation" warning (thanks, Guangbo)
+
+Thanks, Fiona {
+- Removed RequestFn, as all functions simply used request_region and RequestFn
+  had issues. Only request_region() is exposed now.
+- Gated iomem_resource on CONFIG_HAS_IOMEM
+- Require that the name argument be 'static
+}
+
+- Correctly check for IORESOURCE_MEM_NONPOSTED. We now call ioremap_np if that
+  is set (thanks, Lina!)
+- Remove #[dead_code] attribute from ExclusiveIoMem::region.
+
+Changes in v6:
+
+- Added Fiona as co-developer in the first patch, as I merged part of her code
+from the LED driver series (thanks, Fiona)
+
+- (Fiona) added the ResourceSize type, thereby fixing the u32 vs u64 issues
+  pointed out by Christian
+
+- Moved the request_region, release_region and friends to resource.rs
+
+- Added the Region type. This type represents a resource returned by
+  `request_region` and friends. It is also owned, representing the fact
+  that the region remains marked as busy until release_region is called on
+  drop. (Thanks Alice, for pointing out this pattern)
+
+- Rewrote the IoMem abstraction to implement a separate type for exclusive
+  access to an underlying region. I really disliked the `EXCLUSIVE` const
+  generic, as it was definitely not ergonomic, i.e.:
+
+  `IoMem<0, false>`
+
+  ...doesn't really say much. In fact, I believe that boolean parameters
+  hurt readability in general.
+
+  This new approach lets users build either regular IoMem's, which basically
+  call ioremap under the covers, and ExclusiveIoMem's , which also call request_region
+  via the Region type.
+
+- Added access to the ioresource_port and ioresource_mem globals.
+
+Link to v5: https://lore.kernel.org/rust-for-linux/20250116125632.65017-1-daniel.almeida@collabora.com/
+
+Changes in v5:
+
+- resend v5, as the r4l list was not cc'd
+- use srctree where applicable in the docs (Alice)
+- Remove 'mut' in Resource::from_ptr() (Alice)
+- Add 'invariants' section for Resource (Alice)
+- Fix typos in mem.rs (Alice)
+- Turn 'exclusive' into a const generic (Alice)
+- Fix example in platform.rs (Alice)
+- Rework the resource.is_null() check (Alice)
+- Refactor IoMem::new() to return DevRes<IoMem> directly (Danilo)
+
+link to v4: https://lore.kernel.org/rust-for-linux/20250109133057.243751-1-daniel.almeida@collabora.com/
+
+Changes in v4:
+
+- Rebased on top of driver-core-next
+- Split series in multiple patches (Danilo)
+- Move IoMem and Resource into its own files (Danilo)
+- Fix a missing "if exclusive {...}" check (Danilo)
+- Fixed the example, since it was using the old API (Danilo)
+- Use Opaque in `Resource`, instead of NonNull and PhantomData (Boqun)
+- Highlight that non-exclusive access to the iomem might be required in some cases
+- Fixed the safety comment in IoMem::deref()
+
+Link to v3: https://lore.kernel.org/rust-for-linux/20241211-topic-panthor-rs-platform_io_support-v3-1-08ba707e5e3b@collabora.com/
+
+Changes in v3:
+- Rebased on top of v5 for the PCI/Platform abstractions
+- platform_get_resource is now called only once when calling ioremap
+- Introduced a platform::Resource type, which is bound to the lifetime of the
+ platform Device
+- Allow retrieving resources from the platform device either by index or
+ name
+- Make request_mem_region() optional
+- Use resource.name() in request_mem_region
+- Reword the example to remove an unaligned, out-of-bounds offset
+- Update the safety requirements of platform::IoMem
+
+Changes in v2:
+- reworked the commit message
+- added missing request_mem_region call (Thanks Alice, Danilo)
+- IoMem::new() now takes the platform::Device, the resource number and
+ the name, instead of an address and a size (thanks, Danilo)
+- Added a new example for both sized and unsized versions of IoMem.
+- Compiled the examples using kunit.py (thanks for the tip, Alice!)
+- Removed instances of `foo as _`. All `as` casts now spell out the actual
+ type.
+- Now compiling with CLIPPY=1 (I realized I had forgotten, sorry)
+- Rebased on top of rust-next to check for any warnings given the new
+ unsafe lints.
+
+Daniel Almeida (3):
+  rust: io: add resource abstraction
+  rust: io: mem: add a generic iomem abstraction
+  rust: platform: allow ioremap of platform resources
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/io.c               |  36 +++++
+ rust/kernel/io.rs               |   3 +
+ rust/kernel/io/mem.rs           | 125 ++++++++++++++++
+ rust/kernel/io/resource.rs      | 252 ++++++++++++++++++++++++++++++++
+ rust/kernel/platform.rs         | 123 +++++++++++++++-
+ 6 files changed, 539 insertions(+), 1 deletion(-)
+ create mode 100644 rust/kernel/io/mem.rs
+ create mode 100644 rust/kernel/io/resource.rs
+
+--
+2.48.0
+
+---
+Daniel Almeida (4):
+      rust: io: add resource abstraction
+      rust: io: mem: add a generic iomem abstraction
+      rust: platform: add resource accessors
+      rust: platform: allow ioremap of platform resources
+
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/io.c               |  41 ++++++++
+ rust/kernel/io.rs               |   5 +
+ rust/kernel/io/mem.rs           | 147 ++++++++++++++++++++++++++
+ rust/kernel/io/resource.rs      | 222 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/platform.rs         | 163 ++++++++++++++++++++++++++++-
+ 6 files changed, 578 insertions(+), 1 deletion(-)
+---
+base-commit: f5d3ef25d238901a76fe0277787afa44f7714739
+change-id: 20250318-topics-tyr-platform_iomem-1710a177e1df
+
+Best regards,
+-- 
+Daniel Almeida <daniel.almeida@collabora.com>
+
 
