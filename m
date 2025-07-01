@@ -1,291 +1,208 @@
-Return-Path: <linux-kernel+bounces-710361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B421EAEEB46
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:36:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B70BAEEB43
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8962F7AD7D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40ED84410DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFDD72618;
-	Tue,  1 Jul 2025 00:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nc/5SMAS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F837260F;
+	Tue,  1 Jul 2025 00:33:31 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57920129A78
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 00:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39A52F1FE6;
+	Tue,  1 Jul 2025 00:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751330172; cv=none; b=BR0SnHwI/wICJuDeK3BiDP88YppzzcD5pNhfkiSkfvaVKMbJtP78jhohft12GxjvWdZ++OWICKuw/OvefSWxePOPJvI2FpTjFjKq82EJSUATFgNsk7KiY3lt+Vu1fk2OEUL83meBrz5Gni2fQoorib8gfXY3wyV5A8d2z3U6524=
+	t=1751330011; cv=none; b=U90XzyOgImkfxcRnjFLdHAuntuDRKH6CJG+v/Ggx3kH94LmEyRSTwLhYThg6/nXsiANl9SREdZGao07rLsShEIma41qRi3sn3U7H91JEyK8CDb6ubhKQGJ9Xgyd2sv+HL03rMC/PZ0V3CpD1fGLzba7VXch/qRkFrJl9VWEI3jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751330172; c=relaxed/simple;
-	bh=bp85Nb1SqHOkZt8dKzTMcsAOLOjBh44N/vR/2utVHaw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qF3slF46kMIiMxSeQ5nNgX5s0qr6qlR9oEIlp9ZUplafC251URGPUUDPVem2V+3Ms15kd8pY8LQy37KZSvrAF2gybZyGf5P3bjy7vKmIZjiBMmpGTZdkfCRB04jng1WsgB5ts1uS21uEhKDegTxmQ6Hck9aqV/uB0UDEre3W5Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nc/5SMAS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11ADAC4CEE3;
-	Tue,  1 Jul 2025 00:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751330170;
-	bh=bp85Nb1SqHOkZt8dKzTMcsAOLOjBh44N/vR/2utVHaw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nc/5SMAS1+bbub/Krsn3J35YjtGboTAnFJ1fIl3LGz/1WqPpVZo/EpxH2gfh7yNUQ
-	 KgNfkerkmSCK7Dq8zDv4x7qDyv4HsdKDxzG10lanRdBKsnTGB6xRtiYw+Hvno8U9BH
-	 cYNcgxPuOKKyoy5PYJT9aGfZ89P0Xraj/GNXWFsT+sLT2/wCjugb6T3wGGu9hRsErf
-	 K0VwnNmcZn7XVAkp4veu9RRibGzEkZoOM2dzTkJZM0GWhKZVt9EoXVuyB9zCyT4D9Q
-	 t4qkeoL+DYLN6+y5kwyN8lobp/O4rv2djgAr8Qu7jDt6NhkfsCRJQUsn3NJdwEwHbQ
-	 s3zUmTj7ddXXA==
-Message-ID: <132c1bdf-e100-4e3a-883f-27f9e9b78020@kernel.org>
-Date: Tue, 1 Jul 2025 09:34:00 +0900
+	s=arc-20240116; t=1751330011; c=relaxed/simple;
+	bh=/skP8Ljo8IEscW1zmu5gFSkR+/tvjcLxuPcDoAwB+6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mPlC6TFxCLGQJ8t6AmQlxCVuVxPzE3vJNUU9e3q/S2E3wwAECrRqNqpoEy6X4JSWRoRHgcLsCAE7ZrFGcRXWQO1qiBfbbAn+QxhbWIP2YleGH2lXyKgFAnN47paFcYhkNqP6QtmJSPL8s/MTh99VMz1zsdqD+LmeEY1ZQg0U0rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 6EF4F121CE1;
+	Tue,  1 Jul 2025 00:33:27 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id B5A1E20029;
+	Tue,  1 Jul 2025 00:33:25 +0000 (UTC)
+Date: Mon, 30 Jun 2025 20:34:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ john.ogness@linutronix.de
+Subject: Re: [PATCH v10 17/19] rv: Add rtapp_sleep monitor
+Message-ID: <20250630203401.1a11e58f@gandalf.local.home>
+In-Reply-To: <d3cf55d3bf42a0f70a58c394b5cf6d603ca8a9f7.1749547399.git.namcao@linutronix.de>
+References: <cover.1749547399.git.namcao@linutronix.de>
+	<d3cf55d3bf42a0f70a58c394b5cf6d603ca8a9f7.1749547399.git.namcao@linutronix.de>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] nvmet: Make blksize_shift configurable
-To: Richard Weinberger <richard@nod.at>, linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kch@nvidia.com, sagi@grimberg.me,
- hch@lst.de, upstream+nvme@sigma-star.at
-References: <20250630191341.1263000-1-richard@nod.at>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250630191341.1263000-1-richard@nod.at>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: pjgbnxhko5ejey819w8n1j8n6cuyxz71
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: B5A1E20029
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+b2IhGEXg5GPmPtXjNLo1Qu7smsYZuQP0=
+X-HE-Tag: 1751330005-756817
+X-HE-Meta: U2FsdGVkX187jE53da+biyQct+qC0+tc43RGlHOpd9J+9/BJSRYAxs9npKwnthlQ38mbTcJE4YQl9gnvbpD0V98zAg0R2TyKlk9O9YMVTiBDnCLjrU+maXuCJCVXKW0e/4vR3wUTioZhbT86bWQegtpPZQ4dviNkkVDBVVHTjRFuBPN69+fVJCe4hD7HRBZgM4QyPbdCvQinoxDBpibzsWM3kxXCvc2hDzrsJlgLPEVXU20b9RVdn4K/w5qmtJGh/NHcapIcNB1eUZ37dNOAQG8mMPUf+j63W2FRZl0i5NKUM+NhPC7d/Vas5AtjVpTV
 
-On 7/1/25 4:13 AM, Richard Weinberger wrote:
-> Currently, the block size is automatically configured, and for
-> file-backed namespaces it is likely to be 4K.
-> While this is a reasonable default for modern storage, it can
-> cause confusion if someone wants to export a pre-created disk image
-> that uses a 512-byte block size.
-> As a result, partition parsing will fail.
-> 
-> So, just like we already do for the loop block device, let the user
-> configure the block size if they know better.
+On Tue, 10 Jun 2025 11:43:42 +0200
+Nam Cao <namcao@linutronix.de> wrote:
 
-Hmm... That fine with me but this explanation does not match what the patch
-does: you allow configuring the block size bit shift, not the size. That is not
-super user friendly :)
-
-Even if internally you use the block size bit shift, I think it would be better
-if the user facing interface is the block size as that is much easier to
-manipulate without having to remember the exponent for powers of 2 values :)
-
-> 
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> ---
-> Changes since v1 (RFC)[0]:
-> 
-> - Make sure blksize_shift is in general within reason
-> - In the bdev case and when using direct IO, blksize_shift has to be
->   smaller than the logical block it the device
-> - In the file case and when using direct IO try to use STATX_DIOALIGN,
->   just like the loop device does
-> 
-> [0] https://lore.kernel.org/linux-nvme/20250418090834.2755289-1-richard@nod.at/
-> 
-> Thanks,
-> //richard
-> ---
->  drivers/nvme/target/configfs.c    | 37 +++++++++++++++++++++++++++++++
->  drivers/nvme/target/io-cmd-bdev.c | 13 ++++++++++-
->  drivers/nvme/target/io-cmd-file.c | 28 ++++++++++++++++++-----
->  3 files changed, 71 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-> index e44ef69dffc24..26175c37374ab 100644
-> --- a/drivers/nvme/target/configfs.c
-> +++ b/drivers/nvme/target/configfs.c
-> @@ -797,6 +797,42 @@ static ssize_t nvmet_ns_resv_enable_store(struct config_item *item,
->  }
->  CONFIGFS_ATTR(nvmet_ns_, resv_enable);
->  
-> +static ssize_t nvmet_ns_blksize_shift_show(struct config_item *item, char *page)
-
-As mentioned above, I think this should be nvmet_ns_blksize_show().
-
+> +static void
+> +ltl_possible_next_states(struct ltl_monitor *mon, unsigned int state, unsigned long *next)
 > +{
-> +	return sysfs_emit(page, "%u\n", to_nvmet_ns(item)->blksize_shift);
+> +	bool task_is_migration = test_bit(LTL_TASK_IS_MIGRATION, mon->atoms);
+> +	bool task_is_rcu = test_bit(LTL_TASK_IS_RCU, mon->atoms);
+> +	bool val40 = task_is_rcu || task_is_migration;
+> +	bool futex_lock_pi = test_bit(LTL_FUTEX_LOCK_PI, mon->atoms);
+> +	bool val41 = futex_lock_pi || val40;
+> +	bool block_on_rt_mutex = test_bit(LTL_BLOCK_ON_RT_MUTEX, mon->atoms);
+> +	bool val5 = block_on_rt_mutex || val41;
+> +	bool kthread_should_stop = test_bit(LTL_KTHREAD_SHOULD_STOP, mon->atoms);
+> +	bool abort_sleep = test_bit(LTL_ABORT_SLEEP, mon->atoms);
+> +	bool val32 = abort_sleep || kthread_should_stop;
+> +	bool woken_by_nmi = test_bit(LTL_WOKEN_BY_NMI, mon->atoms);
+> +	bool val33 = woken_by_nmi || val32;
+> +	bool woken_by_hardirq = test_bit(LTL_WOKEN_BY_HARDIRQ, mon->atoms);
+> +	bool val34 = woken_by_hardirq || val33;
+> +	bool woken_by_equal_or_higher_prio = test_bit(LTL_WOKEN_BY_EQUAL_OR_HIGHER_PRIO,
+> +	     mon->atoms);
+> +	bool val14 = woken_by_equal_or_higher_prio || val34;
+> +	bool wake = test_bit(LTL_WAKE, mon->atoms);
+> +	bool val13 = !wake;
+> +	bool kernel_thread = test_bit(LTL_KERNEL_THREAD, mon->atoms);
+> +	bool nanosleep_clock_tai = test_bit(LTL_NANOSLEEP_CLOCK_TAI, mon->atoms);
+> +	bool nanosleep_clock_monotonic = test_bit(LTL_NANOSLEEP_CLOCK_MONOTONIC, mon->atoms);
+> +	bool val24 = nanosleep_clock_monotonic || nanosleep_clock_tai;
+> +	bool nanosleep_timer_abstime = test_bit(LTL_NANOSLEEP_TIMER_ABSTIME, mon->atoms);
+> +	bool val25 = nanosleep_timer_abstime && val24;
+> +	bool clock_nanosleep = test_bit(LTL_CLOCK_NANOSLEEP, mon->atoms);
+> +	bool val18 = clock_nanosleep && val25;
+> +	bool futex_wait = test_bit(LTL_FUTEX_WAIT, mon->atoms);
+> +	bool val9 = futex_wait || val18;
+> +	bool val11 = val9 || kernel_thread;
+> +	bool sleep = test_bit(LTL_SLEEP, mon->atoms);
+> +	bool val2 = !sleep;
+> +	bool rt = test_bit(LTL_RT, mon->atoms);
+> +	bool val1 = !rt;
+> +	bool val3 = val1 || val2;
+> +
+> +	switch (state) {
+> +	case S0:
+> +		if (val3)
+> +			__set_bit(S0, next);
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val5)
+> +			__set_bit(S5, next);
+> +		break;
 
-And you can do:
+What's with all the magic numbers?
 
-	return sysfs_emit(page, "%u\n",
-			  1U << to_nvmet_ns(item)->blksize_shift);
+Can we turn these into enums so they have some meaning for us humans?
 
+-- Steve
+
+> +	case S1:
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val13 && val3)
+> +			__set_bit(S2, next);
+> +		if (val14 && val3)
+> +			__set_bit(S3, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val13 && val5)
+> +			__set_bit(S6, next);
+> +		if (val14 && val5)
+> +			__set_bit(S7, next);
+> +		break;
+> +	case S2:
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val13 && val3)
+> +			__set_bit(S2, next);
+> +		if (val14 && val3)
+> +			__set_bit(S3, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val13 && val5)
+> +			__set_bit(S6, next);
+> +		if (val14 && val5)
+> +			__set_bit(S7, next);
+> +		break;
+> +	case S3:
+> +		if (val3)
+> +			__set_bit(S0, next);
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val5)
+> +			__set_bit(S5, next);
+> +		break;
+> +	case S4:
+> +		if (val3)
+> +			__set_bit(S0, next);
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val5)
+> +			__set_bit(S5, next);
+> +		break;
+> +	case S5:
+> +		if (val3)
+> +			__set_bit(S0, next);
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val5)
+> +			__set_bit(S5, next);
+> +		break;
+> +	case S6:
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val13 && val3)
+> +			__set_bit(S2, next);
+> +		if (val14 && val3)
+> +			__set_bit(S3, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val13 && val5)
+> +			__set_bit(S6, next);
+> +		if (val14 && val5)
+> +			__set_bit(S7, next);
+> +		break;
+> +	case S7:
+> +		if (val3)
+> +			__set_bit(S0, next);
+> +		if (val11 && val13)
+> +			__set_bit(S1, next);
+> +		if (val11 && val14)
+> +			__set_bit(S4, next);
+> +		if (val5)
+> +			__set_bit(S5, next);
+> +		break;
+> +	}
 > +}
-> +
-> +static ssize_t nvmet_ns_blksize_shift_store(struct config_item *item,
-> +		const char *page, size_t count)
-
-Similar here: nvmet_ns_blksize_store()
-
-> +{
-> +	struct nvmet_ns *ns = to_nvmet_ns(item);
-> +	u32 shift;
-> +	int ret;
-> +
-> +	ret = kstrtou32(page, 0, &shift);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Make sure block size is within reason, something between 512 and
-> +	 * BLK_MAX_BLOCK_SIZE.
-> +	 */
-> +	if (shift < 9 || shift > 16)
-> +		return -EINVAL;
-
-And this would be simpler:
-
-	if (blksz < SECTOR_SIZE || blksz > BLK_MAX_BLOCK_SIZE ||
-	    !is_power_of_2(blksz))
-		return -EINVAL;
-
-> +
-> +	mutex_lock(&ns->subsys->lock);
-> +	if (ns->enabled) {
-> +		pr_err("the ns:%d is already enabled.\n", ns->nsid);
-> +		mutex_unlock(&ns->subsys->lock);
-> +		return -EINVAL;
-> +	}
-> +	ns->blksize_shift = shift;
-
-and here:
-
-	ns->blksize_shift = ilog2(blksz);
-
-> +	mutex_unlock(&ns->subsys->lock);
-> +
-> +	return count;
-> +}
-> +CONFIGFS_ATTR(nvmet_ns_, blksize_shift);
-> +
->  static struct configfs_attribute *nvmet_ns_attrs[] = {
->  	&nvmet_ns_attr_device_path,
->  	&nvmet_ns_attr_device_nguid,
-> @@ -806,6 +842,7 @@ static struct configfs_attribute *nvmet_ns_attrs[] = {
->  	&nvmet_ns_attr_buffered_io,
->  	&nvmet_ns_attr_revalidate_size,
->  	&nvmet_ns_attr_resv_enable,
-> +	&nvmet_ns_attr_blksize_shift,
->  #ifdef CONFIG_PCI_P2PDMA
->  	&nvmet_ns_attr_p2pmem,
->  #endif
-> diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-> index eba42df2f8215..be39837d4d792 100644
-> --- a/drivers/nvme/target/io-cmd-bdev.c
-> +++ b/drivers/nvme/target/io-cmd-bdev.c
-> @@ -77,6 +77,7 @@ static void nvmet_bdev_ns_enable_integrity(struct nvmet_ns *ns)
->  
->  int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
->  {
-> +	int bdev_blksize_shift;
->  	int ret;
->  
->  	/*
-> @@ -100,7 +101,17 @@ int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
->  	}
->  	ns->bdev = file_bdev(ns->bdev_file);
->  	ns->size = bdev_nr_bytes(ns->bdev);
-> -	ns->blksize_shift = blksize_bits(bdev_logical_block_size(ns->bdev));
-> +	bdev_blksize_shift = blksize_bits(bdev_logical_block_size(ns->bdev));
-> +
-> +	if (ns->blksize_shift) {
-> +		if (ns->blksize_shift < bdev_blksize_shift) {
-> +			pr_err("Configured blksize_shift needs to be at least %d for device %s\n",
-> +				bdev_blksize_shift, ns->device_path);
-> +			return -EINVAL;
-> +		}
-> +	} else {
-> +		ns->blksize_shift = bdev_blksize_shift;
-> +	}
-
-Nit: to avoid the indented if, may be write this like this: ?
-
-	if (!ns->blksize_shift)
-		ns->blksize_shift = bdev_blksize_shift;
-
-	if (ns->blksize_shift < bdev_blksize_shift) {
-		pr_err("Configured blksize needs to be at least %u for device %s\n",
-			bdev_logical_block_size(ns->bdev),
-			ns->device_path);
-		return -EINVAL;
-	}
-
-Also, if the backend is an HDD, do we want to allow the user to configure a
-block size that is less than the *physical* block size ? Performance will
-suffer on regular HDDs and writes may fail with SMR HDDs.
-
->  
->  	ns->pi_type = 0;
->  	ns->metadata_size = 0;
-> diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
-> index 2d068439b129c..a4066b5a1dc97 100644
-> --- a/drivers/nvme/target/io-cmd-file.c
-> +++ b/drivers/nvme/target/io-cmd-file.c
-> @@ -49,12 +49,28 @@ int nvmet_file_ns_enable(struct nvmet_ns *ns)
->  
->  	nvmet_file_ns_revalidate(ns);
->  
-> -	/*
-> -	 * i_blkbits can be greater than the universally accepted upper bound,
-> -	 * so make sure we export a sane namespace lba_shift.
-> -	 */
-> -	ns->blksize_shift = min_t(u8,
-> -			file_inode(ns->file)->i_blkbits, 12);
-> +	if (ns->blksize_shift) {
-> +		if (!ns->buffered_io) {
-> +			struct block_device *sb_bdev = ns->file->f_mapping->host->i_sb->s_bdev;
-> +			struct kstat st;
-> +
-> +			if (!vfs_getattr(&ns->file->f_path, &st, STATX_DIOALIGN, 0) &&
-> +			    (st.result_mask & STATX_DIOALIGN) &&
-> +			    (1 << ns->blksize_shift) < st.dio_offset_align)
-> +				return -EINVAL;
-> +
-> +			if (sb_bdev && (1 << ns->blksize_shift < bdev_logical_block_size(sb_bdev)))
-> +				return -EINVAL;
-
-I am confused... This is going to check both... But if you got STATX_DIOALIGN
-and it is OK, you do not need (and probably should not) do the second if, no ?
-
-Also, the second condition of the second if is essentially the same check as
-for the block dev case. So maybe reuse that by creating a small helper function ?
-
-> +		}
-> +	} else {
-> +		/*
-> +		 * i_blkbits can be greater than the universally accepted
-> +		 * upper bound, so make sure we export a sane namespace
-> +		 * lba_shift.
-> +		 */
-> +		ns->blksize_shift = min_t(u8,
-> +				file_inode(ns->file)->i_blkbits, 12);
-> +	}
-
-It feels like this entire hunk should be a helper function as that would allow
-making it a lot more readable with early returns. This code here whould be
-something like:
-
-	ret = nvmet_file_set_ns_blksize_shift(ns);
-	if (ret)
-		return ret;
-
->  
->  	ns->bvec_pool = mempool_create(NVMET_MIN_MPOOL_OBJ, mempool_alloc_slab,
->  			mempool_free_slab, nvmet_bvec_cache);
-
-
--- 
-Damien Le Moal
-Western Digital Research
 
