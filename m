@@ -1,129 +1,86 @@
-Return-Path: <linux-kernel+bounces-711351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00F6AEF987
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FC2AEF926
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2412D189F60B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B73A16E79E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01DD274B37;
-	Tue,  1 Jul 2025 13:00:14 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E02272E4C;
+	Tue,  1 Jul 2025 12:49:54 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB8C2741B9;
-	Tue,  1 Jul 2025 13:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05371A29A;
+	Tue,  1 Jul 2025 12:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751374814; cv=none; b=Ng51PrLVAhP269NhGwDLmZ9V+oFQ24opqUCzEU2AWahp2H5Aqi1DeaGcUnGSFuVzduysjaDp89NUH3G/DPCk1XdBcdylCpxZudKcIGmG5cxduES9McXmYAKNWm4L8VkB9rsHW7O5Sa3wQNjKCkJQ2qFXl21Ie1VbpE2ukg0bhzo=
+	t=1751374193; cv=none; b=rJbARhw1kRPG6LvoOEs/RHxeAhj8RwCw9HoOFylqP7DrdQujmoyL2uFFOOLf/i4IbEgcMJ8zVqEuCNl4WedqdLGJuye7Y1sAe9eWnfxBOYn+I2T/VpyDYHJyaTt0Dv898+vjdgMfz7Alpx7vQMYLty0P/Rhq7uOm4P1ta32k7uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751374814; c=relaxed/simple;
-	bh=ZH/q3VNf/bXbhSvmsNcfK1lIDc6sWxMcPfDrISGe4GI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Pic0znNhKUkIVij1GYgnNEmmHF3kHVrnMwlhrU8BMRzAZT0uLo9wn61BC7gW92Bd7ltDFL09S1qi5x2Wq7MDBGPjrrc/EQHaYwidRCllfIEHGeZExktVn/a/IU2iKEyB1R84RmFqlUsior6kjOQLUWiPLu/Av7GpaPv9XP0s6IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bWjh85W7tz20sxk;
-	Tue,  1 Jul 2025 20:56:08 +0800 (CST)
-Received: from kwepemo200008.china.huawei.com (unknown [7.202.195.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 101BB1A016C;
-	Tue,  1 Jul 2025 21:00:09 +0800 (CST)
-Received: from huawei.com (10.67.175.28) by kwepemo200008.china.huawei.com
- (7.202.195.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 1 Jul
- 2025 21:00:08 +0800
-From: ZHENG Xinyu <zhengxinyu6@huawei.com>
-To: <mst@redhat.com>, <jasowang@redhat.com>
-CC: <pbonzini@redhat.com>, <stefanha@redhat.com>,
-	<virtualization@lists.linux-foundation.org>, <kvm@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5.10] vhost-scsi: protect vq->log_used with vq->mutex
-Date: Tue, 1 Jul 2025 12:48:48 +0000
-Message-ID: <20250701124848.4162114-1-zhengxinyu6@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751374193; c=relaxed/simple;
+	bh=SfWAk3wIbxwA6nMEpDKa5BYTQX2mvHu4Y0ggJuZsX4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/YHJQ1iBsejU7QZCS9fjTNztu2uog96JLIqDuQubMFL4JQFRdML7Hai6tAUcAw7SzQCEGiaidw7o4LXFKQkztAzEDAKiEm1ZVnxYBsqH2DsSru6FgjCOtshp+5JTdgFK1hO5qQKGyDrvNJY9K3u1TaVqogzv7n9QaBzNXkMi+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id F156C200918B;
+	Tue,  1 Jul 2025 14:49:41 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id DE504316C0B; Tue,  1 Jul 2025 14:49:41 +0200 (CEST)
+Date: Tue, 1 Jul 2025 14:49:41 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Jim Quinlan <james.quinlan@broadcom.com>
+Subject: Re: [PATCH v2] PCI/pwrctrl: Skip creating pwrctrl device unless
+ CONFIG_PCI_PWRCTRL is enabled
+Message-ID: <aGPZZcb9D4qKr2rM@wunner.de>
+References: <20250701064731.52901-1-manivannan.sadhasivam@linaro.org>
+ <aGOHkmG1jnDistgh@wunner.de>
+ <n23tedrmgzfo7bxe4mbde2rrsayalcz4jya5yopoeahlll3qaw@mpz4oemtyern>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemo200008.china.huawei.com (7.202.195.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <n23tedrmgzfo7bxe4mbde2rrsayalcz4jya5yopoeahlll3qaw@mpz4oemtyern>
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
+On Tue, Jul 01, 2025 at 05:27:27PM +0530, Manivannan Sadhasivam wrote:
+> On Tue, Jul 01, 2025 at 09:00:34AM GMT, Lukas Wunner wrote:
+> > Hm, why does pci_pwrctrl_create_device() return a pointer, even though the
+> > sole caller doesn't make any use of it?  Why not return a negative errno?
+> > 
+> > Then you could just do this:
+> > 
+> > 	if (!IS_ENABLED(CONFIG_PCI_PWRCTRL))
+> > 		return 0;
+> > 
+> > ... at the top of the function and you don't need the extra LoC for the
+> > empty inline stub.
+> 
+> This is what I initially submitted [1] though that returned NULL, but the
+> idea was the same. But Bjorn didn't like that.
+[...]
 
-The vhost-scsi completion path may access vq->log_base when vq->log_used is
-already set to false.
+Thanks for summarizing the state of the discussion, I apologize for not
+having paid sufficient attention to the thread.
 
-    vhost-thread                       QEMU-thread
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
 
-vhost_scsi_complete_cmd_work()
--> vhost_add_used()
-   -> vhost_add_used_n()
-      if (unlikely(vq->log_used))
-                                      QEMU disables vq->log_used
-                                      via VHOST_SET_VRING_ADDR.
-                                      mutex_lock(&vq->mutex);
-                                      vq->log_used = false now!
-                                      mutex_unlock(&vq->mutex);
-
-				      QEMU gfree(vq->log_base)
-        log_used()
-        -> log_write(vq->log_base)
-
-Assuming the VMM is QEMU. The vq->log_base is from QEMU userpace and can be
-reclaimed via gfree(). As a result, this causes invalid memory writes to
-QEMU userspace.
-
-The control queue path has the same issue.
-
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Mike Christie <michael.christie@oracle.com>
-Message-Id: <20250403063028.16045-2-dongli.zhang@oracle.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Zheng Xinyu <zhengxinyu6@huawei.com>
----
- drivers/vhost/scsi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index a23a65e7d828..fcde3752b4f1 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -579,8 +579,10 @@ static void vhost_scsi_complete_cmd_work(struct vhost_work *work)
- 		ret = copy_to_iter(&v_rsp, sizeof(v_rsp), &iov_iter);
- 		if (likely(ret == sizeof(v_rsp))) {
- 			struct vhost_scsi_virtqueue *q;
--			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
- 			q = container_of(cmd->tvc_vq, struct vhost_scsi_virtqueue, vq);
-+			mutex_lock(&q->vq.mutex);
-+			vhost_add_used(cmd->tvc_vq, cmd->tvc_vq_desc, 0);
-+			mutex_unlock(&q->vq.mutex);
- 			vq = q - vs->vqs;
- 			__set_bit(vq, signal);
- 		} else
-@@ -1193,8 +1195,11 @@ static void vhost_scsi_tmf_resp_work(struct vhost_work *work)
- 	else
- 		resp_code = VIRTIO_SCSI_S_FUNCTION_REJECTED;
- 
-+	mutex_lock(&tmf->svq->vq.mutex);
- 	vhost_scsi_send_tmf_resp(tmf->vhost, &tmf->svq->vq, tmf->in_iovs,
- 				 tmf->vq_desc, &tmf->resp_iov, resp_code);
-+	mutex_unlock(&tmf->svq->vq.mutex);
-+
- 	vhost_scsi_release_tmf_res(tmf);
- }
- 
--- 
-2.34.1
-
+Lukas
 
