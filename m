@@ -1,138 +1,83 @@
-Return-Path: <linux-kernel+bounces-711680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D62AEFDDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D1CAEFDDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D3511798CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:18:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D7B162EF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603727CCE4;
-	Tue,  1 Jul 2025 15:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="byDTN9CB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B9A27A47F;
+	Tue,  1 Jul 2025 15:17:11 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A7627C154;
-	Tue,  1 Jul 2025 15:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76921279785;
+	Tue,  1 Jul 2025 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751383035; cv=none; b=OsgBk8ZGZ2BH+Br531V/TF8L8RsCECHlCcealv2qHOb7X6ZWqtyquyssQYtBSdRiOFdL0TPGDM3jyFwLoQr9HrE4XzW4/kElw2CBsm3bAh+tjFRtPovfPwbbdLhkw+g5KBam9qyem/b+OjQ5lBrsRSdlYPwJqZfUNxLoNHvtubw=
+	t=1751383031; cv=none; b=XgRnDv5KT/DcbUzqE2He4WGEodoKeNyWO2cWmqDwsds/wPY6ovQlI1IVcK2WJfaC4O8nkGSOaTgS0KHaPHnqG6QGdXdeEtHwQ4gG54ksUTx9oT5KtCN1xhidAJfkCiBBQiDO0OOT1fF6J+wKXIEM5wd+pPdeue0QI0R389gBIuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751383035; c=relaxed/simple;
-	bh=xF46JrP8aTdg2PgCUCAiAmpKdKQ9KAMX0vbS7CRfomU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJGz9kSHkTKsCmzqZhHBit//Pv31+RnSHwbMqGcL/fk/LGKuObiuKtkPOFRoEWXSSgdutDjRVAP7ZmKn9giTNmcAu0iLfphxGR1gecVgzCKOqLnVfs+8NnUuYTWV8JIXJFkJr5PBrR7y+nMyUtfg1XbzqBHZKdyXxD1KVXYh8mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=byDTN9CB; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751383034; x=1782919034;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xF46JrP8aTdg2PgCUCAiAmpKdKQ9KAMX0vbS7CRfomU=;
-  b=byDTN9CBp0ldQsV3oOQ3HsDyWXPRAzKXqsTbQboWvITUfdZqFyoNJxbY
-   DPxTyFB9Ipbk8tdhOH3D7ME64GBRZb9K8ff6lVF35SDOAFkVUk4MnjIYG
-   f386ykKfItzIm2UVQTPH17wZq9cXqUgSwldnAnGpaOOgOxG2Ddezl+OCN
-   OLb4hxBMxJ5jt4vE8VJIR7RI5klaVtTZefE40PMWvtYde7Asc05KeXFzn
-   AZv4D/5/fR5MdLReoA9oYnTq27Nt5/U7g/N9mL/dXIh4AcOvXKg35gkv6
-   V1V2TGMAVwufMoos1/mlX5Ikh8CIrihaJMMVnwD283iY+8m72lMPli0eO
-   A==;
-X-CSE-ConnectionGUID: d3V95BTVQm2A9dhEsSOp7w==
-X-CSE-MsgGUID: y51vruxpQdWknQn8uzWj5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="56280821"
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="56280821"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 08:17:01 -0700
-X-CSE-ConnectionGUID: DFBSNyyLRgqMa0JsQlI12w==
-X-CSE-MsgGUID: WZqqy4hiQMuisizYBYIJ9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="158072587"
-Received: from puneetse-mobl.amr.corp.intel.com (HELO [10.125.109.179]) ([10.125.109.179])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 08:17:00 -0700
-Message-ID: <60f4f153-9947-4730-a72b-2fe3df8d18e9@intel.com>
-Date: Tue, 1 Jul 2025 08:16:59 -0700
+	s=arc-20240116; t=1751383031; c=relaxed/simple;
+	bh=T6CC/bF+0UrpLoMFgTTdtIesr+jqgX9wVhcRDJoCjvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PmYWTNVmyv6Dx0mLa30Quj1M4nJzIueUAZBxUNacdbxY8+8nC0LQGGrFaOz0u1OG04oJKY3uf/mGo4igqmseTpkzk0aV59hNx3QtOLAwrg3Lnr+GUhqRI/xK8GuwoGB3mmPeczHP2f6Chf3jIW8Aa2GM5zmAj5BElRIsq3Plw7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id E27C1B9A48;
+	Tue,  1 Jul 2025 15:17:06 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 0BC7A20025;
+	Tue,  1 Jul 2025 15:17:04 +0000 (UTC)
+Date: Tue, 1 Jul 2025 11:17:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ john.ogness@linutronix.de
+Subject: Re: [PATCH v10 17/19] rv: Add rtapp_sleep monitor
+Message-ID: <20250701111704.00456667@batman.local.home>
+In-Reply-To: <20250701151114.OJQTlRCY@linutronix.de>
+References: <cover.1749547399.git.namcao@linutronix.de>
+	<d3cf55d3bf42a0f70a58c394b5cf6d603ca8a9f7.1749547399.git.namcao@linutronix.de>
+	<20250630203401.1a11e58f@gandalf.local.home>
+	<20250701051757.mBjQVdoo@linutronix.de>
+	<20250701110218.5e742850@batman.local.home>
+	<20250701110551.5c2dc2ee@batman.local.home>
+	<20250701151114.OJQTlRCY@linutronix.de>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cxl: make cxl_bus_type constant
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org
-References: <2025070138-vigorous-negative-eae7@gregkh>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <2025070138-vigorous-negative-eae7@gregkh>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 57fic98dhtr6rjtionmrhfukq7h6eqxg
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 0BC7A20025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18MooYQoY8XdA99/UI9cZS8fiRimYxM4Kc=
+X-HE-Tag: 1751383024-59033
+X-HE-Meta: U2FsdGVkX1+i5PyWbO9ijWx6noMaTZwjyENR2apD4ZGj5GOCGIHrEQr+ouj2sjcye+NurUsT4ntGJW4Gwlwn2gHXKFco7OnEG+qWndwOmoQ9Yih5xFO2t4xT7BF2c0j9wNkx5f2jyLF2OMhk+KEZe9F9Sp5b8hfen/nK/ljCBqFhH2xxdAFdCIhFv3FrB3W02ZHSDGmQl4zcP2FobqayM/ePWKHmtcoNhhP70kEdNTmdIfCHxjsxdlxkCWNdT8CXBI3lBtDuohboqHJ4lWIRTZ9l5m9C+V4Qri3dRp8ef0SVo60pgC91HS42rxAJnXQO
 
+On Tue, 1 Jul 2025 17:11:14 +0200
+Nam Cao <namcao@linutronix.de> wrote:
 
-
-On 7/1/25 5:07 AM, Greg Kroah-Hartman wrote:
-> Now that the driver core can properly handle constant struct bus_type,
-> move the cxl_bus_type variable to be a constant structure as well,
-> placing it into read-only memory which can not be modified at runtime.
+> > There's nothing in the code that even states that this was generated
+> > (if they were).  
 > 
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: linux-cxl@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Yeah this entire file is generated from the LTL specification. I will add a
+> comment.
 
-Applied to cxl/next
-ac0fe6a5731700bcea6fecfd5d0b76c0454b3a20
+Yeah, generated code needs a big comment at the top of the file on what
+generated it. Bonus points if it shows how it was generated so that
+people will know how to regenerate it.
 
-> ---
-> v2: fix up the subject line to be correct
-> 
->  drivers/cxl/core/port.c | 2 +-
->  drivers/cxl/cxl.h       | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index eb46c6764d20..0696f7fcef56 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -2293,7 +2293,7 @@ static const struct attribute_group *cxl_bus_attribute_groups[] = {
->  	NULL,
->  };
->  
-> -struct bus_type cxl_bus_type = {
-> +const struct bus_type cxl_bus_type = {
->  	.name = "cxl",
->  	.uevent = cxl_bus_uevent,
->  	.match = cxl_bus_match,
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 3f1695c96abc..e7b66ca1d423 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -815,7 +815,7 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
->  
->  bool is_cxl_region(struct device *dev);
->  
-> -extern struct bus_type cxl_bus_type;
-> +extern const struct bus_type cxl_bus_type;
->  
->  struct cxl_driver {
->  	const char *name;
-
+-- Steve
 
