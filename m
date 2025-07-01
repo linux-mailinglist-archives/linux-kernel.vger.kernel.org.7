@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-711536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34ABAEFBC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:14:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164ADAEFBE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0944A05F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AD4F1C049EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171A8272E46;
-	Tue,  1 Jul 2025 14:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EE12798E1;
+	Tue,  1 Jul 2025 14:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=alpinelinux.org header.i=@alpinelinux.org header.b="ORdHVku8"
-Received: from gbr-app-1.alpinelinux.org (gbr-app-1.alpinelinux.org [213.219.36.190])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="gFuevKNR"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5814E275852
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.219.36.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410B8277CBB;
+	Tue,  1 Jul 2025 14:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751379200; cv=none; b=M55WLYMy0GDZrhvdDXU3sV8OorowVx3g8HH7OKffPtXMD9NPsAryNOEdLKYwCodZir21jFsfXDFpQYRYNN8bLZByZ6GsKh5Kfh9SxoTqFd27LbAW7ElJF63EXZe98rfbONXMeikKq8zDUJRvRRFgKaP8sDIKKGkmE9x00YYEw+I=
+	t=1751379277; cv=none; b=hRMNx2Ysgp59nWQuk0IRgeOdlKxXdvzgkbBorTbUqJ7LbISUIWIu6Saw+cLBfmSwMbhbvcKK0mx7gywfce0CE1xe7lMtg8/tmi4becKiexaY4Uakkulv3LP4TULQobyjcndDfAyiiIFBys7vh8e5WY/BoY3nXPjdUJBnEtZn2Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751379200; c=relaxed/simple;
-	bh=Zg3PTbWHNLypaVroQqWRCPRItq2RQXyBU5YVvdtYWwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EH/xNtMZ7X79THfN7bxd5Q13qLf9HGdihk0/3McnydTHsDdh70FdZsan/Tee3n6yG7RynAf/M+IsF7aj65a5fkv4BM6YDxwi6xEeYf+VV4kXIpFM1aEWpiinWrOF34TBX2PbJlKwj4oE7HHXcnsw5TtTYhWXY1wExJEEhwsTOrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpinelinux.org; spf=pass smtp.mailfrom=alpinelinux.org; dkim=pass (1024-bit key) header.d=alpinelinux.org header.i=@alpinelinux.org header.b=ORdHVku8; arc=none smtp.client-ip=213.219.36.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpinelinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpinelinux.org
-Received: from ncopa-desktop (unknown [IPv6:2001:4646:fb05:0:4470:81ef:576c:2941])
-	(Authenticated sender: ncopa@alpinelinux.org)
-	by gbr-app-1.alpinelinux.org (Postfix) with ESMTPSA id BC1012257EE;
-	Tue,  1 Jul 2025 14:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alpinelinux.org;
-	s=smtp; t=1751379194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Zg3PTbWHNLypaVroQqWRCPRItq2RQXyBU5YVvdtYWwU=;
-	b=ORdHVku8k85wserfmr5gZdDf4yWRLuexnePajY0KPny0UEhbewc1adFQjYZ03vtrzCY2X+
-	P8IcBFsV0cX7wFseUKVEe6Iy/z1Bx2w+k455svNktlm8ud+db5F1CytaEPYw/vz60Kashq
-	W3pP0EC9IgQFZt6KP8oe/yzwSsixlO8=
-Date: Tue, 1 Jul 2025 16:13:09 +0200
-From: Natanael Copa <ncopa@alpinelinux.org>
-To: linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Achill Gilgenast <fossdd@pwned.life>
-Subject: [REGRESSION]  (build) kallsyms.h:21:10: fatal error: execinfo.h: No
- such file or directory
-Message-ID: <20250701161309.0f7984c3@ncopa-desktop>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-alpine-linux-musl)
+	s=arc-20240116; t=1751379277; c=relaxed/simple;
+	bh=INugTqBVM7fToZCIvxlUMkZxsPpLlqW6VEdnb21T200=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3lYn5ck32XB0N2q/qVP7s3mf+DcQvIwIAExbLGdoqmbmlv/qWvjsDEJtr2vZq0Kv4buUGLf2WJu6tNKznWqm1gQIvC3ZWyj2/iK9Q2oNajrm1MZexAC3R6fS0s0p4vF8DZ3sHe92hoPI/rLBaYHZk9whZW/on4tyPj/ag6Avbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=gFuevKNR; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=UgVcaTMaZwQKG0vFQL59Zz76XRt+0Z5vWGwWG9Mrcpw=;
+	b=gFuevKNRJo4o54DWHlJLiUMQBuWMzoWzwImK/JXY8XYu7CrEvAqhSaeQ8LYDTX
+	50TbYpj26O6tdp9RbFri9qZ+zKFzLkXuEySPe85cbSIB2mxygYXOX9Uh2T4jnZb7
+	ZbtHQDkaQPu+H898TFGKZAj/2iOFtPypm+GE5pdUFUuxA=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3l9r37GNoUbwBAA--.4338S3;
+	Tue, 01 Jul 2025 22:13:13 +0800 (CST)
+Date: Tue, 1 Jul 2025 22:13:11 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Oliver Graute <oliver.graute@kococonnector.com>,
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v3] arm64: dts: imx8qm: add system controller watchdog
+ support
+Message-ID: <aGPs9wGBLKGiTdVq@dragon>
+References: <20250609-imx8qm-watchdog-v3-1-5c22618606c8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250609-imx8qm-watchdog-v3-1-5c22618606c8@bootlin.com>
+X-CM-TRANSID:M88vCgD3l9r37GNoUbwBAA--.4338S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUw-eOUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIRls0Whj7Pkt0wAA3l
 
-Hi!
+On Mon, Jun 09, 2025 at 02:02:34PM +0200, Thomas Richard wrote:
+> Add system controller watchdog support for i.MX8QM.
+> 
+> Acked-by: Oliver Graute <oliver.graute@kococonnector.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 
-Commit c104c16073b7 (Kunit to check the longest symbol length)
-introduced a regression that causes build to fail on musl libc systems.
-The regression has now tickled down to stable releases and is currently
-blocking kernel upgrades for Alpine Linux.
-
-There was a fix proposed[1] which has not yet been applied, and Greg
-asked us to get the fix (or revert?) in upstream first before handling
-it for stable[2].
-
-Since it appears to take some time to get this fixed, I wonder if
-we can revert commit c104c16073b7 (Kunit to check the longest symbol
-length) til someone has time to help us work out an acceptable fix?
-
-Thanks!
-
--nc
-
-[1]: https://lore.kernel.org/stable/DB0OSTC6N4TL.2NK75K2CWE9JV@pwned.life/T/#t
-[2]: https://lore.kernel.org/stable/2025070104-ether-wipe-9c19@gregkh/
+Applied, thanks!
 
 
