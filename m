@@ -1,145 +1,123 @@
-Return-Path: <linux-kernel+bounces-711580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F97AEFC53
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBCDAEFCB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3F71658D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101DE3BAA4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6900B2749CF;
-	Tue,  1 Jul 2025 14:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DCB276036;
+	Tue,  1 Jul 2025 14:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="efF7AS6P"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mw8KxcJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7AC274B2D
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3F41C3306;
+	Tue,  1 Jul 2025 14:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751380279; cv=none; b=LsPqP8u6iAmNViBTFSVwr2UVn1mzOChicDO9rtcHh2j4+qAADDxf7SzrNQRiTWY1Q7xx1R3uwYAfPAXplqhtALxaMXE9IyCrI1S+4VUBs6OnopWmQx1cQddcf0cdMwWG2c1YNCjpZXibcnp/ZwN+kaPWlvEvJHXP6GgaIsMwf7U=
+	t=1751380431; cv=none; b=GXlbM+d9ruZqJ6QRzDh4P9XuPdS66eCmiHuVWaKUf12S0KOjDqSa9y5D7p7QurHbs0ia4l2nOZ5WVoyLDWVPL0tSG6tNKtzX+/V6oDIDbicttz9cXglO/401zj7sxm4FhiuYXAIfmU+/14xiVkKC228ciGRASft2xURrgu+2Y+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751380279; c=relaxed/simple;
-	bh=Vyaw3SbBUxgSTTI9AeYN82yvnlhmafU1DKbDbWX2Gxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q9+opt/bV5hUDDgTX3JGkKFnb/LN81eR0T9tupOlFKjYPdjDAeeNlY6/TRFHdLfJt6mUWrxYNgpqahoXsOzeiRZZMmP+2tt4DQCFpsOpECgH3Aj9sH7Hn5p2U+2TQd/wl9IEWOdTBvoNma8vEsWBtP7Tvdr0eZzlcUD5YXvJR/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=efF7AS6P; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70b4e497d96so35328597b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 07:31:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751380277; x=1751985077; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQpP4/sk5UISbR4PxoNCsU4Q55EXCGohsAJif2KUhLk=;
-        b=efF7AS6PoWTQN0bacqPpWZORTkzqbQ0o5sEhaPGgu2BWKgVGSDb2joWMl2mhLzIvmR
-         x0UrlBfaicNfLJCdFnGTiVSNtedEPVOgTklmN3afXi9nlyEZ/3laMY2ZgrNyMmgh5aM9
-         eelL1DOS/VwiyS7g84uRnfbJ7ncDB2WbqBI6rNYhJOsgQV9foagkOJxmrDVmMuL3Qwrp
-         nA4i6DUL8hAS0czzXUcA6O0t1taDngCZ4sqy/p3d6bG9J1QgTkCMrGBSH2zwAI4RVxcN
-         QiN/459QpyuicB972tjp3tGTzDh6D4iGk3812KjybHoEuzaaNJf2CUBKBQWxLIDJkd4s
-         kVcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751380277; x=1751985077;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TQpP4/sk5UISbR4PxoNCsU4Q55EXCGohsAJif2KUhLk=;
-        b=aALCsGxIdCbEFa4M+B2QTnIoujASDLkew+1xAFLbaEVrDgE2n9STbN+qQo+WucY/Zp
-         M5t8F2UqOgdDl+Cf5kIRb80EWszzbmVpksNZEBzRQPvxm43I1hB2mDHb6cNN/YfG5bkL
-         7Qku4viVhvhB0J5Q0Ov1196txaeTn8QjNTQNgdT1XYDkOhEtnD72XMCPEN9AboCyHCTM
-         OdtvkqnXcLyByiRrw+xXrUSwInCgkaas/j5ZNmC6aOgcI5JKhSADOWScXbKnOgkBxDnT
-         bmRJxJGKMXVNAamFPZAwWHsT9gMaLWNl1ZR9HIde9M38rNEQosJFgH+pyc7+ArMrr9do
-         9eTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUE9+7mgEqEULju5Lx76ceaXOIiVtIdDIiSnAShAyRU3XIJ3okay83ajYrcIpQidJ3Bd021Tsos0c+hWOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMo1TwCzv2w/1kUShv5bXQZt2sRVnedCrFMZqUlp+Ji+cpjn2p
-	g4Cl2eKVF8ABtfcwkWK6hFmgUX4ACrtTrQVoTnKAB55LQT0T/AxaUtxmMKuH/gBiH2JABH8w+3O
-	MekqNBT2oik2mZ/zJWnVCCrfPWq28nWbeWVrpsal5mw==
-X-Gm-Gg: ASbGncswGKUBWT0kcp7tua0Qt4BQ6WQKnBv5xBxGkHNxlYbRIyW/Cv+fHzeKYwmBXnI
-	vNnzlKy2M3jTKUU42j/xZ/NBDGuiNf++N8waqh61pGQNyWwyOszCQLJ5n69D+LRKNF1bOJK0S8g
-	CBwCsqPux73uI1TG2mekSrJdeJqNrF/YQqUUVfZNnQ6KM=
-X-Google-Smtp-Source: AGHT+IHLzuypKr5+dQZzwd42pEKbEhbfN4QvfGGBYNmqENm7MgpYzk7kFsFxKSU9PQLvgxInKK0kKJIRrLIS9ZY0Xrc=
-X-Received: by 2002:a05:690c:f8c:b0:70e:2246:1999 with SMTP id
- 00721157ae682-7151718b978mr245629467b3.21.1751380276931; Tue, 01 Jul 2025
- 07:31:16 -0700 (PDT)
+	s=arc-20240116; t=1751380431; c=relaxed/simple;
+	bh=Pbx/EKD9++JlxPP6paHBkhHJcaCHEyRFBjtniob5ydQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=le0MBM61O3RCJq7ft8tq2xIVRHMqL5XdUosRSotRQQ4CVJmkhbJT48y1mdBLMwqa34Ni4rwfs5ita5KB8lcTBMo3nhDb1pZxpGGGYwuUBXRCQFfSaqlTZkZLG7RkOGNNFNPl2/7RJe4oslwXQXpB4MjjrSv5tmgLiEG31aWwVUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mw8KxcJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05790C4CEEB;
+	Tue,  1 Jul 2025 14:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751380431;
+	bh=Pbx/EKD9++JlxPP6paHBkhHJcaCHEyRFBjtniob5ydQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=mw8KxcJTWTUsceAHB41Ph04FCThUEAvv8JJfobCGUJpfdOHexVZU5VhfM0AQnsp20
+	 n6K4nUXA6xM9YSx0Jo5qYcEKO73f/mafczWDm3KgIPw21wKI13z7E5rfIAthYOTPO6
+	 d4jKAmrXrjucmKTq+705JJvOmmOT/C1Obbr4B+VR4g+NNi/rmeSiDxnCjTcUp2ypa0
+	 bipUN5pi2gIskcAcxOihLjwxtAmZSUldVpgqnfCyb/14nA7hti+tYstfvJgIwbE054
+	 mhcowXpHC1/tAuZcZwblXCM5NTw5+DBbikZJmwEm4sXQ7/7Nzte6IUkSRaUOW8PduY
+	 Tm0TyT2nLV8NQ==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Tue, 01 Jul 2025 07:33:31 -0700
+Subject: [PATCH] cxl: Include range.h in cxl.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701142313.9880-1-terry.tritton@linaro.org>
-In-Reply-To: <20250701142313.9880-1-terry.tritton@linaro.org>
-From: Terry Tritton <terry.tritton@linaro.org>
-Date: Tue, 1 Jul 2025 15:31:05 +0100
-X-Gm-Features: Ac12FXxLXB1RyvUmPau1KOm3_EHbxZPmugbEEKi4qfRF9Vdw1FA3L6wYKz2GY7s
-Message-ID: <CABeuJB3QYKqEb2YZjCicGVFkrZTCgdU+dMM90B6OHUuvUSrWaA@mail.gmail.com>
-Subject: Re: [PATCH v2] selftests/futex: Convert 32bit timespec struct to
- 64bit version for 32bit compatibility mode
-To: Thomas Gleixner <tglx@linutronix.de>, Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: ttritton@google.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Wei Gao <wegao@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250701-cxl-fix-struct-range-error-v1-1-1f199bddc7c9@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALrxY2gC/x3MQQqAIBBA0avErBswTYquEi3KphqIirEiEO+eu
+ Pzw+AE8CZOHrggg9LLn80hRlQW4bTxWQp5Tg1baqkZV6L4dF/7Q3/K4GyUbEjkF27qxbpoWY2w
+ LaXAJJZnn/RDjDyS3htxsAAAA
+X-Change-ID: 20250701-cxl-fix-struct-range-error-8475cbbf3358
+To: Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Dan Williams <dan.j.williams@intel.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1619; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=Pbx/EKD9++JlxPP6paHBkhHJcaCHEyRFBjtniob5ydQ=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBnJH89ssC/NjDy2xJ5Rp8N3ldwOj46q367HJ5U+faNrL
+ GDw/3FPRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAZhIWwfD/7pLQuKXw5Qf22iY
+ LDlil60smlC4YIZ9Ub9Rl8Kbq4s9TjL80z3THnL99fXYTf0pMzZYbpy6Y6kM35mDfrsUPQMOMJk
+ 58AEA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Sorry forgot to save the change log before sending.
-v2: fix Signed-off-by chain
+After commit aefeb286b960 ("libnvdimm: Don't use "proxy" headers"),
+range.h may not be implicitly included, resulting in a build error:
 
-On Tue, 1 Jul 2025 at 15:23, Terry Tritton <terry.tritton@linaro.org> wrote:
->
-> Futex_waitv can not accept old_timespec32 struct, so userspace should
-> convert it from 32bit to 64bit before syscall in 32bit compatible mode.
->
-> This fix is based off [1]
->
-> Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
->
-> Signed-off-by: Wei Gao <wegao@suse.com>
-> Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
-> ---
->  .../testing/selftests/futex/include/futex2test.h  | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
-> index ea79662405bc..6780e51eb2d6 100644
-> --- a/tools/testing/selftests/futex/include/futex2test.h
-> +++ b/tools/testing/selftests/futex/include/futex2test.h
-> @@ -55,6 +55,13 @@ struct futex32_numa {
->         futex_t numa;
->  };
->
-> +#if !defined(__LP64__)
-> +struct timespec64 {
-> +       int64_t tv_sec;
-> +       int64_t tv_nsec;
-> +};
-> +#endif
-> +
->  /**
->   * futex_waitv - Wait at multiple futexes, wake on any
->   * @waiters:    Array of waiters
-> @@ -65,7 +72,15 @@ struct futex32_numa {
->  static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
->                               unsigned long flags, struct timespec *timo, clockid_t clockid)
->  {
-> +#if !defined(__LP64__)
-> +       struct timespec64 timo64 = {0};
-> +
-> +       timo64.tv_sec = timo->tv_sec;
-> +       timo64.tv_nsec = timo->tv_nsec;
-> +       return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, &timo64, clockid);
-> +#else
->         return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
-> +#endif
->  }
->
->  /*
-> --
-> 2.39.5
->
+  In file included from drivers/cxl/core/features.c:8:
+  drivers/cxl/cxl.h:365:22: error: field 'hpa_range' has incomplete type
+    365 |         struct range hpa_range;
+        |                      ^~~~~~~~~
+  drivers/cxl/cxl.h:562:22: error: field 'hpa_range' has incomplete type
+    562 |         struct range hpa_range;
+        |                      ^~~~~~~~~
+  drivers/cxl/cxl.h:570:22: error: field 'hpa_range' has incomplete type
+    570 |         struct range hpa_range;
+        |                      ^~~~~~~~~
+  drivers/cxl/cxl.h:803:22: error: array type has incomplete element type 'struct range'
+    803 |         struct range dvsec_range[2];
+        |                      ^~~~~~~~~~~
+
+Include range.h in cxl.h explicitly to clear up the errors.
+
+Fixes: aefeb286b960 ("libnvdimm: Don't use "proxy" headers")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/cxl/cxl.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+index 3f1695c96abc..b941ff94fe0a 100644
+--- a/drivers/cxl/cxl.h
++++ b/drivers/cxl/cxl.h
+@@ -11,6 +11,7 @@
+ #include <linux/log2.h>
+ #include <linux/node.h>
+ #include <linux/io.h>
++#include <linux/range.h>
+ 
+ extern const struct nvdimm_security_ops *cxl_security_ops;
+ 
+
+---
+base-commit: aefeb286b960a0629273d1dc809ea36754f42d98
+change-id: 20250701-cxl-fix-struct-range-error-8475cbbf3358
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
+
 
