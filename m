@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-712135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DC3AF053E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:58:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FAADAF0544
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F44717005D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6541E1BC3E18
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5322530207B;
-	Tue,  1 Jul 2025 20:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76549306DBD;
+	Tue,  1 Jul 2025 20:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="IX7J0deq"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="SZYedS01"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD25266560;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD9228B3FD;
 	Tue,  1 Jul 2025 20:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751403479; cv=none; b=Q1p1piSGDaN/qaXoFcgMJEevZImdDAJjgG4gZ+QRdKWGJ2MHmZWbwVPlTZJpb/PtIjyCwijqbUovw0XQzfwsEMDeldxS6hb+f/ipfHy3lsr6++awpdj/239szhzzylcXHu6OoONAgqooV5H7PxSVwHRx56KZpyn99WYddm7RU2E=
+	t=1751403481; cv=none; b=Rf7JcOGdtqZKuQYH+/J+FewgTANsAiD+9mSAYo8JyX6OjpJjjIoMZ33jq5WEI5Amz/XF8bDjgo56eUQNvIURw/rqe6URYxtXf0lwvAYmsCAIzq/xiXkObY9IhvSBjN47VgV5b3XNPK2yHv38FK2chSQX7+iSC5JJvXHlnwSA2LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751403479; c=relaxed/simple;
-	bh=Eaksr4HhPMjQmwPjPOOAjOOvNz7adjAjvNRO1mGvo5c=;
+	s=arc-20240116; t=1751403481; c=relaxed/simple;
+	bh=R3tNUtkVXW9CZKgkxhpPTYJhIbS0igKazDEJU749qP8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BanzwLeXIgzKPdTsqoOuLR1VJ+57wx22Y1r1QZHXGDOk50gWryvLZgPnbesXM9xeNaeUDAZDMzdETo6YTnhtnkOcfh/kScW67gB987GBcag3AqegWyrT/KmSVYPFU1j/HFuoNxKCppOzNgQ00ol0G99b4bdtP97x0RkfQJaDNT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=IX7J0deq; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=jOBLlfeQoTRF2vB0wNcbWjOLzsBTsltaBgPjkbyPJ76SJaIl0zSG4zN10YJOJi+Qsh56Y81pWGd1PUBrSfNTqnEY2faUrYDjhYaaArsyYNJq2GVNMaAT28O+J1UqZNlr40+3PUPIT0JJoo+3x/Fa37PPz6KN3KFUVT23n3FQY9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=SZYedS01; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BF84540AD0
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5CE8840AD2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751403472; bh=uKLzQw6LskeWU3LFVrkmzDlvEIcpVXbA+0YqM4MUzu8=;
+	t=1751403472; bh=kBqglquqqrq2ldzkhbwrpnwof/hRu8OVVr4u0qu3yNU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IX7J0deq62csjiUS+s4DmMe0Y9GFwQ0BurnEWF9KlHflSqAkYBwB2qw/txy/Uv+5n
-	 ji5jNokHj09mWoT+OvrWgvFT7p27TFcbf3kmMq6ll03wcYSCX72GJ1s7m9lmkSokn5
-	 TMJCSYYEZOP5+BNV/UruaemBzmM+il/lvEXxwaIPP7TuEmXMHb1nI7XNzM//7V5vI0
-	 CCJ8KOLZvv+Dc3O/xKrVqoY0eWOfCY2Q3bCNhnUIBCdxsN9ObRz3d3xl1dlkBcMldG
-	 6diUfO7e1/2UU+2KktN8xOO3mK8ROzNgCDjw6nWSzlHEcIIWT4vje/YdCyvrLf2Ec7
-	 qGSK17+FJrwoA==
+	b=SZYedS015ASLKY9EUNU4z1ji9ODQ18DQ0BJl0ZOUJn2RCk7oFEIMyw+YIeVQLCrau
+	 OSOqpW2yJzIkB3YHgwtP9oP0RZozCSgPL4b3erG0AmH8jxrvm0AtQr5qOJisU74kbQ
+	 9t1v3rxlpEKdPjRAeNZea54UuNeaKFa6YU8eNr2IJz/Haip/Crg7OoLzWay6NMWKQn
+	 oKi3xHEAK70o9ed/Nio5xmwp0jeOdV1f0qeC3qomWaOSlJUdM6kpqtCfwUiu0E4uuL
+	 JZ9MGf/Of0PJmRohi7fD63dmE9hGG/mg+ykfjmNEWvFoR7JwQ2nPPLeVOuzMOT7vU1
+	 77cO58z0/bUaQ==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id BF84540AD0;
-	Tue,  1 Jul 2025 20:57:51 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 5CE8840AD2;
+	Tue,  1 Jul 2025 20:57:52 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/7] docs: kdoc: micro-optimize KernRe
-Date: Tue,  1 Jul 2025 14:57:25 -0600
-Message-ID: <20250701205730.146687-3-corbet@lwn.net>
+Subject: [PATCH 3/7] docs: kdoc: remove the brcount floor in process_proto_type()
+Date: Tue,  1 Jul 2025 14:57:26 -0600
+Message-ID: <20250701205730.146687-4-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250701205730.146687-1-corbet@lwn.net>
 References: <20250701205730.146687-1-corbet@lwn.net>
@@ -63,33 +63,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Switch KernRe::add_regex() to a try..except block to avoid looking up each
-regex twice.
+Putting the floor under brcount does not change the output in any way, just
+remove it.
+
+Change the termination test from ==0 to <=0 to prevent infinite loops in
+case somebody does something truly wacko in the code.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_re.py | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/scripts/lib/kdoc/kdoc_re.py b/scripts/lib/kdoc/kdoc_re.py
-index e81695b273bf..a467cd2f160b 100644
---- a/scripts/lib/kdoc/kdoc_re.py
-+++ b/scripts/lib/kdoc/kdoc_re.py
-@@ -29,12 +29,10 @@ class KernRe:
-         """
-         Adds a new regex or re-use it from the cache.
-         """
--
--        if string in re_cache:
-+        try:
-             self.regex = re_cache[string]
--        else:
-+        except KeyError:
-             self.regex = re.compile(string, flags=flags)
--
-             if self.cache:
-                 re_cache[string] = self.regex
+diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+index d9ff2d066160..935f2a3c4b47 100644
+--- a/scripts/lib/kdoc/kdoc_parser.py
++++ b/scripts/lib/kdoc/kdoc_parser.py
+@@ -1609,9 +1609,7 @@ class KernelDoc:
+                 self.entry.brcount += r.group(2).count('{')
+                 self.entry.brcount -= r.group(2).count('}')
  
+-                self.entry.brcount = max(self.entry.brcount, 0)
+-
+-                if r.group(2) == ';' and self.entry.brcount == 0:
++                if r.group(2) == ';' and self.entry.brcount <= 0:
+                     self.dump_declaration(ln, self.entry.prototype)
+                     self.reset_state(ln)
+                     break
 -- 
 2.49.0
 
