@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-711047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542E8AEF512
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:28:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F4DAEF51C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478211BC4186
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BD991BC06D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FC813AA53;
-	Tue,  1 Jul 2025 10:28:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64E426C391
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4867827144B;
+	Tue,  1 Jul 2025 10:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TkIcy4rw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4813425BF00;
+	Tue,  1 Jul 2025 10:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751365722; cv=none; b=T/aw+rHxL1bdxT8qTQscBiiLRaZ12qrQnH93ojKE+mlrCR9A+hBBv1m3Q3mcPcqBLP91GT5bHdaVpgd2hgViQQr1Jap1cVzvp2eN9rNCsYCkeTYB5fhfh44a+CJ2FEuj+9F8tipFWKiJuc1rPjSberjThMBwl8nHbs5TwQ37NyQ=
+	t=1751365789; cv=none; b=uqYbx4vkqTWXiGGaAFj87KMrhx0NxwzgKqAq6qJ8huFzEagN8oFQBiy7VTmteL/4zsz7A+/R4h8CBZbIABwVeZbfP/dORXBlmWjr5c/02/kxiO/goO67qAPq/Pn9gmFuN8iFXDHR8pirAOu6B/r0DVKhneQTRc/Zy0QGyGVWrLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751365722; c=relaxed/simple;
-	bh=XhWHon4d8R7ksAbe9OFreXLgHU5rL0iX6ZTv1M5LebY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtiOXnCpk+cOCRtRmUKaw2A2qjS/GFfn+/r5IDbsWOV/f6j/rBTs713gI0Pb8GwgYV6ZQPMCY82B95XCJBZ9++Bi5F97IHRPWy3cyBoHIKfdvTGsr9lQvdJ8XU7OO2E6sle7wjFM5lkqCacJwjuELVEDqrwMQ5T3kX6psGALREs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CC521595;
-	Tue,  1 Jul 2025 03:28:24 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E9183F58B;
-	Tue,  1 Jul 2025 03:28:37 -0700 (PDT)
-Date: Tue, 1 Jul 2025 11:28:30 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] entry: Split generic entry into generic exception and
- syscall entry
-Message-ID: <aGO4Trd5qBJCrMH7@J2N7QTR9R3>
-References: <20250624-generic-entry-split-v1-1-53d5ef4f94df@linaro.org>
- <87o6u5m7uh.ffs@tglx>
+	s=arc-20240116; t=1751365789; c=relaxed/simple;
+	bh=kPFXJCr9D+md/YcVAVbgP4zMlnt8rlaUuwr4oT7O/7Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JhRsob82MM1tksyUro+07GJR03VMlooPvxvARqQ6nW8+yY+CySZ1etZboLjU0GAnsOCiUO01/RMgyQKF3ExY8DuRSFtkpepfpD5Klwu7E8qug/KV9WS/j+RUqQXSOzbI9R3UIjTYFjBJhTYgAuzq8LDJ5vLSdVx3B5zD/ehKi+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TkIcy4rw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5619pU3g007048;
+	Tue, 1 Jul 2025 10:29:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=vO7Vr7MxHIfmpgfRREt3nzlagvjPa9eneFB
+	SDbg6Gxc=; b=TkIcy4rwIFkFVW3myIJIA5Uj/hoiNruUXaFNPHSK1PWfuPQq6wT
+	277hJm/MfL436ixW6JqXsPWrYE+XcgysjcNfNQkde/gqIfh5InFbbRyH7z623VQT
+	nDVzfAwfcLXOA9zQqQ5F69B6z7k0B5P0Q8sxJIeLctamcgOtr4yHUAC7izMIPNqy
+	JIcyF6o4rkiWUT+PrBjTAvS9sdRq5xP44Cm25V8dX9l55ep9NyVgtKfIXZgcEVLm
+	x37hiE25XyrdgmXaxOjmxnST9wjUWUE8CnyJI0pCXPfkgTbvUqttmrOC65FlsrkA
+	diBbXSX+U9DcdnCfWQDP6Wk6Tl1folavFug==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kn5jct8m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 10:29:37 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 561ATWLm030927;
+	Tue, 1 Jul 2025 10:29:32 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 47m1bxafd5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 10:29:32 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 561ATWR2030912;
+	Tue, 1 Jul 2025 10:29:32 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 561ATWd0030907
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 10:29:32 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
+	id 40D2A5BE; Tue,  1 Jul 2025 15:59:31 +0530 (+0530)
+From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+To: Srinivas Kandagatla <srini@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_pkumpatl@quicinc.com, kernel@oss.qualcomm.com
+Subject: [PATCH v1 0/2] Add sound card support for QCS8275
+Date: Tue,  1 Jul 2025 15:59:13 +0530
+Message-Id: <20250701102915.4016108-1-quic_pkumpatl@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o6u5m7uh.ffs@tglx>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=KtJN2XWN c=1 sm=1 tr=0 ts=6863b891 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=FlgLVNPGBAFpXXl924kA:9 a=zgiPjhLxNE0A:10
+X-Proofpoint-ORIG-GUID: 8ZCXsYrzddB2B6GF-WyjzxDwcqsQ_8DC
+X-Proofpoint-GUID: 8ZCXsYrzddB2B6GF-WyjzxDwcqsQ_8DC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA2MyBTYWx0ZWRfX03V9vNUgwcqf
+ rrrmOHFxowaNzfunXKFY7Abuvm38y8j8NlxJft3zf5jdGqRIpauz37gq52InkVUKbhzD3ZZWrxE
+ +QL+Sz3hqwTTG8mRlmqtIA1br4NjEyBLqgSJ7wl9GLNiUyYQ5odZE4bQhYAzlTEQDdGpdLSBBQ9
+ walx0xGfgf5RBjiL4DrVPn13dN6OJFVfPXU1eKHCfBi6Kv2VdTLsJRsMfiuMvmSm1Qn/DJ1+OZo
+ XfV7gd6L9wOAvBV+4mWDGHQVZKzbkZAF0JU8+CZAgdQH8+VPVXkLYqETCjLx9YMth9C+ua67iuo
+ lpphlmAvUBISd6rHiMGjTnKVhgahMg6h+C3wS4TEWQqdc11Pj9fwFpINk7lbjG3pKVKW92dNR+k
+ YMVUWAQdSlzwhg5QkUPvMf8Z6PAHl/NCZNy2O/w8y729aVoxvnTrgMP5ESYdkpbVUS1jQteO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
+ clxscore=1011 mlxlogscore=720 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507010063
 
-On Mon, Jun 30, 2025 at 07:56:22PM +0200, Thomas Gleixner wrote:
-> On Tue, Jun 24 2025 at 20:35, Linus Walleij wrote:
-> > From: Jinjie Ruan <ruanjinjie@huawei.com>
-> >
-> > Currently CONFIG_GENERIC_ENTRY enables both the generic exception
-> > entry logic and the generic syscall entry logic, which are otherwise
-> > loosely coupled.
-> >
-> > Introduce separate config options for these so that architectures can
-> > select the two independently. This will make it easier for
-> > architectures to migrate to generic entry code.
-> >
-> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Link: https://lore.kernel.org/20250213130007.1418890-2-ruanjinjie@huawei.com
-> > [Linus Walleij: rebase onto v6.16-rc1]
-> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I merged this into tip based of v6.16-rc1 and tagged it so the commit
-> can be pulled into arm[64] trees if needed.
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git entry-split-for-arm
+This patchset adds support for sound card on Qualcomm QCS8275 boards.
 
-Thanks, much appreciated!
+Prasad Kumpatla (2):
+  ASoC: dt-bindings: qcom,qcs8275-snd: Add QCS8275 sound card
+  ASoC: qcom: sc8280xp: Add support for QCS8275
 
-Mark.
+ Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 1 +
+ sound/soc/qcom/sc8280xp.c                                | 1 +
+ 2 files changed, 2 insertions(+)
+
+
+base-commit: 2b53f08bc950fe271c6adde86f3b3332b48d2077
+-- 
+2.34.1
+
 
