@@ -1,137 +1,78 @@
-Return-Path: <linux-kernel+bounces-711276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3518EAEF872
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:29:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E4BAEF845
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A794162F59
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0334F7AECCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968D72749C5;
-	Tue,  1 Jul 2025 12:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27335273D9D;
+	Tue,  1 Jul 2025 12:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0su1eZN"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4dXZdIy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0EC270EDD;
-	Tue,  1 Jul 2025 12:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C233273D90;
+	Tue,  1 Jul 2025 12:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751372704; cv=none; b=F7a7VZHRlEAI74XTtxxhOM0ua6jhVpwrf4ZwSBGd3+uZRkEUkheU3xdPG3TH6hed1h7T+EbRTgVM8RCzNzQwz+VGHvf2WFigBklExrHIRCTcWAubAtXygoLBYiEqOB+UZtrQtJFKrNiosOiTlDSGksFCQTv9UA8ztuRVgg8URmo=
+	t=1751372549; cv=none; b=tLN6PTwFUWujQh626fMr2TK+7w+U/yiC4/IWhf7o9Br4be7+g7oXCY39arbJGt8/JSIZapCM/6P41duXvPtdeADnawoGz2YsmQq2bOTBRTHTsfkVfxkHBYWmgn5KktQz+zUSG1tpk/0JGDzVThV3HnyZac8CjEmno6bWTFkrsDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751372704; c=relaxed/simple;
-	bh=NmcjOq31Gb0th3ag4qLiGH35SqygK9MXceGdxECczTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HevBZukuu6A63mK34wtHDW7oCa5oSjjrJFjdkxq77BR9997lBr2eaE/l/NLVwzwqnEqUMAEA7KbnOs2Lo7XeUnLehBYFoLVwvsB44mTS9HZSNALbrndwA/PqoYRm60ktAsZOVtTE9SXDjqo62Jl9YnJt0UR5ePai0LBTMlv2WBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V0su1eZN; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54d98aa5981so4780966e87.0;
-        Tue, 01 Jul 2025 05:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751372700; x=1751977500; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sb5Ep9r3vpiD7ybqKvh3wn7iDchYBiJpC7QxUP6423Y=;
-        b=V0su1eZN3ZYkaKgGzEPaWOWqnjwptPBnnl7LZ1Zn232skSZCq3T+HqOy6ZlcYT/9ao
-         tX+eIgCrgE4/fnfl3pUULBTjJR3yW/Yiq24NhW2FPJN9r4wlRghigRuHscw9akTYb3TQ
-         If2FHZAVnbvGU/ihws927SuL0QH2UcPllJSSwRBT4hGOu7rsDkS+grlJWzNrKFcrr6qz
-         XkUIECr7OiuoKopMoGVyn0e63LWYODWh95z2BKIQae9iCy42kGlZb0npno+NBThOlv58
-         6ftttksx8TbnaA+pDs6058Js09QNr1slPCIG70TWCkLLoHvE75xm/orDZU9YqypdeUye
-         Vrgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751372700; x=1751977500;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sb5Ep9r3vpiD7ybqKvh3wn7iDchYBiJpC7QxUP6423Y=;
-        b=q7yMqjHoLRt3ZqpoagmV1mP3b7vyWhGHa3Yb5wI8U0Af8yRP4O9ST8PdOmDVTb+en6
-         y164Ovsu7WCLA/BIcOyu8oKp3bpvMwNjFy7PZBzuueR4oIEP5fKlFKN1Us9S3QkuPEU9
-         CKs8YuhTzscKcwIIZYyPA1OF2q57p9cPFWdAUVPaxuzjFrR/aVu4YBW3og/X9VH4s2Hs
-         r+N1H4rT7FdxmXz4iWf8RP5Jp1QsNGrIOBtaSBx/V9DR6VarDzn8fr2J2H8csL7Qr/1l
-         HlLHwpBPhcqO854TX20ihv9OIVenPSA1qPcnSMPPmLZR3zriGkKYtb/xz44QNcokKr9u
-         WhRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3e0k1zmJpuvQTvB4rLO7j8Ir6lD/Mx9Q8RNsavsE5uWzWmQqpy7OGWGtdQfu+a71YNZ3OQ2YGFIiRmeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhBsiNivloWXDKIJ71LxV7DzR86VmeQku6CG4UDlahxIeFW1Ct
-	e8zKXoIYmkISPH2vIB0djQdoJ0GPHcAwiKKGQefpQfip3vswI5lD+dVP
-X-Gm-Gg: ASbGncsP71YzNKpipRVlmUxh+yeKwqXJefNpWCBcATx+OnhlpB8jR6o7hg6kX+BskCM
-	EO7zaa6BsT7OlAPpxJIDyDe1YL3h3Piss1mmbE1ESCSaXxiW8Bntgu1mj26dFmmvUiZyrALn5tv
-	A8ynkgKBDt3iBUTggh3nbMdmhImH4nHAdZaoi0QRkhqKi65DI9hMKNGWIZlA06CNZ4cfkT3yju8
-	QNw1iCfimnNJ8DWqqsHLWlfyLJQdcLeedZ/6DiaqjP0b836Ew1Lp8uN3+N+y4EruhECAf2uumfI
-	b2vt5hNoEEou164kvlM7WXLxAPfSf2rugTHUs7lAhSPUHu4JMQOcPBv/aq0aOXDRUVd3rJzPU7f
-	9YUURG4c+38gohQ==
-X-Google-Smtp-Source: AGHT+IE8JPSjlgJX/ljFkWvNiEGayauKBp0F7/traHojzfmX3lACaAnF5hbUBchaqf2LdilB9mEplA==
-X-Received: by 2002:a05:6512:1281:b0:553:2e82:1632 with SMTP id 2adb3069b0e04-5550b8c3e0fmr5562588e87.44.1751372699990;
-        Tue, 01 Jul 2025 05:24:59 -0700 (PDT)
-Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.230.218])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2b8c9fsm1818695e87.137.2025.07.01.05.24.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 05:24:59 -0700 (PDT)
-From: Sergey Bashirov <sergeybashirov@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konstantin Evtushenko <koevtushenko@yandex.com>,
-	Sergey Bashirov <sergeybashirov@gmail.com>
-Subject: [PATCH] pNFS: Fix stripe mapping in block/scsi layout
-Date: Tue,  1 Jul 2025 15:21:48 +0300
-Message-ID: <20250701122341.199112-1-sergeybashirov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751372549; c=relaxed/simple;
+	bh=254CU+o/PFeNIU/JlYJ59aAPA3HHr7d1xC1p/E4fWdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vCCRJYhDbRY2jJHBA8AyxM63ep04Qb0nT9ubQ0nWIlZc0Q8+LGkX4jMD/iNqJVfIyP0z31yYgWkG/j5tCC9ItAHxXgh5PvMakkv+qz8QYdoM7s+JW4gFDInv5CoqHlVNZAmhak3r0u2sVVwa5S7nJGJl2t48lq9y0KQUnAsYi0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4dXZdIy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27FD7C4CEEB;
+	Tue,  1 Jul 2025 12:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751372549;
+	bh=254CU+o/PFeNIU/JlYJ59aAPA3HHr7d1xC1p/E4fWdw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a4dXZdIy+PDoHmH7xISBVLfVN7Niu0wnXTvRhm9OkdXE6Bzjka39HFr9A44aLDQak
+	 CvOxWmKKuMVfubdN9s01yeutvUSIcMoGBQawoXIPGcNfs0it0MMVKwmPgvo7OwKvyO
+	 U+sy8sKa4ku/p83x/UNgg7/dQZmMxsDmQGckxsuOs5ql38weERKQ9tIWUzzgL60HVI
+	 NN8r3QW0uRuJR/+xn9KPtCnZxGgc8o1rBt1/CXb5pVc3euiU6ihI2ba1Pe4Ddac+oB
+	 G/lpeyr1xYZ+ysu/Q7gEZxh8dn8KnAqMZDeXy2GN/Xz3S3NDt2iItey6DvTAyjYCFn
+	 K94d5TDgoR6oA==
+Date: Tue, 1 Jul 2025 05:22:24 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] loongarch: Use '.ascii' instead of '.string' in
+ __BUGVERBOSE_LOCATION
+Message-ID: <20250701122224.GA1879931@ax162>
+References: <20250616-loongarch-fix-warn-cond-llvm-ias-v1-1-6c6d90bb4466@kernel.org>
+ <CAAhV-H5BEe2FtKwh+SMNAKeKadhf4ALHb0nTFa5e_BBY1TOWCg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H5BEe2FtKwh+SMNAKeKadhf4ALHb0nTFa5e_BBY1TOWCg@mail.gmail.com>
 
-Because of integer division, we need to carefully calculate the
-disk offset. Consider the example below for a stripe of 6 volumes,
-a chunk size of 4096, and an offset of 70000.
+On Sun, Jun 29, 2025 at 11:59:57AM +0800, Huacai Chen wrote:
+> On Tue, Jun 17, 2025 at 7:23 AM Nathan Chancellor <nathan@kernel.org> wrote:
+> > Fixes: 5d476f66e6ad ("bugs/LoongArch: Concatenate 'cond_str' with '__FILE__' in __BUG_ENTRY(), to extend WARN_ON/BUG_ON output")
+> 
+> 5d476f66e6ad is not in upstream, so I prefer squash this patch to 5d476f66e6ad.
 
-chunk = div_u64(offset, dev->chunk_size) = 70000 / 4096 = 17
-offset = chunk * dev->chunk_size = 17 * 4096 = 69632
-disk_offset_wrong = div_u64(offset, dev->nr_children) = 69632 / 6 = 11605
-disk_chunk = div_u64(chunk, dev->nr_children) = 17 / 6 = 2
-disk_offset = disk_chunk * dev->chunk_size = 2 * 4096 = 8192
+Sure, that's fine with me, assuming Ingo is fine with rebasing that
+branch. I just want my builds back to green :)
 
-Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
----
- fs/nfs/blocklayout/dev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
-index cab8809f0e0f..44306ac22353 100644
---- a/fs/nfs/blocklayout/dev.c
-+++ b/fs/nfs/blocklayout/dev.c
-@@ -257,10 +257,11 @@ static bool bl_map_stripe(struct pnfs_block_dev *dev, u64 offset,
- 	struct pnfs_block_dev *child;
- 	u64 chunk;
- 	u32 chunk_idx;
-+	u64 disk_chunk;
- 	u64 disk_offset;
- 
- 	chunk = div_u64(offset, dev->chunk_size);
--	div_u64_rem(chunk, dev->nr_children, &chunk_idx);
-+	disk_chunk = div_u64_rem(chunk, dev->nr_children, &chunk_idx);
- 
- 	if (chunk_idx >= dev->nr_children) {
- 		dprintk("%s: invalid chunk idx %d (%lld/%lld)\n",
-@@ -273,7 +274,7 @@ static bool bl_map_stripe(struct pnfs_block_dev *dev, u64 offset,
- 	offset = chunk * dev->chunk_size;
- 
- 	/* disk offset of the stripe */
--	disk_offset = div_u64(offset, dev->nr_children);
-+	disk_offset = disk_chunk * dev->chunk_size;
- 
- 	child = &dev->children[chunk_idx];
- 	child->map(child, disk_offset, map);
--- 
-2.43.0
-
+Cheers,
+Nathan
 
