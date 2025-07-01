@@ -1,112 +1,129 @@
-Return-Path: <linux-kernel+bounces-711711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2124FAEFE4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:31:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66507AEFE59
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64FA7170F12
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3F63BE04C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A8D1DDC15;
-	Tue,  1 Jul 2025 15:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6CE278E71;
+	Tue,  1 Jul 2025 15:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3RweiDK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vlJtrpnG"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7C5279795;
-	Tue,  1 Jul 2025 15:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E35E27702D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751383859; cv=none; b=cOSUazs9W/0bLWOJvfIy7JJ/JerBWr4CHzvlBhfWxW019yRklaVWVd2vAIC85xiunHsNAtLZEu+OK0OEp1cl0n2nAQHHYPcD6U6qc0WTWVNhSQOE7rjm5fL3pOKrHCjcRGX/i37uDilRX5e33Ap48mwyH8lOMzuGvPZ0YXNvXko=
+	t=1751383981; cv=none; b=PhmGqUq7HSIey63EMJVRaUzCX69NY8NkDkLWj/JkV3pzZCTNCjgvBQ9cUxY2brVnzQbvQaGMk0t9iER/+HJcI5+1wcCer+WosU56CoQyCICFZ6xU/O7LuyNnZwov9QVv+TcRTc0Fuc/Siym2+Q1pQXWDs9sDH1C/IIUCOWa2Mp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751383859; c=relaxed/simple;
-	bh=iQj/zPT+jV/OpLNW2E0l3eLxBgFKFwdXuIzFbY8QHx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CeHIpClnAjogiVaKDkXu/iWvlRu02z0WHQWXx2TXXRv3sHee7wVXBlPwzKk6TqF9uBqrKyxC/7pXO3EsIiZigzSAlveEfGUC2Zx2l14EQ8O2eV/mCQyM+KEJtE1B+om+B60TBgpMexqpqLSxbM+k/RzLpQCS4BB7rKcID1Te/BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3RweiDK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56A3C4CEEB;
-	Tue,  1 Jul 2025 15:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751383858;
-	bh=iQj/zPT+jV/OpLNW2E0l3eLxBgFKFwdXuIzFbY8QHx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H3RweiDKCi26++6p3MRCraKm7blPX7uUFzX3z56uJwSb4OKTpfjRLgVMWJFMMpwcV
-	 kHmVgtUenaqrLED1VTkH96f+rR0F20AdcCq1kaPYz8DiyUpNokOCCyJ1dxioAzNbJ0
-	 1lrGTLhJvbHD47IKvkLCYuPIaItUSj4fTI5f+7lwQZnjJrRHriMzUPvIgV9OpVKi/H
-	 b5fbYi0CShJwMJaV+MV4BKTGy5WQQiTZtPpA8vz0gJq5VkQrO+WyP92D2bAyFlHBn4
-	 3xBERr4aSUeCEit6tr2jR1f8r5TZJpCZS2Igrk7ELcOk407fgCJ1uPb1ULSXe2rRGk
-	 O23fufwQMMaSw==
-Date: Tue, 1 Jul 2025 16:30:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Vladimir Oltean <olteanv@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Frank Li <Frank.li@nxp.com>, Christoph Hellwig <hch@lst.de>,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] spi: spi-fsl-dspi: Target mode improvements
-Message-ID: <578e01d9-20bc-48f1-aada-579276f6a9d1@sirena.org.uk>
-References: <20250627-james-nxp-spi-dma-v4-0-178dba20c120@linaro.org>
- <20250630152612.npdobwbcezl5nlym@skbuf>
- <c9bf945b-9fc6-4829-addf-2fb7a7d4eb36@linaro.org>
- <20250701135747.mns6emamtmxwgpyu@skbuf>
- <3c3c912c-1f33-4f63-9a37-fe4db5d23527@sirena.org.uk>
- <20250701145312.zx56ji4vvaoxwzkc@skbuf>
- <dd41f014-79e8-4567-9617-754b93e2c12d@sirena.org.uk>
- <20250701152433.4m54y2rkjzfe4kag@skbuf>
+	s=arc-20240116; t=1751383981; c=relaxed/simple;
+	bh=PjPyvNgy9hm7ONMITzr0T6sHroPPo9twpkI/M+XTD8s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W1osVQVNftsRN/LmODzhEq2tZHGpLsKuVW18yTZyF6j1ehJa6TmzCKMpvruzpA/IMEYHt2xBlP90BRj08XZRb/bciHeGvXpEEOiIS7DdYA1zCQ/csF2WSr2xcA5ZMg02VWjPyKHYEet4VMzgndNQwivCNudQdL7eJ0ZvXWc9db4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vlJtrpnG; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d6ade159so24104575e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 08:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751383978; x=1751988778; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Wjl7TqtpfpT/cVhyOMYZ+YoZwvVH3I5MuberAw7nso=;
+        b=vlJtrpnGprK+8FqwiyMFA3wNglLVTPh71rhca3xouR7RStj+Wofo/fTVgO6wdkri7D
+         nkFIcAgacqC38vbzFgYqX6823OdYWznW1C4ST0FH4eoRNTZkIMOB1q85Zo746mPJFyOZ
+         QLBTPxgTuQ3/WzMIbKkc9f/DijcDJTAbdTTH8JnG7lzGLpG7idGRQYwYfPpQXzkMk+vg
+         RG8Uz2sW6EUVYxmlIG+Ju/YeCqRQYVtaaEYUoSNxDR4KW7Qwf+5JauCtomM9BCXoXdKl
+         unxu1+X803L4AOyUpJj6b91fLEkxm/Mg0aijCbkLbfJ8VZdw4FyDVY1waWvdYhzSSqhW
+         RGbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751383978; x=1751988778;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Wjl7TqtpfpT/cVhyOMYZ+YoZwvVH3I5MuberAw7nso=;
+        b=gN8t373NXzV8XgcaDlOF4bcypnjLdTDSyNlBICIMPKYpJLL9cWQH6GwhBMDkIou4r7
+         jJWCYLQSYuUrdPlNWvPC0O6yeinlWVwrS7L67SDjsNlgp6VYn0xWQx7tB+ZxQRniGn6r
+         dwyiNSOs8odRc1i0EJCde9tWtU+kd0+29JiOJruXeSjb6e5542nrPenX2uWbqyzYUaf0
+         BUDs+RFS7iOKcSLDP5yjl3eThLDHmkzKmPEcU75ewfyIcgWmQoI8r/ZSypihc6btcpwm
+         2JRflxDfwoDcnNMyC0sMxqJKYAVU8dzvdcCtFmiK3HVHBSMtzWOSmwDN3L8VJnqbU39S
+         P+UA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3HP4bWLvA4SzQboow8qL/hJGdnIwr01Idb8KepivAztL7HAn0dtu5A4cxLBByMutMlQ3Cn+9BIAVYTC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC6rDqXSqXGj3mkecv5BAAlQo94dI65DmQFszh0ft84dEt8YUK
+	GqvPeSx9jN2vV5dgaOr9t4zzrnRHTPuupm5xk3c5BuEqNTckYdaEU8BHhlo6DPp9m+I=
+X-Gm-Gg: ASbGnctUdgimOi881T8E2u6oMiapOhCmXZZhlt+6AZo8oyYAOyqtXGXLtEwbD7kktrs
+	yz5gAMMiEcTHbE57RcYIeURiugeWNf38TfB3fGoWWncUZNlGaeRk1Sqff2KlMAYGdA4qNvLFzUL
+	MJDoTzduFKVIrWD0hn77O0+O5RnW5wlRQeMXxqPe51Tw2wdQZtlqIa7/DEpdoEs3eeftFTtwBZf
+	24Bg//55TOQa+9M2oDU9eZlGEdo8GOroQiwINShX8SPFi9wdBq2ZwAwfSXp1xgzguHAWBQkYoU0
+	TvlskzFqtlTNBLtxv7wqE0z/ept6kiRR7w8iPCGAw5FFuA3Xmb8qvjk4Ds2FWz31hBEokKgKo8c
+	+NVbGsA==
+X-Google-Smtp-Source: AGHT+IFfPvs67/UJpu/9kyB3q+XqucTe78Apo5J0t9CmwCnnIvnAeglojVve+6TRV6p2yD+cqIsekg==
+X-Received: by 2002:a05:600c:5250:b0:448:e8c0:c778 with SMTP id 5b1f17b1804b1-4538ee61eedmr160326185e9.22.1751383978328;
+        Tue, 01 Jul 2025 08:32:58 -0700 (PDT)
+Received: from ho-tower-lan.lan ([37.18.136.128])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c80b5a3sm13435002f8f.40.2025.07.01.08.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 08:32:57 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH 0/3] perf: arm_spe: Add support for SPE VM interface
+Date: Tue, 01 Jul 2025 16:31:56 +0100
+Message-Id: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2FxrJs+8WJHxk+HO"
-Content-Disposition: inline
-In-Reply-To: <20250701152433.4m54y2rkjzfe4kag@skbuf>
-X-Cookie: No shirt, no shoes, no service.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGz/Y2gC/x3MQQqDQAxG4atI1g2MsVrtVcTFqL82gqNMRAri3
+ Tt0+S3eu8gQFUbv7KKIU023kJA/Mho+PsxgHZNJnJSucg0vfoWx7eBzZQ0H4uQHsPT9M4cUtXs
+ JpXiPmPT7H7fdff8ADND5UmgAAAA=
+To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Alexandru Elisei <Alexandru.Elisei@arm.com>, 
+ Anshuman Khandual <Anshuman.Khandual@arm.com>, 
+ Rob Herring <Rob.Herring@arm.com>, Suzuki Poulose <Suzuki.Poulose@arm.com>, 
+ Robin Murphy <Robin.Murphy@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
+SPE can be used from within a guest as long as the driver adheres to the
+new VM interface spec [1]. Because the driver should behave correctly
+whether it's running in a guest or not, the first patches are marked as
+a fix. Furthermore, in future versions of the architecture the PE will
+be allowed to behave in the same way.
 
---2FxrJs+8WJHxk+HO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The last patch adds new behavior to make it easier for guests to be
+able to reserve large buffers. It's not strictly necessary, so it's not
+marked as a fix.
 
-On Tue, Jul 01, 2025 at 06:24:33PM +0300, Vladimir Oltean wrote:
-> On Tue, Jul 01, 2025 at 04:16:50PM +0100, Mark Brown wrote:
+[1]: https://developer.arm.com/documentation/den0154/latest/
 
-> > Switching between modes is incredibly common, usually between PIO (for
-> > very short transfers) and DMA, that's no problem.  Factoring in
-> > timestamping seems like a reasonable signal I guess, might trip someone
-> > who was trying to benchmark things up but probably not normal users.
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+James Clark (3):
+      perf: arm_spe: Add barrier before enabling profiling buffer
+      perf: arm_spe: Disable buffer before writing to PMBPTR_EL1 or PMBSR_EL1
+      perf: arm_spe: Add support for SPE VM interface
 
-> Ah, ok, I vaguely remember something being discussed about can_dma()
-> on previous iterations of this patch, but in a different context.
-> Then that's an avenue to explore, I guess. Looking at that method's
-> prototype, I suppose dspi could simply return can_dma = false "if (xfer->ptp_sts)"
-> (timestamp requested), i.e. no core involvement in the decision process at all?
+ arch/arm64/include/asm/sysreg.h |  1 +
+ arch/arm64/tools/sysreg         |  6 ++++-
+ drivers/perf/arm_spe_pmu.c      | 60 ++++++++++++++++++++++++++++++++---------
+ 3 files changed, 54 insertions(+), 13 deletions(-)
+---
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+change-id: 20250609-james-spe-vm-interface-2bb41e238072
 
-Yes, exactly.  It can base the decision on whatever amuses it about the
-transfer.
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
 
---2FxrJs+8WJHxk+HO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhj/y0ACgkQJNaLcl1U
-h9AA4wf1HpKIPW+LJH8rPfjIBT9odSSTNv12AYDc1i9DdflTO1rvB7Ye0vjzEb8X
-ASCf8RLUsYTE/3uGBFNZC0b0OpfkYGwVfTapks+RM3t/i9HdVzK23loy1UyodGA4
-JNYXSXVgPJLXl5+QBnUKkR8IOcaNqVC0Zz+jW+rBBQf4+EmDoJ4jAymS0ZSy0cMo
-bXo/9QeIgGUcwUEMlQg7ACyjuUgwEZWd8bhKaUQ2wl54zSGe7ngt6Wb+rwtZFNjB
-4WIc+DPcI8xMHs76pcn3rzi3dS8sKhGzdGHniTp4PF3xTNVgJFIIYS3XzxKF2m3S
-TjC8nGA/rgAJnUcZYdKcALl7msMK
-=ZbKC
------END PGP SIGNATURE-----
-
---2FxrJs+8WJHxk+HO--
 
