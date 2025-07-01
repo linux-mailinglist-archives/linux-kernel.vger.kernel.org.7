@@ -1,304 +1,403 @@
-Return-Path: <linux-kernel+bounces-710958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9974AEF399
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 152B9AEF391
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36611BC729E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A771BC745B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1F626E6EC;
-	Tue,  1 Jul 2025 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XzvEuaDG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="M0KH3vJW"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FDD26FA50;
+	Tue,  1 Jul 2025 09:41:18 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E9426B740;
-	Tue,  1 Jul 2025 09:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751362932; cv=fail; b=JoIDNICEx2vn2Z+Bm3ERPy66hj7j2dYT6uV8XVbZ+slXGGR/+VtW0G9+wb264aGGJICfUJv4GVgR49s9WEWbJFpoBkJoaYWV2s0tvkDeuyP6l/CmMXeaN1IjBrO4ctDBuimr9dFOqGgbDa53cq9HQveItmk1OzcuKNAmxz6z51s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751362932; c=relaxed/simple;
-	bh=lKA7RqeR29mT7jtz6H3XElJgW6O64Op1O7BI6Y7JVKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=U+UIzFt2cNj0mFJfJ7WZjEuud9yn8pHeCC7ALeMWyGxSevY23tB8nBXQ2RRsI2e5LN+DoriJPfC9uKuZOVdHbeV3+VLLcNHfav9KhnVtP9Zy/wymDzjxI/2E94P9HQ3+JfCus37gmuR0zh6bmV9lDad4go/1oJJzfHJHWR7nLqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XzvEuaDG; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=M0KH3vJW; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5611MjrH012608;
-	Tue, 1 Jul 2025 09:40:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=DzTOP7TUiQs8sTxzyK
-	XDXDcSC83Ju9IFc9UAzY77SoI=; b=XzvEuaDGaM4Q8ANM6JK39nEKg6h/mtk7Al
-	2JOt5IRXaJNrCUSys8YI1z9flTPvOeyx33NzryIyZ27fptH0g0BChOP/BS/cL+OF
-	/njNrgwxgprHQAiebYRq0DgHNPqNOt4YPmBH9ftv9DBeUULnnu1yHIjydpwTd8s+
-	xmdFMG9h+Qst50BX71Ra4n890UcImghIhrRFFxXW2qTXJef6P1FD4HJFM1QMFc6B
-	YOlF+kF+uJVsF2mB0gBeadGovarnJkEvXFXQLAkF0xFlT78+IzYYSV5H2YguOy2d
-	725SYKhwVdwQNikL/xQlqLZsAGmNq6qGVuq+ZxuoXyTv/x98cxpQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j6tfccvg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 09:40:46 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56195Dm4009076;
-	Tue, 1 Jul 2025 09:40:45 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u9htrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 09:40:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gPhtuR6uaPVyS6vZQ3NEPdXZt4r7CmAq9NGp1RBPkItc9QY7NluGUWEk0cl1bUOpzGt+v7rvp3cTbyG72Ebi502bpirpi6gxZ7Xw5Lv2xwjzr0m8SB9UKeW+/cVgrRcGFbYYjnrXB20FDvOBDrJT8TC73Dw4wpCV4pzu7j+Vih7mLmDiFa2ODmSVAczApV3ucQ5qFWtmPv8dlYjTCOP7YxhnwRk4/fcK/1l+j35VjTDIUX+WoXUTnGZeic8cr4AnGLaKNhyJ4Kyj0v80vyqHFoST8LlM9nTOyCmAo94ofrvoZ76yiwnhM/zTEdSxKiFRunDLfRb84sFpuH5T/+kupg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DzTOP7TUiQs8sTxzyKXDXDcSC83Ju9IFc9UAzY77SoI=;
- b=QUUwsJp6ZtvU+8V8z0wB2TUjuPSDTD54PGe+ODSSOGBNb8smKJI6IZ28k7Zi+CN+8xZOpRBlkhV4nMaW+uwT8Frdt97ypVBnLEf/GNvbFO0yWUJfUbnySb/NsnytxTis7tqoRlvT90htPwz2HDhpUQc0fjUMhIbMdp2sb+wM8WKIy8jhgcKwWPPqMCvjgkRrsDZlMmIC2rDNit5G1Ty7AJ90bNi2S6d5fG1B5/UCW/jayToTDCVMx/oLQU/pat7lA8EKUnqbq12qvMRRW9hKCqEM9ndj2oz1f2qPLwP/v5wWiVVtW6d1BT3PgedUswRMU4MyljZVDX4umPLP2SMZ3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DzTOP7TUiQs8sTxzyKXDXDcSC83Ju9IFc9UAzY77SoI=;
- b=M0KH3vJWugjwxqries0nMtMJIvhKMxzFPDH5+U/UTcLWHzVns06DGXmgc6mez6BZqu/56fMvS1e7sDuwAus6t+nual2zngXKYVHs5ugSZ56LaA2CWr+SzTNhs7YtmFBGIhxBAJS13cKAiJ/8ITWChMxKEsWsGnJJ/xsfiWBhwPg=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DM3PPFEDD6F73B8.namprd10.prod.outlook.com (2603:10b6:f:fc00::c56) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.25; Tue, 1 Jul
- 2025 09:40:42 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
- 09:40:42 +0000
-Date: Tue, 1 Jul 2025 10:40:40 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
-        Harry Yoo <harry.yoo@oracle.com>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v1 12/29] mm/zsmalloc: stop using __ClearPageMovable()
-Message-ID: <e10e82ff-190f-443b-bed7-3a8c45397600@lucifer.local>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-13-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630130011.330477-13-david@redhat.com>
-X-ClientProxiedBy: LO2P265CA0302.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::26) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BCF2309B0;
+	Tue,  1 Jul 2025 09:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751362878; cv=none; b=Qb0JJW2IvivwjT6Upa3/vgDFuL+IvNSrApjQHccb5nG8NOhHjznAuEX/db8X6cb3SWQ7JvMGiIOTWLor8H6yxFoJRMjSmLBzJMy0yuyiZmgxKyf8XEGiDlgabWmVv4ug/oJelFfiKxkFzOdQzEcApRw6RUQZdNGTn/VjH6kOpoE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751362878; c=relaxed/simple;
+	bh=1lHpk4falGd8CU4cBIEePpzPxJzDW//lHJ8RG77rWEE=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=WogVkjME7BKaPURxdMW8/rj8pW0z5NXr4mdXFtumPSxGvSYlUFkAihZuoub5vKmFNpX80eqYL9cD+SVkrgcS5KDPGDab11toq+Mn6tPXNsVnefsE/ybCe/9dmVVN9vBVktGA14OUSfcSa+gYpgb0lHqwfBpBaILW6slbOrwxgYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4bWdM404Dfz51SWj;
+	Tue,  1 Jul 2025 17:41:04 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl2.zte.com.cn with SMTP id 5619enZv054393;
+	Tue, 1 Jul 2025 17:40:49 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 1 Jul 2025 17:40:51 +0800 (CST)
+Date: Tue, 1 Jul 2025 17:40:51 +0800 (CST)
+X-Zmail-TransId: 2afc6863ad23ffffffffa60-b95ab
+X-Mailer: Zmail v1.0
+Message-ID: <20250701174051880riwWtq_0siCJ5Yfsa6ZOQ@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM3PPFEDD6F73B8:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7756e721-7a9a-48cc-fa35-08ddb8835881
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oiWgDA8lQve8t6+hAieGITcw7gTkYVvMsB/2UqE9ZyoR8T/4HFD/pDQTqRjp?=
- =?us-ascii?Q?LsZV6qtMCdrGfKRMF3OtShkSR2hkiKzPRW5GebLB8Zzjgl+3os1s5Ff5o9Z/?=
- =?us-ascii?Q?55hD7BPBmZTNgi2Fn4RHCftwWGP5SAX6bNpbr6scSt8Ze7boKO6MMY+WZkiH?=
- =?us-ascii?Q?/Cg3Xo8wnllOJOT96AWPDBDcE21K9a80+z4vG3CellaEwKdCcsxaJwWGMXhq?=
- =?us-ascii?Q?qC59p1v3T7rLgFZQBENwgZRjEH1NnAVZUCiS/UiBdrvcQea+URnLy8yHk7tJ?=
- =?us-ascii?Q?A32FvdzNN6Opq670exqzgAQfTczhdTw00jd5fL0xc0mL7+EMJxi1jx7Fx7GF?=
- =?us-ascii?Q?ythPDMd/HXwA8gLj44SPRQY2L9F2wkcBoIJFyhu/zNy340BomFb9zCT8lVmn?=
- =?us-ascii?Q?nkjKhK/hKFt8VfA3q9IF8cOvio3j/iqG+In6e3xPPN8OpArhF4jD0xnPP6fV?=
- =?us-ascii?Q?52xGHu5CJicpJzQsMhaki/PxLyGXwX0Epnq29tpvRUs8Md4sH/g3/U6Uekw0?=
- =?us-ascii?Q?aa5rursD0cjEj6zQmEIvI93UzXwrTd6H9YsvNUJqyCEZqr/ybvWSl28M+0Ar?=
- =?us-ascii?Q?PNOAaqBr3ufRfoSredxaaBePKZPZ00awrGRAWlwOsTWhZg1qDBL0n3hbdNas?=
- =?us-ascii?Q?TfuQmAXZaFErUDmpjn1mLxH0jpadhRYGC0t6g0jYSn2pu7BuX8D3tM87xwwI?=
- =?us-ascii?Q?2RJZW0Eudicta2Dp5PPCdIuyRMrapZa6YydB+aSEhftIun8hEsAPmxwnyd5K?=
- =?us-ascii?Q?UdI0Jhv7vl5K479MIF3gvS4eqUNDUbleNhGPt3PMRFpPnEveBBIQYNru0X3H?=
- =?us-ascii?Q?Pg0qxltl7w7oZzRM/Kjn36iD3ilY4iXrmvjTAdawoeN3hP+o3TR6tFVyuELn?=
- =?us-ascii?Q?hkJwCwk0ZIpu6wRxlc8tBlunj3qL6nHO3+o3m5da/0BFvm6pefTbOTdHUk2W?=
- =?us-ascii?Q?vNJrHVquC1h7sjdnFsgrz3GMPH+MT5p+pzq7TIqlwrScukM8vqxjA2eCESK9?=
- =?us-ascii?Q?l0/ZDQpfBWAXNzP52ugFf4by+ppPuRSW9DzBt/VeyHlsTgEnFGyLWKe45xup?=
- =?us-ascii?Q?sLHvGDLpI2lxRvqBLqTL/Q+3uYT8dPqrCZzle5dnLIh8ie581mLX1oxDTv3f?=
- =?us-ascii?Q?6Iusdr8bIVDqwCdiGvLekiU2e5G6rpwgMB4C5qtyBeYw6+31oU8DTHbHSwo+?=
- =?us-ascii?Q?t1GxRImyyQLP+yuGu5gx2D+HCXEOGsm5TC4FRwMan8w2lFeO0rIfIMYE046W?=
- =?us-ascii?Q?pUf/UA5+/ATgIpC8O8LE4ExIoedilXOW3S6l4ebZvpFTuQEn08+qGTj3aAYq?=
- =?us-ascii?Q?tpWhpgnA2QNOmNdRtdfMJo7lzJQlwP/it5THi78pWls55eAU1DoQABtSimxX?=
- =?us-ascii?Q?kT0ICfbshvs1cYtPqLe2bn458UD2yNvf4XOTVYWBAP//o0QlKw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RgRw5lWIN5PaelxHVX1ceBwA4auLu84IwXCANdHlKqdp4sywfTs9HBSu96PU?=
- =?us-ascii?Q?i9k7kBUDciund58CqqWEAoGJxgHFhdSe0rsAguf5AmuuhkJVbGZ235XgsdlF?=
- =?us-ascii?Q?5hmwlQjdbLAX3DMQbqSVjtARVju6wJ6XRqT3TA2fyEXJ8us6l0L+GwyGVPgD?=
- =?us-ascii?Q?uUH+higv6wcngLzxag94jDH+lBlogPPEFakdDDMm0MynlJfmle+ntbUaf3Yy?=
- =?us-ascii?Q?EsNlj1mFr1ZWUj2BztTlX9IKFuxyIDK06bnmnN0LsElkR99Ry4ohaex0hgSk?=
- =?us-ascii?Q?oyn96D1ZOiGMUlT/r+voSf7xGBCeOSZkPhP7UtOYo6RzRQgTJ/CAflyJn8Fj?=
- =?us-ascii?Q?Yvr/9+Z2+NM5IGfOR1ZWJ/bsb4RKi9h5BA0h9rD39Zd0PtqHiGvEypvfShCR?=
- =?us-ascii?Q?ZLzDyGPKuPxeDe9QiDJZfQtTD3bRypLRsuD6OuxgTwc2PfThNHahOayoQLep?=
- =?us-ascii?Q?uFxG6hlww3KCUWiUOJKP13CBOALxljBGgFTxjVWKrdfzU1bgz2EyhTngvYjg?=
- =?us-ascii?Q?L82fXFj4UJ963XIVicw1wVrVp9ktheTajS5tfITYELpWxVLPohwksFNz3q0t?=
- =?us-ascii?Q?Z0c31Mn2zhaeLHYGhGPo5ZzRVqGbUFP4iBNEHJee5Dv4PsNyN0jxZ+tkx+ga?=
- =?us-ascii?Q?/GL9F+DpJHY07+TiU+yhS8tDqKdXcxW3zq10bxic5yvRz+4FeSdnuOkTOTVM?=
- =?us-ascii?Q?NosvjMwRJrosx02Y9E08ViIPl0VmKKc7ASfya9mieTFmu4jWRVhdX6MEWKjq?=
- =?us-ascii?Q?wYYG7Fa2A/NIdpo2hIN/ntc3JRfe4e7zQjsY2ipKK9o9rTMYY8cxYBNV/mvm?=
- =?us-ascii?Q?NGlfVPHAYCPhxRr4r7UgMu5BHq3yGbkJlREnOpbD3YFGmpmBRXE6438ekKjX?=
- =?us-ascii?Q?bT4LAA5/hrOrPNKLGIYpSETKLqd+eS7Lo18DGCk4fgpAohWhsDHK0Kh6RkeA?=
- =?us-ascii?Q?LtB8AtVY8c6fAD80s1mmOgQSf7pyp/2cCHw7Kz+zebx5tMFxYvJqL6VpT1M8?=
- =?us-ascii?Q?slgl+PoXl26NIQkT+WBeGzXkjqlUrTN07yMR7Pfy6B4RnGFrNaAs3OZbTnyB?=
- =?us-ascii?Q?hJqAdmynrRV4R7Kk0qA/Lj5A0+v0ZAA/GGl0VNdfqCQkZJGE3DbhQTMl+CEp?=
- =?us-ascii?Q?pvb97IfWgODF8kb2JI4oQxflNWTNdrlaO5xyp2CyQAVOnk+Yuv0hUnGI/AIc?=
- =?us-ascii?Q?H1Q5g8DrhXO4IN7+kspXSrXXKEqlK25yFQmKq0jUNqYIWnPe4KhC57X1VMYk?=
- =?us-ascii?Q?Xzdr14y3KGnYpL87OmgtZdBHRLpNi97fNK950s5mibDi5tsaj8LV2L9JzvgC?=
- =?us-ascii?Q?9kZajy04MWS0T8EI2fevJ/CUGXAyk6w1I6ddlIb0hGabxG+7PMy97gNjpYjN?=
- =?us-ascii?Q?RLDS9x/+R/R+/pPwd4b9BcmrAi31s2RiJX9/uNAU6hcNoT4atQ2uJ3My1/yu?=
- =?us-ascii?Q?q8euvFmsjvr6lGO7LXib1C/ORgfEGZCMPwW19FrHYdaPqgjbmv3Ec+pQJWmX?=
- =?us-ascii?Q?jS0hwVj7HgsyCeyYrCm2XEW9Iy68ZVi+vejqkv8yHtQkC/hOFAYPvTL8znHV?=
- =?us-ascii?Q?3Ug+mR+pNzhrPqEG5CTfSeGWi7G3K0XzLW/iZb/gr/JDsRh3GAIhICHydrLa?=
- =?us-ascii?Q?UQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	k2iu498Rg3YNRx4BenvpbvC841BH2oa/+eOxf8vK+fucevHwibTD7P2veHvWosFPhdU+dUrXRGSurSShohC7HFlE1cbVjzW/8LrY/2el75CbfsfIiUBI6n2BFn9y3CFV5+bdMw4PVDt88gtjmA90aG8+szy4Qytgu2a3hl4DjFOD0ewgpCaXwcKlLvyDe+oPR0AUcZ0IeA7tc4Pk3bt/lA3eaGgdYOAuZMKOcGYA2oOA21jM4bLzG+922DeDw4JDRZYnjoUBYM20/rtPyDyFDkVMym9LnWtYFc+f85j2q2O00QilK2l6t9KCm7mKajr1sRk8QtfKx+WvXHMRftNynLzNheM5yJ95CavAhfF7IlNKgcAsgpRbwdgNUK3uDXF2F32JHnXvrygY8CGRJMv4aPDl4cVNOalkHYcTpGXDnApDJYrWh9yUUbAc0WaTzaOUbnwaOIhqM+mhYTcB6P/Od5I3svCqf+WmrzQHMapGS5bwy0fzl+9kwTfgAuiUuFyF2GAUk1HQIVFXOHNsGFRvXLUHiYylnol+aaWaf60S39PMlFDCpap8teg8pKggdYu5CsZgYruAGyoAdwMR3e1ajEa/VmjAFw+qMmdLZUXVAe4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7756e721-7a9a-48cc-fa35-08ddb8835881
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 09:40:42.2461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3QNPcpCi4GR++GV0wbqdOvMosoh9wWquwo8+HMPnn3xZu50kh8TUmipB4i+BAK0gpxXHgxlDFW4mrLPoAd3MJGyO95EII0UxHMYP1BS4jtg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFEDD6F73B8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507010057
-X-Authority-Analysis: v=2.4 cv=CMMqXQrD c=1 sm=1 tr=0 ts=6863ad1e b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=nCi1l6IOqr0Szu5SiHwA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:14723
-X-Proofpoint-GUID: CkjjWM2RAOEjtTU0UFeptrn6M38cLl4u
-X-Proofpoint-ORIG-GUID: CkjjWM2RAOEjtTU0UFeptrn6M38cLl4u
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA1NyBTYWx0ZWRfX33viAgEzBdNA sCBDoeFetJJqYdjCx0XSxNXCfUfX4t0TO67UStXeqaMhyJ1Sg6ZeuO+NiAX7DLVW2S7Qf5vOhOw AbCFPf+Ot6tCDSIN45DXcKB1c0vkT2P80oTR1aU57SkjeITttT3pzDFRVfFBhwu6VDvKZtOQ8Sc
- BFrx5ZFmP6C46T1ejIEHAYkKEuKuCeMIQzETA/QdUrAJ3kgCz8Ni2+T7nz3HfVaExjdL36dqLDA gKk3GMD8/KLsg0hJf06u/0vTS24nKuLHgrPkCXJ3a/RTFFctofpk7hyvg9UuCpZ5M6A1UtApDrz n240wu7P5UAP80kq4wMNgRJ3HNzJ3IezJVOa1D/gczTeW/gWp6UUSOoHdYsiMuSReO12uHN4Tfg
- FEhGU8kWVBFo1awNoBX+N39HuoyXnbVnSthOEkp4ih4s+XduU4nINfSalh5B9xVEEA1qCnms
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <kuba@kernel.org>, <edumazet@google.com>, <kuniyu@amazon.com>,
+        <ncardwell@google.com>, <davem@davemloft.net>, <horms@kernel.org>
+Cc: <dsahern@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+        <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIG5ldC1uZXh0IHYyXSB0Y3A6IGV4dGVuZCB0Y3BfcmV0cmFuc21pdF9za2IgdHJhY2Vwb2ludCB3aXRoIGZhaWx1cmUgcmVhc29ucw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 5619enZv054393
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6863AD2F.001/4bWdM404Dfz51SWj
 
-On Mon, Jun 30, 2025 at 02:59:53PM +0200, David Hildenbrand wrote:
-> Instead, let's check in the callbacks if the page was already destroyed,
-> which can be checked by looking at zpdesc->zspage (see reset_zpdesc()).
->
-> If we detect that the page was destroyed:
->
-> (1) Fail isolation, just like the migration core would
->
-> (2) Fake migration success just like the migration core would
->
-> In the putback case there is nothing to do, as we don't do anything just
-> like the migration core would do.
->
-> In the future, we should look into not letting these pages get destroyed
-> while they are isolated -- and instead delaying that to the
-> putback/migration call. Add a TODO for that.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-LGTM, so:
+Background
+==========
+When TCP retransmits a packet due to missing ACKs, the
+retransmission may fail for various reasons (e.g., packets
+stuck in driver queues, sequence errors, or routing issues).
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+The original tcp_retransmit_skb tracepoint:
+'commit e086101b150a ("tcp: add a tracepoint for tcp retransmission")'
+lacks visibility into these failure causes, making production
+diagnostics difficult.
 
-> ---
->  mm/zsmalloc.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-> index f98747aed4330..72c2b7562c511 100644
-> --- a/mm/zsmalloc.c
-> +++ b/mm/zsmalloc.c
-> @@ -876,7 +876,6 @@ static void reset_zpdesc(struct zpdesc *zpdesc)
->  {
->  	struct page *page = zpdesc_page(zpdesc);
->
-> -	__ClearPageMovable(page);
->  	ClearPagePrivate(page);
->  	zpdesc->zspage = NULL;
->  	zpdesc->next = NULL;
-> @@ -1715,10 +1714,11 @@ static void replace_sub_page(struct size_class *class, struct zspage *zspage,
->  static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
->  {
->  	/*
-> -	 * Page is locked so zspage couldn't be destroyed. For detail, look at
-> -	 * lock_zspage in free_zspage.
-> +	 * Page is locked so zspage can't be destroyed concurrently
-> +	 * (see free_zspage()). But if the page was already destroyed
-> +	 * (see reset_zpdesc()), refuse isolation here.
->  	 */
-> -	return true;
-> +	return page_zpdesc(page)->zspage;
->  }
->
->  static int zs_page_migrate(struct page *newpage, struct page *page,
-> @@ -1736,6 +1736,13 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
->  	unsigned long old_obj, new_obj;
->  	unsigned int obj_idx;
->
-> +	/*
-> +	 * TODO: nothing prevents a zspage from getting destroyed while
-> +	 * isolated: we should disallow that and defer it.
-> +	 */
-> +	if (!zpdesc->zspage)
-> +		return MIGRATEPAGE_SUCCESS;
-> +
->  	/* The page is locked, so this pointer must remain valid */
->  	zspage = get_zspage(zpdesc);
->  	pool = zspage->pool;
-> --
-> 2.49.0
->
+Solution
+=======
+Adds a 'reason' field to the tcp_retransmit_skb tracepoint,
+enumerating with explicit failure cases:
+TCP_RETRANS_ERR_DEFAULT (retransmit terminate unexpectedly)
+TCP_RETRANS_IN_HOST_QUEUE (packet still queued in driver)
+TCP_RETRANS_END_SEQ_ERROR (invalid end sequence)
+TCP_RETRANS_TRIM_HEAD_NOMEM (trim head no memory)
+TCP_RETRANS_UNCLONE_NOMEM (skb unclone keeptruesize no memory)
+TCP_RETRANS_FRAG_NOMEM (fragment no memory)
+TCP_RETRANS_ROUTE_FAIL (routing failure)
+TCP_RETRANS_RCV_ZERO_WINDOW (closed recevier window)
+TCP_RETRANS_PSKB_COPY_NOBUFS (no buffer for skb copy)
+
+Functionality
+=============
+Enables users to know why some tcp retransmission quitted and filter
+retransmission failures by reason.
+
+
+Compatibility description
+=========================
+This patch extends the tcp_retransmit_skb tracepoint
+by adding a new quit_reason field at the end of its
+existing structure (within TP_STRUCT__entry). The
+compatibility implications are detailed as follows:
+
+1) Structural compatibility for legacy user-space tools
+
+Legacy tools/BPF programs accessing existing fields
+(by offset or name) can still work without modification
+or recompilation.The new field is appended to the end,
+preserving original memory layout. 
+
+2) Note: semantic changes
+
+The original tracepoint primarily only focused on
+successfully retransmitted packets. With this patch,
+the tracepoint now covers all packets that trigger
+retransmission attempts, including those that may
+terminate early due to specific reasons. For accurate
+statistics, users should filter using quit_reason
+to distinguish outcomes.
+
+
+
+Before patched:
+# cat /sys/kernel/debug/tracing/events/tcp/tcp_retransmit_skb/format
+        field:const void * skbaddr;     offset:8;       size:8; signed:0;
+        field:const void * skaddr;      offset:16;      size:8; signed:0;
+        field:int state;        offset:24;      size:4; signed:1;
+        field:__u16 sport;      offset:28;      size:2; signed:0;
+        field:__u16 dport;      offset:30;      size:2; signed:0;
+        field:__u16 family;     offset:32;      size:2; signed:0;
+        field:__u8 saddr[4];    offset:34;      size:4; signed:0;
+        field:__u8 daddr[4];    offset:38;      size:4; signed:0;
+        field:__u8 saddr_v6[16];        offset:42;      size:16;        signed:0;
+        field:__u8 daddr_v6[16];        offset:58;      size:16;        signed:0;
+print fmt: "skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s"
+
+After patched:
+# cat /sys/kernel/debug/tracing/events/tcp/tcp_retransmit_skb/format
+        field:const void * skbaddr;     offset:8;       size:8; signed:0;
+        field:const void * skaddr;      offset:16;      size:8; signed:0;
+        field:int state;        offset:24;      size:4; signed:1;
+        field:__u16 sport;      offset:28;      size:2; signed:0;
+        field:__u16 dport;      offset:30;      size:2; signed:0;
+        field:__u16 family;     offset:32;      size:2; signed:0;
+        field:__u8 saddr[4];    offset:34;      size:4; signed:0;
+        field:__u8 daddr[4];    offset:38;      size:4; signed:0;
+        field:__u8 saddr_v6[16];        offset:42;      size:16;        signed:0;
+        field:__u8 daddr_v6[16];        offset:58;      size:16;        signed:0;
+        field:enum tcp_retransmit_quit_reason quit_reason;      offset:76;      size:4; signed:0;
+print fmt: "skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s quit_reason=%s"
+
+
+Co-developed-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+
+---
+v1->v2:
+
+1) Rename TCP_RETRANS_QUIT_UNDEFINED to TCP_RETRANS_ERR_DEFAULT,
+as error codes due to tcp_transmit_skb() calls within
+__tcp_retransmit_skb are not explicitly tracked, it is
+necessary to make default failure reason essential
+for clarity. 
+
+2) Added detailed compatibility consequences section.
+
+ include/linux/tcp.h        | 13 +++++++++
+ include/trace/events/tcp.h | 54 +++++++++++++++++++++++++-------------
+ net/ipv4/tcp_output.c      | 52 ++++++++++++++++++++++++++----------
+ 3 files changed, 87 insertions(+), 32 deletions(-)
+
+diff --git a/include/linux/tcp.h b/include/linux/tcp.h
+index 29f59d50dc73..7ffd5680c4ac 100644
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -530,6 +530,19 @@ enum tsq_flags {
+ 	TCPF_ACK_DEFERRED		= BIT(TCP_ACK_DEFERRED),
+ };
+
++enum tcp_retransmit_quit_reason {
++	TCP_RETRANS_ERR_DEFAULT,
++	TCP_RETRANS_SUCCESS,
++	TCP_RETRANS_IN_HOST_QUEUE,
++	TCP_RETRANS_END_SEQ_ERROR,
++	TCP_RETRANS_TRIM_HEAD_NOMEM,
++	TCP_RETRANS_UNCLONE_NOMEM,
++	TCP_RETRANS_FRAG_NOMEM,
++	TCP_RETRANS_ROUTE_FAIL,
++	TCP_RETRANS_RCV_ZERO_WINDOW,
++	TCP_RETRANS_PSKB_COPY_NOBUFS,
++};
++
+ #define tcp_sk(ptr) container_of_const(ptr, struct tcp_sock, inet_conn.icsk_inet.sk)
+
+ /* Variant of tcp_sk() upgrading a const sock to a read/write tcp socket.
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 54e60c6009e3..3e24740d759e 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -13,17 +13,38 @@
+ #include <linux/sock_diag.h>
+ #include <net/rstreason.h>
+
+-/*
+- * tcp event with arguments sk and skb
+- *
+- * Note: this class requires a valid sk pointer; while skb pointer could
+- *       be NULL.
+- */
+-DECLARE_EVENT_CLASS(tcp_event_sk_skb,
++#define TCP_RETRANSMIT_QUIT_REASON		\
++		ENUM(TCP_RETRANS_ERR_DEFAULT,		"retransmit terminate unexpectedly")	\
++		ENUM(TCP_RETRANS_SUCCESS,		"retransmit successfully")		\
++		ENUM(TCP_RETRANS_IN_HOST_QUEUE,		"packet still queued in driver")	\
++		ENUM(TCP_RETRANS_END_SEQ_ERROR,		"invalid end sequence")			\
++		ENUM(TCP_RETRANS_TRIM_HEAD_NOMEM,	"trim head no memory")			\
++		ENUM(TCP_RETRANS_UNCLONE_NOMEM,		"skb unclone keeptruesize no memory")	\
++		ENUM(TCP_RETRANS_FRAG_NOMEM,		"fragment no memory")			\
++		ENUM(TCP_RETRANS_ROUTE_FAIL,		"routing failure")			\
++		ENUM(TCP_RETRANS_RCV_ZERO_WINDOW,	"closed recevier window")		\
++		ENUMe(TCP_RETRANS_PSKB_COPY_NOBUFS,	"no buffer for skb copy")		\
++
++/* Redefine for export. */
++#undef ENUM
++#undef ENUMe
++#define ENUM(a, b)	TRACE_DEFINE_ENUM(a);
++#define ENUMe(a, b)	TRACE_DEFINE_ENUM(a);
++
++TCP_RETRANSMIT_QUIT_REASON
++
++/* Redefine for symbolic printing. */
++#undef ENUM
++#undef ENUMe
++#define ENUM(a, b)	{ a, b },
++#define ENUMe(a, b)	{ a, b }
++
++TRACE_EVENT(tcp_retransmit_skb,
+
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
++	TP_PROTO(const struct sock *sk, const struct sk_buff *skb,
++		enum tcp_retransmit_quit_reason quit_reason),
+
+-	TP_ARGS(sk, skb),
++	TP_ARGS(sk, skb, quit_reason),
+
+ 	TP_STRUCT__entry(
+ 		__field(const void *, skbaddr)
+@@ -36,6 +57,7 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+ 		__array(__u8, daddr, 4)
+ 		__array(__u8, saddr_v6, 16)
+ 		__array(__u8, daddr_v6, 16)
++		__field(enum tcp_retransmit_quit_reason, quit_reason)
+ 	),
+
+ 	TP_fast_assign(
+@@ -58,21 +80,17 @@ DECLARE_EVENT_CLASS(tcp_event_sk_skb,
+
+ 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
+ 			      sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
++
++		__entry->quit_reason = quit_reason;
+ 	),
+
+-	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s",
++	TP_printk("skbaddr=%p skaddr=%p family=%s sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c state=%s quit_reason=%s",
+ 		  __entry->skbaddr, __entry->skaddr,
+ 		  show_family_name(__entry->family),
+ 		  __entry->sport, __entry->dport, __entry->saddr, __entry->daddr,
+ 		  __entry->saddr_v6, __entry->daddr_v6,
+-		  show_tcp_state_name(__entry->state))
+-);
+-
+-DEFINE_EVENT(tcp_event_sk_skb, tcp_retransmit_skb,
+-
+-	TP_PROTO(const struct sock *sk, const struct sk_buff *skb),
+-
+-	TP_ARGS(sk, skb)
++		  show_tcp_state_name(__entry->state),
++		  __print_symbolic(__entry->quit_reason, TCP_RETRANSMIT_QUIT_REASON))
+ );
+
+ #undef FN
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 3ac8d2d17e1f..70b89b9fdf4d 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3326,6 +3326,7 @@ static void tcp_retrans_try_collapse(struct sock *sk, struct sk_buff *to,
+  */
+ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ {
++	enum tcp_retransmit_quit_reason reason = TCP_RETRANS_ERR_DEFAULT;
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	unsigned int cur_mss;
+@@ -3336,8 +3337,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	if (icsk->icsk_mtup.probe_size)
+ 		icsk->icsk_mtup.probe_size = 0;
+
+-	if (skb_still_in_host_queue(sk, skb))
+-		return -EBUSY;
++	if (skb_still_in_host_queue(sk, skb)) {
++		reason = TCP_RETRANS_IN_HOST_QUEUE;
++		err = -EBUSY;
++		goto out;
++	}
+
+ start:
+ 	if (before(TCP_SKB_CB(skb)->seq, tp->snd_una)) {
+@@ -3348,14 +3352,22 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 		}
+ 		if (unlikely(before(TCP_SKB_CB(skb)->end_seq, tp->snd_una))) {
+ 			WARN_ON_ONCE(1);
+-			return -EINVAL;
++			reason = TCP_RETRANS_END_SEQ_ERROR;
++			err = -EINVAL;
++			goto out;
++		}
++		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq)) {
++			reason = TCP_RETRANS_TRIM_HEAD_NOMEM;
++			err = -ENOMEM;
++			goto out;
+ 		}
+-		if (tcp_trim_head(sk, skb, tp->snd_una - TCP_SKB_CB(skb)->seq))
+-			return -ENOMEM;
+ 	}
+
+-	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk))
+-		return -EHOSTUNREACH; /* Routing failure or similar. */
++	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk)) {
++		reason = TCP_RETRANS_ROUTE_FAIL;
++		err = -EHOSTUNREACH; /* Routing failure or similar. */
++		goto out;
++	}
+
+ 	cur_mss = tcp_current_mss(sk);
+ 	avail_wnd = tcp_wnd_end(tp) - TCP_SKB_CB(skb)->seq;
+@@ -3366,8 +3378,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	 * our retransmit of one segment serves as a zero window probe.
+ 	 */
+ 	if (avail_wnd <= 0) {
+-		if (TCP_SKB_CB(skb)->seq != tp->snd_una)
+-			return -EAGAIN;
++		if (TCP_SKB_CB(skb)->seq != tp->snd_una) {
++			reason = TCP_RETRANS_RCV_ZERO_WINDOW;
++			err = -EAGAIN;
++			goto out;
++		}
+ 		avail_wnd = cur_mss;
+ 	}
+
+@@ -3379,11 +3394,17 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	}
+ 	if (skb->len > len) {
+ 		if (tcp_fragment(sk, TCP_FRAG_IN_RTX_QUEUE, skb, len,
+-				 cur_mss, GFP_ATOMIC))
+-			return -ENOMEM; /* We'll try again later. */
++				 cur_mss, GFP_ATOMIC)) {
++			reason = TCP_RETRANS_FRAG_NOMEM;
++			err = -ENOMEM;  /* We'll try again later. */
++			goto out;
++		}
+ 	} else {
+-		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC))
+-			return -ENOMEM;
++		if (skb_unclone_keeptruesize(skb, GFP_ATOMIC)) {
++			reason = TCP_RETRANS_UNCLONE_NOMEM;
++			err = -ENOMEM;
++			goto out;
++		}
+
+ 		diff = tcp_skb_pcount(skb);
+ 		tcp_set_skb_tso_segs(skb, cur_mss);
+@@ -3421,6 +3442,7 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 				nskb->dev = NULL;
+ 				err = tcp_transmit_skb(sk, nskb, 0, GFP_ATOMIC);
+ 			} else {
++				reason = TCP_RETRANS_PSKB_COPY_NOBUFS;
+ 				err = -ENOBUFS;
+ 			}
+ 		} tcp_skb_tsorted_restore(skb);
+@@ -3438,7 +3460,7 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 				  TCP_SKB_CB(skb)->seq, segs, err);
+
+ 	if (likely(!err)) {
+-		trace_tcp_retransmit_skb(sk, skb);
++		reason = TCP_RETRANS_SUCCESS;
+ 	} else if (err != -EBUSY) {
+ 		NET_ADD_STATS(sock_net(sk), LINUX_MIB_TCPRETRANSFAIL, segs);
+ 	}
+@@ -3448,6 +3470,8 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
+ 	 */
+ 	TCP_SKB_CB(skb)->sacked |= TCPCB_EVER_RETRANS;
+
++out:
++	trace_tcp_retransmit_skb(sk, skb, reason);
+ 	return err;
+ }
+
+-- 
+2.25.1
 
