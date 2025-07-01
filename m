@@ -1,266 +1,213 @@
-Return-Path: <linux-kernel+bounces-712123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A19AF050C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:41:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2138AF0513
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B768A1C2065B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:41:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6061C2084A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B5C2FEE3D;
-	Tue,  1 Jul 2025 20:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BB52F236D;
+	Tue,  1 Jul 2025 20:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UumG0ZNK"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tDpRt3cO"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCFF220F23;
-	Tue,  1 Jul 2025 20:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295E2283CBF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 20:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751402484; cv=none; b=Dv0wNaLi5ahdbro/nfWO+NMxDuIllQqL7xfsLQ2TQXZNhQqYtdQTp+dmJxxg1DbuuX4VPrYSujZSN7J2OH942jj2Lx+AaUypbte2GI8QWRpbeEwsrVUBTENi1LFBAdNmVI9u1SEwjYXWKds/q+9ptVAXLHIhwWNmrnjpXlSfN+k=
+	t=1751402621; cv=none; b=YtOZYFRghMODCVAqcmEw2tt7EC+V1wPlwdb2NTpCngIYSLFvvhh74PzqUi6OMIOuTZzR14yjMhKmDBZmNyB14jYo41p2nv9so9KvoCFQwFivkqZsj80uSjjP0Z8SYZTy9weWban9SzsmAR1Cv0tXJ/M8CAKr36n7B+0QpNg1aU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751402484; c=relaxed/simple;
-	bh=qzRCTMWMCe++obHXlAhP7LMkVWCqzlO9gvLzpauokrE=;
+	s=arc-20240116; t=1751402621; c=relaxed/simple;
+	bh=t6w6HZ3d39NHLiwdzdaqKTFFJH+mBfnQBGoBzloEzXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3eyycvUXzqaehoTACRY9avl+uQTr6y+4o5wqp2za1a8vIdSE8M9o0ZBuR/uYSdzngfklOxXhrpcxsVlZ4JhBpQLBx8IuOFoEOJ0METXwmGG+mfGRKKiHbQeWHJt+NvRyYhxnSGPemvleluBnwTY1WigRlfeJg8G1ARexVWSvyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UumG0ZNK; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 688C478C;
-	Tue,  1 Jul 2025 22:40:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1751402458;
-	bh=qzRCTMWMCe++obHXlAhP7LMkVWCqzlO9gvLzpauokrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UumG0ZNKyVGAXDweyJ+lWTFRJULthmwHeI9oUocz0E7GGML6Fj+mBXqIFUyTQ5OQ7
-	 pniUa6ZlP5ntOF8F4tkkyIwtcdZjS8joCQ0I5t2JgssC2rXsb/jg6r6iRSi5LwPSRp
-	 cXB78TepSmFLOmS3VtHqzZNwLeM9lNE3fx43R7PU=
-Date: Tue, 1 Jul 2025 23:40:54 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Alice Yuan <alice.yuan@nxp.com>
-Subject: Re: [PATCH 2/5] dt-bindings: media: add i.MX parallel csi support
-Message-ID: <20250701204054.GD16835@pendragon.ideasonboard.com>
-References: <20250630-imx8qxp_pcam-v1-0-eccd38d99201@nxp.com>
- <20250630-imx8qxp_pcam-v1-2-eccd38d99201@nxp.com>
- <20250630225340.GE15184@pendragon.ideasonboard.com>
- <aGP2yT9ID1E0BepB@lizhi-Precision-Tower-5810>
- <aGP+L6aRsi7GT9mf@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9x9TGNEKh0P9PujAUIIjIcX0M7aEGZ4zMC8GWSnoqh7UAW+cDn4GmKmPMcW06hbcrNQC3UT/OfNWL7QGEAGt4qFi2yWSB+Y8KHYBgXMKF6riP0yQfjJamutt1IKagS9kDofhAG2e/iYklNF0tq1zWJ0w31gjqKvEENDBYj8zJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tDpRt3cO; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2357c61cda7so207475ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 13:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751402619; x=1752007419; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gp4ARI8yx8eK5+ZYKJ4V0qAwq8T5VmfMZEWG24JsVtU=;
+        b=tDpRt3cOlJV+0eYx3cpvFlgyFkuAy70sDvbRT8UUSM/hdogqjjLUMhCc4DGgn8F/ly
+         g4XyQLBApGchqcqnUuyzf4YCQlXhYFIiM1zatFRfpc3rPYOVU1xoPEZcfilf/bvhUCYH
+         uTGT+CbAnxpwSRZvfUGXbb5TUFtu3+Vz7e1zhFf9jCE7cZVQte/+iI5czrdcS1mRrjQE
+         8JAM5RTOZDtWCzwYl6smx0oPKN48GhcM/jIcj0aq0MOH8/+QeWw7VL2j1uP9TSY6O03D
+         eiIrlm5hUd2mqDeRDrfsu1q9EMftSDckGVd5n1RPbXi3lGUAY1wY15z+mT1GeUuy+xos
+         MBGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751402619; x=1752007419;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gp4ARI8yx8eK5+ZYKJ4V0qAwq8T5VmfMZEWG24JsVtU=;
+        b=Cluwou76o13dwNxSQMzys88YoP8/9mfVlZS4S3Y5v1YelFgi4QiK0oYOLItXHFiWv9
+         08i7hU52wtfP7sk8c2fSvWC8BJW802AQ/B6KXL8rqpsxun74PDWsaPXMO2FgFfO9HHgN
+         AIs5YKAOrZkmyn2JlIuWHCOdWKrhGDsPOWieFYegtOgRhN8DI3TbS037TMM5/9thiQzB
+         F9NIVumLG2xHTOI8Bf05xOKc7ouD65M97Y0DVTzuwH385GAjgYEbpAZSfwiBSAwfSW+k
+         jK7h9hIw5ksf4iI2r3tVPI0t1d3ZY1rDNt6fx4bEagAj4sRy/G+VHnZ2rrLkeVBAsVa0
+         AXlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkqLOQqVFeKGncYQamzdZgG1kiU403V6S2n381oRZ/tzhtTUavQ9coUOwnJMI92fTalP2xyEumLsGyCjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw69YXpJ4PmYs15w7SO1kKZ3nfu6cWBxjij0Oyk8AJ5EwWmyTIa
+	cvNw8y2v+oOkXGRm+qAj/XPbD47A1/zwtl1ctg+OexbFBRy7guWGt50R0rU8zNPjiQ==
+X-Gm-Gg: ASbGncvk7ed1tTscgzjozE6HHQl6xRf9EsAVE5LBlj2m4vCfoeLGFeBYQdD+TQonuQ3
+	yPcNR5fjiIH18SQdD1qxpK/E3kSGGS+PklO5pMAWQLfeLvHpKWGlmkRpDSmECCYS3B07Zjet9CQ
+	JR6pDd2Z+ibU7Ny9nFN6Qs6Ls291NWanRIDxSN0LZeUejEWFf2ZpX5ZeeVCA3NCRIrls2OlOXgH
+	SNDk9bYKEI+/Acwol+Ojuv4lr9EPTAkO9kV6OPsjTRrZAX7iu/jIlnc/7txm5tQPxfrgr0QMNhR
+	uOw3xSIujPUNO6zaS2HeLfg93SmNvts3a++R6Y9INMPxHDwFaGxf0ZyCZ7snBack8hbZpgSsRnK
+	lgagjQxq3sfAlFB1hn7yq
+X-Google-Smtp-Source: AGHT+IEgQNF03gTMPFMuZ5i4oqeFgT9l/mftJxCXd5iV8tzIDEl3pR9lFMVTJeBzdy2r/6gfVZ+O7w==
+X-Received: by 2002:a17:902:e54e:b0:231:d0ef:e8ff with SMTP id d9443c01a7336-23c5ff29f9dmr4133295ad.8.1751402619181;
+        Tue, 01 Jul 2025 13:43:39 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af541bdeasm12778586b3a.53.2025.07.01.13.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 13:43:38 -0700 (PDT)
+Date: Tue, 1 Jul 2025 20:43:30 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v7 27/28] iommu/tegra241-cmdqv: Add user-space use support
+Message-ID: <aGRIctg4T6cQECx4@google.com>
+References: <cover.1750966133.git.nicolinc@nvidia.com>
+ <539ee2ec112162abdba511574e2205a77b425059.1750966133.git.nicolinc@nvidia.com>
+ <aGQGm1-i4M75b9Qp@google.com>
+ <aGQ6KCI9OZEwHdxS@Asurada-Nvidia>
+ <aGQ_F7Qx3scbbA-J@google.com>
+ <aGRDtYRXFLoT+PrI@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aGP+L6aRsi7GT9mf@lizhi-Precision-Tower-5810>
+In-Reply-To: <aGRDtYRXFLoT+PrI@Asurada-Nvidia>
 
-On Tue, Jul 01, 2025 at 11:26:58AM -0400, Frank Li wrote:
-> On Tue, Jul 01, 2025 at 10:55:32AM -0400, Frank Li wrote:
-> > On Tue, Jul 01, 2025 at 01:53:40AM +0300, Laurent Pinchart wrote:
-> > > Hi Frank, Alice,
-> > >
-> > > Thank you for the patch.
-> > >
-> > > On Mon, Jun 30, 2025 at 06:28:18PM -0400, Frank Li wrote:
-> > > > From: Alice Yuan <alice.yuan@nxp.com>
-> > > >
-> > > > Document the binding for parallel CSI controller found in i.MX8QXP, i.MX93
-> > > > and i.MX91 SoCs.
-> > > >
-> > > > Signed-off-by: Alice Yuan <alice.yuan@nxp.com>
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > >  .../bindings/media/fsl,imx93-parallel-csi.yaml     | 108 +++++++++++++++++++++
-> > > >  MAINTAINERS                                        |   1 +
-> > > >  2 files changed, 109 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml b/Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
-> > > > new file mode 100644
-> > > > index 0000000000000..b4657c913adad
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
-> > > > @@ -0,0 +1,108 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/media/fsl,imx93-parallel-csi.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: i.MX8/9 Parallel Camera Interface
-> > > > +
-> > > > +maintainers:
-> > > > +  - Frank Li <Frank.Li@nxp.com>
-> > > > +
-> > > > +description: |
-> > > > +  This is device node for the Parallel Camera Interface which enables the
-> > > > +  chip to connect directly to external Parallel CMOS image sensors.
-> > > > +  Supports up to 80MHz input clock from sensor.
-> > > > +  Supports the following input data formats
-> > > > +    - 8-bit/10-bit Camera Sensor Interface (CSI)
-> > > > +    - 8-bit data port for RGB, YCbCr, and YUV data input
-> > > > +    - 8-bit/10-bit data ports for Bayer data input
-> > > > +  Parallel Camera Interface is hooked to the Imaging subsystem via the
-> > > > +  Pixel Link.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    oneOf:
-> > > > +      - const: fsl,imx8qxp-parallel-csi
-> > >
-> > > Is there any chance we could avoid calling this "csi", given that the
-> > > whole block is called "Parallel Capture Interface" in the reference
-> > > manual ? "CSI" is horribly confusing as it usually refers to MIPI CSI-2.
-> > > I suppose calling it "PCI" for "Parallel Capture Interface" wouldn't
-> > > help :-/
-> >
-> > PCI is too famous for PCI(Peripheral Component Interconnec) bus. It will be
-> > more confused.
-> >
-> > Can we use pcam? fsl,imx8qxp-pcam
-> >
-> > Frank
-> >
-> > >
-> > > > +      - items:
-> > > > +          - enum:
-> > > > +              - fsl,imx91-parallel-csi
-> > > > +          - const: fsl,imx93-parallel-csi
-> > > > +      - const: fsl,imx93-parallel-csi
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  clocks:
-> > > > +    maxItems: 2
-> > > > +
-> > > > +  clock-names:
-> > > > +    items:
-> > > > +      - const: pixel
-> > > > +      - const: ipg
-> > > > +
-> > > > +  power-domains:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  ports:
-> > > > +    $ref: /schemas/graph.yaml#/properties/ports
-> > > > +
-> > > > +    properties:
-> > > > +      port@0:
-> > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > +        unevaluatedProperties: false
-> > > > +        description:
-> > > > +          Input port node.
-> > > > +
-> > > > +      port@1:
-> > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > +        unevaluatedProperties: false
-> > > > +        description:
-> > > > +          Output port node.
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - clocks
-> > > > +  - clock-names
-> > > > +  - ports
-> > >
-> > > Patch 4/5 lists a power domain, and so does the example below for
-> > > i.MX93. Should the power-domains property be mandatory ?
-> > >
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    #include <dt-bindings/clock/imx93-clock.h>
-> > > > +    #include <dt-bindings/power/fsl,imx93-power.h>
-> > > > +
-> > > > +    parallel-csi@4ac10070 {
-> > > > +        compatible = "fsl,imx93-parallel-csi";
-> > > > +        reg = <0x4ac10070 0x10>;
-> > >
-> > > The i.MX93 reference manual doesn't document the register set for this
-> > > block, so I have a hard time reviewing this. Is there a plan to publish
-> > > a new version of the reference manual with the complete documentation
-> > > for the parallel interface ?
+On Tue, Jul 01, 2025 at 01:23:17PM -0700, Nicolin Chen wrote:
+> On Tue, Jul 01, 2025 at 08:03:35PM +0000, Pranjal Shrivastava wrote:
+> > On Tue, Jul 01, 2025 at 12:42:32PM -0700, Nicolin Chen wrote:
+> > > On Tue, Jul 01, 2025 at 04:02:35PM +0000, Pranjal Shrivastava wrote:
+> > > > On Thu, Jun 26, 2025 at 12:34:58PM -0700, Nicolin Chen wrote:
+> > > > > +/**
+> > > > > + * struct tegra241_vintf_sid - Virtual Interface Stream ID Replacement
+> > > > > + * @core: Embedded iommufd_vdevice structure, holding virtual Stream ID
+> > > > > + * @vintf: Parent VINTF pointer
+> > > > > + * @sid: Physical Stream ID
+> > > > > + * @idx: Replacement index in the VINTF
+> > > > > + */
+> > > > > +struct tegra241_vintf_sid {
+> > > > > +	struct iommufd_vdevice core;
+> > > > > +	struct tegra241_vintf *vintf;
+> > > > > +	u32 sid;
+> > > > > +	u8 idx;
+> > > > >  };
+> > > > 
+> > > > AFAIU, This seems to be a handle for sid -> vintf mapping.. it yes, then
+> > > > I'm not sure if "Virtual Interface Stream ID Replacement" clarifies that?
+> > > 
+> > > No. It's for vSID to pSID mappings. I had it explained in commit log:
+> > > 
+> > 
+> > I get that, it's for vSID -> pSID mapping which also "happens to" point
+> > to the vintf.. all I wanted to say was that the description is unclear..
+> > We could've described it as "Vintf SID map" or something, but I guess
+> > it's fine the way it is too.. your call.
 > 
-> Sorry, I missed this part at last email. It already imx93's reference
-> manual, but it is bindle to
+> The "replace" word is borrowed from the "SID_REPLACE" HW register.
 > 
-> 82.4.1.1 mediamix_GPR_ctrl memory map
-> BLK_CTRL_MEDIAMIX base address: 4AC1_0000h
+> But I think it's okay to call it just "mapping", if that makes it
+> clearer.
 > 
-> because it is tail part of this space, we can simple strink mediamix_GPR_ctrl
-> space in dts.
 
-Ah thank you for the information. I had missed that.
+Anything works. Maybe let it be as is.
 
-> I am working on this.
+> > > > > +static struct iommufd_viommu_ops tegra241_cmdqv_viommu_ops = {
+> > > > > +	.destroy = tegra241_cmdqv_destroy_vintf_user,
+> > > > > +	.alloc_domain_nested = arm_vsmmu_alloc_domain_nested,
+> > > > > +	.cache_invalidate = arm_vsmmu_cache_invalidate,
+> > > > 
+> > > > I see that we currently use the main cmdq to issue these cache
+> > > > invalidations (there's a FIXME in arm_vsmmu_cache_invalidate). I was
+> > > > hoping for this series to change that but I'm assuming there's another
+> > > > series coming for that?
+> > > > 
+> > > > Meanwhile, I guess it'd be good to call that out for folks who have
+> > > > Grace and start trying out this feature.. I'm assuming they won't see
+> > > > as much perf improvement with this series alone since we're still using
+> > > > the main CMDQ in the upstream code?
+> > > 
+> > > VCMDQ only accelerates invalidation commands.
+> > > 
+> > 
+> > I get that.. but I see we're using `arm_vsmmu_cache_invalidate` here
+> > from arm-smmu-v3-iommufd.c which seems to issue all commands to
+> > smmu->cmdq as of now (the code has a FIXME as well), per the code:
+> > 
+> > 	/* FIXME always uses the main cmdq rather than trying to group by type */
+> >         ret = arm_smmu_cmdq_issue_cmdlist(smmu, &smmu->cmdq, last->cmd,
+> > 					  cur - last, true);
+> > 
+> > I was hoping this FIXME to be addressed in this series..
 > 
-> > > > +        clocks = <&clk IMX93_CLK_MIPI_CSI_GATE>,
-> > > > +                 <&clk IMX93_CLK_MEDIA_APB>;
-> > > > +        clock-names = "pixel", "ipg";
-> > > > +        assigned-clocks = <&clk IMX93_CLK_CAM_PIX>;
-> > > > +        assigned-clock-parents = <&clk IMX93_CLK_VIDEO_PLL>;
-> > > > +        assigned-clock-rates = <140000000>;
-> > > > +        power-domains = <&media_blk_ctrl IMX93_MEDIABLK_PD_MIPI_CSI>;
-> > > > +
-> > > > +        ports {
-> > > > +            #address-cells = <1>;
-> > > > +            #size-cells = <0>;
-> > > > +
-> > > > +            port@0 {
-> > > > +                reg = <0>;
-> > > > +
-> > > > +                endpoint {
-> > > > +                    remote-endpoint = <&mt9m114_ep>;
-> > > > +                };
-> > > > +            };
-> > > > +
-> > > > +            port@1 {
-> > > > +                reg = <1>;
-> > > > +                endpoint {
-> > > > +                    remote-endpoint = <&isi_in>;
-> > > > +                };
-> > > > +            };
-> > > > +        };
-> > > > +    };
-> > > > +...
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 8dc0f6609d1fe..3bd6772c11539 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -15107,6 +15107,7 @@ L:	linux-media@vger.kernel.org
-> > > >  S:	Maintained
-> > > >  T:	git git://linuxtv.org/media.git
-> > > >  F:	Documentation/admin-guide/media/imx7.rst
-> > > > +F:	Documentation/devicetree/bindings/media/fsl,imx93-parallel-csi.yaml
-> > > >  F:	Documentation/devicetree/bindings/media/nxp,imx-mipi-csi2.yaml
-> > > >  F:	Documentation/devicetree/bindings/media/nxp,imx7-csi.yaml
-> > > >  F:	Documentation/devicetree/bindings/media/nxp,imx8mq-mipi-csi2.yaml
+> Oh, that's not related.
+> 
+> The main goal of this series is to route all invalidation commands
+> to the VCMDQ HW. And this is where Grace users can see perf gains
+> mentioned in the cover letter or commit log, from eliminating the
+> VM Exits at those most frequently used commands.
+> 
+> Any non-invalidation commands will just reuse what we have with the
+> standard SMMU nesting. And even if we did something to that FIXME,
+> there is no significant perf gain as it's going down the trapping
+> pathway, i.e. the VM Exits are always there.
+> 
+> > > That is for non-invalidation commands that VCMDQ doesn't support,
+> > > so they still have to go in the standard nesting pathway.
+> > > 
+> > > Let's add a line:
+> > > 	/* for non-invalidation commands use */
+> > 
+> > Umm.. I was talking about the cache_invalidate op? I think there's some
+> > misunderstanding here? What am I missing?
+> 
+> That line is exactly for cache_invalidate. All the non-invalidation
+> commands will be sent to he arm_vsmmu_cache_invalidate() by VMM, as
+> it means.
+> 
+> Or perhaps calling them "non-accelerated commands" would be nicer.
 
--- 
-Regards,
+Uhh okay, so there'll be a separate driver in the VM issuing invalidation
+commands directly to the CMDQV thus we don't see any of it's part here?
 
-Laurent Pinchart
+AND for non-invalidation commands, we trap out and the VMM ends up
+calling the `cache_invalidate` op of the viommu?
+
+Is that understanding correct?
+
+> 
+> Thanks
+> Nicolin
+
+Thanks
+Praan
 
