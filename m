@@ -1,244 +1,247 @@
-Return-Path: <linux-kernel+bounces-711686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930E0AEFDF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:21:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9ADAAEFDFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B81863B8B80
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:20:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5AD31883634
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0DE27A92D;
-	Tue,  1 Jul 2025 15:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4854D27781B;
+	Tue,  1 Jul 2025 15:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="crxqb/+U"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+NH8ntK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4023C27A900
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751383234; cv=none; b=O9f5nAAa/olYj+PZ6ZlfiEfbt7OGv/nnMHj05X4gTEk42xJWynsUSeTUTMLyuB13NTGC/BUt6b5LHKN+cVI5YdA02sK0JzBVyI///rgb2kKk5/9z7usVohzwLeW17En3fB1JTy5YBo853QT+/0Jvhy4vAZhuBmhXX/Q5DYtdWR0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751383234; c=relaxed/simple;
-	bh=YHKFuGE35A4Aa0dREmXAp8IwwFwiIVWsYuMOqi4QHaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dkYNjHaR8cZx5TtzBvo2JsWfOz42ep+Mwjgbi27P6SzDBHuUgHA+KnjMMGJt02xyt1ADkYUQzk4MSepNSowITaskSrix/HFX8dOcWaVwvGtfH04mv4T89fCN6zyGpEx81nGCTcBvU9iduWr7dyDRsYVJkzQ0tKgyRrAVzyf+/cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=crxqb/+U; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5619qJ0J028627;
-	Tue, 1 Jul 2025 15:20:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5VjOrehgu67gGQhS/OJrOelLzd1u65qTrNycDObBlgU=; b=crxqb/+UGn4UAyWL
-	uHCpSS2MrrFfshzDF8QKlom4W0WYDjIVTi8SNaATW8Bv6PfU+htr4HACE2wNNpvj
-	N/94UCq+kDFSvhYBpL6j0h6cKCsSUPRxLepI42kv5o1exjkVVtZNYk1aevYqT033
-	O2voVPpn3RwnS0aWvh7nh+rybHXX2KHdD87JvYE27Fa9+eezq2CIGMRqgtHM/akr
-	Ku1WxqYzw3ovLuHuEHGge+k7kJ0VydQdmOmNlqWIpTCB/aKjgwwvbLsanD5eA85t
-	MyYQHViqsB3ekeH1mbM8bntr0LdfROrx/4i8af6cuX6az0jrPXdafKL9uMxB3FY2
-	8lxCLw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bvsbkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 15:20:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561FKQqR017226
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 1 Jul 2025 15:20:26 GMT
-Received: from [10.110.56.217] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Jul
- 2025 08:20:24 -0700
-Message-ID: <cba8a539-b6f9-428a-be6a-52169ab0de56@quicinc.com>
-Date: Tue, 1 Jul 2025 20:49:59 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199BF23504D;
+	Tue,  1 Jul 2025 15:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751383145; cv=fail; b=j6Boz+iO+LtnrwYJXBMhPnB2KljihPkPIEzLghRXxxR5B8LCGrNvohqrH5IAIDKRB0bIt3qLQiXJ7gwzXu/ZBpLbwZpBMuVAEKEWojfkfdelIQIBFaPcGw44gxF6vBNhDJtZBIaPtR3xwkNUtzalp8NQ+OELk7tPxhbuLTMNMgE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751383145; c=relaxed/simple;
+	bh=QZu7ahqjCjTd2LIgc9H2gdi9d3GCy376I8AF8CUET1c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=j8d1b4uZ+xbencDDeDEubed1XSisFOpXm0VPZMyvI0DQWqRkM+OrRhEvpvjT2/Bap/VnKJVzHWCKMHatd81B6EyVt2haPWLqLb4+PqLDadewcAOE+MELsIYSbg/nB3FZy/RlwfiB5tqgqq4vsw0txnBlOKgaMV4xP9j/M1aXNGQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+NH8ntK; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751383144; x=1782919144;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=QZu7ahqjCjTd2LIgc9H2gdi9d3GCy376I8AF8CUET1c=;
+  b=T+NH8ntKaJr/Q4ZK+LW+EN4EeMSCr2vcLvqdu3f54GZqKffKs5IeEtt5
+   eYwZbki5L/YQFvCrKPgihbjG2W55DexvnVViVt/z2NaCs8KWIZ3cVW1XE
+   SZmW1vs/82T0PyirChJJjmdZccTeGLXIsTDrhrA89t7PzlUpGmje7ZpTV
+   4A6E4/rs8bHn0OYkbbROaEW0eb6/pnYZ40PfB9/uCoPtU58Fd/fznYYuF
+   1Ll27ddTnIik1y9Tj5d09IU4tQb0prdBTqFZIFtNz058bfH5J7ol1TpGC
+   M3hlCmNX8/BV1D46HtPjdfbhqE6oXR08GctEQIxuDvhOmxF5d0Iq6R8Zg
+   w==;
+X-CSE-ConnectionGUID: 8SfsfKJLSUytH0t0feDrQA==
+X-CSE-MsgGUID: uDqBiSwVRuyXUZoNaE1nNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53590023"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="53590023"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 08:19:03 -0700
+X-CSE-ConnectionGUID: pU+4x1xSTN66LyvOtVxgag==
+X-CSE-MsgGUID: xzOxF6pCQH6a3y+2t+5I5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="153211865"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 08:19:03 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 1 Jul 2025 08:19:02 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Tue, 1 Jul 2025 08:19:02 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.87)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 1 Jul 2025 08:19:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PHFMBadE2VErsksNEwKu2lTNBnsqghQDe9Cf1c2U9Ice8LSma/D04H7fOs2KSIp79u9wtdbhiah0HnL7Qd/tWjypeFMzzTWBiLQLYriSzvPZskKXD2RpS0/q9md2NzEDVzCN3xOU3klCGCUnRROntDbi1Yc7ff/ypie36KyHck53VEYtfOizhzdQN+S/4bokui45LVtfynSJiJpl4I6XtO4n4K8B3hbi19PNeAZfYRi17mHb9HuDKDFx1Dt6dUNxelYCtqnLl7tNAck8TQq/iVNUyqgjVrl3lv0SBxCioArNETiDJds66r6N/WIzUv+/n9iEmXkVbGhb06Y9NOvcPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wQKCBrLLJldMDDKjfXWLhAimNeoXEQyM+MXxtQCcVV0=;
+ b=QLP1F6S+gFILbSv07hcgV5R1MGRSinIWh9Ph9Riwpm8gOSfDF45KZh693Vxuqde8+raPqyCydVit7mBFwb/mwsMdqROa3/3z8gi03fba4C7S9xFTk4B4sQkFCoFwbIjo+uKvNh9C/OW1TQ7JvVJosL2sD9AII+UTXzwHZojXVlDTHoq/tP1bjrPDG+iX+YSMBYUhVpmyXtH1VoZA+dh0Lj+QKIFAkn5FxpOabp41bZFFiziT3dcMfic0fnqaQl5ySdTXOTWLbqpc0zW4ek6KceYhF0SeS+zFs8LwQk0KMVf8NSaSTfxTlgePNqWm0Vg485F3FfEqGYagyZmqRNvuGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by SA2PR11MB4938.namprd11.prod.outlook.com
+ (2603:10b6:806:fb::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.28; Tue, 1 Jul
+ 2025 15:18:55 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::19ef:ed1c:d30:468f]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::19ef:ed1c:d30:468f%4]) with mapi id 15.20.8835.018; Tue, 1 Jul 2025
+ 15:18:55 +0000
+Date: Tue, 1 Jul 2025 10:20:22 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Nathan Chancellor <nathan@kernel.org>, Davidlohr Bueso
+	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, "Dave
+ Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Dan Williams" <dan.j.williams@intel.com>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Nathan
+ Chancellor" <nathan@kernel.org>
+Subject: Re: [PATCH] cxl: Include range.h in cxl.h
+Message-ID: <6863fcb649c0d_2ff1fe29428@iweiny-mobl.notmuch>
+References: <20250701-cxl-fix-struct-range-error-v1-1-1f199bddc7c9@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250701-cxl-fix-struct-range-error-v1-1-1f199bddc7c9@kernel.org>
+X-ClientProxiedBy: MW2PR16CA0071.namprd16.prod.outlook.com
+ (2603:10b6:907:1::48) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing/perf: disable preemption in perf_trace calls
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
-References: <20250630-fix-perf-trace-null-access-v1-1-8c15bf5f402c@quicinc.com>
- <20250630143230.25b7a38a@batman.local.home>
-Content-Language: en-US
-From: Aditya Chillara <quic_achillar@quicinc.com>
-In-Reply-To: <20250630143230.25b7a38a@batman.local.home>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bHvnHshZeI8gojKFnITDLSmxz6TSSH4h
-X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=6863fcba cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=-RQ7FLaKujfTUwwmNdEA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: bHvnHshZeI8gojKFnITDLSmxz6TSSH4h
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDEwMiBTYWx0ZWRfX2M+PgjHs9NWf
- uOVApBrAWLqOtwVQHQ42sUNykLhQsDFLVj1xRxAV6GZsiaZ1MOiLExImLEkKo3KTy/zTsiymimQ
- V32DAqVnWOgDB1PLS6b5ygqGjyImNTPodO0JZ8RNFTe3FuGNtbuJVFU8xjfeyODYf1CANx27zS5
- HvYDvo/eWM6FHOrgqkHAIAF+Mf0QIZMd0V9uwS71f++1WCNOu9jmzs6p7P7sBabIOAah6OapYEA
- WaMeHhsPYNxVbZlkP8ajQOlPIC/NKV6N3VT9/rdi3fTP7KEykjbb0fbZeFVrNv9FTgttF0y66Tc
- Ru/S9dcb58j9MtOoO/wUR+EaQbbHPoHorBUUYErQyEAfKiTNbVUTVA+Ixj3QR7CHwo1Z1dBkk+D
- XTFA8CEDMl0cslE/EZ2TA1tvKqCdiWz0oRis4xsvgERa7BbFDw8OUlj74L0M6qxg9zkOLA/F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507010102
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SA2PR11MB4938:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0c91ad8-4b7c-487b-78a6-08ddb8b2985a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UklVajfuckB3GJqi5DWdRIQB96WDIXX2HZHFLlgryTidUycd18cB0kyOM09O?=
+ =?us-ascii?Q?wGh1P/GGsGleQtnwQwt/tc1PFFGYvxXvBLfupsUiU29yNaJw14MkAvc+OUf1?=
+ =?us-ascii?Q?9mgCPSsH1ztXhgI9o/76YnGIbj0I3aqOnTqbHWvDyw8C/q77p38QMfslOSPR?=
+ =?us-ascii?Q?HlS9lakeEn5WdMllriQZZ2lq1DQ4wMfg1Ja9ML4WiozyT1nMfw+2f3fvrSMF?=
+ =?us-ascii?Q?RdgjJA4mXxt4xLbpa4t3hoqpsqH406kKymA//T1tsOp+Xb3LgAJnoNvto8hU?=
+ =?us-ascii?Q?oad8KUg46NTk9AL9N/0BPoLMZBSY/fGalagcJmIW8IUzGFfeBbusM8/ALP5h?=
+ =?us-ascii?Q?YEDLkB+tpokDlG7lJ/TyCUkk5t0BDB5mfhXRdTspR9HEAG8KUYF7rMgilPPb?=
+ =?us-ascii?Q?SMVl1acpgVErEOxGnXEIMc1J3wvIzFdGKbq+ZW8/Xhk+l6B3Q1NTTcLVRx1W?=
+ =?us-ascii?Q?44yvlb0un4Nt4k0M37Yxjx63YbBzA3wSLPPgYKaHjjzJ9qO6R04QVovFyuXv?=
+ =?us-ascii?Q?X+/lA8b7xWF+FB9xGmqW0hpWPoM+0Y3+8k3GMc/CAzrOwcj2N6PgvEdyQIzo?=
+ =?us-ascii?Q?HyicqKI7c1s57D9rDdBm8aoNeOPZC8+gBwR8HGzR123NtkmO0FyXNMKJdzIN?=
+ =?us-ascii?Q?610ORARX+FmNW1/bFxA16EDDecoQQKEGIHWRoBUUdSR9Rxjo1CDAS5gtUAIU?=
+ =?us-ascii?Q?yAkFckS1Ey4iiKz1e4mm5t3JVb+I4bpIgbtCKJI+38sDKqVy/s+gxafKrQNN?=
+ =?us-ascii?Q?+t0T01/YkLdj9xkY/I6h+/EOlCPNksd0yzycYqxPGg4VXPHFc0v5s+rVrL+A?=
+ =?us-ascii?Q?gG0X5XRzwlzI43HwNAtDQLVmiviK7mXLc1EPVjzCB0BlHYC/l6q7woiNC7tQ?=
+ =?us-ascii?Q?7iLUwevAjPg8EXHkRHXaU0RLLBEqfBAVqWLWGW3phlP2INjKDp/lSXW5zlka?=
+ =?us-ascii?Q?AFehcxLrZ4Q2n08j9zqo51/gesF9PzO/izuNLsHqHqEUErMfXnOyu9rncnHS?=
+ =?us-ascii?Q?/ze5qZS6iTPhv0IDOBh9kNYTi2pxL3xIQh9kGFhouS3IuX2Qt5vHu0bHdwNP?=
+ =?us-ascii?Q?ceMO+QSHieNMKucY4YbN+CBhLe5h9U+y7wIULHu1zvjQ38ENpdyO43ALwca+?=
+ =?us-ascii?Q?i/ZanyxVr5Hphk/K6rkTd+/3Lc3E1wkqNuC7pMw2bLOQdD2E+sVcHFJ7lKep?=
+ =?us-ascii?Q?4i2paWcytgLz8dJ8/lkbRaQSOpLpomVypi/sn28BMTIQs+Smcc3bDhCyfgnv?=
+ =?us-ascii?Q?QE++MSW8cc7ouEw+DX3xdp3qkhQNOUY2c0/zwx/0wY20hg9XkhZz2/GIHgf8?=
+ =?us-ascii?Q?5+jugv28vIIYxq44eQfIerSrQN4EnwB9uXd8Oxi1ksLYPb+R7RaS1WaD7upV?=
+ =?us-ascii?Q?piMarBedHVbEHqOfTZBmj3NgYmttKkMMsNiCz+P0bzo43JBFOA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hAcG9uhP6ZHsInvdAUF33OQU9uyoc0Qx3ZI3kTmaToBHIiXry6CTfusZJWCu?=
+ =?us-ascii?Q?KZToWNr8KC+yUr65XnGJ82RdJVEdP1CIzF9LcCCWXM6gEdb9P/T6nPxhAW6R?=
+ =?us-ascii?Q?2siEzI8Ij76TuzmQGFzr685NO4dynISKqY0dPA/yrp6wntcog7BMbwXA3Oo9?=
+ =?us-ascii?Q?9VMVndlHMmS9emvx6+VaEyUFkK5+lrT7fsSmjdtqqLLQv2KjQKESziaxB2Tr?=
+ =?us-ascii?Q?sMi9I7grLkmrrREA7Q0F314rSIoE10vr1E6k5dpqQSblm+f3/vIX62iuigVL?=
+ =?us-ascii?Q?tp8Ut/T65F6a0e5MwoUDB0rjg/21oH2nCsu15vDB1xXjYXTlIDKpOOEDAhfH?=
+ =?us-ascii?Q?6cys9DdyjJ96YRl9w0O6hJdLbtlB/ZftmDQnVVPfY8yB9zawYv7oAZhsUxhF?=
+ =?us-ascii?Q?dL/9MSI8/S/VO0CFPSF8Siu+XNBq/vHRWMYRAtYHSfzfN0b2eYFiujemVxWu?=
+ =?us-ascii?Q?dqDmWsJwz96iowJ4XHO4c6cDqmlS0BXkM9zTxMLqE3+GALoY7t8Rpos+RVx2?=
+ =?us-ascii?Q?f+9pESnRg5chUHmcx6v9LL9BLrEh6q/NJJ6f8PVoy6RhAHTO7VbxQU4RqzCd?=
+ =?us-ascii?Q?/Y2t4Q09MdlYM9X4/ELcJcdVE2UeFDI1GexWxYJ3GVu1sk45sfWrC2JFV0gg?=
+ =?us-ascii?Q?IF4rqKAJNYoGydpizRace2MOLHQolsxLIwWvO2PeoLIDzjJuBKivRSr9AG3Q?=
+ =?us-ascii?Q?v9+HWkgyceOfFmpOl6B/NlffRSILnBZZrT1s5Dmh8LQ38BeB1N7smrwb34Jw?=
+ =?us-ascii?Q?8NBzwSHZOJZWGG685PT8hlgNP95RE8I5VWTYshv2LLX22F9Tf93G3slvLA6m?=
+ =?us-ascii?Q?kGWxoi3Gls1vXbpwOS9yn66bBGU4U/JlA1KdsuMH6V4W4GciHqXcDqLSVLTO?=
+ =?us-ascii?Q?LrYy1Ay5DY9WyS1EY2V7XO68o6Wr5fvRoOgBXW40bkcA16PeAb9qieei3Qs6?=
+ =?us-ascii?Q?iImiajPqbBWi4ETU9547u0n03xYtIIu/54rRDP3DWXnDiBytUGLJpTFC3N19?=
+ =?us-ascii?Q?jVrdTC28ex7nXX2JhTfjymNFlpE+/4mTOq+bWpYEdvOeY+YzPJW05KtJOyB1?=
+ =?us-ascii?Q?EnWk9AN98zV2oZJr032BXPdqb4WMvg3wx/JrQLFgGysGPUiYkixdUh+c1cIP?=
+ =?us-ascii?Q?8mQDrbLqycp/INmfaGyI0KxLExmdQ2UNHoMZL7lL3FWsiu0M1HRXq0GGs+WO?=
+ =?us-ascii?Q?xvnqW934wsxTsNiCfHDkXNuXWKZ63Xh+wMXkWyQCcy2vcmkTIU7wIOtdCJs6?=
+ =?us-ascii?Q?X2MPPMT6KZSmRvgUaQBMgyu1bA9dVg4loHYoCBCQF0aXBLKiFGjQ1WGVU7dg?=
+ =?us-ascii?Q?GbUqVUGsMGlWl+u4xtgX5zo+Na7pjQsqYbKUk+Bb71TJOj7AtN3SvqWZYrBQ?=
+ =?us-ascii?Q?bfbGA0WWDWAyPGQSSJgl/4Yc6uDT9/q0Z9TGSZKytLDK//DDAJW/K+aiW84D?=
+ =?us-ascii?Q?N6aXHW7I6Az1OMNUYgnaETSdpUxhHvhhsa9joF5s8K9wLTUW4WLLNWkA+lIQ?=
+ =?us-ascii?Q?imDcPLrcb5kkTTwYIPwQ45J09/bZ3Tm/RTu6zj1vH/XLyGKrBup3Je89iuTF?=
+ =?us-ascii?Q?hC+G+K+XSnwYpYPmIeJnioowzPlvu4lO3+KPaiJu?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0c91ad8-4b7c-487b-78a6-08ddb8b2985a
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 15:18:55.7343
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AVQYNHK16/dVo1LCHWoaNUWMp4B7z5YqQtvscMc+RAAPrIi3mE6MvI1Spt5NdHWpOtwzoV3DjPTwfaiupJfL+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4938
+X-OriginatorOrg: intel.com
 
-On 7/1/2025 12:02 AM, Steven Rostedt wrote:
-> On Mon, 30 Jun 2025 22:35:28 +0530
-> Aditya Chillara <quic_achillar@quicinc.com> wrote:
-> 
->> It is possible that perf_trace_sched_switch call is rescheduled causing
->> NULL access in perf_trace_buf_alloc because of perf_trace_event_unreg
->> called in between, leading to data abort:
->>
->> [  363.202351][    T0] Unable to handle kernel paging request at virtual address ffffffba56d0a03c
->> [  363.202355][    T0] Mem abort info:
->> [  363.202355][    T0]   ESR = 0x0000000096000045
->> [  363.202357][    T0]   EC = 0x25: DABT (current EL), IL = 32 bits
->> [  363.202359][    T0]   SET = 0, FnV = 0
->> [  363.202360][    T0]   EA = 0, S1PTW = 0
->> [  363.202361][    T0]   FSC = 0x05: level 1 translation fault
->> [  363.202363][    T0] Data abort info:
->> [  363.202364][    T0]   ISV = 0, ISS = 0x00000045, ISS2 = 0x00000000
->> [  363.202365][    T0]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
->> [  363.202367][    T0]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> [  363.202369][    T0] swapper pgtable: 4k pages, 39-bit VAs, pgdp=00000000c9795000
->> [  363.202371][    T0] [ffffffba56d0a03c] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
->> [  363.202377][    T0] Internal error: Oops: 0000000096000045 [#1] PREEMPT SMP
->> [  363.202383][    T0] Dumping ftrace buffer:
->> [  363.202385][    T0]    (ftrace buffer empty)
->> .
->> .
->> [  363.203036][    T0] CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Tainted: G W  O \
->> 	6.12.23-android16-5-maybe-dirty-4k #1 6d534d25cf9b12caecb741d5004c181a6a432b53
->> [  363.203042][    T0] Tainted: [W]=WARN, [O]=OOT_MODULE
->> [  363.203045][    T0] pstate: 834000c5 (Nzcv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
->> [  363.203048][    T0] pc : perf_trace_buf_alloc+0x90/0xe0
->> [  363.203057][    T0] lr : perf_trace_buf_alloc+0x40/0xe0
->> [  363.203060][    T0] sp : ffffffc08016bc90
->> [  363.203062][    T0] x29: ffffffc08016bc90 x28: 0000000000000000 x27: ffffff88083d0000
->> [  363.203066][    T0] x26: ffffffba56d0a000 x25: 00000044684e8bd8 x24: 1198f2d01457f4e4
->> [  363.203070][    T0] x23: 0000000000000000 x22: ffffff88083d0000 x21: ffffffc08016bccc
->> [  363.203073][    T0] x20: ffffffc08016bcd0 x19: 0000000000000044 x18: ffffffd01580bec0
->> [  363.203077][    T0] x17: 00000000d2dc9ceb x16: 00000000d2dc9ceb x15: 0000000000000010
->> [  363.203080][    T0] x14: 0000000000000100 x13: 0000000000000100 x12: 0000000000000100
->> [  363.203083][    T0] x11: 0000000000ff0100 x10: 0000000000000001 x9 : ffffffba56d0a000
->> [  363.203087][    T0] x8 : ffffffba56d0a044 x7 : 0000000000000001 x6 : 000000548fd2bf93
->> [  363.203090][    T0] x5 : 00000054908be990 x4 : 0000000000000000 x3 : ffffff8808329640
->> [  363.203094][    T0] x2 : ffffffc08016bccc x1 : ffffffc08016bcd0 x0 : ffffffba56d0a000
->> [  363.203097][    T0] Call trace:
->> [  363.203098][    T0]  perf_trace_buf_alloc+0x90/0xe0
->> [  363.203102][    T0]  perf_trace_sched_switch+0x74/0x190
->> [  363.203107][    T0]  __schedule+0xbb0/0xeac
->> [  363.203112][    T0]  schedule_idle+0x24/0x48
->> [  363.203114][    T0]  do_idle+0x214/0x25c
->> [  363.203117][    T0]  cpu_startup_entry+0x34/0x3c
->> [  363.203119][    T0]  secondary_start_kernel+0x130/0x150
->> [  363.203124][    T0]  __secondary_switched+0xc0/0xc4
->> [  363.203129][    T0] Code: f8605908 d538d089 8b080120 8b33c008 (f81f811f)
->> [  363.203131][    T0] ---[ end trace 0000000000000000 ]---
->> [  363.203133][    T0] Kernel panic - not syncing: Oops: Fatal exception
->> [  363.203135][    T0] SMP: stopping secondary CPUs
->> [  363.203276][    T0]
->> [  363.203276][    T0] Total active clients count: 0
->> [  363.203280][    T0] Dumping ftrace buffer:
->> [  363.203281][    T0]    (ftrace buffer empty)
->>
->> Fix the issue by disabling preemption in perf_trace calls.
-> 
-> Does it really fix the issue?
-No, wanted to confirm that perf_trace_##call() should not get
-scheduled out.
+Nathan Chancellor wrote:
+> After commit aefeb286b960 ("libnvdimm: Don't use "proxy" headers"),
+> range.h may not be implicitly included, resulting in a build error:
 
-The following is also present in the logs:
-[<ffffffd4cde44348>] do_mem_abort+0x54
-[<ffffffd4cef79b5c>] el1_abort+0x3c
-[<ffffffd4cef79ad4>] el1h_64_sync_handler[jt]+0xb4
-[<ffffffd4cde11298>] ret_to_kernel[jt]+0x0
-[<ffffffd4ce05a19c>] perf_trace_buf_alloc+0x90
-[<ffffffd4cdf137fc>] perf_trace_sched_process_template+0x64
-[<ffffffd4cdf115f4>] __traceiter_sched_process_free+0x48
-[<ffffffd4cded7eb8>] delayed_put_task_struct+0x94
-[<ffffffd4cdfb1564>] rcu_do_batch+0x1f0
-[<ffffffd4cdfb3ec8>] rcu_nocb_cb_kthread+0x250
-[<ffffffd4cdf08420>] kthread+0x11c
-[<ffffffd4cde1f174>] ret_from_fork+0x10
+Dave J., I'll pick this up since the nvdimm change was pushed through
+libnvdimm.
+
+That said, I'm not seeing this issue.  What config caught this?
+
+Ira
+
 > 
-> 1. perf_trace_##call() gets called either by DECLARE_EVENT_CLASS or by
->    DECLARE_EVENT_SYSCALL_CLASS. The latter already disables preemption
->    but the former does not because it is called by the tracepoint logic
->    that has:
+>   In file included from drivers/cxl/core/features.c:8:
+>   drivers/cxl/cxl.h:365:22: error: field 'hpa_range' has incomplete type
+>     365 |         struct range hpa_range;
+>         |                      ^~~~~~~~~
+>   drivers/cxl/cxl.h:562:22: error: field 'hpa_range' has incomplete type
+>     562 |         struct range hpa_range;
+>         |                      ^~~~~~~~~
+>   drivers/cxl/cxl.h:570:22: error: field 'hpa_range' has incomplete type
+>     570 |         struct range hpa_range;
+>         |                      ^~~~~~~~~
+>   drivers/cxl/cxl.h:803:22: error: array type has incomplete element type 'struct range'
+>     803 |         struct range dvsec_range[2];
+>         |                      ^~~~~~~~~~~
 > 
-> #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
-> 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
-> 	static inline void __do_trace_##name(proto)			\
-> 	{								\
-> 		if (cond) {						\
-> 			guard(preempt_notrace)();			\
-> 			__DO_TRACE_CALL(name, TP_ARGS(args));		\
-> 		}							\
-> 	}
+> Include range.h in cxl.h explicitly to clear up the errors.
 > 
->    Where preemption should already be disabled.
-DECLARE_EVENT_SYSCALL_CLASS in not present in our tree.
+> Fixes: aefeb286b960 ("libnvdimm: Don't use "proxy" headers")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  drivers/cxl/cxl.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> 2. trace_sched_switch() is called with interrupts disabled. So there
->    should be no scheduling out in this trace event. So how did it get
->    scheduled out in that trace event?
-Thank you for confirming that trace_sched_switch() should not be
-scheduled out.
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 3f1695c96abc..b941ff94fe0a 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/log2.h>
+>  #include <linux/node.h>
+>  #include <linux/io.h>
+> +#include <linux/range.h>
+>  
+>  extern const struct nvdimm_security_ops *cxl_security_ops;
+>  
 > 
-> I think there's something else going on.
-I will try my luck with CONFIG_DEBUG_PREEMPT to check for any
-preemption underflows. Any other idea what could be going on?
+> ---
+> base-commit: aefeb286b960a0629273d1dc809ea36754f42d98
+> change-id: 20250701-cxl-fix-struct-range-error-8475cbbf3358
 > 
-> -- Steve
+> Best regards,
+> --  
+> Nathan Chancellor <nathan@kernel.org>
 > 
 > 
->>
->> Signed-off-by: Aditya Chillara <quic_achillar@quicinc.com>
->> ---
->> Change-Id: I787347a7db4554cfd2cb74e0fc985699f1824c92
->> ---
->>  include/trace/perf.h | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/include/trace/perf.h b/include/trace/perf.h
->> index 5800d13146c3d0cdf4eb474a3bb895dd71753de4..76994a5d8c55f4ca071070ff551a53a84fb1d95c 100644
->> --- a/include/trace/perf.h
->> +++ b/include/trace/perf.h
->> @@ -66,6 +66,8 @@ perf_trace_##call(void *__data, proto)					\
->>  	int __data_size;						\
->>  	int rctx;							\
->>  									\
->> +	guard(preempt_notrace)();		\
->> +									\
->>  	__data_size = trace_event_get_offsets_##call(&__data_offsets, args); \
->>  									\
->>  	head = this_cpu_ptr(event_call->perf_events);			\
->>
->> ---
->> base-commit: 70575e77839f4c5337ce2653b39b86bb365a870e
->> change-id: 20250630-fix-perf-trace-null-access-9661f910df72
->>
->> Best regards,
-> 
+
+
 
