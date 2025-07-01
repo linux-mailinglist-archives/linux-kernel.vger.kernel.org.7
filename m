@@ -1,271 +1,140 @@
-Return-Path: <linux-kernel+bounces-710940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6ED0AEF360
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:30:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B20AEF30B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AD13A327B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4E13B25D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81B02701D0;
-	Tue,  1 Jul 2025 09:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA6D26A0EB;
+	Tue,  1 Jul 2025 09:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LhfzDPB3"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iVpcNRk5"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C017A26F453;
-	Tue,  1 Jul 2025 09:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29184266B41;
+	Tue,  1 Jul 2025 09:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751362204; cv=none; b=udk9/xiRavIR+AkZ/B1chguVcaJumeIZiri1jWDs7SU6DaMO5O2cCxDzaGxtQWNxBXW5PUBQ1cYBE1lJ0ZtLqcvdc7HuK8x72/8gAUkrl2/rNaY76SOFOooSXmIhI5OPO3VIyMOEfMtqTYXzexr6WQsyK1iTeGmATqreo9eTOBk=
+	t=1751361533; cv=none; b=NeAalLooSnc+C/lwa/nCbsRTRyrtn1Es4to+inOoyJtupFjpMzdIpUYqQJUBFGlJmmhAfaA7mtUG5T1E/KbplIWBBU4OVmExaBwnOpEUyjoK8Mw9V5guGPpHOP151EScxXS0uaqPwFzhWMkMLr5i+wEXF2zbvyIOHuxkXJb0mZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751362204; c=relaxed/simple;
-	bh=n9gJwUoLnTXmdXxs+B03lJuMiB8DYt08iMhx1Pt6bpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Woh96a59B3qcnBm2LGyr1Fej/tL12vMG9y4+9Dhm2Wm7uggABE0oQFfRe2ALBnONujCqzZ2lzvTYCH+V3VFUku1LxQQBGEa/v5Za1OUgujEExJMTdZqNJ2zT964BLHLLDIW6eZKPbtVazVAeXiQ3u8g+hZfxAZiSWNwpiZoZBio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LhfzDPB3; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from sec2-plucky-amd64.. (176-136-128-80.abo.bbox.fr [176.136.128.80])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 01BB441260;
-	Tue,  1 Jul 2025 09:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1751361612;
-	bh=UxW42upBEQMGjVGIBlOTFGoX6HXLadq+Li0fl5+hEPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type;
-	b=LhfzDPB3E2dWMzt+jZT3n8qYbI84Mz9VGCecgZCAaukn+aGlRBaNABr0iChOOfx8b
-	 0YpSPkvGEohh24Zs/TguNtowklmWOMMZtR8VwCw83Kl4ceJZKPQY/HsYsp0jW+AoGU
-	 xnZWXqk3B2V5m1sMwU7cqyFN1udqWVSAX5ciAqGHwYi6tmVWhRCAg0RsO/VVGY8Qmd
-	 OZGLMZTEfd7yoiq5MWOsamOeWpn/klh6JzxZYdIZRBnL2AgwlonAV6BHscPF8kescN
-	 njeGY72eXaL0/1+e9JNZZSh77l8PiBgVqy1XZ2CSHjqCXGUsbpoSPjHsepDHi7LnlR
-	 L1dTXBoroUoNw==
-From: =?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
-To: linux-security-module@vger.kernel.org
-Cc: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	mic@digikod.net,
-	kees@kernel.org,
-	stephen.smalley.work@gmail.com,
-	casey@schaufler-ca.com,
-	takedakn@nttdata.co.jp,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	song@kernel.org,
-	rdunlap@infradead.org,
-	linux-api@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Maxime=20B=C3=A9lair?= <maxime.belair@canonical.com>
-Subject: [PATCH v4 3/3] AppArmor: add support for lsm_config_self_policy and lsm_config_system_policy
-Date: Tue,  1 Jul 2025 11:17:41 +0200
-Message-ID: <20250701091904.395837-4-maxime.belair@canonical.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250701091904.395837-1-maxime.belair@canonical.com>
-References: <20250701091904.395837-1-maxime.belair@canonical.com>
+	s=arc-20240116; t=1751361533; c=relaxed/simple;
+	bh=rf4CGdCHUYs1dOhweYzyYABZwQzYP0vkcgLdE2l/Kzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gAZOEgmIX7lP+A6vm1JSuYvC2WwsZJEl0GknqSzTOOA1TZ6I3mEE6jB1qzc93Zi67f9N/T6ZjF9CU5K2+/4YBgKGPIJYXAS22na3roNBR1hjdCzui9b36x6HCFvjFIS4jSm0x8zp62KIZbA39kzGgwhfM3CDDYVT+jyerfK4OdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iVpcNRk5; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1751361497; x=1751966297; i=markus.elfring@web.de;
+	bh=rf4CGdCHUYs1dOhweYzyYABZwQzYP0vkcgLdE2l/Kzw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=iVpcNRk5sF1p84NA1BzyN7RdA6bVU1D52ORf74wrZwsJHXlUmxO5vtzryIUT2ivn
+	 fKhDV+n1/mDAx0Lbstq/JQZ47wpRDabiSPHyAwpPer7UThijYyG206exxwiCSOUc6
+	 1l3Exam7tTGW+7jZB9p7J+pHgoy77zbf9OqynnRnQ3/kPn5Ntp+5tAz3KCMNthwsX
+	 BzBn1mrz9K6PPxrPZbQt19UYjT3juVBH+a6B4zK5wj31GH0wORcASKGihq2z5AHE3
+	 OCcASwy/xduYhtMc+iuhe/BTxqrdlf5ewXl7n3C1w77M1387eRt2+C8RslU4u9C6N
+	 qkVwan+gXx3hHGjZ6w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.242]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGQGH-1uV91Q10of-000hlo; Tue, 01
+ Jul 2025 11:18:17 +0200
+Message-ID: <35924ff7-4703-4cac-88da-dc01d22c8dd8@web.de>
+Date: Tue, 1 Jul 2025 11:18:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 0/5] media: i2c: imx214: Add some style improvements
+To: =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+ linux-media@vger.kernel.org, phone-devel@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ ~postmarketos/upstreaming@lists.sr.ht,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ricardo Ribalda Delgado <ribalda@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20250630-imx214_fixes-v2-0-cd1a76c412c0@apitzsch.eu>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250630-imx214_fixes-v2-0-cd1a76c412c0@apitzsch.eu>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dhr0VNQ99MR4kUX866Kelg7mQlii5oZLe86NT+j7lKybosK1ez3
+ Glabh4DZj0pxiSpapz0aT1QqEWpVyAp19e5bLNn/ZJ8v7GeYkbAnP6doKY7lQ9CrJdKSOkD
+ sn3szAJm1QHkZAKo36LHPuhiAZnhZKpMtZ4/0svUB27mU6e/FHYjnghj44tTs+H6jm2XhFQ
+ xbpL4X5XMxd2UAeA+Eomg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Hwzo/Mfj13E=;0/qKqkeTsQibfMaoSz9biGyBu9P
+ 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
 
-Enable users to manage AppArmor policies through the new hooks
-lsm_config_self_policy and lsm_config_system_policy.
+=E2=80=A6> ---
+> Changes in v2:
+=E2=80=A6
+> - Use imperative mood for commit message (patch =E2=80=A6)
+=E2=80=A6
 
-lsm_config_self_policy allows stacking existing policies in the kernel.
-This ensures that it can only further restrict the caller and can never
-be used to gain new privileges.
+Will this review concern become relevant for further update steps?
 
-lsm_config_system_policy allows loading or replacing AppArmor policies in
-any AppArmor namespace.
-
-Signed-off-by: Maxime Bélair <maxime.belair@canonical.com>
----
- security/apparmor/apparmorfs.c         | 31 ++++++++++
- security/apparmor/include/apparmor.h   |  4 ++
- security/apparmor/include/apparmorfs.h |  3 +
- security/apparmor/lsm.c                | 79 ++++++++++++++++++++++++++
- 4 files changed, 117 insertions(+)
-
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 6039afae4bfc..6df43299b045 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -439,6 +439,37 @@ static ssize_t policy_update(u32 mask, const char __user *buf, size_t size,
- 	return error;
- }
- 
-+/**
-+ * aa_profile_load_ns_name - load a profile into the current namespace identified by name
-+ * @name: The name of the namesapce to load the policy in. "" for root_ns
-+ * @name_size: size of @name. 0 For root ns
-+ * @buf: buffer containing the user-provided policy
-+ * @size: size of @buf
-+ * @ppos: position pointer in the file
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+ssize_t aa_profile_load_ns_name(char *name, size_t name_size, const void __user *buf,
-+				size_t size, loff_t *ppos)
-+{
-+	struct aa_ns *ns;
-+
-+	if (name_size == 0)
-+		ns = aa_get_ns(root_ns);
-+	else
-+		ns = aa_lookupn_ns(root_ns, name, name_size);
-+
-+	if (!ns)
-+		return -EINVAL;
-+
-+	int error = policy_update(AA_MAY_LOAD_POLICY | AA_MAY_REPLACE_POLICY,
-+				  buf, size, ppos, ns);
-+
-+	aa_put_ns(ns);
-+
-+	return error >= 0 ? 0 : error;
-+}
-+
- /* .load file hook fn to load policy */
- static ssize_t profile_load(struct file *f, const char __user *buf, size_t size,
- 			    loff_t *pos)
-diff --git a/security/apparmor/include/apparmor.h b/security/apparmor/include/apparmor.h
-index f83934913b0f..1d9a2881a8b9 100644
---- a/security/apparmor/include/apparmor.h
-+++ b/security/apparmor/include/apparmor.h
-@@ -62,5 +62,9 @@ extern unsigned int aa_g_path_max;
- #define AA_DEFAULT_CLEVEL 0
- #endif /* CONFIG_SECURITY_APPARMOR_EXPORT_BINARY */
- 
-+/* Syscall-related buffer size limits */
-+
-+#define AA_PROFILE_NAME_MAX_SIZE (1 << 9)
-+#define AA_PROFILE_MAX_SIZE (1 << 28)
- 
- #endif /* __APPARMOR_H */
-diff --git a/security/apparmor/include/apparmorfs.h b/security/apparmor/include/apparmorfs.h
-index 1e94904f68d9..fd415afb7659 100644
---- a/security/apparmor/include/apparmorfs.h
-+++ b/security/apparmor/include/apparmorfs.h
-@@ -112,6 +112,9 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent);
- void __aafs_ns_rmdir(struct aa_ns *ns);
- int __aafs_ns_mkdir(struct aa_ns *ns, struct dentry *parent, const char *name,
- 		     struct dentry *dent);
-+ssize_t aa_profile_load_ns_name(char *name, size_t name_len, const void __user *buf,
-+				size_t size, loff_t *ppos);
-+
- 
- struct aa_loaddata;
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 9b6c2f157f83..1b7b5381f478 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1275,6 +1275,81 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
- 	return aa_sock_perm(OP_SHUTDOWN, AA_MAY_SHUTDOWN, sock);
- }
- 
-+/**
-+ * apparmor_lsm_config_self_policy - Stack a profile
-+ * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-+ * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-+ * @buf: buffer containing the user-provided name of the profile to stack
-+ * @size: size of @buf
-+ * @flags: reserved for future use; must be zero
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
-+				      size_t size, u32 flags)
-+{
-+	char *name;
-+	long name_size;
-+	int ret;
-+
-+	if (op != LSM_POLICY_LOAD || flags)
-+		return -EOPNOTSUPP;
-+	if (size > AA_PROFILE_NAME_MAX_SIZE)
-+		return -E2BIG;
-+
-+	name = kmalloc(size, GFP_KERNEL);
-+	if (!name)
-+		return -ENOMEM;
-+
-+
-+	name_size = strncpy_from_user(name, buf, size);
-+	if (name_size < 0) {
-+		kfree(name);
-+		return name_size;
-+	}
-+
-+	ret = aa_change_profile(name, AA_CHANGE_STACK);
-+
-+	kfree(name);
-+
-+	return ret;
-+}
-+
-+/**
-+ * apparmor_lsm_config_system_policy - Load or replace a system policy
-+ * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
-+ * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
-+ * @buf: user-supplied buffer in the form "<ns>\0<policy>"
-+ *        <ns> is the namespace to load the policy into (empty string for root)
-+ *        <policy> is the policy to load
-+ * @size: size of @buf
-+ * @flags: reserved for future uses; must be zero
-+ *
-+ * Returns: 0 on success, negative value on error
-+ */
-+static int apparmor_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
-+				      size_t size, u32 flags)
-+{
-+	loff_t pos = 0; // Partial writing is not currently supported
-+	char name[AA_PROFILE_NAME_MAX_SIZE];
-+	long name_size;
-+
-+	if (op != LSM_POLICY_LOAD || flags)
-+		return -EOPNOTSUPP;
-+	if (size > AA_PROFILE_MAX_SIZE)
-+		return -E2BIG;
-+
-+	name_size = strncpy_from_user(name, buf, AA_PROFILE_NAME_MAX_SIZE);
-+	if (name_size < 0)
-+		return name_size;
-+	else if (name_size == AA_PROFILE_NAME_MAX_SIZE)
-+		return -E2BIG;
-+
-+	return aa_profile_load_ns_name(name, name_size, buf + name_size + 1,
-+				       size - name_size - 1, &pos);
-+}
-+
-+
- #ifdef CONFIG_NETWORK_SECMARK
- /**
-  * apparmor_socket_sock_rcv_skb - check perms before associating skb to sk
-@@ -1483,6 +1558,10 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(socket_getsockopt, apparmor_socket_getsockopt),
- 	LSM_HOOK_INIT(socket_setsockopt, apparmor_socket_setsockopt),
- 	LSM_HOOK_INIT(socket_shutdown, apparmor_socket_shutdown),
-+
-+	LSM_HOOK_INIT(lsm_config_self_policy, apparmor_lsm_config_self_policy),
-+	LSM_HOOK_INIT(lsm_config_system_policy,
-+		      apparmor_lsm_config_system_policy),
- #ifdef CONFIG_NETWORK_SECMARK
- 	LSM_HOOK_INIT(socket_sock_rcv_skb, apparmor_socket_sock_rcv_skb),
- #endif
--- 
-2.48.1
-
+Regards,
+Markus
 
