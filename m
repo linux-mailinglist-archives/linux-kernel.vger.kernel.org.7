@@ -1,102 +1,94 @@
-Return-Path: <linux-kernel+bounces-711335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C126DAEF94A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:54:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11EEAEF94F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6851BC7CC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:53:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3DD17B2DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381CC2741A6;
-	Tue,  1 Jul 2025 12:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C022741A6;
+	Tue,  1 Jul 2025 12:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zTQC2n53";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dYnCPGq5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zTQC2n53";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dYnCPGq5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d4Ru7rwo"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFBF273D91
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BFF2741DF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751374385; cv=none; b=MAWdvVbHMp+GWZ7uL2v3FR+PkEl1zEyJq1L/s2tO7xzbgQq5QhtK2jsr9bWUi4g5qDny8OB/1O+t058f5LxZgZcNbHntoK9+AS8WwEdLeCGGJ4uXkps23Xeqfc66dqXjBJrAgLfqa+hkUSr/MpxE+EnFc6zHRMeE3c6HMbSOYrs=
+	t=1751374459; cv=none; b=b5TAWpUGp+vv9OElyp2uxPxX5moHcwIE7Nwnbb8BQ1iJlvVdhBw4XizbmHEoXvsc0OA9QPZss9Qv61382p9gnKDw+laBZhybnmx5zziJlrPQE822whAfXmcuQLKbeR5sQXov6DuYlRNsKZk+lFNvRIihBsPvbz+thEERAdPoysY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751374385; c=relaxed/simple;
-	bh=vYdlp4Z6RCPeTFgo9Kj+Ca3apINrxmJWElaVPlxLwBM=;
+	s=arc-20240116; t=1751374459; c=relaxed/simple;
+	bh=3gJtS77mHK7VTcYFcjrd5hF6WARIXk6d2X2+wZ3Hta4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsZ0ZlqNZ3qDAPi2/APlO9Ji95tdXjAk+8DcioMIuvYSYT3RtnP8p4MO2YoQwurmKl3xUbQHQqDrwv3uYcwcfzW+oANBpiaPoJSJ2MHOvuOzjvkhiW5fRM3/oxo7Ux9u7xdM0g1JN2MHqGECNaN0IGvAGe5iEdEWaIVLAZhfqJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zTQC2n53; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dYnCPGq5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zTQC2n53; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dYnCPGq5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 62C292116D;
-	Tue,  1 Jul 2025 12:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751374382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PA1V2abM/P8oSZs6xHMV5WsqH1qOUBIxzO0VRP6dg70=;
-	b=zTQC2n53/QBj3DQCoTQcCrTmYgkS8/TsVFoLKUfdoQDe00EPWZB/EmE5nZwMxH7Eu3Wo/P
-	yjqTXHnAH/jjDYYGIMzEEvuAvUyCaxYnu0HqyszmbOrrp2uE+9dJwIadydquKZsqScRCBF
-	8WindzPuCJVRSttF/Fe7E8pOn+Y56P0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751374382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PA1V2abM/P8oSZs6xHMV5WsqH1qOUBIxzO0VRP6dg70=;
-	b=dYnCPGq5/98HBSCbjs2BejzCPSlPvI0F+JuGWRvxgHHzcnheCChTCLQfRAkOYwLtMo0Oyf
-	2dI8gYJswBvRB+Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1751374382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PA1V2abM/P8oSZs6xHMV5WsqH1qOUBIxzO0VRP6dg70=;
-	b=zTQC2n53/QBj3DQCoTQcCrTmYgkS8/TsVFoLKUfdoQDe00EPWZB/EmE5nZwMxH7Eu3Wo/P
-	yjqTXHnAH/jjDYYGIMzEEvuAvUyCaxYnu0HqyszmbOrrp2uE+9dJwIadydquKZsqScRCBF
-	8WindzPuCJVRSttF/Fe7E8pOn+Y56P0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1751374382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PA1V2abM/P8oSZs6xHMV5WsqH1qOUBIxzO0VRP6dg70=;
-	b=dYnCPGq5/98HBSCbjs2BejzCPSlPvI0F+JuGWRvxgHHzcnheCChTCLQfRAkOYwLtMo0Oyf
-	2dI8gYJswBvRB+Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 56D9813890;
-	Tue,  1 Jul 2025 12:53:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L6cyFS7aY2iacAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 01 Jul 2025 12:53:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 94D3DA0A23; Tue,  1 Jul 2025 14:52:57 +0200 (CEST)
-Date: Tue, 1 Jul 2025 14:52:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
-Message-ID: <us4tut4gie736xav5lyiehh42uxnd4rodthmalte7gksuptknk@qeigxkbkpre4>
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
- <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IU20O83KXUuVjoOcPIbmPMOvaE7HX92SnP3zXpt4IY6aYwvzRInWcrnV7Hh6jtfPV3evxyQeo7dG4po8C4S44GRPPS8u1zaiNVgCuAruyoNxwcH5wv1p44mLm28vRwDw8l6PIkOHPz3OWs01wBjHVeYVb0UiyR8mZXFOuXonrlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=d4Ru7rwo; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-235e389599fso210995ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 05:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751374456; x=1751979256; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/L74aNTJbvTixP9x7JPOzIa2qX6+0XWisdXXC8NLNbk=;
+        b=d4Ru7rwoQzfB3csNgghl+4OAHNVE8nwC/hAydeK7QGvo5WMiXQI3SSloC1IqOaWsLC
+         YFc800xNEqvT0W1CmcvLe4ynmK6gDN2P2g0UrDDnWGOBSayFqeMNe/NC/nFdbkD9ptqS
+         0MbOagxwj2+1T4l/RYc8KJyzsNlX1WVKeT6z/cBy+tdmOH3bQHuviNAb+tK+VFuwMhST
+         xuimo4dGxLNb8OwJhQIkQDS8xsz+AEZq2ydUeJYjk9EpmkNgl/HZfQmGF8a0LUoLITRc
+         5J3qH+Apx1jJGDbe0iqKl0UlZzRQ13w121sPIGh2fN6BKiW/rKvm11lONNbu83egHwvE
+         cGbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751374456; x=1751979256;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/L74aNTJbvTixP9x7JPOzIa2qX6+0XWisdXXC8NLNbk=;
+        b=LmH9e+ULUxEKczrb8GIWI17kPMhMzt/zO6pa+pXTELaxZzjWeO9NWGQrJUAYIfOKCt
+         TKvKnsEJZ6Vt85xwMTwNiA5/A6UyEprDyJZqe1c/mduCoUErg1irzYnzrBdQJ4zV5KHp
+         jaAMhSEcKTGMfTrsKdx5N6j7azFTCWvKJzIutjT0auHDWLtFfzmLid2bNtrdocB2Rn7b
+         wnsCZoqplnpzyaL5TE1kcLTtDurqMP9NffIw/ufeRiDAPDs5w0d9cb9IHzJ2rbTvZ7Z7
+         mhDAJU4wc2Gf5okg/SUJtNtUpoGN/ipNg42UYtPXCvIg+WnNJ4Gju+/KTrjcrUzh3EvN
+         e37Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVN/2PONgJwF9/gH4MC2IUOGQ24iZITieZKovpWSha65ztVOQTC+ykfkQD0OzaOhhpMu7NTq5soB/M+CgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7ZiZ971O+QqwbeaXPL+OTgHimZakKsUSDcbMs63k7SqD3/Bdr
+	Jc7+t3WPCgKVxwPVtQL9Q/av9i7LYFzLLUWUp9NpaMHGx8F/kdr/HipTGV8OuQku1g==
+X-Gm-Gg: ASbGncuzpPXVQKeNHvWjyclA9fjea0kE+c1oCsNtvwh1ImXy0fnf2hhe/f2krdUQX4J
+	zytpoIFeJLpuxaOXLGCU2leBzBNDf8FIiO8w9dqeSFPnggZ3pP/pzEGUwkP3NJCXx6kvmolTTgB
+	ZYl7EGxo5TwjSluLemkg1WEit9AKScRWanvuy/RH5qzxp6wL0LNQp8GbsNySJntKmW54PpTUPBJ
+	SyLMInT3/wqKLoVHuLIQr945xWo8z64ia+AFmoNd1hSFkUYSKO1JLpZHnAgu/878n7YiYKOFTWY
+	GhC5JzrVycevlZ5LGpLsZHvILNYF3uf2q5A3Otu1L+97JBOwlAJprvNAXamlJnjKCiGL3cDvaOI
+	UrQgJbSTz/KELDDdR9+3S
+X-Google-Smtp-Source: AGHT+IFmb6IkHO5vc0UO9aOVGDXMpB2kmzp4LmZ2sU6rPiqzBx0SBn3BZ18jaHfT4NmGETFHxk/nSg==
+X-Received: by 2002:a17:902:f688:b0:231:ed22:e230 with SMTP id d9443c01a7336-23c6010f25amr2110315ad.15.1751374455431;
+        Tue, 01 Jul 2025 05:54:15 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3b7a47sm108535025ad.166.2025.07.01.05.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 05:54:13 -0700 (PDT)
+Date: Tue, 1 Jul 2025 12:54:05 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v7 19/28] iommu: Allow an input type in hw_info op
+Message-ID: <aGPabX6M2REffzjY@google.com>
+References: <cover.1750966133.git.nicolinc@nvidia.com>
+ <d8c395d6956045fd1fa1349538d29e3b6f9fada8.1750966133.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,51 +97,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,arndb.de,schaufler-ca.com,kernel.org,suse.cz,paul-moore.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+In-Reply-To: <d8c395d6956045fd1fa1349538d29e3b6f9fada8.1750966133.git.nicolinc@nvidia.com>
 
-On Mon 30-06-25 18:20:14, Andrey Albershteyn wrote:
-> Future patches will add new syscalls which use these functions. As
-> this interface won't be used for ioctls only, the EOPNOSUPP is more
-> appropriate return code.
+On Thu, Jun 26, 2025 at 12:34:50PM -0700, Nicolin Chen wrote:
+> The hw_info uAPI will support a bidirectional data_type field that can be
+> used as an input field for user space to request for a specific info data.
 > 
-> This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
-> vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
-> EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
+> To prepare for the uAPI update, change the iommu layer first:
+>  - Add a new IOMMU_HW_INFO_TYPE_DEFAULT as an input, for which driver can
+>    output its only (or firstly) supported type
+>  - Update the kdoc accordingly
+>  - Roll out the type validation in the existing drivers
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  include/linux/iommu.h                               | 3 ++-
+>  include/uapi/linux/iommufd.h                        | 4 +++-
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 4 ++++
+>  drivers/iommu/intel/iommu.c                         | 4 ++++
+>  drivers/iommu/iommufd/device.c                      | 3 +++
+>  drivers/iommu/iommufd/selftest.c                    | 4 ++++
+>  6 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index e06a0fbe4bc7..e8b59ef54e48 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -603,7 +603,8 @@ __iommu_copy_struct_to_user(const struct iommu_user_data *dst_data,
+>   * @capable: check capability
+>   * @hw_info: report iommu hardware information. The data buffer returned by this
+>   *           op is allocated in the iommu driver and freed by the caller after
+> - *           use.
+> + *           use. @type can input a requested type and output a supported type.
+> + *           Driver should reject an unsupported data @type input
+>   * @domain_alloc: Do not use in new drivers
+>   * @domain_alloc_identity: allocate an IDENTITY domain. Drivers should prefer to
+>   *                         use identity_domain instead. This should only be used
+> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+> index f091ea072c5f..6ad361ff9b06 100644
+> --- a/include/uapi/linux/iommufd.h
+> +++ b/include/uapi/linux/iommufd.h
+> @@ -593,13 +593,15 @@ struct iommu_hw_info_arm_smmuv3 {
+>  
+>  /**
+>   * enum iommu_hw_info_type - IOMMU Hardware Info Types
+> - * @IOMMU_HW_INFO_TYPE_NONE: Used by the drivers that do not report hardware
+> + * @IOMMU_HW_INFO_TYPE_NONE: Output by the drivers that do not report hardware
+>   *                           info
+> + * @IOMMU_HW_INFO_TYPE_DEFAULT: Input to request for a default type
+>   * @IOMMU_HW_INFO_TYPE_INTEL_VTD: Intel VT-d iommu info type
+>   * @IOMMU_HW_INFO_TYPE_ARM_SMMUV3: ARM SMMUv3 iommu info type
+>   */
+>  enum iommu_hw_info_type {
+>  	IOMMU_HW_INFO_TYPE_NONE = 0,
+> +	IOMMU_HW_INFO_TYPE_DEFAULT = 0,
+>  	IOMMU_HW_INFO_TYPE_INTEL_VTD = 1,
+>  	IOMMU_HW_INFO_TYPE_ARM_SMMUV3 = 2,
+>  };
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> index 170d69162848..eb9fe1f6311a 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> @@ -15,6 +15,10 @@ void *arm_smmu_hw_info(struct device *dev, u32 *length,
+>  	u32 __iomem *base_idr;
+>  	unsigned int i;
+>  
+> +	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
+> +	    *type != IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+>  	info = kzalloc(sizeof(*info), GFP_KERNEL);
+>  	if (!info)
+>  		return ERR_PTR(-ENOMEM);
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 850f1a6f548c..5f75faffca15 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -4098,6 +4098,10 @@ static void *intel_iommu_hw_info(struct device *dev, u32 *length,
+>  	struct intel_iommu *iommu = info->iommu;
+>  	struct iommu_hw_info_vtd *vtd;
+>  
+> +	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
+> +	    *type != IOMMU_HW_INFO_TYPE_INTEL_VTD)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+>  	vtd = kzalloc(sizeof(*vtd), GFP_KERNEL);
+>  	if (!vtd)
+>  		return ERR_PTR(-ENOMEM);
+> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
+> index 8f078fda795a..64a51993e6a1 100644
+> --- a/drivers/iommu/iommufd/device.c
+> +++ b/drivers/iommu/iommufd/device.c
+> @@ -1519,6 +1519,9 @@ int iommufd_get_hw_info(struct iommufd_ucmd *ucmd)
+>  	    cmd->__reserved[2])
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Clear the type field since drivers don't support a random input */
+> +	cmd->out_data_type = IOMMU_HW_INFO_TYPE_DEFAULT;
+> +
+>  	idev = iommufd_get_device(ucmd, cmd->dev_id);
+>  	if (IS_ERR(idev))
+>  		return PTR_ERR(idev);
+> diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
+> index 8b2c44b32530..a5dc36219a90 100644
+> --- a/drivers/iommu/iommufd/selftest.c
+> +++ b/drivers/iommu/iommufd/selftest.c
+> @@ -310,6 +310,10 @@ static void *mock_domain_hw_info(struct device *dev, u32 *length,
+>  {
+>  	struct iommu_test_hw_info *info;
+>  
+> +	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
+> +	    *type != IOMMU_HW_INFO_TYPE_SELFTEST)
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+>  	info = kzalloc(sizeof(*info), GFP_KERNEL);
+>  	if (!info)
+>  		return ERR_PTR(-ENOMEM);
 
-Modulo the small nits already pointed out this looks good to me. Feel free
-to add:
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> -- 
+> 2.43.0
+> 
 
