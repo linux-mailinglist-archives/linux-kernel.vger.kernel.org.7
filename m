@@ -1,161 +1,103 @@
-Return-Path: <linux-kernel+bounces-712129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EACEAF052D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:55:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32031AF0531
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6DF84449B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3680444685
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BC61D07BA;
-	Tue,  1 Jul 2025 20:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6345302043;
+	Tue,  1 Jul 2025 20:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cNjFReID";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MgcqDESg"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="YRnCJaCr"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1641F2FEE3F;
-	Tue,  1 Jul 2025 20:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BED52FE33C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 20:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751403349; cv=none; b=Vre5KKacURVzUta2OGwrSlTZw90ZlWPdVojQtsv5eAGQzEi8gk6qRyfuGP1dDSq0C0euSH1m58trxi0CdtKulmwtGzL3X2NQD5vgfWi0Uk5bHTwoL7MSK+tXHlyz0tWVW1Qjf5MhRAsU1WcLK2gaB6CdB9Xf7Kum8RbcvFlmxpw=
+	t=1751403410; cv=none; b=I5HToisKsZ5beuAKgOHXAKYyJXRkhV9Nh3h7GavyDcI1SKo8NcmqmW/BMo1c21jUFasp1ElGai/8AU8h6Qy6r3WI58o/fpIVz5+hNUDpl8nS8Cpc83nyZJvUY3/fBbWwqx+DS82+S2FroSPZW7QtHdGnkv1fKvt9bmUNWhbBNPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751403349; c=relaxed/simple;
-	bh=LhtTLZghsQ2oCHBy62D6Fvso6IXy/MsuutcGw2uabx0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=afKISgmn4gWMi1LJIaXTiBtK9OPbq4PiAJd4OMYjHwkA/7d8v5jWZDQ2TVemaJ4JX7xghE70rYFnNFW+zJzmTEJ4sGVxsnzQTcrUxpKszrrh6GJ5h7ZsptphzBCDw0qO7GJF9w+pbV24D8J3xpmPZI2df/Zt4crjVAx+uePnWJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cNjFReID; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MgcqDESg; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 8A2931D00168;
-	Tue,  1 Jul 2025 16:55:45 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 01 Jul 2025 16:55:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1751403345;
-	 x=1751489745; bh=awBVC+wrhtAgL6C9QQzRkh67OL2Xmg4L+hYvay+T57Q=; b=
-	cNjFReIDNA1JFdL+8vN71IV2PFUHIu51LPr0co0ZoBJ6FEZOq8avVTSmXBBvlOAx
-	4RYPGHt4sNiHVu6shivKhklDchYQw5P4HJc8KBpBT6TBcuS03i9zQE6jj6HV8gbN
-	FUP1WLZsBJA9tFHrW3l/YBbtlxDMgVDyl6QY0HJGObYprYl2xyRM08Y89MMJnkCW
-	nv+u5hza1+S9udW910nVsgd3tCkEpJrphxikXeobtEzxlreB0L53qi/Y/IIlkjXv
-	GlkTGanP/9WIuPHwNekEGRB64uQusJp4Unt2MQ49r5gy0Xre/o67J+C5sgyMC6M2
-	+/gz+aw5n+OZADZgt+1KkA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1751403345; x=
-	1751489745; bh=awBVC+wrhtAgL6C9QQzRkh67OL2Xmg4L+hYvay+T57Q=; b=M
-	gcqDESgtP1JgmPC8iaRaUdNcGrqu+xDk0NQg8PAboAlK/7KMLtIACYlPEiOF3gvG
-	iFGwrAQeYNbxlamEjklt98YPaFs9cgg8p02Wk4v/lun5MzV4EU2qHSDxoOykZ3mL
-	ID5Vpu02u5OSDw4ju4axWt4faL2BTQQ4w/xb9u9y3MwTq3uh99PvvDwwccLArA4d
-	oeNhr925978n4KnotubcHRSP+4okBpFF3HljXy+tt3RvUx2zVatun3GGIzWQkFb2
-	G5ReK2qqxdf5FjHMVmvW5kvo0i1Z92HV4Kn9mafPSJOvk4DGuxM1OtBOoHT7sG0Z
-	gfscw7qXBJ0WEzaTDsGOw==
-X-ME-Sender: <xms:UUtkaIePeZhebY9xm0MNoE1uQT1tiqlhOnbts2SGzFeQ3w4O0zEgWg>
-    <xme:UUtkaKOCH83z9yn46WSlf-UCwzw11p-Yk6VG0EM4dJ2mY_qCFAQ3SJx-8YWXFHUTZ
-    5Pdw9A7rr5IrHEHc68>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheehfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepjhhsthhulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsh
-    grrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlmhgtvhhi
-    tghkvghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopehhrghnshhgsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    shgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghrhigrnhdrohguohhnoh
-    hghhhuvgeslhhinhgrrhhordhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggr
-    nhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlohhrvghniihordhpihgvrhgrlh
-    hishhisehlihhnrghrohdrohhrgh
-X-ME-Proxy: <xmx:UUtkaJhpbWUVi3vo4-tSapxC3EnYvhkLdRUm8TXe6jgUGGHkntAFEg>
-    <xmx:UUtkaN_xd-lKV0UxghhPPvC2wb1AsNKinh9gHd0fVin2_P5TPU6ByQ>
-    <xmx:UUtkaEsaOMOK947udcGvLrIgiPCfxlXm05VIFynBJ69OPpL_dS8-8Q>
-    <xmx:UUtkaEEwjU4G6kIbUhrOB07Id-N-2B_OQmzJ9bt-cOjjMyUuxWca4w>
-    <xmx:UUtkaA1O6D8mIKxEr_keeaStGwda-mTnw1edsUaY3Izda0Q2JZxKP6Hm>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F07D8700065; Tue,  1 Jul 2025 16:55:44 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1751403410; c=relaxed/simple;
+	bh=xs1k1IKAt2QUNwG4AyLQYMUY9rKaJpNgz35MNxAhIfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FBmv/b3oGygaea8efa5TaB6Shi5ThJZDIicUYPBTv7xsHB4ebiIMdY9BdJJLf19NaG5G53HwSSVgEmJof1vvI/Jnyvf3u4JvW/I3mMsuVuXpx/XPJ3pOl4YaOW8MofeCtkKu5AtGJIR8B3JAOPvScd3pyT6RgHDEQc30RzdxC3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=YRnCJaCr; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from wse-pc.fritz.box (pd9e59880.dip0.t-ipconnect.de [217.229.152.128])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 4C31D2FC022C;
+	Tue,  1 Jul 2025 22:56:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1751403398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oiDQGr9MkOCts7ZkE3xY4x9skLNvAEcRqxFvVngRJEo=;
+	b=YRnCJaCrDEE3QOlZP/VEVkYCmhAdqZXmT9XgOPcrduoyeid8qoE9ktRHx/VjNIL6z/Tjlv
+	xSUheyXdHre0/ulWgKsoBk4q+5seNn/tznKNTb4Zkdq40nCzFm018QbgnimK4LXdn3LM/F
+	jLmc2gPCjvi5raV+SAxEu8ypZBpWHtI=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: Georg Gottleuber <ggo@tuxedocomputers.com>,
+	Werner Sembach <wse@tuxedocomputers.com>,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nvme-pci: Add TUXEDO IBS Gen8 to Samsung sleep quirk
+Date: Tue,  1 Jul 2025 22:55:49 +0200
+Message-ID: <20250701205630.64031-1-wse@tuxedocomputers.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T1067a3d3a42d0b8a
-Date: Tue, 01 Jul 2025 22:55:24 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "William McVicker" <willmcvicker@google.com>
-Cc: "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org,
- "Lorenzo Pieralisi" <lorenzo.pieralisi@linaro.org>,
- "Hans de Goede" <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
- "Rob Herring" <robh@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "John Stultz" <jstultz@google.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" <devicetree@vger.kernel.org>
-Message-Id: <92daf35f-9240-450f-a05f-b7869fafeb6b@app.fastmail.com>
-In-Reply-To: <aGQnOMDyBckks78k@google.com>
-References: <20250625085715.889837-1-daniel.lezcano@linaro.org>
- <aGMjfxIvbCkyR5rw@google.com>
- <27644998-b089-44ae-ae5f-95f4d7cbe756@app.fastmail.com>
- <aGQnOMDyBckks78k@google.com>
-Subject: Re: [PATCH RFC] timer: of: Create a platform_device before the framework is
- initialized
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 1, 2025, at 20:21, William McVicker wrote:
-> On 07/01/2025, Arnd Bergmann wrote:
->> On Tue, Jul 1, 2025, at 01:53, William McVicker wrote:
->> >> @@ -1550,6 +1553,8 @@ typedef void (*of_init_fn_1)(struct device_node *);
->> >>  		_OF_DECLARE(table, name, compat, fn, of_init_fn_1_ret)
->> >>  #define OF_DECLARE_2(table, name, compat, fn) \
->> >>  		_OF_DECLARE(table, name, compat, fn, of_init_fn_2)
->> >> +#define OF_DECLARE_PDEV(table, name, compat, fn) \
->> >> +		_OF_DECLARE(table, name, compat, fn, of_init_fn_pdev)
->> >
->> > To support auto-module loading you'll need to also define the
->> > MODULE_DEVICE_TABLE() as part of TIMER_OF_DECLARE_PDEV().
->> >
->> > I haven't tested the patch yet, but aside from my comment above it LGTM.
->> 
->> The patch doesn't actually have a module_platform_driver_probe()
->> yet either, so loading the module wouldn't actually do anything.
->
-> Probing with TIMER_OF_DECLARE() just consists of running the match table's data
-> function pointer. So that is covered by Daniel's patch AFAICT. However, it's
-> not clear if this implementation allows you to load the kernel module after the
-> device boots? For example, will the Exynos MCT timer probe if I load the
-> exynos_mct driver after the device boots? My guess is you'd need to register
-> the device as a platform device with a dedicated probe function to handle that.
+From: Georg Gottleuber <ggo@tuxedocomputers.com>
 
-Yes, that's what I meant: the loadable module needs a module_init()
-function that registers the actual platform driver in order for the
-probe function to be called. module_platform_driver_probe()
-is the way I would suggest to arrange it, though that is just a
-convenience helper around the registration.
+On the TUXEDO InfinityBook S Gen8, a Samsung 990 Evo NVMe leads to
+a high power consumption in s2idle sleep (3.5 watts).
 
-The platform device at that point is created by the normal DT scan,
-so there is no need to create an extra one. On the contrary, in case
-we successfully call the probe function from timer_init(), we end
-up with two separate 'struct platform_device' instances 
+This patch applies 'Force No Simple Suspend' quirk to achieve a sleep with
+a lower power consumption, typically around 1 watts.
 
-     Arnd
+Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/nvme/host/pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 8ff12e415cb5d..d677080e67d33 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -3198,10 +3198,12 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+ 		 * Exclude Samsung 990 Evo from NVME_QUIRK_SIMPLE_SUSPEND
+ 		 * because of high power consumption (> 2 Watt) in s2idle
+ 		 * sleep. Only some boards with Intel CPU are affected.
++		 * (Note for testing: Samsung 990 Evo Plus has same PCI ID)
+ 		 */
+ 		if (dmi_match(DMI_BOARD_NAME, "DN50Z-140HC-YD") ||
+ 		    dmi_match(DMI_BOARD_NAME, "GMxPXxx") ||
+ 		    dmi_match(DMI_BOARD_NAME, "GXxMRXx") ||
++		    dmi_match(DMI_BOARD_NAME, "NS5X_NS7XAU") ||
+ 		    dmi_match(DMI_BOARD_NAME, "PH4PG31") ||
+ 		    dmi_match(DMI_BOARD_NAME, "PH4PRX1_PH6PRX1") ||
+ 		    dmi_match(DMI_BOARD_NAME, "PH6PG01_PH6PG71"))
+-- 
+2.43.0
+
 
