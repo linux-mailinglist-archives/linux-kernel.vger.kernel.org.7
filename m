@@ -1,126 +1,110 @@
-Return-Path: <linux-kernel+bounces-711472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04883AEFB3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E61FAEFB3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCAFC481BCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D1F175CE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D09275AF7;
-	Tue,  1 Jul 2025 13:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE864277031;
+	Tue,  1 Jul 2025 13:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nsz8DVWj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5DuswYJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881B826FA59;
-	Tue,  1 Jul 2025 13:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72C426FA59;
+	Tue,  1 Jul 2025 13:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378089; cv=none; b=AbKgh54cfIO2FigyF6S41ZNk0YgkcQAn6xlK9KnonolOazPWixg87BHuVZEhcc/cmAroqjNeaLSh0TgZdtoIohqJDHi6xA/ma9erI9eous/UVxR1f4PSq+3702rxTIz9N+v4TYzVebI96KPdEC+fmXkDIvr+lXX6ZfppBN5MWZ4=
+	t=1751378094; cv=none; b=KwBmO3kYF8thcxzorSMZnZzwjamS8Ijylalle8mBo3zp+My2hAnPfhXP14/51jR61Z/seGxepWct/YgAoqu/0P4Tt274/uL5tL1u+iWksGKcyyWVUJu/iEnpgyCNiBVGJ+02CL9UF/XqAAGd1d/S2DnGkVm2MoSw/W4+HhMw6AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378089; c=relaxed/simple;
-	bh=ZL/u65dIbxosbqEkEvyApJed1MUepl7ko0Ds7XvleG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rjntNQU9euv0NrL28dKZfdT2veA0jtOMUPV1aHn3h+lziv//ckk+ZG5903Tnd6qukqKBOPlny7Tgikt4IjW89G/CWo33TrAxXoH9cVsXH3Qb48TLGNxspS7VBcr17GcEqPH2l1AszUi2ROGC4fufemA9tkWxcyeLMtSS8sfXn94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nsz8DVWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C603BC4CEEB;
-	Tue,  1 Jul 2025 13:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751378089;
-	bh=ZL/u65dIbxosbqEkEvyApJed1MUepl7ko0Ds7XvleG0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nsz8DVWjSFKbqjow7W6o1m10uyyNr8ckimVR/Zp/X3duRAgeYnFGLj+WfAClnWxFm
-	 bivyyT/qnOjyP4sfFsEEegvR7vcg7k8VOHxXiXYV3ssXDXte+YtRAqwP3tD6IfK8MS
-	 Mrt1JLhH2zajYEsV3n9jQ/4LmmD47quFngMft/WipvTT8ZUitgvwd0bnVB0lTeK4h4
-	 P+txvfbJ2FmzsVDKS5hQTsRovvNqYRALDXS+kMQwGM3ejlPp5Y20KuJY7WHjuJpoUj
-	 r+V33xOBw6QSqwDWvcl7BFjSM7qftWk/NxdXJmp6z+60potRDTENv2VeDHqeNBKNsY
-	 HXHg6odR75Mgg==
-Message-ID: <836dc6b6-2821-47fc-8f24-0838f979af76@kernel.org>
-Date: Tue, 1 Jul 2025 15:54:45 +0200
+	s=arc-20240116; t=1751378094; c=relaxed/simple;
+	bh=5ItF9Taz+DNHnbbPxKWNU1QXo7XWqvCYdr5EbofRFrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPwLLE0krfkoQX+ni+anS3szge0BzFLSaGyRlGgdiW4Xy4c/uNQsP2oZT7ejuf6ODgm0M1shIrFVtX/y2jkZJd4AL52cAz3ka2JvnGeqIX1mkvIBq/5FEzXGBTxWODK0G9wzcjfj5xsSSCAh+AU0OpU1LVVhlfF7ufDKurz4XcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5DuswYJ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751378093; x=1782914093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5ItF9Taz+DNHnbbPxKWNU1QXo7XWqvCYdr5EbofRFrI=;
+  b=j5DuswYJa+zH4zc/Qxw0v/oQKzax+8xUXBc6dbs6uUs4wsPUeFByloPH
+   ewiGFfqRy4BC+R3xSHbPszdHAxBWZ1sh7GFX5F9T01HH8dBX51QpQgh+w
+   jlXu4J6FcgrLlru2MwPOffqcTYxdmoCtQK3VBL9dfjOW/zeyS99ZF7i37
+   MgT0XjwUVTrNViHBmG7aJEHUNN7f6fAOkziwBGabMoiP0I63rl1//fpTJ
+   byvtIkRdTobqn+yofwo40FuPX5wy86rX6rm5RYG+4NzUHqSF0BjOK6r20
+   Ak+smkUlELWOQ1lFkBU5UNfZR4dC2BPwQrTgDV0jC1dxsqcMXtAFDs1fN
+   Q==;
+X-CSE-ConnectionGUID: geVwBeM+QISO0si42u5G2A==
+X-CSE-MsgGUID: udxyTurtSb2t2pfDZkcJWw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="71071282"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="71071282"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 06:54:53 -0700
+X-CSE-ConnectionGUID: nHUDxnizR5O4rjnodM4zyw==
+X-CSE-MsgGUID: C4eZp7IRSaqqFdR/McRv/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="177448223"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 06:54:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uWbRf-0000000Bc2B-1UFW;
+	Tue, 01 Jul 2025 16:54:47 +0300
+Date: Tue, 1 Jul 2025 16:54:47 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Chelsy Ratnawat <chelsyratnawat2001@gmail.com>
+Cc: jean-baptiste.maneyrol@tdk.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_mpu6050: Replace scnprintf with sysfs_emit
+Message-ID: <aGPopyM1KbbDS4IH@smile.fi.intel.com>
+References: <20250701113945.6865-1-chelsyratnawat2001@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: media: atomisp: Fix premature setting of
- HMM_BO_DEVICE_INITED flag
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, andy@kernel.org,
- hdegoede@redhat.com, mchehab@kernel.org, sakari.ailus@linux.intel.com,
- gregkh@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev, skhan@linuxfoundation.com,
- dan.carpenter@linaro.org
-References: <20250628052536.43737-1-abdelrahmanfekry375@gmail.com>
- <CAHp75Vcy3dHRu8Wb2KZ=xK7adz=-P-iuRTeR8vOWzHzZL9uFeg@mail.gmail.com>
- <CAGn2d8OMRaeozOMxj1Ry8i9T3sJ5J1QqA_Jpk7wYO8KiUbpKBA@mail.gmail.com>
- <aGPYZhK65LaD0wVO@smile.fi.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hansg@kernel.org>
-In-Reply-To: <aGPYZhK65LaD0wVO@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701113945.6865-1-chelsyratnawat2001@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
+On Tue, Jul 01, 2025 at 04:39:45AM -0700, Chelsy Ratnawat wrote:
+> Documentation/filesystems/sysfs.rst mentions that show() should only
+> use sysfs_emit() or sysfs_emit_at() when formating the value to be
+> returned to user space. So replace scnprintf() with sysfs_emit().
 
-On 1-Jul-25 2:45 PM, Andy Shevchenko wrote:
-> On Tue, Jul 01, 2025 at 02:58:43PM +0300, Abdelrahman Fekry wrote:
->> Hello Andy,
->> On Sat, Jun 28, 2025 at 10:52 PM Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->>> On Sat, Jun 28, 2025 at 8:26 AM Abdelrahman Fekry
->>> <abdelrahmanfekry375@gmail.com> wrote:
-> 
->>>> The HMM_BO_DEVICE_INITED flag was being set in hmm_bo_device_init()
->>>> before key initialization steps like kmem_cache_create(),
->>>> kmem_cache_alloc(), and __bo_init().
->>>>
->>>> This means that if any of these steps fail, the flag remains set,
->>>> misleading other parts of the driver (e.g. hmm_bo_alloc())
->>>> into thinking the device is initialized. This could lead
->>>> to undefined behavior or invalid memory use.
->>>
->>> Nice. Can you make some fault injection (temporary by modifying the
->>> code to always fail, for example) and actually prove this in practice?
->>> If so, the few (important) lines from the given Oops would be nice to
->>> have here.
-> 
->> I have been trying to test it without having any intel atomisp
->> hardware and failed continuously, do you have any tips or maybe some
->> resources on how i can test this driver.
-> 
-> So, the easiest way as I can see it is to ask people who possess the HW to
-> test, but you need to provide a testing patch (which can be applied on top
-> of this one, for example).
+...
 
-I don't think it is worth testing the error path here,
-the old code is obviously wrong.
+>  	case ATTR_ACCL_MATRIX:
+>  		m = st->plat_data.orientation;
+>  
+> -		return scnprintf(buf, PAGE_SIZE,
+> +		return sysfs_emit(buf,
+>  			"%d, %d, %d; %d, %d, %d; %d, %d, %d\n",
 
-What is interesting here is to see if the extra call to hmm_init()
-in __hmm_alloc() is necessary at all.
+Now this fits one line
 
-And obviously hmm_init() needs to propagate the error return
-from hmm_bo_init() right away instead of continuing if nothing
-was wrong and then only returning the error at the end.
+		return sysfs_emit(buf, "%d, %d, %d; %d, %d, %d; %d, %d, %d\n",
 
-So it seems that there plenty of cleanup to do around this
-without needing error injection to test all paths.
+>  			m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
 
-Actually I'm pretty sure that there will be quite a few
-error-handling paths with bugs in the atomisp code given
-its overall quality. But lets clean things up first, that
-should make addressing any such cases easier.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Regards,
-
-Hans
 
 
