@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-711682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C776DAEFDE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:19:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930E0AEFDF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2A516D235
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B81863B8B80
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A47274B3D;
-	Tue,  1 Jul 2025 15:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0DE27A92D;
+	Tue,  1 Jul 2025 15:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EOlQilcL"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="crxqb/+U"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5F92741DC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4023C27A900
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751383166; cv=none; b=Rp0eYRfeR1F6GWPHwijB6GA00q7bxrbqhI5B9//RkjLB5aulpiMmr7JP/aLDeNxyMa0r2XygA0IYpBgbs3Yu2RGYtxsRf3+3LL8fLhy50BhVGGudTq9SGRxqdL7Tskk58UowPqzAb7fWVKfeNEw6gu8fYUfCMh0AnKxNumZ5JIE=
+	t=1751383234; cv=none; b=O9f5nAAa/olYj+PZ6ZlfiEfbt7OGv/nnMHj05X4gTEk42xJWynsUSeTUTMLyuB13NTGC/BUt6b5LHKN+cVI5YdA02sK0JzBVyI///rgb2kKk5/9z7usVohzwLeW17En3fB1JTy5YBo853QT+/0Jvhy4vAZhuBmhXX/Q5DYtdWR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751383166; c=relaxed/simple;
-	bh=t97TyzkipZFoGjqd9kPhcCuknyC/oH3E7SMZc9QKQZU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CEy0D/2UbTYUSZUp4GX2uRJOBIihuyVOscJSoHsQjFVSRjC2+nu4ri+BZ5LLl0bM6ID6C3m7E1QyXSIMMWvV4fuf1HJvf5p7eydL+bi9UbxF0MR0VK4U4HT4CtClBb01BHgCQ52SBLHlz2p1KnvBnVaHnK1syUoH7gd8gMyX4WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EOlQilcL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5619hwhx002217
-	for <linux-kernel@vger.kernel.org>; Tue, 1 Jul 2025 15:19:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	s=arc-20240116; t=1751383234; c=relaxed/simple;
+	bh=YHKFuGE35A4Aa0dREmXAp8IwwFwiIVWsYuMOqi4QHaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dkYNjHaR8cZx5TtzBvo2JsWfOz42ep+Mwjgbi27P6SzDBHuUgHA+KnjMMGJt02xyt1ADkYUQzk4MSepNSowITaskSrix/HFX8dOcWaVwvGtfH04mv4T89fCN6zyGpEx81nGCTcBvU9iduWr7dyDRsYVJkzQ0tKgyRrAVzyf+/cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=crxqb/+U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5619qJ0J028627;
+	Tue, 1 Jul 2025 15:20:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cpr6mXrXqDKBVG3OQMvCgpkcRwa8yNEUsy9+Tt8IbAk=; b=EOlQilcL+QTJVHsK
-	ZvO2fhkuUGlUAm9iDjBT6cp7XWiVkXb8X23LHTWc3sPYwKA/aiujbYP30rmKEQEn
-	y+bApBXD1XW6f8S6/IQEQhZ0ZyttH1/DV4W2dePKT8txVqXlZMYr3f6Zkv+aVe6+
-	HtaZkmaTyYqjiUn9Kb80X9FKSbV5vVqxdufnOcVTdSei9g13YWgqIHpBDXRgbEZr
-	mc4oKVKsBDmWpPQ8KSUWzFUYurpaLErYCj5ZyxmnVCGTyVCmADXYCR/lqNYN9c7N
-	adxDIoGUhfJ0qoZVNcbYYsWGb/hTBihELp5kJJ51H1+gQO58u4HIuvpiLNVhqwnj
-	SF/lgg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j9pcs97h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 15:19:23 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7d0976a24ceso188976485a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 08:19:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751383162; x=1751987962;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cpr6mXrXqDKBVG3OQMvCgpkcRwa8yNEUsy9+Tt8IbAk=;
-        b=wiGrPgraicYW+lt2uazDna9xBVArJZroIeW1K0B+RUQbLJI6HXM0Y/nd8dNQrK3rAS
-         k3zcrpgNUs/CmnpQ6FaSqfLP/MK4/gz7IXmu3fphlNc6okd6OAd6e5/+WU9kP2Z0jDZ3
-         DxJd07OWDF6eU4xLI0LPGeIlbqJLBwgq4RHA2486CspgTaZ5Cu1d/yWdbH4GzezUqynb
-         gSAaXhL/wpgXrCK5ILX3JdHrjEWqrCyM4PUdcyJz4nMn6kioM/g3Ikl0RKwNEFvWsjuP
-         7QdglrlR+Br7DjAXm8Qj3C7fqB0Vz9xqZ6VMbbnH9SjGGIjFeINhTqTpNgMTS6j8pWS5
-         wlAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXA7siGwMigjggwioB1AXr17fm66QD9NRJJOBtC9zJ0QnuuMB/HtaECAbq7sWOIu3ZGAThGpesRafxkEEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6AXGgyBqLPjs2uZIvQbXHxqq62LiedNOa9By3FQmloCG58dNw
-	uHcAM3X/I2hR0XUT0e3eRbja0GhoprqSBE4uTIFYp8Vc5acz6ppyKgOJ5QtNYSc1FdIiVtyFlLu
-	tajc4lq3+316Lopr1faOFhCrhke9cWyJuSToEcSDDl6L1dk7SbPt2G5PsVge9VICfQ68=
-X-Gm-Gg: ASbGncvitQpMC2uWI87znKeDQQmsF7qDzhUXRzm1xGTm5aVEx71uh8tNv+lBiS30bXr
-	G0roI8Vqb2CIMIs/Yqs/v4ho+vP3jom2qK59axbJ9DRni+uG86j29EEOeCJAGo2entUWmZILi5g
-	T+dlEXk9uVJ5r2xpf7AFRc8BtL70YFeRjjTY0BLCPeUx6BbzqY/URD2+ski6MFyeKyJKxZvsuY1
-	nDnciEx7PZkPqYY8eHW7wdOgyYoE5j2CoGb1UP7hLjTWOuhL59qC5tWKyejNEO1kc8iK2L/N7oU
-	afXvWK1l6VHse8xEPVLONXtzBW1Om+ZlmVHLdSPAWI19yykBmgoKaYCPvirrIlElx//OelUNDPI
-	hDcFkE9Io
-X-Received: by 2002:a05:620a:29cf:b0:7d4:4a59:6e8f with SMTP id af79cd13be357-7d4677a1ef6mr168638885a.15.1751383161718;
-        Tue, 01 Jul 2025 08:19:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVw9OkK18UsYMXtCQz0xp70vLQZThgvbIEpJsS6vmdbEaZ6WCWXVX9kJTqVkQwMWBZ3Tk8Fw==
-X-Received: by 2002:a05:620a:29cf:b0:7d4:4a59:6e8f with SMTP id af79cd13be357-7d4677a1ef6mr168635985a.15.1751383160972;
-        Tue, 01 Jul 2025 08:19:20 -0700 (PDT)
-Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353ca20f3sm903250666b.175.2025.07.01.08.19.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 08:19:20 -0700 (PDT)
-Message-ID: <24e4241e-d8a1-41c7-b0f3-3ec01b4375ae@oss.qualcomm.com>
-Date: Tue, 1 Jul 2025 17:19:17 +0200
+	5VjOrehgu67gGQhS/OJrOelLzd1u65qTrNycDObBlgU=; b=crxqb/+UGn4UAyWL
+	uHCpSS2MrrFfshzDF8QKlom4W0WYDjIVTi8SNaATW8Bv6PfU+htr4HACE2wNNpvj
+	N/94UCq+kDFSvhYBpL6j0h6cKCsSUPRxLepI42kv5o1exjkVVtZNYk1aevYqT033
+	O2voVPpn3RwnS0aWvh7nh+rybHXX2KHdD87JvYE27Fa9+eezq2CIGMRqgtHM/akr
+	Ku1WxqYzw3ovLuHuEHGge+k7kJ0VydQdmOmNlqWIpTCB/aKjgwwvbLsanD5eA85t
+	MyYQHViqsB3ekeH1mbM8bntr0LdfROrx/4i8af6cuX6az0jrPXdafKL9uMxB3FY2
+	8lxCLw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bvsbkr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 15:20:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561FKQqR017226
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Jul 2025 15:20:26 GMT
+Received: from [10.110.56.217] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Jul
+ 2025 08:20:24 -0700
+Message-ID: <cba8a539-b6f9-428a-be6a-52169ab0de56@quicinc.com>
+Date: Tue, 1 Jul 2025 20:49:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,135 +64,181 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] Add clock drivers for SM7635
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250625-sm7635-clocks-v1-0-ca3120e3a80e@fairphone.com>
- <68056b4a-b1c3-401f-8720-8e0c3cda6249@oss.qualcomm.com>
- <DAXEWQ93VELV.3HJXPNWASYBT7@fairphone.com>
- <DAZPKV5DQ1EK.2D4TQE5MIH4K9@fairphone.com>
- <w4eujq72uqflqpsqshc7zhu6lkc7owufep2g2rjacvzgj44vmf@auonp4ugbgow>
- <DB0RG4PFFP4A.1BAZWWZU2TWJF@fairphone.com>
+Subject: Re: [PATCH] tracing/perf: disable preemption in perf_trace calls
+To: Steven Rostedt <rostedt@goodmis.org>
+CC: Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
+References: <20250630-fix-perf-trace-null-access-v1-1-8c15bf5f402c@quicinc.com>
+ <20250630143230.25b7a38a@batman.local.home>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <DB0RG4PFFP4A.1BAZWWZU2TWJF@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
+From: Aditya Chillara <quic_achillar@quicinc.com>
+In-Reply-To: <20250630143230.25b7a38a@batman.local.home>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: yKGVz5XxXN42vQz8iWL0UfAYPbqOabuG
-X-Proofpoint-ORIG-GUID: yKGVz5XxXN42vQz8iWL0UfAYPbqOabuG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDEwMSBTYWx0ZWRfX1/Tg5P4+RC81
- iJyZyZcP6EV1do7bir8rssCHrdq5zbjCVA3GkvN5ti1bw4Kh54g3B5eTNGBXcScl/7HrfliUP41
- PyIPCTuF7POuUeK5vF4ixAiwXLKxfJ29BKTDosBngKSr2eWwrBd8YBQ1sKo9qO2hQMoLUCP39zL
- jvmcmtjBih5AhDCCUyCvORbi+gZEp3+E8A+u/zXk9NAheoLxIz/ZD/FwbVRrCDYyCe//GPcZHF6
- R98BscsWsUBVBYkSD+oauvQL1QeGWuz/QeOHdzzU85md5yTJG9iVC4FqhAubvXtihUTycodQhCo
- int+I8/ylP6H8Wo+VZUE6YD+PLdcbAS+rQAF8zWdSfkJiQOP0J356NTdHgMtfcw9cwbaqU88hOn
- zxsIWL1R6hS8LbNVMZaz2h3cZksJzNoT8z3Psmy7N4J7Fxc1rTGI+7CbodG/7wVlCD5UIDV2
-X-Authority-Analysis: v=2.4 cv=QMFoRhLL c=1 sm=1 tr=0 ts=6863fc7b cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=6H0WHjuAAAAA:8
- a=IgS4KiuvraTEoa23li4A:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=Soq9LBFxuPC4vsCAQt-j:22
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bHvnHshZeI8gojKFnITDLSmxz6TSSH4h
+X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=6863fcba cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=-RQ7FLaKujfTUwwmNdEA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: bHvnHshZeI8gojKFnITDLSmxz6TSSH4h
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDEwMiBTYWx0ZWRfX2M+PgjHs9NWf
+ uOVApBrAWLqOtwVQHQ42sUNykLhQsDFLVj1xRxAV6GZsiaZ1MOiLExImLEkKo3KTy/zTsiymimQ
+ V32DAqVnWOgDB1PLS6b5ygqGjyImNTPodO0JZ8RNFTe3FuGNtbuJVFU8xjfeyODYf1CANx27zS5
+ HvYDvo/eWM6FHOrgqkHAIAF+Mf0QIZMd0V9uwS71f++1WCNOu9jmzs6p7P7sBabIOAah6OapYEA
+ WaMeHhsPYNxVbZlkP8ajQOlPIC/NKV6N3VT9/rdi3fTP7KEykjbb0fbZeFVrNv9FTgttF0y66Tc
+ Ru/S9dcb58j9MtOoO/wUR+EaQbbHPoHorBUUYErQyEAfKiTNbVUTVA+Ixj3QR7CHwo1Z1dBkk+D
+ XTFA8CEDMl0cslE/EZ2TA1tvKqCdiWz0oRis4xsvgERa7BbFDw8OUlj74L0M6qxg9zkOLA/F
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
  definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 bulkscore=0 spamscore=0 adultscore=0
- mlxlogscore=815 mlxscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
- clxscore=1015 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507010101
+ definitions=main-2507010102
 
-
-
-On 01-Jul-25 15:42, Luca Weiss wrote:
-> On Tue Jul 1, 2025 at 1:16 PM CEST, Dmitry Baryshkov wrote:
->> On Mon, Jun 30, 2025 at 10:01:35AM +0200, Luca Weiss wrote:
->>> Hi Konrad,
->>>
->>> On Fri Jun 27, 2025 at 5:14 PM CEST, Luca Weiss wrote:
->>>> On Fri Jun 27, 2025 at 5:10 PM CEST, Konrad Dybcio wrote:
->>>>> On 6/25/25 11:12 AM, Luca Weiss wrote:
->>>>>> Document and add the clock drivers for GCC, CAMCC, DISPCC, GPUCC and
->>>>>> VIDEOCC on the SM7635 SoC.
->>>>>>
->>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>>>> ---
->>>>>> Luca Weiss (10):
->>>>>>       dt-bindings: clock: qcom: document the SM7635 Global Clock Controller
->>>>>>       clk: qcom: Add Global Clock controller (GCC) driver for SM7635
->>>>>>       dt-bindings: clock: qcom: document the SM7635 Camera Clock Controller
->>>>>>       clk: qcom: Add Camera Clock controller (CAMCC) driver for SM7635
->>>>>>       dt-bindings: clock: qcom: document the SM7635 Display Clock Controller
->>>>>>       clk: qcom: Add Display Clock controller (DISPCC) driver for SM7635
->>>>>>       dt-bindings: clock: qcom: document the SM7635 GPU Clock Controller
->>>>>>       clk: qcom: Add Graphics Clock controller (GPUCC) driver for SM7635
->>>>>>       dt-bindings: clock: qcom: document the SM7635 Video Clock Controller
->>>>>>       clk: qcom: Add Video Clock controller (VIDEOCC) driver for SM7635
->>>>>
->>>>> We had a massive yak shaving patchset go in this season, please move
->>>>> the magic settings in .probe to qcom_cc_driver_data {}
->>>>
->>>> Okay cool, I found them
->>>> https://lore.kernel.org/linux-arm-msm/174970084192.547582.612305407582982706.b4-ty@kernel.org/
->>>
->>> For camcc, gpucc and videocc it seems quite simple to follow these
->>> changes.
->>>
->>> For dispcc I don't know what to do with this line.
->>>
->>> 	/* Enable clock gating for MDP clocks */
->>> 	regmap_update_bits(regmap, DISP_CC_MISC_CMD, 0x10, 0x10);
+On 7/1/2025 12:02 AM, Steven Rostedt wrote:
+> On Mon, 30 Jun 2025 22:35:28 +0530
+> Aditya Chillara <quic_achillar@quicinc.com> wrote:
+> 
+>> It is possible that perf_trace_sched_switch call is rescheduled causing
+>> NULL access in perf_trace_buf_alloc because of perf_trace_event_unreg
+>> called in between, leading to data abort:
 >>
->> Use clk_regs_configure() callback to set this bit.
+>> [  363.202351][    T0] Unable to handle kernel paging request at virtual address ffffffba56d0a03c
+>> [  363.202355][    T0] Mem abort info:
+>> [  363.202355][    T0]   ESR = 0x0000000096000045
+>> [  363.202357][    T0]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [  363.202359][    T0]   SET = 0, FnV = 0
+>> [  363.202360][    T0]   EA = 0, S1PTW = 0
+>> [  363.202361][    T0]   FSC = 0x05: level 1 translation fault
+>> [  363.202363][    T0] Data abort info:
+>> [  363.202364][    T0]   ISV = 0, ISS = 0x00000045, ISS2 = 0x00000000
+>> [  363.202365][    T0]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+>> [  363.202367][    T0]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [  363.202369][    T0] swapper pgtable: 4k pages, 39-bit VAs, pgdp=00000000c9795000
+>> [  363.202371][    T0] [ffffffba56d0a03c] pgd=0000000000000000, p4d=0000000000000000, pud=0000000000000000
+>> [  363.202377][    T0] Internal error: Oops: 0000000096000045 [#1] PREEMPT SMP
+>> [  363.202383][    T0] Dumping ftrace buffer:
+>> [  363.202385][    T0]    (ftrace buffer empty)
+>> .
+>> .
+>> [  363.203036][    T0] CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Tainted: G W  O \
+>> 	6.12.23-android16-5-maybe-dirty-4k #1 6d534d25cf9b12caecb741d5004c181a6a432b53
+>> [  363.203042][    T0] Tainted: [W]=WARN, [O]=OOT_MODULE
+>> [  363.203045][    T0] pstate: 834000c5 (Nzcv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+>> [  363.203048][    T0] pc : perf_trace_buf_alloc+0x90/0xe0
+>> [  363.203057][    T0] lr : perf_trace_buf_alloc+0x40/0xe0
+>> [  363.203060][    T0] sp : ffffffc08016bc90
+>> [  363.203062][    T0] x29: ffffffc08016bc90 x28: 0000000000000000 x27: ffffff88083d0000
+>> [  363.203066][    T0] x26: ffffffba56d0a000 x25: 00000044684e8bd8 x24: 1198f2d01457f4e4
+>> [  363.203070][    T0] x23: 0000000000000000 x22: ffffff88083d0000 x21: ffffffc08016bccc
+>> [  363.203073][    T0] x20: ffffffc08016bcd0 x19: 0000000000000044 x18: ffffffd01580bec0
+>> [  363.203077][    T0] x17: 00000000d2dc9ceb x16: 00000000d2dc9ceb x15: 0000000000000010
+>> [  363.203080][    T0] x14: 0000000000000100 x13: 0000000000000100 x12: 0000000000000100
+>> [  363.203083][    T0] x11: 0000000000ff0100 x10: 0000000000000001 x9 : ffffffba56d0a000
+>> [  363.203087][    T0] x8 : ffffffba56d0a044 x7 : 0000000000000001 x6 : 000000548fd2bf93
+>> [  363.203090][    T0] x5 : 00000054908be990 x4 : 0000000000000000 x3 : ffffff8808329640
+>> [  363.203094][    T0] x2 : ffffffc08016bccc x1 : ffffffc08016bcd0 x0 : ffffffba56d0a000
+>> [  363.203097][    T0] Call trace:
+>> [  363.203098][    T0]  perf_trace_buf_alloc+0x90/0xe0
+>> [  363.203102][    T0]  perf_trace_sched_switch+0x74/0x190
+>> [  363.203107][    T0]  __schedule+0xbb0/0xeac
+>> [  363.203112][    T0]  schedule_idle+0x24/0x48
+>> [  363.203114][    T0]  do_idle+0x214/0x25c
+>> [  363.203117][    T0]  cpu_startup_entry+0x34/0x3c
+>> [  363.203119][    T0]  secondary_start_kernel+0x130/0x150
+>> [  363.203124][    T0]  __secondary_switched+0xc0/0xc4
+>> [  363.203129][    T0] Code: f8605908 d538d089 8b080120 8b33c008 (f81f811f)
+>> [  363.203131][    T0] ---[ end trace 0000000000000000 ]---
+>> [  363.203133][    T0] Kernel panic - not syncing: Oops: Fatal exception
+>> [  363.203135][    T0] SMP: stopping secondary CPUs
+>> [  363.203276][    T0]
+>> [  363.203276][    T0] Total active clients count: 0
+>> [  363.203280][    T0] Dumping ftrace buffer:
+>> [  363.203281][    T0]    (ftrace buffer empty)
+>>
+>> Fix the issue by disabling preemption in perf_trace calls.
 > 
-> Got it, found an example on the lists.
+> Does it really fix the issue?
+No, wanted to confirm that perf_trace_##call() should not get
+scheduled out.
+
+The following is also present in the logs:
+[<ffffffd4cde44348>] do_mem_abort+0x54
+[<ffffffd4cef79b5c>] el1_abort+0x3c
+[<ffffffd4cef79ad4>] el1h_64_sync_handler[jt]+0xb4
+[<ffffffd4cde11298>] ret_to_kernel[jt]+0x0
+[<ffffffd4ce05a19c>] perf_trace_buf_alloc+0x90
+[<ffffffd4cdf137fc>] perf_trace_sched_process_template+0x64
+[<ffffffd4cdf115f4>] __traceiter_sched_process_free+0x48
+[<ffffffd4cded7eb8>] delayed_put_task_struct+0x94
+[<ffffffd4cdfb1564>] rcu_do_batch+0x1f0
+[<ffffffd4cdfb3ec8>] rcu_nocb_cb_kthread+0x250
+[<ffffffd4cdf08420>] kthread+0x11c
+[<ffffffd4cde1f174>] ret_from_fork+0x10
+> 
+> 1. perf_trace_##call() gets called either by DECLARE_EVENT_CLASS or by
+>    DECLARE_EVENT_SYSCALL_CLASS. The latter already disables preemption
+>    but the former does not because it is called by the tracepoint logic
+>    that has:
+> 
+> #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
+> 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
+> 	static inline void __do_trace_##name(proto)			\
+> 	{								\
+> 		if (cond) {						\
+> 			guard(preempt_notrace)();			\
+> 			__DO_TRACE_CALL(name, TP_ARGS(args));		\
+> 		}							\
+> 	}
+> 
+>    Where preemption should already be disabled.
+DECLARE_EVENT_SYSCALL_CLASS in not present in our tree.
+> 
+> 2. trace_sched_switch() is called with interrupts disabled. So there
+>    should be no scheduling out in this trace event. So how did it get
+>    scheduled out in that trace event?
+Thank you for confirming that trace_sched_switch() should not be
+scheduled out.
+> 
+> I think there's something else going on.
+I will try my luck with CONFIG_DEBUG_PREEMPT to check for any
+preemption underflows. Any other idea what could be going on?
+> 
+> -- Steve
+> 
 > 
 >>
->>>
->>> Do I just keep the regmap references in this probe function and just
->>> move the clk_lucid_ole_pll_configure & qcom_branch_set_clk_en to the
->>> config struct?
->>>
->>> And similar for gcc, I can move the qcom_branch_set_clk_en calls there
->>> but the qcom_cc_register_rcg_dfs needs to be kept.
+>> Signed-off-by: Aditya Chillara <quic_achillar@quicinc.com>
+>> ---
+>> Change-Id: I787347a7db4554cfd2cb74e0fc985699f1824c92
+>> ---
+>>  include/trace/perf.h | 2 ++
+>>  1 file changed, 2 insertions(+)
 >>
->> Would you mind extnding struct qcom_cc_desc with args to call
->> qcom_cc_register_rcg_dfs() and call it from qcom_cc_really_probe()?
+>> diff --git a/include/trace/perf.h b/include/trace/perf.h
+>> index 5800d13146c3d0cdf4eb474a3bb895dd71753de4..76994a5d8c55f4ca071070ff551a53a84fb1d95c 100644
+>> --- a/include/trace/perf.h
+>> +++ b/include/trace/perf.h
+>> @@ -66,6 +66,8 @@ perf_trace_##call(void *__data, proto)					\
+>>  	int __data_size;						\
+>>  	int rctx;							\
+>>  									\
+>> +	guard(preempt_notrace)();		\
+>> +									\
+>>  	__data_size = trace_event_get_offsets_##call(&__data_offsets, args); \
+>>  									\
+>>  	head = this_cpu_ptr(event_call->perf_events);			\
+>>
+>> ---
+>> base-commit: 70575e77839f4c5337ce2653b39b86bb365a870e
+>> change-id: 20250630-fix-perf-trace-null-access-9661f910df72
+>>
+>> Best regards,
 > 
-> Something like this? Not quite sure when (in what order) this should be
-> called, is that place fine?
-> 
-> I'd include a patch then in the v2 of this series.
-> 
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index b3838d885db2..d53f290c6121 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -390,6 +390,14 @@ int qcom_cc_really_probe(struct device *dev,
->  			goto put_rpm;
->  	}
->  
-> +	if (desc->dfs_rcgs && desc->num_dfs_rcgs) {
-> +		ret = qcom_cc_register_rcg_dfs(regmap,
-> +					       desc->dfs_rcgs,
-> +					       desc->num_dfs_rcgs);
-> +		if (ret)
-> +			goto put_rpm;
-> +	}
-
-These were previously registered a bit earlier, but this should
-be good as well
-
-Konrad
 
