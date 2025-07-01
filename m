@@ -1,221 +1,296 @@
-Return-Path: <linux-kernel+bounces-710558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA56AEEDE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:41:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE647AEEDEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF906188C8F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 05:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FF687A19CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 05:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0D2218ADC;
-	Tue,  1 Jul 2025 05:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008CC22DFA5;
+	Tue,  1 Jul 2025 05:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="t+J2CdZT"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2089.outbound.protection.outlook.com [40.107.95.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAgkZKYu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FD723ABAA
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 05:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751348471; cv=fail; b=lDkc0/aXcjZgkqGqPDxt6LRiclEbw+RD1/L6/wRBya65BGISsY4q2GnUK5HB3Pq6vA4h65+3ZJrIVxGwAO0DCD+WoLUs/zvyQbj2pqYOK0T0mh5wuKfWSlVsiZWn5r4M+lBG7t93L1dQys+Jkw5OTbqhwVYZMS2A8DfcS74Zc8g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751348471; c=relaxed/simple;
-	bh=ucr7/cPFO3kX54Uk7awsdTBdwlYjevM9JA65BDZqb38=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q8sAGltmxk+hejvj74mjPLOiJhQQfEUr4a22AaOBoICtbET+6/k1BLBuu0q/fuatDGmjqPcLem5w67SA8NY7o3K1GlMUr+VDa4g/j9twv2CwFZwPMlpAMPwwfZJM/lRrUjlaK8A/IvF+qSYB2BY28nQAN7revhrkHSlLf+2HtZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=t+J2CdZT; arc=fail smtp.client-ip=40.107.95.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XF1VTLV9dngG0G5RAlSSs0pSx+E775/y8d/xbCY8Mv8Vur5ZVfugIYTRXW39l80paQl0eJmSIdHZevNaJVVvMltYbK6bMes/5xedASLdpynr8fFfcsbSbw3DjCYj9t7w/9TcoiTGt6UK9x2lyC6l6UaalM1rnlAgzHNSzQBp00xNsCqtuozCbxE00Yw6XKjyHGqmRV3EcrPKtYOshTzVmrRYV+yk5RGP0GKkGjBbN/8m62etqJmFeWNYquQ6YSuS5Z4Ay9XjT/4Cow8+OX9mjlS/zJBXdt/lPhT6wnb3X+iwTEnPVoz569RXZLd8kw0F+D2JEsUTlPIydcYXQTmq7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ivaEraUrsYkoqahEWIOx1bWTSCv64cNSsy1Ilt+x1dY=;
- b=QUjwfBF+56XRz8/NFR3SLmNBSWYX5msC3s7i81Vtd2cpho9t8T6AtCu6dprD6n3WDPdjs8oZ0gSlPtCbH29rLG5OxyETj4D7EhTH4vCZoPGb51GYhY+mRS2aTvVWCzfdcLz1xlJM1nK785bZfJc2kadtZGxaI5dzciRJ7BG26I6oEXtu7gtAUegAlIDeGlczZPn7I6JYYLuO0C/DinkgNC+24yuRYe7l2J7cU8NMCbsYWETHTsChv4211hGYTatWNGb5UogSrxW8Tl1nreNlSyTnYUgvY2bZ1ofcK5tf/0BiW03Oxo/sBUepQKpS5ksUBxUvtJKb0tzctPecJQigQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ivaEraUrsYkoqahEWIOx1bWTSCv64cNSsy1Ilt+x1dY=;
- b=t+J2CdZTWBdVRMczbF6bUYPvTXz1Q0qWj1I7t78mC5RJNAOCaI59Oazt+HzzwK4Ly2+1/xytvq1/rh5gxtHUhgMLOImyhy3waib0mfVLaBfHBhr8ZZZHhvTGXG8W/p4HdxtndPoaNHDWeo3my8Nw9gkRiSPGPuPVV6R6GZIyI/0=
-Received: from PH7P220CA0007.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::13)
- by IA1PR12MB7686.namprd12.prod.outlook.com (2603:10b6:208:422::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Tue, 1 Jul
- 2025 05:41:04 +0000
-Received: from SJ1PEPF000023D9.namprd21.prod.outlook.com
- (2603:10b6:510:326:cafe::83) by PH7P220CA0007.outlook.office365.com
- (2603:10b6:510:326::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.19 via Frontend Transport; Tue,
- 1 Jul 2025 05:41:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023D9.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8922.1 via Frontend Transport; Tue, 1 Jul 2025 05:41:04 +0000
-Received: from amd.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 1 Jul
- 2025 00:41:00 -0500
-From: Akshay Gupta <akshay.gupta@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <arnd@arndb.de>, <shyam-sundar.s-k@amd.com>,
-	<gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
-	<naveenkrishna.chatradhi@amd.com>, <anand.umarji@amd.com>, Akshay Gupta
-	<akshay.gupta@amd.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH v3 2/2] misc: amd-sbi: Address copy_to/from_user() warning reported in smatch
-Date: Tue, 1 Jul 2025 05:40:41 +0000
-Message-ID: <20250701054041.373358-2-akshay.gupta@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250701054041.373358-1-akshay.gupta@amd.com>
-References: <20250701054041.373358-1-akshay.gupta@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378D11442F4;
+	Tue,  1 Jul 2025 05:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751348620; cv=none; b=ui5xKZqOS7wLZ5GnNOSMjLptGpBsxsv4UjOh98uL3qsSHYh6c7EHKuiKeWDm3XpG+ZHuyZDqOEQBvFn8m4qMiNaNZbKaotBcc5OqSRRlrUbLdpEAVVg62jCfKhCxiqcBwdb5cDcMC7/SdbfqQk8yvo7wiTj7xBI6nMcKQIF9ngo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751348620; c=relaxed/simple;
+	bh=giPZsywmdagr4kvRiGurSj79VhU8gLdO64p2gc9hhy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KBAv6RlWy4lyNco8Zh8FjJfIDzvOXtwWDGP4137IpgYDpHuQiiqAI5qc61mg/5EppXCErFXs3acFkoZ/vCbJB0ul15WdkMLlltPIfvyCFRcSJfAWjC9Z+VGjrud+JIV01gMAtZ5bKb2fWqRTZHokgK4A3IgpCq9AT/1PoEuMxeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAgkZKYu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E993C4CEEB;
+	Tue,  1 Jul 2025 05:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751348619;
+	bh=giPZsywmdagr4kvRiGurSj79VhU8gLdO64p2gc9hhy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cAgkZKYuhlaJG6ZtRFebXYb6EHheh0EI3KYS1XzHjO+dkCenj1OPBgKbWrP9s9HPU
+	 dIhWWLcNHfP+nGetrGFv3cM3DfZwX5TxYArN+H0iR9eWnUz6Bo/d5uiQl2U4aZxS/E
+	 mkYr52AFTmpyn5EmOyjS4yptkdQ4qfjWwPU1bPsN8QJwyJ/cESBaurRzzV6tQLWVuG
+	 InMMZHiDjOc5ydQMRIBwPS+uPd9rEEsdvpF1chLW+Q2l3ByFYxpL6D3uDK11SD8v9+
+	 XabJjl0PcEn+gsAyKhnH42x1hF190rkvcCQcS+EtlW5bvfXNLh8tpk6fV3TFUiQMOb
+	 OMTSmKGQC5jNg==
+Date: Mon, 30 Jun 2025 22:43:36 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Andi Kleen <ak@linux.intel.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Graham Woodward <graham.woodward@arm.com>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Chun-Tse Shao <ctshao@google.com>, Yujie Liu <yujie.liu@intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Levi Yun <yeoreum.yun@arm.com>, Howard Chu <howardchu95@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Matt Fleming <matt@readmodwrite.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Krzysztof =?utf-8?Q?=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>,
+	Zixian Cai <fzczx123@gmail.com>,
+	Steve Clevenger <scclevenger@os.amperecomputing.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
+	Martin Liska <martin.liska@hey.com>,
+	Martin =?utf-8?B?TGnFoWth?= <m.liska@foxlink.cz>,
+	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 08/23] perf record: Make --buildid-mmap the default
+Message-ID: <aGN1iPzoeNVxW5fQ@google.com>
+References: <20250628045017.1361563-1-irogers@google.com>
+ <20250628045017.1361563-9-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D9:EE_|IA1PR12MB7686:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf5b1f5b-7d94-4a90-4385-08ddb861de90
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?X6bBfMJqaAaNo3ptj2Z8/MbIcg6ksqGCIYpNWm9/ri9boQMO6dIo5y7/h1pj?=
- =?us-ascii?Q?xwNOMv5VbZxVbU8SG6YEzHt2InPqo4rOMicEYk00vY+7CR8+rS5AAVH4Qot4?=
- =?us-ascii?Q?56rILKF3jMSBl4ATm4+D7uGxpVqJu8xMCVWc1nUbeLqv8Byj8F2ZRUVDJ2x0?=
- =?us-ascii?Q?HAdkeqd/xSg0kUZfcHhHLGplp847oS6nIQf6ro0tSGTNKkBgF66FhHgsa6Lh?=
- =?us-ascii?Q?7JCHHi2liCaz8OcUnoeGGVpZr+efHKDqXdq2nMiWTwvzc8S1726BBNFofjbr?=
- =?us-ascii?Q?sF7n57Hi3yM/AU71V5SHX3XGomAr4bx2Sn+yHP6hV5B5urwbMsUxKOe2ZrXg?=
- =?us-ascii?Q?zarl6SgEg87ioGbYCxejI9iJ/ZrgkFCTQYjVSw+6SiNVpxO+xhQyOigJ5wi3?=
- =?us-ascii?Q?7EsGBeqmWuhaoK+AySGLyY+/1PLyplY/CXGvcL0bD40dTs2WQH4ITQW6o0ke?=
- =?us-ascii?Q?mEfZidxCaJohueDN3xHDN+LA5g5D7DTzoifDteNNrf/EHxHrVJOIjZ8Pctrf?=
- =?us-ascii?Q?xiFGUDvlt/9NyjBzjR0nL3gVB0ZiYfEl0KPZn8eGpWPEu6K9xsUcghSULMPj?=
- =?us-ascii?Q?cOfMeSGmH5K2NcZR3VEqxftkSQvqGYz7mf6HkNlkIinoqgku1lStxXvmd7Bv?=
- =?us-ascii?Q?W1IRahMEaKd8Ny/O37ClTKzSgTFmWT/Hgk8BXSU0NdZPPKLN3jNcnzniAztr?=
- =?us-ascii?Q?RYXKAmuUp6JnynBRuydgNNPzxVPSScUsgP6KrDolAjgXqOLCB+0gANJyEc/s?=
- =?us-ascii?Q?3AJacNauypvv3qWRI+q+uCGgxjQfwbJxPMSSHtr/sgKDnnHuSOV5zNgEEoOA?=
- =?us-ascii?Q?O3Gt7RpGvX45qwVWU+TsknYVI3YQFAtHask/b8IowyTLlfWugqPSgsGMZMWd?=
- =?us-ascii?Q?EzRH2yQIr0xILd9QpMd6UTKnw0K6aJ3daYvtYvtilXI6n4a160TxT+2oDGYG?=
- =?us-ascii?Q?Tvc8vYOe936JMGhaTvzNrNnFeCfceFA7V22pUwC2TVez20lcyBsdnCWEqeJp?=
- =?us-ascii?Q?K2vnyyAv73r4OYedy0KfIh72Lo2q+KGggt+Txry6xTcF6Qvdz42I+36vTInA?=
- =?us-ascii?Q?s9q5xaq5xC2KJ08WahOI7XT2pgai2XKG8wLUZDMXIxR1S9gtsdG3likps/rV?=
- =?us-ascii?Q?ylWDkR0IAB7O+ICn/WZMVBLBGo1OvUCGf7LXKQ+gaJioE/uUhq9Qyi58DUvr?=
- =?us-ascii?Q?Km0+ANGTTaZaPtIDwoNXqzLWvevKH2af9c5hYOwD00vNaPtBGsh8WskkYbkU?=
- =?us-ascii?Q?RGAeZhPMnGrrHsR2GljcRCECn1MMhcgbaNJj7hcVAoFOgVszxLUCh5g1wPek?=
- =?us-ascii?Q?6rA71TNabI179yCgUuFG+8TObRd/oaaOzYGNNNH8AjA8teFIReV8T6DkKB3t?=
- =?us-ascii?Q?SIst71yMHV7jZt2Aa0FN1Vt32KxbDcA9ENuhRCA5XrrQc4xTXW60hDTvrJs0?=
- =?us-ascii?Q?Ry2iXfIJKkFhd/qisjgR/Zy2bwWjRq/h2NF0uXMMQNYDC2ZmNW+GPQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 05:41:04.0417
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf5b1f5b-7d94-4a90-4385-08ddb861de90
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D9.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7686
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250628045017.1361563-9-irogers@google.com>
 
-Smatch warnings are reported for below commit,
+On Fri, Jun 27, 2025 at 09:50:02PM -0700, Ian Rogers wrote:
+> Support for build IDs in mmap2 perf events has been present since
+> Linux v5.12:
+> https://lore.kernel.org/lkml/20210219194619.1780437-1-acme@kernel.org/
+> Build ID mmap events don't avoid the need to inject build IDs for DSO
+> touched by samples as the build ID cache is populated by perf
+> record. They can avoid some cases of symbol mis-resolution caused by
+> the file system changing from when a sample occurred and when the DSO
+> is sought. To disable build ID scanning
+> 
+> Unlike the --buildid-mmap option, this doesn't disable the build ID
+> cache but it does disable the processing of samples looking for DSOs
+> to inject build IDs for. To disable the build ID cache the -B
+> (--no-buildid) option should be used.
 
-Commit bb13a84ed6b7 ("misc: amd-sbi: Add support for CPUID protocol")
-from Apr 28, 2025 (linux-next), leads to the following Smatch static
-checker warning:
+I think we need to add a config option to control this behavior later.
+Let me think about this more.
 
-drivers/misc/amd-sbi/rmi-core.c:376 apml_rmi_reg_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-drivers/misc/amd-sbi/rmi-core.c:394 apml_mailbox_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-drivers/misc/amd-sbi/rmi-core.c:411 apml_cpuid_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
-drivers/misc/amd-sbi/rmi-core.c:428 apml_mcamsr_xfer() warn: maybe return -EFAULT instead of the bytes remaining?
+> 
+> Making this option the default was raised on the list in:
+> https://lore.kernel.org/linux-perf-users/CAP-5=fXP7jN_QrGUcd55_QH5J-Y-FCaJ6=NaHVtyx0oyNh8_-Q@mail.gmail.com/
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-record.c        | 33 +++++++++++++++++++-----------
+>  tools/perf/util/symbol_conf.h      |  2 +-
+>  tools/perf/util/synthetic-events.c | 16 +++++++--------
+>  3 files changed, 30 insertions(+), 21 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 53971b9de3ba..29428fb8ac67 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -171,6 +171,7 @@ struct record {
+>  	bool			no_buildid_cache_set;
+>  	bool			buildid_all;
+>  	bool			buildid_mmap;
+> +	bool			buildid_mmap_set;
+>  	bool			timestamp_filename;
+>  	bool			timestamp_boundary;
+>  	bool			off_cpu;
+> @@ -1811,6 +1812,7 @@ record__finish_output(struct record *rec)
+>  			data->dir.files[i].size = lseek(data->dir.files[i].fd, 0, SEEK_CUR);
+>  	}
+>  
+> +	/* Buildid scanning disabled or build ID in kernel and synthesized map events. */
+>  	if (!rec->no_buildid) {
+>  		process_buildids(rec);
+>  
+> @@ -3005,6 +3007,8 @@ static int perf_record_config(const char *var, const char *value, void *cb)
+>  			rec->no_buildid = true;
+>  		else if (!strcmp(value, "mmap"))
+>  			rec->buildid_mmap = true;
+> +		else if (!strcmp(value, "no-mmap"))
+> +			rec->buildid_mmap = false;
+>  		else
+>  			return -1;
+>  		return 0;
+> @@ -3411,6 +3415,7 @@ static struct record record = {
+>  		.synth               = PERF_SYNTH_ALL,
+>  		.off_cpu_thresh_ns   = OFFCPU_THRESH,
+>  	},
+> +	.buildid_mmap = true,
+>  };
+>  
+>  const char record_callchain_help[] = CALLCHAIN_RECORD_HELP
+> @@ -3577,8 +3582,8 @@ static struct option __record_options[] = {
+>  		   "file", "vmlinux pathname"),
+>  	OPT_BOOLEAN(0, "buildid-all", &record.buildid_all,
+>  		    "Record build-id of all DSOs regardless of hits"),
+> -	OPT_BOOLEAN(0, "buildid-mmap", &record.buildid_mmap,
+> -		    "Record build-id in map events"),
+> +	OPT_BOOLEAN_SET(0, "buildid-mmap", &record.buildid_mmap, &record.buildid_mmap_set,
+> +			"Legacy record build-id in map events option which is now the default. Behaves indentically to --no-buildid. Disable with --no-buildid-mmap"),
 
-copy_to/from_user() returns number of bytes, not copied.
-In case data not copied, return "-EFAULT".
-Additionally, fixes the "-EPROTOTYPE" error return as intended.
+Looks too long.  Maybe just like below:
+  "Record build-id in mmap events and skip build-id processing."
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aDVyO8ByVsceybk9@stanley.mountain/
-Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
----
-Changes from v2:
- - Update commit message to add, "fix the -EPROTOTYPE error return".
+The detailed explanation can go to the documentation.
 
-Changes from v1:
- - Split patch as per Greg's suggestion
 
- drivers/misc/amd-sbi/rmi-core.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+>  	OPT_BOOLEAN(0, "timestamp-filename", &record.timestamp_filename,
+>  		    "append timestamp to output filename"),
+>  	OPT_BOOLEAN(0, "timestamp-boundary", &record.timestamp_boundary,
+> @@ -4108,19 +4113,23 @@ int cmd_record(int argc, const char **argv)
+>  		record.opts.record_switch_events = true;
+>  	}
+>  
+> +	if (!rec->buildid_mmap) {
+> +		pr_debug("Disabling build id in synthesized mmap2 events.\n");
+> +		symbol_conf.no_buildid_mmap2 = true;
+> +	} else if (rec->buildid_mmap_set) {
+> +		/*
+> +		 * Explicitly passing --buildid-mmap disables buildid processing
+> +		 * and cache generation.
+> +		 */
+> +		rec->no_buildid = true;
+> +	}
+> +	if (rec->buildid_mmap && !perf_can_record_build_id()) {
+> +		pr_warning("Missing support for build id in kernel mmap events. Disable this warning with --no-buildid-mmap\n");
 
-diff --git a/drivers/misc/amd-sbi/rmi-core.c b/drivers/misc/amd-sbi/rmi-core.c
-index 3570f3b269a9..9048517c088c 100644
---- a/drivers/misc/amd-sbi/rmi-core.c
-+++ b/drivers/misc/amd-sbi/rmi-core.c
-@@ -372,7 +372,8 @@ static int apml_rmi_reg_xfer(struct sbrmi_data *data,
- 	mutex_unlock(&data->lock);
- 
- 	if (msg.rflag && !ret)
--		return copy_to_user(arg, &msg, sizeof(struct apml_reg_xfer_msg));
-+		if (copy_to_user(arg, &msg, sizeof(struct apml_reg_xfer_msg)))
-+			return -EFAULT;
- 	return ret;
- }
- 
-@@ -390,7 +391,9 @@ static int apml_mailbox_xfer(struct sbrmi_data *data, struct apml_mbox_msg __use
- 	if (ret && ret != -EPROTOTYPE)
- 		return ret;
- 
--	return copy_to_user(arg, &msg, sizeof(struct apml_mbox_msg));
-+	if (copy_to_user(arg, &msg, sizeof(struct apml_mbox_msg)))
-+		return -EFAULT;
-+	return ret;
- }
- 
- static int apml_cpuid_xfer(struct sbrmi_data *data, struct apml_cpuid_msg __user *arg)
-@@ -407,7 +410,9 @@ static int apml_cpuid_xfer(struct sbrmi_data *data, struct apml_cpuid_msg __user
- 	if (ret && ret != -EPROTOTYPE)
- 		return ret;
- 
--	return copy_to_user(arg, &msg, sizeof(struct apml_cpuid_msg));
-+	if (copy_to_user(arg, &msg, sizeof(struct apml_cpuid_msg)))
-+		return -EFAULT;
-+	return ret;
- }
- 
- static int apml_mcamsr_xfer(struct sbrmi_data *data, struct apml_mcamsr_msg __user *arg)
-@@ -424,7 +429,9 @@ static int apml_mcamsr_xfer(struct sbrmi_data *data, struct apml_mcamsr_msg __us
- 	if (ret && ret != -EPROTOTYPE)
- 		return ret;
- 
--	return copy_to_user(arg, &msg, sizeof(struct apml_mcamsr_msg));
-+	if (copy_to_user(arg, &msg, sizeof(struct apml_mcamsr_msg)))
-+		return -EFAULT;
-+	return ret;
- }
- 
- static long sbrmi_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
--- 
-2.25.1
+This can be in two lines.  I can make the changes if you're ok.
 
+Thanks,
+Namhyung
+
+
+> +		rec->buildid_mmap = false;
+> +	}
+>  	if (rec->buildid_mmap) {
+> -		if (!perf_can_record_build_id()) {
+> -			pr_err("Failed: no support to record build id in mmap events, update your kernel.\n");
+> -			err = -EINVAL;
+> -			goto out_opts;
+> -		}
+> -		pr_debug("Enabling build id in mmap2 events.\n");
+> -		/* Enable mmap build id synthesizing. */
+> -		symbol_conf.buildid_mmap2 = true;
+>  		/* Enable perf_event_attr::build_id bit. */
+>  		rec->opts.build_id = true;
+> -		/* Disable build id cache. */
+> -		rec->no_buildid = true;
+>  	}
+>  
+>  	if (rec->opts.record_cgroup && !perf_can_record_cgroup()) {
+> diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
+> index cd9aa82c7d5a..7a80d2c14d9b 100644
+> --- a/tools/perf/util/symbol_conf.h
+> +++ b/tools/perf/util/symbol_conf.h
+> @@ -43,7 +43,7 @@ struct symbol_conf {
+>  			report_individual_block,
+>  			inline_name,
+>  			disable_add2line_warn,
+> -			buildid_mmap2,
+> +			no_buildid_mmap2,
+>  			guest_code,
+>  			lazy_load_kernel_maps,
+>  			keep_exited_threads,
+> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+> index 69b98023ce74..638d7dd7fa4b 100644
+> --- a/tools/perf/util/synthetic-events.c
+> +++ b/tools/perf/util/synthetic-events.c
+> @@ -532,7 +532,7 @@ int perf_event__synthesize_mmap_events(const struct perf_tool *tool,
+>  		event->mmap2.pid = tgid;
+>  		event->mmap2.tid = pid;
+>  
+> -		if (symbol_conf.buildid_mmap2)
+> +		if (!symbol_conf.no_buildid_mmap2)
+>  			perf_record_mmap2__read_build_id(&event->mmap2, machine, false);
+>  
+>  		if (perf_tool__process_synth_event(tool, event, machine, process) != 0) {
+> @@ -690,7 +690,7 @@ static int perf_event__synthesize_modules_maps_cb(struct map *map, void *data)
+>  		return 0;
+>  
+>  	dso = map__dso(map);
+> -	if (symbol_conf.buildid_mmap2) {
+> +	if (!symbol_conf.no_buildid_mmap2) {
+>  		size = PERF_ALIGN(dso__long_name_len(dso) + 1, sizeof(u64));
+>  		event->mmap2.header.type = PERF_RECORD_MMAP2;
+>  		event->mmap2.header.size = (sizeof(event->mmap2) -
+> @@ -734,9 +734,9 @@ int perf_event__synthesize_modules(const struct perf_tool *tool, perf_event__han
+>  		.process = process,
+>  		.machine = machine,
+>  	};
+> -	size_t size = symbol_conf.buildid_mmap2
+> -		? sizeof(args.event->mmap2)
+> -		: sizeof(args.event->mmap);
+> +	size_t size = symbol_conf.no_buildid_mmap2
+> +		? sizeof(args.event->mmap)
+> +		: sizeof(args.event->mmap2);
+>  
+>  	args.event = zalloc(size + machine->id_hdr_size);
+>  	if (args.event == NULL) {
+> @@ -1124,8 +1124,8 @@ static int __perf_event__synthesize_kernel_mmap(const struct perf_tool *tool,
+>  						struct machine *machine)
+>  {
+>  	union perf_event *event;
+> -	size_t size = symbol_conf.buildid_mmap2 ?
+> -			sizeof(event->mmap2) : sizeof(event->mmap);
+> +	size_t size = symbol_conf.no_buildid_mmap2 ?
+> +			sizeof(event->mmap) : sizeof(event->mmap2);
+>  	struct map *map = machine__kernel_map(machine);
+>  	struct kmap *kmap;
+>  	int err;
+> @@ -1159,7 +1159,7 @@ static int __perf_event__synthesize_kernel_mmap(const struct perf_tool *tool,
+>  		event->header.misc = PERF_RECORD_MISC_GUEST_KERNEL;
+>  	}
+>  
+> -	if (symbol_conf.buildid_mmap2) {
+> +	if (!symbol_conf.no_buildid_mmap2) {
+>  		size = snprintf(event->mmap2.filename, sizeof(event->mmap2.filename),
+>  				"%s%s", machine->mmap_name, kmap->ref_reloc_sym->name) + 1;
+>  		size = PERF_ALIGN(size, sizeof(u64));
+> -- 
+> 2.50.0.727.gbf7dc18ff4-goog
+> 
 
