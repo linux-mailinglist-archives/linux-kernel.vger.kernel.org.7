@@ -1,140 +1,300 @@
-Return-Path: <linux-kernel+bounces-710883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FE9AEF25E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E07AEF280
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64BA179397
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:04:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD3F447256
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D780526D4E2;
-	Tue,  1 Jul 2025 09:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749DC26E154;
+	Tue,  1 Jul 2025 09:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+gHXcV8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zrim28Nv"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AED1FDD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EE026C387
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751360579; cv=none; b=kch/xNaKxsImWliezv3v4aJ0e8OVjJ34kLaHZYLgATlci1oUd3vJXETlRUigI5QTy4CmZBA07UYhW0jLNaGz5k6AS4spShjV/Sd5L3w+Ks6GtE3BSRACmTJj4iEYRpc7feV3z4Il7qjSnbto+zkBVrTFq9a0kXPe8C0wuJ7ESxM=
+	t=1751360682; cv=none; b=NTN5I2ai82p8mBenl7EbHQVCftdHsPjqeXj+8qKdyK9OTbBlTrWkIIC2lYtjEXRSmrE7SL3idxPIjjLh/XwGRxGDYX1RY/F5KMmT/4Ru2bS8QloA+4syRlxamzE5ClPrY7eh5f29g7EBpcdI9qwlbdh9Dlf20wqBL9V1Fx1vo78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751360579; c=relaxed/simple;
-	bh=1CRUAXr5GBbRdmumb0+cV0Od7MCxxqW2fhnqqDHHk8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxDYgVOJqxcs4ejrNr5V4VIZ4Er5seu+PNeZstB8+OhhrpzInGUcJ5eoLwlU3BqVsEnN2AvrCx8/w62jeNWxLtz/7SU3zm9mrJSKUjI3x0yFNlNGMsWwYiwQ8zzntQ7ERB64E84ZtkWBIzoFolevVU0ELC3sDAm1EBSpgJtVkcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+gHXcV8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751360576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=odFmyP7U2sVYXt+ILmpIyMRKTHdQ4Z+Ben4YpGt3RBA=;
-	b=Q+gHXcV88/pQIu1kcI4uU1ZtbqLwG6jQDQw7WkWsAtQgFx6Ftg1WbMqueMTf7Kw2EiSOJM
-	1kCyrQKFST4ByxR6QRkZOQMc9SWFVpBuzrkpF269h/VjfptgJJi3KwXYwcK6+8+HWOyEdo
-	ikpEsIXlJUHIO56Q54iyNKaMUFQ0f0c=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-LBLGkF0fPuaxYgpmrL4SWA-1; Tue, 01 Jul 2025 05:02:55 -0400
-X-MC-Unique: LBLGkF0fPuaxYgpmrL4SWA-1
-X-Mimecast-MFC-AGG-ID: LBLGkF0fPuaxYgpmrL4SWA_1751360574
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a6d1394b07so3450810f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:02:54 -0700 (PDT)
+	s=arc-20240116; t=1751360682; c=relaxed/simple;
+	bh=o28C31JrBgAZEzAB1O4WLZDzarIKJHFMpSuZuTBwEc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rNrwoTDS6SfIfY4kXIma69Wl0PX00iFVUELHJIco5KbmmR25WoMTep4v5iA41b+fGkvbF79uP/1oUcjKwttLtTv0Z2TOSPdoVeFeuI+8Mdp+EYBh7A0ARPEDkm48GlpgSC5PC8KNaol1Q8s8HsYc90QejWDM4a+AJBWkmdr2mwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Zrim28Nv; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-553cf020383so6037174e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1751360679; x=1751965479; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkMPKxlbdTBTKL3fl2oC7mwIlMxs96dPn8+iiFtM8yw=;
+        b=Zrim28Nv00nzmp4uRo1Ibe+axaeRHmcg+ivcmqIMcgWa8xFVkursiUjEyz7vYIKaF0
+         nXmS+nqQzm1V7j8thEe8pZjiKDErFV4Q9RPsSAUeInCdSZYN09HFC2N9AT07z1OCtfl7
+         aPimB5SU42eTpn19hkY/kPJ4fokv7x+gWRdts=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751360574; x=1751965374;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=odFmyP7U2sVYXt+ILmpIyMRKTHdQ4Z+Ben4YpGt3RBA=;
-        b=YhFWvuKG2rJQn9KJOkZW2K2rwI5uPYorNuqHBrcJLK9C7+Ww79NM8PfdH2ns7oi/NQ
-         i6HMoyRDEIS4UrkQKm1NIrhOJlMAmEyuqT3ihKya7pSXpBxPPpy0DN6Rx76taI4YRK8M
-         4Zea1olQVLB7u16qhQXq3y10Ndn+i6DcGSs9z0hGZjuPzWj/0mUWkGvD5gvvd3l4W65v
-         6xXlHBbWd0+rbDG9oxuN+LgOPeHCT1tO/lOzm1UxtEPAu4hQqWsiMy2IGSBMukQHL4i8
-         WFxpNOZr3p3SZY8CXJQUxQIVvBJflz04MC2ngSbBXsOmCXmCjjIPscJjQKgJRcwOGNZv
-         qhGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHjHHfBLKV533cEoPdpYLasTY0ZmHEYsNzr91Ubkjc3rCPVc1zIKbCElo31D+cfB/rlqKPicFpG1PoHkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMQEcBrwQcWTaYwU9vq5PuSC12ZNBSCAzXkHajVZZJceJlWdEo
-	wr8Qirq8NXXxQt38umxiglcXlj1xFrc5FKf1xWAvMPPNKoTuUhBRQUHy4fQN/kkFtMMIXet5Q18
-	MjqJgPxDuR1S7uQrirA1EAbRROaC8Owzdz6WW/J8acX33up2za1xzQwYGxZdXaoWqJw==
-X-Gm-Gg: ASbGnctrsiTlWVV3adkuO9bcQkKoR6qKntLJ2t8wX0AHq0vVuB0vAs7Mm7weQ8LCdqD
-	otze9Vg0znVEbFZFfw9tPzk8KZOd3oUlKa0+q84ewz0TzcM9/yhRKhVUVAnlMJZdQnw070j1I6g
-	zT5gUvuJoB/ObZLoEkmK0VV8AkUIMmb5yyUj1/KRZg3ARvkLrkNeqpTyktEJeodSOuEzi6z+Nx0
-	tcIzz3zJFLGv3zR7m5dXpla6KxWaRWU2IdE/09lEEOzm6qH55Wy+KBEFnrL0ITBe5b/baRSIN5S
-	y6lY/QT6Em8pqKNOkEjogKQwP9BadY9auQe5tTViFbJfv/lkL44tO3Fbh0Kx8zi6lh0bkQ==
-X-Received: by 2002:adf:f6d1:0:b0:3a5:52cc:5e29 with SMTP id ffacd0b85a97d-3a90d0d7317mr11929796f8f.7.1751360573695;
-        Tue, 01 Jul 2025 02:02:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYRKtwQ5aZnc0XqPhfEJjz3LC5qLMurZ/9vUE7Xlx2VhB/BrreyXJkwS9hDRJ79YaRjeUeIA==
-X-Received: by 2002:adf:f6d1:0:b0:3a5:52cc:5e29 with SMTP id ffacd0b85a97d-3a90d0d7317mr11929762f8f.7.1751360573210;
-        Tue, 01 Jul 2025 02:02:53 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:247b:5810:4909:7796:7ec9:5af2? ([2a0d:3344:247b:5810:4909:7796:7ec9:5af2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4064b1sm161825945e9.29.2025.07.01.02.02.51
+        d=1e100.net; s=20230601; t=1751360679; x=1751965479;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xkMPKxlbdTBTKL3fl2oC7mwIlMxs96dPn8+iiFtM8yw=;
+        b=eLIuryFLmwgu4+S8w7WlsvJP94CqEong1gjU2dKg6LBKE/KLyOCwrFqJkMVD8WdKnU
+         cao0eKOMze/g7Ve4HLH30/x07+0+L9pXzRrqJtHMqL3aNSMVyylRY6BzXkETm1Mghuzo
+         gS3kU6nEbdUuIBH0imxkEvszOvXY7AaRZc9kog410gqUFIXdx6rpmXNcspKIk2eOKCS/
+         zHt/hMt1zetaUke7NhzMZ2vSsW3D23wP/aA1sgD86H2bBjPX68rtW1i3F+BsP/K0S8jF
+         5QgLzAAlNrlEr+IN6FSPhViMv1VrRJIZ9dr3u3WjZ+Qkhd4R69u90cgp6k6qJMf8Y9/x
+         za/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+aPytYqvQPNIgAZlQ8hAiinClb7YU/IVWDOAFZDwq9gFZlak9+lAtxx1yb504C5hT4Xw/AlPRy5tTxXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRZtGaxHjGyzXsqBEQRRiRgF4sulK0Gj1EIihxqUOA1mgZ3Rxl
+	68AiDqobkBQGcCXemEOGtjXE7CVdk/SjAtOQ7pQEX4oc/oMZmf8Xf4ZmM9uo/Lrx1pIW7k6dK4F
+	AHbI=
+X-Gm-Gg: ASbGncvzTKZuNLqM9017gyQxD4eDby9Q3UZe85ya2RBDNaq/Cl5N3jpyaBHPcvA3udX
+	rVzyegxqPwB+jPc4bzQfAJDBa5GpoBgAAKcTfJTmZlSW3fzMhk4EQp57WkUbvDa54iWDx6dusQb
+	UiNs2vmjSpM/IVB/QOO4woc4l9UEtE/9MfhU5jeI8Jf4otwieOp3F2ptP1UjiERhcjLvqdLWoW9
+	pep4w2GQI68hT7ZB9m17TqGuPtU0IjsLWhy8BlHAFXWIDXHg7pYebWhPVvXug8jJCOLicYADhI3
+	Iq7a5jhfRgX1fzFjT+RfFhuBC5v+aTiEYmKd+F1fg+rX1+EgCNaVcFESWbRJcxFt21alusn5YIL
+	jQIjxH9Y0WEYNroKTv2tfF9y1
+X-Google-Smtp-Source: AGHT+IFxXqtb41iqP/HlKyJS5Po6p4JyNJ5fEzC+uM+4RevHHjItATGjx38OjDwuahpESpt3rICTbA==
+X-Received: by 2002:a05:6512:224b:b0:553:25f4:695f with SMTP id 2adb3069b0e04-5550b889f53mr5151612e87.20.1751360678839;
+        Tue, 01 Jul 2025 02:04:38 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2b95c2sm1744618e87.129.2025.07.01.02.04.38
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 02:02:52 -0700 (PDT)
-Message-ID: <c405f957-0f88-4c88-98d7-3a27e5230fc8@redhat.com>
-Date: Tue, 1 Jul 2025 11:02:50 +0200
+        Tue, 01 Jul 2025 02:04:38 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-553cf020383so6037155e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:04:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPDzfyDoebSE/XJkPxhFqhPobzvULhPJfswsbXgNED4Ahg70pv6xFzNTcxDYYJS5SUSvvJs7s1YRqmFUY=@vger.kernel.org
+X-Received: by 2002:a05:6512:6c6:b0:553:cf7d:7283 with SMTP id
+ 2adb3069b0e04-5550b9ee0bemr5279219e87.33.1751360678000; Tue, 01 Jul 2025
+ 02:04:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 0/9] net: Remove unused function parameters in
- skbuff.c
-To: Michal Luczaj <mhal@rbox.co>, Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
- David Ahern <dsahern@kernel.org>, Boris Pismenny <borisp@nvidia.com>,
- John Fastabend <john.fastabend@gmail.com>,
- Ayush Sawal <ayush.sawal@chelsio.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
- "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>,
- Wen Gu <guwen@linux.alibaba.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-s390@vger.kernel.org
-References: <20250626-splice-drop-unused-v2-0-3268fac1af89@rbox.co>
- <20250630181847.525a0ad6@kernel.org>
- <beea4b9f-657f-4f98-a853-e40a503e2274@rbox.co>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <beea4b9f-657f-4f98-a853-e40a503e2274@rbox.co>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250605-uvc-orientation-v2-0-5710f9d030aa@chromium.org>
+ <20250605-uvc-orientation-v2-2-5710f9d030aa@chromium.org> <1ac49bd3-1b65-4611-8c90-92fb2c2ffd4a@linux.intel.com>
+In-Reply-To: <1ac49bd3-1b65-4611-8c90-92fb2c2ffd4a@linux.intel.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 1 Jul 2025 11:04:25 +0200
+X-Gmail-Original-Message-ID: <CANiDSCuRLVtT54ZxxAh6031OLg422VApsocvOTCOnavQgifTaA@mail.gmail.com>
+X-Gm-Features: Ac12FXx3IMpNO_E1OyIfv6p5Mqhpq1vAIqrVG416DGyoC75C25dyBDZ2PZqW7zo
+Message-ID: <CANiDSCuRLVtT54ZxxAh6031OLg422VApsocvOTCOnavQgifTaA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/12] media: v4l: fwnode: Support ACPI's _PLD for v4l2_fwnode_device_parse
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/1/25 9:27 AM, Michal Luczaj wrote:
-> On 7/1/25 03:18, Jakub Kicinski wrote:
->> On Thu, 26 Jun 2025 10:33:33 +0200 Michal Luczaj wrote:
->>> Couple of cleanup patches to get rid of unused function parameters around
->>> skbuff.c, plus little things spotted along the way.
->>>
->>> Offshoot of my question in [1], but way more contained. Found by adding
->>> "-Wunused-parameter -Wno-error" to KBUILD_CFLAGS and grepping for specific
->>> skbuff.c warnings.
->>
->> I feel a little ambivalent about the removal of the flags arguments.
->> I understand that they are unused now, but theoretically the operation
->> as a whole has flags so it's not crazy to pass them along.. Dunno.
-> 
-> I suspect you can say the same about @gfp. Even though they've both became
-> irrelevant for the functions that define them. But I understand your
-> hesitation. Should I post v3 without this/these changes?
+Hi Sakari
 
-Yes please, I think it would make the series less controversial.
+Thanks for your review!
 
-Also I feel like the gfp flag removal is less controversial, as is IMHO
-reasonable that skb_splice_from_iter() would not allocate any memory.
+On Mon, 30 Jun 2025 at 09:06, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Ricardo,
+>
+> Thanks for the update.
+>
+> On 6/5/25 20:52, Ricardo Ribalda wrote:
+> > Currently v4l2_fwnode_device_parse() obtains the orientation and
+> > rotation via fwnode properties.
+> >
+> > Extend the function to support as well ACPI devices with _PLD info.
+> >
+> > We give a higher priority to fwnode, because it might contain quirks
+> > injected via swnodes.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >   drivers/media/v4l2-core/v4l2-fwnode.c | 85 ++++++++++++++++++++++++++++++++---
+> >   1 file changed, 79 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+> > index cb153ce42c45d69600a3ec4e59a5584d7e791a2a..379290ab3cfde74c8f663d61837a9a95011b5ae0 100644
+> > --- a/drivers/media/v4l2-core/v4l2-fwnode.c
+> > +++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+> > @@ -15,6 +15,7 @@
+> >    * Author: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> >    */
+> >   #include <linux/acpi.h>
+> > +#include <acpi/acpi_bus.h>
+> >   #include <linux/kernel.h>
+> >   #include <linux/mm.h>
+> >   #include <linux/module.h>
+> > @@ -807,16 +808,65 @@ int v4l2_fwnode_connector_add_link(struct fwnode_handle *fwnode,
+> >   }
+> >   EXPORT_SYMBOL_GPL(v4l2_fwnode_connector_add_link);
+> >
+> > -int v4l2_fwnode_device_parse(struct device *dev,
+> > -                          struct v4l2_fwnode_device_properties *props)
+> > +static int v4l2_fwnode_device_parse_acpi(struct device *dev,
+> > +                                      struct v4l2_fwnode_device_properties *props)
+> > +{
+> > +     struct acpi_pld_info *pld;
+> > +     int ret = 0;
+> > +
+> > +     if (!is_acpi_device_node(dev_fwnode(dev)))
+> > +             return 0;
+> > +
+> > +     if (!acpi_get_physical_device_location(ACPI_HANDLE(dev), &pld)) {
+> > +             dev_dbg(dev, "acpi _PLD call failed\n");
+>
+> I'd do:
+>
+> acpi_handle_debug(ACPI_HANDLE(dev), "cannot obtain _PLD\n");
+ack
+>
+> > +             return 0;
+> > +     }
+> > +
+> > +     if (props->orientation != V4L2_FWNODE_PROPERTY_UNSET) {
+> > +             switch (pld->panel) {
+> > +             case ACPI_PLD_PANEL_FRONT:
+> > +                     props->orientation = V4L2_FWNODE_ORIENTATION_FRONT;
+> > +                     break;
+> > +             case ACPI_PLD_PANEL_BACK:
+> > +                     props->orientation = V4L2_FWNODE_ORIENTATION_BACK;
+> > +                     break;
+> > +             case ACPI_PLD_PANEL_TOP:
+> > +             case ACPI_PLD_PANEL_LEFT:
+> > +             case ACPI_PLD_PANEL_RIGHT:
+> > +             case ACPI_PLD_PANEL_UNKNOWN:
+> > +                     props->orientation = V4L2_FWNODE_ORIENTATION_EXTERNAL;
+> > +                     break;
+> > +             default:
+> > +                     dev_dbg(dev, "Unknown _PLD panel val %d\n", pld->panel);
+>
+> Similarly:
+>
+> acpi_handle_debug(ACPI_HANDLE(dev), "invalid panel %u in _PLD\n",
+>                   pld->panel);
+>
+> > +                     ret = -EINVAL;
+>
+> Should this be an error or should we simply ignore it here (and maybe
+> use acpi_handle_warn())?
 
-Thanks,
+v4l2_fwnode_device_parse_of() returns -EINVAL for a similar situation,
+so I think it is better to be consistent and return -EINVAL here.
+But I agree that acpi_handle_warn() better suits here than _dbg.
 
-Paolo
+>
+> > +                     goto done;
+> > +             }
+> > +     }
+> > +
+> > +     if (props->rotation != V4L2_FWNODE_PROPERTY_UNSET) {
+> > +             switch (pld->rotation) {
+> > +             case 0 ... 7:
+> > +                     props->rotation = pld->rotation * 45;
+> > +                     break;
+> > +             default:
+> > +                     dev_dbg(dev, "Unknown _PLD rotation val %d\n", pld->panel);
+>
+> acpi_handle_debug(ACPI_HANDLE(dev), "invalid rotation %u in _PLD\n",
+>                   pld->rotation);
+>
+> > +                     ret = -EINVAL;
+> > +                     goto done;
+> > +             }
+> > +     }
+> > +
+> > +done:
+> > +     ACPI_FREE(pld);
+> > +     return ret;
+> > +}
+> > +
+> > +static int v4l2_fwnode_device_parse_dt(struct device *dev,
+>
+> I'd call this v4l2_fwnode_device_parse_of() as we're parsing OF nodes
+> and properties here.
+ack
+>
+> > +                                    struct v4l2_fwnode_device_properties *props)
+> >   {
+> >       struct fwnode_handle *fwnode = dev_fwnode(dev);
+> >       u32 val;
+> >       int ret;
+> >
+> > -     memset(props, 0, sizeof(*props));
+> > -
+> > -     props->orientation = V4L2_FWNODE_PROPERTY_UNSET;
+> >       ret = fwnode_property_read_u32(fwnode, "orientation", &val);
+> >       if (!ret) {
+> >               switch (val) {
+> > @@ -833,7 +883,6 @@ int v4l2_fwnode_device_parse(struct device *dev,
+> >               dev_dbg(dev, "device orientation: %u\n", val);
+> >       }
+> >
+> > -     props->rotation = V4L2_FWNODE_PROPERTY_UNSET;
+> >       ret = fwnode_property_read_u32(fwnode, "rotation", &val);
+> >       if (!ret) {
+> >               if (val >= 360) {
+> > @@ -847,6 +896,30 @@ int v4l2_fwnode_device_parse(struct device *dev,
+> >
+> >       return 0;
+> >   }
+> > +
+> > +int v4l2_fwnode_device_parse(struct device *dev,
+> > +                          struct v4l2_fwnode_device_properties *props)
+> > +{
+> > +     int ret;
+> > +
+> > +     memset(props, 0, sizeof(*props));
+> > +
+> > +     props->orientation = V4L2_FWNODE_PROPERTY_UNSET;
+> > +     props->rotation = V4L2_FWNODE_PROPERTY_UNSET;
+> > +
+> > +     /* Start by looking into swnodes and dt. */
+> > +     ret =  v4l2_fwnode_device_parse_dt(dev, props);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* Orientation and rotation found!, we are ready. */
+> > +     if (props->orientation != V4L2_FWNODE_PROPERTY_UNSET &&
+> > +         props->rotation != V4L2_FWNODE_PROPERTY_UNSET)
+> > +             return 0;
+>
+> I think you can remove this check without affecting the functionality.
+I want to avoid calling an acpi method unless it is strictly
+necessary. The check is not that ugly... if it is ok with you i'd
+rather keep it.
 
+>
+> > +
+> > +     /* Let's check the acpi table. */
+> > +     return v4l2_fwnode_device_parse_acpi(dev, props);
+> > +}
+> >   EXPORT_SYMBOL_GPL(v4l2_fwnode_device_parse);
+> >
+> >   /*
+> >
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+
+Thanks!
+
+-- 
+Ricardo Ribalda
 
