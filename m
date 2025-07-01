@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-710417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD89AEEC14
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 03:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48391AEEC1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 03:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F407517DD92
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 01:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1FA1BC1852
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 01:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA76F19007D;
-	Tue,  1 Jul 2025 01:29:06 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD19F19047A;
+	Tue,  1 Jul 2025 01:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n9Tk1TsG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98194C97;
-	Tue,  1 Jul 2025 01:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E311885B8;
+	Tue,  1 Jul 2025 01:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751333346; cv=none; b=iUN9qX+g8x+e4x4D1ujdMxLKiP1ZddZJibNT0euntgquRu+lRlouDxg1qGQjAGECnKmr/YOQT9Be0UgcSa8AMaphuSvOEUudIAKTrNei9aUZKfpNnYlP+v68xj8TvadCfauk6PRdZ0sME60ZiZJgxg/AOTE3lSBmwRQuPUNmPp0=
+	t=1751333681; cv=none; b=OfrFLIauBRPj1Tg24zLD5vo4nnroYXPD+tb05HSllatglcURu5nE4SdNKH55heRQC5rlTqTcA6kCTluIfOzbR8iZximVwkHdozqzITDG/jaDUzbE3KKt4iQ9FWzLYrorsD1VSv3+x6cU+LqCk9+aYxY4SV9MNjQcosvaj4Ic25M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751333346; c=relaxed/simple;
-	bh=D8UqOOsEY/NopVE3CbDsVtjbT/fYg5AELD/acega2Mw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=G7/texkIUQMfLa8uHFIr+ZwGw5qWzouoiwLfcsPW4vSqretil4c8xvY+DaJU/SAZpnfGo0dsINpW7FAizVwRoPxcLnc5JdQ0S9ikiPZ3Rg/yEzeFSAF1GpIZ3HBCkuFX6wz/XIedjjUFZjhwLxvEn4Bx56r3Dx2O66m9sSGKYOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bWQRL6R3YzKHMxk;
-	Tue,  1 Jul 2025 09:29:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 49FA21A0D86;
-	Tue,  1 Jul 2025 09:29:01 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP2 (Coremail) with SMTP id Syh0CgAX_wzbOWNoPK4SAQ--.17602S3;
-	Tue, 01 Jul 2025 09:29:01 +0800 (CST)
-Subject: Re: [PATCH v2] brd: fix sleeping function called from invalid context
- in brd_insert_page()
-To: Jens Axboe <axboe@kernel.dk>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@lst.de
-Cc: penguin-kernel@I-love.SAKURA.ne.jp, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250630112828.421219-1-yukuai1@huaweicloud.com>
- <eb41cab3-5946-4fe3-a1be-843dd6fca159@kernel.dk>
- <a2dc2566-44e1-4460-bbff-bb813f4655d9@kernel.dk>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <773a49cf-3908-85d2-5693-5cbd6530a933@huaweicloud.com>
-Date: Tue, 1 Jul 2025 09:28:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1751333681; c=relaxed/simple;
+	bh=a4+o2VVpIqo+v/jlD6XNim1oDEttyTg1jwqAtEEmicE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0eUs0uFtrbRmfH5eZ0YJLEn1qrP/vLLOGSzIau7NEnm7LzVRAQ+Sfqy4GGv/OFw/Dg2Fbz7oXZ/ngYo8m7TCusQ5fnOOSWZDOGE+qIHWsuWjgMqKDbT4svCuxaspkOWKnRhYwojCSI4ybZL8drU7AdBcGaIkL3sYSrGEZDvv68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n9Tk1TsG; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751333680; x=1782869680;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=a4+o2VVpIqo+v/jlD6XNim1oDEttyTg1jwqAtEEmicE=;
+  b=n9Tk1TsGxhqF09UxzgtN139Ur5xe0IPsYisE/t/uZuH0SlE5WMmYNytf
+   rgSLhUOLFuv/uIo+zkCWhEIbrC76MRQxkkzdcVYyB1nW/ICr+K6dbyRJM
+   2G5tjsnuM71NVMJ2mzEIFME+FEYISsjWIzADRDdG83DqHpgxqEgJaxBeS
+   +crsttERx4rtNZhqUIJOt0U4t03/skJ+Y4wBHRCjzUap/oN+VNcrGr8fi
+   GR/E12KrNHOtekPsXvqgffito3szyv0QLHBvX7JpOuanXJdj0P5pSP/3x
+   8Zv81B9gqeLG1h/QMj6WtGfwjoPLPf2fucGdfHaKk7g2s2wQJdXKtLVSG
+   w==;
+X-CSE-ConnectionGUID: IVAkEgRrQpW/hS0ESEEtaA==
+X-CSE-MsgGUID: 2jgKi9SvRFqZbHgMDLcpRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="53515328"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="53515328"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2025 18:34:38 -0700
+X-CSE-ConnectionGUID: JpGsI+9mQlO99aCifxmnlw==
+X-CSE-MsgGUID: sy5b9sEiTcuafp05lbwY1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="184651912"
+Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 30 Jun 2025 18:33:53 -0700
+Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uWPsd-000ZVi-0m;
+	Tue, 01 Jul 2025 01:33:51 +0000
+Date: Tue, 1 Jul 2025 09:32:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Boris Gjenero <boris.gjenero@gmail.com>,
+	Christian Hewitt <christianshewitt@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Paolo Sabatino <paolo.sabatino@gmail.com>
+Subject: Re: [PATCH v2 7/8] auxdisplay: Add Titanmec TM16xx 7-segment display
+ controllers driver
+Message-ID: <202507010941.mDtYLPDi-lkp@intel.com>
+References: <20250629131830.50034-1-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a2dc2566-44e1-4460-bbff-bb813f4655d9@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAX_wzbOWNoPK4SAQ--.17602S3
-X-Coremail-Antispam: 1UD129KBjvJXoWruw1fGw1fGFy7Xr13Zr1fWFg_yoW8JF1fpF
-	Wjga4Yyr4ku3sFya17u3WDJFyrtw4kKr4UC3WrKFyUZFZIgF93XrW7A3y5Wr9Iqrn2qw1Y
-	qa1j93s3uFZ3AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <20250629131830.50034-1-jefflessard3@gmail.com>
 
-Hi,
+Hi Jean-Fran�ois,
 
-在 2025/06/30 23:28, Jens Axboe 写道:
-> On 6/30/25 9:24 AM, Jens Axboe wrote:
->> On 6/30/25 5:28 AM, Yu Kuai wrote:
->>> From: Yu Kuai <yukuai3@huawei.com>
->>>
->>> __xa_cmpxchg() is called with rcu_read_lock(), and it will allocate
->>> memory if necessary.
->>>
->>> Fix the problem by moving rcu_read_lock() after __xa_cmpxchg(), meanwhile,
->>> it still should be held before xa_unlock(), prevent returned page to be
->>> freed by concurrent discard.
->>
->> The rcu locking in there is a bit of a mess, imho. What _exactly_ is the
->> rcu read side locking protecting? Is it only needed around the lookup
->> and insert? We even hold it over the kmap and copy, which seems very
->> heavy handed.
-> 
-> Gah it's holding the page alive too. Can't we just grab a ref to the
-> page when inserting it, and drop that at free time? It would be a lot
-> better to have only the lookup be RCU protected, having the full
-> copies under it seems kind of crazy.
+kernel test robot noticed the following build errors:
 
-In this case, we must grab a ref to the page for each read/write as
-well, I choose RCU because I think it has less performance overhead than
-page ref, which is atomic. BTW, I thought copy at most one page is
-lightweight, if this is not true, I agree page ref is better.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.16-rc4 next-20250630]
+[cannot apply to robh/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks,
-Kuai
+url:    https://github.com/intel-lab-lkp/linux/commits/Jean-Fran-ois-Lessard/dt-bindings-vendor-prefixes-Add-Fuda-Hisi-Microelectronics/20250630-010326
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250629131830.50034-1-jefflessard3%40gmail.com
+patch subject: [PATCH v2 7/8] auxdisplay: Add Titanmec TM16xx 7-segment display controllers driver
+config: um-randconfig-r053-20250701 (https://download.01.org/0day-ci/archive/20250701/202507010941.mDtYLPDi-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250701/202507010941.mDtYLPDi-lkp@intel.com/reproduce)
 
-> 
-> IOW, I think there's room for some good cleanups here.
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507010941.mDtYLPDi-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   /usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/12/libgcov.a(_gcov.o): in function `mangle_path':
+   (.text+0x1f00): multiple definition of `mangle_path'; fs/seq_file.o:fs/seq_file.c:441: first defined here
+   /usr/bin/ld: drivers/auxdisplay/tm16xx.o: in function `spi_sync_transfer':
+>> include/linux/spi/spi.h:1464: undefined reference to `spi_sync'
+   /usr/bin/ld: drivers/auxdisplay/tm16xx.o: in function `tm16xx_init':
+>> drivers/auxdisplay/tm16xx.c:1279: undefined reference to `__spi_register_driver'
+   collect2: error: ld returned 1 exit status
+
+
+vim +1464 include/linux/spi/spi.h
+
+8ae12a0d85987d David Brownell     2006-01-08  1442  
+323117ab60156d Geert Uytterhoeven 2016-09-13  1443  /**
+323117ab60156d Geert Uytterhoeven 2016-09-13  1444   * spi_sync_transfer - synchronous SPI data transfer
+323117ab60156d Geert Uytterhoeven 2016-09-13  1445   * @spi: device with which data will be exchanged
+323117ab60156d Geert Uytterhoeven 2016-09-13  1446   * @xfers: An array of spi_transfers
+323117ab60156d Geert Uytterhoeven 2016-09-13  1447   * @num_xfers: Number of items in the xfer array
+323117ab60156d Geert Uytterhoeven 2016-09-13  1448   * Context: can sleep
+323117ab60156d Geert Uytterhoeven 2016-09-13  1449   *
+323117ab60156d Geert Uytterhoeven 2016-09-13  1450   * Does a synchronous SPI data transfer of the given spi_transfer array.
+323117ab60156d Geert Uytterhoeven 2016-09-13  1451   *
+323117ab60156d Geert Uytterhoeven 2016-09-13  1452   * For more specific semantics see spi_sync().
+323117ab60156d Geert Uytterhoeven 2016-09-13  1453   *
+2ae3de10abfe0b Randy Dunlap       2020-07-15  1454   * Return: zero on success, else a negative error code.
+323117ab60156d Geert Uytterhoeven 2016-09-13  1455   */
+323117ab60156d Geert Uytterhoeven 2016-09-13  1456  static inline int
+323117ab60156d Geert Uytterhoeven 2016-09-13  1457  spi_sync_transfer(struct spi_device *spi, struct spi_transfer *xfers,
+323117ab60156d Geert Uytterhoeven 2016-09-13  1458  	unsigned int num_xfers)
+323117ab60156d Geert Uytterhoeven 2016-09-13  1459  {
+323117ab60156d Geert Uytterhoeven 2016-09-13  1460  	struct spi_message msg;
+323117ab60156d Geert Uytterhoeven 2016-09-13  1461  
+323117ab60156d Geert Uytterhoeven 2016-09-13  1462  	spi_message_init_with_transfers(&msg, xfers, num_xfers);
+323117ab60156d Geert Uytterhoeven 2016-09-13  1463  
+323117ab60156d Geert Uytterhoeven 2016-09-13 @1464  	return spi_sync(spi, &msg);
+323117ab60156d Geert Uytterhoeven 2016-09-13  1465  }
+323117ab60156d Geert Uytterhoeven 2016-09-13  1466  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
