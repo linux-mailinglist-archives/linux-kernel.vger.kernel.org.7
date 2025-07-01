@@ -1,196 +1,304 @@
-Return-Path: <linux-kernel+bounces-711416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32570AEFA84
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:29:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B227AEFA7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B59487D88
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF8BA4A63DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6D6279355;
-	Tue,  1 Jul 2025 13:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3F1279910;
+	Tue,  1 Jul 2025 13:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kenip.in header.i=@kenip.in header.b="KaN8hsF1"
-Received: from techbitestudio.com (techbitestudio.com [75.119.147.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0KfyUxeE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DSHFGY1d";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k2g4a9TZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pC2n33Vt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E12B278E7C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=75.119.147.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C179E2798FB
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376237; cv=none; b=jnPDny+fO8PjQ3O3ZR94lug7/I6Zr6cl6WSd00usH1po6mzVzmlL8vl7aU40eCE3X5kZLs02QN8huorh9iWXIZDPjj1eg/TBQ2FwpzI73emHwZ9cgFIBjultNgUC2WiQsPv1cqEM1UchUEkzuWbt74iuZNsu4MtqPlotELsi++s=
+	t=1751376252; cv=none; b=m1lje8taNLiZFdEYu6jRCoDNzZYJOGdINHvCdV+1HoBubYYtwTcJmE9CJ4F5alEv+uPO8AoAt8VLt+QjUFNUh1yVODQYlYwyE0t2tXsfOViWX8wsY+Nen05gQ+C6VMnoFqf5N/kpINJlPlBAuXYEJ44sKI7ZqbGiZGYNDcV+s00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751376237; c=relaxed/simple;
-	bh=wd12ttlyPVwBCCUwsL+t3gSmpMpNSA2fc9HOShtr8IQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HcGm89fDAZXizEMWmoXcPv3vG5dL7KCLTdl2uI5ePLkLSoE/xabGowfnhWft5GhSfyJzG3hiSTa3UQyPzSuTbEJSuHwU5QbSu9Sr5PIyRKegvOixcNfqZ+lK4sAIF3hJoFAc5/CbjS/fJxtmc6BPbb7rRmceXNWLO9ieoQ72Dpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kenip.in; spf=pass smtp.mailfrom=kenip.in; dkim=pass (1024-bit key) header.d=kenip.in header.i=@kenip.in header.b=KaN8hsF1; arc=none smtp.client-ip=75.119.147.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kenip.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kenip.in
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kenip.in;
-	 s=mail; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=WYc6BWDDB6pjMcrs1k9Wn+s7y4QT7W16n4fHbowUlO8=; b=KaN8hsF1Io0Buz77jFukgLk0vJ
-	z+8u7x8xSAebY2Uv4qCztDZG71bezDxWmw6OVB8lizdyktcCtBEkOuGVP2eKu2dGbMthknfQaIady
-	xUe3Kf39jD5GkcKBXbLSDP4fGeInKBuAHcDQs17uRWrYvDFw9BZbmXkvPosTXUyPRbQw=;
-Received: from localhost ([127.0.0.1] helo=kenip.in)
-	by techbitestudio.com with esmtpa (Exim 4.93)
-	(envelope-from <siddhartha@kenip.in>)
-	id 1uWaxf-00075f-NT; Tue, 01 Jul 2025 18:53:47 +0530
+	s=arc-20240116; t=1751376252; c=relaxed/simple;
+	bh=xXqDj1wJ7/Ymtp0P5loQ2F/FbTjzYl1Bd3O0meHUjcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrxsVac1/fDTW0X5xQbCOXLL7N28kcvQlRKb2bTg/uhPiHW0JLo6pY/rR7t4V7ZwX4ifmpwbEKrf76UHtQevsirRGLZP9Wc16DF/6x4l/FEPc3q+4wzuGhHwhlIA8olDas6ymDZtM00A4GD9jNqcQ3RXeS/6VTi7myx60M420Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0KfyUxeE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DSHFGY1d; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k2g4a9TZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pC2n33Vt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F1C8A1F399;
+	Tue,  1 Jul 2025 13:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751376249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gj7LAvBX+B7AFcpf2gN6CbdwlzROH86VQ90+DxHz4P4=;
+	b=0KfyUxeE9gLBsCJl6eFvUMl/NUkTwajv4ObGZdRbU9BJPnT17eN3+orNTrZUNlyam1yXXq
+	XV7r9x/2czpeZ1D6E0r647nrpwd2MW6ulGGcQUxubUEUp8nA99+WEFC2+b5m4v05aCKuAo
+	iOtfao8NFhGvgGSnoTDUMtn4Oha+Dic=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751376249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gj7LAvBX+B7AFcpf2gN6CbdwlzROH86VQ90+DxHz4P4=;
+	b=DSHFGY1dGBz2SIn1yXZcWDXIe31d+V1yj+mcqKsiyfB1TxLqz/tVQ2ym6WB65EYrbFsSGf
+	aasJqY5mJ2tdZhAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1751376248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gj7LAvBX+B7AFcpf2gN6CbdwlzROH86VQ90+DxHz4P4=;
+	b=k2g4a9TZ+mEeo+99ew/RtFpR81VTJ4o9bmhNLlBQQaYKRWFzS1pHslK6NUtRFJra+R8IIj
+	CC4TsxvTjOukEnrjsOqEeL+eR9VOj9qcz9ABPhhHGSSX/8zvUGRaVMYoTvY28lGBLAOWP5
+	oYFsG2rilj42FLn9xM83FVkqK1Bfq0k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1751376248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gj7LAvBX+B7AFcpf2gN6CbdwlzROH86VQ90+DxHz4P4=;
+	b=pC2n33VtzF+BIZOKEpB/xiCUBZENOCZvw1fRQrsMUNXxwdVQsmFLtK+R29KPL8KuthqJcQ
+	I5Nt7F47EfbQFACg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E08B413890;
+	Tue,  1 Jul 2025 13:24:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id m5fbNnjhY2jBegAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 01 Jul 2025 13:24:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B30ECA0A23; Tue,  1 Jul 2025 15:24:07 +0200 (CEST)
+Date: Tue, 1 Jul 2025 15:24:07 +0200
+From: Jan Kara <jack@suse.cz>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr
+ syscalls
+Message-ID: <uvxftp37cpvn7emugit7zsmyjmkaivuzxerwfw36ukzrycxtfp@krnv7y7akpjl>
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 01 Jul 2025 18:53:47 +0530
-From: siddhartha@kenip.in
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, mgorman@suse.de
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_mm=3A_limit_THP_alignment_=E2=80=93_?=
- =?UTF-8?Q?performance_gain_observed_in_AI_inference_workloads?=
-In-Reply-To: <5c3d307f-d303-48c3-b730-99a83d4815ec@lucifer.local>
-References: <d8ffe547-5516-43e5-9f33-56b2698a0b4f@arm.com>
- <ba2c89bd-88de-48f8-abd0-b62d8b1d50b3@lucifer.local>
- <5816677a-705e-4a8f-b598-d74ff6198a02@arm.com>
- <ee92d6a9-529a-4ac5-b3d0-0ff4e9085786@lucifer.local>
- <e7152150-2f3e-4ad7-a6c5-f4b77e5c0e05@arm.com>
- <f746d3aa-17e7-4b42-9e08-97cdb2cad89b@lucifer.local>
- <80b849d4-faf3-47a9-8b8c-e8053299cfb2@arm.com>
- <2e99712b-8dac-4762-9fc5-fe3ef569b65e@lucifer.local>
- <afe95bb0-185b-4c4a-ae41-e02457422cc3@arm.com>
- <787639a1e6a27c0f3b0e3ae658e1b8e7@kenip.in>
- <5c3d307f-d303-48c3-b730-99a83d4815ec@lucifer.local>
-Message-ID: <dd370f92e9100e785aeafdc4d31f8cb5@kenip.in>
-X-Sender: siddhartha@kenip.in
-Disposition-Notification-To: siddhartha@kenip.in
-X-Priority: 1 (Highest)
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,arndb.de,schaufler-ca.com,kernel.org,suse.cz,paul-moore.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On 2025-07-01 18:09, Lorenzo Stoakes wrote:
-> On Tue, Jul 01, 2025 at 05:45:51PM +0530, siddhartha@kenip.in wrote:
->> 🧩 1. Does the patch cause VMAs to be merged eventually?
->> You're correct: VMA merging only happens at mmap() time (via
->> __mmap_region()). What the patch affects is the behavior of
->> thp_get_unmapped_area_vmflags() before the mmap is placed.
+On Mon 30-06-25 18:20:16, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
 > 
-> [...]
-> 
->> 
->> 📐 2. Why aren’t the VMAs mergeable before the patch?
->> Great question. Even if the VMA flags are identical, gaps introduced 
->> by
->> forced alignment from get_unmapped_area() break the precondition for
->> merging:
-> 
-> [...]
-> 
->> 💡 4. Why this patch complements Rik’s rather than contradicts it:
-> 
-> I'm really perplexed as to why you felt the need to (seemingly via LLM)
-> reply with the explanation I've already provided here?...
-> 
-> There's errors in things you say here too.
-> 
-> With respect, please don't do this.
-> 
-> (I'm the co-maintainer of pretty much all the relevant code here and 
-> wrote
-> the VMA merge logic you're referring to.)
-> 
->> 
->> 🤖 3. How does this impact AI workloads like Hugging Face Transformers?
->> Tokenization and dynamic batching create non-deterministic memory 
->> allocation
->> patterns:
->> 
->> Models like BERT and T5 dynamically allocate intermediate buffers per
->> token-length, batch size, and attention window.
->> 
->> Hugging Face + ONNX Runtime uses multiple small-ish anonymous mmap()s, 
->> often
->> 512KB–1.8MB.
->> 
->> These allocations come in bursts — but due to forced alignment, the 
->> kernel
->> was placing them with artificial gaps, defeating THP eligibility 
->> entirely.
->> 
->> By not force-aligning non-PMD-sized mappings, we avoid injecting gaps. 
->> The
->> result is that:
->> 
->> a. VMAs remain adjacent → mergeable
->> 
->> b. Physical memory is contiguous → eligible for khugepaged collapse
->> 
->> c. THP utilization increases → fewer TLB misses → lower latency → 
->> higher
->> throughput
->> 
-> 
-> This is very useful information and it's appreciated! Let's not drown 
-> this
-> out with restatements of stuff already covered.
-> 
->> 
->> ⚙️ 5. mTHP note
->> Although this patch doesn’t target mTHP directly, I believe a similar 
->> logic
->> tweak could apply there too — especially with shmem-backed workloads 
->> (common
->> in model servers using shared tensor memory). I’d be happy to help 
->> test any
->> changes proposed there to derive the consequent results.
-> 
-> Dev - could we hold off on any effort to do something like this until 
-> I've
-> had a chance to refactor THP somewhat? This is already a mess and I'd 
-> like
-> to avoid us piling on more complexity.
-> 
-> We can revisit this at a later stage.
-> 
->> 
->> Thanks again for the detailed discussion. Let me know if you’d like a 
->> trace
->> or VMA map from a Hugging Face benchmarked run (happy to generate one
->> locally).
->> 
-> 
-> Thanks! Much appreciated.
-> 
-> Cheers, Lorenzo
+> Introduce file_getattr() and file_setattr() syscalls to manipulate inode
+> extended attributes. The syscalls takes pair of file descriptor and
+> pathname. Then it operates on inode opened accroding to openat()
+						^^^ according
 
-Hi Lorenzo,
+> semantics. The struct fsx_fileattr is passed to obtain/change extended
+> attributes.
+> 
+> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> that file don't need to be open as we can reference it with a path
+            ^^^ doesn't
 
-Thanks for your clarification, and I appreciate your patience — 
-especially given your role in maintaining and designing the VMA merge 
-logic.
+> instead of fd. By having this we can manipulated inode extended
+> attributes not only on regular files but also on special ones. This
+> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> we can not call ioctl() directly on the filesystem inode using fd.
+> 
+> This patch adds two new syscalls which allows userspace to get/set
+> extended inode attributes on special files by using parent directory
+> and a path - *at() like syscall.
+> 
+> CC: linux-api@vger.kernel.org
+> CC: linux-fsdevel@vger.kernel.org
+> CC: linux-xfs@vger.kernel.org
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-I understand now that my earlier phrasing may have repeated your 
-explanation for VMA adjacency, and I regret unintentionally restating 
-it.
+There's possible NULL ptr deref bug below (2x) that's easy to fix. Once
+done feel free to add:
 
-I’ll make sure to be more careful and direct going forward.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-As for the THP alignment condition now being `IS_ALIGNED(len, 
-PMD_SIZE)`, I agree this resolves the regressions by removing alignment 
-for non-aligned sizes, which was exactly what broke workloads like 
-cactusBSSN or some AI inference loads.
+> @@ -343,3 +377,117 @@ int ioctl_fssetxattr(struct file *file, void __user *argp)
+>  	return err;
+>  }
+>  EXPORT_SYMBOL(ioctl_fssetxattr);
+> +
+> +SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+> +		struct fsx_fileattr __user *, ufsx, size_t, usize,
+> +		unsigned int, at_flags)
+> +{
+> +	struct fileattr fa;
+> +	struct path filepath __free(path_put) = {};
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +	struct filename *name __free(putname) = NULL;
+> +	struct fsx_fileattr fsx;
+> +
+> +	BUILD_BUG_ON(sizeof(struct fsx_fileattr) < FSX_FILEATTR_SIZE_VER0);
+> +	BUILD_BUG_ON(sizeof(struct fsx_fileattr) != FSX_FILEATTR_SIZE_LATEST);
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (usize > PAGE_SIZE)
+> +		return -E2BIG;
+> +
+> +	if (usize < FSX_FILEATTR_SIZE_VER0)
+> +		return -EINVAL;
+> +
+> +	name = getname_maybe_null(filename, at_flags);
+> +	if (IS_ERR(name))
+> +		return PTR_ERR(name);
+> +
+> +	if (!name && dfd >= 0) {
+> +		CLASS(fd, f)(dfd);
+> +
+> +		filepath = fd_file(f)->f_path;
 
-Thanks again for the guidance — I’m learning a lot from this thread.
+If dfd is not correct fd, then this will dereference NULL AFAICT. I think
+you need here:
 
-Best Regards,
-Siddhartha Sharma
+		if (fd_empty(f))
+			return -EBADF;
 
+> +		path_get(&filepath);
+> +	} else {
+> +		error = filename_lookup(dfd, name, lookup_flags, &filepath,
+> +					NULL);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	error = vfs_fileattr_get(filepath.dentry, &fa);
+> +	if (error)
+> +		return error;
+> +
+> +	fileattr_to_fsx_fileattr(&fa, &fsx);
+> +	error = copy_struct_to_user(ufsx, usize, &fsx,
+> +				    sizeof(struct fsx_fileattr), NULL);
+> +
+> +	return error;
+> +}
+> +
+> +SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+> +		struct fsx_fileattr __user *, ufsx, size_t, usize,
+> +		unsigned int, at_flags)
+> +{
+> +	struct fileattr fa;
+> +	struct path filepath __free(path_put) = {};
+> +	int error;
+> +	unsigned int lookup_flags = 0;
+> +	struct filename *name __free(putname) = NULL;
+> +	struct fsx_fileattr fsx;
+> +
+> +	BUILD_BUG_ON(sizeof(struct fsx_fileattr) < FSX_FILEATTR_SIZE_VER0);
+> +	BUILD_BUG_ON(sizeof(struct fsx_fileattr) != FSX_FILEATTR_SIZE_LATEST);
+> +
+> +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> +		return -EINVAL;
+> +
+> +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> +		lookup_flags |= LOOKUP_FOLLOW;
+> +
+> +	if (usize > PAGE_SIZE)
+> +		return -E2BIG;
+> +
+> +	if (usize < FSX_FILEATTR_SIZE_VER0)
+> +		return -EINVAL;
+> +
+> +	error = copy_struct_from_user(&fsx, sizeof(struct fsx_fileattr), ufsx,
+> +				      usize);
+> +	if (error)
+> +		return error;
+> +
+> +	error = fsx_fileattr_to_fileattr(&fsx, &fa);
+> +	if (error)
+> +		return error;
+> +
+> +	name = getname_maybe_null(filename, at_flags);
+> +	if (IS_ERR(name))
+> +		return PTR_ERR(name);
+> +
+> +	if (!name && dfd >= 0) {
+> +		CLASS(fd, f)(dfd);
+> +
+
+Same comment here as above.
+
+> +		filepath = fd_file(f)->f_path;
+> +		path_get(&filepath);
+> +	} else {
+> +		error = filename_lookup(dfd, name, lookup_flags, &filepath,
+> +					NULL);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+> +	error = mnt_want_write(filepath.mnt);
+> +	if (!error) {
+> +		error = vfs_fileattr_set(mnt_idmap(filepath.mnt),
+> +					 filepath.dentry, &fa);
+> +		mnt_drop_write(filepath.mnt);
+> +	}
+> +
+> +	return error;
+> +}
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
