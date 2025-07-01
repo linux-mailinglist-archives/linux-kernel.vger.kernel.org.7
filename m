@@ -1,86 +1,120 @@
-Return-Path: <linux-kernel+bounces-710382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1767AEEB6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99EEAEEB7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1FE44119A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6690E162BA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFD61CDFD5;
-	Tue,  1 Jul 2025 00:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC5A1632DF;
+	Tue,  1 Jul 2025 00:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyK4qdqe"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ta2oT7cF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A4919CC0A;
-	Tue,  1 Jul 2025 00:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD231547E7;
+	Tue,  1 Jul 2025 00:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751331264; cv=none; b=kOapyT5usna+ydEs6WdDYjm700G7WLXXbd58bQzO0rYHrQmV3Jm+dYojzevjYdzj/XM3srXFz7qWLk+ohAXCsPq69Iuc6j2C6YaTSzfMD2Ac4mN7P5yTPSRfBS2Sg8fzmgr2MBnUoCmg9MxwydLcZnUoRnjkivL0S+RNO/6PDDk=
+	t=1751331467; cv=none; b=n0tiSf3cwX13jN0X5IktDxytJTiekT1CzTOWp0VYuPwWIaVyEOtoDnVfkUPhJjO7hgJo85ILqVN4jeF6NpW4kagQouFFYvav2lxRsvsO0FtkuZIqFyBARncwOCdXIPi+GIpJSSeB+T759eDPyJLTGiNILjjaXSHCvyJU1nwy1CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751331264; c=relaxed/simple;
-	bh=ToOw6uJVC9iS7TA1n50KV+hOesklTI3h/nf9C9Afkk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6y41+nMt09J84XjMDZciYHBQctR96m+riTn/WEigYQFu4+bYxpb70agvbtgu0fZ2CGjWhmbsdEO0CwJR89jkRmZ6eT2gUwlqVk9Y1VcIg8mdfFISyda5BbSi6WM8q0Knl8fYAXCH2xIc9JBd/4hjdTk2ndkpYLeXboXntxVtAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyK4qdqe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7683EC4CEF1;
-	Tue,  1 Jul 2025 00:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751331263;
-	bh=ToOw6uJVC9iS7TA1n50KV+hOesklTI3h/nf9C9Afkk8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gyK4qdqe7n2SY35w+0A2VIvZMp5I/DS91mgGqJg0VUJl9P+KTZz8W8cM6NauRPs0d
-	 8Z4KahMYQfwakLpjFJGiBdtTnTTcsK2k3VLG0dsTY4g0X06c5R4UUaWbWKDxl5vlv5
-	 QKlX/ooQaHil84zfPAo5lowvdjELNQnek6Lqsuipnltx14giYoclu/w16F9r88UuhR
-	 MGKCx3M1BrRxxqIA2JZegKWGf7raug3DEawkejgjW6hmJ8unAsq08LDGwXHh6SeJJ8
-	 lWGlDH3/Qi9Ehh4+R6CBJMvIPnbhgBAfR88RZCIviqrJI9L51AMHzweUJD/rTjBAsN
-	 7P36XETuKdU8g==
-Date: Mon, 30 Jun 2025 18:54:19 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Ben Copeland <ben.copeland@linaro.org>, linux-kernel@vger.kernel.org,
-	lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	Dan Carpenter <dan.carpenter@linaro.org>, axboe@kernel.dk,
-	sagi@grimberg.me, iommu@lists.linux.dev
-Subject: Re: next-20250627: IOMMU DMA warning during NVMe I/O completion
- after 06cae0e3f61c
-Message-ID: <aGMxu6Yn514Xy55w@kbusch-mbp>
-References: <CAL0q8a6pOBZbWYdwKzC1U-PuH4rgf2miv0jcF=fWVZt_dUZHmw@mail.gmail.com>
- <20250630133343.GA26040@lst.de>
- <aGLyswGYD6Zai_sI@kbusch-mbp>
+	s=arc-20240116; t=1751331467; c=relaxed/simple;
+	bh=0KXdqPxnq8u5m3JaoBAj3LQJmLTeItSenCMiTod8nuU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AiUXu+7c6AGhsAO4ennjPR1O6nPtooWPhI2bqwydRNrm/F+6ixwwzpBSejpetzliZJGaITIkzY3Jbs9f2ipnCzdEgGTHMbIgxyeksB1afuMGgNn7tno9aqQNvYVpquZylFcx+QwcvdxMiET3f7GVwDGkCJTBaepU3ppESFq8jOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ta2oT7cF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C118EC4CEF0;
+	Tue,  1 Jul 2025 00:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1751331467;
+	bh=0KXdqPxnq8u5m3JaoBAj3LQJmLTeItSenCMiTod8nuU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ta2oT7cFvsUGw9C9vm+YGKQtvnu3ivF2IZMKNpHx9yTkkBBYM6pH6fR+spvbLNyET
+	 lx/uBU5qSYdMjTK+I8sE1E5enbYZPdo1CGyOjfnu16+0MD647OdkcTDupzwFgwydyF
+	 xsUSP7uCnt9+w4tVj8KIp3fN90GFHulzlpUk/QRs=
+Date: Mon, 30 Jun 2025 17:57:46 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: peterx@redhat.com, aarcange@redhat.com, surenb@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
+ entries
+Message-Id: <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+In-Reply-To: <20250630031958.1225651-1-sashal@kernel.org>
+References: <20250630031958.1225651-1-sashal@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGLyswGYD6Zai_sI@kbusch-mbp>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 30, 2025 at 02:25:23PM -0600, Keith Busch wrote:
-> On Mon, Jun 30, 2025 at 03:33:43PM +0200, Christoph Hellwig wrote:
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -701,7 +701,7 @@ static void nvme_free_prps(struct request *req)
->         prp_list = iod->descriptors[desc];
->         do {
->                 dma_unmap_page(dma_dev, dma_addr, dma_len, dir);
-> -               if (i == NVME_CTRL_PAGE_SIZE >> 3) {
-> +               if (i == NVME_CTRL_PAGE_SIZE >> 3 && length > NVME_CTRL_PAGE_SIZE) {
->                         prp_list = iod->descriptors[++desc];
->                         i = 0;
->                 }
-> --
+On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
+
+> When handling non-swap entries in move_pages_pte(), the error handling
+> for entries that are NOT migration entries fails to unmap the page table
+> entries before jumping to the error handling label.
 > 
-> But even that, the PRP setup doesn't match the teardown. We're calling
-> dma_map_page() on each PRP even if consecutive PRP's [...]
+> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
+> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
+> corrupted.
+> 
+> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+>   WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>   Call trace:
+>     kunmap_local_indexed from move_pages+0x964/0x19f4
+>     move_pages from userfaultfd_ioctl+0x129c/0x2144
+>     userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+> 
+> The issue was introduced with the UFFDIO_MOVE feature but became more
+> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
+> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
+> path more commonly executed during userfaultfd operations.
+> 
+> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
+> paths before jumping to the error handling label, not just for migration
+> entries.
 
-Err, I meant to say "dma_unmap_page()".
+I don't get it.
+
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+>  
+>  		entry = pte_to_swp_entry(orig_src_pte);
+>  		if (non_swap_entry(entry)) {
+> +			pte_unmap(src_pte);
+> +			pte_unmap(dst_pte);
+> +			src_pte = dst_pte = NULL;
+>  			if (is_migration_entry(entry)) {
+> -				pte_unmap(src_pte);
+> -				pte_unmap(dst_pte);
+> -				src_pte = dst_pte = NULL;
+>  				migration_entry_wait(mm, src_pmd, src_addr);
+>  				err = -EAGAIN;
+> -			} else
+> +			} else {
+>  				err = -EFAULT;
+> +			}
+>  			goto out;
+
+where we have
+
+out:
+	...
+	if (dst_pte)
+		pte_unmap(dst_pte);
+	if (src_pte)
+		pte_unmap(src_pte);
+
+
+
 
