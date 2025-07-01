@@ -1,41 +1,40 @@
-Return-Path: <linux-kernel+bounces-711621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9047FAEFD4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:57:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BAAAEFD52
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C711C06748
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B071C04147
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B2527C863;
-	Tue,  1 Jul 2025 14:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB37327E048;
+	Tue,  1 Jul 2025 14:54:22 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F59B279331
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA6327CCF0
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751381659; cv=none; b=fgMi6gvPifwlxTSTyKJFEVSIz14e4CSfahIQ1yMQx8805WTJ/bGWx7zb6hG3cTAjzmw0IniTKmxewC4TUvKBMwoJEnJQoAOWQZ7WiO9wyG5hTcaYMvYKpVcQbOeNOoxlHLglu+yIRzaMOldux2el71Z4jL3tmcn6G+lXVyVLGyI=
+	t=1751381662; cv=none; b=IDOBBJfzKh8wmdNQh0WqPnSrwJLAaumcR5D8DmLKr7Pe3RAWmEWmHwFiEyPnNLUIssrowVfwhR77wVCfhNV6mhLUQbergCMFQLT8QF74OdBCd/yAW2mStJExfl8msP9k8TZh22BDwjgstOzlmQQnkvmnmpomDTA1EQGs0NW2CV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751381659; c=relaxed/simple;
-	bh=kVfnIuEZjB5bHPp421bGkmfx7svcXMuvxQmlSraykCU=;
+	s=arc-20240116; t=1751381662; c=relaxed/simple;
+	bh=4m7eT5tfhZOLfAcGb/o9rljKjvvedBRVjxFwdOLgSqI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lo8crHWvU0GHsQnR0fxtglz1Ez+VSDcblEFhWxdMSWHZsutYTn8gFfCGAZRZLsZu8D/rgKC04aKqXf58RyY0QExnfXtCs3qzH+G1bjVj5o5ZGHcpca4a4PxX+mnuTlvSgCCOqG1m/K0GOmKptNJT64ROZS5oxuH5NLBornNqN0o=
+	 In-Reply-To:To:Cc; b=r2WkBIFD1Mke5ia2FZmwh+gWBCeKH2vf3ilBXz7osVu+31g5sigmq/CHGUCLrJAeVQAxkTHuCYGrIPROQQg8GWpo9Dz8FEWj3NmPNgqxXWWbCsDseN212Kjuzq4AbVEQ5vKcMJO08phxZ64EkiFCYur+LxFbfktVX7PW6j3W6ak=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE899236D;
-	Tue,  1 Jul 2025 07:54:02 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10FDE12FC;
+	Tue,  1 Jul 2025 07:54:05 -0700 (PDT)
 Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 002EA3F66E;
-	Tue,  1 Jul 2025 07:54:15 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 560F83F66E;
+	Tue,  1 Jul 2025 07:54:18 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
-Date: Tue, 01 Jul 2025 15:53:37 +0100
-Subject: [PATCH v2 12/28] coresight: sysfs: Validate CPU online status for
- per-CPU sources
+Date: Tue, 01 Jul 2025 15:53:38 +0100
+Subject: [PATCH v2 13/28] coresight: Set per CPU source pointer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-arm_cs_pm_fix_v3-v2-12-23ebb864fcc1@arm.com>
+Message-Id: <20250701-arm_cs_pm_fix_v3-v2-13-23ebb864fcc1@arm.com>
 References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
 In-Reply-To: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
@@ -57,40 +56,66 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751381627; l=1042;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751381627; l=1922;
  i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=kVfnIuEZjB5bHPp421bGkmfx7svcXMuvxQmlSraykCU=;
- b=msYEhfqo/15b1dqJFoYGIEnZGzvUj1/bEpSUgI/mniIIIr9EgudVlb4Po0KS9Txv7DbI59gCk
- dJLVFaLa8UaA/42wf0pHvBS23Ksh7vqgYoRU9yo/5YcWe48HXk9YQ3f
+ bh=4m7eT5tfhZOLfAcGb/o9rljKjvvedBRVjxFwdOLgSqI=;
+ b=7qpgAmLoyoY7ovI70BZmdSIYYa9Jq+O6UeTZHDqhzWy+2tWL6H5heDIZz+p9ab/Vmza9ELq37
+ BMa+4vW1I9SCXCtHXHs+gnzu9MDpVa20WJAhwBN9OFcIriTS6B9uDTf
 X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
  pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-The current SysFS flow first enables the links and sink, then rolls back
-to disable them if the source fails to enable. This failure can occur if
-the associated CPU is offline, which causes the SMP call to fail.
-
-Validate whether the associated CPU is online for a per-CPU tracer. If
-the CPU is offline, return -ENODEV and bail out.
+Introduce coresight_set_percpu_source() for setting CPU source device. The
+sources are maintained in a per CPU structure 'csdev_source'.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-sysfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hwtracing/coresight/coresight-core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-sysfs.c b/drivers/hwtracing/coresight/coresight-sysfs.c
-index feadaf065b5318c8426aa53420b8e5f67a258683..14ee15297b98115122068cbe932f0b2ce004b77e 100644
---- a/drivers/hwtracing/coresight/coresight-sysfs.c
-+++ b/drivers/hwtracing/coresight/coresight-sysfs.c
-@@ -161,6 +161,9 @@ static int coresight_validate_source_sysfs(struct coresight_device *csdev,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index 1a4bde5d6cd8fcfdd43bcafb45aa4dc5f1dd2d34..042e8e646ff521a15dc18d7264faa427f1ac0dc7 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -32,6 +32,7 @@
+  */
+ DEFINE_MUTEX(coresight_mutex);
+ static DEFINE_PER_CPU(struct coresight_device *, csdev_sink);
++static DEFINE_PER_CPU(struct coresight_device *, csdev_source);
  
-+	if (coresight_is_percpu_source(csdev) && !cpu_online(csdev->cpu))
-+		return -ENODEV;
-+
- 	return 0;
+ /**
+  * struct coresight_node - elements of a path, from source to sink
+@@ -77,6 +78,11 @@ struct coresight_device *coresight_get_percpu_sink(int cpu)
  }
+ EXPORT_SYMBOL_GPL(coresight_get_percpu_sink);
  
++static void coresight_set_percpu_source(int cpu, struct coresight_device *csdev)
++{
++	per_cpu(csdev_source, cpu) = csdev;
++}
++
+ static struct coresight_device *coresight_get_source(struct coresight_path *path)
+ {
+ 	struct coresight_device *csdev;
+@@ -1390,6 +1396,10 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+ 			goto out_unlock;
+ 		}
+ 	}
++
++	if (coresight_is_percpu_source(csdev))
++		coresight_set_percpu_source(csdev->cpu, csdev);
++
+ 	/* Device is now registered */
+ 	registered = true;
+ 
+@@ -1421,6 +1431,8 @@ EXPORT_SYMBOL_GPL(coresight_register);
+ 
+ void coresight_unregister(struct coresight_device *csdev)
+ {
++	if (coresight_is_percpu_source(csdev))
++		coresight_set_percpu_source(csdev->cpu, NULL);
+ 	etm_perf_del_symlink_sink(csdev);
+ 	/* Remove references of that device in the topology */
+ 	if (cti_assoc_ops && cti_assoc_ops->remove)
 
 -- 
 2.34.1
