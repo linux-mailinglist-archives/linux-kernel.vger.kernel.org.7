@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-710899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D3AAEF2D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491E2AEF2E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1BDD1BC57A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:12:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18314A3B2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F00F26D4E5;
-	Tue,  1 Jul 2025 09:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13A1272E4A;
+	Tue,  1 Jul 2025 09:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jWnipLBO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwMPU35H"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507071D07BA
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE933272811;
+	Tue,  1 Jul 2025 09:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751361113; cv=none; b=E2plWOmIcfnUrxHtGdqmnsa5XbCCX0/fI/nWV8jZrysRD4nV3+NmOIcSM4txM/KiBy510cq4JbrIlQz+gHiIQvmHXkTZQUOFclxYBtlSGnwYmrCW+bF/gC8ZMJMIPcdSEypQpvFIsNIZwF5xD6xKktdwgvDdXuGF9Dv/GrBaOyw=
+	t=1751361150; cv=none; b=XPbWLUgSvydOOFyUfqD36cd7+IFjM7g4KU8Eyxeh6nd4qqL1TJHlfODvuVpDHK3YWD9hC5iJsi6ByQ5uPwcD3qhMDSqfSNtTtba9acD8e4G9RSLN73d6JU3NH3N1MU6S6gi6qH643Akwi3yHjx3HtebAKCVOCoDlZCZEkOUp5AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751361113; c=relaxed/simple;
-	bh=ql5tyJqNB6nfkdC7XaszFpWVQHpSsM1UUL3yjnkQif4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOlRi8Z3Ke5BIZuRshrMCCFk29aDBLaIEUm9i1gl/3JgtKU80u+t+PkkkIECmh5OHjnEvApUJFo/3A0va075oxK3dCow6YU+8pcdYE6rtJSAqBY9og9KE9mvRe3fXPc8nqJ54rPqcr14kmFigFHLKiOnCN2gQPRPTvAxNPLdVao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jWnipLBO; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751361112; x=1782897112;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ql5tyJqNB6nfkdC7XaszFpWVQHpSsM1UUL3yjnkQif4=;
-  b=jWnipLBObx9huNLDy0KT5FPgSERedyc+WmFwgkfsvA3syNj6fa27UmT+
-   ykdw3Gs1l6UY72UTUbC7CP0HZSGc5n6WUGXW30ZlwcQ/3NSxhnZFIY1D9
-   Z63OPmu7tiTefQUD30sy9+E3jEAHztKZ8jqbHlR3puYcuEUa1aFw0DpRY
-   bkji7Yiyf9GPNsPuG7L6UeuTQeqGuFu04U9bDc7i7Ppyqyxd5Nost1n5b
-   AdDS+FZYcYSjbk3qE6/ep1YawWvwJA8u9puTayh61NuY+nAq5tLK9eYjT
-   pq5cVKYqBw7Tpc8EWxDkorc9QQwQPHdUtyaYgcibd/hSs91LPgIDiehQe
-   A==;
-X-CSE-ConnectionGUID: L5k+tvvDRCWAkNnIqCRRSw==
-X-CSE-MsgGUID: sJJnX9YHTp+vwvM0Ygb8vQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="64670881"
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="64670881"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 02:11:49 -0700
-X-CSE-ConnectionGUID: U4ronh2YTXu2QS7XOxfy+Q==
-X-CSE-MsgGUID: KOcH3pjeSXekrzqqtcKi7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="157992814"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 01 Jul 2025 02:11:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 35DB515D; Tue, 01 Jul 2025 12:11:45 +0300 (EEST)
-Date: Tue, 1 Jul 2025 12:11:45 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: dave.hansen@intel.com, peterz@infradead.org, tglx@linutronix.de, 
-	bp@alien8.de, mingo@redhat.com, hpa@zytor.com, rick.p.edgecombe@intel.com, 
-	pbonzini@redhat.com, seanjc@google.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/virt/tdx: Further fix tdh_vp_enter() calls
- instrumentable code warning
-Message-ID: <gtaaadq6asaxiop2f6cph2dffarruw2lq5yolltiy5snqwc5fr@pofskdkfamqh>
-References: <20250630232742.8991-1-kai.huang@intel.com>
+	s=arc-20240116; t=1751361150; c=relaxed/simple;
+	bh=L3TkFh0fwtVYaiYBZgOnZ5611hF2Olg5vpNbzrcso8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRu9a/rleccN/Mpo0Qbsz5oSd8adfo302B8DIAAS1R4W2WIoYEyqKZ1PRZ0CbKKms0ZLsMKL5AEPwPZiEZLrllFploCur1iqu3+gQTmDjqqsjaMmqWL0Pb11qanPSIQmVe1jDuw0bjKNiDrPLNx5gGFzsQf+4oWv7VZ4ZpVJgyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jwMPU35H; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2fb9eb54d6so978658a12.0;
+        Tue, 01 Jul 2025 02:12:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751361148; x=1751965948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4McNG5+rD7Nm3TTw+MBbkRpB0msiB4Rq5QefUUcvjus=;
+        b=jwMPU35HNc3+mxnldO3ovDro+5fKSiEKdAelWR1KSRh0YinZl+A3RnezyzBDgpBZA4
+         9G3/Cpz+jLLyzvkaD557zuNlEkM/vx764/9ATnpaAhclyfYiqL2MxxMg/lJg1ORS4IPs
+         oNIVzpqBl7ZVSPWXF5TsekyCd3SNrQnAsQhb2oQ4EVsiUo+sGcy17NOKXzr9d0TmTrzS
+         1e/udKXh3V6aLBMp04vb56KO3wVlJb+FYb/2b8yYzgf39DqcukkH7sqGxmtWtUsf22PV
+         cPDMcaPo+7LJ/Zvoo81pbWPXVhkEnEFRrZhId+Zou00TMAxLTI5VTLcODwgD6fCfJbjH
+         TWDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751361148; x=1751965948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4McNG5+rD7Nm3TTw+MBbkRpB0msiB4Rq5QefUUcvjus=;
+        b=TodlTszCyigPOq3RSL3a51tXBS4GwhiPo1top4KNOs5xoDoO9FY/P7AnKB58Ww+v4V
+         XdjuSptqd0fh/g0m3nbCEr0IeTv6F8CVJeaVwTebv4lAjggkA1W9+SLN8cyKHuWRU4Bs
+         7vqyH6WwG9c4F52vwXRsS0oyOwkt0Ur6qSH6hWEWIu18OB0r8/NLojG2o9KDWijVP/gC
+         vWoaUkOHqlq0ww5LMT9ejxLYvD+zlJjcKoAQJa2eRbeGios4W5BUjG9t5JI1Gml3NauY
+         jONL6Gf2vRWSCiQPy36vqOIypJLoMGOspcNgvRaTDb5d6O5B7u9F/otnV4rt5dh1ooHz
+         tBEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOKXQV0KF9ChG4Nemv8YxRJkFiY3P5PzUlIo1GQsFiZO0QT/DJI1uj1PgnTatP44vA+7UiFKEjmIR/O6Y=@vger.kernel.org, AJvYcCXEyBiMRcLMVJu/4Tc2Smv4ae7SkNo7OxlvmrKn2pMZrF+S+9qTL6AbHjb9lCJeIpBMIgobBKYF6UxjTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8gE+9q+VdOvtSWTC8C8E10hJ/2U8J/6K3y5hrN+pXVIaQyvC8
+	8OkW6ssfyHCcoVnx57SUwNScsuA5lexAmzPyX4hwWjlIOSbou35iLN14sQQKs2B14tAQp5ODFOZ
+	EqvaW1qU4UZauveX++7D9MjoLYdCxsOQ=
+X-Gm-Gg: ASbGncsPid5B0o/ci3kAP1nNUZTgRyDuqsqD7CLCJMvS1vZczzc40w2ajgutkPYAXdm
+	nHiLwqw9+Uq7G3DsjJcEfWU9cGlEFrLDV6ZLTK7q3BGQh3A/2wwowEhw4ak0KW5usw065gRdzQV
+	pjmZbtMK2Mni/Hkqq1N2fAoXbXqcEVqyL/QD5q+5lBQOg=
+X-Google-Smtp-Source: AGHT+IFHwc4aBB/geds7Zk2EL8s0osfafdk5fSerpaLH48AbaG2bIa6exYRIWXhtcEiAoe9pbx4mL8dvwCPXd//4Glk=
+X-Received: by 2002:a17:90b:3512:b0:311:a314:c2c9 with SMTP id
+ 98e67ed59e1d1-31a800bba14mr1233708a91.1.1751361148131; Tue, 01 Jul 2025
+ 02:12:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630232742.8991-1-kai.huang@intel.com>
+References: <20250701174606.7b07bbce@canb.auug.org.au>
+In-Reply-To: <20250701174606.7b07bbce@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 1 Jul 2025 11:12:16 +0200
+X-Gm-Features: Ac12FXz_6ixlTRUbdR1kdEBVEfrlttOJGOE5C2TZU9P3vGyzxnH2eGGNVWk2WMA
+Message-ID: <CANiq72mSELMEopwaRvxjSn-t1-9+uDm23_rFscuKSRR15LK1vQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust tree with the driver-core tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 01, 2025 at 11:27:42AM +1200, Kai Huang wrote:
-> tdh_vp_enter() needs to be marked noinstr, which means it can't call any
-> non-inlined noinstr functions.  Commit e9f17038d814 ("x86/tdx: mark
-> tdh_vp_enter() as __flatten") tried to address a build warning caused by
-> tdx_tdvpr_pa() not getting inlined.  Unfortunately that commit didn't
-> fix the warning completely due to the inconsistent behavior of the
-> __flatten annotation.
-> 
-> There are two problems that can come up depending on the compiler and
-> config.  One is that tdx_tdvpr_pa() doesn't get inlined, the other is
-> that page_to_phys() doesn't get inlined.
-> 
-> The __flatten annotation makes the compiler inline all function calls
-> that the annotated function makes, and the aforementioned commit assumed
-> this is always honored, recursively.  But it turns out it's not always
-> true:
-> 
->  - Gcc may ignore __flatten when CONFIG_CC_OPTIMIZE_FOR_SIZE=y.
->  - Clang doesn't support recursive inlining for __flatten, which can
->    trigger another similar warning when page_to_phys() calls pfn_valid()
->    when CONFIG_DEBUG_VIRTUAL=y.
-> 
-> Therefore using __flatten is not the right fix.
-> 
-> To fix the first problem, remove the __flatten for tdh_vp_enter() and
-> instead annotate tdx_tdvpr_pa() with __always_inline to make sure it is
-> always inlined.
-> 
-> To fix the second problem, change tdx_tdvpr_pa() to use
-> PFN_PHYS(page_to_pfn()) instead of page_to_phys() so that there will be
-> no more function call inside tdx_tdvpr_pa()[*].
-> 
-> The TDVPR page is always an actual page out of page allocator, so the
-> additional warning around pfn_valid() check in page_to_phys() doesn't
-> help a lot anyway.  It's not worth complicating the code for such
-> warning when CONFIG_DEBUG_VIRTUAL=y.
-> 
-> [*] Since commit cba5d9b3e99d ("x86/mm/64: Make SPARSEMEM_VMEMMAP the
->     only memory model") page_to_pfn() has been a simple macro without
->     any function call.
-> 
-> Fixes: e9f17038d814 ("x86/tdx: mark tdh_vp_enter() as __flatten")
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+On Tue, Jul 1, 2025 at 9:46=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>
+> Maybe not all the above commits are involved ...
+>
+> I used the former version (since it changed things so much) and then
+> added the changes from the latter by hand where I could.  I ended up
+> with the below diff compared to te HEAD before the merge.
 
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Sounds reasonable -- I did a quick merge of just rust-next into
+driver-core and I saw a few conflicts, yeah.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+The diff seems OK, but I can take a better look when the tag is out.
+
+Thanks!
+
+Cheers,
+Miguel
 
