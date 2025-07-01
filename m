@@ -1,122 +1,265 @@
-Return-Path: <linux-kernel+bounces-711786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347A8AEFF7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC1FAEFF8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 579413A8E96
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B641A444EF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C2827C172;
-	Tue,  1 Jul 2025 16:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D96271452;
+	Tue,  1 Jul 2025 16:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JeQhMPj5"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JIZv0vZl"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D3D27B4E0;
-	Tue,  1 Jul 2025 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CB726FA62;
+	Tue,  1 Jul 2025 16:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751386807; cv=none; b=ZDDSCXTfov+U/M2nbNz/E0G5C1x4FZyahY1a8lO4Os9qMhgzbq6KpELK+KATT5/7Q0D0D0KMUXI7nS4hxqPUoYmAo1Xv9w97B7OJNzBgnQGwSPRk7jywGBajmypKdB2ni2+VmQHNY2qFOJeycZGW6F/kJjCmuGdMnbUQw8vBec8=
+	t=1751386860; cv=none; b=QwxoK9OdMdVfDW3Vv0ZBW90oWsa67U9nFi5ZcZHgZ9W8VP0jnHYvseOWuQY/mxjSdfsI2OjcUvsmj7P2zt64MtZ+w8FFQ+d1bBM/mojyzeEx6bBCT89glvPgp3SWpihDcDFpMbLI4/QJWJdHUoUTlf14gMDxHX75Yekq/Mv5exw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751386807; c=relaxed/simple;
-	bh=XUewoyTGaS8PN53cLTlQP620TGbHYjMWIgOh0zhlOow=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Zz5MbTAONh8izeC2zvOFM0z+wv6Rg3YhiEpJYU0i/g1hZCyx3fjuRyR0UCKfQL9U1tbipBYYzP8c9XGQFCZ4PAKV7/zItatqHslR2G45dqAsPtDQPNojPyQlJ7A6QxuhCtwdrAKqFbayuaGkJkayZc/XkNlqKR9EkIsReyDGuPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JeQhMPj5; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=kNr4GTpz5KDYcbRPJrWcHcS/NbX5xNC8V+Q6OcQRh5k=; b=JeQhMPj5SZnA9DL5MCK8l8TURi
-	VuXrqEA3N2/kNkEqGqt10IJsx74wwX9oK1Xq2QG2slypgKWxyYYStdQcJOZlxgRzHANyYFVCg8+m3
-	yPK0+zmUtf2Qfa35WSVZ4zxXmtPCoetcfFmHz+JtlmnJDV7HqXahWYEIo7tsPr47cG9MFA3OiWtTt
-	yrAViKUeyW8NkJ5TzKN6716ooTfj4jVq0j6b4QEkRm0L0jcwBoy8E8jtmSwbRuG+BkjzeCm6qhjKi
-	DM5bkb3JEPXNEQreu7FETDdX9UEL9GnI6Zvt324ccEYsvqHsfg/hSoffKOlc11RrCD2dYGVjLm4S3
-	kj0kShxQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uWdi3-00B2kM-I4; Tue, 01 Jul 2025 18:19:51 +0200
-From: Luis Henriques <luis@igalia.com>
-To: "Achill Gilgenast" <fossdd@pwned.life>
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,  "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>,  "Linus Torvalds"
- <torvalds@linux-foundation.org>,  "Shuah Khan"
- <skhan@linuxfoundation.org>,  <linux-kselftest@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <stable@vger.kernel.org>
-Subject: Re: [RESEND PATCH v2] kallsyms: fix build without execinfo
-In-Reply-To: <DB0OSTC6N4TL.2NK75K2CWE9JV@pwned.life> (Achill Gilgenast's
-	message of "Tue, 01 Jul 2025 13:37:37 +0200")
-References: <20250622014608.448718-1-fossdd@pwned.life>
-	<20250622113602.48092b368afc5f1729b45cb6@linux-foundation.org>
-	<DATW4DAU81FO.388H7H1WSUKAB@pwned.life>
-	<DB0OSTC6N4TL.2NK75K2CWE9JV@pwned.life>
-Date: Tue, 01 Jul 2025 17:19:51 +0100
-Message-ID: <87ecuz51eg.fsf@igalia.com>
+	s=arc-20240116; t=1751386860; c=relaxed/simple;
+	bh=HQktoeVlNcl4UkDcYQChN8gXI5vAV3mCyQeSK5m9Tfk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IgKl428fhzwXeF1J0FXtfu5/C4Iap8mPpIMVERaDmqud1GQXXbdxGk/kM7d8mVWp0tKsafJ98y4bOUiy7lXnQoLghsIm7olMx4FnDiGIUK7DETkjrH2m9RVkbbFrBkq/nDjleoKvR3HgF8oIKQEcvpBBd4ceipIkFeEw24xnvO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JIZv0vZl; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e7daf3f4-de9e-4c06-ae60-6fb215c7364e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751386846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e1/e3eap9f2tDNMMl9IjOF9XHUaDUuipryrarrhqc5k=;
+	b=JIZv0vZlClHXgj7127g8+kz2SRAr0Px3UoYls6ptGkhWdbdq2YobumRaWhdMF90BjQSxlp
+	eXwOfHeMmjmbjKXoX7xNNU7RaeiDHkSB6FrpfzvEPDyPkkC38h9m2xx7Bg2U7vQvBCj3tq
+	bWXWe1kLdjto2uFwDP38VDeu9Vk92Qc=
+Date: Tue, 1 Jul 2025 12:20:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next v2 10/18] net: macb: remove illusion about
+ TBQPH/RBQPH being per-queue
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+ Harini Katakam <harini.katakam@xilinx.com>,
+ Rafal Ozieblo <rafalo@cadence.com>,
+ Haavard Skinnemoen <hskinnemoen@atmel.com>, Jeff Garzik <jeff@garzik.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+ <20250627-macb-v2-10-ff8207d0bb77@bootlin.com>
+ <c0037d24-5e24-4682-bc51-889a854d409e@seco.com>
+Content-Language: en-US
+In-Reply-To: <c0037d24-5e24-4682-bc51-889a854d409e@seco.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 01 2025, Achill Gilgenast wrote:
+On 7/1/25 12:15, Sean Anderson wrote:
+> On 6/27/25 05:08, Théo Lebrun wrote:
+>> The MACB driver acts as if TBQPH/RBQPH are configurable on a per queue
+>> basis; this is a lie. A single register configures the upper 32 bits of
+>> each DMA descriptor buffers for all queues.
+>> 
+>> Concrete actions:
+>> 
+>>  - Drop GEM_TBQPH/GEM_RBQPH macros which have a queue index argument.
+>>    Only use MACB_TBQPH/MACB_RBQPH constants.
+>> 
+>>  - Drop struct macb_queue->TBQPH/RBQPH fields.
+>> 
+>>  - In macb_init_buffers(): do a single write to TBQPH and RBQPH for all
+>>    queues instead of a write per queue.
+>> 
+>>  - In macb_tx_error_task(): drop the write to TBQPH.
+>> 
+>>  - In macb_alloc_consistent(): if allocations give different upper
+>>    32-bits, fail. Previously, it would have lead to silent memory
+>>    corruption as queues would have used the upper 32 bits of the alloc
+>>    from queue 0 and their own low 32 bits.
+> 
+> While better than silent memory corruption, this is not a good solution
+> since bringing the netdev up will now randomly fail. Can we allocate the
+> rings in one contiguous chunk instead?
 
-> On Mon Jun 23, 2025 at 1:53 PM CEST, Achill Gilgenast wrote:
->> On Sun Jun 22, 2025 at 8:36 PM CEST, Andrew Morton wrote:
->>> On Sun, 22 Jun 2025 03:45:49 +0200 Achill Gilgenast <fossdd@pwned.life>=
- wrote:
->>>
->>>> Some libc's like musl libc don't provide execinfo.h since it's not part
->>>> of POSIX. In order to fix compilation on musl, only include execinfo.h
->>>> if available (HAVE_BACKTRACE_SUPPORT)
->>>>=20
->>>> This was discovered with c104c16073b7 ("Kunit to check the longest sym=
-bol length")
->>>> which starts to include linux/kallsyms.h with Alpine Linux' configs.
->>>>=20
->>>> ...
->>>>
->>>> --- a/tools/include/linux/kallsyms.h
->>>> +++ b/tools/include/linux/kallsyms.h
->>>> @@ -18,6 +18,7 @@ static inline const char *kallsyms_lookup(unsigned l=
-ong addr,
->>>>  	return NULL;
->>>>  }
->>>>=20=20
->>>> +#ifdef HAVE_BACKTRACE_SUPPORT
->>>>  #include <execinfo.h>
->>>>  #include <stdlib.h>
->>>>  static inline void print_ip_sym(const char *loglvl, unsigned long ip)
->>>
->>> I'm not seeing anything in there which needs execinfo.h.  Can we simply
->>> remove the inclusion?
->>
->> No, since backtrace_symbols is provided by execinfo.h.
->
-> Is there some status on it? I saw you picked it in mm-hotfixes-unstable,
-> but it got dropped out again.
->
-> Is there something I can do to push it?
+Ah, looks like you do this in the next patch. In that case, (with the other
+comments addressed)
 
-FWIW I can confirm this is indeed a regression.  And specially annoying
-because it has been backported into stable kernels (even if having kunit
-tests backported sounds odd to me).
+Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
 
-It would be great to have this fixed, or reverted.
+>>  - In macb_suspend(): if we use the tie off descriptor for suspend, do
+>>    the write once for all queues instead of once per queue.
+>> 
+>> Fixes: fff8019a08b6 ("net: macb: Add 64 bit addressing support for GEM")
+>> Fixes: ae1f2a56d273 ("net: macb: Added support for many RX queues")
+>> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> 
+> As this is a bugfix, can you move it before your cleanup patches? This
+> will make it easier to backport to stable kernels.
+> 
+>> ---
+>>  drivers/net/ethernet/cadence/macb.h      |  4 ----
+>>  drivers/net/ethernet/cadence/macb_main.c | 36 +++++++++++++-------------------
+>>  2 files changed, 14 insertions(+), 26 deletions(-)
+>> 
+>> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+>> index 707b3286a6b8408a3bc4bbbcb1335ae8c3cd95ad..adc70b6efd52b0b11e436c2c95bb5108c40f3490 100644
+>> --- a/drivers/net/ethernet/cadence/macb.h
+>> +++ b/drivers/net/ethernet/cadence/macb.h
+>> @@ -209,10 +209,8 @@
+>>  
+>>  #define GEM_ISR(hw_q)		(0x0400 + ((hw_q) << 2))
+>>  #define GEM_TBQP(hw_q)		(0x0440 + ((hw_q) << 2))
+>> -#define GEM_TBQPH(hw_q)		(0x04C8)
+>>  #define GEM_RBQP(hw_q)		(0x0480 + ((hw_q) << 2))
+>>  #define GEM_RBQS(hw_q)		(0x04A0 + ((hw_q) << 2))
+>> -#define GEM_RBQPH(hw_q)		(0x04D4)
+>>  #define GEM_IER(hw_q)		(0x0600 + ((hw_q) << 2))
+>>  #define GEM_IDR(hw_q)		(0x0620 + ((hw_q) << 2))
+>>  #define GEM_IMR(hw_q)		(0x0640 + ((hw_q) << 2))
+>> @@ -1208,10 +1206,8 @@ struct macb_queue {
+>>  	unsigned int		IDR;
+>>  	unsigned int		IMR;
+>>  	unsigned int		TBQP;
+>> -	unsigned int		TBQPH;
+>>  	unsigned int		RBQS;
+>>  	unsigned int		RBQP;
+>> -	unsigned int		RBQPH;
+>>  
+>>  	/* Lock to protect tx_head and tx_tail */
+>>  	spinlock_t		tx_ptr_lock;
+>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+>> index a6633e076644089c796453f856a766299bae2ec6..d3b3635998cad095246edf8a75faebbcf7115355 100644
+>> --- a/drivers/net/ethernet/cadence/macb_main.c
+>> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>> @@ -482,15 +482,15 @@ static void macb_init_buffers(struct macb *bp)
+>>  	struct macb_queue *queue;
+>>  	unsigned int q;
+>>  
+>> +	if (macb_dma_is_64b(bp)) {
+>> +		/* Single register for all queues' high 32 bits. */
+>> +		macb_writel(bp, RBQPH, upper_32_bits(bp->queues->rx_ring_dma));
+>> +		macb_writel(bp, TBQPH, upper_32_bits(bp->queues->tx_ring_dma));
+>> +	}
+>> +
+>>  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+>>  		queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_dma));
+>> -		if (macb_dma_is_64b(bp))
+>> -			queue_writel(queue, RBQPH,
+>> -				     upper_32_bits(queue->rx_ring_dma));
+>>  		queue_writel(queue, TBQP, lower_32_bits(queue->tx_ring_dma));
+>> -		if (macb_dma_is_64b(bp))
+>> -			queue_writel(queue, TBQPH,
+>> -				     upper_32_bits(queue->tx_ring_dma));
+>>  	}
+>>  }
+>>  
+>> @@ -1145,8 +1145,6 @@ static void macb_tx_error_task(struct work_struct *work)
+>>  
+>>  	/* Reinitialize the TX desc queue */
+>>  	queue_writel(queue, TBQP, lower_32_bits(queue->tx_ring_dma));
+>> -	if (macb_dma_is_64b(bp))
+>> -		queue_writel(queue, TBQPH, upper_32_bits(queue->tx_ring_dma));
+>>  	/* Make TX ring reflect state of hardware */
+>>  	queue->tx_head = 0;
+>>  	queue->tx_tail = 0;
+>> @@ -2524,7 +2522,8 @@ static int macb_alloc_consistent(struct macb *bp)
+>>  		queue->tx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
+>>  						    &queue->tx_ring_dma,
+>>  						    GFP_KERNEL);
+>> -		if (!queue->tx_ring)
+>> +		if (!queue->tx_ring ||
+>> +		    upper_32_bits(queue->tx_ring_dma) != upper_32_bits(bp->queues->tx_ring_dma))
+>>  			goto out_err;
+>>  		netdev_dbg(bp->dev,
+>>  			   "Allocated TX ring for queue %u of %d bytes at %08lx (mapped %p)\n",
+>> @@ -2539,7 +2538,8 @@ static int macb_alloc_consistent(struct macb *bp)
+>>  		size = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+>>  		queue->rx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
+>>  						 &queue->rx_ring_dma, GFP_KERNEL);
+>> -		if (!queue->rx_ring)
+>> +		if (!queue->rx_ring ||
+>> +		    upper_32_bits(queue->rx_ring_dma) != upper_32_bits(bp->queues->rx_ring_dma))
+> 
+> Can you write this as bp->queues[0].rx_ring_dma for clarity?
+> 
+>>  			goto out_err;
+>>  		netdev_dbg(bp->dev,
+>>  			   "Allocated RX ring of %d bytes at %08lx (mapped %p)\n",
+>> @@ -4269,10 +4269,6 @@ static int macb_init(struct platform_device *pdev)
+>>  			queue->TBQP = GEM_TBQP(hw_q - 1);
+>>  			queue->RBQP = GEM_RBQP(hw_q - 1);
+>>  			queue->RBQS = GEM_RBQS(hw_q - 1);
+>> -			if (macb_dma_is_64b(bp)) {
+>> -				queue->TBQPH = GEM_TBQPH(hw_q - 1);
+>> -				queue->RBQPH = GEM_RBQPH(hw_q - 1);
+>> -			}
+>>  		} else {
+>>  			/* queue0 uses legacy registers */
+>>  			queue->ISR  = MACB_ISR;
+>> @@ -4281,10 +4277,6 @@ static int macb_init(struct platform_device *pdev)
+>>  			queue->IMR  = MACB_IMR;
+>>  			queue->TBQP = MACB_TBQP;
+>>  			queue->RBQP = MACB_RBQP;
+>> -			if (macb_dma_is_64b(bp)) {
+>> -				queue->TBQPH = MACB_TBQPH;
+>> -				queue->RBQPH = MACB_RBQPH;
+>> -			}
+>>  		}
+>>  
+>>  		/* get irq: here we use the linux queue index, not the hardware
+>> @@ -5401,6 +5393,10 @@ static int __maybe_unused macb_suspend(struct device *dev)
+>>  		 */
+>>  		tmp = macb_readl(bp, NCR);
+>>  		macb_writel(bp, NCR, tmp & ~(MACB_BIT(TE) | MACB_BIT(RE)));
+>> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>> +		if (!(bp->caps & MACB_CAPS_QUEUE_DISABLE))
+>> +			macb_writel(bp, RBQPH, upper_32_bits(bp->rx_ring_tieoff_dma));
+>> +#endif
+>>  		for (q = 0, queue = bp->queues; q < bp->num_queues;
+>>  		     ++q, ++queue) {
+>>  			/* Disable RX queues */
+>> @@ -5410,10 +5406,6 @@ static int __maybe_unused macb_suspend(struct device *dev)
+>>  				/* Tie off RX queues */
+>>  				queue_writel(queue, RBQP,
+>>  					     lower_32_bits(bp->rx_ring_tieoff_dma));
+>> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>> -				queue_writel(queue, RBQPH,
+>> -					     upper_32_bits(bp->rx_ring_tieoff_dma));
+>> -#endif
+>>  			}
+>>  			/* Disable all interrupts */
+>>  			queue_writel(queue, IDR, -1);
+>> 
 
-Cheers,
---=20
-Lu=C3=ADs
 
