@@ -1,147 +1,159 @@
-Return-Path: <linux-kernel+bounces-711452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2465AEFAEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91988AEFAE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7612A18857B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3326E188631B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220C026E718;
-	Tue,  1 Jul 2025 13:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2352741DA;
+	Tue,  1 Jul 2025 13:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rlhS3ni/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="D3AZFk3D"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248B92749C5;
-	Tue,  1 Jul 2025 13:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E53D26B2AA
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751377124; cv=none; b=PJWJnN+lBkLlRuTCv8wePtXXHgNujsuHKXiUm3VFaI1X4baftfiT1NISJHX6zI9RKTC+4Xk8CYUACMnMvcYUb7A/6mOyFmh9gghl1yv5E1qYKInOZBAnO+faNHix0c24Kvn4kPcacB6Ynf5IBS11wpODwl+UOLBzof7TDaXm8jg=
+	t=1751377089; cv=none; b=bD2h/Vx2SPNWe5eg1wYCkVXwsgWWWgA/Cem+Z2lBveWrtLJYJB7E1oC/BTGPK+3uRlaEUFi15b/8Yu6idA1SjNP/yE2bgcT8iFP/PazYCds5stofcniQVK8oqhd6BhnTRR4ZIV/1zw3ibBVSDOIt/Iz7QkWkeMMdMJ5kutOKbqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751377124; c=relaxed/simple;
-	bh=rkJyTcOX2ExCrrvvXdxjpejGU+kk3r+zRjowvWeb75o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPgdRbxWsu7X2IgKh5JTufPK97mbvlxpdvesCl6acM1csucT7wvgbXN1hk07tcKVo24b9htRlBPBn7CQkrY8j0jykF1xL3uwMr79oVAbGWrTF/QOxaNn8AOBsJ72Nvzp559zbXt+t3jUNL4O8S0AI/KHT9DiZwOfMoO11ciYCS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rlhS3ni/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 561Ao1Lm012254;
-	Tue, 1 Jul 2025 13:37:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=AJLNXeZBidDlQX/9niKzeIA7RdIQ35
-	aaPXD/kLpTeHk=; b=rlhS3ni/cF+oHD+o2LmQH00Tt1yf+IXrQwS8k/NYdNoQmt
-	duh9xElSzAv31IeesiKLOuUaS7Js+v1FcCM3idLgVIqiFfWon7XDGjUUaGS1gO7k
-	A0JrbTyaswrFc7s4ZFW4HADsPTEgUor320+59p+Q02H940E/xpViJv61e7ViyNjJ
-	vMcXo0c5xDHAYQwHYeEOaFbcipPGvNgKtWbscb8fvFkysHG+EG7pEVr+wrBpt5rP
-	TvpzBk/V8AqMNvTK7fz483B21FzXBpDlDdKDMGCI6bWWjVPpwYCBxl8uHjAuPKPZ
-	sumQ0qg/FxaZ17KQzTSCoQkinixWtocLfr+JROcQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j7wrfqxp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 13:37:34 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 561DK4Af030631;
-	Tue, 1 Jul 2025 13:37:33 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j7wrfqxj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 13:37:33 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 561CFQo0021945;
-	Tue, 1 Jul 2025 13:37:32 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47juqpju2u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 13:37:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 561DbRkS39191032
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Jul 2025 13:37:28 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D64A12004B;
-	Tue,  1 Jul 2025 13:37:27 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 79D812005A;
-	Tue,  1 Jul 2025 13:37:25 +0000 (GMT)
-Received: from osiris (unknown [9.111.81.242])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  1 Jul 2025 13:37:25 +0000 (GMT)
-Date: Tue, 1 Jul 2025 15:37:24 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-        Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
-        glider@google.com, dvyukov@google.com, vincenzo.frascino@arm.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
-        chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, paul.walmsley@sifive.com,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-        gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        johannes@sipsolutions.net, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        chris@zankel.net, jcmvbkbc@gmail.com, akpm@linux-foundation.org,
-        nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
-        justinstitt@google.com, arnd@arndb.de, rppt@kernel.org,
-        geert@linux-m68k.org, mcgrof@kernel.org, guoweikang.kernel@gmail.com,
-        tiwei.btw@antgroup.com, kevin.brodsky@arm.com, benjamin.berg@intel.com,
-        kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-mm@kvack.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 00/11] kasan: unify kasan_arch_is_ready with
- kasan_enabled
-Message-ID: <20250701133724.10162Bea-hca@linux.ibm.com>
-References: <20250626153147.145312-1-snovitoll@gmail.com>
- <CA+fCnZfAtKWx=+to=XQBREhou=Snb0Yms4D8GNGaxE+BQUYm4A@mail.gmail.com>
- <CACzwLxgsVkn98VDPpmm7pKcbvu87UBwPgYJmLfKixu4-x+yjSA@mail.gmail.com>
- <CA+fCnZcGyTECP15VMSPh+duLmxNe=ApHfOnbAY3NqtFHZvceZw@mail.gmail.com>
- <20250701101537.10162Aa0-hca@linux.ibm.com>
- <0400f0be-6b63-4bc7-846e-8852e1d01485@csgroup.eu>
+	s=arc-20240116; t=1751377089; c=relaxed/simple;
+	bh=9NAeOVpHEVGsz5ByZGwQ4Wt24BCLMkjun6lBaE5vbSU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aflkip8oNthJpcYP7K5e2O0+8Ki3War005gMhXQhOrMqMNKdpycYip8cYB3DqbLwm/w7Tan5bisf+eYBVk76nT8TH22cfglN0iX7VLfywOvpnRad4dfCo0T8qikOx+HNQsVfJylmwdE/NOHeZNKlk80oG8bbBgiJvb8OyzA1R0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=D3AZFk3D; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bWkcW3HwMz9sdP;
+	Tue,  1 Jul 2025 15:38:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1751377083; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fG49IWnqi5Qsh1rud8FkyB6EdwDzoRE72QFqV2fypms=;
+	b=D3AZFk3DVTfhK+H1H2QGWIOeLwgkwC9uMyQOlY/FuZjuHgmyZ21Qfl1aaFq78zji03a0kj
+	EN4R2CDw5UETHXl2O+UZhuZDHHaugwhF93+rFeMZisSmwE7MBRLeszahZ/+StspN88PfFD
+	D9kIbpuGie/c807dDjyd4c+XCuj9JSV2AnKlnk3Sdsz6jjTy/551ie9HuTH7g/QTEc1GeC
+	ic2zVfo7hqzsbX49rZuT+RFXj7AsYRQH5dLuYqZhc0V4bcMyQ5L1EyfkNsY/ChapOZcfwq
+	YK8wpj2t/VXLaUdavwXeHANGp6xdU3h4kXnK22OaLWBZTbIfYvOK0dPkiAzYag==
+Message-ID: <4d41dfaf0b48166c41a476f128d59785ddaeeb5f.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched/tests: Make timedout_job callback a better
+ role model
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
+ <tvrtko.ursulin@igalia.com>, Pierre-Eric Pelloux-Prayer
+ <pierre-eric.pelloux-prayer@amd.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 01 Jul 2025 15:37:56 +0200
+In-Reply-To: <20250605134154.191764-2-phasta@kernel.org>
+References: <20250605134154.191764-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0400f0be-6b63-4bc7-846e-8852e1d01485@csgroup.eu>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=E/PNpbdl c=1 sm=1 tr=0 ts=6863e49e cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8 a=9kVARt_T5sJ8cKZ6P08A:9 a=CjuIK1q_8ugA:10
- a=IC2XNlieTeVoXbcui8wp:22
-X-Proofpoint-GUID: RhlQaPOLrhblKhkyaR8lhPAADXtAGdqv
-X-Proofpoint-ORIG-GUID: GE-5RQzQLYwKSRuZzvD2Ieha-YyMeWy7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA4NSBTYWx0ZWRfXzvbPIXoCFjaA YSsHPBvgZlo8uA940MrN2nhmDxVD4yrQC0Blr21wUJpIGCnNlNYIEYn0zUSw91bxc/h5BgvR4PQ 8+gmBbA2hDH7/zlVMxuAui0Eg0eLEMWJxQ2/qxuHFp9hM4UusUMJXT1gcIBCqFiNlncOSMVN5PG
- Ld5QIjM0M/RCgeT9uZc/VoQiigSg/ZOOijWeB0ApYuTWAn6oTpW5uLedkuEa+H9gsqL267RFsh+ hsZlShfTEsI5dV1qJMDiUaZYdjPAHbt+/Y5HPTDay65IxTT2JuvXcJaPY0TCfNXxBXRdcK6cNfg T9ENU2fNsIOPb8h0JhVPWTlgBKUQsNsQrY0goxWlNMztanR3wFR0fwoMfm4Jvvns3yERoc04SWn
- h0O40s/ZVSLp603nO33OhPNgBdCIeQQuKGnHgEsIbQLtMjKZdTC34lQKNuw31VIbsvBRZVlt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0 mlxlogscore=594
- lowpriorityscore=0 mlxscore=0 clxscore=1015 adultscore=0 impostorscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507010085
+X-MBO-RS-ID: d448f7998a01351db5f
+X-MBO-RS-META: 89rnnf8ig8imhwy68phfjgr1x37xts95
 
-On Tue, Jul 01, 2025 at 12:25:32PM +0200, Christophe Leroy wrote:
-> Your patch below is simpler than what I proposed, but it keeps the static
-> branches so the overhead remains.
-> 
-> I also proposed a change, it goes further by removing the static branch for
-> architectures that don't need it, see https://patchwork.ozlabs.org/project/linuxppc-dev/cover/20250626153147.145312-1-snovitoll@gmail.com/#3537388
-> . Feedback welcome.
+On Thu, 2025-06-05 at 15:41 +0200, Philipp Stanner wrote:
+> Since the drm_mock_scheduler does not have real users in userspace,
+> nor
+> does it have real hardware or firmware rings, it's not necessary to
+> signal timedout fences nor free jobs - from a functional standpoint.
+>=20
+> The unit tests, however, serve as a reference implementation and a
+> first
+> example for new scheduler users. Therefore, they should approximate
+> the
+> canonical usage as much as possible.
+>=20
+> Make sure timed out hardware fences get signaled with the appropriate
+> error code.
+>=20
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Yes, removing the static branches during compile time is of course
-even better.
+Pushed that one to drm-misc-next
+
+P.
+
+> ---
+> =C2=A0.../gpu/drm/scheduler/tests/mock_scheduler.c=C2=A0 | 26
+> ++++++++++++++++++-
+> =C2=A01 file changed, 25 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> index 7f947ab9d322..49d067fecd67 100644
+> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
+> @@ -200,12 +200,36 @@ static struct dma_fence
+> *mock_sched_run_job(struct drm_sched_job *sched_job)
+> =C2=A0	return &job->hw_fence;
+> =C2=A0}
+> =C2=A0
+> +/*
+> + * Normally, drivers would take appropriate measures in this
+> callback, such as
+> + * killing the entity the faulty job is associated with, resetting
+> the hardware
+> + * and / or resubmitting non-faulty jobs.
+> + *
+> + * For the mock scheduler, there are no hardware rings to be
+> resetted nor jobs
+> + * to be resubmitted. Thus, this function merely ensures that
+> + *=C2=A0=C2=A0 a) timedout fences get signaled properly and removed from=
+ the
+> pending list
+> + *=C2=A0=C2=A0 b) the mock scheduler framework gets informed about the t=
+imeout
+> via a flag
+> + *=C2=A0=C2=A0 c) The drm_sched_job, not longer needed, gets freed
+> + */
+> =C2=A0static enum drm_gpu_sched_stat
+> =C2=A0mock_sched_timedout_job(struct drm_sched_job *sched_job)
+> =C2=A0{
+> +	struct drm_mock_scheduler *sched =3D
+> drm_sched_to_mock_sched(sched_job->sched);
+> =C2=A0	struct drm_mock_sched_job *job =3D
+> drm_sched_job_to_mock_job(sched_job);
+> +	unsigned long flags;
+> =C2=A0
+> -	job->flags |=3D DRM_MOCK_SCHED_JOB_TIMEDOUT;
+> +	spin_lock_irqsave(&sched->lock, flags);
+> +	if (!dma_fence_is_signaled_locked(&job->hw_fence)) {
+> +		list_del(&job->link);
+> +		job->flags |=3D DRM_MOCK_SCHED_JOB_TIMEDOUT;
+> +		dma_fence_set_error(&job->hw_fence, -ETIMEDOUT);
+> +		dma_fence_signal_locked(&job->hw_fence);
+> +	}
+> +	spin_unlock_irqrestore(&sched->lock, flags);
+> +
+> +	dma_fence_put(&job->hw_fence);
+> +	drm_sched_job_cleanup(sched_job);
+> +	/* Mock job itself is freed by the kunit framework. */
+> =C2=A0
+> =C2=A0	return DRM_GPU_SCHED_STAT_NOMINAL;
+> =C2=A0}
+
 
