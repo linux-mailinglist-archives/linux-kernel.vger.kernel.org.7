@@ -1,141 +1,174 @@
-Return-Path: <linux-kernel+bounces-710864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2406AEF21D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:00:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E483AEF23E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63D967A85F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4721444DC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F68A26E140;
-	Tue,  1 Jul 2025 08:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC64272E59;
+	Tue,  1 Jul 2025 08:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nw3YCgYb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wB37phIU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZgZmCR6h"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D1926C3A9;
-	Tue,  1 Jul 2025 08:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B529D26B09A;
+	Tue,  1 Jul 2025 08:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751360290; cv=none; b=j9dw01N4SwCdtEDLwUt4iLSbBVL78GXNwDA5Z2hDPPzLDGz5akbQBNMxWdMCdylzJo/cD4RwljztaWU5esppH5HwYctUqdFEOuWmCsGx/sZ2a2vUSQ2b4VuNblg8P6sBBZqpmWPqr034WvEUNtOIQlrKIHI3+/t5baz7QNAiFdM=
+	t=1751360293; cv=none; b=K1tlUSGldgTxZpSYQezJmH9ImcUO8tQ569ZJz+CUuEY12heee+R71EgBu8kcnKT6yUDSZOVpFcdX0jXO2edXi0Q8OK3QUbTxyyCbgEFlLj0gnICxmMkXzwQ+oKq8SpbOwcUKLyWH9THNqPtg6z4AvJzi04Kqn1SzK/swSqJ697Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751360290; c=relaxed/simple;
-	bh=GxXVoLFLRD1VKtIrbklplB25upwnw5BQOwzExBjwY4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l8jfWoq4iWsmf9mkFQ49bBgWKqx8EKOt+iFjz/sxwvBUqCWJPNAbaUM2rb+7HSB7vaL72TsZDpar7+mDoWYU8VJ457b4nD1s5ge2Y6UIbVvu++P0KLltNvE79cv/Io2e2AfRcs9wWU+oPO3Co0PPfFa0Tanu4avPaY8QBgMA9C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nw3YCgYb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B01C4CEEE;
-	Tue,  1 Jul 2025 08:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751360289;
-	bh=GxXVoLFLRD1VKtIrbklplB25upwnw5BQOwzExBjwY4M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nw3YCgYbwjsSpNZ9HIXCEA2g/Bmt8OVA8Om0Xh5iXIKU1JqDYUv1ZInfxaMSQd7fQ
-	 i4xby4rkR6t8Qz8V4YRAGJthi6HxqR7csgCrESWffUXeW9xX1uvfwqAV3hQXBurQna
-	 dObctXHHPIIJafNkzAWTGvZKXSkgwI2dD3MD6lstZVU59u9DJAb7fugVNmug5yeFBp
-	 BbOmE8GkjOqzb5DlGCWM3nG1GiKYrmghFvD8pBD0pnWK1RJ0hI6YUDkb7C5eQf8mHJ
-	 WUIWVZJ/+8EmMIKUgiCEKZCh9FW3NFGm1YzUCc+8t5phDf7r/hArr3+ZxnBmHT5qWg
-	 I2jkqkd0s2tRw==
-Message-ID: <ef9a18f8-4e71-4ed4-87d5-d5f175b60a25@kernel.org>
-Date: Tue, 1 Jul 2025 10:58:02 +0200
+	s=arc-20240116; t=1751360293; c=relaxed/simple;
+	bh=CC5cQSfSGmKdKkeZa7p5tvupyfG2CLNGehREDf1mFcc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OHTF7f41mTwowO9YT0QktMOdR1R4Qc2iEd+ZugYFMeDh6hPSm13WDoyOOBtYuWA2mNa0pNCxhEHeT/Ysbp1rZKMv7qQtWEmnu2b5GBCqH0OCkYB/D/WGXX9Fci1idZXLsYGagL7XHgfVGeNWuzOYqs8KXAz+iFbTDrN15gNij5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wB37phIU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZgZmCR6h; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751360289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VUv1tHn4Gb15SCtBOdwANRio4D/S8/QmhpZlRN18zW8=;
+	b=wB37phIU1cgHL9oe4WYfMGliy5jbaoTzF0DhUFJs/rOu6Z9k1d3vYlAoN9EKggIwQUdu7l
+	+TljAEBva1iFEhXtwj719UDDhlB7E7ALl8cwsgv8F+HUkIarv/qpDzLbPy7v4o/GeFoOFd
+	2R4a1ZFq2m8qwljdwSfFlnkniHuUtcqgGxU+sUvfvGw1lpcFjL8gkz81eCl3e1b7Pk8VKb
+	10dcpeqesAIzny9jyLb46PnxK5K9QIJu7XVW1XaC7Hw+NAvENeYfSx+DUhGLnd9jyQJXPU
+	ot0rpxGS270Y+z4vxiKynztpNbEmcLdOyJkwgdvYSvWmLEQ/LGbCnC4ntsmYTA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751360289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VUv1tHn4Gb15SCtBOdwANRio4D/S8/QmhpZlRN18zW8=;
+	b=ZgZmCR6hsNO6h+aAy42Sjmgm6zIioVVD4G5orMl9SniBw8do+p9kwhp5Mrhd+6o7spFRYw
+	zppOqtmG7rk7GaCA==
+Date: Tue, 01 Jul 2025 10:58:02 +0200
+Subject: [PATCH 08/14] vdso/gettimeofday: Introduce vdso_set_timespec()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] dt-bindings: i3c: Add support for Qualcomm I3C
- controller
-To: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>,
- alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jarkko.nikula@linux.intel.com,
- linux-i3c@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Frank.Li@nxp.com,
- wsa+renesas@sang-engineering.com, alok.a.tiwari@oracle.com
-Cc: andersson@kernel.org, konradybcio@kernel.org
-References: <20250701071852.2107800-1-mukesh.savaliya@oss.qualcomm.com>
- <20250701071852.2107800-2-mukesh.savaliya@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250701071852.2107800-2-mukesh.savaliya@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250701-vdso-auxclock-v1-8-df7d9f87b9b8@linutronix.de>
+References: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+In-Reply-To: <20250701-vdso-auxclock-v1-0-df7d9f87b9b8@linutronix.de>
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, John Stultz <jstultz@google.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Christopher Hall <christopher.s.hall@intel.com>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Miroslav Lichvar <mlichvar@redhat.com>, 
+ Werner Abt <werner.abt@meinberg-usa.com>, 
+ David Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Kurt Kanzenbach <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, 
+ Antoine Tenart <atenart@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751360285; l=2428;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=CC5cQSfSGmKdKkeZa7p5tvupyfG2CLNGehREDf1mFcc=;
+ b=7doTRp//wkLzPlGHPeeVXsRB2rVPSQaX9szW5pOx13TUBMCDQh6Ba5Lm0uy/yEitK/NoNivtP
+ C/e1SD9At+pB4f04mSGvpQui1WuaofZ+BHAxek5oRzMozDtD+tqbaLD
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 01/07/2025 09:18, Mukesh Kumar Savaliya wrote:
-> Add device tree bindings for the Qualcomm I3C controller. This includes
-> the necessary documentation and properties required to describe the
-> hardware in the device tree.
+This code is duplicated and with the introduction of auxiliary clocks will
+be duplicated even more.
 
+Introduce a helper.
 
-Last sentence is completely redundant. How would you add bindings
-without necessary documentation? Does it make any sense to add bindings
-without neccesary documentation and properties? No, it does not. Say
-something useful or keep it simple. And I reject patches created to meet
-KPIs/goals like amount of lines of patches (second pattern: other patch
-was for IPQ5424 where I asked to shorten and qualcomm kept it two lines...).
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ lib/vdso/gettimeofday.c | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
 
-> +maintainers:
-> +  - Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
-> +
-> +description:
-> +  I3C in master mode supports up to 12.5MHz, SDR mode data transfer in mixed
-> +  bus mode (I2C and I3C target devices on same i3c bus). It also supports
-> +  hotjoin, IBI mechanism.
-> +
-> +  I3C Controller nodes must be child of GENI based Qualcomm Universal
-> +  Peripharal. Please refer GENI based QUP wrapper controller node bindings
-> +  described in Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml.
-Your cover letter - or this changelog - should explain what is your plan
-in updating that one.
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 215151bd5a1320ee6edda8f334d47c739577f696..50611ba28abfcfc7841616e8787101ea1ffcb7d8 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -77,6 +77,16 @@ static __always_inline bool vdso_clockid_valid(clockid_t clock)
+ 	return likely((u32) clock < MAX_CLOCKS);
+ }
+ 
++/*
++ * Must not be invoked within the sequence read section as a race inside
++ * that loop could result in __iter_div_u64_rem() being extremely slow.
++ */
++static __always_inline void vdso_set_timespec(struct __kernel_timespec *ts, u64 sec, u64 ns)
++{
++	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	ts->tv_nsec = ns;
++}
++
+ #ifdef CONFIG_TIME_NS
+ 
+ #ifdef CONFIG_GENERIC_VDSO_DATA_STORE
+@@ -122,12 +132,7 @@ bool do_hres_timens(const struct vdso_time_data *vdns, const struct vdso_clock *
+ 	sec += offs->sec;
+ 	ns += offs->nsec;
+ 
+-	/*
+-	 * Do this outside the loop: a race inside the loop could result
+-	 * in __iter_div_u64_rem() being extremely slow.
+-	 */
+-	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+-	ts->tv_nsec = ns;
++	vdso_set_timespec(ts, sec, ns);
+ 
+ 	return true;
+ }
+@@ -188,12 +193,7 @@ bool do_hres(const struct vdso_time_data *vd, const struct vdso_clock *vc,
+ 		sec = vdso_ts->sec;
+ 	} while (unlikely(vdso_read_retry(vc, seq)));
+ 
+-	/*
+-	 * Do this outside the loop: a race inside the loop could result
+-	 * in __iter_div_u64_rem() being extremely slow.
+-	 */
+-	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
+-	ts->tv_nsec = ns;
++	vdso_set_timespec(ts, sec, ns);
+ 
+ 	return true;
+ }
+@@ -223,12 +223,8 @@ bool do_coarse_timens(const struct vdso_time_data *vdns, const struct vdso_clock
+ 	sec += offs->sec;
+ 	nsec += offs->nsec;
+ 
+-	/*
+-	 * Do this outside the loop: a race inside the loop could result
+-	 * in __iter_div_u64_rem() being extremely slow.
+-	 */
+-	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
+-	ts->tv_nsec = nsec;
++	vdso_set_timespec(ts, sec, nsec);
++
+ 	return true;
+ }
+ #else
 
-Best regards,
-Krzysztof
+-- 
+2.50.0
+
 
