@@ -1,86 +1,62 @@
-Return-Path: <linux-kernel+bounces-711293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E855AEF8BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:36:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E359AEF8C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329081BC2AAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 013BA4A72E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B02A273D7A;
-	Tue,  1 Jul 2025 12:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240D52749EC;
+	Tue,  1 Jul 2025 12:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eOsvUrpJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Tivybn3q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42657270ED2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD55273D94;
+	Tue,  1 Jul 2025 12:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373386; cv=none; b=V9g4tvD3UeBJNtEi9ihHcDxqGr1aOvbguD8kIJCo1U78x2ue9ePX2gbdLZXGC1E1Un8K1Ma03p2Yco0Mr6e6ixEJD/r33GcNnTMmIlE86V2oXqALu8clH3JiaCogc50cwMSiUrStpm/6wgU6tQAf2/z5Uy9F1u4gE5c0HjnkD5Y=
+	t=1751373402; cv=none; b=pQdpH3iWKN8BulwNDC0g9iX8txkzf5SjCFcQIl1+0V2RFz5vTP5uq325vEdFNh/f3/OmZogxkvZqSQMUs96hVGofkmDoki2jBN2jrpz4D4ikCwD/FdFUFr/iNxB14gxUSMny9BrwTi+WMb/nRRAC+XJlJ7GzrDwyQRFE+m9nta0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373386; c=relaxed/simple;
-	bh=RSqTIjrct88sR7CZzH6GZUrUHcWswrjRQM40/qiNezA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OjsXmsJ0yawGsH8GzSh++MRzK9D5HvHiPus0nRfsMx4K8Is/kV8KaMLAx8vBAtguU5Gir+RMDM3Zd4gi7J1fcWOQ/o/Xs3pmRMeppdujvJ/63R8VX8gK4zHAA2MarmQDXRXREgF+VcRJqxnisLC4BC7XAaO6qmz9CP5+zL/mou8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eOsvUrpJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751373384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BWUS58/xuFehV84IBP/7jugiRMD3VIiL2+WOvgSmr/U=;
-	b=eOsvUrpJ0LOALtwLN0WKD0VCHfgjZuKZDMRrr3VNyIeZz9lNb9PT1kY6KBkExBHb9PlTsS
-	kxfvU9XEbT87u5GwdNoCuosF7MSLTuLeDFTfhfG6qDKBOKqghg5QasveGGUHEne5Ry6Tvo
-	cE5NwaBY1GJ5AMXNXYv5L5qsufDvEcU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-tgjuE-AOPB-5LWC_h8lZng-1; Tue, 01 Jul 2025 08:36:23 -0400
-X-MC-Unique: tgjuE-AOPB-5LWC_h8lZng-1
-X-Mimecast-MFC-AGG-ID: tgjuE-AOPB-5LWC_h8lZng_1751373382
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-453a5d50b81so10460125e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 05:36:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751373382; x=1751978182;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BWUS58/xuFehV84IBP/7jugiRMD3VIiL2+WOvgSmr/U=;
-        b=E54NASLfE0xJ0KRtc4PRDP+oATHB0Lre0NU54Ji+a3iftFt7e1n6b/oTnKsA7YyKql
-         BVrNvpi1H6KfgXUjEnhvUMvLPVw0rKbosSrzxDo41DPLHXzZDC+xpQzgTlc+jNOiL3YT
-         ilqLLd8UoKV7gbcDVd4zI73njDPWOmlrgLnBfIBHrFNi2RTe2O5LeBrij4FHeRYd/z4y
-         pdxN1yftOHlNuyzlcflbhvCtMIa4uTgb9/tgbYLsRxuzmVu4zwDb0Cqz4G1LhOKrZB9t
-         IbX46dVELHAnL2oW1NnnMbnJSjF1vD8opNQs6Csi44oVcjQrhFmbFXTQT4aSiaEYIVZW
-         MVJw==
-X-Gm-Message-State: AOJu0YynDCHlDGYCRbmgEgK2SPCe4LSqsfk69QQdY15T6+k8EF0z7n8B
-	IDoZVSrV8sUfn13bI93qHr4lDblmWYGBWw7wLUgxECk0++N935Qf1l5d8j6toCYnIpFTs2JP7gn
-	QhiZUrrD4GGE2CxzrDgNEsqascRqvpg5o20mD9AOKWR/pjNTMlU9Kw8d1WPJ4TS/vNg==
-X-Gm-Gg: ASbGncub00RF9FLjAbLNOtHTPV2Nol1KDViTX9cv7wtsOjn8Uk+rex3gBz4KtNBhqVz
-	i22qhHUCAhsrWlJXaxOr3lXqobsJZE+7BIcxBueaxHMHrdA4aA69NNoAcxgv/8RRlpOSrTgSVPu
-	hdIIWrc/ePu5wZGFD5UbmB/QJpzlD/sYycFqSSYnHry9l57kjyFqMxiJl+4jLKOodvoYnno0EY3
-	14/IBjgKBusXlqK/QD8ADa1tt7q2bNmnO9jRoBXc11n7XYwIgD7UjkHJkW6Mtlp41tVV1NmOWBn
-	HrKJN+Ar50TPrIj/t8ZyH6dSVelsywlZsjI++3EF8YyHO4OkfB/86PpJgp96JIZZbIZWLp+LLJb
-	39rySVmG9gV5S8e/noBGDRZRHmw2SiKbyx/3P0XRMaLCgEWgqjg==
-X-Received: by 2002:adf:a21a:0:b0:3a5:88cf:479e with SMTP id ffacd0b85a97d-3a8fe79c8e3mr10444947f8f.48.1751373381323;
-        Tue, 01 Jul 2025 05:36:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqIR1BDJyK8ZRp8F0lL2pM8FI7W8fcFCGvncPeyeTD2kfxRgbkByPh+KE/B8iSSRVeA4M/aQ==
-X-Received: by 2002:adf:a21a:0:b0:3a5:88cf:479e with SMTP id ffacd0b85a97d-3a8fe79c8e3mr10444867f8f.48.1751373380689;
-        Tue, 01 Jul 2025 05:36:20 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a87e947431sm13174236f8f.0.2025.07.01.05.36.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 05:36:20 -0700 (PDT)
-Message-ID: <9af55241-8348-46a1-8f72-5ad7e61bcd84@redhat.com>
-Date: Tue, 1 Jul 2025 14:36:17 +0200
+	s=arc-20240116; t=1751373402; c=relaxed/simple;
+	bh=YWeKmkvE2nshyPO+2BHN91uF4zdQRmWK/b609E9Ke5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aFhylYJOtmKSZIc4pVfJUcURfvE8MlFYqZra23KqQ/quG4y33LnFJPUG/KHho8OsWOi5vlWjQyB7ouQ9I5EKnNKpeelvZ3PVHqVsWewJPP1BqjogUt74pX8bBuuvS4VFmBbVP8RIMlzpDjX7XtCLWbPm4BW+e91NOsOb8D1x0rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Tivybn3q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5619q5tJ032421;
+	Tue, 1 Jul 2025 12:36:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yoARzbA2DxUDKFyYQNcEmf1O1r1hsrMQdeSsxiUJ8+Y=; b=Tivybn3qFcPRcSpl
+	amxACRcHpjj7qOoVJ1hQK7fK/Ag603Q4V3B3xI61jYBSZf01+PzDlMVKQWvVJppJ
+	jMLTGK/WAGz4vQeuzEH/LNrEPYGJPUn6vELGquvpwJf/BdBOW80i/x0yDf/YMK+E
+	xt/8Xjcx5XxgCd2vjrDYJSZdw+JreYZXMX7LGX8r6EjPGWAWMV3poEtTASQRySyB
+	99lT1+1oKnvBycvrJkjzamgog56NUCXCDEM+BCCWWNvjgy9Dwi7eUoabmyAjr8i0
+	ukDwgcbwTqrM0FE7CtNC0b1l/s0d968JmmTv9G4hMwz3HPLdKW6aAxAUIHQH37Wu
+	xheuZQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j63k8ykb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 12:36:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561CaR4m032439
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Jul 2025 12:36:27 GMT
+Received: from [10.235.9.75] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Jul
+ 2025 05:36:21 -0700
+Message-ID: <b1d88ceb-9021-4233-abaa-7d742e7a8f58@quicinc.com>
+Date: Tue, 1 Jul 2025 20:36:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,172 +64,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 18/29] mm: remove __folio_test_movable()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin
- <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-19-david@redhat.com>
- <6e067746-9d18-4d04-a60a-536d5fee6b87@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: ipq5424: Add NSS clock
+ controller node
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Georgi Djakov
+	<djakov@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Catalin
+ Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Anusha Rao
+	<quic_anusha@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>
+References: <20250627-qcom_ipq5424_nsscc-v2-0-8d392f65102a@quicinc.com>
+ <20250627-qcom_ipq5424_nsscc-v2-7-8d392f65102a@quicinc.com>
+ <cd6f018d-5653-47d8-abd2-a13f780eb38f@oss.qualcomm.com>
+ <db1d07f4-f87d-403a-9ab3-bf8e5b9465b3@quicinc.com>
+ <a873f197-1ad6-4a7a-ba66-5fef10f32c57@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6e067746-9d18-4d04-a60a-536d5fee6b87@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Luo Jie <quic_luoj@quicinc.com>
+In-Reply-To: <a873f197-1ad6-4a7a-ba66-5fef10f32c57@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ZKfXmW7b c=1 sm=1 tr=0 ts=6863d64b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=wZv0aL5qe_EQj9OG14cA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA3OCBTYWx0ZWRfXxZa597Slz5L9
+ AmdpGrCIOpOtlppRjkZRcFzAdwk3GYMOh5n5ejywGCXzNDOqiWc4XSTbX2KSfeEC+cJserz+OOG
+ xE/4H9i4Yu7N68/WGQq+K9L97KsygEckzeREJUoLwTbJV7dDh8z4BoEeukYw7YU4TmfY1AXEp3l
+ gM5rKuubfnO8fT8FBvyIU34pLpfX9rabQQIEVcDzTJiWpfU+ORqcmUej6dHME+lDCHaS8QtoKsw
+ PiNew8V/KcczMterynlIh+JUy48cdv/TJwCd5oCIABZU/NZ6W3nf639+Tw6e3j9jqS4J+b98Qwr
+ tEiuv4HZQOC/PyYIwY+GxHWXje8MkkvGmvOzrWDThI2oSmprzlhacNFN8f5wGjmR7DvOYasdD7O
+ fDToPB8HvUM1sLnY1vfSr3tAJQ1E81Tjy3Sb8KTL/DSXYvp1+n+AvpdKy30+eSvVZh0pcNk8
+X-Proofpoint-ORIG-GUID: n4wJd_yJgHq0Rsmgt5mIYaEvtlb0yQJq
+X-Proofpoint-GUID: n4wJd_yJgHq0Rsmgt5mIYaEvtlb0yQJq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507010078
 
->> ---
->>   include/linux/page-flags.h |  6 ------
->>   mm/migrate.c               | 43 ++++++++++++--------------------------
->>   mm/vmscan.c                |  6 ++++--
->>   3 files changed, 17 insertions(+), 38 deletions(-)
+
+
+On 7/1/2025 8:10 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 01-Jul-25 14:08, Luo Jie wrote:
 >>
->> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index c67163b73c5ec..4c27ebb689e3c 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -744,12 +744,6 @@ static __always_inline bool PageAnon(const struct page *page)
->>   	return folio_test_anon(page_folio(page));
->>   }
 >>
->> -static __always_inline bool __folio_test_movable(const struct folio *folio)
->> -{
->> -	return ((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS) ==
->> -			PAGE_MAPPING_MOVABLE;
->> -}
->> -
-> 
-> Woah, wait, does this mean we can remove PAGE_MAPPING_MOVABLE??
-
-Jup :)
-
-> 
-> Nice!
-> 
->>   static __always_inline bool page_has_movable_ops(const struct page *page)
->>   {
->>   	return ((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) ==
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 587af35b7390d..15d3c1031530c 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -219,12 +219,7 @@ void putback_movable_pages(struct list_head *l)
->>   			continue;
->>   		}
->>   		list_del(&folio->lru);
->> -		/*
->> -		 * We isolated non-lru movable folio so here we can use
->> -		 * __folio_test_movable because LRU folio's mapping cannot
->> -		 * have PAGE_MAPPING_MOVABLE.
->> -		 */
-> 
-> So hate these references to 'LRU' as in meaning 'pages that could be on the
-> LRU'.
-
-Yeah, it's a historical thing.
-
-But for anything we isolated, it had to be an LRU folio (PageLRU) 
-because that's how we were even able to isolate it ... from the LRU.
-
-[...]
-
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 098bcc821fc74..103dfc729a823 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -1658,9 +1658,11 @@ unsigned int reclaim_clean_pages_from_list(struct zone *zone,
->>   	unsigned int noreclaim_flag;
+>> On 6/28/2025 12:27 AM, Konrad Dybcio wrote:
+>>> On 6/27/25 2:09 PM, Luo Jie wrote:
+>>>> NSS clock controller provides the clocks and resets to the networking
+>>>> hardware blocks on the IPQ5424, such as PPE (Packet Process Engine) and
+>>>> UNIPHY (PCS) blocks.
+>>>>
+>>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/ipq5424.dtsi | 30 ++++++++++++++++++++++++++++++
+>>>>    1 file changed, 30 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+>>>> index 2eea8a078595..eb4aa778269c 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+>>>> @@ -730,6 +730,36 @@ frame@f42d000 {
+>>>>                };
+>>>>            };
+>>>>    +        clock-controller@39b00000 {
+>>>> +            compatible = "qcom,ipq5424-nsscc";
+>>>> +            reg = <0 0x39b00000 0 0x800>;
+>>>
+>>> size = 0x100_000
+>>>
+>>> with that:
+>>>
+>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>
+>>> Konrad
 >>
->>   	list_for_each_entry_safe(folio, next, folio_list, lru) {
->> +		/* TODO: these pages should not even appear in this list. */
->> +		if (page_has_movable_ops(&folio->page))
+>> I initially thought that a block size of 0x800 would be sufficient, as
+>> it covers the maximum address range needed for the clock configurations.
+>> However, the NSS clock controller block actually occupies an address
+>> range of 0x80000. I will update this to 0x80000 in the next version.
+>> Thank you for your feedback.
 > 
-> VM_WARN_ON_ONCE()?
+> 0x80_000 excludes the wrapper region. Please mark it as the entire
+> 0x100_000 that it occupies, no matter if there's anything in there
+> 
+> Konrad
 
-Well, no, it can currently still happen. But really, movable_ops pages 
-are not folios that could ever be reclaimed that way.
-
-So the TODO highlights that movable_ops pages should never even be put 
-in a list (page->lru will go away).
-
--- 
-Cheers,
-
-David / dhildenb
+I will update the register region to use the full 0x100_000 range to
+cover the entire area, including the wrapper region, as suggested,
+thanks.
 
 
