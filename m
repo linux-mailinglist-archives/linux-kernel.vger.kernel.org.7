@@ -1,107 +1,204 @@
-Return-Path: <linux-kernel+bounces-711987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB75AF0321
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AA1AF0324
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA371C04C38
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B9A484A78
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955C42459D9;
-	Tue,  1 Jul 2025 18:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FC927FB05;
+	Tue,  1 Jul 2025 18:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USwTPFVA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIPCFHIW"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC45E3596B;
-	Tue,  1 Jul 2025 18:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B7721CC40;
+	Tue,  1 Jul 2025 18:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751395659; cv=none; b=Td3OsFt79ViF/VpcA1QcODXMDwaL1HkD6bMibmRgUimeVULpwFuw4ReEBUVv0cGzvp+QBpUMcOdcNS1rgErJGJDCi5oD2KTVhx/1Tb76yRcds50ikuqYyQroyGAl2nkuuN9PXrleh8qWTkbMc0bxUyoLSb6BGB2/A0hjCpD69Bw=
+	t=1751395757; cv=none; b=Ty1JeEjONqScOK8ICG1RfpN2UEK3embWg9AXY5cS8zSlaQmCM8WNozq9vHzRsACnpAF/a3p/Xl4phbC66q3pjxszMUWWgDVmtwqmnntxQvAm6Ajbe5ZZVf3MG14m/88J+bMwq6Nlnfz9aXsHz0uLTfGQwIO8kxltVtX1FKX/aeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751395659; c=relaxed/simple;
-	bh=JkTTkr7necSommWO+02eTXNXA+2BqYihS2B9P96yej4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNwxvb+uxLb4ry3bXUC0X6w0qscwGcreSW4U/cpcd3Ocw1Jd4cmumf7jaKdeZOVd+3dk4ju5qjLyug4/gAfjiz8jA+7DSa21kco1ynu2lUa2GZJksMUlDtMztLcGin1FmcaUWHNGkgD5EnS03mH0s68hyKiyJvF8Xl77aDj1L90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USwTPFVA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E73AC4CEEB;
-	Tue,  1 Jul 2025 18:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751395658;
-	bh=JkTTkr7necSommWO+02eTXNXA+2BqYihS2B9P96yej4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USwTPFVA83klNEMTYfQHugsomxqIFBazWYYW6VXoMlsr4Kp1xroTJgkR6KHRm7CST
-	 3mp462/Fq/qPxMVuvILSLvkyOdCZVMqOrEQo7QUAXpPunYIUUwvPqIuCDH0Spywcar
-	 WrnnafQ7qUz35il5zvYSypT8S6xekZcckMwXDTNjISTUVqHjSxsjZ175r06XUvbTdi
-	 sf4IaSMNwJ/1nW2KHQCVZ3LTHLzafn9rUVLNs9r694DA6QUW5otmSHy8fGlVUlSMo2
-	 JV8ab8U21R2/tFFU4bfWdyWj1wIS5ndcJL7CU7wxvncHKBHkB4JN0Qcatnm4hMJNi9
-	 OP1herZ0ZwSOg==
-Date: Tue, 1 Jul 2025 11:47:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: alexjlzheng@gmail.com
-Cc: brauner@kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [PATCH] iomap: avoid unnecessary ifs_set_range_uptodate() with
- locks
-Message-ID: <20250701184737.GA9991@frogsfrogsfrogs>
-References: <20250701144847.12752-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1751395757; c=relaxed/simple;
+	bh=1vjBYMQeftqWi7FZi8y1ssVtN6H/J3kGxcSJ0LgdVFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZO02payclt4Z7frK3B7TaR6tO8xLtJIa372SeLyc3RuAdNFYlNneFiJRjzz/CHE4VXALXzTyHZABfLSRF1b4J7bsFVWFTdrMNmjSJpRw+VoQO070z5jHXJVz4SOTyAHLHeKf/WymRC6TCxI+87rYDsp8EDAro8iPU/1Y2w4hg8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dIPCFHIW; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2e95ab2704fso2423781fac.3;
+        Tue, 01 Jul 2025 11:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751395754; x=1752000554; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6T6ShIaDgYa+eLDzLK1Z4CLo4u4A8Rd31tmUlpMfZZg=;
+        b=dIPCFHIWILQAlDPI9UIb6G1iCUTqRZE+9yKurYAI9WHthFIWt9gVoNZQStyp17yvye
+         ItpLopGBOMjQbLgH50ZK6MBQyDOjokbErvnC1SMGIxS2KKjghTSFOXX510oPBfH/aC9U
+         UEFwNIG3/R/xCVZNB6EHYbpoHnlSpc863B1LrBN+yzubvJe/Ejzgw/DPwD4y2GahHnKT
+         ZUAt5dtpx/xDGbR/EnYYdrlv+JDKmlmfcCwlkiQtndcPV+oyaGKtBm9vYWUlqsyZc7XD
+         fWJZGyM5kiBs8kedAJKSh05g5buH94L4T7gJQv2j7bt6pfHjcKxvL/e6jhf4OCpsVxT3
+         C6oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751395754; x=1752000554;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6T6ShIaDgYa+eLDzLK1Z4CLo4u4A8Rd31tmUlpMfZZg=;
+        b=Vj0oJ3SihKswL2cTCc5SmjeYBHv5e4uyi35A1/09cvRNEtuXyEieu3LMyKFxW6tH2d
+         R8Hgcn0foiYIKdj3a6PQFrTkjGdqwXeJi9esihR7Z5jAMeb5FPxofiD+58iICLoX4wWo
+         fj3SMbaJXBndiV1Yz7szRt7zPXzCFBKUj8KfYTRJeiEZOvraLb+cOINKZ44MvumnxdVj
+         LAlpE9Asz8BEV7KrB3OFKmfR9f3QzuW9VCpUXcUomqNj47+za7C0GTDo+WwzsUQHrMlu
+         b/Yq7//tmqnZsnoCtdbNPJxL9QtIzoPSNJYqhU/kgL3XJpiOPzGuFlYCsoKhU7NmtdCV
+         ANXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+cQcBna+QRn9Gb7xDrQXRWq8Z0nWR/XxyAmxcYLVtQ0oQdKOIOeLETL1HfZVLgTT5/mf/SIot5PlWJLh7EnBj@vger.kernel.org, AJvYcCXK/eCQBMPKMfjEJptUop+fkFvT3a87pFo4M/OfalaskqhxOo8S/KGByAVD4a0jad8IZDkH7qB/9TcWCGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw94FUpItsAJoDiotsuTkdzyqP/p8McBdBP3H4kkXOanFbd/UL
+	HAlH02vo5b5BokHnks0ApDIIshjwzWq4mX5TbAnleO+qcJUBy5m2ghdg
+X-Gm-Gg: ASbGncsGKhig1tr4zKOhE97LGtKQ6qg8tHnD9JyJ8ak5RPzTer5rFpxGBHcdsX2FAQe
+	k8DGZTgFULufa4LxoQTuuNXiXwNwIayi83UhteX3eBsf/B5jVfZsj92ZARZ25T3+U0isjJKLw7A
+	R/FOo6a7CBzAcKHZLOqsX2riEZwPUnvRSePDGEI8E15HYBgBNEpREpdRGttbYqFEkYzAlY2sExM
+	SEgRAug14vc0MDrCBgNio/9VkxzX7JGWx4w9/jqGFXOvk24xV+QMnm1VRo9Elg6q+i6Y1PsxunD
+	aLb5vNFucYvmmIRTxz3r0GWIzS+D6ot00Ytp0RumrEtRkpUJN1DmjfklFbY5K55gV8nEUgLSGg=
+	=
+X-Google-Smtp-Source: AGHT+IFQar7eRKIGXm/cAgR40K7ZQCBU6V/9cWUE3jHqi9PpFBjVeAa5Z08aoxBYmDlj+ul5E6tD3g==
+X-Received: by 2002:a05:6871:3748:b0:2d6:2a40:fb9d with SMTP id 586e51a60fabf-2efed81d50cmr14218187fac.28.1751395754357;
+        Tue, 01 Jul 2025 11:49:14 -0700 (PDT)
+Received: from skc-Dell-Pro-16-Plus-PB16250.. ([132.237.156.254])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afb0e3160sm2213242a34.44.2025.07.01.11.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 11:49:13 -0700 (PDT)
+From: Suresh K C <suresh.k.chandrappa@gmail.com>
+X-Google-Original-From: Suresh K C
+To: nphamcs@gmail.com,
+	hannes@cmpxchg.org,
+	joshua.hahnjy@gmail.com,
+	shuah@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suresh K C <suresh.k.chandrappa@gmail.com>
+Subject: [PATCH v2 1/2] selftests: cachestat: add tests for mmap
+Date: Wed,  2 Jul 2025 00:19:01 +0530
+Message-ID: <20250701184902.8927-1-suresh.k.chandrappa@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701144847.12752-1-alexjlzheng@tencent.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 01, 2025 at 10:48:47PM +0800, alexjlzheng@gmail.com wrote:
-> From: Jinliang Zheng <alexjlzheng@tencent.com>
-> 
-> In the buffer write path, iomap_set_range_uptodate() is called every
-> time iomap_end_write() is called. But if folio_test_uptodate() holds, we
-> know that all blocks in this folio are already in the uptodate state, so
-> there is no need to go deep into the critical section of state_lock to
-> execute bitmap_set().
-> 
-> Although state_lock may not have significant lock contention due to
-> folio lock, this patch at least reduces the number of instructions.
-> 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> ---
->  fs/iomap/buffered-io.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 3729391a18f3..fb4519158f3a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -71,6 +71,9 @@ static void iomap_set_range_uptodate(struct folio *folio, size_t off,
->  	unsigned long flags;
->  	bool uptodate = true;
->  
-> +	if (folio_test_uptodate(folio))
-> +		return;
+From: Suresh K C <suresh.k.chandrappa@gmail.com>
 
-Looks fine, but how exhaustively have you tested this with heavy IO
-workloads?  I /think/ it's the case that folios always creep towards
-ifs_is_fully_uptodate() == true state and once they've gotten there
-never go back.  But folio state bugs are tricky to detect once they've
-crept in.
+Add a test case to verify cachestat behavior with memory-mapped files
+using mmap(). This ensures that pages accessed via mmap are correctly
+accounted for in the page cache.
 
---D
+Tested on x86_64 with default kernel config
 
-> +
->  	if (ifs) {
->  		spin_lock_irqsave(&ifs->state_lock, flags);
->  		uptodate = ifs_set_range_uptodate(folio, ifs, off, len);
-> -- 
-> 2.49.0
-> 
-> 
+Signed-off-by: Suresh K C <suresh.k.chandrappa@gmail.com>
+---
+ .../selftests/cachestat/test_cachestat.c      | 39 ++++++++++++++++---
+ 1 file changed, 33 insertions(+), 6 deletions(-)
+
+diff --git a/tools/testing/selftests/cachestat/test_cachestat.c b/tools/testing/selftests/cachestat/test_cachestat.c
+index 632ab44737ec..b6452978dae0 100644
+--- a/tools/testing/selftests/cachestat/test_cachestat.c
++++ b/tools/testing/selftests/cachestat/test_cachestat.c
+@@ -33,6 +33,11 @@ void print_cachestat(struct cachestat *cs)
+ 	cs->nr_evicted, cs->nr_recently_evicted);
+ }
+ 
++enum file_type {
++	FILE_MMAP,
++	FILE_SHMEM
++};
++
+ bool write_exactly(int fd, size_t filesize)
+ {
+ 	int random_fd = open("/dev/urandom", O_RDONLY);
+@@ -202,7 +207,7 @@ static int test_cachestat(const char *filename, bool write_random, bool create,
+ 	return ret;
+ }
+ 
+-bool test_cachestat_shmem(void)
++bool run_cachestat_test(enum file_type type)
+ {
+ 	size_t PS = sysconf(_SC_PAGESIZE);
+ 	size_t filesize = PS * 512 * 2; /* 2 2MB huge pages */
+@@ -212,27 +217,43 @@ bool test_cachestat_shmem(void)
+ 	char *filename = "tmpshmcstat";
+ 	struct cachestat cs;
+ 	bool ret = true;
++	int fd;
+ 	unsigned long num_pages = compute_len / PS;
+-	int fd = shm_open(filename, O_CREAT | O_RDWR, 0600);
++	if (type == FILE_SHMEM)
++		fd = shm_open(filename, O_CREAT | O_RDWR, 0600);
++	else
++		fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+ 
+ 	if (fd < 0) {
+-		ksft_print_msg("Unable to create shmem file.\n");
++		ksft_print_msg("Unable to create file.\n");
+ 		ret = false;
+ 		goto out;
+ 	}
+ 
+ 	if (ftruncate(fd, filesize)) {
+-		ksft_print_msg("Unable to truncate shmem file.\n");
++		ksft_print_msg("Unable to truncate file.\n");
+ 		ret = false;
+ 		goto close_fd;
+ 	}
+ 
+ 	if (!write_exactly(fd, filesize)) {
+-		ksft_print_msg("Unable to write to shmem file.\n");
++		ksft_print_msg("Unable to write to file.\n");
+ 		ret = false;
+ 		goto close_fd;
+ 	}
+ 
++	if (type == FILE_MMAP){
++		char *map = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
++		if (map == MAP_FAILED) {
++			ksft_print_msg("mmap failed.\n");
++			ret = false;
++			goto close_fd;
++		}
++		for (int i = 0; i < filesize; i++) {
++			map[i] = 'A';
++		}
++		map[filesize - 1] = 'X';
++	}
+ 	syscall_ret = syscall(__NR_cachestat, fd, &cs_range, &cs, 0);
+ 
+ 	if (syscall_ret) {
+@@ -308,12 +329,18 @@ int main(void)
+ 		break;
+ 	}
+ 
+-	if (test_cachestat_shmem())
++	if (run_cachestat_test(FILE_SHMEM))
+ 		ksft_test_result_pass("cachestat works with a shmem file\n");
+ 	else {
+ 		ksft_test_result_fail("cachestat fails with a shmem file\n");
+ 		ret = 1;
+ 	}
+ 
++	if (run_cachestat_test(FILE_MMAP))
++		ksft_test_result_pass("cachestat works with a mmap file\n");
++	else {
++		ksft_test_result_fail("cachestat fails with a mmap file\n");
++		ret = 1;
++	}
+ 	return ret;
+ }
+-- 
+2.43.0
+
 
