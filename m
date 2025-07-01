@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-711458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E90AEFAFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:43:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89921AEFAF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949F43A60BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:42:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A0927B1232
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D10027585C;
-	Tue,  1 Jul 2025 13:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0544727466D;
+	Tue,  1 Jul 2025 13:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cn+EjoAq"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Raceko7F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2461B275845
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099CB149C4A;
+	Tue,  1 Jul 2025 13:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751377336; cv=none; b=DeyHeRg+dzM3VuaGLYy5UM5khPe8aYTNGjsYyctgmjGIIDh2j/XVq1dwhhSsf4kSrXQS4ccEV3FxOG+vgBAY6gWXCC0gF1LOSNaYqH3NYNXA8TTZvjy4nUjsHgC3f2XG3M59lzsPN+vU6G16gJ4/LeoeqTkqNlZQZ79O8hvceRA=
+	t=1751377326; cv=none; b=VopDRPOBFDsVy6yIK5kXowM4OIiPpYCDw0IU1WgFptm408xy3xpVnhszFXnLSnxC0a4mti5x53r5na6Tc2mn5oHVWBlq7Oxl+71MPRM25XBo8a5n2vG1Ig4gnDWqHt5Iy4QXsJX2JYLEx3yHA7ziLpmZKrStFMUNxUmTkoueOXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751377336; c=relaxed/simple;
-	bh=l53+up7iBS1qHbvga47bs+kjEPQBMaO+IwNLLfxJzHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zs3qviEttahx7Lgtoe/2gI0twB7/O0B+xJ6bbGPTOAMy5ZnwYByEouCLIYnFzbz+w+gtaVOYGUbH/q7UD2TjOjCES9XNY8brGChIGXiHqMECirCcReAeWcgh7zWwMo2MCmnvPgrJsTVmNtBImu3KkBvXztspa++2k58rR0QWL7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cn+EjoAq; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so9328a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 06:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751377333; x=1751982133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l53+up7iBS1qHbvga47bs+kjEPQBMaO+IwNLLfxJzHo=;
-        b=Cn+EjoAqBbrDKOfHp5fqDsV8kEgPUGw285JhOjZ8uP/7i0GbWrbUpgLNlLW34DtA4q
-         MTJ6FlH0sXf54PZREy6eLHI/ihyM63WmqVu/5uauEPoojPr52i9n+o5OOevidosts15h
-         2zplKgeEc32bX7p0t01+roQ5cVe+28Cd0MSgaNTGLGE3INRPizQZVm2KfZkQE/8lF6Go
-         SaD13qUc9LOLkF0DOxeXlZpAqPAH9Jc3TMyyXNrcbtS8AINT3Q1yiKltsHXoWODJwqNe
-         2hel1RQ7ruaQILFo47Zo+jKo05d6DYp+JX/BS0uK0e7jAmckYNYP7cxgBw8Dfp16MFKp
-         HDqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751377333; x=1751982133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l53+up7iBS1qHbvga47bs+kjEPQBMaO+IwNLLfxJzHo=;
-        b=igWbcR4CiWJRF6OSeWpKdb+OHfB8U0mpBcHYYVBgqeUcHTdxzUOZnnNjFFKNb6Qa4Q
-         G6tE+OiVXqYyiOEPM5rL2RUQWubK7fS3OPS0DCeY4wDrfoxlg3DpVJIvjhfJF67nff0q
-         N4iUfDWOIKzyt3Lcr3bUyKZabbSprxh/r+1e39xFlg7N46/1ypygTaN0G83OhjiZpekx
-         Pvdkvv2k34i/9NLXjHCTCK54mP7z84za0yHQE2pZfnnrNzKsx185uHpSmId0G4XEUvLF
-         hGDhA4cFLJXJPgAvEz5V/jopuANJSnL8tDnRGC1IfX2PXupsFLPQhWRuip3qhkB7nXqv
-         miUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPmLAbLzJY9ABYR5lW3iNTYZwloNrSgocb7oN89sOsqjWvxBE3Npr9WSNdlZ3t6ttjEDoejI+V8KLoIPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzECKkuUXCXfENwjbbECgE0pOgOyiVKIbXgD+/7RaemDwmYaRPu
-	/zhDN51KomVeph2xu9hT1abHbWFQfbV0lduNZOgfT2HrsTHRQCUuPmzHuzYb4oVPi91dCXcWjMu
-	5Dc+jKR73/d7jN2EqQ2d+CcZvRXlDhIPYxK3zgctX
-X-Gm-Gg: ASbGnctyffB07NuhbgbzvPfkjl63fgP2bHpxnpca6PbWgklytM3o+UmbrOswSfU6N1d
-	MHKtE9gokl6EVHc58tKEfoe6Hpl2U53GjRgMenKFdVMF0lBT3PMczfGuZeRzR0H/lWA/FPn8Ok6
-	wRzfgMAt71dXhsauhbTw/CQXauOLk6Y3B4HA/a3oAMMibSm8njcLWn8DDzG9vfHcvSYzaPi7Mqs
-	VcdC8fMaw==
-X-Google-Smtp-Source: AGHT+IG8i4Y7S9H/asInCH7TGD9/vuiOqqrIhQdHNEBY4YIe1hmb0pRdeOhNZmNhr9/Rh8lPWDairwcma09YPdiesMs=
-X-Received: by 2002:aa7:c342:0:b0:608:fb55:bf12 with SMTP id
- 4fb4d7f45d1cf-60e38a44816mr71027a12.4.1751377333023; Tue, 01 Jul 2025
- 06:42:13 -0700 (PDT)
+	s=arc-20240116; t=1751377326; c=relaxed/simple;
+	bh=ZvBmRJCbf4BqcFDviY6wG5SRoxs4TwMRkF6Krn1jX2M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WHw0c54PvXMO1H2sil65R+2kHxY++F7AJbIn3vl4lpmja0lh3BXp6WAvxGl5sAd5VoXDXmtNBqEGCshyU1wp2M5qL+hIZ5S5pAG6hsyPu3WgsWWG3KOP9ycIceuYIpJkzrX+CxQyfFV25lvChOJEjDBpTorEmuXDGFWMhg79kHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Raceko7F; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751377325; x=1782913325;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZvBmRJCbf4BqcFDviY6wG5SRoxs4TwMRkF6Krn1jX2M=;
+  b=Raceko7F5jRq22ByR5bVvvuVZQXNbG1QM5nDNk+/izFyicRhWypIo6ha
+   +r1o1CkMHjfzUVKO6t4S9LGroZkhjU20LrW838jha4fTGJA31HX7u56Rj
+   BxCRBWW4jg59OvmxSJEeqyYaexY0wkgmHn+t9fFcz96OwjLcIZ+e4Wj1c
+   TDmQji9r5oCMb4XsC9+6j6JRjkHmR78s1+IkM7vKseUxL5uT3PTsgbgJM
+   retvWvk+iX3aYBSjx3uBW4IOJ3EUfsHLipaFF1tgV8mo6xY45CseZrhu7
+   W8cvgFEE8e6mHGLs9eQXxh8rSmw14humtmIRp+YhTe1sm9tPi9AXKyOUa
+   w==;
+X-CSE-ConnectionGUID: qvMWPT/aQcqrtcQusfPX2g==
+X-CSE-MsgGUID: /1WevgExRRGnSBtuTNokhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="57419909"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="57419909"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 06:42:04 -0700
+X-CSE-ConnectionGUID: hXhPQhIYSMiQrftxilxcNw==
+X-CSE-MsgGUID: Z8lAHxDtQ9mtolWAB8bVDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="153858497"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Jul 2025 06:42:03 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 4C6C315B; Tue, 01 Jul 2025 16:42:01 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] serial: 8520_ce4100: Reuse mem_serial_in() in ce4100_mem_serial_in()
+Date: Tue,  1 Jul 2025 16:41:38 +0300
+Message-ID: <20250701134200.2621898-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250628234034.work.800-kees@kernel.org>
-In-Reply-To: <20250628234034.work.800-kees@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 1 Jul 2025 15:41:35 +0200
-X-Gm-Features: Ac12FXwCp_bfivLffFtsPlz6EADiU4bpUi0pVVqVqpSbuvTlWBItorTjM1ha8VM
-Message-ID: <CAG48ez0n1E0iuOxPe=jq4MuuP3w2wMSNixmfNmBbB89jyJBSbA@mail.gmail.com>
-Subject: Re: [PATCH] kunit/fortify: Add back "volatile" for sizeof() constants
-To: Kees Cook <kees@kernel.org>
-Cc: =?UTF-8?Q?Jannik_Gl=C3=BCckert?= <jannik.glueckert@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, linux-hardening@vger.kernel.org, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 29, 2025 at 1:40=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
-> It seems the Clang can see through OPTIMIZER_HIDE_VAR when the constant
-> is coming from sizeof.
+In one place in ce4100_mem_serial_in() the code may be replaced with
+mem_serial_in() call. Do it so and collapse two conditionals into one.
 
-Wait, what? That sounds extremely implausible/broken to me.
+Suggested-by: Jiri Slaby <jirislaby@kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-https://godbolt.org/z/ndeP5chcb also suggests that clang does not
-generally "see through OPTIMIZER_HIDE_VAR when the constant is coming
-from sizeof".
+v2: fixed condition (Jiri)
 
-Do you have a minimal reproducer of what you're talking about?
+ drivers/tty/serial/8250/8250_ce4100.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_ce4100.c b/drivers/tty/serial/8250/8250_ce4100.c
+index 3dd88f372a51..81dfb2adbabd 100644
+--- a/drivers/tty/serial/8250/8250_ce4100.c
++++ b/drivers/tty/serial/8250/8250_ce4100.c
+@@ -35,13 +35,8 @@ static u32 ce4100_mem_serial_in(struct uart_port *p, unsigned int offset)
+ {
+ 	u32 ret, ier, lsr;
+ 
+-	if (offset != UART_IIR)
+-		return mem_serial_in(p, offset);
+-
+-	offset <<= p->regshift;
+-
+-	ret = readl(p->membase + offset);
+-	if (!(ret & UART_IIR_NO_INT))
++	ret = mem_serial_in(p, offset);
++	if (offset != UART_IIR || !(ret & UART_IIR_NO_INT))
+ 		return ret;
+ 
+ 	/* see if the TX interrupt should have really set */
+-- 
+2.47.2
+
 
