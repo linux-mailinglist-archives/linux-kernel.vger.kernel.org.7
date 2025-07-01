@@ -1,181 +1,239 @@
-Return-Path: <linux-kernel+bounces-711890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D948AF0122
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:06:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329C8AF0115
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC9D16F992
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:02:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB5A87AFF2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F3727FD52;
-	Tue,  1 Jul 2025 17:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579B028152D;
+	Tue,  1 Jul 2025 17:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1mZZ1iJc"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJ6AsJTN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33183275AFF
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 17:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C42627C172;
+	Tue,  1 Jul 2025 17:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751389262; cv=none; b=MBZMbvyUFCFnqpWDzwVPyCg1iH3YqL5K3w2dqgjIefDeiZudBJtnN8kncYs6ly5yMkLEa2k4ViYQn6+T1icDTTa4eme+YQMP0BhZ6gNV0XEstT4EnkuG4vNkFyHfsCJhkDVKpT6iVnc/YZ71z6jxu1AgpVNIlnqMlcGW1rW9Af0=
+	t=1751389358; cv=none; b=NIgY2J33/DcO29yNSXQ9zbJj3gKar8mHe2jsWFMuOUewuHI++dpx+6h9PU2rfwJrEkZCaByUeROqO+RTrjIbanC5K749vxxs2a/sLhvQSTj5zif86BgRfBKZrpwgMwVxCjpZcyJgr+5CJzkRddQRWe9yWlJ/f0nyhzatikniQn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751389262; c=relaxed/simple;
-	bh=bkXhikRamz3TYR+syj/QXhLIxFxYsmkj2lhNT1/lT2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VuYOhTl6bDXgBO9JwVp9VIMXryh2d9TTlD1YPVYpYx25QIEsVIuji8MWH1hcR/RxzRPZWESXQS7+bh8erVp0gZb5I6RvFj/iS5NloP4fkzW0/xiVG3CZROBO3ApLBfuIv+9xapkf8LXw7davU1vW43ijj8TiH27uxxgQ8JwNXaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1mZZ1iJc; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3de210e6076so144785ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 10:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751389260; x=1751994060; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/UgRjLg1bANNvxWkIL2D0B4OzAbnbrdTRnXpfNQyHPk=;
-        b=1mZZ1iJcuXiwxxu2KJIZe6jQgJLWF45SuEuVtMpx1tXkdNBHoMpyZXGMGupfZOMSi1
-         W15EbV7C+878rCvYlpGSsFQ7KLWtNNtIHB6p+KQwnqsR8lxboSWXu/YCH3+lrFwL73sG
-         IIPIyfrarzsBzGaWua3ZNOpUiajqySbmXlqIMrsU862Uy34/d37T5HCLR3Pws6h8tREa
-         X/nRZ+yivLwDZxx2c2fMTbJsvhiGCRcGUEHUGBIhV5MfURMATmD/e81OFlNcrlldFFvE
-         PCjXoudkdr5XUlprWnh7ehREKnnkavMr1NkiDiUUUqrcPbeFFwHx1FouS5P+4KxTcftE
-         nRng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751389260; x=1751994060;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/UgRjLg1bANNvxWkIL2D0B4OzAbnbrdTRnXpfNQyHPk=;
-        b=gTbceb8AERa0jvjIAajz5lIGKu2LJa4+PK/NGNOB6qVlMK2x687Ili+vktbcmr5k+h
-         DhCxMcwPkMXEBVAmRVdKF1aN+N/0jVSQhcvbY7ptzrsYviPyYHSjEJxua5QWZMd1pSkz
-         AYke51PlW+sFRzaw7xik3vLXxNPLVG8aaT4tWun++V6igGBxDE59ACiaPTvX2VmBgdij
-         eYBGwAXxT3++iyxb/t9OWJ4Lz+aELfRZi/LOQKOG+3m9HDeE4LlkIeDpKGZc1ZbtfQFy
-         ZoxLqDzUKonCrSaU7jM0neilTCzdBOhDcXu5Qumb/NM+eKM7EnOvFCTn8vVJg6yuni7n
-         /VlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKKenGyonNRbOsraP7tmGoleCU9h6mM6a1LtcwK4aRr0nxYi7Uij+/ZFpm7j7MgnJzlD48wdzpxBm2Gqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN0qzvnALRCsv0DDCr99fkPDhryR9nb0gIu+B7oQWf33WRv5pA
-	mv7SzJ2lPv4mpP5ZKpLW+9c9ofce0zTCnd/je7KbQA2Znd6lz2RNqZM+Jkc79ruBEM9ftyNvY6b
-	we66VfFnU4EjggsqI+76F4vCfd8S3ZZRKqWhExaql
-X-Gm-Gg: ASbGncu5xFG0pK7kKxARc3vsKnWS1K8eAaFTlzqkEVaw1XfyZfMYmpK5B5MHCnH7Tj+
-	X7Zq4fyUlwVK6zJLjv69ruDFnhq3bo5cV5mGfbkSnRNZOLyM47BUzEzOOJBjHxiAT5JvEuOZ9WZ
-	sU2vOhyr7dc7nCXvjiKLgFVDH3DS5QFiMfFILWhB5lThuxmcGpQir/BZnKcs+H5GqUPXJDkuQ=
-X-Google-Smtp-Source: AGHT+IEAhz64e+5NmGN5DM9cSM9FAys6CW3b3NwAestgSJtBnITuejAnC/VvbJqmG/3u6aIr/6ecA3b9nT+k3h8kfT8=
-X-Received: by 2002:a05:6e02:4610:b0:3e0:51fc:6e8 with SMTP id
- e9e14a558f8ab-3e051fc0c97mr1053115ab.15.1751389259861; Tue, 01 Jul 2025
- 10:00:59 -0700 (PDT)
+	s=arc-20240116; t=1751389358; c=relaxed/simple;
+	bh=Z92Sx8gEc4sHUl3d/1AvWAD8yMZK5bpjnhhlTgbwaos=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qFTZNR5qclDfZ3oc77joRkmqpOsKKfCRdXMxkhH2gw3UNSJ+WaPs1as5IXzq4OtVYkymDsg1zBphogA/Jt6j834bGuvdzgZA1kzAT3WOex8Ce97l2rAgmwFXAtWWa+zZBufO+1lAdaY4LMmMS6MIHT9eyJdTkaLwVUkPXyVb76U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJ6AsJTN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4618FC4CEEB;
+	Tue,  1 Jul 2025 17:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751389358;
+	bh=Z92Sx8gEc4sHUl3d/1AvWAD8yMZK5bpjnhhlTgbwaos=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=nJ6AsJTNNffWwyHMazy8+ZfPbBsr6OGTqwEH7b94GBfyDswXb9pR31hJdHsPg9tOc
+	 IisOHKt/loYPTshFENqPkSAvvymbdLvTS3d4E/ATMw4AXVzRgpZKSF9bKLxLLDcI+F
+	 ljARGnISVzXNsRoXNG8vH+MXItkcKLxvoHWXiVK7186igJsT2FXDEu76uFlW8hjy2l
+	 WbZ3/YrYhLCXgCK9SN5uCPaKVTkbXIES9Z7BQBeHs2RT7j/iJCUvjj8Vo3wfuayCp8
+	 OcWfhYMG2eVfRoeYT+TmYCMH5xBbszlEYhG7NyRKBssgoulgd2yUEyVTs4EGX+O1JF
+	 BmxpcYKpmsGgw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1AEC8303A;
+	Tue,  1 Jul 2025 17:02:38 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v9 0/4] arm64: dts: qcom: Add Lenovo ThinkBook 16 device
+ tree
+Date: Tue, 01 Jul 2025 19:02:34 +0200
+Message-Id: <20250701-tb16-dt-v9-0-7d9e280837b5@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250628045017.1361563-1-irogers@google.com> <20250628045017.1361563-11-irogers@google.com>
- <aGN_wBXVt6YN4Itb@google.com>
-In-Reply-To: <aGN_wBXVt6YN4Itb@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 1 Jul 2025 10:00:48 -0700
-X-Gm-Features: Ac12FXz_X_5IipKr8vd50gwfTiNlhqt4RWPZaW22n1cB2CNPPqiGwCwVNqiqJs4
-Message-ID: <CAP-5=fXVxykN_pyydC_8LtNO0wAOz2yZPhwYsThQhgR0QeSP+A@mail.gmail.com>
-Subject: Re: [PATCH v5 10/23] perf session: Add an env pointer for the current perf_env
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Graham Woodward <graham.woodward@arm.com>, 
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Zhongqiu Han <quic_zhonhan@quicinc.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
-	Kajol Jain <kjain@linux.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
-	"Steinar H. Gunderson" <sesse@google.com>, Stephen Brennan <stephen.s.brennan@oracle.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Yujie Liu <yujie.liu@intel.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Levi Yun <yeoreum.yun@arm.com>, 
-	Howard Chu <howardchu95@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Matt Fleming <matt@readmodwrite.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, 
-	=?UTF-8?Q?Krzysztof_=C5=81opatowski?= <krzysztof.m.lopatowski@gmail.com>, 
-	Zixian Cai <fzczx123@gmail.com>, Steve Clevenger <scclevenger@os.amperecomputing.com>, 
-	Ben Gainey <ben.gainey@arm.com>, Chaitanya S Prakash <chaitanyas.prakash@arm.com>, 
-	Martin Liska <martin.liska@hey.com>, =?UTF-8?Q?Martin_Li=C5=A1ka?= <m.liska@foxlink.cz>, 
-	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKoUZGgC/33RwWrDMAwG4FcpPi/DsmTZ3mnvMXZIbWUxlKbEW
+ dhW+u5zC1tySY6/EB8/0lUVGbMU9XK4qlHmXPJwriE8HVTs2/OHNDnVrIw2VluAZjoCN2lqxFM
+ kxOTdEVTdvozS5a+H9PZec5/LNIzfD3iG+/TPsP/GDI1uUrSeuDU2kn8dTqnEfhhOZTh9TrVLe
+ T7mH3UHZ7NGeEFMRVykEDhZL4l3EVwhhhYEKwJODKeAVhzuIrSBUEVMBGENPmGndxG7IKzdgti
+ KtEIBkamzxu4ivIFwRRhahAAk4swu4laICQviKoLWOEYCRN/tIn6FoF4QX5HYkWkxcL3r9ndut
+ 9svVUYIho4CAAA=
+X-Change-ID: 20250511-tb16-dt-e84c433d87b1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751389356; l=6370;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=Z92Sx8gEc4sHUl3d/1AvWAD8yMZK5bpjnhhlTgbwaos=;
+ b=o86fIhYvi31iQ8AckVrCxuHiDN9LsWSTmTY3M0v+7v10QxBGAjwV8XKREoWX1brGLD9o0oMGF
+ YvjzJbrgTK4BUMYIS6v3Lkk+RuOydBbSJqRUdKcwRe2ICMXwbvtejFC
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Mon, Jun 30, 2025 at 11:27=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Fri, Jun 27, 2025 at 09:50:04PM -0700, Ian Rogers wrote:
-> > Initialize to `&header.env`. This will later allow the env value to be
-> > changed.
->
-> I'm curious when it is changed.
+Device tree for the Lenovo Thinkbook 16 G7 QOY
 
-Thanks for the reviews! I'll dig into them for v6. Looking at this one
-I don't see a current use of the changed perf_session__env so I
-suspect we can drop the change. I need to think about the lifetime of
-header.env, use cases where have >1 env like perf inject (in vs out),
-perf diff and what's going on with TUI in patch:
-https://lore.kernel.org/lkml/20250628045017.1361563-12-irogers@google.com/
+The Laptop is a Snapdragon X1 / X1 Plus (Purwa) based device [1].
 
-Thanks,
-Ian
+Supported features:
 
-> Thanks,
-> Namhyung
->
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/session.c | 3 ++-
-> >  tools/perf/util/session.h | 2 ++
-> >  2 files changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> > index b09d157f7d04..e39a1df7c044 100644
-> > --- a/tools/perf/util/session.c
-> > +++ b/tools/perf/util/session.c
-> > @@ -156,6 +156,7 @@ struct perf_session *__perf_session__new(struct per=
-f_data *data,
-> >                            ordered_events__deliver_event, NULL);
-> >
-> >       perf_env__init(&session->header.env);
-> > +     session->env =3D &session->header.env;
-> >       if (data) {
-> >               ret =3D perf_data__open(data);
-> >               if (ret < 0)
-> > @@ -2750,5 +2751,5 @@ int perf_session__dsos_hit_all(struct perf_sessio=
-n *session)
-> >
-> >  struct perf_env *perf_session__env(struct perf_session *session)
-> >  {
-> > -     return &session->header.env;
-> > +     return session->env;
-> >  }
-> > diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-> > index e7f7464b838f..088868f1004a 100644
-> > --- a/tools/perf/util/session.h
-> > +++ b/tools/perf/util/session.h
-> > @@ -45,6 +45,8 @@ struct perf_session {
-> >       struct perf_header      header;
-> >       /** @machines: Machines within the session a host and 0 or more g=
-uests. */
-> >       struct machines         machines;
-> > +     /** @env: The perf_env being worked with, either from a data file=
- or the host's. */
-> > +     struct perf_env         *env;
-> >       /** @evlist: List of evsels/events of the session. */
-> >       struct evlist   *evlist;
-> >       /** @auxtrace: callbacks to allow AUX area data decoding. */
-> > --
-> > 2.50.0.727.gbf7dc18ff4-goog
-> >
+- USB type-c and type-a ports
+- Keyboard
+- Touchpad (all that are described in the dsdt)
+- Touchscreen (described in the dsdt, no known SKUss)
+- Display including PWM backlight control
+- PCIe devices
+- nvme
+- SDHC card reader
+- ath12k WCN7850 Wifi and Bluetooth
+- ADSP and CDSP
+- GPIO keys (Lid switch)
+- Sound via internal speakers / DMIC / USB / headphone jack
+- DP Altmode with 2 lanes (as all of these still do)
+- Integrated fingerprint reader (FPC)
+- Integrated UVC camera
+- X1-45 GPU
+
+Not supported yet:
+
+- HDMI port.
+- EC and some fn hotkeys.
+
+Limited support yet:
+
+- SDHC card reader is based on the on-chip sdhc_2 controller, but the driver from
+the Snapdragon Dev Kit is only a partial match. It can do normal slow sd cards,
+but not UHS-I (SD104) and UHS-II.
+
+Notes:
+
+- Putting the camera behind usb_2_dwc3 results in the camera switched off after 30
+seconds. With the stand-alone node as previously defined it stays usable and
+suspends, as intended. Sincethe sole reason for the USB camera to be in the
+devicetree is the required extra supply (which is guessed, as mentioned), and
+its handling by power management, I would propose to keep it this way.
+
+- The gpi_dma nodes appear to be implicitly enabled when a serial device is used.
+I added them, no change in behaviour, though. Since this would be the only X1
+device adding them afaik, I left them out.
+
+- The cma-memory is removed, it is not on all x1 devices as I assumed.
+Haven't found a case where it is required.
+
+- i2c2 defines the keyboard and 4 different touchpad interfaces. With the bundling
+of the pinctrl it seems to work better. I've had issues with only clock and touchpad
+pinctrl on the i2c2 node, and not keyboard.
+
+This work was done without any schematics or non-public knowledge of the device.
+So, it is based on the existing x1 device trees, dsdt analysis, using HWInfo
+ARM64, and pure guesswork. It has been confirmed, however, that the device really
+has 4 NXP PTN3222 eUSB2 repeaters, one of which doesn't have a reset GPIO (eusb5
+@43).
+
+I have brought up the Thinkbook over the last 5 months since the x1p42100-crd
+patches were available. The laptop is very usable now, and quite solid as a dev/
+test platform.
+
+Big thanks to Aleksandrs Vinarskis for helping (and sort of persisting) on the
+fingerprint, camera and HDMI issues.
+
+[1]: https://psref.lenovo.com/syspool/Sys/PDF/ThinkBook/ThinkBook_16_G7_QOY/ThinkBook_16_G7_QOY_Spec.pdf
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v9:
+- rebase to next-20250701
+- fix errors listed from Rob Herrings dts check script - one typo, one missing 
+  pmic-glink compatible string
+- Link to v8: https://lore.kernel.org/r/20250630-tb16-dt-v8-0-cf42a396e736@oldschoolsolutions.biz
+
+Changes in v8:
+- rebase to next-20250630
+- fix bleed-over of edp0_hpd_active - not in linux-next yet
+- fix bleed-over of hdmi definition 
+- Link to v7: https://lore.kernel.org/r/20250629-tb16-dt-v7-0-35276341338f@oldschoolsolutions.biz
+
+Changes in v7:
+- amended pinctrl order and indents where needed
+- interchanged enable-gpios and select-gpios for usb-sbu-mux as they are
+  defined in the dsdt - dp altmode function confirmed in both orientations
+- picked up reviewed-by and acked-by from Dmitry Baryshkob and Rob Herring
+- Link to v6: https://lore.kernel.org/r/20250607-tb16-dt-v6-0-61a31914ee72@oldschoolsolutions.biz
+
+Changes in v6:
+- removed compatible for qcom,sm8550-pmic-glink" in pmic-glink
+- fixed malformed gpu node
+- Link to v5: https://lore.kernel.org/r/20250607-tb16-dt-v5-0-ae493364f525@oldschoolsolutions.biz
+
+Changes in v5:
+- removed patch for the CMN N160JCE-ELL panel, got reviewed
+- re-ordered code in onboard_usb_dev as requested by Dmitry Baryshkov
+- amended device tree with review notes from Dmitry Baryshkov where possible
+  and resuting in a working laptop - added notes section
+- Link to v4: https://lore.kernel.org/r/20250524-tb16-dt-v4-0-2c1e6018d3f0@oldschoolsolutions.biz
+
+Changes in v4:
+- squashed Makefile and dts commits to one
+- picked up r-b from Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+- Link to v3: https://lore.kernel.org/r/20250524-tb16-dt-v3-0-17e26d935e73@oldschoolsolutions.biz
+
+Changes in v3:
+- removed changes in x1e80100.dtsi and x1p42100.dtsi - resolved with [2]
+- fixed schema errors with correct compatible string for the model
+- added power management for the camera via onboard_usb_dev.c
+- amended node ordering
+- changed the panel driver used to edp-panel, added panel in the driver
+- amended x1e80100.dtsi for exposing PM8010: This one is not present in the design,
+  added /delete-node/ for it.
+- removed commented-out lines for sdhc, specified which don't work.
+- corrected ZAP shader firmware name
+- Link to v2: https://lore.kernel.org/r/20250516-tb16-dt-v2-0-7c4996d58ed6@oldschoolsolutions.biz
+
+Changes in v2:
+- removed nodes that gave DTC compile errors (pm8010_thermal, edp0_hpd_active)
+- amended qcom.yaml
+- shortened the commit titles to fit 75 chars
+- Link to v1: https://lore.kernel.org/r/20250515-tb16-dt-v1-0-dc5846a25c48@oldschoolsolutions.biz
+
+[2]: 20250520-topic-x1p4_tsens-v2-1-9687b789a4fb@oss.qualcomm.com
+
+---
+Jens Glathe (4):
+      dt-bindings: arm: qcom: Add Lenovo TB16 support
+      usb: misc: onboard_usb_dev: Add Bison Electronics Inc. Integrated Camera
+      firmware: qcom: scm: Allow QSEECOM on Lenovo Thinkbook 16
+      arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY device tree
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |    2 +-
+ .../boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts | 1657 ++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |    1 +
+ drivers/usb/misc/onboard_usb_dev.c                 |    2 +
+ drivers/usb/misc/onboard_usb_dev.h                 |    8 +
+ 7 files changed, 1672 insertions(+), 1 deletion(-)
+---
+base-commit: 3f804361f3b9af33e00b90ec9cb5afcc96831e60
+change-id: 20250511-tb16-dt-e84c433d87b1
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
