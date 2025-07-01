@@ -1,161 +1,169 @@
-Return-Path: <linux-kernel+bounces-710705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4365AEEFEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:43:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0281AEEFE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E4A17A0A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62D23BED94
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E9C25F78F;
-	Tue,  1 Jul 2025 07:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CB1EBA1E;
+	Tue,  1 Jul 2025 07:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nmix+Rmj"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WZEvDCM4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEF625E827
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 07:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E3F72601
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 07:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751355799; cv=none; b=LZTjwhnJJRfrMO1ijuv39vgxke+fpd1/9wsZmDYRsFXvMXgruDGiBEjKeOfUV5rYZjgxQouGfqVtBPzWohg9YWTSfQBIaxhuhksV0y3OB0UjxxU8MiU0gKFCFZ7abLsSfS7YHIb8VY/ffAImJVYGX+ZrO1v5TGHzHHEPl6YWZwU=
+	t=1751355659; cv=none; b=JPUQFiAbuE4yi6hIMmMwcx6PrH+nzdjdxm3ayiKiDF+MwMJnFTHu8mhM5DgdPOqa+kyCCcPoniL0lnlAqwaV4hcBjFyjx9Y5A5jIEUSqaUX7CJgtkOd9UpYBsrYayeJSKHBBh4zCrCI2X0Bvi/hbHZbi9Glbsw53gP46jcrSVak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751355799; c=relaxed/simple;
-	bh=ywlYCY8zTz9DvIxTFUwFyz0DawpDzD+jUIkGQoNHBXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V5lthlIYCiqdjThUHnPXH4KcVLukdon8QGyeglnjcuDVIj4QuIgmcIoNQnM+fuEal892qf+6e+9F40IlIFQ/c4l60fLvRhRDqizazhDObYE/Csj/IKdVGMoyYa4qSqxY++y7kiRz/X37dufSg+3aZ9OzQIz6jFPXbCdOirDRVdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nmix+Rmj; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453608ed113so29838285e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 00:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751355794; x=1751960594; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nu+bTpGkebl5ACFwafhyVcbt4recZ+wksormxu6a4Ts=;
-        b=Nmix+RmjKrX41PYW94Ufym2YJRn3n7Y6XDB6gzx3KayLNIITSRIJib0NpBfb1teNtV
-         kpVZH+wJGIj1PMUefYAdW/KCnoMb8aavxWUPYjthMMIGizfRdTgPzOkMCWNnh36bRjc1
-         px/o3+pBohqxczyKlariM7gQp4W/0iqTEmSOW2BNvX1c6uhdvrcOqZiTjxDxNWjggiVT
-         71i8mx17jQBjoKHQePXQZluRvj5U1OmlbH+gzTxWES/nKx9s2pjCpRgUaN7onF0jNWzw
-         ZN9v8yJPXMFtwNUJ3oafT44kCf+0UAaYMmzfBXgZmnv7p17ulJjL+UkBGvexNfLP2MUO
-         V+fA==
+	s=arc-20240116; t=1751355659; c=relaxed/simple;
+	bh=HPdrHWCoDuz13Ky7biRX7elTO+NC2HCwGNPBBt8sgL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MTc5HarLR6oKs8fmtNyTx55CTUizP7RivFJL1fm8etkXJz1tW2YFjRr5ZRoYZUAT2glLKCtcHewmegRwuOZEjRsQx02X1W1BIt0REfnKXIKgh1rIGH6rTjWky+A2ifoSxUQxFh/KTwje1CSi48SzWmn54eeiwVw0NiwR4t8RK6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WZEvDCM4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5614OLgE028627
+	for <linux-kernel@vger.kernel.org>; Tue, 1 Jul 2025 07:40:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GBiUuHa4Ev9QfuzvshOa4pF5bJbfaWZqMb3L/YViHMI=; b=WZEvDCM4cX6BvRq/
+	PFuv4W4DDqBcKiP/duuLq6RRydhbVPTi2zFCdKiZdKRtnpz4lw+qhukm9xqGeRcF
+	+50gsHo90HJ/2rwv+ZJo/S+98Bt6ZXJcJZY3MGZ7aLiE/1cxQSSFVEPoywuj/ODX
+	eHH6PQ4bV1bINlDIpIAnc7JVXo04fjQVs0klDu7AQpoKraPypyfBq7GnbVyoS+Ww
+	NbtFaLqe8vrjcqAdM9rCouSmKUCftOB37Zr/zii0/VoKZy+gMQpTd1QIEh5/VRM2
+	GLKyoozK+cGUlmhFediQEuE0ZJeA6Xg1lwPT0d7BfYtaupXmrAUz6/yKQyNU77JZ
+	NEmO8w==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j7bvqm3g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 07:40:57 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4a804126ed6so6722461cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 00:40:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751355794; x=1751960594;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nu+bTpGkebl5ACFwafhyVcbt4recZ+wksormxu6a4Ts=;
-        b=FF92ntKrgv2jsd/Ob3a0CM3xcOnfocbzNcvOsnkElZiikQZUrhf4+PrEb3l46xlZ0b
-         t5efrxw9ZVMmD7kMIiXUxL8aUx3OtkqWR3h051IafOJqCR4qoQ0bYJ0itjk++pUUev1Q
-         mdqMlLlE7nsDvO95OYKvm4+Uh2O/KRtJcXQuIpi5lr2/pbS5SwMifXrexsu6sFJdXYbn
-         FSpMk9pTxdtTSl+5Gu5y6wd1RtFHpWYnGY1Es90lkjdPmRfT3vft2Uye8tmOf/VEGhDq
-         9dX8s2FF3RIpn2vBh+0AnmRIRHsx6Hao1tGl2jpBc4Ivz2ZdX8prBLTND0CG0aBNplh6
-         V3Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9dMmMTqpcy60DgWO0nxbZ0VfpZnYDdV8S2C8tC5XGA4/NAaX4d6uXeW1c3tcalu4rBkiVK0dFgKt2BwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc0tyEKVLQKlVj6y8s0m4PDQIjYdgcQqsqJCnWahEfJhN3dAjW
-	I008VrPA4NnihnAuDSQ96l5UVhfTNAWJ+5k2RuPYHzNWZcVTVGQ/3xG+
-X-Gm-Gg: ASbGncvOmSO7y5dZvtEMn2u30rou2bgPQjrUgmWLn3P1Uy2GkR62LrtGlRdluBxEQNN
-	0SeHJxC+T/Bdk0MFIlA3JHsEAkxTvLAAvHsMI0kkhKIToqfST2nzrqPZCFbN2dLDk8V+Y02mRrt
-	V0mAXLhcwxE75EmS5FuRg+CMHgxd22WC8Gi93z/5tKlaUllSCkxpFLbT7kh2GRYc7wv6cofxsCN
-	USpkC5UORxefqQAvbHZcrscKmD/uUsJPBbLLCJBRP133WAscm6SmfF30iWphif2LCiDc94x5ng9
-	71R41FVViXvvoxRI9EAp1n8OH1jLHhJr3ips9Mu+BPpx8lmvUpyDR5Lohnj9VuKY4oW/v4R3znQ
-	lhygpaQ==
-X-Google-Smtp-Source: AGHT+IGtM2k1LNAWkFlaRdKHCCh6nVOiryJTl99LCdHmhtjL7Ubikj7DlvQfsyaDS637oDfYU+fGeQ==
-X-Received: by 2002:a05:600c:35d1:b0:450:d3b9:4bac with SMTP id 5b1f17b1804b1-45394179dd4mr106494505e9.28.1751355794064;
-        Tue, 01 Jul 2025 00:43:14 -0700 (PDT)
-Received: from cachyos.customer.ask4.lan ([89.26.177.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453883d81besm169850235e9.38.2025.07.01.00.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 00:43:13 -0700 (PDT)
-From: Marcos Garcia <magazo2005@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: philipp.g.hortmann@gmail.com,
-	dan.carpenter@linaro.org,
-	karanja99erick@gmail.com,
-	rodrigo.gobbi.7@gmail.com,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Marcos Garcia <magazo2005@gmail.com>
-Subject: [PATCH staging] staging: rtl8723bs: replace magic numbers in rtl8723b_InitBeaconParameters()
-Date: Tue,  1 Jul 2025 09:40:49 +0200
-Message-ID: <20250701074243.1300186-1-magazo2005@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1751355656; x=1751960456;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GBiUuHa4Ev9QfuzvshOa4pF5bJbfaWZqMb3L/YViHMI=;
+        b=V1MLCZuDUg7ek1aE71coEriWJrgz2lmDnBjVp7n1XazE/IbSfAVES3ICfqdN83pR1l
+         s0NQ/8enqTAzaJFzLBT0kTvERaHAHjQV6Ijfh5r7Z0efSlaqcT4k8RtR7uvWCCMinmCJ
+         KXL4uDJMukgkYUj8fgqS0jkxHMwVrgMTRugkyfwMFwWFU3mFS0zEko6yUeSVngxTKjJt
+         NpIll5jO9An6n1wE301tLYlZAklBbmDbERpyZACv10SNdLAcQsXUcawanAUqT+/bieFP
+         il3tC7ErT6RcJyD7VfrvI/scUGPi35dFgzsm1DPZCs6W/sE/SPlAgo74nUsHWUrW/g2s
+         VufA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsTBgYp9ldp+p+0Nvhlv2GGFLip/tgFZbRk5vmrGPJvFBaxbO7QLVnmF9toStGLx1oKsqjBeKQLuOG3GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc6d88EI08/GK8CZ919jRl7pPn8qsXa/hRN1SqeFNIL1r6msF4
+	NTL3pT1kb4RozE4ZbG6641GOUN1H7TtIkHxl4n/lKvQe/Y1wF2q/+JG3F9oA9UmF98Xqp1DLGm/
+	ov4hxuvE9KwHckFBkpOOj0AjDSxAOcA5fFxMyW3dsykt0Vzgke++coCMu21yvnVh1Hdw=
+X-Gm-Gg: ASbGncstBLNPlw3+2lqPSTdk9I9VctjDJ+Ojx4m2tNtjlWFO7Qt4avntPFuh1H96N7W
+	+FroeWQ5TS2Agwe0LN77vOk0dJ0YlHpvPZLy4Rf026xlki71maQxabAChDLf/FzZYYLsmYIwYGf
+	EBLb1dY4ynoLoBQjbTbMkwxhp3Nsuha11NKnH/dVQqGsRowguZ91Z0TI++AVFq1bGuo+3NSEQde
+	jANWzLG4y55i4RG6kj6q5yBEfKTGWJgmJaDgvafRlGRm/AjSIbh4tFjFDo897sx6nFEaAkPjfru
+	CJ36GGGhSLmx4jtR0abBULUJV85sJSNV1W2wWdVSP0BN2hchAIilLH0dJeBeSOOtE7wv2QX/Wvv
+	t4e308LbW
+X-Received: by 2002:a05:622a:11c5:b0:494:acf4:9572 with SMTP id d75a77b69052e-4a82f7911dcmr14041731cf.0.1751355655654;
+        Tue, 01 Jul 2025 00:40:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8vIAxiC7R4/LjBlXrebEnIw+5ENBMrqahks1cWfXfwrsNWihn1ztDjWEuPkXZzU19jTs+TQ==
+X-Received: by 2002:a05:622a:11c5:b0:494:acf4:9572 with SMTP id d75a77b69052e-4a82f7911dcmr14041601cf.0.1751355655195;
+        Tue, 01 Jul 2025 00:40:55 -0700 (PDT)
+Received: from [192.168.1.114] (83.9.29.190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353ca20e8sm801034466b.165.2025.07.01.00.40.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 00:40:54 -0700 (PDT)
+Message-ID: <5782155d-c69a-4176-8e57-3af938e5527b@oss.qualcomm.com>
+Date: Tue, 1 Jul 2025 09:40:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] irqchip/qcom-irq-combiner: Rename driver struct to end in
+ _driver
+To: Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+        Agustin Vega-Frias <agustinv@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Markus Schneider-Pargmann <msp@baylibre.com>
+References: <20250630172333.73614-2-u.kleine-koenig@baylibre.com>
+ <563db91f-3080-4a45-ba0d-04f415ed90d9@oss.qualcomm.com>
+ <4396deb6-049a-4649-afbc-fd20986b118a@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <4396deb6-049a-4649-afbc-fd20986b118a@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 1dmB5kxBseIhnNk0lizdccy1IjiS4yTk
+X-Authority-Analysis: v=2.4 cv=RJCzH5i+ c=1 sm=1 tr=0 ts=68639109 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=fKQzr7EGRj+VoE0XNsDNvQ==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=IpJZQVW2AAAA:8 a=8sca0-RJ1klIZi52FdgA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=IawgGOuG5U0WyFbmm1f5:22
+X-Proofpoint-ORIG-GUID: 1dmB5kxBseIhnNk0lizdccy1IjiS4yTk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA0MyBTYWx0ZWRfX0vm1/ewNAdKd
+ fBIZ0liQqU2//HS+DdG+WhDn2voHT472Ezj2mOsrEUUVAExIczetWIBD/0/zzMbk9f+HGX+c5TZ
+ /BoK7BASS72UJnAhy+sWV+nfYpJ59cKafE+LZL1nYaPcpy6WIvHxICpo6gTqDcfOY7nctvKfO4Q
+ FkRmLr82e5Luk5+vpcn1l0hgV8H6m/dt+UAVa7lLb3CAEFaozNBxAQhZUsrrQ7jU13SS7Bc5+l0
+ GLclBSR5p3WkvUKc7oVu+IRGbF1yI/66+m1QeNNNsKQyuIE6UdV4E8An6m7tjde/EJFKxIsHP5h
+ LHodylzccEyTHL//GY6EYbUUNVsbVMpHa5EB26bq/LZYd3T9jSAlklJs6NfC4Cz07FSG2RbInOo
+ DrPkp3gZYMgSvbQaWcbQBLoFU6UD8QcBvfDYH2gXyNGE44hbfR+/9+T+//6vE+58CKt1LSiP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0
+ malwarescore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507010043
 
 
 
-Replace hardcoded values in rtl8723b_InitBeaconParameters() with defined constants
-TBTT_PROHIBIT_VENDOR_DEFAULT (0x6404) and BCNTCFG_AIFS_MAX (0x660F) for clarity and
-maintainability, addressing the TODO comment in the code.
+On 30-Jun-25 20:31, Jeff Hugo wrote:
+> On 6/30/2025 11:25 AM, Konrad Dybcio wrote:
+>>
+>>
+>> On 30-Jun-25 19:23, Uwe Kleine-König wrote:
+>>> The modpost section mismatch checks are more lax for objects that have a
+>>> name that ends in "_probe". This is not justified here though, so rename
+>>> the driver struct according to the usual naming choice.
+>>>
+>>> Note that this change indeed results in modpost identifying a section
+>>> mismatch in this driver. This is not a false positive and should be
+>>> fixed by either converting the driver to use platform_driver_probe() or
+>>> by dropping __init from the .probe() callback. This problem was
+>>> introduced in commit f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner
+>>> driver").
+>>>
+>>> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+>>> ---
+>>> Hello,
+>>>
+>>> I don't know if platform_driver_probe() works here, it might happen that
+>>> the driver is probed before the matching device appears. As I don't have
+>>> a machine with such a device I won't create a patch fixing the issue,
+>>> but if you have questions don't hesitate to ask.
+>>>
+>>> Please consider this patch as a bug report and better only apply it when
+>>> the issue is addressed to not result in build regressions.
+>>
+>> +Jeff is probably the last person on Earth that officially has one
+> 
+> We are talking about QDF2400 here?
 
-The values were sourced from the following documentation:
-- REG_TBTT_PROHIBIT (Offset 0x0540): Bits [15:8] = 0x64 (100ms prohibit time, 1ms units),
-  Bits [7:0] = 0x04 (2ms margin, 0.5ms units), as per RTL8723BS Datasheet v1.5,
-  Section 7.3.1.5 and RTL8723BS Programming Guide, p. 112.
-- REG_BCNTCFG (Offset 0x0510): 0x660F sets max AIFS (0x0F) to prioritize beacon
-  transmission, as per RTL8723BS Datasheet v1.5, Section 7.3.1.3.
+Yes (or anything from the same family)
 
-Hi Dan,
-
-Thank you for your detailed feedback — I truly appreciate it. I tried to contact you
-earlier, but it seems my email didn't reach you. This is my first kernel contribution,
-and I started by addressing TODO comments, thinking they were straightforward. I now
-realize even these changes require deep hardware understanding. I used AI to assist with
-parts of the commit message, but I didn't review it thoroughly enough, and I take full
-responsibility for the vague comments. I could only find limited references to these
-values, and the documentation seems restricted. I apologize for any oversight and
-promise to research more carefully in the future. Thank you for your guidance.
-
-Signed-off-by: Marcos Garcia <magazo2005@gmail.com>
----
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 893cab0532ed..009d9010d72d 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -1183,6 +1183,10 @@ void rtl8723b_read_chip_version(struct adapter *padapter)
- 	ReadChipVersion8723B(padapter);
- }
- 
-+#define TBTT_PROHIBIT_VENDOR_DEFAULT  0x6404
-+
-+#define BCNTCFG_AIFS_MAX  0x660F
-+
- void rtl8723b_InitBeaconParameters(struct adapter *padapter)
- {
- 	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
-@@ -1197,8 +1201,7 @@ void rtl8723b_InitBeaconParameters(struct adapter *padapter)
- 
- 	rtw_write16(padapter, REG_BCN_CTRL, val16);
- 
--	/*  TODO: Remove these magic number */
--	rtw_write16(padapter, REG_TBTT_PROHIBIT, 0x6404);/*  ms */
-+	rtw_write16(padapter, REG_TBTT_PROHIBIT, TBTT_PROHIBIT_VENDOR_DEFAULT);
- 	/*  Firmware will control REG_DRVERLYINT when power saving is enable, */
- 	/*  so don't set this register on STA mode. */
- 	if (check_fwstate(&padapter->mlmepriv, WIFI_STATION_STATE) == false)
-@@ -1207,7 +1210,7 @@ void rtl8723b_InitBeaconParameters(struct adapter *padapter)
- 
- 	/*  Suggested by designer timchen. Change beacon AIFS to the largest number */
- 	/*  because test chip does not contension before sending beacon. by tynli. 2009.11.03 */
--	rtw_write16(padapter, REG_BCNTCFG, 0x660F);
-+	rtw_write16(padapter, REG_BCNTCFG, BCNTCFG_AIFS_MAX);
- 
- 	pHalData->RegBcnCtrlVal = rtw_read8(padapter, REG_BCN_CTRL);
- 	pHalData->RegTxPause = rtw_read8(padapter, REG_TXPAUSE);
--- 
-2.50.0
-
+Konrad
 
