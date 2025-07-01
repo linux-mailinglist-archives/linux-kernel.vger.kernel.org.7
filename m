@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-711153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08662AEF6F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09191AEF7A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8260A7A3FA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:44:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFB517E134
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BBC242D8B;
-	Tue,  1 Jul 2025 11:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFB9274B50;
+	Tue,  1 Jul 2025 11:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R1oW1z7r"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="JQAjAJrC"
+Received: from sonic301-21.consmr.mail.gq1.yahoo.com (sonic301-21.consmr.mail.gq1.yahoo.com [98.137.64.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19F01F4CBD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD50274B2B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370363; cv=none; b=iUnt/Ehk/ZIkSBw0fgBudL499ODatkHhiBuvcwkXFb32KTmPmX8qjMKG07Uo/Plv3eXvQxMs+4sf8c25H+pR5xaNa3GBkTRCP8o+MyLTpvcmJVV3MSrQCmiqZiS8icgwIGV6jEHRDIBTsfKcJB9oAyY87SYuDTOa0d377pV/VEk=
+	t=1751370979; cv=none; b=uIuSmfJI1pkzLZsZdnlWLf4GUgKh/zVspyrKk63AA1tfeUalhhVAnQuvr7z06UPomKXf5JDc/uvQfdCNCj21EJLSsTXYoY6N/et5WHZMyjgXM7z3jrUblcHiIlliYzU+cpa0fSJk3pJ1eQolD9Yn7Kcu7UcGhuVtvYMc1iFDTbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370363; c=relaxed/simple;
-	bh=WUov3zffPEABuD8X7qZURasOUkj09ob+Od8PU6uZBwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HE3NtywUnN5t7JdZX1M+8PIpRiosZw1Yx8qRpcJFQpOlL2ZBUwopk9D0SGUe6efRsBprhFL90gKP9WDfQD+bXIXU2yKJKtLGozPNcr1o+/ZJngl/OwsyAFxw3KNUy2w7VbL42Bh7XLeGEp9ESGYbGhZB0209wTmT0RiG4lUQp9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R1oW1z7r; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2BADD40E020E;
-	Tue,  1 Jul 2025 11:45:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id k5EpbPJ8aK3k; Tue,  1 Jul 2025 11:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751370353; bh=JwxrMiCqrfSNo3sLXL2l1pAhBThNccgGxFeTgS7+l+o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R1oW1z7rUUd47NafZ9JyJIoP7Ao8HACI6wZLlfBn5cz+yV6XUC7ZWL9vkYifmdwwz
-	 lFBxqwWmKfU+i1Nf8MG+gTPsQsH2cqSqbI7KmZKUFEjORXI0yFOIWXFaBC4nbdhDST
-	 KLFSGaOk+PRmQOxv/tTlou8xh6BKAU4QZyjpkhYT3nbe4kX0QISl8wLJNzr7hUNWRU
-	 cAXp1T/Jq1unGf8PNiRKZDpYLEOwb3VpbnqyAXrjGRMxIyIS19h64KPYLzyl5WWgyY
-	 HL+Jlc96q4E66uvMMMB0SnMbw+VmDmNRdCH7HgKWEB69LHC+BTh76fOCLn4avWH4vD
-	 jxCfxa+5lOQhlOzGbtTkUvT/vE4+7tTrlUXNTkAozpo2PNLgMRnNKRraiZTCJmnSlG
-	 BbH7FwaeIuuu5a+8pObxX0WTu5PKCHYnqKqRKLTTlyK7v6x6UU+AZOW+NMiD/ovPy0
-	 6ICqHKcIJ0UQbD+6Sj4KKpNqFauZlTbi5be/b46gfMsjWcDuQuuiPaTdc6nN6UCbe2
-	 YzIPU1cKKHYqySodhmnmLyBz8uOZqavC5MA+FYVUjzL5xSZQ8dk+vGm1oyTP5Klkv3
-	 LNgjcd5IiUsJrDwP1yONd2bgvP0l8a9ARRrluUMvHPvhJtHghlLQNutGSlvByIGQxC
-	 atJsDnLQe5NXNFk6C+vWGpOI=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9331940E0208;
-	Tue,  1 Jul 2025 11:45:43 +0000 (UTC)
-Date: Tue, 1 Jul 2025 13:45:37 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 14/20] x86/bugs: Add attack vector controls for BHI
-Message-ID: <20250701114537.GAaGPKYTbiLl4ABJ0l@fat_crate.local>
-References: <20250509162839.3057217-1-david.kaplan@amd.com>
- <20250509162839.3057217-15-david.kaplan@amd.com>
- <20250630124038.GFaGKFxtAiYEBUAFRy@fat_crate.local>
- <LV3PR12MB926540104F695798EDD4240C9441A@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1751370979; c=relaxed/simple;
+	bh=hzuzRgmP/yoXgQh8FKoxrurOwmMjAhR3D+Whara43Ws=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P+h3Aanq1B/GnGrzZ2MSgBheyMn9TNS8PjR8+Qcq5rsHGc3nV+zp00KgwXYg01IG9JOKHX7euYKN+ZmbeW+0ZK+F3kVDdG01b8shMqLl/xkyROiw2G6n5+HyyZtmkOAr6oEDbeaMaxgSIvg6MELIFMR3WcWViQXDDuPk8hcwRls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=JQAjAJrC; arc=none smtp.client-ip=98.137.64.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1751370977; bh=gntt+k0Q9g+Ea+fbZ/JyDhnXZM80SSryV8+O9wXd6Z4=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=JQAjAJrCUX+nG0rCWLOgI5+m3X4pnNXjiEIrzWqvl3wg5aGJdFQ+76RVcQH7KNT3eqS0cK2MRmeoYB2FEk/qjoDtv3rcKzO7RtzueQw4wXQYBe0wuW5UsyjFmhldpqhR2xYPPqmU/B2zRJT+jjO+LM/TJqzBCdb7TjU8IVJuWo30BFL4jANWf+Bzh5ioIxlGaN6ipeBLpy2LGoQy/myNL7dsoqxuj8Kq2ReSfsrnzokfWCwDGamBFc0Xzo4eU+Kw/AWd4y6Xqz/fk2YIwcvxo+M9RaDSTVUTi8bG/JlDHbGpgYZU3ueaiQvp4vRv0X2P+4d9TXgGlz+DnuY/xbUntQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751370977; bh=pCCbZ2nTs3JwuLlZXeKrhN+QzfLjX/l5YyeP1xPTed1=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=LteqxI6pw5wLcJ7Vq4omNc/nMZrFS6Q4uTJ47jVTmlbnHc74G3C3Nr5nS2vctwXAjXByW0K8UV/997hoGjLD9ADh00uLHt6Rb/aLmpKeqwDWDBCn4JrU3tTOO7nG54oJMBUVKxJ1L0Wd0bAR5JyVDJ5XiyE+G6LR3LSYyXOHKl7YxIqxh7zmhM8tBN6c2T3AdFTKKoZXa8F8Cf/NIEbD5robpFdrKMhzeiGE9/uXJTdnEwkN9reoh7T0v3J+W7o3gR0Q4mkd3d/jEetIw0YWZls50GbfqjHuf7pjLvJr+eX883RsNUGccOUFpBnQwbTFHtRPYM0Y3joloKRTFDRaHA==
+X-YMail-OSG: UzesalwVM1mJqSuLYpBRQdPHfjZgfddJ_v7HnnxGh3dqTRjJ_FgM3GUg39rGxmh
+ kEC38OWmG8awEnn44Kmwf2YszBETJnex0Iiolpzmajkcnu9TXIa2_7kr942PQoHyvBlXZVO.Nuq3
+ UohXc39LQbN58RDHjgUs9X6CFrYvj1_Ukh1NeqWsIJr7eTN3eZKosL7IjvZflIC6RpfzHqDtQ4Vh
+ EJwvl58HTDDz_tNhca.jIB9dOyzZWjg.KjIOaXfGjI.uxkUyQgPh5xu36PSgwhzCmK4Tbb0vlv12
+ uc57PobrxWa8oXVc1ogqEWKBDBfjTpdlztetmaE53KD6C4pSEt0fTpfVo2R7HTWw.MdVJ_rBDVf.
+ RdFteBDZebqHzY5vZpUuSaRrHFOMLanYIvLTJ3f9SjJDKXr_zMagv1CQe3kW4R7.qb_yUFH9vZkb
+ _MhKWVmbM9QUB3pssmcHG4E2.4Ua.U4ihVXE58zRs4gg5lV9DzFK5Zc4T0Szov6y7SLjudoS7Y_F
+ 5klv0SaDFfhDjOzXA9L31k8dFllHbOn_0oboTgAROyFP8OB4_B9mG7urxCbxy.EAhakrDNMbQ7GF
+ vILHX9gKGeYjrV5q2jGPXvR745hb4KhpBEbfk3ooRT_89ZWi_ihe5u8uHlWD_ZQpwxBF0OSBBgq_
+ q1hEgRrCDwMl9BZ.Irrx.b.UvsR.TmD6TJt1FluEkOen1lGEK6sWSl6goolVzgVkARc38ti8n0wg
+ dKNBZGEdImjWRop0IBkRhC0fNl7_sKZR9nZy_SX2CSLGp59TWMkFJVg7tTJgAyLgEcDiV8QToMiy
+ 9AKNFgyyapEfdrOq.r0iDErVl55mB9wPa01L.7UZreZpn_nVLyiocPfFspKshHJAPvLe5NgB8H.T
+ SkPkAWYNmsLmcYfQ61WPjjirKnacgF53tyuWEBaNDxYwepCLQzDHsoMaW6ER_PMX9E.JmXuPVf3D
+ V9AHOJJHqA5hkb1tQhIaYFgEkupTWrrdjjUdZIj1K5aLH5DQGwSdUp9iW1x6xlc9YykdkjE5j3.x
+ GKHJHivgatIzEBbKnaytedlJJhhkDVSoVDAVscC8S5xZdQxD6VmBjQqzBPHxDLoRwHN4ogmOL5XY
+ uT6nQdX5cx28QaHWPA49lsiItdTILcTdrtOMO4lsGJxueSQa1u5dinlNg0NE6.PqtYC59IRcgpea
+ MqSn1NcLs783ShAui0GT0m0_SyFxytFu71bNr8WqW6YdBLyIasjLq8K51BesCxsl2UV3quO_FhAc
+ 5FZ9A1HISg1ivJ9f2_zaiTHmmUwIbo.DPOZJDQV2HFFXnQi0nQosT__En.Dy83Q22yXxkRb_3Ppb
+ 6KAxnRckESfaxWqTiG5xyXZuELsYD8xfS3_hD83eZ1cY9dlRjA7aX4Kw55kc1d4Kna6pVunU9ILY
+ iAqDVImhussu_yUQLo8T935Vg64Kkf1V8q.WsLMOEnb7Sc.LmQ0Q3XHWI6dlutASFMJ_KXzjk5Zp
+ EhGoD65bk8VRTTmZcCfLZh0VJccGRSaiCWilcVHcZ4EuD2X_Zb3BB2rmzw3GTk7U48uId1sDZ6NV
+ xfsaQ0Z8J4RJFlrl1ELUHar1LKp2u1qTsfdAxw3u5CNFMvOFnZ7eM2FBLraciEmePK2kiYBJdfgR
+ fwh44xp8uAvnZNb.nwGCbU56hqKv6X3g6XoKqqo97E2mMdXY40sBjGT6xegKgaxtto_n66gwZ88a
+ laWCHov_IglGAam3dLJ53IscwCSeL6o95CH_AJyNCZyFVEzIaTRN_g.91dwTX6vnexPjeOZk7Kkg
+ AM0E4ggEdFxQBsrXequ.4EK67KeZoM5cogrnzaFf84WWMO3xo8zGgHZn9DPUA9UQi0wn7JbeTpSL
+ ZOmhQ6LphbTk62GTcJINc5L.vdgmMI3WC8QhftR2iXqYeiHiY751Y9x8NgP2.axT4L2NYoEvo0R_
+ m4BVUZg.8AEi7E.cdWPWYHGwL07Sx4EK2JGjnJzPwa7sGuZU_3CUNJjhD690V4STe1LKNWRLnDI9
+ CorgJtoUL2vvZdCcL4vEbLNW49wlEBlnlu1bbMne607C1DBGtf2ruY664NkJLBT8dlbPsOP1eI8u
+ CM.vXqrc3EruFaYy2mhQ5Hv_Zdt20Mz0tXJzOLJfQmmGkH6Szoo52fgRDv8LTZ2hfAbb7hPOsZMl
+ DbZY2I8mcPnJzusKTgRLgiYD4HkYnkdlVthEm8YKUIYqAQNf0HsNJPbqvzVb0._c8YhtXCyZBLg1
+ E2n5KAUqpDW6JZYLmHuNNVKdqt.1awBw3C3rSVyKN0S4y1DfkG1xcdaj.qO.9WD30GR7hgg--
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 89cf28c5-4810-4135-8a5d-d624a22df7f4
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Tue, 1 Jul 2025 11:56:17 +0000
+Received: by hermes--production-ir2-858bd4ff7b-l75cc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3d62bb3bb3a6558dee9bf77d66b96d15;
+          Tue, 01 Jul 2025 11:46:07 +0000 (UTC)
+Message-ID: <922e109fc0f9cd1197674451cc1281cace025f83.camel@aol.com>
+Subject: Re: [PATCH] drm/i915: replace DRM_DEBUG_SELFTEST with DRM_KUNIT_TEST
+From: Ruben Wauters <rubenru09@aol.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen	
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <arlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Date: Tue, 01 Jul 2025 12:46:05 +0100
+In-Reply-To: <8a3ef0b42de25db3faf384260b7abdce468cb65f@intel.com>
+References: <20250701025426.262129-1-rubenru09.ref@aol.com>
+	 <20250701025426.262129-1-rubenru09@aol.com>
+	 <8a3ef0b42de25db3faf384260b7abdce468cb65f@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB926540104F695798EDD4240C9441A@LV3PR12MB9265.namprd12.prod.outlook.com>
+X-Mailer: WebService/1.1.24076 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Tue, Jul 01, 2025 at 03:27:00AM +0000, Kaplan, David wrote:
-> Eh, I'm not a big fan of that.  It's basically overloading an existing
-> mitigation setting with a new meaning depending something else.  That's
-> unnecessarily complex imo, and in this case is actually incorrect.  The
-> attack vectors are supposed to be lower priority than bug-specific command
-> line options (as attack vectors are generic).  So if you pass in
-> "spectre_bhi=vmexit" for instance, that should only mitigate bhi for vmexit,
-> even if you have general user->kernel protections enabled.  The code below
-> appears to not observe that correctly.
-> 
-> That issue aside, the enums I believe should ideally map to specific
-> mitigation decisions.  There are two potential mitigations for BHI, so it
-> makes sense to have mitigation choices for all 4 potential outcomes.
+On Tue, 2025-07-01 at 09:28 +0300, Jani Nikula wrote:
+> On Tue, 01 Jul 2025, Ruben Wauters <rubenru09@aol.com> wrote:
+> > DRM_DEBUG_SELFTEST was replaced with DRM_KUNIT_TEST.
+> >=20
+> > This patch replaces the select in Kconfig.debug to use the
+> > replacement.
+>=20
+> Why? That's the most important questions the commit messages should
+> answer.
 
-But then having a _FULL enum for both while *also* having USER_KERNEL and
-GUEST_HOST which both mean _FULL is kinda confusing, no?
+Sorry, I wrote the commit message quite late at night and forgot to
+include a lot of information, I will send a v2 with more information in
+the message.
 
-And when you look at the final code, that's kinda not really easy to grok for
-something which is actually simple.
-
-So I'm not sure the renaming and adding of another mitigation option is really
-needed. If you want to set mitigations based on the vectors, you can simply
-do:
-
-	if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_HOST)) {
-                if (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL)) {
-                        bhi_mitigation = BHI_MITIGATION_ON;
-                else    
-                        bhi_mitigation = BHI_MITIGATION_VMEXIT_ONLY;
-                }
-        }
-
-no?
-
-Using the existing switches.
-
-Because you have VMEXIT_ONLY already, so you check that first and only if
-USER_KERNEL is also mitigated, you select _ON.
-
-And then you don't need to touch bhi_apply_mitigation() at all.
-
-Or am I missing a corner case?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> BR,
+> Jani.
+>=20
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > ---
+> > =C2=A0drivers/gpu/drm/i915/Kconfig.debug | 2 +-
+> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/i915/Kconfig.debug
+> > b/drivers/gpu/drm/i915/Kconfig.debug
+> > index 1852e0804942..b15b1cecb3aa 100644
+> > --- a/drivers/gpu/drm/i915/Kconfig.debug
+> > +++ b/drivers/gpu/drm/i915/Kconfig.debug
+> > @@ -50,7 +50,7 @@ config DRM_I915_DEBUG
+> > =C2=A0	select DRM_VGEM # used by igt/prime_vgem (dmabuf interop
+> > checks)
+> > =C2=A0	select DRM_DEBUG_MM if DRM=3Dy
+> > =C2=A0	select DRM_EXPORT_FOR_TESTS if m
+> > -	select DRM_DEBUG_SELFTEST
+> > +	select DRM_KUNIT_TEST
+> > =C2=A0	select DMABUF_SELFTESTS
+> > =C2=A0	select SW_SYNC # signaling validation framework
+> > (igt/syncobj*)
+> > =C2=A0	select DRM_I915_WERROR
 
