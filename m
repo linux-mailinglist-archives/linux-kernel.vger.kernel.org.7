@@ -1,173 +1,103 @@
-Return-Path: <linux-kernel+bounces-711633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C51AEFD71
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A187AEFD36
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F451678D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE544E178D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2566281341;
-	Tue,  1 Jul 2025 14:54:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE628030C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3663277CA4;
+	Tue,  1 Jul 2025 14:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM+J/P2o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3772726FDAC;
+	Tue,  1 Jul 2025 14:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751381683; cv=none; b=F9fVAIzxNuryDLAZvwPOShDix6BQm8KKaMxNrV8MDs9K7bZ/ckKXBE76JUOeNRMTlRwmQhgQed903EvapMb2R46Hs4w5J0lenp9/gN+yq112pFsfZ+Pbubsyrlqc5Q8FkTsgUKFtBENfU9GpB0ehYN/B4Tgd9GqMUY/Ot2cRBvw=
+	t=1751381628; cv=none; b=o5Xm7QNovY3HkfrvL9u/Q4yA7ZtbYX7OwesVrShs09mae+04zocjRPVl4doWxQW3xP7r6ADxJpTahnpjB3w4M1/ja/eln+5xtW09zZAveX6A2DzGuqfci78p+MWJHJyfmFkExYRlmmsTlDJMu2UqcykGWXdE99KmfTV7yzPnHW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751381683; c=relaxed/simple;
-	bh=daI45/KHLkHSHN5ClQd+NXqQYk8WXPHn3Y1nZBaOnwE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Lilp3yHH6HvygqnAqCv6dCDOcSauf9HMn8nQcvqCAsN0eY0QFsfbLSW1VNe/2hUk4BTRj7slba43BfZq3l7RW4gKgMhNV/pEF2t254vgswidJatrP+RUQdLwcsIUPLHfc0KIKFZIuk5FEn0ZDOKAXrozQSsOeFvxBi4IBaCpumc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39C04236D;
-	Tue,  1 Jul 2025 07:54:26 -0700 (PDT)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F49F3F66E;
-	Tue,  1 Jul 2025 07:54:39 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-Date: Tue, 01 Jul 2025 15:53:47 +0100
-Subject: [PATCH v2 22/28] coresight: Add 'in_idle' argument to path
- enable/disable functions
+	s=arc-20240116; t=1751381628; c=relaxed/simple;
+	bh=8+Wv0OlytKZIaT42+LGdm7t+KCuQk6vUKLUTvIlXl9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tkxn4xg15u5izrcZCvC/3YGs51aWi3ONtR6qURNw/RO36E97I9gr9wdnu9YZWL49aNUl2Gj39w63HCDW5MQ2YHmdq+iXSc32r2p70jPmnuw599G3sIi7+GRvtNwRGUPjMhFoqDnRR/zAriNFXMUIextqqgxcCXt70UlO+Fv92YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM+J/P2o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9637BC4CEEB;
+	Tue,  1 Jul 2025 14:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751381627;
+	bh=8+Wv0OlytKZIaT42+LGdm7t+KCuQk6vUKLUTvIlXl9s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pM+J/P2obW+0ZPc8hQTckt/NwIfT9aKfSAWixJVSseNuAycRxhqRmIw03BTm8Fa+l
+	 uiu/DrXT3x5xeRSLvzx2z/1fKcWBS1CG1YLyE4SiFonAvgSwM9TtIPl9x2R1kk1Vxr
+	 6Jc0coJEQtWzNCqk9bIcJxjpPSpz1cjS1VLnvahUjPM4hAMy2iQixNAfjTFRDJkMxp
+	 ZNB5PQi30aDp6hIlOT9KG6ZuXZ0yRPTZKrTaxf5YYSIsQxIDETVsx7xOgiFD/h5Tg2
+	 OVlNEysBlIIonXWXuGNKr8Cq4eD08+1Teo/WI4qmS+pFLcPd4zWtNynsMSsmGrhnBZ
+	 uMr55K83KzXWw==
+Date: Tue, 1 Jul 2025 07:53:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Carlos Maiolino <cem@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH 0/6] xfs: cleanup key comparing routines
+Message-ID: <20250701145347.GC10009@frogsfrogsfrogs>
+References: <20250612102455.63024-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-arm_cs_pm_fix_v3-v2-22-23ebb864fcc1@arm.com>
-References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
-In-Reply-To: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Levi Yun <yeoreum.yun@arm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>, 
- Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751381627; l=3705;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=daI45/KHLkHSHN5ClQd+NXqQYk8WXPHn3Y1nZBaOnwE=;
- b=D7TZxKDdiBKP3SIYjMRDWTWkbQJUy21hUHB2lXoNRy8khhqrIPLMkmP5b5kWIxDetMDclolmB
- 9g354hqx5dNAbXp/e46yWoWlCrfizQ8bOQp6XIck1ILpLiLQX00gMHx
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612102455.63024-1-pchelkin@ispras.ru>
 
-Introduce an in_idle argument to the path enable and disable functions.
-When set to true, it skips to touch the sink device. To avoid invoking
-sink related helpers, the condition check is moved before the enable
-helpers are called.
+On Thu, Jun 12, 2025 at 01:24:44PM +0300, Fedor Pchelkin wrote:
+> Key comparing routines are currently opencoded with extra casts and
+> subtractions which is error prone and can be replaced with a neat
+> cmp_int() helper which is now in a generic header file.
+> 
+> Started from:
+> https://lore.kernel.org/linux-xfs/20250426134232.128864-1-pchelkin@ispras.ru/T/#u
+> 
+> Thanks Darrick for suggestion!
 
-This is a preparation for managing the path during CPU idle.
+For patches 1-5,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- drivers/hwtracing/coresight/coresight-core.c | 29 +++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+--D
 
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index ef2a0de366d9b12b4f609027c8b67f690cf84558..b1c122d1c4164e3ca6f1aaad0bd24917032626be 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -477,7 +477,8 @@ static void coresight_restore_source(struct coresight_device *csdev)
-  * disabled.
-  */
- static void coresight_disable_path_from(struct coresight_path *path,
--					struct coresight_node *nd)
-+					struct coresight_node *nd,
-+					bool in_idle)
- {
- 	u32 type;
- 	struct coresight_device *csdev, *parent, *child;
-@@ -500,6 +501,10 @@ static void coresight_disable_path_from(struct coresight_path *path,
- 						CORESIGHT_DEV_TYPE_SINK :
- 						CORESIGHT_DEV_TYPE_LINK;
- 
-+		/* To reduce latency, CPU idle does not touch the sink */
-+		if (in_idle && type == CORESIGHT_DEV_TYPE_SINK)
-+			continue;
-+
- 		switch (type) {
- 		case CORESIGHT_DEV_TYPE_SINK:
- 			coresight_disable_sink(csdev);
-@@ -535,7 +540,7 @@ void coresight_disable_path(struct coresight_path *path)
- 	if (coresight_is_percpu_source(source))
- 		per_cpu(csdev_cpu_path, source->cpu) = NULL;
- 
--	coresight_disable_path_from(path, NULL);
-+	coresight_disable_path_from(path, NULL, false);
- }
- EXPORT_SYMBOL_GPL(coresight_disable_path);
- 
-@@ -559,7 +564,8 @@ static int coresight_enable_helpers(struct coresight_device *csdev,
- }
- 
- static int _coresight_enable_path(struct coresight_path *path,
--				  enum cs_mode mode, void *sink_data)
-+				  enum cs_mode mode, void *sink_data,
-+				  bool in_idle)
- {
- 	int ret = 0;
- 	u32 type;
-@@ -572,10 +578,6 @@ static int _coresight_enable_path(struct coresight_path *path,
- 		csdev = nd->csdev;
- 		type = csdev->type;
- 
--		/* Enable all helpers adjacent to the path first */
--		ret = coresight_enable_helpers(csdev, mode, path);
--		if (ret)
--			goto err_disable_path;
- 		/*
- 		 * ETF devices are tricky... They can be a link or a sink,
- 		 * depending on how they are configured.  If an ETF has been
-@@ -587,6 +589,15 @@ static int _coresight_enable_path(struct coresight_path *path,
- 						CORESIGHT_DEV_TYPE_SINK :
- 						CORESIGHT_DEV_TYPE_LINK;
- 
-+		/* To reduce latency, CPU idle does not touch the sink */
-+		if (in_idle && type == CORESIGHT_DEV_TYPE_SINK)
-+			continue;
-+
-+		/* Enable all helpers adjacent to the path first */
-+		ret = coresight_enable_helpers(csdev, mode, path);
-+		if (ret)
-+			goto err_disable_path;
-+
- 		switch (type) {
- 		case CORESIGHT_DEV_TYPE_SINK:
- 			ret = coresight_enable_sink(csdev, mode, sink_data);
-@@ -622,7 +633,7 @@ static int _coresight_enable_path(struct coresight_path *path,
- err_disable_helpers:
- 	coresight_disable_helpers(csdev, path);
- err_disable_path:
--	coresight_disable_path_from(path, nd);
-+	coresight_disable_path_from(path, nd, false);
- 	goto out;
- }
- 
-@@ -632,7 +643,7 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
- 	int ret;
- 	struct coresight_device *source;
- 
--	ret = _coresight_enable_path(path, mode, sink_data);
-+	ret = _coresight_enable_path(path, mode, sink_data, false);
- 	if (ret)
- 		return ret;
- 
-
--- 
-2.34.1
-
+> 
+> Fedor Pchelkin (6):
+>   xfs: rename diff_two_keys routines
+>   xfs: rename key_diff routines
+>   xfs: refactor cmp_two_keys routines to take advantage of cmp_int()
+>   xfs: refactor cmp_key_with_cur routines to take advantage of cmp_int()
+>   xfs: use a proper variable name and type for storing a comparison
+>     result
+>   xfs: refactor xfs_btree_diff_two_ptrs() to take advantage of cmp_int()
+> 
+>  fs/xfs/libxfs/xfs_alloc_btree.c      | 52 +++++++++------------
+>  fs/xfs/libxfs/xfs_bmap_btree.c       | 32 +++++--------
+>  fs/xfs/libxfs/xfs_btree.c            | 31 ++++++-------
+>  fs/xfs/libxfs/xfs_btree.h            | 41 +++++++++--------
+>  fs/xfs/libxfs/xfs_ialloc_btree.c     | 24 +++++-----
+>  fs/xfs/libxfs/xfs_refcount_btree.c   | 18 ++++----
+>  fs/xfs/libxfs/xfs_rmap_btree.c       | 67 ++++++++++------------------
+>  fs/xfs/libxfs/xfs_rtrefcount_btree.c | 18 ++++----
+>  fs/xfs/libxfs/xfs_rtrmap_btree.c     | 67 ++++++++++------------------
+>  fs/xfs/scrub/rcbag_btree.c           | 38 +++++-----------
+>  10 files changed, 156 insertions(+), 232 deletions(-)
+> 
+> -- 
+> 2.49.0
+> 
+> 
 
