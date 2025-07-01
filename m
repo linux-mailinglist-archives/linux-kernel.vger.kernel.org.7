@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-712148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40C1AF055F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47205AF0565
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8917D189ACA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C6B1C0201E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8F730748B;
-	Tue,  1 Jul 2025 21:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44FF302072;
+	Tue,  1 Jul 2025 21:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv3z6fjb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="soks8+eG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE3A306DCA;
-	Tue,  1 Jul 2025 21:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08033D69;
+	Tue,  1 Jul 2025 21:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751403662; cv=none; b=GSy21A3SUiH7pxAb184+ZicohYbRcAxbF+8AXN9sdUMxmlLbihRVuPPwYpn67i4+Pmn1iMQKtJo+P4KWytO9/doDmWfQeXlYg8sGV/APi6paQTQukjnR6gj6x/KyFBzFlxrGgniK2+MtDo2oVNfzHobWvoK0GhNisWErgwTMDfs=
+	t=1751403700; cv=none; b=ds9CnF4EjBG2QJ6yRUbcT3OLlrlqqQmEayKkutcY8fckF7XnSmRM8OFM23ITPO9Et5MIq6WCu4W8wsZNQd7aiI1Hw+r+cpSBsRYenRAwi851/XrMuIVMTyXk/PizJ8Cb4LvS4XDdjHtlvPKIlWHRL+ocnPGNaacGLbH5owwVC/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751403662; c=relaxed/simple;
-	bh=KxNo7MC9iL3A0G0AkoA1BW65gW/zw4LvgAtZBo2U6AM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXswJvTxt7xISTPA3MJyxz0KnASFqSO08g9uHqFJxT1U0JWyGIguIEZ+gf7/vt+LAHEUAvvpVrXvWpYC/cLQWK2NmE6MCloIFRQ0N4+rk7mzVIXwWhDboN35SV1qv5VzpJquh/pml1j1l5214DZEJzM8eXFQ+6h9B6qRTwC20V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv3z6fjb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37B9C4CEF5;
-	Tue,  1 Jul 2025 21:01:00 +0000 (UTC)
+	s=arc-20240116; t=1751403700; c=relaxed/simple;
+	bh=ZyYV5UNurBoHaNIOOOU+hpKbNEI30wMtrtMFSsxPC/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oU6PbfLiKEnT6NFLWz2gYcLa5g6JoiSoG4pkSR3DkfJ1Ov1ZJd4qxucC/WXtJBrF4t0KFiszn+5avDP4tESAkWLduM1FRHtjLPhZ5XRaZ7GNNdbkgah75EY1ek8ivTCsmVp9QBVaj1RlWZGvu0rSPo3wj6oxVDPy0hG7QeLdQ1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=soks8+eG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7096C4CEEB;
+	Tue,  1 Jul 2025 21:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751403662;
-	bh=KxNo7MC9iL3A0G0AkoA1BW65gW/zw4LvgAtZBo2U6AM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gv3z6fjbqba15oqwRlg4HTHo/E6gMJCSHGUj2KvcDZ+/SHoTsjxAHsANNmtHzNz0j
-	 z6zwAvM5Wkzt1tV/k9PNX3BYm/GdVqh3OkA8EPH7QBRwfn+o4QaOPf2s96HMJtwqu9
-	 gqFoITlilEaPpY7g4b+InUW2ikQFTUmrtJ0+9FzXEidhH8GIlOxjcmyL/iX8/jkDNv
-	 GoAoZzLspR0OvKwV6/7yY4T++V+NGSscI8LgbSB+qYkB4jv/VjXHdzyk8vhfz/yTKM
-	 SjVvUFngMePnvAYa71Xd1L4DIKVoefDbw0+1rAcCKS6OC4xpGrfu8shp2E8nq9N7If
-	 8cCCvGYUDGqAg==
-Date: Tue, 1 Jul 2025 17:00:58 -0400
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Ben Copeland <ben.copeland@linaro.org>, linux-kernel@vger.kernel.org,
-	lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	Dan Carpenter <dan.carpenter@linaro.org>, axboe@kernel.dk,
-	sagi@grimberg.me, iommu@lists.linux.dev,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: next-20250627: IOMMU DMA warning during NVMe I/O completion
- after 06cae0e3f61c
-Message-ID: <aGRMilWhgF4z0WOf@kbusch-mbp>
-References: <CAL0q8a6pOBZbWYdwKzC1U-PuH4rgf2miv0jcF=fWVZt_dUZHmw@mail.gmail.com>
- <20250630133343.GA26040@lst.de>
- <aGLyswGYD6Zai_sI@kbusch-mbp>
- <20250701132936.GA18807@lst.de>
+	s=k20201202; t=1751403699;
+	bh=ZyYV5UNurBoHaNIOOOU+hpKbNEI30wMtrtMFSsxPC/c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=soks8+eG7hN/v41F5Cs5ldAvm0LQ9FeWh8g7BszMN/HamSmKNYIk2fRjQQn2AjMgI
+	 MaDUOg0aQK+f3jW8eii1ciVaTCYMf/QpcwSfx+BkhfX1DT9N15A8wPjosLVZtWshLt
+	 yMdfTAuuWZsRD9gXbFS/z9HuiKEeT0IMsj2E8Nq/Xx8F1VGNQZunG6t7iuaEjW7mxN
+	 uVAhSngiKCuysSbFzITc55/XAXUPnlcOzSeRtrNxQLvZbBk8BFS0JQG1ZOf517JNaj
+	 DYY0B1nhXjTH/Mxt9t6R6vzDmrxdtyioJ7sy+pNURzuftOI+e4W2Udn8+4AwDG3Kzu
+	 yuNsFz/ANuadw==
+Date: Tue, 1 Jul 2025 16:01:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lukas@wunner.de, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Jim Quinlan <james.quinlan@broadcom.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v2] PCI/pwrctrl: Skip creating pwrctrl device unless
+ CONFIG_PCI_PWRCTRL is enabled
+Message-ID: <20250701210138.GA1849044@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,102 +59,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250701132936.GA18807@lst.de>
+In-Reply-To: <20250701064731.52901-1-manivannan.sadhasivam@linaro.org>
 
-On Tue, Jul 01, 2025 at 03:29:36PM +0200, Christoph Hellwig wrote:
-> Yes, that's broken, and I remember fixing it before.  A little digging
-> shows that my fixes disappeared between the oct 30 version of Leon's
-> dma-split branch and the latest one somewhere.  Below is what should
-> restore it, but at least when forcing my Intel IOMMU down this path it
-> still has issues with VPTEs already set.  So maybe Bob should not try
-> it quite yet.  I'll try to get to it, but my availability today and
-> tomorrow is a bit limited.
+[+cc Bart, Krzysztof, update Mani's addr to kernel.org]
 
-Let's say we're using ARM64 SMMU configured with 64k granularity like I
-showed earlier.
+On Tue, Jul 01, 2025 at 12:17:31PM +0530, Manivannan Sadhasivam wrote:
+> If devicetree describes power supplies related to a PCI device, we
+> previously created a pwrctrl device even if CONFIG_PCI_PWRCTL was
+> not enabled.
+> 
+> When pci_pwrctrl_create_device() creates and returns a pwrctrl device,
+> pci_scan_device() doesn't enumerate the PCI device. It assumes the pwrctrl
+> core will rescan the bus after turning on the power. However, if
+> CONFIG_PCI_PWRCTL is not enabled, the rescan never happens.
+> 
+> This may break PCI enumeration on any system that describes power supplies
+> in devicetree but does not use pwrctrl. Jim reported that some brcmstb
+> platforms break this way.
+> 
+> While the actual fix would be to convert all the platforms to use pwrctrl
+> framework, we also need to skip creating the pwrctrl device if
+> CONFIG_PCI_PWRCTL is not enabled and let the PCI core scan the device
+> normally (assuming it is already powered on or by the controller driver).
 
-Now let's send a read command with 128k transfer, and let's assume the
-payload is two 64k aligned physical segments, so we have 2 bvecs.
+I'm fine with this change, but I think the commit log leaves the wrong
+impression.  If CONFIG_PCI_PWRCTRL is not enabled, we shouldn't do
+anything related to it, independent of what other platforms or drivers
+do.
 
-Since nvme's virtual boundary is smaller than the iommu's granule, we
-won't attempt to coalesce. We instead iommu map each bvec segment
-individually.
+So I wouldn't describe this as "the actual fix is converting all
+platforms to use pwrctrl."  Even if all platforms use pwrctrl, we
+*still* shouldn't run pci_pwrctrl_create_device() unless
+CONFIG_PCI_PWRCTRL is enabled.
 
-And let's say each segment just so happens to get consecutive IOVA's.
-The mapping side had done each segment individually, but your proposal
-here will assume the contiguous dma_addr ranges were done as a single
-larger mapping. Is that okay?
+I think all we need to say is something like this:
 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 38be1505dbd9..02bb5cf5db1a 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -678,40 +678,55 @@ static void nvme_free_prps(struct request *req)
->  	enum dma_data_direction dir = rq_dma_dir(req);
->  	int length = iod->total_len;
->  	dma_addr_t dma_addr;
-> -	int i, desc;
-> +	int prp_len, i, desc;
->  	__le64 *prp_list;
-> +	dma_addr_t dma_start;
->  	u32 dma_len;
->  
->  	dma_addr = le64_to_cpu(iod->cmd.common.dptr.prp1);
-> -	dma_len = min_t(u32, length,
-> -		NVME_CTRL_PAGE_SIZE - (dma_addr & (NVME_CTRL_PAGE_SIZE - 1)));
-> -	length -= dma_len;
-> +	prp_len = NVME_CTRL_PAGE_SIZE - (dma_addr & (NVME_CTRL_PAGE_SIZE - 1));
-> +	prp_len = min(length, prp_len);
-> +	length -= prp_len;
->  	if (!length) {
-> -		dma_unmap_page(dma_dev, dma_addr, dma_len, dir);
-> +		dma_unmap_page(dma_dev, dma_addr, prp_len, dir);
->  		return;
->  	}
->  
-> +	dma_start = dma_addr;
-> +	dma_len = prp_len;
-> +	dma_addr = le64_to_cpu(iod->cmd.common.dptr.prp2);
-> +
->  	if (length <= NVME_CTRL_PAGE_SIZE) {
-> -		dma_unmap_page(dma_dev, dma_addr, dma_len, dir);
-> -		dma_addr = le64_to_cpu(iod->cmd.common.dptr.prp2);
-> -		dma_unmap_page(dma_dev, dma_addr, length, dir);
-> -		return;
-> +		if (dma_addr != dma_start + dma_len) {
-> +			dma_unmap_page(dma_dev, dma_start, dma_len, dir);
-> +			dma_start = dma_addr;
-> +			dma_len = 0;
-> +		}
-> +		dma_len += length;
-> +		goto done;
->  	}
->  
->  	i = 0;
->  	desc = 0;
->  	prp_list = iod->descriptors[desc];
->  	do {
-> -		dma_unmap_page(dma_dev, dma_addr, dma_len, dir);
->  		if (i == NVME_CTRL_PAGE_SIZE >> 3) {
->  			prp_list = iod->descriptors[++desc];
->  			i = 0;
->  		}
->  
->  		dma_addr = le64_to_cpu(prp_list[i++]);
-> -		dma_len = min(length, NVME_CTRL_PAGE_SIZE);
-> -		length -= dma_len;
-> +		if (dma_addr != dma_start + dma_len) {
-> +			dma_unmap_page(dma_dev, dma_start, dma_len, dir);
-> +			dma_start = dma_addr;
-> +			dma_len = 0;
-> +		}
-> +		prp_len = min(length, NVME_CTRL_PAGE_SIZE);
-> +		dma_len += prp_len;
-> +		length -= prp_len;
->  	} while (length);
-> +done:
-> +	dma_unmap_page(dma_dev, dma_start, dma_len, dir);
+  We only need pci_pwrctrl_create_device() when CONFIG_PCI_PWRCTRL is
+  enabled.  Compile it out when CONFIG_PCI_PWRCTRL is not enabled.
+
+> Cc: stable@vger.kernel.org # 6.15
+> Fixes: 957f40d039a9 ("PCI/pwrctrl: Move creation of pwrctrl devices to pci_scan_device()")
+
+Not sure about this.  If the problem we're solving is "we run pwrctrl
+code when CONFIG_PCI_PWRCTRL is not enabled," 957f40d039a9 is not the
+commit that added that behavior.
+
+Maybe 8fb18619d910 ("PCI/pwrctl: Create platform devices for child OF
+nodes of the port node") would be more appropriate?
+
+> Reported-by: Jim Quinlan <james.quinlan@broadcom.com>
+> Closes: https://lore.kernel.org/r/CA+-6iNwgaByXEYD3j=-+H_PKAxXRU78svPMRHDKKci8AGXAUPg@mail.gmail.com
+
+I'm also not sure this really merits a "Closes:" tag.  All this does
+is enable a workaround (disable CONFIG_PCI_PWRCTRL when brcmstb is
+enabled).  That's not a fix because we *should* be able to enable both
+pwrctrl and brcmstb at the same time.
+
+If 2489eeb777af ("PCI/pwrctrl: Skip scanning for the device further if
+pwrctrl device is created") was purely an optimization (see
+https://lore.kernel.org/r/20250701203526.GA1849466@bhelgaas), I think
+I would:
+
+  - Revert 2489eeb777af with a stable tag for v6.15, and
+
+  - Apply this patch with a Fixes: 8fb18619d910 ("PCI/pwrctl: Create
+    platform devices for child OF nodes of the port node") but no
+    stable tag.  8fb18619d910 appeared in v6.11 and the "don't enable
+    CONFIG_PCI_PWRCTRL" workaround was enough for brcmstb until
+    2489eeb777af, so if we revert 2489eeb777af, we wouldn't need to
+    backport *this* patch.
+
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> 
+> Changes in v2:
+> 
+> * Used the stub instead of returning NULL inside the function
+> 
+>  drivers/pci/probe.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 4b8693ec9e4c..e6a34db77826 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2508,6 +2508,7 @@ bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
 >  }
+>  EXPORT_SYMBOL(pci_bus_read_dev_vendor_id);
 >  
->  static void nvme_free_sgls(struct request *req)
+> +#if IS_ENABLED(CONFIG_PCI_PWRCTRL)
+>  static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, int devfn)
+>  {
+>  	struct pci_host_bridge *host = pci_find_host_bridge(bus);
+> @@ -2537,6 +2538,12 @@ static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, in
+>  
+>  	return pdev;
+>  }
+> +#else
+> +static struct platform_device *pci_pwrctrl_create_device(struct pci_bus *bus, int devfn)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+>  
+>  /*
+>   * Read the config data for a PCI device, sanity-check it,
+> -- 
+> 2.43.0
+> {
 
