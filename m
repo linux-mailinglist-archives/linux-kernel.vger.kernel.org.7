@@ -1,81 +1,277 @@
-Return-Path: <linux-kernel+bounces-711812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E280AEFFEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:33:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3419DAEFFED
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EA13B6FF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC0A016FE55
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3738C2797B7;
-	Tue,  1 Jul 2025 16:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51715276058;
+	Tue,  1 Jul 2025 16:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqFMmRMr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ju+xTz/G"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA311F428F;
-	Tue,  1 Jul 2025 16:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1653827CCE7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387552; cv=none; b=d/ElODCbYJjGRVB2ldVH/WqvQvut2VOG76x1KASYZZrhno6ZAUKVT2PPQhdXRw7eZRF1gtgp0tgHrNkAaBpkQ8aYU+rkM2x60dyTatoZfJBvYiGlq0dTJS4nZ8wg6s4QIfLfishxLBATyjKB1WVcr89DjIALpxVP9kvZ77qAu/w=
+	t=1751387585; cv=none; b=EftNxmCjdRUYAewSRnVzPzh2Cp2l+FVgHSliNF95lOWUYZlL+TLEwGJMy50Q2uivltkF1uMeONhXmusj1/394hyxgV1LA/iMHfwifp6BEoOxf97my1DVBHdMrPKu7WbBFR/4xHSKHM8T9yrDdwX4j95O4HM5QfnfeWFNwnUNsBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387552; c=relaxed/simple;
-	bh=yY8157hjb4vrAMHnghGfwO7Y+f3XeiGwvIscnnt6e+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpeSNm4fWMutN/HzbjruJ6o0EtkkcJuYMNc94BZdZ4aY+53AOegL2336f/gW8T7CN1MTpztO8j3VXZUKqBZfSt54m7IbVZEFpDTW8EdnvO3MH8fXdN1oRmAF9pp2T9+r4N06Rq5mQrri8FdzJXLuXvzdo1gGDv7WCGFq8EMfpbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqFMmRMr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F2EC4CEEF;
-	Tue,  1 Jul 2025 16:32:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751387552;
-	bh=yY8157hjb4vrAMHnghGfwO7Y+f3XeiGwvIscnnt6e+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uqFMmRMrIizrNOGH2fB1eaIMDlUhGC7FiaC/70V4QaOdSD89FPdlLYXcxOPDIcAFd
-	 uCaBuWxE5JyHmDuAFTknPvT7nI5Fo/80xn0v95o7TRElwbEK4QLyWxsoYarzO6lqjr
-	 oCwH/cuqgeNip76TAfCqGKclrRJs524FMIyF4vD53+CPvj+CM/+9AUReVtpkIg7/+C
-	 7ppRv2HggSE8R68Dn57qQCc4LpdHhkImMTrzTpB9s5tu8A6UG7F/GznadlPLBcPKT0
-	 43E8iJf/S2oWSGY2ME6F55VzkCGGcmGAElUYNxx3PnWyUnCUSdKSlhrcrRJGslkwlo
-	 MkvyEy+bnq+oA==
-Date: Tue, 1 Jul 2025 18:32:27 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, 
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, Raag Jadav <raag.jadav@intel.com>, 
-	"Tauro, Riana" <riana.tauro@intel.com>, "Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>, 
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>, intel-xe@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/5] i2c: designware: Add quirk for Intel Xe
-Message-ID: <fv437o3j3j3durqvdtvd5fjgfdhbzsnfv4r34xptxahctbzhq6@kvy3zoiowrnp>
-References: <20250701122252.2590230-1-heikki.krogerus@linux.intel.com>
- <20250701122252.2590230-3-heikki.krogerus@linux.intel.com>
+	s=arc-20240116; t=1751387585; c=relaxed/simple;
+	bh=cYcTvErTdUiGz4HGSo3g3lV+5DJH+CuVIJXqNpULwPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CxeZfY4M9UncEllDMPqNV+TKC5/9XeT39PF0j3BhlJ1YZsF557DFmkxUieOQbi75V2ug6SOxyXhskc/XvdHVunviRc3aSsRl5JoQ+O7IhSP0SW182e+WeIkDtEmH7p5ZMBA8L/F4v4+OB55e19THpvBDZhEuzPLDjU4nPmBym6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ju+xTz/G; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7752e805-0a06-46ed-b4ac-a51081a73f78@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751387579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j04zcoZXlPQ2qOZxAyDtyKIp/7+XM+QSiGk1gGR0QUc=;
+	b=Ju+xTz/G5fb+wlJYkXEWRGHEdx3g5TOUDlmIH2PwBRPG4cQMJTl6eX/sqDpUGXVxFEkgBC
+	Bla3HiZYfX21Sl+v4RhprTORRrTEgRIOJeeN9eDj8TlE8KEfZY5IpB5Vur9C7ZVPT6PXw8
+	ToHrkIH3HW+qSrP4qbfirHzI3OBhGSE=
+Date: Tue, 1 Jul 2025 12:32:51 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701122252.2590230-3-heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH net-next v2 11/18] net: macb: single dma_alloc_coherent()
+ for DMA descriptors
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+ Harini Katakam <harini.katakam@xilinx.com>,
+ Rafal Ozieblo <rafalo@cadence.com>,
+ Haavard Skinnemoen <hskinnemoen@atmel.com>, Jeff Garzik <jeff@garzik.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+ <20250627-macb-v2-11-ff8207d0bb77@bootlin.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20250627-macb-v2-11-ff8207d0bb77@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Heikki,
-
-On Tue, Jul 01, 2025 at 03:22:49PM +0300, Heikki Krogerus wrote:
-> The regmap is coming from the parent also in case of Xe
-> GPUs. Reusing the Wangxun quirk for that.
+On 6/27/25 05:08, Théo Lebrun wrote:
+> Move from two (Tx/Rx) dma_alloc_coherent() for DMA descriptor rings *per
+> queue* to two dma_alloc_coherent() overall.
 > 
-> Originally-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Issue is with how all queues share the same register for configuring the
+> upper 32-bits of Tx/Rx descriptor rings. For example, with Tx, notice
+> how TBQPH does *not* depend on the queue index:
+> 
+> 	#define GEM_TBQP(hw_q)		(0x0440 + ((hw_q) << 2))
+> 	#define GEM_TBQPH(hw_q)		(0x04C8)
+> 
+> 	queue_writel(queue, TBQP, lower_32_bits(queue->tx_ring_dma));
+> 	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+> 	if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+> 		queue_writel(queue, TBQPH, upper_32_bits(queue->tx_ring_dma));
+> 	#endif
+> 
+> To maxime our chances of getting valid DMA addresses, we do a single
 
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+maximize
 
-Thanks,
-Andi
+> dma_alloc_coherent() across queues.
+
+Is there really any chance involved (other than avoiding ENOMEM)?
+
+> This improves the odds because
+> alloc_pages() guarantees natural alignment. It cannot ensure valid DMA
+> addresses because of IOMMU or codepaths that don't go through
+> alloc_pages().
+> 
+> We error out if all rings don't have the same upper 32 bits, which is
+> better than the current (theoretical, not reproduced) silent corruption
+> caused by hardware that accesses invalid addresses.
+
+I think this is addressed by the previous patch.
+
+> Two considerations:
+>  - dma_alloc_coherent() gives us page alignment. Here we remove this
+>    containst meaning each queue's ring won't be page-aligned anymore.
+
+constraint
+
+>  - This can save some memory. Less allocations means less overhead
+
+fewer
+
+>    (constant cost per alloc) and less wasted bytes due to alignment
+>    constraints.
+
+I think it's probably a bit of a wash with reasonably-sized rings.
+Although the prefetch probably interacts poorly with the default "round"
+power-of-two ring sizes.
+
+> Fixes: 02c958dd3446 ("net/macb: add TX multiqueue support for gem")
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 83 ++++++++++++++++++--------------
+>  1 file changed, 46 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index d3b3635998cad095246edf8a75faebbcf7115355..48b75d95861317b9925b366446c7572c7e186628 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -2445,33 +2445,32 @@ static void macb_free_rx_buffers(struct macb *bp)
+>  
+>  static void macb_free_consistent(struct macb *bp)
+>  {
+> -	struct macb_queue *queue;
+> +	size_t size, tx_size_per_queue, rx_size_per_queue;
+> +	struct macb_queue *queue, *queue0 = bp->queues;
+> +	struct device *dev = &bp->pdev->dev;
+>  	unsigned int q;
+> -	int size;
+>  
+>  	if (bp->rx_ring_tieoff) {
+> -		dma_free_coherent(&bp->pdev->dev, macb_dma_desc_get_size(bp),
+> +		dma_free_coherent(dev, macb_dma_desc_get_size(bp),
+>  				  bp->rx_ring_tieoff, bp->rx_ring_tieoff_dma);
+>  		bp->rx_ring_tieoff = NULL;
+>  	}
+>  
+>  	bp->macbgem_ops.mog_free_rx_buffers(bp);
+>  
+> +	tx_size_per_queue = TX_RING_BYTES(bp) + bp->tx_bd_rd_prefetch;
+> +	size = bp->num_queues * tx_size_per_queue;
+
+Can you refactor the size calculation into a helper function?
+
+> +	dma_free_coherent(dev, size, queue0->tx_ring, queue0->tx_ring_dma);
+> +
+> +	rx_size_per_queue = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+> +	size = bp->num_queues * rx_size_per_queue;
+> +	dma_free_coherent(dev, size, queue0->rx_ring, queue0->rx_ring_dma);
+> +
+>  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+>  		kfree(queue->tx_skb);
+>  		queue->tx_skb = NULL;
+> -		if (queue->tx_ring) {
+> -			size = TX_RING_BYTES(bp) + bp->tx_bd_rd_prefetch;
+> -			dma_free_coherent(&bp->pdev->dev, size,
+> -					  queue->tx_ring, queue->tx_ring_dma);
+> -			queue->tx_ring = NULL;
+> -		}
+> -		if (queue->rx_ring) {
+> -			size = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+> -			dma_free_coherent(&bp->pdev->dev, size,
+> -					  queue->rx_ring, queue->rx_ring_dma);
+> -			queue->rx_ring = NULL;
+> -		}
+> +		queue->tx_ring = NULL; /* Single buffer owned by queue0 */
+> +		queue->rx_ring = NULL; /* Single buffer owned by queue0 */
+
+OK, but queue0 doesn't own the ring either at this point (it's free'd).
+
+>  	}
+>  }
+>  
+> @@ -2513,37 +2512,47 @@ static int macb_alloc_rx_buffers(struct macb *bp)
+>  
+>  static int macb_alloc_consistent(struct macb *bp)
+>  {
+> +	size_t size, tx_size_per_queue, rx_size_per_queue;
+> +	dma_addr_t tx_dma, rx_dma;
+> +	struct device *dev = &bp->pdev->dev;
+>  	struct macb_queue *queue;
+>  	unsigned int q;
+> -	int size;
+> +	void *tx, *rx;
+> +
+> +	/*
+> +	 * Upper 32-bits of Tx/Rx DMA descriptor for each queues much match!
+> +	 * We cannot enforce this guarantee, the best we can do is do a single
+> +	 * allocation and hope it will land into alloc_pages() that guarantees
+> +	 * natural alignment of physical addresses.
+> +	 */
+> +
+> +	tx_size_per_queue = TX_RING_BYTES(bp) + bp->tx_bd_rd_prefetch;
+> +	size = bp->num_queues * tx_size_per_queue;
+> +	tx = dma_alloc_coherent(dev, size, &tx_dma, GFP_KERNEL);
+> +	if (!tx || upper_32_bits(tx_dma) != upper_32_bits(tx_dma + size - 1))
+> +		goto out_err;
+> +	netdev_dbg(bp->dev, "Allocated %zu bytes for %u TX rings at %08lx (mapped %p)\n",
+> +		   size, bp->num_queues, (unsigned long)tx_dma, tx);
+> +
+> +	rx_size_per_queue = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+> +	size = bp->num_queues * rx_size_per_queue;
+> +	rx = dma_alloc_coherent(dev, size, &rx_dma, GFP_KERNEL);
+> +	if (!rx || upper_32_bits(rx_dma) != upper_32_bits(rx_dma + size - 1))
+> +		goto out_err;
+> +	netdev_dbg(bp->dev, "Allocated %zu bytes for %u RX rings at %08lx (mapped %p)\n",
+> +		   size, bp->num_queues, (unsigned long)rx_dma, rx);
+>  
+>  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+> -		size = TX_RING_BYTES(bp) + bp->tx_bd_rd_prefetch;
+> -		queue->tx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
+> -						    &queue->tx_ring_dma,
+> -						    GFP_KERNEL);
+> -		if (!queue->tx_ring ||
+> -		    upper_32_bits(queue->tx_ring_dma) != upper_32_bits(bp->queues->tx_ring_dma))
+> -			goto out_err;
+> -		netdev_dbg(bp->dev,
+> -			   "Allocated TX ring for queue %u of %d bytes at %08lx (mapped %p)\n",
+> -			   q, size, (unsigned long)queue->tx_ring_dma,
+> -			   queue->tx_ring);
+> +		queue->tx_ring = tx + tx_size_per_queue * q;
+> +		queue->tx_ring_dma = tx_dma + tx_size_per_queue * q;
+> +
+> +		queue->rx_ring = rx + rx_size_per_queue * q;
+> +		queue->rx_ring_dma = rx_dma + rx_size_per_queue * q;
+>  
+>  		size = bp->tx_ring_size * sizeof(struct macb_tx_skb);
+>  		queue->tx_skb = kmalloc(size, GFP_KERNEL);
+>  		if (!queue->tx_skb)
+>  			goto out_err;
+> -
+> -		size = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+> -		queue->rx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
+> -						 &queue->rx_ring_dma, GFP_KERNEL);
+> -		if (!queue->rx_ring ||
+> -		    upper_32_bits(queue->rx_ring_dma) != upper_32_bits(bp->queues->rx_ring_dma))
+> -			goto out_err;
+> -		netdev_dbg(bp->dev,
+> -			   "Allocated RX ring of %d bytes at %08lx (mapped %p)\n",
+> -			   size, (unsigned long)queue->rx_ring_dma, queue->rx_ring);
+>  	}
+>  	if (bp->macbgem_ops.mog_alloc_rx_buffers(bp))
+>  		goto out_err;
+> 
+
+Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
 
