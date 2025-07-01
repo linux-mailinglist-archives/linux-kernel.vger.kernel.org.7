@@ -1,79 +1,86 @@
-Return-Path: <linux-kernel+bounces-711273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A538AEF866
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0919AEF870
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9A44E0827
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2658A1692FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D13274667;
-	Tue,  1 Jul 2025 12:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDE6278E7E;
+	Tue,  1 Jul 2025 12:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4NnV64h"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cSspd3/1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F05273D8D;
-	Tue,  1 Jul 2025 12:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B44274650
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751372659; cv=none; b=ci1H7fj2MQqMIHFV48fsXy9jLQ5MkAvsGCBId+h5qbXRUpB+cBDojjsZXv1FJEVVP3Q8Dv2kQnI6ADtu1e1Z/r0zHtC0kbVhyo1y2zA+z3tEw1pkvRMUr8Y6ZYoMcQONR/3dGSRj5+ydJ7kWg1BpEq/d1BfZTZcXwT6gLPyoOQc=
+	t=1751372669; cv=none; b=FGAG0N9syT/gduqZKCbT8ufn94wdWhZQzL7LeItE7JzU2arzTpKXjSN11HOIGZ7VqbmsoLN2KJqtF9QFJWLALt4ppO2dLvaH+Y6yF9p+YPuUDwBKqosZSk5JewxuRSC8gXanyyJF1edMiNTrB+3OWaMsr7JEiu0y5I1a3nQi3f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751372659; c=relaxed/simple;
-	bh=INulgcH/nzHPzEw+6nx7yLO32379I/EfVJ0SS1QNbJs=;
+	s=arc-20240116; t=1751372669; c=relaxed/simple;
+	bh=mJDe2P2PEm8RQgbD+K+iqN6Z01/60G9GraL4XRuTDXk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dAn4UXAMc5dEytmjjNCzld0u6XRXOqHdLCwkyNK984R9HDuwirXacb4ey3qlM+aMdUjAZ8F8tX2Fdcrp3li7ypBSwNcbZv0g9Uu8XWwP9jAPN0lWC21KvBXNKaVjHGDIx/Mq0KiGKy9BqCOLOTUanAJ6JnKz6tO3RfQFBHV25lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4NnV64h; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a50fc819f2so4038321f8f.2;
-        Tue, 01 Jul 2025 05:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751372656; x=1751977456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J3Wtg2aGHhRy0M6H8IQ6x3ipYCPJsyzm0Bs4otQB+Po=;
-        b=T4NnV64hbTHJUSPimdGt6vMDp5+63nczOttfPLL9qNP+OyHoZYgRJlzUBqdyvOwNCi
-         SJZofkkUOP7n2vIIQm9DmYAIg4k/u/S+qd/XoXNagKiqpRwyeVv/88yZUozGUfD5oEDk
-         zYHVR0exRNCrrREbVpYd5ocL6VAGiod2IVKn/tpsmhS/n1OQKZf+93A2tyXffeZKVJ50
-         N6rnjfUuSLTY+V1/gtlNKLrYiIDeDUL7qENFrYklauq0mnqrssttqUCSW8WjB8f11Y7Q
-         Y4OIScHqTvVBSFEXqUlUt6endcv/kmrQPJgQMlSbPN1B1XAqDHP2wnpKTx2Rj0EMEb3n
-         znsA==
+	 In-Reply-To:Content-Type; b=rdgwP1vZGTpSBJ97B2Gxxwk8bzKxQC/IWBhjuql7itfZFQlQSAv663IKUfUU9W25YeGdR9BW3zqHxYJeIlLhFjB6RdWSBugLyO7xts4w26Ea3Jvo0JwE5yOxpFyiiHOiXdYz1TnetTIweyAF/1M5ehnH0Z+ZdvAzwpw908sNLes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cSspd3/1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751372663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5dMJcBXdQ77pxzaJeebTFi4ceGva0cqGC9EQBAzQ3z4=;
+	b=cSspd3/1v+9jmlWwADDMDYebO5uuIT1H51iqtDTSGDR2RfmvzBgMxWxznf1PJ8V0An9FG3
+	0KBtqcCLOJnfjcXDquYwoiiwH2Iaoslb7LvOh8BXWjDmzUU7mE/jtN6lrHORUHr06Ppqe2
+	9gbVc+4047YiF4tAPBDXW3Z1aNX15a4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-270-lA4k2oY_M3GaWUHrNspIzg-1; Tue, 01 Jul 2025 08:24:22 -0400
+X-MC-Unique: lA4k2oY_M3GaWUHrNspIzg-1
+X-Mimecast-MFC-AGG-ID: lA4k2oY_M3GaWUHrNspIzg_1751372661
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451ac1b43c4so27825955e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 05:24:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751372656; x=1751977456;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J3Wtg2aGHhRy0M6H8IQ6x3ipYCPJsyzm0Bs4otQB+Po=;
-        b=dG+cLtb2BOR5usfcrk2xEAX+YNEu5vIsrMdh1QNV7Zcq1PbA+w/zWUHmu4hgtcauSE
-         xC/w+oBvvS33D38Aa2cMzohcurHg/LETPFpet480nPhZrOQfNTBSSFkbdVuEXQWXL44K
-         qjdWfRPlGyF5SuVbr9EfkvUwxsUl5kMsgFaNZEpCZxNyeFG0f/yLauEyCTUcSB8dEVNK
-         OXAbw22eCR/hYGobpIxI6qX+4F5gn4eu8uN5zao0gcEwefODgAfsQx+Z58f9Z+5XdNKL
-         Tj1+YwMrO3qJ8OoE7TJ3x7RdWFojQ1Zn4PobPmH/Wi3ECZru9MZktLw/g2wE7kD8Uj2K
-         KQaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSIzhFHSIOuip0GPFvNYY84ttvND6Y6iDu8U9+hAvJbULW1ULIga1kRx3zvqhC54l50XAYRn7VQ5/8x0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDOtfdxibH1kKsRfDHO8OIs2v6mhL8/yi7zaP5bQ6cyY1opQ/w
-	lIy3pe6Nt5ufA3wZXp5KmBjl2kLqA/PVLTodtFETrBXCBL0l5tp37OcZ
-X-Gm-Gg: ASbGncvqu6X4nZPNM9dE6jCZnh0YX0Ou1OSMFBjMaZhKU93MmcIQif6WXYlxIonI1Z9
-	Qwta1HKOp7mou+m0mccEGLWcK0FxadrvdgkcEljV1crDLjBrMv8a3M/akq0yk9C9mO4nfjBcpZc
-	tEECcesCXAs409cjkly1XnpZraD06xoSOZEJPUMjWbZ+2Q5wfJ4hvofSta9AcXlSNjYJo7ntsMI
-	39VVvq1sbktdI5klZysc15Z0pB2lrgtcdI3KKQ/Ab/U5Kve4zqZn2bE7YxDkNSEm/7aihDmRHwV
-	oG0x9DaScVJsHaHx43Mf0y97ZWFiibcjCNSC1Ush1zk3O2pGGabISnJe6/GTldpsuadoIqm1HBF
-	mC683qVgR0jcYcmUp8YxPcYAC4uMyNGh09ABhlxB1dz2uAt0ndg==
-X-Google-Smtp-Source: AGHT+IFVht3relObZqzWGT0XDyqUreLeTVUjvPsi4ZEg5WYRJLxoFHN8VFWY3YEcwMK3EIrI4A8Ghw==
-X-Received: by 2002:a05:6000:3c1:b0:3a4:d722:5278 with SMTP id ffacd0b85a97d-3a917bc77dfmr15264267f8f.39.1751372655503;
-        Tue, 01 Jul 2025 05:24:15 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fab7asm13077348f8f.24.2025.07.01.05.24.14
+        d=1e100.net; s=20230601; t=1751372661; x=1751977461;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5dMJcBXdQ77pxzaJeebTFi4ceGva0cqGC9EQBAzQ3z4=;
+        b=GiWOekS0W+n7M55MZ2m0s0IJ8ROhXWLoguyF8vh9O8tEOyR4Sn1mnO1GFfaYZQE1+c
+         +qmAMhOREeHPDxUFo9MjcpP9BrJAy7imZWp5QUEVM95sVDherpW5h61t4e0wDgrY/k4s
+         zVoyqDED3XBXtb/nbmXsouZ3iK1G/eRUyZdP4dYdZ4cgMI3SzalLA7uW+QFg2VZXHvMw
+         Fe/MJaYa5iTNQBY/gIwtlT8dkmaGpS9yQ2VXTVIvIYk46g1uDjcYT6rsbZNsoxWmp19O
+         GqYCfSXjT6YQYhS51dJPe7QaUTMWNWoZMOnDF8nf1beMsQXk8dB+KHst2QmwUiaJQn1j
+         t6nw==
+X-Gm-Message-State: AOJu0YxNlMN0+0H6MdSqXmHwiOJUMp1jLjoENEt/6w5uDTh96xtWUd3R
+	sBAVx8ZbIPJpxR9Ft7RxJ2Wfh0NEw6Sa4bJZnVT/spnzeUjf/iJ4DTK2epyEG5+fjHq4pFlAIU2
+	wwZXhB17rAXJmwKPzcrXN0eRmXKtq8n70mVeE4e+YRhFqQSuR7gpCHBZcE4AZ15T7MQ==
+X-Gm-Gg: ASbGncugT7rS2Af9DScEiKtDctc6oiMXeCgSCQPaY8VvtK5OsaED/iYeyU3dthIqg+U
+	KDP4py2OB3ErQX7U6OftqC4O+LMWKnuwphrPj6CuLBLVYAvPjHmqwgLPIpN5C7r2USanY+PvenM
+	TrQnCWoSCw/w7C2WDLbbQP1LlC99ydqzslqU5IvlNIXNMYcs5elbqJZqbTVpx/Vwj2Ri3j+7UO6
+	vkPceJ+TLuf5hcGKQK/HcIriqqmVidCszr4AYVOk95NJrIJqd1ebRPiYc7jUd+m5WLgH7/yuvlp
+	NmscdjhQ3eTEcWcPTx20KHZY8rui2dTUVZSjA+8oZlL2+erejI80Fuh+lEyhSiXj1wH3lWFaTj2
+	ur1zxjzbXc0vd5jjPsGon5y2tNZrtJzc2we5Mumsl0TMGmY05MA==
+X-Received: by 2002:a05:600c:458b:b0:450:b9c0:c7d2 with SMTP id 5b1f17b1804b1-45391b6b96dmr142402415e9.11.1751372661162;
+        Tue, 01 Jul 2025 05:24:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpzHsO7mLLjpgLiPRtxtYPNX8uoCOnkHlcMoEUMymXcRW48dybZJfjs9S76N4KxHcaVdQlIA==
+X-Received: by 2002:a05:600c:458b:b0:450:b9c0:c7d2 with SMTP id 5b1f17b1804b1-45391b6b96dmr142401905e9.11.1751372660588;
+        Tue, 01 Jul 2025 05:24:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f18:7500:202e:b0f1:76d6:f9af? (p200300d82f187500202eb0f176d6f9af.dip0.t-ipconnect.de. [2003:d8:2f18:7500:202e:b0f1:76d6:f9af])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a4213f0sm165518105e9.36.2025.07.01.05.24.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 05:24:14 -0700 (PDT)
-Message-ID: <d152a6ae-4303-4889-b68b-25e29ea8eddb@gmail.com>
-Date: Tue, 1 Jul 2025 13:24:13 +0100
+        Tue, 01 Jul 2025 05:24:19 -0700 (PDT)
+Message-ID: <ec23fcb2-a1f5-4da3-a2fc-09abe317f17d@redhat.com>
+Date: Tue, 1 Jul 2025 14:24:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,79 +88,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] sfc: eliminate xdp_rxq_info_valid using XDP base
- API
-To: Fushuai Wang <wangfushuai@baidu.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-net-drivers@amd.com,
- linux-kernel@vger.kernel.org
-References: <20250628051016.51022-1-wangfushuai@baidu.com>
-Content-Language: en-GB
-From: Edward Cree <ecree.xilinx@gmail.com>
-In-Reply-To: <20250628051016.51022-1-wangfushuai@baidu.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v1 13/29] mm/balloon_compaction: stop using
+ __ClearPageMovable()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Miaohe Lin
+ <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>,
+ Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>
+References: <20250630130011.330477-1-david@redhat.com>
+ <20250630130011.330477-14-david@redhat.com>
+ <65804db3-71c0-47ff-8189-6a1587d4a0cc@lucifer.local>
+ <94333692-0093-4351-a081-13e202dd2322@redhat.com>
+ <4d1d7aa7-15c7-4c2c-8cd7-0853dcde7940@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <4d1d7aa7-15c7-4c2c-8cd7-0853dcde7940@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 28/06/2025 06:10, Fushuai Wang wrote:
-> Commit eb9a36be7f3e ("sfc: perform XDP processing on received packets")
-> use xdp_rxq_info_valid to track failures of xdp_rxq_info_reg().
-> However, this driver-maintained state becomes redundant since the XDP
-> framework already provides xdp_rxq_info_is_reg() for checking registration
-> status.
+> OK I guess this is fine... :)
 > 
-> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
+> An aside, unrelated tot his series: it'd be nice to use 'deflate' consistently
+> in this code. We do __count_vm_event(BALLOON_DEFLATE) in
+> balloon_page_list_dequeue() but say 'deflate' nowhere else... well before this
+> patch :)
 
-Acked-by: Edward Cree <ecree.xilinx@gmail.com>
+Right, dequeue is actually deflate, because one couldn't use that 
+function for anything else as it stands.
 
-> ---
->  drivers/net/ethernet/sfc/net_driver.h | 2 --
->  drivers/net/ethernet/sfc/rx_common.c  | 6 +-----
->  2 files changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/net_driver.h b/drivers/net/ethernet/sfc/net_driver.h
-> index 5c0f306fb019..b98c259f672d 100644
-> --- a/drivers/net/ethernet/sfc/net_driver.h
-> +++ b/drivers/net/ethernet/sfc/net_driver.h
-> @@ -404,7 +404,6 @@ struct efx_rx_page_state {
->   * @old_rx_packets: Value of @rx_packets as of last efx_init_rx_queue()
->   * @old_rx_bytes: Value of @rx_bytes as of last efx_init_rx_queue()
->   * @xdp_rxq_info: XDP specific RX queue information.
-> - * @xdp_rxq_info_valid: Is xdp_rxq_info valid data?.
->   */
->  struct efx_rx_queue {
->  	struct efx_nic *efx;
-> @@ -443,7 +442,6 @@ struct efx_rx_queue {
->  	unsigned long old_rx_packets;
->  	unsigned long old_rx_bytes;
->  	struct xdp_rxq_info xdp_rxq_info;
-> -	bool xdp_rxq_info_valid;
->  };
->  
->  enum efx_sync_events_state {
-> diff --git a/drivers/net/ethernet/sfc/rx_common.c b/drivers/net/ethernet/sfc/rx_common.c
-> index f4f75299dfa9..5306f4c44be4 100644
-> --- a/drivers/net/ethernet/sfc/rx_common.c
-> +++ b/drivers/net/ethernet/sfc/rx_common.c
-> @@ -269,8 +269,6 @@ void efx_init_rx_queue(struct efx_rx_queue *rx_queue)
->  			  "Failure to initialise XDP queue information rc=%d\n",
->  			  rc);
->  		efx->xdp_rxq_info_failed = true;
-> -	} else {
-> -		rx_queue->xdp_rxq_info_valid = true;
->  	}
->  
->  	/* Set up RX descriptor ring */
-> @@ -302,10 +300,8 @@ void efx_fini_rx_queue(struct efx_rx_queue *rx_queue)
->  
->  	efx_fini_rx_recycle_ring(rx_queue);
->  
-> -	if (rx_queue->xdp_rxq_info_valid)
-> +	if (xdp_rxq_info_is_reg(&rx_queue->xdp_rxq_info))
->  		xdp_rxq_info_unreg(&rx_queue->xdp_rxq_info);
-> -
-> -	rx_queue->xdp_rxq_info_valid = false;
->  }
->  
->  void efx_remove_rx_queue(struct efx_rx_queue *rx_queue)
+TODO list ... :)
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
