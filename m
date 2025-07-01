@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-711484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1642DAEFB58
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:58:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097F1AEFB59
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3782D1BC53CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:58:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626A916F2AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7EE27877B;
-	Tue,  1 Jul 2025 13:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59B4279334;
+	Tue,  1 Jul 2025 13:56:46 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FF227817D;
-	Tue,  1 Jul 2025 13:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3EA27815E;
+	Tue,  1 Jul 2025 13:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378205; cv=none; b=mRuwewYzQ/bpve095w5im27Hm6URVS0WKfnfRA1Pfp/fsTQXp5BmmVH1Rf0GBM/10xV/8YGlD3dj6HEEay/ZapnPmXAMSfmMDBWgNknVPdy2OPK8vjoSmwOQ7reMQTMztaFBXjRT88nunNVtFtqEnrZaW6loYa2/zsph/rH0ejo=
+	t=1751378206; cv=none; b=CsqPxeb2URXxDltlwzmufBxa4u+3wgwKu4CzfjwlI0AwAh7xA9unXJPtrmmj+zCTS4oLebcStM7CvMf5N5fxNSkbz2ySTaUXLrDnTWrHBjtFn0FgTt5op2Q2MOe1kE6o4FDnz50Bb59EPYZ0qETq6vw0VvdpEYM4NmIqun2X5Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378205; c=relaxed/simple;
-	bh=3bIgU0XyHqo1DF6Gu7rQQsMcLwH873FqmpmTDaoYukM=;
+	s=arc-20240116; t=1751378206; c=relaxed/simple;
+	bh=/shdMZwCV+KkBBiLg52KW5JwqpXSxghASPezdRQnh/k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pvl8h7VZ7n2JTifG7JpAUGa5ufK5sGQ4kEUo/ptyzjDe2DH84Dy6g+Zh55hxwHHJkIW1Ck2NUN6JdSZkKcCZjtXZq3WBGzAc6W50UIgp0Vb9miig+TZul642TroolG13HxUIbpcQUiPVy2idZm3x+AbjZm1+F8d8pRuUh/eAWyg=
+	 MIME-Version; b=t/hu4/l54Mly2RIv52VeCEQhJDJee/UnjqM1CK5XQz/WrhOjquDkRd5jIiGGuLsedkCnAnFCUJrKDmu90qh+0asGr27va7QruvFkv4PljOxV7BygAuJyecNXLLHqjT4cy4F961Z6SkoZOIwKaNePuYewZZzkkiEbKkpW8PP6p8A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 060BA237B;
-	Tue,  1 Jul 2025 06:56:28 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 799D726BC;
+	Tue,  1 Jul 2025 06:56:29 -0700 (PDT)
 Received: from e133380.cambridge.arm.com (e133380.arm.com [10.1.197.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33EEF3F58B;
-	Tue,  1 Jul 2025 06:56:42 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A78E93F58B;
+	Tue,  1 Jul 2025 06:56:43 -0700 (PDT)
 From: Dave Martin <Dave.Martin@arm.com>
 To: linux-kernel@vger.kernel.org
-Cc: Guo Ren <guoren@kernel.org>,
+Cc: Brian Cain <bcain@kernel.org>,
 	Oleg Nesterov <oleg@redhat.com>,
 	Kees Cook <kees@kernel.org>,
 	Akihiko Odaki <akihiko.odaki@daynix.com>,
-	linux-csky@vger.kernel.org
-Subject: [PATCH 07/23] csky: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
-Date: Tue,  1 Jul 2025 14:56:00 +0100
-Message-Id: <20250701135616.29630-8-Dave.Martin@arm.com>
+	linux-hexagon@vger.kernel.org
+Subject: [PATCH 08/23] hexagon: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
+Date: Tue,  1 Jul 2025 14:56:01 +0100
+Message-Id: <20250701135616.29630-9-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250701135616.29630-1-Dave.Martin@arm.com>
 References: <20250701135616.29630-1-Dave.Martin@arm.com>
@@ -57,37 +57,28 @@ Instead of having the core code guess the note name for each regset,
 use USER_REGSET_NOTE_TYPE() to pick the correct name from elf.h.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: Guo Ren <guoren@kernel.org>
+Cc: Brian Cain <bcain@kernel.org>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Kees Cook <kees@kernel.org>
 Cc: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: linux-csky@vger.kernel.org
+Cc: linux-hexagon@vger.kernel.org
 ---
- arch/csky/kernel/ptrace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/hexagon/kernel/ptrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/csky/kernel/ptrace.c b/arch/csky/kernel/ptrace.c
-index 0f7e7b653c72..6bb685a2646b 100644
---- a/arch/csky/kernel/ptrace.c
-+++ b/arch/csky/kernel/ptrace.c
-@@ -166,7 +166,7 @@ static int fpr_set(struct task_struct *target,
+diff --git a/arch/hexagon/kernel/ptrace.c b/arch/hexagon/kernel/ptrace.c
+index 905b06790ab7..2093eee143e1 100644
+--- a/arch/hexagon/kernel/ptrace.c
++++ b/arch/hexagon/kernel/ptrace.c
+@@ -137,7 +137,7 @@ enum hexagon_regset {
  
- static const struct user_regset csky_regsets[] = {
- 	[REGSET_GPR] = {
+ static const struct user_regset hexagon_regsets[] = {
+ 	[REGSET_GENERAL] = {
 -		.core_note_type = NT_PRSTATUS,
 +		USER_REGSET_NOTE_TYPE(PRSTATUS),
- 		.n = sizeof(struct pt_regs) / sizeof(u32),
- 		.size = sizeof(u32),
- 		.align = sizeof(u32),
-@@ -174,7 +174,7 @@ static const struct user_regset csky_regsets[] = {
- 		.set = gpr_set,
- 	},
- 	[REGSET_FPR] = {
--		.core_note_type = NT_PRFPREG,
-+		USER_REGSET_NOTE_TYPE(PRFPREG),
- 		.n = sizeof(struct user_fp) / sizeof(u32),
- 		.size = sizeof(u32),
- 		.align = sizeof(u32),
+ 		.n = ELF_NGREG,
+ 		.size = sizeof(unsigned long),
+ 		.align = sizeof(unsigned long),
 -- 
 2.34.1
 
