@@ -1,159 +1,133 @@
-Return-Path: <linux-kernel+bounces-711449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91988AEFAE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:40:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E059CAEFFE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3326E188631B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D77A3A50BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2352741DA;
-	Tue,  1 Jul 2025 13:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C894627C167;
+	Tue,  1 Jul 2025 16:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="D3AZFk3D"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oT3g7+5y"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E53D26B2AA
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6831727E04E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751377089; cv=none; b=bD2h/Vx2SPNWe5eg1wYCkVXwsgWWWgA/Cem+Z2lBveWrtLJYJB7E1oC/BTGPK+3uRlaEUFi15b/8Yu6idA1SjNP/yE2bgcT8iFP/PazYCds5stofcniQVK8oqhd6BhnTRR4ZIV/1zw3ibBVSDOIt/Iz7QkWkeMMdMJ5kutOKbqM=
+	t=1751387476; cv=none; b=kQYiSlghIoSwLMmsZzM4+Z+x7ieBdqgK9sz33w4jKU/IyCP79s5JyUpQikHa5PtPenT6ilGxOaY4RtUBBzLwKTutgJaWZKOxD14/M+RANtps8ZFnuHYxAOYLaqGkxXsx9Nhk5bsiiUkxrf3JKuVi4n1YhQ6HqPoHZb/UV242F7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751377089; c=relaxed/simple;
-	bh=9NAeOVpHEVGsz5ByZGwQ4Wt24BCLMkjun6lBaE5vbSU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aflkip8oNthJpcYP7K5e2O0+8Ki3War005gMhXQhOrMqMNKdpycYip8cYB3DqbLwm/w7Tan5bisf+eYBVk76nT8TH22cfglN0iX7VLfywOvpnRad4dfCo0T8qikOx+HNQsVfJylmwdE/NOHeZNKlk80oG8bbBgiJvb8OyzA1R0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=D3AZFk3D; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bWkcW3HwMz9sdP;
-	Tue,  1 Jul 2025 15:38:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1751377083; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fG49IWnqi5Qsh1rud8FkyB6EdwDzoRE72QFqV2fypms=;
-	b=D3AZFk3DVTfhK+H1H2QGWIOeLwgkwC9uMyQOlY/FuZjuHgmyZ21Qfl1aaFq78zji03a0kj
-	EN4R2CDw5UETHXl2O+UZhuZDHHaugwhF93+rFeMZisSmwE7MBRLeszahZ/+StspN88PfFD
-	D9kIbpuGie/c807dDjyd4c+XCuj9JSV2AnKlnk3Sdsz6jjTy/551ie9HuTH7g/QTEc1GeC
-	ic2zVfo7hqzsbX49rZuT+RFXj7AsYRQH5dLuYqZhc0V4bcMyQ5L1EyfkNsY/ChapOZcfwq
-	YK8wpj2t/VXLaUdavwXeHANGp6xdU3h4kXnK22OaLWBZTbIfYvOK0dPkiAzYag==
-Message-ID: <4d41dfaf0b48166c41a476f128d59785ddaeeb5f.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched/tests: Make timedout_job callback a better
- role model
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Philipp Stanner <phasta@kernel.org>, Matthew Brost
- <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
- <tvrtko.ursulin@igalia.com>, Pierre-Eric Pelloux-Prayer
- <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Tue, 01 Jul 2025 15:37:56 +0200
-In-Reply-To: <20250605134154.191764-2-phasta@kernel.org>
-References: <20250605134154.191764-2-phasta@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1751387476; c=relaxed/simple;
+	bh=28omV3/O3aHzL6uKDlQ2PANINxBfKNKjkJr4kIo7X54=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ZUA+gJs+NQPBhNaT8FthfI1rUedALqI1pEHa13nQdJBWFEKuR5/mkUNXNx8qRxjUETfkUpbM/jY5adRtm52BTnNBDOtS4aVVIayWF5DmBIXrN0ZBV/nz+JA/sIsk9T75duD43y2v6qCsiahccBX2/FWkErzA6HzpnKI1W2tA/yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oT3g7+5y; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250701163112epoutp04ed8da4e5931e20b36e5e7fc82fa01891~OLaCLfrz-2900629006epoutp04L
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:31:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250701163112epoutp04ed8da4e5931e20b36e5e7fc82fa01891~OLaCLfrz-2900629006epoutp04L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751387472;
+	bh=CYCieZx7RGc4LBogHf+a8UqHutLdl5VHK4F8STwbvPM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=oT3g7+5ykWliopi8mIAdsTlCpWF4z7LPDgU/YHY2nVhTIVLVp/iNxC6sMHGpCscf6
+	 xXqM5Vf8YsWk3RvOJ8/byHzgAuVETzDxQ3lqsd3/X5++BIaDvsp8+hk9g/aj6uzSwF
+	 qpm6UMUNgJgIvc3JXmvsYi33AP+FsPag3DbUfyZY=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250701163111epcas5p2709c45ba4dad180fe68d0ca67be7a784~OLaBi-Gsx2740427404epcas5p2f;
+	Tue,  1 Jul 2025 16:31:11 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bWpSF6RFTz6B9m5; Tue,  1 Jul
+	2025 16:31:09 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250701133810epcas5p3e1acdfe3bfcf5276e6c70f12755fdf57~OJC9HjeEd0290902909epcas5p3y;
+	Tue,  1 Jul 2025 13:38:10 +0000 (GMT)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250701133807epsmtip15aa5b5f8243b909f80b036d6b7b3ca61~OJC6dIU3K0912509125epsmtip18;
+	Tue,  1 Jul 2025 13:38:07 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-fsd@tesla.com>, <manivannan.sadhasivam@linaro.org>,
+	<lpieralisi@kernel.org>, <kw@linux.com>, <bhelgaas@google.com>,
+	<jingoohan1@gmail.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
+	<arnd@arndb.de>, <m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <20250627211236.GA147018-robh@kernel.org>
+Subject: RE: [PATCH v2 06/10] dt-bindings: PCI: Add bindings support for
+ Tesla FSD SoC
+Date: Tue, 1 Jul 2025 19:08:06 +0530
+Message-ID: <02c001dbea8d$62b21d50$281657f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: d448f7998a01351db5f
-X-MBO-RS-META: 89rnnf8ig8imhwy68phfjgr1x37xts95
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFUClgbainc6hQuKSBO0V8ttZVgkwK41mGpAfhwG8gB/KC3xLT3likQ
+Content-Language: en-in
+X-CMS-MailID: 20250701133810epcas5p3e1acdfe3bfcf5276e6c70f12755fdf57
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250625165315epcas5p19f081c8a0e2e7dc87698577cc2d460ca
+References: <20250625165229.3458-1-shradha.t@samsung.com>
+	<CGME20250625165315epcas5p19f081c8a0e2e7dc87698577cc2d460ca@epcas5p1.samsung.com>
+	<20250625165229.3458-7-shradha.t@samsung.com>
+	<20250627211236.GA147018-robh@kernel.org>
 
-On Thu, 2025-06-05 at 15:41 +0200, Philipp Stanner wrote:
-> Since the drm_mock_scheduler does not have real users in userspace,
-> nor
-> does it have real hardware or firmware rings, it's not necessary to
-> signal timedout fences nor free jobs - from a functional standpoint.
->=20
-> The unit tests, however, serve as a reference implementation and a
-> first
-> example for new scheduler users. Therefore, they should approximate
-> the
-> canonical usage as much as possible.
->=20
-> Make sure timed out hardware fences get signaled with the appropriate
-> error code.
->=20
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Pushed that one to drm-misc-next
 
-P.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 28 June 2025 02:43
+> To: Shradha Todi <shradha.t@samsung.com>
+> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-
+> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-
+> fsd@tesla.com; manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
+> bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org; conor+dt@kernel.org;
+> alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org; arnd@arndb.de;
+> m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
+> Subject: Re: [PATCH v2 06/10] dt-bindings: PCI: Add bindings support for Tesla FSD SoC
+> 
+> On Wed, Jun 25, 2025 at 10:22:25PM +0530, Shradha Todi wrote:
+> > Document the PCIe controller device tree bindings for Tesla FSD
+> > SoC for both RC and EP.
+> 
+> Drop 'bindings support for ' in the subject.
+> 
+> >
+> > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> > ---
+> >  .../bindings/pci/samsung,exynos-pcie.yaml     | 121 ++++++++++++------
+> 
+> I think this should be its own schema file. There's not much shared.
+> 
 
-> ---
-> =C2=A0.../gpu/drm/scheduler/tests/mock_scheduler.c=C2=A0 | 26
-> ++++++++++++++++++-
-> =C2=A01 file changed, 25 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> index 7f947ab9d322..49d067fecd67 100644
-> --- a/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> +++ b/drivers/gpu/drm/scheduler/tests/mock_scheduler.c
-> @@ -200,12 +200,36 @@ static struct dma_fence
-> *mock_sched_run_job(struct drm_sched_job *sched_job)
-> =C2=A0	return &job->hw_fence;
-> =C2=A0}
-> =C2=A0
-> +/*
-> + * Normally, drivers would take appropriate measures in this
-> callback, such as
-> + * killing the entity the faulty job is associated with, resetting
-> the hardware
-> + * and / or resubmitting non-faulty jobs.
-> + *
-> + * For the mock scheduler, there are no hardware rings to be
-> resetted nor jobs
-> + * to be resubmitted. Thus, this function merely ensures that
-> + *=C2=A0=C2=A0 a) timedout fences get signaled properly and removed from=
- the
-> pending list
-> + *=C2=A0=C2=A0 b) the mock scheduler framework gets informed about the t=
-imeout
-> via a flag
-> + *=C2=A0=C2=A0 c) The drm_sched_job, not longer needed, gets freed
-> + */
-> =C2=A0static enum drm_gpu_sched_stat
-> =C2=A0mock_sched_timedout_job(struct drm_sched_job *sched_job)
-> =C2=A0{
-> +	struct drm_mock_scheduler *sched =3D
-> drm_sched_to_mock_sched(sched_job->sched);
-> =C2=A0	struct drm_mock_sched_job *job =3D
-> drm_sched_job_to_mock_job(sched_job);
-> +	unsigned long flags;
-> =C2=A0
-> -	job->flags |=3D DRM_MOCK_SCHED_JOB_TIMEDOUT;
-> +	spin_lock_irqsave(&sched->lock, flags);
-> +	if (!dma_fence_is_signaled_locked(&job->hw_fence)) {
-> +		list_del(&job->link);
-> +		job->flags |=3D DRM_MOCK_SCHED_JOB_TIMEDOUT;
-> +		dma_fence_set_error(&job->hw_fence, -ETIMEDOUT);
-> +		dma_fence_signal_locked(&job->hw_fence);
-> +	}
-> +	spin_unlock_irqrestore(&sched->lock, flags);
-> +
-> +	dma_fence_put(&job->hw_fence);
-> +	drm_sched_job_cleanup(sched_job);
-> +	/* Mock job itself is freed by the kunit framework. */
-> =C2=A0
-> =C2=A0	return DRM_GPU_SCHED_STAT_NOMINAL;
-> =C2=A0}
+Resending my reply after trimming.
+
+Will make 2 new bindings - samsung,exynos-pcie-common.yaml and
+tesla,fsd-pcie.yaml
+Does that sound okay?
 
 
