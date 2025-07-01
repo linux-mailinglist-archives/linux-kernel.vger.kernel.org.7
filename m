@@ -1,69 +1,51 @@
-Return-Path: <linux-kernel+bounces-711220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9413BAEF7B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C875BAEF7CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A536D445134
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0091161D7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2429D2701B3;
-	Tue,  1 Jul 2025 12:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03D0273803;
+	Tue,  1 Jul 2025 12:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXJJcXUr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5C0fJNq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703602737F2;
-	Tue,  1 Jul 2025 12:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AA323F41D;
+	Tue,  1 Jul 2025 12:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751371431; cv=none; b=pOxdYTP8Xtl2hlU5iCfIHgM2MicZk+vBxvPbbFY7hFVRBXyQDR/ELVEAmP5P5FNOwW/jqKNznvpo4E+XZWAqJIUCHmwnEl6feKGGd5DHB2Bq5NHeWIu4pZSWSTp6mdVAtzTgpihbEN9ZbB6DIUBc4NSMYEFNAIYFaL3G2dFhhHk=
+	t=1751371632; cv=none; b=WJ/v0Z0SI/WUQiK0BgEAAGk6U8fex4dT7ziitJY2nbc6vXnL/Dk2GXn7SwAKftKP5PaXh8SZ4WYw6010Saqx/EcgufhJbfEvVkUFVNkwFMZgyNIkXYUm/4nwtAJZJIsVV3rMlPGyxUph00ivxZIxMQkXy+CajeauIy74gWuWi6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751371431; c=relaxed/simple;
-	bh=Q7QVc2qsYqqx0YXVW49AwV+9qD+1NySnWlFCXrePDPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a1gjjiUSBIW6NZ+890JvOCQEfqRToXjCpRe6+YnTdwCW3ignTo/rNcVGbEFmGMNlxAj9fkf6grNjKnBHClnA3xKJJJf0PR4/MsdNfVZdSfBIKgM2btG86tRKHhYGVnZ1GngFBydPOwq7BZeClD+PUD/oKu3mcc5ioqNeat6in3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXJJcXUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39886C4CEEB;
-	Tue,  1 Jul 2025 12:03:47 +0000 (UTC)
+	s=arc-20240116; t=1751371632; c=relaxed/simple;
+	bh=Geu8ummnogYTxNiBXGM/hmRr8QFOAK2JquaYcXupOng=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nhyoxSxd1V3RcflFILE7a4ZaqJgQ7O3BSS7kYuqMlDovY80XcOahbBCDwKcaF8Ok/J+qHp8SsJAWW8zo2kAkfquRAKDv+YFDTz2BOiyU08dKG/DatWP8M0Yk/cNnnBZHlDcvVtAEAE73OdFvDnjx52U90QcCeMgGVImvQD72opc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5C0fJNq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B826EC4CEEE;
+	Tue,  1 Jul 2025 12:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751371431;
-	bh=Q7QVc2qsYqqx0YXVW49AwV+9qD+1NySnWlFCXrePDPA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RXJJcXUrvHSAIOPY2gI4XfjpcD2WMOoRpuEgtUiwLc9iKiaRf/krf8PhSdchunuJM
-	 8u4WdXAy7Y0lAjuaqgCxhvE5mdRI/Z/Bhz6v7ZTq3DO5qFtAmvy+fZ79lilbCEO+zE
-	 DyC82eMXBFcVinxD0Bq1Zl/0D6OADwhCc9kl6BmvhVS6tqonauHkLcJAZQRR+nWS24
-	 Ig9OwkHGHt3GJVFLkQxDVHQNy9mVlClJS2w92exPJHXe4GW1pms/B2EuiRgOh76FiT
-	 /QRyLz/jJ3FHlOtG54Y7wBA1O2+Tk4GI8Qj5vI7iIMD9uJ/MQyeLiWGQXzGig+olW3
-	 w7BWS9u7aqa0Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] eventpoll: Fix priority inversion problem
-Date: Tue,  1 Jul 2025 14:03:38 +0200
-Message-ID: <20250701-wochen-bespannt-33e745d23ff6@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250527090836.1290532-1-namcao@linutronix.de>
-References: <20250527090836.1290532-1-namcao@linutronix.de>
+	s=k20201202; t=1751371631;
+	bh=Geu8ummnogYTxNiBXGM/hmRr8QFOAK2JquaYcXupOng=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=s5C0fJNqf5bmqBuLxocCSef+Q6uuJ54mztN59ZwbbWfieEsphZRjyOvX2C4QdLlET
+	 CbRqwSLxwU5abtG9mhPwDsYppiH9yrYP2Bl7WCm9qMeHjdbGHCTZfvafw7lfOTRznK
+	 AYeCL93Z11c9MKfzLkgV/+zy8TQUiaGU62Y4Ao4/fO7G1EzIHw4mq1nL7HoMQ8RGbR
+	 7ctrQ35aLQZ+LCmun1cW5At4R0WJQlXXMJm7x6FfNd6osJM+N1lJPS+fj5iAohq07z
+	 uznS6d62y1LB86T9fcNLaQT5bPTpSvLbkCxJy7ifYdePlTQ878fyvpSS/7wFiLy7mT
+	 nAqGI8xnru9ew==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8382C83038;
+	Tue,  1 Jul 2025 12:07:11 +0000 (UTC)
+From: Jack Cheng via B4 Relay <devnull+Cheng.JackHY.inventec.com@kernel.org>
+Subject: [PATCH 0/2] Add support for q50sn12072 and q54sn120a1
+Date: Tue, 01 Jul 2025 12:03:44 +0000
+Message-Id: <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-0-c387baf928cb@inventec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,38 +53,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1208; i=brauner@kernel.org; h=from:subject:message-id; bh=Q7QVc2qsYqqx0YXVW49AwV+9qD+1NySnWlFCXrePDPA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQkn1sQnrzZI0ljcfwpHbZEDYcZy5wUhU6vDzAqev/T+ FMGi4RqRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERefGT47+I7r6lfRrx4SZPC gr1nvyx/+ETLa9GU1lkpywpdORRPzmFk2P41wiBiwnsBnxR1dl8pydePEwQ5opmTf1rcsdl8aU4 PCwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKDOY2gC/x3N0QrCMAyF4VcZuTbQBuesryJelCXT3LS1cSKMv
+ bthlx/8nLOBSVcxuA0bdPmqaS2OeBpgfuXyFFR2AwUawxQiZma0tbXaP7jUju8xWIkUJsJc2Hk
+ +mL1MM6UkF75GBt9rXRb9HV/3x77/AcdVEv97AAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, Jack Cheng <Cheng.JackHY@inventec.com>, 
+ Jack Cheng <cheng.jackhy@inventec.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751371491; l=1128;
+ i=Cheng.JackHY@inventec.com; s=20250701; h=from:subject:message-id;
+ bh=Geu8ummnogYTxNiBXGM/hmRr8QFOAK2JquaYcXupOng=;
+ b=uryVKZGTrJl0If/sn1V3mR3ZOgEEAyr2PZdF64jHTusqTC1aP+Q3VmjWBflNBVsR1eytlVMjq
+ dvOvawbcXykDak5tPpz0L11DV4K4EXlgKXcrGdDdBvRfnryRi6H87K2
+X-Developer-Key: i=Cheng.JackHY@inventec.com; a=ed25519;
+ pk=L+GNI15NJXj7JAu9YqFXp9hL3rwZWbBbjlEeDjPvm68=
+X-Endpoint-Received: by B4 Relay for Cheng.JackHY@inventec.com/20250701
+ with auth_id=449
+X-Original-From: Jack Cheng <Cheng.JackHY@inventec.com>
+Reply-To: Cheng.JackHY@inventec.com
 
-On Tue, 27 May 2025 11:08:36 +0200, Nam Cao wrote:
-> The ready event list of an epoll object is protected by read-write
-> semaphore:
-> 
->   - The consumer (waiter) acquires the write lock and takes items.
->   - the producer (waker) takes the read lock and adds items.
-> 
-> The point of this design is enabling epoll to scale well with large number
-> of producers, as multiple producers can hold the read lock at the same
-> time.
-> 
-> [...]
+The Q54SN12072 and Q54SN120A1 are high-efficiency, high-density DC-DC power
+module from Delta Power Modules.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+The Q54SN12072, quarter brick, single output 12V. This product provides up
+to 1200 watts of output power at 38~60V. The Q54SN12072 offers peak
+efficiency up to 98.3%@54Vin.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The Q54SN120A1, quarter brick, single output 12V. This product provides up
+to 1300 watts of output power at 40~60V. The Q54SN120A1 offers peak
+efficiency up to 98.1%@54Vin.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Add support for them to q54sj108a2 driver.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Signed-off-by: Jack Cheng <Cheng.JackHY@inventec.com>
+---
+Jack Cheng (2):
+      dt-bindings: trivial: Add q50sn12072 and q54sj108a1 support
+      hwmon: (pmbus/q54sj108a2) Add support for q50sn12072 and q54sn120a1
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+ .../devicetree/bindings/trivial-devices.yaml       |  4 ++
+ drivers/hwmon/pmbus/q54sj108a2.c                   | 51 +++++++++++++++++++++-
+ 2 files changed, 53 insertions(+), 2 deletions(-)
+---
+base-commit: d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af
+change-id: 20250701-add-support-for-q50sn12072-and-q54sn120a1-a9c299e6d81d
 
-[1/1] eventpoll: Fix priority inversion problem
-      https://git.kernel.org/vfs/vfs/c/e73f3008405b
+Best regards,
+-- 
+Jack Cheng <Cheng.JackHY@inventec.com>
+
+
 
