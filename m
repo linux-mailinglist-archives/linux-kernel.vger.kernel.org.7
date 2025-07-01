@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-711604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CB5AEFD2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:53:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386C3AEFD67
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149F73AD09A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE51D1606BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFE278150;
-	Tue,  1 Jul 2025 14:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC152798E2;
+	Tue,  1 Jul 2025 14:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dlc9BDdz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+zCQsVh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833532749FE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA1B27FB3E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751381529; cv=none; b=h+tWej2AVFj97IuDAbLjKjCdbV7QRNNvac1A8jenrAR3cA/EEdqRdNAF4/JRtBFHBjaNnMP0Nxv17szSj2TuRH7/LtqlcpkCiCFhxmdRrOg2wjtrUC9/7lYHqt3HHz6bo5Yx0OqDAud0TOylUAZaSuG+0pakLMxU2axNxbuM1GY=
+	t=1751381680; cv=none; b=OqdMklLA6IpETnOP38DtCF0u4NJjokNHmI/FvPgn1Ko7QAPaxgReg5ycic+cOS/gur7MOpLaXqIqFmAuAFP7KMKEwSN4cro6Jr+Wz8jy/62eE3iH5cSkaVtuZli1djT96Lf10o0qeK2aWXBj6A39u0kDFW02koBqvqROeBcHfFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751381529; c=relaxed/simple;
-	bh=PG27HA4CdVtGaZFt68ZtRQqcdoSo3KFYNbdjHdu9hzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIFZtImqiTk2hO8wVSDk6MDAHHNf7w4uskwcugvRCAjsLsmU5FIeliObpqXLj9Is2JOfptW1bh99w++XpZ2uUcw+F9HlOCd80Uw1v5TMCsZuBlQsdQftLgsgHKSfXBPx2eaZ9Z+hUGUvO0rbpACogh2Jl7Qon2fmrrTJXvgi5Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dlc9BDdz; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751381527; x=1782917527;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PG27HA4CdVtGaZFt68ZtRQqcdoSo3KFYNbdjHdu9hzY=;
-  b=dlc9BDdz7ZoqF+fu7eIFMm6eEl1fcjV3MrznSCYhW4Qr9/G+LX8GUEP8
-   8nTz+0Qja9sxLfQ7Utj81mS3D6KzZLJEwNJWOsxuHaUAyZuGVzzR5SfQZ
-   NawP9OazD8OSwnog3XstDbqbctUwY3F2ZIEms6jG6UEjbOrdBTHWm8zdm
-   D8UhlSh9Mg/bihnLiUynuI8TegkhbKQtph2mGxSaosmXZ5ZJlvAwK7xEz
-   /oe3LlpfGH9KnhLa4YKSfzp9/N8xkb7865UnY29p0LyF0HQCT53lXn2XB
-   IFvt/9AlHOpJPXIvObCYAamPTSefa3x1MEhPiTc7MyeNSBTKM6GHbmeTp
-   A==;
-X-CSE-ConnectionGUID: cyMNcQJuSrmWtujOYPL7+g==
-X-CSE-MsgGUID: AuvfhOOsRiCfqpXBvsZQ2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53739817"
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="53739817"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 07:52:07 -0700
-X-CSE-ConnectionGUID: hoxMVtyTSrytJEUByLiOLQ==
-X-CSE-MsgGUID: Vi40ygA8RMaAsuCkpDD1gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="153204157"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa010.jf.intel.com with ESMTP; 01 Jul 2025 07:52:05 -0700
-Received: from [10.245.96.176] (mwajdecz-MOBL.ger.corp.intel.com [10.245.96.176])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 159B4357A;
-	Tue,  1 Jul 2025 15:52:02 +0100 (IST)
-Message-ID: <bb783b7b-80d8-4779-a8a4-ad495dd9948c@intel.com>
-Date: Tue, 1 Jul 2025 16:52:02 +0200
+	s=arc-20240116; t=1751381680; c=relaxed/simple;
+	bh=x6tJXHV4fk1EVQw4K1J3xGyEuEu2hZK7D0Ti0UAtj1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JWD91CB1EID8T5mv2eUPFfMF/7h/Tr1eTbreKTmw7ZtNkzl3cJq3WUfPBeLbc3NJ+iEmfgt2ZRI81ddFle3UcjJhYROOnS+6Z1AkRbru29T7xjbLxA+rlH8BovhEPgQa0A6mF3qMNdPDR2rLRsf38Ynrhwh3d+czhzHrjxyyU3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+zCQsVh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751381677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0zQvDsQLPoeUA3QBNmaBPCh3oUPwT2tmL8BD3RO1RuA=;
+	b=Z+zCQsVhu4oQ0XI3aNnYKv4u73mfRbHu64LDCpvQrAc73hF3Im5gAdf6UH5b2/sRQbAPvX
+	3s6NGN9hCQKx67Njwrc5I77NSegO/58Sw8lcSZnEeuSWXTWUYQXsnfvShB9xaFK4OrxO8w
+	U1NmiepA7+YVsvphhmSZgI1Q9NiXmqw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-147-ORK0-R59OeWEBmJaOUU-sw-1; Tue,
+ 01 Jul 2025 10:54:36 -0400
+X-MC-Unique: ORK0-R59OeWEBmJaOUU-sw-1
+X-Mimecast-MFC-AGG-ID: ORK0-R59OeWEBmJaOUU-sw_1751381675
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76BD61955ECF;
+	Tue,  1 Jul 2025 14:54:35 +0000 (UTC)
+Received: from desnesn-thinkpadp16vgen1.rmtbr.csb (unknown [10.96.134.31])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AAC6F30001B1;
+	Tue,  1 Jul 2025 14:54:33 +0000 (UTC)
+From: Desnes Nunes <desnesn@redhat.com>
+To: laurent.pinchart@ideasonboard.com,
+	hansg@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Desnes Nunes <desnesn@redhat.com>
+Subject: [PATCH] media: uvcvideo: avoid variable shadowing in uvc_ctrl_cleanup_fh
+Date: Tue,  1 Jul 2025 11:52:40 -0300
+Message-ID: <20250701145240.105959-1-desnesn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Intel Xe SR-IOV support status
-To: Marcello Sylvester Bauer <marcello.bauer@9elements.com>,
- intel-xe@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Badal Nilawar <badal.nilawar@intel.com>
-References: <72fd3ae7-46da-4203-b583-3fb857e73542@9elements.com>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <72fd3ae7-46da-4203-b583-3fb857e73542@9elements.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Marcello,
+This avoids a variable loop shadowing occurring between the local loop
+iterating through the uvc_entity's controls and the global one going
+through the pending async controls of the file handle
 
-On 30.06.2025 13:47, Marcello Sylvester Bauer wrote:
-> Hi,
-> 
-> Starting with Tiger Lake, support for GVT-g was discontinued in favor of
-> SR-IOV for graphics virtualization[1]. Currently, the upstream Xe
-> drivers only support SR-IOV on Panther Lake. The table below summarizes
-> the current state based on the .has_sriov flag.
-> 
-> | Intel Gen | drm-xe-next[2] | xe-for-CI[2] | intel lts i915[3] |
-> | --------- | -------------- | ------------ | ----------------- |
-> | TGL       |             no | no           | v5.15             |
-> | ADL/RPL   |             no | yes (debug)  | v5.15             |
-> | MTL       |             no | no           | v6.1              |
-> | ARL       |             no | no           | no                |
-> | PTL       |        v6.13.1 | yes          | no                |
+Fixes: 10acb9101355 ("media: uvcvideo: Increase/decrease the PM counter per IOCTL")
+Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+---
+ drivers/media/usb/uvc/uvc_ctrl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Note that we also have
-
-  | ATSM      |             no | yes (debug)  |
-
-> 
-> Interestingly, the xe/topic/xe-for-CI testing branch only covers SR-IOV
-> testing on the ADL platform and not the MTL or ARL platforms.
-> 
-> Is there a reason why SR-IOV has not yet been enabled on the other
-> platforms? 
-
-Since platforms before LNL are not officially supported by the Xe
-driver, we have only enabled SR-IOV on those SDV platforms which are
-actively used and tested by our public CI.
-
-
-> Are there any plans or timeline for adding support for them?
-
-AFAIK it’s unlikely. While in case of TGL the enabling is just a
-one-liner patch with new .has_sriov flag, however for robust MTL it
-would require much more SR-IOV specific code to be added, but there is
-no point to add anything until those platforms itself will be fully
-tested in the native mode (non-virtualized).
-
-Michal
-
-> 
-> Kind regards,
-> Marcello
-> ---
-> [1] https://www.intel.com/content/www/us/en/support/articles/000058558/
-> graphics.html
-> [2] https://gitlab.freedesktop.org/drm/xe
-> [3] https://github.com/intel/linux-intel-lts
-> [4] https://patchwork.freedesktop.org/patch/603316/
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index 44b6513c5264..91cc874da798 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -3260,7 +3260,6 @@ int uvc_ctrl_init_device(struct uvc_device *dev)
+ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+ {
+ 	struct uvc_entity *entity;
+-	int i;
+ 
+ 	guard(mutex)(&handle->chain->ctrl_mutex);
+ 
+@@ -3278,7 +3277,7 @@ void uvc_ctrl_cleanup_fh(struct uvc_fh *handle)
+ 	if (!WARN_ON(handle->pending_async_ctrls))
+ 		return;
+ 
+-	for (i = 0; i < handle->pending_async_ctrls; i++)
++	for (unsigned int j = 0; j < handle->pending_async_ctrls; j++)
+ 		uvc_pm_put(handle->stream->dev);
+ }
+ 
+-- 
+2.49.0
 
 
