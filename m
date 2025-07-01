@@ -1,257 +1,144 @@
-Return-Path: <linux-kernel+bounces-710573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A96FAEEE1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19915AEEE4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7C3BC3C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F36B3BD9D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5663244688;
-	Tue,  1 Jul 2025 06:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75E825DAFC;
+	Tue,  1 Jul 2025 06:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+7l9i9k"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgUIu8ex"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5712423C4E0;
-	Tue,  1 Jul 2025 06:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126D4246BAF;
+	Tue,  1 Jul 2025 06:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751349961; cv=none; b=E93E/ApcYNym6v/WNWfgEkezJcBR/imDBFb0vjtL6opDg5chUuW6vtIWOCDM20AchFbCjo5p2OCdXZkkoS75bw6d+5v3A1G7C1yU0DOR1evRPz1lUNOj83+Ey+9m387NNXDeJpSfSLb4LL2LZMGL8awosi+TDA0647d7LRz+vmE=
+	t=1751350019; cv=none; b=rPK6jwmD6oB01iQWVZbZB831ADFGSBI7EuwnMpebWx1TSHj2BV2xUKyh+DSpDt9YAPMpXCLyl7d/f5HXGCwXqzBcxcTC9p6eMtejKetcKRxwP/rGH+KL2aMzSFL9gJFQnentm5COCSgAZtARTvnDwd+zlPyhc2fChFzmeh7LBAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751349961; c=relaxed/simple;
-	bh=SeIXvbsKD/6wDDdSTrLiwRGd6Sf5ThDoHRlhISLn+Xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nfqbSM88jJ+ViVscZipIsyvFo5NXKOm+uGKkR9rgWtSokymFzJTrzEtdw9WmsR9NaHZk5HBz6J1UCzSZsrnE+H9syiG1IT3KMD4HbLA0z/WNYo8SM6vwlPoyn3dHvUAKQmvJnXvlYVpbyyF3m5pZtWWpR6kuKr3VHGFCN1RPvmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+7l9i9k; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae361e8ec32so673412466b.3;
-        Mon, 30 Jun 2025 23:05:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751349957; x=1751954757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KuEXV07Z9sdbVmePGAe0RiLvhvhMH/ORTr8Xg5rdgBA=;
-        b=E+7l9i9kLtEE34rjEnLqXnObXKxQG8uarocPhssHFhRLMtiYQJ51/JzvaC0hHDRWgP
-         Lg1i+BQsM4PsjssKs1wCY1kDZksLO6le/3qm/MR4S3Dqcmxqcv5kzekJYEFXR3WLIVe7
-         67uoT9e18BhrolXeD17nMqz/n1uaYxAl58tLnkXS2oxge9y/R1Pf1+jmroV0NTyPPnJa
-         DQnn0Qb93OPO2HpWYTWDs9cBQiBH5wz5hjMt19GPjQjxsQRImsV25hXogPb+wXi1EpFt
-         PHjppMRV9rifLt9BXbvxeIzPX6iaKLzj4GdJ+unD86opUTjEX45wMSgzobUwIf7MG8gq
-         s0ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751349957; x=1751954757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KuEXV07Z9sdbVmePGAe0RiLvhvhMH/ORTr8Xg5rdgBA=;
-        b=n5ulsoLnbikljCGnezbvwfcO0wE/LxXAjkAK05CkWV+Yl/N2PU6chsICCcAwoSMYNQ
-         SO41BPkp5agov6o4foO253xGKgQraEwDYYuO5kL5c9PdOMTuUfcQKOAmXB7lHQFnfAmU
-         JvKBFFNZuGI/4wBmY8P0RQ4ZClHXIIH8v5RpwSncnNhV+JMQK8Moo9hayNT7d6ekyVzM
-         TdR0zDK3TFjCKMwiTzD6HrtG2cC9sGljh35rtkZXhTfYezu0RC3v2LenC5+74APQDKah
-         IPO4BHaEqRc0/a4zMgwKwE/mxFp8lFqVNGJe6n4r9VBS2TN4qjy/m8s43bQh900D5I/O
-         MjPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmSB1KUDgjiGXUjkQrAsa7zQZnntcf9QrUryBKMzjH19ObiCs8+Ut++eFAP+vx5BStztJOYG+NVGk=@vger.kernel.org, AJvYcCVcWpg6Qgob1Jf1Y4EpmoetTYDJHGcAFwJnPtVkUMf3H+219YJ3GAHvjcsjqJ/n651y3iTYu3prfSMdjux1@vger.kernel.org, AJvYcCVwu0GoisU0ro3/YRFc08E8OO2CtjMelZuoSdAO0QfCekGO6Wesuv6+ZxbYvw/5xM1FUuRfMJduTS4G@vger.kernel.org, AJvYcCWI80asZIAWQjrfWFu0+SDCuUHom/i7W9WY/egtDOb3DT9+RwD+JIfm7X8bCbAHU0swdhKWZrb34A==@vger.kernel.org, AJvYcCWM3leqCJ2p8y14KcFDRUGF6/C0Am40R/2caqBK000qPACA0ooSaCiXqiL8oRwu8AXs/mUXq4LxVuzGO1udQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJuxxuLLJOLHhtP8Gfi1hKyQu4+EzvxNOpK8dnCqmq/NpRW0Iv
-	EkLVAZ8259z/iXXelas+OdwqzhTxTyDxJXOafqTIgmRluj63xxKYKIlb8nXoqIOqV7SE3BbRd64
-	nOLt1TvFMiKNdxm86ii2WiE3PiocX2Bo=
-X-Gm-Gg: ASbGncsFbZApAC6agFGx/x3p3Hcvi2B0MqiXAl2oWOKeMaDY3BT4r3K9cjkcNGOLJfu
-	X88dnQ5iXIaa0qOrMug2olPTaz3wq9nurAHsWodhBbwvvCbfInkndAZAGni+5Pz/mvCFx2baVZq
-	aBP13KzfOziQ4JqMXDy/jKVuzsj2fkjLhw+5gDaTbwTYc=
-X-Google-Smtp-Source: AGHT+IE8ltAVUHmG0o8AJsNM6aS+AMGdPwBTV6jSAOtvjhmVYfBdldq1gqGOmPM/QRe73Xswe0K6G48qYHzvM8ukRGI=
-X-Received: by 2002:a17:906:4fd5:b0:ae3:5ebc:7a3c with SMTP id
- a640c23a62f3a-ae35ebc87a5mr1309732366b.11.1751349956866; Mon, 30 Jun 2025
- 23:05:56 -0700 (PDT)
+	s=arc-20240116; t=1751350019; c=relaxed/simple;
+	bh=oZcqmmBHgzf7bA0rusgFoUD24PExreWRsI+j45s8cvY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fp8KU4dXjy1TQI8xQNPaHxdfslbRMGl+Yv0DuhYnaNSGIXU40akd/WPEp1KMXNMsY/YtA5pOchDeDEB8E5Df1pt0KQDuTy9fyIOiP6KwtPcWZmNTuC0QqaDMVh2CsvOhp+RREne8f4akV8Udv8RSwk8r4hbp2OGPIPzAMy73g0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgUIu8ex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 85FDBC4CEEE;
+	Tue,  1 Jul 2025 06:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751350018;
+	bh=oZcqmmBHgzf7bA0rusgFoUD24PExreWRsI+j45s8cvY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=QgUIu8exZ5q2zYmj1Bu2+77/1WGjQpzHDPZ5IANy4QUALX1p35z3cq/bJWUiYMwPV
+	 5awZszFcghn9kNKoZYmTdghdK6AFWyEnc5x9bB9giUR+MwpyPVdZ+zqFW1LaATdWTP
+	 6UiELPMCVkaRt1AKpLM9k2ksdt6zAWe4u6IYXJxjLXeQmYTrmWrNSelpA0TKQdoiQx
+	 O2f3XHOgPDdscz/Xl5EV/j4n0SUA4OEGDb+hdYBUSed577rLzbSL0JjAJxHHeSMxM8
+	 JXa7r96hyae0lz0t7PX+F2hyDQtglkx8jVPJ3BARUgvYKlM/7/R84iqAX4gM2VSqIh
+	 NJVaSTJZZqC0w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75091C83038;
+	Tue,  1 Jul 2025 06:06:58 +0000 (UTC)
+From: Max Shevchenko via B4 Relay <devnull+wctrl.proton.me@kernel.org>
+Subject: [PATCH v3 00/11] ARM: Add support for MediaTek MT6572 SoC
+Date: Tue, 01 Jul 2025 09:06:54 +0300
+Message-Id: <20250701-mt6572-v3-0-8937cfa33f95@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org> <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
-In-Reply-To: <20250630-xattrat-syscall-v6-4-c4e3bc35227b@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 1 Jul 2025 08:05:45 +0200
-X-Gm-Features: Ac12FXxgSnJQgGdAHWGW1XZ5QTb4sHxkxo40tOuCn_ldUpIgeYyBQujjKbItCiM
-Message-ID: <CAOQ4uxgbeMEqx7FtBc3KnrCjOHHRniSjBPLzk7_S9SjYKcY_ag@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
-	Andrey Albershteyn <aalbersh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP56Y2gC/02MwQ6DIBAFf8XsuTSwImBP/Y+mB1OWykExYEgb4
+ 78XTdt4nJc3s0Ci6CnBpVogUvbJh7FAfarg0Xfjk5i3hQE5NlyJlg2zajQyctp0tZWNUAbKeYr
+ k/GsP3e6Fe5/mEN97N4tt/SaQ/xJZMM4IrdQGueMSr1MMcxjPA8GWyHjU1F/DojntjETRqtaoo
+ 7au6wdlvVtY0wAAAA==
+X-Change-ID: 20250619-mt6572-ef78a3d45168
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Sean Wang <sean.wang@mediatek.com>, 
+ Russell King <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org, 
+ Max Shevchenko <wctrl@proton.me>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751350015; l=2387;
+ i=wctrl@proton.me; s=20250603; h=from:subject:message-id;
+ bh=oZcqmmBHgzf7bA0rusgFoUD24PExreWRsI+j45s8cvY=;
+ b=2KhKXVehntkb4Wh+h+vs9QAsxwTRPHmCMXW1qrDVrttOmhLUQv4ciyxG1hFdZA/zQMzd8OqAh
+ YTAHYVURzLSD7a+Ag2fTJq4Jck+JvIdjNrp0WNDF3MwY1qYz8yz7igK
+X-Developer-Key: i=wctrl@proton.me; a=ed25519;
+ pk=JXUx3mL/OrnRvbK57HXgugBjEBKq4QgDKJqp7BALm74=
+X-Endpoint-Received: by B4 Relay for wctrl@proton.me/20250603 with
+ auth_id=421
+X-Original-From: Max Shevchenko <wctrl@proton.me>
+Reply-To: wctrl@proton.me
 
-On Mon, Jun 30, 2025 at 6:20=E2=80=AFPM Andrey Albershteyn <aalbersh@redhat=
-.com> wrote:
->
-> Future patches will add new syscalls which use these functions. As
-> this interface won't be used for ioctls only, the EOPNOSUPP is more
-> appropriate return code.
->
-> This patch converts return code from ENOIOCTLCMD to EOPNOSUPP for
-> vfs_fileattr_get and vfs_fileattr_set. To save old behavior translate
-> EOPNOSUPP back for current users - overlayfs, encryptfs and fs/ioctl.c.
->
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ---
->  fs/ecryptfs/inode.c  |  8 +++++++-
->  fs/file_attr.c       | 12 ++++++++++--
->  fs/overlayfs/inode.c |  2 +-
->  3 files changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index 493d7f194956..a55c1375127f 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -1126,7 +1126,13 @@ static int ecryptfs_removexattr(struct dentry *den=
-try, struct inode *inode,
->
->  static int ecryptfs_fileattr_get(struct dentry *dentry, struct fileattr =
-*fa)
->  {
-> -       return vfs_fileattr_get(ecryptfs_dentry_to_lower(dentry), fa);
-> +       int rc;
-> +
-> +       rc =3D vfs_fileattr_get(ecryptfs_dentry_to_lower(dentry), fa);
-> +       if (rc =3D=3D -EOPNOTSUPP)
-> +               rc =3D -ENOIOCTLCMD;
-> +
-> +       return rc;
->  }
->
+This series of patches adds support for the MT6572 SoC and
+the JTY D101 tablet and Lenovo A369i smartphone based on it.
 
-I think the semantics should be
-"This patch converts return code of vfs_fileattr_[gs]et and ->fileattr_[gs]=
-et()
-from ENOIOCTLCMD to EOPNOSUPP"
+Signed-off-by: Max Shevchenko <wctrl@proton.me>
+---
+Changes in v3:
+- Remove the compatible property from the SoC devicetree
+- Link to v2: https://lore.kernel.org/r/20250626-mt6572-v2-0-f7f842196986@proton.me
 
-ENOIOCTLCMD belongs only in the ioctl frontend, so above conversion
-is not needed.
+Changes in v2:
+- Drop the status property for the board devicetrees
+- Add an soc node for the MT6572 and reorder the nodes and properties
+- Change the commit title to a more descriptive one
+- Change the cover title to the correct one
+- Link to v1: https://lore.kernel.org/r/20250620-mt6572-v1-0-e2d47820f042@proton.me
 
->  static int ecryptfs_fileattr_set(struct mnt_idmap *idmap,
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index be62d97cc444..4e85fa00c092 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -79,7 +79,7 @@ int vfs_fileattr_get(struct dentry *dentry, struct file=
-attr *fa)
->         int error;
->
->         if (!inode->i_op->fileattr_get)
-> -               return -ENOIOCTLCMD;
-> +               return -EOPNOTSUPP;
->
->         error =3D security_inode_file_getattr(dentry, fa);
->         if (error)
-> @@ -229,7 +229,7 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct =
-dentry *dentry,
->         int err;
->
->         if (!inode->i_op->fileattr_set)
-> -               return -ENOIOCTLCMD;
-> +               return -EOPNOTSUPP;
->
->         if (!inode_owner_or_capable(idmap, inode))
->                 return -EPERM;
-> @@ -271,6 +271,8 @@ int ioctl_getflags(struct file *file, unsigned int __=
-user *argp)
->         int err;
->
->         err =3D vfs_fileattr_get(file->f_path.dentry, &fa);
-> +       if (err =3D=3D -EOPNOTSUPP)
-> +               err =3D -ENOIOCTLCMD;
->         if (!err)
->                 err =3D put_user(fa.flags, argp);
->         return err;
-> @@ -292,6 +294,8 @@ int ioctl_setflags(struct file *file, unsigned int __=
-user *argp)
->                         fileattr_fill_flags(&fa, flags);
->                         err =3D vfs_fileattr_set(idmap, dentry, &fa);
->                         mnt_drop_write_file(file);
-> +                       if (err =3D=3D -EOPNOTSUPP)
-> +                               err =3D -ENOIOCTLCMD;
->                 }
->         }
->         return err;
-> @@ -304,6 +308,8 @@ int ioctl_fsgetxattr(struct file *file, void __user *=
-argp)
->         int err;
->
->         err =3D vfs_fileattr_get(file->f_path.dentry, &fa);
-> +       if (err =3D=3D -EOPNOTSUPP)
-> +               err =3D -ENOIOCTLCMD;
->         if (!err)
->                 err =3D copy_fsxattr_to_user(&fa, argp);
->
-> @@ -324,6 +330,8 @@ int ioctl_fssetxattr(struct file *file, void __user *=
-argp)
->                 if (!err) {
->                         err =3D vfs_fileattr_set(idmap, dentry, &fa);
->                         mnt_drop_write_file(file);
-> +                       if (err =3D=3D -EOPNOTSUPP)
-> +                               err =3D -ENOIOCTLCMD;
->                 }
->         }
->         return err;
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index 6f0e15f86c21..096d44712bb1 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -721,7 +721,7 @@ int ovl_real_fileattr_get(const struct path *realpath=
-, struct fileattr *fa)
->                 return err;
->
->         err =3D vfs_fileattr_get(realpath->dentry, fa);
-> -       if (err =3D=3D -ENOIOCTLCMD)
-> +       if (err =3D=3D -EOPNOTSUPP)
->                 err =3D -ENOTTY;
->         return err;
->  }
+---
+Max Shevchenko (11):
+      dt-bindings: serial: mediatek,uart: add MT6572
+      dt-bindings: interrupt-controller: mediatek,mt6577-sysirq: add MT6572
+      dt-bindings: timer: mediatek: add MT6572
+      dt-bindings: watchdog: mediatek,mtk-wdt: add MT6572
+      dt-bindings: vendor-prefixes: add JTY
+      dt-bindings: arm: mediatek: add boards based on the MT6572 SoC
+      ARM: mediatek: add board_dt_compat entry for the MT6572 SoC
+      ARM: mediatek: add MT6572 smp bring up code
+      ARM: dts: mediatek: add basic support for MT6572 SoC
+      ARM: dts: mediatek: add basic support for JTY D101 board
+      ARM: dts: mediatek: add basic support for Lenovo A369i board
 
-That's the wrong way, because it hides the desired -EOPNOTSUPP
-return code from ovl_fileattr_get().
+ .../devicetree/bindings/arm/mediatek.yaml          |   5 +
+ .../mediatek,mt6577-sysirq.yaml                    |   1 +
+ .../devicetree/bindings/serial/mediatek,uart.yaml  |   1 +
+ .../devicetree/bindings/timer/mediatek,timer.yaml  |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ .../bindings/watchdog/mediatek,mtk-wdt.yaml        |   1 +
+ arch/arm/boot/dts/mediatek/Makefile                |   2 +
+ arch/arm/boot/dts/mediatek/mt6572-jty-d101.dts     |  61 ++++++++++++
+ arch/arm/boot/dts/mediatek/mt6572-lenovo-a369i.dts |  56 +++++++++++
+ arch/arm/boot/dts/mediatek/mt6572.dtsi             | 108 +++++++++++++++++++++
+ arch/arm/mach-mediatek/Kconfig                     |   4 +
+ arch/arm/mach-mediatek/mediatek.c                  |   1 +
+ arch/arm/mach-mediatek/platsmp.c                   |   7 ++
+ 13 files changed, 250 insertions(+)
+---
+base-commit: 0ff41df1cb268fc69e703a08a57ee14ae967d0ca
+change-id: 20250619-mt6572-ef78a3d45168
 
-The conversion to -ENOTTY was done for
-5b0a414d06c3 ("ovl: fix filattr copy-up failure"),
-so please do this instead:
-
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -722,7 +722,7 @@ int ovl_real_fileattr_get(const struct path
-*realpath, struct fileattr *fa)
-
-        err =3D vfs_fileattr_get(realpath->dentry, fa);
-        if (err =3D=3D -ENOIOCTLCMD)
--               err =3D -ENOTTY;
-+               err =3D -EOPNOTSUPP;
-        return err;
- }
-
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -178,7 +178,7 @@ static int ovl_copy_fileattr(struct inode *inode,
-const struct path *old,
-        err =3D ovl_real_fileattr_get(old, &oldfa);
-        if (err) {
-                /* Ntfs-3g returns -EINVAL for "no fileattr support" */
--               if (err =3D=3D -ENOTTY || err =3D=3D -EINVAL)
-+               if (err =3D=3D -ENOTTY || err =3D=3D -EINVAL || err =3D=3D =
--EOPNOTSUPP)
-                        return 0;
-                pr_warn("failed to retrieve lower fileattr (%pd2, err=3D%i)=
-\n",
-                        old->dentry, err);
+Best regards,
+-- 
+Max Shevchenko <wctrl@proton.me>
 
 
-Thanks,
-Amir.
 
