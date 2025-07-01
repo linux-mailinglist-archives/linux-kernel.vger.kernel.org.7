@@ -1,118 +1,165 @@
-Return-Path: <linux-kernel+bounces-711272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0186AEF85F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95E8AEF867
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2063B4E08DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326B748242C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983EB278156;
-	Tue,  1 Jul 2025 12:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAC727466E;
+	Tue,  1 Jul 2025 12:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I1JISI0m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mqCkYBBY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S3MMrcT5"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EDC2741A6;
-	Tue,  1 Jul 2025 12:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4DC274670
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751372625; cv=none; b=s1UpjoNzDgZBYtxJSRN8NpnZ2oRVXubGZMpI8fmKMNlHT42dYeHZ/8TZ9JyobWGQ7OeMTZ6LaSPX9H5Y9mIkW/i/UfCKMHMOEVBuq7PzlVP1GtEmMlCBruvPSyB0FvHS+nb/ft1G9nJAskO3+3uptvtLFio1rnXCH0dzhO1tDZM=
+	t=1751372665; cv=none; b=nup1Kpj2P87AWbzaKgxbIJI2QMesIVvC4nP7aYTtUN1ifdNsbKoSbMqNbGUS83c0+gSUrq9JMyPCaLXyabqtZlZJrQklPZyWX7sxIMzeYdh7UAFfx2TJ39FBe/AcEEtEXBPRJDxF/wxNcKQKJLagPCxylR1Ski1Pfj+v4nr17ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751372625; c=relaxed/simple;
-	bh=9nlou7VVvbnpibGWPZLlU8AW7nEx/UkPOp8/VdZdEbU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sOYpjMhweZMfcVX1B80pCZSBRMsKN8diDpaPD4rUY0IwT5gi9v3/wGFFhAG7/4WUyckbozNdopMChAIfIh34wQDK4/WZEBwH1wHgJDTH8wdDAnSaRHo/JFRxqAYYfwC03wdXgLeSJJSVYbkRko1AnIJwWIMy2gWbkqkUb2T01tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I1JISI0m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mqCkYBBY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751372621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YynLe9Y0R1ZnzK2pV6bI4BTlb8INUrb2JzuFOPMblXM=;
-	b=I1JISI0mzO9078e3C6dz/XhRJlBWIdbS/XedG5tYz5RRi0Hal1aOBKIpkGs1aUucpjWLE3
-	TO9VWvbnfSPfLrWCnU/D+18cmUS068gt6q0mOjXKGy89DCpwWVTmZ6lOLxpC6j01S4vte3
-	KcGwAHEscOU5tTgyBAJP3iH78Q0wbxeIACdCDm/172+Lmlvxe9EOyNB61XNXy7oy1ldfM2
-	3/FHEYo6sE4p4QC4QY/AxNO9PU1IcNdeu67hrJURuX5HvjlIJ6K81RFBF1zn4H4AQTGyec
-	UyHuKuDQ6CbfpMyJR7LVVxaScJ7Vh4mOjCrJnHScETMvSnB9V+gaYTElCXJQgQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751372621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YynLe9Y0R1ZnzK2pV6bI4BTlb8INUrb2JzuFOPMblXM=;
-	b=mqCkYBBY5g+6cne3JW8WimKDgXSelqerYl9xFT0naQKu5HMVicZy+L3eCmsLOkp2193ET7
-	024j8edbTqJD0bBw==
-To: Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
- Christopher Hall <christopher.s.hall@intel.com>, John Stultz
- <jstultz@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Miroslav Lichvar
- <mlichvar@redhat.com>, Werner Abt <werner.abt@meinberg-usa.com>, David
- Woodhouse <dwmw2@infradead.org>, Stephen Boyd <sboyd@kernel.org>, Thomas
- =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Kurt
- Kanzenbach
- <kurt@linutronix.de>, Nam Cao <namcao@linutronix.de>, Antoine Tenart
- <atenart@kernel.org>
-Subject: Re: [patch 0/3] ptp: Provide support for auxiliary clocks for
- PTP_SYS_OFFSET_EXTENDED
-In-Reply-To: <852d45b4-d53d-42b6-bcd9-62d95aa1f39d@redhat.com>
-References: <20250626124327.667087805@linutronix.de>
- <852d45b4-d53d-42b6-bcd9-62d95aa1f39d@redhat.com>
-Date: Tue, 01 Jul 2025 14:23:39 +0200
-Message-ID: <871pr0m75g.ffs@tglx>
+	s=arc-20240116; t=1751372665; c=relaxed/simple;
+	bh=n8ZZkcIMTZ4oqwXL8cuzmbKEBEW4c7SvXxR443L664I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+XCWoEuYqmu54hDbYMQ47k7JkzOyMmeOhwtS+B4115RZrzRQsaUWku0siSJOJe4mQvUpPbsOneLO40hmAMNx6CzuuwUcCwwFbchuk4j4GPjP/I9FbBAGJSBNOaGV44UNBDHWwLUFcfzR+qgndgll9/FWdQafu/jra4H/mHthxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S3MMrcT5; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235e389599fso205295ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 05:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751372663; x=1751977463; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K7vYU5IpUGkedTKGsOw7fqDjAvdD4uWcycZwbigztzQ=;
+        b=S3MMrcT5ZWO9uq4/Bajo9gsztQdWuZcpeR+2K87z4qLctuYNjN6NGdoWUJyLolBUdr
+         7+WA5f/R1/UHwjdqr073f1fGge50hVU2PKZB88lfHu3iSgTre/FcFxjj7i5pKA/Wklc5
+         ZL0km8NpTkRaI0ugS7ih3veW4sxzVvLuo7mXPRRtyD6dZeD5GivODa0Y6z+5Rlem9bjn
+         uUxz8HltjWSy4PB8avVqsa9bw3K8z1DnjbBFn9dXOjmt246oeb+jh0qFdbfwRGUzC7Bb
+         K+/SIUFWqg0UhLfWvxX3JJSRPFMnsx7SV9gM+4oKyem5X2g8y4lrCu9+8eJ2dqWU2nIu
+         I3WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751372663; x=1751977463;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K7vYU5IpUGkedTKGsOw7fqDjAvdD4uWcycZwbigztzQ=;
+        b=GOEN/LcFK++jX36h8qV7lzgGXwIUnlzt+2Um4SF9Ogs4WUB/UFwkyEab/4uZwafPFU
+         4GNRYv4XZcQz6+qSNEMwAsBYGw0dgxiYJjlSqmiym/pbkqq1PXqmUCAMFWQyMIobnqKA
+         4Qnl6UbI4O50BjGxsvagY9ee0cNGeg++QZvkgxhY1GN3Fa9NgDozDwhO6zy63Yw+iVGl
+         x7d4roKROI1S1fR+kmhVPxHEYU3wCZp8wFeNyUGaWtlaCB6ddPgZmc4Frlp98huvah4M
+         WR8qaDuRXm5O1Sa1ZYeyktnTF2M1sCo8uQ6O8RfnYiXkTFmjJIBSslyI7gpa8PRTw9/+
+         qwwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXkJgoBsrEM8y5u+oJKc7j/O5nM9vTqiZ3yw8CR+poNLXevHriPzXi8iHUoo7VVx67dMLZ6KCOWiZc4Ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCBqZkUmDr/Sf/BdQUNt9EQinD6ABDHG47xzZr/rKD9aebN23s
+	FPgU7dVxWQtm9j6fvtwvM6+FcZMm+mUg1tsAL3NcuOLntHj3W3Y+keR10FIHlOu42Q==
+X-Gm-Gg: ASbGncvje06rPBymNSLm58LuEbECs3XrWf16olEskBfHzp7YtLBp6deP7A7BrxU1c0O
+	tGhiYgs778zHYAtGWUFgvTGqOMuMTVfsTTyrwvcdo0Ol86x/bKEF2kFU4pu7H2hqwxsTPzb3TG2
+	8lLgKl74PQPBU1dymttOW/4sFMTAk9SF4F7IT4+OJR+oT+1lrBFmb5Qya3oMo1q/aJKfSOGYlt3
+	SOXKgfgJ/Z28tqpmkPZa4LMEAJz0+95ZniJXg0cYDFJeNDpk2PiiSenzBVhb7tCkbbpabezkhkk
+	6hRYcrmlWs6IBXrV2muMUuu6wYe4yAxScRTQpYcw6zaLtBWi4/gvDh1sHxbSRfAgD3SABzmGIYA
+	cYjDt1ajqkUy8uSUrticS
+X-Google-Smtp-Source: AGHT+IH4JQ2MdaL4TQHuSEKzEVU+2Jy2z1P1pCYvzTGLNdSVTsldrYDv/hBtBO4QCMRhsGfAvLyPYg==
+X-Received: by 2002:a17:902:e54e:b0:235:e1e4:efc4 with SMTP id d9443c01a7336-23c60105131mr2451315ad.14.1751372662789;
+        Tue, 01 Jul 2025 05:24:22 -0700 (PDT)
+Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f5437b40sm15776317a91.37.2025.07.01.05.24.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 05:24:21 -0700 (PDT)
+Date: Tue, 1 Jul 2025 12:24:07 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
+	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
+	zhangzekun11@huawei.com, iommu@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
+	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com
+Subject: Re: [PATCH v7 23/28] iommu/arm-smmu-v3-iommufd: Add hw_info to
+ impl_ops
+Message-ID: <aGPTZ3uHRIIRMF4c@google.com>
+References: <cover.1750966133.git.nicolinc@nvidia.com>
+ <205f234c05d6b09de52124a72a6978b74d832cfb.1750966133.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <205f234c05d6b09de52124a72a6978b74d832cfb.1750966133.git.nicolinc@nvidia.com>
 
-On Tue, Jul 01 2025 at 12:16, Paolo Abeni wrote:
-> On 6/26/25 3:27 PM, Thomas Gleixner wrote:
->> It is also available via git with all prerequisite patches:
->> 
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git timers/ptp/driver-auxclock
->> 
->> Miroslav: This branch should enable you to test the actual steering via a
->> 	  PTP device which has PTP_SYS_OFFSET_EXTENDED support in the driver.
->
-> I have some dumb issues merging this on net-next.
->
-> It looks like we should pull from the above URL, but it looks like the
-> prereq series there has different hashes WRT the tip tree. Pulling from
-> there will cause good bunch of duplicate commits - the pre-req series vs
-> the tip tree and the ptp cleanup series vs already merge commits on
-> net-next.
->
-> I guess we want to avoid such duplicates, but I don't see how to avoid
-> all of them. A stable branch on top of current net-next will avoid the
-> ptp cleanup series duplicates, but will not avoid duplicates for
-> prereqs. Am I missing something obvious?
+On Thu, Jun 26, 2025 at 12:34:54PM -0700, Nicolin Chen wrote:
+> This will be used by Tegra241 CMDQV implementation to report a non-default
+> HW info data.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 7 +++++++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 8 ++++++--
+>  2 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index 07589350b2a1..836d5556008e 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -721,6 +721,13 @@ struct arm_smmu_impl_ops {
+>  	int (*init_structures)(struct arm_smmu_device *smmu);
+>  	struct arm_smmu_cmdq *(*get_secondary_cmdq)(
+>  		struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
+> +	/*
+> +	 * An implementation should define its own type other than the default
+> +	 * IOMMU_HW_INFO_TYPE_ARM_SMMUV3. And it must validate the input @type
+> +	 * to return its own structure.
+> +	 */
+> +	void *(*hw_info)(struct arm_smmu_device *smmu, u32 *length,
+> +			 enum iommu_hw_info_type *type);
 
-No. I messed that up by not telling that the PTP series should be
-applied as a seperate branch, which is merged into net-next. That way I
-could have merged that branch back into tip and apply this pile on top.
+Thanks for adding the comment, this looks good.
 
-Let me think about an elegant way to make this work without creating an
-utter mess in either of the trees (or both).
+>  	const size_t vsmmu_size;
+>  	const enum iommu_viommu_type vsmmu_type;
+>  	int (*vsmmu_init)(struct arm_vsmmu *vsmmu,
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> index 2ab1c6cf4aac..1cf9646e776f 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
+> @@ -11,13 +11,17 @@ void *arm_smmu_hw_info(struct device *dev, u32 *length,
+>  		       enum iommu_hw_info_type *type)
+>  {
+>  	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
+> +	const struct arm_smmu_impl_ops *impl_ops = master->smmu->impl_ops;
+>  	struct iommu_hw_info_arm_smmuv3 *info;
+>  	u32 __iomem *base_idr;
+>  	unsigned int i;
+>  
+>  	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
+> -	    *type != IOMMU_HW_INFO_TYPE_ARM_SMMUV3)
+> -		return ERR_PTR(-EOPNOTSUPP);
+> +	    *type != IOMMU_HW_INFO_TYPE_ARM_SMMUV3) {
+> +		if (!impl_ops || !impl_ops->hw_info)
+> +			return ERR_PTR(-EOPNOTSUPP);
+> +		return impl_ops->hw_info(master->smmu, length, type);
+> +	}
+>  
+>  	info = kzalloc(sizeof(*info), GFP_KERNEL);
+>  	if (!info)
 
-Thanks,
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 
-        tglx
-
-
-
-
-
-
+> -- 
+> 2.43.0
+> 
 
