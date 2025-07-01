@@ -1,96 +1,186 @@
-Return-Path: <linux-kernel+bounces-710704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DB5AEEFED
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C325DAEEFF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDF22173EE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:43:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0744B16F7FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2186F25F963;
-	Tue,  1 Jul 2025 07:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F0E25F988;
+	Tue,  1 Jul 2025 07:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8kzdJvV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DQqyL2jc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7523E1EA6F;
-	Tue,  1 Jul 2025 07:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567714A0C;
+	Tue,  1 Jul 2025 07:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751355786; cv=none; b=gpnt+4bddnB6iJICuniDlfUnsg9ScWl3Obu33mnNF59EEiv9MA7gNUxzgEU41PuwP0vpJmznbEJfBgrlqhn7n1niZfaI0qcEtsco8PwKYhFCXPVOZ1bwZD7rMYKb7E3cXJ5orenCDhqqbmaLR2+uSuePdV40HSOH9rYvsyeALJI=
+	t=1751355838; cv=none; b=I20RmTLYn3XF0KBNrJpxg8sYau3H60D4kyZVHJK7y8USOOHfZnxvxzot8HWUG3ael0ljcSLp+ycTjtpcQiJ5zUK53WCsqFJYndj2wC9LeIQ1NDNLxIGQBGiAMZRrOSP3ZhRsrhPzJboDmwYNMl8hZRuuShsRIUmq82CUQNIs7ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751355786; c=relaxed/simple;
-	bh=krITJM0978IRsY752Yojw78vCX5/sdxxG3qP5TVzy9Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tDfifhp3NTrgXr3vACdlEL4UPaU034u45LwDjgABuwBKXmJz/n+uQQMu5yaS2zSH5v/4tBkQcOgaNswDhKnJJza8FMFE3LVq4/3FJD9D50hVYgIM6dK99F7c6yKRnrl9LciNceObUqwI57ZRLfO8rLJ59UVhhRcG/LLcGC9BuB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8kzdJvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E805C4CEEB;
-	Tue,  1 Jul 2025 07:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751355786;
-	bh=krITJM0978IRsY752Yojw78vCX5/sdxxG3qP5TVzy9Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=t8kzdJvVaW+RVkrfsOqoFvovi3S0LHUUSHi478rxkKO6yyXkKC0cU/ZpGAjsMT4qn
-	 1JkXekfymC9MGmxV94LQ3vVsgdkNMzGtbkzV4RA6kbpQlSbs6BSRRlTDlyoIGzI43J
-	 rsB5Jm/QFVoS3fB7JKVod82EgqT837jAC7aUQUq1nL/+AH1Xd4MqdZYS3uygK/RZV6
-	 N8LuSTnys4A10aRFgkIpfYfOoCv0f5aB/rMATYEsF9+Iblccn5ycEzQoQJDkBViMu6
-	 ilZq8DioXEDURnmgVyxW0HPPXHRJ+hNs4XnU9JpH0LcwdwDoez94rgGMeWQI44NdEA
-	 VU47dKBUk5MZQ==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: linux-rockchip@lists.infradead.org, 
- Geraldo Nascimento <geraldogabriel@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rick wertenbroek <rick.wertenbroek@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Valmantas Paliksa <walmis@gmail.com>, linux-phy@lists.infradead.org, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-In-Reply-To: <cover.1751322015.git.geraldogabriel@gmail.com>
-References: <cover.1751322015.git.geraldogabriel@gmail.com>
-Subject: Re: (subset) [RESEND PATCH v9 0/4] PCI: rockchip: Improve driver
- quality
-Message-Id: <175135578094.10306.3959145621535083465.b4-ty@kernel.org>
-Date: Tue, 01 Jul 2025 13:13:00 +0530
+	s=arc-20240116; t=1751355838; c=relaxed/simple;
+	bh=yaxlHDl9w0t4PA2D/GvPYwB62GkGoklDetJPWB0Uc/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R8fVTJSyKMb23ZR2JnNWiVkYCdKU5HcvBkhXNFduA1Akcjy0XH0D/4Ni59trQnAjUsrFpA4JWWzOvc7bTytmmCBZkr9FKHLtBLd1blh6jLIyvuPMVBOfBeZlQ9EdzeAv0wiXHrQHh5F6ZktbxhFZhdO7z8Jz/iVHqXC4gdoO5E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DQqyL2jc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5612vACE024827;
+	Tue, 1 Jul 2025 07:43:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=OxVs0RvgVnSeGVKbjAm9LqUGwZ2gkiBSa66
+	AH7cqy20=; b=DQqyL2jcNiHsRqWKNgBevrlch7af4ngvkZt5Cx9fnAKdE1Yzdph
+	dSPJwymHfXDZPgizvKKJgKKsIrKOptF7afapmQcGwU4cZY5bUrpMKqvzYtuGdcb+
+	sIyOp1eQkmUwm7k/eYynivGglCDFYVkxKUzfN0QbHVl4MOZfMHe49jsC/4IscuTg
+	kr/EiLT8jpg6UyUzPBeFx5bccpRiM9J5/86gqNY3Csns0OX/b26A47nQZNMVRqXV
+	fv3dfRJ6z+DnI+t+tk5LgNRlIlXQZyNOJZyjjIZsi0DNa3c4dO5oruFRc4d1T4bg
+	SSvVXjecus21QTz+OXgj9mSF9dPX4McfwMA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j8s9fkrp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 07:43:53 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5617hoO6024296;
+	Tue, 1 Jul 2025 07:43:50 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 47j9fktyv1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 07:43:50 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5617ho86024288;
+	Tue, 1 Jul 2025 07:43:50 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pussin-hyd.qualcomm.com [10.147.247.182])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5617hndT024286
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Jul 2025 07:43:50 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4706513)
+	id CF06D571; Tue,  1 Jul 2025 13:13:48 +0530 (+0530)
+From: Pushpendra Singh <quic_pussin@quicinc.com>
+To: cros-qcom-dts-watchers@chromium.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Pushpendra Singh <quic_pussin@quicinc.com>, kernel@quicinc.com
+Subject: [PATCH] arm64: dts: qcom: sc7280: Add support for two additional DDR frequencies
+Date: Tue,  1 Jul 2025 13:13:34 +0530
+Message-Id: <20250701074334.1782967-1-quic_pussin@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=H/Pbw/Yi c=1 sm=1 tr=0 ts=686391b9 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=dDp98MX-VD6hcrkFVBUA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: tLB2TNKh-qLqNyTFMnL7qEt7JZ28V8Am
+X-Proofpoint-GUID: tLB2TNKh-qLqNyTFMnL7qEt7JZ28V8Am
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA0MyBTYWx0ZWRfXwgklkA9oVjQ2
+ fSpxrfneP5MZ2p/FzbjvSE2c4f53EpXAx5sxVj4V4oyAd+YcrPfTdyG4jloOdQUP4wHcTWDCLvN
+ l2rWResb02LaM3Ss3E0bnxqE+yZwLwBmp7m4IhaoKtLTWBIttHwdoVDL5I/UiZ6E05nT+n+5hvW
+ g+IWNnVDdxzoPYrqy9Uk2UWT1pJB1uVdGtHYvJkg9XsXLlWGF9Jg65F2V4CyAprFz5Qt0MdGHUJ
+ j25mAh1jYq7gYAxe1zzedCiKAHlCl3ASy10klGS9UMwiEabunczcoEzGgvjOyicQzluGqExGVlW
+ C4cYAnqvhLYllTyvwvxATKmSbyz0yzI9M2c6pwtbcqy6avJMpYl3tqQMA6M/3zN32xTKlncBaoQ
+ 0CAVMTLdbUFVJQlsHXP+30qbuYQFNrhumlUCrSyxeOlbeGj9r9XCPCxUQsPX1mOzAFS3u14u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 suspectscore=0 mlxlogscore=973
+ priorityscore=1501 clxscore=1011 mlxscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 bulkscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507010043
 
+Cc: kernel@quicinc.com, kernel@oss.qualcomm.com
 
-On Mon, 30 Jun 2025 19:24:15 -0300, Geraldo Nascimento wrote:
-> During a 30-day debugging-run fighting quirky PCIe devices on RK3399
-> some quality improvements began to take form and after feedback from
-> community they reached more polished state.
-> 
-> This will ensure maximum chance of retraining to 5.0GT/s, on all four
-> lanes and fix async strobe TEST_WRITE disablement. On top of this,
-> standard PCIe defines are now used to reference registers from offset
-> at Capabilities Register.
-> 
-> [...]
+The SC7280 SoC now supports two additional frequencies. This patch
+add those frequencies to the BWMON OPP table and updates the frequency
+mapping table accordingly.
 
-Applied, thanks!
+These changes do not impact existing platforms, as the updated mapping
+only affects the highest OPP. On any given platform, this will continue
+to vote for the maximum available OPP.
 
-[1/4] PCI: rockchip: Use standard PCIe defines
-      commit: a54fa9e656b38d64761478d06aa8679eae074ca1
-[2/4] PCI: rockchip: Set Target Link Speed before retraining
-      commit: 7a886fbf4004a990cb7231d64370c622d0eb741f
+Change-Id: Id3a91e065c49848d9af18e5c3edee0836cb693e5
+Signed-off-by: Pushpendra Singh <quic_pussin@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-Best regards,
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index 64a2abd30100..cb945abf0475 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -620,12 +620,12 @@ cpu4_opp_2208mhz: opp-2208000000 {
+ 
+ 		cpu4_opp_2400mhz: opp-2400000000 {
+ 			opp-hz = /bits/ 64 <2400000000>;
+-			opp-peak-kBps = <8532000 48537600>;
++			opp-peak-kBps = <12787200 48537600>;
+ 		};
+ 
+ 		cpu4_opp_2611mhz: opp-2611200000 {
+ 			opp-hz = /bits/ 64 <2611200000>;
+-			opp-peak-kBps = <8532000 48537600>;
++			opp-peak-kBps = <12787200 48537600>;
+ 		};
+ 	};
+ 
+@@ -685,22 +685,22 @@ cpu7_opp_2381mhz: opp-2380800000 {
+ 
+ 		cpu7_opp_2400mhz: opp-2400000000 {
+ 			opp-hz = /bits/ 64 <2400000000>;
+-			opp-peak-kBps = <8532000 48537600>;
++			opp-peak-kBps = <12787200 48537600>;
+ 		};
+ 
+ 		cpu7_opp_2515mhz: opp-2515200000 {
+ 			opp-hz = /bits/ 64 <2515200000>;
+-			opp-peak-kBps = <8532000 48537600>;
++			opp-peak-kBps = <12787200 48537600>;
+ 		};
+ 
+ 		cpu7_opp_2707mhz: opp-2707200000 {
+ 			opp-hz = /bits/ 64 <2707200000>;
+-			opp-peak-kBps = <8532000 48537600>;
++			opp-peak-kBps = <12787200 48537600>;
+ 		};
+ 
+ 		cpu7_opp_3014mhz: opp-3014400000 {
+ 			opp-hz = /bits/ 64 <3014400000>;
+-			opp-peak-kBps = <8532000 48537600>;
++			opp-peak-kBps = <12787200 48537600>;
+ 		};
+ 	};
+ 
+@@ -4013,6 +4013,12 @@ opp-6 {
+ 				opp-7 {
+ 					opp-peak-kBps = <8532000>;
+ 				};
++				opp-8 {
++					opp-peak-kBps = <10944000>;
++				};
++				opp-9 {
++					opp-peak-kBps = <12787200>;
++				};
+ 			};
+ 		};
+ 
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
+2.34.1
 
 
