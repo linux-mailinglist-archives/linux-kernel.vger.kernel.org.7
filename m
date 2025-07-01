@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-711169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23491AEF729
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:50:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3552AAEF72C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98DE7A42F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F21C4A2D9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF83627602D;
-	Tue,  1 Jul 2025 11:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D4327702D;
+	Tue,  1 Jul 2025 11:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HG+Svjpq"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nZL2ddbO"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415FA27587C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE545275B0F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370487; cv=none; b=Nq8gJA6tU09kVIHjmhQnVFcBHonFr1cFys11NeEiCBNzYlRdbDkCjC9OtXD+FZlLx5n83JiG/VY3YMXP4gO+ypJrk42u1Yu9gFAn3V9+yPum9F2oSKmtyBxpAKBOCPOyjLaYR56Wl/Ku0W4tBFA326t/ieukl9nabb+gQQuQUXY=
+	t=1751370488; cv=none; b=PlwCL7nkVBJL8Oef2Hk8h37ubXKyAmXigycnDnI/6TXDqT0jWHehP9qlFNPctyHqu8oygAzgNIRX/g3Vc2dnHi+RuzdH3zko4NZMdzl6R84aH1pCDZnozYC/hf2og+uFCaoYJjVOebABnipI+rlc+NMeeXUPagQQml/ll673RDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370487; c=relaxed/simple;
-	bh=dCfKc8M+VAFcuXjqcI2B+OXim4o2mp+Y/13x31tJu98=;
+	s=arc-20240116; t=1751370488; c=relaxed/simple;
+	bh=7WjL5PJDN7tc6aoAfPZvK2QXFFS7GTcKuiGQOzvRQEI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VYbjLQGoPnjq10N+wHy0jEaKrDnoOACZgwJF0xPuHHM9yTMjfU0flMmNETrC7JMCcdVYANZWOcFacjG/U/cdmepX00Mu9ReW5ejJ8lEf89hLy4UXNF6kkVrwJHEraqzLOGNIbIFdblVkybECWoUsLJJNaqNubdLFtIo2aEbTxpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HG+Svjpq; arc=none smtp.client-ip=209.85.167.45
+	 MIME-Version; b=AzVuJ1C8IwLsWf9SEeAUi/woEJC1xfut8is4M7oPeczMnO7b+19jUJX+YRR7w2zDxnAegzwIqtscEJf6rhCsIv7WN4FK9Dqoow5miagGeIPOySFQGJM0tvVUPbzLW4yXleibSTPRYA3pUzVBtQ00LD974t33SZmWOMljeo91k/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nZL2ddbO; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-553b51f5218so5644113e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:48:05 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5561c20e2d5so1770197e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751370483; x=1751975283; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1751370485; x=1751975285; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ou37oVNU8EcrZ39XggNFqJJBkEWIeWX5cH4SBBxr5bU=;
-        b=HG+Svjpqal+PjGwJZ64cvQQhONk84b3kcd9AyORVzmQwILpH75utmbtV+nKmEiyD2i
-         8ePNEDm+Q41WHywn/yVT2F3spvtYuwhapZCgPQ2r375OOh6qQjalNEAfzdr4qs25vm61
-         O3UkWhcSOiLpXsQ+Oz+p2JhHk3IitkaxUHgc+plCT1spOd0ol/dI5nOoOFOjlmQjtvoS
-         8zocYKU7jdOPRxywu89KFSbJDz2m2zBuW/rddpzZepuEg8rCGdPQqR79VVTgTm/OaKk6
-         mslFjya+R9VVxhAP7+uGEmqXVFUtE7OB5O2jh5cgVeQgPa3rfBjXSOdN9YVwMZ3wYQmi
-         FOsg==
+        bh=27vCRapRpRoLV9KzfQODt7M6d2jewQo10FyC4pKnCE0=;
+        b=nZL2ddbOBSMlariJaHCazIWBX5FD4mkvhvwxQZOYxbz/qKhBjKqhxCT5ExiWL9cJfl
+         Gj4yRvD+MXqwmkD4ONrLv590qoGs8S63gSNaj5+/Luf4v+yBrlz5NFKRnPwSLGr8wWuG
+         9uYBS36PboLr6PFQwLTPfjykWMFNrCWQaC2LHzivMpNgfsJ57l/bRUYtZTIVXZt0icIS
+         kFwxKO7dCD4kEEYwiEfCDuRzSe87f27vmfZG1rj8CsIA7F9AKIYRAkkfoJjBdE44gHkT
+         4vxSlXCBI6MAYE1XS28VTr0nf75rfRZuFMIlp3bIN3AMIWDQfaHK70igCdmMKgipno86
+         yr8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751370483; x=1751975283;
+        d=1e100.net; s=20230601; t=1751370485; x=1751975285;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ou37oVNU8EcrZ39XggNFqJJBkEWIeWX5cH4SBBxr5bU=;
-        b=JxfiaZAu2PlTGYzuuWxwAp2OVKh+r/LO1t4l+1vX7C0TPOcWSCUYlBTzEMiJN+gqWl
-         zRSNdLRLVHWzhLOVRDLRapZD3MCkc1rwmSvtIqG0QhqaWvykaG//Vn9mN48PeZ3X1Cl+
-         1O9QWau0LDSYaXrY+3Wa9hWfH8d1bbVY+V8plDuPz8o4aix7LPvBJgtda9M8U4jNAVo2
-         MUkhKh1XVg0vh5qXeKt31M55xbRG80/o/jGfzJkU7U4yn3IW45d8V0NXoa21Vj1SYQdE
-         DE7PX1GjdumKYIOhYmnLZF92gSAC6g8Cfeg+3RUL39emzyO4lUJ+luSvmK1jjQCiqRjE
-         hV9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXzAvuySWsBMqAAQyGQKlu4oTV6OtR8bgeBDuHX7sPoFHyNkxrjJNGSGJvyVBHAIarJttqFiiq4AQa/6M4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqU7x3VWRqwylKhDIXUAf+JkX+wOy3qXHWCtxTJt7xMBfE5Hkd
-	uz4Yyb0YKLSZc2JLZDkOUdtuDf6wXfYFRkvEfxYvEyFciVsP+MMbyvmVmYYgzW03aqk=
-X-Gm-Gg: ASbGncsQr+v2FtHNtQq+yyrux+sekPz8lfyfb0aOdPoIJ3aqNBf3YmJTIZGhw9NqaxY
-	2f0jcDZRFVy1gV93oUl3sGwGJWoS7R1VzbkoOZvimNTLhyccOgO4qhgKbEOz9cOxYa+ad+KZsl/
-	rDamRpvY82DbwQQwr/gEYLix2RrTDMPrQS/1mKLInxGiuPzBQfxsem/tjePpqDunEwQGZ2BNpcu
-	RcB0ubbTkeo5KmFRxp/UZEe2vLQn5FLMuXf3m92scEDrcANhgIuM8ek5TsPwnl5rOE3NYgJkfsu
-	i6Zobdk8JF6mF9hk0xA8nqVMkzAV5ltxH3FgzXMRpoFL3zUJidXQZupl8H4/B04gGwUC/r54Jgn
-	R0X897OA5FdsRW56Rf5OxnhrGTWaMvf0MlmcX
-X-Google-Smtp-Source: AGHT+IH0vCvElE8qdxxXL5THgRVp/JjfgP3AQLH5VtPUuqSALJU6t/Q2a/vaudzsxqj21OUKqYtVNg==
-X-Received: by 2002:a05:6512:31d0:b0:553:abcd:cf51 with SMTP id 2adb3069b0e04-5550ba16ad6mr4341553e87.40.1751370483312;
-        Tue, 01 Jul 2025 04:48:03 -0700 (PDT)
+        bh=27vCRapRpRoLV9KzfQODt7M6d2jewQo10FyC4pKnCE0=;
+        b=dXgc2fqoLRbzL+iSSj0AcSMN946DpkfjCeTr1aglxYllfNmC+C3V3tH/W8mHBqwim+
+         aDGJbf6USgjZS33un8hqXFEzaTCQKWiYkcfWEBH8azP4CNOyHn/E+EGCOpgFeF5NIj5o
+         brkzSt9bJ0YA0SRSursuIvv6WnTIWAuOXQ/RkmlgSgrIb6tSU14DRdzStdZT1ngWU+W6
+         r4VFE43H4U3ylGciHdLV9kd31JJRvuO4dNn95ajSpXP+fHsJ746iAS/2TEi+TCCVbCpf
+         SnBx9mJT3Nayv4p8E0ZTh8jpBaIL2OPEp6c1mad/2wfFZzC7taFOcjs4IaoK+hoxBcm6
+         S/6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUn9/XtPowxqToxi5eL8sFK9EjlXrQzFDYIA9P9yOlA2DUe/sjkx3/APxD6isEjuPF3BoTRlJGpOer0EYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo/zh69EuvjbqUBkc+jwoM4VALUPkgbyyClF55aIq7LmdMeV3K
+	t0HBGJ3w9A3IubZTD9OTX8VmjBh+23nnrX9VhmYYP2eW08syJL0LJaO3Vw4In6bqr7o=
+X-Gm-Gg: ASbGncvN3VqFVTCJuSNQ2V5OF/EM6X8Zib2ajM+SY+eMI1C4Q52nj4VOvkqyt/ZTld6
+	AzaXjRqAFjjNASoH5RJxaIzpDXtTBY9bM3swvNU0FcHFkwngVOYVhtAZ4WyqSmzYQXPZEyGichB
+	dR1PmB+YWGk3vm8NkiDtHw97xGQbmjZv8cbhixUJBWziLdqTCqRdBvALmdkHbvdNcNrihD0lz4M
+	EwlLAfNzsJJE5X25Rz2sb3VWuycE6TftQJ8Hu0s2xDyNR1shXp8e5+IiVR69zlvC6OIoEYtqx1Z
+	EbpD/8MFs6NvYXphu8do+dNVHy/qH1YOS6vL5CzNivPvcogLgzwmEWeqiS3DWUMAgMIIB6EhAfE
+	yJIgRi3UXi8ImuIv5C7MTmpWy09JCS1muwNsHu6YBv1S8Vok=
+X-Google-Smtp-Source: AGHT+IHua/UEt3b45/LuxxWp2SUanS88KDLpgikwHH5MvPxATRT7Z0U/3UXMo1sRCEzCo4OszKGTSA==
+X-Received: by 2002:a05:6512:31d0:b0:553:277b:17c8 with SMTP id 2adb3069b0e04-5550b89f65emr5591872e87.35.1751370484839;
+        Tue, 01 Jul 2025 04:48:04 -0700 (PDT)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2f162dsm1800592e87.248.2025.07.01.04.48.01
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2f162dsm1800592e87.248.2025.07.01.04.48.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 04:48:02 -0700 (PDT)
+        Tue, 01 Jul 2025 04:48:04 -0700 (PDT)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: Saravana Kannan <saravanak@google.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -93,11 +93,10 @@ Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
 	Ulf Hansson <ulf.hansson@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michael Tretter <m.tretter@pengutronix.de>
-Subject: [PATCH v3 14/24] firmware/pmdomain: xilinx: Move ->sync_state() support to firmware driver
-Date: Tue,  1 Jul 2025 13:47:16 +0200
-Message-ID: <20250701114733.636510-15-ulf.hansson@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 15/24] firmware: xilinx: Don't share zynqmp_pm_init_finalize()
+Date: Tue,  1 Jul 2025 13:47:17 +0200
+Message-ID: <20250701114733.636510-16-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250701114733.636510-1-ulf.hansson@linaro.org>
 References: <20250701114733.636510-1-ulf.hansson@linaro.org>
@@ -109,90 +108,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than having the genpd provider to add device_links for each device
-that gets attached, to implement the ->sync_state() support, let's rely on
-fw_devlink to do this for us.
+As there no longer any users outside the zynqmp firmware driver of
+zynqmp_pm_init_finalize(), let's turn into a local static function.
 
-In this way, we can simplify the code by moving the ->sync_state() callback
-into the firmware driver, so let's do that.
-
-Cc: Michael Tretter <m.tretter@pengutronix.de>
 Cc: Michal Simek <michal.simek@amd.com>
 Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
 Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62A,Xilinx ZynqMP ZCU106
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/firmware/xilinx/zynqmp.c            | 10 ++++++++++
- drivers/pmdomain/xilinx/zynqmp-pm-domains.c | 16 ----------------
- 2 files changed, 10 insertions(+), 16 deletions(-)
+ drivers/firmware/xilinx/zynqmp.c     | 3 +--
+ include/linux/firmware/xlnx-zynqmp.h | 6 ------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
 diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 7356e860e65c..a91a0191c689 100644
+index a91a0191c689..87ddbb7d11c2 100644
 --- a/drivers/firmware/xilinx/zynqmp.c
 +++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -2100,6 +2100,15 @@ static void zynqmp_firmware_remove(struct platform_device *pdev)
- 	platform_device_unregister(em_dev);
- }
- 
-+static void zynqmp_firmware_sync_state(struct device *dev)
-+{
-+	if (!of_device_is_compatible(dev->of_node, "xlnx,zynqmp-firmware"))
-+		return;
-+
-+	if (zynqmp_pm_init_finalize())
-+		dev_warn(dev, "failed to release power management to firmware\n");
-+}
-+
- static const struct of_device_id zynqmp_firmware_of_match[] = {
- 	{.compatible = "xlnx,zynqmp-firmware"},
- 	{.compatible = "xlnx,versal-firmware"},
-@@ -2112,6 +2121,7 @@ static struct platform_driver zynqmp_firmware_driver = {
- 		.name = "zynqmp_firmware",
- 		.of_match_table = zynqmp_firmware_of_match,
- 		.dev_groups = zynqmp_firmware_groups,
-+		.sync_state = zynqmp_firmware_sync_state,
- 	},
- 	.probe = zynqmp_firmware_probe,
- 	.remove = zynqmp_firmware_remove,
-diff --git a/drivers/pmdomain/xilinx/zynqmp-pm-domains.c b/drivers/pmdomain/xilinx/zynqmp-pm-domains.c
-index d579220a4500..b5aedd6e33ad 100644
---- a/drivers/pmdomain/xilinx/zynqmp-pm-domains.c
-+++ b/drivers/pmdomain/xilinx/zynqmp-pm-domains.c
-@@ -153,14 +153,8 @@ static int zynqmp_gpd_attach_dev(struct generic_pm_domain *domain,
- 				 struct device *dev)
+@@ -1299,11 +1299,10 @@ EXPORT_SYMBOL_GPL(zynqmp_pm_bootmode_write);
+  * This API function is to be used for notify the power management controller
+  * about the completed power management initialization.
+  */
+-int zynqmp_pm_init_finalize(void)
++static int zynqmp_pm_init_finalize(void)
  {
- 	struct zynqmp_pm_domain *pd = to_zynqmp_pm_domain(domain);
--	struct device_link *link;
- 	int ret;
+ 	return zynqmp_pm_invoke_fn(PM_PM_INIT_FINALIZE, NULL, 0);
+ }
+-EXPORT_SYMBOL_GPL(zynqmp_pm_init_finalize);
  
--	link = device_link_add(dev, &domain->dev, DL_FLAG_SYNC_STATE_ONLY);
--	if (!link)
--		dev_dbg(&domain->dev, "failed to create device link for %s\n",
--			dev_name(dev));
--
- 	/* If this is not the first device to attach there is nothing to do */
- 	if (domain->device_count)
- 		return 0;
-@@ -298,19 +292,9 @@ static void zynqmp_gpd_remove(struct platform_device *pdev)
- 	of_genpd_del_provider(pdev->dev.parent->of_node);
+ /**
+  * zynqmp_pm_set_suspend_mode()	- Set system suspend mode
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 6d4dbc196b93..ae48d619c4e0 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -585,7 +585,6 @@ int zynqmp_pm_reset_assert(const u32 reset,
+ int zynqmp_pm_reset_get_status(const u32 reset, u32 *status);
+ unsigned int zynqmp_pm_bootmode_read(u32 *ps_mode);
+ int zynqmp_pm_bootmode_write(u32 ps_mode);
+-int zynqmp_pm_init_finalize(void);
+ int zynqmp_pm_set_suspend_mode(u32 mode);
+ int zynqmp_pm_request_node(const u32 node, const u32 capabilities,
+ 			   const u32 qos, const enum zynqmp_pm_request_ack ack);
+@@ -746,11 +745,6 @@ static inline int zynqmp_pm_bootmode_write(u32 ps_mode)
+ 	return -ENODEV;
  }
  
--static void zynqmp_gpd_sync_state(struct device *dev)
+-static inline int zynqmp_pm_init_finalize(void)
 -{
--	int ret;
--
--	ret = zynqmp_pm_init_finalize();
--	if (ret)
--		dev_warn(dev, "failed to release power management to firmware\n");
+-	return -ENODEV;
 -}
 -
- static struct platform_driver zynqmp_power_domain_driver = {
- 	.driver	= {
- 		.name = "zynqmp_power_controller",
--		.sync_state = zynqmp_gpd_sync_state,
- 	},
- 	.probe = zynqmp_gpd_probe,
- 	.remove = zynqmp_gpd_remove,
+ static inline int zynqmp_pm_set_suspend_mode(u32 mode)
+ {
+ 	return -ENODEV;
 -- 
 2.43.0
 
