@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-711478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CFBAEFB4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1648FAEFB50
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4C34A1A6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9B01BC4E64
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1746276057;
-	Tue,  1 Jul 2025 13:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C904277032;
+	Tue,  1 Jul 2025 13:56:38 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A1C26FA52
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AD727381F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751378197; cv=none; b=k06Cm1hSblVCeJMr0+g/gz5s81SOBtiYiw5/QVnqZCkGeCeeySBJICEOd8bTzHIG1RM5jIGjdU/r6ijYKmCRUWPETGw1X9oqKr1+H12zYESdJwB7IbbxjB0PZdzHmVd3iE9hpZ6m6gfizp+OjOD72ulRMu6qiAeHB0C7Ld3kD74=
+	t=1751378198; cv=none; b=dGlGHZeL8Qw4+OpxjllXo/f12KA63VfkC4aFQ3WAQQBHnhhOiAaI2MhXGd2SyMRsbx2bxNijYLj75FY6WStX450jVdIOX2ESAVBdi2XzNnMPk5X+3OnA9j2mPsI9g4lcTRkPENoQ/PZeOXKh1XiJxH0ojs6wt+MSoJVF7flTvSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751378197; c=relaxed/simple;
-	bh=njI8MgUtYO6adxTImBLYIQZAiw8t/8iuCI2/kYFqDmE=;
+	s=arc-20240116; t=1751378198; c=relaxed/simple;
+	bh=wQClYdyWZ7+lUrdBydq9nKTRqMs+zDy48A/ppFPNDFE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IF8lUprMxZ8/7AWdc9I7tLq2GOoY+vMnizRzpAozKsX53yXLtzNIQRUl8rWzUMLsRw8uBCgudCLIiQ4VEK5QqmX2SovVSRm5tbW2rOALqo8060uRzp7Xd95rkqlIpdq9PKPoVjNvCNwKxiDHV4+lS058dS8BSSh3jkqO3qD2SAc=
+	 MIME-Version; b=ewNCTakJSTDBhwT6WF416l852sNjjDUPMEo1NqfwxqkNyQijU7HGzk4p1L4WmwU1ropwK4zkXOYXxMlj+fQ/k5wRxAAx5Y30QyjFr3hw/IDXcPAOQkyRL6oZ17i+nDEjHrsJ2KZR5HAMMs0djLRgtvdELlDvN6sAoDVc8SyG5fA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7682A2379;
-	Tue,  1 Jul 2025 06:56:19 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A18672381;
+	Tue,  1 Jul 2025 06:56:20 -0700 (PDT)
 Received: from e133380.cambridge.arm.com (e133380.arm.com [10.1.197.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB6563F58B;
-	Tue,  1 Jul 2025 06:56:33 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22E573F58B;
+	Tue,  1 Jul 2025 06:56:34 -0700 (PDT)
 From: Dave Martin <Dave.Martin@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Oleg Nesterov <oleg@redhat.com>,
 	Kees Cook <kees@kernel.org>,
 	Akihiko Odaki <akihiko.odaki@daynix.com>
-Subject: [PATCH 01/23] regset: Fix kerneldoc for struct regset_get() in user_regset
-Date: Tue,  1 Jul 2025 14:55:54 +0100
-Message-Id: <20250701135616.29630-2-Dave.Martin@arm.com>
+Subject: [PATCH 02/23] regset: Add explicit core note name in struct user_regset
+Date: Tue,  1 Jul 2025 14:55:55 +0100
+Message-Id: <20250701135616.29630-3-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250701135616.29630-1-Dave.Martin@arm.com>
 References: <20250701135616.29630-1-Dave.Martin@arm.com>
@@ -51,50 +51,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 7717cb9bdd04 ("regset: new method and helpers for it") added a
-new interface ->regset_get() for struct user_regset, and commit
-1e6986c9db21 ("regset: kill ->get()") got rid of the old interface.
+There is currently hard-coded logic spread around the tree for
+determining the note name for regset notes emitted in coredumps.
 
-The kerneldoc comment block was never updated to take account of this
-change, though.
+Now that the names are declared explicitly in <uapi/elf.h>, this can be
+simplified.
 
-Update it.
+In preparation for getting rid of the special-case logic, add an
+explicit core_note_name field in struct user_regset for specifying the
+note name explicitly.  To help avoid mistakes, a convenience macro
+USER_REGSET_NOTE_TYPE() is provided to set .core_note_type and
+.core_note_name based on the note type.
 
-No functional change.
+When dumping core, use the new field to set the note name, if the
+regset specifies it.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Kees Cook <kees@kernel.org>
 Cc: Akihiko Odaki <akihiko.odaki@daynix.com>
-
 ---
+ fs/binfmt_elf.c        |  8 ++++++--
+ include/linux/regset.h | 10 ++++++++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-No Fixes tag, since kerneldoc is rather best-effort and the kernel
-works either way.  Kernels with users of the old ->get() method
-wouldn't build any more, anyway.
-
-I can add a tag if someone wants it.
-
-I've made no effort to track down all kerneldoc discrepancies
-introduced by the same changeset, but I need to update this particular
-block for another patch.
----
- include/linux/regset.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index a43363d593e5..f1069103ca24 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1727,6 +1727,7 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
+ 	for (view_iter = 1; view_iter < view->n; ++view_iter) {
+ 		const struct user_regset *regset = &view->regsets[view_iter];
+ 		int note_type = regset->core_note_type;
++		const char *note_name = regset->core_note_name;
+ 		bool is_fpreg = note_type == NT_PRFPREG;
+ 		void *data;
+ 		int ret;
+@@ -1747,8 +1748,11 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
+ 		if (is_fpreg)
+ 			SET_PR_FPVALID(&t->prstatus);
+ 
+-		fill_note(&t->notes[note_iter], is_fpreg ? NN_PRFPREG : "LINUX",
+-			  note_type, ret, data);
++		if (!note_name)
++			note_name = is_fpreg ? NN_PRFPREG : "LINUX";
++
++		fill_note(&t->notes[note_iter], note_name, note_type,
++			  ret, data);
+ 
+ 		info->size += notesize(&t->notes[note_iter]);
+ 		note_iter++;
 diff --git a/include/linux/regset.h b/include/linux/regset.h
-index 9061266dd8de..02417e934845 100644
+index 02417e934845..ad1ca6fe04f4 100644
 --- a/include/linux/regset.h
 +++ b/include/linux/regset.h
-@@ -151,7 +151,7 @@ typedef int user_regset_writeback_fn(struct task_struct *target,
+@@ -151,6 +151,7 @@ typedef int user_regset_writeback_fn(struct task_struct *target,
   * @align:		Required alignment, in bytes.
   * @bias:		Bias from natural indexing.
   * @core_note_type:	ELF note @n_type value used in core dumps.
-- * @get:		Function to fetch values.
-+ * @regset_get:		Function to fetch values.
++ * @core_note_name:	ELF note name to qualify the note type.
+  * @regset_get:		Function to fetch values.
   * @set:		Function to store values.
   * @active:		Function to report if regset is active, or %NULL.
-  * @writeback:		Function to write data back to user memory, or %NULL.
+@@ -190,6 +191,10 @@ typedef int user_regset_writeback_fn(struct task_struct *target,
+  *
+  * If nonzero, @core_note_type gives the n_type field (NT_* value)
+  * of the core file note in which this regset's data appears.
++ * @core_note_name specifies the note name.  The preferred way to
++ * specify these two fields is to use the @USER_REGSET_NOTE_TYPE()
++ * macro.
++ *
+  * NT_PRSTATUS is a special case in that the regset data starts at
+  * offsetof(struct elf_prstatus, pr_reg) into the note data; that is
+  * part of the per-machine ELF formats userland knows about.  In
+@@ -207,8 +212,13 @@ struct user_regset {
+ 	unsigned int 			align;
+ 	unsigned int 			bias;
+ 	unsigned int 			core_note_type;
++	const char			*core_note_name;
+ };
+ 
++#define USER_REGSET_NOTE_TYPE(type) \
++	.core_note_type			= (NT_ ## type), \
++	.core_note_name			= (NN_ ## type)
++
+ /**
+  * struct user_regset_view - available regsets
+  * @name:	Identifier, e.g. UTS_MACHINE string.
 -- 
 2.34.1
 
