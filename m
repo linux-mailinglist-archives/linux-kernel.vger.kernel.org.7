@@ -1,188 +1,234 @@
-Return-Path: <linux-kernel+bounces-711040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8B7AEF4FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:25:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDAFAEF590
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF651BC77A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:25:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DB9B7AC963
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9265427054C;
-	Tue,  1 Jul 2025 10:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p3c02I6n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B777426F44D;
-	Tue,  1 Jul 2025 10:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F78127057C;
+	Tue,  1 Jul 2025 10:50:37 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B0D25A33A;
+	Tue,  1 Jul 2025 10:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751365520; cv=none; b=SDy00I/6v5BECxr7Qt2BOpaLLLgOvWwCGcbttnwRFrUrNkqPt0jt/xpNHFZ9tg/IwJ2pUsMdyFpfzXQpdst9MMLwypfBpbVVKt1J2RB6Df/U42yyIJjj1VgJaxIBleN3CZDqaA5YbUrkG8qXPG5a/wrS9TQn++nCHophr6exJ4w=
+	t=1751367036; cv=none; b=CPBe5/uVt8zRCK4SYVCuzGj487Zri8fkCggW6lmm3X6g2t/3qfblywPpt1smg2/KQbBWyvjJabLYtQru3p9mqCsskpT4zGqKcB9Gf3d13qfISWwh4cWnUQL5ZDlrwgc8iryCuxIGvpQ8HiIoUy6znOfexJrKwqPP0nvthnS+zeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751365520; c=relaxed/simple;
-	bh=9RyQdyiAoOXQkmRKHGEM+UrK8rxs3ganX7Ohn3kLeeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q26EmS1oswNCisJP33+D3cHjJtDFGjafm6vpobbJV7fqkwbUudqY6qBCoehCMYdVSsTKJ5RymMInbIl6c72fqbuDT0Liaw0dBCjgC+1tboPZUiIZqfclLFuCLDtQYdiOcx4gBhwZfCcY/D+Dlay30FAsU4eQn/1AAVIU0clmq10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p3c02I6n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB2DEC4CEEB;
-	Tue,  1 Jul 2025 10:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751365519;
-	bh=9RyQdyiAoOXQkmRKHGEM+UrK8rxs3ganX7Ohn3kLeeI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p3c02I6nM7k6XvfI/FAHAITk7ZG0eSvIsAd8bV7L9WWG3QZMpcQzHpZbcLTujugVL
-	 WaNJWHECeb8JrbgVpXhBOILO5r2vMjogCUjGMwqwN987rD4E2e8t6S6Rbc5WzCGb1o
-	 QUnWkvJ3lLydpiiV/k8FKbo0cgNSMtUHbLX5qAVw=
-Date: Tue, 1 Jul 2025 12:25:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-	Youssef Samir <quic_yabdulra@quicinc.com>,
-	Matthew Leung <quic_mattleun@quicinc.com>,
-	Yan Zhen <yanzhen@vivo.com>,
-	Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Alex Elder <elder@kernel.org>, Kunwu Chan <chentao@kylinos.cn>,
-	Siddartha Mohanadoss <smohanad@codeaurora.org>,
-	Sujeev Dias <sdias@codeaurora.org>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	John Crispin <john@phrozen.org>,
-	Muna Sinada <quic_msinada@quicinc.com>,
-	Venkateswara Naralasetty <quic_vnaralas@quicinc.com>,
-	Maharaja Kennadyrajan <quic_mkenna@quicinc.com>,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH 1/3] bus: mhi: host: keep bhi buffer through suspend cycle
-Message-ID: <2025070143-hatchback-roundness-bec2@gregkh>
-References: <20250630074330.253867-1-usama.anjum@collabora.com>
- <20250630074330.253867-2-usama.anjum@collabora.com>
+	s=arc-20240116; t=1751367036; c=relaxed/simple;
+	bh=dC03Wr2epn0tjtzSfWllZBSz+buautvqb5O84U1mUYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZE4ariFBM4nQnEDOuXZtkLTop1Xdf6ats9ScbdsOuoQUFMqKCEHpHfCxgOsQyd8F7WXeyl9cK9sad+78JjNNVE8tPFRRj6RJQ+kF8KeoJpb2t0ltyAOwIQxJ6sTBapMVuJH0C1SPFGcFcWFHvmq+OzgsqLYc2otbi5PNFeGNaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bWfLR38KFz9v2F;
+	Tue,  1 Jul 2025 12:25:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id z68QA4lT7SRl; Tue,  1 Jul 2025 12:25:35 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bWfLR2Dvnz9sVS;
+	Tue,  1 Jul 2025 12:25:35 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 45D468B765;
+	Tue,  1 Jul 2025 12:25:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id CqjVOU_qZS7L; Tue,  1 Jul 2025 12:25:35 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C5E958B763;
+	Tue,  1 Jul 2025 12:25:32 +0200 (CEST)
+Message-ID: <0400f0be-6b63-4bc7-846e-8852e1d01485@csgroup.eu>
+Date: Tue, 1 Jul 2025 12:25:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630074330.253867-2-usama.anjum@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] kasan: unify kasan_arch_is_ready with
+ kasan_enabled
+To: Heiko Carstens <hca@linux.ibm.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
+ glider@google.com, dvyukov@google.com, vincenzo.frascino@arm.com,
+ linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org,
+ chenhuacai@kernel.org, kernel@xen0n.name, maddy@linux.ibm.com,
+ mpe@ellerman.id.au, npiggin@gmail.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, gor@linux.ibm.com,
+ agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+ richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+ hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com,
+ akpm@linux-foundation.org, nathan@kernel.org,
+ nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com,
+ arnd@arndb.de, rppt@kernel.org, geert@linux-m68k.org, mcgrof@kernel.org,
+ guoweikang.kernel@gmail.com, tiwei.btw@antgroup.com, kevin.brodsky@arm.com,
+ benjamin.berg@intel.com, kasan-dev@googlegroups.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-mm@kvack.org, llvm@lists.linux.dev
+References: <20250626153147.145312-1-snovitoll@gmail.com>
+ <CA+fCnZfAtKWx=+to=XQBREhou=Snb0Yms4D8GNGaxE+BQUYm4A@mail.gmail.com>
+ <CACzwLxgsVkn98VDPpmm7pKcbvu87UBwPgYJmLfKixu4-x+yjSA@mail.gmail.com>
+ <CA+fCnZcGyTECP15VMSPh+duLmxNe=ApHfOnbAY3NqtFHZvceZw@mail.gmail.com>
+ <20250701101537.10162Aa0-hca@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20250701101537.10162Aa0-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 30, 2025 at 12:43:28PM +0500, Muhammad Usama Anjum wrote:
-> When there is memory pressure, at resume time dma_alloc_coherent()
-> returns error which in turn fails the loading of firmware and hence
-> the driver crashes:
+
+
+Le 01/07/2025 à 12:15, Heiko Carstens a écrit :
+>>>> Another thing that needs careful consideration is whether it's
+>>>> possible to combine kasan_arch_is_ready() and kasan_enabled() into the
+>>>> same check logically at all. There's one issue mentioned in [1]:
+>>>
+>>> Hello,
+>>> I've removed kasan_arch_is_ready() at all in this series:
+>>> [PATCH v2 11/11] kasan: replace kasan_arch_is_ready with kasan_enabled
+>>>
+>>> Is it not what's expected by unification?
+>>
+>> I guess the issue description diverged a bit from what needs to be
+>> done, sorry about that.
+>>
+>> The core 2 things I wanted to address with the unification are:
+>>
+>> 1. Avoid spraying kasan_arch_is_ready() throughout the KASAN
+>> implementation and move these checks into include/linux/kasan.h (and
+>> add __wrappers when required).
+>>
+>> 2. Avoid architectures redefining the same kasan_enabled global
+>> variable/static key.
+>>
+>> Initially, I thought that s/kasan_arch_is_ready/kasan_enabled + simply
+>> moving the calls into affected include/linux/kasan.h functions would
+>> be enough. But then, based on [1], turns out it's not that simple.
+>>
+>> So now, I think we likely still need two separate checks/flags:
+>> kasan_enabled() that controls whether KASAN is enabled at all and
+>> kasan_arch_is_ready() that gets turned on by kasan_init() when shadow
+>> is initialized (should we rename it to kasan_shadow_initialized()?).
+>> But then we can still move kasan_arch_is_ready() into
+>> include/linux/kasan.h and use the proper combination of checks for
+>> each affected function before calling __wrappers. And we can still
+>> remove the duplicated flags/keys code from the arch code.
 > 
-> kernel: kworker/u33:5: page allocation failure: order:7,
-> mode:0xc04(GFP_NOIO|GFP_DMA32), nodemask=(null),cpuset=/,mems_allowed=0
-> kernel: CPU: 1 UID: 0 PID: 7693 Comm: kworker/u33:5 Not tainted
-> 6.11.11-valve17-1-neptune-611-g027868a0ac03 #1
-> 3843143b92e9da0fa2d3d5f21f51beaed15c7d59
-
-Please don't wrap kernel log lines.
-
-> kernel: Hardware name: Valve Galileo/Galileo, BIOS F7G0112 08/01/2024
-> kernel: Workqueue: mhi_hiprio_wq mhi_pm_st_worker [mhi]
-> kernel: Call Trace:
-> kernel:  <TASK>
-> kernel:  dump_stack_lvl+0x4e/0x70
-> kernel:  warn_alloc+0x164/0x190
-> kernel:  ? srso_return_thunk+0x5/0x5f
-> kernel:  ? __alloc_pages_direct_compact+0xaf/0x360
-> kernel:  __alloc_pages_slowpath.constprop.0+0xc75/0xd70
-> kernel:  __alloc_pages_noprof+0x321/0x350
-> kernel:  __dma_direct_alloc_pages.isra.0+0x14a/0x290
-> kernel:  dma_direct_alloc+0x70/0x270
-> kernel:  mhi_fw_load_handler+0x126/0x340 [mhi
-> a96cb91daba500cc77f86bad60c1f332dc3babdf]
-> kernel:  mhi_pm_st_worker+0x5e8/0xac0 [mhi
-> a96cb91daba500cc77f86bad60c1f332dc3babdf]
-
-Same here.
-
-> kernel:  ? srso_return_thunk+0x5/0x5f
-> kernel:  process_one_work+0x17e/0x330
-> kernel:  worker_thread+0x2ce/0x3f0
-> kernel:  ? __pfx_worker_thread+0x10/0x10
-> kernel:  kthread+0xd2/0x100
-> kernel:  ? __pfx_kthread+0x10/0x10
-> kernel:  ret_from_fork+0x34/0x50
-> kernel:  ? __pfx_kthread+0x10/0x10
-> kernel:  ret_from_fork_asm+0x1a/0x30
-> kernel:  </TASK>
-> kernel: Mem-Info:
-> kernel: active_anon:513809 inactive_anon:152 isolated_anon:0
->     active_file:359315 inactive_file:2487001 isolated_file:0
->     unevictable:637 dirty:19 writeback:0
->     slab_reclaimable:160391 slab_unreclaimable:39729
->     mapped:175836 shmem:51039 pagetables:4415
->     sec_pagetables:0 bounce:0
->     kernel_misc_reclaimable:0
->     free:125666 free_pcp:0 free_cma:0
+> FWIW, as Alexander Gordeev already mentioned: this series breaks s390,
+> since the static_branch_enable() call in kasan_init_generic() is now
+> called way too early, and it isn't necessary at all. Which, as far as
+> I understand, may be the case for other architectures as well. s390
+> sets up the required KASAN mappings in the decompressor and can start
+> with KASAN enabled nearly from the beginning.
 > 
-> In above example, if we sum all the consumed memory, it comes out
-> to be 15.5GB and free memory is ~ 500MB from a total of 16GB RAM.
-> Even though memory is present. But all of the dma memory has been
-> exhausted or fragmented.
-> 
-> Fix it by allocating it only once and then reuse the same allocated
-> memory. As we'll allocate this memory only once, this memory will stay
-> allocated.
-> 
-> Tested-on: WCN6855 WLAN.HSP.1.1-03926.13-QCAHSPSWPL_V2_SILICONZ_CE-2.52297.6
-> 
-> Fixes: cd457afb1667 ("bus: mhi: core: Add support for downloading firmware over BHIe")
+> So something like below on top of this series would address
+> that. Given that this series is about to be reworked this is just for
+> illustration :)
 
-No cc: stable?
+I had the same kind of comment on powerpc/32. Allthough this series work 
+on powerpc32 as is, it is overkill because it adds code and data for 
+static branches for no real benefit.
 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Reported here:
-> https://lore.kernel.org/all/ead32f5b-730a-4b81-b38f-93d822f990c6@collabora.com
+Your patch below is simpler than what I proposed, but it keeps the 
+static branches so the overhead remains.
+
+I also proposed a change, it goes further by removing the static branch 
+for architectures that don't need it, see 
+https://patchwork.ozlabs.org/project/linuxppc-dev/cover/20250626153147.145312-1-snovitoll@gmail.com/#3537388 
+. Feedback welcome.
+
+Christophe
+
 > 
-> Still a lot of more fixes are required. Hence, I'm not adding closes tag.
-> ---
->  drivers/bus/mhi/host/boot.c     | 19 ++++++++++---------
->  drivers/bus/mhi/host/init.c     |  5 +++++
->  drivers/bus/mhi/host/internal.h |  2 ++
->  include/linux/mhi.h             |  1 +
->  4 files changed, 18 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
-> index b3a85aa3c4768..11bb8c12ac597 100644
-> --- a/drivers/bus/mhi/host/boot.c
-> +++ b/drivers/bus/mhi/host/boot.c
-> @@ -302,8 +302,8 @@ static int mhi_fw_load_bhi(struct mhi_controller *mhi_cntrl,
->  	return -EIO;
->  }
->  
-> -static void mhi_free_bhi_buffer(struct mhi_controller *mhi_cntrl,
-> -				struct image_info *image_info)
-> +void mhi_free_bhi_buffer(struct mhi_controller *mhi_cntrl,
-> +			 struct image_info *image_info)
->  {
->  	struct mhi_buf *mhi_buf = image_info->mhi_buf;
->  
-> @@ -455,18 +455,19 @@ static enum mhi_fw_load_type mhi_fw_load_type_get(const struct mhi_controller *m
->  
->  static int mhi_load_image_bhi(struct mhi_controller *mhi_cntrl, const u8 *fw_data, size_t size)
->  {
-> -	struct image_info *image;
-> +	struct image_info *image = mhi_cntrl->bhi_image;
->  	int ret;
->  
-> -	ret = mhi_alloc_bhi_buffer(mhi_cntrl, &image, size);
-> -	if (ret)
-> -		return ret;
-> +	if (!image) {
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index 0c16dc443e2f..c2f51ac39a91 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -172,6 +172,7 @@ config S390
+>   	select HAVE_ARCH_JUMP_LABEL
+>   	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+>   	select HAVE_ARCH_KASAN
+> +	select HAVE_ARCH_KASAN_EARLY
+>   	select HAVE_ARCH_KASAN_VMALLOC
+>   	select HAVE_ARCH_KCSAN
+>   	select HAVE_ARCH_KMSAN
+> diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
+> index 2436eb45cfee..049270a2269f 100644
+> --- a/include/linux/kasan-enabled.h
+> +++ b/include/linux/kasan-enabled.h
+> @@ -10,7 +10,11 @@
+>    * Global runtime flag. Starts ‘false’; switched to ‘true’ by
+>    * the appropriate kasan_init_*() once KASAN is fully initialized.
+>    */
+> +#ifdef CONFIG_HAVE_ARCH_KASAN_EARLY
+> +DECLARE_STATIC_KEY_TRUE(kasan_flag_enabled);
+> +#else
+>   DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> +#endif
+>   
+>   static __always_inline bool kasan_enabled(void)
+>   {
+> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+> index f82889a830fa..1407374e83b9 100644
+> --- a/lib/Kconfig.kasan
+> +++ b/lib/Kconfig.kasan
+> @@ -4,6 +4,13 @@
+>   config HAVE_ARCH_KASAN
+>   	bool
+>   
+> +config HAVE_ARCH_KASAN_EARLY
+> +	bool
+> +	help
+> +	  Architectures should select this if KASAN mappings are setup in
+> +	  the decompressor and when the kernel can run very early with
+> +	  KASAN enabled.
+> +
+>   config HAVE_ARCH_KASAN_SW_TAGS
+>   	bool
+>   
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 0f3648335a6b..2aae0ce659b4 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -36,7 +36,11 @@
+>    * Definition of the unified static key declared in kasan-enabled.h.
+>    * This provides consistent runtime enable/disable across all KASAN modes.
+>    */
+> +#ifdef CONFIG_HAVE_ARCH_KASAN_EARLY
+> +DEFINE_STATIC_KEY_TRUE(kasan_flag_enabled);
+> +#else
+>   DEFINE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> +#endif
+>   EXPORT_SYMBOL(kasan_flag_enabled);
+>   
+>   struct slab *kasan_addr_to_slab(const void *addr)
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index a3b112868be7..455376d5f1c3 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -42,7 +42,8 @@
+>    */
+>   void __init kasan_init_generic(void)
+>   {
+> -	static_branch_enable(&kasan_flag_enabled);
+> +	if (!IS_ENABLED(CONFIG_HAVE_ARCH_KASAN_EARLY))
+> +		static_branch_enable(&kasan_flag_enabled);
+>   
+>   	pr_info("KernelAddressSanitizer initialized (generic)\n");
+>   }
 
-What prevents image from going away right after you tested it?
-
-thanks,
-
-greg k-h
 
