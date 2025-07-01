@@ -1,205 +1,107 @@
-Return-Path: <linux-kernel+bounces-711386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395F6AEFA0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21069AEFA11
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A175161457
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98203178501
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7489B2749FA;
-	Tue,  1 Jul 2025 13:17:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02770274FF2;
+	Tue,  1 Jul 2025 13:18:10 +0000 (UTC)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3490926FA52;
-	Tue,  1 Jul 2025 13:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE42274B2D;
+	Tue,  1 Jul 2025 13:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751375875; cv=none; b=sMUek0JSefw4Fe9PyeXoB1vSB1NkykePv7Pt+F53WV62pbCnuwmSDnGzeaLFPyymM74I6r4l///uyKkvHcLrz5x3EFgYG3A1qn6gDf3RaQdyz6nlFc6hGVXprvg5LzBJc9nCy79xFbU6prNbxebvMQG0UyKxz0piMyqbW/s9B7I=
+	t=1751375889; cv=none; b=bBsfsTlJQdix2Fc4Y1IG+dxUbKMGgbTSRSJ3JeZFFblcic8hvLCpiDbzg431iejyX7zAVcUp7oDLFtcZmYAjBljfeR66b+hpptdJRvvUWWdUm0js2jjYXXHcNI8TnlJ2OqEZU8Frf4DuLazVwXusunutkWs/W411b5U0ZjX1S7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751375875; c=relaxed/simple;
-	bh=r/NN+uPVPVDTHVFIhfUSaYzHUAeqofpBGcQ+MIV4XdM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FEN3b+k4y4RBn2MxF+RFFf6z0kIIlzEtqYiqP62p0xrCGWBwx39Yfjnke9kQBXnRrQvSvS/rQORVilXaBQEFPQZ3oIzm8oqJnlf26WnexOtv+jD8l4DlKTonKJ+GfvaOcMeFp2+vF3ZCWWRC/AH8SgWRkSxrUNDqMikgZjXf80w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bWk5v1p8Bz6L57K;
-	Tue,  1 Jul 2025 21:14:59 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A81EA14038F;
-	Tue,  1 Jul 2025 21:17:49 +0800 (CST)
-Received: from localhost (10.122.19.247) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 1 Jul
- 2025 15:17:49 +0200
-Date: Tue, 1 Jul 2025 14:17:47 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-CC: <linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] cxl: docs/driver-api/conventions resolve conflicts
- btw CFMWS, LMH, ED
-Message-ID: <20250701141747.00003bf7@huawei.com>
-In-Reply-To: <20250623152923.1048525-1-fabio.m.de.francesco@linux.intel.com>
-References: <20250623152923.1048525-1-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1751375889; c=relaxed/simple;
+	bh=ZKJmDxhwcCDftDqFYOYOD4sObA2fTSRqSgyPSrqa2mY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T57vqUJle8mzvLzcTrlUx4B3IcP+9LjWzRvI5dxh0bPdEaWjj5O0DQ9GPz30zyNOR0LcrYMWsleItN4C54B9HQmXP0X685xIjClden9gwcKK7QkGnCWI8L2kTFnetXfZGsq9vPbLlx1sR+FUPfTHX7SLoYMtfGbyxBch24oVV/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6facf4d8ea8so32457886d6.0;
+        Tue, 01 Jul 2025 06:18:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751375886; x=1751980686;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=th9/0jwZYMrw057NN5f2uI8dWtTi2No3OuROf/qziKc=;
+        b=BmnsRhaE6UWlAy1Sxt0mtxi5EsdOB5hsTkE04syC55TZ3kmW99bQ31a6/J0HA4M161
+         gIcyX0qdI6dsyjsf8Hm0jW0pDXRDN6cz2qZU/akVT1PybzRyLZI0hR+at0m+draQXKkg
+         EsPvjMyiEzOPlUKSR40ZfGwr4qXYGhUaKE5/HLR4igDIkKeQtI494vOxST0RgsZ4mm4r
+         r5hdRS4Qu0RwYG3nGIPlNuNcECaVPDti8S1tyOysHtD+YpZoyXxyVDErhSFwfYB3pzFW
+         1ZZhuI9UNw11wedxMQlQBlrt80VLQeXjoRVYBicSG/D1mERuBaFs0FCv3X4bkgy4rFFv
+         yNVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkBpTwTJQ9OGcnin/rD42J0Pk7z/+rqsH4QzdNf0KwzHTRm1oN86kkbDfu9M6yPGxM0QsTuyWIPwE=@vger.kernel.org, AJvYcCVjefYivd63rIq3zkYgkH4wvSWvaX3qsVEeEgSc52cAjNdTpYj7ToYwkPKJuolo4BXr6NE9UP0EZA2dN6H/EjxMbdg=@vger.kernel.org, AJvYcCWKR1y4ZvlFxrsXPSVfJvjZXrTdZaDVrnWH4Ibdw3ZBILbD/QC/crUWmTM8WxDJqR5MpwqGnR8Ws/Wht4Y+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXNW7fULnA1FL4CAnrPpItRiXTXDWLwPuOoKQng+QmRBQXhahr
+	ndaG7zqZLULzFIHJg40ATnSN67ehyyywilZ/RZOS555cf9hSsKiQVXoV2bQqAesy
+X-Gm-Gg: ASbGncu75YxXO9a5DSlbgmjw7BRjk4KDveRi0DaOGDsoFgfxW5yPHG+1T3xBoexPqMt
+	liKKXjLKFqbP3imSMG+ChjC3rb+9CmzkDr5LfXnw+tzibSJylu3KTdiclw9XkRiFdxy2r0VCpXM
+	DTSB/0WUSgb18GSzZtMNx6LiNUsRko2t4HQKRit/3IaozXTOdBuJTtngJ6NsTJX9ho2hPgRaEHW
+	8x02sJyrwF03LWXpZ6M07/hSXvd7ue+sZXnyqornpfp0HHMXKoFfJmbsf0KgCLnhRFWZPaNXnIC
+	a6fgsBuJDN8weL3Lv1JGBaF+wumwA17bhgBNPUpVZXC2dYIuVspgsgJnpMyIPLnc+/pfh7NMlaH
+	WphkA+J03TMofSIDwGeh99hEAkmFw
+X-Google-Smtp-Source: AGHT+IFwN1zowSLe6/NBTO/VResHsgfpxzF7LEiO1ftrH1FyboINETbW/zIhTu0OyFcaqDddkulyaw==
+X-Received: by 2002:a05:6214:1c47:b0:6e8:fe16:4d44 with SMTP id 6a1803df08f44-700134a81d5mr327323726d6.31.1751375885791;
+        Tue, 01 Jul 2025 06:18:05 -0700 (PDT)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd772e3f38sm83965296d6.61.2025.07.01.06.18.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 06:18:05 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d20f799fe9so620906985a.2;
+        Tue, 01 Jul 2025 06:18:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGNPtTWRcdwNb/PyTy1lsIxLbW2zbLdCCloyOE4IUoAH2XIKptYiHFnDkuiF2z/vkmF1wXCZI9Dl/A5lL9@vger.kernel.org, AJvYcCV7WkdUpQTM85Pn6DdPFHM8L86UkkxI5BgLasyduMFFzmirONkL0cM9wDMj2a6424AhXeWzXWCjOEd1XqP9evU0Za0=@vger.kernel.org, AJvYcCWTRZIZpqOgQTJr/AvyFhilXU0FqyoPVmVqRLtoDNX6mymAafQsgIaIl8VZEab/Py4lDKefU86qg2A=@vger.kernel.org
+X-Received: by 2002:a05:620a:1981:b0:7ce:c600:b5e1 with SMTP id
+ af79cd13be357-7d44390835bmr2182726785a.11.1751375885315; Tue, 01 Jul 2025
+ 06:18:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250624192304.338979-1-fabrizio.castro.jz@renesas.com> <20250624192304.338979-2-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250624192304.338979-2-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 1 Jul 2025 15:17:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXBF7vk-fD_i08zK=dOpLYtjksfrJSb=O5f6L8n7AW3ig@mail.gmail.com>
+X-Gm-Features: Ac12FXxXZbwd-rbzXSNPcKUzpn-mJWIeXqG7Bi1dq_cTjKDX6ZGMp3WIieEnOXY
+Message-ID: <CAMuHMdXBF7vk-fD_i08zK=dOpLYtjksfrJSb=O5f6L8n7AW3ig@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: r9a09g057: Add entries for the RSPIs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 23 Jun 2025 17:29:02 +0200
-"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
+On Tue, 24 Jun 2025 at 21:23, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> Add clock and reset entries for the Renesas RZ/V2H(P) RSPI IPs.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-> Add documentation on how to resolve conflicts between CXL Fixed Memory
-> Windows, Platform Memory Holes, and Endpoint Decoders.
->=20
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.co=
-m>
-> ---
->=20
-> v2 -> v3: Rework a few phrases for better clarity.
-> 	  Fix grammar and syntactic errors (Randy, Alok).
-> 	  Fix semantic errors ("size does not comply", Alok).
-> 	  Fix technical errors ("decoder's total memory?", Alok).
-> 	 =20
-> v1 -> v2: Rewrite "Summary of the Change" section, 3r paragraph.
->=20
->  Documentation/driver-api/cxl/conventions.rst | 85 ++++++++++++++++++++
->  1 file changed, 85 insertions(+)
->=20
-> diff --git a/Documentation/driver-api/cxl/conventions.rst b/Documentation=
-/driver-api/cxl/conventions.rst
-> index da347a81a237..d6c8f4cf2f5b 100644
-> --- a/Documentation/driver-api/cxl/conventions.rst
-> +++ b/Documentation/driver-api/cxl/conventions.rst
-> @@ -45,3 +45,88 @@ Detailed Description of the Change
->  ----------------------------------
-> =20
->  <Propose spec language that corrects the conflict.>
-> +
-> +
-> +Resolve conflict between CFMWS, Platform Memory Holes, and Endpoint Deco=
-ders
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +
-> +Document
-> +--------
-> +
-> +CXL Revision 3.2, Version 1.0
-> +
-> +License
-> +-------
-> +
-> +SPDX-License Identifier: CC-BY-4.0
-> +
-> +Creator/Contributors
-> +--------------------
-> +
-> +Fabio M. De Francesco, Intel
-> +Dan J. Williams, Intel
-> +Mahesh Natu, Intel
-> +
-> +Summary of the Change
-> +---------------------
-> +
-> +According to the current CXL Specifications (Revision 3.2, Version 1.0)
-> +the CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
-> +Physical Address (HPA) windows that are associated with each CXL Host
-> +Bridge. Each window represents a contiguous HPA range that may be
-> +interleaved across one or more targets, some of which are CXL Host Bridg=
-es.
-> +Associated with each window is a set of restrictions that govern its usa=
-ge.
-> +It is the OSPM=E2=80=99s responsibility to utilize each window for the s=
-pecified
-> +use.
-> +
-> +Table 9-22 states the Window Size field contains the total number of
-> +consecutive bytes of HPA this window represents and this value shall be a
-> +multiple of Number of Interleave Ways * 256 MB.
-> +
-> +Platform Firmware (BIOS) might reserve part of physical addresses below
-> +4 GB (e.g., the Low Memory Hole that describes PCIe memory space for MMIO
-> +or a requirement for the greater than 8 way interleave CXL regions start=
-ing
-> +at address 0). In that case the Window Size value cannot be anymore
-> +constrained to the NIW * 256 MB above-mentioned rule.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
 
-I'm not following argument for large interleave at address 0 being a problem
-(if we ignore the low memory hole and similar as a separate issue).  Even
-if it is the interaction with the low memory hole, is 12 way interleave
-of 256MiB devices a problem?  Fills up to 3GiB.
+Gr{oetje,eeting}s,
 
+                        Geert
 
-> +
-> +On those systems, BIOS publishes CFMWS which communicate the active Syst=
-em
-> +Physical Address (SPA) ranges that map to a subset of the Host Physical
-> +Address (HPA) ranges. The SPA range trims out the hole, and capacity in =
-the
-> +endpoint is lost with no SPA to map to CXL HPA in that hole.
-> +
-> +The description of the Window Size field in table 9-22 needs to take that
-> +special case into account.
-> +
-> +Note that the Endpoint Decoders HPA range sizes have to comply with the
-> +alignment constraints and so a part of their memory capacity might not be
-> +accessible if their size exceeds the matching CFMWS range's.
-> +
-> +Benefits of the Change
-> +----------------------
-> +
-> +Without this change, the OSPM wouldn't match Endpoint Decoders with CFMWS
-> +whose Window Size don't fit the alignment constraints and so the memdev
-> +capacity would be lost. This change allows the OSPM to match Endpoint
-> +Decoders whose HPA range size exceeds the matching CFMWS and create
-> +regions that at least utilize a part of the memory devices total capacit=
-y.
-> +
-> +References
-> +----------
-> +
-> +Compute Express Link Specification Revision 3.2, Version 1.0
-> +<https://www.computeexpresslink.org/>
-> +
-> +Detailed Description of the Change
-> +----------------------------------
-> +
-> +The current description of a CFMWS Window Size (Table 9-22) is replaced
-> +with:
-> +
-> +"The total number of consecutive bytes of HPA this window represents. Th=
-is
-> +value shall be a multiple of NIW*256 MB. On platforms that reserve physi=
-cal
-> +addresses below 4 GB for special use (e.g., the Low Memory Hole for PCIe
-> +MMIO on x86), an instance of CFMWS whose Base HPA is 0 might have a wind=
-ow
-> +size that doesn't align with the NIW*256 MB constraint; note that the
-> +matching Endpoint Decoders HPA range size must still align to the
-> +above-mentioned rule and so the memory capacity that might exceed the CF=
-MWS
-> +window size will not be accessible.".
->=20
-> base-commit: a021802c18c4c30dff3db9bd355cacb68521f1aa
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
