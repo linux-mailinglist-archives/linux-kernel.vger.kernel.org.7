@@ -1,103 +1,136 @@
-Return-Path: <linux-kernel+bounces-711608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A187AEFD36
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:54:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADC5AEFD6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE544E178D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55143B88EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3663277CA4;
-	Tue,  1 Jul 2025 14:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM+J/P2o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3772726FDAC;
-	Tue,  1 Jul 2025 14:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6354B281532;
+	Tue,  1 Jul 2025 14:54:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6B82797AF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751381628; cv=none; b=o5Xm7QNovY3HkfrvL9u/Q4yA7ZtbYX7OwesVrShs09mae+04zocjRPVl4doWxQW3xP7r6ADxJpTahnpjB3w4M1/ja/eln+5xtW09zZAveX6A2DzGuqfci78p+MWJHJyfmFkExYRlmmsTlDJMu2UqcykGWXdE99KmfTV7yzPnHW4=
+	t=1751381686; cv=none; b=cbhfu2ebeACKcbtY/sObSxNCu/d261DIV4V8WXEIKx6gB/2YdZ5urzsCZAnwc9XywPCrKdnb1U8lZYhnkPzsCI35tnDKUZIVALl55yIYeTr9y0tV6lMJcAy8L2vW5T1VzdVDQ9llV9bfDxmU4UA3IkBQg2M/Z7jaQmPJaMhiRTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751381628; c=relaxed/simple;
-	bh=8+Wv0OlytKZIaT42+LGdm7t+KCuQk6vUKLUTvIlXl9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tkxn4xg15u5izrcZCvC/3YGs51aWi3ONtR6qURNw/RO36E97I9gr9wdnu9YZWL49aNUl2Gj39w63HCDW5MQ2YHmdq+iXSc32r2p70jPmnuw599G3sIi7+GRvtNwRGUPjMhFoqDnRR/zAriNFXMUIextqqgxcCXt70UlO+Fv92YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM+J/P2o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9637BC4CEEB;
-	Tue,  1 Jul 2025 14:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751381627;
-	bh=8+Wv0OlytKZIaT42+LGdm7t+KCuQk6vUKLUTvIlXl9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pM+J/P2obW+0ZPc8hQTckt/NwIfT9aKfSAWixJVSseNuAycRxhqRmIw03BTm8Fa+l
-	 uiu/DrXT3x5xeRSLvzx2z/1fKcWBS1CG1YLyE4SiFonAvgSwM9TtIPl9x2R1kk1Vxr
-	 6Jc0coJEQtWzNCqk9bIcJxjpPSpz1cjS1VLnvahUjPM4hAMy2iQixNAfjTFRDJkMxp
-	 ZNB5PQi30aDp6hIlOT9KG6ZuXZ0yRPTZKrTaxf5YYSIsQxIDETVsx7xOgiFD/h5Tg2
-	 OVlNEysBlIIonXWXuGNKr8Cq4eD08+1Teo/WI4qmS+pFLcPd4zWtNynsMSsmGrhnBZ
-	 uMr55K83KzXWw==
-Date: Tue, 1 Jul 2025 07:53:47 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Carlos Maiolino <cem@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH 0/6] xfs: cleanup key comparing routines
-Message-ID: <20250701145347.GC10009@frogsfrogsfrogs>
-References: <20250612102455.63024-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1751381686; c=relaxed/simple;
+	bh=9L1EiYgvY38bCT1qDmDUnheuGD4I8DQDte2Ndag5pCw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=M+O6PiNZv6f4PxGEfq/wLSgjWUjlPBEyNh/G4YR20xCD+Rurtf2qTPGXCLSfavc3Ui3/RmrLpG2fI4mwJ+EDKwNCHQOytECvW+QI7xW58xHT+ayZ8UJTqjoiUR0hX9DLJuYsKv0blsN5ef2SB2ltJcmZTRvLrRU0vyvpuua1PQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 908B112FC;
+	Tue,  1 Jul 2025 07:54:28 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5ADB3F66E;
+	Tue,  1 Jul 2025 07:54:41 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Date: Tue, 01 Jul 2025 15:53:48 +0100
+Subject: [PATCH v2 23/28] coresight: Control path during CPU idle
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612102455.63024-1-pchelkin@ispras.ru>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250701-arm_cs_pm_fix_v3-v2-23-23ebb864fcc1@arm.com>
+References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
+In-Reply-To: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Levi Yun <yeoreum.yun@arm.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>, 
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751381627; l=2166;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=9L1EiYgvY38bCT1qDmDUnheuGD4I8DQDte2Ndag5pCw=;
+ b=Fgy6ikEzF+BfBZfN+rwxGhriIHc/dM/seJY8qlKEnJjto30WIMD8LgrB4oby5liMO/lgMuODb
+ rkY14JfnHEvA8R8apdo5v6gES1n7DL1ub3DoJXb9Pwxxp7DtihUQBBY
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-On Thu, Jun 12, 2025 at 01:24:44PM +0300, Fedor Pchelkin wrote:
-> Key comparing routines are currently opencoded with extra casts and
-> subtractions which is error prone and can be replaced with a neat
-> cmp_int() helper which is now in a generic header file.
-> 
-> Started from:
-> https://lore.kernel.org/linux-xfs/20250426134232.128864-1-pchelkin@ispras.ru/T/#u
-> 
-> Thanks Darrick for suggestion!
+Control links and helpers on an activated path during CPU idle. Since
+coresight_disable_path_from() does not handle a source device's
+helpers, explicitly disable them alongside the source device.
 
-For patches 1-5,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ drivers/hwtracing/coresight/coresight-core.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
---D
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index b1c122d1c4164e3ca6f1aaad0bd24917032626be..7693a0eade1a8de6d0960d66f6de682b5d5aff17 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -458,8 +458,15 @@ static bool coresight_need_save_restore_source(struct coresight_device *csdev)
+ 
+ static int coresight_save_source(struct coresight_device *csdev)
+ {
+-	if (csdev && source_ops(csdev)->save)
+-		return source_ops(csdev)->save(csdev);
++	int ret;
++
++	if (csdev && source_ops(csdev)->save) {
++		ret = source_ops(csdev)->save(csdev);
++		if (ret)
++			return ret;
++
++		coresight_disable_helpers(csdev, NULL);
++	}
+ 
+ 	/* Return success if callback is not supported */
+ 	return 0;
+@@ -1662,17 +1669,33 @@ static int coresight_cpu_pm_notify(struct notifier_block *nb, unsigned long cmd,
+ {
+ 	unsigned int cpu = smp_processor_id();
+ 	struct coresight_device *source = per_cpu(csdev_source, cpu);
++	struct coresight_path *path;
+ 
+ 	if (!coresight_need_save_restore_source(source))
+ 		return NOTIFY_OK;
+ 
++	/*
++	 * When run at here, the source device mode is enabled.
++	 * The activated path pointer must not be NULL.
++	 */
++	path = per_cpu(csdev_cpu_path, source->cpu);
++	if (WARN_ON(!path))
++		return NOTIFY_BAD;
++
+ 	switch (cmd) {
+ 	case CPU_PM_ENTER:
+ 		if (coresight_save_source(source))
+ 			return NOTIFY_BAD;
++
++		coresight_disable_path_from(path, NULL, true);
+ 		break;
+ 	case CPU_PM_EXIT:
+ 	case CPU_PM_ENTER_FAILED:
++		if (_coresight_enable_path(path,
++					   coresight_get_mode(source),
++					   NULL, true))
++			return NOTIFY_BAD;
++
+ 		coresight_restore_source(source);
+ 		break;
+ 	default:
 
-> 
-> Fedor Pchelkin (6):
->   xfs: rename diff_two_keys routines
->   xfs: rename key_diff routines
->   xfs: refactor cmp_two_keys routines to take advantage of cmp_int()
->   xfs: refactor cmp_key_with_cur routines to take advantage of cmp_int()
->   xfs: use a proper variable name and type for storing a comparison
->     result
->   xfs: refactor xfs_btree_diff_two_ptrs() to take advantage of cmp_int()
-> 
->  fs/xfs/libxfs/xfs_alloc_btree.c      | 52 +++++++++------------
->  fs/xfs/libxfs/xfs_bmap_btree.c       | 32 +++++--------
->  fs/xfs/libxfs/xfs_btree.c            | 31 ++++++-------
->  fs/xfs/libxfs/xfs_btree.h            | 41 +++++++++--------
->  fs/xfs/libxfs/xfs_ialloc_btree.c     | 24 +++++-----
->  fs/xfs/libxfs/xfs_refcount_btree.c   | 18 ++++----
->  fs/xfs/libxfs/xfs_rmap_btree.c       | 67 ++++++++++------------------
->  fs/xfs/libxfs/xfs_rtrefcount_btree.c | 18 ++++----
->  fs/xfs/libxfs/xfs_rtrmap_btree.c     | 67 ++++++++++------------------
->  fs/xfs/scrub/rcbag_btree.c           | 38 +++++-----------
->  10 files changed, 156 insertions(+), 232 deletions(-)
-> 
-> -- 
-> 2.49.0
-> 
-> 
+-- 
+2.34.1
+
 
