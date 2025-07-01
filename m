@@ -1,163 +1,131 @@
-Return-Path: <linux-kernel+bounces-710896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78003AEF2CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D3AAEF2D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3956B1BC5815
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:11:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1BDD1BC57A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FBD26B774;
-	Tue,  1 Jul 2025 09:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F00F26D4E5;
+	Tue,  1 Jul 2025 09:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XiY0mipX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jWnipLBO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1BD72602;
-	Tue,  1 Jul 2025 09:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507071D07BA
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751361075; cv=none; b=md7p226jv0qo5dI7jpMaMO0rNxr9IjzyO+dCcb66r0MQIGAut5z3/PpEYeoeCvlQRhfFgJK29tC/94woi1jgjeodGZLBoWCJA0gSrevKH15M5z0GHP6xsnTxR9cMd6cPu17y9WBvnJG4q9OxNgGrWzayquwG39hldRpjyb4y8Hk=
+	t=1751361113; cv=none; b=E2plWOmIcfnUrxHtGdqmnsa5XbCCX0/fI/nWV8jZrysRD4nV3+NmOIcSM4txM/KiBy510cq4JbrIlQz+gHiIQvmHXkTZQUOFclxYBtlSGnwYmrCW+bF/gC8ZMJMIPcdSEypQpvFIsNIZwF5xD6xKktdwgvDdXuGF9Dv/GrBaOyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751361075; c=relaxed/simple;
-	bh=rAIL7P5+qgQNxK6HoIqMiX8Nk+ttOzK/4HLG7PIlpec=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L7dJfE6PAyNTo8iOR4ccEF5nHRDqmgyxC5s7OzJFqj15hsB2mzoAjhuHJSbtGYUJADEfCbOmcLPzV9QM4n+VR4R4GnCT61BxYVTeO6YRO/5ttocY81SzGV17X4VS0bOXTA/uALO56VAQ6R1hlFhNfZlp3VkGc9KrHNcYdAZa5eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XiY0mipX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751361070;
-	bh=rAIL7P5+qgQNxK6HoIqMiX8Nk+ttOzK/4HLG7PIlpec=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XiY0mipXyPR5TGdzWUzCkYtMFOFA9XsLStZoUjZL6EMse9DdrVrca8Mrd7cE0DmW8
-	 wmR0+Lb8y590XdxthIJQGP75zQY79S1hOMPK8tUOEmBEH2hnvgXBjDMZD14edIiTGP
-	 MixfqPrVmDwiu62qP91NCqC2GKBMj8gjtY38Ky1Rgb1x9zKnk592Cx3gbT+g2SKBs9
-	 iWx5Qiy9TfHTeP9t5sZU6TUn6f9s6/piHke1BNvMh5C4b6BmTSyHztDWtqU6wVvR1X
-	 9wMY6c4jgyuZ9k0Lv6K3X0kk6aF8564rKmR1kEX7ev11LcKdz924p51PF/JVuv8LsB
-	 kcYT9taBGpgVg==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:16f1:973:959b:9b0c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7DAC417E0342;
-	Tue,  1 Jul 2025 11:11:09 +0200 (CEST)
-Date: Tue, 1 Jul 2025 11:11:03 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Daniel Stone <daniels@collabora.com>, Rob
- Herring <robh@kernel.org>, Alice Ryhl <alice.ryhl@google.com>, Beata
- Michalska <beata.michalska@arm.com>, Carsten Haitzler
- <carsten.haitzler@foss.arm.com>, Ashley Smith <ashley.smith@collabora.com>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH] Introduce Tyr
-Message-ID: <20250701111103.728ef3d7@fedora>
-In-Reply-To: <e64c20ae-5aaf-44cf-a463-c7eb1134daee@kernel.org>
-References: <20250627-tyr-v1-1-cb5f4c6ced46@collabora.com>
-	<aF8lYpK_l2I-ts1k@pollux>
-	<20250630180631.5e8066cd@fedora>
-	<e64c20ae-5aaf-44cf-a463-c7eb1134daee@kernel.org>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1751361113; c=relaxed/simple;
+	bh=ql5tyJqNB6nfkdC7XaszFpWVQHpSsM1UUL3yjnkQif4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOlRi8Z3Ke5BIZuRshrMCCFk29aDBLaIEUm9i1gl/3JgtKU80u+t+PkkkIECmh5OHjnEvApUJFo/3A0va075oxK3dCow6YU+8pcdYE6rtJSAqBY9og9KE9mvRe3fXPc8nqJ54rPqcr14kmFigFHLKiOnCN2gQPRPTvAxNPLdVao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jWnipLBO; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751361112; x=1782897112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ql5tyJqNB6nfkdC7XaszFpWVQHpSsM1UUL3yjnkQif4=;
+  b=jWnipLBObx9huNLDy0KT5FPgSERedyc+WmFwgkfsvA3syNj6fa27UmT+
+   ykdw3Gs1l6UY72UTUbC7CP0HZSGc5n6WUGXW30ZlwcQ/3NSxhnZFIY1D9
+   Z63OPmu7tiTefQUD30sy9+E3jEAHztKZ8jqbHlR3puYcuEUa1aFw0DpRY
+   bkji7Yiyf9GPNsPuG7L6UeuTQeqGuFu04U9bDc7i7Ppyqyxd5Nost1n5b
+   AdDS+FZYcYSjbk3qE6/ep1YawWvwJA8u9puTayh61NuY+nAq5tLK9eYjT
+   pq5cVKYqBw7Tpc8EWxDkorc9QQwQPHdUtyaYgcibd/hSs91LPgIDiehQe
+   A==;
+X-CSE-ConnectionGUID: L5k+tvvDRCWAkNnIqCRRSw==
+X-CSE-MsgGUID: sJJnX9YHTp+vwvM0Ygb8vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11480"; a="64670881"
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="64670881"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 02:11:49 -0700
+X-CSE-ConnectionGUID: U4ronh2YTXu2QS7XOxfy+Q==
+X-CSE-MsgGUID: KOcH3pjeSXekrzqqtcKi7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
+   d="scan'208";a="157992814"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 01 Jul 2025 02:11:47 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 35DB515D; Tue, 01 Jul 2025 12:11:45 +0300 (EEST)
+Date: Tue, 1 Jul 2025 12:11:45 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: dave.hansen@intel.com, peterz@infradead.org, tglx@linutronix.de, 
+	bp@alien8.de, mingo@redhat.com, hpa@zytor.com, rick.p.edgecombe@intel.com, 
+	pbonzini@redhat.com, seanjc@google.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/virt/tdx: Further fix tdh_vp_enter() calls
+ instrumentable code warning
+Message-ID: <gtaaadq6asaxiop2f6cph2dffarruw2lq5yolltiy5snqwc5fr@pofskdkfamqh>
+References: <20250630232742.8991-1-kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630232742.8991-1-kai.huang@intel.com>
 
-On Mon, 30 Jun 2025 18:12:02 +0200
-Danilo Krummrich <dakr@kernel.org> wrote:
-
-> On 6/30/25 6:06 PM, Boris Brezillon wrote:
-> > On Sat, 28 Jun 2025 01:12:34 +0200
-> > Danilo Krummrich <dakr@kernel.org> wrote:
-> >   
-> >>> +    pub(crate) fn log(&self, pdev: &platform::Device) {
-> >>> +        let major = (self.gpu_id >> 16) & 0xff;
-> >>> +        let minor = (self.gpu_id >> 8) & 0xff;
-> >>> +        let status = self.gpu_id & 0xff;
-> >>> +
-> >>> +        let model_name = if let Some(model) = GPU_MODELS
-> >>> +            .iter()
-> >>> +            .find(|&f| f.major == major && f.minor == minor)
-> >>> +        {
-> >>> +            model.name
-> >>> +        } else {
-> >>> +            "unknown"
-> >>> +        };
-> >>> +
-> >>> +        dev_info!(
-> >>> +            pdev.as_ref(),
-> >>> +            "mali-{} id 0x{:x} major 0x{:x} minor 0x{:x} status 0x{:x}",
-> >>> +            model_name,
-> >>> +            self.gpu_id >> 16,
-> >>> +            major,
-> >>> +            minor,
-> >>> +            status
-> >>> +        );
-> >>> +
-> >>> +        dev_info!(
-> >>> +            pdev.as_ref(),
-> >>> +            "Features: L2:{:#x} Tiler:{:#x} Mem:{:#x} MMU:{:#x} AS:{:#x}",
-> >>> +            self.l2_features,
-> >>> +            self.tiler_features,
-> >>> +            self.mem_features,
-> >>> +            self.mmu_features,
-> >>> +            self.as_present
-> >>> +        );
-> >>> +
-> >>> +        dev_info!(
-> >>> +            pdev.as_ref(),
-> >>> +            "shader_present=0x{:016x} l2_present=0x{:016x} tiler_present=0x{:016x}",
-> >>> +            self.shader_present,
-> >>> +            self.l2_present,
-> >>> +            self.tiler_present
-> >>> +        );
-> >>> +
-> >>> +        dev_info!(
-> >>> +            pdev.as_ref(),
-> >>> +            "PA bits: {}, VA bits: {}",
-> >>> +            self.pa_bits(),
-> >>> +            self.va_bits()
-> >>> +        );
-> >>> +    }  
-> >>
-> >> This is called from probe() and seems way too verbose for dev_info!(), please
-> >> use dev_dbg!() instead.  
-> > 
-> > We do have the same level of verbosity in Panthor, and it's proven
-> > useful when people are filling bug reports. Asking them to reload
-> > the module with debug prints enabled is kinda annoying, and I don't
-> > think I've heard anyone complaining that this was too verbose or slowing
-> > down the boot, so I'd be tempted to keep it like that, and least for
-> > the information printed in this function.  
+On Tue, Jul 01, 2025 at 11:27:42AM +1200, Kai Huang wrote:
+> tdh_vp_enter() needs to be marked noinstr, which means it can't call any
+> non-inlined noinstr functions.  Commit e9f17038d814 ("x86/tdx: mark
+> tdh_vp_enter() as __flatten") tried to address a build warning caused by
+> tdx_tdvpr_pa() not getting inlined.  Unfortunately that commit didn't
+> fix the warning completely due to the inconsistent behavior of the
+> __flatten annotation.
 > 
-> Yeah, I think for the GPU revision bits that's reasonable, but do you really
-> also need the other prints to be dev_info()? Don't you know this information
-> from the combination of the GPU revision bits and the kernel version?
+> There are two problems that can come up depending on the compiler and
+> config.  One is that tdx_tdvpr_pa() doesn't get inlined, the other is
+> that page_to_phys() doesn't get inlined.
+> 
+> The __flatten annotation makes the compiler inline all function calls
+> that the annotated function makes, and the aforementioned commit assumed
+> this is always honored, recursively.  But it turns out it's not always
+> true:
+> 
+>  - Gcc may ignore __flatten when CONFIG_CC_OPTIMIZE_FOR_SIZE=y.
+>  - Clang doesn't support recursive inlining for __flatten, which can
+>    trigger another similar warning when page_to_phys() calls pfn_valid()
+>    when CONFIG_DEBUG_VIRTUAL=y.
+> 
+> Therefore using __flatten is not the right fix.
+> 
+> To fix the first problem, remove the __flatten for tdh_vp_enter() and
+> instead annotate tdx_tdvpr_pa() with __always_inline to make sure it is
+> always inlined.
+> 
+> To fix the second problem, change tdx_tdvpr_pa() to use
+> PFN_PHYS(page_to_pfn()) instead of page_to_phys() so that there will be
+> no more function call inside tdx_tdvpr_pa()[*].
+> 
+> The TDVPR page is always an actual page out of page allocator, so the
+> additional warning around pfn_valid() check in page_to_phys() doesn't
+> help a lot anyway.  It's not worth complicating the code for such
+> warning when CONFIG_DEBUG_VIRTUAL=y.
+> 
+> [*] Since commit cba5d9b3e99d ("x86/mm/64: Make SPARSEMEM_VMEMMAP the
+>     only memory model") page_to_pfn() has been a simple macro without
+>     any function call.
+> 
+> Fixes: e9f17038d814 ("x86/tdx: mark tdh_vp_enter() as __flatten")
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Sure, we could have a tool extracting most of that from the driver info
-and DEV_QUERY ioctl(), but those info have been printed in Panfrost
-since the early days. I picked those traces up in Panthor because devs
-were used to it, and I honestly see no good reason to not print those as
-dev_info() in Tyr too. What's your concern here? Is this about boot
-time, not bloating the kernel logs or something else? I mean, we're
-talking about less than 10 lines printed at boot/module-load-time.
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
