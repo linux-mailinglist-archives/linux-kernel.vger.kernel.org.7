@@ -1,214 +1,135 @@
-Return-Path: <linux-kernel+bounces-711232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970E5AEF7D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:07:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BD6AEF7C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02640172C6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7967F4819CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF6B27380F;
-	Tue,  1 Jul 2025 12:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E00233127;
+	Tue,  1 Jul 2025 12:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ju65JOmy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cMIUouJJ"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3928626B97F;
-	Tue,  1 Jul 2025 12:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0869A1D540
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751371632; cv=none; b=MwsqFLrkUyaO8b+4fMLB9nddGPvWaeBNPrl6OwhFdDy+XN+7DPSH4wfQ6iAgsozDeGGw8+JhJm6ud2iRC+AU06hmtCnJ3P7k0XSnLGt7oZM2UGstU852K2YLOLbHr0PlJzKGIXqanxCvTkdAyz2xqyb6z0QEj1ZOrwhjBe/qrIo=
+	t=1751371497; cv=none; b=Mni4UrrPvU4e+Ur7kB4S5/MTzA1syA2MX434nbRSILYrj+T0S2bkIZjuArAB2JAy35prvoC6AkyFwDDIpvhXorYbl6wQtzjjeUFUefGqUf+PpEGfYZzMKwjH/82aZUpREpQjyi9dWhH5IRSwyZu/3r/8PMsA5zqD2FVWCaB7kDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751371632; c=relaxed/simple;
-	bh=zdQNmqbysWdxXUYiaVVlHOhxVRge3N7XydcHJPPQNu4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fHQei9E10MGGUeC5Z8ZVVu5eQlL6aTJcbYJQk7xsUDIKy9s2GJaXlraiOx3IdF1yj2NQdOZwiQ7AecjV35yqWRvqFPkQgT5rzIMitUXigz+DPa4j6RvskvbITA5+FCh+45BTl5CXxO0+3x/UvXVCJ0G4fccPz48/5WLziBIxtZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ju65JOmy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D5222C4CEF1;
-	Tue,  1 Jul 2025 12:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751371631;
-	bh=zdQNmqbysWdxXUYiaVVlHOhxVRge3N7XydcHJPPQNu4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ju65JOmy9oCkN1QPH9pvJ14VODmGp+h0gKYTzdrsBHKcubtbU31s5XzcCI3PzmK5X
-	 bpaOMU79xBKlPk/Pk4dpKRpCuxXeareE3r5eYdZ7RCO0YAYkGGy61w6idIkvyraqsp
-	 KSPq4p5MNK82yDe6An4BioRZLi0GNJYmNVyWEvnnvEARIcOTW1pdZHGpAyMoIINarF
-	 dAHhsFu/Av+c7PmCC/iy4YXPtvOcrsnCillv1kdNA4JN9t6AU7CSkr4LsMLRaX5vo+
-	 cN1zXFhwOYqflprfph5qltj6dKqpiK/cskN0XWvHtjmC1yARDCaq2NPv8YdQuaMlDn
-	 R0QmpamrS9OUw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7917C8303A;
-	Tue,  1 Jul 2025 12:07:11 +0000 (UTC)
-From: Jack Cheng via B4 Relay <devnull+Cheng.JackHY.inventec.com@kernel.org>
-Date: Tue, 01 Jul 2025 12:03:46 +0000
-Subject: [PATCH 2/2] hwmon: (pmbus/q54sj108a2) Add support for q50sn12072
- and q54sn120a1
+	s=arc-20240116; t=1751371497; c=relaxed/simple;
+	bh=RJYmisO1a6eiEpF6eF4u0rwng3V3PenJu+puVNYsujo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OsH8EJf+rMhdYhxgUr808eJeicceuTzAr4OfHFMoioNEGb/R5ILTFCHKmlaFJdl1b7+BmphXGWMwlF/B5Dad2gNPZ0ePDVLHCdP0NHtZ+ZSjyPcy9UBaNYZlsZDlq1MX9+XjogCJ2GK33zIo4Bw9Tv6TY/sLOtv+Bb0OzSE7/iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cMIUouJJ; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 561C4L2G3613463;
+	Tue, 1 Jul 2025 07:04:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751371461;
+	bh=FxmiebPIaeW3vcua2psua1JTYarnf+7Xb/RB+rm6+DE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=cMIUouJJr4t9zDpfhSI8f7Chghw7kZvQSCVTS394ne7PdaZbkBnTe0rmTDHqc4Bdl
+	 WCC5NtY32j3zhTpk2AbNddMP5g72xRjC1ot18O0wbN+7B0aUnsyG1o7zqkZRyC1xIH
+	 sdL9RdcB5AYmWwztjU5qLTAIzTWhjYKptcxj/fpE=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 561C4K1t4055689
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 1 Jul 2025 07:04:20 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 1
+ Jul 2025 07:04:20 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 1 Jul 2025 07:04:20 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 561C4GIw1515693;
+	Tue, 1 Jul 2025 07:04:17 -0500
+Message-ID: <3541e223-6a06-40f6-ab32-1b9baf718371@ti.com>
+Date: Tue, 1 Jul 2025 17:34:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] drm/tidss: oldi: Add property to identify OLDI
+ supported VP
+To: Jayesh Choudhary <j-choudhary@ti.com>, <jyri.sarha@iki.fi>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ideasonboard.com>, <mwalle@kernel.org>
+CC: <airlied@gmail.com>, <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>
+References: <20250701095541.190422-1-j-choudhary@ti.com>
+ <20250701095541.190422-2-j-choudhary@ti.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20250701095541.190422-2-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-2-c387baf928cb@inventec.com>
-References: <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-0-c387baf928cb@inventec.com>
-In-Reply-To: <20250701-add-support-for-q50sn12072-and-q54sn120a1-v1-0-c387baf928cb@inventec.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, Jack Cheng <Cheng.JackHY@inventec.com>, 
- Jack Cheng <cheng.jackhy@inventec.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1751371491; l=4040;
- i=Cheng.JackHY@inventec.com; s=20250701; h=from:subject:message-id;
- bh=zA/Fyy6uru6kWhlC/CVZ1MMPpQZdr70m76wF9y8wM0E=;
- b=QlcIod5aR81TXWHqlkwVyvOkCRY/AtaejFlk3i22kPJkuiboUBmK/08hqeqhxGwLTA0PRDLNe
- 5p8ab4oEfHcDWbfGUziBEVK5/oK3VtBAkhHAxKR7QkHymIkHyaKILOT
-X-Developer-Key: i=Cheng.JackHY@inventec.com; a=ed25519;
- pk=L+GNI15NJXj7JAu9YqFXp9hL3rwZWbBbjlEeDjPvm68=
-X-Endpoint-Received: by B4 Relay for Cheng.JackHY@inventec.com/20250701
- with auth_id=449
-X-Original-From: Jack Cheng <Cheng.JackHY@inventec.com>
-Reply-To: Cheng.JackHY@inventec.com
-
-From: Jack Cheng <cheng.jackhy@inventec.com>
-
-The Q54SN12072 and Q54SN120A1 are high-efficiency, high-density DC-DC power
-module from Delta Power Modules.
-
-The Q54SN12072, quarter brick, single output 12V. This product provides up
-to 1200 watts of output power at 38~60V. The Q54SN12072 offers peak
-efficiency up to 98.3%@54Vin.
-
-The Q54SN120A1, quarter brick, single output 12V. This product provides up
-to 1300 watts of output power at 40~60V. The Q54SN120A1 offers peak
-efficiency up to 98.1%@54Vin.
-
-Add support for them to q54sj108a2 driver.
-
-Signed-off-by: Jack Cheng <cheng.jackhy@inventec.com>
----
- drivers/hwmon/pmbus/q54sj108a2.c | 51 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 49 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/hwmon/pmbus/q54sj108a2.c b/drivers/hwmon/pmbus/q54sj108a2.c
-index 4d7086d83aa3..34233d955c48 100644
---- a/drivers/hwmon/pmbus/q54sj108a2.c
-+++ b/drivers/hwmon/pmbus/q54sj108a2.c
-@@ -21,11 +21,14 @@
- #define PMBUS_FLASH_KEY_WRITE		0xEC
- 
- enum chips {
--	q54sj108a2
-+	q50sn12072,
-+	q54sj108a2,
-+	q54sn120a1
- };
- 
- enum {
--	Q54SJ108A2_DEBUGFS_OPERATION = 0,
-+	Q50SN12072_DEBUGFS_VOUT_COMMAND = 0,
-+	Q54SJ108A2_DEBUGFS_OPERATION,
- 	Q54SJ108A2_DEBUGFS_CLEARFAULT,
- 	Q54SJ108A2_DEBUGFS_WRITEPROTECT,
- 	Q54SJ108A2_DEBUGFS_STOREDEFAULT,
-@@ -54,6 +57,20 @@ struct q54sj108a2_data {
- #define to_psu(x, y) container_of((x), struct q54sj108a2_data, debugfs_entries[(y)])
- 
- static struct pmbus_driver_info q54sj108a2_info[] = {
-+	[q50sn12072] = {
-+		.pages = 1,
-+
-+		/* Source : Delta Q50SN12072 */
-+		.format[PSC_TEMPERATURE] = linear,
-+		.format[PSC_VOLTAGE_IN] = linear,
-+		.format[PSC_CURRENT_OUT] = linear,
-+
-+		.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
-+		PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-+		PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
-+		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
-+		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_POUT,
-+	},
- 	[q54sj108a2] = {
- 		.pages = 1,
- 
-@@ -68,6 +85,20 @@ static struct pmbus_driver_info q54sj108a2_info[] = {
- 		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
- 		PMBUS_HAVE_STATUS_INPUT,
- 	},
-+	[q54sn120a1] = {
-+		.pages = 1,
-+
-+		/* Source : Delta Q54SN120A1 */
-+		.format[PSC_TEMPERATURE] = linear,
-+		.format[PSC_VOLTAGE_IN] = linear,
-+		.format[PSC_CURRENT_OUT] = linear,
-+
-+		.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_PIN |
-+		PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-+		PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT |
-+		PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
-+		PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_POUT,
-+	},
- };
- 
- static ssize_t q54sj108a2_debugfs_read(struct file *file, char __user *buf,
-@@ -177,6 +208,7 @@ static ssize_t q54sj108a2_debugfs_write(struct file *file, const char __user *bu
- {
- 	u8 flash_key[4];
- 	u8 dst_data;
-+	u16 val;
- 	ssize_t rc;
- 	int *idxp = file->private_data;
- 	int idx = *idxp;
-@@ -187,6 +219,17 @@ static ssize_t q54sj108a2_debugfs_write(struct file *file, const char __user *bu
- 		return rc;
- 
- 	switch (idx) {
-+	case Q50SN12072_DEBUGFS_VOUT_COMMAND:
-+		rc = kstrtou16_from_user(buf, count, 0, &val);
-+		if (rc < 0)
-+			return rc;
-+
-+		rc = pmbus_write_word_data(psu->client, 0x00,
-+					   PMBUS_VOUT_COMMAND, (const u16)val);
-+		if (rc < 0)
-+			return rc;
-+
-+		break;
- 	case Q54SJ108A2_DEBUGFS_OPERATION:
- 		rc = kstrtou8_from_user(buf, count, 0, &dst_data);
- 		if (rc < 0)
-@@ -268,7 +311,9 @@ static const struct file_operations q54sj108a2_fops = {
- };
- 
- static const struct i2c_device_id q54sj108a2_id[] = {
-+	{ "q50sn12072", q50sn12072 },
- 	{ "q54sj108a2", q54sj108a2 },
-+	{ "q54sn120a1", q54sn120a1 },
- 	{ },
- };
- 
-@@ -401,7 +446,9 @@ static int q54sj108a2_probe(struct i2c_client *client)
- }
- 
- static const struct of_device_id q54sj108a2_of_match[] = {
-+	{ .compatible = "delta,q50sn12072", .data = (void *)q50sn12072 },
- 	{ .compatible = "delta,q54sj108a2", .data = (void *)q54sj108a2 },
-+	{ .compatible = "delta,q54sn120a1", .data = (void *)q54sn120a1 },
- 	{ },
- };
- 
-
--- 
-2.43.0
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
+
+On 01/07/25 15:25, Jayesh Choudhary wrote:
+> TIDSS should know which VP has OLDI output to avoid calling clock
+> functions for that VP as those are controlled by oldi driver. Add a
+> property "is_oldi_vp" to "tidss_device" structure for that. Mark it
+> 'true' in tidss_oldi_init() and 'false' in tidss_oldi_deinit().
+> 
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+
+Regards
+Devarsh
+> ---
+>   drivers/gpu/drm/tidss/tidss_drv.h  | 2 ++
+>   drivers/gpu/drm/tidss/tidss_oldi.c | 2 ++
+>   2 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+> index 0ae24f645582..82beaaceadb3 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.h
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
+> @@ -24,6 +24,8 @@ struct tidss_device {
+>   
+>   	const struct dispc_features *feat;
+>   	struct dispc_device *dispc;
+> +	bool is_oldi_vp[TIDSS_MAX_PORTS];
+> +
+>   
+>   	unsigned int num_crtcs;
+>   	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
+> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+> index b0f99656e87e..63e07c8edeaa 100644
+> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
+> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+> @@ -430,6 +430,7 @@ void tidss_oldi_deinit(struct tidss_device *tidss)
+>   	for (int i = 0; i < tidss->num_oldis; i++) {
+>   		if (tidss->oldis[i]) {
+>   			drm_bridge_remove(&tidss->oldis[i]->bridge);
+> +			tidss->is_oldi_vp[tidss->oldis[i]->parent_vp] = false;
+>   			tidss->oldis[i] = NULL;
+>   		}
+>   	}
+> @@ -579,6 +580,7 @@ int tidss_oldi_init(struct tidss_device *tidss)
+>   		oldi->bridge.timings = &default_tidss_oldi_timings;
+>   
+>   		tidss->oldis[tidss->num_oldis++] = oldi;
+> +		tidss->is_oldi_vp[oldi->parent_vp] = true;
+>   		oldi->tidss = tidss;
+>   
+>   		drm_bridge_add(&oldi->bridge);
 
