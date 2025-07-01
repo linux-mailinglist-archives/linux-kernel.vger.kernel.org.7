@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-710997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FA6AEF45D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:05:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2DAAEF45E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 290324A4BCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:04:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 096807AC35A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C62826F445;
-	Tue,  1 Jul 2025 10:01:32 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31C0273D9C;
+	Tue,  1 Jul 2025 10:01:57 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4D6270EDF
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B619426B0B9
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 10:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751364092; cv=none; b=Ocfu6clodczvUfJq2C0mNI8Sv+Vlahpkf3w5WmlcSXZJ0wxySWaB97S3ys0YnXsu3/1qxZf4evdG0aMoVfzCVvzU4dp6BP9US6Ly+9wN/EYECG3KrPKNoqtSckmEecn+vhVUJFg4Cah5HiaIuacv5ZF6lGI2VlepH7ksRuUFN7U=
+	t=1751364117; cv=none; b=Dz4XCX/LF90LBz3C4trKmnuxsAU+mkfwOwFCbwSz4UZVKiJ+m/eupxBju/QXWJKdwSp670COxthV6EcL8Y+1jnOHJa8gvWUivPo7INjvq5Gm0p+sn1tyC1efqOvv9jgX0Jr+XCuh6vQ/jvl7R2RGrHvsXoNywwzQhQ2poni4ETk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751364092; c=relaxed/simple;
-	bh=P5Rt189e8qUG+MHvROZmWhZjXpiZa0oSmFfwPWBZtUg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bz30Nu94lfTe6z5UiQyHZI5lWf6Gwoy2UFgwbuy9itm+4TXFDkMib31dhRwrr4a9w3GuyefHOQYEgg2wtHEQF4/SGK8Vb9P5PLQWXoaDmOs2Gp/xZj6HudefSC2oTHq+FY77rWO/0kMja4HpA5YGmxEEJbBKe9Q8OTCpUPkl2B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-873fd6e896bso491874139f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 03:01:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751364089; x=1751968889;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JBnYfLShZRP+QHc7hp6xE5I2iMcE/JPwNu1jf/ePmmo=;
-        b=Ur/Y+SiXgikPE/H5n/mPzsA8ZBTBVnYmeXLJ1rZ4jo40YGdrCpufFZDqQLE+l4c2hO
-         Uw0J90ib1VYD7+wCrxqaSHJ+4KYKr9sTNjFrngGAKvyT1FYs9V8op4GECUQI4Cndqrs0
-         4Pz55HR0oIEQhI1SQaXsrPhwL44Rv3fa2LXiljtq3E9h2pgC2NKSPwZ6z/VGIoEtG5ZG
-         eDmQg5HW5ifnrs15j+g1MwfWsYjDVMj5/jEFIesH4jgWEkIZLadj5j1NK8bHT0jF9J76
-         ZH36gbngmfInNEAMnlrR+tMeD6ObLB8AaQbDSw+FAVtaIV65FVHLmBZAkq1301svEe2w
-         QY/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1silQvTktdGIGxA3UPEM+C/EursZO2kXWh0snudjULvMjqsf1B92JZZO+kv30n3/pm5azUN2nlf8WY+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJQ7su3+ZAaGdDios+yZNM2SnTABfgmylYLLy1CttktM0ym7pH
-	IFiPC46NDSf8VigkUq4AC54nAFeQcBqVgz0QEyeb/9EoxCrllTbmqLCfbOxGCIKfl6b8OWptqtw
-	L7xtrx0iab8rS05t76vNu9f6c+28JF7msmK6tYekR8Bp+cQU+/kCTobhxFKI=
-X-Google-Smtp-Source: AGHT+IHgtx7SqShvK0/sNakTaVtzibjONzpxOzeKpEIP0Jy8y46gQyIV2NTDXUQD4Cc414qVDKPq5z23SppLkt2Y/BoTCvaEWEau
+	s=arc-20240116; t=1751364117; c=relaxed/simple;
+	bh=NvbjkUgdlWSy3WOQbPWAgbYm4pYFUwIcipL4RztdTgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jnl3GX1+ikWPC/JgOZCckyOrNiDax+G9B1EKSeUhqmlLB0b/FwIrQh4ZR84JiVYMqWKCDMFUuSwpHkgFLLRkYJsG9SSvxuITjLD+h8J1RjWSfySoiOFHZq0DIjrm/Fsbt6WJlteU0zUc95IWEZcKExW8tyJeR9ehh3AwP7F/NbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 561A1lZv068590;
+	Tue, 1 Jul 2025 19:01:47 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 561A1kQM068582
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 1 Jul 2025 19:01:47 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8cf8c12d-65fc-4e3d-9c2e-fd7d40d38613@I-love.SAKURA.ne.jp>
+Date: Tue, 1 Jul 2025 19:01:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1691:b0:876:1c5e:8c50 with SMTP id
- ca18e2360f4ac-876885d256amr1917863439f.7.1751364089410; Tue, 01 Jul 2025
- 03:01:29 -0700 (PDT)
-Date: Tue, 01 Jul 2025 03:01:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6863b1f9.a70a0220.3b7e22.1936.GAE@google.com>
-Subject: [syzbot] Monthly ocfs2 report (Jul 2025)
-From: syzbot <syzbot+listcb86ed7f103eeb1415ee@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] AppArmor: add support for lsm_config_self_policy
+ and lsm_config_system_policy
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+        linux-security-module@vger.kernel.org
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, mic@digikod.net, kees@kernel.org,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        takedakn@nttdata.co.jp, song@kernel.org, rdunlap@infradead.org,
+        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-kernel@vger.kernel.org
+References: <20250701091904.395837-1-maxime.belair@canonical.com>
+ <20250701091904.395837-4-maxime.belair@canonical.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250701091904.395837-4-maxime.belair@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Anti-Virus-Server: fsav105.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Hello ocfs2 maintainers/developers,
+On 2025/07/01 18:17, Maxime Bélair wrote:
+> +static int apparmor_lsm_config_self_policy(u32 lsm_id, u32 op, void __user *buf,
+> +				      size_t size, u32 flags)
+> +{
+> +	char *name;
+> +	long name_size;
+> +	int ret;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +	if (size > AA_PROFILE_NAME_MAX_SIZE)
+> +		return -E2BIG;
+> +
+> +	name = kmalloc(size, GFP_KERNEL);
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +
+> +	name_size = strncpy_from_user(name, buf, size);
+> +	if (name_size < 0) {
+> +		kfree(name);
+> +		return name_size;
+> +	}
+> +
+> +	ret = aa_change_profile(name, AA_CHANGE_STACK);
 
-This is a 31-day syzbot report for the ocfs2 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ocfs2
+If size == 0, name == ZERO_SIZE_PTR and name_size == 0.
+Then, aa_change_profile() will oops due to ZERO_SIZE_PTR deref.
 
-During the period, 4 new issues were detected and 0 were fixed.
-In total, 69 issues are still open and 17 have already been fixed.
+> +
+> +	kfree(name);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * apparmor_lsm_config_system_policy - Load or replace a system policy
+> + * @lsm_id: AppArmor ID (LSM_ID_APPARMOR). Unused here
+> + * @op: operation to perform. Currently, only LSM_POLICY_LOAD is supported
+> + * @buf: user-supplied buffer in the form "<ns>\0<policy>"
+> + *        <ns> is the namespace to load the policy into (empty string for root)
+> + *        <policy> is the policy to load
+> + * @size: size of @buf
+> + * @flags: reserved for future uses; must be zero
+> + *
+> + * Returns: 0 on success, negative value on error
+> + */
+> +static int apparmor_lsm_config_system_policy(u32 lsm_id, u32 op, void __user *buf,
+> +				      size_t size, u32 flags)
+> +{
+> +	loff_t pos = 0; // Partial writing is not currently supported
+> +	char name[AA_PROFILE_NAME_MAX_SIZE];
+> +	long name_size;
+> +
+> +	if (op != LSM_POLICY_LOAD || flags)
+> +		return -EOPNOTSUPP;
+> +	if (size > AA_PROFILE_MAX_SIZE)
+> +		return -E2BIG;
+> +
+> +	name_size = strncpy_from_user(name, buf, AA_PROFILE_NAME_MAX_SIZE);
+> +	if (name_size < 0)
+> +		return name_size;
+> +	else if (name_size == AA_PROFILE_NAME_MAX_SIZE)
+> +		return -E2BIG;
+> +
+> +	return aa_profile_load_ns_name(name, name_size, buf + name_size + 1,
+> +				       size - name_size - 1, &pos);
 
-Some of the still happening issues:
+If size == 0 and *name == '\0', name_size == 0. Then, size will be -1 at aa_profile_load_ns_name()
+and WARN_ON_ONCE() in __kvmalloc_node_noprof() from kvzalloc() from policy_update() will trigger?
 
-Ref  Crashes Repro Title
-<1>  65257   Yes   possible deadlock in dqget
-                   https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-<2>  47058   Yes   possible deadlock in ocfs2_acquire_dquot
-                   https://syzkaller.appspot.com/bug?extid=51244a05705883616c95
-<3>  22465   Yes   possible deadlock in ocfs2_reserve_suballoc_bits
-                   https://syzkaller.appspot.com/bug?extid=5d516fba7bc3c966c9a9
-<4>  14511   Yes   possible deadlock in ocfs2_init_acl
-                   https://syzkaller.appspot.com/bug?extid=4007ab5229e732466d9f
-<5>  14041   Yes   possible deadlock in ocfs2_reserve_local_alloc_bits
-                   https://syzkaller.appspot.com/bug?extid=843fa26882088a9ee7e3
-<6>  8235    Yes   possible deadlock in ocfs2_setattr
-                   https://syzkaller.appspot.com/bug?extid=d78497256d53041ee229
-<7>  3182    No    possible deadlock in ocfs2_xattr_set
-                   https://syzkaller.appspot.com/bug?extid=ba9a789bd1f4d21fcefe
-<8>  2603    No    possible deadlock in ocfs2_lock_global_qf
-                   https://syzkaller.appspot.com/bug?extid=b53d753ae8fb473e2397
-<9>  2163    Yes   possible deadlock in __ocfs2_flush_truncate_log
-                   https://syzkaller.appspot.com/bug?extid=6bf948e47f9bac7aacfa
-<10> 1551    Yes   possible deadlock in ocfs2_del_inode_from_orphan
-                   https://syzkaller.appspot.com/bug?extid=78359d5fbb04318c35e9
+You need more stricter checks to verify that @buf is in the form "<ns>\0<policy>".
+strncpy_from_user() should not try to read more than @size bytes.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +}
+> +
+> +
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
 
-You may send multiple commands in a single email message.
+Also, in [PATCH v4 2/3], why do you need lines below?
+These functions are supposed to be called via only syscalls, aren't these?
+
++EXPORT_SYMBOL(security_lsm_config_self_policy);
++EXPORT_SYMBOL(security_lsm_config_system_policy);
+
 
