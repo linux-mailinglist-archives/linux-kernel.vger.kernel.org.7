@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-710938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF60AEF359
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:30:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C335FAEF34F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 922363A3310
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87E5717384A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE8B26F476;
-	Tue,  1 Jul 2025 09:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1515326FA70;
+	Tue,  1 Jul 2025 09:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IebRQs2S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z8s/K30a"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7131F26E6E4;
-	Tue,  1 Jul 2025 09:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D6326FA52
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751362203; cv=none; b=Q8v7rkaesQ96qTu/KbD7MfnCzgtVDgY2pKc95kugpucGO3Fdlvj7nAhn/dR5U/dD/P6gDKnCL7zCi0h+pfVWlZ8g8Cr/EffprNcxM1X6ygA76uJmgUtbUfkuVMK3Q1v0fctwlRd5WJKsqssMz0rgvzzE+A+0TUTg92UzDhJQZlQ=
+	t=1751362105; cv=none; b=d9x+RrZaufm1zE1+gYqH2tQTeqHy0NKXHTujIazAp54KMNBEk6x7NX4fejvYk/B6aLqFk0i1Kjur5xl9ABUijzQb5YQhR4hNpqZW9NA5C9io2UUe725LkEUgTDX2NNyQ1YGPxfN0pbLZZ1jpwBBq2lckVj3xz7PU/QW9cDo33sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751362203; c=relaxed/simple;
-	bh=kZOKyNs4Db2MnERH7f8zaFtDju4I4ipaWRZu+43uIXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=spA3dJXJ7BPjon1F+IHB2G6F6lqjIzFseAn69U5GnTfmNwofRYJ9wdOX0TDCnQgU/be7OEt9BJcplJ+HWYZIg4WHEJCuuGVVaeS2p24NlKjtX9tpf0ANcQqth65ZS0Wm1CfwUi+oWtwaMqWvWZsgfVq9qb3QUfEm2ONbI5uYtOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IebRQs2S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAB3C4CEEF;
-	Tue,  1 Jul 2025 09:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751362203;
-	bh=kZOKyNs4Db2MnERH7f8zaFtDju4I4ipaWRZu+43uIXo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IebRQs2S4Zck295c+TBqK/iU11rhK4zM9iH6It/WDDjTnkzRJDFRMga9rMofy3OYK
-	 W41pvCTEWF+AzUxh9eofQQnHdlHTwJg4iJA8ZKA0nN9/4jeP4TnRJIoMisw1r+ibuV
-	 p/RqM8cqTIwciKsQL54FaElEidEarmMz4MI9EmDr/qqOnhPZldCjGCO6AZrImtIAng
-	 e0tMkAozmrb6xpFrg9PHBXr+69xBZtAdSzlNLAWZD/41I9O+pEr0bO5e/LJ8QVkQmJ
-	 QBizlS8OEB4eVW6CgnbR1yjIk1x2mjXNtuE+18MWZoBMFlPOOaJhPX3QwfqTDNgjIw
-	 252/ta9q3QqvA==
-Date: Tue, 1 Jul 2025 11:30:00 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"moderated list:ARM/LPC32XX SOC SUPPORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: pwm: convert lpc32xx-pwm.txt to yaml
- format
-Message-ID: <3jtfwyrga5p6wucp6phzcizolnbgqexskelcolrapoepearqpd@3hws66swq2ya>
-References: <20250625161909.2541315-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1751362105; c=relaxed/simple;
+	bh=xU+kDdU0gwzb9LPPDqkZf5rUekFrGYUlG52+CjTps7A=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNFSgsRfKTqPAJnBfD400CXAoyM46Z+Fr1t5/wV+5hUmU2Fme8EXfm5Dysv6KI8LxaLqR84jtmICNNc7LGh6mMuJtplAoLb3VcKzUe9NHG9loJMOFJs0RCLaPtFWSzprs0urR20sxloE7TT8HizFXpIDjhpNdewy1qFsjA1SG7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z8s/K30a; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acb5ec407b1so544611566b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1751362101; x=1751966901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vW8tXWZC+/EOEMWh/X8OhS7IFKfYxgh/KBq6rDgPsK4=;
+        b=Z8s/K30aun/xPgKGqAjd0fMnXCDU3mgK0OgZbHXARIBxjPzOL3aQ60RPO7OmD0ETKn
+         Rfe4sLdiiP8HTDHybRwu2slNwtUM204NfDhAeCqMl8q6DME2aEFWaIr5Btak2+Odytpm
+         M1U25VIpmqsW43umLqsTK5jVNv9x4iXFCiJkA0assksKUv/WB90O2JqNfRx6zkXRIbJb
+         pCijUpnNDCc9pVw36K7nrSkXGkZsYwnrVTGTNvJ++/x943jGME9P/7zqcVO3dOeYKQLm
+         DBfa1royiNE+C6c9QTGYw4dZrHriapjZRAGwdbw/rs5MOV0RpEkn/lekzvfK5MNyDgEp
+         vF6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751362101; x=1751966901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vW8tXWZC+/EOEMWh/X8OhS7IFKfYxgh/KBq6rDgPsK4=;
+        b=xI0o2nB4Y7khQZfJmNcs5sLmC1/6s9FWo45cgWstbEgJxEh0IsVOhzMud6xpFU7hnN
+         Q1noimF7e6H3tp2yL+WAUMCjk8BpocmUSbxJ6cAM5FQZC9e1/sVceSS282L63BFU5O7/
+         ihnxW5J8RxAVa7d4425mrg4Rb/DdmN0+C800z7YGhSY21WZVYxTq9Oz+gnfEMX9yVEQb
+         3ck7sCRT//1vd9Azg0FkDfZ9t+xnUXKPhB7Ud/9tG9/Gkrnr93bWRmsfHYBJNZ/Ckmm/
+         gM+mAYEJY7TNn0u8Uw/b2ul04ikuaSHCWMbKHFAO7dx01WkGuWCBNFvZCp4YJx/PI3oz
+         vWPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDMDJDj1njdZG9zDzQZZcjJ6Kcitvk2gAQLJehbTsfYV37PBWTEYb6+5Rdb2aya5JPwrtm+4gNRNUrJYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmcMROmwIAfviLNtwxwxdX6fRSitctTUPkFRWYHMrAcXlMCP7A
+	JivP3iknI/zUJtYqDHa/jOcsgf6BgiKOASCVxLN45u7mx+BFM5Rpo0dY2RvFNU6mRT0=
+X-Gm-Gg: ASbGncuzfs/vvThrW8WHcC8b98j9VvfXJSwM6JoobEho6SlhT+hhquxap4h8ZKnGPnM
+	BQMsW5IoLgTnQIfO9BD51LHBvFdmKjCsWeQ6eXw5+OJFQfKWG6rtdGUrVDFRvn80a4Gs0I8YU4+
+	sWY2k6SJBb+X8iRvOVgZ8EsllX5iBk0C96672IRbzmuzqyvBtvUc7EEt+PNPjS8uUyxOlf3ERbe
+	HNBgocBQslxw+Iew6iYm8z0h495GsFIHhF7UOjk6pJnbaqxeQehAbbTfXpZH/MWs6honyykwlPc
+	BMiRdKn2jMWWhWuPxClm8uP6Y86TukrFWPxcQ7qiW+9JAsD0GrgKnFEg5fZcqkjjiDtNr1IjlAl
+	071PJ3+QNyugnh766Y4UCpXj7QcH5V1SR
+X-Google-Smtp-Source: AGHT+IHbFo4CW/gWO5mfmqvdr8G+K+m/vpRfFZfo55Xt83CarSb1cUQYS0Vzv+Vrkh5sEZMITIneQQ==
+X-Received: by 2002:a17:907:a4e:b0:ae0:635c:a400 with SMTP id a640c23a62f3a-ae35016b435mr1478913866b.51.1751362101509;
+        Tue, 01 Jul 2025 02:28:21 -0700 (PDT)
+Received: from localhost (host-79-23-237-223.retail.telecomitalia.it. [79.23.237.223])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60e2a743d53sm1292386a12.28.2025.07.01.02.28.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 02:28:21 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 1 Jul 2025 11:30:01 +0200
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: rp1: silence uninitialized variable warning
+Message-ID: <aGOqmd5cvCeBjWMI@apocalypse>
+References: <748d256a-dc9d-4f85-aaa4-d480b7c4fd22@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ffz725mp2gxeplek"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250625161909.2541315-1-Frank.Li@nxp.com>
+In-Reply-To: <748d256a-dc9d-4f85-aaa4-d480b7c4fd22@sabinyo.mountain>
 
+Hi Dan,
 
---ffz725mp2gxeplek
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/1] dt-bindings: pwm: convert lpc32xx-pwm.txt to yaml
- format
-MIME-Version: 1.0
+On 14:35 Mon 30 Jun     , Dan Carpenter wrote:
+> This default path could probably can't be reached but Smatch can't
+> verify it so it complains that "arg" isn't initialized on this path.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Hello Frank,
+Thanks for your patch!
 
-On Wed, Jun 25, 2025 at 12:19:08PM -0400, Frank Li wrote:
-> Convert pc32xx-pwm.txt to yaml format.
->=20
-> Additional changes:
-> - add ref to pwm.yaml
-> - add clocks
-> - restrict #pwm-cells to 3
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> change in v2
-> - allow clocks, there are not clocks for nxp,lpc3220-motor-pwm, so not put
-> into required.
+> I didn't add a Fixes tag because this likely isn't a real bug.  Plus this
+> code is very new so it doesn't need to be backported anyway.
+> 
+> Also checkpatch complains:
+> 
+> 	WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
+> 
+> But I left it that way so it's consistent with the other return in
+> the function.  Maybe we should change both?
 
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-with the R-b tags for Rob and Vladimir.
+We really can't get rid of that warning by replacing ENOTSUPP with
+EOPNOTSUPP because the core pinctrl code still rely on the 'wrong'
+define, like this excerpt from drivers/pinctrl/pinconf-generic.c:
 
-Thanks
-Uwe
+...
+	if (gname)
+		ret = pin_config_group_get(dev_name(pctldev->dev),
+					   gname, &config);
+	else
+		ret = pin_config_get_for_pin(pctldev, pin, &config);
+	/* These are legal errors */
+	if (ret == -EINVAL || ret == -ENOTSUPP)
+		continue;
+...
 
---ffz725mp2gxeplek
-Content-Type: application/pgp-signature; name="signature.asc"
+Also, many drivers still rely on ENOTSUPP. Maybe a patch that will
+fix all of them at once (drivers and core code) is in order, I have
+it in my todo list, indeed.
+Besides that,
 
------BEGIN PGP SIGNATURE-----
+Reviewed-by: Andrea della Porta <andrea.porta@suse.com>
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmhjqpUACgkQj4D7WH0S
-/k7cZwgAjSlcgslaZQCd4n6XMk369t4QHQX44Dpo46C4+913tMXa3IOAm2bpUVVW
-CXwEF8h0/i0Yyv6icPkv9SCdERBN/dz7xTHB7dhJvtUj2aWSUlS5lEcACWSuq8P1
-DO9U3tDD33LGOVYYV+crDYqpfbUi+6Z3jhLPhYNWY+Zfq2Q+i/XuRtGhx0f7708g
-loG8RYpKnT7Ux2rNhfD73lgNkzyFEbTT9E8HA7HEdXez4ENrVOxnPnAuvRxEnaRH
-ZEhA8RLY4N+lfL5eE+7TPrgg2qNbRR/iSR11AqoFyWy2WbiXk2eopw23IAcAJtKb
-rzZ8jbkiyf/7BqQ2G9DIUxT7pgkcmQ==
-=/nBM
------END PGP SIGNATURE-----
+Many thanks,
+Andrea
 
---ffz725mp2gxeplek--
+> 
+>  drivers/pinctrl/pinctrl-rp1.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+> index d300f28c52cd..f9cc6b28994c 100644
+> --- a/drivers/pinctrl/pinctrl-rp1.c
+> +++ b/drivers/pinctrl/pinctrl-rp1.c
+> @@ -1524,6 +1524,8 @@ static int rp1_pinconf_get(struct pinctrl_dev *pctldev, unsigned int offset,
+>  		case RP1_PAD_DRIVE_12MA:
+>  			arg = 12;
+>  			break;
+> +		default:
+> +			return -ENOTSUPP;
+>  		}
+>  		break;
+>  	case PIN_CONFIG_BIAS_DISABLE:
+> -- 
+> 2.47.2
+> 
 
