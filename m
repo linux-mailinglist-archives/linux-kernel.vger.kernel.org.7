@@ -1,108 +1,154 @@
-Return-Path: <linux-kernel+bounces-711298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98CCAEF8C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:37:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCF0AEF8CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6ACD1BC8163
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21D9444C61
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209A8272E41;
-	Tue,  1 Jul 2025 12:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F61F2727E3;
+	Tue,  1 Jul 2025 12:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RrPWcxei"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8Hh8y/e"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800D9270EA4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A2E274653;
+	Tue,  1 Jul 2025 12:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373413; cv=none; b=FPiR3l7iWdE24O0FK1o53CTua9xonUUoVeL3Awc+IjhS+bb2h6Gmn+jLidfM4bZVZ811ypgsgUG+dOXsWmHLI2I3xtgzW2YC2aj//08eJJU2EZAsKwO+gBkAmhe7iHhO3L7Ri/OKEZtAb+3BAwc8QsPosbeixmg+fQo9fvGQeVs=
+	t=1751373513; cv=none; b=JwvQ2VcUU6Vc4thrZtFVLPgGHhaJ5BzY8QznefNZCeoQ0ybzPDnAfFaRmdCTwGKa68Zp5vCLIUKmHLHFejlnaqLE4SidZLQsgA/m/lK2rmMGiMuo9Ba1kYeWBa/kifMRIp1/utYZLgJmu/s4PpF+HrfkLGj7ZvOv0SM3Hif2Wy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373413; c=relaxed/simple;
-	bh=Yumc9AHeSxWJ3coM6Cuqca/8lTYWSOzPlXbAdw+pVFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOJA3/xI7W9b1ZekfM9hqVcggziiQ6iewp0TeECQWGfntGgO3ilsghJ1T1v+Tdu4VRNJSEfKStW9nKmYUSkfhKmIHd5UjzyET1Vj59Rfj1ERl3eebwKDcpDsu5qMTjetTD0rn9+zxvi9u5Hcd40JyOwVeYp6R61YlEEOAhEzDVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RrPWcxei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA0FC4CEEB;
-	Tue,  1 Jul 2025 12:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751373412;
-	bh=Yumc9AHeSxWJ3coM6Cuqca/8lTYWSOzPlXbAdw+pVFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RrPWcxeixCM3W7sim7nZSuobUqXJHrON0fkntXopA5Io0TA/CMJSG13FGTOH2PMX3
-	 aAVgwErG0tcoub1fBtUV+J+5SrdFOVRua3w2gs165x3aHnl06aPizxoZNABwRJH3QN
-	 39oxikGCdAVhqHKaikTqlaP+lAMCIveu4dwlA2J9DpXiEPeqsDyI2/fS/vVfr4Wh/S
-	 x/WISXyRKhrSJibJiXp7MucQhqP7KXak4829yd1SgkZWfL/2j2ytIXwEPlDe3YIlcm
-	 zj3agkGp4sbWpgeZqgsP+1LfAKrmFSj1N1ySaivUlH5bIv/r8JUehXJ9HQrGs9LxJC
-	 DobUS98w2Cl+w==
-Date: Tue, 1 Jul 2025 14:36:49 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Hillf Danton <hdanton@sina.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/6 v3] sched/mm: LRU drain flush on nohz_full
-Message-ID: <aGPWYWKKWhr2rxMG@localhost.localdomain>
-References: <20250410152327.24504-1-frederic@kernel.org>
- <20250412025831.4010-1-hdanton@sina.com>
+	s=arc-20240116; t=1751373513; c=relaxed/simple;
+	bh=6n3Z+au68UHb+9v+Qq/ulc80NCYEt6D42KSfSZBINHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BXq/bnDN1+9kxIti+Ptf7q33T32m2qkYB2wL2D6TqpH8rlBjSY3mp/Fo1FPiK7qeLZ/M/RQwl7qV6oOtlvNbhKNE/Q3EQQ7uoCC26z8Ogm+M5QH3NBiViywYqveE1yoxdh3cTkPt7ABa4jTnbs3Toao8JY6XZDsr16b/N/+xu+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8Hh8y/e; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a52878d37aso732857f8f.2;
+        Tue, 01 Jul 2025 05:38:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751373510; x=1751978310; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B1pfhh/N50xGHthfuOsKcU9+fCnCqH7gN3Kquy18LxY=;
+        b=G8Hh8y/e184Eo6TghZVUHss3vUjEba9FVyd5gQnxO9zAyqG1z+rAE35bDd69gH500Q
+         7RxNbZVEFbKC2s9EYheYsFVsIQJrJmaCgiazJCj9uDtVvQCYzI41t6tuuv8CG7XYGNxI
+         17Ex5dBwp8UKydLYpmm4O8sN4DYN6oU5TPmXaJJJTs8jhRRuRn+XeWmw8QQIbgVIkRz2
+         wJL17hwhtrfs0sAllnHVBzPJXqoFvjfOPpaqWeoGAg3VMSRLkLPmlK4NshaIVQKxib9s
+         z8Uy6g0axv5H0kj5OMZaCbOv+z26E6L6IqVmWqHHH1RE7+/eVZydPsc7RkPfjcWqBRzr
+         ZxLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751373510; x=1751978310;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B1pfhh/N50xGHthfuOsKcU9+fCnCqH7gN3Kquy18LxY=;
+        b=GywvjIyHm9YqC1HdEIKlzFfCND35EaSxd3e9L/MheITaDhuqMB6FY8ZhVDOpLdUMQ1
+         C16SpXiwRzYFns4AI9Jg8pvmLfP4peeEYqEUtF6ILD7JFwdM+1ssMi5vluvsMGXu8P6r
+         O9l6a9RK0jaRE8iRIOUW8OA0gf35zXjgta0ffbXMkm27EupZfHfylF/S676368gcoSKN
+         dZjSncqLXA1owny3URruRrukc+81FQWKRfvoW5pZWNxmnTog9gjqF5PIXaPD0mqA1VjA
+         eYaXi5FC3b5KpgJk4bkpFaBfQLrPCtAzWUH5ay5lh86LsYYrOuMMWlONe5Ih6LLV17t8
+         /yNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkrei2M6a2BEEBSYe3WD0PVf4cxg1QPpKFGlVGKvWvptjTG6gDJXnR6jCiF3W78Ii8jUUGlXGHXQD5uTMx@vger.kernel.org, AJvYcCVlw3pREfuAUfA+LMxMvB98/noV29WoR0Hkkv9cjNdTOtwUomxDCvzjLarZpWG0nqbuSGMqHcmDAKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFD8S8Dn6wwvUIzIb1rl50K/8LpmMGNw3QL6yrl+IpFs5D0zR+
+	OMVXCgPBKpJi2rt9LO4H4MUJ48keQP8+3fxq6EQDlizuqXm8Z9AQN06f
+X-Gm-Gg: ASbGncsphKw08YgjkLxYoIcDkxVEDJhOkLXe9Sc5TbOxT2fY/YRJ9SRKLvUMbw9grTW
+	nIrnl61rtZ/6E0tEmXE9i2Ji2LzMBdxkEOFo7VKgxZMM/MDjk3v8v0GrR4qh7XoJsVJPZ6heJpw
+	vXHjrhfgZdww+Hiv4MmWXRzeKP6Jbs4gKluuh+MflBYRR+ARwa4E8AHwV3AQhp+GlxY9HfIZ8Vs
+	mQF/tUNsGTuy5/6L5BkpGVZncFlTAaFtpLcgwAaiOwiDQxVTkoADeQDgyD/vq8C3GpGBNewGhW4
+	YlPtaRB5pNZdIVpBe5IZvRG82mzMj/QzrdRASx8unRwMseVscA4hXZUz1Fwp9ALzQzWAhEe4/iB
+	Ipa/fkWzT0iEzZQI=
+X-Google-Smtp-Source: AGHT+IF7xfXWIgEEQTepfFkA8Dq+FFvh/bodnyrAg08k9lWTsmEPjoDWuCf8E4Gm+conMeyqAEB5SQ==
+X-Received: by 2002:a05:6000:4021:b0:3a4:e0ad:9aa5 with SMTP id ffacd0b85a97d-3af259a094fmr949039f8f.11.1751373509923;
+        Tue, 01 Jul 2025 05:38:29 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:a723:4386:e2f6:bd22])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a88c800eaasm13443541f8f.37.2025.07.01.05.38.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 05:38:29 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Lior Amsalem <alior@marvell.com>,
+	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dma: mv_xor: Fix missing check after DMA map and missing unmap
+Date: Tue,  1 Jul 2025 14:37:52 +0200
+Message-ID: <20250701123753.46935-2-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250412025831.4010-1-hdanton@sina.com>
 
-Le Sat, Apr 12, 2025 at 10:58:22AM +0800, Hillf Danton a écrit :
-> On Thu, 10 Apr 2025 17:23:21 +0200 Frederic Weisbecker wrote
-> > Hi,
-> > 
-> > When LRUs are pending, the drain can be triggered remotely, whether the
-> > remote CPU is running in userspace in nohz_full mode or not. This kind
-> > of noise is expected to be caused by preparatory work before a task
-> > runs isolated in userspace. This patchset is a proposal to flush that
-> > before the task starts its critical work in userspace.
-> > 
-> Alternatively add a syscall for workloads on isolated CPUs to flush
-> this xxx and prepare that yyy before entering the critical work, instead
-> of adding random (nice) patches today and next month. Even prctl can
-> do lru_add_and_bh_lrus_drain(), and prctl looks more preferable over
-> adding a syscall.
+The DMA map functions can fail and should be tested for errors.
 
-In an ideal world, this is indeed what we should do now. And I still wish we
-can do this in the future.
+In case of error, unmap the already mapped regions.
 
-The problem is that this has been tried by the past and the work was never
-finished because that syscall eventually didn't meet the need for the people
-working on it.
+Fixes: 22843545b200 ("dma: mv_xor: Add support for DMA_INTERRUPT")
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/dma/mv_xor.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-I would volunteer to start a simple prctl to do such a flush, something that
-can be extended in the future, should the need arise, but such a new ABI must
-be thought through along with the CPU isolation community.
-
-Unfortunately there is no such stable CPU isolation community. Many developers
-in this area contribute changes and then switch to other things. As for the CPU
-isolation users, they are usually very quiet.
-
-I can't assume all the possible usecases myself and therefore I would easily do
-it wrong.
-
-In the meantime, the patchset here is a proposal that hopefully should work for
-many usecases.
-
-Thanks.
-
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index fa6e4646fdc2..1fdcb0f5c9e7 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1061,8 +1061,16 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ 	 */
+ 	mv_chan->dummy_src_addr = dma_map_single(dma_dev->dev,
+ 		mv_chan->dummy_src, MV_XOR_MIN_BYTE_COUNT, DMA_FROM_DEVICE);
++	if (dma_mapping_error(dma_dev->dev, mv_chan->dummy_src_addr))
++		return ERR_PTR(-ENOMEM);
++
+ 	mv_chan->dummy_dst_addr = dma_map_single(dma_dev->dev,
+ 		mv_chan->dummy_dst, MV_XOR_MIN_BYTE_COUNT, DMA_TO_DEVICE);
++	if (dma_mapping_error(dma_dev->dev, mv_chan->dummy_dst_addr)) {
++		ret = -ENOMEM;
++		goto err_unmap_src;
++	}
++
+ 
+ 	/* allocate coherent memory for hardware descriptors
+ 	 * note: writecombine gives slightly better performance, but
+@@ -1071,8 +1079,10 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ 	mv_chan->dma_desc_pool_virt =
+ 	  dma_alloc_wc(&pdev->dev, MV_XOR_POOL_SIZE, &mv_chan->dma_desc_pool,
+ 		       GFP_KERNEL);
+-	if (!mv_chan->dma_desc_pool_virt)
+-		return ERR_PTR(-ENOMEM);
++	if (!mv_chan->dma_desc_pool_virt) {
++		ret = -ENOMEM;
++		goto err_unmap_dst;
++	}
+ 
+ 	/* discover transaction capabilities from the platform data */
+ 	dma_dev->cap_mask = cap_mask;
+@@ -1155,6 +1165,13 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ err_free_dma:
+ 	dma_free_coherent(&pdev->dev, MV_XOR_POOL_SIZE,
+ 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
++err_unmap_dst:
++	dma_unmap_single(dma_dev->dev, mv_chan->dummy_dst_addr,
++			 MV_XOR_MIN_BYTE_COUNT, DMA_TO_DEVICE);
++err_unmap_src:
++	dma_unmap_single(dma_dev->dev, mv_chan->dummy_src_addr,
++			 MV_XOR_MIN_BYTE_COUNT, DMA_FROM_DEVICE);
++
+ 	return ERR_PTR(ret);
+ }
+ 
 -- 
-Frederic Weisbecker
-SUSE Labs
+2.43.0
+
 
