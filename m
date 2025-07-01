@@ -1,87 +1,60 @@
-Return-Path: <linux-kernel+bounces-711270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C0AAEF857
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:27:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16753AEF84B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7962B3AA526
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0423E1C011D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E694277CB5;
-	Tue,  1 Jul 2025 12:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A524A275B07;
+	Tue,  1 Jul 2025 12:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fRcf4BYZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ck7JKnL2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C22277CB0;
-	Tue,  1 Jul 2025 12:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C15273D7E;
+	Tue,  1 Jul 2025 12:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751372605; cv=none; b=HEQJBampk3cF6lzsRYm52rglxXqDqWJBCTmQuBjchCMy7oeYFLPC7QomKo5twL8Vf4iHJP1EgnI6Uph6AciuAFj0sGf6mgIZV0MVAUylogZZBUpdX6pVY5Gq3aRznaWKIbIgNjk4nUX0mM72vzt+MsOOwSr73sap9cVOSQH9yBQ=
+	t=1751372589; cv=none; b=gYBkPqKpHifEVz3Kku9vBlYbPQoBk2BIu1D4rySpQr+GoCuMm3SOtJyrUw0YFuDmuZH0CbfgX1T1XPFob56JI84vK48CS3U2mOB6MrcaRsh+duzGJ6Hm8DrWpbBeDTIH9EHeBBOTnIfMua2AMwePBBvcBTA1enm69QJlRtA25bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751372605; c=relaxed/simple;
-	bh=gSq3WGMYzI+A+QnZWcrD3MEiKdYLg+CcJwmyoCfVs74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=enXcyjQGvimleO5AHhzoz6pwhgwWiR5PW04jVlzMuQJJ5RDOuYZbuF32FAH21mFid8o+Az8/yiyv5PVWzo2bgcfRe/NZe0Fbp+Yf3hr+ExKSls0Qghc/kgoY4gDWHQuDF6BvZIConRSo9k0T55FTQyVYL17AO8x+vF1nR0PkFk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fRcf4BYZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751372604; x=1782908604;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gSq3WGMYzI+A+QnZWcrD3MEiKdYLg+CcJwmyoCfVs74=;
-  b=fRcf4BYZAKsjsR45hCQ1VaWH+S4SsOIocNEDKJMtvJqmFeO8DX4aSjxV
-   jwrMdXWNrJwxjODvGmG6xV/3Db8WU3WAjI2nBzFAsSm8RIb1g5eoXKyFO
-   QRAHxKUGHHUAS0Tc8JBsyN4kOCt8zeaqRZvwtUyHRZr7sSO+FJMOa36DD
-   iu7icWDJlBCkdB0aqLLrIGijEEL5tFPyjYcg6ZYlK5Pvit3ktDqp2Py2i
-   yBsTtr4ibVQtd2liuHmqkn9A+ZXV+VGpZ4zLbwMNsQouHWB0xXwPkDOIp
-   g5IQtxX4t6HsBSeLdv67XwkihRANCzrU1TNvwDJLezpI9Ujfm8xh7rY3V
-   Q==;
-X-CSE-ConnectionGUID: 7ixQ2MI4Q5KdWiI0J1OrEQ==
-X-CSE-MsgGUID: 1ErhId1BS9K8FWVe0f0b6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="71196745"
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="71196745"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 05:23:23 -0700
-X-CSE-ConnectionGUID: t+h40ustS4ub470TWJPQ2w==
-X-CSE-MsgGUID: pwwSlZYKQK+CGBavYDtJeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="153157528"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 01 Jul 2025 05:23:18 -0700
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Raag Jadav <raag.jadav@intel.com>,
-	"Tauro, Riana" <riana.tauro@intel.com>,
-	"Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>,
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andi Shyti <andi.shyti@linux.intel.com>
-Subject: [PATCH v6 5/5] drm/xe/xe_i2c: Add support for i2c in survivability mode
-Date: Tue,  1 Jul 2025 15:22:52 +0300
-Message-ID: <20250701122252.2590230-6-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250701122252.2590230-1-heikki.krogerus@linux.intel.com>
-References: <20250701122252.2590230-1-heikki.krogerus@linux.intel.com>
+	s=arc-20240116; t=1751372589; c=relaxed/simple;
+	bh=I07NkhytVT3vjKtgU8JtRK5xwzfDuVb4MvGSttIHb8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fWpVV8bUIY/9gZIT4f9bKNoXgWmlTfm7ltGDS+G6byKGexZclAhXUDLwM0e+KMYIgDZaKNNn73mi4FAoWIf5amjbirx7tz0xaikk2kyPaBw4Bzp4YqJuQzVVHDtIK0fdgo0+WUdALUNlwyXfahZamUnrIM0rS50ZSsI0FOUdcjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ck7JKnL2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA3BBC4CEEB;
+	Tue,  1 Jul 2025 12:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751372588;
+	bh=I07NkhytVT3vjKtgU8JtRK5xwzfDuVb4MvGSttIHb8w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ck7JKnL2W2dDD80xo9Y9b4D26oDKRtcla4rp1cuJkKgNuXrBe5W365nDeLbZVRTsV
+	 bwfkKBBX5vMam2fuhLe588ELWxmqtPX0b3Bif35t+vWsyBGc4654DIXEHTtQS/Bi8q
+	 6aotE3+dHVCxa45cBexYmuJKDVhvr9Zd5oBYNqno=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: HarshaVardhana S A <harshavardhana.sa@broadcom.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	virtualization@lists.linux.dev,
+	stable <stable@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH net] vsock/vmci: Clear the vmci transport packet properly when initializing it
+Date: Tue,  1 Jul 2025 14:22:54 +0200
+Message-ID: <20250701122254.2397440-1-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,64 +63,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Riana Tauro <riana.tauro@intel.com>
+From: HarshaVardhana S A <harshavardhana.sa@broadcom.com>
 
-Initialize i2c in survivability mode to allow firmware
-update of Add-In Management Controller (AMC) in
-survivability mode.
+In vmci_transport_packet_init memset the vmci_transport_packet before
+populating the fields to avoid any uninitialised data being left in the
+structure.
 
-Signed-off-by: Riana Tauro <riana.tauro@intel.com>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+Cc: Bryan Tan <bryan-bt.tan@broadcom.com>
+Cc: Vishnu Dasa <vishnu.dasa@broadcom.com>
+Cc: Broadcom internal kernel review list
+Cc: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>
+Cc: virtualization@lists.linux.dev
+Cc: netdev@vger.kernel.org
+Cc: stable <stable@kernel.org>
+Signed-off-by: HarshaVardhana S A <harshavardhana.sa@broadcom.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/xe/xe_survivability_mode.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Tweaked from original version by rewording the text and adding a blank
+line and correctly sending it to the proper people for inclusion in net.
 
-diff --git a/drivers/gpu/drm/xe/xe_survivability_mode.c b/drivers/gpu/drm/xe/xe_survivability_mode.c
-index 1f710b3fc599..41705f5d52e3 100644
---- a/drivers/gpu/drm/xe/xe_survivability_mode.c
-+++ b/drivers/gpu/drm/xe/xe_survivability_mode.c
-@@ -14,6 +14,7 @@
- #include "xe_device.h"
- #include "xe_gt.h"
- #include "xe_heci_gsc.h"
-+#include "xe_i2c.h"
- #include "xe_mmio.h"
- #include "xe_pcode_api.h"
- #include "xe_vsec.h"
-@@ -173,20 +174,22 @@ static int enable_survivability_mode(struct pci_dev *pdev)
- 	survivability->mode = true;
- 
- 	ret = xe_heci_gsc_init(xe);
--	if (ret) {
--		/*
--		 * But if it fails, device can't enter survivability
--		 * so move it back for correct error handling
--		 */
--		survivability->mode = false;
--		return ret;
--	}
-+	if (ret)
-+		goto err;
- 
- 	xe_vsec_init(xe);
- 
-+	ret = xe_i2c_probe(xe);
-+	if (ret)
-+		goto err;
+ net/vmw_vsock/vmci_transport.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/vmw_vsock/vmci_transport.c b/net/vmw_vsock/vmci_transport.c
+index b370070194fa..7eccd6708d66 100644
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -119,6 +119,8 @@ vmci_transport_packet_init(struct vmci_transport_packet *pkt,
+ 			   u16 proto,
+ 			   struct vmci_handle handle)
+ {
++	memset(pkt, 0, sizeof(*pkt));
 +
- 	dev_err(dev, "In Survivability Mode\n");
+ 	/* We register the stream control handler as an any cid handle so we
+ 	 * must always send from a source address of VMADDR_CID_ANY
+ 	 */
+@@ -131,8 +133,6 @@ vmci_transport_packet_init(struct vmci_transport_packet *pkt,
+ 	pkt->type = type;
+ 	pkt->src_port = src->svm_port;
+ 	pkt->dst_port = dst->svm_port;
+-	memset(&pkt->proto, 0, sizeof(pkt->proto));
+-	memset(&pkt->_reserved2, 0, sizeof(pkt->_reserved2));
  
- 	return 0;
-+
-+err:
-+	survivability->mode = false;
-+	return ret;
- }
- 
- /**
+ 	switch (pkt->type) {
+ 	case VMCI_TRANSPORT_PACKET_TYPE_INVALID:
 -- 
-2.47.2
+2.50.0
 
 
