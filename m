@@ -1,167 +1,80 @@
-Return-Path: <linux-kernel+bounces-710693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6EC3AEEFCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAECCAEEFCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8023B6F80
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:34:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8DD17E13D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 07:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496C2242928;
-	Tue,  1 Jul 2025 07:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB9025F963;
+	Tue,  1 Jul 2025 07:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyRHRfbM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="P//OOnOm"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A352A72627
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 07:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E54428F1;
+	Tue,  1 Jul 2025 07:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751355288; cv=none; b=SujJzF/DmSjm09vY5kyg032tkuHW72PyhCPZxWC1eByfZcCW2K4DcXoQAcE4QteCR1H/ImSm5MXmF7fUj6dYHubjxtQiq9R9hHoYIHtFcuJynflOTpBTSLEq5EaTFe7FlyvsaWXVaAnsnAhPE9M+CBFi4uV0Au+SslB9aRfc2BI=
+	t=1751355232; cv=none; b=B4D3+bLe+LPkYBr/b+VG4AHqVoFY2hKYKlAb8TjWCWJqyAqPuUgncRgpFhgV+1fURMgB2tRppeSeI5j66ylXnZu7f+EHHKQ/fnJTjzl1+/dZ2cnB2IQzuNwiUUN33TubfVVEA+glyPksKkbXtIKrcKkNEJI2BhyqnmMGaewOA10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751355288; c=relaxed/simple;
-	bh=CnJ7g+laoyIJRX+S6qFT+yJN9TWzFT3yscMkhR4S4tQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqizba43VNoPecXi5USBEbVRmtFYlNA5Rhu+WhfZ9MsdkFE0wPbnDR0nsrrOnrkiR6OTndQ1u9x5uKh42BU6C2VlFXYiWmguSpExqiIpJqqtODxRPASafABUSiIfQ4twktj2vwndUjDTKk+YuDKoOGg/c+8gf9Cvq2d/0J5UswQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyRHRfbM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC704C4CEEB;
-	Tue,  1 Jul 2025 07:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751355288;
-	bh=CnJ7g+laoyIJRX+S6qFT+yJN9TWzFT3yscMkhR4S4tQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eyRHRfbM/kmwdg3sev8ghbqT2/VaeYb950pDlPGq7nwjlY54SgWTdgCikexOvw66Q
-	 wBr2e+atV8YuMXdJ1YvhmcJOuwL6rnhNY4rN4HUqXfat9urVOm4zXNA4gFPIaTrsx6
-	 VPA/Pz8B/UV6Ub6DHEvO3Y1uc7NTm/PfjevygLBhreivsim36vZ+txAMnyZ58jwXIM
-	 xlIh4R3Gvh8DXTXDOFi01t7gV/ADyw76lrKo2F26eNwGTw5Eyfn2a0mSjTapgGmxTq
-	 4CoiXc/GKJ/Pj6b9EBZdKEQ9n+WUsP00t4baj0csl1TPOTIfeuw8HBis/SWegq+iUX
-	 3ljrdYLLwe6qg==
-Message-ID: <7c5b852d-4f29-41c7-a171-c0069771a5e0@kernel.org>
-Date: Tue, 1 Jul 2025 16:32:36 +0900
+	s=arc-20240116; t=1751355232; c=relaxed/simple;
+	bh=2VqbAPJtUfnkDlAF8rcNfBYvaCT+VVnZ4zdP9Nu994k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDCys0VNrbBY+zVXHykusoV3L6YrXJzxLvsy1+P4yr26mCaMXW+rPvJX1VZXVfbsu8w/jlyw+j6EEyladrAQoUtJ9WhKVAwDLlutL4VbClMGBTCmaSNVPiYugdZcheRngI293Ygg84QwbBd0NiK4eRAhKih8xIRUv/auW4Z6axw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=P//OOnOm; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6Lcv9nTvAgKsJXFRPrOjjHvHtdAeBlh7A4eHDwh00wk=; b=P//OOnOm5stv/kbXHC5u15pFPT
+	IYA2JY03mW/qZZm/KKowsf07U1qsvHsCf6ZTgovpvKth50CI8ZbWdoSKlxbdt4dVR+0NoV26w3YHV
+	Eb3hDqmH4FBWNMztMtM0D/4HHuHt72VL1SK7Dj8FIn1bg84nO9t8DkzgSIAOSFae8pbk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uWVUZ-00HRFJ-L8; Tue, 01 Jul 2025 09:33:23 +0200
+Date: Tue, 1 Jul 2025 09:33:23 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Lucien.Jheng" <lucienzx159@gmail.com>
+Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com, wenshin.chung@airoha.com,
+	lucien.jheng@airoha.com, albert-al.lee@airoha.com
+Subject: Re: [PATCH v2 net-next PATCH 1/1] net: phy: air_en8811h: Introduce
+ resume/suspend and clk_restore_context to ensure correct CKO settings after
+ network interface reinitialization.
+Message-ID: <90321dbf-cca3-4f00-9f2e-3d09756761f6@lunn.ch>
+References: <20250630154147.80388-1-lucienzx159@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] nvmet: Make blksize_shift configurable
-To: Richard Weinberger <richard@sigma-star.at>,
- Richard Weinberger <richard@nod.at>, linux-nvme@lists.infradead.org,
- upstream@sigma-star.at
-Cc: linux-kernel@vger.kernel.org, kch@nvidia.com, sagi@grimberg.me,
- hch@lst.de, upstream+nvme@sigma-star.at
-References: <20250630191341.1263000-1-richard@nod.at>
- <132c1bdf-e100-4e3a-883f-27f9e9b78020@kernel.org>
- <2920993.eCsiYhmirv@nailgun>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <2920993.eCsiYhmirv@nailgun>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250630154147.80388-1-lucienzx159@gmail.com>
 
-On 7/1/25 4:09 PM, Richard Weinberger wrote:
-> On Dienstag, 1. Juli 2025 02:34 'Damien Le Moal' via upstream wrote:
->> On 7/1/25 4:13 AM, Richard Weinberger wrote:
->>> Currently, the block size is automatically configured, and for
->>> file-backed namespaces it is likely to be 4K.
->>> While this is a reasonable default for modern storage, it can
->>> cause confusion if someone wants to export a pre-created disk image
->>> that uses a 512-byte block size.
->>> As a result, partition parsing will fail.
->>>
->>> So, just like we already do for the loop block device, let the user
->>> configure the block size if they know better.
->>
->> Hmm... That fine with me but this explanation does not match what the patch
->> does: you allow configuring the block size bit shift, not the size. That is not
->> super user friendly :)
->>
->> Even if internally you use the block size bit shift, I think it would be better
->> if the user facing interface is the block size as that is much easier to
->> manipulate without having to remember the exponent for powers of 2 values :)
+On Mon, Jun 30, 2025 at 11:41:47PM +0800, Lucien.Jheng wrote:
+> If the user reinitializes the network interface, the PHY will reinitialize,
+> and the CKO settings will revert to their initial configuration(be enabled).
+> To prevent CKO from being re-enabled,
+> en8811h_clk_restore_context and en8811h_resume were added
+> to ensure the CKO settings remain correct.
 > 
-> The initial intention of this patch was exposing the blksize_shift property.
-> If we want to expose this as more user friendly, I'm fine with it.
-> Maybe "minimum_io_size"?
+> Signed-off-by: Lucien.Jheng <lucienzx159@gmail.com>
 
-That likely will be confusing with the existing device limit io_min. I think
-block_size is clear.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
->> Nit: to avoid the indented if, may be write this like this: ?
->>
->> 	if (!ns->blksize_shift)
->> 		ns->blksize_shift = bdev_blksize_shift;
->>
->> 	if (ns->blksize_shift < bdev_blksize_shift) {
->> 		pr_err("Configured blksize needs to be at least %u for device %s\n",
->> 			bdev_logical_block_size(ns->bdev),
->> 			ns->device_path);
->> 		return -EINVAL;
->> 	}
-> 
-> It's a matter of taste, but yes...
-
-Absolutely :)
-
-> 
->> Also, if the backend is an HDD, do we want to allow the user to configure a
->> block size that is less than the *physical* block size ? Performance will
->> suffer on regular HDDs and writes may fail with SMR HDDs.
-> 
-> I'm not sure whether it's worth putting more smartness into this logic.
-
-This may be nice to avoid users shooting themselves in the foot with a bad
-setup and us having to deal with bad performance complaints...
-If we do not do anything special, we will be stuck with it as a more
-restrictive setup later may break some (bad) user setups. That is why I raised
-the point :)
-
->>>  	ns->pi_type = 0;
->>>  	ns->metadata_size = 0;
->>> diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
->>> index 2d068439b129c..a4066b5a1dc97 100644
->>> --- a/drivers/nvme/target/io-cmd-file.c
->>> +++ b/drivers/nvme/target/io-cmd-file.c
->>> @@ -49,12 +49,28 @@ int nvmet_file_ns_enable(struct nvmet_ns *ns)
->>>  
->>>  	nvmet_file_ns_revalidate(ns);
->>>  
->>> -	/*
->>> -	 * i_blkbits can be greater than the universally accepted upper bound,
->>> -	 * so make sure we export a sane namespace lba_shift.
->>> -	 */
->>> -	ns->blksize_shift = min_t(u8,
->>> -			file_inode(ns->file)->i_blkbits, 12);
->>> +	if (ns->blksize_shift) {
->>> +		if (!ns->buffered_io) {
->>> +			struct block_device *sb_bdev = ns->file->f_mapping->host->i_sb->s_bdev;
->>> +			struct kstat st;
->>> +
->>> +			if (!vfs_getattr(&ns->file->f_path, &st, STATX_DIOALIGN, 0) &&
->>> +			    (st.result_mask & STATX_DIOALIGN) &&
->>> +			    (1 << ns->blksize_shift) < st.dio_offset_align)
->>> +				return -EINVAL;
->>> +
->>> +			if (sb_bdev && (1 << ns->blksize_shift < bdev_logical_block_size(sb_bdev)))
->>> +				return -EINVAL;
->>
->> I am confused... This is going to check both... But if you got STATX_DIOALIGN
->> and it is OK, you do not need (and probably should not) do the second if, no ?
-> 
-> I was not sure about that.
-> Is it guaranteed that STATX_DIOALIGN returns something sane?
-
-If it is defined by the FS, yes. But it may not be defined, so in that case,
-you have to use the fallback of the bdev block size.
-
-
--- 
-Damien Le Moal
-Western Digital Research
+    Andrew
 
