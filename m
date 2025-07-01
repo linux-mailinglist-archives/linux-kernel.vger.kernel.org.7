@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-711072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3222BAEF589
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49947AEF662
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6680A440120
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52A73BC67B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCF9270EA3;
-	Tue,  1 Jul 2025 10:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgL/bBOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423F126FDA9;
-	Tue,  1 Jul 2025 10:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC932737E6;
+	Tue,  1 Jul 2025 11:20:38 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288CE272E7F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751366982; cv=none; b=lERmfJXHiG+guPjq+SorfP6BqWoP/qeaL7hJPvwVZCpVXkZJjdeI5yZuyybCKrljVxzRD45EYmSmG1BWe8x6KXuUO0VzIdxUjwGjVGgxF07rgNspP+H3sbcNzNagZ50BNWXj+eHJOKRobVjJAnWzrcIcZZl+lusw/Mehob4lPtU=
+	t=1751368837; cv=none; b=OuJ6MEEH8ZDmbi5ijW630RRCK4QGX7XAYCpfnyMRryfT4eiypRoAMpf8DnsfeM9wPKkwvYbiZBRoQ7V/0u3iK+mv93bTiW1N0A/bbGIy/ZmBIUs0IUXz05TLASBGXB85pHgxg2hH2JGzVssIYuGfw3X1CeOx38hKgJ4kno8tLnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751366982; c=relaxed/simple;
-	bh=K72GTE7UBORgAxUCCriBJHYOJ+/xnWxxgAX8Kp6b374=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=gVZhdsxBxkEBRj5roUDU8REPqNvknL2C722Ax8oszaijY6pe3WJCsHPQZnFqd6TLxU2+uUvb2E795dUKObqb3+vp58OzEU2ikcfAueBb2/1AizaE8dl1fpFj1JMU9Fcds7Ybbm0akcK/M8wGbCR1br1pFqSF62C4oqSLCdc5kXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgL/bBOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C38BDC4CEEB;
-	Tue,  1 Jul 2025 10:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751366981;
-	bh=K72GTE7UBORgAxUCCriBJHYOJ+/xnWxxgAX8Kp6b374=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dgL/bBObBmCeQLd6NcVrjT7ixPxxPTuxFeUsg3mSuYSdLEUbLk/hEhRUtrgVsaHb6
-	 prYMs6cUfcm1yLA3dvfEDSVqEEBgHJz26/HzlPLka9191yt7fClSQVhmqxFQqpk/zJ
-	 nZgVqAi9SQfvO3j5/tJtj53uffUFg3sVL2Y5PF9wO5uRYMvUlYDs4RDvWdoHK4K1y9
-	 Cz3g+vF9QoX+BmUJKlpxKKHy14VFcym+driJN9fqxNIFFHpL7jb+hOwjIuWUlv96Ux
-	 N9KVBMHMVCAngjuSUSCaQ3caSA8U7YB6b8ctP1lG/sh6zmJ2ylQbgoi8aymM5y8OF8
-	 s61WIn15XIzJg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF7B38111CE;
-	Tue,  1 Jul 2025 10:50:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751368837; c=relaxed/simple;
+	bh=Fmh/oUteSMJXBwASChJwBISKL4lDdtXTv5z370N0ZhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I8NzhAYqzEbrUznKY1rkRaagr0OD63jh2VL9zM0gvzjODB2ZRZtrXM+bJ0cizdsc0ymuBVofjufA4a8woGSm8E2jB3ekgnKHa5afoxo1n+oizjd+vGkQldxmWwCGNlLisNTOLlcqh5cqlbMFqGRwkp4UrEhmgwy13NwFdofX0Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bWftm1SCKz9v6s;
+	Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 9ZjP7bqju4rm; Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bWftm0rDHz9v6d;
+	Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 17B0C8B765;
+	Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id XdqZhR-nxYqf; Tue,  1 Jul 2025 12:50:08 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id AB5E48B763;
+	Tue,  1 Jul 2025 12:50:07 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] arch/powerpc: Remove support for older GCC and binutils
+Date: Tue,  1 Jul 2025 12:50:07 +0200
+Message-ID: <b6b94cba7492c8581e8d5d25b15962e5ad7a37c2.1751366979.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1751367007; l=1618; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Fmh/oUteSMJXBwASChJwBISKL4lDdtXTv5z370N0ZhY=; b=em+8ziEW8wo/UJ208nB+/sKg9HEwdRL83AvMPAfM06pEayyHy/vcuDHEd/uGf/UuyUM1w/fRE cQI0OzWzOY5CGFcZiLtT0DgcNJiHgc5dffaHH0OVFbmtnkKvS1VHC5c
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v1 1/1] net: usb: lan78xx: fix possible NULL
- pointer
- dereference in lan78xx_phy_init()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175136700676.4114988.13242683891063263726.git-patchwork-notify@kernel.org>
-Date: Tue, 01 Jul 2025 10:50:06 +0000
-References: <20250626103731.3986545-1-o.rempel@pengutronix.de>
-In-Reply-To: <20250626103731.3986545-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, woojung.huh@microchip.com, andrew+netdev@lunn.ch,
- rmk+kernel@armlinux.org.uk, Thangaraj.S@microchip.com,
- Rengarajan.S@microchip.com, dan.carpenter@linaro.org, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, phil@raspberrypi.org,
- maxime.chevallier@bootlin.com, horms@kernel.org
 
-Hello:
+Commit 118c40b7b503 ("kbuild: require gcc-8 and binutils-2.30") raised
+minimum GCC_VERSION and LD_VERSION.
 
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Simplify powerpc build accordingly.
 
-On Thu, 26 Jun 2025 12:37:31 +0200 you wrote:
-> If no PHY device is found (e.g., for LAN7801 in fixed-link mode),
-> lan78xx_phy_init() may proceed to dereference a NULL phydev pointer,
-> leading to a crash.
-> 
-> Update the logic to perform MAC configuration first, then check for the presence
-> of a PHY. For the fixed-link case, set up the fixed link and return early,
-> bypassing any code that assumes a valid phydev pointer.
-> 
-> [...]
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/powerpc/Kconfig      | 2 +-
+ arch/powerpc/boot/wrapper | 6 +-----
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-Here is the summary with links:
-  - [net-next,v1,1/1] net: usb: lan78xx: fix possible NULL pointer dereference in lan78xx_phy_init()
-    https://git.kernel.org/netdev/net-next/c/c22f056e49d9
-
-You are awesome, thank you!
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c3e0cc83f120..cd35d90dfb49 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -252,7 +252,7 @@ config PPC
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_TRACER		if !COMPILE_TEST && (PPC64 || (PPC32 && CC_IS_GCC))
+-	select HAVE_GCC_PLUGINS			if GCC_VERSION >= 50200   # plugin support on gcc <= 5.1 is buggy on PPC
++	select HAVE_GCC_PLUGINS
+ 	select HAVE_GENERIC_VDSO
+ 	select HAVE_HARDLOCKUP_DETECTOR_ARCH	if PPC_BOOK3S_64 && SMP
+ 	select HAVE_HARDLOCKUP_DETECTOR_PERF	if PERF_EVENTS && HAVE_PERF_EVENTS_NMI
+diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
+index 3d8dc822282a..a75baefd1cff 100755
+--- a/arch/powerpc/boot/wrapper
++++ b/arch/powerpc/boot/wrapper
+@@ -226,11 +226,7 @@ ld_is_lld()
+ 
+ # Do not include PT_INTERP segment when linking pie. Non-pie linking
+ # just ignores this option.
+-LD_VERSION=$(${CROSS}ld --version | ld_version)
+-LD_NO_DL_MIN_VERSION=$(echo 2.26 | ld_version)
+-if [ "$LD_VERSION" -ge "$LD_NO_DL_MIN_VERSION" ] ; then
+-	nodl="--no-dynamic-linker"
+-fi
++nodl="--no-dynamic-linker"
+ 
+ # suppress some warnings in recent ld versions
+ nowarn="-z noexecstack"
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
