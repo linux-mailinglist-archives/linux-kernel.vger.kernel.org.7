@@ -1,182 +1,162 @@
-Return-Path: <linux-kernel+bounces-710645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC67AEEF2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:46:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2B5AEEF2F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295DD3E15CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37CA27AC87C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A1D263F59;
-	Tue,  1 Jul 2025 06:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF6225B2FA;
+	Tue,  1 Jul 2025 06:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R3TSDtgQ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NPfo+yPl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D253B25C813
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 06:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C830C1E51FB
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 06:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751352332; cv=none; b=VDflzdr0scuaQ6UZmye0IYvzuSjdqgKqbotModgM64LvAM8GlFVydOKt95KTcO1eAp3M8OaHfujp6gx11S5G/qhJG4fQIVyqgmvSTFMzMqkf/NlNQ+Cx3KeQtR36HCUmFzsi0iygXahohG8LLEjy0FOu6ggyQ4xcij/OBQw6hZ8=
+	t=1751352355; cv=none; b=UtTKQFKWAs59yC9vwfmK/w0/oSutfET58hMREycvZ8OGoy7K2hycBOuDC86IjT/8UZARb43DxNFG+wc+qfHiuMGyK0J0XYM1hxRwBwkTwfJDTpaKzsUZMJ3fMU2lNYKc0BnzQzp8hGvvW1B4clDyHL1rfXKR4sbo7ifCsLY+9aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751352332; c=relaxed/simple;
-	bh=QmZpnmLlh6tX4XaANLS4O9Y/vCKXZvopPBJCBX6jXB4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eSv0nPVSHzQd6zJD+Y0pA1DAgaUJG6B3wIOrGtoWv0rQUwf7FYuovW8BkDKigRlz3HjRPETYrzmYnLT1OuNEeR5H/jmoXHlInyu60edcSdCbzyKMi+/jZ1bnodr1vj5PrbaaloeUrVftqb7Ahm1NY13JGkBxe2oRfBYE8zPjEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R3TSDtgQ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-555163cd09aso2188286e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 23:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1751352327; x=1751957127; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mD/ZZfdswixudH8eqV8nMYQf/9eq1jLBXUnC6Jy/I1E=;
-        b=R3TSDtgQZ+7xQlc6edqU2udtstZq4sCOUKPPxSwmA49CKSkkEkg/vE40ks3HEmDlHf
-         E7Dp32fowhMpNZkEnZYVX6IoVEtp8h+9F0znPmxrPZGvSVd7ebe5HlPh7NkrNnydXYsM
-         cdeNUE8/Wh+rtoGK8uludInZtWaSwZFBVAgSY=
+	s=arc-20240116; t=1751352355; c=relaxed/simple;
+	bh=gLhUqpMgS9yLqJKaBfIOhojwMZScqGvBOte8jL4p3oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=odrN65k81zyYRpUUGTtSOxGzp94MdIDIBkKibPT9tLVqVEwbrhUGCrMAoN03wkI++23EVWsyCxHVqYMVast0CSbfrqAMRlGIrwLhKMQs2wFMy6LfjzFXKfV+s1dE4joDeG8q1VmNTNrJvWcRX4ms8gSQRuR7ERRGw93p6B7Cy5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NPfo+yPl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751352352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/FB/rr13rxhfU8eE4uQBrYdSojlxrnS1P6/7C5rZKVs=;
+	b=NPfo+yPlTGByTIJra44vCbexSLY4MJ7F2yX+l3HLPnIdOFdLGp1UKOtz2SjV3feFgVivKZ
+	FhBt/qwK7htnRu+kuA5sU37RJdgDQrr8DL3FVoZn62hxd6iP4CLIDSiqtSl4C5bWms9BDr
+	KkOH4aSYVpLjRXLVc8qA4WzKY5fSaZ8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-MJcRVM5QMAOJJ1veJnMumA-1; Tue, 01 Jul 2025 02:45:51 -0400
+X-MC-Unique: MJcRVM5QMAOJJ1veJnMumA-1
+X-Mimecast-MFC-AGG-ID: MJcRVM5QMAOJJ1veJnMumA_1751352350
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451d3f03b74so26692415e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 23:45:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751352327; x=1751957127;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mD/ZZfdswixudH8eqV8nMYQf/9eq1jLBXUnC6Jy/I1E=;
-        b=bDBnBNOf9F5SG7nUpxbv67Sv82VNA/zUjkjZcUz8FkoSSId1WqOgZ5IsIVE5PyHJlN
-         vDGo38qqWVDBxk/g3MRJpky+Iz/jnfeAUmHc4HGh1TiljFw+Zo4eVWLo/q/q6NP2hUt8
-         HSjVyDRqhmtEQMk7QCLF+AHExwX7YlkEBfL+u75ASIQKxztdvR682mscE3zu02qpCOVC
-         bftbllbKLmkVpYOLD/VtlPRfhU0yGAcUHAE1XMlfBHP4Pz6YpopM4NofXdFab4hY/MT2
-         ourUCeJc1RlIwtXaLoYdcQx3CdttEFLYq6cVLrJqc4KBw1iZighbjeewjRVPgetNexbh
-         KRAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxBeomUzZvTIr0ER4G9i7/qcr2fdYyikTKtNxOwa9pUZYLk2PE/zyKzwviN4ywanx4yGL7iukekJbYWFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2jixkcqZ3+Yz7EB9x2lNjngvFgFx+pNlwLNYtYPuEEpcOq20y
-	XV4Dqz1onjx4kWgGOo0XVXXezKnBNLExwZnOhj2Geu93XW41MvGtvqySAs+pf1ScAQ==
-X-Gm-Gg: ASbGncu/sbuuFmuTARmW8P2Xmhv9LGw+F3FKY0FhOwecU1/f8lC8JxOjChtOuu5bMK3
-	nPRa4HmAXrNXOqKEWYH0XtsQGV4JZu0ZAqVaSI2S/KOG9SBDHngXeqllzDv9VlMoIGKyJZaFGm/
-	qIZXx2knpzCZgGq1Hr73xhZ/TrFnjBUWccRGxjVi7l9XjFwlYK7oEazd96/ksE6CGEIjzFLzI7s
-	Yw8js7Fh/6AjW+giE9hG4mWnhOwl4uBlaWc6AQEHglZXNnVxftiXE5msd5X/IHNLtuWpVE379gx
-	IPHm0ZYMoYmBfkNZhbLAIy/oK2Ox3gl315jbcpx7jYLQQzk/E9PSHMzf9woNtE1lVkm4/qYGiew
-	dIst7SgtKZKf2Oa2Pjr5xHw9T1h5a3+sPiU768RncEA==
-X-Google-Smtp-Source: AGHT+IHcvZzYcxMuIZSTWN1rrGh8R7B3bfUeWSAMkh500L9Xm26tRalN09L/Awjdk+uRi9ZggZqHFQ==
-X-Received: by 2002:a05:6512:3b0b:b0:553:abd6:cd3 with SMTP id 2adb3069b0e04-5550b7e96bcmr4895630e87.6.1751352327508;
-        Mon, 30 Jun 2025 23:45:27 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2f162dsm1704836e87.248.2025.06.30.23.45.27
+        d=1e100.net; s=20230601; t=1751352350; x=1751957150;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/FB/rr13rxhfU8eE4uQBrYdSojlxrnS1P6/7C5rZKVs=;
+        b=B+Jsw2pccInDUnzQmMQlmEXm4/3qaQzK28d5t8W/odlnqaP+/h9sncv3Z56+Lp0msz
+         7TMCx3PRO958qNfU/XxtJnndcXmvAJoqThVeCCxd9Jz71ByxrzTPqq4o2koNPBOa0QZO
+         47tRhNo6KjlJGF5VPggAV2A2+GZ1I8I1xHskyr4UujijyLu+LHI4YQRcyNqT25K+FzLe
+         PtsVZQAz6S0kzUWmrBwMgqgf+vuhgHLC5aJnOz5iEKlNjCSXSrlyZVWou3i6oiYbc9GJ
+         +8iA5OH8Tjr3gx/kLNE1LjG6BFrTOdNlOkkVJiKuUo8ITLUBrGkSav/NX41M0clGOoE7
+         ClFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJAcDCXOD7WSvMGsKhtlB4lYuiEOyDhkSj8aTUlJYnmmLvzjw7l+gTCdvtUoGYVfACIpY9+iPOvVbf27k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCS1ZfFr/wSRL7+7/otdENDh+3y+jtiluRsu95ZZjRg2DKvjsI
+	GDFi0vgaxKBAJnVeBUmW9wRMwVy8OydwTA33UQIbMf53y7MAOoaxG10XHGMDb8AAu/mE8z9oDS6
+	BRKF7UyLDW+sCzNQ3vk2a5mKar2DZ5j10BgdISthGRL4V2m2pX3j7jr35mVd1TlSZPg==
+X-Gm-Gg: ASbGncvVnSTcjeBiIXZwNEjRh4DAz1eoGjAmgZHm/EEiW0qlfkYRPoU6P5rsG/fcIxP
+	3Nr2BrXiCCNv5BjSPbB6BUPg8KBVJxv/YG9xOYwYZhu1wcU5SLfHNTw+naDkfhjSxTB38/DQIm2
+	jlp1+ebhMUNNpp2gCZmxRP/fzJicqlP7mHQkN2frbcc4r7gxJUfgDNir5XzsNvsw8QpdqfegPVR
+	QSlS8emb+JACAzTzBMmeoAAMDNz6ql8hc0eMYZewuKGBMzvEWQ5XryUgneAcpdpAgVRwRVznrzO
+	LyjB63FzxJ94CVzr
+X-Received: by 2002:a05:600c:8518:b0:442:f482:c421 with SMTP id 5b1f17b1804b1-4538ee7df51mr140275745e9.22.1751352350383;
+        Mon, 30 Jun 2025 23:45:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNqYmg2q01DPQRmv8jE+6E8iA13iSfpZEeDhKnGAq6nzxNu9hatrBH/eHkSndzvZVUAhPbfw==
+X-Received: by 2002:a05:600c:8518:b0:442:f482:c421 with SMTP id 5b1f17b1804b1-4538ee7df51mr140275485e9.22.1751352349874;
+        Mon, 30 Jun 2025 23:45:49 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:152e:1400:856d:9957:3ec3:1ddc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453823ad03asm187631545e9.23.2025.06.30.23.45.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 23:45:27 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 01 Jul 2025 06:45:19 +0000
-Subject: [PATCH v4 7/7] media: uvcvideo: uvc_v4l2_unlocked_ioctl: Invert PM
- logic
+        Mon, 30 Jun 2025 23:45:49 -0700 (PDT)
+Date: Tue, 1 Jul 2025 02:45:47 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 18/19] virtio_ring: factor out split detaching logic
+Message-ID: <20250701024506-mutt-send-email-mst@kernel.org>
+References: <20250616082518.10411-1-jasowang@redhat.com>
+ <20250616082518.10411-19-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-uvc-grannular-invert-v4-7-8003b9b89f68@chromium.org>
-References: <20250701-uvc-grannular-invert-v4-0-8003b9b89f68@chromium.org>
-In-Reply-To: <20250701-uvc-grannular-invert-v4-0-8003b9b89f68@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>, 
- Hans de Goede <hansg@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>, Hans Verkuil <hans@jjverkuil.nl>, 
- Hans Verkuil <hans@hverkuil.nl>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250616082518.10411-19-jasowang@redhat.com>
 
-Instead of listing the IOCTLs that do not need to turn on the camera,
-list the IOCTLs that need to turn it on. This makes the code more
-maintainable.
+On Mon, Jun 16, 2025 at 04:25:16PM +0800, Jason Wang wrote:
+> This patch factors out the split core detaching logic that could be
+> reused by in order feature into a dedicated function.
 
-This patch changes the behaviour for unsupported IOCTLs. Those IOCTLs
-will not turn on the camera.
+you mean 
 
-Suggested-by: Hans Verkuil <hans@jjverkuil.nl>
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-Reviewed-by: Hans Verkuil <hans@hverkuil.nl>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_v4l2.c | 52 ++++++++++++++++++++--------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+Factor out the split core detaching logic  into a dedicated function
+so it cn be reused by the in order feature
 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 7ab1bdcfb493fe9f47dbdc86da23cba98d7d10ff..160f9cf6e6dbdbf39e3eff56a5d5ea1d977fbe22 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -1222,36 +1222,36 @@ static long uvc_v4l2_unlocked_ioctl(struct file *file,
- 				    unsigned int cmd, unsigned long arg)
- {
- 	struct uvc_fh *handle = file->private_data;
-+	unsigned int converted_cmd = v4l2_translate_cmd(cmd);
- 	int ret;
- 
--	/* The following IOCTLs do not need to turn on the camera. */
--	switch (cmd) {
--	case VIDIOC_CREATE_BUFS:
--	case VIDIOC_DQBUF:
--	case VIDIOC_ENUM_FMT:
--	case VIDIOC_ENUM_FRAMEINTERVALS:
--	case VIDIOC_ENUM_FRAMESIZES:
--	case VIDIOC_ENUMINPUT:
--	case VIDIOC_EXPBUF:
--	case VIDIOC_G_FMT:
--	case VIDIOC_G_PARM:
--	case VIDIOC_G_SELECTION:
--	case VIDIOC_QBUF:
--	case VIDIOC_QUERYCAP:
--	case VIDIOC_REQBUFS:
--	case VIDIOC_SUBSCRIBE_EVENT:
--	case VIDIOC_UNSUBSCRIBE_EVENT:
--		return video_ioctl2(file, cmd, arg);
--	}
--
--	ret = uvc_pm_get(handle->stream->dev);
--	if (ret)
-+	/* The following IOCTLs need to turn on the camera. */
-+	switch (converted_cmd) {
-+	case UVCIOC_CTRL_MAP:
-+	case UVCIOC_CTRL_QUERY:
-+	case VIDIOC_G_CTRL:
-+	case VIDIOC_G_EXT_CTRLS:
-+	case VIDIOC_G_INPUT:
-+	case VIDIOC_QUERYCTRL:
-+	case VIDIOC_QUERYMENU:
-+	case VIDIOC_QUERY_EXT_CTRL:
-+	case VIDIOC_S_CTRL:
-+	case VIDIOC_S_EXT_CTRLS:
-+	case VIDIOC_S_FMT:
-+	case VIDIOC_S_INPUT:
-+	case VIDIOC_S_PARM:
-+	case VIDIOC_TRY_EXT_CTRLS:
-+	case VIDIOC_TRY_FMT:
-+		ret = uvc_pm_get(handle->stream->dev);
-+		if (ret)
-+			return ret;
-+		ret = video_ioctl2(file, cmd, arg);
-+		uvc_pm_put(handle->stream->dev);
- 		return ret;
-+	}
- 
--	ret = video_ioctl2(file, cmd, arg);
--
--	uvc_pm_put(handle->stream->dev);
--	return ret;
-+	/* The other IOCTLs can run with the camera off. */
-+	return video_ioctl2(file, cmd, arg);
- }
- 
- const struct v4l2_ioctl_ops uvc_ioctl_ops = {
 
--- 
-2.50.0.727.gbf7dc18ff4-goog
+> 
+> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/virtio/virtio_ring.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 259380797ec4..27a9459a0555 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -804,8 +804,9 @@ static void detach_indirect_split(struct vring_virtqueue *vq,
+>  	vq->split.desc_state[head].indir_desc = NULL;
+>  }
+>  
+> -static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+> -			     void **ctx)
+> +static unsigned detach_buf_split_in_order(struct vring_virtqueue *vq,
+> +					  unsigned int head,
+> +					  void **ctx)
+>  {
+>  	struct vring_desc_extra *extra;
+>  	unsigned int i;
+> @@ -826,8 +827,6 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+>  	}
+>  
+>  	vring_unmap_one_split(vq, &extra[i]);
+> -	vq->split.desc_extra[i].next = vq->free_head;
+> -	vq->free_head = head;
+>  
+>  	/* Plus final descriptor */
+>  	vq->vq.num_free++;
+> @@ -836,6 +835,17 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+>  		detach_indirect_split(vq, head);
+>  	else if (ctx)
+>  		*ctx = vq->split.desc_state[head].indir_desc;
+> +
+> +	return i;
+> +}
+> +
+> +static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+> +			     void **ctx)
+> +{
+> +	unsigned int i = detach_buf_split_in_order(vq, head, ctx);
+> +
+> +	vq->split.desc_extra[i].next = vq->free_head;
+> +	vq->free_head = head;
+>  }
+>  
+>  static bool virtqueue_poll_split(const struct vring_virtqueue *vq,
+> -- 
+> 2.34.1
 
 
