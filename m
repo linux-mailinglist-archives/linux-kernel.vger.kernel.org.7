@@ -1,169 +1,133 @@
-Return-Path: <linux-kernel+bounces-711310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EA4AEF8EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05C7AEF8D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367874846B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA25189DAE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CEE2741A6;
-	Tue,  1 Jul 2025 12:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HVw5phXl"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2089.outbound.protection.outlook.com [40.107.243.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E22273D98;
+	Tue,  1 Jul 2025 12:39:08 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35692749E6;
-	Tue,  1 Jul 2025 12:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373602; cv=fail; b=SwKVNX3bhbK7Fh3roZTgredTA8lBGVJjAiBcotD2S25BCk3iZf7i1tQvLYX3h7FXIXFLAucHxVWTf1Q6JL4d5nrMTjCTJbIiltcHQYuR8C29gouf3Pz9OpHlTPC4ZiurPskPgGz1G6iaa4cQK7iqcB1ReWX9zW9HFTGlX0vlxY0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373602; c=relaxed/simple;
-	bh=pUBHphU30GqL08aBPvFeKHrrvtL+qnt2Ot8vuafflB8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nkLk0Ffsm77DjiaNc5zcYi+2gUJbwmyX4OlmR3JmsDLVGVN1fsntnNd8nSyqcTlWnfdNhR2OmA3Wi1Q+iRYdoHOoPsbaOWGOcO5jCFGcVUApbnkUhn+evphx2QyWMY6uR/bb5jJXajotJi4WGICSI/qKE8uBS4CMWc0gCOerGrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HVw5phXl; arc=fail smtp.client-ip=40.107.243.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PUnH/4jCHkrAsazSWZ6pDOn3TjSRaG35XTDOKglNdEQopS68EZAnkY2lnqT6Bn6xvrNH2+efzU0j2+tYX1spiK5kiiS0ev3CDW/sER3gtBQOGmqVqHcY62m/rR3vUaSblUfVA0cW7A3kMcGcEtfl6vKqB229BQt+id/XAIviWfNkc23WgBbCIudFag1bkUAIVpZWxc6Rt3wV+UmWgeiR0sKa68+z7EDtJSQzgUD1Xyjx08BGhjqeTjmgWRjzzsFb+w0t59iuM8PiibbtfUUeCYdEEeRhdNN0b3xzIZAj4syZ98bdeRiaOa7f5/c+ZTJZ5eXCrGEjtkd3c0mEfloN4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=walO4ieAjnSlQmIbG0kq1CD94eH2uL4Fpm9aeKyzreI=;
- b=bGzX+Wv3J1gKpJ6qCqKizazfw8zqBrjR6vY+oV8YxICuCGvV7k2RdLvtdj3Xa3WQjMfk5HH+ap43j6NxUiWtpNw1JG39pDneUOGQga0Gjq1aa/iz593cN8Wekiji+V6O+dxJArY9HRy4KSMD74t4Fq+9rwv0s8Z1HJlHZT/zhW+7VaVjYBMXqIgpHmnx3q9W+H4w9+zWadSTGm4fsXc5XsHKansV4InoHbPaijqPRMUyfZmRiajfY1LyMOPh35lSJOr8DAE5IHQ+VjEAZ3MNrcp70/u2n1ZSYmGdMqBnNIl/+VnsJQfUjnPFc/7iuqGh1bGXGHwifelujvKiT8F6Jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=walO4ieAjnSlQmIbG0kq1CD94eH2uL4Fpm9aeKyzreI=;
- b=HVw5phXlvaNhjA2/wMRg4I22Sq57NyXeL2aTHKYhAvAvjOXCyuuIBYNsNt6Djv1O4YaAlhhFkZpCZTAgSImUwp9s0GdPuW/uBn6dlbdMbebvEGSHy+3yoU6Jx9Ux3rp1tR8QjbvkvN7U07ZkstWX2+hsyU42OonMxYfszuXKTNM=
-Received: from MW4PR04CA0119.namprd04.prod.outlook.com (2603:10b6:303:83::34)
- by MN0PR12MB6248.namprd12.prod.outlook.com (2603:10b6:208:3c0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.28; Tue, 1 Jul
- 2025 12:39:54 +0000
-Received: from SJ1PEPF00001CE4.namprd03.prod.outlook.com
- (2603:10b6:303:83:cafe::70) by MW4PR04CA0119.outlook.office365.com
- (2603:10b6:303:83::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.19 via Frontend Transport; Tue,
- 1 Jul 2025 12:39:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE4.mail.protection.outlook.com (10.167.242.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8901.15 via Frontend Transport; Tue, 1 Jul 2025 12:39:54 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 1 Jul
- 2025 07:39:52 -0500
-Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 1 Jul 2025 07:39:52 -0500
-From: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-To: <michal.simek@amd.com>, <linus.walleij@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <git@amd.com>
-CC: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-Subject: [PATCH 1/3] firmware: xilinx: Add Versal NET platform compatible string
-Date: Tue, 1 Jul 2025 05:38:49 -0700
-Message-ID: <20250701123851.1314531-2-jay.buddhabhatti@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250701123851.1314531-1-jay.buddhabhatti@amd.com>
-References: <20250701123851.1314531-1-jay.buddhabhatti@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ED126F477;
+	Tue,  1 Jul 2025 12:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751373547; cv=none; b=I0Pfj8zjCI4iXQ/MoqRtcISOBwAQ0LJbvZvuQ3CPLPsQY/zcv9nLUHxFSgDu7jHrqIPVnQfYwr6iw0ftZVMdvCe2i1kWo0yVBJXyqyKDhPJ5xa9ZzvY5IoyFBRwKaVoNwtW6EjtUh743Svxc0kNphKRUn3F43Z+mg2A6g2ARjyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751373547; c=relaxed/simple;
+	bh=o5de/p1cZO3Uxp7wuj2Y3RT2zzFHhWp1WPtKT9S8MV4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n/zAYyx/4ZtSAvtB6lkPXJf35ZDSPGtziFlU9mfa1AmzS3ljHbrkr9OM8AdEt1DaWop9BKOQN53eP6sOFLiSOrC0fXWdJjeIVnNOK1gyayPW3mLF6ptRE+zJiolnRoRgpgpy1NCRYEzH4EgWw5IxEkLih4p9LAvsiHbpbIbHsjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-531b4da8189so1126671e0c.1;
+        Tue, 01 Jul 2025 05:39:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751373544; x=1751978344;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ljpteC1rAZ0Y7Ib0YzT8O0VCIn4qc5LFAPg21zK2Gas=;
+        b=gkSxrqBXMD4wqqG8PivRWlYNCBIMppwoepHMu0qcCMIoNw/y6WQZIi5/rKbdAfuZo5
+         qKPPf1NF0msy6y/BxU1b7WGgWmvLK+ZwQsF5bMEGV0WILOp7cMuEmz4QcLN4OqUKjI8G
+         L4IppnXc9H8hkipSsCGnBgpaus5hSRBYgagyYoZtz8dUt5UXBlybEqEZ096SOrSPgdTX
+         SKJTHNnZFCJ+HvFuYkpZkh7lSbNVDxogWlPCaxJ7HDTRMhGsuTs9tGWUAII+0cdBfG5c
+         VA9nZej11g8laaBYEm9akW6h0ti09NrCcQTpkK0N/9QArdMyVChlOuNiyagpnxvwAWyo
+         xlow==
+X-Forwarded-Encrypted: i=1; AJvYcCUJRHFADzB+lpuPh1mLZ0lFlIQIlGdf36BqRcrxX2fM1zxRyTcp+fOf5ZYEMZqt88Ap+cqMdqltFk+y@vger.kernel.org, AJvYcCUaXcOhrqo7ssb5skwNR7euZmvU8xNGxru+UR09h3saZH6mAfZPoTE0sF2CWm3IqzxwSD5L6hWQyx4MqQ/TD7UjtXI=@vger.kernel.org, AJvYcCVraAgAATICBaQTxG8E3gNy3LJtY+f/KHAk5Pp2WyZEP5Qg9GL0iAsJ/jx6DwDdKjxIxhNmeUkmE8JFABN/@vger.kernel.org, AJvYcCWwBlotdI+4N7Q2txXYs3kwx3hc8toxyZumvKARrP79+N9FW3Rp77TfpBohz3sQHBJy5eyMatzzjCD7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEfMehb1n7Xz9SWC1eJZutOOxeziXdwohCBhSR/WQAWcFE0ILN
+	xNrG71jUCu+HGCLv4EbJidmlU9aYaqzBzHRStKa1gXwFkevzzaZlNdXo0N82tkqq
+X-Gm-Gg: ASbGncth76JoLUHXLntAXkPzzc2SkWZ/1RkCjsUmOqAoSnHms+mXzLma9gF2ll88+s0
+	9n0o7Ak0DpDXYOxlXZvZHSKEVdn8lfJOKiBbFKiJveokjsFyeZM6ALYyWSs8zYzf2rAaou+tuPp
+	44SOWP25ThpKSNijYzSHoFzhAG4BYgsvysRQtcLop4pU30hWIpJmlMyWTGvLWdeBkxkRYz5sXcV
+	NiH4Ly7QkSGJZERzZb5UGh/V/MO8NQ1z5O9VMe06N9aClZIHHTr11BY+FxCLRua+LjZPErE9VjC
+	lrDMo19L/YupsgUWibZafdNuSw2NkRv6j1koQhZ8JgGWx7axXEpWgGwDYSmQvljVhC9lpGrApL5
+	myzf42048lI7Du6qKEGRVy9XnBemc0AljElk=
+X-Google-Smtp-Source: AGHT+IGW29KumIU6iak2ktfnxBtmg0vPzQ8GNSWqpahz/gZFxHL6Ak1P4FkJwMbui64jupH44vK4Lg==
+X-Received: by 2002:a05:6122:2398:b0:531:2906:7519 with SMTP id 71dfb90a1353d-5330be9f389mr10400456e0c.5.1751373543711;
+        Tue, 01 Jul 2025 05:39:03 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-533091ec491sm1731042e0c.35.2025.07.01.05.39.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 05:39:03 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4e79dde8511so629568137.0;
+        Tue, 01 Jul 2025 05:39:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTSmpNy+1hzHE29z5OhqpRVUnfzqgpnnQTNOeNy9zvbDnlVmdza43tbZBxDtngzUdO27hRa0G8K6bgf5iFIlxiitw=@vger.kernel.org, AJvYcCV2xvPtmkpqnRgS61BSTaMoHbBGl1M3pTbbsKHArVdZKKCKDHtdJMXGpec3V+5DuHD6exo8VcMY1c2O@vger.kernel.org, AJvYcCVOvI+iNtlhPk0QB1n8N8Lp8ABnU7+INxGqXsceaV59MRbchQFMmEqra5odKDOTTzioHd1gYbTQQPhIalbD@vger.kernel.org, AJvYcCVaZL9uKhYUOhpQiLzPDi0rp1h0Cxa7lGjKQHk4JCtri6r4QvQ0moZ8VtbedvZribLsSda0IYlTgy11@vger.kernel.org
+X-Received: by 2002:a05:6102:b0f:b0:4ec:b2cc:de60 with SMTP id
+ ada2fe7eead31-4ee4f5318f0mr10978211137.11.1751373542790; Tue, 01 Jul 2025
+ 05:39:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: jay.buddhabhatti@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE4:EE_|MN0PR12MB6248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7763bf50-fa69-48a0-079e-08ddb89c6168
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZAexiTncdfcK78SM+vvBJXXD4SkvsmNKPOnWOrmy4HmyJvRWB34LAXWHm/qQ?=
- =?us-ascii?Q?jkmJyJlOuBul0NF88xy2BFinrKX3P6MyWT1yc90dGDsy8SkpLXMnyW4mOrC5?=
- =?us-ascii?Q?UNERBj036X5BEwAVGLN1NCPPCYsFxadm48JxbnzoeyhF41nHRAPgXEfcx+0S?=
- =?us-ascii?Q?JfEjVclKdTg6mu49fadbF6YRjeXL7FHsdoaa4YvHvvRs60ZKRPwmpWFUDWUi?=
- =?us-ascii?Q?DYBomytOiFFmCtaHcyM5RRtGGxAnAamkN+JgVguSgg1n0kVUkKUP+FZsEUr9?=
- =?us-ascii?Q?OHb8fC9/CGLIzn5v3Pw7V5mXjP8J2KOMtSb8YHWgpeo/t4t3aN8AJZ6M1O1a?=
- =?us-ascii?Q?bjteiuKkuTb2jAGDpGgwRgiJ47toXppbfCR9cuIm30HxwPCtYslLkAsvRd5L?=
- =?us-ascii?Q?4CWPq0bIpTKvyyz5cD1+lxKEnO1T6v7n4yyxHwWYpvYEraCAqkGPiZjuaXFu?=
- =?us-ascii?Q?O1wmR9yDSGFBC4fh4f4bSmw5UKWQ4afCYb39cn//xW/del63zZCCqFCGIfa2?=
- =?us-ascii?Q?4Y6M+Sjm7mVRQJi1Me6hkgKwIaAMLN5EQlPOlWImBgR3hu0SDrS52w8Hs/DG?=
- =?us-ascii?Q?kjWwtvwShEFcrc1P3FWnQTQDDDEyJUJNBvYbovArfNPGYuDKGuxI7rjftHjo?=
- =?us-ascii?Q?fj+B9KJsIhQrbZPkIiVDqkt1KlPJgi8/ytCce835KVtXtQgsMT4Jh0mgj0uB?=
- =?us-ascii?Q?0tMkSJutgTELGHuPAZxagf3VQXd1j5I029T9kU88NA9qBbT7Unwk4HpyRAVK?=
- =?us-ascii?Q?jyaa/PMIY23raGMunpAINGsaVqFdNqTwQwUngEOtOqiegIBH3/RUvpZhg8AO?=
- =?us-ascii?Q?+z/PstME4KEDDueLlXcCvq7afPGIymaLfkpmH749U0pmxJ2Q6drRZGxSCU1z?=
- =?us-ascii?Q?7Hzcmk2NcCu3s9X4vyT4kcVcTBjM2sW6SE+0ivyf/MwhZlkjfI4bwEOoPGSD?=
- =?us-ascii?Q?Ou3KnQIG7tBC6hxxg33dH9C1syLLkOxNeGjP8nJmw07DBqm9PkBeRbVInTbN?=
- =?us-ascii?Q?6pkPGFTVFbik0sQOdE1LmPe+YCHiZLRgTZvQFHJId5EoVvkJlhDBfIbuUAax?=
- =?us-ascii?Q?8I/dSkG1Mn+5OnHeILCpEsaZ8KqkOmCA+WSJ4VGYhnJJ5UdDM9x2g7R7R5NT?=
- =?us-ascii?Q?yMDuwdFTRKifoH4BAyO+Y6o7ZTJulLn+NMLB/W/SFVrc6M7oHo67yYhfMNeL?=
- =?us-ascii?Q?d1YL75aableBcR/8Ae8U+N5ob4AdTUOXhb7pF32Ul5H0FkKMe9rLC8yN9CoK?=
- =?us-ascii?Q?/wf/ISvlPJqCaddePHeM6Nqn+oD7Jeg9izCoAgm1YGgQ9DX+WwFRMlT93xEV?=
- =?us-ascii?Q?tiQJ7STWCVlAaXBVkWdr54ngi9Mm5rhk9skCf04qaXQPw42cpxyLyKLVg5QK?=
- =?us-ascii?Q?Yc3NVy0nbCWC5cWcUfslUC/lALBs56hoo2TmozJSVAK68KduVlHrmI91XNeg?=
- =?us-ascii?Q?kRqbGffSqdzrC9p4PTKyUq+QQYykkS2j/tQdKm0+ndso9TkOaH2LwEf1m8QK?=
- =?us-ascii?Q?EDBBtSQbkytz+CMEf928gcUrD86CGSPDY/Wd?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 12:39:54.3158
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7763bf50-fa69-48a0-079e-08ddb89c6168
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6248
+References: <20250627204237.214635-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250627204237.214635-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250627204237.214635-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 1 Jul 2025 14:38:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU+E_AJRL=cmARemBy+3Npf2PKnhmXx74DzRc+N7b75gQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwMYwN2RdZdQYYhBaaCN7mKnqLf5R-OHFjJmy-MgxRrEHPUBNS2mgw5E4k
+Message-ID: <CAMuHMdU+E_AJRL=cmARemBy+3Npf2PKnhmXx74DzRc+N7b75gQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] clk: renesas: rzv2h: Add fixed-factor module
+ clocks with status reporting
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Introduce a compatible string for the Versal NET platform which enables
-platform identification based on the compatible property for platform
-specific configurations.
+Hi Prabhakar,
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
----
- drivers/firmware/xilinx/zynqmp.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, 27 Jun 2025 at 22:42, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for fixed-factor module clocks that can report their enable
+> status through the module status monitor. Introduce a new clock type,
+> CLK_TYPE_FF_MOD_STATUS, and define the associated structure,
+> rzv2h_ff_mod_status_clk, to manage these clocks.
+>
+> Implement the .is_enabled callback by reading the module status register
+> using monitor index and bit definitions. Provide a helper macro,
+> DEF_FIXED_MOD_STATUS, to simplify the definition of such clocks.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 7356e860e65c..89e0eef219ff 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -2103,6 +2103,7 @@ static void zynqmp_firmware_remove(struct platform_device *pdev)
- static const struct of_device_id zynqmp_firmware_of_match[] = {
- 	{.compatible = "xlnx,zynqmp-firmware"},
- 	{.compatible = "xlnx,versal-firmware"},
-+	{.compatible = "xlnx,versal-net-firmware"},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, zynqmp_firmware_of_match);
+Thanks for the update!
+
+> Note, this patch generates below checkpatch warning but this is
+> not a problem.
+> `WARNING: struct clk_ops should normally be const`
+
+This is indeed a false positive.
+
+> v1->v2:
+> - Moved rzv2h_clk_ff_mod_status_ops to the CPG private data structure
+>   and initialized it in the CPG probe function.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.17.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
