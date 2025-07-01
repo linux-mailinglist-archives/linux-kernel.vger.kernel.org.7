@@ -1,131 +1,208 @@
-Return-Path: <linux-kernel+bounces-710624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4106AEEEE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:37:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3560FAEEEEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10892189FCE3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1863F3B3539
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 06:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A850C25B309;
-	Tue,  1 Jul 2025 06:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B42725B1E0;
+	Tue,  1 Jul 2025 06:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HyK96gyi"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EsnrwMS0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DCF189902
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 06:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26029242928
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 06:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751351805; cv=none; b=DalpXMJ5+46eZQXxjzdcWO8g3pheZwq5pH8H1Lh5a4hX1bKUrYz6CsaoopWz9AYgSwkUKwLKYcXTBZMVO1/t7EUuQyhCB8/Izj/8uSA/60ia34Yur81Q5sVOE2vpFdB9UczRSohBOjYLn3o7hrVbRSgVqlQX81Qn5xN3gnQvQ2Q=
+	t=1751351939; cv=none; b=WWM8EhbRCUsNHJYw8kfN2LS6EK1cobWtiXeB7eGeHT9f/upAkyx34VgALBNdcmLCpNfdMRf2cuBg02MYTyfTrL63uMJir4Osv7XETebnqWwDwgbQ78Ccf4T2lDCa0BePgxi+xxzNcUc/Zppi6LUSLtYpEAh3PUx+LCgPDkOpfZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751351805; c=relaxed/simple;
-	bh=LVOBn5gIt8SN8+AKL1VG0Mcc4HlGoH1nt639zAe/kOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D9O6AHVl78NZ+ktxlk8DM4I5SmLcrzR8gg1egbDNpHxRbLSFyDzW1b8ftoegYWUl5YOD0mh0lFibrNF83S4d6CtOm+i59l9iyZzr6aNNnDR3NvFLFmmZ+tk8F3YjPsYCkVR9s4HB6yBm5FRBYw8NWKtLcLtMX54YtKBaVW0zeJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HyK96gyi; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a4ebbfb18fso176609f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 23:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751351801; x=1751956601; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XF9BsXSBJjchhqC1W0y2iD+54l1AU0WSwwDuBKksZ/A=;
-        b=HyK96gyi2b78nGQHbbf8105VZxi9QOs2jZt0EgfsrkI2mbiPlcGg+3KxTw1oRI5DqW
-         SyAmpj1UIXD+e3Jm5q/72afsVrIgfK+8sRcy6SKGH/LFQXquPSjMlx8fZDaMpOCatxUc
-         XLk8V+biOI0dbG+gf+THZLBRMnKhWQhwd1zQEGSqRsHMEBsQhwVWCKVaCcxdvcEic3uG
-         kiy+ZSOB7TprTF9EBkEjxd/WHQjcMX4LCWK6akrscIGTtFe9V7Ex0vopB8bjXG6HxYwz
-         jSe72pwJq8d8B3ZjsnHBG9RMyAxNllVAne6bINs67vtWAhR4hZW7LbTRlfgMWnRiazJQ
-         okMA==
+	s=arc-20240116; t=1751351939; c=relaxed/simple;
+	bh=vdn58W0P4SV8Ws3EOrRhV/EDGwj8q19SsrDH5hQ3C3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HDkFoa3O7kwsWZ3H6LBYZ5ZMGOVrTEXjdq2wadqxBlGJ3Eddo1YWW067ldZYwN9Jj9x2VqeH4NQ/763z+snZVjRSVBg7W7mA1E5BaZaxEivFEZY0sPSYmyPUXFwQSarSCAB3J0EGdZV/o6dqpDKl+fnfRDqhxVovB9ng1/01Ng8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EsnrwMS0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751351937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/N2L3Cw1UrT66uEmHGGmoTWSgiUKsnwQtuwgvg8Krxk=;
+	b=EsnrwMS00+2qlzINF50fSDq4pOay/TuxTGLMIP8Xx+SHaypS7fR0+2ttYkTHPJpUiCpTyy
+	lxel+2D2z/97ykiGTKLeMQvU6g5g6R1I8XsoOU2rkmtmr1o9sjYZlPI7/UcDhZjc8CGOYA
+	PQ0uRPv6hl1YdMq4T+v/bCxObcM2y30=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-403-mj85MlKPNa-B7iMmJ2W8vA-1; Tue, 01 Jul 2025 02:38:55 -0400
+X-MC-Unique: mj85MlKPNa-B7iMmJ2W8vA-1
+X-Mimecast-MFC-AGG-ID: mj85MlKPNa-B7iMmJ2W8vA_1751351935
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31202bbaafaso3079028a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Jun 2025 23:38:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751351801; x=1751956601;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XF9BsXSBJjchhqC1W0y2iD+54l1AU0WSwwDuBKksZ/A=;
-        b=nKthJcXXQjjF2joXpckWdMMa2YMPxbP2ofNp306NivoOpjeI0x5YYrYCN13iO4cBZp
-         rzUUYWutmMdu6kTVGgHLHLOmL52pE0du345dQVeTaa4NALzlMBET2okr+xB51VNUOZ3B
-         ykAyOgHMcv7n/it4FIGZEfcGW5I3M+B8c5KKBoy0SQ2FJDDDLl2nkx01RmaIeuYY3FS7
-         yPmIHff+L1Juhmnp7d5QM+gK/L7SipSDVVjFL+6gu/edSYpqddfTIbRxmbdregghFd2o
-         4QiqOcTSGsLBzvEAGgN48eh32zg5Bqkwa8ICa2c5G5NrNlsRagrV7KdK9Cb8fCbT54+L
-         jmSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsz/KEMHPKoaL4M4TswgSD+TRG2sgUQG60VqunpLzypCPxpmY9ZVzy9Nc8IPTmN1+zJf306/NktIX4xgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu5ZMZprB6vhizKXVPPKY0Tnqt4fQpS31udwbrH3aK19TpBbTr
-	mAY33iJN3CbeYDPsA66EJiqlrIv5BAm2qtJOp9fKnXjkKxj5TAX0NliLeVjuTEKvfBM=
-X-Gm-Gg: ASbGncvmap8Sg0Ru4fJy1ar8V9KOA0Ih0g6tOydJpfL+AvatZ7lCu6OTSoLe+eWaFoG
-	qZi7t7e2Y49WnuIpbXJ0zA3TuV1uOy0DKxhV+FRMxxCZDCLSqthvMGGQ2/WFsy21Z4yX4lo8862
-	c368QrMoqEyUpX3XNHS49FMZV0t6W22UNAfEyZW8xtkI7i2PE0WtpZXiIXiAQgzfzmuki2WAZgm
-	vnTmdj9+VIbr5xZZMYD7M3zV1Qg0r59/mNAHEOrtK4MtQnw6j3LeeeJFUwsnSJbDGq/azElwlGC
-	6Q6Ds8E+d8mqlKExSx3ATUK/QLo3ox3xjFalmWj7pwkNYkSQDPbsCqVpNzltY2tvXcJ8FGMqKih
-	ewmUx8G5J1Q==
-X-Google-Smtp-Source: AGHT+IGi0D+19VoSHVRWUeDZpEANnFxXdyNqWbA6Zz7HbqVloW2LQcu/8xvrAEhyjKTVBMpjMPDSIQ==
-X-Received: by 2002:a05:600c:470d:b0:43b:c0fa:f9c4 with SMTP id 5b1f17b1804b1-453a812fb30mr6274275e9.4.1751351801542;
-        Mon, 30 Jun 2025 23:36:41 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a421434sm157119695e9.37.2025.06.30.23.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 23:36:40 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: phy: marvell,mmp2-usb-phy: Drop status from the example
-Date: Tue,  1 Jul 2025 08:36:37 +0200
-Message-ID: <20250701063636.23872-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1751351935; x=1751956735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/N2L3Cw1UrT66uEmHGGmoTWSgiUKsnwQtuwgvg8Krxk=;
+        b=MXyvO8qqopkNsvtC+M+hYUHBh7ojNkiOI2OFe0DMU9hDrSONeWEQPacyrPprt2HXXM
+         7ufWqMxan71MeWKrFe37NcLxoPwzic1aBGlUn0UHnQuQd8z4awfXSVeynDHdCDDmb9gp
+         GFM7iVeOeQpumTBPnTfA/1FZ7jebF3MvONeE8qqb4aLBicDf8awZImaLSe/qxGp/1yaS
+         i55OIi5Tk7EieH1Yr5N/h83aCSb+SWLdJHNFCBIZZOG/smmaKbDOJX57AEZXrARsHNcA
+         +KFNlVnmpFyAiKQPQQDAqPxB20dt3kDkmLCZPxRgvZvy+LOzkRopL+Y9IiHlLSRqCQ/u
+         Fvow==
+X-Forwarded-Encrypted: i=1; AJvYcCVZSLL80R1SAbYob9Ib6cjlXUwjpNXRTnCg7CPverynlz25XvddUzUT4q4liRwZT/AmYnS47BtlovA8Bnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSKq6//n/W2u11iwvxOj3kx9YUqVVlM7DOWZYbdz7dprkORLax
+	VKPuvqcWuPS6pa+8ZLtHVYuQdIcPpn75vzni/SKjQbbDL/cQDoxbRpDuZeJsOdXulgQ3azFgvBQ
+	UfgJfJMK8aYTwYsBqxMHArOEI//UbTVy3e9CWTH9RsNZFqfJvhN7kL3if9F8+23TuyQ==
+X-Gm-Gg: ASbGncuSsR+BT138KiuwKTVXEx36RON7VnfRcQslblUe/0h9MrUJtSRWCRW6BDkfq+0
+	auZwF7qGttCrmzSkQPWw0gvjcxYhX7CUDerqkGZp7M6K/vDGhibXcVxfxRLqkDAnn78XuMELhyE
+	FWNcHqYYXcy0rV2zk6nogkCsdJca8NBRONSgTpqxx0LHdDKe2nGRd3i+UTZzBOb6vmPtn1ppGNp
+	2iAcAUFQPDvig0giW/xBgc4yv63kg5hyiNsOdOmzvcAvYnkSuMjiw81EUoTAsI9xzf6AoieETzJ
+	kZ9ldG1jApphJTEXyntL7Cw+OiomOKOnRY5O2+Iir4g3daLsXIPMFYATanBNPw==
+X-Received: by 2002:a17:90b:3c50:b0:312:f0d0:bc4 with SMTP id 98e67ed59e1d1-318c8ec5177mr22460866a91.5.1751351934651;
+        Mon, 30 Jun 2025 23:38:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXGVdcl+epWZi9VPn55ApO38WReIopBQVp1X+PhM6QPcmIdOqHMzKdtlUHTKMJd/V5XIritA==
+X-Received: by 2002:a17:90b:3c50:b0:312:f0d0:bc4 with SMTP id 98e67ed59e1d1-318c8ec5177mr22460805a91.5.1751351934113;
+        Mon, 30 Jun 2025 23:38:54 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-318c1523351sm10913306a91.48.2025.06.30.23.38.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Jun 2025 23:38:53 -0700 (PDT)
+Message-ID: <e33e6268-a6a5-421d-97c1-b26044e3cfa5@redhat.com>
+Date: Tue, 1 Jul 2025 16:38:44 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=779; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=LVOBn5gIt8SN8+AKL1VG0Mcc4HlGoH1nt639zAe/kOo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoY4H0ffaPTbeopHCCCMc1UVmiQZRCkCVMP4baz
- 8YHWXyqWvKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaGOB9AAKCRDBN2bmhouD
- 1x01D/9XFJFW9DXK6yY20AHJAmi1JQG17UexaKXhKbRP1qjAcsWq3WePdUEIaMHDSBYOMY+CYsd
- rS2q0FNN/yv+0pBPDnvC/XBhfS2tRQT4SCB4Vt4NH7BX78uSwnAr7pWiWGnQ145yCeEBD9vNA/b
- sI5sRN9Ea+fZERgKqwpqQ59DQ65CyaPbmmp/dm0sAHxRBAVOc3cFWCaQQJvSJNXiUSlBYWH8rtI
- uIefJGyUCu1pXsl/gsTIliVhn0JFTl8IXvAT3jPo+Hp6ZTmNB6OE8BVCl+PdR4pQ68fiMFqJ+Dn
- awlO6/i8bPhUcCnpuw97SnTy8qBfEhWtkbeMjT+vZxa/dgFfl3ulUtLmb5gMNLiJDrdRnqk3+tz
- 9VD7nITR7jv+58y6CyNFum3Mm2FO2j3F9W2eL96DQlHFjJCNna8zGk1d/IgTXaebHrHib97tMg9
- xI2zLFoMKXAE5QiG0TZRr+z3BUNtEIk6DhJbuX5QrT8g2/OiTORqNt+/sL0Q4mS3eSu30pdinB0
- KbmvcIbNWrJvgj5q1nIRagdSMHUanCwTxeOWsdq+j2CR66lHyNy5jo8rtI/x9tkKcOZN4KpMiX2
- V5AGBDKfTCO+Q1kF+W1vMUuTfrzPRWzNERfxvjOTHlyvHFmP4SarDmzyUPjt60/8v0tMLDzKj0p dpsgim1dFMB5uuQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 09/43] KVM: arm64: Allow passing machine type in KVM
+ creation
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+ Emi Kisanuki <fj0570is@fujitsu.com>
+References: <20250611104844.245235-1-steven.price@arm.com>
+ <20250611104844.245235-10-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250611104844.245235-10-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Examples should not have the 'status' property and 'okay' is anyway by
-default.
+On 6/11/25 8:48 PM, Steven Price wrote:
+> Previously machine type was used purely for specifying the physical
+> address size of the guest. Reserve the higher bits to specify an ARM
+> specific machine type and declare a new type 'KVM_VM_TYPE_ARM_REALM'
+> used to create a realm guest.
+> 
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v7:
+>   * Add some documentation explaining the new machine type.
+> Changes since v6:
+>   * Make the check for kvm_rme_is_available more visible and report an
+>     error code of -EPERM (instead of -EINVAL) to make it explicit that
+>     the kernel supports RME, but the platform doesn't.
+> ---
+>   Documentation/virt/kvm/api.rst | 16 ++++++++++++++--
+>   arch/arm64/kvm/arm.c           | 15 +++++++++++++++
+>   arch/arm64/kvm/mmu.c           |  3 ---
+>   include/uapi/linux/kvm.h       | 19 +++++++++++++++----
+>   4 files changed, 44 insertions(+), 9 deletions(-)
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/phy/marvell,mmp2-usb-phy.yaml | 1 -
- 1 file changed, 1 deletion(-)
+One nitpick below.
 
-diff --git a/Documentation/devicetree/bindings/phy/marvell,mmp2-usb-phy.yaml b/Documentation/devicetree/bindings/phy/marvell,mmp2-usb-phy.yaml
-index 2441c5fae550..af1ae2406f65 100644
---- a/Documentation/devicetree/bindings/phy/marvell,mmp2-usb-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/marvell,mmp2-usb-phy.yaml
-@@ -34,5 +34,4 @@ examples:
-         compatible = "marvell,mmp2-usb-phy";
-         reg = <0xd4207000 0x40>;
-         #phy-cells = <0>;
--        status = "okay";
-     };
--- 
-2.43.0
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 65543289f75c..0049d67fe38f 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -181,8 +181,20 @@ flag KVM_VM_MIPS_VZ.
+>   ARM64:
+>   ^^^^^^
+>   
+> -On arm64, the physical address size for a VM (IPA Size limit) is limited
+> -to 40bits by default. The limit can be configured if the host supports the
+> +On arm64, the machine type identifier is used to encode a type and the
+> +physical address size for the VM. The lower byte (bits[7-0]) encode the
+> +address size and the upper bits[11-8] encode a machine type. The machine
+> +types that might be available are:
+> +
+> + ======================   ============================================
+> + KVM_VM_TYPE_ARM_NORMAL   A standard VM
+> + KVM_VM_TYPE_ARM_REALM    A "Realm" VM using the Arm Confidential
+> +                          Compute extensions, the VM's memory is
+> +                          protected from the host.
+> + ======================   ============================================
+> +
+> +The physical address size for a VM (IPA Size limit) is limited to 40bits
+> +by default. The limit can be configured if the host supports the
+>   extension KVM_CAP_ARM_VM_IPA_SIZE. When supported, use
+>   KVM_VM_TYPE_ARM_IPA_SIZE(IPA_Bits) to set the size in the machine type
+>   identifier, where IPA_Bits is the maximum width of any physical
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 8080443d24af..b3e3323573c6 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -172,6 +172,21 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+>   	mutex_unlock(&kvm->lock);
+>   #endif
+>   
+> +	if (type & ~(KVM_VM_TYPE_ARM_MASK | KVM_VM_TYPE_ARM_IPA_SIZE_MASK))
+> +		return -EINVAL;
+> +
+> +	switch (type & KVM_VM_TYPE_ARM_MASK) {
+> +	case KVM_VM_TYPE_ARM_NORMAL:
+> +		break;
+> +	case KVM_VM_TYPE_ARM_REALM:
+> +		if (!static_branch_unlikely(&kvm_rme_is_available))
+> +			return -EPERM;
+> +		kvm->arch.is_realm = true;
+> +		break;
+
+Here we need to explicitly set the realm's state to REALM_STATE_NONE even though
+it's equal to zero, and the struct vm should have been cleared on allocation.
+
+		WRITE_ONCE(kvm->arch.realm.state, REALM_STATE_NONE);
+		kvm->arch.is_realm = true;
+		break;
+
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+>   	kvm_init_nested(kvm);
+>   
+>   	ret = kvm_share_hyp(kvm, kvm + 1);
+
+[...]
+
+Thanks,
+Gavin
 
 
