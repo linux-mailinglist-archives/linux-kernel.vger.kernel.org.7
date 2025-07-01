@@ -1,188 +1,142 @@
-Return-Path: <linux-kernel+bounces-711900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90421AF0173
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:13:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BD3AF013B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD4D1C23F4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF2F526623
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387D27E07B;
-	Tue,  1 Jul 2025 17:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F57A27F728;
+	Tue,  1 Jul 2025 17:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lamIdTOr"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkVXv9Qy"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91CF1C3306;
-	Tue,  1 Jul 2025 17:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BDE27A44C;
+	Tue,  1 Jul 2025 17:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751389540; cv=none; b=tQOMGsFQwgvY3rRn4Ci+R0DsFuDa9oEpe5kkGSoXk+bw/Q7aBrK5MGgCg9byd1fo3fgvY1NrcbK08aKkDFjmsjuFbK4JJpmyUgY2FMdhBKAdltLpUlwlo0zAk0OaVm8w+YkxptXGZi8gaYeboDw3WA4BnJKQ2+fN/Dv3ozGLUbo=
+	t=1751389484; cv=none; b=WQ7KITYTdXj/0F2l+E+JOmfpDLO2j96Bfh1i8TNbbQp7SkW5kO7/FJn2iYCeIYGtxzBHYSDZLH2+f6QH7FE911JZ6txYBbrpky6UJXI/uit9StzEyGPxGGvpo3+AEEfMADKi5EsfB9x9bODiwhd07HxKMTuI2tbzq64bD4Qcguk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751389540; c=relaxed/simple;
-	bh=3PeqLL7MmBnITYF6ZpWMf/sxV6skJBv/Mia19Fd0wbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DySC2Jeug1MYdsadMzjuWujQu2fjSoZqMej2Bwsd6QD8JOInJelPCxZLJWcsN+2+WMPMwfFGu/Ow6Tu93FtZpKBV1rMm4bpqrSBt3GTqRKqy9bqVlqJ/GQDEXDHjUvx05NyVhibHZ9EtLFsd7IeiPSWxYCyDHYYcTV1reqElgik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lamIdTOr; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1751389484; c=relaxed/simple;
+	bh=Buoy+eHhC6eHoSe6ky5Z+oG1UzCc4eNOy2T2u08lRTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Td8vK8Mibzfu4eGDdLoOt6EmsOggGLFIFEsmQeNDSNkEGPA5e0NANrkCBkJk/0vU/tMnEuOi94sVGH99UFWXGtCCmLQy9Hc2RTCLwAF4e2xUoSgqNiQNe0hDbIy76fIjv6ytw4aCXt7wZ7aqjKDKMoTAKvT/4fldmqmtDNSvRwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkVXv9Qy; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-313910f392dso2663830a91.2;
-        Tue, 01 Jul 2025 10:05:38 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32cd0dfbdb8so31683461fa.0;
+        Tue, 01 Jul 2025 10:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751389538; x=1751994338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=14AtEWASDbQcMrRLN/AjV1PxalbKqaf9kxW8P+HdVyM=;
-        b=lamIdTOrB3QYln4xt+Ur7mcQ23nKG9sZu22HnNYanUAsB5iB7QUTMVgHflyaOVzv39
-         kAZJSgTfDmudIRDP/EbS7O8WOXENJUCmzLMntKzBFKJ0vsvnrc91LMy5Q6iSJ+flRKnK
-         rXgyYQiH5kTCVSVeUdTNPxSm5ucsoM1Y1hy/YoKG5vlv458zfmRuFwufK9Js7QsuJcS+
-         rEUvrqd+n6kBwRdy8XCBLvk2pgtCmMaGkiDDe70fTQKzrpIZI+8691X6c42IQoysl+gU
-         F+ZblP/t5HCH/fQL6FkHPffeX9cGwfj7QiknCjt623lRsjOnjDeHLE+9sSI9l5zX6ZC4
-         bgsA==
+        d=gmail.com; s=20230601; t=1751389480; x=1751994280; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NxqIhubUv69M8iMfBOop3LMw2L0Kp2fdzLhKTpcmD6A=;
+        b=JkVXv9QyyhBzTQoyikA6++HTkh3uM+UkVlPHL4Co1uj8TGKZeoFHmTLOASGHlC97mv
+         64bbvuUKGV9vms2iFKqiTp2SzN3OVcDagGv+kg+DgI66DjENIRT3kBwSfDU19DbO70D+
+         itXMs+TO3XWOaPgZC6W6scjVj08KVhqyhLAGPIKQbBFsZYgbml9l0u/um4PmuU3AT632
+         lzwVmNSJE7GwSZj5o46X45ILtu+Y0AOBDlC9a7tqUh/Pn1x8L82NbI3YSudoCSU3bNk4
+         ar2xO4rGVrmtqfb4s7cyjZtzT/cKYwOOX3S+OjirVL14y0QjirSun2U+c5UC5ReC2Yu3
+         BL+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751389538; x=1751994338;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=14AtEWASDbQcMrRLN/AjV1PxalbKqaf9kxW8P+HdVyM=;
-        b=ir9GX0m2RYBobIzrxyTvoDWpkfq9aPcxcSrCnyZ+booBKHV5z2+0ZFMfmJwT720vHl
-         6+KUcR0mcAm/9Y4HTyHBFTEbJHKFDbruUm6cQGkNFW94z1ig2lihYFy0XP8Gff8VtMkb
-         3D2pRCi8tpzILSapGBB9n2pWaYmdaCq8aZbqjnyXL/avYUAaH/eMy/nrzvEEoN/G15x+
-         mp8hqdpNKi1aQitoHkF9gpQM5sVXd5FNH8MYeRULVyR/+LJu8r++BuyC1LmEECXOn+D7
-         tVF99yb4qwDUaKiQ8YULlueB1sL8SmCZlkfWZkYytoUqZTlClQWjP7Zm8h+ZFkXU6kl7
-         wj7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZbS0fGVt6NvsDDf0kVxRGmzR0B2MGaXfaswef/fhG8tqivotxBEKJYlznR1tBMPNmZoi2CpWP8NTQzcA=@vger.kernel.org, AJvYcCVh99sNIlGsyzl7ckFN2TDCD+AIJaEl7Ch7SG/4rh4TsnWHPRXQY3F4Izd1FdC7JCIPtKFJtEde@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsDb/yAch025soXMOwFAj0DxKfeATynwcDFM0zW5AvNpzVm3zi
-	zPjmbbfHl0hGxTNUpB76GSbo+EbblZcaKTRZaxBVxifSgPdAZNBmlx8J
-X-Gm-Gg: ASbGncs/D6Q1tqHxpVnsuWVvNrQ9GgRYmBCloKXvEGbecthI7nM2KZ5gtx6OevhIXxy
-	RAFw5yx3f0G2V2QbF6u4KQrKUwFcaC7SEfNFTeAMsYtPqBKIX+IQ8MO3VA9tdsBbICV1rWjau37
-	zJqik9cQlTmlpeztO3uCjy0Nzp2kL82fWTcisC2tF5Ifc0ggLJFgBT3UT88rMJrd81pgsZvnH/r
-	CE8+5Q5SlBR3trVPUNKGkWkmoqsEdKkA0fcx+KOoB21OrXvUtyZv0gL+Owk8VBWa9f2Fhvun0mx
-	yZnJujs1CbjCKgiR0sqMFDH4MhvjVYnOyXCKBAy7SzENKjeIZ8UxggZyGSTSi1JZKGjbTIJXKwg
-	p
-X-Google-Smtp-Source: AGHT+IGpbx3xICIFTBJaWCKXAXPyszPU3kpAkEkC3Kx9MGxKXpGrE50T2HK7GgJeTdO7iTngBjisdQ==
-X-Received: by 2002:a17:90b:3b47:b0:311:d670:a10d with SMTP id 98e67ed59e1d1-318c92ee549mr22850865a91.26.1751389537753;
-        Tue, 01 Jul 2025 10:05:37 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-315f5437a0bsm16039494a91.35.2025.07.01.10.05.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 10:05:37 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: richardcochran@gmail.com
-Cc: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net-next] ptp: remove unnecessary mutex lock in ptp_clock_unregister()
-Date: Wed,  2 Jul 2025 02:03:53 +0900
-Message-ID: <20250701170353.7255-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1751389480; x=1751994280;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NxqIhubUv69M8iMfBOop3LMw2L0Kp2fdzLhKTpcmD6A=;
+        b=iF183pyhSf41Jn8u0IPWAH3jwCAR9PkR8TSR7n2LpIK/QHQ3BaOfg0SqOd+e1Fzl3T
+         xH2g9BtgIisY8G/iQPxV31jSwpasP0lleCx6oPBc6GUH/FC1fcJnRbzw2ZmfcUSsPsPT
+         w0MLEgcFED3DEo/FQGbHz6qcYPmanbKu+YPm6LfMR/9DN2bJrRqCOcuG3Nk55wCB9bWw
+         Lp3VuacPzDs9n5tkeyUjnsMDV+zUh7dT2bYsoBuRNwzxsWy7DrKaUqqPcaTw1oOwwyDB
+         GaTfHHDt5uozDh0IdniYbuOacvZFvO4ChnWF0RMukRQmG8F8EJiNLoQKm1zYrUw7fbyF
+         XoYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUd92ZOYWfMKBRPDSZ4AV6a29cZ7UCQF96FY66wKb5d8zxvoWOa315FbSCkAbZv3H/IOENGke05uEgsUu0f@vger.kernel.org, AJvYcCVK62fB5Yvl5xemxsGgeHi8fH347wh/fbExuz8H6gd3FZhPuKYGyak2BohCe7t9SHyOP9k0blOv5FLUOl8ke0Q=@vger.kernel.org, AJvYcCXJrqJ5k4jqOByDuK/jPbzDDTnyBIL/ib01InJ3YLmpKsqAm6SKqGltKoXcXyBXR8PkLOYknh38m4is8YzD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/36NfGri/DHPo+zrZdFcZ1GQcG/yjGkgZFCCdg5+Vne3SQJvA
+	6ZSb/9jdqUJJoqaAZEHQEsTHjtUsVVmWf/IfwOkGnA6+kwZGE5LHm21w3tKWxGRTsVV2sUbXVgn
+	Il3U+6KUzQGVPFCapFBB7/d8Mbz3qiPHuMyR9Cp4=
+X-Gm-Gg: ASbGncvGX8sey+8sutoQ5xbbQv/YWurQADbblm3JjT7T3f9SgI7SZa3D79avI9cdwbC
+	7x+QEfZNGZufHjb1bkHr0eHNhnA4Og/U8bknoEzuKW32lRJ7lwaRdz0tdSQvjlGQR6u6T9pqBTX
+	/6ATk4oJUVYNx3kw+hrDHlXFTI+59V9R0lKSNWhDqG3jpk/zoXO24IE/NoMbMlJwLzLbxFH4YaP
+	hkeyg==
+X-Google-Smtp-Source: AGHT+IEoQsxbSiZHk57iawY5wnpi5nf4WW7yFai/WzA54KcFJwljAAd73b6yGB+qwSMNFbK5Bk7g1hw5i9O4J0dukJ8=
+X-Received: by 2002:a05:651c:419a:b0:32b:492c:5d10 with SMTP id
+ 38308e7fff4ca-32cdc524864mr69147631fa.22.1751389480057; Tue, 01 Jul 2025
+ 10:04:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com>
+ <20250701-xarray-insert-reserve-v1-3-25df2b0d706a@gmail.com> <CANiq72nf-h86GszE3=mLpWHi5Db+Tj0TRyUe9ANfjdNbesBEEg@mail.gmail.com>
+In-Reply-To: <CANiq72nf-h86GszE3=mLpWHi5Db+Tj0TRyUe9ANfjdNbesBEEg@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 1 Jul 2025 13:04:04 -0400
+X-Gm-Features: Ac12FXy7e-RdRR1PBw48BY7WaB1YHjxcedC_KPOTmXI0875WVE3fJL8jozJ2aXM
+Message-ID: <CAJ-ks9k7Jn=8K1a0QeDK-vhTWO8-dv_bkw2SJm3EEUsinMTFQA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rust: xarray: add `insert` and `reserve`
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ptp_clock_unregister() is called by ptp core and several drivers that
-require ptp clock feature. And in this function, ptp_vclock_in_use()
-is called to check if ptp virtual clock is in use, and
-ptp->is_virtual_clock, ptp->n_vclocks are checked.
+On Tue, Jul 1, 2025 at 12:56=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, Jul 1, 2025 at 6:27=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+> >
+> > Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, whic=
+h
+> > are akin to `__xa_{alloc,insert}` in C.
+>
+> Who will be using this? i.e. we need to justify adding code, typically
+> by mentioning the users.
 
-It is true that you should always check ptp->is_virtual_clock to see if
-you are using ptp virtual clock, but you do not necessarily need to
-check ptp->n_vclocks.
+Daniel, could you name your use case?
 
-ptp->n_vclocks is a feature need by ptp sysfs or some ptp cores, so in
-most cases, except for these callers, it is not necessary to check.
+Alice, could you confirm whether rust binder needs this or not?
 
-The problem is that ptp_clock_unregister() checks ptp->n_vclocks even
-when called by a driver other than the ptp core, and acquires
-ptp->n_vclocks_mux to avoid concurrency issues when checking.
+Andreas, did you also need this?
 
-I think this logic is inefficient, so I think it would be appropriate to
-modify the caller function that must check ptp->n_vclocks to check
-ptp->n_vclocks in advance before calling ptp_clock_unregister().
+> By the way, it may help splitting the C parts into its own patch, so
+> that Matthew can focus on that (but maybe you all already discussed
+> this).
 
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/ptp/ptp_clock.c   |  2 +-
- drivers/ptp/ptp_private.h | 34 +++++++++-------------------------
- 2 files changed, 10 insertions(+), 26 deletions(-)
+Happy to do so if it makes Matthew's life easier, but I'd prefer to
+keep it together so the motivation is clearer in the git log. Matthew:
+any preference?
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index 36f57d7b4a66..db6e03072fba 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -413,7 +413,7 @@ static int unregister_vclock(struct device *dev, void *data)
- 
- int ptp_clock_unregister(struct ptp_clock *ptp)
- {
--	if (ptp_vclock_in_use(ptp)) {
-+	if (!ptp->is_virtual_clock) {
- 		device_for_each_child(&ptp->dev, NULL, unregister_vclock);
- 	}
- 
-diff --git a/drivers/ptp/ptp_private.h b/drivers/ptp/ptp_private.h
-index a6aad743c282..9b308461fcc8 100644
---- a/drivers/ptp/ptp_private.h
-+++ b/drivers/ptp/ptp_private.h
-@@ -95,39 +95,23 @@ static inline int queue_cnt(const struct timestamp_event_queue *q)
- 	return cnt < 0 ? PTP_MAX_TIMESTAMPS + cnt : cnt;
- }
- 
--/* Check if ptp virtual clock is in use */
--static inline bool ptp_vclock_in_use(struct ptp_clock *ptp)
-+/* Check if ptp clock shall be free running */
-+static inline bool ptp_clock_freerun(struct ptp_clock *ptp)
- {
--	bool in_use = false;
--
--	/* Virtual clocks can't be stacked on top of virtual clocks.
--	 * Avoid acquiring the n_vclocks_mux on virtual clocks, to allow this
--	 * function to be called from code paths where the n_vclocks_mux of the
--	 * parent physical clock is already held. Functionally that's not an
--	 * issue, but lockdep would complain, because they have the same lock
--	 * class.
--	 */
--	if (ptp->is_virtual_clock)
--		return false;
-+	bool ret = false;
-+
-+	if (ptp->has_cycles)
-+		return ret;
- 
- 	if (mutex_lock_interruptible(&ptp->n_vclocks_mux))
- 		return true;
- 
--	if (ptp->n_vclocks)
--		in_use = true;
-+	if (!ptp->is_virtual_clock && ptp->n_vclocks)
-+		ret = true;
- 
- 	mutex_unlock(&ptp->n_vclocks_mux);
- 
--	return in_use;
--}
--
--/* Check if ptp clock shall be free running */
--static inline bool ptp_clock_freerun(struct ptp_clock *ptp)
--{
--	if (ptp->has_cycles)
--		return false;
--
--	return ptp_vclock_in_use(ptp);
-+	return ret;
- }
- 
- extern const struct class ptp_class;
---
+> Also, unit tests are great, thanks for adding those. Can we add
+> examples as well? Maybe on the module-level docs, given the rest are
+> there.
+
+Will do. I ported all the examples to unit tests now that we have
+kunit, but I'll bring some examples back.
+
+>
+> > +    /// Wrapper around `__xa_alloc`.
+>
+> We try to mention what something does in the title at least, even if
+> it is just copied from the C docs -- you can reference those docs too
+> for more context, e.g. [`__xa_alloc`] to:
+>
+>     https://docs.kernel.org/core-api/xarray.html#c.__xa_alloc
+
+=F0=9F=91=8D
 
