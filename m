@@ -1,98 +1,189 @@
-Return-Path: <linux-kernel+bounces-712116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7EAAF04F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:34:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0EEAAF04FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896D2485191
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFC11C08020
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 20:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA2D2FEE2F;
-	Tue,  1 Jul 2025 20:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FD8j6nH7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B47OIQT3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE3228CF58;
+	Tue,  1 Jul 2025 20:35:33 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867BC29550F;
-	Tue,  1 Jul 2025 20:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221142EE27B;
+	Tue,  1 Jul 2025 20:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751402073; cv=none; b=NJucAOmttOMl8PlH2u9iwmy5FrX3mEYz3A34YpqRR7yErReca8AbspuU4Hqk+gHmrCRCST4X9HhgwHUR43w2xN8h5c2KeIHaHAj9Qptbp2zMwfE40yqmBY6mm5m1bazKIfvLbM5QPlJFfwWUTv/9CwBPCMxP5RV9XOxTMsDkZ2E=
+	t=1751402133; cv=none; b=kz86YRwlCh1Kej1H+W2f2TeoAMRDiGHtd65eqPP7BrMozLxJ6avVj7wrWkuNXpXHQnd1t5U++ObQoJI3kl1peE7+OV4SiwHA5KpN4LoYh1vlwJ8askOPze39ESGiHRY00fvpn/JkykFuSJ08q+gzZ0v7W0gLAYUgNnRycU9RpUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751402073; c=relaxed/simple;
-	bh=XB3O/2+mTdiweRtrIksCZupGiwYiomIq/E0DOY5On8M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GvniLd2REcjV94vxCL1sBGwYc0kpPdtUEE8K/6LKAJi+1H4soVGsIDrJMUGrZlw9hwBe5b+YotgteESRn6ctw9R2OvrTVQ6kmzxd2GFPywsG9irfLkwydfM+e8yZWZE9LMLu3N/d0CWDydhYEeCeGhZ7qvWeWxG97DVOfb83lyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FD8j6nH7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B47OIQT3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1751402069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XB3O/2+mTdiweRtrIksCZupGiwYiomIq/E0DOY5On8M=;
-	b=FD8j6nH7eJFub0RWs30lnYscQleG9xPZqi8IkN+BoYltCzfj3KyHTzRMGPhoVj+qJZ244L
-	OpUfglb60MkBcL7NFWILd3sdeA1ZsNGPtb2tkrektd1wckG7jNVjNKqI5mRwW7/TVstZvA
-	0jT/8lMX3FLyqAnLEMSWl1l4zNhLIDNyQz6mhYN1zMIfvrHO+dGMjTV5Il4uQ7ytL26/pN
-	crauwKTuxDGpOQ/DjC54TQUoL3f5pVIRcAwZFYbEkSMBEuHCXDKQ97wc/STDMsoK4JM3tj
-	J/vqj9Wjxx8cboo9iOwNNdTWlDLI4XxlKnM7CaQY3F66G5fi3aG7U7PKwUEWXQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1751402069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XB3O/2+mTdiweRtrIksCZupGiwYiomIq/E0DOY5On8M=;
-	b=B47OIQT3m0Pz2PEw/LqhuVcGQpth+G9gvEJxgLM9oZ1ibmHQr+RpsSHLWFAQ/tZxwvPs9C
-	rn3NL7vO01sPO6Bw==
-To: Terry Tritton <terry.tritton@linaro.org>, Shuah Khan <shuah@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: ttritton@google.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Terry Tritton <terry.tritton@linaro.org>,
- Wei Gao <wegao@suse.com>
-Subject: Re: [PATCH v2] selftests/futex: Convert 32bit timespec struct to
- 64bit version for 32bit compatibility mode
-In-Reply-To: <20250701142313.9880-1-terry.tritton@linaro.org>
-References: <20250701142313.9880-1-terry.tritton@linaro.org>
-Date: Tue, 01 Jul 2025 22:34:28 +0200
-Message-ID: <87ikkblkff.ffs@tglx>
+	s=arc-20240116; t=1751402133; c=relaxed/simple;
+	bh=aFFF1mLuYBw2ufmFNwubdrwFdnLPXZHdYb0mk4i6WbE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:Content-Type; b=eCrlnaJ055TP9Ui2JtoS6zeP9HhrhzK11hqr+NT+xZ9XGihGInbPyrtmQ04JO88avYv7LCntF49L6w1YcQhc9nm3dtPm6UI5Ug/bh6QfmEM6mlZ4A0zUi/YJHUnvVqqm1MZkTtUkD2oCdelAQCxQFKT5G65WVGcJjhgFNpZZr/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.131.62) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 1 Jul
+ 2025 23:35:07 +0300
+Message-ID: <f769ad67-fc6b-4101-8bdc-8b41eba73a21@omp.ru>
+Date: Tue, 1 Jul 2025 23:35:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v2] NFSv4: prevent integer overflow while calling
+ nfs4_set_lease_period()
+To: <linux-nfs@vger.kernel.org>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>
+Content-Language: en-US
+CC: <linux-kernel@vger.kernel.org>
+Organization: Open Mobile Platform
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 07/01/2025 20:22:13
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 194471 [Jul 01 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 62 0.3.62
+ e2af3448995f5f8a7fe71abf21bb23519d0f38c3
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.131.62 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.131.62 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.131.62
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 07/01/2025 20:24:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 7/1/2025 6:30:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Tue, Jul 01 2025 at 15:23, Terry Tritton wrote:
-> Futex_waitv can not accept old_timespec32 struct, so userspace should
-> convert it from 32bit to 64bit before syscall in 32bit compatible mode.
->
-> This fix is based off [1]
->
-> Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
->
-> Signed-off-by: Wei Gao <wegao@suse.com>
-> Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
+The nfs_client::cl_lease_time field (as well as the jiffies variable it's
+used with) is declared as *unsigned long*, which is 32-bit type on 32-bit
+arches and 64-bit type on 64-bit arches. When nfs4_set_lease_period() that
+sets nfs_client::cl_lease_time is called, 32-bit nfs_fsinfo::lease_time
+field is multiplied by HZ -- that might overflow before being implicitly
+cast to *unsigned long*. Actually, there's no need to multiply by HZ at all
+the call sites of nfs4_set_lease_period() -- it makes more sense to do that
+once, inside that function, calling check_mul_overflow() and capping result
+at ULONG_MAX on actual overflow...
 
-This is still wrong.
+Found by Linux Verification Center (linuxtesting.org) with the Svace static
+analysis tool.
 
-If it is based on someone else work, then you need to attribute it
-Originally-by and omit the Signed-off-by of the original author.
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc: stable@vger.kernel.org
 
-If you just picked it up and adopted it to a later kernel version then
-you need to add 'From: Original Author' and preserve his Signed-off-by.
+---
+The patch is against the master branch of Trond Myklebust's linux-nfs.git repo.
 
-If you collaborated with him, then you want to use Co-developed-by.
+Changes in version 2:
+- made use of check_mul_overflow() instead of mul_u32_u32();
+- capped the multiplication result at ULONG_MAX instead of returning -ERANGE,
+  keeping nfs4_set_lease_period() *void*;
+- rewrote the patch description accordingly.
 
-All of this is documented in Documentation/process/
+ fs/nfs/nfs4_fs.h    |    3 +--
+ fs/nfs/nfs4proc.c   |    2 +-
+ fs/nfs/nfs4renewd.c |   10 +++++++---
+ fs/nfs/nfs4state.c  |    2 +-
+ 4 files changed, 10 insertions(+), 7 deletions(-)
 
+Index: linux-nfs/fs/nfs/nfs4_fs.h
+===================================================================
+--- linux-nfs.orig/fs/nfs/nfs4_fs.h
++++ linux-nfs/fs/nfs/nfs4_fs.h
+@@ -463,8 +463,7 @@ struct nfs_client *nfs4_alloc_client(con
+ extern void nfs4_schedule_state_renewal(struct nfs_client *);
+ extern void nfs4_kill_renewd(struct nfs_client *);
+ extern void nfs4_renew_state(struct work_struct *);
+-extern void nfs4_set_lease_period(struct nfs_client *clp, unsigned long lease);
+-
++extern void nfs4_set_lease_period(struct nfs_client *clp, u32 period);
+ 
+ /* nfs4state.c */
+ extern const nfs4_stateid current_stateid;
+Index: linux-nfs/fs/nfs/nfs4proc.c
+===================================================================
+--- linux-nfs.orig/fs/nfs/nfs4proc.c
++++ linux-nfs/fs/nfs/nfs4proc.c
+@@ -5476,7 +5476,7 @@ static int nfs4_do_fsinfo(struct nfs_ser
+ 		err = _nfs4_do_fsinfo(server, fhandle, fsinfo);
+ 		trace_nfs4_fsinfo(server, fhandle, fsinfo->fattr, err);
+ 		if (err == 0) {
+-			nfs4_set_lease_period(server->nfs_client, fsinfo->lease_time * HZ);
++			nfs4_set_lease_period(server->nfs_client, fsinfo->lease_time);
+ 			break;
+ 		}
+ 		err = nfs4_handle_exception(server, err, &exception);
+Index: linux-nfs/fs/nfs/nfs4renewd.c
+===================================================================
+--- linux-nfs.orig/fs/nfs/nfs4renewd.c
++++ linux-nfs/fs/nfs/nfs4renewd.c
+@@ -137,11 +137,15 @@ nfs4_kill_renewd(struct nfs_client *clp)
+  * nfs4_set_lease_period - Sets the lease period on a nfs_client
+  *
+  * @clp: pointer to nfs_client
+- * @lease: new value for lease period
++ * @period: new value for lease period (in seconds)
+  */
+-void nfs4_set_lease_period(struct nfs_client *clp,
+-		unsigned long lease)
++void nfs4_set_lease_period(struct nfs_client *clp, u32 period)
+ {
++	unsigned long lease;
++
++	if (check_mul_overflow(period, HZ, &lease))
++		lease = ULONG_MAX;
++
+ 	spin_lock(&clp->cl_lock);
+ 	clp->cl_lease_time = lease;
+ 	spin_unlock(&clp->cl_lock);
+Index: linux-nfs/fs/nfs/nfs4state.c
+===================================================================
+--- linux-nfs.orig/fs/nfs/nfs4state.c
++++ linux-nfs/fs/nfs/nfs4state.c
+@@ -103,7 +103,7 @@ static int nfs4_setup_state_renewal(stru
+ 
+ 	status = nfs4_proc_get_lease_time(clp, &fsinfo);
+ 	if (status == 0) {
+-		nfs4_set_lease_period(clp, fsinfo.lease_time * HZ);
++		nfs4_set_lease_period(clp, fsinfo.lease_time);
+ 		nfs4_schedule_state_renewal(clp);
+ 	}
+ 
 
