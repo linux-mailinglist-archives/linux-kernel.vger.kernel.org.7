@@ -1,236 +1,255 @@
-Return-Path: <linux-kernel+bounces-712198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11E3AF05F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:53:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943A2AF05FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 23:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F511C203E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:53:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 486667A4190
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 21:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D222701C8;
-	Tue,  1 Jul 2025 21:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C4F302072;
+	Tue,  1 Jul 2025 21:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AsEZnSE6"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jAJ4fMGD"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D092571BA
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 21:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE0D2FD882
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 21:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751406804; cv=none; b=Y3VWntiVLvQnxyRRvKIybG0Lz1j7OdUO4ILkMmRuSX6lw7ECLeExz4575wAsoqXch7DrEHvHyivuJ1bfQ+f81sCpZiYicRni13fHgQn5CJBFkbYmL+3wSUW4Wsl8oK6BP9CCnkGjPXLFG8Q2xcpO+gl8aJBAlm2nQhtRfoSpvos=
+	t=1751406847; cv=none; b=HKDwLHi068bZvlqQU3RRY/1ClrJmw2ij5KIpMrDf1IhUeD9VKNrEnCX0ZslxFDeyXFcTsS5PQ1CU9QYL2lbcFH/zOciEROR8fnlJqbBOyfFkPsWRQPp0XCxdZHx1HSM13zNuhVxp7lFqkpxWGT0UQKNhmrO52iyIAF8nD4sUxQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751406804; c=relaxed/simple;
-	bh=76HcKGmFmNghBO+pMyD+y9llS/oRUsyq25HSfeg328g=;
+	s=arc-20240116; t=1751406847; c=relaxed/simple;
+	bh=JMomTEei7y0V0/UZWksu2X8Dnt9cCX7Lrm18/W01Xhc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EiwIKFGym1wyN2rkw0AqMffZ4J7N6ByuwrKOX4NA3lxdRP4PU9YNvLGZAo7cU7r2cQivX4aHvFo5IXSdFlYJkRo9rHWrgsirEpqetqVGv6OVh6nT0m5ruJZsWw0aG+IxzgxfD3fB9EyA8YMrxNe1/91X2BBB06zjZXn4m6+68wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AsEZnSE6; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87f0ac304f0so1466659241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 14:53:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=Og2AEFmt8soRKzXfmo4eYVlNQ6i74GbhX5v6m7wUcLxyODe35nqLbYEq/gF3Tljm+dxlxo7f62DZQyVVhhGTSSa/bTDY704N+XH7BPAl8KoIDTR2PpXHako2ogmP6of9lh9zBixAgwf2xOILevfM8i5dkHrrRP46FoqjHa3B7HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jAJ4fMGD; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60b86fc4b47so16109a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 14:54:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751406801; x=1752011601; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1751406843; x=1752011643; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h9Tw5T21oTt8VFmq/0NfB5MMfCxNURL8ZSaWZPOqLE4=;
-        b=AsEZnSE6zMHME36FcBn+jkwRR6UgpbVAUySU1ntf+Hwz2jIJIpYIdrAkpyCVoudBUD
-         nsDLM7gfX/t7O/uwQcofhL4arRaNcTpTb4fcfy7WOVbLs/YS+8BdiSPEYkkY9ormRDdD
-         XP0ejjE2sj6jatctWzarjA4fggBzjFFjj6USxJLjrYouZ3i5wR3L4yxMSNMQ3INTD1fS
-         S5SDJsmtRO9BcUOp1m33HKdWzdG8lHsDSRmumBJ3d6CD0OXuwcxz8PmTQaXGFqX28WBn
-         t2Y9pa35VPJ3mSkzb4arFlZJzQ0OqXa6Ck3XCmb7xtnPLmrhHdkZRxE1U3TiXQD0hJ9J
-         TVLg==
+        bh=ld7F4HBIlGiN9DWhZfqacu/pe2SF5kE57miwsPVjWkY=;
+        b=jAJ4fMGDLS408Z4htpMn4j1TNRvteH1MBcWp3weT6cQfGl3iOlk6wL/grJug9HDhdt
+         xe/YFyTuNm8a3cTsm92ZeN6AfP22ln9IohuNC3MT2hnH8EOfFo+YvA12xMuoWYKIDMdK
+         y/VuLigH6fHleLrQvJsNS9gImTWiItLpnNB/y4gZEqmjp5MqxHjhxUsUdSsermw9tgB+
+         nFQbvqRlGfdBbrh4zYr1kQy8kT8IWc8AKJFyXpljBeTr4Ma1/M+t69kKngRoQUjc8BbH
+         tdzk3KDIVPBBQJ6drqSGWqMLR2bH0l5Kb6xN3jIKj+bFhmh9MuLLAHW+OknCc1eg2YcT
+         jtDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751406801; x=1752011601;
+        d=1e100.net; s=20230601; t=1751406843; x=1752011643;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h9Tw5T21oTt8VFmq/0NfB5MMfCxNURL8ZSaWZPOqLE4=;
-        b=MN28+qyB8TquxiAen3cpK/JkTr/OHv9HwhoSjU6Ly4EmLtpqLKz6xABIrjlVCI6O+t
-         HVJdEWs8rHFXe2/IG1RkiYwDt2J4iaBNwqLFAb2Wql9ZwlX7vibYfmcSuo5lfGdrmaLb
-         V3oRuAsy2zG0pcfy1B/PqLwwyVkMZjXzcG9l2iZjjTtGaw2Xzy/ZiYuoVHxJq+RNdxb+
-         Rz3bGoZf5s6rp/5UNxu7GwhwDvHReGtWF/uQXfPtbaI30aNeqHNjeTFSj975qka5rEfS
-         QnzxJsRNM73EPHBU+7PXkFkfYTIsBBSY8WyNND26iHgkHMhVJJsRLdjW43TfjOkr3pED
-         eEwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLUai4ZReNiAwdek7gIo49B/5LlbjzK6Nv49D6m3Y8l9mM42pdms4Uf/2QrU4RrVDt4i8+3Lt6dizimGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUIpGo1PqENWvr+4Otjr+4AY9te4lGvXOozsxykwr738N119Hr
-	TDgQLgqgdEsLS4p6MOtI9iA+1rkSjf6P16eVO4NzKtaYbDWGkN2ndExeOhi686VOPm4PHnGnHHW
-	ZCoGe/JBO/vzj5+mI/924OHjiJx+t2A4=
-X-Gm-Gg: ASbGnct46Yc+UzRHjltNVclxUDaaGJh53X5Bv9xax/9nrLtSVL4tVXC0KWvH87lf3UC
-	+3dzmp13OxUKwBFjwnira3Mgiul08z6R3EM7By8y5uAvyI4RZuOtq/qpoFHyv4IQdooJt3pjHEV
-	Esy3M+Wx59X1jydTK40wE+9jTD7fn9tbgO2q/KJjEIK8wr2Extm6KaNVjJpmtp+zmpSLxkZL2Tl
-	o7K/Q==
-X-Google-Smtp-Source: AGHT+IHgW+audA3TQkHOsNiNO4Y5C7I1as+sT+lATM9JGrS7qA3IEYv2HU03AtfN1AT94Uq8BWvGQ4u89P5wuKzlRag=
-X-Received: by 2002:a05:6102:c4d:b0:4e6:67f6:e9af with SMTP id
- ada2fe7eead31-4f161114e02mr109275137.9.1751406801281; Tue, 01 Jul 2025
- 14:53:21 -0700 (PDT)
+        bh=ld7F4HBIlGiN9DWhZfqacu/pe2SF5kE57miwsPVjWkY=;
+        b=SYLdDXL3Uwvv7PjXby48tPmMJULvOZoGTr7CuHHJtUaMdIhCDgOCxcd5wbiAQ+3Z3f
+         buifZTET+Eg9MSKitsJMXcfI2BAzJCbFQhHtXpz6Ny5gBflVJtTp+XOEzXbA9WZ7v3TD
+         mTDLix1hTR6CfYVWwWfBkKnKj54CS1hS+CJQPd5HD6LLovU293otFm8YXoQTjzjWOYf0
+         CtB1Mzzwd7WjRWpPc6WRYZAGAcKlNALwzuAW+yqck+IvwdhAZWD/RBwBjSqa0dpUIhEL
+         /f+NpLZ3/689W7mNRenndjnozX+Qi7/e42JsJTtbNoplLYjqIvpqnQ6HAgPyMq7KPYLa
+         gG2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXF47jWYhmegiqkIOoq4gVVkfcNq3intaVdvzVGc8LfoLfK9zjBeK8FIwVn5Fv0OTe1Wf5nxPXroU33e2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC5V/mvzZq4SaurAGoFDJtQVXhy+eRz4PbF7D4iWqCMgmcNDlA
+	LALuBka1d4LdKGQhJTdIvA3nPYT+Zmlj82Epdve8Ewn861wqmQUY76T5RyBlJnKwNVeoR5fHDsR
+	RwJ2KreProT1QbVg2XtyHI2gihVqRDqTgqkaksoGF
+X-Gm-Gg: ASbGncsyWkaf19dfDmgfGLhJS4Iw/NwZdQFi7yNVMIWqxRlPV7NXFddTu/INZG5vX9c
+	Qbf7wp/PaYQ1OidpbbcGs9bosTffFIgSGqnOuQic4jdttF1dKqWkavv1SOsqqxn5o4hJPSbIR8O
+	/BPhJTuUDvQcHb2WMhLKw4X/aHkrRbAXcNx1vBr/NRIijPIj2+kTe2O+jjlKo/JENcrs8DKVVC
+X-Google-Smtp-Source: AGHT+IEcCwkWt0puE4zG3pLRWxXga/B8flfyWb4xB/N4Qbq1OeY9qSRBWTJV/btdLG+9+8LK4mi6nrRvTTdojft+2J0=
+X-Received: by 2002:a05:6402:4558:b0:609:99a7:efdb with SMTP id
+ 4fb4d7f45d1cf-60e388f2b76mr147545a12.2.1751406843249; Tue, 01 Jul 2025
+ 14:54:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250629204215.1651573-1-abinashsinghlalotra@gmail.com> <5e67d651-830a-4d99-af37-26f2d0efd640@vates.tech>
-In-Reply-To: <5e67d651-830a-4d99-af37-26f2d0efd640@vates.tech>
-From: Abinash <abinashlalotra@gmail.com>
-Date: Wed, 2 Jul 2025 03:23:09 +0530
-X-Gm-Features: Ac12FXxWN99Do6-y4I8RTPnx1rDO_yZT307Qk4LLSGsNZ3LC714vlUwHM9tF1aQ
-Message-ID: <CAJZ91LC610AsBZ8X3u8ZxAUhc6QT0FHeffQT0ARmnMgsGrdZQQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] xen/gntdev: reduce stack usage by dynamically
- allocating gntdev_copy_batch
-To: Tu Dinh <ngoc-tu.dinh@vates.tech>
-Cc: jgross@suse.com, sstabellini@kernel.org, oleksandr_tyshchenko@epam.com, 
-	xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org, 
-	Abinash Singh <abinashsinghlalotra@gmail.com>
+References: <2025070131-icon-quarters-0c16@gregkh> <aGPtCBB6nWTNJuwK@pollux>
+ <2025070137-tartar-juncture-fcd2@gregkh> <aGP6d2-jJy5rtjMK@pollux>
+ <CAGSQo00eG5oRdN_xORLUyUauLi_vzypU-gz6DSU_FzaAbHRLng@mail.gmail.com>
+ <aGQ1VsnFaxBo9zaM@pollux> <DB0Z71SF488V.3QURUHHELOY84@kernel.org>
+ <3c928a0e-ccd4-4ba0-9f42-9f2bb0203e75@kernel.org> <DB0ZJVL0682F.ZNNOXEIDL5NN@kernel.org>
+ <DB0ZOHPFJR7T.1W3OF32GDL55O@kernel.org> <aGRCM1VRHI8EvZmd@pollux>
+In-Reply-To: <aGRCM1VRHI8EvZmd@pollux>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Tue, 1 Jul 2025 14:53:52 -0700
+X-Gm-Features: Ac12FXwQ8trYMtg8ADu-pbYNZ4d3NZdUbsJXRWIWlbPMuwiMmCItQakKxyNtqsA
+Message-ID: <CAGSQo03nX2cMc0WZQ2YmUKkOLCH_iu9MeQuLSXfCHmNBbuDJ9g@mail.gmail.com>
+Subject: Re: [PATCH v8 4/6] rust: debugfs: Support arbitrary owned backing for File
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi ,
+On Tue, Jul 1, 2025 at 1:16=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> On Tue, Jul 01, 2025 at 10:09:10PM +0200, Benno Lossin wrote:
+> > On Tue Jul 1, 2025 at 10:03 PM CEST, Benno Lossin wrote:
+> > > On Tue Jul 1, 2025 at 9:58 PM CEST, Danilo Krummrich wrote:
+> > >> On 7/1/25 9:46 PM, Benno Lossin wrote:
+> > >>> On Tue Jul 1, 2025 at 9:21 PM CEST, Danilo Krummrich wrote:
+> > >>>> On Tue, Jul 01, 2025 at 11:11:13AM -0700, Matthew Maurer wrote:
+> > >>>>> If we implement *only* pinned files, we run into an additional pr=
+oblem
+> > >>>>> - you can't easily extend a pinned vector. This means that you ca=
+nnot
+> > >>>>> have dynamically created devices unless you're willing to put eve=
+ry
+> > >>>>> new `File` into its own `Box`, because you aren't allowed to move=
+ any
+> > >>>>> of the previously allocated `File`s for a resize.
+> > >>>>>
+> > >>>>> Where previously you would have had
+> > >>>>>
+> > >>>>> ```
+> > >>>>> debug_files: Vec<File>
+> > >>>>> ```
+> > >>>>>
+> > >>>>> you would now have
+> > >>>>>
+> > >>>>> ```
+> > >>>>> debug_files: Vec<PinBox<File<T>>>
+> > >>>>> ```
+> > >>>>
+> > >>>> Stuffing single File instances into a Vec seems like the wrong thi=
+ng to do.
+> > >>>>
+> > >>>> Instead you may have instances of some data structure that is crea=
+ted
+> > >>>> dynamically in your driver that you want to expose through debugfs=
+.
+> > >>>>
+> > >>>> Let's say you have (userspace) clients that can be registered arbi=
+trarily, then
+> > >>>> you want a Vec<Client>, which contains the client instances. In or=
+der to provide
+> > >>>> information about the Client in debugfs you then have the client e=
+mbed things as
+> > >>>> discussed above.
+> > >>>>
+> > >>>>  struct Client {
+> > >>>>     id: File<ClientId>,
+> > >>>>     data: File<ClientData>,
+> > >>>>     ...
+> > >>>>  }
+> > >>>>
+> > >>>> I think that makes much more sense than keeping a Vec<Arc<Client>>=
+ *and* a
+> > >>>> Vec<File> separately. Also, note that with the above, your Client =
+instances
+> > >>>> don't need to be reference counted anymore.
+> > >>>>
+> > >>>> I think this addresses the concerns below.
+> > >>>
+> > >>> You still have the issue that `Client` now needs to be pinned and t=
+he
+> > >>> vector can't be resized. But if you know that it's bounded, then we
+> > >>> could just make `Pin<Vec<T>>` work as expected (not relocating the
+> > >>> underlying allocation by not exposing `push`, only
+> > >>> `push_within_capacity`).
+> > >>>
+> > >>> We also could have a `SegmentedVec<T>` that doesn't move elements.
+> > >>> Essentially it is
+> > >>>
+> > >>>      enum SegmentedVec<T> {
+> > >>>          Cons(Segment<T>, KBox<SegmentedVec<T>>)
+> > >>>          Nul,
+> > >>>      }
+> > >>>
+> > >>>      struct Segment<T> {
+> > >>>          elements: [T; 16]
+> > >>>      }
+> > >>>
+> > >>> or make the segments variable-sized and grow them accordingly.
+> > >>
+> > >> That sounds a lot like the perfect application for XArray. :)
+> > >
+> > > Haha I didn't know this already existed in the kernel :) Yeah then we
+> > > should make XArray work for this use-case.
+> >
+> > Ah wait, I meant for `SegmentedVec<T>` to store multiple `T` in the sam=
+e
+> > allocation, so it would only grow sometimes and amortize the allocation=
+s
+> > just like `Vec`. It seems to me that XArray only stores pointers, so yo=
+u
+> > have to box everything (which we're trying to avoid IIUC).
+>
+> Yes, that sounds good. And if the potential number of Client instances ca=
+n get
+> pretty large Vec isn't a good choice anyways. If we really get a ton of c=
+lients,
+> they should be allocated with a kmem_cache and stored in an XArray, maple=
+ tree,
+> etc.
 
-Thanks for pointing that out.
+OK. I've outlined why I disagree, but it sounds like consensus here is that=
+:
+1. You want a `File<T>` that implements `Deref` to expose a `&T`.
+2. To enable `T` to take on values which are not `ForeignOwnable`, you
+want me to make `create_file` return a `PinInit<File<T>>` (We will
+also grow a `T: Sized` bound here.)
 
-I haven=E2=80=99t measured the performance impact yet =E2=80=94 my main foc=
-us was on
-getting rid of the stack usage warning triggered by LLVM due to
-inlining. But you're right, gntdev_ioctl_grant_copy() is on a hot
-path, and calling kmalloc() there could definitely slow things down,
-especially under memory pressure.
+You are aware that:
+1. A `File` can no longer be placed in a normal Rust collection, you
+will either need to box it or use a special collection kind.
+2. Adding or removing DebugFS support for some data in a driver may
+cause more noise (code edits non-local to the debug logic) than
+expected.
 
-I=E2=80=99ll run some benchmarks to compare the current approach with the
-dynamic allocation, and also look into alternatives =E2=80=94 maybe
-pre-allocating the struct or limiting inlining instead. If you have
-any ideas or suggestions on how best to approach this, I=E2=80=99d be happy=
- to
-hear them.
+The one thing I still don't see a consensus on:
 
-Do you have any suggestions on how to test the performance?
+What do you want me to do about standard traits for `File`? If we're
+intending it to be heavily used throughout structs, we'll effectively
+break `#[derive]` if I don't add support. For example, if we had
+```
+#[derive(Debug, PartialEq)]
+struct FooAttrs {
+  name: String,
+  size: usize,
+}
+// In my current patch world someone adds `File`, it's by putting
+`FooAttrs` into an `Arc` and passing that into `create_file`, no
+modifications to the structure are made.
+```
+before, we have an obvious semantics for this. If someone adds `File`
+with the new API, we get
+```
+#[derive(Debug, PartialEq)]
+#[pin_data]
+struct FooAttrs {
+  #[pin]
+  name: File<String>,
+  #[pin]
+  size: File<usize>,
+}
+```
 
-Best,
-Abinash
+This means that for the `#[derive]` to keep working, `File` needs to
+implement these traits. Do we want it to:
+A. Purely delegate, so making this sort of change keeps the same
+behavior of derived traits
+B. Do what makes sense for a `File`, so e.g. Debug might print 'File {
+data: "name_of_foo" }', and PartialEq might test for equality of the
+dentry if not an error
 
-
-On Mon, 30 Jun 2025 at 16:05, Tu Dinh <ngoc-tu.dinh@vates.tech> wrote:
->
-> Hi,
->
-> On 30/06/2025 06:54, Abinash Singh wrote:
-> > While building the kernel with LLVM, a warning was reported due to
-> > excessive stack usage in `gntdev_ioctl`:
-> >
-> >       drivers/xen/gntdev.c:991: warning: stack frame size (1160) exceed=
-s limit (1024) in function 'gntdev_ioctl'
-> >
-> > Further analysis revealed that the large stack frame was caused by
-> > `struct gntdev_copy_batch`, which was declared on the stack inside
-> > `gntdev_ioctl_grant_copy()`. Since this function was inlined into
-> > `gntdev_ioctl`, the stack usage was attributed to the latter.
-> >
-> > This patch fixes the issue by dynamically allocating `gntdev_copy_batch=
-`
-> > using `kmalloc()`, which significantly reduces the stack footprint and
-> > eliminates the warning.
-> >
-> > This approach is consistent with similar fixes upstream, such as:
-> >
-> > commit fa26198d30f3 ("iommu/io-pgtable-arm: dynamically allocate selfte=
-st device struct")
-> >
-> > Fixes: a4cdb556cae0 ("xen/gntdev: add ioctl for grant copy")
-> > Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
-> > ---
-> > The stack usage was confirmed using the `-fstack-usage`  flag and mannu=
-al analysis, which showed:
-> >
-> >    drivers/xen/gntdev.c:953: gntdev_ioctl_grant_copy.isra   1048 bytes
-> >    drivers/xen/gntdev.c:826: gntdev_copy                     56 bytes
-> >
-> > Since `gntdev_ioctl` was calling the inlined `gntdev_ioctl_grant_copy`,=
- the total
-> > frame size exceeded 1024 bytes, triggering the warning.
-> >
-> > This patch addresses the warning and keeps stack usage within acceptabl=
-e limits.
-> > Is this patch fine or kmalloc may affect performance ?
-> > ---
->
-> Have you measured the performance impact? gntdev_ioctl_grant_copy is
-> called quite often especially by the backend. I'm afraid calling the
-> allocator here may cause even more slowdown than there already is,
-> especially when memory is tight.
->
-> >   drivers/xen/gntdev.c | 24 +++++++++++++++---------
-> >   1 file changed, 15 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-> > index 61faea1f0663..9811f3d7c87c 100644
-> > --- a/drivers/xen/gntdev.c
-> > +++ b/drivers/xen/gntdev.c
-> > @@ -953,15 +953,19 @@ static int gntdev_grant_copy_seg(struct gntdev_co=
-py_batch *batch,
-> >   static long gntdev_ioctl_grant_copy(struct gntdev_priv *priv, void __=
-user *u)
-> >   {
-> >       struct ioctl_gntdev_grant_copy copy;
-> > -     struct gntdev_copy_batch batch;
-> > +     struct gntdev_copy_batch *batch;
-> >       unsigned int i;
-> >       int ret =3D 0;
-> >
-> >       if (copy_from_user(&copy, u, sizeof(copy)))
-> >               return -EFAULT;
-> > -
-> > -     batch.nr_ops =3D 0;
-> > -     batch.nr_pages =3D 0;
-> > +
-> > +     batch =3D kmalloc(sizeof(*batch), GFP_KERNEL);
-> > +     if (!batch)
-> > +             return -ENOMEM;
-> > +
-> > +     batch->nr_ops =3D 0;
-> > +     batch->nr_pages =3D 0;
-> >
-> >       for (i =3D 0; i < copy.count; i++) {
-> >               struct gntdev_grant_copy_segment seg;
-> > @@ -971,18 +975,20 @@ static long gntdev_ioctl_grant_copy(struct gntdev=
-_priv *priv, void __user *u)
-> >                       goto out;
-> >               }
-> >
-> > -             ret =3D gntdev_grant_copy_seg(&batch, &seg, &copy.segment=
-s[i].status);
-> > +             ret =3D gntdev_grant_copy_seg(batch, &seg, &copy.segments=
-[i].status);
-> >               if (ret < 0)
-> >                       goto out;
-> >
-> >               cond_resched();
-> >       }
-> > -     if (batch.nr_ops)
-> > -             ret =3D gntdev_copy(&batch);
-> > -     return ret;
-> > +     if (batch->nr_ops)
-> > +             ret =3D gntdev_copy(batch);
-> > +     goto free_batch;
-> >
-> >     out:
-> > -     gntdev_put_pages(&batch);
-> > +     gntdev_put_pages(batch);
-> > +  free_batch:
-> > +     kfree(batch);
-> >       return ret;
-> >   }
-> >
->
->
->
-> Ngoc Tu Dinh | Vates XCP-ng Developer
->
-> XCP-ng & Xen Orchestra - Vates solutions
->
-> web: https://vates.tech
->
+I'm guessing you want A, but I've been through so many API reworks at
+this point that I wanted to ask in case there's  disagreement here.
 
