@@ -1,66 +1,83 @@
-Return-Path: <linux-kernel+bounces-710949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E8AEF37A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:37:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCE4AEF3B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A1F3A770B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC7C4A1696
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8499D26CE10;
-	Tue,  1 Jul 2025 09:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496E25DAFF;
+	Tue,  1 Jul 2025 09:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="NtIlq3pR"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRAFq71+"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FB3130A73;
-	Tue,  1 Jul 2025 09:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889FF1F239B
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751362611; cv=none; b=jZ4ofsAlvyAySAJ4grfCNag+RlHhYPRVZHkE3wtMeNUKm3jiDoJkB8wnibJ52ktBbihw9CEMyXQiWeiwOQ8Bm8ZHY7hYS2g9s3UAjt87QQleu129+xJtfpX+5TQAcAes+FQRj1PFLXVQUoLf0+ALTFtCocXi1paJ4PErlvV242k=
+	t=1751363208; cv=none; b=N9WdGeTmBSrjWvk1dJFLVq5GlldjtW+deYClUG0UKyIQDZ738KSDKw09/UWgmbldDweUKBPKn9uHg9ZGd+gqNK5K3/T5rPxQhmieeag35CzjNNi0i9pgqKwC34wqPnzO12ZpoXh37/MeZqbhtp/kv6yQG3oDa+FlochMEghlU20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751362611; c=relaxed/simple;
-	bh=tAvRu02aHPZYShTzOHA70+txOthRe8RiA7wmGNCjLVk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RwnUr5DgP8QLestObi+0tpL9YWew9tkGFiG47DNGM9oT+dtrA+tyeftERfUc3Eo+rnna9IsC/FbUpTJvbE96D7E/r5yqnmgsZhTk9DFblWOQvakrIuBBf7tLwtVjBq5rBjPbU/oICDhA2HQKt9oD44jYn7vG84jtijJ9r5AxOyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=NtIlq3pR; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5619aaonF2789824, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1751362596; bh=hkN0rBDOq2qKTbg0hAD8kX1HW09g4FI4/+Ln0qCkLHg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=NtIlq3pRZTsnVC1XFFv2/NshQi7YjBb+qOlFYLBPz9CBP3lROYJE1ZaIMKz47hLEM
-	 C+JR9LPzZO15oUUfaOo5QeSOE8zXydSYU6PNykXHHjyDBwSpjbM7P3VyIwhYK/gSft
-	 VLPHbuVDKa+WpeXKTcEeBVpsewyI8Cqhe2fuFxi4ATj9wFjn2Nodd5Yd3J/kkm+24U
-	 QJzOd0HzGTocZG0HsJRb+f0sOrQS/wvbH9Z47O1aw/is4aj7Bu6gjp8gUTxACPl08A
-	 /WBXuArALpI5htYaKNFzvrptg87oiWnPV8bBHo4c5GQqp66YsZpImbk1L4vUJCtJ8Y
-	 4by76J1mFSM4Q==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5619aaonF2789824
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Jul 2025 17:36:36 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 1 Jul 2025 17:36:58 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 1 Jul
- 2025 17:36:56 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
-        <max.chou@realtek.com>, <kidman@realtek.com>
-Subject: [PATCH] Bluetooth: btusb: Add the more support IDs for Realtek RTL8852BT/RTL8852BE-VT
-Date: Tue, 1 Jul 2025 17:36:30 +0800
-Message-ID: <20250701093630.2388069-1-hildawu@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1751363208; c=relaxed/simple;
+	bh=u8eQPXTq595/9P5sz1sIlTx9nk5+OiYGc5gxzP27Ots=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MGCYX9//Cd51Xz7C0m6mLQ3th/QpgLFPHtLakVt0Db2R+hw45uEPlwfDwwmKo+a4Nd4wFXbtqmpFtMmQLoUJgYaKwnnQdDB7sAG8ZHlpC/Qg0QtVuEzOmdWN69kS2buA/bsVaGbtns3yr0B85HYl1PAGxy2SybgpVB+kSOcNaxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRAFq71+; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-70e4b1acf41so25127037b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:46:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751363205; x=1751968005; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=adw9AtmAKkR03qobX19/k7gE8iy5Pgo/IUh30/wiTNQ=;
+        b=jRAFq71+riIRsjSjIVpudwBrKPQR0XPNAQkGqBtHUgPIRjPka5AbKYWE5/GSne99T1
+         4mn48oltub97Xb8hdhqsjuhYoKCGnuj4cnqRCGwdW9sA1fI+fkJtzoOVimhpZ1XJfWNy
+         YCez2LFfI6mu5/ISgOA5o40H3/q9UQqJG2x4MenhfJAuADmNXpGgQjDB5zjh0+xKx2Db
+         cFs5g8QozpO/v13KYMsd9xyDBIQALrQJZRGclpe3PJdjTHF3NLkCJCQz79xSO5Ry3TaJ
+         KoSx8rI3bmj8nsBEWXCnnmKNOyHpG0osP2M2avXRDHVunz0QuJdhIBVNB3X4rt/PytwH
+         RHgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751363205; x=1751968005;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=adw9AtmAKkR03qobX19/k7gE8iy5Pgo/IUh30/wiTNQ=;
+        b=NwAeQn8xcUY18I26CuTQM7E7BNr0BO81DXCXJXIvDofd10ePd3VGwzVfiHYlN8e7q4
+         o0RgdV9qtdi0n93SyJKy5/XETJr8V7BlbpuqopJ4tAcg1x6uhQ4Kr00+k2xaa0aSzjqI
+         Qb7G+QPsC6SqOuftbZCTj90TmffPTXHa4h9A5Ue0U4gZvd2wKVA8+NOyDJjTJJXeloJw
+         M6AOere8Cvv7umiCLU5bUxzWYX36w9XasIbg1HpxFKFcKVcGplk420O5b4B7W6kXyh4b
+         qs5opavo/BLi5tZ/+EF/YI5PpQFGN7R5c/c5b258HrlMqzp9+GvepMyE8KdJi590Mywr
+         afIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUhXVLX9RyphztqRhhrQxTDOKhjMhdkfOoOdNasz6Clej87P6cP+vR9t6WVRoFEu0Jw2Nwe8qkpeYfGxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA2DxmefPhlH5ASz/xxyf+rO4X17skvqA28v8AnR/q5d5qZho2
+	3YuweiuA5mtoHJJWQcMhpBvmC9z1T/raX9bcTXRyJIHP86UdE9MOXkJeko+TRikJkKU=
+X-Gm-Gg: ASbGncujjXZETOmPShL/bsi5hUGeSlWSfyAQB/faly+VG20yrTEhKUIYYnF7nqlhlv8
+	87cQh3KnzEYWPfTSoG0Ddh/0RrbOcZLxWsxAyJSOiZKw4NmG0eJh9ZYTzpb+lfguu7yq0p32cVg
+	qcw1S19jcZROQiMXEHSybsncUXADvGnL+EDRODGFi8upI8k4EsqdM4Gi0GUDZlDzpO0UO12hN4p
+	AirwzqF/hscYX8Txb2LBfDEoSoI34X71nj1sEsmG7esUaRzQ9lUgjx7rywFgZNvhoXGTGk4IjnZ
+	DabRYnIppOO0ypF4lhZHxOCvtNhvokxe7beuOjpw9DbhYvMuTNP8f1DpiSZJbTTOlcoLZj7K
+X-Google-Smtp-Source: AGHT+IEZuU9iIlyPaR0v8qouv97qhBTEadqtDJk3Jq6/2x+BT69zQM1/zyy9cye5W8NDl27DEP2Flg==
+X-Received: by 2002:a05:690c:67ca:b0:70f:7483:5a34 with SMTP id 00721157ae682-715171aba9fmr258427827b3.32.1751363205282;
+        Tue, 01 Jul 2025 02:46:45 -0700 (PDT)
+Received: from Gentoo.localdomain ([191.96.150.39])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71515cc809dsm19225897b3.113.2025.07.01.02.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 02:46:44 -0700 (PDT)
+From: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: [PATCH] tools: mm: Added modern version of shell quote and a stranza for required command check
+Date: Tue,  1 Jul 2025 15:07:08 +0530
+Message-ID: <20250701094603.23933-1-unixbhaskar@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,128 +85,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Add the more IDs to usb_device_id table for Realtek RTL8852BT/RTL8852BE-VT
-and also support the wideband speech capability.
+Three things precisely:
 
-The device info from /sys/kernel/debug/usb/devices as below.
+Replaed backquote with dollar-parentheses ...that is modern way of quoting in
+shell script.
 
-T:  Bus=02 Lev=02 Prnt=02 Port=05 Cnt=01 Dev#=  8 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3618 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+Added a stranza of missing/required command for the operation, in this case
+gnuplot and that too in the command shell path.
 
-T:  Bus=02 Lev=02 Prnt=02 Port=05 Cnt=01 Dev#=  8 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3619 Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+And lastly, command with -v print the path of command i.e location for the
+command to be executed.
 
-T:  Bus=02 Lev=02 Prnt=02 Port=05 Cnt=01 Dev#=  8 Spd=12   MxCh= 0
-D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e12f Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Radio
-S:  SerialNumber=00e04c000001
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
+Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 ---
- drivers/bluetooth/btusb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/mm/slabinfo-gnuplot.sh | 45 +++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index f8f256ff79a3..ddbce58cd6f4 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -578,6 +578,12 @@ static const struct usb_device_id quirks_table[] = {
- 	/* Realtek 8852BT/8852BE-VT Bluetooth devices */
- 	{ USB_DEVICE(0x0bda, 0x8520), .driver_info = BTUSB_REALTEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3618), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x13d3, 0x3619), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe12f), .driver_info = BTUSB_REALTEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 
- 	/* Realtek 8922AE Bluetooth devices */
- 	{ USB_DEVICE(0x0bda, 0x8922), .driver_info = BTUSB_REALTEK |
--- 
-2.34.1
+diff --git a/tools/mm/slabinfo-gnuplot.sh b/tools/mm/slabinfo-gnuplot.sh
+index 873a892147e5..de621963b3d1 100644
+--- a/tools/mm/slabinfo-gnuplot.sh
++++ b/tools/mm/slabinfo-gnuplot.sh
+@@ -38,6 +38,23 @@ usage()
+ 	echo "-r %d,%d		- use data samples from a given range"
+ }
+
++
++# This varialble could have space separated commands
++my_needed_commands="gnuplot"
++
++missing_counter=0
++for needed_command in $my_needed_commands; do
++  if ! hash "$needed_command" >/dev/null 2>&1; then
++    printf "Command not found in PATH: %s\n" "$needed_command" >&2
++    ((missing_counter++))
++  fi
++done
++
++if ((missing_counter > 0)); then
++  printf "Minimum %d commands are missing in PATH, aborting\n" "$missing_counter" >&2
++  exit 1
++fi
++
+ check_file_exist()
+ {
+ 	if [ ! -f "$1" ]; then
+@@ -58,13 +75,13 @@ do_slabs_plotting()
+
+ 	check_file_exist "$file"
+
+-	out_file=`basename "$file"`
++	out_file=$(basename "$file")
+ 	if [ $xmax -ne 0 ]; then
+ 		range="$range::$xmax"
+ 		lines=$((xmax-xmin))
+ 	fi
+
+-	wc_lines=`cat "$file" | wc -l`
++	wc_lines=$(cat "$file" | wc -l)
+ 	if [ $? -ne 0 ] || [ "$wc_lines" -eq 0 ] ; then
+ 		wc_lines=$lines
+ 	fi
+@@ -78,7 +95,7 @@ do_slabs_plotting()
+ 		xtic_rotate=90
+ 	fi
+
+-gnuplot -p << EOF
++$(command -v gnuplot) -p << EOF
+ #!/usr/bin/env gnuplot
+
+ set terminal png enhanced size $width,$height large
+@@ -113,14 +130,14 @@ do_totals_plotting()
+ 	for i in "${t_files[@]}"; do
+ 		check_file_exist "$i"
+
+-		file="$file"`basename "$i"`
++		file="$file"$(basename "$i")
+ 		gnuplot_cmd="$gnuplot_cmd '$i' $range using 1 title\
+ 			'$i Memory usage' with lines,"
+ 		gnuplot_cmd="$gnuplot_cmd '' $range using 2 title \
+ 			'$i Loss' with lines,"
+ 	done
+
+-gnuplot -p << EOF
++$(command -v gnuplot) -p << EOF
+ #!/usr/bin/env gnuplot
+
+ set terminal png enhanced size $width,$height large
+@@ -148,26 +165,26 @@ do_preprocess()
+
+ 	# use only 'TOP' slab (biggest memory usage or loss)
+ 	let lines=3
+-	out=`basename "$in"`"-slabs-by-loss"
+-	`cat "$in" | grep -A "$lines" 'Slabs sorted by loss' |\
++	out=$(basename "$in")"-slabs-by-loss"
++	$(cat "$in" | grep -A "$lines" 'Slabs sorted by loss' |\
+ 		grep -E -iv '\-\-|Name|Slabs'\
+-		| awk '{print $1" "$4+$2*$3" "$4}' > "$out"`
++		| awk '{print $1" "$4+$2*$3" "$4}' > "$out")
+ 	if [ $? -eq 0 ]; then
+ 		do_slabs_plotting "$out"
+ 	fi
+
+ 	let lines=3
+-	out=`basename "$in"`"-slabs-by-size"
+-	`cat "$in" | grep -A "$lines" 'Slabs sorted by size' |\
++	out=$(basename "$in")"-slabs-by-size"
++	$(cat "$in" | grep -A "$lines" 'Slabs sorted by size' |\
+ 		grep -E -iv '\-\-|Name|Slabs'\
+-		| awk '{print $1" "$4" "$4-$2*$3}' > "$out"`
++		| awk '{print $1" "$4" "$4-$2*$3}' > "$out")
+ 	if [ $? -eq 0 ]; then
+ 		do_slabs_plotting "$out"
+ 	fi
+
+-	out=`basename "$in"`"-totals"
+-	`cat "$in" | grep "Memory used" |\
+-		awk '{print $3" "$7}' > "$out"`
++	out=$(basename "$in")"-totals"
++	$(cat "$in" | grep "Memory used" |\
++		awk '{print $3" "$7}' > "$out")
+ 	if [ $? -eq 0 ]; then
+ 		t_files[0]=$out
+ 		do_totals_plotting
+--
+2.49.0
 
 
