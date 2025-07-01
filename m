@@ -1,188 +1,103 @@
-Return-Path: <linux-kernel+bounces-711328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FAEAEF932
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1651AEF936
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A41C13A73FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13881BC5EB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF3B274658;
-	Tue,  1 Jul 2025 12:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF182274668;
+	Tue,  1 Jul 2025 12:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aZ22HQYO"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cwbNa/ul"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A613A272E4C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD3021D5BC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751374279; cv=none; b=lSlgl7lH73FsipdLjbq91vHiaeiQBtduTtvuD2PYbasW9SzVgwSks+RtH7b5dsYMSBZpzu9NNVvGnddVAccWcrQ9l89NJOaqN8iTe6z9VhUEo2ZXmvL+M6N0dlwQtqJsiobhcvSKULEOQdN+TlA/4+GY9iAzBuIxv2iBb0J4kY4=
+	t=1751374303; cv=none; b=jm5Ap1cxcQLQg7UjMKK7VP8cMt0WzKflTpHS1DnJr7SymEm2ybkEnqFBKnNp/evC+WdXjoxCP2N7rzcjak+4h4F6zcWzi4d29kjzPScFXUhbjSMT04l4DRzhWro1YLI9TwbXsi+jWYTyE2WVYMM/yJ/s55IvfIjhNVVgESD0kCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751374279; c=relaxed/simple;
-	bh=UTZrlI9y+37r9TWwpMElUdLKen5fGKONWtUw6j0dYNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWO8V85yDsi46Zce/1b0zlZ1l1nLZcyGmSm9syZtJPUAQ6lxp3es7l4dowTi8Sipt9XF+Jw935v/foqldL1H480w0IO/ZnnzwaeH7Wc7fYuASiKK1GNUpMorcDBBSYFxyxBnN/htAEoA1qqXQnwM0JMTJoZX7l3xn/ghg7ZGzG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aZ22HQYO; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235e389599fso210285ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 05:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751374276; x=1751979076; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GPts6df6Q4890tqHCArh7YEtzYo+b0PlaNL9e95JEQ4=;
-        b=aZ22HQYO2CqPeJ5vOwF6wf4CSqisVmIBvzHTgoCjmt0XbKMp4kwFYuz8OdHg8EPDW8
-         7xnR/FJZlhYW+K0ywv5vA5Em26BUKdz+UJjtuMwYD3BtThUNfFqvYgxOM2QUrBqIst5Y
-         36bhdgEzDZb0qHcDwSJG76Yov6n0hJ0MEj0MVbB4tjo7xwHce+1mkOr/qB2X7UGd+Ncf
-         1wAvl8j0siGa2mztOi5hp9mLcUduWKa6/nrTjceFVyDF9akhAjNYkPg9BWEuV/uQY2Hs
-         YFmlPLe++xvJ2f/C0d+fBSyqrCjYNHso4ZZh0UH1MHDrKDVEqxHuZxd0g0TOk8YPCcV/
-         DoLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751374276; x=1751979076;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GPts6df6Q4890tqHCArh7YEtzYo+b0PlaNL9e95JEQ4=;
-        b=jyKWg53TtkE46AQOiHzffwz6KES1sCAyRXT0nHibCcPPQaoZoUyl6B3kLJMWDH7TWw
-         gDhyJbohMMox9/tQ8uK6fC9V0mGfUQpMAQ3E+wNBbdGLiY60TMxztMKt+buN9k4RCFAm
-         Ke9fL1y6YRvagsT3y/+KxS1HcukOJL1jbQ9ZnNxZNxqtePeIq6xB/nGCCki/kFCue7Kw
-         OPQiIre3Kb9OFJNcpSpqY4JZZM86quu1I6qogNpGoZWkWqOWLKm2kebjEog9E0C8FqKV
-         FQKABsY2gze59aE8K/ExKWn7AnfYAjNAumeyGtR/P75l0KIaBM1IHwYUyvWVWgxDRULC
-         slHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqfYdqBOORNB6ScAkeKG2nLVMwYy1kP2DhP8xqbUf7ZGcq8yByDiPd9F3WVPqz2wyzgt5yzFIkivC/DtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv+QzrtROn+BU4HBJ2M6agzZG9NBQj44YVBdLYstYFQKZtiIaa
-	GxJZilUTNBoiXl1jR9+BA87K0ImUmelJBWgBOO7Cty8/aqIBXXdWGbJuYpduwvDGVg==
-X-Gm-Gg: ASbGncsPWNP2dHONVm3FEA6fjnJfPSRz6AvRVGUfj3BBSQzrfYHuawnmB9BF+6bOH95
-	rZN9XgTKfS6t8Z6/qfNS4nYNZ2sYeDM64hvj+idoY55V6AT3gaLKcnvq6y4Ema7pFECJwT1I8HL
-	mWhTWJKicWCXKgaeYUE3iZWrYGCgyA6sQPfqYsQT27NPvmq7iw2v16t/HPwHp0YTlKGS2C0qrIo
-	5WVf0BXwKRhNPIbsfwvtaiDlNyJCn+uSMlNr8tSbkomAFI7HmOTiJl/RPORN00olvurlq/+Hp60
-	JBB7nV3ppuReenwHn9Ix3I61zo4WIRNXPAAupj5XJZqVPXlRnFeXtref4xcwjEkF/Xup0TmNuL6
-	ARnCGkJI9TgPHoGaMqI3a
-X-Google-Smtp-Source: AGHT+IGScnewrdwJXz5o2+pGS36a0Kxzmd5AqmLzt37Kv43BKh9NBBAVMo2i4U9SfF+orF6VioLZJQ==
-X-Received: by 2002:a17:903:b07:b0:234:bfa1:da3e with SMTP id d9443c01a7336-23c5ff04d7cmr1891395ad.5.1751374275468;
-        Tue, 01 Jul 2025 05:51:15 -0700 (PDT)
-Received: from google.com (232.98.126.34.bc.googleusercontent.com. [34.126.98.232])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af57ee760sm11194996b3a.155.2025.07.01.05.51.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 05:51:14 -0700 (PDT)
-Date: Tue, 1 Jul 2025 12:51:05 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
-	bagasdotme@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	shuah@kernel.org, jsnitsel@redhat.com, nathan@kernel.org,
-	peterz@infradead.org, yi.l.liu@intel.com, mshavit@google.com,
-	zhangzekun11@huawei.com, iommu@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, patches@lists.linux.dev,
-	mochs@nvidia.com, alok.a.tiwari@oracle.com, vasant.hegde@amd.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v7 03/28] iommu: Use enum iommu_hw_info_type for type in
- hw_info op
-Message-ID: <aGPZuSKBSADLbwas@google.com>
-References: <cover.1750966133.git.nicolinc@nvidia.com>
- <f588bf6a47cbaf350a03e5a1680074b852fb5502.1750966133.git.nicolinc@nvidia.com>
+	s=arc-20240116; t=1751374303; c=relaxed/simple;
+	bh=c+4c+g5QJfhyC+UXQix6d3ko58wc2ZtIIOw1DxZ0qcM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lELwg5RJkfZcZ2PaOGfHlsDS15CBRyIPausHsew2tl2tba+x/YQOrXM0tfShyJwFZKKdTgJ+C6QX4pwHFtzEY5CwLgG2QPDvlviZf90zAqE2lw/kw6GpU8PqzKkN5dyJTlUJiEUSxFKSunp0X1zR9beC1XN10898PR5rxbDDQew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cwbNa/ul; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F2F154424C;
+	Tue,  1 Jul 2025 12:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751374293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c+4c+g5QJfhyC+UXQix6d3ko58wc2ZtIIOw1DxZ0qcM=;
+	b=cwbNa/ulZeyBqE/Afx6KxKecnKJXH6g0zoZYET/B6cuUD+qx84sK+owpBM6wUTtCB8kxWL
+	7xFDF7Tow7WgtB6WD6lJaibV98kgtmzh6hBp7t+w9VSUiqISPaNGKOcW48eKThTfEUrViP
+	ME79fVcszUk2/wJ8oASxs1xSrsop9FX1it1/+D9aKBmwbtSFbxKT9Vh/avEnx66zA7cpYf
+	M+bDikFmx4P/K6qiYempyctg2+SGVGwV9r7QRkCLZUl7M0MHR3U5iV0yaoR6fZz04j5kmB
+	U5enoet4yQe41GfIFtTt54LKZuZEWw7zesYyesxZlvdLLvSZNjw2GYyj7agUEg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Nicolas Ferre <nicolas.ferre@microchip.com>,
+  Alexandre Belloni <alexandre.belloni@bootlin.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>,  Alexander Dahl <ada@thorsis.com>,  Boris
+ Brezillon <bbrezillon@kernel.org>,  linux-mtd@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: Fix dma_mapping_error() address
+In-Reply-To: <20250701114427.24910-2-fourier.thomas@gmail.com> (Thomas
+	Fourier's message of "Tue, 1 Jul 2025 13:44:23 +0200")
+References: <20250701114427.24910-2-fourier.thomas@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Tue, 01 Jul 2025 14:51:31 +0200
+Message-ID: <878ql8qdkc.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f588bf6a47cbaf350a03e5a1680074b852fb5502.1750966133.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugeehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepfhhouhhrihgvrhdrthhhohhmrghssehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehnihgtohhlrghsrdhfvghrrhgvsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpr
+ hgtphhtthhopegtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopehurdhklhgvihhnvgdqkhhovghnihhgsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopegruggrsehthhhorhhsihhsrdgtohhm
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, Jun 26, 2025 at 12:34:34PM -0700, Nicolin Chen wrote:
-> Replace u32 to make it clear. No functional changes.
-> 
-> Also simplify the kdoc since the type itself is clear enough.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Hi Thomas,
+
+Thanks for the patch!
+
+On 01/07/2025 at 13:44:23 +02, Thomas Fourier <fourier.thomas@gmail.com> wr=
+ote:
+
+The subject prefix should be 'mtd: rawnand: atmel:'
+
+> It seems like what was intended is to test if the dma_map of the
+> previous line failed but the wrong dma address was passed.
+>
+> Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand
+> driver")
+
+Missing:
+
+Cc: stable@vger.kernel.org
+
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 > ---
->  include/linux/iommu.h                               | 6 +++---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 3 ++-
->  drivers/iommu/intel/iommu.c                         | 3 ++-
->  drivers/iommu/iommufd/selftest.c                    | 3 ++-
->  4 files changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 04548b18df28..b87c2841e6bc 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -563,8 +563,7 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
->   * @capable: check capability
->   * @hw_info: report iommu hardware information. The data buffer returned by this
->   *           op is allocated in the iommu driver and freed by the caller after
-> - *           use. The information type is one of enum iommu_hw_info_type defined
-> - *           in include/uapi/linux/iommufd.h.
-> + *           use.
->   * @domain_alloc: Do not use in new drivers
->   * @domain_alloc_identity: allocate an IDENTITY domain. Drivers should prefer to
->   *                         use identity_domain instead. This should only be used
-> @@ -623,7 +622,8 @@ iommu_copy_struct_from_full_user_array(void *kdst, size_t kdst_entry_size,
->   */
->  struct iommu_ops {
->  	bool (*capable)(struct device *dev, enum iommu_cap);
-> -	void *(*hw_info)(struct device *dev, u32 *length, u32 *type);
-> +	void *(*hw_info)(struct device *dev, u32 *length,
-> +			 enum iommu_hw_info_type *type);
->  
->  	/* Domain allocation and freeing by the iommu driver */
->  #if IS_ENABLED(CONFIG_FSL_PAMU)
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> index 9f59c95a254c..69bbe39e28de 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> @@ -7,7 +7,8 @@
->  
->  #include "arm-smmu-v3.h"
->  
-> -void *arm_smmu_hw_info(struct device *dev, u32 *length, u32 *type)
-> +void *arm_smmu_hw_info(struct device *dev, u32 *length,
-> +		       enum iommu_hw_info_type *type)
->  {
->  	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
->  	struct iommu_hw_info_arm_smmuv3 *info;
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 7aa3932251b2..850f1a6f548c 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -4091,7 +4091,8 @@ static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
->  	return ret;
->  }
->  
-> -static void *intel_iommu_hw_info(struct device *dev, u32 *length, u32 *type)
-> +static void *intel_iommu_hw_info(struct device *dev, u32 *length,
-> +				 enum iommu_hw_info_type *type)
->  {
->  	struct device_domain_info *info = dev_iommu_priv_get(dev);
->  	struct intel_iommu *iommu = info->iommu;
-> diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selftest.c
-> index 74ca955a766e..7a9abe3f47d5 100644
-> --- a/drivers/iommu/iommufd/selftest.c
-> +++ b/drivers/iommu/iommufd/selftest.c
-> @@ -287,7 +287,8 @@ static struct iommu_domain mock_blocking_domain = {
->  	.ops = &mock_blocking_ops,
->  };
->  
-> -static void *mock_domain_hw_info(struct device *dev, u32 *length, u32 *type)
-> +static void *mock_domain_hw_info(struct device *dev, u32 *length,
-> +				 enum iommu_hw_info_type *type)
->  {
->  	struct iommu_test_hw_info *info;
->  
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+Otherwise looks good to me!
 
-> -- 
-> 2.43.0
-> 
+Thanks,
+Miqu=C3=A8l
 
