@@ -1,171 +1,226 @@
-Return-Path: <linux-kernel+bounces-711867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96918AF00D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:56:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0C4AF00F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFB2E1616C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098EE440A31
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362D5286418;
-	Tue,  1 Jul 2025 16:50:33 +0000 (UTC)
-Received: from rtg-sunil-navi33.amd.com (unknown [165.204.156.251])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C93280303;
+	Tue,  1 Jul 2025 16:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K14Ov+NR"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBE427FB06
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.204.156.251
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C78227FD5A;
+	Tue,  1 Jul 2025 16:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751388632; cv=none; b=V2vbMduauHbJI+Fons7IN/TecGJcCUu2CU5iqw08QYsXgWF3YKRz68v+gzAJlXDs3u2f0NE/Dk2+YrffX3iRWJ46qCoisdWQWCrkbn1v8WSlPpVv3o6JF9Ns02DqjcUzw3Me/rDU48nUjnz6dERFApSwI1ElUh7RLBw37KQ4aMQ=
+	t=1751388695; cv=none; b=DYGFYWo+BLRbNEy7HVRUvzowgI0b3x3Lq2UViaVcVtnGMDmmBS71pR+esusoxvwEXXor+vn1MTFRJ7HcwIOVBmYcs3oXwwTj4MVsd1bghtA9eVU7BnURCUCnFsW9pudEoE+3TTFbv8IKox2si8tKugNUnWw6hIq8qpVfxAzHlwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751388632; c=relaxed/simple;
-	bh=KYrvpls+KdqdYbOFV0t+YKA3ozzs1zB21+nmPpEooL4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FuoWrPQPCEJp5sPZ3hHBnUZgXSvwszfvFz/bHTSix0apwK4tMIGi3uzVFxfhTlBKk4owAq1G8rvzc1uIocOrXxYOr4i754BcW+hsDzPs0E7iste9Kd8KPG6puXvOqBOqlHFTwUL5HtvGpd481dPPsz5CNpKsemjIB1Cyz3D6UOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=none smtp.mailfrom=rtg-sunil-navi33.amd.com; arc=none smtp.client-ip=165.204.156.251
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=rtg-sunil-navi33.amd.com
-Received: from rtg-sunil-navi33.amd.com (localhost [127.0.0.1])
-	by rtg-sunil-navi33.amd.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTP id 561GnsYa008180;
-	Tue, 1 Jul 2025 22:19:54 +0530
-Received: (from sunil@localhost)
-	by rtg-sunil-navi33.amd.com (8.15.2/8.15.2/Submit) id 561GnsDu008179;
-	Tue, 1 Jul 2025 22:19:54 +0530
-From: Sunil Khatri <sunil.khatri@amd.com>
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        dri-devel@lists.freedesktop.org
-Cc: amd-gfx@lists.freedesktop.org, simona@ffwll.ch, tzimmermann@suse.de,
-        tursulin@ursulin.net, phasta@kernel.org, dakr@kernel.org,
-        linux-kernel@vger.kernel.org, Oded Gabbay <ogabbay@kernel.org>,
-        Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
-        Sunil Khatri <sunil.khatri@amd.com>
-Subject: [PATCH v9 4/4] drm/amdgpu: add support of debugfs for mqd information
-Date: Tue,  1 Jul 2025 22:19:48 +0530
-Message-Id: <20250701164948.8105-5-sunil.khatri@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250701164948.8105-1-sunil.khatri@amd.com>
-References: <20250701164948.8105-1-sunil.khatri@amd.com>
+	s=arc-20240116; t=1751388695; c=relaxed/simple;
+	bh=B/taMgfwrhTGncrj3ZJ43u+lA+ZCcutiEzsqql9X8Q8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fqlolKdAH9DvUjnywpGFuIE2YxwjBznCoLP32E+Tx+2Aw86Al65bEkBRxjRpe4uo1YFjqjQtCm4swYS3BI0I8yyUuBnWay3n4WNCU++eUnKmljXhdybgPkIalJZqYOeEn+9NhAa9MgmcVydvnets00hDQeVYp5u3MWuOv+vTVLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K14Ov+NR; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fe28f804-feee-4435-823b-5d03986c153b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751388680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fFV2Y1ZWu7rW4X21P0xZgpGTDxMq6xKQ6i6Q3MK2S08=;
+	b=K14Ov+NR3NsVPzQm7eadWphxZ3H+IIaVGvtE3m9uhaob7QgGFkE642v1NQgYUgPJo7ly2m
+	C2uu1rxJDY1LaRC/5O/6HzgrnfbANHAN8uoyrKr0VGaU5YVZS+pv5s+gUPIyc/BKP21O2H
+	a8oUKIUnwgutjKv5ZXIirwZ5Fhb4Vdw=
+Date: Tue, 1 Jul 2025 12:51:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH net-next v2 15/18] net: macb: Add "mobileye,eyeq5-gem"
+ compatible
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+ Harini Katakam <harini.katakam@xilinx.com>,
+ Rafal Ozieblo <rafalo@cadence.com>,
+ Haavard Skinnemoen <hskinnemoen@atmel.com>, Jeff Garzik <jeff@garzik.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+ <20250627-macb-v2-15-ff8207d0bb77@bootlin.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20250627-macb-v2-15-ff8207d0bb77@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add debugfs support for mqd for each queue of the client.
+On 6/27/25 05:09, Théo Lebrun wrote:
+> Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, using
+> compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
+> that accesses two system-controller registers.
+> 
+> Noteworthy: NET_IP_ALIGN=2 on MIPS but the hardware does not align and
+> low bits aren't configurable, so we cannot respect the requested IP
+> header alignment.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 80 ++++++++++++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index f9a3a5caebcafe3d9197a3bc7681b64734d7ac93..ed394e5d1ec9b1748282f1448628d5006f3b0971 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/iopoll.h>
+>  #include <linux/ip.h>
+>  #include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/netdevice.h>
+> @@ -31,6 +32,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/ptp_classify.h>
+> +#include <linux/regmap.h>
+>  #include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/tcp.h>
+> @@ -4957,6 +4959,72 @@ static int init_reset_optional(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> +#define EYEQ5_OLB_GP_TX_SWRST_DIS	BIT(0)		// Tx SW reset
+> +#define EYEQ5_OLB_GP_TX_M_CLKE		BIT(1)		// Tx M clock enable
+> +#define EYEQ5_OLB_GP_SYS_SWRST_DIS	BIT(2)		// Sys SW reset
+> +#define EYEQ5_OLB_GP_SYS_M_CLKE		BIT(3)		// Sys clock enable
+> +#define EYEQ5_OLB_GP_SGMII_MODE		BIT(4)		// SGMII mode
+> +#define EYEQ5_OLB_GP_RGMII_DRV		GENMASK(8, 5)	// RGMII mode
+> +
+> +#define EYEQ5_OLB_SGMII_PWR_EN		BIT(0)
+> +#define EYEQ5_OLB_SGMII_RST_DIS		BIT(1)
+> +#define EYEQ5_OLB_SGMII_PLL_EN		BIT(2)
+> +#define EYEQ5_OLB_SGMII_SIG_DET_SW	BIT(3)
+> +#define EYEQ5_OLB_SGMII_PWR_STATE	BIT(4)
+> +#define EYEQ5_OLB_SGMII_PLL_ACK		BIT(18)
+> +
+> +static int eyeq5_init(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct net_device *netdev = platform_get_drvdata(pdev);
+> +	struct macb *bp = netdev_priv(netdev);
+> +	struct device_node *np = dev->of_node;
+> +	unsigned int gp, sgmii;
+> +	struct regmap *regmap;
+> +	unsigned int args[2];
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	regmap = syscon_regmap_lookup_by_phandle_args(np, "mobileye,olb", 2, args);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	gp = args[0];
+> +	sgmii = args[1];
+> +
+> +	/* Forced reset */
+> +	regmap_write(regmap, gp, 0);
+> +	regmap_write(regmap, sgmii, 0);
+> +	usleep_range(5, 20);
+> +
+> +	if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII) 
 
-The address exposed to debugfs could be used to dump
-the mqd.
+Isn't this too early? What if you have an SFP and the interface mode is initially
+1000Base-X and the user plugs in an SGMII module?
 
-Signed-off-by: Sunil Khatri <sunil.khatri@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 52 +++++++++++++++++++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h |  1 +
- 2 files changed, 53 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-index 295e7186e156..115d53bc9a8d 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-@@ -318,6 +318,9 @@ amdgpu_userq_destroy(struct drm_file *filp, int queue_id)
- 		amdgpu_bo_unreserve(queue->db_obj.obj);
- 	}
- 	amdgpu_bo_unref(&queue->db_obj.obj);
-+
-+	debugfs_remove_recursive(queue->debugfs_queue);
-+
- 	r = amdgpu_userq_unmap_helper(uq_mgr, queue);
- 	amdgpu_userq_cleanup(uq_mgr, queue, queue_id);
- 	mutex_unlock(&uq_mgr->userq_mutex);
-@@ -343,6 +346,46 @@ static int amdgpu_userq_priority_permit(struct drm_file *filp,
- 	return -EACCES;
- }
- 
-+#if defined(CONFIG_DEBUG_FS)
-+static int amdgpu_mqd_info_read(struct seq_file *m, void *unused)
-+{
-+	struct amdgpu_usermode_queue *queue = m->private;
-+	struct amdgpu_bo *bo;
-+	int r;
-+
-+	if (!queue || !queue->mqd.obj)
-+		return -EINVAL;
-+
-+	bo = amdgpu_bo_ref(queue->mqd.obj);
-+	r = amdgpu_bo_reserve(bo, true);
-+	if (r) {
-+		amdgpu_bo_unref(&bo);
-+		return -EINVAL;
-+	}
-+
-+	seq_printf(m, "queue_type %d\n", queue->queue_type);
-+	seq_printf(m, "mqd_gpu_address: 0x%llx\n", amdgpu_bo_gpu_offset(queue->mqd.obj));
-+
-+	amdgpu_bo_unreserve(bo);
-+	amdgpu_bo_unref(&bo);
-+
-+	return 0;
-+}
-+
-+static int amdgpu_mqd_info_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, amdgpu_mqd_info_read, inode->i_private);
-+}
-+
-+static const struct file_operations amdgpu_mqd_info_fops = {
-+	.owner = THIS_MODULE,
-+	.open = amdgpu_mqd_info_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+#endif
-+
- static int
- amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- {
-@@ -352,6 +395,7 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- 	const struct amdgpu_userq_funcs *uq_funcs;
- 	struct amdgpu_usermode_queue *queue;
- 	struct amdgpu_db_info db_info;
-+	char *queue_name;
- 	bool skip_map_queue;
- 	uint64_t index;
- 	int qid, r = 0;
-@@ -475,6 +519,14 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- 		}
- 	}
- 
-+	queue_name = kasprintf(GFP_KERNEL, "queue-%d", qid);
-+	if (!queue_name)
-+		return -ENOMEM;
-+
-+	/* Queue dentry per client to hold MQD information   */
-+	queue->debugfs_queue = debugfs_create_dir(queue_name, filp->debugfs_client);
-+	debugfs_create_file("mqd_info", 0444, queue->debugfs_queue, queue, &amdgpu_mqd_info_fops);
-+	kfree(queue_name);
- 
- 	args->out.queue_id = qid;
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h
-index ec040c2fd6c9..b1ca91b7cda4 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.h
-@@ -65,6 +65,7 @@ struct amdgpu_usermode_queue {
- 	struct dma_fence	*last_fence;
- 	u32			xcp_id;
- 	int			priority;
-+	struct dentry		*debugfs_queue;
- };
- 
- struct amdgpu_userq_funcs {
--- 
-2.34.1
-
+{
+> +		regmap_write(regmap, gp, EYEQ5_OLB_GP_SGMII_MODE);
+> +
+> +		reg = EYEQ5_OLB_SGMII_PWR_EN | EYEQ5_OLB_SGMII_RST_DIS |
+> +		      EYEQ5_OLB_SGMII_PLL_EN;
+> +		regmap_write(regmap, sgmii, reg);
+> +
+> +		ret = regmap_read_poll_timeout(regmap, sgmii, reg,
+> +					       reg & EYEQ5_OLB_SGMII_PLL_ACK,
+> +					       1, 100);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "PLL timeout");
+> +
+> +		reg = EYEQ5_OLB_SGMII_PWR_STATE | EYEQ5_OLB_SGMII_SIG_DET_SW;
+> +		regmap_update_bits(regmap, sgmii, reg, reg);
+> +	}
+> +
+> +	reg = phy_interface_mode_is_rgmii(bp->phy_interface) ? 0x9 : 0x0;
+> +	regmap_update_bits(regmap, gp, EYEQ5_OLB_GP_RGMII_DRV,
+> +			   FIELD_PREP(EYEQ5_OLB_GP_RGMII_DRV, reg));
+> +
+> +	reg = EYEQ5_OLB_GP_TX_SWRST_DIS | EYEQ5_OLB_GP_TX_M_CLKE |
+> +	      EYEQ5_OLB_GP_SYS_SWRST_DIS | EYEQ5_OLB_GP_SYS_M_CLKE;
+> +	regmap_update_bits(regmap, gp, reg, reg);
+> +
+> +	return macb_init(pdev);
+> +}
+> +
+>  static const struct macb_usrio_config sama7g5_usrio = {
+>  	.mii = 0,
+>  	.rmii = 1,
+> @@ -5109,6 +5177,17 @@ static const struct macb_config versal_config = {
+>  	.usrio = &macb_default_usrio,
+>  };
+>  
+> +static const struct macb_config eyeq5_config = {
+> +	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_JUMBO |
+> +		MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_QUEUE_DISABLE |
+> +		MACB_CAPS_NO_LSO,
+> +	.dma_burst_length = 16,
+> +	.clk_init = macb_clk_init,
+> +	.init = eyeq5_init,
+> +	.jumbo_max_len = 10240,
+> +	.usrio = &macb_default_usrio,
+> +};
+> +
+>  static const struct of_device_id macb_dt_ids[] = {
+>  	{ .compatible = "cdns,at91sam9260-macb", .data = &at91sam9260_config },
+>  	{ .compatible = "cdns,macb" },
+> @@ -5129,6 +5208,7 @@ static const struct of_device_id macb_dt_ids[] = {
+>  	{ .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
+>  	{ .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
+>  	{ .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
+> +	{ .compatible = "mobileye,eyeq5-gem", .data = &eyeq5_config },
+>  	{ .compatible = "xlnx,zynqmp-gem", .data = &zynqmp_config},
+>  	{ .compatible = "xlnx,zynq-gem", .data = &zynq_config },
+>  	{ .compatible = "xlnx,versal-gem", .data = &versal_config},
+> 
 
