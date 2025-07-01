@@ -1,56 +1,88 @@
-Return-Path: <linux-kernel+bounces-711544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E005AAEFBE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:17:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62387AEFBDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA02E4E22FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:16:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F028E4400BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC6A279791;
-	Tue,  1 Jul 2025 14:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0226275AEC;
+	Tue,  1 Jul 2025 14:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="amqFuhsp"
-Received: from jpms-ob01-os7.noc.sony.co.jp (jpms-ob01-os7.noc.sony.co.jp [211.125.139.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OzhsDA3C"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689ED278143;
-	Tue,  1 Jul 2025 14:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.139.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C0C272E46
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751379276; cv=none; b=OgSJdDWYe02vxt1KXvfbYoVJeaWjZKayN4+9hnStCfbmUwRJaGu2S6SVKd/qI5S0VALGf3mUfgpVWRC91Kfu2HTrp5c/otOHSqpZ+avY29V6FRyfCNnK/T+YD+4un4d56Mr8LOXj9+s0ho7j9Pvyv4OBnpOO919M6ddLp688Pdk=
+	t=1751379263; cv=none; b=qnxdMReoCyZCigt6CNDsY13CRpltrGRjpGFMSdYvy6tJ5HxkXPbz2uo1uulhdCJzafaVlGBp5BFtBeibrc4UKnh938vOeo095ySWPb7dX7+RUlVNdmUahpxv/SzpoB06tKUbCIYhZ8gykDb9guGtkpERVDCTNr0NZgIOrKmcUOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751379276; c=relaxed/simple;
-	bh=kqFaZwOq1c8NL2QVuZAFmyI28sb7OjXf6Gf6ByZX1qQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nPOFZbznXpmjp++D3Cn4I/+j6eZsTPApcuW8Qk8YR9s0v0CVyh626sKB0dBGFoywxeK2RBqJH2tYm+D6sVweYC6dIhnpvJR+3pULqJTYkG86WP7PF7V1Iz3M6Ap5xigfue3JgKi+hwHB+G8TEnSU5IIfz8AOjiel0xYz2a7hkgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=fail smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=amqFuhsp; arc=none smtp.client-ip=211.125.139.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=sony.com
+	s=arc-20240116; t=1751379263; c=relaxed/simple;
+	bh=5OuLPJkS7/FW06Kbx8KtlQhZFZ40qlvkY0aEbvH701c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JylDdH0VbMjBlx+QVzwPii+iZWu/c4vUgkXuJduGAsy98T/nkNFKTk5vEOClnD6VBHzOJQ2RJslWq2HBRrp5iERkvScA2EUuNrAl6ZDtLRWJdzr50D2QfnbsnkzSKe749GqyXumV3bc/tLq2X17KCSzpOTFGguenEFiv+Ys1F58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OzhsDA3C; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3dddc17e4e4so10862625ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 07:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1751379274; x=1782915274;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=nojilaL/3AL8ig7k4WoYT/DekocQo+4nJIJWkp0Ipms=;
-  b=amqFuhspwB1LjlKe99tYBMG1HvYWQI8N7AGYGQQ7GEuJ34DrfVJWUDEP
-   T67RcViimZ6TzJmvvW0dQi92wDe+r0LNFvBl+uItLjG4ZC32oSC/jtuFr
-   snmSHIQKzYYW6YiVxr8uDpnNfhgLtekYuGkpuidGan5ww1qOUnCSxTWxc
-   jBnmn6TSCggWEYxBNey4B6DjHmOc4saTwKb9FTJebIkC5kcEnTGxuukA+
-   1eF/TFdSEA63ryQl74+FAhtrKf0Rs+DjrAIqksYGafstoK0XV2GOw3GkV
-   E9gQ0iCFSz0diXRajjqEsANj30Gdof+ziDphphV5bxIMOQv22C7jeFUfH
-   g==;
-Received: from unknown (HELO jpmta-ob02-os7.noc.sony.co.jp) ([IPv6:2001:cf8:acf:1104::7])
-  by jpms-ob01-os7.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 23:14:23 +0900
-X-IronPort-AV: E=Sophos;i="6.16,279,1744038000"; 
-   d="scan'208";a="3310512"
-Received: from unknown (HELO [127.0.1.1]) ([IPv6:2001:cf8:1:573:0:dddd:eb3e:119e])
-  by jpmta-ob02-os7.noc.sony.co.jp with ESMTP; 01 Jul 2025 23:14:22 +0900
-From: Shashank Balaji <shashank.mahadasyam@sony.com>
-Date: Tue, 01 Jul 2025 23:13:56 +0900
-Subject: [PATCH 2/2] selftests/cgroup: better bound in cpu.max tests
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1751379260; x=1751984060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZmzCkliGIgc/w9CprIKleCb6nmEfP7kYHQXw+v1QCyA=;
+        b=OzhsDA3CRP9ZuwaW//WaVIxPQZDj+5RgvrGHpwMDmdUHIIjZgl9x2CmUfQfHyg2jHp
+         MVajJFbbNa31aSf1zolxcR8T7zUnso3B59vWdYlygpnieVyAP5j4oas/F2fmcZpnb6cH
+         xdG4VaCz1y0fsYonpuzyqaewkg7dypI0iXjlpy1046uhC6TyfplXvBrv8VzfrI5saTj4
+         saj/WyPRxKDKbRix0vmYMmIkNnP+33XWZGsoMFNDuq2wMo/xxBKNVJFlbg88kePkHpFS
+         oRkKss9SMir+kWdCvddwMG0ic0po4nuGhPXgZvOqtmCh9TQaakgo52D1gU/M7Gzk/tzd
+         i5QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751379260; x=1751984060;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZmzCkliGIgc/w9CprIKleCb6nmEfP7kYHQXw+v1QCyA=;
+        b=Lb/tU8Aqz4TL3ycgXUflPqp8X85zdoFzFHPTn4dCYJZarYBqJAPuhDl4OfHPaTRjCz
+         uZgDv5g3w3nUk8tPl4mlzeT6Q8oEW7mB9pBKvFi8nSdl0PE4C9y9q9xFa3mPmCk6GaCs
+         eHRM3J9CUXaVbqQOeEHFNQq+ddHAbK4UyG7Yjrx1oaogCIusmdoLvGpIT5GnkW1VAybd
+         TlOPvvsC118TqnKnCUcq5aAU1lhMaj5JNf8lR/xgtdaf6kRVTSCcBvDf6NjYaGnJs1iF
+         SOhb3FEDFJytWtrr1TJkB6jP9gQ9Ulkeunu2S8j5jcFmv/J/ILJPWxyWKO4xQImC8exP
+         sg5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX7wnA/B4z3gu7AyS/ljz3b6sQWcI+FGaQnL1kSqzxdIZIXbMXtzxlX+pL6K747jqNkuZsD1mlmm0aFmXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzVmhaab4e+X6oTrCVRA7U4sbnSgsfl7of6gAeib411YJycPwT
+	gHQ+gbA3tmgMEnmJZwKdc9RL3KVjKCPTe9oIQNMRZ1ytZuvv9NzcdkjsKuZaafNcP2fNQLt3E6G
+	sscvp
+X-Gm-Gg: ASbGnctIzauCu3s8kD8lxfusNzeZ2CoV+sTiFl0lseqinr0cqGy67jfHgeQkq737MA3
+	wXyjq+NTzZudLpAp/dGWq/JwZctVP+tH+4KY/PsHz+f6t7r3AP634kpqlJ88vcGq6GYyGupwvi4
+	xHbj+SywSWp4yNCNbLC4lPrltKvsLakhpRuy5G9iosnX36x7TAQVgUg41IEFAp440qghlpwp1kU
+	Mg/PMuQuszEIA9EgY9+EJ9N0j2Vr0e6efvwjI74CSbXq6mCDpKZmRRXvtka4wEBzkNS6qo2bPCL
+	ygma43xmziK09bMoBvRw2GH7weiaIufDBzrx0e+ipGD4dxiFaBiVvo9FN3d+kRZG
+X-Google-Smtp-Source: AGHT+IHB54piwldk5JvCGymkNdiDgT55hx3SHr7B9jacyIo19MjXnu+NW0AhuMQH0JmTjiSmrjmDSw==
+X-Received: by 2002:a05:6e02:19cf:b0:3df:3afa:28d6 with SMTP id e9e14a558f8ab-3df4ab56adfmr188248595ab.2.1751379257608;
+        Tue, 01 Jul 2025 07:14:17 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-502048c49b1sm2489377173.49.2025.07.01.07.14.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 07:14:17 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: hch@lst.de, yukuai3@huawei.com, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: penguin-kernel@I-love.SAKURA.ne.jp, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+ johnny.chenyi@huawei.com
+In-Reply-To: <20250630112828.421219-1-yukuai1@huaweicloud.com>
+References: <20250630112828.421219-1-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH v2] brd: fix sleeping function called from invalid
+ context in brd_insert_page()
+Message-Id: <175137925672.318770.9783780559206172712.b4-ty@kernel.dk>
+Date: Tue, 01 Jul 2025 08:14:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,148 +91,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250701-kselftest-cgroup-fix-cpu-max-v1-2-049507ad6832@sony.com>
-References: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
-In-Reply-To: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
-To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
- =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>, 
- Shashank Balaji <shashank.mahadasyam@sony.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4932;
- i=shashank.mahadasyam@sony.com; h=from:subject:message-id;
- bh=kqFaZwOq1c8NL2QVuZAFmyI28sb7OjXf6Gf6ByZX1qQ=;
- b=owGbwMvMwCV2mPH4Ij++H1mMp9WSGDKS39rm/eM+dGCb1oy0Wt3z16LPa9xtbRYvTMq92z8nK
- c+fafnfjlIWBjEuBlkxRZZ3MusuHLSybPp6nOEbzBxWJpAhDFycAjCRJTMY/heKf+6L4P4ewbzp
- Jd8Ph21cn9V1BGw0AnRdWZZYp92tWcLIMMP+8Y8fRVkPjs1acFjbwz/yp1LHHd2XJyILLrsvmLL
- ZhgEA
-X-Developer-Key: i=shashank.mahadasyam@sony.com; a=openpgp;
- fpr=EE1CAED0C13A3982F5C700F6C301C7A24E0EF86A
+X-Mailer: b4 0.14.3-dev-d7477
 
-The cpu.max test (both the normal one and the nested one) setup cpu.max
-with 1000 us runtime and the default period (100,000 us). A cpu hog is
-run for a duration of 1s as per wall clock time. This corresponds to 10
-periods, hence an expected usage of 10,000 us. We want the measured
-usage (as per cpu.stat) to be close to 10,000 us. Enforce this bound correctly.
 
-Previously, this approximate equality test was done by
-`!values_close(usage_usec, duration_usec, 95)`: if the absolute
-difference between usage_usec and duration_usec is greater than 95% of
-their sum, then we pass. This is problematic for two reasons:
+On Mon, 30 Jun 2025 19:28:28 +0800, Yu Kuai wrote:
+> __xa_cmpxchg() is called with rcu_read_lock(), and it will allocate
+> memory if necessary.
+> 
+> Fix the problem by moving rcu_read_lock() after __xa_cmpxchg(), meanwhile,
+> it still should be held before xa_unlock(), prevent returned page to be
+> freed by concurrent discard.
+> 
+> [...]
 
-1. Semantics: When one sees `values_close` they expect the error
-   percentage to be some small number, not 95. The intent behind using
-`values_close` is lost by using a high error percent such as 95. The
-intent it's actually going for is "values far".
+Applied, thanks!
 
-2. Bound too wide: The condition translates to the following expression:
+[1/1] brd: fix sleeping function called from invalid context in brd_insert_page()
+      commit: 0d519bb0de3bf0ac9e6f401d4910fc119062d7be
 
-	|usage_usec - duration_usec| > (usage_usec + duration_usec)*0.95
-
-  	0.05*duration_usec > 1.95*usage_usec (usage < duration)
-
-	usage_usec < 0.0257*duration_usec = 25,641 us
-
-   So, this condition passes as long as usage_usec is lower than 25,641
-us, while all we want is for it to be close to 10,000 us.
-
-To address these issues, the condition is changed to `labs(usage_usec -
-expected_usage_usec) < 2000` meaning pass. Now the meaning is much
-clearer. `labs` is used instead of `values_close` because we don't
-expect the error in usage_usec compared to expected_usage_usec to scale
-with either of the terms. The error is because of the cpu hog process
-running for slightly longer than the duration. So, using a proportional
-error estimate, such as `values_close`, does not make sense. The maximum
-tolerable error is set to 2000 us because on running this test 10 times,
-the maximum `usage_usec` observed was 11,513 us, which corresponds to an
-error of 1513 us.
-
-user_usec is removed because it will always be less than usage_usec.
-usage_usec is what really represents the throttling.
-
-Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
----
- tools/testing/selftests/cgroup/test_cpu.c | 34 ++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
-
-diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
-index 26b0df338505526cc0c5de8f4179b8ec9bad43d7..fcef90d2948e1344b7741214a0cdd10609069624 100644
---- a/tools/testing/selftests/cgroup/test_cpu.c
-+++ b/tools/testing/selftests/cgroup/test_cpu.c
-@@ -645,9 +645,8 @@ test_cpucg_nested_weight_underprovisioned(const char *root)
- static int test_cpucg_max(const char *root)
- {
- 	int ret = KSFT_FAIL;
--	long usage_usec, user_usec;
-+	long usage_usec, expected_usage_usec;
- 	long duration_seconds = 1;
--	long duration_usec = duration_seconds * USEC_PER_SEC;
- 	char *cpucg;
- 
- 	cpucg = cg_name(root, "cpucg_test");
-@@ -672,14 +671,18 @@ static int test_cpucg_max(const char *root)
- 		goto cleanup;
- 
- 	usage_usec = cg_read_key_long(cpucg, "cpu.stat", "usage_usec");
--	user_usec = cg_read_key_long(cpucg, "cpu.stat", "user_usec");
--	if (user_usec <= 0)
-+	if (usage_usec <= 0)
- 		goto cleanup;
- 
--	if (user_usec >= duration_usec)
--		goto cleanup;
-+	/*
-+	 * Since the cpu hog is set to run as per wall clock time, it's expected to
-+	 * run for 10 periods (duration_usec/default_period_usec), and in each
-+	 * period, it's throttled to run for 1000 usec. So its expected usage is
-+	 * 1000 * 10 = 10000 usec.
-+	 */
-+	expected_usage_usec = 10000;
- 
--	if (values_close(usage_usec, duration_usec, 95))
-+	if (labs(usage_usec - expected_usage_usec) > 2000)
- 		goto cleanup;
- 
- 	ret = KSFT_PASS;
-@@ -698,9 +701,8 @@ static int test_cpucg_max(const char *root)
- static int test_cpucg_max_nested(const char *root)
- {
- 	int ret = KSFT_FAIL;
--	long usage_usec, user_usec;
-+	long usage_usec, expected_usage_usec;
- 	long duration_seconds = 1;
--	long duration_usec = duration_seconds * USEC_PER_SEC;
- 	char *parent, *child;
- 
- 	parent = cg_name(root, "cpucg_parent");
-@@ -732,14 +734,18 @@ static int test_cpucg_max_nested(const char *root)
- 		goto cleanup;
- 
- 	usage_usec = cg_read_key_long(child, "cpu.stat", "usage_usec");
--	user_usec = cg_read_key_long(child, "cpu.stat", "user_usec");
--	if (user_usec <= 0)
-+	if (usage_usec <= 0)
- 		goto cleanup;
- 
--	if (user_usec >= duration_usec)
--		goto cleanup;
-+	/*
-+	 * Since the cpu hog is set to run as per wall clock time, it's expected to
-+	 * run for 10 periods (duration_usec/default_period_usec), and in each
-+	 * period, it's throttled to run for 1000 usec. So its expected usage is
-+	 * 1000 * 10 = 10000 usec.
-+	 */
-+	expected_usage_usec = 10000;
- 
--	if (values_close(usage_usec, duration_usec, 95))
-+	if (labs(usage_usec - expected_usage_usec) > 2000)
- 		goto cleanup;
- 
- 	ret = KSFT_PASS;
-
+Best regards,
 -- 
-2.43.0
+Jens Axboe
+
+
 
 
