@@ -1,109 +1,209 @@
-Return-Path: <linux-kernel+bounces-711109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0EFAEF646
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:15:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D137AEF64E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09C64A1027
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649D23B8E82
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD012727E5;
-	Tue,  1 Jul 2025 11:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D321272E44;
+	Tue,  1 Jul 2025 11:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bagG4cM1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnfruKrP"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F666246784
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D0823ABA7;
+	Tue,  1 Jul 2025 11:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751368495; cv=none; b=clk/LPvq+HBoy08SNUL7qJZuOv56vrmAHv1V1Cq0svrumDrA5Odi00b6uFmLPIjtKSqYIxSP6QO/W5cMrGVeUE3yHhXqpd4JTlk3cXoD70amMTb6Hb1iuI2Itqvc1TKvG7nn2vCvQMvENu0co/XwHCv5tOP7RyqbW9ONSfoikQ0=
+	t=1751368568; cv=none; b=MmCH5J323g8fdwQwQwe0p8wW3dSqBo5xyBPwMN8Aln9W/z8xVcC9HwVGbQwZShA4zAgaeDTrh2WSeAD9K2szqUpawvjkM3q1uvzc/W8X4CnwN54u7QQ31rwR8+LUS5KaoGhEXnVDrQzN6ojrS8SdVE6rPKiPqJCJiT46D8k7Vj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751368495; c=relaxed/simple;
-	bh=jyI04bOTNCJGvthTNBpaMWus3XFWb8oj70r4Ft+22ys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bO112fnsWtFsxYO1UebZSzkVgl6X1d0ILWResqhDPFhk0AbCvSDkz4MOt8dixHJrqsZJRrg9HXfEyYcaUjymsfUyH3Kxa7mTt+azDFpDp9HMyTXOB8Z0G/mWz97cBnKHFz+pDqmMQrNhlK+5xafH0+9ugRpbchuibjIkFrvtYas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bagG4cM1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F68C4CEEB;
-	Tue,  1 Jul 2025 11:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751368494;
-	bh=jyI04bOTNCJGvthTNBpaMWus3XFWb8oj70r4Ft+22ys=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bagG4cM1l1i9lMNX942NwAKbr6HT5MwIII3ndsr8TYgGL0yf4zWMynf5bthVs6zKc
-	 HIbzjmvjCS0cAMr40GnkJrwiKDgBdwc3rQtmoyZudNNvAmCTOLW275czZg0OQBCuMB
-	 H2pUjl++j/dkdwz57U65UunjTuEMedWm/GSpNv3c=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>
-Subject: [PATCH] cdx: make cdx_bus_type constant
-Date: Tue,  1 Jul 2025 13:14:51 +0200
-Message-ID: <2025070150-resize-ninetieth-31f1@gregkh>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1751368568; c=relaxed/simple;
+	bh=CAkSiWKP+sJy98dilyg86EM6CTAapR520tBC2bY2n6w=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=anXW5G7bTPalQEIaC31NJZwNP2dkXfRFR0ysgczN0teCHatCMH1Unj3ZX5gj7ilMxLtUohqnq75w0zxo938kl2aaRuuTGH6ktBezjUk+E2f+zgiPg3Yx47rpLoLrU/ccCgr0Rka7hfIFf+CGyECsYzghQIoUpReozO/KygZpFGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AnfruKrP; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55516abe02cso2717972e87.0;
+        Tue, 01 Jul 2025 04:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751368565; x=1751973365; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RW+hX+cQCyvacj8gxDCQmCJ1cgJrO4Ch8WdKLpegjyg=;
+        b=AnfruKrPA1sHX5kTP2JAChPdG4LeYevPeHOKAjWhRfTBf77wh8LAf7RZ2h3k7eMr+v
+         a9Le7DU9u1sJUBS0HfZ8Wqll9fGRSNE4CB14Gojv6W43VX9WTNwTSDD69HzqPn6NZ91F
+         E1qgd+1L/tWoeBXSVw31rn8XX8cvdx9xuIFFjFe0vTpfGcwJKRftFqA+aStWGgwfQx+d
+         Dbgv0UOhnw1NYXOzIqN2qSplgbO3fcQsJ3y5TqiPq7maEaKIvZY8wRt2pgK1EsPpveVi
+         9bOKjwd1yVQ/z3WCcAntq++KYasDh55nHY0O76Uc9TXheV9dGBt+dwN/tzirEPEe9sdB
+         g38Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751368565; x=1751973365;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RW+hX+cQCyvacj8gxDCQmCJ1cgJrO4Ch8WdKLpegjyg=;
+        b=R4q+JaW4+3jFkrNattdcA3GlO2jXKo1IWE8vxWTXJP4145MVMQr+gRPkidDaOszVgv
+         uqHIzWvpGVhwJ4uVqW6UsA1SKp8C9sA9wtkvIb3TdDS7JcqA/53RX2cBurrh3NzQIkfC
+         FRDry/jAq+Mh3hAiJRhrsjCH6YeA5yOkPHy9L5XW+BYfGuoaqvFnZHhD2vcEaPrUcHDK
+         I/wDx2wRDa9iJAbUOd7LM+oNZqZUde9POCjKn/mMwXhTKkCglE8iUzWrZrSzSZSLpg1R
+         V503iAkQfigEAJ68l+ScpTjNSqa2bsZKR6b9Fd0QIS9uQQF767DuiEnNWvKY6c1oHhG1
+         GJSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUimc8Mk/gKQA4vBuUxT50j3lMg24cG7VLuNJwNxtqQupDPpJSz6CqdqcMz7SOdkMEeBFxVLqFtbM3AH74=@vger.kernel.org, AJvYcCXIuopPVrByfnZjHGJIEvwU21rJ7FUm+nFFmT3f9AkkW2zR5Bug3lxEMCvMjI9ERiN29Igp5UoNzrxtCGIPv3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSgUvii8aoQR652U69CPN81UzIVCxw2IysBRlOrYzsV8I4Sb5H
+	AffsFENJKvFLPTFjPCa+F8WzUbE+JR0JrbVQ/iF0JdD1PTg+Koi8LQYt
+X-Gm-Gg: ASbGncsR7qCQUpsQSLLNft1ey7iSR+xeSJsKTFkKiMGUJ2sflUSRZNozCYibSW0Fh37
+	+CGJQjO2uqUtmQbLSpnitYkOxWi1K9tEgONJAW6gil/+n3YmDm6bsbNcme4GNeez7jQM/KOhjNI
+	TRcnPGAzB78u5RQuygYfnB00JwaJ9BDWB56KLvPM28Es5NuKe5tAksoyLzK9cLexuesNmYHQF/8
+	n3Oif9a2j5c8BwhhLGdG29kHRrMIY4ZRNcCNP9sMCG/ucp+LGbfWlTW4Yp1O3HqZyer+bDdl/OD
+	fZ1x7jGZk7Hybn6IKkkHKZ14zNaWf7Y6aAnouVhQoF8Ffwb9/eSpNkltzmoWINZivOMyBSoCEFe
+	9pKI4lwmH6fw=
+X-Google-Smtp-Source: AGHT+IH7beHmzryKHMnEptA76HGQNtp9dSvozMXm0SLIjavGHfqq5azRcWWkcV18tUriffM+X03KIQ==
+X-Received: by 2002:a05:6512:33ca:b0:553:a294:3f8 with SMTP id 2adb3069b0e04-5561f8983e2mr965176e87.14.1751368564504;
+        Tue, 01 Jul 2025 04:16:04 -0700 (PDT)
+Received: from pc636 (host-95-203-1-180.mobileonline.telia.com. [95.203.1.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2b95b7sm1774918e87.108.2025.07.01.04.16.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 04:16:03 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 1 Jul 2025 13:16:01 +0200
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v9 1/4] mm/vmalloc: allow to set node and align in
+ vrealloc
+Message-ID: <aGPDcUc5ixYF8cQL@pc636>
+References: <20250630221511.3325123-1-vitaly.wool@konsulko.se>
+ <20250630221615.3325221-1-vitaly.wool@konsulko.se>
+ <aGO9a06HutqljjNS@pc636>
+ <31E257E1-AB52-4115-A264-56F545AB84A9@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 49
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1711; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=jyI04bOTNCJGvthTNBpaMWus3XFWb8oj70r4Ft+22ys=; b=owGbwMvMwCRo6H6F97bub03G02pJDBnJh7VuS2b3zklcejthyt+2S0XxxSUGk27l+dw3dvjxb t709gVbOmJZGASZGGTFFFm+bOM5ur/ikKKXoe1pmDmsTCBDGLg4BWAiy58yzBW2U8pL4fd1/XbQ ZCfj+xDOVrW5hxjmGfue5J4Vdy134ZWWmP3MuVpHE3ruAgA=
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <31E257E1-AB52-4115-A264-56F545AB84A9@konsulko.se>
 
-Now that the driver core can properly handle constant struct bus_type,
-move the cdx_bus_type variable to be a constant structure as well,
-placing it into read-only memory which can not be modified at runtime.
+On Tue, Jul 01, 2025 at 12:54:36PM +0200, Vitaly Wool wrote:
+> 
+> 
+> > On Jul 1, 2025, at 12:50 PM, Uladzislau Rezki <urezki@gmail.com> wrote:
+> > 
+> > On Tue, Jul 01, 2025 at 12:16:15AM +0200, Vitaly Wool wrote:
+> >> Reimplement vrealloc() to be able to set node and alignment should
+> >> a user need to do so. Rename the function to vrealloc_node_align()
+> >> to better match what it actually does now and introduce macros for
+> >> vrealloc() and friends for backward compatibility.
+> >> 
+> >> With that change we also provide the ability for the Rust part of
+> >> the kernel to set node and aligmnent in its allocations.
+> >> 
+> >> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+> >> ---
+> >> include/linux/vmalloc.h | 12 +++++++++---
+> >> mm/vmalloc.c            | 19 +++++++++++++++----
+> >> 2 files changed, 24 insertions(+), 7 deletions(-)
+> >> 
+> >> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> >> index fdc9aeb74a44..68791f7cb3ba 100644
+> >> --- a/include/linux/vmalloc.h
+> >> +++ b/include/linux/vmalloc.h
+> >> @@ -197,9 +197,15 @@ extern void *__vcalloc_noprof(size_t n, size_t size, gfp_t flags) __alloc_size(1
+> >> extern void *vcalloc_noprof(size_t n, size_t size) __alloc_size(1, 2);
+> >> #define vcalloc(...) alloc_hooks(vcalloc_noprof(__VA_ARGS__))
+> >> 
+> >> -void * __must_check vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> >> - __realloc_size(2);
+> >> -#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+> >> +void *__must_check vrealloc_node_align_noprof(const void *p, size_t size,
+> >> + unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+> >> +#define vrealloc_node_noprof(_p, _s, _f, _nid) \
+> >> + vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
+> >> +#define vrealloc_noprof(_p, _s, _f) \
+> >> + vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
+> >> +#define vrealloc_node_align(...) alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
+> >> +#define vrealloc_node(...) alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
+> >> +#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+> >> 
+> >> extern void vfree(const void *addr);
+> >> extern void vfree_atomic(const void *addr);
+> >> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> >> index 6dbcdceecae1..776c68f84ce2 100644
+> >> --- a/mm/vmalloc.c
+> >> +++ b/mm/vmalloc.c
+> >> @@ -4089,12 +4089,15 @@ void *vzalloc_node_noprof(unsigned long size, int node)
+> >> EXPORT_SYMBOL(vzalloc_node_noprof);
+> >> 
+> >> /**
+> >> - * vrealloc - reallocate virtually contiguous memory; contents remain unchanged
+> >> + * vrealloc_node_align_noprof - reallocate virtually contiguous memory; contents
+> >> + * remain unchanged
+> >>  * @p: object to reallocate memory for
+> >>  * @size: the size to reallocate
+> >> + * @align: requested alignment
+> >>  * @flags: the flags for the page level allocator
+> >> + * @nid: node id
+> >>  *
+> >> - * If @p is %NULL, vrealloc() behaves exactly like vmalloc(). If @size is 0 and
+> >> + * If @p is %NULL, vrealloc_XXX() behaves exactly like vmalloc(). If @size is 0 and
+> >>  * @p is not a %NULL pointer, the object pointed to is freed.
+> >>  *
+> >>  * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+> >> @@ -4111,7 +4114,8 @@ EXPORT_SYMBOL(vzalloc_node_noprof);
+> >>  * Return: pointer to the allocated memory; %NULL if @size is zero or in case of
+> >>  *         failure
+> >>  */
+> >> -void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> >> +void *vrealloc_node_align_noprof(const void *p, size_t size, unsigned long align,
+> >> + gfp_t flags, int nid)
+> >> {
+> >> struct vm_struct *vm = NULL;
+> >> size_t alloced_size = 0;
+> >> @@ -4135,6 +4139,11 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> >> if (WARN(alloced_size < old_size,
+> >> "vrealloc() has mismatched area vs requested sizes (%p)\n", p))
+> >> return NULL;
+> >> + if (WARN(!IS_ALIGNED((unsigned long)p, align),
+> >> + "will not reallocate with a bigger alignment (0x%lx)\n", align))
+> >> + return NULL;
+> >> + if (nid != NUMA_NO_NODE && nid != page_to_nid(vmalloc_to_page(p)))
+> >> + goto need_realloc;
+> >> 
+> > By this goto change, you bypass the two important checks below. For
+> > example if you shrink the allocated size, you do not need to perform
+> > any allocations. Instead the patch goes and allocates a new area.
+> > 
+> > You just need to remove:
+> > 
+> > - if (nid != NUMA_NO_NODE && nid != page_to_nid(vmalloc_to_page(p)))
+> > - goto need_realloc;
+> > 
+> > to make it working.
+> > 
+> 
+> I am not sure I’m following. If we get a request to reallocate for a different node then we should either reject it or do the new allocation for this new node and copy the data to the new place. Shrinking the allocation on the old node doesn’t seem to be right. Or am I missing something?
+> 
+If your process migrates to a new NODE, which is fine, it does not mean
+that you have to perform all this bouncing movement(reallocate on a new node).
+Next time it can be migrated back. Process are allowed to migrate and access
+to a remote memory.
 
-Cc: Nipun Gupta <nipun.gupta@amd.com>
-Cc: Nikhil Agarwal <nikhil.agarwal@amd.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/cdx/cdx.c           | 4 ++--
- include/linux/cdx/cdx_bus.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Let's keep it simple.
 
-diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
-index 092306ca2541..26f296b4a489 100644
---- a/drivers/cdx/cdx.c
-+++ b/drivers/cdx/cdx.c
-@@ -170,7 +170,7 @@ static int cdx_unregister_device(struct device *dev,
- 	return 0;
- }
- 
--static void cdx_unregister_devices(struct bus_type *bus)
-+static void cdx_unregister_devices(const struct bus_type *bus)
- {
- 	/* Reset all the devices attached to cdx bus */
- 	bus_for_each_dev(bus, NULL, NULL, cdx_unregister_device);
-@@ -651,7 +651,7 @@ static struct attribute *cdx_bus_attrs[] = {
- };
- ATTRIBUTE_GROUPS(cdx_bus);
- 
--struct bus_type cdx_bus_type = {
-+const struct bus_type cdx_bus_type = {
- 	.name		= "cdx",
- 	.match		= cdx_bus_match,
- 	.probe		= cdx_probe,
-diff --git a/include/linux/cdx/cdx_bus.h b/include/linux/cdx/cdx_bus.h
-index 79bb80e56790..b1ba97f6c9ad 100644
---- a/include/linux/cdx/cdx_bus.h
-+++ b/include/linux/cdx/cdx_bus.h
-@@ -234,7 +234,7 @@ int __must_check __cdx_driver_register(struct cdx_driver *cdx_driver,
-  */
- void cdx_driver_unregister(struct cdx_driver *cdx_driver);
- 
--extern struct bus_type cdx_bus_type;
-+extern const struct bus_type cdx_bus_type;
- 
- /**
-  * cdx_dev_reset - Reset CDX device
--- 
-2.50.0
-
+--
+Uladzislau Rezki
 
