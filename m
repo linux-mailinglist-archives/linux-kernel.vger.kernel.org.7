@@ -1,182 +1,311 @@
-Return-Path: <linux-kernel+bounces-711379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEBAAEF9F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:13:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12A3AEF9F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F5C188A448
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF051887943
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1262749F8;
-	Tue,  1 Jul 2025 13:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17366274B3D;
+	Tue,  1 Jul 2025 13:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCY3ppOE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="evMQbb58"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E725B22094;
-	Tue,  1 Jul 2025 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57A122094
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751375546; cv=none; b=NGM98DerLbhsGy0QJOJtsGCjisDpZG/flqcN8fqZEHCAByQoBBv86RfJr/frihEdDfaL5qwesCUjpBwwss79GZiX+qvB8/D/DxE9e/D/IQZWSHyOhMvhefq5nhb8XlG9Az51yrCM/w25NkLsbbtzeHQix8idquOtmzapaOqug/Y=
+	t=1751375589; cv=none; b=TcILa++6+OYDxPVy5mSfIL1wxK0HbuZevjy1apL9cnAhKTS/Tbr+k6HlIaUGwsMl19Km4gPVTsn70EWOarOcqIhuzbWs5Hf80GTHhPy4Xg5uXzqiwhCt2XvvjPVvoOSsd1SEvFjJloHJ2iSEPEFjs63jOxUtc6STfOMEkY+o5cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751375546; c=relaxed/simple;
-	bh=VqeOLlcaihFUrQrb2RD4VyHVweYthx0AYzfCJ3MqztU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5rPWcPCaZmpoCgBHfoiovzJE+XtRBBUqIMfpevOMBKtUZOB12c8KHZqFp2Dzfjpd+lb5sJTP0+Zbuy5LFYaekhwqaV2ksGvaB8kb5OqtaarHKIF3ck/fP/AdZZreP2S3HsG4A/j3PMalEN7kbZqYKnMPe7PsMty28W3itwERfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCY3ppOE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C75C4CEEB;
-	Tue,  1 Jul 2025 13:12:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751375545;
-	bh=VqeOLlcaihFUrQrb2RD4VyHVweYthx0AYzfCJ3MqztU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NCY3ppOE66EphEt/LfyDewrDYSgx9co27DIVPTcIcDPPFLSJAnhYoCXp9VOly9gFx
-	 roW+3i11Si7D+RqKBP3nEK3UrwpYYC0L2ORza5BVYkaV75e26yIm3C3ku3cYD6lJmd
-	 qlaxD8Tzgf3caG1uicFHT9kjpblWU3CmIeDjrfDF06a0CpoPSvYvZ7/PrjkfSB2wQq
-	 icocx/skBkrO5/YAl7kzySqqQg2n3wGC87yQNA5PlmdiEEvMXRMa5D4/B+n0RttfaR
-	 U1iC2TAfpDUHb46NMgtENynSqWTd07Bogu7AEhs/NFKTl5FWwTPscoVF1H8mK9ntTn
-	 GD16ulnuJ7k5Q==
-Date: Tue, 1 Jul 2025 15:12:19 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, david.m.ertman@intel.com, ira.weiny@intel.com,
-	leon@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/8] rust: device: add drvdata accessors
-Message-ID: <aGPesxbxR-ob_Hqr@pollux>
-References: <20250621195118.124245-1-dakr@kernel.org>
- <20250621195118.124245-3-dakr@kernel.org>
- <2025070159-perkiness-bullion-da76@gregkh>
- <aGO_SS20fttVZM6D@pollux>
+	s=arc-20240116; t=1751375589; c=relaxed/simple;
+	bh=B/AWvKDjVRGEzVRrtZjjeLe+E6pnKJQl0j9dPHKe7iM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kQPvTFKEDTyebrOV89F4hgaQ06ONkf1iqlxy2PAznWLLd9qPc8rzhKfuoJAtiSn+SplNB9ibAANOjPiw1M2xupV6o1ZY+TJiIB0RG9cPg9KWby7kqEokU6P83qNZxY8tonyNjljTD+1oT0GUGoj+okOAtQhxYWxAmaSQ5xkNfZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=evMQbb58; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 561DCWwO3321452;
+	Tue, 1 Jul 2025 08:12:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751375552;
+	bh=6MPo5B7QzRak+hNKiJwQdJgnEubBotM30t/YWAjUMYU=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=evMQbb58XyXAq1lHsGPkUKQCndcaJFkumRnlMN5pM+vFekdkBCNIynym8mjzrZAoh
+	 krsiHJ+PwC1zEfnpRl4Md69cpgp/JNV0f9GSEdgm0G9Ib4/dKFTYSGLu8RZevynrnW
+	 6HDQ6vEvRUPQWuiQ4wYQ+5J0loAaFoJUK4cGO2fA=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 561DCWwg247591
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 1 Jul 2025 08:12:32 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 1
+ Jul 2025 08:12:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 1 Jul 2025 08:12:31 -0500
+Received: from [172.24.227.193] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.227.193])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 561DCSQa1607227;
+	Tue, 1 Jul 2025 08:12:28 -0500
+Message-ID: <a382dc7d-94f8-4fe5-99a6-913e73d4a808@ti.com>
+Date: Tue, 1 Jul 2025 18:42:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGO_SS20fttVZM6D@pollux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] drm/tidss: Remove max_pclk_khz from tidss display
+ features
+To: Jayesh Choudhary <j-choudhary@ti.com>, <jyri.sarha@iki.fi>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ideasonboard.com>, <mwalle@kernel.org>
+CC: <airlied@gmail.com>, <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>
+References: <20250701095541.190422-1-j-choudhary@ti.com>
+ <20250701095541.190422-3-j-choudhary@ti.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20250701095541.190422-3-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Jul 01, 2025 at 12:58:24PM +0200, Danilo Krummrich wrote:
-> On Tue, Jul 01, 2025 at 11:27:54AM +0200, Greg KH wrote:
-> > On Sat, Jun 21, 2025 at 09:43:28PM +0200, Danilo Krummrich wrote:
-> 
-> > > +impl Device<Internal> {
-> > > +    /// Store a pointer to the bound driver's private data.
-> > > +    pub fn set_drvdata(&self, data: impl ForeignOwnable) {
-> > > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
-> > > +        unsafe { bindings::dev_set_drvdata(self.as_raw(), data.into_foreign().cast()) }
-> > > +    }
-> > 
-> > Ah, but a driver's private data in the device is NOT a bus-specific
-> > thing, it's a driver-specific thing, so your previous patch about
-> > Internal being there for busses feels odd.
-> 
-> It's because we only want to allow the bus abstraction to call
-> Device::set_drvdata().
-> 
-> The reason is the lifecycle of the driver's private data:
-> 
-> It starts when the driver returns the private data object in probe(). In the bus
-> abstraction's probe() function, we're calling set_drvdata().
-> 
-> At this point the ownership of the object technically goes to the device. And it
-> is our responsibility to extract the object from dev->driver_data at some point
-> again through drvdata_obtain(). With calling drvdata_obtain() we take back
-> ownership of the object.
-> 
-> Obviously, we do this in the bus abstraction's remove() callback, where we then
-> let the object go out of scope, such that it's destructor gets called.
-> 
-> In contrast, drvdata_borrow() does what its name implies, it only borrows the
-> object from dev->driver_data, such that we can provide it for the driver to use.
-> 
-> In the bus abstraction's remove() callback, drvdata_obtain() must be able to
-> proof that the object we extract from dev->driver_data is the exact object that
-> we set when calling set_drvdata() from probe().
-> 
-> If we'd allow the driver to call set_drvdata() itself (which is unnecessary
-> anyways), drivers could:
-> 
->   1) Call set_drvdata() multiple times, where every previous call would leak the
->      object, since the pointer would be overwritten.
-> 
->   2) We'd loose any guarantee about the type we extract from dev->driver_data
->      in the bus abstraction's remove() callback wioth drvdata_obtain().
-> 
-> > > +
-> > > +    /// Take ownership of the private data stored in this [`Device`].
-> > > +    ///
-> > > +    /// # Safety
-> > > +    ///
-> > > +    /// - Must only be called once after a preceding call to [`Device::set_drvdata`].
-> > > +    /// - The type `T` must match the type of the `ForeignOwnable` previously stored by
-> > > +    ///   [`Device::set_drvdata`].
-> > > +    pub unsafe fn drvdata_obtain<T: ForeignOwnable>(&self) -> T {
-> > > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
-> > > +        let ptr = unsafe { bindings::dev_get_drvdata(self.as_raw()) };
-> > > +
-> > > +        // SAFETY: By the safety requirements of this function, `ptr` comes from a previous call to
-> > > +        // `into_foreign()`.
-> > > +        unsafe { T::from_foreign(ptr.cast()) }
-> > > +    }
-> > > +
-> > > +    /// Borrow the driver's private data bound to this [`Device`].
-> > > +    ///
-> > > +    /// # Safety
-> > > +    ///
-> > > +    /// - Must only be called after a preceding call to [`Device::set_drvdata`] and before
-> > > +    ///   [`Device::drvdata_obtain`].
-> > > +    /// - The type `T` must match the type of the `ForeignOwnable` previously stored by
-> > > +    ///   [`Device::set_drvdata`].
-> > > +    pub unsafe fn drvdata_borrow<T: ForeignOwnable>(&self) -> T::Borrowed<'_> {
-> > > +        // SAFETY: By the type invariants, `self.as_raw()` is a valid pointer to a `struct device`.
-> > > +        let ptr = unsafe { bindings::dev_get_drvdata(self.as_raw()) };
-> > > +
-> > > +        // SAFETY: By the safety requirements of this function, `ptr` comes from a previous call to
-> > > +        // `into_foreign()`.
-> > > +        unsafe { T::borrow(ptr.cast()) }
-> > > +    }
-> > > +}
-> > 
-> > Why can't this be part of Core?
-> 
-> Device::drvdata_borrow() itself can indeed be part of Core. It has to remain
-> unsafe though, because the type T has to match the type that the driver returned
-> from probe().
-> 
-> Instead, we should provide a reference of the driver's private data in every bus
-> callback, such that drivers don't need unsafe code.
-> 
-> In order to not tempt drivers to use the unsafe method drvdata_borrow()
-> directly, I went for hiding it behind the BusInternal device context.
+Hi Jayesh,
 
-Also, I want to add that I already looked into implementing a safe drvdata()
-accessor for &Device<Bound>.
+On 01/07/25 15:25, Jayesh Choudhary wrote:
+> TIDSS hardware by itself does not have variable max_pclk for each VP.
+> The maximum pixel clock is determined by the limiting factor between
+> the functional clock and the PLL
 
-&Device<Bound> would be fine, since the private driver data is guaranteed to be
-valid as long as the device is bound to the driver.
+and the pixel clock
+.
+> 
+> The limitation that has been modeled till now comes from the clock
+> (PLL can only be programmed to a particular max value). Instead of
+> putting it as a constant field in dispc_features, we can query the
+> DM to see if requested clock can be set or not and use it in
+> "mode_valid()".
+> 
+> Replace constant "max_pclk_khz" in dispc_features with "curr_max_pclk"
+> in tidss_device structure which would be modified in runtime.
+> In mode_valid() call, check if a best frequency match for mode clock
+> can be found or not using "clk_round_rate()". Based on that, propagate
+> "cur_max_pclk" and query DM again only if the requested mode clock
+> is greater than cur_max_pclk. (As the preferred display mode is usually
+> the max resolution, driver ends up checking the highest clock the first
+> time itself which is used in subsequent checks)
+> 
+> Since TIDSS display controller provides clock tolerance of 5%, we use
+> this while checking the curr_max_pclk. Also, move up "dispc_pclk_diff()"
+> before it is called.
+> 
+> This will make the existing compatibles reusable
 
-(Note that we'd need to handle calling dev.drvdata() from probe() gracefully,
-since probe() creates and returns the driver's private data and hence
-dev->driver_data is only set subsequently in the bus abstraction's probe()
-callback.)
+reusable if DSS features are same across two SoCs and only difference 
+being the pixel clock.
 
-The drvdata() accessor would also need to ensure that it returns the correct
-type of the driver's private data, which the device itself does not know, which
-requires additional complexity.
+> 
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> ---
+>   drivers/gpu/drm/tidss/tidss_dispc.c | 77 +++++++++++------------------
+>   drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
+>   drivers/gpu/drm/tidss/tidss_drv.h   |  2 +
+>   3 files changed, 31 insertions(+), 49 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 3f6cff2ab1b2..fb59a6a0f86a 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -58,10 +58,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>   const struct dispc_features dispc_k2g_feats = {
+>   	.min_pclk_khz = 4375,
+>   
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 150000,
+> -	},
+> -
+>   	/*
+>   	 * XXX According TRM the RGB input buffer width up to 2560 should
+>   	 *     work on 3 taps, but in practice it only works up to 1280.
+> @@ -144,11 +140,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>   };
+>   
+>   const struct dispc_features dispc_am65x_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -		[DISPC_VP_OLDI_AM65X] = 165000,
+> -	},
+> -
+>   	.scaling = {
+>   		.in_width_max_5tap_rgb = 1280,
+>   		.in_width_max_3tap_rgb = 2560,
+> @@ -244,11 +235,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>   };
+>   
+>   const struct dispc_features dispc_j721e_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 170000,
+> -		[DISPC_VP_INTERNAL] = 600000,
+> -	},
+> -
+>   	.scaling = {
+>   		.in_width_max_5tap_rgb = 2048,
+>   		.in_width_max_3tap_rgb = 4096,
+> @@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats = {
+>   };
+>   
+>   const struct dispc_features dispc_am625_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -		[DISPC_VP_INTERNAL] = 170000,
+> -	},
+> -
+>   	.scaling = {
+>   		.in_width_max_5tap_rgb = 1280,
+>   		.in_width_max_3tap_rgb = 2560,
+> @@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats = {
+>   };
+>   
+>   const struct dispc_features dispc_am62a7_feats = {
+> -	/*
+> -	 * if the code reaches dispc_mode_valid with VP1,
+> -	 * it should return MODE_BAD.
+> -	 */
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_TIED_OFF] = 0,
+> -		[DISPC_VP_DPI] = 165000,
+> -	},
+> -
+>   	.scaling = {
+>   		.in_width_max_5tap_rgb = 1280,
+>   		.in_width_max_3tap_rgb = 2560,
+> @@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats = {
+>   };
+>   
+>   const struct dispc_features dispc_am62l_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -	},
+> -
+>   	.subrev = DISPC_AM62L,
+>   
+>   	.common = "common",
+> @@ -1347,25 +1315,49 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
+>   			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+>   }
+>   
+> +/*
+> + * Calculate the percentage difference between the requested pixel clock rate
+> + * and the effective rate resulting from calculating the clock divider value.
+> + */
+> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+> +{
+> +	int r = rate / 100, rr = real_rate / 100;
+> +
+> +	return (unsigned int)(abs(((rr - r) * 100) / r));
+> +}
+> +
+> +static int check_pixel_clock(struct dispc_device *dispc,
+> +			     u32 hw_videoport, unsigned long clock)
+> +{
+> +	if (clock > dispc->tidss->curr_max_pclk[hw_videoport] &&
+> +	    !dispc->tidss->is_oldi_vp[hw_videoport]) {
+> +		unsigned long round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
+> +
+> +		if (dispc_pclk_diff(clock, round_clock) > 5)
+> +			return -EINVAL;
+> +
+> +		dispc->tidss->curr_max_pclk[hw_videoport] = round_clock;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>   					 u32 hw_videoport,
+>   					 const struct drm_display_mode *mode)
+>   {
+>   	u32 hsw, hfp, hbp, vsw, vfp, vbp;
+>   	enum dispc_vp_bus_type bus_type;
+> -	int max_pclk;
+>   
+>   	bus_type = dispc->feat->vp_bus_type[hw_videoport];
+>   
+> -	max_pclk = dispc->feat->max_pclk_khz[bus_type];
+> -
+> -	if (WARN_ON(max_pclk == 0))
+> +	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
+>   		return MODE_BAD;
+>   
+>   	if (mode->clock < dispc->feat->min_pclk_khz)
+>   		return MODE_CLOCK_LOW;
+>   
+> -	if (mode->clock > max_pclk)
+> +	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
+>   		return MODE_CLOCK_HIGH;
+>   
+>   	if (mode->hdisplay > 4096)
+> @@ -1437,17 +1429,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
+>   	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
+>   }
+>   
+> -/*
+> - * Calculate the percentage difference between the requested pixel clock rate
+> - * and the effective rate resulting from calculating the clock divider value.
+> - */
+> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+> -{
+> -	int r = rate / 100, rr = real_rate / 100;
+> -
+> -	return (unsigned int)(abs(((rr - r) * 100) / r));
+> -}
+> -
+>   int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
+>   			  unsigned long rate)
+>   {
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+> index 60c1b400eb89..fbfe6e304ac8 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+> @@ -78,7 +78,6 @@ enum dispc_dss_subrevision {
+>   
+>   struct dispc_features {
+>   	int min_pclk_khz;
+> -	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
+>   
+>   	struct dispc_features_scaling scaling;
+>   
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+> index 82beaaceadb3..e89c38a386f7 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.h
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
+> @@ -25,6 +25,8 @@ struct tidss_device {
+>   	const struct dispc_features *feat;
+>   	struct dispc_device *dispc;
+>   	bool is_oldi_vp[TIDSS_MAX_PORTS];
+> +	/* stores max supported pixel clock requested during checking modes */
 
-I have ideas for solving that, but I don't think we actually gonna need to
-access the private data stored in the device from anywhere else than bus device
-callbacks (I also don't think it is desirable), hence I'd really want to wait
-and see a good reason for making this accessible.
+Stores highest pixel clock value found to be valid while checking 
+supported modes for connected display
+
+With suggested changes,
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+
+Regards
+Devarsh
+
+> +	unsigned long curr_max_pclk[TIDSS_MAX_PORTS];
+>   
+>   
+>   	unsigned int num_crtcs;
 
