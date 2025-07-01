@@ -1,174 +1,85 @@
-Return-Path: <linux-kernel+bounces-711356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51ABEAEF997
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A55AEF951
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692134E180D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB719482FFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DF2274FE3;
-	Tue,  1 Jul 2025 13:01:45 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8622741AB;
+	Tue,  1 Jul 2025 12:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PNnwL05N"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36D719006B;
-	Tue,  1 Jul 2025 13:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A1025B301;
+	Tue,  1 Jul 2025 12:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751374904; cv=none; b=jEcTEwbFvGY2DFvmBsdchDu/kTkzgNzv7x8JAgJc3trClPjVFWr41Xg+Bpp3oNHJzgwugcUsnp+7s7z1NxwG2R1xVvmxOrVsB1wqqZzrnUupr0PyYdUdEPaRdd3fa5I4mteugVqQIt60caD0Pp4YfkXTzBxMv3+oCwoyiV7LugM=
+	t=1751374491; cv=none; b=IgEkWthivlm6u8sQox7m20IHFts622yOoEgHQGggGnAXjv4IG5yyaD+1XrApn8z7pVpT9y+28Q1pf4DwF9t/Xo3AkbhUYihVIdkbW+Tr2uZsbHZmP9sFixoRmPJir4o5IaVW3ylZMZizR1TkyOu2hcI9C3Zq2QkgyT9TF4DP0WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751374904; c=relaxed/simple;
-	bh=T9HkFnDBMvtvh+rx8Kod6hT1Ps6qQGtTGTjHSzPg5hY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NCZGpwtF6T/udg3RGpIK3upciNOwa0eoSJMWWTO+zivS4BFVzH04Tz8aV9QDAo8aHOyw5UlhbpsLZNg4ANnGBLuzWyRg6p5larGVtvwUj8PwCJGcOaN18D3Mr8ifpDv4FCbd9BGKue5aQaFDu4FJxkW76Boi/ooHaVSDuARLTro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bWjlh3Xq7z13MWv;
-	Tue,  1 Jul 2025 20:59:12 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D7A41800EC;
-	Tue,  1 Jul 2025 21:01:41 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 1 Jul 2025 21:01:40 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH v4 net-next 3/3] net: hibmcge: configure FIFO thresholds according to the MAC controller documentation
-Date: Tue, 1 Jul 2025 20:54:46 +0800
-Message-ID: <20250701125446.720176-4-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250701125446.720176-1-shaojijie@huawei.com>
-References: <20250701125446.720176-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1751374491; c=relaxed/simple;
+	bh=JUxBJ96sPF/IqLs5HjgYnXkzV4UCixqIj5B+O9WFJhc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kTrSDdCSNy0yZuZEuPU1FtXRkS1dxWcLZc0XyfaEcsE1FsfLwtyBcvJqpnjhPiIIluzCh3kXRiLm1kxVZ10xU63imGG3VAYIea8ye+Cruqi17ey5wmLStpIF6/gaBMo4hyfUL2iKel51VR9HuDlh8PCw55I0+NG0JbdECz1Nx60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PNnwL05N; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A727640700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1751374488; bh=0dzsmgWlqJLGfMOQQ7Vy3xLEXExKhldgLTdaqXjyC6w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PNnwL05N0KkuN59lN1vvfgx7XdEk388aCs7ZkpKdgI4t+QQFhBhU8xe2XojQVhdR5
+	 tDR/y0CPOOM3cWXXaZN+R0W0Xyn9W2HenYgsBXlUua6+0y0SsHwS1oGwvWKrVG7Rul
+	 cQvIQZYTQhqw+bYBt6kcZK5Zp7PGoAnNpzs6nMofoDYgV+SUQIdV1iqgx8XSgb5sIs
+	 LBHefaXscYb2/y0e1qikQhokvmmEkc4nxEFuL4vtMkwcOyzIb4kSlT1RA+HoobDH35
+	 ayzRB8cq2E/WeFypVEWCl9wAPQcMHjkfacR07UhlXiVFGImP1lfjBEP1qfclztKYZz
+	 EbT6XCjNJacwQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id A727640700;
+	Tue,  1 Jul 2025 12:54:48 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Petr Tesarik <ptesarik@suse.com>, Randy Dunlap <rdunlap@infradead.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Bagas
+ Sanjaya <bagasdotme@gmail.com>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, "open list:MEMORY MANAGEMENT"
+ <linux-mm@kvack.org>
+Subject: Re: [PATCH v2 4/8] docs: dma-api: add a kernel-doc comment for
+ dma_pool_zalloc()
+In-Reply-To: <20250701133833.4060f406@mordecai.tesarici.cz>
+References: <20250627101015.1600042-1-ptesarik@suse.com>
+ <20250627101015.1600042-5-ptesarik@suse.com>
+ <5a997777-fd14-40e1-919b-2e61a6e8d570@infradead.org>
+ <20250701133833.4060f406@mordecai.tesarici.cz>
+Date: Tue, 01 Jul 2025 06:54:47 -0600
+Message-ID: <875xgct6js.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
-Configure FIFO thresholds according to the MAC controller documentation
+Petr Tesarik <ptesarik@suse.com> writes:
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-ChangeLog:
-v1 -> v2:
-  - Fix code formatting errors, reported by Jakub Kicinski
-  v1: https://lore.kernel.org/all/20250619144423.2661528-1-shaojijie@huawei.com/
----
- .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 49 +++++++++++++++++++
- .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  |  6 +++
- 2 files changed, 55 insertions(+)
+> Do I have to submit a v3 then?
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-index 6e5602591554..8cca8316ba40 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-@@ -18,6 +18,13 @@
- #define HBG_ENDIAN_CTRL_LE_DATA_BE	0x0
- #define HBG_PCU_FRAME_LEN_PLUS 4
- 
-+#define HBG_FIFO_TX_FULL_THRSLD		0x3F0
-+#define HBG_FIFO_TX_EMPTY_THRSLD	0x1F0
-+#define HBG_FIFO_RX_FULL_THRSLD		0x240
-+#define HBG_FIFO_RX_EMPTY_THRSLD	0x190
-+#define HBG_CFG_FIFO_FULL_THRSLD	0x10
-+#define HBG_CFG_FIFO_EMPTY_THRSLD	0x01
-+
- static bool hbg_hw_spec_is_valid(struct hbg_priv *priv)
- {
- 	return hbg_reg_read(priv, HBG_REG_SPEC_VALID_ADDR) &&
-@@ -272,6 +279,41 @@ void hbg_hw_set_rx_pause_mac_addr(struct hbg_priv *priv, u64 mac_addr)
- 	hbg_reg_write64(priv, HBG_REG_FD_FC_ADDR_LOW_ADDR, mac_addr);
- }
- 
-+static void hbg_hw_set_fifo_thrsld(struct hbg_priv *priv,
-+				   u32 full, u32 empty, enum hbg_dir dir)
-+{
-+	u32 value = 0;
-+
-+	value |= FIELD_PREP(HBG_REG_FIFO_THRSLD_FULL_M, full);
-+	value |= FIELD_PREP(HBG_REG_FIFO_THRSLD_EMPTY_M, empty);
-+
-+	if (dir & HBG_DIR_TX)
-+		hbg_reg_write(priv, HBG_REG_TX_FIFO_THRSLD_ADDR, value);
-+
-+	if (dir & HBG_DIR_RX)
-+		hbg_reg_write(priv, HBG_REG_RX_FIFO_THRSLD_ADDR, value);
-+}
-+
-+static void hbg_hw_set_cfg_fifo_thrsld(struct hbg_priv *priv,
-+				       u32 full, u32 empty, enum hbg_dir dir)
-+{
-+	u32 value;
-+
-+	value = hbg_reg_read(priv, HBG_REG_CFG_FIFO_THRSLD_ADDR);
-+
-+	if (dir & HBG_DIR_TX) {
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_FULL_M, full);
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M, empty);
-+	}
-+
-+	if (dir & HBG_DIR_RX) {
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_FULL_M, full);
-+		value |= FIELD_PREP(HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M, empty);
-+	}
-+
-+	hbg_reg_write(priv, HBG_REG_CFG_FIFO_THRSLD_ADDR, value);
-+}
-+
- static void hbg_hw_init_transmit_ctrl(struct hbg_priv *priv)
- {
- 	u32 ctrl = 0;
-@@ -332,5 +374,12 @@ int hbg_hw_init(struct hbg_priv *priv)
- 
- 	hbg_hw_init_rx_control(priv);
- 	hbg_hw_init_transmit_ctrl(priv);
-+
-+	hbg_hw_set_fifo_thrsld(priv, HBG_FIFO_TX_FULL_THRSLD,
-+			       HBG_FIFO_TX_EMPTY_THRSLD, HBG_DIR_TX);
-+	hbg_hw_set_fifo_thrsld(priv, HBG_FIFO_RX_FULL_THRSLD,
-+			       HBG_FIFO_RX_EMPTY_THRSLD, HBG_DIR_RX);
-+	hbg_hw_set_cfg_fifo_thrsld(priv, HBG_CFG_FIFO_FULL_THRSLD,
-+				   HBG_CFG_FIFO_EMPTY_THRSLD, HBG_DIR_TX_RX);
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h b/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-index d40880beb2f8..a39d1e796e4a 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
-@@ -141,7 +141,13 @@
- /* PCU */
- #define HBG_REG_TX_FIFO_THRSLD_ADDR		(HBG_REG_SGMII_BASE + 0x0420)
- #define HBG_REG_RX_FIFO_THRSLD_ADDR		(HBG_REG_SGMII_BASE + 0x0424)
-+#define HBG_REG_FIFO_THRSLD_FULL_M		GENMASK(25, 16)
-+#define HBG_REG_FIFO_THRSLD_EMPTY_M		GENMASK(9, 0)
- #define HBG_REG_CFG_FIFO_THRSLD_ADDR		(HBG_REG_SGMII_BASE + 0x0428)
-+#define HBG_REG_CFG_FIFO_THRSLD_TX_FULL_M	GENMASK(31, 24)
-+#define HBG_REG_CFG_FIFO_THRSLD_TX_EMPTY_M	GENMASK(23, 16)
-+#define HBG_REG_CFG_FIFO_THRSLD_RX_FULL_M	GENMASK(15, 8)
-+#define HBG_REG_CFG_FIFO_THRSLD_RX_EMPTY_M	GENMASK(7, 0)
- #define HBG_REG_CF_INTRPT_MSK_ADDR		(HBG_REG_SGMII_BASE + 0x042C)
- #define HBG_INT_MSK_WE_ERR_B			BIT(31)
- #define HBG_INT_MSK_RBREQ_ERR_B			BIT(30)
--- 
-2.33.0
+What path were you planning for this to go upstream?  If it goes through
+docs, I can apply that tweak on the way in.
 
+Thanks,
+
+jon
 
