@@ -1,294 +1,249 @@
-Return-Path: <linux-kernel+bounces-711387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4998BAEFA0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:18:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B4BAEFA04
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E53844308F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:17:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4373BD468
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA1274FD4;
-	Tue,  1 Jul 2025 13:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Erv242uZ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="eYcuTdJF"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2334274656;
+	Tue,  1 Jul 2025 13:17:12 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A744246784;
-	Tue,  1 Jul 2025 13:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751375880; cv=fail; b=UPhD01NyAkK7h0k1nSZjonYKhy6MoPVRQmQto+/9axW4n8l1gAJZlkehNoP+PwBFy/OHxbKQDUj3pKfvFdmoJCClhpXZbJJR8U8ijEnk7ccjzA9/GyYdZ+rb08CLKr66TBbIMP7/dal2x/uhRdRhvrL5llPj2VyMtHBoaTLOr0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751375880; c=relaxed/simple;
-	bh=ztrIhH9S+n/77cmjtzVUk+MjDS6m/ffvArZNojE4h+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Syr9FxlspafpQqM+fNixvMEWvPLXm/u4PeTA1ikPsyutDtLRqVupSi5qHfLbBIj0tpVYJek8UyGPs/7Ui4B4VXgC39WiLrJ+ex2qwP79u8kIdpGpFL+mHTqXwjOYZM+60WQEsg7RYfSj+dlz9OZonM4aCJkg1ZTfRzTVZjEAoJw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Erv242uZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=eYcuTdJF; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 561D9Exd030398;
-	Tue, 1 Jul 2025 13:15:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=YEEZDUXoPAy6o+C/IJ
-	vL8b8mowv2oRhZRiZ4J6iDPeA=; b=Erv242uZD/CoB0SMN+8wt+fQ+05cjgtSIY
-	ep2cHAqN9EJtxfg4c7jeDI8g2k3GYOQGIjfWkpG2+rpHJ86IB9e7/KUKHFfRpC1W
-	NDtdNcdiuE003JfpXDTdvv1nSslPhZXeU5s6hj6zmbYBHi9jj5j4klowro+rklPC
-	NlBsWxOr2q0WKOoNYorbq5j62ArRdFrA/Q7GmOodxne/AksCQ/crfbSnXnqKnf6z
-	52BV5IBoJ5FxYJONQAA9UOefcKmxuQqn/o7HO9F7IzrGKylno7Lfe5lCNdfY1c3z
-	ROLTSCL8gTmkAJdcJ4aqwvhX2fRkIRbEuBokK9tojl0OmF1D3hKg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j6tfcq5y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 13:15:08 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 561CgUrF005846;
-	Tue, 1 Jul 2025 13:15:07 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6uh0dm0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 13:15:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V64lRovYFpgFJTK7BECOBdn+F5+KwvZtTpTqAcfKOUOHJA2xWjlaPTF55fERLxVXY9wU9s7nB27FqWHPZsoEbvv9bBiofwy+ycgG6XbxwSv07/uz440ouZcmpNJpvPH7yz/1akt1wx77MaZ8hQ3peIpVTNbCiWuQOmHJ32k/CQD8yCJ/O7OlxFdkg6KRJIoew/8X3TXgcrCA6XMPwNkAs5RjjqpndVE6uepRIqukSWpBw/+2cvy3MNxrMEqGm73O+iTnUhD7AJ1DNJcg2koF3V+hwiH1l3KR1++BfTqRNoAfa03+Uqs2bOYZ2G+MzAU6Eop+a0rz2fvYUIsL8ckFzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YEEZDUXoPAy6o+C/IJvL8b8mowv2oRhZRiZ4J6iDPeA=;
- b=JkzVsM9m3piKDe+YF2Q4EstdWUyy9W6L5yHo7sdlmyOAA3IJeR/3Chr5CpExiIscRBPE/zZlzbfdNSbA+x3nWkP1DKwF8ugMB23goLwbYlcZeQOvmoTf/xPYB2DJAIBkYzG7R4zYnuknGUxY+UUnGRzwgTnzbLKOwEAafxaOKftqAj5vMso8EmJmbRcg0OCsKqwjQdL/G12PogGMJocTmBvMHXMC4hkJUsKBSYSCAHVWSTskZeoUPvoFfVuouYapHhn3c7rPlYD2ZGXrQ8MOQFGtwfjEwaC+nJjl0CNhpap5oqcyqNasmlsBEBWEYYIqTdgGrQAaj5WVqZOwJ301Qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YEEZDUXoPAy6o+C/IJvL8b8mowv2oRhZRiZ4J6iDPeA=;
- b=eYcuTdJFEU9TaBF6aLPRwnAm/DlvMk5qUXvxyYkYE33/fRN48i3wPakqWBModN9+YMjiIwMed9FmfLb0vzkxpebZiAMfpjXxzH8WtJOxG91sbcRG92N5f0CjeSC5TRNoi4ifrwKIzbvxvcsj7jHMKYiArPPGMVxARg2cU+6l134=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA0PR10MB6914.namprd10.prod.outlook.com (2603:10b6:208:432::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Tue, 1 Jul
- 2025 13:15:02 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
- 13:15:02 +0000
-Date: Tue, 1 Jul 2025 14:15:00 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
-        Harry Yoo <harry.yoo@oracle.com>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v1 25/29] mm: simplify folio_expected_ref_count()
-Message-ID: <cf100225-5c2f-42d7-80c2-418dcbeaa21c@lucifer.local>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-26-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630130011.330477-26-david@redhat.com>
-X-ClientProxiedBy: LO4P302CA0009.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c2::17) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD881537DA;
+	Tue,  1 Jul 2025 13:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751375832; cv=none; b=pMXondlQzXdT6HcahpBaX6iwcE3dEynF3YEJoxuyFz++PY5rMz96NOH/D7yXeUBqS5fr7icifUG/OyEMBNJQfwZ1M4v1nNI2rxTfEzOZgImNE7FJSc4/MtdTlWksh+H59js9960nJ1w9cWeF0uNtwV3Hjj25kLTEFZVViz8jAbs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751375832; c=relaxed/simple;
+	bh=clF/opN+ntpR2Ve2PNZbytjYZSh0addA+ndqVcX3MDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lsvPoZ31b2r50zBasGnHhJn/NWmhU85xY7NGf60CFRDzoy+qOLlC5s3M8LMWvwliDo1bEii+LIKsdJg/xahCIUikJTkNr48CGNuAR/W/G+HHMVomI5gU7gT2ju8S+jXEGsIpmvhfGO7KNhYleM46nb0nT1Csa/e3rsbr8Ps7jR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bWk5S6F5Xz13Mh9;
+	Tue,  1 Jul 2025 21:14:36 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 834261402C1;
+	Tue,  1 Jul 2025 21:17:05 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 1 Jul
+ 2025 21:17:04 +0800
+Message-ID: <d9a5775e-afde-49ec-9c20-7613c4ea0cab@huawei.com>
+Date: Tue, 1 Jul 2025 21:17:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA0PR10MB6914:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57065b5f-728f-49ba-7ad6-08ddb8a1499f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5acJ1zwvHbx7PURInbAIKCGM8cH/NL9U+7uLJB5fdhgvDKI5rwgKJPT9Nyqa?=
- =?us-ascii?Q?DOb44AcGQvAZXlTm7Emd9NG7/kEckRI5jGxJ/ao295sOEJc0wy3+FEaloYQE?=
- =?us-ascii?Q?668TzudKr0rMzM9Xb38eap+Ld2iwpR+FTO45A0jtWPMXvFhJrKJnZkd904GV?=
- =?us-ascii?Q?nzmlqSl0RyZx1wwzMXNM8M+2D+NHF7iuanrlI+mqGpQ3edd2nVdYY0CnrXeX?=
- =?us-ascii?Q?LnlNYXc2D6tb2cISkxe2qQU8F9b8hMEF59CylDF4Sv1SbtJMV/A82IvTq6xA?=
- =?us-ascii?Q?XO7KR5pBFqovgz2ZrUU+yqjOIe854BoW0LzOZGLzgCnFpep9kFu70+Bt36qr?=
- =?us-ascii?Q?YgMZ80s9+RWSeWH7ZOsxXZsbnrI8yF3FFffNe6BeaE0VnH03r5e8L4uLkTz/?=
- =?us-ascii?Q?kY16b8x2TAuAxwU9+5b0a9dAZg7iIIIhtbVDgoH4FN7qzukh/iceqK0VZ3+h?=
- =?us-ascii?Q?aXwp6ZLixCppg6C6AsPwt2nx1IKV8NzxwofVNH7UbFxPIetCPSJxPj/WfeAw?=
- =?us-ascii?Q?F3CO3Yaoz3joCLWo1du4t+rNnrivmglHUUAf7lYaFvX6tt7pRcGTqbT/Svpb?=
- =?us-ascii?Q?X7mmtvjBQeydBOeF9SC7l3mNalU5BsIGsdfi8zmkVzQohCq4/EtH0YeX4Qt7?=
- =?us-ascii?Q?fPjOiRXMbEK0x6DOGez8afsxbkDqzRNRqw0fWL1quSkpPSqkb38zZ/1wn1km?=
- =?us-ascii?Q?rBT+srUPlUxS/EvzkbZa1eEtTw5aSEhvBexEpyl/7JaGC24Jmd3Drkk+PxUZ?=
- =?us-ascii?Q?Sm00poKvupF8IldIQ3WDMWR95l874jrsDK2jRP7FjCbyO+Cnepao9iqcrwqG?=
- =?us-ascii?Q?aXIb81NtpxQ+JVE+l0PCNPs5mm1f5t+PqoQvOXhh95QUWVUIKPKdWxXEjVHY?=
- =?us-ascii?Q?pRKgZjh29v0GwRkdve/6uroa1CGZ17WBOjuplv6nm58HRsZv8/LSkfFWjyO/?=
- =?us-ascii?Q?Z76oe5Q45aBhNWh5QJo5fafQv70NsP9zMp7ss2HwmCY7ZQ11FVn46NJLVIAB?=
- =?us-ascii?Q?93yfQItDjajXefc4iEDBiTFMAM4J4EhgFZS1ZZZpKVZCXf/bCqWGPv3UYtSc?=
- =?us-ascii?Q?Pf5TxmEzC7a1M5Dbu5AptsWs5R+TRMUpYEIY52R4VYybppGbKGyFXjFqe0Er?=
- =?us-ascii?Q?DIstO0QADnw2pxuxdcYzTXMkPPxwWZEOosd2UIAIZgGCN3KMbySoyvByyEKm?=
- =?us-ascii?Q?819+k5DLLK1KCouFvgUXWymRlT92WZtgPOGxMIIkfR+MCE4vY0PkB04Y8XZw?=
- =?us-ascii?Q?oIR6y/5gYQO0Z9IB/N30QHTUgYY9xXeJUZ8DdtLQhG5rPiYYbhscTZ8iRBjk?=
- =?us-ascii?Q?kQbAF/vrPGDJ3FRBONZvkmuzv3A4r87trhS4Tv/TjKVVBLov7kt21hygzve9?=
- =?us-ascii?Q?jdBNxoPG9NBT+owhx+fp4wL9lDnfsRb7WyhPc8/KmoQqH2kT1ls96KmqMpQt?=
- =?us-ascii?Q?s24bXAbulRc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OSs/3qihIhrN9o2Nuz+Cna98hYdPGypmafbtHyGKUKzNahaA82yhiVjsSACX?=
- =?us-ascii?Q?djT3DhPTbXPtsdkNDLwBM8gFRjMcdkqEIa+DnSoTNLMmxNRtiyE6L5a3lzTk?=
- =?us-ascii?Q?ya8IZn3G98y1rkfdAuXY/e1Vo2OCj1YH/SbQd2cCORnxP70RAV/ghQ59wOoe?=
- =?us-ascii?Q?sUs5adu70XhvUUQdt/fZtl6IWlJ9h09GwChaHhgf85mUaIdBmihMbt36O0nM?=
- =?us-ascii?Q?i+Adpn8cJgaWwIriLeSvUgCKRSIPq7RX4pB+/I1lGrAjon/cN9Ikzx/KYSfy?=
- =?us-ascii?Q?vg6EVBtryD/o9c+vaxsLGp9t7pzx3pOkj50N4D+WGlbsr+IcV28Wvr2xkAna?=
- =?us-ascii?Q?ZTjVZEk2mSRtoNmSlDVaq+m/GETVWp4Ed0+gZvFE2n9CSx1+BcuGC5s7w5Hs?=
- =?us-ascii?Q?DB9bYL3Uh975JOiRLNjY6oqUorSjN3dClHX/yK1sw3WmBtExirlo2pD/YCeU?=
- =?us-ascii?Q?vt2Gv9HC1I+Fn4tlP4bIX7KuHHKgNyROICFwBpd9fsA4WBzbq/vnV679Ub2w?=
- =?us-ascii?Q?ZC7oZeOfyFxKSZ56CJAFckWwq7b5pD6gWnfbmg61HLUhU4gkrdYpgGc1lI94?=
- =?us-ascii?Q?WFtcTg6BEIancN6fgiR++jNVZLl8Y7sD8dVCJeFDTw/TYdGENIg3LFi35Q+V?=
- =?us-ascii?Q?tzY9FZG9+3Pts7J+Bn/TSey1Yy+3lfop7OSU1DlAmM8X6Vi61e0uZbGqmwiD?=
- =?us-ascii?Q?W7nY8ayWSr4b86k9jT0A/QCEttJx5NqSz+j6UkHHGSPJFqthIGPgAFirzMAV?=
- =?us-ascii?Q?poR4QyHtjseUqsqL0aOISMLpY0UwPs47/aQ3hWBnJ7SQpu4adGqWsvMi+qK/?=
- =?us-ascii?Q?D7OuGrtv3U6RI+9qKZw52VvVbPKCxuZO7XwqCvly0eaLxyJWhE3AyGi8OQav?=
- =?us-ascii?Q?o17jIZrUpEDc7/Z80cBIUxlY+npfr6a2KQSD8fe2ni4KfKWG5K3+LCbuDCe4?=
- =?us-ascii?Q?oSp/zzd6xwkJXcBicQvNe2v9oigTRRtxQd2Is1oYunSHTOLKB/BqPvpz81vr?=
- =?us-ascii?Q?9D2u2EUHSXHppsNA3rCHdw+hznEjUpnku6jPo7jlOWVdvztvhaADyn+N/6Wv?=
- =?us-ascii?Q?EsaGZrvDqzxfgbzDwI/hbpnu+YbcOK3z4cPW+2PhSURRPfL5Vnk9nCswgYjU?=
- =?us-ascii?Q?+//AFy+Tt5cJJh5nXA5deAoxbwKXnCqKO6ygXwJGzdO1JRPDEBYEArPTVX6b?=
- =?us-ascii?Q?gPOzUnUyBSPTfAHutILBgibx85SsycEZbogOPr96CY1+mPnzHcT3kI7VEgW5?=
- =?us-ascii?Q?kOOUNRtF99vZL+YpWC1avGJJYTJsTzWIb0Ivj9LJDqKmgiyF0xqtBoOhCixo?=
- =?us-ascii?Q?/yiArjddSCgW6nI4hhi5Y4jUg9DFHXU5HqCcEKw3MFutRo2ryg//UtL8FhG3?=
- =?us-ascii?Q?vq87GrAl1W19Nuey7FpUGDkPOsbSZzkLZ4su5AQ68PsvxvHn7yYYj/bOPEwR?=
- =?us-ascii?Q?fhKhKT4Ud6jwOUP2nx4IItJwPTkQciN8shGqxYUcy+UVWBtiVepyFTOqgYK4?=
- =?us-ascii?Q?rlig5lX2nktLfuXO/7R6wftWJsnvbrw+oqSBKdQF6jaQLjW7ehYePlfYU23X?=
- =?us-ascii?Q?+nTOy9Qk/SgHPj0spwUvMKH+VLOsrQJ5uNaMA+vad0jjKG6MWdItHUBHOvlM?=
- =?us-ascii?Q?9A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	E9wFTVjp2tKES8kG55zWMyVqBLKZL5h1o+klOZslyOyPpnSJdd6pVigviPxlBFvZRMXwl4I9sdQLosVwywlu6FTdSzGrmGOWrmVCmdgc0yyxHV/bs7zUWEtQCl5rufVvIFzxjWiTpuVYRp+0Bh1h0V64/8lNCGhDOxOaxzz6Oe4JiclrlYkBJ09KUVP1Kzjn3fddI8tZsUvmizXbMQoewiyTiMXeEA5LTd58yaPrAALq9vbm2srg+VxuIpRq+K/kPjadBK6RrTTtTsjRPf0JLqYDVV96XPqPE/ObxItxGTJ2MwT2caDb+Ywhq8hPVXB/YjGQKkPDCL5L2toDEnuIoV2g4phKJE5/obyU1x674AMISCuiENKMhn/aUEtX3CgR4rickCDyCQ0GSGBvr+2PKF+dPoxiey+kcZHWSGJTI+vWvobSfUwbYGXb9GTaA28C8xCSMChwfKouux/CXPvy7r6b1xQG4K10ONiAFkfTCcNCC9zL4y5FEgtntnJ4M5VgI9KSNPE39KFEPqskHD72JXXTeO6BJEahJ/P+whv0kQ0KdK4H9GQ0AmtgsKBWB1gr3wJ0gojUVkDAgMdxmZnGOVpVfO1ZA3qKgxKGAFJ0c0Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57065b5f-728f-49ba-7ad6-08ddb8a1499f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 13:15:02.1795
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4hGa4uQcEB9B5kG8vWkqo0Jwge615dXKuQZEP55Kq+QE2D/6dfbnZmlX/4IS4AOvii8qcq7oHUlgH92wjV0Rmlm/UyUZazsX76/86q0JAqU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6914
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507010084
-X-Authority-Analysis: v=2.4 cv=CMMqXQrD c=1 sm=1 tr=0 ts=6863df5c b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=_8tl2_tmljWMe2TOhnIA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13215
-X-Proofpoint-GUID: MOqS9TFddSNOQWyY0GRx7DjAa8G6NXJR
-X-Proofpoint-ORIG-GUID: MOqS9TFddSNOQWyY0GRx7DjAa8G6NXJR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA4NCBTYWx0ZWRfX4Vw7eCAJxmWa zc8zK2D+2BmtjyiKq6ROt3WfLnz5Uj5SRWhvXy6em5K0PSm3aN7LJP4pUhbV2UtbqRpCg4U8s+V kx8hqTOawIE/3299eGHZjYtEd+Fry95frcHbjBI4JXqooAc40Me+bBozHO/fa7Hmr0jlbZh5WrJ
- b1mms5q5kbwamn5FQjbsQaBl4u01u//T/2BWFmm3WyHaB2ovElkvui3sTwKPfLh+IG0W9248Jxd I7XbOrypvEn6566HxTc5A338sYqJSNK1gn+T7YvnIN+mhGj3PqdSVG3O38qZOxCozXFeb+EEoyT PdY8Bx2UJlxB48iTSgycsVaIfmXQee/++jvEkoHXlJ1e4F+nGDEIojQFxbId/nkspIRySD8SCSQ
- vEON4KW1Ie78Ml3qZULmrBYIgOmbK3f7hmsTWkf6aJpEUfzg0ANTPdw7+PUwp1OtKF5rPlHD
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/16] ext4: remove unnecessary s_md_lock on update
+ s_mb_last_group
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<ojaswin@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, Baokun Li
+	<libaokun1@huawei.com>
+References: <20250623073304.3275702-1-libaokun1@huawei.com>
+ <20250623073304.3275702-4-libaokun1@huawei.com>
+ <xlzlyqudvp7a6ufdvc4rgsoe7ty425rrexuxgfbgwxoazfjd25@6eqbh66w7ayr>
+ <1c2d7881-94bb-46ff-9cf6-ef1fbffc13e5@huawei.com>
+ <mfybwoygcycblgaln2j4et4zmyzli2zibcgvixysanugjjhhh5@xyzoc4juy4wv>
+ <db4b9d71-c34d-4315-a87d-2edf3bbaff2d@huawei.com>
+ <e2dgjtqvqjapir5xizb5ixkilhzr7fm7m7ymxzk6ixzdbwxjjs@24n4nzolye77>
+ <272e8673-36a9-4fef-a9f1-5be29a57c2dc@huawei.com>
+ <kvgztznp6z2gwuujrw5vtklfbmq3arjg54bpiufmxdwmuwjliw@og7qkacbdtax>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <kvgztznp6z2gwuujrw5vtklfbmq3arjg54bpiufmxdwmuwjliw@og7qkacbdtax>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Jun 30, 2025 at 03:00:06PM +0200, David Hildenbrand wrote:
-> Now that PAGE_MAPPING_MOVABLE is gone, we can simplify and rely on the
-> folio_test_anon() test only.
+On 2025/7/1 20:21, Jan Kara wrote:
+> On Tue 01-07-25 10:39:53, Baokun Li wrote:
+>> On 2025/7/1 0:32, Jan Kara wrote:
+>>> On Mon 30-06-25 17:21:48, Baokun Li wrote:
+>>>> On 2025/6/30 15:47, Jan Kara wrote:
+>>>>> On Mon 30-06-25 11:48:20, Baokun Li wrote:
+>>>>>> On 2025/6/28 2:19, Jan Kara wrote:
+>>>>>>> On Mon 23-06-25 15:32:51, Baokun Li wrote:
+>>>>>>>> After we optimized the block group lock, we found another lock
+>>>>>>>> contention issue when running will-it-scale/fallocate2 with multiple
+>>>>>>>> processes. The fallocate's block allocation and the truncate's block
+>>>>>>>> release were fighting over the s_md_lock. The problem is, this lock
+>>>>>>>> protects totally different things in those two processes: the list of
+>>>>>>>> freed data blocks (s_freed_data_list) when releasing, and where to start
+>>>>>>>> looking for new blocks (mb_last_group) when allocating.
+>>>>>>>>
+>>>>>>>> Now we only need to track s_mb_last_group and no longer need to track
+>>>>>>>> s_mb_last_start, so we don't need the s_md_lock lock to ensure that the
+>>>>>>>> two are consistent, and we can ensure that the s_mb_last_group read is up
+>>>>>>>> to date by using smp_store_release/smp_load_acquire.
+>>>>>>>>
+>>>>>>>> Besides, the s_mb_last_group data type only requires ext4_group_t
+>>>>>>>> (i.e., unsigned int), rendering unsigned long superfluous.
+>>>>>>>>
+>>>>>>>> Performance test data follows:
+>>>>>>>>
+>>>>>>>> Test: Running will-it-scale/fallocate2 on CPU-bound containers.
+>>>>>>>> Observation: Average fallocate operations per container per second.
+>>>>>>>>
+>>>>>>>>                        | Kunpeng 920 / 512GB -P80|  AMD 9654 / 1536GB -P96 |
+>>>>>>>>      Disk: 960GB SSD   |-------------------------|-------------------------|
+>>>>>>>>                        | base  |    patched      | base  |    patched      |
+>>>>>>>> -------------------|-------|-----------------|-------|-----------------|
+>>>>>>>> mb_optimize_scan=0 | 4821  | 7612  (+57.8%)  | 15371 | 21647 (+40.8%)  |
+>>>>>>>> mb_optimize_scan=1 | 4784  | 7568  (+58.1%)  | 6101  | 9117  (+49.4%)  |
+>>>>>>>>
+>>>>>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>>>>>> ...
+>>>>>>>
+>>>>>>>> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+>>>>>>>> index 5cdae3bda072..3f103919868b 100644
+>>>>>>>> --- a/fs/ext4/mballoc.c
+>>>>>>>> +++ b/fs/ext4/mballoc.c
+>>>>>>>> @@ -2168,11 +2168,9 @@ static void ext4_mb_use_best_found(struct ext4_allocation_context *ac,
+>>>>>>>>      	ac->ac_buddy_folio = e4b->bd_buddy_folio;
+>>>>>>>>      	folio_get(ac->ac_buddy_folio);
+>>>>>>>>      	/* store last allocated for subsequent stream allocation */
+>>>>>>>> -	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC) {
+>>>>>>>> -		spin_lock(&sbi->s_md_lock);
+>>>>>>>> -		sbi->s_mb_last_group = ac->ac_f_ex.fe_group;
+>>>>>>>> -		spin_unlock(&sbi->s_md_lock);
+>>>>>>>> -	}
+>>>>>>>> +	if (ac->ac_flags & EXT4_MB_STREAM_ALLOC)
+>>>>>>>> +		/* pairs with smp_load_acquire in ext4_mb_regular_allocator() */
+>>>>>>>> +		smp_store_release(&sbi->s_mb_last_group, ac->ac_f_ex.fe_group);
+>>>>>>> Do you really need any kind of barrier (implied by smp_store_release())
+>>>>>>> here? I mean the store to s_mb_last_group is perfectly fine to be reordered
+>>>>>>> with other accesses from the thread, isn't it? As such it should be enough
+>>>>>>> to have WRITE_ONCE() here...
+>>>>>> WRITE_ONCE()/READ_ONCE() primarily prevent compiler reordering and ensure
+>>>>>> that variable reads/writes access values directly from L1/L2 cache rather
+>>>>>> than registers.
+>>>>> I agree READ_ONCE() / WRITE_ONCE() are about compiler optimizations - in
+>>>>> particular they force the compiler to read / write the memory location
+>>>>> exactly once instead of reading it potentially multiple times in different
+>>>>> parts of expression and getting inconsistent values, or possibly writing
+>>>>> the value say byte by byte (yes, that would be insane but not contrary to
+>>>>> the C standard).
+>>>> READ_ONCE() and WRITE_ONCE() rely on the volatile keyword, which serves
+>>>> two main purposes:
+>>>>
+>>>> 1. It tells the compiler that the variable's value can change unexpectedly,
+>>>>      preventing the compiler from making incorrect optimizations based on
+>>>>      assumptions about its stability.
+>>>>
+>>>> 2. It ensures the CPU directly reads from or writes to the variable's
+>>>>      memory address. This means the value will be fetched from cache (L1/L2)
+>>>>      if available, or from main memory otherwise, rather than using a stale
+>>>>      value from a CPU register.
+>>> Yes, we agree on this.
+>>>
+>>>>>> They do not guarantee that other CPUs see the latest values. Reading stale
+>>>>>> values could lead to more useless traversals, which might incur higher
+>>>>>> overhead than memory barriers. This is why we use memory barriers to ensure
+>>>>>> the latest values are read.
+>>>>> But smp_load_acquire() / smp_store_release() have no guarantee about CPU
+>>>>> seeing latest values either. They are just speculation barriers meaning
+>>>>> they prevent the CPU from reordering accesses in the code after
+>>>>> smp_load_acquire() to be performed before the smp_load_acquire() is
+>>>>> executed and similarly with smp_store_release(). So I dare to say that
+>>>>> these barries have no (positive) impact on the allocation performance and
+>>>>> just complicate the code - but if you have some data that show otherwise,
+>>>>> I'd be happy to be proven wrong.
+>>>> smp_load_acquire() / smp_store_release() guarantee that CPUs read the
+>>>> latest data.
+>>>>
+>>>> For example, imagine a variable a = 0, with both CPU0 and CPU1 having
+>>>> a=0 in their caches.
+>>>>
+>>>> Without a memory barrier:
+>>>> When CPU0 executes WRITE_ONCE(a, 1), a=1 is written to the store buffer,
+>>>> an RFO is broadcast, and CPU0 continues other tasks. After receiving ACKs,
+>>>> a=1 is written to main memory and becomes visible to other CPUs.
+>>>> Then, if CPU1 executes READ_ONCE(a), it receives the RFO and adds it to
+>>>> its invalidation queue. However, it might not process it immediately;
+>>>> instead, it could perform the read first, potentially still reading a=0
+>>>> from its cache.
+>>>>
+>>>> With a memory barrier:
+>>>> When CPU0 executes smp_store_release(&a, 1), a=1 is not only written to
+>>>> the store buffer, but data in the store buffer is also written to main
+>>>> memory. An RFO is then broadcast, and CPU0 waits for ACKs from all CPUs.
+>>>>
+>>>> When CPU1 executes smp_load_acquire(a), it receives the RFO and adds it
+>>>> to its invalidation queue. Here, the invalidation queue is flushed, which
+>>>> invalidates a in CPU1's cache. CPU1 then replies with an ACK, and when it
+>>>> performs the read, its cache is invalid, so it reads the latest a=1 from
+>>>> main memory.
+>>> Well, here I think you assume way more about the CPU architecture than is
+>>> generally true (and I didn't find what you write above guaranteed neither
+>>> by x86 nor by arm64 CPU documentation). Generally I'm following the
+>>> guarantees as defined by Documentation/memory-barriers.txt and there you
+>>> can argue only about order of effects as observed by different CPUs but not
+>>> really about when content is fetched to / from CPU caches.
+>> Explaining why smp_load_acquire() and smp_store_release() guarantee the
+>> latest data is read truly requires delving into their underlying
+>> implementation details.
+>>
+>> I suggest you Google "why memory barriers are needed." You might find
+>> introductions to concepts like 'Total Store Order', 'Weak Memory Ordering',
+>> MESI, store buffers, and invalidate queue, along with the stories behind
+>> them.
+> Yes, I know these things. Not that I'd be really an expert in them but I'd
+> call myself familiar enough :). But that is kind of besides the point here.
+> What I want to point out it that if you have code like:
 >
-> ... but staring at the users, this function should never even have been
-> called on movable_ops pages. E.g.,
-> * __buffer_migrate_folio() does not make sense for them
-> * folio_migrate_mapping() does not make sense for them
-> * migrate_huge_page_move_mapping() does not make sense for them
-> * __migrate_folio() does not make sense for them
-> * ... and khugepaged should never stumble over them
+>    some access A
+>    grp = smp_load_acquire(&sbi->s_mb_last_group)
+>    some more accesses
 >
-> Let's simply refuse typed pages (which includes slab) except hugetlb,
-> and WARN.
-
-I guess also:
-
-* PGTY_buddy - raw buddy allocator pagess should't be here...
-* PGTY_table - nor page table...
-* PGTY_guard - nor whatever kind of guard this is I assume? (Not my precious guard regions :P)
-* PGTY_unaccepted - nor unaccepted memory perhaps?
-* PGTY_large_malloc - slab, shouldn't be here
-
-I'd maybe delineate these cases also.
-
+> then the CPU is fully within it's right to execute them as:
 >
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+>    grp = smp_load_acquire(&sbi->s_mb_last_group)
+>    some access A
+>    some more accesses
+>
+> Now your *particular implementation* of the ARM64 CPU model may never do
+> that similarly as no x86 CPU currently does it but some other CPU
+> implementation may (e.g. Alpha CPU probably would, as much as that's
+> irrevelent these days :). So using smp_load_acquire() is at best a
+> heuristics that may happen to help using more fresh value for some CPU
+> models but it isn't guaranteed to help for all architectures and all CPU
+> models Linux supports.
+Yes, it's true that the underlying implementation of
+smp_load_acquire() can differ somewhat across various
+processor architectures.
+>
+> So can you do me a favor please and do a performance comparison of using
+> READ_ONCE / WRITE_ONCE vs using smp_load_acquire / smp_store_release on
+> your Arm64 server for streaming goal management? If smp_load_acquire /
+> smp_store_release indeed bring any performance benefit for your servers, we
+> can just stick a comment there explaining why they are used. If they bring
+> no measurable benefit I'd put READ_ONCE / WRITE_ONCE there for code
+> simplicity. Do you agree?
+>
+> 								Honza
 
-On assumption no typed page should be tolerable here:
+Okay, no problem. I'll get an ARM server from the resource pool to test
+the difference between the two. If there's no difference, replacing them
+with READ_ONCE/WRITE_ONCE would be acceptable.
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-> ---
->  include/linux/mm.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 6a5447bd43fd8..f6ef4c4eb536b 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2176,13 +2176,13 @@ static inline int folio_expected_ref_count(const struct folio *folio)
->  	const int order = folio_order(folio);
->  	int ref_count = 0;
->
-> -	if (WARN_ON_ONCE(folio_test_slab(folio)))
-> +	if (WARN_ON_ONCE(page_has_type(&folio->page) && !folio_test_hugetlb(folio)))
->  		return 0;
->
->  	if (folio_test_anon(folio)) {
->  		/* One reference per page from the swapcache. */
->  		ref_count += folio_test_swapcache(folio) << order;
-> -	} else if (!((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS)) {
-> +	} else {
->  		/* One reference per page from the pagecache. */
->  		ref_count += !!folio->mapping << order;
->  		/* One reference from PG_private. */
-> --
-> 2.49.0
->
+Cheers,
+Baokun
+
 
