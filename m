@@ -1,262 +1,162 @@
-Return-Path: <linux-kernel+bounces-711129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27386AEF693
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:31:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B41AEF6CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28EC61BC836B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC9A172C70
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8920E242D8C;
-	Tue,  1 Jul 2025 11:31:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD8D1EA6F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3287D2737F0;
+	Tue,  1 Jul 2025 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KY7JO1Is"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308F4271476
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751369471; cv=none; b=f8vCdPY58VgUOLxjf/9xzmePPb9QwrPENncqcsBFW7TmZo1XqsgTU3W87BOQILV1fA+Adhu4tm7v5CHHIm1vXAHDLOqrNJR5lV9bKFK38Nl/obCAeDnPLXea7MbpAilgxSLw1Gxg1zejWjF3lXcG/MDCrn0LbuJQtd8OKdu2N84=
+	t=1751370028; cv=none; b=r/fjbF9ZMLdaqrvyOfaTvNic+pKNcx1oTu5/56MY+g/Al9a9pYgrygXVvjKxMS1LjrEXpmbx/SCOxSW5YoJnmTPWljEKfMPDquvxTiBXVUZ/6IL180pNTB4iPCWop42/pXp1z+rGsdLDNyIOVS1x1Sbufhgn4oNR0b1Ts1Xc1DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751369471; c=relaxed/simple;
-	bh=BVhhQhPEqtIrAl2qqWu3zTUoIcb1MEGon7Ds6OjsHMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvdZi2Li3uUW+9qvVU1Yv3cZ/WTkmATxspvqJdN8RYfEhpw5nnhOwEIjm8YCCHrr9agWeKbgXmVFBjINb+DG6Z2V8clCAtMgP7jfPBtHtmQwCAVe6M9S7GYrnb9OL+UJu+diBVY8wDUbYvA5WmUDdpDZrKV+WQtrUcuzLq70dg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A39E1595;
-	Tue,  1 Jul 2025 04:30:52 -0700 (PDT)
-Received: from [10.1.33.214] (XHFQ2J9959.cambridge.arm.com [10.1.33.214])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFE9A3F6A8;
-	Tue,  1 Jul 2025 04:31:03 -0700 (PDT)
-Message-ID: <aed58edc-88c3-47bf-8cc3-bb8d80c4e221@arm.com>
-Date: Tue, 1 Jul 2025 12:31:02 +0100
+	s=arc-20240116; t=1751370028; c=relaxed/simple;
+	bh=OZ49jYUUZOmMK6H9Nv/dyyRZN30Ctk78bX0kjHtFUtE=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=S77BF7vwdHan9WGGD1D9/uVkhmxKVw8Ur/L5pADZHJgQEKxlkmZMJusoQV7BhnAkkoICiOlQkUom5yCpGSVoegQr/3rvpXlTzr+7JVBV98TzPgZvHkxxMN2gcqUbyaPKcTUZUg4DtopqDTlJFZYS4V+zuet84OUhE7GxN8X40CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KY7JO1Is; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250701114024epoutp037f83e5efd0b5c4dbd644716ae96ece47~OHcIW8PQT0277602776epoutp03o
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:40:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250701114024epoutp037f83e5efd0b5c4dbd644716ae96ece47~OHcIW8PQT0277602776epoutp03o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1751370024;
+	bh=2Nli5jAMu0NC9zLKjZfj4lZI1r3k1lL6PZil61CiwoQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=KY7JO1IsHlfA9MJX/INx8OUB847GygezOpPrB/oKVBqWR2MCcGbK12Jt072bSnoBJ
+	 zI0/WThqCBwwTO3oKM9pVqvvpST/SigLVMAIRRB0OV3jRQh9C0Kiti219ZeHzcOB/N
+	 89AT5YOTsEUDcOR3qPlJQMDXwMWgDHnNnCFAxM9Y=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250701114023epcas5p33dd4f6f24af1c80abcf7c49a1993ea12~OHcHvVz-72271022710epcas5p3o;
+	Tue,  1 Jul 2025 11:40:23 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4bWh0j3BTSz6B9m7; Tue,  1 Jul
+	2025 11:40:21 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250701113336epcas5p1cfa1a369fad337b9a2211c7588cd7561~OHWMK6rHg2219722197epcas5p1d;
+	Tue,  1 Jul 2025 11:33:36 +0000 (GMT)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250701113333epsmtip106136eafe25d00b19c1917b7fa970e20~OHWJXty0k3251632516epsmtip1u;
+	Tue,  1 Jul 2025 11:33:33 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Bjorn Helgaas'" <helgaas@kernel.org>
+Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-fsd@tesla.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
+	<kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+	<jingoohan1@gmail.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<alim.akhtar@samsung.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
+	<arnd@arndb.de>, <m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
+	<pankaj.dubey@samsung.com>
+In-Reply-To: <20250627162943.GA1672296@bhelgaas>
+Subject: RE: [PATCH v2 06/10] dt-bindings: PCI: Add bindings support for
+ Tesla FSD SoC
+Date: Tue, 1 Jul 2025 17:03:31 +0530
+Message-ID: <02b201dbea7b$fbaf5390$f30dfab0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] mm: Optimize mprotect() by PTE-batching
-Content-Language: en-GB
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
- willy@infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- catalin.marinas@arm.com, will@kernel.org, Liam.Howlett@oracle.com,
- vbabka@suse.cz, jannh@google.com, anshuman.khandual@arm.com,
- peterx@redhat.com, joey.gouly@arm.com, ioworker0@gmail.com,
- baohua@kernel.org, kevin.brodsky@arm.com, quic_zhenhuah@quicinc.com,
- christophe.leroy@csgroup.eu, yangyicong@hisilicon.com,
- linux-arm-kernel@lists.infradead.org, hughd@google.com,
- yang@os.amperecomputing.com, ziy@nvidia.com
-References: <20250628113435.46678-1-dev.jain@arm.com>
- <20250628113435.46678-4-dev.jain@arm.com>
- <0315c016-d707-42b9-8038-7a2d5e4387f6@lucifer.local>
- <ec2c3f60-43e9-47d9-9058-49d608845200@arm.com>
- <5900e978-6349-4a3d-a384-758889b678a0@lucifer.local>
- <3776ac82-4cd5-41e7-9b96-137a1ae6f473@arm.com>
- <64c2ec85-87ed-4793-b0e9-a68eac1a8020@lucifer.local>
- <a2165422-0d78-4549-bc34-a8bbcdb6513f@arm.com>
- <61f50191-8bd0-4f25-b3b7-86605af8c0c6@lucifer.local>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <61f50191-8bd0-4f25-b3b7-86605af8c0c6@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-
-On 01/07/2025 11:21, Lorenzo Stoakes wrote:
-> On Tue, Jul 01, 2025 at 10:53:08AM +0100, Ryan Roberts wrote:
->> On 01/07/2025 09:51, Lorenzo Stoakes wrote:
->>> On Tue, Jul 01, 2025 at 09:30:51AM +0100, Ryan Roberts wrote:
->>>>>> In an ideal world we would flatten and just have mprotect_folio_pte_batch()
->>>>>> return the batch size considering all the relevant PTE bits AND the
->>>>>> AnonExclusive bit on the pages. IIRC one of Dev's earlier versions modified the
->>>>>> core folio_pte_batch() function to also look at the AnonExclusive bit, but I
->>>>>> really disliked changing that core function (I think others did too?).
->>>>>
->>>>> Yeah let's not change the core function.
->>>>>
->>>>> My suggestion is to have mprotect_folio_pte_batch() do this.
->>>>>
->>>>>>
->>>>>> So barring that approach, we are really only left with the batch and sub-batch
->>>>>> approach - although, yes, it could be abstracted more. We could maintain a
->>>>>> context struct that persists across all calls to mprotect_folio_pte_batch() and
->>>>>> it can use that to keep it's state to remember if we are in the middle of a
->>>>>> sub-batch and decide either to call folio_pte_batch() to get a new batch, or
->>>>>> call anon_exclusive_batch() to get the next sub-batch within the current batch.
->>>>>> But that started to feel overly abstracted to me.
->>>>>
->>>>> Having this nested batch/sub-batch loop really feels worse. You just get lost in
->>>>> the complexity here very easily.
->>>>>
->>>>> But i"m also not sure we need to maintain _that_ much state?
->>>>>
->>>>> We're already looping over all of the PTEs here, so abstracting _the entire
->>>>> loop_ and all the sub-batch stuff to another function, that is
->>>>> mprotect_folio_pte_batch() I think sensibly, so it handles this for you makes a
->>>>> ton of sense.
->>>>
->>>> So effectively turn mprotect_folio_pte_batch() into an iterator; have a struct
->>>> and a funtion to init the struct for the the number of ptes we want to iterate
->>>> over, then a per iteration function that progressively returns batches?
->>>
->>> Is that really necessary though?
->>>
->>> Idea is that mprotect_folio_pte_batch() returns the nr_ptes _taking into account
->>> the PAE stuff_.
->>
->> The issue is the efficiency. Assuming we want to keep the PTE scan contained
->> within the core folio_pte_batch() function and we _don't_ want to add PAE
->> awareness to that function, then we have 2 separate, independent loops; one for
->> PTE scanning and the other for PAE scanning. If the first loop scans through ans
->> returns 512, but then the PAE scan returns 1, we return 1. If we don't remember
->> for the next time that we already determined we have a PTE batch of 512 (now
->> 511) then we will rescan the 511 PTEs and potentially return 1 again due to PAE.
->> Then 510, then 509...
-> 
-> Hm really?
-> 
-> The idea is mprotect_folio_pte_batch() would look ahead and determine the
-> PAE/non-PAE sub-batch and return this nr_pages. It'd check 'this page is PAE, so
-> when's the next page that is not/hit max_nr_pages?'
-> 
-> So that'd be 1 in the first case.
-> 
-> Then you loop around and go again, and this time it'd check 'this page is !PAE,
-> so when's the next page that is/hit max_nr_pages?' and then it'd return 511.
-> 
-> A better example I think is e.g. if we had, for the sake argument, it return 16,
-> 16, 480.
-> 
-> Then we scan ahead 16, set nr_ptes = 16, process 16 PTEs. Then the same again,
-> then the same again only for 480 PTEs.
-> 
-> Each time we set nr_ptes = the sub-batch size.
-> 
-> So I don't think we'll see O(n^2) here?
-> 
-> It would be like:
-> 
-> 	do {
-> 		/* now returns sub-batch count */
-> 		nr_ptes = mprotect_folio_pte_batch(folio, addr, pte, oldpte,
-> 				   max_nr_ptes, FPB_IGNORE_SOFT_DIRTY);
-> 
-> 		... rest of logic remains roughly the same ...
-> 	} while (...);
-> 
-> I may be being naive here in some way?
-
-I believe so, yes. But usually it's me that ends up being wrong. Let me try to
-explain my point and we shall see...
-
-There are 2 separate requirements that need to be met for a batch to be assembled:
-
-  - All PTEs have to map consecutive pages from the same folio, all with the
-    same pgprots (except a/d/sd).
-  - If anon, all of the mapped pages must have the same PAE value.
-
-The first requirement is managed by scanning forward through PTEs until it hits
-the first PTE that is non-conformant (or hits max_nr). Currently implemented by
-folio_pte_batch().
-
-The second requirement is managed by scanning through the struct pages, checking
-PAE (or hits max_nr).
-
-The final batch is determined according to the smaller of the 2 batches
-determined using both these checks.
-
-So, assuming we don't want to fold both of those into the same loop (which would
-enable checking the PTE and PAE in lock-step, mprotect_folio_pte_batch() needs
-to call both folio_pte_batch() and loop over the pages looking at PAE in order
-to decide where the batch boundary is.
-
-If we want it to be stateless, then if it scans the PTEs first and that batch is
-larger than the batch determined for the subsequent PAE scan, we return the
-smaller and next time it is called it will rescan those excess PTEs. The same
-logic applies in reverse if you scan PAE first.
-
-If we make it stateless, it can remember "I've already scanned PTEs and the PTE
-batch ends at X. So now I just need to iterate through that to create
-sub-batches taking PAE into account".
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLemVNzYEMOy/tIwP8yQfjCLghe+gHQOY9Ysgk/TyA=
+Content-Language: en-in
+X-CMS-MailID: 20250701113336epcas5p1cfa1a369fad337b9a2211c7588cd7561
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250627162949epcas5p1fc5eebd0036116ce2913cdcbabdab1fd
+References: <CGME20250627162949epcas5p1fc5eebd0036116ce2913cdcbabdab1fd@epcas5p1.samsung.com>
+	<20250627162943.GA1672296@bhelgaas>
 
 
-> 
->>
->> That feels inefficient to me. So I'd much rather just remember that we have a
->> batch of 512, then split into sub batches as needed for PAE compliance. Then we
->> only scan each PTE once and each struct page once.
->>
->> But to achieve this, we either need to merge the 2 loops or we need to carry
->> state across function calls (i.e. like an iterator).
->>
->>>
->>> Would this break anything?
->>
->> It's not about breaking anything, it's about scanning efficiently. Perhaps you
->> don't think it's worth worrying about in practice?
-> 
-> The question re: breaking was - if we re-do things like getting oldpte, ptent,
-> etc. on each sub-batch does _that_ break anything?
-> 
-> 
-> The current implementation is not acceptable on the basis of adding a horrible
-> level of complexity. That function is already terrible, and adding an inner loop
-> for this batch special casing with _sub batches_ to account for PAE- nobody is
-> going to understand what's going on.
-> 
-> 	do {
-> 		if (...) {
-> 			while (...) {
-> 				help!!!
-> 
-> 
-> We can do better, and I'm going to go further and say - this series _has_ to do
-> better, because I can't accept that, however we do it.
-> 
-> I want the efficiency gainz as much as you guys but I"m convinced we can do it
-> without causing eye bleeding confusion...
 
-That's completely reasonable - we will get there! I'm very happy for this to be
-refactored into help function(s) to make it more accessible.
+> -----Original Message-----
+> From: Bjorn Helgaas <helgaas@kernel.org>
+> Sent: 27 June 2025 22:00
+> To: Shradha Todi <shradha.t@samsung.com>
+> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+linux-
+> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-
+> fsd@tesla.com; manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
+> robh@kernel.org; bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org;
+> arnd@arndb.de; m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
+> Subject: Re: [PATCH v2 06/10] dt-bindings: PCI: Add bindings support for Tesla FSD SoC
+> 
+> On Wed, Jun 25, 2025 at 10:22:25PM +0530, Shradha Todi wrote:
+> > Document the PCIe controller device tree bindings for Tesla FSD
+> > SoC for both RC and EP.
+> 
+> > +++ b/Documentation/devicetree/bindings/pci/samsung,exynos-pcie.yaml
+> 
+> > -  clocks:
+> > -    items:
+> > -      - description: PCIe bridge clock
+> > -      - description: PCIe bus clock
+> 
+> > -  vdd10-supply:
+> > -    description:
+> > -      Phandle to a regulator that provides 1.0V power to the PCIe block.
+> > -
+> > -  vdd18-supply:
+> > -    description:
+> > -      Phandle to a regulator that provides 1.8V power to the PCIe block.
+> 
+> > +            - description: pcie bridge clock
+> > +            - description: pcie bus clock
+> 
+> Gratuitous "PCIe" capitalization changes here and in supplies below.
+> This is just plain English text so we can use English conventions.
+> 
+> > +        vdd10-supply:
+> > +          description:
+> > +            phandle to a regulator that provides 1.0v power to the pcie block.
+> > +
+> > +        vdd18-supply:
+> > +          description:
+> > +            phandle to a regulator that provides 1.8v power to the pcie block.
+> 
+> I *would* be OK if you dropped the periods at the end of these, which
+> would make them match the other descriptions in this binding.
+> 
+> > +++ b/Documentation/devicetree/bindings/pci/tesla,fsd-pcie-ep.yaml
+> 
+> I'm not sure about the "tesla,fsd-pcie-ep.yaml" filename.  I see that
+> it currently only describes a tesla endpoint, but it seems like maybe
+> this should be parallel to the "samsung,exynos-pcie.yaml" host
+> controller binding.
+> 
+> Bjorn
 
-I'm just saying that fundamentally, we either need to flatten this to a single
-loop so that the PTE and PAE can be assessed in lock-step and we never
-over-scan. Or we need to keep some state to remember when we have already
-scanned for a PTE batch and are currently working our way through that chunking
-it into sub-batches based on PAE. I don't think we should entertain a stateless
-two-loop solution.
+Actually there is no support for Exynos5433 in EP mode. Initially I named
+the binding file "samsung,exynos-pcie-ep.yaml" to make it parallel to the host
+controller bindings. But I received a comment that file names should match
+the compatible strings which makes sense so I changed it to this.
 
-> 
->>
->>>
->>> We might need to pass a flag to say 'don't account for this' for prot numa case.
->>
->> Yep, another bool ;-)
-> 
-> Yeah... but we can't sensibly add a flag for this so the flag idea doesn't fly
-> for that either... :>)
-> 
-> I mean I don't think we actually need that flag, let it skip the sub-batch size
-> then check again. Now that, I reckon, is a small overhead.
-
-Yeah, agreed. That's probably fine in practice.
-
-> 
->>
->>>
->>>>
->>>> Then we just have a simple loop here that gets the next batch and processes it?
->>
-> 
-> Another advantage of doing things this way is we can actually add a comment
-> explaining the sub-batch size.
-> 
-> Right now there's just absolutely _nothing_ and it's entirely unclear what on
-> earth is going on.
 
 
