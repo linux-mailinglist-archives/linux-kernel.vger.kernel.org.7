@@ -1,141 +1,151 @@
-Return-Path: <linux-kernel+bounces-711796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A004AEFFA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CEEEAEFFAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01637173BD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF054455DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECAD27CCCB;
-	Tue,  1 Jul 2025 16:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437D127C844;
+	Tue,  1 Jul 2025 16:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFMHXUn2"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGaaHLIs"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8B71D5CC6
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0021D27935A;
+	Tue,  1 Jul 2025 16:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387032; cv=none; b=bZoFoUzjClpKilksm4RS0MxigNgsramy4OhAosXuc3dZ7XRrWgP5NgxncgzmqUg6qPU01C5Pr8FqoODlmWVCVpBXQKhYXCu3lQRiKlR1MDoi/vOofeqjgO+h2XIydeGs0lAUOZwLw8PwGV3up0y3FHXsMOiAUVi5aUPkzDAhn3Q=
+	t=1751387117; cv=none; b=HBzRkv32iYY4zxgaeVOwJRB6kO+l8WjUWCR6lTLkVGOihA3FzomhMjuc0k1uM2VrlPt0cbbm8RjwTvXL3guQL6+sjRrt56TJ2wtjpD1j3ZPKt9CcNKihH81s/mjKmU7jTsUssy80b0/tw1hQo7iesbBpfJwIcoRAKQyI5zFrqPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387032; c=relaxed/simple;
-	bh=TRyKPGlzqNiaAIc+Td0ze+LpUFf6sYZ4Ct+UtsDxJJ8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Ov4GqmlLprQ8/rVli5T7wRCTKmK94tJRtbSuF82Lk73NXb6gUvIp7sHI/aeoR9T7sivAJkpRUvpC6OKkWuDYVtPgSWavqr2JasfsYd8wncoTmIyBvcD2U1T9M6y4De95dexpkOUzCkxrILzJia+W0pVkdKZPC7m5wGG4Sknjb6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IFMHXUn2; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-451d3f72391so36585255e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 09:23:50 -0700 (PDT)
+	s=arc-20240116; t=1751387117; c=relaxed/simple;
+	bh=5wzV07OONkCcGVSYEmRpzbVKPetUPjrh4BiFdFLy65Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pN0OpyOS48Kj1KGWuHAWXVfye6YrHLw9Aq8ztTiyWSrfUpPbIG+BcST/LHIJM6QZtbNWhEXqkaATnQtw2rW1BVJd8NavKQSKf474LT90grRSYi+/nBX0+E+mzba0lNmtOuqV1z2eZoladzlNoG0eZn2oCNMVs9pGua6MAab69+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGaaHLIs; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45363645a8eso41118515e9.1;
+        Tue, 01 Jul 2025 09:25:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751387029; x=1751991829; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1751387114; x=1751991914; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N84p1IfPOnU2LRyJ4jJI6ylTwqJRzAAmh1pUeFRFmtE=;
-        b=IFMHXUn26XoQxgu1PEOhUk+1DwDCC0gLL1fvGvxN6KXwHj83WYK7MaMemjuyu6Bj6C
-         s6kIMqsWWEeY8yBZuvpFt8JZmMrPDXLzxWb21dw+utltdf4Q9XhLNMkuhPzP6MKkXyvU
-         dBcze56B2AcofUbbLP3R0xmh/GJEWkmBoR6NoOIu4g7IW8Gr7tZgju0zBQiknwyUR2IK
-         ue+Vqe7Lp/z/zGd6Q9EBY7megXj46NTu3uPFLZZc78ubpCu7fSmApHW2EONsaOeOAMeK
-         x8JfK+lv1V7mTm2i5A0ZoE7eOfbWSgacnkUcWgy4hR21+6XBUe+RNurXqFZY993daOIe
-         AyUA==
+        bh=5wzV07OONkCcGVSYEmRpzbVKPetUPjrh4BiFdFLy65Q=;
+        b=RGaaHLIseCOWHPK71dnsnVSEeZPJiUEMFgCX5H/nCRjoFTiYFM3ItTnuPHk5E2vK1Q
+         +KSEMw1ORE8Y3sPnGIegXhodOVzBxtBvo48M/QgGyPT26tM5g5RSMpHIDKI1mdORAv00
+         vWkhPKongMnVqZacWHUufMxEbcQKaXWcbfuPo40Wa1y3hnBbI8essJ3vrBOnPD+vadeq
+         cGS2S5NAoNyc4+nHWJpJjXkcvCzmQFRRZZHtlwBmw2TFS/VjPH5PALJk9R7gaI64Knnb
+         qcDmBXn6g95wPIZ4cbaFBFVsNr0LgN/NwsmbpY32I5FXMpznVB2yN+f0n8ezEEfTJP2T
+         6Awg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751387029; x=1751991829;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N84p1IfPOnU2LRyJ4jJI6ylTwqJRzAAmh1pUeFRFmtE=;
-        b=ueqYsOtvXDasBvOxYD4L1CJLElPLqkJrA1rnkujfpV8aqTn4Vk/VG2pZwqUguTYIy1
-         zHI3TL5WK2YqtFJqMCNthfVACfL0taNJZ0Ku5WnAelKS3be+310sLIXA8ZRTZT+D6bSK
-         LJE3B69noWhd/AtwnGVJOqXCldhCWzD9gnNmUWq9vDy3X1mZJIGIB7sNaCFsAz5FM0RH
-         GvoiTT/eE4lWM0ZFaZW3GUpQZi9/WWaK3dpL38gWBb9ofQpqA44X/hA0fDw6EjWKRaCP
-         Jz7FRPRIFSABAuL14XtauFCSrJhQInRAYsi3yFe418Qw/dMzS6wJdpqpF3hMUjBsa/Ab
-         Z/GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFGygWXIgl2PeX1hWXG0L7IGsPNWMmvFjVQEOh0FFqvOqImxuo8To4yomVddrr00dC1tK39Yp6a+JKGRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy44F+fy8WZs5Tus2qJDPzgr5zsKpRRNlueXPSit8f4dArUANee
-	gllBHy8kmZT/D2H2Lq+tLLRqNCFOYihZSz1k5Ge2r0IdkPryXy84N/InK7OkOCYqz9WMIc+SJVC
-	PGJ6T6Pc=
-X-Gm-Gg: ASbGnctxDNE8ez4Nm/Spi0moqtEdoG5ayyZNKypZN9ueT17dxkrM5YDhSPMI7gBNOk4
-	fy3ytOpLfJaymPAzzhT3Z75wcYNC/okWKhtI+f4bBMX/wkTir1ctNvRzrGvTTEadZekokCqntsh
-	4qAndtmuZRctid7ovJ9/CzxXNjPiONnPnvjeQIpHsQpxUMVLKb+TfTOufguKtbIVbifJ5vdx0MY
-	UzzQfnUIcn8yaWexYIc0oZRegdxYrkvmPtjuLziXPqY4nrdhE2dYAumM2dJkhWj+ExsnkX84biH
-	9gb+v7QXCyF4iZd0EEaFSL0CNZo+y08eqfLje/PHB+anJsTMUND71awlKL+68vUp3270ug3VIpF
-	Ks58=
-X-Google-Smtp-Source: AGHT+IF76AvC+yZFLcI56pCMDzSJYwqFxY/61zrbScuKifRBlFHkGuW5GbezYGfN5iWuHq0HbK4jxA==
-X-Received: by 2002:a05:600d:7:b0:442:cd03:3e2 with SMTP id 5b1f17b1804b1-4538eedf21cmr160209575e9.2.1751387029430;
-        Tue, 01 Jul 2025 09:23:49 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7213:c700:4dad:b69a:9c81:2e57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e528a9sm13932521f8f.60.2025.07.01.09.23.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Jul 2025 09:23:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751387114; x=1751991914;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5wzV07OONkCcGVSYEmRpzbVKPetUPjrh4BiFdFLy65Q=;
+        b=dZXJwhd/dv1QsnLfu07p1tA8P5RImAe/Y9zrGpanUQfcAyDSUQh0W9dMFzoTKo3hLo
+         5/xYwtx6xspG1LqsRfIVfBHmYU/zao/ki5eOy0PjV0JQSL97iIfSwxfUMNls0s8yRUtQ
+         uQGxl7/2PW4JjxLrwfONfUynGra4GK1b6h1cUrlP48IKhY01+XAIHp72mTH1FclxyA5A
+         QujsIvR12O9BuM6b+TwBcSbtw4qrIPXxuYOpSgLwoXA3aXc7Tr/AX3Jt0vn63XNvmdqD
+         D4UAe2VxHdv16dTXuLDqfU4AVDZqGZkEKQzvZ4X9w8EF21AVdbHMtUZLHRUj6KDkt1zL
+         jeng==
+X-Forwarded-Encrypted: i=1; AJvYcCWQJyZsF+zWzumR0zZciX66dvJyAylHvAudfVgKSnbf7/hIkzWqvUQ/SQElMevyCqndwsOzRlOv09OydZJC@vger.kernel.org, AJvYcCX/v4YelcGDZrfDmoEf9w5h8+JM8hLfNk7f8WmeuVsV60/rYlvu2GfM6YhpvEE33WqjcGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5vC+5dj5/hBmow8TRsNX0ACwwD7+QwX34ggkig9csrcDaZz/2
+	SWds+Dcb/cRG5YuZdad/rZrp7KnXSQBQ70pZAQ2cLRcttSdzdk6sl0qCM/C0BNQGc8XP69s6d76
+	SwOZInA3unlT7vrxlWkdg9EfxXAdQ1oA=
+X-Gm-Gg: ASbGncvkWszU5Qi3W2KE8ypeuIGpXWH9pQ23xhix4czgbj2uPhXfxWXNZ90rl73PpGn
+	hiIJyxfkQWHM6duVz+EEIheIDjC1H5g+4xP0oOxj14a2Ch+KyMfijSeN/tsxQhtidI5WO2RqCq8
+	rBxVFUahtiXVRc2cZp3HOe2djVQh1L7yv2848QO9OgABx99EI/X6NPwtH8pUI=
+X-Google-Smtp-Source: AGHT+IGrbRuO8nnh6J7e2fn2C9dp4PIQ8S2KOPjswAGJgv02hKqPZh/BsJ/5lrQamHMIxxw8q9iaIkK1Xqmf/umPzGI=
+X-Received: by 2002:a05:600c:a11b:b0:453:5d8d:d1b8 with SMTP id
+ 5b1f17b1804b1-4538ee712f5mr157779215e9.30.1751387113839; Tue, 01 Jul 2025
+ 09:25:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250616095532.47020-1-matt@readmodwrite.com> <CAPhsuW4ie=vvDSc97pk5qH+faoKjz+b51MDYGA3shaJwNd677Q@mail.gmail.com>
+ <CAENh_SQPLHC8pswTRoqh0bQR84HHQmnO3bM07UQa1Xu9uY_3WA@mail.gmail.com>
+ <CAADnVQ+QyPqi7XJ2p=S9FVDbOxMXvVPU859n+2ApuRQv5T2S5w@mail.gmail.com>
+ <CAENh_SQgZ5yVpshKRhiezhGMDAMvgV7SmwD_8u++mACE33oNrg@mail.gmail.com>
+ <CAADnVQJgOyBCCySnBkTk-VCsz0dy+ppdGHpggxbtDpBBGhaXVg@mail.gmail.com>
+ <CALrw=nFvUwmpjUMYh5iJqjo6SbAO8fZt8pkys7iDjZHfpF2DxQ@mail.gmail.com>
+ <CAADnVQLC44+D-FAW=k=iw+RQA057_ohTdwTYePm5PVMY-BEyqw@mail.gmail.com>
+ <CAENh_SSduKpUtkW_=L5Gg0PYcgDCpkgX4g+7grm4kxucWmq0Ag@mail.gmail.com>
+ <CAADnVQ+_UZ2xUaV-=mb63f+Hy2aVcfC+y9ds1X70tbZhV8W9gw@mail.gmail.com> <CAGis_TUNfUOD3+GdbJn1U33W8wW5pWmASxiMa5e5+5-BqJ-PKw@mail.gmail.com>
+In-Reply-To: <CAGis_TUNfUOD3+GdbJn1U33W8wW5pWmASxiMa5e5+5-BqJ-PKw@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 1 Jul 2025 09:25:00 -0700
+X-Gm-Features: Ac12FXwru2RjEeaSQs6NLU8YH1f68FRveHhLdYSTc7Dp87lT_tm2nHkVaU2Cv1A
+Message-ID: <CAADnVQJp-AtrRj_XESbE5TUj6_dGNDwpRWwu2vEHv1HGOb4Fdw@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Call cond_resched() to avoid soft lockup in trie_free()
+To: Matt Fleming <mfleming@cloudflare.com>
+Cc: Matt Fleming <matt@readmodwrite.com>, Ignat Korchagin <ignat@cloudflare.com>, 
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-team <kernel-team@cloudflare.com>, Jesper Dangaard Brouer <hawk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 01 Jul 2025 17:23:48 +0100
-Message-Id: <DB0UVXK5ATOQ.3JOWJ0A1JNIAF@linaro.org>
-Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Bartosz Golaszewski"
- <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: qrb4210-rb2: fix GPIO lookup
- flags for i2c SDA and SCL
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Bartosz Golaszewski" <brgl@bgdev.pl>, "Bjorn Andersson"
- <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250701-qcom-gpio-lookup-open-drain-v1-0-9678c4352f11@linaro.org> <20250701-qcom-gpio-lookup-open-drain-v1-2-9678c4352f11@linaro.org>
-In-Reply-To: <20250701-qcom-gpio-lookup-open-drain-v1-2-9678c4352f11@linaro.org>
 
-On Tue Jul 1, 2025 at 10:01 AM BST, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Jun 30, 2025 at 6:28=E2=80=AFAM Matt Fleming <mfleming@cloudflare.c=
+om> wrote:
 >
-> The I2C GPIO bus driver enforces the SDA and SCL pins as open-drain
-> outputs but the lookup flags in the DTS don't reflect that triggering
-> warnings from GPIO core. Add the appropriate flags.
+> On Fri, 27 Jun 2025 at 20:36, Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > Good. Now you see my point, right?
+> > The cond_resched() doesn't fix the issue.
+> > 1hr to free a trie of 100M elements is horrible.
+> > Try 100M kmalloc/kfree to see that slab is not the issue.
+> > trie_free() algorithm is to blame. It doesn't need to start
+> > from the root for every element. Fix the root cause.
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> It doesn't take an hour to free 100M entries, the table showed it
+> takes about a minute (67 or 62 seconds).
 
-Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
+yeah. I misread the numbers.
 
-> ---
->  arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> I never claimed that kmalloc/kfree was at fault. I said that the loop
+> in trie_free() has no preemption, and that's a problem with tries with
+> millions of entries.
 >
-> diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/d=
-ts/qcom/qrb4210-rb2.dts
-> index a37860175d2733214f1b257e84d5cb4821033242..bdf2d66e40c62596b8b024de8=
-33835a0750df35d 100644
-> --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
-> @@ -5,6 +5,7 @@
-> =20
->  /dts-v1/;
-> =20
-> +#include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/leds/common.h>
->  #include <dt-bindings/sound/qcom,q6afe.h>
->  #include <dt-bindings/sound/qcom,q6asm.h>
-> @@ -65,8 +66,8 @@ hdmi_con: endpoint {
->  	i2c2_gpio: i2c {
->  		compatible =3D "i2c-gpio";
-> =20
-> -		sda-gpios =3D <&tlmm 6 GPIO_ACTIVE_HIGH>;
-> -		scl-gpios =3D <&tlmm 7 GPIO_ACTIVE_HIGH>;
-> +		sda-gpios =3D <&tlmm 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios =3D <&tlmm 7 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> =20
+> Of course, rewriting the algorithm used in the lpm trie code would
+> make this less of an issue. But this would require a major rework.
+> It's not as simple as improving trie_free() alone. FWIW I tried using
+> a recursive algorithm in trie_free() and the results are slightly
+> better, but it still takes multiple seconds to free 10M entries (4.3s)
+> and under a minute for 100M (56.7s). To fix this properly it's
+> necessary to use more than two children per node to reduce the height
+> of the trie.
 
+What is the height of 100m tree ?
+
+What kind of "recursive algo" you have in mind?
+Could you try to keep a stack of nodes visited and once leaf is
+freed pop a node and continue walking.
+Then total height won't be a factor.
+The stack would need to be kmalloc-ed, of course,
+but still should be faster than walking from the root.
+
+> And in the meantime, anyone who uses maps with millions
+> of entries is gonna have the kthread spin in a loop without
+> preemption.
+
+Yes, because judging by this thread I don't believe you'll come
+back and fix it properly.
+I'd rather have this acute pain bothering somebody to fix it
+for good instead of papering over.
 
