@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-711934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D7DAF0236
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:55:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314A3AF0239
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC44E4E1C3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017194851C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0200B27FD70;
-	Tue,  1 Jul 2025 17:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E1F281368;
+	Tue,  1 Jul 2025 17:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5tfX3sA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYJVIC8o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59061FC0A;
-	Tue,  1 Jul 2025 17:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED6928033E;
+	Tue,  1 Jul 2025 17:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751392514; cv=none; b=OQSuPNpisEuop47Xte6+P22njzFWOOvWjj/ZJ6pd9e0vbsPXSTrHHbNbUbVB5jLuq2q50IYBK0pGfXEwLAfDF2SdMaakW4asBRSTumFvwpBRDLnNsxabPFMNMPxh2K/8vptOV5QX7g8mQrTn0SbJtNBSCKtMsdZtxyurEY2KpQI=
+	t=1751392515; cv=none; b=iYhE9Dnk1VcRcDn6vhyfDRJm9FCgEv9BY4si+WtA7ftDwqJgzCJHsb4309IAvq/UNn/s6gNN7IDYFAxKMLVk6poCxrpJRgggeW1MXAcrGrLa3hlGnB97vGJ4RXpKbrpI2CVdeBgTCpD6QJ5l2OJ3kdRQjgzTAhewG4tmAh3iVmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751392514; c=relaxed/simple;
-	bh=mmJjoTZnRRpWNZphf6pjaNzOYayd41EX93Q6Qq8RYqU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GcYGCpibV8L+q+XlFVh6dts1EZbCDhaUyGumVcL9PlfEXrXnkk4CeGyb48zrly8C21x/uBrRgsgE7LmupjzGUXcdaWMb27UaAqJXvTAA/2giLYXmsIb3VXzKYIdqFQ2kghIe3MPS56y/2eqNlkX3IPtEPSNKWBvxYikX8+td4Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5tfX3sA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB85C4CEEB;
-	Tue,  1 Jul 2025 17:55:13 +0000 (UTC)
+	s=arc-20240116; t=1751392515; c=relaxed/simple;
+	bh=v8+OLAuTiHAT1pksO527T58c3OopbPn4PuU74fWWd3E=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ADOdoLYVgKpUmNTZFUsbrKR/qnx7DLl9x9RHf79oT5UI5JiNQj0PNFQc6lqKzcl5Lrcsh1xfi+saN9q2C3D2+IQLyolJUhqMmE2TNA846eQuGo5YGlPWjuH0BBJMbN5VhQb3K3dH4xAxWtaOO5WZvEPs3nLYyhVfuKpvB69PuAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYJVIC8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D830C4CEEB;
+	Tue,  1 Jul 2025 17:55:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751392513;
-	bh=mmJjoTZnRRpWNZphf6pjaNzOYayd41EX93Q6Qq8RYqU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=j5tfX3sA3w9FTZlxot+ZE9FyfwB/J2/OlscAYwBtf8gXmysP3IjrUwHibMmOApwJs
-	 PBuOayHEeGXFbORxbbZQ8tlpzH09RynMef9jf0ess32IbjE7BwWLewweZNeUFgRngC
-	 nE6MsMTKbeHJc06Arl7noRxzog9dAIcqHMIzwUZIVP8yMdS282L/TJXbnQ0LeLBp5i
-	 9eescFs2hjOzsR/bnobYEM/400Z/6uEA/OU6vxS49WL+ORy2+qzhkIrn19Rz//E9/1
-	 3NyuoC0kxTDXFnmfDOZlwJMB8dO8gaXlJ5TidVLbgoFeOILfGKUuCYl1LFEyTC3n8Z
-	 vEK8onslal8MA==
+	s=k20201202; t=1751392515;
+	bh=v8+OLAuTiHAT1pksO527T58c3OopbPn4PuU74fWWd3E=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=eYJVIC8o60nMmf9asbv2HRdpxbMqRfU4vLIRXSssDrW6xAXvXBcY2PtIHStpyvlhp
+	 48QeWjPpf6nTRe6cU+KCLzxNgRn+4wcq9l5HxW6PQ4BhJUeEAgut2W50yS6qNQkxzl
+	 vIOG2HY1EAsMRRj9Zt0KU7w5TDJ/rmndO9LL4rDxk6gwTojkIQiWZFPfxoPHn4Bwpw
+	 5lKa6mMaS1xy2P6/Zp/2gZf5SIKV8GOolXKD87Nz8/1gGxGZhPU/+IcOjkBjAi1sUg
+	 mNgNdIYvawGPy1yseDX9A52EY3lIQ1/YZZ3BAdhRhZmoGWqRTc32wfSfvkql7RuR3k
+	 McMm+bA6wOZmA==
 From: Namhyung Kim <namhyung@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, acme@kernel.org, irogers@google.com, 
- Thomas Richter <tmricht@linux.ibm.com>
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com, 
- hca@linux.ibm.com, japo@linux.ibm.com
-In-Reply-To: <20250630091613.3061664-1-tmricht@linux.ibm.com>
-References: <20250630091613.3061664-1-tmricht@linux.ibm.com>
-Subject: Re: [PATCH] perf test: perf header test fails on s390
-Message-Id: <175139251355.738306.5236113669917576265.b4-ty@kernel.org>
-Date: Tue, 01 Jul 2025 10:55:13 -0700
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+ Thomas Richter <tmricht@linux.ibm.com>, Chun-Tse Shao <ctshao@google.com>, 
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ian Rogers <irogers@google.com>
+In-Reply-To: <20250628015553.1270748-1-irogers@google.com>
+References: <20250628015553.1270748-1-irogers@google.com>
+Subject: Re: [PATCH v2] perf test: Add basic callgraph test to record
+ testing
+Message-Id: <175139251461.738306.3668965739082793830.b4-ty@kernel.org>
+Date: Tue, 01 Jul 2025 10:55:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,16 +67,10 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Mon, 30 Jun 2025 11:16:13 +0200, Thomas Richter wrote:
-> commit 2d584688643fa ("perf test: Add header shell test")
-> introduced a new test case for perf header. It fails on s390
-> because call graph option -g is not supported on s390.
-> Also the option --call-graph dwarf is only supported for
-> the event cpu-clock.
+On Fri, 27 Jun 2025 18:55:53 -0700, Ian Rogers wrote:
+> Give some basic perf record callgraph coverage.
 > 
-> Remove this option and the test succeeds.
 > 
-> [...]
 Applied to perf-tools-next, thanks!
 
 Best regards,
