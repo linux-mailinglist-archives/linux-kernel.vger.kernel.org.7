@@ -1,81 +1,151 @@
-Return-Path: <linux-kernel+bounces-711822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4E3AF0006
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A53AF0023
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142571883635
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2CA1C065E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7D0279DD8;
-	Tue,  1 Jul 2025 16:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A2127EC7C;
+	Tue,  1 Jul 2025 16:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2uH7cHf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IIgTbIr3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7771E1A8401;
-	Tue,  1 Jul 2025 16:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B0527E06E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387920; cv=none; b=pHL70MeVrmkGdTtMcn8s1CwFvqvduNcwyTju2tt7N5aaFS/0a6eaWH4orXOhatFg7ZXJwC/vnXWxBHkxqCU4V/Tvdc/uKNBjpS93gqz6yp8CQ9fhwdv2pZS9sgb71tCwkHK8hj43sSIhMeLI/MMwzeQetJMtv/LhPqD/7+KBcpU=
+	t=1751387953; cv=none; b=Ry46WZUugHkY3LJWwe1jCeIb1N+KkWh3kQ6Fn5z6GnanwvhgX/8dqlOlYwiy2GLAvS3E8Zko7IO/XgXzQvh+leOw9qVNbtuaSImZLsCXNB/S0B6l/VipeBgdpPwqidX5KFaRTSkUBCCP2S8NjrchdMrBTw1pNx5AJxAA+Rm33G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387920; c=relaxed/simple;
-	bh=4z/Fq5xO7/oOY0pBWsyMxZ96iISrUCQepYFM3hvTOvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2xgi0xMV3lPZgpNqCNO7y0YQF/1CxeJGn1Gw3c6iNDWN8LWtretd+p8XXxrCuonzCOQpauY9FXg1ldTxHpUtrK0ZCoAsqk3t/QQpsNdbK8tQVfeIGTelghgDVT0IFkHww8edWlPUYlqVuIArb0jWhoxcY2grkVwy/kFqhgYTM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2uH7cHf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6589DC4CEEB;
-	Tue,  1 Jul 2025 16:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751387920;
-	bh=4z/Fq5xO7/oOY0pBWsyMxZ96iISrUCQepYFM3hvTOvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L2uH7cHfMSvl8HSTyLXtxMZv1E+ph/Ji+EOfme4NeNcxublBKDdz0nNePf6LwfMRb
-	 FBNDVks/DTKoPktmwdkmTSturMwjc5zueJiCLkpvcGvI6uLgx40ir5oc+ev9sVZ5cO
-	 8TNrv9FgARg+4LnK7owfHwgxNEpwNKrvqi5bbZvVdv1+bmuPQuqVAuW0QT8NeoVkSo
-	 ry80q4+/CcbLhDrNh2LfvUKKzir9YwYIEcAvqGDaN7kB0q/zHOzYqG4H1f+J9WFC3J
-	 yoIC9o1z9802RuGDWg1LNF8b4F7RgZUTLTgC2eOW4LeY9vak22FF+wEuVFa5JoA8ag
-	 nsXBoE2AEYAUg==
-Date: Tue, 1 Jul 2025 18:38:35 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: microchip-core: re-fix fake detections w/
- i2cdetect
-Message-ID: <qmuqhle6z5xc7kz5c3ofqstb4couphqy57ff5w2lsupcdye7mq@rtkdzztxcx6z>
-References: <20250630-shopper-proven-500f4075e7d6@spud>
+	s=arc-20240116; t=1751387953; c=relaxed/simple;
+	bh=uT1tmzY8aqGpAfMHZ/0ZFb7NqQ+YPhzb8xiQfHsiL6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BpJd2o3fKnauLlJWZUxyDIvsZTjvU0uOyxinmIw1Ax/Z0xCIrIwaqM2qY+XD3Cu45zlFmuVHgDo0grnXjggLC6PsMQl1YshptWp4vWwyb1Q3wdNEUdcC7GxAdoyWibpHJcVYgBdq2ZcznHNSGClD/L2iCG5QRvSYywhyCmucFM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IIgTbIr3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751387951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7k4azEyuX7ZG5TiA6CUYD8w2mJuuzVeBBXu65ekEOQ=;
+	b=IIgTbIr3lILEUKhZOTU6T5pbFZH7oFpNe9zhz8yJ/dR8d8omjQ/7WC1auSlVrm05I9YKfD
+	fQ5qOUu0CQnDYEr6s3XdNSyVosqc1MFD6Zw54Oy9+ETEQnxPC+qAFiW0OAx7MxAkuZdMbD
+	8k1XpvZZrJD4c9pQHnOoEceDHUCoeHE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-581-EQ2zBC8qOSuiT9NcI9_FlQ-1; Tue,
+ 01 Jul 2025 12:39:07 -0400
+X-MC-Unique: EQ2zBC8qOSuiT9NcI9_FlQ-1
+X-Mimecast-MFC-AGG-ID: EQ2zBC8qOSuiT9NcI9_FlQ_1751387946
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C20F18011EF;
+	Tue,  1 Jul 2025 16:39:05 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.81])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AC737180045B;
+	Tue,  1 Jul 2025 16:39:01 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paulo Alcantara <pc@manguebit.org>
+Subject: [PATCH 01/13] netfs: Fix hang due to missing case in final DIO read result collection
+Date: Tue,  1 Jul 2025 17:38:36 +0100
+Message-ID: <20250701163852.2171681-2-dhowells@redhat.com>
+In-Reply-To: <20250701163852.2171681-1-dhowells@redhat.com>
+References: <20250701163852.2171681-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630-shopper-proven-500f4075e7d6@spud>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Conor,
+When doing a DIO read, if the subrequests we issue fail and cause the
+request PAUSE flag to be set to put a pause on subrequest generation, we
+may complete collection of the subrequests (possibly discarding them) prior
+to the ALL_QUEUED flags being set.
 
-On Mon, Jun 30, 2025 at 04:18:17PM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> Introducing support for smbus re-broke i2cdetect, causing it to detect
-> devices at every i2c address, just as it did prior to being fixed in
-> commit 49e1f0fd0d4cb ("i2c: microchip-core: fix "ghost" detections").
-> This was caused by an oversight, where the new smbus code failed to
-> check the return value of mchp_corei2c_xfer(). Check it, and propagate
-> any errors.
-> 
-> Fixes: d6ceb40538263 ("i2c: microchip-corei2c: add smbus support")
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+In such a case, netfs_read_collection() doesn't see ALL_QUEUED being set
+after netfs_collect_read_results() returns and will just return to the app
+(the collector can be seen unpausing the generator in the trace log).
 
-merged to i2c/i2c-host-fixes.
+The subrequest generator can then set ALL_QUEUED and the app thread reaches
+netfs_wait_for_request().  This causes netfs_collect_in_app() to be called
+to see if we're done yet, but there's missing case here.
 
-Thanks,
-Andi
+netfs_collect_in_app() will see that a thread is active and set inactive to
+false, but won't see any subrequests in the read stream, and so won't set
+need_collect to true.  The function will then just return 0, indicating
+that the caller should just sleep until further activity (which won't be
+forthcoming) occurs.
+
+Fix this by making netfs_collect_in_app() check to see if an active thread
+is complete - i.e. that ALL_QUEUED is set and the subrequests list is empty
+- and to skip the sleep return path.  The collector will then be called
+which will clear the request IN_PROGRESS flag, allowing the app to
+progress.
+
+Fixes: 2b1424cd131c ("netfs: Fix wait/wake to be consistent about the waitqueue used")
+Reported-by: Steve French <sfrench@samba.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Paulo Alcantara <pc@manguebit.org>
+Tested-by: Steve French <sfrench@samba.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/misc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 43b67a28a8fa..0a54b1203486 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -381,7 +381,7 @@ void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
+ static int netfs_collect_in_app(struct netfs_io_request *rreq,
+ 				bool (*collector)(struct netfs_io_request *rreq))
+ {
+-	bool need_collect = false, inactive = true;
++	bool need_collect = false, inactive = true, done = true;
+ 
+ 	for (int i = 0; i < NR_IO_STREAMS; i++) {
+ 		struct netfs_io_subrequest *subreq;
+@@ -400,9 +400,11 @@ static int netfs_collect_in_app(struct netfs_io_request *rreq,
+ 			need_collect = true;
+ 			break;
+ 		}
++		if (subreq || !test_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags))
++			done = false;
+ 	}
+ 
+-	if (!need_collect && !inactive)
++	if (!need_collect && !inactive && !done)
+ 		return 0; /* Sleep */
+ 
+ 	__set_current_state(TASK_RUNNING);
+
 
