@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-711337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E5DAEF952
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FF5AEF995
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE1D1886647
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82B53A3466
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183192741CE;
-	Tue,  1 Jul 2025 12:54:17 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933412749F8;
+	Tue,  1 Jul 2025 13:01:44 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B99F21D5BC;
-	Tue,  1 Jul 2025 12:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CC714A60C;
+	Tue,  1 Jul 2025 13:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751374456; cv=none; b=JghcinEAuZsswJvYx4Be8RVlSkwZ7TonxTfYLo7wEom/jGtmnha/pEJvHWc4/WxljIAR/ccznAa7ga5zWVUqakdK4cAlLKwKxY0brC3N7lAhqSyhIyzld4qPLMsmhvRHc0+WjwNnY4nNerVJn+Qh2dw/+xl3UJNMxC6PCPqLa5M=
+	t=1751374904; cv=none; b=pKJpfXMqFddvGKvL/FUDMmd6MQz5th8nEvCOyy1lMwXDCrxWq2CcUAkHiOXEo3FR4WuG1kRXTtqNDXxwNs6wz2YQsqvrs+F4QYwpPrv87EIDU1KKcsMacr+4BFqm/jx0l5zh1bI2yl3/Jf3Z2kJE1uvW8SkhyWGFQiA/Kiuv8vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751374456; c=relaxed/simple;
-	bh=Dm4yxBSfVhY6e3BMkI0DCmsCmNv16N07mzalzA335AU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CI6xlAKHU0xWWk9VHmU5EL6SFwyEzSiy9z1ErfABeQWWYJiCPQtuH0Q7AG59P4c5oa4MAY/wBy1/RaAjniycmu5URVxG0JfTCfJoIthyOT/Ur8wp3BYRjUPRRNLurcD0Tj31NJVS43XCFIW/8JIpY77uh52Ka7oqKjesiaZcB+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+	s=arc-20240116; t=1751374904; c=relaxed/simple;
+	bh=LA2ArV5iKjCvKVcMwoIx6D3lwI8PFzt6jo7T774jI/0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hzsQKR88k8SrJlFZBh7D7i23L1FVUIwlVUNgK/0E9/SNiQVV1g1bK6L5ahL6+8M9cZPixDe5WNIH58/UAWxXWeTvGFxBqYuGqU3/13iEKHrm4OG6IdZSImDQCJjK3kIJmVke8UhPNQQaqX6OiH5NdO1oMoMpwdMvr/HZehlCzHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bWjZb5wpBz6L4vL;
-	Tue,  1 Jul 2025 20:51:19 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 369E614038F;
-	Tue,  1 Jul 2025 20:54:10 +0800 (CST)
-Received: from localhost (10.122.19.247) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 1 Jul
- 2025 14:54:09 +0200
-Date: Tue, 1 Jul 2025 13:54:08 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>
-Subject: Re: [PATCH v2] cxl: make cxl_bus_type constant
-Message-ID: <20250701135408.00003144@huawei.com>
-In-Reply-To: <2025070138-vigorous-negative-eae7@gregkh>
-References: <2025070138-vigorous-negative-eae7@gregkh>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bWjj72lPrz14Lnv;
+	Tue,  1 Jul 2025 20:56:59 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 738481800B1;
+	Tue,  1 Jul 2025 21:01:39 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 1 Jul 2025 21:01:38 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<shaojijie@huawei.com>
+Subject: [PATCH v4 net-next 0/3] Support some features for the HIBMCGE driver
+Date: Tue, 1 Jul 2025 20:54:43 +0800
+Message-ID: <20250701125446.720176-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-On Tue,  1 Jul 2025 14:07:39 +0200
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Support some features for the HIBMCGE driver
 
-> Now that the driver core can properly handle constant struct bus_type,
-> move the cxl_bus_type variable to be a constant structure as well,
-> placing it into read-only memory which can not be modified at runtime.
-> 
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: linux-cxl@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ChangeLog:
+v3 -> v4:
+  - Fix git log syntax issues, suggested by Larysa Zaremba
+  v3: https://lore.kernel.org/all/20250626020613.637949-1-shaojijie@huawei.com/
+v2 -> v3:
+  - Use fixed_phy to re-implement the no-phy scenario, suggested by Andrew Lunn
+  v2: https://lore.kernel.org/all/20250623034129.838246-1-shaojijie@huawei.com/
+v1 -> v2:
+  - Fix code formatting errors, reported by Jakub Kicinski
+  v1: https://lore.kernel.org/all/20250619144423.2661528-1-shaojijie@huawei.com/
+---
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Jijie Shao (3):
+  net: hibmcge: support scenario without PHY
+  net: hibmcge: adjust the burst len configuration of the MAC controller
+    to improve TX performance.
+  net: hibmcge: configure FIFO thresholds according to the MAC
+    controller documentation
 
-> ---
-> v2: fix up the subject line to be correct
-> 
->  drivers/cxl/core/port.c | 2 +-
->  drivers/cxl/cxl.h       | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index eb46c6764d20..0696f7fcef56 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -2293,7 +2293,7 @@ static const struct attribute_group *cxl_bus_attribute_groups[] = {
->  	NULL,
->  };
->  
-> -struct bus_type cxl_bus_type = {
-> +const struct bus_type cxl_bus_type = {
->  	.name = "cxl",
->  	.uevent = cxl_bus_uevent,
->  	.match = cxl_bus_match,
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 3f1695c96abc..e7b66ca1d423 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -815,7 +815,7 @@ int cxl_dvsec_rr_decode(struct cxl_dev_state *cxlds,
->  
->  bool is_cxl_region(struct device *dev);
->  
-> -extern struct bus_type cxl_bus_type;
-> +extern const struct bus_type cxl_bus_type;
->  
->  struct cxl_driver {
->  	const char *name;
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 57 +++++++++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 38 +++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  |  8 +++
+ 3 files changed, 103 insertions(+)
+
+-- 
+2.33.0
 
 
