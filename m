@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-712209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0472AF062A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:03:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66585AF0624
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9114F3A835A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A333BB329
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D81B27A903;
-	Tue,  1 Jul 2025 22:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFF4278150;
+	Tue,  1 Jul 2025 22:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHlaW8L8"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nb6q70EP"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CAD19995E;
-	Tue,  1 Jul 2025 22:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B62E7260F;
+	Tue,  1 Jul 2025 22:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751407387; cv=none; b=Nz6e77lQLEtEPmqb3LgV5Qow+1OqskjN5pSRUL8urkRjsNXrlyWKV4oMXaXWy2dg6MLR5QBx0UHwUI/tVjKLimcAcsTDi9eAlFApFZh3sk7LEJdx4eeQN0R0RFBMo8iepGRC+vbQL9yyIAXVu6vGmuqwaSfXa2s0bO2oQ5vEAtk=
+	t=1751407341; cv=none; b=mEq94+nwEwEzYCowhcO4HI/AkLqb35T1HNNJMh0HKrG8v8Eh3NDK+MWZwW509KiU0mjx2Cv31e0TgLiUYBeieRcEj8qa5B8z3/iO5rCBV4Lt2buqT5rJkj5pQrVilnElsnga38wyYcrQrr1lHenqRQjQAVpb/5upgnLzvnKSHLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751407387; c=relaxed/simple;
-	bh=6u6DYp8XHiqMAtZhMlgpyQ1cp2/ZUdYKWCN5VTWJ8x4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E4NKIqEd8K8vDjOzRr+t1v2u+3mplHWoF2/9jRyYYFsJhdmxbYCxdM8xGUGvBdPisd1R1faVHini3XnrxgcZsPrPgEyEDgmuLQvlyT8ChdAR5wUo3DWnDxc0uWtKRs3JvaHhgrbqg9W73xYBOTY9WThn6I77RcorYEiSVdNyaeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHlaW8L8; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1751407341; c=relaxed/simple;
+	bh=/UEZb8NkTVMB0RuIfOdOOTMZsG9K+IXgRCinG9NNSXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iR9s8ShvVG+30BlAEQ4SJrp+1IjBvtwSLl+ugjm4LnSWmFd0GbKh2JmwlfDbBs0dSu9/wFxOGr9KF/F4OYZCefrReVJvKalUGTXMnnP31xQtUAVSatPek0O1JuQ01mEVgxuS4dnxWmrscEiqrk+Xg8/0ovPmkPy+CFn85BA+hn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nb6q70EP; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so15533790a12.1;
-        Tue, 01 Jul 2025 15:03:05 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e85e06a7f63so3133517276.1;
+        Tue, 01 Jul 2025 15:02:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751407384; x=1752012184; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aCH6UWaWdMtSV5w3YLUgKyRDkxeGFe8bXumroDH0Y/Y=;
-        b=AHlaW8L8poAYNfhMAgrnvz8shBpO+4+lbBWtR+hkTeZV5oZ+jKmY5cKbtdfWZ6DzaP
-         wJGE03BXi78yXgJAx3pLK02YHbBF3HbM2mYAwJ0FyK/S44O1gviC61IVn7zWIAXcJq3/
-         S11k5lvOQq6wGZaVXT91tXM8gsdRNOuBk0Xpmu4m+EIxKcTS9Oyshx7/l6i1c3409XxC
-         sXA0UQ8ctt33EO1dlt6IJVMGwpledBntDYiYdxus9UAocs4RsOBs67ga9mOAgScnF+uI
-         ZR/O8ofhNCjcVYhG3Cpo3FT4+q/TmWWebaTbRS4uQ4h2SpPe+qh5d1gSqws4tG/weKMO
-         f7Cw==
+        d=gmail.com; s=20230601; t=1751407338; x=1752012138; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r+3A1kXTvGxPm2wKLJImng/HgBPkwj3/5xTfa5vLd9M=;
+        b=Nb6q70EPN0pkXppjque2cH+WtCPP5r5Ykw0ry/PzhSF497qwEbgLICcEpxRK0qNrPx
+         IWvo6JrMILw3rhIb4HSbtOIAZM+yDTSwDGgVGg2vmjhM1m7xHSxsK5li5sCytVvt1GGu
+         dmfw51ZE5mjJjGjmVVDdyLYYX6LiNu/rXvDBXR54wXW6+flIrsYtVM5pY1WP7fgn2VFl
+         QHziO2KKGNAnRvWP/gpQzI6ofgKVTpAQ2T7HtqSOuC0KM6en3t8Rdwni9snSj1UZHCbt
+         4XecUtl11bC16Cqix8exunJQ61lwkev6W1eh4GJKOXc1Rf9OjUFkI3t2JCCsAEnZIW3y
+         h4hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751407384; x=1752012184;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aCH6UWaWdMtSV5w3YLUgKyRDkxeGFe8bXumroDH0Y/Y=;
-        b=p+1UTQ0U/m9qZO5HEbhrJpVJtPGqqtn7hxm457zc+cFgHEzjrueFUZtci8BU5RSJY0
-         yNsKh76UO8l6ZNjrBOoBEmSJtlL4vVgdpZ/JxnJ+ER0nMBDShF3CKni6VEZ52n9uj7Mw
-         6LjJYABolv5TFr+6piVfOH4Ry8K9pQDHaaqBSJQ6pVRCtK3/by2WGTyuR1Osf3MAXoca
-         88Wor6dK3XeCwERDecWmIxIekvFgYfTpfTXoFbzYOyeyFgD/Rn58+mnWUDGbTnKHzsIS
-         bYPfJaH6+t11TV4NxD0h7BH1huZrPBm16xwMocceb7Wu4KwbETlBZB/z4mW859tCPYWV
-         nasA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2rKvPPV+Fb7wM/XATbzBK3KXUXOs0FykU9b146dSC3PM3rr8YHjiYc2W4umWaVN1fpM1RzQokXUE+WR8=@vger.kernel.org, AJvYcCVNYVJz1IoTIBYerwDJ/y+LNRp0DtnzqwEQ7C3OF8wjmK6szzH4UKFiD5AUVSvXyMwmHuiH7ArnjOFG@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ9LySHQZxbNN0m6HJLIOzz3NlSh8+GOA8KaGC5ngGm+b27jBh
-	TY0EClxwj/R0Mi67tTGehhEK9Zrm2XHeZOxwIdEYYcPF2TtK0QMSYO8AJ1Eceg==
-X-Gm-Gg: ASbGnctpjn4H4ZEa//0RVI6Wy+BrUp66Pp3WWMwqH3GSQrw+5Rj8KIM8c4J/EKW1p1a
-	HBFzGKol9ZYzBkfjqOnlu63FL/j/1pGXrI03X+KAHf1h/tJ4uaLZ8Vyx7nTpQD6P4xHJYT+HuTp
-	nzn0tFBNL7278gaoy37h5vAF97Tq+3bs0IbpBkW//K/fYqh9QIPWyAZq7jlJab22KgcCVh4Im/y
-	UHGIZ3T8pk9Qc6fVUGK1+v84QIpV05O1UiGSjMXOIcU7cGoNB3GvPcSUicdDE6yCCxt8AubzANd
-	er43DvE5uz1QVlJ+29lsX9JrAuiM+LPfKvruBOzp1fYv4so08n3bHgyq97eXMN0r7+RN+nl6PEQ
-	GrP3qqW2VgmqeHa2xbBVc138iaigSeiOBlg==
-X-Google-Smtp-Source: AGHT+IGb0hSrbnoMf338DLIN4x8Shdh32qqzM9p3b8N6w2kChFiXV5nx4bbPUXJPHmioNc/LM3NIog==
-X-Received: by 2002:a17:907:9448:b0:ae3:6dc7:1ac3 with SMTP id a640c23a62f3a-ae3c399eaf1mr20986466b.15.1751407383224;
-        Tue, 01 Jul 2025 15:03:03 -0700 (PDT)
-Received: from playground.localdomain ([82.79.237.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a16asm959756266b.72.2025.07.01.15.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 15:03:02 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-pwm@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: imx-tpm: reset counter if CMOD is 0
-Date: Tue,  1 Jul 2025 18:01:47 -0400
-Message-Id: <20250701220147.1007786-1-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1751407338; x=1752012138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r+3A1kXTvGxPm2wKLJImng/HgBPkwj3/5xTfa5vLd9M=;
+        b=rTwx+NH6xFJ1aabo/FNsVX/4+nS/SEoPPEYXzIFFYubcS8risdvHWDGO4AEzKihqme
+         /4y27PHK9tgl74aqXRb33KeOc0OSf3IniVSX6uRObEhXywZZap4en7Sgy6f2GlxToNn3
+         ZoguuCjGL9IpiJgQ6E4QsIfDuA1BRER/PNiYRl8Jpl+b1lsFfjW78t8Ph5kVHSXNy+FC
+         gJ7pgfxPsspQyxi6HmmFMsyI4PQLM6OKDWUUuv9CtlReMSDOFCa44x6g776X8mXwEtEn
+         M7M3F7KRxomheG22WJB9XhUkFQBIByZCk6B9eujIEW80PnmMFl8KoADo6JVncMVmpMrv
+         m6vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6hcI/P/I2YuUUuP/wLodRzc/hID1bWWvvhrHRJ2i1mLh6q0LTQIMytnngOxwTwnYDUf2UQLdPBts=@vger.kernel.org, AJvYcCVwBtltbo2X1hzX2FxUTntpYEdQVFyLHwRzrneHxFdsVRRcVkykX6GIu69daf7BO0M+OSEUPI/ztyI2jRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwweZ/w9Fbyhv2Z5vE78rw6n0BNVNV2OMRRocHQ4VpQJ9aHons6
+	EITKe0CEBe3XzeSZa+AOVRs1WnmAegDSK46qaDhb5vVTqhkGG47OWXbb0yRFqNzDIW6yEjJI1T+
+	HXLbciBqsP9fLqHclzYJ51TL4UN/WlK4E3Siskk8=
+X-Gm-Gg: ASbGncvRp5ZBX1DS4STzMspdv3mCwuf3qmyDIGyTkPMmatt5y+CwZsDwugK08Ssrlr6
+	A+0S+zA5qvrctTKjQdXIedAkAeHWiXl6dmXjoU68xdp32PNTG2sr5gIEL3UqLjD3CFSGc2Edjxw
+	JZdwLKnvgKyUFpI39RHLpxBlxdSJSbRuk1TKH571p4
+X-Google-Smtp-Source: AGHT+IF2UwMzQTrU3c/1ff/h/O/X4HdiWRMl22fU7K+HHjqvTPMz+NeEM0BS0HZeGjnyecFyCDlnJtDG71RLt/iQtNg=
+X-Received: by 2002:a05:690c:ec3:b0:70e:1771:c165 with SMTP id
+ 00721157ae682-7164d47332amr5473697b3.29.1751407338021; Tue, 01 Jul 2025
+ 15:02:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250701215648.95912-1-sivany32@gmail.com>
+In-Reply-To: <20250701215648.95912-1-sivany32@gmail.com>
+From: Sivan Zohar Kotzer <sivany32@gmail.com>
+Date: Wed, 2 Jul 2025 01:02:06 +0300
+X-Gm-Features: Ac12FXyoix9dUSUaftAXwYQOV8H9M1SaO6QN7zS1MwNHDnFdaMqKkUFGl-8U9sU
+Message-ID: <CAB_eDKbTzZh7Dp8E1LroEOb4zVA6Mo0guoRqh3p18ipaZuUAug@mail.gmail.com>
+Subject: Re: [PATCH v1] Linux 6.16-rc2
+To: Daniel Lezcano <daniel.lezcano@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: elazarl@gmail.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+This email was sent by accident, my apologies.
 
-As per the i.MX93 TRM, section 67.3.2.1 "MOD register update", the value
-of the TPM counter does NOT get updated when writing MOD.MOD unless
-SC.CMOD != 0. Therefore, with the current code, assuming the following
-sequence:
-
-	1) pwm_disable()
-	2) pwm_apply_might_sleep() /* period is changed here */
-	3) pwm_enable()
-
-and assuming only one channel is active, if CNT.COUNT is higher than the
-MOD.MOD value written during the pwm_apply_might_sleep() call then, when
-re-enabling the PWM during pwm_enable(), the counter will end up resetting
-after UINT32_MAX - CNT.COUNT + MOD.MOD cycles instead of MOD.MOD cycles as
-normally expected.
-
-Fix this problem by forcing a reset of the TPM counter before MOD.MOD is
-written.
-
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- drivers/pwm/pwm-imx-tpm.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c
-index 7ee7b65b9b90..30f271826aed 100644
---- a/drivers/pwm/pwm-imx-tpm.c
-+++ b/drivers/pwm/pwm-imx-tpm.c
-@@ -204,6 +204,19 @@ static int pwm_imx_tpm_apply_hw(struct pwm_chip *chip,
- 		val |= FIELD_PREP(PWM_IMX_TPM_SC_PS, p->prescale);
- 		writel(val, tpm->base + PWM_IMX_TPM_SC);
- 
-+		/*
-+		 * VERY IMPORTANT: if CMOD is set to 0 then writing
-+		 * MOD will NOT reset the value of the TPM counter.
-+		 *
-+		 * Therefore, if CNT.COUNT > MOD.MOD, the counter will reset
-+		 * after UINT32_MAX - CNT.COUNT + MOD.MOD cycles, which is
-+		 * incorrect.
-+		 *
-+		 * To avoid this, we need to force a reset of the
-+		 * counter before writing the new MOD value.
-+		 */
-+		if (!cmod)
-+			writel(0x0, tpm->base + PWM_IMX_TPM_CNT);
- 		/*
- 		 * set period count:
- 		 * if the PWM is disabled (CMOD[1:0] = 2b00), then MOD register
--- 
-2.34.1
-
+=E2=80=AB=D7=91=D7=AA=D7=90=D7=A8=D7=99=D7=9A =D7=99=D7=95=D7=9D =D7=93=D7=
+=B3, 2 =D7=91=D7=99=D7=95=D7=9C=D7=99 2025 =D7=91-0:56 =D7=9E=D7=90=D7=AA =
+=E2=80=AASivan Zohar-Kotzer=E2=80=AC=E2=80=8F
+<=E2=80=AAsivany32@gmail.com=E2=80=AC=E2=80=8F>:=E2=80=AC
+>
+> From: Linus Torvalds <torvalds@linux-foundation.org>
+>
+> ---
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 69c534982415..ba0827a1fccd 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -2,7 +2,7 @@
+>  VERSION =3D 6
+>  PATCHLEVEL =3D 16
+>  SUBLEVEL =3D 0
+> -EXTRAVERSION =3D -rc1
+> +EXTRAVERSION =3D -rc2
+>  NAME =3D Baby Opossum Posse
+>
+>  # *DOCUMENTATION*
+> --
+> 2.45.2
+>
 
