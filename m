@@ -1,94 +1,187 @@
-Return-Path: <linux-kernel+bounces-711824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473D9AF001E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E600AF005C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37D31C02371
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:39:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E033B4E29
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6491C3306;
-	Tue,  1 Jul 2025 16:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE7E27E04C;
+	Tue,  1 Jul 2025 16:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1ero2cp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RLgFCTGL"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAEE27E05F;
-	Tue,  1 Jul 2025 16:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576DF2797B2
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387952; cv=none; b=t/9CKBFMWJBKCRBx53QCwvLAYYQeDm06WsIH3CGIegCloHfzysd/7B9SI5DGr0z6KjN0bn1xKG1vFI6PfysRM3dfkvv5sGuUwGik7K+YUoZa6J49pKb6nGvvGCfWGbfDFU3Hl7JRjz/nFLJRTubNMCxzN4RRELdWuyhHoTs7Iyk=
+	t=1751388031; cv=none; b=Xzsdd6yJqaCE9DDGlKT48ax1f8ywlJyRnAkwT0p2075TnSleK9fTj+wcMwZdl9x7qa5nCNwa/044DJOBl+o0WwIjLqjTwAjeHOdrAEZoddw49yyI1gGPOg3SJevwKohY9xh7IYEnvL2Vo5XE+L5F8RS6q3y3tk9t6qcet/eQSDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387952; c=relaxed/simple;
-	bh=KLnOYWMx8dtRRlrLc1EiKeuVmR84Zv0deauTJHdmEMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KquL+Ek6s37qWdS8ZeElNZo5dSlMCeNLfNSbqG4nh3Ysgcywblpa8zSVsxjZC1VgLvUHtZH3OqhbOU2fqGaG3v6leroZrXMqokvI7Z4vG6MIRr633nEdQRBZjUuBOMbp0eoHz5td3V/kiHmAiQIN33wjv2mRFuEjhqD5xB+dZfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1ero2cp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 683DCC4CEEB;
-	Tue,  1 Jul 2025 16:39:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751387951;
-	bh=KLnOYWMx8dtRRlrLc1EiKeuVmR84Zv0deauTJHdmEMo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=S1ero2cpFfF+jYqpi6yPUy6RqrRUXhpbNPqmgtwj6rJOzkBSUwptSOwERdpe5Qt4z
-	 Gh58eiH9s5lIpaKyg2A0zGT1rWL8fSqdQCBrWWk4hNs2CglLHz9H6N1PYYa1+u6S3v
-	 SuVRLlQSDGXdDIHZoJjGjQgQcXHITAfyEJjPS1iJ4eOqu9iOuqZ7/lFbTveZvtQnxa
-	 rPbPCp2tk7qie8STl2nuPXT47A7RTGzp81aC50XiLnlVf0KT1gj3gJlvwopKncZG++
-	 QP8QCN+ZHT8RYWfzFd/LQD9DQnQK5MF7/dnTdFUjBrcnnu3QeLrhzmCqUfc6yL0bIj
-	 spSiIHyTJgGMg==
-Date: Tue, 1 Jul 2025 11:39:10 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: lpieralisi@kernel.org, jingoohan1@gmail.com, kwilczynski@kernel.org,
-	bhelgaas@google.com, robh@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: dwc: Make dw_pcie_ptm_ops static
-Message-ID: <20250701163910.GA1838835@bhelgaas>
+	s=arc-20240116; t=1751388031; c=relaxed/simple;
+	bh=hk/shajpqhbI5aSCnWtJ+BEGb1jgnvRLCCAWvwffxH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ln7nsRsyaj+6xQLIV8jxeXWKsZpxikSvLm6Jlzkvt1bLkb1dd8mI88MfqrlMm1CZuJoHWIzMlSKeUHQRhg+zjSKfaNcRQ0XOBq1WKiKeKnMIXNGmaiDD1+kGwHuwpkbrdtrhRBDqdL3johvq1RFFxYJ8015J/4FUYbDgl0aPi6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RLgFCTGL; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1a4fe95a-f029-43b2-aed1-594365254b6a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751388026;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b4v8Xkp+c9mceTr0Q8v7/zrK1IVjBYCeckNhf49+7xs=;
+	b=RLgFCTGLYZGv7GE+j3tCpdemaHKjOPsy83ZDnu3AOOXA8PZ6TwJihlUBHoT7RsdgGvY6rs
+	iSal0Uk/kJUOk03z5i/GAeuQMbCS3TEj1la5NEJxKz28cXHvOKvXg3HkEhsMlGBvKe6R30
+	aQ6wK1DMkfzkt1bFhcGJmZpmKTI4P2o=
+Date: Tue, 1 Jul 2025 12:40:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250701120856.15839-1-mani@kernel.org>
+Subject: Re: [PATCH net-next v2 12/18] net: macb: match skb_reserve(skb,
+ NET_IP_ALIGN) with HW alignment
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+ Harini Katakam <harini.katakam@xilinx.com>,
+ Rafal Ozieblo <rafalo@cadence.com>,
+ Haavard Skinnemoen <hskinnemoen@atmel.com>, Jeff Garzik <jeff@garzik.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+ <20250627-macb-v2-12-ff8207d0bb77@bootlin.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20250627-macb-v2-12-ff8207d0bb77@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 01, 2025 at 05:38:56PM +0530, Manivannan Sadhasivam wrote:
-> dw_pcie_ptm_ops is not used outside of this file, so make it static. This
-> also fixes the sparse warning:
+On 6/27/25 05:08, Théo Lebrun wrote:
+> If HW is RSC capable, it cannot add dummy bytes at the start of IP
+
+Receive-side coalescing? Can you add a brief description of this
+feature to your commit message?
+
+> packets. Alignment (ie number of dummy bytes) is configured using the
+> RBOF field inside the NCFGR register.
 > 
->   drivers/pci/controller/dwc/pcie-designware-debugfs.c:868:27: warning: symbol 'dw_pcie_ptm_ops' was not declared. Should it be static?
+> On the software side, the skb_reserve(skb, NET_IP_ALIGN) call must only
+> be done if those dummy bytes are added by the hardware; notice the
+> skb_reserve() is done AFTER writing the address to the device.
 > 
-> Fixes: 852a1fdd34a8 ("PCI: dwc: Add debugfs support for PTM context")
-> Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-> Closes: https://lore.kernel.org/linux-pci/20250617231210.GA1172093@bhelgaas
-> Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
+> We cannot do the skb_reserve() call BEFORE writing the address because
+> the address field ignores the low 2/3 bits. Conclusion: in some cases,
+> we risk not being able to respect the NET_IP_ALIGN value (which is
+> picked based on unaligned CPU access performance).
+> 
+> Fixes: 4df95131ea80 ("net/macb: change RX path for GEM")
 
-Thanks, looks good to me.
+Do any existing MACBs support RSC? Is this a fix? 
 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->  drivers/pci/controller/dwc/pcie-designware-debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/net/ethernet/cadence/macb.h      |  3 +++
+>  drivers/net/ethernet/cadence/macb_main.c | 21 ++++++++++++++++++---
+>  2 files changed, 21 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> index c67601096c48..7356b0f6a2ad 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> @@ -865,7 +865,7 @@ static bool dw_pcie_ptm_t4_visible(void *drvdata)
->  	return (pci->mode == DW_PCIE_EP_TYPE) ? true : false;
->  }
+> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+> index adc70b6efd52b0b11e436c2c95bb5108c40f3490..d42c81cf441ce435cad38e2dfd779b0e6a141bf3 100644
+> --- a/drivers/net/ethernet/cadence/macb.h
+> +++ b/drivers/net/ethernet/cadence/macb.h
+> @@ -523,6 +523,8 @@
+>  /* Bitfields in DCFG6. */
+>  #define GEM_PBUF_LSO_OFFSET			27
+>  #define GEM_PBUF_LSO_SIZE			1
+> +#define GEM_PBUF_RSC_OFFSET			26
+> +#define GEM_PBUF_RSC_SIZE			1
+>  #define GEM_PBUF_CUTTHRU_OFFSET			25
+>  #define GEM_PBUF_CUTTHRU_SIZE			1
+>  #define GEM_DAW64_OFFSET			23
+> @@ -733,6 +735,7 @@
+>  #define MACB_CAPS_MIIONRGMII			BIT(9)
+>  #define MACB_CAPS_NEED_TSUCLK			BIT(10)
+>  #define MACB_CAPS_QUEUE_DISABLE			BIT(11)
+> +#define MACB_CAPS_RSC_CAPABLE			BIT(12)
+
+No need to be _CAPABLE, we're already _CAPS_
+
+>  #define MACB_CAPS_PCS				BIT(24)
+>  #define MACB_CAPS_HIGH_SPEED			BIT(25)
+>  #define MACB_CAPS_CLK_HW_CHG			BIT(26)
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 48b75d95861317b9925b366446c7572c7e186628..578e72c7727d4f578478ff2b3d0a6316327271b1 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -1317,8 +1317,19 @@ static void gem_rx_refill(struct macb_queue *queue)
+>  			dma_wmb();
+>  			macb_set_addr(bp, desc, paddr);
 >  
-> -const struct pcie_ptm_ops dw_pcie_ptm_ops = {
-> +static const struct pcie_ptm_ops dw_pcie_ptm_ops = {
->  	.check_capability = dw_pcie_ptm_check_capability,
->  	.context_update_write = dw_pcie_ptm_context_update_write,
->  	.context_update_read = dw_pcie_ptm_context_update_read,
-> -- 
-> 2.45.2
+> -			/* properly align Ethernet header */
+> -			skb_reserve(skb, NET_IP_ALIGN);
+> +			/* Properly align Ethernet header.
+> +			 *
+> +			 * Hardware can add dummy bytes if asked using the RBOF
+> +			 * field inside the NCFGR register. That feature isn't
+> +			 * available if hardware is RSC capable.
+> +			 *
+> +			 * We cannot fallback to doing the 2-byte shift before
+> +			 * DMA mapping because the address field does not allow
+> +			 * setting the low 2/3 bits.
+> +			 * It is 3 bits if HW_DMA_CAP_PTP, else 2 bits.
+> +			 */
+> +			if (!(bp->caps & MACB_CAPS_RSC_CAPABLE))
+> +				skb_reserve(skb, NET_IP_ALIGN);
+>  		} else {
+>  			desc->ctrl = 0;
+>  			dma_wmb();
+> @@ -2787,7 +2798,9 @@ static void macb_init_hw(struct macb *bp)
+>  	macb_set_hwaddr(bp);
+>  
+>  	config = macb_mdc_clk_div(bp);
+> -	config |= MACB_BF(RBOF, NET_IP_ALIGN);	/* Make eth data aligned */
+> +	/* Make eth data aligned. If RSC capable, that offset is ignored by HW. */
+> +	if (!(bp->caps & MACB_CAPS_RSC_CAPABLE))
+> +		config |= MACB_BF(RBOF, NET_IP_ALIGN);
+>  	config |= MACB_BIT(DRFCS);		/* Discard Rx FCS */
+>  	if (bp->caps & MACB_CAPS_JUMBO)
+>  		config |= MACB_BIT(JFRAME);	/* Enable jumbo frames */
+> @@ -4108,6 +4121,8 @@ static void macb_configure_caps(struct macb *bp,
+>  		dcfg = gem_readl(bp, DCFG2);
+>  		if ((dcfg & (GEM_BIT(RX_PKT_BUFF) | GEM_BIT(TX_PKT_BUFF))) == 0)
+>  			bp->caps |= MACB_CAPS_FIFO_MODE;
+> +		if (GEM_BFEXT(PBUF_RSC, gem_readl(bp, DCFG6)))
+> +			bp->caps |= MACB_CAPS_RSC_CAPABLE;
+>  		if (gem_has_ptp(bp)) {
+>  			if (!GEM_BFEXT(TSU, gem_readl(bp, DCFG5)))
+>  				dev_err(&bp->pdev->dev,
 > 
+
 
