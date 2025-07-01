@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-710838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA62AEF1D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD757AEF1DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 10:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F6C188F5A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:51:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795BE3A1FD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 08:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E2626C3BD;
-	Tue,  1 Jul 2025 08:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PKCDd3wE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7D3237707;
+	Tue,  1 Jul 2025 08:51:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5124220F4F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4727722A7E9
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 08:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751359832; cv=none; b=sfdVIZDjFGEq8Qu9xw/SxNsNgSTzkjDuuHqBvYU+WgHKsucROcBSwR+0YFVx4re+wMQme8EPgxO9sz5s7K2AB3VAotQX2XdmKjpHvD36ef4nefJWc6v/3n/lAHw4Pl7Ne3rzwwITi5T+ZQ9ZSH8KcnexZGefSS+DYeIvxTeOSgI=
+	t=1751359885; cv=none; b=WcUsWIlJpdyVgk820oKwOuel5JGey+Mnrwfk3q7rdIE31nJ2byexGtrxUgi0WgnsNbi21nQODEkh3vSSO7T7U78CUNbjWrdzI10rr6vxz+E2c37l83YqZRY0Xj/EIEJcPkG6Mzt7q4eK2n4phzoANTFYC39JCh8pqyP8KSogr8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751359832; c=relaxed/simple;
-	bh=7VWffLYp/5JzoHGHAqiHQaV/1rpYb+lDQUQ4g0pcvcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C3gk2Gw6Uye44ipH9giiDOXg2bHJi7nQcPGmnq5R1uXo8C3jaD5nfUxST3D0jIG9tQYW+otV29gk0PCa4gE8Kon0NVU8177uJUs1lm2MrC3sgs9wNQBphY9n+lBtd4Zu/sIe5pS7ISnbFniU8Tw7cBoWJtINtWPfIPD3ECp8lCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PKCDd3wE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE9F4C4CEEE;
-	Tue,  1 Jul 2025 08:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1751359831;
-	bh=7VWffLYp/5JzoHGHAqiHQaV/1rpYb+lDQUQ4g0pcvcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKCDd3wEXm29SJcVurH9+m/uW5A4keQOlXJTla4aTXdGUjj1H8aHgANkWJlf/CD3Z
-	 8XK3JEcPYZ912uJQ0a0SID7bDuQBxxTNJGNPEFbapRbk0F/sSbTkpV03pRlhXrSR2q
-	 HRQvkVC2Mkf2QqU8bjSKMOuR99cA2IUnCmku9KXI=
-Date: Tue, 1 Jul 2025 10:50:28 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jan Kiszka <jan.kiszka@seimens.com>,
-	Bert Karwatzki <spasswolf@web.de>
-Subject: Re: [PATCH v10 2/5] driver core: don't always lock parent in shutdown
-Message-ID: <2025070157-undaunted-curler-bda3@gregkh>
-References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
- <20250625201853.84062-3-stuart.w.hayes@gmail.com>
+	s=arc-20240116; t=1751359885; c=relaxed/simple;
+	bh=a8dUA8AQN4IiNoUrmJw0vwsYuwyniVP6q+4ut/6dFT0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qLyY90UkGSg8Xkcl0++0xNvLrncSFzCpO1b5jF1W+eTalirjqBzx5pUJAiS6UMDM/PJOkS0EmN17G8+qZKkX77lJp7J2RlescEA1Jqib4QnLvBdgy9A1BVs80dv29e3jNm3Crd4QPw4A2hhCGGAdTq5AgMa7JAr7udFXLIXMIYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uWWhi-0006IB-Mc; Tue, 01 Jul 2025 10:51:02 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uWWhg-006F2S-27;
+	Tue, 01 Jul 2025 10:51:00 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uWWhb-0004aR-1k;
+	Tue, 01 Jul 2025 10:50:55 +0200
+Message-ID: <aafdb0e9dee2041ae64b2fe8677b4b3d45401bc8.camel@pengutronix.de>
+Subject: Re: [PATCH v2 0/4] drm/bridge: samsung-dsim: Stop controlling vsync
+ display FIFO flush in panels
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Inki Dae <inki.dae@samsung.com>, Jagan Teki
+ <jagan@amarulasolutions.com>,  Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>, Artur Weber
+ <aweber.kernel@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel@pengutronix.de
+Date: Tue, 01 Jul 2025 10:50:55 +0200
+In-Reply-To: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
+References: <20250627-dsi-vsync-flush-v2-0-4066899a5608@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625201853.84062-3-stuart.w.hayes@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jun 25, 2025 at 03:18:50PM -0500, Stuart Hayes wrote:
-> Don't lock a parent device unless it is needed in device_shutdown. This
-> is in preparation for making device shutdown asynchronous, when it will
-> be needed to allow children of a common parent to shut down
-> simultaneously.
-> 
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-> Signed-off-by: David Jeffery <djeffery@redhat.com>
-> ---
->  drivers/base/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index cbc0099d8ef2..58c772785606 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4823,7 +4823,7 @@ void device_shutdown(void)
->  		spin_unlock(&devices_kset->list_lock);
->  
->  		/* hold lock to avoid race with probe/release */
-> -		if (parent)
-> +		if (parent && dev->bus && dev->bus->need_parent_lock)
->  			device_lock(parent);
+On Fr, 2025-06-27 at 13:45 +0200, Philipp Zabel wrote:
+> This series enables the vsync flush feature in the samsung-dsim driver
+> unconditionally and removes the MIPI_DSI_MODE_VSYNC_FLUSH flag.
 
-What about parents for a device that is not on a bus?  Don't they need
-to be properly locked?
+Applied to drm-misc-next.
 
-
->  		device_lock(dev);
->  
-> @@ -4847,7 +4847,7 @@ void device_shutdown(void)
->  		}
->  
->  		device_unlock(dev);
-> -		if (parent)
-> +		if (parent && dev->bus && dev->bus->need_parent_lock)
->  			device_unlock(parent);
-
-Same here.
-
-thanks,
-
-greg k-h
+[1/4] drm/bridge: samsung-dsim: Always flush display FIFO on vsync pulse
+      commit: a36c533ad3e1b8c0326d665d2d02d2ef7aea8f92
+[2/4] drm/panel: samsung-s6d7aa0: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      commit: f488640e51312fbca02f9229d238a2aed7a8aac9
+[3/4] drm/panel: samsung-s6e8aa0: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      commit: 5c449ddbaba1c807c4674f92e5ebf6a887edb58c
+[4/4] drm/mipi-dsi: Drop MIPI_DSI_MODE_VSYNC_FLUSH flag
+      commit: 12853b279100adc7074b51db23bf62a41cb84cb8
 
