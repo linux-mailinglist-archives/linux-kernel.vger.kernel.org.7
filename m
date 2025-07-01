@@ -1,276 +1,239 @@
-Return-Path: <linux-kernel+bounces-711141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F063CAEF6CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4D8AEF655
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C73A07ABE7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:39:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC9E16E111
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F94E2741B3;
-	Tue,  1 Jul 2025 11:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145EB26F445;
+	Tue,  1 Jul 2025 11:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="I7kS7w0g"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="DnPyqWNv";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="IMDbMUQ7"
+Received: from mailrelay-egress12.pub.mailoutpod2-cph3.one.com (mailrelay-egress12.pub.mailoutpod2-cph3.one.com [46.30.211.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9F2272E72
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BE28821
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370028; cv=none; b=YKw6GpSzSMKLBmSRCa2twU2/W4b80hFAm6IM2j4LQNRpwgQr8DfmQUPRYFx/ET5+BMW28L8NqFZYkB1PHG7eqf7kXgyDOhYt6++bDO5+GKT7p+j35gPQ84Eum9I2a+ws0tg07fzMkD7az3jnw+hc925Bf9AsD7ogU3bUVTaS3lE=
+	t=1751368761; cv=none; b=fqSVahQJxI1LCSl+yV2gYQ0ArGSw83Q2yvXtJBbgYtkymmYjhGIk8lpcGKslqK7BHPQ5nH3TzHgKgAqiur8WeOCG4FrI/BPAwY8YwVszOin7qllXkCWTkAge7ZknX2l/AnlvKga6FEJFjNIUYNS8ukX7KR2i+Zx73gpqnAlQ+TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370028; c=relaxed/simple;
-	bh=bmyf4y1leYdUxCjaeGu9XhIqWb7rxoQsjyZU977/cbQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=QP2l5tewmMF3HGDaGzGzpsBnx/buQmTcNI4ycnGJXrAiflKrEBM1tysPyskvXpA9X7l1hIM/Poc4W71igeFn1FZhqEGTf74OvQJdTo3uYqfnEU2lgbHnp4gR//wlUbDRvJrx2kT6HKRTyTmgWnSVhuYfCRRllslkqk/m7EA4UOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=I7kS7w0g; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250701114018epoutp045738281bdefc06ab05c4dcc17c8d21bf~OHcDIwBy70990609906epoutp044
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:40:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250701114018epoutp045738281bdefc06ab05c4dcc17c8d21bf~OHcDIwBy70990609906epoutp044
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751370018;
-	bh=Y44ZngC9p0NB3MezaOSDWgPGnmy1iJ9G/uwh0PVGesk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=I7kS7w0grMn5BAv46zf20bUn4NnfACk2WhCR/jx2e72sS0SwyTHMXx86hVBBbYp/H
-	 l0NTvmOnEYjhAtmsDNLHWDpObx7gZY0qLp0DY01Ile98SxPYePSo1468WdCgC5UmYA
-	 Kr08AfPXd8ybJLREfw6Dym14N5osZoGoPuU8EH7c=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250701114018epcas5p3da61799c0a1f1b9952e9ee147a22346d~OHcCiPWjL2271522715epcas5p3i;
-	Tue,  1 Jul 2025 11:40:18 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bWh0c3prVz6B9m5; Tue,  1 Jul
-	2025 11:40:16 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250701111817epcas5p1aa3bcea4074a614451ae5e586fe81ff6~OHI0Oe2Uy0185401854epcas5p1z;
-	Tue,  1 Jul 2025 11:18:17 +0000 (GMT)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250701111814epsmtip20da990c40862028a8a169bea64463967~OHIxcFNzu2999529995epsmtip2C;
-	Tue,  1 Jul 2025 11:18:14 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Bjorn Helgaas'" <helgaas@kernel.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<linux-fsd@tesla.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
-	<kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-	<jingoohan1@gmail.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
-	<arnd@arndb.de>, <m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <20250627193046.GA1673824@bhelgaas>
-Subject: RE: [PATCH v2 09/10] PCI: exynos: Add support for Tesla FSD SoC
-Date: Tue, 1 Jul 2025 16:48:13 +0530
-Message-ID: <02b101dbea79$d7e086c0$87a19440$@samsung.com>
+	s=arc-20240116; t=1751368761; c=relaxed/simple;
+	bh=Wi3qTUOqLTwu6EydYZdUzDHX2+YaRYTHjrIsTbVXha8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rdRrdAYI+br+Fnq8I4fC4kA/KtXJpMuboGigH7PUxf9OzbxEWmChZO5MbGNzmIt3R0zXrChBSMHIXDKbggJZ/ekCir0oQdGFIltL13e1gnoO4OmgAIbPF9LTGOKqYfDCOoca10u/kGBxeoRqwV0F9hcPFMTKZcVDdVuI5Y7ASyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=DnPyqWNv; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=IMDbMUQ7; arc=none smtp.client-ip=46.30.211.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1751368756; x=1751973556;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=DHXuxV40u1ZYjDXLBVQbXs11RHOmrGLB2bnqKxDAyss=;
+	b=DnPyqWNviCmpJZ2Hfth/ae8KzTc8bC9btMPr1I8VVD/4t0UE+fWAzDmTpnpribFRkeG6dMqpB7JWX
+	 dwyZf3PS8aWEGKU2C5sIVsSLGX8+xpPAfnrf1Sf//Ca8AGbqgJXJ0PLMRD7etZhKTr5tGWgdom9219
+	 0AbgSZHChHYuFqn04J1SX4IpA6r4hfpr3Mq9KFCmlroV5wJhhEaBattoEIQQ/swKgW2vbKrCH8YNgh
+	 T/SIW7bykAwD16e+KP6UADGr28leGRSjPPx4iWEcC9G1FXuGn1uQ0CVR5P502IT3jlJUUqRZ+z78al
+	 Pvpb0LtmPdW1WzkiOQpTFsMzeNcs81Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1751368756; x=1751973556;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=DHXuxV40u1ZYjDXLBVQbXs11RHOmrGLB2bnqKxDAyss=;
+	b=IMDbMUQ7RkW5LhtaMJhpYbNC1TMzZWvyW51Z3IMABcj6SDyJ7yUS5UO2ltw2SrY9SaFjYYBm8VAwY
+	 Frwzcq7DA==
+X-HalOne-ID: 393bfb6b-566d-11f0-ab17-85eb291bc831
+Received: from smtpclient.apple (c188-150-224-8.bredband.tele2.se [188.150.224.8])
+	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 393bfb6b-566d-11f0-ab17-85eb291bc831;
+	Tue, 01 Jul 2025 11:19:16 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGhrL3pBtmKB+eUT+UdId2XMSsQswHJrC1DtINLLcA=
-Content-Language: en-in
-X-CMS-MailID: 20250701111817epcas5p1aa3bcea4074a614451ae5e586fe81ff6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250627193052epcas5p1cf3fc43c6a3c2e5ed9ad68ceac9c34bd
-References: <CGME20250627193052epcas5p1cf3fc43c6a3c2e5ed9ad68ceac9c34bd@epcas5p1.samsung.com>
-	<20250627193046.GA1673824@bhelgaas>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v9 3/4] rust: add support for NUMA ids in allocations
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <aGO5qadROziFuO35@google.com>
+Date: Tue, 1 Jul 2025 13:19:06 +0200
+Cc: linux-mm@kvack.org,
+ akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ rust-for-linux@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3D58CB40-CB1C-47A2-BB71-5C32B3609AE0@konsulko.se>
+References: <20250630221511.3325123-1-vitaly.wool@konsulko.se>
+ <20250630221640.3325306-1-vitaly.wool@konsulko.se>
+ <aGO5qadROziFuO35@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.200.121)
 
 
 
-> -----Original Message-----
-> From: Bjorn Helgaas <helgaas@kernel.org>
-> Sent: 28 June 2025 01:01
-> To: Shradha Todi <shradha.t@samsung.com>
-> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-linux-
-> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-
-> fsd@tesla.com; manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
-> robh@kernel.org; bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org;
-> conor+dt@kernel.org; alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org;
-> arnd@arndb.de; m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
-> Subject: Re: [PATCH v2 09/10] PCI: exynos: Add support for Tesla FSD SoC
-> 
-> On Wed, Jun 25, 2025 at 10:22:28PM +0530, Shradha Todi wrote:
-> > Add host and endpoint controller driver support for FSD SoC.
-> 
-> > +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> > @@ -20,6 +20,8 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/mod_devicetable.h>
-> >  #include <linux/module.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/mfd/syscon.h>
-> 
-> The trend is to sort these alphabetically.  The last couple additions
-> didn't observe this, but maybe these new ones could go a little
-> farther up and make it more sorted rather than less?
-> 
-> > +#define FSD_PCIE_CXPL_DEBUG_00_31		0x2C8
-> 
-> Existing #defines use lower-case hex; please follow suit.
-> 
-> > +/* to store different SoC variants of Samsung */
-> > +enum samsung_pcie_variants {
-> > +	FSD,
-> > +	EXYNOS_5433,
-> > +};
-> 
-> >  struct samsung_pcie_pdata {
-> >  	struct pci_ops				*pci_ops;
-> >  	const struct dw_pcie_ops		*dwc_ops;
-> >  	const struct dw_pcie_host_ops		*host_ops;
-> > +	const struct dw_pcie_ep_ops		*ep_ops;
-> >  	const struct samsung_res_ops		*res_ops;
-> > +	unsigned int				soc_variant;
-> > +	enum dw_pcie_device_mode		device_mode;
-> >  };
-> 
-> > +static u32 fsd_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
-> > +				u32 reg, size_t size)
-> > +{
-> > +	void __iomem *addr;
-> > +	u32 val;
-> > +
-> > +	addr = fsd_atu_setting(pci, base);
-> > +
-> > +	dw_pcie_read(addr + reg, size, &val);
-> > +
-> > +	return val;
-> 
-> Remove blank lines to match style of fsd_pcie_write_dbi2().
-> 
-> > +}
-> > +
-> > +static void fsd_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base,
-> > +				u32 reg, size_t size, u32 val)
-> > +{
-> > +	void __iomem *addr;
-> > +
-> > +	addr = fsd_atu_setting(pci, base);
-> > +
-> > +	dw_pcie_write(addr + reg, size, val);
-> 
-> Ditto.
-> 
-> > +}
-> > +
-> > +static void fsd_pcie_write_dbi2(struct dw_pcie *pci, void __iomem *base,
-> > +				u32 reg, size_t size, u32 val)
-> > +{
-> > +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> > +
-> > +	fsd_atu_setting(pci, base);
-> > +	dw_pcie_write(pci->dbi_base + reg, size, val);
-> > +	regmap_write(ep->sysreg, ep->sysreg_offset, ADDR_TYPE_DBI);
-> > +}
-> 
-> > +static int fsd_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-> > +				 unsigned int type, u16 interrupt_num)
-> > +{
-> > +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> > +
-> > +	switch (type) {
-> > +	case PCI_IRQ_INTX:
-> > +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
-> > +	case PCI_IRQ_MSIX:
-> > +		dev_err(pci->dev, "EP does not support MSIX\n");
-> 
-> s/MSIX/MSI-X/ to match spec usage.
-> 
+> On Jul 1, 2025, at 12:34=E2=80=AFPM, Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>=20
+> On Tue, Jul 01, 2025 at 12:16:40AM +0200, Vitaly Wool wrote:
+>> Add a new type to support specifying NUMA identifiers in Rust
+>> allocators and extend the allocators to have NUMA id as a
+>> parameter. Thus, modify ReallocFunc to use the new extended realloc
+>> primitives from the C side of the kernel (i. e.
+>> k[v]realloc_node_align/vrealloc_node_align) and add the new function
+>> alloc_node to the Allocator trait while keeping the existing one
+>> (alloc) for backward compatibility.
+>>=20
+>> This will allow to specify node to use for allocation of e. g.
+>> {KV}Box, as well as for future NUMA aware users of the API.
+>>=20
+>> Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
+>=20
+> My main feedback is that we should consider introducing a new trait
+> instead of modifying Allocator. What we could do is have a =
+NodeAllocator
+> trait that is a super-trait of Allocator and has additional methods =
+with
+> a node parameter.
+>=20
+> A sketch:
+>=20
+> pub unsafe trait NodeAllocator: Allocator {
+>    fn alloc_node(layout: Layout, flags: Flags, nid: NumaNode)
+>                -> Result<NonNull<[u8]>, AllocError>;
+>=20
+>    unsafe fn realloc_node(
+>        ptr: Option<NonNull<u8>>,
+>        layout: Layout,
+>        old_layout: Layout,
+>        flags: Flags,
+>        nid: NumaNode,
+>    ) -> Result<NonNull<[u8]>, AllocError>;
+> }
+>=20
+> By doing this, it's possible to have allocators that do not support
+> specifying the numa node which only implement Allocator, and to have
+> other allocators that implement both Allocator and NumaAllocator where
+> you are able to specify the node.
+>=20
+> If all allocators in the kernel support numa nodes, then you can =
+ignore
+> this.
 
-Thanks for the review! Will take care of all mentioned changes in next version
+This is an elegant solution indeed but I think that keeping the existing =
+approach goes better with the overall kernel trend of having better NUMA =
+support. My point is, if we add NodeAllocator as a super-trait and in a =
+foreseeable future all the Rust allocators will want/be required to =
+support NUMA (which is likely to happen), we=E2=80=99ll have to =
+=E2=80=9Cflatten=E2=80=9D the traits and effectively go back to the =
+approach expressed in this patch.
 
-> > @@ -373,13 +617,43 @@ static int exynos_pcie_probe(struct platform_device *pdev)
-> >  		return ret;
-> >
-> >  	platform_set_drvdata(pdev, ep);
-> > -	ret = samsung_irq_init(ep, pdev);
-> > -	if (ret)
-> > -		goto fail_regulator;
-> > -	ep->pci.pp.ops = pdata->host_ops;
-> > -	ret = dw_pcie_host_init(&ep->pci.pp);
-> > -	if (ret < 0)
-> > +
-> > +	if (pdata->res_ops->set_device_mode)
-> > +		pdata->res_ops->set_device_mode(ep);
-> > +
-> > +	switch (ep->pdata->device_mode) {
-> > +	case DW_PCIE_RC_TYPE:
-> > +		ret = samsung_irq_init(ep, pdev);
-> > +		if (ret)
-> > +			goto fail_regulator;
-> > +
-> > +		ep->pci.pp.ops = pdata->host_ops;
-> > +
-> > +		ret = dw_pcie_host_init(&ep->pci.pp);
-> > +		if (ret < 0)
-> > +			goto fail_phy_init;
-> > +
-> > +		break;
-> > +	case DW_PCIE_EP_TYPE:
-> > +		phy_init(ep->phy);
-> > +
-> > +		ep->pci.ep.ops = pdata->ep_ops;
-> > +
-> > +		ret = dw_pcie_ep_init(&ep->pci.ep);
-> > +		if (ret < 0)
-> > +			goto fail_phy_init;
-> > +
-> > +		ret = dw_pcie_ep_init_registers(&ep->pci.ep);
-> > +		if (ret)
-> > +			goto fail_phy_init;
-> > +
-> > +		pci_epc_init_notify(ep->pci.ep.epc);
-> > +
-> > +		break;
-> > +	default:
-> > +		dev_err(dev, "invalid device type\n");
-> >  		goto fail_phy_init;
-> > +	}
-> 
-> This would be a little nicer if you added soc_variant and device_mode
-> and the code that sets and tests them for exynos_5433 first in a
-> separate patch.  Then it would be more obvious that the new FSD parts
-> don't affect exynos_5433 since this patch would only be *adding*
-> FSD-specific things.
-> 
+>> +/// Non Uniform Memory Access (NUMA) node identifier
+>> +#[derive(Clone, Copy, PartialEq)]
+>> +pub struct NumaNode(i32);
+>> +
+>> +impl NumaNode {
+>> +    /// create a new NUMA node identifer (non-negative integer)
+>> +    /// returns EINVAL if a negative id or an id exceeding =
+MAX_NUMNODES is specified
+>> +    pub fn new(node: i32) -> Result<Self> {
+>> +        // SAFETY: MAX_NUMNODES never exceeds 2**10 because =
+NODES_SHIFT is 0..10
+>> +        if node < 0 || node >=3D bindings::MAX_NUMNODES as i32 {
+>> +            return Err(EINVAL);
+>> +        }
+>> +        Ok(Self(node))
+>> +    }
+>> +}
+>> +
+>> +/// Specify necessary constant to pass the information to Allocator =
+that the caller doesn't care
+>> +/// about the NUMA node to allocate memory from.
+>> +pub mod numa {
+>> +    use super::NumaNode;
+>> +
+>> +    /// No preference for NUMA node
+>> +    pub const NUMA_NO_NODE: NumaNode =3D =
+NumaNode(bindings::NUMA_NO_NODE);
+>> +}
+>=20
+> Instead of using a module, you can make it an associated constant of =
+the
+> struct.
+>=20
+> impl NumaNode {
+>    pub const NO_NODE: NumaNode =3D NumaNode(bindings::NUMA_NO_NODE);
+> }
+>=20
+> This way you can access the constant as NumaNode::NO_NODE.
 
-Sure,  I have no issues in splitting the patches further. Though unfortunately,
-I or anyone I know does not possess a board which has Exynos 5433 chipset.
-Therefore, I'm unable to verify these changes for Exynos chipset. I took care
-to not disturb the exynos flow functionally but would be great if someone
-could test this and confirm that it works well on Exynos 5433 after the changes.
+Thanks, noted.
 
-> >  static const struct samsung_pcie_pdata exynos_5433_pcie_rc_pdata = {
-> >  	.dwc_ops		= &exynos_dw_pcie_ops,
-> >  	.pci_ops		= &exynos_pci_ops,
-> >  	.host_ops		= &exynos_pcie_host_ops,
-> >  	.res_ops		= &exynos_res_ops_data,
-> > +	.soc_variant		= EXYNOS_5433,
-> > +	.device_mode		= DW_PCIE_RC_TYPE,
-> >  };
-> 
-> >  static const struct of_device_id exynos_pcie_of_match[] = {
-> > @@ -449,6 +756,14 @@ static const struct of_device_id exynos_pcie_of_match[] = {
-> >  		.compatible = "samsung,exynos5433-pcie",
-> >  		.data = (void *) &exynos_5433_pcie_rc_pdata,
-> >  	},
+>=20
+>> /// The kernel's [`Allocator`] trait.
+>> ///
+>> /// An implementation of [`Allocator`] can allocate, re-allocate and =
+free memory buffers described
+>> @@ -148,7 +175,7 @@ pub unsafe trait Allocator {
+>>     ///
+>>     /// When the return value is `Ok(ptr)`, then `ptr` is
+>>     /// - valid for reads and writes for `layout.size()` bytes, until =
+it is passed to
+>> -    ///   [`Allocator::free`] or [`Allocator::realloc`],
+>> +    ///   [`Allocator::free`], [`Allocator::realloc`] or =
+[`Allocator::realloc_node`],
+>>     /// - aligned to `layout.align()`,
+>>     ///
+>>     /// Additionally, `Flags` are honored as documented in
+>> @@ -159,7 +186,38 @@ fn alloc(layout: Layout, flags: Flags) -> =
+Result<NonNull<[u8]>, AllocError> {
+>>         unsafe { Self::realloc(None, layout, Layout::new::<()>(), =
+flags) }
+>>     }
+>>=20
+>> -    /// Re-allocate an existing memory allocation to satisfy the =
+requested `layout`.
+>> +    /// Allocate memory based on `layout`, `flags` and `nid`.
+>> +    ///
+>> +    /// On success, returns a buffer represented as `NonNull<[u8]>` =
+that satisfies the layout
+>> +    /// constraints (i.e. minimum size and alignment as specified by =
+`layout`).
+>> +    ///
+>> +    /// This function is equivalent to `realloc_node` when called =
+with `None`.
+>> +    ///
+>> +    /// # Guarantees
+>> +    ///
+>> +    /// When the return value is `Ok(ptr)`, then `ptr` is
+>> +    /// - valid for reads and writes for `layout.size()` bytes, =
+until it is passed to
+>> +    ///   [`Allocator::free`], [`Allocator::realloc`] or =
+[`Allocator::realloc_node`],
+>> +    /// - aligned to `layout.align()`,
+>> +    ///
+>> +    /// Additionally, `Flags` are honored as documented in
+>> +    /// =
+<https://docs.kernel.org/core-api/mm-api.html#mm-api-gfp-flags>.
+>> +    fn alloc_node(layout: Layout, flags: Flags, nid: NumaNode)
+>> +                -> Result<NonNull<[u8]>, AllocError> {
+>=20
+> I don't think this is how rustfmt would format this. Can you run =
+rustfmt
+> on your patch?
+>=20
+>=20
+Will do, thanks.
+
+~Vitaly
 
 
