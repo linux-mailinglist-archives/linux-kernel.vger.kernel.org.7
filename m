@@ -1,192 +1,87 @@
-Return-Path: <linux-kernel+bounces-711170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0419DAEF72A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:50:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885B9AEF745
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449DF4A3433
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F161C024EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D5127700A;
-	Tue,  1 Jul 2025 11:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MPBgrhp7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D2F26C3A3;
+	Tue,  1 Jul 2025 11:49:08 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FCE275AFF;
-	Tue,  1 Jul 2025 11:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75C270ECF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370487; cv=none; b=q58iSdYDDbyIMD8fNXblHV9uEp+N7xJzijQ50TR81rcTqtqsXv4ZJmEYa+rLgl2/fu7bw7nshh44uNhvW/PoKSpW84+ebaxoYjxOj5/tutfxIgV1akuWokW7XcWq8zmsjsJbWtXhCO8T4KwnP654BSp3fuwDFzmabpEa7WCvOUA=
+	t=1751370548; cv=none; b=s27GsXh9NmHt7O+FJusE1ZPgUvG0hQGJ++8osap7IcsZ5B9Ea7RmLzHTjcnV4LO/bwqMFpYigwGLRFqdpYTnRGT+129UxTCNgIiOSSN4XVKe6fPImCgIOfS9p1gLM8iE+4UztEDgVrm459GQpvFAcKoSEbFq/boJ/KXscxWAyMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370487; c=relaxed/simple;
-	bh=mSARHChrsSkZqv4FL5ywNNlM+mfq9RkAadWkjMMswZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eaFXdoRa9RxudpZLK6Az5uOsrvowsqD5Enak/E6SBF5YTOO0Cu3BCPeM3UtNTVFS9ETAedsPP7zkgU5KzgMWrT1UAouwToZxTO31bisvnykUXit3l7zJHukww2C0lmowSpBAi+G+QznIXEyrr5XyRjsBPWmfabAb3ieUXCCINuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MPBgrhp7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5618lCvZ026544;
-	Tue, 1 Jul 2025 11:47:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rCGpL5WtLCGHD7lGDK/ISop6wOAMqbvqcoNsJwiihW0=; b=MPBgrhp7EkFMuk/i
-	WvA1LuBdxuKhUs5pH0lkPCj+KvzspP8lCVgVeCn0zUo4mgxPfhWYjB9a3U7PAd56
-	Bo1VuKvFgqBOIFWnInNfxIg9/YFOrK8a8V1iiW/dpwciJPdpf6EoiuFPCsNQUZOn
-	/DogWUZySNf+K7FVN0tz7KuTX0fauaLt2fi12l5J7gDWa4hnxeDHTxqjliJ+lBK6
-	gIWHrLPmxm7N762zm9lPUDEOhBf920q8jRjVqHcsNhmyA584VA8+cbuEy+O2idMw
-	Fp7Urk6tyqY+yb+lkX5ZvVWM0qTfgYy6pPfqSzvDt7yT3Ss2LEKMi7BSBiQHBpsT
-	p1HHtw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j9pcrm2p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Jul 2025 11:47:54 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 561BlrvZ020980
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 1 Jul 2025 11:47:53 GMT
-Received: from [10.217.222.28] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 1 Jul
- 2025 04:47:47 -0700
-Message-ID: <2455f20c-130c-4f27-9cf4-6411e485b845@quicinc.com>
-Date: Tue, 1 Jul 2025 17:17:44 +0530
+	s=arc-20240116; t=1751370548; c=relaxed/simple;
+	bh=xiIu9Q+JBQzhP4JV6yKGx2gC9CfiR3waDVSEfFo8xq4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ArsK6Qu7JACJ4tebN+0Y6lD3JCZ7W6x05rN1WV9YJWG7lH+f9wkZPNvuC+aC6s+tOqXAr7W4H/YZ6Xzyxq1XPzu7bsyvnQCVxZjWlpP/WyUlMipLLz4CyCYStFwEP/t+EKnz/UhHvASAcT8doDM7F+xx5CP8Qdp+tmHn1M6Y0RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-876a65a7157so205225139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:49:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751370545; x=1751975345;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SQ0Xe1Uj5+T9e8E3H7IPeQ26NrnIPkbEwt6ppjAKp4Q=;
+        b=JrTX7pDjR2CeYMtEZRpY+s/LW4jjlRW059EWv6KIOb1fhtl/AXL16/qBMUAzyczdz2
+         t1ZXUNLQaFhzlB+EBbGcE11s7asBVJYOaNkhc8G4bnnvTeQ2qPLOUO/zSCfMIRHzPffY
+         /ONc6E4AvEYaDWy20sdpyRgfP3r+3PfFIujlhkY7aiWGcPaMX5tTXJZ5p/FYg8P1wsx+
+         Vi7F8lC5FfyS4ki8LlMXwlN70gt8o05tF48OoNrDd3iHgHYZMk6S9OFJHP7ki257Q2iG
+         wu7YGsMpXECpIeXqwI1VObufolUeVu26iDz68r2GO+ERrA4EFUIuV1rSKTwNR5ojnkyM
+         S/tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUe1VBElxnC0no0CwKDX7ZranW8mzl2MHlNAx2Y+mLLae6CQ7W8SzMtgMVVXyVAAH9icu6sSnNI3f8eJgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/DEaWySAa5/SCa0gV869h54BNODatHRdRz1fec0BjtSbqteG4
+	eovy4y4pXVberhr0YIZX3EoKjEqmJSEnIBQjqq0+VZLDRaswU8ql03NvOVVmhA865cxBSMiV9ps
+	O1+NrmDDaRX1OW1G1viPSumstu7Giex/EObqUlfmE8/7VbTfp/m9mDcQte4A=
+X-Google-Smtp-Source: AGHT+IF79EafPidSDP0318VB/7YRn/CSPQgRFERBA5FUlb7uKudth/VXbf1J3eVwpxkLZITrznP7bmcHlN/iS3ZpYyhE1CZLvydt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/12] firmware: qcom: tzmem: export shm_bridge
- create/delete
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu
-	<quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R.
- Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-CC: Harshal Dev <quic_hdev@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-doc@vger.kernel.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>
-References: <20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-0-024e3221b0b9@oss.qualcomm.com>
- <20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-8-024e3221b0b9@oss.qualcomm.com>
-Content-Language: en-US
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-In-Reply-To: <20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-8-024e3221b0b9@oss.qualcomm.com>
+X-Received: by 2002:a05:6602:7501:b0:876:bac1:f01e with SMTP id
+ ca18e2360f4ac-876bac1f2ebmr260342439f.5.1751370545082; Tue, 01 Jul 2025
+ 04:49:05 -0700 (PDT)
+Date: Tue, 01 Jul 2025 04:49:05 -0700
+In-Reply-To: <dea4c772-21d6-4e1e-9d16-d3d17e6aed1d@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6863cb31.a70a0220.3b7e22.19f8.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in __ext4_check_dir_entry
+From: syzbot <syzbot+5322c5c260eb44d209ed@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ztKxMaTHEsgXeingGXCKylzfZjaG2-ty
-X-Proofpoint-ORIG-GUID: ztKxMaTHEsgXeingGXCKylzfZjaG2-ty
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA3MyBTYWx0ZWRfX74DO11z9dMYF
- 62b2TucWlwr7aP2wLjZ5GJ8VxyRAYqmoReJedk6CNfnGBZJatEM1OJrxmydL4DRvLfDVKk0HSaA
- glGZa43wXvVkw2RNorrrDsT4ohoJw23givoio+J4JT9e/Hl2q/3PXbKXE+zYKGWyQ4nIZf/gX/x
- 0ygEgUAUl4FzOcg4AoT3/bKo4Ebv9c//GZKuU6wOBpOmIJ8xM3KNdFtLFJeJVYgtJ/wQHRhXx5t
- 8smIEsHc/qD5i5mML4oYknS7mIIQko5H7+L0qHY+ISOyaPPxqcBIb2UT8LymslIwxMEQzt9YzTg
- n4t9AjjbkwFN7EiF6/75yhn9k5v8CoFMGTOfN3Gk1JPh9kXi6WPxG7qRXFFayej7yueJMXnlc23
- +VdTOVUtCt62g4uAKYeR/hiM109i/duCv/ogYnnAOajxoeL8VSKAQRXcAvhJEhkPTRXvgCNO
-X-Authority-Analysis: v=2.4 cv=QMFoRhLL c=1 sm=1 tr=0 ts=6863caea cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=T2KzT_qPCcxtbzpLTyEA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 bulkscore=0 spamscore=0 adultscore=0
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 suspectscore=0 impostorscore=0
- clxscore=1011 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507010073
 
+Hello,
 
-On 5/27/2025 12:26 PM, Amirreza Zarrabi wrote:
-> Anyone with access to contiguous physical memory should be able to
-> share memory with QTEE using shm_bridge.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> ---
->  drivers/firmware/qcom/qcom_tzmem.c       | 57 +++++++++++++++++++++++++-------
->  include/linux/firmware/qcom/qcom_tzmem.h | 15 +++++++++
->  2 files changed, 60 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
-> index 4fe333fd2f07..e9e4f06924ae 100644
-> --- a/drivers/firmware/qcom/qcom_tzmem.c
-> +++ b/drivers/firmware/qcom/qcom_tzmem.c
-> @@ -108,25 +108,61 @@ static int qcom_tzmem_init(void)
->  	return 0;
->  }
->  
-> -static int qcom_tzmem_init_area(struct qcom_tzmem_area *area)
-> +/**
-> + * qcom_tzmem_shm_bridge_create() - Create a SHM bridge.
-> + * @paddr: Physical address of the memory to share.
-> + * @size: Size of the memory to share.
-> + * @handle: Handle to the SHM bridge.
-> + *
-> + * On platforms that support SHM bridge, this function creates a SHM bridge
-> + * for the given memory region with QTEE. The handle returned by this function
-> + * must be passed to qcom_tzmem_shm_bridge_delete() to free the SHM bridge.
-> + *
-> + * Return: On success, returns 0; on failure, returns < 0.
-> + */
-> +int qcom_tzmem_shm_bridge_create(phys_addr_t paddr, size_t size, u64 *handle)
->  {
->  	u64 pfn_and_ns_perm, ipfn_and_s_perm, size_and_flags;
-> -	int ret;
->  
->  	if (!qcom_tzmem_using_shm_bridge)
->  		return 0;
->  
-> -	pfn_and_ns_perm = (u64)area->paddr | QCOM_SCM_PERM_RW;
-> -	ipfn_and_s_perm = (u64)area->paddr | QCOM_SCM_PERM_RW;
-> -	size_and_flags = area->size | (1 << QCOM_SHM_BRIDGE_NUM_VM_SHIFT);
-> +	pfn_and_ns_perm = paddr | QCOM_SCM_PERM_RW;
-> +	ipfn_and_s_perm = paddr | QCOM_SCM_PERM_RW;
-> +	size_and_flags = size | (1 << QCOM_SHM_BRIDGE_NUM_VM_SHIFT);
-> +	if (qcom_scm_shm_bridge_create(pfn_and_ns_perm, ipfn_and_s_perm,
-> +				       size_and_flags, QCOM_SCM_VMID_HLOS,
-> +				       handle))
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Can we add a debug log here to ease debugging in future?
-Something like this can also work.
+Reported-by: syzbot+5322c5c260eb44d209ed@syzkaller.appspotmail.com
+Tested-by: syzbot+5322c5c260eb44d209ed@syzkaller.appspotmail.com
 
-pr_err("Shm bridge creation failed, ret: %d, NS PA|Perm: 0x%llx,
-size|flags: 0x%llx\n", ret, pfn_and_ns_perm_flags, size_and_flags);
+Tested on:
 
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_tzmem_shm_bridge_create);
+commit:         66701750 Merge tag 'io_uring-6.16-20250630' of git://g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1476d88c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e29b8115bf337f53
+dashboard link: https://syzkaller.appspot.com/bug?extid=5322c5c260eb44d209ed
+compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1783788c580000
 
--- 
-Regards
-Kuldeep
-
+Note: testing is done by a robot and is best-effort only.
 
