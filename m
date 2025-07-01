@@ -1,151 +1,147 @@
-Return-Path: <linux-kernel+bounces-712206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87758AF0621
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:01:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0472AF062A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1341C0807D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9114F3A835A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D627F27EC7C;
-	Tue,  1 Jul 2025 22:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D81B27A903;
+	Tue,  1 Jul 2025 22:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZHz+0HE4"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHlaW8L8"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF24419995E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 22:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CAD19995E;
+	Tue,  1 Jul 2025 22:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751407278; cv=none; b=lJARmZRc1g8tHHzyrOFPW1Loeux0ijWm/Jby5DsX3jpJwad7VAuPrg0Jy0TPZBk8xFkpJZrpz8Mdqyw/hTB4kmKjZZIGDnLaDp9u4CfehTs+70eD5sSnPcXDF+4IVJvMaXl4HXhdmWmDYi++XHC5O0HK9/m9OBVIMdIaUdj3uu4=
+	t=1751407387; cv=none; b=Nz6e77lQLEtEPmqb3LgV5Qow+1OqskjN5pSRUL8urkRjsNXrlyWKV4oMXaXWy2dg6MLR5QBx0UHwUI/tVjKLimcAcsTDi9eAlFApFZh3sk7LEJdx4eeQN0R0RFBMo8iepGRC+vbQL9yyIAXVu6vGmuqwaSfXa2s0bO2oQ5vEAtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751407278; c=relaxed/simple;
-	bh=ym4G6ufKkIWzagLIfI+OhFmb/6iNAI1xtHVDilZhmaw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Z0q1OCJf5KLWbowutC1mZEHjySxcOrgl/4x8JOuj4J5Rt/xznvp4Mpd7+9RgtNuoCMNUHRf+uh8klYbZKU/6U8sk8HpKcqVbDIPtaet2pXik2pCeQu+WXDnkG6FGW5yO6sxbj3zNAtlA3xf+Gu+aJGzFZh+gJPOPTIFj/uvQfLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZHz+0HE4; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74943a7cd9aso5803575b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 15:01:16 -0700 (PDT)
+	s=arc-20240116; t=1751407387; c=relaxed/simple;
+	bh=6u6DYp8XHiqMAtZhMlgpyQ1cp2/ZUdYKWCN5VTWJ8x4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E4NKIqEd8K8vDjOzRr+t1v2u+3mplHWoF2/9jRyYYFsJhdmxbYCxdM8xGUGvBdPisd1R1faVHini3XnrxgcZsPrPgEyEDgmuLQvlyT8ChdAR5wUo3DWnDxc0uWtKRs3JvaHhgrbqg9W73xYBOTY9WThn6I77RcorYEiSVdNyaeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHlaW8L8; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c3aafae23so15533790a12.1;
+        Tue, 01 Jul 2025 15:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751407276; x=1752012076; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZpSfMGCY39joD2VC5bXg87sm6OUeYjHe/LMyzT4YGA=;
-        b=ZHz+0HE42hZqtmU9rg2tJEY2N2iuOH72Kq0J9aUOgxRXbBufm+KN9q65AMUkjhpkNF
-         s4lRyv4/diVr61Waahi8gmZ5eYItKwm85Xdm+M3CvrS8dQZqlwepjKxy6i1fMphJlkJ8
-         bOxuDFc9jP6WSNNgVdqDM5nImMcebBKXs8MsIP1LZQrSfbHGWZH2CVLLPeiucXrSTmRF
-         Dr8RZEnbZz2B3RdaF7mtJxGN7L0J8hYkfgTG3R5RP3C3yZQ2Tn1UspkVVw7WTq6Zjhm4
-         m3fiASrRpGGAIGCqf28TZ1BaxD5eHUO9v0uismIfsbr8frJr+8iPn2cbErThb2p49n5E
-         7UwA==
+        d=gmail.com; s=20230601; t=1751407384; x=1752012184; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCH6UWaWdMtSV5w3YLUgKyRDkxeGFe8bXumroDH0Y/Y=;
+        b=AHlaW8L8poAYNfhMAgrnvz8shBpO+4+lbBWtR+hkTeZV5oZ+jKmY5cKbtdfWZ6DzaP
+         wJGE03BXi78yXgJAx3pLK02YHbBF3HbM2mYAwJ0FyK/S44O1gviC61IVn7zWIAXcJq3/
+         S11k5lvOQq6wGZaVXT91tXM8gsdRNOuBk0Xpmu4m+EIxKcTS9Oyshx7/l6i1c3409XxC
+         sXA0UQ8ctt33EO1dlt6IJVMGwpledBntDYiYdxus9UAocs4RsOBs67ga9mOAgScnF+uI
+         ZR/O8ofhNCjcVYhG3Cpo3FT4+q/TmWWebaTbRS4uQ4h2SpPe+qh5d1gSqws4tG/weKMO
+         f7Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751407276; x=1752012076;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sZpSfMGCY39joD2VC5bXg87sm6OUeYjHe/LMyzT4YGA=;
-        b=qkjLQsXlOFH+FWp6FoWIJMPtX3rBz5fb3eCT5B2Qb7BPNPDWvCvAVjcfbWHCM1y791
-         ff+YlwUDLv/Bat8g0/VG72AGKIbmqYxHdYczwTnP+uPnoiN12ibtoWspn0eUWNGvWBx0
-         4Z28wwi0YYgS6qcVLIZnSIy6/ahEGZTa7ua5InouGqCbxW/oGXeiwR6ad0odvgQGX6xR
-         JpGpR6sUWzyIhD8mKCyKTKwx14Ndi87ifCyagPgnWKJdBfsbA9O8UuWjfeiYFfdDaAn6
-         bn/SmmOqsbMQRruhgu5rigPuH8mMKtdVBdxym9zO08Xvy/+WE74Ej4ZT+JKfpVrF593y
-         00nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWT2DZmGvCM8vDJckNnjAosD4p4UW1MvZuV1LPFL+jADF46xfbOvCeFDNFyazhuHD0pxTDSiAxMoNVn02c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRvdDNJZASwjQW+MIpIh7u68mv46mhe+aONHVfDnj0vw1F4PKQ
-	PRqDGOhMu2WVno7EbJ+GoobwQODNUWiQubSGiJIbjSWdyp2G/uay5E7b/+Kope8lJS3FhwgrRbk
-	ZTMEmqV0h9fhJwi5ikS+gHeHdHg==
-X-Google-Smtp-Source: AGHT+IEd9keGJPvtO1uRbJlDNElYmO2f0J3qSttebwAES17DT1AOdOkvIO1LIuYSPiK3tQDScGLMbN+3Qhbuix38Cw==
-X-Received: from pfbbk11.prod.google.com ([2002:aa7:830b:0:b0:748:f98a:d97b])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:618f:b0:216:1ea0:a51a with SMTP id adf61e73a8af0-222d7f25634mr1088275637.38.1751407276143;
- Tue, 01 Jul 2025 15:01:16 -0700 (PDT)
-Date: Tue, 01 Jul 2025 15:01:14 -0700
-In-Reply-To: <aGNtA+E9FT0Q2OUZ@yzhao56-desk.sh.intel.com>
+        d=1e100.net; s=20230601; t=1751407384; x=1752012184;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aCH6UWaWdMtSV5w3YLUgKyRDkxeGFe8bXumroDH0Y/Y=;
+        b=p+1UTQ0U/m9qZO5HEbhrJpVJtPGqqtn7hxm457zc+cFgHEzjrueFUZtci8BU5RSJY0
+         yNsKh76UO8l6ZNjrBOoBEmSJtlL4vVgdpZ/JxnJ+ER0nMBDShF3CKni6VEZ52n9uj7Mw
+         6LjJYABolv5TFr+6piVfOH4Ry8K9pQDHaaqBSJQ6pVRCtK3/by2WGTyuR1Osf3MAXoca
+         88Wor6dK3XeCwERDecWmIxIekvFgYfTpfTXoFbzYOyeyFgD/Rn58+mnWUDGbTnKHzsIS
+         bYPfJaH6+t11TV4NxD0h7BH1huZrPBm16xwMocceb7Wu4KwbETlBZB/z4mW859tCPYWV
+         nasA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2rKvPPV+Fb7wM/XATbzBK3KXUXOs0FykU9b146dSC3PM3rr8YHjiYc2W4umWaVN1fpM1RzQokXUE+WR8=@vger.kernel.org, AJvYcCVNYVJz1IoTIBYerwDJ/y+LNRp0DtnzqwEQ7C3OF8wjmK6szzH4UKFiD5AUVSvXyMwmHuiH7ArnjOFG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ9LySHQZxbNN0m6HJLIOzz3NlSh8+GOA8KaGC5ngGm+b27jBh
+	TY0EClxwj/R0Mi67tTGehhEK9Zrm2XHeZOxwIdEYYcPF2TtK0QMSYO8AJ1Eceg==
+X-Gm-Gg: ASbGnctpjn4H4ZEa//0RVI6Wy+BrUp66Pp3WWMwqH3GSQrw+5Rj8KIM8c4J/EKW1p1a
+	HBFzGKol9ZYzBkfjqOnlu63FL/j/1pGXrI03X+KAHf1h/tJ4uaLZ8Vyx7nTpQD6P4xHJYT+HuTp
+	nzn0tFBNL7278gaoy37h5vAF97Tq+3bs0IbpBkW//K/fYqh9QIPWyAZq7jlJab22KgcCVh4Im/y
+	UHGIZ3T8pk9Qc6fVUGK1+v84QIpV05O1UiGSjMXOIcU7cGoNB3GvPcSUicdDE6yCCxt8AubzANd
+	er43DvE5uz1QVlJ+29lsX9JrAuiM+LPfKvruBOzp1fYv4so08n3bHgyq97eXMN0r7+RN+nl6PEQ
+	GrP3qqW2VgmqeHa2xbBVc138iaigSeiOBlg==
+X-Google-Smtp-Source: AGHT+IGb0hSrbnoMf338DLIN4x8Shdh32qqzM9p3b8N6w2kChFiXV5nx4bbPUXJPHmioNc/LM3NIog==
+X-Received: by 2002:a17:907:9448:b0:ae3:6dc7:1ac3 with SMTP id a640c23a62f3a-ae3c399eaf1mr20986466b.15.1751407383224;
+        Tue, 01 Jul 2025 15:03:03 -0700 (PDT)
+Received: from playground.localdomain ([82.79.237.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae35365a16asm959756266b.72.2025.07.01.15.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jul 2025 15:03:02 -0700 (PDT)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-pwm@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pwm: imx-tpm: reset counter if CMOD is 0
+Date: Tue,  1 Jul 2025 18:01:47 -0400
+Message-Id: <20250701220147.1007786-1-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <diqz34bolnta.fsf@ackerleytng-ctop.c.googlers.com>
- <a3cace55ee878fefc50c68bb2b1fa38851a67dd8.camel@intel.com>
- <diqzms9vju5j.fsf@ackerleytng-ctop.c.googlers.com> <447bae3b7f5f2439b0cb4eb77976d9be843f689b.camel@intel.com>
- <zlxgzuoqwrbuf54wfqycnuxzxz2yduqtsjinr5uq4ss7iuk2rt@qaaolzwsy6ki>
- <4cbdfd3128a6dcc67df41b47336a4479a07bf1bd.camel@intel.com>
- <diqz5xghjca4.fsf@ackerleytng-ctop.c.googlers.com> <aGJxU95VvQvQ3bj6@yzhao56-desk.sh.intel.com>
- <a40d2c0105652dfcc01169775d6852bd4729c0a3.camel@intel.com>
- <diqzms9pjaki.fsf@ackerleytng-ctop.c.googlers.com> <aGNtA+E9FT0Q2OUZ@yzhao56-desk.sh.intel.com>
-Message-ID: <diqzplej4llh.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge pages
-From: Ackerley Tng <ackerleytng@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Hansen, Dave" <dave.hansen@intel.com>, 
-	"david@redhat.com" <david@redhat.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"tabba@google.com" <tabba@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>, 
-	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
-	"Peng, Chao P" <chao.p.peng@intel.com>, "Du, Fan" <fan.du@intel.com>, 
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
-	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "Annapurve, Vishal" <vannapurve@google.com>, 
-	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, 
-	"pgonda@google.com" <pgonda@google.com>, "x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Yan Zhao <yan.y.zhao@intel.com> writes:
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-> On Mon, Jun 30, 2025 at 12:25:49PM -0700, Ackerley Tng wrote:
->> "Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
->> 
->> > On Mon, 2025-06-30 at 19:13 +0800, Yan Zhao wrote:
->> >> > > ok! Lets go f/g. Unless Yan objects.
->> >> I'm ok with f/g. But I have two implementation specific questions:
->> >> 
->> >> 1. How to set the HWPoison bit in TDX?
->> 
->> I was thinking to set the HWpoison flag based on page type. If regular
->> 4K page, set the flag. If THP page (not (yet) supported by guest_memfd),
->> set the has_hwpoison flag, and if HugeTLB page, call
->> folio_set_hugetlb_hwpoison().
-> Could you elaborate on how to call folio_set_hugetlb_hwpoison()?
->
+As per the i.MX93 TRM, section 67.3.2.1 "MOD register update", the value
+of the TPM counter does NOT get updated when writing MOD.MOD unless
+SC.CMOD != 0. Therefore, with the current code, assuming the following
+sequence:
 
-Sorry I meant "in TDX" as in the part of the kernel that performs the
-unmap. I'm assuming something like
+	1) pwm_disable()
+	2) pwm_apply_might_sleep() /* period is changed here */
+	3) pwm_enable()
 
-int ret = tdx_do_unmap(page)
-if (ret)
-	set_hwpoison_based_on_folio_type(page_folio(page))
+and assuming only one channel is active, if CNT.COUNT is higher than the
+MOD.MOD value written during the pwm_apply_might_sleep() call then, when
+re-enabling the PWM during pwm_enable(), the counter will end up resetting
+after UINT32_MAX - CNT.COUNT + MOD.MOD cycles instead of MOD.MOD cycles as
+normally expected.
 
-And set_hwpoison_based_on_folio_type() would have to be written to know
-how to set the HWpoison flag based on type of the folio.
+Fix this problem by forcing a reset of the TPM counter before MOD.MOD is
+written.
 
-I think I might have used the wrong terminology elsewhere. Sorry about
-that. I don't mean to call folio_set_hugetlb_hwpoison() from within the
-TDX module. I meant to set HWpoison in the kernel, based on return value
-to the kernel from the TDX module.
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+---
+ drivers/pwm/pwm-imx-tpm.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
->> But if we go with Rick's suggestion below, then we don't have to figure
->> this out.
->> 
->> >> 2. Should we set this bit for non-guest-memfd pages (e.g. for S-EPT pages) ?
->> >
->> > Argh, I guess we can keep the existing ref count based approach for the other
->> > types of TDX owned pages?
->> >
->> 
->> Wait TDX can only use guest_memfd pages, right? Even if TDX can use
->> non-guest_memfd pages, why not also set HWpoison for non-guest_memfd
->> pages?
-> As in https://lore.kernel.org/all/aGJxU95VvQvQ3bj6@yzhao56-desk.sh.intel.com/,
-> I don't find a proper interface for TDX to set HWpoison bit on non-guset_memfd
-> pages.
->
-> Neither memory_failure() nor memory_failure_queue() seem fit.
+diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c
+index 7ee7b65b9b90..30f271826aed 100644
+--- a/drivers/pwm/pwm-imx-tpm.c
++++ b/drivers/pwm/pwm-imx-tpm.c
+@@ -204,6 +204,19 @@ static int pwm_imx_tpm_apply_hw(struct pwm_chip *chip,
+ 		val |= FIELD_PREP(PWM_IMX_TPM_SC_PS, p->prescale);
+ 		writel(val, tpm->base + PWM_IMX_TPM_SC);
+ 
++		/*
++		 * VERY IMPORTANT: if CMOD is set to 0 then writing
++		 * MOD will NOT reset the value of the TPM counter.
++		 *
++		 * Therefore, if CNT.COUNT > MOD.MOD, the counter will reset
++		 * after UINT32_MAX - CNT.COUNT + MOD.MOD cycles, which is
++		 * incorrect.
++		 *
++		 * To avoid this, we need to force a reset of the
++		 * counter before writing the new MOD value.
++		 */
++		if (!cmod)
++			writel(0x0, tpm->base + PWM_IMX_TPM_CNT);
+ 		/*
+ 		 * set period count:
+ 		 * if the PWM is disabled (CMOD[1:0] = 2b00), then MOD register
+-- 
+2.34.1
+
 
