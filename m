@@ -1,200 +1,117 @@
-Return-Path: <linux-kernel+bounces-711192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C833AAEF76E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:55:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47096AEF773
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA184801F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D401C0318F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4209275AF0;
-	Tue,  1 Jul 2025 11:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6AB27A929;
+	Tue,  1 Jul 2025 11:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="fPgN/uXP"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0JUONJrG"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85038273815;
-	Tue,  1 Jul 2025 11:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D71027A46A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751370632; cv=none; b=DxNem9XuAaAQ3HaXNbdG1ZvfEu58pi84FPBI1tut/Iy6XFf/RyvagQZp8BIVxQtjSO5ISOCvia3OI7CBsVMEamm2ANzGyPGGHVS1MLSr6YfEoBWi7ZQ6FKR4Y69J7ViQOZGwR5ctW8o/ESb6bhL/Xk0EAbK90fIKOcI7UmMMVGk=
+	t=1751370601; cv=none; b=mw2LnrSyfh2MHlPMVOnGuaSpBGhT8jSPd/uuY6518XpRT+MzNdsYLpgNP1UftOCbJplOspdROX7QUKw5qBkVNN00FxoTD+yN1VA35Rz2Bmq9pSAhSopErd7mOIkmi04sB24jpPgHCLabQMF/iIM/rd/+VUIp4tkbHO84k9GiApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751370632; c=relaxed/simple;
-	bh=sGiDLR7tFnqDjFwO3L7Y+6Kl6qiGLT+pwITj1SYecyQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=owMq3lQgQQQHeI7tQ2IIxx2C26s2fozcKfVY1SNTshH3Del0VPFIKdx8Npsqakdky4cX7vp9948hLwDbb72nt3Z3n35zNUZnL5uXIIBWSjFq+0+Tr1TvlhKjehuZIEs0Absuu9Qu/So10GfmXgOjrh8WJ+Esr43g5UKGgqMVD+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=fPgN/uXP; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6B38310380104;
-	Tue,  1 Jul 2025 13:50:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1751370621; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=iBRETYtDN5ekEwSoLL3lRq4j+0ymmhVNyjZ/Ula9YUw=;
-	b=fPgN/uXPkJlGeeI1LcqurFgE1FW/rV2C6Qny1W3KLTJSDuvlsN+0LLXcscqqJWofR9I/vt
-	LGAuoZ9cgVucEFaT+6NwQDZLBvatf+S0iqn7OkPhiSfpVmTpGi8ZKznVF/yinkoTdK6RQ3
-	zLqqsbkVTERzf7wXarhqwnokOSYgFg4rOHuvPFZBdLmABPojWU9cY+yTTXkNl5IQwubvG6
-	cMUD0Tvx5o4fJAoNWdpxk/2fMuYp1XT05rpW4ORqVqqoCZOUQ615ZCufgFmzJovFyBrQG4
-	7p86WFwtRk5w5qRoY9pfoENqkNeXDaNOnn8AEhCidPSn2Jtx/LDx3aFkdpPCwg==
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next v14 00/12] net: mtip: Add support for MTIP imx287 L2 switch driver
-Date: Tue,  1 Jul 2025 13:49:45 +0200
-Message-Id: <20250701114957.2492486-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1751370601; c=relaxed/simple;
+	bh=R+rwOhIowzKwTY9h4u5eqn86gDd48p2rdXWg3ykB4X0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lYCy0SnMmd/2pd8Ba0tyIIqoYNupnQ7+s9O+M5Vc2YoGPXSyWGNlTPns94tl3HAw956lMi4iEheR1ZM7jyr7o9QEtTDfoe1DckgC5ykNCkEEx/RpGVO0Bd+bfw6pmnFvxbkVxxjcxgRHiVl/taxrQt/hQTn0wycB0Ti384/Iy3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0JUONJrG; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so4931568f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 04:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751370598; x=1751975398; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0KGSBavzhT3TpQui0uI73A+Z+3UDA0xLLxmDbt54UW0=;
+        b=0JUONJrGzkaw1i/zUiw+03ML/aAkfY8AGX628MberDpxPEpBMbOcvlBo2B37+WvDjE
+         KdmyhJruSd1D+AMUAahBFaAcxNFpYddVLdNYsz9zqcbF5HQx8hzudHvVAwOrVZnn44Vr
+         1vmmX7WWsiTNf35fnB9i4tmZezAuKiC6Ryepj/79CeQk5HetymnC7+rHM3ZXAzfOW2jd
+         svPMSuF84qClbkXmj3fwCLAdmCa5zA9HRvWVCyjCMTTvGTosPu+83DpVXFcLCd8TsJpq
+         JAUr5u4dpiiKRfHT/r36SG1d7jrKtfVxzIm/SHQSc+NM8xsrHo/nrH7WXRZQI0k7Ml43
+         Fphg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751370598; x=1751975398;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0KGSBavzhT3TpQui0uI73A+Z+3UDA0xLLxmDbt54UW0=;
+        b=JrraC5/LrzLxVHh2prTatt9FUKufP+IuVWp3vFBQRoQN00xU+kXh/hn3EmXOnM/Mf2
+         g8E6mr0XUnumiqh80J+p/WtAC6KJ5DOlYX2KN8h6nv0CyT98SehTGoWp9bOs9wKETVvk
+         YO4StnXfhnglPnxc6B/KSSqm/iDDyFvn+6NbYk4sKDJ5RnnvoJPci/DNJjNwIcOa0c1C
+         FPQgPr8e5ssX+og4I49lx/2eWkz0sV3Af3/a/AbFVinYQJgQaGFfjOqibLMmYo7wCkkO
+         NcHM+mI0QcvCMYfGFKTbuA2b5u+5TBEi+YkSVu6D2sxJkp8bezfbLWsLWA3MKzoQ6bAl
+         LGvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHHBehuU3zYdXNEaQ+ZcK6aa+gkr6xWIq4cvt2pwabsSpu7QmFkBiGwHSeqw23igz+GjpQ9hAE8C3ySkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOry+jR6IWgZbMkeJ6taYftWxyJlba/dYb4gqN5ny9i++zTkcA
+	A/nGENytm14xwFNEYU2x2HN8So30belt/M+81cU8u0YfEITAn7bwqw2cX73InfSBCzegbRkTzXI
+	ggha3IbEZI2bnKXtsEG40b0azl0lsSnkCxa1Rzw56
+X-Gm-Gg: ASbGncsRw9ZF5fRrJcXNxFdl25FlKv3OaMcuAL+Xd/2l6kSStn4CZ7vmBrTahKpslAq
+	AIHkYE7OuznBR5TTuaNwrnhApFiA8lNGU9fHlW5Q9QjQg6qtM1sylQQ1JgbgpH2PN2FwikgHUAQ
+	qND4uXfrtDku2S9r67dBuwsjggRFlmDrJM4XTNF69dRqOG
+X-Google-Smtp-Source: AGHT+IGZXsC8mGRscscDusoREbjL9I6GGdeiYS8C2b53bnLNCJ1i8gfIkCUFcIsBDQNQAE78Y338ALuI+8cM8titd0w=
+X-Received: by 2002:adf:c084:0:b0:3a4:f9e7:2796 with SMTP id
+ ffacd0b85a97d-3a9176038c6mr11687442f8f.35.1751370597647; Tue, 01 Jul 2025
+ 04:49:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250626200054.243480-1-dakr@kernel.org> <20250626200054.243480-5-dakr@kernel.org>
+In-Reply-To: <20250626200054.243480-5-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 1 Jul 2025 13:49:45 +0200
+X-Gm-Features: Ac12FXwadsx85yoxejxv-zSg2WaTwJMeTKN6Q-FEKtOdJN3NxG-K0L-aW-nbazs
+Message-ID: <CAH5fLghrF84T2V_0yckusmpBEdPgS2YPRDLw9iww9rAY3_qqCg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] rust: types: ForeignOwnable: Add type Target
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, david.m.ertman@intel.com, ira.weiny@intel.com, 
+	leon@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch series adds support for More Than IP's L2 switch driver embedded
-in some NXP's SoCs. This one has been tested on imx287, but is also available
-in the vf610.
+On Thu, Jun 26, 2025 at 10:01=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> ForeignOwnable::Target defines the payload data of a ForeignOwnable. For
+> Arc<T> for instance, ForeignOwnable::Target would just be T.
+>
+> This is useful for cases where a trait bound is required on the target
+> type of the ForeignOwnable. For instance:
+>
+>         fn example<P>(data: P)
+>            where
+>               P: ForeignOwnable,
+>               P::Target: MyTrait,
+>         {}
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-In the past there has been performed some attempts to upstream this driver:
+I am skeptical about this patch. I think that most of the time, you
+should just place the trait bound on `P` instead of having a Target
+type like this.
 
-1. The 4.19-cip based one [1]
-2. DSA based one for 5.12 [2] - i.e. the switch itself was treat as a DSA switch
-   with NO tag appended.
-3. The extension for FEC driver for 5.12 [3] - the trick here was to fully reuse
-   FEC when the in-HW switching is disabled. When bridge offloading is enabled,
-   the driver uses already configured MAC and PHY to also configure PHY.
-
-All three approaches were not accepted as eligible for upstreaming.
-
-The driver from this series has floowing features:
-
-1. It is fully separated from fec_main - i.e. can be used interchangeable
-   with it. To be more specific - one can build them as modules and
-   if required switch between them when e.g. bridge offloading is required.
-
-   To be more specific:
-        - Use FEC_MAIN: When one needs support for two ETH ports with separate
-          uDMAs used for both and bridging can be realized in SW.
-
-        - Use MTIPL2SW: When it is enough to support two ports with only uDMA0
-          attached to switch and bridging shall be offloaded to HW. 
-
-2. This driver uses MTIP's L2 switch internal VLAN feature to provide port
-   separation at boot time. Port separation is disabled when bridging is
-   required.
-
-3. Example usage:
-        Configuration:
-        ip link set lan0 up; sleep 1;
-        ip link set lan1 up; sleep 1;
-        ip link add name br0 type bridge;
-        ip link set br0 up; sleep 1;
-        ip link set lan0 master br0;
-        ip link set lan1 master br0;
-        bridge link;
-        ip addr add 192.168.2.17/24 dev br0;
-        ping -c 5 192.168.2.222
-
-        Removal:
-        ip link set br0 down;
-        ip link delete br0 type bridge;
-        ip link set dev lan1 down
-        ip link set dev lan0 down
-
-4. Limitations:
-        - Driver enables and disables switch operation with learning and ageing.
-        - Missing is the advanced configuration (e.g. adding entries to FBD). This is
-          on purpose, as up till now we didn't had consensus about how the driver
-          shall be added to Linux.
-
-5. Clang build:
-	make LLVM_SUFFIX=-19 LLVM=1 mrproper
-	cp ./arch/arm/configs/mxs_defconfig .config
-	make ARCH=arm LLVM_SUFFIX=-19 LLVM=1 W=1 menuconfig
-	make ARCH=arm LLVM_SUFFIX=-19 LLVM=1 W=1 -j8 LOADADDR=0x40008000 uImage dtbs
-
-        make LLVM_SUFFIX=-19 LLVM=1 mrproper
-        make LLVM_SUFFIX=-19 LLVM=1 allmodconfig
-        make LLVM_SUFFIX=-19 LLVM=1 W=1 drivers/net/ethernet/freescale/mtipsw/ | tee llvm_build.log
-        make LLVM_SUFFIX=-19 LLVM=1 W=1 -j8 | tee llvm_build.log
-
-6. Kernel compliance checks:
-	make coccicheck MODE=report J=4 M=drivers/net/ethernet/freescale/mtipsw/
-	~/work/src/smatch/smatch_scripts/kchecker drivers/net/ethernet/freescale/mtipsw/
-
-7. GCC
-        make mrproper
-        make allmodconfig
-        make W=1 drivers/net/ethernet/freescale/mtipsw/
-
-Links:
-[1] - https://github.com/lmajewski/linux-imx28-l2switch/commits/master
-[2] - https://github.com/lmajewski/linux-imx28-l2switch/tree/imx28-v5.12-L2-upstream-RFC_v1
-[3] - https://source.denx.de/linux/linux-imx28-l2switch/-/tree/imx28-v5.12-L2-upstream-switchdev-RFC_v1?ref_type=heads
-
-
-Lukasz Majewski (12):
-  dt-bindings: net: Add MTIP L2 switch description
-  ARM: dts: nxp: mxs: Adjust the imx28.dtsi L2 switch description
-  ARM: dts: nxp: mxs: Adjust XEA board's DTS to support L2 switch
-  net: mtip: The L2 switch driver for imx287
-  net: mtip: Add buffers management functions to the L2 switch driver
-  net: mtip: Add net_device_ops functions to the L2 switch driver
-  net: mtip: Add mtip_switch_{rx|tx} functions to the L2 switch driver
-  net: mtip: Extend the L2 switch driver with management operations
-  net: mtip: Extend the L2 switch driver for imx287 with bridge
-    operations
-  ARM: mxs_defconfig: Enable CONFIG_NFS_FSCACHE
-  ARM: mxs_defconfig: Update mxs_defconfig to 6.16-rc1
-  ARM: mxs_defconfig: Enable CONFIG_FEC_MTIP_L2SW to support MTIP L2
-    switch
-
- .../bindings/net/nxp,imx28-mtip-switch.yaml   |  150 ++
- MAINTAINERS                                   |    7 +
- arch/arm/boot/dts/nxp/mxs/imx28-xea.dts       |   56 +
- arch/arm/boot/dts/nxp/mxs/imx28.dtsi          |    9 +-
- arch/arm/configs/mxs_defconfig                |   13 +-
- drivers/net/ethernet/freescale/Kconfig        |    1 +
- drivers/net/ethernet/freescale/Makefile       |    1 +
- drivers/net/ethernet/freescale/mtipsw/Kconfig |   13 +
- .../net/ethernet/freescale/mtipsw/Makefile    |    4 +
- .../net/ethernet/freescale/mtipsw/mtipl2sw.c  | 1958 +++++++++++++++++
- .../net/ethernet/freescale/mtipsw/mtipl2sw.h  |  654 ++++++
- .../ethernet/freescale/mtipsw/mtipl2sw_br.c   |  120 +
- .../ethernet/freescale/mtipsw/mtipl2sw_mgnt.c |  443 ++++
- 13 files changed, 3418 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/nxp,imx28-mtip-switch.yaml
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/Kconfig
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/Makefile
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_mgnt.c
-
--- 
-2.39.5
-
+Alice
 
