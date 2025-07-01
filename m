@@ -1,201 +1,105 @@
-Return-Path: <linux-kernel+bounces-711106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8AF3AEF639
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16260AEF619
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A812D1C0015E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825671BC71FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBB62727F4;
-	Tue,  1 Jul 2025 11:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3D127145C;
+	Tue,  1 Jul 2025 11:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cFsEWnz4"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FtnDwuQw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830C7272816
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE25F23185E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751368339; cv=none; b=uouickFqJXe+nJ+85VdYlhond+A0OhmhgjuXarG/w3X3hxlTz0rAil7ow/QZgEskn5GYc1wAsVrRsZbDKoHPHvY1VIZuXW9KwEFdBoFknl7ZEx7U1AcB8IVHGOo7DS++bMhPAn4ivEIqJglvEqJeSDd5RDz5GrnagEUxoUQLY+I=
+	t=1751367979; cv=none; b=VY/e2bkFSKtYLDZkReFUaWyLBvZ0K+FUYU9KK6V0idJIeTZeG04l0o738qCa/EmF8yGG+1+BwFO3juW9TRO++UshDJNyvlaD9Z1D6qcb13FCH52DaqMfZPQKqsVmglauJg+t2djF+UfNNgsLlR5XfQPxdcSBEudcQ+8lVv905FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751368339; c=relaxed/simple;
-	bh=M+teapMDErM1luC69yUTICbimOLTsaOpUH2S/iyezF4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=a1Kq76BQeDTLFE+1y+7k1ooxHAyXK1xSUlzeLTvDRAVbCOXlhpWxEE/aCwPXVkxnvokrK0qA1mh1vHnclHeM1f38fpcnKayktlH/N05PCYnqcTLoGTlYGYVc7gc9payZcL7nKLndRvuo3T2C9dtQO1yrzAxIKgmViXFqv1TTTng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cFsEWnz4; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250701111209epoutp03164841d88a585c02447851796f740680~OHDdawVg80984009840epoutp03j
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:12:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250701111209epoutp03164841d88a585c02447851796f740680~OHDdawVg80984009840epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751368329;
-	bh=YTwebVUoQkQpDDdsDBbSlrPKaFDW2GsaHKchVaUCu5k=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=cFsEWnz4p/bZVuWOkULA+mahIAzoo6OZidUhTNxWRxbJaF+y9gxkIs+loiEtNwldd
-	 D5y+6OwXCoyM8FYJ6L+S6fZun41YKIz3yfAQs5hhiYX3YeByRJHm3vA/zzxMZL9SWP
-	 C/jE1XS81elzOdp01jtlh8gmZvDfZYVL/ys5RiaU=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250701111208epcas5p34bedc890d762054d069694d0ef399bb6~OHDcwX6uq3053630536epcas5p3U;
-	Tue,  1 Jul 2025 11:12:08 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bWgN53tLPz2SSKX; Tue,  1 Jul
-	2025 11:12:05 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250701110607epcas5p34c04a301caaf7d8c504eca2fec7f3139~OG_MoTLhB0394403944epcas5p3U;
-	Tue,  1 Jul 2025 11:06:07 +0000 (GMT)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250701110604epsmtip1b0a6d2e9ac97f7d6e2273144ea9b44df~OG_J9OoCr1403014030epsmtip1E;
-	Tue,  1 Jul 2025 11:06:04 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Rob Herring'" <robh@kernel.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<linux-fsd@tesla.com>, <mani@kernel.org>, <lpieralisi@kernel.org>,
-	<kw@linux.com>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<vkoul@kernel.org>, <kishon@kernel.org>, <arnd@arndb.de>,
-	<m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <20250627211721.GA153863-robh@kernel.org>
-Subject: RE: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for
- FSD SoC
-Date: Tue, 1 Jul 2025 16:36:03 +0530
-Message-ID: <02af01dbea78$24f01310$6ed03930$@samsung.com>
+	s=arc-20240116; t=1751367979; c=relaxed/simple;
+	bh=CWIRlpgPJRqEG5Un9ajpiNt3bGaNLmXXcKnSn4AJta4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VQma3xOrg/2LrDJTp7TIfX1orUtsgtpwdl3p+uUGmiJ7wqzUMG5Rwz6SH654c9akKBakcR/OjY5m8piHw0mQPMX8smJinxS+9yk30xpeVNaBCzV+qKPJwIoUkSDZjZdq9h58j6wz1XF1PZvAwdLzOHlzUBMxcsK9QbagKfabP0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FtnDwuQw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B799CC4CEEE;
+	Tue,  1 Jul 2025 11:06:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751367979;
+	bh=CWIRlpgPJRqEG5Un9ajpiNt3bGaNLmXXcKnSn4AJta4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FtnDwuQwkMxAT9f1eJ/rE/Zdvsg+3Jr/kyuJ41TpUXVwCDoVvaVig0w+DrNvMWrJt
+	 3wVy99Gh7bdfBeNe3uZFBvynE0f1SjF1v86R67C9pBmHaV9gATcL4LG4m+Oj7OMm+p
+	 QJlxa6B58hMUyfiot6109412KaKn7qpkXDjluNyQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	greybus-dev@lists.linaro.org
+Subject: [PATCH v2] staging: greybus: gbphy: fix up const issue with the match callback
+Date: Tue,  1 Jul 2025 13:06:16 +0200
+Message-ID: <2025070115-reoccupy-showy-e2ad@gregkh>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFUClgbainc6hQuKSBO0V8ttZVgkwGg1JXJAfs/ltABn1f9rLUC/odg
-Content-Language: en-in
-X-CMS-MailID: 20250701110607epcas5p34c04a301caaf7d8c504eca2fec7f3139
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03
-References: <20250625165229.3458-1-shradha.t@samsung.com>
-	<CGME20250625165319epcas5p3721c19f6e6b482438c62dd1ef784de03@epcas5p3.samsung.com>
-	<20250625165229.3458-8-shradha.t@samsung.com>
-	<20250627211721.GA153863-robh@kernel.org>
+Lines: 44
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1745; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=CWIRlpgPJRqEG5Un9ajpiNt3bGaNLmXXcKnSn4AJta4=; b=owGbwMvMwCRo6H6F97bub03G02pJDBnJB9Vfrck+sH3dpot/T2hazL8Vr8CbVVG/V82noZSnR 97PYZNBRywLgyATg6yYIsuXbTxH91ccUvQytD0NM4eVCWQIAxenAEzEx5xhfu3pzcpBjwXatbak 5gmkC1wyZnq/g2GuzOvAmA23z02+5FMUPFdxt3HORw0TAA==
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
+gbphy_dev_match_id() should be taking a const pointer, as the pointer
+passed to it from the container_of() call was const to start with (it
+was accidentally cast away with the call.)  Fix this all up by correctly
+marking the pointer types.
 
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Alex Elder <elder@kernel.org>
+Cc: greybus-dev@lists.linaro.org
+Fixes: d69d80484598 ("driver core: have match() callback in struct bus_type take a const *")
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v2: - add Fixes: line as pointed out by Johan
+    - don't make gbphy_dev const, it's not needed, as pointed out by
+      Johan
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: 28 June 2025 02:47
-> To: Shradha Todi <shradha.t@samsung.com>
-> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-linux-
-> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-
-> fsd@tesla.com; manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
-> bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org; conor+dt@kernel.org;
-> alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org; arnd@arndb.de;
-> m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
-> Subject: Re: [PATCH v2 07/10] dt-bindings: phy: Add PHY bindings support for FSD SoC
-> 
-> On Wed, Jun 25, 2025 at 10:22:26PM +0530, Shradha Todi wrote:
-> > Document PHY device tree bindings for Tesla FSD SoCs.
-> >
-> > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> > ---
-> >  .../bindings/phy/samsung,exynos-pcie-phy.yaml | 25 +++++++++++++++++--
-> >  1 file changed, 23 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> > index 41df8bb08ff7..4dc20156cdde 100644
-> > --- a/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/phy/samsung,exynos-pcie-phy.yaml
-> > @@ -15,10 +15,13 @@ properties:
-> >      const: 0
-> >
-> >    compatible:
-> > -    const: samsung,exynos5433-pcie-phy
-> > +    enum:
-> > +      - samsung,exynos5433-pcie-phy
-> > +      - tesla,fsd-pcie-phy
-> >
-> >    reg:
-> > -    maxItems: 1
-> > +    minItems: 1
-> > +    maxItems: 2
-> >
-> >    samsung,pmu-syscon:
-> >      $ref: /schemas/types.yaml#/definitions/phandle
-> > @@ -30,6 +33,24 @@ properties:
-> >      description: phandle for FSYS sysreg interface, used to control
-> >                   sysreg registers bits for PCIe PHY
-> >
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - tesla,fsd-pcie-phy
-> > +    then:
-> > +      description:
-> > +        The PHY controller nodes are represented in the aliases node
-> > +        using the following format 'pciephy{n}'. Depending on whether
-> > +        n is 0 or 1, the phy init sequence is chosen.
-> 
-> What? Don't make up your own aliases.
-> 
-> If the PHY instances are different, then maybe you need a different
-> compatible. If this is just selecting the PHY mode, you can do that in
-> PHY cells as the mode depends on the consumer.
-> 
+ drivers/staging/greybus/gbphy.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-FSD PCIe has 2 instances of PHY. Both are the same HW Samsung
-PHYs (Therefore share the same register offsets). But the PHY used here
-does not support auto adaptation so we need to tune the PHYs
-according to the use case (considering channel loss, etc). This is why we
-have 2 different SW PHY initialization sequence depending on the instance
-number. Do you think having different compatible (something like
-tesla,fsd-pcie-phy0 and tesla,fsd-pcie-phy1) and having phy ID as platform data
-is okay in this case? I actually took reference from files like:
-drivers/usb/phy/phy-am335x-control.c
-drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c
-who use alias to differentiate between register offsets for instances.
-
-> 
-> > +      properties:
-> > +        reg:
-> > +          items:
-> > +            - description: PHY
-> > +            - description: PCS
-> 
-> else:
->   properties:
->     reg:
->       maxItems: 1
-> 
-
-Will update. Thanks for the review!
-
-> > +
-> >  required:
-> >    - "#phy-cells"
-> >    - compatible
-> > --
-> > 2.49.0
-> >
+diff --git a/drivers/staging/greybus/gbphy.c b/drivers/staging/greybus/gbphy.c
+index 6adcad286633..60cf09a302a7 100644
+--- a/drivers/staging/greybus/gbphy.c
++++ b/drivers/staging/greybus/gbphy.c
+@@ -102,8 +102,8 @@ static int gbphy_dev_uevent(const struct device *dev, struct kobj_uevent_env *en
+ }
+ 
+ static const struct gbphy_device_id *
+-gbphy_dev_match_id(struct gbphy_device *gbphy_dev,
+-		   struct gbphy_driver *gbphy_drv)
++gbphy_dev_match_id(const struct gbphy_device *gbphy_dev,
++		   const struct gbphy_driver *gbphy_drv)
+ {
+ 	const struct gbphy_device_id *id = gbphy_drv->id_table;
+ 
+@@ -119,7 +119,7 @@ gbphy_dev_match_id(struct gbphy_device *gbphy_dev,
+ 
+ static int gbphy_dev_match(struct device *dev, const struct device_driver *drv)
+ {
+-	struct gbphy_driver *gbphy_drv = to_gbphy_driver(drv);
++	const struct gbphy_driver *gbphy_drv = to_gbphy_driver(drv);
+ 	struct gbphy_device *gbphy_dev = to_gbphy_dev(dev);
+ 	const struct gbphy_device_id *id;
+ 
+-- 
+2.50.0
 
 
