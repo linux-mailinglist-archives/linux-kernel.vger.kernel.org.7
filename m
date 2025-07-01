@@ -1,291 +1,188 @@
-Return-Path: <linux-kernel+bounces-710370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE1BAEEB51
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:40:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B95AEEB54
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 02:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634361BC317C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:40:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34B877AE029
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 00:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB01619DF66;
-	Tue,  1 Jul 2025 00:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B7414AD2D;
+	Tue,  1 Jul 2025 00:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JQBHDoB8"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="AI1BsmGf"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2069.outbound.protection.outlook.com [40.107.93.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B435B13D8B1
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 00:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751330321; cv=none; b=BlfXNjA/A3lYnxAIme0fQzxMzJSWbU0iGTn36rg8ZYz/ybgIJWBtJ/VFXlpguI3FlXWxmAWrexmhJ4VlYa5xUp0jdxHsoi2H/nLGzuXgtb0FQacaWJ7ODN+S5exkj8Cnzh2mIRZ0c3zlRfOvvzYuJjJ8iJ8iFSnm7erv9kFI/Qs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751330321; c=relaxed/simple;
-	bh=sHITr8kRCc4egyLqs5lJZo2zVFBSehDXwgebHkZjIA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qTE7HeOOWpJJULlAPDm0hHfPhfqEgowMlicn96IsMcjsfmcvW7dU9lBGlUSjGfCYW7k6kchsuj39OD425MdZ1Zrjwie2WZlKRnltWQYWRwHByFA+fIPw5FXPZGYXfi+Y0gIdQdWR+iY8zUXUhkL+ay4qqV/y4Tgo4vjcFFu4tYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JQBHDoB8; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UIC8cO003843;
-	Tue, 1 Jul 2025 00:38:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=H/KXq
-	+38CRxvMA/KdN4XNLyDOdGoZL/qPwprstHaWLA=; b=JQBHDoB8ALscuBpp6grPZ
-	RYO2OrHk0hyjjhchanw6esHOm/31TJkZB0APZ6sFQX6PMvBvqiM2FYCVRPshuUsJ
-	hZHqzIHCuPc8gbFIkTdA+VN93b5uS3PJ9ZO70RDBjDzUcv1QSLPy+buN/Z016jrX
-	L9njtVOYc/J0igTf/0AfVpz0F0puahjTk9EufXKNf/r+wiDezFUhh1kFYLO9pPNu
-	IAkTFj9iGHkNleHZIXy7A27jg3Ls7sHboAjSxw0zW1fm+mO25IzoyG2ZY7luY1GM
-	o3gHDGGAX3rOTwwWJeZI+fZKKt50JpM1bsO05jUqlJ4VYbjdZhZRSZMvjWNHfKPE
-	w==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j80w3k33-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 00:38:10 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 55UNDxNd009139;
-	Tue, 1 Jul 2025 00:38:09 GMT
-Received: from psang-work.osdevelopmeniad.oraclevcn.com (psang-work.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.35])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6u92pxj-8
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 01 Jul 2025 00:38:09 +0000
-From: Prakash Sangappa <prakash.sangappa@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        tglx@linutronix.de, bigeasy@linutronix.de, kprateek.nayak@amd.com,
-        vineethr@linux.ibm.com
-Subject: [PATCH V6 7/7] Introduce a config option for scheduler time slice extension feature
-Date: Tue,  1 Jul 2025 00:37:49 +0000
-Message-ID: <20250701003749.50525-8-prakash.sangappa@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250701003749.50525-1-prakash.sangappa@oracle.com>
-References: <20250701003749.50525-1-prakash.sangappa@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDBA22094;
+	Tue,  1 Jul 2025 00:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751330368; cv=fail; b=etxXCPp/J0B+2F2j32efIr6bXZorq/XPutW2fqgGPGnnxNRTyDCctsPR1aFph4cItkTQYFxdndgKe64msqigd6WSvw/OGTMd87PGBFbvRtnOhmYhPpRrcG58qUkWXg8gpwHSttBCDJ0f5VSCRutyKgL+pD/0CabNqD5frqRPWMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751330368; c=relaxed/simple;
+	bh=NZLUZ8GU7j66HcUA3L7nuCSjfdiEQO6Lnhovm2PqhSU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=p6OLKSRXU9maCquEYzQ9i74CyN8cDDsrygEZ4y2vT4AE7aIZWeam8MrPVM/+d8knByo2vWqfP2+VRFWQFxtWxVNW2jlDMs/8MRp3dDKRKJRjubEMlijoj2ScN3TMRFrioJfT6SQlRutzamX4PlwNWREL/Cf6eIS0jsLdsgNy2Dw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=AI1BsmGf; arc=fail smtp.client-ip=40.107.93.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZH44Tz/xApdDptV5EVWRvRjM49X6RA2UotUDOurHCTYZc2AIS6LBDHGIDYZa82Sx4eS5QQ0XArzDBH2E9PBQfKKk1txaF/aC0Nd0gOyBEVMwkPJc6yEw1S4jDf/NQ4knPpbmslSL66wVVQD/B5RY+VgAIzCz/et/96jKPX2FZuigIOmDlMczmWqPr+86JXgdhSIDqpEX2NjhVJbwKAGjE+JB+8PTxm4pmWUSl3wy4G+Z/bxQ3pNSkrb3XAwy5WjCm8eXP0YKiy3dlnFPMmeJJZhix1YxI9BeHc8qWNlr8HIzO38GALBPCtGdyq+CZ6xccqsdhweL/afoJvef3Ur4wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eNwJFBRjM3A7KZBcSqSx7DuAu6rJ+Ex139fSG0To/G8=;
+ b=T5ojR6sGa73tblYN4ecjI4Em1rFHJGyZ6i33ED2rg2nEdP4Epj4Y/j8sRdkdbxbNYBmssUlEAqFStWQD+E9Asdrpeb6I1r9fFyhZoeJYnyr3Ogs/MIaznEpXuhZRODQFjgYXTcxbkABcQHuO0LhqJA3UrP9hhSa0Xeccyv6RvDHyd+OUmTA/gRoBpT6pmWxsZZmpcKjELWnBtixRamhWCxgbVG63ZRp5t/jxfDfryPuLA7Y/mxfULKeF4bCcxzXlhztuLirVc50Y1qwy2zFKjf/BViXaA7kOX6KZJij4yICq36qpAWsL9iBggzm/0SOiDrP0/J3MdNzbVADgRgiFVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eNwJFBRjM3A7KZBcSqSx7DuAu6rJ+Ex139fSG0To/G8=;
+ b=AI1BsmGfZ5HkbYNb0gQcetRikxJypoOV4vpVc9q7IBr75Etjr5uHurOItg1ZiKPwLWrOwaFEvbeJXwRxWN3vFuoBt3pS29VYewH+kvVEYXJ0V59JHnftL1Dkb48gXfKbYB+G7rn6jwY/ZIxQ/lVbFxWuwlLrzntODkTtnJEyy99P49KM6qqAjNZzw5a4upbAPIK5OFmhJ+mvzp4O1fxxiIm9ehO+F9LBLbJpaYQPY2jK6x+iFXGrxOfxWSrwkQMNtMiyrnBZ7bxLdRm7oSedModv3MPe/KePDGBnpTVsAITII0VJW8AzdvFEHGXssnyrDQ1/mnhg0qHnBA9Ywy0wSg==
+Received: from DM6PR03MB5017.namprd03.prod.outlook.com (2603:10b6:5:1ee::21)
+ by SJ0PR03MB6582.namprd03.prod.outlook.com (2603:10b6:a03:38a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Tue, 1 Jul
+ 2025 00:39:24 +0000
+Received: from DM6PR03MB5017.namprd03.prod.outlook.com
+ ([fe80::2898:accd:c6dc:2168]) by DM6PR03MB5017.namprd03.prod.outlook.com
+ ([fe80::2898:accd:c6dc:2168%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
+ 00:39:24 +0000
+From: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Mark Brown <broonie@kernel.org>, "open list:SPI SUBSYSTEM"
+	<linux-spi@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+	"Gerlach, Matthew" <matthew.gerlach@altera.com>
+Subject: RE: [PATCH 1/1] spi: cadence-quadspi: fix cleanup of rx_chan on
+ failure paths
+Thread-Topic: [PATCH 1/1] spi: cadence-quadspi: fix cleanup of rx_chan on
+ failure paths
+Thread-Index: AQHb6Z8JiQISVlGUXkWOkCeuCrM6UrQb/mKAgABu6oA=
+Date: Tue, 1 Jul 2025 00:39:24 +0000
+Message-ID:
+ <DM6PR03MB5017D9C650820B9A5C63C6ACC641A@DM6PR03MB5017.namprd03.prod.outlook.com>
+References: <cover.1751274389.git.khairul.anuar.romli@altera.com>
+ <89765a2b94f047ded4f14babaefb7ef92ba07cb2.1751274389.git.khairul.anuar.romli@altera.com>
+ <9f26f205-756e-4fcd-912e-bf73167be21d@suswa.mountain>
+In-Reply-To: <9f26f205-756e-4fcd-912e-bf73167be21d@suswa.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR03MB5017:EE_|SJ0PR03MB6582:EE_
+x-ms-office365-filtering-correlation-id: 23e121ca-8c5d-4eb2-d354-08ddb837ba3e
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Oid4V+rJW21JaySOTHneos49zyQq0R72evYNO20q+9/U6Eu2iMHeX7N5quRm?=
+ =?us-ascii?Q?J6Cccept2hoJMcmbP66wHmRXTWOp9Y7NbkEOVLOFKLmiAnTWZmH3d1ceVPJ+?=
+ =?us-ascii?Q?GZ4mQxxKrsaMmVo9xVt9gg/8IZyfC7xx8Rw3p19+wDxJ0NcaaP1YJszV7iNg?=
+ =?us-ascii?Q?Uj1iD+euCoASMnWOTmNUTFXfdFCA5RiwoHooyclQ9aaxUuSIoVtfJpFHQJ6t?=
+ =?us-ascii?Q?BAzlXkoJKCk7MrBteS+JAEPXoaxgiY4z/C2sKNKcDbHvXbbRHzb9oMkMlbIA?=
+ =?us-ascii?Q?ZlglBYq83ND46fJ1JQdre1eI/bxxuzrOT0CqDV7YSOL0nIiPmLKRKt2beWCV?=
+ =?us-ascii?Q?BmV4zcwSTVfmbpezrAukRgdUkaZAKdFWYcrh4TAnyrG4B0bCvhr02SGLEJn0?=
+ =?us-ascii?Q?xh4iUm5FhkeJm7cXTCFxFAsRlOa8tiLN+7kIRtc+iUFpo1S5xWn37GsB5GVn?=
+ =?us-ascii?Q?calMBDdLmPrVBLVkFuSpq3KW8NIGWhpcDQwHDz3MbpeUz1bjX69uF+N+INJo?=
+ =?us-ascii?Q?cSNKtub6BaZJBuwNbL0I8U43e5tspCzexBNs1inIs+qSJbdXpvtcUOEOYIZ5?=
+ =?us-ascii?Q?XzxGhSorxMpHQuPiMh2WcNMtpOY/V5nDJvjl/KNA+5Bi5Mr1a4ewVC3StAeU?=
+ =?us-ascii?Q?BMQz0clwIfppLFcP36rtABTNPHZ52WZ6sqhDiWuC50bj59tdZXWjYhyYXJ9p?=
+ =?us-ascii?Q?B/ROneI/S2V5Q/2PyO7fWBw0SuUniq6oxGV6eosLAO1j7iqGTsE/62bSLgSQ?=
+ =?us-ascii?Q?i06A+nSGcRgzFXPKxGlRuKBF/LCJi05ylEE87wEwFPzx4BJ522dfMer56OxG?=
+ =?us-ascii?Q?Jli1f+ve2no5rytAKrVSrSe5tE3F3yxqnjbMIDxciuQzzPI9soD4hGdHQhkk?=
+ =?us-ascii?Q?qbhV8n0V5FOfzNQJ6mUjwIAzDbjbJnRXdrkBGKJbHy4YbiDMQHCyds7Uo2L8?=
+ =?us-ascii?Q?59oaM6VEm8NldySt2p1MnBTHFQEPJgxUiXUpRtq08DiIv/Wo4Rfi4gpVpZvr?=
+ =?us-ascii?Q?YAtOdONizCnA3DyQ4nRqjcjtBYS7BnqPl1RR9G/KmDt5iVzQmFC1Pez4Wmcs?=
+ =?us-ascii?Q?mlBxFS88A2BF4dk5wAFUPHnwKL2cO4bZjwIrdUxc12LMdSVsJpfxaZKWYDMr?=
+ =?us-ascii?Q?6LTQUMVst3dJt0rWF7ck4iXl1Y6qQpvZiOKBhurN/JhZ9GiaqSCK1sXZIXaT?=
+ =?us-ascii?Q?yjBAiPl2AFoWLfosMcnpQ4jSyjeK8Z5ZCu2EVKBXOYujj2WfrkqqvdTJ3JdB?=
+ =?us-ascii?Q?fkGIrI2HtKLfaEH2Ja31tN2AYPqXBhlteSk84oWeE6zSvDxK16lshkf5/EAA?=
+ =?us-ascii?Q?/DS7fLf6s0hIoDHpgiZ3VBNWyreCjXwpRx+IrHNg85OpURd5hk+0sd1yEJHf?=
+ =?us-ascii?Q?FOlxK6j61PtIqSgSrwr8hsKnWnPqH6uVxihn4qUFC0sLDyj5+V7yRevczE7F?=
+ =?us-ascii?Q?vb0f5keixoIHYA7yZ5cQbdnKyD6nxKB8k8QIURi7zcyoMFWTivZ+hQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR03MB5017.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?q5vQ42oIzpfBbHFfXeDbUNjlMNbAW2zb4IGMuPYTyZFs/ZwjOlUBvh0VuE5x?=
+ =?us-ascii?Q?iwXerEO0ki8n1TR3l9MvHDnBKK9WltVxcXeUE3uTGfdT5Qh5Pj8pBqx0m0zj?=
+ =?us-ascii?Q?2T0LrCBsHpzXFl2Jhd0JbZQw09Q2UDWmUx9BY7wjW7yYvOrFzSUGrxI34zoV?=
+ =?us-ascii?Q?Lz7/1IuwBGLXweapWxpQVAe+/TI8Oy+gK48WEcQtwmyqf8nB5DYh+S/QZYUs?=
+ =?us-ascii?Q?757aMjF1YdTW2ddaV85ViC4+Z7TMd9TMHVrLKYBbch53uoAn1t1jv2eLPWo3?=
+ =?us-ascii?Q?iI2q3+lvHk/d5bm7UYahqUc7rSWDpsTSVinMbCIkmkU7eHei+YYedpC361gC?=
+ =?us-ascii?Q?Fh3GHAsXiK49u2nvOvN7YZ1ND+RQQ+oOrSzFEMxXWbGZn8XaLfdTdMICTYkT?=
+ =?us-ascii?Q?Jrsizab+EiZVBJitlePKQ8ViVYJoWk2Z8FVsXUN7fhUbhk7uVsTB7tbqzcvs?=
+ =?us-ascii?Q?D1x1xgNxI1gbuQAABjPpGKb5//6SkYWUuj13+Ky94emr3mlOgRM7fPk2G8NF?=
+ =?us-ascii?Q?Z54Wi1eyN6wQIm0u4mw4S+IYasOQcgK7cUiitohY9JEkDLV7nFLkFnyW0buN?=
+ =?us-ascii?Q?4niwUz6ZbgxieY+0idhW0HOKvxoZU+CARjNqpAa68likLL97y0It55Xfki/n?=
+ =?us-ascii?Q?kiOrfEg2noxmVfF+H2Cd5wwvSsiFo+EKEKbyRB0/blESvrrioEQQ0q83UzDr?=
+ =?us-ascii?Q?TC5nJaY71YBjekxOqQb+ilkzc/qq59ApTFUI69GGNOe5I1fEXBObGveUH4kn?=
+ =?us-ascii?Q?qaitGU7HwWRTFher5RpGyJ+ZF0mecv0b6AASIAiYGqyR6ZRG7s5ABldwcGjN?=
+ =?us-ascii?Q?GXE2RQ3uF0nInHTJGZAEIuklGaPaQh8X77ULvmpZGJE5WMQU5EhoT5s+060+?=
+ =?us-ascii?Q?2BWKNwtPD8Gp9CUuX7idvRfkCWlQwHEitsewFn063ewqKllesb9THVWJVmi8?=
+ =?us-ascii?Q?WkkL0annhP3qSNQcwNfcZKje9xF+jp7Ee6dGfZdIHjxMZMI1BDxbUDKXhJ8N?=
+ =?us-ascii?Q?89BQWTz8u++LYah39hICMePe7AMXwWRcsq6AQ0KO+FEy6Dt6BOMtWkEX9lDH?=
+ =?us-ascii?Q?vmEJ08dC0jw4+ELizPdvDfb45dQFt5yXu5uLoeov2urm5Yi9w9hyYLKcX+PU?=
+ =?us-ascii?Q?Qj7hNRFP8RMsDgNmAW6iKLlwkVMnqCdLCPsZOymAEjKrt8AAk9Ft0PceUNkn?=
+ =?us-ascii?Q?I2CrFwb0R4RyYEaghr2AWq/alMjOuhqHIGRMDBMxrOapCSRxIWEZUCAEG2Rc?=
+ =?us-ascii?Q?Lm2OsKI7RfLHeXA20HLB2D14DCM/OY0nBeHVJXgy+/V3r7tEB3vU1mDpTtUJ?=
+ =?us-ascii?Q?f9r637rYSuCGLoyXV72DtDtKPrfa55g6s/zRv/rgTrreUC6Vekn/FI0Af+SH?=
+ =?us-ascii?Q?U0rcT40ZCFN6DhU6zzMsj0LcIfabxpSiTSsVszLRtXqKqzQWrAVo7Q9qHNB4?=
+ =?us-ascii?Q?DqavU3/jhwT7kDwnA71FXvz7tDY0HxPKjrvtb+YUUBBZ6GGBvfTNEhgpoT9N?=
+ =?us-ascii?Q?/Yzoqo0AtwTpX7rWwoKAIsZ14aaOLcE48dvqLvO01fBxLRYyDONNwD/SphV1?=
+ =?us-ascii?Q?3Owgnk6R/LHvzU2lOl1UjrpMgh/+qBfUmOxdRsAf?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_06,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507010002
-X-Proofpoint-GUID: GYsKCXv2VZOXgQsES73YwaiY7EG0n_80
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDAwMiBTYWx0ZWRfX9k7vcaE7sFRT jJK/yfsGS3TaBA0XOQbXxHLftj0Pop9MJobsh7y9snk3e7rJbqu7djJihwSjZR2nIOyO0pk7Pap 2aVVPXwaKwBKw/WfXiio4rEklPic9I3+w9NzvbOmEhi1tpBxVBWv30LhhJEvoPnlPtR0gqgO8Ut
- 0hUptt/Fgx6YG4KzzgLvPYZXWqvzTj2HQWKXI+Pe968WzO3N6wivdveBRbPHxuQEGmJcODFdv+I bDVv/qnBhRhxPdiQWN4ruzpj2gnYFES3oG2m6ZOOSX8cVaAT4rsFXK+waSjda/O8548f/hwZlDH UfqRNeab1otDJsrk1YdfpSz4RB/p1e6CIe7l2Bra4f2KnEkH1zbzhkxy+RPrdhR7GFIzuyi2t7W
- JmpbQQrfH7yiQHwij60u5QMDDLoxRWdO3Og0pBp6+UK04mfdkeJt22nFYYuvZOmHQokqkM6u
-X-Authority-Analysis: v=2.4 cv=D6hHKuRj c=1 sm=1 tr=0 ts=68632df2 b=1 cx=c_pps a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=V5MaIScRyTJAW4VN5IkA:9 cc=ntf awl=host:14723
-X-Proofpoint-ORIG-GUID: GYsKCXv2VZOXgQsES73YwaiY7EG0n_80
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR03MB5017.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23e121ca-8c5d-4eb2-d354-08ddb837ba3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2025 00:39:24.3726
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eFszrSAT3qE67znwTWgIjx2EuTtxgKXSDv7+fbZMCQjhuMsCdlNqyFr7gX+9TkCfFu1wJ/gneJyZEffwlxWPZ19LcrbKPiFj+HeLmEl02vc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB6582
 
-Add a config option to enable schedule time slice extension.
+> On Mon, Jun 30, 2025 at 05:11:56PM +0800,
+> khairul.anuar.romli@altera.com wrote:
+> > From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+> >
+> > Remove incorrect checks on cqspi->rx_chan that cause driver breakage
+> > during failure cleanup. Ensure proper resource freeing on the success
+> > path when operating in cqspi->use_direct_mode, preventing leaks and
+> > improving stability.
+> >
+> > Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+>=20
+> Thanks.
+>=20
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+>=20
+> Mark asked me to fix this and I wrote a fix but apparently I didn't hit s=
+end
+> because it's still in my outbox.  Sorry about that.  :(
+>=20
+> regards,
+> dan carpenter
 
-Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
----
- include/linux/entry-common.h |  2 +-
- include/linux/sched.h        |  8 ++++----
- init/Kconfig                 |  7 +++++++
- kernel/rseq.c                |  5 ++++-
- kernel/sched/core.c          | 12 ++++++------
- kernel/sched/debug.c         |  2 +-
- kernel/sched/syscalls.c      |  3 ++-
- 7 files changed, 25 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index d4fa952e394e..351c9dc159bc 100644
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -402,7 +402,7 @@ static __always_inline void syscall_exit_to_user_mode_work(struct pt_regs *regs)
- 	CT_WARN_ON(ct_state() != CT_STATE_KERNEL);
- 
- 	/* reschedule if sched delay was granted */
--	if (IS_ENABLED(CONFIG_RSEQ) && current->sched_time_delay)
-+	if (IS_ENABLED(CONFIG_SCHED_PREEMPT_DELAY) && current->sched_time_delay)
- 		set_tsk_need_resched(current);
- 
- 	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 90d7989a0185..ca2b461b7662 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -339,7 +339,7 @@ extern void io_schedule_finish(int token);
- extern long io_schedule_timeout(long timeout);
- extern void io_schedule(void);
- extern void hrtick_local_start(u64 delay);
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- extern void update_stat_preempt_delayed(struct task_struct *t);
- #endif
- 
-@@ -409,7 +409,7 @@ static inline void sched_domains_mutex_lock(void) { }
- static inline void sched_domains_mutex_unlock(void) { }
- #endif
- 
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- /* Scheduler time slice extension */
- extern unsigned int sysctl_sched_preempt_delay_us;
- #endif
-@@ -572,7 +572,7 @@ struct sched_statistics {
- 	u64				nr_wakeups_passive;
- 	u64				nr_wakeups_idle;
- 
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- 	u64				nr_preempt_delay_granted;
- #endif
- 
-@@ -2259,7 +2259,7 @@ static inline bool owner_on_cpu(struct task_struct *owner)
- unsigned long sched_cpu_util(int cpu);
- #endif /* CONFIG_SMP */
- 
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- 
- extern bool rseq_delay_resched(void);
- extern void rseq_delay_resched_fini(void);
-diff --git a/init/Kconfig b/init/Kconfig
-index ce76e913aa2b..2f5f603d175a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1130,6 +1130,13 @@ config SCHED_MM_CID
- 	def_bool y
- 	depends on SMP && RSEQ
- 
-+config SCHED_PREEMPT_DELAY
-+	def_bool y
-+	depends on SMP && RSEQ
-+	help
-+	  This feature enables a thread to request extending its time slice on
-+	  the cpu by delaying preemption.
-+
- config UCLAMP_TASK_GROUP
- 	bool "Utilization clamping per group of tasks"
- 	depends on CGROUP_SCHED
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 7710a209433b..440fa4002be5 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -448,6 +448,7 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
- 	force_sigsegv(sig);
- }
- 
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- bool rseq_delay_resched(void)
- {
- 	struct task_struct *t = current;
-@@ -526,6 +527,7 @@ void rseq_delay_schedule(struct task_struct *tsk)
- 	}
- #endif
- }
-+#endif /* CONFIG_SCHED_PREEMPT_DELAY */
- 
- #ifdef CONFIG_DEBUG_RSEQ
- 
-@@ -581,7 +583,8 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
- 	if (flags & RSEQ_FLAG_QUERY_CS_FLAGS) {
- 		u32 rseq_csflags = RSEQ_CS_FLAG_DELAY_RESCHED |
- 				   RSEQ_CS_FLAG_RESCHEDULED;
--		if (!IS_ENABLED(CONFIG_SCHED_HRTICK))
-+		if (!IS_ENABLED(CONFIG_SCHED_PREEMPT_DELAY) ||
-+					!IS_ENABLED(CONFIG_SCHED_HRTICK))
- 			return -EINVAL;
- 		if (!rseq)
- 			return -EINVAL;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fd572053a955..d28c0e75b4f3 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -149,7 +149,7 @@ __read_mostly int sysctl_resched_latency_warn_once = 1;
-  */
- __read_mostly unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
- 
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- /*
-  * Scheduler time slice extension, duration in microsecs.
-  * Max value allowed 100us, default is 30us.
-@@ -941,7 +941,7 @@ void hrtick_local_start(u64 delay)
- 	rq_unlock(rq, &rf);
- }
- 
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- void update_stat_preempt_delayed(struct task_struct *t)
- {
- 	schedstat_inc(t->stats.nr_preempt_delay_granted);
-@@ -4697,7 +4697,7 @@ static int sysctl_schedstats(const struct ctl_table *table, int write, void *buf
- #endif /* CONFIG_SCHEDSTATS */
- 
- #ifdef CONFIG_PROC_SYSCTL
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- static int sysctl_sched_preempt_delay(const struct ctl_table *table, int write,
- 		void *buffer, size_t *lenp, loff_t *ppos)
- {
-@@ -4711,7 +4711,7 @@ static int sysctl_sched_preempt_delay(const struct ctl_table *table, int write,
- 			SCHED_PREEMPT_DELAY_DEFAULT_US);
- 	return err;
- }
--#endif /* CONFIG_RSEQ */
-+#endif /* CONFIG_SCHED_PREEMPT_DELAY */
- #endif /* CONFIG_PROC_SYSCTL */
- 
- #ifdef CONFIG_SYSCTL
-@@ -4761,7 +4761,7 @@ static const struct ctl_table sched_core_sysctls[] = {
- 		.extra2		= SYSCTL_FOUR,
- 	},
- #endif /* CONFIG_NUMA_BALANCING */
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- 	{
- 		.procname	= "sched_preempt_delay_us",
- 		.data		= &sysctl_sched_preempt_delay_us,
-@@ -4771,7 +4771,7 @@ static const struct ctl_table sched_core_sysctls[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE_HUNDRED,
- 	},
--#endif /* CONFIG_RSEQ */
-+#endif /* CONFIG_SCHED_PREEMPT_DELAY */
- };
- static int __init sched_core_sysctl_init(void)
- {
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 3a2efd9505e1..45ae09447624 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -1225,7 +1225,7 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
- 		P_SCHEDSTAT(nr_wakeups_passive);
- 		P_SCHEDSTAT(nr_wakeups_idle);
- 
--#ifdef CONFIG_RSEQ
-+#ifdef CONFIG_SCHED_PREEMPT_DELAY
- 		P_SCHEDSTAT(nr_preempt_delay_granted);
- #endif
- 
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index d9a4e3a2e064..f86eac7e2b43 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -1379,7 +1379,8 @@ static void do_sched_yield(void)
-  */
- SYSCALL_DEFINE0(sched_yield)
- {
--	if (IS_ENABLED(CONFIG_RSEQ) && current->sched_time_delay) {
-+	if (IS_ENABLED(CONFIG_SCHED_PREEMPT_DELAY) &&
-+				current->sched_time_delay) {
- 		schedule();
- 		return 0;
- 	}
--- 
-2.43.5
+Sorry for sending the fix on your behalf.=20
 
 
