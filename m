@@ -1,213 +1,189 @@
-Return-Path: <linux-kernel+bounces-711821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FA0AF0002
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15585AF0017
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBBF7189892D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:38:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708AC1884BD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1E927A92D;
-	Tue,  1 Jul 2025 16:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EC82797B2;
+	Tue,  1 Jul 2025 16:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CNG+gFTN"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fnq39Rlp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E62B277017
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F851277017
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387871; cv=none; b=anKibLI9tQaA9R4EDzhMHJDXVeUdVoEhOXgin3l6nxwG+UPHJzjxXC0Ryw6WyWVq48KxIlM6DyZldLFDnQcz1mZnxSfT2sCcUPc94QhFveURMbJ5M1vVfyfRdQbZhUCbhqbYfVbRcReCDaw/biJhO/7485DwA2yZmQuU4FNyR8g=
+	t=1751387949; cv=none; b=E6ltCJVVoy/gzkeV+uwRsajP4Qk3NPECONuEyRJ4wReVny55jklSdw3PqOVt4+eKR5Gb6F0k5zDrOh9VGhcyOHtzbE3lORkm9hg6hFqSHnLgahQrUt7mLhmVQmPSjhWv8wBcX3fHkrSuWKhKoL1fkVnGET3McgcvyR9t1lrFZCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387871; c=relaxed/simple;
-	bh=X6kzkxRq62hrdupe3Qvl/V+UACrDKcA+1A0KKz6FZ1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ijngK9rfqVH6NGxFoUM4llHXAalwQCj5qLhUOB77Kq0ynFVHn0h2H0BBmu2Th5Ofgck9h/Ezy0FeC76Cu5Xwsd6G7s4fNClIjJhrrfnKJSSEwh+w1SbM8qypGV6nDJeh1Z91w4P+as11Q6pA43x+MLJKDKkBP/CBu3KjXUYOaKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CNG+gFTN; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4a585dc5f4aso68307641cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 09:37:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751387868; x=1751992668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ISLdnPxtlGKf/l3qBzDBKL53pla5A655ILSzv3SOEo=;
-        b=CNG+gFTNiS8q27Lc3rAnzX2kqNYFwukkVeemw3MluDuzyhQL2rUyRS1VnsylKJbj08
-         NPTWiDrPhE0iFKGcu2nORXtov1juVEPoskpIrpDyJl5jMjGD0J5UUvlWyRyf6SzB8nFQ
-         Tvo9lQo7RFYf6rPFAFGUAODPWhZS52gMYenzVkD9sWPXuU5LdLS0ZbY9wt19mlYpBj07
-         b+CGfZ+QuYZR2z8qXQcoTXVHGCESIg3qrPMhFCa29psLvkBb3cp7gElcBZFnlJoAd7KT
-         lmklmf6+1Po2EpUf5wF3urrEsniunuA2PPlgYS7xQVaw3RNvKKOfoqYUeQTVXfsFdxQ6
-         OZxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751387868; x=1751992668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ISLdnPxtlGKf/l3qBzDBKL53pla5A655ILSzv3SOEo=;
-        b=SnJBsEx9Re8RZiCrPIp0+qPUj0Zz6iEi+QzC3q8N8lTpXSyQmX0RDVtauhPw6+jnPJ
-         EC5ySK0ZjINGkBUc661lb5MRVsoTtIS7Ml7Ps7KZOpxJE2yv+Tk4+O9mNpwzVWSa0C+o
-         hUZTLiSTRw5Vk58Ok9jB3vLF9DExYhpZNgYy921ITaiucUCa4vRPQalRMypirIRudsa3
-         +eI3IBm09v74QMj7OQniD1+7uYM9Y5ZSxgjLKpifx2LMiKNaT7LoonhILES2bZEMwafF
-         OLML/YCQOxJVdFVMmTkzocOydse2mLgdBKl2V+D93nsTNj3o6a+L5jU7Ok4tOEjqJS9j
-         zLJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvOlyZJUcmpzYwZ3XqL9gF9a/3l3PP2/rR4MsrNGXsASqaK1kSFspjoe8WuT+ZNHdZWM1sVnPhHC5f7WU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLeo8sUIpFhQV6cN2uPtfGru6DQcmoBWDuWnOOCaeaBcINMXnB
-	y+mHyh7Tl97+O64UJ5Y9Iimn2XVJEaademdpN+c9Z8DAKVn+aFjU3kMUXqoENVj38QhL/hmOQZK
-	hsokEsBqFFZ/DFu+o4ZJGQtg95ClC6En6OtKs0S6b
-X-Gm-Gg: ASbGncsYxQu5BTmvOzZQ8ljYQvhGgXFEc05uJrIC6kG6ucClqW2jYe7izcB/+Or9dMp
-	6QJa+bLh57SCFQLWfu0ZLQYl6wFAOLnWnh0zXoHSp/2O+vh7fPzsPIZud4fw3u9gC1XE2JNwWmi
-	8BLcZ0GwST5NZwBORYw90ny0PyhCqUjVShD4CNpwlYYGM=
-X-Google-Smtp-Source: AGHT+IHAiK9oEfXH92Sml4i6lZf1ziKhaKb1A45g7ei6HvCGgdoXpQF1Hurv306Xf8kKYruBW3bAWalu9wYw+TNdGaw=
-X-Received: by 2002:a05:622a:54f:b0:4a7:ba7:1a2d with SMTP id
- d75a77b69052e-4a7fc9cfbd9mr291679101cf.4.1751387867916; Tue, 01 Jul 2025
- 09:37:47 -0700 (PDT)
+	s=arc-20240116; t=1751387949; c=relaxed/simple;
+	bh=xn3QiWrr/cxslpYxf0U8Cs6CKjpJPB/cl9dWWjh25Co=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rqj/23cnGvZG9nbXLMxmkhyB25/VZouQTIJW1u+1QOC7FPwHAMqdXaF4nUbl+fa+k7zhu35kW5VTKfR1uFWKsNgQeF5102jse0n62+LvAFifF7w6OBbwui2Dhss/5advR2Ld/IHkMyJTaJx88CpjAw18ZQu7q+9IkOl4ohPJShc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fnq39Rlp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751387945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vgctXpywFIFHu8j0mDgv2ScSkjltwbJbaiW5QTw6DRI=;
+	b=fnq39Rlp78BJrUQXtAujzKmk8Dar+hvwBtmlpD5CMl7h04lUbgeCT0H+V3JzDfoj0levCL
+	yaf+7zKQK/78zO4c02LQrBgr9XsNPhkWDW4tLCtQNuVS5pIWKO+UV93VZWk6m7yeG5oVv1
+	nI8qwILMs31IXtcD9JuYNt/NUTx30sw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-112-tdwkJTqnNP6BVvGZ9z97Dg-1; Tue,
+ 01 Jul 2025 12:39:02 -0400
+X-MC-Unique: tdwkJTqnNP6BVvGZ9z97Dg-1
+X-Mimecast-MFC-AGG-ID: tdwkJTqnNP6BVvGZ9z97Dg_1751387940
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17FC01944A8D;
+	Tue,  1 Jul 2025 16:39:00 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.81])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5FC1A1800284;
+	Tue,  1 Jul 2025 16:38:55 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
+Date: Tue,  1 Jul 2025 17:38:35 +0100
+Message-ID: <20250701163852.2171681-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701174051880riwWtq_0siCJ5Yfsa6ZOQ@zte.com.cn>
-In-Reply-To: <20250701174051880riwWtq_0siCJ5Yfsa6ZOQ@zte.com.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 1 Jul 2025 09:37:36 -0700
-X-Gm-Features: Ac12FXzwmxaj70tKP4W8HtmDFZSM027mPiLZs_ytA57MBpY7K3gg1Pk__C05asI
-Message-ID: <CANn89iJvyYjiweCESQL8E-Si7M=gosYvh1BAVWwAWycXW8GSdg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] tcp: extend tcp_retransmit_skb tracepoint
- with failure reasons
-To: xu.xin16@zte.com.cn
-Cc: kuba@kernel.org, kuniyu@amazon.com, ncardwell@google.com, 
-	davem@davemloft.net, horms@kernel.org, dsahern@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, fan.yu9@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Jul 1, 2025 at 2:42=E2=80=AFAM <xu.xin16@zte.com.cn> wrote:
->
-> From: Fan Yu <fan.yu9@zte.com.cn>
->
-> Background
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> When TCP retransmits a packet due to missing ACKs, the
-> retransmission may fail for various reasons (e.g., packets
-> stuck in driver queues, sequence errors, or routing issues).
->
-> The original tcp_retransmit_skb tracepoint:
-> 'commit e086101b150a ("tcp: add a tracepoint for tcp retransmission")'
-> lacks visibility into these failure causes, making production
-> diagnostics difficult.
->
-> Solution
-> =3D=3D=3D=3D=3D=3D=3D
-> Adds a 'reason' field to the tcp_retransmit_skb tracepoint,
-> enumerating with explicit failure cases:
-> TCP_RETRANS_ERR_DEFAULT (retransmit terminate unexpectedly)
-> TCP_RETRANS_IN_HOST_QUEUE (packet still queued in driver)
-> TCP_RETRANS_END_SEQ_ERROR (invalid end sequence)
-> TCP_RETRANS_TRIM_HEAD_NOMEM (trim head no memory)
-> TCP_RETRANS_UNCLONE_NOMEM (skb unclone keeptruesize no memory)
-> TCP_RETRANS_FRAG_NOMEM (fragment no memory)
-> TCP_RETRANS_ROUTE_FAIL (routing failure)
-> TCP_RETRANS_RCV_ZERO_WINDOW (closed recevier window)
-> TCP_RETRANS_PSKB_COPY_NOBUFS (no buffer for skb copy)
->
-> Functionality
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Enables users to know why some tcp retransmission quitted and filter
-> retransmission failures by reason.
->
->
+Hi Christian, Steve,
 
-...
+Here are some miscellaneous fixes and changes for netfslib and cifs, if you
+could consider pulling them.  All the bugs fixed were observed in cifs, so
+they should probably go through the cifs tree unless Christian would much
+prefer for them to go through the VFS tree.
 
-> +enum tcp_retransmit_quit_reason {
-> +       TCP_RETRANS_ERR_DEFAULT,
-> +       TCP_RETRANS_SUCCESS,
-> +       TCP_RETRANS_IN_HOST_QUEUE,
-> +       TCP_RETRANS_END_SEQ_ERROR,
-> +       TCP_RETRANS_TRIM_HEAD_NOMEM,
-> +       TCP_RETRANS_UNCLONE_NOMEM,
-> +       TCP_RETRANS_FRAG_NOMEM,
-> +       TCP_RETRANS_ROUTE_FAIL,
-> +       TCP_RETRANS_RCV_ZERO_WINDOW,
-> +       TCP_RETRANS_PSKB_COPY_NOBUFS,
-> +};
-> +
->  #define tcp_sk(ptr) container_of_const(ptr, struct tcp_sock, inet_conn.i=
-csk_inet.sk)
->
->  /* Variant of tcp_sk() upgrading a const sock to a read/write tcp socket=
-.
-> diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-> index 54e60c6009e3..3e24740d759e 100644
-> --- a/include/trace/events/tcp.h
-> +++ b/include/trace/events/tcp.h
-> @@ -13,17 +13,38 @@
->  #include <linux/sock_diag.h>
->  #include <net/rstreason.h>
->
-> -/*
-> - * tcp event with arguments sk and skb
-> - *
-> - * Note: this class requires a valid sk pointer; while skb pointer could
-> - *       be NULL.
-> - */
-> -DECLARE_EVENT_CLASS(tcp_event_sk_skb,
-> +#define TCP_RETRANSMIT_QUIT_REASON             \
-> +               ENUM(TCP_RETRANS_ERR_DEFAULT,           "retransmit termi=
-nate unexpectedly")    \
-> +               ENUM(TCP_RETRANS_SUCCESS,               "retransmit succe=
-ssfully")              \
-> +               ENUM(TCP_RETRANS_IN_HOST_QUEUE,         "packet still que=
-ued in driver")        \
-> +               ENUM(TCP_RETRANS_END_SEQ_ERROR,         "invalid end sequ=
-ence")                 \
-> +               ENUM(TCP_RETRANS_TRIM_HEAD_NOMEM,       "trim head no mem=
-ory")                  \
-> +               ENUM(TCP_RETRANS_UNCLONE_NOMEM,         "skb unclone keep=
-truesize no memory")   \
-> +               ENUM(TCP_RETRANS_FRAG_NOMEM,            "fragment no memo=
-ry")                   \
+Many of these were found because a bug in Samba was causing smbd to crash
+and restart after about 1-2s and this was vigorously and abruptly
+exercising the netfslib retry paths.
 
-Do we really need 3 + 1 different 'NOMEMORY' status ?
+Subsequent testing of the cifs RDMA support showed up some more bugs, but
+the fixes for those went via the cifs tree and have been removed from this set
+as they're now upstream.
 
-> +               ENUM(TCP_RETRANS_ROUTE_FAIL,            "routing failure"=
-)                      \
-> +               ENUM(TCP_RETRANS_RCV_ZERO_WINDOW,       "closed recevier =
-window")               \
+First, there are some netfs fixes:
 
-receiver
+ (1) Fix a hang due to missing case in final DIO read result collection
+     not breaking out of a loop if the request finished, but there were no
+     subrequests being processed and NETFS_RREQ_ALL_QUEUED wasn't yet set.
 
-> +               ENUMe(TCP_RETRANS_PSKB_COPY_NOBUFS,     "no buffer for sk=
-b copy")               \
+ (2) Fix a double put of the netfs_io_request struct if completion happened
+     in the pause loop.
 
--> another NOMEM...
+ (3) Provide some helpers to abstract out NETFS_RREQ_IN_PROGRESS flag
+     wrangling.
 
-> +
-> +
+ (4) Fix infinite looping in netfs_wait_for_pause/request() which wa caused
+     by a loop waiting for NETFS_RREQ_ALL_QUEUED to get set - but which
+     wouldn't get set until the looping function returned.  This uses patch
+     (3) above.
 
+ (5) Fix a ref leak on an extra subrequest inserted into a request's list
+     of subreqs because more subreq records were needed for retrying than
+     were needed for the original request (say, for instance, that the
+     amount of cifs credit available was reduced and, subsequently, the ops
+     had to be smaller).
 
-> +               __entry->quit_reason =3D quit_reason;
->         ),
->
-> -       TP_printk("skbaddr=3D%p skaddr=3D%p family=3D%s sport=3D%hu dport=
-=3D%hu saddr=3D%pI4 daddr=3D%pI4 saddrv6=3D%pI6c daddrv6=3D%pI6c state=3D%s=
-",
-> +       TP_printk("skbaddr=3D%p skaddr=3D%p family=3D%s sport=3D%hu dport=
-=3D%hu saddr=3D%pI4 daddr=3D%pI4 saddrv6=3D%pI6c daddrv6=3D%pI6c state=3D%s=
- quit_reason=3D%s",
+Then a bunch of cifs fixes, some of which are from other people:
 
-quit_reason is really weird, since most retransmits are a success.
+ (6-8) cifs: Fix various RPC callbacks to set NETFS_SREQ_NEED_RETRY if a
+     subrequest fails retriably.
 
-What about using : status or result ?
+(10) Fix a warning in the workqueue code when reconnecting a channel.
 
-Also, for scripts parsing the output, I would try to keep  key=3Dval
-format (no space in @val), and concise 'vals'
+Followed by some patches to deal with i_size handling:
+
+(11) Fix the updating of i_size to use a lock to avoid a race between
+     testing if we should have extended the file with a DIO write and
+     changing i_size.
+
+(12) A follow-up patch to (11) to merge the places in netfslib that update
+     i_size on write.
+
+And finally a couple of patches to improve tracing output, but that should
+otherwise not affect functionality:
+
+(13) Renumber the NETFS_RREQ_* flags to make the hex values easier to
+     interpret by eye, including moving the main status flags down to the
+     lowest bits, with IN_PROGRESS in bit 0.
+
+(14) Update the tracepoints in a number of ways, including adding more
+     tracepoints into the cifs read/write RPC callback so that differend
+     MID_RESPONSE_* values can be differentiated.
+
+The last three patches (12-14) could wait for the next merge window.
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
+
+Thanks,
+David
+
+David Howells (9):
+  netfs: Fix hang due to missing case in final DIO read result
+    collection
+  netfs: Fix double put of request
+  netfs: Provide helpers to perform NETFS_RREQ_IN_PROGRESS flag wangling
+  netfs: Fix looping in wait functions
+  netfs: Fix ref leak on inserted extra subreq in write retry
+  netfs: Fix i_size updating
+  netfs: Merge i_size update functions
+  netfs: Renumber the NETFS_RREQ_* flags to make traces easier to read
+  netfs: Update tracepoints in a number of ways
+
+Paulo Alcantara (4):
+  smb: client: set missing retry flag in smb2_writev_callback()
+  smb: client: set missing retry flag in cifs_readv_callback()
+  smb: client: set missing retry flag in cifs_writev_callback()
+  smb: client: fix warning when reconnecting channel
+
+ fs/netfs/buffered_write.c    | 38 ++++++++++++++++-----------
+ fs/netfs/direct_write.c      | 16 ------------
+ fs/netfs/internal.h          | 26 ++++++++++++++++++-
+ fs/netfs/main.c              |  6 ++---
+ fs/netfs/misc.c              | 50 ++++++++++++++++++++++--------------
+ fs/netfs/read_collect.c      | 16 ++++++++----
+ fs/netfs/write_collect.c     | 14 ++++++----
+ fs/netfs/write_retry.c       |  3 +--
+ fs/smb/client/cifsglob.h     |  1 +
+ fs/smb/client/cifssmb.c      | 22 ++++++++++++++++
+ fs/smb/client/smb2pdu.c      | 37 ++++++++++++++++++--------
+ include/linux/netfs.h        | 21 ++++++++-------
+ include/trace/events/netfs.h | 29 ++++++++++++++-------
+ 13 files changed, 183 insertions(+), 96 deletions(-)
+
 
