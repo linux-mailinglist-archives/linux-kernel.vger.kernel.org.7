@@ -1,137 +1,81 @@
-Return-Path: <linux-kernel+bounces-711096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C90AEF601
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:02:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D1EAEF5F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C66327B18AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314563B27CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1639271471;
-	Tue,  1 Jul 2025 11:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5B1264626;
+	Tue,  1 Jul 2025 11:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TyG+yavz";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FMQfQiqg"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g5SpfAl1"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BCA27057D;
-	Tue,  1 Jul 2025 11:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9796E235355
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 11:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751367731; cv=fail; b=c3hVp+B29rZoM2UL+kHByffY6IJxLETcVMZhtMV0aTXvWy42jWuTeJEDYW7sO6F5Q0QPZ11iIfx8LgCDNoeMIVopXgxt04KhPAbddaN7b5LmxPsEaJ9C3i/232WQXXJFekP4NVlUKugMdPg3HiDEJj7fDJpM658UIOjXVdI4UGk=
+	t=1751367624; cv=fail; b=Eme2asUbBtl0mx6BOVhAEs536vZ68CjC08kxE6fsy3dn/Xr4AyuL6fgbg2+tgoTH4agMGdlzOrLaojO3JKIIK+F0MQzYHD10Tj+QfJVuPSjc5vBfuWjR0MV0aZ7zriXxaiU+qK6qbQ5eyaeGZDoLixOi3B2lY8bGDwTyyiuZqXQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751367731; c=relaxed/simple;
-	bh=bRdKk8aBcN2fS6cHRvXh5MEoKeZs1070+FUOC3KWyB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=siAIw5qQf1zFmCMgMfDXx6XyaBLE8+ckHl0quV60HtUKMM6HC90Cr6JjIkPi79Vlng/zIEhOhVR6pc+1ojSxl9k0NL0eCy/WCCR8wmDp/bO3XLgR9e9nhpINkHvcfKTChSn9+mN3ZZTHDo+iKCjBnrCMZDmchMtbcIFoGJd1cmk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TyG+yavz; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FMQfQiqg; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5611MseH012615;
-	Tue, 1 Jul 2025 10:59:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=TLM1To5zbrb2sv2Cem
-	W5GYeQl0aP4XLVOsfmkJCQgoQ=; b=TyG+yavzczchG9lLx9Kf3EcMflslbLT26Q
-	RnSzAvNKBgY6aPJNV/abNM0I+gOjTI0UQX9fIQ590+WPhjNO/kzviV8UqoJy8e15
-	ejw5m76/SZkbXpaAnoDl7G1/4oVyBr9VPbkc3DBm123LVS+brOhFzIYxqAzXqwfz
-	qZ9yuj3MiIh68VHVUBx3P5MhJM0d8wstWfJ+g8voHo97MbjZX8yHi5PGvan5Hbae
-	Y2vfPzZ84rHKmdynARtYmY+/L/FyoomfWDZoBY9f7tdTddxtKR1d9G0x9DsTQ/yF
-	PPJWASYYX5tFok1ueyKGwOz+w6IBNHsLQcTUBeWBNgAmW7Azu6qQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j6tfcgp2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 10:59:41 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 561AiwVD017497;
-	Tue, 1 Jul 2025 10:59:41 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04on2045.outbound.protection.outlook.com [40.107.102.45])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47jy1ebmtr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 10:59:41 +0000
+	s=arc-20240116; t=1751367624; c=relaxed/simple;
+	bh=nvDW1WJm8YC6R4hN3yaHjr+PFTtKg7f3aOMtxpOXA1s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WJVDIQFmaE0iLAVpWDa6UjmNIZ8y5Kn4xauzZnsaztdKYu5f4byXVGxHPb3rVcfHKP6PJmA4Q+3FbEe1VLrVdNsJK2uA3DAZpSy1xzayunmFbHqQNIIg6Ow3CHpy+L5fwKkb+q8E2xwbrRNAKA+75kPR2ItdwgZlB1cI9rLfHEw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g5SpfAl1; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wx5dD8GH4hCjifanzKy1GTi7yBixr81pJuGWaYerdPYIk/vzNPD4Ve6qTAzYbtz9S1yr5tVtL8RFOCBIbNhpKGgEbZqXVAMR1iu4b8btQo2MUTwToMq+enVzkEFiUqVDdkVNEpaxE+AJC9G5Tx8fz2Yebcp4Xn1nzTPteeJXoRJm2tiOpztDZoFabNlY69h5yfEBHpdWmTOHwjTJeHCMmjs84+lC2PvLoeOhUtLWHZ6ib5LfJC9Hw3YqQzZUN555SD7q1lnMg0WMIniOk6C8fBE/7n5YKQvX8Mn+vE9p90iMcprzPxicjXYRQsC1iCzq0oM9thi4aHiPMiwDap2LzA==
+ b=AGVYzo6514Tvc7d7dbwRqTDPURDIgucsIMfiLeOvq53eSXObdmnSWfABV6r/yBzWzlWs14QEPiah7P90sPjT+OZk582TQgOskOHq+48/jnhC0+fKm3uG2pJHPjelqbMZTgfJ1iO+Mb4Xw2O0H1VT8BAi2fXwky7dJqJiYbmjf5boutFe1+sm6hIV8sNCgQ//bQ8Z64GLAWAoSiJJ35Z4132VB/YtcerY+8vwb+zJh6sp6sYeah1Y0/zs+qmEmLIdCs7JRx81rjX0kMX4Y+c0l96YYMC8zLfEr7f8YAc2BAkpqQ6HMikHtv+tKqtvmpoE9+21zssn4fnOZyih6oE2mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TLM1To5zbrb2sv2CemW5GYeQl0aP4XLVOsfmkJCQgoQ=;
- b=KlGPjADSYLSocKREaM0gEhq7AGPLm8NUYq5qSMj1U0hxnbIYtYOEcfuS6JkjkvQsR4nLo3mcJrQsN0n4WcIVMXkcNEHjilZNrQJ6qA4kTKp3l3/ofAwRz2LHmrDzWrb8iN/8Ea91HpoqWW4nQvh5/Th6lFvgtrpZ/XoJj0bJcFz5zZeR6eFwX4rzFrrMLbF7Fw0g1G1RxwushdbKFNc53Zf9tQTm8q+GQHkh1n0Lo/ku9NR1D9Q1qntUh5Qrxz6fCdfqX5lbRVErHLKgowrOC81Us3Dqm1t8OF+2qUP2SO4gvMJmkgidXjKNolwfSDA5qQGTdeWofohpq/oVL03PxA==
+ bh=AMOENoLC+7vltr6CwhRteG5pCm8R4CtLIUSBxNF9I/A=;
+ b=e5zjJiMWhs5r1dpTmfZqomIT6zhREfyu23/Dd1uM8pMYAugtBq58gVkjh+OTc2/PIS8vq5Y5InQIwUzXB77EYPmXKaAnZuiFRC2bMgihNmZCShxb4zs0+Oyr/lGbZtb+LXUwkQbm8xHnUI7HQdqDg6HOfUrwRMojPd/wcYNpzyC1cShQHuxK3+kEnJPYveLl5i6i0Odk+kZIn05IpzF5YCrTepCFYr391ZWtL4NsYHvN2W52XFcNhKc7pQHEiKQyGHm22yuhbNyvZJo71qpVcPO4t/Jp5HOmaS4ebl5E+n0G9QAejNv0iqPToq1X5Q/SuwH7ZTPUSEUwOu1fFFl5oA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TLM1To5zbrb2sv2CemW5GYeQl0aP4XLVOsfmkJCQgoQ=;
- b=FMQfQiqgXRhva81/7ojDz7GqIUoUMIIPIXDyQaYZek61+VNz8f+GAiBzfPHGWqCChYp20h1uaAFqXdo9wnoj0WuIwbT33r8+zKa7vc0hHIiDVmMr1FTgfxketV/lSY/EgtMJZfI7tGkUkpRc8OOtuxHo4rloOQFNInFG2OcdYLY=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ2PR10MB7082.namprd10.prod.outlook.com (2603:10b6:a03:4ca::6) with
+ bh=AMOENoLC+7vltr6CwhRteG5pCm8R4CtLIUSBxNF9I/A=;
+ b=g5SpfAl1n6OxZYa/e91hOqo/yu+3PUh4kfr2LETR2VKsh84+tf+NkJPbBWz8wQDsr1mJazn7Pp91ElAE4NOteloXpGC+9yjiTNpknzb4lRttCD6KT5sPh6kbUgpZj+zF1BxQCmPyQ06/Cg00vMJRp4bNqeBI2Ak2Y/cy9saeAlo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB8658.namprd12.prod.outlook.com (2603:10b6:610:175::8)
+ by SA3PR12MB8811.namprd12.prod.outlook.com (2603:10b6:806:312::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.27; Tue, 1 Jul
- 2025 10:59:32 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
- 10:59:31 +0000
-Date: Tue, 1 Jul 2025 11:59:29 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
-        Harry Yoo <harry.yoo@oracle.com>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v1 16/29] mm: rename __PageMovable() to
- page_has_movable_ops()
-Message-ID: <9a6b403e-ac92-4e4a-8d72-86dade5b9653@lucifer.local>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-17-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630130011.330477-17-david@redhat.com>
-X-ClientProxiedBy: LNXP123CA0017.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:d2::29) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Tue, 1 Jul
+ 2025 11:00:16 +0000
+Received: from CH3PR12MB8658.namprd12.prod.outlook.com
+ ([fe80::d5cc:cc84:5e00:2f42]) by CH3PR12MB8658.namprd12.prod.outlook.com
+ ([fe80::d5cc:cc84:5e00:2f42%4]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
+ 11:00:16 +0000
+Message-ID: <3882929e-d4a1-48b3-b518-1582e6e1c872@amd.com>
+Date: Tue, 1 Jul 2025 16:30:07 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] sched/uclamp: Skip uclamp_rq_dec() for non-final
+ dequeue of delayed tasks
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>, xuewen.yan@unisoc.com,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com
+Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, hongyan.xia2@arm.com, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com,
+ kuyo.chang@mediatek.com, juju.sung@mediatek.com, qyousef@layalina.io
+References: <20250701093407.211500-1-zhangzihuan@kylinos.cn>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250701093407.211500-1-zhangzihuan@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN4P287CA0018.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:269::8) To CH3PR12MB8658.namprd12.prod.outlook.com
+ (2603:10b6:610:175::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -139,309 +83,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ2PR10MB7082:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1496582-f002-4b64-3ed0-08ddb88e5b57
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8658:EE_|SA3PR12MB8811:EE_
+X-MS-Office365-Filtering-Correlation-Id: f01e989c-7def-4304-4086-08ddb88e75d9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Qvrz23FNcZx6I14ZWicx6ke9S6vL3NORNxInUDuiCWTlATp72IBkXUWl8IMa?=
- =?us-ascii?Q?Hti935jFUdnFNRL3UpGwlSEUto2zqPCweAGo7KhDvqUNxz/AfFUqmxOSC8+s?=
- =?us-ascii?Q?V13SxmwuP8ada6GXuVUD73Mf/4D/DqR5L1BKbtfHf252B1HkCynOHe8BQ8ib?=
- =?us-ascii?Q?jlCViuJewxavT45FOxdwANApJY5v1bhlmU9pDlOPWyHynh0SJkyoQ5WZJkuz?=
- =?us-ascii?Q?5sHFNVBrCncn6MROStMjJ9Lkp+pJQRBMZpumxZn4Z2wUNk3ktpy8h5OoFNKZ?=
- =?us-ascii?Q?dNInoG2euVNWsNMQObo9VJ2mF1S2JyP88+mDcCJG6seOHSEydUbtLJIqURm5?=
- =?us-ascii?Q?QJytMspn/Q756gFnSdwtgBZhk77FdLarO5cWdb+DdkEzNZayDn8qXhkpNlpo?=
- =?us-ascii?Q?C5Usi9nRLwq+UiiLfEa91cs7evxumNFylriLho35ubVDniaxe+asEHxg6Q/f?=
- =?us-ascii?Q?Zoqm9Yd53CJpPVMujrJO5umg82GWHpUjuLHmwfegX7qOdX0dE19yTGqES1X4?=
- =?us-ascii?Q?XIikjM6xSYnxpC6kpQyENcS7WC+oz5oU369aT5y0Ge0HUDGu5snBQFUxnfNO?=
- =?us-ascii?Q?hXsdYH7oIuWvfynReCxyZso8D2FfL+sPF8USSljLlgg8znMf36c+x+6WU+I/?=
- =?us-ascii?Q?5r49NQXtMLsTOQ6jhHcGwh4oLoS5WpyfmOMGs7oTNfF+PHMGYFxCgAesygzT?=
- =?us-ascii?Q?FhTiQYNX/yQ4u5qzNqeKEKG9FDTsHMpP3h2SsKEw5TP31PZjJA3RQ3MEvx46?=
- =?us-ascii?Q?+D9aUvaboPzRirUZ/d8aMpsvk4rnDcs6RvZGrwti6IzLJ3+Lo0mGouqNjwvs?=
- =?us-ascii?Q?3LnbR3fwid/stoLBvoa9IcBUecnWrtVEyuUwmX3p42kFvs8tzsNRfVjw4u0G?=
- =?us-ascii?Q?qHQJ6SboKIu4/bRS/mYiDSb3M8lD9jfFxU4fGVYAcFLlk3xPwOt3aex9EyWd?=
- =?us-ascii?Q?BUhVj239LYm4ipW08kWrUzLw3gKWHg8ZoqctHvitM6M6vU8+ZnoWypCdBzli?=
- =?us-ascii?Q?/BSoMNYg7XaFmr2ShqdI8fR0uycjZQOSD7dEfKp8Z4OWE5DQGPOofIs5XNdO?=
- =?us-ascii?Q?jGyz6uKEH7xAvVwce0tkkuQmletALmuiSQFys/UrM1o5OawY5dIJ4hvCQcj1?=
- =?us-ascii?Q?4zZmSxfJKO/fWvCPkqqoFFdHH9FedyG9HIwEWsZntRGeFtvIZnHoLmloF5k5?=
- =?us-ascii?Q?dxaeTsqLzGqJpgwIIrImM+/zL0AysIJiZSNIpqUoHgmO1MeHviHp950AyujE?=
- =?us-ascii?Q?/rV27XNhCBEgnQxSPni0a7r7TzRbnNIQr1866A+BjQcVNPvhidFXC6y9t/cd?=
- =?us-ascii?Q?jdMBjxOrLxInKehxIfDWG1H6ULcL/uV/B9Zp8+wztRGs5WAO6DoGEq5yXRem?=
- =?us-ascii?Q?b9n/7hW1LPzvGYGiMYyKrdu/3Zd8AvJDXGDeuMDwZyBs++sPw2ycFaIa9Asr?=
- =?us-ascii?Q?O7CcbkdcNqg=3D?=
+	=?utf-8?B?cDlOazJaaHlJcTU1bDZwRzR0a3htN1hKR0FLakh1MHZwcXVDVjdTVUYxS1V2?=
+ =?utf-8?B?enJ1U1dFc01QeURhdkJYOWZoaXpIU0pSQ0liUEl1ZUdQeW5sTkRVZGp2cUNu?=
+ =?utf-8?B?WkdZcmZGUTNFeWRQdVA0VnhNcXQrSE4xL0Q3Q3lUOENJeHk3RmtINm43Sm5E?=
+ =?utf-8?B?bmlKVmNxTm1UYXpVNGl5WnNnc2U1L2lFNkhZc3ZmTmxkTTBRNEdEWU5YMzh4?=
+ =?utf-8?B?SU51TE9DRERSbytXc1hCQkhYUjdmQTdCMzdPaHRRdDRQM2tIVXFhZy9LL0dn?=
+ =?utf-8?B?aTNtODhwa2p1bjRYajZMejZxU0t0VmlqT251bHN0cm9sSkNMYmxIZVNISElW?=
+ =?utf-8?B?MHh3ZDZ0Zk1LeUVKa2l2bFdTMm5zcGhRNXdYbnB2K21WRm9ueFZLODZRK1cy?=
+ =?utf-8?B?ZC8veUZ0UERCZWNNMWRaQUs4TnFhTExEWmI4K0IvUHV0UnVpbVFwaFNwQ0ho?=
+ =?utf-8?B?VkJUMm1FbVdMYjdlbXhkWDcyWHhIRVRHUEltbUMyTG8vaGtxZGM4SFc5Z1p0?=
+ =?utf-8?B?a2dEMno3aGlqcWxYWXZxdG92N3RjSGY0ZjcyT2xGd0hvZHJ5MGhoTXFTdkVa?=
+ =?utf-8?B?MkgrOWZUMkRXd3ZVOHhSeTY3WklOeGRRMnhQOGgyUmdrVk1ZS2d1QVAyL3E2?=
+ =?utf-8?B?ZDJwZ2FkZzVYYjdINVpEUEFSeHJwVlpaNmJNTG9WNS9DTkxyekQwWjh3Yllm?=
+ =?utf-8?B?QTRoUFJtTnB5YSsyTGtBRE1HeDhlVVZBeUpaczJJOFNKcGpVRk1HMHBYR1da?=
+ =?utf-8?B?dG1DZk5xRnNjSUlRNUlZSWc1bmVUREtpcmlPZSt3alAwSmM3bnJ1SW9NWjRQ?=
+ =?utf-8?B?R3lHc3IzR05vL2IwMUtQajBkTXdhTGdhRXZWbE5jYUdnMDVNTjRqa0tKeGVz?=
+ =?utf-8?B?WVFvclNKMVFqclNyLzlxUVdzUUFscUlSbEtiSTdBYS9kMHZHL1BZN2dMVTdr?=
+ =?utf-8?B?YkY1Sm5tQU5Bcm1GMndQZ2diL2tPb1hyNlVIZHpEQ2lFUDdRZzNVcHg2UzNz?=
+ =?utf-8?B?VmxkeVl0S3U1dzZmdzRQbkZxYVVyemxaM3hTSGxuZmVtN01kbCtHbmc4UHVK?=
+ =?utf-8?B?c3N1NUJEV3A0c2VDdTh0aytUZERvWStkVWk2VXdOSW1IcCtpUDV6R1B4K3p4?=
+ =?utf-8?B?bWhmQ0dTVzJnN29mQjM3MCtmVVlnZ2xtWEMyL3cxK2RRRnFEalR4dFZwTmtO?=
+ =?utf-8?B?ellza3Rua2JMSWlMTTJrdHNqT3BSNTFLdVAzdmtwOTJRN0RhRi8vL3gyU3RQ?=
+ =?utf-8?B?YXA0WWJMRlpsM081NkpjdEJWTlREOHRwdEpJY0JMWGZ4WkFEbUhyRUJ4cFYx?=
+ =?utf-8?B?VEFrTFI5U2tNY3VOcjdzRHprN25HalJnanRycXZwbldTeGdQVFR5TVBNYStl?=
+ =?utf-8?B?MmRtUVFJQUxWVjUxTmsvbVdWUWg1WWNBZDE4ZmJPZUR4bjNTZXh0NXhycmE0?=
+ =?utf-8?B?MnY3Z1J3cnRFbFROZFZ0eFFZTTMxR2xvRjNJaitsbkxKbDA0TWFLN29jRFk2?=
+ =?utf-8?B?dXJHSllJcVlIZFZiVzhDaU5BWFJFMjdnRGRGemJYbmZndmNyM1d0YWwxeVAr?=
+ =?utf-8?B?c3FxYVZCbm5sZEphV3BHaTBKVnZTQnpzOVFBZHdTK1M0MUpYTlBLemo1dWJw?=
+ =?utf-8?B?VjJOYStTSE5KeUMyUlpLRC9JeWRwOXBpQjExNG5BUTlTcXl2TjRWVWhFUEl6?=
+ =?utf-8?B?TXlONnFXdlVSQzVjd0h0eGpDdlNwZXlzSGFGcFFkWThtRXIyYldaVmRpTWZa?=
+ =?utf-8?B?MEY4ZUNHdU91eC9zMTVveUduMEN2UjJWck1HN0JlbXZzODhxYkllc05GQUJR?=
+ =?utf-8?B?S2tSbDNmSEZ1Y0ZsZUZyNG5JUHVoN0hyZ2pQR2s0VEgrc0FJSENWWFdsa3kz?=
+ =?utf-8?B?NkRUQW9TZnJ4RjhKeXl5MklhOWZkRTdRWFVHQnplaURvd1d0TVg0djJ4UHFI?=
+ =?utf-8?Q?5bcaka2W/20=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8658.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4uTZoyw288oHrBvU86HtBoFcXfJcdz1KvOotAeDNzDNUDq3DT6Sf+NzGmA+d?=
- =?us-ascii?Q?n1ig3ZdJGF+xqQNxcHjQmNkB+5iAVec7QVRdrg7WDcQ3Eqc1Gx5LQzxwRWZR?=
- =?us-ascii?Q?JmoRde8zJjZeiGDOO49uS2pYRO6PY6tEoCrCXYgz3IHXboV72NhpI/pIxbA/?=
- =?us-ascii?Q?xYxKFkjSCzJ6rQlsdhfE0hEmpH2O4oDFyZ+eFLhW77eF9pHCE2HIPhBVuOw4?=
- =?us-ascii?Q?GhpyjR857MQvd2hIpFGVjWyIt4sVPOCd4zKKsLl1V8N+5Avcc/ZytZ/0LiVa?=
- =?us-ascii?Q?g8NstNKiWMYbgjPYQMl/MEHSyBsGHh6e3C09HMyrLDWCNz3BiHkssr7RcEsn?=
- =?us-ascii?Q?BS0ZWyQOsop2ouWuNlriGVCTPzK36y/2MXNiGm0yh3v1EYm3KVA4j5d89li0?=
- =?us-ascii?Q?cZuDjFXyPMC3Ui9QFpbG03TpnBNPNWiD8hZ/tEmgnk9e2anPYSacDSKqD/jP?=
- =?us-ascii?Q?HkCP8+EpuH2atiPItPfSgSE8oIzs3FI+kjewHrC8zh34khtyWaeDyPgA2CN9?=
- =?us-ascii?Q?7OwgZksGqPKXb3b8PmXiEmcJQ6c1GqGGYT6ze4NxIlA9lzT+xzM/mtjGw8bi?=
- =?us-ascii?Q?E5guWpl0+090cWHE8/lRyGGukC9ADci22QBZGiWCbYC73jeSchAbiqTGqoPk?=
- =?us-ascii?Q?yPOqVWx1XBApHjO3N9LEIRbsEQlFzFZCpgc26oW7/4VvzKmPY36X5XsxZ2yP?=
- =?us-ascii?Q?1CdGqquqR/xX15HFdxNyfchlJjs6LabDSvqp+44mlCL0y/HzVfM54eb6BDiL?=
- =?us-ascii?Q?MaOW0pDlnIy+GJq9pNBWd57lymXxIHzS40uOC8uNUajTivCM0TYXbs7PMhzT?=
- =?us-ascii?Q?7IZxJVoTKXK1TBBJxc4jIteQWg5yxnV2O9pqGzRJrw3dEmy6pGEPxq2QdoVI?=
- =?us-ascii?Q?xiiAyT5snYrGtKdo60kTVJVCywK7OYdTSw1bLd8ec2+v2BwbgN3EnxzD2ag5?=
- =?us-ascii?Q?BFfPSEkjgcz+SGqdSPtqVLg8xlW/PYYX2alsryGvsupctOYnJVr8LwfETLyD?=
- =?us-ascii?Q?3TcQs3W52dzCHevPrgNW/JzRHXdR7Dm17C2/+eDsbM827p180edxLnxD/AE8?=
- =?us-ascii?Q?kCxshcJPkhfo4CRY66uFR82VR8BaDOs1xKjEuM0dxSyDngLXvVpuMAstLJAs?=
- =?us-ascii?Q?2ikdVznYmdU99VJZ/oDVKk/UdqfWmDTel/Cecx9Ut/CiCiJkq1dcKXFBedMd?=
- =?us-ascii?Q?HHWeMWmYe34BSbaQR8KWT8PG9huVw+jiafJdzvBYLwSNp0A73mLTqCogNxj4?=
- =?us-ascii?Q?wQbfytJ81uC0Ii67zhFEc5g64h36Cj+Xb8NscBdvGdBjWyLZiJlt14DR6f8/?=
- =?us-ascii?Q?PKxYE+x5MclrvzhCf0dZo/ykvqTq1I4gkgEtzirzdm0tACgxxjIu958LmrtY?=
- =?us-ascii?Q?pPK14u00JawupB/lXyUe6cB4p8HDOeFGy2JF8oFqnqkIs64gH6yYbnY1McjY?=
- =?us-ascii?Q?AIR0RzUtgaDf5lmmyZkzwDzd0jDvavedjKx6LR8aw6YERZ5FLd+y9cJN4nvs?=
- =?us-ascii?Q?6bPfhOArxnHi8anP12Vg5a4OJ3WWTp7UmJEFekCHPIoM/561CapOYJA0gChQ?=
- =?us-ascii?Q?MdQqUDHxQB8bMCNsOVUjBakomaMIXyS90pSKWFux/f0LTB/oHGIwFXAtWU/e?=
- =?us-ascii?Q?bw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	9/SbEn3EjIM+C08grN58uYvivm99pT/ZcBl+vsPZgSj9WTDViVjlc1o9EoO97AZ8tdya3Y02mbU+quchgCLwGQlFX76JBLd5pzJZndsfRG0AI6dwQ3Kup1ZJlsppreuLg2cS4XEJ6vVwNwam465EeK0w477bFADVM1COJBWW1cLkkd6IvyAEWVal3dqwUoBRIqBPCC/1AiRyH9nquQDnQeH4YvuB+x9eJ+oYcYtdEguYFvcyuORMP655/VnBjWWqeFL1k3zenruUPttMaqOCtXzFTusk/Kop6a4nJMN2YXj3KH7570+VrHbDRUGKl6SgLH2Kuh4HoYh6SYt01ngnHlKejCYb0K+3bwRQr3WI/qbyE7KIdRVg/OST0FBlsGizLn/MvImFdgxJ6wNbwp0pwDOc1Bo+yv7ojesAiI86LetjKNCVcNOfKanYXRdRfMBxHSweILSN8+GDbQGntJqtNa5zxPCqT03ijEjR5DEIOKZ2BemPtIl/YOjC2w4r476LbPHFUuusNrWJy0X25esAru4e2FnJcNbY0GJQFAoVzBEMB6DY+fvg00ZGD3JHwmpBe2J2zNRkSpA3FCULgOcxqyDiIFfHnq7uagGLv5e+6CU=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1496582-f002-4b64-3ed0-08ddb88e5b57
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+	=?utf-8?B?Z0hXeGk2czA3bU1qeGtiZ0xHbTlZcW9wSFFtSmQyay9vVkNZUURERFgvLzVn?=
+ =?utf-8?B?bXVlRlRYYnJQOW0ydFB1Q2IvRWZHb29sZmtoZlVaQXRMVGNHb3RUWWU4YkNY?=
+ =?utf-8?B?Nk9oNTFYUnVTWmFZQ0xJd2NnMW5QcUFmdHAzNUtpaEVEaVVpNERNMFJBUFFn?=
+ =?utf-8?B?SEhBa0p3N3g4WFlDME1YY0VReXlxbDZkSU9xbWZNR013MS9McjlHT0l0WTRs?=
+ =?utf-8?B?L1RrTXNZcmhrSjErSGc3M3hwbmlwK0pqWlB1R0dENnZIb1V6Uzd4OTFvNU5r?=
+ =?utf-8?B?Y1kyQW90ODBjcWovQmZxbUFwSUpwOFRUSDcyeTVsV3d5ZDBOMHZxU05uZThZ?=
+ =?utf-8?B?b1ZwRkgrMW1aREZpUi9YQVRUQk8xVnBzNGtkMk9hQkZ0UzFoaHZxeHNtSWNr?=
+ =?utf-8?B?Z2pHUExKWHJKd2p6UDJyd2I3aEdhTGFGb1lLUVJueGc3T0xnT0pHcWdmVnJN?=
+ =?utf-8?B?bllHY2o4ZWtoS3g0WEp0cUU1YWdDM0d1cGFTaUxyNEJFYmUxK3pwSXBLMEFK?=
+ =?utf-8?B?YytIaEUvRWVKWTgxYWRJUUsrNXdmb0NCS3Znc1BwOXVUbnB1ckRTVDdjUVF0?=
+ =?utf-8?B?eGs1MlNDVVA5MmkxN1U4NnZmem9aYmNwNkN4QVdDMUhmTGk4MVo2SFVwdUI2?=
+ =?utf-8?B?MytETzJhbjRiMk9nd2tVc1pJaFBGdzNybFNML0J5MC9DSnBqcXpBazA0VVky?=
+ =?utf-8?B?aFpySnk3cVprS1NWVlRDRWVsd0haQUFuRFlYN3M4dGh1YVJ6MGg0YmZ3bEZl?=
+ =?utf-8?B?NEFxOWxXQWp3MjRoRXErY2pibFYyczR3WTVlQWhmclpBSE1lUDEzbTQxbXA5?=
+ =?utf-8?B?QzlOTitvN1VaNEJWSjh6VnBZUWw2S2VKamRPdWFIYnErckllUXlhWk04SDhJ?=
+ =?utf-8?B?d25XRUNEVDBmTHNJd1N5Q1Z5dTc3U0hFa3YrRFlJQW0wTEdYdC9CQ1hrYWRH?=
+ =?utf-8?B?UjEvb1JrVWd0a3pFNnZMNk51YzJycElmZE1pMHAxaG43OVVNV01ZSnBxRUlE?=
+ =?utf-8?B?YlEwU0hKVk9HdnU1WGhFZzBZcWljTnlMdW1EbnFpK3ZWZ1Ixc3JXQjhKcHIr?=
+ =?utf-8?B?aUdrOE9SMG1vN1UyMTJGd3VFQWp6b2dINzNkNURRTngxU3lXQVRZSlRGd3d4?=
+ =?utf-8?B?ZVhpTDdodDkreFpSeUsrcElubGxiMVRHK21DOVlNR2l0NDU3OHBodkZQM204?=
+ =?utf-8?B?M3NEcUtHcG1hUVdoVFgrNnlQUWxCWkNacjlmaVo4SStsZTNwVUVWUC9wbVMy?=
+ =?utf-8?B?WjV2UHROVUJrQXlCZEsydTRUMGw1T1BtMW1WaS9palhqV05pVU1yOWE4WTVK?=
+ =?utf-8?B?NjJmdGNLMk9hQlc5cGhlU2JuWG9PeWxaa0ZqVzZyTGVoaUN3a3Z1QWlTNUpQ?=
+ =?utf-8?B?c1hvd3hKMEI1TEtQYkN6c0x2czR0UEZDZitZNzZUSTBKaDJ5TVpBWCs3YitN?=
+ =?utf-8?B?UHBmbGt6Q2hleC9oQjVoUE82b3Rka0F3elpYOVRpSFlNbFdldXJtN2wwQy9j?=
+ =?utf-8?B?eUw2eDFNMWJYdkJuMHNQdlhxUnp3M1g1d3d3eXl3MnBBSmx6M2QwT1ZKMXla?=
+ =?utf-8?B?eEl2akVNaEZoNjd0NzBwMm5VR1BVbmZxUkRwU0grRUhicGs5VHp5bDcwd3pG?=
+ =?utf-8?B?cXU0enVXRGRZRkUwQ05lZXBOMGlsbHJrWWs5d1c2Vm9QOHZTUXVObGFhaDBo?=
+ =?utf-8?B?NmdzcEVOclpnWHAyNXFFaW55b1V5MlArZG5DSVZnMk41amNtZ2tpVzF0bXlv?=
+ =?utf-8?B?QnBicE8zSHZPVjU2WlVIMFdjNUhxclBCbWk2QkJreTV1cXZKRytiOTRWWU1n?=
+ =?utf-8?B?RW8xUTN5NTFpbTZTSm1wYW1uMi8wcG9oUjZlQ0gwSHA4T09NSVFteHNvUXdl?=
+ =?utf-8?B?eHI5bGprbnRmbDM1VnBsYkVQaHJlTjcxWkRFUEpXRTV1dzVzQ3ZicWtUZEF5?=
+ =?utf-8?B?TDlzQUQzbUFFa3JYdkxXT3FoNUZtY25ucTU4UFpNZ1AyNndTTE5EbHRDY2Fn?=
+ =?utf-8?B?Y3luMGd4eVRkUFRqczhmbnl1MFBkYjFDbzYraWVma1Q5SHJ0WkNtTFlielhG?=
+ =?utf-8?B?K0tJdDlBcW9lUkh5YnJJZWkvdzNiYkNkLzdQbkdOSzBON0JVU0JLd09xbHpU?=
+ =?utf-8?Q?ilo3vX6M/kErt1ouJJ3T6yQwV?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f01e989c-7def-4304-4086-08ddb88e75d9
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8658.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 10:59:31.8003
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 11:00:16.0164
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7bKkwTBxXcllTv6EMpn+PV1ItP+tWSeZWoawhAH2uKwFHaFeBImQzehvN0X/qDaFRzco8MVdTriu5scklctJ7guuLK1MZIVvM9JEgNINgDg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7082
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
- bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507010067
-X-Authority-Analysis: v=2.4 cv=CMMqXQrD c=1 sm=1 tr=0 ts=6863bf9e b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=NJBbdSwX4AhB4g6Zey0A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13216
-X-Proofpoint-GUID: Hl87dvufaifrRanHG5sQGHzxV78R9Zp0
-X-Proofpoint-ORIG-GUID: Hl87dvufaifrRanHG5sQGHzxV78R9Zp0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA2NiBTYWx0ZWRfXwhCdsE715+LX MthYXxYfKD5fxVepKEdaQx9Ilcl5opzM4PuCEAktRr9wOoGMZGjsa4hohYQ+E/Q7GS9caX8urKC K1R/KdBCpqv5sGRhq5gsl+oWFHzA+FokO7Op3fsj2+7zCFx4cG+pG1Qi3WBaQHXnPA3DTxIxgqY
- LQMn0yjsANR9WwoAN1XqsYah61Ucfk4pqlJTv0wD2WbWwjXyPIQHAgNz+76z5oUfHUN1eJRGWmZ u5n/n8OwukaI9aCPUgphgwqd5e4+q5d5+5UpMLYT6EnLsmkofSLBmwb/hTad0aS/JikknrhrjrB RL555tT7GlcudO+3s97FZgstMr1t90ssHRIkthTdo7NiweisCgVHeOqbQT84k/CSb0HPPUyg2Rx
- iy/IeEDREE7pd25UlPnEa+0kkCtvX1b5UCTrH3ayvavrI4dXpMTkzsBSdFjKL9HUjJzrssb9
+X-MS-Exchange-CrossTenant-UserPrincipalName: H5I1n14GfsoUfc2j2OIVsKKErVcDqGzehYuMEAVB88iO6pUiPc0ffSw5CrXagaRPuVkBkUYmCtqjviEYFgY8uA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8811
 
-On Mon, Jun 30, 2025 at 02:59:57PM +0200, David Hildenbrand wrote:
-> Let's make it clearer that we are talking about movable_ops pages.
->
-> While at it, convert a VM_BUG_ON to a VM_WARN_ON_ONCE_PAGE.
+Hello Zihuan Zhang,
 
-<3
-
->
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Great, love it.
-
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-I noticed that the Simplified Chinese documentation has references for this, but
-again we have to defer to somebody fluent in this of course!
-
-but also in mm/memory_hotplug.c in scan_movable_pages():
-
-		/*
-		 * PageOffline() pages that are not marked __PageMovable() and
-
-Trivial one but might be worth fixing that up also?
-
+On 7/1/2025 3:04 PM, Zihuan Zhang wrote:
+> Currently, uclamp_rq_inc() skips updating the clamp aggregation for
+> delayed tasks unless ENQUEUE_DELAYED is set, to ensure we only track the
+> real enqueue of a task that was previously marked as sched_delayed.
+> 
+> However, the corresponding uclamp_rq_dec() path only checks
+> sched_delayed, and misses the DEQUEUE_DELAYED flag. As a result, we may
+> skip dec for a delayed task that is now being truly dequeued, leading to
+> uclamp aggregation mismatch.
+> 
+> This patch makes uclamp_rq_dec() consistent with uclamp_rq_inc() by
+> checking both sched_delayed and DEQUEUE_DELAYED, ensuring correct
+> accounting symmetry.
+> 
+> Fixes: 90ca9410dab2 ("sched/uclamp: Align uclamp and util_est and call before freq update")
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
 > ---
->  include/linux/migrate.h    |  2 +-
->  include/linux/page-flags.h |  2 +-
->  mm/compaction.c            |  7 ++-----
->  mm/memory-failure.c        |  4 ++--
->  mm/memory_hotplug.c        |  8 +++-----
->  mm/migrate.c               |  8 ++++----
->  mm/page_alloc.c            |  2 +-
->  mm/page_isolation.c        | 10 +++++-----
->  8 files changed, 19 insertions(+), 24 deletions(-)
->
-> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-> index 25659a685e2aa..e04035f70e36f 100644
-> --- a/include/linux/migrate.h
-> +++ b/include/linux/migrate.h
-> @@ -115,7 +115,7 @@ static inline void __SetPageMovable(struct page *page,
->  static inline
->  const struct movable_operations *page_movable_ops(struct page *page)
->  {
-> -	VM_BUG_ON(!__PageMovable(page));
-> +	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
->
->  	return (const struct movable_operations *)
->  		((unsigned long)page->mapping - PAGE_MAPPING_MOVABLE);
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 4fe5ee67535b2..c67163b73c5ec 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -750,7 +750,7 @@ static __always_inline bool __folio_test_movable(const struct folio *folio)
->  			PAGE_MAPPING_MOVABLE;
->  }
->
-> -static __always_inline bool __PageMovable(const struct page *page)
-> +static __always_inline bool page_has_movable_ops(const struct page *page)
->  {
->  	return ((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) ==
->  				PAGE_MAPPING_MOVABLE;
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 5c37373017014..41fd6a1fe9a33 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -1056,11 +1056,8 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
->  		 * Skip any other type of page
->  		 */
->  		if (!PageLRU(page)) {
-> -			/*
-> -			 * __PageMovable can return false positive so we need
-> -			 * to verify it under page_lock.
-> -			 */
-> -			if (unlikely(__PageMovable(page)) &&
-> +			/* Isolation code will deal with any races. */
-> +			if (unlikely(page_has_movable_ops(page)) &&
->  					!PageIsolated(page)) {
->  				if (locked) {
->  					unlock_page_lruvec_irqrestore(locked, flags);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index b91a33fb6c694..9e2cff1999347 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1388,8 +1388,8 @@ static inline bool HWPoisonHandlable(struct page *page, unsigned long flags)
->  	if (PageSlab(page))
->  		return false;
->
-> -	/* Soft offline could migrate non-LRU movable pages */
-> -	if ((flags & MF_SOFT_OFFLINE) && __PageMovable(page))
-> +	/* Soft offline could migrate movable_ops pages */
-> +	if ((flags & MF_SOFT_OFFLINE) && page_has_movable_ops(page))
->  		return true;
->
->  	return PageLRU(page) || is_free_buddy_page(page);
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 62d45752f9f44..5fad126949d08 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1739,8 +1739,8 @@ bool mhp_range_allowed(u64 start, u64 size, bool need_mapping)
->
->  #ifdef CONFIG_MEMORY_HOTREMOVE
->  /*
-> - * Scan pfn range [start,end) to find movable/migratable pages (LRU pages,
-> - * non-lru movable pages and hugepages). Will skip over most unmovable
-> + * Scan pfn range [start,end) to find movable/migratable pages (LRU and
-> + * hugetlb folio, movable_ops pages). Will skip over most unmovable
->   * pages (esp., pages that can be skipped when offlining), but bail out on
->   * definitely unmovable pages.
->   *
-> @@ -1759,9 +1759,7 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
->  		struct folio *folio;
->
->  		page = pfn_to_page(pfn);
-> -		if (PageLRU(page))
-> -			goto found;
-> -		if (__PageMovable(page))
-> +		if (PageLRU(page) || page_has_movable_ops(page))
->  			goto found;
->
->  		/*
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 040484230aebc..587af35b7390d 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -94,7 +94,7 @@ bool isolate_movable_ops_page(struct page *page, isolate_mode_t mode)
->  	 * Note that once a page has movable_ops, it will stay that way
->  	 * until the page was freed.
->  	 */
-> -	if (unlikely(!__PageMovable(page)))
-> +	if (unlikely(!page_has_movable_ops(page)))
->  		goto out_putfolio;
->
->  	/*
-> @@ -111,7 +111,7 @@ bool isolate_movable_ops_page(struct page *page, isolate_mode_t mode)
->  	if (unlikely(!folio_trylock(folio)))
->  		goto out_putfolio;
->
-> -	VM_WARN_ON_ONCE_PAGE(!__PageMovable(page), page);
-> +	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
->  	if (PageIsolated(page))
->  		goto out_no_isolated;
->
-> @@ -153,7 +153,7 @@ static void putback_movable_ops_page(struct page *page)
->  	 */
->  	struct folio *folio = page_folio(page);
->
-> -	VM_WARN_ON_ONCE_PAGE(!__PageMovable(page), page);
-> +	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(page), page);
->  	VM_WARN_ON_ONCE_PAGE(!PageIsolated(page), page);
->  	folio_lock(folio);
->  	page_movable_ops(page)->putback_page(page);
-> @@ -192,7 +192,7 @@ static int migrate_movable_ops_page(struct page *dst, struct page *src,
->  {
->  	int rc = MIGRATEPAGE_SUCCESS;
->
-> -	VM_WARN_ON_ONCE_PAGE(!__PageMovable(src), src);
-> +	VM_WARN_ON_ONCE_PAGE(!page_has_movable_ops(src), src);
->  	VM_WARN_ON_ONCE_PAGE(!PageIsolated(src), src);
->  	rc = page_movable_ops(src)->migrate_page(dst, src, mode);
->  	if (rc == MIGRATEPAGE_SUCCESS)
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 44e56d31cfeb1..a134b9fa9520e 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2005,7 +2005,7 @@ static bool prep_move_freepages_block(struct zone *zone, struct page *page,
->  			 * migration are movable. But we don't actually try
->  			 * isolating, as that would be expensive.
->  			 */
-> -			if (PageLRU(page) || __PageMovable(page))
-> +			if (PageLRU(page) || page_has_movable_ops(page))
->  				(*num_movable)++;
->  			pfn++;
->  		}
-> diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-> index ece3bfc56bcd5..b97b965b3ed01 100644
-> --- a/mm/page_isolation.c
-> +++ b/mm/page_isolation.c
-> @@ -21,9 +21,9 @@
->   * consequently belong to a single zone.
->   *
->   * PageLRU check without isolation or lru_lock could race so that
-> - * MIGRATE_MOVABLE block might include unmovable pages. And __PageMovable
-> - * check without lock_page also may miss some movable non-lru pages at
-> - * race condition. So you can't expect this function should be exact.
-> + * MIGRATE_MOVABLE block might include unmovable pages. Similarly, pages
-> + * with movable_ops can only be identified some time after they were
-> + * allocated. So you can't expect this function should be exact.
->   *
->   * Returns a page without holding a reference. If the caller wants to
->   * dereference that page (e.g., dumping), it has to make sure that it
-> @@ -133,7 +133,7 @@ static struct page *has_unmovable_pages(unsigned long start_pfn, unsigned long e
->  		if ((mode == PB_ISOLATE_MODE_MEM_OFFLINE) && PageOffline(page))
->  			continue;
->
-> -		if (__PageMovable(page) || PageLRU(page))
-> +		if (PageLRU(page) || page_has_movable_ops(page))
->  			continue;
->
->  		/*
-> @@ -421,7 +421,7 @@ static int isolate_single_pageblock(unsigned long boundary_pfn,
->  			 * proper free and split handling for them.
->  			 */
->  			VM_WARN_ON_ONCE_PAGE(PageLRU(page), page);
-> -			VM_WARN_ON_ONCE_PAGE(__PageMovable(page), page);
-> +			VM_WARN_ON_ONCE_PAGE(page_has_movable_ops(page), page);
->
->  			goto failed;
->  		}
-> --
-> 2.49.0
->
+>   kernel/sched/core.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 8988d38d46a3..99f1542cff7d 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1781,7 +1781,7 @@ static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags
+>   		rq->uclamp_flags &= ~UCLAMP_FLAG_IDLE;
+>   }
+>   
+> -static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+> +static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p, int flags)
+>   {
+>   	enum uclamp_id clamp_id;
+>   
+> @@ -1797,7 +1797,8 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+>   	if (unlikely(!p->sched_class->uclamp_enabled))
+>   		return;
+>   
+> -	if (p->se.sched_delayed)
+> +	/* Skip dec if this is a delayed task not being truly dequeued */
+> +	if (p->se.sched_delayed && !(flags & DEQUEUE_DELAYED))
+>   		return;
+
+Consider the following case:
+
+- p is a fair task with uclamp constraints set.
+
+
+- P blocks and dequeue_task() calls uclamp_rq_dec() and later
+   p->sched_class->dequeue_task() sets "p->se.sched_delayed" to 1.
+
+   uclamp_rq_dec() is called for the first time here and has already
+   decremented the clamp_id from the hierarchy.
+
+
+- Before P can be completely dequeued, P is moved to an RT class
+   with p->se.sched_delayed still set to 1 which invokes the following
+   call-chain:
+   
+   __sched_setscheduler() {
+     dequeue_task(DEQUEUE_DELAYED) {
+       uclamp_rq_dec() {
+         if (p->se.sched_delayed && !(flags & DEQUEUE_DELAYED)) /* false */
+           return;
+
+         /* !! Decrements clamp_id again !! */
+       }
+       /* Dequeues from fair class */
+     }
+     /* Enqueues onto the RT class */
+   }
+
+
+ From my reading, the current code is correct and the special handling in
+uclamp_rq_inc() is required because enqueue_task() does a
+uclamp_rq_inc() first before calling p->sched_class->enqueue_task()
+which will clear "p->se.sched_delayed" if ENQUEUE_DELAYED is set.
+
+dequeue_task() already does a uclamp_rq_dec() before task is delayed and
+any further dequeue of a delayed task should not decrement the
+uclamp_id.
+
+Please let me know if I've missed something.
+
+>   
+>   	for_each_clamp_id(clamp_id)
+> @@ -2039,7 +2040,7 @@ static void __init init_uclamp(void)
+>   
+>   #else /* !CONFIG_UCLAMP_TASK */
+>   static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p, int flags) { }
+> -static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
+> +static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p, int flags) { }
+>   static inline void uclamp_fork(struct task_struct *p) { }
+>   static inline void uclamp_post_fork(struct task_struct *p) { }
+>   static inline void init_uclamp(void) { }
+> @@ -2112,7 +2113,7 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
+>   	 * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
+>   	 * and mark the task ->sched_delayed.
+>   	 */
+> -	uclamp_rq_dec(rq, p);
+> +	uclamp_rq_dec(rq, p, flags);
+>   	return p->sched_class->dequeue_task(rq, p, flags);
+>   }
+>   
+
+-- 
+Thanks and Regards,
+Prateek
+
 
