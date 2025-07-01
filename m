@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-711228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12D2AEF7D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:08:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C87AEF7CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DE01C0459E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C6C3ABEDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 12:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BDE273815;
-	Tue,  1 Jul 2025 12:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630762144C7;
+	Tue,  1 Jul 2025 12:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Egebe6Xk"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DpsiB4lw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DD0272E48
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B9C7A13A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 12:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751371593; cv=none; b=eVixFxYH6Fh2OToulEPtLCphsoN3pnJ6BSEqCO1SqLP+OkEY3bxJC8E83k/3t7UbI6TFm35qnaf82EelpBTicc0RQL5mDWjFvBiB0FE5fkWFQpjjNdGLkf2FGnB6RK8FZa6Ao7sAtoQO61H+UPZnXxzI8+Bv2M1U1vHijQKVEo8=
+	t=1751371624; cv=none; b=JtgDC4kk5HTReOjkxmMO/t1z4yhKvQyvG9aQUN7jqKGKgRGVhNIjO12JAxupgxue7HpzQUWgF3wvHzi8dwrxtSVk0udMwsj8jnYFyeTTx2ozqEtTrRelzKhKvbpgc1ZpSxKCgAVqU4cxX2w3bUu90qsEW2vZI6dOSRJuteHUYC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751371593; c=relaxed/simple;
-	bh=fwZQhFulCtk6W9St9reCgVe3JkeISDZLWskJCaogHtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gdwFi9eQLXtLKOkb1/sHxyKpihA86/2ybrvMLQhTR0Ziv7hQfmfrURbYQqNgfve6SwPNpgOIBuyizsGm8p+mQUQgt6kU1Ry0uS4y75gZ0wFkmF9S0wi0aByxMB8xTIeSEOA/neRIV7NjG9ffLEZ9Aoiv7p6ZLnXb+TaaFPC+B54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Egebe6Xk; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2357c61cda7so114235ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 05:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751371592; x=1751976392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fwZQhFulCtk6W9St9reCgVe3JkeISDZLWskJCaogHtY=;
-        b=Egebe6XkkWWxrWmyUivjX5aWl4O1EcZh3DITP/UtDfB1mhO+muB5qow6N1ZSls2gV8
-         jPiPC0SxIzQpJEdcctPszgOWwCIp+qa+HSOh33xWTR//zOV3FbuneW51yMYEDIknGEN8
-         NzA55UM/nuwG25Kdc+J7PMt+fvJj2hO9nQmYSQM9Jb6ELKUo18gvFjVDDbyaDP1HXHRs
-         wpnvSLVjofERgNuAmibJDgFZ6vznKwN8ggjzGeWY8f8s48HgdjmnNfN88QNwpPoWMphc
-         KcWMCdVYLeof3RIGs5/550xMt09mJ/Af0ybTHbC5IJ/XRa9afEgw3aX8jpETkCiZcMGj
-         zoWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751371592; x=1751976392;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fwZQhFulCtk6W9St9reCgVe3JkeISDZLWskJCaogHtY=;
-        b=pTZak5GmJLqbltrXHJFGJJft3AJDKFfdJGrulgC5c28fIfMQwql0Fr70nnBvGhKPrf
-         xiuwrGyRl45ZJou486LXoOQPdr90m9ruxMXz5oVxp0N2R8lBiRnEp1argQFss50Mu7i8
-         TZR19YqNRpAsRrGk9g42SBbVvaV6bPu7HrwypJKzrlQFLVGnOM2lut3sNITXwmjG7UR8
-         3/MJXDY0M7g21YjmahQvzNH1KcycBR1V8eNMD/JlOMRoJS7z2Yv+42aLzmoxETLC1F/0
-         NIVHqW5SBMZMOjEWYWC7s8vugyqGhvg7DZ0eRtQL2KTrDRO5RMHn5llRQ+EMdwNnTu//
-         JSIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuGPlK7dnYHeoqp7FMXDSQbvP3tFlg97i9cAjf7ujWlsX8z6S2xJ94DmblJKuFqwzYuhdGuZ493XWgw/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ7gw4xTWnKNfFKNUV0MzF9nNT9d7zOYf07nkTsJpA9luuBPDq
-	QrB429XxfUPEXCTZVOhahJo+XUOH0qXo62mu/uQXJdG1m0srGKzjirT7MAVqaLrIYYoZ5d58Fri
-	l19625akKtXRA+gChgwKjA16w84PHdJIGCUDRMmz0
-X-Gm-Gg: ASbGnctNQy557z6ksBHoWU5TDRRZz4m7/K0z0g9uOt+GDwav0PcqIOsoiKmhB6qwlfH
-	GMdwusCdf2IW83nrZW0yNULvPnWT/Y1TY7la1EBWpoUVAhqn4CMeqB7RNH2HYz7Qe/gFTH2WYuR
-	J6Xh0lx8WELVprqdbk9ztURVe1vzNhrYMSWclzQWPvDQ==
-X-Google-Smtp-Source: AGHT+IGFAwjulo/i4stzSeDZyvangI+UZ0rJXA7wz0l2gf+G3c7FdoUDkNvfVQlKGJ7tNf7XQG97q/uJgkbiheh/1nA=
-X-Received: by 2002:a17:903:110d:b0:23c:5f63:b67 with SMTP id
- d9443c01a7336-23c5fef26b2mr2103895ad.4.1751371591226; Tue, 01 Jul 2025
- 05:06:31 -0700 (PDT)
+	s=arc-20240116; t=1751371624; c=relaxed/simple;
+	bh=ICNYBUg1q5VfjCk6Ft1uwiaUAxE63kanKo0ZyWYry7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Plo2Jc7WGLSGTiaJWv4mOHqoFFDVlCQgztHPninKsivK6FDQSM9M7q0Xx0LMr1vsmEi/051bYpKnHNPK9m9sjB3qrGgt4y2dSYjO7gJkxWNaWdM6MJXpBKyozmVH6GgXAUoTAbMXr6qy0FN00ABRSVcuynH9MdSDtUXaTurCuAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DpsiB4lw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC111C4CEEB;
+	Tue,  1 Jul 2025 12:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1751371624;
+	bh=ICNYBUg1q5VfjCk6Ft1uwiaUAxE63kanKo0ZyWYry7E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DpsiB4lw6haiZyQYHb9DdLtdcWrbnBTwtaGhznGUdH6/V1g4tumzbSEdZ16JJcqrc
+	 3czGG08q2jylMclwOM4MYeBdHQPTmTZKggHbxOBxFht9n7Or8FTF0ORG5qf0UNx1er
+	 IKrSqDPZcFZjuIlPoN8x+q1O0vnqRI+0o5Ag1ogQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eddie James <eajames@linux.ibm.com>,
+	Ninad Palsule <ninad@linux.ibm.com>,
+	linux-fsi@lists.ozlabs.org
+Subject: [PATCH v2] fsi: make fsi_bus_type constant
+Date: Tue,  1 Jul 2025 14:07:01 +0200
+Message-ID: <2025070100-overblown-busily-a04b@gregkh>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612114210.2786075-1-mclapinski@google.com> <685c67525ba79_2c35442945@iweiny-mobl.notmuch>
-In-Reply-To: <685c67525ba79_2c35442945@iweiny-mobl.notmuch>
-From: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
-Date: Tue, 1 Jul 2025 14:05:59 +0200
-X-Gm-Features: Ac12FXxGIEan-Q08VvikT9LVQKRxgvs42efMWiz53YaKommHJZr1vh6fiZw9HYE
-Message-ID: <CAAi7L5cq9OqRGdyZ07rHhsA8GRh2xVXYGh7n20UoTCRfQK03WA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] libnvdimm/e820: Add a new parameter to configure
- many regions per e820 entry
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Thomas Huth <thuth@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Mike Rapoport <rppt@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-cxl@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Lines: 43
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1489; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=ICNYBUg1q5VfjCk6Ft1uwiaUAxE63kanKo0ZyWYry7E=; b=owGbwMvMwCRo6H6F97bub03G02pJDBnJ51OktdeYXOGJkhaJf6ly69u1WcFe6Svl509udr3RW nQoWPJuRywLgyATg6yYIsuXbTxH91ccUvQytD0NM4eVCWQIAxenAEykuYBhriDvXavgh9tdZpTm /XR2iJRpbZnhy7Bg4rms2qzX6/rdb++xE3oo3GAk2B4IAA==
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 25, 2025 at 11:16=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> wr=
-ote:
->
-> Michal Clapinski wrote:
-> > This includes:
-> > 1. Splitting one e820 entry into many regions.
-> > 2. Conversion to devdax during boot.
-> >
-> > This change is needed for the hypervisor live update. VMs' memory will
-> > be backed by those emulated pmem devices. To support various VM shapes
-> > I want to create devdax devices at 1GB granularity similar to hugetlb.
-> > Also detecting those devices as devdax during boot speeds up the whole
-> > process. Conversion in userspace would be much slower which is
-> > unacceptable while trying to minimize
->
-> Did you explore the NFIT injection strategy which Dan suggested?[1]
->
-> [1] https://lore.kernel.org/all/6807f0bfbe589_71fe2944d@dwillia2-xfh.jf.i=
-ntel.com.notmuch/
->
-> If so why did it not work?
+Now that the driver core can properly handle constant struct bus_type,
+move the fsi_bus_type variable to be a constant structure as well,
+placing it into read-only memory which can not be modified at runtime.
 
-I'm new to all this so I might be off on some/all of the things.
+Cc: Eddie James <eajames@linux.ibm.com>
+Cc: Ninad Palsule <ninad@linux.ibm.com>
+Cc: linux-fsi@lists.ozlabs.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v2: fix up subject line to be correct
 
-My issues with NFIT:
-1. I can either go with custom bios or acpi nfit injection. Custom
-bios sounds rather aggressive to me and I'd prefer to avoid this. The
-NFIT injection is done via initramfs, right? If a system doesn't use
-initramfs at the moment, that would introduce another step in the boot
-process. One of the requirements of the hypervisor live update project
-is that the boot process has to be blazing fast and I'm worried
-introducing initramfs would go against this requirement.
-2. If I were to create an NFIT, it would have to contain thousands of
-entries. That would have to be parsed on every boot. Again, I'm
-worried about the performance.
+ drivers/fsi/fsi-core.c | 2 +-
+ include/linux/fsi.h    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Do you think an NFIT solution could be as fast as the simple command
-line solution?
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index 50e8736039fe..ee39d1699387 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1404,7 +1404,7 @@ void fsi_driver_unregister(struct fsi_driver *fsi_drv)
+ }
+ EXPORT_SYMBOL_GPL(fsi_driver_unregister);
+ 
+-struct bus_type fsi_bus_type = {
++const struct bus_type fsi_bus_type = {
+ 	.name		= "fsi",
+ 	.match		= fsi_bus_match,
+ };
+diff --git a/include/linux/fsi.h b/include/linux/fsi.h
+index 8c5eef808788..adea1b432f2d 100644
+--- a/include/linux/fsi.h
++++ b/include/linux/fsi.h
+@@ -68,7 +68,7 @@ extern int fsi_slave_read(struct fsi_slave *slave, uint32_t addr,
+ extern int fsi_slave_write(struct fsi_slave *slave, uint32_t addr,
+ 		const void *val, size_t size);
+ 
+-extern struct bus_type fsi_bus_type;
++extern const struct bus_type fsi_bus_type;
+ extern const struct device_type fsi_cdev_type;
+ 
+ enum fsi_dev_type {
+-- 
+2.50.0
 
-[snip]
 
