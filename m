@@ -1,305 +1,265 @@
-Return-Path: <linux-kernel+bounces-711404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89C4AEFA5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:25:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03299AEFA19
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3A518888B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:24:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47227A35EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE3A2750E4;
-	Tue,  1 Jul 2025 13:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C3C274B50;
+	Tue,  1 Jul 2025 13:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lVo/pwxy";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="vTFT9vzv"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wS+QoWaW"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E663B274FE8;
-	Tue,  1 Jul 2025 13:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751376086; cv=fail; b=cTYbcDbdeLixzfGwAFfk2AUrRn+Ym49sZWizpjR5G+YAaOTfEjprRAM7EaAvuPZmBgjViJp/qygOV1KO7okDplW7SbUAZ5TfJE2gaon1adaMme8z8JP/31pImHwFVKNOTseeFk76zyuXoDR9pr0tf0RdDv9RsejqfNGcdntv8kw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751376086; c=relaxed/simple;
-	bh=rlG8hdJw1NAseZouPdSl0Ct7KsghzSoNBThErty60eE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cUne4/v4yfGgkXpdSRGlTO/hKohu2pWS9p1l4+aDXPoUTRXb05eZL+Z1Vh3D/+Lksv0JqEEIZb2Gh53/Os4+A0WoHVu8bzCwAIcntHur0dQK41jTjhTNwlPku5lpyCEDd1LEkxIDtAbA1R4GC4EUVdkaafNw8nfm1YIgv76gebQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lVo/pwxy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=vTFT9vzv; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 561D9CId023956;
-	Tue, 1 Jul 2025 13:19:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=M9OtS2HWd25mlIklHS
-	KOou82gkt5WdxGFQy87SOu9/g=; b=lVo/pwxydIfE6Sx2X+fMBf7LN0BlL1FiEV
-	nqp2ylFNgN57utru66vqZJAwYFMoFLLtZIAysQZ4foJuPAohWqZGsE4gA9fTND9h
-	vxeYUMDKrFKEyc+ZRuKO27ModVQQWZBXYzC53c4BquGmxnrdAdroDTNa85Q5q0GK
-	tCt2Id8td2bMgOjumyXjkds4Rk9RcT6CnZIyH2lEsikNKEarTjMz2JOuLSawrisF
-	ia1nMPc3KwAYJ5GmJlKaL7T3rUeC8OAbjuSPqdeMwzLrpDllVmfIxshRB6iy6bGy
-	3gzkKx3eapIoDRAUCo2nxgDzKkpcEEdV2dVvYCGf9hMoI8CkJHuw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j704cs4k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 13:19:13 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 561DBPVn005794;
-	Tue, 1 Jul 2025 13:19:11 GMT
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010062.outbound.protection.outlook.com [52.101.61.62])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47j6uh0jj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 01 Jul 2025 13:19:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NNmMVhBwcoxkWcomG0b8b6LOObwiJLAe2fqtQQss5iIVCtKPTmD2sB1PMRvgMgSl5SOtM76wSxAGE6D40Fn4M0ewV+3VNoLzBq7bmcjofK3gKEIjgondtq3JoDIF4HcKADVpHXiLPkj0t1DYc5SULVnzM0dxBAYSZGv8DY6sBCkXnovwcIZwuEcoH5te7ehi3B9iKz/SFnDzYusfQ+7ZrjW9Dbf0TWIftQ1+Em9/H6xXb7BS4yJYj4fJzr+JrCSreOhOHyRJzyo+Gs7ti7zIkEtHXlmqd/jzUDcplUTZ+FKacNVqweDo9jCvWk2PoIaTfQP9uunj81jvJSlPNotK3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M9OtS2HWd25mlIklHSKOou82gkt5WdxGFQy87SOu9/g=;
- b=ytwH4rj83ck1TWqJVUf+Ejba+geMSlcRGWWHdmi/QjamXVzE7qQEtv2j1GvKa/XBSqyRDmbn0z8NgPZjQJ4d8a0QeHoL80LEkwt99Y8nxyCZANtvJcNYvvA64sTmbZ10uSIXVeLxXEdt8EkrGJ382PCypB+OMVghdjzNDKp2F+DNoG5TtZ5suqixXQoZna5U+wuaqM6kKoFqCivKl4lLs+oIz+xTovGGRaHHNYNDF4CqlLETC9KYXm8dqWPKMY+UM1AnHMJ3qeR8ayUxzaY9AM7Bncwpj5wrRa/OQUaLq3riyFOSSsPFouzSoMPv88uFLL0AcMpABx0GoK2ajnk5jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F72127462
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751375982; cv=none; b=o7qTPJGiB/ThjiRjynzvpAvU2oTurDAMx7QIZnrEV5TA02ndaO6lTZXJM9n1g3x4gTVsiFybDychF1ubBlqC5oCSrCW+9zx9B8sHXNt9Im02UNxs71/WnEOzBhoNqj27P1VQuS7b3b1vu3UmT9RoHT+9H9VU6manLSndj7FGbhw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751375982; c=relaxed/simple;
+	bh=UzT2uInmqyg2RtroVrCYijALhzllqgCfdOFLoK2TCSs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=YankbZX3+5ZFnpdZ+7fOH+pNkd/fzEeKKEoOgW5DnrDtx6SZ5TdH+wd0hyyOrLZTQn+E7zAmjQ1grUHgLfl6rkGX7zgl/WyJDlGsal0T0EUJcFdBkhQo0MNS5YFnOska7xCKSnKqu1FXmFHyNV4NJIDEeTXMllgM8T4uP8EblKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wS+QoWaW; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso33504915e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 06:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M9OtS2HWd25mlIklHSKOou82gkt5WdxGFQy87SOu9/g=;
- b=vTFT9vzvuXL3/2ZhrnxGb8lk4JGyZ41SX+1n25ML6x/ohNUypG+xw3o6I8ePZlbN2tM4p4EVcd9Qraaic5SRcXQw0HjfJaNE0PKtwvi0ZEih9omoPxj4mJyvvxGvLEH/qaY8Qffq8pfJVhVy+2JkU7HZ1yLJfrSHJwqZHNDnh4Q=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH0PR10MB4503.namprd10.prod.outlook.com (2603:10b6:510:3a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.19; Tue, 1 Jul
- 2025 13:19:07 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%6]) with mapi id 15.20.8880.027; Tue, 1 Jul 2025
- 13:19:07 +0000
-Date: Tue, 1 Jul 2025 14:19:05 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Jerrin Shaji George <jerrin.shaji-george@broadcom.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Zi Yan <ziy@nvidia.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>, Peter Xu <peterx@redhat.com>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Oscar Salvador <osalvador@suse.de>, Rik van Riel <riel@surriel.com>,
-        Harry Yoo <harry.yoo@oracle.com>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>
-Subject: Re: [PATCH v1 27/29] docs/mm: convert from "Non-LRU page migration"
- to "movable_ops page migration"
-Message-ID: <8545452f-5b0b-4a6b-a473-5a5fad79f390@lucifer.local>
-References: <20250630130011.330477-1-david@redhat.com>
- <20250630130011.330477-28-david@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630130011.330477-28-david@redhat.com>
-X-ClientProxiedBy: LO4P123CA0429.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18b::20) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=linaro.org; s=google; t=1751375979; x=1751980779; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Aj6b3sQtidaOqLPrzQWg9ZM2jLrBucjJMYudkhoSb1g=;
+        b=wS+QoWaWHe0p08UjZMvgmisoUljPYrIyFcwU9GmYVJ+6ikKPFb9WdlmN1DgrrJjPH5
+         lEHiZ4DCMlRD3IZmIINj5slf+FEOXxmwkAmDQKn9/nXc/sOloCStRi2MRyLnqw7MCX/T
+         +fQBDB87/sk7kPk2YjVhdXNq+gy7vOFC9WB2P3kJgUTeWdw9/GCIH3tJ8XCL/rGvKbrd
+         8rTQKI/XMgrDRcH8cyIB/YIrkyNEU6Xm45h8UgjIxmUcFD9aOEvKkxpHMzT4aazDVm2I
+         fW85mbV/PWyLPj8GJKsE6rUW0OQlHAXFjnx48ZnsSxccoZ2nTD8ui6L55z8wHu6xh4TA
+         xqBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751375979; x=1751980779;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Aj6b3sQtidaOqLPrzQWg9ZM2jLrBucjJMYudkhoSb1g=;
+        b=oqp60bypwCcTFr0pIixBNEK7uDhOSL8N1GbeehiuBBZm8U2QtfdD+5KlD7WlaoCdYM
+         n+q4bjNonsMjODa6U0eqLJUHOh3YwxoKgXZxqsRU7gnMhEeRG6hwAIhUT/xQowOu1wHn
+         ISiHxwaUONbw0asNVdkI6F69b+Rov2Qoe0msGcsUWbl10ZWoV92CzbGQwE3BRIS0zPcM
+         sL8w5M9pax0IUYZ938AGFcO+C8DjoRsCbXkxxuE6533o8B8QNwqZZ/BGgCCddvVDyIju
+         ehzW3C13l2pvZ1F4U+igNRaY/f+vKwv1ZuSBVph9plRqJlV/14ZvrqFIxbD5n4UFMvnv
+         KlTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJmP07tbGMmcbQalTsmxLcZpV1FIN0jErPCeESdsDfbss+u7T/TOHobhmyiwSKDa73cWMp3idVcaOjzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcW+lvpc6ENuI56SlcTbucWJBWfrLqs8gmI4lAG877wmFwEymj
+	ocMvg0lau7Uhg7AaF/AiRZcfF1E0WevdOxLRGn49B04LHAQRy/nQHNjsovr18ThsOck=
+X-Gm-Gg: ASbGncuvckV4GAVdEz9rGlGcwh63UF2pqGjuxZzxfcudXjPCbhw3bs+OB7X9A9ey+PS
+	2hqjJablv3MoJQU70EIwhy9H6eIf+VWWAeHumEBWFEFnBRMdsEanpg8f3K3Ei9FnPiyiBFnVN0I
+	SAuryjnI5CNCG6jnii7OAstevCA+IGRmiA0+C/xt1iP8sOa3he3qSqNe2NmzWpfepsSC08az2oV
+	/XJko1VlfR0HsX90vYTbJT3L/8m3GMehhlnE8KjA9Rm89ZEdTrJr18wsDztBSK8EntCpTl6egLW
+	+ViAsIyKd/fKvpi2Z8unSooakcQdOVN9sNOPFSIpEAueeqPCLrSws7fu2YMTCx2HFWeMtjqN+OI
+	NYUUxln8lha3KoXwoKxqxSnbWLGWr+ZIY06e30OE=
+X-Google-Smtp-Source: AGHT+IHbOrLG7ZTlgC1fQj8MjLSN6N7+UwdKWvv+JS57ZhHInruUexjc1h0UnTdlmqAMpCV1dSFYcw==
+X-Received: by 2002:a05:6000:4104:b0:3a4:ebc4:45a9 with SMTP id ffacd0b85a97d-3a8f482c07cmr13998087f8f.19.1751375978623;
+        Tue, 01 Jul 2025 06:19:38 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:64d3:1697:3b4d:755c? ([2a01:e0a:3d9:2080:64d3:1697:3b4d:755c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7fa8fasm13169357f8f.28.2025.07.01.06.19.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Jul 2025 06:19:38 -0700 (PDT)
+Message-ID: <cf53e9c1-7d38-4458-8708-a74852cd594c@linaro.org>
+Date: Tue, 1 Jul 2025 15:19:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB4503:EE_
-X-MS-Office365-Filtering-Correlation-Id: 219991cb-11c7-4a3a-6e2c-08ddb8a1dc00
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ci0WwJkQ9ZJ/nt5CKYtldVU22PEtnoerz0NE0JbhvX90yGUHRYxAvRqPH4cX?=
- =?us-ascii?Q?6is6cXmiY4ycuyXW9DJTl4y8HwbbVdJSNyipffL0//5OXgCTjDfwF/q1YC/S?=
- =?us-ascii?Q?SFKN3jx0hD1L8yYDYQC5VXjsN7oC+iyasbqQ6Cz5EQmYerm+Rv/aJst5G4Vx?=
- =?us-ascii?Q?smqNUBDex0cb2os1GeGE7SE6v/M0xg/22KD5Ekhxl09plf3yCInf7pzk3zHY?=
- =?us-ascii?Q?QW4FU6aGlYn9J+VFvDIktzwPzGXLexb7fkvQo1xpWNgVa7dIEtHBK40jn6MC?=
- =?us-ascii?Q?3Sslm+Pleees1iXr1E0If06FQpCdlfItJo13RsvmHCpsFgrIdBm6iH0Fm2cB?=
- =?us-ascii?Q?Mt8pzY8FtO3nAsJE8ykY4OmF2bBFSCfDJSc5ZYZTj0uKSDW251AwXFfxv20+?=
- =?us-ascii?Q?dSmUf05n7OVDiiDGYBJr3tH9759SUeeq5sMfmk9TxoOgtIXrZXZQDgpnv2JA?=
- =?us-ascii?Q?n7KHGb8Yy6SoRTCTmxoOYrgAVkwSJjWN2o0em+VP4S25teHTL2m21gYSKte8?=
- =?us-ascii?Q?Q2LoaleG+tbKDSR9Z3b4+bzKeoaadAIsgWwtZawDlPBw5IvS9uXykFbNZtxk?=
- =?us-ascii?Q?3hGXjS7ykyJHUTKFw/odr492ksCqxG+LA0XbyQGa7LAb/HfR+cLhLFOwqxNh?=
- =?us-ascii?Q?oDS3Af9e21IvuUjUOjbTPZ9JyMiS9DQKEDYbL+ESWWGm0LI5YDvBrY2zJ0oM?=
- =?us-ascii?Q?gRkLxlxbfoE3oRp/9L9vmrAxGPHml8MYAKx+ZmdrKWi/Pyguiv1UIrYxyA5p?=
- =?us-ascii?Q?LXg8zlOgv9g6+Qck+Obm9QljFS5SvAeCBMyh/G9Pi2nGNjyUgpaF/0/L4zcO?=
- =?us-ascii?Q?qJwh+Tybi3SIOIVwnXxxSuaQs2jqhhH0eKwjyGBBKB2fdFTkCVbZJjv8c2sZ?=
- =?us-ascii?Q?VyQSSiZ3NrAXvBo+r54Ww7ZpJ9fgvGFDLtzMlxZlD8+NebCB4Pn5inTv2T8L?=
- =?us-ascii?Q?IVNIY4Ny30zVpgOiWG3fsePK06G/rb8wos2L5nhRne3XSkyv9E4f5z/RQV1b?=
- =?us-ascii?Q?qa3iLicq48TSk36dGf+PospozANKcu4gT4mFaGtNFEu5k6zCsGAdJ87DCoEb?=
- =?us-ascii?Q?A0+cu6Kqdlwly4k9TNsGGtMHiSU5YNGSc3c7B0nMq6pwIJr5DtnJoaqhfsVV?=
- =?us-ascii?Q?qmbPdHH/TUc+iNNhcyxtiqpHdy00D3HVWZsgUbRIFAJwxsomNS976A1TFQy4?=
- =?us-ascii?Q?P2waW2eTzt0j4gnUtSaiHvcClD2Uk24Kiw/LkdloUb3+mmN8WoHRdudiSK31?=
- =?us-ascii?Q?0R704jjc28yYHmio8Y/PDLAp4MRVW2ywG3KY9BflgJT13XaUv7b7yq01jkJS?=
- =?us-ascii?Q?KvB7dWFOX4kGQnTQCIdsJafvHLRUuwbNXQt6rEomUORczoVVo8QIz9uM/E8z?=
- =?us-ascii?Q?0Wkr/ud0FfiHUdudQGBJGwlvjxbY5q+evH3+mwGG0luhymBlrsDRKsEof5xY?=
- =?us-ascii?Q?diiD22LE+hw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KdKqjZg7JEFzQnqXZMMItK+ZydLlaciKMpFYPLdFsNWR0tnPjoM0f9+GYZwx?=
- =?us-ascii?Q?OcJd+EzRnB5aTQRuBCV9yp7jEAMr4wYpFHVvw5F+lGWvwp5dd/3Jm9oJD5wd?=
- =?us-ascii?Q?6ljmLHlefTLtkksNNnPtAZ8F/METycRClvDS6S7dMLpcKnoB5lIT4ptm2Nvb?=
- =?us-ascii?Q?YMkeRzGLsfBCGXtq/V5cKgwq90dd89EVPv5EruXG0RkI6rKghIUXhL5keGfm?=
- =?us-ascii?Q?0kk/nLqb8nBPNqQswdX0jNcYW+VM705KVtt0/D2MFevsOoqx/lTeZ8EpQ41C?=
- =?us-ascii?Q?+LFUF47YHGexYaiyum2/ZTW2PqZ6Pc0rBMXwVzX6beTbbKo9BFgUSh5gdJSR?=
- =?us-ascii?Q?6wZUHDkfpOo1l8hD4aXD0vRP0RE6TT686KYn7NUz5wq+HGUgJb2Lmkb803Xm?=
- =?us-ascii?Q?TQlWP9ifSvplYv4zYpLpusPXDEiZJwdvlGg3qlFczrgFso6h2ZYVglm2aUnA?=
- =?us-ascii?Q?XQCtX4eGXGAf78MzbrqWJszsdMwAgHUETS2KBLXxrrEuxW4txVLOHFuFO5Jn?=
- =?us-ascii?Q?UOK7F8R+7/7l/JqS+jRYTNtYdAQH1ZDYltoaFc0ks4s3WgQ+vSS9axgA1Zbh?=
- =?us-ascii?Q?OB0iwjMlpNb2QpB9MIW/kkXI5hUQ5hqsDqWLTS2lTS5DWnI8H5cIu/FekGK8?=
- =?us-ascii?Q?FBbtenUZvr2yNVBlcyHgYaRR/IGAkmpXsWY1Q1fiE9GUkabBg5Fsuci6UQN3?=
- =?us-ascii?Q?jJtUh6JL+59pUbJdxLpyw8t+bZGWLV+p57mgTI0ezome/GjpKFa4SdK9YFjx?=
- =?us-ascii?Q?4OEvXJ5PVfQ8iuhESmVulV/8sJNkgx5++m7VfFVD9C0S1pBD/srds/yax2Is?=
- =?us-ascii?Q?qyGWzb10ReHEaPl6VQK25QsfFFUmL5liny+o+oDg1AqE9I0VniDF+XYLPorA?=
- =?us-ascii?Q?/DmX8qlxKR43kAbTtVmSjPf8KdZ39Xu2XCCSXkucE39xnJd6w+JQXBSgfcTD?=
- =?us-ascii?Q?6dvJzYV/FBDiBVbfn3eljq81212YUmzBQk4IeGK0IcKCoxUnMf858PHP17Z6?=
- =?us-ascii?Q?f2jyanywFyw65yn6xj7uOb0AgucQM4ctHCR4zHKT4ia2T3iHUUqdjFDCQhyv?=
- =?us-ascii?Q?5HoEu+owpcRFt4HtgWE8Mh/PoZTB6pXP0fuAZ4HlMjIIXZ3gwh1GTiXk/+YY?=
- =?us-ascii?Q?z7noKel8NGuvDtsiI0m5sg5ILRHwPjii3Y/T+ubp0IlqiZr80OkFhWmR/wNT?=
- =?us-ascii?Q?YchoL1cyhbgIbzQ/jPN8AGlHEA5Z5FYS2Ic1JqipsrNpCZKGvdF+wADNWpeh?=
- =?us-ascii?Q?wh41DWzz5zsOmKJ71p+gtRy8C06eupn+GkdBNyYK/ou6ywp0a5xM78yJNKVL?=
- =?us-ascii?Q?lL4/xTMWd3zxYL3mnAAQGOX1BSEsCC2QMQlcUF6Tlwpe9rPcbD9tvmjj2QaR?=
- =?us-ascii?Q?ubfbAYeoRCVnRYek4gk9RE1b/LITsBwBiZwwRZeGQJBli8zTX9gPeD5TswHl?=
- =?us-ascii?Q?Ot9lEGZazmoV5Kz+dCI9uDbocql0WKO+rydUd5zGJUr2OSPwTdoKMWdM5R3z?=
- =?us-ascii?Q?0S+YlmAxILilHzIWYeQ7HgLrHfmR+DEjcVCul3tME2ZxE37moCjDLSr9Emg5?=
- =?us-ascii?Q?TXGtY92vc7Ge9P1c+qWhFZhm4aA9ivdY8aRqZK41AMExc5909pAQYNrreFH7?=
- =?us-ascii?Q?+A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	B1I62mEbykRovGaCAEqz/4L7af7kiaDLK8U+xpr1aZbRXsIMTNwXbfcSsPAliP4VX6LP+i9NDDjsuPw/Q9VOo64vqfraL4iqRdyYtibXy41eMT3RytcuZUF9RsZgMO8H1WL++lAfoeuwJ50kcHmn3vNLb0JynkAGCKtOFftGD9Q0qqSbFfi9nPEoGXZFB4yY+EQ/Z4SwTmCnnz+dLxrIJexIpDiIhCQTy/5928vBgXAbKNfMLHl8mSqMVWPNQSjKMSK3xq6ty+Oao87rjhxUNNDIevhSWNGGplhxxU3VXjYinapBmPkxdgRZkpTAYfboAO/oW6Jzj0AkXIOm8uSuxwLgQk8nr3xusg89wVmRWc6cKsyh0XQ8uppT8ZKOHN793C0kcXFR0V28U4YwSIGYFjH5CUcvkI7QGQrMTKZmp+tFJoQz+Ly6dgl2heqwHvN5Od5wh+d1PMF/SOYcQdJ2nF2icDuf82J6thq5xniqTjiPts98G07T5G1ogIjccH9e1JhpjwUWmmwhC+YNSModPa5fWn+2pTjmTpxaWpnhnH88eIGa72ot75dFYOYkgF3la3Fiv5IcShoX9y1MFcsut+mVAhXEycRZxXv4NkL2Riw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 219991cb-11c7-4a3a-6e2c-08ddb8a1dc00
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2025 13:19:07.7675
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HWVHVceFw52hR1WW1uoMZ7DtkxIi+jvhTMVu/32QBx5lc4wLtO67haCJatkx3Z5SlcF1y/Pa94s7VEkcH9QXrv0JAxnk9i0QwRxAByROiwg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4503
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507010085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAxMDA4NCBTYWx0ZWRfX0CktS45UIjpg irUeBGmm7/8HJlJ9Q/zapI7V9uP0zfUOqd9ojhMCyEDgRnohcpR8XnkgFe7+8exHdhFcRyvVWxv +nPYMYDiS/TjpeFaxgOEsD/ua4HjMZKc2wm4gzdiiFP6RAuyo/1WaUMu6JX50m6CX20PdaRVtfD
- JFTP2cSnIp1AdoZ3SXhYp9iDVE7YBWYvq9d15ntfd2HX8l5vIUgWIbO0yVw0fV4qyOqDhzZ52qn +t6xvvFEpxJ9/pQk3+61TgCbfAwGApeiG1neLX9MNkHStV6eFxQMfdskXuHGoh/QCcnEdJbN53p fpvBbpYuNPPqJhkJ+Oz53PzUOjH46FhqHK8FXEC1Ci0kOojMhEtBA4vrEF9dK2TRHiVCKTAZlUX
- vf70N9Vk/hwaWBLm/Y9eatRSKK9/ewaeJc3H/2zQRPN+plnBwylBON3ULAvhd2ZtHXYMdr+y
-X-Authority-Analysis: v=2.4 cv=LcU86ifi c=1 sm=1 tr=0 ts=6863e051 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=Ikd4Dj_1AAAA:8 a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=iciZ6SYYCYNhSKRyFYQA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13215
-X-Proofpoint-GUID: txjVf6HdGi3gBlliU7wrc5Vw9T4aDGjw
-X-Proofpoint-ORIG-GUID: txjVf6HdGi3gBlliU7wrc5Vw9T4aDGjw
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
+ <6c5d9ff2-fa59-4151-99fe-3bddae46b507@linaro.org>
+ <79342b8f-4cef-fc48-c40f-5636f868af2e@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <79342b8f-4cef-fc48-c40f-5636f868af2e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 30, 2025 at 03:00:08PM +0200, David Hildenbrand wrote:
-> Let's bring the docs up-to-date.
->
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Hi,
 
-LGTM, so:
+On 01/07/2025 12:23, Vikash Garodia wrote:
+> 
+> On 6/30/2025 11:34 PM, neil.armstrong@linaro.org wrote:
+>> On 27/06/2025 17:48, Vikash Garodia wrote:
+>>> This series introduces a sub node "non-pixel" within iris video node.
+>>> Video driver registers this sub node as a platform device and configure
+>>> it for DMA operations. All non pixel buffers, i.e bitstream, HFI queues
+>>> and internal buffers related to bitstream processing, would be managed
+>>> by this non_pixel device.
+>>>
+>>> Purpose to add this sub-node:
+>>> Iris device limits the IOVA to an addressable range of 4GiB, and even
+>>> within that range, some of the space is used by IO registers, thereby
+>>> limiting the available IOVA to even lesser. For certain video usecase,
+>>> this limited range in not sufficient enough, hence it brings the need to
+>>> extend the possibility of higher IOVA range.
+>>>
+>>> Video hardware is designed to emit different stream-ID for pixel and
+>>> non-pixel buffers, thereby introduce a non-pixel sub node to handle
+>>> non-pixel stream-ID into a separate platform device.
+>>> With this, both iris and non-pixel device can have IOVA range of
+>>> approximately 0-4GiB individually for each device, thereby doubling the
+>>> range of addressable IOVA.
+>>>
+>>> Tested on SM8550 and SA8775p hardwares.
+>>>
+>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>> ---
+>>> Changes in v3:
+>>> - Add info about change in iommus binding (Thanks Krzysztof)
+>>> - Link to v2:
+>>> https://lore.kernel.org/r/20250627-video_cb-v2-0-3931c3f49361@quicinc.com
+>>>
+>>> Changes in v2:
+>>> - Add ref to reserve-memory schema and drop it from redefining it in
+>>> iris schema (Thanks Krzysztof)
+>>> - Drop underscores and add info about non pixel buffers (Thanks Dmitry)
+>>> - Link to v1:
+>>> https://lore.kernel.org/r/20250620-video_cb-v1-0-9bcac1c8800c@quicinc.com
+>>>
+>>> ---
+>>> Vikash Garodia (5):
+>>>         media: dt-bindings: add non-pixel property in iris schema
+>>>         media: iris: register and configure non-pixel node as platform device
+>>>         media: iris: use np_dev as preferred DMA device in HFI queue management
+>>>         media: iris: select appropriate DMA device for internal buffers
+>>>         media: iris: configure DMA device for vb2 queue on OUTPUT plane
+>>>
+>>>    .../bindings/media/qcom,sm8550-iris.yaml           | 40 ++++++++++++++++-
+>>>    drivers/media/platform/qcom/iris/iris_buffer.c     | 15 ++++++-
+>>>    drivers/media/platform/qcom/iris/iris_core.h       |  2 +
+>>>    drivers/media/platform/qcom/iris/iris_hfi_queue.c  | 20 ++++++---
+>>>    drivers/media/platform/qcom/iris/iris_probe.c      | 50 +++++++++++++++++++++-
+>>>    drivers/media/platform/qcom/iris/iris_vb2.c        |  4 ++
+>>>    6 files changed, 119 insertions(+), 12 deletions(-)
+>>> ---
+>>> base-commit: 8d2b7fde56597ca912f5daaf3ab58915458ba1fc
+>>> change-id: 20250619-video_cb-ea872d6e6627
+>>>
+>>> Best regards,
+>>
+>> I tried the patchset on SM8550 QRD and SM8650 QRD/HDK and the system just reboots
+>> a few millisecond after probing iris, no error messages nor reboot to sahara mode.
+>>
+>> The DT changeset for reference:
+>> https://git.codelinaro.org/neil.armstrong/linux/-/commit/e1b3628469c038559a60d310386f006f353e3d59
+> 
+> I was able to repro this case, the issue was due to a incorrect node name in
+> driver. Fixing the name as per binding, fixes the issue for me. I have made the
+> comment in your code branch [1], which should fix it for you as well. Please
+> share your observations.
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Indeed, with:
+============><========================================
+diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+index 8da2b780395d..06657b42da49 100644
+--- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+@@ -3264,6 +3264,9 @@ &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
+                         iommus = <&apps_smmu 0x1947 0>;
+                         dma-coherent;
 
-> ---
->  Documentation/mm/page_migration.rst | 39 ++++++++++++++++++++---------
->  1 file changed, 27 insertions(+), 12 deletions(-)
->
-> diff --git a/Documentation/mm/page_migration.rst b/Documentation/mm/page_migration.rst
-> index 519b35a4caf5b..d611bc21920d7 100644
-> --- a/Documentation/mm/page_migration.rst
-> +++ b/Documentation/mm/page_migration.rst
-> @@ -146,18 +146,33 @@ Steps:
->  18. The new page is moved to the LRU and can be scanned by the swapper,
->      etc. again.
->
-> -Non-LRU page migration
-> -======================
-> -
-> -Although migration originally aimed for reducing the latency of memory
-> -accesses for NUMA, compaction also uses migration to create high-order
-> -pages.  For compaction purposes, it is also useful to be able to move
-> -non-LRU pages, such as zsmalloc and virtio-balloon pages.
-> -
-> -If a driver wants to make its pages movable, it should define a struct
-> -movable_operations.  It then needs to call __SetPageMovable() on each
-> -page that it may be able to move.  This uses the ``page->mapping`` field,
-> -so this field is not available for the driver to use for other purposes.
-> +movable_ops page migration
-> +==========================
++                       #address-cells = <2>;
++                       #size-cells = <2>;
++
+                         /*
+                          * IRIS firmware is signed by vendors, only
+                          * enable in boards where the proper signed firmware
+diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+index b53a9aa5adbf..7ada62ee411e 100644
+--- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+@@ -5011,6 +5011,9 @@ &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
 
-Bye bye inaccurate reference to LRU :)
+                         dma-coherent;
 
-> +
-> +Selected typed, non-folio pages (e.g., pages inflated in a memory balloon,
-> +zsmalloc pages) can be migrated using the movable_ops migration framework.
-> +
-> +The "struct movable_operations" provide callbacks specific to a page type
-> +for isolating, migrating and un-isolating (putback) these pages.
-> +
-> +Once a page is indicated as having movable_ops, that condition must not
-> +change until the page was freed back to the buddy. This includes not
-> +changing/clearing the page type and not changing/clearing the
-> +PG_movable_ops page flag.
-> +
-> +Arbitrary drivers cannot currently make use of this framework, as it
-> +requires:
-> +
-> +(a) a page type
-> +(b) indicating them as possibly having movable_ops in page_has_movable_ops()
-> +    based on the page type
-> +(c) returning the movable_ops from page_has_movable_ops() based on the page
-> +    type
-> +(d) not reusing the PG_movable_ops and PG_movable_ops_isolated page flags
-> +    for other purposes
-> +
-> +For example, balloon drivers can make use of this framework through the
-> +balloon-compaction infrastructure residing in the core kernel.
->
->  Monitoring Migration
->  =====================
-> --
-> 2.49.0
->
++                       #address-cells = <2>;
++                       #size-cells = <2>;
++
+                         /*
+                          * IRIS firmware is signed by vendors, only
+                          * enable in boards where the proper signed firmware
+diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+index 8fe87e30bd40..c57645a60bc4 100644
+--- a/drivers/media/platform/qcom/iris/iris_probe.c
++++ b/drivers/media/platform/qcom/iris/iris_probe.c
+@@ -136,7 +136,7 @@ static int iris_init_non_pixel_node(struct iris_core *core)
+         struct device_node *np_node;
+         int ret;
+
+-       np_node = of_get_child_by_name(core->dev->of_node, "non_pixel");
++       np_node = of_get_child_by_name(core->dev->of_node, "non-pixel");
+         if (!np_node)
+                 return 0;
+
+============><========================================
+
+It boots again and I can run some decodes on 8550 and 8650.
+
+Thanks,
+Neil
+
+> 
+> Regards,
+> Vikash
+> 
+> [1]
+> https://git.codelinaro.org/neil.armstrong/linux/-/commit/e1b3628469c038559a60d310386f006f353e3d59#note_23930047
+> 
+>>
+>> Neil
+
 
