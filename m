@@ -1,133 +1,119 @@
-Return-Path: <linux-kernel+bounces-711809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E059CAEFFE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 18:32:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651A7AEFADC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D77A3A50BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:31:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F26F97AE3FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C894627C167;
-	Tue,  1 Jul 2025 16:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oT3g7+5y"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78392273D83;
+	Tue,  1 Jul 2025 13:38:38 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6831727E04E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA1D242D82
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 13:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751387476; cv=none; b=kQYiSlghIoSwLMmsZzM4+Z+x7ieBdqgK9sz33w4jKU/IyCP79s5JyUpQikHa5PtPenT6ilGxOaY4RtUBBzLwKTutgJaWZKOxD14/M+RANtps8ZFnuHYxAOYLaqGkxXsx9Nhk5bsiiUkxrf3JKuVi4n1YhQ6HqPoHZb/UV242F7c=
+	t=1751377118; cv=none; b=hi+Ji3vMn2fa940ltOiv48cWE/zJ4wXupmBxrLv+38vth4KdZBwj15OIQADYET4LTp+wAQ3WFztKJOyEYoZ+Kg6tHPjRzF/Qbg3Ha+pqUoisE1O69FJkkXuBKAoQuvTQI0qTH/Zq1sR6sJ5QprlQxU4q1nnuWDl2qaDMvmHByp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751387476; c=relaxed/simple;
-	bh=28omV3/O3aHzL6uKDlQ2PANINxBfKNKjkJr4kIo7X54=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ZUA+gJs+NQPBhNaT8FthfI1rUedALqI1pEHa13nQdJBWFEKuR5/mkUNXNx8qRxjUETfkUpbM/jY5adRtm52BTnNBDOtS4aVVIayWF5DmBIXrN0ZBV/nz+JA/sIsk9T75duD43y2v6qCsiahccBX2/FWkErzA6HzpnKI1W2tA/yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oT3g7+5y; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250701163112epoutp04ed8da4e5931e20b36e5e7fc82fa01891~OLaCLfrz-2900629006epoutp04L
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 16:31:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250701163112epoutp04ed8da4e5931e20b36e5e7fc82fa01891~OLaCLfrz-2900629006epoutp04L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1751387472;
-	bh=CYCieZx7RGc4LBogHf+a8UqHutLdl5VHK4F8STwbvPM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=oT3g7+5ykWliopi8mIAdsTlCpWF4z7LPDgU/YHY2nVhTIVLVp/iNxC6sMHGpCscf6
-	 xXqM5Vf8YsWk3RvOJ8/byHzgAuVETzDxQ3lqsd3/X5++BIaDvsp8+hk9g/aj6uzSwF
-	 qpm6UMUNgJgIvc3JXmvsYi33AP+FsPag3DbUfyZY=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250701163111epcas5p2709c45ba4dad180fe68d0ca67be7a784~OLaBi-Gsx2740427404epcas5p2f;
-	Tue,  1 Jul 2025 16:31:11 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bWpSF6RFTz6B9m5; Tue,  1 Jul
-	2025 16:31:09 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250701133810epcas5p3e1acdfe3bfcf5276e6c70f12755fdf57~OJC9HjeEd0290902909epcas5p3y;
-	Tue,  1 Jul 2025 13:38:10 +0000 (GMT)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250701133807epsmtip15aa5b5f8243b909f80b036d6b7b3ca61~OJC6dIU3K0912509125epsmtip18;
-	Tue,  1 Jul 2025 13:38:07 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Rob Herring'" <robh@kernel.org>
-Cc: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<linux-fsd@tesla.com>, <manivannan.sadhasivam@linaro.org>,
-	<lpieralisi@kernel.org>, <kw@linux.com>, <bhelgaas@google.com>,
-	<jingoohan1@gmail.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<alim.akhtar@samsung.com>, <vkoul@kernel.org>, <kishon@kernel.org>,
-	<arnd@arndb.de>, <m.szyprowski@samsung.com>, <jh80.chung@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: <20250627211236.GA147018-robh@kernel.org>
-Subject: RE: [PATCH v2 06/10] dt-bindings: PCI: Add bindings support for
- Tesla FSD SoC
-Date: Tue, 1 Jul 2025 19:08:06 +0530
-Message-ID: <02c001dbea8d$62b21d50$281657f0$@samsung.com>
+	s=arc-20240116; t=1751377118; c=relaxed/simple;
+	bh=Cdqq6uYHA0DExUvdil2feGBxPPppW6P4hoP6tp8w+dI=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ff8E13xROkY7Be+s/QKnz52rlKQd0EVxMto9NjFO2lp6tWjjld1YUMEjjCyWRBBgyea8v0kgOU0SY/JK0fVp5d6DdYBhMNJuTxYiqJn683PPav/ZDjrGO10/ZdEKb5lzGSSR1jU7qHlJ1RL3fQoOHtykfRAGmV6zB+guueY2wRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bWkXK4cHKzHrFv;
+	Tue,  1 Jul 2025 21:34:25 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 364CF180B63;
+	Tue,  1 Jul 2025 21:38:26 +0800 (CST)
+Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 1 Jul 2025 21:38:25 +0800
+Received: from [10.67.120.218] (10.67.120.218) by
+ kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 1 Jul 2025 21:38:25 +0800
+Subject: Re: [PATCH v2 1/3] coresight: tmc: Add missing doc of
+ tmc_drvdata::reading
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, <linuxarm@huawei.com>
+References: <20250620075412.952934-1-hejunhao3@huawei.com>
+ <20250620075412.952934-2-hejunhao3@huawei.com>
+ <20250620125330.00004fa7@huawei.com>
+CC: <suzuki.poulose@arm.com>, <james.clark@arm.com>, <leo.yan@arm.com>,
+	<anshuman.khandual@arm.com>, <coresight@lists.linaro.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<yangyicong@huawei.com>, <prime.zeng@hisilicon.com>
+From: hejunhao <hejunhao3@huawei.com>
+Message-ID: <c4cede5e-4f0f-73e2-9b3a-96654c19a4a2@huawei.com>
+Date: Tue, 1 Jul 2025 21:38:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250620125330.00004fa7@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFUClgbainc6hQuKSBO0V8ttZVgkwK41mGpAfhwG8gB/KC3xLT3likQ
-Content-Language: en-in
-X-CMS-MailID: 20250701133810epcas5p3e1acdfe3bfcf5276e6c70f12755fdf57
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250625165315epcas5p19f081c8a0e2e7dc87698577cc2d460ca
-References: <20250625165229.3458-1-shradha.t@samsung.com>
-	<CGME20250625165315epcas5p19f081c8a0e2e7dc87698577cc2d460ca@epcas5p1.samsung.com>
-	<20250625165229.3458-7-shradha.t@samsung.com>
-	<20250627211236.GA147018-robh@kernel.org>
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemn500004.china.huawei.com (7.202.194.145)
 
 
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: 28 June 2025 02:43
-> To: Shradha Todi <shradha.t@samsung.com>
-> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-linux-
-> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; linux-
-> fsd@tesla.com; manivannan.sadhasivam@linaro.org; lpieralisi@kernel.org; kw@linux.com;
-> bhelgaas@google.com; jingoohan1@gmail.com; krzk+dt@kernel.org; conor+dt@kernel.org;
-> alim.akhtar@samsung.com; vkoul@kernel.org; kishon@kernel.org; arnd@arndb.de;
-> m.szyprowski@samsung.com; jh80.chung@samsung.com; pankaj.dubey@samsung.com
-> Subject: Re: [PATCH v2 06/10] dt-bindings: PCI: Add bindings support for Tesla FSD SoC
-> 
-> On Wed, Jun 25, 2025 at 10:22:25PM +0530, Shradha Todi wrote:
-> > Document the PCIe controller device tree bindings for Tesla FSD
-> > SoC for both RC and EP.
-> 
-> Drop 'bindings support for ' in the subject.
-> 
-> >
-> > Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> > ---
-> >  .../bindings/pci/samsung,exynos-pcie.yaml     | 121 ++++++++++++------
-> 
-> I think this should be its own schema file. There's not much shared.
-> 
+On 2025/6/20 19:53, Jonathan Cameron wrote:
+> On Fri, 20 Jun 2025 15:54:10 +0800
+> Junhao He <hejunhao3@huawei.com> wrote:
+>
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> tmc_drvdata::reading is used to indicate whether a reading process
+>> is performed through /dev/xyz.tmc. Document it.
+>>
+>> Reviewed-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-tmc.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+>> index 6541a27a018e..3ca0d40c580d 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+>> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+>> @@ -220,6 +220,7 @@ struct tmc_resrv_buf {
+>>    * @pid:	Process ID of the process that owns the session that is using
+>>    *		this component. For example this would be the pid of the Perf
+>>    *		process.
+>> + * @reading:	buffer's in the reading through "/dev/xyz.tmc" entry
+> Hi,
+>
+> Perhaps reword:
+>
+> "buffer is being read through "/dev/xyz.tmc" entry" or
+> "buffer read in progress through "/dev/xyz.tmc" entry"
+>
+> I've not checked what this actually means - just looking at what you have here.
 
-Resending my reply after trimming.
+Will update this. Thanks
 
-Will make 2 new bindings - samsung,exynos-pcie-common.yaml and
-tesla,fsd-pcie.yaml
-Does that sound okay?
+Best regards,
+Junhao.
+
+>>    * @stop_on_flush: Stop on flush trigger user configuration.
+>>    * @buf:	Snapshot of the trace data for ETF/ETB.
+>>    * @etr_buf:	details of buffer used in TMC-ETR
+> .
+>
 
 
