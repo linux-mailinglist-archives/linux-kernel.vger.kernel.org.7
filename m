@@ -1,246 +1,401 @@
-Return-Path: <linux-kernel+bounces-711549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECDEAEFBF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:20:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAA8AEFBFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 16:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B73801C04309
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:18:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5502316DC76
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 14:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAB726FA52;
-	Tue,  1 Jul 2025 14:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433342797AA;
+	Tue,  1 Jul 2025 14:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hacE5f7a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BOwJeMUl"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7575A13C3F2;
-	Tue,  1 Jul 2025 14:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751379354; cv=fail; b=VIjqOOPWpPLLZ8wqh+QBzmUDSegHMjfCiVBlfpzUmwY7xi1ouyb0kyfnJ/XdS9Mzh9up3jSwcxg0wQuex/RykHVLFdHtEnzoZvwghCaxIyCXG3V5ECvjSmoema9Pn2jiQ2t9RegyIoiO7NctMKhgCI1SVPHaUgMPg6IMJucHAQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751379354; c=relaxed/simple;
-	bh=s2tVG0IAyf7fdMGbGK4W6zn2drvybrpY5mUTvoYXX54=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MOLab9lP2M9t4l2hXxkDY87BvN95xMM90DnEABwq0PSqgCuZ/nxFn/lc/cy/Y+IKyWgnFaFMK9zQwKOql5kss46dQPAdHasJsSjTlA+ElPe4NvWKaKR5tq0EeiuqiwC++fTjKfurber2V3N+tjiQb/eTRAj4f3UKCQW7523RIlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hacE5f7a; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751379353; x=1782915353;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=s2tVG0IAyf7fdMGbGK4W6zn2drvybrpY5mUTvoYXX54=;
-  b=hacE5f7abbVr9EiuT9y2w4WPxM9pxDB6j7odVKx6+HijWtN7FLGq5J8Z
-   +OuWt+h/A3m7FRd2+HTYFTS19+a0zuP0ZJD+Yy/XQuB1C65RETXcPlXja
-   8c1Um8tHGQzvtkLZeFiJSIP3oroeAjvlE8RCykluwpZLydLVecDjuQTst
-   FVbKvOoPXSFo1DcyAXWfxNgTLyluRMI/UGEIRaYYFldJWQ1BvUrNqJzmU
-   ez2xwsaxYV4nGuyVGlDn5+F+04EqD4izIf46Il6dbpBV8gTYUXODlDmtP
-   B/HGlmaK9hhciq4DQNsengiFr+CCZ0N/dJwihU2pgLLYNua9/CcMQBaZN
-   g==;
-X-CSE-ConnectionGUID: qssulbhCRZuzN2Fn/RE6/g==
-X-CSE-MsgGUID: 4CM2+kYMQtKNVjMcAL1ivg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="57425003"
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="57425003"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 07:15:52 -0700
-X-CSE-ConnectionGUID: N4HpVZKxQ3Cpd2BVbV4wwA==
-X-CSE-MsgGUID: zw8GwEi7SVu41721gvcXEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,279,1744095600"; 
-   d="scan'208";a="154095522"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 07:15:51 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 1 Jul 2025 07:15:51 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 1 Jul 2025 07:15:51 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.86)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 1 Jul 2025 07:15:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JFa064a8kFxTHXqXpRPx0ZmZwp/7GHBRqZNFfS/Fio4/iu1Fp/qdC5JUpENjRlpj+4dKVzGFKAzsRD8ZCaRPqDoMp4jqqiZfZL+sVR/1r7BlEnMkRGCI3Oc2jrUjBUMtSzOTxoFE5IvVKpG9c8rWlcsFjen9dO4CV+57zN2vDcyn6AJkNqJF1kDFCmhTIQ+jXKMOISlc1YmHYHfp+nRG5NH9SoCtddLog6pZBcIHthu5We/FBOwEnJynO90Hd0czjva7TtQZvBd1Ppuuj2TObUqX9JKavg8zhBCSPM/g0e3UuFQtUPgrD6InUK0VGtWM1DzWbxKKJsKMHyMagUCvjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s2tVG0IAyf7fdMGbGK4W6zn2drvybrpY5mUTvoYXX54=;
- b=RsDhTHnbjaOj7dQ2jC49TdYSy22ROHLfHKePGeJvqAowUE13zQAZZ6dhTsxtAL2ecpK6SLLJtnMRLevlsww1pEi4CvEpJ4FFjhOFc7Orxom37Vx3aYo0vTUPmx/CMdCWkU8xH+ukt6lxe7TsIcBQi8gk4PPDjc75qdLhHPah/5MGEse3PL0sLjVlI4IvPlg8fwk+xowuodmLNDw3mvgMjTFFdw/gvfz7jG7tCQg9OZ/K+Ey3BGg9BMWbtyCszMVhXqDsBN+MEV5x2Qt/NqiwabbPtiLtg+jkWxOKxkoN+DPk8bT4IYz5N/KBNEh6FP2/EpOUJhZZ2hV1GR9fyr1Rig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by PH7PR11MB6451.namprd11.prod.outlook.com (2603:10b6:510:1f4::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.21; Tue, 1 Jul
- 2025 14:15:32 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.8901.018; Tue, 1 Jul 2025
- 14:15:32 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "Annapurve, Vishal" <vannapurve@google.com>, "Zhao, Yan Y"
-	<yan.y.zhao@intel.com>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, "Li, Xiaoyao"
-	<xiaoyao.li@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Hansen,
- Dave" <dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>, "Shutemov, Kirill"
-	<kirill.shutemov@intel.com>, "michael.roth@amd.com" <michael.roth@amd.com>,
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "seanjc@google.com"
-	<seanjc@google.com>, "Peng, Chao P" <chao.p.peng@intel.com>, "Du, Fan"
-	<fan.du@intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>, "Weiny, Ira"
-	<ira.weiny@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jroedel@suse.de" <jroedel@suse.de>, "Miao, Jun" <jun.miao@intel.com>, "Li,
- Zhiquan1" <zhiquan1.li@intel.com>, "pgonda@google.com" <pgonda@google.com>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge
- pages
-Thread-Topic: [RFC PATCH 08/21] KVM: TDX: Increase/decrease folio ref for huge
- pages
-Thread-Index: AQHb1Yuw8TDhKPA9uUiYAoJtWQa0+LPz2/CAgAozpACAB4/5gIAA7nmAgAAX8oCAAO6tAIAAjZiAgAAGKoCACG6bAIAA3+42gAGE44CAABkngIAACJUAgAGDrACAAALngIABC0kAgAB2RoCAAUnBgIAERXKAgABwaoCAABksgIAAJyQAgAB5m4CAAAXyAIAAC1sAgAATqQCAAHXtgA==
-Date: Tue, 1 Jul 2025 14:15:32 +0000
-Message-ID: <aa397b84e283d959cfef061ff1cf571dc39fede9.camel@intel.com>
-References: <447bae3b7f5f2439b0cb4eb77976d9be843f689b.camel@intel.com>
-	 <zlxgzuoqwrbuf54wfqycnuxzxz2yduqtsjinr5uq4ss7iuk2rt@qaaolzwsy6ki>
-	 <4cbdfd3128a6dcc67df41b47336a4479a07bf1bd.camel@intel.com>
-	 <diqz5xghjca4.fsf@ackerleytng-ctop.c.googlers.com>
-	 <aGJxU95VvQvQ3bj6@yzhao56-desk.sh.intel.com>
-	 <a40d2c0105652dfcc01169775d6852bd4729c0a3.camel@intel.com>
-	 <diqzms9pjaki.fsf@ackerleytng-ctop.c.googlers.com>
-	 <fe6de7e7d72d0eed6c7a8df4ebff5f79259bd008.camel@intel.com>
-	 <aGNrlWw1K6nkWdmg@yzhao56-desk.sh.intel.com>
-	 <CAGtprH-csoPxG0hCexCUg_n4hQpsss83inRUMPRqJSFdBN0yTQ@mail.gmail.com>
-	 <aGN6GIFxh57ElHPA@yzhao56-desk.sh.intel.com>
-	 <CAGtprH_GoFMCMWYgOBtmu_ZBbBJeUXXanjYhYg9ZwDPeDXOYXg@mail.gmail.com>
-In-Reply-To: <CAGtprH_GoFMCMWYgOBtmu_ZBbBJeUXXanjYhYg9ZwDPeDXOYXg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|PH7PR11MB6451:EE_
-x-ms-office365-filtering-correlation-id: a2e98ba9-6658-4748-3fbe-08ddb8a9bda6
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?TlNtRmYvcVYwNXM0elhRankzMGMyUjRVdkxraG5MZytnWHhmVE0zOE1Bdkx5?=
- =?utf-8?B?RnBycGF1ZzFjMWVvbzdBamRON0JHeW85SENxM2xYcGZLMmViY0NkbnloRFhx?=
- =?utf-8?B?MEF5QUJ4ODFKbExPSGh5eS9EVVJHN0VVZ3gvamhjMkNOSUhsck5xcHM1ekZO?=
- =?utf-8?B?SDJJTGdqRUlqanFtalp0NzB3Y1p6WkNZRHVVUDk4VTZpTVdLOVZzMWdqbWdR?=
- =?utf-8?B?cXJnNXp5b2dLeUFGZUdhdVRJK3J5WDdJVlc3eE8vQ2RaRm91VlBGMnNkZHpu?=
- =?utf-8?B?OFlzejBUUmpCaGY3QnZnQjJPcmhib0YyZDJvVlAvbStxUEQyaHZJVDdOVWlK?=
- =?utf-8?B?ZFBVL0gyZ2ZzeVhvbVhpdzljaXRVejF0OTNXMlhZdlVWQU44bHBIbGtTTng4?=
- =?utf-8?B?Y1RBV0hpK0Y0endaandzc3BwWnkvQ0s1ckR6cSt5aERmcDlDaGthMktJa2Uz?=
- =?utf-8?B?RDcxMVdIOTRxY08xS3dDTnBFSXVLUnhkbnVHV0pqeXZOT0VsU1FPdVBpclkz?=
- =?utf-8?B?NEE4TExNT1F1WEpmQ3ZhSEVDWVJkT1lQZGR4bDcxdzJ0OUYwNnJWMTE0clZu?=
- =?utf-8?B?M3dCODNLNkJhd0NPeHc4Q3BOVStiMzNQTHNXcVJNRFVadlp2YXNWTnluZ0pu?=
- =?utf-8?B?dkFDVzREcHFOR0NnWGZDTWhOdEMxNkMxZEVsd204WUxBSFdKTzBvMXo3dzZR?=
- =?utf-8?B?Zit0bzkzN1pJQTlPb3hvNnJsaHVsZVI3bmhIRmpabURwUTRtV2RnN25Rb2FT?=
- =?utf-8?B?aG5wd0lVWlFHM2xOMGEzVVA4ZFk2MXJDU2RpRkZmMTVHZ2EvcFFibmNaSDd6?=
- =?utf-8?B?dFlqcHFGMm82QXAxY1AxYVdpOXk0a1YzU1pJMmpLSXRsTVYzUEpHWG8vTFMz?=
- =?utf-8?B?eCs1Q25iMEFXbFRXOWw4R3gyV1dmb0NkMFU4ZytiaEZQU3h1VW9tNXR1aGQx?=
- =?utf-8?B?d3hhZWlGY1R6SFhqKzJGM2FMNlhwY2E1N0RBU3hkTjFiVFNTQVZwektmbEZq?=
- =?utf-8?B?Rjlsc3N1bnZFRXN4dUdYYnozU045dVh6NHZFMitXdGxLcDZXeERxWXRDcXo1?=
- =?utf-8?B?OG1qYjJ2L3U0MGJzcXY3cENMWXJ1WFFjVXRjV2dvU29GVDl6MXlxeWdvS1kv?=
- =?utf-8?B?czd2Qi9WWHNUaGMvRkE1MTlIb3lsTEFVSkMxdVhIa2x4MmJPRlVsQ3ZvSitn?=
- =?utf-8?B?cFovOWJ5TkNGYzcvWEt1dnhYSnVyM2ttY2U5cTc1Z08zRnVoUW9zR3dpekFw?=
- =?utf-8?B?RmpMbGcvNjJkb3o3YVBRc3RUS3I2ZFUza3ZENkQ2OVIrNU5Ya25OdWQ1TkNp?=
- =?utf-8?B?eDRBL0VFS1Ruc2E4VGlhMUcyZ1Nma3dQc1MrbndpbXdYakVkRFFjZFFwekxt?=
- =?utf-8?B?SjRyQjR0VlZha2h0a09JUjVrQmxSc0d5d2VwZCs0MjNZQlhtckU1MDVpTGdp?=
- =?utf-8?B?K3E2THFKb3hJcitTbjduWlpKbGhReUdGMWpKZ3lyOTNOZi9oYU1EMFVqVHgy?=
- =?utf-8?B?a0JBQzZ2NVY1bGFQMyttU1A2UmdFMWp6QXEvYTd0OHpHZW5CRUM4RVZDYmY5?=
- =?utf-8?B?bk05NXFHcEIwQkJOMWlpOTMrdlpVcU5wVVE2OXNpYXpPekpwVFlhbURmOUFs?=
- =?utf-8?B?SmlVUDlEeVdaT2NualhiSjQreU9oQXhQM2lQSk9KK1dqTWF6VGhYKzVBNUNY?=
- =?utf-8?B?Y3d6dHp0VENBOEFHNG1zZ3BiVTE4Y0dqTEhMTWt3WTlxd093anA1SjNVQ3BJ?=
- =?utf-8?B?Smhnd1ZwVUxuaHJMMGxUWGtMZlB1elBZYUd6TG9pdURHQUFOYmcwdGRGa1lx?=
- =?utf-8?B?S3k3WDhZeEl4SjdoSnp6VEMrYWQwSEYxSHR2cllkZUNNYzduay8zQU9vUGow?=
- =?utf-8?B?eHdQUm81MzQ2LzhwOVhaOVZmWVdnREZPWjB0clltcTVqVVhZa2I0R1lDU1VJ?=
- =?utf-8?Q?Wco/dFkfdVQ=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WVJDSVByem81b0IrZlJjZXdiOVZpbFdMTWtlNWFDTDE5aTg0dVlvQnUwVDdo?=
- =?utf-8?B?YlAyZjZFU1pCZFRBNlplMXN5bHlpM1I3Q254aVB1K1I0clA1NkFiWlJtV0gz?=
- =?utf-8?B?OEZtSVhtd2lsL09PWEI5ajdyeStxc1d5bzVSRkJIZi81OHM3WDFFRGgrSjZX?=
- =?utf-8?B?U0Y0RWpaTzdSNE9UU2ZlNlByeFNDRlphZHhpQlJmNjFxLzFOL2E5b0MyRlhp?=
- =?utf-8?B?RTNIcUVoVy9tL0M3ZkQ5Q0ZwcUNUclhESE8zR1ppc1FFL2pJMnI1a1lHdjRs?=
- =?utf-8?B?dVlYU21nRXJSSTBJYWdDYVk4b01aeUxKamxzRmlBVVRUOWU5cGZKUFprZjZh?=
- =?utf-8?B?cy8rS2JyaGVhdHBjK1dhdnNaR04ybUhENXAzNktlQ3FReVBXUk1Sc1J5R0FE?=
- =?utf-8?B?OER1MmkyTlhRdzJoRmttTWtHdm9KRTlzYytON1dLSmNKcHJaN2FRSlBKYnh2?=
- =?utf-8?B?UmxnUjA0WWVQRnZBbTAyTlRRZTRrSmxNSW53Q3hkdE9PN1BBY2h4MWZzRmtI?=
- =?utf-8?B?QnV5RUNLbGhwY2crcWdwa0Z4WDdxVzRBSTY1dzRiZllucjRHblFwRGFWSzU0?=
- =?utf-8?B?VEhoZTdJaUV3L2JGOTZmZmhaL2hCbGtXTFBEaGJBS3VJSUQwbTdKWktPU2Q0?=
- =?utf-8?B?RmVMNGZ0MDErdWl2ZTdEM1I4VjU2RjcxSlZ5QWtOa04zSG1MbWUrQzZZbGxk?=
- =?utf-8?B?OCtabFk4TC9KYXhBcUJmY2NpZVVhNTd1U2RmRzUvU0RTbXRoR2JuWmExRWd4?=
- =?utf-8?B?Z0o5d3R2QWhPTFdxZUFIVnBnUU1lN2dKWEZBQkNBSkowdU16TEtwUE1LZDhH?=
- =?utf-8?B?dm90NGtneFREYmNJSnJPUlZoMWVDWW0vV1hWN2wwNEZUWlRJcnhNRHpNbUJD?=
- =?utf-8?B?MlZSSHl5RlhoVEZGM2dSTFpwbzhjRUMvMUg4NkZYTWxxeVR6ZHVLTEMxU3A5?=
- =?utf-8?B?MlNJN2R2dmViWjdqN3gyNzVmSldBYm9FRWxkYWFPN2JITTVhYmd5N1BncHZG?=
- =?utf-8?B?b2NnU21TTzdnRmJjYmwyR3hDcWN5cmgvNENKTnNkTExaNXBheU5CSjVjMW05?=
- =?utf-8?B?d29Yd0x5TjQzUTh0R0NnT04xVHJIbzRKdUZielJockVpL0tVK0ZWMGIzQkhI?=
- =?utf-8?B?VE1jazhoWnlFcXozVmxaYVdFOW1ZcVNHTlpiZWZSRnNrWUY3NFJUZXJGRk1y?=
- =?utf-8?B?WUFyVkxzUzRhZXk4eXBIT1EvQ1U0ejlYN0FFTFJkc1lzMnVmekQ1c2FFYW9i?=
- =?utf-8?B?bUEycS9qeWFpOWZ6cEc3NVlXTDl5SWRhWVMwSHJpalpFVXZPdVEzWEtMS1Y4?=
- =?utf-8?B?LzJLZUhUNkFLc2tnQjVFWFFTWWJ6MEFEYk92REw2dEZ3U0dVMlAyc1BRbk8y?=
- =?utf-8?B?R0YrLzFjRWtpUFZwSHg4TkYwbXcvWGhRRUVwUTlzaXZFZXJGRlQraTJyWEN1?=
- =?utf-8?B?ZHJWR1JPMzlFNkpHQmIrRzVneWgwNUh0Zk1tQkVhMUwrUG5ralZqbUJ6eity?=
- =?utf-8?B?WHIyVEdpMDh0OHRXWGZuU3FRb1RPbE1nVllGZDUrdk5CZG56R3N3Z3RYT2xy?=
- =?utf-8?B?OVBNdXorMVR0aDVJWDVodktYYm9ZdVd6QlRIOEt5Zk9KVlIyRUNkaHMxSis2?=
- =?utf-8?B?RUo5WkpHUmlSV0s2cGNseFNCeWE0NTV2eTJwNHB5WkNMcFd1VVJvR29pbXN1?=
- =?utf-8?B?WXdZNVNmb1RQOWNmQ1E1WG1yT3l6VS9vTk5NeVIwdHlkUzdBSWdUa0RIVFox?=
- =?utf-8?B?WlV6NlZsU2ovcWlubzJHTGIyTXhwOENsVHVjbHFuZ2RnVmx4VVYyUklBMWVF?=
- =?utf-8?B?a1hhckxiOUlKekdSUGhQd3dlbkx5cXY2T091ZnMvenpGRm5mV2EyQSswbmN1?=
- =?utf-8?B?QWNKN2YzNVlJVXRNWnJDZnJTNXF4cFhHb1ovaEVnTkhMWkc0UlVXb0NNd2NH?=
- =?utf-8?B?aUNSVGlLNE1HTFNVQXVXT0I5YzZaQTUxaFJxdGowZDZYQklIeXpqSUJmdzNC?=
- =?utf-8?B?Z2oxK2RDWU9yRndvZ0l3REpQN01ZUFYwUHRZcWxCdEFMZWpuWk1Gc3pOMmNP?=
- =?utf-8?B?NCtVSzFHdW5weXMwQnY3U2dDRU9jb0ppakNMRnUyYVhyVGdRTkdEYnNvd3BK?=
- =?utf-8?B?ODd4QzdZWmcrK1hqeWhHTUxYbnc5TFhHWGlBZ0p6TURzdjZpS1Z5eldYcEVl?=
- =?utf-8?B?eGc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AC5BC0C5079B2544BE8193D40F3F809A@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4183B2797A5
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 14:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751379382; cv=none; b=rHOh4PL/7CvmugKk6cpDilsZxu6XgEVgjFOoHiOeWd8fxbVx+dV+MJlcpUzg9KAhzP5TH8bXfBGMCXtazaBIK3ZjYgaLeXDmRVd59TOaYzKnEREN+pxLkeI92FRCVA4KVW5upiN+ui76Xn6UhqdEAo++rxLpuC5cqy+hY1NMR/A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751379382; c=relaxed/simple;
+	bh=arjDcOQPz+bLzO+2hqy2LFu/NPPj2XN5yiww8a1Sen0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjSNcEMlPeCZ4+0oasbQqEie0H+OhZa4FvESW9joRu1f87I1N5wpI4nHB4KnsQNNI1YlWEEKujTeadgob59v2IWWrAcCl4llq/i9ZBaAiSHxiIV//eQze/9hyWef1+X2TwgAlO9wYGncAozHMo2h75eB1EHg6WOijxtGvpnvNfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BOwJeMUl; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 1 Jul 2025 22:16:07 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751379374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RKB58BmoOcqdr4LM8jONymTwMS8ilusPwGSmvHxdSQo=;
+	b=BOwJeMUlh3rKN+71IouHQOsO2Vv5oZexwCtI4pCVAHVBeicJbvlWDIYpjSnUSdUMwYLxCr
+	RVagIyX8s2bLmnACaX3eiA4BSaGiYtMk73BJp6FXdomLxVbXKOTV7eCsS/SyistckHlTQp
+	fmws7Niidpq4C0HEUjO8t2j33Dx5Bw4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dawei Li <dawei.li@linux.dev>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	set_pte_at@outlook.com, dawei.li@linux.dev
+Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Message-ID: <20250701141607.GA5219@wendao-VirtualBox>
+References: <20250609151531.22621-1-dawei.li@linux.dev>
+ <f3b99a3d-5d20-4e82-ae5d-75c2c866e118@foss.st.com>
+ <20250619144301.GA9575@wendao-VirtualBox>
+ <db2d2296-3893-427d-85ec-f64e6c0e1d1d@foss.st.com>
+ <20250622041200.GA3703@wendao-VirtualBox>
+ <ce95f80b-4a36-457e-aedd-d59a325a711c@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2e98ba9-6658-4748-3fbe-08ddb8a9bda6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jul 2025 14:15:32.6769
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D+d74qKFF7TKvKb5JLDN09C7DgoluZ/5j3khGB+221/Y+v9M6tyFtlKonfANa7I/Vk8yReqM10IFn23OVoVUqqvVDuNx7yc28fDp8zhXdW4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6451
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce95f80b-4a36-457e-aedd-d59a325a711c@foss.st.com>
+X-Migadu-Flow: FLOW_OUT
 
-T24gVHVlLCAyMDI1LTA3LTAxIGF0IDAwOjEzIC0wNzAwLCBWaXNoYWwgQW5uYXB1cnZlIHdyb3Rl
-Og0KPiA+IE5vdCBzdXJlLiBBcyBLaXJpbGwgc2FpZCAiVERYIG1vZHVsZSBoYXMgY3JlYXRpdmUg
-d2F5cyB0byBjb3JydXB0IGl0Ig0KPiA+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC96bHhn
-enVvcXdyYnVmNTR3ZnF5Y251eHp4ejJ5ZHVxdHNqaW5yNXVxNHNzN2l1azJydEBxYWFvbHp3c3k2
-a2kvDQo+ID4gLg0KPiANCj4gSSB3b3VsZCBhc3N1bWUgdGhhdCB3b3VsZCBiZSB0cnVlIG9ubHkg
-aWYgVERYIG1vZHVsZSBsb2dpYyBpcyBhbGxvd2VkDQo+IHRvIGV4ZWN1dGUuIE90aGVyd2lzZSBp
-dCB3b3VsZCBiZSB1c2VmdWwgdG8gdW5kZXJzdGFuZCB0aGVzZQ0KPiAiY3JlYXRpdmUiIHdheXMg
-YmV0dGVyLg0KDQpUaGUgbm8gbW9yZSBzZWFtY2FsbHMgPSBubyBtb3JlIGNvcnJ1cHRpb25zIGlz
-IHdoYXQgdGhlIGhvc3Qga2V4ZWMgcGF0Y2hlcyBhcmUNCmJhc2VkIG9uLg0K
+Hi Arnaud,
+
+Thanks for the reply.
+
+On Mon, Jun 30, 2025 at 09:54:40AM +0200, Arnaud POULIQUEN wrote:
+> Hello Dawei,
+> 
+> Sorry for the late answer.
+> 
+> On 6/22/25 06:12, Dawei Li wrote:
+> > Hi Arnaud,
+> > 
+> > Thanks for the reply.
+> > 
+> > On Fri, Jun 20, 2025 at 09:52:03AM +0200, Arnaud POULIQUEN wrote:
+> >>
+> >>
+> >> On 6/19/25 16:43, Dawei Li wrote:
+> >>> Hi Arnaud, 
+> >>> Thanks for review.
+> >>>
+> >>> On Wed, Jun 18, 2025 at 03:07:36PM +0200, Arnaud POULIQUEN wrote:
+> >>>> Hello Dawei,
+> >>>>
+> >>>>
+> >>>> Please find a few comments below. It is not clear to me which parts of your
+> >>>> implementation are mandatory and which are optional "nice-to-have" optimizations.
+> >>>
+> >>> It's more like an improvement.
+> >>>
+> >>>>
+> >>>> Based on (potentially erroneous) hypothesis, you will find a suggestion for an
+> >>>> alternative to the anonymous inode approach, which does not seem to be a common
+> >>>> interface.
+> >>>
+> >>> AFAIC, annoymous inode is a common interface and used extensivly in kernel development.
+> >>> Some examples below.
+> >>>
+> >>>>
+> >>>>
+> >>>> On 6/9/25 17:15, Dawei Li wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+> >>>>> for rpmsg subsystem.
+> >>>>>
+> >>>>> Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> >>>>> abstracted in procedures below:
+> >>>>> - fd = open("/dev/rpmsg_ctrlX")
+> >>>>> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+> >>>>>   generated.
+> >>>>> - fd_ep = open("/dev/rpmsgY", O_RDWR) 
+> >>>>> - operations on fd_ep(write, read, poll ioctl)
+> >>>>> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> >>>>> - close(fd_ep)
+> >>>>> - close(fd)
+> >>>>>
+> >>>>> This /dev/rpmsgY abstraction is less favorable for:
+> >>>>> - Performance issue: It's time consuming for some operations are
+> >>>>> invovled:
+> >>>>>   - Device node creation.
+> >>>>>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+> >>>>>     overhead is based on coordination between DEVTMPFS and userspace
+> >>>>>     tools such as udev and mdev.
+> >>>>>
+> >>>>>   - Extra kernel-space switch cost.
+> >>>>>
+> >>>>>   - Other major costs brought by heavy-weight logic like device_add().
+> >>>>
+> >>>> Is this a blocker of just optimization?
+> >>>
+> >>> Yep, performance is one of motivations of this change.
+> >>>
+> >>>>
+> >>>>>
+> >>>>> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+> >>>>>     that a dynamically created device node can be opened only once.
+> >>>>
+> >>>>
+> >>>> I assume this is blocker with the fact that you need to open the /dev/rpmsg<x>
+> >>>> to create the endpoint.
+> >>>
+> >>> Yes. You have to open /dev/rpmsgX which is generated by legacy ioctl to
+> >>> instantiate a new endpoint.
+> >>>
+> >>>>
+> >>>>
+> >>>>>
+> >>>>> - For some container application such as docker, a client can't access
+> >>>>>   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+> >>>>>   is generated dynamically and whose existence is unknown for clients in
+> >>>>>   advance, this uAPI based on device node doesn't fit well.
+> >>>>
+> >>>> does this could be solve in userspace parsing /sys/class/rpmsg/ directory to
+> >>>> retreive the device?
+> >>>
+> >>> Hardly, because client still can't access /dev/rpmsgX which is generated
+> >>> by host _after_ client is launched.
+> >>
+> >>
+> >> This part is not clear to me; could you provide more details?
+> >> I cannot figure out why a client can access /dev/rpmsg_ctrlX but not /dev/rpmsgX.
+> > 
+> > Well, let's take docker as example:
+> 
+> > 
+> > For docker, when a client is launched and it wants to access host's
+> > device, it must make explicit request when it's launched:
+> > 
+> > docker run --device=/dev/xxx
+> > 
+> > Let's presume that xxx is /dev/rpmsgX generated dynamically by _host_.
+> > Docker command above knows nothing about these rpmsg nodes which are
+> > generated by host _after_ client is launched. And yes, parsing> /sys/class/rpmsg may acquire info about rpmsg devices, but client still
+> > can't access /dev/rpmsgX.
+> 
+> One extra question:Are you using RPMsg over virtio?
+> 
+> If yes, do you test the RPMsg name service (NS) announcement, that might also
+> address your needs.
+> 
+> The principle is that the remote processor sends a name service announcement to
+> Linux, which probes the rpmsg character device and creates the /dev/rpmsgX
+> device in a predefined order known by the remote processor.
+> In such a case, the /dev/rpmsgX usage would be determined by the remote
+> processor itself.
+> 
+> Another advantage is that the RPMsg channel creation is not driven by either the
+> host or the client. In such case host does no need to define/kwnow RPMSg
+> endpoint addresses.
+> 
+> You still need to call the open() file system operation, but this should be done
+> one time during Docker client initialization.
+
+NS is nice, but perhaps it's not the approach for some cases.
+
+For offloading/accelerator scenarios, ACPU is responsible for making all
+the important decisions, including creations of endpoints. Because all
+the user-awared software stack is running on ACPU, and if you want to
+create a endpoint _dynamically_, it must be from user's command which is
+from ACPU.
+
+And this series is more about how rpmsg_char and rpmsg_ctrl coordinate
+themselves about creating dynamic rpmsg endpoints in a more simple
+and efficient way.
+
+And the whole point of series is "When you want to return a fd to
+userspace which represents an instance of data structure in kernel, you
+don't implement it as character device". Maybe some quotes from Christian[1]
+can describe it better[1]:
+
+"I'm not sure why people are so in love with character device based apis.
+It's terrible. It glues everything to devtmpfs which isn't namespacable
+in any way. It's terrible to delegate and extremely restrictive in terms
+of extensiblity if you need additional device entries (aka the loop
+driver folly)."
+
+[1] https://lkml.org/lkml/2025/6/24/639
+
+Thanks,
+
+	Dawei
+
+> 
+> Regards
+> Arnaud
+> 
+> 
+> > 
+> >>
+> >>
+> >>>
+> >>>>
+> >>>> You could face same kind of random instantiation for serial peripherals ( UART;
+> >>>> USb, I2C,...) based on a device tree enumeration. I suppose that user space
+> >>>> use to solve this.
+> >>>>
+> >>>>>
+> >>>>> An anonymous inode based approach is introduced to address the issues above.
+> >>>>> Rather than generating device node and opening it, rpmsg code just creates
+> >>>>> an anonymous inode representing eptdev and return the fd to userspace.
+> >>>>
+> >>>> A drawback is that you need to share fb passed between processes.
+> >>>
+> >>> Fd is the abstraction of an unique endpoint device, it holds true for
+> >>> both legacy and new approach.
+> >>>
+> >>> So I guess what you mean is that /dev/rpmsgX is global to all so other process
+> >>> can access it?
+> >>>
+> >>> But /dev/rpmsgX is designed to be opened only once, it's implemented as
+> >>> singleton pattern.
+> >>>
+> >>> static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+> >>> {
+> >>> ...
+> >>>         if (eptdev->ept) {
+> >>>                 mutex_unlock(&eptdev->ept_lock);
+> >>>                 return -EBUSY;
+> >>>         }
+> >>> ...
+> >>>         eptdev->ept = ept;
+> >>> ...
+> >>> }
+> >>>
+> >>> [...]
+> >>>  
+> >>>>> 	printf("loop[%d]\n", loop);
+> >>>>>
+> >>>>> 	gettimeofday(&start, NULL);
+> >>>>>
+> >>>>> 	while (loop--) {
+> >>>>
+> >>>> Do you need to create /close Endpoint sevral times in your real use case with
+> >>>> high timing
+> >>>> constraint?
+> >>>
+> >>> No, it's just a silly benchmark demo, large sample reduces noise statistically.
+> >>>
+> >>>>
+> >>>>> 		fd_info.fd = -1;
+> >>>>> 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+> >>>>> 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+> >>>>> 		if (ret < 0 || fd_info.fd < 0) {
+> >>>>> 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+> >>>>> 		}
+> >>>>>
+> >>>>
+> >>>>
+> >>>>> 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> >>>>> 		if (ret < 0) {
+> >>>>> 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+> >>>>> 		}
+> >>>>>
+> >>>>> 		close(fd_info.fd);
+> >>>>
+> >>>> It seems strange to me to use ioctl() for opening and close() for closing, from
+> >>>> a symmetry point of view.
+> >>>
+> >>> Sorry to hear that. But no, it's a pretty normal skill in kernel codebase
+> >>> , I had to copy some examples from reply to other reviewer[1].
+> >>
+> >> I missed this one, apologize for the duplication.
+> >>
+> >>>
+> >>> anon_inode_get_{fd,file} are used extensively in kernel for returning a new
+> >>> fd to userspace which is associated with an unique data structure in kernel
+> >>> space, in different ways:
+> >>>
+> >>> - via ioctl(), some examples are:
+> >>>
+> >>>  - KVM ioctl(s)
+> >>>    - KVM_CREATE_VCPU -> kvm_vm_ioctl_create_vcpu
+> >>>    - KVM_GET_STATS_FD -> kvm_vcpu_ioctl_get_stats_fd
+> >>>    - KVM_CREATE_DEVICE -> kvm_ioctl_create_device
+> >>>    - KVM_CREATE_VM -> kvm_dev_ioctl_create_vm
+> >>>
+> >>>  - DMA buf/fence/sync ioctls
+> >>>    - DMA_BUF_IOCTL_EXPORT_SYNC_FILE -> dma_buf_export_sync_file
+> >>>    - SW_SYNC_IOC_CREATE_FENCE -> sw_sync_ioctl_create_fence
+> >>>    - Couples of driver implement DMA buf by using anon file _implicitly_:
+> >>>      - UDMABUF_CREATE -> udmabuf_ioctl_create
+> >>>      - DMA_HEAP_IOCTL_ALLOC -> dma_heap_ioctl_allocate
+> >>>
+> >>>  - gpiolib ioctls:
+> >>>    - GPIO_GET_LINEHANDLE_IOCTL -> linehandle_create
+> >>>    - GPIO_V2_GET_LINE_IOCTL
+> >>>
+> >>>  -  IOMMUFD ioctls:
+> >>>
+> >>>  -  VFIO Ioctls:
+> >>>
+> >>>  - ....
+> >>>
+> >>>
+> >>> - via other specific syscalls:
+> >>>  - epoll_create1
+> >>>  - bpf
+> >>>  - perf_event_open
+> >>>  - inotify_init
+> >>>  - ...
+> >>
+> >> If we put the optimization aspect aside, what seems strange to me is that the
+> >> purpose of rpmsg_char was to expose a FS character device to user space. If we
+> >> need tobypass the use of /dev/rpmsgX, does it make sense to support an anonymous
+> >> inode in this driver?  I am clearly not legitimate to answer this question...
+> > 
+> > You have every right to do so, after all, it's purely a technical
+> > discussion :).
+> > 
+> > I admit it's bit confusing to add annoymous inode logic to a file named
+> > rpmsg_char.c which implies 'character' device. That's why I rename API
+> > following Mathieu's comment:
+> >   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+> >   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+> > 
+> > As to topic how these two uAPI(s) co-exist and affect each other. This
+> > change is based on rules:
+> > 
+> > 1. Never break existing uAPI.
+> > 2. Try best to reuse existing codebase.
+> > 3. Userspace can choose whatever approach they want to.
+> > 
+> > Thanks,
+> > 
+> > 	Dawei
+> >>
+> >>
+> >> Thanks,
+> >> Arnaud
+> >>
+> >>>
+> >>> [1] https://lore.kernel.org/all/20250530125008.GA5355@wendao-VirtualBox/
+> >>>
+> >>>>
+> >>>> Regarding your implementation, I wonder if we could keep the /dev/rpmsg<x>
+> >>>> device with specific open() and close() file operations associated with your new
+> >>>> ioctl.
+> >>>>
+> >>>> - The ioctl would create the endpoint.
+> >>>> - The open() and close() operations would simply manage the file descriptor and
+> >>>> increment/decrement a counter to prevent premature endpoint destruction.
+> >>>>
+> >>>>
+> >>>> Regards,
+> >>>> Arnaud
+> >>>>
+> >>>
+> >>> [...]
+> >>>
+> >>> Thanks,
+> >>>
+> >>> 	Dawei
 
