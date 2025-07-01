@@ -1,161 +1,219 @@
-Return-Path: <linux-kernel+bounces-712247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F3CAF0696
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:31:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1B8AF069E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22551BC7D9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04E33B7519
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 22:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989CC26FA50;
-	Tue,  1 Jul 2025 22:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B534277C94;
+	Tue,  1 Jul 2025 22:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kj1y5Plc"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ICYQPpVd"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A3A1D5CDE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 22:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560641A0BE0;
+	Tue,  1 Jul 2025 22:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751409105; cv=none; b=cWb15Ppj7dLhnteqab6siX/peZoYeXdeuaiaFhao3x15D6PO06wUMUWE+KCKr9e1nboe3+pnOZ08vJdqdlqSJ706VTOIxo3+fsCjFqL3/gp5qUZZzShG13dtOKRF4cI8R/w8IPl1B9rL/f4O7IM3MeYA+yb106H8+4SYYBohyXU=
+	t=1751409285; cv=none; b=BfKSKpalZ4wTi3dcH2RljigdELDzIsq377eXCQKadEMw8iPDFbkvhLDnJc2yujHtlLFYD0nFlLAoss3Oj0cmeSlnrZ5z1J6QxVnkw9clgYp1GJ8jeA5ef6dy9G6a13oORbeSD84P/3RYeT/i5zW6Zu/FPhPCKjfmIlmFiqkadv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751409105; c=relaxed/simple;
-	bh=Y38NyVKnZ82iZGpTSGed9LlVmfbMXnVz10ETj3CqMPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GmO7bdJ6GEiklIG3RpiMhwO4+R9NBy46AEDcKhVG+76x1EncRssZCVYokAYfxhT6mKSSq3bNoXrsgNlp3T3KVM2uedPcEB2TRFjvtnrj7xrsc/JzCyMXVelVGwzzqwatJN2dwjXlkFPkSpaZusEy/YDpty9UZKX9kE8GL7pJiZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kj1y5Plc; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2ef493de975so2405935fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 15:31:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751409102; x=1752013902; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g+APmr3mcxG70O2Gf3NLRFLfhkFazHT+YEHSsydc6Nw=;
-        b=kj1y5PlcxzfBzqjp9yr8loT+juWB7r8INMsofwd8QC6Y7b98u33Q3AxfAF4d2g6CSA
-         /CVBEU3/xeliL93K2KQyOQjVRay3xmTVRtFBA9mepks6vm5Wx+alMulLlwFd0XFhI003
-         Rz1zvGQaLX8x+EYp5B5F11brux4O3QSykY+I0TmKfP+2tdvr/VkFAS0BdsXQCObiXI/Y
-         irqr79atlNC6apnQiyLcmifgcAEVrUk1G6envMDiGPbUWn8SnYhwii6H/u1Hhf125ioP
-         HNVs0KIpTTOywVXXD6837FwBo8I/LTBSvIc707sUi2y0PzUsR5urXcV31YUMB3GBuNNo
-         oEXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751409102; x=1752013902;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+APmr3mcxG70O2Gf3NLRFLfhkFazHT+YEHSsydc6Nw=;
-        b=j/YTjnnZ3TCX/kQ2y8BRVJ7c057xw9TNS1JglJAy3wRFxkP8X4z4jPR3cXHvi08wfV
-         wOhRoBnrL2wRvZV4Qig/kv2AAkKqj+Gmn0EfX59GYpokwHtBsmCaSDXfA+9L6gdZAQel
-         DFzT8Y6KC0OM8M0oGzD0b2ZdbnNBYrAeTt0mYuoz7TrtcDkK9UtAcS9DxDipkcfy1nBD
-         m2av55vP6XNq2kV0W5bPr9jclcjwi6F0L0OTG2It1sypHzvkSv1qWQ8+uw+Iy8ly/5vq
-         BqlZF2q4FdPA30Ussv/oZpJpTacs5U1S3yLc5dd+VcCnsku2bWf8XU47BiuY09lezCrt
-         vEMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT/JYaEdWuyegrxVDvfK5ud6Rh3mFtMGjmlckfXkBYRf4hN7+YcuCUv3SHrTe4mE8dmfIz0974ACyJws8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp03HsCYeq/cCTjquGe2uEy0DqmhioGykpSiG1deY1cMBYkfbg
-	YygOj1SdWv1Id1OdFYz5fem6YDZwAsXdYsZ2meYXx040s81G3EM/pehEz3CABrXPsyc=
-X-Gm-Gg: ASbGncvNM+TSifu5NZISXvCTP8O16J/9UAZGZvV9AbTXEzUZdFHWdt0lP6G3CfVU3L9
-	5dhs/TNyIF1CXCAEZlxWKpnMbpS3SXW46F3h5qRZxRMJ9aXljUDXKASiq3g1DUFseyGqeYnQ2S1
-	q3gPmkyB3Pnlx9eTbf+IDz1QWo3b66NSBhNjuDhDtg9q9R9fbMzMPHqXdGWY/LqM1B4Nyv7N6eF
-	6KmLKLcgZTiA2Be7BxwPLadn8j3m3Z/K69CHCuSu/jqHWpMj/0davOYdoUeQBegXMblDkU4utA2
-	shu0IyAdJgAH1QUBFNXHkYMMeKRvoS3OIUKs+vihd3nijSQMMXtp4c/PTWSigPUXD1PzWA==
-X-Google-Smtp-Source: AGHT+IEsUQPOhLWTesKKtP8Y6vrAjQiXU7OxciWMUsj0112kKHLpaSXzrVlr3Y2T3n6p/TQSmzEMbg==
-X-Received: by 2002:a05:687c:820:b0:2bc:716c:4622 with SMTP id 586e51a60fabf-2f5c7de279fmr396814fac.38.1751409101828;
-        Tue, 01 Jul 2025 15:31:41 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:d663:8de8:cafb:14e3])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73afb10088esm2275056a34.50.2025.07.01.15.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 15:31:41 -0700 (PDT)
-Date: Tue, 1 Jul 2025 17:31:40 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] dmaengine: nbpfaxi: Fix memory corruption in probe()
-Message-ID: <b13c5225-7eff-448c-badc-a2c98e9bcaca@sabinyo.mountain>
+	s=arc-20240116; t=1751409285; c=relaxed/simple;
+	bh=TVVP1jC7HYclxJ4Xp3i7dsoPGyAXo6p6cPeNiF/hUn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eYTV/zqDdGvbx3kOGHGx8wmUXh3Sboi194PHlIbF9TFjnl0MN6tONrH+K4n4mJuoU9nl95U7PFzL/KBJ6soyOjmR0O4Bv5X7KwyB1UgM3jtJFEKV2qXLQCbhTH8nYWtA5ffzYv99QAyqKkNeSL3WhOgdGioMVHOo/jfdm4dnOXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ICYQPpVd; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 561MYOes3751726;
+	Tue, 1 Jul 2025 17:34:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1751409264;
+	bh=Qbv/ZtN1eFo6mhf92agyySSZLmzADkxZD1QmubJ60lw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ICYQPpVdYw0OiiI7ITnZ19yIL7Mjd/OV4/w/i3+jaX5Sf/ezYPf3Ui6OZ30//rgRb
+	 ddOvpf8r7sNq6Q0FIa33TeouDtShyXmKJ+esAqlVqkHZBFusaNJz5HCIY++w12+VDL
+	 du+hpg+/d5oYDl49sXYrAMnTy5bUK7kQ4ffbRZJE=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 561MYOq93322304
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 1 Jul 2025 17:34:24 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 1
+ Jul 2025 17:34:24 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 1 Jul 2025 17:34:24 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 561MYOHs2057928;
+	Tue, 1 Jul 2025 17:34:24 -0500
+Message-ID: <76622b57-1f37-417c-9d70-7064cc21d2cb@ti.com>
+Date: Tue, 1 Jul 2025 17:34:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] watchdog: rti_wdt: Add reaction control
+To: Andrew Davis <afd@ti.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250625143338.2381726-1-jm@ti.com>
+ <20250625143338.2381726-3-jm@ti.com>
+ <8fbe03d0-ee45-4b1f-92ec-bebf6d7b9041@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <8fbe03d0-ee45-4b1f-92ec-bebf6d7b9041@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The nbpf->chan[] array is allocated earlier in the nbpf_probe() function
-and it has "num_channels" elements.  These three loops iterate one
-element farther than they should and corrupt memory.
+On 6/27/25 1:31 PM, Andrew Davis wrote:
+> On 6/25/25 9:33 AM, Judith Mendez wrote:
+>> This allows to configure reaction between NMI and reset for WWD.
+>>
+>> On K3 SoC's other than AM62L SoC [0], watchdog reset output is routed
+>> to the ESM module which can subsequently route the signal to safety
+>> master or SoC reset. On AM62L, the watchdog reset output is routed
+>> to the SoC HW reset block. So, add a new compatible for AM62l to add
+>> SoC data and configure reaction to reset instead of NMI.
+> 
+> Should this be something we configure, not selected based on device,
+> do we know if all user of AM62L want the device reset on WDT?
 
-The changes to the second loop are more involved.  In this case, we're
-copying data from the irqbuf[] array into the nbpf->chan[] array.  If
-the data in irqbuf[i] is the error IRQ then we skip it, so the iterators
-are not in sync.  I added a check to ensure that we don't go beyond the
-end of the irqbuf[] array.  I'm pretty sure this can't happen, but it
-seemed harmless to add a check.
+I will assume that end user will want watchdog to actually reset
+the system if watchdog is enabled.
 
-On the other hand, after the loop has ended there is a check to ensure
-that the "chan" iterator is where we expect it to be.  In the original
-code we went one element beyond the end of the array so the iterator
-wasn't in the correct place and it would always return -EINVAL.  However,
-now it will always be in the correct place.  I deleted the check since
-we know the result.
+If they don't use watchdog, they wont care. I believe it should be per
+device/SoC.
 
-Cc: stable@vger.kernel.org
-Fixes: b45b262cefd5 ("dmaengine: add a driver for AMBA AXI NBPF DMAC IP cores")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-From static analysis.  Not tested.
+> 
+>>
+>> [0] https://www.ti.com/product/AM62L
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>> Changes since v1-resend:
+>> - no change
+>> ---
+>>   drivers/watchdog/rti_wdt.c | 31 +++++++++++++++++++++++++++----
+>>   1 file changed, 27 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/rti_wdt.c b/drivers/watchdog/rti_wdt.c
+>> index d1f9ce4100a8..d419884c86c4 100644
+>> --- a/drivers/watchdog/rti_wdt.c
+>> +++ b/drivers/watchdog/rti_wdt.c
+>> @@ -35,7 +35,8 @@
+>>   #define RTIWWDRXCTRL    0xa4
+>>   #define RTIWWDSIZECTRL    0xa8
+>> -#define RTIWWDRX_NMI    0xa
+>> +#define RTIWWDRXN_RST    0x5
+>> +#define RTIWWDRXN_NMI    0xa
+>>   #define RTIWWDSIZE_50P        0x50
+>>   #define RTIWWDSIZE_25P        0x500
+>> @@ -63,22 +64,29 @@
+>>   static int heartbeat;
+>> +struct rti_wdt_data {
+>> +    bool reset;
+>> +};
+>> +
+>>   /*
+>>    * struct to hold data for each WDT device
+>>    * @base - base io address of WD device
+>>    * @freq - source clock frequency of WDT
+>>    * @wdd  - hold watchdog device as is in WDT core
+>> + * @data - hold configuration data
+>>    */
+>>   struct rti_wdt_device {
+>>       void __iomem        *base;
+>>       unsigned long        freq;
+>>       struct watchdog_device    wdd;
+>> +    const struct rti_wdt_data *data;
+>>   };
+>>   static int rti_wdt_start(struct watchdog_device *wdd)
+>>   {
+>>       u32 timer_margin;
+>>       struct rti_wdt_device *wdt = watchdog_get_drvdata(wdd);
+>> +    u8 reaction;
+>>       int ret;
+>>       ret = pm_runtime_resume_and_get(wdd->parent);
+>> @@ -101,8 +109,12 @@ static int rti_wdt_start(struct watchdog_device 
+>> *wdd)
+>>        */
+>>       wdd->min_hw_heartbeat_ms = 520 * wdd->timeout + MAX_HW_ERROR;
+>> -    /* Generate NMI when wdt expires */
+>> -    writel_relaxed(RTIWWDRX_NMI, wdt->base + RTIWWDRXCTRL);
+>> +    /* Generate reset or NMI when timer expires/serviced outside of 
+>> window */
+>> +    reaction = RTIWWDRXN_NMI;
+>> +    if (wdt->data->reset)
+>> +        reaction = RTIWWDRXN_RST;
+>> +
+> 
+> Suggest:
+> 
+> /* Reset device if wdt serviced outside of window or generate NMI if 
+> available */
+> if (wdt->data->reset)
+>      reaction = RTIWWDRXN_RST;
+> else
+>      reaction = RTIWWDRXN_NMI;
 
- drivers/dma/nbpfaxi.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Sure, will fix for v3
 
-diff --git a/drivers/dma/nbpfaxi.c b/drivers/dma/nbpfaxi.c
-index 0d6324c4e2be..7a2488a0d6a3 100644
---- a/drivers/dma/nbpfaxi.c
-+++ b/drivers/dma/nbpfaxi.c
-@@ -1351,7 +1351,7 @@ static int nbpf_probe(struct platform_device *pdev)
- 	if (irqs == 1) {
- 		eirq = irqbuf[0];
- 
--		for (i = 0; i <= num_channels; i++)
-+		for (i = 0; i < num_channels; i++)
- 			nbpf->chan[i].irq = irqbuf[0];
- 	} else {
- 		eirq = platform_get_irq_byname(pdev, "error");
-@@ -1361,16 +1361,15 @@ static int nbpf_probe(struct platform_device *pdev)
- 		if (irqs == num_channels + 1) {
- 			struct nbpf_channel *chan;
- 
--			for (i = 0, chan = nbpf->chan; i <= num_channels;
-+			for (i = 0, chan = nbpf->chan; i < num_channels;
- 			     i++, chan++) {
- 				/* Skip the error IRQ */
- 				if (irqbuf[i] == eirq)
- 					i++;
-+				if (i >= ARRAY_SIZE(irqbuf))
-+					return -EINVAL;
- 				chan->irq = irqbuf[i];
- 			}
--
--			if (chan != nbpf->chan + num_channels)
--				return -EINVAL;
- 		} else {
- 			/* 2 IRQs and more than one channel */
- 			if (irqbuf[0] == eirq)
-@@ -1378,7 +1377,7 @@ static int nbpf_probe(struct platform_device *pdev)
- 			else
- 				irq = irqbuf[0];
- 
--			for (i = 0; i <= num_channels; i++)
-+			for (i = 0; i < num_channels; i++)
- 				nbpf->chan[i].irq = irq;
- 		}
- 	}
--- 
-2.47.2
+> 
+>> +    writel_relaxed(reaction, wdt->base + RTIWWDRXCTRL);
+>>       /* Open window size 50%; this is the largest window size 
+>> available */
+>>       writel_relaxed(RTIWWDSIZE_50P, wdt->base + RTIWWDSIZECTRL);
+>> @@ -255,6 +267,8 @@ static int rti_wdt_probe(struct platform_device 
+>> *pdev)
+>>       wdd->timeout = DEFAULT_HEARTBEAT;
+>>       wdd->parent = dev;
+>> +    wdt->data = of_device_get_match_data(dev);
+> 
+> You can use device_get_match_data() here.
+> 
+Sure, will fix for v3
+
+> Andrew
+> 
+>> +
+>>       watchdog_set_drvdata(wdd, wdt);
+>>       watchdog_set_nowayout(wdd, 1);
+>>       watchdog_set_restart_priority(wdd, 128);
+>> @@ -369,8 +383,17 @@ static void rti_wdt_remove(struct platform_device 
+>> *pdev)
+>>       pm_runtime_disable(&pdev->dev);
+>>   }
+>> +static struct rti_wdt_data j7_wdt = {
+>> +    .reset = false,
+>> +};
+>> +
+>> +static struct rti_wdt_data am62l_wdt = {
+>> +    .reset = true,
+>> +};
+>> +
+>>   static const struct of_device_id rti_wdt_of_match[] = {
+>> -    { .compatible = "ti,j7-rti-wdt", },
+>> +    { .compatible = "ti,j7-rti-wdt", .data = &j7_wdt },
+>> +    { .compatible = "ti,am62l-rti-wdt", .data = &am62l_wdt },
+>>       {},
+>>   };
+>>   MODULE_DEVICE_TABLE(of, rti_wdt_of_match);
 
 
