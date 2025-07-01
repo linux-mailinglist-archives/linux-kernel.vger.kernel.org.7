@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-711885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00EBAF014A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:09:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AEDAF0147
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 19:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CDA21C40086
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:01:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A271C220C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BA9285C92;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C860B285C95;
 	Tue,  1 Jul 2025 16:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOHIx/Z9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OkPUm/PU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FE528312F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15530283138;
 	Tue,  1 Jul 2025 16:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751389091; cv=none; b=qViCnpJwmEYxO3iYBiRCOgDMnSkMZytoEq6DZGUFjL5rQrBZHqlS30t9xVGmksuo1EplnjnmlIiPf4hP0//1k+U2OP/3YtCFvkyuG5YGGOrjZKAWn3//3ZkpUrAHFNx3+k0rz7A71viyl9FTGz01Ft7IK9PQdlOoHyN93ufS1Vo=
+	t=1751389091; cv=none; b=SSt7n253mWelBiquEWyu7jjtNEYQO2OznuhfpGd0QL6uYZL/MEe7pKGl/ZyE5A7OY5eAxqRgfe4cV4wf3PNX9QtqNNfXRthSekYx4qZo8niYPgvYOoxWgU+mTgJeMqGXmsVlrHE+ycOvWFhqg4kKRLXkK0WGWhe7PEPHS3qJW2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1751389091; c=relaxed/simple;
-	bh=nAHJWVBqBIFgDdvlPNmXu9yu+XCBTnN7iRiEX4QfvyM=;
+	bh=2Z/sxjaBMHzyciR0Amj3yQU+atAainaF8NZKa+qbDFE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G14SkEs2ZBkhD8mkZQD6O7dAfGmQ2V/KUmgCkFW9tXUnvUCNr1rF1vYkkbcHPnyxrTLdBDooFQ36ElO5Oo9y3KV3RRd5vv39oATm/17yPpRDGv8EcqFNmmhdp1/6Iey4MOPAgNdpJrQgzERQsvKYwIK5tASyjvM1QSdJvTdcNY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOHIx/Z9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EABBC4CEF1;
+	 MIME-Version; b=c9BBbLKshJp50AgHjU4GC1bGgI5pAns9p3GrqaeNnk0IsELKHKpRd9ZYSgn73+N6/pveUfgSZ8B0PLB+IaX+wqZnYNGk6vZEBHvsCW1z/TA7NE9UX48MB+NavTogXdF9eiZp8RxJ3mZFkspkSlJU9x/A1Ps28OypzH0qgLcMtX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OkPUm/PU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A569EC4CEF2;
 	Tue,  1 Jul 2025 16:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1751389090;
-	bh=nAHJWVBqBIFgDdvlPNmXu9yu+XCBTnN7iRiEX4QfvyM=;
+	bh=2Z/sxjaBMHzyciR0Amj3yQU+atAainaF8NZKa+qbDFE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hOHIx/Z9SgqL7SqpGSUO7dGaLCALAHGW31NBjZxyaYZYoZ4CsOoEPiCpHlgzsPjQT
-	 HmUNHMR7pb/agQnxGX+QPaEQZ5Zm8om+tDxoPZ3Eklvro//MoKclPZOWLrk51yBCgT
-	 CSvjUkSQ/CYqC1lwazTAFqQvRcdrOXKY80i/KWM6Mga4G8UPqgtnWBhIAAsbxH4QUd
-	 GF+G4sNNQcftc6FRmjUnn7DoEcFwcnq2WJoAqb21iWTSrto0TkK2BthlrjJ2oVLdWd
-	 7I0WreVfstImBI+etS9GY77zTv0SlEE3aYLrxOpIPk6q6Y8Kf3TPVI/HH4/xIkUgnq
-	 KmDF+C/mYpG7Q==
+	b=OkPUm/PU7LW9I3SOA8qW+bkFi+253rrDVigh2nSqieuGt1WWZ2DEIAbG5Fun5F0U6
+	 J4uH7mQrqHQH6l/xxsKFo3GTn1tMecCHsYCYQ6RzFRCYJpmSnz1OowvOSbG+UZcoxG
+	 wbgdqaINBCIKgTzkAZ/SfdS2Txwe3Got4APL+maZitPIbcBYkkfp+A81OJ3GNotn9v
+	 A8iwyKoZv6lrqxBNhf1GOh/1hkO5a5dol+UGbr1DKn3TIStxfP8qLo6Z2rBJdsmf91
+	 YQE9Lg6IDVLD5/DhYCY0gsqMSivymnB+IJL1aAg9GaIjNXPFbzW/S3Zyo+uPYeyeN1
+	 kEfRVqxjR6jcw==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 13D555FF19; Wed,  2 Jul 2025 00:58:06 +0800 (CST)
+	id 1BE306013F; Wed,  2 Jul 2025 00:58:06 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -60,9 +60,9 @@ Cc: netdev@vger.kernel.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH RFT net-next 08/10] arm64: dts: allwinner: t527: avaota-a1: Add ethernet PHY reset setting
-Date: Wed,  2 Jul 2025 00:57:54 +0800
-Message-Id: <20250701165756.258356-9-wens@kernel.org>
+Subject: [PATCH RFT net-next 09/10] arm64: dts: allwinner: t527: avaota-a1: enable second Ethernet port
+Date: Wed,  2 Jul 2025 00:57:55 +0800
+Message-Id: <20250701165756.258356-10-wens@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250701165756.258356-1-wens@kernel.org>
 References: <20250701165756.258356-1-wens@kernel.org>
@@ -76,31 +76,78 @@ Content-Transfer-Encoding: 8bit
 
 From: Chen-Yu Tsai <wens@csie.org>
 
-The external Ethernet PHY has a reset pin that is connected to the SoC.
-It is missing from the original submission.
+On the Avaota A1 board, the second Ethernet controller, aka the GMAC200,
+is connected to a second external RTL8211F-CG PHY. The PHY uses an
+external 25MHz crystal, and has the SoC's PJ16 pin connected to its
+reset pin.
 
-Add it to complete the description.
+Enable the second Ethernet port. Also fix up the label for the existing
+external PHY connected to the first Ethernet port.
 
-Fixes: c6800f15998b ("arm64: dts: allwinner: t527: add EMAC0 to Avaota-A1 board")
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ .../dts/allwinner/sun55i-t527-avaota-a1.dts   | 26 +++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts b/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
-index 142177c1f737..9a2f29201d3c 100644
+index 9a2f29201d3c..62bc9a6b0292 100644
 --- a/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
 +++ b/arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
-@@ -80,6 +80,9 @@ &mdio0 {
- 	ext_rgmii_phy: ethernet-phy@1 {
+@@ -13,6 +13,7 @@ / {
+ 
+ 	aliases {
+ 		ethernet0 = &gmac0;
++		ethernet1 = &gmac1;
+ 		serial0 = &uart0;
+ 	};
+ 
+@@ -67,7 +68,7 @@ &ehci1 {
+ 
+ &gmac0 {
+ 	phy-mode = "rgmii-id";
+-	phy-handle = <&ext_rgmii_phy>;
++	phy-handle = <&ext_rgmii0_phy>;
+ 	phy-supply = <&reg_dcdc4>;
+ 
+ 	allwinner,tx-delay-ps = <100>;
+@@ -76,8 +77,19 @@ &gmac0 {
+ 	status = "okay";
+ };
+ 
++&gmac1 {
++	phy-mode = "rgmii-id";
++	phy-handle = <&ext_rgmii1_phy>;
++	phy-supply = <&reg_dcdc4>;
++
++	allwinner,tx-delay-ps = <100>;
++	allwinner,rx-delay-ps = <100>;
++
++	status = "okay";
++};
++
+ &mdio0 {
+-	ext_rgmii_phy: ethernet-phy@1 {
++	ext_rgmii0_phy: ethernet-phy@1 {
  		compatible = "ethernet-phy-ieee802.3-c22";
  		reg = <1>;
-+		reset-gpios = <&pio 7 8 GPIO_ACTIVE_LOW>; /* PH8 */
-+		reset-assert-us = <10000>;
-+		reset-deassert-us = <150000>;
+ 		reset-gpios = <&pio 7 8 GPIO_ACTIVE_LOW>; /* PH8 */
+@@ -86,6 +98,16 @@ ext_rgmii_phy: ethernet-phy@1 {
  	};
  };
  
++&mdio1 {
++	ext_rgmii1_phy: ethernet-phy@1 {
++		compatible = "ethernet-phy-ieee802.3-c22";
++		reg = <1>;
++		reset-gpios = <&pio 9 16 GPIO_ACTIVE_LOW>; /* PJ16 */
++		reset-assert-us = <10000>;
++		reset-deassert-us = <150000>;
++	};
++};
++
+ &mmc0 {
+ 	vmmc-supply = <&reg_cldo3>;
+ 	cd-gpios = <&pio 5 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; /* PF6 */
 -- 
 2.39.5
 
