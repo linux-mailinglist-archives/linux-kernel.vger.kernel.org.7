@@ -1,72 +1,74 @@
-Return-Path: <linux-kernel+bounces-710897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-710898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B31AEF2CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC07AEF2D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 11:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DACA13AE956
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15CDD3B8080
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 09:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C778260590;
-	Tue,  1 Jul 2025 09:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FCE26CE3D;
+	Tue,  1 Jul 2025 09:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f6oy0p8R"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SM2FqGem"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4311D07BA
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC726C39C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751361108; cv=none; b=p6M+BAfNVY3bARU5LUJCd6zq5Tqr2WdMcS9DXQohtjaqBZGi/iJMJQQ87XM4IMvhjRvBPbF537fqsTYSzpwEtIc9h/nfFrG9TfSNe3Gss5KxtpBNJC4oaFAXWivuUsyXsgGqwyW819mP2nokSNU0EIBEVnIHF241TneNRCeng8c=
+	t=1751361112; cv=none; b=tdxJ55BOPZsnWdIBhE5XpKvh1ancbMN+e4Ztq2X4UPIRGjUTr9qFkH7i9mWzyLMUqE0jWpuWy8s3rKJtIFo6wFX8R+powvEabmZ/5SX73OjyP8rDbRDQe28s0RYcoOSsYJQ4MjprmbCtwA34Tb2pUKgHdu0DZ5/veVBma9I38Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751361108; c=relaxed/simple;
-	bh=qBn7O+oadgbDt/1DtKOEuIzBWBkB2LI6zoWM54Khkxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gogmw4jvGpdAIA13G5l4sl+XotYYZPB1+rhNBeqNkIjA2o+oMHeVYoU8pexA2qYJQyRocAZU10rA4qaznkX3a5ph4L6fvBgiDitjvvaQDZUS8GxxQK94d1K/PnxIPky9HyTGYL9n9SLRmXgrNg4CXb+QQYRLQRKE/Biid/aotiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=f6oy0p8R; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1751361112; c=relaxed/simple;
+	bh=1i0ryR5cBWV6GtdEGU8s3EojruIksTv9gJs15V/sUpU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ozaCOfhMyV7sQ+pber3XepL5yE8DKfRJq99ufbahi0VnUyDIJIt9HD+hOSBZcwC+3o8Lx7rLYSUuKAsN9gi/BmrGlSvgen4lgz7MkEejYtWMkd4WeZhEGXWit16TZZPwp0qcZ+nGNzSUoGug5Z6vWXz9luM3LYAS4G4widyw5VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SM2FqGem; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-234f17910d8so50933065ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:11:46 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-748feca4a61so1717685b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 02:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1751361106; x=1751965906; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uz6fO0/Nn0kDVM5mJ4z1SaT0UByDPCAgmjtmOz31sy4=;
-        b=f6oy0p8RIwn9sUruT9UoO4seTJc1rqt4F20gzhlvR99eF/1wGN6nv2NvAL1pw3Bmwj
-         6JIYSgaZEh65VUG+mfqWCblyqiW528TcCaBlasEI+Bg+jOE+LsZSfVWLBX/rZFsmIYNa
-         WRAgN+iZX1iQ/WlpVL3mWZXiS1L75Tc/hHxqY=
+        d=broadcom.com; s=google; t=1751361110; x=1751965910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s7ZtbDhifmulp6X+CGsmi42q8oGid7NOjLwBd1zaIRg=;
+        b=SM2FqGemMkfIVO+UDTjx2N0aDWsd896H0/mWq5qKSCsB6F6btDV7CDIY+Mof/sBdF1
+         YdVhqX+x+Q6kfOj5tPvqdXL4xvdkDKE5wtBIvOgMJ3+f0zDbdhpKe5EE2fUofGiC2Ljd
+         lUX2kqq6TEOqMbKrEBIEh5pADAZjDMPy8m7j4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751361106; x=1751965906;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Uz6fO0/Nn0kDVM5mJ4z1SaT0UByDPCAgmjtmOz31sy4=;
-        b=rh/pi9NJczT3xeLIpNsNRHU2LHAhwnC+z9YyubdWHW1AouvYC3b99EWSbK6j7WoWAw
-         GCgGk2vgIjZ0W/fy3vutpxRauLQCCEvG05gFkvKrNPlNiJtd50wWNmKQ7h3Ntsj70iHs
-         WFh6ygN6+WuLRBHe8cIefWa1rAp6a2vBsUWNKU2zzyYKpZzaw5LzlvcVkwRBM0Fblxhm
-         F2QsGXgUWklgBK5NPFz7wIekdiuiubf9ShaEB0k2AGCsW6B0eEYhrOymlmtYhVSuPKVE
-         nHnxOPEeOzVC0A89sxUS+B3SgyEDhSAVQXWYSe4vOt4FteQCtP7TwZieIqh/Ulncgw3R
-         6wPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWz35jwcg61B26ptE3I3kTzd/GUs0leOwY7tGofi6jrXFSttK3BXTlxp0/v547jktz7en2dVast1NYJC7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3QSRklFydqsbKiuBv0GQQPbCnB1IQgZ5Y6/3A+ay7TFDgSBE9
-	hoFrIdCLcHPoeCpIsnHlhUDks59fF6fZQc+Fh8Ftt/gJ9cyeJcoQ2PVasrYnyicPDA==
-X-Gm-Gg: ASbGncvzsuB/2nFg7T2klPKTcuI9u7xh3pL137emjGmUH/jzN9fbOTMggbDOmjGG20F
-	UdTMDG/ejYmc3ucqK+m0BK7WEiYzBch2TeubJ8kHV6wrbplY0REg7njQYmTzZAcNtJ1tPhhHhu9
-	cMevdIlDcpi3A7tA/G3aMLV6getZ4RhwgCadyRTIvsoFxSHFOqNRQ7aSqAUoTBU4gVS1a6IRXk3
-	SDgm4Y3grUyzfxeujWBYcvJMjmwG2z95LGtavnTIZlaqNWwcmDTjR95e1gV7G2raoi9E1BiFq8R
-	JThZTlbbaRGAzSKgVNaDowfTSuicY4E5B4fqlrf1/8vUo5cL8vBsg2uM98bW6yMa6OcSNIIhIpn
-	2qejX6LXveUbCkwzOigWEXGsM4MGY
-X-Google-Smtp-Source: AGHT+IGlEfsc3kdlXA6znsbIc1Wgfe0QgYv/xrPpW5Q033ESONRrc8Fk+iDwl2r+2FNtPlf8BGI5rg==
-X-Received: by 2002:a17:903:2407:b0:235:7c6:eba2 with SMTP id d9443c01a7336-23ac4880248mr256526095ad.37.1751361106221;
-        Tue, 01 Jul 2025 02:11:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751361110; x=1751965910;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s7ZtbDhifmulp6X+CGsmi42q8oGid7NOjLwBd1zaIRg=;
+        b=T4WSMIF8ntG5lUNMEHnzkWF1ZnLHCcuyqp0bZm0K39jrfBVFZyU+SNby3DNkzGucXb
+         cs3jOUI/hDAbEOaMej0YJmuWyBASmH6o9fgIYmq9Du8ssDaRkF5t7BhaCUW/1xVPUysV
+         5X8tpkYqviM87lhLd1HHnpK62UiganC2RbbVx7Dw3J7T0RkBnvduEu4EeF78EkwY9TG7
+         /VLzjmGk6YfY3DQVbhFAKN8CZLUGSv9RdlhhoC/SQm8iZvssaCTkRIyMqU/uG1a2Yf9m
+         lO1wrouLJepSFeHN0vbf1kEU7jcy1QbpAAbGf8we1HDK5sxnBUv7dtymjEC8dBGoFnTt
+         Q+QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQNPi92Nuk3i6L3HHuE3IVmvVBcc2cRs+CS/rhgv8a7z9L5/mztgddDGlZWBN1jpGgBGY1NTSKZr1G4T4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9mPzbS/7rFdLmW+mEp6WPFsbMsWSiq962Z9SbLbjSiTZElF0K
+	qJPspMBdK0EKNcnETW/TtKgl8zuS9MLt4Kcx622o3POi6wnj2eEMg1u2zknl5okTGQ==
+X-Gm-Gg: ASbGncu9YSlaj3dWf8R5XmpnfMwOuoWapt/cT5Abz+oc3j8RIuMAQmbiTsjTarnCxKo
+	n+zZikFDfJhV5uq+mGLpeDSJtI2+fzdegjJ50t3kbx5kkO+qfUEGQwL9E8svxsP7RdsT2r6BhBP
+	xSM9E9nEju42UXQ8ftZ5Egl/lbN/dDQPgZtqBEbwFWVsjLZF0z2JrYifB2oULmosZ5O4BzLe/7E
+	clQEPpNM3QZ70Sy/hkmwyx8RVHghZ13SlrNGuXqBwAAE7z4bgXc+XDiHrCipevhU+h80jnzNpTe
+	/idcj+kpWw0G5l14e2LAhaenraxx5NsDlEPmUzO9M8IA1xSbR36XzNvRkW4BFNRAeIWBBPl2hvf
+	48EJgI5HArNopDFzvfQPvVdOeiE7c
+X-Google-Smtp-Source: AGHT+IFgJDHAkl2TOYiic4+miA72HcRH5YO5MM7i/Qv0249LYR+6NMvnvGl+aUIzCISEeLulTfE1PQ==
+X-Received: by 2002:a05:6a20:3d8d:b0:220:1ca5:957c with SMTP id adf61e73a8af0-220a16c4113mr31231334637.31.1751361110519;
+        Tue, 01 Jul 2025 02:11:50 -0700 (PDT)
 Received: from localhost.localdomain ([192.19.203.250])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e30201c1sm8893603a12.22.2025.07.01.02.11.42
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e30201c1sm8893603a12.22.2025.07.01.02.11.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 02:11:45 -0700 (PDT)
+        Tue, 01 Jul 2025 02:11:50 -0700 (PDT)
 From: Vikas Gupta <vikas.gupta@broadcom.com>
 To: davem@davemloft.net,
 	edumazet@google.com,
@@ -79,122 +81,266 @@ Cc: netdev@vger.kernel.org,
 	michael.chan@broadcom.com,
 	pavan.chebbi@broadcom.com,
 	vsrama-krishna.nemani@broadcom.com,
-	Vikas Gupta <vikas.gupta@broadcom.com>
-Subject: [net-next, v3 00/10] Introducing Broadcom BNGE Ethernet Driver
-Date: Tue,  1 Jul 2025 14:34:58 +0000
-Message-ID: <20250701143511.280702-1-vikas.gupta@broadcom.com>
+	Vikas Gupta <vikas.gupta@broadcom.com>,
+	Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>,
+	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+Subject: [net-next, v3 01/10] bng_en: Add PCI interface
+Date: Tue,  1 Jul 2025 14:34:59 +0000
+Message-ID: <20250701143511.280702-2-vikas.gupta@broadcom.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250701143511.280702-1-vikas.gupta@broadcom.com>
+References: <20250701143511.280702-1-vikas.gupta@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Add basic pci interface to the driver which supports
+the BCM5770X NIC family.
 
-This patch series introduces the Ethernet driver for Broadcom’s
-BCM5770X chip family, which supports 50/100/200/400/800 Gbps
-link speeds. The driver is built as the bng_en.ko kernel module.
-
-To keep the series within a reviewable size (~5K lines of code), this initial
-submission focuses on the core infrastructure and initialization, including:
-1) PCIe support (device IDs, probe/remove)
-2) Devlink support
-3) Firmware communication mechanism
-4) Creation of network device
-5) PF Resource management (rings, IRQs, etc. for netdev & aux dev)
-
-Support for Tx/Rx datapaths, link management, ethtool/devlink operations and
-additional features will be introduced in the subsequent patch series.
-
-The bng_en driver shares the bnxt_hsi.h file with the bnxt_en driver, as the bng_en
-driver leverages the hardware communication protocol used by the bnxt_en driver.
-
-Changes from:
-=====================================================================
-v2->v3
- Addressed following comments by Jakub Kicinski
- Patch 04/10:
-  - Move devlink register at appropriate place.
- Patch 10/10:
-  - Free skb in xmit call
-
-=====================================================================
-v1->v2
-
-Addressed warnings and errors in the following patches:
--Patch 8/10
--Patch 10/10
-
-Addressed the following major comments by Vadim Fedorenko on Patch 1/10:
-Patch 1/10:
-  - Use of the dma_set_mask_and_coherent() API.
-Patch 2/10:
-  - Added error logs via extack.
-Patch 3/10:
-  - Renamed functions to use the hwrm prefix. This change affects other
-patches in the series as well.
-=====================================================================
-
-
-Thanks,
-Vikas
-
-
-Vikas Gupta (10):
-  bng_en: Add PCI interface
-  bng_en: Add devlink interface
-  bng_en: Add firmware communication mechanism
-  bng_en: Add initial interaction with firmware
-  bng_en: Add ring memory allocation support
-  bng_en: Add backing store support
-  bng_en: Add resource management support
-  bng_en: Add irq allocation support
-  bng_en: Initialize default configuration
-  bng_en: Add a network device
-
+Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
+Reviewed-by: Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>
+Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+---
  MAINTAINERS                                   |   6 +
- drivers/net/ethernet/broadcom/Kconfig         |   9 +
+ drivers/net/ethernet/broadcom/Kconfig         |   8 +
  drivers/net/ethernet/broadcom/Makefile        |   1 +
- drivers/net/ethernet/broadcom/bnge/Makefile   |  12 +
- drivers/net/ethernet/broadcom/bnge/bnge.h     | 218 ++++++
- .../net/ethernet/broadcom/bnge/bnge_core.c    | 388 ++++++++++
- .../net/ethernet/broadcom/bnge/bnge_devlink.c | 306 ++++++++
- .../net/ethernet/broadcom/bnge/bnge_devlink.h |  18 +
- .../net/ethernet/broadcom/bnge/bnge_ethtool.c |  33 +
- .../net/ethernet/broadcom/bnge/bnge_ethtool.h |   9 +
- .../net/ethernet/broadcom/bnge/bnge_hwrm.c    | 508 +++++++++++++
- .../net/ethernet/broadcom/bnge/bnge_hwrm.h    | 110 +++
- .../ethernet/broadcom/bnge/bnge_hwrm_lib.c    | 703 ++++++++++++++++++
- .../ethernet/broadcom/bnge/bnge_hwrm_lib.h    |  27 +
- .../net/ethernet/broadcom/bnge/bnge_netdev.c  | 268 +++++++
- .../net/ethernet/broadcom/bnge/bnge_netdev.h  | 206 +++++
- .../net/ethernet/broadcom/bnge/bnge_resc.c    | 605 +++++++++++++++
- .../net/ethernet/broadcom/bnge/bnge_resc.h    |  94 +++
- .../net/ethernet/broadcom/bnge/bnge_rmem.c    | 438 +++++++++++
- .../net/ethernet/broadcom/bnge/bnge_rmem.h    | 188 +++++
- 20 files changed, 4147 insertions(+)
+ drivers/net/ethernet/broadcom/bnge/Makefile   |   5 +
+ drivers/net/ethernet/broadcom/bnge/bnge.h     |  16 ++
+ .../net/ethernet/broadcom/bnge/bnge_core.c    | 141 ++++++++++++++++++
+ 6 files changed, 177 insertions(+)
  create mode 100644 drivers/net/ethernet/broadcom/bnge/Makefile
  create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge.h
  create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_core.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_devlink.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_devlink.h
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_ethtool.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_ethtool.h
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm.h
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hwrm_lib.h
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_netdev.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_netdev.h
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_resc.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_resc.h
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_rmem.c
- create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_rmem.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bb9df569a3ff..4a9b9d14e0df 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4853,6 +4853,12 @@ F:	drivers/firmware/broadcom/tee_bnxt_fw.c
+ F:	drivers/net/ethernet/broadcom/bnxt/
+ F:	include/linux/firmware/broadcom/tee_bnxt_fw.h
+ 
++BROADCOM BNG_EN 800 GIGABIT ETHERNET DRIVER
++M:	Vikas Gupta <vikas.gupta@broadcom.com>
++L:	netdev@vger.kernel.org
++S:	Maintained
++F:	drivers/net/ethernet/broadcom/bnge/
++
+ BROADCOM BRCM80211 IEEE802.11 WIRELESS DRIVERS
+ M:	Arend van Spriel <arend.vanspriel@broadcom.com>
+ L:	linux-wireless@vger.kernel.org
+diff --git a/drivers/net/ethernet/broadcom/Kconfig b/drivers/net/ethernet/broadcom/Kconfig
+index 81a74e07464f..e2c1ac91708e 100644
+--- a/drivers/net/ethernet/broadcom/Kconfig
++++ b/drivers/net/ethernet/broadcom/Kconfig
+@@ -253,6 +253,14 @@ config BNXT_HWMON
+ 	  Say Y if you want to expose the thermal sensor data on NetXtreme-C/E
+ 	  devices, via the hwmon sysfs interface.
+ 
++config BNGE
++	tristate "Broadcom Ethernet device support"
++	depends on PCI
++	help
++	  This driver supports Broadcom 50/100/200/400/800 gigabit Ethernet cards.
++	  The module will be called bng_en. To compile this driver as a module,
++	  choose M here.
++
+ config BCMASP
+ 	tristate "Broadcom ASP 2.0 Ethernet support"
+ 	depends on ARCH_BRCMSTB || COMPILE_TEST
+diff --git a/drivers/net/ethernet/broadcom/Makefile b/drivers/net/ethernet/broadcom/Makefile
+index bac5cb6ad0cd..10cc1c92ecfc 100644
+--- a/drivers/net/ethernet/broadcom/Makefile
++++ b/drivers/net/ethernet/broadcom/Makefile
+@@ -18,3 +18,4 @@ obj-$(CONFIG_BGMAC_PLATFORM) += bgmac-platform.o
+ obj-$(CONFIG_SYSTEMPORT) += bcmsysport.o
+ obj-$(CONFIG_BNXT) += bnxt/
+ obj-$(CONFIG_BCMASP) += asp2/
++obj-$(CONFIG_BNGE) += bnge/
+diff --git a/drivers/net/ethernet/broadcom/bnge/Makefile b/drivers/net/ethernet/broadcom/bnge/Makefile
+new file mode 100644
+index 000000000000..0c3d632805d1
+--- /dev/null
++++ b/drivers/net/ethernet/broadcom/bnge/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++obj-$(CONFIG_BNGE) += bng_en.o
++
++bng_en-y := bnge_core.o
+diff --git a/drivers/net/ethernet/broadcom/bnge/bnge.h b/drivers/net/ethernet/broadcom/bnge/bnge.h
+new file mode 100644
+index 000000000000..b49c51b44473
+--- /dev/null
++++ b/drivers/net/ethernet/broadcom/bnge/bnge.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2025 Broadcom */
++
++#ifndef _BNGE_H_
++#define _BNGE_H_
++
++#define DRV_NAME	"bng_en"
++#define DRV_SUMMARY	"Broadcom 800G Ethernet Linux Driver"
++
++extern char bnge_driver_name[];
++
++enum board_idx {
++	BCM57708,
++};
++
++#endif /* _BNGE_H_ */
+diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_core.c b/drivers/net/ethernet/broadcom/bnge/bnge_core.c
+new file mode 100644
+index 000000000000..514602555cd1
+--- /dev/null
++++ b/drivers/net/ethernet/broadcom/bnge/bnge_core.c
+@@ -0,0 +1,141 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2025 Broadcom.
++
++#include <linux/init.h>
++#include <linux/crash_dump.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++
++#include "bnge.h"
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION(DRV_SUMMARY);
++
++char bnge_driver_name[] = DRV_NAME;
++
++static const struct {
++	char *name;
++} board_info[] = {
++	[BCM57708] = { "Broadcom BCM57708 50Gb/100Gb/200Gb/400Gb/800Gb Ethernet" },
++};
++
++static const struct pci_device_id bnge_pci_tbl[] = {
++	{ PCI_VDEVICE(BROADCOM, 0x1780), .driver_data = BCM57708 },
++	/* Required last entry */
++	{0, }
++};
++MODULE_DEVICE_TABLE(pci, bnge_pci_tbl);
++
++static void bnge_print_device_info(struct pci_dev *pdev, enum board_idx idx)
++{
++	struct device *dev = &pdev->dev;
++
++	dev_info(dev, "%s found at mem %lx\n", board_info[idx].name,
++		 (long)pci_resource_start(pdev, 0));
++
++	pcie_print_link_status(pdev);
++}
++
++static void bnge_pci_disable(struct pci_dev *pdev)
++{
++	pci_release_regions(pdev);
++	if (pci_is_enabled(pdev))
++		pci_disable_device(pdev);
++}
++
++static int bnge_pci_enable(struct pci_dev *pdev)
++{
++	int rc;
++
++	rc = pci_enable_device(pdev);
++	if (rc) {
++		dev_err(&pdev->dev, "Cannot enable PCI device, aborting\n");
++		return rc;
++	}
++
++	if (!(pci_resource_flags(pdev, 0) & IORESOURCE_MEM)) {
++		dev_err(&pdev->dev,
++			"Cannot find PCI device base address, aborting\n");
++		rc = -ENODEV;
++		goto err_pci_disable;
++	}
++
++	rc = pci_request_regions(pdev, bnge_driver_name);
++	if (rc) {
++		dev_err(&pdev->dev, "Cannot obtain PCI resources, aborting\n");
++		goto err_pci_disable;
++	}
++
++	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++
++	pci_set_master(pdev);
++
++	return 0;
++
++err_pci_disable:
++	pci_disable_device(pdev);
++	return rc;
++}
++
++static int bnge_probe_one(struct pci_dev *pdev, const struct pci_device_id *ent)
++{
++	int rc;
++
++	if (pci_is_bridge(pdev))
++		return -ENODEV;
++
++	if (!pdev->msix_cap) {
++		dev_err(&pdev->dev, "MSIX capability missing, aborting\n");
++		return -ENODEV;
++	}
++
++	if (is_kdump_kernel()) {
++		pci_clear_master(pdev);
++		pcie_flr(pdev);
++	}
++
++	rc = bnge_pci_enable(pdev);
++	if (rc)
++		return rc;
++
++	bnge_print_device_info(pdev, ent->driver_data);
++
++	pci_save_state(pdev);
++
++	return 0;
++}
++
++static void bnge_remove_one(struct pci_dev *pdev)
++{
++	bnge_pci_disable(pdev);
++}
++
++static void bnge_shutdown(struct pci_dev *pdev)
++{
++	pci_disable_device(pdev);
++
++	if (system_state == SYSTEM_POWER_OFF) {
++		pci_wake_from_d3(pdev, 0);
++		pci_set_power_state(pdev, PCI_D3hot);
++	}
++}
++
++static struct pci_driver bnge_driver = {
++	.name		= bnge_driver_name,
++	.id_table	= bnge_pci_tbl,
++	.probe		= bnge_probe_one,
++	.remove		= bnge_remove_one,
++	.shutdown	= bnge_shutdown,
++};
++
++static int __init bnge_init_module(void)
++{
++	return pci_register_driver(&bnge_driver);
++}
++module_init(bnge_init_module);
++
++static void __exit bnge_exit_module(void)
++{
++	pci_unregister_driver(&bnge_driver);
++}
++module_exit(bnge_exit_module);
 -- 
 2.47.1
 
