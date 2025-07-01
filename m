@@ -1,83 +1,116 @@
-Return-Path: <linux-kernel+bounces-711677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-711683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D1CAEFDDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C1EAEFE08
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 17:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D7B162EF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5C9188D316
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Jul 2025 15:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B9A27A47F;
-	Tue,  1 Jul 2025 15:17:11 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B390279354;
+	Tue,  1 Jul 2025 15:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QQxqQFHV"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76921279785;
-	Tue,  1 Jul 2025 15:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FF82741DC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Jul 2025 15:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751383031; cv=none; b=XgRnDv5KT/DcbUzqE2He4WGEodoKeNyWO2cWmqDwsds/wPY6ovQlI1IVcK2WJfaC4O8nkGSOaTgS0KHaPHnqG6QGdXdeEtHwQ4gG54ksUTx9oT5KtCN1xhidAJfkCiBBQiDO0OOT1fF6J+wKXIEM5wd+pPdeue0QI0R389gBIuo=
+	t=1751383227; cv=none; b=sRkTiV6B8hQ2sJMq45t1msEwftuFuyVZeRY/ghmBbyVSLLTq7+DkAuIwC9HPuzAHQPx3qF7bfOlIc4Xa0fkxJuDGAW7dg2PYBtuY80jyL8ujKfDsjQ+pEzQWVzMvlnsbYuCYfiFUMvWM4x03FqZta21EEYukMmTgiVWh2LxjdcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751383031; c=relaxed/simple;
-	bh=T6CC/bF+0UrpLoMFgTTdtIesr+jqgX9wVhcRDJoCjvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PmYWTNVmyv6Dx0mLa30Quj1M4nJzIueUAZBxUNacdbxY8+8nC0LQGGrFaOz0u1OG04oJKY3uf/mGo4igqmseTpkzk0aV59hNx3QtOLAwrg3Lnr+GUhqRI/xK8GuwoGB3mmPeczHP2f6Chf3jIW8Aa2GM5zmAj5BElRIsq3Plw7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id E27C1B9A48;
-	Tue,  1 Jul 2025 15:17:06 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 0BC7A20025;
-	Tue,  1 Jul 2025 15:17:04 +0000 (UTC)
-Date: Tue, 1 Jul 2025 11:17:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- john.ogness@linutronix.de
-Subject: Re: [PATCH v10 17/19] rv: Add rtapp_sleep monitor
-Message-ID: <20250701111704.00456667@batman.local.home>
-In-Reply-To: <20250701151114.OJQTlRCY@linutronix.de>
-References: <cover.1749547399.git.namcao@linutronix.de>
-	<d3cf55d3bf42a0f70a58c394b5cf6d603ca8a9f7.1749547399.git.namcao@linutronix.de>
-	<20250630203401.1a11e58f@gandalf.local.home>
-	<20250701051757.mBjQVdoo@linutronix.de>
-	<20250701110218.5e742850@batman.local.home>
-	<20250701110551.5c2dc2ee@batman.local.home>
-	<20250701151114.OJQTlRCY@linutronix.de>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751383227; c=relaxed/simple;
+	bh=4HxDKDVDuqVFjjRQfc2NTTjXMx7SXDrod/9PZy2w8QA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RvuV7tLScC78nlCjDhG62MBf05O5QROsUQQVVdDrjB6bDYW7wddijKIeUj2k//VwlEP5bqrqNt03vFMg2b2Q3TrYcoYGRbuuiGU95r+w7eRhrLobLQNUGMv3+tFdBd8nor/HiDnAjl70EgDeUtHw+W105w/nkp2mp0qKNFksvJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QQxqQFHV; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4f3796779so3166503f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 08:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751383223; x=1751988023; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HS0leYMDlHYokYSQ7rOzdx0mYa3EoAXRbAoaC0gzq8o=;
+        b=QQxqQFHVsJA3LIg146JX0V3i8xK8uLjncfhhNg2/xvlaH0sRbI946Y7q46aoJuExkr
+         FrXctz80G0HaYUe+MivuMKrl6Z3tzzJKUHvJPjhBg8haPDjDLcmdQzra+AsvJYzHNc/D
+         w9b+3z/hp9i4I5HSM3LyKRqZuIvymj+5K8tUj7QheTj9gYFXzdCnlu4rbO+ugYAfnciI
+         xUu/ZSyL7uDz6Rf4+/LCypO86D6YVocLGTco8X541wZgM04xpKgwulkyhYAfXEOfbqKj
+         uuMMzCf+oM/gQUCWev+Rm/8LzrVRV6rNttKvgTGO1GFuKtHFvqRvB++XU0mt0DZdq18L
+         VgPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751383223; x=1751988023;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HS0leYMDlHYokYSQ7rOzdx0mYa3EoAXRbAoaC0gzq8o=;
+        b=jHIpsiW3D8h5zNuBoWIuHjtRcj2VSLozaeEMXx4+J/8XmGZ9CFnDbK9uZou2ovtu5v
+         UZ53XeGnR8900UzhySZmHS/FZL+TsRGHMi8Q+0dQbjI1bmEkcbz/qKYb0fuxYNnalSvV
+         i91YVkfLNSAS50OqCezTIcPkiqR39KSTep6NrWGrO0kBHOeNhKColCu/ilkNJVBf0V8s
+         noKySzR3K6Eyy8IrzrCjmxeDRMsEei+7vwOOKCUPHNTVKTjBabbOuzn+k8XAZY3/nzp0
+         EBmnjeik8Ul9qA5JfQzRd0ZiXM8EHMsnbptwa0XUiJn+4pe8efia2omZP4zss9ZYM7Gg
+         864A==
+X-Forwarded-Encrypted: i=1; AJvYcCWx1caSp8tGuOJxPmwfRysg0dPamEqL3DxR2a+g/dRrQb8DU33L7BXeKrCIjrlf/AW8Ph0uuFT0C6RPlqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9126Az7sDx5jWzL9ZKppO2tW24oAnurn7EC6Sg6bUXIUAnFwi
+	Zlu0Jhr37akYOo8RYeP/5Igut3rfxkM0PnVwJvPtGD/NiYhClFrwc5HSY7LKzZ7mPpQ0NPKSwW7
+	VqQ4SQXQ1yiR6GA==
+X-Google-Smtp-Source: AGHT+IFnMJ61wTYiwe+Gnktsjz4/HaiRP/F54x21/++tHXd37+SoOD+fZukTxHtrkdZFAOLWvY//EsBG9SDmAQ==
+X-Received: from wmpz17.prod.google.com ([2002:a05:600c:a11:b0:453:8b14:6e0c])
+ (user=gprocida job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:42c1:b0:3a4:fb33:85ce with SMTP id ffacd0b85a97d-3a91818bae2mr10702455f8f.46.1751383223349;
+ Tue, 01 Jul 2025 08:20:23 -0700 (PDT)
+Date: Tue,  1 Jul 2025 16:19:09 +0100
+In-Reply-To: <CAK7LNASzE1CtRo9T4byPXJtB-HtuWsGe=OLba+8JU9fB28Chow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 57fic98dhtr6rjtionmrhfukq7h6eqxg
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 0BC7A20025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18MooYQoY8XdA99/UI9cZS8fiRimYxM4Kc=
-X-HE-Tag: 1751383024-59033
-X-HE-Meta: U2FsdGVkX1+i5PyWbO9ijWx6noMaTZwjyENR2apD4ZGj5GOCGIHrEQr+ouj2sjcye+NurUsT4ntGJW4Gwlwn2gHXKFco7OnEG+qWndwOmoQ9Yih5xFO2t4xT7BF2c0j9wNkx5f2jyLF2OMhk+KEZe9F9Sp5b8hfen/nK/ljCBqFhH2xxdAFdCIhFv3FrB3W02ZHSDGmQl4zcP2FobqayM/ePWKHmtcoNhhP70kEdNTmdIfCHxjsxdlxkCWNdT8CXBI3lBtDuohboqHJ4lWIRTZ9l5m9C+V4Qri3dRp8ef0SVo60pgC91HS42rxAJnXQO
+Mime-Version: 1.0
+References: <CAK7LNASzE1CtRo9T4byPXJtB-HtuWsGe=OLba+8JU9fB28Chow@mail.gmail.com>
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250701152000.2477659-1-gprocida@google.com>
+Subject: [PATCH v2 0/2] gendwarfksyms - improve symtypes output
+From: Giuliano Procida <gprocida@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Giuliano Procida <gprocida@google.com>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 1 Jul 2025 17:11:14 +0200
-Nam Cao <namcao@linutronix.de> wrote:
+When investigating MODVERSIONS CRC changes from one build to the next,
+we need to diff corresponding symtypes files. However, gendwarfksyms
+did not order these files.
 
-> > There's nothing in the code that even states that this was generated
-> > (if they were).  
-> 
-> Yeah this entire file is generated from the LTL specification. I will add a
-> comment.
+The first change in this series makes gendwarfksyms code conform to
+the preferred style for the size parameter passed to allocation
+functions.
 
-Yeah, generated code needs a big comment at the top of the file on what
-generated it. Bonus points if it shows how it was generated so that
-people will know how to regenerate it.
+https://github.com/torvalds/linux/blob/v6.15/Documentation/process/coding-style.rst?plain=1#L941
 
--- Steve
+The second change in this series ensures symtypes are output in key
+order.
+
+The series is marked as v2 to distinguish it from earlier versions
+where the changes were posted individually.
+
+Giuliano Procida (2):
+  gendwarfksyms: use preferred form of sizeof for allocation
+  gendwarfksyms: order -T symtypes output by name
+
+ scripts/gendwarfksyms/cache.c   |  2 +-
+ scripts/gendwarfksyms/die.c     |  4 ++--
+ scripts/gendwarfksyms/dwarf.c   |  2 +-
+ scripts/gendwarfksyms/kabi.c    |  2 +-
+ scripts/gendwarfksyms/symbols.c |  2 +-
+ scripts/gendwarfksyms/types.c   | 33 ++++++++++++++++++++++++++++-----
+ 6 files changed, 34 insertions(+), 11 deletions(-)
+
+-- 
+2.50.0.727.gbf7dc18ff4-goog
+
 
