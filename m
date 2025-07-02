@@ -1,127 +1,208 @@
-Return-Path: <linux-kernel+bounces-713689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EC7AF5D34
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7E4AF5D3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D7F7B35B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 933EF4861FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852DC315537;
-	Wed,  2 Jul 2025 15:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2F72F85DE;
+	Wed,  2 Jul 2025 15:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fSRIFJpu"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kC4dKTZw"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C5A309A5D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51F32FC3B1
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470077; cv=none; b=KBVCcV296MED5d2P6Y6eea8w/hpwCoQVAMMWoTuPIorbAw6nMnSPw6aGAWz6l3nizqgSJoh1Zp3ptJ5Vu7gp75tabwta5w+ba4SkHmYLMC+8FIFk2sksVO+c9Vi8FdqGTtqC7VMt2LiqeMZyz/mFdLwkb3F07VFKngFDpLaIMtE=
+	t=1751470083; cv=none; b=bhstubUzgf2o6arWDI41G1dZvGVdFl8ecWe8OxZNMHvtJBP65tkIf6d/+3JLdwFnyov8/Nm4RrajSHx/Uxy9N1JdEvh6gIl+CoVHf83zraWsIaKpuD/+rV3mrIYIulOxZwvFcGqpbIu4vj4AZDTzN2szD23qzhGP2l2uNUb6GSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470077; c=relaxed/simple;
-	bh=R3w2XCZ+9hC/UQRD0VOIOyl0Fwy/AYwdVSqZytDRbyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m2li3hvjt8ecUgh0xzaI5KfprTDnZVMeHpo5MWe7tmJeAcuTxm0pLLND2DTjOFHYnAKK+nsqy5Afhf46CtX9jp9ygzgikc88pr72RYJcPXEtV2s2D/x1M04wyqdpDsV6crnWQs8L+r7YKlRVj3B9a8EWOs8IhwfUXhS0lGJB85s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fSRIFJpu; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso7503794f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 08:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751470073; x=1752074873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ugfvMw37FYCbNgp16hJSt7OdezX3ZWc2zEhd8WWY3I4=;
-        b=fSRIFJpuj7EbDCIioeymFx4JpGmeIBGUU8TNs2Sms+ZzpNxPexJaygwc5h8jJjC2kh
-         h3GjtjDlVwuNtZAizzbxzdybHmIO5zRDx3J9V9c+jX8C+h648/XqhIWcA1jfPfeZR9O0
-         keB+6i+zgTBlWaET3Y3/oPjvY9QcU1WUObl0VHr2uLw2rcSxNCKhF4w909PmbLbf8ysC
-         66TrsnLYfhmQBMsy9rErWxotOedb5jOOI/j5kH0a+bOayASKLHwWyC5Dpf+E3gchb51M
-         BHdprCwvo3QGnXASC1fryotJTfXSeMS4GadXHyyLduDGbkBw+7t2Td1WtIIsYIxaPDw2
-         4KaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751470073; x=1752074873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ugfvMw37FYCbNgp16hJSt7OdezX3ZWc2zEhd8WWY3I4=;
-        b=sfS1U6E/aTN+RDcgcn6eaV/0JIqsNr2DIdZlvzlq9SyIGii6XU9iCb5eqn3i4Ie3eO
-         H+swwgufuInV29aDxUyOGI5tuxm/SVHEIt00847depycDkwc7kIjq0FqsWV+1ockKcNX
-         IMHPdfNidz8OprZUZAHm2pDUY6gzOZ6W4b5F8HVt2xsBaFZnEk0Qmt46IL8Wjpgm0q7n
-         ZOgPhbkLkuvjwDDMYZflRCQPOfxXHIwXeN6bniN3WW9wdUKg8TsIgRwSjzRmevKkuKqk
-         UVyyLN+lHcsWfQeaEH7RFIkdQNK5oWtkstQefF6n2kFzds3Mi264KziUNs1R3h1Gaf9E
-         EaJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWL1p4NTA+dIi86wOhYCyiNIEIfJ/ToJ6Mc3QlK4c5pf6tNQ7zH3qRMyC/XILrBRxTxTP1UhOHvs4wlrms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPgRS3KMX1GlrzyED/PSh0GzX4iJ7o4KFvtaCuTS/vPRRJmTn2
-	sgmc95Tp1Ka4+VCZ3npLQRjcgzMlzyG8nfdeKdazUJWNkAhNdMJnDGACMzwGbp0Z8eqmR0Wp/pi
-	0c5JFz2tF3M9H/XI8xc7CeQog8TwGsqrhYZQN7tjU
-X-Gm-Gg: ASbGncufMLWyTn4MOKoj2BIGAOKdcRcZwYDchfB6M9VYnzEiKlZZSjIv5i5Lb7uXCBV
-	ZtFjk85KNNcV0QIPussXPpV6wiuaByAJ0H8dV1XuSNMrZHPfzHR4vrjoNU6RRMFxae4f5I8cvR5
-	XOvemmX8Bvnu55WZxjDuQTz+0Ty2tEVITt1hVKmFdz95+M
-X-Google-Smtp-Source: AGHT+IEXxgvMAbbclIedX4dgfJFsqC/LVdMO+VKlBTNEwybEIPdTuBzGSh5PvnP88V7tuXnmlGMxd5H2vPZ17Yd18gg=
-X-Received: by 2002:a05:6000:2891:b0:3a5:527b:64c6 with SMTP id
- ffacd0b85a97d-3b1fd74c9bbmr3330783f8f.1.1751470073141; Wed, 02 Jul 2025
- 08:27:53 -0700 (PDT)
+	s=arc-20240116; t=1751470083; c=relaxed/simple;
+	bh=toA1Z/HEzEC87vvHzwP53jgQyCAQTPKIkkCux8WahSA=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=JGpPtxSvACKcNF/qVYr26xkbZZe0xaAgL5n+vF6WXZQ/NPFMBLHm5K8pydMdxq077+RMBDaCI2ZDOUvyeBojtVtm5vJxxb13QqbkUOq6H/hyx96rIE/aYEM3D15l4mW4+7AuKGiN6QrpCvZbsSe6F8AFdb9lHfDUN58bZCYssjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kC4dKTZw; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org>
- <20250702-module-params-v3-v14-1-5b1cc32311af@kernel.org> <DB1NVTWHU7BN.2WGPMAY9LQYNW@kernel.org>
-In-Reply-To: <DB1NVTWHU7BN.2WGPMAY9LQYNW@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 2 Jul 2025 17:27:41 +0200
-X-Gm-Features: Ac12FXw61cMF6EsKoC5KmH0MvT9whf775volIzyT9NHNJ14IR5rW7yw5x1K4H9c
-Message-ID: <CAH5fLgiOK-zA0qT1dis-BsrEAk96R+E8e_F_361w7kCq_uxn7g@mail.gmail.com>
-Subject: Re: [PATCH v14 1/7] rust: sync: add `OnceLock`
-To: Benno Lossin <lossin@kernel.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Trevor Gross <tmgross@umich.edu>, 
-	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
-	Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751470078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j37gTI83G/0npP0vUifckHIJRdF1qjNhI6E7oZQqNe0=;
+	b=kC4dKTZwI8kVcBTPiULB/3Z1bTjznXesHizU2OBZDrOWKE+8E0ZCWvdtSkmYGE+WsQTBFo
+	ROoEoxz3FgmIkC711b2kv6tqHY7tExrnI2gvGqPhkvZ78pyYIB9sK+6qLW5oEsSARImbzk
+	6ETnWVuy1ZP6hN7cALaosa06Nnvb22Q=
+Date: Wed, 02 Jul 2025 15:27:56 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <c910cfc4b58e9e2e1ceaca9d4dc7d68b679caa48@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH net-next v1] tcp: Correct signedness in skb remaining
+ space calculation
+To: "Eric Dumazet" <edumazet@google.com>
+Cc: netdev@vger.kernel.org, mrpre@163.com, "Neal Cardwell"
+ <ncardwell@google.com>, "Kuniyuki Iwashima" <kuniyu@google.com>, "David
+ S. Miller" <davem@davemloft.net>, "David Ahern" <dsahern@kernel.org>,
+ "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ "Simon Horman" <horms@kernel.org>, "David Howells" <dhowells@redhat.com>,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <CANn89iJD6ZYCBBT_qsgm_HJ5Xrups1evzp9ej=UYGP5sv6oG_A@mail.gmail.com>
+References: <20250702110039.15038-1-jiayuan.chen@linux.dev>
+ <c9c5d36bc516e70171d1bb1974806e16020fbff1@linux.dev>
+ <CANn89iJdGZq0HW3+uGLCMtekC7G5cPnHChCJFCUhvzuzPuhsrA@mail.gmail.com>
+ <CANn89iJD6ZYCBBT_qsgm_HJ5Xrups1evzp9ej=UYGP5sv6oG_A@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 2, 2025 at 5:07=E2=80=AFPM Benno Lossin <lossin@kernel.org> wro=
+July 2, 2025 at 22:02, "Eric Dumazet" <edumazet@google.com> wrote:
+
+
+
+>=20
+>=20On Wed, Jul 2, 2025 at 6:59 AM Eric Dumazet <edumazet@google.com> wro=
 te:
+>=20
+>=20>=20
+>=20> On Wed, Jul 2, 2025 at 6:42 AM Jiayuan Chen <jiayuan.chen@linux.dev=
+> wrote:
+> >=20
+>=20>  July 2, 2025 at 19:00, "Jiayuan Chen" <jiayuan.chen@linux.dev> wro=
+te:
+> >=20
+>=20>  >
+> >=20
+>=20>  > The calculation for the remaining space, 'copy =3D size_goal - s=
+kb->len',
+> >=20
+>=20>  >
+> >=20
+>=20>  > was prone to an integer promotion bug that prevented copy from e=
+ver being
+> >=20
+>=20>  >
+> >=20
+>=20>  > negative.
+> >=20
+>=20>  >
+> >=20
+>=20>  > The variable types involved are:
+> >=20
+>=20>  >
+> >=20
+>=20>  > copy: ssize_t (long)
+> >=20
+>=20>  >
+> >=20
+>=20>  > size_goal: int
+> >=20
+>=20>  >
+> >=20
+>=20>  > skb->len: unsigned int
+> >=20
+>=20>  >
+> >=20
+>=20>  > Due to C's type promotion rules, the signed size_goal is convert=
+ed to an
+> >=20
+>=20>  >
+> >=20
+>=20>  > unsigned int to match skb->len before the subtraction. The resul=
+t is an
+> >=20
+>=20>  >
+> >=20
+>=20>  > unsigned int.
+> >=20
+>=20>  >
+> >=20
+>=20>  > When this unsigned int result is then assigned to the s64 copy v=
+ariable,
+> >=20
+>=20>  >
+> >=20
+>=20>  > it is zero-extended, preserving its non-negative value. Conseque=
+ntly,
+> >=20
+>=20>  >
+> >=20
+>=20>  > copy is always >=3D 0.
+> >=20
+>=20>  >
+> >=20
+>=20>  To better explain this problem, consider the following example:
+> >=20
+>=20>  '''
+> >=20
+>=20>  #include <sys/types.h>
+> >=20
+>=20>  #include <stdio.h>
+> >=20
+>=20>  int size_goal =3D 536;
+> >=20
+>=20>  unsigned int skblen =3D 1131;
+> >=20
+>=20>  void main() {
+> >=20
+>=20>  ssize_t copy =3D 0;
+> >=20
+>=20>  copy =3D size_goal - skblen;
+> >=20
+>=20>  printf("wrong: %zd\n", copy);
+> >=20
+>=20>  copy =3D size_goal - (ssize_t)skblen;
+> >=20
+>=20>  printf("correct: %zd\n", copy);
+> >=20
+>=20>  return;
+> >=20
+>=20>  }
+> >=20
+>=20>  '''
+> >=20
+>=20>  Output:
+> >=20
+>=20>  '''
+> >=20
+>=20>  wrong: 4294966701
+> >=20
+>=20>  correct: -595
+> >=20
+>=20>  '''
+> >=20
+>=20>  Can you explain how one skb could have more bytes (skb->len) than =
+size_goal ?
+> >=20
+>=20>  If we are under this condition, we already have a prior bug ?
+> >=20
+>=20>  Please describe how you caught this issue.
+> >=20
+>=20
+> Also, not sure why copy variable had to be changed from "int" to "ssize=
+_t"
+>=20
+>=20A nicer patch (without a cast) would be to make it an "int" again/
 >
-> On Wed Jul 2, 2025 at 3:18 PM CEST, Andreas Hindborg wrote:
-> > +impl<T: Copy> OnceLock<T> {
-> > +    /// Get a copy of the contained object.
-> > +    ///
-> > +    /// Returns [`None`] if the [`OnceLock`] is empty.
-> > +    pub fn copy(&self) -> Option<T> {
-> > +        if self.init.load(Acquire) =3D=3D 2 {
-> > +            // SAFETY: As determined by the load above, the object is =
-ready for shared access.
-> > +            Some(unsafe { *self.value.get() })
-> > +        } else {
-> > +            None
-> > +        }
->
-> The impl can just be:
->
->     self.as_ref().copied()
->
-> Would it make sense for this function to take `self` instead & we make
-> the `OnceLock` also `Copy` if `T: Copy`? Maybe not...
 
-Atomics are not Copy.
+I encountered this issue because I had tcp_repair enabled, which uses
+tcp_init_tso_segs to reset the MSS.
+However, it seems that tcp_bound_to_half_wnd also dynamically adjusts
+the value to be smaller than the current size_goal.
 
-Alice
+Looking at the commit history, it's indeed unnecessary to define the
+copy variable as type ssize_t.
 
