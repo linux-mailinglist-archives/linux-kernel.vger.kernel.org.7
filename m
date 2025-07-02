@@ -1,134 +1,234 @@
-Return-Path: <linux-kernel+bounces-713711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165EBAF5D83
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358D3AF5D7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54A4F1BC3A96
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C443B1C50
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705AB2D7803;
-	Wed,  2 Jul 2025 15:40:16 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADDE3196BF;
+	Wed,  2 Jul 2025 15:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q6Z/91YG"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4A02D375A;
-	Wed,  2 Jul 2025 15:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D703196D0
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470816; cv=none; b=KjrrsivPKiQCsECUi0lnnxmFrIHjTpVnGwItTcTwSIDYLwk1ABFdoZFt3NhYFfASkHrHkA4xKX0G0nkPoyLrEzDpM1fpgxdmNZU4or6oZoSPpSOiDaESlDtoq8VSyFv3WdIeDopzCR1qFyRoyEpco2EvFxpAQuuHEYvYI4n58jk=
+	t=1751470881; cv=none; b=rpI8G/pDSLxplC4NKUOZd9qC6IB2jijTKzgaeq0zN+3uk69sY/IpvFj3qKMHnNuZ32cXSDFhbD1AA2/Gkg4cumz1vo/7lK5awAQ2Wud/LqaaRPYtC5d8ySYYI/x7qk45T4oUsQJJ1Lpop1SuvvYX4iONBkog4r718MVM5PvcACY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470816; c=relaxed/simple;
-	bh=H0p2C5Aq/L5bJMThl0O5sb0mwWXsUG5t59ilBo5jr9k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gnXmtvQ+n0N9/u9XceSZ1VE4UVNkVLYmfUbRCiTjslhOb0L9yN/mDpeeuuq0Vax+4Yjo+04JT+zohn43qMkujliAODJLV15ObSBjZnII07sQOZ0HPCejZy8F/TJ9cF/VbP5rJLh7IBlz8JE3c0fDQSUszhfN6RSzVKTa2EY1f2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-acb5ec407b1so820866666b.1;
-        Wed, 02 Jul 2025 08:40:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751470813; x=1752075613;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7FCXzq9xPVJKybdTLnzGouu8qhNq09dAOCfBWEVvIpQ=;
-        b=QG/VT7xJIc8NzcdpI+4XBv+XNnE/flxnLPnQxI2fgLpdcLjvBT9KvwDiwyTfJvLEoK
-         rF2raA0OoxAdlOqOMiFgMYE5GzQLNqDn6uDfiQQG1KFyJRDTGKaYZ1avny3zOc6RVuKi
-         edMDXN9JuU3GxtpTF07I1gXwNNOdUHFVINZfqzmNQ9BpeozMh1EqnqlOeh9oeviWQNu/
-         hbXTgBJVGPZgTlGTDOK9KP+MmHG7nsuBz8B6fBPB0HhgZ1ehzrjdy357PjcAm+z5iVrU
-         jtOckMxl4TAbrIQ133o0LrhEX0cr1ejq/YouwJWaFHtvA/kNcfBxjOIOLjR/R9NxrrnQ
-         yQTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXb+AQov+M60lzZqCobtWrEnIfj9+7+I0YGXMJ7heL+l2jwbCQb8zTz/Glyzej/tiNt3z6tbcLKgtNrfno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIq4e3UImWzHRkqCVmJWo/rvh1iX2bpVp/+1c9Fhv2Du81ukOp
-	Jo+JAWUqD5NLDvexNMeyAQASowfHfxdkKw8sj6EwoZ8hzrwYo7yISlY+
-X-Gm-Gg: ASbGncvRFHigntwAyHILbIOx0FCoeFeQP/krKqE/hakagIOmEvmrQC0E9xyBFq8nNvp
-	yDoXwB5w4BIGjj/G4UdPsjVRUgeJw/RMGYg+VIP/UfANx+1eGB2fmmXXgB6Sm2saLGmlsTh4fAR
-	jsocGec/DxG7rhGNJ4Kbl9uUBNEq9UcXP/WW8WIa9HqZSUjbQYHl9wwF+N0BEYPJcPGvSMjpiGJ
-	Z8dq6y+JJALsbO4f1Z7z0dwP7kW1BOnwMzIpT5OxDwsjpA7YaghxgQJkdx0hgJ88d2lBcZKnOHn
-	+ue1+1QBH815rjeUx2FmFtwVlh4nFD7tdNaBAiv42fYlNCTFjNwE
-X-Google-Smtp-Source: AGHT+IFhKD+UFn3R+yw3qSulyUTwOClAqgA3NAxQ1uOk0f4fjkjzQHBjYGokXqp5b5GBQRaEIwd4Yg==
-X-Received: by 2002:a17:907:9719:b0:ae3:6eb9:60d0 with SMTP id a640c23a62f3a-ae3c2da637amr364942766b.42.1751470812395;
-        Wed, 02 Jul 2025 08:40:12 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353c6b407sm1099063666b.117.2025.07.02.08.40.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 08:40:12 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 02 Jul 2025 08:39:51 -0700
-Subject: [PATCH] acpi/ghes: add TAINT_MACHINE_CHECK on GHES panic path
+	s=arc-20240116; t=1751470881; c=relaxed/simple;
+	bh=u4W2Z/TU+YB4Ijy/Gte4BRSlL9Zv3XISeoAVt1fLVSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mdZWnsAk9gItN+f0wUpPJaW5t9p0Ajspnw6L35FA/lVzwVRD9cJIa5rkaATVAsmsx0seHms9tEXL4qz/kvTfTlaa/uurKMg5T5m3saWPCcNSMLbXhJ9DRn0Xxg+alZ9lzLmKqTA6hlCN4Qe7aFqo5R5RKBSDKxiYzY+fkxznBdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q6Z/91YG; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751470865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JHo1YDWLvWpOCNgZLEBk5Fsdvw+OSzNkQJKF7Fq1xL0=;
+	b=q6Z/91YGqqvFC8+PcQcYDCLQhvBn6l9NfGd3SsCn3XS3bv4ph2LB3XGTRfCQH+H6vx5h0R
+	kljQwPEOkKcGCUJ5TytMB/KpBofGgj8SWViAP04b3LXktOkCno90hWGUh9Mf6ydMFFZ9/m
+	YPav8McZt6rpWOr260wF5n6LbZxnfEQ=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v7 1/3] bpf: Show precise link_type for {uprobe,kprobe}_multi fdinfo
+Date: Wed,  2 Jul 2025 23:39:56 +0800
+Message-ID: <20250702153958.639852-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-add_tain-v1-1-9187b10914b9@debian.org>
-X-B4-Tracking: v=1; b=H4sIAMdSZWgC/x3MUQoCIRAG4KsM/7PCNOGGXiUibB23ebHQWALZu
- wd9B/gmhnbTgUQTXXcb9mpIdHKE9Znbpt4KEkFYAl9YfC7l/snWfGSJEupZH3GBI7y7Vvv+q+v
- tOH4Zn53XWgAAAA==
-X-Change-ID: 20250702-add_tain-902925f3eb96
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
- Borislav Petkov <bp@alien8.de>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1166; i=leitao@debian.org;
- h=from:subject:message-id; bh=H0p2C5Aq/L5bJMThl0O5sb0mwWXsUG5t59ilBo5jr9k=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoZVLblba1mllPYaf1aVPQXI+4DLke3A7+VQT36
- l8gsOrXjieJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaGVS2wAKCRA1o5Of/Hh3
- bXLCEACiRSNk8lLaC0DKhfgWK8qrihxDqBJEExogxZV4kRPUhf/iya8+NK83C/pN6NqV0zgbcTD
- eRdm+5eD78zTVi1M8PzR/kn3mDhpB2MKDYPtk11zsXi8vjrpPLl5H1c35hIGANBaNRzSL+c/P5R
- HesT2iNJRygR6QPnXhDLibcM7EK6XH7nis5NIZc4Do7QLj6xZxbWDrCKxXWTliGTTJSzZ5wq3Yx
- uXrmqrobo7wkLEL2mQWBH3qL07ptvdt3HVvh0Is+ugXxrTW8JerCXBow1hVe2jMF+eT/4KH+w9n
- SDB/O+bKvV513OJvMfg711p7fysk2mTpVr/nTXFlZb1E8bLPCDUG5B38w/spoRtQ3lXYHcR43NO
- NLj149raSjrgnqKzDhgfZe9jfX6iyoysrIXIjGTTTE5iJ1uCamnjWmANfXDPDTlcvvS9uQqFOPg
- JMzn4iOUYPnINY4kCtSJRa2uRJToCe19shVYev3yQa5Fj+XMF7KOwnNxW+b+8xbxESAdroCyjU0
- FL4+TZLbzqeXQ/Alx7XVVkPgCup28UxmF5sKCG9Lxwr6pQMYIgoRnJzDWO3hypVpvvoNeWF8TTz
- JbCma1ZCGpAs5u01LpSTKoHk/qH4bofTsNzA5cN6IpzCeAglVk/Ucv9HYikRbe0DAT2Eo2+zvsH
- De61Acf0izFd82g==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-When a GHES (Generic Hardware Error Source) triggers a panic, add the
-TAINT_MACHINE_CHECK taint flag to the kernel. This explicitly marks the
-kernel as tainted due to a machine check event, improving diagnostics
-and post-mortem analysis. The taint is set with LOCKDEP_STILL_OK to
-indicate lockdep remains valid.
+Alexei suggested, 'link_type' can be more precise and differentiate
+for human in fdinfo. In fact BPF_LINK_TYPE_KPROBE_MULTI includes
+kretprobe_multi type, the same as BPF_LINK_TYPE_UPROBE_MULTI, so we
+can show it more concretely.
 
-At large scale deployment, this helps to quickly determin panics that
-are coming due to hardware failures.
+link_type:	kprobe_multi
+link_id:	1
+prog_tag:	d2b307e915f0dd37
+...
+link_type:	kretprobe_multi
+link_id:	2
+prog_tag:	ab9ea0545870781d
+...
+link_type:	uprobe_multi
+link_id:	9
+prog_tag:	e729f789e34a8eca
+...
+link_type:	uretprobe_multi
+link_id:	10
+prog_tag:	7db356c03e61a4d4
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Co-developed-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
- drivers/acpi/apei/ghes.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/bpf.h      |  1 +
+ kernel/bpf/syscall.c     |  9 ++++++++-
+ kernel/trace/bpf_trace.c | 10 ++++------
+ 3 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index f0584ccad4519..3d44f926afe8e 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -1088,6 +1088,8 @@ static void __ghes_panic(struct ghes *ghes,
- 
- 	__ghes_print_estatus(KERN_EMERG, ghes->generic, estatus);
- 
-+	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
-+
- 	ghes_clear_estatus(ghes, estatus, buf_paddr, fixmap_idx);
- 
- 	if (!panic_timeout)
+Change list:
+  v6 -> v7:
+    - Show the same order cookie for kprobe/uprobe.(Andrii)
+    - Use tab format to show multi events for kprobe/uprobe.(Andrii)
+    - Use u32 flags in bpf_link.(Alexei)
+  v6:
+  https://lore.kernel.org/bpf/20250627082252.431209-1-chen.dylane@linux.dev
 
----
-base-commit: e96ee511c906c59b7c4e6efd9d9b33917730e000
-change-id: 20250702-add_tain-902925f3eb96
+  v5 -> v6:
+    - Move flags into bpf_link to get retprobe info
+      directly.(Alexei, Jiri)
+  v5:
+  https://lore.kernel.org/bpf/20250623134342.227347-1-chen.dylane@linux.dev
 
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
+  v4 -> v5:
+    - Add patch1 to show precise link_type for
+      {uprobe,kprobe}_multi.(Alexei)
+    - patch2,3 just remove type field, which will be showed in
+      link_type
+  v4:
+  https://lore.kernel.org/bpf/20250619034257.70520-1-chen.dylane@linux.dev
+
+  v3 -> v4:
+    - use %pS to print func info.(Alexei)
+  v3:
+  https://lore.kernel.org/bpf/20250616130233.451439-1-chen.dylane@linux.dev
+
+  v2 -> v3:
+    - show info in one line for multi events.(Jiri)
+  v2:
+  https://lore.kernel.org/bpf/20250615150514.418581-1-chen.dylane@linux.dev
+
+  v1 -> v2:
+    - replace 'func_cnt' with 'uprobe_cnt'.(Andrii)
+    - print func name is more readable and security for kprobe_multi.(Alexei)
+  v1:
+  https://lore.kernel.org/bpf/20250612115556.295103-1-chen.dylane@linux.dev
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 5b25d278409..751ea3f5480 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -1702,6 +1702,7 @@ struct bpf_link {
+ 	 * link's semantics is determined by target attach hook
+ 	 */
+ 	bool sleepable;
++	u32 flags;
+ 	/* rcu is used before freeing, work can be used to schedule that
+ 	 * RCU-based freeing before that, so they never overlap
+ 	 */
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 51ba1a7aa43..e6eea594f1c 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -3228,7 +3228,14 @@ static void bpf_link_show_fdinfo(struct seq_file *m, struct file *filp)
+ 	char prog_tag[sizeof(prog->tag) * 2 + 1] = { };
+ 
+ 	if (type < ARRAY_SIZE(bpf_link_type_strs) && bpf_link_type_strs[type]) {
+-		seq_printf(m, "link_type:\t%s\n", bpf_link_type_strs[type]);
++		if (link->type == BPF_LINK_TYPE_KPROBE_MULTI)
++			seq_printf(m, "link_type:\t%s\n", link->flags == BPF_F_KPROBE_MULTI_RETURN ?
++				   "kretprobe_multi" : "kprobe_multi");
++		else if (link->type == BPF_LINK_TYPE_UPROBE_MULTI)
++			seq_printf(m, "link_type:\t%s\n", link->flags == BPF_F_UPROBE_MULTI_RETURN ?
++				   "uretprobe_multi" : "uprobe_multi");
++		else
++			seq_printf(m, "link_type:\t%s\n", bpf_link_type_strs[type]);
+ 	} else {
+ 		WARN_ONCE(1, "missing BPF_LINK_TYPE(...) for link type %u\n", type);
+ 		seq_printf(m, "link_type:\t<%u>\n", type);
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 24b94870b50..85f07f662fe 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2469,7 +2469,6 @@ struct bpf_kprobe_multi_link {
+ 	u32 cnt;
+ 	u32 mods_cnt;
+ 	struct module **mods;
+-	u32 flags;
+ };
+ 
+ struct bpf_kprobe_multi_run_ctx {
+@@ -2589,7 +2588,7 @@ static int bpf_kprobe_multi_link_fill_link_info(const struct bpf_link *link,
+ 
+ 	kmulti_link = container_of(link, struct bpf_kprobe_multi_link, link);
+ 	info->kprobe_multi.count = kmulti_link->cnt;
+-	info->kprobe_multi.flags = kmulti_link->flags;
++	info->kprobe_multi.flags = kmulti_link->link.flags;
+ 	info->kprobe_multi.missed = kmulti_link->fp.nmissed;
+ 
+ 	if (!uaddrs)
+@@ -2979,7 +2978,7 @@ int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+ 	link->addrs = addrs;
+ 	link->cookies = cookies;
+ 	link->cnt = cnt;
+-	link->flags = flags;
++	link->link.flags = flags;
+ 
+ 	if (cookies) {
+ 		/*
+@@ -3048,7 +3047,6 @@ struct bpf_uprobe_multi_link {
+ 	struct path path;
+ 	struct bpf_link link;
+ 	u32 cnt;
+-	u32 flags;
+ 	struct bpf_uprobe *uprobes;
+ 	struct task_struct *task;
+ };
+@@ -3112,7 +3110,7 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
+ 
+ 	umulti_link = container_of(link, struct bpf_uprobe_multi_link, link);
+ 	info->uprobe_multi.count = umulti_link->cnt;
+-	info->uprobe_multi.flags = umulti_link->flags;
++	info->uprobe_multi.flags = umulti_link->link.flags;
+ 	info->uprobe_multi.pid = umulti_link->task ?
+ 				 task_pid_nr_ns(umulti_link->task, task_active_pid_ns(current)) : 0;
+ 
+@@ -3372,7 +3370,7 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+ 	link->uprobes = uprobes;
+ 	link->path = path;
+ 	link->task = task;
+-	link->flags = flags;
++	link->link.flags = flags;
+ 
+ 	bpf_link_init(&link->link, BPF_LINK_TYPE_UPROBE_MULTI,
+ 		      &bpf_uprobe_multi_link_lops, prog);
+-- 
+2.48.1
 
 
