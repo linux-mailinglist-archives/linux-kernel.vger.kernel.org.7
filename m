@@ -1,163 +1,139 @@
-Return-Path: <linux-kernel+bounces-712993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622AAAF11BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:23:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AD1AF11EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4554344353B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9D1178556
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F12254B1B;
-	Wed,  2 Jul 2025 10:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huMpaUmb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07651253B64;
+	Wed,  2 Jul 2025 10:30:59 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50F62512C6;
-	Wed,  2 Jul 2025 10:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B478238C0C;
+	Wed,  2 Jul 2025 10:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751451806; cv=none; b=QIDpZWFsLuXqVfiIz6GaIoXX3JvCtaBEEVCQXXqVJ3cAsc089M5oo4Ui7xR38JEgQpWlZdr9iGUy/Nx+iFsxuuBqbT3VizgZdNeKai0ngDyt7QPu6tX695s7da03jGQ38YP113fRxrTFkkwy6EN25yKz1RewE52+t6kXA4xQ69k=
+	t=1751452258; cv=none; b=JRcih80wGxwI/M+rfEknxVB6v6zk3++kbUhUbIn7iKQSEtTbdGYKfxfUS+ojm26FkkiBS1O2dKh9MXzXys4ucyvYsDK+OeVU1pXJHu2/BNPeakvSAfxj4ZTtn/OoSumFYoIk2xjud31XpWC+7X/gkXGnXM6iv/RUa1hRrQgYyUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751451806; c=relaxed/simple;
-	bh=5l0STjhS+Ewa7qZ2YzJ7JzJuAr3mhaNFoItK0ZwOzbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFnvBtcRpjkINbSTIqEU75aGfYCPLkr5StbMv53iSnBCuXG3BMPvJkgQZj/JgeIRdtHBft7SeoKhP/SHYmXQDwnyQ0fsigm8rmdGSc43bvqBd6jWOkXg01YaqIqJsg/O+9HeCrrRaozZhHw7ZdK9SZW6+hzMO3FzvBv1WteyceA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huMpaUmb; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751451805; x=1782987805;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5l0STjhS+Ewa7qZ2YzJ7JzJuAr3mhaNFoItK0ZwOzbQ=;
-  b=huMpaUmbKLkGHEKYckS0kkSR7Dp2kKyJpEXAk8Wgf1PyoGZoX1tTw6zm
-   3950e6MXwBsjVtiTmGiD/7UGq7/mtGNybjcXZ//1PcraHZjdAV7grH/Sf
-   0OauX5cgQ3tg26JSlcClBFLHdFEJG1CXQ1NW9n/sbA0N187AYH6kOVwG/
-   zQjUmsu0dTyU3YJYjkzUEGjSBvCHiIEar/1HsBW+kNO+bWMLWieBSnJXW
-   KoL41uVQXZypQZnlCZykKRwI/VxwctMIA+4PLz/9E6HEpn9YiCnQgCQcj
-   TVxj5UPnQC7NNbmgs/o6LNmEOymPt5djpIAnIM8gYyoovJxPguRkViBva
-   A==;
-X-CSE-ConnectionGUID: wO0uR//TSu+cQZanmSGiPw==
-X-CSE-MsgGUID: 3x23BNkQRGyFnixHWPXIYw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="57518370"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="57518370"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 03:23:25 -0700
-X-CSE-ConnectionGUID: Cn8NkYV1Qx6lxf5fOWfO/Q==
-X-CSE-MsgGUID: AN8RcvltTcaZlibe9v3eVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="154769101"
-Received: from unknown (HELO [10.238.224.237]) ([10.238.224.237])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 03:23:21 -0700
-Message-ID: <116ea6fa-e9b8-4c28-bc31-f4d1589eb34b@intel.com>
-Date: Wed, 2 Jul 2025 18:23:19 +0800
+	s=arc-20240116; t=1751452258; c=relaxed/simple;
+	bh=PwaLIRZZ+zNd55Wo4Lwsq2k0+RwAv0Yy8uSElGUCDoo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b2p/oU8bN0CXNdWdYMnm30+db6hpFFtOUvkWUsJde6pWqialplMAZmQjh86+lmhZ1czV+GetDGyLry6QoTjW/TMv3a2KsnrL1zeadwtb2THzrHZiIqg0jpRYgBXaRlbd0+nzMtQdg+hjQtoXhMWMmDNNFH7qX/9I3FpjpHgbgtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bXGQ55LvJzKHMyb;
+	Wed,  2 Jul 2025 18:30:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 28A341A07FA;
+	Wed,  2 Jul 2025 18:30:52 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgCHNSNaCmVoxoqlAQ--.14629S4;
+	Wed, 02 Jul 2025 18:30:52 +0800 (CST)
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	zhengqixing@huawei.com
+Subject: [PATCH] md/raid1,raid10: strip REQ_NOWAIT from member bios
+Date: Wed,  2 Jul 2025 18:23:41 +0800
+Message-Id: <20250702102341.1969154-1-zhengqixing@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] platform/x86: int3472: add hpd pin support
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
- sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>, u.kleine-koenig@baylibre.com,
- ricardo.ribalda@gmail.com, bingbu.cao@linux.intel.com,
- stable@vger.kernel.org, dongcheng.yan@linux.intel.com, hao.yao@intel.com
-References: <20250425104331.3165876-1-dongcheng.yan@intel.com>
- <5a04f105-3075-3226-6ad6-f2c3f31b29da@linux.intel.com>
-Content-Language: en-US
-From: "Yan, Dongcheng" <dongcheng.yan@intel.com>
-In-Reply-To: <5a04f105-3075-3226-6ad6-f2c3f31b29da@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCHNSNaCmVoxoqlAQ--.14629S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr47Zw4xAw4ruF18uFWfKrg_yoW8uFyfp3
+	9rKa4rZrW5G34rZF1jyayDuayFqwsFga9FkrWxJ3yfZryavFyDWa1rXay0grn8XFn5ury7
+	ZFn0yrsrWF45JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
 
-Hi Ilpo,
+From: Zheng Qixing <zhengqixing@huawei.com>
 
-On 7/2/2025 6:19 PM, Ilpo Järvinen wrote:
-> On Fri, 25 Apr 2025, Dongcheng Yan wrote:
-> 
->> Typically HDMI to MIPI CSI-2 bridges have a pin to signal image data is
->> being received. On the host side this is wired to a GPIO for polling or
->> interrupts. This includes the Lontium HDMI to MIPI CSI-2 bridges
->> lt6911uxe and lt6911uxc.
->>
->> The GPIO "hpd" is used already by other HDMI to CSI-2 bridges, use it
->> here as well.
->>
->> Signed-off-by: Dongcheng Yan <dongcheng.yan@intel.com>
->> ---
->>  drivers/platform/x86/intel/int3472/common.h   | 1 +
->>  drivers/platform/x86/intel/int3472/discrete.c | 6 ++++++
->>  2 files changed, 7 insertions(+)
->>
->> diff --git a/drivers/platform/x86/intel/int3472/common.h b/drivers/platform/x86/intel/int3472/common.h
->> index 51b818e62a25..4593d567caf4 100644
->> --- a/drivers/platform/x86/intel/int3472/common.h
->> +++ b/drivers/platform/x86/intel/int3472/common.h
->> @@ -23,6 +23,7 @@
->>  #define INT3472_GPIO_TYPE_CLK_ENABLE				0x0c
->>  #define INT3472_GPIO_TYPE_PRIVACY_LED				0x0d
->>  #define INT3472_GPIO_TYPE_HANDSHAKE				0x12
->> +#define INT3472_GPIO_TYPE_HOTPLUG_DETECT			0x13
->>  
->>  #define INT3472_PDEV_MAX_NAME_LEN				23
->>  #define INT3472_MAX_SENSOR_GPIOS				3
->> diff --git a/drivers/platform/x86/intel/int3472/discrete.c b/drivers/platform/x86/intel/int3472/discrete.c
->> index 394975f55d64..efa3bc7af193 100644
->> --- a/drivers/platform/x86/intel/int3472/discrete.c
->> +++ b/drivers/platform/x86/intel/int3472/discrete.c
->> @@ -191,6 +191,10 @@ static void int3472_get_con_id_and_polarity(struct int3472_discrete_device *int3
->>  		*con_id = "privacy-led";
->>  		*gpio_flags = GPIO_ACTIVE_HIGH;
->>  		break;
->> +	case INT3472_GPIO_TYPE_HOTPLUG_DETECT:
->> +		*con_id = "hpd";
->> +		*gpio_flags = GPIO_ACTIVE_HIGH;
->> +		break;
->>  	case INT3472_GPIO_TYPE_POWER_ENABLE:
->>  		*con_id = "avdd";
->>  		*gpio_flags = GPIO_ACTIVE_HIGH;
->> @@ -221,6 +225,7 @@ static void int3472_get_con_id_and_polarity(struct int3472_discrete_device *int3
->>   * 0x0b Power enable
->>   * 0x0c Clock enable
->>   * 0x0d Privacy LED
->> + * 0x13 Hotplug detect
->>   *
->>   * There are some known platform specific quirks where that does not quite
->>   * hold up; for example where a pin with type 0x01 (Power down) is mapped to
->> @@ -290,6 +295,7 @@ static int skl_int3472_handle_gpio_resources(struct acpi_resource *ares,
->>  	switch (type) {
->>  	case INT3472_GPIO_TYPE_RESET:
->>  	case INT3472_GPIO_TYPE_POWERDOWN:
->> +	case INT3472_GPIO_TYPE_HOTPLUG_DETECT:
->>  		ret = skl_int3472_map_gpio_to_sensor(int3472, agpio, con_id, gpio_flags);
->>  		if (ret)
->>  			err_msg = "Failed to map GPIO pin to sensor\n";
-> 
-> I was informed about existance of this patch through an off-band channel 
-> (as I was not among receipients). In future, please include all relevant 
-> maintainers and MLs as receipients as indicated by 
-> scripts/get_maintainers.pl.
-> 
-> This may go through a media tree,
-> 
-> Acked-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> 
-> 
+RAID layers don't implement proper non-blocking semantics for
+REQ_NOWAIT, making the flag potentially misleading when propagated
+to member disks.
 
-Thanks a lot and sorry for the trouble caused by me.
+This patch clear REQ_NOWAIT from cloned bios in raid1/raid10. Retain
+original bio's REQ_NOWAIT flag for upper layer error handling.
 
-Thanks,
-Dongcheng
+Maybe we can implement non-blocking I/O handling mechanisms within
+RAID in future work.
+
+Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+---
+ drivers/md/raid1.c  | 3 ++-
+ drivers/md/raid10.c | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 19c5a0ce5a40..213ad5b7e20b 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1399,7 +1399,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
+ 	}
+ 	read_bio = bio_alloc_clone(mirror->rdev->bdev, bio, gfp,
+ 				   &mddev->bio_set);
+-
++	read_bio->bi_opf &= ~REQ_NOWAIT;
+ 	r1_bio->bios[rdisk] = read_bio;
+ 
+ 	read_bio->bi_iter.bi_sector = r1_bio->sector +
+@@ -1649,6 +1649,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+ 				wait_for_serialization(rdev, r1_bio);
+ 		}
+ 
++		mbio->bi_opf &= ~REQ_NOWAIT;
+ 		r1_bio->bios[i] = mbio;
+ 
+ 		mbio->bi_iter.bi_sector	= (r1_bio->sector + rdev->data_offset);
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index b74780af4c22..951b9b443cd1 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1221,6 +1221,7 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
+ 		r10_bio->master_bio = bio;
+ 	}
+ 	read_bio = bio_alloc_clone(rdev->bdev, bio, gfp, &mddev->bio_set);
++	read_bio->bi_opf &= ~REQ_NOWAIT;
+ 
+ 	r10_bio->devs[slot].bio = read_bio;
+ 	r10_bio->devs[slot].rdev = rdev;
+@@ -1256,6 +1257,7 @@ static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
+ 			     conf->mirrors[devnum].rdev;
+ 
+ 	mbio = bio_alloc_clone(rdev->bdev, bio, GFP_NOIO, &mddev->bio_set);
++	mbio->bi_opf &= ~REQ_NOWAIT;
+ 	if (replacement)
+ 		r10_bio->devs[n_copy].repl_bio = mbio;
+ 	else
+-- 
+2.39.2
+
 
