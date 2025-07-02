@@ -1,147 +1,90 @@
-Return-Path: <linux-kernel+bounces-713520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F207DAF5AE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CA5AF5B0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546091C24D0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74063188F482
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8622F0026;
-	Wed,  2 Jul 2025 14:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2DD2F5307;
+	Wed,  2 Jul 2025 14:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QIJsd0F/"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qtmlabs.xyz header.i=@qtmlabs.xyz header.b="BIDfhzn7"
+Received: from s1.g1.infrastructure.qtmlabs.xyz (s1.g1.infrastructure.qtmlabs.xyz [107.172.1.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169092EFDAB
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9E02777F9;
+	Wed,  2 Jul 2025 14:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.172.1.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465819; cv=none; b=miLXwc5n9zNQ7RHc7ponoKbaykEW6qZVMbM6mVSVeq8mRe/EOK8KjxMSS7Kw2a+BxwWwe5TzDU5d2PkA3KZAEsF4rdBNerCgyw31JPIzODNl2LXTdNW3m/pJZMwH4W0scrmgORlCZSuZ+WXorRfhRsmA1PP3aUOJaX3g39GBXyk=
+	t=1751466281; cv=none; b=Ym/HwF9F36IU4wTou+fctiryjC2u49QjTh5Uxm1W0GedSSU2rTaSbnjeD6dl2armRI+shaipY+hUCcYlaUASY7wacOSRALjVVOvV7LUkTINpVXBtwNv0tDCFWMtZXE5A7IYn6DvxRxvRZDc59O6ZylC8soVLAvKMQJjBJwQXJwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465819; c=relaxed/simple;
-	bh=ivkSgMTtV81CdANQ5XafOK5UJU4ttt5I90ZuP9XelP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U9FeNApyVyt3GqjS9nSF7bRqi6XbzRhEwEAFDBkjj1c4PYGwwykzSvQ4nAgHBeTXXh8sfHXhs3lJ2WPlVDr1oC7aespwSjzqhW0r6EDKDR1qeZixheq3H89S5ih4ECJGXgYgWLYWyO3LJDwzPwZO3dD+K+mPOEZuEN9CjNdZGAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QIJsd0F/; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2e95ab2704fso3061351fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751465815; x=1752070615; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sCNt8orVvRnPdLUcXvMNqNxbNUJlKlGrsoDHbOPwgJM=;
-        b=QIJsd0F/MbFF49Boy+x1Af49w/0wyrnkTsPYjdyr9VuNaiOCkgY23qxpljBn7nqmAp
-         liOIHpmk/RCAdlYe0wweHopiZBw0ShCotJCrr7CijEH0teqdvRPrhFYQIy3rHqk4nIrI
-         uZLHdY/RkOgJhvj7b7tmQSjHGRRqlTm7v12KSGANWWKbKJcHI0g9jaIZI7Yuvw5anyDI
-         uVwK6o6T7mH5TrL1r9rjtD1NkFPixUBzdloXmnqW5qA9dmX5vQ/D13kBYVx44mZGGbc2
-         hLg66JW1Mn+TSLgVmmd8fJYNcp6+AfBn0nFPibF7DWjenQKPDp8nVdxCQ9KcirRN4/ja
-         3Bxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751465815; x=1752070615;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sCNt8orVvRnPdLUcXvMNqNxbNUJlKlGrsoDHbOPwgJM=;
-        b=u3AYwIeA16D4H8DeUrc78sPN71O+M9wyOLjLuGXLRzOspT+HYYFZcOUrzPq1DgHtCm
-         ptKBY27OA/MrBavU+fEXET+SRRntbtPVUG8X/hFO6JQ7FY5EaNzYw4Se89puB4yIh0U5
-         ICh/Yl4w4u7tBVzsXUkv0rxq85y5dYhQbmbepiTd9HSIs68tpMOQ50BRPT2eJKXXAftQ
-         GsuaffLD+rCMiFKM54JmZ7fVBo5IRdsDstZ5DbrO7YH7MXSd23mzeg1k2kEVBq18m+La
-         +4QmQkgNUL0DFtVJtrB5TuBjkF1Az4vRP7ZY6Xh2KJ1paQb1OxlyjGu4mrDyPmg9xdOW
-         B3OA==
-X-Forwarded-Encrypted: i=1; AJvYcCVri7HRg3+K0FH5wZ0Gh4zEiuQL5Zgodua5KQ05keSGb15Tz/wm0ocJENvCwIEQl+ckp8BFcwMq7ZLA29Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs2Be50XBNsHN/jAqQe8n5MOMtHiAbR7xTPRMIl+1jhukxtx6z
-	hzdaJMfk4FJpqn9FoepL5+Ptii23PvG5mC0BXOqxzXOjwEwi4W5QW4hUow8Hph2C6i8=
-X-Gm-Gg: ASbGncv+RX6/rPJ0yyKhhR3uLkf3dgGe4Tv1bLYgnGEzNG6SejmQobfstlPgh96k/iM
-	jZQ5JCULcri0qXYyjCJs+WsrkCM++H+fTbZd2OtODJ7sDGuopMqHaPs40KbuHOfeVinLIsxXONh
-	VN0GvgycxEcL23hS9cZq3SL2K3CMORo2ynl1U9uwPOCuAgi8nwuX94/2lwXbQLLoP4cVRFuH0yq
-	ykwSD+WaMcLTUHScJudmh/HMnTlzMtuMuXde5S7/dFsE3j4qwcYxLFcAzK0pUy+7pJlG1oiQA2X
-	nujGoIleXMUsOWV7lSm6nsAnR+twslb7G4UiS7TGWSrtuqgAMHgBIpf2fRqaJOy01RSivp150li
-	sYgNLx+mUmq9nMuMoB2jf5S20WVb/hxRRRW0haK0=
-X-Google-Smtp-Source: AGHT+IE3wezFD6gq5YO9AtpQHZYWN89aAqaWHJI6eS+Rikhf0NRsNSoAVq5E1EldNNLhjkG+5ZMahA==
-X-Received: by 2002:a05:6870:288:b0:296:b568:7901 with SMTP id 586e51a60fabf-2f5a8c19495mr1923947fac.16.1751465814997;
-        Wed, 02 Jul 2025 07:16:54 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:70a7:ca49:a250:f1d5? ([2600:8803:e7e4:1d00:70a7:ca49:a250:f1d5])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efd50f9748sm3929916fac.37.2025.07.02.07.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 07:16:53 -0700 (PDT)
-Message-ID: <f96b68a5-d750-45f0-8cdd-9761b5daca1d@baylibre.com>
-Date: Wed, 2 Jul 2025 09:16:51 -0500
+	s=arc-20240116; t=1751466281; c=relaxed/simple;
+	bh=0+7L8fLqxJb5AyBlaDa9ZfMehG8UnncNNNdr1XfhJVE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fZiuwpiKAVCF1LH3lpSvO6B9SGN3M0fPtZQSmX9OM6klh1jl/vMVXENdiGWSPvCGlUH9pdEGr5j6vCLxHOMEpHP4QzW6TxDQvT6o27VQtN7krKAgAkiqB2i7MKUU0rxpvx9toioclPXr6ZZG6r17kwTVzhu+eZtV5K+P9COjFqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtmlabs.xyz; spf=pass smtp.mailfrom=qtmlabs.xyz; dkim=pass (2048-bit key) header.d=qtmlabs.xyz header.i=@qtmlabs.xyz header.b=BIDfhzn7; arc=none smtp.client-ip=107.172.1.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qtmlabs.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qtmlabs.xyz
+From: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qtmlabs.xyz; s=dkim;
+	t=1751465886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3DUlpEKsACdnEXHsOcxPwAOx0thj+lv6oLlBcLccapE=;
+	b=BIDfhzn7UF3CAdBEovt72UXOSTeypWWh2yQa562b4ZHzNkDjKq/T9yU+FNzXhFEN7Bgew8
+	FUf8YsInFtymQUc3uWjAq9s69dAp/AwEk1sTBuM1mNVq5+3s89AUFaivl0z7k5kd3uIOGZ
+	a47fd0RryZwQE5ipJWzOXLeje504zpgWOW76MT0TBd26VN5IOdcNeE2n+g9X5IPGdKFClJ
+	J/QkBC2cslA3HjKQCe9wJ36NsQx/pANgV7LvzB57NZWIo0djtoJsEBpONvUi8SYNlF9G5U
+	vcyDwVqci08hIILEQbqvV2XWtq5ex5Eowc53dx0I6F+mOfCuPSNTDi7FavslEg==
+Authentication-Results: s1.g1.infrastructure.qtmlabs.xyz;
+	auth=pass smtp.mailfrom=myrrhperiwinkle@qtmlabs.xyz
+Subject: [PATCH 0/2] vt: Miscellaneous fixes for keyboard input handling
+Date: Wed, 02 Jul 2025 21:17:56 +0700
+Message-Id: <20250702-vt-misc-unicode-fixes-v1-0-c27e143cc2eb@qtmlabs.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
-To: Akshay Bansod <akbansd@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250702135855.59955-1-akbansd@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250702135855.59955-1-akbansd@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJQ/ZWgC/x3LQQqAIBBA0avErBswwYSuEi1Kx5pFGk5FIN09a
+ fn4/AJCmUlgaApkulk4xYqubcBtc1wJ2VeDVtooqzTeJ+4sDq/ILnnCwA8J2sV1wdtglO6hvke
+ mP9R1nN73AzELqfVnAAAA
+X-Change-ID: 20250702-vt-misc-unicode-fixes-7bc1fd7f5026
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Arthur Taylor <art@ified.ca>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, 
+ Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>, stable@vger.kernel.org
+X-Spamd-Bar: ---
 
-On 7/2/25 8:58 AM, Akshay Bansod wrote:
-> Update the sysfs interface for sampling frequency and scale attributes.
-> Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
-> and recommended for use in sysfs.
-> 
-> Signed-off-by: Akshay Bansod <akbansd@gmail.com>
-> ---
-> 
-> Testing:
-> - Built the driver (`st_lsm6dsx_i2c`) as a module.
-> - Tested using `i2c-stub` to mock the device.
-> - Verified that reading sysfs attributes like `sampling_frequency_available`
->   works correctly and shows no change in functionality.
+This patch series fixes two long standing bugs that when combined
+results in a ^@ (NUL) sequence being generated on the virtual terminal
+even when the keyboard mode is set to OFF every suspend/resume cycle
+on ACPI systems.
 
-Nice to see it was actually tested. :-)
+Signed-off-by: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
+---
+Myrrh Periwinkle (2):
+      vt: keyboard: Don't process Unicode characters in K_OFF mode
+      vt: defkeymap: Map keycodes above 127 to K_HOLE
 
-> 
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> index c65ad4982..1cef10919 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> @@ -2035,7 +2035,7 @@ st_lsm6dsx_sysfs_sampling_frequency_avail(struct device *dev,
->  
->  	odr_table = &sensor->hw->settings->odr_table[sensor->id];
->  	for (i = 0; i < odr_table->odr_len; i++)
-> -		len += scnprintf(buf + len, PAGE_SIZE - len, "%d.%03d ",
-> +		len += sysfs_emit_at(buf, len, "%d.%03d ",
->  				 odr_table->odr_avl[i].milli_hz / 1000,
->  				 odr_table->odr_avl[i].milli_hz % 1000);
+ drivers/tty/vt/defkeymap.c_shipped | 112 +++++++++++++++++++++++++++++++++++++
+ drivers/tty/vt/keyboard.c          |   2 +-
+ 2 files changed, 113 insertions(+), 1 deletion(-)
+---
+base-commit: 66701750d5565c574af42bef0b789ce0203e3071
+change-id: 20250702-vt-misc-unicode-fixes-7bc1fd7f5026
 
-Let's keep checkpatch happy and change the indent of the wrapped lines to
-line up with ( since the ( moved.
-
->  	buf[len - 1] = '\n';
-> @@ -2054,7 +2054,7 @@ static ssize_t st_lsm6dsx_sysfs_scale_avail(struct device *dev,
->  
->  	fs_table = &hw->settings->fs_table[sensor->id];
->  	for (i = 0; i < fs_table->fs_len; i++)
-> -		len += scnprintf(buf + len, PAGE_SIZE - len, "0.%09u ",
-> +		len += sysfs_emit_at(buf, len, "0.%09u ",
->  				 fs_table->fs_avl[i].gain);
-
-ditto
-
->  	buf[len - 1] = '\n';
->  
+Best regards,
+-- 
+Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
 
 
