@@ -1,187 +1,136 @@
-Return-Path: <linux-kernel+bounces-713271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FE1AF15B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:31:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C915AF4D00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77CEF16FBCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10BC167DAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934BF27381E;
-	Wed,  2 Jul 2025 12:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA62798FE;
+	Wed,  2 Jul 2025 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQIOuCNM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="D1W3z4I5"
+Received: from mail-m15580.qiye.163.com (mail-m15580.qiye.163.com [101.71.155.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB44E1E487;
-	Wed,  2 Jul 2025 12:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E67D275B06;
+	Wed,  2 Jul 2025 13:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751459497; cv=none; b=HzC1YWoVKuQX58Ek303/twf6hS3wWguYKR6lndw/vtdGQjqQONMK5qXfSeEP2wbfD9Lcu1RdMauulx4Ps/6zzAe+1PQ2kh9dpU5iqD5PxsjL6OQNeg601zB5St11+VNGNJ2SqegvageS9Uhp/0szEUACEqoWcy2R/ctics6Sl1k=
+	t=1751461625; cv=none; b=ZHKcpvA1LI3H9oW4zl/15Z9eIrPS5iCVqEPMxH+omVkKrfQH0YNt2mlsM6mHaW/xYIivfmToUFsrJFXDCuwAKL2zJZUYBJZZv1cQsLGyC3f0gy/aPmnLFZ/GgBAuRyOTm+8vd0mTC6/UmCoyfseok1FxawgQRg0EhnRYnyd+cDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751459497; c=relaxed/simple;
-	bh=HyLomZoUIsBZI28vt4NzRZMuAo9iSJ1mkcus3zmJ/uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EggvUCg+KTQmLANeH4Px+lj+sbk9GMj2UzgZ5CYgxi77/lA4d9I/07rjKzSl+u0zAYmjIMZNFodJXC0esL5XmVNht+uyASLehNnFbIWeFMmIGuOg/aYgUgR/IojQ96WXABQYNO7xS8GmBH8NunfaO5k2n+jmK07CIp3KUYDaisU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQIOuCNM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0877C4CEED;
-	Wed,  2 Jul 2025 12:31:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751459497;
-	bh=HyLomZoUIsBZI28vt4NzRZMuAo9iSJ1mkcus3zmJ/uI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQIOuCNMICguAzeBgxu+HHL77MCyaObg/26HSEUCrXWPkUd23kVGSO+krBqrgQDjE
-	 mqpEtRaeIZTNVpMnC7ZSpNLLvoKTfdwSnMAVI6e+ddliSNa4hjOxsmEmAimZUFx9Lt
-	 XjHN+M2S7/rCFQ+9QG1fl2Akq4wqY2suSIJr9x3bxPv3Ge3YAhOIvKQpq+YvdJ8Alr
-	 5FGix2e4Cql3/KPuymrOlR3aEWS3ik5beTXLqXMe1PPIjuw+DmAbw+2FLOWnRdAHhd
-	 Pr6Dw818Pd5W32CmctWaoz/Q8YfP+nMAAw9KII2KckiGPrFrt1HPC9IXKuGhBg7o4+
-	 RUy6Keg7shOYA==
-Date: Wed, 2 Jul 2025 18:01:18 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, jdmason@kudzu.us, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH v19 04/10] PCI: endpoint: Add
- pci_epf_align_inbound_addr() helper for address alignment
-Message-ID: <n6wdkexskwjd7k5zwaaqeb36zdsxzcshsm7f5czv44rmocswex@pzbpehep2teu>
-References: <20250609-ep-msi-v19-0-77362eaa48fa@nxp.com>
- <20250609-ep-msi-v19-4-77362eaa48fa@nxp.com>
+	s=arc-20240116; t=1751461625; c=relaxed/simple;
+	bh=C86Nj4j8sa5kMJmGRiyGwOaW3dqu2Ko61hQwEyhr7CU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gpnoiNtCSdlpuouLQr85FX2WNUCtHHLsILVglQuMmAj6iwl/IDMLA8UvavsZFPIv17RQ5FAHHY4t9Ql+de+6shXjqDuTzp7WVzenSG1g3ZfnKKCFlmeb0ZurVMfvCirh2g+EzTTJyizUfrDwFJR9sVB5+faG8l2e/q2lAx/qnR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=D1W3z4I5; arc=none smtp.client-ip=101.71.155.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
+Received: from localhost.localdomain (unknown [117.184.129.134])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaecf0f1;
+	Wed, 2 Jul 2025 20:31:33 +0800 (GMT+08:00)
+From: Albert Yang <yangzh0906@thundersoft.com>
+To: krzk@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/8] arm64: dts: bst: add support for Black Sesame Technologies C1200 CDCU1.0 board
+Date: Wed,  2 Jul 2025 20:31:33 +0800
+Message-Id: <20250702123133.3613126-1-yangzh0906@thundersoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <a570b833-0619-4d1a-909f-971ba08f4202@kernel.org>
+References: <a570b833-0619-4d1a-909f-971ba08f4202@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250609-ep-msi-v19-4-77362eaa48fa@nxp.com>
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaT09IVk0fT0hKQhlKT0oYSFYVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTEpVSk
+	tLVUpCS0tZBg++
+X-HM-Tid: 0a97cb1ef7a409cckunm04f03588425578
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MT46CTo6FzExPE4PSUMtHT4C
+	ERcwFENVSlVKTE5KT05CT0JPQkxKVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUhKS003Bg++
+DKIM-Signature:a=rsa-sha256;
+	b=D1W3z4I516N9g+9guQ8Xs6Vx0djrJ7Kyp6y6mXfU1NrGA7bFh4L1GkPyLVCy9hQRSuEKgkQo2dfNkWIQlwbN2MV8qq3e87xdbK55EEnCoJYdeOTkcT27knWGsH2hnoS2FFBZj39HGeMTnIS5Al+dui9Ule2qfQdQeSaEglrY6zE=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=GvRC5yQrOK6GqqxZKCbY7Q/4BSYWG7oUxuoBfHuLWOg=;
+	h=date:mime-version:subject:message-id:from;
 
-On Mon, Jun 09, 2025 at 12:34:16PM GMT, Frank Li wrote:
-> Introduce the helper function pci_epf_align_inbound_addr() to adjust
-> addresses according to PCI BAR alignment requirements, converting addresses
-> into base and offset values.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v15 to v16
-> - none
-> 
-> Change from v14 to v15
-> - change out address type to dma_addr_t to fix below build issue
-> 
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202502082311.G1hWGggF-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/pci/endpoint/functions/pci-epf-test.c: In function 'pci_epf_test_enable_doorbell':
-> >> drivers/pci/endpoint/functions/pci-epf-test.c:726:42: error: passing argument 4 of 'pci_epf_align_inbound_addr' from incompatible pointer type [-Werror=incompatible-pointer-types]
->      726 |                                          &epf_test->db_bar.phys_addr, &offset);
->          |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->          |                                          |
->          |                                          dma_addr_t * {aka unsigned int *}
->    In file included from include/linux/pci-epc.h:12,
-> 
-> Change form v9 to v14
-> - none
-> 
-> change from v8 to v9
-> - pci_epf_align_inbound_addr(), base and off must be not NULL
-> - rm pci_epf_align_inbound_addr_lo_hi()
-> 
-> change from v7 to v8
-> - change name to pci_epf_align_inbound_addr()
-> - update comment said only need for memory, which not allocated by
-> pci_epf_alloc_space().
-> 
-> change from v6 to v7
-> - new patch
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 44 +++++++++++++++++++++++++++++++++++++
->  include/linux/pci-epf.h             |  3 +++
->  2 files changed, 47 insertions(+)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index 95fb3d7c1d45e..33e14a6b1549a 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -481,6 +481,50 @@ struct pci_epf *pci_epf_create(const char *name)
->  }
->  EXPORT_SYMBOL_GPL(pci_epf_create);
->  
-> +/**
-> + * pci_epf_align_inbound_addr() - Get base address and offset that match BAR's
-> + *			  alignment requirement
+Hi Krzysztof,
 
-'Align the given address based on the BAR alignment requirement'
+Thank you for your detailed review and feedback. I have addressed all the issues you mentioned:
 
-> + * @epf: the EPF device
-> + * @addr: the address of the memory
+> This is messed. SoB does not go to changelog. Apply your patch and look
+> at result - do you see SoB? No, because changelog is stripped.
+> submitting patches explains how this is supposed to look like.
 
-'inbound address to be aligned'
+Fixed. Moved Signed-off-by lines to the correct position in commit message, 
+outside of the changelog section.
 
-> + * @bar: the BAR number corresponding to map addr
+> Nothing improved. I asked to follow DTS coding style in ordering.
 
-s/map addr/the given addr
+Fixed. Reordered all nodes according to DTS coding style:
+- Root level nodes: alphabetically ordered (clk_mmc → cpus → psci → soc → timer)
+- SoC nodes: ordered by address (uart0@20008000 → mmc0@22200000 → gic@32800000)
+- Applied consistent ordering throughout the dtsi file
 
-> + * @base: return base address, which match BAR's alignment requirement.
+> l2-cache. Otherwise it is incomplete, so add the second one.
 
-'base address matching the @bar alignment requirement'
+Fixed. Renamed l2-cache-1 to l2-cache as per standard naming convention.
 
-> + * @off: return offset.
+> Why do you have multiple memory nodes, not one?
 
-'offset to be added to the @base address'
+Fixed. Consolidated multiple memory nodes into a single memory node with 
+multiple reg entries as required by Device Tree specification:
 
-> + *
-> + * Helper function to convert input 'addr' to base and offset, which match
+Before (incorrect):
+  memory@800151000 { reg = <0x8 0x00151000 0x0 0x1000>; };
+  memory@800254000 { reg = <0x8 0x00254000 0x0 0x1000>; };
+  ...
 
-s/convert/align
+After (correct):
+  memory@800151000 {
+    reg = <0x8 0x00151000 0x0 0x1000>,
+          <0x8 0x00254000 0x0 0x1000>,
+          <0x8 0x10000000 0x0 0x30000000>,
+          <0x8 0xc0000000 0x1 0x0>,
+          <0xc 0x00000000 0x0 0x40000000>;
+  };
 
-> + * BAR's alignment requirement.
-> + *
-> + * The pci_epf_alloc_space() function already accounts for alignment. This is
-> + * primarily intended for use with other memory regions not allocated by
-> + * pci_epf_alloc_space(), such as peripheral register spaces or the trigger
-> + * address for a platform MSI controller.
-> + */
-> +int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
-> +			       u64 addr, dma_addr_t *base, size_t *off)
-> +{
-> +	const struct pci_epc_features *epc_features;
-> +	u64 align;
-> +
-> +	if (!base || !off)
-> +		return -EINVAL;
-> +
-> +	epc_features = pci_epc_get_features(epf->epc, epf->func_no, epf->vfunc_no);
-> +	if (!epc_features) {
-> +		dev_err(&epf->dev, "epc_features not implemented\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	align = epc_features->align;
-> +	align = align ? align : 128;
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=1`
 
-From where this 128 byte alignment comes from?
+Fixed. Ran `make dtbs_check W=1` and verified no schema violations. 
+DTB builds successfully without warnings.
 
-- Mani
+> This is not a DTS patch. (regarding defconfig)
 
--- 
-மணிவண்ணன் சதாசிவம்
+Fixed. Moved all defconfig changes to a separate dedicated commit as suggested.
+The DTS commit now only contains device tree related changes.
+
+Additionally, I have addressed all feedback from the v1 review:
+- Fixed reserved-memory node naming (mmc0-reserved@5160000)
+- Corrected all property ordering according to DTS coding style
+- Ensured all nodes follow standard naming conventions
+
+All changes have been tested with:
+- make ARCH=arm64 bst/bstc1200-cdcu1.0-adas_4c2g.dtb W=1 (successful)
+- DTB validation passes without errors
+
+I will send v3 with all these fixes applied.
+
+Best regards,
+Albert Yang
 
