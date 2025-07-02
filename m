@@ -1,284 +1,202 @@
-Return-Path: <linux-kernel+bounces-713206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87813AF14E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97905AF14EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774FB1C42C57
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B55481B21
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1E52676DA;
-	Wed,  2 Jul 2025 12:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A2026D4E7;
+	Wed,  2 Jul 2025 12:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmMlghfh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0hA37z4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A2A25CC78
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4A225CC78;
+	Wed,  2 Jul 2025 12:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751457808; cv=none; b=ToR0DK3FwOIsCHzyGUvH6+LWbUzUNcMmtQ4PZuSEmZb0pGYIRA0fM/Zei9v1Ya23UdsrIGJG1st7PqetuLvVZ6aceijvsQ7amF/I3ZrPs2EnT7FRt+/0Fw+3sGcojsgUM3BDeq6YBqTqEtcdmBwa/Oo6+5/6l5q9EJjdn6YxoTw=
+	t=1751457908; cv=none; b=sbms5wfYclikxTXmD7CF24PA9rtZ4Kvl4Q/Kwn4p75ncxfLVmbLD3MN1gwAkncVsyIPZu49QnAKJkSS3djpGy8AlQm2Jh0/hmrmc8iBp6SETDJiFzpyqhDP1oWbDV/jxVCFBpTWHBUYQNltE9eIEVo+uZ8anXFotqa2bQRKQxa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751457808; c=relaxed/simple;
-	bh=WmY+JUfUvwROD+mbFZAOWnPgdjyfSc8zKpixiZNeoBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OUOPuysedM3gaBNTasqy3OO9eg24X7Y1EFIs6067Kv0WwFka/uCWs8+z6lMXofsMv+gd1/icXKpb5fHO6SEV9CGiVn8bTsINIoPhGZ23fhqIp2BS6wc8pkI3G7e3i+qp3EPDqAA5Kn3+/af8Xh8ezVUUvcV2Mo1cTOdEerqkqug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmMlghfh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92295C4CEED;
-	Wed,  2 Jul 2025 12:03:26 +0000 (UTC)
+	s=arc-20240116; t=1751457908; c=relaxed/simple;
+	bh=eXrSReE/2UtB0WR1repBoMLQ9GhS3cE3pbJuSLKxPRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UiVsg6f5zGLO4wpJ7u2eo0PJqSdtRTzY4s1fR/wabVc4SIug0zGvOX9EC+4LBewzWHOlhH7yIBp/gX0OQQ9AZJCGP3VUSHVR8ddTS09PahhXjnmrSfY787DlhiiPQBcl8t8tW/H7w2ld0WXNOsKM/8gjmUBcLm5vmusVUSpRt0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0hA37z4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21963C4CEED;
+	Wed,  2 Jul 2025 12:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751457807;
-	bh=WmY+JUfUvwROD+mbFZAOWnPgdjyfSc8zKpixiZNeoBo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qmMlghfh1SwXMeQnNJYnpfbOFif/th/D4xB3rIY6OQqR0xizBxhWoX2kOJdVQo02n
-	 YObqjyBskpth6pk/sHxA/DqYydR0/toDYNaBNVJC0TgJo89wsBvdChVsVzaqNn0fF0
-	 vigHmXRllpTcnFfMpHAdFa9L7/ubllcbViRL14W4FPDBC2i3QcFf5VBi/eK0KQ8y+5
-	 5AL0QlyQWIdgACCODvbN8/0sAgruiz8RRXHBXzJVSqha1cAAuHBkR84szwDG7aJT4Z
-	 9HbMQEDLk/EJQzPh/th+4o4pT6yKda4Xl30b3tQPjPmLk4MmtrhyFyFs7Df7nPy+8x
-	 L3DUnqy4ZZdhg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	stable@kernel.org
-Subject: [PATCH] f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
-Date: Wed,  2 Jul 2025 20:03:21 +0800
-Message-ID: <20250702120321.1080759-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+	s=k20201202; t=1751457907;
+	bh=eXrSReE/2UtB0WR1repBoMLQ9GhS3cE3pbJuSLKxPRo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n0hA37z4CjjouH9LR87gt16wZnmC1SKXUQLyl6I8xBjP0OFkhnaNST09qnvewzNk3
+	 w89VuTbLYzB8f+UfRO5QzhZwG2mJ9YXpy7aQMXODsQ+u4TAOpuAo01EVvDS530smTt
+	 ypssHVMfBd2vNQgy8RU4CPrZsIT/NNlAZW3uNRiPQAilcwkKxHp6kOapprGFUdLdu9
+	 gRhE8KCAgF5Qu+DROwNA43CqFNUfbB2RysKZs6btD+xkayRbrzWAY7if9Ofrs3Zf53
+	 myh4UUzAu1XTbUh9Y+5eww4r2+jKoP821esQZ/GEIo7svNMUCtfUz9ZlHc7WIMNs3E
+	 8e+h9URYD1bQQ==
+Message-ID: <729d83e1-f28c-4e95-bcba-52f7d7a166ee@kernel.org>
+Date: Wed, 2 Jul 2025 14:05:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
+ <5f90547d-945a-4e26-b36c-75f2d8a1af97@kernel.org>
+ <eab8d79f-7188-9537-9176-3e4d22f0978a@quicinc.com>
+ <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
+ <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot reported an UAF issue as below: [1] [2]
+On 02/07/2025 14:01, Vikash Garodia wrote:
+> 
+> 
+> On 7/2/2025 5:22 PM, Krzysztof Kozlowski wrote:
+>> On 02/07/2025 13:37, Vikash Garodia wrote:
+>>>
+>>> On 7/2/2025 4:48 PM, Krzysztof Kozlowski wrote:
+>>>> On 27/06/2025 17:48, Vikash Garodia wrote:
+>>>>> This series introduces a sub node "non-pixel" within iris video node.
+>>>>> Video driver registers this sub node as a platform device and configure 
+>>>>> it for DMA operations. All non pixel buffers, i.e bitstream, HFI queues 
+>>>>> and internal buffers related to bitstream processing, would be managed 
+>>>>> by this non_pixel device.
+>>>>>
+>>>>> Purpose to add this sub-node:
+>>>>> Iris device limits the IOVA to an addressable range of 4GiB, and even 
+>>>>> within that range, some of the space is used by IO registers, thereby 
+>>>>> limiting the available IOVA to even lesser. For certain video usecase, 
+>>>>> this limited range in not sufficient enough, hence it brings the need to 
+>>>>> extend the possibility of higher IOVA range.
+>>>>>
+>>>>> Video hardware is designed to emit different stream-ID for pixel and 
+>>>>> non-pixel buffers, thereby introduce a non-pixel sub node to handle 
+>>>>> non-pixel stream-ID into a separate platform device.
+>>>>> With this, both iris and non-pixel device can have IOVA range of 
+>>>>> approximately 0-4GiB individually for each device, thereby doubling the 
+>>>>> range of addressable IOVA.
+>>>>>
+>>>>> Tested on SM8550 and SA8775p hardwares.
+>>>>>
+>>>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>>>> ---
+>>>>> Changes in v3:
+>>>>> - Add info about change in iommus binding (Thanks Krzysztof)
+>>>>
+>>>> Nothing improved in commit msg. You are changing existing device and the
+>>>> reason for that change is not communicated at all.
+>>>>
+>>>> There was big feedback from qualcomm saying that some commit in the past
+>>>> received review, so future commits can repeat the same stuff. If qcom
+>>>> approaches that way, sorry, no you need to come with proper commit
+>>>> description.
+>>>>
+>>>> Please align internally how to solve it, because my response that past
+>>>> imperfect review is not justification for whatever future issues was not
+>>>> enough.
+>>> Sure, lets take this as an example and you can suggest to provide a better
+>>> commit message for this case, it would help me to compare where is the gap. I
+>>> have tried my best to capture and explain the limitations and how the changes
+>>> address those limitations. If that is not sufficient, we might have the perfect
+>>> message from you and compare to find the gaps and improve, I am sorry, but thats
+>>
+>> It is not question to me: I did not want imperfectness. Qualcomm
+>> engineer used issues in existing commits or imperfect commit in
+>> discussion, so that's my solution. I don't need that perfect commit, but
+>> it seems if I agree to that, then I will have to defend it later. Well,
+>> no, I don't want it.
+>>
+>>> how i feel at the moment.
+>> Sure, I feel confused now as well.
+>>
+>> Anyway, in other messages I explained what is missing. You are changing
+>> existing hardware and you clearly must explain how existing hardware is
+>> affected, how can we reproduce it, how users are affected.
+> Exactly all of these i have explained in the commit message. The limitation with
 
-[1] https://syzkaller.appspot.com/text?tag=CrashReport&x=16594c60580000
+Well, no.
 
-==================================================================
-BUG: KASAN: use-after-free in __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
-Read of size 8 at addr ffff888100567dc8 by task kworker/u4:0/8
+I did not see reproduce steps, users affected, which boards, nothing
+like that.
 
-CPU: 1 PID: 8 Comm: kworker/u4:0 Tainted: G        W          6.1.129-syzkaller-00017-g642656a36791 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: writeback wb_workfn (flush-7:0)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x151/0x1b7 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:316 [inline]
- print_report+0x158/0x4e0 mm/kasan/report.c:427
- kasan_report+0x13c/0x170 mm/kasan/report.c:531
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:351
- __list_del_entry_valid+0xa6/0x130 lib/list_debug.c:62
- __list_del_entry include/linux/list.h:134 [inline]
- list_del_init include/linux/list.h:206 [inline]
- f2fs_inode_synced+0x100/0x2e0 fs/f2fs/super.c:1553
- f2fs_update_inode+0x72/0x1c40 fs/f2fs/inode.c:588
- f2fs_update_inode_page+0x135/0x170 fs/f2fs/inode.c:706
- f2fs_write_inode+0x416/0x790 fs/f2fs/inode.c:734
- write_inode fs/fs-writeback.c:1460 [inline]
- __writeback_single_inode+0x4cf/0xb80 fs/fs-writeback.c:1677
- writeback_sb_inodes+0xb32/0x1910 fs/fs-writeback.c:1903
- __writeback_inodes_wb+0x118/0x3f0 fs/fs-writeback.c:1974
- wb_writeback+0x3da/0xa00 fs/fs-writeback.c:2081
- wb_check_background_flush fs/fs-writeback.c:2151 [inline]
- wb_do_writeback fs/fs-writeback.c:2239 [inline]
- wb_workfn+0xbba/0x1030 fs/fs-writeback.c:2266
- process_one_work+0x73d/0xcb0 kernel/workqueue.c:2299
- worker_thread+0xa60/0x1260 kernel/workqueue.c:2446
- kthread+0x26d/0x300 kernel/kthread.c:386
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
- </TASK>
+Your commit says "certain video usecases"... how is this specific?
 
-Allocated by task 298:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
- kasan_save_alloc_info+0x1f/0x30 mm/kasan/generic.c:505
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:333
- kasan_slab_alloc include/linux/kasan.h:202 [inline]
- slab_post_alloc_hook+0x53/0x2c0 mm/slab.h:768
- slab_alloc_node mm/slub.c:3421 [inline]
- slab_alloc mm/slub.c:3431 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3438 [inline]
- kmem_cache_alloc_lru+0x102/0x270 mm/slub.c:3454
- alloc_inode_sb include/linux/fs.h:3255 [inline]
- f2fs_alloc_inode+0x2d/0x350 fs/f2fs/super.c:1437
- alloc_inode fs/inode.c:261 [inline]
- iget_locked+0x18c/0x7e0 fs/inode.c:1373
- f2fs_iget+0x55/0x4ca0 fs/f2fs/inode.c:486
- f2fs_lookup+0x3c1/0xb50 fs/f2fs/namei.c:484
- __lookup_slow+0x2b9/0x3e0 fs/namei.c:1689
- lookup_slow+0x5a/0x80 fs/namei.c:1706
- walk_component+0x2e7/0x410 fs/namei.c:1997
- lookup_last fs/namei.c:2454 [inline]
- path_lookupat+0x16d/0x450 fs/namei.c:2478
- filename_lookup+0x251/0x600 fs/namei.c:2507
- vfs_statx+0x107/0x4b0 fs/stat.c:229
- vfs_fstatat fs/stat.c:267 [inline]
- vfs_lstat include/linux/fs.h:3434 [inline]
- __do_sys_newlstat fs/stat.c:423 [inline]
- __se_sys_newlstat+0xda/0x7c0 fs/stat.c:417
- __x64_sys_newlstat+0x5b/0x70 fs/stat.c:417
- x64_sys_call+0x52/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:7
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x3b/0x80 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x68/0xd2
+You are deflecting now questions. Point me then part of commit msg which
+answers to:
 
-Freed by task 0:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x4b/0x70 mm/kasan/common.c:52
- kasan_save_free_info+0x2b/0x40 mm/kasan/generic.c:516
- ____kasan_slab_free+0x131/0x180 mm/kasan/common.c:241
- __kasan_slab_free+0x11/0x20 mm/kasan/common.c:249
- kasan_slab_free include/linux/kasan.h:178 [inline]
- slab_free_hook mm/slub.c:1745 [inline]
- slab_free_freelist_hook mm/slub.c:1771 [inline]
- slab_free mm/slub.c:3686 [inline]
- kmem_cache_free+0x291/0x560 mm/slub.c:3711
- f2fs_free_inode+0x24/0x30 fs/f2fs/super.c:1584
- i_callback+0x4b/0x70 fs/inode.c:250
- rcu_do_batch+0x552/0xbe0 kernel/rcu/tree.c:2297
- rcu_core+0x502/0xf40 kernel/rcu/tree.c:2557
- rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2574
- handle_softirqs+0x1db/0x650 kernel/softirq.c:624
- __do_softirq kernel/softirq.c:662 [inline]
- invoke_softirq kernel/softirq.c:479 [inline]
- __irq_exit_rcu+0x52/0xf0 kernel/softirq.c:711
- irq_exit_rcu+0x9/0x10 kernel/softirq.c:723
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1118 [inline]
- sysvec_apic_timer_interrupt+0xa9/0xc0 arch/x86/kernel/apic/apic.c:1118
- asm_sysvec_apic_timer_interrupt+0x1b/0x20 arch/x86/include/asm/idtentry.h:691
+"explain how existing hardware is affected"
 
-Last potentially related work creation:
- kasan_save_stack+0x3b/0x60 mm/kasan/common.c:45
- __kasan_record_aux_stack+0xb4/0xc0 mm/kasan/generic.c:486
- kasan_record_aux_stack_noalloc+0xb/0x10 mm/kasan/generic.c:496
- __call_rcu_common kernel/rcu/tree.c:2807 [inline]
- call_rcu+0xdc/0x10f0 kernel/rcu/tree.c:2926
- destroy_inode fs/inode.c:316 [inline]
- evict+0x87d/0x930 fs/inode.c:720
- iput_final fs/inode.c:1834 [inline]
- iput+0x616/0x690 fs/inode.c:1860
- do_unlinkat+0x4e1/0x920 fs/namei.c:4396
- __do_sys_unlink fs/namei.c:4437 [inline]
- __se_sys_unlink fs/namei.c:4435 [inline]
- __x64_sys_unlink+0x49/0x50 fs/namei.c:4435
- x64_sys_call+0x289/0x9a0 arch/x86/include/generated/asm/syscalls_64.h:88
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x3b/0x80 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x68/0xd2
+"how can we reproduce it"
 
-The buggy address belongs to the object at ffff888100567a10
- which belongs to the cache f2fs_inode_cache of size 1360
-The buggy address is located 952 bytes inside of
- 1360-byte region [ffff888100567a10, ffff888100567f60)
+"how users are affected."
 
-The buggy address belongs to the physical page:
-page:ffffea0004015800 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x100560
-head:ffffea0004015800 order:3 compound_mapcount:0 compound_pincount:0
-flags: 0x4000000000010200(slab|head|zone=1)
-raw: 4000000000010200 0000000000000000 dead000000000122 ffff8881002c4d80
-raw: 0000000000000000 0000000080160016 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 298, tgid 298 (syz-executor330), ts 26489303743, free_ts 0
- set_page_owner include/linux/page_owner.h:33 [inline]
- post_alloc_hook+0x213/0x220 mm/page_alloc.c:2637
- prep_new_page+0x1b/0x110 mm/page_alloc.c:2644
- get_page_from_freelist+0x3a98/0x3b10 mm/page_alloc.c:4539
- __alloc_pages+0x234/0x610 mm/page_alloc.c:5837
- alloc_slab_page+0x6c/0xf0 include/linux/gfp.h:-1
- allocate_slab mm/slub.c:1962 [inline]
- new_slab+0x90/0x3e0 mm/slub.c:2015
- ___slab_alloc+0x6f9/0xb80 mm/slub.c:3203
- __slab_alloc+0x5d/0xa0 mm/slub.c:3302
- slab_alloc_node mm/slub.c:3387 [inline]
- slab_alloc mm/slub.c:3431 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3438 [inline]
- kmem_cache_alloc_lru+0x149/0x270 mm/slub.c:3454
- alloc_inode_sb include/linux/fs.h:3255 [inline]
- f2fs_alloc_inode+0x2d/0x350 fs/f2fs/super.c:1437
- alloc_inode fs/inode.c:261 [inline]
- iget_locked+0x18c/0x7e0 fs/inode.c:1373
- f2fs_iget+0x55/0x4ca0 fs/f2fs/inode.c:486
- f2fs_fill_super+0x5360/0x6dc0 fs/f2fs/super.c:4488
- mount_bdev+0x282/0x3b0 fs/super.c:1445
- f2fs_mount+0x34/0x40 fs/f2fs/super.c:4743
- legacy_get_tree+0xf1/0x190 fs/fs_context.c:632
-page_owner free stack trace missing
 
-Memory state around the buggy address:
- ffff888100567c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888100567d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888100567d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                              ^
- ffff888100567e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888100567e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
 
-[2] https://syzkaller.appspot.com/text?tag=CrashLog&x=13654c60580000
-
-[   24.675720][   T28] audit: type=1400 audit(1745327318.732:72): avc:  denied  { write } for  pid=298 comm="syz-executor399" name="/" dev="loop0" ino=3 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
-[   24.705426][  T296] ------------[ cut here ]------------
-[   24.706608][   T28] audit: type=1400 audit(1745327318.732:73): avc:  denied  { remove_name } for  pid=298 comm="syz-executor399" name="file0" dev="loop0" ino=4 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
-[   24.711550][  T296] WARNING: CPU: 0 PID: 296 at fs/f2fs/inode.c:847 f2fs_evict_inode+0x1262/0x1540
-[   24.734141][   T28] audit: type=1400 audit(1745327318.732:74): avc:  denied  { rename } for  pid=298 comm="syz-executor399" name="file0" dev="loop0" ino=4 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
-[   24.742969][  T296] Modules linked in:
-[   24.765201][   T28] audit: type=1400 audit(1745327318.732:75): avc:  denied  { add_name } for  pid=298 comm="syz-executor399" name="bus" scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:unlabeled_t tclass=dir permissive=1
-[   24.768847][  T296] CPU: 0 PID: 296 Comm: syz-executor399 Not tainted 6.1.129-syzkaller-00017-g642656a36791 #0
-[   24.799506][  T296] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-[   24.809401][  T296] RIP: 0010:f2fs_evict_inode+0x1262/0x1540
-[   24.815018][  T296] Code: 34 70 4a ff eb 0d e8 2d 70 4a ff 4d 89 e5 4c 8b 64 24 18 48 8b 5c 24 28 4c 89 e7 e8 78 38 03 00 e9 84 fc ff ff e8 0e 70 4a ff <0f> 0b 4c 89 f7 be 08 00 00 00 e8 7f 21 92 ff f0 41 80 0e 04 e9 61
-[   24.834584][  T296] RSP: 0018:ffffc90000db7a40 EFLAGS: 00010293
-[   24.840465][  T296] RAX: ffffffff822aca42 RBX: 0000000000000002 RCX: ffff888110948000
-[   24.848291][  T296] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-[   24.856064][  T296] RBP: ffffc90000db7bb0 R08: ffffffff822ac6a8 R09: ffffed10200b005d
-[   24.864073][  T296] R10: 0000000000000000 R11: dffffc0000000001 R12: ffff888100580000
-[   24.871812][  T296] R13: dffffc0000000000 R14: ffff88810fef4078 R15: 1ffff920001b6f5c
-
-The root cause is w/ a fuzzed image, f2fs may missed to clear FI_DIRTY_INODE
-flag for target inode, after f2fs_evict_inode(), the inode is still linked in
-sbi->inode_list[DIRTY_META] global list, once it triggers checkpoint,
-f2fs_sync_inode_meta() may access the released inode.
-
-In f2fs_evict_inode(), let's always call f2fs_inode_synced() to clear
-FI_DIRTY_INODE flag and drop inode from global dirty list to avoid this
-UAF issue.
-
-Cc: stable@kernel.org
-Closes: https://syzkaller.appspot.com/bug?extid=849174b2efaf0d8be6ba
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/inode.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 0a9462b51b75..7b4780d5e00e 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -951,8 +951,12 @@ void f2fs_evict_inode(struct inode *inode)
- 	if (likely(!f2fs_cp_error(sbi) &&
- 				!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
- 		f2fs_bug_on(sbi, is_inode_flag_set(inode, FI_DIRTY_INODE));
--	else
--		f2fs_inode_synced(inode);
-+
-+	/*
-+	 * anyway, it needs to remove the inode from sbi->inode_list[DIRTY_META]
-+	 * list to avoid UAF in f2fs_sync_inode_meta() during checkpoint.
-+	 */
-+	f2fs_inode_synced(inode);
- 
- 	/* for the case f2fs_new_inode() was failed, .i_ino is zero, skip it */
- 	if (inode->i_ino)
--- 
-2.49.0
-
+Best regards,
+Krzysztof
 
