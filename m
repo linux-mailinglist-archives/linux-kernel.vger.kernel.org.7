@@ -1,94 +1,96 @@
-Return-Path: <linux-kernel+bounces-714039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EF5AF6276
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19553AF62B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1783A7801
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0819B4A373A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90E62BE626;
-	Wed,  2 Jul 2025 19:11:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486392DCF5A;
+	Wed,  2 Jul 2025 19:32:37 +0000 (UTC)
+Received: from trager.us (trager.us [52.5.81.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1787218E9F;
-	Wed,  2 Jul 2025 19:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E6B221FC7;
+	Wed,  2 Jul 2025 19:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751483484; cv=none; b=RW6QiwFvkKoi55W5GmV44MrPuaAZqMY2GaG1jAXwyScm6j9GzsRPsobQfDAUUdhIreHVz7sY6Z39ClANEZZ7aunDsCN2pOzP56qmmSUv3dEe/YL7m6qkneLHAHenvbx6RBl2VoHC8zBBbVEmPGEU8bQDBlG9AmMCRa5XmAMhags=
+	t=1751484756; cv=none; b=epLTHd2bSp7KocRwYLJiVy0wnUthTuyN63xGGTI+UqkYUL2/NafFKpCu6E8WGbzLcezbdLmURJLMCDFzpHw+q5ZpUVsk0fUSGngiOpeX6h70bDf7H0TqIa5WnT5/Wce++GBPDm3azpCknT47os0txBV8DhHmPn1OfxGcbYZdrDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751483484; c=relaxed/simple;
-	bh=YoNaNwUFLT82kv2ptCXYqY4Mgn+cmOc73jVNLs/BO8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z8F16hsLfXbtmahwKZlmQhxWztO10M/bUG6VcKntRvNWiUNQdqXRPLLs7RwpwQwfwZ4RJPiGKWk4NCts4v6QZHNP/UMGVBs5Knn+pdmfJ3x7eKKvU0td9chyGQdsVnDX4SxJgftHsG2+YlXfjqek2ES3Psl+a7S44X+csCA5lUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 3D44658BFA;
-	Wed,  2 Jul 2025 19:11:19 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 8ECCD2F;
-	Wed,  2 Jul 2025 19:11:14 +0000 (UTC)
-Date: Wed, 2 Jul 2025 15:11:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
- <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
- Belgrave <beaub@linux.microsoft.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v12 07/14] unwind_user/deferred: Make unwind deferral
- requests NMI-safe
-Message-ID: <20250702151113.25961ecf@batman.local.home>
-In-Reply-To: <d0aa861d-e1bb-4ab4-8ccb-d9fdc39738a9@linux.ibm.com>
-References: <20250701005321.942306427@goodmis.org>
-	<20250701005451.737614486@goodmis.org>
-	<d0aa861d-e1bb-4ab4-8ccb-d9fdc39738a9@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1751484756; c=relaxed/simple;
+	bh=S3tlkmGLslmWoPL3TROuxDeeglOQMYTuEQbmKPjlm+s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OT78Otg8bIQ1zQr3MqOycaoos1ZdwdLA/ftOhkewqOLm28rq/vkvS+kV7gsFdF4T5+dBzNpNyiidbSdlr5TVCsz7d6Q5Izg5TMgstM2TVVAbUTzNWIcYcz7DnsdqwROyeAVI8RRaXlBSOHVsBu8MHKo7223lb68WnFqTbBtQTvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=trager.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
+Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=localhost)
+	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92.3)
+	(envelope-from <lee@trager.us>)
+	id 1uX32X-00080G-Pq; Wed, 02 Jul 2025 19:22:41 +0000
+From: Lee Trager <lee@trager.us>
+To: Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	kernel-team@meta.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Sanman Pradhan <sanman.p211993@gmail.com>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>,
+	Su Hui <suhui@nfschina.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Simon Horman <horms@kernel.org>,
+	Lee Trager <lee@trager.us>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+	Jacob Keller <jacob.e.keller@intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH net-next 0/6] eth: fbnic: Add firmware logging support
+Date: Wed,  2 Jul 2025 12:12:06 -0700
+Message-ID: <20250702192207.697368-1-lee@trager.us>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: zbnbhxynbb1bau79zhap459gestpmx4h
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 8ECCD2F
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/jaa49HHu5DgsoSVQxEPOEMrWu+n1e/U4=
-X-HE-Tag: 1751483474-642477
-X-HE-Meta: U2FsdGVkX1+ucqbNdoZQfHmhufbeMK4NTnU6b2a54e1o8jaomukbo8MpsMCicGq5oAvTYcMYb49gYrWeq56kmvojHGy+F5LNJv3/WwM1tdhvyMrhS1B57onjxFKDPddJ7ElFnZ4WVEO+BWadQWThAtzcfWGwdQG3kBv3+krIfNgZrPzy1FzsLnKL50W6t0P4h425vU0TcUeW7zwurqCg6Sk61/q0v+qhZLrRnq27/DO4+Zrw4vvHkuyCdCveqW/odo3Anbtkdia4TD9qKzPDglPkaGFDbG0yO1ptowCJvu1E6URo6KuvAKl1+a2y7CKFG8i8VVJj7YaF/a8kSpLYkkxO/pPiHroO
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2 Jul 2025 17:53:05 +0200
-Jens Remus <jremus@linux.ibm.com> wrote:
+Firmware running on fbnic generates device logs. These logs contain useful
+information about the device which may or may not be related to the host.
+Logs are stored in a ring buffer and accessible through DebugFS.
 
-> > @@ -2,6 +2,9 @@
-> >  #ifndef _LINUX_UNWIND_USER_DEFERRED_TYPES_H
-> >  #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
-> >  
-> > +#include <asm/local64.h>
-> > +#include <asm/local.h>  
-> 
-> This creates the following circular dependency, that breaks the build on
-> s390 as follows, whenever local64.h is included first, so that local64_t
-> is not yet defined when unwind_deferred_types.h gets included down the
-> line:
+Lee Trager (6):
+  eth: fbnic: Fix incorrect minimum firmware version
+  eth: fbnic: Use FIELD_PREP to generate minimum firmware version
+  eth: fbnic: Create ring buffer for firmware logs
+  eth: fbnic: Add mailbox support for firmware logs
+  eth: fbnic: Enable firmware logging
+  eth: fbnic: Create fw_log file in DebugFS
 
-As per the discussion on patch 6, this may not be an issue in the next
-version. I'm looking to get rid of 64 bit cmpxchg.
+ drivers/net/ethernet/meta/fbnic/Makefile      |   1 +
+ drivers/net/ethernet/meta/fbnic/fbnic.h       |   3 +
+ drivers/net/ethernet/meta/fbnic/fbnic_csr.h   |  27 ++-
+ .../net/ethernet/meta/fbnic/fbnic_debugfs.c   |  29 +++
+ drivers/net/ethernet/meta/fbnic/fbnic_fw.c    | 179 +++++++++++++++++-
+ drivers/net/ethernet/meta/fbnic/fbnic_fw.h    |  36 ++++
+ .../net/ethernet/meta/fbnic/fbnic_fw_log.c    | 123 ++++++++++++
+ .../net/ethernet/meta/fbnic/fbnic_fw_log.h    |  45 +++++
+ drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |  21 ++
+ 9 files changed, 451 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/net/ethernet/meta/fbnic/fbnic_fw_log.c
+ create mode 100644 drivers/net/ethernet/meta/fbnic/fbnic_fw_log.h
 
--- Steve
+--
+2.47.1
 
