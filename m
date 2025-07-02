@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-714230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C15DAF6547
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72616AF6597
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC9C522E6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC621C45F50
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAD124C06A;
-	Wed,  2 Jul 2025 22:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE28C24E019;
+	Wed,  2 Jul 2025 22:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IPvxbppH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gX9HIzpV"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960B524A05B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 22:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C981A1F4261;
+	Wed,  2 Jul 2025 22:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751495702; cv=none; b=P/Rk0W90W+kYMA7uDaW2AH3qqtbN0KnuaHbf0/KCtpKj92Vd1Wle+PSTxNYdUDQuO6nMZpYsd/GLkDib8/btwR/sAMt2Bd0xkaFByunvynhGmhoH+vGhwWB1R/bJsIcaZmxP56TSG8vVwHKMCFCX+FgMYWuWRyVWco1wuIUvgXQ=
+	t=1751496361; cv=none; b=skdY7rTU+SOIm7nRLjtsq4+b8QFWd9gik+6RVhAxaQgUo1WPgB6wcdmrQqqVyO2d7ZMZPDvOWBlx4PS2xwKEgHu9+eQSP+sAMf84UEiahOt8tgd98DRlFY6SL45YduByAB1FFMB3A+jG0jgrBHGdrEPYqfQJw6/QDfNwvYvdyyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751495702; c=relaxed/simple;
-	bh=GAlxTjCWg7CNPfzdPKpxiRK/Lyn09NTHnoTv6rZDjso=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ub42isnikmIMcjlecQGYLG2mOfvK/ZpxcAgjLw4C+vpbpw9zKKE0fL4qp/QnhtsfHy2+v09mXaK98g/6Mldjjf6bU9sH/StfHivY7u02ICzAPpr4Ckznn5gc1OMmqfSV0O2ZAvRFyauciqno938/2CnvqcXQJibFEzJUd3IOyPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IPvxbppH; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751495701; x=1783031701;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GAlxTjCWg7CNPfzdPKpxiRK/Lyn09NTHnoTv6rZDjso=;
-  b=IPvxbppHISjltgHcG+YqXJODO1sLm1I3odlfkmYRT2aaWO6cYRns78Wn
-   FEhJAQmHVrDR9qe0PLxG88KIOxlmkMkZsw5EiE39Dc0ISVybdq3GGJpbP
-   Iz+r4r7nUj1nxQRmprRMVWFbaD159HNOuCrUinjGnzQqgaGJFFtzdghQJ
-   8iGHNSbXmcA9FtmZ0+EzZAZ+Nw8Q0OOkBNgz8NFFAjzWbvB4H5Zk92Jr3
-   /n5++TyOpGURoRgX4eCffzNIWiYsRAaSIntBJpOcSkPXSy+j3Z2ZMPrDw
-   VWr1M/7PDNArrQQzRUJ+QiNR1k96/LlaihMg159tx0+/qPr6mAf0b+e9a
-   Q==;
-X-CSE-ConnectionGUID: 1nKNotXIRZuR96x5hdGyRg==
-X-CSE-MsgGUID: 12dWT3MnTDu5oyOF3IBV7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="41438527"
-X-IronPort-AV: E=Sophos;i="6.16,282,1744095600"; 
-   d="scan'208";a="41438527"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 15:35:01 -0700
-X-CSE-ConnectionGUID: l5BQhDkHRGe8bqVpKtFUYA==
-X-CSE-MsgGUID: Riy1InJoRWuWUJgt4I6lFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,282,1744095600"; 
-   d="scan'208";a="159889429"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO stinkbox) ([10.245.244.30])
-  by orviesa005.jf.intel.com with SMTP; 02 Jul 2025 15:34:56 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Thu, 03 Jul 2025 01:34:55 +0300
-From: Ville Syrjala <ville.syrjala@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jani Nikula <jani.nikula@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Matt Wagantall <mattw@codeaurora.org>,
-	Dejin Zheng <zhengdejin5@gmail.com>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Subject: [PATCH 4/4] DO-NOT-MERGE: drm/i915: Use poll_timeout_us()
-Date: Thu,  3 Jul 2025 01:34:39 +0300
-Message-ID: <20250702223439.19752-4-ville.syrjala@linux.intel.com>
+	s=arc-20240116; t=1751496361; c=relaxed/simple;
+	bh=bAxT7zPif7gDfwukFbvsyJyuLCrL/XhzO4gRr8ODT/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ksGkray5DIkVCXjePNup0apxdmERkRIneSXXh2NrvZm87JmU6F5vEgiMq+ckec2in75cu4aD6HZpZr+eVRIoZUzqjIWKFbTeNMZNVSw7Asq+2UNEkY2v1rq0GmbRQ/MBJQNfJTs/d0KW/Zom+ie3Nb6oglBy2Qqlg1dUqNp22Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gX9HIzpV; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A26FF406FC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1751495759; bh=D+KAohx9yyDKsSmhMQmJNnI4DAmY9EzLf2HuMkXOofQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gX9HIzpVXXiOD9JS6W68kJerSvxYvKEDcn4DAJSwDbQ1o9NCy2Xz85ZUGqaM23Fb9
+	 GdgQd5y8kjmUaq+dwgrNHCY5QO+2KxVy1j6LIkE3/x0wBykK2jmWKZZKYr9VoYcE77
+	 mVFDsjdxB1X2LWt0aMtzwSoYQmVosUeqqVSmu6Pg/iUJTukeTGbU0YBrIsgdioG3M+
+	 aS7AU0wWUSeeOE/nrRvxYLwxT1lwJ6bIeopDiJt29iCOa7LZ70+ZtR+Rv/41bs9fMs
+	 DnfdKHr2wqRnL0YOHii/xRx1CGxIxFtmyI/rs6AW19DYt0zZCcK0CX4o/hxNY8Yd/T
+	 /HjtRYRxQ0QBQ==
+Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
+	by ms.lwn.net (Postfix) with ESMTPA id A26FF406FC;
+	Wed,  2 Jul 2025 22:35:58 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 00/12] [PATCH 00/11] Thrash up the parser/output interface
+Date: Wed,  2 Jul 2025 16:35:12 -0600
+Message-ID: <20250702223524.231794-1-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250702223439.19752-1-ville.syrjala@linux.intel.com>
-References: <20250702223439.19752-1-ville.syrjala@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+[I'll slow down soon, honest - real work is piling up...]
 
-Make sure poll_timeout_us() works by using it in i915
-instead of the custom __wait_for().
+The kerneldoc parsing phase gathers all of the information about the
+declarations of interest, then passes it through to the output phase as a
+dict that is an unstructured blob of information; this organization has its
+origins in the Perl version of the program.  It results in an interface
+that is difficult to reason about, dozen-parameter function calls, and
+other ills.
 
-Remaining difference between two:
-               | poll_timeout_us() | __wait_for()
----------------------------------------------------
-backoff        | fixed interval    | exponential
-usleep_range() | N/4+1 to N        | N to N*2
-clock          | MONOTONIC         | MONOTONIC_RAW
+Introduce a new class (KdocItem) to carry this information between the
+parser and the output modules, and, step by step, modify the system to use
+this class in a more structured way.  This could be taken further by
+creating a subclass of KdocItem for each declaration type (function,
+struct, ...), but that is probably more structure than we need.
 
-Just a test hack for now, proper conversion probably
-needs actual thought.
+As a final step, add some structure for the accumulation of the output
+text.
 
-Cc: Jani Nikula <jani.nikula@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>
-Cc: Imre Deak <imre.deak@intel.com>
-Cc: David Laight <david.laight.linux@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Matt Wagantall <mattw@codeaurora.org>
-Cc: Dejin Zheng <zhengdejin5@gmail.com>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: intel-xe@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/i915/i915_utils.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+The result is (I hope) clearer code, the removal of a bunch of boilerplate,
+and no changes to the generated output.
 
-diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
-index f7fb40cfdb70..8509d1de1901 100644
---- a/drivers/gpu/drm/i915/i915_utils.h
-+++ b/drivers/gpu/drm/i915/i915_utils.h
-@@ -32,6 +32,7 @@
- #include <linux/types.h>
- #include <linux/workqueue.h>
- #include <linux/sched/clock.h>
-+#include <linux/iopoll.h>
- 
- #ifdef CONFIG_X86
- #include <asm/hypervisor.h>
-@@ -238,7 +239,7 @@ wait_remaining_ms_from_jiffies(unsigned long timestamp_jiffies, int to_wait_ms)
-  * timeout could be due to preemption or similar and we've never had a chance to
-  * check the condition before the timeout.
-  */
--#define __wait_for(OP, COND, US, Wmin, Wmax) ({ \
-+#define __wait_for_old(OP, COND, US, Wmin, Wmax) ({ \
- 	const ktime_t end__ = ktime_add_ns(ktime_get_raw(), 1000ll * (US)); \
- 	long wait__ = (Wmin); /* recommended min for usleep is 10 us */	\
- 	int ret__;							\
-@@ -263,6 +264,8 @@ wait_remaining_ms_from_jiffies(unsigned long timestamp_jiffies, int to_wait_ms)
- 	ret__;								\
- })
- 
-+#define __wait_for(OP, COND, US, Wmin, Wmax)				\
-+	poll_timeout_us(OP, COND, (Wmin), (US), false)
- #define _wait_for(COND, US, Wmin, Wmax)	__wait_for(, (COND), (US), (Wmin), \
- 						   (Wmax))
- #define wait_for(COND, MS)		_wait_for((COND), (MS) * 1000, 10, 1000)
+Jonathan Corbet (12):
+  docs: kdoc; Add a rudimentary class to represent output items
+  docs: kdoc: simplify the output-item passing
+  docs: kdoc: drop "sectionlist"
+  docs: kdoc: Centralize handling of the item section list
+  docs: kdoc: remove the "struct_actual" machinery
+  docs: kdoc: use self.entry.parameterlist directly in check_sections()
+  docs: kdoc: Coalesce parameter-list handling
+  docs: kdoc: Regularize the use of the declaration name
+  docs: kdoc: straighten up dump_declaration()
+  docs: kdoc: directly access the always-there KdocItem fields
+  docs: kdoc: clean up check_sections()
+  docs: kdoc: Improve the output text accumulation
+
+ scripts/lib/kdoc/kdoc_files.py  |   4 +-
+ scripts/lib/kdoc/kdoc_item.py   |  39 ++++
+ scripts/lib/kdoc/kdoc_output.py | 331 ++++++++++++++------------------
+ scripts/lib/kdoc/kdoc_parser.py | 162 +++-------------
+ 4 files changed, 218 insertions(+), 318 deletions(-)
+ create mode 100644 scripts/lib/kdoc/kdoc_item.py
+
 -- 
 2.49.0
 
