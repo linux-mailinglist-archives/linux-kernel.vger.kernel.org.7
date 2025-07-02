@@ -1,278 +1,298 @@
-Return-Path: <linux-kernel+bounces-714054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0222AF62A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E48AF62AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 265EB16C7B6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7BA16FE16
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5872D0C9D;
-	Wed,  2 Jul 2025 19:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1261369B4;
+	Wed,  2 Jul 2025 19:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HBAQ2lm4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CO0TzRUo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A94F2F7CE1
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 19:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9252F7D18
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 19:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751484542; cv=none; b=mC/ijE1l3IfPlfRVQuZEjul9vzekpX5eOkbsUg4bg+XdZyQY9xngQTo81Rm6X/iWPHj52Il5cRJnm4sMjTeiuDwQ1bVQJMyZt8P4EsT2VQGCVj2CZ7MGO7tFopa+lmPsdz19gHC94hPfhqlXQ5hktx8ZFacRT+oT0BenPiL2C3M=
+	t=1751484624; cv=none; b=lK/3uc1SCf+P3VYTE+BTfKEAhHazGXT8O7DLOaD48MnDsbTtT6FaQMA7feu12y2pD2LlZUX7ZO06WiqXI6vGi0kuNhoZ5HVFQeSaJvGEhFAnuaL3lutC/tSS3S/aPQlOEl6Fq0NZpFAM7SbrJbw2Z1DxQSvaLyH6KNp8qyaYMeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751484542; c=relaxed/simple;
-	bh=E8flaWw2++poWNVYNidJyMe0WHnyGRsXcMcoUOKMvqw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=GOEk9BxapQ/gE9PqhYqlxU+QWTybzG4ncM1sgW1X/VuNoLcalCkPvpGWQdHD9uJKycR7j/R61lRRnHfcZ3f1a2Zv9Is1XMIja9Gt3Ghc60VVk27vCQfn9VYHZ2wP03b/9agN/m1FCyN9l+DJGTq++f1kGHxl7LfXCoIO82pCu1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HBAQ2lm4; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751484540; x=1783020540;
-  h=date:from:to:cc:subject:message-id;
-  bh=E8flaWw2++poWNVYNidJyMe0WHnyGRsXcMcoUOKMvqw=;
-  b=HBAQ2lm4f5BVCdoog5GSDK1b7amXMZodAdngdG8B7dxwW8rpFMcZXh+4
-   iKk+hzU1nnMeaPVRBHw16I6hownXwgWmn7W1iJIKjuCapyo/c2ZO9ny03
-   LSMj+vW8eQN3C5ZOe9vJpHWim+QmWNQOCrYn9GLlVycFOsm4iBXO2sH1w
-   S4wMNC7R8Ym3QpqiM0h5c69NjQJOYBFO4KyejYiUwpWjKmyDBbRhOu5RH
-   u3ycVs7IHniaM6Lo0JFieL1tKBwsYNGAnfBZymN/VZHY1Ha75xrEdWM4B
-   3U1V+lztSzoV5TBIDduiFAFIbhD+yFh58YSt0MzmfKOyQTvz0nUyEwAjn
-   w==;
-X-CSE-ConnectionGUID: bhnK927wQzik/BUadcwHIw==
-X-CSE-MsgGUID: pNTK8t2dQVqmLhkYE/UKoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="64846773"
-X-IronPort-AV: E=Sophos;i="6.16,282,1744095600"; 
-   d="scan'208";a="64846773"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 12:29:00 -0700
-X-CSE-ConnectionGUID: iqIXe/RSThOyLyvAYA2PDA==
-X-CSE-MsgGUID: FOsCUlmBTsWHAs32xbkcWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,282,1744095600"; 
-   d="scan'208";a="158541682"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 02 Jul 2025 12:28:59 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uX38a-00010t-0h;
-	Wed, 02 Jul 2025 19:28:56 +0000
-Date: Thu, 03 Jul 2025 03:28:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250701] BUILD SUCCESS
- 2251db9b5842843a20bd397903c41c338ff7a215
-Message-ID: <202507030350.xP9XVxcj-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1751484624; c=relaxed/simple;
+	bh=sqGDApwK+RkK93D+5heEBkQKPJVnN6cdJg5/KLXWmAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bsw8hm1AaSubSxx25UakwcanYao/jvTUZ9g4dC3mplYE3WBvUGH9zn8o+U10SHfXDOGRYBCdIwr3V5a89c5xR9GC2x3WTWLbIlHc0CguJ2Ts+XghwK0Hax5rlXkxhQSca6kMnum/J6upJlgrVUPE6CvpdRYq31FXVAvFkRfe/BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CO0TzRUo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751484621;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bVjNXEmwWJ25OMSC8D6SKZP+6PnJvUru8QWuoRzdce0=;
+	b=CO0TzRUoel8ZoKGHB3QBFldNYkceZblILqlEjKWo3XAlKL4UZGh0z3qh8jnKFqkgTqanux
+	FMIr0xGrDzmz8kxl/5xG4HHo4w1Jbez9+Ut1FEJvMLEvjpCW0iTqZspuUU2y8SPozCPP/n
+	73tyAL+jq7pddErrte0uqYzeOsnis/c=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-251-vnLzLULVO8SfxTlSbjEqIA-1; Wed, 02 Jul 2025 15:30:20 -0400
+X-MC-Unique: vnLzLULVO8SfxTlSbjEqIA-1
+X-Mimecast-MFC-AGG-ID: vnLzLULVO8SfxTlSbjEqIA_1751484620
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6fb5664c771so116252766d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 12:30:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751484619; x=1752089419;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bVjNXEmwWJ25OMSC8D6SKZP+6PnJvUru8QWuoRzdce0=;
+        b=NQP4jUIluQf0L13ff2kdEjI0Vtd1n3njhdiiFWHHgP3MRyeJvrwOTcxeBxzYp+88Ld
+         BA7/z01+0HjdQckHQTLgH5ehT426HX5Qsuxqvfljlg6xrV8eRX/FgJ4/O1Z+TtlvW1GB
+         5XNZx6Gfxy0OQF50TWQHUAvtjdeBTDObSMGkZCY0gVcKe119+LYrgOwzbMrwkDPBKrhf
+         DuDEhuReDSDxrnMGyPlXXCD2w5VZlyoO21jTBhfTY/pS03BYYLxq9X5grXElPA+AvIgP
+         dkUxIo8/WgEUfk81aXqXs6Drqb/1oZLe2pB9O1pCqN8xxwHY1Xic8gVF0vuQgiFZziH3
+         D5nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXH//EP0G0mF8MceyQqovXBzvuaEQvuMT24Qy/u5NhQRQcIE4m1sK5ig4cqIwzakznk2rYSusAe+5Dr8zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTWz01jFJxGMUr0HtN82hHgJXjPTxqCUFJnpMlPP0xSppLBiEt
+	3bpZBkRyPKVa3dkkrlhv7KHCQ8962RHrv1nEJX3aqQjVfdt+Ofo+LI/dQwSaVuPxFawm9KS43mx
+	M5eu/L8z1aTXWD9GlWHtOW1K5ok0/lpZmPOeGktu3B+QpFPo5E1S5WTMKKt/Qmfn+rQ==
+X-Gm-Gg: ASbGncvw++Dc6NIjZGygxcPjwGvnNRx6sGCIbojWaylZuy/OZR3wOa14EDajz5SYDnT
+	XDk32L0MJSIE/SKL0q4ZVAr/5Q/D4kmspwPQ38xFDrvBEVHWKTbAB0b9/tXj8UdBxA4yjIV6xQg
+	uuLjpUQA0Hpoqe6GyhTMyWo7Nwar5uZFWKpiq44A5Q+0L9EueDtHtSrItRb4mop0/J2Yz/NGuqr
+	8XsEpDZ2qsLwbGqhE3fB7qlcP2EXLFlQ8tRWd4NJhggAbUfQH2jtOshAfkcpFVw+M9S1+pisybo
+	5Tdi0TNMlqkpUw==
+X-Received: by 2002:ad4:5de7:0:b0:6fa:c81a:6234 with SMTP id 6a1803df08f44-702bc8a6f74mr10611576d6.10.1751484619053;
+        Wed, 02 Jul 2025 12:30:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESVA/R9sRs5Zd0ceXMGp/3YBzwNIxrliDpxNfmTWOPrytf8EoXJDoPprMsHlrfqNc+nZKlSg==
+X-Received: by 2002:ad4:5de7:0:b0:6fa:c81a:6234 with SMTP id 6a1803df08f44-702bc8a6f74mr10610616d6.10.1751484618418;
+        Wed, 02 Jul 2025 12:30:18 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd773119c3sm106153026d6.120.2025.07.02.12.30.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 12:30:17 -0700 (PDT)
+Date: Wed, 2 Jul 2025 15:30:14 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Houghton <jthoughton@google.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Michal Hocko <mhocko@suse.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aGWIxj74Hk6Fld06@x1.local>
+References: <20250627154655.2085903-1-peterx@redhat.com>
+ <20250627154655.2085903-2-peterx@redhat.com>
+ <aGD-QxroTEDUh1eX@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aGD-QxroTEDUh1eX@kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250701
-branch HEAD: 2251db9b5842843a20bd397903c41c338ff7a215  treewide-TRAILING_OVERLAP: Avoid -Wflex-array-member-not-at-end warnings
+On Sun, Jun 29, 2025 at 11:50:11AM +0300, Mike Rapoport wrote:
+> Hi Peter,
 
-elapsed time: 1449m
+Hi, Mike,
 
-configs tested: 186
-configs skipped: 5
+> 
+> On Fri, Jun 27, 2025 at 11:46:52AM -0400, Peter Xu wrote:
+> > Introduce a generic userfaultfd API for vm_operations_struct, so that one
+> > vma, especially when as a module, can support userfaults without modifying
+> > the core files.  More importantly, when the module can be compiled out of
+> > the kernel.
+> > 
+> > So, instead of having core mm referencing modules that may not ever exist,
+> > we need to have modules opt-in on core mm hooks instead.
+> > 
+> > After this API applied, if a module wants to support userfaultfd, the
+> > module should only need to touch its own file and properly define
+> > vm_uffd_ops, instead of changing anything in core mm.
+> 
+> I liked the changelog update you proposed in v1 thread. I took liberty to
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+It's definitely hard to satisfy all reviewers on one version of commit
+message..
 
-tested configs:
-alpha                            alldefconfig    gcc-15.1.0
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    clang-19
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250702    gcc-10.5.0
-arc                   randconfig-002-20250702    gcc-14.3.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-15.1.0
-arm                                 defconfig    gcc-15.1.0
-arm                      integrator_defconfig    clang-21
-arm                   randconfig-001-20250702    clang-17
-arm                   randconfig-002-20250702    clang-19
-arm                   randconfig-003-20250702    clang-21
-arm                   randconfig-004-20250702    clang-17
-arm                         vf610m4_defconfig    gcc-15.1.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20250702    clang-21
-arm64                 randconfig-002-20250702    clang-21
-arm64                 randconfig-003-20250702    clang-21
-arm64                 randconfig-004-20250702    clang-21
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250702    gcc-15.1.0
-csky                  randconfig-001-20250703    gcc-8.5.0
-csky                  randconfig-002-20250702    gcc-15.1.0
-csky                  randconfig-002-20250703    gcc-8.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                          allmodconfig    clang-19
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-19
-hexagon                          allyesconfig    clang-21
-hexagon                             defconfig    gcc-15.1.0
-hexagon               randconfig-001-20250702    clang-21
-hexagon               randconfig-001-20250703    gcc-8.5.0
-hexagon               randconfig-002-20250702    clang-21
-hexagon               randconfig-002-20250703    gcc-8.5.0
-i386                             allmodconfig    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-20
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-20
-i386        buildonly-randconfig-001-20250702    clang-20
-i386        buildonly-randconfig-001-20250703    gcc-12
-i386        buildonly-randconfig-002-20250702    gcc-12
-i386        buildonly-randconfig-002-20250703    gcc-12
-i386        buildonly-randconfig-003-20250702    clang-20
-i386        buildonly-randconfig-003-20250703    gcc-12
-i386        buildonly-randconfig-004-20250702    clang-20
-i386        buildonly-randconfig-004-20250703    gcc-12
-i386        buildonly-randconfig-005-20250702    gcc-12
-i386        buildonly-randconfig-005-20250703    gcc-12
-i386        buildonly-randconfig-006-20250702    clang-20
-i386        buildonly-randconfig-006-20250703    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-15.1.0
-loongarch                         allnoconfig    gcc-15.1.0
-loongarch                           defconfig    gcc-15.1.0
-loongarch             randconfig-001-20250702    gcc-15.1.0
-loongarch             randconfig-001-20250703    gcc-8.5.0
-loongarch             randconfig-002-20250702    gcc-15.1.0
-loongarch             randconfig-002-20250703    gcc-8.5.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-m68k                        m5307c3_defconfig    gcc-15.1.0
-m68k                        stmark2_defconfig    gcc-15.1.0
-m68k                           sun3_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                  cavium_octeon_defconfig    gcc-15.1.0
-mips                      loongson3_defconfig    gcc-15.1.0
-mips                       rbtx49xx_defconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20250702    gcc-14.2.0
-nios2                 randconfig-001-20250703    gcc-8.5.0
-nios2                 randconfig-002-20250702    gcc-14.2.0
-nios2                 randconfig-002-20250703    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250702    gcc-12.4.0
-parisc                randconfig-001-20250703    gcc-8.5.0
-parisc                randconfig-002-20250702    gcc-9.3.0
-parisc                randconfig-002-20250703    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    gcc-15.1.0
-powerpc               mpc834x_itxgp_defconfig    clang-21
-powerpc               randconfig-001-20250702    gcc-11.5.0
-powerpc               randconfig-001-20250703    gcc-8.5.0
-powerpc               randconfig-002-20250702    gcc-11.5.0
-powerpc               randconfig-002-20250703    gcc-8.5.0
-powerpc               randconfig-003-20250702    clang-21
-powerpc               randconfig-003-20250703    gcc-8.5.0
-powerpc                     tqm8540_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20250702    clang-21
-powerpc64             randconfig-001-20250703    gcc-8.5.0
-powerpc64             randconfig-002-20250702    clang-19
-powerpc64             randconfig-002-20250703    gcc-8.5.0
-powerpc64             randconfig-003-20250702    clang-21
-powerpc64             randconfig-003-20250703    gcc-8.5.0
-riscv                            allmodconfig    gcc-15.1.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    gcc-15.1.0
-riscv                 randconfig-001-20250702    clang-21
-riscv                 randconfig-001-20250703    gcc-12
-riscv                 randconfig-002-20250702    clang-21
-riscv                 randconfig-002-20250703    gcc-12
-s390                             allmodconfig    clang-18
-s390                             allmodconfig    gcc-15.1.0
-s390                              allnoconfig    clang-21
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-001-20250702    gcc-10.5.0
-s390                  randconfig-001-20250703    gcc-12
-s390                  randconfig-002-20250702    clang-21
-s390                  randconfig-002-20250703    gcc-12
-sh                               alldefconfig    gcc-15.1.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                    randconfig-001-20250702    gcc-15.1.0
-sh                    randconfig-001-20250703    gcc-12
-sh                    randconfig-002-20250702    gcc-15.1.0
-sh                    randconfig-002-20250703    gcc-12
-sh                           se7721_defconfig    gcc-15.1.0
-sh                           se7724_defconfig    gcc-15.1.0
-sh                  sh7785lcr_32bit_defconfig    gcc-15.1.0
-sparc                            alldefconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250702    gcc-12.4.0
-sparc                 randconfig-001-20250703    gcc-12
-sparc                 randconfig-002-20250702    gcc-15.1.0
-sparc                 randconfig-002-20250703    gcc-12
-sparc64               randconfig-001-20250702    gcc-9.3.0
-sparc64               randconfig-001-20250703    gcc-12
-sparc64               randconfig-002-20250702    gcc-11.5.0
-sparc64               randconfig-002-20250703    gcc-12
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    clang-19
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250702    clang-21
-um                    randconfig-001-20250703    gcc-12
-um                    randconfig-002-20250702    clang-21
-um                    randconfig-002-20250703    gcc-12
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250702    gcc-12
-x86_64      buildonly-randconfig-002-20250702    gcc-11
-x86_64      buildonly-randconfig-003-20250702    clang-20
-x86_64      buildonly-randconfig-004-20250702    clang-20
-x86_64      buildonly-randconfig-005-20250702    clang-20
-x86_64      buildonly-randconfig-006-20250702    gcc-12
-x86_64                              defconfig    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-12
-x86_64                         rhel-9.4-kunit    gcc-12
-x86_64                           rhel-9.4-ltp    gcc-12
-x86_64                          rhel-9.4-rust    clang-18
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                       common_defconfig    gcc-15.1.0
-xtensa                randconfig-001-20250702    gcc-14.3.0
-xtensa                randconfig-001-20250703    gcc-12
-xtensa                randconfig-002-20250702    gcc-12.4.0
-xtensa                randconfig-002-20250703    gcc-12
+> slightly update it and here's what I've got:
+> 
+>   Currently, most of the userfaultfd features are implemented directly in the
+>   core mm.  It will invoke VMA specific functions whenever necessary.  So far
+>   it is fine because it almost only interacts with shmem and hugetlbfs.
+> 
+>   Introduce a generic userfaultfd API extension for vm_operations_struct,
+>   so that any code that implements vm_operations_struct (including kernel
+>   modules that can be compiled separately from the kernel core) can support
+>   userfaults without modifying the core files.
+> 
+>   With this API applied, if a module wants to support userfaultfd, the
+>   module should only need to properly define vm_uffd_ops and hook it to
+>   vm_operations_struct, instead of changing anything in core mm.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks, I very much appreciate explicit suggestions on the wordings.
+Personally I like it and the rest suggestions, I'll use it when repost, but
+I'll also wait for others if anyone has other things to say.
+
+> 
+> > Note that such API will not work for anonymous. Core mm will process
+> > anonymous memory separately for userfault operations like before.
+> 
+> Maybe:
+> 
+>   This API will not work for anonymous memory. Handling of userfault
+>   operations for anonymous memory remains unchanged in core mm.
+>  
+> > This patch only introduces the API alone so that we can start to move
+> > existing users over but without breaking them.
+> 
+> Please use imperative mood, e.g.
+>  
+>   Only introduce the new API so that ...
+>  
+> > Currently the uffd_copy() API is almost designed to be the simplistic with
+> > minimum mm changes to move over to the API.
+> > 
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  include/linux/mm.h            |  9 ++++++
+> >  include/linux/userfaultfd_k.h | 52 +++++++++++++++++++++++++++++++++++
+> >  2 files changed, 61 insertions(+)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index ef40f68c1183..6a5447bd43fd 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -576,6 +576,8 @@ struct vm_fault {
+> >  					 */
+> >  };
+> >  
+> > +struct vm_uffd_ops;
+> > +
+> >  /*
+> >   * These are the virtual MM functions - opening of an area, closing and
+> >   * unmapping it (needed to keep files on disk up-to-date etc), pointer
+> > @@ -653,6 +655,13 @@ struct vm_operations_struct {
+> >  	 */
+> >  	struct page *(*find_special_page)(struct vm_area_struct *vma,
+> >  					  unsigned long addr);
+> > +#ifdef CONFIG_USERFAULTFD
+> > +	/*
+> > +	 * Userfaultfd related ops.  Modules need to define this to support
+> > +	 * userfaultfd.
+> > +	 */
+> > +	const struct vm_uffd_ops *userfaultfd_ops;
+> > +#endif
+> >  };
+> >  
+> >  #ifdef CONFIG_NUMA_BALANCING
+> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
+> > index df85330bcfa6..c9a093c4502b 100644
+> > --- a/include/linux/userfaultfd_k.h
+> > +++ b/include/linux/userfaultfd_k.h
+> > @@ -92,6 +92,58 @@ enum mfill_atomic_mode {
+> >  	NR_MFILL_ATOMIC_MODES,
+> >  };
+> >  
+> > +/* VMA userfaultfd operations */
+> > +struct vm_uffd_ops {
+> > +	/**
+> > +	 * @uffd_features: features supported in bitmask.
+> > +	 *
+> > +	 * When the ops is defined, the driver must set non-zero features
+> > +	 * to be a subset (or all) of: VM_UFFD_MISSING|WP|MINOR.
+> > +	 */
+> > +	unsigned long uffd_features;
+> > +	/**
+> > +	 * @uffd_ioctls: ioctls supported in bitmask.
+> > +	 *
+> > +	 * Userfaultfd ioctls supported by the module.  Below will always
+> > +	 * be supported by default whenever a module provides vm_uffd_ops:
+> > +	 *
+> > +	 *   _UFFDIO_API, _UFFDIO_REGISTER, _UFFDIO_UNREGISTER, _UFFDIO_WAKE
+> > +	 *
+> > +	 * The module needs to provide all the rest optionally supported
+> > +	 * ioctls.  For example, when VM_UFFD_MISSING was supported,
+> > +	 * _UFFDIO_COPY must be supported as ioctl, while _UFFDIO_ZEROPAGE
+> > +	 * is optional.
+> > +	 */
+> > +	unsigned long uffd_ioctls;
+> > +	/**
+> > +	 * uffd_get_folio: Handler to resolve UFFDIO_CONTINUE request.
+> > +	 *
+> > +	 * @inode: the inode for folio lookup
+> > +	 * @pgoff: the pgoff of the folio
+> > +	 * @folio: returned folio pointer
+> > +	 *
+> > +	 * Return: zero if succeeded, negative for errors.
+> > +	 */
+> > +	int (*uffd_get_folio)(struct inode *inode, pgoff_t pgoff,
+> > +			      struct folio **folio);
+> > +	/**
+> > +	 * uffd_copy: Handler to resolve UFFDIO_COPY|ZEROPAGE request.
+> > +	 *
+> > +	 * @dst_pmd: target pmd to resolve page fault
+> > +	 * @dst_vma: target vma
+> > +	 * @dst_addr: target virtual address
+> > +	 * @src_addr: source address to copy from
+> > +	 * @flags: userfaultfd request flags
+> > +	 * @foliop: previously allocated folio
+> > +	 *
+> > +	 * Return: zero if succeeded, negative for errors.
+> > +	 */
+> > +	int (*uffd_copy)(pmd_t *dst_pmd, struct vm_area_struct *dst_vma,
+> > +			 unsigned long dst_addr, unsigned long src_addr,
+> > +			 uffd_flags_t flags, struct folio **foliop);
+> > +};
+> > +typedef struct vm_uffd_ops vm_uffd_ops;
+> 
+> Either use vm_uffd_ops_t for the typedef or drop the typedef entirely. My
+> preference is for the second option.
+
+Andrew helped me to fix some hidden spaces which I appreciated, then I
+found checkpatch warns on this one too besides the spaces fixed in mm-new.
+I do not know why checkpatch doesn't like typedefs even if typedefs are
+massively used in Linux..
+
+I think I'll simply stick with not using typedefs.
+
+Thanks,
+
+> 
+> > +
+> >  #define MFILL_ATOMIC_MODE_BITS (const_ilog2(NR_MFILL_ATOMIC_MODES - 1) + 1)
+> >  #define MFILL_ATOMIC_BIT(nr) BIT(MFILL_ATOMIC_MODE_BITS + (nr))
+> >  #define MFILL_ATOMIC_FLAG(nr) ((__force uffd_flags_t) MFILL_ATOMIC_BIT(nr))
+> > -- 
+> > 2.49.0
+> > 
+> 
+> -- 
+> Sincerely yours,
+> Mike.
+> 
+
+-- 
+Peter Xu
+
 
