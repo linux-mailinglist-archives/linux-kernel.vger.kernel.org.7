@@ -1,144 +1,91 @@
-Return-Path: <linux-kernel+bounces-713173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D61CAF146F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:47:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F30AAF1474
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A774E7952
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9991C28558
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228BF2673BC;
-	Wed,  2 Jul 2025 11:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387A52673AF;
+	Wed,  2 Jul 2025 11:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MhNaDu3K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="myc68ZIn"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AC8260569
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068E32609EC
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751456849; cv=none; b=A3KQa8HEFip/5b01WzHCVe587RepLLqO7iJDQhHRY3dBHK8fjlGkbOzOTRPX92mYidgHQAFEznY5IAecfktE6q+b00b5bag6TSAybFcJsGC8ALVF9TOOa8lhoqbERGqtBAxVm0B8SQFLRRQwtHDpAUJ5ucpwEe6d4dzDOqdGZK8=
+	t=1751456879; cv=none; b=fZ4VvloJz4d6W//1cTh5DIayqT+lYdj8a1HcC2j2aPZpPvgVYz4bgZdOKXHLzUByFFIq1XFerZsG+/Z6uvjqXUCSTXGAwJU2BEjhqecsYMC3YksZ5QHWXEiR3PjWfT315B8aICErTPv5Qm7qebUH+ygXvHDLRWlcrFigwwxg1bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751456849; c=relaxed/simple;
-	bh=EdrNrz0J5/F40ltBEuQ5eTDBQM8WpBm8Wgb12vkPL4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qlTQmwl/gI07B0DLZXYSEO0IaUU7Lm3NNaRbCVMyz6fsAvJEVVnFKTJowCns00p6513YIGYnISobThQ+/pKCm2pPUgnq1UCQbBeJse3gG2rVsnipV7JgQMeFBVm+4BX4QY1hgEUF5cG64Q41lidNObe/eyGYwum5RB0NXougKM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MhNaDu3K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751456847;
+	s=arc-20240116; t=1751456879; c=relaxed/simple;
+	bh=XXM/2+43v5B/yWZGaaE+2zqWNDPJnqN0DeA9m2z+i+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rN3zLBY46WnMZM13tUW43jg4lq5Qzd2htNRRztWIX04RyCvIMvNFAYDx0cOwVakTVfaNnJf8xxi0x8pfHnyFwbSyL3p8sB5dHtg78sNX2flmLaOZk/8bfM1e8a1lKWXBoU7TjnjGDQGCjIi0l9/wl8C4uSOqsnuPqa8Fg3fYl2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=myc68ZIn; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bXJ6x24QZz9ssC;
+	Wed,  2 Jul 2025 13:47:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1751456873;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Vpjls0kbN64i2dWrj9KDXg1RVSJyJ1rvA/dpxJi7NRE=;
-	b=MhNaDu3KbOM2/vUId7NQji3WKNZar+gNmAwLdAQQzv08Wc3eLBFWhAlxrwv+qCv3bdUYbk
-	fssCamLvzB216qhlumXGvqLfi77JtArCQ/qC+KVWjoTv8o1w9VKYHWVyB/1YtA82x/6Bmy
-	rZpZisKuTshoaEvqqXJyX/Q1g/WIat8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-U-JgH6XrNR2I76D7Zs9FDQ-1; Wed,
- 02 Jul 2025 07:47:22 -0400
-X-MC-Unique: U-JgH6XrNR2I76D7Zs9FDQ-1
-X-Mimecast-MFC-AGG-ID: U-JgH6XrNR2I76D7Zs9FDQ_1751456839
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D996B180028A;
-	Wed,  2 Jul 2025 11:47:18 +0000 (UTC)
-Received: from [10.45.226.95] (unknown [10.45.226.95])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8BCBA30001B9;
-	Wed,  2 Jul 2025 11:47:12 +0000 (UTC)
-Message-ID: <18e5cef5-7907-4c65-a255-56af0cfa67b8@redhat.com>
-Date: Wed, 2 Jul 2025 13:47:10 +0200
+	bh=TpdbB1QH8opy3+7xxkb6wmPQyj3GD7huniHgbKQg+Gs=;
+	b=myc68ZInlcCoBUsgU4TYxckzoRMtTzP0Kkd1u+AK6JT/SbBf7UyXaAFGAXEAN1B3blENss
+	sqIf889CLbTpld1UDwFZJPP62e7FcjUuL82uGW7IU83P/JkEL0NZJSvyAXTqi+IvX0WX1r
+	TciOy8pMSY/kOHdIcv/MHYzze4Z2E6Zxa90IWrpEoqf6RebpzUzg0ShXg6bZzhV636eJaX
+	wBw6V8CWIKlpQToeqcNhvhhy6da5a5EYhc/O6KDoE4dn2yUui/mMyhjNlfC0P4/Mj3vjnT
+	HQL/El6gN6nu6RsCPwgdEkJnRrnGAYh8+6YbprrzPStdvijyWcF2fNoqGjiQvA==
+Date: Wed, 2 Jul 2025 17:17:33 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, alexander.usyskin@intel.com, 
+	tomas.winkler@intel.com
+Subject: Re: [PATCH] samples: mei: Fix building on musl libc
+Message-ID: <m3mqhfb2xeoje7hmwzlkdqih7d2pqiu3quyqsj5zyj77el6pb6@ik2ohi4spp4r>
+References: <20250701160726.22406-1-listout@listout.xyz>
+ <2025070224-unheard-viscous-58a5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 08/14] dpll: zl3073x: Read DPLL types and pin
- properties from system firmware
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Shannon Nelson <shannon.nelson@amd.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250629191049.64398-1-ivecera@redhat.com>
- <20250629191049.64398-9-ivecera@redhat.com>
- <vpzjeh5kc6s4cpah5wagdy6sm3rzt6vlfyfcdbenppwnzftzow@u4xu7mhzg77u>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <vpzjeh5kc6s4cpah5wagdy6sm3rzt6vlfyfcdbenppwnzftzow@u4xu7mhzg77u>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025070224-unheard-viscous-58a5@gregkh>
+X-Rspamd-Queue-Id: 4bXJ6x24QZz9ssC
 
-On 02. 07. 25 12:41 odp., Jiri Pirko wrote:
-> Sun, Jun 29, 2025 at 09:10:43PM +0200, ivecera@redhat.com wrote:
+On 02.07.2025 07:45, Greg KH wrote:
+> On Tue, Jul 01, 2025 at 09:37:26PM +0530, Brahmajit Das wrote:
+... snip ...
+> > 
+> > Signed-off-by: Brahmajit Das <listout@listout.xyz>
+> > ---
+> >  samples/mei/mei-amt-version.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
+> What commit id does this fix?
 > 
+> thanks,
 > 
->> +/**
->> + * zl3073x_prop_dpll_type_get - get DPLL channel type
->> + * @zldev: pointer to zl3073x device
->> + * @index: DPLL channel index
->> + *
->> + * Return: DPLL type for given DPLL channel
->> + */
->> +enum dpll_type
->> +zl3073x_prop_dpll_type_get(struct zl3073x_dev *zldev, u8 index)
->> +{
->> +	const char *types[ZL3073X_MAX_CHANNELS];
->> +	int count;
->> +
->> +	/* Read dpll types property from firmware */
->> +	count = device_property_read_string_array(zldev->dev, "dpll-types",
->> +						  types, ARRAY_SIZE(types));
->> +
->> +	/* Return default if property or entry for given channel is missing */
->> +	if (index >= count)
->> +		return DPLL_TYPE_PPS;
-> 
-> Not sure how this embedded stuff works, but isn't better to just bail
-> out in case this is not present/unknown_value? Why assuming PPS is
-> correct?
+> greg k-h
 
-Per discussion with Microchip, the PPS should be reported as default.
-The platform can define either via DT or APCI or software_node the
-values for the DPLLs. Anyway this attribute is informational.
-
->> +
->> +	if (!strcmp(types[index], "pps"))
->> +		return DPLL_TYPE_PPS;
->> +	else if (!strcmp(types[index], "eec"))
->> +		return DPLL_TYPE_EEC;
->> +
->> +	dev_info(zldev->dev, "Unknown DPLL type '%s', using default\n",
->> +		 types[index]);
->> +
->> +	return DPLL_TYPE_PPS; /* Default */
->> +}
-> 
-> [...]
-> 
-
+The (both) changes were introduced by commit c52827cc4ddf3 (staging/mei:
+add mei user space example).
+Shall I resend the patch with a Fixes tag?
+-- 
+Regards,
+listout
 
