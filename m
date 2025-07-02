@@ -1,119 +1,189 @@
-Return-Path: <linux-kernel+bounces-713377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84C0AF5893
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:23:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79482AF587B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C9F188BD82
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EB93B18F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262B527877F;
-	Wed,  2 Jul 2025 13:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FC3279DC9;
+	Wed,  2 Jul 2025 13:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbF3K1F0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="kI4pN1N+"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796DC2798FE;
-	Wed,  2 Jul 2025 13:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DFC279794
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462381; cv=none; b=bDtk7Dhbsj3FxdLyQt7qbV54iN4vOMeYr7N8B911ymEzTc6BGmJn8y9ehbqJdiKOLohLlae+SJb8oVX0TYl0RpWLObdyY1YtXxFSXYpjPubo2YoPCqje02/nXWNCJ0MCZpBUCmVIWkEU4PNcUtJL4sSpQB9nAcfE6HlXQrGOzZI=
+	t=1751462347; cv=none; b=s0Pi/8vuLwW1+vsoec3RlW09uBjednEl0Gew9Ig5Pvjy2Dj+7rh3F6/Nqs2Kp5+Jl2GljPeacdCXk6mKJceHJCnzDWaOu6FCmUndGlLmoVUCmg2ItY88kS8PdarxnkogeRqXr3TP8smr8cSYb79BUY44TG81Lu0u57XDI1nMsF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462381; c=relaxed/simple;
-	bh=QKv1eaNx8HXCqOejDO0r39rwgHrEEYHNlSfukU0dcXk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f6/5I6FosoIwysUVb4ot375HK7ly6TKW6yZq7Qq3JBWPaRrEZjAB2F7pbWPXzk4FnzjJFZ0ZROxMw4JXIKp1wjyvnVxBvkLqq7LTBYRqT5HDsiWu8rY1JjHVNR1R9r6Gxx/G8XB7poLT2PIAYL0kEBxvQKsaSCakKYPowtNeALw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbF3K1F0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B025C4CEF1;
-	Wed,  2 Jul 2025 13:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751462381;
-	bh=QKv1eaNx8HXCqOejDO0r39rwgHrEEYHNlSfukU0dcXk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=FbF3K1F0xoMCvW2mCumeLkEI7lUkTga14EsFKlxYJXhpm/ctiwGe4N74gIPu3vIHx
-	 x6Ku4BYZEphGAar9XBVMNrE7Xs368n2HDMiUu4l2y/A6rTMK+aM8F+BFir5mMAOkpa
-	 WkuOh68i8M5i5+XMLuuERMgu5QBgEEeto/QfW6aFEWtwGj0sw9Gj62VDTCR6SvgHYK
-	 bCKPDj/FBNnB69N6OKwfdxbkH/bvAbiXuLAIND56oONr0ABCaUNXcV+yaFmRZzVBp4
-	 VVTNYbE1UY20D2io2LkOgeMeLmdQFpLn/qCMxr7mLnrIARczPBIrF4/I7gPB5KC4RL
-	 Eu6mf0qH8KZoA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Wed, 02 Jul 2025 15:18:39 +0200
-Subject: [PATCH v14 7/7] modules: add rust modules files to MAINTAINERS
+	s=arc-20240116; t=1751462347; c=relaxed/simple;
+	bh=L8owLmtFzaaJZIxGw+Pv1FUP1IEjAz3P9wKS03iNN3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U9C9A3Tl0per41n3b8VgEPFmFkMTqZo3V0DeknTypQPSECi2A8yZnDDV39Ng9zef4DLioyZEiQuh+PraNaYTZpNGyq4U+4cSI8C5SIURTafJYXSyNA19ee5le8I/qEfzxRLq7iyh+afPAugIP2UNs8Gdmcq5lqhnQWTeJEd3W7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=kI4pN1N+; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-553cf020383so7578176e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 06:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751462343; x=1752067143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bvqohbDI2GAmHMqzaTXORDEqROTHuWUKuOqQymQYwFg=;
+        b=kI4pN1N+nNaJjH+4xfqOUYgmxt901xFhCC1tS/wCT+VUdFHod18HMxIRZCZ8Xx/T2o
+         0Sahn3ZT6OObMcRnjh9qlfsH1eCOqSgozCyyLTN3MKZkGBPjmmaRJkC/Big49ySrGtJA
+         65XeYUeuw2TGU6c4c4Gngg71Vi4u2T/EOs3dn8B4bTcC8CK4+cjIuS4wSr1eJYCt9RxF
+         nbFzVQTVAT+tgKgvsm5z387DfOZbSzQ+AsLiFkKLLRA1VWyKC6IHZoftvwNV31OazpMR
+         Ut18Uhzc5ZbcV9VUSSmZuyASZwEyhDmW0RONvkDyePRy9YndYknkPgOzLJoAmRNX1LjX
+         I1tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751462343; x=1752067143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bvqohbDI2GAmHMqzaTXORDEqROTHuWUKuOqQymQYwFg=;
+        b=aXue8aG22HjaY1/c+Wk4+pX/pwDAb4IbaNF7AcKiVE862pe9JhoYr7q4nQY3owuTKG
+         L2zXybY4ECP/sht6uElNhOyBpB4yba1YEIvUozz4TYhBKytYfqBIYFADWFBlWBpX4nUv
+         OV0TFDoBBaIah423shGuosJY8DbVGHTTrxFrpRzScrxZysJ6pDM5QDggkuQHswZJBBga
+         1u6L0Ar80MUpfHbxxwwCOIFKtrZPfA8a0tlKUGI55QWySp0/cnGRyS/Q5uHaNtqDFUQa
+         sAEhyIV8JF2D6fJ3MGH7+7gNme3sBrjIbAOU4eR6ooJBk0uGPblfpXwwossvqH+0JA+e
+         StBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXotGVo89ajI1YLWHs7GcSSTGRx/3VUihypQPJTniVILT9UKe3QwGX4NokH6EgOM7hUm4LhZ7qOKM7kcUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaDXJvSOrgoNeTTwzXGA8mkMf56Ewy6hadoXZXnzw4mhtrxaya
+	SMKKauCZacQGwHF74YjXYgsSHcTXMzM9lL4kf7ICqyu7+T6DfWqdmr3u7I5rhr3nn65DDtfjnv9
+	RJ0xDpZMtTtfFcUBJxsQIOZg75UnlOVLkmmqfEab1jA==
+X-Gm-Gg: ASbGncuAs6nPMB0UF/aQg7+NqaJXvigJUb8IwLbTjhpfElHXGvBxioxWFTGlKodwI4p
+	CWYgLWVyac/fu7t1srkKFDO8nxH1kSm3T2NoYqtN/JW2JlcSwp7vR2aahBHQAUQiPvdxmf/lauI
+	UKItJJc7VJE3rZ31LKkPW9P1XtqlYcri5d6EpUeAP0F+zaqncFinrsDca+DCbI6De4C5NjMUIo
+X-Google-Smtp-Source: AGHT+IGo+t57UliEc2HwQ13eyq0sY0QeAbqdOoDWjWbCox3B3fh2R/GjloOBxDDYSfcQ+CEbIeiSIdHamp/sunKThtQ=
+X-Received: by 2002:a05:6512:15a1:b0:553:addb:ef51 with SMTP id
+ 2adb3069b0e04-5562824ee0amr1135537e87.18.1751462342357; Wed, 02 Jul 2025
+ 06:19:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-module-params-v3-v14-7-5b1cc32311af@kernel.org>
-References: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org>
-In-Reply-To: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
- Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
- Benno Lossin <lossin@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Trevor Gross <tmgross@umich.edu>, 
- Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
- Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
- Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- linux-modules@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=808; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=QKv1eaNx8HXCqOejDO0r39rwgHrEEYHNlSfukU0dcXk=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBoZTG4L057HjJ5TR9cS+a56ULFDPMPW9mzocfjJ
- Aei5uwPLiqJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaGUxuAAKCRDhuBo+eShj
- d5j2D/9sF/xwBInFVeLxWuLHtYlx4FfdgeB9B20QNmNCqnu9ZEGGRCv4E7ETYVzdCSYIgAAwQ1f
- EvT/iH9cmn5m+G9mcAQojIE8ZqrlcisATzKw4D1LKbDJ8TmV5FyWva2Lvo11kn+8lObcVcEmt7a
- WBAsGmE1VAiKskFe5Wt7zk+kNGKh7FjZcWvX1L9EvvrBF7u1P61BwxrJkAAhwDTq8F8H5DxghtI
- MMkAVLHZP+pNDsCKTrVI7FlRGHsnPoOldn0521AI3bawMC4y/0OtzSr958u8+fGBByAlDPqKHtG
- rJnMINI3VvgwyOKHhYEyhKQTirCNkNZZ6WaRl7gpqIWfddTq5u1fT4sft18Q/mDyfz6zu6P+phk
- dC6T8CU48RNwUsUDcD1aiKV4SUGbF5aewaAFqdCFLjt0woMIhMiSK8yGL0l+bOXPainnXn2Lt0R
- 6ll3QNuxZZYeZgqHeFPK5YR1fIpjxiEzl7E1QCKqgUmwjiVYeeXgc+6G9yO1BMohZeN4uJbd7lO
- VsRCejzqVqoZPwVNx5ayx5+ARamTXjt8QGLBEY3GqlwHBxVIT7iyaA+9QJNwUf07JhIMGkvYcBU
- Xqgk9TJqp1y4mL4/BkvTrFKnjfz3uFwBUxsUfmUc7U/hdk8UPy5+kUi9ZXvMZ2UFG4R57+j6xTk
- 6BXyhbtu0NRRgJA==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+References: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
+ <aGPrFnDxG4W7S9Ym@smile.fi.intel.com> <20250702035439.GA20273@rigel>
+ <CAMRc=MftawBB4rtj4EKS_OwMCU9h53sA8QxcFq_ZY0MRg2OLag@mail.gmail.com> <aGUeRczCNJLg-KON@smile.fi.intel.com>
+In-Reply-To: <aGUeRczCNJLg-KON@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 2 Jul 2025 15:18:50 +0200
+X-Gm-Features: Ac12FXyIstglX0Pn7fB6SNZb0RFuwEcN1DnpF2Rd1MaiGH2nMKkaE1WvFTqfGBk
+Message-ID: <CAMRc=MexjmozQ+vkLz1L4_Vfb+aqqwNSxKtNVA7zb-=r5eCMQw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] gpio: sysfs: add a per-chip export/unexport
+ attribute pair
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Kent Gibson <warthog618@gmail.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
+	=?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>, Marek Vasut <marex@denx.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The module subsystem people agreed to maintain rust support for modules
-[1]. Thus, add entries for relevant files to modules entry in MAINTAINERS.
+On Wed, Jul 2, 2025 at 1:55=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Wed, Jul 02, 2025 at 11:45:02AM +0200, Bartosz Golaszewski wrote:
+> > On Wed, Jul 2, 2025 at 5:54=E2=80=AFAM Kent Gibson <warthog618@gmail.co=
+m> wrote:
+> > > On Tue, Jul 01, 2025 at 05:05:10PM +0300, Andy Shevchenko wrote:
+> > > > It seems I never expressed my overall opinion about this. I think t=
+he poking
+> > > > sysfs and making it working with a new schema won't solve the issue=
+s that
+> > > > character device was developed to target. If so, doing this just br=
+ings yet
+> > > > another broken interface. I would be happy to be mistaken!
+> > > >
+> > > > If I am mistaken, I would like to see a summary here that explains =
+that clearly
+> > > > that the new sysfs approach does not inherit design flaws of the or=
+iginal
+> > > > implementation.
+> >
+> > You cut out the link to the discussion that preceded this series where
+> > a good summary is in the very first email. Anyway: the gist is: people
+> > need to do some basic GPIO fiddling early on from initramfs that may
+> > not have any tools other than basic shell utils from busybox. This
+> > series is not about improving or extending the sysfs interface - it's
+> > about removing its reliance on global GPIO numbers. And that's about
+> > it. We don't add any new features really, just move the GPIO line
+> > groups into their respective chip directories and make exporting use
+> > the hardware offsets, not global numbers.
+>
+> I see it differently. This adds the second variant of how sysfs can be ha=
+ndled
+> and it needs to be rotten in the same way as the original sysfs. I really=
+ don't
+> see a point to prolonging the life of the broken interface in such a way.=
+ If somebody
+> wants to check the GPIO without accessing character device interface, the=
+y probably
+> are simply lazy to think of how to do that on early stages properly. The =
+desire
+> sounds like a workaround against proper thinking.
+>
 
-Link: https://lore.kernel.org/all/0d9e596a-5316-4e00-862b-fd77552ae4b5@suse.com/ [1]
+Whatever your opinion on this is - if user-space wants to keep the
+interface, then we need to support it. We can only propose
+alternatives and hope the users will switch. Please read the
+discussion, it explains why people want to keep using the simple sysfs
+ABI and why those specific users will most likely never switch to the
+character device. At this point a bigger concern to me is the global
+GPIO numberspace, not the existence of the sysfs class as such.
 
-Acked-by: Daniel Gomez <da.gomez@samsung.com>
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+We have three alternatives:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe0cf0a2e6e5..aa5618350723 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16796,6 +16796,8 @@ F:	include/linux/module*.h
- F:	kernel/module/
- F:	lib/test_kmod.c
- F:	lib/tests/module/
-+F:	rust/kernel/module_param.rs
-+F:	rust/macros/module.rs
- F:	scripts/module*
- F:	tools/testing/selftests/kmod/
- F:	tools/testing/selftests/module/
+1. Do nothing. Keep the sysfs as is and hope we'll drop it eventually
+but this will most likely never happen.
+2. Add an entirely new "simple" interface next to the existing sysfs
+AND character device. It seems to be what you're proposing but this is
+the worst of two worlds. I don't want to be in charge of maintaining
+three separate interfaces. Four if you count cdev v1.
+3. Modify the existing sysfs in a backward compatible way but make it
+possible to export lines by their HW offset within their parent chip,
+not by global numbers. This is what this series does and what people
+having interest in using sysfs confirmed would work for them.
+Eventually we could drop the bits that use the global numberspace
+which seems more palatable for user-space than entirely removing the
+sysfs GPIO class.
 
--- 
-2.47.2
+> > > Indeed.  I've already expressed my reservations about supporting the =
+whole
+> > > of the existing sysfs capabilties, but I've otherwise tried to remain=
+ out
+> > > of the discussion.
+> > >
+> > > To reiterate my position:
+> > > While I am all for maintaining sysfs in some form to cater for those
+> > > rare cases where cdev is too heavyweight, IMHO it is a mistake to
+> > > support the existing sysfs capabilities in toto.  Take the opportunit=
+y to
+> > > remove the parts of the sysfs interface that don't work well.
+> >
+> > Doesn't the last patch do it? We cannot remove it without giving
+> > user-space some time to switch.
+>
+> Famous Last Words. How many years the sysfs is being rotten?! This just m=
+akes
+> it a Frankenstein.
+>
 
+I'm doing it BECAUSE sysfs hasn't gone anywhere despite several years
+of efforts. I cannot force user-space to stop using it, I can only
+propose alternatives and it seems that cdev has not been enough.
 
+Bart
 
