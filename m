@@ -1,127 +1,230 @@
-Return-Path: <linux-kernel+bounces-712289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A3FAF0729
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:06:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5730AF14F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77327AED92
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:04:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DF97A499C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2A5A55;
-	Wed,  2 Jul 2025 00:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CVNb94Iv"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B67163
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 00:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADC626E70F;
+	Wed,  2 Jul 2025 12:05:56 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2C326C3B8;
+	Wed,  2 Jul 2025 12:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751414765; cv=none; b=LsLhY97PS6FYnNehKPQKRezLOHxVOsSbfRZf1wJVQ20KnaaBnPe6+0kJqq+TOulLse2gPEWMjPQvkdsfb/u458unaNByJ7jIL5cLmm8qC1B6upc/u5aKTkkTWtTpQmNfIHABcnH94uotevhOdy3VYp2cHhOOdp9flRcJ4UGJjno=
+	t=1751457955; cv=none; b=VExL/KJmK251puw4k5IwJE8q01jh0ZbdHIy6FpiRxn5DJ35hEuMR/lQzjJxvqdhEU5cLmMJRyZFvYKiPriIGjLxNUNUJ2DJyVOXN2uRtUMZYa3xrc/yAmp9k/pw3o6GUBemlPQ24lQ3GgLbyto532Psjesgdf2AYPpJQdgzyq0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751414765; c=relaxed/simple;
-	bh=bIMTi4MWsgaUbmZu8ndOxvFLqagge7bVFXfE8u72634=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RCNOw8WZUzFaDUoY/o/bfVJznbviX18vPEK8IygXEPHIjuyZEYbJN/UqoJXy+Casl3ACSfQTrml+5nz06cIuOeF6XxXj6Gr2dU5+ZzePnNUl555kQ/ejE8jBIaLNPRbQjlfOV/BBFQjDfjCKbrdrZeXJ4nBKTIi4tv/2H39CCl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CVNb94Iv; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso6632086f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 17:06:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751414760; x=1752019560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ce3zDRJVoRRIoVuOih+y1uZIYHn+OOhDiG27OLlb9rE=;
-        b=CVNb94IvQLjV3Kc0WC6Ibs+Hn96TZhMGBiKW0BKCKqBQ/sFqmF8HLm7AQUDUtwqAF5
-         P4svXkkMAxLVTWrrF7uLZUjdace7iRHzoET/dR+5G9BMn64vwp8OcDUU2h81O41g8kV+
-         RDHL7G9RcMRjTwfBpDBDQi2QDm0w/RyiptwPLehfdv7Y0yXGeRNwCMwvx4cnngNMO4lc
-         mVg8pEanOfRbrUKOmPkQFIIBAk6mqV7Q1BUjBaNQMGET9F/atmK+hTYylh5hOTa7VBbz
-         MAFBmwvN5C46Shv1i+iv7K07DHXgxLZWHFPygr6k1W6aVQcR0neULyutljOw5NvQ3kgL
-         JboA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751414760; x=1752019560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ce3zDRJVoRRIoVuOih+y1uZIYHn+OOhDiG27OLlb9rE=;
-        b=osyrBhanX4XEsSB9wX/HD40pXw/fYwmAM2hDM8TZxiNEwiP7fvedyOVSZqS7S5w0A1
-         LaEGA0ke5bka2Q7/MkhIC9YcFJgj5Lf6DLp5obmcne3ayVRu014s6iolaB02ML7H2oTt
-         OllgGv4mdeCni8c+lwHWrILMPTeHayuROCZVQOAhM+kSIT/cofVqlrUK9zHGNdqaKQTS
-         1Yrh//aXbVcqKYs+1blsNbMyZ8lRAnlB9pFyhYtdAGDQsrPbIVPS4KKWdzgREvTlHk2R
-         8r6pzzsdpX2uySFJkkP8yKssY/gVMtTfIHdImx53G33OQguxGmo9/4LrgcVad40ZqTpN
-         2Ksg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF/7C4sKqlyadA1xnBOrlM4Km9hK37qs075E6I691EvcXqGmDi1vmK70+xVDDazkCwqU721/blal6deP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxo+u1hZCFY8TQW+MAv5RVL01WxMIDj9SN5hOxrK+KMrEjrNMe
-	AIou3Ndl4JIizPjvM3Z2jiPqlxdamYX80atJa5a2pIqjqI/+JERKhUluXo33IxdroA==
-X-Gm-Gg: ASbGncvDLlgJdxGa8UClOUeByaBy5gf11go3xu8ayCf7NAkP6BaNCzGspf04IPl+0li
-	eTi2jd0sp1jdnEi6E3BptCOtwaIvou2r5dBerHAqDbRDEezAte5qdkjzqiSfroekiDk8awnFTqw
-	uxIo28Oqql91PA2TImrGe8WWc1O9BdsrzI8xWK7rbDnAqJYPQFER9OLMgBY0WUdutQvHcvgmLmp
-	wkcweNDHohNU4UVnMvJnWhaYvutlaShwiu+SqWmDciFrjkJQnTr88hJdIQeTaiWiwFeH1bCSgZT
-	Q9eXbgJ5v1g9D4e/fSTATAV2tWDrPkn7WFDNsgw/lB2Wemv3ke5SDcyaq3B1+w==
-X-Google-Smtp-Source: AGHT+IHgFK+x5iOOCR7s+Jwca4C328dxRJPFWJLVCE70nVrrFL6mJkkvUSJeMxzZnHxSrAYyY3US1Q==
-X-Received: by 2002:a05:6000:2dc1:b0:3a4:d83a:eb4c with SMTP id ffacd0b85a97d-3b2013f8c90mr292003f8f.57.1751414760277;
-        Tue, 01 Jul 2025 17:06:00 -0700 (PDT)
-Received: from MiWiFi-CR6608-srv ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-318c14fd6b5sm12475850a91.35.2025.07.01.17.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 17:05:59 -0700 (PDT)
-Date: Wed, 2 Jul 2025 08:05:23 -0400
-From: Wei Gao <wegao@suse.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Terry Tritton <terry.tritton@linaro.org>, Shuah Khan <shuah@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	ttritton@google.com, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests/futex: Convert 32bit timespec struct to
- 64bit version for 32bit compatibility mode
-Message-ID: <aGUggwe_gJon_2E3@MiWiFi-CR6608-srv>
-References: <20250701142313.9880-1-terry.tritton@linaro.org>
- <87ikkblkff.ffs@tglx>
+	s=arc-20240116; t=1751457955; c=relaxed/simple;
+	bh=otXCCYDqXbZXzkKorXyslIDNgdIqmIjtatTHokyVyaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZBq5w8j6oC/A45Cj/nHnArTEiWW14kqBY6ri3T6zGwEmISdgqBJTY+jLkqkWeVSDZZPH/Syg0Va4disaRH6m8OJV0ThW+nUJSFXPYGgdZUryfeOVAj+M0+UKFVNrf21qOzkZfVzHQknOcxtTpsWGQo8zZA40TFWquCublYjwCgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: r+eVYdDBQ12wGVrnc62sUw==
+X-CSE-MsgGUID: jwJuG788SIe8xFaxH6/DJw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 02 Jul 2025 21:05:45 +0900
+Received: from localhost.localdomain (unknown [10.226.92.89])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5BBDC41F551C;
+	Wed,  2 Jul 2025 21:05:42 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-can@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2] can: rcar_canfd: Drop unused macros
+Date: Wed,  2 Jul 2025 13:05:29 +0100
+Message-ID: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ikkblkff.ffs@tglx>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 01, 2025 at 10:34:28PM +0200, Thomas Gleixner wrote:
-> On Tue, Jul 01 2025 at 15:23, Terry Tritton wrote:
-> > Futex_waitv can not accept old_timespec32 struct, so userspace should
-> > convert it from 32bit to 64bit before syscall in 32bit compatible mode.
-> >
-> > This fix is based off [1]
-> >
-> > Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
-> >
-> > Signed-off-by: Wei Gao <wegao@suse.com>
-> > Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
-> 
-> This is still wrong.
-> 
-> If it is based on someone else work, then you need to attribute it
-> Originally-by and omit the Signed-off-by of the original author.
-> 
-> If you just picked it up and adopted it to a later kernel version then
-> you need to add 'From: Original Author' and preserve his Signed-off-by.
+Drop unused macros from the rcar_canfd.c.
 
-@Terry @Thomas, Thank you both for the mention in the commit. I appreciate being included.
-I guess above options both good.
+Reported-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Closes: https://lore.kernel.org/all/7ff93ff9-f578-4be2-bdc6-5b09eab64fe6@wanadoo.fr/
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v1->v2:
+ * Dropped the Rb tags.
+ * Restored simple simple bit definitions as it serve as documentation.
+ * Restored register offsets will become anonymous gaps when the register
+   offsets are replaced by C structs.
+---
+ drivers/net/can/rcar/rcar_canfd.c | 93 -------------------------------
+ 1 file changed, 93 deletions(-)
 
-> 
-> If you collaborated with him, then you want to use Co-developed-by.
-> 
-> All of this is documented in Documentation/process/
-> 
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 417d9196f41e..b3c8c592fb0e 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -224,8 +224,6 @@
+ 
+ /* RSCFDnCFDRFPTRx */
+ #define RCANFD_RFPTR_RFDLC(x)		(((x) >> 28) & 0xf)
+-#define RCANFD_RFPTR_RFPTR(x)		(((x) >> 16) & 0xfff)
+-#define RCANFD_RFPTR_RFTS(x)		(((x) >> 0) & 0xffff)
+ 
+ /* RSCFDnCFDRFFDSTSx */
+ #define RCANFD_RFFDSTS_RFFDF		BIT(2)
+@@ -257,12 +255,9 @@
+ /* RSCFDnCFDCFIDk */
+ #define RCANFD_CFID_CFIDE		BIT(31)
+ #define RCANFD_CFID_CFRTR		BIT(30)
+-#define RCANFD_CFID_CFID_MASK(x)	((x) & 0x1fffffff)
+ 
+ /* RSCFDnCFDCFPTRk */
+ #define RCANFD_CFPTR_CFDLC(x)		(((x) & 0xf) << 28)
+-#define RCANFD_CFPTR_CFPTR(x)		(((x) & 0xfff) << 16)
+-#define RCANFD_CFPTR_CFTS(x)		(((x) & 0xff) << 0)
+ 
+ /* RSCFDnCFDCFFDCSTSk */
+ #define RCANFD_CFFDCSTS_CFFDF		BIT(2)
+@@ -328,59 +323,6 @@
+ #define RCANFD_CFPCTR(gpriv, ch, idx) \
+ 	((gpriv)->info->regs->cfpctr + (0x0c * (ch)) + (0x04 * (idx)))
+ 
+-/* RSCFDnCFDFESTS / RSCFDnFESTS */
+-#define RCANFD_FESTS			(0x0238)
+-/* RSCFDnCFDFFSTS / RSCFDnFFSTS */
+-#define RCANFD_FFSTS			(0x023c)
+-/* RSCFDnCFDFMSTS / RSCFDnFMSTS */
+-#define RCANFD_FMSTS			(0x0240)
+-/* RSCFDnCFDRFISTS / RSCFDnRFISTS */
+-#define RCANFD_RFISTS			(0x0244)
+-/* RSCFDnCFDCFRISTS / RSCFDnCFRISTS */
+-#define RCANFD_CFRISTS			(0x0248)
+-/* RSCFDnCFDCFTISTS / RSCFDnCFTISTS */
+-#define RCANFD_CFTISTS			(0x024c)
+-
+-/* RSCFDnCFDTMCp / RSCFDnTMCp */
+-#define RCANFD_TMC(p)			(0x0250 + (0x01 * (p)))
+-/* RSCFDnCFDTMSTSp / RSCFDnTMSTSp */
+-#define RCANFD_TMSTS(p)			(0x02d0 + (0x01 * (p)))
+-
+-/* RSCFDnCFDTMTRSTSp / RSCFDnTMTRSTSp */
+-#define RCANFD_TMTRSTS(y)		(0x0350 + (0x04 * (y)))
+-/* RSCFDnCFDTMTARSTSp / RSCFDnTMTARSTSp */
+-#define RCANFD_TMTARSTS(y)		(0x0360 + (0x04 * (y)))
+-/* RSCFDnCFDTMTCSTSp / RSCFDnTMTCSTSp */
+-#define RCANFD_TMTCSTS(y)		(0x0370 + (0x04 * (y)))
+-/* RSCFDnCFDTMTASTSp / RSCFDnTMTASTSp */
+-#define RCANFD_TMTASTS(y)		(0x0380 + (0x04 * (y)))
+-/* RSCFDnCFDTMIECy / RSCFDnTMIECy */
+-#define RCANFD_TMIEC(y)			(0x0390 + (0x04 * (y)))
+-
+-/* RSCFDnCFDTXQCCm / RSCFDnTXQCCm */
+-#define RCANFD_TXQCC(m)			(0x03a0 + (0x04 * (m)))
+-/* RSCFDnCFDTXQSTSm / RSCFDnTXQSTSm */
+-#define RCANFD_TXQSTS(m)		(0x03c0 + (0x04 * (m)))
+-/* RSCFDnCFDTXQPCTRm / RSCFDnTXQPCTRm */
+-#define RCANFD_TXQPCTR(m)		(0x03e0 + (0x04 * (m)))
+-
+-/* RSCFDnCFDTHLCCm / RSCFDnTHLCCm */
+-#define RCANFD_THLCC(m)			(0x0400 + (0x04 * (m)))
+-/* RSCFDnCFDTHLSTSm / RSCFDnTHLSTSm */
+-#define RCANFD_THLSTS(m)		(0x0420 + (0x04 * (m)))
+-/* RSCFDnCFDTHLPCTRm / RSCFDnTHLPCTRm */
+-#define RCANFD_THLPCTR(m)		(0x0440 + (0x04 * (m)))
+-
+-/* RSCFDnCFDGTINTSTS0 / RSCFDnGTINTSTS0 */
+-#define RCANFD_GTINTSTS0		(0x0460)
+-/* RSCFDnCFDGTINTSTS1 / RSCFDnGTINTSTS1 */
+-#define RCANFD_GTINTSTS1		(0x0464)
+-/* RSCFDnCFDGTSTCFG / RSCFDnGTSTCFG */
+-#define RCANFD_GTSTCFG			(0x0468)
+-/* RSCFDnCFDGTSTCTR / RSCFDnGTSTCTR */
+-#define RCANFD_GTSTCTR			(0x046c)
+-/* RSCFDnCFDGLOCKK / RSCFDnGLOCKK */
+-#define RCANFD_GLOCKK			(0x047c)
+ /* RSCFDnCFDGRMCFG */
+ #define RCANFD_GRMCFG			(0x04fc)
+ 
+@@ -398,12 +340,6 @@
+ /* RSCFDnGAFLXXXj offset */
+ #define RCANFD_C_GAFL_OFFSET		(0x0500)
+ 
+-/* RSCFDnRMXXXq -> RCANFD_C_RMXXX(q) */
+-#define RCANFD_C_RMID(q)		(0x0600 + (0x10 * (q)))
+-#define RCANFD_C_RMPTR(q)		(0x0604 + (0x10 * (q)))
+-#define RCANFD_C_RMDF0(q)		(0x0608 + (0x10 * (q)))
+-#define RCANFD_C_RMDF1(q)		(0x060c + (0x10 * (q)))
+-
+ /* RSCFDnRFXXx -> RCANFD_C_RFXX(x) */
+ #define RCANFD_C_RFOFFSET	(0x0e00)
+ #define RCANFD_C_RFID(x)	(RCANFD_C_RFOFFSET + (0x10 * (x)))
+@@ -423,17 +359,6 @@
+ #define RCANFD_C_CFDF(ch, idx, df) \
+ 	(RCANFD_C_CFOFFSET + 0x08 + (0x30 * (ch)) + (0x10 * (idx)) + (0x04 * (df)))
+ 
+-/* RSCFDnTMXXp -> RCANFD_C_TMXX(p) */
+-#define RCANFD_C_TMID(p)		(0x1000 + (0x10 * (p)))
+-#define RCANFD_C_TMPTR(p)		(0x1004 + (0x10 * (p)))
+-#define RCANFD_C_TMDF0(p)		(0x1008 + (0x10 * (p)))
+-#define RCANFD_C_TMDF1(p)		(0x100c + (0x10 * (p)))
+-
+-/* RSCFDnTHLACCm */
+-#define RCANFD_C_THLACC(m)		(0x1800 + (0x04 * (m)))
+-/* RSCFDnRPGACCr */
+-#define RCANFD_C_RPGACC(r)		(0x1900 + (0x04 * (r)))
+-
+ /* R-Car Gen4 Classical and CAN FD mode specific register map */
+ #define RCANFD_GEN4_GAFL_OFFSET		(0x1800)
+ 
+@@ -452,12 +377,6 @@ struct rcar_canfd_f_c {
+ /* RSCFDnCFDGAFLXXXj offset */
+ #define RCANFD_F_GAFL_OFFSET		(0x1000)
+ 
+-/* RSCFDnCFDRMXXXq -> RCANFD_F_RMXXX(q) */
+-#define RCANFD_F_RMID(q)		(0x2000 + (0x20 * (q)))
+-#define RCANFD_F_RMPTR(q)		(0x2004 + (0x20 * (q)))
+-#define RCANFD_F_RMFDSTS(q)		(0x2008 + (0x20 * (q)))
+-#define RCANFD_F_RMDF(q, b)		(0x200c + (0x04 * (b)) + (0x20 * (q)))
+-
+ /* RSCFDnCFDRFXXx -> RCANFD_F_RFXX(x) */
+ #define RCANFD_F_RFOFFSET(gpriv)	((gpriv)->info->regs->rfoffset)
+ #define RCANFD_F_RFID(gpriv, x)		(RCANFD_F_RFOFFSET(gpriv) + (0x80 * (x)))
+@@ -482,23 +401,11 @@ struct rcar_canfd_f_c {
+ 	(RCANFD_F_CFOFFSET(gpriv) + 0x0c + (0x180 * (ch)) + (0x80 * (idx)) + \
+ 	 (0x04 * (df)))
+ 
+-/* RSCFDnCFDTMXXp -> RCANFD_F_TMXX(p) */
+-#define RCANFD_F_TMID(p)		(0x4000 + (0x20 * (p)))
+-#define RCANFD_F_TMPTR(p)		(0x4004 + (0x20 * (p)))
+-#define RCANFD_F_TMFDCTR(p)		(0x4008 + (0x20 * (p)))
+-#define RCANFD_F_TMDF(p, b)		(0x400c + (0x20 * (p)) + (0x04 * (b)))
+-
+-/* RSCFDnCFDTHLACCm */
+-#define RCANFD_F_THLACC(m)		(0x6000 + (0x04 * (m)))
+-/* RSCFDnCFDRPGACCr */
+-#define RCANFD_F_RPGACC(r)		(0x6400 + (0x04 * (r)))
+-
+ /* Constants */
+ #define RCANFD_FIFO_DEPTH		8	/* Tx FIFO depth */
+ #define RCANFD_NAPI_WEIGHT		8	/* Rx poll quota */
+ 
+ #define RCANFD_NUM_CHANNELS		8	/* Eight channels max */
+-#define RCANFD_CHANNELS_MASK		BIT((RCANFD_NUM_CHANNELS) - 1)
+ 
+ #define RCANFD_GAFL_PAGENUM(entry)	((entry) / 16)
+ #define RCANFD_CHANNEL_NUMRULES		1	/* only one rule per channel */
+-- 
+2.43.0
+
 
