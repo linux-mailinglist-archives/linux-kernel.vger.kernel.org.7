@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-713435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADB7AF5A0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8367FAF59BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D3607BEA91
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:37:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C79C7BF277
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F058627A122;
-	Wed,  2 Jul 2025 13:38:31 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9D3289E14;
+	Wed,  2 Jul 2025 13:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="XQ/KeHj+"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239BE210FB;
-	Wed,  2 Jul 2025 13:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C292280A52;
+	Wed,  2 Jul 2025 13:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751463511; cv=none; b=A8VHhoYPJFtWglT7AW4zTpoGw0yUWkLrcj3s3J63fqe4jJhVm9FFqpNTSFhShcQ+HPpBFoE1WDtvgLsugyMnKI40KCHGiNiKrsIpYXiAXBJgA8BG6k8Z7WVzaWSobTqVfCyC05on6/XDOVSug6qTH7qjNlqUV4aznL1JqgvEGYU=
+	t=1751463536; cv=none; b=tb08KVuy8LvysCtZBjOm3ps7Qd0lT/ruCAJIa5CrUutjwW8n1lLx8ZBURFQb8W/Yg3Tsqz5KWpvTuZwOfKVZzwsW7BL0MSsltAcoYVqRC8dHI9x8YcPhZLiUniMbU65JAZw2CVQMTlLmqqucp1y8Au5AxBMH790D65RGLoEX04U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751463511; c=relaxed/simple;
-	bh=fuOTSmJv7T+0NyENvlRT2dBogIf54mUZAlku7TamFMM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bVgojMspSzwYI/ddyu4K59COXI6VQX6NwR7KKVBC2IBky4J/XUD1PNyoWXVvO3pqFLiYiz6oBkvWiTbc34m1+eZlMZRge/TyzLeHWj2ZlWV8pXptTvQRCVe97b/AK6TqiasOtPHiZpXRVKpDjBwayrzKe+svbvv+1hIpivBZsPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-52b2290e28eso1580412e0c.3;
-        Wed, 02 Jul 2025 06:38:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751463507; x=1752068307;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePQG1MsUBShhdoAQGKCKXv0vOZyacAN5Vmj3ODr9rzI=;
-        b=dWijLhxYOA9h6N2HrjiVbPiA4CeMc1uubLW/hShhaVT7LJizfGe2Zo+Ix6x16WCjgn
-         i7GuztyPsDwRkFZYq4i+Hp1z+2UDvesmNS5juEllvTu/5YbN0WRhiTwLlQDzzO8GgWnM
-         NPYG30G03j2y6HrfyFPEB6BwQWpdCNdsnbuWWc5XQlBeSKwiqWGBStutOX4Fr/N3PmG7
-         NyR0Sm5VwcwxEeIE0m7kDkx8ns2Knb2WvWea0vN2x3A1WFusgcpw1s1daDbZSUueLteK
-         IJCckLF2ssRu1Ai4HKZVw1QiyDBbYg8MGX3wdXE7yxjsgTR44KSHrirmpwJWfHMsGk3b
-         K90g==
-X-Forwarded-Encrypted: i=1; AJvYcCU+p0jQTOrA143gq5x+FOZecWnSZAMQo63jhAQkY00Y+SGN4PYJ44qo+5LwwYY6IqJAtriQXOlkzsSI+H1b6LkF7Po=@vger.kernel.org, AJvYcCW3Hmu/SfwYNwu4vfSxWwAxDpZ0N82n21NhnJTMWWB01olyS36YthyZpKoxyVDxIiqpct4ZlS5Y+fip@vger.kernel.org, AJvYcCWsa0nfjgkp+ss6tfZ4cmghBzFv+p58F7/85f/kTmcLmL7TkbZEgIeANtp+9UMeL5/lYtbUMMvfjANQ@vger.kernel.org, AJvYcCXtZvWXZh0+JuHQyfoAsdup6zeZotYQyG8K2tVJlOf5Lnn/wDOGSUM8Y6nl25ozEypEDWwVJzDPb7heWZgB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+lIO8L/XLFrLnrFO1eo4OMZy7zRgWLyEGEVxuX4wUlHIe9oAS
-	AoYE2q4dX3NdTTS6Jup9K2jNmYJ1mzXrfuTMDuRzSDd+WaBfxK+TjKw+nw0kuO53
-X-Gm-Gg: ASbGncsVq7dREnS+/yY3aKgTWUs+uHrVq9d7TJzXlCzFaKvNQ5RlNAsvKdPujCgPMBd
-	naUX4CLRhzpm9Fo0Pcg60NYtnpJ9K7CIJvMbSduSHir/dtXecXe0IIDz+/f1strlx7/7NCqB1gt
-	lRKXriGf+fucHA69tsPVYSnT3/ScV2bKMk0mo5dBp/j2yHrRioj+7s7fNmGK+twpwycoyzIFyVG
-	CbuAwGLD+vQvbs0wnoMpiMJz9xObJILa0bnUYtKjfN6hCASTUqQluFqFPmlnxjq4s3FAa2oBLUc
-	3zzbnEBPSBC8T+XAf4pZ1qjgOzckxrO0XEuKmVGetkMStlMi6jbCnJrg9o5A8lX8y0C+zr2+EVC
-	9iZgFum7vgLaMi4i4IBXgzE3v
-X-Google-Smtp-Source: AGHT+IFdkuGGv6RNbzQx1lUS3R3vP8Lhwi0OtlNirI7EvQ8Qdy4JV559aBIP/OwtLZdNwD2jMCaNTw==
-X-Received: by 2002:a05:6122:905:b0:531:188b:c1a9 with SMTP id 71dfb90a1353d-53457c20a73mr1862384e0c.0.1751463507462;
-        Wed, 02 Jul 2025 06:38:27 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-533090ba68esm2133233e0c.16.2025.07.02.06.38.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 06:38:26 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-87ec9aee6dbso1489556241.0;
-        Wed, 02 Jul 2025 06:38:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNC2DKWrGx2mlKT3gHnYV6epwTkrREiMGFAM94DpTPxf+volCClBeuTBJHDjxVm4KWNcFq5cKZs4BQCimJ@vger.kernel.org, AJvYcCVh8kDVtBDy36A8DtM0vpxK0KXyhS7fF+110ks1mbOHXpr5c6vO4kCgb1UGYRZTCQ75zNK2v7wwbtKLSQYvSoE4KAo=@vger.kernel.org, AJvYcCW5lMpN8bySxaTfNxJiLgBzZ4z3I/6nAD4z+h8YPdnns0Y91xQCYZfS+cv++/JT+754c+SwJC8TMkT/@vger.kernel.org, AJvYcCXfBTc2T6leO7ZBr+mEsWAyZc6g6kQTujhElu5qyC0neUyeAEPho2KyY+RSMGRg0NBiNwMtmo3Hr7NE@vger.kernel.org
-X-Received: by 2002:a05:6102:4b0a:b0:4e6:e126:6238 with SMTP id
- ada2fe7eead31-4f1610076c3mr1456363137.3.1751463506197; Wed, 02 Jul 2025
- 06:38:26 -0700 (PDT)
+	s=arc-20240116; t=1751463536; c=relaxed/simple;
+	bh=jdFrNC6NiwknkJyl69b6rDUa9Yoz8gcCJi1eybxIXcc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cw/7Jvrv/J9l2P0iTkMUwxgx/Ziw6GeMMbyNnjpW/HlCiJHgUhufemgUTk2ztRxtxOOkvBtXN0ML4hnTCNyvEn1eFFaJlSQvDvFgVD9VlASgjajxdPL8fbJOsIMYS1MOUOXJn9MhEw/ZbfymlaIzqz51fAn4KqIoqrDDjyyKmY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=XQ/KeHj+; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uWxfo-00GcMN-K4; Wed, 02 Jul 2025 15:38:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From; bh=6ZRtUO3nIsi2U4OeyB53Qpuv1fm+SVSeTb2FbQzXyDI=
+	; b=XQ/KeHj+hAsqPPd4QOSYrC3UmojqOdFrkrbQ+Nj1d52YZJequSvlSHitllhkS2LRquDzCK5LQ
+	D2bhYa+hQ/PusniCmJPRCNHJ41BmjhQQlWPoElAMxA3sGaEnPtFtkSHx46x5YsBPyYcPb5fWJLgqO
+	UNkr48pO2+/tLGlcVYMleFCWLCy3TiytANrILB83kdtr2gxaId5b38oorz2znYDfG87vuq6PcVY10
+	nfO39erBpskye2lcvsmpZTcCN6v5i9GY3Y/uARNmR8dwHCALuPBZLo/IggyvmfZA2bhg1aQfrU9wz
+	yiWZAdgdn9qOFsuO1ACvbbZhSi1Ct5WyiyWQig==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uWxfo-0005HR-1s; Wed, 02 Jul 2025 15:38:52 +0200
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uWxfl-009LQl-Jp; Wed, 02 Jul 2025 15:38:49 +0200
+From: Michal Luczaj <mhal@rbox.co>
+Subject: [PATCH net v3 0/3] vsock: Fix transport_{h2g,g2h,dgram,local}
+ TOCTOU issues
+Date: Wed, 02 Jul 2025 15:38:42 +0200
+Message-Id: <20250702-vsock-transports-toctou-v3-0-0a7e2e692987@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625141705.151383-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250625141705.151383-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250625141705.151383-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Jul 2025 15:38:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVpc2asQpmYjhGT3iyu1t8RUtSGNivugncWpK9dmk+VjQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxqYAq2Gz5s7j6S5XN9equ44orB6qfa6dbubkHdrjFtiDs4VZ-k5UG_TYs
-Message-ID: <CAMuHMdVpc2asQpmYjhGT3iyu1t8RUtSGNivugncWpK9dmk+VjQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: r9a09g077-cpg: Add PLL2 and SDHI clock support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGI2ZWgC/3XOwQ7CIAwG4FcxPYuBTnTz5HsYD4NWR0zGAkhml
+ r27hItedvzb/F+7QOTgOMJlt0Dg7KLzYwnNfgd26McnC0clA0rUUmMjcvT2JVLoxzj5kKJI3ib
+ /Fkdz1tRZ7FupobSnwA83V/kGIye4l+HgYvLhU69lVVcVPql2E85KSEGEhEzclR+uwfj5YH0VM
+ /4pKLcVLIpENoTSKJLNT1nX9QtCDdMMBwEAAA==
+X-Change-ID: 20250523-vsock-transports-toctou-4b75d9c2a805
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Stefan Hajnoczi <stefanha@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
+X-Mailer: b4 0.14.2
 
-On Wed, 25 Jun 2025 at 16:17, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add support for PLL2 to the R9A09G077 (RZ/T2H) clock definitions and
-> register it as the source for the high-speed SDHI clock (SDHI_CLKHS)
-> operating at 800MHz.
->
-> Also add fixed-factor clock PCLKAM derived from CLK_PLL4D1, and define
-> module clocks for SDHI0 and SDHI1, both of which use PCLKAM as their
-> clock source.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+transport_{h2g,g2h,dgram,local} may become NULL on vsock_core_unregister().
+Make sure a poorly timed `rmmod transport` won't lead to a NULL/stale
+pointer dereference.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.17.
+Note that these oopses are pretty unlikely to happen in the wild. Splats
+were collected after sprinkling kernel with mdelay()s.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
+---
+Changes in v3:
+- Static transport_* CID getter rename and comment [Stefano]
+- Link to v2: https://lore.kernel.org/r/20250620-vsock-transports-toctou-v2-0-02ebd20b1d03@rbox.co
 
-                        Geert
+Changes in v2:
+- Introduce a helper function to get local CIDs safely [Stefano]
+- Rename goto label to indicate an error path, explain why releasing
+  vsock_register_mutex after try_module_get() is safe [Stefano]
+- Link to v1: https://lore.kernel.org/r/20250618-vsock-transports-toctou-v1-0-dd2d2ede9052@rbox.co
 
+---
+Michal Luczaj (3):
+      vsock: Fix transport_{g2h,h2g} TOCTOU
+      vsock: Fix transport_* TOCTOU
+      vsock: Fix IOCTL_VM_SOCKETS_GET_LOCAL_CID to check also `transport_local`
+
+ net/vmw_vsock/af_vsock.c | 57 ++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 46 insertions(+), 11 deletions(-)
+---
+base-commit: 561aa0e22b70a5e7246b73d62a824b3aef3fc375
+change-id: 20250523-vsock-transports-toctou-4b75d9c2a805
+
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Michal Luczaj <mhal@rbox.co>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
