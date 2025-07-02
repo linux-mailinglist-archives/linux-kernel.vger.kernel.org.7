@@ -1,148 +1,285 @@
-Return-Path: <linux-kernel+bounces-713430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C763AAF5963
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E957AAF5942
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8C14E4DE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F2C1C43F58
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EC327EFE6;
-	Wed,  2 Jul 2025 13:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814512DA765;
+	Wed,  2 Jul 2025 13:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="cV01KRSp"
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQfIgT0x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC03E27603A;
-	Wed,  2 Jul 2025 13:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6893527F012;
+	Wed,  2 Jul 2025 13:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751463266; cv=none; b=alJUbcZ/YC348qIGYicLV+HpFjDwjt3Yx/AOlNK2n7Lef6Y3X+yMvTCqSDhaLk9S07/atEEj7PW2iVVuL8U0frtIUDOqhUaQUMRm6TBhlvUoLNgtnaXtrJrDgRMMOl9+eRLTrEHpzxRbIfGfBLblRrLzi5mNqxSRNTEjXK6Mq20=
+	t=1751462693; cv=none; b=LuR5dozj++G58dNFunRYQgCbuLuO/xkyJLD1AOa5SgviuwfRlJ+e4fILh8QGdu7y06pTkTKVmbFIj3pnak29ZMEW4AFbyYltUXQ8GBHNeRoqsOwwo7kwtvo2yQoriTMtuRoOs0EQ9WNOdmXK5aNo/4A1YProzPXS2XtGFomeQGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751463266; c=relaxed/simple;
-	bh=JNr5JhnmpSELPd3exj25rIHy7u/NEDaXATV0e2m0pTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1lBF5U9sSyRyg5sDOtFueNgdfeupeyThjEV2+r5SJPnO1/D38Ur7PrBLSWdnGBJwrd8BNLStArPRaBnB0KRb8ZtIw9bDCaGGSm7b2qh+4ikpmPVlhP8v2l2MoXIrjz8cCAw1IukAQf140xwfXNxdP/wrsETuP58boqhDpCbJ6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=cV01KRSp; arc=none smtp.client-ip=93.188.205.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
-	s=mail; t=1751462785;
-	bh=JNr5JhnmpSELPd3exj25rIHy7u/NEDaXATV0e2m0pTM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cV01KRSpnCED0ratvOKTGc7rUUJQGMIX26Iv/7CxtTd208y0UL2rPlMtgYwwuPLN+
-	 6FR+GEYYa9dZBkxLs3UYbyBj/epVq9QOEMgbEN3r54568KH26p07//kM8JuxyRiQ/O
-	 SMLlN4boXKI6K5SNm+3h2+mW/AqyqJKyG/fLTcELSOd2zrP/x83OZRV4CPz37HJcFX
-	 ISscKlf/mzB+GN4FhAA3PjgI2ECokqQQ4EaUjb28q94KIibRtXyxc8TG+JtTf3Z+rq
-	 td3OfxBaO/K02Y5qpp4mwcLVO90pQAoyBOxrkCmDXR+tkX7lp7A5QTxUnPocyE9nct
-	 8DovlkdLiwuCg==
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 47C621F97E;
-	Wed,  2 Jul 2025 16:26:25 +0300 (MSK)
-Received: from new-mail.astralinux.ru (unknown [10.177.185.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Wed,  2 Jul 2025 16:26:24 +0300 (MSK)
-Received: from localhost.localdomain (unknown [10.198.18.126])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4bXLJZ5sYPz16Hnt;
-	Wed,  2 Jul 2025 16:26:22 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
-	James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Justin Tee <justin.tee@broadcom.com>
-Subject: [PATCH 5.10] scsi: lpfc: Move NPIV's transport unregistration to after resource clean up
-Date: Wed,  2 Jul 2025 16:24:46 +0300
-Message-ID: <20250702132448.93012-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1751462693; c=relaxed/simple;
+	bh=uYEviD6m/6DukLOUz1n6hydV/ZbFarkjRRLaJSugb+Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=Kho5fEcB1FlBRKUt/zLEKAMD6ovgSvZg4rtybjE1G0woxSXnr/OBv1VplpImkSfcdCjLK49d8rk4Ko0Q/uKcHIpa9M4fnyhqJBFrv+nm6cF3XqRWUzhon+C1eNB7oXMfL6vZQwG2tDCHMeje5c33CUo3kvmABovdT3kiardrT+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQfIgT0x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5826CC4CEED;
+	Wed,  2 Jul 2025 13:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751462692;
+	bh=uYEviD6m/6DukLOUz1n6hydV/ZbFarkjRRLaJSugb+Y=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=RQfIgT0xSGQIBGCbtzg/VpYTcL6ATUV6zd7EHcoOex0vsvsTGEQzHOeRR3DaZUMqe
+	 YvJaG6FKR9CVLVboJh7G/OTmfdq1i012+1n0yX/yrdVw49T4XP82ZXIJUgNxAjs5cF
+	 WbaKsJFDyuqaXuChNA9YDZwtlgrI20/Mqo95Sh13lRxG7bZJR2PPTiAV4llGBiXTWf
+	 UpRJRc3tPyWVlg592QDp/ttAuK0tlDKk3387fJgS5hwsgUN/H/5CMom0a5cRsjQvPN
+	 WqECeFEz5goDWQ5A7JSKvMn5ydnSPrFuLCywc1XoER/ogao6f88JCl7b+CHNcpCfIB
+	 Q+NetNEvB0mvw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/07/02 12:42:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 63 0.3.63 9cc2b4b18bf16653fda093d2c494e542ac094a39, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;new-mail.astralinux.ru:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 194491 [Jul 02 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/07/02 12:40:00 #27611971
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/07/02 12:41:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 02 Jul 2025 15:24:48 +0200
+Message-Id: <DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org>
+To: "Oliver Mangold" <oliver.mangold@pm.me>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Asahi Lina"
+ <lina+kernel@asahilina.net>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 4/4] rust: Add `OwnableRefCounted`
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
+ <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me>
+In-Reply-To: <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me>
 
-From: Justin Tee <justin.tee@broadcom.com>
+On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
+> diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.rs
+> index 80cd990f6601767aa5a742a6c0997f4f67d06453..b5626dead6bb25ea76a0ae577=
+db1b130308d98b1 100644
+> --- a/rust/kernel/types/ownable.rs
+> +++ b/rust/kernel/types/ownable.rs
+> @@ -2,6 +2,7 @@
+> =20
+>  //! Owned reference types.
+> =20
+> +use crate::types::{ARef, RefCounted};
+>  use core::{
+>      marker::PhantomData,
+>      mem::ManuallyDrop,
+> @@ -18,8 +19,9 @@
+>  ///
+>  /// Note: Implementing this trait allows types to be wrapped in an [`Own=
+ed<Self>`]. This does not
+>  /// provide reference counting but represents a unique, owned reference.=
+ If reference counting is
+> -/// required [`RefCounted`](crate::types::RefCounted) should be implemen=
+ted which allows types to be
+> -/// wrapped in an [`ARef<Self>`](crate::types::ARef).
+> +/// required [`RefCounted`] should be implemented which allows types to =
+be wrapped in an
+> +/// [`ARef<Self>`]. Implementing the trait [`OwnableRefCounted`] allows =
+to convert between unique
+> +/// and shared references (i.e. [`Owned<Self>`] and [`ARef<Self>`]).
 
-commit 4ddf01f2f1504fa08b766e8cfeec558e9f8eef6c upstream.
+This change should probably be in the earlier patch.
 
-There are cases after NPIV deletion where the fabric switch still believes
-the NPIV is logged into the fabric.  This occurs when a vport is
-unregistered before the Remove All DA_ID CT and LOGO ELS are sent to the
-fabric.
+>  ///
+>  /// # Safety
+>  ///
+> @@ -132,3 +134,124 @@ fn drop(&mut self) {
+>          unsafe { T::release(self.ptr) };
+>      }
+>  }
+> +
+> +/// A trait for objects that can be wrapped in either one of the referen=
+ce types [`Owned`] and
+> +/// [`ARef`].
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that:
+> +///
+> +/// - [`try_from_shared()`](OwnableRefCounted::into_shared) only returns=
+ an [`Owned<Self>`] if
+> +///   exactly one [`ARef<Self>`] exists.
 
-Currently fc_remove_host(), which calls dev_loss_tmo for all D_IDs including
-the fabric D_ID, removes the last ndlp reference and frees the ndlp rport
-object.  This sometimes causes the race condition where the final DA_ID and
-LOGO are skipped from being sent to the fabric switch.
+This shouldn't be required?
 
-Fix by moving the fc_remove_host() and scsi_remove_host() calls after DA_ID
-and LOGO are sent.
+> +/// - [`into_shared()`](OwnableRefCounted::into_shared) set the referenc=
+e count to the value which
+> +///   the returned [`ARef<Self>`] expects for an object with a single re=
+ference in existence. This
+> +///   implies that if [`into_shared()`](OwnableRefCounted::into_shared) =
+is left on the default
+> +///   implementation, which just rewraps the underlying object, the refe=
+rence count needs not to be
+> +///   modified when converting an [`Owned<Self>`] to an [`ARef<Self>`].
 
-Signed-off-by: Justin Tee <justin.tee@broadcom.com>
-Link: https://lore.kernel.org/r/20240305200503.57317-3-justintee8345@gmail.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+This also seems pretty weird...
+
+I feel like `OwnableRefCounted` is essentially just a compatibility
+condition between `Ownable` and `RefCounted`. It ensures that the
+ownership declared in `Ownable` corresponds to exactly one refcount
+declared in `RefCounted`.
+
+That being said, I think a `RefCounted` *always* canonically is
+`Ownable` by the following impl:
+
+    unsafe impl<T: RefCounted> Ownable for T {
+        unsafe fn release(this: NonNull<Self>) {
+            T::dec_ref(this)
+        }
+    }
+
+So I don't think that we need this trait at all?
+
+> +///
+> +/// # Examples
+
+If we're having an example here, then we should also have on on `Owned`.
+
+> +///
+> +/// A minimal example implementation of [`OwnableRefCounted`], [`Ownable=
+`] and its usage with
+> +/// [`ARef`] and [`Owned`] looks like this:
+> +///
+> +/// ```
+> +/// # #![expect(clippy::disallowed_names)]
+> +/// use core::cell::Cell;
+> +/// use core::ptr::NonNull;
+> +/// use kernel::alloc::{flags, kbox::KBox, AllocError};
+> +/// use kernel::types::{
+> +///     ARef, RefCounted, Owned, Ownable, OwnableRefCounted,
+> +/// };
+> +///
+> +/// struct Foo {
+> +///     refcount: Cell<usize>,
+> +/// }
+> +///
+> +/// impl Foo {
+> +///     fn new() -> Result<Owned<Self>, AllocError> {
+> +///         // Use a `KBox` to handle the actual allocation.
+> +///         let result =3D KBox::new(
+> +///             Foo {
+> +///                 refcount: Cell::new(1),
+> +///             },
+> +///             flags::GFP_KERNEL,
+> +///         )?;
+> +///         let result =3D NonNull::new(KBox::into_raw(result))
+> +///             .expect("Raw pointer to newly allocation KBox is null, t=
+his should never happen.");
+
+I'm not really convinced that an example using `KBox` is a good one...
+Maybe we should just have a local invisible `bindings` module that
+exposes a `-> *mut foo`. (internally it can just create a KBox`)
+
+> +///         // SAFETY: We just allocated the `Foo`, thus it is valid.
+
+This isn't going through all the requirements on `from_raw`...
+
 ---
-Backport fix for CVE-2024-36952
- drivers/scsi/lpfc/lpfc_vport.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Cheers,
+Benno
 
-diff --git a/drivers/scsi/lpfc/lpfc_vport.c b/drivers/scsi/lpfc/lpfc_vport.c
-index aa4e451d5dc1..921630f71ee9 100644
---- a/drivers/scsi/lpfc/lpfc_vport.c
-+++ b/drivers/scsi/lpfc/lpfc_vport.c
-@@ -668,10 +668,6 @@ lpfc_vport_delete(struct fc_vport *fc_vport)
- 		ns_ndlp_referenced = true;
- 	}
- 
--	/* Remove FC host and then SCSI host with the vport */
--	fc_remove_host(shost);
--	scsi_remove_host(shost);
--
- 	ndlp = lpfc_findnode_did(phba->pport, Fabric_DID);
- 
- 	/* In case of driver unload, we shall not perform fabric logo as the
-@@ -783,6 +779,10 @@ lpfc_vport_delete(struct fc_vport *fc_vport)
- 		lpfc_nlp_put(ndlp);
- 	}
- 
-+	/* Remove FC host to break driver binding. */
-+	fc_remove_host(shost);
-+	scsi_remove_host(shost);
-+
- 	lpfc_cleanup(vport);
- 	lpfc_sli_host_down(vport);
- 
--- 
-2.43.0
+> +///         Ok(unsafe { Owned::from_raw(result) })
+> +///     }
+> +/// }
+> +///
+> +/// // SAFETY: We increment and decrement each time the respective funct=
+ion is called and only free
+> +/// // the `Foo` when the refcount reaches zero.
+> +/// unsafe impl RefCounted for Foo {
+> +///     fn inc_ref(&self) {
+> +///         self.refcount.replace(self.refcount.get() + 1);
+> +///     }
+> +///
+> +///     unsafe fn dec_ref(this: NonNull<Self>) {
+> +///         // SAFETY: The underlying object is always valid when the fu=
+nction is called.
+> +///         let refcount =3D unsafe { &this.as_ref().refcount };
+> +///         let new_refcount =3D refcount.get() - 1;
+> +///         if new_refcount =3D=3D 0 {
+> +///             // The `Foo` will be dropped when `KBox` goes out of sco=
+pe.
+> +///             // SAFETY: The `Box<Foo>` is still alive as the old refc=
+ount is 1.
+> +///             unsafe { KBox::from_raw(this.as_ptr()) };
+> +///         } else {
+> +///             refcount.replace(new_refcount);
+> +///         }
+> +///     }
+> +/// }
+> +///
+> +/// // SAFETY: We only convert into an `Owned` when the refcount is 1.
+> +/// unsafe impl OwnableRefCounted for Foo {
+> +///     fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef=
+<Self>> {
+> +///         if this.refcount.get() =3D=3D 1 {
+> +///             // SAFETY: The `Foo` is still alive as the refcount is 1=
+.
+> +///             Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
+> +///         } else {
+> +///             Err(this)
+> +///         }
+> +///     }
+> +/// }
+> +///
+> +/// // SAFETY: We are not `AlwaysRefCounted`.
+> +/// unsafe impl Ownable for Foo {
+> +///     unsafe fn release(this: NonNull<Self>) {
+> +///         // SAFETY: Using `dec_ref()` from `RefCounted` to release is=
+ okay, as the refcount is
+> +///         // always 1 for an `Owned<Foo>`.
+> +///         unsafe{ Foo::dec_ref(this) };
+> +///     }
+> +/// }
+> +///
+> +/// let foo =3D Foo::new().unwrap();
+> +/// let mut foo =3D ARef::from(foo);
+> +/// {
+> +///     let bar =3D foo.clone();
+> +///     assert!(Owned::try_from(bar).is_err());
+> +/// }
+> +/// assert!(Owned::try_from(foo).is_ok());
+> +/// ```
+> +pub unsafe trait OwnableRefCounted: RefCounted + Ownable + Sized {
+> +    /// Checks if the [`ARef`] is unique and convert it to an [`Owned`] =
+it that is that case.
+> +    /// Otherwise it returns again an [`ARef`] to the same underlying ob=
+ject.
+> +    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<Sel=
+f>>;
+> +
+> +    /// Converts the [`Owned`] into an [`ARef`].
+> +    fn into_shared(this: Owned<Self>) -> ARef<Self> {
+> +        // SAFETY: Safe by the requirements on implementing the trait.
+> +        unsafe { ARef::from_raw(Owned::into_raw(this)) }
+> +    }
+> +}
+> +
+> +impl<T: OwnableRefCounted> TryFrom<ARef<T>> for Owned<T> {
+> +    type Error =3D ARef<T>;
+> +    /// Tries to convert the [`ARef`] to an [`Owned`] by calling
+> +    /// [`try_from_shared()`](OwnableRefCounted::try_from_shared). In ca=
+se the [`ARef`] is not
+> +    /// unique, it returns again an [`ARef`] to the same underlying obje=
+ct.
+> +    fn try_from(b: ARef<T>) -> Result<Owned<T>, Self::Error> {
+> +        T::try_from_shared(b)
+> +    }
+> +}
 
 
