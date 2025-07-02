@@ -1,115 +1,189 @@
-Return-Path: <linux-kernel+bounces-713648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A82AF5CC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:23:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9750AF5D59
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E877B7B04D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021D11887059
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C7F30E83B;
-	Wed,  2 Jul 2025 15:22:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467B428A1CA;
-	Wed,  2 Jul 2025 15:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751469773; cv=none; b=Y0KouvC9PxWnzPpvuBzQ4C1wdF5Xk9KIeddc2mVLiNeraP4pKqExRfwW2PrhiwJFODrdt6YPuWmd9wSbE1hurUEKU2rz5AG1X4NImVwRVr5uvSRAQXOXbAC1rl2MOVPRH6fMoy9WhsC0XcaXaHBtJPdM/M6XjQiR/77a1pbeYuE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751469773; c=relaxed/simple;
-	bh=PQ+hdBJx/CkzLHdGqBVQQ/tW1D4I/JfEPGFPP/Z/xks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jT+4izExFH2HghE5xpTOLKpkSIZ8ltat8vKaQdwEFL3hrZdUxEI0X3smb7ooa1+LrqcMiI+joPVdhPZvqdUMpT8btaii7npmNouJ4yaj4wyTL2zs2iJOlgkOvZlaSlwPUzTKGHgp71l0R0Gg78zDAYxdQeZHlHPNVS1MsPtizMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFB511424;
-	Wed,  2 Jul 2025 08:22:36 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E58C13F6A8;
-	Wed,  2 Jul 2025 08:22:49 -0700 (PDT)
-Date: Wed, 2 Jul 2025 16:22:47 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, <arm-scmi@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/7] firmware: imx: sm-misc: Dump syslog and system info
-Message-ID: <20250702-berserk-paper-uakari-74a8bd@sudeepholla>
-References: <20250627-sm-misc-api-v1-v1-0-2b99481fe825@nxp.com>
- <20250627-sm-misc-api-v1-v1-7-2b99481fe825@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE86B2FD5AE;
+	Wed,  2 Jul 2025 15:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="qwCmYvbl"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E0D2DCF54;
+	Wed,  2 Jul 2025 15:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751470273; cv=pass; b=kzoKNnkit66spH9W6TShud5VH11k4KwQyHEXr91YAgrF5I+LKWFWeFsSGFX6aKZpd2XRAB22JPsPQCQJbVSZpIngqw77iOV0Sb2+dTquoviEEKD+75ZhbeUzCRN+rG48HivVvWIFoCqnnTgPVaFqq2TMOniWMmYyg5Y/olhupy4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751470273; c=relaxed/simple;
+	bh=MPn4dwWS4SsgFUv2ktEgYlMmldSTWVa0DGbq8Yo9njs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=U/Hu5pdoRc9WXhYJgWrhEJuA7MF7OA1D//qGG/5G69JC7bIzB4btGbCNmoCO9vM7bwgeu8WN0HRmwWjyVyVjhxa3dcViWHNyicrYwAde5qaQg5bJniLYLCyeFJ/2OvnQdl6lpUy+4h39kj3xfz9DTIXdEKzoWWQlj8T/CC41cTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=qwCmYvbl; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from [192.168.1.195] (unknown [IPv6:2a0c:f040:0:2790::a03d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pav@iki.fi)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4bXNv66SDgz49Q1w;
+	Wed,  2 Jul 2025 18:22:58 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1751469781;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=74URfcO5JqEqPB6bVC6qfZC838MIsWWJe/PpASUbCcg=;
+	b=qwCmYvblW1ha/yOsewISSpkENjgZG6kjiLfwgD0E+sVtnNzh7Zr2APWtQjd75KzRr4ENID
+	bREMQTMzIGyQq7GVpw0pWWqcKKMdAgslFC2A6NPz2cYwlBY6lQ+Z6XSyoG2bebOhh3hGbR
+	yzxJghasL1SVrZw0yElS2xcort6THfuzb0NWrF95KsPt01HEXhdNSluFnPci+PsrcU3jeg
+	CkTQKPb/sDydrKGVVGDFVxEvtxnYpTRD5pyrBHOLLY1c0Jv8IWsr/Oi1JFoSFuJRk64k6d
+	nxI5+9DuJrSsWWuw2EqbJ/GqWCZxaVeikWDhLI++PbAGa10N5/mIvIThj5dZqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1751469781;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=74URfcO5JqEqPB6bVC6qfZC838MIsWWJe/PpASUbCcg=;
+	b=Bv+zQLY/uODqENaM6A+8FpHCZeTVMohTR+6yB6cacaQUKKREpAdN4s86urYViTDo+sYBgi
+	P1tFQrjn7ks7/8ZtC6i9GYh5r+X/CCUVubuWHEBi6zLdSYK2OLSWuIrue5GZ/iYgeQ+asE
+	/e5p9W6wrQbFlBd5RWDivSqEZCYpI2qpUyN7b36rcgnUWKa6V3GIcknISLH+iU9N4g5s3/
+	8mJRLrtS0Yhec1VZUbXs7U5WeZJwHVf6303Sj6Ifoa/qdBNg9CUTtCTRPq/O6qiBQqpgrA
+	RVr/N+EyUAdyEoUMX3hmWRD4JNUaWTs0ruomOJ/FwsrSI8S+T/o/u+ZhsiiTyQ==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pav@iki.fi smtp.mailfrom=pav@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1751469781; a=rsa-sha256;
+	cv=none;
+	b=Un44gB7xX3oHblb63J1ZUJcaxwh9h1IM/GXh/z3WacNRJoluk3xC/FZdg8sMXiWE3fKARu
+	rwMhFyPesxQWyabrE/grEPy3rW7F556dvD487yqFxyUN8AKFHOZQgoIjHgeWeNlxMFq1HP
+	IIQB+tI+B1ApF8GG+3L0yLiCl/Nel4TRfvLezNuMwf2Ea6QiMrMEHcuRn6k39rWnIbqql1
+	+ffCgM61X2xXFvdjV3GTZiDvx7s40ovSl4QX21Hz4fueFT36s4pWFJCxifa4SUbaR4mjbQ
+	0kfuv4T60XWlFAN45QjQ1MnOrOz6NtNiFzU40/C45S5XYpQSr6nkdrNfwxDoBg==
+Message-ID: <d6906cfb7fae090b9fe0c1c5b8708182eb939b42.camel@iki.fi>
+Subject: Re: [PATCH v2] Bluetooth: ISO: Support SOCK_RCVTSTAMP via CMSG for
+ ISO sockets
+From: Pauli Virtanen <pav@iki.fi>
+To: yang.li@amlogic.com, Marcel Holtmann <marcel@holtmann.org>, Johan
+ Hedberg	 <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
+ <luiz.dentz@gmail.com>,  "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 02 Jul 2025 18:22:56 +0300
+In-Reply-To: <20250702-iso_ts-v2-1-723d199c8068@amlogic.com>
+References: <20250702-iso_ts-v2-1-723d199c8068@amlogic.com>
+Autocrypt: addr=pav@iki.fi; prefer-encrypt=mutual;
+ keydata=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
+ bzyGkKh2h8XdrYhtDjw9LmrprPQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250627-sm-misc-api-v1-v1-7-2b99481fe825@nxp.com>
 
-On Fri, Jun 27, 2025 at 02:03:50PM +0800, Peng Fan wrote:
-> Add sysfs interface to read System Manager syslog and system info
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Hi,
+
+ke, 2025-07-02 kello 19:35 +0800, Yang Li via B4 Relay kirjoitti:
+> From: Yang Li <yang.li@amlogic.com>
+>=20
+> User-space applications (e.g., PipeWire) depend on
+> ISO-formatted timestamps for precise audio sync.
+>=20
+> Signed-off-by: Yang Li <yang.li@amlogic.com>
 > ---
->  drivers/firmware/imx/sm-misc.c | 97 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 97 insertions(+)
-> 
-> diff --git a/drivers/firmware/imx/sm-misc.c b/drivers/firmware/imx/sm-misc.c
-> index fc3ee12c2be878e0285183e3381c9514a63d5142..55485a3c4a5c615102a377f41025a6911d746770 100644
-> --- a/drivers/firmware/imx/sm-misc.c
-> +++ b/drivers/firmware/imx/sm-misc.c
-> @@ -44,6 +44,100 @@ static int scmi_imx_misc_ctrl_notifier(struct notifier_block *nb,
->  	return 0;
->  }
->  
-> +static ssize_t syslog_show(struct device *device, struct device_attribute *attr,
-> +			   char *buf)
-> +{
-> +	struct scmi_imx_misc_sys_sleep_rec *rec;
-> +	struct scmi_imx_misc_syslog *syslog;
-> +	int ret;
-> +	size_t len = 0;
-> +
-> +	if (!ph)
-> +		return 0;
-> +
-> +	syslog = kmalloc(sizeof(*syslog), GFP_KERNEL);
-> +	if (!syslog)
-> +		return -ENOMEM;
-> +
-> +	ret = imx_misc_ctrl_ops->misc_syslog(ph, sizeof(*syslog), syslog);
-> +	if (ret) {
-> +		kfree(syslog);
-> +		return ret;
-> +	}
-> +
-> +	rec = &syslog->syssleeprecord;
-> +
-> +	len += sysfs_emit_at(buf, len, "Wake Vector = %u\n", rec->wakesource);
-> +	len += sysfs_emit_at(buf, len, "Sys sleep mode = %u\n", rec->syssleepmode);
-> +	len += sysfs_emit_at(buf, len, "Sys sleep flags = 0x%08x\n", rec->syssleepflags);
-> +	len += sysfs_emit_at(buf, len, "MIX power status = 0x%08x\n", rec->mixpwrstat);
-> +	len += sysfs_emit_at(buf, len, "MEM power status = 0x%08x\n", rec->mempwrstat);
-> +	len += sysfs_emit_at(buf, len, "PLL power status = 0x%08x\n", rec->pllpwrstat);
-> +	len += sysfs_emit_at(buf, len, "Sleep latency = %u\n", rec->sleepentryusec);
-> +	len += sysfs_emit_at(buf, len, "Wake latency = %u\n", rec->sleepexitusec);
-> +	len += sysfs_emit_at(buf, len, "Sleep count = %u\n", rec->sleepcnt);
-> +
+> Changes in v2:
+> - Support SOCK_RCVTSTAMPNS via CMSG for ISO sockets
+> - Link to v1: https://lore.kernel.org/r/20250429-iso_ts-v1-1-e586f30de6cb=
+@amlogic.com
+> ---
+>  net/bluetooth/iso.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> index fc22782cbeeb..6927c593a1d6 100644
+> --- a/net/bluetooth/iso.c
+> +++ b/net/bluetooth/iso.c
+> @@ -2308,6 +2308,9 @@ void iso_recv(struct hci_conn *hcon, struct sk_buff=
+ *skb, u16 flags)
+>  				goto drop;
+>  			}
+> =20
+> +			/* Record the timestamp to skb*/
+> +			skb->skb_mstamp_ns =3D le32_to_cpu(hdr->ts);
 
-Why can't this be individual files and values ?
+Hardware timestamps are supposed to go in
 
--- 
-Regards,
-Sudeep
+	skb_hwtstamps(skb)->hwtstamp
+
+See Documentation/networking/timestamping.rst
+"3.1 Hardware Timestamping Implementation: Device Drivers" and how it
+is done in drivers/net/
+
+This documentation also explains how user applications can obtain the
+hardware timestamps.
+
+AFAIK, skb->tstamp (skb->skb_mstamp_ns is union for it) must be in
+system clock. The hdr->ts is in some unsynchronized controller clock,
+so they should go to HW timestamps.
+
+> +
+>  			len =3D __le16_to_cpu(hdr->slen);
+>  		} else {
+>  			struct hci_iso_data_hdr *hdr;
+>=20
+> ---
+> base-commit: 3bc46213b81278f3a9df0324768e152de71eb9fe
+> change-id: 20250421-iso_ts-c82a300ae784
+>=20
+> Best regards,
+
+--=20
+Pauli Virtanen
 
