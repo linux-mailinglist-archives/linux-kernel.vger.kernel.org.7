@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-712497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358EAAF0A7B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0128DAF0A7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC81444878
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60419443E2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D724225417;
-	Wed,  2 Jul 2025 05:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97B521C19D;
+	Wed,  2 Jul 2025 05:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="TOKXt0Wh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cF618pGX"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0N4UPpQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457F8219A7A;
-	Wed,  2 Jul 2025 05:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D79322D4F6;
+	Wed,  2 Jul 2025 05:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751433357; cv=none; b=OdKJpbNfklvBtW4EsRi1tBXUxC4hXc7DANk5D0YhxrWV6wuP2EXukKein2gHEvZnf1O2GM8onjEEafLkZVjkNrD7wk12VSyLTcfNA6KfxoOM4qgLcE6VpviTI/prt8AvfJENiJh2em+k8OBNw5pKyII+E55JHC/IgLTeJu1MBzg=
+	t=1751433366; cv=none; b=mUV49XmFzNTVw+yy5SGsYC0LFU0dGP8gMqiF+izVuxY14v8gKD8JeRiRX/PWhJqI7jsZHMZzzUBSj2JQJlJAK4RVPz6FUyyfCffZJvMbdrnBP57ZZagJjSbYcIhnY1NYIC6BOsmlfDicV8E9vv8CEhNtF4vq5nH5KuFKYHTXtvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751433357; c=relaxed/simple;
-	bh=609em8duwn1TuR7A8MeBu753B5OAPg1aWBaZfiCHuf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WRVXZear+8Y2dfP2hwYZyegbBv3RMgMeB/ZVmfwm96jERSOPm67Seh/V7SuI+zNvbtgGWauoqhDxlQ7z4/XIwxUK4zQTW4mdTrodEz94lXXJQKSFXFQTOcg/nFEX269OE9DiQPKi9n5LXZcDJ/p4dZ7mVu3qV4Gr1eYTGa1yk1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=TOKXt0Wh; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cF618pGX reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1751433354; x=1782969354;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yEbAI3opm4LnixMNPD4CJAcS1fuxSWr4Pdo00xuzpFY=;
-  b=TOKXt0WhGRqtccPEOjmPu7X14LaQsk0a1aoTnFSijVkhf5Zysb12MyMU
-   Bzqfac/hxcr1jS4IW9CyTkJYourAOEyAwKvQcAn2JxWNDaUv3YsUc21f6
-   HvqvQJhvsRuk8txaVVyZkl06stxK+f8shuukHv3H67ueGnX5/efHwscwA
-   a4EAVcSkjaE7mKIM8aCBmcqJgn/LyzZmrbHbgy6gLjCA+DvNt/SirOfTF
-   X5kjKANfDgH9QHViZY/BGm5wP2iLiZXJ6tmfHwp8yG3BWv/gL7qtsaXkM
-   B7knFm4nkHHAD4tvZ8pQcGy3thxrz+UOtlaerScRPGeVmag9h28S+CmgV
-   A==;
-X-CSE-ConnectionGUID: eIs4CnGHQlWPEHsu6qr5AA==
-X-CSE-MsgGUID: ERVeFJYmQfG8spIkNsSiLA==
-X-IronPort-AV: E=Sophos;i="6.16,281,1744063200"; 
-   d="scan'208";a="44969913"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 02 Jul 2025 07:15:50 +0200
-X-CheckPoint: {6864C085-39-B6FA1C9B-ED1A9D03}
-X-MAIL-CPID: 7C0C64754A18A0C5244284046CA090FF_2
-X-Control-Analysis: str=0001.0A006371.6864C09E.0036,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B95DA1609FC;
-	Wed,  2 Jul 2025 07:15:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1751433345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yEbAI3opm4LnixMNPD4CJAcS1fuxSWr4Pdo00xuzpFY=;
-	b=cF618pGXKLBuYLWJzcG6yKxN6HvPJZ3OnzuLEmANIX9+PK+VYRbMI4jhxz1Vp9MpJjcL4q
-	DP/tq6zlyoJctpFzYH6DACLXA9gX9E4ETE1oCbnLP+OdSd0ldDYS7s5U91NVaRVj8YmGhD
-	mi0e/RFIx3A+oxWRWYME+JgWfucWZeAmbB3vgaJTZwofsXB6zLTxPbYoWiMdk4LLFPN6Rv
-	BimCqaXrReERUtViTT11VULX6JSEgaScb7ZQnJ2+QgOQtVwTVrv4uI3VVOiPNEak+PfBtO
-	xwmC5iDg3mkguCVlmoDwq96bJgvsvhTiIScf1lrG5gGikyChpuTjvkDGXsvlhg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rui Miguel Silva <rmfrfs@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Eugen Hristev <eugen.hristev@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
- Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 3/7] pmdomain: imx93-blk-ctrl: populate child devices
-Date: Wed, 02 Jul 2025 07:15:41 +0200
-Message-ID: <2232630.irdbgypaU6@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250701-95_cam-v1-3-c5172bab387b@nxp.com>
-References:
- <20250701-95_cam-v1-0-c5172bab387b@nxp.com>
- <20250701-95_cam-v1-3-c5172bab387b@nxp.com>
+	s=arc-20240116; t=1751433366; c=relaxed/simple;
+	bh=GOT+hMMc2cAgxhFzxN3QZQCNYo95TBfs4Wp4R9OGGQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zi/rpATPoQoE64kEShMjblq+xk7PSFqaFoweNi5tRdLAArccgUg2rL0Bq6oYPz07bGzAEDu2Bw/WQjHOzgQw6x3MLuEnfJ5M3o1pZCZrGK3z3cC12sd/hychT5+GIr0EPRUOHbdkDwF7qv4GbVEOZgkA9flLZXkOmUfp59H9x3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0N4UPpQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3A9C4CEEE;
+	Wed,  2 Jul 2025 05:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751433365;
+	bh=GOT+hMMc2cAgxhFzxN3QZQCNYo95TBfs4Wp4R9OGGQM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=h0N4UPpQ6fmKhHxfZ2f7CkES6W5lrR0kMo8MADzDdSRgafV4fQ8wbar1D8Zh9fLMC
+	 E8FdaBgTFQY4AOK5hxMimyC9ExjGGKeKqceFHpHra1YkBMYgvUF7XAJIM22oXpO95u
+	 Ezc/mOLbZgELP0LP+yYWsdQiHzSSNH+lGuXVs4hrzYfM7Oobsf0KCPZhjGyVs/dtc+
+	 zNsVePw9LcM8zdHgKtiqYfOGetMOjtkOU0c0Y6atpAi2qAp45v/pebHGjEc4l3dbx+
+	 cF9QNnZPsZ+PkNjFFEi1VnZpb2+tuoErvBvDHcwj+ddHndm4rxgL43MEAuMvzZMifD
+	 x3IzZCgDtwAmQ==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bijan Tabatabai <bijan311@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v2 0/6] mm/damon: add DAMOS_MIGRATE_{HOT,COLD} destination nodes and weights
+Date: Tue,  1 Jul 2025 22:15:52 -0700
+Message-Id: <20250702051558.54138-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi,
+DAMOS_MIGRATE_{HOT,COLD} action can migrate pages to only single node.
+It could be useful to allow it migrates pages to multiple nodes with
+different weights.  A work for dynamic interleaving[1], which is in
+progress, is an expected case.  We also discussed this could be useful
+for memory tiering, e.g., when we want to move pages to multiple noes of
+same tier.
 
-thanks for the patch.
+Extend the API and ABI for specifying the multiple destination nodes and
+their weights.
 
-Am Mittwoch, 2. Juli 2025, 00:06:08 CEST schrieb Frank Li:
-> imx93-blk-ctrl is miscellaneous devices, which include reset, clock, MIPI
-> CSI2 PHY and DSI's miscellaneous logic. Call of_platform_populate() to
-> probe child nodes.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pmdomain/imx/imx93-blk-ctrl.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx=
-/imx93-blk-ctrl.c
-> index 0e2ba8ec55d75..ba2dd8bd143d1 100644
-> --- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> +++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
-> @@ -7,6 +7,7 @@
->  #include <linux/device.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_runtime.h>
-> @@ -297,7 +298,7 @@ static int imx93_blk_ctrl_probe(struct platform_devic=
-e *pdev)
-> =20
->  	dev_set_drvdata(dev, bc);
-> =20
-> -	return 0;
-> +	return of_platform_populate(dev->of_node, NULL, NULL, dev);
+Note that this RFC is a prototype of the interface change for Bijan's
+interleaving work[1].  Hence this patch series is only implementing the
+interface part, not the real implementation of the migration behavior.
 
-Please use devm_ same as in [1], which you Sob'ed as well.
+[1] https://lore.kernel.org/20250620180458.5041-1-bijan311@gmail.com
+[2] https://lore.kernel.org/20240408175228.91414-1-sj@kernel.org
 
-[1] https://lore.kernel.org/all/20250304154929.1785200-4-alexander.stein@ew=
-=2Etq-group.com/
+Changes from RFC
+(https://lore.kernel.org/20250621173131.23917-1-sj@kernel.org)
+- Add documentation patches
+- Wordsmith commit messages
+- Rebase on latest mm-new
 
-> =20
->  cleanup_pds:
->  	for (i--; i >=3D 0; i--)
->=20
->=20
+SeongJae Park (6):
+  mm/damon: add struct damos_migrate_dest
+  mm/damon/core: add damos->migrate_dest field
+  mm/damon/sysfs-schemes: implement DAMOS action destinations directory
+  mm/damon/sysfs-schemes: set damos->migrate_dest
+  Docs/ABI/damon: document schemes dests directory
+  Docs/admin-guide/mm/damon/usage: document dests directory
+
+ .../ABI/testing/sysfs-kernel-mm-damon         |  22 ++
+ Documentation/admin-guide/mm/damon/usage.rst  |  33 ++-
+ include/linux/damon.h                         |  29 +-
+ mm/damon/core.c                               |   4 +
+ mm/damon/sysfs-schemes.c                      | 253 +++++++++++++++++-
+ 5 files changed, 333 insertions(+), 8 deletions(-)
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+base-commit: 8a6d44984fa3076b444a6ddd8a8898b6ba254d25
+-- 
+2.39.5
 
