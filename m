@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-713261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3876AF1586
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:24:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31522AF157F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B514B167E33
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402913A7CA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F030A271458;
-	Wed,  2 Jul 2025 12:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4804626E17A;
+	Wed,  2 Jul 2025 12:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F0SCA7CM"
-Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BDM7WFDA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C526B747;
-	Wed,  2 Jul 2025 12:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323AC1DF27F;
+	Wed,  2 Jul 2025 12:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751459053; cv=none; b=lRd0j7vjm9sK/RMrHyERGQEGK6F96W+d1P/Vpa5I8qSRmi/CGIkuZ3E318OmokpI2plrmENImxMB8UI2DNqOOVHgX3xbsVeU96kW41g5+P7cglz/AqRJL8J+eHQObvYlBEBdOtt5kkMQNl879Wp4aYynStghZL73R7TKVpHSGwc=
+	t=1751459040; cv=none; b=krGU4WSgWOUQIsQvc/N4FhVUsEXvxq1YjlYDbZ5SuMUOOO8fWlhc5gQusPQWGkBJSssNinYqm1LxGvTcL1PmB6pk2frn/onVuQkQRiKvndNb7Pqx8fB0g+fJtk41sV9UIaBRVLygIXHp9XfBkJTsTShco7hWVpCexKS4GZUlPNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751459053; c=relaxed/simple;
-	bh=FnTPS7XrucGy4Vkovkr4+yG8KSsot54yCzj6ft7QxKQ=;
+	s=arc-20240116; t=1751459040; c=relaxed/simple;
+	bh=7MXsvefg93WoDNxgQrzmnxeJinMCDTf4uZTRkhJS/pQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekEy5oqFL3CA6aWQYGdQbOGG/pVBwQrnBi7bibYcYpeSS63sfmrKCuZIf/ciuOKK65AvA/lR3u7jp3iPBWJneY3p3YsJvmh4GRu4M1xHHoAGfv4OUTLaxtoa78xkHR0j7VoblgY7+M1dAzebO564FNGxvEbygXoxLKx3PkgJAQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F0SCA7CM; arc=none smtp.client-ip=193.252.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id WwUKuU4efLcVHWwULu3zCl; Wed, 02 Jul 2025 14:23:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751458981;
-	bh=6AUGzcNiTKnyYAvQQAMQveENbbz1AubdZ1CqkeZ4AEo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=F0SCA7CMjk17ST1ESJdj+eX//PXF9chUocEUvBpjdh5rL4IVLdMtIia1TN5zJO63d
-	 T6d61cwVkyQjCftcAhb2/Z2pCL8Q25tyb2g0DloaWReUEblvJ6V4/6ZwkQBLKy2/T5
-	 c/5xiaMvxcHNfckmhGNqjRe/rSZrZOBLgSycwgjXlr3JHCMBugQ7g6uL4V0YplWDeq
-	 2xmE8SL9z007D34L7dsonXCovBvg3PcCfxMkINQtOTBW0QYOJshJBx8jfqLOm6L9w3
-	 jkyIOjUudFyA7areOCqSBZmb50djcikGZkxsC0zQAjXmli96rzwU6tCW3ExM7N6bI7
-	 WQ4W8E0PPJHpQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 02 Jul 2025 14:23:01 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <23dbf1ed-543c-4765-91a6-b54db2d49150@wanadoo.fr>
-Date: Wed, 2 Jul 2025 21:22:56 +0900
+	 In-Reply-To:Content-Type; b=DyU0JjqkrhA9gkWFC+kk/tDC2GZjjt2A8d/eCZb0yIpv/qx1IHQ5Ia9RGKFVBy3IYKpHk3HeK5Y3BZY51oJrCF+22e/uVbFlCTm7jF0vHpUxZ17MhaZ8f/BhYdluRfSmHhTBCaEA1/R11caEl0zTwLslzVFNyLpA7Dmp85t2PPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BDM7WFDA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5629TjxU013644;
+	Wed, 2 Jul 2025 12:23:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=UdBAqe
+	jzoUw+UgaBlhXeMSEbuN5A8uBlJuHZIqvXh4A=; b=BDM7WFDAb1M1owrIjk0IoQ
+	I60vhnYcmtOvIXIBdsOnySMhNbLlJHwf805Eq353MhEg+Y7tIbYooSqqvW0jOLEe
+	KBEtuu//NN29vPtL+EhJufYXhnScDRqjtBp5OdGm/w7kLNZnHj4tP23WKLBGIo/A
+	uQNM6zkmLE4hGVZFTt4p5SmnhlS97FSbl0zvkQLACXE2utH7sOouoDcl14b16Yyn
+	TMl1wfc4SqrtJ/OXSVbGpkXGGRiHbLldjTtZvSlst+3UVoxaq5PMK7TnabOL6MJy
+	HwEdblujIDPYD4w9aUqpAaGTn7eP7k6opl4eHkrWcGl7q31gxq51Sl78NRaqYRiQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u1w3xw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 12:23:29 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5629JcjL021078;
+	Wed, 2 Jul 2025 12:23:29 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jtqufmps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 12:23:28 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 562CNPnv44106226
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Jul 2025 12:23:25 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 369572004E;
+	Wed,  2 Jul 2025 12:23:25 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D9FCF20043;
+	Wed,  2 Jul 2025 12:23:24 +0000 (GMT)
+Received: from [9.152.222.224] (unknown [9.152.222.224])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Jul 2025 12:23:24 +0000 (GMT)
+Message-ID: <51903e66-56bc-42a4-b80c-9c3223e2a48a@linux.ibm.com>
+Date: Wed, 2 Jul 2025 14:23:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,56 +76,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] can: rcar_canfd: Drop unused macros
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Biju Das <biju.das.au@gmail.com>, Magnus Damm <magnus.damm@gmail.com>
-References: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v12 08/11] perf tools: Minimal CALLCHAIN_DEFERRED support
+To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+References: <20250701180410.755491417@goodmis.org>
+ <20250701180456.884974538@goodmis.org>
 Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250702120539.98490-1-biju.das.jz@bp.renesas.com>
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250701180456.884974538@goodmis.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: axbO-Vk8p0TWJ0uevcQWCloOnJFQGtqY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDEwMCBTYWx0ZWRfX+YfD2C4mM3TP DZMmJfN2CnKikoPEdppg5lNczoasu01L0XpLgqT29WXQqORGJOfKEA4/RMU4qfS7FJ+rZD4MfZT G2YhSgzJDw43PYZ6JRdXV6PaPUgJXQpBzsEhi+QPCFIyXZdNHkg1USkvdmXFkBkI9wzLtRRLGDw
+ hd8OgRTJCsNpjQ//sBw41BpoMycktdAKXZMMPlLFIxVfuvbydDA3OCkvl4Z2soQYmmmXzoWyTsV UVm3VJ+3mo6NhF1n2QLsykDOeNKaaUsISjtTV131z/LqFVL+NOniBs5w/31JpJa1AkBcXM77VUh bYztdFIZCsr2K+U9QZaqy5t3RLuiQPNud++2dMoXqmVeIQNMyFjhT6EakrQ7eNFTMaQCd7KU4h4
+ /M5swsKeo4rwEK/UdU28Au3O8KW+v1LSSNbnDOkGRwzAACV4dyySrniFg0xb1yfbjcg5dZMN
+X-Proofpoint-GUID: axbO-Vk8p0TWJ0uevcQWCloOnJFQGtqY
+X-Authority-Analysis: v=2.4 cv=GrRC+l1C c=1 sm=1 tr=0 ts=686524c2 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=0MvmVg10__VCTnNSAJcA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 adultscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020100
 
-On 02/07/2025 at 21:05, Biju Das wrote:
-> Drop unused macros from the rcar_canfd.c.
+Hello Steve!
+
+On 01.07.2025 20:04, Steven Rostedt wrote:
+> From: Namhyung Kim <namhyung@kernel.org>
 > 
-> Reported-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> Closes: https://lore.kernel.org/all/7ff93ff9-f578-4be2-bdc6-5b09eab64fe6@wanadoo.fr/
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Add a new event type for deferred callchains and a new callback for the
+> struct perf_tool.  For now it doesn't actually handle the deferred
+> callchains but it just marks the sample if it has the PERF_CONTEXT_
+> USER_DEFFERED in the callchain array.
 
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
 
-> ---
-> v1->v2:
->  * Dropped the Rb tags.
->  * Restored simple simple bit definitions as it serve as documentation.
->  * Restored register offsets will become anonymous gaps when the register
->    offsets are replaced by C structs.
+> @@ -151,6 +151,12 @@ struct perf_record_switch {
+>  	__u32			 next_prev_tid;
+>  };
+>  
+> +struct perf_record_callchain_deferred {
+> +	struct perf_event_header header;
 
-When you refactor into the C structs, there is no problem to give a proper name
-to a field which is unused. First, the struct clearly shows that this field is
-part of a group whereas this relation is less obvious with the macros, second,
-it takes little real estate: just one field name (less distraction when a human
-parses the code compared to the macro) and finally, as a bonus point, you do not
-get a W=2 warning spam.
+At minimum the timestamp field added to perf with "[PATCH v12 07/11]
+perf: Support deferred user callchains for per CPU events" needs to be
+added here as well:
 
+	__u64			 timestamp;
 
-Yours sincerely,
-Vincent Mailhol
+Otherwise this and any subsequent enhancements of the perf tools do no
+longer work at all.  But probably the timestamp field also needs to be
+used for some purpose?
+
+> +	__u64			 nr;
+> +	__u64			 ips[];
+> +};
+> +
+
+Thanks and regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
