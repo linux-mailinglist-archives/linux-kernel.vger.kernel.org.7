@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-713223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9CCAF151B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA45AF1523
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C65D7ABEC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C3A3B42A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E6C26FD97;
-	Wed,  2 Jul 2025 12:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DDC275851;
+	Wed,  2 Jul 2025 12:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q+OU4Rwe"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NWCWpilK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0BD26D4D9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529A22741D0
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458375; cv=none; b=RW4gHSbkKlIu1BLtV3t245UdRrLPnLzLWjoGiYnDgS/z1jVlFqDXDPghx0+OLvRWbs8ai1ugrj9HAlueE7kozCfobDyMBQpWJWlt+oGMBXHV/Ka6rrOyiksdupHRpgRCY5Mp5t/QQwkFMfNsL60f9P714BeRq5JsJ/TLei3+TvE=
+	t=1751458383; cv=none; b=PWNa7dkJtV7WwTLGuNIXWQgvSxPkaUuvq1oTSS0c0pJEx5m5EPj3b5foOLw1jPUskv9mtlBa9uet/Def0XZKHZxVR6ArcTqIoOTKGeXXRdtt56tNiwJNXoc2NYzZUg+Jmgz8dTQ93kLdmvBoqMrzNAG5cjvDUBirwbsW8Ajl5Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458375; c=relaxed/simple;
-	bh=OJ5GCBmIvAPN0pMDBWv2WeEEvtrkmyaMrK9hOo6rLP8=;
+	s=arc-20240116; t=1751458383; c=relaxed/simple;
+	bh=FWv0wUWinfxRvRf2jp6kAyQT3DxEUSWPhksp51+zDRM=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=GzOpKmEBTtPWhBz8tBTAoBm/ljulu6vfZSUMHtGJxwBy5mojMGhiB4U7yKIGASblqiIjhY/VC9b5ke/IwZLZZrH/cVM2lP4pXABefb/ZXy0pTBcnH2PW5EZ7YMJBGbVEUFHiE5ju1mF484cWqANZJAB+85qTiJ/nuoFkLi4rKBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Q+OU4Rwe; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type; b=gm2cyHRYErV6OvWpR1o6BnDh1SR0n/qrB3LeGzVFLpCvoiRflY06czPaLM9b6dHI5ONkb7u/ttSrGnkcUJb2nmMjCUuTmAH/2bNwLFp8vmbOy9PCspOSxTOECHH9lVYD+owJxLTwITKpqLCc0X2rYSy04179ksaLc84gdojiyto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NWCWpilK; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=onhBm3Dupd3NVH6sTDnfi4lnWVArcDQumqorYE8AWno=; b=Q+OU4RweT1hcq/jHY1l7Nd8S9M
-	xMDR0gwrG9M407kRfKybl0ZGGoqx8RefbpLYVX9HklxqTL1lqBbWKJiCbycJ3LHCwoW6EkhHiIrj0
-	14KNlB7Uiq5hHxWhRFRO9bPdMFDcgEmiMFCrUsJ2K/OTR56BTHaIuFWSM1pGIJKI04u1dTlPidi4j
-	9q+xxZ0d9Uo6tHfrqaSQuu7f+Gr4Yt1eqpAykRLksrMu+0efonc3rrreFOlz+WWj06o1LNYtpVeP4
-	oswI59fHhGj8HqshWe5LZqfJVJ2yjgLnE4FrMGxXrECxPTO4Ms98ZJ30FjtfU9EuzE4nVeHNSOnUz
-	l89HGT2g==;
+	bh=8PPBxPGtoZgH0uq70gRQQr/CkrObDZsJfEUhnPhGB4E=; b=NWCWpilKWXwh5EOu/FlUk/CdNV
+	5f0qzy1Bujnt91gQ+dKlk1p4SVR+BqH3VGu3rXSGniO90uo3U7uhJ2P8w+4MXnGFCGmN4iTkAOYU/
+	L68EbPmaOBsZw+4Oqecz2p2Yz7QGOYvC9ufv+cgVhn4z4UVqXtf0/5LEP7JbzNnzcdY7H3LTe2QzF
+	xGFk0N7n1ude0JJzEmn4yMvp3qEShVgd6yJQ1uT+9wn/wWlqpAPviuBxiA3+QwPXB/aypvxNwI1ZI
+	/lJMwVKonvYgy3v5mknils0CwTjlLRAOPv0/KwyHaAa6twCGOgSeJcrNNoLc56RTfdSblTSGA/krR
+	cRNOibwA==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWwKW-00000007LoD-013a;
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uWwKW-00000009lFH-1t0f;
 	Wed, 02 Jul 2025 12:12:48 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id D911A300212; Wed, 02 Jul 2025 14:12:46 +0200 (CEST)
-Message-ID: <20250702121159.172688305@infradead.org>
+	id DD50F300220; Wed, 02 Jul 2025 14:12:46 +0200 (CEST)
+Message-ID: <20250702121159.287358119@infradead.org>
 User-Agent: quilt/0.68
-Date: Wed, 02 Jul 2025 13:49:32 +0200
+Date: Wed, 02 Jul 2025 13:49:33 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  juri.lelli@redhat.com,
@@ -61,7 +61,7 @@ To: mingo@redhat.com,
  clm@meta.com
 Cc: linux-kernel@vger.kernel.org,
  peterz@infradead.org
-Subject: [PATCH v2 08/12] sched: Re-arrange __ttwu_queue_wakelist()
+Subject: [PATCH v2 09/12] sched: Clean up ttwu comments
 References: <20250702114924.091581796@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,46 +71,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-The relation between ttwu_queue_wakelist() and __ttwu_queue_wakelist()
-is ill defined -- probably because the former is the only caller of
-the latter and it grew into an arbitrary subfunction.
-
-Clean things up a little such that __ttwu_queue_wakelist() no longer
-takes the wake_flags argument, making for a more sensible separation.
+Various changes have rendered these comments slightly out-of-date.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/sched/core.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -3848,11 +3848,11 @@ bool call_function_single_prep_ipi(int c
-  * via sched_ttwu_wakeup() for activation so the wakee incurs the cost
-  * of the wakeup instead of the waker.
-  */
--static void __ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
-+static void __ttwu_queue_wakelist(struct task_struct *p, int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
+@@ -4276,8 +4276,8 @@ int try_to_wake_up(struct task_struct *p
+ 		 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 		 *
+ 		 * Form a control-dep-acquire with p->on_rq == 0 above, to ensure
+-		 * schedule()'s deactivate_task() has 'happened' and p will no longer
+-		 * care about it's own p->state. See the comment in __schedule().
++		 * schedule()'s try_to_block_task() has 'happened' and p will no longer
++		 * care about its own p->state. See the comment in try_to_block_task().
+ 		 */
+ 		smp_acquire__after_ctrl_dep();
  
--	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
-+	sched_clock_cpu(cpu); /* Sync clocks across CPUs */
+@@ -6708,8 +6708,8 @@ static void __sched notrace __schedule(i
+ 	preempt = sched_mode == SM_PREEMPT;
  
- 	WRITE_ONCE(rq->ttwu_pending, 1);
- #ifdef CONFIG_SMP
-@@ -3954,8 +3954,9 @@ static bool ttwu_queue_wakelist(struct t
- 	if (!ttwu_queue_cond(p, cpu, def))
- 		return false;
- 
--	sched_clock_cpu(cpu); /* Sync clocks across CPUs */
--	__ttwu_queue_wakelist(p, cpu, wake_flags);
-+	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
-+
-+	__ttwu_queue_wakelist(p, cpu);
- 	return true;
- }
- 
+ 	/*
+-	 * We must load prev->state once (task_struct::state is volatile), such
+-	 * that we form a control dependency vs deactivate_task() below.
++	 * We must load prev->state once, such that we form a control
++	 * dependency vs try_to_block_task() below.
+ 	 */
+ 	prev_state = READ_ONCE(prev->__state);
+ 	if (sched_mode == SM_IDLE) {
 
 
 
