@@ -1,119 +1,146 @@
-Return-Path: <linux-kernel+bounces-714196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35193AF64AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A451AF64B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601B74E6649
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:01:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C8E4E6AB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0552441A6;
-	Wed,  2 Jul 2025 22:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F962500DF;
+	Wed,  2 Jul 2025 22:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qdllhblg"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y48xNPQ1"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F971940A2
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 22:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C841C24111D
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 22:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751493662; cv=none; b=SkGaqsL8KDNHz1KEbge7Q9jL6+ACaKGwxJVKjwK0aoBxVkPE1y5jvaWulxArihQkvgmqFnHxwrP0xsqoMI9UTfAaoONMIa5AoIL2nIbrUfFD8b+Y67nORiK3FH1m8E8IHN5pLO6q2fYH4bSwhCcn0+ExV+zebIL6evRfEvEq1h0=
+	t=1751493673; cv=none; b=KAk3d7Q8A+wjqupzsUBV4pcbjK6H65Kggq0+mhUq4WK8HwTXJgQxpq+rj9Mlcuoci5CehYIfff4byRkYUEOPzW4Rd88ie8VaaPQLy5fU1ip7xemWtNdhmnBLOVt4TBiJi3rre54csp5dnjMn6QvF26muwd6+uZ+NJdzYQ8Wxsqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751493662; c=relaxed/simple;
-	bh=5YYFOCsJnX8d3GevyvlTzzIk6SIuPizITf4JXt/BAEQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R7Gdrcs/MJwG2SUMZNt00AlvuT8PbFNkFUOgfgfHt8okBDXXTIiilst9TT6ZSMug1kmk0ux+M7+0dbZ5fKUZ1ZGRWUNTIGE1iFCBbfvEL9cZc5+wEgMWu1Ef4lz3ejvbScLjTdMXiBwgG6RNPXhzro3p5YkIrD11qmIqtUwYgRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qdllhblg; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-235ef62066eso93731185ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 15:01:01 -0700 (PDT)
+	s=arc-20240116; t=1751493673; c=relaxed/simple;
+	bh=hjhHlOolfaZNDUs+RdvLckgniM7ltNQJFdfTBZFssqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LWpnTwRMGHPiv8B/zvfdtZH+/ykj/RKBq464zrTJygTMtdJDYeVlFHNYD6exKjdxh74ZV0gCux92BWylTp+QmiM6DINJthCpe233F4fnd2lPPWB9beY4bwkGbeVPQiNsgx4fzRcpvoZEW/26YykHcex7eaJmMhC+49OtTRVtCo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y48xNPQ1; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-73a8d0e3822so3796202a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 15:01:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751493661; x=1752098461; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YYFOCsJnX8d3GevyvlTzzIk6SIuPizITf4JXt/BAEQ=;
-        b=QdllhblgZYcTSc0dHzrkBVhmpCjZ5VktdepHl6WYuC8utcJW+JY9vLkaKakqeM4eWO
-         5JEblFbSTk303ezoI67Lvz7y8TklZMjxmdraOqBS/8/feU6Iqef405BQa+hcUioJfIe9
-         PRVdtjtigwnCp2hZ9IE5xOx7w04/jUFUW9wSIM6KLNv+s18OTUeB/n95co+mzAtFJn6x
-         9bDDLmVJqx4C4iCVdrPRocnugmhStcdxrxeB+lM3cxgma/JLTwufNW+OCW4K2IKN3U2c
-         UDE1OTG9gUr5GkIyTv/zQT5r5RR2qt1zvUnMfebKbDKzRTVnWzya95WQK7bFovAskvPg
-         43xg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1751493669; x=1752098469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=DKgWS7/qdk7+Eg50DbHdDl8mGYC2JyCvr3ER8bCDhe0=;
+        b=y48xNPQ1VGFonG90ers22n9CaIGu/U0THcQn5c8nBkrNDl4s9PaFjS+j1I6g9WKNKk
+         AIt90eg9oaV1EgKUwMKqT6KK+6qZm0ycbC3hNp4m6EMABEfx09alAUON+kWaoxtIKcLc
+         KpF0R66j9mNHBxgK3gVzHPFVU3zoE/wqhAbjqow81uQxg+cfY447RdnKngepHdBwkEoA
+         erkhwbWUhLFkvzceqJ0cHWv3nN9vR0F3ZV9QQRRlcAkjmr2yRwkjT/VoCkPEvvC4uya0
+         +4NGqWis8xoTuzKwFm7oiFKXthN/Lw8UdUwMqdkbwyOEA+arjT+4IL8OlrccbhJhMKY1
+         F5nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751493661; x=1752098461;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5YYFOCsJnX8d3GevyvlTzzIk6SIuPizITf4JXt/BAEQ=;
-        b=ZtkZ7oWspJh5/VevJUQd+vGiAIEgEq3G1Fh928yM9vF9QCtmOy5bdbcBMyWUrIr9B0
-         TXAIGUTCic8uRdGjjFlidOUFwQmrwdqIEBBomxicyBQ24s2KmAeSoZOeaOq6sqb+QD+5
-         OKtc90R/RfX1ZKlFdQNmyxwyqn6xmanMZMAWMSj4DJyc166NPMmVAjOIWb1tu+gmkQqW
-         KhH906Y76dFFmGB8lmPKx7RRfZ1JNJu8YQKm9+Fx6kT65asaim6vHb8ZH9OMx6mhtlD5
-         nHbZeKguADF4CVnNqPng5dAmpBVqJKTIrNbe/x1ks2tZceB9sexHG6fBMUypTIRG+GZz
-         zg7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEW1+E+pWGzJIyp+QyMWtYDYHoyH3VMT71ajhxx3Qmbmjb4+zn8mm8Cz7lzZw+HN+eeAgveYwmAPlK74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7n3cOpGUA5kmqFcP3RdKwYzQ82am2ygjdpQtznaXvmwWHneio
-	RykOPhzq0D4ToW/ldD4hoCVDyLo04LQsy6PfYwkdyx9OEMFasmVp49Jw0joFfhmbUA==
-X-Gm-Gg: ASbGncsEdHFFBHbvbiQDR7O4b2GOYFzai/48gsRntgk+R6nldelvrs9k3rbYWEBAKb0
-	FEqCUMVfYXofqCXUSANThzx+5uqiKRyjFvx9NyORpIqKtpwH/5iPRNhnncie9qu0u6ObbCtCiDe
-	OnQKWP/2Uh7mkTECGRcc2vrvvgvfEsgMK0A7EWzbQUNgu4JYbZUUFMGzAcK5hGDyTG5QRQKOT4T
-	I+vs8Eoj5MHfS8b+lp0R6CnZBRjtuTIfy/NKbTvOo7sF1gtSmAhR9t2brOQdTuvCGq/6jNihLO5
-	28cC+h7u4aBrriMpexujMUZRL5MlhsaKk7tX92FqQZoPRroERTTq+VJyyrGoSXGDC6oJ3EuDw2n
-	CbXB7N1XuZYrg4ap4oVfdCcTRQY4vEdHs9gx8YA==
-X-Google-Smtp-Source: AGHT+IFeH0m2dNn02wNTz56CuRzim+pAyvmjWbYc7FcKMGX+ehKDGHSrKlm94sLbkFRFlLq6G0OPHQ==
-X-Received: by 2002:a17:903:4b43:b0:236:7079:fafd with SMTP id d9443c01a7336-23c6e5b7737mr77658625ad.36.1751493660515;
-        Wed, 02 Jul 2025 15:01:00 -0700 (PDT)
-Received: from bsegall-glaptop.localhost (c-76-132-13-32.hsd1.ca.comcast.net. [76.132.13.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2f1d72sm146381475ad.66.2025.07.02.15.00.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 15:00:59 -0700 (PDT)
-From: Benjamin Segall <bsegall@google.com>
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,  K Prateek Nayak
- <kprateek.nayak@amd.com>,  Peter Zijlstra <peterz@infradead.org>,
-  Chengming Zhou <chengming.zhou@linux.dev>,  Josh Don
- <joshdon@google.com>,  Ingo Molnar <mingo@redhat.com>,  Vincent Guittot
- <vincent.guittot@linaro.org>,  Xi Wang <xii@google.com>,
-  linux-kernel@vger.kernel.org,  Juri Lelli <juri.lelli@redhat.com>,
-  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
- <rostedt@goodmis.org>,  Mel Gorman <mgorman@suse.de>,  Chuyi Zhou
- <zhouchuyi@bytedance.com>,  Jan Kiszka <jan.kiszka@siemens.com>,  Florian
- Bezdeka <florian.bezdeka@siemens.com>
-Subject: Re: [PATCH v2 0/5] Defer throttle when task exits to user
-In-Reply-To: <20250618081940.621-1-ziqianlu@bytedance.com> (Aaron Lu's message
-	of "Wed, 18 Jun 2025 16:19:35 +0800")
-References: <20250618081940.621-1-ziqianlu@bytedance.com>
-Date: Wed, 02 Jul 2025 15:00:56 -0700
-Message-ID: <xm26qzyyb6cn.fsf@google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=1e100.net; s=20230601; t=1751493669; x=1752098469;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKgWS7/qdk7+Eg50DbHdDl8mGYC2JyCvr3ER8bCDhe0=;
+        b=KTwJmo50VKha1g1EWfPinW7/YJmkJ1zTABF6DkCIMI1Me2fPmIOZRYLwsabksuGObs
+         F3cbR7gJapzoCXfnW+vw3LZGuSB1aTIP+hMh3G6l0eYyMAu9DfRDu+xdhmLBeN+yqEis
+         DPLkIfsevJHVpVkJmtm2/nhNpjVtTWyOg4pLXE2dCzrEjJWQK9qeU7Nf79TidoLpt6RT
+         xNDeUm+jQQ3UbJmi8bLwyH30jCED/XQq7LLlZQQp6tY7aFo74omWmXQ1tTZmD3VuRtYI
+         Uhdlg78U4Benx/wR1BqBzLYDdT0jeBpYmduUc43wdo6Fnajkha0ceF+E1AfgdgXONxUD
+         XCXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1CagLyoaDeGctquNE3ilPKg8kl57Xj6mV3AB4v3XjSklqdStdONZKXHkAhWyyAVLetHaYT40wxqhMnEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyhNOi22ZO5nSnZKsynZaRpvZ+1p5qX0KoI3iJ4eBL1MEjJqkT
+	vnDPW2S2DLZH39b6+0wE50OcaMXJ23jwl9AH1YLe2KA8rIoVlfg2snGqfaLGQ70V110=
+X-Gm-Gg: ASbGncufbQkn2p1+eG1AxCyeH60ru+Vjlds9o4XOxfSt0806LLLqemUeT2BfM94lIxv
+	y0mx8IWdoE3RYu0g0HrNcXM8yJ9U4GaPJiLpef6hkDgyRh6axG4gpqWMUFjQ9t56h6CP7rV4DXY
+	4tXVC3hU9Fo7caxTRtHGty4/iYrpMd+TBEuIN0d88jdOA+tnhxlcOSlNj9VLhGHYpLrc8yOBygk
+	B545g29oVE6I7N37znrxJscyrPCoi3VSx7xV80CSdJy+OeJRYRZfG2sbMkFDaGgM1J/M0MIAmYr
+	q7QEgrpAl96Lc2JSJ6pmW/ljMPnTVIIkli/orqryM5pTMtU4p7pfJTnb3dak2+uiAaLKQiy/BXW
+	DvpDngaouLgl+/m7q7XQ6gJcz+EzRtND4vxYbHcs=
+X-Google-Smtp-Source: AGHT+IHKZNhePlF0+T6dWuoOeOIoDbpvywH95ABuicUB05Dmc1aVoalsdNueqPirXs97Btv0KkGWcg==
+X-Received: by 2002:a05:6808:e8a:b0:403:3673:65f0 with SMTP id 5614622812f47-40b88b25dc6mr3169424b6e.31.1751493668851;
+        Wed, 02 Jul 2025 15:01:08 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:5c00:24f0:997b:5458? ([2600:8803:e7e4:1d00:5c00:24f0:997b:5458])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40b32420c83sm2747613b6e.36.2025.07.02.15.01.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 15:01:08 -0700 (PDT)
+Message-ID: <a30cbe3a-7d1b-4072-880e-99688657a093@baylibre.com>
+Date: Wed, 2 Jul 2025 17:01:07 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: Add support for MT7981
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, jic23@kernel.org,
+ nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, zhiyong.tao@mediatek.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250702214830.255898-1-olek2@wp.pl>
+ <20250702214830.255898-2-olek2@wp.pl>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250702214830.255898-2-olek2@wp.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Aaron Lu <ziqianlu@bytedance.com> writes:
+On 7/2/25 4:48 PM, Aleksander Jan Bajkowski wrote:
+> The temperature sensor in the MT7981 is same as in the MT7986.
+> Add compatible string for mt7981.
+> 
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml      | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+> index b489c984c1bb..ceb914dde15b 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+> @@ -26,6 +26,7 @@ properties:
+>            - mediatek,mt2712-auxadc
+>            - mediatek,mt6765-auxadc
+>            - mediatek,mt7622-auxadc
+> +          - mediatek,mt7981-auxadc
+>            - mediatek,mt7986-auxadc
+>            - mediatek,mt8173-auxadc
+>        - items:
 
-> For pelt clock, I chose to keep the current behavior to freeze it on
-> cfs_rq's throttle time. The assumption is that tasks running in kernel
-> mode should not last too long, freezing the cfs_rq's pelt clock can keep
-> its load and its corresponding sched_entity's weight. Hopefully, this can
-> result in a stable situation for the remaining running tasks to quickly
-> finish their jobs in kernel mode.
+The new compatible with fallback should look like this:
 
-I suppose the way that this would go wrong would be CPU 1 using up all
-of the quota, and then a task waking up on CPU 2 and trying to run in
-the kernel for a while. I suspect pelt time needs to also keep running
-until all the tasks are asleep (and that's what we have been running at
-google with the version based on separate accounting, so we haven't
-accidentally done a large scale test of letting it pause).
+diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+index b489c984c1bb..14363389f30a 100644
+--- a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+@@ -32,6 +32,10 @@ properties:
+           - enum:
+               - mediatek,mt7623-auxadc
+           - const: mediatek,mt2701-auxadc
++      - items:
++          - enum:
++              - mediatek,mt7981-auxadc
++          - const: mediatek,mt7986-auxadc
+       - items:
+           - enum:
+               - mediatek,mt6893-auxadc
+---
 
-Otherwise it does look ok, so long as we're ok with increasing distribute
-time again.
+Then you can validate that the next patch matches the bindings with
+`make CHECK_DTBS=1`. I would expect it to fail currently since the
+binding is specifying a compatible without a fallback but the .dts
+uses a fallback.
 
