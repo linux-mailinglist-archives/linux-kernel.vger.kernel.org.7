@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-713709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A137AF5D77
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:43:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1663CAF5D86
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6973BD446
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01D54188196C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55253196D0;
-	Wed,  2 Jul 2025 15:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bYRVJMTW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D452DCF55;
+	Wed,  2 Jul 2025 15:40:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300A23196B9;
-	Wed,  2 Jul 2025 15:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D252D375A;
+	Wed,  2 Jul 2025 15:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470812; cv=none; b=cpE3HCzTcv+yk6ZjgNWneeGasROFfqVBb0nspZYsGBjubAlFyeV7ioWURVTmGtHpdZGkkNNL9W6VyJzpQEG+7HVasZXlCaz856s9/atpgizNvbMyrd3+tfXL07IXMfy3ha7k9DhmwdE18Wz4eR4lX+nWqN4nJ6Cg+S3YZPO7FwM=
+	t=1751470827; cv=none; b=m6W0Zk7J1sWuJGsRvf86CjCa/sBZdXb6uzxb+HeV5RvOnsBpUU2GYTcfY/TCb1qDj6XEB2z8fom8qAgq11e5Hyj7qe8EJiXxzmKtYvWuv1OMFM11lNY6ftA2gYhFx8d7qhxvBbcg4NfLQjjD95D75elAEv7iTiJmiyuc40RjbdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470812; c=relaxed/simple;
-	bh=Nl1aiQlqLwfjxOlqHygtp0TPczUO9+yJInOmHaoNVqs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=TQLWjIxbwko5jSDQ5UgPJinjl5CUWtAmo23+Xl1re2R7JH+KZqROwHcny+8VCrkI61HE/rOmByWtbB1To5td+aLsKg/4mJmsU0ZTWk136gNZiUUEXjDrk4Qr9sdx+vfea0GT3F6LxfMbMGggq4iH6R91ukXJQvpxQ5DvaNIb8WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bYRVJMTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CB5C4CEE7;
-	Wed,  2 Jul 2025 15:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751470811;
-	bh=Nl1aiQlqLwfjxOlqHygtp0TPczUO9+yJInOmHaoNVqs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bYRVJMTW6KqJ4prbGWr+/MLk3v69Kf43T2YYrJquE/xIK+MZJLz/d9MxhKLXVbllv
-	 bTH2Bi1KC45sBKqxy0Zza5/YxJ1j+ZGSB/sIBDVHzdhVfDlFGLdCqN2Is60MVCLpcS
-	 ZhQdHqA68/YTVzP8Nw8331Yy+UdkhMMj8rw/Z0fnhu0WGwPODLsPDrwJuf/ITFgWLh
-	 O3F9h7+YiQY9ha9wgrbxv7WdjlxAyds/yU+Q/GhFg2JXOS4rilHZRISYqbK7azaysq
-	 LASiSfOsPLArnA2RC9gzTYMA/u3a4GLg6/xkwD6v35r8BeZE8Tib5wWWjw0VCIY9Go
-	 wXx9+AQXACFnA==
+	s=arc-20240116; t=1751470827; c=relaxed/simple;
+	bh=o8ilAhr3zD03buME2l5n8+FNjqhVnN4JTb7lUuydy3Y=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fi9wOvIzUjlnLKi4s1O3ELnIugLWJH1wAnHtgDZCCSvPuCrIHQTFkR7WeWEIu/exIyb8cqsjhJFauwrst5du4+nbr3gADHycakbC6fx+hYVdEV8NG8dwI8PbCS1Zi9nqkFHqQOPzYHEk2CVx/QWCOW8CFUwYchUJgp1ENQsal54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bXPG82CkKz6M4g3;
+	Wed,  2 Jul 2025 23:39:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 18EA214033F;
+	Wed,  2 Jul 2025 23:40:24 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 2 Jul
+ 2025 17:40:23 +0200
+Date: Wed, 2 Jul 2025 16:40:22 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+CC: "Colin King (gmail)" <colin.i.king@gmail.com>, Jonathan Cameron
+	<jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Gustavo Bastos
+	<gustavobastos@usp.br>, Andrew Ijano <andrew.ijano@gmail.com>, "Julien
+ Stephan" <jstephan@baylibre.com>, <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: iio: accel: sca3000: dead code issue
+Message-ID: <20250702164022.000027e8@huawei.com>
+In-Reply-To: <aGUh7uXenHc7NYB2@smile.fi.intel.com>
+References: <1c1e39cb-5fe0-46b3-898e-c65bbb3beb30@gmail.com>
+	<aGUh7uXenHc7NYB2@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 02 Jul 2025 17:40:05 +0200
-Message-Id: <DB1OL0D3DA8K.2MTH0QKQGRQUQ@kernel.org>
-Cc: "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Masahiro
- Yamada" <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>,
- "Luis Chamberlain" <mcgrof@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Nicolas Schier" <nicolas.schier@linux.dev>, "Trevor
- Gross" <tmgross@umich.edu>, "Adam Bratschi-Kaye" <ark.email@gmail.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-kbuild@vger.kernel.org>, "Petr Pavlu" <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, "Daniel Gomez" <da.gomez@samsung.com>,
- "Simona Vetter" <simona.vetter@ffwll.ch>, "Greg KH"
- <gregkh@linuxfoundation.org>, "Fiona Behrens" <me@kloenk.dev>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v14 1/7] rust: sync: add `OnceLock`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-X-Mailer: aerc 0.20.1
-References: <20250702-module-params-v3-v14-0-5b1cc32311af@kernel.org>
- <20250702-module-params-v3-v14-1-5b1cc32311af@kernel.org>
- <DB1NVTWHU7BN.2WGPMAY9LQYNW@kernel.org>
- <CAH5fLgiOK-zA0qT1dis-BsrEAk96R+E8e_F_361w7kCq_uxn7g@mail.gmail.com>
-In-Reply-To: <CAH5fLgiOK-zA0qT1dis-BsrEAk96R+E8e_F_361w7kCq_uxn7g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed Jul 2, 2025 at 5:27 PM CEST, Alice Ryhl wrote:
-> On Wed, Jul 2, 2025 at 5:07=E2=80=AFPM Benno Lossin <lossin@kernel.org> w=
-rote:
->> On Wed Jul 2, 2025 at 3:18 PM CEST, Andreas Hindborg wrote:
->> > +impl<T: Copy> OnceLock<T> {
->> > +    /// Get a copy of the contained object.
->> > +    ///
->> > +    /// Returns [`None`] if the [`OnceLock`] is empty.
->> > +    pub fn copy(&self) -> Option<T> {
->> > +        if self.init.load(Acquire) =3D=3D 2 {
->> > +            // SAFETY: As determined by the load above, the object is=
- ready for shared access.
->> > +            Some(unsafe { *self.value.get() })
->> > +        } else {
->> > +            None
->> > +        }
->>
->> The impl can just be:
->>
->>     self.as_ref().copied()
->>
->> Would it make sense for this function to take `self` instead & we make
->> the `OnceLock` also `Copy` if `T: Copy`? Maybe not...
->
-> Atomics are not Copy.
+On Wed, 2 Jul 2025 15:11:26 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-Ah right... Yeah it probably also isn't useful.
+> On Wed, Jul 02, 2025 at 10:00:55AM +0100, Colin King (gmail) wrote:
+> 
+> >                 ret = spi_w8r8(st->us,
+> > SCA3000_READ_REG(SCA3000_REG_BUF_COUNT_ADDR));
+> >   
+> > >>>  the call to spi_w8r8 returns 0 on success or -ve on an error  
+> 
+> Where did you get this from, please?  Any link to elixir or Git repo?
+> 
 
----
-Cheers,
-Benno
+Hmm.  Just for reference the docs of spi_w8r8 are:
+
+* Return: the (unsigned) eight bit number returned by the
+* device, or else a negative error code.
+
+Not 0 on success (well not unless it is zero.
+
+So the check indeed looks wrong as should be if (ret < 0)
+
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=testing&id=ca66d8208762492df8442a503db568d9aab65f2f
+It's in my tree.
+
+I'll drop the patch when I'm on the right machine.  Andrew, could
+you do a new version fixing this up?  If not can make the changes
+but will be at least the weekend before I get a chance.
+
+Looks like there are a couple of instances of this.
+
+Jonathan
+
+
+
+> > 
+> >                 if (ret)
+> >                         goto error_ret;  
+> 
+
 
