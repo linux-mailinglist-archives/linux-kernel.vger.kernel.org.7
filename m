@@ -1,164 +1,149 @@
-Return-Path: <linux-kernel+bounces-713587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653C9AF5BE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:58:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A57AF5BF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC97F3A2B24
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:57:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F332517BBF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5404D30AAD7;
-	Wed,  2 Jul 2025 14:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E4D30E826;
+	Wed,  2 Jul 2025 14:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmbTHing"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iIjCKHzV"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6B8284B59;
-	Wed,  2 Jul 2025 14:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C1230AADC
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751468281; cv=none; b=LZqZ6LaFaqhES2Kj9r0K8LGTBIae3cOiDqHy6qvjCzsFxt+7h/LotnQXPrdbPUUyS35WC2+DLcSdW7VGobez4whPmXM3WpBnxiGxjshiotSkfr6tdBLgZa5ln2wh7eh2vpq8U73B9QnqMRS8gG7mIxvfNXV+hVbzaH5awLSkfCE=
+	t=1751468319; cv=none; b=CJ6AX58tm5zkAu0ZfkMmFqsOOxATZP0oYNdE9XaGBngaV0U5uT5ECXWa5jX6zAVElTohaZ5TNSiPGrZBtxYCM9XTw78M+zK+ITpOo9QhQHOOtGgwOqUfiEofZs1MGY/8QQN+VYMUOdOes2ne4Iam54BKKuWmQCmN82y8lRIKdlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751468281; c=relaxed/simple;
-	bh=BjH9ZL9GM336U/7LmIC7pQDa5Ym6s6rn2+kjuOw1wp4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mqPtyPxmWumZqFkytNYzK6NWyO1I8+/deSFq4QHY4mzMJGi/1LVG7fcIpBU+Y6MjnRXP/95xLy1E09t6Qtjr1Nt4M/rV04XXGRPtzuYLBY4zk0GnwUYg7lz/VgXmec6mjGEtdoWnneJ+sD3X68ySuIxM1JqAd1hcxgkXD909PyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmbTHing; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-235f9e87f78so46800705ad.2;
-        Wed, 02 Jul 2025 07:58:00 -0700 (PDT)
+	s=arc-20240116; t=1751468319; c=relaxed/simple;
+	bh=jmdo0wtlEM9OGtqiUmj8GSs9s2w3JeA5xOWYKMd/baE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SqYQqO2JfnHRIpG8/P13FHwAFbyINqqjAdl/de6E4u9EbRTDz8oJX3mXNwU8CuJHu8MqsfiwCWakqmq/+miE6hoiWrfZ+zU1XC6xwb/I310DmfrJg86grxULnVYsHt3y76dL29RgJWRXQwG/QjAKqhNATq566zzLokc2xTHsB0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iIjCKHzV; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450cfb79177so42045085e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:58:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751468279; x=1752073079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G8mb6YKO/25FxCcRxNpOnxxYjHITO3LXQLCHLiZTW/c=;
-        b=mmbTHing0/A9vlil6kCiIj9CAipnxFUoPNzynZn0I47jy9iQxhdRyjJRQ0zZyxkUXV
-         9xp0lUAuhZMXRueAWechqOKjDLSR5LLHcUV9rL4pm1VgyODiET7D0azLUArZNiY8goDU
-         lZAMNm8+4blmmjLT3WgtP2SCXOuCNDREadqkci4zry+UTLWF+MDJ0lYPdw+9FtNYZIDm
-         1irD5YGfJoeRcpdrxK2iv62Etym433bhoMRFaU1ChoP5w/XTgB7cnpO50dba0n9c7QDR
-         hKoZuD5d59X7YRp0yVW/2qJX8KNZDxEe8xyBVnI4IzIwfrowCb8D6uPMKjJRynH08lTB
-         bp3Q==
+        d=linaro.org; s=google; t=1751468314; x=1752073114; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JO+LYkjBSv6Ibw6vZ1z2UPxJ2+RcrEARZpMlMoEjCbw=;
+        b=iIjCKHzVmgD9ddqjWVzRYA66hWINjAVkj+uAh5e+xoNYufqoojFWsAolb4Hh88lmOC
+         6pVKTFkGAGwfPBrz2CNnmUoy4+FdK7pbrwdcqPqSgakMPgnljxc1t6XAcaHuNxfLVIiP
+         WNszDQbv+Cr6HuqdtqxtX65GUBiEA/+1AV/sa37fntaTI7UznF8Deu1MLQfdGwEKw8P8
+         VWea/7OVxY97m+HPrWqMxOzjxpcdufhTElopGmDQBAYKh89NKzZ8Va6tGw/GlzwIq6hr
+         jpVAG0D7E6vbWN+Pguxiu/Qxkupnmk+zQjdz7lKnqxHKs5jD12Wu9cEa3rStz0RbcvwE
+         9OJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751468279; x=1752073079;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G8mb6YKO/25FxCcRxNpOnxxYjHITO3LXQLCHLiZTW/c=;
-        b=Pv+FULPZf8TYOfpgPkd38JDlUY70fcxvk+nBvArdHpG7x1e6H0roJL8Ua1T6Eq7EgH
-         gTSK/C3MKctYtQRKxDulQf3bL+/PYVglurTzsxvsCJZvBxVbHsPD4IlS21kZS9HLcdTU
-         r2HRQ5cxKYrcHmwLLVKflwpqxg0ZTw92uApVcfmf2zNWAtjmTWy/kLFRVdLY5bJewnIY
-         ZXHoRJJZjjD+QQ/b2k7jnpCkRhSo3UJbx4gV0JCDzI+FXea4dhB35izf21i418Mz69Tx
-         z6bWSWLZFSB6+RV/abRMRcpCn+l4BtAw5D8LDQwE/3qzGJZo0WAxlsNSUrN8fCOE4HjG
-         J/cg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+fUZ8hr93lXvrUzT+bjw3mmw8xQ/gw7zlZolJorTzLS8z51lWFghrxu3tB+q7He6tyGIzdEzTRfw=@vger.kernel.org, AJvYcCWqrH68fm0tYTQe+9JnU+eCG2RzCLwCyjhcZLt7y+JUGzM+Xh0LoJeMjrd4t0coF+GnkMysREspS/UAcFgS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkZH1q8DN5I+JUzgMv0PAIk2o7T5IVX4JEyUtiGgCzautHJNfI
-	3+P11WHKizzzADN7gVPTdd7E/tjfsLdoQqs6nTqh3OHzD9C2UnVu8Bkq
-X-Gm-Gg: ASbGncvGmlRWSqNJAeypbeTbYqy8KnpargOEJmD7zN4EM3raftfXwBxkjKTGGT9zuDF
-	bcn5WcZXx60smt28Kt7gp3ylMZZ30mo2JDnS8rePvZ2MXyprOmsxER5qx2SgkpyH9TYd5yi3VbY
-	2C9mtxh3pOcKz/N58LxSrVtfxI5YFK0kHu1uzELXVuW8Iyud8VBj+PJY6m0hwkrQNml1/pvAwT/
-	gMzR8eK3OcYcUtk/WaNCKLrg6EXeWS4GJ6RjHIFrB/n4Ia8I3EwAhsBzrvR1UcigEfSqOT4gzcL
-	7iCvBSfw7WmtoFmXX5G/5FH2I/qjTwoEYJmtPm0eBU/nMrTisIz1fofI+EcoLVsc/bVALWc=
-X-Google-Smtp-Source: AGHT+IGgNwNCyuwa7r5FGF7RkrD49EIguonUe9/QiJBv7+/xI5mloY38Y/AsFY/SVbUDzwPV58ljBA==
-X-Received: by 2002:a17:903:2984:b0:234:b743:c7a4 with SMTP id d9443c01a7336-23c6e56f44emr61631745ad.38.1751468279578;
-        Wed, 02 Jul 2025 07:57:59 -0700 (PDT)
-Received: from mbox.localnet ([36.50.162.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb3b8ec2sm132043445ad.183.2025.07.02.07.57.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:57:59 -0700 (PDT)
-From: akshay bansod <akbansd@gmail.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
-Date: Wed, 02 Jul 2025 20:27:53 +0530
-Message-ID: <3363941.44csPzL39Z@mbox>
-In-Reply-To: <f96b68a5-d750-45f0-8cdd-9761b5daca1d@baylibre.com>
-References:
- <20250702135855.59955-1-akbansd@gmail.com>
- <f96b68a5-d750-45f0-8cdd-9761b5daca1d@baylibre.com>
+        d=1e100.net; s=20230601; t=1751468314; x=1752073114;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JO+LYkjBSv6Ibw6vZ1z2UPxJ2+RcrEARZpMlMoEjCbw=;
+        b=WsC0rVc/a9CyFXe/+UAWE36Ah9nLS8dv4VXvcNFGdSFDg9EJn0m+gtFiAWrdiEN9Tj
+         t1eQpyShxUomMqw0ncHYhjBi4qiPuwL7mJM+a2fgD3dj8ibsDVZM1Zusqn2jRftr+PCs
+         VKrL8fNvT6lQ3WXqmWpjzy9asVwDEBkLigaUG/UrPZelzvFsMtmSFT+QgOGuYWGR+okE
+         /8IOCj74YCZub8X+5eyCboge4baTDr+lsQxTUXyt7xaGwfhddgATI3mf7NU1gHqHlHJI
+         HzZFN/m/wQPDefiEhIoVrWDHnJr7tlAM75xglhGuUMKb+bFENd4s5eNGgs157uHnLcVK
+         MMTw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5uxFzg3F2hUd8PVDnDwJJQFoNCq/6lFUtGTj4hMEJYRyVlTvK2qHhxyP5ZfxvbN9282EmSygN+cksWpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5F1XY7SvRwSD+WJ7oVWHVY0R8FXZQmUXAxPFF9f0arfXvmR0n
+	Vvv75jWcPJKref2UZB7r5jbi7f/B56RBlAw6y6JGEwEoKfkRYM5IErsBAJEJ14ojqLc=
+X-Gm-Gg: ASbGncuN41s+kpslCb29MWNJ8KzYNlA3MnzwUgwkcNzqhiTLPnk+mMP1b3nWy4vUk/b
+	XkJ3VxfuaEFwlq25lRVoNHD6Bb0un9yIflpge4W7I//xjMBpWzaomFBQIeRRtjpXjumkesqDpGT
+	V22im+vMf4gKmGFNxS5E+iRG5kaDvrd6T44uuP3OWL1lLhGLwSAFeiYunXMZSmOBoCt5ij3rH2p
+	idfHHu92ymHk6fH28Q960IXAbjHY83yYRlbgJij7ObAC64hOWS/1a59lcdPFbHxev9C/PE+y49Y
+	StStob5vIAUuspOmgDRLflWdGvKtJGc0/JZ+FBEYptmoEYLkNr34gif0Mh0itG+z5r1M1K9YJBv
+	qnF7AGgmMSd1O9fG8ChgXkgVR/Kmx+qf1HOOcORw=
+X-Google-Smtp-Source: AGHT+IG8IhnVjdqSTayA9JUM4Fr5GDQ3JacEz/LaBYGYa1zzNjcnf1n3rb9PZrhs50FB927OOVq7Hw==
+X-Received: by 2002:a05:600c:6389:b0:450:d019:263 with SMTP id 5b1f17b1804b1-454a370c053mr34926805e9.18.1751468314016;
+        Wed, 02 Jul 2025 07:58:34 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-454a99668c5sm582525e9.5.2025.07.02.07.58.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 07:58:33 -0700 (PDT)
+Message-ID: <8e7e0b5b-28a0-49db-9acc-f3a4c7d90559@linaro.org>
+Date: Wed, 2 Jul 2025 15:58:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: iris: Call correct power off callback in cleanup
+ path
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20250702134158.210966-2-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250702134158.210966-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, 2 July 2025 8:25=E2=80=AFpm +0530 David Lechner wrote:
-> On 7/2/25 8:58 AM, Akshay Bansod wrote:
-> > Update the sysfs interface for sampling frequency and scale attributes.
-> > Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
-> > and recommended for use in sysfs.
-> >=20
-> > Signed-off-by: Akshay Bansod <akbansd@gmail.com>
-> > ---
-> >=20
-> > Testing:
-> > - Built the driver (`st_lsm6dsx_i2c`) as a module.
-> > - Tested using `i2c-stub` to mock the device.
-> > - Verified that reading sysfs attributes like `sampling_frequency_avail=
-able`
-> >   works correctly and shows no change in functionality.
->=20
-> Nice to see it was actually tested. :-)
->=20
-:-)
-> >=20
-> >  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio=
-/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> > index c65ad4982..1cef10919 100644
-> > --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> > +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> > @@ -2035,7 +2035,7 @@ st_lsm6dsx_sysfs_sampling_frequency_avail(struct =
-device *dev,
-> > =20
-> >  	odr_table =3D &sensor->hw->settings->odr_table[sensor->id];
-> >  	for (i =3D 0; i < odr_table->odr_len; i++)
-> > -		len +=3D scnprintf(buf + len, PAGE_SIZE - len, "%d.%03d ",
-> > +		len +=3D sysfs_emit_at(buf, len, "%d.%03d ",
-> >  				 odr_table->odr_avl[i].milli_hz / 1000,
-> >  				 odr_table->odr_avl[i].milli_hz % 1000);
->=20
-> Let's keep checkpatch happy and change the indent of the wrapped lines to
-> line up with ( since the ( moved.
->=20
-noted. I wasn't aware of that.
-> >  	buf[len - 1] =3D '\n';
-> > @@ -2054,7 +2054,7 @@ static ssize_t st_lsm6dsx_sysfs_scale_avail(struc=
-t device *dev,
-> > =20
-> >  	fs_table =3D &hw->settings->fs_table[sensor->id];
-> >  	for (i =3D 0; i < fs_table->fs_len; i++)
-> > -		len +=3D scnprintf(buf + len, PAGE_SIZE - len, "0.%09u ",
-> > +		len +=3D sysfs_emit_at(buf, len, "0.%09u ",
-> >  				 fs_table->fs_avl[i].gain);
->=20
-> ditto
->=20
-noted.
-> >  	buf[len - 1] =3D '\n';
-> > =20
->=20
->=20
+On 02/07/2025 14:41, Krzysztof Kozlowski wrote:
+> Driver implements different callbacks for the power off controller
+> (.power_off_controller):
 
-Thanks for the review. I'll revise the patch.
+The driver
 
-Regards,
-Akshay
+> 
+>   - iris_vpu_power_off_controller,
+>   - iris_vpu33_power_off_controller,
+> 
+> The generic wrapper for handling power off - iris_vpu_power_off() -
+> calls them via 'iris_platform_data->vpu_ops', so shall the cleanup code
+> in iris_vpu_power_on().
+> 
+> This makes also sense if looking at caller of iris_vpu_power_on(), which
+> unwinds also with the wrapper calling respective platfortm code (unwinds
+> with iris_vpu_power_off()).
 
+platfortm/s//platform
 
+> Otherwise power off sequence on the newer VPU3.3 in error path is not
+> complete.
+> 
+> Fixes: c69df5de4ac3 ("media: platform: qcom/iris: add power_off_controller to vpu_ops")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   drivers/media/platform/qcom/iris/iris_vpu_common.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> index 268e45acaa7c..42a7c53ce48e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> @@ -359,7 +359,7 @@ int iris_vpu_power_on(struct iris_core *core)
+>   	return 0;
+>   
+>   err_power_off_ctrl:
+> -	iris_vpu_power_off_controller(core);
+> +	core->iris_platform_data->vpu_ops->power_off_controller(core);
 
+Correct.
+
+>   err_unvote_icc:
+>   	iris_unset_icc_bw(core);
+>   err:
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
