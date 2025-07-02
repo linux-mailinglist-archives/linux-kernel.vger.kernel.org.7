@@ -1,163 +1,127 @@
-Return-Path: <linux-kernel+bounces-713799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB8AAF5E98
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:28:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3246CAF5E9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A1D4E5B40
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A299D3A925C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8F92F5327;
-	Wed,  2 Jul 2025 16:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155AB2D0C8E;
+	Wed,  2 Jul 2025 16:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D76RsSKi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LIjXtCoc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F3B1E8338
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC20E179A7;
+	Wed,  2 Jul 2025 16:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751473728; cv=none; b=XjiD5s95K6JUnG6fZbpmtTX40XeTC0He9sULfhoq9SxlOlaHDGc+7qB//0rWOWdhNOPc9mKNampCx5jU7J8yv+Xyxae9LtMafGLOFq1yasT8mzF5dxtjMnuBlypN6RXPZpV1ACWE1t8s/sHBDjrPBN3+Dsw1Jwz4FhnldekNJAs=
+	t=1751473915; cv=none; b=CGcFNh0e9xB4Nw+qs2XuX2LK+uSrItyD/4IjXLAUKdYxYOT/H52VvDOZyh/s1TLUwfWyxKVm9Nqd29E9fBu3moB+ug2n6G6zrxkgO49NaRYOkbhxnhawVbGmmp6mxTXSeU+7OGke/hPxI41vsdzTFKdcYFOAlRQv23cGTd4OXiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751473728; c=relaxed/simple;
-	bh=3cOhVNRurGPxaeIw/7+m+PZy6wlwiza6W0eLxC4gdvQ=;
+	s=arc-20240116; t=1751473915; c=relaxed/simple;
+	bh=IrCNo4PC0NsD0HLz0/9tt4ktA9q6Z/+LdaUaSaX08Bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIIMkS//Q7piAokXu0YGuRc5KDjR+zmfXVqStV2Ry8KIuNWFJY50ZT2zT99ZterRDiJ5DPQ9ToUA150Igk7ZsjNmR733bLgFQJgbKx0MD0eop47Hn73zKlwUM1DFbEHraXBv3A2vr4wLu2BcII5ldjoRdtYYKziL8WfqxIJ2kIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D76RsSKi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751473725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NG8jUsMOCdk8QP8hLYJJABR34rscESNoucVpKrlQhUA=;
-	b=D76RsSKi5UdNhOK2u/eDpX6dsoV/IVUBGzETgyJdbx4ozIuT4txXQjVNz2Qec4PJEGyH+C
-	J5Y8uByBNqVirQWD1SVM6SV8a/Na89mANZWRi90u3liRsCX9oAJkHUIoJJGn/dAFGsxF7O
-	BfsFKjP3dA8JVe8JflPhjkqReyS0t6I=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-439-34y3MGYmNseXUlJ09VUEFA-1; Wed, 02 Jul 2025 12:28:44 -0400
-X-MC-Unique: 34y3MGYmNseXUlJ09VUEFA-1
-X-Mimecast-MFC-AGG-ID: 34y3MGYmNseXUlJ09VUEFA_1751473723
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3af3c860ed7so1205059f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:28:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751473723; x=1752078523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NG8jUsMOCdk8QP8hLYJJABR34rscESNoucVpKrlQhUA=;
-        b=qfZ/Dh1bnZaiaLjWOnRd9rw1eXK8BPUUS4zh6FKLQdwMdV2qS/2PPYwBvvq1ddaTaK
-         ymTIu52dTuaE8u6a4VtHNo5vZKyvsuQsJ/gQG1KE0P9WdzajZd2y5NzbAFahkx85pjFA
-         YEx+LNnQLdnA3s6WZ1tx78lIipyycttfrxC2BEtq79DVOt57sbZKeaucsBsqEH9GfIRA
-         lIHeesoavFA5uWVQ9+fc1PVUgrs2boUzrj3M+OPdAf9tCt7LLCSBKbGnux11GyshNEAB
-         67Vac7te/gtP0lmlGvLMUdbYAb0y0zvikqrzi5IuR7SgZXCnvLskR6NwuwasgHboZt1X
-         tpTw==
-X-Gm-Message-State: AOJu0YzFWTyiULydmpyBecRZBpPjDlOcGk9ZEHxnOhV2jDMWE0NM2vBl
-	bw1yPnPFpyG217qdwZJ0E1VGcvA4MQclaxftjqIn8dPb/ee+GMoIpYGMI7NekBo4yKXXbvGN540
-	vNun1f6WEs5NmZwdX3QUKyOVQwJYeVmLqWKxWqvOWan+UI+g5NuZXoUU83rU8w3oYBg==
-X-Gm-Gg: ASbGncvx4+C1EGgOFURDuVMXTIvjK881m5nWA3HlOR9WZjZQ9lCPT5ZulWQtydOD6fO
-	80WvUjSAgniq7HY+mX3xJ4TVeijmxaMoCgvpEjtctylzvqid9oSMwGDOj7ONJyVlzt7SVF0/5+A
-	sBm1A/OEckaypjhb2UdrceQqmt4wnwnB9r9M4sBdAWVy3btT12RaFTgqL9p/9VE1dfdR9jQr8Ef
-	ARPy+9rtCSjuxiOr3Y/CbIoIZDn0HDvsifRvMOJq1sHgeSJetvBDryj4xy2qElKngvUHW7UEyYQ
-	dX0rZOENjGZ0dnuR00WFjFkLATmb
-X-Received: by 2002:a5d:5888:0:b0:3a4:d0ed:257b with SMTP id ffacd0b85a97d-3b1ff42f9b6mr2955393f8f.22.1751473722732;
-        Wed, 02 Jul 2025 09:28:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH509kf9vFGj6z4R6xZfwGPmfKpg2fLP7ZQfSUt7IFbDwWC1CAH/5JCS3EUz2u2b0JuI21xGg==
-X-Received: by 2002:a5d:5888:0:b0:3a4:d0ed:257b with SMTP id ffacd0b85a97d-3b1ff42f9b6mr2955367f8f.22.1751473722074;
-        Wed, 02 Jul 2025 09:28:42 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.130.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a892e52c8esm16610161f8f.55.2025.07.02.09.28.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 09:28:41 -0700 (PDT)
-Date: Wed, 2 Jul 2025 18:28:37 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>, 
-	Steven Moreland <smoreland@google.com>, Frederick Mayle <fmayle@google.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
-	netdev@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH v2 3/8] vsock/virtio: Move length check to callers of
- virtio_vsock_skb_rx_put()
-Message-ID: <g3h6k6vqfxwqsvojptaqy63qsn2vwo7i45segjgwjgmotysmwr@dmgbwacytag7>
-References: <20250701164507.14883-1-will@kernel.org>
- <20250701164507.14883-4-will@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkAD4SV4txE8WCzDXtXdLxCnouMmyzd5kUVjVPO1OrUxQSdIr5xjF9PQyJvi3XRCCh/VpcZHNvcBmsYI7g1F+gvBhcf2iOdovR2gTbrP0vKjdPA7OsElm52/C6PDhJDNUE4zhZCPE0CUBQLuJsSA3z/H6D6LmpK3m8U+kBcuaZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LIjXtCoc; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751473914; x=1783009914;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IrCNo4PC0NsD0HLz0/9tt4ktA9q6Z/+LdaUaSaX08Bs=;
+  b=LIjXtCocoBCU7G+Yjv+QUsHlFtbec55yYweV31gx53/c3mgR7NlxVn3n
+   a5f8jJgS8rc0jqGXxLpjgkv9mQZp/OgwnQuSHpuIP1pmIsSovGPghK5CF
+   f64YF6ZSpS2julppBJ+S5mJSJStzhuX/rEcPhfUbn9gv3UAf3oeg3Vmun
+   0k/7APO2ZC37apILd3QLI6iz1FibguCrdrlymy8rvlFLiDdJJsQgSbfaI
+   NAjWBD8JVWsjgLLB+3WiUdGMND/sYJ1c1OFeT9AsqOKL0p0DHhBvFgboN
+   HnbHWvjCoxRNF2yUsQ3S0QaVVpjgAF6k1xYZ9qytQSAYDPrp2GDDLDgCs
+   Q==;
+X-CSE-ConnectionGUID: xyF0ZTR4TCG7oNhfQSyQ6w==
+X-CSE-MsgGUID: zK/D4CSOSq29a1TVdVDULQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53656282"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="53656282"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:31:33 -0700
+X-CSE-ConnectionGUID: o41iukwUTKKgv6CK8P0eiQ==
+X-CSE-MsgGUID: TJ1zwm1GSr6100lGBcwqBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153576647"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.103.51])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:31:32 -0700
+Date: Wed, 2 Jul 2025 09:31:30 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	James Morse <james.morse@arm.com>, Borislav Petkov <bp@alien8.de>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH] acpi/ghes: add TAINT_MACHINE_CHECK on GHES panic path
+Message-ID: <aGVe4nv18dRHHV16@agluck-desk3>
+References: <20250702-add_tain-v1-1-9187b10914b9@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250701164507.14883-4-will@kernel.org>
+In-Reply-To: <20250702-add_tain-v1-1-9187b10914b9@debian.org>
 
-On Tue, Jul 01, 2025 at 05:45:02PM +0100, Will Deacon wrote:
->virtio_vsock_skb_rx_put() only calls skb_put() if the length in the
->packet header is not zero even though skb_put() handles this case
->gracefully.
->
->Remove the functionally redundant check from virtio_vsock_skb_rx_put()
->and, on the assumption that this is a worthwhile optimisation for
->handling credit messages, augment the existing length checks in
->virtio_transport_rx_work() to elide the call for zero-length payloads.
->Note that the vhost code already has similar logic in
->vhost_vsock_alloc_skb().
->
->Signed-off-by: Will Deacon <will@kernel.org>
->---
-> include/linux/virtio_vsock.h     | 4 +---
-> net/vmw_vsock/virtio_transport.c | 4 +++-
-> 2 files changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
->index 36fb3edfa403..eb6980aa19fd 100644
->--- a/include/linux/virtio_vsock.h
->+++ b/include/linux/virtio_vsock.h
->@@ -52,9 +52,7 @@ static inline void virtio_vsock_skb_rx_put(struct sk_buff *skb)
-> 	u32 len;
->
-> 	len = le32_to_cpu(virtio_vsock_hdr(skb)->len);
->-
->-	if (len > 0)
->-		skb_put(skb, len);
->+	skb_put(skb, len);
+On Wed, Jul 02, 2025 at 08:39:51AM -0700, Breno Leitao wrote:
+> When a GHES (Generic Hardware Error Source) triggers a panic, add the
+> TAINT_MACHINE_CHECK taint flag to the kernel. This explicitly marks the
 
-Since the caller is supposed to check the len, can we just pass it as 
-parameter?
+While it might not strictly be a machine check that caused GHES to
+panic, it seems close enough from the available TAINT options.
 
-So we can avoid the `le32_to_cpu(virtio_vsock_hdr(skb)->len)` here.
+So unless someone feels it would be better to create a new TAINT
+flag (TAINT_FATAL_GHES? TAINT_FIRMWARE_REPORTED_FATAL_ERRROR?)
+then this seems OK to me.
 
-Thanks,
-Stefano
+Reviewed-by: Tony Luck <tony.luck@intel.com>
 
-> }
->
-> static inline struct sk_buff *virtio_vsock_alloc_skb(unsigned int size, gfp_t mask)
->diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
->index bd2c6aaa1a93..488e6ddc6ffa 100644
->--- a/net/vmw_vsock/virtio_transport.c
->+++ b/net/vmw_vsock/virtio_transport.c
->@@ -656,7 +656,9 @@ static void virtio_transport_rx_work(struct work_struct *work)
-> 				continue;
-> 			}
->
->-			virtio_vsock_skb_rx_put(skb);
->+			if (payload_len)
->+				virtio_vsock_skb_rx_put(skb);
->+
-> 			virtio_transport_deliver_tap_pkt(skb);
-> 			virtio_transport_recv_pkt(&virtio_transport, skb);
-> 		}
->-- 
->2.50.0.727.gbf7dc18ff4-goog
->
-
+> kernel as tainted due to a machine check event, improving diagnostics
+> and post-mortem analysis. The taint is set with LOCKDEP_STILL_OK to
+> indicate lockdep remains valid.
+> 
+> At large scale deployment, this helps to quickly determin panics that
+> are coming due to hardware failures.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>  drivers/acpi/apei/ghes.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index f0584ccad4519..3d44f926afe8e 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -1088,6 +1088,8 @@ static void __ghes_panic(struct ghes *ghes,
+>  
+>  	__ghes_print_estatus(KERN_EMERG, ghes->generic, estatus);
+>  
+> +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
+> +
+>  	ghes_clear_estatus(ghes, estatus, buf_paddr, fixmap_idx);
+>  
+>  	if (!panic_timeout)
+> 
+> ---
+> base-commit: e96ee511c906c59b7c4e6efd9d9b33917730e000
+> change-id: 20250702-add_tain-902925f3eb96
+> 
+> Best regards,
+> --  
+> Breno Leitao <leitao@debian.org>
+> 
 
