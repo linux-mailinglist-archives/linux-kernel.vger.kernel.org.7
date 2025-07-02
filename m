@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-713444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF4DAF59B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EB2AF59EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95093172E74
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E69A3BC662
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A7F28A1DD;
-	Wed,  2 Jul 2025 13:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46ED27A122;
+	Wed,  2 Jul 2025 13:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="llNjzvhM"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="TaoMGapY"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F79288CA1;
-	Wed,  2 Jul 2025 13:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751463536; cv=none; b=FcXG08QmKe+7NDpV/gE8icR+GQVtnYUKmernI7VpZkrwdtmaW5sHqzmiBuL6IzwF6IUIYjXWgXxUXRBjb8w0u8XC18jJzQpuuuo5J0djyoa9nC/RBcdLql4uzWIKto9f4/ffrR0rzkz2TPxh4tqELcu11AViY9bIEs1MuWNMCgU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751463536; c=relaxed/simple;
-	bh=ajLG02yi+ttHchLtbL7gZ22RqiGskqK0Alx3czSX0yg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oevCNWOWArd6RD4USlhP19KIHK1YqcLHyUackfksOy4Wc0b2iw8XtJvUPkX1Ecj6bGJMMJBCGPoy+tzRhfXOzMiP8ti4/MxgYzXC19EBEGlYEc7yNRRt2mVU51+GJA4WJoP4EQpGXlfP28fSNgsCeMx97ELe/p4QCK5q2SzAWuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=llNjzvhM; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uWxfp-00GxRq-FT; Wed, 02 Jul 2025 15:38:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector2; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
-	bh=32SZ/8kTDsVrpAS16u/KNOvN+G7U0kqiaAdXc6L1eMA=; b=llNjzvhMtz51MMP245f7eRuKxH
-	0rxItQGcu31Efb0pxWL5cmGh2Zh6Z4vYHXFuoMGSbZoOII42lgLFxCiyhKaxQLLyRvD2+yF/KJDel
-	9+AHduuAce8VIR41AQGTEQrSgEeJd+Lwxb0fwFbOaAxBxxJuQ//6qiI4dRzLhndiL7U/FCuecPBR9
-	F6SnUokZCBApdWFpNbNAblwk1Bvhyz9luqWGkZyZIAEEfOahFXwwSEm8snd5f5tPBradc9uSTV3sG
-	Tva01zYEPjVidyMLsKlLim/rHNBbiAvOY2la7nFIY/0LMOp6Smae1JSXJco1iktls+2tsyYyjGnmB
-	Zq2fCCjQ==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uWxfp-0005HX-2e; Wed, 02 Jul 2025 15:38:53 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uWxfn-009LQl-Aj; Wed, 02 Jul 2025 15:38:51 +0200
-From: Michal Luczaj <mhal@rbox.co>
-Date: Wed, 02 Jul 2025 15:38:45 +0200
-Subject: [PATCH net v3 3/3] vsock: Fix IOCTL_VM_SOCKETS_GET_LOCAL_CID to
- check also `transport_local`
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4962749D6;
+	Wed,  2 Jul 2025 13:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751463619; cv=pass; b=NrYrZx4aXNydTmzWpQ+HTj6hTXhX1UIPO5hi81D++obcZvJFhmgYsq7Jv2K3acACE9eP2C+u4/1uXbiCvqhO1X6qa8UKeNNWOOwc3VKaqVyUuGMOcEgn+0M74gd4kd1dMTDcStVX0jspx+QjYoiJPvpYmOkc0CSQqZFaEqatJpE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751463619; c=relaxed/simple;
+	bh=zGz3wZaMO2CCXdPpXYEDAMhtkv9y3EB0vMLHbEUIfYQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=JyemlBK0sU2GIkkLAXhdJtEa8NbaA0MAdjnnmuC4s7SkryPYt21YiPqEuxW948IZQZ0x9Li43sGVuTvCwLEzwYupf1dLJ4FtS9MWcI2ByEU7j22dscjWa5TA21BCYPcbOoI8+wmwpBox4n5u+kfwFQxwSBisUziSsdt92oOd8H8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=TaoMGapY; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1751463588; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cExZJQShZ2uQ1MN1i5UO8fmEQalayc+lyTtgz46ZkgqQgPLT9tOz30SLJDv3qFITFp0srCKKCJ93qIKXTcke0806yZo9AekWCmgkTlHTfSB6F6XQ+USpo+aqUDMg0snEMhhxMWr1Z7QxG5nKx8l3451G0YTJzb1VkmmVzgkN71Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1751463588; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=zGz3wZaMO2CCXdPpXYEDAMhtkv9y3EB0vMLHbEUIfYQ=; 
+	b=nSetWO1moVj9josi1pcj5yvFifyocK6d3/CKHmkV8TjL2jF7aMjnj1pRt4X+RXBA6AltKoVI4nnrE2DgePS1bH78+i2JhYrECS1hYmm5aEigpcrewVurzv+slfS+DOdHVDL0fvpZnlXAt1Sh9slZm7MreNfNKlL9jPJdFjGILJU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751463588;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=zGz3wZaMO2CCXdPpXYEDAMhtkv9y3EB0vMLHbEUIfYQ=;
+	b=TaoMGapYkuGCPVaT+OpCTHgKvr3HndiuyLlDNyl+81jX7y2HthpMkQ44DE3cw/Ch
+	G8vAT9xp7J6s+vLU1orxlhw7Qy2zkrauGwzba7KrjQPceZ3XljUICqN7tWFxxWwBmFj
+	lyhE0JLSZJar7N8jOP16vAGl0D0EEb+oQL6n1cNc=
+Received: by mx.zohomail.com with SMTPS id 1751463587050641.5348975838191;
+	Wed, 2 Jul 2025 06:39:47 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250702-vsock-transports-toctou-v3-3-0a7e2e692987@rbox.co>
-References: <20250702-vsock-transports-toctou-v3-0-0a7e2e692987@rbox.co>
-In-Reply-To: <20250702-vsock-transports-toctou-v3-0-0a7e2e692987@rbox.co>
-To: Stefano Garzarella <sgarzare@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
-X-Mailer: b4 0.14.2
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH 3/3] rust: xarray: add `insert` and `reserve`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAJ-ks9k7Jn=8K1a0QeDK-vhTWO8-dv_bkw2SJm3EEUsinMTFQA@mail.gmail.com>
+Date: Wed, 2 Jul 2025 10:39:30 -0300
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <70F0607C-FFAA-412C-9412-5F5A01079C45@collabora.com>
+References: <20250701-xarray-insert-reserve-v1-0-25df2b0d706a@gmail.com>
+ <20250701-xarray-insert-reserve-v1-3-25df2b0d706a@gmail.com>
+ <CANiq72nf-h86GszE3=mLpWHi5Db+Tj0TRyUe9ANfjdNbesBEEg@mail.gmail.com>
+ <CAJ-ks9k7Jn=8K1a0QeDK-vhTWO8-dv_bkw2SJm3EEUsinMTFQA@mail.gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Support returning VMADDR_CID_LOCAL in case no other vsock transport is
-available.
+Hi, this is on my todo list.
 
-Fixes: 0e12190578d0 ("vsock: add local transport support in the vsock core")
-Suggested-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: Michal Luczaj <mhal@rbox.co>
----
- net/vmw_vsock/af_vsock.c | 2 ++
- 1 file changed, 2 insertions(+)
+Again, thanks Tamir for working on this.
 
-diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
-index 9b2af5c63f7c2ae575c160415bd77208a3980835..c8398f9cec5296e07395df8e7ad0f52b8ceb65d5 100644
---- a/net/vmw_vsock/af_vsock.c
-+++ b/net/vmw_vsock/af_vsock.c
-@@ -2581,6 +2581,8 @@ static long vsock_dev_do_ioctl(struct file *filp,
- 		cid = vsock_registered_transport_cid(&transport_g2h);
- 		if (cid == VMADDR_CID_ANY)
- 			cid = vsock_registered_transport_cid(&transport_h2g);
-+		if (cid == VMADDR_CID_ANY)
-+			cid = vsock_registered_transport_cid(&transport_local);
- 
- 		if (put_user(cid, p) != 0)
- 			retval = -EFAULT;
+> On 1 Jul 2025, at 14:04, Tamir Duberstein <tamird@gmail.com> wrote:
+>=20
+> On Tue, Jul 1, 2025 at 12:56=E2=80=AFPM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>>=20
+>> On Tue, Jul 1, 2025 at 6:27=E2=80=AFPM Tamir Duberstein =
+<tamird@gmail.com> wrote:
+>>>=20
+>>> Add `Guard::{insert,reserve}` and `Guard::{insert,reserve}_limit`, =
+which
+>>> are akin to `__xa_{alloc,insert}` in C.
+>>=20
+>> Who will be using this? i.e. we need to justify adding code, =
+typically
+>> by mentioning the users.
+>=20
+> Daniel, could you name your use case?
 
--- 
-2.49.0
+My main use case is for insert_limit.
 
+Tyr uses xarrays to keep track of resources allocated by userspace, and =
+we need
+to impose limits on how many resources can be allocated at once.
+
+insert_limits() provides the exact semantics needed, i.e.: insert =
+somewhere in
+the array as long as there is vacant space in the given range.
+
+=E2=80=94 Daniel=
 
