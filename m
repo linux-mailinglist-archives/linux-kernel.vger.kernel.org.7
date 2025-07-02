@@ -1,97 +1,152 @@
-Return-Path: <linux-kernel+bounces-714161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FFDAF6407
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3ABAF6410
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26124E3347
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A97E74A77F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBDE2D641F;
-	Wed,  2 Jul 2025 21:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6955923C50F;
+	Wed,  2 Jul 2025 21:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfS18JJA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g5vN7RTm"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88F82BE656;
-	Wed,  2 Jul 2025 21:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4119A19D8A7
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 21:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751491786; cv=none; b=o6AroeKAoMT3QjBQlWdrmOnpmjpwPikqodq24CyTkr1EZk7Ju7xTc5GR+omfh4mbuMcMofG5bnr440APl5g8ScejOIgOsh1Jh3uixG04kkHrypVH01suiiIMjMgZ7V6kPxouf61ohdxgLLtB0m+L3Erj+hrORmXUbo00QamKOX4=
+	t=1751492083; cv=none; b=ZK2xgN9s6Tu8Q94tIrbaZp0WhrlY2VxPY+XQ/HqjBvfYag7frOGsxpcKFZs7Dz03EsDBOq2tpeMYpVNEt5VCbuxK0o9eCK4M/Ds463jFh3sUY8SmFbCAMwBraWdTBBoU3E9f4lOREfdZDKqPLcH9pzC7XULNhMvRfyMNRHtCdAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751491786; c=relaxed/simple;
-	bh=0WNEst3sBeqmgcUmIKzjp8s/Qwi8FrrcsJxDKg7Ym1w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GfXdxSJDjj859tdGLKAVNFrA+rG/LVcjkHn20KArPzYbHMjgfw7rWxBRBdC3q/EpLS2kGu+k9VxgF9rqO6PtZpe1I9k9sky0wM56EATetHfbXx2g8zON+nIAqXzbhr50QYB7DjJDK9wH4FclFAkat89BN7tE3XJZUVMUf7oSqvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfS18JJA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81169C4CEF2;
-	Wed,  2 Jul 2025 21:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751491785;
-	bh=0WNEst3sBeqmgcUmIKzjp8s/Qwi8FrrcsJxDKg7Ym1w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NfS18JJANYUxJH9ISefFms7MtV7+AXIV0SzQUkrIm0wBiqDKXAQ9lJmvODN+ZDtoJ
-	 edX4Fod5+FSR1dZqv0Dgo3pjOc3SyjyupnkGWVDu43LE3zm3DPH/E1NCji36YwqBE9
-	 zKZ3rZ6da3Krvj0bSG2niC9/+ydgexba3TwxuROLFGa7VGUZ1mkmZwhThrp5jMKMJ+
-	 Oicoj4MsXhXOx4phQONxtDlsDpKdGEr1rzLbv2YgjgTdoewqVazQgsFyK76SRBeN4O
-	 h6yAiedu5e5LYwmVtSLTcwMu+G15EmIh00lOyjHI+AXGkPSzWiz1q1jaziuryGVfTm
-	 heDcexoDeuE2g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D68383B273;
-	Wed,  2 Jul 2025 21:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1751492083; c=relaxed/simple;
+	bh=dIvSAKAz9GvFL8eF8f11r9vPU2RPP8HamslypNFwZD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KW9F1l5d2AkHsVBAgFhAEDCUcM5FAcPwgW7E1EMzWyG/3ExukPUAqA5KLxYKZKIooNLMy0OZbU6hgnWDpxfmdgUrP6FythdDjBu0OUspAIZv9N6rpKxSrHCDlSeN3HOIP+nHImeWvgKXWf6Z2piQarEdrGUsNRKOhKHusQeV8gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g5vN7RTm; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4e7fc3309f2so1789048137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 14:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751492081; x=1752096881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SpucKaFQXs24/Gdxy0fvjSfjmEgyvs47syPRCcBg2xY=;
+        b=g5vN7RTmr2dk4axdoF6+fBQYjrqtuzDSkkKwE2qN3D5++wg+EINlYQpHCEZgregjir
+         PxB6BYNEx95JWOEouYFbV6CC1xmgglD/C3teLwafmArJFhrb+N8Fv55Awyz4Xr9eakbl
+         3/07rxUR45dHdjSYE9nzNqO4iQ2eRnjXrliXriidpAEy2SRAt6etWelOwEjy2ZhW7deB
+         IlC/WW5Nb65916AW1UmUusK/HlDf3ab+WImdDlMzv7mCE5N6wgENWumi8K3xYGclnWFQ
+         o0pqanBauyiXZ3revWzSysJm8NnBU7LLp4Ttx8L+gAliYCtjx5IULcf8SYcDydZ9V2fp
+         Nhrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751492081; x=1752096881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SpucKaFQXs24/Gdxy0fvjSfjmEgyvs47syPRCcBg2xY=;
+        b=e28ZzOnqAEcsAEO4/RU8waqOd5xIYQm8nVWj6Sc6Vqt7VymOU5XDfJLqUmBVLPKbJO
+         pjWf4gYuXR4DRi4aAdijbbk0Rfa3RDjIfCiUcfhPuj8dmvTvmteUyUAGWdZbPjNGOAsC
+         JvN5QTCFlpCmmuBQ5ilodHHSNzMXCcpWcT+ODVchco7IgJsyTQVpxf5MgQir5CX7DUOV
+         H56wQ4YZAvYxdtVzFc/a3rg+ji51qzm80cC8sGwhnlLZkDloAoVh/yjI4KgT9e/jgO/o
+         d2t4BYnZW3Y1iXGjyvWySRCczOg48rXNfR5fgmiATgSpRiQHMmdJJ7YNnFJxxc/woNYu
+         Qigg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEWgA6MnqDmJRbcXKECkPiyJPlLNBysSgvJRxoYFYpgP2NU5jC+d3ZtQalqF36b/ZJgbWfZF2TY0MuNJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP3WJ7h3EuimOLHtvgug5n0NCbBmFV/sQQneyquwIOyTnkN6Tw
+	k+pbGrccHUMzDPGFWm+cYH4B2UlrYfCSZ5Ef5NGjCiZtpAWiMkhblz7UIJTTh6HReTe9qJg5i5h
+	QFAr6mwON5Oe/iyr5QCpHuH3wGD4Tvwrnl2+HElad
+X-Gm-Gg: ASbGncvFUSs/Qq8fEcRFbeGOuOBgWVm98R6ROiLE4Xc1Ps/dQSqfEzpQ0EqQoxDwMue
+	eSuC5cnRGX+EYBAaUIITE8eqwcKvg4F+X8vLGngdfTYU2VgrPk+ksOaeQOyWNSTGB+Shch43wGG
+	M8wDYzDRbjWflvjhLeQdHcEL7ZAEIC43f7Yx0ZBmXsrgr6OFntG2DTWKIX5YgEKZCEPgHJaupR
+X-Google-Smtp-Source: AGHT+IH1fp/oO8knYExoVI4CZr0MWB4CCN3Ddzd0DoffyBdgk98L0zPZn5aGpXX4Klhx4XnOgbiAKitEu5ixJn7kSp4=
+X-Received: by 2002:a05:6102:5486:b0:4e5:59ce:471b with SMTP id
+ ada2fe7eead31-4f1613c8319mr3578113137.23.1751492080860; Wed, 02 Jul 2025
+ 14:34:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] net: thunderbolt: Enable end-to-end flow control also
- in
- transmit
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175149180975.869841.11361314397733527763.git-patchwork-notify@kernel.org>
-Date: Wed, 02 Jul 2025 21:30:09 +0000
-References: <20250628093813.647005-1-zhangjianrong5@huawei.com>
-In-Reply-To: <20250628093813.647005-1-zhangjianrong5@huawei.com>
-To: zhangjianrong <zhangjianrong5@huawei.com>
-Cc: michael.jamet@intel.com, mika.westerberg@linux.intel.com,
- YehezkelShB@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- guhengsheng@hisilicon.com, caiyadong@huawei.com, xuetao09@huawei.com,
- lixinghang1@huawei.com
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <20250701114733.636510-18-ulf.hansson@linaro.org> <2025070205-ignore-passive-17b4@gregkh>
+ <aGWH2mH6iZJ3s3lL@pollux>
+In-Reply-To: <aGWH2mH6iZJ3s3lL@pollux>
+From: Saravana Kannan <saravanak@google.com>
+Date: Wed, 2 Jul 2025 14:34:04 -0700
+X-Gm-Features: Ac12FXzxNwy9Q8y7eUa-yNyxqV22KlOcq4v5ePhyN7HxiHMeoKsg2U5kRHPewzA
+Message-ID: <CAGETcx_yVXgvmbDFYe+Nbdp18D-m14W8xO_G9RyAujpag+M9ow@mail.gmail.com>
+Subject: Re: [PATCH v3 17/24] driver core: Export get_dev_from_fwnode()
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Michael Grzeschik <m.grzeschik@pengutronix.de>, 
+	Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	Peng Fan <peng.fan@oss.nxp.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
+	Michal Simek <michal.simek@amd.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Wed, Jul 2, 2025 at 12:26=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Wed, Jul 02, 2025 at 09:34:12AM +0200, Greg Kroah-Hartman wrote:
+> > On Tue, Jul 01, 2025 at 01:47:19PM +0200, Ulf Hansson wrote:
+> > > It has turned out get_dev_from_fwnode() is useful at a few other plac=
+es
+> > > outside of the driver core, as in gpiolib.c for example. Therefore le=
+t's
+> > > make it available as a common helper function.
+> > >
+> > > Suggested-by: Saravana Kannan <saravanak@google.com>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Colibri iMX8X
+> > > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> # TI AM62=
+A,Xilinx ZynqMP ZCU106
+> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > ---
+> > >  drivers/base/core.c    | 8 ++++++--
+> > >  include/linux/device.h | 1 +
+> > >  2 files changed, 7 insertions(+), 2 deletions(-)
+> > >
+> >
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> I'm a bit concerned about exporting get_dev_from_fwnode() -- at least wit=
+hout a
+> clear note on that this helper should be used with caution.
+>
+> AFAIK, a struct fwnode_handle instance does not have a reference count fo=
+r its
+> struct device pointer.
+>
+> Hence, calling get_dev_from_fwnode() with a valid fwnode handle is not en=
+ough.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Not enough for what?
 
-On Sat, 28 Jun 2025 17:38:13 +0800 you wrote:
-> According to USB4 specification, if E2E flow control is disabled for
-> the Transmit Descriptor Ring, the Host Interface Adapter Layer shall
-> not require any credits to be available before transmitting a Tunneled
-> Packet from this Transmit Descriptor Ring, so e2e flow control should
-> be enabled in both directions.
-> 
-> Signed-off-by: zhangjianrong <zhangjianrong5@huawei.com>
-> 
-> [...]
+> The caller also needs to ensure that the device the fwnode has a pointer =
+to has
+> not been released yet.
 
-Here is the summary with links:
-  - [v2] net: thunderbolt: Enable end-to-end flow control also in transmit
-    https://git.kernel.org/netdev/net-next/c/a8065af3346e
+Why? The point of the API is to give you the driver core's notion of
+the primary device that corresponds to a fwnode at that instant.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+There's no refcount needed for that. This is just a simpler way than
+looping through all the devices to find the first device that has that
+specific fwnode.
 
+It's only the device that needs to be ref counted because the caller
+needs to do stuff with it.
 
+-Saravana
 
