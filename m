@@ -1,126 +1,294 @@
-Return-Path: <linux-kernel+bounces-713412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9053CAF593E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC6CAF5943
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2E51C42DA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23BB15211EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B2E27E06D;
-	Wed,  2 Jul 2025 13:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0495210FB;
+	Wed,  2 Jul 2025 13:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="c1yDFmGs"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JrTAIG4c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2D82798F8
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DD727A122
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462681; cv=none; b=h/CBYZ+7HlZOqnGsXtdavtWE7R1a3Fuu0OgCJcApDtJwA4ncmJoLUFSwGVSTY5gpzcuvOd8U+vdYj5HpaXcfKfocBljzEecuQVmc3kcaCC3EZ+qH4MKx9WoEICyfyQ+vtHMbFNDHQ+vAaM89jsjLDrbccAIAIR6hymYXoDYhRbs=
+	t=1751462709; cv=none; b=OzPczijgD3TqrDVa9wRP4oa+YKYrXp0D+YNAlLWYPqwxXazdf0nBJ0x0d5SU57jr/274G2bgW3l58Uyg9zM+nOnnYxRXAEvyBUwtsU0lUTT3VHK1Eu3Hu/ZkR205/DSOCwCXZ7xgtSRbFeWRqIkShyJvWYnB+A07mTX9qfEI3Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462681; c=relaxed/simple;
-	bh=Niz+m0D1JqkH5aTX+Uv8Rcb69sVNw/rYIAm7h3Hs6Mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6jP1A1+xVtMj9p1NRU4q0+rgGL7ubEKJXPuLS7yQC+UeQzw40Z6ErXCzWCkB9n0J2wD52AvLjtzvYth00zHeKOMMr2aQwXZUmGb6cbNB77z2HM1JYFVaFsYPKMqpJsmoMc0UKFTvgIa17hA4gRnSkXlhMs2oClZCOLKr0IP3VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=c1yDFmGs; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2799B40E021D;
-	Wed,  2 Jul 2025 13:24:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mqwxr6HJcW_k; Wed,  2 Jul 2025 13:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751462672; bh=5eqncYxutXgmX6kJnSEQAbsb0Ij4/aMXV0r2ck6ZhQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c1yDFmGsnzJXOSIA3Db9yDsJRM5HUtD9DCDsqz5acK6Q8RDhrd1UzhHXK+DORXBNj
-	 n6JxT1jW+ME9Ghq9MoDQJEc9mLwCr5hQVmAeDDOvOmq5JcD2sJ1kguoEsqpHRe09io
-	 em2blc4SK67v5Gw2zdwksl03wmhO4gkihMBSww8oDGtwXca3+w7msc6QoA4Vs6XMD5
-	 UFh6uYYglxKDLT1VZh0y157pq9DRMkBuuEgtmHGO+1UD9droeuXl/yL5iDLUVTeJVa
-	 nsnmLAyWl0okfbi/cnteU+OvkyHhi9PMpPTmV+S13paU7+VBG9OtVfA6oaDY/8eHVH
-	 BJ6dHjn4GCe0A3gc1g2Z584oXOEbTe4hs34PR1Eygxd7c3feGbTrKBn6iH8ZMnP6nA
-	 XpOUJ4uB/4+K5jgKEI2IE/QFh/1MJWLbdYvlwfe0jr28Lkyb6ZRlVxReIiqr9xCI8F
-	 dikg/byc493ndCFdc8X/lFxz6sJb5gQAzbWtIgjtsnNsQlvTYma+kmiD/H+fBGjODK
-	 GiYHsxrwfcxPwtp4aNfE+ENb/SD1us6+heSCJSkjj+vvSrBeBqPuxHi0BZDRkprVXR
-	 Wjd548mn6cXZ/v8+bicOCck3OJ68gJVcTGairKCIoYR6UTtjGmM8DKFACjF1etiz+9
-	 wlZk1QuNIG1hnaiLGlFIJWng=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7EA4940E0218;
-	Wed,  2 Jul 2025 13:24:22 +0000 (UTC)
-Date: Wed, 2 Jul 2025 15:24:15 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: kernel test robot <lkp@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>
-Subject: Re: [tip:master 19/19] include/linux/irq-entry-common.h:201:2:
- error: unexpected token
-Message-ID: <20250702132415.GFaGUy_6q0dZZI9AX3@fat_crate.local>
-References: <202507020528.N0LtekXt-lkp@intel.com>
- <20250702123240.GDaGUm6Le4KLL7o_91@fat_crate.local>
- <aGUtCveV8Ev17_FS@J2N7QTR9R3.cambridge.arm.com>
- <20250702130915.GEaGUve86iYnv337_Z@fat_crate.local>
- <aGUxH--v32Bv4T81@J2N7QTR9R3.cambridge.arm.com>
+	s=arc-20240116; t=1751462709; c=relaxed/simple;
+	bh=+DPhhkCqhCjY4HudI0WMpZlk/Iw/TdRAjF3onlmBOA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SS0qkfYv+/MISD3YwkEFQJnf4bRWYihBUEFP+LDQYHHm5KFxJlKgypqGwc+liTYg81DOs1KxrxpFpcn0SadQBRY6lO+9iKL0URx1UVrDRYViuRg7WTfEkweTyfQ4F2SPttiFr7QsVH7ixJ42hf2/awbwroaHYQKzmQwFbFQKpYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JrTAIG4c; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751462706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EeBgXnTH5r2aHEQZ3vNU+jyCuCVHJOcl40pBVmcDFfA=;
+	b=JrTAIG4cOD8/R1Kkj+psfY9ryvsNxgX6ottHG9kjxxtREsah36lgrexXaZjXMrXa2Lr2K7
+	/SZGjoKUbTlMjwYpmpr/GPJIhN7d3dHLsA4jjw7iiBiDNQEc+IgAimAbM9YP6ZQCmbmycA
+	eWXs6/lwfgbwwDVKClHdiHdfENXesV4=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-VxsB-c_VNCCpD6VnaROYiQ-1; Wed, 02 Jul 2025 09:25:03 -0400
+X-MC-Unique: VxsB-c_VNCCpD6VnaROYiQ-1
+X-Mimecast-MFC-AGG-ID: VxsB-c_VNCCpD6VnaROYiQ_1751462702
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-32b93fa2e51so21944881fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 06:25:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751462701; x=1752067501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EeBgXnTH5r2aHEQZ3vNU+jyCuCVHJOcl40pBVmcDFfA=;
+        b=kPdBalh/VuqMIuUfEmqJ2zWbMKGMhMKcf4D3KzcdEoGi+c1pZh/GDdE2RK+bs6QCQu
+         OfYoqIBgY8YOxfJK22bHVF5GVL/2A1q+kBX11Wq+fiwMg9gE8vuVZEDPQ0WpTYq8LiW9
+         dUMsuZo4Q2qJNZCe9BwnBWVsvMxMXUUbj+Ve2ylD99L+wx0Gq18jyNl2/qAIakM4w1yP
+         jlOgRAXCusaZnXexUeobMRBtUoTtK6dm2qMFaYMzp9wI+B0s5eRNhz+XO/gVe8SG03U2
+         MtMe4+7KW6XGl9DTolTkcWR+m7scvUZq/sI0CHMY+4mi/dfVaJN+4kN4/6UyjWQjN1d4
+         xpcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGN3PNZh/OYlB47VYlk7EpUx3bEgcZNlB7864FWMHj77aRz/uAqTnPppF+KX/ZoK1T1+N8XBB1dR3Oim4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzetztUdvLwFlm6cHDFPpO2khm/v8uK+CIc48PdN6OpUvHTq4IJ
+	83KCmZIhvwihCkNTJnA0ztUmAcYjZEh4q0FpaBG1yt4WFJb2JUWwQicjbrJnQpaTsFRL/CKmmOR
+	h0iv8QQsdAjrlufZQOayn6LKo6YzU+cRyT6FRJZnKKRcOWFaZ4zmgtHFU6v8ERe5C1yO9GKvyZn
+	LZW81fP1vhgxEVlTX0+8o81TNgGXGITQ9mo5I/HA3jAQ1Vhcoh4Rg=
+X-Gm-Gg: ASbGncvbeNKiGWfl6v9DxXTdd79eXFO/D/HwyXtoUsP5DW47E5qzmElKLkOozCaOeoy
+	94U3OaLQt4fPAARgubTBRWWhaoTbzXwinZEtEMm1KXBlL/84zKP6Q6wQ7KhWUZEBwFoQWwPUdRY
+	3//9E=
+X-Received: by 2002:a2e:bea7:0:b0:32b:3879:ce7f with SMTP id 38308e7fff4ca-32dffdef4a4mr9111151fa.0.1751462700861;
+        Wed, 02 Jul 2025 06:25:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHha/4r1kt+uXecZZusV0b51ZWt5zi1mY0uZGr2yXPSdqq30GrvFgxrEf7cJ7AoWe6sDVWLya/lQjalGXgETNI=
+X-Received: by 2002:a2e:bea7:0:b0:32b:3879:ce7f with SMTP id
+ 38308e7fff4ca-32dffdef4a4mr9111061fa.0.1751462700365; Wed, 02 Jul 2025
+ 06:25:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aGUxH--v32Bv4T81@J2N7QTR9R3.cambridge.arm.com>
+References: <CAE4VaGBLJxpd=NeRJXpSCuw=REhC5LWJpC29kDy-Zh2ZDyzQZA@mail.gmail.com>
+ <07D9F8BC-47A7-4E87-8655-C978C056E308@gmail.com> <CAE4VaGBQnMp953tsv13s=CiaaiW+EZNuvh6dCuRA7MWbyU_Hsw@mail.gmail.com>
+ <CAE4VaGAak=U-oLwXvPZsiNRnRvNL_ROKL8AJCSkCm+zPOjf2qQ@mail.gmail.com>
+ <31bd3395-cfe3-4af5-bc1c-fa8d26629b93@intel.com> <d0b7b52b-c370-4ad7-8a03-d785f1505372@intel.com>
+ <e9666935-f7af-4419-bb85-e1f041c64ea9@amd.com> <8a919ef6-4105-44e0-a17c-e41c1c0abbe9@amd.com>
+ <0ec290aa-0e9b-49cc-9dd7-2f58c51b6d22@intel.com> <CAE4VaGDgta2PrG2WhPQ6KndZd3pAf5Fh9oJEf9k1eZ4492Aw_g@mail.gmail.com>
+ <5bcb752d-813e-4ab4-8519-fae897472b5b@amd.com>
+In-Reply-To: <5bcb752d-813e-4ab4-8519-fae897472b5b@amd.com>
+From: Jirka Hladky <jhladky@redhat.com>
+Date: Wed, 2 Jul 2025 15:24:46 +0200
+X-Gm-Features: Ac12FXzsNHIQ1kyflPsrdraidMZd6ZkY2iHE7gHyz9XsSz5l6DQ7ztArEBIrp7g
+Message-ID: <CAE4VaGDvBM20+VGbe+uCYOsuRX1bnQugHH=9DZCAuqAxRV5KiA@mail.gmail.com>
+Subject: Re: [BUG] Kernel panic in __migrate_swap_task() on 6.16-rc2 (NULL
+ pointer dereference)
+To: "Aithal, Srikanth" <sraithal@amd.com>
+Cc: "Chen, Yu C" <yu.c.chen@intel.com>, Abhigyan ghosh <zscript.team.zs@gmail.com>, 
+	linux-kernel@vger.kernel.org, Suneeth D <Suneeth.D@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 02, 2025 at 02:16:15PM +0100, Mark Rutland wrote:
-> Sounds like a plan.
+Thank you, Aithal!
 
-As we figured out on IRC:
+Chenyu, here is another debug log - the flag is essentially the same
+as before, except that PF_NOFREEZE is also set, so it points to the
+same race condition (task exit).
 
-https://lore.kernel.org/all/20250616-loongarch-fix-warn-cond-llvm-ias-v1-1-6c6d90bb4466@kernel.org/
+This happened on an AMD Bergamo 9754 single socket server.
 
-"clang's integrated assembler only supports concatenating strings with
-'.ascii'. There was discussion of allowing '.string' / '.asciz' but it
-was decided against [1] because it was undesirable to match the behavior
-of released binutils at the time, where"
+cat /sys/kernel/debug/tracing/trace
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 1/1   #P:256
+#
+#                                _-----=3D> irqs-off/BH-disabled
+#                               / _----=3D> need-resched
+#                              | / _---=3D> hardirq/softirq
+#                              || / _--=3D> preempt-depth
+#                              ||| / _-=3D> migrate-disable
+#                              |||| /     delay
+#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
+#              | |         |   |||||     |         |
+   migration/96-599     [096] dN.5. 84281.647548: __migrate_swap_task:
+!! (2886754 sysbench-binary) flags=3D40804c
 
-and this seems to fix it here:
+On Wed, Jul 2, 2025 at 2:19=E2=80=AFPM Aithal, Srikanth <sraithal@amd.com> =
+wrote:
+>
+> On 7/2/2025 5:23 PM, Jirka Hladky wrote:
+> > Hi Aithal,
+> >
+> > thank you for the reproducer.
+> >
+> > With the patched kernel, after running a reproducer, please do
+> >
+> > cat /sys/kernel/debug/tracing/trace
+> >
+> > If the counter is nonzero like this:
+> > entries-in-buffer/entries-written: 1/1
+> >
+> > please post the `cat /sys/kernel/debug/tracing/trace` here.
+> >
+> > It would be helpful to check if there are any other race conditions
+> > besides the task exit.
+> >
+> > Thank you!
+> > Jirka
+> >
+>
+>
+> None of the four machines running our workload [with the debug patch]
+> showed any entries.
+> Entries in Buffer/Entries Written: 0/0
+>
+>
+> > On Wed, Jul 2, 2025 at 1:17=E2=80=AFPM Chen, Yu C <yu.c.chen@intel.com>=
+ wrote:
+> >>
+> >> On 7/2/2025 3:36 PM, Aithal, Srikanth wrote:
+> >>>
+> >>>
+> >>> On 7/2/2025 10:02 AM, Aithal, Srikanth wrote:
+> >>>> On 6/27/2025 1:03 PM, Chen, Yu C wrote:
+> >>>>> On 6/27/2025 3:16 PM, Chen, Yu C wrote:
+> >>>>>> Hi Jirka,
+> >>>>>>
+> >>>>>> On 6/27/2025 5:46 AM, Jirka Hladky wrote:
+> >>>>>>> Hi Chen and all,
+> >>>>>>>
+> >>>>>>> we have now verified that the following commit causes a kernel pa=
+nic
+> >>>>>>> discussed in this thread:
+> >>>>>>>
+> >>>>>>> ad6b26b6a0a79 sched/numa: add statistics of numa balance task
+> >>>>>>>
+> >>>>>>> Reverting this commit fixes the issue.
+> >>>>>>>
+> >>>>>>> I'm happy to help debug this further or test a proposed fix.
+> >>>>>>>
+> >>>>>>
+> >>>>>> Thanks very much for your report, it seems that there is a
+> >>>>>> race condition that when the swap task candidate was chosen,
+> >>>>>> but its mm_struct get released due to task exit, then later
+> >>>>>> when doing the task swaping, the p->mm is NULL which caused
+> >>>>>> the problem:
+> >>>>>>
+> >>>>>> CPU0                                   CPU1
+> >>>>>> :
+> >>>>>> ...
+> >>>>>> task_numa_migrate
+> >>>>>>     task_numa_find_cpu
+> >>>>>>      task_numa_compare
+> >>>>>>        # a normal task p is chosen
+> >>>>>>        env->best_task =3D p
+> >>>>>>
+> >>>>>>                                          # p exit:
+> >>>>>>                                          exit_signals(p);
+> >>>>>>                                             p->flags |=3D PF_EXITI=
+NG
+> >>>>>>                                          exit_mm
+> >>>>>>                                             p->mm =3D NULL;
+> >>>>>>
+> >>>>>>      migrate_swap_stop
+> >>>>>>        __migrate_swap_task((arg->src_task, arg->dst_cpu)
+> >>>>>>         count_memcg_event_mm(p->mm, NUMA_TASK_SWAP)# p->mm is NULL
+> >>>>>>
+> >>>>>> Could you please help check if the following debug patch works,
+> >>>>>
+> >>>>> Attached the patch:
+> >>>>>
+> >>>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> >>>>> index 8988d38d46a3..82fc966b390c 100644
+> >>>>> --- a/kernel/sched/core.c
+> >>>>> +++ b/kernel/sched/core.c
+> >>>>> @@ -3364,7 +3364,12 @@ static void __migrate_swap_task(struct
+> >>>>> task_struct *p, int cpu)
+> >>>>>    {
+> >>>>>        __schedstat_inc(p->stats.numa_task_swapped);
+> >>>>>        count_vm_numa_event(NUMA_TASK_SWAP);
+> >>>>> -    count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
+> >>>>> +    if (unlikely(!p->mm)) {
+> >>>>> +        trace_printk("!! (%d %s) flags=3D%lx\n", p->pid, p->comm,
+> >>>>> +                p->flags);
+> >>>>> +    } else {
+> >>>>> +        count_memcg_event_mm(p->mm, NUMA_TASK_SWAP);
+> >>>>> +    }
+> >>>>>
+> >>>>>        if (task_on_rq_queued(p)) {
+> >>>>>            struct rq *src_rq, *dst_rq;
+> >>>>
+> >>>> I was encountering the same issue as mentioned earlier in this threa=
+d,
+> >>>> which has been recurring in our daily linux-next CI builds within ou=
+r
+> >>>> virtualization CI stream where we observed this BUG appearing random=
+ly
+> >>>> during the runs.
+> >>>>
+> >>>> Additionally, we were able to reproduce this issue while running the
+> >>>> autonuma benchmark. As mentioned earlier, the BUG would occur random=
+ly
+> >>>> across iterations, typically between the 5th and 10th iterations.
+> >>>>
+> >>>> We consistently encountered this issue up to the 6.16.0-rc4-
+> >>>> next-20250630 build [https://git.kernel.org/pub/scm/linux/kernel/git=
+/
+> >>>> next/linux-next.git].
+> >>>>
+> >>>> After applying the aforementioned patch ontop of next-20250630 build=
+,
+> >>>> I tested it in our virtualization CI and with the autonuma benchmark
+> >>>> reproducer described below, and the issue no longer occurred. The
+> >>>> patch appears to have resolved the reported problem.
+> >>>>
+> >>>>
+> >>>> git clone https://github.com/pholasek/autonuma-benchmark.git
+> >>>> cd autonuma-benchmark
+> >>>> for i in $(seq 1 80); do bash ./start_bench.sh -s -t; done
+> >>>> Note: The server running the autonuma-benchmark must have at least t=
+wo
+> >>>> nodes.
+> >>>>
+> >>>> If the provided fix is final, please feel free to include the
+> >>>> following Tested-by tag:
+> >>>>
+> >>>> Tested-by: Srikanth Aithal <Srikanth.Aithal@amd.com>
+> >>>> Tested-by: Suneeth D <Suneeth.D@amd.com>
+> >>>>
+> >>>
+> >>>
+> >>> I apologize for overlooking that this was a debug patch. With this de=
+bug
+> >>> patch applied on top of 6.16.0-rc4-next-20250630, I am unable to
+> >>> reproduce the issue. However, when I revert this debug patch, I
+> >>> encounter the issue again on 6.16.0-rc4-next-20250630.
+> >>>
+> >>>
+> >>
+> >> Thank you Aithal, this is a debug + fix patch. And Jirka has confirmed
+> >> that this helps somehow. I'll post a formal one and Cc you.
+> >>
+> >> Thanks,
+> >> Chenyu
+> >>
+> >
+> >
+>
 
----
-diff --git a/arch/s390/include/asm/bug.h b/arch/s390/include/asm/bug.h
-index a185855ab158..46d9eb64bd18 100644
---- a/arch/s390/include/asm/bug.h
-+++ b/arch/s390/include/asm/bug.h
-@@ -9,7 +9,7 @@
- #else
- #define __BUGVERBOSE_LOCATION(file, line)			\
- 		.pushsection .rodata.str, "aMS", @progbits, 1;	\
--	10002:	.string file;					\
-+	10002:	.ascii file;					\
- 		.popsection;					\
- 								\
- 		.long 10002b - .;				\
 
+--=20
+-Jirka
 
-I leave it to Mr. Z to sort out.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
