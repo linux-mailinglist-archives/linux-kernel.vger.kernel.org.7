@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-712689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F8DAF0D68
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:01:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F5EAF0D75
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357EA1C23E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CA31697FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B4922F74B;
-	Wed,  2 Jul 2025 08:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C0B2343C2;
+	Wed,  2 Jul 2025 08:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="awSuFaBp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cM49nz4T"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FEC4C7F;
-	Wed,  2 Jul 2025 08:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5D7137923;
+	Wed,  2 Jul 2025 08:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751443275; cv=none; b=tf5i+znWuKT/IN3nRbfnY63wRyznZ63ypyWxCF8ElGZV820Ju1KfJxeFAddle1tk7Z3l93nRGrTvRsHP1xEpJyAwQ2ay/3zDgj1HHM9fm2OvQln2LgE1RSEMCPqh+1zDFAvxfKCVPYHuul8g2aDsp78pvXc4AkzEOJyLxtl/1oo=
+	t=1751443496; cv=none; b=HRVIFZoEBhhfY8tQEISLFOIIVZlT2aV3RznnqFFPyyeLJiOBBYssg4Yub2W970akvZwVAz2bllGradTFRg9yslz75ChgR5aPgXBUtodMJO4CF7pxgelF3GvobByWvjIg0FT/0xewKCA7GNEsqxEflbawtX9ufsAYuvWhQRoDl/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751443275; c=relaxed/simple;
-	bh=o/beQO41xS5a7XgcnZeothK7b/popVg22tt0/+I5ea4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qiOECgB8sj9BqoYqmK7LQ2VzNtvpAGIJpCTYeUgPcUlzh634XMJ9nLfjFzLa1yPrm03wj8+HK6SlDGiRwBK/TNzu2tHo6LNqVfLeHJBJOp5iIc4We8uTu+HfVjiPmQzEfOV/pfLQrD/D21hV/nHG9PEnvbfh+DiFcBPBxPwffIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=awSuFaBp; arc=none smtp.client-ip=192.198.163.10
+	s=arc-20240116; t=1751443496; c=relaxed/simple;
+	bh=l0pSZlRPG8LstMnELObDfWKePkirOAxhEP7OlBTiROU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bRFRLg1eH/Jym3et1O/TXWijKNa8YyKlhry77y3fmv5x80fXgWYMFr5cprQ+88vYmk77ZYtaDTXIDix9NxwBtQyW2jBcQnT2BWc/IgTJkaj6inGfWq96QiZMzysnZNF3gmEEyTvFadOqTg6jWD77Mn3w8TtAEMDIFs8y+YiBq8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cM49nz4T; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751443274; x=1782979274;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=o/beQO41xS5a7XgcnZeothK7b/popVg22tt0/+I5ea4=;
-  b=awSuFaBp/qFQO1TknEj4dL9k/NUok6E+bDI7eZ/i0uZPvGbDbDnsORAx
-   5JrQahhY6FqaGIqLXmbk629mMMyy1SXeyiPrcbDF28H7O8uxugyu4dZDy
-   FV+JKgfprhe8rT5xCQLIiKSU7jg/z+OT0jn2N1jZl64VNZGad+fIjHLtw
-   lv7WIsgeJXIMxoKbWnpUl8lrqwsha+aUdsC0u+vGqdvOkej/wJHaQtFRI
-   RkMItgrIJCHAiguxjIkPJ8+o0Xuw6o/23+gamIz6VoHXSicGDkMkug0PE
-   XwhwEpio69UMaHgEqNbT0uuIZlrd6qFAsVwGz8nKIEFKh7TgaPmjq3f6b
-   A==;
-X-CSE-ConnectionGUID: VKHo0g2XSL6kb4wFgycgRQ==
-X-CSE-MsgGUID: evi3SuJ3RseoNfDR4dbZdw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="65077682"
+  t=1751443495; x=1782979495;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=l0pSZlRPG8LstMnELObDfWKePkirOAxhEP7OlBTiROU=;
+  b=cM49nz4TBTComOWsfLgZfKYPbq8Gd0mwC6WIw6UFT+wwbWjL0MApbrWB
+   T3/PP8yng5/OSEvDerrVnnf+c7m81SaiUC4iKTU8y1TQQEMOdaxTK+Uw4
+   t+qmtOxvBc5YX91KVsvcv2C5ig6Png8iqMd7hEjQMwOPqIyeWvWQ2EHik
+   7OgqHQIAz+ShPiHQG+jcmhD1f8s2lhjGdUdd3GytfWzVE/WuUTF2RBlFT
+   lrhyMnQ37QJ/JCOOjouwb5LLFkx3WZ9Qy09mwavpzIdxDTkdvcjm/aLH5
+   CWfb4F6QmHV0n67KP3+iH/QTLsZlkdJ420N1Ps5xDwnzPF9J30GEegVld
+   w==;
+X-CSE-ConnectionGUID: jLaDj3QgSPKpONs/K6xi7w==
+X-CSE-MsgGUID: zEu/3CbLRgSKr2oIWkYOMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="57536231"
 X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="65077682"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:01:13 -0700
-X-CSE-ConnectionGUID: OBbdimyHQVyPQprEivO4Fw==
-X-CSE-MsgGUID: hjg2Q9CpSM6kt481Ip4ZQw==
+   d="scan'208";a="57536231"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:04:54 -0700
+X-CSE-ConnectionGUID: ZjpuVCdBQyWgkIfdFROO8Q==
+X-CSE-MsgGUID: 9nb3zhAlSeq/KFRxve4Q5Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="153468910"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 02 Jul 2025 01:01:11 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3CC921E0; Wed, 02 Jul 2025 11:01:10 +0300 (EEST)
+   d="scan'208";a="154556266"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:04:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWsSW-0000000BrMJ-28tk;
+	Wed, 02 Jul 2025 11:04:48 +0300
+Date: Wed, 2 Jul 2025 11:04:48 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v1 1/1] rtc: sysfs: use __ATTRIBUTE_GROUPS()
-Date: Wed,  2 Jul 2025 11:01:08 +0300
-Message-ID: <20250702080108.2722905-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] iio: adc: ad7173: add SPI offload support
+Message-ID: <aGToIInJLMHmB4ay@smile.fi.intel.com>
+References: <20250701-iio-adc-ad7173-add-spi-offload-support-v3-0-42abb83e3dac@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701-iio-adc-ad7173-add-spi-offload-support-v3-0-42abb83e3dac@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Embrace __ATTRIBUTE_GROUPS() to avoid boiler plate code.
-This should not introduce any functional changes.
+On Tue, Jul 01, 2025 at 04:37:48PM -0500, David Lechner wrote:
+> Here comes another series for adding SPI offload support to an ADC.
+> 
+> The primary target is AD411x, but since this uses the ad_sigma_delta
+> shared module, a lot of this series is focused on that.
+> 
+> To start with, we have some cleanups to the ad_sigma_delta code, so feel
+> free to pick these up as they are ready as they generally stand on their
+> own.
+> 
+> Then before adding proper SPI offload support, we make use of
+> spi_optimize_message() to reduce CPU usage of all users of this driver
+> during buffered reads.
+> 
+> Also there is a new dt-binding and driver for a special SPI offload
+> trigger FPGA IP core that is used in this particular setup.
+> 
+> Then finally actual SPI offload support is added to the ad_sigma_delta
+> module and the ad7173 driver.
+> 
+> This was tested using EVAL-AD4112ARDZ on a DE10-Nano.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/rtc/sysfs.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+This version LGTM,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/rtc/sysfs.c b/drivers/rtc/sysfs.c
-index 86d1140b4f39..2230241285d0 100644
---- a/drivers/rtc/sysfs.c
-+++ b/drivers/rtc/sysfs.c
-@@ -298,11 +298,7 @@ static struct attribute_group rtc_attr_group = {
- 	.is_visible	= rtc_attr_is_visible,
- 	.attrs		= rtc_attrs,
- };
--
--static const struct attribute_group *rtc_attr_groups[] = {
--	&rtc_attr_group,
--	NULL
--};
-+__ATTRIBUTE_GROUPS(rtc_attr);
- 
- const struct attribute_group **rtc_get_dev_attribute_groups(void)
- {
 -- 
-2.47.2
+With Best Regards,
+Andy Shevchenko
+
 
 
