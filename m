@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-712529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4644AF0AF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:49:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E870AAF0AC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82E64E0CA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:49:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE3267AC99C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B5E223DFB;
-	Wed,  2 Jul 2025 05:48:27 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A895020CCCC;
-	Wed,  2 Jul 2025 05:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13671F4622;
+	Wed,  2 Jul 2025 05:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OIN8OM2L"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B101C5F06
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 05:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751435307; cv=none; b=V9aSeOdZA+c2JxOI/4HwjeeiBH8/bVhL6fgQC/3l1SECd8HVsa/CBZZypWejHFbGX3PlNcB7Ywug/xSlr2cVYZwpQsQ8mV0Gq6Nr/abnBhEvd5KZeBTcxoKm7M/+Ou4CoJqUU1hftI6VAqlMpw0eVQq3T0KN70NsElvttZoSNKY=
+	t=1751434685; cv=none; b=BFYehn5LTiRtLjXYHT4oUZL5cEmJQuDp306rPHGJErK+vO+6m2vfEXmPFB6hnjFIsih+kl0rZsNvV9QQetl/u6BrTkacFrq4NSxCadNm9LK5BhdWxR+JWTj/v4JjeQOzrFGS2P1dMSTknxbO5K2cKTk3CbIvyTj5N++VIR5lWYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751435307; c=relaxed/simple;
-	bh=OX7su+A2+XxOGEYJv11FdVH8w8M7m/9/3b1Kym7xqMo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z/t/+RKNSu6Aj+HsUR8uzUh+7TlH87WDH+m4Ey4ShQAQHjI9EXIP9t5+4nNtxL6v8ATN3VO3FtouKYSfNDlNojznS+45LI6VhznIAuUVqN2fzMzSGWqqLNbC+8yTVE+YRP7SI6tO7A4jqEE7odcz8/NuONxTE8Xn88KEPV84lqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-34-6864c492dad2
-From: Byungchul Park <byungchul@sk.com>
-To: willy@infradead.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel_team@skhynix.com,
-	kuba@kernel.org,
-	almasrymina@google.com,
-	ilias.apalodimas@linaro.org,
-	harry.yoo@oracle.com,
-	hawk@kernel.org,
-	akpm@linux-foundation.org,
-	davem@davemloft.net,
-	john.fastabend@gmail.com,
-	andrew+netdev@lunn.ch,
-	asml.silence@gmail.com,
-	toke@redhat.com,
-	tariqt@nvidia.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	horms@kernel.org,
-	linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org,
-	vishal.moola@gmail.com,
-	hannes@cmpxchg.org,
-	ziy@nvidia.com,
-	jackmanb@google.com
-Subject: [PATCH net-next v8 5/5] page_pool: make page_pool_get_dma_addr() just wrap page_pool_get_dma_addr_netmem()
-Date: Wed,  2 Jul 2025 14:32:56 +0900
-Message-Id: <20250702053256.4594-6-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250702053256.4594-1-byungchul@sk.com>
-References: <20250702053256.4594-1-byungchul@sk.com>
+	s=arc-20240116; t=1751434685; c=relaxed/simple;
+	bh=b4jYhBLaJVWS8uCLTTvFGVkJv0bteHOKXi+J5IzUiHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LhegQFm0CVLvk95R5MebHX8h42FIyE1BWI8LJDISZ2L/9BQIcGoWHpnjEx6B7yCLCWwew2aXkDJT2mADkLkHMDnLvaOLwzU/QKFbbB3SjRT4D/o2sxpQtbwhBJ+qFHdVFR6YCWwqlIAMRvKewFjsgUKSvJ0VKJGsR6zUKEvx/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OIN8OM2L; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a58f79d6e9so84451211cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Jul 2025 22:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1751434682; x=1752039482; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBw4HF7qWDcXJbgwvgqT6jgJQFstUmKnuwkt3nojl78=;
+        b=OIN8OM2LvfCfeppp1blKo4zz/zy9cmevcQIaJ35ew16/rePFm5GyPHBvq52DM6O0dQ
+         QhMlYrCDozus4YFg6mFJX3h3A2WjGwP2KrqHOzo4TTtll9dn39FfYC5kQ3fuaN/TBSyf
+         RxZllTUwZ/orTxmsAsmzxZx+J4CuUxLoTYB2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751434682; x=1752039482;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XBw4HF7qWDcXJbgwvgqT6jgJQFstUmKnuwkt3nojl78=;
+        b=ZxWVMD4487mbvE8ny0OOkjYHIrVc9qGP+OQtD4wpHZxySLxHa6NDa7bNOubT5V2/CR
+         PBFRS2y2fafxoaSehnqrjWDQZ7DSWWacrZO7OsdWFbezoGkWXXcmqw3DX3lc1I5c1uUI
+         tjrvDTe5A5UKFGmeM/rG9GdtEqztvfFySJzuUcPIBdhic8sZ7it3nVLSoppZAxWWbi8u
+         Ns5DYeK/ZXrPcBRM85BjkaORZBto1oOBtEHpgU43Q02ubZNgMKYW2lMFBHk7ZqioOBas
+         jbfECcdUBB8CLZ/pJIhQyg0aWOldZMUOVLIxz0m2T4NBiaSBJdZUodWOhYfyFT1YIGro
+         B60Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3fu5SOMUJmvHNpKqzobH4LD3nNRYinxPaDjEDYeJFXPCP13CktuwfJXkIVgYZASCKuO/Yz2p+1EVmpIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVgyQd5n2LkRxdb5NQmSbddVZJU3o0PBYCsjPlnZLgjvXqsCUx
+	WsO+KBwMbsgrMUwWRsaFLhrZMviPk0SVC6mdhKe/hLqbZKospALjIVl1QhzcvpEj/dYqMgTedkB
+	Cbyrfk6LrdM5/hC2tSjKIhIEo5jXdfSC6gt0d8NuiSQ==
+X-Gm-Gg: ASbGncsm6afLx8Ry9+qGdYINDayG2mvWZo6s8mbe3jKkKsria63dJuc+vU+RPcxd7QF
+	rShtfBgFXUSwSR7otB8Pf5x42Jla90teyIFJ2uZmOcT8Oi/OFb8/ogD0CN60TKGQrS91KXF3Uex
+	NvC3eCGxjYNhgRlCCpgeyQMT385dV9ZmzMCe3aaA2OX8o0uHcAylYOnSUpqpmCocZT4mbix3+aO
+	zkeHMq5/JFf7DQ=
+X-Google-Smtp-Source: AGHT+IF8xAcXBcrSYEe9Ba8cdGjOrU848zSeBK/Ng3+OTDZ69YucBQEbh5zW/k8ND8IcNbh6AVxqSBsNCfOLuuhGP7Q=
+X-Received: by 2002:a05:622a:1827:b0:4a7:face:ce10 with SMTP id
+ d75a77b69052e-4a976a13b4amr29650981cf.31.1751434681962; Tue, 01 Jul 2025
+ 22:38:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SW0hTcRzH+Z9zds5xtDieok5GBKuQJM3K4FeUCfVwHhS6UuRDDXdqo6lr
-	M9MiWGWZ4iw0oV2qVVi2Kct5m7ak5vIeiWUtzUvL6iErUxteytoUybcPv9/v+/m+/GicNYjC
-	aGVKmqBJkamkpJgQf1twN7LQI1dE57TQYLaXkmAbz4AHA04RmK3VCMYmeigY9TSRcO+OHwfz
-	yywCftkncfjU6KPA5kiA/vufCXBl1+Dgu9pMgj5rCocnE98puOAswaCjOl8E1yeLcajRDVDw
-	qs5MQl/pXxF8dusJaDE+JKA/Pw4aLUvA3zaEwGOvwcCfd5OEwk4LCR+z+hF0NvgIMJ3PR2Cv
-	94pgajzgMD3vo+JW8w1DP3C+8uE7jK819lK8xXGKryiJ4HO9nTjvsOaQvGOkgOLfv3GRfPON
-	KYKvdY5ivP7id5L/+amb4H/Ud5G8vbKL4NstHmp36GHxNrmgUqYLmvWxR8UK0/BbTJ0vznBP
-	gw710rkohOaYGO6d7TyaY7P+MR5kkgnnvN6JGV7MbOBGfU1ELhLTOFNGcp7SHiq4WMRouffF
-	rpkwwazhely3sSBLAqK2r3WiWelKzvbo6YwohNnM1Tc2k0FmAzcfr3jI2ftQrsUwGCigAwXh
-	nP0WGxzjgejFKhMe7OWYSporLL5LzjqXcc9KvMQ1xBjnxY3/48Z5cQvCrYhVpqQny5SqmChF
-	ZooyIyopNdmBAg9z/9zvRCca6djnRgyNpAskza+TFKxIlq7NTHYjjsaliyULVwRGErks84yg
-	ST2iOaUStG60nCakSyUb/aflLHNcliacEAS1oJnbYnRImA5d6d55tk19UsAiX2Pscuuk6tcW
-	dXjBk3XHbg+PXXbmTBY82tulLGAPRKg2NURuT0hrX8tkt1vL7qBdLQfL6RUfiv5khprVt5Kq
-	WltRrEERHRPfMbgj8YvO0BvWdHP4ktcSLS86urU0yaIYQvvFg9Wu0elDq154hk6Xx7sqdHl7
-	pIRWIdsQgWu0sn9PaqIwLAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTcRSH+997d3cdLW43qYsV0aIXtDdD6ZQRUkQXoahPgYQ52qUt57St
-	yQwCS6GStsoMcpu1Ek2dsVq1admKbfmCmGFUW1bWUulFNp1tadrLpkR9e/id5/zOl0PhzCSR
-	RClUR3m1SqqUkCJCtDujdE2FVyZf7x9IA7OtiQTruA5uvG8WgLnRgeDbRJ8QxrztJNRci+Jg
-	7ikjIGL7gcNgW0AIVvsu6K8bIqD1lBOHwLkOEvRlkzg8nAgK4WRzPQae6k4BPHMYBFD5oxYH
-	Z8l7ITy/bybhXdNvAQy59QR0GhsI6DdkQptlPkS7hhF4bU4MomerSbjYayHhY1k/gl5PgADT
-	CQMCm8sngMnxWIfpyTth5nLOMxzCubsNfoxrMb4Vcha7lrtTn8yV+3pxzt54huTs4Qoh9+Zl
-	K8l1XJ4kuJbmMYzTlwZJbnTwNcGFXC9IrubTCMbZ7r4g9jDZoi0yXqko4tXrtuaK5KaRV1ih
-	QaRz/4IS9JYqRwkUS6exZv0DPM4kvZL1+SamOZFOZccC7UQ5ElE4fZNkvU19wvhgHq1h39S2
-	ojgT9HK2r/UqFmdxrKjr633BTOkS1nrr8XRRAp3Outo6yDgzMefjaS85489lO6sGYgeo2IGV
-	rO0KE4/x2GrpPRN+HomN/1nGf5bxP8uC8EaUqFAV5UsVyvS1mjx5sUqhW3uwIN+OYi9Rd3zq
-	QjP69nynG9EUkswWP+4+KGcE0iJNcb4bsRQuSRTPWRyLxDJp8TFeXXBArVXyGjdaSBGSBeKs
-	fXwuQx+SHuXzeL6QV/+dYlRCUgl6pB0KV34J9Uf9VRH/Jp236PqFaHCvuWVDm4kZBU/2eO3n
-	nMP1Gfe6rYu2jzA+hc7p9zZtjGQVTmVNpB9ybUthVs8KHpHv+PmhSutISVtlkF0PDUoylhna
-	n1YEwo7zytt5338u3Zwy66KVUadGLKtOXerpDO1PzlkhkN0Kw6CE0Milqcm4WiP9A08AsP0O
-	AwAA
-X-CFilter-Loop: Reflected
+References: <20250610045321.4030262-1-senozhatsky@chromium.org> <20250610045321.4030262-2-senozhatsky@chromium.org>
+In-Reply-To: <20250610045321.4030262-2-senozhatsky@chromium.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 2 Jul 2025 07:37:51 +0200
+X-Gm-Features: Ac12FXzLD6BJxilx6zyt-xoL-NaGTq-9HFVDoqCZzsuZQN3zCETTYbd9SUoGWps
+Message-ID: <CAJfpegvVojwCaoTkdGcP_LJT8q-m6_VMyxciKoFFXFVvuDW-SA@mail.gmail.com>
+Subject: Re: [PATCHv2 2/2] fuse: use freezable wait in fuse_get_req()
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Tomasz Figa <tfiga@chromium.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The page pool members in struct page cannot be removed unless it's not
-allowed to access any of them via struct page.
+On Tue, 10 Jun 2025 at 06:53, Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> Use freezable wait in fuse_get_req() so that it won't block
+> the system from entering suspend:
+>
+>  Freezing user space processes failed after 20.009 seconds
+>  Call trace:
+>   __switch_to+0xcc/0x168
+>   schedule+0x57c/0x1138
+>   fuse_get_req+0xd0/0x2b0
+>   fuse_simple_request+0x120/0x620
+>   fuse_getxattr+0xe4/0x158
+>   fuse_xattr_get+0x2c/0x48
+>   __vfs_getxattr+0x160/0x1d8
+>   get_vfs_caps_from_disk+0x74/0x1a8
+>   __audit_inode+0x244/0x4d8
+>   user_path_at_empty+0x2e0/0x390
+>   __arm64_sys_faccessat+0xdc/0x260
+>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-Do not access 'page->dma_addr' directly in page_pool_get_dma_addr() but
-just wrap page_pool_get_dma_addr_netmem() safely.
+Applied, thanks.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
----
- include/net/page_pool/helpers.h | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/include/net/page_pool/helpers.h b/include/net/page_pool/helpers.h
-index 773fc65780b5..db180626be06 100644
---- a/include/net/page_pool/helpers.h
-+++ b/include/net/page_pool/helpers.h
-@@ -444,12 +444,7 @@ static inline dma_addr_t page_pool_get_dma_addr_netmem(netmem_ref netmem)
-  */
- static inline dma_addr_t page_pool_get_dma_addr(const struct page *page)
- {
--	dma_addr_t ret = page->dma_addr;
--
--	if (PAGE_POOL_32BIT_ARCH_WITH_64BIT_DMA)
--		ret <<= PAGE_SHIFT;
--
--	return ret;
-+	return page_pool_get_dma_addr_netmem(page_to_netmem(page));
- }
- 
- static inline void __page_pool_dma_sync_for_cpu(const struct page_pool *pool,
--- 
-2.17.1
-
+Miklos
 
