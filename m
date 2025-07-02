@@ -1,92 +1,164 @@
-Return-Path: <linux-kernel+bounces-713025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4636DAF1228
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:42:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9234EAF11D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6241C4072E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:43:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314023BC931
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F05A2580CC;
-	Wed,  2 Jul 2025 10:42:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7A5182D0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D88254AFF;
+	Wed,  2 Jul 2025 10:27:18 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DBF17A2E6;
+	Wed,  2 Jul 2025 10:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751452970; cv=none; b=gq7j4siEkoTjjPlxzPeVSuCUPq2qoPKb/PpVgwThnAnCEvRhYz+uZns1EbgcyJXEpTeS1K12PQ5OoJR/tesRoflZqPw6gEpAz37W1wKrshiINQ+ug+Zok+kFz860uX4ystHgQP97q+adstRefNI/b51lyZZit0dmYkf5z35t+Vc=
+	t=1751452038; cv=none; b=fkKgu4suyJxdyEQRk50dTqLJtKRmK23DuiEpsJcZUYP4FIaoNrVSsYcGoEcOG2WAnwufxgccETzfvyGfiogCAFvY5Fz75XUa9TYiVpAe3wi/qCDAV01Q5WJlxSLAfslHo4D8wKlUFG3R/H1qXMGXcQ25HUzzWUNt+mQzZCn6St8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751452970; c=relaxed/simple;
-	bh=EkEXZ6RXULGLL014nDgby1Mjw2I8uRkWR4rl2MXCcWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Chheo5zzLNUuYqrZ3eizGl2kjmKPiwzg+15eFT+cJLFVsaWC88QLp7ug8qhEDdKB7dRbUnhYYVr65PpRxR6rKW+4gvZtYPfIUKjsEdc8PHsySLgNuDIXo0Ho1JXytiluZwzCd3jfMF6kfccfTbqc3Upugph4Teb95MtK1OvsdcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E726522D9;
-	Wed,  2 Jul 2025 03:42:33 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70E6C3F58B;
-	Wed,  2 Jul 2025 03:42:48 -0700 (PDT)
-Date: Wed, 2 Jul 2025 11:42:46 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
-	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/28] coresight: etm3x: Always set tracer's device
- mode on target CPU
-Message-ID: <20250702104246.GW794930@e132581.arm.com>
-References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
- <20250701-arm_cs_pm_fix_v3-v2-3-23ebb864fcc1@arm.com>
- <aGUHbWR0vreo29kl@e129823.arm.com>
+	s=arc-20240116; t=1751452038; c=relaxed/simple;
+	bh=VwCvQamL3OLboOtaKpp5/6Nma/BoEDweaCfWoWZixfc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rRlbgpcOBZdavtmlREtiunbg6SObVUwnUK6FkDErNInBYBI/exjQ0ZUmlrfX+Kg/issklUMu0T4LtZoM/WTGEfJWVk5y/3evaWM4HbIrXyUBnOXE2YN7vUkDJ0UUz/sJECanM3343325aDg7LOkvz89U8JEPanX8JxSiL69yrqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bXGHp59Cxz2BdVx;
+	Wed,  2 Jul 2025 18:25:26 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 99D4C180042;
+	Wed,  2 Jul 2025 18:27:12 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by dggpemf500016.china.huawei.com
+ (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 2 Jul
+ 2025 18:27:11 +0800
+From: Wang Liang <wangliang74@huawei.com>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] net: replace ADDRLABEL with dynamic debug
+Date: Wed, 2 Jul 2025 18:44:17 +0800
+Message-ID: <20250702104417.1526138-1-wangliang74@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGUHbWR0vreo29kl@e129823.arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Wed, Jul 02, 2025 at 11:18:21AM +0100, Yeoreum Yun wrote:
-> Hi Leo,
-> 
-> [...]
-> > @@ -464,17 +477,29 @@ static int etm_enable_perf(struct coresight_device *csdev,
-> >  			   struct perf_event *event,
-> >  			   struct coresight_path *path)
-> >  {
-> > +	int ret = 0;
-> >  	struct etm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> >
-> > -	if (WARN_ON_ONCE(drvdata->cpu != smp_processor_id()))
-> > -		return -EINVAL;
-> > +	if (!coresight_take_mode(csdev, CS_MODE_PERF))
-> > +		return -EBUSY;
-> > +
-> > +	if (WARN_ON_ONCE(drvdata->cpu != smp_processor_id())) {
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> 
-> Small question: why drvdata->cpu != smp_processor_id() check after
-> changing mode? Would it better to check before change of it?
+ADDRLABEL only works when it was set in compilation phase. Replace it with
+net_dbg_ratelimited().
 
-You are right. I will update in next version.
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+---
+ net/ipv6/addrlabel.c | 32 +++++++++++---------------------
+ 1 file changed, 11 insertions(+), 21 deletions(-)
 
-Thanks for pointing out this!
+diff --git a/net/ipv6/addrlabel.c b/net/ipv6/addrlabel.c
+index fb63ffbcfc64..567efd626ab4 100644
+--- a/net/ipv6/addrlabel.c
++++ b/net/ipv6/addrlabel.c
+@@ -20,12 +20,6 @@
+ #include <linux/netlink.h>
+ #include <linux/rtnetlink.h>
+ 
+-#if 0
+-#define ADDRLABEL(x...) printk(x)
+-#else
+-#define ADDRLABEL(x...) do { ; } while (0)
+-#endif
+-
+ /*
+  * Policy Table
+  */
+@@ -150,8 +144,8 @@ u32 ipv6_addr_label(struct net *net,
+ 	label = p ? p->label : IPV6_ADDR_LABEL_DEFAULT;
+ 	rcu_read_unlock();
+ 
+-	ADDRLABEL(KERN_DEBUG "%s(addr=%pI6, type=%d, ifindex=%d) => %08x\n",
+-		  __func__, addr, type, ifindex, label);
++	net_dbg_ratelimited("%s(addr=%pI6, type=%d, ifindex=%d) => %08x\n", __func__, addr, type,
++			    ifindex, label);
+ 
+ 	return label;
+ }
+@@ -164,8 +158,8 @@ static struct ip6addrlbl_entry *ip6addrlbl_alloc(const struct in6_addr *prefix,
+ 	struct ip6addrlbl_entry *newp;
+ 	int addrtype;
+ 
+-	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u)\n",
+-		  __func__, prefix, prefixlen, ifindex, (unsigned int)label);
++	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u)\n", __func__,
++			    prefix, prefixlen, ifindex, (unsigned int)label);
+ 
+ 	addrtype = ipv6_addr_type(prefix) & (IPV6_ADDR_MAPPED | IPV6_ADDR_COMPATv4 | IPV6_ADDR_LOOPBACK);
+ 
+@@ -207,8 +201,7 @@ static int __ip6addrlbl_add(struct net *net, struct ip6addrlbl_entry *newp,
+ 	struct hlist_node *n;
+ 	int ret = 0;
+ 
+-	ADDRLABEL(KERN_DEBUG "%s(newp=%p, replace=%d)\n", __func__, newp,
+-		  replace);
++	net_dbg_ratelimited("%s(newp=%p, replace=%d)\n", __func__, newp, replace);
+ 
+ 	hlist_for_each_entry_safe(p, n,	&net->ipv6.ip6addrlbl_table.head, list) {
+ 		if (p->prefixlen == newp->prefixlen &&
+@@ -247,9 +240,8 @@ static int ip6addrlbl_add(struct net *net,
+ 	struct ip6addrlbl_entry *newp;
+ 	int ret = 0;
+ 
+-	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u, replace=%d)\n",
+-		  __func__, prefix, prefixlen, ifindex, (unsigned int)label,
+-		  replace);
++	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d, label=%u, replace=%d)\n",
++			    __func__, prefix, prefixlen, ifindex, (unsigned int)label, replace);
+ 
+ 	newp = ip6addrlbl_alloc(prefix, prefixlen, ifindex, label);
+ 	if (IS_ERR(newp))
+@@ -271,8 +263,8 @@ static int __ip6addrlbl_del(struct net *net,
+ 	struct hlist_node *n;
+ 	int ret = -ESRCH;
+ 
+-	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n",
+-		  __func__, prefix, prefixlen, ifindex);
++	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n", __func__, prefix,
++			    prefixlen, ifindex);
+ 
+ 	hlist_for_each_entry_safe(p, n, &net->ipv6.ip6addrlbl_table.head, list) {
+ 		if (p->prefixlen == prefixlen &&
+@@ -294,8 +286,8 @@ static int ip6addrlbl_del(struct net *net,
+ 	struct in6_addr prefix_buf;
+ 	int ret;
+ 
+-	ADDRLABEL(KERN_DEBUG "%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n",
+-		  __func__, prefix, prefixlen, ifindex);
++	net_dbg_ratelimited("%s(prefix=%pI6, prefixlen=%d, ifindex=%d)\n", __func__, prefix,
++			    prefixlen, ifindex);
+ 
+ 	ipv6_addr_prefix(&prefix_buf, prefix, prefixlen);
+ 	spin_lock(&net->ipv6.ip6addrlbl_table.lock);
+@@ -312,8 +304,6 @@ static int __net_init ip6addrlbl_net_init(struct net *net)
+ 	int err;
+ 	int i;
+ 
+-	ADDRLABEL(KERN_DEBUG "%s\n", __func__);
+-
+ 	spin_lock_init(&net->ipv6.ip6addrlbl_table.lock);
+ 	INIT_HLIST_HEAD(&net->ipv6.ip6addrlbl_table.head);
+ 
+-- 
+2.34.1
 
-Leo
 
