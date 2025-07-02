@@ -1,104 +1,144 @@
-Return-Path: <linux-kernel+bounces-712389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8480AF087A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 04:30:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A39AAF087D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 04:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1A04A76A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C872171820
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EDA19DF61;
-	Wed,  2 Jul 2025 02:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000381A23AD;
+	Wed,  2 Jul 2025 02:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjzbSl/T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZKHoe2n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB238F77;
-	Wed,  2 Jul 2025 02:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F4716E863
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 02:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751423443; cv=none; b=aOmhdwz+Y7If3OewIqAkLU4GeJTbI8rsLJI6UeHzWlYCHUXdfK6kgJ6Z/LRIWD9vZtqJUJH5jhBbvd1Iebu3GqcLz6sriyJF48fi4SmpTS4YWEpmh1nv164UfzOKP5HiAmuGkhXZWJlT7ObnRtCkcmCVCDTfL0nLmwCP487tFI4=
+	t=1751423600; cv=none; b=DvWe13QS/Jy16xmUvuyu1IoZ+JKb6sTKZgjIrAWF3b2EssWW0wuq2R6iVCGgB7JgDMpq04olrE+S5N71FnpUBJp3WkiX1FL+rJ5zdbUD5b2N/gn2Vi2zkVx61Ma589xT/6U8fopTDTlixW/xVXGh+D2JhKKCMa1wQFnSpcuY9I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751423443; c=relaxed/simple;
-	bh=nOJFQfwOfss2NyHRh7Sf9V00Sdr8q6zas3oVjvzNpvg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lMpRQR9oQ/UQSoguOj7W8Et2YY5jgYQKZWaeeqvBYUqCnnww6XIyz9DKLPBt926l/XQc3acyMfZbFim7M+5HPDBELX82N+1sM6EoKoQIJey96/cTWqBh9fXa9ftk7kGaKf4jTKdUTLrPcgW0AcTVePUsbBoq3AEVGF6+Op/JJbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjzbSl/T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7213C4CEEB;
-	Wed,  2 Jul 2025 02:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751423442;
-	bh=nOJFQfwOfss2NyHRh7Sf9V00Sdr8q6zas3oVjvzNpvg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SjzbSl/TPrFOocvezBId2X3qbDulB9UGKGJ8Rq1YTyF6X8mpB2ndzkBI38ylvFn7X
-	 IXZuejIZ/mOinCifATVRwL/DwR7Yb4XGE6gZzpP8b3lVkmMf9Zhohq4LoAGnkUe17x
-	 1vWQfIFbytT6ed2HKWvMu8i37ArON0Qpgw2+Bc+XQA9lXt0OPzS+eg4+Q+fSB68wXD
-	 E8h7fsMQ2vEjoA3L9V7P9sBG0vR9jFMYhNOKOynYGCFfIVd4U9T2u1A27QdJ2qIVa2
-	 UrMgKaRhjNfYRTeU8vf+M8CQ2L8ALQ39wiv42BU9GFdpbOMdRP9E7ZVC00OPopZftU
-	 Q1Kp7nA9qijzA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32b78b5aa39so38323351fa.1;
-        Tue, 01 Jul 2025 19:30:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7tq0bj/OvjjMr1UDqgO66grEarzoxPxs5uCWSpUpOm7X2ODoCF27hxPW7JMxsfn/aYM2kixquluIOT6I=@vger.kernel.org, AJvYcCWyR1OovcaW78xUcO4grg1lpyEfch8oowiA1JXM0/HY1rP3sz4vmSMJPQMjBtsDQCYpHqgzUF2Fw5VhQeajDw==@vger.kernel.org, AJvYcCXtL7Sh3y+LPsGVI6wwNnsyGKxGTPx44XSuynweaKzfvAErQI/2ImJr0LSwZAHezpAXA7RUO7JEm0iHbdXz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTOTBFC5prqWonaa7uX8iRgsKJIpoc3LermA4VV6Fu1g6kp1mq
-	fLcACPKYyLpQGR1BTzs9bF/Bdii+Nftr9pP2k2dYVj6kl21eg7TLw1Q4hSAjFv1S+gOwAgHKrdq
-	4d8DB9m1Hnh6al3qZBWknrwGqV5kO+u0=
-X-Google-Smtp-Source: AGHT+IG8qma5BlB/p8uudhBhIOVBWqyt28tuit7Uo1ecmsNa3uMEIakYE9tjYUTQZClYvDp0LFbPMinm6Fs0RucwRAo=
-X-Received: by 2002:a05:651c:31c2:b0:32a:8ac3:93f7 with SMTP id
- 38308e7fff4ca-32dfff87430mr3318591fa.14.1751423441403; Tue, 01 Jul 2025
- 19:30:41 -0700 (PDT)
+	s=arc-20240116; t=1751423600; c=relaxed/simple;
+	bh=kYJRSf3Gn5sMpfF/6A1FwMCKjt3zxN26Pr+Lm2aRllY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riGAYQm/caBBka9z3ojHC8ur41tZSO7xlGykav/Dkzx2Bv6fp3wxI/Xoe0/bZQ1IHRrj97YmPxZ5OBgzSJ0YEQX4zyIHUK7iGGLfVcoOnoGHwK+r1vZamc4CDzQzbit7Ffty/0cOLurdRIF0HNbt4JatXx0T8tKyMIw2BxYebhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZKHoe2n; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751423597;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jbPIEReb3xkWAZWAXZfMhbsS92bXSTORD10Gzf+15sA=;
+	b=OZKHoe2njTVJFprwPNfNjFfwHsLSFOtai0CJ059i1UAunC3yE0+8E8NgK6rMvnw3oHrp4d
+	c7HnVwVs2cNfIR/Kl1bNroLAb3y7GiR5i6pg7RfMJyiR15WGlbEg0PCdDC/SdowWIyVG8J
+	oqsg/w1QELHnNTct/SvO/cgDRmqiYBI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-gfpB-GDIMGK_xLIBuMXB0w-1; Tue,
+ 01 Jul 2025 22:33:12 -0400
+X-MC-Unique: gfpB-GDIMGK_xLIBuMXB0w-1
+X-Mimecast-MFC-AGG-ID: gfpB-GDIMGK_xLIBuMXB0w_1751423590
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 993F31944A83;
+	Wed,  2 Jul 2025 02:33:09 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.27])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D7137195608F;
+	Wed,  2 Jul 2025 02:33:00 +0000 (UTC)
+Date: Wed, 2 Jul 2025 10:32:54 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Nilay Shroff <nilay@linux.ibm.com>, josef@toxicpanda.com,
+	axboe@kernel.dk, hch@infradead.org, hare@suse.de,
+	linux-block@vger.kernel.org, nbd@other.debian.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, johnny.chenyi@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
+Message-ID: <aGSaVhiH2DeTvtdr@fedora>
+References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
+ <aF56oVEzTygIOUTN@fedora>
+ <c2fbaacc-62a1-4a98-4157-2637b7f242b7@huaweicloud.com>
+ <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
+ <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNASzE1CtRo9T4byPXJtB-HtuWsGe=OLba+8JU9fB28Chow@mail.gmail.com>
- <20250701152000.2477659-1-gprocida@google.com>
-In-Reply-To: <20250701152000.2477659-1-gprocida@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 2 Jul 2025 11:30:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR3YqsQc_kVfLba8Ti8HtrRWGr=KKB+MRdcKE5j8HOtHQ@mail.gmail.com>
-X-Gm-Features: Ac12FXymuWYHvG3lICt1yLtE4SzCSkfOmdBQFCOI03uSMYviSsyoQoon5NM3XSM
-Message-ID: <CAK7LNAR3YqsQc_kVfLba8Ti8HtrRWGr=KKB+MRdcKE5j8HOtHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] gendwarfksyms - improve symtypes output
-To: Giuliano Procida <gprocida@google.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Jul 2, 2025 at 12:20=E2=80=AFAM Giuliano Procida <gprocida@google.c=
-om> wrote:
->
-> When investigating MODVERSIONS CRC changes from one build to the next,
-> we need to diff corresponding symtypes files. However, gendwarfksyms
-> did not order these files.
->
-> The first change in this series makes gendwarfksyms code conform to
-> the preferred style for the size parameter passed to allocation
-> functions.
->
-> https://github.com/torvalds/linux/blob/v6.15/Documentation/process/coding=
--style.rst?plain=3D1#L941
->
-> The second change in this series ensures symtypes are output in key
-> order.
->
-> The series is marked as v2 to distinguish it from earlier versions
-> where the changes were posted individually.
->
+On Wed, Jul 02, 2025 at 09:12:09AM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/07/01 21:28, Nilay Shroff 写道:
+> > 
+> > 
+> > On 6/28/25 6:18 AM, Yu Kuai wrote:
+> > > Hi,
+> > > 
+> > > 在 2025/06/27 19:04, Ming Lei 写道:
+> > > > I guess the patch in the following link may be simper, both two take
+> > > > similar approach:
+> > > > 
+> > > > https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
+> > > 
+> > > I this the above approach has concurrent problems if nbd_start_device
+> > > concurrent with nbd_start_device:
+> > > 
+> > > t1:
+> > > nbd_start_device
+> > > lock
+> > > num_connections = 1
+> > > unlock
+> > >      t2:
+> > >      nbd_add_socket
+> > >      lock
+> > >      config->num_connections++
+> > >      unlock
+> > >          t3:
+> > >          nbd_start_device
+> > >          lock
+> > >          num_connections = 2
+> > >          unlock
+> > >          blk_mq_update_nr_hw_queues
+> > > 
+> > > blk_mq_update_nr_hw_queues
+> > > //nr_hw_queues updated to 1 before failure
+> > > return -EINVAL
+> > > 
+> > 
+> > In the above case, yes I see that t1 would return -EINVAL (as
+> > config->num_connections doesn't match with num_connections)
+> > but then t3 would succeed to update nr_hw_queue (as both
+> > config->num_connections and num_connections set to 2 this
+> > time). Isn't it? If yes, then the above patch (from Ming)
+> > seems good.
+> 
+> Emm, I'm confused, If you agree with the concurrent process, then
+> t3 update nr_hw_queues to 2 first and return sucess, later t1 update
+> nr_hw_queues back to 1 and return failure.
 
-Both applied to linux-kbuild.
-Thanks!
+It should be easy to avoid failure by simple retrying.
 
 
+Thanks,
+Ming
 
---=20
-Best Regards
-Masahiro Yamada
 
