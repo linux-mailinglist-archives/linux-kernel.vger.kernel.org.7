@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-713551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11FCAF5B4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:41:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F26AAF5B42
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43971C42840
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E761C40152
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D19307AFC;
-	Wed,  2 Jul 2025 14:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931EE307AEF;
+	Wed,  2 Jul 2025 14:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="R341aV8Q"
-Received: from smtpcmd03116.aruba.it (smtpcmd03116.aruba.it [62.149.158.116])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oa4Y/b/4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A23307AF0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB3128A71F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751467255; cv=none; b=WC1crwJZx5wGW79pFcOLfnBPT1bcKF+HXbQIMvkN2t6mpvGpKycUzvIZzEp360h3bF0DTiA6Nf3+5Q5ayDyBtB5Hr6+FdZf4YBpXLfFjzqV3cr07su1le0Y6ooshKizSTr8haR+Y3t6eQ/myzj9pbNPmnpXU6tFsUTrFV7Y6/Go=
+	t=1751467133; cv=none; b=td8aw3OxNXIHOe/NMUiFHJKcHq4vK5k/m68Z+1iYT9oYgZRV/bOuUMVORlWclrS3akSTFLRuTO/H+M/UOIQVD+MJvm9eXTLOAR2wljziGOBQA9tB7HJks7q3TBlYlIfMfahS0MA9crgPx7/CibiFaryfLmxkbwbf+YZrFpFXY7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751467255; c=relaxed/simple;
-	bh=iVHMHjey2MNE41Mhu0E5GtBHJGyxsabbICgb+nwHSMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EKCq67+B6nEV8DUzO+gGiKiWxa3V6pd4StMWj+HseMHpdjQNP1jH8ZSV6eDfGTl+Z7VzTKhl/1lL9oKBmFdlR/RYcYiRJKZWVBgREgTJTAQ6OlcNEBEwa3xYFI/XUVOsLhBbvjPm/LwvAmQyBwZIYyhaML+SJMAapetVHd33oeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=R341aV8Q; arc=none smtp.client-ip=62.149.158.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.57] ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id WyajuG21xmHkSWyajujv0o; Wed, 02 Jul 2025 16:37:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1751467062; bh=iVHMHjey2MNE41Mhu0E5GtBHJGyxsabbICgb+nwHSMo=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=R341aV8Q97hZxsxZthlDX7PD36H8OFPPeo4v4lPf0yqe5+dxaRbVonDiqe4hZGPga
-	 Wv8udZTCQkiz4vj43/noZCualKaCDwMkTacinePnI7bHlpS15waiWEsR7KFoCMlHtu
-	 d5ea0lq3YACMf2b915IZG2YluaFelik84qm0XpQqTKzQAH3cYf/uPDlXd+R291jW8D
-	 0L1d3kSuJ+5j1EobsLXiqWD86WS3PfCLbSL/PK3PZGqcztmXRt929XSPxHWYq+PY/H
-	 3L/BfVv69tBZlmiJ56Q5v6YVAjEqZZHFrH4znuHJ1qJSyPF/e5nS9rrMPmzG4jgq/r
-	 RDRiTG7SY2Fow==
-Message-ID: <91ea3b14-20c5-4e5b-a88a-206748a6d36c@enneenne.com>
-Date: Wed, 2 Jul 2025 16:37:41 +0200
+	s=arc-20240116; t=1751467133; c=relaxed/simple;
+	bh=wZUs0Lg9nLG5vj3a0ZB7yNj+yaPuo6lcWjmwj8/JImo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JtoDGABtJfSyyesDvHh1zORoKEw1fjQxCbaN0qZ5hiqKYFx+NQKJJck5LcVp7/S/S1kIznemGmm1WEfADh8h7r29OYISf09hERyth7ZPVooBd98vx9e4pURRNSTv24dBnkf+jy5qeDzRjBwIDSzWPqA08Q/OYpKPf1i5+/9Gayw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oa4Y/b/4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751467130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jsW6zqBgtCDTnvN34Xc+Lxt07USTsTvI2l+xYg+WY9U=;
+	b=Oa4Y/b/4MHUa5BR7YnPi7+LHD02ZjKVS4Lm0LATlTDDYjKOBtiL16TnpC3Fbubl9smiWBh
+	xGmNjf49aFGIibBpjLrMGycGYv8KpyFiC3MwLubuHkBKp0NE8wLNfe4k/36Xw+O7iX2jkn
+	pM6IbouLxY8BowVwcduj0pvvy9TlvzE=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530-FmDmaMDPN8i-4cA9eESOAQ-1; Wed, 02 Jul 2025 10:38:49 -0400
+X-MC-Unique: FmDmaMDPN8i-4cA9eESOAQ-1
+X-Mimecast-MFC-AGG-ID: FmDmaMDPN8i-4cA9eESOAQ_1751467128
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-40b0a248ce8so4065022b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:38:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751467128; x=1752071928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jsW6zqBgtCDTnvN34Xc+Lxt07USTsTvI2l+xYg+WY9U=;
+        b=etmKSfrYfnz65ZzQK/bqVjFdSzxMaUPq3K3R4fFCXath4+bVMn01jB0BQtJQDSQTVn
+         1jeMbHGgG6rkrUe1zbhSOorSsKVBpXm7s9az2zmZDFTQgtvmZLdBFHFXBVXfDu4U9vNF
+         xZeT+zmAU1VXYmKZpUYqNyfVutOSybkdTK9615d+tOGDAh0N2qD3pJm7XEU/Mt03wJ8i
+         SULz3Tu/3y/wWR81a8GoG8+m4t1Dp8qQs6VgiJ9pLE+Qa3tZHu+DQ/D5SivD9dSzk7bc
+         LOF8MT+odjoL/iXGR/mhYa49V8l+cACy12yJg+5Dr96T4hBUvhLEZf/nulARTJyYVRKZ
+         It2g==
+X-Forwarded-Encrypted: i=1; AJvYcCW97GW6zdtMydJSvgtVt+liGlJOLtSypgrusWMuVhsiIiulq5t5TRl1YDpQzQG+d2uds92C3hqR12GOyLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhcZ6FUsz2rJilYsgcRuU8Ku0z8AX3PepE1GfKSYvhmz0VXcjx
+	5andmpt1dsJzGxPK0NEcyamgZhTzOLfOOVb8pbz05G+ufwVsMtH0Y05wcbqcM/vRh31FuAsmm55
+	zRWJXsl4mmsKwsII+fTjY1YXE6vkzplm8+r4cQfqf0mlaQJqVBCaNpd960B/t1h3UcBtqRPZIW0
+	N7BbyfQE4Sjfuk5RpbUfpk+uirsbKjo+JrX8021F5g
+X-Gm-Gg: ASbGnctv2V4bojQpYhK4KZOEFhUCOQvpBenjzSZQ01STwfQfTfBcja67TN8JapuZpxg
+	pN+v6zDl1N18hdEDX/kW34KI+9P6Ir06NFCS1Y376JBLiDAJi3h6ksGXF7buhlKfD8TBTb76LaD
+	fDZw==
+X-Received: by 2002:a05:6808:1b90:b0:3f8:3489:d93d with SMTP id 5614622812f47-40b88816cbemr2174539b6e.25.1751467128237;
+        Wed, 02 Jul 2025 07:38:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGJkEyRApKN9Snn2Qns9uRFnPDyzYI0heJJY+yiOKE3hkdxWXuRgqyrbD2KwH2XrfLhobH6R7OolRAxc95iss=
+X-Received: by 2002:a05:6808:1b90:b0:3f8:3489:d93d with SMTP id
+ 5614622812f47-40b88816cbemr2174514b6e.25.1751467127863; Wed, 02 Jul 2025
+ 07:38:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Expand oscillator stop flag (OSF) validity check to
- ds1341
-Content-Language: en-US
-To: Tyler Hicks <code@tyhicks.com>,
- Meagan Lloyd <meaganlloyd@linux.microsoft.com>, alexandre.belloni@bootlin.com
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1749665656-30108-1-git-send-email-meaganlloyd@linux.microsoft.com>
- <aGMVtfwB5gmBuW4T@redbud>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <aGMVtfwB5gmBuW4T@redbud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfLSFNQXFvQ0eYwrsDBdrlJebgl6jfsRd73w9K4CkWYzbl0bTjJnStRZK5ay/ZOY4wIZGQ/Rl/S/k1O7pu/0ZZilQGV0NRhxfzAOL1PMB5b3g3TLVuDe3
- XpNtFlyqRQgsWWEinEFKk8SlNhAThb4UFawN4+rs5oD5Uod3CVws/m9s6ljoYFOuD5LPYLRcUSMDgQ4nh8YijiWeDY1I7ZAGpIVObAGHWbQCaoxRQNCOEnh3
- Klr78EfL255Yzj2Pmv7K9AUT7zKaWUBs7PFbTbELPoXUqcUnGMczzd05W4hkQp521H/hayRhc49TZeoWzk7WqCJCRfGQNqmC3hRwhp13nDKs62HfZeeClcgy
- IwUKzUWf
+References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
+ <20250625201853.84062-3-stuart.w.hayes@gmail.com> <2025070157-undaunted-curler-bda3@gregkh>
+In-Reply-To: <2025070157-undaunted-curler-bda3@gregkh>
+From: David Jeffery <djeffery@redhat.com>
+Date: Wed, 2 Jul 2025 10:38:35 -0400
+X-Gm-Features: Ac12FXy9HjgNoFaB4FAc6SLNfV66UqBtwIgyuy9-ldwc1GEwfSJnUe5aDVCjxV4
+Message-ID: <CA+-xHTEk_N6qE5w+hWxXfSMJLQ5tFROMVZnr5h2HUmrwEKVdNQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/5] driver core: don't always lock parent in shutdown
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Stuart Hayes <stuart.w.hayes@gmail.com>, linux-kernel@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Martin Belanger <Martin.Belanger@dell.com>, 
+	"Oliver O'Halloran" <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>, 
+	Lukas Wunner <lukas@wunner.de>, Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org, 
+	Nathan Chancellor <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>, 
+	Bert Karwatzki <spasswolf@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/07/25 00:54, Tyler Hicks wrote:
-> [Adding Rodolfo Giometti]
-> 
-> On 2025-06-11 11:14:14, Meagan Lloyd wrote:
->> We would like to use CONFIG_RTC_HCTOSYS to sync a supercapacitor-backed
->> DS1342 RTC to the kernel time early in boot. An obstacle is that the
->> sync in rtc_hctosys() is unconditional as long as rtc_read_time()
->> succeeds and in some power loss situations, our RTC comes up with either
->> an unpredictable future time or the default 01/01/00 from the datasheet.
->> Syncing a future time, followed by an NTP sync would not be desired as
->> it would result in a backwards time jump. The sync feature is useful in
->> boot scenarios where power is maintained so syncing only when the RTC
->> data is valid would allow us to make use of the feature.
->>
->> The DS1342 has the oscillator stop flag (OSF) which is a status flag
->> indicating that the oscillator stopped for a period of time. It can be
->> set due to power loss. Some chip types in the ds1307 driver already use
->> the OSF to determine whether .read_time should provide valid data or
->> return -EINVAL. This patch series expands that handling to the ds1341
->> chip type (DS1341 and DS1342 share a datasheet).
->>
->> These changes enable us to make use of CONFIG_RTC_HCTOSYS as they
->> prevent the invalid time from getting synced to the kernel time. It will
->> also prevent userspace programs from getting the invalid time as the fix
->> cuts it off at the source - the .read_time function.
-> 
-> These two patches look good to me, although I'm not an expert in RTC drivers.
-> I've reviewed the DS1341/DS1342 datasheet and the approach that Meagan has
-> taken makes sense to me given our (Meagan and I work together) desire to use
-> CONFIG_RTC_HCTOSYS and the need to avoid syncing from an invalid RTC state.
-> 
-> I've added Rodolfo because he first added the logic to clear the Oscillator
-> Stop Flag, during driver initialization, way back in 2007 with v2.6.23 commit
-> be5f59f4b67f ("rtc-ds1307: oscillator restart for ds13{37,38,39,40}") and may
-> have additional context to provide.
-> 
-> Alexandre and Rodolfo, does this approach make sense to you? If not, do you
-> have any other suggestions on how to make CONFIG_RTC_HCTOSYS work with this
-> driver? Thanks!
+On Tue, Jul 1, 2025 at 5:03=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jun 25, 2025 at 03:18:50PM -0500, Stuart Hayes wrote:
+> > Don't lock a parent device unless it is needed in device_shutdown. This
+> > is in preparation for making device shutdown asynchronous, when it will
+> > be needed to allow children of a common parent to shut down
+> > simultaneously.
+> >
+> > Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+> > Signed-off-by: David Jeffery <djeffery@redhat.com>
+> > ---
+> >  drivers/base/core.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > index cbc0099d8ef2..58c772785606 100644
+> > --- a/drivers/base/core.c
+> > +++ b/drivers/base/core.c
+> > @@ -4823,7 +4823,7 @@ void device_shutdown(void)
+> >               spin_unlock(&devices_kset->list_lock);
+> >
+> >               /* hold lock to avoid race with probe/release */
+> > -             if (parent)
+> > +             if (parent && dev->bus && dev->bus->need_parent_lock)
+> >                       device_lock(parent);
+>
+> What about parents for a device that is not on a bus?  Don't they need
+> to be properly locked?
 
-They look good to me. You can add my Acked-by line to all of them:
+From my examination of the code and history, I do not believe so.
+Locking the parent was added before need_parent_lock was added, and
+when the other locations changed to depend on need_parent_lock to lock
+both, device_shutdown was left always locking both.
 
-     Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+It is simple enough to change the if checks to:
 
-Rodolfo
+if (parent && (!dev->bus || dev->bus->need_parent_lock))
 
-> Tyler
-> 
->>
->> Meagan Lloyd (2):
->>    rtc: ds1307: remove clear of oscillator stop flag (OSF) in probe
->>    rtc: ds1307: handle oscillator stop flag (OSF) for ds1341
->>
->>   drivers/rtc/rtc-ds1307.c | 15 ++++++++++++---
->>   1 file changed, 12 insertions(+), 3 deletions(-)
->>
->>
->> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
->> -- 
->> 2.49.0
->>
+if you think my understanding is wrong and some bus-less devices have
+come to depend on the behavior.
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+David Jeffery
 
 
