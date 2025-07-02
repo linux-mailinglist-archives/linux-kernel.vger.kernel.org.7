@@ -1,118 +1,186 @@
-Return-Path: <linux-kernel+bounces-712576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC36AF0B97
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CEDAF0B92
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93F107B1B35
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 06:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71DF14A420E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 06:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338121CA1F;
-	Wed,  2 Jul 2025 06:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6B621CC5D;
+	Wed,  2 Jul 2025 06:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="udXL9j1a"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aZ6PFaim"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D02217730
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 06:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234B4219A72;
+	Wed,  2 Jul 2025 06:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751437319; cv=none; b=rHq5bAUCJecogeRBJGOjPOYmzoWbu9CNVI55lRcHwYz6J9tMo3VykjdFUua+y5+xbYPsqAfOiJmRwXIHLeTnGi3nbyiGpzyyjwIY4l06iaT0F2//jsQB8GSl0/1hLx4kgPld+o6JydMCG7Uyb4TiDeyrGxik4HpP0uDBQlRg/c0=
+	t=1751437370; cv=none; b=OlXlsDbmaU5mIdKh/fdZja6Mi7JcVxnTzs8qfQVJLQZOqQWxeaksmXPzSqBfyRImeiX1qbHTb3r/uPoI03zTNb0MBNv7vXEkZS8ZuP5+EjWCdKfD6ZwrirKfSu8SOtOGHoKFpwJL6i+lUAJRlpjSFnjVdX6yhIbwpxPEe/yclUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751437319; c=relaxed/simple;
-	bh=Ob91oO3Vo7GCUPhrbw641VDdmlJ1ZGqyGVAcVQVYpLk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kfXj7tLSIRBmhYHjGhZUu1+M/UFCsa9uPVCQ1IxNZLPFxfO4yBm2TjZYqUp6lVcGzJm1F4FfQ9GdinkdV4GyUnMeuTy58kA3jq6VZL7coJKhD9S5eKz8OrpVFps1DLwz3coA/4Pt9w2NW9Z9igF17R/her4w852NGMQJbq0gMUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=udXL9j1a; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bX8tn3B83z9ssQ;
-	Wed,  2 Jul 2025 08:21:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1751437313; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ob91oO3Vo7GCUPhrbw641VDdmlJ1ZGqyGVAcVQVYpLk=;
-	b=udXL9j1aIsSa1HOw2caxw6IFIpEQqn/HFoTLxJ3Pu9llaSGRw4Q9Wl3yjbGdEdhwgUotGe
-	0UjIFPPxm057R6AqntPUw67R5P03iHDTYqwifCNNO7qBXBo/31RK5RkVGib7d86hkcMkbr
-	sRPkfmuOpD5Lrg4eSeQ9wyQt0pZRNpH300AqUh6EosRJkxwPmuNHw+yQYWvXDrFUb5h26n
-	bXipsEITzSbBoXj704jaBozfQ3ewTjaiLI36jpuBktO9apE5lbnLZTdpNQDNuM1Ievp5a8
-	lEivl6nSHO6Gh+/1j7vhM6TfMKDXbLScDlUpnfI9rOcmnxWTOESvFVgoSaI/Jw==
-Message-ID: <b1c87f95832a27c4435a24223ac5a715cbdd38c2.camel@mailbox.org>
-Subject: Re: [PATCH v9 0/4] Enable debugfs information based on client-id
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Sunil Khatri <sunil.khatri@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?=
-	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org
-Cc: amd-gfx@lists.freedesktop.org, simona@ffwll.ch, tzimmermann@suse.de, 
-	tursulin@ursulin.net, phasta@kernel.org, dakr@kernel.org, 
-	linux-kernel@vger.kernel.org, Oded Gabbay <ogabbay@kernel.org>, Jeff Hugo
-	 <jeff.hugo@oss.qualcomm.com>
-Date: Wed, 02 Jul 2025 08:21:48 +0200
-In-Reply-To: <20250701164948.8105-1-sunil.khatri@amd.com>
-References: <20250701164948.8105-1-sunil.khatri@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1751437370; c=relaxed/simple;
+	bh=2udpDP6aJq7yw4yrO5mcybhjlkPzUQ90UwKUqm9EFK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ue4ZusNORQFXGoSU8YLndnjTkfDlIXDGmnhjGUAA2vIUJODHBSzA8OYgU1DU5gExx5wejvB4K8pyGC9Z26QUTnZ1ngnVNqsZfUi/qQjr+37l4ckgHTBXMdOpmT8V23K8/C4kKQtStQlzcrBy+ITaT4dNyT2eBANz8hgzbvlsLEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aZ6PFaim; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5622b0mE011357;
+	Wed, 2 Jul 2025 06:22:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OtIkKF
+	5ibBxODszHLe1JM79ZjIjDUmvycEYPuH+g/Yk=; b=aZ6PFaim3JyAFxC6TijGX4
+	jcPiRPoYU29zHgEckyu5D/B3UjMecoAqrg++9kJeHnWtxZ+nAtuctAAbeGlGyXGE
+	39QGD8RoiVBUsjYCgxYIvUHMY6I4uhCPgcRHVVqWz3OdnVwuUxk6oUrmmlAOsKCp
+	zIthzOZa/Wc7vMBxaCS/xMCEtSoekToapto3JFOwGasnQJXP1sBHXDqrLZ+8rjl6
+	qQFTtCQel15tSicVv/eRnvzWXG/nmsVlTcW0f3fVYZ6ZGwICwmDBWIT2lb8s82H3
+	wxEyVFLT2aOaSdqNJ6P5xj4FGuuMZihb8uRxjY0095J4X89jFuOC4X+Vtc921+qA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j7wrkqnq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 06:22:16 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56229FnA006904;
+	Wed, 2 Jul 2025 06:22:15 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 47jvxme135-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 06:22:15 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5626MEld16122418
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 2 Jul 2025 06:22:14 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 53B8758045;
+	Wed,  2 Jul 2025 06:22:14 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E475F5805F;
+	Wed,  2 Jul 2025 06:22:09 +0000 (GMT)
+Received: from [9.109.198.197] (unknown [9.109.198.197])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  2 Jul 2025 06:22:09 +0000 (GMT)
+Message-ID: <7b09167f-bf8d-4d94-9317-3cfbb4f83cd8@linux.ibm.com>
+Date: Wed, 2 Jul 2025 11:52:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: b21141670de3f8496bd
-X-MBO-RS-META: 4ekzzj8jcxr3eiod1bq13zcb77u8gggq
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nbd: fix false lockdep deadlock warning
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: josef@toxicpanda.com, axboe@kernel.dk, hch@infradead.org, hare@suse.de,
+        linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+        yangerkun@huawei.com, johnny.chenyi@huawei.com,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <20250627092348.1527323-1-yukuai1@huaweicloud.com>
+ <aF56oVEzTygIOUTN@fedora>
+ <c2fbaacc-62a1-4a98-4157-2637b7f242b7@huaweicloud.com>
+ <197b6dca-56be-438d-a60f-21011367c5ed@linux.ibm.com>
+ <99b4afce-de05-ddcb-2634-b19214cf4534@huaweicloud.com>
+ <aGSaVhiH2DeTvtdr@fedora>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <aGSaVhiH2DeTvtdr@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=E/PNpbdl c=1 sm=1 tr=0 ts=6864d018 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=PL8FM_zyLEa3LRvGiX0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 25iKB3x1FaUALPZA2WTuXGyERogZkYcq
+X-Proofpoint-ORIG-GUID: 25iKB3x1FaUALPZA2WTuXGyERogZkYcq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA0OCBTYWx0ZWRfX50OdNXDO+dAq CZ2jrsSDupmt0aF42DN2Mk8JtfgAuACe6/6v5SVJAoSVy2ytkz3HlDFkzZ0P6pkOupjFTzpTmyq ve/T0RCB4AU9mf//7X9Zb1VxCBMbYmgxRvyvwiYgk2gWnx0O8V7UzAs4j5cNgc5rhUEYE86W0aH
+ Ux8BblrleShXmz6XuN3CZ94kYCywE3hnfxof4li5cnOb6HiEuMtsl9e1CmXqG8ZnKZ5YNIH3zhV 0xGKD8hv1GxmNAFRWaGzJCG+xHJgeCENneEtG2Y3Z7kl81jWcPN/qi9Njs4vc+47SDfkOUms/Z7 C0A622TMdk99o6yAw+zbSV6CHRt2WsbPMDKt4weqJWW/VhAu+5AqbFEJaNEWnqIT0kVSWPKNZfL
+ gjWHaQRQilyCKe06ILizjco+EwKf2F3ynUV8m1SrMC1JNeEoN5CpUY91FKZY9idARaINqg/Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 adultscore=0 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020048
 
-T24gVHVlLCAyMDI1LTA3LTAxIGF0IDIyOjE5ICswNTMwLCBTdW5pbCBLaGF0cmkgd3JvdGU6Cj4g
-Y2xpZW50LWlkIGlzIGEgdW5pcXVlIGlkIGFjcm9zcyB0aGUgc3lzdGVtIG5vIG1hdHRlciBpZiBp
-dHMgZnJvbSBhIFZNCj4gb3Igb24gYSBob3N0IHN5c3RlbS4gVGhpcyB1bmlxdWUgaWQgaXMgYSBn
-b29kIGJhc2UgdG8gdXNlIGNyZWF0ZQo+IGNsaWVudC1pZCBiYXNlZCBkZW50cnkgaW4gZGVidWdm
-cyBpbiB0aGUgcm9vdCBkaXJlY3RvcnkuCj4gCj4gVGhpcyBkaXJlY3RvcnkgY291bGQgYmUgYSB1
-bmlxdWUgZGlyZWN0b3J5IHdoZXJlIGRyaXZlcnMgY291bGQgZHVtcAo+IHRoZSBkZWJ1ZyBpbmZv
-cm1hdGlvbi4KPiAKPiBGb3IgYW1kZ3B1IGRyaXZlciwgd2Ugd2FudCB0byBkdW1wIHRoZSBWTSBQ
-VEJBU0UgYWRkcmVzcyBhbmQgTVFEIGZvciAKPiB1c2VycXVldWUgd2hpY2ggY2FuIGJlIHVzZWQg
-YnkgYSB0b29sIGxpa2UgYW1kIHVtciB0byBkdW1wIHRoZSBtZW1vcnkKPiBhbmQgdGhhdCBpcyBy
-ZWFsbHkgaW1wb3J0YW50IHRvIGRlYnVnIHVzZXJxdWV1ZXMgYW5kIFZNIHJlbGF0ZWQKPiBpc3N1
-ZXMuCj4gCj4gT25lIG9mIHRoZSBjaGFsbGVuZ2UgaW4gdGhpcyBob3cgdG8gYWNjZXNzIHRoZSBy
-b290IGRpcmVjdG9yeSB3aGljaAo+IGlzCj4gYmV5b25kIHRoZSBkcm1fZGV2aWNlIGhlbmNlIG1v
-dmluZyB0aGUgZGVidWdmcyByZWxhdGVkIGluZm9ybWF0aW9uIHRvCj4gZHJtX2RlYnVnZnMuYyAK
-PiAKPiBTdW5pbCBLaGF0cmkgKDQpOgo+IMKgIGRybTogbW92ZSBkcm0gYmFzZWQgZGVidWdmcyBm
-dW5jcyB0byBkcm1fZGVidWdmcy5jCj4gwqAgZHJtOiBhZGQgZGVidWdmcyBzdXBwb3J0IG9uIHBl
-ciBjbGllbnQtaWQgYmFzaXMKPiDCoCBkcm0vYW1kZ3B1OiBhZGQgZGVidWdmcyBzdXBwb3J0IGZv
-ciBWTSBwYWdldGFibGUgcGVyIGNsaWVudAo+IMKgIGRybS9hbWRncHU6IGFkZCBzdXBwb3J0IG9m
-IGRlYnVnZnMgZm9yIG1xZCBpbmZvcm1hdGlvbgoKSGksCgpwbGVhc2Ugd2FpdCA+MjRoIGJlZm9y
-ZSBzZW5kaW5nIG5ldyB2ZXJzaW9ucyBvZiBhIHNlcmllcywgc28gdGhhdCBtb3JlCnBlb3BsZSBj
-YW4gb3B0IGluIGFuZCB0cmFmZmljIG9uIHRoZSBsaXN0cyBnZXRzIHJlZHVjZWQKClRoeAoKCj4g
-Cj4gwqBkcml2ZXJzL2FjY2VsL2RybV9hY2NlbC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHzCoCAxNiAtLS0KPiDCoGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdw
-dV9kZWJ1Z2ZzLmMgfMKgIDUyICsrKysrKysrKwo+IMKgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRn
-cHUvYW1kZ3B1X2RlYnVnZnMuaCB8wqDCoCAxICsKPiDCoGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1k
-Z3B1L2FtZGdwdV9rbXMuY8KgwqDCoMKgIHzCoMKgIDIgKy0KPiDCoGRyaXZlcnMvZ3B1L2RybS9h
-bWQvYW1kZ3B1L2FtZGdwdV91c2VycS5jwqDCoCB8wqAgNTIgKysrKysrKysrCj4gwqBkcml2ZXJz
-L2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfdXNlcnEuaMKgwqAgfMKgwqAgMSArCj4gwqBkcml2
-ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfdm0uY8KgwqDCoMKgwqAgfMKgwqAgNCArLQo+
-IMKgZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X3ZtLmjCoMKgwqDCoMKgIHzCoMKg
-IDQgKy0KPiDCoGRyaXZlcnMvZ3B1L2RybS9kcm1fZGVidWdmcy5jwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCB8IDExMwo+ICsrKysrKysrKysrKysrKysrKy0tCj4gwqBkcml2ZXJzL2dwdS9k
-cm0vZHJtX2Rydi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAxNCAr
-LS0KPiDCoGRyaXZlcnMvZ3B1L2RybS9kcm1fZmlsZS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCB8wqDCoCA5ICsrCj4gwqBkcml2ZXJzL2dwdS9kcm0vZHJtX2ludGVybmFsLmjC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCA2ICstCj4gwqBpbmNsdWRlL2RybS9kcm1f
-YWNjZWwuaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNSAt
-Cj4gwqBpbmNsdWRlL2RybS9kcm1fZGVidWdmcy5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHzCoCAxMSArKwo+IMKgaW5jbHVkZS9kcm0vZHJtX2Rydi5owqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDE0ICsrLQo+IMKgaW5jbHVkZS9k
-cm0vZHJtX2ZpbGUuaMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
-wqDCoCA3ICsrCj4gwqAxNiBmaWxlcyBjaGFuZ2VkLCAyNjUgaW5zZXJ0aW9ucygrKSwgNDYgZGVs
-ZXRpb25zKC0pCj4gCgo=
 
+
+On 7/2/25 8:02 AM, Ming Lei wrote:
+> On Wed, Jul 02, 2025 at 09:12:09AM +0800, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/07/01 21:28, Nilay Shroff 写道:
+>>>
+>>>
+>>> On 6/28/25 6:18 AM, Yu Kuai wrote:
+>>>> Hi,
+>>>>
+>>>> 在 2025/06/27 19:04, Ming Lei 写道:
+>>>>> I guess the patch in the following link may be simper, both two take
+>>>>> similar approach:
+>>>>>
+>>>>> https://lore.kernel.org/linux-block/aFjbavzLAFO0Q7n1@fedora/
+>>>>
+>>>> I this the above approach has concurrent problems if nbd_start_device
+>>>> concurrent with nbd_start_device:
+>>>>
+>>>> t1:
+>>>> nbd_start_device
+>>>> lock
+>>>> num_connections = 1
+>>>> unlock
+>>>>      t2:
+>>>>      nbd_add_socket
+>>>>      lock
+>>>>      config->num_connections++
+>>>>      unlock
+>>>>          t3:
+>>>>          nbd_start_device
+>>>>          lock
+>>>>          num_connections = 2
+>>>>          unlock
+>>>>          blk_mq_update_nr_hw_queues
+>>>>
+>>>> blk_mq_update_nr_hw_queues
+>>>> //nr_hw_queues updated to 1 before failure
+>>>> return -EINVAL
+>>>>
+>>>
+>>> In the above case, yes I see that t1 would return -EINVAL (as
+>>> config->num_connections doesn't match with num_connections)
+>>> but then t3 would succeed to update nr_hw_queue (as both
+>>> config->num_connections and num_connections set to 2 this
+>>> time). Isn't it? If yes, then the above patch (from Ming)
+>>> seems good.
+>>
+>> Emm, I'm confused, If you agree with the concurrent process, then
+>> t3 update nr_hw_queues to 2 first and return sucess, later t1 update
+>> nr_hw_queues back to 1 and return failure.
+> 
+> It should be easy to avoid failure by simple retrying.
+> 
+Yeah I think retry should be a safe bet here. 
+
+On another note, synchronizing nbd_start_device and nbd_add_socket
+using nbd->task_setup looks more complex and rather we may use 
+nbd->pid to synchronize both. We need to move setting of nbd->pid
+before we invoke blk_mq_update_nr_hw_queues in nbd_start_device.
+Then in nbd_add_socket we can evaluate nbd->pid and if it's 
+non-NULL then we could assume that either nr_hw_queues update is in 
+progress or device has been setup and so return -EBUSY. I think
+anyways updating number of connections once device is configured
+would not be possible, so once nbd_start_device is initiated, we
+shall prevent user adding more connections. If we follow this
+approach then IMO we don't need to add retry discussed above.
+
+Thanks,
+--Nilay
 
