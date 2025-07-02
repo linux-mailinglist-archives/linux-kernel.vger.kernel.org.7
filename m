@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-713328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C915AF4D00
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5597EAF15B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10BC167DAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BBD1C2205F
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA62798FE;
-	Wed,  2 Jul 2025 13:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C47272E43;
+	Wed,  2 Jul 2025 12:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="D1W3z4I5"
-Received: from mail-m15580.qiye.163.com (mail-m15580.qiye.163.com [101.71.155.80])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lHyKwge7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E67D275B06;
-	Wed,  2 Jul 2025 13:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BCB1DA4E;
+	Wed,  2 Jul 2025 12:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461625; cv=none; b=ZHKcpvA1LI3H9oW4zl/15Z9eIrPS5iCVqEPMxH+omVkKrfQH0YNt2mlsM6mHaW/xYIivfmToUFsrJFXDCuwAKL2zJZUYBJZZv1cQsLGyC3f0gy/aPmnLFZ/GgBAuRyOTm+8vd0mTC6/UmCoyfseok1FxawgQRg0EhnRYnyd+cDM=
+	t=1751459543; cv=none; b=Ps/gx+XYZeZ6P10QnqQK4lChz6oZ+HLxylYb/WiClECJ3chKywjGM9fWrNz77y96D1oG1VdzowDr2OwVN4XFxalve8QVu4+umIFhs9SZNSF1GF3iWkhbOoLSftKpPFZnLEzN3q8DuLanWN9Zp/Fm6sjsnHfvY+dC/SwVkpwrniw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461625; c=relaxed/simple;
-	bh=C86Nj4j8sa5kMJmGRiyGwOaW3dqu2Ko61hQwEyhr7CU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gpnoiNtCSdlpuouLQr85FX2WNUCtHHLsILVglQuMmAj6iwl/IDMLA8UvavsZFPIv17RQ5FAHHY4t9Ql+de+6shXjqDuTzp7WVzenSG1g3ZfnKKCFlmeb0ZurVMfvCirh2g+EzTTJyizUfrDwFJR9sVB5+faG8l2e/q2lAx/qnR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=D1W3z4I5; arc=none smtp.client-ip=101.71.155.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
-Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaecf0f1;
-	Wed, 2 Jul 2025 20:31:33 +0800 (GMT+08:00)
-From: Albert Yang <yangzh0906@thundersoft.com>
-To: krzk@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/8] arm64: dts: bst: add support for Black Sesame Technologies C1200 CDCU1.0 board
-Date: Wed,  2 Jul 2025 20:31:33 +0800
-Message-Id: <20250702123133.3613126-1-yangzh0906@thundersoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <a570b833-0619-4d1a-909f-971ba08f4202@kernel.org>
-References: <a570b833-0619-4d1a-909f-971ba08f4202@kernel.org>
+	s=arc-20240116; t=1751459543; c=relaxed/simple;
+	bh=PfZ54BR/DQeTkZbbJMQYs5PKz2moe77bxCc/RiZ+xB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oWimnnkeuTcDmpBnx7uJlQUounscpFL1h4/1mzgjd0YTbwz+MnkDygF5IyREs/xjlyGwwaMSlb/NC5BhVlWwKP+aArYXttllCLGgnjWwX+B8OrJci36wsOjbUYpvolYhRqSSp09yxYCmDzF33k865BeQ5z7WxG9cOiMLiMZOhKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lHyKwge7; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751459542; x=1782995542;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PfZ54BR/DQeTkZbbJMQYs5PKz2moe77bxCc/RiZ+xB0=;
+  b=lHyKwge784i79aDH2xwJOSKES+CwvHUWa0VNPz1btI9vGucIgJoo0h48
+   p89n8o6tdqX/QHgrH+9RsmVsQzvGvwfKGb6y0VsjBFL8JSwtZscfhIg6A
+   rrL4MN+LzaMd3ItWx794PDxQySqFIPQi71F1TmBUuGAQ0eKHYOWMMKSlg
+   e8iQSUxC7BxfiNOwunmnISlfa+L0dvbWfeOo8PR3Cx9LDTglI9l+xuoQq
+   zUKHBj1TIONlpj4FADVJXsgZ1WCkQ2eXYYUm31CTW57DAM8PB2N0BDlct
+   QqcG6SCG3OmAz1nD0W3KGnpNDBniUw95yXQNjLLUTCY7MTqnkJkNidbza
+   A==;
+X-CSE-ConnectionGUID: cRiIuYT+SBmC56hYsQpRzw==
+X-CSE-MsgGUID: z5umHr+3S9KxHFD6dwZo/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="65207575"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="65207575"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:32:21 -0700
+X-CSE-ConnectionGUID: la87R4sVRIqU5y8Oay7TYw==
+X-CSE-MsgGUID: Al/ue6ziSIGLMd4nKgkYYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="158629264"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:32:14 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWwdF-0000000BuxV-4C67;
+	Wed, 02 Jul 2025 15:32:10 +0300
+Date: Wed, 2 Jul 2025 15:32:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 05/24] mailbox: Allow controller specific mapping
+ using fwnode
+Message-ID: <aGUmyeUMgBPVlxPh@smile.fi.intel.com>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-6-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaT09IVk0fT0hKQhlKT0oYSFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTEpVSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a97cb1ef7a409cckunm04f03588425578
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MT46CTo6FzExPE4PSUMtHT4C
-	ERcwFENVSlVKTE5KT05CT0JPQkxKVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUhKS003Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=D1W3z4I516N9g+9guQ8Xs6Vx0djrJ7Kyp6y6mXfU1NrGA7bFh4L1GkPyLVCy9hQRSuEKgkQo2dfNkWIQlwbN2MV8qq3e87xdbK55EEnCoJYdeOTkcT27knWGsH2hnoS2FFBZj39HGeMTnIS5Al+dui9Ule2qfQdQeSaEglrY6zE=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=GvRC5yQrOK6GqqxZKCbY7Q/4BSYWG7oUxuoBfHuLWOg=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702051345.1460497-6-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Krzysztof,
+On Wed, Jul 02, 2025 at 10:43:26AM +0530, Anup Patel wrote:
+> Introduce optional fw_node() callback which allows a mailbox controller
+> driver to provide controller specific mapping using fwnode.
+> 
+> The Linux OF framework already implements fwnode operations for the
+> Linux DD framework so the fw_xlate() callback works fine with device
+> tree as well.
 
-Thank you for your detailed review and feedback. I have addressed all the issues you mentioned:
+Looks okay to me, FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> This is messed. SoB does not go to changelog. Apply your patch and look
-> at result - do you see SoB? No, because changelog is stripped.
-> submitting patches explains how this is supposed to look like.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Fixed. Moved Signed-off-by lines to the correct position in commit message, 
-outside of the changelog section.
 
-> Nothing improved. I asked to follow DTS coding style in ordering.
-
-Fixed. Reordered all nodes according to DTS coding style:
-- Root level nodes: alphabetically ordered (clk_mmc → cpus → psci → soc → timer)
-- SoC nodes: ordered by address (uart0@20008000 → mmc0@22200000 → gic@32800000)
-- Applied consistent ordering throughout the dtsi file
-
-> l2-cache. Otherwise it is incomplete, so add the second one.
-
-Fixed. Renamed l2-cache-1 to l2-cache as per standard naming convention.
-
-> Why do you have multiple memory nodes, not one?
-
-Fixed. Consolidated multiple memory nodes into a single memory node with 
-multiple reg entries as required by Device Tree specification:
-
-Before (incorrect):
-  memory@800151000 { reg = <0x8 0x00151000 0x0 0x1000>; };
-  memory@800254000 { reg = <0x8 0x00254000 0x0 0x1000>; };
-  ...
-
-After (correct):
-  memory@800151000 {
-    reg = <0x8 0x00151000 0x0 0x1000>,
-          <0x8 0x00254000 0x0 0x1000>,
-          <0x8 0x10000000 0x0 0x30000000>,
-          <0x8 0xc0000000 0x1 0x0>,
-          <0xc 0x00000000 0x0 0x40000000>;
-  };
-
-> It does not look like you tested the DTS against bindings. Please run
-> `make dtbs_check W=1`
-
-Fixed. Ran `make dtbs_check W=1` and verified no schema violations. 
-DTB builds successfully without warnings.
-
-> This is not a DTS patch. (regarding defconfig)
-
-Fixed. Moved all defconfig changes to a separate dedicated commit as suggested.
-The DTS commit now only contains device tree related changes.
-
-Additionally, I have addressed all feedback from the v1 review:
-- Fixed reserved-memory node naming (mmc0-reserved@5160000)
-- Corrected all property ordering according to DTS coding style
-- Ensured all nodes follow standard naming conventions
-
-All changes have been tested with:
-- make ARCH=arm64 bst/bstc1200-cdcu1.0-adas_4c2g.dtb W=1 (successful)
-- DTB validation passes without errors
-
-I will send v3 with all these fixes applied.
-
-Best regards,
-Albert Yang
 
