@@ -1,172 +1,158 @@
-Return-Path: <linux-kernel+bounces-713516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA0EAF5ADF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:16:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6610DAF5ACB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5501C418F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CDE17F16C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5612EA466;
-	Wed,  2 Jul 2025 14:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79302BDC25;
+	Wed,  2 Jul 2025 14:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dBDQHoEX"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AggipgHW"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664562E9EB2;
-	Wed,  2 Jul 2025 14:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CCE27A121
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751465746; cv=none; b=pLWc7OHIb+aFdkPAThZIZHtamQY0sd2DjKXy/qlR0W6LW/S7BfuXSWpE13Ue/2o2jL5uHqCdGuc9caKt5bFOoVsSHH1z9sF04oNFfv9pBo7phDArEXBNAQO54IzMQrBNdOICaW5+D/CziL5n+ZN56WqZDsSUOqbNp1mL2Mc4tuA=
+	t=1751465661; cv=none; b=XdKnJlPFjBHi+swySsFBYbvtoyZULe0Gk3fCVEBABYwogVsn1DHmnlcny+gOlrtb/fKK0JwKvQXST5AwZZPUi8pxeQbJGihRegn6ejVUG3GYjOgNo9/eORAdEEkeHo5FlMcLlhd1ZqIR4K4G/1sckTAa3n9TdTLoMBQBAsaTR7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751465746; c=relaxed/simple;
-	bh=AjSA6Bdq5vB9w+D1KK5HtFTazyanZB6oZ2EEmsWUSP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VTGVPIFfOOVdqbzO4v8ClVYej6Ew7nMLCnL3cYlbCum4yVzVu2F2wUrLEWCuuShkDYVDvfOLZ9J9MgM6ZYCQR0wCS5uMPTyyjBq7+pO9fwEGIIEE00Q+sv+PWoetGBpQnW+3XBg75Wg1tRK74NMvVp7M/Rki+lbLgfJs/VDJNzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dBDQHoEX; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562DIwPT009778;
-	Wed, 2 Jul 2025 16:15:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	VR6E01Xg6J6Izs0olt9dR6pYp+S5ROquFthL7GlUqPs=; b=dBDQHoEXqF/md8Ai
-	OKxTINMTwYY9+MXakIisn2u4OHsDwVaws4+1VieBQiNXPftGP0VE8IKDZH79YV9C
-	gDu+8iKUecC6lTA5ex8FURzdpDRCP4m/LQweQkCWaJTIbkrTllzw7aH+Rxeuwntn
-	utlstZrXHzSVULtL2Cc2OeUtYOrfnxH6LYJk/mWHDIEXpYkQRK9ktb31DLmb16v8
-	IQ4M7f9TAHR4Q0aCT0gLzcFyIT99ZXhPfBCV/NcxixuYXHjqrUI8h1A2+IEiQK0n
-	OkuVflyw9cWVeufHcOel2SUgz5K4BtxO8qghv8cKOOkUm6NRS9TCAHbMDBGTCt8h
-	+QRk2A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tmb9wc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 16:15:22 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 46F9340050;
-	Wed,  2 Jul 2025 16:14:05 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 22C18BB2448;
-	Wed,  2 Jul 2025 16:13:50 +0200 (CEST)
-Received: from [10.48.86.185] (10.48.86.185) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
- 2025 16:13:49 +0200
-Message-ID: <164e93e7-b9b1-45ff-8418-3a381b2bc781@foss.st.com>
-Date: Wed, 2 Jul 2025 16:13:48 +0200
+	s=arc-20240116; t=1751465661; c=relaxed/simple;
+	bh=zqKGhMgZTNKn8t9nNqOSQ0vaSPiBBITK2Mwmm0guxPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PmLA03KxfWcdUZRdwiE4iCMtFL2LFxzOlPmznxgQBGMFWosY00s6JUvF5S0KzHLXOuxvdd+rY94oeNR2+A/7wSr6jzZpIvglDuyr0RR70YYKa3jhnSuAT4ma/RMp0b8+43MODvZBZa9jygzPYue9xf17DGCjzsBBeApTl2JG4N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AggipgHW; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a8ea0565-e20d-4019-a64b-fa8020866411@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1751465653;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6uQFp4cJ8AYYwMC7A3lrbx+MnxlYvEYEmihK/yWxec8=;
+	b=AggipgHWO0jdRYz0u1A4o9IuVGIUox6XdD/xi0R/d6J6bhOmrOrOr1EYpHWE0DyawWIISL
+	aq8S/Nw40+gThtNLeZTlRVfpSm7YmtQ0b1ttiCHmMapXtsmm3EOWRYT1vDv0QJKHYW5xD7
+	+6k76+6P75Nfr0qiXUPN0e9Vo8PgH54=
+Date: Wed, 2 Jul 2025 07:14:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/13] perf: stm32: introduce DDRPERFM driver
-To: Philipp Zabel <p.zabel@pengutronix.de>, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gatien
- Chevallier <gatien.chevallier@foss.st.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250623-ddrperfm-upstream-v1-0-7dffff168090@foss.st.com>
- <20250623-ddrperfm-upstream-v1-6-7dffff168090@foss.st.com>
- <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <5d4cf5bff7733421c8a031493742ba6a21e98583.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH] bpf: turn off sanitizer in do_misc_fixups for old clang
+Content-Language: en-GB
+To: Arnd Bergmann <arnd@arndb.de>, Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Arnd Bergmann <arnd@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Luis Gerhorst <luis.gerhorst@fau.de>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
+References: <20250620113846.3950478-1-arnd@kernel.org>
+ <CAADnVQKAT3UPzcpzkJ6_-powz4YTiDAku4-a+++hrhYdJUnLiw@mail.gmail.com>
+ <361eb614-e145-49dc-aa32-12f313f61b96@linux.dev>
+ <CAEf4BzahSLGiW_F4LtG1tMAb0O1b6D-kO0AcrU2O+nLKVbkvZA@mail.gmail.com>
+ <646c1c27-b940-4ece-aa0f-dbeea8aa7de3@linux.dev>
+ <eb4b4473-c75e-4bfa-9a16-19a5256a558d@app.fastmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <eb4b4473-c75e-4bfa-9a16-19a5256a558d@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
+X-Migadu-Flow: FLOW_OUT
 
-Hi Philip
 
-On 6/30/25 10:38, Philipp Zabel wrote:
-> On Mo, 2025-06-23 at 11:27 +0200, Clément Le Goffic wrote:
->> Introduce the driver for the DDR Performance Monitor available on
->> STM32MPU SoC.
->>
->> On STM32MP2 platforms, the DDRPERFM allows to monitor up to 8 DDR events
->> that come from the DDR Controller such as read or write events.
->>
->> On STM32MP1 platforms, the DDRPERFM cannot monitor any event on any
->> counter, there is a notion of set of events.
->> Events from different sets cannot be monitored at the same time.
->> The first chosen event selects the set.
->> The set is coded in the first two bytes of the config value which is on 4
->> bytes.
->>
->> On STM32MP25x series, the DDRPERFM clock is shared with the DDR controller
->> and may be secured by bootloaders.
->> Access controllers allow to check access to a resource. Use the access
->> controller defined in the devicetree to know about the access to the
->> DDRPERFM clock.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   drivers/perf/Kconfig         |  11 +
->>   drivers/perf/Makefile        |   1 +
->>   drivers/perf/stm32_ddr_pmu.c | 893 +++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 905 insertions(+)
->>
-> [...]
->> diff --git a/drivers/perf/stm32_ddr_pmu.c b/drivers/perf/stm32_ddr_pmu.c
->> new file mode 100644
->> index 000000000000..c0bce1f446a0
->> --- /dev/null
->> +++ b/drivers/perf/stm32_ddr_pmu.c
->> @@ -0,0 +1,893 @@
-> [...]
->> +	if (of_property_present(pdev->dev.of_node, "resets")) {
->> +		rst = devm_reset_control_get(&pdev->dev, NULL);
-> 
-> Use devm_reset_control_get_optional_exclusive() instead. It returns
-> NULL if the device tree doesn't contain a resets property.
 
-Ok I will have a look, thank you
+On 7/2/25 12:48 AM, Arnd Bergmann wrote:
+> On Tue, Jul 1, 2025, at 23:28, Yonghong Song wrote:
+>> On 7/1/25 1:45 PM, Andrii Nakryiko wrote:
+>>> On Tue, Jul 1, 2025 at 1:03 PM Yonghong Song <yonghong.song@linux.dev> wrote:
+>>>> On 6/23/25 2:32 PM, Alexei Starovoitov wrote:
+>>>>> On Fri, Jun 20, 2025 at 4:38 AM Arnd Bergmann <arnd@kernel.org> wrote:
+>>>>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>> I checked IR and found the following memory allocations which may contribute
+>>>> excessive stack usage:
+>>>>
+>>>> attr.coerce1, i32 noundef %uattr_size) local_unnamed_addr #0 align 16 !dbg !19800 {
+>>>> entry:
+>>>>      %zext_patch.i = alloca [2 x %struct.bpf_insn], align 16, !DIAssignID !19854
+>>>>      %rnd_hi32_patch.i = alloca [4 x %struct.bpf_insn], align 16, !DIAssignID !19855
+>>>>      %cnt.i = alloca i32, align 4, !DIAssignID !19856
+>>>>      %patch.i766 = alloca [3 x %struct.bpf_insn], align 16, !DIAssignID !19857
+>>>>      %chk_and_sdiv.i = alloca [1 x %struct.bpf_insn], align 4, !DIAssignID !19858
+>>>>      %chk_and_smod.i = alloca [1 x %struct.bpf_insn], align 4, !DIAssignID !19859
+>>>>      %chk_and_div.i = alloca [4 x %struct.bpf_insn], align 16, !DIAssignID !19860
+>>>>      %chk_and_mod.i = alloca [4 x %struct.bpf_insn], align 16, !DIAssignID !19861
+>>>>      %chk_and_sdiv343.i = alloca [8 x %struct.bpf_insn], align 16, !DIAssignID !19862
+>>>>      %chk_and_smod472.i = alloca [9 x %struct.bpf_insn], align 16, !DIAssignID !19863
+>>>>      %desc.i = alloca %struct.bpf_jit_poke_descriptor, align 8, !DIAssignID !19864
+>>>>      %target_size.i = alloca i32, align 4, !DIAssignID !19865
+>>>>      %patch.i = alloca [2 x %struct.bpf_insn], align 16, !DIAssignID !19866
+>>>>      %patch355.i = alloca [2 x %struct.bpf_insn], align 16, !DIAssignID !19867
+>>>>      %ja.i = alloca %struct.bpf_insn, align 8, !DIAssignID !19868
+>>>>      %ret_insn.i.i = alloca [8 x i32], align 16, !DIAssignID !19869
+>>>>      %ret_prog.i.i = alloca [8 x i32], align 16, !DIAssignID !19870
+>>>>      %fd.i = alloca i32, align 4, !DIAssignID !19871
+>>>>      %log_true_size = alloca i32, align 4, !DIAssignID !19872
+>>>> ...
+>>>>
+>>>> So yes, chk_and_{div,mod,sdiv,smod} consumes quite some stack and
+>>>> can be coverted to runtime allocation but that is not enough for 1280
+>>>> stack limit, we need to do more conversion from stack to memory
+>>>> allocation. Will try to have uniform way to convert
+>>>> 'alloca [<num> x %struct.bpf_insn]' to runtime allocation.
+>>>>
+>>> Do we need to go all the way to dynamic allocation? See env->insns_buf
+>>> (which some parts of this function are already using for constructing
+>>> instruction patch), let's just converge on that? It pre-allocates
+>>> space for 32 instructions, should be sufficient for all the use cases,
+>>> no?
+>> Make sense. This is much better. Thanks!
+> I'm not sure if that actually helps on the old clang version, as far
+> as I understood it in my initial analysis, the problem in the
+>
+> struct bpf_insn chk_and_sdiv[] = {
+>                                  /* [R,W]x sdiv 0 -> 0
+>                                   * LLONG_MIN sdiv -1 -> LLONG_MIN
+>                                   * INT_MIN sdiv -1 -> INT_MIN
+>                                   */
+>                                  BPF_MOV64_REG(BPF_REG_AX, insn->src_reg),
+> ...
+> }
+>
+> construct is not the chk_and_sdiv[] array itself but the
+> struct initializer in the BPF_MOV64_REG() macro that leads to
+> having two copies of the struct on the stack and then copying
+> between them. In gcc or clang-18+, these all get folded
+> into a single object on the stack.
 
-> 
->> +		if (IS_ERR(rst)) {
->> +			dev_err(&pdev->dev, "Failed to get reset\n");
-> 
-> Please consider using dev_err_probe() instead.
+See https://lore.kernel.org/bpf/20250702053332.1991516-1-yonghong.song@linux.dev/.
+The above 'struct bpf_insn chk_and_sdiv[] = { ... }' will be removed so
+there will not be stack consumption any more for it. Instead, we use
+the scratch space in bpf_verifier_env.
 
-Ok
+>
+> (Disclaimer: I don't understand anything about how clang
+> actually works internally, the above is only speculation on
+> my side, based on the assembler output)
+>
+>        Arnd
 
->> +			ret = PTR_ERR(rst);
->> +			goto err_clk;
->> +		}
->> +		reset_control_assert(rst);
->> +		reset_control_deassert(rst);
-> 
-> These can be done unconditionally, as they are no-ops for rst == NULL.
-
-Indeed
-
-Best regards,
-Clément
 
