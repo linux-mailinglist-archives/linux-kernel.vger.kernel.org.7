@@ -1,136 +1,296 @@
-Return-Path: <linux-kernel+bounces-713588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00900AF5BEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 017DCAF5C00
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39EC3A243B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECEEC3A32A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B452330B994;
-	Wed,  2 Jul 2025 14:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D967B30E824;
+	Wed,  2 Jul 2025 14:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vfx/KsYX"
-Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/dCBG63"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF0230AAD1;
-	Wed,  2 Jul 2025 14:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA0430E82B;
+	Wed,  2 Jul 2025 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751468318; cv=none; b=aRDBVVNDjg8QaRjbhUKnJ4luSiCnw4eztnA0Hww6TRPfvGm1aRwNNFXssQGnKLaesaGk2u2L+RA8/+WPdghwqt2DdHyS65GLgDC97UHjTs9OO+SFPiWxoWoEhSQCCylvZaS0DF8K+asEcQUp/79jmnnr5zp+Pu87hSmDTgdLWSs=
+	t=1751468348; cv=none; b=CaqkqBvLLeAq9VIiimvRd/JP0JRSjiELNEdA3vmLr7JVAEiksoRf81xj5ZhrmhA2gTa6qcwOsrhF7sdHSm/rV76RR3wnpy/IYmjmq8nu7wQwDPFaDrjyivxTar98hHRoA62cJGS0z3oQ4c5tL/z64n/EOeuy4m0KsAoqByEUvyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751468318; c=relaxed/simple;
-	bh=oX/ZAtWzwJdsQhtNvalvhpcwa8JeOFlisMtV8cvuNIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J3KSujmNWkbU6uUda6vCdZ2ewoeYTwNTbXuXGLAH5CoGHo1CnEV9OLBltL7jLx7xl4QaurjwWZ5e/UwLIX6omEJhZe80WB8PWyCI2/plU9pNZzHk4J2QvlOmi7uYoqKciHfaeygHwHT/FeJkEgXMDXuufJDbHldr/ydsdSzPDMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vfx/KsYX; arc=none smtp.client-ip=209.85.219.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e897c8ca777so1195032276.2;
-        Wed, 02 Jul 2025 07:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751468314; x=1752073114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T1WkFzcqoZ9zfZk6rKFoEV4a3LB4LFCO7cfh2fSf18M=;
-        b=Vfx/KsYXuvVLuESzF8oqtv5MeUX9ouWcH2RsUgPsN//qn6aWgIhjf1oJdicaOPMwKl
-         +gu9rIbKTP7tgvj9ymrWc/ZGgRHhZEDM6fK0DB9za6EYWmHnppZIBuKaBaEWsBu+twXA
-         +rW2z/++D57u/HZVgC5/ztmxeDfYy6at6SanHtmTyuJuibNkYOEorrIGsSyA+DqVmrJG
-         DYTZU4JhX6eofDm4MqLeiuSI3/Pj9fOWA2rEufcqDfLbHCBK6YUfQ/JC0reiUyBYcyCb
-         8eHqtQCWKJqqPeoPKFIfF4bMqrOQw9hSnOnWci/dggeGHb0r/7jGNptFTsYwkbM9gyl3
-         I7dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751468314; x=1752073114;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T1WkFzcqoZ9zfZk6rKFoEV4a3LB4LFCO7cfh2fSf18M=;
-        b=P3x502jqfgVMs+s9EqURKCHmuFD3TW4T4V3vytCA/lDS53m/WUsOc8zsgyyNJ7ySTI
-         OpblIvp8Zc8dieEzR/1eMQ8Oo+8NPEAaL8k6H9vfjm0vjyhm5/TGmBKQ/hJkilX/JPLN
-         KfoXB0AY0WgDiPTh7ZJFvXwmb1I4XuA+dKlxWSrcbOh3nKLzv5V5w3QZSmroQ/9ik6+s
-         0dQI3SROKgdRuhtfhlNgb2dq1prckmOS9TxLMPiFZB6oeUZc+xqopPQm7f+9wuj71FPw
-         XeS2fF4gpn00DJTbI0/s8N9ZuPyrDcD3RJXgjMqvOH+0thmHX3FAzVPhJL0hT53oar9P
-         LvUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUv/fv8vftjzD24Ac4X+8b3V1yYPz2iy6JOoMgFEe4D+L793Z3AC2RVVGF644PVORzQRc8PEE6C@vger.kernel.org, AJvYcCXcJ/EWnO3z35VvWWysY7RXfQme80/+xIYUY7xhTfRvd/4WJv/edYEoIIHMfihXK8glLfJbDyJD1JcVn1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8YkgM7LbFH45/HZnE7Nz8D/I+FWPINQnSAe5VTwjLZZ+Ssd0Q
-	LbTZkwBagU8LmefrX4/ibg30X29R5VU9slWlVAbIvt6dadPREFnnk9QS
-X-Gm-Gg: ASbGncsxcUjvzjLNNVgq17e/jp2/ua4BJxBiB7BUXbD22YAGtTKl8XpcXwTUxRlTlW5
-	VaFSpVQRluNIi+/FBGodwHN06QTVhVN7SUiQ1OCW0gvl1seLLrAqgiSG2XerUYHXPIgYEvLNhie
-	g1rKiGrsKr5+nJ/Z+RD/2uCQn5lHTijS9Bjk0nB/1cVMi4rWhtx3UUUgxKS1s96mXIbS1jQtKSq
-	MOreXsp+YGqi3+zTweXSE6XK4juK8QiYOwofb4Fr6u8aRnxhU6TuPKmTSZAA1MQEWmrBeGogtUS
-	5Xe/WYhGG1XtfDfQ+t4I2vaC/WDzXX6seg7JeHO0H1AZW10r3tR/uN12xldrEmvAT4LLQR9OL8L
-	t0YaAHurg
-X-Google-Smtp-Source: AGHT+IGlSboF2WeQ17XUS4xFc2PW/wJIU1k/DVuD4yqPbLcGVoiUFPieioZSCcoMk0Qg2yQY9vZcjg==
-X-Received: by 2002:a05:6902:728:b0:e89:8cc2:8082 with SMTP id 3f1490d57ef6-e898cc2856cmr885356276.41.1751468314365;
-        Wed, 02 Jul 2025 07:58:34 -0700 (PDT)
-Received: from [10.102.6.66] ([208.97.243.82])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8980a99c80sm480883276.56.2025.07.02.07.58.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 07:58:34 -0700 (PDT)
-Message-ID: <9c43747a-f73d-476d-a1dc-1646fcfb771f@gmail.com>
-Date: Wed, 2 Jul 2025 10:58:33 -0400
+	s=arc-20240116; t=1751468348; c=relaxed/simple;
+	bh=7U1RIaJFYuXTcTnJPh2nsOAauQAM414gMJSuOXL4gkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YnJo+PTqahpLiop5vTlo7kWfMzsyTI8VOtWhHwdOSwEX6ue2Ab6Q0zqK0hVfS9R9DwLC2olzZxWkOXDq0MvKoPwoOn3yEDHmEnpswb/5XiQEFfdCO+diSjbj+ax9qGl1qRNOefYIjnC4ZkNVpkPsQI4ENgwATbb9Og5V4ODrC+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/dCBG63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82D1C4CEED;
+	Wed,  2 Jul 2025 14:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751468347;
+	bh=7U1RIaJFYuXTcTnJPh2nsOAauQAM414gMJSuOXL4gkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a/dCBG63u9V3vqZHxS2BfmOlb7HvqThyXavXbFg4U9Y/vPyLDJcy5lWR+DBAO8rcF
+	 VHvi2iuG1ujcCNaO3aWCwRAeOpyeb/VNtMqOYn8trzTsVPyH9Mnq8jPedWT9C/A3aG
+	 fcGwLEOyQvgybl+bfFGMXIyHiGfe0pqJcxwrmKAv4bl63lh4PFvSGB2OJV8LyonP8W
+	 ElokT3XaYGBgLk8pE2Nxo+QZLBrWBUP33EbnGvpirmPoDWXRseCcDwJ2MZwY0Touyn
+	 xSiulqoF1KO4yHbOnhVcwzhWdCTv/IuBUgbGFtiTd987QQppoN7PxVyjSkCu/NnNA0
+	 IHvdu9ivVZUWw==
+Date: Wed, 2 Jul 2025 16:59:00 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 20/31] irqchip/gic-v5: Add GICv5 PPI support
+Message-ID: <aGVJNHiD44DH1sLn@lpieralisi>
+References: <20250626-gicv5-host-v6-0-48e046af4642@kernel.org>
+ <20250626-gicv5-host-v6-20-48e046af4642@kernel.org>
+ <20250702124019.00006b01@huawei.com>
+ <aGUqEkascwGFD9x+@lpieralisi>
+ <20250702140022.00001c65@huawei.com>
+ <aGUycEuLadcG+IfV@lpieralisi>
+ <20250702150907.000060d8@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: bridge: Do not offload IGMP/MLD messages
-To: Tobias Waldekranz <tobias@waldekranz.com>,
- Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org
-Cc: Nikolay Aleksandrov <razor@blackwall.org>,
- Ido Schimmel <idosch@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, bridge@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250701193639.836027-1-Joseph.Huang@garmin.com>
- <87a55nyofq.fsf@waldekranz.com>
-Content-Language: en-US
-From: Joseph Huang <joseph.huang.2024@gmail.com>
-In-Reply-To: <87a55nyofq.fsf@waldekranz.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702150907.000060d8@huawei.com>
 
-On 7/2/2025 4:41 AM, Tobias Waldekranz wrote:
-> On tis, jul 01, 2025 at 15:36, Joseph Huang <Joseph.Huang@garmin.com> wrote:
->> Do not offload IGMP/MLD messages as it could lead to IGMP/MLD Reports
->> being unintentionally flooded to Hosts. Instead, let the bridge decide
->> where to send these IGMP/MLD messages.
+On Wed, Jul 02, 2025 at 03:09:07PM +0100, Jonathan Cameron wrote:
+> On Wed, 2 Jul 2025 15:21:52 +0200
+> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
 > 
-> Hi Joseph,
+> > On Wed, Jul 02, 2025 at 02:00:22PM +0100, Jonathan Cameron wrote:
+> > > On Wed, 2 Jul 2025 14:46:10 +0200
+> > > Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> > >   
+> > > > On Wed, Jul 02, 2025 at 12:40:19PM +0100, Jonathan Cameron wrote:  
+> > > > > On Thu, 26 Jun 2025 12:26:11 +0200
+> > > > > Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> > > > >     
+> > > > > > The GICv5 CPU interface implements support for PE-Private Peripheral
+> > > > > > Interrupts (PPI), that are handled (enabled/prioritized/delivered)
+> > > > > > entirely within the CPU interface hardware.    
+> > > > > 
+> > > > > I can't remember where I got to last time so if I repeat stuff that
+> > > > > you already responded to, feel free to just ignore me this time ;)
+> > > > > 
+> > > > > All superficial stuff. Feel free to completely ignore if you like.    
+> > > > 
+> > > > We are at v6.16-rc4, series has been on the lists for 3 months, it has
+> > > > been reviewed and we would like to get it into v6.17 if possible and
+> > > > deemed reasonable, I am asking you folks please, what should I do ?
+> > > > 
+> > > > I can send a v7 with the changes requested below (no bug fixes there)
+> > > > - it is fine by me - but I need to know please asap if we have a
+> > > > plan to get this upstream this cycle.  
+> > > 
+> > > I'm absolutely fine with leaving these be.  The mask stuff I would like
+> > > to clean up as it applies quite widely in the series but that
+> > > can be a follow up as no bugs (so far!).   
+> > 
+> > I am certain that at a given state in the development I used the
+> > FIELD_PREP() on the hwirq_id and then was asked to remove it because
+> > it does not serve any purpose - this, for the records.
 > 
-> Do I understand the situation correctly that this is the case where the
-> local host is sending out reports in response to a remote querier?
-> 
->          mcast-listener-process (IP_ADD_MEMBERSHIP)
->             \
->             br0
->            /   \
->         swp1   swp2
->           |     |
->     QUERIER     SOME-OTHER-HOST
-> 
-> So in the above setup, br0 will want to br_forward() reports for
-> mcast-listener-process's group(s) via swp1 to QUERIER; but since the
-> source hwdom is 0, the report is eligible for tx offloading, and is
-> flooded by hardware to both swp1 and swp2, reaching SOME-OTHER-HOST as
-> well?
+> Fair enough.  Though on that front the code is inconsistent as
+> there are places where it is masked.  Anyhow, no problem either
+> way. The bit of feedback I gave on patch 22 might be more useful
+> to address (comments not matching code).
 
-That's exactly what's happening with my setup.
+Yes it is. It is not strictly speaking a bug but the logic should
+be changed for SZ_64K PAGE_SIZE (try first 4K, then fallback to 16K).
 
-Also, IIRC, the querier port (a.k.a. mrouter port) is not offloaded to 
-the switch (at least not for DSA switches). So depending on the 
-multicast_flood setting on the (querier) port, the Reports may not even 
-reach the querier if they are tx offloaded.
+Well spotted, apologies but again, it is not even a bug, I missed
+it.
 
-Thanks,
-Joseph
+I think I can do a v7 tomorrow morning for that and include the
+other comments as well - definitely not something that should stop
+this series from being considered for v6.17 please.
+
+Lorenzo
+
+> 
+> 
+> Jonathan
+> 
+> > 
+> > Thanks,
+> > Lorenzo
+> > 
+> > > As Marc said, these are in a good state.
+> > > 
+> > > Jonathan
+> > >   
+> > > > 
+> > > > Thanks,
+> > > > Lorenzo
+> > > >   
+> > > > > > diff --git a/drivers/irqchip/irq-gic-v5.c b/drivers/irqchip/irq-gic-v5.c
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..a08daa562d21
+> > > > > > --- /dev/null
+> > > > > > +++ b/drivers/irqchip/irq-gic-v5.c
+> > > > > > @@ -0,0 +1,461 @@
+> > > > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > > > +/*
+> > > > > > + * Copyright (C) 2024-2025 ARM Limited, All Rights Reserved.
+> > > > > > + */
+> > > > > > +
+> > > > > > +#define pr_fmt(fmt)	"GICv5: " fmt
+> > > > > > +
+> > > > > > +#include <linux/irqdomain.h>
+> > > > > > +#include <linux/wordpart.h>
+> > > > > > +
+> > > > > > +#include <linux/irqchip.h>
+> > > > > > +#include <linux/irqchip/arm-gic-v5.h>
+> > > > > > +
+> > > > > > +#include <asm/cpufeature.h>
+> > > > > > +#include <asm/exception.h>
+> > > > > > +
+> > > > > > +static u8 pri_bits __ro_after_init = 5;
+> > > > > > +
+> > > > > > +#define GICV5_IRQ_PRI_MASK	0x1f
+> > > > > > +#define GICV5_IRQ_PRI_MI	(GICV5_IRQ_PRI_MASK & GENMASK(4, 5 - pri_bits))
+> > > > > > +
+> > > > > > +#define PPI_NR	128
+> > > > > > +
+> > > > > > +static bool gicv5_cpuif_has_gcie(void)
+> > > > > > +{
+> > > > > > +	return this_cpu_has_cap(ARM64_HAS_GICV5_CPUIF);
+> > > > > > +}
+> > > > > > +
+> > > > > > +struct gicv5_chip_data {
+> > > > > > +	struct fwnode_handle	*fwnode;
+> > > > > > +	struct irq_domain	*ppi_domain;
+> > > > > > +};
+> > > > > > +
+> > > > > > +static struct gicv5_chip_data gicv5_global_data __read_mostly;    
+> > > > >     
+> > > > > > +static void gicv5_hwirq_eoi(u32 hwirq_id, u8 hwirq_type)
+> > > > > > +{
+> > > > > > +	u64 cddi = hwirq_id | FIELD_PREP(GICV5_GIC_CDDI_TYPE_MASK, hwirq_type);    
+> > > > > 
+> > > > > Slight preference for not needing to care where hwirq_id goes in CDDI or how big
+> > > > > it is (other than when I checked the header defines).
+> > > > >  
+> > > > > 	u64 cddi = FIELD_PREP(GICV5_GIC_CDDI_ID_MASK, hwirq_id) |
+> > > > >         	   FIELD_PREP(GICV5_GIC_CDDI_TYPE_MASK, hwirq_type);
+> > > > > 
+> > > > >     
+> > > > > > +
+> > > > > > +	gic_insn(cddi, CDDI);
+> > > > > > +
+> > > > > > +	gic_insn(0, CDEOI);
+> > > > > > +}    
+> > > > >     
+> > > > > > +static int gicv5_ppi_irq_get_irqchip_state(struct irq_data *d,
+> > > > > > +					   enum irqchip_irq_state which,
+> > > > > > +					   bool *state)
+> > > > > > +{
+> > > > > > +	u64 hwirq_id_bit = BIT_ULL(d->hwirq % 64);
+> > > > > > +
+> > > > > > +	switch (which) {
+> > > > > > +	case IRQCHIP_STATE_PENDING:
+> > > > > > +		*state = !!(read_ppi_sysreg_s(d->hwirq, PPI_PENDING) & hwirq_id_bit);    
+> > > > > 
+> > > > > Technically don't need the !! but if you really like it I don't mind that much.
+> > > > >     
+> > > > > > +		return 0;
+> > > > > > +	case IRQCHIP_STATE_ACTIVE:
+> > > > > > +		*state = !!(read_ppi_sysreg_s(d->hwirq, PPI_ACTIVE) & hwirq_id_bit);
+> > > > > > +		return 0;
+> > > > > > +	default:
+> > > > > > +		pr_debug("Unexpected PPI irqchip state\n");
+> > > > > > +		return -EINVAL;
+> > > > > > +	}
+> > > > > > +}    
+> > > > > 
+> > > > >     
+> > > > > > +static int gicv5_irq_ppi_domain_translate(struct irq_domain *d,
+> > > > > > +					  struct irq_fwspec *fwspec,
+> > > > > > +					  irq_hw_number_t *hwirq,
+> > > > > > +					  unsigned int *type)
+> > > > > > +{
+> > > > > > +	if (!is_of_node(fwspec->fwnode))
+> > > > > > +		return -EINVAL;
+> > > > > > +
+> > > > > > +	if (fwspec->param_count < 3)    
+> > > > > 
+> > > > > I don't care that much, but could relax this seeing as fwspec->param[2]
+> > > > > isn't used anyway? Maybe a tiny comment on why it matters?
+> > > > >     
+> > > > > > +		return -EINVAL;
+> > > > > > +
+> > > > > > +	if (fwspec->param[0] != GICV5_HWIRQ_TYPE_PPI)
+> > > > > > +		return -EINVAL;
+> > > > > > +
+> > > > > > +	*hwirq = fwspec->param[1];
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * Handling mode is hardcoded for PPIs, set the type using
+> > > > > > +	 * HW reported value.
+> > > > > > +	 */
+> > > > > > +	*type = gicv5_ppi_irq_is_level(*hwirq) ? IRQ_TYPE_LEVEL_LOW : IRQ_TYPE_EDGE_RISING;
+> > > > > > +
+> > > > > > +	return 0;    
+> > > > > 
+> > > > >     
+> > > > > > +static int __init gicv5_of_init(struct device_node *node, struct device_node *parent)
+> > > > > > +{
+> > > > > > +	int ret = gicv5_init_domains(of_fwnode_handle(node));
+> > > > > > +	if (ret)
+> > > > > > +		return ret;
+> > > > > > +
+> > > > > > +	gicv5_set_cpuif_pribits();
+> > > > > > +
+> > > > > > +	ret = gicv5_starting_cpu(smp_processor_id());
+> > > > > > +	if (ret)
+> > > > > > +		goto out_dom;
+> > > > > > +
+> > > > > > +	ret = set_handle_irq(gicv5_handle_irq);
+> > > > > > +	if (ret)
+> > > > > > +		goto out_int;
+> > > > > > +
+> > > > > > +	return 0;
+> > > > > > +
+> > > > > > +out_int:
+> > > > > > +	gicv5_cpu_disable_interrupts();
+> > > > > > +out_dom:
+> > > > > > +	gicv5_free_domains();    
+> > > > > 
+> > > > > Naming is always tricky but I'd not really expect gicv5_free_domains() as the
+> > > > > pair of gicv5_init_domains() (which is doing creation rather than just initializing).
+> > > > > 
+> > > > > Ah well, names are never prefect and I don't really mind.
+> > > > >     
+> > > > > > +
+> > > > > > +	return ret;
+> > > > > > +}
+> > > > > > +IRQCHIP_DECLARE(gic_v5, "arm,gic-v5", gicv5_of_init);    
+> > > > >     
+> > > >   
+> > >   
+> 
 
