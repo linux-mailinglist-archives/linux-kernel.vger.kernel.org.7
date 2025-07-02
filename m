@@ -1,206 +1,123 @@
-Return-Path: <linux-kernel+bounces-712944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596E1AF111A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:05:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E77AF1122
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE8D1C22674
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8118F1C22827
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCCB2517AF;
-	Wed,  2 Jul 2025 10:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FA1256C76;
+	Wed,  2 Jul 2025 10:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+7T92zz"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aGTeaalE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF862367A2;
-	Wed,  2 Jul 2025 10:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA6325485F;
+	Wed,  2 Jul 2025 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751450723; cv=none; b=PoddB8VsGVnvfOhQ0Qlz9cQoqaTuCcSLeW+Si5niVwQkTIcQx5wG/mbb7RrJFpg5v0N1736mvUDZAYd1oS5+mqPgnTTto7n6kWIID0zpQ64dnxPHPxYJ+9DnhsVUo1cF0zsE0acJXkiE0pJBAItBpKq4pa3PR6BRiP6nSY9RyVw=
+	t=1751450739; cv=none; b=B+UOOX1O+Uf9v1fbIAgvPXzmb2OYnL0YHCLYpSqRfQVD0xtvKzJqRXfgnpxIl4Ds4823CLzF87LmXMOun2KeJCuoGv9jxqqpDeKchnuKA7VSG3ZUUXLTUPFIvCuSHTCrM6FrDGevOQrN4wLdPR0HGQuF+z2/zXtPQJvZMrFrEBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751450723; c=relaxed/simple;
-	bh=BZYRZ5TFWTzUNC3kGwjRxau2NjTbkYh6g4ciUE81fiA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rRfPND9ghT88Y+ph547ksGjEpvFNFtCXzIQsbqbS4nrBUQFSR491xRR7xSGgwVd3vKLhbB0+egJf34Xzy7WO3+Z8y3EuXByNupGhNVXtauFg5GM5OC+iX9Er8qZz27IEEjn/CZ5uJbyzR5CtWA3ZtZ1RhOvCmZTUQc5+0SpGjVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+7T92zz; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7494999de5cso5054466b3a.3;
-        Wed, 02 Jul 2025 03:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751450722; x=1752055522; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a1APMQxBHqNTDFKhYsPJPgE3N0Q/GtKtTrkho+3f+8U=;
-        b=R+7T92zzBmN0rC2/JzA8cdsRvjhFkQ66Iey249PTy2ulbDNWOBpOLEghj3T1LrQtI0
-         baHETR4Luv+Ofm+qOHRhbn6JHhv4dNZJDZs6ZTBiMWy+/koMaoNLVLpPfFg0sDuT93g7
-         KFREq9Gyv29xHTFURdNspaCZ9wPo0GYKy/HC+9Q30/7duTgKyZm3xN2ApK4OqYLOcPv3
-         mkaRQZKr4B8rzUateJAjyyMvfo+ofoQUZ/RrKDDGsY/E9m4ICZ+UNULExRunZ7+jZxsg
-         knHVzXcmXiPupwqJpPr9BncjqODCpIVQqvuroO5C/Ow8a557u8GUhncI/TpX5IdsvVd5
-         tbPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751450722; x=1752055522;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a1APMQxBHqNTDFKhYsPJPgE3N0Q/GtKtTrkho+3f+8U=;
-        b=RmgBKYsrzDpHqMCBspJB3dTvdLW43eSo7JUzWHvmhE8DGeBj17rJw6S6U9pZ5aQhaH
-         Pasyx0w+LEyiY9iIFWmJb2Y4VpcETaaYpZI7UFX+P7eM9yCXeleJed3EjYM3V+exIzRM
-         TYntCKV/2F11BbR3r6iaqwsDNDyo550sgZZZMNaiMxKl4o/XM6Zah2k/UejRCQhIVhpC
-         1ntULs11p4+J6dKR1isQyXIY5BNugCjKLF0Da8K+JiJT5t/jwsi6kkHouk/kzcWxhDyI
-         LMzymMIZjb0AD+YoKdcWe4NJtjhvBxAIxMkV+kxhIonSuP8/1OGtMjmfca146e7ehx+Z
-         hIEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHdehDxcdYajcevn6i35750FopPZ2CyZ9PF2m/12NG+8+nGPw4kQXIf/DDtagEUkEBh//Xmwfs@vger.kernel.org, AJvYcCV2zbzFcTd+hjm2jOci8HyUK98bK2SUUsIkiHHs3kxU+x3LvrtzH/rxzVuPEyepDIK/KUi9pDz+6VzAB4ZZ@vger.kernel.org, AJvYcCVRJVqrDpZyYansvtgOmQrJ85oamEXvukRPMH+eDWCwPVATcurn+v1uk0EyOUs74DMIY50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG8pG850Go3L0BDz/bIO+kvXzemR3D3dHk9WQG1NfN1EcgPf+E
-	seN6mir4PMOO4oThKlGrsEozNYClcC8RKbPRp1feDwp9u4iHn9n4C5aQfZjwquv+qFdE6cf5
-X-Gm-Gg: ASbGncuV/EzgZmAd0CG44HhLNggTt/9nkqMv4qcMjr31Xg3gsSAqyxIdjc849MVly7/
-	/rPkflB6yv9mKHuCTVYRKcyfJJowbRlBO0RQAFZ8l6ejtGRYDFrR/QUqFDd+TM/wSSOE0DPvj0m
-	kLSjomPPQSSTLesxrHsIMJnFtCDJbrpB7MpgqxL+4eBwClkZD6Tyhm1VOEDxm5ANiBJJqRw/qt+
-	imGHngKgup+VhIN/ZqZ6Uyi6uNeFybDykEPXjdCDJYWU7BlIklmFitE59enFfW9vPFyLzevSoxh
-	wL4Gyqq3d4WaKRFmIXZVymOG613jtMoyRp2BuVGwPGQ56C2Z9pQ+bg3DWM7ruDrdQmKQTQQ=
-X-Google-Smtp-Source: AGHT+IFWOp01aw0H2f+dLbLSHH5rCRbGt+ICBReE5quNPSyRzZo0OhEWZTb45SRGcAxR8wdlx3Dh8Q==
-X-Received: by 2002:a05:6a00:1411:b0:747:b043:41e5 with SMTP id d2e1a72fcca58-74b5126b4f3mr2992134b3a.16.1751450721399;
-        Wed, 02 Jul 2025 03:05:21 -0700 (PDT)
-Received: from smtpclient.apple ([23.132.124.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74af57ef4dbsm14257833b3a.160.2025.07.02.03.05.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jul 2025 03:05:20 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1751450739; c=relaxed/simple;
+	bh=Bw4Y/IgagKvBTqG1QoK2vY6ZG8eSZpTmBIYDJdyKhEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aC18cO1CSMIVonyzKJ+d7ocx+BS6TjejfKzRghhdo/LvP4IbvUKkLzFAYWbYxcVugZ2KFlZbIbdMcro/byOm2Rg0H9nRiszx5HLLkboNZ3dxQ1yj4cjgScVx73pYFnOcIk8bkLCS8nCtGi3Muo5L6KOupFZfpEEvaiVvN/chtfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aGTeaalE; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751450738; x=1782986738;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Bw4Y/IgagKvBTqG1QoK2vY6ZG8eSZpTmBIYDJdyKhEo=;
+  b=aGTeaalEm21+fEB4v9Qq8y/o5jUNBjzRJiaafiKjjpIx9nxC1KYVKbEm
+   5QbZ7wZPCCyUpYzvfhg+DzT29IKMzdYGxxsdeaSAtWhJBL+moR2INjplp
+   HR0myeejTyxHqSDUVbHFFFHFSQF8vJ5KdB0ZXAdWmGPgwP3qUUW7lHbso
+   Kmjpsy9fQbSA5LzEIOf61vdCCFxhT8+XRNdLhH0hncswU5oY0TchXn1o2
+   DLi/thN+aOj92wL0Zt9OeYKeO+IyPeZyUjIHD1Dxzdx0Bsn8gO5Puxy/t
+   x+qdQSj9I37/WHXHyS7gto91UFjBsYU1RbuUSWTQuyv/2Z0n3x8muDsW1
+   A==;
+X-CSE-ConnectionGUID: 3d9RAxt3RmaF5x5jUpO1Vg==
+X-CSE-MsgGUID: kC5B5/5uQtm2tf0ZTvZE0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53605736"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="53605736"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 03:05:36 -0700
+X-CSE-ConnectionGUID: 5CGaxxggTDqWWnHrDvXjCQ==
+X-CSE-MsgGUID: e6lTZ57AR666aCfvszHJlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="154516220"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 02 Jul 2025 03:05:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 689101E0; Wed, 02 Jul 2025 13:05:23 +0300 (EEST)
+Date: Wed, 2 Jul 2025 13:05:23 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv8 04/17] x86/cpu: Defer CR pinning setup until after EFI
+ initialization
+Message-ID: <2n2knq4wkzyfr35udpxawgnc4ykk7s77yavu3crnzf77wjaj4c@njyscphln4gl>
+References: <20250701095849.2360685-1-kirill.shutemov@linux.intel.com>
+ <20250701095849.2360685-5-kirill.shutemov@linux.intel.com>
+ <841a200e-bcf0-4488-acbd-c00396a9ccd2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RESEND PATCH net-next v4 2/4] hv_sock: Return the readable bytes
- in hvs_stream_has_data()
-From: Xuewei Niu <niuxuewei97@gmail.com>
-In-Reply-To: <mofyjvpvlrh75sfu7c7pi4ea6p5nkatkqqtnwpwne7uuhhl5ms@gaqcs3m6i6kx>
-Date: Wed, 2 Jul 2025 18:05:03 +0800
-Cc: mst@redhat.com,
- pabeni@redhat.com,
- jasowang@redhat.com,
- xuanzhuo@linux.alibaba.com,
- davem@davemloft.net,
- netdev@vger.kernel.org,
- stefanha@redhat.com,
- leonardi@redhat.com,
- decui@microsoft.com,
- virtualization@lists.linux.dev,
- kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- fupan.lfp@antgroup.com,
- Xuewei Niu <niuxuewei.nxw@antgroup.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FDB4EF2E-60B4-4264-9F7F-3AA14A60F119@gmail.com>
-References: <20250630075727.210462-1-niuxuewei.nxw@antgroup.com>
- <20250630075727.210462-3-niuxuewei.nxw@antgroup.com>
- <mofyjvpvlrh75sfu7c7pi4ea6p5nkatkqqtnwpwne7uuhhl5ms@gaqcs3m6i6kx>
-To: Stefano Garzarella <sgarzare@redhat.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <841a200e-bcf0-4488-acbd-c00396a9ccd2@intel.com>
 
+On Tue, Jul 01, 2025 at 04:10:19PM -0700, Dave Hansen wrote:
+> On 7/1/25 02:58, Kirill A. Shutemov wrote:
+> > Move CR pinning setup behind the EFI initialization.
+> 
+> I kinda grumble about these one-off solutions. Could we just do this
+> once and for all and defer CR pinning as long as possible? For instance,
+> could we do it in a late_initcall()?
+> 
+> Do we need pinning before userspace comes up?
 
-> On Jul 2, 2025, at 17:58, Stefano Garzarella <sgarzare@redhat.com> =
-wrote:
->=20
-> On Mon, Jun 30, 2025 at 03:57:25PM +0800, Xuewei Niu wrote:
->=20
-> IMO here you should not reset the author to you, but you should keep
-> Dexuan as authour of this patch.
+Hm. I operated from an assumption that we want to pin control registers as
+early as possible to get most benefit from it.
 
-Well, I did that. However, `./scripts/checkpatch.pl` is unhappy wihtout =
-my SOB.
-Perhaps I should ignore it, and will do in the next :) =20
+I guess we can defer it until later. But I am not sure late_initcall() is
+the right place. Do we want random driver to twiddle control registers?
 
->=20
->> When hv_sock was originally added, __vsock_stream_recvmsg() and
->> vsock_stream_has_data() actually only needed to know whether there
->> is any readable data or not, so hvs_stream_has_data() was written to
->> return 1 or 0 for simplicity.
->>=20
->> However, now hvs_stream_has_data() should return the readable bytes
->> because vsock_data_ready() -> vsock_stream_has_data() needs to know =
-the
->> actual bytes rather than a boolean value of 1 or 0.
->>=20
->> The SIOCINQ ioctl support also needs hvs_stream_has_data() to return
->> the readable bytes.
->>=20
->> Let hvs_stream_has_data() return the readable bytes of the payload in
->> the next host-to-guest VMBus hv_sock packet.
->>=20
->> Note: there may be multpile incoming hv_sock packets pending in the
->> VMBus channel's ringbuffer, but so far there is not a VMBus API that
->> allows us to know all the readable bytes in total without reading and
->> caching the payload of the multiple packets, so let's just return the
->> readable bytes of the next single packet. In the future, we'll either
->> add a VMBus API that allows us to know the total readable bytes =
-without
->> touching the data in the ringbuffer, or the hv_sock driver needs to
->> understand the VMBus packet format and parse the packets directly.
->>=20
->> Signed-off-by: Dexuan Cui <decui@microsoft.com>
->> Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
->> ---
->> net/vmw_vsock/hyperv_transport.c | 16 +++++++++++++---
->> 1 file changed, 13 insertions(+), 3 deletions(-)
->>=20
->> diff --git a/net/vmw_vsock/hyperv_transport.c =
-b/net/vmw_vsock/hyperv_transport.c
->> index 31342ab502b4..64f1290a9ae7 100644
->> --- a/net/vmw_vsock/hyperv_transport.c
->> +++ b/net/vmw_vsock/hyperv_transport.c
->> @@ -694,15 +694,25 @@ static ssize_t hvs_stream_enqueue(struct =
-vsock_sock *vsk, struct msghdr *msg,
->> static s64 hvs_stream_has_data(struct vsock_sock *vsk)
->> {
->> 	struct hvsock *hvs =3D vsk->trans;
->> +	bool need_refill =3D !hvs->recv_desc;
->=20
-> For v5 remember to fix this as Paolo suggested. Dexuan proposed a fix =
-on his thread.
-
-Will do. And big thanks to Dexuan for the great work.
-
-Thanks,
-Xuewei
-
-> Stefano
->=20
->> 	s64 ret;
->>=20
->> 	if (hvs->recv_data_len > 0)
->> -		return 1;
->> +		return hvs->recv_data_len;
->>=20
->> 	switch (hvs_channel_readable_payload(hvs->chan)) {
->> 	case 1:
->> -		ret =3D 1;
->> -		break;
->> +		if (!need_refill)
->> +			return -EIO;
->> +
->> +		hvs->recv_desc =3D hv_pkt_iter_first(hvs->chan);
->> +		if (!hvs->recv_desc)
->> +			return -ENOBUFS;
->> +
->> +		ret =3D hvs_update_recv_data(hvs);
->> +		if (ret)
->> +			return ret;
->> +		return hvs->recv_data_len;
->> 	case 0:
->> 		vsk->peer_shutdown |=3D SEND_SHUTDOWN;
->> 		ret =3D 0;
->> --=20
->> 2.34.1
->>=20
->=20
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
