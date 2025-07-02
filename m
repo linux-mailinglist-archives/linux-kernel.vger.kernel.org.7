@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-713797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD4FAF5E95
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE9AAF5E9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2914E16E0F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:28:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50388171C9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98EF2ECEB1;
-	Wed,  2 Jul 2025 16:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="PqdqjY1t"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4694F2FF490;
+	Wed,  2 Jul 2025 16:28:54 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8042D0C8D;
-	Wed,  2 Jul 2025 16:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C7D1E8338;
+	Wed,  2 Jul 2025 16:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751473689; cv=none; b=SSFgiG3orQzjpVhsAa5sCcDgFKIckaZW2j5WWWvEa/8PiLIka1MK5ThwHWoXpPVAOxwSdoCyp9P+p9iltzU+ZKXlhgoyFT+A4n8wYObxrfSjnS89PNQlNIbACiu4e86tcZ7ULwLNElNd2ugmJMhC3xnC1jhF6iW2Ydtjw9YToLw=
+	t=1751473733; cv=none; b=CzL8TJcPuU+eDGnn1sELTnDW4xk3WKsMy/xRoifkrH0jEuDIT8At5uiSTjCdenRBofFKpxva5cAa5KIKZps5gdkyJrUdw9PWmrQ5Dn6/aBBS+IiqohW56w5IL+gO9KSVMnkoujAL1R4VCiAmaEe0/uuYouDuc6DB0OwerGaX8rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751473689; c=relaxed/simple;
-	bh=ZCTshSXQVcM1KFm7TGSucuLFTkQjMwCjolHqQrquCrk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=roC6F+KXL4hcsKJa1Ne9iQC/l9PyWhTYHNxG1gDC11mxv1R83vu0mApftPeoKyy7VeA3/fY5X9/WfoV8YaclxYCvFT3FkOzRz7O4d3RitJb/Dd/Dz3z5W9oS0pjT5KFIKFuaqYwqq5gozAlfNvckzgoLWDe2YtpzAJrIkz04XUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=PqdqjY1t; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-235a3dd4f0dso44490275ad.0;
-        Wed, 02 Jul 2025 09:28:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1751473686; x=1752078486; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCTshSXQVcM1KFm7TGSucuLFTkQjMwCjolHqQrquCrk=;
-        b=PqdqjY1t0HMPnZWtHgWQVhH7qQvZJuCp1mzKMZGAIMa7ThO9T6KC6+q0VSEUFurrsE
-         mGH0MeUUPGVGyXobPgHgk+cTMuGpbkwaUzdczAnMpB8nW2ahwnEjhSmcZsbNcLUpBj5a
-         0AxCfv/pDxU+RAneMFh5QAtBpDnntztBFn+3sKNQ9ntAlXCT1+vOEkKb6asb91POl5qM
-         ArK3pRKE+cwJVGqZ4+95puA5lXyRXLMs9yenTR2en4W1LFF6nIj1RxSyxfDF9uu2xeyV
-         cGjXKRtocR2iohFKv5mT3eAV61R23H8lu8qIlccfM7oNOX1a98qKih6cGacVddtjFGsJ
-         Eneg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751473686; x=1752078486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZCTshSXQVcM1KFm7TGSucuLFTkQjMwCjolHqQrquCrk=;
-        b=rAenuvMQ1Wn/w91HiE1t4GulWldlqxt+AzBE4tVRxuUf/zHa+zYkD1jBlNYTgUQif5
-         EnVujVWukPxo+jSvQdx9RqiBgtLO/qualuicAD6uYmdwRpB/81T5O5MqV0jvwgN66Ul6
-         e0qsOiPZAFmz7UOsEJGlExZ6ujZBsd61LkJjo6OX3uvnSZ1Tiw9xYkn+AJQNVRQTWd0Q
-         2dMQxn1hy9aS8kLi1/efZWqHmTwbk2OWeuUbi3X5ZbJvscUYt1cLA9U5k71KRHWj2JGQ
-         7Jf9FWUFeioLy/b+3jd/B8IjieKM6adRg4WtqXe9r4Ggg9L+imnFacKWmbeCoZUSbz6f
-         l7YA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf0irGCeM9f9I5D+0ZkwT10rSgF4GIbc0C2mOnn1kxZ69NPaFgI5ZPYtsEILdSDq+Tgk6fV9kPTyCeqnw=@vger.kernel.org, AJvYcCWTBrS9WEXfl3N7fg+aRalD+320rsz58ig4NKw9H3keABq5qfF1sQehKmYlHXTRfQ3qZabbV6U39pay@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjZ+68U9nqNDJmj2IMkh4+O6qy5+36vWBtfB5rfLyXuKOiLicB
-	+Kwui1LcUfkCcHW8Q9LKzBKAYVCFD2g8d6yJpxyuO1yzT6agzMWltlBzUKna7MKh/p8crpP9Rao
-	FTVrsW6Ap3zEUAtbqszddkD0MAymLvGk=
-X-Gm-Gg: ASbGncs4042TL6ogYo6A/zdwVKaurlDnE0kwhN1/Or6PFNhT6KefQpM4lFffxMcVGdt
-	bvH/pALtwxEWlo56agxtIqdAxjYvvrMCj7Q3HE2uiT9kaOrgiSus0xOktpf6JQQI6uf/6zfkDNl
-	Y6ttHwQ6rObCsfC9vgs54qtdRWRe/suBR11HhwZ/0ICLOY0ZbsYozghveolnVTiEg9Ew+B4/LuS
-	8Qo
-X-Google-Smtp-Source: AGHT+IF14YYWtSQVLNWBilfTD0yTzo9aWZ97ZCPc9J9lKF7t4wOtrLhQknUMxWAgb+WT7kDpQ/opeNe9S8UxrZAnEVk=
-X-Received: by 2002:a17:903:1ae3:b0:22e:421b:49b1 with SMTP id
- d9443c01a7336-23c6e5d61d7mr51904205ad.48.1751473686514; Wed, 02 Jul 2025
- 09:28:06 -0700 (PDT)
+	s=arc-20240116; t=1751473733; c=relaxed/simple;
+	bh=O78i3PtYhDv6nhyXLLngxRq6HcuIuz811l6iEc8QL50=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KOPKdggoSBvfTHyn3OxgwAhjPoxc/4ryLuS4vsUwK7zigJIQOy5seP+RFMjxgQAE0D9wqOgBnlAu3MzOwGMoFl8FiR4+r4w4M1b+CZ8sCRZIXwstX6iWaHUX6Lm/jA7ts9Ng2rfT6b97/gREHEFqDvKlrsdWMoRYRYzjH8S9oBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id DAD3D1602BE;
+	Wed,  2 Jul 2025 16:28:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 2B2DB20025;
+	Wed,  2 Jul 2025 16:28:38 +0000 (UTC)
+Date: Wed, 2 Jul 2025 12:28:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat
+ <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v12 08/11] perf tools: Minimal CALLCHAIN_DEFERRED
+ support
+Message-ID: <20250702122837.4bb6f259@batman.local.home>
+In-Reply-To: <51903e66-56bc-42a4-b80c-9c3223e2a48a@linux.ibm.com>
+References: <20250701180410.755491417@goodmis.org>
+	<20250701180456.884974538@goodmis.org>
+	<51903e66-56bc-42a4-b80c-9c3223e2a48a@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250628015328.249637-1-da@libre.computer> <CANAwSgTH67T9SBQSFQgFjvyrxNCbtfd9ZaCDZFACWA=ZQ-PYtQ@mail.gmail.com>
-In-Reply-To: <CANAwSgTH67T9SBQSFQgFjvyrxNCbtfd9ZaCDZFACWA=ZQ-PYtQ@mail.gmail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Wed, 2 Jul 2025 18:27:55 +0200
-X-Gm-Features: Ac12FXxvG-ViHEbQFCSslz9e9T4bovXAzoVxc9U88YSGNB8BC_29uQExD1MkQUM
-Message-ID: <CAFBinCBwTkVwcBTWOzS+G13+rRM2eftMXZ3GHzW+F+BY0bBBzg@mail.gmail.com>
-Subject: Re: [RFC] mmc: meson-gx-mmc: add delay during poweroff
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Da Xue <da@libre.computer>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: hrz3gr8g8fnuszqbuqb6g7193rtpwyne
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 2B2DB20025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19STW27tMHZTYbWFvw7VDDjMIJafpmxz8w=
+X-HE-Tag: 1751473718-90826
+X-HE-Meta: U2FsdGVkX19qOqy4HoAPzJi9tpj2DHOur5zvbjBtGWXEhvfNsWPD0KDCFYiPR4CkwkQ/ooiR8NESddj/qft5mDm4IdNoqp3V4wBKp24XYQWpoLRCsLAlZ4jvr3LzyLKZ3GjuwUqlimtshFO80UcXhVoqEayyxTlkagitb2hc613XuGtjeFqncew5yn/9dK6m94OoUDvNAlgL5mAV++k88I0zlFSSGn4lZTmhBCQ00HUialrop1Ml7rkRf29Qzq56ZWCmz7tAZ+voi/r5jCuwB33TfYsDhjyK9ZI6UZLegM6PKOSA2iScAoj2FCqscd4gAVlMcZ6jFS1YNwcVmuV8pdg+OMaVyOJv
 
-Hi Anand,
+On Wed, 2 Jul 2025 14:23:24 +0200
+Jens Remus <jremus@linux.ibm.com> wrote:
 
-On Tue, Jul 1, 2025 at 12:00=E2=80=AFPM Anand Moon <linux.amoon@gmail.com> =
-wrote:
->
-> Hi Da,
->
-> On Sat, 28 Jun 2025 at 09:15, Da Xue <da@libre.computer> wrote:
-> >
-> > Regulators controlling the SD card power need some settling time for SD
-> > cards to fully reset from UHS modes. The regulator framework seems to
-> > ignore falling times set in the device tree causing a few boards with t=
-he
-> > same hardware implementation to hang on reboot because the SD card stil=
-l
-> > had some voltage and did not reset properly to be initialized again.
-> >
-> > Add a delay sufficiently long for the voltage to drop so that the SD ca=
-rd
-> > can reset properly. Otherwise the reboot will hang at missing SD card
-> > especially with Samsung cards.
-> >
-> Although the driver defines reset identifiers such as
-> RESET_SD_EMMC_A, RESET_SD_EMMC_B, and RESET_SD_EMMC_C,
-> It does not implement proper reset controller functionality,
-> specifically lacking support
-> for reset_control_assert() and reset_control_deassert() operations.
-I think there's a misunderstanding:
-The meson-gx-mmc driver calls device_reset_optional() during .probe
-which will internally call reset_control_reset().
-So I don't see a problem here.
+> > +struct perf_record_callchain_deferred {
+> > +	struct perf_event_header header;  
+> 
+> At minimum the timestamp field added to perf with "[PATCH v12 07/11]
+> perf: Support deferred user callchains for per CPU events" needs to be
+> added here as well:
 
-The patch seems more about power sequencing, where either the SD card
-or regulator used to power the SD card requires a certain amount of
-time (delay) when switching from ON -> OFF -> ON (my understanding is:
-without this delay the card sees ON -> ON which fails to update some
-state internally).
+Thanks for the review.
 
-To me it's not clear if this is a property of the SD spec or rather
-the regulator.
-Ulf, Jerome - any ideas / inputs from you?
+> 
+> 	__u64			 timestamp;
+> 
+> Otherwise this and any subsequent enhancements of the perf tools do no
+> longer work at all.  But probably the timestamp field also needs to be
+> used for some purpose?
+
+OK, so this may be part of the discussion about using this as a
+timestamp. The timestamp is the timestamp given by the deferred trace
+infrastructure. It holds the time that this stack trace is valid for.
+But that's assuming that the timestamp is the same as what perf is
+using.
+
+In case of dropped events, we could have the case of:
+
+  system_call() {
+    <nmi> {
+      take kernel stack trace
+      ask for deferred trace.
+
+   [EVENTS START DROPPING HERE]
+    }
+    Call deferred callback to record trace [ BUT IS DROPPED ]
+  }
+
+  system_call() {
+    <nmi> {
+      take kernel stack trace
+      ask for deferred trace [ STILL DROPPING ]
+    }
+    [ READER CATCHES UP AND STARTS READING EVENTS AGAIN]
+
+    Call deferred callback to record trace
+  }
+
+The user space tool will see that kernel stack traces of the first
+system call, then it will see events dropped, and then it will see the
+deferred user space stack trace of the second call.
+
+If the timestamps are in sync with perf and what is passed in, then the
+tool will see that the kernel stack traces from the first system call
+are older than the timestamp of the user stack trace and know that they
+are not related.
+
+Without either saving the timestamp along with the kernel stack traces,
+or having the timestamps in sync, user space will not know whether or
+not if the user space stack trace of the second system call belongs to
+the kernel stack traces that were recorded in the first system call.
+
+I guess the question is, do we just not associate stack traces beyond
+where events are dropped? If so, we don't even need to save the
+timestamp.
+
+-- Steve
 
 
-Best regards,
-Martin
+> 
+> > +	__u64			 nr;
+> > +	__u64			 ips[];
+> > +};
 
