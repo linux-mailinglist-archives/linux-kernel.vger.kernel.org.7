@@ -1,253 +1,134 @@
-Return-Path: <linux-kernel+bounces-713563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D397AF5B7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:45:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4AFAF5B74
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0E516D632
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F91C4297B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3418309DD9;
-	Wed,  2 Jul 2025 14:45:36 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE983093BB;
+	Wed,  2 Jul 2025 14:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7fJak/R"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D112BCF51
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812EF307AE8;
+	Wed,  2 Jul 2025 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751467536; cv=none; b=dS7cmoR9J9/THZ3Ngt6dIjVMz8i1MwuKH+A/QLgc7scoVBoBOnSMBygRx8SuXfxSUxGdHzkLpYaii/i5BHsdlgtvbMNRwNSQlvf4rVFthswvxvUxAqbV43imPiStR5zfBiSrc+nyOQPC5b/c/y9YSLroTJChkxCRMEoPM191rhs=
+	t=1751467482; cv=none; b=DQ8zwHdWL5m62vUe6gqm4H2Pg52XWlojIMFalNkcoFx+//hsHvCFy+6OY0uUuNgTzBL1eXX8bDSBKUT54CggCMeagCVdKc2/jq1eyBYCQFR+OZAhWvepVtttEU7XrNV+jb5GB3UfTYBVxtl6qzYBMx6PiSlYDWebShj9Rwwa/WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751467536; c=relaxed/simple;
-	bh=KnRsXxuS3PYx608n/NKuWFSSfCm14iJU6Ylj55wt3Vo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bRY90HhTLP1Kub7zEXN4pSmfahc9Dc6L8uf0/fAEVnVeIiXgSWpbWit8e5EX0mmZNiRehaRDYBDOUlwkaWXwgoaA8hCgrRwahFQzeE9q4503VRsJ875bjITqbIfxD8VHi+627QYCUv0A8EDUGgK9zDRL733c34BZebQXN8rcRok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ddc5137992so49902895ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:45:34 -0700 (PDT)
+	s=arc-20240116; t=1751467482; c=relaxed/simple;
+	bh=dIhZkNW3gjEURrt2LwtYenbRsdX0gVg1dIBAdJYfSgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGrchqS22kfFnglWe6zA1qZQwF1zFQSPmFaJzQnfBqPvFcg7BtwFuOAsl7Aql2yiY1rh0TdGYYaai9eqK39kM5OZmHi3+69qwAL20o2ktOqU1hk8XJ9cQmPrGG/RtNeRUdkE8UJmRIpRB/18hsh9Yi4u/rckfsEPsl/iE0Tnig4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7fJak/R; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d3cc0017fdso488724685a.3;
+        Wed, 02 Jul 2025 07:44:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751467479; x=1752072279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVAUHsF9DNYSa/iYiugjbpYggI5LGAKgst70gtbBVuQ=;
+        b=O7fJak/RjWVRz1KYw2g/xdaxguuFW/HJZPcOaj5pEj9ID0Qgqdzyx7Vtybt7VPREDZ
+         qj9SNcbmP4DWL1SPB7iLZWe7iNHy4oArNGB0tEz1tcKNzTphbnYK6ChWj7NWelQ5G3LG
+         BOwEz0kwx0zb5m1Hwk5KQfOlVht9ts5iaOM7noUW+INQ0ytSQhp8+SNxINioHCkaf/Yo
+         AkaMKk8RREl2n7X5AlC3RzVgg3BHHqjxQCCW4Zfdeyia06hr3G9ZZ1MQPbE9RBxaA13B
+         vjVc7lUJDJDaNDWj734UvZqCj9tXqCMAZOZG56+SvD/RA2gyQKoN1uSd+0kKOvKNZTzH
+         +6RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751467534; x=1752072334;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b+oqTp2Og2HX7h9r3Aolir1SZcv+7UJxoxCfvKCxR/E=;
-        b=RbsTzsAzahRb9tiTjNz4XdwU8XT47leEZNcMN0WiWbMC5dqzJ3uucoikZC4IG5vY8n
-         sLqN+nwpwSYJXYqFW0m7heBdNPhSpL2ZtDrUmflOdSUQ/+P0/i3c4X0SapuhJUBVl1ZV
-         8jBqghzpFEvsNR7m+zmZW21lxwxBYZdKwGUReh71vTTzeJaXE5/L2x1H5Hias2y2Avsj
-         GKyOlsMIzEDW8Z79y5hxExa3IbSIYMAmPp85OvO4tTTsRRamZpZ4WSd8dlwoXtW9lTdC
-         HDrB3xxsVIET5KpK/W6gHM3SYTnW/C1Z7Adq9/FO6dVJlvzviylVkmx2YSpwHbXa5hNr
-         /M7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgwR3XLPGzBItcVl9Vo7WHJeIkidrfYd6SwkbAVbAejLheEEHLIYqEqzVm+uttomoPEG/EJ1z/vv5+j4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAzTFzXKC/MQS8T7tzx/1viVoLklk584u5hsle9+v6/uI2fhoY
-	v7/mG6+qrNOUgWtCfXyhU0iTsdZx+BSF5ZdzkphDHzQtgIaRRXCMqO4TLOofg/Qr2BNeTY0b3gW
-	W9GBh3yY1DGNZG04imsae6QbL2hk1PkciJ0SpDSqErht+JWyb01DEsfwwvaM=
-X-Google-Smtp-Source: AGHT+IHjo7npVajFLK0WbnSNk9OjJnXgU9PyligF9JndywkNnLdbAESqQAfdNu8AIxGYTLz2dFiruIVNje7kxyXCi8thiNCg+D06
+        d=1e100.net; s=20230601; t=1751467479; x=1752072279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lVAUHsF9DNYSa/iYiugjbpYggI5LGAKgst70gtbBVuQ=;
+        b=DRhoaa86/7qcOsrq6LmvnNexiirTp+sh8KR0yXailrGm78zB26uHgC9obBb9eIeBRP
+         MnjCKUkWBdJ2Oj2ozE6bSkxRmJwlYbsWiFE4Qzsw+l3M30OGQlUkkCnp6kjhdsWLTbNQ
+         EdKLc7c0ixt/0kgp0QXTvgJIm5LmQ4kMKxjAaKwPUYApz3BS8nYdJvwmjkGE2CNiu4uy
+         naHfQB26pr86gP/pfxQmftZgTXAH86hybe7DANYaKVBPhy0cYUyP1IQkOyixlYz7RIS5
+         gN8Xl5i8/UMw6wzWDiCB8xyblJpOhUAox1VSLZDFiLWik8MiPLpoGL6dpKX3WY7XfaUa
+         ZfDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMP1KHwL4ZZby8FA3dSLzNxQ1aA60GDFhnrys1xDzTVVhJni0YVvptu9Ai2DnS4lkmT8WknSJuMbQ=@vger.kernel.org, AJvYcCXUXBD8xFmPxrTNphIr2oJ4OY3dMewTieHY40GLZsP8eli9fG6JoEvAarTTTHGzq3iSBxwlhmxTedkLXgXY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjDMeJhUkxEESehK8jYZeLgBctmqw7V6Oi+KbVzPAL4tRKM3yk
+	J5cKryVFf0e9/64wE9lsdFawSIcbl27MZqseRQGWkUujjtWDlaeCvRWD
+X-Gm-Gg: ASbGncs/6a1IxEF54lN53oSid4foXxFNYSkTyZfnEVZ0e1NrbL32tHYOWmqc1hvYrGk
+	o2GCEEKtQSk7JQlT2VkmMvd9I1LY71Yn6BWBj/IqGOT5BagZh6vI3XRzu6knRSOBxMs2HrIaX4C
+	ExyuGP5l7TcaxkmJwvUbpqS/TFfyXIoJw4RYUDBpUDKIJeq7tD2KFNE52lpyvvdQKbNmsKNPDmD
+	7MbK81INux4Yd8B6//kgF4hlf5nbbWxw2ZYgVbajtoNDA566LWCeeaX7T2iWXMOaHihT9sEfXVc
+	IZKcdvya8j9xkr8a2dLBxnT/aBOhP0/Y4U/2fl12rDzNkO0JqcL2x+zlcsR4Fce49cb1Pg==
+X-Google-Smtp-Source: AGHT+IEUUzQZ77xkfyRexb4hYyJNdV0cwKqIdsWyojwhD5PuT/fqb0HqrNPfKT4SY2N7KTfvoOQ7tQ==
+X-Received: by 2002:a05:620a:4711:b0:7d4:4b7d:fc66 with SMTP id af79cd13be357-7d5c4725221mr506896585a.18.1751467479088;
+        Wed, 02 Jul 2025 07:44:39 -0700 (PDT)
+Received: from localhost ([2804:30c:b15:b200:425a:de22:1d7f:2d4b])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d453bc5b00sm663795285a.92.2025.07.02.07.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 07:44:38 -0700 (PDT)
+Date: Wed, 2 Jul 2025 11:46:38 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad4000: don't use shift_right()
+Message-ID: <aGVGTn3zFV1CuSQp@debian-BULLSEYE-live-builder-AMD64>
+References: <20250702-iio-adc-ad4000-don-t-use-shift_right-v1-1-041c2d6c3950@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c5:b0:3df:3222:278e with SMTP id
- e9e14a558f8ab-3e054934f08mr41009735ab.1.1751467533742; Wed, 02 Jul 2025
- 07:45:33 -0700 (PDT)
-Date: Wed, 02 Jul 2025 07:45:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6865460d.a00a0220.270cb1.0001.GAE@google.com>
-Subject: [syzbot] [kernel?] general protection fault in __cpa_flush_tlb
-From: syzbot <syzbot+169412e85b1803dfda81@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702-iio-adc-ad4000-don-t-use-shift_right-v1-1-041c2d6c3950@baylibre.com>
 
-Hello,
+On 07/02, David Lechner wrote:
+> Drop use of shift_right() macro for unsigned value. The shift_right()
+> macro is intended for signed values and is not needed for unsigned
+> values.
+> 
+> This was found by a static analysis tool [1].
+> 
+> Link: https://github.com/analogdevicesinc/linux/pull/2831/files#diff-c14a34a6492576d22e7192cc0f61ad0083190aeb627191596fe12462f0c6f21aR557 [1]
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
-syzbot found the following issue on:
-
-HEAD commit:    1343433ed389 Add linux-next specific files for 20250630
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10aa93d4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c1ce97baf6bd6397
-dashboard link: https://syzkaller.appspot.com/bug?extid=169412e85b1803dfda81
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10ed648c580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c3387c64e9ec/disk-1343433e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/abf15e85d8dd/vmlinux-1343433e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/081c344403bc/bzImage-1343433e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+169412e85b1803dfda81@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: out-of-bounds in __cpa_flush_tlb+0x46/0x270 arch/x86/mm/pat/set_memory.c:407
-Read of size 8 at addr ffffc90003397920 by task syz-executor/5960
-
-CPU: 0 UID: 0 PID: 5960 Comm: syz-executor Not tainted 6.16.0-rc4-next-20250630-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <IRQ>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xd2/0x2b0 mm/kasan/report.c:521
- kasan_report+0x118/0x150 mm/kasan/report.c:634
- __cpa_flush_tlb+0x46/0x270 arch/x86/mm/pat/set_memory.c:407
- csd_do_func kernel/smp.c:134 [inline]
- __flush_smp_call_function_queue+0x370/0xaa0 kernel/smp.c:540
- __sysvec_call_function_single+0xa8/0x3d0 arch/x86/kernel/smp.c:271
- instr_sysvec_call_function_single arch/x86/kernel/smp.c:266 [inline]
- sysvec_call_function_single+0x9e/0xc0 arch/x86/kernel/smp.c:266
- </IRQ>
- <TASK>
- asm_sysvec_call_function_single+0x1a/0x20 arch/x86/include/asm/idtentry.h:709
-RIP: 0010:finish_task_switch+0x26b/0x950 kernel/sched/core.c:5181
-Code: 0f 84 3c 01 00 00 48 85 db 0f 85 63 01 00 00 e9 27 05 00 00 4c 8b 75 d0 4c 89 e7 e8 2f db e0 09 e8 3a 0e 36 00 fb 4c 8b 65 c0 <49> 8d bc 24 18 16 00 00 48 89 f8 48 c1 e8 03 42 0f b6 04 28 84 c0
-RSP: 0018:ffffc9000453f5f8 EFLAGS: 00000282
-RAX: 312751dada94af00 RBX: 0000000000000000 RCX: 312751dada94af00
-RDX: 0000000000000000 RSI: ffffffff8d992cd0 RDI: ffffffff8be31d00
-RBP: ffffc9000453f650 R08: ffffffff8fa17437 R09: 1ffffffff1f42e86
-R10: dffffc0000000000 R11: fffffbfff1f42e87 R12: ffff888021ed9e00
-R13: dffffc0000000000 R14: ffff888023f2da00 R15: ffff8880b863ab18
- context_switch kernel/sched/core.c:5316 [inline]
- __schedule+0x16fd/0x4d00 kernel/sched/core.c:6696
- preempt_schedule_common+0x83/0xd0 kernel/sched/core.c:6876
- preempt_schedule+0xae/0xc0 kernel/sched/core.c:6900
- preempt_schedule_thunk+0x16/0x30 arch/x86/entry/thunk.S:12
- idr_preload_end+0x126/0x200 include/linux/idr.h:191
- alloc_pid+0x35c/0xab0 kernel/pid.c:241
- copy_process+0x198e/0x3c00 kernel/fork.c:2184
- kernel_clone+0x21e/0x870 kernel/fork.c:2598
- __do_sys_clone kernel/fork.c:2741 [inline]
- __se_sys_clone kernel/fork.c:2725 [inline]
- __x64_sys_clone+0x18b/0x1e0 kernel/fork.c:2725
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd22b785193
-Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
-RSP: 002b:00007fff68c51808 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fd22b785193
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000001
-R10: 00005555595c77d0 R11: 0000000000000246 R12: 0000000000000000
-R13: 00000000000927c0 R14: 00000000000295d0 R15: 00007fff68c519a0
- </TASK>
-
-The buggy address belongs to the virtual mapping at
- [ffffc90003390000, ffffc90003399000) created by:
- copy_process+0x54b/0x3c00 kernel/fork.c:1998
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x4 pfn:0x76b10
-memcg:ffff88807849f502
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000004 0000000000000000 00000001ffffffff ffff88807849f502
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_ZERO|__GFP_NOWARN), pid 10519, tgid 10519 (syz.1.2188), ts 169318727845, free_ts 167753086937
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1848
- prep_new_page mm/page_alloc.c:1856 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3855
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5145
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
- alloc_frozen_pages_noprof mm/mempolicy.c:2490 [inline]
- alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2510
- vm_area_alloc_pages mm/vmalloc.c:3642 [inline]
- __vmalloc_area_node mm/vmalloc.c:3720 [inline]
- __vmalloc_node_range_noprof+0x97d/0x12f0 mm/vmalloc.c:3893
- __vmalloc_node_noprof+0xc2/0x110 mm/vmalloc.c:3956
- alloc_thread_stack_node kernel/fork.c:310 [inline]
- dup_task_struct+0x3e7/0x860 kernel/fork.c:876
- copy_process+0x54b/0x3c00 kernel/fork.c:1998
- kernel_clone+0x21e/0x870 kernel/fork.c:2598
- __do_sys_clone3 kernel/fork.c:2902 [inline]
- __se_sys_clone3+0x256/0x2d0 kernel/fork.c:2881
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 49 tgid 49 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1392 [inline]
- __free_frozen_pages+0xb80/0xd80 mm/page_alloc.c:2892
- pagetable_free include/linux/mm.h:2896 [inline]
- pagetable_dtor_free include/linux/mm.h:2994 [inline]
- __tlb_remove_table+0x2d2/0x3b0 include/asm-generic/tlb.h:220
- __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
- tlb_remove_table_rcu+0x85/0x100 mm/mmu_gather.c:290
- rcu_do_batch kernel/rcu/tree.c:2582 [inline]
- rcu_core+0xca8/0x1710 kernel/rcu/tree.c:2838
- handle_softirqs+0x286/0x870 kernel/softirq.c:579
- do_softirq+0xec/0x180 kernel/softirq.c:480
- __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
- spin_unlock_bh include/linux/spinlock.h:396 [inline]
- batadv_nc_purge_paths+0x318/0x3b0 net/batman-adv/network-coding.c:471
- batadv_nc_worker+0x369/0x610 net/batman-adv/network-coding.c:722
- process_one_work kernel/workqueue.c:3239 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3322
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3403
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Memory state around the buggy address:
- ffffc90003397800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90003397880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90003397900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                                  ^
- ffffc90003397980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90003397a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	0f 84 3c 01 00 00    	je     0x142
-   6:	48 85 db             	test   %rbx,%rbx
-   9:	0f 85 63 01 00 00    	jne    0x172
-   f:	e9 27 05 00 00       	jmp    0x53b
-  14:	4c 8b 75 d0          	mov    -0x30(%rbp),%r14
-  18:	4c 89 e7             	mov    %r12,%rdi
-  1b:	e8 2f db e0 09       	call   0x9e0db4f
-  20:	e8 3a 0e 36 00       	call   0x360e5f
-  25:	fb                   	sti
-  26:	4c 8b 65 c0          	mov    -0x40(%rbp),%r12
-* 2a:	49 8d bc 24 18 16 00 	lea    0x1618(%r12),%rdi <-- trapping instruction
-  31:	00
-  32:	48 89 f8             	mov    %rdi,%rax
-  35:	48 c1 e8 03          	shr    $0x3,%rax
-  39:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax
-  3e:	84 c0                	test   %al,%al
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>  drivers/iio/adc/ad4000.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+> index 5609a7845b6f50b5818613170df6b234f8f0c496..fd3d79fca78581e51bb904d0bcfeda3d3663ea25 100644
+> --- a/drivers/iio/adc/ad4000.c
+> +++ b/drivers/iio/adc/ad4000.c
+> @@ -554,7 +554,7 @@ static void ad4000_fill_scale_tbl(struct ad4000_state *st,
+>  	val = mult_frac(st->vref_mv, MICRO, st->gain_milli);
+>  
+>  	/* Would multiply by NANO here but we multiplied by extra MILLI */
+> -	tmp2 = shift_right((u64)val * MICRO, scale_bits);
+> +	tmp2 = (u64)val * MICRO >> scale_bits;
+>  	tmp0 = div_s64_rem(tmp2, NANO, &tmp1);
+>  
+>  	/* Store scale for when span compression is disabled */
+> 
+> ---
+> base-commit: 6742eff60460e77158d4f1b233f17e0345c9e66a
+> change-id: 20250702-iio-adc-ad4000-don-t-use-shift_right-bda6e41152b6
+> 
+> Best regards,
+> -- 
+> David Lechner <dlechner@baylibre.com>
+> 
+> 
 
