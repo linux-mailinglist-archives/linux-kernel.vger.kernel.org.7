@@ -1,137 +1,129 @@
-Return-Path: <linux-kernel+bounces-713582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6053EAF5BD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:55:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8ABAF5BDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52D9188AD3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:56:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F1B7B04FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D7E30AAD6;
-	Wed,  2 Jul 2025 14:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A89830AAD2;
+	Wed,  2 Jul 2025 14:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4dOc7rR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDpPgf5S"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B108017A316;
-	Wed,  2 Jul 2025 14:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB2130AAD0;
+	Wed,  2 Jul 2025 14:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751468137; cv=none; b=eUZyFWGTQRH1Z97lryY/PXKEDiH32n0ZxTPyVWN+VOcizz5Kx+zATt6U5AF2dFPxlYWv3ApbEBNbCjwZqNF9LevB6u59kspDJkXTn4qPw/22ZUgdW360ywvSESwyDEoNJTJEcZyjWaN870J9iPS9Ydq/ZaCQPxvBTlZu+TRr8Rk=
+	t=1751468163; cv=none; b=Gtagu38+8XteW+7LvIuVFpH0gcRolzYBo63k0vRO81Ox7I4QWAqIzDUyIX6QlRLw4ewxeAX0K+bTqZYSGJVYcP2v3nS0ceLxFl3MbeL6O5Zzs+nvokGOqQU6yJGALr+2h3RAEfhIabYnOzmm2Eita//xrqz5V9MvgJ6aQrYmgPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751468137; c=relaxed/simple;
-	bh=odc42PZm0xJO0diX1K58N47iddxW3a0F4HZfOHM34QQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhmtbFsk30+RmabzEz3wqq1ScH147T2X8n47JiyojZVeoZRRbXhvJ0qxja9sg48C3Jkzm53y9EdpxYlI+wk9iiTXc4GZpNlu4UMP24Xg2K6po+Wa5voeJRF0JjtpmVJVfDIAb/mnM1yOXZaCvLrTdnGbLpIbX3NTR40micnw85I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4dOc7rR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7004C4CEE7;
-	Wed,  2 Jul 2025 14:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751468137;
-	bh=odc42PZm0xJO0diX1K58N47iddxW3a0F4HZfOHM34QQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4dOc7rRMoTUrPqkvoVH5KlxVpdU6iDMm2rDEi+KlTjIIDv+7QNH9XaqWCWQj4OoT
-	 zbzjAWxc3IYGTwZrkS3cvU9VHATYI/yGlBu2sn96cJrffqibdZeCa/0G4jjmoziguF
-	 GlZ3vbYwRHql8BA9Q4SCt1HgQ7URRolg7gqp0ShtPK2P37mdoegDMOHpDzVqW/vTRa
-	 BrrmyEINlk52COqWZhKyeTsDkIsaKHvntPkZmJYEYD533pltwZ5NWi8gTlrABTWN5V
-	 Yucf/dcJQpMPS0K9YHh5kyNeSkz9kiXrM1c4UZgPuQrVSMQEwf4s4UXaij+akTO8KS
-	 jFhyFmMdklDiA==
-Date: Wed, 2 Jul 2025 20:25:17 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Anup Patel <apatel@ventanamicro.com>, Marc Zyngier <maz@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, dlemoal@kernel.org, jdmason@kudzu.us, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH v19 01/10] PCI: endpoint: Set ID and of_node for function
- driver
-Message-ID: <75opnvi46fbmsnmykjwn3gmir7r3uqhzp7tfoua42cado6aopu@dmos2v2qd3jn>
-References: <20250609-ep-msi-v19-0-77362eaa48fa@nxp.com>
- <20250609-ep-msi-v19-1-77362eaa48fa@nxp.com>
- <ne5yrjtdevmndqds4uwo2ppq6gay2wuwjouyf33lqr5g3nfkwr@lkwqlwqjqbmx>
- <aGVE6veZm3bL0mVJ@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1751468163; c=relaxed/simple;
+	bh=Dlr641/jaRt8XQMPWF8AiBsdrW+iNEiGMzhd7bwiQN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=INlGuaNAM2Rq2sGTcXQ8ZT3T9ALbJpsmngTsINV6bwI6qQcnqi91YoGmeKZ68muGNvrZNLwKddAq2lzI/GMIAF8bthCsyBjld+gmulVL4DyBfXRdv42DIXGC1mcpHg9IRYG/DejPz+QbevLvrXAaG5H9f/90qeTN3d0PvE1FRo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDpPgf5S; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60dffae17f3so6494668a12.1;
+        Wed, 02 Jul 2025 07:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751468159; x=1752072959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S34LfcZO7mNIrklHTL3tRuBy4Dtgu5OYviVtTOiNfuk=;
+        b=ZDpPgf5S/VXmEvHM10yl41n6Hl2EP822OWN8RUeHUOxT9tKLv4FNee9JKBeijNMIgY
+         M9Yi2gfV5XVUUf2m8UI3PsgjDxP31IS53SjVcbpr59sMECGlYNyDgm/ODWag3VPX25j0
+         8Zw3d8qtkJEXsIvCvjX0IViHUYmoV9cUhHD5hLOSgKbO2xqUXsIfKYIOoGCaKsD1ARYt
+         wIwvZWI+Gbo/6U8Tb/IRQY2wQDPbfJ6xY+PIOAA8YqeWdOQf5J0cD1A4S635y20EKn2q
+         iDsuhS284x/TO8h01ilNdCifxh7+wnLi7Ms2Eppt1mmXb4Y1CQC6W4Nj+B11YhFosdzL
+         yUxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751468159; x=1752072959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S34LfcZO7mNIrklHTL3tRuBy4Dtgu5OYviVtTOiNfuk=;
+        b=s38n+cloCfXi+ziDUbGsWiz402j0rV6MtXEo547pTlTamLTA9KvNeSlZmnRK6fcD4H
+         Cy4BgvFaJeE+dgA85pN1DcvoRu10HjMISS2GdGUrvEZGFjfpYsNZxTTT4shXNPJyxBRt
+         yyLUNdXHlWZT7inRzVbgH+poMjgKEOQnnIymZ8x6Yf//DRnWDwEoypEO1ij/gd8eGumK
+         HARBUqllYEl0l9trsaPUfxWyf/Nfoem4i1tKBsyeKom2XHkiIi1ht8zeYivmSsMom4Ul
+         JTLzavlGkrI3Hv8YIT5ZiNodvefDwyedBJRA7wK0CC996t4TOPWEQw/c1/nve/xKouuX
+         oKVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyFfZMgOcxRikMn1yBqPU/wq33FXARsOqHor3x8hLbk3RH3vYcpE4I//Yujy1L7JbLQIbqgZ4j4XM=@vger.kernel.org, AJvYcCVxNuUzVMeqDt8pZOdT0x3OpnLNnk7t1iw0CcDBm+dGf/FwxLnTypg6ok9vZgtuAavDPeIICQggZtWKRM/o@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0+JeIDiKr9swSrVKq3Got5E+x5PHzBllnVVg6GbzdkIBZRALj
+	QrdZYpR7pjFSNpwEnYifOQRJ9J9OWOoMpdJ56TEEy69Zwthk0kOC3cQiqzFsPt5H5tEYZ0JXue7
+	rl9G+RKENf89pL/8Olr20LYwQD2KEFMbrMr0OplsfYZB+
+X-Gm-Gg: ASbGncuVInN/WFAf0tgMv3fSUjJSwmO8AYM1EDAxlzlQTP8tmahHwqBVrxJVKMyyqMo
+	7rP9olXE9Jz7ab0fW2efYfpu1w71MY4TpPDcJv+tqAA2PAWqm4fK4xa36N1jH8r023XHzdc989u
+	QgeIQMW16IK7Lk1ZB3N/tOiWCMU2ev6efugM66Id/0ZvU=
+X-Google-Smtp-Source: AGHT+IHCEqavMSJODrLTljm46mako9PS+GfEa4EIPBB/UT8YujbWBkSGLagwXsUuebN+t4VZEV49aqN6Nk14poXWsTs=
+X-Received: by 2002:a05:6402:42c8:b0:607:f31f:26de with SMTP id
+ 4fb4d7f45d1cf-60e52cc6eb2mr2893432a12.1.1751468158524; Wed, 02 Jul 2025
+ 07:55:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aGVE6veZm3bL0mVJ@lizhi-Precision-Tower-5810>
+References: <20250630192443193j2wDCmmnHGLns9ki1GXcv@zte.com.cn>
+In-Reply-To: <20250630192443193j2wDCmmnHGLns9ki1GXcv@zte.com.cn>
+From: Alex Shi <seakeel@gmail.com>
+Date: Wed, 2 Jul 2025 22:55:21 +0800
+X-Gm-Features: Ac12FXwotRrLlSoxuekGOpBvg3j-FGRPeRXWTHkUWfF-T8pYqlVrrsj85n2E0iU
+Message-ID: <CAJy-Amn_8e+Vveab65rVmo1=UOax6UPWxgq59bDYwx27_u1nfw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3 linux next] Docs/zh_CN: Translate networking docs
+ to Simplified Chinese
+To: jiang.kun2@zte.com.cn
+Cc: alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, xu.xin16@zte.com.cn, 
+	yang.yang29@zte.com.cn, wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, 
+	he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn, 
+	zhang.yunkai@zte.com.cn, ye.xingchen@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 02, 2025 at 10:40:53AM GMT, Frank Li wrote:
-> On Wed, Jul 02, 2025 at 04:30:48PM +0530, Manivannan Sadhasivam wrote:
-> > On Mon, Jun 09, 2025 at 12:34:13PM GMT, Frank Li wrote:
-> > > Set device ID as 'vfunc_no << 3 | func_no' and use
-> > > 'device_set_of_node_from_dev()' to set 'of_node' the same as the EPC parent
-> > > device.
-> > >
-> > > Currently, EPF 'of_node' is NULL, but many functions depend on 'of_node'
-> > > settings, such as DMA, IOMMU, and MSI. At present, all DMA allocation
-> > > functions use the EPC's device node, but they should use the EPF one.
-> > > For multiple function drivers, IOMMU/MSI should be different for each
-> > > function driver.
-> > >
-> >
-> > We don't define OF node for any function, so device_set_of_node_from_dev() also
-> > ends up reusing the EPC node. So how can you make use of it in multi EPF setup?
-> 
-> In mfd devices, children devices reuse parent's of_node
-> drivers/gpio/gpio-adp5585.c
-> drivers/input/keyboard/adp5589-keys.c
-> drivers/pwm/pwm-adp5585.c
-> 
-> multi EPF should be similar to create multi children devices of mfd.
-> 
+Hi Jiang,
+I cannot apply this patch on the tree:
+git@gitolite.kernel.org:pub/scm/linux/kernel/git/alexs/linux.git
+docs-next. Could you like to rebase the patchset on that tree?
+And it's better to pick up your alias translation patch in this
+patchset too. That would be much more convenient for me.
 
-No, they are not similar. MFD are real physical devices, but EPFs are (so far)
-software based entities.
+Thanks!
+Alex
 
-> > I don't understand.
-> 
-> >
-> > > If multiple function devices share the same EPC device, there will be
-> > > no isolation between them. Setting the ID and 'of_node' prepares for
-> > > proper support.
-> 
-> Only share the same of_node.
-> 
-> Actually pci host bridge have similar situation, all pci ep devices reuse
-> bridge's of node. framework use rid to distringuish it. EPF can use device::id
-> to do similar things.
-> 
-> Actually iommu face the similar problem. So far, there are not EP device enable
-> iommu yet, because it needs special mapping.
-> 
-> Prevously, I consider create dymatic of_node for each EPF and copy iommu/msi
-> information to each children. But when I see adp5585 case, I think direct
-> use parent's of_node should be simple and good enough.
-> 
-> In future, I suggest add children dt binding for it. For example: EPF provide
-> a mailbox interface. how other dts node to refer to this mailbox's phandle?
-> 
-
-As I said above, EPFs are not real devices. There is currently only one
-exception, MHI, which is backed by a hardware entity. So we cannot add
-devicetree nodes for EPF, unless each EPF is a hardware entity.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+<jiang.kun2@zte.com.cn> =E4=BA=8E2025=E5=B9=B46=E6=9C=8830=E6=97=A5=E5=91=
+=A8=E4=B8=80 19:24=E5=86=99=E9=81=93=EF=BC=9A
+>
+> From: Wang Yaxin <wang.yaxin@zte.com.cn>
+>
+> translate networking docs to Simplified Chinese
+>
+> Wang Yaxin (3):
+>   Docs/zh_CN: Translate netif-msg.rst to Simplified Chinese
+>   Docs/zh_CN: Translate xfrm_proc.rst to Simplified Chinese
+>   Docs/zh_CN: Translate netmem.rst to Simplified Chinese
+>
+>  .../translations/zh_CN/networking/index.rst   |   6 +-
+>  .../zh_CN/networking/netif-msg.rst            |  92 +++++++++++++
+>  .../translations/zh_CN/networking/netmem.rst  |  92 +++++++++++++
+>  .../zh_CN/networking/xfrm_proc.rst            | 126 ++++++++++++++++++
+>  4 files changed, 313 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/translations/zh_CN/networking/netif-msg=
+.rst
+>  create mode 100644 Documentation/translations/zh_CN/networking/netmem.rs=
+t
+>  create mode 100644 Documentation/translations/zh_CN/networking/xfrm_proc=
+.rst
+>
+> --
+> 2.25.1
 
