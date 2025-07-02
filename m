@@ -1,285 +1,344 @@
-Return-Path: <linux-kernel+bounces-713413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E957AAF5942
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:33:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B08AF5961
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F2C1C43F58
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AAF482882
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814512DA765;
-	Wed,  2 Jul 2025 13:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E232DF3CC;
+	Wed,  2 Jul 2025 13:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQfIgT0x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AP2uHd87"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6893527F012;
-	Wed,  2 Jul 2025 13:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462693; cv=none; b=LuR5dozj++G58dNFunRYQgCbuLuO/xkyJLD1AOa5SgviuwfRlJ+e4fILh8QGdu7y06pTkTKVmbFIj3pnak29ZMEW4AFbyYltUXQ8GBHNeRoqsOwwo7kwtvo2yQoriTMtuRoOs0EQ9WNOdmXK5aNo/4A1YProzPXS2XtGFomeQGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462693; c=relaxed/simple;
-	bh=uYEviD6m/6DukLOUz1n6hydV/ZbFarkjRRLaJSugb+Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Kho5fEcB1FlBRKUt/zLEKAMD6ovgSvZg4rtybjE1G0woxSXnr/OBv1VplpImkSfcdCjLK49d8rk4Ko0Q/uKcHIpa9M4fnyhqJBFrv+nm6cF3XqRWUzhon+C1eNB7oXMfL6vZQwG2tDCHMeje5c33CUo3kvmABovdT3kiardrT+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQfIgT0x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5826CC4CEED;
-	Wed,  2 Jul 2025 13:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751462692;
-	bh=uYEviD6m/6DukLOUz1n6hydV/ZbFarkjRRLaJSugb+Y=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=RQfIgT0xSGQIBGCbtzg/VpYTcL6ATUV6zd7EHcoOex0vsvsTGEQzHOeRR3DaZUMqe
-	 YvJaG6FKR9CVLVboJh7G/OTmfdq1i012+1n0yX/yrdVw49T4XP82ZXIJUgNxAjs5cF
-	 WbaKsJFDyuqaXuChNA9YDZwtlgrI20/Mqo95Sh13lRxG7bZJR2PPTiAV4llGBiXTWf
-	 UpRJRc3tPyWVlg592QDp/ttAuK0tlDKk3387fJgS5hwsgUN/H/5CMom0a5cRsjQvPN
-	 WqECeFEz5goDWQ5A7JSKvMn5ydnSPrFuLCywc1XoER/ogao6f88JCl7b+CHNcpCfIB
-	 Q+NetNEvB0mvw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CAB280A52;
+	Wed,  2 Jul 2025 13:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751462710; cv=fail; b=hkKLFzYo9N99qQSpgFFG94N2C9ZuBOjYiTO+GaXiTTL09coGRRiegGNVlUJxXoA92TPj9hM6gt89yX7Y0yvfciDshoRzE2pAw5F2w0mI594TsuOi2xQk7mgqzMXYJN+42AuPEspWuCpKyK4Zrmgd6pOamB5zIww+oq8qqSpz7ZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751462710; c=relaxed/simple;
+	bh=P+ro6TRoYyyJWYo+GfmFwPoO9439KXXxVbX2roiAYD0=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=WqfPgC3DQrsNFaCgQDhFwZcUwedjhUtoiclNac2QLwgQxe43uAbCPaoqNkBYLqGmWaLss0n41FxmwMSAUGWubV+9C7p54zcGf2juzVUp7bz/3g3Qi25rpCVef38fdtBjtE8Ecd+aAR7flOJzrKxHugOZKOHvkRQWirXENIc8Ebc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AP2uHd87; arc=fail smtp.client-ip=40.107.220.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yaymG5me34GnWoLQEMIh/gkCwKkvmQS5YqEMiE90bXsaqvksDtaZt+ch+nilgDcnmBSNWfchgq6ANRmuUQDLs0z6krNm2wOQ2lVuOktC++srIW9mgfl2z43gG8u7lURZA3DN7ivoYt4jIsVzmiGfS72M3uUosKZyajkeAI5kJ+1iSo6FgLhqxzMifG+/Iyw4OtuJ20mrvUQY5HCNluHjOF1cfXXUcqdwz2dpXekCyN5RDNZxa9vdnI7+bC3FQTLksKerQaVUt+9zhVehvRm0qS95Ch4QuLz7PUBF5jkl+49lzABjp0HMeCs8VXe092bABSt/yruL4gU+lonUEIH/vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UN9mb261KOht98XSpYHCAW53lReTTsT17M5rrcL3Mb8=;
+ b=w7CiWrL1dDpYhcrfTDOHPZi57hKbRYxzt3XgA/Vql4maH37JVnBAvr1cIxjg4N5RVj+kjucRr9L66aE6LXiYwXC1Boy37Six4DsM90SYcNpQ4VBt9POfnY055l1FCgF6ZpsURakO16bE/Oh0LzQNUyiD4mTkuORNj+vH/7vjFJsE+wgXd4LtU0JaQeUlSWjsjQpW+W7+sKEU0k6oa9D036/Ky203FgIAvUJJhcgLBl/4C2CvANUIzZJ3Aw9v+5N9qVrmYpRD+/5DiwWW3GSb1qxISCCFVb5YuQjHgQGbkWtt5xAvkJO+WfJel3oA5YStH1ybT+zfhzMMr6zK5Ch8SQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UN9mb261KOht98XSpYHCAW53lReTTsT17M5rrcL3Mb8=;
+ b=AP2uHd87wFpkyvsetCsNACxXy40aED7/MLHH4idVhPUWhatgHCU4kET1jXBYG+mZjSBhxakHckEeYbgulBQ0W5LiDFm1F5pRL4+O+LLhrN9FMS3noNepHoVpH4hmFISdT8kowVeNSpsz0mED3vlsUk9hsf4/e4gUfrnbmq5XLRNAulh78O0P4rwU7463XvzZcb7wg9kmDBCDv3mHPUPFjdCqEmlHAPXCn/wQ46Vso/NFgPZDGYEYQ/kL9cgcHi22zGYmYsxIq2SQU3CGSHhBwL5ooREfTRufeY58Lu3vElfziP0dCcU56kkJSLP7BgYM+a+I5CIA99oC++xNECGG+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by MW4PR12MB7383.namprd12.prod.outlook.com (2603:10b6:303:219::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.21; Wed, 2 Jul
+ 2025 13:25:06 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8901.018; Wed, 2 Jul 2025
+ 13:25:05 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 02 Jul 2025 22:25:02 +0900
+Message-Id: <DB1LPLOF0O0R.YQBJ0HBDUSKA@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Benno Lossin" <lossin@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v7] rust: kernel: add support for bits/genmask macros
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250623-topic-panthor-rs-genmask-v7-1-9f986951e7b5@collabora.com>
+In-Reply-To: <20250623-topic-panthor-rs-genmask-v7-1-9f986951e7b5@collabora.com>
+X-ClientProxiedBy: TY2PR0101CA0020.apcprd01.prod.exchangelabs.com
+ (2603:1096:404:92::32) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 02 Jul 2025 15:24:48 +0200
-Message-Id: <DB1LPFAX66WG.1QL5JDCWI7RN4@kernel.org>
-To: "Oliver Mangold" <oliver.mangold@pm.me>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Asahi Lina"
- <lina+kernel@asahilina.net>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 4/4] rust: Add `OwnableRefCounted`
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250618-unique-ref-v11-0-49eadcdc0aa6@pm.me>
- <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me>
-In-Reply-To: <20250618-unique-ref-v11-4-49eadcdc0aa6@pm.me>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW4PR12MB7383:EE_
+X-MS-Office365-Filtering-Correlation-Id: aea8393f-897d-4b93-ea73-08ddb96bdbb3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|7416014|376014|366016|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nmc2bVR1NnBjZTdwZkN3OTNJUVI5VFJvNmhpWGRQOVlNMlpxcFg5c2VaSUlq?=
+ =?utf-8?B?Y3JJNHh2NnpsYkpSWTdWRkxXaTBkak12NEZIeWFaL3pVOUltSW9CT1Y5bW1s?=
+ =?utf-8?B?RVNUNkdCVW1qd2twL05WbmQvelhsdnJZRG5nR296cFVWTmtwSUpucGlxZnB1?=
+ =?utf-8?B?RmhJZnd1N1AyZFIzYlFRaytSRFdzREVVK0hwbTljcWVIVlhZZldyb1lsNE1o?=
+ =?utf-8?B?NkhSVW9VN3NHS3prTS8wYTJMSzE5WStEUEpNd2NmRXVjcjF6SG5ybWNnMXlx?=
+ =?utf-8?B?OXN0MEIyVVhiUUlneDlHTkpuaWNuSi9YNitlait6UThEcWxsdFZHcnVRR1dV?=
+ =?utf-8?B?MGhDa1BoVHgrUzFXR0FQUzZJSXFqQ1h3bkJwQ1lwVjZKVUtVYzFNeVBSSGdu?=
+ =?utf-8?B?SUczNzB1SFQ5OHdJR0Jra3NWUkZIQ0ZIc1dWU2N2U3RQcjVYa0liaXAzdFJl?=
+ =?utf-8?B?bU1qSFdhQ0xXeWMzSkREYkNtcHArM0VBU2xKUlUvaVgvTzJKSmE1US9GdVIz?=
+ =?utf-8?B?QzZGZFJSZXliMk12NHBDRUFSZFdRY25EY2dpc2M0ZDE4TGtoOUVkbzBVd3I2?=
+ =?utf-8?B?NnpaTnFJQXM1MkNvcWQ4Skw0Z3laT3RaYXkvdHUxUnZiQjFyeHJNcm5zMFJF?=
+ =?utf-8?B?NkdSREJGeVdlVm4zV09mVGtYeWw2c2tKYWY0WTh2MFhPVGlIci9ka2g1WERI?=
+ =?utf-8?B?TXRiZ3NYY3p6OG9iQjFoMkVHUWRTWTlZMHV1cTVJS1hDVFo4ekdHNTZLLysr?=
+ =?utf-8?B?RC8rZXBMVHZMNlNaTmg2ZDBaYXdlbXVvWDZiNVdwUk9VNGhHSmJRS1RSZmw4?=
+ =?utf-8?B?N3lXanp6clZPWm5MOFBCN3MwUzFGQWs3ajNWaXp0MW91aFYrczBqM2Z4Sm9k?=
+ =?utf-8?B?MXB4bWlqak1kSFozcnE0dzRjSlRmZ3ZFNTNtbTVBb1hvUWl2UEhjcWNaVWdE?=
+ =?utf-8?B?VHdlZ3BtL0pIZUtmd2dCSGxYazVUQWRqcjBXL3BmckJTYi9rdkxqcjNNRFRi?=
+ =?utf-8?B?UkRMaTQybG9qUGdjakttL05PcWN0NGVDMk42ZTY4TU9nK2pPVVpROXpqUnRB?=
+ =?utf-8?B?TUJkNmR0UTgxdGpxdi9oVmI3b2ZzRlJaek1hZkw1SE5FR3c3cnNPVDFMYTBX?=
+ =?utf-8?B?TjFjMTdwaHBJZEE0aXhVVDlONzlMMmtNN1cwS05JRDRuT1RFeTRwd1ROSEVv?=
+ =?utf-8?B?Q3Q3M3VxTmRhVDZSMnIzQTY1bnVzKzBUY3ZOZDA2S08vTHVoelczOGVQdkdP?=
+ =?utf-8?B?em1YRU8vbEk4NFZXejFDUTBXRm5VSWV1MDdZZ0pqYkhvMDNvOHRnbkZKTkJB?=
+ =?utf-8?B?dXF5cHIwOU1MSGVBVFJwVkdwSDAxK01RcGVKZlBCUmJvKzJ3VzNWS2pLTWlD?=
+ =?utf-8?B?eEZ0dnZHeFBROEJJM3ovR29Cc1RDeTduTXpMZkE5N2V0V2tQRFZVM0RlUDA3?=
+ =?utf-8?B?NnBCNmNwYnR5RlJ3UXZFZXI4TkFTOWl5ekZxbUFXZjU0SGhYU0FmM1BDMlRj?=
+ =?utf-8?B?bkpYNzFVMG9NeXljRjQrdFlpVjlRbnozU1ByL2lQUjU2eXdVQ1RVRGJxMHpm?=
+ =?utf-8?B?NE5hcTQ3eFVnMytaUXZTQnB4RmtIUUxMbldGd0wvcDVRRjk1WHo3dE9FclFq?=
+ =?utf-8?B?K2lZTXJWN1Z4TW1BR2RlR2FITjJBb0RxVndGYk9uOWJLQzFDeFpKZTVISWpX?=
+ =?utf-8?B?OEcydXY1UDU1NVRUaThtQXdVVWdsRXNpUU9rYW14Q1QxQUtzTFp6Sks1bGtt?=
+ =?utf-8?B?SVVXaXFYMWFIZFBpNTFoeG9hMmFIaG9YdnZvc2pOTWxDTWpBbUNGd21UWXhW?=
+ =?utf-8?B?RGxpQlBYMGl2aFE5RjdJZDF1bmFhVE1KcExvV1BLK2F4R1Q5SGxKOVlYS0pT?=
+ =?utf-8?B?eXNRVWtCbFd4SUthTnVQcWxlVW1DWVJBb0RaQ0pmNm1Qa1RlZkNoREpJYzE5?=
+ =?utf-8?B?M21rSmFGd3liaktxamRyZlp3clk2WGwzeGV4eU53S2ppYnVWTysxK3YwbDVz?=
+ =?utf-8?B?d3hUazZTK3FBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(376014)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WTYzWDhmK3N6dis5LzVuc2ZzSmp1NE4wbUhNOFA0aCtvamduMDR1WEE2UzhE?=
+ =?utf-8?B?WE52VjdOZEdjQk9xVDRjcEoybHk0ZXNKQ2NzNFFzMzdoM3dwVitxWVMxK09Y?=
+ =?utf-8?B?YnZQeU51VTcyeEQ5cDUwS1FHRG92KytrcDMycU5Zb3hmZFpuMXQ4YndBbWJ3?=
+ =?utf-8?B?SWZFOXNSRDJkRDRyVDhZT0RJTzFDMkFUcHBWOFBlVUhCN0trN3kySDI4Zitp?=
+ =?utf-8?B?VnpDbG5vSlp4U296c3pjU2JwY1NLdzhEZTR5L1JDRXVUZnBYMm9MRkJseGdM?=
+ =?utf-8?B?MFZnVEduOGg2YVB5cWRNNHVoUlYwOE9IM3hGcVJQMENXRXU3MXcvRGhIZ1Nt?=
+ =?utf-8?B?RitORXlDZExCMkg3MGpNUWdrQlpEUGtFTGF4VkNybE0wbkZhWllEZWxrODRk?=
+ =?utf-8?B?UDVpT0xLTzUzNVRubmFsbjBiL2NpdUVaVnZ5L1R1WDhCbklMTzNkTkZUZEtL?=
+ =?utf-8?B?empHN3Nsa2JCNGxINUt0c1dNOEhjVC8zME1BN0UwOSszWDZqQSsvQ3FQSVZh?=
+ =?utf-8?B?UHhuMUNqZkVMaHlFdTZMUThNc3hSM2xKbFFibkpFWjVSWE5scENOcUQvQWYy?=
+ =?utf-8?B?WlhDWjMzQUsrMVhtNUJrTUNSbzROM3lIU0N4RVA4NXV4dzNodTdmSkQ1RTZB?=
+ =?utf-8?B?Y3BTc3hyK2kyRU9lUmxaVlpPampjMTI2eEVOZzVCejQwTHVkWGZvQ2w2QlRz?=
+ =?utf-8?B?dVZaR1dSZjdxRnFqV1plVlRZV003YWRvYTlzcWhoR3grY1dvc25ZUVoyWG85?=
+ =?utf-8?B?d3lYeXMxcDNaMDJOeUVZalZXSWNzOUVEaDhRVXVwcGVQZ3o3RWdrTTg1WVJz?=
+ =?utf-8?B?R2t3OCtZbFhWZzNkNDRSeXZielRqUGVyQlR5VWxtdXRFZnBqNXpoT3c1RmJI?=
+ =?utf-8?B?Y1JXSk1idlp4bHV4VThGOUdoeEljOW96OUhVdk5MRVJ6YW5mRWdsbDNmSFhV?=
+ =?utf-8?B?MzhMWEpXZTVJTU9rQ3BhT1c5OVc4WTZkNi9VVDVnRDNIVjJjWHBjelJPbkhP?=
+ =?utf-8?B?WXhqMDJ4SkxQUDRKQVB3UmRwdFcyelNIT3E5QkViMmhpUU5IZzNwKytxVmJG?=
+ =?utf-8?B?dVJvaWVZT1VUWjdUeFJMcE8ybGlwM2ZEYlNmbGlwampVYk9LVHhMaVZDamJm?=
+ =?utf-8?B?QTVNQUZYUVdvMnh6TnBpVU9UYlNaLzlyN200dWtBNlJqOFRLMlRHMWlkdjF1?=
+ =?utf-8?B?bGQzV0RLMHJrSlNCa3dOZkNYRjY2eUhGc24yVEt4MWtNSEMvbDk1Q3FnUnZN?=
+ =?utf-8?B?aGhKWXBZTEZsNVFmVXFGUXkrMjRRT1MvNEdhTG9OdzJ0dEVGOGU4S2NqK3d2?=
+ =?utf-8?B?L2FWR3MzQkNCWDhCcnN2R1hLZkU2alpQa2IyUGNXcEVTZzdNSlp1VU5FQmkv?=
+ =?utf-8?B?alk3Rjl5MUFVNU9pU2IxNTkyRXZEbGFtWmVYRGdNdjlLaTNUUE9VSk5LOVlm?=
+ =?utf-8?B?czJvYmJVZWRnUEFIcURxQmJmR3U5cmZVS3AvU25RUGpjdVZZbFNuV25iZTlL?=
+ =?utf-8?B?UEZhZHgzT0dQc2UzY291L2RpT0lqUnBsMjR3TUY5K2ZYSHNuS0xwUUppcU1J?=
+ =?utf-8?B?bkhxdVZ2VXkxWUtnSjBMMWluZTFVVkRmQmI1OVk5WGRNaGk3dmIyZktiZFI4?=
+ =?utf-8?B?LzlndWhNL1gyOWFrT29vZnBPSmxlOWRMc291aG0wc1dxNGNTeXdRTkoyMVJ5?=
+ =?utf-8?B?cGJZNzI5MnJ2NjJucjNZMHF4QzVHTXRETHdiOVdSa3JWNUpmdlN5ZE1vVmRr?=
+ =?utf-8?B?QnpWWVdRQTZldk5pMnlFMGprMXllWFl4QVVJR1VUaEVRcFNXZ093RUxocWZK?=
+ =?utf-8?B?MGs2R1hwOWhKaDc5Vm8yUDFtMHhxd1pQdHJyaWFOeksyN1l1c3VlMVJ2RE5n?=
+ =?utf-8?B?U0xXOEdmd3AzSCt0QUhkeTNETG5ramhzS1NPL25ZekFVTjVPZ0tDcHpmUzlE?=
+ =?utf-8?B?UVpDSDAzNU8wSE9YVHQ3NDRxdGdMZUpqdVZiRmdkVjNhd2xSSlQyQzJHWERY?=
+ =?utf-8?B?dXhDRXBxalBaZldnVjliMllpTlQ1YlFPNk8vaWNSc1d2clB4MXJDOXZTSEdP?=
+ =?utf-8?B?Z1dmV3UwbFRUOXplU1ZMRUJXUlgya2hRai96dlBqa1k1T0N6K1I4YndhUGVl?=
+ =?utf-8?B?K0RlMENKVHdUZ1B6RTYvL2RPNmZuSUlkYTFvZkFwUjU1WkhnRjFHZ3RaaGVa?=
+ =?utf-8?Q?ymNS4Q3L3g2p3U/bEjsAjxaPkg1xiHyERouOa7qzlAwA?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aea8393f-897d-4b93-ea73-08ddb96bdbb3
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 13:25:05.7062
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: esGneI/3a8NoJFx2mxedCLFk+9K0yb9virl240GW/yB4XArh17mWV1KS7At5vStEOjvIgDHzkAb8UuyV6lmU1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7383
 
-On Wed Jun 18, 2025 at 2:27 PM CEST, Oliver Mangold wrote:
-> diff --git a/rust/kernel/types/ownable.rs b/rust/kernel/types/ownable.rs
-> index 80cd990f6601767aa5a742a6c0997f4f67d06453..b5626dead6bb25ea76a0ae577=
-db1b130308d98b1 100644
-> --- a/rust/kernel/types/ownable.rs
-> +++ b/rust/kernel/types/ownable.rs
-> @@ -2,6 +2,7 @@
-> =20
->  //! Owned reference types.
-> =20
-> +use crate::types::{ARef, RefCounted};
->  use core::{
->      marker::PhantomData,
->      mem::ManuallyDrop,
-> @@ -18,8 +19,9 @@
->  ///
->  /// Note: Implementing this trait allows types to be wrapped in an [`Own=
-ed<Self>`]. This does not
->  /// provide reference counting but represents a unique, owned reference.=
- If reference counting is
-> -/// required [`RefCounted`](crate::types::RefCounted) should be implemen=
-ted which allows types to be
-> -/// wrapped in an [`ARef<Self>`](crate::types::ARef).
-> +/// required [`RefCounted`] should be implemented which allows types to =
-be wrapped in an
-> +/// [`ARef<Self>`]. Implementing the trait [`OwnableRefCounted`] allows =
-to convert between unique
-> +/// and shared references (i.e. [`Owned<Self>`] and [`ARef<Self>`]).
+Hi Daniel,
 
-This change should probably be in the earlier patch.
+On Tue Jun 24, 2025 at 5:17 AM JST, Daniel Almeida wrote:
+> In light of bindgen being unable to generate bindings for macros, and
+> owing to the widespread use of these macros in drivers, manually define
+> the bit and genmask C macros in Rust.
+>
+> The *_checked version of the functions provide runtime checking while
+> the const version performs compile-time assertions on the arguments via
+> the build_assert!() macro.
+>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
->  ///
->  /// # Safety
->  ///
-> @@ -132,3 +134,124 @@ fn drop(&mut self) {
->          unsafe { T::release(self.ptr) };
->      }
->  }
+Overall this looks great ; I especially like how succint this has
+become. I think I found a couple of last remaining issues, please check
+below.
+
+<snip>
+> diff --git a/rust/kernel/bits.rs b/rust/kernel/bits.rs
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..8db122b5db9565b76c14fc33e=
+33058f9dac7bd75
+> --- /dev/null
+> +++ b/rust/kernel/bits.rs
+> @@ -0,0 +1,133 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +/// A trait for objects that can be wrapped in either one of the referen=
-ce types [`Owned`] and
-> +/// [`ARef`].
-> +///
-> +/// # Safety
-> +///
-> +/// Implementers must ensure that:
-> +///
-> +/// - [`try_from_shared()`](OwnableRefCounted::into_shared) only returns=
- an [`Owned<Self>`] if
-> +///   exactly one [`ARef<Self>`] exists.
-
-This shouldn't be required?
-
-> +/// - [`into_shared()`](OwnableRefCounted::into_shared) set the referenc=
-e count to the value which
-> +///   the returned [`ARef<Self>`] expects for an object with a single re=
-ference in existence. This
-> +///   implies that if [`into_shared()`](OwnableRefCounted::into_shared) =
-is left on the default
-> +///   implementation, which just rewraps the underlying object, the refe=
-rence count needs not to be
-> +///   modified when converting an [`Owned<Self>`] to an [`ARef<Self>`].
-
-This also seems pretty weird...
-
-I feel like `OwnableRefCounted` is essentially just a compatibility
-condition between `Ownable` and `RefCounted`. It ensures that the
-ownership declared in `Ownable` corresponds to exactly one refcount
-declared in `RefCounted`.
-
-That being said, I think a `RefCounted` *always* canonically is
-`Ownable` by the following impl:
-
-    unsafe impl<T: RefCounted> Ownable for T {
-        unsafe fn release(this: NonNull<Self>) {
-            T::dec_ref(this)
-        }
-    }
-
-So I don't think that we need this trait at all?
-
-> +///
-> +/// # Examples
-
-If we're having an example here, then we should also have on on `Owned`.
-
-> +///
-> +/// A minimal example implementation of [`OwnableRefCounted`], [`Ownable=
-`] and its usage with
-> +/// [`ARef`] and [`Owned`] looks like this:
-> +///
-> +/// ```
-> +/// # #![expect(clippy::disallowed_names)]
-> +/// use core::cell::Cell;
-> +/// use core::ptr::NonNull;
-> +/// use kernel::alloc::{flags, kbox::KBox, AllocError};
-> +/// use kernel::types::{
-> +///     ARef, RefCounted, Owned, Ownable, OwnableRefCounted,
-> +/// };
-> +///
-> +/// struct Foo {
-> +///     refcount: Cell<usize>,
-> +/// }
-> +///
-> +/// impl Foo {
-> +///     fn new() -> Result<Owned<Self>, AllocError> {
-> +///         // Use a `KBox` to handle the actual allocation.
-> +///         let result =3D KBox::new(
-> +///             Foo {
-> +///                 refcount: Cell::new(1),
-> +///             },
-> +///             flags::GFP_KERNEL,
-> +///         )?;
-> +///         let result =3D NonNull::new(KBox::into_raw(result))
-> +///             .expect("Raw pointer to newly allocation KBox is null, t=
-his should never happen.");
-
-I'm not really convinced that an example using `KBox` is a good one...
-Maybe we should just have a local invisible `bindings` module that
-exposes a `-> *mut foo`. (internally it can just create a KBox`)
-
-> +///         // SAFETY: We just allocated the `Foo`, thus it is valid.
-
-This isn't going through all the requirements on `from_raw`...
-
----
-Cheers,
-Benno
-
-> +///         Ok(unsafe { Owned::from_raw(result) })
-> +///     }
-> +/// }
-> +///
-> +/// // SAFETY: We increment and decrement each time the respective funct=
-ion is called and only free
-> +/// // the `Foo` when the refcount reaches zero.
-> +/// unsafe impl RefCounted for Foo {
-> +///     fn inc_ref(&self) {
-> +///         self.refcount.replace(self.refcount.get() + 1);
-> +///     }
-> +///
-> +///     unsafe fn dec_ref(this: NonNull<Self>) {
-> +///         // SAFETY: The underlying object is always valid when the fu=
-nction is called.
-> +///         let refcount =3D unsafe { &this.as_ref().refcount };
-> +///         let new_refcount =3D refcount.get() - 1;
-> +///         if new_refcount =3D=3D 0 {
-> +///             // The `Foo` will be dropped when `KBox` goes out of sco=
-pe.
-> +///             // SAFETY: The `Box<Foo>` is still alive as the old refc=
-ount is 1.
-> +///             unsafe { KBox::from_raw(this.as_ptr()) };
-> +///         } else {
-> +///             refcount.replace(new_refcount);
-> +///         }
-> +///     }
-> +/// }
-> +///
-> +/// // SAFETY: We only convert into an `Owned` when the refcount is 1.
-> +/// unsafe impl OwnableRefCounted for Foo {
-> +///     fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef=
-<Self>> {
-> +///         if this.refcount.get() =3D=3D 1 {
-> +///             // SAFETY: The `Foo` is still alive as the refcount is 1=
-.
-> +///             Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
-> +///         } else {
-> +///             Err(this)
-> +///         }
-> +///     }
-> +/// }
-> +///
-> +/// // SAFETY: We are not `AlwaysRefCounted`.
-> +/// unsafe impl Ownable for Foo {
-> +///     unsafe fn release(this: NonNull<Self>) {
-> +///         // SAFETY: Using `dec_ref()` from `RefCounted` to release is=
- okay, as the refcount is
-> +///         // always 1 for an `Owned<Foo>`.
-> +///         unsafe{ Foo::dec_ref(this) };
-> +///     }
-> +/// }
-> +///
-> +/// let foo =3D Foo::new().unwrap();
-> +/// let mut foo =3D ARef::from(foo);
-> +/// {
-> +///     let bar =3D foo.clone();
-> +///     assert!(Owned::try_from(bar).is_err());
-> +/// }
-> +/// assert!(Owned::try_from(foo).is_ok());
-> +/// ```
-> +pub unsafe trait OwnableRefCounted: RefCounted + Ownable + Sized {
-> +    /// Checks if the [`ARef`] is unique and convert it to an [`Owned`] =
-it that is that case.
-> +    /// Otherwise it returns again an [`ARef`] to the same underlying ob=
-ject.
-> +    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<Sel=
-f>>;
+> +//! Bit manipulation macros.
+> +//!
+> +//! C header: [`include/linux/bits.h`](srctree/include/linux/bits.h)
 > +
-> +    /// Converts the [`Owned`] into an [`ARef`].
-> +    fn into_shared(this: Owned<Self>) -> ARef<Self> {
-> +        // SAFETY: Safe by the requirements on implementing the trait.
-> +        unsafe { ARef::from_raw(Owned::into_raw(this)) }
-> +    }
+> +use crate::prelude::*;
+> +use core::ops::RangeInclusive;
+> +use macros::paste;
+> +
+> +macro_rules! impl_bit_fn {
+> +    (
+> +        $ty:ty
+> +    ) =3D> {
+> +        paste! {
+> +            /// Computes `1 << n` if `n` is in bounds, i.e.: if `n` is s=
+maller than
+> +            /// the maximum number of bits supported by the type.
+> +            ///
+> +            /// Returns [`None`] otherwise.
+> +            #[inline]
+> +            pub fn [<checked_bit_ $ty>](n: u32) -> Option<$ty> {
+> +                (1 as $ty).checked_shl(n)
+> +            }
+> +
+> +            /// Computes `1 << n` by performing a compile-time assertion=
+ that `n` is
+> +            /// in bounds.
+> +            ///
+> +            /// This version is the default and should be used if `n` is=
+ known at
+> +            /// compile time.
+> +            #[inline]
+> +            pub const fn [<bit_ $ty>](n: u32) -> $ty {
+> +                build_assert!(n < <$ty>::BITS);
+> +                (1 as $ty) << n
+> +            }
+> +        }
+> +    };
 > +}
 > +
-> +impl<T: OwnableRefCounted> TryFrom<ARef<T>> for Owned<T> {
-> +    type Error =3D ARef<T>;
-> +    /// Tries to convert the [`ARef`] to an [`Owned`] by calling
-> +    /// [`try_from_shared()`](OwnableRefCounted::try_from_shared). In ca=
-se the [`ARef`] is not
-> +    /// unique, it returns again an [`ARef`] to the same underlying obje=
-ct.
-> +    fn try_from(b: ARef<T>) -> Result<Owned<T>, Self::Error> {
-> +        T::try_from_shared(b)
-> +    }
+> +impl_bit_fn!(u64);
+> +impl_bit_fn!(u32);
+> +impl_bit_fn!(u16);
+> +impl_bit_fn!(u8);
+> +
+> +macro_rules! impl_genmask_fn {
+> +    (
+> +        $ty:ty,
+> +        $(#[$genmask_ex:meta])*
+> +    ) =3D> {
+> +        paste! {
+> +            /// Creates a compile-time contiguous bitmask for the given =
+range by
+
+This is the checked version, so IIUC the bitmask is not created at
+compile-time?
+
+> +            /// validating the range at runtime.
+> +            ///
+> +            /// Returns [`None`] if the range is invalid, i.e.: if the s=
+tart is
+> +            /// greater than or equal to the end.
+
+"... or is out of the representable range for $ty."
+
+> +            #[inline]
+
+Can we give examples for this function as well?
+
+> +            pub fn [<genmask_checked_ $ty>](range: RangeInclusive<u32>) =
+-> Option<$ty> {
+> +                let start =3D *range.start();
+> +                let end =3D *range.end();
+> +
+> +                if start >=3D end || end >=3D <$ty>::BITS {
+
+The range is inclusive, so something like `0..=3D0` is valid (and returns
+a mask of `0x1`). I think we want `start > end`?
+
+Also, since you are using `checked_bit_*` below, I think the `end >=3D
+<$ty>::BITS` check is redundant.
+
+> +                    return None;
+> +                }
+> +
+> +                let high =3D [<checked_bit_ $ty>](end)?;
+> +                let low =3D [<checked_bit_ $ty>](start)?;
+> +                Some((high | (high - 1)) & !(low - 1))
+> +            }
+> +
+> +            /// Creates a compile-time contiguous bitmask for the given =
+range by
+> +            /// performing a compile-time assertion that the range is va=
+lid.
+> +            ///
+> +            /// This version is the default and should be used if the ra=
+nge is known
+> +            /// at compile time.
+> +            $(#[$genmask_ex])*
+> +            #[inline]
+> +            pub const fn [<genmask_ $ty>](range: RangeInclusive<u32>) ->=
+ $ty {
+> +                let start =3D *range.start();
+> +                let end =3D *range.end();
+> +
+> +                build_assert!(start < end);
+
+`start <=3D end`
+
+> +                build_assert!(end < <$ty>::BITS);
+
+Here also this check looks redundant, since `bit_*` will fail if the
+shift doesn't fit into $ty.
+
+> +
+> +                let high =3D [<bit_ $ty>](end);
+> +                let low =3D [<bit_ $ty>](start);
+> +                (high | (high - 1)) & !(low - 1)
+> +            }
+> +        }
+> +    };
 > +}
+> +
+> +impl_genmask_fn!(
+> +    u64,
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// # use kernel::bits::genmask_u64;
+> +    /// let mask =3D genmask_u64(21..=3D39);
+> +    /// assert_eq!(mask, 0x000000ffffe00000);
+
+I think we should also have 2 examples that show the behavior at the
+limits (i.e. `0..=3D0` and `0..=3D63` here ; possibly others if you can see
+interesting cases.). They are useful to understand how the function
+actually works, and would also have caught the errors I pointed out
+above.
 
 
