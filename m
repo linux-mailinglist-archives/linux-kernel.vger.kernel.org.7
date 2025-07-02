@@ -1,139 +1,218 @@
-Return-Path: <linux-kernel+bounces-712701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BD2AF0D9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:13:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B56AF0DA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 120787A1825
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:12:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E324E3ACD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CA523645D;
-	Wed,  2 Jul 2025 08:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0E9233723;
+	Wed,  2 Jul 2025 08:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="keWQnS7Q"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i//tWxRq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B1C211F;
-	Wed,  2 Jul 2025 08:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCDD79F5
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 08:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751444021; cv=none; b=QAyWWQVq65vX5b7fsMeHr9stbLRvBei2ejWZphkUA7fDUUCF+CSjkNqYczqvtXjAFJQf6xyA0Kui4Eg9I+w3nbJRiBm3in/+BCHT/+tUnvJzXhF++/Xz1NL+Yfr9wZDA3zc7uNWPcu3/w6bgXs6HS+bgrVf167G2AfP12BlTYlc=
+	t=1751444136; cv=none; b=DYCVrtSpCrc3YlAVMrXvRO6JzuAYReecFVwOHJfyMVoW3+OfKGXx0SA75oCQUntrLnNC9M1n0XmKoxQozllcsK0RT4WIJErqYJsFspDgf9Q743xCpvvPIwo7tv/p3nfHyJaG1T5iRQUm8sAIY4H+s/dbzYxfATNtM4A2YsBjQKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751444021; c=relaxed/simple;
-	bh=rpo2ESDt1LMwF1P1AS+ULFy50jeEECnVqLiyEcJOcUI=;
-	h=From:Content-Type:Mime-Version:Subject:Date:References:To:
-	 In-Reply-To:Message-Id; b=V0qt7qAboaGythh/eAKKJEnBpbFFxOvk8lGaR6YPOJ34XSXok3I2OG7CPXBlHLdGvPIXANnb+L1Mx/FRVlp+J+AsvcYsh8ce9r8Xxd2fU9cmK91dsEUySJZ8ucpdrGzpc5Y9DnCW3XEs6KtFA6SQKpXpVtwPWhTD/s6+Ig6w93c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=keWQnS7Q; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-553ba7f11cbso7706526e87.1;
-        Wed, 02 Jul 2025 01:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751444016; x=1752048816; darn=vger.kernel.org;
-        h=message-id:in-reply-to:to:references:date:subject:mime-version
-         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rpo2ESDt1LMwF1P1AS+ULFy50jeEECnVqLiyEcJOcUI=;
-        b=keWQnS7QOr9OI9lTAUUIwiigfZCW7/6LeteLaUMBc8M3iNet/wrtKBaMQsyM87tpGY
-         ek2IXhrrFxeb+Uplk5ZtPZDVdDB3TVDaf7aZx15p1JElioYYu5x1zyh6UdqPNwDETkEW
-         8dEOWH5thzJlkbtA2hB9Y4D/krmRair50Dv10FQe/w6CGYb4+UI9BEuG2LrWZNidtMjK
-         bImJHUY0hw1cc6yB5AFKcaptz+hELQ2fUtGxWCHpp3KztwCJu1cqPaIGrW4rKWvyTR/+
-         3ELKClcFX0LM9rhqH5XJ7zQtHZ60wj5CJZxigX9KNKUaS+6oVWR7lEL3ddqoUZj5b/v6
-         9Xog==
+	s=arc-20240116; t=1751444136; c=relaxed/simple;
+	bh=Ka2UjaphCjNa6EguV7MypeLZuUU8lQh4vdiRaAq0nd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYs5YIY+K9Umcxu1tpOZ9BwexOYISeDHjTOq3MndDrPHHqyvo0e6AlOgrjA9nr6uq3SNJyll1zlLH627nG/pHbuA4AaphkDMQqK3hHgZgSUQuqnwtRuABPlWZzIatNNMif8q+F4nYrUSHAvm6iduqvquMetCcfF9j6skrZNc8Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i//tWxRq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751444134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=S/PeRiI9W057w864aBxmq+mzL1W5cMHbc8FsLBmU7cs=;
+	b=i//tWxRqPDMETu0kKWFPWjZpnybmScltIz2Kx5Up5qEMY1FuIXOEKJffO3bZQX3erRSoYN
+	+Xcrp84hSYrLCrbWR1gpjI6CATEy8q5oz4P9TC9NSYfcZrUwMd/1pl4AZ0M1NzGDb5GVxH
+	+JaNnYf40HGqL9Yna2wBapl8vUBOeIY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-307-j8-PUR2GPG2qQ1QSun00nA-1; Wed, 02 Jul 2025 04:15:32 -0400
+X-MC-Unique: j8-PUR2GPG2qQ1QSun00nA-1
+X-Mimecast-MFC-AGG-ID: j8-PUR2GPG2qQ1QSun00nA_1751444132
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-453018b4ddeso37448825e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 01:15:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751444016; x=1752048816;
-        h=message-id:in-reply-to:to:references:date:subject:mime-version
-         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rpo2ESDt1LMwF1P1AS+ULFy50jeEECnVqLiyEcJOcUI=;
-        b=qgzaAk6geRq+JqhFsYDR1WVs3jgd8TPtg3ut4sHAC8NEip8Ft2waDGPpijw/7l/AIz
-         +8tx725MCWAaG3S/T3KPgMEKisIyGJWmY31d9++65Pp6Zq2ppDnhfwn8i41p1NxEmREx
-         cQe37lDDCF3XtZtEApPfpPzTo8CN5W2Eo+vz71OYRUZFLiM4qeDRZGqyWP9Ne0bdvFGc
-         pJslSH40jSGJsWrWrfJ4bu2DDRsWJBd5g8CGt968IH4ZAk4TDanA50tZuYQQIxQ08Hsp
-         9F+pvQfFh1RBjjhXFu5gBZa/2MuKWPtqI/sNknYJj9b5NskAZ71aVslT//131wlQ3veP
-         0CnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD4ABcXijRRDuqm6Ucud59bJWCY+F1KoutiS2Oh0bl4gQ4O/dPmUpilNzZlxswC7Z7AlDkJnHhTvYy3Ck=@vger.kernel.org, AJvYcCXZvf1quryIG1vTcDOwiJ3ZX0I6eg13SfFXV6ko8IsGiVeFMOPAMWc+bFpAVzW8fiBB2+yTw1XdJVwEWx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza2LFdR4e4jkWtHjXmkXtcx6xB5YOzGEnNH5KzaUcYyt9RDg4e
-	RW06/4pDNXc7qVDu5L0eCK/SC1fsHf90EYM+bqx9Ft+RDbp/80IQ6Leg
-X-Gm-Gg: ASbGncvEaDCvlXH335x9ORX/ZckSuUK0JFoLVuzRlpmzTE+WAn7H7bqtWtoysTDgJ44
-	kYxYE1Bo+1AlQd+X/PHi8jWjgPFB1IVq65Jt9lhfmOz0CgicGllEYyxP3j99z80nSQ0Cipi9EUu
-	UEndC9ifHavnMTLe/xDExFsUHh+J6QADnsMNRjlP0FFhrb+k4Ck2bRx228hlgQ7HIwMOrxBd8NP
-	fEIufMzDDZoOGgXIqjeZ/eA5QpILoJW8GnXxNQyW6hUJm6BXGM8VVD/NgKj+kcv3SPSBdEzfNXe
-	4J+6EObnIQ6aTeVO9YKpJlvI6smjqNTKLjn1s/BFuE7iX/eGz2+PfOgvuRkYCikPXA17bfuQJu7
-	U1bk0WMwq01s=
-X-Google-Smtp-Source: AGHT+IFq1xyVsfbm5OpMZLE3lahO1obWQ/sqszwZ7C4sbORBoXKs9FoMUmZ+mcPBYVsXNdCInPgB8g==
-X-Received: by 2002:a05:6512:3094:b0:553:ad48:3f2b with SMTP id 2adb3069b0e04-556282aeb07mr683575e87.2.1751444016128;
-        Wed, 02 Jul 2025 01:13:36 -0700 (PDT)
-Received: from smtpclient.apple ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5550b2b95acsm2055286e87.115.2025.07.02.01.13.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 02 Jul 2025 01:13:35 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20230601; t=1751444131; x=1752048931;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S/PeRiI9W057w864aBxmq+mzL1W5cMHbc8FsLBmU7cs=;
+        b=RPc+QxtM9M0LLa1jcZVWwhFAZvjB5zMQXFdOaZxXZ9BWQEuXAt92T3HBfNayMcWxhJ
+         ObFlXxtIqJZyyXTISvPdeO4ylWc5UfCZkNkeXCA9uJFfCEPdTTpZkzcs7q9N93Rhlj5/
+         WJiS/lxiDtJRTwbBgw07kxqMUIH1GdbQlhYaRvNauVT0Kh623p6lUKmYtfjcOF8fvzrL
+         wwUSDRBedXryk3OSenB2/3Ahb4LiZ32UPT9DS90irp2wtkOeKBGlI0PjaYRDdTgY8ssa
+         0HAX0DdrKvRGHbCdQH7u+RUpJd095AMhfP6Um48Pm7w3NDbDvzBitu2/i1dcE7AguhBh
+         t+1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnD7tReCE1ssKJyK7ssYZ4x43Loziv/rFbaJFiJZM1RqgwUgcrVELf9PMc1FhyZqJNR64nbAaeVUSqC+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAvH0Po9qTRrq9PM7YrZQsvTriNtCCoFVP5/9RA/BG1zwr9mji
+	bNgTgx6GwxtGxo0ug3j6kFozTFQP3W3XDHUxw7A8ZQxfKwgfCVDUfO1bSEZ19/A4FemsGmUbH3Z
+	QjwqjexdhlGr00czz8gSMr01su/foNpo5zCgFbV4Ie3oX/4r1l8HpKf/oLO6hehPNrA==
+X-Gm-Gg: ASbGncuyiquUmiVUWBHYpBVze8ZMUgKgqX/3R7UczOAa5fXcaoTq7Xptf7kk7OJ6PNm
+	2NFx3JI2cbj6re/HAp7F7sl2WLNFPzlzl8VN/9c3RMwj9liFVmbyPEn4Q/esI7Fh4uRrzvcaynh
+	UPwK3c7Zqff2TC0zSgB/QcvEDnOkwvIHKWJk2uwEPyngm/T3b5VoM/V0eoTfKppIyMiwYq1D68U
+	nbBM1qJmjRJ8maQzR+2yWvwDHuiq1F6n5TKE/NxP/j0IOC/xzNVw8q0dWvZqLn9odWx/ZhC1n2C
+	lCVE+rXLrifb8R8Ih1MW1Cy0Y6xaw8RV57baDM9P9m3K3soqc4DZiRE=
+X-Received: by 2002:a05:600c:628c:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-454a370a8b7mr21587335e9.16.1751444131555;
+        Wed, 02 Jul 2025 01:15:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEjeoKb0+czmHoAzmLIFMrNEO4FKYLUVYmqyrAcXt4obyK043c7z5NOyTl9xiVAExon27uSQ==
+X-Received: by 2002:a05:600c:628c:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-454a370a8b7mr21586865e9.16.1751444131044;
+        Wed, 02 Jul 2025 01:15:31 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a390c88sm200260175e9.8.2025.07.02.01.15.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 01:15:30 -0700 (PDT)
+Message-ID: <6508ccf7-5ce0-4274-9afb-a41bf192d81b@redhat.com>
+Date: Wed, 2 Jul 2025 10:15:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [v2] media: si2168: increase cmd execution timeout value
-Date: Wed, 2 Jul 2025 12:13:21 +0400
-References: <20250331084437.3974648-1-christianshewitt@gmail.com>
- <67ea654f.050a0220.2a49ac.2402@mx.google.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Peter Rosin <peda@axentia.se>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <67ea654f.050a0220.2a49ac.2402@mx.google.com>
-Message-Id: <796D5DD1-D49E-4B9B-9F20-7FC5A88DD37B@gmail.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] vfio/type1: optimize vfio_pin_pages_remote() and
+ vfio_unpin_pages_remote() for large folio
+To: lizhe.67@bytedance.com, alex.williamson@redhat.com, jgg@ziepe.ca,
+ peterx@redhat.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <20250630072518.31846-1-lizhe.67@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250630072518.31846-1-lizhe.67@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> On 31 Mar 2025, at 1:50=E2=80=AFpm, Patchwork Integration =
-<patchwork@media-ci.org> wrote:
->=20
-> Dear Christian Hewitt:
->=20
-> Thanks for your patches! Unfortunately the Media CI robot detected =
-some
-> issues:
->=20
-> # Test =
-checkpatch:./0001-media-si2168-increase-cmd-execution-timeout-value.patch =
-checkpatch
-> WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit =
-description?)
-> #9:=20
-> Jan 28 12:23:46.788180 LibreELEC kernel: si2168 1-0060: cmd execution =
-took 0 ms
->=20
-> total: 0 errors, 1 warnings, 0 checks, 25 lines checked
->=20
->=20
->=20
-> Please fix your series, and upload a new version. If you have a =
-patchwork
-> account, do not forget to mark the current series as Superseded.
->=20
-> For more details, check the full report at:
-> =
-https://linux-media.pages.freedesktop.org/-/users/patchwork/-/jobs/7364245=
-4/artifacts/report.htm
+On 30.06.25 09:25, lizhe.67@bytedance.com wrote:
+> From: Li Zhe <lizhe.67@bytedance.com>
+> 
+> This patchset is an consolidation of the two previous patchsets[1][2].
+> 
+> When vfio_pin_pages_remote() is called with a range of addresses that
+> includes large folios, the function currently performs individual
+> statistics counting operations for each page. This can lead to significant
+> performance overheads, especially when dealing with large ranges of pages.
+> 
+> The function vfio_unpin_pages_remote() has a similar issue, where executing
+> put_pfn() for each pfn brings considerable consumption.
+> 
+> This patchset optimizes the performance of the relevant functions by
+> batching the less efficient operations mentioned before.
+> 
+> The first patch optimizes the performance of the function
+> vfio_pin_pages_remote(), while the remaining patches optimize the
+> performance of the function vfio_unpin_pages_remote().
+> 
+> The performance test results, based on v6.16-rc4, for completing the 16G
+> VFIO MAP/UNMAP DMA, obtained through unit test[3] with slight
+> modifications[4], are as follows.
+> 
+> Base(6.16-rc4):
+> ./vfio-pci-mem-dma-map 0000:03:00.0 16
+> ------- AVERAGE (MADV_HUGEPAGE) --------
+> VFIO MAP DMA in 0.047 s (340.2 GB/s)
+> VFIO UNMAP DMA in 0.135 s (118.6 GB/s)
+> ------- AVERAGE (MAP_POPULATE) --------
+> VFIO MAP DMA in 0.280 s (57.2 GB/s)
+> VFIO UNMAP DMA in 0.312 s (51.3 GB/s)
+> ------- AVERAGE (HUGETLBFS) --------
+> VFIO MAP DMA in 0.052 s (310.5 GB/s)
+> VFIO UNMAP DMA in 0.136 s (117.3 GB/s)
+> 
+> With this patchset:
+> ------- AVERAGE (MADV_HUGEPAGE) --------
+> VFIO MAP DMA in 0.027 s (596.4 GB/s)
+> VFIO UNMAP DMA in 0.045 s (357.6 GB/s)
+> ------- AVERAGE (MAP_POPULATE) --------
+> VFIO MAP DMA in 0.288 s (55.5 GB/s)
+> VFIO UNMAP DMA in 0.288 s (55.6 GB/s)
+> ------- AVERAGE (HUGETLBFS) --------
+> VFIO MAP DMA in 0.031 s (508.3 GB/s)
+> VFIO UNMAP DMA in 0.045 s (352.9 GB/s)
+> 
+> For large folio, we achieve an over 40% performance improvement for VFIO
+> MAP DMA and an over 66% performance improvement for VFIO DMA UNMAP. For
+> small folios, the performance test results show little difference compared
+> with the performance before optimization.
 
-Can someone please confirm whether I do need to submit a v3 of
-this patch? - the line-length issue flagged by the bot refers
-to the patch description text (which has some longer log lines
-that demo the issue) not code in the patch. I=E2=80=99d like to get this
-merged so I can clear the patch from my distro=E2=80=99s patchset.
+Jason mentioned in reply to the other series that, ideally, vfio 
+shouldn't be messing with folios at all.
 
-Christian=
+While we now do that on the unpin side, we still do it at the pin side.
+
+Which makes me wonder if we can avoid folios in patch #1 in 
+contig_pages(), and simply collect pages that correspond to consecutive 
+PFNs.
+
+What was the reason again, that contig_pages() would not exceed a single 
+folio?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
