@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-713345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1F2AF5849
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:15:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FEBAF5848
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0AC3A0FBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0747B5313
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7312727877F;
-	Wed,  2 Jul 2025 13:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="FcvHW1+q"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326F0276031;
+	Wed,  2 Jul 2025 13:14:39 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0F3275AFF;
-	Wed,  2 Jul 2025 13:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462085; cv=pass; b=eCKMPZlA+EaZvJiQg0zt4IMxiQSED9niH/QCKBt4Q6xL7MTRJ4Llr3K05Px/OYANhmX+tUgQzvemBjFsDSpm8+6vtlARmMj1ht1A+c/SrCMGbZh/J51pFj1QZHgvxgHxiRbq3p5ZvyNRiQuWO0pzmcW0U7CGkTcfL1AAvfZ+jS0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462085; c=relaxed/simple;
-	bh=ZDkq31mV+uhs8Uuyx642C5Fpj1d+m5wEOZRDd4QkaEw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=hZKOnV+TwuVCwKnXB3KYMen1THX3RddFuBeauBHXK3LMMZ5qzOIJYeGyKchcHwMY9jWJZg83Eim6p/JRGkfIxjR5l3/AsVVb5JlMkfR3xyp0TrlLnZsOMEIE9LpkLbo1zZJJ0AzdgKfjIEWeCAhz8r581+GFbujZRivFDyoXGPw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=FcvHW1+q; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1751462063; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iFbSwsqhBq4otegwQvzoqZyVGvcdPzxgFMjb6bFPdZejdHH3cYY+gJ3tTpSiMFjQf2hjroON1zAMUPSJdgEt841nVxf7M4gU2t39XFgMrMhIOUVJvbPlBiHWERfp1OO0gRXE/rp9Ars73I1IrHRqq+D7SbumD9q+gnElF8crjTM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1751462063; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0kWiHd1qdcCThaYd52BxxMVESal++GotlrEBuaZtyTM=; 
-	b=TsGFs8xpYKSXsZWuExsySZPAs8CwwpaLOJpng9ry5Tc6BlV7xa19Oy6KKGPg86JWI0mXMI95Muco9ekQk1zdiUVj807wuHCV+4rJHWdwZxAfyVrhiczb3YFMMh31v6X7BNZEvTI4X4CrHbsMEgbV8NHk7QqvV2bJaWwXent38IQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1751462063;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=0kWiHd1qdcCThaYd52BxxMVESal++GotlrEBuaZtyTM=;
-	b=FcvHW1+q1t7ckCOg8MdYfRkE56KyDnsJCf+jD5k9ut0l6dOglS9qCFYlpHnqW09B
-	O5ETE/51fQ72dO1D87oyanUSq1U7aNxMwGtSWDbnnJ+iGiWxSrdx8Mn8y37/wX+ssuT
-	KJflbKxwJ56WHigsyr5yn6WURm/Xlr11A/erw+0s=
-Received: by mx.zohomail.com with SMTPS id 1751462060902807.575235946391;
-	Wed, 2 Jul 2025 06:14:20 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E079C275842;
+	Wed,  2 Jul 2025 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751462078; cv=none; b=jfQtj8nSOzuUIqyZMpoNxm+j9DEiUxD7Rl9oHZ+CFVCBkEeadPi9UueRH2L6dK+KpoWd5vlw5Rd0JBQqGckwWeptNN8qBLY4we/R+c5QevrGovweYR1Q0W3b6SxlCiZAn97tqQr4dW8Jl5Y6V2qyY7uWP7gAFptQ/j0ABkJVW14=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751462078; c=relaxed/simple;
+	bh=OPSe+3QFxTJOCAjhl0W0R8iuX49OExDwL5nwcOfAG40=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FzzdurF6PSxvkqPBdE/DGhOOuyO8YJQvTrCqoUf0rV2gcAUOmJGDkD3L8WcVdkNlulrNp1FkavJURp/fTQcGiDtXrk7sqCvVPhZ14ON42Sy3pgpfUuvGXHGnB/cuDfChNIxeqO0GuoqbXH/Re7Tg8lz09HZ62lVq6FqXETuxAaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uWxI8-000000007sk-0DKJ;
+	Wed, 02 Jul 2025 13:14:24 +0000
+Date: Wed, 2 Jul 2025 14:14:20 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Felix Fietkau <nbd@nbd.name>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
+	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
+	Sky Huang <skylake.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH net-next v5 0/3] net: ethernet: mtk_eth_soc: improve device
+ tree handling
+Message-ID: <cover.1751461762.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v6 1/2] rust: regulator: add a bare minimum regulator
- abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLgg1-K6x0wRO79mt4fGvJeNanr9Km75=1Z9G0gy-WbeU2g@mail.gmail.com>
-Date: Wed, 2 Jul 2025 10:14:04 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0FD01582-58D1-4DC2-89DB-A4C8771F7750@collabora.com>
-References: <20250627-topics-tyr-regulator-v6-0-1d015219b454@collabora.com>
- <20250627-topics-tyr-regulator-v6-1-1d015219b454@collabora.com>
- <CAH5fLgj_eKuo=E7HPgmd1bJNfidGUS37MM1QqRaQ_MJ2kTgCmg@mail.gmail.com>
- <1DFECD1D-9445-4D59-A727-37C527B5DFF5@collabora.com>
- <CAH5fLgg1-K6x0wRO79mt4fGvJeNanr9Km75=1Z9G0gy-WbeU2g@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+This series further improves the mtk_eth_soc driver in preparation to
+complete upstream support for the MediaTek MT7988 SoC family.
 
->=20
->>>> +impl<T: RegulatorState + 'static> Drop for Regulator<T> {
->>>> +    fn drop(&mut self) {
->>>> +        if core::any::TypeId::of::<T>() =3D=3D =
-core::any::TypeId::of::<Enabled>() {
->>>=20
->>> I would avoid this kind of logic. Instead, you can add an
->>> `disable_on_drop()` method or constant to the trait and check it =
-here.
->>>=20
->>> Alice
->>>=20
->>=20
->> Can you expand on this?
->=20
-> Along these lines:
->=20
-> pub trait RegulatorState: 'static {
->    const DISABLE_ON_DROP: bool;
-> }
->=20
-> impl RegulatorState for Enabled {
->    const DISABLE_ON_DROP: bool =3D true;
-> }
-> impl RegulatorState for Disabled {
->    const DISABLE_ON_DROP: bool =3D false;
-> }
-> impl RegulatorState for Dynamic {
->    const DISABLE_ON_DROP: bool =3D false;
-> }
->=20
-> impl<T: RegulatorState> Drop for Regulator<T> {
->    fn drop(&mut self) {
->        if T::DISABLE_ON_DROP {
->            unsafe { bindings::regulator_disable(self.inner.as_ptr()) =
-};
->        }
->        unsafe { bindings::regulator_put(self.inner.as_ptr()) };
->    }
-> }
+Frank Wunderlich's previous attempt to have the ethernet node included
+in mt7988a.dtsi and cover support for MT7988 in the device tree bindings
+was criticized for the way mtk_eth_soc references SRAM in device tree[1].
 
-Ah, that indeed looks better, thanks.
+Having a 2nd 'reg' property, like introduced by commit ebb1e4f9cf38
+("net: ethernet: mtk_eth_soc: add support for in-SoC SRAM") isn't
+acceptable and a dedicated "mmio-sram" node should be used instead.
 
-=E2=80=94 Daniel
+In order to make the code more clean and readable, the existing
+hardcoded offsets for the scratch ring, RX and TX rings are dropped in
+favor of using the generic allocator. However, support for the hardcoded
+offset of the SRAM itself being included as part of the Ethernet's "reg"
+MMIO space is kept as it will still be required in order to support
+existing legacy device trees of the MT7986 SoC family.
 
+While at it also replace confusing error messages when using legacy
+device trees without "interrupt-names" with a warning informing users
+that they are using a legacy device tree.
 
+[1]: https://patchwork.ozlabs.org/comment/3533543/
+
+Daniel Golle (3):
+  net: ethernet: mtk_eth_soc: improve support for named interrupts
+  net: ethernet: mtk_eth_soc: fix kernel-doc comment
+  net: ethernet: mtk_eth_soc: use generic allocator for SRAM
+
+ drivers/net/ethernet/mediatek/Kconfig       |   1 +
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 167 +++++++++++---------
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h |  11 +-
+ 3 files changed, 101 insertions(+), 78 deletions(-)
+
+-- 
+2.50.0
 
