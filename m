@@ -1,98 +1,153 @@
-Return-Path: <linux-kernel+bounces-713995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2297CAF6161
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BEF0AF6172
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCD7B7AAC56
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB6D37A65D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63688267B95;
-	Wed,  2 Jul 2025 18:34:42 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55585301121;
+	Wed,  2 Jul 2025 18:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="rd1RwZ+5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BD51F2BAE;
-	Wed,  2 Jul 2025 18:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26145217666
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 18:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751481282; cv=none; b=kkUH3Bpuj+uLY3iRB4y5HnLW2/o5VIygfei4ti4Zwoav5o7untbUfugwKzhkyzr5+nZI6oR3Lm8wrBXo+/gi6HAYAcVtwmM5JA/r1iC1VIWzlr6RhKUCrJilJhPr08/IyK/218jVch2Rm6XMBUrwg+ObAhMD3gP0PpYM+CNcHws=
+	t=1751481554; cv=none; b=bgR5E4EEiBmGqjRLolxt+KYtTB8OMbWZji3sklW2tx8aNhtT70s+ymEFB0e4kaLdvZysbdQM28m7iTbIiV3YqkXh6PlqjFt9/H/AWxG5d0thq9jnviyJuQ5lHKTUofxus2PZqsNDaNLl2uKIRPV1dorEITkDOwbLvAaAaQdro0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751481282; c=relaxed/simple;
-	bh=aWuUX6tLZD4z9ADKTWTUwJg5KGFXyu88N0DH7uktLNY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m6W91zwVZntq3RzeI/56YUZOurj/M3EFCMz8/iccoKcUTNYKw1btAvrFkQSa+xG4eCe4mRKdtVqifWU13NIoFfcxUle7Rkcz7DoIW3Ot1SAgHE0LZ/mdTRBplW35owaFDtc4ErotEojpa11xGWc2x8NAAekJgRIFFvEjfFLGPcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 937CDC4CEE7;
-	Wed,  2 Jul 2025 18:34:38 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: pcc@google.com,
+	s=arc-20240116; t=1751481554; c=relaxed/simple;
+	bh=xCRs4dzrc6WcXYmCwUPWRARDoPNR6pE48wQDzbnDrFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8ZvUOeGSKlwoXODe4JN1mRmPqEfSmklBCGHE7HdZZPO+yk1i47U6eh0P0zyFpMFCrOyyrDzzJlnXR8yr74CWnfqx+oGFPAbul1pCdtw6b6iLaxhDv2IqEs6dbH76NU/vs7wS2+3AgpqdE3Z81zW+j8LX3F1XtoprcAxpHLoVNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=rd1RwZ+5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2350fc2591dso1776395ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 11:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1751481552; x=1752086352; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H0vokW/WVWIh/diYEqZYuuuvilgnskYyUw0dTfGNSpI=;
+        b=rd1RwZ+5nubdEQxYyJFun87C00oSIIPar2SyPLa2/vR41WjfK5wDB9i1LDVOJDpgqF
+         8mK9mxPgO5iLW9e81d87+vOykBOkJSpy5k4/eqbi8L6WlqU3ZpVUQToBsGfcbuVW53MR
+         6m+g6CF3ijwp+YW7yc1A472ZsLTMAurLhw4fXlbLyrn3ZMKvAjlS3awXzBr9Y8qy+ys1
+         J3mb8zyJv/tEcP1rp75BdLzpVC/urUFC6R2Wlgey/2IHxk2sarL33GYm5w55fyyzQbqO
+         y2JPdIcPnxWB5UOYSMmDP0WDSsezjeOveo7nWLAxA1wJJ5JzuxQ81IQjOhix55O32dz6
+         MXNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751481552; x=1752086352;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H0vokW/WVWIh/diYEqZYuuuvilgnskYyUw0dTfGNSpI=;
+        b=kpgJOz5o1gwJSUqdFqTIewfH/m8kWTRLDZHupiz2fNASYRB3fBey7Ut0uk34ZfxRRb
+         xfhoRsiyJ/gSS6CMQswOKjTto3KOUdC2Xm5pBcqUJL+BYz6ZdTQpmw1FjWJLuoDUv0d2
+         1KR3UcBBnNKHHrIVWWbt60lNHPmFlVHhKk+u6og4GMplIwRYSoqZPDr1WKFpNXsyZZmM
+         3BAN7NTscw1+PhajHatH45oqPdjdYx2lgsVFR+5/Vg9+7LYF37rC0N9q6WCcj/yfJl2K
+         U/dppGfLnP/HwecLMQ90AlLWRtWR4KEc9O8iskNLgdfifrZo5as6/wPkcVKOTj4vrYV7
+         LYCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUe41N2DMarqB1kR/zSbM5Eu9UmIrAD+DC3JITtx/gxFAlQp1H/GgfwrfV3/Oflz80ZbWNUQFsNy40/qlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+Gxo5rTfsqralYEDX+/j6uv4gWdWUTRVRqWdmTyv6RaWUieFN
+	uR8Sr4yLCtpjhfaasavQg6DWaZquYiAmOLasRiuSER+lhoxYiswsLVTE7VDs3ZEqICk=
+X-Gm-Gg: ASbGncuLqlknyI5pAeYFvTP7nPddjbz9DSUTALK6mB3sBkMpU5+QRUtakUlSqdxPj3c
+	I9CPPo2IqJ5pfgxmrgrxNMCw4/YNAZBGBv22s++d/Uzd6MSW4/BqvJ1fYydRccBjY1kdKUjhAVn
+	Oys/EqceLSZNBZgcn/c3xuXgSgcshqb4e57zFgijVyI9eckf/DumkHVjJghT6Ftn3d/FAVHpT1C
+	2uet/Y7IbolN86Qn1Zlq1nGRh6w9UwJxFKsZC0QODCEI3WOcVNnwI2yPGc6BreIPZq/joQzAIWI
+	dNHRh/+7eTZZdxOIVARXjYZ5ptISy/le3LAwLS5HShyT+FzpbkxxMF78NYcUce4Zdr/uyvIojfJ
+	8//CMvaD4Zc4xXY0Scarg0Ng=
+X-Google-Smtp-Source: AGHT+IGquOgZW20g+Jug5sdpx4963ZXWIcFE/S5pAht3IG0Kq6KeWcjOPzHMuBzGwiWByDwygshOwQ==
+X-Received: by 2002:a17:903:1105:b0:235:f059:17de with SMTP id d9443c01a7336-23c793f0bc4mr7420165ad.15.1751481552430;
+        Wed, 02 Jul 2025 11:39:12 -0700 (PDT)
+Received: from fedora (cpe-94-253-164-144.zg.cable.xnet.hr. [94.253.164.144])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-23acb2f39bdsm143034195ad.80.2025.07.02.11.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 11:39:11 -0700 (PDT)
+From: Robert Marko <robert.marko@sartura.hr>
+To: linux@armlinux.org.uk,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev,
+	catalin.marinas@arm.com,
 	will@kernel.org,
+	olivia@selenic.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	vkoul@kernel.org,
+	andi.shyti@kernel.org,
+	lee@kernel.org,
 	broonie@kernel.org,
-	anshuman.khandual@arm.com,
-	joey.gouly@arm.com,
-	yury.khrustalev@arm.com,
-	maz@kernel.org,
-	oliver.upton@linux.dev,
-	frederic@kernel.org,
-	akpm@linux-foundation.org,
-	surenb@google.com,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	arnd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v9 00/10] support FEAT_MTE_TAGGED_FAR feature
-Date: Wed,  2 Jul 2025 19:34:35 +0100
-Message-Id: <175148125053.2930777.15499665158759959456.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250618084513.1761345-1-yeoreum.yun@arm.com>
-References: <20250618084513.1761345-1-yeoreum.yun@arm.com>
+	linux-crypto@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	o.rempel@pengutronix.de,
+	daniel.machon@microchip.com
+Cc: luka.perkov@sartura.hr,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH v8 00/10] arm64: lan969x: Add support for Microchip LAN969x SoC
+Date: Wed,  2 Jul 2025 20:35:58 +0200
+Message-ID: <20250702183856.1727275-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 18 Jun 2025 09:45:03 +0100, Yeoreum Yun wrote:
-> The FEAT_MTE_TAGGED_FAR feature provides support for
-> reporting all non-address bits during a synchronous MTE tag check fault.
-> 
-> This patchset extends the reporting tag to include
-> not only the memory tag (logical tag) but also the address tag via
-> si_addr when FEAT_MTE_TAGGED_FAR feature is supported.
-> 
-> [...]
+This patch series adds basic support for Microchip LAN969x SoC.
 
-Applied to arm64 (for-next/feat_mte_store_only), thanks!
+It introduces the SoC ARCH symbol itself under the ARCH_MICROCHIP symbol
+which allows to avoid the need to change dependencies of the drivers that
+are shared for Microchip SoC-s in the future.
 
-[01/10] arm64/cpufeature: add FEAT_MTE_TAGGED_FAR feature
-        https://git.kernel.org/arm64/c/66984536899f
-[02/10] arm64: report address tag when FEAT_MTE_TAGGED_FAR is supported
-        https://git.kernel.org/arm64/c/7c7f55039b8d
-[03/10] arm64/kvm: expose FEAT_MTE_TAGGED_FAR feature to guest
-        https://git.kernel.org/arm64/c/61eae495da68
-[04/10] tools/kselftest: add MTE_FAR hwcap test
-        https://git.kernel.org/arm64/c/49a9942ff80c
-[05/10] kselftest/arm64/mte: register mte signal handler with SA_EXPOSE_TAGBITS
-        https://git.kernel.org/arm64/c/cfafa517c9e6
-[06/10] kselftest/arm64/mte: check MTE_FAR feature is supported
-        https://git.kernel.org/arm64/c/2e3e356560ef
-[07/10] kselftest/arm64/mte: add address tag related macro and function
-        https://git.kernel.org/arm64/c/ed434c6e0813
-[08/10] kselftest/arm64/mte: add verification for address tag in signal handler
-        https://git.kernel.org/arm64/c/49cee364c866
-[09/10] kselftest/arm64/mte: refactor check_mmap_option test
-        https://git.kernel.org/arm64/c/64a64e5d12f0
-[10/10] kselftest/arm64/mte: add mtefar tests on check_mmap_options
-        https://git.kernel.org/arm64/c/d09674f98cdb
+DTS and further driver will be added in follow-up series.
+
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+Changes in v8:
+* Move to using ARCH_MICROCHIP as suggested by Arnd
+* Dropped any review tags due to changes
+
+Robert Marko (10):
+  arm64: Add config for Microchip SoC platforms
+  ARM: at91: select ARCH_MICROCHIP
+  arm64: lan969x: Add support for Microchip LAN969x SoC
+  mfd: at91-usart: Make it selectable for ARCH_MICROCHIP
+  tty: serial: atmel: make it selectable for ARCH_MICROCHIP
+  spi: atmel: make it selectable for ARCH_MICROCHIP
+  i2c: at91: make it selectable for ARCH_MICROCHIP
+  dma: xdmac: make it selectable for ARCH_MICROCHIP
+  char: hw_random: atmel: make it selectable for ARCH_MICROCHIP
+  crypto: atmel-aes: make it selectable for ARCH_MICROCHIP
+
+ arch/arm/mach-at91/Kconfig     |  4 +++
+ arch/arm64/Kconfig.platforms   | 49 ++++++++++++++++++++++++----------
+ drivers/char/hw_random/Kconfig |  2 +-
+ drivers/crypto/Kconfig         |  2 +-
+ drivers/dma/Kconfig            |  2 +-
+ drivers/i2c/busses/Kconfig     |  2 +-
+ drivers/mfd/Kconfig            |  2 +-
+ drivers/spi/Kconfig            |  2 +-
+ drivers/tty/serial/Kconfig     |  2 +-
+ 9 files changed, 46 insertions(+), 21 deletions(-)
 
 -- 
-Catalin
+2.50.0
 
 
