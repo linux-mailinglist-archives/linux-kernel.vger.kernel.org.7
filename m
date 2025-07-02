@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-713232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E021DAF1524
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:14:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9CCAF151B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA654E7649
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C65D7ABEC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A814275AE1;
-	Wed,  2 Jul 2025 12:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E6C26FD97;
+	Wed,  2 Jul 2025 12:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UPZGRsJ3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q+OU4Rwe"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192C427465A
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0BD26D4D9
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458383; cv=none; b=WT9aHkLDAEvY0XEIYabyterAvOfccUvJPNfGtUOxNftf4eQ3Q/Ywu3QPDdWbI3pyjQ+YF4BKjrinwm/ncCZ5Zudrrln7YHm1cB7Kjfd0DkJdEV4IzZKTefxgdYiYkjXaNA2TIWVhYtEK44GQDEJi0CSc4GszRNRaJ1tEuAkeyM8=
+	t=1751458375; cv=none; b=RW4gHSbkKlIu1BLtV3t245UdRrLPnLzLWjoGiYnDgS/z1jVlFqDXDPghx0+OLvRWbs8ai1ugrj9HAlueE7kozCfobDyMBQpWJWlt+oGMBXHV/Ka6rrOyiksdupHRpgRCY5Mp5t/QQwkFMfNsL60f9P714BeRq5JsJ/TLei3+TvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458383; c=relaxed/simple;
-	bh=P8jphMyMMPpfZst8bg+ufd2/3jz+uX9EB9UuFN8r+0g=;
+	s=arc-20240116; t=1751458375; c=relaxed/simple;
+	bh=OJ5GCBmIvAPN0pMDBWv2WeEEvtrkmyaMrK9hOo6rLP8=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=JSQWcNB0oXuTmDCPbewMpAzQwwsa8+CW9/RgPgp3E6Am0iVTeko/1kE432IuRNxtbk+vbH2ptwI8xs1v8Bp82Fu4tRJMCb2uts366d0z5cZ7iNWpN1dkXEpEPRe72KHerTpv7B6xP9nNILG6fL1XlVghNI75JMBzBuEkJN6pQ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UPZGRsJ3; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type; b=GzOpKmEBTtPWhBz8tBTAoBm/ljulu6vfZSUMHtGJxwBy5mojMGhiB4U7yKIGASblqiIjhY/VC9b5ke/IwZLZZrH/cVM2lP4pXABefb/ZXy0pTBcnH2PW5EZ7YMJBGbVEUFHiE5ju1mF484cWqANZJAB+85qTiJ/nuoFkLi4rKBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Q+OU4Rwe; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=6xCtwYthTWBcEmQ5LUN1G1tEYsMC0rBESkEr3zoStCA=; b=UPZGRsJ3JQo4jYqfnYr22wPqps
-	fdJIVOGFTZ4Dq+vueGR4oXN5AjidByT9lu0XsN0NGqmtD/Gl/PvB9bQ7l8AxGmXOeC/YztEDHmDdX
-	beUzaugyJ60aOEpMnzf6aIEu+R7zq/xQecJqN5qxWUDSBJ87IXKsrTZyIt5piQwUJaLhjpZKImfdO
-	UTXlcK4c6f35K7x/gnh1wb3cFjRInoLvys4KZhh9ThH2CZjhqdx+KDDXLec9nvx5Ih4dH/gSEzuKK
-	S082KVk2OGMX2yqpZoSUhyeU4JinBVe/hIStQhpb21ZupcBuOdc7SxcZixvp3XYSgLr/93TIDDQFo
-	cH4WuCBg==;
+	bh=onhBm3Dupd3NVH6sTDnfi4lnWVArcDQumqorYE8AWno=; b=Q+OU4RweT1hcq/jHY1l7Nd8S9M
+	xMDR0gwrG9M407kRfKybl0ZGGoqx8RefbpLYVX9HklxqTL1lqBbWKJiCbycJ3LHCwoW6EkhHiIrj0
+	14KNlB7Uiq5hHxWhRFRO9bPdMFDcgEmiMFCrUsJ2K/OTR56BTHaIuFWSM1pGIJKI04u1dTlPidi4j
+	9q+xxZ0d9Uo6tHfrqaSQuu7f+Gr4Yt1eqpAykRLksrMu+0efonc3rrreFOlz+WWj06o1LNYtpVeP4
+	oswI59fHhGj8HqshWe5LZqfJVJ2yjgLnE4FrMGxXrECxPTO4Ms98ZJ30FjtfU9EuzE4nVeHNSOnUz
+	l89HGT2g==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWwKV-00000009lFA-3yzX;
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uWwKW-00000007LoD-013a;
 	Wed, 02 Jul 2025 12:12:48 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id D4E1F3001F7; Wed, 02 Jul 2025 14:12:46 +0200 (CEST)
-Message-ID: <20250702121159.050144163@infradead.org>
+	id D911A300212; Wed, 02 Jul 2025 14:12:46 +0200 (CEST)
+Message-ID: <20250702121159.172688305@infradead.org>
 User-Agent: quilt/0.68
-Date: Wed, 02 Jul 2025 13:49:31 +0200
+Date: Wed, 02 Jul 2025 13:49:32 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@redhat.com,
  juri.lelli@redhat.com,
@@ -61,7 +61,7 @@ To: mingo@redhat.com,
  clm@meta.com
 Cc: linux-kernel@vger.kernel.org,
  peterz@infradead.org
-Subject: [PATCH v2 07/12] psi: Split psi_ttwu_dequeue()
+Subject: [PATCH v2 08/12] sched: Re-arrange __ttwu_queue_wakelist()
 References: <20250702114924.091581796@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,105 +71,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Currently psi_ttwu_dequeue() is called while holding p->pi_lock and
-takes rq->lock. Split the function in preparation for calling
-ttwu_do_migration() while already holding rq->lock.
+The relation between ttwu_queue_wakelist() and __ttwu_queue_wakelist()
+is ill defined -- probably because the former is the only caller of
+the latter and it grew into an arbitrary subfunction.
+
+Clean things up a little such that __ttwu_queue_wakelist() no longer
+takes the wake_flags argument, making for a more sensible separation.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c  |   18 ++++++++++++++----
- kernel/sched/stats.h |   24 +++++++++++++-----------
- 2 files changed, 27 insertions(+), 15 deletions(-)
+ kernel/sched/core.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -3774,17 +3774,27 @@ static int ttwu_runnable(struct task_str
- 	return 1;
- }
- 
--static inline bool ttwu_do_migrate(struct task_struct *p, int cpu)
-+static inline bool ttwu_do_migrate(struct rq *rq, struct task_struct *p, int cpu)
+@@ -3848,11 +3848,11 @@ bool call_function_single_prep_ipi(int c
+  * via sched_ttwu_wakeup() for activation so the wakee incurs the cost
+  * of the wakeup instead of the waker.
+  */
+-static void __ttwu_queue_wakelist(struct task_struct *p, int cpu, int wake_flags)
++static void __ttwu_queue_wakelist(struct task_struct *p, int cpu)
  {
-+	struct rq *p_rq = rq ? : task_rq(p);
-+
- 	if (task_cpu(p) == cpu)
+ 	struct rq *rq = cpu_rq(cpu);
+ 
+-	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
++	sched_clock_cpu(cpu); /* Sync clocks across CPUs */
+ 
+ 	WRITE_ONCE(rq->ttwu_pending, 1);
+ #ifdef CONFIG_SMP
+@@ -3954,8 +3954,9 @@ static bool ttwu_queue_wakelist(struct t
+ 	if (!ttwu_queue_cond(p, cpu, def))
  		return false;
  
- 	if (p->in_iowait) {
- 		delayacct_blkio_end(p);
--		atomic_dec(&task_rq(p)->nr_iowait);
-+		atomic_dec(&p_rq->nr_iowait);
- 	}
- 
--	psi_ttwu_dequeue(p);
-+	if (psi_ttwu_need_dequeue(p)) {
-+		if (rq) {
-+			lockdep_assert(task_rq(p) == rq);
-+			__psi_ttwu_dequeue(p);
-+		} else {
-+			guard(__task_rq_lock)(p);
-+			__psi_ttwu_dequeue(p);
-+		}
-+	}
- 	set_task_cpu(p, cpu);
+-	sched_clock_cpu(cpu); /* Sync clocks across CPUs */
+-	__ttwu_queue_wakelist(p, cpu, wake_flags);
++	p->sched_remote_wakeup = !!(wake_flags & WF_MIGRATED);
++
++	__ttwu_queue_wakelist(p, cpu);
  	return true;
  }
-@@ -4283,7 +4293,7 @@ int try_to_wake_up(struct task_struct *p
- 		 * their previous state and preserve Program Order.
- 		 */
- 		smp_cond_load_acquire(&p->on_cpu, !VAL);
--		if (ttwu_do_migrate(p, cpu))
-+		if (ttwu_do_migrate(NULL, p, cpu))
- 			wake_flags |= WF_MIGRATED;
  
- 		ttwu_queue(p, cpu, wake_flags);
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -191,23 +191,24 @@ static inline void psi_dequeue(struct ta
- 	psi_task_change(p, p->psi_flags, 0);
- }
- 
--static inline void psi_ttwu_dequeue(struct task_struct *p)
-+static inline bool psi_ttwu_need_dequeue(struct task_struct *p)
- {
- 	if (static_branch_likely(&psi_disabled))
--		return;
-+		return false;
- 	/*
- 	 * Is the task being migrated during a wakeup? Make sure to
- 	 * deregister its sleep-persistent psi states from the old
- 	 * queue, and let psi_enqueue() know it has to requeue.
- 	 */
--	if (unlikely(p->psi_flags)) {
--		struct rq_flags rf;
--		struct rq *rq;
--
--		rq = __task_rq_lock(p, &rf);
--		psi_task_change(p, p->psi_flags, 0);
--		__task_rq_unlock(rq, &rf);
--	}
-+	if (!likely(!p->psi_flags))
-+		return false;
-+
-+	return true;
-+}
-+
-+static inline void __psi_ttwu_dequeue(struct task_struct *p)
-+{
-+	psi_task_change(p, p->psi_flags, 0);
- }
- 
- static inline void psi_sched_switch(struct task_struct *prev,
-@@ -223,7 +224,8 @@ static inline void psi_sched_switch(stru
- #else /* !CONFIG_PSI: */
- static inline void psi_enqueue(struct task_struct *p, bool migrate) {}
- static inline void psi_dequeue(struct task_struct *p, bool migrate) {}
--static inline void psi_ttwu_dequeue(struct task_struct *p) {}
-+static inline bool psi_ttwu_need_dequeue(struct task_struct *p) { return false; }
-+static inline void __psi_ttwu_dequeue(struct task_struct *p) {}
- static inline void psi_sched_switch(struct task_struct *prev,
- 				    struct task_struct *next,
- 				    bool sleep) {}
 
 
 
