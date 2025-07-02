@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-712742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26F0AF0E34
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9082CAF0E37
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A80317A9FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:38:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D72F1C200C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3BC23AB94;
-	Wed,  2 Jul 2025 08:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C23A238C06;
+	Wed,  2 Jul 2025 08:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TRPqZnZa"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="eNEcCmTp"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D00C238177
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 08:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522192367B3;
+	Wed,  2 Jul 2025 08:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751445511; cv=none; b=BRGPSEHhVnAA+fuFzZDVwRVXXMVcLiSPXRV56wsn9BAtLZUkXfa2AQwbchBgoQkPgb7OtIjYcBN4het/x9stE9LKq0x+nc0pIx80FVfXTDjXstjzUitxPydqnnHMrhJ0KHoSr6vN8HAg0P/dBi1AgFstqU6W4hl2BlDR96tIM1w=
+	t=1751445586; cv=none; b=pFA56LyExn7O7G85cLU01ZhxqqaSGJVsU0/lCsXQQDWvTji2a06W0SmvB2UNhiyaw6NxAVYnHM/ip6wZ/MXniODPHPpYN1wHXsGoepYO0kAvKDDG06/uln5EU0qDLJiTT3/vwmPGT+COo+qSTaxEPu7wi//kJA3DTf0bBmT8TRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751445511; c=relaxed/simple;
-	bh=Oy/Le5wYL1yuUCtebF6wEJ3ycGUPlWMtkoWzd9jO0c8=;
+	s=arc-20240116; t=1751445586; c=relaxed/simple;
+	bh=h69eKJGK22OdLLw+KLex6FL443o3ymPTOdqDKgsyu2c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuOmQ1wcDhTeFRYZrr68EEcgaQIxffXLe9iepfmP2eauySujQOljzbd5OStHjduYYQY8IAIAphzeAAIdjMFnR8vVUic/dCX3azqFxlYGgmxLobnraNbbCosn0fK+83Y3Rl3BBZwRi8HURkqEXhDYSGcmaPMdjcAFjrXErXq5frA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TRPqZnZa; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tueLrdkmQRBHr+mzWg5Fwd6/tBSVji9XeraKb1hDY3o=; b=TRPqZnZaTglhLfGTKIh7tLPxoU
-	+5a+hIYyCkhf8BSKkYrwSfTZhIRedv3uUNzhBK3my0gTD2jZ5iRfqu6otUzjFfgcGFEhVyE/ipveP
-	tQQcfBQkHqRJWlBHogDTuURfwrTWLcHm1nIEihZ7ZFBAwk7geC24w6dhcwA1b5FhLSJ9t0xTgI9zP
-	Rd/cX15emOuNXfA54zuGH7djZf5KDRYV7RznAp8J8RR+fzlve7CbSzDm5MvVHys+xri87ET50NbiU
-	OO11Y0vL/XX+E3hsJrdEXgy9+BG6n+52ERJSDyfPZIGWz28UrHDWFDdkajIHsDWndJhC0LdmUEhRI
-	TML4TwMg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uWsz5-00000007K29-0lEJ;
-	Wed, 02 Jul 2025 08:38:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id ED2FA300125; Wed, 02 Jul 2025 10:38:25 +0200 (CEST)
-Date: Wed, 2 Jul 2025 10:38:25 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [PATCH] objtool: Add missing endianess conversion when checking
- annations
-Message-ID: <20250702083825.GM1613200@noisy.programming.kicks-ass.net>
-References: <20250514133515.1829691-1-svens@linux.ibm.com>
- <yt9d1pqz6ll0.fsf@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eo7LUMy7MezAGhtyUkhEQhiHvvIkxQMRG4RDhY/BZ0JAMMTXBbrz5MBO0brBcxYLNkq+pmJzoPbKohMq2JxkF8lp5nJlKjjLO7YpHW2C0GSITPDdHVagTh/a+P22al2CA2ZtyuwMvQdEfy4LoikCh4OSz27/9Q4vPwULVt9y3dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=eNEcCmTp; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=bt7kRNitnRRomL12XcgnkgtBgNnfGJgLPobysScsIdU=;
+	b=eNEcCmTpKvsNznW2z72kTSHm/x8r/H5RnC6X9E5eszrzz7BzwCkQIwRnQpc3Jt
+	sZ+HdxhwUSfJxnvSLSoOfV8LGZMtn3nzjbvIH6KEQwsiDvY6LfbWnPITx1ypNfea
+	LEYanzNaQGBqt9UBxlWwfbKTKjx5MxMQu/cHIUBuSL/Es=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgDHz8oW8GRohq0NAA--.9535S3;
+	Wed, 02 Jul 2025 16:38:49 +0800 (CST)
+Date: Wed, 2 Jul 2025 16:38:46 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: John Ernberg <john.ernberg@actia.se>
+Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 4/4] arm64: dts: freescale: imx8qxp/imx8qm: Add CAAM
+ support
+Message-ID: <aGTwFl911B0W6PKu@dragon>
+References: <20250611113748.2986988-1-john.ernberg@actia.se>
+ <20250611113748.2986988-5-john.ernberg@actia.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <yt9d1pqz6ll0.fsf@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250611113748.2986988-5-john.ernberg@actia.se>
+X-CM-TRANSID:M88vCgDHz8oW8GRohq0NAA--.9535S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw4fJw4xJrykWFyDAryfCrg_yoWxCwc_Z3
+	WxJw10vw4rGFWxJa15Ga1fXr1rKay5Gr45WrZ0vwsxGas0vFWxKrykJrZaq3y09wsFvF9x
+	AF18t3yUu343ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjX18PUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwF+ZWhk3sY-3gAAsk
 
-On Wed, Jul 02, 2025 at 10:30:51AM +0200, Sven Schnelle wrote:
-> Sven Schnelle <svens@linux.ibm.com> writes:
+On Wed, Jun 11, 2025 at 11:38:09AM +0000, John Ernberg wrote:
+> From: Horia Geantă <horia.geanta@nxp.com>
 > 
-> > cross-compiling a kernel for x86 on s390 produces the following warning:
-> >
-> > drivers/mfd/mc13xxx-core.o: warning: objtool: mc13xxx_reg_rmw+0xc: Unknown annotation type: 50331648
-> >
-> > Fix this by adding the required endianess conversion.
-> >
-> > Fixes: 2116b349e29a ("objtool: Generic annotation infrastructure")
-> > Reported-by: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-> > ---
-> >  tools/objtool/check.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> > index b21b12ec88d9..35fb871b2c62 100644
-> > --- a/tools/objtool/check.c
-> > +++ b/tools/objtool/check.c
-> > @@ -2316,7 +2316,7 @@ static int read_annotate(struct objtool_file *file,
-> >  	}
-> >  
-> >  	for_each_reloc(sec->rsec, reloc) {
-> > -		type = *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4);
-> > +		type = bswap_if_needed(file->elf, *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4));
-> >  
-> >  		offset = reloc->sym->offset + reloc_addend(reloc);
-> >  		insn = find_insn(file, reloc->sym->sec, offset);
+> The iMX8QXP and iMX8QM have a CAAM (Cryptographic Acceleration and
+> Assurance Module) like many other iMXs.
 > 
-> Gentle ping?
+> Add the definitions for it.
+> 
+> Job Rings 0 and 1 are bound to the SECO (Security Controller) ARM core
+> and are not exposed outside it. There's no point to define them in the
+> bindings as they cannot be used outside the SECO.
+> 
+> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+> Signed-off-by: John Ernberg <john.ernberg@actia.se>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Oh, I missed there were two of these. I merged this:
-
- https://lkml.kernel.org/r/175137563313.406.6298042704364318030.tip-bot2@tip-bot2
-
+Applied, thanks!
 
 
