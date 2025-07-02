@@ -1,289 +1,134 @@
-Return-Path: <linux-kernel+bounces-712630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BB3AF0C54
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:17:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16563AF0C67
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C7E23B22B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBB218873F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E0222A7E9;
-	Wed,  2 Jul 2025 07:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9997E229B1F;
+	Wed,  2 Jul 2025 07:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hPoPhMew"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bF5Yyc/t"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFF7201261;
-	Wed,  2 Jul 2025 07:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CD0634EC;
+	Wed,  2 Jul 2025 07:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751440643; cv=none; b=C/KvEqxpiowv/l6N+KLEy/xziDK95KKsn3DChtyPl2BXNMTnbcqUHwAyux/g2gcoFJGH3ggTH1PVL4RbAe5U9cVXuAdsuBaW1TAY+9PhZi2ujYmx3KW/89gB/cO4tYWkqq4zJZp53SCoQiyHeYmDwU+sWnFNM0qPHUsfs/Pru+s=
+	t=1751440791; cv=none; b=M3Wh8zbdBTNjWFZ8mwRkNT824ZQKq/lEdKoXNYUtG/fCFpOEcM7mZfVfRJFZVqHbHVMuouxD65xWBExauMR+7AjD9gF2Lf2YOUIXyG6eKF9wol4mJVCGgK0/vTz+I0HqsIMEwhtpxtelHyOop4C9imNTCY039Eu6kO7Wb7ThAn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751440643; c=relaxed/simple;
-	bh=LSExucKZe0mtwwHTf3y56VWlUEakHL74/OJzWDFLcJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Di9+sxzxpuFHd6eNlK/eSR5VKI8Byj3cKyPWEszu2XXkKHIEzZs3tp4JcalCcO4ST5YK701zasRON/ZknOQEVjOX0ofsSPqEoGcZ8WoqGG5lac9SHlGyi9ocEHj3J9Kc7T7PtHAQ70AbmavgZuygKsrCVLoBkCDNUvQSSnVw/4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hPoPhMew; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A85F841DF1;
-	Wed,  2 Jul 2025 07:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751440633;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7SFgR9s1yj+x64xIhs3vXUk9wLToSRANqG6/nyrw1DA=;
-	b=hPoPhMewJQweoHwYO4sqNASE9CzWou7I3Wgj6uAz6MZuXpv/hlIppiL7o4PqMX936lWsgX
-	5QO2qBBwFrLWUnIgrk5xvC9XzoI7xYf8SCWrz+3OngrB9NDfmvTC+Z8hyaMTSkY9LxkFOe
-	HMSRWCKAlbKrGIHaF1JC5VYaLe6Ik2CyTK2ujSpunLoGZPtytBJE1ws/ISdh7efmKEwhRA
-	zMxDYBhuGg70deDJmG+fSC8aV4oRU00idfkloFns4XOqP53SKJAEnX8LZvBd55cAaaN1j4
-	V+9sQkl2g5hJX6QU9ysJ8rX/rugg04aR64O18mJLe7girCTTDnpXq98WKJ5Z5g==
-Date: Wed, 2 Jul 2025 09:17:08 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
- Ghiti <alex@ghiti.fr>, Vivian Wang <uwu@dram.page>, Lukas Bulwahn
- <lukas.bulwahn@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/5] net: spacemit: Add K1 Ethernet MAC
-Message-ID: <20250702091708.7d459213@fedora.home>
-In-Reply-To: <20250702-net-k1-emac-v3-2-882dc55404f3@iscas.ac.cn>
-References: <20250702-net-k1-emac-v3-0-882dc55404f3@iscas.ac.cn>
-	<20250702-net-k1-emac-v3-2-882dc55404f3@iscas.ac.cn>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1751440791; c=relaxed/simple;
+	bh=HZwQzes1s0dCeXQ80X1zgZSKLvoJz6waGynj8z/p1Nk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lQzv2Yx566Z9/6ZAPeVce4HyUlzJnUth7Z3AS7Ix+1KXq4D8vo33e5hq2zGvTqROp23Ts5RBPvdj7woYMPxxOOzG7ZBiwv6Z7F9bnxK5ikZZz1F9Xpad0avoWmi7GLAnw9I176A/0mtz3y51m5uvVrmH9lvotNNiqeScOXN0BZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bF5Yyc/t; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a577ab8c34so878242f8f.3;
+        Wed, 02 Jul 2025 00:19:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751440787; x=1752045587; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=29Ak/ncEpBZr7ANmY5PCAbSSEdsdCcghSMWZ9aad75g=;
+        b=bF5Yyc/tRQz+JkdV7OjYCWVLyqY3ddBsBBkFmAlmyeQkYOvCwVMJM08TYBlTRipPRt
+         CEZpJL2vQ757pu5ChCEy+XyqT8/wwcPVDOrPi9rQX7KQGlCDskayuWM0FbCNQyKSxrVf
+         jPYCYZv/8rZkHvcUMzA8hee49WxuITYun7mofSh//6+VTC1ZsjdonxXgVWmUjBJe238L
+         oLOvpdtmuU7kuanczTjyvXS79yMTb1jZrlcffQE6pVvxQz4gz1GJSz+4e/wgqknmlybU
+         akrDpQksXPp4G+cfsPRyoGDVqwA+vrajMazjCS65afvV53ZfbC4pNKwCUmTnyW3mgTZM
+         F+PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751440787; x=1752045587;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=29Ak/ncEpBZr7ANmY5PCAbSSEdsdCcghSMWZ9aad75g=;
+        b=dedW+PMutUk3s/s0jLW6uyk2uVNuMoLuDGiFAaVSpR63oA91BQuRlw8ZMCru3Ie84i
+         B3/+nqDEpcQ+xHRjWoJpxisGSzT+96NoHUT3171D+RrOh+qvUQsH0HZBG8taDxgKz5qQ
+         kN6R8cOaU2Sl2s7Gpjx0XqQdz5OFyY9keOJRdYr8+V/6B+W3WBTEAMLud3LMMQsrfz7E
+         biP+OLNuv/CtdpBAH6kGfgr0Fc0/sZ2//dHC5j0ZTO0jV9pxCLJSidGnjudhJgl2IBF1
+         q92AQ1HS9W9ZPFDrbuiu5P8Q3+wjjhrOo+dTFQrVZX/og6gM44p7lgHnE5qeqK1mK/8o
+         Z4KA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWhSozJHXtibnMugPn9gwozApr5JxEh9sFya3Pb+PaUma5KqGrzQSEiPN2Npbf3Q02oWrZraE041jjKVs=@vger.kernel.org, AJvYcCXCzyzmMyio+w8P/rV4488GisnthQjy850IN1k05hmPJoYfjqVysx40DPHhx3xH7aXwf7ZlQRXu@vger.kernel.org, AJvYcCXFlXYmjpO7PfT2PVI4XcnxZIPibHYEe1k1/CqRlhKtjhJ2+Xyza4nhJFz0YnAjGXMKIsDKF0nFg0sSlpJHUTGrYIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxHsG87buLfQ+Wo5+iFRT8pGBNG0cXMJM7zkkW/Yw2ALsFnjBS
+	XrH/ac+LOK1udie/GiV9CxtZLsb8x7iGcOGFlrhWhFBKXWEpn3CWiPBE
+X-Gm-Gg: ASbGncsgnlvhwJWmAbb63Dvl2nWfpyyQg5ILy1KPcUwkYkXUvOZzRMQTN04fsq14MpI
+	DNTDhcxWn3tPvf6nMdXX1vxhpFeL8eUdBY97IL9fQiUqPqoXWNZcJ7ZFNTLjTO/Doo7woadfL5/
+	PDqP9yV9INi87+LMlO7rJAAHLvQqa3ACM44OCnncic7xTgIjuR8wUDuhqCsXkWVXpggdA3drW3U
+	0X5t3+aGclpU7EWFIvvCvvg5gWp/+e+azOuFGUSfcCrmJ8vgbCa2v7tpW+sHhhiaZ/bgGF7MVWy
+	ed8n/WTFIlVjw86oftCzwTmJeC6Ap2Ve61AlVPcl87HOwV0q2iBf494g7erK7paQbqiapkLJKs5
+	ePyyLkghysVNz
+X-Google-Smtp-Source: AGHT+IFvEc/YQH0iMY9kuno2iXyUVs1TvRbucMzr5iCCWzoq4QGjRiP5liXmGKiCZcU1DHEwPw2+Hg==
+X-Received: by 2002:a05:600c:358f:b0:439:8c80:6aee with SMTP id 5b1f17b1804b1-454a370c4d7mr6204995e9.4.1751440787221;
+        Wed, 02 Jul 2025 00:19:47 -0700 (PDT)
+Received: from thomas-precision3591.imag.fr ([2001:660:5301:24:9d5:215:761c:daff])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-453823ad0f3sm223424525e9.19.2025.07.02.00.19.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 00:19:46 -0700 (PDT)
+From: Thomas Fourier <fourier.thomas@gmail.com>
+To: 
+Cc: Thomas Fourier <fourier.thomas@gmail.com>,
+	stable@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mtd@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: renesas: Add missing check after DMA map
+Date: Wed,  2 Jul 2025 09:17:22 +0200
+Message-ID: <20250702071722.24921-3-fourier.thomas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieejkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgfejgeegheeitefgleehgeejiedvheefudelhfeijedutdeihfeijeetgfegfeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdegpdhrtghpthhtohepfigrnhhgrhhuihhkrghnghesihhstggrshdrrggtrdgtnhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpt
- hhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Vivian,
+The DMA map functions can fail and should be tested for errors.
 
-On Wed, 02 Jul 2025 14:01:41 +0800
-Vivian Wang <wangruikang@iscas.ac.cn> wrote:
+Fixes: d8701fe890ec ("mtd: rawnand: renesas: Add new NAND controller driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+---
+ drivers/mtd/nand/raw/renesas-nand-controller.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
-> that only superficially resembles some other embedded MACs. SpacemiT
-> refers to them as "EMAC", so let's just call the driver "k1_emac".
-> 
-> This driver is based on "k1x-emac" in the same directory in the vendor's
-> tree [1]. Some debugging tunables have been fixed to vendor-recommended
-> defaults, and PTP support is not included yet.
-> 
-> [1]: https://github.com/spacemit-com/linux-k1x
-> 
-> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+diff --git a/drivers/mtd/nand/raw/renesas-nand-controller.c b/drivers/mtd/nand/raw/renesas-nand-controller.c
+index 44f6603736d1..f4a775571733 100644
+--- a/drivers/mtd/nand/raw/renesas-nand-controller.c
++++ b/drivers/mtd/nand/raw/renesas-nand-controller.c
+@@ -426,6 +426,10 @@ static int rnandc_read_page_hw_ecc(struct nand_chip *chip, u8 *buf,
+ 	/* Configure DMA */
+ 	dma_addr = dma_map_single(rnandc->dev, rnandc->buf, mtd->writesize,
+ 				  DMA_FROM_DEVICE);
++	if (dma_mapping_error(rnandc->dev, dma_addr)) {
++		dev_err(rnandc->dev, "DMA mapping failed.\n");
++		return -ENOMEM;
++	}
+ 	writel(dma_addr, rnandc->regs + DMA_ADDR_LOW_REG);
+ 	writel(mtd->writesize, rnandc->regs + DMA_CNT_REG);
+ 	writel(DMA_TLVL_MAX, rnandc->regs + DMA_TLVL_REG);
+@@ -606,6 +610,10 @@ static int rnandc_write_page_hw_ecc(struct nand_chip *chip, const u8 *buf,
+ 	/* Configure DMA */
+ 	dma_addr = dma_map_single(rnandc->dev, (void *)rnandc->buf, mtd->writesize,
+ 				  DMA_TO_DEVICE);
++	if (dma_mapping_error(rnandc->dev, dma_addr)) {
++		dev_err(rnandc->dev, "DMA mapping failed.\n");
++		return -ENOMEM;
++	}
+ 	writel(dma_addr, rnandc->regs + DMA_ADDR_LOW_REG);
+ 	writel(mtd->writesize, rnandc->regs + DMA_CNT_REG);
+ 	writel(DMA_TLVL_MAX, rnandc->regs + DMA_TLVL_REG);
+-- 
+2.43.0
 
-I have a handful of tiny comments, the rest looks fine by me !
-
-> +static int emac_phy_connect(struct net_device *ndev)
-> +{
-> +	struct emac_priv *priv = netdev_priv(ndev);
-> +	struct device *dev = &priv->pdev->dev;
-> +	struct phy_device *phydev;
-> +	struct device_node *np;
-> +	int ret;
-> +
-> +	ret = of_get_phy_mode(dev->of_node, &priv->phy_interface);
-> +	if (ret) {
-> +		dev_err(dev, "No phy-mode found");
-> +		return ret;
-> +	}
-> +
-> +	np = of_parse_phandle(dev->of_node, "phy-handle", 0);
-> +	if (!np && of_phy_is_fixed_link(dev->of_node))
-> +		np = of_node_get(dev->of_node);
-> +
-> +	if (!np) {
-> +		dev_err(dev, "No PHY specified");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = emac_phy_interface_config(priv);
-> +	if (ret)
-> +		goto err_node_put;
-> +
-> +	phydev = of_phy_connect(ndev, np, &emac_adjust_link, 0,
-> +				priv->phy_interface);
-> +	if (!phydev) {
-> +		dev_err(dev, "Could not attach to PHY\n");
-> +		ret = -ENODEV;
-> +		goto err_node_put;
-> +	}
-> +
-> +	phydev->mac_managed_pm = true;
-> +
-> +	ndev->phydev = phydev;
-
-of_phy_connect() eventually calls phy_attach_direct(), which sets
-ndev->phydev, so you don't need to do it here :)
-
-> +
-> +	emac_update_delay_line(priv);
-> +
-> +err_node_put:
-> +	of_node_put(np);
-> +	return ret;
-> +}
-
-[ ... ]
-
-> +static int emac_down(struct emac_priv *priv)
-> +{
-> +	struct platform_device *pdev = priv->pdev;
-> +	struct net_device *ndev = priv->ndev;
-> +
-> +	netif_stop_queue(ndev);
-> +
-> +	phy_stop(ndev->phydev);
-
-phy_disconnect() will call phy_stop() for you, you can remove it.
-
-> +	phy_disconnect(ndev->phydev);
-> +
-> +	emac_wr(priv, MAC_INTERRUPT_ENABLE, 0x0);
-> +	emac_wr(priv, DMA_INTERRUPT_ENABLE, 0x0);
-> +
-> +	free_irq(priv->irq, ndev);
-> +
-> +	napi_disable(&priv->napi);
-> +
-> +	emac_reset_hw(priv);
-> +
-> +	pm_runtime_put_sync(&pdev->dev);
-> +	return 0;
-> +}
-> +
-
-[ ... ]
-
-> +static int emac_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct reset_control *reset;
-> +	struct net_device *ndev;
-> +	struct emac_priv *priv;
-> +	int ret;
-> +
-> +	ndev = devm_alloc_etherdev(dev, sizeof(struct emac_priv));
-> +	if (!ndev)
-> +		return -ENOMEM;
-> +
-> +	ndev->hw_features = NETIF_F_SG;
-> +	ndev->features |= ndev->hw_features;
-> +
-> +	ndev->min_mtu = ETH_MIN_MTU;
-
-This should already be the default value when using
-devm_alloc_etherdev()
-
-> +	ndev->max_mtu = EMAC_RX_BUF_4K - (ETH_HLEN + ETH_FCS_LEN);
-> +
-> +	priv = netdev_priv(ndev);
-> +	priv->ndev = ndev;
-> +	priv->pdev = pdev;
-> +	platform_set_drvdata(pdev, priv);
-> +	priv->hw_stats = devm_kzalloc(dev, sizeof(*priv->hw_stats), GFP_KERNEL);
-> +	if (!priv->hw_stats) {
-> +		dev_err(dev, "Failed to allocate memory for stats\n");
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	ret = emac_config_dt(pdev, priv);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Configuration failed\n");
-> +		goto err;
-> +	}
-> +
-> +	ndev->watchdog_timeo = 5 * HZ;
-> +	ndev->base_addr = (unsigned long)priv->iobase;
-> +	ndev->irq = priv->irq;
-> +
-> +	ndev->ethtool_ops = &emac_ethtool_ops;
-> +	ndev->netdev_ops = &emac_netdev_ops;
-> +
-> +	devm_pm_runtime_enable(&pdev->dev);
-> +
-> +	priv->bus_clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->bus_clk)) {
-> +		ret = dev_err_probe(dev, PTR_ERR(priv->bus_clk),
-> +				    "Failed to get clock\n");
-> +		goto err;
-> +	}
-> +
-> +	reset = devm_reset_control_get_optional_exclusive_deasserted(&pdev->dev,
-> +								     NULL);
-> +	if (IS_ERR(reset)) {
-> +		ret = dev_err_probe(dev, PTR_ERR(reset),
-> +				    "Failed to get reset\n");
-> +		goto err;
-> +	}
-> +
-> +	emac_sw_init(priv);
-> +
-> +	if (of_phy_is_fixed_link(dev->of_node)) {
-> +		ret = of_phy_register_fixed_link(dev->of_node);
-> +		if (ret) {
-> +			dev_err_probe(dev, ret,
-> +				      "Failed to register fixed-link");
-> +			goto err_timer_delete;
-> +		}
-
-It looks like you're missing the calls to:
-
-  of_phy_deregister_fixed_link()
-
-in the error path here as well as in the .remove() function.
-
-> +	}
-> +
-> +	ret = emac_mdio_init(priv);
-> +	if (ret)
-> +		goto err_timer_delete;
-> +
-> +	SET_NETDEV_DEV(ndev, &pdev->dev);
-> +
-> +	ret = devm_register_netdev(dev, ndev);
-> +	if (ret) {
-> +		dev_err(dev, "devm_register_netdev failed\n");
-> +		goto err_timer_delete;
-> +	}
-> +
-> +	netif_napi_add(ndev, &priv->napi, emac_rx_poll);
-> +	netif_carrier_off(ndev);
-> +
-> +	return 0;
-> +
-> +err_timer_delete:
-> +	timer_delete_sync(&priv->txtimer);
-> +err:
-> +	return ret;
-> +}
-
-Maxime
 
