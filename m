@@ -1,98 +1,75 @@
-Return-Path: <linux-kernel+bounces-714148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA91AF63C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3A0AF63CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC31C42F25
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387BD1C433A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078E2239E87;
-	Wed,  2 Jul 2025 21:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA9D23A989;
+	Wed,  2 Jul 2025 21:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJ77vzr6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWXCyB/d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2EF23026B;
-	Wed,  2 Jul 2025 21:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73851E9B3D;
+	Wed,  2 Jul 2025 21:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751490767; cv=none; b=EVq555MyFSZZqA08tVGWTXm0uK3jpTxtQJ10Z1kdVpEMm6ffpmG3mnEPsLlW5Nmm0zQ2BEOUoPGw8MfVrUrEhnuGuSaJx86hXKMtX9/h3VHETn+/eV55vgaRM7LVFC4RXBGlodo6/LBd46apUrfz3bZbxbmcxLx7/iIyYHdVBy0=
+	t=1751490879; cv=none; b=cKsHiVN+ccavdc+X/wxS39JfdrH2lbmcxP2oX9R2T8141CucRDg4KFY8eiJiWQt1B5uhpoJHgiwfDjJ2sZJDxF/MVzeZULqjW2pXHZKylaiZ0KtXu+ER/fWni6DxSgYMohybHEW8fGARg1HTpIVoODjY1ZiiBTvzat1J9z17nGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751490767; c=relaxed/simple;
-	bh=9NKIGUVVUirKI1tb1JfWLkjqKROEx89KEPlFO4hWjZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U0gsqVQG9OFW1osfWx8lqV5ZREKez4Pk+xdGPfNljMAy9ZLDUjzi63oxtvxIfYZZUx8eUSIsXs4Vat8aW9B2ZpPSxMmhHS2dAoI/iL0JlKfmmJ813SgTxrxmTRGbUFXqsYNSewDFL6orLrvyQdvkjInTxfLOFozNb73f2lA2McE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJ77vzr6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3BBC4CEEE;
-	Wed,  2 Jul 2025 21:12:46 +0000 (UTC)
+	s=arc-20240116; t=1751490879; c=relaxed/simple;
+	bh=IRreGz5DKr52FblTxRK/rFgWXfFqeBVNLQ73T/BEENc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=adLk5RP0pSWJh7XdQUXyAMImzrPQZdU18tkBBiQMkSYdeNBQkchA1UxsXHMDOMQHRGhY1oQ/Nlg6zyRHBDIzvsut6OaVEKSVq0XFKjM0vPLUU/2s27CHT2vUiKU0JpTCWMu1Okb7RshY2BHOtFI6YTNpc8bbG5fIUidQdu5qHjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWXCyB/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1042C4CEE7;
+	Wed,  2 Jul 2025 21:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751490766;
-	bh=9NKIGUVVUirKI1tb1JfWLkjqKROEx89KEPlFO4hWjZE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZJ77vzr69AvttrhgsTTPlulhgeeeEjgoGi1jQOw6HeDZDE/xe5JRzZvtVmSfKOwQK
-	 6dh2D7HW/SVEc3D5v7UNTWEZH2igJhpoxRhVG5V6homSOHHPj/9D82fNrmH6ysfYHu
-	 y0h5AZamxF+BfXAgvThXdV4FEzdNI5FiNnLMNk6yH7BZm9h5z8T7b/SKw/AEAISgYO
-	 C/KfPOwk66OBlGVfXW1ogoGuedZlGSTZvAdq9CkzaP4sSmO0oHYQOIaNHHyt3xH07k
-	 ctFTwAA23NgmzFfmHrnipJJt4Mxs/VHRjAl1NNpFh18t227MsA7+nz3ECaSZ4sT+fO
-	 IC2YsU4YpbA0g==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	akpm@linux-foundation.org,
-	corbet@lwn.net,
-	joshua.hahnjy@gmail.com,
-	bijantabatab@micron.com,
-	venkataravis@micron.com,
-	emirakhur@micron.com,
-	ajayjoshi@micron.com,
-	vtavarespetr@micron.com,
-	Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
-Subject: Re: [RFC PATCH v3 08/13] mm/damon: Move migration helpers from paddr to ops-common
-Date: Wed,  2 Jul 2025 14:12:44 -0700
-Message-Id: <20250702211244.55454-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250702201337.5780-9-bijan311@gmail.com>
-References: 
+	s=k20201202; t=1751490879;
+	bh=IRreGz5DKr52FblTxRK/rFgWXfFqeBVNLQ73T/BEENc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BWXCyB/dH4bnI6cFLqHIapEJ6FxIaN/X75SdNdNLbl4umCK+ViQH8MbQt9YPFDy8+
+	 eAsu5lUy6Pvyg8On0qJgNJdKWnFFzBd04DaPhxRbxg3zWr2jZTyXjlobglpNRPTj6Q
+	 Zm4xolPOkOAlR6svjVp8jgT+alkkoImMdKS7rh561cQP5s7PfiknYnSygIkuOOfGP/
+	 nrHtCEVlw8xPOtKOwsv9eJomOgqY16d5eJ7GAuQoppG/nbzKwNJABEgou8Q/Arg2G8
+	 dTQSmlpSAWRQp5sIL6wpXNPTnyh+ZoITkk8SJVvjRhdHI6VyIU8PVMKdw58xh0YsTY
+	 o2P7IM8tYDQow==
+Date: Wed, 2 Jul 2025 14:14:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: zhangjianrong <zhangjianrong5@huawei.com>
+Cc: <michael.jamet@intel.com>, <mika.westerberg@linux.intel.com>,
+ <YehezkelShB@gmail.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+ <edumazet@google.com>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <guhengsheng@hisilicon.com>,
+ <caiyadong@huawei.com>, <xuetao09@huawei.com>, <lixinghang1@huawei.com>
+Subject: Re: [PATCH v2] net: thunderbolt: Fix the parameter passing of
+ tb_xdomain_enable_paths()/tb_xdomain_disable_paths()
+Message-ID: <20250702141437.5d4cb9bd@kernel.org>
+In-Reply-To: <20250628094920.656658-1-zhangjianrong5@huawei.com>
+References: <20250628094920.656658-1-zhangjianrong5@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed,  2 Jul 2025 15:13:31 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
-
-> From: Bijan Tabatabai <bijantabatab@micron.com>
+On Sat, 28 Jun 2025 17:49:20 +0800 zhangjianrong wrote:
+> According to the description of tb_xdomain_enable_paths(), the third
+> parameter represents the transmit ring and the fifth parameter represents
+> the receive ring. tb_xdomain_disable_paths() is the same case.
 > 
-> This patch moves the damon_pa_migrate_pages function along with its
-> corresponding helper functions from paddr to ops-common. The function
-> prefix of "damon_pa_" was also changed to just "damon_" accordingly.
-> 
-> This patch will allow page migration to be available to vaddr schemes as
-> well as paddr schemes.
+> Fixes: ff7cd07f3064 ("net: thunderbolt: Enable DMA paths only after rings are enabled")
+> Signed-off-by: zhangjianrong <zhangjianrong5@huawei.com>
 
-Looks good to me!
-
-> 
-> Co-developed-by: Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
-> Signed-off-by: Ravi Shankar Jonnalagadda <ravis.opensrc@micron.com>
-> Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-
-Thanks,
-SJ
-
-[...]
+I'll add Mika's review tag manually, in the future please add the tags
+you received before reposting.
 
