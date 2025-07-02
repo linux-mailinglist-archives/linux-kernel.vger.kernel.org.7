@@ -1,749 +1,194 @@
-Return-Path: <linux-kernel+bounces-713200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9016CAF14CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:01:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35417AF14DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93356189CD15
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6394E849A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ABB267B68;
-	Wed,  2 Jul 2025 12:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E67B2701D6;
+	Wed,  2 Jul 2025 12:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HXIlvlal"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RNJDlxxv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9879B1DF27F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452F1267AEC;
+	Wed,  2 Jul 2025 12:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751457677; cv=none; b=oDmefQsov2zlsT/dr/RzlwBOpXL6P/pV5f4L5gn90HHA3csifEO/yrEh1puQ3exdMdc4+FEtN8c++pvCK0KPDIbgE9HA5hOfo69KXbA3deWh26hZMLvI/4S7dSU5JLVDIe8adfqYieU3Ci+tiLp/kuRrxD7Kv6fqW+wSygRzE1I=
+	t=1751457713; cv=none; b=p/EgTjjB5dDksWAaGwQ7pjbKhm2CQ4v8wnulHGRfaPVd7wLaNaU2C8qy3beM2EkGwJWuwOj0R3GBf94t79Hr/YYxKDlp1mqNbR93LtW4ey6wZiBRRKaUdQNWzOe7X9iP60cei+uFcLe3zE65WtE2v+0P/O7OZH/E29nxv95FJG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751457677; c=relaxed/simple;
-	bh=OUMMHGctzVEBfy1/u+d0yYbbEQDlZmd1dSNxUReAGHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MMBJfZvfzZrtbDNxE58sjORJJ73sxSzdVGHBwog7CCU6QT68qQTvXi8nvtaMjJNaWS7dyxTgppBy5IZXwX3+/n7VIwCDhodZIz/1q/xkV/mgyRJcMZ8UWfinG/chrIV2yLk0JVb1z9A4ia9W+c0Mup0WDxEUUSR/fWnHgZ02Y3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HXIlvlal; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a50fc7ac4dso3125371f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 05:01:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751457673; x=1752062473; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6jv276frdTgezmLf2N0J1pH6om38MxgZQbyEgKGpNg4=;
-        b=HXIlvlaln2eF8iWO9i2cGEEdoZyBaYsELc1MfC40a+4XjIX3zPZ0U0VZORmaMaTglC
-         Y1J21TtpRQ4r/IDI+GwHmLfq3+Azvb6JM5Im+yt29vhPR+oqBaUEohGotuDcSY5vDJlQ
-         VDNKji2T01pnS2QNiWRfN46h4nvTdpo+HuqP08jm3JN8gK1ZGa67efm/TFU/lYA5HV85
-         YPN2bxffhSNTy8cCptM9PIUj4wOruoQViBsXUhFuQBlJGF8gX1EU4On0jicTgpxQdq2B
-         qlGFIO+kGU3xN1uJ3I2+Zy1BL2D6WAlV07FR6nrArUcdRgix95Gio6bHT5SNNF1yeeFh
-         XmeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751457673; x=1752062473;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6jv276frdTgezmLf2N0J1pH6om38MxgZQbyEgKGpNg4=;
-        b=jgb6SiCRHNQX01mOgnyywV++n34irC1rqGgFTBUDHA3zktL7Clm5d0n1FkoUy68M/Q
-         SluwOKbI1Jzde9FfeC7sIuiXG8dJWOzKH8qTtVYFPNmEQSZ+zL33tv9LJm5uoCz08uwT
-         EAINt9507RYbIDc0a9yJToInEEUyKiB5LRaMf/I0pT1vOMYG+rxLwPJVJXy5pGG58Ccm
-         FBFd6mPpMLqWv136qbn21FCmnTNSFQhEvdj9io/Ja8VykE9IkhxbLCyfvJmg7NQaFqRe
-         t/6ELPEcg7UVCHi6F/iwxG0E/K6yM6AHnfb58sx45fx6CWWLiw5pPVzk40+mD25hyBXI
-         RBxQ==
-X-Gm-Message-State: AOJu0Yyenopi3MGxKHI005ggcvDtjb5fiVnmEWxkSoRmboLbMW0zn/S+
-	ayP6AhcpoITJY2i6nODtoT924WtD8EuBgkn7a6b2ttAi0gcS2XecGGDIJ2bTbPoKWbk=
-X-Gm-Gg: ASbGnctEl9VdM7B9UuoQw1AeMMCRRglxa/g1qcjUtTOoq82nbrboIcb3J3JY15yeVUR
-	wNFf/W7i3avPj9UyhgEfc3TWaWD5qyj1jSCcfHNW/qt//7VQNtuR3jnvUEmkj4tbaypupxmMpWN
-	Fi2rD5+asXws95NCLeRCp2KrLxmX3rgjM3047rf0JuQzwJqqNjgMgILu7C7jfSC1QaoJJ09Al1n
-	XTwCGYqj7Lo3U27NOoM9NRSeVkWNk76bFMUfdufvenO4j7yPD7njkRk3oThmbCnKfqmTHvAv53W
-	8EtmAeI5wiRVavD4xUncOuh1CvG2MpDJhr0c3FfWvA8rYa7JymWhI+DKgYAvDbWw
-X-Google-Smtp-Source: AGHT+IGewDt5mVuSiixjGkkOn3JnJKe9HgobIuweNbFb78DsEXDV20zqJd3DJ0/nb84m3QRmd1bftw==
-X-Received: by 2002:a05:6000:2083:b0:3a4:f939:b53 with SMTP id ffacd0b85a97d-3b1ffcd6477mr2154410f8f.38.1751457670853;
-        Wed, 02 Jul 2025 05:01:10 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b34e3200fedsm12817743a12.73.2025.07.02.05.01.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 05:01:09 -0700 (PDT)
-Date: Wed, 2 Jul 2025 14:00:55 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Shardul Bankar <shardulsb08@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	john.ogness@linutronix.de, senozhatsky@chromium.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [BUG] KASAN: slab-out-of-bounds in vsnprintf triggered by large
- stack frame
-Message-ID: <aGUfd7mxQOOpkHz8@pathway.suse.cz>
-References: <9052e70eb1cf8571c1b37bb0cee19aaada7dfe3d.camel@gmail.com>
+	s=arc-20240116; t=1751457713; c=relaxed/simple;
+	bh=zQtNcMGzIquLCd/CHysM5N2spJz9eEDEPTNKqaoCOX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XO6SUk588yHPMU6fZ1upjO3ECIYyog/MYoQzDnb/x3KfWZzhmXW73HvWoaPoWYcl/60uI/wQGyWBJb63NjgAZID8rgQ1ob25pW0PP93x3w4bpWl+N9OQAI/OSTXkjUbIx2BtnhALrxD1BBgU/pXDfTpV2IW1MQ5Kd1JmuLNIpY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RNJDlxxv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562Asw7m020939;
+	Wed, 2 Jul 2025 12:01:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FVlWhQQ+b14FmNqD30heTiW9T8Tf/brelVlSxVCs1Qk=; b=RNJDlxxvugzXhAFK
+	jxvph5klDwfisgzEmkWuZ6U5kAjPBFyYd4IS6G3Q2KtSWzilDIyDL/RrsMxphZEH
+	Y/7nTY9410BVQzYPhODUcDA+HV+fciuWqB5oAzyX8TpOPt2rSsEURMmogA06dGRb
+	dvbnAy3of/zBpriAl/c/saq4+pF8bT58hiFQg4a1yXKMwo8gdB4qLJTosNlYkoT+
+	Kfwmmvv8cgGErKr8Oy7min8M+owE6/jCh6jBbFDheZ7Tp0LtAnN12m8UCrPdhxYw
+	IzR6s3OWrQrIDJN9Mv3ONC48QIiF1KNGpXBGi4Ard5zbE0T7NNGB8n/1Rp8tNstF
+	YGsK4g==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47mhxn36pn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 12:01:45 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 562C1huq029489
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 12:01:43 GMT
+Received: from [10.50.58.161] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Jul 2025
+ 05:01:40 -0700
+Message-ID: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+Date: Wed, 2 Jul 2025 17:31:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9052e70eb1cf8571c1b37bb0cee19aaada7dfe3d.camel@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250627-video_cb-v3-0-51e18c0ffbce@quicinc.com>
+ <5f90547d-945a-4e26-b36c-75f2d8a1af97@kernel.org>
+ <eab8d79f-7188-9537-9176-3e4d22f0978a@quicinc.com>
+ <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <5ad418d9-8199-43c9-a477-1e3b939c054c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA5NyBTYWx0ZWRfX5wTPO1ebF12d
+ LLun7/21txH/GjF74LohlbrKn+aaAh43brmjwfbTkKL9oxmCE8f5nm66CsqCLx9MRiCadKvxJpx
+ 4OVZzJnvgkUJPR8GTaRmv8i1QkXNHeE3JWimSgbQO2y7Cz/sZGJdSpId9DlMHaXlI/dj2CYUHxy
+ zMB29mt03NiqizAcOPpDcT8eu5K5Bdu157yfFw8obLB62jX2r7uthnPFgDUwKw/uaMFozOF2LHA
+ 6dbiDAm+XO0BsgciLHr1JFSOghOt2ipUjMldqWv7WtkbKWmbX9OgD0EZLd6pPtLJyfatNVE7k6V
+ GwWhkJnB5jD5T3AHACcEX+Z8EJ1BdcHWjsB4O6qLd0rLJv31X5qem9000KoGC5nkYb0ygwYAGXE
+ AYbNdJudUITpMzUQQTyCUjXSkyuI2//6scSClkGKoArZXgx5Px94dLiwTukvGX76kcM5BaPA
+X-Authority-Analysis: v=2.4 cv=EbvIQOmC c=1 sm=1 tr=0 ts=68651fa9 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=d-4ZcLASQ4404vAoVlQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: RSk8M61780XpcYmvqoBldalLSZde6uSD
+X-Proofpoint-GUID: RSk8M61780XpcYmvqoBldalLSZde6uSD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ spamscore=0 suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020097
 
-Adding Kees and linux-hardening mailing list into CC just to be sure.
 
-But I think that this is a bogus report, see below.
 
-On Tue 2025-07-01 22:11:55, Shardul Bankar wrote:
-> Hello,
+On 7/2/2025 5:22 PM, Krzysztof Kozlowski wrote:
+> On 02/07/2025 13:37, Vikash Garodia wrote:
+>>
+>> On 7/2/2025 4:48 PM, Krzysztof Kozlowski wrote:
+>>> On 27/06/2025 17:48, Vikash Garodia wrote:
+>>>> This series introduces a sub node "non-pixel" within iris video node.
+>>>> Video driver registers this sub node as a platform device and configure 
+>>>> it for DMA operations. All non pixel buffers, i.e bitstream, HFI queues 
+>>>> and internal buffers related to bitstream processing, would be managed 
+>>>> by this non_pixel device.
+>>>>
+>>>> Purpose to add this sub-node:
+>>>> Iris device limits the IOVA to an addressable range of 4GiB, and even 
+>>>> within that range, some of the space is used by IO registers, thereby 
+>>>> limiting the available IOVA to even lesser. For certain video usecase, 
+>>>> this limited range in not sufficient enough, hence it brings the need to 
+>>>> extend the possibility of higher IOVA range.
+>>>>
+>>>> Video hardware is designed to emit different stream-ID for pixel and 
+>>>> non-pixel buffers, thereby introduce a non-pixel sub node to handle 
+>>>> non-pixel stream-ID into a separate platform device.
+>>>> With this, both iris and non-pixel device can have IOVA range of 
+>>>> approximately 0-4GiB individually for each device, thereby doubling the 
+>>>> range of addressable IOVA.
+>>>>
+>>>> Tested on SM8550 and SA8775p hardwares.
+>>>>
+>>>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>>>> ---
+>>>> Changes in v3:
+>>>> - Add info about change in iommus binding (Thanks Krzysztof)
+>>>
+>>> Nothing improved in commit msg. You are changing existing device and the
+>>> reason for that change is not communicated at all.
+>>>
+>>> There was big feedback from qualcomm saying that some commit in the past
+>>> received review, so future commits can repeat the same stuff. If qcom
+>>> approaches that way, sorry, no you need to come with proper commit
+>>> description.
+>>>
+>>> Please align internally how to solve it, because my response that past
+>>> imperfect review is not justification for whatever future issues was not
+>>> enough.
+>> Sure, lets take this as an example and you can suggest to provide a better
+>> commit message for this case, it would help me to compare where is the gap. I
+>> have tried my best to capture and explain the limitations and how the changes
+>> address those limitations. If that is not sufficient, we might have the perfect
+>> message from you and compare to find the gaps and improve, I am sorry, but thats
 > 
-> I would like to report a slab-out-of-bounds bug that can be reliably
-> reproduced with a purpose-built kernel module. This report was
-> initially sent to security@kernel.org, and I was advised to move it to
-> the public lists.
+> It is not question to me: I did not want imperfectness. Qualcomm
+> engineer used issues in existing commits or imperfect commit in
+> discussion, so that's my solution. I don't need that perfect commit, but
+> it seems if I agree to that, then I will have to defend it later. Well,
+> no, I don't want it.
 > 
-> I have confirmed this issue still exists on the latest mainline kernel
-> (v6.16.0-rc4).
+>> how i feel at the moment.
+> Sure, I feel confused now as well.
 > 
-> Bug Summary:
-> 
-> The bug is a KASAN-reported slab-out-of-bounds write within vsnprintf.
-> It appears to be caused by a latent memory corruption issue, likely
-> related to the names_cache slab.
-> 
-> The vulnerability can be triggered by loading a kernel module that
-> allocates an unusually large stack frame. When compiling the PoC
-> module, GCC explicitly warns about this: warning: the frame size of
-> 29760 bytes is larger than 2048 bytes. This "stack grooming" positions
-> the task's stack to overlap with a stale pointer from a freed
-> names_cache object. A subsequent call to pr_info() then uses this
-> corrupted value, leading to the out-of-bounds write.
+> Anyway, in other messages I explained what is missing. You are changing
+> existing hardware and you clearly must explain how existing hardware is
+> affected, how can we reproduce it, how users are affected.
+Exactly all of these i have explained in the commit message. The limitation with
+existing hardware binding usage and how my new approach mitigates that limition.
 
-Honestly, I think that everything works as expected.
-I do not see any bug with the existing kernel code.
-IMHO, the bug is in the test module, see below.
-
-> Reproducer:
+Coming to usecase, i made a generic comment saying usecases which needs higher
+IOVA, i can add the explicit detail about usecase like 8k or higher
+concurrencies like 32 or higher concurrent sessions.
 > 
-> The following minimal kernel module reliably reproduces the crash on my
-> x86-64 test system.
+> All these answers.
 > 
-> #include <linux/init.h>
-> #include <linux/module.h>
-> #include <linux/printk.h>
-> 
-> #define STACK_FOOTPRINT (3677 * sizeof(void *))
-> 
-> static int __init final_poc_init(void)
-> {
->     volatile char stack_eater[STACK_FOOTPRINT];
->     stack_eater[0] = 'A'; // Prevent optimization
-
-This takes the whole stack.
-
->     pr_info("Final PoC: Triggering bug with controlled stack
-> layout.\n");
-
-And any function called here, which would need to store return
-address on the stack would fail.
-
-The compiler warned about it.
-KASAN caught and reported the problem.
-
-The solution is to listen to the compiler warnings and
-do not create broken modules.
-
-Best Regards,
-Petr
-
->     return -EAGAIN;
-> }
-> 
-> static void __exit final_poc_exit(void) {}
-> 
-> module_init(final_poc_init);
-> module_exit(final_poc_exit);
-> MODULE_LICENSE("GPLv2");
-> MODULE_DESCRIPTION("A PoC to trigger a kernel bug by creating a large
-> stack frame.");
-> 
-> 
-> KASAN Crash Log (on mainline v6.16.0-rc4):
-> 
-> Loading the module produces the following KASAN report and kernel
-> panic:
-> 
-> [  214.241371] 006_state_corruption_poc_reduce_size: loading out-of-
-> tree module taints kernel.
->   214.242338] Final PoC: Triggering bug with controlled stack layout.
-> [  214.242340]
-> ==================================================================
-> [  214.242341] BUG: KASAN: slab-out-of-bounds in vsnprintf+0x5a6/0x1400
-> [  214.242346] Write of size 1 at addr ffff88814269fee0 by task
-> insmod/2258
-> [  214.242348]
-> [  214.242350] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        
-> OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
-> [  214.242353] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [  214.242354] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-> [  214.242355] Call Trace:
-> [  214.242356]  <TASK>
-> [  214.242359]  ? console_emit_next_record+0x12b/0x450
-> [  214.242362]  ? __pfx_console_emit_next_record+0x10/0x10
-> [  214.242363]  ? __asan_memmove+0x3c/0x60
-> [  214.242367]  ? console_flush_all+0x36c/0x570
-> [  214.242368]  ? __pfx_console_flush_all+0x10/0x10
-> [  214.242370]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242372]  ? console_unlock+0xbf/0x240
-> [  214.242373]  ? __pfx_console_unlock+0x10/0x10
-> [  214.242375]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
-> [  214.242377]  ? vprintk_emit+0x412/0x4b0
-> [  214.242379]  ? __pfx_vprintk_emit+0x10/0x10
-> [  214.242380]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242382]  ? _printk+0xc7/0x100
-> [  214.242384]  ? __pfx__printk+0x10/0x10
-> [  214.242386]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242388]  ? final_poc_init+0xd7/0xff0
-> [006_state_corruption_poc_reduce_size]
-> [  214.242390]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242486]  ? do_one_initcall+0xa4/0x380
-> [  214.242488]  ? __pfx_do_one_initcall+0x10/0x10
-> [  214.242490]  ? kasan_unpoison+0x44/0x70
-> [  214.242492]  ? do_init_module+0x2cc/0x8e0
-> [  214.242494]  ? __pfx_do_init_module+0x10/0x10
-> [  214.242495]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
-> [  214.242542]  ? init_module_from_file+0xe1/0x150
-> [  214.242543]  ? __pfx_init_module_from_file+0x10/0x10
-> [  214.242544]  ? vfs_read+0x6da/0xa40
-> [  214.242547]  ? _raw_spin_lock+0x83/0xe0
-> [  214.242549]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  214.242550]  ? cred_has_capability.isra.0+0x12c/0x220
-> [  214.242553]  ? idempotent_init_module+0x224/0x750
-> [  214.242555]  ? __pfx_idempotent_init_module+0x10/0x10
-> [  214.242557]  ? fdget+0x53/0x4a0
-> [  214.242558]  ? security_capable+0x87/0x150
-> [  214.242561]  ? __x64_sys_finit_module+0xcd/0x150
-> [  214.242562]  ? do_syscall_64+0x82/0x2c0
-> [  214.242564]  ? count_memcg_events+0x1aa/0x410
-> [  214.242567]  ? handle_mm_fault+0x492/0x910
-> [  214.242569]  ? do_user_addr_fault+0x4b0/0xa30
-> [  214.242571]  ? exc_page_fault+0x75/0xd0
-> [  214.242573]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.242575]  </TASK>
-> [  214.242576]
-> [  214.242577] Allocated by task 2255:
-> [  214.242578]  kasan_save_stack+0x30/0x50
-> [  214.242580]  kasan_save_track+0x14/0x30
-> [  214.242581]  __kasan_slab_alloc+0x7e/0x90
-> [  214.242582]  kmem_cache_alloc_noprof+0x148/0x420
-> [  214.242584]  getname_flags.part.0+0x48/0x540
-> [  214.242586]  do_sys_openat2+0xb1/0x180
-> [  214.242588]  __x64_sys_openat+0x10e/0x210
-> [  214.242590]  do_syscall_64+0x82/0x2c0
-> [  214.242591]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.242592]
-> [  214.242592] Freed by task 2255:
-> [  214.242593]  kasan_save_stack+0x30/0x50
-> [  214.242594]  kasan_save_track+0x14/0x30
-> [  214.242595]  kasan_save_free_info+0x3b/0x70
-> [  214.242596]  __kasan_slab_free+0x52/0x70
-> [  214.242598]  kmem_cache_free+0x17b/0x540
-> [  214.242599]  do_sys_openat2+0x109/0x180
-> [  214.242601]  __x64_sys_openat+0x10e/0x210
-> [  214.242602]  do_syscall_64+0x82/0x2c0
-> [  214.242603]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.242604]
-> [  214.242605] Last potentially related work creation:
-> [  214.242605] ------------[ cut here ]------------
-> [  214.242606] pool index 109701 out of bounds (339) for stack id
-> a1bbac86
-> [  214.242623] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:451
-> depot_fetch_stack+0x68/0xb0
-> [  214.242626] Modules linked in:
-> 006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
-> binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
-> parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
-> net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
-> i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
-> vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
-> vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
-> 9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
-> pata_acpi(E) fuse(E) qemu_fw_cfg(E)
-> [  214.242652] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
-> padlock_aes(E):2
-> [  214.242657] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        
-> OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
-> [  214.242659] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [  214.242660] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-> [  214.242660] RIP: 0010:depot_fetch_stack+0x68/0xb0
-> [  214.242663] Code: c1 e7 04 81 e7 f0 3f 00 00 48 01 f8 8b 50 1c 85 d2
-> 74 2a 48 83 c4 10 e9 16 a2 91 01 89 f9 48 c7 c7 08 61 c8 a5 e8 68 2f 58
-> fe <0f> 0b 31 c0 48 83 c4 10 c3 cc cc cc cc 0f 0b 31 c0 eb f1 0f 0b 31
-> [  214.242664] RSP: 0018:ffff88814269faf8 EFLAGS: 00010046
-> [  214.242666] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
-> 0000000000000001
-> [  214.242667] RDX: 1ffff110284d3f47 RSI: 0000000000000004 RDI:
-> ffff88848ab2cf48
-> [  214.242668] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
-> ffffed10915659e9
-> [  214.242669] R10: ffffed10915659ea R11: 0000000000000001 R12:
-> ffff88814269fbe0
-> [  214.242670] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
-> ffff88814269fdc8
-> [  214.242671] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
-> knlGS:0000000000000000
-> [  214.242672] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  214.242673] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
-> 00000000000006f0
-> [  214.242675] Call Trace:
-> [  214.242676]  <TASK>
-> [  214.242678]  ? console_emit_next_record+0x12b/0x450
-> [  214.242680]  ? __pfx_console_emit_next_record+0x10/0x10
-> [  214.242681]  ? __asan_memmove+0x3c/0x60
-> [  214.242684]  ? console_flush_all+0x36c/0x570
-> [  214.242685]  ? __pfx_console_flush_all+0x10/0x10
-> [  214.242687]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242689]  ? console_unlock+0xbf/0x240
-> [  214.242690]  ? __pfx_console_unlock+0x10/0x10
-> [  214.242692]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
-> [  214.242694]  ? vprintk_emit+0x412/0x4b0
-> [  214.242695]  ? __pfx_vprintk_emit+0x10/0x10
-> [  214.242697]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242699]  ? _printk+0xc7/0x100
-> [  214.242701]  ? __pfx__printk+0x10/0x10
-> [  214.242703]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242704]  ? final_poc_init+0xd7/0xff0
-> [006_state_corruption_poc_reduce_size]
-> [  214.242706]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242834]  ? do_one_initcall+0xa4/0x380
-> [  214.242835]  ? __pfx_do_one_initcall+0x10/0x10
-> [  214.242837]  ? kasan_unpoison+0x44/0x70
-> [  214.242839]  ? do_init_module+0x2cc/0x8e0
-> [  214.242841]  ? __pfx_do_init_module+0x10/0x10
-> [  214.242842]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
-> [  214.242855]  ? init_module_from_file+0xe1/0x150
-> [  214.242856]  ? __pfx_init_module_from_file+0x10/0x10
-> [  214.242858]  ? vfs_read+0x6da/0xa40
-> [  214.242859]  ? _raw_spin_lock+0x83/0xe0
-> [  214.242861]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  214.242862]  ? cred_has_capability.isra.0+0x12c/0x220
-> [  214.242864]  ? idempotent_init_module+0x224/0x750
-> [  214.242866]  ? __pfx_idempotent_init_module+0x10/0x10
-> [  214.242867]  ? fdget+0x53/0x4a0
-> [  214.242868]  ? security_capable+0x87/0x150
-> [  214.242871]  ? __x64_sys_finit_module+0xcd/0x150
-> [  214.242872]  ? do_syscall_64+0x82/0x2c0
-> [  214.242874]  ? count_memcg_events+0x1aa/0x410
-> [  214.242875]  ? handle_mm_fault+0x492/0x910
-> [  214.242877]  ? do_user_addr_fault+0x4b0/0xa30
-> [  214.242879]  ? exc_page_fault+0x75/0xd0
-> [  214.242880]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.242882]  </TASK>
-> [  214.242883] ---[ end trace 0000000000000000 ]---
-> [  214.242884] ------------[ cut here ]------------
-> [  214.242885] corrupt handle or use after stack_depot_put()
-> [  214.242892] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:723
-> stack_depot_print+0x43/0x50
-> [  214.242895] Modules linked in:
-> 006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
-> binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
-> parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
-> net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
-> i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
-> vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
-> vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
-> 9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
-> pata_acpi(E) fuse(E) qemu_fw_cfg(E)
-> [  214.242915] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
-> padlock_aes(E):2
-> [  214.242919] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        W
-> OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
-> [  214.242921] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [  214.242921] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-> [  214.242922] RIP: 0010:stack_depot_print+0x43/0x50
-> [  214.242924] Code: ff ff 48 85 c0 74 17 8b 70 14 85 f6 74 0b 48 8d 78
-> 20 31 d2 e9 2e eb 85 fe c3 cc cc cc cc 48 c7 c7 40 61 c8 a5 e8 8d 28 58
-> fe <0f> 0b c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90
-> [  214.242925] RSP: 0018:ffff88814269fb10 EFLAGS: 00010046
-> [  214.242926] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
-> 0000000000000001
-> [  214.242927] RDX: 1ffff110284d3f4a RSI: 0000000000000004 RDI:
-> ffff88848ab2cf48
-> [  214.242928] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
-> ffffed10915659e9
-> [  214.242929] R10: ffffed10915659ea R11: ffffffffa87b4d46 R12:
-> ffff88814269fbe0
-> [  214.242930] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
-> ffff88814269fdc8
-> [  214.242931] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
-> knlGS:0000000000000000
-> [  214.242932] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  214.242933] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
-> 00000000000006f0
-> [  214.242935] Call Trace:
-> [  214.242935]  <TASK>
-> [  214.242937]  ? console_emit_next_record+0x12b/0x450
-> [  214.242939]  ? __pfx_console_emit_next_record+0x10/0x10
-> [  214.242940]  ? __asan_memmove+0x3c/0x60
-> [  214.242942]  ? console_flush_all+0x36c/0x570
-> [  214.242944]  ? __pfx_console_flush_all+0x10/0x10
-> [  214.242946]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242947]  ? console_unlock+0xbf/0x240
-> [  214.242949]  ? __pfx_console_unlock+0x10/0x10
-> [  214.242950]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
-> [  214.242952]  ? vprintk_emit+0x412/0x4b0
-> [  214.242954]  ? __pfx_vprintk_emit+0x10/0x10
-> [  214.242956]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242958]  ? _printk+0xc7/0x100
-> [  214.242959]  ? __pfx__printk+0x10/0x10
-> [  214.242961]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.242963]  ? final_poc_init+0xd7/0xff0
-> [006_state_corruption_poc_reduce_size]
-> [  214.242965]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243090]  ? do_one_initcall+0xa4/0x380
-> [  214.243091]  ? __pfx_do_one_initcall+0x10/0x10
-> [  214.243093]  ? kasan_unpoison+0x44/0x70
-> [  214.243095]  ? do_init_module+0x2cc/0x8e0
-> [  214.243097]  ? __pfx_do_init_module+0x10/0x10
-> [  214.243098]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
-> [  214.243110]  ? init_module_from_file+0xe1/0x150
-> [  214.243111]  ? __pfx_init_module_from_file+0x10/0x10
-> [  214.243113]  ? vfs_read+0x6da/0xa40
-> [  214.243114]  ? _raw_spin_lock+0x83/0xe0
-> [  214.243116]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  214.243117]  ? cred_has_capability.isra.0+0x12c/0x220
-> [  214.243119]  ? idempotent_init_module+0x224/0x750
-> [  214.243121]  ? __pfx_idempotent_init_module+0x10/0x10
-> [  214.243122]  ? fdget+0x53/0x4a0
-> [  214.243123]  ? security_capable+0x87/0x150
-> [  214.243126]  ? __x64_sys_finit_module+0xcd/0x150
-> [  214.243127]  ? do_syscall_64+0x82/0x2c0
-> [  214.243129]  ? count_memcg_events+0x1aa/0x410
-> [  214.243130]  ? handle_mm_fault+0x492/0x910
-> [  214.243132]  ? do_user_addr_fault+0x4b0/0xa30
-> [  214.243134]  ? exc_page_fault+0x75/0xd0
-> [  214.243135]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.243137]  </TASK>
-> [  214.243138] ---[ end trace 0000000000000000 ]---
-> [  214.243138]
-> [  214.243139] Second to last potentially related work creation:
-> [  214.243139] ------------[ cut here ]------------
-> [  214.243140] pool index 131070 out of bounds (339) for stack id
-> ffffffff
-> [  214.243148] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:451
-> depot_fetch_stack+0x68/0xb0
-> [  214.243150] Modules linked in:
-> 006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
-> binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
-> parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
-> net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
-> i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
-> vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
-> vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
-> 9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
-> pata_acpi(E) fuse(E) qemu_fw_cfg(E)
-> [  214.243171] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
-> padlock_aes(E):2
-> [  214.243174] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        W
-> OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
-> [  214.243176] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [  214.243176] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-> [  214.243177] RIP: 0010:depot_fetch_stack+0x68/0xb0
-> [  214.243179] Code: c1 e7 04 81 e7 f0 3f 00 00 48 01 f8 8b 50 1c 85 d2
-> 74 2a 48 83 c4 10 e9 16 a2 91 01 89 f9 48 c7 c7 08 61 c8 a5 e8 68 2f 58
-> fe <0f> 0b 31 c0 48 83 c4 10 c3 cc cc cc cc 0f 0b 31 c0 eb f1 0f 0b 31
-> [  214.243180] RSP: 0018:ffff88814269faf8 EFLAGS: 00010046
-> [  214.243181] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
-> 0000000000000001
-> [  214.243182] RDX: 1ffff110284d3f47 RSI: 0000000000000004 RDI:
-> ffff88848ab2cf48
-> [  214.243183] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
-> ffffed10915659e9
-> [  214.243184] R10: ffffed10915659ea R11: 0000000000000001 R12:
-> ffff88814269fbe0
-> [  214.243185] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
-> ffff88814269fdc8
-> [  214.243186] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
-> knlGS:0000000000000000
-> [  214.243187] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  214.243187] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
-> 00000000000006f0
-> [  214.243189] Call Trace:
-> [  214.243190]  <TASK>
-> [  214.243192]  ? console_emit_next_record+0x12b/0x450
-> [  214.243193]  ? __pfx_console_emit_next_record+0x10/0x10
-> [  214.243194]  ? __asan_memmove+0x3c/0x60
-> [  214.243197]  ? console_flush_all+0x36c/0x570
-> [  214.243198]  ? __pfx_console_flush_all+0x10/0x10
-> [  214.243200]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243202]  ? console_unlock+0xbf/0x240
-> [  214.243203]  ? __pfx_console_unlock+0x10/0x10
-> [  214.243205]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
-> [  214.243207]  ? vprintk_emit+0x412/0x4b0
-> [  214.243208]  ? __pfx_vprintk_emit+0x10/0x10
-> [  214.243210]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243212]  ? _printk+0xc7/0x100
-> [  214.243214]  ? __pfx__printk+0x10/0x10
-> [  214.243216]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243217]  ? final_poc_init+0xd7/0xff0
-> [006_state_corruption_poc_reduce_size]
-> [  214.243219]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243344]  ? do_one_initcall+0xa4/0x380
-> [  214.243346]  ? __pfx_do_one_initcall+0x10/0x10
-> [  214.243347]  ? kasan_unpoison+0x44/0x70
-> [  214.243350]  ? do_init_module+0x2cc/0x8e0
-> [  214.243351]  ? __pfx_do_init_module+0x10/0x10
-> [  214.243353]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
-> [  214.243364]  ? init_module_from_file+0xe1/0x150
-> [  214.243365]  ? __pfx_init_module_from_file+0x10/0x10
-> [  214.243367]  ? vfs_read+0x6da/0xa40
-> [  214.243369]  ? _raw_spin_lock+0x83/0xe0
-> [  214.243370]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  214.243371]  ? cred_has_capability.isra.0+0x12c/0x220
-> [  214.243373]  ? idempotent_init_module+0x224/0x750
-> [  214.243375]  ? __pfx_idempotent_init_module+0x10/0x10
-> [  214.243376]  ? fdget+0x53/0x4a0
-> [  214.243377]  ? security_capable+0x87/0x150
-> [  214.243380]  ? __x64_sys_finit_module+0xcd/0x150
-> [  214.243381]  ? do_syscall_64+0x82/0x2c0
-> [  214.243383]  ? count_memcg_events+0x1aa/0x410
-> [  214.243384]  ? handle_mm_fault+0x492/0x910
-> [  214.243386]  ? do_user_addr_fault+0x4b0/0xa30
-> [  214.243388]  ? exc_page_fault+0x75/0xd0
-> [  214.243389]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.243391]  </TASK>
-> [  214.243392] ---[ end trace 0000000000000000 ]---
-> [  214.243392] ------------[ cut here ]------------
-> [  214.243393] corrupt handle or use after stack_depot_put()
-> [  214.243401] WARNING: CPU: 6 PID: 2258 at lib/stackdepot.c:723
-> stack_depot_print+0x43/0x50
-> [  214.243403] Modules linked in:
-> 006_state_corruption_poc_reduce_size(OE+) 9p(E) rfkill(E) isofs(E)
-> binfmt_misc(E) vfat(E) fat(E) ppdev(E) parport_pc(E) snd_pcm(E)
-> parport(E) snd_timer(E) snd(E) virtio_net(E) soundcore(E)
-> net_failover(E) joydev(E) bochs(E) failover(E) i2c_piix4(E) pcspkr(E)
-> i2c_smbus(E) loop(E) nfnetlink(E) vsock_loopback(E)
-> vmw_vsock_virtio_transport_common(E) vmw_vsock_vmci_transport(E)
-> vsock(E) zram(E) vmw_vmci(E) lz4hc_compress(E) lz4_compress(E)
-> 9pnet_virtio(E) 9pnet(E) floppy(E) netfs(E) serio_raw(E) ata_generic(E)
-> pata_acpi(E) fuse(E) qemu_fw_cfg(E)
-> [  214.243423] Unloaded tainted modules: snd_pcsp(E):1 hv_vmbus(E):1
-> padlock_aes(E):2
-> [  214.243426] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G        W
-> OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
-> [  214.243428] Tainted: [W]=WARN, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
-> [  214.243429] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-> [  214.243429] RIP: 0010:stack_depot_print+0x43/0x50
-> [  214.243431] Code: ff ff 48 85 c0 74 17 8b 70 14 85 f6 74 0b 48 8d 78
-> 20 31 d2 e9 2e eb 85 fe c3 cc cc cc cc 48 c7 c7 40 61 c8 a5 e8 8d 28 58
-> fe <0f> 0b c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90
-> [  214.243432] RSP: 0018:ffff88814269fb10 EFLAGS: 00010046
-> [  214.243433] RAX: 0000000000000000 RBX: ffffea000509a600 RCX:
-> 0000000000000001
-> [  214.243434] RDX: 1ffff110284d3f4a RSI: 0000000000000004 RDI:
-> ffff88848ab2cf48
-> [  214.243435] RBP: ffff88814269fee0 R08: ffffffffa1f4e7dc R09:
-> ffffed10915659e9
-> [  214.243436] R10: ffffed10915659ea R11: ffffffffa87b6f46 R12:
-> ffff88814269fbe0
-> [  214.243437] R13: ffffffffa4cf91e6 R14: 00000000fffffffe R15:
-> ffff88814269fdc8
-> [  214.243438] FS:  00007f5dec131740(0000) GS:ffff8884e241d000(0000)
-> knlGS:0000000000000000
-> [  214.243439] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  214.243440] CR2: 0000558a1aca08c0 CR3: 0000000104536000 CR4:
-> 00000000000006f0
-> [  214.243441] Call Trace:
-> [  214.243442]  <TASK>
-> [  214.243444]  ? console_emit_next_record+0x12b/0x450
-> [  214.243445]  ? __pfx_console_emit_next_record+0x10/0x10
-> [  214.243446]  ? __asan_memmove+0x3c/0x60
-> [  214.243449]  ? console_flush_all+0x36c/0x570
-> [  214.243450]  ? __pfx_console_flush_all+0x10/0x10
-> [  214.243452]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243454]  ? console_unlock+0xbf/0x240
-> [  214.243455]  ? __pfx_console_unlock+0x10/0x10
-> [  214.243457]  ? __down_trylock_console_sem.isra.0+0x2e/0x50
-> [  214.243459]  ? vprintk_emit+0x412/0x4b0
-> [  214.243460]  ? __pfx_vprintk_emit+0x10/0x10
-> [  214.243462]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243464]  ? _printk+0xc7/0x100
-> [  214.243466]  ? __pfx__printk+0x10/0x10
-> [  214.243468]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243469]  ? final_poc_init+0xd7/0xff0
-> [006_state_corruption_poc_reduce_size]
-> [  214.243471]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.243596]  ? do_one_initcall+0xa4/0x380
-> [  214.243598]  ? __pfx_do_one_initcall+0x10/0x10
-> [  214.243600]  ? kasan_unpoison+0x44/0x70
-> [  214.243602]  ? do_init_module+0x2cc/0x8e0
-> [  214.243603]  ? __pfx_do_init_module+0x10/0x10
-> [  214.243605]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
-> [  214.243616]  ? init_module_from_file+0xe1/0x150
-> [  214.243617]  ? __pfx_init_module_from_file+0x10/0x10
-> [  214.243618]  ? vfs_read+0x6da/0xa40
-> [  214.243620]  ? _raw_spin_lock+0x83/0xe0
-> [  214.243622]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  214.243623]  ? cred_has_capability.isra.0+0x12c/0x220
-> [  214.243625]  ? idempotent_init_module+0x224/0x750
-> [  214.243626]  ? __pfx_idempotent_init_module+0x10/0x10
-> [  214.243628]  ? fdget+0x53/0x4a0
-> [  214.243629]  ? security_capable+0x87/0x150
-> [  214.243631]  ? __x64_sys_finit_module+0xcd/0x150
-> [  214.243633]  ? do_syscall_64+0x82/0x2c0
-> [  214.243634]  ? count_memcg_events+0x1aa/0x410
-> [  214.243636]  ? handle_mm_fault+0x492/0x910
-> [  214.243638]  ? do_user_addr_fault+0x4b0/0xa30
-> [  214.243640]  ? exc_page_fault+0x75/0xd0
-> [  214.243641]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.243643]  </TASK>
-> [  214.243643] ---[ end trace 0000000000000000 ]---
-> [  214.243644]
-> [  214.243645] The buggy address belongs to the object at
-> ffff88814269e600
-> [  214.243645]  which belongs to the cache names_cache of size 4096
-> [  214.243646] The buggy address is located 2272 bytes to the right of
-> [  214.243646]  allocated 4096-byte region [ffff88814269e600,
-> ffff88814269f600)
-> [  214.243648]
-> [  214.243648] The buggy address belongs to the physical page:
-> [  214.243649] page: refcount:0 mapcount:0 mapping:0000000000000000
-> index:0x0 pfn:0x142698
-> [  214.243651] head: order:3 mapcount:0 entire_mapcount:0
-> nr_pages_mapped:0 pincount:0
-> [  214.243652] anon flags:
-> 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
-> [  214.243654] page_type: f5(slab)
-> [  214.243656] raw: 0017ffffc0000040 ffff88810039d680 0000000000000000
-> dead000000000001
-> [  214.243658] raw: 0000000000000000 0000000000070007 00000000f5000000
-> 0000000000000000
-> [  214.243659] head: 0017ffffc0000040 ffff88810039d680 0000000000000000
-> dead000000000001
-> [  214.243660] head: 0000000000000000 0000000000070007 00000000f5000000
-> 0000000000000000
-> [  214.243661] head: 0017ffffc0000003 ffffea000509a601 00000000ffffffff
-> 00000000ffffffff
-> [  214.243662] head: ffffffffffffffff 0000000000000000 00000000ffffffff
-> 0000000000000008
-> [  214.243663] page dumped because: kasan: bad access detected
-> [  214.243663]
-> [  214.243664] Memory state around the buggy address:
-> [  214.243665]  ffff88814269fd80: 00 00 00 00 00 f1 f1 f1 f1 00 00 00
-> f3 f3 f3 f3
-> [  214.243666]  ffff88814269fe00: f3 fc fc fc fc fc 00 00 00 00 00 00
-> 00 00 00 00
-> [  214.243667] >ffff88814269fe80: 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-> fc fc fc fc
-> [  214.243668]                                                        ^
-> [  214.243669]  ffff88814269ff00: f3 f3 f3 f3 00 00 00 00 00 00 00 00
-> 00 00 00 00
-> [  214.243670]  ffff88814269ff80: 00 00 f1 f1 f1 f1 00 00 00 f2 f2 f2
-> f2 f2 00 00
-> [  214.243671]
-> ==================================================================
-> [  214.243695] Disabling lock debugging due to kernel taint
-> [  214.403690] Kernel panic - not syncing: corrupted stack end detected
-> inside scheduler
-> [  214.404200] CPU: 6 UID: 0 PID: 2258 Comm: insmod Tainted: G    B   W
-> OE       6.16.0-rc4-custombuild #139 PREEMPT(lazy)
-> [  214.404904] Tainted: [B]=BAD_PAGE, [W]=WARN, [O]=OOT_MODULE,
-> [E]=UNSIGNED_MODULE
-> [  214.405459] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-> [  214.406193] Call Trace:
-> [  214.406558]  <TASK>
-> [  214.406910]  ? dump_stack_lvl+0x5d/0x80
-> [  214.407336]  ? panic+0x257/0x4eb
-> [  214.407738]  ? __pfx_panic+0x10/0x10
-> [  214.408147]  ? __asan_memcpy+0x3c/0x60
-> [  214.408564]  ? this_cpu_in_panic+0x1a/0x70
-> [  214.408994]  ? _prb_read_valid+0x166/0x2e0
-> [  214.409423]  ? this_cpu_in_panic+0x1a/0x70
-> [  214.409855]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.410438]  ? __schedule+0x17b1/0x17c0
-> [  214.410865]  ? __pfx___schedule+0x10/0x10
-> [  214.411296]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.411889]  ? __pfx_prb_read_valid+0x10/0x10
-> [  214.412341]  ? console_unlock+0xe5/0x240
-> [  214.412776]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.413368]  ? preempt_schedule+0x53/0x90
-> [  214.413811]  ? preempt_schedule_thunk+0x16/0x30
-> [  214.414273]  ? this_cpu_in_panic+0x1a/0x70
-> [  214.414714]  ? vprintk_emit+0x35c/0x4b0
-> [  214.415144]  ? __pfx_vprintk_emit+0x10/0x10
-> [  214.415584]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.416176]  ? _printk+0xc7/0x100
-> [  214.416582]  ? __pfx__printk+0x10/0x10
-> [  214.417006]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.417591]  ? final_poc_init+0xd7/0xff0
-> [006_state_corruption_poc_reduce_size]
-> [  214.418160]  ? __pfx_final_poc_init+0x10/0x10
-> [006_state_corruption_poc_reduce_size]
-> [  214.418871]  ? do_one_initcall+0xa4/0x380
-> [  214.419302]  ? __pfx_do_one_initcall+0x10/0x10
-> [  214.419752]  ? kasan_unpoison+0x44/0x70
-> [  214.420174]  ? do_init_module+0x2cc/0x8e0
-> [  214.420599]  ? __pfx_do_init_module+0x10/0x10
-> [  214.421043]  ? netfs_unbuffered_read_iter_locked+0x47f/0x980 [netfs]
-> [  214.421580]  ? init_module_from_file+0xe1/0x150
-> [  214.422033]  ? __pfx_init_module_from_file+0x10/0x10
-> [  214.422497]  ? vfs_read+0x6da/0xa40
-> [  214.422904]  ? _raw_spin_lock+0x83/0xe0
-> [  214.423322]  ? __pfx__raw_spin_lock+0x10/0x10
-> [  214.423760]  ? cred_has_capability.isra.0+0x12c/0x220
-> [  214.424225]  ? idempotent_init_module+0x224/0x750
-> [  214.424675]  ? __pfx_idempotent_init_module+0x10/0x10
-> [  214.425139]  ? fdget+0x53/0x4a0
-> [  214.425520]  ? security_capable+0x87/0x150
-> [  214.425942]  ? __x64_sys_finit_module+0xcd/0x150
-> [  214.426380]  ? do_syscall_64+0x82/0x2c0
-> [  214.426787]  ? count_memcg_events+0x1aa/0x410
-> [  214.427210]  ? handle_mm_fault+0x492/0x910
-> [  214.427614]  ? do_user_addr_fault+0x4b0/0xa30
-> [  214.428026]  ? exc_page_fault+0x75/0xd0
-> [  214.428407]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  214.428841]  </TASK>
-> [  214.429413] Kernel Offset: 0x20400000 from 0xffffffff81000000
-> (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> [  214.430091] ---[ end Kernel panic - not syncing: corrupted stack end
-> detected inside scheduler ]---
-> 
-> 
-> This is my first time reporting a bug on the mailing list, so please
-> let me know if any additional information or formatting is required.
-> 
-> Thank you,
-> Shardul Bankar
+> Best regards,
+> Krzysztof
 
