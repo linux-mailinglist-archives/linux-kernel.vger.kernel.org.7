@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-712298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098DBAF073D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:23:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B491DAF0741
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 02:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7A44417E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:22:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1EA4A1056
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 00:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AFA7482;
-	Wed,  2 Jul 2025 00:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3861804A;
+	Wed,  2 Jul 2025 00:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rw3I0MJy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8RAmerP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CCC4A1A;
-	Wed,  2 Jul 2025 00:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4DC7482;
+	Wed,  2 Jul 2025 00:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751415799; cv=none; b=ADMXgKQp+9LaK4uUweZdZ6LAlGbD8uIOPaCYV5dqkyQEhjOdkJxBBl2qdTuX9p6N4zfr4l/Ivi6SWEf7PybKShUl25/jUnH+Tizukddq0cFn0yxZeLl6OwQvXcuduQ+4lOeqFTb3FeIJEQcfGHoK0d0GhCQppUCYLoUU4beu1Ac=
+	t=1751415815; cv=none; b=SdmGiGPs9A01lUH6eRW9qpv35oaSmrUv+iCVP/5CK+pDHwGFPJBalG8H8z3WgXPnzrNgtRpHxz4y1oDYwstDk9aDGtdbkQZFFUwzPbdbAKOytb/2pHe1mUqkuWuf8u+eWdmNSWomUkh8+HiZ9vhnGOGR6I4LwbK8lmYKDOTRXcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751415799; c=relaxed/simple;
-	bh=3Dx6SOGktlpWitmJQ1//ZWkVkagwCpxpW8LCa46sgeQ=;
+	s=arc-20240116; t=1751415815; c=relaxed/simple;
+	bh=EUI54hyyekscOlUf1kI6gFhpia6+94hPUVs8ZhSFkV4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LDYbSQtQMLfQrl3tc54pOCpo+INIGeLQFjLJxmTB5BlwSvG0udHhYXE2g5bPF5PMfawKA2p9c747fB+rtFF4shHzANUdgI9IFiPrKEJ46YjpN7ERlmPsGoN08jmpFglrl7eHrzEH+p1zb+Sg0w+ji9tT6okV2liKn1c75nNO4uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rw3I0MJy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06665C4CEED;
-	Wed,  2 Jul 2025 00:23:19 +0000 (UTC)
+	 MIME-Version; b=ZQE0PhEBKzbS3vNxlp+IGpigRXy9dLzHrYq3b1sVl8o5Am3pUkmaFy8hkcFg4xS3REE4rUwDtTsGaFT8vZAqlfRWgrfBoPeyFgYSs2HaAiuGdUHPgi7OxKI7xzFsDIy3YWpT81U0/t+0HJGE2ZHnUv9XrpsPzVfoBKKziNEwVJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8RAmerP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9130C4CEEB;
+	Wed,  2 Jul 2025 00:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751415799;
-	bh=3Dx6SOGktlpWitmJQ1//ZWkVkagwCpxpW8LCa46sgeQ=;
+	s=k20201202; t=1751415814;
+	bh=EUI54hyyekscOlUf1kI6gFhpia6+94hPUVs8ZhSFkV4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Rw3I0MJydoSdPJN4OEk94Fk1rh1bhKkg5CU2FAw7Xdepw9/MC0LggJYmc+t/ILPx9
-	 Kzk9dmv4k8UEMrEvUV2Fahzh9x+F77o9cOwVlkKTYyCPxMyzijgCdhiGZdCLsd/KAO
-	 wWq6mUeInWqQ9NvElb4M4PGTkPjrrDgLnud7SFDP3hvcItKthwXHqPz7Eaf9fqLaIQ
-	 DGkL3IjT0VnTmjbVDqplZlJATIGtWh7VIEr/TOtIs9/EYl7BTwA1o1RXU+S1bfJXtC
-	 Erp6aEL9Rztr4xEyFbxhazhqfXkKPpNOqrONYdhxQyoW2tUkLHImKGziJqVkteBYwM
-	 smnWDqcnFmUeA==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bijan Tabatabai <bijantabatab@micron.com>,
-	damon@lists.linux.dev,
+	b=G8RAmerPRzYla7Kx67NwHAizBqGltgF4pVXpU71nMmctvt+ztXxD++pfD6yXBaFuD
+	 5IrwzHyYCYOaInOwlGNwo2ATo7iBlpNXD0izqhgYsKMEn1ifDMUgqz1JDZT/BHQQl6
+	 R+rthcPiN+tk/banqyv2nFLhCDvf56+6mZ890XX2HLEZ2I4SilaLW+ltbf+WOx+wkk
+	 laat0zpWNVk/fAt4fTtD+/gIV1+dOM86gzRovtK/f1/RM5dayLQKdCQsUtWxmokmdG
+	 joQPdhepaoKYp/tzHr63mWLVYbcUH4ViqfMn4Ji3jzUCbe/RH5CEknva/ZaAxqiNGO
+	 2QaqDtPiDtr+g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 86FC9CE0E63; Tue,  1 Jul 2025 17:23:34 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/4] mm/damon: add DAMOS_MIGRATE_{HOT,COLD} destination nodes and weights
-Date: Tue,  1 Jul 2025 17:23:16 -0700
-Message-Id: <20250702002316.1139-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250701224014.9008-1-bijan311@gmail.com>
-References: 
+	rostedt@goodmis.org,
+	Christoph Hellwig <hch@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH v2 1/5] torture: Remove support for SRCU-lite
+Date: Tue,  1 Jul 2025 17:23:26 -0700
+Message-Id: <20250702002330.1074433-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <2994ade2-bd06-4ba7-bcc9-be4d0d15ea0c@paulmck-laptop>
+References: <2994ade2-bd06-4ba7-bcc9-be4d0d15ea0c@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,67 +63,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue,  1 Jul 2025 17:39:37 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+Because SRCU-lite is being replaced by SRCU-fast, this commit removes
+support for SRCU-lite from refscale.c.
 
-> On Sat, 21 Jun 2025 10:31:27 -0700 SeongJae Park <sj@kernel.org> wrote:
-> 
-> > DAMOS_MIGRATE_{HOT,COLD} action can migrate pages to only single node.
-> > It could be useful to allow it migrates pages to multiple nodes with
-> > different weights.  A work for dynamic interleaving[1] is in progress.
-> > We also discussed this could be useful for memory tiering, e.g., when we
-> > want to move pages to multiple noes of same tier.
-> > 
-> > Extend the API and ABI interface for specifying the multiple destination
-> > nodes and their weights.
-> > 
-> > Note that this RFC is a prototype of the interface change for Bijan's
-> > interleaving work[1].  Hence this patch series is only implementing the
-> > interface part, not the real implementation of the migration behavior.
-> > 
-> > [1] https://lore.kernel.org/20250620180458.5041-1-bijan311@gmail.com
-> > [2] https://lore.kernel.org/20240408175228.91414-1-sj@kernel.org
-> > 
-> > SeongJae Park (4):
-> >   mm/damon: add struct damos_migrate_dest
-> >   mm/damon/core: add damos->migrate_dest field
-> >   mm/damon/sysfs-schemes: implement DAMOS action destinations directory
-> >   mm/damon/sysfs-schemes: set damos->migrate_dest
-> > 
-> >  include/linux/damon.h    |  29 ++++-
-> >  mm/damon/core.c          |   4 +
-> >  mm/damon/sysfs-schemes.c | 253 ++++++++++++++++++++++++++++++++++++++-
-> >  3 files changed, 282 insertions(+), 4 deletions(-)
-> > 
-> > 
-> > base-commit: 78745efafbb93197e476717385616ed57ea2df22
-> > -- 
-> > 2.39.5
-> 
-> Hi SeongJae,
-> 
-> Thanks for putting this patch together. Sorry for taking a while to
-> respond to it.
+Both SRCU-lite and SRCU-fast provide faster readers by dropping the
+smp_mb() call from their lock and unlock primitives, but incur a pair
+of added RCU grace periods during the SRCU grace period.  There is a
+trivial mapping from the SRCU-lite API to that of SRCU-fast, so there
+should be no transition issues.
 
-No worry!
+[ paulmck: Apply Christoph Hellwig feedback. ]
 
-> 
-> I am finishing up V3 of the interleave patchset using these patches. It
-> has mostly worked great, but I noticed that damos->migrate_dest was not
-> being updated in damos_commit(), so new weights would not be applied. This
-> meant that you could not update the interleave weights by committing the
-> damon state. I also saw that damos->target_nid was also not being updated
-> here. I will will have a patch fixing
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/refscale.c | 32 +-------------------------------
+ 1 file changed, 1 insertion(+), 31 deletions(-)
 
-Nice catch, thank you for finding the bug and making the fix!
+diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
+index f11a7c2af778c..f4b2cea1cce5e 100644
+--- a/kernel/rcu/refscale.c
++++ b/kernel/rcu/refscale.c
+@@ -246,36 +246,6 @@ static const struct ref_scale_ops srcu_fast_ops = {
+ 	.name		= "srcu-fast"
+ };
+ 
+-static void srcu_lite_ref_scale_read_section(const int nloops)
+-{
+-	int i;
+-	int idx;
+-
+-	for (i = nloops; i >= 0; i--) {
+-		idx = srcu_read_lock_lite(srcu_ctlp);
+-		srcu_read_unlock_lite(srcu_ctlp, idx);
+-	}
+-}
+-
+-static void srcu_lite_ref_scale_delay_section(const int nloops, const int udl, const int ndl)
+-{
+-	int i;
+-	int idx;
+-
+-	for (i = nloops; i >= 0; i--) {
+-		idx = srcu_read_lock_lite(srcu_ctlp);
+-		un_delay(udl, ndl);
+-		srcu_read_unlock_lite(srcu_ctlp, idx);
+-	}
+-}
+-
+-static const struct ref_scale_ops srcu_lite_ops = {
+-	.init		= rcu_sync_scale_init,
+-	.readsection	= srcu_lite_ref_scale_read_section,
+-	.delaysection	= srcu_lite_ref_scale_delay_section,
+-	.name		= "srcu-lite"
+-};
+-
+ #ifdef CONFIG_TASKS_RCU
+ 
+ // Definitions for RCU Tasks ref scale testing: Empty read markers.
+@@ -1193,7 +1163,7 @@ ref_scale_init(void)
+ 	long i;
+ 	int firsterr = 0;
+ 	static const struct ref_scale_ops *scale_ops[] = {
+-		&rcu_ops, &srcu_ops, &srcu_fast_ops, &srcu_lite_ops, RCU_TRACE_OPS RCU_TASKS_OPS
++		&rcu_ops, &srcu_ops, &srcu_fast_ops, RCU_TRACE_OPS RCU_TASKS_OPS
+ 		&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops,
+ 		&acqrel_ops, &sched_clock_ops, &clock_ops, &jiffies_ops,
+ 		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
+-- 
+2.40.1
 
-> this with the V3 of the interleave
-> patchset that I will hopefully send out tomorrow.
-
-I cannot wait, but please take your time! :)
-
-
-Thanks,
-SJ
-
-[...]
 
