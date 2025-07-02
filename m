@@ -1,204 +1,152 @@
-Return-Path: <linux-kernel+bounces-713851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C914BAF5F31
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:54:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B99AF5F05
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C25D4E0127
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536F54A1738
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90AB2FD59D;
-	Wed,  2 Jul 2025 16:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B938301127;
+	Wed,  2 Jul 2025 16:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EDwtMXNI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gdPr058V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708F52F4321
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26421EFF81
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751475182; cv=none; b=izpaxa15A5XMUkWfnCkLaVZmemwPXG+UxdQblcQXqCsmDOnoKEOtQZLUQOzcCw+PwVa/0AgPF84FgKUMHGodsQFL1OYUVDXsl8+QSyKB6bThFofEr/7Gk2KKSS6+eWsEbjQwHQeCVe4YcSCCCvpXz1sNCYV2L8qqtdKa5xsvtzw=
+	t=1751474878; cv=none; b=JMNy2WrB8nFqiGWzcqfWztBoD/rKaTzXjk3kOu6Rkcv0DXj7180O16ZmUjsxhtfFrAkPLkkRG0eC7cNc8LoAn1d7v/nNG8aQrLM3wR3NTq85k0HENdjaznHiVd5y0Bu+BHAE8b8QHdhjIzyoGy8nTRKDGOGvZaA11Z/pXIE8DlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751475182; c=relaxed/simple;
-	bh=eYBPhk4sV4GO/PBkfuhrYLwaeqNoDsM3graeutBFqgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lMP/ZpPocUxpTL8QC4VLoMRN636+MADL1L3kpC2MQV/LivXHIKeOFUV8Gx+RsrHmHIX4bHCaZF2s04qcbLHrDR+ps+TSPWQxf1xDskYIzmcfy73bi8eeUtxeoNJONhYkfi6oYBsJT4xRzD0e+o/Bn8Oz2ApypzdMzHGhTdQ6tXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EDwtMXNI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751475179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYPE9kAm4n5JaaAj3WmzYSVaYGMobSZ1mvZBnXOb9Jo=;
-	b=EDwtMXNI3vV+7orAlA9+Wq/KtFXqzMNgKGA7CdZM+KspZA09Jw6I34feWgjJagvWtE2gIV
-	+20aDYTE4kBxP7lMunxSB2WRZy5UXvOjHHy+GDR5yyqVo+YKJDI6zoBh0UTGJGSQ3HeaDv
-	9tADzCRAVY3p7h5zGktFn2gRcz4LTJk=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-1qh7-h34NE2P6j7q6kxETA-1; Wed, 02 Jul 2025 12:52:58 -0400
-X-MC-Unique: 1qh7-h34NE2P6j7q6kxETA-1
-X-Mimecast-MFC-AGG-ID: 1qh7-h34NE2P6j7q6kxETA_1751475177
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-2f76caa41a3so25937fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:52:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751475177; x=1752079977;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYPE9kAm4n5JaaAj3WmzYSVaYGMobSZ1mvZBnXOb9Jo=;
-        b=fTCVKoi+qd+EFbD9ppJtToQkOkneGxKCaX2TEgThLui1JpXxthb3xOhH+M6HJz2WVi
-         bL6iSO7o0QzpMVxVu58sGIQwhhJYhWBfV5PX6mmN6FDitqCxKk2rdTeHU0/2AG0bIpT7
-         T2NIV1KErf0FkgUTeWuzVmM5BFNpZXkwU4ODLF/zyZ70yUl3wPr7mKh/C0rat9h1ECOY
-         sOWREOS9dOzCrZyiwJaj6QHnS/7RMIAoxq2+uBoVtT9Fr9SbiJEEekX7suU64m4vu5YI
-         qj92xxOEhNkxrxXXyzyeJgO9rQbv+E9ylfjrl2RV9w71IYRofmWQ6MyeiqArEdrEMwU3
-         TJTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUI7J+50yUZb2ULNY+4bdOVGOjuWT2KsGCIjQqyF5hFnC661N0+xeFiXLYxTQFc5xYZKRqql8iubfVD48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbsegVX078i1SzgmSx2gGnv2lNPn5apFnJqPw59JNOul1VdRou
-	6HJ0JzfWqOPhCce+1F4eerO28Drh3di0CoF++PwWd03yfCOhP/K/GDfpfBn1jrfhBkgDR9VhwpM
-	XJoEa+l0j4eT6lWApLZGNBuNw5AtD0uqPMY6kuWN7Ul4b/v7RB1g9fJFWj/AxU3wJ0w==
-X-Gm-Gg: ASbGnctxn0b16DvpB9aIwRZ3l00STLOQxJ9yqYQpJPaqVKnAwCzOje/Ju0SvtC55Bpi
-	H6auKxD2992/Pt1RVeEJbVIV+kh2gfKTB5SftDyizx3diNVw3X6tULEpfN573gnXChInDkBrqsG
-	jARu4ije4PaXx8ZhLH5i4K1RA+Opi8EfZACk4EcjssrQ+lkjQuOWeYzdYvSDMFRZt5802CpJ9Sv
-	A/lnxsLftvKo0tzlv7HtNnYu+ZgwGeLIg1jrYlOZ06lGtqPp5n63S4TN0Zxfx+vfN9ZKYVdjaEu
-	z8fi+gAcqAyclP/+LIEPchY=
-X-Received: by 2002:a05:6870:c18c:b0:2ea:6ec5:f182 with SMTP id 586e51a60fabf-2f76cb4ee23mr82908fac.38.1751475177335;
-        Wed, 02 Jul 2025 09:52:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8xhPj4vbeCO6BR/7uWOvOuQ5ERydvemFdCvd/3yMMwrMEKbwcC+0fs0OrYA1xZmzNSwVtTg==
-X-Received: by 2002:a05:6870:c18c:b0:2ea:6ec5:f182 with SMTP id 586e51a60fabf-2f76cb4ee23mr82872fac.38.1751475176870;
-        Wed, 02 Jul 2025 09:52:56 -0700 (PDT)
-Received: from [192.168.40.164] ([70.105.235.240])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afafee51bsm2562567a34.10.2025.07.02.09.52.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Jul 2025 09:52:56 -0700 (PDT)
-Message-ID: <1a14ee0a-04af-407d-89a5-5222ee6da9c7@redhat.com>
-Date: Wed, 2 Jul 2025 12:51:06 -0400
+	s=arc-20240116; t=1751474878; c=relaxed/simple;
+	bh=bJ/kR0mO6yP1Fm6QjMsMwfrHw2ayxOxCh+oR/JaHtAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t9gnUJxTa+0djL0YUmwgBhSvioVtMiYbvkdbVDAKYl3fc1JkWJJC+uZZGoQjbffuNGOhJtiAhTByOAmPFekxN+eqQA1uSFcxu3bl0wG0aCYpR/U0Q1McZVOR7jmKuQ+LWdUGWCeyE7SH2R1SLc+ieH+kGwb+cuG0FGAJf2VoqE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gdPr058V; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751474877; x=1783010877;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bJ/kR0mO6yP1Fm6QjMsMwfrHw2ayxOxCh+oR/JaHtAg=;
+  b=gdPr058VyaPSKUoCVIm/OWwWzV8AdlJU/3aG9AM6tjqB526j5732IqOx
+   QTtO4TqcciN2/9mvpQw3uOyFKnm0EJ5J/37Xb3tHXiLQjGi37YS8vX/Ux
+   ugoEWhpkFD9/Fpeclq3WgaJ8B2av2NwV52QaD8XeAnjCCs6aAgIvgVrLL
+   huTGwIiTE/doGB73Gy3pSjR5yX9VVPQcldrIBwJBWCNUGvN0dQjQ3BhH2
+   oYUja8hhDEEEDbZDzBBF8lL7ro7UnJpCbhl8jcJF0R/rwxsp9RSqFTAtd
+   oeue9gpxktxhcku4tB+RXqY23KYrdSREYwDtZG3l6Of/IhrYEry2neTfm
+   w==;
+X-CSE-ConnectionGUID: qVZO1D7qQ9OsecdmPYD1ng==
+X-CSE-MsgGUID: x04FGFhfSae76+dOjTbItw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="64380734"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="64380734"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:47:55 -0700
+X-CSE-ConnectionGUID: /Rwme+E6Tx+TW0jmpdo/qQ==
+X-CSE-MsgGUID: 5nx2uR9uRJ++d9783IMXDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153535576"
+Received: from unknown (HELO bnilawar-desk2.iind.intel.com) ([10.190.239.41])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 09:47:53 -0700
+From: Badal Nilawar <badal.nilawar@intel.com>
+To: intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: anshuman.gupta@intel.com,
+	rodrigo.vivi@intel.com,
+	alexander.usyskin@intel.com,
+	gregkh@linuxfoundation.org,
+	daniele.ceraolospurio@intel.com
+Subject: [PATCH v5 00/10] Introducing firmware late binding
+Date: Wed,  2 Jul 2025 22:22:06 +0530
+Message-Id: <20250702165216.557074-1-badal.nilawar@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/6] KVM: arm64: Map GPU device memory as cacheable
-Content-Language: en-US
-To: Ankit Agrawal <ankita@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
- "maz@kernel.org" <maz@kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "joey.gouly@arm.com" <joey.gouly@arm.com>,
- "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
- "yuzenghui@huawei.com" <yuzenghui@huawei.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shahuang@redhat.com" <shahuang@redhat.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "david@redhat.com" <david@redhat.com>, "seanjc@google.com"
- <seanjc@google.com>
-Cc: Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
- Kirti Wankhede <kwankhede@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>,
- "Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
- Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
- Dan Williams <danw@nvidia.com>, Zhi Wang <zhiw@nvidia.com>,
- Matt Ochs <mochs@nvidia.com>, Uday Dhoke <udhoke@nvidia.com>,
- Dheeraj Nigam <dnigam@nvidia.com>,
- "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
- "sebastianene@google.com" <sebastianene@google.com>,
- "coltonlewis@google.com" <coltonlewis@google.com>,
- "kevin.tian@intel.com" <kevin.tian@intel.com>,
- "yi.l.liu@intel.com" <yi.l.liu@intel.com>, "ardb@kernel.org"
- <ardb@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "gshan@redhat.com" <gshan@redhat.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "tabba@google.com" <tabba@google.com>,
- "qperret@google.com" <qperret@google.com>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "maobibo@loongson.cn" <maobibo@loongson.cn>
-References: <20250621042111.3992-1-ankita@nvidia.com>
- <SA1PR12MB7199F8346F2CA802E9F3965DB040A@SA1PR12MB7199.namprd12.prod.outlook.com>
-From: Donald Dutile <ddutile@redhat.com>
-In-Reply-To: <SA1PR12MB7199F8346F2CA802E9F3965DB040A@SA1PR12MB7199.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Introducing firmware late binding feature to enable firmware loading
+for the devices, such as the fan controller and voltage regulator,
+during the driver probe.
+Typically, firmware for these devices are part of IFWI flash image but
+can be replaced at probe after OEM tuning.
 
+v2:
+ - Dropped voltage regulator specific code as binaries for it will not
+   be available for upstreaming as of now.
+ - Address review comments
+v3:
+ - Dropped fwctl patch for now
+ - Added new patch to extract binary version
+ - Address v2 review comments
+v4:
+ - Address v3 review comments
+v5:
+ xe_kmd:
+ - Dropped mutex is worker flush in unbind blocking component
+   removal while fw download is in progress
+ - Handled the fw load in all 3 scenarios (probe, system resume, rpm resume)
+   by holding rpm wake ref in outer bounds of worker.
+ mei:
+ - Most of the review comments
 
-On 7/2/25 5:33 AM, Ankit Agrawal wrote:
->> Grace based platforms such as Grace Hopper/Blackwell Superchips have
->> CPU accessible cache coherent GPU memory. The GPU device memory is
->> essentially a DDR memory and retains properties such as cacheability,
->> unaligned accesses, atomics and handling of executable faults. This
->> requires the device memory to be mapped as NORMAL in stage-2.
->>
->> Today KVM forces the memory to either NORMAL or DEVICE_nGnRE depending
->> on whether the memory region is added to the kernel. The KVM code is
->> thus restrictive and prevents device memory that is not added to the
->> kernel to be marked as cacheable. The patch aims to solve this.
->>
->> A cachebility check is made by consulting the VMA pgprot value. If
->> the pgprot mapping type is cacheable, it is considered safe to be
->> mapped cacheable as the KVM S2 will have the same Normal memory type
->> as the VMA has in the S1 and KVM has no additional responsibility
->> for safety.
->>
->> Note when FWB (Force Write Back) is not enabled, the kernel expects to
->> trivially do cache management by flushing the memory by linearly
->> converting a kvm_pte to phys_addr to a KVA. The cache management thus
->> relies on memory being mapped. Since the GPU device memory is not kernel
->> mapped, exit when the FWB is not supported. Similarly, ARM64_HAS_CACHE_DIC
->> allows KVM to avoid flushing the icache and turns icache_inval_pou() into
->> a NOP. So the cacheable PFNMAP is made contingent on these two hardware
->> features.
->>
->> The ability to safely do the cacheable mapping of PFNMAP is exposed
->> through a KVM capability for userspace consumption.
->>
->> The changes are heavily influenced by the discussions among
->> maintainers Marc Zyngier and Oliver Upton besides Jason Gunthorpe,
->> Catalin Marinas, David Hildenbrand, Sean Christopherson [1]. Many
->> thanks for their valuable suggestions.
->>
->> Applied over next-20250610 and tested on the Grace Blackwell
->> platform by booting up VM, loading NVIDIA module [2] and running
->> nvidia-smi in the VM.
->>
->> To run CUDA workloads, there is a dependency on the IOMMUFD and the
->> Nested Page Table patches being worked on separately by Nicolin Chen.
->> (nicolinc@nvidia.com). NVIDIA has provided git repositories which
->> includes all the requisite kernel [3] and Qemu [4] patches in case
->> one wants to try.
->>
->> v8 -> v9
->> 1. Included MIXEDMAP to also be considered for cacheable mapping.
->> (Jason Gunthorpe).
->> 2. Minor text nits (Jason Gunthorpe).
-> 
-> Humble reminder for review.
-> 
+Alexander Usyskin (2):
+  mei: bus: add mei_cldev_mtu interface
+  mei: late_bind: add late binding component driver
 
-Apologies for the delay, I had some issues getting a Grace-Hopper to test on,
-and a VM that needed to be adjusted(bigger file system) to run the 12.9.1 CUDA install script.
+Badal Nilawar (8):
+  drm/xe/xe_late_bind_fw: Introducing xe_late_bind_fw
+  drm/xe/xe_late_bind_fw: Initialize late binding firmware
+  drm/xe/xe_late_bind_fw: Load late binding firmware
+  drm/xe/xe_late_bind_fw: Reload late binding fw in rpm resume
+  drm/xe/xe_late_bind_fw: Reload late binding fw during system resume
+  drm/xe/xe_late_bind_fw: Introduce debug fs node to disable late
+    binding
+  drm/xe/xe_late_bind_fw: Extract and print version info
+  drm/xe/xe_late_bind_fw: Select INTEL_MEI_LATE_BIND for CI
 
-Anyhow, able to assign a G-H GPU to a VM under qemu-kvm, and in the
-guest, successfully perform an 'nvidia-smi'.  Previously, without this patch
-series in the host, the nvida-smi command would fail and hang the guest.
-(qemu-kvm was qemu-10.0 -based)
+ drivers/gpu/drm/xe/Kconfig                  |   1 +
+ drivers/gpu/drm/xe/Makefile                 |   1 +
+ drivers/gpu/drm/xe/xe_debugfs.c             |  41 ++
+ drivers/gpu/drm/xe/xe_device.c              |   5 +
+ drivers/gpu/drm/xe/xe_device_types.h        |   6 +
+ drivers/gpu/drm/xe/xe_late_bind_fw.c        | 454 ++++++++++++++++++++
+ drivers/gpu/drm/xe/xe_late_bind_fw.h        |  17 +
+ drivers/gpu/drm/xe/xe_late_bind_fw_types.h  |  77 ++++
+ drivers/gpu/drm/xe/xe_pci.c                 |   3 +
+ drivers/gpu/drm/xe/xe_pm.c                  |   8 +
+ drivers/gpu/drm/xe/xe_uc_fw_abi.h           |  66 +++
+ drivers/misc/mei/Kconfig                    |   1 +
+ drivers/misc/mei/Makefile                   |   1 +
+ drivers/misc/mei/bus.c                      |  13 +
+ drivers/misc/mei/late_bind/Kconfig          |  13 +
+ drivers/misc/mei/late_bind/Makefile         |   9 +
+ drivers/misc/mei/late_bind/mei_late_bind.c  | 272 ++++++++++++
+ include/drm/intel/i915_component.h          |   1 +
+ include/drm/intel/late_bind_mei_interface.h |  64 +++
+ include/linux/mei_cl_bus.h                  |   1 +
+ 20 files changed, 1054 insertions(+)
+ create mode 100644 drivers/gpu/drm/xe/xe_late_bind_fw.c
+ create mode 100644 drivers/gpu/drm/xe/xe_late_bind_fw.h
+ create mode 100644 drivers/gpu/drm/xe/xe_late_bind_fw_types.h
+ create mode 100644 drivers/misc/mei/late_bind/Kconfig
+ create mode 100644 drivers/misc/mei/late_bind/Makefile
+ create mode 100644 drivers/misc/mei/late_bind/mei_late_bind.c
+ create mode 100644 include/drm/intel/late_bind_mei_interface.h
 
-If anyone wants more details, or want more tests run, feel free to ask;
-I can probably keep the system for another day or two, but I'll have to
-give it up by this Friday.
-
-Tested-by: Donald Dutile <ddutile@redhat.com>
+-- 
+2.34.1
 
 
