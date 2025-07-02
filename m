@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-713854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9421FAF5F2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:54:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC48BAF5F3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC15B7AE2AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:52:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8937A3AAA58
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846E12FF490;
-	Wed,  2 Jul 2025 16:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618502EAB91;
+	Wed,  2 Jul 2025 16:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKlMaTth"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S6EZMjpp"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5533289E30;
-	Wed,  2 Jul 2025 16:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74182DCF76
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751475237; cv=none; b=skSJO3bENTs8mBBJZn7c19QGmLCJg5r6GYqjzfdtB3/e9tbjJB3K7kLpZWrO6GLx3lUHGd+Zxa747LnA65nvbUiz7jbqq4y7FRkbTApp/KFiAXrhYhXD8dfEl7k2HlXr0KvKaYW1NVj2F098wThQ/v1vzqChJmh1uEdacibtT9g=
+	t=1751475420; cv=none; b=lIfyvtUQMMPDxUS6C2BLaqFPQyBi54Iibc9RBWJxzOx9ta8fX9FBKM4I9gII1VAHcgIVnwjQ0SVLKADynX/6v4einnIB79S+2iN+aLAzQEjNJix9Ibnasiq2/If2MLFCsYGd7lZqyzbK84M8g8ttBqu2HBJSZJcmyc6Zyx9y75Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751475237; c=relaxed/simple;
-	bh=SPe4Uai1bMQkO9HlAyYOM9wfRpZK1LE+tL6F2AD8u1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YU50kBNlwviTyW/2W+0qHAkTaE+NhsPR8SBFVB6Onv5WNfNENyseoV0rWhedxojf50kJcvjN1jD4b53uF3aOhxb8MJhZm38tqQitUDZnhcH3c8yUBfijNDyQWC0pkpttfFzFF9gjiFrA18Yk8VfFiq69WNvfWpewV76iRnOt8Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKlMaTth; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE08C4CEE7;
-	Wed,  2 Jul 2025 16:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751475236;
-	bh=SPe4Uai1bMQkO9HlAyYOM9wfRpZK1LE+tL6F2AD8u1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKlMaTth9qVjFXD1OrmZjGPDo89B+QjHzvGZv11qCVAmnmt/fVk1mV1FCiB8JKdNf
-	 D6Vro1jZ4YN3ADYJXKWzZZ0cMndBt84UGCpSFWW6ygeTgBzpcY3zazVZgGcp/pOmZn
-	 ogalxEGv0qRjivDYljIcQikdjDt35QapyEsoKDEDNgjC1H5OZtoSx8r+0M/n89FHhv
-	 0FYBMICOQWnsCj5jPKwA8Rc/Eab0BMqBGNMlX10Iu1ef++FnlKUjF7Yzo+gSzkKtv1
-	 iie6R/1OsgeHiMDbSfpx/RKVgdJAKwTyD8furAM25FZyQPwLA+Gzt81wBv3ZltyBeM
-	 R/NPEBCybHM9g==
-Date: Wed, 2 Jul 2025 11:53:55 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: netdev@vger.kernel.org, maxime.chevallier@bootlin.com,
-	Mun Yew Tham <mun.yew.tham@altera.com>, davem@davemloft.net,
-	richardcochran@gmail.com, linux-arm-kernel@lists.infradead.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	alexandre.torgue@foss.st.com, andrew+netdev@lunn.ch,
-	conor+dt@kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	dinguyen@kernel.org, edumazet@google.com, mcoquelin.stm32@gmail.com
-Subject: Re: [PATCH v7] dt-bindings: net: Convert socfpga-dwmac bindings to
- yaml
-Message-ID: <175147523465.1908626.13539013933475728908.robh@kernel.org>
-References: <20250630213748.71919-1-matthew.gerlach@altera.com>
+	s=arc-20240116; t=1751475420; c=relaxed/simple;
+	bh=7SlooTOK9TfIj1SqgbI4JXV35XGMr7m8t7eSmUpMnIw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q2R0QX9Atpgrc5qPchxFNXsUwCY0mVgQy880/OV9cJW6OLkdmRchRpt5DGqchZUMoxInm7inYxGt3O7dwo+UY5IoDakv+Hyo2JBpbFIsuELT72c/3TFSH2nM6vaBxzp/qc05gJwKJMOtLnXKl2OjSFz0FsiHjwV8pohR1b+lSng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S6EZMjpp; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6099d89a19cso9009453a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1751475417; x=1752080217; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e8/uvlPqD4CZgTZ4reU0BZKjR48ea3dcbDn19W3W2ng=;
+        b=S6EZMjppOx8COb64LjW6kMLFXRYuTr5V+NvoeUQZGHgiOih5r4JUEFdg0P/oST8ID0
+         2mkktuLnb0o7x6Gtrawy8HAYzpMlUb6eP5ztp9mBdmIu/oXv4jb9mXd/b5zhYHF0Fdg+
+         P6Zl+ijJd0T+kDulS5ujc39Lf7UM75X9073jg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751475417; x=1752080217;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e8/uvlPqD4CZgTZ4reU0BZKjR48ea3dcbDn19W3W2ng=;
+        b=DqIQGaZx1X+kxpDQrQFZK3DSQSZmF+A1rU41eh25FKMDzkdG9/ygqdFMAwwLr3Ni9m
+         iSv0/NSJ1dTVHuDUYhbNIv5cZyncAZ6gWlVVcNeOF5IN0W3zDpViWGNxBHDv+oeXDkCE
+         6shJZOpFZ7iSCUjjgo4QJeW0TmRyItXkLCl6BhCnH4wXl9awg2t9cfDHkpoB/YHS0fLb
+         vwaIwJl+dzYrq8BUarNbeNHXj/Oc5N1kHOqeHiQIUmym7g0j+lk66/OPYaXPzqZd0PnT
+         xBWvEVTFATnQpQHvpl6VrquAv9KNtwnDD7xHuAluKWB6AOVR3mTViDCaLh619oswXZI4
+         wsHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyJ3Hk9yqcoszCXMvawE+2FNgV0nHSrx5ZjJhOpjYePy+YcUSDptaRDmAuFtK6vvH5sYWyHHVKj1p+0IQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJDf0fzxjtV3U6i4CutbFnNK1jhb8CeBSNqIyZSM6yv0zBlm63
+	kbu1IL9PGKkhsknTTtq3HMOh6+rhhdFqG0eIW5R8GJ+7M/61QhbSsWsh1QLfjRcPzDIXmD7bawx
+	c63EjL80=
+X-Gm-Gg: ASbGncvAUL9rvEdWVnrz+e3huESHlXeGooJoXGALRHfbDhJdKvCYOPRrC4oAaiqepEV
+	GnzaZkqeN2AZw5Jse/axSzn0bP500pmAnsW9f3L9EmtXaHQQVC9lNx4YFUFFxAJwzGDVL/wirnJ
+	jILhr2N8vLkQkL/Co1Nv5njcdJ5pF5WrS7mfEc3vKNI/XhEgK+B8/eSqe/crBZFu3wI1dBDVbzB
+	3+ElOZ3aoq+fhusZpODCR8zCsHYtn99vcikWT4gO+qFQ7onGrvz8sZcAsHV9hzecCFVWqojF1k7
+	cDYE1O6sde/vLTr+C6Wb5bQmJhAKqM+aBhk/OOBwdn2iGzTaq73vNrm3RwY73w4NJjPQrwi6OQh
+	uvsBMs39zp5QolWGNFQsY6PapZYnEP8DCMmY2
+X-Google-Smtp-Source: AGHT+IHQKXZQ04s/OO8DmPI8I4MFd6xK+DEHv/dOP79UBBLiQyIi4Ev9V91V9bcktoT2HrZzsBU5kQ==
+X-Received: by 2002:a05:6402:b6e:b0:608:3f9c:c69d with SMTP id 4fb4d7f45d1cf-60e5350016dmr2518575a12.33.1751475417147;
+        Wed, 02 Jul 2025 09:56:57 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c828de500sm9448082a12.18.2025.07.02.09.56.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 09:56:57 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so8253163a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:56:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV5s+2/kAg+FzDKqkMHxnDPNFTMDqnWmQWZnOJ20xphxnarOjjjEFAlFjd3giD7aTx1+s6OqTS0PilFU5U=@vger.kernel.org
+X-Received: by 2002:a05:6402:3550:b0:609:aa85:8d78 with SMTP id
+ 4fb4d7f45d1cf-60e52cc4800mr3206129a12.8.1751475416392; Wed, 02 Jul 2025
+ 09:56:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250630213748.71919-1-matthew.gerlach@altera.com>
+References: <20250701005321.942306427@goodmis.org> <20250701005451.571473750@goodmis.org>
+ <20250702163609.GR1613200@noisy.programming.kicks-ass.net> <20250702124216.4668826a@batman.local.home>
+In-Reply-To: <20250702124216.4668826a@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 2 Jul 2025 09:56:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiXjrvif6ZdunRV3OT0YTrY=5Oiw1xU_F1L93iGLGUdhQ@mail.gmail.com>
+X-Gm-Features: Ac12FXw4HRUmsY26ZzTIlgUFVvvKfSBHwdgpc89cjL9awvQELp5EmXGzK0yXAsM
+Message-ID: <CAHk-=wiXjrvif6ZdunRV3OT0YTrY=5Oiw1xU_F1L93iGLGUdhQ@mail.gmail.com>
+Subject: Re: [PATCH v12 06/14] unwind_user/deferred: Add deferred unwinding interface
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andrii Nakryiko <andrii@kernel.org>, Indu Bhagat <indu.bhagat@oracle.com>, 
+	"Jose E. Marchesi" <jemarch@gnu.org>, Beau Belgrave <beaub@linux.microsoft.com>, 
+	Jens Remus <jremus@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 2 Jul 2025 at 09:42, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> As the timestamp is likely not going to be as useful as it is with
+> Microsoft as there's no guarantee that the timestamp counter used is
+> the same as the timestamp used by the tracer asking for this, the cookie
+> approach may indeed be better.
 
-On Mon, 30 Jun 2025 14:37:48 -0700, Matthew Gerlach wrote:
-> Convert the bindings for socfpga-dwmac to yaml. Since the original
-> text contained descriptions for two separate nodes, two separate
-> yaml files were created.
-> 
-> Signed-off-by: Mun Yew Tham <mun.yew.tham@altera.com>
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> v7:
->  - Add compatible definition for Arria10.
->  - Update iommus to maxItems: 2.
-> 
-> v6:
->  - Fix reference to altr,gmii-to-sgmii-2.0.yaml in MAINTAINERS.
->  - Add Reviewed-by:
-> 
-> v5:
->  - Fix dt_binding_check error: comptabile.
->  - Rename altr,gmii-to-sgmii.yaml to altr,gmii-to-sgmii-2.0.yaml
-> 
-> v4:
->  - Change filename from socfpga,dwmac.yaml to altr,socfpga-stmmac.yaml.
->  - Updated compatible in select properties and main properties.
->  - Fixed clocks so stmmaceth clock is required.
->  - Added binding for altr,gmii-to-sgmii.
->  - Update MAINTAINERS.
-> 
-> v3:
->  - Add missing supported phy-modes.
-> 
-> v2:
->  - Add compatible to required.
->  - Add descriptions for clocks.
->  - Add clock-names.
->  - Clean up items: in altr,sysmgr-syscon.
->  - Change "additionalProperties: true" to "unevaluatedProperties: false".
->  - Add properties needed for "unevaluatedProperties: false".
->  - Fix indentation in examples.
->  - Drop gmac0: label in examples.
->  - Exclude support for Arria10 that is not validating.
-> ---
->  .../bindings/net/altr,gmii-to-sgmii-2.0.yaml  |  49 ++++++
->  .../bindings/net/altr,socfpga-stmmac.yaml     | 166 ++++++++++++++++++
->  .../devicetree/bindings/net/socfpga-dwmac.txt |  57 ------
->  MAINTAINERS                                   |   7 +-
->  4 files changed, 221 insertions(+), 58 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/altr,gmii-to-sgmii-2.0.yaml
->  create mode 100644 Documentation/devicetree/bindings/net/altr,socfpga-stmmac.yaml
->  delete mode 100644 Documentation/devicetree/bindings/net/socfpga-dwmac.txt
-> 
+I think having just a percpu counter is probably the safest thing to
+do, since the main reason just seems to be "correlate with the user
+event". Using some kind of "real time" for correlation purposes seems
+like a bad idea from any portability standpoint, considering just how
+many broken timers we've seen across pretty much every architecture
+out there.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Also, does it actually have to be entirely unique? IOW, a 32-bit
+counter (or even less) might be sufficient if there's some guarantee
+that processing happens before the counter wraps around? Again - for
+correlation purposes, just *how* many outstanding events can you have
+that aren't ordered by other things too?
 
+I'm sure people want to also get some kind of rough time idea, but
+don't most perf events have them simply because people want time
+information for _informatioal_ reasons, rather than to correlate two
+events?
+
+               Linus
 
