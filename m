@@ -1,222 +1,131 @@
-Return-Path: <linux-kernel+bounces-713450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C48AF59D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:44:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F29AF59D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87ABD7B9A63
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92DA4176623
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0752F2857DF;
-	Wed,  2 Jul 2025 13:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03016275AFF;
+	Wed,  2 Jul 2025 13:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iaNmmlFL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mke0nmCj"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F18327E06D
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 13:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA78D210FB;
+	Wed,  2 Jul 2025 13:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751463755; cv=none; b=h7qQmcrrkXmnHce05W6fnYtR7GOEFsr/noqJE800LvbUkH6TR+94IK4FgpxAEAbMyCnEH3PcB8QMM0l+41tLLAbk2A1miOUitVbUGC7Jb7gulD34daNLMUzaRdB9Z/i+xQUdhofL62B+mmym1aeF+Zr67osAGNuHLZZYm5ys+fU=
+	t=1751463823; cv=none; b=JkHJ7UoCEBs/271fGK1sJ6l8bM1vSSF9D4gilD2Yyi1s1VWZlPIDf6apku5xh/4D/IIsBo1FmyH2AZOrmdOAfg03dTQ0JQjDEtCCW4PCnrlEGcfWXiIBtXa/yQrr4FNsjsgnjBrdpd1HV1og0odA8DT/VXsepdzX/o1Ly05HIF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751463755; c=relaxed/simple;
-	bh=HynuDTxmOu2ewRdSrqrDudGKu95lIFkIcCV6e+uJxOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G3pRriicM+yB+pKch6GY0BicQgiMWeQscmeL/27BS914JgW5NH8MHqMYkZFlTkpy7kKpTzz74/Fc8gZVhXI6SI/quD74kdiI2fAnKhJX822q8P7Tp9lnXCt/0avoevgK6U/QmoCHmdVFfK+eaRenPobjNmwmEUBJmfSMSPpmzvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iaNmmlFL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4535fc0485dso8858625e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 06:42:33 -0700 (PDT)
+	s=arc-20240116; t=1751463823; c=relaxed/simple;
+	bh=1sxzDC5zf3UuhHKDufGOR1abNbNpZjrzvWoD6tTHOSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o1Ffhdh+yPWGfI2nmzYABBBfhuPte52Df9phVO5yRpp33zJgiW/knhfhk1fAp1qRKvhpa6qNTvHs+kruQMpI07AINrFQAVoEbMYkmJlpAts/R+fyhM8499kMVGo7kXDhN9nWjg9sr7Mpzmccj1Dm374Qhuqsb0JpOwy80bJVAlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mke0nmCj; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae360b6249fso895828766b.1;
+        Wed, 02 Jul 2025 06:43:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751463752; x=1752068552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DQrF8Tet5NgeUi0faj8isle/+o+jIcZn4CPSUqfPZ5E=;
-        b=iaNmmlFLUC5OU20agq11qIkoSGPxsDBa8pK0OjqUhvfDrAqzeseLFsyDsx7FmXFlqH
-         GdozkVF5Ps3jx0E9B9Sp1xVvRCnPx4KPc3HutkeDU6Xc2nyBk1Crw7nVh1qGyVP3YgJl
-         ivPE/0ItlseROgmZSy/SNxM2MFevaz8++XooxxXQ88FhMlls1zl+qbwtmyyTPRvq2mRE
-         c3MYnYrv2xIibUgHVpqucbbkrPU3rXeT8NIjCnOcKqLBWA3HOcHXxGqT3RSaJ6eptE1e
-         xfZ4vkz3CtX3ZLZL5QHGNKCLFMBXQ9iiPk52e2wkJBkmqEL0Cl2kRqGjUpvB3xAEX6Dp
-         y9HA==
+        d=gmail.com; s=20230601; t=1751463820; x=1752068620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UwIDCZCusW6djd9Ye3kiK32Dnzf8SQVyvqtNWdIs4aA=;
+        b=mke0nmCjT67d3SNVWwFFFCFv9qH2cwkheJ5n9PLjnOkMqaP7GCJpqvuRbH1qipyzM5
+         3s57ro02sfj0ohRhXHfy6zo+RFzVRxXpNAP7imEtw6yXrZ842vpFYM+sLWSxNWsrqLma
+         GKOmhcqG2x9b8vmSWdomyqAEt4/h50KkyjCrstf6t/d0jdIS+BqIjslFEuSCLS9OZXOD
+         3od2hvu5JOxVu4r7drmnayUju58WjVFae1B4f6VR70t0c677wu3pXzgyRnS7bSAl2mqy
+         x3G3NUWp8cjNC5jsOX4bxd6yEd+L8KyOwekEuXBqmH5FOASmQPlSBZt3XQMtgZkfXOC0
+         mqCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751463752; x=1752068552;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DQrF8Tet5NgeUi0faj8isle/+o+jIcZn4CPSUqfPZ5E=;
-        b=fB5QF7xNqiP0wvX2DbCY45wYC0W2p9oZ9EFH72VT9tjHetFH3EfbOv91pliAmfPsNM
-         LsWWwtzOm3+LMHsI+KygH5wbVYhHZGYnByPY8kfMZrO/sXwhRpECZld+DUAMrWjhjToo
-         1IDqRZtnf1fw/FNVupNBcoxtICv+zxRTNBz8bNogzCMZaCfRoAldnqwLFJCQSy4Cro+E
-         RBQ0YoZFd35++BOBgQsp/2nE+rPLtG9xV0GRBkjAMU+SgdVbzSI2GeanH21Gfxiy4A5w
-         Myc1F1puZ7pCo0uOJiPa6N6vBhx9fykGtgGz20wL5VMv6xDqNHxwG621sVjVb4IK+/bn
-         VOQA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6jYKg3GUcN+EOayTJ+BuPx74svHZs+OB0mVRo7MR9mrOkwkSI4TV6RZsB3oXshYQ+b5bLAsij92BBv98=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt8e1UhwDPEMOtYPxQcPSipzatMPIlo7AGCbDr4v/jP8rAJmjl
-	HVa5+FnClO9LShuG/mfzO4SZFMnqnyvmdLDHG5WAtya61upiPfCN6Lmv96FHiSNduGs=
-X-Gm-Gg: ASbGncszgAmtOt8ApcWTynBHw14NqMkg47V3IvAxZ+Yj+KjQFJKwNAHKsxFnVGO31yk
-	5yCNyRhdra8KyGIJtwXStCPCjvvnd9GPET0ojU7WQIV0xFTDa1IXOKOA2uTgOhDC+wpaXFqUJGc
-	+no1NQc8ppO1KHqAGlJQYRsQCay1/yj+F8yPnpQ3USH3IzIGMeqZVUKGaHKWZNl+cKAs4wWOyZ6
-	tMXVvPjcUgMbH0a+yar19oLjyIlzwLCHDQgadzHjsFZN0/QOEo2GkBu8ptlKNb0qERecKx8MAE2
-	h8Z7IzMbY0SmUBMl5y1gCWHg2jSfO2SXwe3nJNrH7a2Rc9Z1kk/iJ+W7XQX2rnIb8ht1U+ksWGg
-	=
-X-Google-Smtp-Source: AGHT+IHXJVYG7CGJmIlVVF+7xhnyzo6/jgx9msjPE65f/XwuKhcb83fUFenpGNeqel9qtSLRlO7a1Q==
-X-Received: by 2002:a05:600c:46d1:b0:439:88bb:d00b with SMTP id 5b1f17b1804b1-454a3706e3amr11800745e9.5.1751463751635;
-        Wed, 02 Jul 2025 06:42:31 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-453883d81besm213483145e9.38.2025.07.02.06.42.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 06:42:31 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] media: iris: Be explicit in naming of VPU2 power off handlers
-Date: Wed,  2 Jul 2025 15:42:28 +0200
-Message-ID: <20250702134227.211104-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1751463820; x=1752068620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UwIDCZCusW6djd9Ye3kiK32Dnzf8SQVyvqtNWdIs4aA=;
+        b=o4x8QErHvBfRvSvGdzI/mSYk1NB/kDbRqUcQrOO8BZeyBAgAaJygsW603mGs7W7jdP
+         bpyQCRRTg5tf2tzGe/iEyu2SB73yJEd75ZGS6HrjUsHA7JdJSx3UOT9Lud6mkLe/pq3h
+         rBmf9j2PiT+IehuaYk4fi7OfzV2RUFKLd61i5wVhwCpYRhuytENBZdRfETfGYDkiXmdo
+         0K3Geydh6tpLBu8v0dBsy/2JqQRzVasYFH1upZfEApNaprjRd9gd1R7KHQJOnRadT51F
+         3uOuO0QqkYE9fBWRsAaz2ihtjkPktPV+WtiMFUJnbireTYqgEFSOG3gDXQcLX+nyhK5h
+         QNoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzAhtAAXXS8+XKnbNlztPFihB48vVwTHqPx1LMVzcMX3dlj+CCY/C581embZFz69RqG6gN/Rv75fzHfMFV7Q==@vger.kernel.org, AJvYcCW2dlUy73DnHfsPasdQ33rFCCE7UWpq8s9xAfZ+yh+E+v64OiiUq9Ng1YPKfKxiyAmw12JTM36gXuLVG9d5@vger.kernel.org, AJvYcCX+6QnJ8jqYUvLHPdfnOq+7QayqVkuQboYYegPZGAEkz7tnqW8k8FDhJd+J44zw/ztAoPySduXZVA==@vger.kernel.org, AJvYcCXCxcaX3/icHivWXcf1x0qIzgDi5nDcHIfwlOgCvJvaEjrY15B6Twzm2AbUS93VuFE+FecnBXD8RX8=@vger.kernel.org, AJvYcCXky29fUalaaEnj7n7nkQXBnutH245fOm2TDAKO0fbFp2qTsUdE+kjnyC2w4erSPxHPXH5DXSj0CzdQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5lv6YQmTqNSd3Z1VguwxnXOtng2YUz+95z7taR7Bh96W89LLU
+	NWr/ZeDIxU+mJfwjH47RxOcQLlOrLcRmZ5Dr+Zl+59S3pbOEQrOJeRMw0RkrSg4/I963RDnVx9/
+	Bf4MNFHW8S42NlKdzQKqO2xrbWa6N9G8=
+X-Gm-Gg: ASbGncsHjsX8einJNq5rxCjzuBfFNfqNy462ToNP1iclW8ZAmTvWyDuJfhICuVZqxCx
+	0amc3vnwJZF5bz2ZRmUGXv9+h9NvNIGfetcCnJlqC/pR0qdlbM/RXV5lULSKZhpqjrcGr0Yegb0
+	fSmzD2sutmqU95jATonzV/04iLrqRg3xmygJY7LUINIuZzD9Km7eGYRA==
+X-Google-Smtp-Source: AGHT+IEJPX6UR9g84WoexbzzHUEQq6h3wPdSNSsyqViJdHMEb+94B4bmHAHCPHuJ0zmK7ftG43fN0Hd7MLLMLWsWtBg=
+X-Received: by 2002:a17:906:6a09:b0:ae3:8c9b:bd64 with SMTP id
+ a640c23a62f3a-ae3c2ce7628mr342266566b.29.1751463819440; Wed, 02 Jul 2025
+ 06:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4835; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=HynuDTxmOu2ewRdSrqrDudGKu95lIFkIcCV6e+uJxOc=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoZTdDDFdqzRjoEwS2qyMfMPJpXavpBI9k9iB4m
- IUWqkTolfCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaGU3QwAKCRDBN2bmhouD
- 16vYEACXxoAS+JyVn6Sd2ITk/USxrgfO9EohNmNqZSEKZ+fzXEHuaADmhVULaWAYtMph1L3bDRq
- /uJQtrcS26iFIdxfdaIqjXbX20OjZH86SXwxOQvr+fLxbgaSHuI6/EpM59g/9HIoUK6q9UkKpY1
- pNndA9RSPIO+5PAYtHzB0hKGi5JdRqIGNs446OvGPfpGb0vmtuO2xd195ZbwoBblohxq3flg20f
- uKnTFZk8sT963SWBxZjYqEjtsjBu1AuqEi0JvnCeHqmdlz1juIH+tGon2g44lPPMLdgyEzAwM1K
- e7RpAnrRrCI7MvLRcj7LsQ7j3aj56UnlH7F0fVRfDDp4Dodb8RObuN2RQmvA/8jF4ZJUkEfwygL
- PR4/LnDxH31Uezo+F/ND/1bOP5lDIkGkcrgARy8eyA7gcjveb4NOfOWpsGk1/6XCSkHb4FxOAtx
- pMFBbjWg+4xIKg+2M7b1oPi6qX6wJqkxa12joibEotRpVDWFpPSgPMOjSdDIZdnXc5XnLYDOnRP
- PaXq7OVHaGkXi2WXzNZ95MHusB3LyORYjaHZAYfg0QRHhtUygWxPzk+q8sELZNB+PY4lRV6ZRfz
- o6aiTflz+4J/gE/M97RFi2Hj5TaRNShn1jYsYDoUZqUq8D9JwhzxlNgmJXtcKCsdQOYPPfP1KNZ cpwYxvWlCSiNZiw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+References: <20250630-xattrat-syscall-v6-0-c4e3bc35227b@kernel.org>
+ <20250630-xattrat-syscall-v6-6-c4e3bc35227b@kernel.org> <20250701184317.GQ10009@frogsfrogsfrogs>
+ <20250702-stagnation-dackel-294bb4cd9f3d@brauner>
+In-Reply-To: <20250702-stagnation-dackel-294bb4cd9f3d@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 2 Jul 2025 15:43:28 +0200
+X-Gm-Features: Ac12FXw1I6BqbNe0ftFra8l5z14QYm57oMc5TjvDPGU72Dw-9sfBMZjzC6un8jM
+Message-ID: <CAOQ4uximwjYabeO=-ktMtnzMsx6KXBs=pUsgNno=_qgpQnpHCA@mail.gmail.com>
+Subject: Re: [PATCH v6 6/6] fs: introduce file_getattr and file_setattr syscalls
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Andrey Albershteyn <aalbersh@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, selinux@vger.kernel.org, 
+	Andrey Albershteyn <aalbersh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Driver implements different callbacks for power off hardware
-(.power_off_hw) and power off controller (.power_off_controller):
+On Wed, Jul 2, 2025 at 2:40=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> > Er... "fsx_fileattr" is the struct that the system call uses?
+> >
+> > That's a little confusing considering that xfs already has a
+> > xfs_fill_fsxattr function that actually fills a struct fileattr.
+> > That could be renamed xfs_fill_fileattr.
+> >
+> > I dunno.  There's a part of me that would really rather that the
+> > file_getattr and file_setattr syscalls operate on a struct file_attr.
+>
+> Agreed, I'm pretty sure I suggested this during an earlier review. Fits
+> in line with struct mount_attr and others. Fwiw, struct fileattr (the
+> kernel internal thing) should've really been struct file_kattr or struct
+> kernel_file_attr. This is a common pattern now:
+>
+> struct mount_attr vs struct mount_kattr
+>
+> struct clone_args vs struct kernel_clone_kargs
+>
+> etc.
+>file_attr
 
- - iris_vpu_power_off_hw + iris_vpu_power_off_controller,
- - iris_vpu3_power_off_hardware,
- - iris_vpu33_power_off_hardware + iris_vpu33_power_off_controller,
+I can see the allure, but we have a long history here with fsxattr,
+so I think it serves the users better to reference this history with
+fsxattr64.
 
-The first group (iris_vpu_power_off_hw() and
-iris_vpu_power_off_controller()) is used on older VPU2 designs but also
-called from newer ones: iris_vpu3_power_off_hardware() calls
-iris_vpu_power_off_controller().
+That, and also, avoid the churn of s/fileattr/file_kattr/
+If you want to do this renaming, please do it in the same PR
+because I don't like the idea of having both file_attr and fileattr
+in the tree for an unknown period.
 
-In the same time there is wrapper iris_vpu_power_off() which calls
-respective callbacks (the VPU2, VPU3 etc).
-
-Let's make it more obvious which function is a generic wrapper over
-specific VPU/platform callbacks (iris_vpu_power_off()) and which one is
-the callback by adding "2" to callbacks used on VPU2.  No functional
-changes.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/media/platform/qcom/iris/iris_vpu2.c       | 4 ++--
- drivers/media/platform/qcom/iris/iris_vpu3x.c      | 6 +++---
- drivers/media/platform/qcom/iris/iris_vpu_common.c | 4 ++--
- drivers/media/platform/qcom/iris/iris_vpu_common.h | 4 ++--
- 4 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
-index 7cf1bfc352d3..2570e65816f6 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu2.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
-@@ -33,7 +33,7 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
- }
- 
- const struct vpu_ops iris_vpu2_ops = {
--	.power_off_hw = iris_vpu_power_off_hw,
--	.power_off_controller = iris_vpu_power_off_controller,
-+	.power_off_hw = iris_vpu2_power_off_hw,
-+	.power_off_controller = iris_vpu2_power_off_controller,
- 	.calc_freq = iris_vpu2_calc_freq,
- };
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-index 9b7c9a1495ee..a2c8a1650153 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-@@ -104,7 +104,7 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
- 	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
- 
- disable_power:
--	iris_vpu_power_off_hw(core);
-+	iris_vpu2_power_off_hw(core);
- }
- 
- static void iris_vpu33_power_off_hardware(struct iris_core *core)
-@@ -142,7 +142,7 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
- 	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
- 
- disable_power:
--	iris_vpu_power_off_hw(core);
-+	iris_vpu2_power_off_hw(core);
- }
- 
- static int iris_vpu33_power_off_controller(struct iris_core *core)
-@@ -264,7 +264,7 @@ static u64 iris_vpu3x_calculate_frequency(struct iris_inst *inst, size_t data_si
- 
- const struct vpu_ops iris_vpu3_ops = {
- 	.power_off_hw = iris_vpu3_power_off_hardware,
--	.power_off_controller = iris_vpu_power_off_controller,
-+	.power_off_controller = iris_vpu2_power_off_controller,
- 	.calc_freq = iris_vpu3x_calculate_frequency,
- };
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-index 42a7c53ce48e..22f190e0c7c6 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-@@ -211,7 +211,7 @@ int iris_vpu_prepare_pc(struct iris_core *core)
- 	return -EAGAIN;
- }
- 
--int iris_vpu_power_off_controller(struct iris_core *core)
-+int iris_vpu2_power_off_controller(struct iris_core *core)
- {
- 	u32 val = 0;
- 	int ret;
-@@ -253,7 +253,7 @@ int iris_vpu_power_off_controller(struct iris_core *core)
- 	return 0;
- }
- 
--void iris_vpu_power_off_hw(struct iris_core *core)
-+void iris_vpu2_power_off_hw(struct iris_core *core)
- {
- 	dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], false);
- 	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-index 93b7fa27be3b..8f63f243dd0d 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-@@ -24,8 +24,8 @@ void iris_vpu_clear_interrupt(struct iris_core *core);
- int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
- int iris_vpu_prepare_pc(struct iris_core *core);
- int iris_vpu_power_on(struct iris_core *core);
--int iris_vpu_power_off_controller(struct iris_core *core);
--void iris_vpu_power_off_hw(struct iris_core *core);
-+int iris_vpu2_power_off_controller(struct iris_core *core);
-+void iris_vpu2_power_off_hw(struct iris_core *core);
- void iris_vpu_power_off(struct iris_core *core);
- 
- #endif
--- 
-2.43.0
-
+Thanks,
+Amir.
 
