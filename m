@@ -1,49 +1,59 @@
-Return-Path: <linux-kernel+bounces-714252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0431EAF65AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:50:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18138AF65BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 01:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A9E523926
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C71C408C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3672BE65F;
-	Wed,  2 Jul 2025 22:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78F825228C;
+	Wed,  2 Jul 2025 23:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AW3KD/H/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LdpJ23gs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB42260575;
-	Wed,  2 Jul 2025 22:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083772DE70A;
+	Wed,  2 Jul 2025 23:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751496604; cv=none; b=rlh5ZzhesVvsLPglOHNb46E67JaIApmFYFym6JnDK2GULJUBpEuhG04Cn4Hh2af5twzK9KexwRaXt+hYkkxJPJujvBHBNhULAGwocxNi1E6PfTrVTMtrFMt284KgDHcGTejv3iTqZn3AxFD+8N5cuTqGuBuhYh1SP+Rnq5pMvi0=
+	t=1751497228; cv=none; b=VXBw1FGgqtl5hAzMfYbfehF+8bIJMGJzIcIkq0BwQLb1Vv/M5TT52I9u0Lg6AgSHXUM7Kr9faB+hIQ8h0KM3hzZjUQEMugFF39+80SHd2+qSsG9dN/b/az/TTwZ1brExkS5Qyr0Jax90b8Te57yQqGEhs9C06bkVVQii+716MOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751496604; c=relaxed/simple;
-	bh=Wycl/TIHNL8gwnmGyoRRgjyRHlwQWQEqNA5Db38y2VU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=h0DF6/fpjqwOVftiLFaq7xTbMnDMf0rCTTJnCMVh3sj9VrhDmyprDlLndEWkSqOK25O6lqT8+onAPDR6O1mbvAPD125pTYQgepr4Nd3apOZZDxmwn5JW8E5ePM1h0m82R+k1IYgzMGfkDY2dEgBC1OJoqCx5Bs+yYYIpRvG8TKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AW3KD/H/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B581C4CEF3;
-	Wed,  2 Jul 2025 22:50:04 +0000 (UTC)
+	s=arc-20240116; t=1751497228; c=relaxed/simple;
+	bh=YoxFkvvT3uGhs9+nxoPloOtRn0pJtIA5kzHG983qo/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rczV0tumZGB64/bc7oH1qA/C7UbTi0A5ow/YmBX3HmekaiM+qnSJZ9SWUASWKwxuVXyNVHm/h2o/NrVafJBZlyK19U8y9SLb22IDsPrQ4g7XiBeFqzt7MQMANPQ0dwb+2Cj1VHfnB9Nmyp93k4gLmMUUijisiYVq3gTkj4fUqaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LdpJ23gs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1D8C4CEE7;
+	Wed,  2 Jul 2025 23:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751496604;
-	bh=Wycl/TIHNL8gwnmGyoRRgjyRHlwQWQEqNA5Db38y2VU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AW3KD/H/a7I0wzEGre23ZmtdgiA+poJQ92pc0ROvjV3+BbBti9kNumA5mBhjOv8JZ
-	 oUTBgi8V3Vd53Eki07GBndgLfhvo1uWqcy81v601tuIlQ8piSBkFP6Y2M3yOmnEx2e
-	 pJy3zPY1m+WeFEjbHIYFBmciwD8pKUV6Ag+e+twDvTisQJ/lKxGq8hHxY5hF+q4Qna
-	 LZ4omZMEYH7lV7sfM1pPIPychSbBB9JddNXMUjIBEKvcCBJ4Z6oH3/s33BG/lJuYuV
-	 X/tJR2GSPBmmQyVjRjSn9tD9c0H4FmOKCYDLvuReBUIcQBiZkGSISRTmKVnedmXTm/
-	 uw7V74CvqqX+g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADA6383B274;
-	Wed,  2 Jul 2025 22:50:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1751497227;
+	bh=YoxFkvvT3uGhs9+nxoPloOtRn0pJtIA5kzHG983qo/8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LdpJ23gskwvtzo+wI4ZdwYtzxGN3XBWPweYW/AjiS5g5Og+WK1qiwTA5T99m0foMN
+	 dCrosyxmzEEuGSN3hvbdD/sFScH/4vki5rsnInDGIwYgbpsMlj2wF4uTFLpzfxuLk1
+	 mRV386m2m/W5L8+IehWoaZ2bzWiR8XNNMC0yhuY8Q43Er4mpDtzqRcoCrKYzjUwQGs
+	 96WHuvtEML0++8EpClnY5eG3OpSO+RNZalQ8b36CBsqw5Q/15HCJ2GwI93g5dY4rG2
+	 EcyGVAOmAloo3KTvzqITUEPcTUGoaI3rawRKcWUHH+vE0bH32i4bHB9ZTke0VDIxH1
+	 z0HmnMm2Wqs1Q==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: thermal: Convert marvell,armada370-thermal to DT schema
+Date: Wed,  2 Jul 2025 17:55:27 -0500
+Message-ID: <20250702225530.2858649-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,40 +61,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ipv6: Fix spelling mistake
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175149662850.890932.9219557571562861851.git-patchwork-notify@kernel.org>
-Date: Wed, 02 Jul 2025 22:50:28 +0000
-References: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-In-Reply-To: <20250702055820.112190-1-zhaochenguang@kylinos.cn>
-To: Chenguang Zhao <zhaochenguang@kylinos.cn>
-Cc: paul@paul-moore.com, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+Convert the Marvell Armada 3xx/XP thermal binding to schema.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Drop the AP80x and CP110 as they have long been deprecated and have
+been replaced by a new binding.
 
-On Wed,  2 Jul 2025 13:58:20 +0800 you wrote:
-> change 'Maximium' to 'Maximum'
-> 
-> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
-> ---
->  net/ipv6/calipso.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/thermal/armada-thermal.txt       | 42 -------------------
+ .../thermal/marvell,armada370-thermal.yaml    | 37 ++++++++++++++++
+ 2 files changed, 37 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/thermal/armada-thermal.txt
+ create mode 100644 Documentation/devicetree/bindings/thermal/marvell,armada370-thermal.yaml
 
-Here is the summary with links:
-  - net: ipv6: Fix spelling mistake
-    https://git.kernel.org/netdev/net-next/c/8b98f34ce1d8
-
-You are awesome, thank you!
+diff --git a/Documentation/devicetree/bindings/thermal/armada-thermal.txt b/Documentation/devicetree/bindings/thermal/armada-thermal.txt
+deleted file mode 100644
+index ab8b8fccc7af..000000000000
+--- a/Documentation/devicetree/bindings/thermal/armada-thermal.txt
++++ /dev/null
+@@ -1,42 +0,0 @@
+-* Marvell Armada 370/375/380/XP thermal management
+-
+-Required properties:
+-
+-- compatible: Should be set to one of the following:
+-    * marvell,armada370-thermal
+-    * marvell,armada375-thermal
+-    * marvell,armada380-thermal
+-    * marvell,armadaxp-thermal
+-    * marvell,armada-ap806-thermal
+-    * marvell,armada-ap807-thermal
+-    * marvell,armada-cp110-thermal
+-
+-Note: these bindings are deprecated for AP806/CP110 and should instead
+-follow the rules described in:
+-Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
+-Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
+-
+-- reg: Device's register space.
+-  Two entries are expected, see the examples below. The first one points
+-  to the status register (4B). The second one points to the control
+-  registers (8B).
+-  Note: The compatibles marvell,armada370-thermal,
+-  marvell,armada380-thermal, and marvell,armadaxp-thermal must point to
+-  "control MSB/control 1", with size of 4 (deprecated binding), or point
+-  to "control LSB/control 0" with size of 8 (current binding). All other
+-  compatibles must point to "control LSB/control 0" with size of 8.
+-
+-Examples:
+-
+-	/* Legacy bindings */
+-	thermal@d0018300 {
+-		compatible = "marvell,armada370-thermal";
+-		reg = <0xd0018300 0x4
+-		       0xd0018304 0x4>;
+-	};
+-
+-	ap_thermal: thermal@6f8084 {
+-		compatible = "marvell,armada-ap806-thermal";
+-		reg = <0x6f808C 0x4>,
+-		      <0x6f8084 0x8>;
+-	};
+diff --git a/Documentation/devicetree/bindings/thermal/marvell,armada370-thermal.yaml b/Documentation/devicetree/bindings/thermal/marvell,armada370-thermal.yaml
+new file mode 100644
+index 000000000000..2f55b7252e51
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/marvell,armada370-thermal.yaml
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thermal/marvell,armada370-thermal.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell Armada 3xx/XP thermal management
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++properties:
++  compatible:
++    enum:
++      - marvell,armada370-thermal
++      - marvell,armada375-thermal
++      - marvell,armada380-thermal
++      - marvell,armadaxp-thermal
++
++  reg:
++    items:
++      - description: status register (4B)
++      - description: control register (4B or 8B)
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    thermal@d0018300 {
++        compatible = "marvell,armada370-thermal";
++        reg = <0xd0018300 0x4
++               0xd0018304 0x4>;
++    };
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.2
 
 
