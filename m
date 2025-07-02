@@ -1,160 +1,144 @@
-Return-Path: <linux-kernel+bounces-713717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADC5AF5D82
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD2AAF5D7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912DC3AC319
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E771D3A3BD6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1560B2F85DB;
-	Wed,  2 Jul 2025 15:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0681F288CA4;
+	Wed,  2 Jul 2025 15:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A3O9Dpuo"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="TYeS64cE"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093F3196B9
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B633196A8
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 15:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751470895; cv=none; b=ZFS0LiXMRR9mLjkepWjSEItIPMNNncbJlOVoUV5k3d36chT17XTZsWAlgg2TWETeV94IMAkwWhif+kVJ6Y8LB6AzGu0UpjFsez4SrmnM22ezWMjhqyrTWB+K6VHjmfB+7xG9KqpEop9U+qxQii9yakCzm2ah3exxvNrBaHCI80w=
+	t=1751470813; cv=none; b=k/C7pUsaNf3FlAQ2StSCm/bJ1VuO8ybEWa6cQyVYkAlED4ghwVisXmsrCWS+bKyU37Wj3rrb2NATXPdXd3+1cCcr+nmEfVjtAOJw906D6crpkYcvAubuio8FHoXKHhfMyL4BWyLumezU4uuwzfhlp47mHi7LSNSHsV2AtXyF6kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751470895; c=relaxed/simple;
-	bh=ZAQsrXPOl2O9Lj2rA112EgpzrmhpxRn37XfAnFKIexM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TLGBPS9YTeL5bYYLycS8iz+n+nTH66as6Tp+DBaCTc940i1j3BU0XByV8FPiNljLCXpwTSkG0SzTigjegkddEyBE0xWYgHQNYqZdR0fd5cJEO7oJ6KjhHwyjlwvDZXYKxHDelAIM2S+XM2Vy3VW6nwN49Apw8DiI2Bj9xSUtVXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A3O9Dpuo; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1751470881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WmPSSyi2TevtL7Ci/GfXvARkxAO7xrZZ+pyYoPwMNTU=;
-	b=A3O9Dpuo5fJ9xidlpxWIZ4bem5KJiO/g2pOw7nuWKSoTsmPxApfl5C3LsbjijHnx0yot9z
-	9w8qNs2e/3lAoTy6bfJp/I+RUikFQWwasuytKWbBeQ3PBtpFJ6DOGlGXu0VlqA0L54dCLr
-	tHYCkw3SEl6lNkIx9EUoQ8Tw+wn7hh8=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v7 2/3] bpf: Add show_fdinfo for uprobe_multi
-Date: Wed,  2 Jul 2025 23:39:57 +0800
-Message-ID: <20250702153958.639852-2-chen.dylane@linux.dev>
-In-Reply-To: <20250702153958.639852-1-chen.dylane@linux.dev>
-References: <20250702153958.639852-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1751470813; c=relaxed/simple;
+	bh=3leE4hJGTzOnIvybyYzVeLVcLwlH3jXFpp+iCxZd8d4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MQ1qDpgpUAyYiJwtK9fiizgP/KYNPRAfizjv3Kndp/5sAYubcZiNbkedCoX75XuCQ+y4+KI1SotfMlIOszP+9bqTXs98FlaUXTu3UHdKS0qKBYPIIIYEpZt8dfY6s+Car+auFc0iKH+30Y2CApUlyJ4KtjyiTKQ32r8MjAYcrGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=TYeS64cE; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4a43afb04a7so32350891cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 08:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1751470809; x=1752075609; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BAXwYrzQQxC3az0StNvnncSbLnK+v9TAGG9M6gj4BwM=;
+        b=TYeS64cEbFYo5moSc+SyZtlKUsXjdvl7vAPB4rJbhbX67ODMsT52TsFNg8idhz3Qqq
+         o9YXzoWKJd517FOhSBGZnQiw3uNZoKl/gyXZ+5QJ3xF8tCRQJmfZfmPgz0MLImud5TOj
+         Srdv3qCsRNavGyMfsRDW8Kev4si+sU4uFfk7I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751470809; x=1752075609;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BAXwYrzQQxC3az0StNvnncSbLnK+v9TAGG9M6gj4BwM=;
+        b=jeAbYgTuPkioMTjD/WcjR5vKDoPq05DicycMjNMAfPzYl7wASD0yk+jUi26ieFEiVd
+         B1DgkWM3aB5x8OSDzmcb9MfWbQHzx0th3pJEoKG55of6c4hCqBCn9vMXS+LaAu2OjugS
+         wi6/3gYca2ntN2L+pjwSWAZ0qUOOlrrFo7Bv2HgAqMhCQInNXJ/+fmehahWw53ZXSpx+
+         rLFE3Wm6x0e3XGDrpmcQHdNjev3F8P+HTb5o9yEAygocqlai2PR3MTEkb2K8VOx/cWG4
+         1d8qVCGlbjFDufVLTqpDAbuwW4QU01xcspEzzfUYvls3oFUDj/nkSB9V6PseHbWmizFi
+         AAPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxGnXEQazKrSSnqezqsgR24FA1xNGiqZpYV0hx4YQkUcQ6Tko6/AWlHi/KhjDLAJs2/zFt1ceom9FpFok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhCHyiolpa03rnQgZZDVDCSI125t+PkGClx9YJHBH/MI+xzk1u
+	FkwUolYtDoBpGKTU0N1J+dXRmTQAc2gsgN7WoQHwOtZ0fkJqKjtF0kbtS5h7DtpYj3nll6hhYKi
+	H6eumVvZcee37fG4h21Z0aqb5R58nf5+jg0D+MQPEKA==
+X-Gm-Gg: ASbGncsOFz+dmfyguLKbe+C7CDwwUhJzgpi3aIMmR5Ncxg7rWHqrA48BMCwwtV1RG/w
+	V91owDnnZfICBBpU7XF5xYgvTGDVTwyKFRN7e7+iq/u6s7ukwp0Xf2gD14ueSSXceDaxGsEqwml
+	J+MHa0c/P6fkOk/c0GmEb0toM2o2v3mcOYQ/ShqA3PxzHRz+OvbFU/RDVTaohiS82JbacaNLEUC
+	6Vv
+X-Google-Smtp-Source: AGHT+IFNsETd+DqArdws56o/Fjq7V5K7vMfImlLGHwvaIWT00CmQ085htrDrkxaeicglEyem8Wq2gfZsqXYSzAiISlA=
+X-Received: by 2002:a05:622a:1889:b0:4a7:6f1e:6fa7 with SMTP id
+ d75a77b69052e-4a97690acf4mr60762141cf.19.1751470809458; Wed, 02 Jul 2025
+ 08:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250520154203.31359-1-luis@igalia.com>
+In-Reply-To: <20250520154203.31359-1-luis@igalia.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 2 Jul 2025 17:39:58 +0200
+X-Gm-Features: Ac12FXz1-wpyaTIFNuFKATECNBotnEswf5YkN6Gav-8CiMX78wlEueoCNXNw21A
+Message-ID: <CAJfpegue3szRGZs+ogvYjiVt0YUo-=e+hrj-r=8ZDy11Zgrt9w@mail.gmail.com>
+Subject: Re: [PATCH v3] fuse: new workqueue to periodically invalidate expired dentries
+To: Luis Henriques <luis@igalia.com>
+Cc: Bernd Schubert <bernd@bsbernd.com>, Laura Promberger <laura.promberger@cern.ch>, 
+	Dave Chinner <david@fromorbit.com>, Matt Harvey <mharvey@jumptrading.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Show uprobe_multi link info with fdinfo, the info as follows:
+On Tue, 20 May 2025 at 17:42, Luis Henriques <luis@igalia.com> wrote:
+>
+> This patch adds a new module parameter 'inval_wq' which is used to start a
+> workqueue to periodically invalidate expired dentries.  The value of this
+> new parameter is the period, in seconds, of the workqueue.  When it is set,
+> every new dentry will be added to an rbtree, sorted by the dentry's expiry
+> time.
+>
+> When the workqueue is executed, it will check the dentries in this tree and
+> invalidate them if:
+>
+>   - The dentry has timed-out, or if
+>   - The connection epoch has been incremented.
 
-link_type:	uprobe_multi
-link_id:	9
-prog_tag:	e729f789e34a8eca
-prog_id:	39
-uprobe_cnt:	3
-pid:	0
-path:	/home/dylane/bpf/tools/testing/selftests/bpf/test_progs
-cookie	 offset	 ref_ctr_offset
-3	 0xa69f13	 0x0
-1	 0xa69f1e	 0x0
-2	 0xa69f29	 0x0
+I wonder, why not make the whole infrastructure global?  There's no
+reason to have separate rb-trees and workqueues for each fuse
+instance.  Contention on the lock would be worse, but it's bad as it
+is, so need some solution, e.g. hashed lock, which is better done with
+a single instance.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/trace/bpf_trace.c | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+>
+> The workqueue will run for, at most, 5 seconds each time.  It will
+> reschedule itself if the dentries tree isn't empty.
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 85f07f662fe..9161a1b3418 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3155,10 +3155,54 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
- 	return err;
- }
- 
-+#ifdef CONFIG_PROC_FS
-+static void bpf_uprobe_multi_show_fdinfo(const struct bpf_link *link,
-+					 struct seq_file *seq)
-+{
-+	struct bpf_uprobe_multi_link *umulti_link;
-+	char *p, *buf;
-+	pid_t pid;
-+
-+	umulti_link = container_of(link, struct bpf_uprobe_multi_link, link);
-+
-+	buf = kmalloc(PATH_MAX, GFP_KERNEL);
-+	if (!buf)
-+		return;
-+
-+	p = d_path(&umulti_link->path, buf, PATH_MAX);
-+	if (IS_ERR(p)) {
-+		kfree(buf);
-+		return;
-+	}
-+
-+	pid = umulti_link->task ?
-+	      task_pid_nr_ns(umulti_link->task, task_active_pid_ns(current)) : 0;
-+	seq_printf(seq,
-+		   "uprobe_cnt:\t%u\n"
-+		   "pid:\t%u\n"
-+		   "path:\t%s\n",
-+		   umulti_link->cnt, pid, p);
-+
-+	seq_printf(seq, "%s\t %s\t %s\n", "cookie", "offset", "ref_ctr_offset");
-+	for (int i = 0; i < umulti_link->cnt; i++) {
-+		seq_printf(seq,
-+			   "%llu\t %#llx\t %#lx\n",
-+			   umulti_link->uprobes[i].cookie,
-+			   umulti_link->uprobes[i].offset,
-+			   umulti_link->uprobes[i].ref_ctr_offset);
-+	}
-+
-+	kfree(buf);
-+}
-+#endif
-+
- static const struct bpf_link_ops bpf_uprobe_multi_link_lops = {
- 	.release = bpf_uprobe_multi_link_release,
- 	.dealloc_deferred = bpf_uprobe_multi_link_dealloc,
- 	.fill_link_info = bpf_uprobe_multi_link_fill_link_info,
-+#ifdef CONFIG_PROC_FS
-+	.show_fdinfo = bpf_uprobe_multi_show_fdinfo,
-+#endif
- };
- 
- static int uprobe_prog_run(struct bpf_uprobe *uprobe,
--- 
-2.48.1
+It should check need_resched() instead.
 
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 1fb0b15a6088..257ca2b36b94 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -34,33 +34,153 @@ static void fuse_advise_use_readdirplus(struct inode *dir)
+>         set_bit(FUSE_I_ADVISE_RDPLUS, &fi->state);
+>  }
+>
+> -#if BITS_PER_LONG >= 64
+> -static inline void __fuse_dentry_settime(struct dentry *entry, u64 time)
+> +struct fuse_dentry {
+> +       u64 time;
+> +       struct rcu_head rcu;
+> +       struct rb_node node;
+> +       struct dentry *dentry;
+> +};
+> +
+
+You lost the union with rcu_head.   Any other field is okay, none of
+them matter in rcu protected code.  E.g.
+
+struct fuse_dentry {
+        u64 time;
+        union {
+                struct rcu_head rcu;
+                struct rb_node node;
+        };
+        struct dentry *dentry;
+};
+
+Thanks,
+Miklos
 
