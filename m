@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-712710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76044AF0DD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:23:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3794AF0DE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A32C4830C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:23:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5017F4E3C90
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178CC2367AE;
-	Wed,  2 Jul 2025 08:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7CD2367AE;
+	Wed,  2 Jul 2025 08:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ts5Ndxmv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MJ12tkxP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BC6233723;
-	Wed,  2 Jul 2025 08:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FA12367AC;
+	Wed,  2 Jul 2025 08:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751444618; cv=none; b=pjWo2M3yy6EPwAm6XstJ1APjHyzAdrPBcCFt8y7G2jz56KvZHMaOB70RyjRy35tdRfJgJ2CX7nf3FsViUZ/xZrO+IUqUXCKuX9F+wOWTPHsYKTFGEnYmKqi6IBfVqb7qSyDH8eIDq74aV1WWAJdA1yYDwT4RmavbekwBPv2qGBk=
+	t=1751444692; cv=none; b=foNRlBUAUndM8WI4guv/tCjr4AnioUqL5tH9AECyJMuzKjuh959uG7jOL0NkUbJEki44hIxIsDXCpJ3+QuUOMabMWTymLlpk+/W94Hf7Ba3TWUjOFjq5ZUDQdLqqPfq+E8+6tPwdqhjjcroHq+5NxC1F49Okygxd6WQyYKfBt+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751444618; c=relaxed/simple;
-	bh=HBWjIeHT2TPx6GxRmnniI2Bkgont5Fgc3phV6Wo21uE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SOw9eIYjud03S6kZZC4tccLEjBXHD92b0zvwpG4saDLiouYSv2U/PDWxtA6SZGOHSYsK/cVL7+ms4ObtvFP3AGG9lq3K+7dcpNZOdM+Nwfdedh3HEfSvBVZYahpgpKbINHSd4+jVCvYtyZ0FJakFzfthPzPQK48g8RibQXHIJJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ts5Ndxmv; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1751444692; c=relaxed/simple;
+	bh=X96pjU5FylzsfS/7gPB4fZIph/7DEncDPblL1kj4hUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tEBpkuChm98uv1en1iAFHvBcUFIVfb1d6ioN3UCoToJRsDtiVKwoMCtSpnbLZGlqZ1CnuVE+KHicnP2j23OhCBqbCDOD8iDdeff2HNc28jEz1CinxiJ2yqJJY9hasigDWefMqsyJQI2cYIyDLHq5mYk7wVcDr+V84gkLFJnIje4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MJ12tkxP; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751444617; x=1782980617;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=HBWjIeHT2TPx6GxRmnniI2Bkgont5Fgc3phV6Wo21uE=;
-  b=Ts5NdxmvSq1lssn0L5V5f6Cg5pftbfXqzT0uTVkhUTa5E9lBoMv7RLhz
-   uVk8A+8Kdttm17ve5XJmC5nvFh2DmJLpfb+vnm3mQC3xDzTdLceqLIF6H
-   M8gesEUAQM/Bjwb81neg0cZeI1+vZYpwK+ClSw+l06b5xT3774aRn++DY
-   6L0ua2x97DX7PHSNedUFW6b/ilsAhkTgfhkGf9eoU/MzwB5NEewjAs70r
-   cBK2lnlBXZryNId8zP1punoU2tPus0r/WC2KlWD+dlbYIZSsh0nIMteh0
-   /ubouYybXvJIetM0XiLdOnSerBBqyHA+QkuIubXN6FNYEFa5IAMLRGACa
-   g==;
-X-CSE-ConnectionGUID: av93zIewQN+quNUbKsLm+Q==
-X-CSE-MsgGUID: ypv88JdsSWuayApenIfD/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53871416"
+  t=1751444691; x=1782980691;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X96pjU5FylzsfS/7gPB4fZIph/7DEncDPblL1kj4hUs=;
+  b=MJ12tkxPaJsWxFVboG463lCEh38qDoY5TZwJu9ikxQdRorDwVk2GplAo
+   bjxgRNZXT3n603VVH9svJVWl+c2baNNX7b9Ws9wZ8h32YFpTTiZpsmuyB
+   lK5RxaHMckKrkcizAm0YhgmdpPO2rskniQ9Wfs4zxD4dKj2vAfEdJOIQA
+   sd8UIot44NBmQf0ZMKi4LzCZ52LDz1WFmaIQRCAHX1n8V04kBqFiTpdm9
+   aKklxNyNSaxJWVP6bf8P07RNLLvpTB9exAx/0FPwfVN9fj/tYXvsmxeAM
+   psObjxLPTCtCwbnENcug0y9/CU1YbhF0Vmr6fuWNGcnx/Wv/4khdGheTH
+   w==;
+X-CSE-ConnectionGUID: CqoaLLAsT5+kkXMPPOj3ag==
+X-CSE-MsgGUID: y1yCokfxTluNUsQUpfJIKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53822435"
 X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="53871416"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:23:35 -0700
-X-CSE-ConnectionGUID: 6eHzCsT7R2Cc1UlwpOveoQ==
-X-CSE-MsgGUID: SRDxKhSaQLiW8WSuocYl2w==
+   d="scan'208";a="53822435"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:24:50 -0700
+X-CSE-ConnectionGUID: w3eeiw9mQ+ewBzlwzvSjHg==
+X-CSE-MsgGUID: zJsJhhvjTyqqwqCKon4sbA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="154164230"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.29])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:23:33 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 6/7] docs: kdoc: Remove a Python 2 comment
-In-Reply-To: <20250701205730.146687-7-corbet@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250701205730.146687-1-corbet@lwn.net>
- <20250701205730.146687-7-corbet@lwn.net>
-Date: Wed, 02 Jul 2025 11:23:29 +0300
-Message-ID: <829b4b1ed00f6e97626ff551148b6e47212ae673@intel.com>
+   d="scan'208";a="159526802"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:24:47 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWsln-0000000Brfz-4BGd;
+	Wed, 02 Jul 2025 11:24:43 +0300
+Date: Wed, 2 Jul 2025 11:24:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Li Ming <ming.li@zohomail.com>
+Cc: akpm@linux-foundation.org, bhelgaas@google.com,
+	ilpo.jarvinen@linux.intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, dan.j.williams@intel.com,
+	shiju.jose@huawei.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] cxl/edac: Fix wrong dpa checking for PPR operation
+Message-ID: <aGTsyw4iq5mFLDPg@smile.fi.intel.com>
+References: <20250702072008.468371-1-ming.li@zohomail.com>
+ <20250702072008.468371-2-ming.li@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702072008.468371-2-ming.li@zohomail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, 01 Jul 2025, Jonathan Corbet <corbet@lwn.net> wrote:
-> We no longer support Python 2 in the docs build chain at all, so we
-> certainly do not need to admonish folks to keep this file working with it.
+On Wed, Jul 02, 2025 at 03:20:07PM +0800, Li Ming wrote:
+> DPA 0 is considered invalid in cxl_do_ppr(), but per Table 8-143. "Get
+> Partition Info Output Payload" in CXL r3.2 section 8.2.10.9.2.1 "Get
+> Partition Info(Opcode 4100h)", it mentions that DPA 0 is a valid address
+> of a CXL device. So the correct implementation should be checking if the
+> DPA is in the DPA range of the CXL device rather than checking if the
+> DPA is equal to 0.
 
-I feel old.
-
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-
->
-> Cc: Jani Nikula <jani.nikula@intel.com>
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  Documentation/sphinx/kerneldoc.py | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-> index 51a2793dc8e2..2586b4d4e494 100644
-> --- a/Documentation/sphinx/kerneldoc.py
-> +++ b/Documentation/sphinx/kerneldoc.py
-> @@ -25,8 +25,6 @@
->  # Authors:
->  #    Jani Nikula <jani.nikula@intel.com>
->  #
-> -# Please make sure this works on both python2 and python3.
-> -#
->  
->  import codecs
->  import os
+Looking at the use cases, I even like the first patch less. You can do
+it locally in the macro or function in cxl code. We may see in the future
+if something like this will be needed for others.
 
 -- 
-Jani Nikula, Intel
+With Best Regards,
+Andy Shevchenko
+
+
 
