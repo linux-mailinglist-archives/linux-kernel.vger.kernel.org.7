@@ -1,226 +1,183 @@
-Return-Path: <linux-kernel+bounces-713484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D05AF5A67
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151ACAF5A6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45DC44E6ED4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D111C22B2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AA928313F;
-	Wed,  2 Jul 2025 14:02:41 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4423286420;
+	Wed,  2 Jul 2025 14:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N2VCwfGG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9456FC5
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1C928541F
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751464960; cv=none; b=PTr9u9cE9+iH2nlz8bs6QIGAFBFluN6nU33o4zHPnS/ho2HFoRNmgzOz1KEfmR91alC74WvpMcJJfOAL59pM5Ab7YrEACtZhBkbwjB2sjI3/M7iAg64RiFAjFeuQ81DtKXMuc4fpyQqH10PiVSNYgqeUMBtlkBhuL28pulWRQVU=
+	t=1751464983; cv=none; b=TFspmwYhkqI7cAlNnIYVjmbyJ5menBNVJwfxfBOWz/xRAh2wK1Wej7qOnqUfHyZ16r8C0nsnvA24mtRrTNhkAot/Ffm634gFUOOdbM4kkXT07laNpz/sRP7amm70ghcL6ujkhtc1L4YRwLSgapdm5LxSQO7vzxoHJzYPVC7UVOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751464960; c=relaxed/simple;
-	bh=/xnQFIqYyIL9Yz85movHuQxtuMf6MHqxcoRtaZvgxNU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=q24DMDAllU8iZg3muMCGc0cqUFRMlt+OOvtjWPWGRP43c3nU32YCURU3GrdE1T96DaiUSUIYDM9dvlHtoWRw0kCGkSgPnPeV7YK0li7w7JG4wdigUSbTQ086dzFp05Mkq2QTEnCU9P5HZroukb+LGG9KCrzEyYDtgGfTUB3IVi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87632a0275dso546419839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:02:38 -0700 (PDT)
+	s=arc-20240116; t=1751464983; c=relaxed/simple;
+	bh=w9xLP90+ayLc+1sYeBMpVBhY8AdDb/1wgWcz4K04vhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=trniYvCD2j3UUwR4sX7yV1hXyLhVCZRJuMl6YgJUsoKMigo9Fx4vWNx5ypFJKB3GIFL9Ndp4M+s9Qiqp4xPELWErsADL7zVTMQFB8m2tEEdLtz+w7ZBLv7ZfplACZSgDgRbV+hLfe9/LTOTRyFRfP4xpc/Q4h/GP9ohifE5mnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N2VCwfGG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562Da05m007067
+	for <linux-kernel@vger.kernel.org>; Wed, 2 Jul 2025 14:03:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UPCD0AbKy4uQjUrZK3gQh2e0DrRheClUuURBVYRNDDk=; b=N2VCwfGG6NBuKXHl
+	QLYieeoIO5cNYNHy0ETMqS/cMpNi53RZpa2PRAYEB9+Xxxzo30D9i77nMXNfdVi4
+	2QvdK7Shto7WW0OK4FIyJzp8ik9foWgBgS5uMBdVD4w0GZPpxzmWlbgEUrrhegmf
+	FUS9wvDd6kt5dZUEvYxpT/uH7n+0dSPY+2G36CegYyBS+EF3WINN8aVXj+zydmu/
+	hT0RxAZiarDcmyXT31LzpK2kfB1gmsXnPpaoKTU2RwLM/JIHMebdC7WeCuy3guU6
+	0ixW0EML5rSg9IGyzMTexIj+MN7cJHN/qEiheQAPJjZzhX7Ek4i8OHbFErbn3qgn
+	5pQLfQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47kn5jh8aw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 14:03:00 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7d09b74dc4bso148223985a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:03:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751464958; x=1752069758;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dByylAG2c51x5gFXBJ6JiboT2jB5E3W7QnW5fgQ6Oiw=;
-        b=OsYZOcUM1LjvXFfv7Z2kytE8DOSaza3rp97gV6nmh8b37VIaW+6Wb7hFNFR3uiDiLN
-         6kx1+Jn8QiYdBXTQPyw2N0Cxv244BEI/pt+a9HjzyE78T3YzlbRaWYw8pEU/RBADTWhC
-         M56Zly4bXChNK6eU00lzsgWY6ZsS2w1ZPL6UWXiKA32mYdiL4ICwm0dKgBNpRR+NvS8v
-         tIOMzXSDfHwfb8xZr0pXlT24aDqKDzyt1+f4OtP+0/x/5UIdjj5lj5IHwjFbhOliaFAO
-         kCFd+Pr496F8Ib6fGPKWVvoHIJ0vvrmZ5+uHPfF96ghYqFati9C/r3SgByNcqU6dgTs0
-         R9mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjfiA36xET/pe3YK6gGP58TACFK5LyaY2ibIUknWy54c58qcyln0Gs5Qs7Mew6wOVEZ9eteAQB2BZBaSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfTkF0NFiW7Sgk0tgGrMOKtW8aXE+PDGZcm5S4qfCuyVryL0Cu
-	knNz/7sd6WKvWyUlE+byHaWp749vfQq1Ys9yLlgRRuI0CyokMuAR85MXzlAO0CFB8k/pLY1/Kvj
-	SWE0QKhXmyztmyE7bGHTAOZAEiLA5qU7HzJz+pJzpFuc8nGMIOoAJZO2MYZA=
-X-Google-Smtp-Source: AGHT+IF4x4Or/xkfZx7+M2g2bxTm2Ngcdv5e6gScnz+K6XgI5teTfxfLyoi8M7MaKmbsiwTQXKRuH36XYi+0I3m7jN8PapKeG5n2
+        d=1e100.net; s=20230601; t=1751464978; x=1752069778;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UPCD0AbKy4uQjUrZK3gQh2e0DrRheClUuURBVYRNDDk=;
+        b=Y4Z/Ve1x3yniJA809VarhaDd7a9sastPLlweQteCbkorD2wz2h6Kl1JaAuhnGMfz+0
+         Qf8ENXhHwcZxI2EdD0LRkUITc1iylFE0ik0cQMud9QrFHjejSVmO3G+cQ6Grgz0eKn2s
+         yZTcdwMfFsw76v9e/NwV1Xv5FDw3sYJitVFDZDO4YqfJGHx51j1V5kxPt7J+lz28Y3mk
+         SbuRlDjRRzmen01L6GouArKx+cYvcIT2GqV+oDWHpo6gamSOGHoOAGuDIq742XADmuSy
+         yiBNKfItD8LrT3uPkWZ77F13HW6Bgvd1bRiCXCctffaMYhPiMt9pAEoK9VpL1xzFutJU
+         m9eA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWqE6ylYXKof+KcgVAYWwfbb78Lov6io1K1DwB0mBxQcSlTN+7WiPiOvbB3vW7R+DXtF1w3AI+ZRux8OE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuNtiwD17XiDPZ/6LwQzPz0N/H9R1nniZSNA5AqyI8pbJTSHvW
+	OS2rCAQPiya2z/dlUuyLfOJDE8zr/wp6LDxbcbhXwEFkKldAI4aFcROuGqIfXPtEYUOtq3dZkfu
+	/jDTdtDiKtkfWniJ7Up5jaNtc6NBDZPnVgHqyupyE73ri5uywz0vV3SKMMS1XcTNKPLs=
+X-Gm-Gg: ASbGncvjcIRWiDQ7gRZvF8zHO9s7G+54SAhaNLOG73r0GnlZAUsIOILs6B0SUhtp4u2
+	qTwIIjq8SoFFXxZBbhANB1cIWY6hSdvQAQb53TO/QxdpDsEG2Kzsne32vZnw9W7kxNH3pXN7dfd
+	NBeHtkkLkxfhUSVdc8cUcos5HRQJAgFt+bdGdAb0ZxN+sh+bRRklfo0CGJJhXDyS18eWM3DFQJV
+	qS8pkcjnvfxAtUThgMF8Dy3GUaVaI1Yjo1A7keDTbKGhamp+CFMq81+RlOFXQa7WPQH1bHl+Caw
+	ltspIwZq1wynSpbSvjm9DTvOXzACkKH21Xg5ODlYwbqDy4dx2sTCBZp56daXBhFKoQ2Fha4E5VS
+	BuZA=
+X-Received: by 2002:a05:620a:6009:b0:7c3:c814:591d with SMTP id af79cd13be357-7d5c4712edamr157508585a.1.1751464978151;
+        Wed, 02 Jul 2025 07:02:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHK0NLQr9opky8nQy86TjPixbKtYzWYESdBlrd9f6gMI8n3YCnfEIgoK3ktCcSinV5RnjaizA==
+X-Received: by 2002:a05:620a:6009:b0:7c3:c814:591d with SMTP id af79cd13be357-7d5c4712edamr157506685a.1.1751464977525;
+        Wed, 02 Jul 2025 07:02:57 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c831cd0dbsm9185926a12.58.2025.07.02.07.02.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Jul 2025 07:02:56 -0700 (PDT)
+Message-ID: <803adfad-a601-4d65-b877-e8ec10969698@oss.qualcomm.com>
+Date: Wed, 2 Jul 2025 16:02:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:88c2:0:b0:861:c238:bf03 with SMTP id
- ca18e2360f4ac-876c6a292ddmr287486139f.8.1751464957903; Wed, 02 Jul 2025
- 07:02:37 -0700 (PDT)
-Date: Wed, 02 Jul 2025 07:02:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68653bfd.a00a0220.270cb1.0000.GAE@google.com>
-Subject: [syzbot] [usb?] KMSAN: kernel-usb-infoleak in usbhid_raw_request
-From: syzbot <syzbot+fbe9fff1374eefadffb9@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: iris: Be explicit in naming of VPU2 power off
+ handlers
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250702134227.211104-2-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250702134227.211104-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=KtJN2XWN c=1 sm=1 tr=0 ts=68653c14 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=ORHsN169zhdEUPBzc4IA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: eOwDv9lRBTPHA4wLixM4f76TDzDvfviS
+X-Proofpoint-GUID: eOwDv9lRBTPHA4wLixM4f76TDzDvfviS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDExNCBTYWx0ZWRfX+qe/33tujYvB
+ i/StdpfU7rTbQTkH52okdJP5FfWbJk4Onwzb68UWRrNO1t02khIiOj0QpeLE7gXrJODRtEpAVin
+ jkYjc4HcPD+IXsvv3XJIV6Mr/OsvKL8fN9u9CnoqmdiiklLvEVuZQWa2YNlqf0dWk12PG3BoVWg
+ Gx0hm6Qp2q6Rw75tG5HildkziZjCtfNGr0CJMgBTh4RSwlQwKlRqGYYyaN+ExIT4hwXLC5BBqcg
+ 56UdFrUh7pl83BmBFo3O78wsKw8sVV99E/el11JJc3/4de2+UR2uj0XZo7jMft9Cl7+SZbgtG3r
+ htEXHUGT7LFkKQ3UyMtaS4/mYTjK3jJBMap3UnQ5bMnqECAei3HFebFcx7TbTAc6V+o4nhYwDua
+ JznZRYWLhQSPqTeQMuCmKOnhMtiPglZo2DZ17BfRdq1Dj2kpdmtQV7YsTpCPxxBuqDpsTbsx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_02,2025-07-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
+ clxscore=1015 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507020114
 
-Hello,
+On 7/2/25 3:42 PM, Krzysztof Kozlowski wrote:
+> Driver implements different callbacks for power off hardware
+> (.power_off_hw) and power off controller (.power_off_controller):
+> 
+>  - iris_vpu_power_off_hw + iris_vpu_power_off_controller,
+>  - iris_vpu3_power_off_hardware,
+>  - iris_vpu33_power_off_hardware + iris_vpu33_power_off_controller,
+> 
+> The first group (iris_vpu_power_off_hw() and
+> iris_vpu_power_off_controller()) is used on older VPU2 designs but also
+> called from newer ones: iris_vpu3_power_off_hardware() calls
+> iris_vpu_power_off_controller().
+> 
+> In the same time there is wrapper iris_vpu_power_off() which calls
+> respective callbacks (the VPU2, VPU3 etc).
+> 
+> Let's make it more obvious which function is a generic wrapper over
+> specific VPU/platform callbacks (iris_vpu_power_off()) and which one is
+> the callback by adding "2" to callbacks used on VPU2.  No functional
+> changes.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-syzbot found the following issue on:
+[...]
 
-HEAD commit:    66701750d556 Merge tag 'io_uring-6.16-20250630' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=169d648c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d5c61bcebaf295a
-dashboard link: https://syzkaller.appspot.com/bug?extid=fbe9fff1374eefadffb9
-compiler:       Debian clang version 20.1.6 (++20250514063057+1e4d39e07757-1~exp1~20250514183223.118), Debian LLD 20.1.6
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> index 9b7c9a1495ee..a2c8a1650153 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> @@ -104,7 +104,7 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
+>  	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>  
+>  disable_power:
+> -	iris_vpu_power_off_hw(core);
+> +	iris_vpu2_power_off_hw(core);
+>  }
+>  
+>  static void iris_vpu33_power_off_hardware(struct iris_core *core)
+> @@ -142,7 +142,7 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>  	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>  
+>  disable_power:
+> -	iris_vpu_power_off_hw(core);
+> +	iris_vpu2_power_off_hw(core);
+>  }
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I don't really like how v3 calls v2 ops internally.. and there's
+nothing really vpu2-specific about what the function does.
+Maybe something along the lines of "iris_disable_resources"?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c23f36e934f7/disk-66701750.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fb02dd3f3235/vmlinux-66701750.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0a0df8bd2838/bzImage-66701750.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fbe9fff1374eefadffb9@syzkaller.appspotmail.com
-
-usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 4-1: config 0 descriptor??
-microsoft 0003:045E:07DA.0003: unknown main item tag 0x0
-microsoft 0003:045E:07DA.0003: ignoring exceeding usage max
-=====================================================
-BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x5a1/0x2630 drivers/usb/core/urb.c:430
- usb_submit_urb+0x5a1/0x2630 drivers/usb/core/urb.c:430
- usb_start_wait_urb+0xc2/0x320 drivers/usb/core/message.c:59
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x27c/0x5b0 drivers/usb/core/message.c:154
- usbhid_raw_request+0x4ab/0x690 drivers/hid/usbhid/hid-core.c:-1
- __hid_request+0x2bd/0x500 drivers/hid/hid-core.c:1989
- hidinput_change_resolution_multipliers drivers/hid/hid-input.c:1950 [inline]
- hidinput_connect+0x3bf5/0x5cc0 drivers/hid/hid-input.c:2327
- hid_connect+0x6b4/0x3440 drivers/hid/hid-core.c:2239
- hid_hw_start+0xfc/0x1e0 drivers/hid/hid-core.c:2354
- ms_probe+0x2e5/0x890 drivers/hid/hid-microsoft.c:391
- __hid_device_probe drivers/hid/hid-core.c:2724 [inline]
- hid_device_probe+0x536/0xab0 drivers/hid/hid-core.c:2761
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x4d1/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
- driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
- __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
- bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
- __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
- device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
- device_add+0x12a9/0x1c10 drivers/base/core.c:3692
- hid_add_device+0x5ed/0x7b0 drivers/hid/hid-core.c:2907
- usbhid_probe+0x1fec/0x2660 drivers/hid/usbhid/hid-core.c:1435
- usb_probe_interface+0xd01/0x1310 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x4d1/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
- driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
- __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
- bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
- __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
- device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
- device_add+0x12a9/0x1c10 drivers/base/core.c:3692
- usb_set_configuration+0x3493/0x3b70 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xfc/0x290 drivers/usb/core/generic.c:250
- usb_probe_device+0x38d/0x690 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:-1 [inline]
- really_probe+0x4d1/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x268/0x380 drivers/base/dd.c:799
- driver_probe_device+0x70/0x8b0 drivers/base/dd.c:829
- __device_attach_driver+0x4ee/0x950 drivers/base/dd.c:957
- bus_for_each_drv+0x3e3/0x680 drivers/base/bus.c:462
- __device_attach+0x3c8/0x5c0 drivers/base/dd.c:1029
- device_initial_probe+0x33/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3ba/0x5e0 drivers/base/bus.c:537
- device_add+0x12a9/0x1c10 drivers/base/core.c:3692
- usb_new_device+0x104b/0x20c0 drivers/usb/core/hub.c:2663
- hub_port_connect drivers/usb/core/hub.c:5535 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5675 [inline]
- port_event drivers/usb/core/hub.c:5835 [inline]
- hub_event+0x5588/0x7580 drivers/usb/core/hub.c:5917
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3321
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3402
- kthread+0xd5c/0xf00 kernel/kthread.c:464
- ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4154 [inline]
- slab_alloc_node mm/slub.c:4197 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_node_track_caller_noprof+0x96d/0x12f0 mm/slub.c:4347
- __kmemdup_nul mm/util.c:63 [inline]
- kstrdup+0x8a/0x2a0 mm/util.c:83
- kstrdup_const+0x5e/0x90 mm/util.c:103
- __kernfs_new_node+0x6e/0xa70 fs/kernfs/dir.c:633
- kernfs_new_node+0x1f0/0x370 fs/kernfs/dir.c:713
- kernfs_create_dir_ns+0x9a/0x2b0 fs/kernfs/dir.c:1083
- sysfs_create_dir_ns+0x19c/0x540 fs/sysfs/dir.c:59
- create_dir lib/kobject.c:73 [inline]
- kobject_add_internal+0xeed/0x1840 lib/kobject.c:240
- kobject_add_varg lib/kobject.c:374 [inline]
- kobject_init_and_add+0x371/0x4e0 lib/kobject.c:457
- rx_queue_add_kobject net/core/net-sysfs.c:1239 [inline]
- net_rx_queue_update_kobjects+0x314/0xd40 net/core/net-sysfs.c:1301
- register_queue_kobjects net/core/net-sysfs.c:2093 [inline]
- netdev_register_kobject+0x2bc/0x4f0 net/core/net-sysfs.c:2340
- register_netdevice+0x1b41/0x25d0 net/core/dev.c:11105
- veth_newlink+0x88f/0x1630 drivers/net/veth.c:1855
- rtnl_newlink_create+0x41c/0x1250 net/core/rtnetlink.c:3823
- __rtnl_newlink net/core/rtnetlink.c:3940 [inline]
- rtnl_newlink+0x2f13/0x3a90 net/core/rtnetlink.c:4055
- rtnetlink_rcv_msg+0x106c/0x14b0 net/core/rtnetlink.c:6944
- netlink_rcv_skb+0x54d/0x680 net/netlink/af_netlink.c:2534
- rtnetlink_rcv+0x35/0x40 net/core/rtnetlink.c:6971
- netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
- netlink_unicast+0xed8/0x1290 net/netlink/af_netlink.c:1339
- netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:712 [inline]
- __sock_sendmsg+0x333/0x3d0 net/socket.c:727
- __sys_sendto+0x593/0x720 net/socket.c:2180
- __do_sys_sendto net/socket.c:2187 [inline]
- __se_sys_sendto net/socket.c:2183 [inline]
- __x64_sys_sendto+0x130/0x200 net/socket.c:2183
- x64_sys_call+0x3c0b/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Bytes 20-22 of 65535 are uninitialized
-Memory access of size 65535 starts at ffff88804b9e3399
-
-CPU: 1 UID: 0 PID: 42 Comm: kworker/1:1 Not tainted 6.16.0-rc4-syzkaller-00013-g66701750d556 #0 PREEMPT(undef) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Workqueue: usb_hub_wq hub_event
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Konrad
 
