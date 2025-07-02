@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-713547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F26AAF5B42
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:38:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAD3AF5B4A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E761C40152
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7AA4A13D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931EE307AEF;
-	Wed,  2 Jul 2025 14:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oa4Y/b/4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB3128A71F
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79632307AF1;
+	Wed,  2 Jul 2025 14:40:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585C42561AF
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 14:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751467133; cv=none; b=td8aw3OxNXIHOe/NMUiFHJKcHq4vK5k/m68Z+1iYT9oYgZRV/bOuUMVORlWclrS3akSTFLRuTO/H+M/UOIQVD+MJvm9eXTLOAR2wljziGOBQA9tB7HJks7q3TBlYlIfMfahS0MA9crgPx7/CibiFaryfLmxkbwbf+YZrFpFXY7k=
+	t=1751467233; cv=none; b=iEMhA0Ca941Zi1xdWBRgVWqWvYP5uzAZHyoWnZdeoxhaeYqMDM+NDHUFUzrmVGkNAusHUYuNIjK5vSiqOKCBGh5BhiKErSYdYSYeU4nnnIJ4fVXMQ9c1NCf10V7IFqF8cEpbbBaAGiJv3X+uSO4k2LNimD8feq2Noe2vsCwpJcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751467133; c=relaxed/simple;
-	bh=wZUs0Lg9nLG5vj3a0ZB7yNj+yaPuo6lcWjmwj8/JImo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtoDGABtJfSyyesDvHh1zORoKEw1fjQxCbaN0qZ5hiqKYFx+NQKJJck5LcVp7/S/S1kIznemGmm1WEfADh8h7r29OYISf09hERyth7ZPVooBd98vx9e4pURRNSTv24dBnkf+jy5qeDzRjBwIDSzWPqA08Q/OYpKPf1i5+/9Gayw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oa4Y/b/4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751467130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jsW6zqBgtCDTnvN34Xc+Lxt07USTsTvI2l+xYg+WY9U=;
-	b=Oa4Y/b/4MHUa5BR7YnPi7+LHD02ZjKVS4Lm0LATlTDDYjKOBtiL16TnpC3Fbubl9smiWBh
-	xGmNjf49aFGIibBpjLrMGycGYv8KpyFiC3MwLubuHkBKp0NE8wLNfe4k/36Xw+O7iX2jkn
-	pM6IbouLxY8BowVwcduj0pvvy9TlvzE=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-530-FmDmaMDPN8i-4cA9eESOAQ-1; Wed, 02 Jul 2025 10:38:49 -0400
-X-MC-Unique: FmDmaMDPN8i-4cA9eESOAQ-1
-X-Mimecast-MFC-AGG-ID: FmDmaMDPN8i-4cA9eESOAQ_1751467128
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-40b0a248ce8so4065022b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 07:38:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751467128; x=1752071928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jsW6zqBgtCDTnvN34Xc+Lxt07USTsTvI2l+xYg+WY9U=;
-        b=etmKSfrYfnz65ZzQK/bqVjFdSzxMaUPq3K3R4fFCXath4+bVMn01jB0BQtJQDSQTVn
-         1jeMbHGgG6rkrUe1zbhSOorSsKVBpXm7s9az2zmZDFTQgtvmZLdBFHFXBVXfDu4U9vNF
-         xZeT+zmAU1VXYmKZpUYqNyfVutOSybkdTK9615d+tOGDAh0N2qD3pJm7XEU/Mt03wJ8i
-         SULz3Tu/3y/wWR81a8GoG8+m4t1Dp8qQs6VgiJ9pLE+Qa3tZHu+DQ/D5SivD9dSzk7bc
-         LOF8MT+odjoL/iXGR/mhYa49V8l+cACy12yJg+5Dr96T4hBUvhLEZf/nulARTJyYVRKZ
-         It2g==
-X-Forwarded-Encrypted: i=1; AJvYcCW97GW6zdtMydJSvgtVt+liGlJOLtSypgrusWMuVhsiIiulq5t5TRl1YDpQzQG+d2uds92C3hqR12GOyLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhcZ6FUsz2rJilYsgcRuU8Ku0z8AX3PepE1GfKSYvhmz0VXcjx
-	5andmpt1dsJzGxPK0NEcyamgZhTzOLfOOVb8pbz05G+ufwVsMtH0Y05wcbqcM/vRh31FuAsmm55
-	zRWJXsl4mmsKwsII+fTjY1YXE6vkzplm8+r4cQfqf0mlaQJqVBCaNpd960B/t1h3UcBtqRPZIW0
-	N7BbyfQE4Sjfuk5RpbUfpk+uirsbKjo+JrX8021F5g
-X-Gm-Gg: ASbGnctv2V4bojQpYhK4KZOEFhUCOQvpBenjzSZQ01STwfQfTfBcja67TN8JapuZpxg
-	pN+v6zDl1N18hdEDX/kW34KI+9P6Ir06NFCS1Y376JBLiDAJi3h6ksGXF7buhlKfD8TBTb76LaD
-	fDZw==
-X-Received: by 2002:a05:6808:1b90:b0:3f8:3489:d93d with SMTP id 5614622812f47-40b88816cbemr2174539b6e.25.1751467128237;
-        Wed, 02 Jul 2025 07:38:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGJkEyRApKN9Snn2Qns9uRFnPDyzYI0heJJY+yiOKE3hkdxWXuRgqyrbD2KwH2XrfLhobH6R7OolRAxc95iss=
-X-Received: by 2002:a05:6808:1b90:b0:3f8:3489:d93d with SMTP id
- 5614622812f47-40b88816cbemr2174514b6e.25.1751467127863; Wed, 02 Jul 2025
- 07:38:47 -0700 (PDT)
+	s=arc-20240116; t=1751467233; c=relaxed/simple;
+	bh=Aj1dmvOg9aToLcm09LeTlRIpHjx9YflykqH4KN3e/YI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SV3KNvTqzerzfa4J9Fs1qxZ8imANhXJhLPXxPD2XFu/udvak0uVb/58t7eOZpi0WYdFvBBxSCzJjPK0QWxyYwvV1D5ln5HNYrH5Pj3lX+28QZHmNs3Q0YPBVBxPB+WU0sfDRdO31qb3GLrYaGxMw5d88dQJF8bgFk7qu1hu+oFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D90B22C7;
+	Wed,  2 Jul 2025 07:40:15 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0824F3F6A8;
+	Wed,  2 Jul 2025 07:40:29 -0700 (PDT)
+Date: Wed, 2 Jul 2025 15:40:28 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/28] coresight: etm4x: Add context synchronization
+ before enabling trace
+Message-ID: <20250702144028.GY794930@e132581.arm.com>
+References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
+ <20250701-arm_cs_pm_fix_v3-v2-6-23ebb864fcc1@arm.com>
+ <aGUSZpR1QHNgLu6f@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250625201853.84062-1-stuart.w.hayes@gmail.com>
- <20250625201853.84062-3-stuart.w.hayes@gmail.com> <2025070157-undaunted-curler-bda3@gregkh>
-In-Reply-To: <2025070157-undaunted-curler-bda3@gregkh>
-From: David Jeffery <djeffery@redhat.com>
-Date: Wed, 2 Jul 2025 10:38:35 -0400
-X-Gm-Features: Ac12FXy9HjgNoFaB4FAc6SLNfV66UqBtwIgyuy9-ldwc1GEwfSJnUe5aDVCjxV4
-Message-ID: <CA+-xHTEk_N6qE5w+hWxXfSMJLQ5tFROMVZnr5h2HUmrwEKVdNQ@mail.gmail.com>
-Subject: Re: [PATCH v10 2/5] driver core: don't always lock parent in shutdown
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Stuart Hayes <stuart.w.hayes@gmail.com>, linux-kernel@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Martin Belanger <Martin.Belanger@dell.com>, 
-	"Oliver O'Halloran" <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>, 
-	Lukas Wunner <lukas@wunner.de>, Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org, 
-	Nathan Chancellor <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>, 
-	Bert Karwatzki <spasswolf@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGUSZpR1QHNgLu6f@e129823.arm.com>
 
-On Tue, Jul 1, 2025 at 5:03=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Jun 25, 2025 at 03:18:50PM -0500, Stuart Hayes wrote:
-> > Don't lock a parent device unless it is needed in device_shutdown. This
-> > is in preparation for making device shutdown asynchronous, when it will
-> > be needed to allow children of a common parent to shut down
-> > simultaneously.
+On Wed, Jul 02, 2025 at 12:05:10PM +0100, Yeoreum Yun wrote:
+
+[...]
+
+> > @@ -445,13 +445,37 @@ static int etm4_enable_trace_unit(struct etmv4_drvdata *drvdata)
+> >  		etm4x_relaxed_write32(csa, TRCRSR_TA, TRCRSR);
 > >
-> > Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-> > Signed-off-by: David Jeffery <djeffery@redhat.com>
-> > ---
-> >  drivers/base/core.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index cbc0099d8ef2..58c772785606 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -4823,7 +4823,7 @@ void device_shutdown(void)
-> >               spin_unlock(&devices_kset->list_lock);
-> >
-> >               /* hold lock to avoid race with probe/release */
-> > -             if (parent)
-> > +             if (parent && dev->bus && dev->bus->need_parent_lock)
-> >                       device_lock(parent);
->
-> What about parents for a device that is not on a bus?  Don't they need
-> to be properly locked?
+> >  	etm4x_allow_trace(drvdata);
+> > +
+> > +	/*
+> > +	 * According to software usage PKLXF in Arm ARM (ARM DDI 0487 L.a),
+> > +	 * execute a Context synchronization event to guarantee the trace unit
+> > +	 * will observe the new values of the System registers.
+> > +	 */
+> > +	if (!csa->io_mem)
+> > +		isb();
+> > +
+> 
+> But, when write to SYS_TRFCR_EL1 in etm4x_allow_trace(), it already does
+> isb(). Is it redundant?
 
-From my examination of the code and history, I do not believe so.
-Locking the parent was added before need_parent_lock was added, and
-when the other locations changed to depend on need_parent_lock to lock
-both, device_shutdown was left always locking both.
+Good point. It is not sufficient. As a system register writing in
+kvm_tracing_set_el1_configuration(), this is why adds a ISB here.
 
-It is simple enough to change the if checks to:
-
-if (parent && (!dev->bus || dev->bus->need_parent_lock))
-
-if you think my understanding is wrong and some bus-less devices have
-come to depend on the behavior.
-
-David Jeffery
-
+Thanks,
+Leo
 
