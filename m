@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-712913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7940DAF107C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:49:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F05BAF1110
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F89B4A5D9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:47:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95BE07A494D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E9C2522BE;
-	Wed,  2 Jul 2025 09:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E95725392D;
+	Wed,  2 Jul 2025 10:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="km48lblw"
-Received: from mail-m49207.qiye.163.com (mail-m49207.qiye.163.com [45.254.49.207])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="CCVhNbF0"
+Received: from mail-m49202.qiye.163.com (mail-m49202.qiye.163.com [45.254.49.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5352E24DD1F;
-	Wed,  2 Jul 2025 09:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773CB24DCF6;
+	Wed,  2 Jul 2025 10:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751449604; cv=none; b=g5ktyZGYmjID7R5uzgpuYfF3nS6c/CcGAXWsxGfoMQCPIBR8uKRx7klPtu0gKs/YFldCuzqzePBVUVzvzORnpXw1j5G+Xq23qVb6DLhnKsmD2Y/b6BUnJQA7Z0UyymUEIB7Gbve2vT8B2owG3vOxhMXD6k5naP04to0IptS6wCg=
+	t=1751450516; cv=none; b=YY5dIUv5Tg25+bfoTe3VKi/whOdNgrKaCb2hWVdb7eZtU5fB4igHEV05FgAcevC90oVz70ZM0p4RRm7gi9zkJ2RxhxmiyNFZPobkNGUHK7R8oRSyuzk234mY2b599sZ58GxhrHwtODsk6cwsrA3EKNwv9PAXALHPE052n7qVDeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751449604; c=relaxed/simple;
-	bh=R0CWMLD/EEHYNbcG8KgTMPj2hzXibcGsXODlklTI5q4=;
+	s=arc-20240116; t=1751450516; c=relaxed/simple;
+	bh=i9OB2XoW87G6P7CVuqhw+Zp1R6CIsj11Qr8nH7WUQ4k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GEWLFRnLQJV3C0p2BbmcTABZf2xjC5Hk1LYE+FYlfcwYtTDkLXAkM6QBaDHcvo3bWU7feaiX4jIbXvxITNPikbwq42EuV8/cH+yJVTkiITVZqtx047CbTJAPQOVnVYWcdccSVytovd581AT/mtSHyrAyhSSbEx3yYtv/4ayvtYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=km48lblw; arc=none smtp.client-ip=45.254.49.207
+	 MIME-Version; b=jjCYxiKYagHhc/FiPV4ih6xyeLrdYs4qSeCkk8J3J8xFGu+EnQh56sa5hv9fw8LQXcQGlBdSjhiYksmCC+NUO2sSuCPdhsVJMRk4Q6B0vUh9g0zZK1t2gPq0XgCLtCgLbfSAF+gpxnNiMxgFdIlNUo8Dg6rQLcqyxcILNHqh1AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=CCVhNbF0; arc=none smtp.client-ip=45.254.49.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
 Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed36;
-	Wed, 2 Jul 2025 17:46:31 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed42;
+	Wed, 2 Jul 2025 17:46:33 +0800 (GMT+08:00)
 From: Albert Yang <yangzh0906@thundersoft.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -66,9 +66,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	shanchun1218@gmail.com,
 	ben.chuang@genesyslogic.com.tw,
 	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v2 2/8] dt-bindings: arm: add Black Sesame Technologies (bst) SoC
-Date: Wed,  2 Jul 2025 17:44:38 +0800
-Message-Id: <20250702094444.3523973-3-yangzh0906@thundersoft.com>
+Subject: [PATCH v2 3/8] arm64: Kconfig: add ARCH_BST for bst silicons
+Date: Wed,  2 Jul 2025 17:44:39 +0800
+Message-Id: <20250702094444.3523973-4-yangzh0906@thundersoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250702094444.3523973-1-yangzh0906@thundersoft.com>
 References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
@@ -79,74 +79,60 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUhXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGR1JVk4YGENDTEpJHh5OQ1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSklVT1
-	VKT1kG
-X-HM-Tid: 0a97ca87dd3009cckunmee1cabff3ebaba
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHkNOVk9LQktMGRpOSBgYH1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCS0NVSk
+	tLVUpCWQY+
+X-HM-Tid: 0a97ca87e53409cckunmee1cabff3ebb07
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pxg6KTo6TzE*T089KxksHQw9
-	CD4aCQ5VSlVKTE5KT09CTkJIS0NKVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUhKSEw3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nxg6DAw5HjE5LE9RQiIzHUkP
+	TC8aCi5VSlVKTE5KT09CTkJPQkxPVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUlMSU43Bg++
 DKIM-Signature:a=rsa-sha256;
-	b=km48lblwqhJ9eMNaOOixs21bDUWw710nq+WF3nGAJkUGzohpfAFY+A5CVIoRyltnZs22ksywNjzOgET76hamxpDBF9R2HS4wUCyQgTxvo7xVqyRedMN6Tw+WsJO1RgD0TEFox7TMi1Djhh6zAs54h+QEhBwVrqNNP5Gokbgz6uA=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=7HId0QjN1Uxd1UcS1PVWLgSUuLheSa0vzbbArIAI4e0=;
+	b=CCVhNbF0z/nZNzKXzKPmTCziV/mfP8r7/JXYSuX3+o352hI3g6Kd+ZBKmVA2IicGO6JRd2Fv501c/80xty3Xoc6C9D1Fk8SXqWl+jay/xIqLslItLvj1HV/8BynCZlGPmq7wpK9nT9EFSJP0rrE9PrdQfzgP4wfgYZcHo+W1q0c=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=+mZ281H0S02t7176D+bqxjl4chkVEj1RFfKyhGtpJ7c=;
 	h=date:mime-version:subject:message-id:from;
 
-Add device tree bindings for Black Sesame Technologies Arm SoC,
-it consists several SoC models like C1200, etc.
-
----
-Changes for v2:
-- Removed unnecessary pipe (`|`) in description
-- Dropped invalid `compatible` entry for standalone SoC
-- Removed root node (`$nodename: '/'`) definition
+Add ARCH_BST for bst SoC series support.
 
 Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
 Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 ---
- .../devicetree/bindings/arm/bst.yaml          | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/bst.yaml
+Changes for v2:
+- Placed the configuration entry in correct alphabetical order
+- Used generic family name (ARCH_BST) instead of SoC-specific naming
+- Followed upstream kernel naming and description conventions
+---
+ arch/arm64/Kconfig.platforms | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/bst.yaml b/Documentation/devicetree/bindings/arm/bst.yaml
-new file mode 100644
-index 000000000000..e6f48f569768
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bst.yaml
-@@ -0,0 +1,30 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/bst.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index a541bb029aa4..4412d54b224d 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -106,6 +106,14 @@ config ARCH_BLAIZE
+ 	help
+ 	  This enables support for the Blaize SoC family
+ 
++config ARCH_BST
++	bool "Black Sesame Technologies SoC Family"
++	help
++	  This enables support for Black Sesame Technologies (BST) SoC family.
++	  BST produces automotive-grade system-on-chips for intelligent driving,
++	  focusing on computer vision and AI capabilities. The BST C1200 family
++	  includes SoCs for ADAS and autonomous driving applications.
 +
-+title: BST platforms
+ config ARCH_EXYNOS
+ 	bool "Samsung Exynos SoC family"
+ 	select COMMON_CLK_SAMSUNG
+@@ -402,4 +410,6 @@ config ARCH_ZYNQMP
+ 	help
+ 	  This enables support for Xilinx ZynqMP Family
+ 
 +
-+description:
-+  Black Sesame Technologies (BST) is a semiconductor company that produces
-+  automotive-grade system-on-chips (SoCs) for intelligent driving, focusing
-+  on computer vision and AI capabilities. The BST C1200 family includes SoCs
-+  for ADAS (Advanced Driver Assistance Systems) and autonomous driving applications.
 +
-+maintainers:
-+  - Ge Gordon <gordon.ge@bst.ai>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: BST C1200 CDCU1.0 ADAS 4C2G board
-+        items:
-+          - const: bst,c1200-cdcu1.0-adas-4c2g
-+          - const: bst,c1200
-+
-+additionalProperties: true
-+
-+...
+ endmenu # "Platform selection"
 -- 
 2.25.1
 
