@@ -1,263 +1,176 @@
-Return-Path: <linux-kernel+bounces-713773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E717AF5E3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:14:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DD0AF5E35
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAB711C44271
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:14:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2C57A7A72
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416422E7BD5;
-	Wed,  2 Jul 2025 16:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2C52E7BD7;
+	Wed,  2 Jul 2025 16:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xVsDIZQR"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2059.outbound.protection.outlook.com [40.107.236.59])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AhmPsFF0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B512D46BE
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751472825; cv=fail; b=W1q3S5U+VuImE/mYgx8NqYA9Dnp1VkJ/XluOnQguV4y95MZGWD6mQo3mopy7KnC/gzO7tC45pCHtJNQpRX473yxoOXYlPTriYNwNmP3JwGMB3KqSJ05dIPNmjyqPcpPD/gGQc++Q8b8tsLD0kA9comkDhRlDlNwFGEgZy/EFCIQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751472825; c=relaxed/simple;
-	bh=WW3H/3PUBAN8vbvlxSIkCZqtgDWeezWeZRaaVmjUs9g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QGhmGFWeFMAd/ddV3io4EbFAvyXAdScj0eYKh3oeotJIoTKp4Oe0ycr4cDU9kzYPMOu8h1u+tq4wyW1meVoz5aZUptEjKDdGRVir/FRA0dhoAe7dLjyS7Sr6w+Ay1Lz3SbV2/+FcgfaxZy8afMOJFN46IsRXj4WOXUghFHsKhBs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xVsDIZQR; arc=fail smtp.client-ip=40.107.236.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fj8gf5UxDu9efmB4JMNU5fERkgwKH5AjoIf//mYRCJgwB5hWhrWrerW+h2b4zxSxsuxes6svW2AI3eE24Q0NPj8mmXJywQlo0DidSFcCrbBNdoGnx4CvxhJwStXOymyrlNG9QwYWICuUMTlf8MflAqjB/XBJJZ1MKMuKp6atc82IbgLUr+5/9CRAys3KOg6PoXAPCvsndh2FfckcP9JQjRp9RBoL/Dgu3Z324DRkPn4N+EC2sfobiAVH/sghVFrmWGwLQnCpUMR34HBdYH29DpcVVr1UDaH3LdJCGdNdkGx3efJSnepU32tiJpxtqVbqzsKJJAnbgo4Kbp1Kq5AdjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ik1fsrU3+1GM9eFwPLMAXJh38CC+gxZmcnGsD0S1ytI=;
- b=RwbgBvWpXlGq9zv4gk9N0WQP5J9vQEB18SlfsexS7NqcmAjdFvJsVtlwYUxRwuYnH7tJAH/jTVNv+eP7Dz4blWFnnzXdxqazOfKcxyT4CGoN0OEChcRsXeonSZZ1ORgB3jmCMXKkwAo85CJPaIquhzHb+JVVGw/EVDDVPNUuOfPMjrata2I7bAmXbISXXQzpQI55ZA+k4A4cNERfqvw6pwZtjOiQM8ZDnn+DtiXyMZOf+16SAYPCzZBZ6Qbib0rWPy8XoIjthUNIn9pJwLT0O2MWSmBRatxuOGShqghPeOWH7lJfXWXYuwq40yjZydr8sUyCCU56C2fYV9/be3FhRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ik1fsrU3+1GM9eFwPLMAXJh38CC+gxZmcnGsD0S1ytI=;
- b=xVsDIZQRzKh25OQv06cpWeuPDVXg15C5/9ePZE80MCtT6VJkVrzIRy1F8rWJvip8osuA+yx7I6UAi7zi0F3WA+IenTQd+V0wB07XbKZkmO+9Id84rPexTwzfl2Ofn79FO4dNayUobXP94negjYYWIgqSLOUdgUGqa8dDt2OOhSA=
-Received: from SN7P222CA0016.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:124::16)
- by PH8PR12MB7325.namprd12.prod.outlook.com (2603:10b6:510:217::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Wed, 2 Jul
- 2025 16:13:36 +0000
-Received: from SA2PEPF00001504.namprd04.prod.outlook.com
- (2603:10b6:806:124:cafe::9e) by SN7P222CA0016.outlook.office365.com
- (2603:10b6:806:124::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.21 via Frontend Transport; Wed,
- 2 Jul 2025 16:13:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00001504.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8901.15 via Frontend Transport; Wed, 2 Jul 2025 16:13:35 +0000
-Received: from FRAPPELLOUX01.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
- 2025 11:13:33 -0500
-From: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 3/3] drm/buddy: dont go over the higher orders multiple times
-Date: Wed, 2 Jul 2025 18:12:04 +0200
-Message-ID: <20250702161208.25188-4-pierre-eric.pelloux-prayer@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250702161208.25188-1-pierre-eric.pelloux-prayer@amd.com>
-References: <20250702161208.25188-1-pierre-eric.pelloux-prayer@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5151F2E7BB9
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751472751; cv=none; b=l8EeE940ZnFa3vbbMVpDPwmFY+W5ITVCv2QlnE9NynZGybPmXCxSA9PPcYOaNinkM1cR5FiTUvwDvLLeNLbqdSzC0dtoMCx9mbwWpLl89gSlg05rqQP7/TgaZrbuMGlGhrxHjsnt+72rbJ9qHh+2zot9+AH+dJw5kKiVeVYxIlg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751472751; c=relaxed/simple;
+	bh=m0eEcaCjmUCFL4JFaEiBzPDfdxn8QHFuAUdYAEKfPb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mFsG1+i+lXPf7DkClFr0q9Ovm1SElLH0LSg+Ra1f6UFYBkx+oZoEYQeAi29vP5F7h359A5owk2F+bJhbflis6GM4ViB/c8tJc3HpZ7FVSy0IDk9Yz/zlXuvo1XhluGBTF+3dWMW+HMVwPZe25RAhZkg/Dh5xQ/8NRnFdskBxujs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AhmPsFF0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751472747;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EUYWoR42G+SMmKsDPy2iaqrLNIu9+Nuw9et8Q6pFC+U=;
+	b=AhmPsFF0jJaTLpxtqgtIrrVshXTBb4VmIn1sTBoyhPpACk5wunDHHs8Bx5zoa4qoQr2cAB
+	p368JwuDW5HdKroiScwSmBI5zjqj74Qz5LQaqQfursg7os46ZZ1nTI0/Kkj7GAaP6OiT+I
+	pjbl8UI2hIJlGK8pRsK+DdSeppRsJY0=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-n80TOq8dNAKf1alAYALrnQ-1; Wed, 02 Jul 2025 12:12:23 -0400
+X-MC-Unique: n80TOq8dNAKf1alAYALrnQ-1
+X-Mimecast-MFC-AGG-ID: n80TOq8dNAKf1alAYALrnQ_1751472743
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4a985909a64so2646761cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:12:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751472743; x=1752077543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EUYWoR42G+SMmKsDPy2iaqrLNIu9+Nuw9et8Q6pFC+U=;
+        b=e7Qn6wmnZUlcrG6wlpGAKFeaHARXqY3OreZ1I446ogayFX7dxJCjhxAuVeA/y43rfl
+         t8gm8ZQgVc+sJpjUoLPVySwzn+7gLcyOiAojuExsUdQ4C/jGlNzVFhlFGS8/dBEwj5J2
+         GpyCRjrR006RlfWqRkN8MMtZwv7rSoddvdl+5Q0cElKkR4/hbLQxbEonEFVqpWMqIv1r
+         Py2u1wDzjBiYEj+CU1sgODG5DGAVvhYAsY3Hs4gvLcB5dQGxu71EGII3Me28GFIUoGsA
+         M+eUDKuqagd4q7uMkuco9kYi4/cj/XRwgEzHNeyGs6Mxdxohuu5+xw52v/eNV7Ea89vM
+         ykqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFiV+Fq16rCELuj8WAAzSVH7ez8umTEqMGKELf1yDpXE0X+0e5q5xN2QQvH2MrYb1v1xP9Qdid4WSbu34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvYCcpiGgs2xMZwFz11smxkeysyfd6Bp8CLizBmddWxo5PN4Nh
+	vKs2W6yIt78TU0DfbG3Ps1ihH/pfZ1opUPNhMIvls1VLrYJm7UQm0bJQVYzufnIslY1DGwbaiDg
+	fxW5b8WWx/T9lSF/HqCUTa6HjN4aozneRVywTzLDg/U+XScQYulhUah6MCCkikqgjL/ujmurQp7
+	h23v7oPpS+NOa7Vc+n4ItV7iDgdfIqmcfcrXTijZRI
+X-Gm-Gg: ASbGncvo6+1wZ2jxsSX5hcIDo0J0xHM9cog26laTusEqVXHrrGjgf3chl149ce+Wuta
+	0ILUH0Mzwou7zg4fCzsvIIWMJUhXR58N9Qaaf1n77HReQfXbkgljFC18o8cAtNH8w+SGa7VlDqU
+	cHGY2x6JB7+kVweSGZs9+lAWJpDBKKWNvzJ6SM
+X-Received: by 2002:ac8:5a8e:0:b0:4a8:eba:afa with SMTP id d75a77b69052e-4a976a3727cmr65408561cf.52.1751472742505;
+        Wed, 02 Jul 2025 09:12:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGLnGgcGhxBcVfguvFJiZmlK/0RzO2gvvQsRBX2MAmcT2pXIrn00MLL/gJHBtybAndawS8Bg8/32exWz0tC//w=
+X-Received: by 2002:ac8:5a8e:0:b0:4a8:eba:afa with SMTP id d75a77b69052e-4a976a3727cmr65407891cf.52.1751472742090;
+ Wed, 02 Jul 2025 09:12:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001504:EE_|PH8PR12MB7325:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c03b0f0-1cdc-4d21-5705-08ddb98365c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7FPfXiVCZxILjuV/nzvRpMK/FBYIgvadxKV6mFY60jur9EDwOx9FU1ENfUSd?=
- =?us-ascii?Q?DYz5eAfKawiylss9E0fMe0qdZ6CHYGnozQcjjKU8cU3TugPW8ZhV5kgWgdNr?=
- =?us-ascii?Q?9LTEI5CpZXLVhxrWVnGtTh/w7F74LABveejwvzGjfwVXWBo1Qj03+er1uxoI?=
- =?us-ascii?Q?/c1PwGeN2uitefhK63zB2gtCw3TF/AE6CAlTAA55TDxAXDpCkLJHyGxrZ4MF?=
- =?us-ascii?Q?fGrbPHSb22po2lquz+tOKJl5itAmpyw3D7AZkJy9Q0bisTXQk9UY0dyIFhQw?=
- =?us-ascii?Q?D6agBq4KzeZnQIYs9H0/knp4WnwGVEySpv7wsIzQN4S2jpt2TQedmodADg6W?=
- =?us-ascii?Q?0k8244uXw9244dkiRbMO/5tiUJI4N/ArHoPqoDn/hoXnLj6pY5dyOTYsGXpE?=
- =?us-ascii?Q?DwN/sRCErIvZ9tTzFuwk85s8hSrPe5w5p3Qh8V5JOVPEP6imXvdkfpSg4/Nf?=
- =?us-ascii?Q?XOa49+wU8o60bqL9xdgjyB5PFNNYHjEwhlE52NrBTbEXyLAaTRIsYsaRIO1Y?=
- =?us-ascii?Q?H6BTwItrXITbekWXnCTdUdL8vBE9288baZPXo7Zx3saPlMK3QVexnDWQqzFT?=
- =?us-ascii?Q?cG563HcHDHwfKrLZILI9T3MdwB/vDJ7MnxUICbpnUAWh+B1D8OY0RxLE4LnI?=
- =?us-ascii?Q?LaXYvCb/G9enKnutEvzXhZlVfly28SciPf8GGdwSHLAiglMgEk61SdLJVHRe?=
- =?us-ascii?Q?jcq9SkXgaE8Vgd4HwWaA7nVfajTWAa6i3U/hcNjVIpDdD98PWKWRRILDW8yU?=
- =?us-ascii?Q?uv+QmsQUiAj3jXNR7riIZjDVuoNg/h43ry4Rk7J8nmE5GMyjxXRaHReFQUqX?=
- =?us-ascii?Q?6y+ffKmCVXMiD5v3EJwwffvtj+pQluDwRW4wc+84uMunHhRo4GipqB3NYO3Q?=
- =?us-ascii?Q?O3+9ytkSlI4GTder17tSLj7e3hvH1MU78JfXoRAwsnBr6fiv9AaUQXNp9YrF?=
- =?us-ascii?Q?yK1xbDi102SUWU6V9t6CDWPkQzf9E2PCaO0tttqg/rV3gNHne3WLfb0FH1vN?=
- =?us-ascii?Q?AtVlciMIZQy/yvjSCsB+cG1Lms/1mSnnJ6K7y49pl9aGX0JmJ4BVwXTQQPZl?=
- =?us-ascii?Q?GATtm/JqiZLyA5jww1fCWTDwxp7vmCIHfkPwKK00jHdGMHJOIG87oGlUoFEf?=
- =?us-ascii?Q?/MhUn/B0tRsX2x0ePB1Zl3HTA+lID8xsjG8PwG8KNaD3f9pb99e49sbvnGcs?=
- =?us-ascii?Q?JeUBiG81+Wog3bIb+iWv75d0Et3OFpXJdahpZ5OEFkTF4sXvOqa1NCsrV2lr?=
- =?us-ascii?Q?/Js8aVzTkNVDqe7X9MU3YNGa40ni38IfJmlwDtHqxjzx3YybFdFKDL6o3oIh?=
- =?us-ascii?Q?3C5a1Pm66zgqqRZMmmm+JpWNG85ymfR30+EoHih66HfQK9L/F6FRVHNhvpzW?=
- =?us-ascii?Q?POxY+/PrxR2SjxiQNAMCH2zaWTjH3g36XWxJ2fSwMxnPvBhBU7LxOxBO7HPl?=
- =?us-ascii?Q?iBaeiVy2Qmn2sY4fXkS/UAavnLtmhcg4MqwembNyNrnq4wIVt7koCmBYs2ri?=
- =?us-ascii?Q?JbsKgUDvAf/LeaXuzCh8WWJTScHBkzXiy9RZ?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 16:13:35.4909
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c03b0f0-1cdc-4d21-5705-08ddb98365c2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001504.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7325
+References: <20250612104349.5047-1-gpaoloni@redhat.com> <20250612104349.5047-3-gpaoloni@redhat.com>
+ <20250701181119.7b0bc5d6@batman.local.home> <CA+wEVJarZben=F3Dw0A8_tvAAR7-qb4PrjCj0AGFoq=DH1RJwg@mail.gmail.com>
+ <20250702111245.1fa23138@batman.local.home>
+In-Reply-To: <20250702111245.1fa23138@batman.local.home>
+From: Gabriele Paoloni <gpaoloni@redhat.com>
+Date: Wed, 2 Jul 2025 18:12:11 +0200
+X-Gm-Features: Ac12FXwM4LZQpznS--1r7Sy5LekmCvpoP3iwhSrFZmt-bmCIWn0LWN2GieA0ff4
+Message-ID: <CA+wEVJbjhLmA4ZR5w7s6QDCfjET=Pf2J9PsFhC2wdO1nQ5YY+A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] tracing: add testable specifications for event_enable_write/read
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	acarmina@redhat.com, chuck.wolber@boeing.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-AFAICT the rationale for the loop is to:
-1) try to allocate from the preferred order
-2) if it fails, try higher orders (order + 1 -> max order)
-3) if it fails, try smaller orders (order - 1 -> min order)
+On Wed, Jul 2, 2025 at 5:12=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+>
+> On Wed, 2 Jul 2025 16:59:29 +0200
+> Gabriele Paoloni <gpaoloni@redhat.com> wrote:
+>
+> > Mmm got it. What about
+> >
+> > * Function's expectations:
+> > * - This function shall lock the global event_mutex before performing a=
+ny
+> > *   operation on the target event file and unlock it after all operatio=
+ns on
+> > *   the target event file have completed;
+>
+> Since 99% of the time that a lock is taken in a function it is
+> released, I think that should be the default assumption here, and only
+> when a lock is taken and not release, that should be explicitly called
+> out.
+>
+> And also we should remove "This function" we know that these
+> requirements are for this function.
+>
+>   - The global event_mutex shall be taken before performing any
+>     operation on the target event.
+>
+> Should be good enough.
+>
+> If the lock can be released and taken again, that too should be
+> explicit in the requirements otherwise it is assumed it is taken once
+> and not released until the operation is completed.
 
-Steps 1 and 2 are covered by the loop going through [order, max_order].
-Currently step 3 tries again [order, max_order] but with decreasing
-values of order.
 
-This is wasteful, so change it to evaluate only order.
 
-Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
----
- drivers/gpu/drm/drm_buddy.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> > *
+> > * - This function shall format the string copied to userspace according=
+ to
+> > *   the status flags retrieved from the target event file:
+> > *    - The first character shall be set to "1" if the enabled flag is
+> > set AND the
+> > *      soft_disabled flag is not set, else it shall be set to "0";
+> > *    - The second character is optional and shall be set to "*" if eith=
+er the
+> > *      soft_disabled flag or the soft_mode flag is set;
+> > *   - The string shall be terminated by a newline ("\n") and any remain=
+ing
+> > *      character shall be set to "0";
+>
+>  - The string copied to user space shall be formatted according to the
+>    status flags from the target event file:
+>
+>    - If the enable flag is set AND the soft_disable flag is not set then
+>      the first character shall be set to "1" ELSE it shall be set to "0"
+>
+>    - If either the soft_disable fag or the soft_mode flag is set then the
+>      second character shall be set to "*" ELSE it is skipped.
+>
+> I think the above is easier to read and is a bit more consolidated.
+> Stating the status then the effect is also easier to read.
 
-diff --git a/drivers/gpu/drm/drm_buddy.c b/drivers/gpu/drm/drm_buddy.c
-index fd31322b3d41..9d3723f2cff9 100644
---- a/drivers/gpu/drm/drm_buddy.c
-+++ b/drivers/gpu/drm/drm_buddy.c
-@@ -590,13 +590,14 @@ __drm_buddy_alloc_range_bias(struct drm_buddy *mm,
- 
- static struct drm_buddy_block *
- get_maxblock(struct drm_buddy *mm, unsigned int order,
-+	     unsigned int max_order,
- 	     unsigned long flags)
- {
- 	struct drm_buddy_block *max_block = NULL, *block = NULL;
- 	bool wants_clear;
- 	unsigned int i;
- 
--	for (i = order; i <= mm->max_order; ++i) {
-+	for (i = order; i <= max_order; ++i) {
- 		struct drm_buddy_block *tmp_block;
- 
- 		wants_clear = flags & DRM_BUDDY_PREFER_CLEAR_ALLOCATION;
-@@ -635,6 +636,7 @@ get_maxblock(struct drm_buddy *mm, unsigned int order,
- static struct drm_buddy_block *
- alloc_from_freelist(struct drm_buddy *mm,
- 		    unsigned int order,
-+		    unsigned int max_order,
- 		    unsigned long flags)
- {
- 	struct drm_buddy_block *block = NULL;
-@@ -643,12 +645,12 @@ alloc_from_freelist(struct drm_buddy *mm,
- 	int err;
- 
- 	if (flags & DRM_BUDDY_TOPDOWN_ALLOCATION) {
--		block = get_maxblock(mm, order, flags);
-+		block = get_maxblock(mm, order, max_order, flags);
- 		if (block)
- 			/* Store the obtained block order */
- 			tmp = drm_buddy_block_order(block);
- 	} else {
--		for (tmp = order; tmp <= mm->max_order; ++tmp) {
-+		for (tmp = order; tmp <= max_order; ++tmp) {
- 			struct drm_buddy_block *tmp_block;
- 			wants_clear = flags & DRM_BUDDY_PREFER_CLEAR_ALLOCATION;
- 
-@@ -956,6 +958,7 @@ static struct drm_buddy_block *
- __drm_buddy_alloc_blocks(struct drm_buddy *mm,
- 			 u64 start, u64 end,
- 			 unsigned int order,
-+			 unsigned int max_order,
- 			 unsigned long flags)
- {
- 	if (flags & DRM_BUDDY_RANGE_ALLOCATION)
-@@ -964,7 +967,7 @@ __drm_buddy_alloc_blocks(struct drm_buddy *mm,
- 						     order, flags);
- 	else
- 		/* Allocate from freelist */
--		return alloc_from_freelist(mm, order, flags);
-+		return alloc_from_freelist(mm, order, max_order, flags);
- }
- 
- /**
-@@ -995,7 +998,7 @@ int drm_buddy_alloc_blocks(struct drm_buddy *mm,
- {
- 	struct drm_buddy_block *block = NULL;
- 	u64 original_size, original_min_size;
--	unsigned int min_order, order;
-+	unsigned int min_order, max_order, order;
- 	LIST_HEAD(allocated);
- 	unsigned long pages;
- 	int err;
-@@ -1044,6 +1047,7 @@ int drm_buddy_alloc_blocks(struct drm_buddy *mm,
- 
- 	do {
- 		order = min(order, (unsigned int)fls(pages) - 1);
-+		max_order = mm->max_order;
- 		BUG_ON(order > mm->max_order);
- 		BUG_ON(order < min_order);
- 
-@@ -1051,6 +1055,7 @@ int drm_buddy_alloc_blocks(struct drm_buddy *mm,
- 			block = __drm_buddy_alloc_blocks(mm, start,
- 							 end,
- 							 order,
-+							 max_order,
- 							 flags);
- 			if (!IS_ERR(block))
- 				break;
-@@ -1062,6 +1067,7 @@ int drm_buddy_alloc_blocks(struct drm_buddy *mm,
- 					block = __drm_buddy_alloc_blocks(mm, start,
- 									 end,
- 									 min_order,
-+									 mm->max_order,
- 									 flags);
- 					if (!IS_ERR(block)) {
- 						order = min_order;
-@@ -1082,6 +1088,7 @@ int drm_buddy_alloc_blocks(struct drm_buddy *mm,
- 				err = -ENOSPC;
- 				goto err_free;
- 			}
-+			max_order = order;
- 		} while (1);
- 
- 		mark_allocated(block);
--- 
-2.43.0
+I will add all your suggestions in v4.
+Many thanks for your review!
+Gab
+
+>
+> -- Steve
+>
+>
+> > *
+> > * - This function shall invoke simple_read_from_buffer() to perform the=
+ copy
+> > *   of the kernel space string to ubuf.
+> >
+> > (pls note that the check on cnt has been removed in v3 that is out alre=
+ady)
+>
 
 
