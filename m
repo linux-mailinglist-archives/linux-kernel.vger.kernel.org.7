@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-713376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6764AF5941
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3943AF15AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF7D87BD310
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6063BB1A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C7287516;
-	Wed,  2 Jul 2025 13:19:38 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292ED2874E0;
-	Wed,  2 Jul 2025 13:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD3F23D29A;
+	Wed,  2 Jul 2025 12:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uOclpbdW"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E03C1E480;
+	Wed,  2 Jul 2025 12:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462378; cv=none; b=PdsOgiZgXI568l8YZV30QBAUadedVCcRmCYTa/cDGAUU8AVd9rrbAYBXgCzgab5181noG8ZLlVz1NAqT3G70HlpBLfGTQH1Zod8h7fGKydUIpSpGEIEUsxfAwZwp+/eQvo1H51bDaE5x/FsjgY0ytljH+sFC5DlLpy+0KI6B1zY=
+	t=1751459461; cv=none; b=PNVe6Qu8PFlu22rgtzTmGIxGgMZi1sJvVDt7i6SxI55AwtfZIRRk8pXG5ziS4JeBMjhJjnTCV2lr3lx8YvzY27Mqo2ugn9twAvLeZp8F1onKr36jjjrYzBgufZz9huiVdfuBjQjj0k0o34bGGILz9JD5hzVwvQUwGYx0kQ6YDOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462378; c=relaxed/simple;
-	bh=tuVAUH59+l/O8UCrXTZ5Z+cA00nPP9nSSO/OIl+MgdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBCIy0Bb0mRHwFneiz8vMCvdQlJfftWVJE6amIukS7E8Bliha8ubTOecT4oxXWMdR1lGzFEQ2WMJTPpuKuyeUwGgV/+BZzpgr+fmvb7H91Iskjb2N1/Iwuy0kGgKhQ+UI9FHqZskANI3C6aWMdg05mUng0usblpZwp3LNgGgbMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uWwab-00058l-00; Wed, 02 Jul 2025 14:29:25 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 9F5D4C0C86; Wed,  2 Jul 2025 14:28:58 +0200 (CEST)
-Date: Wed, 2 Jul 2025 14:28:58 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Huacai Chen <chenhuacai@kernel.org>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com
-Subject: Re: [PATCH v4 1/2] MIPS: Don't crash in stack_top() for tasks
- without ABI or vDSO
-Message-ID: <aGUmClZQXMIQAIif@alpha.franken.de>
-References: <20250611-kunit-mips-v4-0-1d8997fb2ae4@linutronix.de>
- <20250611-kunit-mips-v4-1-1d8997fb2ae4@linutronix.de>
+	s=arc-20240116; t=1751459461; c=relaxed/simple;
+	bh=ochG6ugWYbmuJiaEjRqcoWoR0DKCjQg/LTcy4LEQKPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K+2zgrzzipJZ0VLZnHorxA8NmJmn6KOQlCeVW5Mm+Easj3rZKUClIYODrsd2EBXOZp4FEYEzqnRYj3Sz47HTKvzwBow3zBj18wK3ybfHzMGymPf6qr6Uw2wYUBe7Pm7I4mkmexGoGw+z05r4DvPqzgcNOm+E25aMH88ByXNhoH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uOclpbdW; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1751459448; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=8sg3F1xvFGQ55WLtut50r+Q56w4tVb4Lz11K8/MRd6o=;
+	b=uOclpbdWwgfALoqMQEtxPocZTP0mS6A0zdpTW6+Q0Kw7VaA0O/4TNcdZvywFkYqjKsXpU7rC02mXFWlYrc6W7UIpDgKrhZPsdBFuMC3p5b6v1hP9Wgp/QG0QhXHOFvAZ/ZMRWi6DQtbdc5Ffn10dtUk/Vrg4W07bo8eWkh6kIpA=
+Received: from DESKTOP-S9E58SO.localdomain(mailfrom:cp0613@linux.alibaba.com fp:SMTPD_---0WgftUI4_1751459444 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 02 Jul 2025 20:30:48 +0800
+From: cp0613@linux.alibaba.com
+To: yury.norov@gmail.com
+Cc: alex@ghiti.fr,
+	aou@eecs.berkeley.edu,
+	arnd@arndb.de,
+	cp0613@linux.alibaba.com,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux@rasmusvillemoes.dk,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com
+Subject: Re: [PATCH 2/2] bitops: rotate: Add riscv implementation using Zbb extension
+Date: Wed,  2 Jul 2025 20:30:43 +0800
+Message-ID: <20250702123043.1460-1-cp0613@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <aGQprv3HTplw9r-q@yury>
+References: <aGQprv3HTplw9r-q@yury>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250611-kunit-mips-v4-1-1d8997fb2ae4@linutronix.de>
 
-On Wed, Jun 11, 2025 at 01:28:26PM +0200, Thomas Weiﬂschuh wrote:
-> Not all tasks have an ABI associated or vDSO mapped,
-> for example kthreads never do.
-> If such a task ever ends up calling stack_top(), it will derefence the
-> NULL ABI pointer and crash.
-> 
-> This can for example happen when using kunit:
-> 
->     mips_stack_top+0x28/0xc0
->     arch_pick_mmap_layout+0x190/0x220
->     kunit_vm_mmap_init+0xf8/0x138
->     __kunit_add_resource+0x40/0xa8
->     kunit_vm_mmap+0x88/0xd8
->     usercopy_test_init+0xb8/0x240
->     kunit_try_run_case+0x5c/0x1a8
->     kunit_generic_run_threadfn_adapter+0x28/0x50
->     kthread+0x118/0x240
->     ret_from_kernel_thread+0x14/0x1c
-> 
-> Only dereference the ABI point if it is set.
-> 
-> The GIC page is also included as it is specific to the vDSO.
-> Also move the randomization adjustment into the same conditional.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> Reviewed-by: David Gow <davidgow@google.com>
-> ---
->  arch/mips/kernel/process.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
+On Tue, 1 Jul 2025 14:32:14 -0400, yury.norov@gmail.com wrote:
 
-applied to mips-next.
+> > static inline u8 variable_rol8(u8 word, unsigned int shift)
+> 
+> Now that it has assembler inlines, would it help to add the __pure
+> qualifier?
 
-Thomas.
+Even if the same parameters are passed in, after comparing the disassembly
+with and without the __pure qualifier, it is found that it does not help.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+> Please do the following:
+> 
+> 1. Drop the generic_ror8() and keep only ror/l8()
+> 2. Add ror/l16, 34 and 64 tests.
+> 3. Adjust the 'loop' so that each subtest will take 1-10 ms on your hw.
+> 4. Name the function like test_rorl(), and put it next to the test_fns()
+>    in lib/test_bitops.c. Refer the 0a2c6664e56f0 for implementation.
+> 5. Prepend the series with the benchmark patch, just as with const-eval
+>    one, and report before/after for your series. 
+> 
+> > > Please find attached a test for compile-time ror/rol evaluation.
+> > > Please consider prepending your series with it.
+> > 
+> > Okay, I'll bring it to the next series.
+> 
+> Still waiting for bloat-o-meter results.
+
+Ok, in the next series I will provide a patch for the benchmark, and then
+prepend the const-eval and benchmark patches, and also provide the results
+of the bloat-o-meter.
+
+Thank you very much,
+Pei
 
