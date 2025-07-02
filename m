@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-712810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2243AF0F45
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:11:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DDEAF0F3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70351C26BB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF313A5967
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FC123ED58;
-	Wed,  2 Jul 2025 09:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373C523C51B;
+	Wed,  2 Jul 2025 09:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aXMmvAqm"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dgOQOown"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F3923D2A4;
-	Wed,  2 Jul 2025 09:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096621EDA12
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751447493; cv=none; b=QlJBZsLNov32UGJNNkxoeU7KnxDInB2bqCD0tQDunEPS/TJAu7HQ+RlCXqc7J6lKNnv87GZa50eBv5VpXjymcc6tOF8s9XKehEvSMDizy8rgnCCCSINNfuWUULh04vslcAHF4YIJeEvDbKX3BcZuAgzEFAdECQidu+bjFhVZEZk=
+	t=1751447458; cv=none; b=S4ficoEquWE9LWv07+OxEsqhN7/NXnPLx2cbuQ4NKaVQQwr509mqzeRIVW785bZ41GyAzmHxXoy4u3jyOkwSW5H1HlBcWRk8E1TQoeFpZaATSHQQxhgUdXmmSapxoJJjU326LYTdM7XO6s8xDxGZcVCVRwI2kHMdgU7DSsG8UpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751447493; c=relaxed/simple;
-	bh=gb9PArGeVtVBJceqS5jT/2Pe/gOdat2eaUjsNLZ204E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o1QhKAqZ2uWrGI+n4Qu/Iq0XB78qDi8/dWUcvZFFO5nZs97A0LNaAEUw5XlqEq1+6o7or2TKCT263X6rWeNZg46Yq1ISWXQT995fBr2KSn4RrD5r7yla8gfWunYs0mXp5gTvU2vD/ADQ/9t0rVnH8ujl8mF+d33SVgVkTDBSj9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aXMmvAqm; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5627Mamw026815;
-	Wed, 2 Jul 2025 09:10:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2025-04-25; bh=4dBOpWr8id00dZ4J
-	PyVc8gbGRIWehHNPoJUiC+hXwHw=; b=aXMmvAqm2HSkl4z/OZn/BOTlupo7hCK5
-	XofZ+0om8ZfoVOvivruvtRS8uYeYxBZztTcMg0knGLzh2Xrht+Mn0Xjt1RKXMpQ4
-	Xbsi1aqCSF1IUepJU1zPEiXQG5e11znV1qUAssl7IZdbIaFVobqpP7YfV6X4VDzA
-	WUhDB1hlqP3MxegPkd9vYrTgRFAarIQeM+Bx8mkNvBYzGPX2XhEduNwgFBGgwHBz
-	vjqVA10Rs2KryE7auE+zzzayH7YxNT82NZ3IGYWaI/Idk+uRy+mC63iqbnsskrbV
-	7HhCFR1W5UdSzTUui5qkJhwC81AaU9jmHswtjQynAP0olsjbuxiRog==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47j6tfefjs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 02 Jul 2025 09:10:42 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5628UG43033801;
-	Wed, 2 Jul 2025 09:10:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 47j6uaxyse-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 02 Jul 2025 09:10:41 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5629Afp3033109;
-	Wed, 2 Jul 2025 09:10:41 GMT
-Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 47j6uaxypg-1;
-	Wed, 02 Jul 2025 09:10:40 +0000
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Zheng Qixing <zhengqixing@huawei.com>
-Cc: stable@vger.kernel.org, Gerald Gibson <gerald.gibson@oracle.com>,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] md/md-bitmap: fix GPF in bitmap_get_stats()
-Date: Wed,  2 Jul 2025 11:10:34 +0200
-Message-ID: <20250702091035.2061312-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1751447458; c=relaxed/simple;
+	bh=5iifZ9sddF7JT6wHEMvPompZQJFFM10A+DVZoJvVWOw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DljO2E4heMgu//pieF5hlJ6m85KibNIDL0Mq/NBvz7SCZnzVRkG40acY3X8wkcvvoAGetKGW+uPxQiYV8n84lE21SmmSFmqe9ZEX3eL0Vowqyt/ajcGIFYcvhtBWx35hqB8Is2kfypQNqg2gnDWToyh6rHgbCBZZfWDH8zCyJOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dgOQOown; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cf0120cdso42052775e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 02:10:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1751447455; x=1752052255; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SCvgBdrIzmyxvo92jPpKMB/LyPu8S/mztJbd6iPipx0=;
+        b=dgOQOown2LE0Nj0FdtjIIodqKmLWJohefZzU2aHuuQS4djRrw1toSFxZ8vY6yOvmdR
+         2Vq+mnfFn9qDy7RWzXpgqze2YmzrcofkYH/gkHJBCV97DDhUgKfL7yj9QfyMmkdoLKvY
+         OhjDDfHfwgEBQvyIGZTe4NlGoyD8NQXYO2F3BLtHTxixa8P03x6WDKvOJzNNstIq31Mg
+         TZg10ej5QKiP+F+eGUbl1TR4rV+INrI3ZMr0lDTU2q/mSsZePHbN66XaHEI44yiOyv2S
+         1AcA61flLV4nxmlITwR0Qtb9wZDXaakoiP7EWoBwn4a5eEU8ysMEK6QIe71fiOQ9QOqN
+         K+lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751447455; x=1752052255;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SCvgBdrIzmyxvo92jPpKMB/LyPu8S/mztJbd6iPipx0=;
+        b=azeb7OeGOQ6zrktuSYCmjl+JynYV+wiFPxiWuo4DC4Glg2TfZmNUyux0igMcBVNomd
+         pKkV8A4VYGhxd4mZau5lPZTQLso4avCwflA66gCRnPIuCqhXyai6bw1VtH9pRP1Saygt
+         N95IesMTR6ZwtjbjkMvyKSW3chlkxfdR2GlZkBLChhSVkR0KVKKSoN61ovcH+ohuKyZG
+         2IDWjYnJ8BOttJwH4mRHrsemDwJCp3QzMWgssRFaD3DpsZMONsFSybua3aNuppSzE6RP
+         IdAZl1S3bEFdUnWHkAe2O0jgPN/eg2aPyT8USh1wzt/BabXI9+YZY7lg0hYBAWEreidK
+         M14g==
+X-Forwarded-Encrypted: i=1; AJvYcCWpXi0rlet1i61Nx/nUdtZ2kALxStNcYUo0z1oHfcHdLd31sDvjj+MkHirOoScX783a3O8Cr/jFspGrIzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/6TuAM+YRafzARu5Qwy5R2SRZHaRmiasImpwBASNiybYEmpb4
+	1qZpjo0F2e33O8OYAZhZxrLg5gdRy3VkY81N4wX8lWlWaV76n32Jl4Yw1yKTMmYVdmk=
+X-Gm-Gg: ASbGncuDP1IHvab9jGOWEoki1Iz5TlwsUzvQlaU5JjtxWc094aFnke67ImCmHHGZ8e2
+	Jrula5zg7T42Ns2t4guiuO6gzIhIG9Ld3wLSkbSEYpOq46Xx5fmzP1Zy8L6URBfCoe9D9GWBGdC
+	SKA1d6FF2AjTuAGp74wKiKTZYj9W0bA2CoAplC3v+jFZxjvDDsar0TiNT1DJQqexfrmKnoTJClh
+	qXWGNuwbGyqCoH8+s0Q/QYMwL1rx+Z4FVXG4s03QQmcshZ83gy93sS5tKDVBVN1WS+dd5o1hyde
+	WhAwsLH5vrTGdRqM7Cj/jwygRSR9YjvHYMUGEoFTjTLPtY0EP/e+EPJIpT21
+X-Google-Smtp-Source: AGHT+IE2uNkHx82MMiG8CGeHGUvRcCCh7iICIVjsq7NBy92UZNfJfN/G6zonzIOaQuM2K57woKCLRg==
+X-Received: by 2002:a05:600c:6818:b0:442:ccfa:1461 with SMTP id 5b1f17b1804b1-454a36e3ec8mr22278755e9.13.1751447455288;
+        Wed, 02 Jul 2025 02:10:55 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8827:d0e:25e:834a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538a3fe28dsm192866295e9.20.2025.07.02.02.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 02:10:54 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thorsten Scherer <t.scherer@eckelmann.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 00/12] gpio: use new GPIO line value setter callbacks
+Date: Wed,  2 Jul 2025 11:10:51 +0200
+Message-ID: <175144745011.23577.5985560691841779187.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250625-gpiochip-set-rv-gpio-round2-v1-0-bc110a3b52ff@linaro.org>
+References: <20250625-gpiochip-set-rv-gpio-round2-v1-0-bc110a3b52ff@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 adultscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507020073
-X-Authority-Analysis: v=2.4 cv=CMMqXQrD c=1 sm=1 tr=0 ts=6864f792 cx=c_pps a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=M51BFTxLslgA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=ff15VUUy24FoKP-N-78A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 4R6cwTqIV5KDWNyL6OkaUxTpg5Vebak7
-X-Proofpoint-ORIG-GUID: 4R6cwTqIV5KDWNyL6OkaUxTpg5Vebak7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA3MyBTYWx0ZWRfX4AKsRvmrnLRv 1cNOopFv04eSWZHqgo3LalLefSEubeVK5iV/tr+rR1jbz/0qzi9/wI2dImLLfbwpVQVhUPyNwOF aQm6JJgr4MIJ0sVqSg3FUwlSDbSeAkbfjlISUAsSlnkKPXQm/5WKFKsb40KYGj95nju4DfSiUoo
- HmDyCoQ2KFuBxj76+JI3sG8t6kzCxARIU1ma8LI5SG2eODo+aFocs66t3EIl/1gAG8ysuuNejFq LY3AnAyy7VJao7hurduXbDxzcGqpz7jKf4f6j82YHB0NHaQApM4htZs1O7ZvT1C/Y47Q9D0Jnc/ cGYme1iulurA4OX6oW2tszhDOvr1RR+Z8zfbj9djogtDBt2CFU89dDPxZ4CHsN+7dSmGt6bNT0Y
- TgEzeETz4uNQ2n+WXUT9A/2RoHcqtt1/D5nSklCmIDoQTWoq4WdhoTaS5trjx1F6ICJAv1dt
 
-The commit message of commit 6ec1f0239485 ("md/md-bitmap: fix stats
-collection for external bitmaps") states:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-    Remove the external bitmap check as the statistics should be
-    available regardless of bitmap storage location.
 
-    Return -EINVAL only for invalid bitmap with no storage (neither in
-    superblock nor in external file).
+On Wed, 25 Jun 2025 12:33:23 +0200, Bartosz Golaszewski wrote:
+> Commit 98ce1eb1fd87e ("gpiolib: introduce gpio_chip setters that return
+> values") added new line setter callbacks to struct gpio_chip. They allow
+> to indicate failures to callers. We're in the process of converting all
+> GPIO controllers to using them before removing the old ones. This series
+> converts another round of GPIO drivers.
+> 
+> 
+> [...]
 
-But, the code does not adhere to the above, as it does only check for
-a valid super-block for "internal" bitmaps. Hence, we observe:
+Applied, thanks!
 
-Oops: GPF, probably for non-canonical address 0x1cd66f1f40000028
-RIP: 0010:bitmap_get_stats+0x45/0xd0
-Call Trace:
+[01/12] gpio: sama5d2-piobu: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/df213abe6913cae8d1d69efa66b725831f63e663
+[02/12] gpio: sch311x: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/e932e894aec6ee22d7314f74e0a27db244a14fdb
+[03/12] gpio: sch: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/883c7eb2c4a9e143b2662ba754f9c16fb31adced
+[04/12] gpio: siox: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/d5297b0f861a124efe7965619212a632d5138281
+[05/12] gpio: spear-spics: remove unneeded callbacks
+        https://git.kernel.org/brgl/linux/c/e9a5f9ac245fd58b8477f1d2fe5a077803631460
+[06/12] gpio: spear-spics: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/70c8f51ff68147176a41d549587a67ea377ed2e2
+[07/12] gpio: sprd: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/ae35dd91ad2ea4ae446e74364edd6428a26f5080
+[08/12] gpio: stmpe: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/c9148553ac13565ad06d83d7baebef133245ebe6
+[09/12] gpio: stp-xway: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/e87dff29ff6b919f64ca25b066c44bbacdc08ac3
+[10/12] gpio: syscon: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/c203705c9b46ad0b66ef3bdc93ec9073b00efed1
+[11/12] gpio: tangier: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/f3c9b6a51cb31a8816feb801c8c8a2265432143e
+[12/12] gpio: tc3589x: use new GPIO line value setter callbacks
+        https://git.kernel.org/brgl/linux/c/b033bc5a9a7d95b8dc206dd7455a033b0670d8e7
 
- seq_read_iter+0x2b9/0x46a
- seq_read+0x12f/0x180
- proc_reg_read+0x57/0xb0
- vfs_read+0xf6/0x380
- ksys_read+0x6d/0xf0
- do_syscall_64+0x8c/0x1b0
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-We fix this by checking the existence of a super-block for both the
-internal and external case.
-
-Fixes: 6ec1f0239485 ("md/md-bitmap: fix stats collection for external bitmaps")
-Cc: stable@vger.kernel.org
-Reported-by: Gerald Gibson <gerald.gibson@oracle.com>
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
----
- drivers/md/md-bitmap.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index bd694910b01b0..7f524a26cebca 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -2366,8 +2366,7 @@ static int bitmap_get_stats(void *data, struct md_bitmap_stats *stats)
- 
- 	if (!bitmap)
- 		return -ENOENT;
--	if (!bitmap->mddev->bitmap_info.external &&
--	    !bitmap->storage.sb_page)
-+	if (!bitmap->storage.sb_page)
- 		return -EINVAL;
- 	sb = kmap_local_page(bitmap->storage.sb_page);
- 	stats->sync_size = le64_to_cpu(sb->sync_size);
+Best regards,
 -- 
-2.43.5
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
