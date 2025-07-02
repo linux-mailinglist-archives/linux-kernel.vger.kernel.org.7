@@ -1,155 +1,144 @@
-Return-Path: <linux-kernel+bounces-712918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16657AF1094
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B9CAF1096
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78BE918968B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:50:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B1C3BC7EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0475B248884;
-	Wed,  2 Jul 2025 09:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F263246797;
+	Wed,  2 Jul 2025 09:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="f71292rU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YIw+uuGt"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429FD182D0;
-	Wed,  2 Jul 2025 09:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A142309B0
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751449774; cv=none; b=kDRCVSB80un8puYF8v9fLp8wuE4USFWmRzaigcP64hM7pdFSBPJbxq/RqmLdshO4F4YQ5AbxkkyDZy3wFhsa497SG9ubzwYlfjvrwrBQyxF5Oz9Bvalt8M2S0PxYFufiT7eoGdF9HZbLWeQglyU14Y6RicvgswcKz3+wv0FXMzI=
+	t=1751449852; cv=none; b=PGggHtc2L46c435HuNsvgeqMn4TOGTTv2/G32qq4zlyc2aLuFoAmc4lxsP5696lj0ztYY9u+dnG8sxVAVngcIyzBaHfdOxne1bzH+qry7WXnub5u2ReJ/vdnA136bKbhVu/Kq6/gl+JdDxqAMVwN7DjovTYuYFhb0lEU/AxwDZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751449774; c=relaxed/simple;
-	bh=HaDbrpXJ0lT6/Xsy0anDOjZM40zt+N8qVQXlMq+igkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cl78CUXTiHn23Vs2mOfV8fk+1Pz1s8Pj/kUNsCndupldpqXvt2b771fZLv9EAvgHy+jnRd+NfloTB0v7CjrsRCfJOtP871pvgczy4wd84/Q8s/+VdtFKNUbmU91lnlNJf0jg+sAgfJfvEm7lLd0/MKQQdMmdox5YTmCd+9T3qVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=f71292rU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1751449770;
-	bh=HaDbrpXJ0lT6/Xsy0anDOjZM40zt+N8qVQXlMq+igkE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f71292rUHg3WI4fUSBFc+KK9z9UY3VGWxdv3y3c+UbrfUwDm0DZ74NzaasxZy7qey
-	 b3I3owP50H3fZzi3SJ/tS8dGG9hayAu8pc6ytIHBEP1L3yBw53cQTwvYO6C1mC4i7g
-	 Bzqfz8X5QGCOZeiBFF1BBsAlIYdp72hhMFRdR6UFV6ndoOJR0MUONKuknnN3y4PZfl
-	 I2hBSlW1TOHwYjd5hg52TmWTB3r0jqeJbyNnYgPvtM6nIXHUcXiMXtUj+V/qLeK7z7
-	 Q3s1LLUIXPYiCXHFQuITvmgx72/frRdzu88TA86x1ot0zUb94rh3GIr4gUfFD4XdOG
-	 t3Uju+CuhRIqg==
-Received: from [192.168.1.90] (unknown [212.93.144.165])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BE03B17E04C0;
-	Wed,  2 Jul 2025 11:49:29 +0200 (CEST)
-Message-ID: <422d8ca6-00b6-4c69-b261-b0399d12c9d8@collabora.com>
-Date: Wed, 2 Jul 2025 12:49:29 +0300
+	s=arc-20240116; t=1751449852; c=relaxed/simple;
+	bh=FZN7ov2fejb1PPwc6riwGfFAbnmQoUBR/y4B+tXjjuM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MEIVKazOp8jXeWW7VP7HGTQP/1fmFnVIaoWs4eaJpDdRYZtEPV2azTeUzJYIlqaMOW61CVUixT14ZY/LsjZMhIguM7Tmq5WCD1PwOhDSHd+S532xC60lyIFFkIzH3wHwHec+inu2cea0XzwM/+fqSzenj2Oc6kHDfh3XMd0Dq+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YIw+uuGt; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a6d77b43c9so3891556f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 02:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751449849; x=1752054649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FZN7ov2fejb1PPwc6riwGfFAbnmQoUBR/y4B+tXjjuM=;
+        b=YIw+uuGt4vaCEu75NagIdWAl0vMOZyqmwFls8YfBgHkp2zpDAU9CJoGEdH1rK2nLEm
+         t4x/4cH/BgKWTvXAPfv9HNUbXBvQERvMgrems2ohOhxR8ZT9YzkW464JbERgYDQYRFS0
+         q3yya+u05p1nYoefaSZeZnWMQGNm+qGFVF/Nww0uAE5Qczv2f15eka+hjaj2mgKW5Oas
+         gEJUQXXuE84btwzDxnvkCGlkTVLcZcVTnuXR8U9jQhCKUjlK5Co5OF7aYBKpEpIMxVeg
+         mTaqqGNMe/RIY23LDmvFktHZNGMpnlN59tjv0wI4nlhXInUJBGsm6Nv8l7YdXsK5xXfN
+         Zq0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751449849; x=1752054649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FZN7ov2fejb1PPwc6riwGfFAbnmQoUBR/y4B+tXjjuM=;
+        b=txLmvZp8ohT5oc3v+eRw1PHDdTIlCAE+0jTjqy7RnoAYeECBt8b1q3bDcjqm8U2hkF
+         InCheTGugnFj9smLbKyXElrsUr0HRwimef3CtX849luOxA+v+hBMinJXnGaMiMhcvuOM
+         eHadcSmirQ4QXaTxFwWWqkLlUKhxAzOyCF92W9U0xlnG3VT1lZreDh3x5wnnPddmHUDw
+         qQgISHDl+GHKAh4Rbeox81GsRLdVbVU7ttSkjTuAqAw1Qp7clZXHVRDr2nmrq2Ws5acd
+         HF6aIKX4SqSzeR4nrXzICNiXeITENPJJI7y+39REpgqp7pyBzfr8zSfcShRGVnmHdM19
+         W93Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW+6sQ0YiGkTJp7o0EXwkKePMvDtBm9fV34Q36b9P8z0iop7to65WtgceVpTDUtnkMHzxuG6EegVsK3EJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDjUX6YD+jdZuVVeuNShprCPQdB3M9NRxcj49zZdFxDdtlTH8W
+	ucHXxydblNE3nmtYuWlORo5ZwfsFl1MNSsaxa46gv35dn755EpLXjjnzRTnWy6bi9EYM8YaLSs3
+	uOuaw/hb+Glk1jc7+Fxn0MZGYlizo0ws76sMydPH9
+X-Gm-Gg: ASbGnct/wOKmPZ5z6HErCjz3mYWDTQ5Dro74g7ItGXqFC/i7j6pnlg4KxQAOzex0jSG
+	VIskPekKM0dBngBq72xLreI/fHvKeDcc071OJ+xrYoaHLnapAiVVZV/8+ElTSxoQwQdE1txUcFB
+	xitoRd0VTs845DnT12lO3fQvCcF3t1uRqNqLUznp3sVyAtb28klmOG1bv7kWXvEwJPHwBJ3q8l
+X-Google-Smtp-Source: AGHT+IFinFQvCiDd7DyIlomk5YKpY4AunxXUpyYDBethh+ZqD2nFnCbSEvSWbZeGQLXBm4KeF+X+5F+eyTNv0077ACg=
+X-Received: by 2002:a05:6000:43d4:10b0:3a5:1240:6802 with SMTP id
+ ffacd0b85a97d-3b2015e19b8mr1128287f8f.57.1751449848583; Wed, 02 Jul 2025
+ 02:50:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: add analog audio to ROCK 4D
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Heiko Stuebner <heiko@sntech.de>
-Cc: kernel@collabora.com, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250630-rock4d-audio-v1-0-0b3c8e8fda9c@collabora.com>
- <20250630-rock4d-audio-v1-3-0b3c8e8fda9c@collabora.com>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250630-rock4d-audio-v1-3-0b3c8e8fda9c@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250630131011.405219-1-fujita.tomonori@gmail.com>
+ <CAH5fLgirsNn9WwEUgFaY2z9+9gG3SWssCoNSzpE56F=sS02kEw@mail.gmail.com>
+ <WFqBzZDwsggoxcPQzynlG5_2FqsVdmQlUKufvcDECQUsXJOPHCA4dzoAByNPpuPrAcBoeKoDSR9v3OkJxsYxNg==@protonmail.internalid>
+ <20250701.083940.2222161064880631447.fujita.tomonori@gmail.com> <87sejfuf3n.fsf@kernel.org>
+In-Reply-To: <87sejfuf3n.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 2 Jul 2025 11:50:35 +0200
+X-Gm-Features: Ac12FXycwJqNF5jcIgfkkGlHIx2iR5_a-gqm_uvnzaU0d1vhvUVxcwhatQ6m4wM
+Message-ID: <CAH5fLgjdpso4waCrP6iVaMEOpYLUmqCz8PxqXuSbQBMaxxCHBw@mail.gmail.com>
+Subject: Re: [PATCH v1] rust: time: make ClockSource unsafe trait
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, alex.gaynor@gmail.com, ojeda@kernel.org, 
+	boqun.feng@gmail.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
+	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
+	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
+	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
+	tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/30/25 1:19 PM, Nicolas Frattaroli wrote:
-> The RADXA ROCK 4D, like many other Rockchip-based boards, uses an ES8388
-> analog audio codec. On the production version of the board, the codec's
-> LOUT1 and ROUT1 pins are tied to the headphone jack, whereas pins LOUT2
-> and ROUT2 lead to a non-populated speaker amplifier that itself leads to
-> a non-populated speaker jack. The schematic is still haunted by the
-> ghosts of those symbols, but it clearly marks them as "NC".
-> 
-> The 3.5mm TRRS jack has its microphone ring (and ground ring) wired to
-> the codec's LINPUT1 and RINPUT1 pins for differential signalling.
-> 
-> Furthermore, it uses the SoCs ADC to detect whether the inserted cable
-> is of headphones (i.e., no microphone), or a headset (i.e., with
-> microphone). The way this is done is that the ADC input taps the output
-> of a 100K/100K resistor divider that divides the microphone ring pin
-> that's pulled up to 3.3V.
-> 
-> There is no ADC level difference between a completely empty jack and one
-> with a set of headphones (i.e., ones that don't have a microphone)
-> connected. Consequently headphone insertion detection isn't something
-> that can be done.
-> 
-> Add the necessary codec and audio card nodes. The non-populated parts,
-> i.e. LOUT2 and ROUT2, are not modeled at all, as they are not present on
-> the hardware.
-> 
-> Also, add an adc-keys node for the headset detection, which uses an
-> input type of EV_SW with the SW_MICROPHONE_INSERT keycode. Below the
-> 220mV pressed voltage level of our SW_MICROPHONE_INSERT switch, we also
-> define a button that emits a KEY_RESERVED code, which is there to model
-> this part of the voltage range as not just being extra legroom for the
-> button above it, but actually a state that is encountered in the real
-> world, and should be recognised as a valid state for the ADC range to be
-> in so that no "closer" ADC button is chosen.
-> 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+On Wed, Jul 2, 2025 at 11:17=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+>
+> > On Mon, 30 Jun 2025 15:33:31 +0200
+> > Alice Ryhl <aliceryhl@google.com> wrote:
+> >
+> >> On Mon, Jun 30, 2025 at 3:10=E2=80=AFPM FUJITA Tomonori
+> >> <fujita.tomonori@gmail.com> wrote:
+> >>>
+> >>> Mark the ClockSource trait as unsafe and document its safety
+> >>> requirements. Specifically, implementers must guarantee that their
+> >>> `ktime_get()` implementation returns a value in the inclusive range
+> >>> [0, KTIME_MAX].
+> >>>
+> >>> Update all existing implementations to use `unsafe impl` with
+> >>> corresponding safety comments.
+> >>>
+> >>> Note that there could be potential users of a customized clock source=
+ [1]
+> >>> so we don't seal the trait.
+> >>>
+> >>> Link: https://lore.kernel.org/rust-for-linux/Z9xb1r1x5tOzAIZT@boqun-a=
+rchlinux/ [1]
+> >>> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> >>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> >>
+> >> LGTM:
+> >> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> >
+> > Thanks!
+> >
+> >> Though you're missing `` around [0; KTIME_MAX] in some places, which
+> >> may be worth adding.
+> >
+> > Andreas, would you like me to send v2 with the above changes?
+>
+> Perhaps we should use rust ranges instead [1]? Like this, no brackets: `0=
+..=3DKTIME_MAX`.
 
-Enabled CONFIG_SND_SOC_ES8328_I2C and confirm playback works fine:
+Well, maybe. But I think it's also worth considering just using
+english to describe it:
 
-    $ speaker-test -D hw:ES8388,0 -F S16_LE -c 2 -t wav
+Implementers must ensure that `ktime_get()` returns a positive value
+less than or equal to `KTIME_MAX`.
 
-Unfortunately the recording doesn't seem to be functional:
-
-    $ arecord -D hw:ES8388,0 -f S16_LE -c 2 -r 48000 -d 5 -V stereo /tmp/test.wav
-    Recording WAVE '/tmp/test.wav' : Signed 16 bit Little Endian, Rate 48000 Hz, Stereo
-                                    +00%|00%+
-
-    $ aplay -D hw:ES8388,0 /tmp/test.wav
-
-However, the headset plug detection works correctly:
-
-    $ evtest
-    No device specified, trying to scan all of /dev/input/event*
-    Available devices:
-    /dev/input/event0:	Logitech USB Receiver
-    /dev/input/event1:	Logitech USB Receiver Mouse
-    /dev/input/event2:	Logitech USB Receiver Consumer Control
-    /dev/input/event3:	Logitech USB Receiver System Control
-    /dev/input/event4:	adc-keys
-    Select the device event number [0-4]: 4
-    Input driver version is 1.0.1
-    Input device ID: bus 0x19 vendor 0x1 product 0x1 version 0x100
-    Input device name: "adc-keys"
-    Supported events:
-      Event type 0 (EV_SYN)
-      Event type 1 (EV_KEY)
-      Event type 5 (EV_SW)
-        Event code 4 (SW_MICROPHONE_INSERT) state 0
-    Properties:
-    Testing ... (interrupt to exit)
-    Event: time 1751449448.185340, type 5 (EV_SW), code 4 (SW_MICROPHONE_INSERT), value 1
-    Event: time 1751449448.185340, -------------- SYN_REPORT ------------
-    Event: time 1751449448.289477, type 5 (EV_SW), code 4 (SW_MICROPHONE_INSERT), value 0
-    Event: time 1751449448.289477, -------------- SYN_REPORT ------------
-    Event: time 1751449449.329482, type 5 (EV_SW), code 4 (SW_MICROPHONE_INSERT), value 1
-    Event: time 1751449449.329482, -------------- SYN_REPORT ------------
-
-Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-
+Alice
 
