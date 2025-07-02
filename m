@@ -1,144 +1,94 @@
-Return-Path: <linux-kernel+bounces-712921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B9CAF1096
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35848AF10A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B1C3BC7EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 826153AEBE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F263246797;
-	Wed,  2 Jul 2025 09:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B1424BC07;
+	Wed,  2 Jul 2025 09:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YIw+uuGt"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="hGA4ZzeS"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A142309B0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 09:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0F9247297;
+	Wed,  2 Jul 2025 09:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751449852; cv=none; b=PGggHtc2L46c435HuNsvgeqMn4TOGTTv2/G32qq4zlyc2aLuFoAmc4lxsP5696lj0ztYY9u+dnG8sxVAVngcIyzBaHfdOxne1bzH+qry7WXnub5u2ReJ/vdnA136bKbhVu/Kq6/gl+JdDxqAMVwN7DjovTYuYFhb0lEU/AxwDZA=
+	t=1751449941; cv=none; b=YHYdD7TXyT9tZr7PSc2DDt3oiujfUdLMQRZ79180fzsmwmOhZ5+QoTmHedU5CZlDy13tS8KCWymKyd1Ty+UQHxVYxR5nMOAnxheIBZk16DhlAJH6SfJh22qNU1tESjdIjmFybrKf/u1N/0aJhZQ0nthu1u/UbI49KSrJ/0BW3Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751449852; c=relaxed/simple;
-	bh=FZN7ov2fejb1PPwc6riwGfFAbnmQoUBR/y4B+tXjjuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MEIVKazOp8jXeWW7VP7HGTQP/1fmFnVIaoWs4eaJpDdRYZtEPV2azTeUzJYIlqaMOW61CVUixT14ZY/LsjZMhIguM7Tmq5WCD1PwOhDSHd+S532xC60lyIFFkIzH3wHwHec+inu2cea0XzwM/+fqSzenj2Oc6kHDfh3XMd0Dq+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YIw+uuGt; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a6d77b43c9so3891556f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 02:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1751449849; x=1752054649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FZN7ov2fejb1PPwc6riwGfFAbnmQoUBR/y4B+tXjjuM=;
-        b=YIw+uuGt4vaCEu75NagIdWAl0vMOZyqmwFls8YfBgHkp2zpDAU9CJoGEdH1rK2nLEm
-         t4x/4cH/BgKWTvXAPfv9HNUbXBvQERvMgrems2ohOhxR8ZT9YzkW464JbERgYDQYRFS0
-         q3yya+u05p1nYoefaSZeZnWMQGNm+qGFVF/Nww0uAE5Qczv2f15eka+hjaj2mgKW5Oas
-         gEJUQXXuE84btwzDxnvkCGlkTVLcZcVTnuXR8U9jQhCKUjlK5Co5OF7aYBKpEpIMxVeg
-         mTaqqGNMe/RIY23LDmvFktHZNGMpnlN59tjv0wI4nlhXInUJBGsm6Nv8l7YdXsK5xXfN
-         Zq0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751449849; x=1752054649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FZN7ov2fejb1PPwc6riwGfFAbnmQoUBR/y4B+tXjjuM=;
-        b=txLmvZp8ohT5oc3v+eRw1PHDdTIlCAE+0jTjqy7RnoAYeECBt8b1q3bDcjqm8U2hkF
-         InCheTGugnFj9smLbKyXElrsUr0HRwimef3CtX849luOxA+v+hBMinJXnGaMiMhcvuOM
-         eHadcSmirQ4QXaTxFwWWqkLlUKhxAzOyCF92W9U0xlnG3VT1lZreDh3x5wnnPddmHUDw
-         qQgISHDl+GHKAh4Rbeox81GsRLdVbVU7ttSkjTuAqAw1Qp7clZXHVRDr2nmrq2Ws5acd
-         HF6aIKX4SqSzeR4nrXzICNiXeITENPJJI7y+39REpgqp7pyBzfr8zSfcShRGVnmHdM19
-         W93Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+6sQ0YiGkTJp7o0EXwkKePMvDtBm9fV34Q36b9P8z0iop7to65WtgceVpTDUtnkMHzxuG6EegVsK3EJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDjUX6YD+jdZuVVeuNShprCPQdB3M9NRxcj49zZdFxDdtlTH8W
-	ucHXxydblNE3nmtYuWlORo5ZwfsFl1MNSsaxa46gv35dn755EpLXjjnzRTnWy6bi9EYM8YaLSs3
-	uOuaw/hb+Glk1jc7+Fxn0MZGYlizo0ws76sMydPH9
-X-Gm-Gg: ASbGnct/wOKmPZ5z6HErCjz3mYWDTQ5Dro74g7ItGXqFC/i7j6pnlg4KxQAOzex0jSG
-	VIskPekKM0dBngBq72xLreI/fHvKeDcc071OJ+xrYoaHLnapAiVVZV/8+ElTSxoQwQdE1txUcFB
-	xitoRd0VTs845DnT12lO3fQvCcF3t1uRqNqLUznp3sVyAtb28klmOG1bv7kWXvEwJPHwBJ3q8l
-X-Google-Smtp-Source: AGHT+IFinFQvCiDd7DyIlomk5YKpY4AunxXUpyYDBethh+ZqD2nFnCbSEvSWbZeGQLXBm4KeF+X+5F+eyTNv0077ACg=
-X-Received: by 2002:a05:6000:43d4:10b0:3a5:1240:6802 with SMTP id
- ffacd0b85a97d-3b2015e19b8mr1128287f8f.57.1751449848583; Wed, 02 Jul 2025
- 02:50:48 -0700 (PDT)
+	s=arc-20240116; t=1751449941; c=relaxed/simple;
+	bh=oMaM/R8SFUD4LZpCTkVpqQIRRfxIiZ6hh0W2t8wEReI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6WK+ZQNuDpjlm50PSgoGiRYQu032AN42zJnVXKC64Dfh11+xlPDg8Bk6P6yu/MqQ8ixCIYc8eqHJawVDZ/OYLeKyTk/Cy97O8D+l0nYEi9uMFa+bFj1p1/erePWZyFkNbBQvgMevPFqaaU4VcLtvPUkpP+Ro95ERkEX5wLz0JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=hGA4ZzeS; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=aBCj5KCtd0YSw2+jeSI15O55rXmA7O2x9Co1/dUd/sc=;
+	b=hGA4ZzeSjGnd+cybXPReqSh4PH2pwX4u9pKlm/oeOv8yq86qURfz/Xt1IbIZyB
+	Wug27aAY1vskf6a32jw0WDNJ5T9BCynkbthhLJXmD+bMtuBff73qOYOmn4ZtmoUU
+	FZPkgcuFdhBZ68eC8rvxcrf73iB7XMs/T8+kH/XsNtOuM=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXfxAkAWVoRbopAA--.51920S3;
+	Wed, 02 Jul 2025 17:51:33 +0800 (CST)
+Date: Wed, 2 Jul 2025 17:51:31 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+	m.felsch@pengutronix.de, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 0/4] Increase i.MX8MP VPU
+Message-ID: <aGUBIz1lYIkhMCWr@dragon>
+References: <20250612003924.178251-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630131011.405219-1-fujita.tomonori@gmail.com>
- <CAH5fLgirsNn9WwEUgFaY2z9+9gG3SWssCoNSzpE56F=sS02kEw@mail.gmail.com>
- <WFqBzZDwsggoxcPQzynlG5_2FqsVdmQlUKufvcDECQUsXJOPHCA4dzoAByNPpuPrAcBoeKoDSR9v3OkJxsYxNg==@protonmail.internalid>
- <20250701.083940.2222161064880631447.fujita.tomonori@gmail.com> <87sejfuf3n.fsf@kernel.org>
-In-Reply-To: <87sejfuf3n.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 2 Jul 2025 11:50:35 +0200
-X-Gm-Features: Ac12FXycwJqNF5jcIgfkkGlHIx2iR5_a-gqm_uvnzaU0d1vhvUVxcwhatQ6m4wM
-Message-ID: <CAH5fLgjdpso4waCrP6iVaMEOpYLUmqCz8PxqXuSbQBMaxxCHBw@mail.gmail.com>
-Subject: Re: [PATCH v1] rust: time: make ClockSource unsafe trait
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, alex.gaynor@gmail.com, ojeda@kernel.org, 
-	boqun.feng@gmail.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, jstultz@google.com, 
-	linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com, 
-	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
-	tmgross@umich.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250612003924.178251-1-aford173@gmail.com>
+X-CM-TRANSID:Ms8vCgDXfxAkAWVoRbopAA--.51920S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtF43CFyUCFy5Kr4UZFWkJFb_yoW3urc_C3
+	4a9F1xCwn8KFs7Kw4DGan8Z3yDK3y2yr4DZa42qF4fZF1fZF4rZ340gr9avF18GF9akw1q
+	vF98Xw4xAry3CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUj7DGUUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNQa8ImhlASaNiAAA3C
 
-On Wed, Jul 2, 2025 at 11:17=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
-> "FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
->
-> > On Mon, 30 Jun 2025 15:33:31 +0200
-> > Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> >> On Mon, Jun 30, 2025 at 3:10=E2=80=AFPM FUJITA Tomonori
-> >> <fujita.tomonori@gmail.com> wrote:
-> >>>
-> >>> Mark the ClockSource trait as unsafe and document its safety
-> >>> requirements. Specifically, implementers must guarantee that their
-> >>> `ktime_get()` implementation returns a value in the inclusive range
-> >>> [0, KTIME_MAX].
-> >>>
-> >>> Update all existing implementations to use `unsafe impl` with
-> >>> corresponding safety comments.
-> >>>
-> >>> Note that there could be potential users of a customized clock source=
- [1]
-> >>> so we don't seal the trait.
-> >>>
-> >>> Link: https://lore.kernel.org/rust-for-linux/Z9xb1r1x5tOzAIZT@boqun-a=
-rchlinux/ [1]
-> >>> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> >>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
-> >>
-> >> LGTM:
-> >> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> >
-> > Thanks!
-> >
-> >> Though you're missing `` around [0; KTIME_MAX] in some places, which
-> >> may be worth adding.
-> >
-> > Andreas, would you like me to send v2 with the above changes?
->
-> Perhaps we should use rust ranges instead [1]? Like this, no brackets: `0=
-..=3DKTIME_MAX`.
+On Wed, Jun 11, 2025 at 07:39:18PM -0500, Adam Ford wrote:
+> Some of the VPU clocks are under rated, even for nominal ratings.
+> Fix the nominial VPU clocks and clock parents, then introduce
+> the overdrive clock rates.  The fluster scores don't change,
+> but they do go faster.
+> 
+> This series was adapted from an RFC from Marco Felsch which
+> was setup to introduce the VC8000E encoder and extacted the
+> parts that affect the existing infrastructure.
+> 
+> V2:  The only change is 4/4.  Patches 1-3 are all unchanged.
+> 
+> Adam Ford (2):
+>   arm64: dts: imx8mp-nominal: Explicitly configure nominal VPU clocks
+>   arm64: dts: imx8mp: Configure VPU clocks for overdrive
+> 
+> Marco Felsch (2):
+>   arm64: dts: imx8mp: drop gpcv2 vpu power-domains and clocks
+>   arm64: dts: imx8mp: fix VPU_BUS clock setting
 
-Well, maybe. But I think it's also worth considering just using
-english to describe it:
+Applied all, thanks!
 
-Implementers must ensure that `ktime_get()` returns a positive value
-less than or equal to `KTIME_MAX`.
-
-Alice
 
