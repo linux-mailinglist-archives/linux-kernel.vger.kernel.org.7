@@ -1,158 +1,139 @@
-Return-Path: <linux-kernel+bounces-713274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE28AF15C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:34:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAA9AF15C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1093BCEB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A3A1C24AFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC6426D4F9;
-	Wed,  2 Jul 2025 12:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236DD2741A3;
+	Wed,  2 Jul 2025 12:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OfaPKYw2"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbhTbUlY"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0861224677B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91461E485;
+	Wed,  2 Jul 2025 12:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751459675; cv=none; b=EoZGtlIuui6esT5udH4sZQ/AcBpZ8iYtex6R+wxc/ZiHg0jFUOTvmUhhNv2xjg3g6F08VmojDwWT3iemdq+PCLuGyOLjEAcFIAC3JsO8iQPm3ppiVCWQTMnvFeecURMRPUAMuVSAGpm93Lm33nMmvkGbDfcQ1JFPuxWtvCb2ayQ=
+	t=1751459752; cv=none; b=Wu/nGoE5vWZA89oVWSDJ/EDO9gL4w8zPsN2iuaJhLd24jnnw7pYcXjc6Xp3+NLX/PVkCPLE/aC0pKuzVjftls3M/B6uUuOQ8w1EqViNMNYvSZwCvT5tcpwbmrb4TDYYZ179vhuoW1uXl2pKOwe0gFO7Zd8Np7KZRMHbhm7TlIm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751459675; c=relaxed/simple;
-	bh=w4Nwr3rzBU8oAkSw6PUTnXCWYhJ7PZRyve2lIpVTSKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0ylIyPqtO/CnvA8GU42U6mWA0aTeWbCFooEO5Kfpc+FqUt4LP70fwN0y+g8aZVRE6AGKbnAlRlhwMRrxSQTIAHYFVn6ML4dA5i5p4aAGlawPe5ymgLROzZH3dXj3oGo867Tb1YiumVNFzsxrs+ZoZuBkwZKfhju5OKLpn3Rlvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OfaPKYw2; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a507e88b0aso3441749f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 05:34:33 -0700 (PDT)
+	s=arc-20240116; t=1751459752; c=relaxed/simple;
+	bh=VTQYWgQLaorrbxmbb+xIR3t+bnZTz+/x9isjksDhFTg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NKr9qEQF8SLXSBjN1xFsOmei+0s24TR4ee0B92ctHoDnY2WA11OpsVKGuX3RtiHyc1JXG/ce6ELepuFe8xHDQJCFJobPj64oPRdYtDMBHb0B2QBf9Io5DJ0gvVFwK/V7JQYHpem1a5DvLQWg9EGz2Ey0eOldJ/mJZM+ivQJLByE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbhTbUlY; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so2922235f8f.0;
+        Wed, 02 Jul 2025 05:35:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1751459672; x=1752064472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYauURT58UhCHylTptKqbdFltvK7gtU+BWTcrPEHD/Y=;
-        b=OfaPKYw2cYcn/F5xoa+WPeE5QukO7X43r4yI/zGjhIlRFVN1/WcVa4CaKMdHRCW5wn
-         NU7ILLUzmQPzN8yZ7QcGCFftv9uxl8qvVvqgDUH55Hh/HgKHEkYirh1SNfvbOMVTNpuE
-         05Irdjn1+XK2Br63ppVnMjra6aXvCtVg3rCfq9PYfIaQaRyAH67FHaMm6oPBx8HtPZsu
-         oWFl7mwrstoIwbajC9Gi2fRdoQhyHkzWjjVVscqEgl+w/zXrXBPnKrXbawdNh8LoNgRY
-         e4s+6oo4KX9irznTFMh9QjDbILRcz/+VS9FUGNMX6oxnFw36Zbo+1qHUZnl3gLhgeXDL
-         ALlg==
+        d=gmail.com; s=20230601; t=1751459749; x=1752064549; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jg0LOIPqdIozUkUH06/iHo0/WcHNQMfp9668OgWITsE=;
+        b=jbhTbUlYizjYAE5A9RY61Lgi/9O/+v7mJDg/yEEBaRqnWKcATent1yq24/sJq1J443
+         KtExSFITHrwhGllAtFry0GN3SWVvwthUyyvta1AY5+ftfcS7/UJJcRKh7pCf4NTY7tnh
+         lZaU/JBvwfm7KsnTaMqYoLxC9NRcuIqCdlyuzkxe9qlPQyPKVxG3ExytfCPamTuK9wv6
+         jY0wngKGYclAihmk3XhyfI4xCpf4y86JRVe5WVxzXoKp/2NbPfdJmTU+I9a/KAi4AYsu
+         ghL1nFbZw82L2k7rRMzzMBRozCP+0a5HtYsrXqw7RYnDx+6vvoJmvvq3fBig5moI1weI
+         QIaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751459672; x=1752064472;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYauURT58UhCHylTptKqbdFltvK7gtU+BWTcrPEHD/Y=;
-        b=ZvVH0p54gTXcFdyK+lhRlSvnFMIvkuj2k4Ql3J5iEg3obgmIFCrntMBBc/TlcwHB3N
-         8ennOVQjG6p/eXxepsnRjEGyuVsOJTscMNbuDm1Z1xgUgDnaAedqbPc0fPSYbkuoRFmE
-         TFfW4NVNInADc4K8rLAeLjyV44A+dajl3bvLR/47GX8XQSA5chZnpU3BmIiy86m41qnc
-         aOCNWODdCR2DgbW/hKjf16LQkuTeNTLAJ4ex1nXKCe6oeDKSmo6TpbyX9VFc2xCVPFP1
-         6yNivm8asi5pWCD8nuka7knTOwb29VCOFB3n0qqBKnxCQpvqibveMP80Q9FDPjKSEjgZ
-         1Ayg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi8ngbBi5eUJetKZUlXEgYF4ijbYnou7WCnERaZzpgHNuGlmSPK1/qb1c2Tm8UaLuMe4J10EqGKRHOico=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysm1vIx6hP9pAgu0kzwIkLmP0qZcbbqoYE9A9h/ocGawEfWZum
-	SnJ/iAWYk7nViTXIboaikJMccNYa8WUrLzH9fhrEBdQYilYq/Ia3ush+HDh6wbTrCM4=
-X-Gm-Gg: ASbGnctDBN7hqyK9pBMfOxJk3dD/WDrvLywrg0CsAECKhUAgILJFG1vVpqJVd8Oh2JR
-	myu2DLDqvCsdCjdt9wqPB/I1NjnW8ZVQSaEjARtX9RxrI0WyvXFx1E1wV1Dc7BRcueS+E2HUHvN
-	me56lBPvRtQMfael6csxH2hIZtCJnVABO5bN9lGTnHEXYoOX7uH4rCMIRtEJ3mXyxEnL3578Inv
-	fE+xguMYJ8H1DJgWsH9BwdKwInXcBol0++gYrmWw3RpTfRm4zTBX+nsnunMIVtCTVgij1H4xfVv
-	MxYW5t15ujGxfAMz6ukR0rVIXToBORa9+7YCaa8twAlpUISc+e0y7avrlCR+1HaB
-X-Google-Smtp-Source: AGHT+IHpmwTSHq0ZYz8lQTm5DuVgf5H+LAptA4zeTr6a+ZP5dC8xfupiDfgs6zU9Ea25L7XoigSn+A==
-X-Received: by 2002:a05:6000:26c7:b0:3a4:fbaf:3f99 with SMTP id ffacd0b85a97d-3b1fe4c8d71mr2056593f8f.13.1751459672276;
-        Wed, 02 Jul 2025 05:34:32 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c80b5a3sm15800036f8f.40.2025.07.02.05.34.31
+        d=1e100.net; s=20230601; t=1751459749; x=1752064549;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jg0LOIPqdIozUkUH06/iHo0/WcHNQMfp9668OgWITsE=;
+        b=jb78UhvkNys2SaCqcfmZaH8kY1Cewt6BvRJaIGf9UbXZ8CGMaJ0/QtXqEOyl8iH7DK
+         2vbjRILqT0ccjs8sgRitlAHiTpKtjUyKQ49ynPscZi6dTv3J7CwDtqq6MR63DKa2BTNj
+         5oOXRCXsYZTv8DIGNTdR267Qf7ClPI1VuvXaJlD/Cb1pNhvZ4MXt2caGaTVGyHBmDTM6
+         at7PNVYAdpI7HqANQ+ISbuNB6v/CyY86X9cm3e+qihA6N2RNkh7ImbOtMehcfhksK7u1
+         dmp2Fh9P6/yc1fYA2r8EdPJxW4CMswbVwcpYvLz+iZmJtKqWLUq2HNubKTBZuT6d8RBQ
+         sHEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0+WPWu6emBP7xfXH8DPvllJnFIzasC09Mn88XQ2pAbrPFFG0MBMuPv0wAKqXpWE1XIlFzlwVLy4ST@vger.kernel.org, AJvYcCUshQ/3W3PJsGFRrxk7pRaU5rE9GO/y8jiLBLkDX2YpboJqd71WsJdPpdfDWkd8XyqaQHCCId5f2niv6tJX@vger.kernel.org, AJvYcCW9TYctoq3RsrApqKcLv7+NsdO5yteUixL9mWR8w1isMzYY2kBihRoDnqwJLXyA+fLwC2sFnJRgFB+V7+63@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtIE4EEg3zwo0X0oN5vprOS4CG7apWnGXL0muRiyeUd+7CEAF+
+	xh1bqty3MPtgeSqC5/NeEz0+DMC1f6E5zzQbe7rQuN9iF3eE4ZQCYCSk
+X-Gm-Gg: ASbGncudwOQGiAqBEaMSKc459SBVxOxnmZ+qVk2odz7gC7ty2PtGd59LYyVdTvtKqZI
+	Fa3332+LtRxrld0KCEvwWTYjk/zo/IcEVqOpr2kQ9bdEPfUsvrYW8HgcEMekYTsDIuoQSS3DYxv
+	9tUS6fPWoeyimE0RihhSSBdiARNFxkVfG0cLEVdP3EQc6cfXqvlnF9hhuTjlmHoDTQcbwL8fxhU
+	qreq+yo/xbQ4XEar+WEtxwnupSotztfzyJhQh+6XNqJ5i3bDrLykzoZH2UavySe37Cy5JPRzQbU
+	D+ttP4BUCOv3iK01bKrYQKwGvtSLHRdMWTAdnn+Mo+OL54c8WdfC1Z97MQPzbL1FKN4hzwJJzJc
+	BW/jYiJptJ4ecyqU=
+X-Google-Smtp-Source: AGHT+IEZ7JKobG7elvoBdLsbn735VSU4fEnUj1mgXLW4+2+SXlswXfAlX7UhudyRbE0dWHkfsFfn2Q==
+X-Received: by 2002:a05:6000:18ab:b0:3a4:ddde:13e4 with SMTP id ffacd0b85a97d-3b20253882cmr2157966f8f.58.1751459749144;
+        Wed, 02 Jul 2025 05:35:49 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3a892e5f8a0sm16208688f8f.96.2025.07.02.05.35.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 05:34:31 -0700 (PDT)
-Date: Wed, 2 Jul 2025 14:34:29 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Shashank Balaji <shashank.mahadasyam@sony.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Shinya Takumi <shinya.takumi@sony.com>
-Subject: Re: [PATCH 0/2] selftests/cgroup: better bound for cpu.max tests
-Message-ID: <4bqk62cqsv3b4sid76zf3jwvyswdym7bl5wf7r6ouwqvmmvsfv@qztfmjdd7nvc>
-References: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
+        Wed, 02 Jul 2025 05:35:48 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: [PATCH v2 0/2] spi: spi-qpic-snand: enable 8 bits ECC strength
+ support
+Date: Wed, 02 Jul 2025 14:35:22 +0200
+Message-Id: <20250702-qpic-snand-8bit-ecc-v2-0-ae2c17a30bb7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="smuhsidh4jj2dmo5"
-Content-Disposition: inline
-In-Reply-To: <20250701-kselftest-cgroup-fix-cpu-max-v1-0-049507ad6832@sony.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIonZWgC/22NQQ6CMBBFr0Jm7ZhabVJceQ/DAqYDTCIFWiQaw
+ t2tsHDj8v3kv7dA5CAc4ZotEHiWKL1PoA8ZUFv6hlFcYtBKG6WVxXEQwuhL79BWMiEToSOrLrV
+ T1uQa0nMIXMtrs96LnQOPzySffmMrcerDeyvPp++6R1Lmb2Q+ocLc1GdKoaoic2u6Uh5H6jso1
+ nX9APl+Ot/LAAAA
+X-Change-ID: 20250208-qpic-snand-8bit-ecc-dc804fd08592
+To: Mark Brown <broonie@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
+This small patch set adds support for 8 bits ECC strength, which widens
+the range of the usable SPI NAND chips with the driver.
 
---smuhsidh4jj2dmo5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/2] selftests/cgroup: better bound for cpu.max tests
-MIME-Version: 1.0
+The first one is a preparatory patch which adds some defines which
+allows to avoid using magic values, and the second patch implements
+the actual support.
 
-Hello Shashank.
+The series should be integrated via the SPI tree, as that contains
+prerequisite changes.
 
-On Tue, Jul 01, 2025 at 11:13:54PM +0900, Shashank Balaji <shashank.mahadas=
-yam@sony.com> wrote:
-> cpu.max selftests (both the normal one and the nested one) test the
-> working of throttling by setting up cpu.max, running a cpu hog process
-> for a specified duration, and comparing usage_usec as reported by
-> cpu.stat with the duration of the cpu hog: they should be far enough.
->=20
-> Currently, this is done by using values_close, which has two problems:
->=20
-> 1. Semantic: values_close is used with an error percentage of 95%, which
->    one will not expect on seeing "values close". The intent it's
-> actually going for is "values far".
->=20
-> 2. Accuracy: the tests can pass even if usage_usec is upto around double
->    the expected amount. That's too high of a margin for usage_usec.
->=20
-> Overall, this patchset improves the readability and accuracy of the
-> cpu.max tests.
->=20
-> Signed-off-by: Shashank Balaji <shashank.mahadasyam@sony.com>
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Changes in v2:
+  - collect offered tags
+  - rebase on tip of spi/for-6.17
+  - update cover letter
+  - remove 'next' prefix
+  - Link to v1: https://lore.kernel.org/r/20250502-qpic-snand-8bit-ecc-v1-0-95f3cd08bbc5@gmail.com
 
-I think you're getting at an actual bug in the test definition.=20
+---
+Gabor Juhos (2):
+      mtd: nand: qpic-common: add defines for ECC_MODE values
+      spi: spi-qpic-snand: add support for 8 bits ECC strength
 
-I think that the test_cpucg_max should either run hog_cpus_timed with
-CPU_HOG_CLOCK_PROCESS instead of CPU_HOG_CLOCK_WALL to make sense or the
-expected_usage_usec should be defined with the configured quota in mind
-(i.e. 1/100).  (The latter seems to make the test more natural.)
+ drivers/mtd/nand/raw/qcom_nandc.c    |  6 +++---
+ drivers/spi/spi-qpic-snand.c         | 21 ++++++++++++++++-----
+ include/linux/mtd/nand-qpic-common.h |  2 ++
+ 3 files changed, 21 insertions(+), 8 deletions(-)
+---
+base-commit: d2c0e95525216cdc695d0066ee2f70b8adfbc536
+change-id: 20250208-qpic-snand-8bit-ecc-dc804fd08592
 
-With such defined metrics, the asserted expression could be
-	values_close(usage_usec, expected_usage_usec, 10)
-based on your numbers, error is around 20% so our helper's argument is
-roughly half of that. (I'd be fine even with err=3D20 to prevent some
-false positives.)
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
-I think those changes could even be in one patch but I leave that up to
-you. My comment to your 2nd patch is that I'd like to stick to relative
-errors and keep positive values_close() predicate that's used in other
-selftests too. (But those 95% in the current code are clumsy given two
-different qualities are compared.)
-
-Thanks,
-Michal
-
---smuhsidh4jj2dmo5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaGUnSQAKCRB+PQLnlNv4
-CK12AQC617NY4Bgg95KOUtRUliBbD467q6iN7i8UX5uw1TDHPQD/YDZ9YQbLmR8s
-aaGAL35x9nFcbe50VlfD5NyVDwbVugI=
-=ntIR
------END PGP SIGNATURE-----
-
---smuhsidh4jj2dmo5--
 
