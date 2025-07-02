@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-714026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08895AF6209
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A0EAF6243
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F64523D3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08ED1C47926
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7832BE634;
-	Wed,  2 Jul 2025 18:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070162D3736;
+	Wed,  2 Jul 2025 19:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5dIntmv"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="clvk4KIC"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC842F7CE2;
-	Wed,  2 Jul 2025 18:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98602BE630;
+	Wed,  2 Jul 2025 19:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751482635; cv=none; b=T0G3roFewziXUqwpaUGNVvi1vPR0S6pxxggD3g13Dn0IgkkoJOMTf9HpwyCkaTQfYxgUuvpUJ4juMXkkuvaA/pHx7GZdXDWpejia5hUQE2cSfzd3Wst03BiVNn2bBkq7wPIUmbwhcxt2wW0oBfAmm2T7//lLMDTVhqxzv/qnL38=
+	t=1751482831; cv=none; b=Ec75Sd/dLuT54Go5gUU0YRME3vysH/iy/G5MsgopsdSbM9PQPpy7Gmlow6vgTDn/q1OQ6CAs6UotxfhWHkISnYKenMLWrBwZ3qlR54J54PAgYS+p1DdT7QbTiylBrEZOmb5A5Yl3dwZwSdukX7a0b5k/dWfYm4Fcq4uTwd2tnnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751482635; c=relaxed/simple;
-	bh=kC3Ij0+TwzLPJxztlRCaWKRcoSyo8G6Yo4Whg2rzTmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IeUsI+FHU6tuDjQkRJOd2tse8qvweqzo2g+gG5iJ30Io9KAGniGy3vmLMBtoMJASmW2Ngh8jbNqvBg1txMujzsRqOKahFZqJCOBhi1wsT4ZHOJos4vDtWrRNwFkP23sNRHBgMOWe5Nlo4o9grtgZ9uK3TXINsAWtqF+U4G1aNsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5dIntmv; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1751482831; c=relaxed/simple;
+	bh=d8RdH4bygtc6dzbH1AbeiVyiXe9i4xNli8uyMLHR01g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r6DIW8Zctz1eJVgB31u41XH/zpCveUbN10xWZgizpJgYs+6t/UoBlbBPnezh6YlL1mvBm8dztVHpurbr/7ZlpoZMiaiQTcJu17y/ut7ZaSEOIE8Zcn+9FDq/9VZrcmnM3EQRS4Qrnkl3u3S71IsFCWojBLnc9E1qf4wKgbQD43U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=clvk4KIC; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7d402c901cbso662829385a.3;
-        Wed, 02 Jul 2025 11:57:14 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31332cff2d5so5994051a91.1;
+        Wed, 02 Jul 2025 12:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751482633; x=1752087433; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZIAXJvKauaAlRkK7qxQW9qPzH50AGsUAE8RQQJUH+Y=;
-        b=l5dIntmv5gBD/Be/Dqr/8HjR8lnXUy71WaB8vAxr/KBygeJkh/Ult/xV5NlMMmI4ES
-         8Bua5rVADe9UY4NUj8lE0XayyFo3mkb2sTQ67UYn9jTSIR8QmUlwdeq2XJPcFHX9bgfC
-         6nGHwiEbi4G5kO4Bq2FTpYFm1/x2qMcDlFBlKMunUQrSLfVWhqNeaDgIt19KUuiNeoPn
-         fMUsps6GiiJCLpxmxR2yp5JZszSoTjJaFPjZuRq5SoGU06MC7n+bE4CqNQa6YomG2GsZ
-         BlfOKGX46jR8iYz5lZ6kRM4CDojvqmq5eiMM47q8A3gIcf48Ko4UwxOuXSC062AFQfqJ
-         da0w==
+        d=gmail.com; s=20230601; t=1751482829; x=1752087629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNvEoNaOIW82DnFZ370ho50EsopFgUiF2vv7ai8Lmhs=;
+        b=clvk4KICnU8snL/FbktHJZ7PdbQyZSrARigUBS09siWgeJMBZB+TLzUepKlwGoYfYo
+         qL2WuPalebxGY5y/Tg9JTuGwBrlwPaV0B+AuT88cgGmJK2s0ONQb91D5PNxL40/8MRFC
+         MYiG4oQuViy2/twLcweMnY54O4glLZpmxtxIELAawncWq6FZBQBumPptMt9XrgJYWSzn
+         4AinxKZHkaSXUHJkcUFBovcYLUH6yG9RUPme42OtP5Vv8Ge17AoKesgQfVNWLqt9GrFE
+         Dem4bH+UoSFoLAfWrdkUYcHjz8ItOEUTw3jGS5LnpjHWoTFno8x35rmzht9Rr9z8+81L
+         ltMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751482633; x=1752087433;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kZIAXJvKauaAlRkK7qxQW9qPzH50AGsUAE8RQQJUH+Y=;
-        b=eT1sBOTPc/UB5IMSKBDDHT7Q5QoQ9Ai666tY8XKE7xRPeCmPQII+6w42AGCtHaQE6b
-         EXWEwKvP8BdP9wYq86cJQ2vuJrm4klLa+Bp2Y9yuBra5lVQO4NZxTRFZMikbEKm02+1M
-         +p6lnPbpgUt/YI2Akahj4Q6kZXni3STREcfb4CTvSVE9WU5XNPfahhSWtg1b7wZagyfQ
-         cMqY96EZgBxDZlqGT4W7Ypjjt8i2R6EAoQgtxMXMUp8YdFP4/Q20xP/EavU9T7d8l0zk
-         0rlBYKAkP7lBj3S4Y/actHAL6sd1iTS+Bm7UJK5VGDD8j7RLfyATXu0NseB9lr2cuQ6u
-         Tn+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWMLZzbTYm80phW/XUDd+HuKjzKsutGvRf3yiJWeG1ZRScI9NanpEbgiMaD8pOU7HxQzkgsMEm2rV3cRcki@vger.kernel.org, AJvYcCXT7SzJF0GkpuBEVs2HGj2JU0CVtBR73MRHXw4moFFkM8C6C2ZOAwpwdYjAUWt82Z6Z1YEe6Gs0wY8e@vger.kernel.org, AJvYcCXcY7XDKra33ME9vsw4oT8e1wlpK7Un6p58xuvlk4e3AQhNkbisySeyV/mzmA1NhWs8Yaydiuzo3z8o@vger.kernel.org, AJvYcCXqtdGLVkK5wP67CbgcEj810Yr+6UXMGXdN3SYJM9bCfO5Ug1r+kiJls6pMLNU/YE1vVa7gp/D8qXf8qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF8o8ivc6vXUNCpAARedPzMa8nHdZbhx8Q3xRpe41b4HkTrt6G
-	RFFCG7dIgrZiJiSvjuVxHrzI9SSf2wVzMTClMoBHbD2NuyrXEXj4DURu
-X-Gm-Gg: ASbGnctNcQVN7HEpDOgKuTTidPY7+CgiCvynako/jMj7eRIR1TZ5IYX0TiSTkZKdJI3
-	aY5zjP6dmMFWkOoWss29L/IGZR+J2yPE8Ndz+NydAgB6xny5C+fQcMYSfcanvn0vQMkFdTeEUrB
-	25zfogu4aABmLoo0WvI9rw9DPHX6Vlmr73PxhLSjxqGUpoOCNDGH4R5kYVFQVMp9Hlw3RpWMQ2C
-	1R+l+GRymWQMBRLQG2BYXnyJKqgUJQws24enmp60wSiptMKUFkfjSHJeYZLrz+Lo6sFTtagVrbi
-	KdTdUCdERVlxljM++xUkbsOf9YyZWMdwp5NTLxUKjQx1FsZxDe6pIJdpDgWw2nr7tegsVg==
-X-Google-Smtp-Source: AGHT+IEDEXEIqda75EtSySR3EUVNGEIZON8yl5WQFsWtxwa8n1GITiIvSiibTZKgp2uaIs7UnnNvOw==
-X-Received: by 2002:a05:620a:4489:b0:7cd:5b2a:979e with SMTP id af79cd13be357-7d5c470457emr455087985a.30.1751482632870;
-        Wed, 02 Jul 2025 11:57:12 -0700 (PDT)
-Received: from localhost ([2804:30c:b15:b200:425a:de22:1d7f:2d4b])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d443139b31sm990700685a.7.2025.07.02.11.57.11
+        d=1e100.net; s=20230601; t=1751482829; x=1752087629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dNvEoNaOIW82DnFZ370ho50EsopFgUiF2vv7ai8Lmhs=;
+        b=tAshOQPTsfFsqZ/dbVGgGM81CiZrEKdgs8poZv3T1ZdAkbgFPcbtwfJiM1tyOBHlhp
+         Gcy0Oi6Zg1d43xlyIk7wXRhfqZYTyJWOEF3j9ezG/tPlTiSaFRO2Ll+us/CbkLxQ6X3O
+         eYsW3Ma1iGaUYaTCqEVE6IWJDctoxlTzHTPLlmJv1sBJd8n2AV0b9hP3AX5aucE4Bzkd
+         v9FB+NeB1xMZMhACEFXDtpL1uwdew3E0G0bV+e89qZ5/zJeiZw9Mb96ih5xmJA3H6Hmk
+         zd4hGBg8RkKXo1cv9PqQ7nkI4PG25gLnoABx9Phbh5hqwWMz1xMNAD5XR90WwDKBDVeW
+         uEFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXHTybjjj6dzW9SYo8DJTbSixKD/66IXe/PnIvaqOou3rkFMnIaNFfRKJ7+GnIYZddbJi31WtFZ7iC0TU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpUKjkujb44oBsz3De1IAiiGEEY+cJ9cDyoTfsFcgRo3vn2AWr
+	keA4EWsOXo2+nhvWLYhqI189aVHLpBhtFGEB6BsxLsLQxjUbhDRuf28Ymg6wYbNV
+X-Gm-Gg: ASbGncsZ7XSyXeW2Cxx8TFhHkJpuekYgX/qx+I8WHg1wQKmwqF8J7Hg+h6L2nv36ocT
+	8TTwQs0Cy0CHEhja//YdCqadHLKMI2x+GglkAWpQAOG/IzrjrDGzwqyRPwwABfVrE2hQyrwRRZY
+	ZnjXxxlwTmuLQnmLQTJ+LVAH9Rq8tpi/C2xxY7hJui4zwxCGASCmisq0zSU7PYRCWpo2l2ScpQk
+	NtD0rSbdO2hNb1Xhc5BLo8QKr6I9PCL4snLlC3YrvnUlG6rsFjxksIvlRWt08p9Ce5iPcQI3ilx
+	IKqI4LNp3fJ18D8dhbUurNEk4hpl9jcfo//c9sGet9c5PTjFZvq8ryhO6y4DHsTXCkwBiCZz
+X-Google-Smtp-Source: AGHT+IHisT+jL2i9exD2iEGFPt0p0HhJMwOgwOqxm5sMieaqvdl02QcRn6IPSerxf/AqzuegXaPCvw==
+X-Received: by 2002:a17:90b:52c6:b0:316:3972:b9d0 with SMTP id 98e67ed59e1d1-31a90a2d5d4mr7166223a91.0.1751482828855;
+        Wed, 02 Jul 2025 12:00:28 -0700 (PDT)
+Received: from pop-os.. ([49.207.217.131])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31a9cc66830sm415374a91.16.2025.07.02.12.00.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 11:57:12 -0700 (PDT)
-Date: Wed, 2 Jul 2025 15:59:12 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jic23@kernel.org, lars@metafoo.de,
-	Michael.Hennerich@analog.com, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-	brgl@bgdev.pl, broonie@kernel.org, lgirdwood@gmail.com
-Subject: Re: [PATCH v7 00/12] iio: adc: Add support for AD4170 series of ADCs
-Message-ID: <aGWBgLLtOzVGwXek@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1751289747.git.marcelo.schmitt@analog.com>
- <aGTpNNaW7cXC18Jt@smile.fi.intel.com>
- <aGUfapky2uh2tsFt@debian-BULLSEYE-live-builder-AMD64>
- <aGUi7r2dgnbqLOAH@smile.fi.intel.com>
+        Wed, 02 Jul 2025 12:00:28 -0700 (PDT)
+From: Aditya Dutt <duttaditya18@gmail.com>
+To: stable@vger.kernel.org
+Cc: Edward Adam Davis <eadavis@qq.com>,
+	Dave Kleikamp <dave.kleikamp@oracle.com>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	jfs-discussion@lists.sourceforge.net,
+	skhan@linuxfoundation.org,
+	Manas Ghandat <ghandatmanas@gmail.com>,
+	syzbot+30b3e48dc48dd2ad45b6@syzkaller.appspotmail.com,
+	syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com,
+	Aditya Dutt <duttaditya18@gmail.com>
+Subject: [PATCH 5.15.y] jfs: fix null ptr deref in dtInsertEntry
+Date: Thu,  3 Jul 2025 00:29:36 +0530
+Message-Id: <20250702185936.68245-1-duttaditya18@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aGUi7r2dgnbqLOAH@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On 07/02, Andy Shevchenko wrote:
-> On Wed, Jul 02, 2025 at 09:00:42AM -0300, Marcelo Schmitt wrote:
-> > On 07/02, Andy Shevchenko wrote:
-> > > On Mon, Jun 30, 2025 at 10:57:32AM -0300, Marcelo Schmitt wrote:
-> 
-> ...
-> 
-> > > >  6 files changed, 3601 insertions(+)
-> > > 
-> > > This is weird. At least patches 11 & 12 have '-' lines...
-> > > 
-> > Yeah, sorry about that. These ADCs are fancy such that the base driver is about
-> > 1500 LoCs due to channel setup handling and support for multiple combinations of
-> > voltage references and channel setups.
-> > 
-> > About the '-' lines, I will rework ad4170_parse_channel_node() on earlier
-> > patches to avoid 3 line removals in patch 11. Patch 12 is only makes sense
-> > after patch 7 and I think it would lead to '-' lines if coming before patch 10
-> > since both increment the number of IIO channels. Anyway, I'll see how to further
-> > reduce the number of lines being removed.
-> 
-> My point is that the above statistics is mangled and I don't know how I can
-> trust the contents of this series if it already lied about that.
+From: Edward Adam Davis <eadavis@qq.com>
 
-Looks like git format-patch summarizes the changes from all patches when
-printing the statistics to the cover letter. Also, git format-patch doc [1]
-says the 'changes' dirstat option (default behavior) doesn't count
-rearranged lines as much as other changes. There are cover letters of other
-patch sets where the number of '-' lines don't match the sum of lines
-removed by each patch. [2] and [3] are examples of that.
+[ Upstream commit ce6dede912f064a855acf6f04a04cbb2c25b8c8c ]
 
-[1]: https://git-scm.com/docs/git-format-patch
-[2]: https://lore.kernel.org/linux-iio/20250630-losd-3-inv-icm42600-add-wom-support-v6-0-5bb0c84800d9@tdk.com/
-[3]: https://lore.kernel.org/linux-iio/20250627-iio-adc-ad7173-add-spi-offload-support-v2-0-f49c55599113@baylibre.com/
+[syzbot reported]
+general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 0 PID: 5061 Comm: syz-executor404 Not tainted 6.8.0-syzkaller-08951-gfe46a7dd189e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:dtInsertEntry+0xd0c/0x1780 fs/jfs/jfs_dtree.c:3713
+...
+[Analyze]
+In dtInsertEntry(), when the pointer h has the same value as p, after writing
+name in UniStrncpy_to_le(), p->header.flag will be cleared. This will cause the
+previously true judgment "p->header.flag & BT-LEAF" to change to no after writing
+the name operation, this leads to entering an incorrect branch and accessing the
+uninitialized object ih when judging this condition for the second time.
 
-This set doesn't remove stuff that existed prior to it so I think it makes
-sense the cover letter to show that lines are only being added.
+[Fix]
+After got the page, check freelist first, if freelist == 0 then exit dtInsert()
+and return -EINVAL.
 
-I'll send v8 with the change I mentioned earlier. Unless patches 11 and 12
-already look good the way they are in v7.
+Closes: https://syzkaller.appspot.com/bug?extid=30b3e48dc48dd2ad45b6
+Reported-by: syzbot+30b3e48dc48dd2ad45b6@syzkaller.appspotmail.com
+Reported-by: syzbot+bba84aef3a26fb93deb9@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Aditya Dutt <duttaditya18@gmail.com>
+---
 
-Best regards,
-Marcelo
+I tested the patch manually using the C reproducer:
+https://syzkaller.appspot.com/text?tag=ReproC&x=135c9b70580000
+given in the syzkaller dashboard above.
+
+ fs/jfs/jfs_dtree.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+index 27ca98614b0b..cb57d4f1161f 100644
+--- a/fs/jfs/jfs_dtree.c
++++ b/fs/jfs/jfs_dtree.c
+@@ -835,6 +835,8 @@ int dtInsert(tid_t tid, struct inode *ip,
+ 	 * the full page.
+ 	 */
+ 	DT_GETSEARCH(ip, btstack->top, bn, mp, p, index);
++	if (p->header.freelist == 0)
++		return -EINVAL;
+ 
+ 	/*
+ 	 *	insert entry for new key
+-- 
+2.34.1
+
 
