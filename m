@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-712941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0EEAF110C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7940DAF107C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D152B17D0EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F89B4A5D9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC902472A8;
-	Wed,  2 Jul 2025 10:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E9C2522BE;
+	Wed,  2 Jul 2025 09:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="bRQvynVU"
-Received: from mail-m19731115.qiye.163.com (mail-m19731115.qiye.163.com [220.197.31.115])
+	dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b="km48lblw"
+Received: from mail-m49207.qiye.163.com (mail-m49207.qiye.163.com [45.254.49.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C9C19AD89;
-	Wed,  2 Jul 2025 10:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5352E24DD1F;
+	Wed,  2 Jul 2025 09:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751450512; cv=none; b=XNMWXI05kMmmLFv3hsIcpp15PuI5ETS2XoLTP3EOHQUxsok2lUib99Et/KfYAc9W9DrztWMM4tb8t7zu7ol8PDQLSuZHDk7+K/S9Lvq43tblIuRGKoItmygWIDwgGaYHtRH5ZqNXIB2M5Z3x+WFxXmdKs0Z93kiSdQbd3lUQzeY=
+	t=1751449604; cv=none; b=g5ktyZGYmjID7R5uzgpuYfF3nS6c/CcGAXWsxGfoMQCPIBR8uKRx7klPtu0gKs/YFldCuzqzePBVUVzvzORnpXw1j5G+Xq23qVb6DLhnKsmD2Y/b6BUnJQA7Z0UyymUEIB7Gbve2vT8B2owG3vOxhMXD6k5naP04to0IptS6wCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751450512; c=relaxed/simple;
-	bh=eNKdiGfqO/VuWb4nuKPgERe+wyH9DEVM80fafn4TfEc=;
+	s=arc-20240116; t=1751449604; c=relaxed/simple;
+	bh=R0CWMLD/EEHYNbcG8KgTMPj2hzXibcGsXODlklTI5q4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N0oLk+x72s9ApHeMZ5dgir3fytaJe6TCNQKsUhXFlKjV/3/I8tW3Ag1sYP/lvKY2HGpBAkZBGqoAV4LPybkPhdP8hlUZVzbiMU0Z+uSOzTBdFKJJl5tcxzyGQqWAgBv6C8p/YnKkd68E/6S5tnHO4LqE9iev2Bki7rCgVl5Nh+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=bRQvynVU; arc=none smtp.client-ip=220.197.31.115
+	 MIME-Version:Content-Type; b=GEWLFRnLQJV3C0p2BbmcTABZf2xjC5Hk1LYE+FYlfcwYtTDkLXAkM6QBaDHcvo3bWU7feaiX4jIbXvxITNPikbwq42EuV8/cH+yJVTkiITVZqtx047CbTJAPQOVnVYWcdccSVytovd581AT/mtSHyrAyhSSbEx3yYtv/4ayvtYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com; spf=pass smtp.mailfrom=thundersoft.com; dkim=pass (1024-bit key) header.d=thundersoft.com header.i=@thundersoft.com header.b=km48lblw; arc=none smtp.client-ip=45.254.49.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thundersoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thundersoft.com
 Received: from localhost.localdomain (unknown [117.184.129.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed2b;
-	Wed, 2 Jul 2025 17:46:28 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1aaa9ed36;
+	Wed, 2 Jul 2025 17:46:31 +0800 (GMT+08:00)
 From: Albert Yang <yangzh0906@thundersoft.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -66,9 +66,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	shanchun1218@gmail.com,
 	ben.chuang@genesyslogic.com.tw,
 	Albert Yang <yangzh0906@thundersoft.com>
-Subject: [PATCH v2 1/8] dt-bindings: vendor-prefixes: Add Black Sesame Technologies Co., Ltd.
-Date: Wed,  2 Jul 2025 17:44:37 +0800
-Message-Id: <20250702094444.3523973-2-yangzh0906@thundersoft.com>
+Subject: [PATCH v2 2/8] dt-bindings: arm: add Black Sesame Technologies (bst) SoC
+Date: Wed,  2 Jul 2025 17:44:38 +0800
+Message-Id: <20250702094444.3523973-3-yangzh0906@thundersoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250702094444.3523973-1-yangzh0906@thundersoft.com>
 References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
@@ -79,45 +79,74 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSkgaVk4ZGkNNTBofQ09OGFYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a97ca87d4b509cckunmee1cabff3eba7e
+X-HM-Spam-Status: e1kfGhgUHx5ZQUhXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGR1JVk4YGENDTEpJHh5OQ1YVFAkWGhdVEwETFh
+	oSFyQUDg9ZV1kYEgtZQVlKSkxVSkNPVUpJQlVKSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSklVT1
+	VKT1kG
+X-HM-Tid: 0a97ca87dd3009cckunmee1cabff3ebaba
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MVE6Pzo4LjE4NE8PHSE6HQE6
-	VjIKC0tVSlVKTE5KT09CTkJKS0hKVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
-	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUlPS0k3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pxg6KTo6TzE*T089KxksHQw9
+	CD4aCQ5VSlVKTE5KT09CTkJIS0NKVTMWGhIXVQIaFRwBE0tCS007DxMOFR8eCQgUHQ9VGBQWRVlX
+	WRILWUFZSkpMVUpDT1VKSUJVSkhPWVdZCAFZQUhKSEw3Bg++
 DKIM-Signature:a=rsa-sha256;
-	b=bRQvynVUXniiVJyyH/q9DnWCaWegCDyqvNxnpqcOsl2JGrj4Lp17augQtBgTZqfrea5swTq0A7M/4pQt89ZzyIlff4KcZcrt4pvdvzrIrSyWMezcOqVZY1eHYXD7auzMGNh7585V6XitzXFdlqGw0EGjlU2k3TaBYmrQv3o4sUA=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
-	bh=XEabmgEszbyuyR1aOE7h10DY4QzFMJFpCj2YxqFGf80=;
+	b=km48lblwqhJ9eMNaOOixs21bDUWw710nq+WF3nGAJkUGzohpfAFY+A5CVIoRyltnZs22ksywNjzOgET76hamxpDBF9R2HS4wUCyQgTxvo7xVqyRedMN6Tw+WsJO1RgD0TEFox7TMi1Djhh6zAs54h+QEhBwVrqNNP5Gokbgz6uA=; c=relaxed/relaxed; s=default; d=thundersoft.com; v=1;
+	bh=7HId0QjN1Uxd1UcS1PVWLgSUuLheSa0vzbbArIAI4e0=;
 	h=date:mime-version:subject:message-id:from;
 
-Black Sesame Technologies Co., Ltd.s a leading automotive-grade
-computing SoC and SoC-based
-intelligent vehicle solution provider. Link: https://bst.ai/.
+Add device tree bindings for Black Sesame Technologies Arm SoC,
+it consists several SoC models like C1200, etc.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Changes for v2:
+- Removed unnecessary pipe (`|`) in description
+- Dropped invalid `compatible` entry for standalone SoC
+- Removed root node (`$nodename: '/'`) definition
+
 Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
 Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/arm/bst.yaml          | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/bst.yaml
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 5d2a7a8d3ac6..3c2031417232 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -222,6 +222,8 @@ patternProperties:
-     description: Shenzhen BigTree Tech Co., LTD
-   "^bitmain,.*":
-     description: Bitmain Technologies
-+  "^bst,.*":
-+    description: Black Sesame Technologies Co., Ltd.
-   "^blaize,.*":
-     description: Blaize, Inc.
-   "^blutek,.*":
+diff --git a/Documentation/devicetree/bindings/arm/bst.yaml b/Documentation/devicetree/bindings/arm/bst.yaml
+new file mode 100644
+index 000000000000..e6f48f569768
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/bst.yaml
+@@ -0,0 +1,30 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/bst.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: BST platforms
++
++description:
++  Black Sesame Technologies (BST) is a semiconductor company that produces
++  automotive-grade system-on-chips (SoCs) for intelligent driving, focusing
++  on computer vision and AI capabilities. The BST C1200 family includes SoCs
++  for ADAS (Advanced Driver Assistance Systems) and autonomous driving applications.
++
++maintainers:
++  - Ge Gordon <gordon.ge@bst.ai>
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - description: BST C1200 CDCU1.0 ADAS 4C2G board
++        items:
++          - const: bst,c1200-cdcu1.0-adas-4c2g
++          - const: bst,c1200
++
++additionalProperties: true
++
++...
 -- 
 2.25.1
 
