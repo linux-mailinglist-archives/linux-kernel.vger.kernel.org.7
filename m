@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-713583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0CAAAF5BD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F75AF5BDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34915189DE4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8046F4A3C8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFFE30AAD4;
-	Wed,  2 Jul 2025 14:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDBB30B999;
+	Wed,  2 Jul 2025 14:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXEcwP+6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwmzkYlw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC9F307AEC;
-	Wed,  2 Jul 2025 14:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA3F30B988;
+	Wed,  2 Jul 2025 14:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751468152; cv=none; b=L1qP2N1h94iEa5pNC6BK7EOFzl/kCysPf1HIXEIxrCt+pOZkGg9K7bxdQDG2uAUVzmPJpTkbfju4zh6/XAWb+dKBLORxkNXcQpH3uZSPtv/xH9pKxwIdywNnjodzpHUjPvDVUUAVduui0KZVK+wmGb8vzoiMdEG3MEKD10Zp81Q=
+	t=1751468167; cv=none; b=g72RbpJyPyBb4m+DZVV2liQDALRl9CV8+We4kjPAuLzIn7nTH0AaRYsQalFZdoiLb7G7fjqoD81U+lf41siItNLwDP8NlRJKvHheh8isRApHGn95ptf8qD0P0VzcXzTtQBody2SaYeEGNBDKuHSCcAvLYxduD61oCbRLxZ5y6Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751468152; c=relaxed/simple;
-	bh=rLyX23ymLYa8j5VfciRa5YAFA/KvzENBXUoIUXYhWnw=;
+	s=arc-20240116; t=1751468167; c=relaxed/simple;
+	bh=jPSExSFTuCmZYyW1vpV6frVat4xvr0IfGJRia6zEiEM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAa83E/Hy4W3GY1qtSzQPVzqZi2dHv2DkhWk82+hbKHaMX5UCndZ2o01qwNRyuG9bdK1vZaBnAlL6PJQn5ySQdPtLUcBhhpLoXSqi9hFdAKr5R9CQ+m3l5jtBciuFC76WQRbXS61S5J0i679GqPiCr3i99Cl0rVhaAoC9UYmfDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lXEcwP+6; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751468150; x=1783004150;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rLyX23ymLYa8j5VfciRa5YAFA/KvzENBXUoIUXYhWnw=;
-  b=lXEcwP+6DdglkKyAV78h8yrHHpsO/9tjZpWqy5ZaLf2RDJAvnYhnPp5Z
-   86W5QbAqco9FzJRBXxqt46Hd8uezsQgOguD/C8vpdbtW3W7jWfsqIHa0s
-   TbSIXVV3Qff2TSvvbGZLiVig0ayopcBIV1070D2fhYOGvBeRbPcIoIXVj
-   WvtzZyL+oMIsqniy4+1FSxsNhRW0m7yi3qQzdrZQyjPnk5ErHVholjVH5
-   G38jVVlM70rFCKV5QhwPOnTYOpweJOCwk5gEs6yNUgY0CbHJil48RDuVQ
-   GzfbhZdFyP2Ad1H7sIiSFi1/376DiuRySWvwQM4HFJAYi2FaN5zyUJA+Y
-   w==;
-X-CSE-ConnectionGUID: HimKoylSTYynfZ4OQ+b9MA==
-X-CSE-MsgGUID: mc1wTu8FRoCiTFI9fANxxg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53886530"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="53886530"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 07:55:50 -0700
-X-CSE-ConnectionGUID: XN4ArCpnT4OmAZgIK5ZmGw==
-X-CSE-MsgGUID: YvrNEx8VSl2LgAQ71WXxpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="191269399"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 07:55:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uWysC-0000000BwmV-3TTU;
-	Wed, 02 Jul 2025 17:55:44 +0300
-Date: Wed, 2 Jul 2025 17:55:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Akshay Bansod <akbansd@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: st_lsm6dsx: Replace scnprintf with sysfs_emit
-Message-ID: <aGVIcBLgXZj_YR7B@smile.fi.intel.com>
-References: <20250702135855.59955-1-akbansd@gmail.com>
- <f96b68a5-d750-45f0-8cdd-9761b5daca1d@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhkpBVr7N4owY3tH6jIk348F3uix3e83VjpK0ZdozdGtLFpy8x5Wp7PDFr7Q3kUfEJJ6eZeoz5bnj0vvxPqIbcV4Bd9JIeKuqKRPzkCvPa60z5aoismMX69snpnb0K/NyW8S2z5u6a5acD+YduC+JCusY1MBPCIX0/yYeT7TBPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwmzkYlw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3090DC4CEE7;
+	Wed,  2 Jul 2025 14:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751468167;
+	bh=jPSExSFTuCmZYyW1vpV6frVat4xvr0IfGJRia6zEiEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TwmzkYlwB9IXoWYiTTPlsJR9akZk93fcjgJg6GoqsidFL3/va22HeolW4AtWm6WBR
+	 qDORl0UL2v1tX9sqxupC621a9pK4Po/zcfQTqQ93FeFqHU4lIAO82OY2azKmqOSw6z
+	 juJ/kKe+A4Jyr4MHP2RmWZD28BsxqVQZ+8LkLAN4S8sP5+TyuHDl+lj1cwEoeV3J87
+	 BQibCF8oi7FhXWzO7FypDa15h26jMsH+ynDLuonuhHj21WNBRSAc3WQRozq20sQCTr
+	 IZTy2epyswxYsioCWK9zFS7c4uUgKPWmtHtAR49sUt6LgUHTa8moooBkgVSEkuRE+G
+	 jQGOPhmB+QPIQ==
+Date: Wed, 2 Jul 2025 07:56:06 -0700
+From: Kees Cook <kees@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH v12 00/14] unwind_user: x86: Deferred unwinding
+ infrastructure
+Message-ID: <202507020751.CB3EFC2D@keescook>
+References: <20250701005321.942306427@goodmis.org>
+ <CAHk-=wijwK_idn0TFvu2NL0vUaQF93xK01_Rru78EMqUHj=b1w@mail.gmail.com>
+ <20250630224539.3ccf38b0@gandalf.local.home>
+ <202507011547.D291476BE1@keescook>
+ <20250701192619.20eb2a58@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,31 +76,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f96b68a5-d750-45f0-8cdd-9761b5daca1d@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20250701192619.20eb2a58@gandalf.local.home>
 
-On Wed, Jul 02, 2025 at 09:16:51AM -0500, David Lechner wrote:
-> On 7/2/25 8:58 AM, Akshay Bansod wrote:
-> > Update the sysfs interface for sampling frequency and scale attributes.
-> > Replace `scnprintf()` with `sysfs_emit_at()` which is PAGE_SIZE-aware
-> > and recommended for use in sysfs.
+On Tue, Jul 01, 2025 at 07:26:19PM -0400, Steven Rostedt wrote:
+> On Tue, 1 Jul 2025 15:49:23 -0700 Kees Cook <kees@kernel.org> wrote:
+> > Okay, I've read the cover letter and this wiki page, but I am dense: why
+> > does the _kernel_ want to do this? Shouldn't it only be userspace that
+> > cares about userspace unwinding? I don't use perf, ftrace, and ebpf
+> > enough to make this obvious to me, I guess. ;)
+> [...]
+> Anyway, yeah, it's something that has a ton of interest, as it's the way
+> for tools like perf to give nice graphs of where user space bottlenecks
+> exist.
 
-...
-
-> > +		len += sysfs_emit_at(buf, len, "%d.%03d ",
-> >  				 odr_table->odr_avl[i].milli_hz / 1000,
-> >  				 odr_table->odr_avl[i].milli_hz % 1000);
-> 
-> Let's keep checkpatch happy and change the indent of the wrapped lines to
-> line up with ( since the ( moved.
-
-While I see the point, wouldn't be better to have 1000 replaced with MILLI
-at the same time?
+Right! Yeah, I know it's very wanted -- I wasn't saying "don't this in
+the kernel", but quite literally, "*I* am missing something about why
+this is so important." :) And thank you, now I see: the sampling-based
+profiling of userspace must happen via the kernel.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Kees Cook
 
