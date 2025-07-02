@@ -1,68 +1,95 @@
-Return-Path: <linux-kernel+bounces-712676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAEFAF0D29
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9833AF0D21
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333133B0EA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040F01C2319C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCDD22A80D;
-	Wed,  2 Jul 2025 07:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A351D63F0;
+	Wed,  2 Jul 2025 07:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="JTaAQ5tq"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oz3WEWgg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c6+OnuAK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oz3WEWgg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c6+OnuAK"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366401F5619;
-	Wed,  2 Jul 2025 07:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1431222F762
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 07:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751442658; cv=none; b=CDl3UhwAErcwEA72ayuzriUXqW6F919guNsloS2W47FVqGvChgkcPwP8TBiBuVdJUyNjRrCotfN4LaWsnymyO5cadl6EGf2uK4iBfDmK+EF0Mj6M/OKAKh6qOLxN0bccnQm6TNGik5NS7ro4kIxtTp2i70eYVZK0ZmachzUDWr0=
+	t=1751442581; cv=none; b=ZYwJPSH2FydQN0rk0uA3UGw4Zrk3S72K5Bl7oWwzDwAz5q15BinnCeWY0wD/iRqYBoiOZR/S4n/QVIKqS3Rd8+K5r3QWFuiAYZjyL/okskqWtptfQ+B8baUJjuxBCwMXOF1hhqKUu+qoKmKYb3REXIHVM3CsxrmgHjXmS1oXxoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751442658; c=relaxed/simple;
-	bh=MhH3YYVBH9VOdNh4VoGi/5ItbJtV9wj2TFwiXuVDgnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=egyvjXzT+C7pJm6sxm/bw+4k0SLkh6dl0AY28ILTQez2t22ehvvgRfxHYT9eZIXCUI/VrcmzFUFVMB4j6pfplv7+bqyGyc+9Wi+xaH624TZVjvMS/qvpi2m/9LVIdSeczaSwPvpKZXyLTvNwX84ZZA8lFf/CgifxrH4gJh5OQ28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=JTaAQ5tq; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5627dfum032247;
-	Wed, 2 Jul 2025 09:50:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	I/ZCqBGkaOyVgMTdMl1PUQIOWsZD4M/QSf93rQq0ccA=; b=JTaAQ5tqKtPgkQw3
-	dIPKZHMuooSL4bZYq7/7KyQD9oWOyI/UE+CTuKRHuplhITIGsmb8zWnqQh52YZxi
-	hURiVUp1Kp/KHmwPgd3wrZTU88JR9zCL1KJR2rjWKAIP2c+8PMW0NTeS7wkY/9+V
-	xP1DzeGeVthnPldZ7T6CDYxFOnYo6fWXZIfgNJpy49d81IQgcBLATVJwQumEGhQP
-	il+OI/OgO6FRoVHqnHRryOTQwBDm2mmF2YAqFYXe0A6sO9QWj1+HJXtnv1sLNg4X
-	lbDRuN4H0R1qHoh6BWb8N1ssdjix0lnysEkl5yK93XmbFnVc5cjsHxhvE4+wFbcW
-	qpe+ag==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47jsy4xj7q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 09:50:16 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 247014002D;
-	Wed,  2 Jul 2025 09:49:27 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DE71BB94E56;
-	Wed,  2 Jul 2025 09:49:00 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
- 2025 09:49:00 +0200
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 2 Jul
- 2025 09:49:00 +0200
-Message-ID: <685641cb-d5e0-4f28-87a1-98d2fd84e920@foss.st.com>
-Date: Wed, 2 Jul 2025 09:48:59 +0200
+	s=arc-20240116; t=1751442581; c=relaxed/simple;
+	bh=90eOtoDZR87XEjTT5OSrKcgQ+qlNMG8Uc+U/vnDdH1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CwwL8muaSjZaa1cZzxqA6xxLSncavHuvs1Fp8yi9aMDRRaxAN9/m7oaw/T36ed9dayiW3QQZazM0oJKg1YoyXaZraNgcCLxvdpx2p+GiieIKo7JovuxbdMbbzPCQxITR/eXdkdwxp5hXj4QIQtWY20er0xEd1FxNjsfELGYdBZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oz3WEWgg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c6+OnuAK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oz3WEWgg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c6+OnuAK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 31CD62111F;
+	Wed,  2 Jul 2025 07:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751442577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5qgNZZo+UhrOw0qZY5yzCbxyS0sZdhvhyBwDFlNZPn0=;
+	b=oz3WEWggc4R2HbV+0+aBPK1Y4RXZcIi7eBbXCZ3EUjcEJYUISWyZOfEEQKRlJzF2QYtVtm
+	ZTzk4NmRlRThEsLY2ImfBhTn7L9aGgH6w0ndqs1uKk+QtPrRToWYrRK0yN8VZJlQuSeif6
+	YgR6+CZfcXqmuC5EkymSxi0yMWnlxEY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751442577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5qgNZZo+UhrOw0qZY5yzCbxyS0sZdhvhyBwDFlNZPn0=;
+	b=c6+OnuAKYY9awBdfeywvmh/5Gc+JIqt5Hl6RyTduPv+ZgHTefqJqPsT5+irWeoLvJHFmYs
+	U82NN1d5cKdzJ3Dg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oz3WEWgg;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=c6+OnuAK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1751442577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5qgNZZo+UhrOw0qZY5yzCbxyS0sZdhvhyBwDFlNZPn0=;
+	b=oz3WEWggc4R2HbV+0+aBPK1Y4RXZcIi7eBbXCZ3EUjcEJYUISWyZOfEEQKRlJzF2QYtVtm
+	ZTzk4NmRlRThEsLY2ImfBhTn7L9aGgH6w0ndqs1uKk+QtPrRToWYrRK0yN8VZJlQuSeif6
+	YgR6+CZfcXqmuC5EkymSxi0yMWnlxEY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1751442577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=5qgNZZo+UhrOw0qZY5yzCbxyS0sZdhvhyBwDFlNZPn0=;
+	b=c6+OnuAKYY9awBdfeywvmh/5Gc+JIqt5Hl6RyTduPv+ZgHTefqJqPsT5+irWeoLvJHFmYs
+	U82NN1d5cKdzJ3Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 956D213A24;
+	Wed,  2 Jul 2025 07:49:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id s2TeIpDkZGjoQQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 02 Jul 2025 07:49:36 +0000
+Message-ID: <ef053350-975b-4685-8e09-0493d526801d@suse.de>
+Date: Wed, 2 Jul 2025 09:49:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,378 +97,300 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-To: Dawei Li <dawei.li@linux.dev>
-CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <set_pte_at@outlook.com>
-References: <20250609151531.22621-1-dawei.li@linux.dev>
- <f3b99a3d-5d20-4e82-ae5d-75c2c866e118@foss.st.com>
- <20250619144301.GA9575@wendao-VirtualBox>
- <db2d2296-3893-427d-85ec-f64e6c0e1d1d@foss.st.com>
- <20250622041200.GA3703@wendao-VirtualBox>
- <ce95f80b-4a36-457e-aedd-d59a325a711c@foss.st.com>
- <20250701141607.GA5219@wendao-VirtualBox>
+Subject: Re: [PATCH v6 9/9] PCI: Add a new 'boot_display' attribute
+To: Mario Limonciello <superm1@kernel.org>, David Airlie <airlied@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>, Lukas Wunner <lukas@wunner.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Woodhouse <dwmw2@infradead.org>,
+ Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INTEL IOMMU (VT-d)" <iommu@lists.linux.dev>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ "open list:VFIO DRIVER" <kvm@vger.kernel.org>,
+ "open list:SOUND" <linux-sound@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+References: <20250627043108.3141206-1-superm1@kernel.org>
+ <20250627043108.3141206-10-superm1@kernel.org>
+ <41587824-4a05-4ead-b24c-4729007cd663@suse.de>
+ <8878af70-3eb8-495b-b8df-43a10285c4f5@kernel.org>
+ <732aeb75-71e7-49e7-a5f2-2080ee94a273@suse.de>
+ <8f9efe23-c774-477d-97ad-8e22532ad6b2@kernel.org>
 Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20250701141607.GA5219@wendao-VirtualBox>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-01_02,2025-06-27_01,2025-03-28_01
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <8f9efe23-c774-477d-97ad-8e22532ad6b2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[kernel.org,gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	TO_DN_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[amd.com:email,suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 31CD62111F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.51
 
-hello Dawei
+Hi
 
-On 7/1/25 16:16, Dawei Li wrote:
-> Hi Arnaud,
-> 
-> Thanks for the reply.
-> 
-> On Mon, Jun 30, 2025 at 09:54:40AM +0200, Arnaud POULIQUEN wrote:
->> Hello Dawei,
+Am 30.06.25 um 20:37 schrieb Mario Limonciello:
+> On 6/30/2025 2:24 AM, Thomas Zimmermann wrote:
+>> Hi
 >>
->> Sorry for the late answer.
->>
->> On 6/22/25 06:12, Dawei Li wrote:
->>> Hi Arnaud,
->>>
->>> Thanks for the reply.
->>>
->>> On Fri, Jun 20, 2025 at 09:52:03AM +0200, Arnaud POULIQUEN wrote:
+>> Am 27.06.25 um 17:37 schrieb Mario Limonciello:
+>>> On 6/27/2025 2:07 AM, Thomas Zimmermann wrote:
+>>>> Hi
 >>>>
+>>>> Am 27.06.25 um 06:31 schrieb Mario Limonciello:
+>>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>>
+>>>>> On systems with multiple GPUs there can be uncertainty which GPU 
+>>>>> is the
+>>>>> primary one used to drive the display at bootup. In order to 
+>>>>> disambiguate
+>>>>> this add a new sysfs attribute 'boot_display' that uses the output of
+>>>>> video_is_primary_device() to populate whether a PCI device was 
+>>>>> used for
+>>>>> driving the display.
+>>>>>
+>>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>>> ---
+>>>>> v6:
+>>>>>   * Only show for the device that is boot display
+>>>>>   * Only create after PCI device sysfs files are initialized to 
+>>>>> ensure
+>>>>>     that resources are ready.
+>>>>> v4:
+>>>>>   * new patch
+>>>>> ---
+>>>>>   Documentation/ABI/testing/sysfs-bus-pci |  8 +++++
+>>>>>   drivers/pci/pci-sysfs.c                 | 46 
+>>>>> +++++++++++++++++++++ ++++
 >>>>
->>>> On 6/19/25 16:43, Dawei Li wrote:
->>>>> Hi Arnaud, 
->>>>> Thanks for review.
->>>>>
->>>>> On Wed, Jun 18, 2025 at 03:07:36PM +0200, Arnaud POULIQUEN wrote:
->>>>>> Hello Dawei,
->>>>>>
->>>>>>
->>>>>> Please find a few comments below. It is not clear to me which parts of your
->>>>>> implementation are mandatory and which are optional "nice-to-have" optimizations.
->>>>>
->>>>> It's more like an improvement.
->>>>>
->>>>>>
->>>>>> Based on (potentially erroneous) hypothesis, you will find a suggestion for an
->>>>>> alternative to the anonymous inode approach, which does not seem to be a common
->>>>>> interface.
->>>>>
->>>>> AFAIC, annoymous inode is a common interface and used extensivly in kernel development.
->>>>> Some examples below.
->>>>>
->>>>>>
->>>>>>
->>>>>> On 6/9/25 17:15, Dawei Li wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
->>>>>>> for rpmsg subsystem.
->>>>>>>
->>>>>>> Current uAPI implementation for rpmsg ctrl & char device manipulation is
->>>>>>> abstracted in procedures below:
->>>>>>> - fd = open("/dev/rpmsg_ctrlX")
->>>>>>> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
->>>>>>>   generated.
->>>>>>> - fd_ep = open("/dev/rpmsgY", O_RDWR) 
->>>>>>> - operations on fd_ep(write, read, poll ioctl)
->>>>>>> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
->>>>>>> - close(fd_ep)
->>>>>>> - close(fd)
->>>>>>>
->>>>>>> This /dev/rpmsgY abstraction is less favorable for:
->>>>>>> - Performance issue: It's time consuming for some operations are
->>>>>>> invovled:
->>>>>>>   - Device node creation.
->>>>>>>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
->>>>>>>     overhead is based on coordination between DEVTMPFS and userspace
->>>>>>>     tools such as udev and mdev.
->>>>>>>
->>>>>>>   - Extra kernel-space switch cost.
->>>>>>>
->>>>>>>   - Other major costs brought by heavy-weight logic like device_add().
->>>>>>
->>>>>> Is this a blocker of just optimization?
->>>>>
->>>>> Yep, performance is one of motivations of this change.
->>>>>
->>>>>>
->>>>>>>
->>>>>>> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
->>>>>>>     that a dynamically created device node can be opened only once.
->>>>>>
->>>>>>
->>>>>> I assume this is blocker with the fact that you need to open the /dev/rpmsg<x>
->>>>>> to create the endpoint.
->>>>>
->>>>> Yes. You have to open /dev/rpmsgX which is generated by legacy ioctl to
->>>>> instantiate a new endpoint.
->>>>>
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> - For some container application such as docker, a client can't access
->>>>>>>   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
->>>>>>>   is generated dynamically and whose existence is unknown for clients in
->>>>>>>   advance, this uAPI based on device node doesn't fit well.
->>>>>>
->>>>>> does this could be solve in userspace parsing /sys/class/rpmsg/ directory to
->>>>>> retreive the device?
->>>>>
->>>>> Hardly, because client still can't access /dev/rpmsgX which is generated
->>>>> by host _after_ client is launched.
->>>>
->>>>
->>>> This part is not clear to me; could you provide more details?
->>>> I cannot figure out why a client can access /dev/rpmsg_ctrlX but not /dev/rpmsgX.
+>>>> The code looks good. Just one more question: could this be added 
+>>>> independently from the PCI bus (at a reasonable cost)? There are 
+>>>> other busses that can host the boot display. Alternatively, we'd 
+>>>> add this attribute per bus as needed.
 >>>
->>> Well, let's take docker as example:
->>
+>>> It depends upon the underlying hardware implementation.  On x86 it's 
+>>> always PCI and so I realized there is a requirement that PCI 
+>>> resources are setup before screen_info event works.
 >>>
->>> For docker, when a client is launched and it wants to access host's
->>> device, it must make explicit request when it's launched:
+>>> That is the v5 version of this patch would have had a potential race 
+>>> condition with userspace where boot_display didn't always show '1' 
+>>> if userspace read it too quickly.
 >>>
->>> docker run --device=/dev/xxx
+>>> Other architecture's hardware implementation might have similar 
+>>> problem.
 >>>
->>> Let's presume that xxx is /dev/rpmsgX generated dynamically by _host_.
->>> Docker command above knows nothing about these rpmsg nodes which are
->>> generated by host _after_ client is launched. And yes, parsing> /sys/class/rpmsg may acquire info about rpmsg devices, but client still
->>> can't access /dev/rpmsgX.
+>>> So in summary I think it would be better to do it per-bus.  If we 
+>>> realize there is indeed code duplication we can always move this to 
+>>> a common helper at that point.
 >>
->> One extra question:Are you using RPMsg over virtio?
+>> Ok, makes sense. With the kernel test robot's issues fixed:
 >>
->> If yes, do you test the RPMsg name service (NS) announcement, that might also
->> address your needs.
+>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>
+> Thanks, I've got a fix locally for it.
 >>
->> The principle is that the remote processor sends a name service announcement to
->> Linux, which probes the rpmsg character device and creates the /dev/rpmsgX
->> device in a predefined order known by the remote processor.
->> In such a case, the /dev/rpmsgX usage would be determined by the remote
->> processor itself.
+>> I guess that interface also needs some sort of OK from user-space devs?
 >>
->> Another advantage is that the RPMsg channel creation is not driven by either the
->> host or the client. In such case host does no need to define/kwnow RPMSg
->> endpoint addresses.
->>
->> You still need to call the open() file system operation, but this should be done
->> one time during Docker client initialization.
-> 
-> NS is nice, but perhaps it's not the approach for some cases.
-> 
-> For offloading/accelerator scenarios, ACPU is responsible for making all
-> the important decisions, including creations of endpoints. Because all
-> the user-awared software stack is running on ACPU, and if you want to
-> create a endpoint _dynamically_, it must be from user's command which is
-> from ACPU.
-> 
-> And this series is more about how rpmsg_char and rpmsg_ctrl coordinate
-> themselves about creating dynamic rpmsg endpoints in a more simple
-> and efficient way.
-> 
-> And the whole point of series is "When you want to return a fd to
-> userspace which represents an instance of data structure in kernel, you
-> don't implement it as character device". Maybe some quotes from Christian[1]
-> can describe it better[1]:
-> 
-> "I'm not sure why people are so in love with character device based apis.
-> It's terrible. It glues everything to devtmpfs which isn't namespacable
-> in any way. It's terrible to delegate and extremely restrictive in terms
-> of extensiblity if you need additional device entries (aka the loop
-> driver folly)."
-> 
-> [1] https://lkml.org/lkml/2025/6/24/639
+>
+> Who needs to OK it?  I do have MR's for matching userspace 
+> implementations mentioned in the cover letter already.
 
-Thank you for all your explanations! It is always very interesting to understand
-the different ways to use RPMsg.
+The MRs are the right place. Maybe ask Dave Airlie for a comment. He was 
+most outspoken against the original approach.
 
-In the end, I don't see any problem with your series. The possibility of using
-an anonymous inode seems valid to me.
+Best regards
+Thomas
 
-I am just wondering whether this should be implemented in the rpmsg_char driver
-or in a new driver, addressing this question to Mathieu and Bjorn.
-
-
-Regards,
-Arnaud
-
-> 
-> Thanks,
-> 
-> 	Dawei
-> 
->>
->> Regards
->> Arnaud
->>
+>
+>> Best regards
+>> Thomas
 >>
 >>>
 >>>>
+>>>> Best regards
+>>>> Thomas
 >>>>
+>>>>>   2 files changed, 54 insertions(+)
 >>>>>
->>>>>>
->>>>>> You could face same kind of random instantiation for serial peripherals ( UART;
->>>>>> USb, I2C,...) based on a device tree enumeration. I suppose that user space
->>>>>> use to solve this.
->>>>>>
->>>>>>>
->>>>>>> An anonymous inode based approach is introduced to address the issues above.
->>>>>>> Rather than generating device node and opening it, rpmsg code just creates
->>>>>>> an anonymous inode representing eptdev and return the fd to userspace.
->>>>>>
->>>>>> A drawback is that you need to share fb passed between processes.
->>>>>
->>>>> Fd is the abstraction of an unique endpoint device, it holds true for
->>>>> both legacy and new approach.
->>>>>
->>>>> So I guess what you mean is that /dev/rpmsgX is global to all so other process
->>>>> can access it?
->>>>>
->>>>> But /dev/rpmsgX is designed to be opened only once, it's implemented as
->>>>> singleton pattern.
->>>>>
->>>>> static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->>>>> {
->>>>> ...
->>>>>         if (eptdev->ept) {
->>>>>                 mutex_unlock(&eptdev->ept_lock);
->>>>>                 return -EBUSY;
->>>>>         }
->>>>> ...
->>>>>         eptdev->ept = ept;
->>>>> ...
->>>>> }
->>>>>
->>>>> [...]
->>>>>  
->>>>>>> 	printf("loop[%d]\n", loop);
->>>>>>>
->>>>>>> 	gettimeofday(&start, NULL);
->>>>>>>
->>>>>>> 	while (loop--) {
->>>>>>
->>>>>> Do you need to create /close Endpoint sevral times in your real use case with
->>>>>> high timing
->>>>>> constraint?
->>>>>
->>>>> No, it's just a silly benchmark demo, large sample reduces noise statistically.
->>>>>
->>>>>>
->>>>>>> 		fd_info.fd = -1;
->>>>>>> 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
->>>>>>> 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
->>>>>>> 		if (ret < 0 || fd_info.fd < 0) {
->>>>>>> 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
->>>>>>> 		}
->>>>>>>
->>>>>>
->>>>>>
->>>>>>> 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
->>>>>>> 		if (ret < 0) {
->>>>>>> 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
->>>>>>> 		}
->>>>>>>
->>>>>>> 		close(fd_info.fd);
->>>>>>
->>>>>> It seems strange to me to use ioctl() for opening and close() for closing, from
->>>>>> a symmetry point of view.
->>>>>
->>>>> Sorry to hear that. But no, it's a pretty normal skill in kernel codebase
->>>>> , I had to copy some examples from reply to other reviewer[1].
+>>>>> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/ 
+>>>>> Documentation/ ABI/testing/sysfs-bus-pci
+>>>>> index 69f952fffec72..8b455b1a58852 100644
+>>>>> --- a/Documentation/ABI/testing/sysfs-bus-pci
+>>>>> +++ b/Documentation/ABI/testing/sysfs-bus-pci
+>>>>> @@ -612,3 +612,11 @@ Description:
+>>>>>             # ls doe_features
+>>>>>             0001:01        0001:02        doe_discovery
+>>>>> +
+>>>>> +What:        /sys/bus/pci/devices/.../boot_display
+>>>>> +Date:        October 2025
+>>>>> +Contact:    Linux PCI developers <linux-pci@vger.kernel.org>
+>>>>> +Description:
+>>>>> +        This file indicates the device was used as a boot
+>>>>> +        display. If the device was used as the boot display, the 
+>>>>> file
+>>>>> +        will be present and contain "1".
+>>>>> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+>>>>> index 268c69daa4d57..cc766461de1da 100644
+>>>>> --- a/drivers/pci/pci-sysfs.c
+>>>>> +++ b/drivers/pci/pci-sysfs.c
+>>>>> @@ -30,6 +30,7 @@
+>>>>>   #include <linux/msi.h>
+>>>>>   #include <linux/of.h>
+>>>>>   #include <linux/aperture.h>
+>>>>> +#include <asm/video.h>
+>>>>>   #include "pci.h"
+>>>>>   #ifndef ARCH_PCI_DEV_GROUPS
+>>>>> @@ -679,6 +680,13 @@ const struct attribute_group *pcibus_groups[] 
+>>>>> = {
+>>>>>       NULL,
+>>>>>   };
+>>>>> +static ssize_t boot_display_show(struct device *dev, struct 
+>>>>> device_attribute *attr,
+>>>>> +                 char *buf)
+>>>>> +{
+>>>>> +    return sysfs_emit(buf, "1\n");
+>>>>> +}
+>>>>> +static DEVICE_ATTR_RO(boot_display);
+>>>>> +
+>>>>>   static ssize_t boot_vga_show(struct device *dev, struct 
+>>>>> device_attribute *attr,
+>>>>>                    char *buf)
+>>>>>   {
+>>>>> @@ -1246,6 +1254,37 @@ static int pci_create_attr(struct pci_dev 
+>>>>> *pdev, int num, int write_combine)
+>>>>>       return 0;
+>>>>>   }
+>>>>> +/**
+>>>>> + * pci_create_boot_display_file - create a file in sysfs for @dev
+>>>>> + * @pdev: dev in question
+>>>>> + *
+>>>>> + * Creates a file `boot_display` in sysfs for the PCI device @pdev
+>>>>> + * if it is the boot display device.
+>>>>> + */
+>>>>> +static int pci_create_boot_display_file(struct pci_dev *pdev)
+>>>>> +{
+>>>>> +#ifdef CONFIG_VIDEO
+>>>>> +    if (video_is_primary_device(&pdev->dev))
+>>>>> +        return sysfs_create_file(&pdev->dev.kobj, 
+>>>>> &dev_attr_boot_display.attr);
+>>>>> +#endif
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>> +/**
+>>>>> + * pci_remove_boot_display_file - remove the boot display file 
+>>>>> for @dev
+>>>>> + * @pdev: dev in question
+>>>>> + *
+>>>>> + * Removes the file `boot_display` in sysfs for the PCI device @pdev
+>>>>> + * if it is the boot display device.
+>>>>> + */
+>>>>> +static void pci_remove_boot_display_file(struct pci_dev *pdev)
+>>>>> +{
+>>>>> +#ifdef CONFIG_VIDEO
+>>>>> +    if (video_is_primary_device(&pdev->dev))
+>>>>> +        sysfs_remove_file(&pdev->dev.kobj, 
+>>>>> &dev_attr_boot_display.attr);
+>>>>> +#endif
+>>>>> +}
+>>>>> +
+>>>>>   /**
+>>>>>    * pci_create_resource_files - create resource files in sysfs 
+>>>>> for @dev
+>>>>>    * @pdev: dev in question
+>>>>> @@ -1654,9 +1693,15 @@ static const struct attribute_group 
+>>>>> pci_dev_resource_resize_group = {
+>>>>>   int __must_check pci_create_sysfs_dev_files(struct pci_dev *pdev)
+>>>>>   {
+>>>>> +    int retval;
+>>>>> +
+>>>>>       if (!sysfs_initialized)
+>>>>>           return -EACCES;
+>>>>> +    retval = pci_create_boot_display_file(pdev);
+>>>>> +    if (retval)
+>>>>> +        return retval;
+>>>>> +
+>>>>>       return pci_create_resource_files(pdev);
+>>>>>   }
+>>>>> @@ -1671,6 +1716,7 @@ void pci_remove_sysfs_dev_files(struct 
+>>>>> pci_dev *pdev)
+>>>>>       if (!sysfs_initialized)
+>>>>>           return;
+>>>>> +    pci_remove_boot_display_file(pdev);
+>>>>>       pci_remove_resource_files(pdev);
+>>>>>   }
 >>>>
->>>> I missed this one, apologize for the duplication.
->>>>
->>>>>
->>>>> anon_inode_get_{fd,file} are used extensively in kernel for returning a new
->>>>> fd to userspace which is associated with an unique data structure in kernel
->>>>> space, in different ways:
->>>>>
->>>>> - via ioctl(), some examples are:
->>>>>
->>>>>  - KVM ioctl(s)
->>>>>    - KVM_CREATE_VCPU -> kvm_vm_ioctl_create_vcpu
->>>>>    - KVM_GET_STATS_FD -> kvm_vcpu_ioctl_get_stats_fd
->>>>>    - KVM_CREATE_DEVICE -> kvm_ioctl_create_device
->>>>>    - KVM_CREATE_VM -> kvm_dev_ioctl_create_vm
->>>>>
->>>>>  - DMA buf/fence/sync ioctls
->>>>>    - DMA_BUF_IOCTL_EXPORT_SYNC_FILE -> dma_buf_export_sync_file
->>>>>    - SW_SYNC_IOC_CREATE_FENCE -> sw_sync_ioctl_create_fence
->>>>>    - Couples of driver implement DMA buf by using anon file _implicitly_:
->>>>>      - UDMABUF_CREATE -> udmabuf_ioctl_create
->>>>>      - DMA_HEAP_IOCTL_ALLOC -> dma_heap_ioctl_allocate
->>>>>
->>>>>  - gpiolib ioctls:
->>>>>    - GPIO_GET_LINEHANDLE_IOCTL -> linehandle_create
->>>>>    - GPIO_V2_GET_LINE_IOCTL
->>>>>
->>>>>  -  IOMMUFD ioctls:
->>>>>
->>>>>  -  VFIO Ioctls:
->>>>>
->>>>>  - ....
->>>>>
->>>>>
->>>>> - via other specific syscalls:
->>>>>  - epoll_create1
->>>>>  - bpf
->>>>>  - perf_event_open
->>>>>  - inotify_init
->>>>>  - ...
->>>>
->>>> If we put the optimization aspect aside, what seems strange to me is that the
->>>> purpose of rpmsg_char was to expose a FS character device to user space. If we
->>>> need tobypass the use of /dev/rpmsgX, does it make sense to support an anonymous
->>>> inode in this driver?  I am clearly not legitimate to answer this question...
 >>>
->>> You have every right to do so, after all, it's purely a technical
->>> discussion :).
->>>
->>> I admit it's bit confusing to add annoymous inode logic to a file named
->>> rpmsg_char.c which implies 'character' device. That's why I rename API
->>> following Mathieu's comment:
->>>   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
->>>   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
->>>
->>> As to topic how these two uAPI(s) co-exist and affect each other. This
->>> change is based on rules:
->>>
->>> 1. Never break existing uAPI.
->>> 2. Try best to reuse existing codebase.
->>> 3. Userspace can choose whatever approach they want to.
->>>
->>> Thanks,
->>>
->>> 	Dawei
->>>>
->>>>
->>>> Thanks,
->>>> Arnaud
->>>>
->>>>>
->>>>> [1] https://lore.kernel.org/all/20250530125008.GA5355@wendao-VirtualBox/
->>>>>
->>>>>>
->>>>>> Regarding your implementation, I wonder if we could keep the /dev/rpmsg<x>
->>>>>> device with specific open() and close() file operations associated with your new
->>>>>> ioctl.
->>>>>>
->>>>>> - The ioctl would create the endpoint.
->>>>>> - The open() and close() operations would simply manage the file descriptor and
->>>>>> increment/decrement a counter to prevent premature endpoint destruction.
->>>>>>
->>>>>>
->>>>>> Regards,
->>>>>> Arnaud
->>>>>>
->>>>>
->>>>> [...]
->>>>>
->>>>> Thanks,
->>>>>
->>>>> 	Dawei
+>>
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
