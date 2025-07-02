@@ -1,127 +1,86 @@
-Return-Path: <linux-kernel+bounces-713888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2072AF5FBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E1FAF5FC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AF01883AA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB5218847CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E653E272E60;
-	Wed,  2 Jul 2025 17:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEF42749E5;
+	Wed,  2 Jul 2025 17:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bU9TFi/U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLRU0rsy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413922D781E
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA67292B2E;
+	Wed,  2 Jul 2025 17:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751476658; cv=none; b=UfRSUSI/LzQZZEgj/Y55NL4AOXTlaNN7NiWk4MqCO3P5926dYvlKx2nCPukyHup7WJGpwmb+mTq+UDt3o/lZLyxuEhVPdgyddgai9e8wUL+OiSBSe3ETfKdf1loEjpnBgPp6cj2EkVjuCVtclCTkEtL+RgLHlfwwbZXM+iAIh+o=
+	t=1751476735; cv=none; b=vFdisL6609/nM2ubSgpzK5IS9IWUhUIUOi4ZgAZnkTzs/90VvUiM035k3ve9L3XVxdEge/iondsdIj4liMRQvJRgRl8Q8SA3nw+21ewBU4XIoF7W0Gx/gOuD3KyOvBQ4f0c2538eX/01jKN9u/3qWfrf0ddk9KlSjSFR3BY2Agg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751476658; c=relaxed/simple;
-	bh=+vf25wCjkCvykYnLtQgZdrGwJqDOLdf+jwuxlU5Qc4g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NYAHNbsx76ELGnUYEXQCtN6gtXkdWh6ejqhMKnexvGl9xswKSKGq9vBuc14+esEOgRoHPTOA5ihJDi2eTVEJOQYX5MNewuBLQgryOAOL0yqnPISTYxJo84c9/rDfKHfaDOACW7MyjSJNSj9mekjmwRf2loToya7Zmqbs5BkfOT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bU9TFi/U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1010C4CEE7;
-	Wed,  2 Jul 2025 17:17:37 +0000 (UTC)
+	s=arc-20240116; t=1751476735; c=relaxed/simple;
+	bh=8h5GbKdkae9i6ZkZEjnm4Lxi6OfPqqiK/ol2Xrklaag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jvlc0ZjYkZlH3UR0uB2TrsnfbKfubAVoQzYUbZPm7ZdEWDUqst3+n6q8Fcb1GiWAV2Zz0l0Bj7+T+nhPemuSgzP+Ls7b7ttg5mM66pTZ7b44tfdhgRHULRr0buUTK1Y1nqJxZElfa6QnMtKEoMNUqSikoKjji1BafW+L1zvLAHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLRU0rsy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE86C4CEE7;
+	Wed,  2 Jul 2025 17:18:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751476657;
-	bh=+vf25wCjkCvykYnLtQgZdrGwJqDOLdf+jwuxlU5Qc4g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bU9TFi/UIriQe18BgRLtCTlhofLeADM4SH0yzmI3DkPjVs6U2NVoxNEw4TmGlroRd
-	 POUYTVLd7so2R4MbjrtLgg5/I/Q6+zTCKszt7LFpQ8ONXZoroiQpwmz6xzsCff//Oh
-	 1AJ1Ib3XqOpSGw+2Bsx3FP3qpZaCYAApTcqJpORBt4tcxTbYCznt+wr9Ej1b6hx6IW
-	 2stGpaqFIA+Vx1nus1hI5cZZ4XeS0bPQ0HEfXRZtR6fNtIeAi7wQu0KwkyLUCLTC40
-	 fCwkaXR1rE/zbeq18acObsqBFIlUbfR637dQ9aHdqfF+Njl/m4q6ZqW+FZDQg7LGi1
-	 8RrrJlL2LWk5g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uX15T-00C2Wg-Tn;
-	Wed, 02 Jul 2025 18:17:36 +0100
-Date: Wed, 02 Jul 2025 18:17:34 +0100
-Message-ID: <86cyaibjgx.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	ardb@kernel.org,
-	frederic@kernel.org,
-	james.morse@arm.com,
-	joey.gouly@arm.com,
-	scott@os.amperecomputing.com,
-	linux-arm-kernel@lists.infradead.org,
+	s=k20201202; t=1751476734;
+	bh=8h5GbKdkae9i6ZkZEjnm4Lxi6OfPqqiK/ol2Xrklaag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NLRU0rsywuoBmH8y6P1v4kfDw9ZRazFWEd2K6Q5H7u4pKgYfjhhQNDmcNsiTIFK9J
+	 /Go0ys/I3yvuOGyJcuYHv1nwslY+mU+XPio/+aW4PZ9o4/E50wpdweRPjVfWz8zKvC
+	 edm78aK1NERBhoFqeOyl/rO5frW81GPht01XKibzF49due1PXzyLF4Z8Mhu9GYlrnJ
+	 lh9DXFwACxuTmbU7XFLC1cVQ/ZcAg/tfbWIunm6pZXiwRZwUJ6J9ek5uNyzXjRqif2
+	 T+IvUFvRaoDQ1Nw59ucfA/jN8fFTy/f5Ehq8JSEv9CQ3Xloucc2cW97oT99o1w4iWG
+	 ELYaAHlkJdbAg==
+Date: Wed, 2 Jul 2025 19:18:50 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, Raag Jadav <raag.jadav@intel.com>, 
+	"Tauro, Riana" <riana.tauro@intel.com>, "Adatrao, Srinivasa" <srinivasa.adatrao@intel.com>, 
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>, intel-xe@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] arm64/kvm: expose FEAT_LSUI to guest
-In-Reply-To: <20250617183635.1266015-3-yeoreum.yun@arm.com>
-References: <20250617183635.1266015-1-yeoreum.yun@arm.com>
-	<20250617183635.1266015-3-yeoreum.yun@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Subject: Re: [PATCH v6 0/5] drm/xe: i2c support
+Message-ID: <s7kfne6budueamqqbshbrrtql6awrp7mvfhqlkrvtyhqjqsech@qemfad4phmlj>
+References: <20250701122252.2590230-1-heikki.krogerus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, oliver.upton@linux.dev, ardb@kernel.org, frederic@kernel.org, james.morse@arm.com, joey.gouly@arm.com, scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701122252.2590230-1-heikki.krogerus@linux.intel.com>
 
-On Tue, 17 Jun 2025 19:36:30 +0100,
-Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+Hi Heikki,
+
+> Heikki Krogerus (3):
+>   i2c: designware: Use polling by default when there is no irq resource
+>   i2c: designware: Add quirk for Intel Xe
+
+I think you could have kept Jarkko's ack here. Up to you.
+
+Anyone against me taking the two above already?
+
+Andi
+
+>   drm/xe: Support for I2C attached MCUs
 > 
-> expose FEAT_LSUI to guest.
+> Raag Jadav (1):
+>   drm/xe/pm: Wire up suspend/resume for I2C controller
 > 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  arch/arm64/kvm/sys_regs.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 76c2f0da821f..5c5a9c3ace2f 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1636,7 +1636,8 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
->  			val &= ~ARM64_FEATURE_MASK(ID_AA64ISAR2_EL1_WFxT);
->  		break;
->  	case SYS_ID_AA64ISAR3_EL1:
-> -		val &= ID_AA64ISAR3_EL1_FPRCVT | ID_AA64ISAR3_EL1_FAMINMAX;
-> +		val &= ID_AA64ISAR3_EL1_FPRCVT | ID_AA64ISAR3_EL1_FAMINMAX |
-> +		       ID_AA64ISAR3_EL1_LSUI;
->  		break;
->  	case SYS_ID_AA64MMFR2_EL1:
->  		val &= ~ID_AA64MMFR2_EL1_CCIDX_MASK;
-> @@ -2921,7 +2922,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  					ID_AA64ISAR2_EL1_APA3 |
->  					ID_AA64ISAR2_EL1_GPA3)),
->  	ID_WRITABLE(ID_AA64ISAR3_EL1, (ID_AA64ISAR3_EL1_FPRCVT |
-> -				       ID_AA64ISAR3_EL1_FAMINMAX)),
-> +				       ID_AA64ISAR3_EL1_FAMINMAX | ID_AA64ISAR3_EL1_LSUI)),
->  	ID_UNALLOCATED(6,4),
->  	ID_UNALLOCATED(6,5),
->  	ID_UNALLOCATED(6,6),
-
-In the future, please Cc the relevant people and mailing lists.
-
-With $SUBJECT fixed to match the KVM/arm64 log,
-
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> Riana Tauro (1):
+>   drm/xe/xe_i2c: Add support for i2c in survivability mode
 
