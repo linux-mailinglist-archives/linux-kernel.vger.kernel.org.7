@@ -1,160 +1,235 @@
-Return-Path: <linux-kernel+bounces-713892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D993BAF5FCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CD2AF5FD2
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10F6188758C
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8006188F0A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACAF301123;
-	Wed,  2 Jul 2025 17:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA74303DDA;
+	Wed,  2 Jul 2025 17:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LquZRlGE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ne3wbLSp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDAC2D94BB
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F4B301130;
+	Wed,  2 Jul 2025 17:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751476817; cv=none; b=fq81YJPDbtWWBFNIUbtyoXZjhw4FlsYYXr0BCbidiwfvWbNna5DL1qYSvkj1Tnly0/QzN0aN5YgqBrcGBsvPqUlWEFAAdU3wDJLpp07ne3ZRFSKZAQAo04Gb9g3F7chwqL6Q3pZgyK8ihCLJv2B6B+55SvLJb0dmNA0bpHt0fhE=
+	t=1751476847; cv=none; b=Ny9IDzOfWXzTxQmMjs5HLaMni5vIH6yE6A89HzpQpWalOEKg0gBMF4yDOXwT4kAmceTuhwxlYgPlaIdJySUeKsLqF63i+UOQ7HPlMKu4OdWR43OPfa3/BFXYwkbnSmw2G7kPyoBFgeuQSIbEZbcQzQ0aN/lZDEFNcjSqT7jHVvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751476817; c=relaxed/simple;
-	bh=FWRZKvWiItvy6hxJjRoYrslXi/LBIi5lbHx16cmY1qc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n88r6Q8BwX44uo8NJliY3y3rix96tcVu/OD9EM+TVteUGjOlBYHpk2Iua6/ds0UTuza7ni/FicmAHe9yKIL4hYOdpO8k6J6ffnT1iikCdzhrhd7P+qVvqNv2sbScumwsmy5hjodfzP5N5qpHXeh0tB46B2bbhvhWkGVCgwZ+/BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LquZRlGE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1751476812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X4OXeIMkVHqZr0TmFdZKIZ9QEBYkowbL9PbKefie20c=;
-	b=LquZRlGER+W1FUq65Cp1l/yTXkW9C5sdE1SifHF/sPLTWmNDC2/905FC8Gsb30/HhqMwGj
-	cuECMdJdEVQY96aI4hNvkgDnAAOfpymX74b4l0Z8AVEV8XGgiAq95v2m+bR7oJH9iP6qHG
-	xIfmzaiBagbeTViJB4K04udjBdupMKs=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-14-QCt6uVYNNYKR8whtD2Wpdw-1; Wed, 02 Jul 2025 13:20:10 -0400
-X-MC-Unique: QCt6uVYNNYKR8whtD2Wpdw-1
-X-Mimecast-MFC-AGG-ID: QCt6uVYNNYKR8whtD2Wpdw_1751476810
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d3f0958112so1045358585a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 10:20:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751476810; x=1752081610;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X4OXeIMkVHqZr0TmFdZKIZ9QEBYkowbL9PbKefie20c=;
-        b=XqBnPDwTWKamzMCoZ75FQdpWXx89wdL9j/fHRXgT8539VI1xnesAkL+HaFGBnk3fqp
-         ZojPdN76M9uBog3UWzTmOdv1vZ1V77FN+VY2TS2VcIZgV4S+LM4FCMIed0k56DryfWu+
-         FAobYxx3mHvJ+9h60EEJ/Na3Z0CKwvaOFnNXEpVoqOVmkuacGlC11LSFeOk4p+n9NyVq
-         rIfyUoFJ/oAE4Jw7BrUJiusQKfviL96jdw1fTmitMemGX7acaVGp+lkt7hpHkPD8J6Mw
-         u9dY8RQSEWDR27r8O71TuBX4eT+ZLp8KseGnROacz/A9+cSXYneFvMsAOTZ+cwbADcrz
-         pYaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYyvGTRW889zFux1sV5wFAvYRP3COiL8psnX+NLsQ/COnmci6BhOZmz5pYCOgIuVIAnWOecl9XwSyaSFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsYgT0tqYASm6mXGa0Ihf4QbyHbH2KI/cr5lQLnITP+X9GpESt
-	tmUdXRh3nJC49e4ztE+Cl/0SL4y7OnqgmcB2SDNtF4PfxKmSStBL7kTU4mio8b9BeZdUSuJCTxo
-	3OO5Rok9u10vimWTte+1Mht6xIcsIy1S+y/G1zivPWSoZ9ZSMILUTDvEC1+XedzjBbg==
-X-Gm-Gg: ASbGnct0xKl+XolxIqLCODD5sdXoB7fzdpR9Bt50N+oOEDQpjQIUAwOe5sEw/gXlvQV
-	3NuINg3wL4j85OgRtNd4izIr+G0/PqCUlC2Y7iu9RxoHNDvxVSRISPZhseTKcwq61WsuhouMM7b
-	uLAaucnVSvJev5TKdxn8WELWOs/6qMDxPb2tezvj7x+ZTbOwDzSIp6W33wGAOtOLPhe1noBnC/R
-	OqSAuKmJ3c/Xh9/Ki+bGw0rVWvC3sR4j7KgLpYS2ZCOFL7ZZJYZEgK9wS5UqBdgKIZkFc9FCWFi
-	djg8h8u/bk9jUA==
-X-Received: by 2002:a05:620a:2493:b0:7cd:45ed:c4a5 with SMTP id af79cd13be357-7d5c462ac6bmr497721585a.0.1751476810087;
-        Wed, 02 Jul 2025 10:20:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEABzvdSXcUcA35EvmAadp6Gl0tgp7duV0eKH1z56ocBWqywdOnkcWFAdC7968vXYiaa2gJNQ==
-X-Received: by 2002:a05:620a:2493:b0:7cd:45ed:c4a5 with SMTP id af79cd13be357-7d5c462ac6bmr497717285a.0.1751476809650;
-        Wed, 02 Jul 2025 10:20:09 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d443134f32sm971947685a.12.2025.07.02.10.20.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 10:20:09 -0700 (PDT)
-Date: Wed, 2 Jul 2025 13:20:05 -0400
-From: Peter Xu <peterx@redhat.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH] mm/hugetlb: Remove prepare_hugepage_range()
-Message-ID: <aGVqRQKWu9IDVwk6@x1.local>
-References: <20250627160707.2124580-1-peterx@redhat.com>
- <jjwzfnbz7uzuniwd2qc6prfg4sboa7dnjswnbeotjbaqngbs6s@2y42bsqcjpv6>
+	s=arc-20240116; t=1751476847; c=relaxed/simple;
+	bh=+54uhqLwJcHQwTHHQMidXNth1tuspznqeURDP+ZUXg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YQzN6EZhEk8fe2V1V2f3tsf+C0DOoKFtB4lpxHzisLRGS13Zi1I37lpC+htIRDtvRc8N42x7QisOV5+puz2hLiyQgl9zr5yVYnzkTTh3s1hvacXv/LiRiZQ5pGvinfLhPTGosS3h8DRyJWdK5qww10uQMLROue6YEOrdXGaLvoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ne3wbLSp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562Da69V032129;
+	Wed, 2 Jul 2025 17:20:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EXDpNIn/bppQCuAzGEeFfZyrQ2cEw5aYYhoByhgfN78=; b=ne3wbLSpy3ijsL4t
+	XKBopICfM131NRKz3w164XjKzbxiCdUCmyiKbR6wCtbD1XPWiSIVF+9t0bX7LQel
+	KMjxFgfsztSL0LzpO9rZeInwke3ilLLz5FXOtiw10r9VJ5R8Uaz4TJfK35RstDsi
+	ShIjg6YhK1GQRvNoKSUN0zgArfXSfh6ECAS7wMEICjehxH5kfNSme28BLAvmw0Cs
+	16NKTopJdxEbm9mlxJ2RPJ9nOeL3kisccTw0C8Hm3doLl0ljgzZl5sNEzsZ28rhz
+	e8EDztrMPSzr7b/H7lg75lcIzmN+F9PoKtKG43wlLiCJKiD+lqhxZSwzEVw+ziyz
+	ZUOlww==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47j63kdmmr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Jul 2025 17:20:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 562HKdlH025303
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 2 Jul 2025 17:20:39 GMT
+Received: from [10.50.58.161] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 2 Jul 2025
+ 10:20:36 -0700
+Message-ID: <7ee61b56-4c93-f6e2-d405-9f88f69af675@quicinc.com>
+Date: Wed, 2 Jul 2025 22:50:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <jjwzfnbz7uzuniwd2qc6prfg4sboa7dnjswnbeotjbaqngbs6s@2y42bsqcjpv6>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] media: iris: Be explicit in naming of VPU2 power off
+ handlers
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250702134227.211104-2-krzysztof.kozlowski@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250702134227.211104-2-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=ZKfXmW7b c=1 sm=1 tr=0 ts=68656a67 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8
+ a=sF5NrI78e988phRYh04A:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDE0MyBTYWx0ZWRfXycOIxpcOXCFr
+ yX6CTMo8jXmaPwP/J4U/sBgISMQevmhqg4N+yaqxtI3tO9NPHp3A1OgKv3scSKQIorGrxfexQzi
+ H9HZE0iNdN94Yq9IsSCsO0SkS+ty1uScxtnb/YEZzWbxB/iKt+5rRgCvlPJ8BUKDS/5jufHxMVv
+ CUmyNNLzMiWvGYWn6Rtup/NqPqp5R0IBoEvjxrHDrJjOiYey7oJ4ltL7UJ85An3Lz6DaQmo5kwH
+ tWY/MlXhQO9Z3FyJm9YLn28hskK1z/P8CeXCSoXMZOCqZgHd5B2Lo4Y5vXX0Q1632quAHMro9Pi
+ E7jgZzbzksJrnEnKNde/0okxp0EQVQrctVYMJwNQXZ6oXd3RrrSvxRTZBy1uSQ8OdsMdgaVTbkS
+ shcfr5PWXAB+ckLCv5ZbrrgulmqtuBRM6oLNTYJU+e1S3csGWAwLiSFE9tTWhyzR7INxcZH3
+X-Proofpoint-ORIG-GUID: KzXHRB-WDLJd4dFPmDIjBTWHLLa4mEtn
+X-Proofpoint-GUID: KzXHRB-WDLJd4dFPmDIjBTWHLLa4mEtn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_02,2025-07-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ impostorscore=0 malwarescore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507020143
 
-On Mon, Jun 30, 2025 at 10:26:13AM -0400, Liam R. Howlett wrote:
-> * Peter Xu <peterx@redhat.com> [250627 12:07]:
-> > Only mips and loongarch implemented this API, however what it does was
-> > checking against stack overflow for either len or addr.  That's already
-> > done in arch's arch_get_unmapped_area*() functions, even though it may not
-> > be 100% identical checks.
-> > 
-> > For example, for both of the architectures, there will be a trivial
-> > difference on how stack top was defined.  The old code uses STACK_TOP which
-> > may be slightly smaller than TASK_SIZE on either of them, but the hope is
-> > that shouldn't be a problem.
-> > 
-> > It means the whole API is pretty much obsolete at least now, remove it
-> > completely.
+
+On 7/2/2025 7:12 PM, Krzysztof Kozlowski wrote:
+> Driver implements different callbacks for power off hardware
+> (.power_off_hw) and power off controller (.power_off_controller):
 > 
-> Thanks for rewording this change, apologies for the late response on
-> your change log.  I think it's fine.
-
-That's totally OK, thanks for keeping an eye.
-
+>  - iris_vpu_power_off_hw + iris_vpu_power_off_controller,
+>  - iris_vpu3_power_off_hardware,
+>  - iris_vpu33_power_off_hardware + iris_vpu33_power_off_controller,
 > 
-> I think the only meaningful difference is that the failure would have
-> aborted entirely if stack_top - len < addr, but with this change it will
-> attempt to search in the opposite direction.  Unless I missed something?
-
-IIUC the prepare_hugepage_range() API shouldn't affect the direction of VA
-allocation yet, but rather a (likely proven unnecessary by this patch) way
-to fail fast for hugetlbfs for no good reason.
-
-It is currently only invoked with MAP_FIXED, and if it returns 0 it'll
-further move on to the core VA allocator.  Then the allocation can happen
-either TOP->DOWN or DOWN->TOP.
-
-So "stack_top - len < addr" check is meaningful no matter if MMF_TOPDOWN or
-not, because we want to make sure it won't overflow in any direction.  It's
-just that it's already covered at least by the two archs providing this
-hugetlbfs specific hook.
-
+> The first group (iris_vpu_power_off_hw() and
+> iris_vpu_power_off_controller()) is used on older VPU2 designs but also
+> called from newer ones: iris_vpu3_power_off_hardware() calls
+> iris_vpu_power_off_controller().
 > 
-> I suspect that this wasn't meant to happen in the first place anyways,
-> and I bet there are no tests for it and no real-world harm in changing
-> an error scenario into a potential successful mapping.
-
-Yes, checking stack for hugetlbfs so far just looks redundant.  Maybe keep
-digging the history we may found why we had it before, but so far it looks
-not useful at all.
-
+> In the same time there is wrapper iris_vpu_power_off() which calls
+> respective callbacks (the VPU2, VPU3 etc).
 > 
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> Let's make it more obvious which function is a generic wrapper over
+> specific VPU/platform callbacks (iris_vpu_power_off()) and which one is
+> the callback by adding "2" to callbacks used on VPU2.  No functional
+> changes.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/media/platform/qcom/iris/iris_vpu2.c       | 4 ++--
+>  drivers/media/platform/qcom/iris/iris_vpu3x.c      | 6 +++---
+>  drivers/media/platform/qcom/iris/iris_vpu_common.c | 4 ++--
+>  drivers/media/platform/qcom/iris/iris_vpu_common.h | 4 ++--
+>  4 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> index 7cf1bfc352d3..2570e65816f6 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> @@ -33,7 +33,7 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
+>  }
+>  
+>  const struct vpu_ops iris_vpu2_ops = {
+> -	.power_off_hw = iris_vpu_power_off_hw,
+> -	.power_off_controller = iris_vpu_power_off_controller,
+> +	.power_off_hw = iris_vpu2_power_off_hw,
+> +	.power_off_controller = iris_vpu2_power_off_controller,
+There was a reason to name it as VPU* independent, as it can be used for
+multiple VPUs. There isn't any VPU specific code within iris_vpu_power_off_hw
+that it needs to be associated to any VPU.
 
-Thanks,
+>  	.calc_freq = iris_vpu2_calc_freq,
+>  };
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> index 9b7c9a1495ee..a2c8a1650153 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> @@ -104,7 +104,7 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
+>  	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>  
+>  disable_power:
+> -	iris_vpu_power_off_hw(core);
+> +	iris_vpu2_power_off_hw(core);
+Again, its like VPU3 does something specific and then reuses the common handling.
 
--- 
-Peter Xu
+I do not see a point in making this change.
 
+Regards,
+Vikash
+>  }
+>  
+>  static void iris_vpu33_power_off_hardware(struct iris_core *core)
+> @@ -142,7 +142,7 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>  	writel(0x0, core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+>  
+>  disable_power:
+> -	iris_vpu_power_off_hw(core);
+> +	iris_vpu2_power_off_hw(core);
+>  }
+>  
+>  static int iris_vpu33_power_off_controller(struct iris_core *core)
+> @@ -264,7 +264,7 @@ static u64 iris_vpu3x_calculate_frequency(struct iris_inst *inst, size_t data_si
+>  
+>  const struct vpu_ops iris_vpu3_ops = {
+>  	.power_off_hw = iris_vpu3_power_off_hardware,
+> -	.power_off_controller = iris_vpu_power_off_controller,
+> +	.power_off_controller = iris_vpu2_power_off_controller,
+>  	.calc_freq = iris_vpu3x_calculate_frequency,
+>  };
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> index 42a7c53ce48e..22f190e0c7c6 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> @@ -211,7 +211,7 @@ int iris_vpu_prepare_pc(struct iris_core *core)
+>  	return -EAGAIN;
+>  }
+>  
+> -int iris_vpu_power_off_controller(struct iris_core *core)
+> +int iris_vpu2_power_off_controller(struct iris_core *core)
+>  {
+>  	u32 val = 0;
+>  	int ret;
+> @@ -253,7 +253,7 @@ int iris_vpu_power_off_controller(struct iris_core *core)
+>  	return 0;
+>  }
+>  
+> -void iris_vpu_power_off_hw(struct iris_core *core)
+> +void iris_vpu2_power_off_hw(struct iris_core *core)
+>  {
+>  	dev_pm_genpd_set_hwmode(core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN], false);
+>  	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_HW_POWER_DOMAIN]);
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> index 93b7fa27be3b..8f63f243dd0d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> @@ -24,8 +24,8 @@ void iris_vpu_clear_interrupt(struct iris_core *core);
+>  int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
+>  int iris_vpu_prepare_pc(struct iris_core *core);
+>  int iris_vpu_power_on(struct iris_core *core);
+> -int iris_vpu_power_off_controller(struct iris_core *core);
+> -void iris_vpu_power_off_hw(struct iris_core *core);
+> +int iris_vpu2_power_off_controller(struct iris_core *core);
+> +void iris_vpu2_power_off_hw(struct iris_core *core);
+>  void iris_vpu_power_off(struct iris_core *core);
+>  
+>  #endif
 
