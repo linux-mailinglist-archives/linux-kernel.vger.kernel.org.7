@@ -1,92 +1,129 @@
-Return-Path: <linux-kernel+bounces-712666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A40BAF0CE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:47:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFD2AF0CFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CD64E27DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:47:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B7577B3D2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EDC22DFAA;
-	Wed,  2 Jul 2025 07:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2227E1FE44B;
+	Wed,  2 Jul 2025 07:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TY+5wL4g"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OwIxVvlZ"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6321F0991;
-	Wed,  2 Jul 2025 07:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C694E223DEA;
+	Wed,  2 Jul 2025 07:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751442407; cv=none; b=Ql8SS5iQ+3U7gJJ6xo0/X6+EAKRGx1imLUOUrlmEXrO6+QbptoPhmJ7oCGQrhpa4vV9eLug6KMbQsnndg2MC8RsAFCHq0rHSQpwFiBV6sXCgJ+qn+klzlfLL4gbCTpn4LPqyf9heDh+9pP27ZtQ7AJMKwfDW41ge0OAwmB58j7Y=
+	t=1751442500; cv=none; b=LLddxLg/9KtETc4IOilizR4HMUXLjRLq5cXficerztI2/SQaWsP3vzjMI97iYzpJ3gU/cORx+vd3O2atbh8Mq3dbPMYKPVcZiozO8OWm6WwtZxJ1ApxcPbPpbY17tbh3xBQ2NbPEqTCH5BwWR6dawnOmDKrIslnsCPzWc+jZdtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751442407; c=relaxed/simple;
-	bh=T1dfQtN0fOnpT3jRKO9/i37AUF1Fx6meJL5vsJcl4c8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZXNkHcO7jSVVhi2kdUn91hbdZmrhfvLmO3f4qYTEuQ8Qon8s9xjjc/E+oqVjelPu8prGD8VLY9/rf9o1942isN4tcKJQf756IKmaXTfLo1yG9p5kFN7pgPSwBgNktklDE5GXdrH4Cv7cS8R7nfJOSdQSCZHeK0EdaHIVn3kNUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TY+5wL4g; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OFEn8Mwx7iZb4bcLt1+4BA8J7VwQHTbrRClWAd6OzhU=; b=TY+5wL4gDFSoFVqQeDom46pQ3Z
-	DslEO6a82orDnsC9xr7tvmwE9LkDnW1GS1RQeYPD4PSM3xE0VsV6qjCsxtVrRIs7Dt8+xW9DKeK/g
-	jEkUCwbXdJFtMPrHOp4p8hlz5likS8jO47le2YGqEcIhCcgzZhZ+Wze7mORKVH0L7ijQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uWsAk-00HYRS-Hx; Wed, 02 Jul 2025 09:46:26 +0200
-Date: Wed, 2 Jul 2025 09:46:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Felix Fietkau <nbd@nbd.name>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Eric Woudstra <ericwouds@gmail.com>, Elad Yifee <eladwf@gmail.com>,
-	Bo-Cun Chen <bc-bocun.chen@mediatek.com>,
-	Sky Huang <skylake.huang@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v4 3/3] net: ethernet: mtk_eth_soc: use generic
- allocator for SRAM
-Message-ID: <e5d6ac18-4d38-4a01-abd5-8bd4d6c3b05b@lunn.ch>
-References: <cover.1751421358.git.daniel@makrotopia.org>
- <88ae2a765ef809d36e153430bf60aac6ce81d6f1.1751421358.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1751442500; c=relaxed/simple;
+	bh=Ygo+3EXyX2A//CA0ixDyqzlihUEypIyuHoFDa84UCtQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NEt680OTWTJWP8HJcynwLLeQ0dlltLgL+VaxdPsx3q/OXn7mSLYfuVQKpvg2stlaDdKsfThF6tbLRZN9+28pf73KEMOQ5Tz7QdbCF3y/0orzODRdSAa+oXpvL9c+uVUyvcyJiL9zhNgt42uczzI6v7Yl9ZKYkRO+svqJshFyY+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OwIxVvlZ; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DE69F449E7;
+	Wed,  2 Jul 2025 07:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1751442489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FjGikRjaB+jO1uDjOO0DjL+ti5fz5Aw/2bvXKkr4ak4=;
+	b=OwIxVvlZy5LxGK4FXI4zX/t+d9G0wKbfB3U8Du/5RVNNCOyIa38P4SPyY4yBlpGZ0AC9eL
+	voNgIzfSQEqP9qLa22x2wjPykl46YEIiuh2Xhupo51qzUmXzQi9utPiCazlbQ0iBeisnwp
+	PtNYqJrFh3cKII6ij0iu433zX+5tI4lDnGB8gbi2nrT3zLcnSBzU+uPZR/VYlj8oOGastt
+	9djwEeNezT70Ce0uxU8q7VTUqlYJdUg5h3rhlnOYbm6soUg31p1st1hbV7LlF2AwX1tmT6
+	BkSnHpqmNsPi04gOg99iBjZcks1yGSLDZ2mPVlRFsTG+JGP2zbjrLxpHQenowg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: stable@vger.kernel.org,  Richard Weinberger <richard@nod.at>,  Vignesh
+ Raghavendra <vigneshr@ti.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>,  linux-mtd@lists.infradead.org,
+  linux-renesas-soc@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: rawnand: renesas: Add missing check after DMA map
+In-Reply-To: <20250702071722.24921-3-fourier.thomas@gmail.com> (Thomas
+	Fourier's message of "Wed, 2 Jul 2025 09:17:22 +0200")
+References: <20250702071722.24921-3-fourier.thomas@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Wed, 02 Jul 2025 09:48:07 +0200
+Message-ID: <878ql7nidk.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88ae2a765ef809d36e153430bf60aac6ce81d6f1.1751421358.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduieekfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehfohhurhhivghrrdhthhhomhgrshesghhmrghilhdrtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpt
+ hhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 
-On Wed, Jul 02, 2025 at 03:38:15AM +0100, Daniel Golle wrote:
-> Use a dedicated "mmio-sram" node and the generic allocator
-> instead of open-coding SRAM allocation for DMA rings.
-> Keep support for legacy device trees but notify the user via a
-> warning to update, and let the ethernet driver create the
-> gen_pool in this case.
-> 
-> Co-developed-by: Frank Wunderlich <frank-w@public-files.de>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Hi Thomas,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On 02/07/2025 at 09:17:22 +02, Thomas Fourier <fourier.thomas@gmail.com> wr=
+ote:
 
-    Andrew
+> The DMA map functions can fail and should be tested for errors.
+>
+> Fixes: d8701fe890ec ("mtd: rawnand: renesas: Add new NAND controller driv=
+er")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
+> ---
+>  drivers/mtd/nand/raw/renesas-nand-controller.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/mtd/nand/raw/renesas-nand-controller.c b/drivers/mtd=
+/nand/raw/renesas-nand-controller.c
+> index 44f6603736d1..f4a775571733 100644
+> --- a/drivers/mtd/nand/raw/renesas-nand-controller.c
+> +++ b/drivers/mtd/nand/raw/renesas-nand-controller.c
+> @@ -426,6 +426,10 @@ static int rnandc_read_page_hw_ecc(struct nand_chip =
+*chip, u8 *buf,
+>  	/* Configure DMA */
+>  	dma_addr =3D dma_map_single(rnandc->dev, rnandc->buf, mtd->writesize,
+>  				  DMA_FROM_DEVICE);
+> +	if (dma_mapping_error(rnandc->dev, dma_addr)) {
+> +		dev_err(rnandc->dev, "DMA mapping failed.\n");
+
+This error message is not informative, please drop
+it. dma_mapping_error() does give more information if you enable some
+DMA DEBUG Kconfig symbol already.
+
+> +		return -ENOMEM;
+> +	}
+>  	writel(dma_addr, rnandc->regs + DMA_ADDR_LOW_REG);
+>  	writel(mtd->writesize, rnandc->regs + DMA_CNT_REG);
+>  	writel(DMA_TLVL_MAX, rnandc->regs + DMA_TLVL_REG);
+> @@ -606,6 +610,10 @@ static int rnandc_write_page_hw_ecc(struct nand_chip=
+ *chip, const u8 *buf,
+>  	/* Configure DMA */
+>  	dma_addr =3D dma_map_single(rnandc->dev, (void *)rnandc->buf, mtd->writ=
+esize,
+>  				  DMA_TO_DEVICE);
+> +	if (dma_mapping_error(rnandc->dev, dma_addr)) {
+> +		dev_err(rnandc->dev, "DMA mapping failed.\n");
+
+Ditto.
+
+> +		return -ENOMEM;
+> +	}
+>  	writel(dma_addr, rnandc->regs + DMA_ADDR_LOW_REG);
+>  	writel(mtd->writesize, rnandc->regs + DMA_CNT_REG);
+>  	writel(DMA_TLVL_MAX, rnandc->regs + DMA_TLVL_REG);
+
+Thanks,
+Miqu=C3=A8l
 
