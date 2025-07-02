@@ -1,123 +1,148 @@
-Return-Path: <linux-kernel+bounces-713897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 163CBAF5FD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:22:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0160AF5FDC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5821C42697
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BE616B91C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED8C301155;
-	Wed,  2 Jul 2025 17:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="WaJ1TA29"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26244253351;
+	Wed,  2 Jul 2025 17:22:57 +0000 (UTC)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C4C27A110
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6AC30112F;
+	Wed,  2 Jul 2025 17:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751476948; cv=none; b=oRNZaYzO71sWvesOZPUk2je5o/D0eAo8IBA2Vpbv+XNYb3wntPZRILHXsxSOIuhDHAQF7U9t7d3MUq0hYUID+/QDXHsfAfV1HJ8F3Q6UQUVzyodgApxyY04AAT1XXf9LC/AeO+lpYtn+R9d8k+pLYTFZeFaVmAdBRTmAPeBSuPo=
+	t=1751476976; cv=none; b=ZbAoGLcaOxuAdvmaVyios8MNmfr4jpoj3tc2MatJR8Zrc0VKnJZHgAZLmXlpGWNG7CfSFFCy3+kmKWLUOoUvXQCRf8aF83yER0b19H38Vo2oOaiH9rklP0IDEF4QoGRhuRnzjU7R8w6wV6f1xE1b4yJOz7/ocyTkEizxiX15ndM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751476948; c=relaxed/simple;
-	bh=/SkwY6ne+g8BY+F31MtkqlGaiDXb8coPhVMth5244qs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1xGX1J0wrBl4vGVncmEcHOD9HdnNcuL+bqkygyse32a9gTGVR8vpB6wFfIDvb8OMIUrN5JM7LSr+Q2q4xbLvZBZ3RfYdHLufElCr1kw4h7U9nneWK+osfyXnbaRcdcF9367CzPCAd2usNDPWLQLUjiiuDEsP1VLILpsJhPjwGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=WaJ1TA29; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e8187601f85so6374312276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 10:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=libre.computer; s=google; t=1751476946; x=1752081746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/SkwY6ne+g8BY+F31MtkqlGaiDXb8coPhVMth5244qs=;
-        b=WaJ1TA29Tz82XkVznEqYNerS0pddA1Rb3Yajbi9mj2RuAzt7iPaY0FZN8dU4b0B1ey
-         TQDFtb1KSmqMWvJY50Ed/NYxNxuL8zuW3kBijeMI9RhsjkxfXzNK1FFqDqBk+5LvXn/l
-         0nf2O1MjOouuTBMH93s0MclMJGAhMxNokKO7TJubOd+Xj6zdgHMlpo+S6R2FLGtQGPSK
-         Y3G0qSvGI/ooX0JfTKB0kW+kjB7MN3QHxTCFmYhMj7zNJeZ3IttBQzSuv0tu8ykHSLkd
-         LowgbQpkEUu/Ne3gqLjyoHqk2oK1MBtRpdgboF2g4GHYHwkjycOKQv9XRsv52Qn5BglD
-         ovPg==
+	s=arc-20240116; t=1751476976; c=relaxed/simple;
+	bh=rBer7v6TKwbZtXGGIbx+pCsCWsubSneQmgOO75t0FHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CetXbc2mXQZacEXI6BoeDhzCndRETuPsutqJgQgdfofVjCUNUp4AbQcKvjZZE7EAmAcDV9QgBR6lkR/UQK9WZt0O6qtXJ/V1qiwGowSm7N9cxP6baejpiXmcX9Sr+c65kJrey/0lGFzeIVGtP/hbEZCKJywI2Hp31Ex990SUBaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-60c6fea6742so13495647a12.1;
+        Wed, 02 Jul 2025 10:22:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751476946; x=1752081746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/SkwY6ne+g8BY+F31MtkqlGaiDXb8coPhVMth5244qs=;
-        b=bgXZvC9EHSS71vlZ6GTKwrzPC/3tAs+ky8pz3jak/NvUX50UgB0eVehPylzkFrtuT8
-         j7LrU6apXbTuf8ey0HPBMRVW07qyPziTLPoYVDVo2zDAuTi/Xn5ARVegJsmvjPvClvAE
-         G8jbEvYhrP8QL56WzNmyKpUw13gASZhg/vmbta4jbjlfF+ZZPQ/GPXtZE6Gyt2Ao7/9J
-         HIghFgYIZKXiZ4yhryAU044BASukNJVVKi+NofJdlum1W8D1hK4mX4bTi2I5vbdWN/TK
-         UTIXeDoMLdX/i/rmOWrm9CPUwP6cEXWdAWa51qkNJDJXXzbUCdaUZQpQOdHfGhc+4pED
-         DylA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrb4N+KMkwynesVPgeo51wcZj2xxT3HNhUq2MfHqYybsVCEtrCh2bAPQegZOCDET4Hucv7qY7gUdTcmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+5o4Z/wztBLWh98D43uQxbm5avj4tqkZox++41Rp963wHwknl
-	fSyFG+71MFrMgnuDzcyf3wlHZCjL5GosY0oNYIRMa7X3bdXVHdk3zUFbQp/hlvE9wP5QVREiIc0
-	OktKpzMqKYRtJgfx+JsCtCmF448s8bu2Bu55x6UAL
-X-Gm-Gg: ASbGncsfNqm9rmXeq046oWm2MTXlfudPwY8g3/2fSVh+cwiqjiNdNCmgVJ7pIFYk7wM
-	vR+mZN2h/xZrnIM1+c0WegNa8Q59b7dQx+4Ss6D0LuVt6nbPolE02IpaBX1LtYinwTYOhnNfR5+
-	oHd5s54kfAFApBoH+nO0bP5vP3jG1sW9n/25j3m+OBnyYBCpPUTDH7SsqDOWPcEjR5FWHoAfOxC
-	ikB
-X-Google-Smtp-Source: AGHT+IH+2cHiDRkSexobKNpcDsdKZBCYRCcLg4PJcbDmEq49ClTbY7a3qJRhpGa/9rwzq7pB1ZCDPnILu5cCdmgnzFU=
-X-Received: by 2002:a05:690c:7487:b0:712:d70b:45eb with SMTP id
- 00721157ae682-7164d539984mr52498477b3.31.1751476946103; Wed, 02 Jul 2025
- 10:22:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1751476973; x=1752081773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mtw6pZQE0DlhVBE2VMFX3XGHgEpdo88L0cVeYsuNgAQ=;
+        b=Y73i1kULkNxSmmMAqdNuCmZ8PakRyXpoN46ZdZzf8vzAOTRTVW7oztka8hzQAMet80
+         v6TJE5wAcXNKoCTVbt5AMaTmdwame1miUv6gRLekVhVmXDxvuQua/OpDz4vrP18Es5g1
+         8xQxGPDAdPJMA5Iu+G20xgxEdYQkJerRIpsE8hRSenp5AZ41e6zrUmnqmn7hbCYUr4iA
+         ujuXIoqCfGZNnRwQGeEqlnT08q0SYnfPlyaybyCIgGABfmRzWmuMHIGKFvM92t6W9st+
+         Kh3mOrB4Qjhjnr15fDBmjvDzpXNIyW5ooRjJGdfE/8MX3XCSVvXxAsx3oTg+qFuR55S9
+         bGMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUruDJpFFBJr7aw/mE7nGlWYXt8R004bGn5bA0fy4w85JRRuS60gxKeMoF48wHL4eLW1ekDfuwe9T9GMFxc@vger.kernel.org, AJvYcCXubQSQemcZqTnLYqC6IMJZKCCFbtrJZZm4hegdDy5mrL+JhyM5Xtpz9GFlGttB7f/5ZDqQzh0S9bVg@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywun64Vdf1cR6zinAG5pXcoA3fhd9yJEcrf+ubaQlYSuY4KAbyW
+	D4aD+FoMfNiL+fmqCmfUiijTgvFoKpn1PpPbRz5qEha0IlGGuVyU9MDo
+X-Gm-Gg: ASbGncsFc7l64V0a7G2jDaZ50ISS9oo2ULPZmCqJolcK5RtPDJKIgFFF9ESh9jb0AmU
+	NWYwOSlWSMFUDc7+NP9/n+ta3Rq5xToRSS2yOJU9C2jnl97KbJJcxkq54VXVr+YhZGGz4F77fqy
+	NrJ9yBpE+GIClOegHmDkQ73CM9MrJCeZJfC6dwXRtImLFaczLq7zzIwmf1zXGwbHwor+yTpVE1r
+	wXewmJjbkTm9njduxHJyO3ZyrFJipu0VcnPIuYr+czmOFA68gK9nx237Bnyjhgmx4Ck09PJ8Hkf
+	4SSpnrNAisQAVyabHIDXm4TMDw8Um2zYXR1F62zUPDQngLH4eeD0
+X-Google-Smtp-Source: AGHT+IEvfrsb7eTYf57GmhCFjhHDvWPbaYrMBXRhFQFoVMUGw5OFFwNtrc9VfEKQ9mKm5SEPQqkW/Q==
+X-Received: by 2002:a17:907:96a3:b0:ad5:8412:1c9 with SMTP id a640c23a62f3a-ae3d8bf2173mr1556066b.59.1751476972808;
+        Wed, 02 Jul 2025 10:22:52 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:5::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae353659de4sm1091039666b.42.2025.07.02.10.22.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 10:22:52 -0700 (PDT)
+Date: Wed, 2 Jul 2025 10:22:50 -0700
+From: Breno Leitao <leitao@debian.org>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	James Morse <james.morse@arm.com>, Borislav Petkov <bp@alien8.de>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, kbusch@kernel.org, rmikey@meta.com
+Subject: Re: [PATCH] acpi/ghes: add TAINT_MACHINE_CHECK on GHES panic path
+Message-ID: <aGVq6khN+QdqD5Aj@gmail.com>
+References: <20250702-add_tain-v1-1-9187b10914b9@debian.org>
+ <aGVe4nv18dRHHV16@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250628015328.249637-1-da@libre.computer> <CANAwSgTH67T9SBQSFQgFjvyrxNCbtfd9ZaCDZFACWA=ZQ-PYtQ@mail.gmail.com>
- <CAFBinCBwTkVwcBTWOzS+G13+rRM2eftMXZ3GHzW+F+BY0bBBzg@mail.gmail.com> <1j4ivued2q.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1j4ivued2q.fsf@starbuckisacylon.baylibre.com>
-From: Da Xue <da@libre.computer>
-Date: Wed, 2 Jul 2025 13:22:15 -0400
-X-Gm-Features: Ac12FXzMF1aM5Sb75d0lCCLP5TcPQJxcLdk716xFOwxeZ7EpHXVjogygUeOUfJs
-Message-ID: <CACqvRUa8EqMbCd2x=di-a6jbMWW8CMo4kgLH=0qnsqHdO16kxA@mail.gmail.com>
-Subject: Re: [RFC] mmc: meson-gx-mmc: add delay during poweroff
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Anand Moon <linux.amoon@gmail.com>, 
-	Da Xue <da@libre.computer>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aGVe4nv18dRHHV16@agluck-desk3>
 
-On Wed, Jul 2, 2025 at 1:07=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com>=
- wrote:
-...
-> If, as the description suggest, the regulator framework somehow ignore
-> the timing set in DT, maybe this is what needs to be checked ?
+On Wed, Jul 02, 2025 at 09:31:30AM -0700, Luck, Tony wrote:
+> On Wed, Jul 02, 2025 at 08:39:51AM -0700, Breno Leitao wrote:
+> > When a GHES (Generic Hardware Error Source) triggers a panic, add the
+> > TAINT_MACHINE_CHECK taint flag to the kernel. This explicitly marks the
+> 
+> While it might not strictly be a machine check that caused GHES to
+> panic, it seems close enough from the available TAINT options.
 
-The regulator framework only cares about timing for regulator on.
-Regulator off just turns off the regulator and returns without delay.
-The code makes incorrect assumptions. Then the kernel resets the board
-without having enough time.
-I can patch the regulator framework with the same code for regulator
-on but that seems very hazardous given how many things might already
-depend on the original behavior of returning immediately.
+Right, that was my reasoning as well. There are other cases where
+TAINT_MACHINE_CHECK is set when the Hardware is broken.
 
->
-> TBH I would suspect the delays before the regulator framework itself.
->
-> Those assert/de-assert delays tend to be just copied from boards to
-> boards. Maybe some boards need different delays. If those are too short
-> for the actual HW, an ON -> OFF -> ON could result in a NOP.
+> So unless someone feels it would be better to create a new TAINT
+> flag (TAINT_FATAL_GHES? TAINT_FIRMWARE_REPORTED_FATAL_ERRROR?)
+> then this seems OK to me.
 
-50ms should be sufficient for all boards as many boards don't even
-have this functionality. < 30ms is sufficient most of the time.
+Thanks. That brings another topic. I am seeing crashes and warnings that
+are only happening after recoverable errors. I.e, there is a GHES
+recoverable error, and then machine crashes minutes later. A classical
+example is when the PCI downstream port disappear, and recovers later,
+re-enumerating everything, which is simply chaotic.
 
->
-...
->
-> --
-> Jerome
+I would like to be able to correlate the crash/warning with a machine
+that had a recoverable error. At scale, this improves the kernel
+monitoring by a lot.
+
+So, if we go toward using TAINT_FATAL_GHES, can we have two flavors?
+TAINT_FATAL_GHES_RECOVERABLE and TAINT_FATAL_GHES_FATAL?
+
+Thanks for the review,
+--breno
+
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> 
+> > kernel as tainted due to a machine check event, improving diagnostics
+> > and post-mortem analysis. The taint is set with LOCKDEP_STILL_OK to
+> > indicate lockdep remains valid.
+> > 
+> > At large scale deployment, this helps to quickly determin panics that
+> > are coming due to hardware failures.
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > ---
+> >  drivers/acpi/apei/ghes.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> > index f0584ccad4519..3d44f926afe8e 100644
+> > --- a/drivers/acpi/apei/ghes.c
+> > +++ b/drivers/acpi/apei/ghes.c
+> > @@ -1088,6 +1088,8 @@ static void __ghes_panic(struct ghes *ghes,
+> >  
+> >  	__ghes_print_estatus(KERN_EMERG, ghes->generic, estatus);
+> >  
+> > +	add_taint(TAINT_MACHINE_CHECK, LOCKDEP_STILL_OK);
+> > +
+> >  	ghes_clear_estatus(ghes, estatus, buf_paddr, fixmap_idx);
+> >  
+> >  	if (!panic_timeout)
+> > 
+> > ---
+> > base-commit: e96ee511c906c59b7c4e6efd9d9b33917730e000
+> > change-id: 20250702-add_tain-902925f3eb96
+> > 
+> > Best regards,
+> > --  
+> > Breno Leitao <leitao@debian.org>
+> > 
 
