@@ -1,229 +1,314 @@
-Return-Path: <linux-kernel+bounces-712700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BF2AF0D93
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:12:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43E3AF0D9E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6DD61C23DD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1204E3B75
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523A2238C0C;
-	Wed,  2 Jul 2025 08:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED0B1E47AE;
+	Wed,  2 Jul 2025 08:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t3wcZVkp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hKf8P/Aa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fKitWYC1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1BBED3i3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="nAZdYZUp";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="nAZdYZUp"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013033.outbound.protection.outlook.com [40.107.162.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9C5238150
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 08:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751443936; cv=none; b=W3o1+otKmhnl3Q+YxxOeLAa61KDQafgdDp3MVb7sSSdjniZpSkGinvpS0uBfW70SofYT3KFlQ1AaottuYuiy9LbA9TmMQoqb8rVF/JYEwHAQ1wqO3o9QCbWpyNuubMT4d0V+gBEljW7zIKnQY42pmzmS8d1eZqmfvRozOk31sjo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751443936; c=relaxed/simple;
-	bh=TLn+aB/L0d2DUZvosDvWQf7D30SKl61TbsuQNLFdQ1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MTVy7H2YTrqmD3vrZL4REWp18gecY9pHFSGt5lYti6Dy0SLV6skPZJ6FTIHXT1a4FEY3mCRve9ME4d/v3thSxJXKh6bMn69/kVu7HAD/vnywEZj5aIQWvoJ4+Lqk8PnYp2Zh7nCSpkRrEdc4dxeKbc5yuEhiILwgNzHEEihqGcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t3wcZVkp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hKf8P/Aa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fKitWYC1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1BBED3i3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DA55221175;
-	Wed,  2 Jul 2025 08:12:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751443932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XMusER8bbzla3LK0PhIib8SXlNxMhayP7yraWeoIwjc=;
-	b=t3wcZVkpjh7O3POO1ztTU2jJcqJ/locBR6tZRXbBUZpiWZOE9pKug/xFclAfcgW3HIKRTr
-	ICo75CzV5ISvVba/nNJgrYSG0TycfO09QTQ8lEq/qYtqGOtomRitT0dbPvyyNSoY8LdA+b
-	kN/ij77BCIuB/XaHT+YUxgFGibG8vrI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751443932;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XMusER8bbzla3LK0PhIib8SXlNxMhayP7yraWeoIwjc=;
-	b=hKf8P/AaPzt+N3mToh37AInvicCTlYsKISzJpsu5Ixa0Z3Lxlj9QUx7CihckmhDeRKUfVf
-	sTTWk4GS9r4/D2Bw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751443931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XMusER8bbzla3LK0PhIib8SXlNxMhayP7yraWeoIwjc=;
-	b=fKitWYC1P1BdeGL91OmLXXws4PttDj/kWigyDBZssapFojWmtmre1CJIPq9oNtYXuW6+tV
-	SJbtnBqKaw/pmcJBs2/8hbp42UOVDjONI94ozJt1w3A19ccJImIaoUBWuoQMK0JToc6xPt
-	cdJNwOlA/IIqB8idIGsATcLkyZNRDU0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751443931;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XMusER8bbzla3LK0PhIib8SXlNxMhayP7yraWeoIwjc=;
-	b=1BBED3i3lnNGB1Bl3ld7xMtKXakgH0kwvBM5rLY5QVrvLjpbQ0EcwHoCHpQnnr43MiCEy+
-	OCUq5Ur7B3Q97QDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D9D613A24;
-	Wed,  2 Jul 2025 08:12:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rYcrIdvpZGhsSAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 02 Jul 2025 08:12:11 +0000
-Message-ID: <48b36219-3344-4cac-8e47-318e7da46c1b@suse.de>
-Date: Wed, 2 Jul 2025 10:12:11 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375562367C3
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 08:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.33
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751444025; cv=fail; b=C1qCH4vcRYuDLsPqjXJnigFbJaZaIgjLismD/5KjWg4/HD2/UDkK5gjAvM4lIb2yPeo6d0vZ00yInHpmnm2A+YV8fN67dVcWeLdyR+a8IuXgUsuJzZVq3MBQ5WV/8ndBWIqF/C+0HpVOWkXZKNi4ebs1ufNYJn8F1B6SCHOXKUw=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751444025; c=relaxed/simple;
+	bh=69eLqbNqJw+BzlKiGg/tDswdCWZwvOlYggRvVntMcDk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XBp7ZaQ7LSqX6wqileUXAYMron70qjhiHPY3qcQyFenLQL0rcRMl7tDPvU/+GU4GsWLUY+XUV0eBVxGcg5UOeXQLIDLjtQOHbt3BmXI7IetilVMjxcQCxynP45q/2lgYup1/DEaLHOvzgqSdDs3HsA4Nk5WkAoISMu/7ZjkRZ7Y=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=nAZdYZUp; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=nAZdYZUp; arc=fail smtp.client-ip=40.107.162.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=gQXYgyML0a+rtpBMn9vmqiiZ/BD8ksxXvZouC39Hep8ZG+zvIOoV3mrXPtuiqME97ZCAQBI5UN9v+bp8oh8vUvKVyHIyLanvucDWWYGPufM9F1KguSvzbV25yU5Ug6AqDzmmee0xJOr/WF+Wem0U2EkoRoSicibN4w/PKN1zc28aYH99N0SwXGjxKha+2g+qFYsUc83Oigoy8Zjn9XZ8VDp6agORIvLsuHt1n0Aq+JEHv5XOB+dHwQ55+TOFUIXHaDH+KLJlWx35vJkgkdnqmoofm4mo1xpBsyL1R4CpHOaFW8gsvwgPXdcujt9TTvsVBwLy+k4IIBkAjxDcy28ahw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eLbNYdLBlUGdtXhJ6//wVBE3BxSuP612IWFrBrnPMFI=;
+ b=R5b1rtvSwbfZzNPDkSCZ6OPvg2HaVb7IgoYp8mSqkRtF+y/huGuzguPc2E+TfF89v+8fYvgWizFw3LVdkexAY+P/6CffOgac710Zzi7p09xK8+rWkteeLyQaN0xvMklw+QuoG3Lcg78mPSUEavNwaXgZo2+fZetjfpyGK2zgSn5oOU495mG3f/7pzNsxAOFW4UnRD8AYxggvj3lRhOKhB5r+GQSIyRxZpjkKESISi5J1tNnMBKh8KSfOL0CMJC+3zauvomP819DU0FP610P/itBNii45l7KLmtWeQ1fZZLHD7Yea3gK2QKFN0DcdtgreCgTUtot7EuVn/Wsyo2/rEw==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=amd.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eLbNYdLBlUGdtXhJ6//wVBE3BxSuP612IWFrBrnPMFI=;
+ b=nAZdYZUpM7NTUaucRS1SneR5api1sa9Y/AdTy7NKOS9uM5VzxaZIezwz8kDTE68cKTSmuyFN1NKURK1YsUKKkHZQ7jn5HwYHYwVYz6l4B6CyjSzR+OxQcMCjnQrtyL/5kcOFioJjdBnrjUoFRc3IBUuhZU2RfWLb608SpuLcjJQ=
+Received: from DU2PR04CA0283.eurprd04.prod.outlook.com (2603:10a6:10:28c::18)
+ by AM0PR08MB5300.eurprd08.prod.outlook.com (2603:10a6:208:18e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Wed, 2 Jul
+ 2025 08:13:39 +0000
+Received: from DB3PEPF00008860.eurprd02.prod.outlook.com
+ (2603:10a6:10:28c:cafe::f5) by DU2PR04CA0283.outlook.office365.com
+ (2603:10a6:10:28c::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.20 via Frontend Transport; Wed,
+ 2 Jul 2025 08:13:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB3PEPF00008860.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8901.15
+ via Frontend Transport; Wed, 2 Jul 2025 08:13:38 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CbYvOBp3GuL0so0PVd1TxkJ2/mloZyyMwhO/ELJTWRu1L6t6NJ9aITyy05s3LpbbiiZZDJn4Gov9qKsNZfW45+tJ/8BNKJ/ix8yPEFwo0duzrsmonl7sFjiNRvsdES24HaUQVFanq3TCvmyHBKVJngl0/wDltCGPsguwMIe1aE+ZIqExZaVEJ8cH32e+whPWuwsnKKqb+JQt/ZnCImZvWMHrRc6oyO0CEoF+/1kbQiIT03O0X58gXVoBFJXtTcDwrw1hZvdCKFhS+HWTm63Xiid4G3LkZtFuWSzuCdrWXvKo+9i/eZz+6xQ23ro9jzuWb1N9S4TqCZeGzFgeDp9YYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eLbNYdLBlUGdtXhJ6//wVBE3BxSuP612IWFrBrnPMFI=;
+ b=nvsduJyGwd4Be9kUDsKhK/a+IdaJpomknC+gXfFV/dBdjWiaOf+HtrcdnppxQG0jlpSwjSUOTVaXSISV9tMba2xssXtBW/2heKn00g4CWNm4qxvZpHqphDSzm6sYh1V32fPesOg67E8AHb7Phb5cDxZ8Iffy9xCK9KriF73Hl4bXW16siiZMX3VtEK8HVzME8RZcxlOUir52SCjAuiHzo6oj/VX4QbjEbQpLkDeLQxxidmgiqXCWqRrKsvV8T32CBtII9r+Ud/8x3CBLu+3Qx1TsrQ5yBZtMY+xPxamUu84clFLnKTvwuWIWarE9r9iOKgX7EQt8IKWfC+AbrL4usw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eLbNYdLBlUGdtXhJ6//wVBE3BxSuP612IWFrBrnPMFI=;
+ b=nAZdYZUpM7NTUaucRS1SneR5api1sa9Y/AdTy7NKOS9uM5VzxaZIezwz8kDTE68cKTSmuyFN1NKURK1YsUKKkHZQ7jn5HwYHYwVYz6l4B6CyjSzR+OxQcMCjnQrtyL/5kcOFioJjdBnrjUoFRc3IBUuhZU2RfWLb608SpuLcjJQ=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
+ by DU5PR08MB10494.eurprd08.prod.outlook.com (2603:10a6:10:516::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Wed, 2 Jul
+ 2025 08:13:05 +0000
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e%3]) with mapi id 15.20.8901.018; Wed, 2 Jul 2025
+ 08:13:04 +0000
+Message-ID: <980a1569-cdae-4343-bd94-4fb2ea6e247b@arm.com>
+Date: Wed, 2 Jul 2025 13:43:01 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lib/test_vmalloc.c: introduce xfail for failing tests
+To: Raghavendra K T <raghavendra.kt@amd.com>
+Cc: akpm@linux-foundation.org, urezki@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250702064319.885-1-raghavendra.kt@amd.com>
+ <8adf60ed-91ed-4469-86ae-59e8e30bc6ed@arm.com>
+ <1ffe2e4d-88f2-4e2f-8888-8cb278f1cc28@amd.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <1ffe2e4d-88f2-4e2f-8888-8cb278f1cc28@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA0PR01CA0039.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:81::10) To AM9PR08MB7120.eurprd08.prod.outlook.com
+ (2603:10a6:20b:3dc::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/tests: Fix endian warning
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
- =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, lumag@kernel.org, cristian.ciocaltea@collabora.com,
- gcarlos@disroot.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250630090054.353246-1-jose.exposito89@gmail.com>
- <6c2e44cc-c01a-4331-b139-152ccdbd0401@mailbox.org> <aGQQjTUrG8-p8qAC@fedora>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <aGQQjTUrG8-p8qAC@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,mailbox.org];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,collabora.com,disroot.org,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB7120:EE_|DU5PR08MB10494:EE_|DB3PEPF00008860:EE_|AM0PR08MB5300:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61ed181a-8001-400d-91de-08ddb940599d
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?ajlZQXNyV1VtV2xWUGQ0b0tBK1JLVkFUcjBXYTMrWHY3WjNHK1hOdHhaT04z?=
+ =?utf-8?B?UEZlK3RGbElMeVZSQ3EwUkhhZzZmODlRaXdJSXFNamg1UEdtMVVpWjdyRE41?=
+ =?utf-8?B?SzJ3ZjZaVmJIUnAyWmplUUpwSHVwK0EyWFpVNzlHdVFZdGh1WmI3N0p2TDA3?=
+ =?utf-8?B?V2JzZldOZHhmVnpFdk1FdUNRRWM1WUVPYkRqamN6ZjJLVjJXRVdOQnF3TnRK?=
+ =?utf-8?B?b01xVVdQN2l0YmhtekRoK0xRbXlHOGxjSFNUL0ZXUVZUeC9GdE5JNzlIME10?=
+ =?utf-8?B?Q2swa3lydGNWNWtDQ1ZWeTB5R3R1dC8xVzZZd1BVcUVVSzF1eERnL0NFNVF6?=
+ =?utf-8?B?UnNjWEliWlMvcE5ZWHErVkw2aXQ1aHFOT1lIN2FZNGVvOVZmVnpGNitieElR?=
+ =?utf-8?B?TStHRTIwYkFuY21VejEvZm0vdFNrc1JNWUtPZzJnZDJra3JhdTRrWmhEZUts?=
+ =?utf-8?B?MnE2OVpaVmZSZ1NCYjkxeEpYeXEzSzJnbGdEazZpWG5TQzc4YlU5WG5aTUsx?=
+ =?utf-8?B?RGFLWlo2a2xLUGVObENOWmRQWTA5NnBzR1JlREpQdnBzQ0JtaHcxL3MzRUVH?=
+ =?utf-8?B?YlNUeEdjR3Y2b0Nxc2tqWDNsbVlpd2tnb3lMeTVidDgvODdLU3lXM2VNeWdF?=
+ =?utf-8?B?MHgvdGtNd1ZGU3lxRjBjQklVdmtVRlo1VHduekNpYzhacGE1ditlRmpNRnFs?=
+ =?utf-8?B?bmlxSjB5THgrQzFQUFpERlp2Z2Y2cTRWZDNaV000Sm9JMEhEelc5d1lCeFZS?=
+ =?utf-8?B?NHNEVXg4Y2pqWWVHcjVwMkFELzRQVnhZc0pOQmd4LzlFa244ZTRzc1ZGRy81?=
+ =?utf-8?B?VWMzKzZEYTVESDZKUlVBMnRNTHpUR1JKOFVQSHQ2NFp1ZlVnM0ZYNUNDS2Y1?=
+ =?utf-8?B?RXN6ZGZTWWFDUzZsS1JZQllKaWd1cGdMbElua2NSQXVjSlVJcGVKYmwzbER6?=
+ =?utf-8?B?R0s5WWx6bHhOTlpBSXpLUGtxRThwUGt3aVZwMzMzSEgzem9tTy82eVZGVTJn?=
+ =?utf-8?B?M0JSRTcvOGtDeStPYzQxTjlLaldoamFHaGV2Qm5nRnU0d3dEMEZIRnlkREds?=
+ =?utf-8?B?YkdrSHU4WHc3UmRveUFlZFpBOWxuWHVna3pSSlU2aUNiRlVXaEZHclJqQjBF?=
+ =?utf-8?B?b1oyaGRNRHRyMTFvMnNoUmxFTHR4K1dma25pM0w2aUFWRlpjUVNNWGgwZ2kr?=
+ =?utf-8?B?OU54SzU4ek5CWWtYYndRa0RLeDF4b3BPNXVhaXpRYmZoQmVnMTJhUzRHdkpi?=
+ =?utf-8?B?bTVkeE9IendsVEowK2R2N0dvNHVSeEYvaml2aFo4S3kybXN4VUs3cVdHYUEy?=
+ =?utf-8?B?VjdhbnB2T2lEQnoyWWl2WDUzckxaRzlVYVoyb1JxREtpY2xSZEVucDJKcjFa?=
+ =?utf-8?B?YldROWxPVGpKRnFucmNXNUtMZHoyS2xITnpIRjNwNFZvc0h0QTlpMmlxOTJn?=
+ =?utf-8?B?d1NjT0FKdnR5c1d5WkU0KzFtMTZQdG55M05UU0lCS2t3VWo5cmd2RDAzR1hV?=
+ =?utf-8?B?TVJ6TDh4bFUxK2N3UkZDZmJjZlF2Ym1oWUdHV0ZYWDZNbDFYMDR4Z2p2anBv?=
+ =?utf-8?B?QUZEYjV1VE1FT2FJY1Y2ajg4S1dHV1YwL0NITkY1Qm9yb0IvUkJ3MnJ1bnhY?=
+ =?utf-8?B?MUx5MXBtWFJsT2E4bmt2R3YvTFhFNU0raFhjb2trM2JiSGQrZWxWMFZoVnB3?=
+ =?utf-8?B?SUpKTFk4eUNUSXVQR29XdEVLdldjclNGbmJQVnpGQ2doRzk4NmYyM21TOHlT?=
+ =?utf-8?B?S0xSdDYwUlBaUlVDOEgrZmpURUtVbUhaZzRXaG1aSDAyN3ppbFZuUE9iYkFO?=
+ =?utf-8?B?OHg5eHh4ZFFtWnlRQ1h3cHlZSGp5a2FNbVltYkVWY1FGWXBMQVp6a244VHRU?=
+ =?utf-8?B?ZENCMkt2WFlZMWZXSDRCaXpqSmhGK0VyYTFQOHVwSUg5RHFnNWZvWlF1aW1l?=
+ =?utf-8?Q?wJpxCWepoms=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR08MB10494
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB3PEPF00008860.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	0821bc96-606e-4ea6-36eb-08ddb9404522
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|14060799003|36860700013|1800799024|35042699022|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Ync1Rk9WWm9TNXFRK2tTbzBhYlRuSnZGT0kxSDVuTXZPNXpjbmFYL0k0Zkhy?=
+ =?utf-8?B?bC9yRkhvK3pFd0NGWEtDUWN6Z3pyTFFRWVdNZTJvcXhwZFJYM2hldkU4akdn?=
+ =?utf-8?B?U3dDZVM1cjJ0VWZjOWVyMWpXT1lacTQ0V05XRGtXTm5DVHUveXYwUEhvZVp3?=
+ =?utf-8?B?UXA1NWdDanBkYjJlanB2SDF4VHg4OFpPMXNVMm1KUW12d1hpMDNObkpvMHNv?=
+ =?utf-8?B?cVlEQ1N6NmREZFZzdCt2NGNCZzEwRGFzNFIrZTNQcEZkZm00anpjK0p4QW95?=
+ =?utf-8?B?emVhOEJLS3puTHI0WGRuWm0wZi94MnA2VEllMGk4cmRSckpnVlJXZnNZY1Bp?=
+ =?utf-8?B?WFI5RCs3eHA5Y2ZQZStVUVlTQTRRYTgzOThPODZzSUNwUTRXZTFqT3FRMEFq?=
+ =?utf-8?B?QUFCRHd5L1RRR2VmU1IzRWdtUTBGWGNOemlYT2dZeWkxejVmNVR1clBWRHZV?=
+ =?utf-8?B?N3NQS2dEWGdMS1Iyb2hqKzQwRVE2TUJnSGJDQ0VuTXFYM0E2RFlGbXFQUnRh?=
+ =?utf-8?B?WVFjRko4SURVUk1zWEVjL1dwU2ZmTHdFVHIyeVlnMTZlRnJ1bjNUbG1ILzVR?=
+ =?utf-8?B?UFE2dE9qZC9zRWJ4Yk8rQnNWUmdCTDcxYlk4bk1rZCt5ZSswcjNoMzkyRlZ0?=
+ =?utf-8?B?RVVraXFOWElFWTBKdmc3TE9OZVJEMDAzOCtKNUcxUlcrU2c0R25rRnM1RWJT?=
+ =?utf-8?B?cWxEUyttM0VJV0ZGbTZZTG1OR2JnbDM0Yko0VEJKUzVUKzNQckcvbUx3MVZB?=
+ =?utf-8?B?T2JqaWdoM0xMSzRVSXJ1U2FHZ2k4VmtDekxzNkliZmIxWFhBQkVER2EyOEd0?=
+ =?utf-8?B?cDJCeS9pUkFzR2R3N3RNZWdoL0tRUS9lci9XK1VaRDYxQk01MHJSU25ycnhk?=
+ =?utf-8?B?Njk1eXVHVW1MWUI3RDIrOWNsWWI0M3djVmo4a2Y3cEZjYnZhcUZwYUtHL1Ro?=
+ =?utf-8?B?QTlnWDFMRFVuWWRTUFpUQWhsL3h4UkxnVThJV3k0c1lWRXp4dk5VZnZqKzgz?=
+ =?utf-8?B?ZFh6Z1RtQzZUSThuckVHaWxQdVRhQ3NVYm00QkQ4OGwwbGdEWmJkclZFb0R0?=
+ =?utf-8?B?STYxTEVwNnA1YmpJQ0NtSG4xQjMrRElsd3NCeG0wMEhpeW9FRUd3NmRGU0Zz?=
+ =?utf-8?B?RU50MCsrMnRBczVXVGVDZTlkWnJhUVY2K2NkaktBSmd5S3gwMXBJeUc5aUF3?=
+ =?utf-8?B?Z1hVeDFHRWVkU1d3dndEeHliYWZ4VEhuT1ZqM3NDZ0xrakJTK2dpN21lakRX?=
+ =?utf-8?B?VEg0R1FrbUQ5SkdJcW9JbU9Zc3JkY0dsbUFRWDI0ZGhpSnB6ZG5PVFNxQWdC?=
+ =?utf-8?B?MTdUN3dFUVlFdzVIRjJnM1pDYTVnMXljSWxKU0t0NHZ6UHlTcjBndG9DVk14?=
+ =?utf-8?B?ZG5UQTZvcEF0NWVGU25iR2ZHV2lYZDFhVjRqaEpHVkl0Z2VKMW9Hb1FyRjJR?=
+ =?utf-8?B?SnVFRkRXMWdEdWY1d0FxQlN1bVc0N1lrelJYMW9vTWVnUmgrNFhSZUxqV1pw?=
+ =?utf-8?B?OG54U0FyL1V5b3ZwenlERzBRcnBxZVZvSTA4ZWhtSFJQUVowSGhnNXRMY1Jq?=
+ =?utf-8?B?d09tdW03NlhwWlMvamVmNjAwKytTMkVRRmxhY1FhSEdVNFU1eTdqaEl5WW9G?=
+ =?utf-8?B?aWk1bDZFRk1Sbk1ZMFhCZmZ6NFJha0xnZVUwTCtzNUZpZmYxRitKcDJCNjVV?=
+ =?utf-8?B?ZDhoLzZUTmt3S2MwVS94Qld5bVZrUU50a1RmRmJ2SnpZZGhwL0N4bzVSS3h5?=
+ =?utf-8?B?NmJ1MTNUazJheVVXQlB0K1hHVHRZQlp3SnNyV3JmbytYZGpTQ3JZOXFSTTVI?=
+ =?utf-8?B?U09mSWg5V2VIOUhUeDRUY1poRnZ5QnNLUHVhYktkOTJWRlQ3Q2FhWUVTTGsv?=
+ =?utf-8?B?c29hVjE1SkFha0pnOWh1blhmZXdrUy9xNG5ZSG54aGMvR2dzamxkZFBkaGx6?=
+ =?utf-8?B?VWVkbHZFS251V3RJY3labmtsc0FFZEg0NmdvTC82dGdUM1NYaDg0WFk5U1pR?=
+ =?utf-8?B?dE1aTkxUT3BUMWR2elJRWTVJb3Y0Yncrc1BBcXdPWE5Db3dFTVV4MzVDM3JI?=
+ =?utf-8?Q?o5tM7Y?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(14060799003)(36860700013)(1800799024)(35042699022)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 08:13:38.8034
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61ed181a-8001-400d-91de-08ddb940599d
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB3PEPF00008860.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5300
 
-Hi
 
-Am 01.07.25 um 18:45 schrieb José Expósito:
-> Hey Michel,
+On 02/07/25 1:38 pm, Raghavendra K T wrote:
 >
-> Thanks for looking into this.
 >
-> On Tue, Jul 01, 2025 at 10:22:13AM +0200, Michel Dänzer wrote:
->> On 30.06.25 11:00, José Expósito wrote:
->>> When compiling with sparse enabled, this warning is thrown:
+> On 7/2/2025 12:18 PM, Dev Jain wrote:
+>>
+>> On 02/07/25 12:13 pm, Raghavendra K T wrote:
+>>> The test align_shift_alloc_test is expected to fail.
+>>> Reporting the test as fail confuses to be a genuine failure.
+>>> Introduce widely used xfail sematics to address the issue.
 >>>
->>>    warning: incorrect type in argument 2 (different base types)
->>>       expected restricted __le32 const [usertype] *buf
->>>       got unsigned int [usertype] *[assigned] buf
+>>> Note: a warn_alloc dump similar to below is still expected:
 >>>
->>> Add a cast to fix it.
+>>>   Call Trace:
+>>>    <TASK>
+>>>    dump_stack_lvl+0x64/0x80
+>>>    warn_alloc+0x137/0x1b0
+>>>    ? __get_vm_area_node+0x134/0x140
 >>>
->>> Fixes: 453114319699 ("drm/format-helper: Add KUnit tests for drm_fb_xrgb8888_to_xrgb2101010()")
->>> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+>>> Snippet of dmesg after change:
+>>>
+>>> Summary: random_size_align_alloc_test passed: 1 failed: 0 xfailed: 0 ..
+>>> Summary: align_shift_alloc_test passed: 0 failed: 0 xfailed: 1 ..
+>>> Summary: pcpu_alloc_test passed: 1 failed: 0 xfailed: 0 ..
+>>>
+>>> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
 >>> ---
->>>   drivers/gpu/drm/tests/drm_format_helper_test.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> Thanks for doing this, been thinking about this for so long but
+>> I'm lazy : )
+>
+> :)
+>
+>>
+>>>   lib/test_vmalloc.c | 36 +++++++++++++++++++++---------------
+>>>   1 file changed, 21 insertions(+), 15 deletions(-)
 >>>
->>> diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
->>> index 7299fa8971ce..86829e1cb7f0 100644
->>> --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
->>> +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
->>> @@ -1033,7 +1033,7 @@ static void drm_test_fb_xrgb8888_to_xrgb2101010(struct kunit *test)
->>>   		NULL : &result->dst_pitch;
->>>   
->>>   	drm_fb_xrgb8888_to_xrgb2101010(&dst, dst_pitch, &src, &fb, &params->clip, &fmtcnv_state);
->>> -	buf = le32buf_to_cpu(test, buf, dst_size / sizeof(u32));
->>> +	buf = le32buf_to_cpu(test, (__force const __le32 *)buf, dst_size / sizeof(u32));
->>>   	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
->>>   
->>>   	buf = dst.vaddr; /* restore original value of buf */
->> It might be cleaner to use two separate variables instead of using "buf" as both little endian and host byte order. (Same for patch 2)
-> Yes, however, the same pattern is repeated 10 times in this file.
+>>> diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
+>>> index 1b0b59549aaf..649f352e2046 100644
+>>> --- a/lib/test_vmalloc.c
+>>> +++ b/lib/test_vmalloc.c
+>>> @@ -396,25 +396,27 @@ vm_map_ram_test(void)
+>>>   struct test_case_desc {
+>>>       const char *test_name;
+>>>       int (*test_func)(void);
+>>> +    bool xfail;
+>>>   };
+>>>   static struct test_case_desc test_case_array[] = {
+>>> -    { "fix_size_alloc_test", fix_size_alloc_test },
+>>> -    { "full_fit_alloc_test", full_fit_alloc_test },
+>>> -    { "long_busy_list_alloc_test", long_busy_list_alloc_test },
+>>> -    { "random_size_alloc_test", random_size_alloc_test },
+>>> -    { "fix_align_alloc_test", fix_align_alloc_test },
+>>> -    { "random_size_align_alloc_test", random_size_align_alloc_test },
+>>> -    { "align_shift_alloc_test", align_shift_alloc_test },
+>>> -    { "pcpu_alloc_test", pcpu_alloc_test },
+>>> -    { "kvfree_rcu_1_arg_vmalloc_test", 
+>>> kvfree_rcu_1_arg_vmalloc_test },
+>>> -    { "kvfree_rcu_2_arg_vmalloc_test", 
+>>> kvfree_rcu_2_arg_vmalloc_test },
+>>> -    { "vm_map_ram_test", vm_map_ram_test },
+>>> +    { "fix_size_alloc_test", fix_size_alloc_test, },
+>>> +    { "full_fit_alloc_test", full_fit_alloc_test, },
+>>> +    { "long_busy_list_alloc_test", long_busy_list_alloc_test, },
+>>> +    { "random_size_alloc_test", random_size_alloc_test, },
+>>> +    { "fix_align_alloc_test", fix_align_alloc_test, },
+>>> +    { "random_size_align_alloc_test", random_size_align_alloc_test, },
+>>> +    { "align_shift_alloc_test", align_shift_alloc_test, true },
+>>> +    { "pcpu_alloc_test", pcpu_alloc_test, },
+>>> +    { "kvfree_rcu_1_arg_vmalloc_test", 
+>>> kvfree_rcu_1_arg_vmalloc_test, },
+>>> +    { "kvfree_rcu_2_arg_vmalloc_test", 
+>>> kvfree_rcu_2_arg_vmalloc_test, },
+>>> +    { "vm_map_ram_test", vm_map_ram_test, },
+>>>       /* Add a new test case here. */
+>>>   };
+>>
+>> Why this change?
 >
-> What do you think about fixing it in a follow up? I don't think it
-> should block fixing the KUnit tests.
+> Perhaps not entirely necessary except for align_shift_alloc_test line,
+> still updated the field since one more bool field added. But let me know
+> if you are okay with current state OR need a respin for that?
 
-Before doing this, you should consider storing the test data in 
-little-endian. That would save all the endianess conversion in the code.
+Oh now I saw the "true", I thought you were adding commas for no reason.
 
-Best regards
-Thomas
+I think that's fine then, but will let Uladzislau decide.
+
 
 >
-> Jose
->
->> -- 
->> Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
->> https://redhat.com             \               Libre software enthusiast
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+> [...]
 
