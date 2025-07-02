@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-712494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057B4AF0A73
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 358EAAF0A7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 07:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BFB83BD837
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:16:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC81444878
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 05:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C954A221FCC;
-	Wed,  2 Jul 2025 05:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D724225417;
+	Wed,  2 Jul 2025 05:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrPshvA4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="TOKXt0Wh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cF618pGX"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936E4221FCA;
-	Wed,  2 Jul 2025 05:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457F8219A7A;
+	Wed,  2 Jul 2025 05:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751433344; cv=none; b=Wc5as4u+yrHXmOKChs4X8/xP0ARj0w5/k32hwVm1ecHJcs4VXMi6ZAp+gxcQOTHvjqLgnksvHVMqPa+LbvX/mCe1jHTsb0VYIBS/0/e5XsqDgwItcC878miZvpa60I3fVyeynQ6MxwSPDUO+WpmmC0Pxtwy0Ceo7kWG48OU34BY=
+	t=1751433357; cv=none; b=OdKJpbNfklvBtW4EsRi1tBXUxC4hXc7DANk5D0YhxrWV6wuP2EXukKein2gHEvZnf1O2GM8onjEEafLkZVjkNrD7wk12VSyLTcfNA6KfxoOM4qgLcE6VpviTI/prt8AvfJENiJh2em+k8OBNw5pKyII+E55JHC/IgLTeJu1MBzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751433344; c=relaxed/simple;
-	bh=yA/VFyXgbsNQmFMOwhT88/9R1hkxNmEietIiNZ5dXEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I+6Vp9fUvMqCaftxA9au02Onxn80JE9GLgzH2ruNbko69yyAhLcNpDwXQtv0tYMMV2GRNfSWsOuFE7rC40pWXRyJymhDPKiGlh+GWPIEV7g036YVkX/ILCCxWVPea14qiDf5UwhPFLwMjd+wJ+/9VMwwt8brFXjm6yL0s16PdKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JrPshvA4; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751433343; x=1782969343;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=yA/VFyXgbsNQmFMOwhT88/9R1hkxNmEietIiNZ5dXEs=;
-  b=JrPshvA4DAbeHm97OcT1DZ3zBFbElQ7EpadkKyhgd/Jn0mXVuX7JAkqf
-   hAIKYWcubkk95IaDM9WMnMxynr9Y6Cbt0Kej2DtsbQczxUuMDphcoKh27
-   2TnH32vB3fMPOc9sjj5BKDDdNuhdrlAiDxT9Vx/tVwkoxG1ydoaT1zlv4
-   2RGM0AVxu/V/Nd0Q2r0bfpKQXXSya2JXFdXJ5EFV9LoVIj2MyT3WmWCYl
-   dsMn9DP6GnlnhUnjm8xfEuUeHxce+pnyH/A39MHyqt4gVoAb371XbZyF1
-   pGKGI1LIEnqZOOUHigp6UaVVy4keAyo1vL8hzWpuJaKvew7MzGMd6wXX7
-   g==;
-X-CSE-ConnectionGUID: 9SkMQcdORMmqPRkBQf5rRg==
-X-CSE-MsgGUID: JRSS3i14TXCmFaGro3MaHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53583406"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="53583406"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 22:15:42 -0700
-X-CSE-ConnectionGUID: oTaVz3k6S1qnLv+V1IVrug==
-X-CSE-MsgGUID: reW8n6DgSlCO/tJh9SjkFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="153748196"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2025 22:15:39 -0700
-Message-ID: <7d2214f3-3b54-4b74-a18b-aca1fdf4fdb4@linux.intel.com>
-Date: Wed, 2 Jul 2025 13:14:12 +0800
+	s=arc-20240116; t=1751433357; c=relaxed/simple;
+	bh=609em8duwn1TuR7A8MeBu753B5OAPg1aWBaZfiCHuf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WRVXZear+8Y2dfP2hwYZyegbBv3RMgMeB/ZVmfwm96jERSOPm67Seh/V7SuI+zNvbtgGWauoqhDxlQ7z4/XIwxUK4zQTW4mdTrodEz94lXXJQKSFXFQTOcg/nFEX269OE9DiQPKi9n5LXZcDJ/p4dZ7mVu3qV4Gr1eYTGa1yk1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=TOKXt0Wh; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cF618pGX reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1751433354; x=1782969354;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yEbAI3opm4LnixMNPD4CJAcS1fuxSWr4Pdo00xuzpFY=;
+  b=TOKXt0WhGRqtccPEOjmPu7X14LaQsk0a1aoTnFSijVkhf5Zysb12MyMU
+   Bzqfac/hxcr1jS4IW9CyTkJYourAOEyAwKvQcAn2JxWNDaUv3YsUc21f6
+   HvqvQJhvsRuk8txaVVyZkl06stxK+f8shuukHv3H67ueGnX5/efHwscwA
+   a4EAVcSkjaE7mKIM8aCBmcqJgn/LyzZmrbHbgy6gLjCA+DvNt/SirOfTF
+   X5kjKANfDgH9QHViZY/BGm5wP2iLiZXJ6tmfHwp8yG3BWv/gL7qtsaXkM
+   B7knFm4nkHHAD4tvZ8pQcGy3thxrz+UOtlaerScRPGeVmag9h28S+CmgV
+   A==;
+X-CSE-ConnectionGUID: eIs4CnGHQlWPEHsu6qr5AA==
+X-CSE-MsgGUID: ERVeFJYmQfG8spIkNsSiLA==
+X-IronPort-AV: E=Sophos;i="6.16,281,1744063200"; 
+   d="scan'208";a="44969913"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 02 Jul 2025 07:15:50 +0200
+X-CheckPoint: {6864C085-39-B6FA1C9B-ED1A9D03}
+X-MAIL-CPID: 7C0C64754A18A0C5244284046CA090FF_2
+X-Control-Analysis: str=0001.0A006371.6864C09E.0036,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B95DA1609FC;
+	Wed,  2 Jul 2025 07:15:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1751433345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yEbAI3opm4LnixMNPD4CJAcS1fuxSWr4Pdo00xuzpFY=;
+	b=cF618pGXKLBuYLWJzcG6yKxN6HvPJZ3OnzuLEmANIX9+PK+VYRbMI4jhxz1Vp9MpJjcL4q
+	DP/tq6zlyoJctpFzYH6DACLXA9gX9E4ETE1oCbnLP+OdSd0ldDYS7s5U91NVaRVj8YmGhD
+	mi0e/RFIx3A+oxWRWYME+JgWfucWZeAmbB3vgaJTZwofsXB6zLTxPbYoWiMdk4LLFPN6Rv
+	BimCqaXrReERUtViTT11VULX6JSEgaScb7ZQnJ2+QgOQtVwTVrv4uI3VVOiPNEak+PfBtO
+	xwmC5iDg3mkguCVlmoDwq96bJgvsvhTiIScf1lrG5gGikyChpuTjvkDGXsvlhg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rui Miguel Silva <rmfrfs@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Eugen Hristev <eugen.hristev@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+ Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 3/7] pmdomain: imx93-blk-ctrl: populate child devices
+Date: Wed, 02 Jul 2025 07:15:41 +0200
+Message-ID: <2232630.irdbgypaU6@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250701-95_cam-v1-3-c5172bab387b@nxp.com>
+References:
+ <20250701-95_cam-v1-0-c5172bab387b@nxp.com>
+ <20250701-95_cam-v1-3-c5172bab387b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION][BISECTED] Performance Regression in IOMMU/VT-d Since
- Kernel 6.10
-To: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>,
- kevin.tian@intel.com, jroedel@suse.de, robin.murphy@arm.com,
- will@kernel.org, joro@8bytes.org, dwmw2@infradead.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev, stable@vger.kernel.org
-References: <20250701171154.52435-1-ioanna-maria.alifieraki@canonical.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250701171154.52435-1-ioanna-maria.alifieraki@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 7/2/25 01:11, Ioanna Alifieraki wrote:
-> #regzbot introduced: 129dab6e1286
-> 
-> Hello everyone,
-> 
-> We've identified a performance regression that starts with linux
-> kernel 6.10 and persists through 6.16(tested at commit e540341508ce).
-> Bisection pointed to commit:
-> 129dab6e1286 ("iommu/vt-d: Use cache_tag_flush_range_np() in iotlb_sync_map").
-> 
-> The issue occurs when running fio against two NVMe devices located
-> under the same PCIe bridge (dual-port NVMe configuration). Performance
-> drops compared to configurations where the devices are on different
-> bridges.
-> 
-> Observed Performance:
-> - Before the commit: ~6150 MiB/s, regardless of NVMe device placement.
-> - After the commit:
->    -- Same PCIe bridge: ~4985 MiB/s
->    -- Different PCIe bridges: ~6150 MiB/s
-> 
-> 
-> Currently we can only reproduce the issue on a Z3 metal instance on
-> gcp. I suspect the issue can be reproducible if you have a dual port
-> nvme on any machine.
-> At [1] there's a more detailed description of the issue and details
-> on the reproducer.
+Hi,
 
-This test was running on bare metal hardware instead of any
-virtualization guest, right? If that's the case,
-cache_tag_flush_range_np() is almost a no-op.
+thanks for the patch.
 
-Can you please show me the capability register of the IOMMU by:
+Am Mittwoch, 2. Juli 2025, 00:06:08 CEST schrieb Frank Li:
+> imx93-blk-ctrl is miscellaneous devices, which include reset, clock, MIPI
+> CSI2 PHY and DSI's miscellaneous logic. Call of_platform_populate() to
+> probe child nodes.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pmdomain/imx/imx93-blk-ctrl.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pmdomain/imx/imx93-blk-ctrl.c b/drivers/pmdomain/imx=
+/imx93-blk-ctrl.c
+> index 0e2ba8ec55d75..ba2dd8bd143d1 100644
+> --- a/drivers/pmdomain/imx/imx93-blk-ctrl.c
+> +++ b/drivers/pmdomain/imx/imx93-blk-ctrl.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/device.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_runtime.h>
+> @@ -297,7 +298,7 @@ static int imx93_blk_ctrl_probe(struct platform_devic=
+e *pdev)
+> =20
+>  	dev_set_drvdata(dev, bc);
+> =20
+> -	return 0;
+> +	return of_platform_populate(dev->of_node, NULL, NULL, dev);
 
-#cat /sys/bus/pci/devices/[pci_dev_name]/iommu/intel-iommu/cap
+Please use devm_ same as in [1], which you Sob'ed as well.
 
-> 
-> Could you please advise on the appropriate path forward to mitigate or
-> address this regression?
-> 
-> Thanks,
-> Jo
-> 
-> [1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2115738
+[1] https://lore.kernel.org/all/20250304154929.1785200-4-alexander.stein@ew=
+=2Etq-group.com/
 
-Thanks,
-baolu
+> =20
+>  cleanup_pds:
+>  	for (i--; i >=3D 0; i--)
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
