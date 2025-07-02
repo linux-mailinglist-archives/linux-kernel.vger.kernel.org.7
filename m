@@ -1,179 +1,119 @@
-Return-Path: <linux-kernel+bounces-713939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05132AF606D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E071CAF6071
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9693B2CC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 960D13B4E46
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60814309A77;
-	Wed,  2 Jul 2025 17:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDFD309A77;
+	Wed,  2 Jul 2025 17:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pmnMC2zj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="agyambVu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pmnMC2zj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="agyambVu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tG+k6u3b"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8A2F50B7
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFF5309A75
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751478823; cv=none; b=D3JsYENFGFo9TSSmHm1lRzX6nXiTZokTXZKgCnySZ9HqJKk9UeAdLOt59pu8QVtl1kuHc2wLS5uhNVfByZA7T3alD41dMWAi3v9FVTGoOQyB18GF+1qruEyI/29AwdCmzZcQ1oec4nqDenphpaCnetdnRf69Tn5eT8NTI3YBXdk=
+	t=1751478847; cv=none; b=Ff8VUe0PFWdvg+Ik8ly/3pvjP17f0mTfBoW74VKKiOXPefB88PeRoxZDbP1DUUkvS/yirHZJhlZmksAbrTXSPzGhMxsdrbnoRdOnHeFR+ca5HZBqXFXnl68/SxO5mtVk8UPlQ+ee4k7pLIVNt3kL47jsZE5MQI+1ASC9SWN+X8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751478823; c=relaxed/simple;
-	bh=uXYLCLa7He0l8SeuuT5s6C5IVlgt4fYu+20zNBy2wiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJ32lO3qSZPwLJCPXJeR91HrEepqyQHfUo+Y01AzuZ/tVJ9L1dD8Z4wgPK168zCOyNSn/yuqYOdmFD+cTcvQT8Ln5SMDgvgGe5tBvOkuCBPqspPdesZv0Mh+bLqVAsfICgqa5gt4sW2uoMzhXsuWRsCAZO8+GAMZ1VeL7Nt9ZGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pmnMC2zj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=agyambVu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pmnMC2zj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=agyambVu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0400021163;
-	Wed,  2 Jul 2025 17:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751478820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FiMDhOWgDK6aRf46H0zrt2j/bBbAo0BPLVU88GTsNyw=;
-	b=pmnMC2zj224RwnAUnlYQvqnfeIVeR8nocowKQ8dn6EATdfc4u8N8TISPzoiAPVcp190R9H
-	0FfXrZg9w67/rlQExlkcTgynGOgBaagOx8/iJ9W17ljhGGVFH5IRXA6HZhBL4IIq2j4Kuj
-	iX7bzHwZ0wDJlJzvqlJOTPLS90WM8QE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751478820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FiMDhOWgDK6aRf46H0zrt2j/bBbAo0BPLVU88GTsNyw=;
-	b=agyambVuYYk7F7azrM2/DaReSK43Kp5URpcxsoyad0ADNIL6jenmjSpWtnktE12LCC+ftE
-	wzpTASRxGrHEwrBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1751478820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FiMDhOWgDK6aRf46H0zrt2j/bBbAo0BPLVU88GTsNyw=;
-	b=pmnMC2zj224RwnAUnlYQvqnfeIVeR8nocowKQ8dn6EATdfc4u8N8TISPzoiAPVcp190R9H
-	0FfXrZg9w67/rlQExlkcTgynGOgBaagOx8/iJ9W17ljhGGVFH5IRXA6HZhBL4IIq2j4Kuj
-	iX7bzHwZ0wDJlJzvqlJOTPLS90WM8QE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1751478820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FiMDhOWgDK6aRf46H0zrt2j/bBbAo0BPLVU88GTsNyw=;
-	b=agyambVuYYk7F7azrM2/DaReSK43Kp5URpcxsoyad0ADNIL6jenmjSpWtnktE12LCC+ftE
-	wzpTASRxGrHEwrBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C5F2E13A24;
-	Wed,  2 Jul 2025 17:53:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DpteLSJyZWj8BAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 02 Jul 2025 17:53:38 +0000
-Date: Wed, 2 Jul 2025 19:53:37 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>, Lance Yang <ioworker0@gmail.com>
-Subject: Re: [PATCH v2 4/4] mm: remove boolean output parameters from
- folio_pte_batch_ext()
-Message-ID: <aGVyIZby0mCBz0Yl@localhost.localdomain>
-References: <20250702104926.212243-1-david@redhat.com>
- <20250702104926.212243-5-david@redhat.com>
- <aGU7axcql69-GRQI@localhost.localdomain>
- <3f8d6f3f-f98b-4f90-95d5-f4a09d61c88a@redhat.com>
+	s=arc-20240116; t=1751478847; c=relaxed/simple;
+	bh=k89fQPiBNyDB/0V+EIFMALygaQ9NdDpzKAK2yXffWXA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=I6i9EK8Y7SqtGl5QJ3Z0OpF+fKymXH1YbMSQga3NF3MMqN+RvJCEd71Z3ysodivRSTjtBCanAmdRnr5YZUTHFkVtVMxqPNunYXKCFyK1UW9ZyT6PCM2uAuZaC4uUG1XIvpSpZenAeh5xA/dWL++/LsK+1fPqxRmt0oIf/1cLrBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tG+k6u3b; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31366819969so5712229a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 10:54:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1751478845; x=1752083645; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:from:subject:message-id:mime-version
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qx+srozlbEc9LS3I6ua+gsxIOcIl9/CZgn+gg4jjp6A=;
+        b=tG+k6u3bGbUPpFmi4eRYHQNPYme7n3F4hOLDpiWeoXSlFwLcLtkFrE6BN/hUHrDQW7
+         bE22TNtZxrP8LG+UkEjMMhrHtBOhP1LxuzgiVXcBC6W7hPqCwIdF/HnuKVYvJ24wZWKO
+         wr2SaveUavsdlDycypqSSafLRQh82frbBUIcteT3nBYjg9EM9pGx8USiHWrEF2B0apFV
+         akyj++phDu0In74mHr7vVL8xpUbhAxTJse4j9EhCpSPVKONWkKDux1Xjkq0zKlEbb3QY
+         owmSz+Uh8i0ZORuSubqyitkplFkAb4Kv5sH/mUdDZAcEIAvASnvxnBbJRo1mCpYPiUIf
+         gpYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751478845; x=1752083645;
+        h=content-transfer-encoding:to:from:subject:message-id:mime-version
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qx+srozlbEc9LS3I6ua+gsxIOcIl9/CZgn+gg4jjp6A=;
+        b=Y1Kf/1fdFjAk2CTLSBtMOIIYClhe1pHYo45dimJI0gkSOxFkyh92PNtmnAHA4ldYs9
+         UtmnNpsgwPrHRAEO18NUEZzH7ZFyc6UyfeIRbTyO753satt/0xjvCcBKXk6IfzjbQu5t
+         nVxDEdIo1BaqHNO1MhIj69Aowwa17lMezezOioPiq2tuSiE5lP5yhX3r66L1PAW6zUVq
+         DNaSCG/yFT0YU2HczloHrT6+nPkp+emPUITi1UyCZV6owhzwrc9gSwjhaybXU/Fc00Pe
+         vIAlkPc12cfQiTltLyRGC8cCbha8LFwUZlz8tWzRsDJ68eKXKS0n9TNE5kVxKMObW7fO
+         RcqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpfnzi+hJjPBUtPxLSO73Xlah6AwM5S5D94/PI9g9HDXPfxfXVY2EXhzAoih++JuLDeROt+4SoO5spQ2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUkoii2F3fkt1cF8kT01ak+qohrkQdow6EjCqlY/jlmqC0jVj0
+	Kf4dIZ3Bg+aD/miq4s9wzN1OmXklY/ITGEMl8SvyBEtnTZiRJlmjKVc6c4Ux1Is0P9y9qo+iZeE
+	v4ORsOW0XaQ==
+X-Google-Smtp-Source: AGHT+IEhKU+BfPwXUZA28Afv177AAOxLT+LlkCtxGs7XMWzoEm8no/XF9kxpC9GQYle/zPOoVwc8OzBjJTID
+X-Received: from pjuw4.prod.google.com ([2002:a17:90a:d604:b0:313:221f:6571])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3dc4:b0:2ee:d371:3227
+ with SMTP id 98e67ed59e1d1-31a90bd92a6mr6467837a91.17.1751478845442; Wed, 02
+ Jul 2025 10:54:05 -0700 (PDT)
+Date: Wed,  2 Jul 2025 10:54:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f8d6f3f-f98b-4f90-95d5-f4a09d61c88a@redhat.com>
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kvack.org,linux-foundation.org,oracle.com,suse.cz,google.com,kernel.org,suse.com,nvidia.com,intel.com,gmail.com,sk.com,gourry.net,linux.alibaba.com,suse.de,surriel.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.0.727.gbf7dc18ff4-goog
+Message-ID: <20250702175402.761818-1-irogers@google.com>
+Subject: [PATCH v1] perf genelf: Fix NO_LIBDW=1 build
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Yuzhuo Jing <yuzhuo@google.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 02, 2025 at 04:40:30PM +0200, David Hildenbrand wrote:
-> But more importantly, usually young+dirty is a moving target as HW can
-> usually update it asynchronously.
+With NO_LIBDW=3D1 a new unused-parameter warning/error has appeared:
+```
+util/genelf.c: In function =E2=80=98jit_write_elf=E2=80=99:
+util/genelf.c:163:32: error: unused parameter =E2=80=98load_addr=E2=80=99 [=
+-Werror=3Dunused-parameter]
+  163 | jit_write_elf(int fd, uint64_t load_addr, const char *sym,
+```
 
-Ok, you mean they often get queried both at once?
+Fixes: e3f612c1d8f3 ("perf genelf: Remove libcrypto dependency and use buil=
+t-in sha1()")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/genelf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> So in the common case, you really have to rely on the young+dirty bits from
-> get_and_clear_full_ptes(), and not on the current snapshot while the page
-> remains mapped.
-> 
-> The madvise() use case is rather special in that sense.
+diff --git a/tools/perf/util/genelf.c b/tools/perf/util/genelf.c
+index fcf86a27f69e..591548b10e34 100644
+--- a/tools/perf/util/genelf.c
++++ b/tools/perf/util/genelf.c
+@@ -160,7 +160,7 @@ jit_add_eh_frame_info(Elf *e, void* unwinding, uint64_t=
+ unwinding_header_size,
+  * csize: the code size in bytes
+  */
+ int
+-jit_write_elf(int fd, uint64_t load_addr, const char *sym,
++jit_write_elf(int fd, uint64_t load_addr __maybe_unused, const char *sym,
+ 	      const void *code, int csize,
+ 	      void *debug __maybe_unused, int nr_debug_entries __maybe_unused,
+ 	      void *unwinding, uint64_t unwinding_header_size, uint64_t unwinding=
+_size)
+--=20
+2.50.0.727.gbf7dc18ff4-goog
 
-I see.
-I mean, codewise this looks like an improvement, I was just puzzled by the
-fact that we're dealing with young+dirty together (while we didn't before),
-but given that get_and_clear_full_ptes() do that already, I guess it makes
-sense if that's the way we usually operate.
-
-I wasn't familiar with that, thinking about it makes sense, but I wonder whether
-we could place a comment either in the definition of FPB_MERGE_YOUNG_DIRTY, or in
-the handling of it in folio_pte_batch_flags().
-I guess in the definition would make more sense.
-
-
-Whether you decide to move forward on the comment or not (could be
-squashed), I'm ok with this. 
-
-
--- 
-Oscar Salvador
-SUSE Labs
 
