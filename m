@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-712842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8C6AF0FB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:19:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451CAAF0FC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42AA2163AAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77F6484ACC
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 09:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D4A246779;
-	Wed,  2 Jul 2025 09:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACFA24167F;
+	Wed,  2 Jul 2025 09:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNGNS0Pe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHa0mXnd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6BF23E355;
-	Wed,  2 Jul 2025 09:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C20B24113C;
+	Wed,  2 Jul 2025 09:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751447830; cv=none; b=liD3jzn7072VbEylfvbBZfmTd2WM86OVCT0qWXz4bGzvaOhHfx0VefKr1TekqyojaI9nHcxKeiQOoO1JoZNt9lVCJX4HoMX5K58Wa8MSWhQKPq66PHR8LEC5VLZUH/PL2gEy8ZIBUPgT5gmHhPZgNJmFZvaWDfDhi/TMJFmd4Do=
+	t=1751447922; cv=none; b=B8pSo/o0pqRiuklC75K+w+dfOn+kv74LASrnuv0WpbWPFEaVycicMWfbilR09S44IaD/PjEqG74bV62ke2WDVWVxSbHesvy57iJ5Tedmj0/P8nDjtqZ3obTeesywySd96t/WTM1uhT+ws56HYlShF80t9Kut9IQAMcG5f63TIck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751447830; c=relaxed/simple;
-	bh=5trX2/qBt370oQM+eQOmc4ScCf1+K3pdG9doe5YgmgY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GucmG4xTLi3SF7+0WAIL1gn5wx9a5IhgZg0RIs169V+oIozjrHIBECnxKEkf76AdQYrKEk5Erwr2QmB1avpoT7luLJLIJvyLdMz8ouHJpcFW3CC/cIdpUydJ1BgzltBZbYD+pNJ+kv/xw4TAQDw0ajCFrFF0neOXsEJByCSioak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNGNS0Pe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E7FC4CEED;
-	Wed,  2 Jul 2025 09:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751447829;
-	bh=5trX2/qBt370oQM+eQOmc4ScCf1+K3pdG9doe5YgmgY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iNGNS0Pe9MXE3erkwPxh1ibwgsZgQq8saMTuE4GuBkKVVeCwm7hMNMnYHWtJQ6uK9
-	 K6Y31MMrKM6JfyfGEc6jvIjZ1nlWv8xu6MLy4v2/iyq8VlLDfYqoiU4+vk+9NPNykZ
-	 wG4w6FEODOwRx8Dgm2o3e6X+elTmiaDHkCQr2RBQubnsfud0tamfZ9IIrjs2tyY6mj
-	 S3zVxy+aSy17ee55oh+A5T2gbDyhcSEDcvS2TwP8kuTz3greGCUfGCddFaidZm+F65
-	 UnGO3NwcE2te7XXjsNpVwAB4G7hnQZSxCQESU6DZZpShg7/R/cHDQ5uxWX7yYaUjX5
-	 ScT69UdBZhtQg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-Cc: <aliceryhl@google.com>,  <alex.gaynor@gmail.com>,  <ojeda@kernel.org>,
-  <boqun.feng@gmail.com>,  <anna-maria@linutronix.de>,
-  <bjorn3_gh@protonmail.com>,  <dakr@kernel.org>,  <frederic@kernel.org>,
-  <gary@garyguo.net>,  <jstultz@google.com>,
-  <linux-kernel@vger.kernel.org>,  <lossin@kernel.org>,
-  <lyude@redhat.com>,  <rust-for-linux@vger.kernel.org>,
-  <sboyd@kernel.org>,  <tglx@linutronix.de>,  <tmgross@umich.edu>
-Subject: Re: [PATCH v1] rust: time: make ClockSource unsafe trait
-In-Reply-To: <20250701.083940.2222161064880631447.fujita.tomonori@gmail.com>
-	(FUJITA Tomonori's message of "Tue, 01 Jul 2025 08:39:40 +0900")
-References: <20250630131011.405219-1-fujita.tomonori@gmail.com>
-	<CAH5fLgirsNn9WwEUgFaY2z9+9gG3SWssCoNSzpE56F=sS02kEw@mail.gmail.com>
-	<WFqBzZDwsggoxcPQzynlG5_2FqsVdmQlUKufvcDECQUsXJOPHCA4dzoAByNPpuPrAcBoeKoDSR9v3OkJxsYxNg==@protonmail.internalid>
-	<20250701.083940.2222161064880631447.fujita.tomonori@gmail.com>
-User-Agent: mu4e 1.12.9; emacs 30.1
-Date: Wed, 02 Jul 2025 11:17:00 +0200
-Message-ID: <87sejfuf3n.fsf@kernel.org>
+	s=arc-20240116; t=1751447922; c=relaxed/simple;
+	bh=YgIsYbsQFBijlbHTYsgXc9tCHNmRLzh8Vr+Nl8ZnQ3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxJ478Vskn/ZuAM/zgH0PYkg4VXZkJUkHRMy5GKmCvmBsDmfs1eXxPCkoTpun93e37P7mnUmo9KmJmaVSylsGkPw2OLdEMWiYekjTUOihxDT3uA4/TUXYhu/bjmM5fy5971B7I0ciTKdRqun4t2Y4CLuHHMY1JvsIasrYPHq+QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHa0mXnd; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751447921; x=1782983921;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YgIsYbsQFBijlbHTYsgXc9tCHNmRLzh8Vr+Nl8ZnQ3Y=;
+  b=NHa0mXndNPsqjlQrfnWjAXFl0IMSNhz84cndMG2tSKjw+euM/Oyp9vFa
+   ixo1LLXfEIm9HtzAE1ubpLWvHg4bv8TUeMSD2U/GUWQ/hk7P85yndqVcX
+   wfl/BQmx2E2ZfEEb+QW9hChTSpulkYFuC6bbRN4nqmR37f/MkJIe3m/Ue
+   PXccaMN8oeLtYrXgITAR3jwszyIoaJ2jvPktZqBfosvEPTHXlbS3cKATq
+   dxtPq+yy2idujdWfTJFXnHEYP4bD5xDHIvYj2QfdUFVWtw89we8XjVo+I
+   XMbazlG4XKfyLikroo4TRYHVUzQ1PDXCYtNISQus8pwnJcp6gGosfUCtu
+   Q==;
+X-CSE-ConnectionGUID: +itLhkHVSiqOACp35zLYFQ==
+X-CSE-MsgGUID: SEjAjsBxRdWyilKroVWb2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="64427969"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="64427969"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 02:18:39 -0700
+X-CSE-ConnectionGUID: vxd1XndcT3OoMKfVHJDRig==
+X-CSE-MsgGUID: gpP80ZaVRkCf3Rmd/W+dKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="159538616"
+Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 02 Jul 2025 02:18:36 -0700
+Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uWtbu-0000RX-0P;
+	Wed, 02 Jul 2025 09:18:34 +0000
+Date: Wed, 2 Jul 2025 17:17:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: gpio: Create a trivial GPIO schema
+Message-ID: <202507021740.qURVV9D8-lkp@intel.com>
+References: <20250701225355.2977294-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701225355.2977294-1-robh@kernel.org>
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+Hi Rob,
 
-> On Mon, 30 Jun 2025 15:33:31 +0200
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
->> On Mon, Jun 30, 2025 at 3:10=E2=80=AFPM FUJITA Tomonori
->> <fujita.tomonori@gmail.com> wrote:
->>>
->>> Mark the ClockSource trait as unsafe and document its safety
->>> requirements. Specifically, implementers must guarantee that their
->>> `ktime_get()` implementation returns a value in the inclusive range
->>> [0, KTIME_MAX].
->>>
->>> Update all existing implementations to use `unsafe impl` with
->>> corresponding safety comments.
->>>
->>> Note that there could be potential users of a customized clock source [=
-1]
->>> so we don't seal the trait.
->>>
->>> Link: https://lore.kernel.org/rust-for-linux/Z9xb1r1x5tOzAIZT@boqun-arc=
-hlinux/ [1]
->>> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
->>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
->>
->> LGTM:
->> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->
-> Thanks!
->
->> Though you're missing `` around [0; KTIME_MAX] in some places, which
->> may be worth adding.
->
-> Andreas, would you like me to send v2 with the above changes?
+kernel test robot noticed the following build warnings:
 
-Perhaps we should use rust ranges instead [1]? Like this, no brackets: `0..=
-=3DKTIME_MAX`.
+[auto build test WARNING on brgl/gpio/for-next]
+[also build test WARNING on linus/master v6.16-rc4 next-20250701]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Rob-Herring-Arm/dt-bindings-gpio-Create-a-trivial-GPIO-schema/20250702-065536
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20250701225355.2977294-1-robh%40kernel.org
+patch subject: [PATCH] dt-bindings: gpio: Create a trivial GPIO schema
+reproduce: (https://download.01.org/0day-ci/archive/20250702/202507021740.qURVV9D8-lkp@intel.com/reproduce)
 
-Best regards,
-Andreas Hindborg
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507021740.qURVV9D8-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
 
-[1] https://doc.rust-lang.org/reference/expressions/range-expr.html
+>> Warning: Documentation/devicetree/bindings/mfd/lp3943.txt references a file that doesn't exist: Documentation/devicetree/bindings/gpio/gpio-lp3943.txt
+>> Warning: Documentation/devicetree/bindings/powerpc/nintendo/wii.txt references a file that doesn't exist: Documentation/devicetree/bindings/gpio/nintendo,hollywood-gpio.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
+   Warning: Documentation/translations/ja_JP/process/submit-checklist.rst references a file that doesn't exist: Documentation/translations/ja_JP/SubmitChecklist
+   Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+   Warning: Documentation/translations/zh_CN/how-to.rst references a file that doesn't exist: Documentation/xxx/xxx.rst
+   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
+   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/gpio/gpio-moxtet.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
+   Warning: arch/riscv/kernel/kexec_image.c references a file that doesn't exist: Documentation/riscv/boot-image-header.rst
+   Warning: drivers/clocksource/timer-armada-370-xp.c references a file that doesn't exist: Documentation/devicetree/bindings/timer/marvell,armada-370-xp-timer.txt
+   Using alabaster theme
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
