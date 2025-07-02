@@ -1,142 +1,167 @@
-Return-Path: <linux-kernel+bounces-713254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E034AF1577
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87BAAF157B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836184A71B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21CA91891C9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61BB23C8C5;
-	Wed,  2 Jul 2025 12:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A0426E6EA;
+	Wed,  2 Jul 2025 12:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aEz897f1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnLIXY18"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA00D253350;
-	Wed,  2 Jul 2025 12:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1351C244663;
+	Wed,  2 Jul 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751458843; cv=none; b=H3POKgOkRiLAzIeORIcnUk8lsn9Fql5V/CDLFEInrCkuEFg+LsyZ0XA+Fy3W6VaOztBxRD7paEA/pvJ/fVobX8ZJWFTB+mLsveur9o41fupIPoeoQxHrqQpUt/azNjKcAoXtRu6IRefG8UbMYB9Y5T0UvNwmAsUeNuXk74ciqKI=
+	t=1751458902; cv=none; b=DGW8NcPcdzbtlIuTaWGmgJ7cSIjyY43Owa7xHlZyZ8NavqsQ4/JEjuFUdfqGJQtXMM4JvO8F3A9rfuaCUqtHRs0ku0aAs+pBOUbDmUg8jNwbyhQf40siXvc0ZGCBQJs7xXiWB2HIMzFM9EE9PHXJMwCw2p9hQQLCwSwMLQ+3gLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751458843; c=relaxed/simple;
-	bh=64aTKjc/IcbpGG9gKWt+2nVue/MdoRiwlfPf0ILjKpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMjCVdjsGVRQf5Fwuy8Uz6NcHgJ7dosTiVUOoKjWcFuBEviWECpZJkgjRSdXlS+DwlBwYTUFklx/PW9Ldnn70T09Fm1ce0NMMYDD1sFs3KqnUgmBrshdiqYKUg/P+S/6c8ifrwzJKtfvLPMtk0l/MAJ1XRAunZO2HIiEUh9jHJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aEz897f1; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751458842; x=1782994842;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=64aTKjc/IcbpGG9gKWt+2nVue/MdoRiwlfPf0ILjKpo=;
-  b=aEz897f1q7bf7XAR9LSt27bLtTKuL51R7K+tQRCij+p0CyJoei91o6Mr
-   2tiORroOnfTJGswRavIVIEPomDZyLT5FB6p2Ief2e7qqvwSH2qCRUkLkA
-   12Qg/P6zkQbXKz90b5j2g8m3vBq6dorFF1vsDsDo5gnn8xHFlJF2j8ztY
-   H1w1dhggL1fbFb33j/sBLgvR+dj1lrSqmSQXWL1cmWB04v4oVOOqAsboB
-   nrscgTxq4dCnsN9nFWnxB90oT/k3YkVSS2qvrRSzCieYjrkLVZVWE4FIo
-   Taz2irBVTvjlo1gM6f5EesUZGH6Kk3gysCdnohh8MHck+bsjGO1CB880a
-   Q==;
-X-CSE-ConnectionGUID: 665iHEqlQ2Wx9e6RID6Row==
-X-CSE-MsgGUID: pso3+bjzTdmhyRzmLgjRiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53616732"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="53616732"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:20:41 -0700
-X-CSE-ConnectionGUID: 1aETWCKNQ1umOKFoIsAm7Q==
-X-CSE-MsgGUID: ppFS1wN+T+ik1840nkTGjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="158104826"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:20:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uWwS1-0000000Bun0-43Su;
-	Wed, 02 Jul 2025 15:20:33 +0300
-Date: Wed, 2 Jul 2025 15:20:33 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: ezequiel@vanguardiasur.com.ar, mchehab@kernel.org,
-	laurent.pinchart@ideasonboard.com, hdegoede@redhat.com,
-	gregkh@linuxfoundation.org, mingo@kernel.org, tglx@linutronix.de,
-	viro@zeniv.linux.org.uk, thomas.weissschuh@linutronix.de,
-	dafna.hirschfeld@collabora.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH v3 1/3] usb: core: add dma-noncoherent buffer alloc and
- free API
-Message-ID: <aGUkEbaSOzrtILkZ@smile.fi.intel.com>
-References: <20250702110222.3926355-1-xu.yang_2@nxp.com>
- <20250702110222.3926355-2-xu.yang_2@nxp.com>
+	s=arc-20240116; t=1751458902; c=relaxed/simple;
+	bh=0JyVKoG6XZX61RLsTv4oIIad+TKMElb4fpWrf0SFNWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M/w7Zgt1qa3vdvLGEmVUBcg7LLo5disvXVYK9BB114T9ADpNpjrOl8pyJ1A7LLCnyh+5ESJMIEvwNbsqs3y/J5j33QDEPUAeizLuBQ7ghK6QcJXraFtKx2iR7FU1EMyHxOQV2XR0kZzWPENIFE3lB3hywsAZcwiySQwzWbbBA0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnLIXY18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08379C4CEED;
+	Wed,  2 Jul 2025 12:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751458901;
+	bh=0JyVKoG6XZX61RLsTv4oIIad+TKMElb4fpWrf0SFNWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MnLIXY18SisYTg+ljLXqJdN6osP5LoKjTbbupBy6liMrfWAkwWBK+hsdkCGFruCSa
+	 y6oA2qCCP0pPrXMZm8E6irxTKKRTfw7BmWMB6uKDAaE4ScZH9LRPzmYQJcIFBRVU4R
+	 Qa2TaQ+fOx8hNFCQess0xbV/G2qQdkToc/pA/Ny/MqUDKaBAgT77AqK+aFX78oHraU
+	 lFAvfM8gZbc1qd0DKrTDyp6ZprvW9FbwfjUDEWeh+twGRiD5bZFmwidfeOv34fgWL6
+	 2Kpv33zyLJioZ808tk0716PNbg61LbeHu6uXodZN3Ggq+HAssyRBRCUQ3QP0TcfqM8
+	 Cm5N1xEJ4OVRQ==
+Message-ID: <d676ddc8-0e4a-456a-8aa2-15ba898c44de@kernel.org>
+Date: Wed, 2 Jul 2025 14:21:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702110222.3926355-2-xu.yang_2@nxp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] arm64: Kconfig: add ARCH_BST for bst silicons
+To: Albert Yang <yangzh0906@thundersoft.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, gordon.ge@bst.ai,
+ catalin.marinas@arm.com, geert.uytterhoeven@gmail.com, will@kernel.org,
+ ulf.hansson@linaro.org, adrian.hunter@intel.com, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, soc@lists.linux.dev,
+ bst-upstream@bstai.top, neil.armstrong@linaro.org,
+ jonathan.cameron@huawei.com, bigfoot@classfun.cn, kever.yang@rock-chips.com,
+ mani@kernel.org, geert+renesas@glider.be, andersson@kernel.org, nm@ti.com,
+ nfraprado@collabora.com, quic_tdas@quicinc.com, ebiggers@google.com,
+ victor.shih@genesyslogic.com.tw, shanchun1218@gmail.com,
+ ben.chuang@genesyslogic.com.tw
+References: <20250528085403.481055-1-yangzh0906@thundersoft.com>
+ <20250702094444.3523973-1-yangzh0906@thundersoft.com>
+ <20250702094444.3523973-4-yangzh0906@thundersoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250702094444.3523973-4-yangzh0906@thundersoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 02, 2025 at 07:02:20PM +0800, Xu Yang wrote:
-> This will add usb_alloc_noncoherent() and usb_free_noncoherent()
-> functions to support alloc and free buffer in a dma-noncoherent way.
+On 02/07/2025 11:44, Albert Yang wrote:
+> Add ARCH_BST for bst SoC series support.
 > 
-> To explicit manage the memory ownership for the kernel and device,
-> this will also add usb_dma_noncoherent_sync_for_cpu/device() functions
-> and call it at proper time.  The management requires the user save
-> sg_table returned by usb_alloc_noncoherent() to urb->sgt.
+> Signed-off-by: Ge Gordon <gordon.ge@bst.ai>
+> Signed-off-by: Albert Yang <yangzh0906@thundersoft.com>
 
-...
 
-> +	if ((urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP) &&
-> +	    urb->sgt) {
+All your patches come in some big delays (this one came 2.5h later).
+Maybe there is something with mail server on your side?
 
-Something weird with the indentation. Here you wrapped, but the very next line
-is not, and they both satisfy 80 limit (even though we have it relaxed now).
 
-> +		dma_sync_sgtable_for_cpu(hcd->self.sysdev, urb->sgt, dir);
-> +		if (dir == DMA_FROM_DEVICE)
-> +			invalidate_kernel_vmap_range(urb->transfer_buffer,
-> +						     urb->transfer_buffer_length);
-> +	}
-
-...
-
+> ---
+> Changes for v2:
+> - Placed the configuration entry in correct alphabetical order
+> - Used generic family name (ARCH_BST) instead of SoC-specific naming
+> - Followed upstream kernel naming and description conventions
+> ---
+>  arch/arm64/Kconfig.platforms | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index a541bb029aa4..4412d54b224d 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -106,6 +106,14 @@ config ARCH_BLAIZE
+>  	help
+>  	  This enables support for the Blaize SoC family
+>  
+> +config ARCH_BST
+> +	bool "Black Sesame Technologies SoC Family"
+> +	help
+> +	  This enables support for Black Sesame Technologies (BST) SoC family.
+> +	  BST produces automotive-grade system-on-chips for intelligent driving,
+> +	  focusing on computer vision and AI capabilities. The BST C1200 family
+> +	  includes SoCs for ADAS and autonomous driving applications.
 > +
-> +		return ret;
->  	}
+>  config ARCH_EXYNOS
+>  	bool "Samsung Exynos SoC family"
+>  	select COMMON_CLK_SAMSUNG
+> @@ -402,4 +410,6 @@ config ARCH_ZYNQMP
+>  	help
+>  	  This enables support for Xilinx ZynqMP Family
+>  
 > +
-> +	if ((urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP) &&
-> +	    urb->sgt) {
-
-Why not
-
-	} else if {
-
-and drop the above return ret; ?
-
-> +		if (dir == DMA_TO_DEVICE)
-> +			flush_kernel_vmap_range(urb->transfer_buffer,
-> +						urb->transfer_buffer_length);
-> +		dma_sync_sgtable_for_device(hcd->self.sysdev, urb->sgt, dir);
-> +	}
 > +
->  	return ret;
 
--- 
-With Best Regards,
-Andy Shevchenko
+Why this change?
 
-
+Best regards,
+Krzysztof
 
