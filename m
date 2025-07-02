@@ -1,186 +1,147 @@
-Return-Path: <linux-kernel+bounces-713067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41FDAF12DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B95AF1305
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7CEE4A4144
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5104E3CE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA5D2609C4;
-	Wed,  2 Jul 2025 10:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5518E182D0;
+	Wed,  2 Jul 2025 11:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjRiaMwy"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="a5F3CSt7"
+Received: from outbound.pv.icloud.com (p-west1-cluster3-host2-snip4-3.eps.apple.com [57.103.66.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CE725F79A;
-	Wed,  2 Jul 2025 10:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD9019995E
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 11:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751453887; cv=none; b=Ub1Cxl8IRWThTMAlB/UfrUjHVd1h4Qbrob5M86OyFUg8B79ovhb5eo+VLCkkv8oxaBY3RNRj9wRkfI6BzkJtP+zhHog2qON0F5d9q6m4lR0Zy3J4zV4NBtX4qh2Zaw1V+4NZRAfcBTnMEUxf7cy7CVm6/v3jgnhEHserCaN0uvs=
+	t=1751454049; cv=none; b=iJL54UsBrO4jIL6UukFNEsozH6qPWXMlhiB7rcMSXbD/D/UKPc1iPW0VdGST9pqhKyea58K0Ooc9RYGgMAtk5Dl1nsY4Gja5cinnSvcjWElkKVCyt2kt/4q9GSybur5iBuC/jK6SgU50Hadus6o2s96sTPzc/QFf3A1B2yc+5HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751453887; c=relaxed/simple;
-	bh=ww9qVi9kS/GRl/dQgoVS7ktOBVeLoeyQcow80qPNWP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRwcsPKJhG/7CIRZEFOBoO5k8UufIRWQfKszaYyKtWfJ/HsUM4+8YBd/+/YAGKPeFxU+tHt9YXcAxxfo/QD/e1on9aHlzq1QtoPSnCZMDiGZCbuw/VY9Ffito3p2rff3MtgmmkOTeDA3EA36DWkLpZWECa68PAR7vBbPG9yKvg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjRiaMwy; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae36e88a5daso850338666b.1;
-        Wed, 02 Jul 2025 03:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751453884; x=1752058684; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4UQDvStLCCqdjbM2QKt6gHnnOIKDEa8/C2rjjg0SswI=;
-        b=PjRiaMwyYaG/UPgImqoFqHGZIyDPT22KEYAMGPEISUTuZiZfqnzZLfWI/2dHQf1XN/
-         00106gMqcwu6K1lcj+AgkPKw/bJawebg4yybpXwtuW8QabmgXAzLo5WTDXcrKjB32Sic
-         GGmm5T58P65Iko2OLLEy5WHQlYCLFjx7y4qMOltBbh4EsLwQh3mufH67RRDZ5Y/6oazo
-         0yIElvyR+MasZWI7JmuCH7594KPCuLm8t+uYCvERGDCZlGRD3g/Sz4QYq1Zy2uzwY2Ox
-         KZrWT8ClApsFg+R/izFd+rEN2hYW33QW3vQoELDlkQE2cg85+sTqQYiI6vUd79kVmF0h
-         Rywg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751453884; x=1752058684;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4UQDvStLCCqdjbM2QKt6gHnnOIKDEa8/C2rjjg0SswI=;
-        b=M8Ryv1jWl4QwldGDUiwmEdOVwblJlcxiHzdxRZSeqdz7H3qvElcljdj78ruNhKxyXG
-         Auik6lRXQgO4AsGTo2Wr66kCpl6A6vlLKpFdPu1nljiJCogknLPEgAXWOFV1n9QcuuX7
-         pgVVUQSjtAV+qVZU3OM5F44EqftK23gBh481IWYpngPfcAeOM+bF8grESfR9AtCm+g0e
-         V31uMbbYo0dPsOuCJa8InZkvkG0ZfXpFW729KfnYEwf/xYLp/G0rw9sLUVqq5+LDKzON
-         VjqYmse8n9799OGAvmm4Y8za/LqhuUQsXoZLTE/wP/Ii/vx7HF7+TJt6KvN7fRYx4Ym6
-         PcNA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7KXOG/+oFCxzv5IUnZfiGkx+toXiPO+Y2zjf0OMFx5wA7jBAgx3eggb0knOtCBEErBTEUaXGfWrgmDlT3@vger.kernel.org, AJvYcCW/2F8N86hP5ez5ONL6iRclz4uah+oUvMnHrfihk7bdsP9F32qeo5HkLF6GLtr3+NQKwNSnXfZozK8i@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ4QSdfq7lP24e0wMNUvwaTjb6PxfxpHuZcq3tkQQZyVFNQqnD
-	k18r8A60pJkiGwbGfQALAZeDikDNq9afRJOArKXtwj1O9WpTEnLzrXFr
-X-Gm-Gg: ASbGncs0uG0WVzBqwAazH8b8XWVn9odpeQR1dVDZg21A8m3qPmSflqIhEgjB3ncCBnI
-	bsbGMILwDFp0LyfE5duRR07yQqRviN93FhCGERqNhfGe6yxh8NWaJMbg50DJX+UkoL88TSlq731
-	qUzHwDUYBgiDwYiwEgPD5MC6Qr5uXeQD66fTyCENgjMymHynN1xl71e/fcAwRKoFeT72fkTWJCR
-	y7zSx5duFxd5vL9cAagaEZpP8nYu6+XS8duWSg7YaJwa1R+2TRqVKyPTWYxMEfSDYKqoH/OMLO7
-	cGPG7uSAFFTxUuLrbY7Ae4frAYn6xD6FQcmvZYEMOvdumFm4KZYe2kAxJuIXPAfIm9ney7vD2cx
-	yQr0N2+c=
-X-Google-Smtp-Source: AGHT+IEsoB7YBUau4TzIFD9Pd++QxJk8jVRKzBz/JBIA6OBn/guMweMpUf9qL70n0g01Wfz1g1iRgA==
-X-Received: by 2002:a17:907:6095:b0:ae0:a0d0:eca0 with SMTP id a640c23a62f3a-ae3c2c4bf31mr216834366b.14.1751453883569;
-        Wed, 02 Jul 2025 03:58:03 -0700 (PDT)
-Received: from HYB-DlYm71t3hSl.ad.analog.com ([137.71.226.91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3c7606786sm79736466b.60.2025.07.02.03.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 03:58:03 -0700 (PDT)
-Date: Wed, 2 Jul 2025 12:58:00 +0200
-From: Jorge Marques <gastmaier@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jorge Marques <jorge.marques@analog.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <v2ybju75bpjdqxfkell47nlkeyal36ylmnqt2yvpncxnmp2irb@pygx56jsyxkr>
-References: <20250626-adi-i3c-master-v4-0-3846a1f66d5e@analog.com>
- <20250626-adi-i3c-master-v4-1-3846a1f66d5e@analog.com>
- <20250627-steadfast-ferret-of-expertise-5c8ff2@krzk-bin>
- <tl5fckhrivaqfyzwyb2o2a7gykpigwend7z2nduqgbbej3hqbs@vxxtsadhtdmt>
- <41782ded-908b-46ef-8f75-4d2565476b7c@kernel.org>
- <cfi6rzhco2ba6pcbk57l7tblimuks5jnpgaly7nbedbrpyhtma@u46if22kurwk>
+	s=arc-20240116; t=1751454049; c=relaxed/simple;
+	bh=EDpCE0FsRsP957sJiS4v86/d+16D13uGqgBiODpWyzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qa3kpbRGDxlIZHeHelwCBRkk22qKR+U8/v+vaw/WrONnOSn/B416ssHXPF4pktSwmjIbNgvI8giM7/3tw7qcvyVw9vHpZVmARAPB8gt781q/RxQnFTWyHA4dIIbM8sX+J04zUf4SM2wmrXoFAyNJIRIbPf9yiQ1qEQ0EEb/fO5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=a5F3CSt7; arc=none smtp.client-ip=57.103.66.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=l0grrrQpY81N/VQL7J2F9njJr7ho5zRKX+wKppU/wMo=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:x-icloud-hme;
+	b=a5F3CSt7ew6T8OhTqenJH92raFtftvMdFQmN3s2DgK2Qx13hcJ7mAGdSQBiTDSSmm
+	 tpoXs96I0wSTtSHxTkLtwBBVmKIPFkwWTx1ra9A+FOPrUSi/voo7hoboeJcVEiUC+a
+	 Qwg7IJDWEJ93V0394ZH5FYyIOeQevrc0E4bYQOSaxpGLvUJBfHjsLbACBzFFCKxFSe
+	 O5Fs8RR8WhBPW4eVo/C4z800MOOYbrAiz0Av5/Je1UVawI0K2CYsmv4BQvNml93MrP
+	 amcQGuXsavcp/sewtrfbIZmdrAYN+3ysA12uzjuGMlClCJYJCnt7BnKIbqIN6hGq1k
+	 zIiP3td/GciiQ==
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 628A818000AF;
+	Wed,  2 Jul 2025 11:00:45 +0000 (UTC)
+Received: from dedsec-amd0.tail874668.ts.net (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 4AA1D18006F0;
+	Wed,  2 Jul 2025 11:00:39 +0000 (UTC)
+From: Yulong Han <wheatfox17@icloud.com>
+To: chenhuacai@kernel.org
+Cc: kernel@xen0n.name,
+	zhaotianrui@loongson.cn,
+	maobibo@loongson.cn,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Yulong Han <wheatfox17@icloud.com>
+Subject: [PATCH] LoongArch: KVM: Add tracepoints for CPUCFG and CSR emulation exits
+Date: Wed,  2 Jul 2025 18:59:22 +0800
+Message-Id: <20250702105922.1035771-1-wheatfox17@icloud.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfi6rzhco2ba6pcbk57l7tblimuks5jnpgaly7nbedbrpyhtma@u46if22kurwk>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: SKFNO0ti4yqAUpAxixOhYuM9w5Zvmb_K
+X-Proofpoint-GUID: SKFNO0ti4yqAUpAxixOhYuM9w5Zvmb_K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA4OSBTYWx0ZWRfXzm30iI/d+ldT
+ kUpGlbB7KyFewJao7eMN0ZtECEyHIbwIsJGXAL+ZT2Tkeb5YtirFgi8e9XxnbRsc8P3QUlaJn2j
+ bfBs3AdNw1sDpqo99bscHDnIDTsawymTopXW40QvoZ2aKWjpDpZOm9+fGzX+/6pyQ10TTI4G7zF
+ oRkSlfy5neL8arokSxlGcXSN8ZmGMy5OBZ9iXqPpSphXIdhUIlR5k8upyQh7CyVKy0ZIYTSSiW0
+ 9efDoPMpN87n9PY3Wh4S7p6INlNwtwcDiuCFNZShGJlfcaCnGKzzwKDqGDqFgSr02hxdtyEX8=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-02_01,2025-06-27_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0
+ malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1011 spamscore=0
+ mlxlogscore=742 suspectscore=0 adultscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2506060001 definitions=main-2507020089
 
-On Fri, Jun 27, 2025 at 06:02:26PM +0200, Jorge Marques wrote:
-> On Fri, Jun 27, 2025 at 04:49:19PM +0200, Krzysztof Kozlowski wrote:
-> > On 27/06/2025 16:38, Jorge Marques wrote:
-> > > On Fri, Jun 27, 2025 at 08:56:55AM +0200, Krzysztof Kozlowski wrote:
-> > >> On Thu, Jun 26, 2025 at 12:07:36PM +0200, Jorge Marques wrote:
-> > >>> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
-> > >>> core that implements the MIPI I3C Basic controller specification.
-> > >>
-> > >> How did you resolve my last comment? I don't see any explanation -
-> > >> neither here nor in the binding description. Binding description is
-> > >> actually better place, I think now.
-> > >>
-> > >> Best regards,
-> > >> Krzysztof
-> > >>
-> > > 
-> > > Hi Krzysztof,
-> > > 
-> > > I forgot to condense out discussion on v4.
-> > > What about this binding description:
-> > > 
-> > >   description: |
-> > >     FPGA-based I3C controller designed to interface with I3C and I2C
-> > >     peripherals, implementing a subset of the I3C-basic specification.
-> > >     The IP core is tested on arm, microblaze, and arm64 architectures.
-> > >     It takes one or two clocks, axi and i3c. If only axi is provided,
-> > >     then there is no clock signal to the i3c input clock pin and axi
-> > 
-> > This is obvious from the schema, drop.
-> Ack.
-> 
-> > 
-> > >     clock drives the whole IP. The compatible is suffixed by 1.00.a
-> > >     foreseeing future controllers by Analog Devices Inc. and breaking
-> > >     changes.
-> > 
-> > I don't understand that. How are you breaking any changes? And how
-> > 1.00.a predicts future? I don't think this reflects previous discussion.
-> > Why you were asked to go with v1.00.a?
-> The -1.00.a suffix came from this discussion:
->   
->   https://lore.kernel.org/linux-i3c/ildi2pup2zkyv4stuknkrjysex3yzsbrrsrwbgcc4xgvdhwrdd@7qh4y6mutgy2/
-> 
-> Other adi bindings use this suffix. I personally wouldn't add any suffix
-> unless told otherwise, as I expressed on the thread. Should I drop it?
-> or suffix it with something else?
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> Best regards,
-> Jorge
+This patch adds tracepoints to track KVM exits caused by CPUCFG 
+and CSR emulation. Note that IOCSR emulation tracing is already
+covered by the generic trace_kvm_iocsr().
 
-Hi Krzysztof and Conor,
+Signed-off-by: Yulong Han <wheatfox17@icloud.com>
+---
+ arch/loongarch/kvm/exit.c  |  2 ++
+ arch/loongarch/kvm/trace.h | 14 +++++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-I went after the reason of the historically -1.00.a suffix and
-discovered that they came into existence due to AMD Xilinx auto
-generation devicetree tool SDTGen
-https://github.com/Xilinx/system-device-tree-xlnx
-that would automatically suffix with the IP version, defaulting to 1.00.a,
-and for a seamless experience, the were copied over to the dt-bindings.
+diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+index fa52251b3bf1c..6a47a23ae9cd6 100644
+--- a/arch/loongarch/kvm/exit.c
++++ b/arch/loongarch/kvm/exit.c
+@@ -289,9 +289,11 @@ static int kvm_trap_handle_gspr(struct kvm_vcpu *vcpu)
+ 	er = EMULATE_FAIL;
+ 	switch (((inst.word >> 24) & 0xff)) {
+ 	case 0x0: /* CPUCFG GSPR */
++		trace_kvm_exit_cpucfg(vcpu, KVM_TRACE_EXIT_CPUCFG);
+ 		er = kvm_emu_cpucfg(vcpu, inst);
+ 		break;
+ 	case 0x4: /* CSR{RD,WR,XCHG} GSPR */
++		trace_kvm_exit_csr(vcpu, KVM_TRACE_EXIT_CSR);
+ 		er = kvm_handle_csr(vcpu, inst);
+ 		break;
+ 	case 0x6: /* Cache, Idle and IOCSR GSPR */
+diff --git a/arch/loongarch/kvm/trace.h b/arch/loongarch/kvm/trace.h
+index 1783397b1bc88..145514dab6d5b 100644
+--- a/arch/loongarch/kvm/trace.h
++++ b/arch/loongarch/kvm/trace.h
+@@ -46,11 +46,15 @@ DEFINE_EVENT(kvm_transition, kvm_out,
+ /* Further exit reasons */
+ #define KVM_TRACE_EXIT_IDLE		64
+ #define KVM_TRACE_EXIT_CACHE		65
++#define KVM_TRACE_EXIT_CPUCFG		66
++#define KVM_TRACE_EXIT_CSR		67
+ 
+ /* Tracepoints for VM exits */
+ #define kvm_trace_symbol_exit_types			\
+ 	{ KVM_TRACE_EXIT_IDLE,		"IDLE" },	\
+-	{ KVM_TRACE_EXIT_CACHE,		"CACHE" }
++	{ KVM_TRACE_EXIT_CACHE,		"CACHE" },	\
++	{ KVM_TRACE_EXIT_CPUCFG,	"CPUCFG" },	\
++	{ KVM_TRACE_EXIT_CSR,		"CSR" }
+ 
+ DECLARE_EVENT_CLASS(kvm_exit,
+ 	    TP_PROTO(struct kvm_vcpu *vcpu, unsigned int reason),
+@@ -82,6 +86,14 @@ DEFINE_EVENT(kvm_exit, kvm_exit_cache,
+ 	     TP_PROTO(struct kvm_vcpu *vcpu, unsigned int reason),
+ 	     TP_ARGS(vcpu, reason));
+ 
++DEFINE_EVENT(kvm_exit, kvm_exit_cpucfg,
++	     TP_PROTO(struct kvm_vcpu *vcpu, unsigned int reason),
++	     TP_ARGS(vcpu, reason));
++
++DEFINE_EVENT(kvm_exit, kvm_exit_csr,
++	     TP_PROTO(struct kvm_vcpu *vcpu, unsigned int reason),
++	     TP_ARGS(vcpu, reason));
++
+ DEFINE_EVENT(kvm_exit, kvm_exit,
+ 	     TP_PROTO(struct kvm_vcpu *vcpu, unsigned int reason),
+ 	     TP_ARGS(vcpu, reason));
+-- 
+2.39.5
 
-The adi,axi-pwmgen dt-binding went more creative and suffixed with
--2.00.a, while never enforcing Vivado to yield the devicetree with such
-value (Major version is asserted in the driver through reg access, the
-current core version is v2.1.1)
-
-Testing on my side (AMD Xilinx Vivado 2024.2), it seems Vivado now
-defaults to 1.0, so the previous bindings from the other IPs are not
-accurate anymore, either, (axi-pwmgen auto gens
-`compatible = "xlnx,axi-pwm-gen-1.0";` (`xlnx` instead of `adi`, also)).
-
-For fun, the current Vivado version thinks the devicetree node for the
-i3c master should be as follows:
-
-  i3c_host_interface: i3c_controller_host_interface@44a00000 {
-          compatible = "xlnx,i3c-controller-host-interface-1.0";
-          reg = <0x44a00000 0x10000>;
-          clocks = <&clkc 15>;
-          clock-names = "s_axi_aclk";
-  };
-
-Let me know if we can drop the suffix, or replace with something else.
-The current register defined core version is v0.1.0.
-
-Best regards,
-Jorge
 
