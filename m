@@ -1,196 +1,154 @@
-Return-Path: <linux-kernel+bounces-712967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3435AF116A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881F9AF116E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8AB94A7FA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C7A521D94
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB57125394C;
-	Wed,  2 Jul 2025 10:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A5324A07A;
+	Wed,  2 Jul 2025 10:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cAJgh0pn"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2065.outbound.protection.outlook.com [40.107.236.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5rZtJFP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766E22CCC9;
-	Wed,  2 Jul 2025 10:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751451301; cv=fail; b=jgEVZfFXR+VL5wZ/wKAXoqQ3Cl5sjI1KTTMh/31o29YhbPWHyWTrsXHMBX2qtc1LAlvUwBCag1qonA0i/hrqoC/VlNGzKrzr83vYzQkP7Yhngj51twHdggKpysHSffmHgbhAhvycElF6n/ykn+v7533JUzNBjhkkg0erBdkq6kk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751451301; c=relaxed/simple;
-	bh=Rsqj0my+vuewFVu0QQPxQvyyjdV18+9AdmfIZNhtUXA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=R8UniwffqdwASUYsTqKebfYFYkMTwAiZe4yfu1XHYTzK1ekbmrsEFvjRXeKFs/1G8cty4lDBhbjSCDLlG/0pkDTbiCGi+HfxuN0wzlXrY4C/CktwSx4we/r6C4PU9z5nRSUmTDdZwmmcQETVkFrvwsvzdPcZrk6lijZGfhpXegg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cAJgh0pn; arc=fail smtp.client-ip=40.107.236.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w+BAkXseIIaA3m23gayV8/bCXADR6i+JNxEKPjMv5JVhm12x98dl+KLCVGyFgXFBdMWVq2E1XY4hUZrpD8WUJKWmBVx0qQvjMMDwnPJk8cBVB17tvm2qfLEl8qKAh1BAa8Rw0neKyPbpPNWcGFwHiju9DwaCi388ieyo5MDj1QmuF9TkloMB/jCY38j6/9V5YOjI2GqlTKpDHX+Qg/z1jgiJfNYja8j+AQHxjgOEIJmgVMbrjzhVztl8H1+IU7aeAuuZ5enI0E7wJnFenSGM2LWr+3EZtr8KOh8QqccnbTvOaVkEcPWrDAYAnLhchIVtMSHuI9fs88WGqym2W6+xkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HwkcPUSKQDPKvWGQWyKE49uZTTdX6EKQfQ84Wd2jURk=;
- b=f7QB4DrgNJ5duIvcSovEMeyaGCDJeXN6NhYi1aZH6FJ0IyJzinzmKAGRd5Hr2eA3iG0naRFBW/oATX7ULZVfHiAjxwQOvLiiDI+1Oz2h2txs08rLbuBtRkHzv0bXxC5e8J99Wm6q148Gd8Iv33IrgXQc+NU4/gsQZ7kXW6TG90ggU4N/RuYi8e/FstntZsZE28d4d9t7bmnbPwZmynbkVCMpIedeMuv4SSjFzvHMd6jx+PhZbik7gH5XUAsdnAFGoIhdM8NmtPgWGmsa2rflLX+H5kStNPigdoXAEbH4oTEDAHijPydPA+CH5TrhGYhwU78aps56TwaKLw7wJFgyhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HwkcPUSKQDPKvWGQWyKE49uZTTdX6EKQfQ84Wd2jURk=;
- b=cAJgh0pntrAKKlWHT7Ql2dMvc/1SvkIjejXseFOa9mG0wQ/41H5XLAdaDC2HlTyuLgqv9x9HbScg8FHe31rzxG/J+zwa+6JaOkPbYtdPFALLkI+EQ/5C2uyzwDdUOMybBAKtbITuATuZ4EC2p/5LYxOifNjq6yzqePvzzbvqqcA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA1PR12MB9001.namprd12.prod.outlook.com (2603:10b6:806:387::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.20; Wed, 2 Jul
- 2025 10:14:55 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8901.018; Wed, 2 Jul 2025
- 10:14:55 +0000
-Message-ID: <21bb2afc-4edb-4e45-91fd-9cfb33cac1c7@amd.com>
-Date: Wed, 2 Jul 2025 12:14:48 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/ttm: remove redundant ternaray operation on ret
-To: "Colin King (gmail)" <colin.i.king@gmail.com>,
- "Robert P. J. Day" <rpjday@crashcourse.ca>
-Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250702092541.968932-1-colin.i.king@gmail.com>
- <e3cfe3dd-5edd-ef67-6651-62ecf31cd4ad@crashcourse.ca>
- <4ae91081-a7fe-4937-b416-6b439a4010bc@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <4ae91081-a7fe-4937-b416-6b439a4010bc@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL1PR13CA0324.namprd13.prod.outlook.com
- (2603:10b6:208:2c1::29) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7551DF27E;
+	Wed,  2 Jul 2025 10:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751451415; cv=none; b=KntrmWVQOO+7wxbfotUdDLML8lUigf4M3J8kn2z7kZA/PQoUJyaP8F2TqPmzeXq5wKJ3B0Q0QV5DTM1G2GPRTmQQjJTqm1Of1DeNpYfMiLkBupklQgetFQav1brQsjBbn6QWUtIPzcvApzOIGeJUQqujeDS30bf28Z9BOG0ByNg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751451415; c=relaxed/simple;
+	bh=nJMHPXeAJaBz7xhsn1CHhGywgMoqmwosoUeaAN0Iqwc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=Z/ED+fm/FlAE7FXgjF8dFTXAnhDL7odCx9a7pheICJWK20DRPr+7Z3CN3jokY9xnH6jnCBj6nuXjOYcC228/4PnlDUrKsoqA5MNylMBypHXR9P0Z6Mvui8HuujRmX7GwEJSM1EA8XYx8LPSBzTLP+RV/tCj+RotQD3Ca6RamJg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5rZtJFP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D1D5C4CEED;
+	Wed,  2 Jul 2025 10:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751451414;
+	bh=nJMHPXeAJaBz7xhsn1CHhGywgMoqmwosoUeaAN0Iqwc=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=Z5rZtJFP5THphnMGrAwNEsylF5NxdVxbBcxvCTPSdp72Z/Sbophtc7TPZs1YatmIt
+	 t/tP8337Skyo6r1GjPXAfNfOVx43T2rT1K19ql0/FaCawx+sXQdGG+pHW0Ws5hyAd/
+	 ahlDuVLQujhoZ9CQPrdj2u657lcnOGFCyNPwUU/tHHYJZSz74rMBwxkvxnh5PEN6XN
+	 vhRjQk01XjKEt5GANo/pkJoXWazhPLJu3cF1ei/ez6ZUM9Lio6DTJbc2mWyGFQdEcI
+	 wcTYT011g2+G4DpvDZGwOOXVIuahSVw4cysXxXGaH3hvA9jxkDSX8rleUMbdbGaC5K
+	 yAmYCsyHJgzmQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB9001:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b20d510-ac88-4600-c789-08ddb9514a6a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TlozUDFNMVBWbHppRjRyb3hPd1FjU1lscVcvS1Jlc3gyanhwMlVwanFTVGJp?=
- =?utf-8?B?eXMvR0RTWmFlRXd2aUh2a29mUHZSZkxWT0NoNWhnSStSWXROdzdLc3ozTFJD?=
- =?utf-8?B?eTdDSE1tRjZGc0lldDgvRHVlL1dyNGxxR1QyK2R1cEl4eHJlU09IWW5XR2FN?=
- =?utf-8?B?ZWtqRGMrbXlxNWp6alo5T3Vsa09WeFhhcGlQQ2pRQ3JUVjY3c3hVU05jNVpM?=
- =?utf-8?B?eFJuVmpobndkT00xWXNXcUhObkhOallid1YySzNBb3oxeWFBMTRVU0JUQjI3?=
- =?utf-8?B?SWRSQm5sdStFQUpRWWhpYnJrYnZic1M4MDIrcWo2L1FjK2lQUktEMEV3T3FM?=
- =?utf-8?B?ZVBvblZkOXFVcW9PRTF3Vks2QndGOENRM0dKMDk0K1NCaVlYUXp5NGpwYzJs?=
- =?utf-8?B?a2Y2cjgybnMrWTBaZmhlY3NJUW1zZFZ3aVZaT1BodEJkOXdzUEhyRllZeTRE?=
- =?utf-8?B?RWFkU045WVh6bXlTT0dUQ0ZPL3BIbmV0TXIzMEU1d1N0bnloR05SbS9lQUNH?=
- =?utf-8?B?TmlMZ2dRV0NvdGlvcEw4MVMxYjFqZWowR0FzbEVuRjBlb0x3L2J2azBzaSs1?=
- =?utf-8?B?UWR2U3dpdkE3NjBqdEljSWJSODQ0c1h4WktVY0dINEhaWmQzeVZPZWxmNERS?=
- =?utf-8?B?dFM5RnNkK1MzNzRTOFlaNzVaTkNzbzNYTlA1Ym8wV1ByVHd0bHpBR3I0L2xi?=
- =?utf-8?B?Wlc3ZHhBYkprdy82Q3p2RW1ha1dlOXJtTnQyU0hwMlZUMEZmWUphMkpmL0k2?=
- =?utf-8?B?d0J6UVIyOTV4MTZiWXFRams5cWRZSlJnWDFlNGRGcC9KNHFUVDBSVHJXRllj?=
- =?utf-8?B?QTA1OE1zdm9BQ2hyd0EvUE1pdVRGSm1jd0ljNVA0TnJicXpHalgwSzNFRENW?=
- =?utf-8?B?aE91eFlTM2w3ck9zVUFKcFV6NXZ6OVh0cXVTdWM2UFNjbXhOUkFMWUk1SUxl?=
- =?utf-8?B?S211dGo4WmxJL2N3c0NvTlgydytsV0hqclRmTTdIVTd2M2hiQWVXR09oMWZM?=
- =?utf-8?B?bVZtaVJkL1I4NUNsTGx3ME9xb0pIV0VxT09FTS9tWmhNK0k1bUcxdHZ3eSs2?=
- =?utf-8?B?SGlkbjhsenpwRGdvS2hJejFLdmZhdHBOU3VCN3kydVQ0RUYraFBLMU11MFlh?=
- =?utf-8?B?cGdMMVRtNldoajBQSVBIMElvaFhqYXd5Y3RUYTRkZWJoLzRUeTI5K0xBVGNx?=
- =?utf-8?B?U0VrYkR2M1NvUnZzS2ZPQUVRaFZZcnFQR3FqZWlpanh2NFZNTnZrY1VDSEpE?=
- =?utf-8?B?c1ErWEJDNTlybHpTcG11d0NYbDlnRmRkUFY1aSt6KzNxRStwSW9FRFNRcWx0?=
- =?utf-8?B?b0ZBM1J4NkNNa1ZrQmxad08vZVNzT3Y1WW40UkpEN1B3SnpDRmtmbTZhVEk0?=
- =?utf-8?B?MzhVMHk2ZmFaVVhGTjdEL2pmVHBKbTAwMmVvTUprVGJOU2MxQjdkZnB4WW1E?=
- =?utf-8?B?Znh6SGRZLzg1elZ5cHBKcVNjUHk3ZzFJckltWEtCUmdtcjl6czk1K1FkbkY2?=
- =?utf-8?B?cWo2cHN5VnpXSmxiaGN1ampxRklNV0pFMFZNU0gwd0NVMVpFc2JLL0I5WEJX?=
- =?utf-8?B?SW9HWE4xNTJoeVVGV0xxSmZUZTB0ckJPOUVUejVtaGYrbXJtcEtQUzJEWFIx?=
- =?utf-8?B?Z2hpYUNRS2p6OW5adTMyVjJhY0NnUUdJRGdlZDZjZFNTb1BCSzhKb3lUUEN0?=
- =?utf-8?B?NXdleGY4L2hjb3NvbWhLUFNTMlhzdGlrMUxDd0MxcTJjN0s0V2thaHo1L3RG?=
- =?utf-8?B?SHB5b3BkNGVRRHR2WTc1T1ZORUFENW8rUWJsQ0Zldis1VUhvclRrZ1Jtcnh0?=
- =?utf-8?B?dlVmNlJreDEvMEhSSlJhNk9acTJhN1AxODZEK3BrYVg1WjlUTzdaVysrUUcy?=
- =?utf-8?B?d0VtQU9lMURGcTh3aHZQcXQ0U1hzc2s0S01xWUZySFkyR2QwVHQzbGhSN1Vx?=
- =?utf-8?Q?P9C5Pw774PY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZGFXNktvVXpMOGEyeXBTZXRaMGRsVm9LRXQ0WHhIbzJzTlJFV3BtUkJDSHJr?=
- =?utf-8?B?TlZVejRNVnBjSmo2enlUdWwwWEsxME9iOXdjR0NZYlB3NFJuTlZzUzB1RlA0?=
- =?utf-8?B?MjRzUWZ0TTJUSnBXaUFvNHRnVExaSFg1dmxtZmZxcGM2aFJ1bFd0bE9laXNQ?=
- =?utf-8?B?MVA0ZnZzL3A3OUVHZWFZczhtTnZaYzVhZDhnTVBmM2FJT1p2bXl5eDBYM1Vj?=
- =?utf-8?B?MEZQVHcxTm0yM2Y5QnBwcHlaTERQRnJJYVZMdjN0NDlzSFBsa3Z1QzVpQXVO?=
- =?utf-8?B?ZFZwbmMxT21Rd0FGMjVHWDZ3Uy82YjZhSHRhVG1xc3BiaTNhU3FJTjBBKys4?=
- =?utf-8?B?N2JqTFYvNzNyZm5OZ2cyMFZVV2ZwQUhPL3ZQcjI5czhzbDBmbWorRUQ2ZUFX?=
- =?utf-8?B?RW93NkJaNXkyZ3ZsN0w5N2ZwOFNGYnhjY3VIdkc5M29pTWhQZkR6UVo3Nk0w?=
- =?utf-8?B?T3lxUXRRTFcwc2JNWVJhVWxBZzBoNm9TWWZlb0xMRkV2OGJhZ1BqS1pPYjdv?=
- =?utf-8?B?UEtzR0lXQjdWcmNCUnptdnl2SHdtcnQ3STV3aUFOcERkQm5YMEk2cXY1c3NJ?=
- =?utf-8?B?citiMXc2c3FVTjA3OWhTMEdaL29JdFJzSUx2SW16YkE5WGI5clhxSDYyZU4v?=
- =?utf-8?B?V2x2bHlNZTdPRUw4UjJoWUk3MVkvWitNN0JIUlh4aDBiRjlWMDFCMEk5Yi9X?=
- =?utf-8?B?K21ZcE52eGFmVEk5OERpVVVjNU5hUzJEcWh0Z1hpQkpWMzVUL1B4K2hyK2pP?=
- =?utf-8?B?cDgybFhGSWJHQm8yckIxLzBValo1dGRaOGRnSENMc2JveXVORU04N3NEcjQ4?=
- =?utf-8?B?WE5PNDhYRTlSQkg0U21CQmdJS21sSDNzMlBudHFTRnF1ZUdtZTJPdjhQc2Vx?=
- =?utf-8?B?TlU5OCtuZ09nOUxTYjJjS1ZndUZCVlM5MU53VGVkOUFHYVhRRGtZamVsV1Bl?=
- =?utf-8?B?cnIrZE1uUksrMEwzalBnQ09MWWs4V1hPTDUxakMzb0dnUjRoSHpEOGFaTFNs?=
- =?utf-8?B?aldrZzhkZGxtempGaDFkV1h4enZzY3Y1SktrS05TNzZPWmlWZDlpUUVTVE9P?=
- =?utf-8?B?MUdYRkJUOEZqOEdmdVozRU5SaEpFOUM2SENraXh2VTFKOVY1V3lLaFNGUTNl?=
- =?utf-8?B?STRPNyt4dGhwcUUzakdDT3RPY2ZITks0aTVwbDhxMjB6MGI2UlEwRkhoRDNE?=
- =?utf-8?B?VG9EZmRWN3NMM2ROWHd3b2QzRVBMaGtVcFVsMHNBZFRvOVlKdlNXdVQ5UWpC?=
- =?utf-8?B?ankrWW1FcEFKQldIbmJhNUd1VkNwV1VaelhsQ1JUUVpxT2d5S0Z4NVFiZWlz?=
- =?utf-8?B?WE5TZ05Fb3k3Q0hjVXVUUkh0cC9pTGpkNERmUUowZjIxM0hlWDZVZmp6c0FT?=
- =?utf-8?B?SlBTL2JJQnZ1R0xhNWhieURNMFFGZklyY1ZMaytQRmJnTDlzMitlNUV6SnVv?=
- =?utf-8?B?TVZsNWc4elJ1SXozV1pVZUNkT3R4eDlKNVZ2cVA2cGlqYkxJekYxbWdBYkVH?=
- =?utf-8?B?czFvelJ2YUpocTIwZ0ZiQk80OE5XMUkzS0VoNFhKSnU2akVLdkxsNUkyTS9o?=
- =?utf-8?B?NlQzK2s4WFFNalR2SUlxMXBvZUNpWk9haVRqWWM1VFNBQlY5bFduMFdEYW5T?=
- =?utf-8?B?LzZ4aUd6RTJGVUw2K2p5Q0tiZ0NodTJPOFZwNnJWQkl0c2E0SkNsS2lKRFB4?=
- =?utf-8?B?KzNoMUJOQmdhTks1TlZjMitONG9BMzl4NGx1SVYyeWwxakxhK29WbXd0dFdZ?=
- =?utf-8?B?MFNyS0l5RXozK3BsTTBMZGxWSnVFcnNEUHJhWDlURTRTZHoreFN4bXloUG9X?=
- =?utf-8?B?MUY4N0RLMTNKMWJaYU9rZGtCWCtjOFdDVjNLZEVHSDMvSVVIRUxyZ2RNOUNz?=
- =?utf-8?B?eG5kMGNqbGp4ZUMxeVRhWHRtbCtPTXcwVmtiRzRwREh2VDhRcmZSSml3cThz?=
- =?utf-8?B?SXllb0RNa3dGbXMzT2ppSDdVK2VaL3ZDVWJVampzajA2TEJSa3dkemdTQnhZ?=
- =?utf-8?B?UnFWUDFrSWEwcjlGZ1hVTWM0ZVN0eGtObjVjd1RnUjZZekxGbVFPT3plc284?=
- =?utf-8?B?ZW5IWDRkZXBxMFlVM2lZNkhuYk5yc3R1akJRb3M0Z2RSd3ZXU0gvZU4vTmZH?=
- =?utf-8?Q?htug=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b20d510-ac88-4600-c789-08ddb9514a6a
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 10:14:55.1158
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qPxlMZyAOlgpY44OQIequ4ss8O5VGXWk7kQCnX3s4KbMGunWpgUGgpE0fD3M8D7u
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9001
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 02 Jul 2025 12:16:47 +0200
+Message-Id: <DB1HPGT5MG09.25OEO7K36RNKX@kernel.org>
+Subject: Re: [RFC RESEND v10 00/14] Refcounted interrupts, SpinLockIrq for
+ rust
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>, <rust-for-linux@vger.kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Boqun Feng"
+ <boqun.feng@gmail.com>, <linux-kernel@vger.kernel.org>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250527222254.565881-1-lyude@redhat.com>
+In-Reply-To: <20250527222254.565881-1-lyude@redhat.com>
 
-On 02.07.25 11:43, Colin King (gmail) wrote:
-> On 02/07/2025 10:42, Robert P. J. Day wrote:
->>
->>    subject has typo, should be "ternary"
->>
->> rday
-> 
-> Good catch. Can that be fixed up before applying the patch rather than me sending a V2?
+On Wed May 28, 2025 at 12:21 AM CEST, Lyude Paul wrote:
+> Hi! While this patch series still needs some changes on the C side, I
+> wanted to update things and send out the latest version of it that's
+> been sitting on my machine for a while now. This adds back the
+> mistakenly missing commit messages along with a number of other changes
+> that were requested.
+>
+> Please keep in mind, there are still some issues with this patch series
+> that I do need help with solving before it can move forward:
+>
+> * https://lore.kernel.org/rust-for-linux/ZxrCrlg1XvaTtJ1I@boqun-archlinux=
+/
+> * Concerns around double checking the HARDIRQ bits against all
+>   architectures that have interrupt priority support. I know what IPL is
+>   but I really don't have a clear understanding of how this actually
+>   fits together in the kernel's codebase or even how to find the
+>   documentation for many of the architectures involved here.
+>
+>   Please help :C! If you want these rust bindings, figuring out these
+>   two issues will let this patch seires move forward.
+>
+> The previous version of this patch series can be found here:
+>
+> https://lore.kernel.org/rust-for-linux/20250227221924.265259-4-lyude@redh=
+at.com/T/
 
-Thomas or me can take care of that before pushing.
+Overall I think it looks good, I haven't checked the details though.
+IIUC, the C side will also change a bit, inducing some more changes on
+the Rust side as well, so I'll just take a look when this becomes a
+normal patch series :)
 
-Christian.
+Thanks for the hard work Lyude & Boqun!
 
-> 
-> Colin
+---
+Cheers,
+Benno
+
+> Boqun Feng (6):
+>   preempt: Introduce HARDIRQ_DISABLE_BITS
+>   preempt: Introduce __preempt_count_{sub, add}_return()
+>   irq & spin_lock: Add counted interrupt disabling/enabling
+>   rust: helper: Add spin_{un,}lock_irq_{enable,disable}() helpers
+>   rust: sync: lock: Add `Backend::BackendInContext`
+>   locking: Switch to _irq_{disable,enable}() variants in cleanup guards
+>
+> Lyude Paul (8):
+>   rust: Introduce interrupt module
+>   rust: sync: Add SpinLockIrq
+>   rust: sync: Introduce lock::Backend::Context
+>   rust: sync: Add a lifetime parameter to lock::global::GlobalGuard
+>   rust: sync: lock/global: Rename B to G in trait bounds
+>   rust: sync: Expose lock::Backend
+>   rust: sync: lock/global: Add Backend parameter to GlobalGuard
+>   rust: sync: lock/global: Add BackendInContext support to GlobalLock
+>
+>  arch/arm64/include/asm/preempt.h  |  18 +++
+>  arch/s390/include/asm/preempt.h   |  19 +++
+>  arch/x86/include/asm/preempt.h    |  10 ++
+>  include/asm-generic/preempt.h     |  14 +++
+>  include/linux/irqflags.h          |   1 -
+>  include/linux/irqflags_types.h    |   6 +
+>  include/linux/preempt.h           |  20 +++-
+>  include/linux/spinlock.h          |  88 +++++++++++---
+>  include/linux/spinlock_api_smp.h  |  27 +++++
+>  include/linux/spinlock_api_up.h   |   8 ++
+>  include/linux/spinlock_rt.h       |  16 +++
+>  kernel/locking/spinlock.c         |  31 +++++
+>  kernel/softirq.c                  |   3 +
+>  rust/helpers/helpers.c            |   1 +
+>  rust/helpers/interrupt.c          |  18 +++
+>  rust/helpers/spinlock.c           |  15 +++
+>  rust/kernel/interrupt.rs          |  83 +++++++++++++
+>  rust/kernel/lib.rs                |   1 +
+>  rust/kernel/sync.rs               |   5 +-
+>  rust/kernel/sync/lock.rs          |  69 ++++++++++-
+>  rust/kernel/sync/lock/global.rs   |  91 ++++++++++-----
+>  rust/kernel/sync/lock/mutex.rs    |   2 +
+>  rust/kernel/sync/lock/spinlock.rs | 186 ++++++++++++++++++++++++++++++
+>  23 files changed, 680 insertions(+), 52 deletions(-)
+>  create mode 100644 rust/helpers/interrupt.c
+>  create mode 100644 rust/kernel/interrupt.rs
+>
+>
+> base-commit: a3b2347343e077e81d3c169f32c9b2cb1364f4cc
 
 
