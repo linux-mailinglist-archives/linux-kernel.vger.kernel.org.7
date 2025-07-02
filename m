@@ -1,111 +1,115 @@
-Return-Path: <linux-kernel+bounces-713273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F397DAF15B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:33:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18157AF15C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 404D216E28A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF3A1712F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4B2271442;
-	Wed,  2 Jul 2025 12:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BB2274B44;
+	Wed,  2 Jul 2025 12:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="I8UByZf3"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAOuONiY"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74A2257431
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 12:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBFC26A0EB;
+	Wed,  2 Jul 2025 12:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751459583; cv=none; b=tZpW7aEnY4aWMWDIIP6okaFiTDF5h0JbyuEC+jajg9ryNa7VkqkpdfXvDiUZLoJICMS8SOvsgWj2FEsvGSfxsYFX1gTIJLeJZYjQjbkesuYWsCrWjPIqcn+p96B5mwHHPsBP1KE6cl0fixAtbTHjJZWu/AHWHR0FqLkbOuJ/U30=
+	t=1751459678; cv=none; b=W2ptykIc890+oJZuyJmNkZSKoRvvIPiVH/hRHNo4VCDH70fz2FRmG6B9S6sJ8TZDT+25/RGWGDM08NFMfBCsFBMoNYf4qZK33soygPR5tVN7EGPgtudO33O6GtW2RvPBAblJSofn3tlf4MrI4irkMzb2BT16qlU+FXXLrC1aQEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751459583; c=relaxed/simple;
-	bh=7+uACN9MKsOjPTypJ4XdPY+HJFpt49d92OEGxFbI7LI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvmdYvLSvpwx2+w2KMtOif38jk9LY8b+6kmrWLYUJTfQJ4CbaHxdnCUPbbKi3dTlWvsFKGsgTPT9UTkpUWP/L8anIyfiqOfask0oP1S9GNrnC9Womy3DaH2eqZnKN/QdwgS81vekg6XDKkQDXujY+CI+8UG5wvTiHXNrDHZQklU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=I8UByZf3; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A381F40E020E;
-	Wed,  2 Jul 2025 12:32:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id OdpU--Y_RnXa; Wed,  2 Jul 2025 12:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1751459572; bh=ZqE1g5XlyeMJ29/caE4sLN2mDveLeL3e6GwduwiRf2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I8UByZf397wi7DJe5SwyLlD6rqBaiDj3/blRCFiXEWmTHuMx6p6+tkDhFFVRIOwNr
-	 XmkGOdcdXbzsPPRmKSilU6kaoaCSHB/d9u+r4puQg5KzyU4tgt1VsYB3M0pWLe3+Gd
-	 iZRpcjE0rLYLoKFN04znQI/t5SpPHfdDFkbEHYQS3WfiOtFHycd7UxZtYtG3Z5xnUP
-	 d9PiRa/alPgMMyUjNgK+Nmf8miBFrEZgVaBx+cKU3Y7Z0uGJLzPrH8NYDIBOcXwnaM
-	 8DopYQJVI0ETRw8hmD6Dop7Xuqof5abHt42q9045CnwoY5SIYxcbOLcC+k1s4moU7o
-	 JV5sGxLAblJX+P6614rXZigG6uKt6O1SdiElN2xoW8ILAJf+Qk6mbqblpIABAeEWyh
-	 UgwbKjbP/hAO4YIrjIZSR7K4l4XyhWwQdnc5mG918KoJ2PbIOJ0haD+NPVGvrzzbM2
-	 vPqkP5CUJapcRMxJvHG/SS5sT4mfWTFil0lEAkhgduCARuHgAROa/zvrs/5B3e6Meb
-	 XNzIht+fOz69fiYYmSrOXTLWpLkZXnbaNJUIe8FlFeznaibQov3DsJk2FM7y008SR2
-	 R+xKLjyDlBuZ3G3HWQS+X1jNpJn9RRPgz+g0EwZOrgbwXVfy+I9O3fS2VmlzUSldjr
-	 rl9HQ8n+FSQfzCgFQMTpKk5U=
-Received: from zn.tnic (p57969c58.dip0.t-ipconnect.de [87.150.156.88])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A5DC640E0218;
-	Wed,  2 Jul 2025 12:32:46 +0000 (UTC)
-Date: Wed, 2 Jul 2025 14:32:40 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: kernel test robot <lkp@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [tip:master 19/19] include/linux/irq-entry-common.h:201:2:
- error: unexpected token
-Message-ID: <20250702123240.GDaGUm6Le4KLL7o_91@fat_crate.local>
-References: <202507020528.N0LtekXt-lkp@intel.com>
+	s=arc-20240116; t=1751459678; c=relaxed/simple;
+	bh=mzTW+TqSUEzk8fmktxy5CGaAVrReWkENvam7sk5L6Wk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tiw2iqy5TkxyT64Lm4USxDJaKncA6VGeWoCfsE1hmOaZLPjPe4FyoCom2DTH4s5FQqHS+esFQ8ZBcE6JeoQYMsQnTCunsQi4d+M0fVfVq+jpN6e0R6WhTGsRAgd2uYILFkLrD1z0+JHrTbEJoF9FBkTOG7EcCJcNrxT27v7rpXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZAOuONiY; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-313dc7be67aso943494a91.0;
+        Wed, 02 Jul 2025 05:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751459676; x=1752064476; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mzTW+TqSUEzk8fmktxy5CGaAVrReWkENvam7sk5L6Wk=;
+        b=ZAOuONiY80yRq9KsGYHEyWS1RG8Nn1mjWMiRtrwPQu8qUnQooEo6p9Slw6y2Fh+/b1
+         HDDOpELcgFNSkoS8QYx/dRqqiY59HFAaiDMpYHDVnFJB3gkm3GayE5V/MoMAUPmpKfmT
+         mLihmIiqHKyCvDDrEqm+SozfDjUWpXDp51wZGNOhOVhJpFK56NiL+5YhiMklmvFEePB7
+         rtQLr3zlKhl3tCaX3Cu6as5tcaJY4fmLffIxNCniP5zXGdPdKOBiZGw9w5ybM+dhcfd2
+         fs5Ugn9ZmdaWXJ6DdSrcxOxfyRAVTGHd3RDMR/+fskA4owP+pDqRHww1MVnLPOOeQfvC
+         uesQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751459676; x=1752064476;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mzTW+TqSUEzk8fmktxy5CGaAVrReWkENvam7sk5L6Wk=;
+        b=B5kSYEzZwqZKzkcRTUxw45fNrEJGhlh37LhrJ9yzZXLiCeBYjvSBWbBqjRrjQ/t62J
+         jHJqFuL1tTyZYz81HoT3rQ9dch5zZtxPo3Qjm/0Ko6zq4MonW32nbyZNBNAtHZYtcNU/
+         godShxBCMihZsCgjhVJmZVTAs+M34IZIr55FL4xBVvntd0lIXkd7CkRsCb9lWXaIRkdJ
+         HdtIsAEhLbp0Nz8/gBWSkg5nCUaHMhyYvIZOSx8DOq5fFZ5Wi8ADII9aAmuyCfxWCPpE
+         B5ow25qvB9lWEZJpyKd8k9B6C5BK+pWTk57LFkVfkefziSiqROSb5bmsBsExd6pRJZS5
+         zF1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUI622QHPzJT5//AHuMooKNhQn/Y+y50ndmusbwTYgSK+cJ4leW1EP46ANVKpun+Sfl87BOKwOpmczc3ILjErQ=@vger.kernel.org, AJvYcCWDTvtHL6bxldd0bRLtdMi2+LCVDOsW7k7md+BTzXPtWqd4lGnlr6WTeiCVKd1cl61e7m+GfRFGzjeLr4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoC+31QOxWEwYtsksjD5LMo2K7lC467l23agoPoUok3H12J5/3
+	mJPYm9nSFDkPKaHcCC4fKnenNkPfdfwzhYRojOgonGm/KhZcc1Dyoh73AYLYo18vXWA618OgY0w
+	RzSTlM+DbjXNtqm3zZyWC/UQ/laFukNk=
+X-Gm-Gg: ASbGncuOMJVZelm6bSgtrDYlfa1spL2LZywNTPNrrVQBu0BUcINFkRdVMG1qlJUdgD6
+	FFkKoxPcsNvUDZ6ST1gVOSmsyITFFKLcrAfQ4X/8yQXMe4XWLhzu1OQxxAqVLfBV+rjbDXplyTe
+	DhnozVfg+m2nX4fvsKrvoTpzd9PipsCK+7T/nWiHIA8Hs=
+X-Google-Smtp-Source: AGHT+IG9SfscpjxpOW8VWWo+j+txbqwJKQnHHud5dEaZRHtbgncdC7yj8rxKvhncYz2QiCbWHr5XiJn+ENwDcuJiJlw=
+X-Received: by 2002:a17:90b:534c:b0:311:a314:c2dd with SMTP id
+ 98e67ed59e1d1-31a90bdc46fmr1470452a91.4.1751459675919; Wed, 02 Jul 2025
+ 05:34:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202507020528.N0LtekXt-lkp@intel.com>
+References: <kyrCsGDYN5QdXPkUe4OxMxU2UzHfJ-vH5z643gA-_KFJIaew0duyMXU0yfTrGN5ZCNaecP8Yu2kIXKXMoWS2lA==@protonmail.internalid>
+ <20250701001809.496389-1-fujita.tomonori@gmail.com> <874ivvvvjw.fsf@kernel.org>
+ <20250702.180922.1185854079687770335.fujita.tomonori@gmail.com>
+In-Reply-To: <20250702.180922.1185854079687770335.fujita.tomonori@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 2 Jul 2025 14:34:23 +0200
+X-Gm-Features: Ac12FXyeX_CoN9Gd5KjF3KbaBd5lVxPxjLli5fXfW5MTYFZJjXeqhByvQVxV6mk
+Message-ID: <CANiq72kq8EMKkehTQS2odA-AVqxZe=EQs4yj4tQ8CK3zi9e9Pw@mail.gmail.com>
+Subject: Re: [PATCH v1] rust: time: Add examples with doctest for Delta
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: a.hindborg@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, 
+	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
+	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
+	tglx@linutronix.de, tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 02, 2025 at 05:56:06AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-> head:   104f02a7798f7e8aba25545f9d485035532260b2
-> commit: 104f02a7798f7e8aba25545f9d485035532260b2 [19/19] Merge core/entry into tip/master
-> config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250702/202507020528.N0LtekXt-lkp@intel.com/config)
-> compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250702/202507020528.N0LtekXt-lkp@intel.com/reproduce)
+On Wed, Jul 2, 2025 at 11:09=E2=80=AFAM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> I think that Miguel suggested adding examples but either is fine by me:
+>
+> https://lore.kernel.org/lkml/CANiq72kiTwpcH6S0XaTEBnLxqyJ6EDVLoZPi9X+MWka=
+nK5wq=3Dw@mail.gmail.com/
 
-I'm trying to follow your reproducer and installed binutils-s390x-linux-gnu.
+Ah, if Andreas was talking about the examples in general (not just the
+edge cases within each example, which is what I understood in my
+previous reply), then we definitely want to have examples in our
+documentation. Unit tests serve a different purpose.
 
-However: 
+It is a balance -- to me, examples should try to be minimal and yet
+show all "cases" a user may need to care about, but if other tests
+would be useful as tests (e.g. passing `i64::MAX` as input), then
+those would be unit tests.
 
-make CC=clang HOSTCC=clang W=1 ARCH=s390 arch/s390/ 
-  SYNC    include/config/auto.conf.cmd
-  CALL    scripts/checksyscalls.sh
-  VDSO    arch/s390/kernel/vdso64/vdso64.so.dbg
-ld: unrecognised emulation mode: elf64_s390
-Supported emulations: elf_x86_64 elf32_x86_64 elf_i386 elf_iamcu i386pep i386pe
-make[2]: *** [arch/s390/kernel/vdso64/Makefile:53: arch/s390/kernel/vdso64/vdso64.so.dbg] Error 1
-make[1]: *** [arch/s390/Makefile:150: vdso_prepare] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-My linker can't do s390. So I need something else which your system has.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers,
+Miguel
 
