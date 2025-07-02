@@ -1,375 +1,473 @@
-Return-Path: <linux-kernel+bounces-712740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-712736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9051AAF0E32
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0168DAF0E25
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 10:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36841894CF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77AA3A51DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 08:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0D223A562;
-	Wed,  2 Jul 2025 08:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD97B238D32;
+	Wed,  2 Jul 2025 08:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ey832ScC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5Q96JCa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AF12367B3;
-	Wed,  2 Jul 2025 08:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751445509; cv=fail; b=FTuT+jgu6okEhBwE7NC6C050PX34/RwpD63Pkhr2ea3nINdOGEvEn8NwH91Byu3Pz4fPHbFcpViEbllP/6U6P0xH9uRGBfc48qXGjqd0RiABBCORo/WMrfH8P8UuL5R2ge6i27LrepEwN4RvCA6i74I2NDaL8EN+AL6RgseRpPY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751445509; c=relaxed/simple;
-	bh=oxvr/j2brGEjV7f+syPnINivsrNz+5iqfnc6WRLGBtI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=uvV43qqViDmlU0LtxMGShVOswyYmGneq6FC/HMcpy9CUKJRYbffYozk7GLgTD6iSoSS3IRD3+gwBmqkfb/Y4UlKyf21yqi4WIajZA6uPxPZj8R3QENYHHI8HrTCBKqUMGVd7lPwRXM66wTcHlATnCmcV0yZHFdyVTrU/Wd73JaQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ey832ScC; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751445508; x=1782981508;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=oxvr/j2brGEjV7f+syPnINivsrNz+5iqfnc6WRLGBtI=;
-  b=ey832ScCYuQlY/2FSZ9Cq0iOqXOf7u0YQCkGoJbCDU/PJsZQYBD1U89I
-   CGiRq0Tg8MBAOggWy0XEYpK740jPRH2+JeUcH2vrlHRMDqPBBN8jpK8Ln
-   Ah1YKexzaUvMjLmYEWkDj//1YA+Uvr3NSPP7TPwFi9LXAXcR3OeR0Nq4P
-   usXLWQwSOqQimwQU2VymRRxIIM9HJBil0cHRM4oTQoBcIUr8spBYT+8/+
-   P8Xlc4yhhPJxuiJUqlY08xLQBGgTsiMqpIJ1eMe3gjJdEWla7O0xJlpXf
-   IL1X1og2ihfDCZ5yDL8FL5Ep5HzkFzRicd3O1dIvaJiuLQpPCQdCen2OH
-   g==;
-X-CSE-ConnectionGUID: qvMZ079QQ1C3AtlDQ/+HkQ==
-X-CSE-MsgGUID: sj+K1ipoRgS3xI18bIABKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="53661765"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="53661765"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:38:26 -0700
-X-CSE-ConnectionGUID: KvEctvg2Q/aBkuiAJfApnw==
-X-CSE-MsgGUID: b1638uTRQ/KShrjdukMNkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="153788600"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 01:38:26 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 01:38:25 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 01:38:25 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.64)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 01:38:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vvyb1917wqndgupfN0FuXcD7FJV1xutuhYhV5uMe77e/9K1td0yAsm5wX7iWEnz9NQfjZHshyZJ045IG5Eibusji3462m+dm4Dc6cynaPSGbhPHl8mXygyIvEjPSTQvFicCG8AuXOycF701dSAgh9zWFKCj8aON24Lonq9IPBrY4vu+RJ3APbTGfvaNEbN8OuS7tD0YmZ4JPuiK55FZhS35bVPdh2MvLDogbmvtXgQrS5pi9Cz4u5ODivP6eQWICpzKxxwU3rzlIM0zBG1jhJxeevYMCX5Zxtq9HckGIlwGsFzmhkXDnz3/WBHupMQ1g69nRZ/S4O/1Irw2HHrBHkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uMcisIX9erHhPhRijIpu3CUadWZ0nYMPgKabtym5k3c=;
- b=asM+zWETuoH1hOi2+n5hSKOBVElOtDi+5vWMHo146VbNRDtY8HACyAwXb1+LLt8N9SpFBbawsRMDLv393ZTHuodmcRqIgBMDuIHGnht3FtIMV/uw6VeiH9wISvBZulwYw+YNvhpbSg3ljc1PKm/zSrCE93U6hs3ER6FIDXqf4PL/FEyIIxy0rr1qmZRonv0ICJydKwh0PoqRbU/f190NUZRdPu1fi8XtppzfHz2/qjf4sKkc9yn+1ysMVSgMM92r/UJCLHtNNnaEqAj2FpPuKNOEQUcYvkW+NGAMfXNtG/puocx4LIiM/J71hgG5QIUIQCizUKhPmn5Cxxdu3BCfZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SJ5PPFC0624F2CA.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::850) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.30; Wed, 2 Jul
- 2025 08:38:23 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%5]) with mapi id 15.20.8901.018; Wed, 2 Jul 2025
- 08:38:23 +0000
-Date: Wed, 2 Jul 2025 16:35:25 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Vishal Annapurve <vannapurve@google.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Alexey Kardashevskiy <aik@amd.com>, "Fuad
- Tabba" <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>,
-	<kvm@vger.kernel.org>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, <linux-fsdevel@vger.kernel.org>, <ajones@ventanamicro.com>,
-	<akpm@linux-foundation.org>, <amoorthy@google.com>,
-	<anthony.yznaga@oracle.com>, <anup@brainfault.org>, <aou@eecs.berkeley.edu>,
-	<bfoster@redhat.com>, <binbin.wu@linux.intel.com>, <brauner@kernel.org>,
-	<catalin.marinas@arm.com>, <chao.p.peng@intel.com>, <chenhuacai@kernel.org>,
-	<dave.hansen@intel.com>, <david@redhat.com>, <dmatlack@google.com>,
-	<dwmw@amazon.co.uk>, <erdemaktas@google.com>, <fan.du@intel.com>,
-	<fvdl@google.com>, <graf@amazon.com>, <haibo1.xu@intel.com>,
-	<hch@infradead.org>, <hughd@google.com>, <ira.weiny@intel.com>,
-	<isaku.yamahata@intel.com>, <jack@suse.cz>, <james.morse@arm.com>,
-	<jarkko@kernel.org>, <jgowans@amazon.com>, <jhubbard@nvidia.com>,
-	<jroedel@suse.de>, <jthoughton@google.com>, <jun.miao@intel.com>,
-	<kai.huang@intel.com>, <keirf@google.com>, <kent.overstreet@linux.dev>,
-	<kirill.shutemov@intel.com>, <liam.merwick@oracle.com>,
-	<maciej.wieczor-retman@intel.com>, <mail@maciej.szmigiero.name>,
-	<maz@kernel.org>, <mic@digikod.net>, <michael.roth@amd.com>,
-	<mpe@ellerman.id.au>, <muchun.song@linux.dev>, <nikunj@amd.com>,
-	<nsaenz@amazon.es>, <oliver.upton@linux.dev>, <palmer@dabbelt.com>,
-	<pankaj.gupta@amd.com>, <paul.walmsley@sifive.com>, <pbonzini@redhat.com>,
-	<pdurrant@amazon.co.uk>, <peterx@redhat.com>, <pgonda@google.com>,
-	<pvorel@suse.cz>, <qperret@google.com>, <quic_cvanscha@quicinc.com>,
-	<quic_eberman@quicinc.com>, <quic_mnalajal@quicinc.com>,
-	<quic_pderrin@quicinc.com>, <quic_pheragu@quicinc.com>,
-	<quic_svaddagi@quicinc.com>, <quic_tsoni@quicinc.com>,
-	<richard.weiyang@gmail.com>, <rick.p.edgecombe@intel.com>,
-	<rientjes@google.com>, <roypat@amazon.co.uk>, <rppt@kernel.org>,
-	<seanjc@google.com>, <shuah@kernel.org>, <steven.price@arm.com>,
-	<steven.sistare@oracle.com>, <suzuki.poulose@arm.com>,
-	<thomas.lendacky@amd.com>, <usama.arif@bytedance.com>, <vbabka@suse.cz>,
-	<viro@zeniv.linux.org.uk>, <vkuznets@redhat.com>, <wei.w.wang@intel.com>,
-	<will@kernel.org>, <willy@infradead.org>, <xiaoyao.li@intel.com>,
-	<yilun.xu@intel.com>, <yuzenghui@huawei.com>, <zhiquan1.li@intel.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-Message-ID: <aGTvTbPHuXbvj59t@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <cover.1747264138.git.ackerleytng@google.com>
- <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
- <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
- <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
- <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com>
- <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
- <9502503f-e0c2-489e-99b0-94146f9b6f85@amd.com>
- <20250624130811.GB72557@ziepe.ca>
- <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGtprH_qh8sEY3s-JucW3n1Wvoq7jdVZDDokvG5HzPf0HV2=pg@mail.gmail.com>
-X-ClientProxiedBy: SG2P153CA0051.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::20)
- To DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9B2111BF;
+	Wed,  2 Jul 2025 08:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751445330; cv=none; b=tG5lVXdU/Ed2LvK9yerWAKzYxAeH5KwuhXFVcAxbttbegV7T9RpIow1shEheQVvZJPLPmUqvFIdQ5Mro8rIRKN3VcblfyY27hL/G67wv3tIdtxTdal4feKd3WSMH1zgBsxVW0hGJKEX50fYWEAPiHsfbT62vAmYDBjvN4rv+Dgw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751445330; c=relaxed/simple;
+	bh=+tEN468+Pz0ZLeoxMngBSW2D7LstgZ1Ov8e/gnQ7aHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AsBP2uFbRAnd/VNNl699Cb6dmikii0vROOkjWgtYGDYddf7YrFcT9sK3PQhM87nxPCWAb1pSEK3EBF31naSwhIk8QNFwMFzzGzLtOpVSs28fLoRVk4lIsuAcvkwn++6AKdOUUeIlkVA+AQnqP7/pUqMGVg72r67IwRhCS9TO4Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5Q96JCa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675D4C4CEED;
+	Wed,  2 Jul 2025 08:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751445330;
+	bh=+tEN468+Pz0ZLeoxMngBSW2D7LstgZ1Ov8e/gnQ7aHI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=W5Q96JCazLbjPRQ1yZYpUUjo3fnPBjViKKVntg/YCa+TP6dD51z5dpvqkMmaPkr8N
+	 duRDh8y2USHpWkINvsCECpWmHaZ62xQq+s2U0wgWprrbCQMG+owuBUAq4QiqMddt7l
+	 3xx4QByZI3nwAw4JeleNNroZJl7DBIdCraEaVRB/klLx+NG8/SdOD0/0CwoMR2ayk2
+	 WXTXzsJaNTPgg4qIqli5f2W4krEEcgPseppPWCpsGMIKxZHThYuazruRIJkaKXVqAX
+	 XDYxEjTVJwd1Ao3YX9QbTNJNaNumLVwIl5HFJ4KUaf76mKZCYpE1s9zfkrO8+CTCLv
+	 TGtdmKs76qWNA==
+Message-ID: <c893384d-4134-4510-be87-11a2c9ba6cc7@kernel.org>
+Date: Wed, 2 Jul 2025 10:35:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ5PPFC0624F2CA:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36f323d1-6ecf-4f73-4a26-08ddb943ce03
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dzcydHkrSnh5cUhsUUVvL0p6SFo5ck1FMzk4L2JjUmxyL3Rzc294MjBsVHZl?=
- =?utf-8?B?NFFFTWRFL24yUXJhdUQ2VVJCdzJxbmpqZm9EWE9QeklzZEN2dHRZREpVVWUw?=
- =?utf-8?B?SE1oaWgvQ1g3U2xYUjB6c0hQckFDbVRwb25TM1hmeWxQYytjeEFzL0tzQXhr?=
- =?utf-8?B?YWJER0JmMTVIY0JMcTd0aHpFZ0pNVXBONnVyenk2elh6aWpTb2FqSzVzbCtn?=
- =?utf-8?B?eXdhK01MWm1pNVRsblgyUVFXNm9TeXZsZHEvZEFmcDJyT0pzWU1jR0xEOGFa?=
- =?utf-8?B?dk5rYmNjbVRLNHZNQXdScWNaVW9ON2wxOVNIcDd2YllNL21RN1F4ZC9lYlNh?=
- =?utf-8?B?Z3JZL0dwUlN3WnNmVEdYUVZVMkdvVmJtczFDeGxXaE1HZEMwSWlodzNpR3RV?=
- =?utf-8?B?cVZZb0lEa0psYU5VMjdMS2U1Ly9mSXg4MXRFODRDTDRJSkdDbURLSFM0TWY5?=
- =?utf-8?B?NWZreEJmYnhkMENaSjFUekFhVGkwaEdacTk2b1l6NGZHa3BHa3hSa2Qyc0hJ?=
- =?utf-8?B?cFV0TnNiWGxCUEpicWRUMDhXcWl5WEg5cG5ka2dqTmRSSDQ0NG9HQ3lWeXV2?=
- =?utf-8?B?ekNQeFNLODBRdEp1eVA3WFdQVTRORyt5Yy9KTU5nZGYxb2pmVGsyZHFqT3dM?=
- =?utf-8?B?WkFub0dYUVZXTkhpUkRhQ2xRNlVlcTVvOHF2aVhkdjA3QU95U2VFWGo4eWJw?=
- =?utf-8?B?TXNQSUV1Q094d2xPVUd5czhYUzdMTGM3WEdBZDZETG1wK0ZVLzc2Q0JONGpL?=
- =?utf-8?B?S05KTUVvd1BTeHk1M25hVThLa21aajZJM3VGWTVubEhCd3lrenZzUmpTbFpP?=
- =?utf-8?B?QjVvWkRPY3BnRm9RZzAybmZoUnhsZGZ6NlJ4Rys1WWFwWVlKeSs5dVFFTFN0?=
- =?utf-8?B?aUNER09Vczd6SkE4REpxWjRHTWlBdGp2S3ZPeXNBYmxLSEdjcDRCSUV1SENm?=
- =?utf-8?B?VGhXOEpjYVlwRTNEMnc4M3ZqOHlrc21JQUVrS0dwOHpNcGdwUlo1QjBRM2dP?=
- =?utf-8?B?MmF4L1NkZ3cveHFXT3VDK0NJeVB1ZlAxK0xtSnNnUFNHdFZVbzVEd2d3cVdV?=
- =?utf-8?B?L09nYUJsUzcvRkJoOERuc0V5YXJXSWc3S0x0VmhLcGRBci9DSkxpajZKQVk0?=
- =?utf-8?B?T1JGRGVvbno1Y0h4ZkRoT1pvWUUrVCt6Uy81UVlkOCtWWHM3cmdEb3JHeUVw?=
- =?utf-8?B?cWVYUUsvazFxcXU4MUh3UzlYQXNUOFNGVUZMSUpXdUF1aHlvMUsvYTlLdTg3?=
- =?utf-8?B?VHpybVVzWUNRZk5NY0syL0swY2tHN2JycFFmVTdUMFZPT2l3NlNvcjRFMSt0?=
- =?utf-8?B?dmlLdzZ3KzBpV1pnTXYzNTFQZVNHY3lNdzJlNEYxaVZ2VldnZGhmM2hXQlBS?=
- =?utf-8?B?RGpUc2dMWld0UTl3OXNuaUZGa0x5anBZNEt4MXpjaFpaZlJ5NW4vZTB2TlNq?=
- =?utf-8?B?UStPR1pzUHlhdXBqUGN4SkRXbUYyZWUrN3dlQkIxZVRKMENvZEpUWXVqMTlC?=
- =?utf-8?B?VVFqU0w0SjhtUmd1b0RrZlpkZTlPZmhoZUkvYzNUY1JUdFhIbnBKRGpjWVdq?=
- =?utf-8?B?V1FFZ0ZRT3N5UXBCcVhXRkh5QXREMkJzTGV3ZFFzcUxFaEVseFg1bUk0YjVm?=
- =?utf-8?B?R3FiWXhHdFA4Z2d0bERJUmhYMkpVeC8ybEhOZVNHNzYyTE4rRFlPbnRhbkg5?=
- =?utf-8?B?a05PZWNZMXBXb29ZR2orZmdHbWJWbTVqZm5BWmFnREl5bityS3JRNWlGUUtJ?=
- =?utf-8?B?SFRwTU1oKzlQN3RyTjdwUS84T2NWaG80MFlPOHNkMkg3a3B5TWovMVkwc2N4?=
- =?utf-8?B?QXRuRGprRXZtT0MrMXJJY0F2OEhIMXJmSFpzWnlpZnFpZXNhMXhtUkZSTWRz?=
- =?utf-8?B?YUVTQjIvUmQ1VS9ZTHZwUlZZSVVVa0pULzV1THVLRGJka0NqVmg1TUVQbnM1?=
- =?utf-8?Q?Txydq2n4Elo=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SHlqYSt6R0NiMnY0dzJwczJ0WTUwcEx1MTRqS0d2RHFNVkllbTJPeG5RMDdt?=
- =?utf-8?B?NTJaQ2EySVN1TXFMSGtOSTRZMVJMTTAwU29IUFlIaUt4c0tQMW9DZjZzQS9s?=
- =?utf-8?B?dGVuRHhxZEk5NWdteWZWWlRGYk9jSmg0T1lHTUdGSjkrRFhIWVpIVlEzQ2Fw?=
- =?utf-8?B?Y29sK0pDNlZTT09WZkYxMmlRV1h4VGFCdUZhRkNML3VOR2JhVXBFUS9GcWdX?=
- =?utf-8?B?SUhUUkdOcHJOK0VzcUlnd3pOMEd2RHZaa1dxOHNhTnFNNXRhN0VBd3BrcVhJ?=
- =?utf-8?B?OVpqaUI1c0I3ZFY0dDJ4Q0dEdERzUWh4MTZ0QzhwVjYvTWFGZjJjdFZqTFVm?=
- =?utf-8?B?ZW1sVHNMNnAxaEdORWxsdWdOUlFraS9WUlBlSWdJRlkwT25aQ0VMNit3Vmtu?=
- =?utf-8?B?MkZVSElMaXQ5RjNENUMvSUp1Um9MSFFsL2JXdElETFhmKzZ4YWpRa2lqVmYv?=
- =?utf-8?B?anc3T2lGdkF3bFBLS0lBV0JMK3JJcTljNkl2RmlHVXJ2cUZlUnh1cmllTmlw?=
- =?utf-8?B?YTd4WmgwTllCZ3BHdHJNUnk2YUsxQW9uUTlLT0pVM2UrZllOUmkyK2I0bVUy?=
- =?utf-8?B?d0c5YXJtODMzZ1k1WkVxdXFUR0FPeXZxK1ByaVFVUUFGMWNYWU1uejltc3NV?=
- =?utf-8?B?QnpLL2NSdVNOaFNWSDYycnJseUxmL29Da0FiS09DY3MvbGplSzJZeFZlbHBT?=
- =?utf-8?B?a01ReEd2cUJHaFBTRUYreFZiNlQ5TCtHbjlXRUM3dk1MNmxPLzdTL1IzZlBK?=
- =?utf-8?B?VFZUMld6Q2RqNmNCS0FWdG9YS0daM1l5Rmhqb2FTWWZHRmdLVVY1d2RJMDhp?=
- =?utf-8?B?WTB0K1dpYk14Wmk2V2VOT1E4VkNycWd4eTA1WVczOTNGQjZaNWQ1ZG1VZzVo?=
- =?utf-8?B?RHZ0dWw2a0dxVmd3dW5JZ1Zlc1VQVThlTlRQR3FoVFBjeUlPMVhudU0raGY3?=
- =?utf-8?B?TXVqQWpPUU9pbVIyRVR1QjZDWHlVeEp4K2hRTmZsTldMS0VHaTRpUXMxQ1Zv?=
- =?utf-8?B?cEpRYjJNNGMrcDlmTlpPdGZZaTAvN2RQVlhRaTFzN09kSmhCaWp5cUE4R1lD?=
- =?utf-8?B?M214Wlc2aHJqYjlva0RYNVo3V2RCZTJnN3ZBSjQrd3o2TTY3R1lDZ1MwazFF?=
- =?utf-8?B?d3U4MG44SnpiNHN1Yy9qbjBCSXFzd3ZOR0VwK0Vuci83amMzWWtxcUs4T1V0?=
- =?utf-8?B?dUkyRXV2UWc3TFlCdm9hemo2Wkw1THIrUUxzb2c1RGtCbVFpbjc0a0ZYRk0v?=
- =?utf-8?B?QmNvNVFpK2cwRFE0LzZHb3FDY2dPQWg5OVJFbS9jZ29YaldsSjkwT3Z5WTJI?=
- =?utf-8?B?R3lRazlFeGt4NWZhcDZxMUxqUmRaQjdyQ0FrcGFRUFZZM25pWnFBbmtnSlI0?=
- =?utf-8?B?VWhJcytJMVloTkczdi8vL0hqNVRtQm9oQTcxTW9RemJBVkZ3em5zVXlFSWRp?=
- =?utf-8?B?cU5rajZqaGxjeGJ1aS9tTHVrbktWSFh0UmpsNVFDaSt5WndKOXc0TkU3OU1K?=
- =?utf-8?B?VUY5RmQyd1VNYW5UMkNBZVlEQjhmSFM0OW9kZkpDNVB6MGYwVDliZzZkTTJJ?=
- =?utf-8?B?TWxacWZNdW1VMkNKQjF3aDllSVZydzNhTkpSdkVVc2V3eUs1MjRIK2lrSDRL?=
- =?utf-8?B?dWJ1eklpMEtBc1pVUEYyM1FHeThiR1RGL2I3MHg1ODJYbkdYVldXR0tUZ1FC?=
- =?utf-8?B?QnkzL3pmT290WklJa3F2cGNRWEF5dmFxUTU5RXcycSt3RldHWnRHM0o5NUlW?=
- =?utf-8?B?MmFzYXVKTnBBSk1vRS9aaE0wVEJRTzFLZXVxYnk1VUwxYjVoSmNoTGVhK1hn?=
- =?utf-8?B?OHJuTDVoQUwyZ2djOTR2c2szNTVsVnhxMFpQQ3gwbGZwUWdSM1NybHZhZk1o?=
- =?utf-8?B?QytodnBGc2lZcHA4d0hpQ0RuMzZ3ZlBRQW80b3NXS0JIMVBjbzRCUGNNQmlH?=
- =?utf-8?B?TFJSTHJBK3FpTDFKd1dmSTlyWU1VK25GOGVWVVRCTlR5NFB5ZlplR0FBT2pN?=
- =?utf-8?B?dUFmZXV5N21WWGpEc21lOGxxaXo3bk5TU1pnK3dnT0RlbkFYR2VoVkdJUUtm?=
- =?utf-8?B?NmRGdDNiS004YUNEYSt1NnN1VzVCbERldE5ObGZKbWZMS0UzQ0E2QU5rV21m?=
- =?utf-8?Q?888U4P9ksKxBB415Vt6w5CHG8?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36f323d1-6ecf-4f73-4a26-08ddb943ce03
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jul 2025 08:38:22.9461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: r8WFCQrQu3436cMa98fTihEL7fgNR2Ub+AEPFBQFrTuHW4FGfluCY7j25w1IQPbacNMDT6r87pfKGS2QZ2XlhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFC0624F2CA
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers: hwmon: add EMC2101 driver
+To: =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+ jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, corbet@lwn.net, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250701181228.1196102-1-noltari@gmail.com>
+ <20250701181228.1196102-4-noltari@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250701181228.1196102-4-noltari@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 24, 2025 at 07:10:38AM -0700, Vishal Annapurve wrote:
-> On Tue, Jun 24, 2025 at 6:08 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Tue, Jun 24, 2025 at 06:23:54PM +1000, Alexey Kardashevskiy wrote:
-> >
-> > > Now, I am rebasing my RFC on top of this patchset and it fails in
-> > > kvm_gmem_has_safe_refcount() as IOMMU holds references to all these
-> > > folios in my RFC.
-> > >
-> > > So what is the expected sequence here? The userspace unmaps a DMA
-> > > page and maps it back right away, all from the userspace? The end
-> > > result will be the exactly same which seems useless. And IOMMU TLB
+On 01/07/2025 20:12, Álvaro Fernández Rojas wrote:
+> The Microchip EMC2101 is a SMBus 2.0 fan controller with temperature
+> monitoring.
+> It supports up to 1 fan, 1 internal temperature sensor, 1 external
+> temperature sensor and an 8 entry look up table to create a
+> programmable temperature response.
 > 
->  As Jason described, ideally IOMMU just like KVM, should just:
-> 1) Directly rely on guest_memfd for pinning -> no page refcounts taken
-> by IOMMU stack
-In TDX connect, TDX module and TDs do not trust VMM. So, it's the TDs to inform
-TDX module about which pages are used by it for DMAs purposes.
-So, if a page is regarded as pinned by TDs for DMA, the TDX module will fail the
-unmap of the pages from S-EPT.
+> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+> ---
+>  drivers/hwmon/Kconfig   |   10 +
+>  drivers/hwmon/Makefile  |    1 +
+>  drivers/hwmon/emc2101.c | 2175 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 2186 insertions(+)
+>  create mode 100644 drivers/hwmon/emc2101.c
+> 
+>  v2: multiple improvements:
+>   - Remove FAN_RPM_MIN definition.
+>   - Rename FAN_FALSE_READ to FAN_MIN_READ.
+>   - pwm_auto_point_temp_hyst_store(): simplify function.
+>   - emc2101_fan_min_read(): add missing FAN_MIN_READ condition.
+>   - emc2101_fan_min_write(): fix tach_count calculation.
+>   - emc2101_init(): fix REG_TACH_MIN value.
+> 
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 079620dd4286..360b9f66275c 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -2002,6 +2002,16 @@ config SENSORS_EMC1403
+>  	  Threshold values can be configured using sysfs.
+>  	  Data from the different diodes are accessible via sysfs.
+>  
+> +config SENSORS_EMC2101
+> +	tristate "SMSC EMC2101"
+> +	depends on I2C
+> +	help
+> +	  If you say yes here you get support for the SMSC EMC2101
+> +	  fan controller chips.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called emc2101.
+> +
+>  config SENSORS_EMC2103
+>  	tristate "SMSC EMC2103"
+>  	depends on I2C
+> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> index 48e5866c0c9a..70e95096c6f2 100644
+> --- a/drivers/hwmon/Makefile
+> +++ b/drivers/hwmon/Makefile
+> @@ -73,6 +73,7 @@ obj-$(CONFIG_SENSORS_DRIVETEMP)	+= drivetemp.o
+>  obj-$(CONFIG_SENSORS_DS620)	+= ds620.o
+>  obj-$(CONFIG_SENSORS_DS1621)	+= ds1621.o
+>  obj-$(CONFIG_SENSORS_EMC1403)	+= emc1403.o
+> +obj-$(CONFIG_SENSORS_EMC2101)	+= emc2101.o
+>  obj-$(CONFIG_SENSORS_EMC2103)	+= emc2103.o
+>  obj-$(CONFIG_SENSORS_EMC2305)	+= emc2305.o
+>  obj-$(CONFIG_SENSORS_EMC6W201)	+= emc6w201.o
+> diff --git a/drivers/hwmon/emc2101.c b/drivers/hwmon/emc2101.c
+> new file mode 100644
+> index 000000000000..65f2eff27aaf
+> --- /dev/null
+> +++ b/drivers/hwmon/emc2101.c
+> @@ -0,0 +1,2176 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Driver for Microchip EMC2101 fan controller.
+> + *
+> + * Copyright 2025 Álvaro Fernández Rojas <noltari@gmail.com>
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/hwmon.h>
+> +#include <linux/hwmon-sysfs.h>
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/slab.h>
+> +#include <linux/util_macros.h>
+> +
+> +#define REG_TEMP_INT			0x00
+> +#define REG_TEMP_EXT_HI			0x01
+> +#define REG_STATUS			0x02
+> +#define  ADC_BUSY			BIT(7)
+> +#define  TEMP_INT_HIGH			BIT(6)
+> +#define  EEPROM_ERROR			BIT(5)
+> +#define  TEMP_EXT_HIGH			BIT(4)
+> +#define  TEMP_EXT_LOW			BIT(3)
+> +#define  TEMP_EXT_FAULT			BIT(2)
+> +#define  TEMP_EXT_CRIT			BIT(1)
+> +#define  TACH_LOW			BIT(0)
+> +#define REG_CONFIG			0x03
+> +#define  ALERT_IRQ_ACK			BIT(7)
+> +#define  FAN_STANDBY_ENABLE		BIT(6)
+> +#define  FAN_STANDBY_MODE		BIT(5)
+> +#define  FAN_MODE_DAC			BIT(4)
+> +#define  SMBUS_TOUT_DISABLE		BIT(3)
+> +#define  PIN_FUNC_TACH			BIT(2)
+> +#define  TEMP_EXT_CRIT_UNLOCK		BIT(1)
+> +#define  PIN_ASSERT_3_EXC		BIT(0)
+> +#define REG_CONV_RATE			0x04
+> +#define  CONV_RATE_MASK			0xf
+> +#define REG_TEMP_INT_MAX		0x05
+> +#define REG_TEMP_EXT_MAX_HI		0x07
+> +#define REG_TEMP_EXT_MIN_HI		0x08
+> +#define REG_TEMP_EXT_FORCE		0x0c
+> +#define REG_ONE_SHOT			0x0f
+> +#define REG_TEMP_EXT_LO			0x10
+> +#define REG_SCRATCHPAD_1		0x11
+> +#define REG_SCRATCHPAD_2		0x12
+> +#define REG_TEMP_EXT_MAX_LO		0x13
+> +#define REG_TEMP_EXT_MIN_LO		0x14
+> +#define REG_ALERT_MASK			0x16
+> +#define  IRQ_TEMP_INT_MAX_DISABLE	BIT(6)
+> +#define  IRQ_TEMP_EXT_MAX_DISABLE	BIT(4)
+> +#define  IRQ_TEMP_EXT_MIN_DISABLE	BIT(3)
+> +#define  IRQ_TEMP_EXT_CRIT_DISABLE	BIT(1)
+> +#define  IRQ_TACH_MIN_DISABLE		BIT(0)
+> +#define REG_EXT_IDEALITY		0x17
+> +#define  EXT_IDEALITY_START		9846
+> +#define  EXT_IDEALITY_STEP		13
+> +#define  EXT_IDEALITY_VAL(x)		(EXT_IDEALITY_START + \
+> +					 ((x) * EXT_IDEALITY_STEP))
+> +#define  EXT_IDEALITY_MASK		0x3f
+> +#define REG_BETA_COMP			0x18
+> +#define  BETA_COMP_AUTO			BIT(3)
+> +#define  BETA_COMP_DISABLE		7
+> +#define  BETA_COMP_2_33			6
+> +#define  BETA_COMP_1_00			5
+> +#define  BETA_COMP_0_43			4
+> +#define  BETA_COMP_0_33			3
+> +#define  BETA_COMP_0_25			2
+> +#define  BETA_COMP_0_18			1
+> +#define  BETA_COMP_0_11			0
+> +#define  BETA_COMP_MASK			0x7
+> +#define REG_TEMP_EXT_CRIT		0x19
+> +#define REG_TEMP_EXT_CRIT_HYST		0x21
+> +#define REG_TACH_LO			0x46
+> +#define REG_TACH_HI			0x47
+> +#define REG_TACH_MIN_LO			0x48
+> +#define REG_TACH_MIN_HI			0x49
+> +#define REG_FAN_CONFIG			0x4a
+> +#define  FAN_EXT_TEMP_FORCE		BIT(6)
+> +#define  FAN_LUT_DISABLE		BIT(5)
+> +#define  FAN_POL_INV			BIT(4)
+> +#define  FAN_CLK_SEL			BIT(3)
+> +#define  FAN_CLK_OVR			BIT(2)
+> +#define  TACH_FALSE_READ_DISABLE	BIT(0)
+> +#define  TACH_FALSE_READ_MASK		0x3
+> +#define REG_FAN_SPIN			0x4b
+> +#define  FAN_SPIN_UP_ABORT		BIT(5)
+> +#define  FAN_SPIN_UP_POWER_SHIFT	3
+> +#define  FAN_SPIN_UP_POWER_100		(3 << FAN_SPIN_UP_POWER_SHIFT)
+> +#define  FAN_SPIN_UP_POWER_75		(2 << FAN_SPIN_UP_POWER_SHIFT)
+> +#define  FAN_SPIN_UP_POWER_50		(1 << FAN_SPIN_UP_POWER_SHIFT)
+> +#define  FAN_SPIN_UP_POWER_0		(0 << FAN_SPIN_UP_POWER_SHIFT)
+> +#define  FAN_SPIN_UP_POWER_MASK		(0x3 << FAN_SPIN_UP_POWER_SHIFT)
+> +#define  FAN_SPIN_UP_TIME_3200		7
+> +#define  FAN_SPIN_UP_TIME_1600		6
+> +#define  FAN_SPIN_UP_TIME_800		5
+> +#define  FAN_SPIN_UP_TIME_400		4
+> +#define  FAN_SPIN_UP_TIME_200		3
+> +#define  FAN_SPIN_UP_TIME_100		2
+> +#define  FAN_SPIN_UP_TIME_50		1
+> +#define  FAN_SPIN_UP_TIME_0		0
+> +#define  FAN_SPIN_UP_TIME_MASK		0x7
+> +#define REG_FAN_SET			0x4c
+> +#define  FAN_SET_MASK			0x3f
+> +#define REG_PWM_FREQ			0x4d
+> +#define  PWM_FREQ_MASK			0x1f
+> +#define REG_PWM_FREQ_DIV		0x4e
+> +#define REG_FAN_LUT_HYST		0x4f
+> +#define  FAN_LUT_HYST_MASK		0x1f
+> +#define REG_FAN_LUT_TEMP(x)		(0x50 + (0x2 * (x)))
+> +/* Write only with FAN_LUT_DISABLE */
+> +#define  FAN_LUT_TEMP_MASK		0x7f
+> +#define REG_FAN_LUT_SPEED(x)		(0x51 + (0x2 * (x)))
+> +/* Write only with FAN_LUT_DISABLE */
+> +#define  FAN_LUT_SPEED_MASK		0x3f
+> +#define REG_AVG_FILTER			0xbf
+> +#define  FILTER_SHIFT			1
+> +#define  FILTER_L2			(3 << FILTER_SHIFT)
+> +#define  FILTER_L1			(1 << FILTER_SHIFT)
+> +#define  FILTER_NONE			(0 << FILTER_SHIFT)
+> +#define  FILTER_MASK			(0x3 << FILTER_SHIFT)
+> +#define  ALERT_PIN_TEMP_COMP		BIT(0)
+> +#define REG_PRODUCT_ID			0xfd
+> +#define REG_MANUFACTURER_ID		0xfe
+> +#define REG_REVISION			0xff
+> +
+> +#define CLK_FREQ_ALT			1400
+> +#define CLK_FREQ_BASE			360000
+> +
+> +#define FAN_LUT_COUNT			8
+> +#define FAN_LUT_HYST_DEF		4
+> +#define FAN_LUT_HYST_MIN		0
+> +#define FAN_LUT_HYST_MAX		31
+> +#define FAN_MIN_READ			0xffff
+> +#define FAN_RPM_FACTOR			5400000
+> +
+> +#define MANUFACTURER_ID			0x5d
+> +
+> +#define TEMP_EXT_HI_FAULT		0x7f
+> +#define TEMP_EXT_LO_FAULT_OPEN		0x00
+> +#define TEMP_EXT_LO_FAULT_SHORT		0xe0
+> +
+> +#define TEMP_LO_FRAC			125
+> +#define TEMP_LO_SHIFT			5
+> +#define TEMP_LO_MASK			(0x3 << TEMP_LO_SHIFT)
+> +
+> +#define TEMP_MIN			-64
+> +#define TEMP_MAX			127
+> +#define TEMP_MAX_FRAC			750
+> +
+> +enum emc2101_fan_spin_up_abort {
+> +	EMC2101_FAN_SPIN_ABORT_DISABLE = 0,
+> +	EMC2101_FAN_SPIN_ABORT_ENABLE
+> +};
+> +
+> +enum emc2101_fan_standby {
+> +	EMC2101_FAN_STBY_DISABLE = 0,
+> +	EMC2101_FAN_STBY_ENABLE
+> +};
+> +
+> +enum emc2101_mode {
+> +	EMC2101_MODE_PWM = 0,
+> +	EMC2101_MODE_DAC
+> +};
+> +
+> +enum ecm2101_product_id {
+> +	EMC2101 = 0x16,
+> +	EMC2101_R = 0x28
+> +};
+> +
+> +enum emc2101_pwm_enable {
+> +	EMC2101_PWM_MANUAL = 1,
+> +	EMC2101_PWM_LUT = 2
+> +};
+> +
+> +enum emc2101_pwm_polarity {
+> +	EMC2101_POL_NORMAL = 0,
+> +	EMC2101_POL_INVERTED
+> +};
+> +
+> +enum emc2101_temp_channels {
+> +	EMC2101_TC_INT = 0,
+> +	EMC2101_TC_EXT,
+> +	EMC2101_TC_FORCE,
+> +	EMC2101_TC_NUM
+> +};
+> +
+> +enum emc2101_temp_diode {
+> +	EMC2101_TD_CPU = 1,
+> +	EMC2101_TD_2N3904 = 2
+> +};
+> +
+> +struct emc2101_data {
+> +	struct i2c_client *client;
+> +	struct device *dev;
+> +	struct mutex mutex;
 
-If IOMMU side does not increase refcount, IMHO, some way to indicate that
-certain PFNs are used by TDs for DMA is still required, so guest_memfd can
-reject the request before attempting the actual unmap.
-Otherwise, the unmap of TD-DMA-pinned pages will fail.
+Add a comment describing what you are protecting here. It looks so far
+like you could just use regmap and drop the mutex, but I didn't check
+thoroughly.
 
-Upon this kind of unmapping failure, it also doesn't help for host to retry
-unmapping without unpinning from TD.
+> +};
 
 
-> 2) Directly query pfns from guest_memfd for both shared/private ranges
-> 3) Implement an invalidation callback that guest_memfd can invoke on
-> conversions.
-> 
-> Current flow:
-> Private to Shared conversion via kvm_gmem_convert_range() -
->     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
-> on each bound memslot overlapping with the range
->          -> KVM has the concept of invalidation_begin() and end(),
-> which effectively ensures that between these function calls, no new
-> EPT/NPT entries can be added for the range.
->      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
-> actually unmaps the KVM SEPT/NPT entries.
->      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
-> shareability and then splits the folios if needed
-> 
-> Shared to private conversion via kvm_gmem_convert_range() -
->     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
-> on each bound memslot overlapping with the range
->      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
-> actually unmaps the host mappings which will unmap the KVM non-seucure
-> EPT/NPT entries.
->      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
-> shareability and then merges the folios if needed.
-> 
-> ============================
-> 
-> For IOMMU, could something like below work?
-> 
-> * A new UAPI to bind IOMMU FDs with guest_memfd ranges
-> * VFIO_DMA_MAP/UNMAP operations modified to directly fetch pfns from
-> guest_memfd ranges using kvm_gmem_get_pfn()
->     -> kvm invokes kvm_gmem_is_private() to check for the range
-> shareability, IOMMU could use the same or we could add an API in gmem
-> that takes in access type and checks the shareability before returning
-> the pfn.
-> * IOMMU stack exposes an invalidation callback that can be invoked by
-> guest_memfd.
-> 
-> Private to Shared conversion via kvm_gmem_convert_range() -
->     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
-> on each bound memslot overlapping with the range
->      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
-> actually unmaps the KVM SEPT/NPT entries.
->            -> guest_memfd invokes IOMMU invalidation callback to zap
-> the secure IOMMU entries.
-If guest_memfd could determine if a page is used by DMA purposes before
-attempting the actual unmaps, it could reject and fail the conversion earlier,
-thereby keeping IOMMU/S-EPT mappings intact.
 
-This could prevent the conversion from partially failing.
+...
 
->      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
-> shareability and then splits the folios if needed
->      4) Userspace invokes IOMMU map operation to map the ranges in
-> non-secure IOMMU.
-> 
-> Shared to private conversion via kvm_gmem_convert_range() -
->     1) guest_memfd invokes kvm_gmem_invalidate_begin() for the ranges
-> on each bound memslot overlapping with the range
->      2) guest_memfd invokes kvm_gmem_convert_should_proceed() which
-> actually unmaps the host mappings which will unmap the KVM non-seucure
-> EPT/NPT entries.
->          -> guest_memfd invokes IOMMU invalidation callback to zap the
-> non-secure IOMMU entries.
->      3) guest_memfd invokes kvm_gmem_execute_work() which updates the
-> shareability and then merges the folios if needed.
->      4) Userspace invokes IOMMU map operation to map the ranges in secure IOMMU.
-> 
-> There should be a way to block external IOMMU pagetable updates while
-> guest_memfd is performing conversion e.g. something like
-> kvm_invalidate_begin()/end().
-> 
-> > > is going to be flushed on a page conversion anyway (the RMPUPDATE
-> > > instruction does that). All this is about AMD's x86 though.
-> >
-> > The iommu should not be using the VMA to manage the mapping. It should
-> 
-> +1.
-> 
-> > be directly linked to the guestmemfd in some way that does not disturb
-> > its operations. I imagine there would be some kind of invalidation
-> > callback directly to the iommu.
-> >
-> > Presumably that invalidation call back can include a reason for the
-> > invalidation (addr change, shared/private conversion, etc)
-> >
-> > I'm not sure how we will figure out which case is which but guestmemfd
-> > should allow the iommu to plug in either invalidation scheme..
-> >
-> > Probably invalidation should be a global to the FD thing, I imagine
-> > that once invalidation is established the iommu will not be
-> > incrementing page refcounts.
-> 
-> +1.
-> 
-> >
-> > Jason
-> 
+> +
+> +static int emc2101_probe(struct i2c_client *client)
+> +{
+> +	struct i2c_adapter *adapter = client->adapter;
+> +	struct device *dev = &client->dev;
+> +	struct emc2101_data *data;
+> +	struct device *hwmon_dev;
+> +
+> +	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+> +		return -EIO;
+> +
+> +	data = devm_kzalloc(dev, sizeof(struct emc2101_data), GFP_KERNEL);
+
+sizeof(*)
+
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->client = client;
+> +	data->dev = dev;
+> +	mutex_init(&data->mutex);
+> +
+> +	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, data,
+> +							 &emc2101_chip_info,
+> +							 emc2101_hwmon_groups);
+> +	if (IS_ERR(hwmon_dev))
+> +		return PTR_ERR(hwmon_dev);
+> +
+> +	dev_info(dev, "%s: sensor '%s'\n", dev_name(hwmon_dev), client->name);
+
+Drivers should be silent oon success. We already know that this probed
+based on sysfs.
+
+> +
+> +	return emc2101_init(data);
+> +}
+> +
+> +static int emc2101_detect(struct i2c_client *client, struct i2c_board_info *info)
+> +{
+> +	struct i2c_adapter *adapter = client->adapter;
+> +	s32 manufacturer, product, revision;
+> +	struct device *dev = &adapter->dev;
+> +
+> +	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+> +		return -ENODEV;
+> +
+> +	manufacturer = i2c_smbus_read_byte_data(client, REG_MANUFACTURER_ID);
+> +	if (manufacturer != MANUFACTURER_ID)
+> +		return -ENODEV;
+> +
+> +	product = i2c_smbus_read_byte_data(client, REG_PRODUCT_ID);
+> +	switch (product) {
+> +	case EMC2101:
+> +		strscpy(info->type, "emc2101", I2C_NAME_SIZE);
+> +		break;
+> +	case EMC2101_R:
+> +		strscpy(info->type, "emc2101-r", I2C_NAME_SIZE);
+> +		break;
+> +	default:
+> +		return -ENODEV;
+> +	}
+> +
+> +	revision = i2c_smbus_read_byte_data(client, REG_REVISION);
+> +
+> +	dev_info(dev, "Found %s at 0x%02x (rev 0x%02x).\n",
+> +		 info->type, client->addr, revision);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id emc2101_ids[] = {
+> +	{ "emc2101" },
+> +	{ "emc2101-r" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, emc2101_ids);
+> +
+> +static const struct of_device_id emc2101_of_match_table[] = {
+> +	{ .compatible = "microchip,emc2101", },
+> +	{ .compatible = "microchip,emc2101-r", },
+
+Devices are compatible then? Express it in the bindings and drop this entry.
+
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, emc2101_of_match_table);
+> +
+> +static const unsigned short emc2101_address_list[] = {
+> +	0x4c, I2C_CLIENT_END
+> +};
+> +
+Best regards,
+Krzysztof
 
