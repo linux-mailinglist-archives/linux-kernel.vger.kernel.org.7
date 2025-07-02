@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-714147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C12AF63C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C5EAF63C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 23:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C660D7A7F93
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1881A4E2829
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 21:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D84239E87;
-	Wed,  2 Jul 2025 21:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B997423AB94;
+	Wed,  2 Jul 2025 21:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="eJuEA5uR"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIU0waRN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FC823026B
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 21:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8C1239E90;
+	Wed,  2 Jul 2025 21:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751490717; cv=none; b=ckboqKG0CoEQLZ/NU2vDo/YQONvyCYUpbx86fY9ZgaTOPBNDDxhcBwAMB16y0YNE3DG9wsxEUm1GS29Cn3izYqgysnZun4X4Ikdm74rcBcT0wWEmZce85AjKSmlBLRijSGGuRqnU55r4Kb0SyfnVQizH9Lx0KgpScUhSS0D8IL4=
+	t=1751490768; cv=none; b=owHh+ooPEzA1BrgUct7MoLT3QSfK1v9k8+Ehfuw8V5OKnKTMyo4u+Xs1Rllh6aYMB35NJRXZRYyEArGuexpOXWMgZhzYDSUs0OvnOa9uODt2Tie7iWzPrdWFBGytjlRe55pJv5J9/F+BgMH/xGS5PKoJjfCh/CNwke4chm4ivRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751490717; c=relaxed/simple;
-	bh=r4ycxoolYmuKX0m2fIW1oV8sY58bOT134WmsNhkmxdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tGMyJ8KIb9YwNMVYPoU4sZFAn/ftM2ATY2ZxXMiQmjg76SUDp9wD9DiUC7aNueP29EXDcY4gIYsokcwdzsl5z9YNH0Mb1/71cp/IQDabG9WwFVzOUrLxuG1KETnXyN2imrkHY7SDrzZT6P5cEIocNdIwPjUFT5DncyP9aiY6mZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=eJuEA5uR; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-23c71b21f72so1098715ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 14:11:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1751490713; x=1752095513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sHPw+gFNU4kcte4+DjGEOa7pSlzMKOzoy1+5anqcCg0=;
-        b=eJuEA5uRye4ewsbqqtf3mko+4VCMtWArFtfxu+IphRRxyCpyR19cUc+9vvbruZq5v2
-         eDHL0HK2i/e0kibposvkeF/M9zToe21sUJ4XygzHek51RnbkGB/GVlcLHlDd/b8kag2H
-         UsKnWEqPtgzn8QH5NY/yVYcjNs7cSyeB6FPdBArimfEnPWJvi1kwbQiVK/7pRIUyrRBf
-         wvlNiMEaaDxkZQFN1Ccrxs8UrujlKG49AdzAn/95s0ALMgXyRQh4Pu2DyFQ9zc4loIUs
-         bmWV0OUROTySQP377KJNTEwM6p1oZ3aLEsFMDq9KGtndcnpzp5vt906JNTe0LoVQG9Qg
-         By2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751490713; x=1752095513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sHPw+gFNU4kcte4+DjGEOa7pSlzMKOzoy1+5anqcCg0=;
-        b=C73vwhn7V2+1onSx4dQGLHt5EtdU/gD/saI9mSoaSo7WadDGOvW8snEZsnBhDUlc7W
-         VOpxsQg8dmLUSs7PKUxqZjvGe6DnlmLQ5583LT9ZBcUqvttv6tALh3rJOKd+FunfnBYr
-         jTi6jlV2WAeE/lFEGdU402YTiJWBi2QsxaO+zwjZF+GsxqjKtHHpXhJVjpiqFGr8/UFf
-         SuEwOk1LeqDXayCUnmmXrv2+nrk0QbOtlygeI18dpjcS6+JyXwo0okiG0LdKBGrYZ8tt
-         YrMBdmVRfCg90aqjPMELoaShuZEeJwQdtGsKH0EnxixsDExBk3HXEu9+shjqRi8Cz33p
-         b5NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWoBBF5sRgphBy8Pxpi9rmSksHxrcHM2SbsmvKHG64lrYmnsRr4xIhKY9Q0Vkv2cEyOv813sqQtg9E02so=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV239LZnONv9L+vc7pPisC46J1p0kHCntANVo1wn11b+m1tYn9
-	TuuOqX8lvOelDvUFPa2RdgFqa17cBqkqZtJARwLnQS4aX/CQjZSO3PrCHWQodyT43qWn4WFbKV7
-	uFpLZY7rQd0ehxyxA6joUNzM6iwqLOvk4eGDHoPUTBQ==
-X-Gm-Gg: ASbGncu2wQtCVCG/9dlLHrficfQk9Hb8ASY2e6ZNAGuVSj7vRa76UxGtMFeCvSRvry9
-	Q7wfJIzYBSy5ES3S0D5/B46oiSK111ytaQEL5C4uBR1uawaFWI30uqPoAbpPKHeEJnHmvt/AjQP
-	5k42/F/iykVlPKamj4hspqxQucCZ1rbP8rtbpsd77Cs+3Sgaimq1d2gA==
-X-Google-Smtp-Source: AGHT+IFuNZwePMXtrGGiy+Lal9FBipRUHE+tVSTERSi9lHrrMb5JTmkuRgmPnmoBG4HWQ7kRECEakR5dz4NREEM6yVA=
-X-Received: by 2002:a17:902:d4c5:b0:234:db06:ab5 with SMTP id
- d9443c01a7336-23c6e50f8bcmr28811895ad.12.1751490713407; Wed, 02 Jul 2025
- 14:11:53 -0700 (PDT)
+	s=arc-20240116; t=1751490768; c=relaxed/simple;
+	bh=PBybrmdPM7zrM8eU16XV6OIXKt3aecbUtvMDihivU7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewMB3nLa9td1R7871lhwaOE5MZkpl0m9wPKazVuVnditKC8Lt2GnjUk3+y77HlJPnc3mjC65gNEbj5mk7foWqvXvgX41kS3gXKpRbScRzla1AbTY8B7NFgLlzj6PxkNOoySdwzjfum07uriMVw4tWD8vBVNcPyx5iOpO3SwhjNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIU0waRN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA7CEC4CEE7;
+	Wed,  2 Jul 2025 21:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751490767;
+	bh=PBybrmdPM7zrM8eU16XV6OIXKt3aecbUtvMDihivU7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LIU0waRNiIeiPXwSighbehOZkYRBLyQQz/OS6cgrq0YpfDjcMuVKWmq2bSTD6tu66
+	 kA6tVC+6djnuqyN0Lj0rL334tlOcAB5r72iewYougOw/bzfu4Lx/nY304Jz7tSU9oj
+	 YaZfI4cthW4dLYj6wxLpbY/zI4K2yg/TiSQZboapPql9zxnqEGN1mz064iyzVaNgQ5
+	 YCS5r4KAwPVcGYmVSWrFN3Qqt7S9sHNgZfMNujLorofqE5HLZLHhNyEACZ2DGB4YlV
+	 w2gaNvdq1Snnwvrp7VO0eBCfOzN3B/iNQ8FhHlELE4LfNlkPoioqXa82k5CnizIR5a
+	 Gd7+4ywf7/owA==
+Date: Wed, 2 Jul 2025 14:12:43 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Bill Wendling <morbo@google.com>
+Cc: Kees Cook <kees@kernel.org>, Jann Horn <jannh@google.com>,
+	Jannik =?iso-8859-1?Q?Gl=FCckert?= <jannik.glueckert@gmail.com>,
+	linux-hardening@vger.kernel.org,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] kunit/fortify: Add back "volatile" for sizeof() constants
+Message-ID: <20250702211243.GA327934@ax162>
+References: <20250628234034.work.800-kees@kernel.org>
+ <CAG48ez0n1E0iuOxPe=jq4MuuP3w2wMSNixmfNmBbB89jyJBSbA@mail.gmail.com>
+ <202507010926.1650356E@keescook>
+ <CAGG=3QWVM9tTRoGws0X+Jq+m7Fte2JeQC+jUL=EZ5hqGzSY6hg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250619143435.3474028-1-csander@purestorage.com>
-In-Reply-To: <20250619143435.3474028-1-csander@purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 2 Jul 2025 17:11:42 -0400
-X-Gm-Features: Ac12FXyYeIjTfBC7VX_f4PgJXEIGElJPaVB7WXMGWA-c8qyxwbh-DBbEEDN0jU0
-Message-ID: <CADUfDZo5O1zONAdyLnp+Nm2ackD5K5hMtQsO_q4fqfxF2wTcPA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring/rsrc: skip atomic refcount for uncloned buffers
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGG=3QWVM9tTRoGws0X+Jq+m7Fte2JeQC+jUL=EZ5hqGzSY6hg@mail.gmail.com>
 
-Hi Jens,
-Any concerns with this one? I thought it was a fairly straightforward
-optimization in the ublk zero-copy I/O path.
+On Tue, Jul 01, 2025 at 10:38:36AM -0700, Bill Wendling wrote:
+> On Tue, Jul 1, 2025 at 9:27 AM Kees Cook <kees@kernel.org> wrote:
+> > I have not had the time to minimize it, no.
 
-Thanks,
-Caleb
+I can try to extract this into a minimal reproducer next week if nothing
+major crops up over the long weekend.
 
-On Thu, Jun 19, 2025 at 10:34=E2=80=AFAM Caleb Sander Mateos
-<csander@purestorage.com> wrote:
->
-> io_buffer_unmap() performs an atomic decrement of the io_mapped_ubuf's
-> reference count in case it has been cloned into another io_ring_ctx's
-> registered buffer table. This is an expensive operation and unnecessary
-> in the common case that the io_mapped_ubuf is only registered once.
-> Load the reference count first and check whether it's 1. In that case,
-> skip the atomic decrement and immediately free the io_mapped_ubuf.
->
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> ---
->  io_uring/rsrc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 94a9db030e0e..9a1f24a43035 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -133,12 +133,14 @@ static void io_free_imu(struct io_ring_ctx *ctx, st=
-ruct io_mapped_ubuf *imu)
->                 kvfree(imu);
->  }
->
->  static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_ub=
-uf *imu)
->  {
-> -       if (!refcount_dec_and_test(&imu->refs))
-> -               return;
-> +       if (unlikely(refcount_read(&imu->refs) > 1)) {
-> +               if (!refcount_dec_and_test(&imu->refs))
-> +                       return;
-> +       }
->
->         if (imu->acct_pages)
->                 io_unaccount_mem(ctx, imu->acct_pages);
->         imu->release(imu->priv);
->         io_free_imu(ctx, imu);
-> --
-> 2.45.2
->
+> OPTIMIZER_HIDE_VAR doesn't have a 'volatile' on it. Could that be it?
+
+I tested
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 6f04a1d8c720..eab208a9a6f4 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -160,7 +160,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #ifndef OPTIMIZER_HIDE_VAR
+ /* Make the optimizer believe the variable can be manipulated arbitrarily. */
+ #define OPTIMIZER_HIDE_VAR(var)						\
+-	__asm__ ("" : "=r" (var) : "0" (var))
++	__asm__ volatile("" : "=r" (var) : "0" (var))
+ #endif
+ 
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+
+but that did not resolve the error.
+
+Cheers,
+Nathan
 
