@@ -1,51 +1,96 @@
-Return-Path: <linux-kernel+bounces-713374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1D6AF589E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 15:24:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941F8AF15A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A1794E17FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:22:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 200BB7B6EB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 12:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7984E28724A;
-	Wed,  2 Jul 2025 13:19:35 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B75B286D5D;
-	Wed,  2 Jul 2025 13:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2395F271452;
+	Wed,  2 Jul 2025 12:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aimjaRiN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302BB26FDA5;
+	Wed,  2 Jul 2025 12:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751462375; cv=none; b=ShalVzZFRv8eW6/Ic19GCHfeL39tNb7yeePA2dFwcO2+I+1q4OEhvRNGG9rjfcv9dpOJEyX5G/R0lFBv1rAkk1Fb7SOMtLnEXf7wsvsfKEqxDwCXBz2mcDdesa0myZoq7QCcIgASxMGQYb8QKMMZggJbyYFQC8ghaKa9KZ5FbP4=
+	t=1751459338; cv=none; b=bUC0fIM66uSU45HgBnaUZQM401fgn9hIZlJkDck+4fcsg0vaE7gR6kXnaDWbuKkLil10X1NZUfEhintOHAMOZiPPr+T3FOaCKcHf94b7uR982yqtxqmtsGGraQhEkLAtW7ijiymof89302KB/OKHWdjqWLmjCA9o4vW38sBboVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751462375; c=relaxed/simple;
-	bh=U21Vck/VgyCaiFV68QQ9fY52qyjiIU3NzWjI2rcDFEI=;
+	s=arc-20240116; t=1751459338; c=relaxed/simple;
+	bh=zoqxa8Dth/WIL+RSmgjM63YP+N6qBvdpGWSiRdatsBg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fxe6UfwCrSm/AeBepOOkyizstYvZK24OS9McVE74g+y5buLDYZ4F9BNW0z1SQ/M+YNOKwu36QrkpZ+Be8HqHu7jsXSEE/D6ZoCH+eLbjzrKpE4cfi/AINjFg0+hXlmXjZfT1kH2Qs8ucOqjtlfr/3yYZvcC1iipGNG7sl99ztDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1uWwab-00058S-00; Wed, 02 Jul 2025 14:29:25 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id E7961C0C1C; Wed,  2 Jul 2025 14:28:11 +0200 (CEST)
-Date: Wed, 2 Jul 2025 14:28:11 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-wireless@vger.kernel.org,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-	nbd@nbd.name, Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3GC0PCkc742SFReiOSnUXGtwI8Y8oPSp1bVzBNRnmrODK6UdulHV9oZVU3napdu04ACDmN2bdjEo4BGOerIUZBbUD64SiSA48b3UutQOjiVH0Ws6NoN6EMS1DgB/Pj2VrIEEcY3+n4m51UGUOk/Fr1FZeE8D5yCIyGlLk4ky30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aimjaRiN; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751459338; x=1782995338;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zoqxa8Dth/WIL+RSmgjM63YP+N6qBvdpGWSiRdatsBg=;
+  b=aimjaRiNhIDq/ud/a1Ouq7G6B8K1Rjec3heqITU4bucRJOzy6IY3cWL1
+   H7l1L81zaDSgFWQjCvN31AtBqhwW5fY2mMoGkBMYb42U11SrVnnlAMFi1
+   GLIQUzvR3V2BwihCUaZXYotR44YMUl84LYgjogeuc1dAveqsLZtJFe4+S
+   3fMwYvyh8MUy1rNdYTgeidK4Wwcd28+VmjFlb0HdTBmZ1ZPryqfnU+VMQ
+   neeAuvUM9mEWqbkr07nKNjUNjKQx+m09y8YX8PhHi//Hw3+bJ/wWhFAHZ
+   pFO1aRfl5OdHrQKH1kDnXU8vntw7XG9tAk5Asdz7gRmG3WS9+8K3D8UGv
+   w==;
+X-CSE-ConnectionGUID: OXtJ+nJQR5eWO8r3+dwVHA==
+X-CSE-MsgGUID: tyc9leZBQJiLva+69552UQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="57426623"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="57426623"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:28:57 -0700
+X-CSE-ConnectionGUID: ZYzfy1TaTmSmBpS29OqyAg==
+X-CSE-MsgGUID: c4FjoOfOQgG2bv26Z60xAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="153839670"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 05:28:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uWwZx-0000000Buum-1vQU;
+	Wed, 02 Jul 2025 15:28:45 +0300
+Date: Wed, 2 Jul 2025 15:28:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MIPS" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCHv5 5/5] mips: dts: qca: add wmac support
-Message-ID: <aGUl2_kSTkF4qUgZ@alpha.franken.de>
-References: <20250609030851.17739-1-rosenp@gmail.com>
- <20250609030851.17739-6-rosenp@gmail.com>
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 21/24] mailbox/riscv-sbi-mpxy: Add ACPI support
+Message-ID: <aGUl_S9irfhlHmy2@smile.fi.intel.com>
+References: <20250702051345.1460497-1-apatel@ventanamicro.com>
+ <20250702051345.1460497-22-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,30 +99,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250609030851.17739-6-rosenp@gmail.com>
+In-Reply-To: <20250702051345.1460497-22-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sun, Jun 08, 2025 at 08:08:51PM -0700, Rosen Penev wrote:
-> Now that OF ahb support was added to the ath9k driver, we can use it to
-> enable and use the SoC wireless found in these chipsets.
+On Wed, Jul 02, 2025 at 10:43:42AM +0530, Anup Patel wrote:
+> From: Sunil V L <sunilvl@ventanamicro.com>
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  arch/mips/boot/dts/qca/ar9132.dtsi                       | 9 +++++++++
->  arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts         | 4 ++++
->  arch/mips/boot/dts/qca/ar9331.dtsi                       | 9 +++++++++
->  arch/mips/boot/dts/qca/ar9331_dpt_module.dts             | 4 ++++
->  arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts           | 4 ++++
->  arch/mips/boot/dts/qca/ar9331_omega.dts                  | 4 ++++
->  .../mips/boot/dts/qca/ar9331_openembed_som9331_board.dts | 4 ++++
->  arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts              | 4 ++++
->  8 files changed, 42 insertions(+)
+> Add ACPI support for the RISC-V SBI message proxy (MPXY) based
+> mailbox driver.
 
-applied to mips-next.
+...
 
-Thomas.
+> -		if (dev_of_node(dev))
+> +		if (is_of_node(fwnode)) {
+>  			of_msi_configure(dev, dev_of_node(dev));
+> +		} else if (is_acpi_device_node(fwnode)) {
+> +			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
+> +							      DOMAIN_BUS_PLATFORM_MSI);
+> +			dev_set_msi_domain(dev, msi_domain);
+> +		}
+
+Actually you don't need to have the if-else-if if I am not mistaken.
+The OF does almost the same as it's done in the second branch for ACPI case.
+How many MSI parents this may have?
 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+With Best Regards,
+Andy Shevchenko
+
+
 
