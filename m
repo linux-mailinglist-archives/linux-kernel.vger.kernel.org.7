@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-714096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44E2AF631F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:15:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C95AF632C
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E53A523DE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:15:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D734E35F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 20:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D8630E846;
-	Wed,  2 Jul 2025 20:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E529C2D641B;
+	Wed,  2 Jul 2025 20:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoRIaife"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z5AO+dcM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QfXg31Yp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30D53093CA;
-	Wed,  2 Jul 2025 20:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFC52D6408;
+	Wed,  2 Jul 2025 20:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751487282; cv=none; b=WN+7AETj8D/LfgSgWZOAd6170ziWZYwR3FIDE2c/Mkr0XKid8FcK0Y2gQjOZt6moxgm4vMLfuiGReq4qkXo6SN2qZZEXpUto8dsEQqjKMBIsX50Ss2lyzh9ljYCS7eln7j15uJaSvLwomanS4p93btVVDGEn+ptIb9h4Enn/0a0=
+	t=1751487310; cv=none; b=t3PDiafs9pd6hS9fkbDRLH+ANe6Psc/8pOWrofdG6B4wAlkr0pw6hjFmbxJu4+Fh/t/0N/WZL8nHCWzSpBI0cKjxcYE4lp6uNF3v5nke4kDoaulbPrOUTZVbqvRpfqqGsegK9oKarF3mOJCJhPuYC4UNhixr/cCI3uSk/qJxzZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751487282; c=relaxed/simple;
-	bh=6eSaApPhk3wJVbii9cEkGt0eTlySUhDBHN3P7aS4uUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CBeK9nV2VNn5k+Et0hG0uaAQxcg2NZH3DBKCK3oOZrK0vpGnxECq/YFL+gvUR3VUnpQsEgmCcOEv7dnbsj2Kscb7yjN6feRyGd3qEIUnPqMRy/b8H6CDR+9IcrnpWMUBpAw23CEbpU1qiEBiPzfIIhgsZq3abLCoBrh2Xw7KZ5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoRIaife; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B21C4CEE7;
-	Wed,  2 Jul 2025 20:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751487281;
-	bh=6eSaApPhk3wJVbii9cEkGt0eTlySUhDBHN3P7aS4uUM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hoRIaifeAR9VN04Rc7+qMCtEan1HTEfv2e41o0Nvp9ZBIHJ5xrlodBpv2v8Mtwq/6
-	 v4fUbXTlYgGFWl5Bh0K8/6ntwPtQoKIveaPQPPncb6FMwXuQI8fNp4Nc65EpTaz02S
-	 fWFVaudbUTxo2h+LJ9my80uFO/qD+OshbnTtrBPLWOuCg6JiopHyUM9YgbnhhqiZEK
-	 +ok7oKsPE8FJqfeUVM01lug5kXjpaOnJmoKHLVto321ibSKd6GvPTkQu4qWbrEBM3S
-	 HVmubt+Gq5WFZYqlQ9fVKVwzdPFxZ9I6Ug6/uVOM3OpbiF6PedXEQVpbLcCAI1f0us
-	 UNiGKx9uTqWeQ==
-Message-ID: <5d4dfcb2-cdf5-41d6-a94f-5a116837ee25@kernel.org>
-Date: Wed, 2 Jul 2025 22:14:34 +0200
+	s=arc-20240116; t=1751487310; c=relaxed/simple;
+	bh=xoEzdAXMN+9YNOEQPnHeME9fmdpC2h7BUF6gBBURt/4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G3H/1UsTwJPrn6bpQrIwREHr0r9Xrt81mXPN0uCoT+p3uEAqm4K0te4kzA1NItp/7KX4mXqY0Hq4xJH4cKVyrCp5GKmRqDGk9QevyyLZxU1J9IeHQkSsKU4QSPFvzfmZA5+utqNCCwrpBDgSiPtawfGbz4g+g4nLxcrwyfZBPoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z5AO+dcM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QfXg31Yp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1751487306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhL+z41on9N9B0503MxBPByf3cm+nR0OppEpbXyGbwM=;
+	b=Z5AO+dcMUJjSZuXOBpdwzVRdiewXsbJcnGYGUinI21KQtUefqC2NPNnl10T6jB10Y0zsAY
+	ZacG3w265vsoRAi4Sj8KT6BHQaifHIszh9KjhPzNHDrUECKI63k6L/pphJOHeiN2e45lY1
+	NBQyI3+xkBtF+mSyARjgIqkLhLH4zLcyrHKiBDx81Y3Wt0OueaU6NgbZNhtV8/23+PhXcC
+	HnEDbxmwyYrf3mo1KS+qZpIyBfDRQ9hUaUC2MxBC45z5nNyzVxDJXgFnOMGJI/pJtICH9B
+	TJgC4iY0bYsnGZFu1ApuIObtWKodk4LImL96x4Y4raiwRnEMIbZCukpiSov6Xw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1751487306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JhL+z41on9N9B0503MxBPByf3cm+nR0OppEpbXyGbwM=;
+	b=QfXg31Yp1L3nUgpqMntcYdcUNxmNo3vHlRMknBHFeJwi9ixPa5OnZI2vgfLv/fmJtx5AAq
+	gC2EruvjFfcnPVAA==
+To: Terry Tritton <terry.tritton@linaro.org>, Shuah Khan <shuah@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: ttritton@google.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Terry Tritton <terry.tritton@linaro.org>,
+ Wei Gao <wegao@suse.com>
+Subject: Re: [PATCH v3] selftests/futex: Convert 32bit timespec struct to
+ 64bit version for 32bit compatibility mode
+In-Reply-To: <20250702102157.5222-1-terry.tritton@linaro.org>
+References: <20250702102157.5222-1-terry.tritton@linaro.org>
+Date: Wed, 02 Jul 2025 22:15:06 +0200
+Message-ID: <87y0t6jqnp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] dt-bindings: vendor-prefixes: Add Winrise
- Technology
-To: Christian Hewitt <christianshewitt@gmail.com>
-Cc: =?UTF-8?Q?Jean-Fran=C3=A7ois_Lessard?= <jefflessard3@gmail.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>, Boris Gjenero <boris.gjenero@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Paolo Sabatino <paolo.sabatino@gmail.com>
-References: <20250629130002.49842-1-jefflessard3@gmail.com>
- <20250629130002.49842-6-jefflessard3@gmail.com>
- <c6d0d856-0c49-4ad7-bc6f-1a228dcb2d9d@kernel.org>
- <0182CF05-6011-479C-A4A2-18A0C60F7710@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0182CF05-6011-479C-A4A2-18A0C60F7710@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 30/06/2025 15:51, Christian Hewitt wrote:
->> On 30 Jun 2025, at 4:25 pm, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 29/06/2025 14:59, Jean-François Lessard wrote:
->>> Assign vendor prefix "winrise", matching their domain name.
->>>
->>> Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
->>> ---
->>> Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->>> 1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->>> index f03ab02afe..a3bf93e5dc 100644
->>> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
->>> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
->>> @@ -1711,6 +1711,8 @@ patternProperties:
->>>     description: Wingtech Technology Co., Ltd.
->>>   "^winlink,.*":
->>>     description: WinLink Co., Ltd
->>> +  "^winrise,.*":
->>> +    description: Shenzhen Winrise Technology Co., Ltd.
->> Hm? https://winrise.com/ redirects to https://amdaluminum.com/ for
->> fences and other alu products.
-> 
-> According to multiple Chinese chip-buying/trade websites [0],[1] and
-> the internet archive [2] their domain is winrise.cn (not .com). There
-> is currently no active website despite whois entries showing that the
-> domain registration is still active/alive.
-> 
-> [0] http://www.84878.tradebig.com/
-> [1] https://www.tradeeasy.com/supplier/714703/products
-> [2] https://web.archive.org/web/20160312143416/http://winrise.cn/
-> 
-> If you’d prefer “Assign vendor prefix based on their name” as the
-> patch description? we can change that for the next iteration.
-If commit msg says "domain name" as an argument and it turns out it is
-not matching domain name, then that other domain name least needs to be
-in commit msg. The rule of domain name comes from US tickers, so only
-.com should be considered. If there is no conflict and no .com
-manufacturer it is fine to use whatever other name, but the commit msg
-is not then correct.
+On Wed, Jul 02 2025 at 11:21, Terry Tritton wrote:
 
-Best regards,
-Krzysztof
+> Futex_waitv can not accept old_timespec32 struct, so userspace should
+
+sys_futex_wait()
+
+> convert it from 32bit to 64bit before syscall in 32bit compatible mode.
+>
+> This fix is based off [1]
+>
+> Link: https://lore.kernel.org/all/20231203235117.29677-1-wegao@suse.com/ [1]
+>
+> Originally-by: Wei Gao <wegao@suse.com>
+> Signed-off-by: Terry Tritton <terry.tritton@linaro.org>
+> ---
+> Changes in v3:
+> - Fix signed-off-by chain but for real this time
+>
+> Changes in v2:
+> - Fix signed-off-by chain
+>
+>  .../testing/selftests/futex/include/futex2test.h  | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/tools/testing/selftests/futex/include/futex2test.h b/tools/testing/selftests/futex/include/futex2test.h
+> index ea79662405bc..6780e51eb2d6 100644
+> --- a/tools/testing/selftests/futex/include/futex2test.h
+> +++ b/tools/testing/selftests/futex/include/futex2test.h
+> @@ -55,6 +55,13 @@ struct futex32_numa {
+>  	futex_t numa;
+>  };
+>  
+> +#if !defined(__LP64__)
+> +struct timespec64 {
+> +	int64_t tv_sec;
+> +	int64_t tv_nsec;
+> +};
+> +#endif
+
+Why not use __kernel_timespec which is the actual data type that syscall
+requests?
+
+> +
+>  /**
+>   * futex_waitv - Wait at multiple futexes, wake on any
+>   * @waiters:    Array of waiters
+> @@ -65,7 +72,15 @@ struct futex32_numa {
+>  static inline int futex_waitv(volatile struct futex_waitv *waiters, unsigned long nr_waiters,
+>  			      unsigned long flags, struct timespec *timo, clockid_t clockid)
+>  {
+> +#if !defined(__LP64__)
+> +	struct timespec64 timo64 = {0};
+> +
+> +	timo64.tv_sec = timo->tv_sec;
+> +	timo64.tv_nsec = timo->tv_nsec;
+> +	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, &timo64, clockid);
+> +#else
+>  	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, timo, clockid);
+> +#endif
+
+You simply can do
+
+        struct __kernel_timespec ts = {
+        	.tv_sec = timo->tv_sec,
+                .tv_nsec = timo->tv_nsec,
+        };
+
+  	return syscall(__NR_futex_waitv, waiters, nr_waiters, flags, &ts, clockid);
+        
+unconditionally. No?
+
+Thanks,
+
+        tglx
 
