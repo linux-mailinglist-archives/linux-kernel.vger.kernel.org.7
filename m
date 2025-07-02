@@ -1,341 +1,234 @@
-Return-Path: <linux-kernel+bounces-713890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB00AF5FC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 19:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90500AF5F22
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 18:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E18B1887712
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 17:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C7491C45BC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE2130112D;
-	Wed,  2 Jul 2025 17:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C91DE2A5;
+	Wed,  2 Jul 2025 16:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="Xm4bVHuq";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="Blpg6hSn"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="blHLxU37"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A34A301136
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 17:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751476671; cv=fail; b=pUAutcEaOJHKLy5r8hQ/S0gfyI8hXQXGwE80+GxGEzKm1Xdtb05mlgSIEDnEA6jg7iD2K/Bza8TpAp4mlQQWjYg6mNv1/9zLHyD3z28m6B1tj1aZchR5gSzwGYpeabLTayN8PLFks4a/cgpIISrO6B/r/SjqHz0h//XPjgDzeMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751476671; c=relaxed/simple;
-	bh=9jsaOpqY9AQUb7geUhR0DCbguIzvKUH/v2DX0p3RCU4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Hxp7FvvS6F2BbOF3tsZe1RFByLuloljy9c5n8X55P5LIeO4UYFtTQ9m67IDR5vJfcbmhjCihj1u6g+6pxMgM9Ua/phxjIA0NXFEO2CCMFPcoH9Nk3NULkd5ReQcVzzcM7qpZ9GeAaiNWQIV6JnQNeJVheSy95iDmzDYOeKfbaO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=Xm4bVHuq; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=Blpg6hSn; arc=fail smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 562CZX5k4027150;
-	Wed, 2 Jul 2025 17:50:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=mgNLvADr8ofg57qCkGaqEpl8q
-	jRofNGjnGHNlbb5V4Q=; b=Xm4bVHuq7Fz+0/AGUM2+DLnyxB8jczb77g+0chsAV
-	iRQ6aYcek/px76X7cMZUAAvImE8pXjt6ayevedCJecwqgOWRpL1DFvKvzXxsjVK4
-	1y5BOcifuU7Q+iiQDsdeKeglRqrjLMEO/jxb9DmGhUPY8XH4pc130dkZuzPebeqX
-	qDVHsyYsHQZTb4Dq7t7r1jF8d9K+B38ZSrF+v1jzsfyAmk6jcncmvWc6484vkS93
-	TeWsZGS9aBzjleb2tKkEuIdKjX03GTP2ewHqSjk6YgSiv/7/IAEG4ZX/fRAqJcn6
-	sKgnNSBQ3a7+9BUyRhns4c5HM2ENVV6iwWIlOhBEc3ofg==
-Received: from lo3p265cu004.outbound.protection.outlook.com (mail-uksouthazon11020121.outbound.protection.outlook.com [52.101.196.121])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 47n1d90ah8-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 02 Jul 2025 17:50:23 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=inQH/EmCwKXuIpGzDyWEiEtgijnZm0Pwpi54thw9xyTXOpT2+EGhpBLzBqPeL2rd0DdJdkbOWRLk+qNO7OdeNkLnfj+Aolh8ltsuRn66R/DM5wDKtQZ5bnGHhUhBAIx6nR4G+ORS4UbScxP3JOO3+3D+Vg2xuGyfUXU9PekLkd1Q9tDu1KiM+fGZhoHuYVfn+uzY22aXqIlYB2iFFUG0fVbYgQ+FFcRjT9nmTEdrJCfsdaIBvK2i25rC9L+RjYw4URp5dbI/ruDGTbZqx0VIB/aw/cWSua+arxKPqd0IG49Cj7TS0t9Onw1lQMnQMi8enAmAva50x+IBIu+SZECvow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mgNLvADr8ofg57qCkGaqEpl8qjRofNGjnGHNlbb5V4Q=;
- b=BjrzIxyKu7DojRVzdjsmzltbxEqFUIOeRlnmk2+h6jG0X0ch9AbudiVkKf1wohty9G6tlSx1Wcgh38lQJPwuVZGDUhXE3yOP3T0q4643IwmJRyoyoj533b6nZ2JWw8Aaiux9Lot4V18H0RllSEnaJqEqEb8UQf/b8Dx+WnVdb6XSb5vWtVsGSNsGUEe1CG6HHu+O03k/nOUP0XxtHdoCy9dVkV1pWDTTNspD4M831y72B8gT+zms6NsVblgeA/IKdZLeWqMyTr2tpgpWyrdK1+M7VEJxaGH9fVSvep1y5xedRbX2aGZKuxwDa0ttJqMGb1TiZftWQpxzayNrZ5bcPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mgNLvADr8ofg57qCkGaqEpl8qjRofNGjnGHNlbb5V4Q=;
- b=Blpg6hSnqcI3ujXiQ6oxynJoS+HBOE5NPQ6Vlr0xFNjCwmm37uhIShUnq+kqFddfMWKtLLM/0w6HSma+HGJPyQ/JpRgXKzSkcLy+t7gE7GSXDKlyCWucKsVclXtQo5pQjIBkJQPTLjZ4LIN7JM4150FEXlxnC96gClOscmnagac=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- LO0P265MB3401.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:186::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8901.20; Wed, 2 Jul 2025 16:50:21 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%3]) with mapi id 15.20.8901.018; Wed, 2 Jul 2025
- 16:50:21 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Alessio Belle <Alessio.Belle@imgtec.com>
-CC: Frank Binns <Frank.Binns@imgtec.com>,
-        Alexandru Dadu
-	<Alexandru.Dadu@imgtec.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/imagination: Fix kernel crash when hard resetting the
- GPU
-Thread-Topic: [PATCH] drm/imagination: Fix kernel crash when hard resetting
- the GPU
-Thread-Index: AQHb5RNs7gCPd/hxM06SJOLWtlg4+bQfGKMA
-Date: Wed, 2 Jul 2025 16:50:21 +0000
-Message-ID: <2ec47280-1032-4e7a-b381-e6f738a15dd5@imgtec.com>
-References:
- <20250624-fix-kernel-crash-gpu-hard-reset-v1-1-6d24810d72a6@imgtec.com>
-In-Reply-To:
- <20250624-fix-kernel-crash-gpu-hard-reset-v1-1-6d24810d72a6@imgtec.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO0P265MB3401:EE_
-x-ms-office365-filtering-correlation-id: feaa3a37-4dc1-4637-3114-08ddb988886b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|4053099003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?K0hEVlpKbXVnNVBXTEgraUd0UjdOdUlKNEhBend5OEsxWHgxN1lvZDI3VTJx?=
- =?utf-8?B?cGZnZlU2bmFtRURtN2lLSS9qUlhVMll5ejlTV2YzeDVtbUNzRENvVERUUGZq?=
- =?utf-8?B?NkpSZHdsYWVjY3BIRjRKdmhVTllTK084ZVNLNmFkaldvN0l6MlByUkxPMkEx?=
- =?utf-8?B?eDdhQUZZZVdSOXJTRDNKdjU5VTg2bi9Gd2dwT1E0UFVIcmh6VmlYaHRNUjht?=
- =?utf-8?B?aDFqQmw4VVpWb3pBUnJzZE9mSVZFNGs2R1VHdWp4Umdvb3RxK2xydnFsaU9u?=
- =?utf-8?B?UjR4OTVYY2FiSXNnbnFFeWUvQkxMdWdPNWt2RHI0WnNrSkVuR0VydU5KUThS?=
- =?utf-8?B?Y2p1VG13M25IWWEwd1FVbUhWZUFPSEhKbkF2NjNIOC9PbkM4NXFQZ0I1eTU0?=
- =?utf-8?B?ZVlWWXNBMlVHZXZ1SEdvRlBUN29xSllVK1IvZ0ZYYUNxRUU0cklJcnU4ck11?=
- =?utf-8?B?NUxFOXhLWG9SY1h6aEZjUVdZR1ZCTXZKS0VhQjVXajJKUzlvdlM4cG4zVS81?=
- =?utf-8?B?UkpGeTk1K1JkVjh2eG5UV3Z4MGlId1lNSU00dU1mbnY5ZGFGNHBROWJMemNq?=
- =?utf-8?B?V0tRWEdtdzMvaEFaWVlwRWJ5ZUs0RGN5Tno0TGJrZzVOV29OYXl6RUdMd1Rw?=
- =?utf-8?B?ZWtMSTdtdDFHVisydkZEdEZWLy9UbUIydXZ2bk1Mb3R6ZHZFTU1iRE9VaUNr?=
- =?utf-8?B?U2N1c3RxRy9Pc1JuT3JtMHFlOUZHeldpZkdzbXFRd3d3R3hXZ3RvSGZURGZ4?=
- =?utf-8?B?Z3RUZ1R3akZWNWUxa1I4ZUl6dkZlTlNpUWRSdjduN2Zsek53KzRGajlnTXBt?=
- =?utf-8?B?TGpxSTlnMnErd1AwWUdRNkZkTTVET3ZvUzdodHJvWC9MbWIzbS92OXJVTmpH?=
- =?utf-8?B?US9BM0VVYmVMTlNhRGt1MVovOUJjU2NiL3JWY1hOS3E3bnMxeHBWSkoyVVpQ?=
- =?utf-8?B?a3JFby9Bd204bi9tS0wyOEc3ZTdRVWlIZ2dzMGhvS2xhT29OaXlCTy93UjBG?=
- =?utf-8?B?TkxEcDhMRmFENzdqNnBQV01OOTVVWmovTWE1Tk9ISkJYOVJ2ZmVDbEd4ZUFH?=
- =?utf-8?B?YVBoN3RRc2xOY2ZXSEJCcithTGt6YmVhdjVlZ3RTQ0ZZSGRNY1Vab21xNk5S?=
- =?utf-8?B?QUdDQTBqUkJDN1NkSnRZcXdTSHcxNVhwVXQybU8rVmdRbk1ra0czbmZBVko1?=
- =?utf-8?B?NUxLMkszSHVUMWpwK3haclA5MStHdTgvZW9sczllSGFnY0x2dXNXall2eGpt?=
- =?utf-8?B?SFZyUVJ6UUpLYlZzU0d3N2NVMnFVUDhvZWpPaDE3WFJrbE15YU5sM1loSmVX?=
- =?utf-8?B?Wk1UN1dENWxLZE1QZDNsbGo4K2NDZmxHakNCMmhGa3ZSZWFsWHg1cDJzcFA4?=
- =?utf-8?B?U0dpb2phU3Q2L1dZOWdxaUNCbUM4RUVZTHl2RmlIcStLVkNpakpQMzlRL2px?=
- =?utf-8?B?QTBEb2FpMnhuWDk3YVpKVWcvQng0S2ZXSjJzYzdYQkoxVnlRZ2pkYjhwQVFM?=
- =?utf-8?B?NzluRkVLQ09xZERFZlpwNGZhdkVTYlNrVE5aU1NKdlU1UVFBcUdlYmlCTWtM?=
- =?utf-8?B?dDlUZjJOTUlmNXlTeEUyKy8wcFhoODA1R1NiWkI3Q0p2MXIreXZLckg4ODNn?=
- =?utf-8?B?ZllFdFFqZjdxVFlETlhJZHUyVURCTXgyRytmb2FTYWtZaFhvMjhTVzgwYjB0?=
- =?utf-8?B?WWNUSEJ3alhUbnFGTWxuS1dKc0Q2TlFwcHE1ck1mK3ZpWEhIeTNjM0RhdVhL?=
- =?utf-8?B?Slk1ai9VTmxSb3JCampCaEt4dUJReDBpS1FHcVp3T2ljYnpkTXVValVrRWpY?=
- =?utf-8?B?dTUvZGd1MWZjMXU0SE8rUVFWc1IvYU4wd3NORDBEK1lGU21oWmVxMzJ5Z0I2?=
- =?utf-8?B?Yjg5QnZRM3M5VVF2dXdwRm1PZmh5MktEMjl6UjU0Q1FRSGV2aWlHTDBUbmgz?=
- =?utf-8?B?N29vSDBzalF0RFp2Ri9sWndFOExNZWswOExoVmQ5QnRLL2VFTWJITUM5Qnhs?=
- =?utf-8?B?M1VwbjdUK0pRPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(4053099003)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cVJNYktFUlJFSndGMzZVK1JHY0JlMUhUdVdrWG5IeGZITDc4QTdjMUpLMFNm?=
- =?utf-8?B?bGR3Rmt6U1dlN0JkWkNheEtCME1wZUJueDhxcmduMEJZZkVSYWZXYnhZdUM5?=
- =?utf-8?B?ZzRucXQ4N0VFSllDa0R6d2JSZ2JISzloclRnMkNOcGNGd3ZlcDdIdzZ5NFJq?=
- =?utf-8?B?OTFNV09tQmpFNEdSM3FROWhjeWdDazdwWnk1OFozUU9KVC9mM20rMVNqT3Ny?=
- =?utf-8?B?TmV5OExoRyt4ZnRUa1J1SWhsVEkxWUVsZFRHTzFZMDBTUWpUVVR4ZkV3Ulor?=
- =?utf-8?B?YnR0VFp2NnZFQnZ0cmphWmNjUkdkNXZTMEJJQ2VicVFoSG5jbENwT212U0sx?=
- =?utf-8?B?b2V3ZThMQTIxcUpEQUY0dVpyQWk0bXZlSzJMT1BIK0hiZlc4QjlESTRxMkFU?=
- =?utf-8?B?TWdaUXdsQTUrbHc4RFVjelBScjRUTmFYaFRQS1B4WXNycTJDZWpidXhDS2Ra?=
- =?utf-8?B?WE9ncUhSMzgrTjArdy9uajAwNVR6aDIzYUx4NVl0dk1iMTZjM1hUQzdTNi9L?=
- =?utf-8?B?L3RtOU41ZlIrbEhLRVA5SXR3enJmTytkZ09mUjJxS21oamRVRnFsck5BQWl6?=
- =?utf-8?B?YmlwR0FiYzNqSkhmZWwrblY0WEdqQ1Ztd2czK1hSbkMyVFliN3o4WUQwK2NM?=
- =?utf-8?B?anJKa005TXlZeUNKeEg2OG1KSWpwMVBIK3JTWlFpeHhqZnB2cU1TVGxwYWdQ?=
- =?utf-8?B?TmVpczBHTGF4TnFwQ2owK2NqWisrTzBDek5jbzk4a1kvakhBWTJSYnZYaC9H?=
- =?utf-8?B?YllWTmRxNGtHaHBTSTlrQ2ViWXpvYzVNMSttQTZsUUI3alprNXhMN1E1aitQ?=
- =?utf-8?B?Vnh2SUllZEREK0U3eDJBc0k5TmpUTC96MmVDZGVJS2VJdVBseGVtUTRaS0I2?=
- =?utf-8?B?UWFUV0hjU3NJZkFDZzNpTlVmbXdzdmErTTNzUmE0Y2lQN3RHemVydjE0NlRo?=
- =?utf-8?B?NWpIb3hlYi94UHNjMFVieVc0REF5SGVoNTRQOXBXdXhlRlVxV1M4V0tCMzR4?=
- =?utf-8?B?Q05DU0JMbmZVdmxncHBkclBoRXkzOVFSRERpMjVQUUdRaUpkNHVPeWZsb3hQ?=
- =?utf-8?B?bDRlNDU0MHhEeXFFQjNDcnlEUWcwUXBVMnRmNUVrV2t2NjJNUkNQVFRGTlEx?=
- =?utf-8?B?L1lyUGlpQmtEYzFhaEwrYzY3TGU2Z1B3NDNGMWlNaDlmbGFsQ0hGU2xJTkpq?=
- =?utf-8?B?T2dybXBkQWJZcmpLMEpEWGRDem9MaHFYQUpHbnNLcXlhaTRTc3duVFh4R1B3?=
- =?utf-8?B?cmRWSUFrbXQvMkxibktzY245eGx3OUFFajZINVFPb2ZTdG4wU0czOTlHUnAr?=
- =?utf-8?B?VXdOakpyWkFNbkxGT3h2Y1dMVjgxZmZ6RzM3b3ZSdmpLU25zMEJGM09NV1Q3?=
- =?utf-8?B?MkQwVEdkYkJmUDY4WWJocVA1eW5rY2VIVUhSSFZBS3c1Y0hTQ3FQNXluTUJB?=
- =?utf-8?B?VnB5T0tIcysyRmpmUWYvdHBSMmJyTXVhMk5Pd3hHN2dvckdWZlduWmFwaEFV?=
- =?utf-8?B?WENJN3pZTEpzT1ZUaFJoc1JtQVA4SjRoOUtJcFpRNktyOE96RkttTURuVnYy?=
- =?utf-8?B?M1pXdVpaQkFxbHdOQW90WUxENW94aTZab2d4VWVBZTh6TEdDd3g0ZUpJV2ZY?=
- =?utf-8?B?U3Rzc0Q1ZkZqVS9FWDVzYnhhTU9qeHBENS94VTFScXA5MFhab3ZZL21BSjdC?=
- =?utf-8?B?UEZyV0J4SkZDMnYrSDdZYVltM09XaE1ma0NUbGJvQVp0WW5sSXhRRTV5UENR?=
- =?utf-8?B?WmFBOGZzZkMyUTh3UU85U0k3NXZKZEsweXZJcUw2bVRTS1NtNDRoVFpXR1Rt?=
- =?utf-8?B?emtaTFZQM2h3bzFVTDlnbkQvY0N6VFhnNnZLenVlU2ZDSHgzRTliN2Z3Ymtr?=
- =?utf-8?B?RXRzQ2ZraDkwYkNIdW14VE04T04zcDFHWkV0bFRoVVl1bVdUK2FvQ3lRZmFY?=
- =?utf-8?B?cS95a01oS0NBbTkzTXFkeXpGWm56S3ZpK2NRQ21naXlhWVhHYlE1YzEvL21M?=
- =?utf-8?B?UW05Nzgwc0c2ckZPakxmTnNFeFFpaWxST2J2N0ZsU0JXSWRvaituWEx6OW1p?=
- =?utf-8?B?Z2MwenFNQkw4bFpiVmc2cFlrMS9FZytLK0o2bjRvRXBNcEl1NDVGMSsrSUdx?=
- =?utf-8?B?TUpOY0NRdVZPN0xKUm5zRnVzQlJ3Yko5RlcxV2F3ZnN2SzRBcEVPZmMzY1o2?=
- =?utf-8?B?Znc9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------Ol8DWgpkqdCmgdXwcOO0tEvJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB7C72600
+	for <linux-kernel@vger.kernel.org>; Wed,  2 Jul 2025 16:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751475079; cv=none; b=heV8TKn6NKL/nUI1SnKl7Og+q65iZiadj52MjHw2N9XJjsM5FOFjXvBwasrcVSDrk09ZIZziG1MVdL68UgppLgNfMAbZf1/3XL5dLK9qAA7c85jCijZrIvt+XSKSWPf3EHOOBTYh8MOJeqRLPMzLLJmy39bcMHSZnStcbeMT9u0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751475079; c=relaxed/simple;
+	bh=vb//Qo24WW6S8QPbUQgG5ByNtX4L0YdqgqXP0MjGKWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBaVY/9woSm/6K1APcTrX7nPgN7P7LHKtbU5DVWAEPqOxQWU6T7ynErGs4W2R1+U8f5rHfvp65/jDONtm8LZoFk+QVnzyWKpXbryaIDm3MguCbdUitf++u8H2a8MRj4ENuHpq8+fBGFOwJllK1/Vi+bOqtEd2badZuBIvfXeaLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=blHLxU37; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751475075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xpfWH72ogCTg47ecP2Ua5CQ85Iecj8xXO5x3bBkcgCk=;
+	b=blHLxU37YUFkI3bg7H+naGM0VC+IgvyqR60WyGZH4VR1Nyh9YiXXWDVFQ+CoRQWAI05Elh
+	ckInTcB8OywNTOnEMrfkgockwoFfMQ/mWBOUpODo7bhMnm+U0KqEJBlyWabj8AzfqPrNAe
+	PKcdSpG4efiivslS99RhQYUfcuLffkc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-678-U2lz1bcdM_yzE1Fwwv9RhQ-1; Wed, 02 Jul 2025 12:51:14 -0400
+X-MC-Unique: U2lz1bcdM_yzE1Fwwv9RhQ-1
+X-Mimecast-MFC-AGG-ID: U2lz1bcdM_yzE1Fwwv9RhQ_1751475073
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4536962204aso19130445e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 02 Jul 2025 09:51:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751475073; x=1752079873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpfWH72ogCTg47ecP2Ua5CQ85Iecj8xXO5x3bBkcgCk=;
+        b=rih0Tu4KXZSPQ+o6sZ6nHgQcbanDpyYud6kWUcgnx+lMaIAod/G5AGYE6OazkZMoi5
+         A+oBP0ZCNjkxbT2cW8xzlcbYSC1YbyUxYnNB2Y4JVPZNf6nSeOkuwF0W0yp3dFGawZSd
+         dE8LhErQ7RsIr2E/PurUgWke8X5Ca5BM3By2V3Rbat7QvH0778PBazSMFxL2A7SCQqkz
+         Qzb/awYSrEr2LEbDSob+cwU+uzf00aZITEwhK9fBFnMBZAI5aDUIYmWC9jDBUEozflGO
+         C27x4vA1wMr3CneRao9GObCmEz5CV7XhCV+f3SKrKhlS4Rl2KAfmZVf1xcMpdquQRYUj
+         M8qQ==
+X-Gm-Message-State: AOJu0Yzzwn4cVEH/VPQbdxgrW63kHy1GalVFYJSvCskpLEMgQyvNC3R/
+	vU+DNboBCdWUd5C2fJLv23w/Q1xi/uze/7d+egC2DnAZDYqeeAn2Tzer6IzNsducYd0P7WwZ/rG
+	9AGyuRygS/VggasBCMHkxfUneHuGJ5fKnbbpMOYvy9J7OnUkFulKlj8tp2UpE0VdMfA==
+X-Gm-Gg: ASbGnct2f5a9MUeCdKgqJrizwRxGTQoYOCFAFkXX/EdMKVEg/1yosNRp8pl0NNFKzNr
+	olLE6Nb8MQsG54g26wupt8PGijfYamc7VcB0eDJSg4cs4YWZ24JzjfYnNzkHVPIxiLwJIizoAQx
+	QgiJq0I4DDFmuf/hjWAnxrAlxBeXuleVIsZKEfFt3Bc1qlLkx0qsXXIpFOz5uAxiibNEjNnZkyH
+	/dK5QzsAEj+6oGEkSDPzcuAmqn8OmAJiVDwqa2exSGg6bRb+1hqqLYdJ3F6rec1fM7RCMaTnUKH
+	Sgd9LnWEPK/b9QEQhu4fg5TEvq4=
+X-Received: by 2002:a05:6000:1acc:b0:3a5:3a03:79c1 with SMTP id ffacd0b85a97d-3b2015e2547mr3077867f8f.48.1751475072819;
+        Wed, 02 Jul 2025 09:51:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvxMRKysuQdHGrGs7w7B21ZCIsLANcSN4jMzO65KTRNFi6asbCS0Y0iZ5KuPAG39RZBqRDZg==
+X-Received: by 2002:a05:6000:1acc:b0:3a5:3a03:79c1 with SMTP id ffacd0b85a97d-3b2015e2547mr3077832f8f.48.1751475072278;
+        Wed, 02 Jul 2025 09:51:12 -0700 (PDT)
+Received: from sgarzare-redhat ([193.207.161.84])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c80b516sm16110429f8f.41.2025.07.02.09.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 09:51:11 -0700 (PDT)
+Date: Wed, 2 Jul 2025 18:50:59 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>, 
+	Steven Moreland <smoreland@google.com>, Frederick Mayle <fmayle@google.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	netdev@vger.kernel.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH v2 6/8] vhost/vsock: Allocate nonlinear SKBs for handling
+ large receive buffers
+Message-ID: <bborsmywroqnwopuadqovhjvdt2fexhwjy2h3higczb7rwojnf@mg5xrk4mgnwx>
+References: <20250701164507.14883-1-will@kernel.org>
+ <20250701164507.14883-7-will@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: feaa3a37-4dc1-4637-3114-08ddb988886b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 16:50:21.1380
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bIZCuAbfFmNT1YtqsKS3wv2wEnDA25I6ucGsbDGLUVGhfd9Mq0OjjRf/OdG2hAezuIf1vTthe1gj03De5peUlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB3401
-X-Proofpoint-ORIG-GUID: kq6ZgsMbZ1bA1IXu-C5O3FIUHhlV2PZ9
-X-Proofpoint-GUID: kq6ZgsMbZ1bA1IXu-C5O3FIUHhlV2PZ9
-X-Authority-Analysis: v=2.4 cv=JNM7s9Kb c=1 sm=1 tr=0 ts=68656350 cx=c_pps
- a=yaq00K9prcfTLPsZX4D6DQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=NgoYpvdbvlAA:10 a=r_1tXGB3AAAA:8
- a=4U6UeLK507fo_c5QFXAA:9 a=QEXdDO2ut3YA:10 a=LUKTbpVRX47aZlhRm8MA:9
- a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAyMDA2OCBTYWx0ZWRfX497BVZxKIGNu
- 7Ednoh/bRhmLEFDLvzr09LM7Bto5QPm3kybHAjnzN9CRRTmerUFdlNCsL6+BbFkecoCShziXxCj
- 1wd8edM/uM4RhaoU91Cx+YOaqzMA5AEGaIV8pnvroLtx1SDyN7EqPhhU2mm+I/qR5GG77tS2Ocv
- j10HsrYa30XVoSVDimPWf4vBJMhpnrsyyQ80kKS00H5GQs3uFxXuv0zv4zv9pTCBUdN1yGGPtvZ
- dvR7ErLleoP073150JlNyQtVZTgz6/fNEJbTXOHHIdphYmlpN9ho9xyGUMnqNKdYTiPsoHTJPXw
- MJGaQUPXMXzX+zdQlLlHcoHOGtOd+6EpSZPTrJ/DKvvOtR5z5vY9hpPLbygry3rGJotuTWi6390
- KBFOwLeW
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250701164507.14883-7-will@kernel.org>
 
---------------Ol8DWgpkqdCmgdXwcOO0tEvJ
-Content-Type: multipart/mixed; boundary="------------t3Ly4XpJOiT0d2DPXNFnXlTe";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: Alessio Belle <alessio.belle@imgtec.com>
-Cc: Frank Binns <frank.binns@imgtec.com>,
- Alexandru Dadu <alexandru.dadu@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-ID: <2ec47280-1032-4e7a-b381-e6f738a15dd5@imgtec.com>
-Subject: Re: [PATCH] drm/imagination: Fix kernel crash when hard resetting the
- GPU
-References: <20250624-fix-kernel-crash-gpu-hard-reset-v1-1-6d24810d72a6@imgtec.com>
-In-Reply-To: <20250624-fix-kernel-crash-gpu-hard-reset-v1-1-6d24810d72a6@imgtec.com>
+On Tue, Jul 01, 2025 at 05:45:05PM +0100, Will Deacon wrote:
+>When receiving a packet from a guest, vhost_vsock_handle_tx_kick()
+>calls vhost_vsock_alloc_linear_skb() to allocate and fill an SKB with
+>the receive data. Unfortunately, these are always linear allocations and
+>can therefore result in significant pressure on kmalloc() considering
+>that the maximum packet size (VIRTIO_VSOCK_MAX_PKT_BUF_SIZE +
+>VIRTIO_VSOCK_SKB_HEADROOM) is a little over 64KiB, resulting in a 128KiB
+>allocation for each packet.
+>
+>Rework the vsock SKB allocation so that, for sizes with page order
+>greater than PAGE_ALLOC_COSTLY_ORDER, a nonlinear SKB is allocated
+>instead with the packet header in the SKB and the receive data in the
+>fragments. Move the VIRTIO_VSOCK_SKB_HEADROOM check out of the
+>allocation function and into the single caller that needs it and add a
+>debug warning if virtio_vsock_skb_rx_put() is ever called on an SKB with
+>a non-zero length, as this would be destructive for the nonlinear case.
+>
+>Signed-off-by: Will Deacon <will@kernel.org>
+>---
+> drivers/vhost/vsock.c        | 11 +++++------
+> include/linux/virtio_vsock.h | 32 +++++++++++++++++++++++++-------
+> 2 files changed, 30 insertions(+), 13 deletions(-)
+>
+>diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+>index b13f6be452ba..f3c2ea1d0ae7 100644
+>--- a/drivers/vhost/vsock.c
+>+++ b/drivers/vhost/vsock.c
+>@@ -344,11 +344,12 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
+>
+> 	len = iov_length(vq->iov, out);
+>
+>-	if (len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
+>+	if (len < VIRTIO_VSOCK_SKB_HEADROOM ||
+>+	    len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE + VIRTIO_VSOCK_SKB_HEADROOM)
+> 		return NULL;
+>
+> 	/* len contains both payload and hdr */
+>-	skb = virtio_vsock_alloc_linear_skb(len, GFP_KERNEL);
+>+	skb = virtio_vsock_alloc_skb(len, GFP_KERNEL);
+> 	if (!skb)
+> 		return NULL;
+>
+>@@ -377,10 +378,8 @@ vhost_vsock_alloc_skb(struct vhost_virtqueue *vq,
+>
+> 	virtio_vsock_skb_rx_put(skb);
+>
+>-	nbytes = copy_from_iter(skb->data, payload_len, &iov_iter);
+>-	if (nbytes != payload_len) {
+>-		vq_err(vq, "Expected %zu byte payload, got %zu bytes\n",
+>-		       payload_len, nbytes);
+>+	if (skb_copy_datagram_from_iter(skb, 0, &iov_iter, payload_len)) {
+>+		vq_err(vq, "Failed to copy %zu byte payload\n", payload_len);
+> 		kfree_skb(skb);
+> 		return NULL;
+> 	}
+>diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+>index 6d4a933c895a..ad69668f6b91 100644
+>--- a/include/linux/virtio_vsock.h
+>+++ b/include/linux/virtio_vsock.h
+>@@ -51,29 +51,47 @@ static inline void virtio_vsock_skb_rx_put(struct sk_buff *skb)
+> {
+> 	u32 len;
+>
+>+	DEBUG_NET_WARN_ON_ONCE(skb->len);
+> 	len = le32_to_cpu(virtio_vsock_hdr(skb)->len);
+>-	skb_put(skb, len);
+>+
+>+	if (skb_is_nonlinear(skb))
+>+		skb->len = len;
+>+	else
+>+		skb_put(skb, len);
+> }
 
---------------t3Ly4XpJOiT0d2DPXNFnXlTe
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+>
+>-static inline struct sk_buff *virtio_vsock_alloc_skb(unsigned int size, gfp_t mask)
+>+static inline struct sk_buff *
+>+__virtio_vsock_alloc_skb_with_frags(unsigned int header_len,
+>+				    unsigned int data_len,
+>+				    gfp_t mask)
+> {
+> 	struct sk_buff *skb;
+>+	int err;
+>
+>-	if (size < VIRTIO_VSOCK_SKB_HEADROOM)
+>-		return NULL;
 
-On 24/06/2025 15:22, Alessio Belle wrote:
-> The GPU hard reset sequence calls pm_runtime_force_suspend() and
-> pm_runtime_force_resume(), which according to their documentation shoul=
-d
-> only be used during system-wide PM transitions to sleep states.
->=20
-> The main issue though is that depending on some internal runtime PM
-> state as seen by pm_runtime_force_suspend() (whether the usage count is=
+I would have made this change in a separate patch, but IIUC the only 
+other caller is virtio_transport_alloc_skb() where this condition is 
+implied, right?
 
-> <=3D 1), pm_runtime_force_resume() might not resume the device unless
-> needed. If that happens, the runtime PM resume callback
-> pvr_power_device_resume() is not called, the GPU clocks are not
-> re-enabled, and the kernel crashes on the next attempt to access GPU
-> registers as part of the power-on sequence.
->=20
-> Replace calls to pm_runtime_force_suspend() and
-> pm_runtime_force_resume() with direct calls to the driver's runtime PM
-> callbacks, pvr_power_device_suspend() and pvr_power_device_resume(),
-> to ensure clocks are re-enabled and avoid the kernel crash.
->=20
-> Fixes: cc1aeedb98ad ("drm/imagination: Implement firmware infrastructur=
-e and META FW support")
->=20
+I don't know, maybe we could have one patch where you touch this and 
+virtio_vsock_skb_rx_put(), and another where you introduce nonlinear 
+allocation for vhost/vsock.  What do you think? (not a strong opinion, 
+just worried about doing 2 things in a single patch)
 
-Nit: no blank line here
+Thanks,
+Stefano
 
-> Signed-off-by: Alessio Belle <alessio.belle@imgtec.com>
+>-
+>-	skb = alloc_skb(size, mask);
+>+	skb = alloc_skb_with_frags(header_len, data_len,
+>+				   PAGE_ALLOC_COSTLY_ORDER, &err, mask);
+> 	if (!skb)
+> 		return NULL;
+>
+> 	skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
+>+	skb->data_len = data_len;
+> 	return skb;
+> }
+>
+> static inline struct sk_buff *
+> virtio_vsock_alloc_linear_skb(unsigned int size, gfp_t mask)
+> {
+>-	return virtio_vsock_alloc_skb(size, mask);
+>+	return __virtio_vsock_alloc_skb_with_frags(size, 0, mask);
+>+}
+>+
+>+static inline struct sk_buff *virtio_vsock_alloc_skb(unsigned int size, gfp_t mask)
+>+{
+>+	if (size <= SKB_WITH_OVERHEAD(PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+>+		return virtio_vsock_alloc_linear_skb(size, mask);
+>+
+>+	size -= VIRTIO_VSOCK_SKB_HEADROOM;
+>+	return __virtio_vsock_alloc_skb_with_frags(VIRTIO_VSOCK_SKB_HEADROOM,
+>+						   size, mask);
+> }
+>
+> static inline void
+>-- 
+>2.50.0.727.gbf7dc18ff4-goog
+>
 
-Thanks for this fix! I'll push it to drm-misc-fixes on Friday if there
-are no objections (with the blank line above removed; no need to re-send
-for that), so:
-
-Reviewed-by: Matt Coster <matt.coster@imgtec.com>
-
-Cheers,
-Matt
-
-> ---
->  drivers/gpu/drm/imagination/pvr_power.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/=
-imagination/pvr_power.c
-> index 41f5d89e78b854cf6993838868a4416a220b490a..3e349d039fc0c4176b5c4ba=
-f009ffa005a2b28d1 100644
-> --- a/drivers/gpu/drm/imagination/pvr_power.c
-> +++ b/drivers/gpu/drm/imagination/pvr_power.c
-> @@ -386,13 +386,13 @@ pvr_power_reset(struct pvr_device *pvr_dev, bool =
-hard_reset)
->                 if (!err) {
->                         if (hard_reset) {
->                                 pvr_dev->fw_dev.booted =3D false;
-> -                               WARN_ON(pm_runtime_force_suspend(from_p=
-vr_device(pvr_dev)->dev));
-> +                               WARN_ON(pvr_power_device_suspend(from_p=
-vr_device(pvr_dev)->dev));
->=20
->                                 err =3D pvr_fw_hard_reset(pvr_dev);
->                                 if (err)
->                                         goto err_device_lost;
->=20
-> -                               err =3D pm_runtime_force_resume(from_pv=
-r_device(pvr_dev)->dev);
-> +                               err =3D pvr_power_device_resume(from_pv=
-r_device(pvr_dev)->dev);
->                                 pvr_dev->fw_dev.booted =3D true;
->                                 if (err)
->                                         goto err_device_lost;
->=20
-> ---
-> base-commit: 1a45ef022f0364186d4fb2f4e5255dcae1ff638a
-> change-id: 20250619-fix-kernel-crash-gpu-hard-reset-1ed31981f8cd
->=20
-> Best regards,
-> --
-> Alessio Belle <alessio.belle@imgtec.com>
->=20
-
-
---=20
-Matt Coster
-E: matt.coster@imgtec.com
-
---------------t3Ly4XpJOiT0d2DPXNFnXlTe--
-
---------------Ol8DWgpkqdCmgdXwcOO0tEvJ
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCaGVjTAUDAAAAAAAKCRB5vBnz2d5qsKld
-AP9czmezDyFj0zy3HWy+9DhzmCEJ5EHMn337gDeRX9yGOQD/S5yUXwtFyGLobzE6DLoykoRetIF5
-11lljM/1IpdF0AU=
-=nPtV
------END PGP SIGNATURE-----
-
---------------Ol8DWgpkqdCmgdXwcOO0tEvJ--
 
