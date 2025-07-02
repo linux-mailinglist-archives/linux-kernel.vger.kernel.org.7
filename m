@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-713560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4AFAF5B74
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DAEAF5B89
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 16:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F91C4297B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DCBD7ADD3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 14:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE983093BB;
-	Wed,  2 Jul 2025 14:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12258309DC4;
+	Wed,  2 Jul 2025 14:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7fJak/R"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I+eVHH2A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812EF307AE8;
-	Wed,  2 Jul 2025 14:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025D628468C;
+	Wed,  2 Jul 2025 14:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751467482; cv=none; b=DQ8zwHdWL5m62vUe6gqm4H2Pg52XWlojIMFalNkcoFx+//hsHvCFy+6OY0uUuNgTzBL1eXX8bDSBKUT54CggCMeagCVdKc2/jq1eyBYCQFR+OZAhWvepVtttEU7XrNV+jb5GB3UfTYBVxtl6qzYBMx6PiSlYDWebShj9Rwwa/WM=
+	t=1751467665; cv=none; b=QyxA+hK/EXkMJ3XCsXjcrnFUk6EMcmbV6Ueh/QZkFFra8dXLrH0We7zL4yhF3H5qzmS5nslaQWjW7AMA/3yFk7fBZ5OXL91RCyMGt/S4fVESNwGbommg/4ry5o/JUsXwTNtaqxFdBKtJaA+UJ9ZMFaeKoOtm7/FBVQHXPY/edNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751467482; c=relaxed/simple;
-	bh=dIhZkNW3gjEURrt2LwtYenbRsdX0gVg1dIBAdJYfSgY=;
+	s=arc-20240116; t=1751467665; c=relaxed/simple;
+	bh=Mp0evPB7WFJwTnK3WQTNV5HRsXFh08Qp2Kyd16xCUJo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGrchqS22kfFnglWe6zA1qZQwF1zFQSPmFaJzQnfBqPvFcg7BtwFuOAsl7Aql2yiY1rh0TdGYYaai9eqK39kM5OZmHi3+69qwAL20o2ktOqU1hk8XJ9cQmPrGG/RtNeRUdkE8UJmRIpRB/18hsh9Yi4u/rckfsEPsl/iE0Tnig4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7fJak/R; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7d3cc0017fdso488724685a.3;
-        Wed, 02 Jul 2025 07:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751467479; x=1752072279; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lVAUHsF9DNYSa/iYiugjbpYggI5LGAKgst70gtbBVuQ=;
-        b=O7fJak/RjWVRz1KYw2g/xdaxguuFW/HJZPcOaj5pEj9ID0Qgqdzyx7Vtybt7VPREDZ
-         qj9SNcbmP4DWL1SPB7iLZWe7iNHy4oArNGB0tEz1tcKNzTphbnYK6ChWj7NWelQ5G3LG
-         BOwEz0kwx0zb5m1Hwk5KQfOlVht9ts5iaOM7noUW+INQ0ytSQhp8+SNxINioHCkaf/Yo
-         AkaMKk8RREl2n7X5AlC3RzVgg3BHHqjxQCCW4Zfdeyia06hr3G9ZZ1MQPbE9RBxaA13B
-         vjVc7lUJDJDaNDWj734UvZqCj9tXqCMAZOZG56+SvD/RA2gyQKoN1uSd+0kKOvKNZTzH
-         +6RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751467479; x=1752072279;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lVAUHsF9DNYSa/iYiugjbpYggI5LGAKgst70gtbBVuQ=;
-        b=DRhoaa86/7qcOsrq6LmvnNexiirTp+sh8KR0yXailrGm78zB26uHgC9obBb9eIeBRP
-         MnjCKUkWBdJ2Oj2ozE6bSkxRmJwlYbsWiFE4Qzsw+l3M30OGQlUkkCnp6kjhdsWLTbNQ
-         EdKLc7c0ixt/0kgp0QXTvgJIm5LmQ4kMKxjAaKwPUYApz3BS8nYdJvwmjkGE2CNiu4uy
-         naHfQB26pr86gP/pfxQmftZgTXAH86hybe7DANYaKVBPhy0cYUyP1IQkOyixlYz7RIS5
-         gN8Xl5i8/UMw6wzWDiCB8xyblJpOhUAox1VSLZDFiLWik8MiPLpoGL6dpKX3WY7XfaUa
-         ZfDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMP1KHwL4ZZby8FA3dSLzNxQ1aA60GDFhnrys1xDzTVVhJni0YVvptu9Ai2DnS4lkmT8WknSJuMbQ=@vger.kernel.org, AJvYcCXUXBD8xFmPxrTNphIr2oJ4OY3dMewTieHY40GLZsP8eli9fG6JoEvAarTTTHGzq3iSBxwlhmxTedkLXgXY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjDMeJhUkxEESehK8jYZeLgBctmqw7V6Oi+KbVzPAL4tRKM3yk
-	J5cKryVFf0e9/64wE9lsdFawSIcbl27MZqseRQGWkUujjtWDlaeCvRWD
-X-Gm-Gg: ASbGncs/6a1IxEF54lN53oSid4foXxFNYSkTyZfnEVZ0e1NrbL32tHYOWmqc1hvYrGk
-	o2GCEEKtQSk7JQlT2VkmMvd9I1LY71Yn6BWBj/IqGOT5BagZh6vI3XRzu6knRSOBxMs2HrIaX4C
-	ExyuGP5l7TcaxkmJwvUbpqS/TFfyXIoJw4RYUDBpUDKIJeq7tD2KFNE52lpyvvdQKbNmsKNPDmD
-	7MbK81INux4Yd8B6//kgF4hlf5nbbWxw2ZYgVbajtoNDA566LWCeeaX7T2iWXMOaHihT9sEfXVc
-	IZKcdvya8j9xkr8a2dLBxnT/aBOhP0/Y4U/2fl12rDzNkO0JqcL2x+zlcsR4Fce49cb1Pg==
-X-Google-Smtp-Source: AGHT+IEUUzQZ77xkfyRexb4hYyJNdV0cwKqIdsWyojwhD5PuT/fqb0HqrNPfKT4SY2N7KTfvoOQ7tQ==
-X-Received: by 2002:a05:620a:4711:b0:7d4:4b7d:fc66 with SMTP id af79cd13be357-7d5c4725221mr506896585a.18.1751467479088;
-        Wed, 02 Jul 2025 07:44:39 -0700 (PDT)
-Received: from localhost ([2804:30c:b15:b200:425a:de22:1d7f:2d4b])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7d453bc5b00sm663795285a.92.2025.07.02.07.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 07:44:38 -0700 (PDT)
-Date: Wed, 2 Jul 2025 11:46:38 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad4000: don't use shift_right()
-Message-ID: <aGVGTn3zFV1CuSQp@debian-BULLSEYE-live-builder-AMD64>
-References: <20250702-iio-adc-ad4000-don-t-use-shift_right-v1-1-041c2d6c3950@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nk+zc7QJC440ZnJQtx+djoYa4DSIbfIK9LSHGLpXFilw4QXBSn5rXURh7IhcZ35vAhOkhbajEQwCy5kcMsjBrgn+ZImU20xGKnFfNHQBZPVtWclZinM2piyfUuKstApx2Ld98JXpnI1dSdoXwHfVf4jvlmHuoFHHGbxiShps2ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I+eVHH2A; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751467665; x=1783003665;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Mp0evPB7WFJwTnK3WQTNV5HRsXFh08Qp2Kyd16xCUJo=;
+  b=I+eVHH2ARyKUyMHhKOHzMc67L/eusOAzR/O2tZLmglOiuUK4BlgHBmd7
+   2fC7Nr3WylhpQXedyCnjW0QiGX0RHKaBzmtpgC8dnyYmMknaECVukwy0x
+   Nq9jTk0BqCgxnREAGr0wAIcvuCxDeviAGICy5T8BfDMKAsPfljmJoCCXS
+   o8BQ3Ky1Npwp2cZfjwAMpetOrWzrKgK34UjTrjx0DiFyfgTtHWb3GvVVZ
+   gRxvzFVB+NdaTn8AXMUNLgbRmxitr+vf0MXHkZoVRV7MYT/3YOseZQzgK
+   Hjg6xwr6OowfmNigw1773ASaI4tuF8YJ2p5w9BueUfwHqxHMIg9Mbvzak
+   Q==;
+X-CSE-ConnectionGUID: Wh8A882lTByPgD6GHzpI1Q==
+X-CSE-MsgGUID: i2dabJcsSOuNXWsxE24u9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="53632172"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="53632172"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 07:47:44 -0700
+X-CSE-ConnectionGUID: xxUdef3KRTuj/C+rFkHWQA==
+X-CSE-MsgGUID: w/pjUIgCSYq2rdNW/mYlAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="158365268"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 02 Jul 2025 07:47:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id E8CB21E0; Wed, 02 Jul 2025 17:47:30 +0300 (EEST)
+Date: Wed, 2 Jul 2025 17:47:30 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, 
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, 
+	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [PATCHv8 14/17] x86/traps: Handle LASS thrown #SS
+Message-ID: <6vihhfk5z33nrpy53ck2c6tkscjas4fhi6hqorenknbnjo4k3j@ywybd4obx76m>
+References: <20250701095849.2360685-1-kirill.shutemov@linux.intel.com>
+ <20250701095849.2360685-15-kirill.shutemov@linux.intel.com>
+ <95dc18fd-73b0-4019-92d2-c0e6aaf22c96@intel.com>
+ <4DE45AFD-C1E0-4FB8-BE01-44A72C5C6E1E@zytor.com>
+ <5q2zbkzyjknusd3feqolycqialetqfe52yfyzasnr6zp24pmej@4cg2r2hi4pf2>
+ <DF2E7B41-46C9-4DAC-A671-EC8D6F53F496@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,44 +100,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250702-iio-adc-ad4000-don-t-use-shift_right-v1-1-041c2d6c3950@baylibre.com>
+In-Reply-To: <DF2E7B41-46C9-4DAC-A671-EC8D6F53F496@zytor.com>
 
-On 07/02, David Lechner wrote:
-> Drop use of shift_right() macro for unsigned value. The shift_right()
-> macro is intended for signed values and is not needed for unsigned
-> values.
-> 
-> This was found by a static analysis tool [1].
-> 
-> Link: https://github.com/analogdevicesinc/linux/pull/2831/files#diff-c14a34a6492576d22e7192cc0f61ad0083190aeb627191596fe12462f0c6f21aR557 [1]
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+On Wed, Jul 02, 2025 at 07:37:12AM -0700, H. Peter Anvin wrote:
+> A LASS violation of any kind in the kernel (unless handled by fixup,
+> including user access fixup) ought to be fatal, correct?
 
->  drivers/iio/adc/ad4000.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> index 5609a7845b6f50b5818613170df6b234f8f0c496..fd3d79fca78581e51bb904d0bcfeda3d3663ea25 100644
-> --- a/drivers/iio/adc/ad4000.c
-> +++ b/drivers/iio/adc/ad4000.c
-> @@ -554,7 +554,7 @@ static void ad4000_fill_scale_tbl(struct ad4000_state *st,
->  	val = mult_frac(st->vref_mv, MICRO, st->gain_milli);
->  
->  	/* Would multiply by NANO here but we multiplied by extra MILLI */
-> -	tmp2 = shift_right((u64)val * MICRO, scale_bits);
-> +	tmp2 = (u64)val * MICRO >> scale_bits;
->  	tmp0 = div_s64_rem(tmp2, NANO, &tmp1);
->  
->  	/* Store scale for when span compression is disabled */
-> 
-> ---
-> base-commit: 6742eff60460e77158d4f1b233f17e0345c9e66a
-> change-id: 20250702-iio-adc-ad4000-don-t-use-shift_right-bda6e41152b6
-> 
-> Best regards,
-> -- 
-> David Lechner <dlechner@baylibre.com>
-> 
-> 
+Yes, LASS violation is fatal for !user_mode(regs), unless addressed by
+fixups.
+
+For user_mode(regs), emulate_vsyscall_gp() is the notable exception.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
