@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-714248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-714232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856CEAF659A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:46:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87866AF654D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Jul 2025 00:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7C14E446D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75321C43BE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 22:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0A5256C9F;
-	Wed,  2 Jul 2025 22:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246F724E019;
+	Wed,  2 Jul 2025 22:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="KvS4CyeV"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZKCmdI9a"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8BF21770B;
-	Wed,  2 Jul 2025 22:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8421BA2E;
+	Wed,  2 Jul 2025 22:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751496361; cv=none; b=KP4gN7s87XhQ5bgrKsjqdJqkjAXYLeZ+9Q7J+amRHumIa6728e+QRjwoDGURDFfXzZDhTF7YQExlRd7BIV1FspMsAmgjGS83HBebtro46/MqnEbj3amtOhtQnsRVIqgHhKCTHuDOD4mZd7/5MTK1BRHS+X8bz9YXNSoMQt7AyG8=
+	t=1751495767; cv=none; b=BO2awDS2yqOJluLQ8djjqGx+Tq4tpq4ruIlE4KoZrQ5xmP5Q+ofF849cOsLHUlv/aqUo/Ag4v6Z71H9OEopTOYSW+PGJwJushLPbw4VOnJdihUhNwcjGuoE+zvA9uLtBHI9Vu+ldvh/p9CAMJ2JhgYteVrt1ishJCRVAhh/kIW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751496361; c=relaxed/simple;
-	bh=UPS3jRecEgBaQrFDvJUIey28qto38FfAohZ6dAgaey8=;
+	s=arc-20240116; t=1751495767; c=relaxed/simple;
+	bh=oZuV8TXB0zmFmNtykCVMbeVWfcnuP0A42EsvLKTwol8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iDBV2CFVIOqXvNC0rbWysm/Posjaiex6liktgvshC4pforpbY+/8X1Ey3FVYdIg0uaeSKcPFPhl+ogRIOaFpEhkFOgbCIRIvnAHLubb1s2XA8z9/ATzd6/wjF0xNkqwtzBkQyMKpY/v1v9O8yM9/ey69ZePfct3WfbCVbboPxzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=KvS4CyeV; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=UfGzdiOQ1RXB7BfUdCdfa5SkEcMSdkWjsEHuvLb+LcLP7lQw2ZxKFDE3meQdZykg5XlbQsCUtsOnnmne5bEegdxijaJfcsSfgdmkHQVD+INhpxWlM1tutro4ZFpKdjS5U2ZVs15b+zEb6PW+2Y4Vd1fPzkmiEEYFkdcN0JYyYCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZKCmdI9a; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D13E440AD6
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 69B8E40AD7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1751495761; bh=/IXkiFnHxKywSEBZcmAZNPVT8JLzPS8dyYGnsbT50ws=;
+	t=1751495761; bh=atGQI8ciMQaBSgY8/Pnz9IPDBgayT8RIht1YuEDa/kE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KvS4CyeVaC8a0sxpwR43rOHRMW3jcor+9DSHtk5uzdQDG6xTjocJpgloDaT9W6vJF
-	 knUAKp9elkA6NreE+rup+gXKwpJieNqPotvRY1JrP4KZQzN2X/yYHXXm5MPzJ8h9aY
-	 vZnaiOxyJ+2Gofiofppjk9jG2As7tg0kbju3nuJ1a6qm9nnempNvi6F7tlBa1UgzMi
-	 esnPLlJ+/2ZTOW5qRu7Zy+DEXOPw+VRCgYNwlM0XJoOFstDoox9lxNfkZYKG0lh9de
-	 TMDsNawsVv6YK10Ohf4lfu63jAuzIU0K+6YyWiG8vBcMCzU/DznQ3GZ5tAQeb6FxYz
-	 oHWhc8ottBSvA==
+	b=ZKCmdI9a6ouhaRpb0abiFSNJ9NxywoLe4apaimyq4aR8hb7vV43HkMkyvFXlYsslw
+	 1+w/zDtnCkTT23Hv+t+UFPwwRBD0jk0XYStbPY2jkzVD9yUb9fFwx9sATBNSuV/J1i
+	 PvbU5OIxM5pndAqeSDBaRIu0TamqyYncsZhuvALzIYdA6k8QKBtWDGuS5GYpAG5YOG
+	 knun8egBwzPDlPrOMPg418ZrsvJMDUgjI99DPkbb1L3oPEBbmTx9HSBlA8efEK3QkX
+	 qKVV5QEeZG+vKaAExLO8dMdQFde88nDq66fHQsc2LrE27rhgGt6oVLbmZTGg1FeAli
+	 GlHO4akNXYHYQ==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id D13E440AD6;
-	Wed,  2 Jul 2025 22:36:00 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 69B8E40AD7;
+	Wed,  2 Jul 2025 22:36:01 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 04/12] docs: kdoc: Centralize handling of the item section list
-Date: Wed,  2 Jul 2025 16:35:16 -0600
-Message-ID: <20250702223524.231794-5-corbet@lwn.net>
+Subject: [PATCH 05/12] docs: kdoc: remove the "struct_actual" machinery
+Date: Wed,  2 Jul 2025 16:35:17 -0600
+Message-ID: <20250702223524.231794-6-corbet@lwn.net>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250702223524.231794-1-corbet@lwn.net>
 References: <20250702223524.231794-1-corbet@lwn.net>
@@ -63,244 +63,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The section list always comes directly from the under-construction entry
-and is used uniformly.  Formalize section handling in the KdocItem class,
-and have output_declaration() load the sections directly from the entry,
-eliminating a lot of duplicated, verbose parameters.
+The code goes out of its way to create a special list of parameters in
+entry.struct_actual that is just like entry.parameterlist, but with extra
+junk.  The only use of that information, in check_sections(), promptly
+strips all the extra junk back out.  Drop all that extra work and just use
+parameterlist.
+
+No output changes.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- scripts/lib/kdoc/kdoc_item.py   |  8 ++++++++
- scripts/lib/kdoc/kdoc_output.py | 36 ++++++++++++---------------------
- scripts/lib/kdoc/kdoc_parser.py | 20 +++---------------
- 3 files changed, 24 insertions(+), 40 deletions(-)
+ scripts/lib/kdoc/kdoc_parser.py | 32 ++------------------------------
+ 1 file changed, 2 insertions(+), 30 deletions(-)
 
-diff --git a/scripts/lib/kdoc/kdoc_item.py b/scripts/lib/kdoc/kdoc_item.py
-index add2cc772fec..c8329019a219 100644
---- a/scripts/lib/kdoc/kdoc_item.py
-+++ b/scripts/lib/kdoc/kdoc_item.py
-@@ -9,6 +9,7 @@ class KdocItem:
-         self.name = name
-         self.type = type
-         self.declaration_start_line = start_line
-+        self.sections = self.sections_start_lines = { }
-         #
-         # Just save everything else into our own dict so that the output
-         # side can grab it directly as before.  As we move things into more
-@@ -24,3 +25,10 @@ class KdocItem:
- 
-     def __getitem__(self, key):
-         return self.get(key)
-+
-+    #
-+    # Tracking of section information.
-+    #
-+    def set_sections(self, sections, start_lines):
-+        self.sections = sections
-+        self.section_start_lines = start_lines
-diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index 4895c80e4b81..15cb89f91987 100644
---- a/scripts/lib/kdoc/kdoc_output.py
-+++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -338,11 +338,7 @@ class RestFormat(OutputFormat):
-         starts by putting out the name of the doc section itself, but that
-         tends to duplicate a header already in the template file.
-         """
--
--        sections = args.get('sections', {})
--        section_start_lines = args.get('section_start_lines', {})
--
--        for section in sections:
-+        for section, text in args.sections.items():
-             # Skip sections that are in the nosymbol_table
-             if section in self.nosymbol:
-                 continue
-@@ -354,8 +350,8 @@ class RestFormat(OutputFormat):
-             else:
-                 self.data += f'{self.lineprefix}**{section}**\n\n'
- 
--            self.print_lineno(section_start_lines.get(section, 0))
--            self.output_highlight(sections[section])
-+            self.print_lineno(args.section_start_lines.get(section, 0))
-+            self.output_highlight(text)
-             self.data += "\n"
-         self.data += "\n"
- 
-@@ -635,23 +631,20 @@ class ManFormat(OutputFormat):
-                 self.data += line + "\n"
- 
-     def out_doc(self, fname, name, args):
--        sections = args.get('sections', {})
--
-         if not self.check_doc(name, args):
-             return
- 
-         self.data += f'.TH "{self.modulename}" 9 "{self.modulename}" "{self.man_date}" "API Manual" LINUX' + "\n"
- 
--        for section in sections:
-+        for section, text in args.sections.items():
-             self.data += f'.SH "{section}"' + "\n"
--            self.output_highlight(sections.get(section))
-+            self.output_highlight(text)
- 
-     def out_function(self, fname, name, args):
-         """output function in man"""
- 
-         parameterlist = args.get('parameterlist', [])
-         parameterdescs = args.get('parameterdescs', {})
--        sections = args.get('sections', {})
- 
-         self.data += f'.TH "{args["function"]}" 9 "{args["function"]}" "{self.man_date}" "Kernel Hacker\'s Manual" LINUX' + "\n"
- 
-@@ -692,15 +685,14 @@ class ManFormat(OutputFormat):
-             self.data += f'.IP "{parameter}" 12' + "\n"
-             self.output_highlight(parameterdescs.get(parameter_name, ""))
- 
--        for section in sections:
-+        for section, text in args.sections.items():
-             self.data += f'.SH "{section.upper()}"' + "\n"
--            self.output_highlight(sections[section])
-+            self.output_highlight(text)
- 
-     def out_enum(self, fname, name, args):
- 
-         name = args.get('enum', '')
-         parameterlist = args.get('parameterlist', [])
--        sections = args.get('sections', {})
- 
-         self.data += f'.TH "{self.modulename}" 9 "enum {args["enum"]}" "{self.man_date}" "API Manual" LINUX' + "\n"
- 
-@@ -727,24 +719,23 @@ class ManFormat(OutputFormat):
-             self.data += f'.IP "{parameter}" 12' + "\n"
-             self.output_highlight(args['parameterdescs'].get(parameter_name, ""))
- 
--        for section in sections:
-+        for section, text in args.sections.items():
-             self.data += f'.SH "{section}"' + "\n"
--            self.output_highlight(sections[section])
-+            self.output_highlight(text)
- 
-     def out_typedef(self, fname, name, args):
-         module = self.modulename
-         typedef = args.get('typedef')
-         purpose = args.get('purpose')
--        sections = args.get('sections', {})
- 
-         self.data += f'.TH "{module}" 9 "{typedef}" "{self.man_date}" "API Manual" LINUX' + "\n"
- 
-         self.data += ".SH NAME\n"
-         self.data += f"typedef {typedef} \\- {purpose}\n"
- 
--        for section in sections:
-+        for section, text in args.sections.items():
-             self.data += f'.SH "{section}"' + "\n"
--            self.output_highlight(sections.get(section))
-+            self.output_highlight(text)
- 
-     def out_struct(self, fname, name, args):
-         module = self.modulename
-@@ -753,7 +744,6 @@ class ManFormat(OutputFormat):
-         purpose = args.get('purpose')
-         definition = args.get('definition')
-         parameterlist = args.get('parameterlist', [])
--        sections = args.get('sections', {})
-         parameterdescs = args.get('parameterdescs', {})
- 
-         self.data += f'.TH "{module}" 9 "{struct_type} {struct_name}" "{self.man_date}" "API Manual" LINUX' + "\n"
-@@ -782,6 +772,6 @@ class ManFormat(OutputFormat):
-             self.data += f'.IP "{parameter}" 12' + "\n"
-             self.output_highlight(parameterdescs.get(parameter_name))
- 
--        for section in sections:
-+        for section, text in args.sections.items():
-             self.data += f'.SH "{section}"' + "\n"
--            self.output_highlight(sections.get(section))
-+            self.output_highlight(text)
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 2e00c8b3a5f2..608f3a1045dc 100644
+index 608f3a1045dc..b28f056365cb 100644
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -272,13 +272,13 @@ class KernelDoc:
-         item = KdocItem(name, dtype, self.entry.declaration_start_line, **args)
-         item.warnings = self.entry.warnings
+@@ -116,7 +116,6 @@ class KernelEntry:
  
--        sections = item.get('sections', {})
+         self._contents = []
+         self.sectcheck = ""
+-        self.struct_actual = ""
+         self.prototype = ""
+ 
+         self.warnings = []
+@@ -366,15 +365,6 @@ class KernelDoc:
+         org_arg = KernRe(r'\s\s+').sub(' ', org_arg)
+         self.entry.parametertypes[param] = org_arg
+ 
+-    def save_struct_actual(self, actual):
+-        """
+-        Strip all spaces from the actual param so that it looks like
+-        one string item.
+-        """
 -
-         # Drop empty sections
-         # TODO: improve empty sections logic to emit warnings
-+        sections = self.entry.sections
-         for section in ["Description", "Return"]:
-             if section in sections and not sections[section].rstrip():
-                 del sections[section]
-+        item.set_sections(sections, self.entry.section_start_lines)
+-        actual = KernRe(r'\s*').sub("", actual, count=1)
+-
+-        self.entry.struct_actual += actual + " "
  
-         self.entries.append(item)
+     def create_parameter_list(self, ln, decl_type, args,
+                               splitter, declaration_name):
+@@ -420,7 +410,6 @@ class KernelDoc:
+                     param = arg
  
-@@ -824,8 +824,6 @@ class KernelDoc:
-                                 parameterdescs=self.entry.parameterdescs,
-                                 parametertypes=self.entry.parametertypes,
-                                 parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
--                                sections=self.entry.sections,
--                                section_start_lines=self.entry.section_start_lines,
-                                 purpose=self.entry.declaration_purpose)
+                 dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+-                self.save_struct_actual(param)
+                 self.push_parameter(ln, decl_type, param, dtype,
+                                     arg, declaration_name)
  
-     def dump_enum(self, ln, proto):
-@@ -908,8 +906,6 @@ class KernelDoc:
-                                 parameterlist=self.entry.parameterlist,
-                                 parameterdescs=self.entry.parameterdescs,
-                                 parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
--                                sections=self.entry.sections,
--                                section_start_lines=self.entry.section_start_lines,
-                                 purpose=self.entry.declaration_purpose)
+@@ -437,7 +426,6 @@ class KernelDoc:
  
-     def dump_declaration(self, ln, prototype):
-@@ -1079,8 +1075,6 @@ class KernelDoc:
-                                     parameterdescs=self.entry.parameterdescs,
-                                     parametertypes=self.entry.parametertypes,
-                                     parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
--                                    sections=self.entry.sections,
--                                    section_start_lines=self.entry.section_start_lines,
-                                     purpose=self.entry.declaration_purpose,
-                                     func_macro=func_macro)
-         else:
-@@ -1092,8 +1086,6 @@ class KernelDoc:
-                                     parameterdescs=self.entry.parameterdescs,
-                                     parametertypes=self.entry.parametertypes,
-                                     parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
--                                    sections=self.entry.sections,
--                                    section_start_lines=self.entry.section_start_lines,
-                                     purpose=self.entry.declaration_purpose,
-                                     func_macro=func_macro)
+                 dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
  
-@@ -1137,8 +1129,6 @@ class KernelDoc:
-                                     parameterdescs=self.entry.parameterdescs,
-                                     parametertypes=self.entry.parametertypes,
-                                     parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
--                                    sections=self.entry.sections,
--                                    section_start_lines=self.entry.section_start_lines,
-                                     purpose=self.entry.declaration_purpose)
-             return
+-                self.save_struct_actual(param)
+                 self.push_parameter(ln, decl_type, param, dtype,
+                                     arg, declaration_name)
  
-@@ -1159,8 +1149,6 @@ class KernelDoc:
+@@ -470,7 +458,6 @@ class KernelDoc:
  
-             self.output_declaration('typedef', declaration_name,
-                                     typedef=declaration_name,
--                                    sections=self.entry.sections,
--                                    section_start_lines=self.entry.section_start_lines,
-                                     purpose=self.entry.declaration_purpose)
-             return
+                         param = r.group(1)
  
-@@ -1642,9 +1630,7 @@ class KernelDoc:
+-                        self.save_struct_actual(r.group(2))
+                         self.push_parameter(ln, decl_type, r.group(2),
+                                             f"{dtype} {r.group(1)}",
+                                             arg, declaration_name)
+@@ -482,12 +469,10 @@ class KernelDoc:
+                             continue
  
-         if doc_end.search(line):
-             self.dump_section()
--            self.output_declaration("doc", self.entry.identifier,
--                                    sections=self.entry.sections,
--                                    section_start_lines=self.entry.section_start_lines)
-+            self.output_declaration("doc", self.entry.identifier)
-             self.reset_state(ln)
+                         if dtype != "":  # Skip unnamed bit-fields
+-                            self.save_struct_actual(r.group(1))
+                             self.push_parameter(ln, decl_type, r.group(1),
+                                                 f"{dtype}:{r.group(2)}",
+                                                 arg, declaration_name)
+                     else:
+-                        self.save_struct_actual(param)
+                         self.push_parameter(ln, decl_type, param, dtype,
+                                             arg, declaration_name)
  
-         elif doc_content.search(line):
+@@ -499,24 +484,11 @@ class KernelDoc:
+ 
+         sects = sectcheck.split()
+         prms = prmscheck.split()
+-        err = False
+ 
+         for sx in range(len(sects)):                  # pylint: disable=C0200
+             err = True
+             for px in range(len(prms)):               # pylint: disable=C0200
+-                prm_clean = prms[px]
+-                prm_clean = KernRe(r'\[.*\]').sub('', prm_clean)
+-                prm_clean = attribute.sub('', prm_clean)
+-
+-                # ignore array size in a parameter string;
+-                # however, the original param string may contain
+-                # spaces, e.g.:  addr[6 + 2]
+-                # and this appears in @prms as "addr[6" since the
+-                # parameter list is split at spaces;
+-                # hence just ignore "[..." for the sections check;
+-                prm_clean = KernRe(r'\[.*').sub('', prm_clean)
+-
+-                if prm_clean == sects[sx]:
++                if prms[px] == sects[sx]:
+                     err = False
+                     break
+ 
+@@ -782,7 +754,7 @@ class KernelDoc:
+         self.create_parameter_list(ln, decl_type, members, ';',
+                                    declaration_name)
+         self.check_sections(ln, declaration_name, decl_type,
+-                            self.entry.sectcheck, self.entry.struct_actual)
++                            self.entry.sectcheck, ' '.join(self.entry.parameterlist))
+ 
+         # Adjust declaration for better display
+         declaration = KernRe(r'([\{;])').sub(r'\1\n', declaration)
 -- 
 2.49.0
 
