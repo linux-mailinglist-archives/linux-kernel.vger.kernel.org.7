@@ -1,172 +1,139 @@
-Return-Path: <linux-kernel+bounces-713087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-713085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9043EAF1322
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:05:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17ABBAF131E
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 13:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858DA189949B
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5890F3AD4E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Jul 2025 11:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131C4262FDC;
-	Wed,  2 Jul 2025 11:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E185267711;
+	Wed,  2 Jul 2025 11:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a5JjRyE5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2DI2UzU"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED29240604;
-	Wed,  2 Jul 2025 11:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7C724A07A;
+	Wed,  2 Jul 2025 11:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751454117; cv=none; b=YxttPK5HMNYN4jKdIKh3BOIgYqf0taEOLSOzEf8XKbmKzpc5bd1n2PRraGlebtlbUpocU0cEdllI/V7+7FqIGTfqa3vYBo5gUp/jEtgkyleq8SKa7KxmrkBqaTSaK7/ctdhwPQgjZGTNXll1dTukReR+9TILRyWwgXf1eI1HQt8=
+	t=1751454100; cv=none; b=f446/vMt7wOFHAvkMnX9lb4isonB8Sx3Epjxi9AZqXZNJtcrJTre+KaTwPEqVRsmtyEDdVGQnTqNZU7mrLtz1Ifpqtcss6f5TZnUKLFllJxZoUB0Va2/U3KnzLHOmFmZZ4As4Uq0R5jp6kufHuOG5ECzo73GqCxv6H5sL77ZBAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751454117; c=relaxed/simple;
-	bh=vk9xFYF2tM63tWK0lwWvjJGavzdkJM4pk3eHgL+p5iE=;
+	s=arc-20240116; t=1751454100; c=relaxed/simple;
+	bh=Jx3nrA3y02nN1a8g4PQwns0WXAh0O1ZzASAoOCJAAOc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZqjGy+GaPiASFJMbFOopEkMLYCiIJ/aKYBywWkCjtBpX6BfuMIGT00xZYxsQLrL++dHLhzXQ0OEWH2f6dvb00yVhoHoJpUCBkY4pnMdeJuoBJYaVUNovZIAai15BsLflHyFnsTOhlox+067Kc6AKFtxW5HIBR5iDwj3C2lk/Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a5JjRyE5; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751454116; x=1782990116;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vk9xFYF2tM63tWK0lwWvjJGavzdkJM4pk3eHgL+p5iE=;
-  b=a5JjRyE5LljjU8/j/Z7fRO/bQYCMfutwNPBcK8cZ/kyJ5yi5cCklKJa7
-   EYH7225izh0ICVgQcoJWl2QjVyHk6g4oXkONMN1USQUvWoPsG1kMW/yLN
-   G10HMf5WOsXri4Bcak3F6SArVuQhfhWZ0Z4OTuxCQgMKky7AJw+BBULfX
-   1L/XqrNZuIFnKuhkObOyNUqRR1qY1oSRMqohXhp8yjw8oMdv9YGWw9TZQ
-   9aUkiU7dRBHsP1JXPYFI6ycyhqhf5FpNet9fZ7x7buzAQCNEC9qcJbqdV
-   jrYMZfte/d8Z1XDkIIH8tdJTsc78tQ2Z4BMDSkk0FOITRusi0ERKwbLp2
-   g==;
-X-CSE-ConnectionGUID: 2KtZlC1TTviau+/AK2zuSQ==
-X-CSE-MsgGUID: 4VqToGsTTrytqiCU80bULA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11481"; a="79183705"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="79183705"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 04:01:55 -0700
-X-CSE-ConnectionGUID: TKdxGbLaThynfIdl2VgMkw==
-X-CSE-MsgGUID: wfLo+LikQHu8xgNbgqPuTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="154777677"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Jul 2025 04:01:52 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uWvDp-0000Xj-2G;
-	Wed, 02 Jul 2025 11:01:49 +0000
-Date: Wed, 2 Jul 2025 19:01:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shankari Anand <shankari.ak0208@gmail.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	patches@lists.linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: move ARef and AlwaysRefCounted to sync::aref
-Message-ID: <202507021852.OMX5AiRy-lkp@intel.com>
-References: <20250625111133.698481-1-shankari.ak0208@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiNYgj4cNzNEEks3BFcSJHS9/L3siw07DE97E1CMHY9eXL29S5C/TZFUr4vfu/4Wc8xiKT1btmAfxW+7KmJUi9jaSRiWUHXduVEXt26EMTjK0tiDsWntD7sBNXCWsBMBfTBxdzNBMqMh83ItVgGK8E94EklQw0H5WbAaOa0uiIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2DI2UzU; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-235a3dd4f0dso41553835ad.0;
+        Wed, 02 Jul 2025 04:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751454098; x=1752058898; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WOPaH+YDPVrASXxcxRgC02h4qR2oQtnWUqk9fTWuytQ=;
+        b=U2DI2UzUMt5U3pWr2PEeyqQq/KXJRRQAlQqu4SuBxqmQvGgbSYBHqCWhczc5t9r6BJ
+         +deVtHKS7rnAJUvqEvwkMHC7FWzGHkqcZJ7PM9tUWmqX8P21R1BJ3wxPz6uKv479LvqZ
+         r+g3N5wbXOOvqv49QuQqZ43dHOQkWjVTajRGa3rTYIv6WLX7BA1o5+3+7hMaLMvnjXJb
+         DzQHe83ANvnei+k0zlY8nwRMQHC+PPAOfudw3czAybi8bzdbK2YdoUMLXQZ/0vEJBzou
+         /ZMjSi3xSkBobi0jaeP4m7KKRubT8Z5srYBjBVOroQ0iKMhwbWJ7EXi696K2pnQm+6CP
+         Gj2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751454098; x=1752058898;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOPaH+YDPVrASXxcxRgC02h4qR2oQtnWUqk9fTWuytQ=;
+        b=c/lzUY5hxVXjwPVTzLWG+UdiW3khqbD9iPBFEWCE2UIFcnjqAxCuitcm23zDRheOFh
+         5mlR7DnwEtObRaU87HW5N3ui04YDXHJhJHQfgF/uakrUmVmp9Gp0rhTckkWOifHdL5n8
+         KDOd3YFPShO18va44mdzw59RaAGjm6U3TPLlHBSoq/CMCxVwO3fAbgAUdDHo48Mg/ywG
+         a7s9qDXvyzlXYZ6xyoDSIT8IVKotyGZWORJx8qMcyCHhs7xPdwnw9iWbLwJqJys+grMK
+         mgtHASSP4puwqkgb+SbEi036lmYzvHzVK3LT4B/uwdaA5IIK9Pf8DSMctiElEQEZX1So
+         12rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Q4dHLehuViX+U30JwzySz9OZ5kDuO+5LfXoG52/UQ0sxymtJ2UjE+Z7WWwOQZP27OePcMizNdraK2OVq@vger.kernel.org, AJvYcCVXYEDH5an0sBcH9mtiC4zAqYI1dmNEQ+KpLdiB2JCWXWe0LFWKH6lYxPiSoblpkuMWCXh8t9bTEqTy@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU5Mnu0QDWNwZMuHU2SdBg7/sL5cuPvMpR2CE27GFC7vAkVDCI
+	1/ZKinQtwYVxPBvFqOzcifY0ZF2mEd1yb8qGM0cCqJnv85DYy5Whisyi
+X-Gm-Gg: ASbGncu6dIyP8GmZbrmFMBV8fIb4sDoPMcHVUBPLpfJbEOUFEWC5lgIJUmK8AtSHT9+
+	P/2fleh9AoX9aPRZpOqAT8IvGLFIg5x76rV1vl7fPQfGE7DVifFUb+xtgNww7aSU1zmB9VJYClc
+	Fkt3v9Vl37j9KcQ0h+29+Tac43+AL34VY7GLXDDzPm5hehZBKc6khjc4n9NBgP8kwVEU5tAlkGg
+	M0rpWLYdzX8pr5uEwFIhVJlido5V8CRvgeOIgTsFnozW5muW70dWBFnWfBh4qmd25NI3/kidTvV
+	yLJoSQ2PXxnwoddiHXb3vYh4luNDdjY6ldfrwhRpUZ1ya1IRe3OHm4wUL78kwmj/2mMFAU2Z6Kp
+	aDsk=
+X-Google-Smtp-Source: AGHT+IH3iDn2QARp1hU12Ij89unmFmTckuBxbgbwVWw3NsxmxzgB5zxbKWqK6YrXdS5LmZnaITwGiw==
+X-Received: by 2002:a17:903:4405:b0:234:d2fb:2d0e with SMTP id d9443c01a7336-23c6e4d680fmr37152175ad.10.1751454098421;
+        Wed, 02 Jul 2025 04:01:38 -0700 (PDT)
+Received: from rigel (61-68-193-107.tpgi.com.au. [61.68.193.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23acb2e3a23sm135084225ad.1.2025.07.02.04.01.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 04:01:38 -0700 (PDT)
+Date: Wed, 2 Jul 2025 19:01:27 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>, Marek Vasut <marex@denx.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 00/10] gpio: sysfs: add a per-chip export/unexport
+ attribute pair
+Message-ID: <20250702110127.GA51968@rigel>
+References: <20250630-gpio-sysfs-chip-export-v3-0-b997be9b7137@linaro.org>
+ <aGPrFnDxG4W7S9Ym@smile.fi.intel.com>
+ <20250702035439.GA20273@rigel>
+ <CAMRc=MftawBB4rtj4EKS_OwMCU9h53sA8QxcFq_ZY0MRg2OLag@mail.gmail.com>
+ <20250702101212.GA47772@rigel>
+ <CAMRc=MeuMpo0=ym+FvDh5sCNXM00+iOSNFgTxMqagO78ZS64_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250625111133.698481-1-shankari.ak0208@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeuMpo0=ym+FvDh5sCNXM00+iOSNFgTxMqagO78ZS64_g@mail.gmail.com>
 
-Hi Shankari,
+On Wed, Jul 02, 2025 at 12:28:01PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Jul 2, 2025 at 12:12 PM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > >
+> > > I tend to not interpret it as adding new features. We really just
+> > > *move* what exists under a slightly different path when you think
+> > > about it.
+> > >
+> > > So what are you suggesting, remove the `edge` attribute and polling
+> > > features from the new `value` attribute?
+> > >
+> >
+> > Exactly. I'm not suggesting ANY changes to the old sysfs, only your new
+> > non-global numbering version.  The idea being don't port everything over
+> > from the old sysfs - just the core feature set that non-cdev users need.
+> >
+>
+> I mean, if someone shows up saying they need this or that from the old
+> sysfs and without they won't switch, we can always add it back I
+> guess... Much easier than removing something that's carved in stone.
+>
 
-kernel test robot noticed the following build errors:
+Exactly - expect to be supporting whatever goes in now forever.
 
-[auto build test ERROR on 0303584766b7bdb6564c7e8f13e0b59b6ef44984]
+> Anything else should go away? `active_low`?
+>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shankari-Anand/rust-update-ARef-and-AlwaysRefCounted-call-sites-to-import-from-sync-aref/20250625-191416
-base:   0303584766b7bdb6564c7e8f13e0b59b6ef44984
-patch link:    https://lore.kernel.org/r/20250625111133.698481-1-shankari.ak0208%40gmail.com
-patch subject: [PATCH v2 1/2] rust: move ARef and AlwaysRefCounted to sync::aref
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250702/202507021852.OMX5AiRy-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250702/202507021852.OMX5AiRy-lkp@intel.com/reproduce)
+I don't personally see any value in 'active_low' in the sysfs API if you
+drop edges. It is easy enough to flip values as necessary in userspace.
+(From time to time I think it should've been dropped from cdev in v2 but, as
+above, it is carved in stone now so oh well...)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507021852.OMX5AiRy-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   PATH=/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   INFO PATH=/opt/cross/rustc-1.78.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS= -fno-crash-diagnostics -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck
-   make: Entering directory '/kbuild/src/consumer'
-   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
->> Diff in rust/kernel/sync/aref.rs at line 10:
-    //!
-    //! For Rust-managed objects, prefer using [`Arc`](crate::sync::Arc) instead.
-    
-   -use core::{
-   -    marker::PhantomData,
-   -    mem::ManuallyDrop,
-   -    ops::Deref,
-   -    ptr::NonNull,
-   -};
-   +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
-    
-    /// Trait for types that are _always_ reference-counted.
-    ///
->> Diff in rust/kernel/sync/aref.rs at line 10:
-    //!
-    //! For Rust-managed objects, prefer using [`Arc`](crate::sync::Arc) instead.
-    
-   -use core::{
-   -    marker::PhantomData,
-   -    mem::ManuallyDrop,
-   -    ops::Deref,
-   -    ptr::NonNull,
-   -};
-   +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
-    
-    /// Trait for types that are _always_ reference-counted.
-    ///
->> Diff in rust/kernel/sync/aref.rs at line 10:
-    //!
-    //! For Rust-managed objects, prefer using [`Arc`](crate::sync::Arc) instead.
-    
-   -use core::{
-   -    marker::PhantomData,
-   -    mem::ManuallyDrop,
-   -    ops::Deref,
-   -    ptr::NonNull,
-   -};
-   +use core::{marker::PhantomData, mem::ManuallyDrop, ops::Deref, ptr::NonNull};
-    
-    /// Trait for types that are _always_ reference-counted.
-    ///
-   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'rustfmtcheck' not remade because of errors.
-   make: Leaving directory '/kbuild/src/consumer'
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'rustfmtcheck' not remade because of errors.
-   make[2]: *** [Makefile:1831: rustfmt] Error 123
-   make[2]: Target 'rustfmtcheck' not remade because of errors.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Kent.
 
